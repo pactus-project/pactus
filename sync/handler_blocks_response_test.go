@@ -133,8 +133,8 @@ func TestSyncing(t *testing.T) {
 	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeHello)
 
 	// Ensure peers are connected and block heights are correct
-	assert.Len(t, syncAlice.Peers(), 1)
-	assert.Len(t, syncBob.Peers(), 1)
+	assert.Equal(t, syncAlice.PeerSet().Len(), 1)
+	assert.Equal(t, syncBob.PeerSet().Len(), 1)
 	assert.Equal(t, syncAlice.state.LastBlockHeight(), uint32(0))
 	assert.Equal(t, syncBob.state.LastBlockHeight(), uint32(100))
 

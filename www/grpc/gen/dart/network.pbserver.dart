@@ -17,12 +17,12 @@ export 'network.pb.dart';
 
 abstract class NetworkServiceBase extends $pb.GeneratedService {
   $async.Future<$2.GetNetworkInfoResponse> getNetworkInfo($pb.ServerContext ctx, $2.GetNetworkInfoRequest request);
-  $async.Future<$2.GetPeerInfoResponse> getPeerInfo($pb.ServerContext ctx, $2.GetPeerInfoRequest request);
+  $async.Future<$2.GetNodeInfoResponse> getNodeInfo($pb.ServerContext ctx, $2.GetNodeInfoRequest request);
 
   $pb.GeneratedMessage createRequest($core.String method) {
     switch (method) {
       case 'GetNetworkInfo': return $2.GetNetworkInfoRequest();
-      case 'GetPeerInfo': return $2.GetPeerInfoRequest();
+      case 'GetNodeInfo': return $2.GetNodeInfoRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
@@ -30,7 +30,7 @@ abstract class NetworkServiceBase extends $pb.GeneratedService {
   $async.Future<$pb.GeneratedMessage> handleCall($pb.ServerContext ctx, $core.String method, $pb.GeneratedMessage request) {
     switch (method) {
       case 'GetNetworkInfo': return this.getNetworkInfo(ctx, request as $2.GetNetworkInfoRequest);
-      case 'GetPeerInfo': return this.getPeerInfo(ctx, request as $2.GetPeerInfoRequest);
+      case 'GetNodeInfo': return this.getNodeInfo(ctx, request as $2.GetNodeInfoRequest);
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }

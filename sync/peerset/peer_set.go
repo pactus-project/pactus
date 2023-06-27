@@ -16,11 +16,13 @@ import (
 type PeerSet struct {
 	lk sync.RWMutex
 
-	peers            map[peer.ID]*Peer
-	sessions         map[int]*Session
-	nextSessionID    int
-	maxClaimedHeight uint32
-	sessionTimeout   time.Duration
+	peers              map[peer.ID]*Peer
+	sessions           map[int]*Session
+	nextSessionID      int
+	maxClaimedHeight   uint32
+	sessionTimeout     time.Duration
+	totalSentBytes     int
+	totalReceivedBytes int
 }
 
 func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
@@ -298,6 +300,14 @@ func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, c int) {
 
 	p := ps.mustGetPeer(pid)
 	p.ReceivedBytes += c
+	ps.totalReceivedBytes += c
+}
+
+func (ps *PeerSet) IncreaseTotalSentBytesCounter(c int) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	ps.totalSentBytes += c
 }
 
 func (ps *PeerSet) IncreaseSendSuccessCounter(pid peer.ID) {

@@ -425,25 +425,37 @@ public final class NetworkOuterClass {
     com.google.protobuf.ByteString getSelfId();
 
     /**
-     * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+     * <code>int32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+     * @return The totalSentBytes.
+     */
+    int getTotalSentBytes();
+
+    /**
+     * <code>int32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+     * @return The totalReceivedBytes.
+     */
+    int getTotalReceivedBytes();
+
+    /**
+     * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
      */
     java.util.List<pactus.network.NetworkOuterClass.PeerInfo> 
         getPeersList();
     /**
-     * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+     * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
      */
     pactus.network.NetworkOuterClass.PeerInfo getPeers(int index);
     /**
-     * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+     * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
      */
     int getPeersCount();
     /**
-     * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+     * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
      */
     java.util.List<? extends pactus.network.NetworkOuterClass.PeerInfoOrBuilder> 
         getPeersOrBuilderList();
     /**
-     * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+     * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
      */
     pactus.network.NetworkOuterClass.PeerInfoOrBuilder getPeersOrBuilder(
         int index);
@@ -501,17 +513,39 @@ public final class NetworkOuterClass {
       return selfId_;
     }
 
-    public static final int PEERS_FIELD_NUMBER = 2;
+    public static final int TOTAL_SENT_BYTES_FIELD_NUMBER = 2;
+    private int totalSentBytes_;
+    /**
+     * <code>int32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+     * @return The totalSentBytes.
+     */
+    @java.lang.Override
+    public int getTotalSentBytes() {
+      return totalSentBytes_;
+    }
+
+    public static final int TOTAL_RECEIVED_BYTES_FIELD_NUMBER = 3;
+    private int totalReceivedBytes_;
+    /**
+     * <code>int32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+     * @return The totalReceivedBytes.
+     */
+    @java.lang.Override
+    public int getTotalReceivedBytes() {
+      return totalReceivedBytes_;
+    }
+
+    public static final int PEERS_FIELD_NUMBER = 4;
     private java.util.List<pactus.network.NetworkOuterClass.PeerInfo> peers_;
     /**
-     * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+     * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
      */
     @java.lang.Override
     public java.util.List<pactus.network.NetworkOuterClass.PeerInfo> getPeersList() {
       return peers_;
     }
     /**
-     * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+     * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
      */
     @java.lang.Override
     public java.util.List<? extends pactus.network.NetworkOuterClass.PeerInfoOrBuilder> 
@@ -519,21 +553,21 @@ public final class NetworkOuterClass {
       return peers_;
     }
     /**
-     * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+     * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
      */
     @java.lang.Override
     public int getPeersCount() {
       return peers_.size();
     }
     /**
-     * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+     * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
      */
     @java.lang.Override
     public pactus.network.NetworkOuterClass.PeerInfo getPeers(int index) {
       return peers_.get(index);
     }
     /**
-     * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+     * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
      */
     @java.lang.Override
     public pactus.network.NetworkOuterClass.PeerInfoOrBuilder getPeersOrBuilder(
@@ -558,8 +592,14 @@ public final class NetworkOuterClass {
       if (!selfId_.isEmpty()) {
         output.writeBytes(1, selfId_);
       }
+      if (totalSentBytes_ != 0) {
+        output.writeInt32(2, totalSentBytes_);
+      }
+      if (totalReceivedBytes_ != 0) {
+        output.writeInt32(3, totalReceivedBytes_);
+      }
       for (int i = 0; i < peers_.size(); i++) {
-        output.writeMessage(2, peers_.get(i));
+        output.writeMessage(4, peers_.get(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -574,9 +614,17 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(1, selfId_);
       }
+      if (totalSentBytes_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, totalSentBytes_);
+      }
+      if (totalReceivedBytes_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, totalReceivedBytes_);
+      }
       for (int i = 0; i < peers_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, peers_.get(i));
+          .computeMessageSize(4, peers_.get(i));
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -595,6 +643,10 @@ public final class NetworkOuterClass {
 
       if (!getSelfId()
           .equals(other.getSelfId())) return false;
+      if (getTotalSentBytes()
+          != other.getTotalSentBytes()) return false;
+      if (getTotalReceivedBytes()
+          != other.getTotalReceivedBytes()) return false;
       if (!getPeersList()
           .equals(other.getPeersList())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -610,6 +662,10 @@ public final class NetworkOuterClass {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + SELF_ID_FIELD_NUMBER;
       hash = (53 * hash) + getSelfId().hashCode();
+      hash = (37 * hash) + TOTAL_SENT_BYTES_FIELD_NUMBER;
+      hash = (53 * hash) + getTotalSentBytes();
+      hash = (37 * hash) + TOTAL_RECEIVED_BYTES_FIELD_NUMBER;
+      hash = (53 * hash) + getTotalReceivedBytes();
       if (getPeersCount() > 0) {
         hash = (37 * hash) + PEERS_FIELD_NUMBER;
         hash = (53 * hash) + getPeersList().hashCode();
@@ -744,6 +800,10 @@ public final class NetworkOuterClass {
         super.clear();
         selfId_ = com.google.protobuf.ByteString.EMPTY;
 
+        totalSentBytes_ = 0;
+
+        totalReceivedBytes_ = 0;
+
         if (peersBuilder_ == null) {
           peers_ = java.util.Collections.emptyList();
         } else {
@@ -779,6 +839,8 @@ public final class NetworkOuterClass {
         pactus.network.NetworkOuterClass.GetNetworkInfoResponse result = new pactus.network.NetworkOuterClass.GetNetworkInfoResponse(this);
         int from_bitField0_ = bitField0_;
         result.selfId_ = selfId_;
+        result.totalSentBytes_ = totalSentBytes_;
+        result.totalReceivedBytes_ = totalReceivedBytes_;
         if (peersBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             peers_ = java.util.Collections.unmodifiableList(peers_);
@@ -839,6 +901,12 @@ public final class NetworkOuterClass {
         if (other.getSelfId() != com.google.protobuf.ByteString.EMPTY) {
           setSelfId(other.getSelfId());
         }
+        if (other.getTotalSentBytes() != 0) {
+          setTotalSentBytes(other.getTotalSentBytes());
+        }
+        if (other.getTotalReceivedBytes() != 0) {
+          setTotalReceivedBytes(other.getTotalReceivedBytes());
+        }
         if (peersBuilder_ == null) {
           if (!other.peers_.isEmpty()) {
             if (peers_.isEmpty()) {
@@ -896,7 +964,17 @@ public final class NetworkOuterClass {
 
                 break;
               } // case 10
-              case 18: {
+              case 16: {
+                totalSentBytes_ = input.readInt32();
+
+                break;
+              } // case 16
+              case 24: {
+                totalReceivedBytes_ = input.readInt32();
+
+                break;
+              } // case 24
+              case 34: {
                 pactus.network.NetworkOuterClass.PeerInfo m =
                     input.readMessage(
                         pactus.network.NetworkOuterClass.PeerInfo.parser(),
@@ -908,7 +986,7 @@ public final class NetworkOuterClass {
                   peersBuilder_.addMessage(m);
                 }
                 break;
-              } // case 18
+              } // case 34
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -960,6 +1038,68 @@ public final class NetworkOuterClass {
         return this;
       }
 
+      private int totalSentBytes_ ;
+      /**
+       * <code>int32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+       * @return The totalSentBytes.
+       */
+      @java.lang.Override
+      public int getTotalSentBytes() {
+        return totalSentBytes_;
+      }
+      /**
+       * <code>int32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+       * @param value The totalSentBytes to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTotalSentBytes(int value) {
+        
+        totalSentBytes_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTotalSentBytes() {
+        
+        totalSentBytes_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int totalReceivedBytes_ ;
+      /**
+       * <code>int32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+       * @return The totalReceivedBytes.
+       */
+      @java.lang.Override
+      public int getTotalReceivedBytes() {
+        return totalReceivedBytes_;
+      }
+      /**
+       * <code>int32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+       * @param value The totalReceivedBytes to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTotalReceivedBytes(int value) {
+        
+        totalReceivedBytes_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTotalReceivedBytes() {
+        
+        totalReceivedBytes_ = 0;
+        onChanged();
+        return this;
+      }
+
       private java.util.List<pactus.network.NetworkOuterClass.PeerInfo> peers_ =
         java.util.Collections.emptyList();
       private void ensurePeersIsMutable() {
@@ -973,7 +1113,7 @@ public final class NetworkOuterClass {
           pactus.network.NetworkOuterClass.PeerInfo, pactus.network.NetworkOuterClass.PeerInfo.Builder, pactus.network.NetworkOuterClass.PeerInfoOrBuilder> peersBuilder_;
 
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public java.util.List<pactus.network.NetworkOuterClass.PeerInfo> getPeersList() {
         if (peersBuilder_ == null) {
@@ -983,7 +1123,7 @@ public final class NetworkOuterClass {
         }
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public int getPeersCount() {
         if (peersBuilder_ == null) {
@@ -993,7 +1133,7 @@ public final class NetworkOuterClass {
         }
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public pactus.network.NetworkOuterClass.PeerInfo getPeers(int index) {
         if (peersBuilder_ == null) {
@@ -1003,7 +1143,7 @@ public final class NetworkOuterClass {
         }
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public Builder setPeers(
           int index, pactus.network.NetworkOuterClass.PeerInfo value) {
@@ -1020,7 +1160,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public Builder setPeers(
           int index, pactus.network.NetworkOuterClass.PeerInfo.Builder builderForValue) {
@@ -1034,7 +1174,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public Builder addPeers(pactus.network.NetworkOuterClass.PeerInfo value) {
         if (peersBuilder_ == null) {
@@ -1050,7 +1190,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public Builder addPeers(
           int index, pactus.network.NetworkOuterClass.PeerInfo value) {
@@ -1067,7 +1207,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public Builder addPeers(
           pactus.network.NetworkOuterClass.PeerInfo.Builder builderForValue) {
@@ -1081,7 +1221,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public Builder addPeers(
           int index, pactus.network.NetworkOuterClass.PeerInfo.Builder builderForValue) {
@@ -1095,7 +1235,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public Builder addAllPeers(
           java.lang.Iterable<? extends pactus.network.NetworkOuterClass.PeerInfo> values) {
@@ -1110,7 +1250,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public Builder clearPeers() {
         if (peersBuilder_ == null) {
@@ -1123,7 +1263,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public Builder removePeers(int index) {
         if (peersBuilder_ == null) {
@@ -1136,14 +1276,14 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public pactus.network.NetworkOuterClass.PeerInfo.Builder getPeersBuilder(
           int index) {
         return getPeersFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public pactus.network.NetworkOuterClass.PeerInfoOrBuilder getPeersOrBuilder(
           int index) {
@@ -1153,7 +1293,7 @@ public final class NetworkOuterClass {
         }
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public java.util.List<? extends pactus.network.NetworkOuterClass.PeerInfoOrBuilder> 
            getPeersOrBuilderList() {
@@ -1164,14 +1304,14 @@ public final class NetworkOuterClass {
         }
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public pactus.network.NetworkOuterClass.PeerInfo.Builder addPeersBuilder() {
         return getPeersFieldBuilder().addBuilder(
             pactus.network.NetworkOuterClass.PeerInfo.getDefaultInstance());
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public pactus.network.NetworkOuterClass.PeerInfo.Builder addPeersBuilder(
           int index) {
@@ -1179,7 +1319,7 @@ public final class NetworkOuterClass {
             index, pactus.network.NetworkOuterClass.PeerInfo.getDefaultInstance());
       }
       /**
-       * <code>repeated .pactus.PeerInfo peers = 2 [json_name = "peers"];</code>
+       * <code>repeated .pactus.PeerInfo peers = 4 [json_name = "peers"];</code>
        */
       public java.util.List<pactus.network.NetworkOuterClass.PeerInfo.Builder> 
            getPeersBuilderList() {
@@ -1263,30 +1403,30 @@ public final class NetworkOuterClass {
 
   }
 
-  public interface GetPeerInfoRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:pactus.GetPeerInfoRequest)
+  public interface GetNodeInfoRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.GetNodeInfoRequest)
       com.google.protobuf.MessageOrBuilder {
   }
   /**
-   * Protobuf type {@code pactus.GetPeerInfoRequest}
+   * Protobuf type {@code pactus.GetNodeInfoRequest}
    */
-  public static final class GetPeerInfoRequest extends
+  public static final class GetNodeInfoRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:pactus.GetPeerInfoRequest)
-      GetPeerInfoRequestOrBuilder {
+      // @@protoc_insertion_point(message_implements:pactus.GetNodeInfoRequest)
+      GetNodeInfoRequestOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use GetPeerInfoRequest.newBuilder() to construct.
-    private GetPeerInfoRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use GetNodeInfoRequest.newBuilder() to construct.
+    private GetNodeInfoRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private GetPeerInfoRequest() {
+    private GetNodeInfoRequest() {
     }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new GetPeerInfoRequest();
+      return new GetNodeInfoRequest();
     }
 
     @java.lang.Override
@@ -1296,15 +1436,15 @@ public final class NetworkOuterClass {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.network.NetworkOuterClass.internal_static_pactus_GetPeerInfoRequest_descriptor;
+      return pactus.network.NetworkOuterClass.internal_static_pactus_GetNodeInfoRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.network.NetworkOuterClass.internal_static_pactus_GetPeerInfoRequest_fieldAccessorTable
+      return pactus.network.NetworkOuterClass.internal_static_pactus_GetNodeInfoRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.network.NetworkOuterClass.GetPeerInfoRequest.class, pactus.network.NetworkOuterClass.GetPeerInfoRequest.Builder.class);
+              pactus.network.NetworkOuterClass.GetNodeInfoRequest.class, pactus.network.NetworkOuterClass.GetNodeInfoRequest.Builder.class);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -1340,10 +1480,10 @@ public final class NetworkOuterClass {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.network.NetworkOuterClass.GetPeerInfoRequest)) {
+      if (!(obj instanceof pactus.network.NetworkOuterClass.GetNodeInfoRequest)) {
         return super.equals(obj);
       }
-      pactus.network.NetworkOuterClass.GetPeerInfoRequest other = (pactus.network.NetworkOuterClass.GetPeerInfoRequest) obj;
+      pactus.network.NetworkOuterClass.GetNodeInfoRequest other = (pactus.network.NetworkOuterClass.GetNodeInfoRequest) obj;
 
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
@@ -1361,69 +1501,69 @@ public final class NetworkOuterClass {
       return hash;
     }
 
-    public static pactus.network.NetworkOuterClass.GetPeerInfoRequest parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoRequest parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoRequest parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoRequest parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoRequest parseFrom(byte[] data)
+    public static pactus.network.NetworkOuterClass.GetNodeInfoRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoRequest parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoRequest parseFrom(java.io.InputStream input)
+    public static pactus.network.NetworkOuterClass.GetNodeInfoRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoRequest parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.network.NetworkOuterClass.GetNodeInfoRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoRequest parseDelimitedFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoRequest parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoRequest parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1436,7 +1576,7 @@ public final class NetworkOuterClass {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.network.NetworkOuterClass.GetPeerInfoRequest prototype) {
+    public static Builder newBuilder(pactus.network.NetworkOuterClass.GetNodeInfoRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1452,26 +1592,26 @@ public final class NetworkOuterClass {
       return builder;
     }
     /**
-     * Protobuf type {@code pactus.GetPeerInfoRequest}
+     * Protobuf type {@code pactus.GetNodeInfoRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:pactus.GetPeerInfoRequest)
-        pactus.network.NetworkOuterClass.GetPeerInfoRequestOrBuilder {
+        // @@protoc_insertion_point(builder_implements:pactus.GetNodeInfoRequest)
+        pactus.network.NetworkOuterClass.GetNodeInfoRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.network.NetworkOuterClass.internal_static_pactus_GetPeerInfoRequest_descriptor;
+        return pactus.network.NetworkOuterClass.internal_static_pactus_GetNodeInfoRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.network.NetworkOuterClass.internal_static_pactus_GetPeerInfoRequest_fieldAccessorTable
+        return pactus.network.NetworkOuterClass.internal_static_pactus_GetNodeInfoRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.network.NetworkOuterClass.GetPeerInfoRequest.class, pactus.network.NetworkOuterClass.GetPeerInfoRequest.Builder.class);
+                pactus.network.NetworkOuterClass.GetNodeInfoRequest.class, pactus.network.NetworkOuterClass.GetNodeInfoRequest.Builder.class);
       }
 
-      // Construct using pactus.network.NetworkOuterClass.GetPeerInfoRequest.newBuilder()
+      // Construct using pactus.network.NetworkOuterClass.GetNodeInfoRequest.newBuilder()
       private Builder() {
 
       }
@@ -1490,17 +1630,17 @@ public final class NetworkOuterClass {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.network.NetworkOuterClass.internal_static_pactus_GetPeerInfoRequest_descriptor;
+        return pactus.network.NetworkOuterClass.internal_static_pactus_GetNodeInfoRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.network.NetworkOuterClass.GetPeerInfoRequest getDefaultInstanceForType() {
-        return pactus.network.NetworkOuterClass.GetPeerInfoRequest.getDefaultInstance();
+      public pactus.network.NetworkOuterClass.GetNodeInfoRequest getDefaultInstanceForType() {
+        return pactus.network.NetworkOuterClass.GetNodeInfoRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.network.NetworkOuterClass.GetPeerInfoRequest build() {
-        pactus.network.NetworkOuterClass.GetPeerInfoRequest result = buildPartial();
+      public pactus.network.NetworkOuterClass.GetNodeInfoRequest build() {
+        pactus.network.NetworkOuterClass.GetNodeInfoRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1508,8 +1648,8 @@ public final class NetworkOuterClass {
       }
 
       @java.lang.Override
-      public pactus.network.NetworkOuterClass.GetPeerInfoRequest buildPartial() {
-        pactus.network.NetworkOuterClass.GetPeerInfoRequest result = new pactus.network.NetworkOuterClass.GetPeerInfoRequest(this);
+      public pactus.network.NetworkOuterClass.GetNodeInfoRequest buildPartial() {
+        pactus.network.NetworkOuterClass.GetNodeInfoRequest result = new pactus.network.NetworkOuterClass.GetNodeInfoRequest(this);
         onBuilt();
         return result;
       }
@@ -1548,16 +1688,16 @@ public final class NetworkOuterClass {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.network.NetworkOuterClass.GetPeerInfoRequest) {
-          return mergeFrom((pactus.network.NetworkOuterClass.GetPeerInfoRequest)other);
+        if (other instanceof pactus.network.NetworkOuterClass.GetNodeInfoRequest) {
+          return mergeFrom((pactus.network.NetworkOuterClass.GetNodeInfoRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.network.NetworkOuterClass.GetPeerInfoRequest other) {
-        if (other == pactus.network.NetworkOuterClass.GetPeerInfoRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.network.NetworkOuterClass.GetNodeInfoRequest other) {
+        if (other == pactus.network.NetworkOuterClass.GetNodeInfoRequest.getDefaultInstance()) return this;
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -1612,23 +1752,23 @@ public final class NetworkOuterClass {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:pactus.GetPeerInfoRequest)
+      // @@protoc_insertion_point(builder_scope:pactus.GetNodeInfoRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:pactus.GetPeerInfoRequest)
-    private static final pactus.network.NetworkOuterClass.GetPeerInfoRequest DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:pactus.GetNodeInfoRequest)
+    private static final pactus.network.NetworkOuterClass.GetNodeInfoRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.network.NetworkOuterClass.GetPeerInfoRequest();
+      DEFAULT_INSTANCE = new pactus.network.NetworkOuterClass.GetNodeInfoRequest();
     }
 
-    public static pactus.network.NetworkOuterClass.GetPeerInfoRequest getDefaultInstance() {
+    public static pactus.network.NetworkOuterClass.GetNodeInfoRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<GetPeerInfoRequest>
-        PARSER = new com.google.protobuf.AbstractParser<GetPeerInfoRequest>() {
+    private static final com.google.protobuf.Parser<GetNodeInfoRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetNodeInfoRequest>() {
       @java.lang.Override
-      public GetPeerInfoRequest parsePartialFrom(
+      public GetNodeInfoRequest parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1647,61 +1787,123 @@ public final class NetworkOuterClass {
       }
     };
 
-    public static com.google.protobuf.Parser<GetPeerInfoRequest> parser() {
+    public static com.google.protobuf.Parser<GetNodeInfoRequest> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<GetPeerInfoRequest> getParserForType() {
+    public com.google.protobuf.Parser<GetNodeInfoRequest> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public pactus.network.NetworkOuterClass.GetPeerInfoRequest getDefaultInstanceForType() {
+    public pactus.network.NetworkOuterClass.GetNodeInfoRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
-  public interface GetPeerInfoResponseOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:pactus.GetPeerInfoResponse)
+  public interface GetNodeInfoResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.GetNodeInfoResponse)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
-     * @return Whether the peer field is set.
+     * <code>string moniker = 1 [json_name = "moniker"];</code>
+     * @return The moniker.
      */
-    boolean hasPeer();
+    java.lang.String getMoniker();
     /**
-     * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
-     * @return The peer.
+     * <code>string moniker = 1 [json_name = "moniker"];</code>
+     * @return The bytes for moniker.
      */
-    pactus.network.NetworkOuterClass.PeerInfo getPeer();
+    com.google.protobuf.ByteString
+        getMonikerBytes();
+
     /**
-     * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+     * <code>string agent = 2 [json_name = "agent"];</code>
+     * @return The agent.
      */
-    pactus.network.NetworkOuterClass.PeerInfoOrBuilder getPeerOrBuilder();
+    java.lang.String getAgent();
+    /**
+     * <code>string agent = 2 [json_name = "agent"];</code>
+     * @return The bytes for agent.
+     */
+    com.google.protobuf.ByteString
+        getAgentBytes();
+
+    /**
+     * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
+     * @return The peerId.
+     */
+    com.google.protobuf.ByteString getPeerId();
+
+    /**
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+     * @return A list containing the consensusKeys.
+     */
+    java.util.List<java.lang.String>
+        getConsensusKeysList();
+    /**
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+     * @return The count of consensusKeys.
+     */
+    int getConsensusKeysCount();
+    /**
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+     * @param index The index of the element to return.
+     * @return The consensusKeys at the given index.
+     */
+    java.lang.String getConsensusKeys(int index);
+    /**
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the consensusKeys at the given index.
+     */
+    com.google.protobuf.ByteString
+        getConsensusKeysBytes(int index);
+
+    /**
+     * <code>int32 flags = 5 [json_name = "flags"];</code>
+     * @return The flags.
+     */
+    int getFlags();
+
+    /**
+     * <code>uint32 height = 6 [json_name = "height"];</code>
+     * @return The height.
+     */
+    int getHeight();
+
+    /**
+     * <code>int64 started_at = 7 [json_name = "startedAt"];</code>
+     * @return The startedAt.
+     */
+    long getStartedAt();
   }
   /**
-   * Protobuf type {@code pactus.GetPeerInfoResponse}
+   * Protobuf type {@code pactus.GetNodeInfoResponse}
    */
-  public static final class GetPeerInfoResponse extends
+  public static final class GetNodeInfoResponse extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:pactus.GetPeerInfoResponse)
-      GetPeerInfoResponseOrBuilder {
+      // @@protoc_insertion_point(message_implements:pactus.GetNodeInfoResponse)
+      GetNodeInfoResponseOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use GetPeerInfoResponse.newBuilder() to construct.
-    private GetPeerInfoResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use GetNodeInfoResponse.newBuilder() to construct.
+    private GetNodeInfoResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private GetPeerInfoResponse() {
+    private GetNodeInfoResponse() {
+      moniker_ = "";
+      agent_ = "";
+      peerId_ = com.google.protobuf.ByteString.EMPTY;
+      consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new GetPeerInfoResponse();
+      return new GetNodeInfoResponse();
     }
 
     @java.lang.Override
@@ -1711,41 +1913,170 @@ public final class NetworkOuterClass {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.network.NetworkOuterClass.internal_static_pactus_GetPeerInfoResponse_descriptor;
+      return pactus.network.NetworkOuterClass.internal_static_pactus_GetNodeInfoResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.network.NetworkOuterClass.internal_static_pactus_GetPeerInfoResponse_fieldAccessorTable
+      return pactus.network.NetworkOuterClass.internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.network.NetworkOuterClass.GetPeerInfoResponse.class, pactus.network.NetworkOuterClass.GetPeerInfoResponse.Builder.class);
+              pactus.network.NetworkOuterClass.GetNodeInfoResponse.class, pactus.network.NetworkOuterClass.GetNodeInfoResponse.Builder.class);
     }
 
-    public static final int PEER_FIELD_NUMBER = 1;
-    private pactus.network.NetworkOuterClass.PeerInfo peer_;
+    public static final int MONIKER_FIELD_NUMBER = 1;
+    private volatile java.lang.Object moniker_;
     /**
-     * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
-     * @return Whether the peer field is set.
+     * <code>string moniker = 1 [json_name = "moniker"];</code>
+     * @return The moniker.
      */
     @java.lang.Override
-    public boolean hasPeer() {
-      return peer_ != null;
+    public java.lang.String getMoniker() {
+      java.lang.Object ref = moniker_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        moniker_ = s;
+        return s;
+      }
     }
     /**
-     * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
-     * @return The peer.
+     * <code>string moniker = 1 [json_name = "moniker"];</code>
+     * @return The bytes for moniker.
      */
     @java.lang.Override
-    public pactus.network.NetworkOuterClass.PeerInfo getPeer() {
-      return peer_ == null ? pactus.network.NetworkOuterClass.PeerInfo.getDefaultInstance() : peer_;
+    public com.google.protobuf.ByteString
+        getMonikerBytes() {
+      java.lang.Object ref = moniker_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        moniker_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int AGENT_FIELD_NUMBER = 2;
+    private volatile java.lang.Object agent_;
+    /**
+     * <code>string agent = 2 [json_name = "agent"];</code>
+     * @return The agent.
+     */
+    @java.lang.Override
+    public java.lang.String getAgent() {
+      java.lang.Object ref = agent_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        agent_ = s;
+        return s;
+      }
     }
     /**
-     * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+     * <code>string agent = 2 [json_name = "agent"];</code>
+     * @return The bytes for agent.
      */
     @java.lang.Override
-    public pactus.network.NetworkOuterClass.PeerInfoOrBuilder getPeerOrBuilder() {
-      return getPeer();
+    public com.google.protobuf.ByteString
+        getAgentBytes() {
+      java.lang.Object ref = agent_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        agent_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PEER_ID_FIELD_NUMBER = 3;
+    private com.google.protobuf.ByteString peerId_;
+    /**
+     * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
+     * @return The peerId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getPeerId() {
+      return peerId_;
+    }
+
+    public static final int CONSENSUS_KEYS_FIELD_NUMBER = 4;
+    private com.google.protobuf.LazyStringList consensusKeys_;
+    /**
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+     * @return A list containing the consensusKeys.
+     */
+    public com.google.protobuf.ProtocolStringList
+        getConsensusKeysList() {
+      return consensusKeys_;
+    }
+    /**
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+     * @return The count of consensusKeys.
+     */
+    public int getConsensusKeysCount() {
+      return consensusKeys_.size();
+    }
+    /**
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+     * @param index The index of the element to return.
+     * @return The consensusKeys at the given index.
+     */
+    public java.lang.String getConsensusKeys(int index) {
+      return consensusKeys_.get(index);
+    }
+    /**
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the consensusKeys at the given index.
+     */
+    public com.google.protobuf.ByteString
+        getConsensusKeysBytes(int index) {
+      return consensusKeys_.getByteString(index);
+    }
+
+    public static final int FLAGS_FIELD_NUMBER = 5;
+    private int flags_;
+    /**
+     * <code>int32 flags = 5 [json_name = "flags"];</code>
+     * @return The flags.
+     */
+    @java.lang.Override
+    public int getFlags() {
+      return flags_;
+    }
+
+    public static final int HEIGHT_FIELD_NUMBER = 6;
+    private int height_;
+    /**
+     * <code>uint32 height = 6 [json_name = "height"];</code>
+     * @return The height.
+     */
+    @java.lang.Override
+    public int getHeight() {
+      return height_;
+    }
+
+    public static final int STARTED_AT_FIELD_NUMBER = 7;
+    private long startedAt_;
+    /**
+     * <code>int64 started_at = 7 [json_name = "startedAt"];</code>
+     * @return The startedAt.
+     */
+    @java.lang.Override
+    public long getStartedAt() {
+      return startedAt_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -1762,8 +2093,26 @@ public final class NetworkOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (peer_ != null) {
-        output.writeMessage(1, getPeer());
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(moniker_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, moniker_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(agent_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, agent_);
+      }
+      if (!peerId_.isEmpty()) {
+        output.writeBytes(3, peerId_);
+      }
+      for (int i = 0; i < consensusKeys_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, consensusKeys_.getRaw(i));
+      }
+      if (flags_ != 0) {
+        output.writeInt32(5, flags_);
+      }
+      if (height_ != 0) {
+        output.writeUInt32(6, height_);
+      }
+      if (startedAt_ != 0L) {
+        output.writeInt64(7, startedAt_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -1774,9 +2123,35 @@ public final class NetworkOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (peer_ != null) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(moniker_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, moniker_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(agent_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, agent_);
+      }
+      if (!peerId_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(1, getPeer());
+          .computeBytesSize(3, peerId_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < consensusKeys_.size(); i++) {
+          dataSize += computeStringSizeNoTag(consensusKeys_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getConsensusKeysList().size();
+      }
+      if (flags_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(5, flags_);
+      }
+      if (height_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(6, height_);
+      }
+      if (startedAt_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(7, startedAt_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -1788,16 +2163,25 @@ public final class NetworkOuterClass {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.network.NetworkOuterClass.GetPeerInfoResponse)) {
+      if (!(obj instanceof pactus.network.NetworkOuterClass.GetNodeInfoResponse)) {
         return super.equals(obj);
       }
-      pactus.network.NetworkOuterClass.GetPeerInfoResponse other = (pactus.network.NetworkOuterClass.GetPeerInfoResponse) obj;
+      pactus.network.NetworkOuterClass.GetNodeInfoResponse other = (pactus.network.NetworkOuterClass.GetNodeInfoResponse) obj;
 
-      if (hasPeer() != other.hasPeer()) return false;
-      if (hasPeer()) {
-        if (!getPeer()
-            .equals(other.getPeer())) return false;
-      }
+      if (!getMoniker()
+          .equals(other.getMoniker())) return false;
+      if (!getAgent()
+          .equals(other.getAgent())) return false;
+      if (!getPeerId()
+          .equals(other.getPeerId())) return false;
+      if (!getConsensusKeysList()
+          .equals(other.getConsensusKeysList())) return false;
+      if (getFlags()
+          != other.getFlags()) return false;
+      if (getHeight()
+          != other.getHeight()) return false;
+      if (getStartedAt()
+          != other.getStartedAt()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -1809,78 +2193,91 @@ public final class NetworkOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      if (hasPeer()) {
-        hash = (37 * hash) + PEER_FIELD_NUMBER;
-        hash = (53 * hash) + getPeer().hashCode();
+      hash = (37 * hash) + MONIKER_FIELD_NUMBER;
+      hash = (53 * hash) + getMoniker().hashCode();
+      hash = (37 * hash) + AGENT_FIELD_NUMBER;
+      hash = (53 * hash) + getAgent().hashCode();
+      hash = (37 * hash) + PEER_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getPeerId().hashCode();
+      if (getConsensusKeysCount() > 0) {
+        hash = (37 * hash) + CONSENSUS_KEYS_FIELD_NUMBER;
+        hash = (53 * hash) + getConsensusKeysList().hashCode();
       }
+      hash = (37 * hash) + FLAGS_FIELD_NUMBER;
+      hash = (53 * hash) + getFlags();
+      hash = (37 * hash) + HEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getHeight();
+      hash = (37 * hash) + STARTED_AT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getStartedAt());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
 
-    public static pactus.network.NetworkOuterClass.GetPeerInfoResponse parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoResponse parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoResponse parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoResponse parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoResponse parseFrom(byte[] data)
+    public static pactus.network.NetworkOuterClass.GetNodeInfoResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoResponse parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoResponse parseFrom(java.io.InputStream input)
+    public static pactus.network.NetworkOuterClass.GetNodeInfoResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoResponse parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.network.NetworkOuterClass.GetNodeInfoResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoResponse parseDelimitedFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoResponse parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.network.NetworkOuterClass.GetPeerInfoResponse parseFrom(
+    public static pactus.network.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1893,7 +2290,7 @@ public final class NetworkOuterClass {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.network.NetworkOuterClass.GetPeerInfoResponse prototype) {
+    public static Builder newBuilder(pactus.network.NetworkOuterClass.GetNodeInfoResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1909,26 +2306,26 @@ public final class NetworkOuterClass {
       return builder;
     }
     /**
-     * Protobuf type {@code pactus.GetPeerInfoResponse}
+     * Protobuf type {@code pactus.GetNodeInfoResponse}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:pactus.GetPeerInfoResponse)
-        pactus.network.NetworkOuterClass.GetPeerInfoResponseOrBuilder {
+        // @@protoc_insertion_point(builder_implements:pactus.GetNodeInfoResponse)
+        pactus.network.NetworkOuterClass.GetNodeInfoResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.network.NetworkOuterClass.internal_static_pactus_GetPeerInfoResponse_descriptor;
+        return pactus.network.NetworkOuterClass.internal_static_pactus_GetNodeInfoResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.network.NetworkOuterClass.internal_static_pactus_GetPeerInfoResponse_fieldAccessorTable
+        return pactus.network.NetworkOuterClass.internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.network.NetworkOuterClass.GetPeerInfoResponse.class, pactus.network.NetworkOuterClass.GetPeerInfoResponse.Builder.class);
+                pactus.network.NetworkOuterClass.GetNodeInfoResponse.class, pactus.network.NetworkOuterClass.GetNodeInfoResponse.Builder.class);
       }
 
-      // Construct using pactus.network.NetworkOuterClass.GetPeerInfoResponse.newBuilder()
+      // Construct using pactus.network.NetworkOuterClass.GetNodeInfoResponse.newBuilder()
       private Builder() {
 
       }
@@ -1941,29 +2338,37 @@ public final class NetworkOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        if (peerBuilder_ == null) {
-          peer_ = null;
-        } else {
-          peer_ = null;
-          peerBuilder_ = null;
-        }
+        moniker_ = "";
+
+        agent_ = "";
+
+        peerId_ = com.google.protobuf.ByteString.EMPTY;
+
+        consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        flags_ = 0;
+
+        height_ = 0;
+
+        startedAt_ = 0L;
+
         return this;
       }
 
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.network.NetworkOuterClass.internal_static_pactus_GetPeerInfoResponse_descriptor;
+        return pactus.network.NetworkOuterClass.internal_static_pactus_GetNodeInfoResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.network.NetworkOuterClass.GetPeerInfoResponse getDefaultInstanceForType() {
-        return pactus.network.NetworkOuterClass.GetPeerInfoResponse.getDefaultInstance();
+      public pactus.network.NetworkOuterClass.GetNodeInfoResponse getDefaultInstanceForType() {
+        return pactus.network.NetworkOuterClass.GetNodeInfoResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.network.NetworkOuterClass.GetPeerInfoResponse build() {
-        pactus.network.NetworkOuterClass.GetPeerInfoResponse result = buildPartial();
+      public pactus.network.NetworkOuterClass.GetNodeInfoResponse build() {
+        pactus.network.NetworkOuterClass.GetNodeInfoResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1971,13 +2376,20 @@ public final class NetworkOuterClass {
       }
 
       @java.lang.Override
-      public pactus.network.NetworkOuterClass.GetPeerInfoResponse buildPartial() {
-        pactus.network.NetworkOuterClass.GetPeerInfoResponse result = new pactus.network.NetworkOuterClass.GetPeerInfoResponse(this);
-        if (peerBuilder_ == null) {
-          result.peer_ = peer_;
-        } else {
-          result.peer_ = peerBuilder_.build();
+      public pactus.network.NetworkOuterClass.GetNodeInfoResponse buildPartial() {
+        pactus.network.NetworkOuterClass.GetNodeInfoResponse result = new pactus.network.NetworkOuterClass.GetNodeInfoResponse(this);
+        int from_bitField0_ = bitField0_;
+        result.moniker_ = moniker_;
+        result.agent_ = agent_;
+        result.peerId_ = peerId_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          consensusKeys_ = consensusKeys_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000001);
         }
+        result.consensusKeys_ = consensusKeys_;
+        result.flags_ = flags_;
+        result.height_ = height_;
+        result.startedAt_ = startedAt_;
         onBuilt();
         return result;
       }
@@ -2016,18 +2428,45 @@ public final class NetworkOuterClass {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.network.NetworkOuterClass.GetPeerInfoResponse) {
-          return mergeFrom((pactus.network.NetworkOuterClass.GetPeerInfoResponse)other);
+        if (other instanceof pactus.network.NetworkOuterClass.GetNodeInfoResponse) {
+          return mergeFrom((pactus.network.NetworkOuterClass.GetNodeInfoResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.network.NetworkOuterClass.GetPeerInfoResponse other) {
-        if (other == pactus.network.NetworkOuterClass.GetPeerInfoResponse.getDefaultInstance()) return this;
-        if (other.hasPeer()) {
-          mergePeer(other.getPeer());
+      public Builder mergeFrom(pactus.network.NetworkOuterClass.GetNodeInfoResponse other) {
+        if (other == pactus.network.NetworkOuterClass.GetNodeInfoResponse.getDefaultInstance()) return this;
+        if (!other.getMoniker().isEmpty()) {
+          moniker_ = other.moniker_;
+          onChanged();
+        }
+        if (!other.getAgent().isEmpty()) {
+          agent_ = other.agent_;
+          onChanged();
+        }
+        if (other.getPeerId() != com.google.protobuf.ByteString.EMPTY) {
+          setPeerId(other.getPeerId());
+        }
+        if (!other.consensusKeys_.isEmpty()) {
+          if (consensusKeys_.isEmpty()) {
+            consensusKeys_ = other.consensusKeys_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureConsensusKeysIsMutable();
+            consensusKeys_.addAll(other.consensusKeys_);
+          }
+          onChanged();
+        }
+        if (other.getFlags() != 0) {
+          setFlags(other.getFlags());
+        }
+        if (other.getHeight() != 0) {
+          setHeight(other.getHeight());
+        }
+        if (other.getStartedAt() != 0L) {
+          setStartedAt(other.getStartedAt());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -2056,12 +2495,41 @@ public final class NetworkOuterClass {
                 done = true;
                 break;
               case 10: {
-                input.readMessage(
-                    getPeerFieldBuilder().getBuilder(),
-                    extensionRegistry);
+                moniker_ = input.readStringRequireUtf8();
 
                 break;
               } // case 10
+              case 18: {
+                agent_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 18
+              case 26: {
+                peerId_ = input.readBytes();
+
+                break;
+              } // case 26
+              case 34: {
+                java.lang.String s = input.readStringRequireUtf8();
+                ensureConsensusKeysIsMutable();
+                consensusKeys_.add(s);
+                break;
+              } // case 34
+              case 40: {
+                flags_ = input.readInt32();
+
+                break;
+              } // case 40
+              case 48: {
+                height_ = input.readUInt32();
+
+                break;
+              } // case 48
+              case 56: {
+                startedAt_ = input.readInt64();
+
+                break;
+              } // case 56
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -2077,124 +2545,395 @@ public final class NetworkOuterClass {
         } // finally
         return this;
       }
+      private int bitField0_;
 
-      private pactus.network.NetworkOuterClass.PeerInfo peer_;
-      private com.google.protobuf.SingleFieldBuilderV3<
-          pactus.network.NetworkOuterClass.PeerInfo, pactus.network.NetworkOuterClass.PeerInfo.Builder, pactus.network.NetworkOuterClass.PeerInfoOrBuilder> peerBuilder_;
+      private java.lang.Object moniker_ = "";
       /**
-       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
-       * @return Whether the peer field is set.
+       * <code>string moniker = 1 [json_name = "moniker"];</code>
+       * @return The moniker.
        */
-      public boolean hasPeer() {
-        return peerBuilder_ != null || peer_ != null;
-      }
-      /**
-       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
-       * @return The peer.
-       */
-      public pactus.network.NetworkOuterClass.PeerInfo getPeer() {
-        if (peerBuilder_ == null) {
-          return peer_ == null ? pactus.network.NetworkOuterClass.PeerInfo.getDefaultInstance() : peer_;
+      public java.lang.String getMoniker() {
+        java.lang.Object ref = moniker_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          moniker_ = s;
+          return s;
         } else {
-          return peerBuilder_.getMessage();
+          return (java.lang.String) ref;
         }
       }
       /**
-       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+       * <code>string moniker = 1 [json_name = "moniker"];</code>
+       * @return The bytes for moniker.
        */
-      public Builder setPeer(pactus.network.NetworkOuterClass.PeerInfo value) {
-        if (peerBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          peer_ = value;
-          onChanged();
+      public com.google.protobuf.ByteString
+          getMonikerBytes() {
+        java.lang.Object ref = moniker_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          moniker_ = b;
+          return b;
         } else {
-          peerBuilder_.setMessage(value);
+          return (com.google.protobuf.ByteString) ref;
         }
-
-        return this;
       }
       /**
-       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+       * <code>string moniker = 1 [json_name = "moniker"];</code>
+       * @param value The moniker to set.
+       * @return This builder for chaining.
        */
-      public Builder setPeer(
-          pactus.network.NetworkOuterClass.PeerInfo.Builder builderForValue) {
-        if (peerBuilder_ == null) {
-          peer_ = builderForValue.build();
-          onChanged();
-        } else {
-          peerBuilder_.setMessage(builderForValue.build());
-        }
-
-        return this;
-      }
-      /**
-       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
-       */
-      public Builder mergePeer(pactus.network.NetworkOuterClass.PeerInfo value) {
-        if (peerBuilder_ == null) {
-          if (peer_ != null) {
-            peer_ =
-              pactus.network.NetworkOuterClass.PeerInfo.newBuilder(peer_).mergeFrom(value).buildPartial();
-          } else {
-            peer_ = value;
-          }
-          onChanged();
-        } else {
-          peerBuilder_.mergeFrom(value);
-        }
-
-        return this;
-      }
-      /**
-       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
-       */
-      public Builder clearPeer() {
-        if (peerBuilder_ == null) {
-          peer_ = null;
-          onChanged();
-        } else {
-          peer_ = null;
-          peerBuilder_ = null;
-        }
-
-        return this;
-      }
-      /**
-       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
-       */
-      public pactus.network.NetworkOuterClass.PeerInfo.Builder getPeerBuilder() {
-        
+      public Builder setMoniker(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        moniker_ = value;
         onChanged();
-        return getPeerFieldBuilder().getBuilder();
+        return this;
       }
       /**
-       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+       * <code>string moniker = 1 [json_name = "moniker"];</code>
+       * @return This builder for chaining.
        */
-      public pactus.network.NetworkOuterClass.PeerInfoOrBuilder getPeerOrBuilder() {
-        if (peerBuilder_ != null) {
-          return peerBuilder_.getMessageOrBuilder();
+      public Builder clearMoniker() {
+        
+        moniker_ = getDefaultInstance().getMoniker();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string moniker = 1 [json_name = "moniker"];</code>
+       * @param value The bytes for moniker to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMonikerBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        moniker_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object agent_ = "";
+      /**
+       * <code>string agent = 2 [json_name = "agent"];</code>
+       * @return The agent.
+       */
+      public java.lang.String getAgent() {
+        java.lang.Object ref = agent_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          agent_ = s;
+          return s;
         } else {
-          return peer_ == null ?
-              pactus.network.NetworkOuterClass.PeerInfo.getDefaultInstance() : peer_;
+          return (java.lang.String) ref;
         }
       }
       /**
-       * <code>.pactus.PeerInfo peer = 1 [json_name = "peer"];</code>
+       * <code>string agent = 2 [json_name = "agent"];</code>
+       * @return The bytes for agent.
        */
-      private com.google.protobuf.SingleFieldBuilderV3<
-          pactus.network.NetworkOuterClass.PeerInfo, pactus.network.NetworkOuterClass.PeerInfo.Builder, pactus.network.NetworkOuterClass.PeerInfoOrBuilder> 
-          getPeerFieldBuilder() {
-        if (peerBuilder_ == null) {
-          peerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              pactus.network.NetworkOuterClass.PeerInfo, pactus.network.NetworkOuterClass.PeerInfo.Builder, pactus.network.NetworkOuterClass.PeerInfoOrBuilder>(
-                  getPeer(),
-                  getParentForChildren(),
-                  isClean());
-          peer_ = null;
+      public com.google.protobuf.ByteString
+          getAgentBytes() {
+        java.lang.Object ref = agent_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          agent_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
         }
-        return peerBuilder_;
+      }
+      /**
+       * <code>string agent = 2 [json_name = "agent"];</code>
+       * @param value The agent to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAgent(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        agent_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string agent = 2 [json_name = "agent"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAgent() {
+        
+        agent_ = getDefaultInstance().getAgent();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string agent = 2 [json_name = "agent"];</code>
+       * @param value The bytes for agent to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAgentBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        agent_ = value;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString peerId_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
+       * @return The peerId.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getPeerId() {
+        return peerId_;
+      }
+      /**
+       * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
+       * @param value The peerId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPeerId(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        peerId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPeerId() {
+        
+        peerId_ = getDefaultInstance().getPeerId();
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.LazyStringList consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureConsensusKeysIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          consensusKeys_ = new com.google.protobuf.LazyStringArrayList(consensusKeys_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @return A list containing the consensusKeys.
+       */
+      public com.google.protobuf.ProtocolStringList
+          getConsensusKeysList() {
+        return consensusKeys_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @return The count of consensusKeys.
+       */
+      public int getConsensusKeysCount() {
+        return consensusKeys_.size();
+      }
+      /**
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @param index The index of the element to return.
+       * @return The consensusKeys at the given index.
+       */
+      public java.lang.String getConsensusKeys(int index) {
+        return consensusKeys_.get(index);
+      }
+      /**
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the consensusKeys at the given index.
+       */
+      public com.google.protobuf.ByteString
+          getConsensusKeysBytes(int index) {
+        return consensusKeys_.getByteString(index);
+      }
+      /**
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @param index The index to set the value at.
+       * @param value The consensusKeys to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConsensusKeys(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureConsensusKeysIsMutable();
+        consensusKeys_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @param value The consensusKeys to add.
+       * @return This builder for chaining.
+       */
+      public Builder addConsensusKeys(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureConsensusKeysIsMutable();
+        consensusKeys_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @param values The consensusKeys to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllConsensusKeys(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureConsensusKeysIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, consensusKeys_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearConsensusKeys() {
+        consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @param value The bytes of the consensusKeys to add.
+       * @return This builder for chaining.
+       */
+      public Builder addConsensusKeysBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        ensureConsensusKeysIsMutable();
+        consensusKeys_.add(value);
+        onChanged();
+        return this;
+      }
+
+      private int flags_ ;
+      /**
+       * <code>int32 flags = 5 [json_name = "flags"];</code>
+       * @return The flags.
+       */
+      @java.lang.Override
+      public int getFlags() {
+        return flags_;
+      }
+      /**
+       * <code>int32 flags = 5 [json_name = "flags"];</code>
+       * @param value The flags to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFlags(int value) {
+        
+        flags_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 flags = 5 [json_name = "flags"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFlags() {
+        
+        flags_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int height_ ;
+      /**
+       * <code>uint32 height = 6 [json_name = "height"];</code>
+       * @return The height.
+       */
+      @java.lang.Override
+      public int getHeight() {
+        return height_;
+      }
+      /**
+       * <code>uint32 height = 6 [json_name = "height"];</code>
+       * @param value The height to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHeight(int value) {
+        
+        height_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 height = 6 [json_name = "height"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearHeight() {
+        
+        height_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long startedAt_ ;
+      /**
+       * <code>int64 started_at = 7 [json_name = "startedAt"];</code>
+       * @return The startedAt.
+       */
+      @java.lang.Override
+      public long getStartedAt() {
+        return startedAt_;
+      }
+      /**
+       * <code>int64 started_at = 7 [json_name = "startedAt"];</code>
+       * @param value The startedAt to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStartedAt(long value) {
+        
+        startedAt_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 started_at = 7 [json_name = "startedAt"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearStartedAt() {
+        
+        startedAt_ = 0L;
+        onChanged();
+        return this;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -2209,23 +2948,23 @@ public final class NetworkOuterClass {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:pactus.GetPeerInfoResponse)
+      // @@protoc_insertion_point(builder_scope:pactus.GetNodeInfoResponse)
     }
 
-    // @@protoc_insertion_point(class_scope:pactus.GetPeerInfoResponse)
-    private static final pactus.network.NetworkOuterClass.GetPeerInfoResponse DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:pactus.GetNodeInfoResponse)
+    private static final pactus.network.NetworkOuterClass.GetNodeInfoResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.network.NetworkOuterClass.GetPeerInfoResponse();
+      DEFAULT_INSTANCE = new pactus.network.NetworkOuterClass.GetNodeInfoResponse();
     }
 
-    public static pactus.network.NetworkOuterClass.GetPeerInfoResponse getDefaultInstance() {
+    public static pactus.network.NetworkOuterClass.GetNodeInfoResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<GetPeerInfoResponse>
-        PARSER = new com.google.protobuf.AbstractParser<GetPeerInfoResponse>() {
+    private static final com.google.protobuf.Parser<GetNodeInfoResponse>
+        PARSER = new com.google.protobuf.AbstractParser<GetNodeInfoResponse>() {
       @java.lang.Override
-      public GetPeerInfoResponse parsePartialFrom(
+      public GetNodeInfoResponse parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
@@ -2244,17 +2983,17 @@ public final class NetworkOuterClass {
       }
     };
 
-    public static com.google.protobuf.Parser<GetPeerInfoResponse> parser() {
+    public static com.google.protobuf.Parser<GetNodeInfoResponse> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<GetPeerInfoResponse> getParserForType() {
+    public com.google.protobuf.Parser<GetNodeInfoResponse> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public pactus.network.NetworkOuterClass.GetPeerInfoResponse getDefaultInstanceForType() {
+    public pactus.network.NetworkOuterClass.GetNodeInfoResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2295,29 +3034,29 @@ public final class NetworkOuterClass {
     com.google.protobuf.ByteString getPeerId();
 
     /**
-     * <code>repeated string keys = 4 [json_name = "keys"];</code>
-     * @return A list containing the keys.
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+     * @return A list containing the consensusKeys.
      */
     java.util.List<java.lang.String>
-        getKeysList();
+        getConsensusKeysList();
     /**
-     * <code>repeated string keys = 4 [json_name = "keys"];</code>
-     * @return The count of keys.
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+     * @return The count of consensusKeys.
      */
-    int getKeysCount();
+    int getConsensusKeysCount();
     /**
-     * <code>repeated string keys = 4 [json_name = "keys"];</code>
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
      * @param index The index of the element to return.
-     * @return The keys at the given index.
+     * @return The consensusKeys at the given index.
      */
-    java.lang.String getKeys(int index);
+    java.lang.String getConsensusKeys(int index);
     /**
-     * <code>repeated string keys = 4 [json_name = "keys"];</code>
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
      * @param index The index of the value to return.
-     * @return The bytes of the keys at the given index.
+     * @return The bytes of the consensusKeys at the given index.
      */
     com.google.protobuf.ByteString
-        getKeysBytes(int index);
+        getConsensusKeysBytes(int index);
 
     /**
      * <code>int32 flags = 5 [json_name = "flags"];</code>
@@ -2389,7 +3128,7 @@ public final class NetworkOuterClass {
       moniker_ = "";
       agent_ = "";
       peerId_ = com.google.protobuf.ByteString.EMPTY;
-      keys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
 
     @java.lang.Override
@@ -2504,39 +3243,39 @@ public final class NetworkOuterClass {
       return peerId_;
     }
 
-    public static final int KEYS_FIELD_NUMBER = 4;
-    private com.google.protobuf.LazyStringList keys_;
+    public static final int CONSENSUS_KEYS_FIELD_NUMBER = 4;
+    private com.google.protobuf.LazyStringList consensusKeys_;
     /**
-     * <code>repeated string keys = 4 [json_name = "keys"];</code>
-     * @return A list containing the keys.
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+     * @return A list containing the consensusKeys.
      */
     public com.google.protobuf.ProtocolStringList
-        getKeysList() {
-      return keys_;
+        getConsensusKeysList() {
+      return consensusKeys_;
     }
     /**
-     * <code>repeated string keys = 4 [json_name = "keys"];</code>
-     * @return The count of keys.
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+     * @return The count of consensusKeys.
      */
-    public int getKeysCount() {
-      return keys_.size();
+    public int getConsensusKeysCount() {
+      return consensusKeys_.size();
     }
     /**
-     * <code>repeated string keys = 4 [json_name = "keys"];</code>
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
      * @param index The index of the element to return.
-     * @return The keys at the given index.
+     * @return The consensusKeys at the given index.
      */
-    public java.lang.String getKeys(int index) {
-      return keys_.get(index);
+    public java.lang.String getConsensusKeys(int index) {
+      return consensusKeys_.get(index);
     }
     /**
-     * <code>repeated string keys = 4 [json_name = "keys"];</code>
+     * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
      * @param index The index of the value to return.
-     * @return The bytes of the keys at the given index.
+     * @return The bytes of the consensusKeys at the given index.
      */
     public com.google.protobuf.ByteString
-        getKeysBytes(int index) {
-      return keys_.getByteString(index);
+        getConsensusKeysBytes(int index) {
+      return consensusKeys_.getByteString(index);
     }
 
     public static final int FLAGS_FIELD_NUMBER = 5;
@@ -2661,8 +3400,8 @@ public final class NetworkOuterClass {
       if (!peerId_.isEmpty()) {
         output.writeBytes(3, peerId_);
       }
-      for (int i = 0; i < keys_.size(); i++) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, keys_.getRaw(i));
+      for (int i = 0; i < consensusKeys_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, consensusKeys_.getRaw(i));
       }
       if (flags_ != 0) {
         output.writeInt32(5, flags_);
@@ -2712,11 +3451,11 @@ public final class NetworkOuterClass {
       }
       {
         int dataSize = 0;
-        for (int i = 0; i < keys_.size(); i++) {
-          dataSize += computeStringSizeNoTag(keys_.getRaw(i));
+        for (int i = 0; i < consensusKeys_.size(); i++) {
+          dataSize += computeStringSizeNoTag(consensusKeys_.getRaw(i));
         }
         size += dataSize;
-        size += 1 * getKeysList().size();
+        size += 1 * getConsensusKeysList().size();
       }
       if (flags_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -2775,8 +3514,8 @@ public final class NetworkOuterClass {
           .equals(other.getAgent())) return false;
       if (!getPeerId()
           .equals(other.getPeerId())) return false;
-      if (!getKeysList()
-          .equals(other.getKeysList())) return false;
+      if (!getConsensusKeysList()
+          .equals(other.getConsensusKeysList())) return false;
       if (getFlags()
           != other.getFlags()) return false;
       if (getHeight()
@@ -2812,9 +3551,9 @@ public final class NetworkOuterClass {
       hash = (53 * hash) + getAgent().hashCode();
       hash = (37 * hash) + PEER_ID_FIELD_NUMBER;
       hash = (53 * hash) + getPeerId().hashCode();
-      if (getKeysCount() > 0) {
-        hash = (37 * hash) + KEYS_FIELD_NUMBER;
-        hash = (53 * hash) + getKeysList().hashCode();
+      if (getConsensusKeysCount() > 0) {
+        hash = (37 * hash) + CONSENSUS_KEYS_FIELD_NUMBER;
+        hash = (53 * hash) + getConsensusKeysList().hashCode();
       }
       hash = (37 * hash) + FLAGS_FIELD_NUMBER;
       hash = (53 * hash) + getFlags();
@@ -2969,7 +3708,7 @@ public final class NetworkOuterClass {
 
         peerId_ = com.google.protobuf.ByteString.EMPTY;
 
-        keys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
         flags_ = 0;
 
@@ -3020,10 +3759,10 @@ public final class NetworkOuterClass {
         result.agent_ = agent_;
         result.peerId_ = peerId_;
         if (((bitField0_ & 0x00000001) != 0)) {
-          keys_ = keys_.getUnmodifiableView();
+          consensusKeys_ = consensusKeys_.getUnmodifiableView();
           bitField0_ = (bitField0_ & ~0x00000001);
         }
-        result.keys_ = keys_;
+        result.consensusKeys_ = consensusKeys_;
         result.flags_ = flags_;
         result.height_ = height_;
         result.receivedMessages_ = receivedMessages_;
@@ -3092,13 +3831,13 @@ public final class NetworkOuterClass {
         if (other.getPeerId() != com.google.protobuf.ByteString.EMPTY) {
           setPeerId(other.getPeerId());
         }
-        if (!other.keys_.isEmpty()) {
-          if (keys_.isEmpty()) {
-            keys_ = other.keys_;
+        if (!other.consensusKeys_.isEmpty()) {
+          if (consensusKeys_.isEmpty()) {
+            consensusKeys_ = other.consensusKeys_;
             bitField0_ = (bitField0_ & ~0x00000001);
           } else {
-            ensureKeysIsMutable();
-            keys_.addAll(other.keys_);
+            ensureConsensusKeysIsMutable();
+            consensusKeys_.addAll(other.consensusKeys_);
           }
           onChanged();
         }
@@ -3172,8 +3911,8 @@ public final class NetworkOuterClass {
               } // case 26
               case 34: {
                 java.lang.String s = input.readStringRequireUtf8();
-                ensureKeysIsMutable();
-                keys_.add(s);
+                ensureConsensusKeysIsMutable();
+                consensusKeys_.add(s);
                 break;
               } // case 34
               case 40: {
@@ -3424,112 +4163,112 @@ public final class NetworkOuterClass {
         return this;
       }
 
-      private com.google.protobuf.LazyStringList keys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureKeysIsMutable() {
+      private com.google.protobuf.LazyStringList consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureConsensusKeysIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          keys_ = new com.google.protobuf.LazyStringArrayList(keys_);
+          consensusKeys_ = new com.google.protobuf.LazyStringArrayList(consensusKeys_);
           bitField0_ |= 0x00000001;
          }
       }
       /**
-       * <code>repeated string keys = 4 [json_name = "keys"];</code>
-       * @return A list containing the keys.
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @return A list containing the consensusKeys.
        */
       public com.google.protobuf.ProtocolStringList
-          getKeysList() {
-        return keys_.getUnmodifiableView();
+          getConsensusKeysList() {
+        return consensusKeys_.getUnmodifiableView();
       }
       /**
-       * <code>repeated string keys = 4 [json_name = "keys"];</code>
-       * @return The count of keys.
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @return The count of consensusKeys.
        */
-      public int getKeysCount() {
-        return keys_.size();
+      public int getConsensusKeysCount() {
+        return consensusKeys_.size();
       }
       /**
-       * <code>repeated string keys = 4 [json_name = "keys"];</code>
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
        * @param index The index of the element to return.
-       * @return The keys at the given index.
+       * @return The consensusKeys at the given index.
        */
-      public java.lang.String getKeys(int index) {
-        return keys_.get(index);
+      public java.lang.String getConsensusKeys(int index) {
+        return consensusKeys_.get(index);
       }
       /**
-       * <code>repeated string keys = 4 [json_name = "keys"];</code>
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
        * @param index The index of the value to return.
-       * @return The bytes of the keys at the given index.
+       * @return The bytes of the consensusKeys at the given index.
        */
       public com.google.protobuf.ByteString
-          getKeysBytes(int index) {
-        return keys_.getByteString(index);
+          getConsensusKeysBytes(int index) {
+        return consensusKeys_.getByteString(index);
       }
       /**
-       * <code>repeated string keys = 4 [json_name = "keys"];</code>
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
        * @param index The index to set the value at.
-       * @param value The keys to set.
+       * @param value The consensusKeys to set.
        * @return This builder for chaining.
        */
-      public Builder setKeys(
+      public Builder setConsensusKeys(
           int index, java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureKeysIsMutable();
-        keys_.set(index, value);
+  ensureConsensusKeysIsMutable();
+        consensusKeys_.set(index, value);
         onChanged();
         return this;
       }
       /**
-       * <code>repeated string keys = 4 [json_name = "keys"];</code>
-       * @param value The keys to add.
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @param value The consensusKeys to add.
        * @return This builder for chaining.
        */
-      public Builder addKeys(
+      public Builder addConsensusKeys(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureKeysIsMutable();
-        keys_.add(value);
+  ensureConsensusKeysIsMutable();
+        consensusKeys_.add(value);
         onChanged();
         return this;
       }
       /**
-       * <code>repeated string keys = 4 [json_name = "keys"];</code>
-       * @param values The keys to add.
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @param values The consensusKeys to add.
        * @return This builder for chaining.
        */
-      public Builder addAllKeys(
+      public Builder addAllConsensusKeys(
           java.lang.Iterable<java.lang.String> values) {
-        ensureKeysIsMutable();
+        ensureConsensusKeysIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, keys_);
+            values, consensusKeys_);
         onChanged();
         return this;
       }
       /**
-       * <code>repeated string keys = 4 [json_name = "keys"];</code>
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
        * @return This builder for chaining.
        */
-      public Builder clearKeys() {
-        keys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      public Builder clearConsensusKeys() {
+        consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
       /**
-       * <code>repeated string keys = 4 [json_name = "keys"];</code>
-       * @param value The bytes of the keys to add.
+       * <code>repeated string consensus_keys = 4 [json_name = "consensusKeys"];</code>
+       * @param value The bytes of the consensusKeys to add.
        * @return This builder for chaining.
        */
-      public Builder addKeysBytes(
+      public Builder addConsensusKeysBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-        ensureKeysIsMutable();
-        keys_.add(value);
+        ensureConsensusKeysIsMutable();
+        consensusKeys_.add(value);
         onChanged();
         return this;
       }
@@ -3887,15 +4626,15 @@ public final class NetworkOuterClass {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_GetNetworkInfoResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_pactus_GetPeerInfoRequest_descriptor;
+    internal_static_pactus_GetNodeInfoRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_pactus_GetPeerInfoRequest_fieldAccessorTable;
+      internal_static_pactus_GetNodeInfoRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_pactus_GetPeerInfoResponse_descriptor;
+    internal_static_pactus_GetNodeInfoResponse_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_pactus_GetPeerInfoResponse_fieldAccessorTable;
+      internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_PeerInfo_descriptor;
   private static final 
@@ -3911,27 +4650,34 @@ public final class NetworkOuterClass {
   static {
     java.lang.String[] descriptorData = {
       "\n\rnetwork.proto\022\006pactus\"\027\n\025GetNetworkInf" +
-      "oRequest\"Y\n\026GetNetworkInfoResponse\022\027\n\007se" +
-      "lf_id\030\001 \001(\014R\006selfId\022&\n\005peers\030\002 \003(\0132\020.pac" +
-      "tus.PeerInfoR\005peers\"\024\n\022GetPeerInfoReques" +
-      "t\";\n\023GetPeerInfoResponse\022$\n\004peer\030\001 \001(\0132\020" +
-      ".pactus.PeerInfoR\004peer\"\215\003\n\010PeerInfo\022\030\n\007m" +
-      "oniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002 \001(\tR\005ag" +
-      "ent\022\027\n\007peer_id\030\003 \001(\014R\006peerId\022\022\n\004keys\030\004 \003" +
-      "(\tR\004keys\022\024\n\005flags\030\005 \001(\005R\005flags\022\026\n\006height" +
-      "\030\006 \001(\rR\006height\022+\n\021received_messages\030\007 \001(" +
-      "\005R\020receivedMessages\022)\n\020invalid_messages\030" +
-      "\010 \001(\005R\017invalidMessages\022%\n\016received_bytes" +
-      "\030\t \001(\005R\rreceivedBytes\022\026\n\006status\030\n \001(\005R\006s" +
-      "tatus\022\033\n\tlast_seen\030\013 \001(\003R\010lastSeen\022!\n\014se" +
-      "nd_success\030\014 \001(\005R\013sendSuccess\022\037\n\013send_fa" +
-      "iled\030\r \001(\005R\nsendFailed2\242\001\n\007Network\022O\n\016Ge" +
-      "tNetworkInfo\022\035.pactus.GetNetworkInfoRequ" +
-      "est\032\036.pactus.GetNetworkInfoResponse\022F\n\013G" +
-      "etPeerInfo\022\032.pactus.GetPeerInfoRequest\032\033" +
-      ".pactus.GetPeerInfoResponseBB\n\016pactus.ne" +
-      "tworkZ0github.com/pactus-project/pactus/" +
-      "www/grpc/pactusb\006proto3"
+      "oRequest\"\265\001\n\026GetNetworkInfoResponse\022\027\n\007s" +
+      "elf_id\030\001 \001(\014R\006selfId\022(\n\020total_sent_bytes" +
+      "\030\002 \001(\005R\016totalSentBytes\0220\n\024total_received" +
+      "_bytes\030\003 \001(\005R\022totalReceivedBytes\022&\n\005peer" +
+      "s\030\004 \003(\0132\020.pactus.PeerInfoR\005peers\"\024\n\022GetN" +
+      "odeInfoRequest\"\322\001\n\023GetNodeInfoResponse\022\030" +
+      "\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002 \001(\tR" +
+      "\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peerId\022%\n\016conse" +
+      "nsus_keys\030\004 \003(\tR\rconsensusKeys\022\024\n\005flags\030" +
+      "\005 \001(\005R\005flags\022\026\n\006height\030\006 \001(\rR\006height\022\035\n\n" +
+      "started_at\030\007 \001(\003R\tstartedAt\"\240\003\n\010PeerInfo" +
+      "\022\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002 \001(" +
+      "\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peerId\022%\n\016con" +
+      "sensus_keys\030\004 \003(\tR\rconsensusKeys\022\024\n\005flag" +
+      "s\030\005 \001(\005R\005flags\022\026\n\006height\030\006 \001(\rR\006height\022+" +
+      "\n\021received_messages\030\007 \001(\005R\020receivedMessa" +
+      "ges\022)\n\020invalid_messages\030\010 \001(\005R\017invalidMe" +
+      "ssages\022%\n\016received_bytes\030\t \001(\005R\rreceived" +
+      "Bytes\022\026\n\006status\030\n \001(\005R\006status\022\033\n\tlast_se" +
+      "en\030\013 \001(\003R\010lastSeen\022!\n\014send_success\030\014 \001(\005" +
+      "R\013sendSuccess\022\037\n\013send_failed\030\r \001(\005R\nsend" +
+      "Failed2\242\001\n\007Network\022O\n\016GetNetworkInfo\022\035.p" +
+      "actus.GetNetworkInfoRequest\032\036.pactus.Get" +
+      "NetworkInfoResponse\022F\n\013GetNodeInfo\022\032.pac" +
+      "tus.GetNodeInfoRequest\032\033.pactus.GetNodeI" +
+      "nfoResponseBB\n\016pactus.networkZ0github.co" +
+      "m/pactus-project/pactus/www/grpc/pactusb" +
+      "\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -3948,25 +4694,25 @@ public final class NetworkOuterClass {
     internal_static_pactus_GetNetworkInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNetworkInfoResponse_descriptor,
-        new java.lang.String[] { "SelfId", "Peers", });
-    internal_static_pactus_GetPeerInfoRequest_descriptor =
+        new java.lang.String[] { "SelfId", "TotalSentBytes", "TotalReceivedBytes", "Peers", });
+    internal_static_pactus_GetNodeInfoRequest_descriptor =
       getDescriptor().getMessageTypes().get(2);
-    internal_static_pactus_GetPeerInfoRequest_fieldAccessorTable = new
+    internal_static_pactus_GetNodeInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_pactus_GetPeerInfoRequest_descriptor,
+        internal_static_pactus_GetNodeInfoRequest_descriptor,
         new java.lang.String[] { });
-    internal_static_pactus_GetPeerInfoResponse_descriptor =
+    internal_static_pactus_GetNodeInfoResponse_descriptor =
       getDescriptor().getMessageTypes().get(3);
-    internal_static_pactus_GetPeerInfoResponse_fieldAccessorTable = new
+    internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_pactus_GetPeerInfoResponse_descriptor,
-        new java.lang.String[] { "Peer", });
+        internal_static_pactus_GetNodeInfoResponse_descriptor,
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "ConsensusKeys", "Flags", "Height", "StartedAt", });
     internal_static_pactus_PeerInfo_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "Keys", "Flags", "Height", "ReceivedMessages", "InvalidMessages", "ReceivedBytes", "Status", "LastSeen", "SendSuccess", "SendFailed", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "ConsensusKeys", "Flags", "Height", "ReceivedMessages", "InvalidMessages", "ReceivedBytes", "Status", "LastSeen", "SendSuccess", "SendFailed", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

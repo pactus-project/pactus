@@ -28,13 +28,13 @@ func TestGetNetworkInfo(t *testing.T) {
 		for _, p := range res.Peers {
 			assert.NotEmpty(t, p.PeerId)
 			pid, _ := peer.IDFromBytes(p.PeerId)
-			pp := tMockSync.PeerSet.GetPeer(pid)
+			pp := tMockSync.PeerSet().GetPeer(pid)
 			assert.Equal(t, p.Agent, pp.Agent)
 			assert.Equal(t, p.Moniker, pp.Moniker)
 			assert.Equal(t, p.Height, pp.Height)
 			assert.NotEmpty(t, pp.ConsensusKeys)
 			for key := range pp.ConsensusKeys {
-				assert.Contains(t, p.Keys, key.String())
+				assert.Contains(t, p.ConsensusKeys, key.String())
 			}
 		}
 	})
@@ -42,16 +42,15 @@ func TestGetNetworkInfo(t *testing.T) {
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }
 
-func TestGetPeerInfo(t *testing.T) {
+func TestGetNodeInfo(t *testing.T) {
 	conn, client := testNetworkClient(t)
 
-	res, err := client.GetPeerInfo(tCtx, &pactus.GetPeerInfoRequest{})
+	res, err := client.GetNodeInfo(tCtx, &pactus.GetNodeInfoRequest{})
 	assert.NoError(t, err)
 	assert.Nil(t, err)
-	peer := res.Peer
-	assert.Equal(t, version.Agent(), peer.Agent)
-	assert.Equal(t, []byte(tMockSync.SelfID()), peer.PeerId)
-	assert.Equal(t, "test-moniker", peer.Moniker)
+	assert.Equal(t, version.Agent(), res.Agent)
+	assert.Equal(t, []byte(tMockSync.SelfID()), res.PeerId)
+	assert.Equal(t, "test-moniker", res.Moniker)
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }

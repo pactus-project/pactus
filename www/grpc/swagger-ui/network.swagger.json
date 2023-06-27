@@ -38,14 +38,14 @@
         ]
       }
     },
-    "/v1/network/peer_info": {
+    "/v1/network/node": {
       "get": {
-        "operationId": "Network_GetPeerInfo",
+        "operationId": "Network_GetNodeInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusGetPeerInfoResponse"
+              "$ref": "#/definitions/pactusGetNodeInfoResponse"
             }
           },
           "default": {
@@ -69,20 +69,52 @@
           "type": "string",
           "format": "byte"
         },
+        "totalSentBytes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalReceivedBytes": {
+          "type": "integer",
+          "format": "int32"
+        },
         "peers": {
           "type": "array",
           "items": {
-            "type": "object",
             "$ref": "#/definitions/pactusPeerInfo"
           }
         }
       }
     },
-    "pactusGetPeerInfoResponse": {
+    "pactusGetNodeInfoResponse": {
       "type": "object",
       "properties": {
-        "peer": {
-          "$ref": "#/definitions/pactusPeerInfo"
+        "moniker": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "peerId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "consensusKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "flags": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "startedAt": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },
@@ -99,7 +131,7 @@
           "type": "string",
           "format": "byte"
         },
-        "keys": {
+        "consensusKeys": {
           "type": "array",
           "items": {
             "type": "string"
@@ -165,7 +197,6 @@
         "details": {
           "type": "array",
           "items": {
-            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }
