@@ -39,6 +39,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 	// --- PageMode
 	mode, radio, pageModeName := pageMode(assistant, assistFunc)
 	assistant.AppendPage(mode)
+	assistant.SetPageType(mode, gtk.ASSISTANT_PAGE_CONTENT)
 
 	// --- seedGenerate
 	seedGenerate, textViewSeed, pageSeedName := pageSeed(assistant, assistFunc)
@@ -146,18 +147,30 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 		}
 	})
 
+	assistant.AppendPage(seedGenerate)
+	assistant.AppendPage(seedConfirm)
+	assistant.AppendPage(seedRestore)
+	assistant.AppendPage(password)
+	assistant.AppendPage(numValidators)
+	assistant.AppendPage(final)
+	assistant.SetPageType(seedGenerate, gtk.ASSISTANT_PAGE_CONTENT)
+	assistant.SetPageType(seedConfirm, gtk.ASSISTANT_PAGE_CONTENT)
+	assistant.SetPageType(seedRestore, gtk.ASSISTANT_PAGE_CONTENT)
+	assistant.SetPageType(password, gtk.ASSISTANT_PAGE_CONTENT)
+	assistant.SetPageType(numValidators, gtk.ASSISTANT_PAGE_CONTENT)
+	assistant.SetPageType(final, gtk.ASSISTANT_PAGE_SUMMARY)
+
 	pageAppender := func(restoreMode bool) {
 		fmt.Println("called appender ", restoreMode)
 		if restoreMode {
-			assistant.RemovePage(1)
 			assistant.RemovePage(2)
-
+			assistant.RemovePage(1)
+			fmt.Println("restore")
 			assistant.InsertPage(seedRestore, 1)
 			assistant.SetPageType(seedRestore, gtk.ASSISTANT_PAGE_CONTENT)
-
 		} else {
 			assistant.RemovePage(1)
-
+			fmt.Println("create")
 			assistant.InsertPage(seedGenerate, 1)
 			assistant.InsertPage(seedConfirm, 2)
 			assistant.SetPageType(seedGenerate, gtk.ASSISTANT_PAGE_CONTENT)
@@ -171,14 +184,6 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 	radio.Connect("toggled", func() {
 		pageAppender(radio.GetActive())
 	})
-
-	assistant.AppendPage(password)
-	assistant.AppendPage(numValidators)
-	assistant.AppendPage(final)
-	assistant.SetPageType(mode, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(password, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(numValidators, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(final, gtk.ASSISTANT_PAGE_SUMMARY)
 
 	assistant.SetModal(true)
 	assistant.ShowAll()
