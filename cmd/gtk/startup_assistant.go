@@ -157,7 +157,6 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 				} else {
 					assistant.SetPageComplete(seedGenerate, true)
 				}
-
 			}
 		case pagePasswordName:
 			{
@@ -260,7 +259,7 @@ func pageAssistant() assistantFunc {
 }
 
 func pageMode(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.RadioButton, string) {
-	mode := new(gtk.Widget)
+	var mode *gtk.Widget
 	newWalletRadio, err := gtk.RadioButtonNewWithLabel(nil, "Create a new wallet from the scratch")
 	fatalErrorCheck(err)
 
@@ -291,7 +290,7 @@ func pageMode(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, 
 }
 
 func pageSeedGenerate(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.TextView, string) {
-	pageWidget := new(gtk.Widget)
+	var pageWidget *gtk.Widget
 	textViewSeed, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
 
@@ -363,7 +362,8 @@ func pageSeedRestore(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.W
 	return pageWidget, textViewRestoreSeed, pageSeedName
 }
 
-func pageSeedConfirm(assistant *gtk.Assistant, assistFunc assistantFunc, textViewSeed *gtk.TextView) (*gtk.Widget, string) {
+func pageSeedConfirm(assistant *gtk.Assistant, assistFunc assistantFunc,
+	textViewSeed *gtk.TextView) (*gtk.Widget, string) {
 	pageWidget := new(gtk.Widget)
 	textViewConfirmSeed, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
@@ -479,8 +479,9 @@ func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widg
 	return pageWidget, entryPassword, pagePasswordName
 }
 
-func pageNumValidators(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.ListStore, *gtk.ComboBox, string) {
-	pageWidget := new(gtk.Widget)
+func pageNumValidators(assistant *gtk.Assistant,
+	assistFunc assistantFunc) (*gtk.Widget, *gtk.ListStore, *gtk.ComboBox, string) {
+	var pageWidget *gtk.Widget
 	lsNumValidators, err := gtk.ListStoreNew(glib.TYPE_INT)
 	fatalErrorCheck(err)
 
@@ -532,7 +533,7 @@ For more information, look <a href="https://pactus.org/user-guides/run-pactus-gu
 }
 
 func pageFinal(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.TextView, string) {
-	pageWidget := new(gtk.Widget)
+	var pageWidget *gtk.Widget
 	textViewNodeInfo, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
 
