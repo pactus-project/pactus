@@ -25,6 +25,7 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
   $async.Future<$1.GetAccountResponse> getAccountByNumber($pb.ServerContext ctx, $1.GetAccountByNumberRequest request);
   $async.Future<$1.GetValidatorResponse> getValidator($pb.ServerContext ctx, $1.GetValidatorRequest request);
   $async.Future<$1.GetValidatorResponse> getValidatorByNumber($pb.ServerContext ctx, $1.GetValidatorByNumberRequest request);
+  $async.Future<$1.GetValidatorAddressesResponse> getValidatorAddresses($pb.ServerContext ctx, $1.GetValidatorAddressesRequest request);
   $async.Future<$1.GetValidatorsResponse> getValidators($pb.ServerContext ctx, $1.GetValidatorsRequest request);
 
   $pb.GeneratedMessage createRequest($core.String method) {
@@ -38,6 +39,7 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
       case 'GetAccountByNumber': return $1.GetAccountByNumberRequest();
       case 'GetValidator': return $1.GetValidatorRequest();
       case 'GetValidatorByNumber': return $1.GetValidatorByNumberRequest();
+      case 'GetValidatorAddresses': return $1.GetValidatorAddressesRequest();
       case 'GetValidators': return $1.GetValidatorsRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
     }
@@ -54,6 +56,7 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
       case 'GetAccountByNumber': return this.getAccountByNumber(ctx, request as $1.GetAccountByNumberRequest);
       case 'GetValidator': return this.getValidator(ctx, request as $1.GetValidatorRequest);
       case 'GetValidatorByNumber': return this.getValidatorByNumber(ctx, request as $1.GetValidatorByNumberRequest);
+      case 'GetValidatorAddresses': return this.getValidatorAddresses(ctx, request as $1.GetValidatorAddressesRequest);
       case 'GetValidators': return this.getValidators(ctx, request as $1.GetValidatorsRequest);
       default: throw $core.ArgumentError('Unknown method: $method');
     }

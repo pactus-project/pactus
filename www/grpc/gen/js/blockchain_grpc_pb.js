@@ -148,6 +148,28 @@ function deserialize_pactus_GetConsensusInfoResponse(buffer_arg) {
   return blockchain_pb.GetConsensusInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_GetValidatorAddressesRequest(arg) {
+  if (!(arg instanceof blockchain_pb.GetValidatorAddressesRequest)) {
+    throw new Error('Expected argument of type pactus.GetValidatorAddressesRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetValidatorAddressesRequest(buffer_arg) {
+  return blockchain_pb.GetValidatorAddressesRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetValidatorAddressesResponse(arg) {
+  if (!(arg instanceof blockchain_pb.GetValidatorAddressesResponse)) {
+    throw new Error('Expected argument of type pactus.GetValidatorAddressesResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetValidatorAddressesResponse(buffer_arg) {
+  return blockchain_pb.GetValidatorAddressesResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetValidatorByNumberRequest(arg) {
   if (!(arg instanceof blockchain_pb.GetValidatorByNumberRequest)) {
     throw new Error('Expected argument of type pactus.GetValidatorByNumberRequest');
@@ -303,6 +325,17 @@ var BlockchainService = exports.BlockchainService = {
     requestDeserialize: deserialize_pactus_GetValidatorByNumberRequest,
     responseSerialize: serialize_pactus_GetValidatorResponse,
     responseDeserialize: deserialize_pactus_GetValidatorResponse,
+  },
+  getValidatorAddresses: {
+    path: '/pactus.Blockchain/GetValidatorAddresses',
+    requestStream: false,
+    responseStream: false,
+    requestType: blockchain_pb.GetValidatorAddressesRequest,
+    responseType: blockchain_pb.GetValidatorAddressesResponse,
+    requestSerialize: serialize_pactus_GetValidatorAddressesRequest,
+    requestDeserialize: deserialize_pactus_GetValidatorAddressesRequest,
+    responseSerialize: serialize_pactus_GetValidatorAddressesResponse,
+    responseDeserialize: deserialize_pactus_GetValidatorAddressesResponse,
   },
   getValidators: {
     path: '/pactus.Blockchain/GetValidators',

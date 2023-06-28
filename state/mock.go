@@ -173,12 +173,13 @@ func (m *MockState) AccountByAddress(addr crypto.Address) *account.Account {
 	a, _ := m.TestStore.Account(addr)
 	return a
 }
-
 func (m *MockState) AccountByNumber(number int32) *account.Account {
 	a, _ := m.TestStore.AccountByNumber(number)
 	return a
 }
-
+func (m *MockState) ValidatorAddresses() []crypto.Address {
+	return m.TestStore.ValidatorAddresses()
+}
 func (m *MockState) ValidatorByAddress(addr crypto.Address) *validator.Validator {
 	v, _ := m.TestStore.Validator(addr)
 	return v

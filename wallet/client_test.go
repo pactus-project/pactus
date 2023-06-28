@@ -49,6 +49,11 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 	return nil, fmt.Errorf("unknown request")
 }
 
+func (s *blockchainServer) GetValidatorAddresses(_ context.Context,
+	_ *pactus.GetValidatorAddressesRequest) (*pactus.GetValidatorAddressesResponse, error) {
+	return nil, nil
+}
+
 func (s *blockchainServer) GetAccountByNumber(_ context.Context,
 	_ *pactus.GetAccountByNumberRequest) (*pactus.GetAccountResponse, error) {
 	return nil, nil

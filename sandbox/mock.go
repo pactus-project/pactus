@@ -21,7 +21,8 @@ type MockSandbox struct {
 	TestStore            *store.MockStore
 	TestCommittee        committee.Committee
 	TestCommitteeSigners []crypto.Signer
-	AcceptTestSortition  bool
+	TestAcceptSortition  bool
+	TestPowerDelta       int64
 }
 
 func MockingSandbox() *MockSandbox {
@@ -97,7 +98,12 @@ func (m *MockSandbox) IterateValidators(consumer func(*validator.Validator, bool
 func (m *MockSandbox) Committee() committee.Reader {
 	return m.TestCommittee
 }
-
+func (m *MockSandbox) UpdatePowerDelta(delta int64) {
+	m.TestPowerDelta += delta
+}
+func (m *MockSandbox) PowerDelta() int64 {
+	return m.TestPowerDelta
+}
 func (m *MockSandbox) VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool {
-	return m.AcceptTestSortition
+	return m.TestAcceptSortition
 }

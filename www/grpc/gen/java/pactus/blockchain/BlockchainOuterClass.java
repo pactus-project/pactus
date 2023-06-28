@@ -2273,6 +2273,1019 @@ public final class BlockchainOuterClass {
 
   }
 
+  public interface GetValidatorAddressesRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.GetValidatorAddressesRequest)
+      com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code pactus.GetValidatorAddressesRequest}
+   */
+  public static final class GetValidatorAddressesRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.GetValidatorAddressesRequest)
+      GetValidatorAddressesRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GetValidatorAddressesRequest.newBuilder() to construct.
+    private GetValidatorAddressesRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GetValidatorAddressesRequest() {
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new GetValidatorAddressesRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest.class, pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest.Builder.class);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest)) {
+        return super.equals(obj);
+      }
+      pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest other = (pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest) obj;
+
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code pactus.GetValidatorAddressesRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.GetValidatorAddressesRequest)
+        pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest.class, pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest.Builder.class);
+      }
+
+      // Construct using pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest getDefaultInstanceForType() {
+        return pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest build() {
+        pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest buildPartial() {
+        pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest result = new pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest(this);
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest) {
+          return mergeFrom((pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest other) {
+        if (other == pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.GetValidatorAddressesRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.GetValidatorAddressesRequest)
+    private static final pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest();
+    }
+
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetValidatorAddressesRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetValidatorAddressesRequest>() {
+      @java.lang.Override
+      public GetValidatorAddressesRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetValidatorAddressesRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetValidatorAddressesRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface GetValidatorAddressesResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.GetValidatorAddressesResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+     * @return A list containing the addresses.
+     */
+    java.util.List<java.lang.String>
+        getAddressesList();
+    /**
+     * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+     * @return The count of addresses.
+     */
+    int getAddressesCount();
+    /**
+     * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+     * @param index The index of the element to return.
+     * @return The addresses at the given index.
+     */
+    java.lang.String getAddresses(int index);
+    /**
+     * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the addresses at the given index.
+     */
+    com.google.protobuf.ByteString
+        getAddressesBytes(int index);
+  }
+  /**
+   * Protobuf type {@code pactus.GetValidatorAddressesResponse}
+   */
+  public static final class GetValidatorAddressesResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.GetValidatorAddressesResponse)
+      GetValidatorAddressesResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GetValidatorAddressesResponse.newBuilder() to construct.
+    private GetValidatorAddressesResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GetValidatorAddressesResponse() {
+      addresses_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new GetValidatorAddressesResponse();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse.class, pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse.Builder.class);
+    }
+
+    public static final int ADDRESSES_FIELD_NUMBER = 1;
+    private com.google.protobuf.LazyStringList addresses_;
+    /**
+     * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+     * @return A list containing the addresses.
+     */
+    public com.google.protobuf.ProtocolStringList
+        getAddressesList() {
+      return addresses_;
+    }
+    /**
+     * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+     * @return The count of addresses.
+     */
+    public int getAddressesCount() {
+      return addresses_.size();
+    }
+    /**
+     * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+     * @param index The index of the element to return.
+     * @return The addresses at the given index.
+     */
+    public java.lang.String getAddresses(int index) {
+      return addresses_.get(index);
+    }
+    /**
+     * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the addresses at the given index.
+     */
+    public com.google.protobuf.ByteString
+        getAddressesBytes(int index) {
+      return addresses_.getByteString(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < addresses_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, addresses_.getRaw(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < addresses_.size(); i++) {
+          dataSize += computeStringSizeNoTag(addresses_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getAddressesList().size();
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse)) {
+        return super.equals(obj);
+      }
+      pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse other = (pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse) obj;
+
+      if (!getAddressesList()
+          .equals(other.getAddressesList())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getAddressesCount() > 0) {
+        hash = (37 * hash) + ADDRESSES_FIELD_NUMBER;
+        hash = (53 * hash) + getAddressesList().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code pactus.GetValidatorAddressesResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.GetValidatorAddressesResponse)
+        pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse.class, pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse.Builder.class);
+      }
+
+      // Construct using pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        addresses_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse getDefaultInstanceForType() {
+        return pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse build() {
+        pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse buildPartial() {
+        pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse result = new pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          addresses_ = addresses_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.addresses_ = addresses_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse) {
+          return mergeFrom((pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse other) {
+        if (other == pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse.getDefaultInstance()) return this;
+        if (!other.addresses_.isEmpty()) {
+          if (addresses_.isEmpty()) {
+            addresses_ = other.addresses_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureAddressesIsMutable();
+            addresses_.addAll(other.addresses_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                java.lang.String s = input.readStringRequireUtf8();
+                ensureAddressesIsMutable();
+                addresses_.add(s);
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private com.google.protobuf.LazyStringList addresses_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureAddressesIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          addresses_ = new com.google.protobuf.LazyStringArrayList(addresses_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+       * @return A list containing the addresses.
+       */
+      public com.google.protobuf.ProtocolStringList
+          getAddressesList() {
+        return addresses_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+       * @return The count of addresses.
+       */
+      public int getAddressesCount() {
+        return addresses_.size();
+      }
+      /**
+       * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+       * @param index The index of the element to return.
+       * @return The addresses at the given index.
+       */
+      public java.lang.String getAddresses(int index) {
+        return addresses_.get(index);
+      }
+      /**
+       * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the addresses at the given index.
+       */
+      public com.google.protobuf.ByteString
+          getAddressesBytes(int index) {
+        return addresses_.getByteString(index);
+      }
+      /**
+       * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+       * @param index The index to set the value at.
+       * @param value The addresses to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddresses(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureAddressesIsMutable();
+        addresses_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+       * @param value The addresses to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAddresses(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureAddressesIsMutable();
+        addresses_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+       * @param values The addresses to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllAddresses(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureAddressesIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, addresses_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAddresses() {
+        addresses_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
+       * @param value The bytes of the addresses to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAddressesBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        ensureAddressesIsMutable();
+        addresses_.add(value);
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.GetValidatorAddressesResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.GetValidatorAddressesResponse)
+    private static final pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse();
+    }
+
+    public static pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetValidatorAddressesResponse>
+        PARSER = new com.google.protobuf.AbstractParser<GetValidatorAddressesResponse>() {
+      @java.lang.Override
+      public GetValidatorAddressesResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetValidatorAddressesResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetValidatorAddressesResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface GetValidatorRequestOrBuilder extends
       // @@protoc_insertion_point(interface_extends:pactus.GetValidatorRequest)
       com.google.protobuf.MessageOrBuilder {
@@ -17174,6 +18187,16 @@ public final class BlockchainOuterClass {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_GetValidatorsRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_GetValidatorAddressesRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_GetValidatorAddressesRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_GetValidatorAddressesResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_GetValidatorAddressesResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_GetValidatorRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -17287,93 +18310,98 @@ public final class BlockchainOuterClass {
       "\001(\tR\007address\"3\n\031GetAccountByNumberReques" +
       "t\022\026\n\006number\030\001 \001(\005R\006number\"C\n\022GetAccountR" +
       "esponse\022-\n\007account\030\001 \001(\0132\023.pactus.Accoun" +
-      "tInfoR\007account\"\026\n\024GetValidatorsRequest\"/" +
-      "\n\023GetValidatorRequest\022\030\n\007address\030\001 \001(\tR\007" +
-      "address\"5\n\033GetValidatorByNumberRequest\022\026" +
-      "\n\006number\030\001 \001(\005R\006number\"N\n\025GetValidatorsR" +
-      "esponse\0225\n\nvalidators\030\001 \003(\0132\025.pactus.Val" +
-      "idatorInfoR\nvalidators\"K\n\024GetValidatorRe" +
-      "sponse\0223\n\tvalidator\030\001 \001(\0132\025.pactus.Valid" +
-      "atorInfoR\tvalidator\"_\n\017GetBlockRequest\022\026" +
-      "\n\006height\030\001 \001(\rR\006height\0224\n\tverbosity\030\002 \001(" +
-      "\0162\026.pactus.BlockVerbosityR\tverbosity\"\203\002\n" +
-      "\020GetBlockResponse\022\026\n\006height\030\001 \001(\rR\006heigh" +
-      "t\022\022\n\004hash\030\002 \001(\014R\004hash\022\022\n\004data\030\003 \001(\014R\004dat" +
-      "a\022\035\n\nblock_time\030\004 \001(\rR\tblockTime\022/\n\006head" +
-      "er\030\005 \001(\0132\027.pactus.BlockHeaderInfoR\006heade" +
-      "r\0224\n\tprev_cert\030\006 \001(\0132\027.pactus.Certificat" +
-      "eInfoR\010prevCert\022)\n\003txs\030\007 \003(\0132\027.pactus.Tr" +
-      "ansactionInfoR\003txs\"-\n\023GetBlockHashReques" +
-      "t\022\026\n\006height\030\001 \001(\rR\006height\"*\n\024GetBlockHas" +
-      "hResponse\022\022\n\004hash\030\001 \001(\014R\004hash\"+\n\025GetBloc" +
-      "kHeightRequest\022\022\n\004hash\030\001 \001(\014R\004hash\"0\n\026Ge" +
-      "tBlockHeightResponse\022\026\n\006height\030\001 \001(\rR\006he" +
-      "ight\"\032\n\030GetBlockchainInfoRequest\"\325\002\n\031Get" +
-      "BlockchainInfoResponse\022*\n\021last_block_hei" +
-      "ght\030\001 \001(\rR\017lastBlockHeight\022&\n\017last_block" +
-      "_hash\030\002 \001(\014R\rlastBlockHash\022%\n\016total_acco" +
-      "unts\030\003 \001(\005R\rtotalAccounts\022)\n\020total_valid" +
-      "ators\030\004 \001(\005R\017totalValidators\022\037\n\013total_po" +
-      "wer\030\005 \001(\003R\ntotalPower\022\'\n\017committee_power" +
-      "\030\006 \001(\003R\016committeePower\022H\n\024committee_vali" +
-      "dators\030\007 \003(\0132\025.pactus.ValidatorInfoR\023com" +
-      "mitteeValidators\"\031\n\027GetConsensusInfoRequ" +
-      "est\"O\n\030GetConsensusInfoResponse\0223\n\tinsta" +
-      "nces\030\001 \003(\0132\025.pactus.ConsensusInfoR\tinsta" +
-      "nces\"\303\002\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\014R\004ha" +
-      "sh\022\022\n\004data\030\002 \001(\014R\004data\022\035\n\npublic_key\030\003 \001" +
-      "(\tR\tpublicKey\022\026\n\006number\030\004 \001(\005R\006number\022\032\n" +
-      "\010sequence\030\005 \001(\005R\010sequence\022\024\n\005stake\030\006 \001(\003" +
-      "R\005stake\022.\n\023last_bonding_height\030\007 \001(\rR\021la" +
-      "stBondingHeight\022,\n\022last_joined_height\030\010 " +
-      "\001(\rR\020lastJoinedHeight\022)\n\020unbonding_heigh" +
-      "t\030\t \001(\rR\017unbondingHeight\022\030\n\007address\030\n \001(" +
-      "\tR\007address\"\203\001\n\013AccountInfo\022\022\n\004hash\030\001 \001(\014" +
-      "R\004hash\022\022\n\004data\030\002 \001(\014R\004data\022\026\n\006number\030\003 \001" +
-      "(\005R\006number\022\032\n\010sequence\030\004 \001(\005R\010sequence\022\030" +
-      "\n\007balance\030\005 \001(\003R\007balance\"\304\001\n\017BlockHeader" +
-      "Info\022\030\n\007version\030\001 \001(\005R\007version\022&\n\017prev_b" +
-      "lock_hash\030\002 \001(\014R\rprevBlockHash\022\035\n\nstate_" +
-      "root\030\003 \001(\014R\tstateRoot\022%\n\016sortition_seed\030" +
-      "\004 \001(\014R\rsortitionSeed\022)\n\020proposer_address" +
-      "\030\005 \001(\tR\017proposerAddress\"\227\001\n\017CertificateI" +
-      "nfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\024\n\005round\030\002 \001(\005R\005" +
-      "round\022\036\n\ncommitters\030\003 \003(\005R\ncommitters\022\034\n" +
-      "\tabsentees\030\004 \003(\005R\tabsentees\022\034\n\tsignature" +
-      "\030\005 \001(\014R\tsignature\"{\n\010VoteInfo\022$\n\004type\030\001 " +
-      "\001(\0162\020.pactus.VoteTypeR\004type\022\024\n\005voter\030\002 \001" +
-      "(\tR\005voter\022\035\n\nblock_hash\030\003 \001(\014R\tblockHash" +
-      "\022\024\n\005round\030\004 \001(\005R\005round\"\227\001\n\rConsensusInfo" +
-      "\022\030\n\007address\030\001 \001(\tR\007address\022\026\n\006Active\030\002 \001" +
-      "(\010R\006Active\022\026\n\006height\030\003 \001(\rR\006height\022\024\n\005ro" +
-      "und\030\004 \001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.pactus" +
-      ".VoteInfoR\005votes*H\n\016BlockVerbosity\022\016\n\nBL" +
-      "OCK_DATA\020\000\022\016\n\nBLOCK_INFO\020\001\022\026\n\022BLOCK_TRAN" +
-      "SACTIONS\020\002*\\\n\010VoteType\022\020\n\014VOTE_UNKNOWN\020\000" +
-      "\022\020\n\014VOTE_PREPARE\020\001\022\022\n\016VOTE_PRECOMMIT\020\002\022\030" +
-      "\n\024VOTE_CHANGE_PROPOSER\020\0032\246\006\n\nBlockchain\022" +
-      "=\n\010GetBlock\022\027.pactus.GetBlockRequest\032\030.p" +
-      "actus.GetBlockResponse\022I\n\014GetBlockHash\022\033" +
-      ".pactus.GetBlockHashRequest\032\034.pactus.Get" +
-      "BlockHashResponse\022O\n\016GetBlockHeight\022\035.pa" +
-      "ctus.GetBlockHeightRequest\032\036.pactus.GetB" +
-      "lockHeightResponse\022X\n\021GetBlockchainInfo\022" +
-      " .pactus.GetBlockchainInfoRequest\032!.pact" +
-      "us.GetBlockchainInfoResponse\022U\n\020GetConse" +
-      "nsusInfo\022\037.pactus.GetConsensusInfoReques" +
-      "t\032 .pactus.GetConsensusInfoResponse\022C\n\nG" +
-      "etAccount\022\031.pactus.GetAccountRequest\032\032.p" +
-      "actus.GetAccountResponse\022S\n\022GetAccountBy" +
-      "Number\022!.pactus.GetAccountByNumberReques" +
-      "t\032\032.pactus.GetAccountResponse\022I\n\014GetVali" +
-      "dator\022\033.pactus.GetValidatorRequest\032\034.pac" +
-      "tus.GetValidatorResponse\022Y\n\024GetValidator" +
-      "ByNumber\022#.pactus.GetValidatorByNumberRe" +
-      "quest\032\034.pactus.GetValidatorResponse\022L\n\rG" +
-      "etValidators\022\034.pactus.GetValidatorsReque" +
-      "st\032\035.pactus.GetValidatorsResponseBE\n\021pac" +
-      "tus.blockchainZ0github.com/pactus-projec" +
-      "t/pactus/www/grpc/pactusb\006proto3"
+      "tInfoR\007account\"\026\n\024GetValidatorsRequest\"\036" +
+      "\n\034GetValidatorAddressesRequest\"=\n\035GetVal" +
+      "idatorAddressesResponse\022\034\n\taddresses\030\001 \003" +
+      "(\tR\taddresses\"/\n\023GetValidatorRequest\022\030\n\007" +
+      "address\030\001 \001(\tR\007address\"5\n\033GetValidatorBy" +
+      "NumberRequest\022\026\n\006number\030\001 \001(\005R\006number\"N\n" +
+      "\025GetValidatorsResponse\0225\n\nvalidators\030\001 \003" +
+      "(\0132\025.pactus.ValidatorInfoR\nvalidators\"K\n" +
+      "\024GetValidatorResponse\0223\n\tvalidator\030\001 \001(\013" +
+      "2\025.pactus.ValidatorInfoR\tvalidator\"_\n\017Ge" +
+      "tBlockRequest\022\026\n\006height\030\001 \001(\rR\006height\0224\n" +
+      "\tverbosity\030\002 \001(\0162\026.pactus.BlockVerbosity" +
+      "R\tverbosity\"\203\002\n\020GetBlockResponse\022\026\n\006heig" +
+      "ht\030\001 \001(\rR\006height\022\022\n\004hash\030\002 \001(\014R\004hash\022\022\n\004" +
+      "data\030\003 \001(\014R\004data\022\035\n\nblock_time\030\004 \001(\rR\tbl" +
+      "ockTime\022/\n\006header\030\005 \001(\0132\027.pactus.BlockHe" +
+      "aderInfoR\006header\0224\n\tprev_cert\030\006 \001(\0132\027.pa" +
+      "ctus.CertificateInfoR\010prevCert\022)\n\003txs\030\007 " +
+      "\003(\0132\027.pactus.TransactionInfoR\003txs\"-\n\023Get" +
+      "BlockHashRequest\022\026\n\006height\030\001 \001(\rR\006height" +
+      "\"*\n\024GetBlockHashResponse\022\022\n\004hash\030\001 \001(\014R\004" +
+      "hash\"+\n\025GetBlockHeightRequest\022\022\n\004hash\030\001 " +
+      "\001(\014R\004hash\"0\n\026GetBlockHeightResponse\022\026\n\006h" +
+      "eight\030\001 \001(\rR\006height\"\032\n\030GetBlockchainInfo" +
+      "Request\"\325\002\n\031GetBlockchainInfoResponse\022*\n" +
+      "\021last_block_height\030\001 \001(\rR\017lastBlockHeigh" +
+      "t\022&\n\017last_block_hash\030\002 \001(\014R\rlastBlockHas" +
+      "h\022%\n\016total_accounts\030\003 \001(\005R\rtotalAccounts" +
+      "\022)\n\020total_validators\030\004 \001(\005R\017totalValidat" +
+      "ors\022\037\n\013total_power\030\005 \001(\003R\ntotalPower\022\'\n\017" +
+      "committee_power\030\006 \001(\003R\016committeePower\022H\n" +
+      "\024committee_validators\030\007 \003(\0132\025.pactus.Val" +
+      "idatorInfoR\023committeeValidators\"\031\n\027GetCo" +
+      "nsensusInfoRequest\"O\n\030GetConsensusInfoRe" +
+      "sponse\0223\n\tinstances\030\001 \003(\0132\025.pactus.Conse" +
+      "nsusInfoR\tinstances\"\303\002\n\rValidatorInfo\022\022\n" +
+      "\004hash\030\001 \001(\014R\004hash\022\022\n\004data\030\002 \001(\014R\004data\022\035\n" +
+      "\npublic_key\030\003 \001(\tR\tpublicKey\022\026\n\006number\030\004" +
+      " \001(\005R\006number\022\032\n\010sequence\030\005 \001(\005R\010sequence" +
+      "\022\024\n\005stake\030\006 \001(\003R\005stake\022.\n\023last_bonding_h" +
+      "eight\030\007 \001(\rR\021lastBondingHeight\022,\n\022last_j" +
+      "oined_height\030\010 \001(\rR\020lastJoinedHeight\022)\n\020" +
+      "unbonding_height\030\t \001(\rR\017unbondingHeight\022" +
+      "\030\n\007address\030\n \001(\tR\007address\"\203\001\n\013AccountInf" +
+      "o\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n\004data\030\002 \001(\014R\004dat" +
+      "a\022\026\n\006number\030\003 \001(\005R\006number\022\032\n\010sequence\030\004 " +
+      "\001(\005R\010sequence\022\030\n\007balance\030\005 \001(\003R\007balance\"" +
+      "\304\001\n\017BlockHeaderInfo\022\030\n\007version\030\001 \001(\005R\007ve" +
+      "rsion\022&\n\017prev_block_hash\030\002 \001(\014R\rprevBloc" +
+      "kHash\022\035\n\nstate_root\030\003 \001(\014R\tstateRoot\022%\n\016" +
+      "sortition_seed\030\004 \001(\014R\rsortitionSeed\022)\n\020p" +
+      "roposer_address\030\005 \001(\tR\017proposerAddress\"\227" +
+      "\001\n\017CertificateInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\024" +
+      "\n\005round\030\002 \001(\005R\005round\022\036\n\ncommitters\030\003 \003(\005" +
+      "R\ncommitters\022\034\n\tabsentees\030\004 \003(\005R\tabsente" +
+      "es\022\034\n\tsignature\030\005 \001(\014R\tsignature\"{\n\010Vote" +
+      "Info\022$\n\004type\030\001 \001(\0162\020.pactus.VoteTypeR\004ty" +
+      "pe\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nblock_hash\030\003" +
+      " \001(\014R\tblockHash\022\024\n\005round\030\004 \001(\005R\005round\"\227\001" +
+      "\n\rConsensusInfo\022\030\n\007address\030\001 \001(\tR\007addres" +
+      "s\022\026\n\006Active\030\002 \001(\010R\006Active\022\026\n\006height\030\003 \001(" +
+      "\rR\006height\022\024\n\005round\030\004 \001(\005R\005round\022&\n\005votes" +
+      "\030\005 \003(\0132\020.pactus.VoteInfoR\005votes*H\n\016Block" +
+      "Verbosity\022\016\n\nBLOCK_DATA\020\000\022\016\n\nBLOCK_INFO\020" +
+      "\001\022\026\n\022BLOCK_TRANSACTIONS\020\002*\\\n\010VoteType\022\020\n" +
+      "\014VOTE_UNKNOWN\020\000\022\020\n\014VOTE_PREPARE\020\001\022\022\n\016VOT" +
+      "E_PRECOMMIT\020\002\022\030\n\024VOTE_CHANGE_PROPOSER\020\0032" +
+      "\214\007\n\nBlockchain\022=\n\010GetBlock\022\027.pactus.GetB" +
+      "lockRequest\032\030.pactus.GetBlockResponse\022I\n" +
+      "\014GetBlockHash\022\033.pactus.GetBlockHashReque" +
+      "st\032\034.pactus.GetBlockHashResponse\022O\n\016GetB" +
+      "lockHeight\022\035.pactus.GetBlockHeightReques" +
+      "t\032\036.pactus.GetBlockHeightResponse\022X\n\021Get" +
+      "BlockchainInfo\022 .pactus.GetBlockchainInf" +
+      "oRequest\032!.pactus.GetBlockchainInfoRespo" +
+      "nse\022U\n\020GetConsensusInfo\022\037.pactus.GetCons" +
+      "ensusInfoRequest\032 .pactus.GetConsensusIn" +
+      "foResponse\022C\n\nGetAccount\022\031.pactus.GetAcc" +
+      "ountRequest\032\032.pactus.GetAccountResponse\022" +
+      "S\n\022GetAccountByNumber\022!.pactus.GetAccoun" +
+      "tByNumberRequest\032\032.pactus.GetAccountResp" +
+      "onse\022I\n\014GetValidator\022\033.pactus.GetValidat" +
+      "orRequest\032\034.pactus.GetValidatorResponse\022" +
+      "Y\n\024GetValidatorByNumber\022#.pactus.GetVali" +
+      "datorByNumberRequest\032\034.pactus.GetValidat" +
+      "orResponse\022d\n\025GetValidatorAddresses\022$.pa" +
+      "ctus.GetValidatorAddressesRequest\032%.pact" +
+      "us.GetValidatorAddressesResponse\022L\n\rGetV" +
+      "alidators\022\034.pactus.GetValidatorsRequest\032" +
+      "\035.pactus.GetValidatorsResponseBE\n\021pactus" +
+      ".blockchainZ0github.com/pactus-project/p" +
+      "actus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -17404,122 +18432,134 @@ public final class BlockchainOuterClass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetValidatorsRequest_descriptor,
         new java.lang.String[] { });
-    internal_static_pactus_GetValidatorRequest_descriptor =
+    internal_static_pactus_GetValidatorAddressesRequest_descriptor =
       getDescriptor().getMessageTypes().get(4);
+    internal_static_pactus_GetValidatorAddressesRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_GetValidatorAddressesRequest_descriptor,
+        new java.lang.String[] { });
+    internal_static_pactus_GetValidatorAddressesResponse_descriptor =
+      getDescriptor().getMessageTypes().get(5);
+    internal_static_pactus_GetValidatorAddressesResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_GetValidatorAddressesResponse_descriptor,
+        new java.lang.String[] { "Addresses", });
+    internal_static_pactus_GetValidatorRequest_descriptor =
+      getDescriptor().getMessageTypes().get(6);
     internal_static_pactus_GetValidatorRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetValidatorRequest_descriptor,
         new java.lang.String[] { "Address", });
     internal_static_pactus_GetValidatorByNumberRequest_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_pactus_GetValidatorByNumberRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetValidatorByNumberRequest_descriptor,
         new java.lang.String[] { "Number", });
     internal_static_pactus_GetValidatorsResponse_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_pactus_GetValidatorsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetValidatorsResponse_descriptor,
         new java.lang.String[] { "Validators", });
     internal_static_pactus_GetValidatorResponse_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_pactus_GetValidatorResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetValidatorResponse_descriptor,
         new java.lang.String[] { "Validator", });
     internal_static_pactus_GetBlockRequest_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_pactus_GetBlockRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockRequest_descriptor,
         new java.lang.String[] { "Height", "Verbosity", });
     internal_static_pactus_GetBlockResponse_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(11);
     internal_static_pactus_GetBlockResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockResponse_descriptor,
         new java.lang.String[] { "Height", "Hash", "Data", "BlockTime", "Header", "PrevCert", "Txs", });
     internal_static_pactus_GetBlockHashRequest_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(12);
     internal_static_pactus_GetBlockHashRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockHashRequest_descriptor,
         new java.lang.String[] { "Height", });
     internal_static_pactus_GetBlockHashResponse_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(13);
     internal_static_pactus_GetBlockHashResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockHashResponse_descriptor,
         new java.lang.String[] { "Hash", });
     internal_static_pactus_GetBlockHeightRequest_descriptor =
-      getDescriptor().getMessageTypes().get(12);
+      getDescriptor().getMessageTypes().get(14);
     internal_static_pactus_GetBlockHeightRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockHeightRequest_descriptor,
         new java.lang.String[] { "Hash", });
     internal_static_pactus_GetBlockHeightResponse_descriptor =
-      getDescriptor().getMessageTypes().get(13);
+      getDescriptor().getMessageTypes().get(15);
     internal_static_pactus_GetBlockHeightResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockHeightResponse_descriptor,
         new java.lang.String[] { "Height", });
     internal_static_pactus_GetBlockchainInfoRequest_descriptor =
-      getDescriptor().getMessageTypes().get(14);
+      getDescriptor().getMessageTypes().get(16);
     internal_static_pactus_GetBlockchainInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockchainInfoRequest_descriptor,
         new java.lang.String[] { });
     internal_static_pactus_GetBlockchainInfoResponse_descriptor =
-      getDescriptor().getMessageTypes().get(15);
+      getDescriptor().getMessageTypes().get(17);
     internal_static_pactus_GetBlockchainInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockchainInfoResponse_descriptor,
         new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "TotalAccounts", "TotalValidators", "TotalPower", "CommitteePower", "CommitteeValidators", });
     internal_static_pactus_GetConsensusInfoRequest_descriptor =
-      getDescriptor().getMessageTypes().get(16);
+      getDescriptor().getMessageTypes().get(18);
     internal_static_pactus_GetConsensusInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetConsensusInfoRequest_descriptor,
         new java.lang.String[] { });
     internal_static_pactus_GetConsensusInfoResponse_descriptor =
-      getDescriptor().getMessageTypes().get(17);
+      getDescriptor().getMessageTypes().get(19);
     internal_static_pactus_GetConsensusInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetConsensusInfoResponse_descriptor,
         new java.lang.String[] { "Instances", });
     internal_static_pactus_ValidatorInfo_descriptor =
-      getDescriptor().getMessageTypes().get(18);
+      getDescriptor().getMessageTypes().get(20);
     internal_static_pactus_ValidatorInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_ValidatorInfo_descriptor,
         new java.lang.String[] { "Hash", "Data", "PublicKey", "Number", "Sequence", "Stake", "LastBondingHeight", "LastJoinedHeight", "UnbondingHeight", "Address", });
     internal_static_pactus_AccountInfo_descriptor =
-      getDescriptor().getMessageTypes().get(19);
+      getDescriptor().getMessageTypes().get(21);
     internal_static_pactus_AccountInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_AccountInfo_descriptor,
         new java.lang.String[] { "Hash", "Data", "Number", "Sequence", "Balance", });
     internal_static_pactus_BlockHeaderInfo_descriptor =
-      getDescriptor().getMessageTypes().get(20);
+      getDescriptor().getMessageTypes().get(22);
     internal_static_pactus_BlockHeaderInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_BlockHeaderInfo_descriptor,
         new java.lang.String[] { "Version", "PrevBlockHash", "StateRoot", "SortitionSeed", "ProposerAddress", });
     internal_static_pactus_CertificateInfo_descriptor =
-      getDescriptor().getMessageTypes().get(21);
+      getDescriptor().getMessageTypes().get(23);
     internal_static_pactus_CertificateInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_CertificateInfo_descriptor,
         new java.lang.String[] { "Hash", "Round", "Committers", "Absentees", "Signature", });
     internal_static_pactus_VoteInfo_descriptor =
-      getDescriptor().getMessageTypes().get(22);
+      getDescriptor().getMessageTypes().get(24);
     internal_static_pactus_VoteInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_VoteInfo_descriptor,
         new java.lang.String[] { "Type", "Voter", "BlockHash", "Round", });
     internal_static_pactus_ConsensusInfo_descriptor =
-      getDescriptor().getMessageTypes().get(23);
+      getDescriptor().getMessageTypes().get(25);
     internal_static_pactus_ConsensusInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_ConsensusInfo_descriptor,

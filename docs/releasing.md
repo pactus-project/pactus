@@ -35,9 +35,9 @@ Let's create environment variables for the release version.
 For the rest of this document, we will use these environment variables in the commands.
 
 ```bash
-PRV_VER="0.11.0"
-CUR_VER="0.12.0"
-NEXT_VER="0.13.0"
+PRV_VER="0.12.0"
+CUR_VER="0.13.0"
+NEXT_VER="0.14.0"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 ```
@@ -58,7 +58,7 @@ Sometimes you may need to amend the changelog manually.
 Then, add links to the CHANGELOG:
 
 ```bash
-sed -E -i "s/## v${CUR_VER} /## [${CUR_VER}](https:\/\/github.com\/pactus-project\/pactus\/compare\/v${PRV_VER}...v${CUR_VER})/" CHANGELOG.md
+sed -E -i "s/## v${CUR_VER} /## [${CUR_VER}](https:\/\/github.com\/pactus-project\/pactus\/compare\/v${PRV_VER}...v${CUR_VER})/g" CHANGELOG.md
 sed -E -i 's/\(#([0-9]+)\)/([#\1](https:\/\/github.com\/pactus-project\/pactus\/pull\/\1))/g' CHANGELOG.md
 ```
 
@@ -68,7 +68,7 @@ Create a new PR against the `main` branch:
 
 ```bash
 git checkout -b releasing_${CUR_VER}
-git commit -a -m "chore: Releasing version ${CUR_VER}
+git commit -a -m "chore: releasing version ${CUR_VER}"
 git push origin HEAD
 ```
 

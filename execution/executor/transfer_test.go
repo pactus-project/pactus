@@ -30,6 +30,7 @@ func checkTotalCoin(t *testing.T, fee int64) {
 	for _, acc := range tSandbox.TestStore.Accounts {
 		total += acc.Balance()
 	}
+
 	for _, val := range tSandbox.TestStore.Validators {
 		total += val.Stake()
 	}

@@ -294,6 +294,37 @@ public final class BlockchainGrpc {
     return getGetValidatorByNumberMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest,
+      pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse> getGetValidatorAddressesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetValidatorAddresses",
+      requestType = pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest.class,
+      responseType = pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest,
+      pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse> getGetValidatorAddressesMethod() {
+    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest, pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse> getGetValidatorAddressesMethod;
+    if ((getGetValidatorAddressesMethod = BlockchainGrpc.getGetValidatorAddressesMethod) == null) {
+      synchronized (BlockchainGrpc.class) {
+        if ((getGetValidatorAddressesMethod = BlockchainGrpc.getGetValidatorAddressesMethod) == null) {
+          BlockchainGrpc.getGetValidatorAddressesMethod = getGetValidatorAddressesMethod =
+              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest, pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetValidatorAddresses"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetValidatorAddresses"))
+              .build();
+        }
+      }
+    }
+    return getGetValidatorAddressesMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest,
       pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> getGetValidatorsMethod;
 
@@ -438,6 +469,13 @@ public final class BlockchainGrpc {
 
     /**
      */
+    public void getValidatorAddresses(pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetValidatorAddressesMethod(), responseObserver);
+    }
+
+    /**
+     */
     public void getValidators(pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest request,
         io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetValidatorsMethod(), responseObserver);
@@ -508,6 +546,13 @@ public final class BlockchainGrpc {
                 pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest,
                 pactus.blockchain.BlockchainOuterClass.GetValidatorResponse>(
                   this, METHODID_GET_VALIDATOR_BY_NUMBER)))
+          .addMethod(
+            getGetValidatorAddressesMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest,
+                pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse>(
+                  this, METHODID_GET_VALIDATOR_ADDRESSES)))
           .addMethod(
             getGetValidatorsMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -607,6 +652,14 @@ public final class BlockchainGrpc {
 
     /**
      */
+    public void getValidatorAddresses(pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetValidatorAddressesMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
     public void getValidators(pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest request,
         io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
@@ -689,6 +742,13 @@ public final class BlockchainGrpc {
     public pactus.blockchain.BlockchainOuterClass.GetValidatorResponse getValidatorByNumber(pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetValidatorByNumberMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse getValidatorAddresses(pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetValidatorAddressesMethod(), getCallOptions(), request);
     }
 
     /**
@@ -787,6 +847,14 @@ public final class BlockchainGrpc {
 
     /**
      */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse> getValidatorAddresses(
+        pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetValidatorAddressesMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
     public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> getValidators(
         pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
@@ -803,7 +871,8 @@ public final class BlockchainGrpc {
   private static final int METHODID_GET_ACCOUNT_BY_NUMBER = 6;
   private static final int METHODID_GET_VALIDATOR = 7;
   private static final int METHODID_GET_VALIDATOR_BY_NUMBER = 8;
-  private static final int METHODID_GET_VALIDATORS = 9;
+  private static final int METHODID_GET_VALIDATOR_ADDRESSES = 9;
+  private static final int METHODID_GET_VALIDATORS = 10;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -857,6 +926,10 @@ public final class BlockchainGrpc {
         case METHODID_GET_VALIDATOR_BY_NUMBER:
           serviceImpl.getValidatorByNumber((pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest) request,
               (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse>) responseObserver);
+          break;
+        case METHODID_GET_VALIDATOR_ADDRESSES:
+          serviceImpl.getValidatorAddresses((pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse>) responseObserver);
           break;
         case METHODID_GET_VALIDATORS:
           serviceImpl.getValidators((pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest) request,
@@ -932,6 +1005,7 @@ public final class BlockchainGrpc {
               .addMethod(getGetAccountByNumberMethod())
               .addMethod(getGetValidatorMethod())
               .addMethod(getGetValidatorByNumberMethod())
+              .addMethod(getGetValidatorAddressesMethod())
               .addMethod(getGetValidatorsMethod())
               .build();
         }

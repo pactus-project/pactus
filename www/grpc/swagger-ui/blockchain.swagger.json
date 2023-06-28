@@ -480,6 +480,17 @@
         }
       }
     },
+    "pactusGetValidatorAddressesResponse": {
+      "type": "object",
+      "properties": {
+        "addresses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "pactusGetValidatorResponse": {
       "type": "object",
       "properties": {

@@ -151,7 +151,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 		crypto.GenerateTestAddress(), 1000, 1000, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
-	tSandbox.AcceptTestSortition = true
+	tSandbox.TestAcceptSortition = true
 	sortitionTx := tx.NewSortitionTx(block1000000.Stamp(), val3.Sequence()+1, val3.Address(),
 		sortition.GenerateRandomProof())
 	val3Signer.SignMsg(sortitionTx)

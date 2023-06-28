@@ -295,6 +295,21 @@ func TestGetValidators(t *testing.T) {
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }
 
+func TestGetValidatorAddresses(t *testing.T) {
+	conn, client := testBlockchainClient(t)
+
+	t.Run("should return list of validator addresses", func(t *testing.T) {
+		res, err := client.GetValidatorAddresses(tCtx,
+			&pactus.GetValidatorAddressesRequest{})
+
+		assert.NoError(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, 2, len(res.GetAddresses()))
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+}
+
 func TestConsensusInfo(t *testing.T) {
 	conn, client := testBlockchainClient(t)
 

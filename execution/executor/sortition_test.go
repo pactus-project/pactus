@@ -33,7 +33,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 
 	t.Run("Should fail, Invalid address", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, 1, crypto.GenerateTestAddress(), proof)
-		tSandbox.AcceptTestSortition = true
+		tSandbox.TestAcceptSortition = true
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidAddress)
 	})
 
@@ -41,7 +41,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	tSandbox.UpdateValidator(newVal)
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, newVal.Sequence()+1, newVal.Address(), proof)
-		tSandbox.AcceptTestSortition = true
+		tSandbox.TestAcceptSortition = true
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidHeight)
 	})
 
@@ -49,25 +49,25 @@ func TestExecuteSortitionTx(t *testing.T) {
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, newVal.Sequence()+2, newVal.Address(), proof)
-		tSandbox.AcceptTestSortition = true
+		tSandbox.TestAcceptSortition = true
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidSequence)
 	})
 
 	t.Run("Should fail, Invalid proof", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, newVal.Sequence()+1, newVal.Address(), proof)
-		tSandbox.AcceptTestSortition = false
+		tSandbox.TestAcceptSortition = false
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidProof)
 	})
 
 	t.Run("Should fail, Committee has free seats and validator is in the committee", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, existingVal.Sequence()+1, existingVal.Address(), proof)
-		tSandbox.AcceptTestSortition = true
+		tSandbox.TestAcceptSortition = true
 		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidTx)
 	})
 
 	t.Run("Should be ok", func(t *testing.T) {
 		trx := tx.NewSortitionTx(tStamp500000, newVal.Sequence()+1, newVal.Address(), proof)
-		tSandbox.AcceptTestSortition = true
+		tSandbox.TestAcceptSortition = true
 		assert.NoError(t, exe.Execute(trx, tSandbox))
 
 		// Execute again, should fail
@@ -88,7 +88,7 @@ func TestSortitionNonStrictMode(t *testing.T) {
 	val := tSandbox.TestStore.RandomTestVal()
 	proof := sortition.GenerateRandomProof()
 
-	tSandbox.AcceptTestSortition = true
+	tSandbox.TestAcceptSortition = true
 	trx := tx.NewSortitionTx(tStamp500000, val.Sequence(), val.Address(), proof)
 	assert.Error(t, exe1.Execute(trx, tSandbox))
 	assert.NoError(t, exe2.Execute(trx, tSandbox))
@@ -119,7 +119,7 @@ func TestChangePower1(t *testing.T) {
 	proof3 := sortition.GenerateRandomProof()
 
 	tSandbox.TestParams.CommitteeSize = 4
-	tSandbox.AcceptTestSortition = true
+	tSandbox.TestAcceptSortition = true
 	trx1 := tx.NewSortitionTx(tStamp500000, val1.Sequence()+1, val1.Address(), proof1)
 	assert.NoError(t, exe.Execute(trx1, tSandbox))
 
@@ -162,7 +162,7 @@ func TestChangePower2(t *testing.T) {
 	proof4 := sortition.GenerateRandomProof()
 
 	tSandbox.TestParams.CommitteeSize = 7
-	tSandbox.AcceptTestSortition = true
+	tSandbox.TestAcceptSortition = true
 	trx1 := tx.NewSortitionTx(tStamp500000, val1.Sequence()+1, val1.Address(), proof1)
 	assert.NoError(t, exe.Execute(trx1, tSandbox))
 
@@ -196,7 +196,7 @@ func TestOldestDidNotPropose(t *testing.T) {
 	}
 
 	tSandbox.TestParams.CommitteeSize = 7
-	tSandbox.AcceptTestSortition = true
+	tSandbox.TestAcceptSortition = true
 
 	stamp := tStamp500000
 	for i := 0; i < 8; i = i + 2 {

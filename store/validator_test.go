@@ -66,6 +66,22 @@ func TestValidatorBatchSaving(t *testing.T) {
 	})
 }
 
+func TestValidatorAddresses(t *testing.T) {
+	setup(t)
+
+	total := util.RandInt32(100) + 1
+	addrs1 := make([]crypto.Address, 0, total)
+
+	for i := int32(0); i < total; i++ {
+		val, _ := validator.GenerateTestValidator(i)
+		tStore.UpdateValidator(val)
+		addrs1 = append(addrs1, val.Address())
+	}
+
+	addrs2 := tStore.ValidatorAddresses()
+	assert.ElementsMatch(t, addrs1, addrs2)
+}
+
 func TestValidatorByNumber(t *testing.T) {
 	setup(t)
 

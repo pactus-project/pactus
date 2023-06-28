@@ -20,6 +20,8 @@ type Sandbox interface {
 	Validator(crypto.Address) *validator.Validator
 	MakeNewValidator(*bls.PublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
+	UpdatePowerDelta(delta int64)
+	PowerDelta() int64
 
 	VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool
 	Committee() committee.Reader

@@ -7,6 +7,7 @@ import (
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/util"
 )
 
 //go:embed assets/ui/main_window.ui
@@ -43,6 +44,15 @@ func buildMainWindow(nodeModel *nodeModel, walletModel *walletModel) *mainWindow
 		widgetWallet:      widgetWallet,
 	}
 
+	explorerItemMenu := getMenuItem(builder, "id_explorer_menu")
+	explorerItemMenu.Connect("activate", mw.onMenuItemActivateExplorer)
+
+	websiteItemMenu := getMenuItem(builder, "id_website_menu")
+	websiteItemMenu.Connect("activate", mw.onMenuItemActivateWebsite)
+
+	learnItemMenu := getMenuItem(builder, "id_learn_menu")
+	learnItemMenu.Connect("activate", mw.onMenuItemActivateLearn)
+
 	// Map the handlers to callback functions, and connect the signals
 	// to the Builder.
 	signals := map[string]interface{}{
@@ -71,6 +81,24 @@ func (mw *mainWindow) onAbout() {
 
 func (mw *mainWindow) OnTransactionTransfer() {
 	broadcastTransactionSend(mw.widgetWallet.model.wallet)
+}
+
+func (mw *mainWindow) onMenuItemActivateWebsite(_ *gtk.MenuItem) {
+	if err := util.OpenURLInBrowser("https://pactus.org/"); err != nil {
+		fatalErrorCheck(err)
+	}
+}
+
+func (mw *mainWindow) onMenuItemActivateExplorer(_ *gtk.MenuItem) {
+	if err := util.OpenURLInBrowser("https://pactusscan.com/"); err != nil {
+		fatalErrorCheck(err)
+	}
+}
+
+func (mw *mainWindow) onMenuItemActivateLearn(_ *gtk.MenuItem) {
+	if err := util.OpenURLInBrowser("https://pactus.org/learn/"); err != nil {
+		fatalErrorCheck(err)
+	}
 }
 
 func (mw *mainWindow) OnTransactionBond() {

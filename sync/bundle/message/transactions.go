@@ -2,6 +2,7 @@ package message
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/errors"
@@ -35,9 +36,11 @@ func (m *TransactionsMessage) Type() Type {
 }
 
 func (m *TransactionsMessage) Fingerprint() string {
-	var s string
+	var builder strings.Builder
+
 	for _, tx := range m.Transactions {
-		s += fmt.Sprintf("%v ", tx.ID().Fingerprint())
+		builder.WriteString(fmt.Sprintf("%v ", tx.ID().Fingerprint()))
 	}
-	return fmt.Sprintf("{%v: ⌘ [%v]}", len(m.Transactions), s)
+	builder.WriteString(fmt.Sprintf("{%v: ⌘ [%v]}", len(m.Transactions), builder.String()))
+	return builder.String()
 }
