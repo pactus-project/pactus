@@ -31,7 +31,7 @@ func Init() func(c *cli.Cmd) {
 		})
 		restoreOpt := c.String(cli.StringOpt{
 			Name:  "restore",
-			Desc:  "Restore and validate a mnemonic (seed phrase) based on BIP-39",
+			Desc:  "Restore the default_wallet using a mnemonic (seed phrase)",
 			Value: "",
 		})
 
