@@ -538,3 +538,8 @@ func TestMakeWithdrawTx(t *testing.T) {
 		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
 }
+
+func TestCheckMnemonic(t *testing.T) {
+	mnemonic := GenerateMnemonic(128)
+	assert.NoError(t, CheckMnemonic(mnemonic))
+}
