@@ -37,14 +37,12 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 	assistFunc := pageAssistant()
 
 	// --- PageMode
-	mode, radio, pageModeName := pageMode(assistant, assistFunc)
-	assistant.AppendPage(mode)
-	assistant.SetPageType(mode, gtk.ASSISTANT_PAGE_CONTENT)
+	mode, restoreRadio, pageModeName := pageMode(assistant, assistFunc)
 
 	// --- seedGenerate
-	seedGenerate, textViewSeed, pageSeedName := pageSeed(assistant, assistFunc)
+	seedGenerate, textViewSeed, pageSeedGenerateName := pageSeedGenerate(assistant, assistFunc)
 
-	// -- seedGenerate restore
+	// -- seedRestore
 	seedRestore, pageSeedRestoreName := pageSeedRestore(assistant, assistFunc)
 
 	// --- seedConfirm
@@ -70,33 +68,97 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 		gtk.MainQuit()
 	})
 
-	mnemonic := wallet.GenerateMnemonic(128)
+	assistant.AppendPage(mode)          // page 0
+	assistant.AppendPage(seedGenerate)  // page 1
+	assistant.AppendPage(seedConfirm)   // page 2
+	assistant.AppendPage(seedRestore)   // page 3
+	assistant.AppendPage(password)      // page 4
+	assistant.AppendPage(numValidators) // page 5
+	assistant.AppendPage(final)         // page 6
 
+	assistant.SetPageType(mode, gtk.ASSISTANT_PAGE_CONTENT)
+	assistant.SetPageType(seedGenerate, gtk.ASSISTANT_PAGE_CONTENT)
+	assistant.SetPageType(seedConfirm, gtk.ASSISTANT_PAGE_CONTENT)
+	assistant.SetPageType(seedRestore, gtk.ASSISTANT_PAGE_CONTENT)
+	assistant.SetPageType(password, gtk.ASSISTANT_PAGE_CONTENT)
+	assistant.SetPageType(numValidators, gtk.ASSISTANT_PAGE_CONTENT)
+	assistant.SetPageType(final, gtk.ASSISTANT_PAGE_SUMMARY)
+
+	mnemonic := ""
+	prevPageName := ""
 	assistant.Connect("prepare", func(assistant *gtk.Assistant, page *gtk.Widget) {
-		name, err := page.GetName()
+		isRestoreMode := restoreRadio.GetActive()
+		curPageName, err := page.GetName()
 		fatalErrorCheck(err)
 
-		log.Printf("%v - %v\n", assistant.GetCurrentPage(), name)
-		switch name {
+		log.Printf("%v - %v (restore: %v, prev: %v)\n",
+			assistant.GetCurrentPage(), curPageName, isRestoreMode, prevPageName)
+		switch curPageName {
 		case pageModeName:
 			{
 				assistant.SetPageComplete(mode, true)
+				assistant.UpdateButtonsState()
 			}
-		case pageSeedName:
+
+		case pageSeedGenerateName:
 			{
-				text := getTextViewContent(textViewSeed)
-				if text == "" {
+				if isRestoreMode {
+					if prevPageName == pageSeedGenerateName {
+						// backward
+						log.Printf("jumping backward from seedGenerate page")
+						assistant.PreviousPage()
+					} else if prevPageName == pageModeName {
+						// forward
+						log.Printf("jumping forward from seedGenerate page")
+						assistant.NextPage()
+					} else {
+						log.Fatalf("invalid1 page order, pageName: %v, prevPageName: %v",
+							curPageName, prevPageName)
+					}
+				} else {
+					mnemonic = wallet.GenerateMnemonic(128)
 					setTextViewContent(textViewSeed, mnemonic)
 				}
 				assistant.SetPageComplete(seedGenerate, true)
 			}
-		case pageSeedRestoreName:
-			{
-				assistant.SetPageComplete(seedRestore, true)
-			}
 		case pageSeedConfirmName:
 			{
-				assistant.SetPageComplete(seedConfirm, true)
+				if isRestoreMode {
+					if prevPageName == pageSeedGenerateName {
+						// backward
+						log.Printf("jumping backward from seedConfirm page")
+						assistant.PreviousPage()
+					} else if prevPageName == pageModeName {
+						// forward
+						log.Printf("jumping forward from seedConfirm page")
+						assistant.NextPage()
+					} else {
+						log.Fatalf("invalid2 page order, pageName: %v, prevPageName: %v",
+							curPageName, prevPageName)
+					}
+				} else {
+					assistant.SetPageComplete(seedConfirm, false)
+				}
+			}
+		case pageSeedRestoreName:
+			{
+				if !isRestoreMode {
+					if prevPageName == pageSeedRestoreName {
+						// backward
+						log.Printf("jumping backward from seedRestore page")
+						assistant.PreviousPage()
+					} else if prevPageName == pageSeedConfirmName {
+						// forward
+						log.Printf("jumping forward from seedRestore page")
+						assistant.NextPage()
+					} else {
+						log.Fatalf("invalid page order, pageName: %v, prevPageName: %v",
+							curPageName, prevPageName)
+					}
+				} else {
+					assistant.SetPageComplete(seedGenerate, true)
+				}
+
 			}
 		case pagePasswordName:
 			{
@@ -145,44 +207,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 				setTextViewContent(textViewNodeInfo, nodeInfo)
 			}
 		}
-	})
-
-	assistant.AppendPage(seedGenerate)
-	assistant.AppendPage(seedConfirm)
-	assistant.AppendPage(seedRestore)
-	assistant.AppendPage(password)
-	assistant.AppendPage(numValidators)
-	assistant.AppendPage(final)
-	assistant.SetPageType(seedGenerate, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(seedConfirm, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(seedRestore, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(password, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(numValidators, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(final, gtk.ASSISTANT_PAGE_SUMMARY)
-
-	pageAppender := func(restoreMode bool) {
-		fmt.Println("called appender ", restoreMode)
-		if restoreMode {
-			assistant.RemovePage(2)
-			assistant.RemovePage(1)
-			fmt.Println("restore")
-			assistant.InsertPage(seedRestore, 1)
-			assistant.SetPageType(seedRestore, gtk.ASSISTANT_PAGE_CONTENT)
-		} else {
-			assistant.RemovePage(1)
-			fmt.Println("create")
-			assistant.InsertPage(seedGenerate, 1)
-			assistant.InsertPage(seedConfirm, 2)
-			assistant.SetPageType(seedGenerate, gtk.ASSISTANT_PAGE_CONTENT)
-			assistant.SetPageType(seedConfirm, gtk.ASSISTANT_PAGE_CONTENT)
-		}
-
-	}
-
-	pageAppender(false)
-
-	radio.Connect("toggled", func() {
-		pageAppender(radio.GetActive())
+		prevPageName = curPageName
 	})
 
 	assistant.SetModal(true)
@@ -258,8 +283,8 @@ func pageMode(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, 
 	return mode, restoreWalletRadio, pageModeName
 }
 
-func pageSeed(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.TextView, string) {
-	seed := new(gtk.Widget)
+func pageSeedGenerate(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.TextView, string) {
+	pageWidget := new(gtk.Widget)
 	textViewSeed, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
 
@@ -269,7 +294,7 @@ func pageSeed(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, 
 	textViewSeed.SetMonospace(true)
 	textViewSeed.SetSizeRequest(0, 80)
 
-	pageSeedName := "page_seed"
+	pageSeedName := "page_seed_generate"
 	pageSeedTitle := "Wallet seed"
 	pageSeedSubject := "Your wallet generation seed is:"
 	pageSeedDesc := `Please write these 12 words on paper.
@@ -279,44 +304,56 @@ This seed will allow you to recover your wallet in case of computer failure.
   - Never type it on a website.
   - Do not store it electronically.`
 
-	seed = assistFunc(
+	pageWidget = assistFunc(
 		assistant,
 		textViewSeed,
 		pageSeedName,
 		pageSeedTitle,
 		pageSeedSubject,
 		pageSeedDesc)
-	return seed, textViewSeed, pageSeedName
+	return pageWidget, textViewSeed, pageSeedName
 }
 
 func pageSeedRestore(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, string) {
-	seed := new(gtk.Widget)
-	textViewSeed, err := gtk.TextViewNew()
+	pageWidget := new(gtk.Widget)
+	textViewRestoreSeed, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
 
-	setMargin(textViewSeed, 6, 6, 6, 6)
-	textViewSeed.SetWrapMode(gtk.WRAP_WORD)
-	textViewSeed.SetEditable(true)
-	textViewSeed.SetMonospace(true)
-	textViewSeed.SetSizeRequest(0, 80)
+	setMargin(textViewRestoreSeed, 6, 6, 6, 6)
+	textViewRestoreSeed.SetWrapMode(gtk.WRAP_WORD)
+	textViewRestoreSeed.SetEditable(true)
+	textViewRestoreSeed.SetMonospace(true)
+	textViewRestoreSeed.SetSizeRequest(0, 80)
+
+	textViewRestoreSeed.Connect("paste_clipboard", func(textView *gtk.TextView) {
+		showInfoDialog(assistant, "Opps, no copy paste!")
+		textViewRestoreSeed.StopEmission("paste_clipboard")
+	})
+
+	seedConfirmTextBuffer, err := textViewRestoreSeed.GetBuffer()
+	fatalErrorCheck(err)
+
+	seedConfirmTextBuffer.Connect("changed", func(buf *gtk.TextBuffer) {
+
+	})
 
 	pageSeedName := "page_seed_restore"
 	pageSeedTitle := "Wallet seed restore"
 	pageSeedSubject := "Please enter your seed:"
 	pageSeedDesc := "Please enter your 12 words mnemonics backup to restore your wallet."
 
-	seed = assistFunc(
+	pageWidget = assistFunc(
 		assistant,
-		textViewSeed,
+		textViewRestoreSeed,
 		pageSeedName,
 		pageSeedTitle,
 		pageSeedSubject,
 		pageSeedDesc)
-	return seed, pageSeedName
+	return pageWidget, pageSeedName
 }
 
 func pageSeedConfirm(assistant *gtk.Assistant, assistFunc assistantFunc, textViewSeed *gtk.TextView) (*gtk.Widget, string) {
-	confirm := new(gtk.Widget)
+	pageWidget := new(gtk.Widget)
 	textViewConfirmSeed, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
 
@@ -341,9 +378,9 @@ func pageSeedConfirm(assistant *gtk.Assistant, assistFunc assistantFunc, textVie
 		mnemonic2 = space.ReplaceAllString(mnemonic2, " ")
 		mnemonic2 = strings.TrimSpace(mnemonic2)
 		if mnemonic1 == mnemonic2 {
-			assistant.SetPageComplete(confirm, true)
+			assistant.SetPageComplete(pageWidget, true)
 		} else {
-			assistant.SetPageComplete(confirm, false)
+			assistant.SetPageComplete(pageWidget, false)
 		}
 	})
 
@@ -353,18 +390,18 @@ func pageSeedConfirm(assistant *gtk.Assistant, assistFunc assistantFunc, textVie
 	pageSeedConfirmDesc := `Your seed is important!
 To make sure that you have properly saved your seed, please retype it here.`
 
-	confirm = assistFunc(
+	pageWidget = assistFunc(
 		assistant,
 		textViewConfirmSeed,
 		pageSeedConfirmName,
 		pageSeedConfirmTitle,
 		pageSeedConfirmSubject,
 		pageSeedConfirmDesc)
-	return confirm, pageSeedConfirmName
+	return pageWidget, pageSeedConfirmName
 }
 
 func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.Entry, string) {
-	password := new(gtk.Widget)
+	pageWidget := new(gtk.Widget)
 	entryPassword, err := gtk.EntryNew()
 	fatalErrorCheck(err)
 
@@ -403,9 +440,9 @@ func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widg
 		fatalErrorCheck(err)
 
 		if pass1 == pass2 {
-			assistant.SetPageComplete(password, true)
+			assistant.SetPageComplete(pageWidget, true)
 		} else {
-			assistant.SetPageComplete(password, false)
+			assistant.SetPageComplete(pageWidget, false)
 		}
 	}
 	entryPassword.Connect("changed", func(entry *gtk.Entry) {
@@ -421,18 +458,18 @@ func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widg
 	pagePasswordSubject := "Enter password for your wallet:"
 	pagePsswrdDesc := "Please choose a strong password for your wallet."
 
-	password = assistFunc(
+	pageWidget = assistFunc(
 		assistant,
 		grid,
 		pagePasswordName,
 		pagePasswordTitle,
 		pagePasswordSubject,
 		pagePsswrdDesc)
-	return password, entryPassword, pagePasswordName
+	return pageWidget, entryPassword, pagePasswordName
 }
 
 func pageNumValidators(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.ListStore, *gtk.ComboBox, string) {
-	validator := new(gtk.Widget)
+	pageWidget := new(gtk.Widget)
 	lsNumValidators, err := gtk.ListStoreNew(glib.TYPE_INT)
 	fatalErrorCheck(err)
 
@@ -473,18 +510,18 @@ func pageNumValidators(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk
 You can define validators based on the amount of coins you want to stake.
 For more information, look <a href="https://pactus.org/user-guides/run-pactus-gui/">here</a>`
 
-	validator = assistFunc(
+	pageWidget = assistFunc(
 		assistant,
 		grid,
 		pageNumValidatorsName,
 		pageNumValidatorsTitle,
 		pageNumValidatorsSubject,
 		pageNumValidatorsDesc)
-	return validator, lsNumValidators, comboNumValidators, pageNumValidatorsName
+	return pageWidget, lsNumValidators, comboNumValidators, pageNumValidatorsName
 }
 
 func pageFinal(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.TextView, string) {
-	final := new(gtk.Widget)
+	pageWidget := new(gtk.Widget)
 	textViewNodeInfo, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
 
@@ -505,12 +542,12 @@ func pageFinal(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget,
 	pageFinalDesc := `Congratulation. Your node is initialized successfully.
 Now you are ready to start the node!`
 
-	final = assistFunc(
+	pageWidget = assistFunc(
 		assistant,
 		scrolledWindow,
 		pageFinalName,
 		pageFinalTitle,
 		pageFinalSubject,
 		pageFinalDesc)
-	return final, textViewNodeInfo, pageFinalName
+	return pageWidget, textViewNodeInfo, pageFinalName
 }
