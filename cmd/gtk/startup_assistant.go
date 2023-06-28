@@ -43,7 +43,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 	seedGenerate, textViewSeed, pageSeedGenerateName := pageSeedGenerate(assistant, assistFunc)
 
 	// -- seedRestore
-	seedRestore, pageSeedRestoreName := pageSeedRestore(assistant, assistFunc)
+	seedRestore, textViewRestoreSeed, pageSeedRestoreName := pageSeedRestore(assistant, assistFunc)
 
 	// --- seedConfirm
 	seedConfirm, pageSeedConfirmName := pageSeedConfirm(assistant, assistFunc, textViewSeed)
@@ -112,13 +112,12 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 						log.Printf("jumping forward from seedGenerate page")
 						assistant.NextPage()
 					} else {
-						log.Fatalf("invalid1 page order, pageName: %v, prevPageName: %v",
+						log.Fatalf("invalid page order, pageName: %v, prevPageName: %v",
 							curPageName, prevPageName)
 					}
-				} else {
-					mnemonic = wallet.GenerateMnemonic(128)
-					setTextViewContent(textViewSeed, mnemonic)
 				}
+				mnemonic = wallet.GenerateMnemonic(128)
+				setTextViewContent(textViewSeed, mnemonic)
 				assistant.SetPageComplete(seedGenerate, true)
 			}
 		case pageSeedConfirmName:
@@ -162,6 +161,14 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 			}
 		case pagePasswordName:
 			{
+				if isRestoreMode {
+					mnemonic = getTextViewContent(textViewRestoreSeed)
+
+					if err := wallet.CheckMnemonic(mnemonic); err != nil {
+						showErrorDialog(assistant, "mnemonic is invalid: "+err.Error())
+						assistant.PreviousPage()
+					}
+				}
 				assistant.SetPageComplete(password, true)
 			}
 		case pageNumValidatorsName:
@@ -314,7 +321,7 @@ This seed will allow you to recover your wallet in case of computer failure.
 	return pageWidget, textViewSeed, pageSeedName
 }
 
-func pageSeedRestore(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, string) {
+func pageSeedRestore(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.TextView, string) {
 	pageWidget := new(gtk.Widget)
 	textViewRestoreSeed, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
@@ -330,11 +337,15 @@ func pageSeedRestore(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.W
 		textViewRestoreSeed.StopEmission("paste_clipboard")
 	})
 
-	seedConfirmTextBuffer, err := textViewRestoreSeed.GetBuffer()
+	seedRestoreTextBuffer, err := textViewRestoreSeed.GetBuffer()
 	fatalErrorCheck(err)
 
-	seedConfirmTextBuffer.Connect("changed", func(buf *gtk.TextBuffer) {
-
+	seedRestoreTextBuffer.Connect("changed", func(buf *gtk.TextBuffer) {
+		if len(strings.Split(getTextViewContent(textViewRestoreSeed), " ")) == 12 {
+			assistant.SetPageComplete(pageWidget, true)
+		} else {
+			assistant.SetPageComplete(pageWidget, false)
+		}
 	})
 
 	pageSeedName := "page_seed_restore"
@@ -349,7 +360,7 @@ func pageSeedRestore(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.W
 		pageSeedTitle,
 		pageSeedSubject,
 		pageSeedDesc)
-	return pageWidget, pageSeedName
+	return pageWidget, textViewRestoreSeed, pageSeedName
 }
 
 func pageSeedConfirm(assistant *gtk.Assistant, assistFunc assistantFunc, textViewSeed *gtk.TextView) (*gtk.Widget, string) {
