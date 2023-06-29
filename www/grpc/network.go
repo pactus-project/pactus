@@ -17,13 +17,12 @@ type networkServer struct {
 
 func (s *networkServer) GetNetworkInfo(_ context.Context,
 	_ *pactus.GetNetworkInfoRequest) (*pactus.GetNetworkInfoResponse, error) {
-	// Create response peers
-	rps := make([]*pactus.PeerInfo, int32(len(s.sync.Peers())))
+	peerset := s.sync.PeerSet()
+	peers := make([]*pactus.PeerInfo, peerset.Len())
 
-	// cast to response peers from synced peers
-	for i, peer := range s.sync.Peers() {
-		rps[i] = new(pactus.PeerInfo)
-		p := rps[i]
+	for i, peer := range peerset.GetPeerList() {
+		peers[i] = new(pactus.PeerInfo)
+		p := peers[i]
 
 		bs, err := cbor.Marshal(peer.Agent)
 		if err != nil {
@@ -46,24 +45,23 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		p.SendFailed = int32(peer.SendFailed)
 
 		for key := range peer.ConsensusKeys {
-			p.Keys = append(p.Keys, key.String())
+			p.ConsensusKeys = append(p.ConsensusKeys, key.String())
 		}
 	}
 
 	return &pactus.GetNetworkInfoResponse{
-		SelfId: []byte(s.sync.SelfID()),
-		Peers:  rps,
+		TotalSentBytes:     int32(peerset.TotalSentBytes()),
+		TotalReceivedBytes: int32(peerset.TotalReceivedBytes()),
+		StartedAt:          peerset.StartedAt().Unix(),
+		Peers:              peers,
 	}, nil
 }
 
-func (s *networkServer) GetPeerInfo(_ context.Context,
-	_ *pactus.GetPeerInfoRequest) (*pactus.GetPeerInfoResponse, error) {
-	return &pactus.GetPeerInfoResponse{
-		Peer: &pactus.PeerInfo{
-			Moniker: s.sync.Moniker(),
-			Agent:   version.Agent(),
-			PeerId:  []byte(s.sync.SelfID()),
-		},
-		// TODO: Update me
+func (s *networkServer) GetNodeInfo(_ context.Context,
+	_ *pactus.GetNodeInfoRequest) (*pactus.GetNodeInfoResponse, error) {
+	return &pactus.GetNodeInfoResponse{
+		Moniker: s.sync.Moniker(),
+		Agent:   version.Agent(),
+		PeerId:  []byte(s.sync.SelfID()),
 	}, nil
 }

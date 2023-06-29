@@ -39,8 +39,8 @@ http:
     - selector: pactus.Network.GetNetworkInfo
       get: "/v1/network/info"
 
-    - selector: pactus.Network.GetPeerInfo
-      get: "/v1/network/peer_info"
+    - selector: pactus.Network.GetNodeInfo
+      get: "/v1/network/node"
 
     # Wallet APIs
     - selector: pactus.Wallet.CreateWallet

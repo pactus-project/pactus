@@ -14,8 +14,8 @@ import (
 var _ Synchronizer = &MockSync{}
 
 type MockSync struct {
-	ID      peer.ID
-	PeerSet *peerset.PeerSet
+	TestID      peer.ID
+	TestPeerSet *peerset.PeerSet
 }
 
 func MockingSync() *MockSync {
@@ -43,8 +43,8 @@ func MockingSync() *MockSync {
 	ps.UpdateHeight(pid1, util.RandUint32(100000))
 
 	return &MockSync{
-		ID:      network.TestRandomPeerID(),
-		PeerSet: ps,
+		TestID:      network.TestRandomPeerID(),
+		TestPeerSet: ps,
 	}
 }
 
@@ -58,12 +58,12 @@ func (m *MockSync) Fingerprint() string {
 }
 
 func (m *MockSync) SelfID() peer.ID {
-	return m.ID
+	return m.TestID
 }
 
 func (m *MockSync) Moniker() string {
 	return "test-moniker"
 }
-func (m *MockSync) Peers() []peerset.Peer {
-	return m.PeerSet.GetPeerList()
+func (m *MockSync) PeerSet() *peerset.PeerSet {
+	return m.TestPeerSet
 }

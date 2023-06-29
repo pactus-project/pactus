@@ -49,20 +49,20 @@ func local_request_Network_GetNetworkInfo_0(ctx context.Context, marshaler runti
 
 }
 
-func request_Network_GetPeerInfo_0(ctx context.Context, marshaler runtime.Marshaler, client NetworkClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetPeerInfoRequest
+func request_Network_GetNodeInfo_0(ctx context.Context, marshaler runtime.Marshaler, client NetworkClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetNodeInfoRequest
 	var metadata runtime.ServerMetadata
 
-	msg, err := client.GetPeerInfo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.GetNodeInfo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Network_GetPeerInfo_0(ctx context.Context, marshaler runtime.Marshaler, server NetworkServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetPeerInfoRequest
+func local_request_Network_GetNodeInfo_0(ctx context.Context, marshaler runtime.Marshaler, server NetworkServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetNodeInfoRequest
 	var metadata runtime.ServerMetadata
 
-	msg, err := server.GetPeerInfo(ctx, &protoReq)
+	msg, err := server.GetNodeInfo(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -98,7 +98,7 @@ func RegisterNetworkHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 
 	})
 
-	mux.Handle("GET", pattern_Network_GetPeerInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Network_GetNodeInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -106,12 +106,12 @@ func RegisterNetworkHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Network/GetPeerInfo", runtime.WithHTTPPathPattern("/v1/network/peer_info"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Network/GetNodeInfo", runtime.WithHTTPPathPattern("/v1/network/node"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Network_GetPeerInfo_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Network_GetNodeInfo_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -119,7 +119,7 @@ func RegisterNetworkHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 			return
 		}
 
-		forward_Network_GetPeerInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Network_GetNodeInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -129,7 +129,7 @@ func RegisterNetworkHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 // RegisterNetworkHandlerFromEndpoint is same as RegisterNetworkHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
 func RegisterNetworkHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
-	conn, err := grpc.DialContext(ctx, endpoint, opts...)
+	conn, err := grpc.Dial(endpoint, opts...)
 	if err != nil {
 		return err
 	}
@@ -186,25 +186,25 @@ func RegisterNetworkHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 
 	})
 
-	mux.Handle("GET", pattern_Network_GetPeerInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Network_GetNodeInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Network/GetPeerInfo", runtime.WithHTTPPathPattern("/v1/network/peer_info"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Network/GetNodeInfo", runtime.WithHTTPPathPattern("/v1/network/node"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Network_GetPeerInfo_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Network_GetNodeInfo_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Network_GetPeerInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Network_GetNodeInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -214,11 +214,11 @@ func RegisterNetworkHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 var (
 	pattern_Network_GetNetworkInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "network", "info"}, ""))
 
-	pattern_Network_GetPeerInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "network", "peer_info"}, ""))
+	pattern_Network_GetNodeInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "network", "node"}, ""))
 )
 
 var (
 	forward_Network_GetNetworkInfo_0 = runtime.ForwardResponseMessage
 
-	forward_Network_GetPeerInfo_0 = runtime.ForwardResponseMessage
+	forward_Network_GetNodeInfo_0 = runtime.ForwardResponseMessage
 )

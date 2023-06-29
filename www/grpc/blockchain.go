@@ -191,8 +191,6 @@ func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
 		return nil, status.Errorf(codes.NotFound, "validator not found")
 	}
 
-	// TODO: make a function
-	// proto validator from native validator
 	return &pactus.GetValidatorResponse{
 		Validator: validatorToProto(val),
 	}, nil
@@ -209,8 +207,6 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 		return nil, status.Errorf(codes.NotFound, "validator not found")
 	}
 
-	// TODO: make a function
-	// proto validator from native validator
 	return &pactus.GetValidatorResponse{
 		Validator: validatorToProto(val),
 	}, nil

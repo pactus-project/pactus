@@ -19,10 +19,10 @@ class NetworkStub(object):
                 request_serializer=network__pb2.GetNetworkInfoRequest.SerializeToString,
                 response_deserializer=network__pb2.GetNetworkInfoResponse.FromString,
                 )
-        self.GetPeerInfo = channel.unary_unary(
-                '/pactus.Network/GetPeerInfo',
-                request_serializer=network__pb2.GetPeerInfoRequest.SerializeToString,
-                response_deserializer=network__pb2.GetPeerInfoResponse.FromString,
+        self.GetNodeInfo = channel.unary_unary(
+                '/pactus.Network/GetNodeInfo',
+                request_serializer=network__pb2.GetNodeInfoRequest.SerializeToString,
+                response_deserializer=network__pb2.GetNodeInfoResponse.FromString,
                 )
 
 
@@ -35,7 +35,7 @@ class NetworkServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetPeerInfo(self, request, context):
+    def GetNodeInfo(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -49,10 +49,10 @@ def add_NetworkServicer_to_server(servicer, server):
                     request_deserializer=network__pb2.GetNetworkInfoRequest.FromString,
                     response_serializer=network__pb2.GetNetworkInfoResponse.SerializeToString,
             ),
-            'GetPeerInfo': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetPeerInfo,
-                    request_deserializer=network__pb2.GetPeerInfoRequest.FromString,
-                    response_serializer=network__pb2.GetPeerInfoResponse.SerializeToString,
+            'GetNodeInfo': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetNodeInfo,
+                    request_deserializer=network__pb2.GetNodeInfoRequest.FromString,
+                    response_serializer=network__pb2.GetNodeInfoResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -82,7 +82,7 @@ class Network(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetPeerInfo(request,
+    def GetNodeInfo(request,
             target,
             options=(),
             channel_credentials=None,
@@ -92,8 +92,8 @@ class Network(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Network/GetPeerInfo',
-            network__pb2.GetPeerInfoRequest.SerializeToString,
-            network__pb2.GetPeerInfoResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/pactus.Network/GetNodeInfo',
+            network__pb2.GetNodeInfoRequest.SerializeToString,
+            network__pb2.GetNodeInfoResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

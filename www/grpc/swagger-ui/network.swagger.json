@@ -38,14 +38,14 @@
         ]
       }
     },
-    "/v1/network/peer_info": {
+    "/v1/network/node": {
       "get": {
-        "operationId": "Network_GetPeerInfo",
+        "operationId": "Network_GetNodeInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusGetPeerInfoResponse"
+              "$ref": "#/definitions/pactusGetNodeInfoResponse"
             }
           },
           "default": {
@@ -65,24 +65,38 @@
     "pactusGetNetworkInfoResponse": {
       "type": "object",
       "properties": {
-        "selfId": {
+        "totalSentBytes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalReceivedBytes": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "startedAt": {
           "type": "string",
-          "format": "byte"
+          "format": "int64"
         },
         "peers": {
           "type": "array",
           "items": {
-            "type": "object",
             "$ref": "#/definitions/pactusPeerInfo"
           }
         }
       }
     },
-    "pactusGetPeerInfoResponse": {
+    "pactusGetNodeInfoResponse": {
       "type": "object",
       "properties": {
-        "peer": {
-          "$ref": "#/definitions/pactusPeerInfo"
+        "moniker": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "peerId": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },
@@ -99,7 +113,7 @@
           "type": "string",
           "format": "byte"
         },
-        "keys": {
+        "consensusKeys": {
           "type": "array",
           "items": {
             "type": "string"
@@ -165,7 +179,6 @@
         "details": {
           "type": "array",
           "items": {
-            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }

@@ -317,6 +317,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID, sessionID int)
 			sync.logger.Info("sending bundle to a peer", "bundle", bdl, "to", to)
 			sync.peerSet.IncreaseSendSuccessCounter(to)
 		}
+		sync.peerSet.IncreaseTotalSentBytesCounter(len(data))
 	}
 }
 
@@ -332,6 +333,7 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 		} else {
 			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
 		}
+		sync.peerSet.IncreaseTotalSentBytesCounter(len(data))
 	}
 }
 
@@ -343,8 +345,8 @@ func (sync *synchronizer) Moniker() string {
 	return sync.config.Moniker
 }
 
-func (sync *synchronizer) Peers() []peerset.Peer {
-	return sync.peerSet.GetPeerList()
+func (sync *synchronizer) PeerSet() *peerset.PeerSet {
+	return sync.peerSet
 }
 
 // downloadBlocks starts downloading blocks from the network.

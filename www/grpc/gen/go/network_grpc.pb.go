@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NetworkClient interface {
 	GetNetworkInfo(ctx context.Context, in *GetNetworkInfoRequest, opts ...grpc.CallOption) (*GetNetworkInfoResponse, error)
-	GetPeerInfo(ctx context.Context, in *GetPeerInfoRequest, opts ...grpc.CallOption) (*GetPeerInfoResponse, error)
+	GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest, opts ...grpc.CallOption) (*GetNodeInfoResponse, error)
 }
 
 type networkClient struct {
@@ -43,9 +43,9 @@ func (c *networkClient) GetNetworkInfo(ctx context.Context, in *GetNetworkInfoRe
 	return out, nil
 }
 
-func (c *networkClient) GetPeerInfo(ctx context.Context, in *GetPeerInfoRequest, opts ...grpc.CallOption) (*GetPeerInfoResponse, error) {
-	out := new(GetPeerInfoResponse)
-	err := c.cc.Invoke(ctx, "/pactus.Network/GetPeerInfo", in, out, opts...)
+func (c *networkClient) GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest, opts ...grpc.CallOption) (*GetNodeInfoResponse, error) {
+	out := new(GetNodeInfoResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Network/GetNodeInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *networkClient) GetPeerInfo(ctx context.Context, in *GetPeerInfoRequest,
 // for forward compatibility
 type NetworkServer interface {
 	GetNetworkInfo(context.Context, *GetNetworkInfoRequest) (*GetNetworkInfoResponse, error)
-	GetPeerInfo(context.Context, *GetPeerInfoRequest) (*GetPeerInfoResponse, error)
+	GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error)
 }
 
 // UnimplementedNetworkServer should be embedded to have forward compatible implementations.
@@ -67,8 +67,8 @@ type UnimplementedNetworkServer struct {
 func (UnimplementedNetworkServer) GetNetworkInfo(context.Context, *GetNetworkInfoRequest) (*GetNetworkInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNetworkInfo not implemented")
 }
-func (UnimplementedNetworkServer) GetPeerInfo(context.Context, *GetPeerInfoRequest) (*GetPeerInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPeerInfo not implemented")
+func (UnimplementedNetworkServer) GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNodeInfo not implemented")
 }
 
 // UnsafeNetworkServer may be embedded to opt out of forward compatibility for this service.
@@ -100,20 +100,20 @@ func _Network_GetNetworkInfo_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Network_GetPeerInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPeerInfoRequest)
+func _Network_GetNodeInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNodeInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NetworkServer).GetPeerInfo(ctx, in)
+		return srv.(NetworkServer).GetNodeInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pactus.Network/GetPeerInfo",
+		FullMethod: "/pactus.Network/GetNodeInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NetworkServer).GetPeerInfo(ctx, req.(*GetPeerInfoRequest))
+		return srv.(NetworkServer).GetNodeInfo(ctx, req.(*GetNodeInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -130,8 +130,8 @@ var Network_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Network_GetNetworkInfo_Handler,
 		},
 		{
-			MethodName: "GetPeerInfo",
-			Handler:    _Network_GetPeerInfo_Handler,
+			MethodName: "GetNodeInfo",
+			Handler:    _Network_GetNodeInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

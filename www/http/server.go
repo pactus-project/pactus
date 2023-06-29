@@ -64,6 +64,7 @@ func (s *Server) StartServer(grpcServer string) error {
 	s.router.HandleFunc("/blockchain/", s.BlockchainHandler)
 	s.router.HandleFunc("/consensus", s.ConsensusHandler)
 	s.router.HandleFunc("/network", s.NetworkHandler)
+	s.router.HandleFunc("/node", s.NodeHandler)
 	s.router.HandleFunc("/block/hash/{hash}", s.GetBlockByHashHandler)
 	s.router.HandleFunc("/block/height/{height}", s.GetBlockByHeightHandler)
 	s.router.HandleFunc("/transaction/id/{id}", s.GetTransactionHandler)
@@ -174,6 +175,9 @@ func (t *tableMaker) addRowTxID(key string, val []byte) {
 }
 func (t *tableMaker) addRowString(key, val string) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", key, val))
+}
+func (t *tableMaker) addRowTime(key string, sec int64) {
+	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", key, time.Unix(sec, 0).String()))
 }
 func (t *tableMaker) addRowAmount(key string, change int64) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>",

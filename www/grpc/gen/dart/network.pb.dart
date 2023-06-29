@@ -42,19 +42,29 @@ class GetNetworkInfoRequest extends $pb.GeneratedMessage {
 
 class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetNetworkInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'selfId', $pb.PbFieldType.OY)
-    ..pc<PeerInfo>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peers', $pb.PbFieldType.PM, subBuilder: PeerInfo.create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalSentBytes', $pb.PbFieldType.O3)
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalReceivedBytes', $pb.PbFieldType.O3)
+    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'startedAt')
+    ..pc<PeerInfo>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peers', $pb.PbFieldType.PM, subBuilder: PeerInfo.create)
     ..hasRequiredFields = false
   ;
 
   GetNetworkInfoResponse._() : super();
   factory GetNetworkInfoResponse({
-    $core.List<$core.int>? selfId,
+    $core.int? totalSentBytes,
+    $core.int? totalReceivedBytes,
+    $fixnum.Int64? startedAt,
     $core.Iterable<PeerInfo>? peers,
   }) {
     final _result = create();
-    if (selfId != null) {
-      _result.selfId = selfId;
+    if (totalSentBytes != null) {
+      _result.totalSentBytes = totalSentBytes;
+    }
+    if (totalReceivedBytes != null) {
+      _result.totalReceivedBytes = totalReceivedBytes;
+    }
+    if (startedAt != null) {
+      _result.startedAt = startedAt;
     }
     if (peers != null) {
       _result.peers.addAll(peers);
@@ -83,94 +93,138 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   static GetNetworkInfoResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get selfId => $_getN(0);
+  $core.int get totalSentBytes => $_getIZ(0);
   @$pb.TagNumber(1)
-  set selfId($core.List<$core.int> v) { $_setBytes(0, v); }
+  set totalSentBytes($core.int v) { $_setSignedInt32(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasSelfId() => $_has(0);
+  $core.bool hasTotalSentBytes() => $_has(0);
   @$pb.TagNumber(1)
-  void clearSelfId() => clearField(1);
+  void clearTotalSentBytes() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<PeerInfo> get peers => $_getList(1);
+  $core.int get totalReceivedBytes => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set totalReceivedBytes($core.int v) { $_setSignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasTotalReceivedBytes() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTotalReceivedBytes() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $fixnum.Int64 get startedAt => $_getI64(2);
+  @$pb.TagNumber(3)
+  set startedAt($fixnum.Int64 v) { $_setInt64(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasStartedAt() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearStartedAt() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.List<PeerInfo> get peers => $_getList(3);
 }
 
-class GetPeerInfoRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetPeerInfoRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+class GetNodeInfoRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetNodeInfoRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..hasRequiredFields = false
   ;
 
-  GetPeerInfoRequest._() : super();
-  factory GetPeerInfoRequest() => create();
-  factory GetPeerInfoRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory GetPeerInfoRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  GetNodeInfoRequest._() : super();
+  factory GetNodeInfoRequest() => create();
+  factory GetNodeInfoRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetNodeInfoRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  GetPeerInfoRequest clone() => GetPeerInfoRequest()..mergeFromMessage(this);
+  GetNodeInfoRequest clone() => GetNodeInfoRequest()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  GetPeerInfoRequest copyWith(void Function(GetPeerInfoRequest) updates) => super.copyWith((message) => updates(message as GetPeerInfoRequest)) as GetPeerInfoRequest; // ignore: deprecated_member_use
+  GetNodeInfoRequest copyWith(void Function(GetNodeInfoRequest) updates) => super.copyWith((message) => updates(message as GetNodeInfoRequest)) as GetNodeInfoRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static GetPeerInfoRequest create() => GetPeerInfoRequest._();
-  GetPeerInfoRequest createEmptyInstance() => create();
-  static $pb.PbList<GetPeerInfoRequest> createRepeated() => $pb.PbList<GetPeerInfoRequest>();
+  static GetNodeInfoRequest create() => GetNodeInfoRequest._();
+  GetNodeInfoRequest createEmptyInstance() => create();
+  static $pb.PbList<GetNodeInfoRequest> createRepeated() => $pb.PbList<GetNodeInfoRequest>();
   @$core.pragma('dart2js:noInline')
-  static GetPeerInfoRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetPeerInfoRequest>(create);
-  static GetPeerInfoRequest? _defaultInstance;
+  static GetNodeInfoRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetNodeInfoRequest>(create);
+  static GetNodeInfoRequest? _defaultInstance;
 }
 
-class GetPeerInfoResponse extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetPeerInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOM<PeerInfo>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peer', subBuilder: PeerInfo.create)
+class GetNodeInfoResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetNodeInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'moniker')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'agent')
+    ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peerId', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
-  GetPeerInfoResponse._() : super();
-  factory GetPeerInfoResponse({
-    PeerInfo? peer,
+  GetNodeInfoResponse._() : super();
+  factory GetNodeInfoResponse({
+    $core.String? moniker,
+    $core.String? agent,
+    $core.List<$core.int>? peerId,
   }) {
     final _result = create();
-    if (peer != null) {
-      _result.peer = peer;
+    if (moniker != null) {
+      _result.moniker = moniker;
+    }
+    if (agent != null) {
+      _result.agent = agent;
+    }
+    if (peerId != null) {
+      _result.peerId = peerId;
     }
     return _result;
   }
-  factory GetPeerInfoResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory GetPeerInfoResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory GetNodeInfoResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetNodeInfoResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  GetPeerInfoResponse clone() => GetPeerInfoResponse()..mergeFromMessage(this);
+  GetNodeInfoResponse clone() => GetNodeInfoResponse()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  GetPeerInfoResponse copyWith(void Function(GetPeerInfoResponse) updates) => super.copyWith((message) => updates(message as GetPeerInfoResponse)) as GetPeerInfoResponse; // ignore: deprecated_member_use
+  GetNodeInfoResponse copyWith(void Function(GetNodeInfoResponse) updates) => super.copyWith((message) => updates(message as GetNodeInfoResponse)) as GetNodeInfoResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static GetPeerInfoResponse create() => GetPeerInfoResponse._();
-  GetPeerInfoResponse createEmptyInstance() => create();
-  static $pb.PbList<GetPeerInfoResponse> createRepeated() => $pb.PbList<GetPeerInfoResponse>();
+  static GetNodeInfoResponse create() => GetNodeInfoResponse._();
+  GetNodeInfoResponse createEmptyInstance() => create();
+  static $pb.PbList<GetNodeInfoResponse> createRepeated() => $pb.PbList<GetNodeInfoResponse>();
   @$core.pragma('dart2js:noInline')
-  static GetPeerInfoResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetPeerInfoResponse>(create);
-  static GetPeerInfoResponse? _defaultInstance;
+  static GetNodeInfoResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetNodeInfoResponse>(create);
+  static GetNodeInfoResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  PeerInfo get peer => $_getN(0);
+  $core.String get moniker => $_getSZ(0);
   @$pb.TagNumber(1)
-  set peer(PeerInfo v) { setField(1, v); }
+  set moniker($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasPeer() => $_has(0);
+  $core.bool hasMoniker() => $_has(0);
   @$pb.TagNumber(1)
-  void clearPeer() => clearField(1);
-  @$pb.TagNumber(1)
-  PeerInfo ensurePeer() => $_ensure(0);
+  void clearMoniker() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get agent => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set agent($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasAgent() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAgent() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.List<$core.int> get peerId => $_getN(2);
+  @$pb.TagNumber(3)
+  set peerId($core.List<$core.int> v) { $_setBytes(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasPeerId() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearPeerId() => clearField(3);
 }
 
 class PeerInfo extends $pb.GeneratedMessage {
@@ -178,7 +232,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'moniker')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'agent')
     ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peerId', $pb.PbFieldType.OY)
-    ..pPS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'keys')
+    ..pPS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'consensusKeys')
     ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'flags', $pb.PbFieldType.O3)
     ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedMessages', $pb.PbFieldType.O3)
@@ -196,7 +250,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     $core.String? moniker,
     $core.String? agent,
     $core.List<$core.int>? peerId,
-    $core.Iterable<$core.String>? keys,
+    $core.Iterable<$core.String>? consensusKeys,
     $core.int? flags,
     $core.int? height,
     $core.int? receivedMessages,
@@ -217,8 +271,8 @@ class PeerInfo extends $pb.GeneratedMessage {
     if (peerId != null) {
       _result.peerId = peerId;
     }
-    if (keys != null) {
-      _result.keys.addAll(keys);
+    if (consensusKeys != null) {
+      _result.consensusKeys.addAll(consensusKeys);
     }
     if (flags != null) {
       _result.flags = flags;
@@ -298,7 +352,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   void clearPeerId() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.List<$core.String> get keys => $_getList(3);
+  $core.List<$core.String> get consensusKeys => $_getList(3);
 
   @$pb.TagNumber(5)
   $core.int get flags => $_getIZ(4);
@@ -390,9 +444,9 @@ class NetworkApi {
     var emptyResponse = GetNetworkInfoResponse();
     return _client.invoke<GetNetworkInfoResponse>(ctx, 'Network', 'GetNetworkInfo', request, emptyResponse);
   }
-  $async.Future<GetPeerInfoResponse> getPeerInfo($pb.ClientContext? ctx, GetPeerInfoRequest request) {
-    var emptyResponse = GetPeerInfoResponse();
-    return _client.invoke<GetPeerInfoResponse>(ctx, 'Network', 'GetPeerInfo', request, emptyResponse);
+  $async.Future<GetNodeInfoResponse> getNodeInfo($pb.ClientContext? ctx, GetNodeInfoRequest request) {
+    var emptyResponse = GetNodeInfoResponse();
+    return _client.invoke<GetNodeInfoResponse>(ctx, 'Network', 'GetNodeInfo', request, emptyResponse);
   }
 }
 

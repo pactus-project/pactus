@@ -16,11 +16,14 @@ import (
 type PeerSet struct {
 	lk sync.RWMutex
 
-	peers            map[peer.ID]*Peer
-	sessions         map[int]*Session
-	nextSessionID    int
-	maxClaimedHeight uint32
-	sessionTimeout   time.Duration
+	peers              map[peer.ID]*Peer
+	sessions           map[int]*Session
+	nextSessionID      int
+	maxClaimedHeight   uint32
+	sessionTimeout     time.Duration
+	totalSentBytes     int
+	totalReceivedBytes int
+	startedAt          time.Time
 }
 
 func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
@@ -28,6 +31,7 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 		peers:          make(map[peer.ID]*Peer),
 		sessions:       make(map[int]*Session),
 		sessionTimeout: sessionTimeout,
+		startedAt:      time.Now(),
 	}
 }
 
@@ -298,6 +302,14 @@ func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, c int) {
 
 	p := ps.mustGetPeer(pid)
 	p.ReceivedBytes += c
+	ps.totalReceivedBytes += c
+}
+
+func (ps *PeerSet) IncreaseTotalSentBytesCounter(c int) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	ps.totalSentBytes += c
 }
 
 func (ps *PeerSet) IncreaseSendSuccessCounter(pid peer.ID) {
@@ -314,4 +326,25 @@ func (ps *PeerSet) IncreaseSendFailedCounter(pid peer.ID) {
 
 	p := ps.mustGetPeer(pid)
 	p.SendFailed++
+}
+
+func (ps *PeerSet) TotalSentBytes() int {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.totalSentBytes
+}
+
+func (ps *PeerSet) TotalReceivedBytes() int {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.totalReceivedBytes
+}
+
+func (ps *PeerSet) StartedAt() time.Time {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.startedAt
 }

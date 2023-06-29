@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -33,5 +34,18 @@ func TestNetworkInfo(t *testing.T) {
 	assert.Equal(t, w.Code, 200)
 	assert.Contains(t, w.Body.String(), "Peers")
 	assert.Contains(t, w.Body.String(), "ID")
+	//	fmt.Println(w.Body.String())
+}
+
+func TestNodeInfo(t *testing.T) {
+	setup(t)
+
+	w := httptest.NewRecorder()
+	r := new(http.Request)
+
+	tHTTPServer.NodeHandler(w, r)
+
+	assert.Equal(t, w.Code, 200)
+	assert.Contains(t, w.Body.String(), version.Agent())
 	//	fmt.Println(w.Body.String())
 }
