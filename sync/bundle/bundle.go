@@ -21,9 +21,9 @@ const (
 )
 
 type Bundle struct {
-	Flags     int
-	Initiator peer.ID
 	Message   message.Message
+	Initiator peer.ID
+	Flags     int
 }
 
 func NewBundle(initiator peer.ID, msg message.Message) *Bundle {

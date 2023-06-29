@@ -18,8 +18,8 @@ import (
 )
 
 type GatewayConfig struct {
-	Enable     bool   `toml:"enable"`
 	Listen     string `toml:"listen"`
+	Enable     bool   `toml:"enable"`
 	EnableCORS bool   `toml:"enable_cors"`
 }
 

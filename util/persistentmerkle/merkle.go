@@ -13,9 +13,9 @@ type Tree struct {
 }
 
 type node struct {
+	hash   *hash.Hash
 	width  int
 	height int
-	hash   *hash.Hash
 }
 
 // nodeID return the node ID (four bytes):

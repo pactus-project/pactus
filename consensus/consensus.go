@@ -19,16 +19,8 @@ import (
 )
 
 type consensus struct {
-	lk sync.RWMutex
-
-	config              *Config
-	log                 *log.Log
 	signer              crypto.Signer
-	rewardAddr          crypto.Address
 	state               state.Facade // TODO: rename `state` to `bcState` (blockchain state)
-	height              uint32
-	round               int16
-	active              bool
 	newHeightState      consState
 	proposeState        consState
 	prepareState        consState
@@ -36,9 +28,16 @@ type consensus struct {
 	commitState         consState
 	currentState        consState
 	changeProposerState consState
-	broadcastCh         chan message.Message
 	mediator            mediator
+	config              *Config
+	log                 *log.Log
+	broadcastCh         chan message.Message
 	logger              *logger.Logger
+	lk                  sync.RWMutex
+	height              uint32
+	round               int16
+	rewardAddr          crypto.Address
+	active              bool
 }
 
 func NewConsensus(

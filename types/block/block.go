@@ -18,14 +18,14 @@ import (
 
 type Block struct {
 	memorizedHash *hash.Hash
-	memorizedData []byte
 	data          blockData
+	memorizedData []byte
 }
 
 type blockData struct {
-	Header   Header
 	PrevCert *Certificate
 	Txs      Txs
+	Header   Header
 }
 
 func NewBlock(header Header, prevCert *Certificate, txs Txs) *Block {

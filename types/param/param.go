@@ -3,18 +3,18 @@ package param
 import "time"
 
 type Params struct {
-	BlockVersion              uint8   `cbor:"1,keyasint"`
 	BlockTimeInSecond         int     `cbor:"2,keyasint"`
 	CommitteeSize             int     `cbor:"3,keyasint"`
 	BlockReward               int64   `cbor:"4,keyasint"`
-	TransactionToLiveInterval uint32  `cbor:"5,keyasint"`
-	BondInterval              uint32  `cbor:"6,keyasint"`
-	UnbondInterval            uint32  `cbor:"7,keyasint"`
-	SortitionInterval         uint32  `cbor:"8,keyasint"`
 	FeeFraction               float64 `cbor:"9,keyasint"`
 	MinimumFee                int64   `cbor:"10,keyasint"`
 	MaximumFee                int64   `cbor:"11,keyasint"`
 	MaximumStake              int64   `cbor:"12,keyasint"`
+	TransactionToLiveInterval uint32  `cbor:"5,keyasint"`
+	BondInterval              uint32  `cbor:"6,keyasint"`
+	UnbondInterval            uint32  `cbor:"7,keyasint"`
+	SortitionInterval         uint32  `cbor:"8,keyasint"`
+	BlockVersion              uint8   `cbor:"1,keyasint"`
 }
 
 func DefaultParams() Params {

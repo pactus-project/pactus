@@ -9,14 +9,14 @@ import (
 var LatestBlockInterval = uint32(720) // 720 blocks is about two hours
 
 type Config struct {
+	Firewall        *firewall.Config `toml:"firewall"`
 	Moniker         string           `toml:"moniker"`
 	HeartBeatTimer  time.Duration    `toml:"heartbeat_timer"`
 	SessionTimeout  time.Duration    `toml:"session_timeout"`
 	MaxOpenSessions int              `toml:"max_open_sessions"`
-	BlockPerMessage uint32           `toml:"block_per_message"`
 	CacheSize       int              `toml:"cache_size"`
+	BlockPerMessage uint32           `toml:"block_per_message"`
 	NodeNetwork     bool             `toml:"node_network"`
-	Firewall        *firewall.Config `toml:"firewall"`
 }
 
 func DefaultConfig() *Config {

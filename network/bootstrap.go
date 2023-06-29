@@ -18,17 +18,14 @@ import (
 // to discover new peers. To stop a bootstrap cancel the context passed in Start()
 // or call Stop().
 type bootstrap struct {
-	ctx    context.Context
-	config *BootstrapConfig
-
-	bootstrapPeers []lp2ppeer.AddrInfo
-
+	ctx context.Context
 	// Dependencies
-	host    lp2phost.Host
-	dialer  lp2pnet.Dialer
-	routing lp2prouting.Routing
-
-	logger *logger.Logger
+	host           lp2phost.Host
+	dialer         lp2pnet.Dialer
+	routing        lp2prouting.Routing
+	config         *BootstrapConfig
+	logger         *logger.Logger
+	bootstrapPeers []lp2ppeer.AddrInfo
 }
 
 // newBootstrap returns a new Bootstrap that will attempt to keep connected

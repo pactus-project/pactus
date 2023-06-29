@@ -11,10 +11,10 @@ import (
 )
 
 type BondPayload struct {
-	Sender    crypto.Address
-	Receiver  crypto.Address
 	PublicKey *bls.PublicKey
 	Stake     int64
+	Sender    crypto.Address
+	Receiver  crypto.Address
 }
 
 func (p *BondPayload) Type() Type {

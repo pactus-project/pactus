@@ -11,13 +11,13 @@ import (
 )
 
 type store struct {
-	Version   int               `json:"version"`
-	UUID      uuid.UUID         `json:"uuid"`
 	CreatedAt time.Time         `json:"created_at"`
-	Network   genesis.ChainType `json:"network"`
-	VaultCRC  uint32            `json:"crc"`
-	Vault     *vault.Vault      `json:"vault"`
 	History   history           `json:"history"`
+	Vault     *vault.Vault      `json:"vault"`
+	Version   int               `json:"version"`
+	VaultCRC  uint32            `json:"crc"`
+	UUID      uuid.UUID         `json:"uuid"`
+	Network   genesis.ChainType `json:"network"`
 }
 
 func (s *store) Load() ([]byte, error) {

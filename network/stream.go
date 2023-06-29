@@ -16,10 +16,10 @@ import (
 type streamService struct {
 	ctx        context.Context
 	host       lp2phost.Host
-	protocolID lp2pcore.ProtocolID
-	relayAddrs []ma.Multiaddr
 	eventCh    chan Event
 	logger     *logger.Logger
+	protocolID lp2pcore.ProtocolID
+	relayAddrs []ma.Multiaddr
 }
 
 func newStreamService(ctx context.Context, host lp2phost.Host,

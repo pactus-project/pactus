@@ -9,9 +9,9 @@ import (
 )
 
 type TransferPayload struct {
+	Amount   int64
 	Sender   crypto.Address
 	Receiver crypto.Address
-	Amount   int64
 }
 
 func (p *TransferPayload) Type() Type {

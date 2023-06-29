@@ -21,8 +21,8 @@ import (
 
 type Wallet struct {
 	store  *store
-	path   string
 	client *grpcClient
+	path   string
 }
 
 //go:embed servers.json

@@ -16,14 +16,13 @@ import (
 )
 
 type LastInfo struct {
-	lk sync.RWMutex
-
+	lastBlockTime     time.Time
 	store             store.Store
+	lastCertificate   *block.Certificate
+	lk                sync.RWMutex
 	lastBlockHeight   uint32
 	lastSortitionSeed sortition.VerifiableSeed
 	lastBlockHash     hash.Hash
-	lastCertificate   *block.Certificate
-	lastBlockTime     time.Time
 }
 
 func NewLastInfo(store store.Store) *LastInfo {

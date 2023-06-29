@@ -18,12 +18,12 @@ type Vote struct {
 }
 
 type voteData struct {
+	Signature *bls.Signature `cbor:"6,keyasint"`
 	Type      Type           `cbor:"1,keyasint"`
 	Height    uint32         `cbor:"2,keyasint"`
 	Round     int16          `cbor:"3,keyasint"`
 	BlockHash hash.Hash      `cbor:"4,keyasint"`
 	Signer    crypto.Address `cbor:"5,keyasint"`
-	Signature *bls.Signature `cbor:"6,keyasint"`
 }
 
 func (v *Vote) SignBytes() []byte {

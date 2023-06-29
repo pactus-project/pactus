@@ -17,9 +17,9 @@ import (
 
 type Server struct {
 	ctx       context.Context
-	config    *Config
 	publisher mangos.Socket
 	listener  net.Listener
+	config    *Config
 	logger    *logger.Logger
 	eventCh   <-chan event.Event
 	seqNum    uint32

@@ -8,14 +8,14 @@ import (
 )
 
 type Config struct {
+	Bootstrap   *BootstrapConfig `toml:"bootstrap"`
 	Name        string           `toml:"name"`
-	Listens     []string         `toml:"listens"`
 	NetworkKey  string           `toml:"network_key"`
+	Listens     []string         `toml:"listens"`
+	RelayAddrs  []string         `toml:"relay_addresses"`
 	EnableNAT   bool             `toml:"enable_nat"`
 	EnableRelay bool             `toml:"enable_relay"`
-	RelayAddrs  []string         `toml:"relay_addresses"`
 	EnableMdns  bool             `toml:"enable_mdns"`
-	Bootstrap   *BootstrapConfig `toml:"bootstrap"`
 }
 
 // BootstrapConfig holds all configuration options related to bootstrap nodes.

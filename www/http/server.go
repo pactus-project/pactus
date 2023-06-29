@@ -21,13 +21,13 @@ import (
 
 type Server struct {
 	ctx         context.Context
-	config      *Config
-	router      *mux.Router
-	grpc        *grpc.ClientConn
 	blockchain  pactus.BlockchainClient
 	transaction pactus.TransactionClient
 	network     pactus.NetworkClient
 	listener    net.Listener
+	config      *Config
+	router      *mux.Router
+	grpc        *grpc.ClientConn
 	logger      *logger.Logger
 }
 

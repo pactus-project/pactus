@@ -14,9 +14,9 @@ import (
 var _ Committee = &committee{}
 
 type committee struct {
-	committeeSize int
 	validatorList *list.List
 	proposerPos   *list.Element
+	committeeSize int
 }
 
 func cloneValidator(val *validator.Validator) *validator.Validator {

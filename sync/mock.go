@@ -14,8 +14,8 @@ import (
 var _ Synchronizer = &MockSync{}
 
 type MockSync struct {
-	ID      peer.ID
 	PeerSet *peerset.PeerSet
+	ID      peer.ID
 }
 
 func MockingSync() *MockSync {

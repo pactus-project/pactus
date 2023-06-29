@@ -11,18 +11,18 @@ import (
 )
 
 type HistoryInfo struct {
-	TxID        string
 	Time        *time.Time
+	TxID        string
 	PayloadType string
 	Desc        string
 	Amount      int64
 }
 
 type transaction struct {
-	BlockHeight uint32 `json:"height"`
-	BlockTime   uint32 `json:"time"`
 	PayloadType string `json:"type"`
 	Data        string `json:"data"`
+	BlockHeight uint32 `json:"height"`
+	BlockTime   uint32 `json:"time"`
 }
 
 type activity struct {
@@ -33,8 +33,8 @@ type activity struct {
 
 type pending struct {
 	TxID   string `json:"id"`
-	Amount int64  `json:"amount"`
 	Data   string `json:"data"`
+	Amount int64  `json:"amount"`
 }
 
 type history struct {

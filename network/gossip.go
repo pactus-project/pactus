@@ -12,13 +12,13 @@ import (
 
 type gossipService struct {
 	ctx     context.Context
-	wg      sync.WaitGroup
 	host    lp2phost.Host
 	pubsub  *lp2pps.PubSub
-	topics  []*lp2pps.Topic
-	subs    []*lp2pps.Subscription
 	eventCh chan Event
 	logger  *logger.Logger
+	topics  []*lp2pps.Topic
+	subs    []*lp2pps.Subscription
+	wg      sync.WaitGroup
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,

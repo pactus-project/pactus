@@ -1,8 +1,8 @@
 package logger
 
 type Config struct {
-	Colorful bool              `toml:"colorful"`
 	Levels   map[string]string `toml:"levels"`
+	Colorful bool              `toml:"colorful"`
 }
 
 func DefaultConfig() *Config {

@@ -10,9 +10,9 @@ import (
 )
 
 type WithdrawPayload struct {
+	Amount int64          // amount to deposit
 	From   crypto.Address // withdraw from validator address
 	To     crypto.Address // deposit to account address
-	Amount int64          // amount to deposit
 }
 
 func (p *WithdrawPayload) Type() Type {

@@ -12,16 +12,16 @@ import (
 var _ Network = &MockNetwork{}
 
 type BroadcastData struct {
-	Data   []byte
 	Target *lp2pcore.PeerID
+	Data   []byte
 }
 
 type MockNetwork struct {
+	SendError   error
 	BroadcastCh chan BroadcastData
 	EventCh     chan Event
 	ID          peer.ID
 	OtherNets   []*MockNetwork
-	SendError   error
 }
 
 func MockingNetwork(id peer.ID) *MockNetwork {

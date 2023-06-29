@@ -29,20 +29,19 @@ import (
 )
 
 type state struct {
-	lk sync.RWMutex
-
-	signers         []crypto.Signer
-	genDoc          *genesis.Genesis
 	store           store.Store
-	params          param.Params
 	txPool          txpool.TxPool
 	committee       committee.Committee
-	totalPower      int64
+	genDoc          *genesis.Genesis
 	lastInfo        *lastinfo.LastInfo
 	accountMerkle   *persistentmerkle.Tree
 	validatorMerkle *persistentmerkle.Tree
 	logger          *logger.Logger
 	eventCh         chan event.Event
+	signers         []crypto.Signer
+	params          param.Params
+	totalPower      int64
+	lk              sync.RWMutex
 }
 
 func LoadOrNewState(

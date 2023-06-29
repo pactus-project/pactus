@@ -19,9 +19,9 @@ type Validator struct {
 // validatorData contains the data associated with a validator.
 type validatorData struct {
 	PublicKey         *bls.PublicKey
+	Stake             int64
 	Number            int32
 	Sequence          int32
-	Stake             int64
 	LastBondingHeight uint32
 	UnbondingHeight   uint32
 	LastJoinedHeight  uint32

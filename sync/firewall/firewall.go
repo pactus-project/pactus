@@ -16,10 +16,10 @@ import (
 
 // Firewall check packets before passing them to sync module.
 type Firewall struct {
-	config  *Config
 	network network.Network
-	peerSet *peerset.PeerSet
 	state   state.Facade
+	config  *Config
+	peerSet *peerset.PeerSet
 	logger  *logger.Logger
 }
 

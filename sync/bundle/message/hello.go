@@ -18,13 +18,13 @@ const (
 )
 
 type HelloMessage struct {
+	PublicKey   *bls.PublicKey `cbor:"4,keyasint"`
+	Signature   *bls.Signature `cbor:"5,keyasint"`
 	PeerID      peer.ID        `cbor:"1,keyasint"`
 	Agent       string         `cbor:"2,keyasint"`
 	Moniker     string         `cbor:"3,keyasint"`
-	PublicKey   *bls.PublicKey `cbor:"4,keyasint"`
-	Signature   *bls.Signature `cbor:"5,keyasint"`
-	Height      uint32         `cbor:"6,keyasint"`
 	Flags       int            `cbor:"7,keyasint"`
+	Height      uint32         `cbor:"6,keyasint"`
 	GenesisHash hash.Hash      `cbor:"8,keyasint"`
 }
 

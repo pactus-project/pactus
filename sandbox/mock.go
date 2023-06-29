@@ -17,12 +17,12 @@ var _ Sandbox = &MockSandbox{}
 
 // MockSandbox is a testing mock for sandbox.
 type MockSandbox struct {
-	TestParams           param.Params
-	TestStore            *store.MockStore
 	TestCommittee        committee.Committee
+	TestStore            *store.MockStore
 	TestCommitteeSigners []crypto.Signer
-	TestAcceptSortition  bool
+	TestParams           param.Params
 	TestPowerDelta       int64
+	TestAcceptSortition  bool
 }
 
 func MockingSandbox() *MockSandbox {

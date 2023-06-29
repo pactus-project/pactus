@@ -24,13 +24,20 @@ const maxMemoLength = 64
 type ID = hash.Hash
 
 type Tx struct {
+	data          txData
 	memorizedID   *ID
 	sanityChecked bool
-
-	data txData
 }
 
 type txData struct {
+	Payload   payload.Payload
+	PublicKey crypto.PublicKey
+	Signature crypto.Signature
+	Memo      string
+	Fee       int64
+	LockTime  uint32
+	Sequence  int32
+	Stamp     hash.Stamp
 	// Version format
 	//  7             0
 	// +-+-+-+-+-+-+-+-+
@@ -39,15 +46,7 @@ type txData struct {
 	// L: Lock Time transacion
 	// R: Reserved bit
 	//
-	Version   uint8
-	Stamp     hash.Stamp
-	LockTime  uint32
-	Sequence  int32
-	Fee       int64
-	Payload   payload.Payload
-	Memo      string
-	PublicKey crypto.PublicKey
-	Signature crypto.Signature
+	Version uint8
 }
 
 func NewTx(stamp hash.Stamp, seq int32, pld payload.Payload, fee int64,

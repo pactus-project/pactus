@@ -14,13 +14,12 @@ import (
 // - Implementing garbage collection for peerset
 
 type PeerSet struct {
-	lk sync.RWMutex
-
 	peers            map[peer.ID]*Peer
 	sessions         map[int]*Session
 	nextSessionID    int
-	maxClaimedHeight uint32
 	sessionTimeout   time.Duration
+	lk               sync.RWMutex
+	maxClaimedHeight uint32
 }
 
 func NewPeerSet(sessionTimeout time.Duration) *PeerSet {

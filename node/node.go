@@ -24,14 +24,14 @@ import (
 )
 
 type Node struct {
-	genesisDoc *genesis.Genesis
-	config     *config.Config
 	state      state.Facade
 	store      store.Store
 	txPool     txpool.TxPool
 	consMgr    consensus.Manager
 	network    network.Network
 	sync       sync.Synchronizer
+	genesisDoc *genesis.Genesis
+	config     *config.Config
 	http       *http.Server
 	grpc       *grpc.Server
 	nanomsg    *nanomsg.Server

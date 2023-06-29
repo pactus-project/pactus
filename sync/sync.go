@@ -31,19 +31,19 @@ import (
 
 type synchronizer struct {
 	ctx             context.Context
-	config          *Config
-	signers         []crypto.Signer
 	state           state.Facade
 	consMgr         consensus.Manager
+	network         network.Network
+	config          *Config
 	peerSet         *peerset.PeerSet
 	firewall        *firewall.Firewall
 	cache           *cache.Cache
 	handlers        map[message.Type]messageHandler
 	broadcastCh     <-chan message.Message
 	networkCh       <-chan network.Event
-	network         network.Network
 	heartBeatTicker *time.Ticker
 	logger          *logger.Logger
+	signers         []crypto.Signer
 }
 
 func NewSynchronizer(

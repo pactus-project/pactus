@@ -22,9 +22,9 @@ var (
 )
 
 type Logger struct {
+	obj    interface{}
 	logger *logrus.Logger
 	name   string
-	obj    interface{}
 }
 
 func getLoggersInst() *loggers {

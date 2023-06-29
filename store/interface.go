@@ -17,9 +17,9 @@ import (
 // TODO: How to undo or rollback at least for last 21 blocks
 
 type StoredBlock struct {
-	BlockHash hash.Hash
-	Height    uint32
 	Data      []byte
+	Height    uint32
+	BlockHash hash.Hash
 }
 
 func (s *StoredBlock) ToBlock() *block.Block {
@@ -34,10 +34,10 @@ func (s *StoredBlock) ToBlock() *block.Block {
 }
 
 type StoredTx struct {
-	TxID      tx.ID
+	Data      []byte
 	Height    uint32
 	BlockTime uint32
-	Data      []byte
+	TxID      tx.ID
 }
 
 func (s *StoredTx) ToTx() *tx.Tx {

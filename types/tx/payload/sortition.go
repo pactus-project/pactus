@@ -11,8 +11,8 @@ import (
 )
 
 type SortitionPayload struct {
-	Address crypto.Address
 	Proof   sortition.Proof
+	Address crypto.Address
 }
 
 func (p *SortitionPayload) Type() Type {

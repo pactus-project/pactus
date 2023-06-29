@@ -26,9 +26,9 @@ type network struct {
 	// We should remove it from here and pass it as first argument of functions
 	// Adding these linter later:  contextcheck and containedctx
 	ctx            context.Context
+	host           lp2phost.Host
 	cancel         func()
 	config         *Config
-	host           lp2phost.Host
 	mdns           *mdnsService
 	dht            *dhtService
 	stream         *streamService

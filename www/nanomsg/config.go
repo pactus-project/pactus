@@ -1,8 +1,8 @@
 package nanomsg
 
 type Config struct {
-	Enable bool   `toml:"enable"`
 	Listen string `toml:"listen"`
+	Enable bool   `toml:"enable"`
 }
 
 func DefaultConfig() *Config {

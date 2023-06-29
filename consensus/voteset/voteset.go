@@ -13,13 +13,13 @@ import (
 )
 
 type VoteSet struct {
-	round      int16
-	voteType   vote.Type
-	validators []*validator.Validator
 	blockVotes map[hash.Hash]*blockVotes
 	allVotes   map[hash.Hash]*vote.Vote
-	totalPower int64
 	quorumHash *hash.Hash
+	validators []*validator.Validator
+	voteType   vote.Type
+	totalPower int64
+	round      int16
 }
 
 func NewVoteSet(round int16, voteType vote.Type, validators []*validator.Validator) *VoteSet {

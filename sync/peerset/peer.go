@@ -15,19 +15,19 @@ const (
 )
 
 type Peer struct {
-	Status          StatusCode
+	LastSeen        time.Time
+	ConsensusKeys   map[bls.PublicKey]bool
 	Moniker         string
 	Agent           string
 	PeerID          peer.ID
-	ConsensusKeys   map[bls.PublicKey]bool
+	Status          StatusCode
 	Flags           int
-	LastSeen        time.Time
-	Height          uint32
 	ReceivedBundles int
 	InvalidBundles  int
 	ReceivedBytes   int
 	SendSuccess     int
 	SendFailed      int
+	Height          uint32
 }
 
 func NewPeer(peerID peer.ID) *Peer {

@@ -32,21 +32,21 @@ import (
 // EIP-2334: https://eips.ethereum.org/EIPS/eip-2334
 
 type AddressInfo struct {
+	Pub           crypto.PublicKey
 	Address       string
 	Label         string
-	Pub           crypto.PublicKey
 	Path          hdkeychain.Path
-	Imported      bool
 	ImportedIndex int
+	Imported      bool
 }
 
 const PurposeBLS12381 = uint32(12381)
 
 type Vault struct {
-	Encrypter    encrypter.Encrypter `json:"encrypter"` //
-	Keystore     keystore            `json:"keystore"`  //
-	ImportedKeys []imported          `json:"imported"`  // Imported private keys
-	Labels       map[string]string   `json:"labels"`    //
+	Keystore     keystore            `json:"keystore"`
+	Labels       map[string]string   `json:"labels"`
+	Encrypter    encrypter.Encrypter `json:"encrypter"`
+	ImportedKeys []imported          `json:"imported"` // Imported private keys
 }
 
 type imported struct {
@@ -56,9 +56,9 @@ type imported struct {
 }
 
 type keystore struct {
-	CoinType uint32              `json:"coin_type"`      // Coin type: 21888 for Mainnet, 21777 for Testnet
-	Mnemonic string              `json:"seed,omitempty"` // Seed phrase or mnemonic (encrypted)
 	Purposes map[uint32]*purpose `json:"purpose"`        // Purposes: 12381 for BLS signature
+	Mnemonic string              `json:"seed,omitempty"` // Seed phrase or mnemonic (encrypted)
+	CoinType uint32              `json:"coin_type"`      // Coin type: 21888 for Mainnet, 21777 for Testnet
 }
 
 type purpose struct {

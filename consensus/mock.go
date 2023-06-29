@@ -13,15 +13,14 @@ import (
 var _ Consensus = &MockConsensus{}
 
 type MockConsensus struct {
-	// This locks prevents the Data Race in tests
-	lk sync.RWMutex
-
 	Signer   crypto.Signer
-	Votes    []*vote.Vote
 	Proposal *proposal.Proposal
-	Active   bool
-	Height   uint32
-	Round    int16
+	Votes    []*vote.Vote
+	// This locks prevents the Data Race in tests
+	lk     sync.RWMutex
+	Height uint32
+	Round  int16
+	Active bool
 }
 
 func MockingManager(signers []crypto.Signer) (Manager, []*MockConsensus) {

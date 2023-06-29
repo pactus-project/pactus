@@ -16,10 +16,10 @@ type Proposal struct {
 	data proposalData
 }
 type proposalData struct {
-	Height    uint32         `cbor:"1,keyasint"`
-	Round     int16          `cbor:"2,keyasint"`
 	Block     *block.Block   `cbor:"3,keyasint"`
 	Signature *bls.Signature `cbor:"4,keyasint"`
+	Height    uint32         `cbor:"1,keyasint"`
+	Round     int16          `cbor:"2,keyasint"`
 }
 
 func NewProposal(height uint32, round int16, block *block.Block) *Proposal {

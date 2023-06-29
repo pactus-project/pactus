@@ -150,9 +150,9 @@ func NewFixedWriter(max int) *FixedWriter {
 // fixedReader implements the io.Reader interface and intentionally allows
 // testing of error paths by forcing short reads.
 type FixedReader struct {
+	iobuf *bytes.Buffer
 	buf   []byte
 	pos   int
-	iobuf *bytes.Buffer
 }
 
 // Read reads the next len(p) bytes from the fixed reader.  When the number of
@@ -175,6 +175,6 @@ func NewFixedReader(max int, buf []byte) *FixedReader {
 	}
 
 	iobuf := bytes.NewBuffer(b)
-	fr := FixedReader{b, 0, iobuf}
+	fr := FixedReader{iobuf, b, 0}
 	return &fr
 }

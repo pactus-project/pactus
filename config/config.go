@@ -39,8 +39,8 @@ type Config struct {
 }
 
 type NodeConfig struct {
-	NumValidators   int      `toml:"num_validators"`
 	RewardAddresses []string `toml:"reward_addresses"`
+	NumValidators   int      `toml:"num_validators"`
 }
 
 func DefaultNodeConfig() *NodeConfig {

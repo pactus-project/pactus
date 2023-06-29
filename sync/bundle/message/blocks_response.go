@@ -11,11 +11,11 @@ const LatestBlocksResponseCodeOK = 0
 const LatestBlocksResponseCodeNoMoreBlock = 1
 
 type BlocksResponseMessage struct {
+	LastCertificate *block.Certificate `cbor:"6,keyasint"`
+	BlocksData      [][]byte           `cbor:"4,keyasint"`
 	ResponseCode    ResponseCode       `cbor:"1,keyasint"`
 	SessionID       int                `cbor:"2,keyasint"`
 	From            uint32             `cbor:"3,keyasint"`
-	BlocksData      [][]byte           `cbor:"4,keyasint"`
-	LastCertificate *block.Certificate `cbor:"6,keyasint"`
 }
 
 func NewBlocksResponseMessage(code ResponseCode, sid int, from uint32,

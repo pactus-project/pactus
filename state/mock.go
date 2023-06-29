@@ -23,14 +23,13 @@ import (
 var _ Facade = &MockState{}
 
 type MockState struct {
-	// This locks prevents the Data Race in tests
-	lk sync.RWMutex
-
+	TestCommittee committee.Committee
 	TestGenesis   *genesis.Genesis
 	TestStore     *store.MockStore
 	TestPool      *txpool.MockTxPool
-	TestCommittee committee.Committee
 	TestParams    param.Params
+	// This locks prevents the Data Race in tests
+	lk sync.RWMutex
 }
 
 func MockingState() *MockState {

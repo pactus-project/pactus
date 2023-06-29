@@ -16,10 +16,10 @@ type Certificate struct {
 	data certificateData
 }
 type certificateData struct {
-	Round      int16
+	Signature  *bls.Signature
 	Committers []int32
 	Absentees  []int32
-	Signature  *bls.Signature
+	Round      int16
 }
 
 func NewCertificate(round int16, committers, absentees []int32, signature *bls.Signature) *Certificate {

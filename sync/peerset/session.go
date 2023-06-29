@@ -10,15 +10,15 @@ import (
 )
 
 type Session struct {
-	lk   sync.RWMutex
 	data sessionData
+	lk   sync.RWMutex
 }
 
 type sessionData struct {
-	SessionID        int
-	PeerID           peer.ID
-	LastResponseCode message.ResponseCode
 	LastActivityAt   time.Time
+	PeerID           peer.ID
+	SessionID        int
+	LastResponseCode message.ResponseCode
 }
 
 func newSession(id int, peerID peer.ID) *Session {

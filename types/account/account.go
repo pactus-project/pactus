@@ -18,9 +18,9 @@ type Account struct {
 
 // accountData contains the data associated with a account.
 type accountData struct {
+	Balance  int64
 	Number   int32
 	Sequence int32
-	Balance  int64
 }
 
 // NewAccount constructs a new account from the given number.

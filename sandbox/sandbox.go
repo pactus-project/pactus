@@ -19,17 +19,16 @@ import (
 var _ Sandbox = &sandbox{}
 
 type sandbox struct {
-	lk sync.RWMutex
-
 	store           store.Reader
 	committee       committee.Reader
 	accounts        map[crypto.Address]*sandboxAccount
 	validators      map[crypto.Address]*sandboxValidator
 	params          param.Params
-	totalAccounts   int32
-	totalValidators int32
 	totalPower      int64
 	powerDelta      int64
+	lk              sync.RWMutex
+	totalAccounts   int32
+	totalValidators int32
 }
 
 type sandboxValidator struct {

@@ -14,14 +14,14 @@ import (
 
 type Server struct {
 	ctx      context.Context
-	config   *Config
 	listener net.Listener
-	address  string
-	grpc     *grpc.Server
 	state    state.Facade
 	sync     sync.Synchronizer
 	consMgr  consensus.ManagerReader
+	config   *Config
+	grpc     *grpc.Server
 	logger   *logger.Logger
+	address  string
 }
 
 func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
