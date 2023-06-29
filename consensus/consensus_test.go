@@ -158,11 +158,13 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, ha
 	}
 }
 
-func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus, height uint32, round int16) *proposal.Proposal {
+func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
+	height uint32, round int16) *proposal.Proposal {
 	return shouldPublishProposal(t, cons, height, round)
 }
 
-func shouldPublishProposal(t *testing.T, cons *consensus, height uint32, round int16) *proposal.Proposal {
+func shouldPublishProposal(t *testing.T, cons *consensus,
+	height uint32, round int16) *proposal.Proposal {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {

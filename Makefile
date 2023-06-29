@@ -65,6 +65,7 @@ check:
 	golangci-lint run \
 		--build-tags "${BUILD_TAG}" \
 		-e "SA1019" \
+		-e "G404" \
 		--timeout=20m0s \
 		--enable=gofmt \
 		--enable=unconvert \

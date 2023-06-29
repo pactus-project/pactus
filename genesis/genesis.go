@@ -3,7 +3,7 @@ package genesis
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
@@ -148,7 +148,7 @@ func MakeGenesis(genesisTime time.Time, accounts map[crypto.Address]*account.Acc
 
 // LoadFromFile loads genesis object from a JSON file.
 func LoadFromFile(file string) (*Genesis, error) {
-	dat, err := ioutil.ReadFile(file)
+	dat, err := os.ReadFile(file)
 	if err != nil {
 		return nil, err
 	}

@@ -591,7 +591,8 @@ func TestLoadState(t *testing.T) {
 
 	// Add a bond transactions to change total power (stake)
 	pub, _ := td.RandomBLSKeyPair()
-	tx2 := tx.NewBondTx(td.state1.LastBlockHash().Stamp(), 1, td.valSigner1.Address(), pub.Address(), pub, 8888000, 8888, "")
+	tx2 := tx.NewBondTx(td.state1.LastBlockHash().Stamp(), 1, td.valSigner1.Address(),
+		pub.Address(), pub, 8888000, 8888, "")
 	td.valSigner1.SignMsg((tx2))
 
 	assert.NoError(t, td.commonTxPool.AppendTx(tx2))
@@ -628,7 +629,8 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 		td.moveToNextHeightForAllStates(t)
 	}
 
-	_, err := LoadOrNewState(td.state1.genDoc, []crypto.Signer{td.valSigner1}, td.state1.store, txpool.MockingTxPool(), nil)
+	_, err := LoadOrNewState(td.state1.genDoc, []crypto.Signer{td.valSigner1},
+		td.state1.store, txpool.MockingTxPool(), nil)
 	require.NoError(t, err)
 
 	pub, _ := td.RandomBLSKeyPair()

@@ -2,7 +2,7 @@ package network
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -85,7 +85,7 @@ func (mock *MockNetwork) SendToOthers(data []byte, target *peer.ID) {
 			// direct message
 			event := &StreamMessage{
 				Source: mock.ID,
-				Reader: ioutil.NopCloser(bytes.NewReader(data)),
+				Reader: io.NopCloser(bytes.NewReader(data)),
 			}
 			net.EventCh <- event
 		}

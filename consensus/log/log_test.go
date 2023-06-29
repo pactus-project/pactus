@@ -21,7 +21,7 @@ func TestMustGetRound(t *testing.T) {
 	assert.Equal(t, len(log.roundMessages), 5)
 }
 
-func addVotes(t *testing.T) {
+func TestAddVotes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	committee, signers := ts.GenerateTestCommittee(4)

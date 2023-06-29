@@ -26,7 +26,7 @@ func MakeAbs(path string) string {
 }
 
 func ReadFile(filename string) ([]byte, error) {
-	return ioutil.ReadFile(filename)
+	return os.ReadFile(filename)
 }
 
 func WriteFile(filename string, data []byte) error {

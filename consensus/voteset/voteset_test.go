@@ -28,7 +28,7 @@ func setupCommittee(t *testing.T, ts *testsuite.TestSuite, stakes ...int64) (com
 	return committee, signers
 }
 
-func addVote(t *testing.T) {
+func TestAddVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	committee, signers := setupCommittee(t, ts, 1000, 1500, 2500, 2000)
