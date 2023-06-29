@@ -10,26 +10,26 @@ import (
 )
 
 func TestBlockchainInfo(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	tMockState.CommitTestBlocks(10)
+	td.mockState.CommitTestBlocks(10)
 
 	w := httptest.NewRecorder()
 	r := new(http.Request)
 
-	tHTTPServer.BlockchainHandler(w, r)
+	td.httpServer.BlockchainHandler(w, r)
 
 	assert.Equal(t, w.Code, 200)
 	assert.Contains(t, w.Body.String(), "10")
 }
 
 func TestNetworkInfo(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
 	w := httptest.NewRecorder()
 	r := new(http.Request)
 
-	tHTTPServer.NetworkHandler(w, r)
+	td.httpServer.NetworkHandler(w, r)
 
 	assert.Equal(t, w.Code, 200)
 	assert.Contains(t, w.Body.String(), "Peers")

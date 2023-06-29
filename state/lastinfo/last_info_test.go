@@ -5,13 +5,12 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,18 +19,23 @@ import (
 //
 // Testing this part is not easy ;(
 
-var tStore *store.MockStore
-var tLastInfo *LastInfo
+type testData struct {
+	*testsuite.TestSuite
 
-func setup(t *testing.T) {
-	tStore = store.MockingStore()
-	tLastInfo = NewLastInfo(tStore)
+	store    *store.MockStore
+	lastInfo *LastInfo
+}
 
-	pub0, _ := bls.GenerateTestKeyPair()
-	pub1, _ := bls.GenerateTestKeyPair()
-	pub2, _ := bls.GenerateTestKeyPair()
-	pub3, _ := bls.GenerateTestKeyPair()
-	pub4, prv4 := bls.GenerateTestKeyPair()
+func setup(t *testing.T) *testData {
+	ts := testsuite.NewTestSuite(t)
+	store := store.MockingStore(ts)
+	lastInfo := NewLastInfo(store)
+
+	pub0, _ := ts.RandomBLSKeyPair()
+	pub1, _ := ts.RandomBLSKeyPair()
+	pub2, _ := ts.RandomBLSKeyPair()
+	pub3, _ := ts.RandomBLSKeyPair()
+	pub4, prv4 := ts.RandomBLSKeyPair()
 	signer := crypto.NewSigner(prv4)
 
 	val0 := validator.NewValidator(pub0, 0)
@@ -52,60 +56,68 @@ func setup(t *testing.T) {
 	val3.UpdateLastJoinedHeight(0)
 	val4.UpdateLastJoinedHeight(100)
 
-	tStore.UpdateValidator(val0)
-	tStore.UpdateValidator(val1)
-	tStore.UpdateValidator(val2)
-	tStore.UpdateValidator(val3)
-	tStore.UpdateValidator(val4)
+	store.UpdateValidator(val0)
+	store.UpdateValidator(val1)
+	store.UpdateValidator(val2)
+	store.UpdateValidator(val3)
+	store.UpdateValidator(val4)
 
 	// Last block
 	committers := []int32{0, 1, 2, 3}
-	trx := tx.NewSortitionTx(hash.GenerateTestStamp(), 1, pub4.Address(), sortition.GenerateRandomProof())
+	trx := tx.NewSortitionTx(ts.RandomStamp(), 1, pub4.Address(), ts.RandomProof())
 	signer.SignMsg(trx)
-	prevHash := hash.GenerateTestHash()
-	prevCert := block.GenerateTestCertificate(prevHash)
-	lastHeight := util.RandUint32(100000)
-	lastSeed := sortition.GenerateRandomSeed()
+	prevHash := ts.RandomHash()
+	prevCert := ts.GenerateTestCertificate(prevHash)
+	lastHeight := ts.RandUint32(100000)
+	lastSeed := ts.RandomSeed()
 	lastBlock := block.MakeBlock(1, util.Now(), block.Txs{trx},
 		prevHash,
-		hash.GenerateTestHash(),
+		ts.RandomHash(),
 		prevCert, lastSeed, val2.Address())
 
 	sig := signer.SignData([]byte("fatdog"))
 	lastCert := block.NewCertificate(0, committers, []int32{}, sig.(*bls.Signature))
-	tStore.SaveBlock(lastHeight, lastBlock, lastCert)
-	assert.Equal(t, tStore.LastHeight, lastHeight)
+	store.SaveBlock(lastHeight, lastBlock, lastCert)
+	assert.Equal(t, store.LastHeight, lastHeight)
 
-	tLastInfo.SetSortitionSeed(lastSeed)
-	tLastInfo.SetBlockHeight(lastHeight)
-	tLastInfo.SetBlockHash(lastBlock.Hash())
-	tLastInfo.SetCertificate(lastCert)
-	tLastInfo.SetBlockTime(lastBlock.Header().Time())
+	lastInfo.SetSortitionSeed(lastSeed)
+	lastInfo.SetBlockHeight(lastHeight)
+	lastInfo.SetBlockHash(lastBlock.Hash())
+	lastInfo.SetCertificate(lastCert)
+	lastInfo.SetBlockTime(lastBlock.Header().Time())
+
+	return &testData{
+		TestSuite: ts,
+		store:     store,
+		lastInfo:  lastInfo,
+	}
 }
 
 func TestRestoreCommittee(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	li := NewLastInfo(tStore)
+	li := NewLastInfo(td.store)
 
 	cmt, err := li.RestoreLastInfo(4)
 	assert.NoError(t, err)
 
-	assert.Equal(t, tLastInfo.SortitionSeed(), li.SortitionSeed())
-	assert.Equal(t, tLastInfo.BlockHeight(), li.BlockHeight())
-	assert.Equal(t, tLastInfo.BlockHash(), li.BlockHash())
-	assert.Equal(t, tLastInfo.Certificate().Hash(), li.Certificate().Hash())
-	assert.Equal(t, tLastInfo.BlockTime(), li.BlockTime())
+	assert.Equal(t, td.lastInfo.SortitionSeed(), li.SortitionSeed())
+	assert.Equal(t, td.lastInfo.BlockHeight(), li.BlockHeight())
+	assert.Equal(t, td.lastInfo.BlockHash(), li.BlockHash())
+	assert.Equal(t, td.lastInfo.Certificate().Hash(), li.Certificate().Hash())
+	assert.Equal(t, td.lastInfo.BlockTime(), li.BlockTime())
 	assert.Equal(t, cmt.Committers(), []int32{1, 4, 2, 3})
 }
 
 func TestRestoreFailed(t *testing.T) {
+	td := setup(t)
+
 	t.Run("Unable to get validator from store", func(t *testing.T) {
 		setup(t)
 
-		li := NewLastInfo(tStore)
+		li := NewLastInfo(td.store)
 
-		tStore.Validators = make(map[crypto.Address]validator.Validator) // Reset Validators
+		td.store.Validators = make(map[crypto.Address]validator.Validator) // Reset Validators
 		_, err := li.RestoreLastInfo(4)
 		assert.Error(t, err)
 	})
@@ -113,9 +125,9 @@ func TestRestoreFailed(t *testing.T) {
 	t.Run("Unable to get block from store", func(t *testing.T) {
 		setup(t)
 
-		li := NewLastInfo(tStore)
+		li := NewLastInfo(td.store)
 
-		tStore.Blocks = make(map[uint32]block.Block) // Reset Blocks
+		td.store.Blocks = make(map[uint32]block.Block) // Reset Blocks
 		_, err := li.RestoreLastInfo(4)
 		assert.Error(t, err)
 	})

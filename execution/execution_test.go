@@ -4,27 +4,28 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sandbox"
-	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExecution(t *testing.T) {
-	sb := sandbox.MockingSandbox()
+	ts := testsuite.NewTestSuite(t)
+
+	sb := sandbox.MockingSandbox(ts)
 	exe := NewExecutor()
 
-	signer1 := bls.GenerateTestSigner()
+	signer1 := ts.RandomSigner()
 	addr1 := signer1.Address()
 	acc1 := sb.MakeNewAccount(addr1)
 	acc1.AddToBalance(100 * 1e9)
 	sb.UpdateAccount(addr1, acc1)
 
-	rcvAddr := crypto.GenerateTestAddress()
+	rcvAddr := ts.RandomAddress()
 	block1 := sb.TestStore.AddTestBlock(1)
 	block3 := sb.TestStore.AddTestBlock(3)
 	block8635 := sb.TestStore.AddTestBlock(8635)
@@ -32,7 +33,7 @@ func TestExecution(t *testing.T) {
 	block8642 := sb.TestStore.AddTestBlock(8642)
 
 	t.Run("Invalid transaction, Should returns error", func(t *testing.T) {
-		trx, _ := tx.GenerateTestSendTx()
+		trx, _ := ts.GenerateTestSendTx()
 		assert.Error(t, exe.Execute(trx, sb))
 		assert.Zero(t, exe.AccumulatedFee())
 	})
@@ -92,14 +93,14 @@ func TestExecution(t *testing.T) {
 	})
 
 	t.Run("Sortition tx - Expired stamp, Should returns error", func(t *testing.T) {
-		proof := sortition.GenerateRandomProof()
+		proof := ts.RandomProof()
 		trx := tx.NewSortitionTx(block8635.Stamp(), 1, addr1, proof)
 		signer1.SignMsg(trx)
 		assert.Error(t, exe.Execute(trx, sb))
 	})
 
 	t.Run("Execution failed", func(t *testing.T) {
-		proof := sortition.GenerateRandomProof()
+		proof := ts.RandomProof()
 		trx := tx.NewSortitionTx(block8642.Stamp(), 1, addr1, proof)
 		signer1.SignMsg(trx)
 		assert.Error(t, exe.Execute(trx, sb))
@@ -107,14 +108,16 @@ func TestExecution(t *testing.T) {
 }
 
 func TestChecker(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	executor := NewExecutor()
 	checker := NewChecker()
-	sb := sandbox.MockingSandbox()
+	sb := sandbox.MockingSandbox(ts)
 
 	block1000 := sb.TestStore.AddTestBlock(1000)
 
 	t.Run("In strict mode transaction should be rejected.", func(t *testing.T) {
-		signer := bls.GenerateTestSigner()
+		signer := ts.RandomSigner()
 		acc := sb.MakeNewAccount(signer.Address())
 		acc.AddToBalance(10000)
 		sb.UpdateAccount(signer.Address(), acc)
@@ -129,15 +132,17 @@ func TestChecker(t *testing.T) {
 }
 
 func TestLockTime(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	executor := NewExecutor()
 	checker := NewChecker()
-	sb := sandbox.MockingSandbox()
+	sb := sandbox.MockingSandbox(ts)
 
 	curHeight := 2 * sb.TestParams.TransactionToLiveInterval
 	sb.TestStore.AddTestBlock(curHeight)
 
 	t.Run("Should reject sortition transactions with lock time", func(t *testing.T) {
-		pub, prv := bls.GenerateTestKeyPair()
+		pub, prv := ts.RandomBLSKeyPair()
 		signer := crypto.NewSigner(prv)
 		val := sb.MakeNewValidator(pub)
 		sb.UpdateValidator(val)
@@ -145,7 +150,7 @@ func TestLockTime(t *testing.T) {
 		sb.TestAcceptSortition = true
 		pld := &payload.SortitionPayload{
 			Address: pub.Address(),
-			Proof:   sortition.GenerateRandomProof(),
+			Proof:   ts.RandomProof(),
 		}
 		trx := tx.NewLockTimeTx(curHeight+10, 1, pld, 0, "")
 		signer.SignMsg(trx)
@@ -156,7 +161,7 @@ func TestLockTime(t *testing.T) {
 	t.Run("Should reject subsidy transactions with lock time", func(t *testing.T) {
 		pld := &payload.TransferPayload{
 			Sender:   crypto.TreasuryAddress,
-			Receiver: crypto.GenerateTestAddress(),
+			Receiver: ts.RandomAddress(),
 			Amount:   1234,
 		}
 		trx := tx.NewLockTimeTx(curHeight+10, 1, pld, 0, "")
@@ -165,13 +170,13 @@ func TestLockTime(t *testing.T) {
 	})
 
 	t.Run("Should reject expired transactions", func(t *testing.T) {
-		signer := bls.GenerateTestSigner()
+		signer := ts.RandomSigner()
 		acc := sb.MakeNewAccount(signer.Address())
 		acc.AddToBalance(10000)
 		sb.UpdateAccount(signer.Address(), acc)
 		pld := &payload.TransferPayload{
 			Sender:   signer.Address(),
-			Receiver: crypto.GenerateTestAddress(),
+			Receiver: ts.RandomAddress(),
 			Amount:   1234,
 		}
 
@@ -183,13 +188,13 @@ func TestLockTime(t *testing.T) {
 	})
 
 	t.Run("Not finalized transaction", func(t *testing.T) {
-		signer := bls.GenerateTestSigner()
+		signer := ts.RandomSigner()
 		acc := sb.MakeNewAccount(signer.Address())
 		acc.AddToBalance(10000)
 		sb.UpdateAccount(signer.Address(), acc)
 		pld := &payload.TransferPayload{
 			Sender:   signer.Address(),
-			Receiver: crypto.GenerateTestAddress(),
+			Receiver: ts.RandomAddress(),
 			Amount:   1234,
 		}
 
@@ -206,8 +211,10 @@ func TestLockTime(t *testing.T) {
 }
 
 func TestFee(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	exe := NewChecker()
-	sb := sandbox.MockingSandbox()
+	sb := sandbox.MockingSandbox(ts)
 
 	tests := []struct {
 		amount          int64
@@ -228,9 +235,9 @@ func TestFee(t *testing.T) {
 		{1 * 1e12, 1000000, 1000000, errors.ErrNone},
 	}
 
-	sender := crypto.GenerateTestAddress()
-	receiver := crypto.GenerateTestAddress()
-	stamp := hash.GenerateTestStamp()
+	sender := ts.RandomAddress()
+	receiver := ts.RandomAddress()
+	stamp := ts.RandomStamp()
 	for i, test := range tests {
 		trx := tx.NewTransferTx(stamp, 1, sender, receiver, test.amount, test.fee,
 			"testing fee")

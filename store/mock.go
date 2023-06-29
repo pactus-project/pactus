@@ -9,12 +9,14 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 )
 
 var _ Store = &MockStore{}
 
 type MockStore struct {
+	ts *testsuite.TestSuite
+
 	Blocks     map[uint32]block.Block
 	Accounts   map[crypto.Address]account.Account
 	Validators map[crypto.Address]validator.Validator
@@ -22,8 +24,9 @@ type MockStore struct {
 	LastHeight uint32
 }
 
-func MockingStore() *MockStore {
+func MockingStore(ts *testsuite.TestSuite) *MockStore {
 	return &MockStore{
+		ts:         ts,
 		Blocks:     make(map[uint32]block.Block),
 		Accounts:   make(map[crypto.Address]account.Account),
 		Validators: make(map[crypto.Address]validator.Validator),
@@ -182,20 +185,20 @@ func (m *MockStore) WriteBatch() error {
 }
 
 func (m *MockStore) AddTestValidator() *validator.Validator {
-	val, _ := validator.GenerateTestValidator(util.RandInt32(10000))
+	val, _ := m.ts.GenerateTestValidator(m.ts.RandInt32(10000))
 	m.UpdateValidator(val)
 	return val
 }
 
 func (m *MockStore) AddTestAccount() (*account.Account, crypto.Signer) {
-	acc, signer := account.GenerateTestAccount(util.RandInt32(10000))
+	acc, signer := m.ts.GenerateTestAccount(m.ts.RandInt32(10000))
 	m.UpdateAccount(signer.Address(), acc)
 	return acc, signer
 }
 
 func (m *MockStore) AddTestBlock(height uint32) *block.Block {
-	b := block.GenerateTestBlock(nil, nil)
-	cert := block.GenerateTestCertificate(b.Hash())
+	b := m.ts.GenerateTestBlock(nil, nil)
+	cert := m.ts.GenerateTestCertificate(b.Hash())
 	m.SaveBlock(height, b, cert)
 	return b
 }

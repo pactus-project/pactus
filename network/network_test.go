@@ -10,6 +10,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/host"
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -17,7 +18,6 @@ import (
 // Original code from:
 // https://github.com/libp2p/go-libp2p/blob/master/p2p/host/autorelay/autorelay_test.go
 func makeTestRelay(t *testing.T) host.Host {
-	t.Helper()
 	h, err := lp2p.New(
 		lp2p.ListenAddrStrings("/ip4/0.0.0.0/tcp/0"),
 		lp2p.DisableRelay(),
@@ -127,6 +127,8 @@ func TestStoppingNetwork(t *testing.T) {
 //   - General and consensus topics and gossip message
 //   - Direct and relayed stream communication between nodes
 func TestNetwork(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	// Relay
 	nodeR := makeTestRelay(t)
 
@@ -139,7 +141,7 @@ func TestNetwork(t *testing.T) {
 
 	// Bootstrap node
 	confB := testConfig()
-	bootstrapPort := util.RandInt32(9999) + 10000
+	bootstrapPort := ts.RandInt32(9999) + 10000
 	confB.Listens = []string{
 		fmt.Sprintf("/ip4/0.0.0.0/tcp/%v", bootstrapPort),
 		fmt.Sprintf("/ip6/::/tcp/%v", bootstrapPort),

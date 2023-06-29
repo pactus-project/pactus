@@ -1,17 +1,21 @@
-package bls
+package bls_test
 
 import (
 	"encoding/hex"
 	"strings"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPrivateKeyEqualsTo(t *testing.T) {
-	_, prv1 := GenerateTestKeyPair()
-	_, prv2 := GenerateTestKeyPair()
+	ts := testsuite.NewTestSuite(t)
+
+	_, prv1 := ts.RandomBLSKeyPair()
+	_, prv2 := ts.RandomBLSKeyPair()
 
 	assert.True(t, prv1.EqualsTo(prv1))
 	assert.False(t, prv1.EqualsTo(prv2))
@@ -87,7 +91,7 @@ func TestPrivateKeyToString(t *testing.T) {
 		},
 	}
 	for no, test := range tests {
-		prv, err := PrivateKeyFromString(test.encoded)
+		prv, err := bls.PrivateKeyFromString(test.encoded)
 		if test.valid {
 			assert.NoError(t, err, "test %v: unexpected error", no)
 			assert.Equal(t, prv.Bytes(), test.result, "test %v: invalid bytes", no)
@@ -144,7 +148,7 @@ func TestKeyGen(t *testing.T) {
 
 	for i, test := range tests {
 		ikm, _ := hex.DecodeString(test.ikm)
-		prv, err := KeyGen(ikm, nil)
+		prv, err := bls.KeyGen(ikm, nil)
 		if test.sk == "Err" {
 			assert.Error(t, err,
 				"test '%v' failed. no error", i)

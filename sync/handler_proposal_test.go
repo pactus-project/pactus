@@ -3,21 +3,19 @@ package sync
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestParsingProposalMessages(t *testing.T) {
-	setup(t)
+	td := setup(t, nil)
 
 	t.Run("Parsing proposal message", func(t *testing.T) {
-		consensusHeight := tState.LastBlockHeight() + 1
-		prop, _ := proposal.GenerateTestProposal(consensusHeight, 0)
+		consensusHeight := td.state.LastBlockHeight() + 1
+		prop, _ := td.GenerateTestProposal(consensusHeight, 0)
 		msg := message.NewProposalMessage(prop)
 
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, network.TestRandomPeerID()))
-		assert.NotNil(t, tConsMgr.RoundProposal(0))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, td.RandomPeerID()))
+		assert.NotNil(t, td.consMgr.RoundProposal(0))
 	})
 }

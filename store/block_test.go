@@ -4,16 +4,15 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/pactus-project/pactus/types/block"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBlockStore(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	lastHeight, _ := tStore.LastCertificate()
-	b1 := block.GenerateTestBlock(nil, nil)
-	c1 := block.GenerateTestCertificate(b1.Hash())
+	lastHeight, _ := td.store.LastCertificate()
+	b1 := td.GenerateTestBlock(nil, nil)
+	c1 := td.GenerateTestCertificate(b1.Hash())
 
 	t.Run("Missed block, Should panic ", func(t *testing.T) {
 		defer func() {
@@ -21,26 +20,26 @@ func TestBlockStore(t *testing.T) {
 				t.Errorf("The code did not panic")
 			}
 		}()
-		tStore.SaveBlock(lastHeight+2, b1, c1)
+		td.store.SaveBlock(lastHeight+2, b1, c1)
 	})
 
 	t.Run("Add block, don't batch write", func(t *testing.T) {
-		tStore.SaveBlock(lastHeight+1, b1, c1)
-		b2, err := tStore.Block(lastHeight + 1)
+		td.store.SaveBlock(lastHeight+1, b1, c1)
+		b2, err := td.store.Block(lastHeight + 1)
 		assert.Error(t, err)
 		assert.Nil(t, b2)
 	})
 
 	t.Run("Add block, batch write", func(t *testing.T) {
-		tStore.SaveBlock(lastHeight+1, b1, c1)
-		assert.NoError(t, tStore.WriteBatch())
-		sb, err := tStore.Block(lastHeight + 1)
+		td.store.SaveBlock(lastHeight+1, b1, c1)
+		assert.NoError(t, td.store.WriteBatch())
+		sb, err := td.store.Block(lastHeight + 1)
 		assert.NoError(t, err)
 		d, _ := b1.Bytes()
 		assert.Equal(t, sb.Height, lastHeight+1)
 		assert.True(t, bytes.Equal(sb.Data, d))
 
-		h, cert := tStore.LastCertificate()
+		h, cert := td.store.LastCertificate()
 		assert.NoError(t, err)
 		assert.Equal(t, h, lastHeight+1)
 		assert.Equal(t, cert.Hash(), c1.Hash())
@@ -52,6 +51,6 @@ func TestBlockStore(t *testing.T) {
 				t.Errorf("The code did not panic")
 			}
 		}()
-		tStore.SaveBlock(lastHeight, b1, c1)
+		td.store.SaveBlock(lastHeight, b1, c1)
 	})
 }

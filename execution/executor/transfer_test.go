@@ -3,119 +3,126 @@ package executor
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	tSandbox     *sandbox.MockSandbox
-	tStamp500000 hash.Stamp
-)
+type testData struct {
+	*testsuite.TestSuite
 
-func setup(t *testing.T) {
-	tSandbox = sandbox.MockingSandbox()
-
-	block500000 := tSandbox.TestStore.AddTestBlock(500000)
-	tStamp500000 = block500000.Stamp()
-	checkTotalCoin(t, 0)
+	sandbox     *sandbox.MockSandbox
+	stamp500000 hash.Stamp
 }
 
-func checkTotalCoin(t *testing.T, fee int64) {
+func setup(t *testing.T) *testData {
+	ts := testsuite.NewTestSuite(t)
+
+	sandbox := sandbox.MockingSandbox(ts)
+	block500000 := sandbox.TestStore.AddTestBlock(500000)
+	stamp500000 := block500000.Stamp()
+
+	return &testData{
+		TestSuite:   ts,
+		sandbox:     sandbox,
+		stamp500000: stamp500000,
+	}
+}
+
+func (td *testData) checkTotalCoin(t *testing.T, fee int64) {
 	total := int64(0)
-	for _, acc := range tSandbox.TestStore.Accounts {
+	for _, acc := range td.sandbox.TestStore.Accounts {
 		total += acc.Balance()
 	}
 
-	for _, val := range tSandbox.TestStore.Validators {
+	for _, val := range td.sandbox.TestStore.Validators {
 		total += val.Stake()
 	}
 	assert.Equal(t, total+fee, int64(21000000*1e9))
 }
 
-func randomAmountAndFee(max int64) (int64, int64) {
-	amt := util.RandInt64(max / 2)
-	fee := int64(float64(amt) * tSandbox.Params().FeeFraction)
+func (td *testData) randomAmountAndFee(max int64) (int64, int64) {
+	amt := td.RandInt64(max / 2)
+	fee := int64(float64(amt) * td.sandbox.Params().FeeFraction)
 	return amt, fee
 }
 
 func TestExecuteTransferTx(t *testing.T) {
-	setup(t)
+	td := setup(t)
 	exe := NewTransferExecutor(true)
 
-	senderAddr, senderAcc := tSandbox.TestStore.RandomTestAcc()
+	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
-	receiverAddr := crypto.GenerateTestAddress()
-	amt, fee := randomAmountAndFee(senderBalance)
+	receiverAddr := td.RandomAddress()
+	amt, fee := td.randomAmountAndFee(senderBalance)
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
-		trx := tx.NewTransferTx(tStamp500000, 1, crypto.GenerateTestAddress(),
+		trx := tx.NewTransferTx(td.stamp500000, 1, td.RandomAddress(),
 			receiverAddr, amt, fee, "non-existing account")
 
-		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidAddress)
+		assert.Equal(t, errors.Code(exe.Execute(trx, td.sandbox)), errors.ErrInvalidAddress)
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewTransferTx(tStamp500000, senderAcc.Sequence()+1, senderAddr,
+		trx := tx.NewTransferTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
 			receiverAddr, senderBalance+1, 0, "insufficient balance")
 
-		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInsufficientFunds)
+		assert.Equal(t, errors.Code(exe.Execute(trx, td.sandbox)), errors.ErrInsufficientFunds)
 	})
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewTransferTx(tStamp500000, senderAcc.Sequence()+2, senderAddr,
+		trx := tx.NewTransferTx(td.stamp500000, senderAcc.Sequence()+2, senderAddr,
 			receiverAddr, amt, fee, "invalid sequence")
 
-		assert.Equal(t, errors.Code(exe.Execute(trx, tSandbox)), errors.ErrInvalidSequence)
+		assert.Equal(t, errors.Code(exe.Execute(trx, td.sandbox)), errors.ErrInvalidSequence)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewTransferTx(tStamp500000, senderAcc.Sequence()+1, senderAddr,
+		trx := tx.NewTransferTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
 			receiverAddr, amt, fee, "ok")
 
-		assert.NoError(t, exe.Execute(trx, tSandbox))
+		assert.NoError(t, exe.Execute(trx, td.sandbox))
 
 		// Execute again, should fail
-		assert.Error(t, exe.Execute(trx, tSandbox))
+		assert.Error(t, exe.Execute(trx, td.sandbox))
 	})
 
-	assert.Equal(t, tSandbox.Account(senderAddr).Balance(), senderBalance-(amt+fee))
-	assert.Equal(t, tSandbox.Account(receiverAddr).Balance(), amt)
+	assert.Equal(t, td.sandbox.Account(senderAddr).Balance(), senderBalance-(amt+fee))
+	assert.Equal(t, td.sandbox.Account(receiverAddr).Balance(), amt)
 
-	checkTotalCoin(t, fee)
+	td.checkTotalCoin(t, fee)
 }
 
 func TestTransferToSelf(t *testing.T) {
-	setup(t)
+	td := setup(t)
 	exe := NewTransferExecutor(true)
 
-	senderAddr, senderAcc := tSandbox.TestStore.RandomTestAcc()
+	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
-	amt, fee := randomAmountAndFee(senderBalance)
+	amt, fee := td.randomAmountAndFee(senderBalance)
 
-	trx := tx.NewTransferTx(tStamp500000, senderAcc.Sequence()+1, senderAddr, senderAddr, amt, fee, "ok")
-	assert.NoError(t, exe.Execute(trx, tSandbox))
+	trx := tx.NewTransferTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr, senderAddr, amt, fee, "ok")
+	assert.NoError(t, exe.Execute(trx, td.sandbox))
 
-	assert.Equal(t, tSandbox.Account(senderAddr).Balance(), senderBalance-fee) // Fee should be deducted
+	assert.Equal(t, td.sandbox.Account(senderAddr).Balance(), senderBalance-fee) // Fee should be deducted
 	assert.Equal(t, exe.Fee(), fee)
 }
 
 func TestTransferNonStrictMode(t *testing.T) {
-	setup(t)
+	td := setup(t)
 	exe1 := NewTransferExecutor(true)
 	exe2 := NewTransferExecutor(false)
 
-	receiver1 := crypto.GenerateTestAddress()
+	receiver1 := td.RandomAddress()
 
-	trx1 := tx.NewSubsidyTx(tStamp500000, int32(tSandbox.CurrentHeight()), receiver1, 1, "")
-	assert.Equal(t, errors.Code(exe1.Execute(trx1, tSandbox)), errors.ErrInvalidSequence)
-	assert.NoError(t, exe2.Execute(trx1, tSandbox))
+	trx1 := tx.NewSubsidyTx(td.stamp500000, int32(td.sandbox.CurrentHeight()), receiver1, 1, "")
+	assert.Equal(t, errors.Code(exe1.Execute(trx1, td.sandbox)), errors.ErrInvalidSequence)
+	assert.NoError(t, exe2.Execute(trx1, td.sandbox))
 
-	trx2 := tx.NewSubsidyTx(tStamp500000, int32(tSandbox.CurrentHeight()+1), receiver1, 1, "")
-	assert.Equal(t, errors.Code(exe1.Execute(trx2, tSandbox)), errors.ErrInvalidSequence)
-	assert.Equal(t, errors.Code(exe2.Execute(trx2, tSandbox)), errors.ErrInvalidSequence)
+	trx2 := tx.NewSubsidyTx(td.stamp500000, int32(td.sandbox.CurrentHeight()+1), receiver1, 1, "")
+	assert.Equal(t, errors.Code(exe1.Execute(trx2, td.sandbox)), errors.ErrInvalidSequence)
+	assert.Equal(t, errors.Code(exe2.Execute(trx2, td.sandbox)), errors.ErrInvalidSequence)
 }

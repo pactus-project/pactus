@@ -3,10 +3,7 @@ package grpc
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 )
@@ -102,6 +99,8 @@ func TestGetBlockHash(t *testing.T) {
 }
 
 func TestGetBlockHeight(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	conn, client := testBlockchainClient(t)
 
 	b := tMockState.TestStore.AddTestBlock(100)
@@ -116,7 +115,7 @@ func TestGetBlockHeight(t *testing.T) {
 
 	t.Run("Should return error for non existing block", func(t *testing.T) {
 		res, err := client.GetBlockHeight(tCtx,
-			&pactus.GetBlockHeightRequest{Hash: hash.GenerateTestHash().Bytes()})
+			&pactus.GetBlockHeightRequest{Hash: ts.RandomHash().Bytes()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -149,6 +148,8 @@ func TestGetBlockchainInfo(t *testing.T) {
 }
 
 func TestGetAccount(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	conn, client := testBlockchainClient(t)
 	acc, signer := tMockState.TestStore.AddTestAccount()
 
@@ -162,7 +163,7 @@ func TestGetAccount(t *testing.T) {
 
 	t.Run("Should return nil for non existing account ", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx,
-			&pactus.GetAccountRequest{Address: crypto.GenerateTestAddress().String()})
+			&pactus.GetAccountRequest{Address: ts.RandomAddress().String()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -182,6 +183,8 @@ func TestGetAccount(t *testing.T) {
 }
 
 func TestGetAccountByNumber(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	conn, client := testBlockchainClient(t)
 	acc, _ := tMockState.TestStore.AddTestAccount()
 
@@ -195,7 +198,7 @@ func TestGetAccountByNumber(t *testing.T) {
 
 	t.Run("Should return nil for non existing account ", func(t *testing.T) {
 		res, err := client.GetAccountByNumber(tCtx,
-			&pactus.GetAccountByNumberRequest{Number: util.RandInt32(0)})
+			&pactus.GetAccountByNumberRequest{Number: ts.RandInt32(1000)})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -215,6 +218,8 @@ func TestGetAccountByNumber(t *testing.T) {
 }
 
 func TestGetValidator(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	conn, client := testBlockchainClient(t)
 	val1 := tMockState.TestStore.AddTestValidator()
 
@@ -228,7 +233,7 @@ func TestGetValidator(t *testing.T) {
 
 	t.Run("should return Not Found", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx,
-			&pactus.GetValidatorRequest{Address: crypto.GenerateTestAddress().String()})
+			&pactus.GetValidatorRequest{Address: ts.RandomAddress().String()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -311,10 +316,12 @@ func TestGetValidatorAddresses(t *testing.T) {
 }
 
 func TestConsensusInfo(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	conn, client := testBlockchainClient(t)
 
-	v1, _ := vote.GenerateTestPrepareVote(100, 2)
-	v2, _ := vote.GenerateTestChangeProposerVote(100, 2)
+	v1, _ := ts.GenerateTestPrepareVote(100, 2)
+	v2, _ := ts.GenerateTestChangeProposerVote(100, 2)
 	tConsMocks[1].Active = true
 	tConsMocks[1].Height = 100
 	tConsMocks[0].AddVote(v1)

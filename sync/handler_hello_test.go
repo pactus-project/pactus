@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
@@ -15,50 +13,50 @@ import (
 )
 
 func TestParsingHelloMessages(t *testing.T) {
-	setup(t)
+	td := setup(t, nil)
 
 	t.Run("Receiving Hello message from a peer. Peer ID is not same as initiator.",
 		func(t *testing.T) {
-			signer := bls.GenerateTestSigner()
-			pid := network.TestRandomPeerID()
-			initiator := network.TestRandomPeerID()
-			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0, tState.Genesis().Hash())
+			signer := td.RandomSigner()
+			pid := td.RandomPeerID()
+			initiator := td.RandomPeerID()
+			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0, td.state.Genesis().Hash())
 			signer.SignMsg(msg)
 			assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
-			assert.Error(t, testReceivingNewMessage(tSync, msg, initiator))
-			assert.Equal(t, tSync.peerSet.GetPeer(initiator).Status, peerset.StatusCodeBanned)
+			assert.Error(t, td.receivingNewMessage(td.sync, msg, initiator))
+			assert.Equal(t, td.sync.peerSet.GetPeer(initiator).Status, peerset.StatusCodeBanned)
 		})
 
 	t.Run("Receiving Hello message from a peer. Genesis hash is wrong.",
 		func(t *testing.T) {
-			invGenHash := hash.GenerateTestHash()
-			signer := bls.GenerateTestSigner()
-			pid := network.TestRandomPeerID()
+			invGenHash := td.RandomHash()
+			signer := td.RandomSigner()
+			pid := td.RandomPeerID()
 			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0, invGenHash)
 			signer.SignMsg(msg)
 			assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
-			assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
-			shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
-			checkPeerStatus(t, pid, peerset.StatusCodeBanned)
+			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeHello)
+			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
 		})
 
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info",
 		func(t *testing.T) {
-			signer := bls.GenerateTestSigner()
-			height := util.RandUint32(tState.LastBlockHeight())
-			pid := network.TestRandomPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork, tState.Genesis().Hash())
+			signer := td.RandomSigner()
+			height := util.RandUint32(td.state.LastBlockHeight())
+			pid := td.RandomPeerID()
+			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork, td.state.Genesis().Hash())
 			signer.SignMsg(msg)
 
-			assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello) // Alice key 1
-			shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello) // Alice key 2
+			td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeHello) // Alice key 1
+			td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeHello) // Alice key 2
 
 			// Check if the peer info is updated
-			p := tSync.peerSet.GetPeer(pid)
+			p := td.sync.peerSet.GetPeer(pid)
 
 			pub := signer.PublicKey().(*bls.PublicKey)
 			assert.Equal(t, p.Status, peerset.StatusCodeKnown)
@@ -72,43 +70,43 @@ func TestParsingHelloMessages(t *testing.T) {
 
 	t.Run("Receiving Hello-ack message from a peer. It should not be acknowledged, but update the peer info",
 		func(t *testing.T) {
-			signer := bls.GenerateTestSigner()
-			height := util.RandUint32(tState.LastBlockHeight())
-			pid := network.TestRandomPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagHelloAck, tState.Genesis().Hash())
+			signer := td.RandomSigner()
+			height := util.RandUint32(td.state.LastBlockHeight())
+			pid := td.RandomPeerID()
+			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagHelloAck, td.state.Genesis().Hash())
 			signer.SignMsg(msg)
 
-			assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
-			shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
-			checkPeerStatus(t, pid, peerset.StatusCodeKnown)
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeHello)
+			td.checkPeerStatus(t, pid, peerset.StatusCodeKnown)
 
 			// Check if the peer info is updated
-			p := tSync.peerSet.GetPeer(pid)
+			p := td.sync.peerSet.GetPeer(pid)
 			assert.Equal(t, p.Height, height)
 		})
 
 	t.Run("Receiving Hello-ack message from a peer. Peer is ahead. It should request for blocks",
 		func(t *testing.T) {
-			tSync.peerSet.Clear()
-			signer := bls.GenerateTestSigner()
-			claimedHeight := tState.LastBlockHeight() + 5
-			pid := network.TestRandomPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck, tState.Genesis().Hash())
+			td.sync.peerSet.Clear()
+			signer := td.RandomSigner()
+			claimedHeight := td.state.LastBlockHeight() + 5
+			pid := td.RandomPeerID()
+			msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck, td.state.Genesis().Hash())
 			signer.SignMsg(msg)
 
-			assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
-			shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksRequest)
-			checkPeerStatus(t, pid, peerset.StatusCodeKnown)
-			assert.Equal(t, tSync.peerSet.MaxClaimedHeight(), claimedHeight)
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+			td.checkPeerStatus(t, pid, peerset.StatusCodeKnown)
+			assert.Equal(t, td.sync.peerSet.MaxClaimedHeight(), claimedHeight)
 		})
 }
 
 func TestBroadcastingHelloMessages(t *testing.T) {
-	setup(t)
+	td := setup(t, nil)
 
-	tSync.sayHello(true)
+	td.sync.sayHello(true)
 
-	bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello)
+	bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeHello)
 	assert.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHelloMessage))
 	assert.True(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Flags, message.FlagHelloAck))
 }

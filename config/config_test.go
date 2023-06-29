@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -85,6 +85,8 @@ func TestExampleConfig(t *testing.T) {
 }
 
 func TestNodeConfigSanityCheck(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	t.Run("invalid number of validators", func(t *testing.T) {
 		conf := DefaultNodeConfig()
 		conf.NumValidators = 0
@@ -95,7 +97,7 @@ func TestNodeConfigSanityCheck(t *testing.T) {
 	t.Run("invalid number of reward addresses", func(t *testing.T) {
 		conf := DefaultNodeConfig()
 		conf.RewardAddresses = []string{
-			crypto.GenerateTestAddress().String()}
+			ts.RandomAddress().String()}
 
 		assert.Error(t, conf.SanityCheck())
 	})
@@ -104,7 +106,7 @@ func TestNodeConfigSanityCheck(t *testing.T) {
 		conf := DefaultNodeConfig()
 		conf.NumValidators = 2
 		conf.RewardAddresses = []string{
-			crypto.GenerateTestAddress().String(),
+			ts.RandomAddress().String(),
 			"abcd"}
 
 		assert.Error(t, conf.SanityCheck())
@@ -114,8 +116,8 @@ func TestNodeConfigSanityCheck(t *testing.T) {
 		conf := DefaultNodeConfig()
 		conf.NumValidators = 2
 		conf.RewardAddresses = []string{
-			crypto.GenerateTestAddress().String(),
-			crypto.GenerateTestAddress().String()}
+			ts.RandomAddress().String(),
+			ts.RandomAddress().String()}
 
 		assert.NoError(t, conf.SanityCheck())
 	})

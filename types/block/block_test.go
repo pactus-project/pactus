@@ -1,4 +1,4 @@
-package block
+package block_test
 
 import (
 	"encoding/hex"
@@ -6,56 +6,115 @@ import (
 	"time"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/simplemerkle"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSanityCheck(t *testing.T) {
-	b := GenerateTestBlock(nil, nil)
-	assert.NoError(t, b.SanityCheck())
-	assert.LessOrEqual(t, b.Header().Time(), time.Now())
-	assert.NotZero(t, b.Header().UnixTime())
-	assert.Equal(t, b.Header().Version(), uint8(1))
+	ts := testsuite.NewTestSuite(t)
 
-	b = GenerateTestBlock(nil, nil)
-	b.data.Txs = Txs{}
-	assert.Error(t, b.SanityCheck())
+	t.Run("No transactions", func(t *testing.T) {
+		b0 := ts.GenerateTestBlock(nil, nil)
+		b := block.NewBlock(b0.Header(), b0.PrevCertificate(), block.Txs{})
 
-	b = GenerateTestBlock(nil, nil)
-	b.data.Header.data.StateRoot = hash.UndefHash
-	assert.Error(t, b.SanityCheck())
+		assert.Error(t, b.SanityCheck())
+	})
 
-	b = GenerateTestBlock(nil, nil)
-	b.data.Header.data.PrevBlockHash = hash.UndefHash
-	assert.Error(t, b.SanityCheck())
+	t.Run("Without the previous certificate", func(t *testing.T) {
+		b0 := ts.GenerateTestBlock(nil, nil)
+		b := block.NewBlock(b0.Header(), nil, b0.Transactions())
 
-	b = GenerateTestBlock(nil, nil)
-	b.data.Header.data.ProposerAddress[0] = 0x2
-	assert.Error(t, b.SanityCheck())
+		assert.Error(t, b.SanityCheck())
+	})
 
-	b = GenerateTestBlock(nil, nil)
-	b.data.PrevCert = nil
-	assert.Error(t, b.SanityCheck())
+	t.Run("Invalid certificate round", func(t *testing.T) {
+		b0 := ts.GenerateTestBlock(nil, nil)
+		cert0 := b0.PrevCertificate()
+		invCert := block.NewCertificate(-1, cert0.Committers(), cert0.Absentees(), cert0.Signature())
+		b := block.NewBlock(b0.Header(), invCert, b0.Transactions())
 
-	b = GenerateTestBlock(nil, nil)
-	b.data.PrevCert.data.Round = -1
-	assert.Error(t, b.SanityCheck())
+		assert.Error(t, b.SanityCheck())
+	})
 
-	b = GenerateTestBlock(nil, nil)
-	invalidSigner := bls.GenerateTestSigner()
-	invalidSigner.SignMsg(b.data.Txs[0])
-	assert.Error(t, b.SanityCheck())
+	t.Run("Invalid transaction", func(t *testing.T) {
+		b0 := ts.GenerateTestBlock(nil, nil)
+		trxs0 := b0.Transactions()
+		invalidSigner := ts.RandomSigner()
+		invalidSigner.SignMsg(trxs0[0])
+		b := block.NewBlock(b0.Header(), b0.PrevCertificate(), trxs0)
+
+		assert.Error(t, b.SanityCheck())
+	})
+
+	t.Run("Invalid state root hash", func(t *testing.T) {
+		d, _ := hex.DecodeString(
+			"0134ec9b649f1fe7230ecf98ede2eb097587f69d7e29fade7d1ba0d5d9383bd74c1704655b00000000000000000000000000000000000000" +
+				"00000000000000000000000000b9f39a3a63edeeeb24cec7daae01575168024a96b15def00da7ff84332acba24e3269dcfb5a592824ec174" +
+				"5551ffcbb9011c8e4ed0bfe587a05f2bffa6965455a6fd483a1a07040312142101128d1e40bd0135faab80e264d2171b1b6b8700e87e1c75" +
+				"20e3f8c15930c7615eee6ef829ed5034c7d9254092f58b32d7ef010180b04fda9903c0f5ccf018010128d651affb92e704fcb993249c076e" +
+				"276fa89f4301e4b5fa19f70684a771b6587ae2b4fcd14ece4dc3adb2be84f4f0010c746573742073656e642d7478a56ee5b7af5a4baeddd6" +
+				"8a82556ca09ca0b1e3ae2587a0d202f5204193cf582a38a2e9bd08468a0321e6fd723741924c8144710257ea8629e7181a478f348664e648" +
+				"4a20655b2eca7aec933e53d537fc082b34da84b899aba4aa6a980dcd15e80cebc5837cf48ee01d4a65bad3e272855c6f9d4d2ba9b7b8ebce" +
+				"45f3e9113be1337d7e67d9fc9029705e0c2d3d824b31")
+
+		b, err := block.FromBytes(d)
+		assert.NoError(t, err)
+
+		assert.Error(t, b.SanityCheck())
+	})
+
+	t.Run("Invalid previous block hash", func(t *testing.T) {
+		d, _ := hex.DecodeString(
+			"0134ec9b64000000000000000000000000000000000000000000000000000000000000000082916efdb068bbec819457f5ce73bf8d2ca743" +
+				"e12c1946ee844e696e47bbe164b9f39a3a63edeeeb24cec7daae01575168024a96b15def00da7ff84332acba24e3269dcfb5a592824ec174" +
+				"5551ffcbb9011c8e4ed0bfe587a05f2bffa6965455a6fd483a1a07040312142101128d1e40bd0135faab80e264d2171b1b6b8700e87e1c75" +
+				"20e3f8c15930c7615eee6ef829ed5034c7d9254092f58b32d7ef010180b04fda9903c0f5ccf018010128d651affb92e704fcb993249c076e" +
+				"276fa89f4301e4b5fa19f70684a771b6587ae2b4fcd14ece4dc3adb2be84f4f0010c746573742073656e642d7478a56ee5b7af5a4baeddd6" +
+				"8a82556ca09ca0b1e3ae2587a0d202f5204193cf582a38a2e9bd08468a0321e6fd723741924c8144710257ea8629e7181a478f348664e648" +
+				"4a20655b2eca7aec933e53d537fc082b34da84b899aba4aa6a980dcd15e80cebc5837cf48ee01d4a65bad3e272855c6f9d4d2ba9b7b8ebce" +
+				"45f3e9113be1337d7e67d9fc9029705e0c2d3d824b31")
+
+		_, err := block.FromBytes(d)
+		assert.Error(t, err)
+	})
+
+	t.Run("Invalid proposer address (type is 2)", func(t *testing.T) {
+		d, _ := hex.DecodeString(
+			"0134ec9b649f1fe7230ecf98ede2eb097587f69d7e29fade7d1ba0d5d9383bd74c1704655b82916efdb068bbec819457f5ce73bf8d2ca743" +
+				"e12c1946ee844e696e47bbe164b9f39a3a63edeeeb24cec7daae01575168024a96b15def00da7ff84332acba24e3269dcfb5a592824ec174" +
+				"5551ffcbb9021c8e4ed0bfe587a05f2bffa6965455a6fd483a1a07040312142101128d1e40bd0135faab80e264d2171b1b6b8700e87e1c75" +
+				"20e3f8c15930c7615eee6ef829ed5034c7d9254092f58b32d7ef010180b04fda9903c0f5ccf018010128d651affb92e704fcb993249c076e" +
+				"276fa89f4301e4b5fa19f70684a771b6587ae2b4fcd14ece4dc3adb2be84f4f0010c746573742073656e642d7478a56ee5b7af5a4baeddd6" +
+				"8a82556ca09ca0b1e3ae2587a0d202f5204193cf582a38a2e9bd08468a0321e6fd723741924c8144710257ea8629e7181a478f348664e648" +
+				"4a20655b2eca7aec933e53d537fc082b34da84b899aba4aa6a980dcd15e80cebc5837cf48ee01d4a65bad3e272855c6f9d4d2ba9b7b8ebce" +
+				"45f3e9113be1337d7e67d9fc9029705e0c2d3d824b31")
+
+		b, err := block.FromBytes(d)
+		assert.NoError(t, err)
+
+		assert.Error(t, b.SanityCheck())
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		b := ts.GenerateTestBlock(nil, nil)
+		assert.NoError(t, b.SanityCheck())
+		assert.LessOrEqual(t, b.Header().Time(), time.Now())
+		assert.NotZero(t, b.Header().UnixTime())
+		assert.Equal(t, b.Header().Version(), uint8(1))
+	})
 }
 
 func TestCBORMarshaling(t *testing.T) {
-	b1 := GenerateTestBlock(nil, nil)
+	ts := testsuite.NewTestSuite(t)
 
+	b1 := ts.GenerateTestBlock(nil, nil)
 	bz1, err := cbor.Marshal(b1)
 	assert.NoError(t, err)
-	var b2 Block
+	var b2 block.Block
 	err = cbor.Unmarshal(bz1, &b2)
 	assert.NoError(t, err)
 	assert.NoError(t, b2.SanityCheck())
@@ -68,7 +127,9 @@ func TestCBORMarshaling(t *testing.T) {
 }
 
 func TestEncodingBlock(t *testing.T) {
-	blk := GenerateTestBlock(nil, nil)
+	ts := testsuite.NewTestSuite(t)
+
+	blk := ts.GenerateTestBlock(nil, nil)
 	length := blk.SerializeSize()
 
 	for i := 0; i < length; i++ {
@@ -79,12 +140,12 @@ func TestEncodingBlock(t *testing.T) {
 	assert.NoError(t, blk.Encode(w))
 
 	for i := 0; i < length; i++ {
-		blk2 := new(Block)
+		blk2 := new(block.Block)
 		r := util.NewFixedReader(i, w.Bytes())
 		assert.Error(t, blk2.Decode(r), "decode test %v failed", i)
 	}
 
-	blk2 := new(Block)
+	blk2 := new(block.Block)
 	r := util.NewFixedReader(length, w.Bytes())
 	assert.NoError(t, blk2.Decode(r))
 	assert.Equal(t, blk.Hash(), blk2.Hash())
@@ -92,41 +153,26 @@ func TestEncodingBlock(t *testing.T) {
 }
 
 func TestTxFromBytes(t *testing.T) {
-	blk := GenerateTestBlock(nil, nil)
+	ts := testsuite.NewTestSuite(t)
+
+	blk := ts.GenerateTestBlock(nil, nil)
 	bs, _ := blk.Bytes()
-	_, err := FromBytes(bs)
+	_, err := block.FromBytes(bs)
 	assert.NoError(t, err)
-	assert.Equal(t, blk.memorizedData, bs)
 	_, err = blk.Bytes()
 	assert.NoError(t, err)
 
-	_, err = FromBytes([]byte{1})
+	_, err = block.FromBytes([]byte{1})
 	assert.Error(t, err)
 }
 
 func TestBlockHash(t *testing.T) {
 	d, _ := hex.DecodeString(
-		"011a873d62b69e39b4e06567b6ad3a58f61df4c3c05920a29043277af01264c9e1e7693068bbf7b5e010ca98da562965a1a3411a48fee70b" +
-			"d0dbbe11d9867fa9e13b3e005e99bbd54999c7cd6bb176b160962080ee130c455c88507bd51a878a0b85c656cfc1a542cbbe0105708389ca" +
-			"68269bda290119cba9960c6ad28aaaa140377f652bdea0551e3b0104d6041607b207011685ee6c00e9554451b2d46665ed5ca6a9a8bb1843" +
-			"f485a3323e05757a79a94518185dc1ce48c87634672928f0b90815f10401742b6b20dd04e981f7f1efb0140101d4dc361132b551ef27c514" +
-			"e44558c7da36e08794010fbd61774e607aa691785d3567f4b111fd8b283ef693d3e9de91cd1f0c746573742073656e642d74788657d98718" +
-			"fd5794eb37115b1d9418a63358c3a7bcf1e17146fdb71f8ce0525a657a78ee41886ddaf4887de6f0d0478685f2fbe28bb1770344e50a7b3e" +
-			"db34631741c403f7d19dff02a728e585fcb1284d23ad4c557329abc1873afc889e1d681423a930fdaf52a8ea591d8c13a88ec3126a3a2463" +
-			"b147f22878588789e58b5c07f6d5c5afbded864c4066659e30176401f10c077fcc04f5ef819fc9d6080101d3e45d249a39d806a1faec2fd8" +
-			"5820db340b98e30168fc72a1a961933e694439b2e3c8751d27de5ad3b9c3dc91b9c9b59b010c746573742073656e642d7478b53d79e156e9" +
-			"417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a68d82fa4fcac04a3b565267685e90" +
-			"db1b01420285d2f8295683c138c092c209479983ba1591370778846681b7b558e0611776208c0718006311c84b4a113335c70d1f5c7c5dd9" +
-			"3a5625c4af51c48847abd0b590c055306162d2a03ca1cbf7bcc101485641b2cd02f3e088df92eb020101a771feb6079155a30c57861e6e36" +
-			"83c3b94d1ccd0182ef6ced84b2ccb2ddf717172e1b4c3371b83c92e780dd8cebff92660c746573742073656e642d7478b18c974a6cb2dfcf" +
-			"b1f2e664005c3637eb8b17def29c947c5e816d00b48367438a705e62abb3a4f62e482b3ead3d15058f0e51102e9b3eab12f6f3058d679cb2" +
-			"2d6dd8a2ce6202d9853a84690d4293f8c328e972758ed7e08488a942372462920568b52d42e02928b8a7ccd3391ac460ca0e3b032ba624d8" +
-			"e7e2010d1cd31392819f5a24b9c6370afcf0e777cef97c82011fd50521d007a8ead3e7fc891001012109b6290b25650951067871b027068b" +
-			"fc439418014a2916f7d8aa26061311f42a594d59ddfd6aaf6ab9cc91c796a1801c0c746573742073656e642d7478977353953a0925b0d104" +
-			"6b94a5fd7ea9766db30a94237a08dd15daf77977b4fa1d16b776c1181c9193b2bd72b960bf0298f011ca48cca9850225c6002a5e976b2ffb" +
-			"2e6f63b62b183e74a2d236c69d01847f51493d04d6d3f9e991e4552e47660e54cd8a14dc07c093448aac18e0551883eedb6bb97a44a549e6" +
-			"5dcde8969763ab62eb15600629931f880fab20f8621c")
-	b, err := FromBytes(d)
+		"0140da9b641551048b59a859946ca7f9ab95c9cf84da488a1a5c49ba643b29b653dc223bc20a4e9ff03158165f3d42" +
+			"4e2a74677bfe24a7295d1ce2e55ca3644cbe9a5a5e7d913b8e1ba6a020afbd5a25024a12b37cf8e1ed0b9498f91d75b294db0f95123d8593" +
+			"05aa5deea3d4216777e74310b6a601bb4d4d6b13c9b295781ab1533aea032978d4f8930504060f1b23010fab4f72234cc7c12048bbbc616c" +
+			"005573d8ad4d5c6997996d6f488946cdd78410f0a400c4a7f9bdb41506bdf717a892fa00")
+	b, err := block.FromBytes(d)
 	assert.NoError(t, err)
 	assert.Equal(t, b.SerializeSize(), len(d))
 	d2, _ := b.Bytes()
@@ -135,9 +181,10 @@ func TestBlockHash(t *testing.T) {
 	headerSize := b.Header().SerializeSize()
 	headerData := d[:headerSize]
 	// TODO: uncomment this comment later
+	// TODO: make HashBytes unexported
 	// certSize := b.PrevCertificate().SerializeSize()
 	// certData := d[headerSize : headerSize+certSize]
-	certData := b.PrevCertificate().hashBytes()
+	certData := b.PrevCertificate().HashBytes()
 	certHash := hash.CalcHash(certData)
 
 	txHashes := make([]hash.Hash, 0)
@@ -152,68 +199,22 @@ func TestBlockHash(t *testing.T) {
 	hashData = append(hashData, util.Int32ToSlice(int32(b.Transactions().Len()))...)
 
 	expected1 := hash.CalcHash(hashData)
-	expected2, _ := hash.FromString("665e48e4dcbe3d4ad4871ed01606ced559501ad969093f9c63f8f0c41b25819b")
+	expected2, _ := hash.FromString("aa0244a7464e2d7318d0f0bf40218fcd5cc0a0d8746e29348666160e6b58a20c")
 	assert.Equal(t, b.Hash(), expected1)
 	assert.Equal(t, b.Hash(), expected2)
-	assert.Equal(t, b.Stamp(), hash.Stamp{0x66, 0x5e, 0x48, 0xe4})
+	assert.Equal(t, b.Stamp(), hash.Stamp{0xaa, 0x02, 0x44, 0xa7})
 }
 
 func TestMakeBlock(t *testing.T) {
-	tmp := GenerateTestBlock(nil, nil)
-	t.Run("Valid block information, should not panic", func(t *testing.T) {
-		MakeBlock(1, util.Now(), tmp.Transactions(),
-			tmp.Header().PrevBlockHash(),
-			tmp.Header().StateRoot(),
-			tmp.PrevCertificate(),
-			tmp.Header().SortitionSeed(),
-			tmp.Header().ProposerAddress())
-	})
+	ts := testsuite.NewTestSuite(t)
 
-	t.Run("Invalid block information, should panic", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
-			}
-		}()
+	b0 := ts.GenerateTestBlock(nil, nil)
+	b1 := block.MakeBlock(1, util.Now(), b0.Transactions(),
+		b0.Header().PrevBlockHash(),
+		b0.Header().StateRoot(),
+		b0.PrevCertificate(),
+		b0.Header().SortitionSeed(),
+		b0.Header().ProposerAddress())
 
-		// Certificate is missed,
-		MakeBlock(1, util.Now(), tmp.Transactions(),
-			tmp.Header().PrevBlockHash(),
-			tmp.Header().StateRoot(),
-			nil,
-			tmp.Header().SortitionSeed(),
-			tmp.Header().ProposerAddress())
-	})
-
-	t.Run("Invalid block information, should panic", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
-			}
-		}()
-
-		// Invalid state root
-		MakeBlock(1, util.Now(), tmp.Transactions(),
-			tmp.Header().PrevBlockHash(),
-			hash.UndefHash,
-			tmp.PrevCertificate(),
-			tmp.Header().SortitionSeed(),
-			tmp.Header().ProposerAddress())
-	})
-
-	t.Run("Invalid block information, should panic", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
-			}
-		}()
-
-		// Invalid previous block hash
-		MakeBlock(1, util.Now(), tmp.Transactions(),
-			hash.UndefHash,
-			tmp.Header().PrevBlockHash(),
-			tmp.PrevCertificate(),
-			tmp.Header().SortitionSeed(),
-			tmp.Header().ProposerAddress())
-	})
+	assert.Equal(t, b0.Hash(), b1.Hash())
 }

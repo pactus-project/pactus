@@ -37,6 +37,12 @@ func (p *Proposal) Block() *block.Block         { return p.data.Block }
 func (p *Proposal) Signature() crypto.Signature { return p.data.Signature }
 
 func (p *Proposal) SanityCheck() error {
+	if p.data.Block == nil {
+		return errors.Errorf(errors.ErrInvalidSignature, "no block")
+	}
+	if p.data.Signature == nil {
+		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
+	}
 	if err := p.data.Block.SanityCheck(); err != nil {
 		return err
 	}
@@ -45,9 +51,6 @@ func (p *Proposal) SanityCheck() error {
 	}
 	if p.data.Round < 0 {
 		return errors.Error(errors.ErrInvalidRound)
-	}
-	if p.data.Signature == nil {
-		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
 	}
 	return nil
 }
@@ -68,6 +71,7 @@ func (p *Proposal) SignBytes() []byte {
 }
 
 func (p *Proposal) MarshalCBOR() ([]byte, error) {
+	p.data.Signature = nil
 	return cbor.Marshal(p.data)
 }
 
@@ -95,14 +99,4 @@ func (p *Proposal) IsForBlock(hash hash.Hash) bool {
 func (p Proposal) Fingerprint() string {
 	b := p.Block()
 	return fmt.Sprintf("{%v/%v 🗃 %v}", p.data.Height, p.data.Round, b.Fingerprint())
-}
-
-// GenerateTestProposal generates a bond transaction for testing.
-func GenerateTestProposal(height uint32, round int16) (*Proposal, crypto.Signer) {
-	signer := bls.GenerateTestSigner()
-	addr := signer.Address()
-	b := block.GenerateTestBlock(&addr, nil)
-	p := NewProposal(height, round, b)
-	signer.SignMsg(p)
-	return p, signer
 }

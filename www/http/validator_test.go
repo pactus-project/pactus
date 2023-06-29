@@ -8,20 +8,19 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestValidator(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	val := tMockState.TestStore.AddTestValidator()
+	val := td.mockState.TestStore.AddTestValidator()
 
 	t.Run("Shall return a validator", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"address": val.Address().String()})
-		tHTTPServer.GetValidatorHandler(w, r)
+		td.httpServer.GetValidatorHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
 		fmt.Println(w.Body)
@@ -30,8 +29,8 @@ func TestValidator(t *testing.T) {
 	t.Run("Shall return an error, non exist", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"address": crypto.GenerateTestAddress().String()})
-		tHTTPServer.GetValidatorHandler(w, r)
+		r = mux.SetURLVars(r, map[string]string{"address": td.RandomAddress().String()})
+		td.httpServer.GetValidatorHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 	})
@@ -40,7 +39,7 @@ func TestValidator(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"address": "invalid-address"})
-		tHTTPServer.GetValidatorHandler(w, r)
+		td.httpServer.GetValidatorHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
@@ -50,7 +49,7 @@ func TestValidator(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"address": ""})
-		tHTTPServer.GetValidatorHandler(w, r)
+		td.httpServer.GetValidatorHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
@@ -59,7 +58,7 @@ func TestValidator(t *testing.T) {
 	t.Run("Shall return an error, no address", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		tHTTPServer.GetValidatorHandler(w, r)
+		td.httpServer.GetValidatorHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
@@ -67,9 +66,9 @@ func TestValidator(t *testing.T) {
 }
 
 func TestValidatorByNumber(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	val := tMockState.TestStore.AddTestValidator()
+	val := td.mockState.TestStore.AddTestValidator()
 
 	t.Run("Shall return a validator", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -77,7 +76,7 @@ func TestValidatorByNumber(t *testing.T) {
 		fmt.Println(val.Number())
 		fmt.Println(strconv.Itoa(int(val.Number())))
 		r = mux.SetURLVars(r, map[string]string{"number": strconv.Itoa(int(val.Number()))})
-		tHTTPServer.GetValidatorByNumberHandler(w, r)
+		td.httpServer.GetValidatorByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
 		fmt.Println(w.Body)
@@ -89,7 +88,7 @@ func TestValidatorByNumber(t *testing.T) {
 		fmt.Println(val.Number())
 		fmt.Println(strconv.Itoa(int(val.Number())))
 		r = mux.SetURLVars(r, map[string]string{"number": strconv.Itoa(int(val.Number() + 1))})
-		tHTTPServer.GetValidatorByNumberHandler(w, r)
+		td.httpServer.GetValidatorByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
@@ -99,7 +98,7 @@ func TestValidatorByNumber(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"number": ""})
-		tHTTPServer.GetValidatorByNumberHandler(w, r)
+		td.httpServer.GetValidatorByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
@@ -109,7 +108,7 @@ func TestValidatorByNumber(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"number": "not-a-number"})
-		tHTTPServer.GetValidatorByNumberHandler(w, r)
+		td.httpServer.GetValidatorByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
@@ -118,7 +117,7 @@ func TestValidatorByNumber(t *testing.T) {
 	t.Run("Shall return an error, no number", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		tHTTPServer.GetValidatorByNumberHandler(w, r)
+		td.httpServer.GetValidatorByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)

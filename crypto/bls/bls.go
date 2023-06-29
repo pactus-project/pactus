@@ -1,10 +1,7 @@
 package bls
 
 import (
-	"crypto/rand"
-
 	bls12381 "github.com/kilic/bls12-381"
-	"github.com/pactus-project/pactus/crypto"
 )
 
 // set Ciphersuite for Basic mode
@@ -47,23 +44,4 @@ func VerifyAggregated(sig *Signature, pubs []*PublicKey, msg []byte) bool {
 
 	aggPub := PublicKey{pointG2: aggPointG2}
 	return aggPub.Verify(msg, sig) == nil
-}
-
-// GenerateTestSigner generates a signer for testing.
-func GenerateTestSigner() crypto.Signer {
-	_, prv := GenerateTestKeyPair()
-	return crypto.NewSigner(prv)
-}
-
-// GenerateTestKeyPair generates a key pair for testing.
-func GenerateTestKeyPair() (*PublicKey, *PrivateKey) {
-	buf := make([]byte, PrivateKeySize)
-	_, err := rand.Read(buf)
-	if err != nil {
-		panic(err)
-	}
-	prv, _ := PrivateKeyFromBytes(buf)
-	pub := prv.PublicKey().(*PublicKey)
-
-	return pub, prv
 }

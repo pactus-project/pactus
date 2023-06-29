@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/store"
@@ -56,11 +57,19 @@ func TestMain(m *testing.M) {
 	tNodes = make([]*node.Node, tTotalNodes)
 	tSequences = make(map[crypto.Address]int32)
 
+	ikm := hash.CalcHash([]byte{})
 	for i := 0; i < tTotalNodes; i++ {
+		ikm = hash.CalcHash(ikm.Bytes())
+		key0, _ := bls.KeyGen(ikm.Bytes(), nil)
+		ikm = hash.CalcHash(ikm.Bytes())
+		key1, _ := bls.KeyGen(ikm.Bytes(), nil)
+		ikm = hash.CalcHash(ikm.Bytes())
+		key2, _ := bls.KeyGen(ikm.Bytes(), nil)
+
 		tSigners[i] = make([]crypto.Signer, 3)
-		tSigners[i][0] = bls.GenerateTestSigner()
-		tSigners[i][1] = bls.GenerateTestSigner()
-		tSigners[i][2] = bls.GenerateTestSigner()
+		tSigners[i][0] = crypto.NewSigner(key0)
+		tSigners[i][1] = crypto.NewSigner(key1)
+		tSigners[i][2] = crypto.NewSigner(key2)
 		tConfigs[i] = config.DefaultConfig()
 
 		tConfigs[i].Store.Path = util.TempDirPath()

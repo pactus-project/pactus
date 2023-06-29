@@ -7,7 +7,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
@@ -187,13 +186,4 @@ func (val *Validator) Clone() *Validator {
 	cloned := new(Validator)
 	*cloned = *val
 	return cloned
-}
-
-// GenerateTestValidator generates a validator for testing purposes.
-func GenerateTestValidator(number int32) (*Validator, crypto.Signer) {
-	pub, pv := bls.GenerateTestKeyPair()
-	val := NewValidator(pub, number)
-	val.data.Stake = util.RandInt64(100 * 1e9)
-	val.data.Sequence = util.RandInt32(100)
-	return val, crypto.NewSigner(pv)
 }

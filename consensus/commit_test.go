@@ -10,61 +10,61 @@ import (
 )
 
 func TestCommitExecute(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	commitBlockForAllStates(t)
-	commitBlockForAllStates(t)
-	commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
 
 	h := uint32(4)
 	r := int16(0)
-	p1 := makeProposal(t, h, r)
-	trx := tx.NewTransferTx(hash.UndefHash.Stamp(), 1, tSigners[0].Address(),
-		tSigners[1].Address(), 1000, 1000, "proposal changer")
-	tSigners[0].SignMsg(trx)
-	assert.NoError(t, tTxPool.AppendTx(trx))
-	p2 := makeProposal(t, h, r)
+	p1 := td.makeProposal(t, h, r)
+	trx := tx.NewTransferTx(hash.UndefHash.Stamp(), 1, td.signers[0].Address(),
+		td.signers[1].Address(), 1000, 1000, "proposal changer")
+	td.signers[0].SignMsg(trx)
+	assert.NoError(t, td.txPool.AppendTx(trx))
+	p2 := td.makeProposal(t, h, r)
 	assert.NotEqual(t, p1.Hash(), p2.Hash())
 
-	testEnterNewHeight(tConsX)
+	td.enterNewHeight(td.consX)
 
-	testAddVote(tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX)
-	testAddVote(tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexY)
-	testAddVote(tConsX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB)
+	td.addVote(td.consX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexX)
+	td.addVote(td.consX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexY)
+	td.addVote(td.consX, vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tIndexB)
 
-	s := &commitState{tConsX}
+	s := &commitState{td.consX}
 
 	// No proposal
-	tConsX.lk.Lock()
+	td.consX.lk.Lock()
 	s.decide()
-	tConsX.lk.Unlock()
-	checkHeightRound(t, tConsX, h, r)
+	td.consX.lk.Unlock()
+	td.checkHeightRound(t, td.consX, h, r)
 
 	// Invalid proposal
-	tConsX.SetProposal(p2)
-	tConsX.lk.Lock()
+	td.consX.SetProposal(p2)
+	td.consX.lk.Lock()
 	s.decide()
-	tConsX.lk.Unlock()
-	assert.Nil(t, tConsX.RoundProposal(0))
+	td.consX.lk.Unlock()
+	assert.Nil(t, td.consX.RoundProposal(0))
 
-	tConsX.SetProposal(p1)
-	txs := tTxPool.Txs
-	tTxPool.Txs = []*tx.Tx{}
-	tConsX.lk.Lock()
+	td.consX.SetProposal(p1)
+	txs := td.txPool.Txs
+	td.txPool.Txs = []*tx.Tx{}
+	td.consX.lk.Lock()
 	s.decide()
-	tConsX.lk.Unlock()
-	assert.NotNil(t, tConsX.RoundProposal(0))
-	checkHeightRound(t, tConsX, h, r)
+	td.consX.lk.Unlock()
+	assert.NotNil(t, td.consX.RoundProposal(0))
+	td.checkHeightRound(t, td.consX, h, r)
 
-	v := vote.NewVote(vote.VoteTypePrecommit, h, r, p1.Block().Hash(), tSigners[tIndexP].Address())
-	tSigners[tIndexP].SignMsg(v)
+	v := vote.NewVote(vote.VoteTypePrecommit, h, r, p1.Block().Hash(), td.signers[tIndexP].Address())
+	td.signers[tIndexP].SignMsg(v)
 	s.onAddVote(v)
-	assert.Contains(t, tConsX.AllVotes(), v)
+	assert.Contains(t, td.consX.AllVotes(), v)
 
-	tTxPool.Txs = txs
-	tConsX.lk.Lock()
+	td.txPool.Txs = txs
+	td.consX.lk.Lock()
 	s.decide()
-	tConsX.lk.Unlock()
+	td.consX.lk.Unlock()
 
-	shouldPublishBlockAnnounce(t, tConsX, p1.Block().Hash())
+	td.shouldPublishBlockAnnounce(t, td.consX, p1.Block().Hash())
 }

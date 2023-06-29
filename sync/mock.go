@@ -4,10 +4,9 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/version"
 )
 
@@ -18,12 +17,12 @@ type MockSync struct {
 	TestPeerSet *peerset.PeerSet
 }
 
-func MockingSync() *MockSync {
+func MockingSync(ts *testsuite.TestSuite) *MockSync {
 	ps := peerset.NewPeerSet(1 * time.Second)
-	pub1, _ := bls.GenerateTestKeyPair()
-	pub2, _ := bls.GenerateTestKeyPair()
-	pid1 := network.TestRandomPeerID()
-	pid2 := network.TestRandomPeerID()
+	pub1, _ := ts.RandomBLSKeyPair()
+	pub2, _ := ts.RandomBLSKeyPair()
+	pid1 := ts.RandomPeerID()
+	pid2 := ts.RandomPeerID()
 	ps.UpdatePeerInfo(
 		pid1,
 		peerset.StatusCodeKnown,

@@ -2,7 +2,6 @@ package crypto
 
 import (
 	"bytes"
-	"crypto/rand"
 
 	"github.com/pactus-project/pactus/util/bech32m"
 	"github.com/pactus-project/pactus/util/errors"
@@ -100,17 +99,4 @@ func (addr *Address) SanityCheck() error {
 
 func (addr Address) EqualsTo(right Address) bool {
 	return bytes.Equal(addr.Bytes(), right.Bytes())
-}
-
-// GenerateTestAddress generates a address for testing.
-func GenerateTestAddress() Address {
-	data := make([]byte, 20)
-	_, err := rand.Read(data)
-	if err != nil {
-		panic(err)
-	}
-	data = append([]byte{1}, data...)
-	var addr Address
-	copy(addr[:], data[:])
-	return addr
 }

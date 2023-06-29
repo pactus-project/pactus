@@ -1,17 +1,21 @@
-package crypto
+package crypto_test
 
 import (
 	"encoding/hex"
 	"strings"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAddressKeyEqualsTo(t *testing.T) {
-	addr1 := GenerateTestAddress()
-	addr2 := GenerateTestAddress()
+	ts := testsuite.NewTestSuite(t)
+
+	addr1 := ts.RandomAddress()
+	addr2 := ts.RandomAddress()
 
 	assert.True(t, addr1.EqualsTo(addr1))
 	assert.False(t, addr1.EqualsTo(addr2))
@@ -20,7 +24,9 @@ func TestAddressKeyEqualsTo(t *testing.T) {
 }
 
 func TestFingerprint(t *testing.T) {
-	addr1 := GenerateTestAddress()
+	ts := testsuite.NewTestSuite(t)
+
+	addr1 := ts.RandomAddress()
 	assert.Contains(t, addr1.String(), addr1.Fingerprint())
 }
 
@@ -29,13 +35,13 @@ func TestToString(t *testing.T) {
 		errMsg    string
 		encoded   string
 		decodable bool
-		result    *Address
+		result    *crypto.Address
 	}{
 		{
 			"",
 			"000000000000000000000000000000000000000000",
 			true,
-			&Address{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			&crypto.Address{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		},
 		{
 			"invalid bech32 string length 0",
@@ -89,19 +95,19 @@ func TestToString(t *testing.T) {
 			"",
 			"PC1P0HRCT7EFLRPW4CCRTTXZS4QUD2AXEX4DCDZDFR", // UPPERCASE
 			true,
-			&Address{0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
+			&crypto.Address{0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
 				0x3, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad},
 		},
 		{
 			"",
 			"pc1p0hrct7eflrpw4ccrttxzs4qud2axex4dcdzdfr",
 			true,
-			&Address{0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
+			&crypto.Address{0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
 				0x3, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad},
 		},
 	}
 	for no, test := range tests {
-		addr, err := AddressFromString(test.encoded)
+		addr, err := crypto.AddressFromString(test.encoded)
 		if test.decodable {
 			assert.NoError(t, err, "test %v: unexpected error", no)
 			assert.Equal(t, addr, *test.result, "test %v: invalid result", no)
@@ -142,7 +148,7 @@ func TestAddressSanityCheck(t *testing.T) {
 	}
 	for no, test := range tests {
 		data, _ := hex.DecodeString(test.hex)
-		addr := Address{}
+		addr := crypto.Address{}
 		copy(addr[:], data)
 
 		err := addr.SanityCheck()

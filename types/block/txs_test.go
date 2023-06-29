@@ -1,17 +1,20 @@
-package block
+package block_test
 
 import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTxsMerkle(t *testing.T) {
-	txs := NewTxs()
-	trx1, _ := tx.GenerateTestSendTx()
-	trx2, _ := tx.GenerateTestSendTx()
+	ts := testsuite.NewTestSuite(t)
+
+	txs := block.NewTxs()
+	trx1, _ := ts.GenerateTestSendTx()
+	trx2, _ := ts.GenerateTestSendTx()
 	txs.Append(trx1)
 	merkle := txs.Root()
 	assert.Equal(t, merkle, trx1.ID())
@@ -25,12 +28,14 @@ func TestTxsMerkle(t *testing.T) {
 }
 
 func TestAppendPrependRemove(t *testing.T) {
-	txs := NewTxs()
-	trx1, _ := tx.GenerateTestSendTx()
-	trx2, _ := tx.GenerateTestSendTx()
-	trx3, _ := tx.GenerateTestSendTx()
-	trx4, _ := tx.GenerateTestSendTx()
-	trx5, _ := tx.GenerateTestSendTx()
+	ts := testsuite.NewTestSuite(t)
+
+	txs := block.NewTxs()
+	trx1, _ := ts.GenerateTestSendTx()
+	trx2, _ := ts.GenerateTestSendTx()
+	trx3, _ := ts.GenerateTestSendTx()
+	trx4, _ := ts.GenerateTestSendTx()
+	trx5, _ := ts.GenerateTestSendTx()
 	txs.Append(trx2)
 	txs.Append(trx3)
 	txs.Prepend(trx1)
@@ -38,22 +43,26 @@ func TestAppendPrependRemove(t *testing.T) {
 	txs.Append(trx4)
 	txs.Remove(3)
 
-	assert.Equal(t, txs, Txs{trx1, trx2, trx3, trx4})
+	assert.Equal(t, txs, block.Txs{trx1, trx2, trx3, trx4})
 }
 
 func TestIsEmpty(t *testing.T) {
-	txs := NewTxs()
+	ts := testsuite.NewTestSuite(t)
+
+	txs := block.NewTxs()
 	assert.True(t, txs.IsEmpty())
 
-	trx, _ := tx.GenerateTestSendTx()
+	trx, _ := ts.GenerateTestSendTx()
 	txs.Append(trx)
 	assert.False(t, txs.IsEmpty())
 }
 
 func TestGetTransaction(t *testing.T) {
-	txs := NewTxs()
-	trx1, _ := tx.GenerateTestSendTx()
-	trx2, _ := tx.GenerateTestSendTx()
+	ts := testsuite.NewTestSuite(t)
+
+	txs := block.NewTxs()
+	trx1, _ := ts.GenerateTestSendTx()
+	trx2, _ := ts.GenerateTestSendTx()
 	txs.Append(trx1)
 	txs.Append(trx2)
 	assert.Equal(t, trx1, txs.Get(0))

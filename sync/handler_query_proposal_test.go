@@ -3,67 +3,65 @@ package sync
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestParsingQueryProposalMessages(t *testing.T) {
-	setup(t)
+	td := setup(t, nil)
 
-	consensusHeight, _ := tConsMgr.HeightRound()
-	prop, _ := proposal.GenerateTestProposal(consensusHeight, 0)
-	pid := network.TestRandomPeerID()
-	tConsMgr.SetProposal(prop)
+	consensusHeight, _ := td.consMgr.HeightRound()
+	prop, _ := td.GenerateTestProposal(consensusHeight, 0)
+	pid := td.RandomPeerID()
+	td.consMgr.SetProposal(prop)
 
 	t.Run("Not in the committee, should not respond to the query proposal message", func(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight, 0)
 
-		assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
+		assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
 	})
 
-	testAddPeerToCommittee(t, pid, nil)
+	td.addPeerToCommittee(t, pid, nil)
 
 	t.Run("In the committee, but not the same height", func(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight+1, 0)
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeProposal)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeProposal)
 	})
 	t.Run("In the committee, should respond to the query proposal message", func(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight, 0)
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeProposal)
+		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeProposal)
 		assert.Equal(t, bdl.Message.(*message.ProposalMessage).Proposal.Hash(), prop.Hash())
 	})
 
 	t.Run("In the committee, but doesn't have the proposal", func(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight, 1)
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeProposal)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeProposal)
 	})
 }
 
 func TestBroadcastingQueryProposalMessages(t *testing.T) {
-	setup(t)
+	td := setup(t, nil)
 
-	consensusHeight := tState.LastBlockHeight() + 1
+	consensusHeight := td.state.LastBlockHeight() + 1
 	msg := message.NewQueryProposalMessage(consensusHeight, 0)
 
 	t.Run("Not in the committee, should not send query proposal message", func(t *testing.T) {
-		tSync.broadcast(msg)
+		td.sync.broadcast(msg)
 
-		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryProposal)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeQueryProposal)
 	})
 
-	testAddPeerToCommittee(t, tSync.SelfID(), tSync.signers[0].PublicKey())
+	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.signers[0].PublicKey())
 
 	t.Run("In the committee, should send query proposal message", func(t *testing.T) {
-		tSync.broadcast(msg)
+		td.sync.broadcast(msg)
 
-		shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeQueryProposal)
+		td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeQueryProposal)
 	})
 }

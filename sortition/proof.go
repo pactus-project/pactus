@@ -3,9 +3,6 @@ package sortition
 import (
 	"encoding/hex"
 	"fmt"
-
-	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/util"
 )
 
 type Proof [48]byte
@@ -28,11 +25,4 @@ func ProofFromBytes(data []byte) (Proof, error) {
 	copy(p[:], data)
 
 	return p, nil
-}
-
-func GenerateRandomProof() Proof {
-	sig := bls.GenerateTestSigner().SignData(
-		util.Int64ToSlice(util.RandInt64(0)))
-	proof, _ := ProofFromBytes(sig.Bytes())
-	return proof
 }

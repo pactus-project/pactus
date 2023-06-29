@@ -5,37 +5,50 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sandbox"
-	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-var tPool *txPool
-var tSandbox *sandbox.MockSandbox
-var tCh chan message.Message
-var tTestTx *tx.Tx
+type testData struct {
+	*testsuite.TestSuite
 
-func setup(t *testing.T) {
-	tCh = make(chan message.Message, 10)
-	tSandbox = sandbox.MockingSandbox()
-	p := NewTxPool(DefaultConfig(), tCh)
-	p.SetNewSandboxAndRecheck(tSandbox)
-	tPool = p.(*txPool)
-	assert.NotNil(t, tPool)
-
-	block88 := tSandbox.TestStore.AddTestBlock(88)
-	tTestTx = tx.NewSubsidyTx(block88.Stamp(), 89, crypto.GenerateTestAddress(), 25000000, "subsidy-tx")
+	pool    *txPool
+	sandbox *sandbox.MockSandbox
+	ch      chan message.Message
+	testTx  *tx.Tx
 }
 
-func shouldPublishTransaction(t *testing.T, id tx.ID) {
+func setup(t *testing.T) *testData {
+	ts := testsuite.NewTestSuite(t)
+
+	ch := make(chan message.Message, 10)
+	sandbox := sandbox.MockingSandbox(ts)
+	p := NewTxPool(DefaultConfig(), ch)
+	p.SetNewSandboxAndRecheck(sandbox)
+	pool := p.(*txPool)
+	assert.NotNil(t, pool)
+
+	block88 := sandbox.TestStore.AddTestBlock(88)
+	testTx := tx.NewSubsidyTx(block88.Stamp(), 89, ts.RandomAddress(), 25000000, "subsidy-tx")
+
+	return &testData{
+		TestSuite: ts,
+		pool:      pool,
+		sandbox:   sandbox,
+		ch:        ch,
+		testTx:    testTx,
+	}
+}
+
+func (td *testData) shouldPublishTransaction(t *testing.T, id tx.ID) {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -43,7 +56,7 @@ func shouldPublishTransaction(t *testing.T, id tx.ID) {
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("Timeout"))
 			return
-		case msg := <-tCh:
+		case msg := <-td.ch:
 			logger.Info("shouldPublishTransaction", "message", msg)
 
 			if msg.Type() == message.MessageTypeTransactions {
@@ -56,90 +69,90 @@ func shouldPublishTransaction(t *testing.T, id tx.ID) {
 }
 
 func TestAppendAndRemove(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	assert.NoError(t, tPool.AppendTx(tTestTx))
+	assert.NoError(t, td.pool.AppendTx(td.testTx))
 	// Appending the same transaction again, should not return any error
-	assert.NoError(t, tPool.AppendTx(tTestTx))
-	tPool.RemoveTx(tTestTx.ID())
-	assert.False(t, tPool.HasTx(tTestTx.ID()), "Transaction should be removed")
+	assert.NoError(t, td.pool.AppendTx(td.testTx))
+	td.pool.RemoveTx(td.testTx.ID())
+	assert.False(t, td.pool.HasTx(td.testTx.ID()), "Transaction should be removed")
 }
 
 func TestAppendInvalidTransaction(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	invalidTx, _ := tx.GenerateTestSendTx()
-	assert.Error(t, tPool.AppendTx(invalidTx))
+	invalidTx, _ := td.GenerateTestSendTx()
+	assert.Error(t, td.pool.AppendTx(invalidTx))
 }
 
 // TestFullPool tests if the pool prunes the old transactions when it is full.
 func TestFullPool(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	block10000 := tSandbox.TestStore.AddTestBlock(10000)
-	trxs := make([]*tx.Tx, tPool.config.sendPoolSize()+1)
+	block10000 := td.sandbox.TestStore.AddTestBlock(10000)
+	trxs := make([]*tx.Tx, td.pool.config.sendPoolSize()+1)
 
-	signer := bls.GenerateTestSigner()
+	signer := td.RandomSigner()
 	acc := account.NewAccount(0)
 	acc.AddToBalance(10000000000)
-	tSandbox.UpdateAccount(signer.Address(), acc)
+	td.sandbox.UpdateAccount(signer.Address(), acc)
 
 	// Make sure the pool is empty
-	assert.Equal(t, tPool.Size(), 0)
+	assert.Equal(t, td.pool.Size(), 0)
 
 	for i := 0; i < len(trxs); i++ {
 		trx := tx.NewTransferTx(block10000.Stamp(), acc.Sequence()+int32(i+1), signer.Address(),
-			crypto.GenerateTestAddress(), 1000, 1000, "ok")
+			td.RandomAddress(), 1000, 1000, "ok")
 		signer.SignMsg(trx)
-		assert.NoError(t, tPool.AppendTx(trx))
+		assert.NoError(t, td.pool.AppendTx(trx))
 		trxs[i] = trx
 	}
 
-	assert.False(t, tPool.HasTx(trxs[0].ID()))
-	assert.True(t, tPool.HasTx(trxs[1].ID()))
-	assert.Equal(t, tPool.Size(), tPool.config.sendPoolSize())
+	assert.False(t, td.pool.HasTx(trxs[0].ID()))
+	assert.True(t, td.pool.HasTx(trxs[1].ID()))
+	assert.Equal(t, td.pool.Size(), td.pool.config.sendPoolSize())
 }
 
 func TestEmptyPool(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	assert.Empty(t, tPool.PrepareBlockTransactions(), "pool should be empty")
+	assert.Empty(t, td.pool.PrepareBlockTransactions(), "pool should be empty")
 }
 
 func TestPrepareBlockTransactions(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	block1000000 := tSandbox.TestStore.AddTestBlock(1000000)
+	block1000000 := td.sandbox.TestStore.AddTestBlock(1000000)
 
-	acc1Signer := bls.GenerateTestSigner()
+	acc1Signer := td.RandomSigner()
 	acc1 := account.NewAccount(0)
 	acc1.AddToBalance(10000000000)
-	tSandbox.UpdateAccount(acc1Signer.Address(), acc1)
+	td.sandbox.UpdateAccount(acc1Signer.Address(), acc1)
 
-	val1Signer := bls.GenerateTestSigner()
+	val1Signer := td.RandomSigner()
 	val1Pub := val1Signer.PublicKey().(*bls.PublicKey)
 	val1 := validator.NewValidator(val1Pub, 0)
 	val1.AddToStake(10000000000)
-	tSandbox.UpdateValidator(val1)
+	td.sandbox.UpdateValidator(val1)
 
-	val2Signer := bls.GenerateTestSigner()
+	val2Signer := td.RandomSigner()
 	val2Pub := val2Signer.PublicKey().(*bls.PublicKey)
 	val2 := validator.NewValidator(val2Pub, 0)
 	val2.AddToStake(10000000000)
 	val2.UpdateUnbondingHeight(1)
-	tSandbox.UpdateValidator(val2)
+	td.sandbox.UpdateValidator(val2)
 
-	val3Signer := bls.GenerateTestSigner()
+	val3Signer := td.RandomSigner()
 	val3Pub := val3Signer.PublicKey().(*bls.PublicKey)
 	val3 := validator.NewValidator(val3Pub, 0)
 	val3.AddToStake(10000000000)
-	tSandbox.UpdateValidator(val3)
+	td.sandbox.UpdateValidator(val3)
 
 	sendTx := tx.NewTransferTx(block1000000.Stamp(), acc1.Sequence()+1, acc1Signer.Address(),
-		crypto.GenerateTestAddress(), 1000, 1000, "send-tx")
+		td.RandomAddress(), 1000, 1000, "send-tx")
 	acc1Signer.SignMsg(sendTx)
 
-	pub, _ := bls.GenerateTestKeyPair()
+	pub, _ := td.RandomBLSKeyPair()
 	bondTx := tx.NewBondTx(block1000000.Stamp(), acc1.Sequence()+2, acc1Signer.Address(),
 		pub.Address(), pub, 1000, 1000, "bond-tx")
 	acc1Signer.SignMsg(bondTx)
@@ -148,21 +161,21 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	val1Signer.SignMsg(unbondTx)
 
 	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(),
-		crypto.GenerateTestAddress(), 1000, 1000, "withdraw-tx")
+		td.RandomAddress(), 1000, 1000, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
-	tSandbox.TestAcceptSortition = true
+	td.sandbox.TestAcceptSortition = true
 	sortitionTx := tx.NewSortitionTx(block1000000.Stamp(), val3.Sequence()+1, val3.Address(),
-		sortition.GenerateRandomProof())
+		td.RandomProof())
 	val3Signer.SignMsg(sortitionTx)
 
-	assert.NoError(t, tPool.AppendTx(sendTx))
-	assert.NoError(t, tPool.AppendTx(unbondTx))
-	assert.NoError(t, tPool.AppendTx(withdrawTx))
-	assert.NoError(t, tPool.AppendTx(bondTx))
-	assert.NoError(t, tPool.AppendTx(sortitionTx))
+	assert.NoError(t, td.pool.AppendTx(sendTx))
+	assert.NoError(t, td.pool.AppendTx(unbondTx))
+	assert.NoError(t, td.pool.AppendTx(withdrawTx))
+	assert.NoError(t, td.pool.AppendTx(bondTx))
+	assert.NoError(t, td.pool.AppendTx(sortitionTx))
 
-	trxs := tPool.PrepareBlockTransactions()
+	trxs := td.pool.PrepareBlockTransactions()
 	assert.Len(t, trxs, 5)
 	assert.Equal(t, trxs[0].ID(), sortitionTx.ID())
 	assert.Equal(t, trxs[1].ID(), bondTx.ID())
@@ -172,31 +185,31 @@ func TestPrepareBlockTransactions(t *testing.T) {
 }
 
 func TestAppendAndBroadcast(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	assert.NoError(t, tPool.AppendTxAndBroadcast(tTestTx))
-	shouldPublishTransaction(t, tTestTx.ID())
+	assert.NoError(t, td.pool.AppendTxAndBroadcast(td.testTx))
+	td.shouldPublishTransaction(t, td.testTx.ID())
 
-	invTrx, _ := tx.GenerateTestBondTx()
-	assert.Error(t, tPool.AppendTxAndBroadcast(invTrx))
+	invTrx, _ := td.GenerateTestBondTx()
+	assert.Error(t, td.pool.AppendTxAndBroadcast(invTrx))
 }
 
 func TestAddSubsidyTransactions(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	block88 := tSandbox.TestStore.AddTestBlock(88)
-	proposer1 := crypto.GenerateTestAddress()
-	proposer2 := crypto.GenerateTestAddress()
+	block88 := td.sandbox.TestStore.AddTestBlock(88)
+	proposer1 := td.RandomAddress()
+	proposer2 := td.RandomAddress()
 	trx1 := tx.NewSubsidyTx(block88.Stamp(), 88, proposer1, 25000000, "subsidy-tx-1")
 	trx2 := tx.NewSubsidyTx(block88.Stamp(), 89, proposer1, 25000000, "subsidy-tx-1")
 	trx3 := tx.NewSubsidyTx(block88.Stamp(), 89, proposer2, 25000000, "subsidy-tx-2")
 
-	assert.Error(t, tPool.AppendTx(trx1), "Expired subsidy transaction")
-	assert.NoError(t, tPool.AppendTx(trx2))
-	assert.NoError(t, tPool.AppendTx(trx3))
+	assert.Error(t, td.pool.AppendTx(trx1), "Expired subsidy transaction")
+	assert.NoError(t, td.pool.AppendTx(trx2))
+	assert.NoError(t, td.pool.AppendTx(trx3))
 
-	tSandbox.TestStore.AddTestBlock(89)
+	td.sandbox.TestStore.AddTestBlock(89)
 
-	tPool.SetNewSandboxAndRecheck(sandbox.MockingSandbox())
-	assert.Zero(t, tPool.Size())
+	td.pool.SetNewSandboxAndRecheck(sandbox.MockingSandbox(td.TestSuite))
+	assert.Zero(t, td.pool.Size())
 }

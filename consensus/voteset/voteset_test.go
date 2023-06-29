@@ -5,19 +5,19 @@ import (
 
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
-func setupCommittee(t *testing.T, stakes ...int64) (committee.Committee, []crypto.Signer) {
+func setupCommittee(t *testing.T, ts *testsuite.TestSuite, stakes ...int64) (committee.Committee, []crypto.Signer) {
 	signers := []crypto.Signer{}
 	vals := []*validator.Validator{}
 	for i, s := range stakes {
-		pub, pv := bls.GenerateTestKeyPair()
+		pub, pv := ts.RandomBLSKeyPair()
 		val := validator.NewValidator(pub, int32(i))
 		val.AddToStake(s)
 		vals = append(vals, val)
@@ -28,11 +28,13 @@ func setupCommittee(t *testing.T, stakes ...int64) (committee.Committee, []crypt
 	return committee, signers
 }
 
-func TestAddVote(t *testing.T) {
-	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
+func addVote(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
 
-	h1 := hash.GenerateTestHash()
-	invSigner := bls.GenerateTestSigner()
+	committee, signers := setupCommittee(t, ts, 1000, 1500, 2500, 2000)
+
+	h1 := ts.RandomHash()
+	invSigner := ts.RandomSigner()
 	vs := NewVoteSet(5, vote.VoteTypePrecommit, committee.Validators())
 
 	v1 := vote.NewVote(vote.VoteTypePrecommit, 100, 5, h1, invSigner.Address())
@@ -62,11 +64,13 @@ func TestAddVote(t *testing.T) {
 }
 
 func TestDuplicateVote(t *testing.T) {
-	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
+	ts := testsuite.NewTestSuite(t)
 
-	h1 := hash.GenerateTestHash()
-	h2 := hash.GenerateTestHash()
-	h3 := hash.GenerateTestHash()
+	committee, signers := setupCommittee(t, ts, 1000, 1500, 2500, 2000)
+
+	h1 := ts.RandomHash()
+	h2 := ts.RandomHash()
+	h3 := ts.RandomHash()
 	vs := NewVoteSet(0, vote.VoteTypePrepare, committee.Validators())
 
 	correctVote := vote.NewVote(vote.VoteTypePrepare, 1, 0, h1, signers[0].Address())
@@ -102,10 +106,12 @@ func TestDuplicateVote(t *testing.T) {
 }
 
 func TestQuorum(t *testing.T) {
-	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
+	ts := testsuite.NewTestSuite(t)
+
+	committee, signers := setupCommittee(t, ts, 1000, 1500, 2500, 2000)
 
 	vs := NewVoteSet(0, vote.VoteTypePrecommit, committee.Validators())
-	h1 := hash.GenerateTestHash()
+	h1 := ts.RandomHash()
 	v1 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[0].Address())
 	v2 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[1].Address())
 	v3 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[2].Address())
@@ -140,12 +146,14 @@ func TestQuorum(t *testing.T) {
 }
 
 func TestPower(t *testing.T) {
-	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
+	ts := testsuite.NewTestSuite(t)
+
+	committee, signers := setupCommittee(t, ts, 1000, 1500, 2500, 2000)
 
 	vs := NewVoteSet(0, vote.VoteTypePrecommit, committee.Validators())
 
-	h1 := hash.GenerateTestHash()
-	h2 := hash.GenerateTestHash()
+	h1 := ts.RandomHash()
+	h2 := ts.RandomHash()
 	v1 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[0].Address())
 	v2 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[1].Address())
 	v3 := vote.NewVote(vote.VoteTypePrecommit, 1, 0, h1, signers[2].Address())
@@ -177,7 +185,9 @@ func TestPower(t *testing.T) {
 }
 
 func TestAllVotes(t *testing.T) {
-	committee, signers := setupCommittee(t, 1000, 1500, 2500, 2000)
+	ts := testsuite.NewTestSuite(t)
+
+	committee, signers := setupCommittee(t, ts, 1000, 1500, 2500, 2000)
 
 	vs := NewVoteSet(0, vote.VoteTypeChangeProposer, committee.Validators())
 
@@ -204,7 +214,9 @@ func TestAllVotes(t *testing.T) {
 }
 
 func TestOneThirdPower(t *testing.T) {
-	committee, signers := setupCommittee(t, 1000, 1000, 1500, 1500)
+	ts := testsuite.NewTestSuite(t)
+
+	committee, signers := setupCommittee(t, ts, 1000, 1000, 1500, 1500)
 
 	vs := NewVoteSet(0, vote.VoteTypeChangeProposer, committee.Validators())
 

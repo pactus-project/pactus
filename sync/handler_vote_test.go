@@ -3,20 +3,18 @@ package sync
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestParsingVoteMessages(t *testing.T) {
-	setup(t)
+	td := setup(t, nil)
 
 	t.Run("Parsing vote message", func(t *testing.T) {
-		v, _ := vote.GenerateTestPrecommitVote(1, 0)
+		v, _ := td.GenerateTestPrecommitVote(1, 0)
 		msg := message.NewVoteMessage(v)
 
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, network.TestRandomPeerID()))
-		assert.Equal(t, tConsMgr.PickRandomVote().Hash(), v.Hash())
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, td.RandomPeerID()))
+		assert.Equal(t, td.consMgr.PickRandomVote().Hash(), v.Hash())
 	})
 }

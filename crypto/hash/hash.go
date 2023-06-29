@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/pactus-project/pactus/util"
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/ripemd160"
 )
@@ -90,13 +89,4 @@ func (h Hash) SanityCheck() error {
 
 func (h Hash) EqualsTo(r Hash) bool {
 	return h == r
-}
-
-// GenerateTestHash generates a hash for testing.
-func GenerateTestHash() Hash {
-	return CalcHash(util.Uint64ToSlice(util.RandUint64(0)))
-}
-
-func GenerateTestStamp() Stamp {
-	return GenerateTestHash().Stamp()
 }

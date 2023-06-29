@@ -6,164 +6,163 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/validator"
-	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestValidatorCounter(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	num := util.RandInt32(1000)
-	val, _ := validator.GenerateTestValidator(num)
+	num := td.RandInt32(1000)
+	val, _ := td.GenerateTestValidator(num)
 
 	t.Run("Add new validator, should increase the total validators number", func(t *testing.T) {
-		assert.Zero(t, tStore.TotalValidators())
+		assert.Zero(t, td.store.TotalValidators())
 
-		tStore.UpdateValidator(val)
-		assert.NoError(t, tStore.WriteBatch())
-		assert.Equal(t, tStore.TotalValidators(), int32(1))
+		td.store.UpdateValidator(val)
+		assert.NoError(t, td.store.WriteBatch())
+		assert.Equal(t, td.store.TotalValidators(), int32(1))
 	})
 
 	t.Run("Update validator, should not increase the total validators number", func(t *testing.T) {
 		val.AddToStake(1)
-		tStore.UpdateValidator(val)
+		td.store.UpdateValidator(val)
 
-		assert.NoError(t, tStore.WriteBatch())
-		assert.Equal(t, tStore.TotalValidators(), int32(1))
+		assert.NoError(t, td.store.WriteBatch())
+		assert.Equal(t, td.store.TotalValidators(), int32(1))
 	})
 
 	t.Run("Get validator", func(t *testing.T) {
-		val1, err := tStore.Validator(val.Address())
+		val1, err := td.store.Validator(val.Address())
 		assert.NoError(t, err)
 
-		val2, err := tStore.ValidatorByNumber(num)
+		val2, err := td.store.ValidatorByNumber(num)
 		assert.NoError(t, err)
 
 		assert.Equal(t, val1.Hash(), val2.Hash())
-		assert.Equal(t, tStore.TotalValidators(), int32(1))
-		assert.True(t, tStore.HasValidator(val.Address()))
+		assert.Equal(t, td.store.TotalValidators(), int32(1))
+		assert.True(t, td.store.HasValidator(val.Address()))
 	})
 }
 
 func TestValidatorBatchSaving(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	total := util.RandInt32(100)
+	total := td.RandInt32(100)
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
-			val, _ := validator.GenerateTestValidator(i)
-			tStore.UpdateValidator(val)
+			val, _ := td.GenerateTestValidator(i)
+			td.store.UpdateValidator(val)
 		}
-		assert.NoError(t, tStore.WriteBatch())
-		assert.Equal(t, tStore.TotalValidators(), total)
+		assert.NoError(t, td.store.WriteBatch())
+		assert.Equal(t, td.store.TotalValidators(), total)
 	})
 
 	t.Run("Close and load db", func(t *testing.T) {
-		tStore.Close()
-		store, _ := NewStore(tStore.config, 21)
+		td.store.Close()
+		store, _ := NewStore(td.store.config, 21)
 		assert.Equal(t, store.TotalValidators(), total)
 	})
 }
 
 func TestValidatorAddresses(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	total := util.RandInt32(100) + 1
+	total := td.RandInt32(100) + 1
 	addrs1 := make([]crypto.Address, 0, total)
 
 	for i := int32(0); i < total; i++ {
-		val, _ := validator.GenerateTestValidator(i)
-		tStore.UpdateValidator(val)
+		val, _ := td.GenerateTestValidator(i)
+		td.store.UpdateValidator(val)
 		addrs1 = append(addrs1, val.Address())
 	}
 
-	addrs2 := tStore.ValidatorAddresses()
+	addrs2 := td.store.ValidatorAddresses()
 	assert.ElementsMatch(t, addrs1, addrs2)
 }
 
 func TestValidatorByNumber(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	total := util.RandInt32(100) + 1 // +1 when random number is zero
+	total := td.RandInt32(100) + 1 // +1 when random number is zero
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
-			val, _ := validator.GenerateTestValidator(i)
-			tStore.UpdateValidator(val)
+			val, _ := td.GenerateTestValidator(i)
+			td.store.UpdateValidator(val)
 		}
-		assert.NoError(t, tStore.WriteBatch())
-		assert.Equal(t, tStore.TotalValidators(), total)
+		assert.NoError(t, td.store.WriteBatch())
+		assert.Equal(t, td.store.TotalValidators(), total)
 	})
 
 	t.Run("Get a random Validator", func(t *testing.T) {
-		num := util.RandInt32(total)
-		val, err := tStore.ValidatorByNumber(num)
+		num := td.RandInt32(total)
+		val, err := td.store.ValidatorByNumber(num)
 		assert.NoError(t, err)
 		require.NotNil(t, val)
 		assert.Equal(t, val.Number(), num)
 	})
 
 	t.Run("Negative number", func(t *testing.T) {
-		val, err := tStore.ValidatorByNumber(-1)
+		val, err := td.store.ValidatorByNumber(-1)
 		assert.Error(t, err)
 		assert.Nil(t, val)
 	})
 
 	t.Run("Non existing validator", func(t *testing.T) {
-		val, err := tStore.ValidatorByNumber(total + 1)
+		val, err := td.store.ValidatorByNumber(total + 1)
 		assert.Error(t, err)
 		assert.Nil(t, val)
 	})
 
 	t.Run("Reopen the store", func(t *testing.T) {
-		tStore.Close()
-		store, _ := NewStore(tStore.config, 21)
+		td.store.Close()
+		store, _ := NewStore(td.store.config, 21)
 
-		num := util.RandInt32(total)
+		num := td.RandInt32(total)
 		val, err := store.ValidatorByNumber(num)
 		assert.NoError(t, err)
 		require.NotNil(t, val)
 		assert.Equal(t, val.Number(), num)
 
-		val, err = tStore.ValidatorByNumber(total + 1)
+		val, err = td.store.ValidatorByNumber(total + 1)
 		assert.Error(t, err)
 		assert.Nil(t, val)
 	})
 }
 
 func TestValidatorByAddress(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	total := util.RandInt32(100) + 1
+	total := td.RandInt32(100) + 1
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
-			val, _ := validator.GenerateTestValidator(i)
-			tStore.UpdateValidator(val)
+			val, _ := td.GenerateTestValidator(i)
+			td.store.UpdateValidator(val)
 		}
-		assert.NoError(t, tStore.WriteBatch())
-		assert.Equal(t, tStore.TotalValidators(), total)
+		assert.NoError(t, td.store.WriteBatch())
+		assert.Equal(t, td.store.TotalValidators(), total)
 	})
 
 	t.Run("Get random validator", func(t *testing.T) {
-		num := util.RandInt32(total)
-		val0, _ := tStore.ValidatorByNumber(num)
-		val, err := tStore.Validator(val0.Address())
+		num := td.RandInt32(total)
+		val0, _ := td.store.ValidatorByNumber(num)
+		val, err := td.store.Validator(val0.Address())
 		assert.NoError(t, err)
 		require.NotNil(t, val)
 		assert.Equal(t, val.Number(), num)
 	})
 
 	t.Run("Unknown address", func(t *testing.T) {
-		val, err := tStore.Validator(crypto.GenerateTestAddress())
+		val, err := td.store.Validator(td.RandomAddress())
 		assert.Error(t, err)
 		assert.Nil(t, val)
 	})
 
 	t.Run("Reopen the store", func(t *testing.T) {
-		tStore.Close()
-		store, _ := NewStore(tStore.config, 21)
+		td.store.Close()
+		store, _ := NewStore(td.store.config, 21)
 
-		num := util.RandInt32(total)
+		num := td.RandInt32(total)
 		val0, _ := store.ValidatorByNumber(num)
 		val, err := store.Validator(val0.Address())
 		assert.NoError(t, err)
@@ -173,26 +172,26 @@ func TestValidatorByAddress(t *testing.T) {
 }
 
 func TestIterateValidators(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	total := util.RandInt32(100)
+	total := td.RandInt32(100)
 	vals1 := []hash.Hash{}
 	for i := int32(0); i < total; i++ {
-		val, _ := validator.GenerateTestValidator(i)
-		tStore.UpdateValidator(val)
+		val, _ := td.GenerateTestValidator(i)
+		td.store.UpdateValidator(val)
 		vals1 = append(vals1, val.Hash())
 	}
-	assert.NoError(t, tStore.WriteBatch())
+	assert.NoError(t, td.store.WriteBatch())
 
 	vals2 := []hash.Hash{}
-	tStore.IterateValidators(func(val *validator.Validator) bool {
+	td.store.IterateValidators(func(val *validator.Validator) bool {
 		vals2 = append(vals2, val.Hash())
 		return false
 	})
 	assert.ElementsMatch(t, vals1, vals2)
 
 	stopped := false
-	tStore.IterateValidators(func(val *validator.Validator) bool {
+	td.store.IterateValidators(func(val *validator.Validator) bool {
 		if val.Hash().EqualsTo(vals1[0]) {
 			stopped = true
 		}
@@ -202,17 +201,17 @@ func TestIterateValidators(t *testing.T) {
 }
 
 func TestValidatorDeepCopy(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	num := util.RandInt32(1000)
-	val1, _ := validator.GenerateTestValidator(num)
-	tStore.UpdateValidator(val1)
+	num := td.RandInt32(1000)
+	val1, _ := td.GenerateTestValidator(num)
+	td.store.UpdateValidator(val1)
 
-	val2, _ := tStore.ValidatorByNumber(num)
+	val2, _ := td.store.ValidatorByNumber(num)
 	val2.IncSequence()
-	assert.NotEqual(t, tStore.validatorStore.numberMap[num].Hash(), val2.Hash())
+	assert.NotEqual(t, td.store.validatorStore.numberMap[num].Hash(), val2.Hash())
 
-	val3, _ := tStore.Validator(val1.Address())
+	val3, _ := td.store.Validator(val1.Address())
 	val3.IncSequence()
-	assert.NotEqual(t, tStore.validatorStore.numberMap[num].Hash(), val3.Hash())
+	assert.NotEqual(t, td.store.validatorStore.numberMap[num].Hash(), val3.Hash())
 }

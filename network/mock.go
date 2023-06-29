@@ -6,7 +6,7 @@ import (
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 )
 
 var _ Network = &MockNetwork{}
@@ -17,6 +17,8 @@ type BroadcastData struct {
 }
 
 type MockNetwork struct {
+	*testsuite.TestSuite
+
 	BroadcastCh chan BroadcastData
 	EventCh     chan Event
 	ID          peer.ID
@@ -24,8 +26,9 @@ type MockNetwork struct {
 	SendError   error
 }
 
-func MockingNetwork(id peer.ID) *MockNetwork {
+func MockingNetwork(ts *testsuite.TestSuite, id peer.ID) *MockNetwork {
 	return &MockNetwork{
+		TestSuite:   ts,
 		BroadcastCh: make(chan BroadcastData, 100),
 		EventCh:     make(chan Event, 100),
 		OtherNets:   make([]*MockNetwork, 0),
@@ -108,12 +111,4 @@ func (mock *MockNetwork) NumConnectedPeers() int {
 }
 func (mock *MockNetwork) AddAnotherNetwork(net *MockNetwork) {
 	mock.OtherNets = append(mock.OtherNets, net)
-}
-
-// TestRandomPeerID returns a random peer ID.
-func TestRandomPeerID() peer.ID {
-	s := util.Uint64ToSlice(util.RandUint64(0))
-	id := [34]byte{0x12, 32}
-	copy(id[2:], s[:])
-	return peer.ID(id[:])
 }

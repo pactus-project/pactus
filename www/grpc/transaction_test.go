@@ -3,14 +3,15 @@ package grpc
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util/testsuite"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetTransaction(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	conn, client := testTransactionClient(t)
 
 	testBlock := tMockState.TestStore.AddTestBlock(1)
@@ -46,7 +47,7 @@ func TestGetTransaction(t *testing.T) {
 	})
 
 	t.Run("Should return nil value because transaction doesn't exist", func(t *testing.T) {
-		id := hash.GenerateTestHash()
+		id := ts.RandomHash()
 		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{Id: id.Bytes()})
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -55,6 +56,8 @@ func TestGetTransaction(t *testing.T) {
 }
 
 func TestSendRawTransaction(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	conn, client := testTransactionClient(t)
 
 	t.Run("Should fail, invalid cbor", func(t *testing.T) {
@@ -63,15 +66,15 @@ func TestSendRawTransaction(t *testing.T) {
 		assert.Nil(t, res)
 	})
 	t.Run("Should fail, transaction with invalid signature", func(t *testing.T) {
-		trx, _ := tx.GenerateTestSendTx()
-		_, signer := tx.GenerateTestSendTx()
+		trx, _ := ts.GenerateTestSendTx()
+		_, signer := ts.GenerateTestSendTx()
 		trx.SetSignature(signer.SignData(trx.SignBytes()))
 		data, _ := trx.Bytes()
 		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: data})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
-	trx, _ := tx.GenerateTestSendTx()
+	trx, _ := ts.GenerateTestSendTx()
 	data, _ := trx.Bytes()
 	t.Run("Should pass", func(t *testing.T) {
 		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: data})

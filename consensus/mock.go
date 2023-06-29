@@ -7,7 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 )
 
 var _ Consensus = &MockConsensus{}
@@ -15,6 +15,7 @@ var _ Consensus = &MockConsensus{}
 type MockConsensus struct {
 	// This locks prevents the Data Race in tests
 	lk sync.RWMutex
+	ts *testsuite.TestSuite
 
 	Signer   crypto.Signer
 	Votes    []*vote.Vote
@@ -24,11 +25,11 @@ type MockConsensus struct {
 	Round    int16
 }
 
-func MockingManager(signers []crypto.Signer) (Manager, []*MockConsensus) {
+func MockingManager(ts *testsuite.TestSuite, signers []crypto.Signer) (Manager, []*MockConsensus) {
 	mocks := make([]*MockConsensus, len(signers))
 	instances := make([]Consensus, len(signers))
 	for i, s := range signers {
-		cons := MockingConsensus(s)
+		cons := MockingConsensus(ts, s)
 		mocks[i] = cons
 		instances[i] = cons
 	}
@@ -38,8 +39,11 @@ func MockingManager(signers []crypto.Signer) (Manager, []*MockConsensus) {
 	}, mocks
 }
 
-func MockingConsensus(signer crypto.Signer) *MockConsensus {
-	return &MockConsensus{Signer: signer}
+func MockingConsensus(ts *testsuite.TestSuite, signer crypto.Signer) *MockConsensus {
+	return &MockConsensus{
+		ts:     ts,
+		Signer: signer,
+	}
 }
 func (m *MockConsensus) SignerKey() crypto.PublicKey {
 	return m.Signer.PublicKey()
@@ -109,7 +113,7 @@ func (m *MockConsensus) PickRandomVote() *vote.Vote {
 	if len(m.Votes) == 0 {
 		return nil
 	}
-	r := util.RandInt32(int32(len(m.Votes)))
+	r := m.ts.RandInt32(int32(len(m.Votes)))
 	return m.Votes[r]
 }
 func (m *MockConsensus) IsActive() bool {

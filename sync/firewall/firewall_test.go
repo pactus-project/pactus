@@ -13,191 +13,208 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
-var tFirewall *Firewall
-var tBadPeerID peer.ID
-var tGoodPeerID peer.ID
-var tUnknownPeerID peer.ID
-var tNetwork *network.MockNetwork
-var tState *state.MockState
+type testData struct {
+	*testsuite.TestSuite
 
-func setup(t *testing.T) {
+	firewall      *Firewall
+	badPeerID     peer.ID
+	goodPeerID    peer.ID
+	unknownPeerID peer.ID
+	network       *network.MockNetwork
+	state         *state.MockState
+}
+
+func setup(t *testing.T) *testData {
+	ts := testsuite.NewTestSuite(t)
+
 	logger := logger.NewLogger("firewall", nil)
 	peerSet := peerset.NewPeerSet(3 * time.Second)
-	tState = state.MockingState()
-	tNetwork = network.MockingNetwork(network.TestRandomPeerID())
+	state := state.MockingState(ts)
+	net := network.MockingNetwork(ts, ts.RandomPeerID())
 	conf := DefaultConfig()
 	conf.Enabled = true
-	tFirewall = NewFirewall(conf, tNetwork, peerSet, tState, logger)
-	assert.NotNil(t, tFirewall)
-	tBadPeerID = network.TestRandomPeerID()
-	tGoodPeerID = network.TestRandomPeerID()
-	tUnknownPeerID = network.TestRandomPeerID()
+	firewall := NewFirewall(conf, net, peerSet, state, logger)
+	assert.NotNil(t, firewall)
+	badPeerID := ts.RandomPeerID()
+	goodPeerID := ts.RandomPeerID()
+	unknownPeerID := ts.RandomPeerID()
 
-	tNetwork.AddAnotherNetwork(network.MockingNetwork(tGoodPeerID))
-	tNetwork.AddAnotherNetwork(network.MockingNetwork(tUnknownPeerID))
-	tNetwork.AddAnotherNetwork(network.MockingNetwork(tBadPeerID))
+	net.AddAnotherNetwork(network.MockingNetwork(ts, goodPeerID))
+	net.AddAnotherNetwork(network.MockingNetwork(ts, unknownPeerID))
+	net.AddAnotherNetwork(network.MockingNetwork(ts, badPeerID))
 
-	tFirewall.peerSet.UpdateStatus(tGoodPeerID, peerset.StatusCodeKnown)
-	tFirewall.peerSet.UpdateStatus(tBadPeerID, peerset.StatusCodeBanned)
+	firewall.peerSet.UpdateStatus(goodPeerID, peerset.StatusCodeKnown)
+	firewall.peerSet.UpdateStatus(badPeerID, peerset.StatusCodeBanned)
+
+	return &testData{
+		TestSuite:     ts,
+		firewall:      firewall,
+		network:       net,
+		state:         state,
+		badPeerID:     badPeerID,
+		goodPeerID:    goodPeerID,
+		unknownPeerID: unknownPeerID,
+	}
 }
 
 func TestInvalidBundlesCounter(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	assert.Nil(t, tFirewall.OpenGossipBundle([]byte("bad"), tUnknownPeerID, tUnknownPeerID))
-	assert.Nil(t, tFirewall.OpenGossipBundle(nil, tUnknownPeerID, tUnknownPeerID))
+	assert.Nil(t, td.firewall.OpenGossipBundle([]byte("bad"), td.unknownPeerID, td.unknownPeerID))
+	assert.Nil(t, td.firewall.OpenGossipBundle(nil, td.unknownPeerID, td.unknownPeerID))
 
-	bdl := bundle.NewBundle(tUnknownPeerID, message.NewQueryProposalMessage(0, -1))
+	bdl := bundle.NewBundle(td.unknownPeerID, message.NewQueryProposalMessage(0, -1))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	d, _ := bdl.Encode()
-	assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tUnknownPeerID))
+	assert.Nil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID, td.unknownPeerID))
 
-	bdl = bundle.NewBundle(tBadPeerID, message.NewQueryProposalMessage(0, 1))
+	bdl = bundle.NewBundle(td.badPeerID, message.NewQueryProposalMessage(0, 1))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	d, _ = bdl.Encode()
-	assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tUnknownPeerID))
+	assert.Nil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID, td.unknownPeerID))
 
-	peer := tFirewall.peerSet.GetPeer(tUnknownPeerID)
+	peer := td.firewall.peerSet.GetPeer(td.unknownPeerID)
 	assert.Equal(t, peer.InvalidBundles, 4)
 }
 
 func TestGossipMessage(t *testing.T) {
 	t.Run("Message source: unknown, from: unknown => should NOT close the connection", func(t *testing.T) {
-		setup(t)
+		td := setup(t)
 
-		bdl := bundle.NewBundle(tUnknownPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl := bundle.NewBundle(td.unknownPeerID, message.NewQueryProposalMessage(100, 1))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
-		assert.False(t, tFirewall.isPeerBanned(tUnknownPeerID))
-		assert.False(t, tNetwork.IsClosed(tUnknownPeerID))
+		assert.False(t, td.firewall.isPeerBanned(td.unknownPeerID))
+		assert.False(t, td.network.IsClosed(td.unknownPeerID))
 		// TODO: should only accepts hello from unknown peers?
-		assert.NotNil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tUnknownPeerID))
-		assert.False(t, tNetwork.IsClosed(tUnknownPeerID))
+		assert.NotNil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID, td.unknownPeerID))
+		assert.False(t, td.network.IsClosed(td.unknownPeerID))
 	})
 
 	t.Run("Message source: unknown, from: bad => should close the connection", func(t *testing.T) {
-		setup(t)
+		td := setup(t)
 
-		bdl := bundle.NewBundle(tUnknownPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl := bundle.NewBundle(td.unknownPeerID, message.NewQueryProposalMessage(100, 1))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
-		assert.False(t, tNetwork.IsClosed(tUnknownPeerID))
-		assert.False(t, tNetwork.IsClosed(tBadPeerID))
-		assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tBadPeerID))
-		assert.False(t, tNetwork.IsClosed(tUnknownPeerID))
-		assert.True(t, tNetwork.IsClosed(tBadPeerID))
+		assert.False(t, td.network.IsClosed(td.unknownPeerID))
+		assert.False(t, td.network.IsClosed(td.badPeerID))
+		assert.Nil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID, td.badPeerID))
+		assert.False(t, td.network.IsClosed(td.unknownPeerID))
+		assert.True(t, td.network.IsClosed(td.badPeerID))
 	})
 
 	t.Run("Message source: bad, from: unknown => should close the connection", func(t *testing.T) {
-		setup(t)
+		td := setup(t)
 
-		bdl := bundle.NewBundle(tBadPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl := bundle.NewBundle(td.badPeerID, message.NewQueryProposalMessage(100, 1))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
-		assert.False(t, tNetwork.IsClosed(tBadPeerID))
-		assert.False(t, tNetwork.IsClosed(tUnknownPeerID))
-		assert.Nil(t, tFirewall.OpenGossipBundle(d, tBadPeerID, tUnknownPeerID))
-		assert.True(t, tNetwork.IsClosed(tBadPeerID))
-		assert.True(t, tNetwork.IsClosed(tUnknownPeerID))
+		assert.False(t, td.network.IsClosed(td.badPeerID))
+		assert.False(t, td.network.IsClosed(td.unknownPeerID))
+		assert.Nil(t, td.firewall.OpenGossipBundle(d, td.badPeerID, td.unknownPeerID))
+		assert.True(t, td.network.IsClosed(td.badPeerID))
+		assert.True(t, td.network.IsClosed(td.unknownPeerID))
 	})
 
 	t.Run("Message initiator is not the same as source => should close the connection", func(t *testing.T) {
-		setup(t)
+		td := setup(t)
 
-		bdl := bundle.NewBundle(tBadPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl := bundle.NewBundle(td.badPeerID, message.NewQueryProposalMessage(100, 1))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
-		assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tUnknownPeerID))
-		assert.True(t, tNetwork.IsClosed(tUnknownPeerID))
+		assert.Nil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID, td.unknownPeerID))
+		assert.True(t, td.network.IsClosed(td.unknownPeerID))
 	})
 
 	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
-		setup(t)
+		td := setup(t)
 
-		bdl := bundle.NewBundle(tGoodPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryProposalMessage(100, 1))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
-		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
-		assert.NotNil(t, tFirewall.OpenGossipBundle(d, tGoodPeerID, tGoodPeerID))
-		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
+		assert.False(t, td.network.IsClosed(td.goodPeerID))
+		assert.NotNil(t, td.firewall.OpenGossipBundle(d, td.goodPeerID, td.goodPeerID))
+		assert.False(t, td.network.IsClosed(td.goodPeerID))
 	})
 }
 
 func TestStreamMessage(t *testing.T) {
 	t.Run("Message source: bad => should close the connection", func(t *testing.T) {
-		setup(t)
+		td := setup(t)
 
-		bdl := bundle.NewBundle(tBadPeerID, message.NewBlocksRequestMessage(int(util.RandInt32(0)), 1, 100))
+		bdl := bundle.NewBundle(td.badPeerID, message.NewBlocksRequestMessage(td.RandInt(100), 1, 100))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
-		assert.False(t, tNetwork.IsClosed(tBadPeerID))
-		assert.Nil(t, tFirewall.OpenStreamBundle(bytes.NewReader(d), tBadPeerID))
-		assert.True(t, tNetwork.IsClosed(tBadPeerID))
+		assert.False(t, td.network.IsClosed(td.badPeerID))
+		assert.Nil(t, td.firewall.OpenStreamBundle(bytes.NewReader(d), td.badPeerID))
+		assert.True(t, td.network.IsClosed(td.badPeerID))
 	})
 
 	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
-		setup(t)
+		td := setup(t)
 
-		bdl := bundle.NewBundle(tGoodPeerID, message.NewBlocksRequestMessage(int(util.RandInt32(0)), 1, 100))
+		bdl := bundle.NewBundle(td.goodPeerID, message.NewBlocksRequestMessage(td.RandInt(100), 1, 100))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
-		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
-		assert.NotNil(t, tFirewall.OpenStreamBundle(bytes.NewReader(d), tGoodPeerID))
-		assert.False(t, tNetwork.IsClosed(tGoodPeerID))
+		assert.False(t, td.network.IsClosed(td.goodPeerID))
+		assert.NotNil(t, td.firewall.OpenStreamBundle(bytes.NewReader(d), td.goodPeerID))
+		assert.False(t, td.network.IsClosed(td.goodPeerID))
 	})
 }
 
 func TestDisabledFirewall(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	bdl := bundle.NewBundle(tGoodPeerID, message.NewQueryProposalMessage(0, -1))
+	bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryProposalMessage(0, -1))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	d, _ := bdl.Encode()
 
-	tFirewall.config.Enabled = false
-	assert.Nil(t, tFirewall.OpenGossipBundle(d, tBadPeerID, tBadPeerID))
-	assert.False(t, tNetwork.IsClosed(tBadPeerID))
+	td.firewall.config.Enabled = false
+	assert.Nil(t, td.firewall.OpenGossipBundle(d, td.badPeerID, td.badPeerID))
+	assert.False(t, td.network.IsClosed(td.badPeerID))
 }
 
 func TestUpdateLastSeen(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	bdl := bundle.NewBundle(tGoodPeerID, message.NewQueryProposalMessage(100, 1))
+	bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryProposalMessage(100, 1))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	d, _ := bdl.Encode()
 	now := time.Now().UnixNano()
-	assert.Nil(t, tFirewall.OpenGossipBundle(d, tUnknownPeerID, tGoodPeerID))
+	assert.Nil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID, td.goodPeerID))
 
-	peerUnknown := tFirewall.peerSet.GetPeer(tUnknownPeerID)
-	peerGood := tFirewall.peerSet.GetPeer(tGoodPeerID)
+	peerUnknown := td.firewall.peerSet.GetPeer(td.unknownPeerID)
+	peerGood := td.firewall.peerSet.GetPeer(td.goodPeerID)
 	assert.GreaterOrEqual(t, peerUnknown.LastSeen.UnixNano(), now)
 	assert.GreaterOrEqual(t, peerGood.LastSeen.UnixNano(), now)
 }
 
 func TestNetworkFlags(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
 	// TODO: add tests for Mainnet and Testnet flags
-	bdl := bundle.NewBundle(tGoodPeerID, message.NewQueryProposalMessage(100, 1))
+	bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryProposalMessage(100, 1))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-	assert.NoError(t, tFirewall.checkBundle(bdl, tGoodPeerID))
+	assert.NoError(t, td.firewall.checkBundle(bdl, td.goodPeerID))
 
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
-	assert.Error(t, tFirewall.checkBundle(bdl, tGoodPeerID))
+	assert.Error(t, td.firewall.checkBundle(bdl, td.goodPeerID))
 
 	bdl.Flags = 0
-	assert.Error(t, tFirewall.checkBundle(bdl, tGoodPeerID))
+	assert.Error(t, td.firewall.checkBundle(bdl, td.goodPeerID))
 
-	tState.TestParams.BlockVersion = 0x3f
-	assert.Error(t, tFirewall.checkBundle(bdl, tGoodPeerID))
+	td.state.TestParams.BlockVersion = 0x3f
+	assert.Error(t, td.firewall.checkBundle(bdl, td.goodPeerID))
 }

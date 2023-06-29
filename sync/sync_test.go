@@ -10,31 +10,32 @@ import (
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-var (
-	tConfig      *Config
-	tState       *state.MockState
-	tConsMgr     consensus.Manager
-	tConsMocks   []*consensus.MockConsensus
-	tNetwork     *network.MockNetwork
-	tSync        *synchronizer
-	tBroadcastCh chan message.Message
-)
+type testData struct {
+	*testsuite.TestSuite
+
+	config      *Config
+	state       *state.MockState
+	consMgr     consensus.Manager
+	consMocks   []*consensus.MockConsensus
+	network     *network.MockNetwork
+	sync        *synchronizer
+	broadcastCh chan message.Message
+}
 
 type OverrideFingerprint struct {
 	sync Synchronizer
@@ -43,8 +44,6 @@ type OverrideFingerprint struct {
 
 func init() {
 	LatestBlockInterval = 23
-	tConfig = testConfig()
-	tConfig.Moniker = "Alice"
 }
 
 func (o *OverrideFingerprint) Fingerprint() string {
@@ -64,31 +63,51 @@ func testConfig() *Config {
 	}
 }
 
-func setup(t *testing.T) {
-	signers := []crypto.Signer{bls.GenerateTestSigner(), bls.GenerateTestSigner()}
-	tState = state.MockingState()
-	tConsMgr, tConsMocks = consensus.MockingManager(signers)
-	tBroadcastCh = make(chan message.Message, 1000)
-	tNetwork = network.MockingNetwork(network.TestRandomPeerID())
+func setup(t *testing.T, config *Config) *testData {
+	ts := testsuite.NewTestSuite(t)
 
-	testAddBlocks(t, tState, 21)
+	if config == nil {
+		config = testConfig()
+		config.Moniker = "Alice"
+	}
+	signers := []crypto.Signer{ts.RandomSigner(), ts.RandomSigner()}
+	state := state.MockingState(ts)
+	consMgr, consMocks := consensus.MockingManager(ts, signers)
+	broadcastCh := make(chan message.Message, 1000)
+	network := network.MockingNetwork(ts, ts.RandomPeerID())
 
-	Sync, err := NewSynchronizer(tConfig,
+	Sync, err := NewSynchronizer(config,
 		signers,
-		tState,
-		tConsMgr,
-		tNetwork,
-		tBroadcastCh,
+		state,
+		consMgr,
+		network,
+		broadcastCh,
 	)
 	assert.NoError(t, err)
-	tSync = Sync.(*synchronizer)
+	sync := Sync.(*synchronizer)
 
-	assert.NoError(t, tSync.Start())
-	assert.Equal(t, tSync.Moniker(), tConfig.Moniker)
-	shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello) // Alice key 1
-	shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeHello) // Alice key 2
+	td := &testData{
+		TestSuite:   ts,
+		config:      config,
+		state:       state,
+		consMgr:     consMgr,
+		consMocks:   consMocks,
+		network:     network,
+		sync:        sync,
+		broadcastCh: broadcastCh,
+	}
+
+	td.addBlocks(t, state, 21)
+
+	assert.NoError(t, td.sync.Start())
+	assert.Equal(t, td.sync.Moniker(), config.Moniker)
+
+	td.shouldPublishMessageWithThisType(t, network, message.MessageTypeHello) // Alice key 1
+	td.shouldPublishMessageWithThisType(t, network, message.MessageTypeHello) // Alice key 2
 
 	logger.Info("setup finished, running the tests", "name", t.Name())
+
+	return td
 }
 
 func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) *bundle.Bundle {
@@ -133,7 +152,11 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 	}
 }
 
-func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
+func (td *testData) shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) *bundle.Bundle {
+	return shouldPublishMessageWithThisType(t, net, msgType)
+}
+
+func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
 	timeout := time.NewTimer(300 * time.Millisecond)
 
 	for {
@@ -150,128 +173,133 @@ func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
 	}
 }
 
-func testReceivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
+func (td *testData) receivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
 	bdl := bundle.NewBundle(from, msg)
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P|bundle.BundleFlagNetworkMainnet)
 	return sync.processIncomingBundle(bdl)
 }
 
-func testAddBlocks(t *testing.T, state *state.MockState, count int) {
+func addBlocks(t *testing.T, state *state.MockState, count int) {
 	h := state.LastBlockHeight()
 	state.CommitTestBlocks(count)
 	assert.Equal(t, h+uint32(count), state.LastBlockHeight())
 }
 
-func testAddPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID, nodeNetwork bool) {
-	tSync.peerSet.UpdatePeerInfo(pid, peerset.StatusCodeKnown, t.Name(),
+func (td *testData) addBlocks(t *testing.T, state *state.MockState, count int) {
+	addBlocks(t, state, count)
+}
+
+func (td *testData) addPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID, nodeNetwork bool) {
+	td.sync.peerSet.UpdatePeerInfo(pid, peerset.StatusCodeKnown, t.Name(),
 		version.Agent(), pub.(*bls.PublicKey), nodeNetwork)
 }
 
-func testAddPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
+func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
 	if pub == nil {
-		pub, _ = bls.GenerateTestKeyPair()
+		pub, _ = td.RandomBLSKeyPair()
 	}
-	testAddPeer(t, pub, pid, true)
-	val := validator.NewValidator(pub.(*bls.PublicKey), util.RandInt32(0))
+	td.addPeer(t, pub, pid, true)
+	val := validator.NewValidator(pub.(*bls.PublicKey), td.RandInt32(1000))
 	// Note: This may not be completely accurate, but it poses no harm for testing purposes.
-	val.UpdateLastJoinedHeight(tState.TestCommittee.Proposer(0).LastJoinedHeight() + 1)
-	tState.TestStore.UpdateValidator(val)
-	tState.TestCommittee.Update(0, []*validator.Validator{val})
-	require.True(t, tState.TestCommittee.Contains(pub.Address()))
+	val.UpdateLastJoinedHeight(td.state.TestCommittee.Proposer(0).LastJoinedHeight() + 1)
+	td.state.TestStore.UpdateValidator(val)
+	td.state.TestCommittee.Update(0, []*validator.Validator{val})
+	require.True(t, td.state.TestCommittee.Contains(pub.Address()))
 
-	for _, cons := range tConsMocks {
+	for _, cons := range td.consMocks {
 		cons.SetActive(cons.Signer.PublicKey().EqualsTo(pub))
 	}
 }
 
-func checkPeerStatus(t *testing.T, pid peer.ID, code peerset.StatusCode) {
-	require.Equal(t, tSync.peerSet.GetPeer(pid).Status, code)
+func (td *testData) checkPeerStatus(t *testing.T, pid peer.ID, code peerset.StatusCode) {
+	require.Equal(t, td.sync.peerSet.GetPeer(pid).Status, code)
 }
 
 func TestStop(t *testing.T) {
-	setup(t)
+	td := setup(t, nil)
+
 	// Should stop gracefully.
-	tSync.Stop()
+	td.sync.Stop()
 }
 
 func TestTestNetFlags(t *testing.T) {
-	setup(t)
+	td := setup(t, nil)
 
-	tState.TestParams.BlockVersion = 0x3f
-	bdl := tSync.prepareBundle(message.NewHeartBeatMessage(1, 0, hash.GenerateTestHash()))
+	td.state.TestParams.BlockVersion = 0x3f
+	bdl := td.sync.prepareBundle(message.NewHeartBeatMessage(1, 0, td.RandomHash()))
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
 }
 
 func TestDownload(t *testing.T) {
-	setup(t)
+	td := setup(t, nil)
 
-	ourBlockHeight := tState.LastBlockHeight()
-	b := block.GenerateTestBlock(nil, nil)
-	c := block.GenerateTestCertificate(b.Hash())
-	pid := network.TestRandomPeerID()
+	ourBlockHeight := td.state.LastBlockHeight()
+	b := td.GenerateTestBlock(nil, nil)
+	c := td.GenerateTestCertificate(b.Hash())
+	pid := td.RandomPeerID()
 	msg := message.NewBlockAnnounceMessage(ourBlockHeight+LatestBlockInterval+1, b, c)
 
 	t.Run("try to query latest blocks, but the peer is not known", func(t *testing.T) {
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksRequest)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
 	})
 
 	t.Run("try to download blocks, but the peer is not known", func(t *testing.T) {
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksRequest)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
 	})
 
 	t.Run("try to download blocks, but the peer is not a network node", func(t *testing.T) {
-		pub, _ := bls.GenerateTestKeyPair()
-		testAddPeer(t, pub, pid, false)
+		pub, _ := td.RandomBLSKeyPair()
+		td.addPeer(t, pub, pid, false)
 
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksRequest)
-		assert.Equal(t, tSync.peerSet.GetPeer(pid).SendSuccess, 0)
-		assert.Equal(t, tSync.peerSet.GetPeer(pid).SendFailed, 0)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendSuccess, 0)
+		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendFailed, 0)
 	})
 
 	t.Run("try to download blocks and the peer is a network node", func(t *testing.T) {
-		pub, _ := bls.GenerateTestKeyPair()
-		testAddPeer(t, pub, pid, true)
+		pub, _ := td.RandomBLSKeyPair()
+		td.addPeer(t, pub, pid, true)
 
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksRequest)
-		assert.Equal(t, tSync.peerSet.GetPeer(pid).SendSuccess, 1)
-		assert.Equal(t, tSync.peerSet.GetPeer(pid).SendFailed, 0)
+		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendSuccess, 1)
+		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendFailed, 0)
 
 		// Let's close the opened session
-		tSync.peerSet.CloseSession(bdl.Message.(*message.BlocksRequestMessage).SessionID)
+		td.sync.peerSet.CloseSession(bdl.Message.(*message.BlocksRequestMessage).SessionID)
 	})
 
 	t.Run("download request is rejected", func(t *testing.T) {
-		session := tSync.peerSet.OpenSession(pid)
+		session := td.sync.peerSet.OpenSession(pid)
 		msg2 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, session.SessionID(), 1, nil, nil)
-		assert.NoError(t, testReceivingNewMessage(tSync, msg2, pid))
-		bdl := shouldPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksRequest)
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg2, pid))
+		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
 
-		assert.Equal(t, tSync.peerSet.GetPeer(pid).SendSuccess, 2)
-		assert.Equal(t, tSync.peerSet.GetPeer(pid).SendFailed, 1)
+		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendSuccess, 2)
+		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendFailed, 1)
 
 		// Let's close the opened session
-		tSync.peerSet.CloseSession(bdl.Message.(*message.BlocksRequestMessage).SessionID)
+		td.sync.peerSet.CloseSession(bdl.Message.(*message.BlocksRequestMessage).SessionID)
 	})
 
 	t.Run("testing send failure", func(t *testing.T) {
-		tNetwork.SendError = fmt.Errorf("send error")
+		td.network.SendError = fmt.Errorf("send error")
 
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		shouldNotPublishMessageWithThisType(t, tNetwork, message.MessageTypeBlocksRequest)
-		assert.Equal(t, tSync.peerSet.GetPeer(pid).SendSuccess, 2)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendSuccess, 2)
 		// Since the test pid is the only peer in the peerSet list, it always tries to connect to it.
 		// After the second attempt, the requested height is higher than that of the test peer.
 		// So we have two sends, and therefore two failures.
-		assert.Equal(t, tSync.peerSet.GetPeer(pid).SendFailed, 3)
+		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendFailed, 3)
 	})
 }
