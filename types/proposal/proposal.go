@@ -71,7 +71,6 @@ func (p *Proposal) SignBytes() []byte {
 }
 
 func (p *Proposal) MarshalCBOR() ([]byte, error) {
-	p.data.Signature = nil
 	return cbor.Marshal(p.data)
 }
 
