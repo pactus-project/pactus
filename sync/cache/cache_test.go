@@ -3,7 +3,6 @@ package cache
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,7 +22,7 @@ func TestCacheBlocks(t *testing.T) {
 	b1 := ts.GenerateTestBlock(nil, nil)
 	h1 := b1.Hash()
 	b2 := ts.GenerateTestBlock(nil, &h1)
-	testHeight := util.RandUint32(0)
+	testHeight := ts.RandUint32(10000)
 
 	cache.AddBlock(testHeight, b1)
 	cache.AddBlock(testHeight+1, b2)

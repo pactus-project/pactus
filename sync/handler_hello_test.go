@@ -45,7 +45,7 @@ func TestParsingHelloMessages(t *testing.T) {
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info",
 		func(t *testing.T) {
 			signer := td.RandomSigner()
-			height := util.RandUint32(td.state.LastBlockHeight())
+			height := td.RandUint32(td.state.LastBlockHeight())
 			pid := td.RandomPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork, td.state.Genesis().Hash())
 			signer.SignMsg(msg)
@@ -71,7 +71,7 @@ func TestParsingHelloMessages(t *testing.T) {
 	t.Run("Receiving Hello-ack message from a peer. It should not be acknowledged, but update the peer info",
 		func(t *testing.T) {
 			signer := td.RandomSigner()
-			height := util.RandUint32(td.state.LastBlockHeight())
+			height := td.RandUint32(td.state.LastBlockHeight())
 			pid := td.RandomPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagHelloAck, td.state.Genesis().Hash())
 			signer.SignMsg(msg)

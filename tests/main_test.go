@@ -78,7 +78,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_state"] = "info"
 		tConfigs[i].Logger.Levels["_sync"] = "error"
 		tConfigs[i].Logger.Levels["_consensus"] = "error"
-		tConfigs[i].Logger.Levels["_network"] = "debug"
+		tConfigs[i].Logger.Levels["_network"] = "error"
 		tConfigs[i].Logger.Levels["_pool"] = "error"
 		tConfigs[i].Sync.CacheSize = 1000
 		tConfigs[i].Sync.NodeNetwork = false

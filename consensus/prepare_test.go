@@ -8,6 +8,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/vote"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPrepareQueryProposal(t *testing.T) {
@@ -130,6 +131,10 @@ func TestByzantineVote2(t *testing.T) {
 	h := uint32(3)
 	r := int16(0)
 	p := td.makeProposal(t, h, r)
+
+	// This simple trick prevents "DATA RACE" errors in this test
+	// by memoizing tx.sanityChecked.
+	assert.NoError(t, p.SanityCheck())
 
 	wg := sync.WaitGroup{}
 	wg.Add(2)
