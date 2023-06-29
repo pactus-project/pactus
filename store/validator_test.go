@@ -48,7 +48,7 @@ func TestValidatorCounter(t *testing.T) {
 func TestValidatorBatchSaving(t *testing.T) {
 	td := setup(t)
 
-	total := td.RandInt32(100)
+	total := td.RandInt32NonZero(100)
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			val, _ := td.GenerateTestValidator(i)
@@ -68,7 +68,7 @@ func TestValidatorBatchSaving(t *testing.T) {
 func TestValidatorAddresses(t *testing.T) {
 	td := setup(t)
 
-	total := td.RandInt32(100) + 1
+	total := td.RandInt32NonZero(100)
 	addrs1 := make([]crypto.Address, 0, total)
 
 	for i := int32(0); i < total; i++ {
@@ -84,7 +84,7 @@ func TestValidatorAddresses(t *testing.T) {
 func TestValidatorByNumber(t *testing.T) {
 	td := setup(t)
 
-	total := td.RandInt32(100) + 1 // +1 when random number is zero
+	total := td.RandInt32NonZero(100)
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			val, _ := td.GenerateTestValidator(i)
@@ -133,7 +133,7 @@ func TestValidatorByNumber(t *testing.T) {
 func TestValidatorByAddress(t *testing.T) {
 	td := setup(t)
 
-	total := td.RandInt32(100) + 1
+	total := td.RandInt32NonZero(100)
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			val, _ := td.GenerateTestValidator(i)
@@ -174,7 +174,7 @@ func TestValidatorByAddress(t *testing.T) {
 func TestIterateValidators(t *testing.T) {
 	td := setup(t)
 
-	total := td.RandInt32(100)
+	total := td.RandInt32NonZero(100)
 	vals1 := []hash.Hash{}
 	for i := int32(0); i < total; i++ {
 		val, _ := td.GenerateTestValidator(i)
@@ -203,7 +203,7 @@ func TestIterateValidators(t *testing.T) {
 func TestValidatorDeepCopy(t *testing.T) {
 	td := setup(t)
 
-	num := td.RandInt32(1000)
+	num := td.RandInt32NonZero(1000)
 	val1, _ := td.GenerateTestValidator(num)
 	td.store.UpdateValidator(val1)
 

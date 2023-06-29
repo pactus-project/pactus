@@ -48,7 +48,7 @@ func TestAccountCounter(t *testing.T) {
 func TestAccountBatchSaving(t *testing.T) {
 	td := setup(t)
 
-	total := td.RandInt32(100)
+	total := td.RandInt32NonZero(100)
 	t.Run("Add some accounts", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			acc, signer := td.GenerateTestAccount(i)
@@ -68,7 +68,7 @@ func TestAccountBatchSaving(t *testing.T) {
 func TestAccountByNumber(t *testing.T) {
 	td := setup(t)
 
-	total := td.RandInt32(100) + 1 // +1 when random number is zero
+	total := td.RandInt32NonZero(100)
 	t.Run("Add some accounts", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			acc, signer := td.GenerateTestAccount(i)
@@ -117,7 +117,7 @@ func TestAccountByNumber(t *testing.T) {
 func TestAccountByAddress(t *testing.T) {
 	td := setup(t)
 
-	total := td.RandInt32(100) + 1
+	total := td.RandInt32NonZero(100)
 	var lastAddr crypto.Address
 	t.Run("Add some accounts", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
@@ -157,7 +157,7 @@ func TestAccountByAddress(t *testing.T) {
 func TestIterateAccounts(t *testing.T) {
 	td := setup(t)
 
-	total := td.RandInt32(100)
+	total := td.RandInt32NonZero(100)
 	accs1 := []hash.Hash{}
 	for i := int32(0); i < total; i++ {
 		acc, signer := td.GenerateTestAccount(i)
