@@ -2,6 +2,7 @@ package peerset
 
 import (
 	"fmt"
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"testing"
 	"time"
 
@@ -91,6 +92,18 @@ func TestPeerSet(t *testing.T) {
 
 		peer1 := peerSet.getPeer(pid1)
 		assert.Equal(t, peer1.Status, StatusCodeBanned)
+	})
+
+	t.Run("Testing UpdateLastSeen", func(t *testing.T) {
+		now := time.Now()
+		peerSet.UpdateLastSeen(pid1)
+
+		peer1 := peerSet.getPeer(pid1)
+		assert.GreaterOrEqual(t, peer1.LastSeen, now)
+	})
+
+	t.Run("Testing StartedAt", func(t *testing.T) {
+		assert.LessOrEqual(t, peerSet.StartedAt(), time.Now())
 	})
 
 	t.Run("Testing RemovePeer", func(t *testing.T) {
@@ -248,4 +261,18 @@ func TestGetRandomPeerOnePeer(t *testing.T) {
 	p := peerSet.GetRandomPeer()
 
 	assert.Equal(t, p.PeerID, pid)
+}
+
+func TestRemoveExpiredSessions(t *testing.T) {
+	ps := NewPeerSet(time.Second)
+
+	pid := peer.ID("peer1")
+	session := ps.OpenSession(pid)
+	session.SetLastResponseCode(message.ResponseCodeOK)
+
+	assert.NotNil(t, session)
+	assert.True(t, ps.HasAnyOpenSession())
+
+	time.Sleep(time.Second)
+	assert.False(t, ps.HasAnyOpenSession())
 }
