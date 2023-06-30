@@ -7,7 +7,6 @@ import (
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/util"
 )
 
 //go:embed assets/ui/main_window.ui
@@ -84,19 +83,19 @@ func (mw *mainWindow) OnTransactionTransfer() {
 }
 
 func (mw *mainWindow) onMenuItemActivateWebsite(_ *gtk.MenuItem) {
-	if err := util.OpenURLInBrowser("https://pactus.org/"); err != nil {
+	if err := openURLInBrowser("https://pactus.org/"); err != nil {
 		fatalErrorCheck(err)
 	}
 }
 
 func (mw *mainWindow) onMenuItemActivateExplorer(_ *gtk.MenuItem) {
-	if err := util.OpenURLInBrowser("https://pactusscan.com/"); err != nil {
+	if err := openURLInBrowser("https://pactusscan.com/"); err != nil {
 		fatalErrorCheck(err)
 	}
 }
 
 func (mw *mainWindow) onMenuItemActivateLearn(_ *gtk.MenuItem) {
-	if err := util.OpenURLInBrowser("https://pactus.org/learn/"); err != nil {
+	if err := openURLInBrowser("https://pactus.org/learn/"); err != nil {
 		fatalErrorCheck(err)
 	}
 }

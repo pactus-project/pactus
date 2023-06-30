@@ -2,13 +2,9 @@ package util
 
 import (
 	crand "crypto/rand"
-	"errors"
 	"fmt"
 	"math/big"
-	"net/url"
 	"os"
-	"os/exec"
-	"runtime"
 	"strconv"
 )
 
@@ -199,33 +195,4 @@ func ChangeToStringWithTrailingZeros(change int64) string {
 func ChangeToString(change int64) string {
 	coin := ChangeToCoin(change)
 	return strconv.FormatFloat(coin, 'f', -1, 64)
-}
-
-// OpenURLInBrowser open specific url in browser base on os
-func OpenURLInBrowser(address string) error {
-	cmd := ""
-	args := make([]string, 0)
-
-	addr, err := url.Parse(address)
-	if err != nil {
-		return err
-	}
-
-	switch addr.Scheme {
-	case "http", "https":
-	default:
-		return errors.New("address scheme is invalid")
-	}
-
-	switch runtime.GOOS {
-	case "windows":
-		cmd = "cmd"
-		args = []string{"/c", "start"}
-	case "darwin":
-		cmd = "open"
-	default: // "linux", "freebsd", "openbsd", "netbsd"
-		cmd = "xdg-open"
-	}
-	args = append(args, address)
-	return exec.Command(cmd, args...).Start()
 }
