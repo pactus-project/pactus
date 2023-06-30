@@ -19,7 +19,7 @@ func TestProposeBlock(t *testing.T) {
 
 	invSubsidyTx := tx.NewSubsidyTx(td.state1.lastInfo.BlockHash().Stamp(), 1, td.valSigner2.Address(),
 		td.state1.params.BlockReward, "duplicated subsidy transaction")
-	invSendTx, _ := td.GenerateTestTransferTx()
+	invTransferTx, _ := td.GenerateTestTransferTx()
 	invBondTx, _ := td.GenerateTestBondTx()
 	invSortitionTx, _ := td.GenerateTestSortitionTx()
 
@@ -30,7 +30,7 @@ func TestProposeBlock(t *testing.T) {
 	trx2 := tx.NewBondTx(b1.Stamp(), 2, td.valSigner1.Address(), pub.Address(), pub, 1000, 1000, "")
 	td.valSigner1.SignMsg(trx2)
 
-	assert.NoError(t, td.state1.txPool.AppendTx(invSendTx))
+	assert.NoError(t, td.state1.txPool.AppendTx(invTransferTx))
 	assert.NoError(t, td.state1.txPool.AppendTx(invBondTx))
 	assert.NoError(t, td.state1.txPool.AppendTx(invSortitionTx))
 	assert.NoError(t, td.state1.txPool.AppendTx(invSubsidyTx))
@@ -57,12 +57,12 @@ func TestExecuteBlock(t *testing.T) {
 	rewardAddr := td.RandomAddress()
 	invSubsidyTx := td.state1.createSubsidyTx(rewardAddr, 1001)
 	validSubsidyTx := td.state1.createSubsidyTx(rewardAddr, 1000)
-	invSendTx, _ := td.GenerateTestTransferTx()
+	invTransferTx, _ := td.GenerateTestTransferTx()
 
 	validTx1 := tx.NewTransferTx(b1.Stamp(), 1, td.valSigner1.Address(), td.valSigner1.Address(), 1, 1000, "")
 	td.valSigner1.SignMsg(validTx1)
 
-	assert.NoError(t, td.state1.txPool.AppendTx(invSendTx))
+	assert.NoError(t, td.state1.txPool.AppendTx(invTransferTx))
 	assert.NoError(t, td.state1.txPool.AppendTx(validSubsidyTx))
 	assert.NoError(t, td.state1.txPool.AppendTx(invSubsidyTx))
 	assert.NoError(t, td.state1.txPool.AppendTx(validTx1))
@@ -81,7 +81,7 @@ func TestExecuteBlock(t *testing.T) {
 	t.Run("Has invalid tx", func(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(validSubsidyTx)
-		txs.Append(invSendTx)
+		txs.Append(invTransferTx)
 		invBlock := block.MakeBlock(1, util.Now(), txs, td.state1.lastInfo.BlockHash(),
 			td.state1.stateRoot(), td.state1.lastInfo.Certificate(),
 			td.state1.lastInfo.SortitionSeed(), proposerAddr)

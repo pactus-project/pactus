@@ -65,7 +65,7 @@ func TestFromBytes(t *testing.T) {
 	trx4, _ := ts.GenerateTestWithdrawTx()
 	trx5, _ := ts.GenerateTestSortitionTx()
 	tests := []*tx.Tx{trx1, trx2, trx3, trx4, trx5}
-	assert.True(t, trx1.IsSendTx())
+	assert.True(t, trx1.IsTransferTx())
 	assert.True(t, trx2.IsBondTx())
 	assert.True(t, trx3.IsUnbondTx())
 	assert.True(t, trx4.IsWithdrawTx())

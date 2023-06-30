@@ -406,7 +406,7 @@ func (tx *Tx) ID() ID {
 	return id
 }
 
-func (tx *Tx) IsSendTx() bool {
+func (tx *Tx) IsTransferTx() bool {
 	return tx.Payload().Type() == payload.PayloadTypeTransfer &&
 		!tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }

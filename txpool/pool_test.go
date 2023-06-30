@@ -148,9 +148,9 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	val3.AddToStake(10000000000)
 	td.sandbox.UpdateValidator(val3)
 
-	sendTx := tx.NewTransferTx(block1000000.Stamp(), acc1.Sequence()+1, acc1Signer.Address(),
+	transferTx := tx.NewTransferTx(block1000000.Stamp(), acc1.Sequence()+1, acc1Signer.Address(),
 		td.RandomAddress(), 1000, 1000, "send-tx")
-	acc1Signer.SignMsg(sendTx)
+	acc1Signer.SignMsg(transferTx)
 
 	pub, _ := td.RandomBLSKeyPair()
 	bondTx := tx.NewBondTx(block1000000.Stamp(), acc1.Sequence()+2, acc1Signer.Address(),
@@ -169,7 +169,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 		td.RandomProof())
 	val3Signer.SignMsg(sortitionTx)
 
-	assert.NoError(t, td.pool.AppendTx(sendTx))
+	assert.NoError(t, td.pool.AppendTx(transferTx))
 	assert.NoError(t, td.pool.AppendTx(unbondTx))
 	assert.NoError(t, td.pool.AppendTx(withdrawTx))
 	assert.NoError(t, td.pool.AppendTx(bondTx))
@@ -181,7 +181,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	assert.Equal(t, trxs[1].ID(), bondTx.ID())
 	assert.Equal(t, trxs[2].ID(), unbondTx.ID())
 	assert.Equal(t, trxs[3].ID(), withdrawTx.ID())
-	assert.Equal(t, trxs[4].ID(), sendTx.ID())
+	assert.Equal(t, trxs[4].ID(), transferTx.ID())
 }
 
 func TestAppendAndBroadcast(t *testing.T) {

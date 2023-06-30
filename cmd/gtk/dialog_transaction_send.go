@@ -60,7 +60,7 @@ func broadcastTransactionSend(wallet *wallet.Wallet) {
 			return
 		}
 
-		trx, err := wallet.MakeSendTx(sender, receiver, amount)
+		trx, err := wallet.MakeTransferTx(sender, receiver, amount)
 		if err != nil {
 			errorCheck(err)
 			return

@@ -271,7 +271,7 @@ func TestSigningTx(t *testing.T) {
 	assert.Equal(t, trx.ID().String(), id)
 }
 
-func TestMakeSendTx(t *testing.T) {
+func TestMakeTransferTx(t *testing.T) {
 	td := setup(t)
 
 	sender, _ := td.wallet.DeriveNewAddress("testing addr")
