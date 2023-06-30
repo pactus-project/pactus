@@ -60,8 +60,8 @@ func (h *Header) ProposerAddress() crypto.Address {
 }
 
 func NewHeader(version uint8, time time.Time, stateRoot, prevBlockHash hash.Hash,
-	sortitionSeed sortition.VerifiableSeed, proposerAddress crypto.Address) Header {
-	h := Header{
+	sortitionSeed sortition.VerifiableSeed, proposerAddress crypto.Address) *Header {
+	return &Header{
 		data: headerData{
 			Version:         version,
 			UnixTime:        uint32(time.Unix()),
@@ -71,7 +71,6 @@ func NewHeader(version uint8, time time.Time, stateRoot, prevBlockHash hash.Hash
 			SortitionSeed:   sortitionSeed,
 		},
 	}
-	return h
 }
 
 func (h *Header) SanityCheck() error {

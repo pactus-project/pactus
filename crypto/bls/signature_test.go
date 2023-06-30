@@ -1,4 +1,4 @@
-package bls
+package bls_test
 
 import (
 	"encoding/hex"
@@ -6,15 +6,19 @@ import (
 	"testing"
 
 	cbor "github.com/fxamacker/cbor/v2"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSignatureCBORMarshaling(t *testing.T) {
-	_, prv := GenerateTestKeyPair()
-	sig1 := prv.Sign(util.Uint64ToSlice(util.RandUint64(0)))
-	sig2 := new(Signature)
+	ts := testsuite.NewTestSuite(t)
+
+	_, prv := ts.RandomBLSKeyPair()
+	sig1 := prv.Sign(ts.RandomBytes(16))
+	sig2 := new(bls.Signature)
 
 	bs, err := sig1.MarshalCBOR()
 	assert.NoError(t, err)
@@ -23,13 +27,15 @@ func TestSignatureCBORMarshaling(t *testing.T) {
 
 	assert.Error(t, sig2.UnmarshalCBOR([]byte("abcd")))
 
-	inv, _ := hex.DecodeString(strings.Repeat("ff", SignatureSize))
+	inv, _ := hex.DecodeString(strings.Repeat("ff", bls.SignatureSize))
 	data, _ := cbor.Marshal(inv)
 	assert.Error(t, sig2.UnmarshalCBOR(data))
 }
 
 func TestSignatureEqualsTo(t *testing.T) {
-	signer := GenerateTestSigner()
+	ts := testsuite.NewTestSuite(t)
+
+	signer := ts.RandomSigner()
 	sig1 := signer.SignData([]byte("foo"))
 	sig2 := signer.SignData([]byte("bar"))
 
@@ -40,26 +46,30 @@ func TestSignatureEqualsTo(t *testing.T) {
 }
 
 func TestSignatureEncoding(t *testing.T) {
-	_, prv := GenerateTestKeyPair()
-	sig := prv.Sign(util.Uint64ToSlice(util.RandUint64(0)))
+	ts := testsuite.NewTestSuite(t)
+
+	_, prv := ts.RandomBLSKeyPair()
+	sig := prv.Sign(ts.RandomBytes(16))
 	w1 := util.NewFixedWriter(20)
 	assert.Error(t, sig.Encode(w1))
 
-	w2 := util.NewFixedWriter(SignatureSize)
+	w2 := util.NewFixedWriter(bls.SignatureSize)
 	assert.NoError(t, sig.Encode(w2))
 
 	r1 := util.NewFixedReader(20, w2.Bytes())
 	assert.Error(t, sig.Decode(r1))
 
-	r2 := util.NewFixedReader(SignatureSize, w2.Bytes())
+	r2 := util.NewFixedReader(bls.SignatureSize, w2.Bytes())
 	assert.NoError(t, sig.Decode(r2))
 }
 
 func TestVerifyingSignature(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	msg := []byte("zarb")
 
-	pb1, pv1 := GenerateTestKeyPair()
-	pb2, pv2 := GenerateTestKeyPair()
+	pb1, pv1 := ts.RandomBLSKeyPair()
+	pb2, pv2 := ts.RandomBLSKeyPair()
 	sig1 := pv1.Sign(msg)
 	sig2 := pv2.Sign(msg)
 
@@ -124,7 +134,7 @@ func TestSignatureBytes(t *testing.T) {
 	}
 
 	for no, test := range tests {
-		sig, err := SignatureFromString(test.encoded)
+		sig, err := bls.SignatureFromString(test.encoded)
 		if test.valid {
 			assert.NoError(t, err, "test %v: unexpected error", no)
 			assert.Equal(t, sig.Bytes(), test.bytes, "test %v: invalid bytes", no)

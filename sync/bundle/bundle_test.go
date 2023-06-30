@@ -6,16 +6,16 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/types/block"
-	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewMessage(t *testing.T) {
-	pid := network.TestRandomPeerID()
+	ts := testsuite.NewTestSuite(t)
+
+	pid := ts.RandomPeerID()
 	msg := NewBundle(pid, message.NewQueryProposalMessage(100, 0))
 	assert.Zero(t, msg.Flags)
 	assert.Equal(t, msg.Initiator, pid)
@@ -31,14 +31,16 @@ func TestInvalidCBOR(t *testing.T) {
 	assert.Error(t, err)
 }
 func TestMessageCompress(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	var blocksData = [][]byte{}
 	for i := 0; i < 10; i++ {
-		b := block.GenerateTestBlock(nil, nil)
+		b := ts.GenerateTestBlock(nil, nil)
 		d, _ := b.Bytes()
 		blocksData = append(blocksData, d)
 	}
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, 1234, 888, blocksData, nil)
-	bdl := NewBundle(network.TestRandomPeerID(), msg)
+	bdl := NewBundle(ts.RandomPeerID(), msg)
 	bs0, err := bdl.Encode()
 	assert.NoError(t, err)
 	bdl.CompressIt()
@@ -59,9 +61,11 @@ func TestMessageCompress(t *testing.T) {
 }
 
 func TestDecodeVoteMessage(t *testing.T) {
-	v, _ := vote.GenerateTestPrecommitVote(88, 0)
+	ts := testsuite.NewTestSuite(t)
+
+	v, _ := ts.GenerateTestPrecommitVote(88, 0)
 	msg := message.NewVoteMessage(v)
-	bdl := NewBundle(network.TestRandomPeerID(), msg)
+	bdl := NewBundle(ts.RandomPeerID(), msg)
 	bs0, err := bdl.Encode()
 	assert.NoError(t, err)
 	bdl.CompressIt()

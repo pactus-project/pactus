@@ -6,65 +6,64 @@ import (
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestInvalidBlockData(t *testing.T) {
-	setup(t)
+	td := setup(t, nil)
 
-	pid := network.TestRandomPeerID()
-	sid := tSync.peerSet.OpenSession(pid).SessionID()
+	pid := td.RandomPeerID()
+	sid := td.sync.peerSet.OpenSession(pid).SessionID()
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, sid,
 		0, [][]byte{{1, 2, 3}}, nil)
 
-	assert.Error(t, testReceivingNewMessage(tSync, msg, pid))
+	assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
 }
 
 func TestOneBlockShorter(t *testing.T) {
-	setup(t)
+	td := setup(t, nil)
 
-	lastBlockHash := tState.LastBlockHash()
-	lastBlockHeight := tState.LastBlockHeight()
-	b1 := block.GenerateTestBlock(nil, &lastBlockHash)
-	c1 := block.GenerateTestCertificate(b1.Hash())
+	lastBlockHash := td.state.LastBlockHash()
+	lastBlockHeight := td.state.LastBlockHeight()
+	b1 := td.GenerateTestBlock(nil, &lastBlockHash)
+	c1 := td.GenerateTestCertificate(b1.Hash())
 	d1, _ := b1.Bytes()
-	pid := network.TestRandomPeerID()
+	pid := td.RandomPeerID()
 
-	pub, _ := bls.GenerateTestKeyPair()
-	testAddPeer(t, pub, pid, false)
+	pub, _ := td.RandomBLSKeyPair()
+	td.addPeer(t, pub, pid, false)
 
 	t.Run("Peer is busy. Session should be closed", func(t *testing.T) {
-		sid := tSync.peerSet.OpenSession(pid).SessionID()
+		sid := td.sync.peerSet.OpenSession(pid).SessionID()
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, sid,
 			0, nil, nil)
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		assert.Nil(t, tSync.peerSet.FindSession(sid))
+		assert.Nil(t, td.sync.peerSet.FindSession(sid))
 	})
 
 	t.Run("Request is rejected. Session should be closed", func(t *testing.T) {
-		sid := tSync.peerSet.OpenSession(pid).SessionID()
+		sid := td.sync.peerSet.OpenSession(pid).SessionID()
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, sid,
 			0, nil, nil)
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		assert.Nil(t, tSync.peerSet.FindSession(sid))
+		assert.Nil(t, td.sync.peerSet.FindSession(sid))
 	})
 
 	t.Run("Commit one block", func(t *testing.T) {
-		sid := tSync.peerSet.OpenSession(pid).SessionID()
+		sid := td.sync.peerSet.OpenSession(pid).SessionID()
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, sid,
 			lastBlockHeight+1, [][]byte{d1}, c1)
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, pid))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		assert.Nil(t, tSync.peerSet.FindSession(sid))
-		assert.Equal(t, tState.LastBlockHeight(), lastBlockHeight+1)
+		assert.Nil(t, td.sync.peerSet.FindSession(sid))
+		assert.Equal(t, td.state.LastBlockHeight(), lastBlockHeight+1)
 	})
 }
 
@@ -72,23 +71,25 @@ func TestOneBlockShorter(t *testing.T) {
 // test nodes, Alice and Bob. In real-world scenarios, multiple nodes are typically
 // involved, but the procedure remains similar.
 func TestSyncing(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	configAlice := testConfig()
 	configBob := testConfig()
-	signersAlice := []crypto.Signer{bls.GenerateTestSigner()}
-	signersBob := []crypto.Signer{bls.GenerateTestSigner()}
-	stateAlice := state.MockingState()
-	stateBob := state.MockingState()
-	consMgrAlice, _ := consensus.MockingManager(signersAlice)
-	consMgrBob, _ := consensus.MockingManager(signersBob)
+	signersAlice := []crypto.Signer{ts.RandomSigner()}
+	signersBob := []crypto.Signer{ts.RandomSigner()}
+	stateAlice := state.MockingState(ts)
+	stateBob := state.MockingState(ts)
+	consMgrAlice, _ := consensus.MockingManager(ts, signersAlice)
+	consMgrBob, _ := consensus.MockingManager(ts, signersBob)
 	broadcastChAlice := make(chan message.Message, 1000)
 	broadcastChBob := make(chan message.Message, 1000)
-	networkAlice := network.MockingNetwork(network.TestRandomPeerID())
-	networkBob := network.MockingNetwork(network.TestRandomPeerID())
+	networkAlice := network.MockingNetwork(ts, ts.RandomPeerID())
+	networkBob := network.MockingNetwork(ts, ts.RandomPeerID())
 
 	configBob.NodeNetwork = true
 	networkAlice.AddAnotherNetwork(networkBob)
 	networkBob.AddAnotherNetwork(networkAlice)
-	testAddBlocks(t, stateBob, 100)
+	addBlocks(t, stateBob, 100)
 
 	sync1, err := NewSynchronizer(configAlice,
 		signersAlice,

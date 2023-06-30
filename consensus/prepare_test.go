@@ -8,34 +8,35 @@ import (
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/vote"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPrepareQueryProposal(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
 
-	testEnterNewHeight(tConsP)
+	td.enterNewHeight(td.consP)
 
 	// After receiving one vote, it should query for proposal (if don't have it yet)
-	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, hash.GenerateTestHash(), tIndexX)
+	td.addVote(td.consP, vote.VoteTypePrepare, 2, 0, td.RandomHash(), tIndexX)
 
-	shouldPublishQueryProposal(t, tConsP, 2, 0)
+	td.shouldPublishQueryProposal(t, td.consP, 2, 0)
 }
 
 func TestGoToChangeProposerFromPrepare(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
 
-	testEnterNewHeight(tConsP)
-	p := makeProposal(t, 2, 0)
+	td.enterNewHeight(td.consP)
+	p := td.makeProposal(t, 2, 0)
 
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexX)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
+	td.addVote(td.consP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexX)
+	td.addVote(td.consP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
 
-	tConsP.SetProposal(p)
-	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
+	td.consP.SetProposal(p)
+	td.shouldPublishVote(t, td.consP, vote.VoteTypeChangeProposer, hash.UndefHash)
 }
 
 // We have four nodes: Nx, Ny, Nb, and Np, which:
@@ -47,14 +48,14 @@ func TestGoToChangeProposerFromPrepare(t *testing.T) {
 // Np should not move to the change-proposer state.
 // After the partition heals, honest nodes move to the next round.
 func TestByzantineVote1(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	commitBlockForAllStates(t)
-	commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
 
 	h := uint32(3)
 	r := int16(0)
-	p := makeProposal(t, h, r)
+	p := td.makeProposal(t, h, r)
 
 	wg := sync.WaitGroup{}
 	wg.Add(2)
@@ -62,15 +63,15 @@ func TestByzantineVote1(t *testing.T) {
 	// =================================
 	// Nx votes
 	go func() {
-		testEnterNewHeight(tConsX)
-		tConsX.SetProposal(p)
+		td.enterNewHeight(td.consX)
+		td.consX.SetProposal(p)
 
-		shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p.Block().Hash())
-		testAddVote(tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
-		testAddVote(tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
+		td.shouldPublishVote(t, td.consX, vote.VoteTypePrepare, p.Block().Hash())
+		td.addVote(td.consX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+		td.addVote(td.consX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
 
-		shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p.Block().Hash())
-		testAddVote(tConsX, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
+		td.shouldPublishVote(t, td.consX, vote.VoteTypePrecommit, p.Block().Hash())
+		td.addVote(td.consX, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexY)
 		// Byzantine node doesn't broadcast its precommit vote
 
 		// Nx and Ny are unable to progress
@@ -81,10 +82,10 @@ func TestByzantineVote1(t *testing.T) {
 	// =================================
 	// Np votes
 	go func() {
-		testEnterNewHeight(tConsP)
+		td.enterNewHeight(td.consP)
 
-		shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
-		testAddVote(tConsP, vote.VoteTypeChangeProposer, h, r, hash.UndefHash, tIndexB) // Byzantine vote
+		td.shouldPublishVote(t, td.consP, vote.VoteTypeChangeProposer, hash.UndefHash)
+		td.addVote(td.consP, vote.VoteTypeChangeProposer, h, r, hash.UndefHash, tIndexB) // Byzantine vote
 
 		wg.Done()
 	}()
@@ -92,25 +93,25 @@ func TestByzantineVote1(t *testing.T) {
 
 	// =================================
 	wg.Wait()
-	checkHeightRound(t, tConsX, h, r)
-	checkHeightRound(t, tConsP, h, r)
+	td.checkHeightRound(t, td.consX, h, r)
+	td.checkHeightRound(t, td.consP, h, r)
 
 	// =================================
 	// Now, Partition heals
 	time.Sleep(1 * time.Second)
 	fmt.Println("=== Partition healed")
 
-	for _, v := range tConsP.AllVotes() {
-		tConsX.AddVote(v)
+	for _, v := range td.consP.AllVotes() {
+		td.consX.AddVote(v)
 	}
-	shouldPublishVote(t, tConsX, vote.VoteTypeChangeProposer, hash.UndefHash)
-	checkHeightRoundWait(t, tConsX, h, r+1)
+	td.shouldPublishVote(t, td.consX, vote.VoteTypeChangeProposer, hash.UndefHash)
+	td.checkHeightRoundWait(t, td.consX, h, r+1)
 
-	tConsP.SetProposal(p)
-	for _, v := range tConsX.AllVotes() {
-		tConsP.AddVote(v)
+	td.consP.SetProposal(p)
+	for _, v := range td.consX.AllVotes() {
+		td.consP.AddVote(v)
 	}
-	checkHeightRoundWait(t, tConsP, h, r+1)
+	td.checkHeightRoundWait(t, td.consP, h, r+1)
 }
 
 // We have four nodes: Nx, Ny, Nb, and Np, which:
@@ -122,14 +123,18 @@ func TestByzantineVote1(t *testing.T) {
 // Np moves to the precommit state.
 // After the partition heals, honest nodes move to the next round.
 func TestByzantineVote2(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	commitBlockForAllStates(t)
-	commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
 
 	h := uint32(3)
 	r := int16(0)
-	p := makeProposal(t, h, r)
+	p := td.makeProposal(t, h, r)
+
+	// This simple trick prevents "DATA RACE" errors in this test
+	// by memoizing tx.sanityChecked.
+	assert.NoError(t, p.SanityCheck())
 
 	wg := sync.WaitGroup{}
 	wg.Add(2)
@@ -137,16 +142,16 @@ func TestByzantineVote2(t *testing.T) {
 	// =================================
 	// Nx votes
 	go func() {
-		testEnterNewHeight(tConsX)
+		td.enterNewHeight(td.consX)
 
-		tConsX.SetProposal(p)
-		shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p.Block().Hash())
-		testAddVote(tConsX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
-		testAddVote(tConsX, vote.VoteTypePrepare, h, r, hash.UndefHash, tIndexB)
+		td.consX.SetProposal(p)
+		td.shouldPublishVote(t, td.consX, vote.VoteTypePrepare, p.Block().Hash())
+		td.addVote(td.consX, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
+		td.addVote(td.consX, vote.VoteTypePrepare, h, r, hash.UndefHash, tIndexB)
 
-		shouldPublishVote(t, tConsX, vote.VoteTypeChangeProposer, hash.UndefHash)
-		testAddVote(tConsX, vote.VoteTypeChangeProposer, h, r, hash.UndefHash, tIndexY)
-		testAddVote(tConsX, vote.VoteTypeChangeProposer, h, r, hash.UndefHash, tIndexB)
+		td.shouldPublishVote(t, td.consX, vote.VoteTypeChangeProposer, hash.UndefHash)
+		td.addVote(td.consX, vote.VoteTypeChangeProposer, h, r, hash.UndefHash, tIndexY)
+		td.addVote(td.consX, vote.VoteTypeChangeProposer, h, r, hash.UndefHash, tIndexB)
 
 		// Nx and Ny move to next round
 
@@ -155,15 +160,15 @@ func TestByzantineVote2(t *testing.T) {
 	// =================================
 	// Np votes
 	go func() {
-		testEnterNewHeight(tConsP)
+		td.enterNewHeight(td.consP)
 
-		tConsP.SetProposal(p)
-		shouldPublishVote(t, tConsP, vote.VoteTypePrepare, p.Block().Hash())
-		testAddVote(tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
-		testAddVote(tConsP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
+		td.consP.SetProposal(p)
+		td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, p.Block().Hash())
+		td.addVote(td.consP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
+		td.addVote(td.consP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexB)
 
-		shouldPublishVote(t, tConsP, vote.VoteTypePrecommit, p.Block().Hash())
-		testAddVote(tConsP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexB)
+		td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, p.Block().Hash())
+		td.addVote(td.consP, vote.VoteTypePrecommit, h, r, p.Block().Hash(), tIndexB)
 		// Np is unable to progress
 
 		wg.Done()
@@ -171,8 +176,8 @@ func TestByzantineVote2(t *testing.T) {
 
 	// =================================
 	wg.Wait()
-	checkHeightRound(t, tConsX, h, r+1)
-	checkHeightRound(t, tConsP, h, r)
+	td.checkHeightRound(t, td.consX, h, r+1)
+	td.checkHeightRound(t, td.consP, h, r)
 
 	// =================================
 	// Now, Partition heals
@@ -180,24 +185,24 @@ func TestByzantineVote2(t *testing.T) {
 	time.Sleep(1 * time.Second)
 	fmt.Println("=== Partition healed")
 
-	for _, v := range tConsP.AllVotes() {
-		tConsX.AddVote(v)
+	for _, v := range td.consP.AllVotes() {
+		td.consX.AddVote(v)
 	}
-	checkHeightRoundWait(t, tConsX, h, r+1)
+	td.checkHeightRoundWait(t, td.consX, h, r+1)
 
-	tConsP.SetProposal(p)
-	for _, v := range tConsX.AllVotes() {
-		tConsP.AddVote(v)
+	td.consP.SetProposal(p)
+	for _, v := range td.consX.AllVotes() {
+		td.consP.AddVote(v)
 	}
-	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
-	checkHeightRoundWait(t, tConsP, h, r+1)
+	td.shouldPublishVote(t, td.consP, vote.VoteTypeChangeProposer, hash.UndefHash)
+	td.checkHeightRoundWait(t, td.consP, h, r+1)
 }
 
 func TestQueryProposal(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	commitBlockForAllStates(t)
-	testEnterNewHeight(tConsX)
-	testEnterNextRound(tConsX)
-	shouldPublishQueryProposal(t, tConsX, 2, 1)
+	td.commitBlockForAllStates(t)
+	td.enterNewHeight(td.consX)
+	td.enterNextRound(td.consX)
+	td.shouldPublishQueryProposal(t, td.consX, 2, 1)
 }

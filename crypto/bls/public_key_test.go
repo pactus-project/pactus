@@ -1,4 +1,4 @@
-package bls
+package bls_test
 
 import (
 	"encoding/hex"
@@ -6,15 +6,18 @@ import (
 	"testing"
 
 	cbor "github.com/fxamacker/cbor/v2"
-	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPublicKeyCBORMarshaling(t *testing.T) {
-	pub1, _ := GenerateTestKeyPair()
-	pub2 := new(PublicKey)
+	ts := testsuite.NewTestSuite(t)
+
+	pub1, _ := ts.RandomBLSKeyPair()
+	pub2 := new(bls.PublicKey)
 
 	bs, err := pub1.MarshalCBOR()
 	assert.NoError(t, err)
@@ -23,14 +26,16 @@ func TestPublicKeyCBORMarshaling(t *testing.T) {
 
 	assert.Error(t, pub2.UnmarshalCBOR([]byte("abcd")))
 
-	inv, _ := hex.DecodeString(strings.Repeat("ff", PublicKeySize))
+	inv, _ := hex.DecodeString(strings.Repeat("ff", bls.PublicKeySize))
 	data, _ := cbor.Marshal(inv)
 	assert.Error(t, pub2.UnmarshalCBOR(data))
 }
 
 func TestPublicKeyEqualsTo(t *testing.T) {
-	pub1, _ := GenerateTestKeyPair()
-	pub2, _ := GenerateTestKeyPair()
+	ts := testsuite.NewTestSuite(t)
+
+	pub1, _ := ts.RandomBLSKeyPair()
+	pub2, _ := ts.RandomBLSKeyPair()
 
 	assert.True(t, pub1.EqualsTo(pub1))
 	assert.False(t, pub1.EqualsTo(pub2))
@@ -39,39 +44,47 @@ func TestPublicKeyEqualsTo(t *testing.T) {
 }
 
 func TestPublicKeyEncoding(t *testing.T) {
-	pub, _ := GenerateTestKeyPair()
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandomBLSKeyPair()
 	w1 := util.NewFixedWriter(20)
 	assert.Error(t, pub.Encode(w1))
 
-	w2 := util.NewFixedWriter(PublicKeySize)
+	w2 := util.NewFixedWriter(bls.PublicKeySize)
 	assert.NoError(t, pub.Encode(w2))
 
 	r1 := util.NewFixedReader(20, w2.Bytes())
 	assert.Error(t, pub.Decode(r1))
 
-	r2 := util.NewFixedReader(PublicKeySize, w2.Bytes())
+	r2 := util.NewFixedReader(bls.PublicKeySize, w2.Bytes())
 	assert.NoError(t, pub.Decode(r2))
 }
 
 func TestPublicKeyVerifyAddress(t *testing.T) {
-	pub1, _ := GenerateTestKeyPair()
-	pub2, _ := GenerateTestKeyPair()
+	ts := testsuite.NewTestSuite(t)
+
+	pub1, _ := ts.RandomBLSKeyPair()
+	pub2, _ := ts.RandomBLSKeyPair()
 
 	assert.NoError(t, pub1.VerifyAddress(pub1.Address()))
 	assert.Equal(t, errors.Code(pub1.VerifyAddress(pub2.Address())), errors.ErrInvalidAddress)
 }
 
 func TestNilPublicKey(t *testing.T) {
-	pub := &PublicKey{}
-	assert.Error(t, pub.VerifyAddress(crypto.GenerateTestAddress()))
+	ts := testsuite.NewTestSuite(t)
+
+	pub := &bls.PublicKey{}
+	assert.Error(t, pub.VerifyAddress(ts.RandomAddress()))
 	assert.Error(t, pub.Verify(nil, nil))
-	assert.Error(t, pub.Verify(nil, &Signature{}))
+	assert.Error(t, pub.Verify(nil, &bls.Signature{}))
 }
 
 func TestNilSignature(t *testing.T) {
-	pub, _ := GenerateTestKeyPair()
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandomBLSKeyPair()
 	assert.Error(t, pub.Verify(nil, nil))
-	assert.Error(t, pub.Verify(nil, &Signature{}))
+	assert.Error(t, pub.Verify(nil, &bls.Signature{}))
 }
 
 func TestPublicKeyBytes(t *testing.T) {
@@ -146,7 +159,7 @@ func TestPublicKeyBytes(t *testing.T) {
 	}
 
 	for no, test := range tests {
-		pub, err := PublicKeyFromString(test.encoded)
+		pub, err := bls.PublicKeyFromString(test.encoded)
 		if test.valid {
 			assert.NoError(t, err, "test %v: unexpected error", no)
 			assert.Equal(t, pub.Bytes(), test.result, "test %v: invalid bytes", no)

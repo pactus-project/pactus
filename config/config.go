@@ -4,7 +4,7 @@ import (
 	"bytes"
 	_ "embed"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/pactus-project/pactus/consensus"
@@ -158,7 +158,7 @@ func (conf *Config) toTOML() []byte {
 }
 
 func LoadFromFile(file string, strict bool) (*Config, error) {
-	data, err := ioutil.ReadFile(file)
+	data, err := os.ReadFile(file)
 	if err != nil {
 		return nil, err
 	}

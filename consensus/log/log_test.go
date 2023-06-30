@@ -3,16 +3,15 @@ package log
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/committee"
-	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMustGetRound(t *testing.T) {
-	committee, _ := committee.GenerateTestCommittee(4)
+	ts := testsuite.NewTestSuite(t)
+
+	committee, _ := ts.GenerateTestCommittee(4)
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
 	log.MustGetRoundMessages(4)
@@ -23,22 +22,24 @@ func TestMustGetRound(t *testing.T) {
 }
 
 func TestAddVotes(t *testing.T) {
-	committee, signers := committee.GenerateTestCommittee(4)
+	ts := testsuite.NewTestSuite(t)
+
+	committee, signers := ts.GenerateTestCommittee(4)
 
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
-	invalidVote, _ := vote.GenerateTestPrecommitVote(55, 5)
+	invalidVote, _ := ts.GenerateTestPrecommitVote(55, 5)
 	err := log.AddVote(invalidVote) // invalid height
 	assert.Error(t, err)
 
-	v1, _ := vote.GenerateTestPrecommitVote(101, 5)
+	v1, _ := ts.GenerateTestPrecommitVote(101, 5)
 	err = log.AddVote(v1) // invalid signer
 	assert.Error(t, err)
 
-	validVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, hash.GenerateTestHash(), signers[0].Address())
+	validVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, ts.RandomHash(), signers[0].Address())
 	signers[0].SignMsg(validVote)
 
-	duplicateVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, hash.GenerateTestHash(), signers[0].Address())
+	duplicateVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, ts.RandomHash(), signers[0].Address())
 	signers[0].SignMsg(duplicateVote)
 
 	err = log.AddVote(validVote)
@@ -59,8 +60,10 @@ func TestAddVotes(t *testing.T) {
 }
 
 func TestSetRoundProposal(t *testing.T) {
-	committee, _ := committee.GenerateTestCommittee(4)
-	prop, _ := proposal.GenerateTestProposal(101, 0)
+	ts := testsuite.NewTestSuite(t)
+
+	committee, _ := ts.GenerateTestCommittee(4)
+	prop, _ := ts.GenerateTestProposal(101, 0)
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
 	log.SetRoundProposal(4, prop)
@@ -73,11 +76,13 @@ func TestSetRoundProposal(t *testing.T) {
 }
 
 func TestCanVote(t *testing.T) {
-	committee, signers := committee.GenerateTestCommittee(4)
+	ts := testsuite.NewTestSuite(t)
+
+	committee, signers := ts.GenerateTestCommittee(4)
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
 
-	addr := crypto.GenerateTestAddress()
+	addr := ts.RandomAddress()
 	assert.True(t, log.CanVote(signers[0].Address()))
 	assert.False(t, log.CanVote(addr))
 }

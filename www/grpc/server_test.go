@@ -9,11 +9,11 @@ import (
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/testsuite"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -27,6 +27,8 @@ var tListener *bufconn.Listener
 var tCtx context.Context
 
 func init() {
+	ts := testsuite.NewTestSuiteForSeed(0x1234)
+
 	// for saving test wallets in temp directory
 	err := os.Chdir(util.TempDirPath())
 	if err != nil {
@@ -35,14 +37,14 @@ func init() {
 
 	const bufSize = 1024 * 1024
 
-	consMgr, consMocks := consensus.MockingManager([]crypto.Signer{
-		bls.GenerateTestSigner(), bls.GenerateTestSigner(),
+	consMgr, consMocks := consensus.MockingManager(ts, []crypto.Signer{
+		ts.RandomSigner(), ts.RandomSigner(),
 	})
 
 	tListener = bufconn.Listen(bufSize)
 	tConsMocks = consMocks
-	tMockState = state.MockingState()
-	tMockSync = sync.MockingSync()
+	tMockState = state.MockingState(ts)
+	tMockSync = sync.MockingSync(ts)
 	tCtx = context.Background()
 
 	tMockState.CommitTestBlocks(10)

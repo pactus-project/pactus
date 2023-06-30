@@ -6,17 +6,19 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPeerSet(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	peerSet := NewPeerSet(time.Second)
 
 	// Add peers using UpdatePeerInfo
-	pk1, _ := bls.GenerateTestKeyPair()
-	pk2, _ := bls.GenerateTestKeyPair()
-	pk3, _ := bls.GenerateTestKeyPair()
+	pk1, _ := ts.RandomBLSKeyPair()
+	pk2, _ := ts.RandomBLSKeyPair()
+	pk3, _ := ts.RandomBLSKeyPair()
 	pid1 := peer.ID("peer1")
 	pid2 := peer.ID("peer2")
 	pid3 := peer.ID("peer3")
@@ -176,6 +178,8 @@ func TestCloseSession(t *testing.T) {
 }
 
 func TestGetRandomWeightedPeer(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	// We create 6 peers with varying success and failure counts:
 	// peer_1 has 4 successful attempts and 0 failed attempts
 	// peer_2 has 4 successful attempts and 1 failed attempt
@@ -184,7 +188,7 @@ func TestGetRandomWeightedPeer(t *testing.T) {
 	// peer_7 has 4 successful attempts and 5 failed attempts
 	peerSet := NewPeerSet(time.Second)
 	for i := 0; i < 6; i++ {
-		pk, _ := bls.GenerateTestKeyPair()
+		pk, _ := ts.RandomBLSKeyPair()
 		pid := peer.ID(fmt.Sprintf("peer_%v", i+1))
 		peerSet.UpdatePeerInfo(
 			pid, StatusCodeKnown,
@@ -213,13 +217,15 @@ func TestGetRandomWeightedPeer(t *testing.T) {
 }
 
 func TestGetRandomPeerUnknown(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	peerSet := NewPeerSet(time.Second)
 
-	pk, _ := bls.GenerateTestKeyPair()
+	pk, _ := ts.RandomBLSKeyPair()
 	pidUnknown := peer.ID("peer_unknown")
 	peerSet.UpdatePeerInfo(pidUnknown, StatusCodeUnknown, "Moniker_unknown", "Agent1", pk, true)
 
-	pk, _ = bls.GenerateTestKeyPair()
+	pk, _ = ts.RandomBLSKeyPair()
 	pidBanned := peer.ID("peer_banned")
 	peerSet.UpdatePeerInfo(pidBanned, StatusCodeBanned, "Moniker_banned", "Agent1", pk, true)
 
@@ -230,9 +236,11 @@ func TestGetRandomPeerUnknown(t *testing.T) {
 }
 
 func TestGetRandomPeerOnePeer(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	peerSet := NewPeerSet(time.Second)
 
-	pk, _ := bls.GenerateTestKeyPair()
+	pk, _ := ts.RandomBLSKeyPair()
 	pid := peer.ID("peer_known")
 	peerSet.UpdatePeerInfo(pid, StatusCodeKnown, "Moniker_known", "Agent1", pk, true)
 	peerSet.IncreaseSendSuccessCounter(pid)

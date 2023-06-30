@@ -3,7 +3,6 @@ package linkedmap
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -181,7 +180,7 @@ func TestLinkedMap(t *testing.T) {
 }
 
 func TestCapacity(t *testing.T) {
-	capacity := int(util.RandInt32(1000))
+	capacity := 100
 	lm := NewLinkedMap[int, string](capacity)
 	assert.Equal(t, lm.Capacity(), capacity)
 }

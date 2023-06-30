@@ -3,9 +3,9 @@ package message
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,9 +15,11 @@ func TestLatestBlocksResponseType(t *testing.T) {
 }
 
 func TestBlocksResponseMessage(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	sid := 123
 	t.Run("Invalid certificate", func(t *testing.T) {
-		b := block.GenerateTestBlock(nil, nil)
+		b := ts.GenerateTestBlock(nil, nil)
 		c := block.NewCertificate(-1, nil, nil, nil)
 		d, _ := b.Bytes()
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 100, [][]byte{d}, c)
@@ -26,7 +28,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 	})
 
 	t.Run("Unexpected block for height zero", func(t *testing.T) {
-		b := block.GenerateTestBlock(nil, nil)
+		b := ts.GenerateTestBlock(nil, nil)
 		d, _ := b.Bytes()
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 0, [][]byte{d}, nil)
 
@@ -34,8 +36,8 @@ func TestBlocksResponseMessage(t *testing.T) {
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		b1 := block.GenerateTestBlock(nil, nil)
-		b2 := block.GenerateTestBlock(nil, nil)
+		b1 := ts.GenerateTestBlock(nil, nil)
+		b2 := ts.GenerateTestBlock(nil, nil)
 		d1, _ := b1.Bytes()
 		d2, _ := b2.Bytes()
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 100, [][]byte{d1, d2}, nil)
@@ -47,6 +49,8 @@ func TestBlocksResponseMessage(t *testing.T) {
 }
 
 func TestLatestBlocksResponseCode(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	t.Run("busy", func(t *testing.T) {
 		m := NewBlocksResponseMessage(ResponseCodeBusy, 1, 0, nil, nil)
 
@@ -68,8 +72,8 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 	})
 
 	t.Run("OK - MoreBlocks", func(t *testing.T) {
-		b1 := block.GenerateTestBlock(nil, nil)
-		b2 := block.GenerateTestBlock(nil, nil)
+		b1 := ts.GenerateTestBlock(nil, nil)
+		b2 := ts.GenerateTestBlock(nil, nil)
 		d1, _ := b1.Bytes()
 		d2, _ := b2.Bytes()
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, 1, 100, [][]byte{d1, d2}, nil)
@@ -83,7 +87,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 	})
 
 	t.Run("OK - Synced", func(t *testing.T) {
-		cert := block.GenerateTestCertificate(hash.GenerateTestHash())
+		cert := ts.GenerateTestCertificate(ts.RandomHash())
 
 		m := NewBlocksResponseMessage(ResponseCodeSynced, 1, 100, nil, cert)
 		assert.NoError(t, m.SanityCheck())

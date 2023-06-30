@@ -9,9 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
 	"github.com/pactus-project/pactus/util/errors"
 )
@@ -36,7 +34,7 @@ type txData struct {
 	// +-+-+-+-+-+-+-+-+
 	// |L|R|R|R|VERSION|
 	// +-+-+-+-+-+-+-+-+
-	// L: Lock Time transacion
+	// L: Lock Time transaction
 	// R: Reserved bit
 	//
 	Version   uint8
@@ -408,7 +406,7 @@ func (tx *Tx) ID() ID {
 	return id
 }
 
-func (tx *Tx) IsSendTx() bool {
+func (tx *Tx) IsTransferTx() bool {
 	return tx.Payload().Type() == payload.PayloadTypeTransfer &&
 		!tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }
@@ -437,55 +435,4 @@ func (tx *Tx) IsWithdrawTx() bool {
 // IsFreeTx will checks if transaction fee is 0.
 func (tx *Tx) IsFreeTx() bool {
 	return tx.IsSubsidyTx() || tx.IsSortitionTx() || tx.IsUnbondTx()
-}
-
-// GenerateTestSendTx generates a send transaction for testing.
-func GenerateTestSendTx() (*Tx, crypto.Signer) {
-	stamp := hash.GenerateTestStamp()
-	s := bls.GenerateTestSigner()
-	pub, _ := bls.GenerateTestKeyPair()
-	tx := NewTransferTx(stamp, util.RandInt32(1000), s.Address(), pub.Address(),
-		util.RandInt64(1000*1e10), util.RandInt64(1*1e10), "test send-tx")
-	s.SignMsg(tx)
-	return tx, s
-}
-
-// GenerateTestSendTx generates a bond transaction for testing.
-func GenerateTestBondTx() (*Tx, crypto.Signer) {
-	stamp := hash.GenerateTestStamp()
-	s := bls.GenerateTestSigner()
-	pub, _ := bls.GenerateTestKeyPair()
-	tx := NewBondTx(stamp, util.RandInt32(1000), s.Address(), pub.Address(),
-		pub, util.RandInt64(1000*1e10), util.RandInt64(1*1e10), "test bond-tx")
-	s.SignMsg(tx)
-	return tx, s
-}
-
-// GenerateTestSendTx generates a sortition transaction for testing.
-func GenerateTestSortitionTx() (*Tx, crypto.Signer) {
-	stamp := hash.GenerateTestStamp()
-	s := bls.GenerateTestSigner()
-	proof := sortition.GenerateRandomProof()
-	tx := NewSortitionTx(stamp, util.RandInt32(1000), s.Address(), proof)
-	s.SignMsg(tx)
-	return tx, s
-}
-
-// GenerateTestSendTx generates an unbond transaction for testing.
-func GenerateTestUnbondTx() (*Tx, crypto.Signer) {
-	stamp := hash.GenerateTestStamp()
-	s := bls.GenerateTestSigner()
-	tx := NewUnbondTx(stamp, util.RandInt32(1000), s.Address(), "test unbond-tx")
-	s.SignMsg(tx)
-	return tx, s
-}
-
-// GenerateTestSendTx generates a withdraw transaction for testing.
-func GenerateTestWithdrawTx() (*Tx, crypto.Signer) {
-	stamp := hash.GenerateTestStamp()
-	s := bls.GenerateTestSigner()
-	tx := NewWithdrawTx(stamp, util.RandInt32(1000), s.Address(), crypto.GenerateTestAddress(),
-		util.RandInt64(1000*1e10), util.RandInt64(1*1e10), "test withdraw-tx")
-	s.SignMsg(tx)
-	return tx, s
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -40,10 +40,12 @@ func broadcastBondTransaction(t *testing.T, sender crypto.Signer, pub crypto.Pub
 }
 
 func TestTransactions(t *testing.T) {
-	pubAlice, prvAlice := bls.GenerateTestKeyPair()
-	pubBob, prvBob := bls.GenerateTestKeyPair()
-	pubCarol, _ := bls.GenerateTestKeyPair()
-	pubDave, _ := bls.GenerateTestKeyPair()
+	ts := testsuite.NewTestSuite(t)
+
+	pubAlice, prvAlice := ts.RandomBLSKeyPair()
+	pubBob, prvBob := ts.RandomBLSKeyPair()
+	pubCarol, _ := ts.RandomBLSKeyPair()
+	pubDave, _ := ts.RandomBLSKeyPair()
 
 	signerAlice := crypto.NewSigner(prvAlice)
 	signerBob := crypto.NewSigner(prvBob)
@@ -76,7 +78,7 @@ func TestTransactions(t *testing.T) {
 		// These validators are not in the committee now.
 		// Bond transactions are valid and they can enter the committee soon
 		for i := 0; i < tTotalNodes; i++ {
-			amt := util.RandInt64(1000000 - 1) // fee is always 1000
+			amt := ts.RandInt64(1000000 - 1) // fee is always 1000
 			signer := tSigners[tNodeIdx1][0]
 
 			require.NoError(t, broadcastBondTransaction(t, signer, tSigners[i][1].PublicKey(), amt, 1000))

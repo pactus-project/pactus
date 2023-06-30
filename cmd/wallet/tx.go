@@ -39,7 +39,7 @@ func TransferTx() func(c *cli.Cmd) {
 				wallet.OptionMemo(*memoOpt),
 			}
 
-			trx, err := w.MakeSendTx(*fromArg, *toArg, util.CoinToChange(*amtArg),
+			trx, err := w.MakeTransferTx(*fromArg, *toArg, util.CoinToChange(*amtArg),
 				opts...)
 			cmd.FatalErrorCheck(err)
 

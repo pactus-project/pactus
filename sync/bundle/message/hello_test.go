@@ -3,10 +3,8 @@ package message
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,10 +14,12 @@ func TestHelloType(t *testing.T) {
 }
 
 func TestHelloMessage(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	t.Run("Invalid signature", func(t *testing.T) {
-		signer1 := bls.GenerateTestSigner()
-		signer2 := bls.GenerateTestSigner()
-		m := NewHelloMessage(network.TestRandomPeerID(), "Oscar", 100, 0, hash.GenerateTestHash())
+		signer1 := ts.RandomSigner()
+		signer2 := ts.RandomSigner()
+		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash())
 		signer1.SignMsg(m)
 		m.SetPublicKey(signer2.PublicKey())
 
@@ -27,8 +27,8 @@ func TestHelloMessage(t *testing.T) {
 	})
 
 	t.Run("Signature is nil", func(t *testing.T) {
-		signer := bls.GenerateTestSigner()
-		m := NewHelloMessage(network.TestRandomPeerID(), "Oscar", 100, 0, hash.GenerateTestHash())
+		signer := ts.RandomSigner()
+		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash())
 		signer.SignMsg(m)
 		m.Signature = nil
 
@@ -36,8 +36,8 @@ func TestHelloMessage(t *testing.T) {
 	})
 
 	t.Run("PublicKey is nil", func(t *testing.T) {
-		signer := bls.GenerateTestSigner()
-		m := NewHelloMessage(network.TestRandomPeerID(), "Oscar", 100, 0, hash.GenerateTestHash())
+		signer := ts.RandomSigner()
+		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash())
 		signer.SignMsg(m)
 		m.PublicKey = nil
 
@@ -45,8 +45,8 @@ func TestHelloMessage(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		signer := bls.GenerateTestSigner()
-		m := NewHelloMessage(network.TestRandomPeerID(), "Alice", 100, 0, hash.GenerateTestHash())
+		signer := ts.RandomSigner()
+		m := NewHelloMessage(ts.RandomPeerID(), "Alice", 100, 0, ts.RandomHash())
 		signer.SignMsg(m)
 
 		assert.NoError(t, m.SanityCheck())

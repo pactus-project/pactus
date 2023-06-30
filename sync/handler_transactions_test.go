@@ -3,21 +3,20 @@ package sync
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestParsingTransactionsMessages(t *testing.T) {
-	setup(t)
+	td := setup(t, nil)
 
 	t.Run("Parsing transactions message", func(t *testing.T) {
-		trx1, _ := tx.GenerateTestBondTx()
+		trx1, _ := td.GenerateTestBondTx()
 		msg := message.NewTransactionsMessage([]*tx.Tx{trx1})
 
-		assert.NoError(t, testReceivingNewMessage(tSync, msg, network.TestRandomPeerID()))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, td.RandomPeerID()))
 
-		assert.NotNil(t, tSync.state.PendingTx(trx1.ID()))
+		assert.NotNil(t, td.sync.state.PendingTx(trx1.ID()))
 	})
 }

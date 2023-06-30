@@ -4,81 +4,93 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-var tStore *store
+type testData struct {
+	*testsuite.TestSuite
 
-func setup(t *testing.T) {
+	store *store
+}
+
+func setup(t *testing.T) *testData {
+	ts := testsuite.NewTestSuite(t)
+
 	conf := &Config{
 		Path: util.TempDirPath(),
 	}
 	s, err := NewStore(conf, 21)
 	require.NoError(t, err)
 
-	tStore = s.(*store)
-	SaveTestBlocks(t, 10)
+	td := &testData{
+		TestSuite: ts,
+		store:     s.(*store),
+	}
+
+	td.saveTestBlocks(t, 10)
+
+	return td
 }
 
-func SaveTestBlocks(t *testing.T, num int) {
-	lastHeight, _ := tStore.LastCertificate()
+func (td *testData) saveTestBlocks(t *testing.T, num int) {
+	lastHeight, _ := td.store.LastCertificate()
 	for i := 0; i < num; i++ {
-		b := block.GenerateTestBlock(nil, nil)
-		c := block.GenerateTestCertificate(b.Hash())
+		b := td.GenerateTestBlock(nil, nil)
+		c := td.GenerateTestCertificate(b.Hash())
 
-		tStore.SaveBlock(lastHeight+uint32(i+1), b, c)
-		assert.NoError(t, tStore.WriteBatch())
+		td.store.SaveBlock(lastHeight+uint32(i+1), b, c)
+		assert.NoError(t, td.store.WriteBatch())
 	}
 }
 
 func TestBlockHash(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	sb, _ := tStore.Block(1)
+	sb, _ := td.store.Block(1)
 
-	assert.Equal(t, tStore.BlockHash(0), hash.UndefHash)
-	assert.Equal(t, tStore.BlockHash(util.MaxUint32), hash.UndefHash)
-	assert.Equal(t, tStore.BlockHash(1), sb.BlockHash)
+	assert.Equal(t, td.store.BlockHash(0), hash.UndefHash)
+	assert.Equal(t, td.store.BlockHash(util.MaxUint32), hash.UndefHash)
+	assert.Equal(t, td.store.BlockHash(1), sb.BlockHash)
 }
 
 func TestBlockHeight(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	sb, _ := tStore.Block(1)
+	sb, _ := td.store.Block(1)
 
-	assert.Equal(t, tStore.BlockHeight(hash.UndefHash), uint32(0))
-	assert.Equal(t, tStore.BlockHeight(hash.GenerateTestHash()), uint32(0))
-	assert.Equal(t, tStore.BlockHeight(sb.BlockHash), uint32(1))
+	assert.Equal(t, td.store.BlockHeight(hash.UndefHash), uint32(0))
+	assert.Equal(t, td.store.BlockHeight(td.RandomHash()), uint32(0))
+	assert.Equal(t, td.store.BlockHeight(sb.BlockHash), uint32(1))
 }
 
 func TestUnknownTransactionID(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	tx, err := tStore.Transaction(hash.GenerateTestHash())
+	tx, err := td.store.Transaction(td.RandomHash())
 	assert.Error(t, err)
 	assert.Nil(t, tx)
 }
 
 func TestWriteAndClosePeacefully(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
 	// After closing db, we should not crash
-	assert.NoError(t, tStore.Close())
-	assert.Error(t, tStore.WriteBatch())
+	assert.NoError(t, td.store.Close())
+	assert.Error(t, td.store.WriteBatch())
 }
 func TestRetrieveBlockAndTransactions(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	height, _ := tStore.LastCertificate()
-	storedBlock, err := tStore.Block(height)
+	height, _ := td.store.LastCertificate()
+	storedBlock, err := td.store.Block(height)
 	assert.NoError(t, err)
 	assert.Equal(t, height, storedBlock.Height)
 	block := storedBlock.ToBlock()
 	for _, trx := range block.Transactions() {
-		storedTx, err := tStore.Transaction(trx.ID())
+		storedTx, err := td.store.Transaction(trx.ID())
 		assert.NoError(t, err)
 		assert.Equal(t, storedTx.TxID, trx.ID())
 		assert.Equal(t, storedTx.BlockTime, block.Header().UnixTime())
@@ -87,60 +99,60 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 }
 
 func TestRecentBlockByStamp(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	hash1 := tStore.BlockHash(1)
+	hash1 := td.store.BlockHash(1)
 
-	h, b := tStore.RecentBlockByStamp(hash.UndefHash.Stamp())
+	h, b := td.store.RecentBlockByStamp(hash.UndefHash.Stamp())
 	assert.Zero(t, h)
 	assert.Nil(t, b)
 
-	h, b = tStore.RecentBlockByStamp(hash1.Stamp())
+	h, b = td.store.RecentBlockByStamp(hash1.Stamp())
 	assert.Equal(t, h, uint32(1))
 	assert.Equal(t, b.Hash(), hash1)
 
 	// Saving more blocks, blocks 11 to 22
-	SaveTestBlocks(t, 12)
-	hash2 := tStore.BlockHash(2)
-	hash14 := tStore.BlockHash(14)
-	hash22 := tStore.BlockHash(22)
+	td.saveTestBlocks(t, 12)
+	hash2 := td.store.BlockHash(2)
+	hash14 := td.store.BlockHash(14)
+	hash22 := td.store.BlockHash(22)
 
 	// First block should remove from the list
-	h, b = tStore.RecentBlockByStamp(hash1.Stamp())
+	h, b = td.store.RecentBlockByStamp(hash1.Stamp())
 	assert.Zero(t, h)
 	assert.Nil(t, b)
 
-	h, b = tStore.RecentBlockByStamp(hash2.Stamp())
+	h, b = td.store.RecentBlockByStamp(hash2.Stamp())
 	assert.Equal(t, h, uint32(2))
 	assert.Equal(t, b.Hash(), hash2)
 
-	h, b = tStore.RecentBlockByStamp(hash14.Stamp())
+	h, b = td.store.RecentBlockByStamp(hash14.Stamp())
 	assert.Equal(t, h, uint32(14))
 	assert.Equal(t, b.Hash(), hash14)
 
-	h, b = tStore.RecentBlockByStamp(hash22.Stamp())
+	h, b = td.store.RecentBlockByStamp(hash22.Stamp())
 	assert.Equal(t, h, uint32(22))
 	assert.Equal(t, b.Hash(), hash22)
 
 	// Reopen the store
-	tStore.Close()
-	s, _ := NewStore(tStore.config, 21)
-	tStore = s.(*store)
+	td.store.Close()
+	s, _ := NewStore(td.store.config, 21)
+	td.store = s.(*store)
 
-	h, b = tStore.RecentBlockByStamp(hash2.Stamp())
+	h, b = td.store.RecentBlockByStamp(hash2.Stamp())
 	assert.Equal(t, h, uint32(2))
 	assert.Equal(t, b.Hash(), hash2)
 
 	// Saving one more blocks, block 23
-	SaveTestBlocks(t, 1)
+	td.saveTestBlocks(t, 1)
 
 	// Second block should remove from the list
-	h, b = tStore.RecentBlockByStamp(hash2.Stamp())
+	h, b = td.store.RecentBlockByStamp(hash2.Stamp())
 	assert.Zero(t, h)
 	assert.Nil(t, b)
 
 	// Genesis block
-	h, b = tStore.RecentBlockByStamp(hash.UndefHash.Stamp())
+	h, b = td.store.RecentBlockByStamp(hash.UndefHash.Stamp())
 	assert.Zero(t, h)
 	assert.Nil(t, b)
 }

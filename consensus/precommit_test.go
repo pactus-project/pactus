@@ -10,45 +10,45 @@ import (
 )
 
 func TestPrecommitQueryProposal(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
 
-	testEnterNewHeight(tConsP)
+	td.enterNewHeight(td.consP)
 
-	p := makeProposal(t, 2, 0)
+	p := td.makeProposal(t, 2, 0)
 
-	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexX)
-	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
-	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
+	td.addVote(td.consP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexX)
+	td.addVote(td.consP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
+	td.addVote(td.consP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
 
-	shouldPublishQueryProposal(t, tConsP, 2, 0)
+	td.shouldPublishQueryProposal(t, td.consP, 2, 0)
 }
 
 func TestPrecommitInvalidProposal(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
 
-	p1 := makeProposal(t, 2, 0)
-	trx := tx.NewTransferTx(hash.UndefHash.Stamp(), 1, tSigners[0].Address(),
-		tSigners[1].Address(), 1000, 1000, "invalid proposal")
-	tSigners[0].SignMsg(trx)
-	assert.NoError(t, tTxPool.AppendTx(trx))
-	p2 := makeProposal(t, 2, 0)
+	p1 := td.makeProposal(t, 2, 0)
+	trx := tx.NewTransferTx(hash.UndefHash.Stamp(), 1, td.signers[0].Address(),
+		td.signers[1].Address(), 1000, 1000, "invalid proposal")
+	td.signers[0].SignMsg(trx)
+	assert.NoError(t, td.txPool.AppendTx(trx))
+	p2 := td.makeProposal(t, 2, 0)
 	assert.NotEqual(t, p1.Hash(), p2.Hash())
 
-	testEnterNewHeight(tConsP)
+	td.enterNewHeight(td.consP)
 
-	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexX)
-	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexY)
-	testAddVote(tConsP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexB)
+	td.addVote(td.consP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexX)
+	td.addVote(td.consP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexY)
+	td.addVote(td.consP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexB)
 
-	tConsP.SetProposal(p2)
-	assert.Nil(t, tConsP.RoundProposal(0))
+	td.consP.SetProposal(p2)
+	assert.Nil(t, td.consP.RoundProposal(0))
 
-	tConsP.SetProposal(p1)
-	assert.NotNil(t, tConsP.RoundProposal(0))
+	td.consP.SetProposal(p1)
+	assert.NotNil(t, td.consP.RoundProposal(0))
 }
 
 // Np is partitioned by Nb and goes into the change-proposer state.
@@ -56,27 +56,27 @@ func TestPrecommitInvalidProposal(t *testing.T) {
 // However, Nb doesn't broadcast its precommit vote.
 // Once the partition heals, Nx should move to the next round.
 func TestPrecommitTimeout(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
 
-	testEnterNewHeight(tConsX)
+	td.enterNewHeight(td.consX)
 
-	p := makeProposal(t, 2, 0)
-	tConsX.SetProposal(p)
+	p := td.makeProposal(t, 2, 0)
+	td.consX.SetProposal(p)
 
-	testAddVote(tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
-	testAddVote(tConsX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
-	shouldPublishVote(t, tConsX, vote.VoteTypePrepare, p.Block().Hash())
-	shouldPublishVote(t, tConsX, vote.VoteTypePrecommit, p.Block().Hash())
+	td.addVote(td.consX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
+	td.addVote(td.consX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
+	td.shouldPublishVote(t, td.consX, vote.VoteTypePrepare, p.Block().Hash())
+	td.shouldPublishVote(t, td.consX, vote.VoteTypePrecommit, p.Block().Hash())
 
 	// Nx and Ny timeout and broadcast change-proposer.
-	testAddVote(tConsX, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
-	shouldPublishVote(t, tConsX, vote.VoteTypeChangeProposer, hash.UndefHash)
+	td.addVote(td.consX, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
+	td.shouldPublishVote(t, td.consX, vote.VoteTypeChangeProposer, hash.UndefHash)
 
 	// partition heals.
-	testAddVote(tConsX, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexP)
+	td.addVote(td.consX, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexP)
 
 	// Nx moves to the next round.
-	checkHeightRoundWait(t, tConsX, 2, 1)
+	td.checkHeightRoundWait(t, td.consX, 2, 1)
 }

@@ -10,60 +10,60 @@ import (
 )
 
 func TestChangeProposer(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	tConsP.config.ChangeProposerTimeout = 100 * time.Millisecond
-	testEnterNewHeight(tConsP)
+	td.consP.config.ChangeProposerTimeout = 100 * time.Millisecond
+	td.enterNewHeight(td.consP)
 
-	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
+	td.shouldPublishVote(t, td.consP, vote.VoteTypeChangeProposer, hash.UndefHash)
 }
 
 func TestGotoNewRound(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
 
-	tConsP.config.ChangeProposerTimeout = 100 * time.Millisecond
-	testEnterNewHeight(tConsP)
+	td.consP.config.ChangeProposerTimeout = 100 * time.Millisecond
+	td.enterNewHeight(td.consP)
 
-	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexX)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
+	td.shouldPublishVote(t, td.consP, vote.VoteTypeChangeProposer, hash.UndefHash)
+	td.addVote(td.consP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexX)
+	td.addVote(td.consP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
 
-	checkHeightRound(t, tConsP, 2, 1)
+	td.checkHeightRound(t, td.consP, 2, 1)
 }
 
 func TestSetProposalAfterChangeProposer(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
 
-	testEnterNewHeight(tConsP)
+	td.enterNewHeight(td.consP)
 
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexX)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
+	td.addVote(td.consP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexX)
+	td.addVote(td.consP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
 
-	p := makeProposal(t, 2, 0)
-	tConsP.SetProposal(p)
-	assert.Nil(t, tConsP.RoundProposal(0))
+	p := td.makeProposal(t, 2, 0)
+	td.consP.SetProposal(p)
+	assert.Nil(t, td.consP.RoundProposal(0))
 
-	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
+	td.shouldPublishVote(t, td.consP, vote.VoteTypeChangeProposer, hash.UndefHash)
 }
 
 func TestRemoveProposalAfterChangeProposer(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
 
-	testEnterNewHeight(tConsP)
-	p := makeProposal(t, 2, 0)
-	tConsP.SetProposal(p)
-	assert.NotNil(t, tConsP.RoundProposal(0))
+	td.enterNewHeight(td.consP)
+	p := td.makeProposal(t, 2, 0)
+	td.consP.SetProposal(p)
+	assert.NotNil(t, td.consP.RoundProposal(0))
 
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexX)
-	testAddVote(tConsP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
+	td.addVote(td.consP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexX)
+	td.addVote(td.consP, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
 
-	shouldPublishVote(t, tConsP, vote.VoteTypeChangeProposer, hash.UndefHash)
-	checkHeightRound(t, tConsP, 2, 1)
-	assert.Nil(t, tConsP.RoundProposal(0))
+	td.shouldPublishVote(t, td.consP, vote.VoteTypeChangeProposer, hash.UndefHash)
+	td.checkHeightRound(t, td.consP, 2, 1)
+	assert.Nil(t, td.consP.RoundProposal(0))
 }

@@ -8,21 +8,20 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAccount(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	acc, signer := tMockState.TestStore.AddTestAccount()
+	acc, signer := td.mockState.TestStore.AddTestAccount()
 
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"address": signer.Address().String()})
-		tHTTPServer.GetAccountHandler(w, r)
+		td.httpServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
 		assert.Contains(t, w.Body.String(), util.ChangeToString(acc.Balance()))
@@ -32,8 +31,8 @@ func TestAccount(t *testing.T) {
 	t.Run("Shall return nil, non exist", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"address": crypto.GenerateTestAddress().String()})
-		tHTTPServer.GetAccountHandler(w, r)
+		r = mux.SetURLVars(r, map[string]string{"address": td.RandomAddress().String()})
+		td.httpServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 	})
@@ -42,7 +41,7 @@ func TestAccount(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"address": "invalid-address"})
-		tHTTPServer.GetAccountHandler(w, r)
+		td.httpServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
@@ -52,7 +51,7 @@ func TestAccount(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"address": ""})
-		tHTTPServer.GetAccountHandler(w, r)
+		td.httpServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
@@ -61,7 +60,7 @@ func TestAccount(t *testing.T) {
 	t.Run("Shall return an error, no address", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		tHTTPServer.GetAccountHandler(w, r)
+		td.httpServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
@@ -69,15 +68,15 @@ func TestAccount(t *testing.T) {
 }
 
 func TestAccountByNumber(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	acc, _ := tMockState.TestStore.AddTestAccount()
+	acc, _ := td.mockState.TestStore.AddTestAccount()
 
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"number": strconv.Itoa(int(acc.Number()))})
-		tHTTPServer.GetAccountByNumberHandler(w, r)
+		td.httpServer.GetAccountByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
 		fmt.Println(w.Body)
@@ -87,7 +86,7 @@ func TestAccountByNumber(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"number": strconv.Itoa(int(acc.Number() + 1))})
-		tHTTPServer.GetAccountByNumberHandler(w, r)
+		td.httpServer.GetAccountByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
@@ -97,7 +96,7 @@ func TestAccountByNumber(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"number": "not-a-number"})
-		tHTTPServer.GetAccountByNumberHandler(w, r)
+		td.httpServer.GetAccountByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
@@ -107,7 +106,7 @@ func TestAccountByNumber(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"number": ""})
-		tHTTPServer.GetAccountByNumberHandler(w, r)
+		td.httpServer.GetAccountByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
@@ -116,7 +115,7 @@ func TestAccountByNumber(t *testing.T) {
 	t.Run("Shall return error, no number", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		tHTTPServer.GetAccountByNumberHandler(w, r)
+		td.httpServer.GetAccountByNumberHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)

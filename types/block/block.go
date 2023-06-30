@@ -23,12 +23,12 @@ type Block struct {
 }
 
 type blockData struct {
-	Header   Header
+	Header   *Header
 	PrevCert *Certificate
 	Txs      Txs
 }
 
-func NewBlock(header Header, prevCert *Certificate, txs Txs) *Block {
+func NewBlock(header *Header, prevCert *Certificate, txs Txs) *Block {
 	return &Block{
 		data: blockData{
 			Header:   header,
@@ -55,14 +55,10 @@ func MakeBlock(version uint8, timestamp time.Time, txs Txs,
 	header := NewHeader(version, timestamp,
 		stateRoot, prevBlockHash, sortitionSeed, proposer)
 
-	b := NewBlock(header, prevCert, txs)
-	if err := b.SanityCheck(); err != nil {
-		panic(err)
-	}
-	return b
+	return NewBlock(header, prevCert, txs)
 }
 
-func (b *Block) Header() *Header               { return &b.data.Header }
+func (b *Block) Header() *Header               { return b.data.Header }
 func (b *Block) PrevCertificate() *Certificate { return b.data.PrevCert }
 func (b *Block) Transactions() Txs             { return b.data.Txs }
 
@@ -78,9 +74,6 @@ func (b *Block) SanityCheck() error {
 	}
 	if b.PrevCertificate() != nil {
 		if err := b.PrevCertificate().SanityCheck(); err != nil {
-			return err
-		}
-		if err := b.Header().PrevBlockHash().SanityCheck(); err != nil {
 			return err
 		}
 	} else {
@@ -173,6 +166,7 @@ func (b *Block) Encode(w io.Writer) error {
 }
 
 func (b *Block) Decode(r io.Reader) error {
+	b.data.Header = new(Header)
 	if err := b.data.Header.Decode(r); err != nil {
 		return err
 	}
@@ -229,41 +223,4 @@ func (b *Block) Bytes() ([]byte, error) {
 	// Cache the serialized bytes and return them.
 	b.memorizedData = w.Bytes()
 	return b.memorizedData, nil
-}
-
-// GenerateTestBlock generates a block vote for testing.
-func GenerateTestBlock(proposer *crypto.Address, prevBlockHash *hash.Hash) *Block {
-	if proposer == nil {
-		addr := crypto.GenerateTestAddress()
-		proposer = &addr
-	}
-	txs := NewTxs()
-	tx1, _ := tx.GenerateTestSendTx()
-	tx2, _ := tx.GenerateTestSortitionTx()
-	tx3, _ := tx.GenerateTestBondTx()
-	tx4, _ := tx.GenerateTestUnbondTx()
-	tx5, _ := tx.GenerateTestWithdrawTx()
-
-	txs.Append(tx1)
-	txs.Append(tx2)
-	txs.Append(tx3)
-	txs.Append(tx4)
-	txs.Append(tx5)
-
-	if prevBlockHash == nil {
-		h := hash.GenerateTestHash()
-		prevBlockHash = &h
-	}
-	cert := GenerateTestCertificate(*prevBlockHash)
-	if prevBlockHash.IsUndef() {
-		cert = nil
-	}
-	sortitionSeed := sortition.GenerateRandomSeed()
-	header := NewHeader(1, util.Now(),
-		hash.GenerateTestHash(),
-		*prevBlockHash,
-		sortitionSeed,
-		*proposer)
-
-	return NewBlock(header, cert, txs)
 }

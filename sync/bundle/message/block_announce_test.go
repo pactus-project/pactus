@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,8 +15,10 @@ func TestBlockAnnounceType(t *testing.T) {
 }
 
 func TestBlockAnnounceMessage(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	t.Run("Invalid certificate", func(t *testing.T) {
-		b := block.GenerateTestBlock(nil, nil)
+		b := ts.GenerateTestBlock(nil, nil)
 		c := block.NewCertificate(-1, nil, nil, nil)
 		m := NewBlockAnnounceMessage(100, b, c)
 
@@ -23,8 +26,8 @@ func TestBlockAnnounceMessage(t *testing.T) {
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		b := block.GenerateTestBlock(nil, nil)
-		c := block.GenerateTestCertificate(b.Hash())
+		b := ts.GenerateTestBlock(nil, nil)
+		c := ts.GenerateTestCertificate(b.Hash())
 		m := NewBlockAnnounceMessage(100, b, c)
 
 		assert.NoError(t, m.SanityCheck())

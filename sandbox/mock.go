@@ -11,12 +11,15 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/util/testsuite"
 )
 
 var _ Sandbox = &MockSandbox{}
 
 // MockSandbox is a testing mock for sandbox.
 type MockSandbox struct {
+	ts *testsuite.TestSuite
+
 	TestParams           param.Params
 	TestStore            *store.MockStore
 	TestCommittee        committee.Committee
@@ -25,12 +28,13 @@ type MockSandbox struct {
 	TestPowerDelta       int64
 }
 
-func MockingSandbox() *MockSandbox {
-	committee, signers := committee.GenerateTestCommittee(7)
+func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
+	committee, signers := ts.GenerateTestCommittee(7)
 
 	sb := &MockSandbox{
+		ts:                   ts,
 		TestParams:           param.DefaultParams(),
-		TestStore:            store.MockingStore(),
+		TestStore:            store.MockingStore(ts),
 		TestCommittee:        committee,
 		TestCommitteeSigners: signers,
 	}

@@ -64,7 +64,6 @@ fmt:
 check:
 	golangci-lint run \
 		--build-tags "${BUILD_TAG}" \
-		-e "SA1019" \
 		--timeout=20m0s \
 		--enable=gofmt \
 		--enable=unconvert \

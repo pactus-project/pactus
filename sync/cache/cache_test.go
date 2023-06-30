@@ -3,18 +3,9 @@ package cache
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/types/block"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
-
-var tCache *Cache
-
-func setup(t *testing.T) {
-	var err error
-	tCache, err = NewCache(10)
-	assert.NoError(t, err)
-}
 
 func TestKeys(t *testing.T) {
 	assert.Equal(t, blockKey(1234),
@@ -24,56 +15,62 @@ func TestKeys(t *testing.T) {
 }
 
 func TestCacheBlocks(t *testing.T) {
-	setup(t)
+	ts := testsuite.NewTestSuite(t)
 
-	b1 := block.GenerateTestBlock(nil, nil)
+	cache, _ := NewCache(10)
+
+	b1 := ts.GenerateTestBlock(nil, nil)
 	h1 := b1.Hash()
-	b2 := block.GenerateTestBlock(nil, &h1)
-	testHeight := util.RandUint32(0)
+	b2 := ts.GenerateTestBlock(nil, &h1)
+	testHeight := ts.RandUint32(10000)
 
-	tCache.AddBlock(testHeight, b1)
-	tCache.AddBlock(testHeight+1, b2)
+	cache.AddBlock(testHeight, b1)
+	cache.AddBlock(testHeight+1, b2)
 
-	assert.True(t, tCache.HasBlockInCache(testHeight))
-	assert.True(t, tCache.HasBlockInCache(testHeight+1))
-	assert.False(t, tCache.HasBlockInCache(testHeight+3))
+	assert.True(t, cache.HasBlockInCache(testHeight))
+	assert.True(t, cache.HasBlockInCache(testHeight+1))
+	assert.False(t, cache.HasBlockInCache(testHeight+3))
 
-	assert.NotNil(t, tCache.GetBlock(testHeight))
-	assert.NotNil(t, tCache.GetBlock(testHeight+1))
-	assert.Nil(t, tCache.GetBlock(testHeight+2))
+	assert.NotNil(t, cache.GetBlock(testHeight))
+	assert.NotNil(t, cache.GetBlock(testHeight+1))
+	assert.Nil(t, cache.GetBlock(testHeight+2))
 
-	assert.Equal(t, tCache.GetBlock(testHeight).Hash(), b1.Hash())
-	assert.Equal(t, tCache.GetBlock(testHeight+1).Hash(), b2.Hash())
-	assert.Nil(t, tCache.GetCertificate(0))
-	assert.Equal(t, tCache.GetCertificate(testHeight).Hash(), b2.PrevCertificate().Hash())
-	assert.Nil(t, tCache.GetCertificate(4))
+	assert.Equal(t, cache.GetBlock(testHeight).Hash(), b1.Hash())
+	assert.Equal(t, cache.GetBlock(testHeight+1).Hash(), b2.Hash())
+	assert.Nil(t, cache.GetCertificate(0))
+	assert.Equal(t, cache.GetCertificate(testHeight).Hash(), b2.PrevCertificate().Hash())
+	assert.Nil(t, cache.GetCertificate(4))
 }
 
 func TestClearCache(t *testing.T) {
-	setup(t)
+	ts := testsuite.NewTestSuite(t)
 
-	b := block.GenerateTestBlock(nil, nil)
+	cache, _ := NewCache(10)
 
-	tCache.AddBlock(2, b)
+	b := ts.GenerateTestBlock(nil, nil)
 
-	assert.Equal(t, tCache.Len(), 2) // block + certificate
-	tCache.Clear()
-	assert.Equal(t, tCache.Len(), 0)
-	assert.Nil(t, tCache.GetBlock(2))
+	cache.AddBlock(2, b)
+
+	assert.Equal(t, cache.Len(), 2) // block + certificate
+	cache.Clear()
+	assert.Equal(t, cache.Len(), 0)
+	assert.Nil(t, cache.GetBlock(2))
 }
 
 func TestCacheIsFull(t *testing.T) {
-	setup(t)
+	ts := testsuite.NewTestSuite(t)
+
+	cache, _ := NewCache(10)
 
 	i := int32(0)
 	for ; i < 10; i++ {
-		b := block.GenerateTestBlock(nil, nil)
-		tCache.AddBlock(uint32(i+1), b)
+		b := ts.GenerateTestBlock(nil, nil)
+		cache.AddBlock(uint32(i+1), b)
 	}
 
-	newBlock := block.GenerateTestBlock(nil, nil)
-	tCache.AddBlock(uint32(i+1), newBlock)
+	newBlock := ts.GenerateTestBlock(nil, nil)
+	cache.AddBlock(uint32(i+1), newBlock)
 
-	assert.NotNil(t, tCache.GetBlock(uint32(i+1)))
-	assert.Nil(t, tCache.GetBlock(1))
+	assert.NotNil(t, cache.GetBlock(uint32(i+1)))
+	assert.Nil(t, cache.GetBlock(1))
 }

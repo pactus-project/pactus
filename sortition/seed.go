@@ -48,11 +48,3 @@ func (s *VerifiableSeed) Verify(public crypto.PublicKey, prevSeed VerifiableSeed
 	hash := hash.CalcHash(prevSeed[:])
 	return public.Verify(hash.Bytes(), sig) == nil
 }
-
-func GenerateRandomSeed() VerifiableSeed {
-	h := hash.GenerateTestHash()
-	signer := bls.GenerateTestSigner()
-	sig := signer.SignData(h.Bytes())
-	seed, _ := VerifiableSeedFromBytes(sig.Bytes())
-	return seed
-}

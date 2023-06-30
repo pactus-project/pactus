@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -14,11 +14,20 @@ import (
 
 const tPassword = "super_secret_password"
 
-var mnemonic = GenerateMnemonic(128)
-var _, importedPrv = bls.GenerateTestKeyPair()
+type testData struct {
+	*testsuite.TestSuite
 
-// testVault return an instances of vault fo testing
-func testVault(t *testing.T) *Vault {
+	vault       *Vault
+	mnemonic    string
+	importedPrv crypto.PrivateKey
+}
+
+// setup return an instances of vault fo testing
+func setup(t *testing.T) *testData {
+	ts := testsuite.NewTestSuite(t)
+
+	mnemonic := GenerateMnemonic(128)
+	_, importedPrv := ts.RandomBLSKeyPair()
 	vault, err := CreateVaultFromMnemonic(mnemonic, 21888)
 	assert.NoError(t, err)
 
@@ -47,18 +56,23 @@ func testVault(t *testing.T) *Vault {
 	err = vault.UpdatePassword("", tPassword, opts...)
 	assert.NoError(t, err)
 	assert.True(t, vault.IsEncrypted())
-	return vault
+	return &testData{
+		TestSuite:   ts,
+		vault:       vault,
+		mnemonic:    mnemonic,
+		importedPrv: importedPrv,
+	}
 }
 
 func TestAddressInfo(t *testing.T) {
-	vault := testVault(t)
+	td := setup(t)
 
-	assert.Equal(t, vault.AddressCount(), 4)
-	infos := vault.AddressLabels()
+	assert.Equal(t, td.vault.AddressCount(), 4)
+	infos := td.vault.AddressLabels()
 	blsIndex := 0
 	importedIndex := 0
 	for _, i := range infos {
-		info := vault.AddressInfo(i.Address)
+		info := td.vault.AddressInfo(i.Address)
 		assert.Equal(t, info.Address, info.Address)
 		if !info.Imported {
 			assert.Equal(t, info.Path.String(), fmt.Sprintf("m/12381'/21888'/%d/0", blsIndex))
@@ -73,12 +87,12 @@ func TestAddressInfo(t *testing.T) {
 	}
 
 	// Neutered
-	neutered := vault.Neuter()
+	neutered := td.vault.Neuter()
 	assert.Equal(t, neutered.AddressCount(), 3)
 	infos = neutered.AddressLabels()
 	blsIndex = 0
 	for _, i := range infos {
-		info := vault.AddressInfo(i.Address)
+		info := td.vault.AddressInfo(i.Address)
 		assert.Equal(t, info.Address, info.Address)
 		if !info.Imported {
 			assert.Equal(t, info.Path.String(), fmt.Sprintf("m/12381'/21888'/%d/0", blsIndex))
@@ -90,23 +104,23 @@ func TestAddressInfo(t *testing.T) {
 }
 
 func TestDeriveNewAddress(t *testing.T) {
-	vault := testVault(t)
+	td := setup(t)
 
 	t.Run("Invalid purpose", func(t *testing.T) {
-		_, err := vault.DeriveNewAddress("", 0)
+		_, err := td.vault.DeriveNewAddress("", 0)
 		assert.ErrorIs(t, err, ErrInvalidPath)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		addr, err := vault.DeriveNewAddress("new-addr", PurposeBLS12381)
+		addr, err := td.vault.DeriveNewAddress("new-addr", PurposeBLS12381)
 		assert.NoError(t, err)
-		assert.True(t, vault.Contains(addr))
-		assert.Equal(t, vault.Label(addr), "new-addr")
+		assert.True(t, td.vault.Contains(addr))
+		assert.Equal(t, td.vault.Label(addr), "new-addr")
 	})
 }
 
 func TestRecover(t *testing.T) {
-	vault := testVault(t)
+	td := setup(t)
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
 		_, err := CreateVaultFromMnemonic("invalid mnemonic phrase seed", 21888)
@@ -114,7 +128,7 @@ func TestRecover(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		recovered, err := CreateVaultFromMnemonic(mnemonic, 21888)
+		recovered, err := CreateVaultFromMnemonic(td.mnemonic, 21888)
 		assert.NoError(t, err)
 
 		// Recover addresses
@@ -125,36 +139,36 @@ func TestRecover(t *testing.T) {
 		_, err = recovered.DeriveNewAddress("addr-3", PurposeBLS12381)
 		assert.NoError(t, err)
 
-		assert.Equal(t, recovered.Keystore.Purposes, vault.Keystore.Purposes)
+		assert.Equal(t, recovered.Keystore.Purposes, td.vault.Keystore.Purposes)
 	})
 }
 
 func TestGetPrivateKeys(t *testing.T) {
-	vault := testVault(t)
+	td := setup(t)
 
 	t.Run("Unknown address", func(t *testing.T) {
-		addr := crypto.GenerateTestAddress()
-		_, err := vault.PrivateKeys(tPassword, []string{addr.String()})
+		addr := td.RandomAddress()
+		_, err := td.vault.PrivateKeys(tPassword, []string{addr.String()})
 		assert.ErrorIs(t, err, NewErrAddressNotFound(addr.String()))
 	})
 
 	t.Run("No password", func(t *testing.T) {
-		addr := vault.AddressLabels()[0].Address
-		_, err := vault.PrivateKeys("", []string{addr})
+		addr := td.vault.AddressLabels()[0].Address
+		_, err := td.vault.PrivateKeys("", []string{addr})
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Invalid password", func(t *testing.T) {
-		addr := vault.AddressLabels()[0].Address
-		_, err := vault.PrivateKeys("wrong_password", []string{addr})
+		addr := td.vault.AddressLabels()[0].Address
+		_, err := td.vault.PrivateKeys("wrong_password", []string{addr})
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Check all the private keys", func(t *testing.T) {
-		for _, info := range vault.AddressLabels() {
-			prv, err := vault.PrivateKeys(tPassword, []string{info.Address})
+		for _, info := range td.vault.AddressLabels() {
+			prv, err := td.vault.PrivateKeys(tPassword, []string{info.Address})
 			assert.NoError(t, err)
-			i := vault.AddressInfo(info.Address)
+			i := td.vault.AddressInfo(info.Address)
 			require.True(t, prv[0].PublicKey().EqualsTo(i.Pub))
 			require.Equal(t, prv[0].PublicKey().Address().String(), info.Address)
 		}
@@ -162,57 +176,57 @@ func TestGetPrivateKeys(t *testing.T) {
 }
 
 func TestImportPrivateKey(t *testing.T) {
-	vault := testVault(t)
+	td := setup(t)
 
 	t.Run("Reimporting private key", func(t *testing.T) {
-		err := vault.ImportPrivateKey(tPassword, importedPrv)
+		err := td.vault.ImportPrivateKey(tPassword, td.importedPrv)
 		assert.ErrorIs(t, err, ErrAddressExists)
 	})
 
 	t.Run("Invalid password", func(t *testing.T) {
-		_, prv := bls.GenerateTestKeyPair()
-		err := vault.ImportPrivateKey("invalid-password", prv)
+		_, prv := td.RandomBLSKeyPair()
+		err := td.vault.ImportPrivateKey("invalid-password", prv)
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		_, prv := bls.GenerateTestKeyPair()
-		assert.NoError(t, vault.ImportPrivateKey(tPassword, prv))
-		assert.True(t, vault.Contains(prv.PublicKey().Address().String()))
+		_, prv := td.RandomBLSKeyPair()
+		assert.NoError(t, td.vault.ImportPrivateKey(tPassword, prv))
+		assert.True(t, td.vault.Contains(prv.PublicKey().Address().String()))
 	})
 }
 
 func TestGetMnemonic(t *testing.T) {
-	vault := testVault(t)
+	td := setup(t)
 
 	t.Run("Invalid password", func(t *testing.T) {
-		_, err := vault.Mnemonic("invalid-password")
+		_, err := td.vault.Mnemonic("invalid-password")
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("No password", func(t *testing.T) {
-		_, err := vault.Mnemonic("")
+		_, err := td.vault.Mnemonic("")
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		m, err := vault.Mnemonic(tPassword)
+		m, err := td.vault.Mnemonic(tPassword)
 		assert.NoError(t, err)
-		assert.Equal(t, m, mnemonic)
+		assert.Equal(t, m, td.mnemonic)
 	})
 
 	t.Run("Neutered wallet", func(t *testing.T) {
-		_, err := vault.Neuter().Mnemonic("")
+		_, err := td.vault.Neuter().Mnemonic("")
 		assert.ErrorIs(t, err, ErrNeutered)
 	})
 }
 
 func TestUpdatePassword(t *testing.T) {
-	vault := testVault(t)
+	td := setup(t)
 
-	infos := make([]*AddressInfo, 0, vault.AddressCount())
-	for _, info := range vault.AddressLabels() {
-		info := vault.AddressInfo(info.Address)
+	infos := make([]*AddressInfo, 0, td.vault.AddressCount())
+	for _, info := range td.vault.AddressLabels() {
+		info := td.vault.AddressInfo(info.Address)
 		infos = append(infos, info)
 	}
 
@@ -224,70 +238,70 @@ func TestUpdatePassword(t *testing.T) {
 			encrypter.OptionParallelism(1),
 		}
 
-		err := vault.UpdatePassword("", newPassword)
+		err := td.vault.UpdatePassword("", newPassword)
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
-		err = vault.UpdatePassword("invalid-password", newPassword)
+		err = td.vault.UpdatePassword("invalid-password", newPassword)
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
-		assert.NoError(t, vault.UpdatePassword(tPassword, newPassword, opts...))
-		assert.True(t, vault.IsEncrypted())
+		assert.NoError(t, td.vault.UpdatePassword(tPassword, newPassword, opts...))
+		assert.True(t, td.vault.IsEncrypted())
 		for _, info := range infos {
-			assert.Equal(t, info, vault.AddressInfo(info.Address))
+			assert.Equal(t, info, td.vault.AddressInfo(info.Address))
 		}
 	})
 
 	t.Run("Set empty password for the vault", func(t *testing.T) {
-		err := vault.UpdatePassword("invalid-password", newPassword)
+		err := td.vault.UpdatePassword("invalid-password", newPassword)
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
-		assert.NoError(t, vault.UpdatePassword(newPassword, ""))
-		assert.False(t, vault.IsEncrypted())
+		assert.NoError(t, td.vault.UpdatePassword(newPassword, ""))
+		assert.False(t, td.vault.IsEncrypted())
 		for _, info := range infos {
-			assert.Equal(t, info, vault.AddressInfo(info.Address))
+			assert.Equal(t, info, td.vault.AddressInfo(info.Address))
 		}
 	})
 }
 
 func TestSetLabel(t *testing.T) {
-	vault := testVault(t)
+	td := setup(t)
 
 	t.Run("Set label for unknown address", func(t *testing.T) {
-		invAddr := crypto.GenerateTestAddress().String()
-		err := vault.SetLabel(invAddr, "i have label")
+		invAddr := td.RandomAddress().String()
+		err := td.vault.SetLabel(invAddr, "i have label")
 		assert.ErrorIs(t, err, NewErrAddressNotFound(invAddr))
-		assert.Equal(t, vault.Label(invAddr), "")
+		assert.Equal(t, td.vault.Label(invAddr), "")
 	})
 
 	t.Run("Update label", func(t *testing.T) {
-		testAddr := vault.AddressLabels()[0].Address
-		err := vault.SetLabel(testAddr, "i have label")
+		testAddr := td.vault.AddressLabels()[0].Address
+		err := td.vault.SetLabel(testAddr, "i have label")
 		assert.NoError(t, err)
-		assert.Equal(t, vault.Label(testAddr), "i have label")
+		assert.Equal(t, td.vault.Label(testAddr), "i have label")
 	})
 
 	t.Run("Remove label", func(t *testing.T) {
-		testAddr := vault.AddressLabels()[0].Address
-		err := vault.SetLabel(testAddr, "")
+		testAddr := td.vault.AddressLabels()[0].Address
+		err := td.vault.SetLabel(testAddr, "")
 		assert.NoError(t, err)
-		assert.Empty(t, vault.Label(testAddr))
-		_, ok := vault.Labels[testAddr]
+		assert.Empty(t, td.vault.Label(testAddr))
+		_, ok := td.vault.Labels[testAddr]
 		assert.False(t, ok)
 	})
 }
 
 func TestNeuter(t *testing.T) {
-	vault := testVault(t)
+	td := setup(t)
 
-	neutered := vault.Neuter()
+	neutered := td.vault.Neuter()
 	_, err := neutered.Mnemonic(tPassword)
 	assert.ErrorIs(t, err, ErrNeutered)
 
 	_, err = neutered.PrivateKeys(tPassword, []string{
-		crypto.GenerateTestAddress().String()})
+		td.RandomAddress().String()})
 	assert.ErrorIs(t, err, ErrNeutered)
 
-	err = neutered.ImportPrivateKey("any", importedPrv)
+	err = neutered.ImportPrivateKey("any", td.importedPrv)
 	assert.ErrorIs(t, err, ErrNeutered)
 
-	err = vault.Neuter().UpdatePassword("any", "any")
+	err = td.vault.Neuter().UpdatePassword("any", "any")
 	assert.ErrorIs(t, err, ErrNeutered)
 }
 

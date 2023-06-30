@@ -25,6 +25,7 @@ func (p *UnbondPayload) Value() int64 {
 	return 0
 }
 
+// TODO: write test for me
 func (p *UnbondPayload) SanityCheck() error {
 	if err := p.Validator.SanityCheck(); err != nil {
 		return errors.Error(errors.ErrInvalidAddress)

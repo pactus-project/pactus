@@ -63,7 +63,7 @@ func (cert *Certificate) SanityCheck() error {
 
 // Remove this function later
 // read below comment
-func (cert *Certificate) hashBytes() []byte {
+func (cert *Certificate) HashBytes() []byte {
 	w := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
 	if err := encoding.WriteVarInt(w, uint64(cert.Round())); err != nil {
 		return nil
@@ -89,7 +89,7 @@ func (cert *Certificate) Hash() hash.Hash {
 	// As a possible enhancement in the future, we can remove the committers from the certificate.
 	// In this case, increasing the committee size won't increase the size of the certificate.
 
-	return hash.CalcHash(cert.hashBytes())
+	return hash.CalcHash(cert.HashBytes())
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the block.
@@ -205,27 +205,4 @@ func CertificateSignBytes(blockHash hash.Hash, round int16) []byte {
 	sb = append(sb, util.Int16ToSlice(round)...)
 
 	return sb
-}
-
-func GenerateTestCertificate(blockHash hash.Hash) *Certificate {
-	_, priv2 := bls.GenerateTestKeyPair()
-	_, priv3 := bls.GenerateTestKeyPair()
-	_, priv4 := bls.GenerateTestKeyPair()
-
-	sigs := []*bls.Signature{
-		priv2.Sign(blockHash.Bytes()).(*bls.Signature),
-		priv3.Sign(blockHash.Bytes()).(*bls.Signature),
-		priv4.Sign(blockHash.Bytes()).(*bls.Signature),
-	}
-	sig := bls.Aggregate(sigs)
-
-	c1 := util.RandInt32(10)
-	c2 := util.RandInt32(10) + 10
-	c3 := util.RandInt32(10) + 20
-	c4 := util.RandInt32(10) + 30
-	return NewCertificate(
-		util.RandInt16(10),
-		[]int32{c1, c2, c3, c4},
-		[]int32{c2},
-		sig)
 }

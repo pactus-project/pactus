@@ -5,19 +5,21 @@ import (
 
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestRunningNode(t *testing.T) {
-	pub, _ := bls.GenerateTestKeyPair()
+	ts := testsuite.NewTestSuite(t)
+
+	pub, _ := ts.RandomBLSKeyPair()
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
 	val := validator.NewValidator(pub, 0)
@@ -32,8 +34,8 @@ func TestRunningNode(t *testing.T) {
 	conf.Network.EnableRelay = false
 	conf.Network.NetworkKey = util.TempFilePath()
 
-	signers := []crypto.Signer{bls.GenerateTestSigner(), bls.GenerateTestSigner()}
-	rewardAddrs := []crypto.Address{crypto.GenerateTestAddress(), crypto.GenerateTestAddress()}
+	signers := []crypto.Signer{ts.RandomSigner(), ts.RandomSigner()}
+	rewardAddrs := []crypto.Address{ts.RandomAddress(), ts.RandomAddress()}
 	n, err := NewNode(gen, conf, signers, rewardAddrs)
 
 	require.NoError(t, err)

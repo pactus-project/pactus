@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -19,12 +18,15 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestManager(t *testing.T) {
-	_, committeeSigners := committee.GenerateTestCommittee(5)
+	ts := testsuite.NewTestSuite(t)
+
+	_, committeeSigners := ts.GenerateTestCommittee(5)
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
 	params := param.DefaultParams()
@@ -40,20 +42,20 @@ func TestManager(t *testing.T) {
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
 
 	rewardAddrs := []crypto.Address{
-		crypto.GenerateTestAddress(), crypto.GenerateTestAddress(),
-		crypto.GenerateTestAddress(), crypto.GenerateTestAddress(),
-		crypto.GenerateTestAddress(),
+		ts.RandomAddress(), ts.RandomAddress(),
+		ts.RandomAddress(), ts.RandomAddress(),
+		ts.RandomAddress(),
 	}
 	signers := make([]crypto.Signer, 5)
 	signers[0] = committeeSigners[0]
 	signers[1] = committeeSigners[1]
-	signers[2] = bls.GenerateTestSigner()
-	signers[3] = bls.GenerateTestSigner()
-	signers[4] = bls.GenerateTestSigner()
+	signers[2] = ts.RandomSigner()
+	signers[3] = ts.RandomSigner()
+	signers[4] = ts.RandomSigner()
 	broadcastCh := make(chan message.Message, 500)
 	txPool := txpool.MockingTxPool()
 
-	state, err := state.LoadOrNewState(genDoc, signers, store.MockingStore(), txPool, nil)
+	state, err := state.LoadOrNewState(genDoc, signers, store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
 
 	Mgr := NewManager(testConfig(), state, signers, rewardAddrs, broadcastCh)

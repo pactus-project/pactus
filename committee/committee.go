@@ -8,7 +8,6 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/validator"
-	"github.com/pactus-project/pactus/util"
 )
 
 var _ Committee = &committee{}
@@ -208,26 +207,4 @@ func (c *committee) iterate(consumer func(*validator.Validator) (stop bool)) {
 			return
 		}
 	}
-}
-
-// GenerateTestCommittee generates a committee for testing purpose.
-// All committee members have same power.
-func GenerateTestCommittee(num int) (Committee, []crypto.Signer) {
-	signers := make([]crypto.Signer, num)
-	vals := make([]*validator.Validator, num)
-	h1 := util.RandUint32(100000)
-	for i := int32(0); i < int32(num); i++ {
-		val, s := validator.GenerateTestValidator(i)
-		signers[i] = s
-		vals[i] = val
-
-		val.UpdateLastBondingHeight(h1 + uint32(i))
-		val.UpdateLastJoinedHeight(h1 + 100 + uint32(i))
-		//
-		val.SubtractFromStake(val.Stake())
-		val.AddToStake(10 * 1e9)
-	}
-
-	committee, _ := NewCommittee(vals, num, vals[0].Address())
-	return committee, signers
 }

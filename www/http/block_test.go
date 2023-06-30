@@ -7,20 +7,19 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBlock(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
-	b := tMockState.TestStore.AddTestBlock(100)
+	b := td.mockState.TestStore.AddTestBlock(100)
 
 	t.Run("Shall return a block", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"hash": b.Hash().String()})
-		tHTTPServer.GetBlockByHashHandler(w, r)
+		td.httpServer.GetBlockByHashHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
 		assert.Contains(t, w.Body.String(), b.Hash().String())
@@ -30,7 +29,7 @@ func TestBlock(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"height": "100"})
-		tHTTPServer.GetBlockByHeightHandler(w, r)
+		td.httpServer.GetBlockByHeightHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
 		//fmt.Println(w.Body)
@@ -40,7 +39,7 @@ func TestBlock(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"height": "x"})
-		tHTTPServer.GetBlockByHeightHandler(w, r)
+		td.httpServer.GetBlockByHeightHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 		//fmt.Println(w.Body)
@@ -49,8 +48,8 @@ func TestBlock(t *testing.T) {
 	t.Run("Shall return an error, non exists", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"hash": hash.GenerateTestHash().String()})
-		tHTTPServer.GetBlockByHashHandler(w, r)
+		r = mux.SetURLVars(r, map[string]string{"hash": td.RandomHash().String()})
+		td.httpServer.GetBlockByHashHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
 	})
@@ -59,7 +58,7 @@ func TestBlock(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"hash": "abc"})
-		tHTTPServer.GetBlockByHashHandler(w, r)
+		td.httpServer.GetBlockByHashHandler(w, r)
 		fmt.Println(w.Body)
 
 		assert.Equal(t, w.Code, 400)
@@ -69,7 +68,7 @@ func TestBlock(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
 		r = mux.SetURLVars(r, map[string]string{"hash": ""})
-		tHTTPServer.GetBlockByHashHandler(w, r)
+		td.httpServer.GetBlockByHashHandler(w, r)
 		fmt.Println(w.Body)
 
 		assert.Equal(t, w.Code, 400)
@@ -78,7 +77,7 @@ func TestBlock(t *testing.T) {
 	t.Run("Shall return an error, no hash", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		tHTTPServer.GetBlockByHashHandler(w, r)
+		td.httpServer.GetBlockByHashHandler(w, r)
 		fmt.Println(w.Body)
 
 		assert.Equal(t, w.Code, 400)

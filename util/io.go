@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -26,7 +25,7 @@ func MakeAbs(path string) string {
 }
 
 func ReadFile(filename string) ([]byte, error) {
-	return ioutil.ReadFile(filename)
+	return os.ReadFile(filename)
 }
 
 func WriteFile(filename string, data []byte) error {
@@ -34,7 +33,7 @@ func WriteFile(filename string, data []byte) error {
 	if err := Mkdir(filepath.Dir(filename)); err != nil {
 		return err
 	}
-	if err := ioutil.WriteFile(filename, data, 0600); err != nil {
+	if err := os.WriteFile(filename, data, 0600); err != nil {
 		return fmt.Errorf("failed to write to %s: %v", filename, err)
 	}
 	return nil
@@ -57,7 +56,7 @@ func PathExists(path string) bool {
 }
 
 func TempDirPath() string {
-	p, err := ioutil.TempDir("", "pactus*")
+	p, err := os.MkdirTemp("", "pactus*")
 	if err != nil {
 		panic(err)
 	}
@@ -94,7 +93,7 @@ func IsValidDirPath(fp string) bool {
 	fi, err := os.Stat(fp)
 	if err == nil {
 		if fi.IsDir() {
-			if err := ioutil.WriteFile(fp+"/test", []byte{}, 0600); err != nil {
+			if err := os.WriteFile(fp+"/test", []byte{}, 0600); err != nil {
 				return false
 			}
 			os.Remove(fp + "/test")

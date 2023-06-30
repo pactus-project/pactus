@@ -18,6 +18,7 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/testsuite"
 )
 
 var _ Facade = &MockState{}
@@ -25,6 +26,7 @@ var _ Facade = &MockState{}
 type MockState struct {
 	// This locks prevents the Data Race in tests
 	lk sync.RWMutex
+	ts *testsuite.TestSuite
 
 	TestGenesis   *genesis.Genesis
 	TestStore     *store.MockStore
@@ -33,11 +35,12 @@ type MockState struct {
 	TestParams    param.Params
 }
 
-func MockingState() *MockState {
-	committee, _ := committee.GenerateTestCommittee(21)
+func MockingState(ts *testsuite.TestSuite) *MockState {
+	committee, _ := ts.GenerateTestCommittee(21)
 	return &MockState{
+		ts:            ts,
 		TestGenesis:   genesis.TestnetGenesis(), // TODO: replace me with the Mainnet genesis
-		TestStore:     store.MockingStore(),
+		TestStore:     store.MockingStore(ts),
 		TestPool:      txpool.MockingTxPool(),
 		TestCommittee: committee,
 		TestParams:    param.DefaultParams(),
@@ -47,8 +50,8 @@ func MockingState() *MockState {
 func (m *MockState) CommitTestBlocks(num int) {
 	for i := 0; i < num; i++ {
 		lastHash := m.LastBlockHash()
-		b := block.GenerateTestBlock(nil, &lastHash)
-		cert := block.GenerateTestCertificate(b.Hash())
+		b := m.ts.GenerateTestBlock(nil, &lastHash)
+		cert := m.ts.GenerateTestCertificate(b.Hash())
 
 		m.TestStore.SaveBlock(m.LastBlockHeight()+1, b, cert)
 	}
@@ -102,7 +105,7 @@ func (m *MockState) Close() error {
 	return nil
 }
 func (m *MockState) ProposeBlock(_ crypto.Signer, _ crypto.Address, _ int16) (*block.Block, error) {
-	b := block.GenerateTestBlock(nil, nil)
+	b := m.ts.GenerateTestBlock(nil, nil)
 	return b, nil
 }
 func (m *MockState) ValidateBlock(_ *block.Block) error {
