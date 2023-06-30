@@ -259,7 +259,7 @@ func TestSigningTx(t *testing.T) {
 		OptionMemo("test"),
 	}
 
-	trx, err := td.wallet.MakeSendTx(sender, receiver.String(), amount, opts...)
+	trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amount, opts...)
 	assert.NoError(t, err)
 	err = td.wallet.SignTransaction(td.password, trx)
 	assert.NoError(t, err)
@@ -288,7 +288,7 @@ func TestMakeSendTx(t *testing.T) {
 			OptionMemo("test"),
 		}
 
-		trx, err := td.wallet.MakeSendTx(sender, receiver.String(), amount, opts...)
+		trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amount, opts...)
 		assert.NoError(t, err)
 		assert.Equal(t, trx.Stamp(), stamp)
 		assert.Equal(t, trx.Fee(), util.CoinToChange(10))
@@ -301,7 +301,7 @@ func TestMakeSendTx(t *testing.T) {
 		tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHash.Bytes()}
 		tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Sequence: seq}}
 
-		trx, err := td.wallet.MakeSendTx(sender, receiver.String(), amount)
+		trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amount)
 		assert.NoError(t, err)
 		assert.Equal(t, trx.Sequence(), seq+1)
 		assert.Equal(t, trx.Payload().Value(), amount)
@@ -310,19 +310,19 @@ func TestMakeSendTx(t *testing.T) {
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
-		_, err := td.wallet.MakeSendTx("invalid_addr_string", receiver.String(), amount)
+		_, err := td.wallet.MakeTransferTx("invalid_addr_string", receiver.String(), amount)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("invalid receiver address", func(t *testing.T) {
-		_, err := td.wallet.MakeSendTx(sender, "invalid_addr_string", amount)
+		_, err := td.wallet.MakeTransferTx(sender, "invalid_addr_string", amount)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("sender account doesn't exist", func(t *testing.T) {
 		tAccountResponse = nil
 
-		_, err := td.wallet.MakeSendTx(td.RandomAddress().String(), receiver.String(), amount)
+		_, err := td.wallet.MakeTransferTx(td.RandomAddress().String(), receiver.String(), amount)
 		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
 }

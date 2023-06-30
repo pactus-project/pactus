@@ -19,7 +19,7 @@ func TestProposeBlock(t *testing.T) {
 
 	invSubsidyTx := tx.NewSubsidyTx(td.state1.lastInfo.BlockHash().Stamp(), 1, td.valSigner2.Address(),
 		td.state1.params.BlockReward, "duplicated subsidy transaction")
-	invSendTx, _ := td.GenerateTestSendTx()
+	invSendTx, _ := td.GenerateTestTransferTx()
 	invBondTx, _ := td.GenerateTestBondTx()
 	invSortitionTx, _ := td.GenerateTestSortitionTx()
 
@@ -57,7 +57,7 @@ func TestExecuteBlock(t *testing.T) {
 	rewardAddr := td.RandomAddress()
 	invSubsidyTx := td.state1.createSubsidyTx(rewardAddr, 1001)
 	validSubsidyTx := td.state1.createSubsidyTx(rewardAddr, 1000)
-	invSendTx, _ := td.GenerateTestSendTx()
+	invSendTx, _ := td.GenerateTestTransferTx()
 
 	validTx1 := tx.NewTransferTx(b1.Stamp(), 1, td.valSigner1.Address(), td.valSigner1.Address(), 1, 1000, "")
 	td.valSigner1.SignMsg(validTx1)

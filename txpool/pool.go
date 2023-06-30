@@ -174,7 +174,7 @@ func (p *txPool) PrepareBlockTransactions() block.Txs {
 		trxs = append(trxs, n.Data.Value)
 	}
 
-	// Appending send transactions
+	// Appending transfer transactions
 	poolSend := p.pools[payload.PayloadTypeTransfer]
 	for n := poolSend.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)

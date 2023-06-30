@@ -51,7 +51,7 @@ func TestSanityCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid state root hash", func(t *testing.T) {
-		d, _ := hex.DecodeString(
+		d := ts.DecodingHex(
 			"0134ec9b649f1fe7230ecf98ede2eb097587f69d7e29fade7d1ba0d5d9383bd74c1704655b00000000000000000000000000000000000000" +
 				"00000000000000000000000000b9f39a3a63edeeeb24cec7daae01575168024a96b15def00da7ff84332acba24e3269dcfb5a592824ec174" +
 				"5551ffcbb9011c8e4ed0bfe587a05f2bffa6965455a6fd483a1a07040312142101128d1e40bd0135faab80e264d2171b1b6b8700e87e1c75" +
@@ -68,7 +68,7 @@ func TestSanityCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid previous block hash", func(t *testing.T) {
-		d, _ := hex.DecodeString(
+		d := ts.DecodingHex(
 			"0134ec9b64000000000000000000000000000000000000000000000000000000000000000082916efdb068bbec819457f5ce73bf8d2ca743" +
 				"e12c1946ee844e696e47bbe164b9f39a3a63edeeeb24cec7daae01575168024a96b15def00da7ff84332acba24e3269dcfb5a592824ec174" +
 				"5551ffcbb9011c8e4ed0bfe587a05f2bffa6965455a6fd483a1a07040312142101128d1e40bd0135faab80e264d2171b1b6b8700e87e1c75" +
@@ -83,7 +83,7 @@ func TestSanityCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid proposer address (type is 2)", func(t *testing.T) {
-		d, _ := hex.DecodeString(
+		d := ts.DecodingHex(
 			"0134ec9b649f1fe7230ecf98ede2eb097587f69d7e29fade7d1ba0d5d9383bd74c1704655b82916efdb068bbec819457f5ce73bf8d2ca743" +
 				"e12c1946ee844e696e47bbe164b9f39a3a63edeeeb24cec7daae01575168024a96b15def00da7ff84332acba24e3269dcfb5a592824ec174" +
 				"5551ffcbb9021c8e4ed0bfe587a05f2bffa6965455a6fd483a1a07040312142101128d1e40bd0135faab80e264d2171b1b6b8700e87e1c75" +

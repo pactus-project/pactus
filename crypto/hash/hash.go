@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"golang.org/x/crypto/blake2b"
+	// nolint:staticcheck
 	"golang.org/x/crypto/ripemd160"
 )
 

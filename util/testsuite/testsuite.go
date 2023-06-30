@@ -1,6 +1,7 @@
 package testsuite
 
 import (
+	"encoding/hex"
 	"math/rand"
 	"testing"
 	"time"
@@ -20,23 +21,32 @@ import (
 	"github.com/pactus-project/pactus/util"
 )
 
+// TestSuite provides a set of helper functions for testing purposes.
+// All the random values are generated based on a logged seed.
+// By using a pre-generated seed, it is possible to reproduce failed tests
+// by re-evaluating all the random values. This helps in identifying and debugging
+// failures in testing conditions.
 type TestSuite struct {
 	Seed int64
 	Rand *rand.Rand
 }
 
+// NewTestSuiteForSeed creates a new TestSuite with the given seed.
 func NewTestSuiteForSeed(seed int64) *TestSuite {
 	return &TestSuite{
 		Seed: seed,
+		// nolint:gosec
 		Rand: rand.New(rand.NewSource(seed)),
 	}
 }
 
+// NewTestSuite creates a new TestSuite by generating new seed.
 func NewTestSuite(t *testing.T) *TestSuite {
 	seed := time.Now().UTC().UnixNano()
 	t.Logf("%v seed is %v", t.Name(), seed)
 	return &TestSuite{
 		Seed: seed,
+		// nolint:gosec
 		Rand: rand.New(rand.NewSource(seed)),
 	}
 }
@@ -46,8 +56,8 @@ func (ts *TestSuite) RandInt16(max int16) int16 {
 	return int16(ts.RandUint64(uint64(max)))
 }
 
-// RandUint16 returns a random uint32 between 0 and max.
-func (ts *TestSuite) RandUint16(max uint32) uint16 {
+// RandUint16 returns a random uint16 between 0 and max.
+func (ts *TestSuite) RandUint16(max uint16) uint16 {
 	return uint16(ts.RandUint64(uint64(max)))
 }
 
@@ -66,7 +76,7 @@ func (ts *TestSuite) RandInt64(max int64) int64 {
 	return ts.Rand.Int63n(max)
 }
 
-// RandUint64 returns a random int between 0 and max.
+// RandUint64 returns a random uint64 between 0 and max.
 func (ts *TestSuite) RandUint64(max uint64) uint64 {
 	return uint64(ts.RandInt64(int64(max)))
 }
@@ -78,35 +88,40 @@ func (ts *TestSuite) RandInt(max int) int {
 
 // RandInt16NonZero returns a random int16 between 1 and max+1.
 func (ts *TestSuite) RandInt16NonZero(max int16) int16 {
-	return int16(ts.RandUint64(uint64(max))) + 1
+	return ts.RandInt16(max) + 1
 }
 
 // RandUint16NonZero returns a random uint16 between 1 and max+1.
 func (ts *TestSuite) RandUint16NonZero(max uint16) uint16 {
-	return uint16(ts.RandUint64(uint64(max))) + 1
+	return ts.RandUint16(max) + 1
 }
 
 // RandInt32NonZero returns a random int32 between 1 and max+1.
 func (ts *TestSuite) RandInt32NonZero(max int32) int32 {
-	return int32(ts.RandUint64(uint64(max))) + 1
+	return ts.RandInt32(max) + 1
 }
 
 // RandUint32NonZero returns a random uint32 between 1 and max+1.
 func (ts *TestSuite) RandUint32NonZero(max uint32) uint32 {
-	return uint32(ts.RandUint64(uint64(max))) + 1
+	return ts.RandUint32(max) + 1
 }
 
 // RandInt64NonZero returns a random int64 between 1 and max+1.
 func (ts *TestSuite) RandInt64NonZero(max int64) int64 {
-	return ts.Rand.Int63n(max) + 1
+	return ts.RandInt64(max) + 1
+}
+
+// RandUint64NonZero returns a random uint64 between 1 and max+1.
+func (ts *TestSuite) RandUint64NonZero(max uint64) uint64 {
+	return ts.RandUint64(max) + 1
 }
 
 // RandIntNonZero returns a random int between 1 and max+1.
 func (ts *TestSuite) RandIntNonZero(max int) int {
-	return int(ts.RandInt64(int64(max))) + 1
+	return ts.RandInt(max) + 1
 }
 
-// RandomBytes returns a slice of random bytes of given length
+// RandomBytes returns a slice of random bytes of the given length.
 func (ts *TestSuite) RandomBytes(len int) []byte {
 	buf := make([]byte, len)
 	_, err := ts.Rand.Read(buf)
@@ -127,13 +142,22 @@ func (ts *TestSuite) RandomString(len int) string {
 	return string(b)
 }
 
-// GenerateTestBLSSigner generates a signer for testing.
+// DecodingHex decodes the input string from hexadecimal format and returns the resulting byte slice.
+func (ts *TestSuite) DecodingHex(in string) []byte {
+	d, err := hex.DecodeString(in)
+	if err != nil {
+		panic(err)
+	}
+	return d
+}
+
+// RandomSigner generates a random signer for testing.
 func (ts *TestSuite) RandomSigner() crypto.Signer {
 	_, prv := ts.RandomBLSKeyPair()
 	return crypto.NewSigner(prv)
 }
 
-// RandomBLSKeyPair generates a key pair for testing.
+// RandomBLSKeyPair generates a random BLS key pair for testing.
 func (ts *TestSuite) RandomBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 	buf := make([]byte, bls.PrivateKeySize)
 	_, err := ts.Rand.Read(buf)
@@ -146,16 +170,17 @@ func (ts *TestSuite) RandomBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 	return pub, prv
 }
 
-// RandomHash generates a hash for testing.
+// RandomHash generates a random hash for testing.
 func (ts *TestSuite) RandomHash() hash.Hash {
 	return hash.CalcHash(util.Int64ToSlice(ts.RandInt64(util.MaxInt64)))
 }
 
+// RandomStamp generates a random stamp for testing.
 func (ts *TestSuite) RandomStamp() hash.Stamp {
 	return ts.RandomHash().Stamp()
 }
 
-// RandomAddress generates a address for testing.
+// RandomAddress generates a random address for testing.
 func (ts *TestSuite) RandomAddress() crypto.Address {
 	data := make([]byte, 20)
 	_, err := ts.Rand.Read(data)
@@ -168,6 +193,7 @@ func (ts *TestSuite) RandomAddress() crypto.Address {
 	return addr
 }
 
+// RandomSeed generates a random VerifiableSeed for testing.
 func (ts *TestSuite) RandomSeed() sortition.VerifiableSeed {
 	h := ts.RandomHash()
 	signer := ts.RandomSigner()
@@ -176,6 +202,7 @@ func (ts *TestSuite) RandomSeed() sortition.VerifiableSeed {
 	return seed
 }
 
+// RandomProof generates a random Proof for testing.
 func (ts *TestSuite) RandomProof() sortition.Proof {
 	sig := ts.RandomSigner().SignData(ts.RandomHash().Bytes())
 	proof, _ := sortition.ProofFromBytes(sig.Bytes())
@@ -219,7 +246,7 @@ func (ts *TestSuite) GenerateTestBlock(proposer *crypto.Address, prevBlockHash *
 		proposer = &addr
 	}
 	txs := block.NewTxs()
-	tx1, _ := ts.GenerateTestSendTx()
+	tx1, _ := ts.GenerateTestTransferTx()
 	tx2, _ := ts.GenerateTestSortitionTx()
 	tx3, _ := ts.GenerateTestBondTx()
 	tx4, _ := ts.GenerateTestUnbondTx()
@@ -249,6 +276,7 @@ func (ts *TestSuite) GenerateTestBlock(proposer *crypto.Address, prevBlockHash *
 	return block.NewBlock(header, cert, txs)
 }
 
+// GenerateTestCertificate generates a certificate for testing.
 func (ts *TestSuite) GenerateTestCertificate(blockHash hash.Hash) *block.Certificate {
 	_, priv2 := ts.RandomBLSKeyPair()
 	_, priv3 := ts.RandomBLSKeyPair()
@@ -272,7 +300,7 @@ func (ts *TestSuite) GenerateTestCertificate(blockHash hash.Hash) *block.Certifi
 		sig)
 }
 
-// GenerateTestProposal generates a bond transaction for testing.
+// GenerateTestProposal generates a proposal for testing.
 func (ts *TestSuite) GenerateTestProposal(height uint32, round int16) (*proposal.Proposal, crypto.Signer) {
 	signer := ts.RandomSigner()
 	addr := signer.Address()
@@ -282,8 +310,8 @@ func (ts *TestSuite) GenerateTestProposal(height uint32, round int16) (*proposal
 	return p, signer
 }
 
-// GenerateTestSendTx generates a send transaction for testing.
-func (ts *TestSuite) GenerateTestSendTx() (*tx.Tx, crypto.Signer) {
+// GenerateTestTransferTx generates a transfer transaction for testing.
+func (ts *TestSuite) GenerateTestTransferTx() (*tx.Tx, crypto.Signer) {
 	stamp := ts.RandomStamp()
 	s := ts.RandomSigner()
 	pub, _ := ts.RandomBLSKeyPair()
@@ -293,7 +321,7 @@ func (ts *TestSuite) GenerateTestSendTx() (*tx.Tx, crypto.Signer) {
 	return tx, s
 }
 
-// GenerateTestSendTx generates a bond transaction for testing.
+// GenerateTestBondTx generates a bond transaction for testing.
 func (ts *TestSuite) GenerateTestBondTx() (*tx.Tx, crypto.Signer) {
 	stamp := ts.RandomStamp()
 	s := ts.RandomSigner()
@@ -304,7 +332,7 @@ func (ts *TestSuite) GenerateTestBondTx() (*tx.Tx, crypto.Signer) {
 	return tx, s
 }
 
-// GenerateTestSendTx generates a sortition transaction for testing.
+// GenerateTestSortitionTx generates a sortition transaction for testing.
 func (ts *TestSuite) GenerateTestSortitionTx() (*tx.Tx, crypto.Signer) {
 	stamp := ts.RandomStamp()
 	s := ts.RandomSigner()
@@ -314,7 +342,7 @@ func (ts *TestSuite) GenerateTestSortitionTx() (*tx.Tx, crypto.Signer) {
 	return tx, s
 }
 
-// GenerateTestSendTx generates an unbond transaction for testing.
+// GenerateTestUnbondTx generates an unbond transaction for testing.
 func (ts *TestSuite) GenerateTestUnbondTx() (*tx.Tx, crypto.Signer) {
 	stamp := ts.RandomStamp()
 	s := ts.RandomSigner()
@@ -323,7 +351,7 @@ func (ts *TestSuite) GenerateTestUnbondTx() (*tx.Tx, crypto.Signer) {
 	return tx, s
 }
 
-// GenerateTestSendTx generates a withdraw transaction for testing.
+// GenerateTestWithdrawTx generates a withdraw transaction for testing.
 func (ts *TestSuite) GenerateTestWithdrawTx() (*tx.Tx, crypto.Signer) {
 	stamp := ts.RandomStamp()
 	s := ts.RandomSigner()
@@ -372,8 +400,8 @@ func (ts *TestSuite) GenerateTestChangeProposerVote(height uint32, round int16) 
 	return v, s
 }
 
-// GenerateTestCommittee generates a committee for testing purpose.
-// All committee members have same power.
+// GenerateTestCommittee generates a committee for testing purposes.
+// All committee members have the same power.
 func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []crypto.Signer) {
 	signers := make([]crypto.Signer, num)
 	vals := make([]*validator.Validator, num)
@@ -385,7 +413,6 @@ func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []cryp
 
 		val.UpdateLastBondingHeight(h1 + uint32(i))
 		val.UpdateLastJoinedHeight(h1 + 100 + uint32(i))
-		//
 		val.SubtractFromStake(val.Stake())
 		val.AddToStake(10 * 1e9)
 	}

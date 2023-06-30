@@ -87,7 +87,7 @@ func TestNetworkLagging(t *testing.T) {
 	r := int16(0)
 	p := td.makeProposal(t, h, r)
 
-	// td.consP doesn't have the proposal, but it has received prepared votes from other peers
+	// consP doesn't have the proposal, but it has received prepared votes from other peers
 	td.addVote(td.consP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexX)
 	td.addVote(td.consP, vote.VoteTypePrepare, h, r, p.Block().Hash(), tIndexY)
 	td.shouldPublishQueryProposal(t, td.consP, h, r)
@@ -114,7 +114,7 @@ func TestProposalNextRound(t *testing.T) {
 
 	td.consX.SetProposal(p)
 
-	// td.consX accepts his proposal, but doesn't move to the next round
+	// consX accepts his proposal, but doesn't move to the next round
 	assert.NotNil(t, td.consX.RoundProposal(1))
 	assert.Equal(t, td.consX.height, uint32(2))
 	assert.Equal(t, td.consX.round, int16(0))

@@ -81,7 +81,7 @@ func TestAppendAndRemove(t *testing.T) {
 func TestAppendInvalidTransaction(t *testing.T) {
 	td := setup(t)
 
-	invalidTx, _ := td.GenerateTestSendTx()
+	invalidTx, _ := td.GenerateTestTransferTx()
 	assert.Error(t, td.pool.AppendTx(invalidTx))
 }
 

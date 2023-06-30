@@ -33,7 +33,7 @@ func TestExecution(t *testing.T) {
 	block8642 := sb.TestStore.AddTestBlock(8642)
 
 	t.Run("Invalid transaction, Should returns error", func(t *testing.T) {
-		trx, _ := ts.GenerateTestSendTx()
+		trx, _ := ts.GenerateTestTransferTx()
 		assert.Error(t, exe.Execute(trx, sb))
 		assert.Zero(t, exe.AccumulatedFee())
 	})

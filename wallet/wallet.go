@@ -284,8 +284,8 @@ func (w *Wallet) ValidatorSequence(addrStr string) (int32, error) {
 	return val.Sequence, nil
 }
 
-// MakeSendTx creates a new send transaction based on the given parameters.
-func (w *Wallet) MakeSendTx(sender, receiver string, amount int64,
+// MakeTransferTx creates a new transfer transaction based on the given parameters.
+func (w *Wallet) MakeTransferTx(sender, receiver string, amount int64,
 	options ...TxOption) (*tx.Tx, error) {
 	maker, err := newTxBuilder(w.client, options...)
 	if err != nil {

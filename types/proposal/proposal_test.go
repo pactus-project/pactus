@@ -1,7 +1,6 @@
 package proposal_test
 
 import (
-	"encoding/hex"
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
@@ -74,7 +73,7 @@ func TestSanityCheck(t *testing.T) {
 
 	t.Run("No signature", func(t *testing.T) {
 		pub, _ := ts.RandomBLSKeyPair()
-		d, _ := hex.DecodeString(
+		d := ts.DecodingHex(
 			"a401186402000358c30140da9b641551048b59a859946ca7f9ab95c9cf84da488a1a5c49ba643b29b653dc223bc20a4e9ff03158165f3d42" +
 				"4e2a74677bfe24a7295d1ce2e55ca3644cbe9a5a5e7d913b8e1ba6a020afbd5a25024a12b37cf8e1ed0b9498f91d75b294db0f95123d8593" +
 				"05aa5deea3d4216777e74310b6a601bb4d4d6b13c9b295781ab1533aea032978d4f8930504060f1b23010fab4f72234cc7c12048bbbc616c" +

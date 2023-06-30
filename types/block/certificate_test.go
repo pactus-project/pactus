@@ -5,6 +5,7 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -37,33 +38,56 @@ func TestCertificateSignBytes(t *testing.T) {
 	assert.NotEqual(t, bz, block.CertificateSignBytes(ts.RandomHash(), c1.Round()))
 }
 
-// func TestInvalidCertificate(t *testing.T) {
-// 	ts := testsuite.NewTestSuite(t)
+func TestInvalidCertificate(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
 
-// 	cert := ts.GenerateTestCertificate(ts.RandomHash())
-// 	cert.data.Committers = nil
-// 	assert.Error(t, cert.SanityCheck())
+	cert0 := ts.GenerateTestCertificate(ts.RandomHash())
 
-// 	cert = ts.GenerateTestCertificate(ts.RandomHash())
-// 	cert.data.Round = -1
-// 	assert.Error(t, cert.SanityCheck())
+	t.Run("Invalid round", func(t *testing.T) {
+		cert := block.NewCertificate(-1, cert0.Committers(), cert0.Absentees(), cert0.Signature())
 
-// 	cert = ts.GenerateTestCertificate(ts.RandomHash())
-// 	cert.data.Absentees = nil
-// 	assert.Error(t, cert.SanityCheck())
+		err := cert.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
+	})
 
-// 	cert = ts.GenerateTestCertificate(ts.RandomHash())
-// 	cert.data.Absentees = append(cert.data.Absentees, 0)
-// 	assert.Error(t, cert.SanityCheck())
+	t.Run("Committers is nil", func(t *testing.T) {
+		cert := block.NewCertificate(cert0.Round(), nil, cert0.Absentees(), cert0.Signature())
 
-// 	cert = ts.GenerateTestCertificate(ts.RandomHash())
-// 	cert.data.Absentees = []int32{2, 1}
-// 	assert.Error(t, cert.SanityCheck())
+		err := cert.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidBlock)
+	})
 
-// 	cert = ts.GenerateTestCertificate(ts.RandomHash())
-// 	cert.data.Signature = nil
-// 	assert.Error(t, cert.SanityCheck())
-// }
+	t.Run("Absentees is nil", func(t *testing.T) {
+		cert := block.NewCertificate(cert0.Round(), cert0.Committers(), nil, cert0.Signature())
+
+		err := cert.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidBlock)
+	})
+
+	t.Run("Signature is nil", func(t *testing.T) {
+		cert := block.NewCertificate(cert0.Round(), cert0.Committers(), cert0.Absentees(), nil)
+
+		err := cert.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
+	})
+
+	t.Run("Invalid Absentees ", func(t *testing.T) {
+		abs := cert0.Absentees()
+		abs = append(abs, 0)
+		cert := block.NewCertificate(cert0.Round(), cert0.Committers(), abs, cert0.Signature())
+
+		err := cert.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidBlock)
+	})
+
+	t.Run("Invalid Absentees ", func(t *testing.T) {
+		abs := []int32{2, 1}
+		cert := block.NewCertificate(cert0.Round(), cert0.Committers(), abs, cert0.Signature())
+
+		err := cert.SanityCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidBlock)
+	})
+}
 
 func TestCertificateHash(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)

@@ -13,8 +13,8 @@ func TestTxsMerkle(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	txs := block.NewTxs()
-	trx1, _ := ts.GenerateTestSendTx()
-	trx2, _ := ts.GenerateTestSendTx()
+	trx1, _ := ts.GenerateTestTransferTx()
+	trx2, _ := ts.GenerateTestTransferTx()
 	txs.Append(trx1)
 	merkle := txs.Root()
 	assert.Equal(t, merkle, trx1.ID())
@@ -31,11 +31,11 @@ func TestAppendPrependRemove(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	txs := block.NewTxs()
-	trx1, _ := ts.GenerateTestSendTx()
-	trx2, _ := ts.GenerateTestSendTx()
-	trx3, _ := ts.GenerateTestSendTx()
-	trx4, _ := ts.GenerateTestSendTx()
-	trx5, _ := ts.GenerateTestSendTx()
+	trx1, _ := ts.GenerateTestTransferTx()
+	trx2, _ := ts.GenerateTestTransferTx()
+	trx3, _ := ts.GenerateTestTransferTx()
+	trx4, _ := ts.GenerateTestTransferTx()
+	trx5, _ := ts.GenerateTestTransferTx()
 	txs.Append(trx2)
 	txs.Append(trx3)
 	txs.Prepend(trx1)
@@ -52,7 +52,7 @@ func TestIsEmpty(t *testing.T) {
 	txs := block.NewTxs()
 	assert.True(t, txs.IsEmpty())
 
-	trx, _ := ts.GenerateTestSendTx()
+	trx, _ := ts.GenerateTestTransferTx()
 	txs.Append(trx)
 	assert.False(t, txs.IsEmpty())
 }
@@ -61,8 +61,8 @@ func TestGetTransaction(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	txs := block.NewTxs()
-	trx1, _ := ts.GenerateTestSendTx()
-	trx2, _ := ts.GenerateTestSendTx()
+	trx1, _ := ts.GenerateTestTransferTx()
+	trx2, _ := ts.GenerateTestTransferTx()
 	txs.Append(trx1)
 	txs.Append(trx2)
 	assert.Equal(t, trx1, txs.Get(0))
