@@ -38,12 +38,12 @@ func TestNetworkInfo(t *testing.T) {
 }
 
 func TestNodeInfo(t *testing.T) {
-	setup(t)
+	td := setup(t)
 
 	w := httptest.NewRecorder()
 	r := new(http.Request)
 
-	tHTTPServer.NodeHandler(w, r)
+	td.httpServer.NodeHandler(w, r)
 
 	assert.Equal(t, w.Code, 200)
 	assert.Contains(t, w.Body.String(), version.Agent())
