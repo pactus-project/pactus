@@ -49,3 +49,7 @@ func (p *Peer) IsBanned() bool {
 func (p *Peer) IsNodeNetwork() bool {
 	return util.IsFlagSet(p.Flags, PeerFlagNodeNetwork)
 }
+
+func (p *Peer) LastSeenAt() time.Time {
+	return p.LastSeen
+}
