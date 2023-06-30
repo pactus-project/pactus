@@ -30,31 +30,30 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 	assistant, err := gtk.AssistantNew()
 	fatalErrorCheck(err)
 
-	assistant.Hide()
 	assistant.SetDefaultSize(600, 400)
 	assistant.SetTitle("Pactus - Init Wizard")
 
 	assistFunc := pageAssistant()
 
-	// --- PageMode
+	// --- page_mode
 	mode, restoreRadio, pageModeName := pageMode(assistant, assistFunc)
 
-	// --- seedGenerate
+	// --- page_seed_generate
 	seedGenerate, textViewSeed, pageSeedGenerateName := pageSeedGenerate(assistant, assistFunc)
 
-	// -- seedRestore
-	seedRestore, textViewRestoreSeed, pageSeedRestoreName := pageSeedRestore(assistant, assistFunc)
-
-	// --- seedConfirm
+	// --- page_seed_confirm
 	seedConfirm, pageSeedConfirmName := pageSeedConfirm(assistant, assistFunc, textViewSeed)
 
-	// --- PagePassword
+	// -- page_seed_restore
+	seedRestore, textViewRestoreSeed, pageSeedRestoreName := pageSeedRestore(assistant, assistFunc)
+
+	// --- page_password
 	password, entryPassword, pagePasswordName := pagePassword(assistant, assistFunc)
 
-	// --- numValidators
+	// --- page_num_validators
 	numValidators, lsNumValidators, comboNumValidators, pageNumValidatorsName := pageNumValidators(assistant, assistFunc)
 
-	// --- final
+	// --- page_final
 	final, textViewNodeInfo, pageFinalName := pageFinal(assistant, assistFunc)
 
 	assistant.Connect("cancel", func() {
@@ -68,94 +67,93 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 		gtk.MainQuit()
 	})
 
-	assistant.AppendPage(mode)          // page 0
-	assistant.AppendPage(seedGenerate)  // page 1
-	assistant.AppendPage(seedConfirm)   // page 2
-	assistant.AppendPage(seedRestore)   // page 3
-	assistant.AppendPage(password)      // page 4
-	assistant.AppendPage(numValidators) // page 5
-	assistant.AppendPage(final)         // page 6
-
-	assistant.SetPageType(mode, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(seedGenerate, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(seedConfirm, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(seedRestore, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(password, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(numValidators, gtk.ASSISTANT_PAGE_CONTENT)
-	assistant.SetPageType(final, gtk.ASSISTANT_PAGE_SUMMARY)
+	assistant.SetPageType(mode, gtk.ASSISTANT_PAGE_INTRO)            // page 0
+	assistant.SetPageType(seedGenerate, gtk.ASSISTANT_PAGE_CONTENT)  // page 1
+	assistant.SetPageType(seedConfirm, gtk.ASSISTANT_PAGE_CONTENT)   // page 2
+	assistant.SetPageType(seedRestore, gtk.ASSISTANT_PAGE_CONTENT)   // page 3
+	assistant.SetPageType(password, gtk.ASSISTANT_PAGE_CONTENT)      // page 4
+	assistant.SetPageType(numValidators, gtk.ASSISTANT_PAGE_CONTENT) // page 5
+	assistant.SetPageType(final, gtk.ASSISTANT_PAGE_SUMMARY)         // page 6
 
 	mnemonic := ""
-	prevPageName := ""
+	prevPageIndex := -1
+	prevPageAdjust := 0
 	assistant.Connect("prepare", func(assistant *gtk.Assistant, page *gtk.Widget) {
 		isRestoreMode := restoreRadio.GetActive()
 		curPageName, err := page.GetName()
+		curPageIndex := assistant.GetCurrentPage()
 		fatalErrorCheck(err)
 
-		log.Printf("%v - %v (restore: %v, prev: %v)\n",
-			assistant.GetCurrentPage(), curPageName, isRestoreMode, prevPageName)
+		isForward := true
+		if curPageIndex > 0 && curPageIndex < prevPageIndex {
+			isForward = false
+		}
+
+		log.Printf("%v (restore: %v, prev: %v, cur: %v)\n",
+			curPageName, isRestoreMode, prevPageIndex, curPageIndex)
 		switch curPageName {
 		case pageModeName:
 			{
-				assistant.SetPageComplete(mode, true)
-				assistant.UpdateButtonsState()
+				assistantPageComplete(assistant, mode, true)
 			}
 
 		case pageSeedGenerateName:
 			{
 				if isRestoreMode {
-					if prevPageName == pageSeedGenerateName {
-						// backward
-						log.Printf("jumping backward from seedGenerate page")
-						assistant.PreviousPage()
-					} else if prevPageName == pageModeName {
+					if isForward {
 						// forward
 						log.Printf("jumping forward from seedGenerate page")
 						assistant.NextPage()
+						prevPageAdjust = 1
 					} else {
-						log.Fatalf("invalid page order, pageName: %v, prevPageName: %v",
-							curPageName, prevPageName)
+						// backward
+						log.Printf("jumping backward from seedGenerate page")
+						assistant.PreviousPage()
+						prevPageAdjust = -1
 					}
+					assistantPageComplete(assistant, seedGenerate, false)
+				} else {
+					mnemonic = wallet.GenerateMnemonic(128)
+					setTextViewContent(textViewSeed, mnemonic)
+					assistantPageComplete(assistant, seedGenerate, true)
 				}
-				mnemonic = wallet.GenerateMnemonic(128)
-				setTextViewContent(textViewSeed, mnemonic)
-				assistant.SetPageComplete(seedGenerate, true)
 			}
 		case pageSeedConfirmName:
 			{
 				if isRestoreMode {
-					if prevPageName == pageSeedGenerateName {
-						// backward
-						log.Printf("jumping backward from seedConfirm page")
-						assistant.PreviousPage()
-					} else if prevPageName == pageModeName {
+					if isForward {
 						// forward
 						log.Printf("jumping forward from seedConfirm page")
 						assistant.NextPage()
+						prevPageAdjust = 1
 					} else {
-						log.Fatalf("invalid2 page order, pageName: %v, prevPageName: %v",
-							curPageName, prevPageName)
+						// backward
+						log.Printf("jumping backward from seedConfirm page")
+						assistant.PreviousPage()
+						prevPageAdjust = -1
 					}
+					assistantPageComplete(assistant, seedConfirm, false)
 				} else {
-					assistant.SetPageComplete(seedConfirm, false)
+					assistantPageComplete(assistant, seedConfirm, false)
 				}
 			}
 		case pageSeedRestoreName:
 			{
 				if !isRestoreMode {
-					if prevPageName == pageSeedRestoreName {
-						// backward
-						log.Printf("jumping backward from seedRestore page")
-						assistant.PreviousPage()
-					} else if prevPageName == pageSeedConfirmName {
+					if isForward {
 						// forward
 						log.Printf("jumping forward from seedRestore page")
 						assistant.NextPage()
+						prevPageAdjust = 1
 					} else {
-						log.Fatalf("invalid page order, pageName: %v, prevPageName: %v",
-							curPageName, prevPageName)
+						// backward
+						log.Printf("jumping backward from seedRestore page")
+						assistant.PreviousPage()
+						prevPageAdjust = -1
 					}
+					assistantPageComplete(assistant, seedConfirm, false)
 				} else {
-					assistant.SetPageComplete(seedGenerate, true)
+					assistantPageComplete(assistant, seedRestore, true)
 				}
 			}
 		case pagePasswordName:
@@ -164,15 +162,15 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 					mnemonic = getTextViewContent(textViewRestoreSeed)
 
 					if err := wallet.CheckMnemonic(mnemonic); err != nil {
-						showErrorDialog(assistant, "mnemonic is invalid: "+err.Error())
+						showErrorDialog(assistant, "mnemonic is invalid")
 						assistant.PreviousPage()
 					}
 				}
-				assistant.SetPageComplete(password, true)
+				assistantPageComplete(assistant, password, true)
 			}
 		case pageNumValidatorsName:
 			{
-				assistant.SetPageComplete(numValidators, true)
+				assistantPageComplete(assistant, numValidators, true)
 			}
 
 		case pageFinalName:
@@ -213,7 +211,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 				setTextViewContent(textViewNodeInfo, nodeInfo)
 			}
 		}
-		prevPageName = curPageName
+		prevPageIndex = curPageIndex + prevPageAdjust
 	})
 
 	assistant.SetModal(true)
@@ -253,6 +251,8 @@ func pageAssistant() assistantFunc {
 		box.Add(labelDesc)
 		page.Add(box)
 		page.SetName(name)
+		assistant.AppendPage(page)
+		assistant.SetPageTitle(page, title)
 
 		return page.ToWidget()
 	}
@@ -321,7 +321,7 @@ This seed will allow you to recover your wallet in case of computer failure.
 }
 
 func pageSeedRestore(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.TextView, string) {
-	pageWidget := new(gtk.Widget)
+	var pageWidget *gtk.Widget
 	textViewRestoreSeed, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
 
@@ -331,25 +331,9 @@ func pageSeedRestore(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.W
 	textViewRestoreSeed.SetMonospace(true)
 	textViewRestoreSeed.SetSizeRequest(0, 80)
 
-	textViewRestoreSeed.Connect("paste_clipboard", func(textView *gtk.TextView) {
-		showInfoDialog(assistant, "Opps, no copy paste!")
-		textViewRestoreSeed.StopEmission("paste_clipboard")
-	})
-
-	seedRestoreTextBuffer, err := textViewRestoreSeed.GetBuffer()
-	fatalErrorCheck(err)
-
-	seedRestoreTextBuffer.Connect("changed", func(buf *gtk.TextBuffer) {
-		if len(strings.Split(getTextViewContent(textViewRestoreSeed), " ")) == 12 {
-			assistant.SetPageComplete(pageWidget, true)
-		} else {
-			assistant.SetPageComplete(pageWidget, false)
-		}
-	})
-
 	pageSeedName := "page_seed_restore"
 	pageSeedTitle := "Wallet seed restore"
-	pageSeedSubject := "Please enter your seed:"
+	pageSeedSubject := "Enter your wallet seed:"
 	pageSeedDesc := "Please enter your 12 words mnemonics backup to restore your wallet."
 
 	pageWidget = assistFunc(
@@ -389,9 +373,9 @@ func pageSeedConfirm(assistant *gtk.Assistant, assistFunc assistantFunc,
 		mnemonic2 = space.ReplaceAllString(mnemonic2, " ")
 		mnemonic2 = strings.TrimSpace(mnemonic2)
 		if mnemonic1 == mnemonic2 {
-			assistant.SetPageComplete(pageWidget, true)
+			assistantPageComplete(assistant, pageWidget, true)
 		} else {
-			assistant.SetPageComplete(pageWidget, false)
+			assistantPageComplete(assistant, pageWidget, false)
 		}
 	})
 
@@ -451,9 +435,9 @@ func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widg
 		fatalErrorCheck(err)
 
 		if pass1 == pass2 {
-			assistant.SetPageComplete(pageWidget, true)
+			assistantPageComplete(assistant, pageWidget, true)
 		} else {
-			assistant.SetPageComplete(pageWidget, false)
+			assistantPageComplete(assistant, pageWidget, false)
 		}
 	}
 	entryPassword.Connect("changed", func(entry *gtk.Entry) {
@@ -562,4 +546,9 @@ Now you are ready to start the node!`
 		pageFinalSubject,
 		pageFinalDesc)
 	return pageWidget, textViewNodeInfo, pageFinalName
+}
+
+func assistantPageComplete(assistant *gtk.Assistant, page gtk.IWidget, completed bool) {
+	assistant.SetPageComplete(page, completed)
+	assistant.UpdateButtonsState()
 }
