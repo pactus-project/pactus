@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.13.0](https://github.com/pactus-project/pactus/compare/v0.12.0...v0.13.0)(2023-06-30)
+
+### Fix
+
+- implemented restore wallet base on input seed ([#553](https://github.com/pactus-project/pactus/pull/553))
+- measuring total sent and received bytes ([#552](https://github.com/pactus-project/pactus/pull/552))
+- add validate seed and restore wallet ([#533](https://github.com/pactus-project/pactus/pull/533))
+- **HTTP**: Missing handlers ([#549](https://github.com/pactus-project/pactus/pull/549))
+- **gui**: update about dialog and menu items in help ([#532](https://github.com/pactus-project/pactus/pull/532))
+
+### Refactor
+
+- implementing TestSuite ([#535](https://github.com/pactus-project/pactus/pull/535))
+
 ## [0.12.0](https://github.com/pactus-project/pactus/compare/v0.11.0...v0.12.0)(2023-06-19)
 
 ### Feat
