@@ -17,7 +17,7 @@ func newQueryVotesHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *queryVotesHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+func (handler *queryVotesHandler) ParseMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.QueryVotesMessage)
 	handler.logger.Trace("parsing QueryVotes message", "message", msg)
 

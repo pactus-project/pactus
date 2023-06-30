@@ -17,7 +17,7 @@ func newBlocksResponseHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *blocksResponseHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+func (handler *blocksResponseHandler) ParseMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.BlocksResponseMessage)
 	handler.logger.Trace("parsing BlocksResponse message", "message", msg)
 
