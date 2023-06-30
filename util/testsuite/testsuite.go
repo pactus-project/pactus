@@ -78,27 +78,27 @@ func (ts *TestSuite) RandInt(max int) int {
 
 // RandInt16NonZero returns a random int16 between 1 and max+1.
 func (ts *TestSuite) RandInt16NonZero(max int16) int16 {
-	return int16(ts.RandUint64(uint64(max)))
+	return int16(ts.RandUint64(uint64(max))) + 1
 }
 
 // RandUint16NonZero returns a random uint16 between 1 and max+1.
 func (ts *TestSuite) RandUint16NonZero(max uint16) uint16 {
-	return uint16(ts.RandUint64(uint64(max)))
+	return uint16(ts.RandUint64(uint64(max))) + 1
 }
 
 // RandInt32NonZero returns a random int32 between 1 and max+1.
 func (ts *TestSuite) RandInt32NonZero(max int32) int32 {
-	return int32(ts.RandUint64(uint64(max)))
+	return int32(ts.RandUint64(uint64(max))) + 1
 }
 
 // RandUint32NonZero returns a random uint32 between 1 and max+1.
 func (ts *TestSuite) RandUint32NonZero(max uint32) uint32 {
-	return uint32(ts.RandUint64(uint64(max)))
+	return uint32(ts.RandUint64(uint64(max))) + 1
 }
 
 // RandInt64NonZero returns a random int64 between 1 and max+1.
 func (ts *TestSuite) RandInt64NonZero(max int64) int64 {
-	return ts.Rand.Int63n(max)
+	return ts.Rand.Int63n(max) + 1
 }
 
 // RandIntNonZero returns a random int between 1 and max+1.
