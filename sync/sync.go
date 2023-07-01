@@ -65,6 +65,9 @@ func NewSynchronizer(
 	}
 
 	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
+	clearanceTimeut := time.Hour * 24
+	go peerSet.GarbageCollector(sync.ctx, clearanceTimeut)
+
 	logger := logger.NewLogger("_sync", sync)
 	firewall := firewall.NewFirewall(conf.Firewall, net, peerSet, state, logger)
 	cache, err := cache.NewCache(conf.CacheSize)

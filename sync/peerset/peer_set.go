@@ -1,6 +1,7 @@
 package peerset
 
 import (
+	"context"
 	"sync"
 	"time"
 
@@ -8,10 +9,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util"
 )
-
-// TODO:
-// - Add tests for peerset
-// - Implementing garbage collection for peerset
 
 type PeerSet struct {
 	lk sync.RWMutex
@@ -347,4 +344,24 @@ func (ps *PeerSet) StartedAt() time.Time {
 	defer ps.lk.RUnlock()
 
 	return ps.startedAt
+}
+
+func (ps *PeerSet) GarbageCollector(ctx context.Context, timeout time.Duration) {
+	for {
+		timer := time.NewTimer(timeout)
+		select {
+		case <-timer.C:
+			for _, peer := range ps.peers {
+				now := time.Now()
+				diff := now.Sub(peer.LastSeen)
+
+				if diff.Hours() >= 24 {
+					ps.RemovePeer(peer.PeerID)
+				}
+			}
+		case <-ctx.Done():
+			timer.Stop()
+			return
+		}
+	}
 }
