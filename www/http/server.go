@@ -71,7 +71,7 @@ func (s *Server) StartServer(grpcServer string) error {
 	s.router.HandleFunc("/account/address/{address}", s.GetAccountHandler)
 	s.router.HandleFunc("/account/number/{number}", s.GetAccountByNumberHandler)
 	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)
-	s.router.HandleFunc("/validator/number/{number}", s.GetAccountByNumberHandler)
+	s.router.HandleFunc("/validator/number/{number}", s.GetValidatorByNumberHandler)
 	http.Handle("/", handlers.RecoveryHandler()(s.router))
 
 	l, err := net.Listen("tcp", s.config.Listen)
