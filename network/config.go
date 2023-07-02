@@ -66,7 +66,6 @@ func validateAddresses(address []string) error {
 	for _, addr := range address {
 		_, err := multiaddr.NewMultiaddr(addr)
 		if err != nil {
-			fmt.Println("Failed to parse address: ", err)
 			return errors.Errorf(errors.ErrInvalidAddress, "invalid relay and listen address")
 		}
 	}
