@@ -2,11 +2,11 @@ package peerset
 
 import (
 	"fmt"
-	"github.com/pactus-project/pactus/sync/bundle/message"
 	"testing"
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
