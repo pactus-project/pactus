@@ -16,7 +16,7 @@ func newHeartBeatHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *heartBeatHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+func (handler *heartBeatHandler) ParseMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.HeartBeatMessage)
 	handler.logger.Trace("parsing HeartBeat message", "message", msg)
 

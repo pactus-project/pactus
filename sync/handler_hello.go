@@ -19,7 +19,7 @@ func newHelloHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *helloHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.HelloMessage)
 	handler.logger.Trace("parsing Hello message", "message", msg)
 
