@@ -1,6 +1,7 @@
 package peerset
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -248,4 +249,50 @@ func TestGetRandomPeerOnePeer(t *testing.T) {
 	p := peerSet.GetRandomPeer()
 
 	assert.Equal(t, p.PeerID, pid)
+}
+
+func TestGarbageCollector(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	peerSet := NewPeerSet(time.Second)
+
+	t.Run("Context cancellation", func(t *testing.T) {
+		canceled := make(chan bool)
+		ctx, cancel := context.WithCancel(context.Background())
+
+		go func() {
+			peerSet.GarbageCollector(ctx, 5*time.Second)
+			canceled <- true
+		}()
+
+		cancel()
+
+		select {
+		case <-canceled:
+			// GarbageCollector canceled
+		case <-time.After(time.Second * 2):
+			t.Errorf("Timeout waiting for the Goroutine to complete")
+		}
+	})
+
+	t.Run("Removing peers", func(t *testing.T) {
+		for i := 0; i < ts.RandInt(10); i++ {
+			pk, _ := ts.RandomBLSKeyPair()
+			pid := ts.RandomPeerID()
+			peerSet.UpdatePeerInfo(pid, StatusCodeKnown,
+				ts.RandomString(8), ts.RandomString(8), pk, true)
+
+			peerSet.UpdateLastSeen(pid)
+		}
+
+		ctx, cancel := context.WithCancel(context.Background())
+		go func() {
+			peerSet.GarbageCollector(ctx, 1*time.Second)
+		}()
+
+		time.Sleep(1 * time.Second)
+		cancel()
+
+		assert.Zero(t, peerSet.Len())
+	})
 }

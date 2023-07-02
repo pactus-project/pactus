@@ -65,8 +65,8 @@ func NewSynchronizer(
 	}
 
 	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
-	clearanceTimeut := time.Hour * 24
-	go peerSet.GarbageCollector(sync.ctx, clearanceTimeut)
+	clearanceTimeout := time.Hour * 24
+	go peerSet.GarbageCollector(sync.ctx, clearanceTimeout)
 
 	logger := logger.NewLogger("_sync", sync)
 	firewall := firewall.NewFirewall(conf.Firewall, net, peerSet, state, logger)
@@ -123,7 +123,6 @@ func (sync *synchronizer) Start() error {
 }
 
 func (sync *synchronizer) Stop() {
-	sync.ctx.Done()
 	if sync.heartBeatTicker != nil {
 		sync.heartBeatTicker.Stop()
 	}

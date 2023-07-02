@@ -351,11 +351,11 @@ func (ps *PeerSet) GarbageCollector(ctx context.Context, timeout time.Duration) 
 		timer := time.NewTimer(timeout)
 		select {
 		case <-timer.C:
+			now := time.Now()
 			for _, peer := range ps.peers {
-				now := time.Now()
 				diff := now.Sub(peer.LastSeen)
 
-				if diff.Hours() >= 24 {
+				if diff >= timeout {
 					ps.RemovePeer(peer.PeerID)
 				}
 			}
