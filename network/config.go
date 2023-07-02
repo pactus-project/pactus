@@ -62,23 +62,15 @@ func DefaultConfig() *Config {
 	}
 }
 
-func validateAddress(address []string) bool {
+func validateAddresses(address []string) error {
 	for _, addr := range address {
-		isValid := isValidAddress(addr)
-		if !isValid {
-			return false
+		_, err := multiaddr.NewMultiaddr(addr)
+		if err != nil {
+			fmt.Println("Failed to parse address: ", err)
+			return errors.Errorf(errors.ErrInvalidAddress, "invalid relay and listen address")
 		}
 	}
-	return true
-}
-
-func isValidAddress(address string) bool {
-	_, err := multiaddr.NewMultiaddr(address)
-	if err != nil {
-		fmt.Println("Failed to parse address: ", err)
-		return false
-	}
-	return true
+	return nil
 }
 
 // SanityCheck performs basic checks on the configuration.
@@ -88,8 +80,7 @@ func (conf *Config) SanityCheck() error {
 			return errors.Errorf(errors.ErrInvalidConfig, "at least one relay address should be defined")
 		}
 	}
-	if !validateAddress(conf.Listens) || !validateAddress(conf.RelayAddrs) {
-		return errors.Errorf(errors.ErrInvalidAddress, "in listen and relay address")
-	}
+	validateAddresses(conf.Listens)
+	validateAddresses(conf.RelayAddrs)
 	return nil
 }
