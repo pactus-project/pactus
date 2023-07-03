@@ -186,7 +186,7 @@ func TestDisabledFirewall(t *testing.T) {
 	assert.False(t, td.network.IsClosed(td.badPeerID))
 }
 
-func TestUpdateLastSeen(t *testing.T) {
+func TestUpdateLastReceived(t *testing.T) {
 	td := setup(t)
 
 	bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryProposalMessage(100, 1))

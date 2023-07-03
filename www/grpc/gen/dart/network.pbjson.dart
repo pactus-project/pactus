@@ -61,14 +61,15 @@ const PeerInfo$json = const {
     const {'1': 'invalid_messages', '3': 8, '4': 1, '5': 5, '10': 'invalidMessages'},
     const {'1': 'received_bytes', '3': 9, '4': 1, '5': 5, '10': 'receivedBytes'},
     const {'1': 'status', '3': 10, '4': 1, '5': 5, '10': 'status'},
-    const {'1': 'last_seen', '3': 11, '4': 1, '5': 3, '10': 'lastSeen'},
-    const {'1': 'send_success', '3': 12, '4': 1, '5': 5, '10': 'sendSuccess'},
-    const {'1': 'send_failed', '3': 13, '4': 1, '5': 5, '10': 'sendFailed'},
+    const {'1': 'last_sent', '3': 11, '4': 1, '5': 3, '10': 'lastSent'},
+    const {'1': 'last_received', '3': 12, '4': 1, '5': 3, '10': 'lastReceived'},
+    const {'1': 'send_success', '3': 13, '4': 1, '5': 5, '10': 'sendSuccess'},
+    const {'1': 'send_failed', '3': 14, '4': 1, '5': 5, '10': 'sendFailed'},
   ],
 };
 
 /// Descriptor for `PeerInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode('CghQZWVySW5mbxIYCgdtb25pa2VyGAEgASgJUgdtb25pa2VyEhQKBWFnZW50GAIgASgJUgVhZ2VudBIXCgdwZWVyX2lkGAMgASgMUgZwZWVySWQSJQoOY29uc2Vuc3VzX2tleXMYBCADKAlSDWNvbnNlbnN1c0tleXMSFAoFZmxhZ3MYBSABKAVSBWZsYWdzEhYKBmhlaWdodBgGIAEoDVIGaGVpZ2h0EisKEXJlY2VpdmVkX21lc3NhZ2VzGAcgASgFUhByZWNlaXZlZE1lc3NhZ2VzEikKEGludmFsaWRfbWVzc2FnZXMYCCABKAVSD2ludmFsaWRNZXNzYWdlcxIlCg5yZWNlaXZlZF9ieXRlcxgJIAEoBVINcmVjZWl2ZWRCeXRlcxIWCgZzdGF0dXMYCiABKAVSBnN0YXR1cxIbCglsYXN0X3NlZW4YCyABKANSCGxhc3RTZWVuEiEKDHNlbmRfc3VjY2VzcxgMIAEoBVILc2VuZFN1Y2Nlc3MSHwoLc2VuZF9mYWlsZWQYDSABKAVSCnNlbmRGYWlsZWQ=');
+final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode('CghQZWVySW5mbxIYCgdtb25pa2VyGAEgASgJUgdtb25pa2VyEhQKBWFnZW50GAIgASgJUgVhZ2VudBIXCgdwZWVyX2lkGAMgASgMUgZwZWVySWQSJQoOY29uc2Vuc3VzX2tleXMYBCADKAlSDWNvbnNlbnN1c0tleXMSFAoFZmxhZ3MYBSABKAVSBWZsYWdzEhYKBmhlaWdodBgGIAEoDVIGaGVpZ2h0EisKEXJlY2VpdmVkX21lc3NhZ2VzGAcgASgFUhByZWNlaXZlZE1lc3NhZ2VzEikKEGludmFsaWRfbWVzc2FnZXMYCCABKAVSD2ludmFsaWRNZXNzYWdlcxIlCg5yZWNlaXZlZF9ieXRlcxgJIAEoBVINcmVjZWl2ZWRCeXRlcxIWCgZzdGF0dXMYCiABKAVSBnN0YXR1cxIbCglsYXN0X3NlbnQYCyABKANSCGxhc3RTZW50EiMKDWxhc3RfcmVjZWl2ZWQYDCABKANSDGxhc3RSZWNlaXZlZBIhCgxzZW5kX3N1Y2Nlc3MYDSABKAVSC3NlbmRTdWNjZXNzEh8KC3NlbmRfZmFpbGVkGA4gASgFUgpzZW5kRmFpbGVk');
 const $core.Map<$core.String, $core.dynamic> NetworkServiceBase$json = const {
   '1': 'Network',
   '2': const [

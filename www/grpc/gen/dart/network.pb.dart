@@ -239,9 +239,10 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invalidMessages', $pb.PbFieldType.O3)
     ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', $pb.PbFieldType.O3)
     ..a<$core.int>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.O3)
-    ..aInt64(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSeen')
-    ..a<$core.int>(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sendSuccess', $pb.PbFieldType.O3)
-    ..a<$core.int>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sendFailed', $pb.PbFieldType.O3)
+    ..aInt64(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSent')
+    ..aInt64(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastReceived')
+    ..a<$core.int>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sendSuccess', $pb.PbFieldType.O3)
+    ..a<$core.int>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sendFailed', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -257,7 +258,8 @@ class PeerInfo extends $pb.GeneratedMessage {
     $core.int? invalidMessages,
     $core.int? receivedBytes,
     $core.int? status,
-    $fixnum.Int64? lastSeen,
+    $fixnum.Int64? lastSent,
+    $fixnum.Int64? lastReceived,
     $core.int? sendSuccess,
     $core.int? sendFailed,
   }) {
@@ -292,8 +294,11 @@ class PeerInfo extends $pb.GeneratedMessage {
     if (status != null) {
       _result.status = status;
     }
-    if (lastSeen != null) {
-      _result.lastSeen = lastSeen;
+    if (lastSent != null) {
+      _result.lastSent = lastSent;
+    }
+    if (lastReceived != null) {
+      _result.lastReceived = lastReceived;
     }
     if (sendSuccess != null) {
       _result.sendSuccess = sendSuccess;
@@ -409,31 +414,40 @@ class PeerInfo extends $pb.GeneratedMessage {
   void clearStatus() => clearField(10);
 
   @$pb.TagNumber(11)
-  $fixnum.Int64 get lastSeen => $_getI64(10);
+  $fixnum.Int64 get lastSent => $_getI64(10);
   @$pb.TagNumber(11)
-  set lastSeen($fixnum.Int64 v) { $_setInt64(10, v); }
+  set lastSent($fixnum.Int64 v) { $_setInt64(10, v); }
   @$pb.TagNumber(11)
-  $core.bool hasLastSeen() => $_has(10);
+  $core.bool hasLastSent() => $_has(10);
   @$pb.TagNumber(11)
-  void clearLastSeen() => clearField(11);
+  void clearLastSent() => clearField(11);
 
   @$pb.TagNumber(12)
-  $core.int get sendSuccess => $_getIZ(11);
+  $fixnum.Int64 get lastReceived => $_getI64(11);
   @$pb.TagNumber(12)
-  set sendSuccess($core.int v) { $_setSignedInt32(11, v); }
+  set lastReceived($fixnum.Int64 v) { $_setInt64(11, v); }
   @$pb.TagNumber(12)
-  $core.bool hasSendSuccess() => $_has(11);
+  $core.bool hasLastReceived() => $_has(11);
   @$pb.TagNumber(12)
-  void clearSendSuccess() => clearField(12);
+  void clearLastReceived() => clearField(12);
 
   @$pb.TagNumber(13)
-  $core.int get sendFailed => $_getIZ(12);
+  $core.int get sendSuccess => $_getIZ(12);
   @$pb.TagNumber(13)
-  set sendFailed($core.int v) { $_setSignedInt32(12, v); }
+  set sendSuccess($core.int v) { $_setSignedInt32(12, v); }
   @$pb.TagNumber(13)
-  $core.bool hasSendFailed() => $_has(12);
+  $core.bool hasSendSuccess() => $_has(12);
   @$pb.TagNumber(13)
-  void clearSendFailed() => clearField(13);
+  void clearSendSuccess() => clearField(13);
+
+  @$pb.TagNumber(14)
+  $core.int get sendFailed => $_getIZ(13);
+  @$pb.TagNumber(14)
+  set sendFailed($core.int v) { $_setSignedInt32(13, v); }
+  @$pb.TagNumber(14)
+  $core.bool hasSendFailed() => $_has(13);
+  @$pb.TagNumber(14)
+  void clearSendFailed() => clearField(14);
 }
 
 class NetworkApi {

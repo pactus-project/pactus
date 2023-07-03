@@ -272,6 +272,14 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {
 	p.Status = status
 }
 
+func (ps *PeerSet) UpdateLastSent(pid peer.ID) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.mustGetPeer(pid)
+	p.LastSent = time.Now()
+}
+
 func (ps *PeerSet) UpdateLastReceived(pid peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()

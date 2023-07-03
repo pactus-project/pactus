@@ -305,6 +305,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID, sessionID int)
 	bdl := sync.prepareBundle(msg)
 	if bdl != nil {
 		data, _ := bdl.Encode()
+		sync.peerSet.UpdateLastSent(to)
 		err := sync.network.SendTo(data, to)
 		if err != nil {
 			sync.logger.Warn("error on sending bundle", "bundle", bdl, "err", err, "to", to)
