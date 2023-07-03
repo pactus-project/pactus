@@ -16,7 +16,7 @@ func newVoteHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *voteHandler) ParsMessage(m message.Message, _ peer.ID) error {
+func (handler *voteHandler) ParseMessage(m message.Message, _ peer.ID) error {
 	msg := m.(*message.VoteMessage)
 	handler.logger.Trace("parsing Vote message", "message", msg)
 

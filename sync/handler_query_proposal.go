@@ -17,7 +17,7 @@ func newQueryProposalHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *queryProposalHandler) ParsMessage(m message.Message, initiator peer.ID) error {
+func (handler *queryProposalHandler) ParseMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.QueryProposalMessage)
 	handler.logger.Trace("parsing QueryProposal message", "message", msg)
 

@@ -234,7 +234,7 @@ func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle) error {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid message type: %v", bdl.Message.Type())
 	}
 
-	return h.ParsMessage(bdl.Message, bdl.Initiator)
+	return h.ParseMessage(bdl.Message, bdl.Initiator)
 }
 
 func (sync *synchronizer) Fingerprint() string {
