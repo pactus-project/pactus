@@ -287,7 +287,7 @@ func TestGarbageCollector(t *testing.T) {
 
 		ctx, cancel := context.WithCancel(context.Background())
 		go func() {
-			peerSet.GarbageCollector(ctx, 1*time.Second)
+			peerSet.GarbageCollector(ctx, 300*time.Millisecond)
 		}()
 
 		time.Sleep(1 * time.Second)

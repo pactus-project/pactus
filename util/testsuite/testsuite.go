@@ -137,7 +137,7 @@ func (ts *TestSuite) RandomString(len int) string {
 
 	b := make([]byte, len)
 	for i := range b {
-		b[i] = letterBytes[ts.RandInt(52)]
+		b[i] = letterBytes[ts.RandInt(51)]
 	}
 	return string(b)
 }
