@@ -94,6 +94,14 @@ func TestPeerSet(t *testing.T) {
 		assert.Equal(t, peer1.Status, StatusCodeBanned)
 	})
 
+	t.Run("Testing UpdateLastSent", func(t *testing.T) {
+		now := time.Now()
+		peerSet.UpdateLastSent(pid1)
+
+		peer1 := peerSet.getPeer(pid1)
+		assert.GreaterOrEqual(t, peer1.LastSent, now)
+	})
+
 	t.Run("Testing UpdateLastReceived", func(t *testing.T) {
 		now := time.Now()
 		peerSet.UpdateLastReceived(pid1)
