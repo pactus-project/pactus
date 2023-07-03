@@ -66,7 +66,7 @@ func validateAddresses(address []string) error {
 	for _, addr := range address {
 		_, err := multiaddr.NewMultiaddr(addr)
 		if err != nil {
-			return errors.Errorf(errors.ErrInvalidAddress, "invalid relay and listen address")
+			return err
 		}
 	}
 	return nil
@@ -79,7 +79,11 @@ func (conf *Config) SanityCheck() error {
 			return errors.Errorf(errors.ErrInvalidConfig, "at least one relay address should be defined")
 		}
 	}
-	validateAddresses(conf.Listens)
-	validateAddresses(conf.RelayAddrs)
+	if err := validateAddresses(conf.Listens); err != nil {
+		return err
+	}
+	if err := validateAddresses(conf.RelayAddrs); err != nil {
+		return err
+	}
 	return nil
 }
