@@ -21,7 +21,7 @@ type Peer struct {
 	PeerID          peer.ID
 	ConsensusKeys   map[bls.PublicKey]bool
 	Flags           int
-	LastSeen        time.Time
+	LastReceived    time.Time
 	Height          uint32
 	ReceivedBundles int
 	InvalidBundles  int

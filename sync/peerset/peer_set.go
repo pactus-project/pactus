@@ -272,12 +272,12 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {
 	p.Status = status
 }
 
-func (ps *PeerSet) UpdateLastSeen(pid peer.ID) {
+func (ps *PeerSet) UpdateLastReceived(pid peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
-	p.LastSeen = time.Now()
+	p.LastReceived = time.Now()
 }
 
 func (ps *PeerSet) IncreaseReceivedBundlesCounter(pid peer.ID) {
