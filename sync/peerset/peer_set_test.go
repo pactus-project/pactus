@@ -308,6 +308,7 @@ func TestGarbageCollector(t *testing.T) {
 
 		assert.Zero(t, peerSet.Len())
 	})
+}
 
 func TestRemoveExpiredSessions(t *testing.T) {
 	ps := NewPeerSet(time.Second)
