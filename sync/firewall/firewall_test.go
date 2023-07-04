@@ -186,7 +186,7 @@ func TestDisabledFirewall(t *testing.T) {
 	assert.False(t, td.network.IsClosed(td.badPeerID))
 }
 
-func TestUpdateLastSeen(t *testing.T) {
+func TestUpdateLastReceived(t *testing.T) {
 	td := setup(t)
 
 	bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryProposalMessage(100, 1))
@@ -197,8 +197,8 @@ func TestUpdateLastSeen(t *testing.T) {
 
 	peerUnknown := td.firewall.peerSet.GetPeer(td.unknownPeerID)
 	peerGood := td.firewall.peerSet.GetPeer(td.goodPeerID)
-	assert.GreaterOrEqual(t, peerUnknown.LastSeen.UnixNano(), now)
-	assert.GreaterOrEqual(t, peerGood.LastSeen.UnixNano(), now)
+	assert.GreaterOrEqual(t, peerUnknown.LastReceived.UnixNano(), now)
+	assert.GreaterOrEqual(t, peerGood.LastReceived.UnixNano(), now)
 }
 
 func TestNetworkFlags(t *testing.T) {

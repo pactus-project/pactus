@@ -46,6 +46,37 @@
         ]
       }
     },
+    "/v1/blockchain/account/number/{number}": {
+      "get": {
+        "operationId": "Blockchain_GetAccountByNumber",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetAccountResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "number",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
     "/v1/blockchain/block/height/{height}/verbosity/{verbosity}": {
       "get": {
         "operationId": "Blockchain_GetBlock",

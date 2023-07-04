@@ -840,9 +840,10 @@ proto.pactus.PeerInfo.toObject = function(includeInstance, msg) {
     invalidMessages: jspb.Message.getFieldWithDefault(msg, 8, 0),
     receivedBytes: jspb.Message.getFieldWithDefault(msg, 9, 0),
     status: jspb.Message.getFieldWithDefault(msg, 10, 0),
-    lastSeen: jspb.Message.getFieldWithDefault(msg, 11, 0),
-    sendSuccess: jspb.Message.getFieldWithDefault(msg, 12, 0),
-    sendFailed: jspb.Message.getFieldWithDefault(msg, 13, 0)
+    lastSent: jspb.Message.getFieldWithDefault(msg, 11, 0),
+    lastReceived: jspb.Message.getFieldWithDefault(msg, 12, 0),
+    sendSuccess: jspb.Message.getFieldWithDefault(msg, 13, 0),
+    sendFailed: jspb.Message.getFieldWithDefault(msg, 14, 0)
   };
 
   if (includeInstance) {
@@ -921,13 +922,17 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 11:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setLastSeen(value);
+      msg.setLastSent(value);
       break;
     case 12:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setLastReceived(value);
+      break;
+    case 13:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setSendSuccess(value);
       break;
-    case 13:
+    case 14:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setSendFailed(value);
       break;
@@ -1030,24 +1035,31 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getLastSeen();
+  f = message.getLastSent();
   if (f !== 0) {
     writer.writeInt64(
       11,
       f
     );
   }
+  f = message.getLastReceived();
+  if (f !== 0) {
+    writer.writeInt64(
+      12,
+      f
+    );
+  }
   f = message.getSendSuccess();
   if (f !== 0) {
     writer.writeInt32(
-      12,
+      13,
       f
     );
   }
   f = message.getSendFailed();
   if (f !== 0) {
     writer.writeInt32(
-      13,
+      14,
       f
     );
   }
@@ -1278,10 +1290,10 @@ proto.pactus.PeerInfo.prototype.setStatus = function(value) {
 
 
 /**
- * optional int64 last_seen = 11;
+ * optional int64 last_sent = 11;
  * @return {number}
  */
-proto.pactus.PeerInfo.prototype.getLastSeen = function() {
+proto.pactus.PeerInfo.prototype.getLastSent = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
 };
 
@@ -1290,16 +1302,16 @@ proto.pactus.PeerInfo.prototype.getLastSeen = function() {
  * @param {number} value
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setLastSeen = function(value) {
+proto.pactus.PeerInfo.prototype.setLastSent = function(value) {
   return jspb.Message.setProto3IntField(this, 11, value);
 };
 
 
 /**
- * optional int32 send_success = 12;
+ * optional int64 last_received = 12;
  * @return {number}
  */
-proto.pactus.PeerInfo.prototype.getSendSuccess = function() {
+proto.pactus.PeerInfo.prototype.getLastReceived = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
 };
 
@@ -1308,16 +1320,16 @@ proto.pactus.PeerInfo.prototype.getSendSuccess = function() {
  * @param {number} value
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setSendSuccess = function(value) {
+proto.pactus.PeerInfo.prototype.setLastReceived = function(value) {
   return jspb.Message.setProto3IntField(this, 12, value);
 };
 
 
 /**
- * optional int32 send_failed = 13;
+ * optional int32 send_success = 13;
  * @return {number}
  */
-proto.pactus.PeerInfo.prototype.getSendFailed = function() {
+proto.pactus.PeerInfo.prototype.getSendSuccess = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 13, 0));
 };
 
@@ -1326,8 +1338,26 @@ proto.pactus.PeerInfo.prototype.getSendFailed = function() {
  * @param {number} value
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setSendFailed = function(value) {
+proto.pactus.PeerInfo.prototype.setSendSuccess = function(value) {
   return jspb.Message.setProto3IntField(this, 13, value);
+};
+
+
+/**
+ * optional int32 send_failed = 14;
+ * @return {number}
+ */
+proto.pactus.PeerInfo.prototype.getSendFailed = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 14, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setSendFailed = function(value) {
+  return jspb.Message.setProto3IntField(this, 14, value);
 };
 
 

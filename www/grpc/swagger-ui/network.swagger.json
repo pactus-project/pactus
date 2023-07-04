@@ -143,7 +143,11 @@
           "type": "integer",
           "format": "int32"
         },
-        "lastSeen": {
+        "lastSent": {
+          "type": "string",
+          "format": "int64"
+        },
+        "lastReceived": {
           "type": "string",
           "format": "int64"
         },

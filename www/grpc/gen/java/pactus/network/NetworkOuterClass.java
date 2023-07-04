@@ -2668,19 +2668,25 @@ public final class NetworkOuterClass {
     int getStatus();
 
     /**
-     * <code>int64 last_seen = 11 [json_name = "lastSeen"];</code>
-     * @return The lastSeen.
+     * <code>int64 last_sent = 11 [json_name = "lastSent"];</code>
+     * @return The lastSent.
      */
-    long getLastSeen();
+    long getLastSent();
 
     /**
-     * <code>int32 send_success = 12 [json_name = "sendSuccess"];</code>
+     * <code>int64 last_received = 12 [json_name = "lastReceived"];</code>
+     * @return The lastReceived.
+     */
+    long getLastReceived();
+
+    /**
+     * <code>int32 send_success = 13 [json_name = "sendSuccess"];</code>
      * @return The sendSuccess.
      */
     int getSendSuccess();
 
     /**
-     * <code>int32 send_failed = 13 [json_name = "sendFailed"];</code>
+     * <code>int32 send_failed = 14 [json_name = "sendFailed"];</code>
      * @return The sendFailed.
      */
     int getSendFailed();
@@ -2917,21 +2923,32 @@ public final class NetworkOuterClass {
       return status_;
     }
 
-    public static final int LAST_SEEN_FIELD_NUMBER = 11;
-    private long lastSeen_;
+    public static final int LAST_SENT_FIELD_NUMBER = 11;
+    private long lastSent_;
     /**
-     * <code>int64 last_seen = 11 [json_name = "lastSeen"];</code>
-     * @return The lastSeen.
+     * <code>int64 last_sent = 11 [json_name = "lastSent"];</code>
+     * @return The lastSent.
      */
     @java.lang.Override
-    public long getLastSeen() {
-      return lastSeen_;
+    public long getLastSent() {
+      return lastSent_;
     }
 
-    public static final int SEND_SUCCESS_FIELD_NUMBER = 12;
+    public static final int LAST_RECEIVED_FIELD_NUMBER = 12;
+    private long lastReceived_;
+    /**
+     * <code>int64 last_received = 12 [json_name = "lastReceived"];</code>
+     * @return The lastReceived.
+     */
+    @java.lang.Override
+    public long getLastReceived() {
+      return lastReceived_;
+    }
+
+    public static final int SEND_SUCCESS_FIELD_NUMBER = 13;
     private int sendSuccess_;
     /**
-     * <code>int32 send_success = 12 [json_name = "sendSuccess"];</code>
+     * <code>int32 send_success = 13 [json_name = "sendSuccess"];</code>
      * @return The sendSuccess.
      */
     @java.lang.Override
@@ -2939,10 +2956,10 @@ public final class NetworkOuterClass {
       return sendSuccess_;
     }
 
-    public static final int SEND_FAILED_FIELD_NUMBER = 13;
+    public static final int SEND_FAILED_FIELD_NUMBER = 14;
     private int sendFailed_;
     /**
-     * <code>int32 send_failed = 13 [json_name = "sendFailed"];</code>
+     * <code>int32 send_failed = 14 [json_name = "sendFailed"];</code>
      * @return The sendFailed.
      */
     @java.lang.Override
@@ -2994,14 +3011,17 @@ public final class NetworkOuterClass {
       if (status_ != 0) {
         output.writeInt32(10, status_);
       }
-      if (lastSeen_ != 0L) {
-        output.writeInt64(11, lastSeen_);
+      if (lastSent_ != 0L) {
+        output.writeInt64(11, lastSent_);
+      }
+      if (lastReceived_ != 0L) {
+        output.writeInt64(12, lastReceived_);
       }
       if (sendSuccess_ != 0) {
-        output.writeInt32(12, sendSuccess_);
+        output.writeInt32(13, sendSuccess_);
       }
       if (sendFailed_ != 0) {
-        output.writeInt32(13, sendFailed_);
+        output.writeInt32(14, sendFailed_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -3054,17 +3074,21 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(10, status_);
       }
-      if (lastSeen_ != 0L) {
+      if (lastSent_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(11, lastSeen_);
+          .computeInt64Size(11, lastSent_);
+      }
+      if (lastReceived_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(12, lastReceived_);
       }
       if (sendSuccess_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(12, sendSuccess_);
+          .computeInt32Size(13, sendSuccess_);
       }
       if (sendFailed_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(13, sendFailed_);
+          .computeInt32Size(14, sendFailed_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -3101,8 +3125,10 @@ public final class NetworkOuterClass {
           != other.getReceivedBytes()) return false;
       if (getStatus()
           != other.getStatus()) return false;
-      if (getLastSeen()
-          != other.getLastSeen()) return false;
+      if (getLastSent()
+          != other.getLastSent()) return false;
+      if (getLastReceived()
+          != other.getLastReceived()) return false;
       if (getSendSuccess()
           != other.getSendSuccess()) return false;
       if (getSendFailed()
@@ -3140,9 +3166,12 @@ public final class NetworkOuterClass {
       hash = (53 * hash) + getReceivedBytes();
       hash = (37 * hash) + STATUS_FIELD_NUMBER;
       hash = (53 * hash) + getStatus();
-      hash = (37 * hash) + LAST_SEEN_FIELD_NUMBER;
+      hash = (37 * hash) + LAST_SENT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getLastSeen());
+          getLastSent());
+      hash = (37 * hash) + LAST_RECEIVED_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getLastReceived());
       hash = (37 * hash) + SEND_SUCCESS_FIELD_NUMBER;
       hash = (53 * hash) + getSendSuccess();
       hash = (37 * hash) + SEND_FAILED_FIELD_NUMBER;
@@ -3295,7 +3324,9 @@ public final class NetworkOuterClass {
 
         status_ = 0;
 
-        lastSeen_ = 0L;
+        lastSent_ = 0L;
+
+        lastReceived_ = 0L;
 
         sendSuccess_ = 0;
 
@@ -3342,7 +3373,8 @@ public final class NetworkOuterClass {
         result.invalidMessages_ = invalidMessages_;
         result.receivedBytes_ = receivedBytes_;
         result.status_ = status_;
-        result.lastSeen_ = lastSeen_;
+        result.lastSent_ = lastSent_;
+        result.lastReceived_ = lastReceived_;
         result.sendSuccess_ = sendSuccess_;
         result.sendFailed_ = sendFailed_;
         onBuilt();
@@ -3432,8 +3464,11 @@ public final class NetworkOuterClass {
         if (other.getStatus() != 0) {
           setStatus(other.getStatus());
         }
-        if (other.getLastSeen() != 0L) {
-          setLastSeen(other.getLastSeen());
+        if (other.getLastSent() != 0L) {
+          setLastSent(other.getLastSent());
+        }
+        if (other.getLastReceived() != 0L) {
+          setLastReceived(other.getLastReceived());
         }
         if (other.getSendSuccess() != 0) {
           setSendSuccess(other.getSendSuccess());
@@ -3519,20 +3554,25 @@ public final class NetworkOuterClass {
                 break;
               } // case 80
               case 88: {
-                lastSeen_ = input.readInt64();
+                lastSent_ = input.readInt64();
 
                 break;
               } // case 88
               case 96: {
-                sendSuccess_ = input.readInt32();
+                lastReceived_ = input.readInt64();
 
                 break;
               } // case 96
               case 104: {
-                sendFailed_ = input.readInt32();
+                sendSuccess_ = input.readInt32();
 
                 break;
               } // case 104
+              case 112: {
+                sendFailed_ = input.readInt32();
+
+                break;
+              } // case 112
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -4032,40 +4072,71 @@ public final class NetworkOuterClass {
         return this;
       }
 
-      private long lastSeen_ ;
+      private long lastSent_ ;
       /**
-       * <code>int64 last_seen = 11 [json_name = "lastSeen"];</code>
-       * @return The lastSeen.
+       * <code>int64 last_sent = 11 [json_name = "lastSent"];</code>
+       * @return The lastSent.
        */
       @java.lang.Override
-      public long getLastSeen() {
-        return lastSeen_;
+      public long getLastSent() {
+        return lastSent_;
       }
       /**
-       * <code>int64 last_seen = 11 [json_name = "lastSeen"];</code>
-       * @param value The lastSeen to set.
+       * <code>int64 last_sent = 11 [json_name = "lastSent"];</code>
+       * @param value The lastSent to set.
        * @return This builder for chaining.
        */
-      public Builder setLastSeen(long value) {
+      public Builder setLastSent(long value) {
         
-        lastSeen_ = value;
+        lastSent_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 last_seen = 11 [json_name = "lastSeen"];</code>
+       * <code>int64 last_sent = 11 [json_name = "lastSent"];</code>
        * @return This builder for chaining.
        */
-      public Builder clearLastSeen() {
+      public Builder clearLastSent() {
         
-        lastSeen_ = 0L;
+        lastSent_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long lastReceived_ ;
+      /**
+       * <code>int64 last_received = 12 [json_name = "lastReceived"];</code>
+       * @return The lastReceived.
+       */
+      @java.lang.Override
+      public long getLastReceived() {
+        return lastReceived_;
+      }
+      /**
+       * <code>int64 last_received = 12 [json_name = "lastReceived"];</code>
+       * @param value The lastReceived to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLastReceived(long value) {
+        
+        lastReceived_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 last_received = 12 [json_name = "lastReceived"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLastReceived() {
+        
+        lastReceived_ = 0L;
         onChanged();
         return this;
       }
 
       private int sendSuccess_ ;
       /**
-       * <code>int32 send_success = 12 [json_name = "sendSuccess"];</code>
+       * <code>int32 send_success = 13 [json_name = "sendSuccess"];</code>
        * @return The sendSuccess.
        */
       @java.lang.Override
@@ -4073,7 +4144,7 @@ public final class NetworkOuterClass {
         return sendSuccess_;
       }
       /**
-       * <code>int32 send_success = 12 [json_name = "sendSuccess"];</code>
+       * <code>int32 send_success = 13 [json_name = "sendSuccess"];</code>
        * @param value The sendSuccess to set.
        * @return This builder for chaining.
        */
@@ -4084,7 +4155,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>int32 send_success = 12 [json_name = "sendSuccess"];</code>
+       * <code>int32 send_success = 13 [json_name = "sendSuccess"];</code>
        * @return This builder for chaining.
        */
       public Builder clearSendSuccess() {
@@ -4096,7 +4167,7 @@ public final class NetworkOuterClass {
 
       private int sendFailed_ ;
       /**
-       * <code>int32 send_failed = 13 [json_name = "sendFailed"];</code>
+       * <code>int32 send_failed = 14 [json_name = "sendFailed"];</code>
        * @return The sendFailed.
        */
       @java.lang.Override
@@ -4104,7 +4175,7 @@ public final class NetworkOuterClass {
         return sendFailed_;
       }
       /**
-       * <code>int32 send_failed = 13 [json_name = "sendFailed"];</code>
+       * <code>int32 send_failed = 14 [json_name = "sendFailed"];</code>
        * @param value The sendFailed to set.
        * @return This builder for chaining.
        */
@@ -4115,7 +4186,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>int32 send_failed = 13 [json_name = "sendFailed"];</code>
+       * <code>int32 send_failed = 14 [json_name = "sendFailed"];</code>
        * @return This builder for chaining.
        */
       public Builder clearSendFailed() {
@@ -4230,7 +4301,7 @@ public final class NetworkOuterClass {
       "\n\005peers\030\004 \003(\0132\020.pactus.PeerInfoR\005peers\"\024" +
       "\n\022GetNodeInfoRequest\"^\n\023GetNodeInfoRespo" +
       "nse\022\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002" +
-      " \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peerId\"\240\003\n" +
+      " \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peerId\"\305\003\n" +
       "\010PeerInfo\022\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005a" +
       "gent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peer" +
       "Id\022%\n\016consensus_keys\030\004 \003(\tR\rconsensusKey" +
@@ -4239,15 +4310,16 @@ public final class NetworkOuterClass {
       "ivedMessages\022)\n\020invalid_messages\030\010 \001(\005R\017" +
       "invalidMessages\022%\n\016received_bytes\030\t \001(\005R" +
       "\rreceivedBytes\022\026\n\006status\030\n \001(\005R\006status\022\033" +
-      "\n\tlast_seen\030\013 \001(\003R\010lastSeen\022!\n\014send_succ" +
-      "ess\030\014 \001(\005R\013sendSuccess\022\037\n\013send_failed\030\r " +
-      "\001(\005R\nsendFailed2\242\001\n\007Network\022O\n\016GetNetwor" +
-      "kInfo\022\035.pactus.GetNetworkInfoRequest\032\036.p" +
-      "actus.GetNetworkInfoResponse\022F\n\013GetNodeI" +
-      "nfo\022\032.pactus.GetNodeInfoRequest\032\033.pactus" +
-      ".GetNodeInfoResponseBB\n\016pactus.networkZ0" +
-      "github.com/pactus-project/pactus/www/grp" +
-      "c/pactusb\006proto3"
+      "\n\tlast_sent\030\013 \001(\003R\010lastSent\022#\n\rlast_rece" +
+      "ived\030\014 \001(\003R\014lastReceived\022!\n\014send_success" +
+      "\030\r \001(\005R\013sendSuccess\022\037\n\013send_failed\030\016 \001(\005" +
+      "R\nsendFailed2\242\001\n\007Network\022O\n\016GetNetworkIn" +
+      "fo\022\035.pactus.GetNetworkInfoRequest\032\036.pact" +
+      "us.GetNetworkInfoResponse\022F\n\013GetNodeInfo" +
+      "\022\032.pactus.GetNodeInfoRequest\032\033.pactus.Ge" +
+      "tNodeInfoResponseBB\n\016pactus.networkZ0git" +
+      "hub.com/pactus-project/pactus/www/grpc/p" +
+      "actusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -4282,7 +4354,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "ConsensusKeys", "Flags", "Height", "ReceivedMessages", "InvalidMessages", "ReceivedBytes", "Status", "LastSeen", "SendSuccess", "SendFailed", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "ConsensusKeys", "Flags", "Height", "ReceivedMessages", "InvalidMessages", "ReceivedBytes", "Status", "LastSent", "LastReceived", "SendSuccess", "SendFailed", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
