@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/errors"
 )
 
@@ -61,6 +62,16 @@ func DefaultConfig() *Config {
 	}
 }
 
+func validateAddresses(address []string) error {
+	for _, addr := range address {
+		_, err := multiaddr.NewMultiaddr(addr)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // SanityCheck performs basic checks on the configuration.
 func (conf *Config) SanityCheck() error {
 	if conf.EnableRelay {
@@ -68,5 +79,8 @@ func (conf *Config) SanityCheck() error {
 			return errors.Errorf(errors.ErrInvalidConfig, "at least one relay address should be defined")
 		}
 	}
-	return nil
+	if err := validateAddresses(conf.RelayAddrs); err != nil {
+		return err
+	}
+	return validateAddresses(conf.Listens)
 }
