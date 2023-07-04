@@ -12,19 +12,24 @@ func TestDefaultConfigCheck(t *testing.T) {
 	conf.EnableRelay = true
 	assert.Error(t, conf.SanityCheck())
 
-	conf.EnableRelay = false
+	conf.Listens = []string{""}
+	assert.Error(t, conf.SanityCheck())
+
+	conf.Listens = []string{"127.0.0.1"}
+	assert.Error(t, conf.SanityCheck())
+
+	conf.Listens = []string{"/ip4"}
+	assert.Error(t, conf.SanityCheck())
+
+	conf.RelayAddrs = []string{"/ip4"}
+	assert.Error(t, conf.SanityCheck())
+
+	conf.RelayAddrs = []string{}
+	conf.Listens = []string{}
+
+	conf.RelayAddrs = []string{"/ip4/127.0.0.1"}
 	assert.NoError(t, conf.SanityCheck())
 
-	inValidAddresses := []string{
-		"/ip4/1wg.1/tcp/21777/p2p8VccQ8888888Wyc",
-		"",
-		"/ip4",
-		"127.0.0.1",
-	}
-	assert.Error(t, validateAddresses(inValidAddresses))
-
-	validAddresses := []string{
-		"/ip4/127.0.0.1",
-	}
-	assert.Equal(t, nil, validateAddresses(validAddresses))
+	conf.Listens = []string{"/ip4/127.0.0.1"}
+	assert.NoError(t, conf.SanityCheck())
 }
