@@ -97,20 +97,19 @@ func TestAggregateFailed(t *testing.T) {
 	assert.True(t, bls.VerifyAggregated(agg5, pubs1, msg1))
 	assert.True(t, bls.VerifyAggregated(agg1, pubs4, msg1))
 
-	assert.NotNil(t, pubAgg1.Verify(msg1,agg1))
-	assert.Nil(t, pubAgg1.Verify(msg2,agg1))
-	assert.Nil(t, pubAgg1.Verify(msg1,agg2))
-	assert.Nil(t, pubAgg2.Verify(msg1,agg1))
-	assert.NotNil(t, pubAgg2.Verify(msg1,agg2))
-	assert.Nil(t, pubAgg2.Verify(msg2,agg2))
-	assert.Nil(t, pubAgg1.Verify(msg1,agg3))
-	assert.Nil(t, pubAgg1.Verify(msg2,agg3))
-	assert.Nil(t, pubAgg1.Verify(msg1,agg4))
-	assert.Nil(t, pubAgg3.Verify(msg1,agg1))
-	assert.NotNil(t, pubAgg1.Verify(msg1,agg5))
-	assert.NotNil(t, pubAgg4.Verify(msg1,agg1))
+	assert.Nil(t, pubAgg1.Verify(msg1, agg1))
+	assert.NotNil(t, pubAgg1.Verify(msg2, agg1))
+	assert.NotNil(t, pubAgg1.Verify(msg1, agg2))
+	assert.NotNil(t, pubAgg2.Verify(msg1, agg1))
+	assert.Nil(t, pubAgg2.Verify(msg1, agg2))
+	assert.NotNil(t, pubAgg2.Verify(msg2, agg2))
+	assert.NotNil(t, pubAgg1.Verify(msg1, agg3))
+	assert.NotNil(t, pubAgg1.Verify(msg2, agg3))
+	assert.NotNil(t, pubAgg1.Verify(msg1, agg4))
+	assert.NotNil(t, pubAgg3.Verify(msg1, agg1))
+	assert.Nil(t, pubAgg1.Verify(msg1, agg5))
+	assert.Nil(t, pubAgg4.Verify(msg1, agg1))
 }
-
 
 func TestAggregateNil(t *testing.T) {
 	assert.Nil(t, bls.SignatureAggregate(nil))
@@ -160,11 +159,10 @@ func TestDuplicatedAggregate(t *testing.T) {
 	assert.False(t, pubAgg1.EqualsTo(pubAgg2))
 
 	assert.False(t, bls.VerifyAggregated(agg1, pubs1, msg1))
-	assert.Nil(t, pubAgg1.Verify(msg1,agg1))
+	assert.NotNil(t, pubAgg1.Verify(msg1, agg1))
 
-	
 	assert.True(t, bls.VerifyAggregated(agg1, pubs2, msg1))
-	assert.NotNil(t, pubAgg2.Verify(msg1,agg1))
+	assert.Nil(t, pubAgg2.Verify(msg1, agg1))
 }
 
 // TestHashToCurve ensures that the hash-to-curve function in kilic/bls12-381
