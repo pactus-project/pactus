@@ -39,7 +39,7 @@ func TestSignatureAggregate(t *testing.T) {
 	sig1 := prv1.Sign(msg).(*bls.Signature)
 	sig2 := prv2.Sign(msg).(*bls.Signature)
 
-	assert.True(t, bls.Aggregate([]*bls.Signature{sig1, sig2}).EqualsTo(agg))
+	assert.True(t, bls.SignatureAggregate([]*bls.Signature{sig1, sig2}).EqualsTo(agg))
 	assert.False(t, prv1.EqualsTo(prv2))
 }
 
@@ -59,16 +59,21 @@ func TestAggregateFailed(t *testing.T) {
 	sig3 := prv3.Sign(msg1).(*bls.Signature)
 	sig4 := prv4.Sign(msg1).(*bls.Signature)
 
-	agg1 := bls.Aggregate([]*bls.Signature{sig1, sig2, sig3})
-	agg2 := bls.Aggregate([]*bls.Signature{sig1, sig2, sig4})
-	agg3 := bls.Aggregate([]*bls.Signature{sig11, sig2, sig3})
-	agg4 := bls.Aggregate([]*bls.Signature{sig1, sig2})
-	agg5 := bls.Aggregate([]*bls.Signature{sig3, sig2, sig1})
+	agg1 := bls.SignatureAggregate([]*bls.Signature{sig1, sig2, sig3})
+	agg2 := bls.SignatureAggregate([]*bls.Signature{sig1, sig2, sig4})
+	agg3 := bls.SignatureAggregate([]*bls.Signature{sig11, sig2, sig3})
+	agg4 := bls.SignatureAggregate([]*bls.Signature{sig1, sig2})
+	agg5 := bls.SignatureAggregate([]*bls.Signature{sig3, sig2, sig1})
 
 	pubs1 := []*bls.PublicKey{pub1, pub2, pub3}
 	pubs2 := []*bls.PublicKey{pub1, pub2, pub4}
 	pubs3 := []*bls.PublicKey{pub1, pub2}
 	pubs4 := []*bls.PublicKey{pub3, pub2, pub1}
+
+	pubAgg1 := bls.PublicKeyAggregate(pubs1)
+	pubAgg2 := bls.PublicKeyAggregate(pubs2)
+	pubAgg3 := bls.PublicKeyAggregate(pubs3)
+	pubAgg4 := bls.PublicKeyAggregate(pubs4)
 
 	assert.NoError(t, pub1.Verify(msg1, sig1))
 	assert.NoError(t, pub2.Verify(msg1, sig2))
@@ -91,10 +96,24 @@ func TestAggregateFailed(t *testing.T) {
 	assert.False(t, bls.VerifyAggregated(agg1, pubs3, msg1))
 	assert.True(t, bls.VerifyAggregated(agg5, pubs1, msg1))
 	assert.True(t, bls.VerifyAggregated(agg1, pubs4, msg1))
+
+	assert.Nil(t, pubAgg1.Verify(msg1, agg1))
+	assert.NotNil(t, pubAgg1.Verify(msg2, agg1))
+	assert.NotNil(t, pubAgg1.Verify(msg1, agg2))
+	assert.NotNil(t, pubAgg2.Verify(msg1, agg1))
+	assert.Nil(t, pubAgg2.Verify(msg1, agg2))
+	assert.NotNil(t, pubAgg2.Verify(msg2, agg2))
+	assert.NotNil(t, pubAgg1.Verify(msg1, agg3))
+	assert.NotNil(t, pubAgg1.Verify(msg2, agg3))
+	assert.NotNil(t, pubAgg1.Verify(msg1, agg4))
+	assert.NotNil(t, pubAgg3.Verify(msg1, agg1))
+	assert.Nil(t, pubAgg1.Verify(msg1, agg5))
+	assert.Nil(t, pubAgg4.Verify(msg1, agg1))
 }
 
 func TestAggregateNil(t *testing.T) {
-	assert.Nil(t, bls.Aggregate(nil))
+	assert.Nil(t, bls.SignatureAggregate(nil))
+	assert.Nil(t, bls.PublicKeyAggregate(nil))
 }
 
 func TestAggregateOnlyOneSignature(t *testing.T) {
@@ -103,9 +122,18 @@ func TestAggregateOnlyOneSignature(t *testing.T) {
 	_, prv1 := ts.RandomBLSKeyPair()
 	msg1 := []byte("zarb")
 	sig1 := prv1.Sign(msg1).(*bls.Signature)
-	agg1 := bls.Aggregate([]*bls.Signature{sig1})
+	agg1 := bls.SignatureAggregate([]*bls.Signature{sig1})
 
 	assert.True(t, agg1.EqualsTo(sig1))
+}
+
+func TestAggregateOnlyOnePublicKey(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	pub1, _ := ts.RandomBLSKeyPair()
+	agg1 := bls.PublicKeyAggregate([]*bls.PublicKey{pub1})
+
+	assert.True(t, agg1.EqualsTo(pub1))
 }
 
 // TODO: should we check for duplication here?
@@ -120,15 +148,21 @@ func TestDuplicatedAggregate(t *testing.T) {
 	sig1 := prv1.Sign(msg1).(*bls.Signature)
 	sig2 := prv2.Sign(msg1).(*bls.Signature)
 
-	agg1 := bls.Aggregate([]*bls.Signature{sig1, sig2, sig1})
-	agg2 := bls.Aggregate([]*bls.Signature{sig1, sig2})
+	agg1 := bls.SignatureAggregate([]*bls.Signature{sig1, sig2, sig1})
+	agg2 := bls.SignatureAggregate([]*bls.Signature{sig1, sig2})
 	assert.False(t, agg1.EqualsTo(agg2))
 
 	pubs1 := []*bls.PublicKey{pub1, pub2}
-	assert.False(t, bls.VerifyAggregated(agg1, pubs1, msg1))
-
 	pubs2 := []*bls.PublicKey{pub1, pub2, pub1}
+	pubAgg1 := bls.PublicKeyAggregate(pubs1)
+	pubAgg2 := bls.PublicKeyAggregate(pubs2)
+	assert.False(t, pubAgg1.EqualsTo(pubAgg2))
+
+	assert.False(t, bls.VerifyAggregated(agg1, pubs1, msg1))
+	assert.NotNil(t, pubAgg1.Verify(msg1, agg1))
+
 	assert.True(t, bls.VerifyAggregated(agg1, pubs2, msg1))
+	assert.Nil(t, pubAgg2.Verify(msg1, agg1))
 }
 
 // TestHashToCurve ensures that the hash-to-curve function in kilic/bls12-381

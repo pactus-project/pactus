@@ -290,7 +290,7 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *block.
 	sig2 := td.signers[1].SignData(sb).(*bls.Signature)
 	sig4 := td.signers[3].SignData(sb).(*bls.Signature)
 
-	sig := bls.Aggregate([]*bls.Signature{sig1, sig2, sig4})
+	sig := bls.SignatureAggregate([]*bls.Signature{sig1, sig2, sig4})
 	cert := block.NewCertificate(0, []int32{0, 1, 2, 3}, []int32{2}, sig)
 	block := p.Block()
 

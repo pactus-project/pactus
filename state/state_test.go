@@ -151,7 +151,7 @@ func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash, ro
 	}
 
 	absentees := util.Subtracts(committers, signedBy)
-	return block.NewCertificate(round, committers, absentees, bls.Aggregate(sigs))
+	return block.NewCertificate(round, committers, absentees, bls.SignatureAggregate(sigs))
 }
 
 func (td *testData) commitBlockForAllStates(t *testing.T, b *block.Block, c *block.Certificate) {
@@ -449,7 +449,7 @@ func TestSortition(t *testing.T) {
 	sigs[1] = td.valSigner3.SignData(sb).(*bls.Signature)
 	sigs[2] = td.valSigner4.SignData(sb).(*bls.Signature)
 	sigs[3] = signer.SignData(sb).(*bls.Signature)
-	c14 := block.NewCertificate(3, []int32{4, 0, 1, 2, 3}, []int32{0}, bls.Aggregate(sigs))
+	c14 := block.NewCertificate(3, []int32{4, 0, 1, 2, 3}, []int32{0}, bls.SignatureAggregate(sigs))
 
 	height++
 	assert.NoError(t, st1.CommitBlock(height, b14, c14))

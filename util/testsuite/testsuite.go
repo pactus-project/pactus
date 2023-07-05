@@ -287,7 +287,7 @@ func (ts *TestSuite) GenerateTestCertificate(blockHash hash.Hash) *block.Certifi
 		priv3.Sign(blockHash.Bytes()).(*bls.Signature),
 		priv4.Sign(blockHash.Bytes()).(*bls.Signature),
 	}
-	sig := bls.Aggregate(sigs)
+	sig := bls.SignatureAggregate(sigs)
 
 	c1 := ts.RandInt32(10)
 	c2 := ts.RandInt32(10) + 10

@@ -166,7 +166,7 @@ func (vs *VoteSet) ToCertificate() *block.Certificate {
 		committers[i] = val.Number()
 	}
 
-	sig := bls.Aggregate(sigs)
+	sig := bls.SignatureAggregate(sigs)
 
 	return block.NewCertificate(vs.Round(), committers, absentees, sig)
 }
