@@ -88,6 +88,14 @@ func TestExecuteBondTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, td.sandbox), "Execute again, should fail")
 	})
 
+	t.Run("Should fail, amount less than MinimumStake", func(t *testing.T) {
+		trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
+			receiverAddr, pub, 1000, fee, "less than MinimumStake")
+
+		err := exe.Execute(trx, td.sandbox)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
+	})
+
 	t.Run("Should fail, public key should not set for existing validators", func(t *testing.T) {
 		trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+2, senderAddr,
 			receiverAddr, pub, amt, fee, "with public key")

@@ -70,6 +70,9 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if receiverVal.Stake()+pld.Stake > sb.Params().MaximumStake {
 		return errors.Errorf(errors.ErrInvalidTx,
 			"validator's stake can't be more than %v", sb.Params().MaximumStake)
+	} else if pld.Stake < sb.Params().MinimumStake {
+		return errors.Errorf(errors.ErrInvalidTx,
+			"validator's stake can't be less than %v", sb.Params().MinimumStake)
 	}
 
 	senderAcc.IncSequence()
