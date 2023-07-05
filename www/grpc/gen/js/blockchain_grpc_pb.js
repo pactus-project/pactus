@@ -203,28 +203,6 @@ function deserialize_pactus_GetValidatorResponse(buffer_arg) {
   return blockchain_pb.GetValidatorResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_GetValidatorsRequest(arg) {
-  if (!(arg instanceof blockchain_pb.GetValidatorsRequest)) {
-    throw new Error('Expected argument of type pactus.GetValidatorsRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_GetValidatorsRequest(buffer_arg) {
-  return blockchain_pb.GetValidatorsRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_pactus_GetValidatorsResponse(arg) {
-  if (!(arg instanceof blockchain_pb.GetValidatorsResponse)) {
-    throw new Error('Expected argument of type pactus.GetValidatorsResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_GetValidatorsResponse(buffer_arg) {
-  return blockchain_pb.GetValidatorsResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 
 var BlockchainService = exports.BlockchainService = {
   getBlock: {
@@ -336,17 +314,6 @@ var BlockchainService = exports.BlockchainService = {
     requestDeserialize: deserialize_pactus_GetValidatorAddressesRequest,
     responseSerialize: serialize_pactus_GetValidatorAddressesResponse,
     responseDeserialize: deserialize_pactus_GetValidatorAddressesResponse,
-  },
-  getValidators: {
-    path: '/pactus.Blockchain/GetValidators',
-    requestStream: false,
-    responseStream: false,
-    requestType: blockchain_pb.GetValidatorsRequest,
-    responseType: blockchain_pb.GetValidatorsResponse,
-    requestSerialize: serialize_pactus_GetValidatorsRequest,
-    requestDeserialize: deserialize_pactus_GetValidatorsRequest,
-    responseSerialize: serialize_pactus_GetValidatorsResponse,
-    responseDeserialize: deserialize_pactus_GetValidatorsResponse,
   },
 };
 

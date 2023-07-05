@@ -263,28 +263,6 @@
           "Blockchain"
         ]
       }
-    },
-    "/v1/blockchain/validators": {
-      "get": {
-        "operationId": "Blockchain_GetValidators",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusGetValidatorsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "Blockchain"
-        ]
-      }
     }
   },
   "definitions": {
@@ -523,17 +501,6 @@
       "properties": {
         "validator": {
           "$ref": "#/definitions/pactusValidatorInfo"
-        }
-      }
-    },
-    "pactusGetValidatorsResponse": {
-      "type": "object",
-      "properties": {
-        "validators": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/pactusValidatorInfo"
-          }
         }
       }
     },

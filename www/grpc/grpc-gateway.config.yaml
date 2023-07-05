@@ -19,9 +19,6 @@ http:
     - selector: pactus.Blockchain.GetAccountByNumber
       get: "/v1/blockchain/account/number/{number}"
 
-    - selector: pactus.Blockchain.GetValidators
-      get: "/v1/blockchain/validators"
-
     - selector: pactus.Blockchain.GetValidator
       get: "/v1/blockchain/validator/address/{address}"
 
