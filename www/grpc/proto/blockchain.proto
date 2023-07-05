@@ -21,7 +21,6 @@ service Blockchain {
       returns (GetValidatorResponse);
   rpc GetValidatorAddresses(GetValidatorAddressesRequest)
       returns(GetValidatorAddressesResponse);
-  rpc GetValidators(GetValidatorsRequest) returns (GetValidatorsResponse);
 }
 
 message GetAccountRequest { string address = 1; }
@@ -32,8 +31,6 @@ message  GetAccountByNumberRequest {
 
 message GetAccountResponse { AccountInfo account = 1; }
 
-message GetValidatorsRequest {}
-
 message GetValidatorAddressesRequest {}
 
 message GetValidatorAddressesResponse { repeated string addresses = 1; }
@@ -41,8 +38,6 @@ message GetValidatorAddressesResponse { repeated string addresses = 1; }
 message GetValidatorRequest { string address = 1; }
 
 message GetValidatorByNumberRequest { int32 number = 1; }
-
-message GetValidatorsResponse { repeated ValidatorInfo validators = 1; }
 
 message GetValidatorResponse { ValidatorInfo validator = 1; }
 
