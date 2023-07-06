@@ -18,15 +18,15 @@ const (
 )
 
 type HelloMessage struct {
-	PeerID      peer.ID        `cbor:"1,keyasint"`
-	Agent       string         `cbor:"2,keyasint"`
-	Moniker     string         `cbor:"3,keyasint"`
-	PublicKey   *bls.PublicKey `cbor:"4,keyasint,omitempty"`
+	PeerID      peer.ID          `cbor:"1,keyasint"`
+	Agent       string           `cbor:"2,keyasint"`
+	Moniker     string           `cbor:"3,keyasint"`
+	PublicKey   *bls.PublicKey   `cbor:"4,keyasint,omitempty"`
 	PublicKeys  []*bls.PublicKey `cbor:"9,keyasint,omitempty"`
-	Signature   *bls.Signature `cbor:"5,keyasint"`
-	Height      uint32         `cbor:"6,keyasint"`
-	Flags       int            `cbor:"7,keyasint"`
-	GenesisHash hash.Hash      `cbor:"8,keyasint"`
+	Signature   *bls.Signature   `cbor:"5,keyasint"`
+	Height      uint32           `cbor:"6,keyasint"`
+	Flags       int              `cbor:"7,keyasint"`
+	GenesisHash hash.Hash        `cbor:"8,keyasint"`
 }
 
 func NewHelloMessage(pid peer.ID, moniker string,
@@ -61,14 +61,6 @@ func (m *HelloMessage) SetSignature(sig crypto.Signature) {
 
 func (m *HelloMessage) SetPublicKey(pub crypto.PublicKey) {
 	m.PublicKey = pub.(*bls.PublicKey)
-}
-
-func (m *HelloMessage) SetPublicKeys(pubs []crypto.PublicKey) {
-	pubkeys := []*bls.PublicKey{}
-	for _ , pub := range pubs {
-		pubkeys = append(pubkeys , pub.(*bls.PublicKey))
-	}
-	m.PublicKeys = pubkeys
 }
 
 func (m *HelloMessage) Type() Type {

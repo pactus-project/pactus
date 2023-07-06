@@ -8,6 +8,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -172,10 +173,20 @@ func (sync *synchronizer) sayHello(helloAck bool) {
 		sync.state.LastBlockHeight(),
 		flags, sync.state.Genesis().Hash())
 
+	pubkeys := []*bls.PublicKey{}
+	signs := []*bls.Signature{}
+
 	for _, signer := range sync.signers {
 		signer.SignMsg(msg)
+		pubkeys = append(pubkeys, msg.PublicKey)
+		signs = append(signs, msg.Signature)
 		sync.broadcast(msg)
 	}
+	sig := bls.SignatureAggregate(signs)
+	msg.Signature = sig
+	msg.PublicKeys = pubkeys
+	msg.PublicKey = nil
+	sync.broadcast(msg)
 }
 
 func (sync *synchronizer) broadcastLoop() {
