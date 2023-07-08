@@ -78,6 +78,13 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		assert.Error(t, exe.Execute(trx, td.sandbox))
 	})
 
+	t.Run("Should fail, can't withdraw less than stake amount", func(t *testing.T) {
+		trx := tx.NewWithdrawTx(td.stamp500000, val.Sequence()+1, val.Address(), addr,
+			val.Stake()-1, fee, "can't withdraw less than stake amount")
+
+		assert.Error(t, exe.Execute(trx, td.sandbox))
+	})
+
 	assert.Equal(t, exe.Fee(), fee)
 	assert.Zero(t, td.sandbox.Validator(val.Address()).Stake())
 	assert.Equal(t, td.sandbox.Account(addr).Balance(), amt)

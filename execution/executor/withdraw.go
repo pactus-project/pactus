@@ -41,6 +41,11 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			"hasn't passed unbonding period, expected: %v, got: %v",
 			val.UnbondingHeight()+sb.Params().UnbondInterval, sb.CurrentHeight())
 	}
+	if val.Stake() != pld.Amount+trx.Fee() {
+		return errors.Errorf(errors.ErrInvalidAmount,
+			"Withdraw amount: %v is not equal to stake amount: %v",
+			pld.Amount, val.Stake())
+	}
 
 	acc := sb.Account(pld.To)
 	if acc == nil {
