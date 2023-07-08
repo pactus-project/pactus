@@ -1,6 +1,7 @@
 package network
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -9,14 +10,15 @@ import (
 
 func TestMDNS(t *testing.T) {
 	conf1 := testConfig()
+	ctx, cancel := context.WithCancel(context.Background())
 	conf1.Listens = []string{"/ip4/127.0.0.1/tcp/0"}
 	conf1.EnableMdns = true
-	net1, _ := newNetwork(conf1, nil)
+	net1, _ := newNetwork(conf1, nil, ctx, cancel)
 
 	conf2 := testConfig()
 	conf2.Listens = []string{"/ip4/127.0.0.1/tcp/0"}
 	conf2.EnableMdns = true
-	net2, _ := newNetwork(conf2, nil)
+	net2, _ := newNetwork(conf2, nil, ctx, cancel)
 
 	assert.NoError(t, net1.Start())
 	time.Sleep(250 * time.Millisecond)

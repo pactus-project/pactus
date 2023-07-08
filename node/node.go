@@ -48,7 +48,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		"network", genDoc.ChainType())
 
 	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	network, err := network.NewNetwork(conf.Network, ctx, cancel)
 	if err != nil {

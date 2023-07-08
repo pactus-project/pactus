@@ -2,6 +2,7 @@ package sync
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -75,6 +76,7 @@ func setup(t *testing.T, config *Config) *testData {
 	consMgr, consMocks := consensus.MockingManager(ts, signers)
 	broadcastCh := make(chan message.Message, 1000)
 	network := network.MockingNetwork(ts, ts.RandomPeerID())
+	ctx := context.Background()
 
 	Sync, err := NewSynchronizer(config,
 		signers,
@@ -82,6 +84,7 @@ func setup(t *testing.T, config *Config) *testData {
 		consMgr,
 		network,
 		broadcastCh,
+		ctx,
 	)
 	assert.NoError(t, err)
 	sync := Sync.(*synchronizer)

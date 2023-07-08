@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -32,6 +33,8 @@ func setup(t *testing.T) *testData {
 		return tTestData
 	}
 
+	ctx := context.Background()
+
 	ts := testsuite.NewTestSuite(t)
 
 	mockState := state.MockingState(ts)
@@ -49,10 +52,10 @@ func setup(t *testing.T) *testData {
 		Listen: "[::]:0",
 	}
 
-	gRPCServer := grpc.NewServer(grpcConf, mockState, mockSync, mockConsMgr)
+	gRPCServer := grpc.NewServer(grpcConf, mockState, mockSync, mockConsMgr, ctx)
 	assert.NoError(t, gRPCServer.StartServer())
 
-	httpServer := NewServer(httpConf)
+	httpServer := NewServer(httpConf, ctx)
 	assert.NoError(t, httpServer.StartServer(gRPCServer.Address()))
 
 	tTestData = &testData{

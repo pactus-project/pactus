@@ -1,6 +1,7 @@
 package sync
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -86,6 +87,8 @@ func TestSyncing(t *testing.T) {
 	networkAlice := network.MockingNetwork(ts, ts.RandomPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandomPeerID())
 
+	ctx := context.Background()
+
 	configBob.NodeNetwork = true
 	networkAlice.AddAnotherNetwork(networkBob)
 	networkBob.AddAnotherNetwork(networkAlice)
@@ -97,6 +100,7 @@ func TestSyncing(t *testing.T) {
 		consMgrAlice,
 		networkAlice,
 		broadcastChAlice,
+		ctx,
 	)
 	assert.NoError(t, err)
 	syncAlice := sync1.(*synchronizer)
@@ -107,6 +111,7 @@ func TestSyncing(t *testing.T) {
 		consMgrBob,
 		networkBob,
 		broadcastChBob,
+		ctx,
 	)
 	assert.NoError(t, err)
 	syncBob := sync2.(*synchronizer)

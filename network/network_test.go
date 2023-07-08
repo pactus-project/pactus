@@ -1,6 +1,7 @@
 package network
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"testing"
@@ -40,7 +41,8 @@ func makeTestRelay(t *testing.T) host.Host {
 }
 
 func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
-	net, err := newNetwork(conf, opts)
+	ctx, cancel := context.WithCancel(context.Background())
+	net, err := newNetwork(conf, opts, ctx, cancel)
 	assert.NoError(t, err)
 
 	assert.NoError(t, net.Start())
@@ -104,7 +106,8 @@ func readData(t *testing.T, r io.ReadCloser, len int) []byte {
 }
 
 func TestStoppingNetwork(t *testing.T) {
-	net, err := NewNetwork(testConfig())
+	ctx, cancel := context.WithCancel(context.Background())
+	net, err := NewNetwork(testConfig(), ctx, cancel)
 	assert.NoError(t, err)
 
 	assert.NoError(t, net.Start())
@@ -301,7 +304,8 @@ func TestNetwork(t *testing.T) {
 }
 
 func TestInvalidTopic(t *testing.T) {
-	net, err := NewNetwork(testConfig())
+	ctx, cancel := context.WithCancel(context.Background())
+	net, err := NewNetwork(testConfig(), ctx, cancel)
 	assert.NoError(t, err)
 
 	msg := []byte("test-invalid-topic")
@@ -313,11 +317,13 @@ func TestInvalidRelayAddress(t *testing.T) {
 	conf := testConfig()
 	conf.EnableRelay = true
 
+	ctx, cancel := context.WithCancel(context.Background())
+
 	conf.RelayAddrs = []string{"127.0.0.1:4001"}
-	_, err := NewNetwork(conf)
+	_, err := NewNetwork(conf, ctx, cancel)
 	assert.Error(t, err)
 
 	conf.RelayAddrs = []string{"/ip4/127.0.0.1/tcp/4001"}
-	_, err = NewNetwork(conf)
+	_, err = NewNetwork(conf, ctx, cancel)
 	assert.Error(t, err)
 }
