@@ -126,7 +126,7 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	n := &network{
-		ctx:          ctx,
+		ctx:          ctx, //
 		cancel:       cancel,
 		config:       conf,
 		host:         host,

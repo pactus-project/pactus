@@ -27,7 +27,7 @@ type Server struct {
 
 func NewServer(conf *Config, eventCh <-chan event.Event) *Server {
 	return &Server{
-		ctx:     context.Background(),
+		ctx:     context.Background(),//
 		config:  conf,
 		logger:  logger.NewLogger("_nonomsg", nil),
 		eventCh: eventCh,

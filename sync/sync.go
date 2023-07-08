@@ -54,7 +54,7 @@ func NewSynchronizer(
 	net network.Network,
 	broadcastCh <-chan message.Message) (Synchronizer, error) {
 	sync := &synchronizer{
-		ctx:         context.Background(), // TODO, set proper context
+		ctx:         context.Background(), // // TODO, set proper context
 		config:      conf,
 		signers:     signers,
 		state:       state,

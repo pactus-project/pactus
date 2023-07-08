@@ -33,7 +33,7 @@ type Server struct {
 
 func NewServer(conf *Config) *Server {
 	return &Server{
-		ctx:    context.Background(),
+		ctx:    context.Background(),//
 		config: conf,
 		logger: logger.NewLogger("_http", nil),
 	}

@@ -1,6 +1,7 @@
 package node
 
 import (
+	"context"
 	"time"
 
 	"github.com/pactus-project/pactus/config"
@@ -46,6 +47,9 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		"version", version.Version(),
 		"network", genDoc.ChainType())
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	
 	network, err := network.NewNetwork(conf.Network)
 	if err != nil {
 		return nil, err
