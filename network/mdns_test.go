@@ -13,12 +13,12 @@ func TestMDNS(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	conf1.Listens = []string{"/ip4/127.0.0.1/tcp/0"}
 	conf1.EnableMdns = true
-	net1, _ := newNetwork(conf1, nil, ctx, cancel)
+	net1, _ := newNetwork(ctx, cancel, conf1, nil)
 
 	conf2 := testConfig()
 	conf2.Listens = []string{"/ip4/127.0.0.1/tcp/0"}
 	conf2.EnableMdns = true
-	net2, _ := newNetwork(conf2, nil, ctx, cancel)
+	net2, _ := newNetwork(ctx, cancel, conf2, nil)
 
 	assert.NoError(t, net1.Start())
 	time.Sleep(250 * time.Millisecond)

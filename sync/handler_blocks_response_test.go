@@ -94,24 +94,24 @@ func TestSyncing(t *testing.T) {
 	networkBob.AddAnotherNetwork(networkAlice)
 	addBlocks(t, stateBob, 100)
 
-	sync1, err := NewSynchronizer(configAlice,
+	sync1, err := NewSynchronizer(ctx,
+		configAlice,
 		signersAlice,
 		stateAlice,
 		consMgrAlice,
 		networkAlice,
 		broadcastChAlice,
-		ctx,
 	)
 	assert.NoError(t, err)
 	syncAlice := sync1.(*synchronizer)
 
-	sync2, err := NewSynchronizer(configBob,
+	sync2, err := NewSynchronizer(ctx,
+		configBob,
 		signersBob,
 		stateBob,
 		consMgrBob,
 		networkBob,
 		broadcastChBob,
-		ctx,
 	)
 	assert.NoError(t, err)
 	syncBob := sync2.(*synchronizer)

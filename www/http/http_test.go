@@ -52,10 +52,10 @@ func setup(t *testing.T) *testData {
 		Listen: "[::]:0",
 	}
 
-	gRPCServer := grpc.NewServer(grpcConf, mockState, mockSync, mockConsMgr, ctx)
+	gRPCServer := grpc.NewServer(ctx, grpcConf, mockState, mockSync, mockConsMgr)
 	assert.NoError(t, gRPCServer.StartServer())
 
-	httpServer := NewServer(httpConf, ctx)
+	httpServer := NewServer(ctx, httpConf)
 	assert.NoError(t, httpServer.StartServer(gRPCServer.Address()))
 
 	tTestData = &testData{

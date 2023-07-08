@@ -78,13 +78,13 @@ func setup(t *testing.T, config *Config) *testData {
 	network := network.MockingNetwork(ts, ts.RandomPeerID())
 	ctx := context.Background()
 
-	Sync, err := NewSynchronizer(config,
+	Sync, err := NewSynchronizer(ctx,
+		config,
 		signers,
 		state,
 		consMgr,
 		network,
 		broadcastCh,
-		ctx,
 	)
 	assert.NoError(t, err)
 	sync := Sync.(*synchronizer)

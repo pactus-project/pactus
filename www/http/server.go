@@ -31,7 +31,7 @@ type Server struct {
 	logger      *logger.Logger
 }
 
-func NewServer(conf *Config, ctx context.Context) *Server {
+func NewServer(ctx context.Context, conf *Config) *Server {
 	return &Server{
 		ctx:    ctx,
 		config: conf,

@@ -47,13 +47,14 @@ type synchronizer struct {
 }
 
 func NewSynchronizer(
+	ctx context.Context,
 	conf *Config,
 	signers []crypto.Signer,
 	state state.Facade,
 	consMgr consensus.Manager,
 	net network.Network,
 	broadcastCh <-chan message.Message,
-	ctx context.Context) (Synchronizer, error) {
+) (Synchronizer, error) {
 	sync := &synchronizer{
 		ctx:         ctx,
 		config:      conf,

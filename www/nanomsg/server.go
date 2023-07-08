@@ -25,7 +25,7 @@ type Server struct {
 	seqNum    uint32
 }
 
-func NewServer(conf *Config, eventCh <-chan event.Event, ctx context.Context) *Server {
+func NewServer(ctx context.Context, conf *Config, eventCh <-chan event.Event) *Server {
 	return &Server{
 		ctx:     ctx,
 		config:  conf,

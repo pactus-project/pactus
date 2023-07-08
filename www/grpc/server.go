@@ -24,8 +24,8 @@ type Server struct {
 	logger   *logger.Logger
 }
 
-func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
-	consMgr consensus.ManagerReader, ctx context.Context) *Server {
+func NewServer(ctx context.Context, conf *Config, state state.Facade, sync sync.Synchronizer,
+	consMgr consensus.ManagerReader) *Server {
 	return &Server{
 		ctx:     ctx,
 		config:  conf,
