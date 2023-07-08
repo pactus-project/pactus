@@ -52,9 +52,10 @@ func NewSynchronizer(
 	state state.Facade,
 	consMgr consensus.Manager,
 	net network.Network,
-	broadcastCh <-chan message.Message) (Synchronizer, error) {
+	broadcastCh <-chan message.Message,
+	ctx context.Context) (Synchronizer, error) {
 	sync := &synchronizer{
-		ctx:         context.Background(), // // TODO, set proper context
+		ctx:         ctx,
 		config:      conf,
 		signers:     signers,
 		state:       state,

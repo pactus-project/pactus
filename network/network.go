@@ -71,11 +71,11 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 	return key, nil
 }
 
-func NewNetwork(conf *Config) (Network, error) {
-	return newNetwork(conf, []lp2p.Option{})
+func NewNetwork(conf *Config, ctx context.Context, cancel func()) (Network, error) {
+	return newNetwork(conf, []lp2p.Option{}, ctx, cancel)
 }
 
-func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
+func newNetwork(conf *Config, opts []lp2p.Option, ctx context.Context, cancel func()) (*network, error) {
 	networkKey, err := loadOrCreateKey(conf.NetworkKey)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
@@ -123,10 +123,8 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-
 	n := &network{
-		ctx:          ctx, //
+		ctx:          ctx,
 		cancel:       cancel,
 		config:       conf,
 		host:         host,

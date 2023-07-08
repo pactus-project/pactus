@@ -31,9 +31,9 @@ type Server struct {
 	logger      *logger.Logger
 }
 
-func NewServer(conf *Config) *Server {
+func NewServer(conf *Config, ctx context.Context) *Server {
 	return &Server{
-		ctx:    context.Background(),//
+		ctx:    ctx,
 		config: conf,
 		logger: logger.NewLogger("_http", nil),
 	}

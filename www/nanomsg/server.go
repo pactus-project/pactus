@@ -25,9 +25,9 @@ type Server struct {
 	seqNum    uint32
 }
 
-func NewServer(conf *Config, eventCh <-chan event.Event) *Server {
+func NewServer(conf *Config, eventCh <-chan event.Event, ctx context.Context) *Server {
 	return &Server{
-		ctx:     context.Background(),//
+		ctx:     ctx,
 		config:  conf,
 		logger:  logger.NewLogger("_nonomsg", nil),
 		eventCh: eventCh,

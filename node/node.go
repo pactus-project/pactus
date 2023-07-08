@@ -49,8 +49,8 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	
-	network, err := network.NewNetwork(conf.Network)
+
+	network, err := network.NewNetwork(conf.Network, ctx, cancel)
 	if err != nil {
 		return nil, err
 	}
@@ -74,14 +74,14 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	consMgr := consensus.NewManager(conf.Consensus, state, signers, rewardAddrs, messageCh)
 
-	sync, err := sync.NewSynchronizer(conf.Sync, signers, state, consMgr, network, messageCh)
+	sync, err := sync.NewSynchronizer(conf.Sync, signers, state, consMgr, network, messageCh, ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	http := http.NewServer(conf.HTTP)
-	grpc := grpc.NewServer(conf.GRPC, state, sync, consMgr)
-	nanomsg := nanomsg.NewServer(conf.Nanomsg, eventCh)
+	http := http.NewServer(conf.HTTP, ctx)
+	grpc := grpc.NewServer(conf.GRPC, state, sync, consMgr, ctx)
+	nanomsg := nanomsg.NewServer(conf.Nanomsg, eventCh, ctx)
 
 	node := &Node{
 		config:     conf,

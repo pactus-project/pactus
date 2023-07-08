@@ -25,9 +25,9 @@ type Server struct {
 }
 
 func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
-	consMgr consensus.ManagerReader) *Server {
+	consMgr consensus.ManagerReader, ctx context.Context) *Server {
 	return &Server{
-		ctx:     context.Background(),//
+		ctx:     ctx,
 		config:  conf,
 		state:   state,
 		sync:    sync,
