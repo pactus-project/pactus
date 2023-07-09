@@ -5,12 +5,16 @@ package main
 import (
 	_ "embed"
 
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/crypto"
 )
 
 //go:embed assets/ui/main_window.ui
 var uiMainWindow []byte
+
+//go:embed assets/css/style.css
+var cssCustom string
 
 type mainWindow struct {
 	*gtk.ApplicationWindow
@@ -62,6 +66,18 @@ func buildMainWindow(nodeModel *nodeModel, walletModel *walletModel) *mainWindow
 		"on_transaction_bond":     mw.OnTransactionBond,
 	}
 	builder.ConnectSignals(signals)
+
+	// apply custom css
+	provider, err := gtk.CssProviderNew()
+	fatalErrorCheck(err)
+
+	err = provider.LoadFromData(cssCustom)
+	fatalErrorCheck(err)
+
+	screen, err := gdk.ScreenGetDefault()
+	fatalErrorCheck(err)
+
+	gtk.AddProviderForScreen(screen, provider, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 	return mw
 }

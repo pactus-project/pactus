@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"runtime"
 
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/types/tx"
@@ -18,30 +19,30 @@ import (
 )
 
 func showQuestionDialog(parent gtk.IWindow, msg string) bool {
-	dlg := gtk.MessageDialogNewWithMarkup(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, "")
-	dlg.SetMarkup(msg)
+	dlg := gtk.MessageDialogNew(parent,
+		gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, msg)
 	res := dlg.Run()
 	dlg.Destroy()
 	return res == gtk.RESPONSE_YES
 }
 
 func showInfoDialog(parent gtk.IWindow, msg string) {
-	dlg := gtk.MessageDialogNewWithMarkup(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "")
-	dlg.SetMarkup(msg)
+	dlg := gtk.MessageDialogNew(parent,
+		gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, msg)
 	dlg.Run()
 	dlg.Destroy()
 }
 
 func showWarningDialog(parent gtk.IWindow, msg string) {
-	dlg := gtk.MessageDialogNewWithMarkup(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, "")
-	dlg.SetMarkup(msg)
+	dlg := gtk.MessageDialogNew(parent,
+		gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, msg)
 	dlg.Run()
 	dlg.Destroy()
 }
 
 func showErrorDialog(parent gtk.IWindow, msg string) {
-	dlg := gtk.MessageDialogNewWithMarkup(parent, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, "")
-	dlg.SetMarkup(msg)
+	dlg := gtk.MessageDialogNew(parent,
+		gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, msg)
 	dlg.Run()
 	dlg.Destroy()
 }
@@ -84,6 +85,10 @@ func getComboBoxTextObj(builder *gtk.Builder, name string) *gtk.ComboBoxText {
 
 func getEntryObj(builder *gtk.Builder, name string) *gtk.Entry {
 	return getObj(builder, name).(*gtk.Entry)
+}
+
+func getOverlayObj(builder *gtk.Builder, name string) *gtk.Overlay {
+	return getObj(builder, name).(*gtk.Overlay)
 }
 
 func getTreeViewObj(builder *gtk.Builder, name string) *gtk.TreeView {
@@ -240,4 +245,51 @@ func openURLInBrowser(address string) error {
 	}
 	args = append(args, address)
 	return exec.Command(cmd, args...).Start()
+}
+
+func buildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {
+	overlay := getOverlayObj(builder, overlayID)
+
+	// Create a new Entry
+	entry, err := gtk.EntryNew()
+	fatalErrorCheck(err)
+	entry.SetCanFocus(true)
+	entry.SetHExpand(true)
+	entry.SetEditable(false)
+
+	setCSSClass(&entry.Widget, "copyable_entry")
+
+	// Create a new Button
+	button, err := gtk.ButtonNewFromIconName("edit-copy-symbolic", gtk.ICON_SIZE_BUTTON)
+	fatalErrorCheck(err)
+
+	button.SetTooltipText("Copy to Clipboard") // TODO: Not working!
+	button.SetHAlign(gtk.ALIGN_END)
+	button.SetVAlign(gtk.ALIGN_CENTER)
+	button.SetHExpand(false)
+	button.SetVExpand(false)
+	button.SetBorderWidth(0)
+
+	setCSSClass(&button.Widget, "inline_button")
+
+	// Set the click event for the Button
+	button.Connect("clicked", func() {
+		buffer, _ := entry.GetText()
+		clipboard, _ := gtk.ClipboardGet(gdk.SELECTION_CLIPBOARD)
+		clipboard.SetText(buffer)
+	})
+
+	overlay.Add(entry)
+	overlay.AddOverlay(button)
+
+	overlay.ShowAll() // Ensure all child widgets are shown
+
+	return entry
+}
+
+func setCSSClass(widget *gtk.Widget, name string) {
+	styleContext, err := widget.GetStyleContext()
+	fatalErrorCheck(err)
+
+	styleContext.AddClass(name)
 }
