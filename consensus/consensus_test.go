@@ -490,10 +490,10 @@ func TestConsensusInvalidVote(t *testing.T) {
 func TestPickRandomVote(t *testing.T) {
 	td := setup(t)
 
-	assert.Nil(t, td.consP.PickRandomVote())
+	assert.Nil(t, td.consP.PickRandomVote(0))
 
 	td.enterNewHeight(td.consP)
-	assert.Nil(t, td.consP.PickRandomVote())
+	assert.Nil(t, td.consP.PickRandomVote(0))
 
 	p1 := td.makeProposal(t, 1, 0)
 	p2 := td.makeProposal(t, 1, 1)
@@ -505,7 +505,7 @@ func TestPickRandomVote(t *testing.T) {
 	td.addVote(td.consP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexX)
 	td.addVote(td.consP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexY)
 
-	assert.NotNil(t, td.consP.PickRandomVote())
+	assert.NotNil(t, td.consP.PickRandomVote(0))
 
 	td.addVote(td.consP, vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, tIndexX)
 	td.addVote(td.consP, vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, tIndexY)
@@ -522,8 +522,8 @@ func TestPickRandomVote(t *testing.T) {
 	// Round 2
 	td.addVote(td.consP, vote.VoteTypeChangeProposer, 1, 2, hash.UndefHash, tIndexP)
 
-	for i := 0; i < 10; i++ {
-		rndVote := td.consP.PickRandomVote()
+	for r := int16(0); r <= 2; r++ {
+		rndVote := td.consP.PickRandomVote(r)
 		assert.NotNil(t, rndVote)
 		assert.Equal(t, rndVote.Type(), vote.VoteTypeChangeProposer,
 			"Should only pick Change Proposer votes")

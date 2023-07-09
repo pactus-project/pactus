@@ -6,6 +6,7 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -255,12 +256,13 @@ func (ps *PeerSet) UpdatePeerInfo(
 	}
 }
 
-func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32) {
+func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32, lastBlockHash hash.Hash) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
-	p.Height = util.MaxU32(p.Height, height)
+	p.Height = height
+	p.LastBlockHash = lastBlockHash
 	ps.maxClaimedHeight = util.MaxU32(ps.maxClaimedHeight, height)
 }
 

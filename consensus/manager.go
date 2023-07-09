@@ -54,9 +54,9 @@ func (mgr *manager) Instances() []Reader {
 }
 
 // PickRandomVote retrieves a random vote from a random consensus instance.
-func (mgr *manager) PickRandomVote() *vote.Vote {
+func (mgr *manager) PickRandomVote(round int16) *vote.Vote {
 	cons := mgr.getBestInstance()
-	return cons.PickRandomVote()
+	return cons.PickRandomVote(round)
 }
 
 // RoundProposal retrieves the proposal for a specific round from a random consensus instance.

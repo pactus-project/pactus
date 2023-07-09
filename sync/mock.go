@@ -29,7 +29,7 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 		version.Agent(),
 		pub1,
 		true)
-	ps.UpdateHeight(pid1, ts.RandUint32(100000))
+	ps.UpdateHeight(pid1, ts.RandUint32(100000), ts.RandomHash())
 
 	ps.UpdatePeerInfo(
 		pid2,
@@ -38,7 +38,7 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 		version.Agent(),
 		pub2,
 		false)
-	ps.UpdateHeight(pid1, ts.RandUint32(100000))
+	ps.UpdateHeight(pid1, ts.RandUint32(100000), ts.RandomHash())
 
 	return &MockSync{
 		TestID:      ts.RandomPeerID(),

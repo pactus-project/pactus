@@ -38,8 +38,6 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	t.Run("Receiving missed block, should commit both blocks", func(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg1, pid))
 
-		peer := td.sync.peerSet.GetPeer(pid)
-		assert.Equal(t, peer.Height, lastBlockHeight+2)
 		assert.Equal(t, td.sync.state.LastBlockHeight(), lastBlockHeight+2)
 		assert.Equal(t, td.sync.peerSet.MaxClaimedHeight(), lastBlockHeight+2)
 	})

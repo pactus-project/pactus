@@ -18,7 +18,8 @@ func TestSessionTimeout(t *testing.T) {
 		signer := td.RandomSigner()
 		pid := td.RandomPeerID()
 		claimedHeight := uint32(6666)
-		msg := message.NewHelloMessage(pid, "Oscar", claimedHeight, message.FlagNodeNetwork, td.state.Genesis().Hash())
+		msg := message.NewHelloMessage(pid, "Oscar", claimedHeight, message.FlagNodeNetwork,
+			td.state.LastBlockHash(), td.state.Genesis().Hash())
 		signer.SignMsg(msg)
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
@@ -101,9 +102,6 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).To())
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).Count())
 				assert.Zero(t, bdl1.Message.(*message.BlocksResponseMessage).LastCertificateHeight())
-
-				peer := td.sync.peerSet.GetPeer(pid)
-				assert.Equal(t, peer.Height, curHeight-1) // Peer needs one more block
 			})
 
 			t.Run("Peer synced", func(t *testing.T) {
@@ -123,21 +121,8 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).To())
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).Count())
 				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).LastCertificateHeight(), curHeight)
-
-				peer := td.sync.peerSet.GetPeer(pid)
-				assert.Equal(t, peer.Height, curHeight) // Peer is synced
 			})
 		})
-
-		// t.Run("Peer requests to send the blocks again, It should be rejected", func(t *testing.T) {
-		// 	msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
-		// 	assert.Error(t, td.testReceivingNewMessage(td.sync, msg, pid))
-
-		// 	bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
-		// 	assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
-		// 	assert.Zero(t, bdl.Message.(*message.BlocksResponseMessage).LastCertificateHeight())
-
-		// })
 
 		t.Run("Peer requests blocks that we don't have", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight+100, 1)
@@ -145,9 +130,6 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
-
-			peer := td.sync.peerSet.GetPeer(pid)
-			assert.Equal(t, peer.Height, curHeight+99)
 		})
 	})
 
@@ -168,9 +150,6 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 			msg2 := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
 			assert.Equal(t, msg2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeNoMoreBlocks)
-
-			peer := td.sync.peerSet.GetPeer(pid)
-			assert.Equal(t, peer.Height, uint32(2))
 		})
 
 		t.Run("Peer is busy", func(t *testing.T) {

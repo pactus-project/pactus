@@ -43,6 +43,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		p.LastReceived = peer.LastReceived.Unix()
 		p.SendSuccess = int32(peer.SendSuccess)
 		p.SendFailed = int32(peer.SendFailed)
+		p.LastBlockHash = peer.LastBlockHash.Bytes()
 
 		for key := range peer.ConsensusKeys {
 			p.ConsensusKeys = append(p.ConsensusKeys, key.String())

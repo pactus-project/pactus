@@ -2,6 +2,7 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
@@ -48,7 +49,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 		msg.Agent,
 		msg.PublicKey,
 		util.IsFlagSet(msg.Flags, message.FlagNodeNetwork))
-	handler.peerSet.UpdateHeight(initiator, msg.Height)
+	handler.peerSet.UpdateHeight(initiator, msg.Height, hash.UndefHash)
 
 	if !util.IsFlagSet(msg.Flags, message.FlagHelloAck) {
 		// TODO: Sends response only if there is a direct connection between two peers.

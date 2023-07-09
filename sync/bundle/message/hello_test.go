@@ -19,7 +19,7 @@ func TestHelloMessage(t *testing.T) {
 	t.Run("Invalid signature", func(t *testing.T) {
 		signer1 := ts.RandomSigner()
 		signer2 := ts.RandomSigner()
-		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash())
+		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash(), ts.RandomHash())
 		signer1.SignMsg(m)
 		m.SetPublicKey(signer2.PublicKey())
 
@@ -28,7 +28,7 @@ func TestHelloMessage(t *testing.T) {
 
 	t.Run("Signature is nil", func(t *testing.T) {
 		signer := ts.RandomSigner()
-		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash())
+		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash(), ts.RandomHash())
 		signer.SignMsg(m)
 		m.Signature = nil
 
@@ -37,7 +37,7 @@ func TestHelloMessage(t *testing.T) {
 
 	t.Run("PublicKey is nil", func(t *testing.T) {
 		signer := ts.RandomSigner()
-		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash())
+		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash(), ts.RandomHash())
 		signer.SignMsg(m)
 		m.PublicKey = nil
 
@@ -46,7 +46,7 @@ func TestHelloMessage(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		signer := ts.RandomSigner()
-		m := NewHelloMessage(ts.RandomPeerID(), "Alice", 100, 0, ts.RandomHash())
+		m := NewHelloMessage(ts.RandomPeerID(), "Alice", 100, 0, ts.RandomHash(), ts.RandomHash())
 		signer.SignMsg(m)
 
 		assert.NoError(t, m.SanityCheck())

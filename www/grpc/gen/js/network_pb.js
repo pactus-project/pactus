@@ -843,7 +843,8 @@ proto.pactus.PeerInfo.toObject = function(includeInstance, msg) {
     lastSent: jspb.Message.getFieldWithDefault(msg, 11, 0),
     lastReceived: jspb.Message.getFieldWithDefault(msg, 12, 0),
     sendSuccess: jspb.Message.getFieldWithDefault(msg, 13, 0),
-    sendFailed: jspb.Message.getFieldWithDefault(msg, 14, 0)
+    sendFailed: jspb.Message.getFieldWithDefault(msg, 14, 0),
+    lastBlockHash: msg.getLastBlockHash_asB64()
   };
 
   if (includeInstance) {
@@ -935,6 +936,10 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
     case 14:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setSendFailed(value);
+      break;
+    case 15:
+      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      msg.setLastBlockHash(value);
       break;
     default:
       reader.skipField();
@@ -1060,6 +1065,13 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
   if (f !== 0) {
     writer.writeInt32(
       14,
+      f
+    );
+  }
+  f = message.getLastBlockHash_asU8();
+  if (f.length > 0) {
+    writer.writeBytes(
+      15,
       f
     );
   }
@@ -1358,6 +1370,48 @@ proto.pactus.PeerInfo.prototype.getSendFailed = function() {
  */
 proto.pactus.PeerInfo.prototype.setSendFailed = function(value) {
   return jspb.Message.setProto3IntField(this, 14, value);
+};
+
+
+/**
+ * optional bytes last_block_hash = 15;
+ * @return {!(string|Uint8Array)}
+ */
+proto.pactus.PeerInfo.prototype.getLastBlockHash = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 15, ""));
+};
+
+
+/**
+ * optional bytes last_block_hash = 15;
+ * This is a type-conversion wrapper around `getLastBlockHash()`
+ * @return {string}
+ */
+proto.pactus.PeerInfo.prototype.getLastBlockHash_asB64 = function() {
+  return /** @type {string} */ (jspb.Message.bytesAsB64(
+      this.getLastBlockHash()));
+};
+
+
+/**
+ * optional bytes last_block_hash = 15;
+ * Note that Uint8Array is not supported on all browsers.
+ * @see http://caniuse.com/Uint8Array
+ * This is a type-conversion wrapper around `getLastBlockHash()`
+ * @return {!Uint8Array}
+ */
+proto.pactus.PeerInfo.prototype.getLastBlockHash_asU8 = function() {
+  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
+      this.getLastBlockHash()));
+};
+
+
+/**
+ * @param {!(string|Uint8Array)} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setLastBlockHash = function(value) {
+  return jspb.Message.setProto3BytesField(this, 15, value);
 };
 
 

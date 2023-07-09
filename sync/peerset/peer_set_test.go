@@ -34,9 +34,9 @@ func TestPeerSet(t *testing.T) {
 	t.Run("Testing MaxClaimedHeight", func(t *testing.T) {
 		assert.Equal(t, uint32(0), peerSet.MaxClaimedHeight())
 
-		peerSet.UpdateHeight(pid1, 100)
-		peerSet.UpdateHeight(pid2, 200)
-		peerSet.UpdateHeight(pid3, 150)
+		peerSet.UpdateHeight(pid1, 100, ts.RandomHash())
+		peerSet.UpdateHeight(pid2, 200, ts.RandomHash())
+		peerSet.UpdateHeight(pid3, 150, ts.RandomHash())
 
 		assert.Equal(t, uint32(200), peerSet.MaxClaimedHeight())
 	})

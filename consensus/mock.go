@@ -106,7 +106,7 @@ func (m *MockConsensus) HeightRound() (uint32, int16) {
 func (m *MockConsensus) Fingerprint() string {
 	return ""
 }
-func (m *MockConsensus) PickRandomVote() *vote.Vote {
+func (m *MockConsensus) PickRandomVote(_ int16) *vote.Vote {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 

@@ -20,7 +20,8 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer := td.RandomSigner()
 			pid := td.RandomPeerID()
 			initiator := td.RandomPeerID()
-			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0, td.state.Genesis().Hash())
+			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			signer.SignMsg(msg)
 			assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
@@ -33,7 +34,8 @@ func TestParsingHelloMessages(t *testing.T) {
 			invGenHash := td.RandomHash()
 			signer := td.RandomSigner()
 			pid := td.RandomPeerID()
-			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0, invGenHash)
+			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
+				td.state.LastBlockHash(), invGenHash)
 			signer.SignMsg(msg)
 			assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
@@ -47,7 +49,8 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer := td.RandomSigner()
 			height := td.RandUint32(td.state.LastBlockHeight())
 			pid := td.RandomPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork, td.state.Genesis().Hash())
+			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork,
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			signer.SignMsg(msg)
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
@@ -73,7 +76,8 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer := td.RandomSigner()
 			height := td.RandUint32(td.state.LastBlockHeight())
 			pid := td.RandomPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagHelloAck, td.state.Genesis().Hash())
+			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagHelloAck,
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			signer.SignMsg(msg)
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
@@ -91,7 +95,8 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer := td.RandomSigner()
 			claimedHeight := td.state.LastBlockHeight() + 5
 			pid := td.RandomPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck, td.state.Genesis().Hash())
+			msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck,
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			signer.SignMsg(msg)
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))

@@ -2690,6 +2690,12 @@ public final class NetworkOuterClass {
      * @return The sendFailed.
      */
     int getSendFailed();
+
+    /**
+     * <code>bytes last_block_hash = 15 [json_name = "lastBlockHash"];</code>
+     * @return The lastBlockHash.
+     */
+    com.google.protobuf.ByteString getLastBlockHash();
   }
   /**
    * Protobuf type {@code pactus.PeerInfo}
@@ -2708,6 +2714,7 @@ public final class NetworkOuterClass {
       agent_ = "";
       peerId_ = com.google.protobuf.ByteString.EMPTY;
       consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      lastBlockHash_ = com.google.protobuf.ByteString.EMPTY;
     }
 
     @java.lang.Override
@@ -2967,6 +2974,17 @@ public final class NetworkOuterClass {
       return sendFailed_;
     }
 
+    public static final int LAST_BLOCK_HASH_FIELD_NUMBER = 15;
+    private com.google.protobuf.ByteString lastBlockHash_;
+    /**
+     * <code>bytes last_block_hash = 15 [json_name = "lastBlockHash"];</code>
+     * @return The lastBlockHash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getLastBlockHash() {
+      return lastBlockHash_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -3022,6 +3040,9 @@ public final class NetworkOuterClass {
       }
       if (sendFailed_ != 0) {
         output.writeInt32(14, sendFailed_);
+      }
+      if (!lastBlockHash_.isEmpty()) {
+        output.writeBytes(15, lastBlockHash_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -3090,6 +3111,10 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(14, sendFailed_);
       }
+      if (!lastBlockHash_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(15, lastBlockHash_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -3133,6 +3158,8 @@ public final class NetworkOuterClass {
           != other.getSendSuccess()) return false;
       if (getSendFailed()
           != other.getSendFailed()) return false;
+      if (!getLastBlockHash()
+          .equals(other.getLastBlockHash())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -3176,6 +3203,8 @@ public final class NetworkOuterClass {
       hash = (53 * hash) + getSendSuccess();
       hash = (37 * hash) + SEND_FAILED_FIELD_NUMBER;
       hash = (53 * hash) + getSendFailed();
+      hash = (37 * hash) + LAST_BLOCK_HASH_FIELD_NUMBER;
+      hash = (53 * hash) + getLastBlockHash().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3332,6 +3361,8 @@ public final class NetworkOuterClass {
 
         sendFailed_ = 0;
 
+        lastBlockHash_ = com.google.protobuf.ByteString.EMPTY;
+
         return this;
       }
 
@@ -3377,6 +3408,7 @@ public final class NetworkOuterClass {
         result.lastReceived_ = lastReceived_;
         result.sendSuccess_ = sendSuccess_;
         result.sendFailed_ = sendFailed_;
+        result.lastBlockHash_ = lastBlockHash_;
         onBuilt();
         return result;
       }
@@ -3476,6 +3508,9 @@ public final class NetworkOuterClass {
         if (other.getSendFailed() != 0) {
           setSendFailed(other.getSendFailed());
         }
+        if (other.getLastBlockHash() != com.google.protobuf.ByteString.EMPTY) {
+          setLastBlockHash(other.getLastBlockHash());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -3573,6 +3608,11 @@ public final class NetworkOuterClass {
 
                 break;
               } // case 112
+              case 122: {
+                lastBlockHash_ = input.readBytes();
+
+                break;
+              } // case 122
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -4195,6 +4235,40 @@ public final class NetworkOuterClass {
         onChanged();
         return this;
       }
+
+      private com.google.protobuf.ByteString lastBlockHash_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes last_block_hash = 15 [json_name = "lastBlockHash"];</code>
+       * @return The lastBlockHash.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getLastBlockHash() {
+        return lastBlockHash_;
+      }
+      /**
+       * <code>bytes last_block_hash = 15 [json_name = "lastBlockHash"];</code>
+       * @param value The lastBlockHash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLastBlockHash(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        lastBlockHash_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes last_block_hash = 15 [json_name = "lastBlockHash"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLastBlockHash() {
+        
+        lastBlockHash_ = getDefaultInstance().getLastBlockHash();
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -4301,7 +4375,7 @@ public final class NetworkOuterClass {
       "\n\005peers\030\004 \003(\0132\020.pactus.PeerInfoR\005peers\"\024" +
       "\n\022GetNodeInfoRequest\"^\n\023GetNodeInfoRespo" +
       "nse\022\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002" +
-      " \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peerId\"\305\003\n" +
+      " \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peerId\"\355\003\n" +
       "\010PeerInfo\022\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005a" +
       "gent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peer" +
       "Id\022%\n\016consensus_keys\030\004 \003(\tR\rconsensusKey" +
@@ -4313,7 +4387,8 @@ public final class NetworkOuterClass {
       "\n\tlast_sent\030\013 \001(\003R\010lastSent\022#\n\rlast_rece" +
       "ived\030\014 \001(\003R\014lastReceived\022!\n\014send_success" +
       "\030\r \001(\005R\013sendSuccess\022\037\n\013send_failed\030\016 \001(\005" +
-      "R\nsendFailed2\242\001\n\007Network\022O\n\016GetNetworkIn" +
+      "R\nsendFailed\022&\n\017last_block_hash\030\017 \001(\014R\rl" +
+      "astBlockHash2\242\001\n\007Network\022O\n\016GetNetworkIn" +
       "fo\022\035.pactus.GetNetworkInfoRequest\032\036.pact" +
       "us.GetNetworkInfoResponse\022F\n\013GetNodeInfo" +
       "\022\032.pactus.GetNodeInfoRequest\032\033.pactus.Ge" +
@@ -4354,7 +4429,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "ConsensusKeys", "Flags", "Height", "ReceivedMessages", "InvalidMessages", "ReceivedBytes", "Status", "LastSent", "LastReceived", "SendSuccess", "SendFailed", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "ConsensusKeys", "Flags", "Height", "ReceivedMessages", "InvalidMessages", "ReceivedBytes", "Status", "LastSent", "LastReceived", "SendSuccess", "SendFailed", "LastBlockHash", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
