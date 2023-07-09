@@ -257,7 +257,7 @@ func buildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {
 	entry.SetHExpand(true)
 	entry.SetEditable(false)
 
-	setCssClass(&entry.Widget, "copyable_entry")
+	setCSSClass(&entry.Widget, "copyable_entry")
 
 	// Create a new Button
 	button, err := gtk.ButtonNewFromIconName("edit-copy-symbolic", gtk.ICON_SIZE_BUTTON)
@@ -270,7 +270,7 @@ func buildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {
 	button.SetVExpand(false)
 	button.SetBorderWidth(0)
 
-	setCssClass(&button.Widget, "inline_button")
+	setCSSClass(&button.Widget, "inline_button")
 
 	// Set the click event for the Button
 	button.Connect("clicked", func() {
