@@ -287,7 +287,7 @@ func buildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {
 	return entry
 }
 
-func setCssClass(widget *gtk.Widget, name string) {
+func setCSSClass(widget *gtk.Widget, name string) {
 	styleContext, err := widget.GetStyleContext()
 	fatalErrorCheck(err)
 
