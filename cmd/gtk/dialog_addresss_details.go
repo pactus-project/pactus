@@ -23,8 +23,8 @@ func showAddressDetails(wallet *wallet.Wallet, addr string) {
 	}
 
 	dlg := getDialogObj(builder, "id_dialog_address_details")
-	addressEntry := getEntryObj(builder, "id_entry_address")
-	pubKeyEntry := getEntryObj(builder, "id_entry_public_key")
+	addressEntry := buildExtendedEntry(builder, "id_overlay_address")
+	pubKeyEntry := buildExtendedEntry(builder, "id_overlay_public_key")
 	pathEntry := getEntryObj(builder, "id_entry_path")
 
 	addressEntry.SetText(info.Address)

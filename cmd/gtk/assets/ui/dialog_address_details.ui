@@ -67,13 +67,9 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="id_entry_address">
+              <object class="GtkOverlay" id="id_overlay_address">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="hexpand">True</property>
-                <property name="editable">False</property>
-                <property name="width-chars">32</property>
-                <property name="caps-lock-warning">False</property>
+                <property name="can-focus">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -95,13 +91,9 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="id_entry_public_key">
+              <object class="GtkOverlay" id="id_overlay_public_key">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="hexpand">True</property>
-                <property name="editable">False</property>
-                <property name="width-chars">32</property>
-                <property name="caps-lock-warning">False</property>
+                <property name="can-focus">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
