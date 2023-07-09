@@ -26,7 +26,6 @@ type network struct {
 	// We should remove it from here and pass it as first argument of functions
 	// Adding these linter later:  contextcheck and containedctx
 	ctx            context.Context
-	cancel         func()
 	config         *Config
 	host           lp2phost.Host
 	mdns           *mdnsService
@@ -71,11 +70,11 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 	return key, nil
 }
 
-func NewNetwork(ctx context.Context, cancel func(), conf *Config) (Network, error) {
-	return newNetwork(ctx, cancel, conf, []lp2p.Option{})
+func NewNetwork(ctx context.Context, conf *Config) (Network, error) {
+	return newNetwork(ctx, conf, []lp2p.Option{})
 }
 
-func newNetwork(ctx context.Context, cancel func(), conf *Config, opts []lp2p.Option) (*network, error) {
+func newNetwork(ctx context.Context, conf *Config, opts []lp2p.Option) (*network, error) {
 	networkKey, err := loadOrCreateKey(conf.NetworkKey)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
@@ -125,7 +124,6 @@ func newNetwork(ctx context.Context, cancel func(), conf *Config, opts []lp2p.Op
 
 	n := &network{
 		ctx:          ctx,
-		cancel:       cancel,
 		config:       conf,
 		host:         host,
 		eventChannel: make(chan Event, 100),
@@ -176,8 +174,6 @@ func (n *network) Start() error {
 }
 
 func (n *network) Stop() {
-	n.cancel()
-
 	if n.mdns != nil {
 		n.mdns.Stop()
 	}

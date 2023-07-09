@@ -36,6 +36,8 @@ type Node struct {
 	http       *http.Server
 	grpc       *grpc.Server
 	nanomsg    *nanomsg.Server
+	ctx        context.Context
+	cancel     context.CancelFunc
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config,
@@ -49,7 +51,14 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	network, err := network.NewNetwork(ctx, cancel, conf.Network)
+	var err error
+	defer func() {
+		if err != nil {
+			cancel()
+		}
+	}()
+
+	network, err := network.NewNetwork(ctx, conf.Network)
 	if err != nil {
 		return nil, err
 	}
@@ -94,6 +103,8 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		http:       http,
 		grpc:       grpc,
 		nanomsg:    nanomsg,
+		ctx:        ctx,
+		cancel:     cancel,
 	}
 
 	return node, nil
@@ -151,6 +162,7 @@ func (n *Node) Stop() {
 	n.http.StopServer()
 	n.grpc.StopServer()
 	n.nanomsg.StopServer()
+	n.cancel()
 }
 
 // these methods are using by GUI
