@@ -26,15 +26,17 @@ type HelloMessage struct {
 	Height      uint32         `cbor:"6,keyasint"`
 	Flags       int            `cbor:"7,keyasint"`
 	GenesisHash hash.Hash      `cbor:"8,keyasint"`
+	BlockHash   hash.Hash      `cbor:"10,keyasint"`
 }
 
 func NewHelloMessage(pid peer.ID, moniker string,
-	height uint32, flags int, genesisHash hash.Hash) *HelloMessage {
+	height uint32, flags int, blockHash, genesisHash hash.Hash) *HelloMessage {
 	return &HelloMessage{
 		PeerID:      pid,
 		Agent:       version.Agent(),
 		Moniker:     moniker,
 		GenesisHash: genesisHash,
+		BlockHash:   blockHash,
 		Height:      height,
 		Flags:       flags,
 	}

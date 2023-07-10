@@ -158,6 +158,10 @@
         "sendFailed": {
           "type": "integer",
           "format": "int32"
+        },
+        "lastBlockHash": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },

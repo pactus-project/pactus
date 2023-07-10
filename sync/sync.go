@@ -144,17 +144,24 @@ func (sync *synchronizer) heartBeatTickerLoop() {
 func (sync *synchronizer) broadcastHeartBeat() {
 	// Broadcast a random vote if we are inside the committee
 	if sync.weAreInTheCommittee() {
-		v := sync.consMgr.PickRandomVote()
+		_, round := sync.consMgr.HeightRound()
+		v := sync.consMgr.PickRandomVote(round)
 		if v != nil {
 			msg := message.NewVoteMessage(v)
 			sync.broadcast(msg)
 		}
-	}
 
-	height, round := sync.consMgr.HeightRound()
-	if height > 0 {
-		msg := message.NewHeartBeatMessage(height, round, sync.state.LastBlockHash())
-		sync.broadcast(msg)
+		height, round := sync.consMgr.HeightRound()
+		if height > 0 {
+			msg := message.NewHeartBeatMessage(height, round, sync.state.LastBlockHash())
+			sync.broadcast(msg)
+		}
+	} else {
+		height := sync.state.LastBlockHeight()
+		if height > 0 {
+			msg := message.NewHeartBeatMessage(height, -1, sync.state.LastBlockHash())
+			sync.broadcast(msg)
+		}
 	}
 }
 
@@ -170,7 +177,9 @@ func (sync *synchronizer) sayHello(helloAck bool) {
 		sync.SelfID(),
 		sync.config.Moniker,
 		sync.state.LastBlockHeight(),
-		flags, sync.state.Genesis().Hash())
+		flags,
+		sync.state.LastBlockHash(),
+		sync.state.Genesis().Hash())
 
 	for _, signer := range sync.signers {
 		signer.SignMsg(msg)

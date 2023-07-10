@@ -243,6 +243,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..aInt64(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastReceived')
     ..a<$core.int>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sendSuccess', $pb.PbFieldType.O3)
     ..a<$core.int>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sendFailed', $pb.PbFieldType.O3)
+    ..a<$core.List<$core.int>>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBlockHash', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
@@ -262,6 +263,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     $fixnum.Int64? lastReceived,
     $core.int? sendSuccess,
     $core.int? sendFailed,
+    $core.List<$core.int>? lastBlockHash,
   }) {
     final _result = create();
     if (moniker != null) {
@@ -305,6 +307,9 @@ class PeerInfo extends $pb.GeneratedMessage {
     }
     if (sendFailed != null) {
       _result.sendFailed = sendFailed;
+    }
+    if (lastBlockHash != null) {
+      _result.lastBlockHash = lastBlockHash;
     }
     return _result;
   }
@@ -448,6 +453,15 @@ class PeerInfo extends $pb.GeneratedMessage {
   $core.bool hasSendFailed() => $_has(13);
   @$pb.TagNumber(14)
   void clearSendFailed() => clearField(14);
+
+  @$pb.TagNumber(15)
+  $core.List<$core.int> get lastBlockHash => $_getN(14);
+  @$pb.TagNumber(15)
+  set lastBlockHash($core.List<$core.int> v) { $_setBytes(14, v); }
+  @$pb.TagNumber(15)
+  $core.bool hasLastBlockHash() => $_has(14);
+  @$pb.TagNumber(15)
+  void clearLastBlockHash() => clearField(15);
 }
 
 class NetworkApi {

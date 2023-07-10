@@ -25,9 +25,6 @@ func (m *HeartBeatMessage) SanityCheck() error {
 	if m.Height == 0 {
 		return errors.Errorf(errors.ErrInvalidHeight, "invalid height")
 	}
-	if m.Round < 0 {
-		return errors.Error(errors.ErrInvalidRound)
-	}
 	return nil
 }
 

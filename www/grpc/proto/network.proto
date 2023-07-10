@@ -41,4 +41,5 @@ message PeerInfo {
   int64 last_received = 12;
   int32 send_success = 13;
   int32 send_failed = 14;
+  bytes last_block_hash = 15;
 }

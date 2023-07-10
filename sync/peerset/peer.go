@@ -5,6 +5,7 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -23,6 +24,7 @@ type Peer struct {
 	Flags           int
 	LastSent        time.Time
 	LastReceived    time.Time
+	LastBlockHash   hash.Hash
 	Height          uint32
 	ReceivedBundles int
 	InvalidBundles  int

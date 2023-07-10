@@ -21,11 +21,6 @@ func TestHeartBeatMessage(t *testing.T) {
 
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
 	})
-	t.Run("Invalid round", func(t *testing.T) {
-		m := NewHeartBeatMessage(100, -1, ts.RandomHash())
-
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidRound)
-	})
 
 	t.Run("OK", func(t *testing.T) {
 		m := NewHeartBeatMessage(100, 1, ts.RandomHash())
