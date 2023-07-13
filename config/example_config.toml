@@ -49,6 +49,11 @@
   # Default is false.
  ## enable_mdns = false
 
+  # `enable_metrics` provides network metrics for prometheus.
+  # Metrics provides information about network usage that you can show them in prometheus.
+  # Default is false.
+ ## enable_metrics = false
+
     # `network.bootstrap` contains configuration for bootstrapping the node.
   [network.bootstrap]
 

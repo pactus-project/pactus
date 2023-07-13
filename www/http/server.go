@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/pactus-project/pactus/util"
@@ -72,6 +74,7 @@ func (s *Server) StartServer(grpcServer string) error {
 	s.router.HandleFunc("/account/number/{number}", s.GetAccountByNumberHandler)
 	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)
 	s.router.HandleFunc("/validator/number/{number}", s.GetValidatorByNumberHandler)
+	http.Handle("/metrics/prometheus", promhttp.Handler())
 	http.Handle("/", handlers.RecoveryHandler()(s.router))
 
 	l, err := net.Listen("tcp", s.config.Listen)
