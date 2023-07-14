@@ -84,7 +84,6 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 
-	//libp2p prometheus metrics
 	if conf.EnableMetrics {
 		rcmgrObs.MustRegisterWith(prometheus.DefaultRegisterer)
 	}

@@ -49,8 +49,7 @@
   # Default is false.
  ## enable_mdns = false
 
-  # `enable_metrics` provides network metrics for prometheus.
-  # Metrics provides information about network usage that you can show them in prometheus.
+  # `enable_metrics` if enabled, it provides network metrics for the Prometheus software.
   # Default is false.
  ## enable_metrics = false
 
