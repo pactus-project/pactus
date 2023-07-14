@@ -15,7 +15,7 @@ type Params struct {
 	MinimumFee                int64   `cbor:"10,keyasint"`
 	MaximumFee                int64   `cbor:"11,keyasint"`
 	MinimumStake              int64   `cobr:"12,keyasint"`
-	MaximumStake              int64   `cbor:"12,keyasint"`
+	MaximumStake              int64   `cbor:"13,keyasint"`
 }
 
 func DefaultParams() Params {
