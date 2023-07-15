@@ -2,10 +2,10 @@ package logger
 
 import (
 	"encoding/hex"
-	"fmt"
 	"reflect"
 
-	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 type fingerprintable interface {
@@ -22,7 +22,7 @@ var (
 )
 
 type Logger struct {
-	logger *logrus.Logger
+	logger *zap.Logger
 	name   string
 	obj    interface{}
 }
@@ -58,46 +58,48 @@ func InitLogger(conf *Config) {
 			config:  conf,
 			loggers: make(map[string]*Logger),
 		}
+
+		var cfg zap.Config
 		if conf.Colorful {
-			logrus.SetFormatter(&logrus.TextFormatter{ForceColors: true})
+			cfg = zap.NewDevelopmentConfig()
 		} else {
-			logrus.SetFormatter(&logrus.TextFormatter{DisableColors: true})
+			cfg = zap.NewProductionConfig()
 		}
 
-		lvl, err := logrus.ParseLevel(conf.Levels["default"])
+		cfg.Level = zap.NewAtomicLevelAt(ParseZapLevel(conf.Levels["default"]))
+
+		logger, err := cfg.Build()
 		if err == nil {
-			logrus.SetLevel(lvl)
+			zap.ReplaceGlobals(logger)
 		}
 	}
 }
 
 func NewLogger(name string, obj interface{}) *Logger {
 	l := &Logger{
-		logger: logrus.New(),
-		name:   name,
-		obj:    obj,
-	}
-	if getLoggersInst().config.Colorful {
-		l.logger.SetFormatter(&logrus.TextFormatter{ForceColors: true})
-	} else {
-		l.logger.SetFormatter(&logrus.TextFormatter{DisableColors: true})
+		name: name,
+		obj:  obj,
 	}
 
-	lvl := getLoggersInst().config.Levels[name]
-	if lvl == "" {
-		lvl = getLoggersInst().config.Levels["default"]
+	cfg := zap.NewDevelopmentConfig()
+	if !getLoggersInst().config.Colorful {
+		cfg = zap.NewProductionConfig()
 	}
 
-	level, err := logrus.ParseLevel(lvl)
-	if err == nil {
-		l.SetLevel(level)
+	cfg.Level = zap.NewAtomicLevelAt(ParseZapLevel(getLoggersInst().config.Levels[name]))
+
+	logger, err := cfg.Build()
+	if err != nil {
+		panic(err)
 	}
+
+	l.logger = logger
 
 	getLoggersInst().loggers[name] = l
 	return l
 }
 
-func isNil(i interface{}) bool {
+func IsNil(i interface{}) bool {
 	if i == nil {
 		return true
 	}
@@ -108,119 +110,128 @@ func isNil(i interface{}) bool {
 	return false
 }
 
-func keyvalsToFields(keyvals ...interface{}) logrus.Fields {
+func KeyvalsToFields(keyvals ...interface{}) []zapcore.Field {
 	if len(keyvals)%2 != 0 {
 		keyvals = append(keyvals, "<MISSING VALUE>")
 	}
-	fields := make(logrus.Fields)
+
+	fields := make([]zapcore.Field, 0, len(keyvals)/2)
 	for i := 0; i < len(keyvals); i += 2 {
 		key, ok := keyvals[i].(string)
 		if !ok {
 			key = "invalid-key"
 		}
-		///
-		val := "nil"
+
+		var val interface{}
 		switch v := keyvals[i+1].(type) {
 		case fingerprintable:
-			if !isNil(v) {
-				val = fmt.Sprintf("%v", v.Fingerprint())
+			if !IsNil(v) {
+				val = v.Fingerprint()
 			}
 		case []byte:
 			{
-				val = fmt.Sprintf("%v", hex.EncodeToString(v))
+				val = hex.EncodeToString(v)
 			}
 		default:
-			val = fmt.Sprintf("%v", keyvals[i+1])
+			val = keyvals[i+1]
 		}
-		fields[key] = val
+
+		fields = append(fields, zap.Any(key, val))
 	}
 
 	return fields
 }
 
-func (l *Logger) SetLevel(level logrus.Level) {
-	l.logger.SetLevel(level)
-}
-
-func (l *Logger) withDefaultFields() *logrus.Entry {
-	var fields logrus.Fields
-	if f, ok := l.obj.(fingerprintable); ok {
-		fields = keyvalsToFields(l.name, f.Fingerprint())
-	} else {
-		fields = keyvalsToFields("module", l.name)
+func ParseZapLevel(level string) zapcore.Level {
+	switch level {
+	case "trace":
+		return zapcore.DebugLevel
+	case "debug":
+		return zapcore.DebugLevel
+	case "info":
+		return zapcore.InfoLevel
+	case "warning":
+		return zapcore.WarnLevel
+	case "error":
+		return zapcore.ErrorLevel
+	case "fatal":
+		return zapcore.FatalLevel
+	case "panic":
+		return zapcore.PanicLevel
+	default:
+		return zapcore.InfoLevel
 	}
-	return l.logger.WithFields(fields)
 }
 
-func (l *Logger) log(level logrus.Level, msg string, keyvals ...interface{}) {
-	if l.logger.IsLevelEnabled(level) {
-		l.withDefaultFields().WithFields(keyvalsToFields(keyvals...)).Log(level, msg)
+func (l *Logger) log(level zapcore.Level, msg string, keyvals ...interface{}) {
+	if ce := l.logger.Check(level, msg); ce != nil {
+		ce.Write(KeyvalsToFields(keyvals...)...)
 	}
 }
 
-func (l *Logger) With(keyvals ...interface{}) *logrus.Entry {
-	fields := keyvalsToFields(keyvals...)
-	return l.logger.WithFields(fields)
+func (l *Logger) With(keyvals ...interface{}) *zap.Logger {
+	fields := KeyvalsToFields(keyvals...)
+	return l.logger.With(fields...)
 }
 
 func (l *Logger) Trace(msg string, keyvals ...interface{}) {
-	l.log(logrus.TraceLevel, msg, keyvals...)
+	l.log(zapcore.DebugLevel, msg, keyvals...)
 }
 
 func (l *Logger) Debug(msg string, keyvals ...interface{}) {
-	l.log(logrus.DebugLevel, msg, keyvals...)
+	l.log(zapcore.DebugLevel, msg, keyvals...)
 }
 
 func (l *Logger) Info(msg string, keyvals ...interface{}) {
-	l.log(logrus.InfoLevel, msg, keyvals...)
+	l.log(zapcore.InfoLevel, msg, keyvals...)
 }
 
 func (l *Logger) Warn(msg string, keyvals ...interface{}) {
-	l.log(logrus.WarnLevel, msg, keyvals...)
+	l.log(zapcore.WarnLevel, msg, keyvals...)
 }
 
 func (l *Logger) Error(msg string, keyvals ...interface{}) {
-	l.log(logrus.ErrorLevel, msg, keyvals...)
+	l.log(zapcore.ErrorLevel, msg, keyvals...)
 }
 
 func (l *Logger) Fatal(msg string, keyvals ...interface{}) {
-	l.log(logrus.FatalLevel, msg, keyvals...)
+	l.log(zapcore.FatalLevel, msg, keyvals...)
 }
 
 func (l *Logger) Panic(msg string, keyvals ...interface{}) {
-	l.log(logrus.PanicLevel, msg, keyvals...)
+	l.log(zapcore.PanicLevel, msg, keyvals...)
 }
 
-func log(level logrus.Level, msg string, keyvals ...interface{}) {
-	if logrus.IsLevelEnabled(level) {
-		logrus.WithFields(keyvalsToFields(keyvals...)).Log(level, msg)
+func log(level zapcore.Level, msg string, keyvals ...interface{}) {
+	if ce := zap.L().Check(level, msg); ce != nil {
+		ce.Write(KeyvalsToFields(keyvals...)...)
 	}
 }
 
 func Trace(msg string, keyvals ...interface{}) {
-	log(logrus.TraceLevel, msg, keyvals...)
+	log(zapcore.DebugLevel, msg, keyvals...)
 }
 
 func Debug(msg string, keyvals ...interface{}) {
-	log(logrus.DebugLevel, msg, keyvals...)
+	log(zapcore.DebugLevel, msg, keyvals...)
 }
 
 func Info(msg string, keyvals ...interface{}) {
-	log(logrus.InfoLevel, msg, keyvals...)
+	log(zapcore.InfoLevel, msg, keyvals...)
 }
 
 func Warn(msg string, keyvals ...interface{}) {
-	log(logrus.WarnLevel, msg, keyvals...)
+	log(zapcore.WarnLevel, msg, keyvals...)
 }
 
 func Error(msg string, keyvals ...interface{}) {
-	log(logrus.ErrorLevel, msg, keyvals...)
+	log(zapcore.ErrorLevel, msg, keyvals...)
 }
 
 func Fatal(msg string, keyvals ...interface{}) {
-	log(logrus.FatalLevel, msg, keyvals...)
+	log(zapcore.FatalLevel, msg, keyvals...)
 }
 
 func Panic(msg string, keyvals ...interface{}) {
-	log(logrus.PanicLevel, msg, keyvals...)
+	log(zapcore.PanicLevel, msg, keyvals...)
 }

@@ -1,109 +1,52 @@
-package logger
+package logger_test
 
 import (
-	"bytes"
-	"fmt"
+	"encoding/hex"
 	"testing"
 
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+
+	"github.com/pactus-project/pactus/util/logger"
 )
 
-type Foo struct{}
+type mockFingerprintable struct{}
 
-func (f Foo) Fingerprint() string {
-	return "foo"
+func (m *mockFingerprintable) Fingerprint() string {
+	return "mock-fingerprint"
 }
 
-type Bar struct{}
+func TestFingerprintable(t *testing.T) {
+	f := &mockFingerprintable{}
 
-func (b *Bar) Fingerprint() string {
-	return "bar"
-}
-func TestFingerprint(t *testing.T) {
-	f1 := Foo{}
-	f2 := &Foo{}
-	b1 := Bar{}
-	b2 := &Bar{}
-
-	assert.Equal(t, keyvalsToFields("key", f1)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", &f1)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", f2)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", b1)["key"], "{}")
-	assert.Equal(t, keyvalsToFields("key", &b1)["key"], "bar")
-	assert.Equal(t, keyvalsToFields("key", b2)["key"], "bar")
-	assert.Nil(t, keyvalsToFields(1)["key"])
-	assert.Nil(t, keyvalsToFields(nil, 1)["key"])
-	assert.Nil(t, keyvalsToFields(1, nil)["key"])
+	assert.Equal(t, "mock-fingerprint", f.Fingerprint())
 }
 
-func TestNilFingerprint(t *testing.T) {
-	var f1 Foo
-	var f2 *Foo
-	var b1 Bar
-	var b2 *Bar
+func TestIsNil(t *testing.T) {
+	assert.True(t, logger.IsNil(nil))
 
-	assert.Equal(t, keyvalsToFields("key", f1)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", &f1)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", f2)["key"], "nil")
-	assert.Equal(t, keyvalsToFields("key", b1)["key"], "{}")
-	assert.Equal(t, keyvalsToFields("key", &b1)["key"], "bar")
-	assert.Equal(t, keyvalsToFields("key", b2)["key"], "nil")
-	assert.Nil(t, keyvalsToFields(1)["key"])
-	assert.Nil(t, keyvalsToFields(nil, 1)["key"])
-	assert.Nil(t, keyvalsToFields(1, nil)["key"])
+	obj := struct{}{}
+	assert.False(t, logger.IsNil(obj))
 }
 
-func TestObjLogger(t *testing.T) {
-	loggersInst = nil
-	c := DefaultConfig()
-	c.Colorful = false
-	InitLogger(c)
-
-	l := NewLogger("test", Foo{})
-	var buf bytes.Buffer
-	l.logger.SetOutput(&buf)
-
-	l.Trace("a")
-	l.Debug("b")
-	l.Info("c")
-	l.Warn("d")
-	l.Error("e")
-
-	out := buf.String()
-
-	assert.Contains(t, out, "foo")
-	assert.NotContains(t, out, "trace")
-	assert.NotContains(t, out, "debug")
-	assert.Contains(t, out, "info")
-	assert.Contains(t, out, "warn")
-	assert.Contains(t, out, "err")
+func TestKeyvalsToFields(t *testing.T) {
+	fields := logger.KeyvalsToFields("key1", "value1", "key2", 123, "key3", []byte{0x01, 0x02})
+	expectedFields := []zapcore.Field{
+		zap.Any("key1", "value1"),
+		zap.Any("key2", 123),
+		zap.Any("key3", hex.EncodeToString([]byte{0x01, 0x02})),
+	}
+	assert.Equal(t, expectedFields, fields)
 }
 
-func TestLogger(t *testing.T) {
-	loggersInst = nil
-	c := DefaultConfig()
-	c.Colorful = true
-	InitLogger(c)
+func TestParseZapLevel(t *testing.T) {
+	assert.Equal(t, zapcore.DebugLevel, logger.ParseZapLevel("debug"))
+	assert.Equal(t, zapcore.InfoLevel, logger.ParseZapLevel("info"))
+	assert.Equal(t, zapcore.WarnLevel, logger.ParseZapLevel("warning"))
+	assert.Equal(t, zapcore.ErrorLevel, logger.ParseZapLevel("error"))
+	assert.Equal(t, zapcore.FatalLevel, logger.ParseZapLevel("fatal"))
+	assert.Equal(t, zapcore.PanicLevel, logger.ParseZapLevel("panic"))
 
-	var buf bytes.Buffer
-	logrus.SetOutput(&buf)
-
-	Trace("a")
-	Debug("b", "a", nil)
-	Info("c", "b", []byte{1, 2, 3})
-	Warn("d", "x")
-	Error("e", "y", Foo{})
-
-	out := buf.String()
-
-	fmt.Println(out)
-	assert.Contains(t, out, "foo")
-	assert.Contains(t, out, "010203")
-	assert.Contains(t, out, "<MISSING VALUE>")
-	assert.NotContains(t, out, "TRACE")
-	assert.NotContains(t, out, "DEBU")
-	assert.Contains(t, out, "INFO")
-	assert.Contains(t, out, "WARN")
-	assert.Contains(t, out, "ERR")
+	assert.Equal(t, zapcore.InfoLevel, logger.ParseZapLevel("invalid-level"))
 }
