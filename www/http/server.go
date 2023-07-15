@@ -133,6 +133,7 @@ func (s *Server) RootHandler(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
+	buf.WriteString("<a href=\"/metrics/prometheus\">/metrics/prometheus</a></br>")
 	buf.WriteString("</body></html>")
 	s.writeHTML(w, buf.String())
 }
