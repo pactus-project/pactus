@@ -49,6 +49,10 @@
   # Default is false.
  ## enable_mdns = false
 
+  # `enable_metrics` if enabled, it provides network metrics for the Prometheus software.
+  # Default is false.
+ ## enable_metrics = false
+
     # `network.bootstrap` contains configuration for bootstrapping the node.
   [network.bootstrap]
 
