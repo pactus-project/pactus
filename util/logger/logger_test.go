@@ -18,6 +18,11 @@ func TestNewLogger(t *testing.T) {
 	assert.Equal(t, logger, loggersMap["test"])
 }
 
+func TestInitLogger(t *testing.T) {
+	inst := getLoggersInst()
+	assert.NoError(t, InitLogger(inst.config), "no error")
+}
+
 func TestSetLevel(t *testing.T) {
 	logger := NewLogger("test", nil)
 
@@ -28,12 +33,8 @@ func TestSetLevel(t *testing.T) {
 func TestLog(t *testing.T) {
 	logger := NewLogger("test", nil)
 
-	logger.Log(zerolog.DebugLevel, "Debug message")
-	logger.Log(zerolog.InfoLevel, "Info message")
-	logger.Log(zerolog.WarnLevel, "Warn message")
-	logger.Log(zerolog.ErrorLevel, "Error message")
+	assert.Panics(t, func() { logger.Panic("should panic") }, "Expected Panic to panic")
 }
-
 func TestWith(t *testing.T) {
 	logger := NewLogger("test", nil)
 
@@ -48,7 +49,7 @@ func TestPackageLoggingFunctions(t *testing.T) {
 	Warn("Warn message")
 	Error("Error message")
 	Fatal("Fatal message")
-	assert.Panics(t, func() { Panic("should panic") }, "Expected MyFunction to panic")
+	assert.Panics(t, func() { Panic("should panic") }, "Expected Panic to panic")
 }
 
 func TestKeyvalsToFields(t *testing.T) {

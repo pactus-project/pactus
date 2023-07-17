@@ -2,6 +2,7 @@ package logger
 
 import (
 	"encoding/hex"
+	"fmt"
 	"io"
 	"reflect"
 
@@ -53,18 +54,19 @@ func getLoggersInst() *loggers {
 	return loggersInst
 }
 
-func InitLogger(conf *Config) {
+func InitLogger(conf *Config) error {
 	if loggersInst == nil {
 		loggersInst = &loggers{
 			config:  conf,
 			loggers: make(map[string]*Logger),
 		}
-
 		lvl, err := zerolog.ParseLevel(conf.Levels["default"])
 		if err == nil {
-			zerolog.SetGlobalLevel(lvl)
+			return err
 		}
+		zerolog.SetGlobalLevel(lvl)
 	}
+	return nil
 }
 
 func NewLogger(name string, obj interface{}) *Logger {
@@ -114,11 +116,11 @@ func keyvalsToFields(keyvals ...interface{}) map[string]interface{} {
 		switch v := keyvals[i+1].(type) {
 		case fingerprintable:
 			if !isNil(v) {
-				val = v.Fingerprint()
+				val = fmt.Sprintf("%v", v.Fingerprint())
 			}
 		case []byte:
 			{
-				val = hex.EncodeToString(v)
+				val = fmt.Sprintf("%v", hex.EncodeToString(v))
 			}
 		default:
 			val = keyvals[i+1]
@@ -136,17 +138,19 @@ func (l *Logger) SetLevel(level zerolog.Level) {
 func (l *Logger) Log(level zerolog.Level, msg string, keyvals ...interface{}) {
 	switch level {
 	case zerolog.DebugLevel:
-		log.Debug().Msgf(msg, keyvalsToFields(keyvals...))
+		l.logger.Debug().Msgf(msg, keyvalsToFields(keyvals...))
 	case zerolog.InfoLevel:
-		log.Info().Msgf(msg, keyvalsToFields(keyvals...))
+		l.logger.Info().Msgf(msg, keyvalsToFields(keyvals...))
 	case zerolog.WarnLevel:
-		log.Warn().Msgf(msg, keyvalsToFields(keyvals...))
+		l.logger.Warn().Msgf(msg, keyvalsToFields(keyvals...))
 	case zerolog.ErrorLevel:
-		log.Error().Msgf(msg, keyvalsToFields(keyvals...))
+		l.logger.Error().Msgf(msg, keyvalsToFields(keyvals...))
 	case zerolog.PanicLevel:
-		log.Panic().Msgf(msg, keyvalsToFields(keyvals...))
+		l.logger.Panic().Msgf(msg, keyvalsToFields(keyvals...))
+	case zerolog.TraceLevel:
+		l.logger.Trace().Msgf(msg, keyvalsToFields(keyvals...))
 	default:
-		log.Log().Msgf(msg, keyvalsToFields(keyvals...))
+		l.logger.Log().Msgf(msg, keyvalsToFields(keyvals...))
 	}
 }
 
@@ -195,6 +199,8 @@ func pLog(level zerolog.Level, msg string, keyvals ...interface{}) {
 		log.Error().Msgf(msg, keyvalsToFields(keyvals...))
 	case zerolog.PanicLevel:
 		log.Panic().Msgf(msg, keyvalsToFields(keyvals...))
+	case zerolog.TraceLevel:
+		log.Trace().Msgf(msg, keyvalsToFields(keyvals...))
 	default:
 		log.Log().Msgf(msg, keyvalsToFields(keyvals...))
 	}
