@@ -48,7 +48,7 @@ func TestPackageLoggingFunctions(t *testing.T) {
 	Warn("Warn message")
 	Error("Error message")
 	Fatal("Fatal message")
-	Panic("Panic message")
+	assert.Panics(t, func() { Panic("should panic") }, "Expected MyFunction to panic")
 }
 
 func TestKeyvalsToFields(t *testing.T) {
