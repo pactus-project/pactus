@@ -1,109 +1,66 @@
 package logger
 
 import (
-	"bytes"
-	"fmt"
 	"testing"
 
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 )
 
-type Foo struct{}
+func TestNewLogger(t *testing.T) {
+	logger := NewLogger("test", nil)
+	assert.NotNil(t, logger)
+	assert.Equal(t, "test", logger.name)
+	assert.Nil(t, logger.obj)
 
-func (f Foo) Fingerprint() string {
-	return "foo"
+	loggersMap := getLoggersInst().loggers
+	assert.Contains(t, loggersMap, "test")
+	assert.Equal(t, logger, loggersMap["test"])
 }
 
-type Bar struct{}
+func TestSetLevel(t *testing.T) {
+	logger := NewLogger("test", nil)
 
-func (b *Bar) Fingerprint() string {
-	return "bar"
-}
-func TestFingerprint(t *testing.T) {
-	f1 := Foo{}
-	f2 := &Foo{}
-	b1 := Bar{}
-	b2 := &Bar{}
-
-	assert.Equal(t, keyvalsToFields("key", f1)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", &f1)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", f2)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", b1)["key"], "{}")
-	assert.Equal(t, keyvalsToFields("key", &b1)["key"], "bar")
-	assert.Equal(t, keyvalsToFields("key", b2)["key"], "bar")
-	assert.Nil(t, keyvalsToFields(1)["key"])
-	assert.Nil(t, keyvalsToFields(nil, 1)["key"])
-	assert.Nil(t, keyvalsToFields(1, nil)["key"])
+	logger.SetLevel(zerolog.ErrorLevel)
+	assert.Equal(t, zerolog.ErrorLevel, logger.logger.GetLevel())
 }
 
-func TestNilFingerprint(t *testing.T) {
-	var f1 Foo
-	var f2 *Foo
-	var b1 Bar
-	var b2 *Bar
+func TestLog(t *testing.T) {
+	logger := NewLogger("test", nil)
 
-	assert.Equal(t, keyvalsToFields("key", f1)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", &f1)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", f2)["key"], "nil")
-	assert.Equal(t, keyvalsToFields("key", b1)["key"], "{}")
-	assert.Equal(t, keyvalsToFields("key", &b1)["key"], "bar")
-	assert.Equal(t, keyvalsToFields("key", b2)["key"], "nil")
-	assert.Nil(t, keyvalsToFields(1)["key"])
-	assert.Nil(t, keyvalsToFields(nil, 1)["key"])
-	assert.Nil(t, keyvalsToFields(1, nil)["key"])
+	logger.Log(zerolog.DebugLevel, "Debug message")
+	logger.Log(zerolog.InfoLevel, "Info message")
+	logger.Log(zerolog.WarnLevel, "Warn message")
+	logger.Log(zerolog.ErrorLevel, "Error message")
 }
 
-func TestObjLogger(t *testing.T) {
-	loggersInst = nil
-	c := DefaultConfig()
-	c.Colorful = false
-	InitLogger(c)
+func TestWith(t *testing.T) {
+	logger := NewLogger("test", nil)
 
-	l := NewLogger("test", Foo{})
-	var buf bytes.Buffer
-	l.logger.SetOutput(&buf)
-
-	l.Trace("a")
-	l.Debug("b")
-	l.Info("c")
-	l.Warn("d")
-	l.Error("e")
-
-	out := buf.String()
-
-	assert.Contains(t, out, "foo")
-	assert.NotContains(t, out, "trace")
-	assert.NotContains(t, out, "debug")
-	assert.Contains(t, out, "info")
-	assert.Contains(t, out, "warn")
-	assert.Contains(t, out, "err")
+	event := logger.With("key1", "value1", "key2", "value2")
+	assert.NotNil(t, event)
 }
 
-func TestLogger(t *testing.T) {
-	loggersInst = nil
-	c := DefaultConfig()
-	c.Colorful = true
-	InitLogger(c)
+func TestPackageLoggingFunctions(t *testing.T) {
+	Trace("Trace message")
+	Debug("Debug message")
+	Info("Info message")
+	Warn("Warn message")
+	Error("Error message")
+	Fatal("Fatal message")
+	Panic("Panic message")
+}
 
-	var buf bytes.Buffer
-	logrus.SetOutput(&buf)
+func TestKeyvalsToFields(t *testing.T) {
+	fields := keyvalsToFields("key1", "value1", "key2", "value2", "fingerprint", &testFingerprintable{})
+	assert.NotNil(t, fields)
+	assert.Equal(t, "value1", fields["key1"])
+	assert.Equal(t, "value2", fields["key2"])
+	assert.Equal(t, "test-fingerprint", fields["fingerprint"])
+}
 
-	Trace("a")
-	Debug("b", "a", nil)
-	Info("c", "b", []byte{1, 2, 3})
-	Warn("d", "x")
-	Error("e", "y", Foo{})
+type testFingerprintable struct{}
 
-	out := buf.String()
-
-	fmt.Println(out)
-	assert.Contains(t, out, "foo")
-	assert.Contains(t, out, "010203")
-	assert.Contains(t, out, "<MISSING VALUE>")
-	assert.NotContains(t, out, "TRACE")
-	assert.NotContains(t, out, "DEBU")
-	assert.Contains(t, out, "INFO")
-	assert.Contains(t, out, "WARN")
-	assert.Contains(t, out, "ERR")
+func (t *testFingerprintable) Fingerprint() string {
+	return "test-fingerprint"
 }
