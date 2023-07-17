@@ -40,7 +40,10 @@ type Node struct {
 func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	signers []crypto.Signer, rewardAddrs []crypto.Address) (*Node, error) {
 	// Initialize the logger
-	logger.InitLogger(conf.Logger)
+	err := logger.InitLogger(conf.Logger)
+	if err != nil {
+		return nil, err
+	}
 
 	logger.Info("You are running a pactus block chain",
 		"version", version.Version(),

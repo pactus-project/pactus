@@ -1,11 +1,55 @@
 package logger
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 )
+
+type Foo struct{}
+
+func (f Foo) Fingerprint() string {
+	return "foo"
+}
+
+type Bar struct{}
+
+func (b *Bar) Fingerprint() string {
+	return "bar"
+}
+func TestFingerprint(t *testing.T) {
+	f1 := Foo{}
+	f2 := &Foo{}
+	b1 := Bar{}
+	b2 := &Bar{}
+
+	assert.Equal(t, keyvalsToFields("key", f1)["key"], "foo")
+	assert.Equal(t, keyvalsToFields("key", &f1)["key"], "foo")
+	assert.Equal(t, keyvalsToFields("key", f2)["key"], "foo")
+	assert.Equal(t, keyvalsToFields("key", &b1)["key"], "bar")
+	assert.Equal(t, keyvalsToFields("key", b2)["key"], "bar")
+	assert.Nil(t, keyvalsToFields(1)["key"])
+	assert.Nil(t, keyvalsToFields(nil, 1)["key"])
+	assert.Nil(t, keyvalsToFields(1, nil)["key"])
+}
+
+func TestNilFingerprint(t *testing.T) {
+	var f1 Foo
+	var f2 *Foo
+	var b1 Bar
+	var b2 *Bar
+
+	assert.Equal(t, keyvalsToFields("key", f1)["key"], "foo")
+	assert.Equal(t, keyvalsToFields("key", &f1)["key"], "foo")
+	assert.Equal(t, keyvalsToFields("key", f2)["key"], nil)
+	assert.Equal(t, keyvalsToFields("key", &b1)["key"], "bar")
+	assert.Equal(t, keyvalsToFields("key", b2)["key"], nil)
+	assert.Nil(t, keyvalsToFields(1)["key"])
+	assert.Nil(t, keyvalsToFields(nil, 1)["key"])
+	assert.Nil(t, keyvalsToFields(1, nil)["key"])
+}
 
 func TestNewLogger(t *testing.T) {
 	logger := NewLogger("test", nil)
@@ -58,6 +102,26 @@ func TestKeyvalsToFields(t *testing.T) {
 	assert.Equal(t, "value1", fields["key1"])
 	assert.Equal(t, "value2", fields["key2"])
 	assert.Equal(t, "test-fingerprint", fields["fingerprint"])
+}
+
+func TestLogger(t *testing.T) {
+	l := NewLogger("test", nil)
+
+	var buf bytes.Buffer
+	l2 := l.logger.Output(&buf)
+	l.logger = l2
+
+	l.Debug("debug log")
+	l.Info("info log")
+	l.Error("info log")
+
+	out := buf.String()
+
+	assert.Contains(t, out, "error")
+	assert.Contains(t, out, "debug")
+	assert.Contains(t, out, "info")
+	assert.NotContains(t, out, "trace")
+	assert.NotContains(t, out, "panci")
 }
 
 type testFingerprintable struct{}

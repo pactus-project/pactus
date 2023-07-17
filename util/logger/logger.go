@@ -1,9 +1,9 @@
 package logger
 
 import (
+	"bytes"
 	"encoding/hex"
 	"fmt"
-	"io"
 	"reflect"
 
 	"github.com/rs/zerolog"
@@ -71,7 +71,7 @@ func InitLogger(conf *Config) error {
 
 func NewLogger(name string, obj interface{}) *Logger {
 	l := &Logger{
-		logger: zerolog.New(io.MultiWriter()),
+		logger: zerolog.New(&bytes.Buffer{}),
 		name:   name,
 		obj:    obj,
 	}
