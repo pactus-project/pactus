@@ -61,7 +61,7 @@ func InitLogger(conf *Config) error {
 			loggers: make(map[string]*Logger),
 		}
 		lvl, err := zerolog.ParseLevel(conf.Levels["default"])
-		if err == nil {
+		if err != nil {
 			return err
 		}
 		zerolog.SetGlobalLevel(lvl)
