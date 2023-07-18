@@ -29,8 +29,6 @@ require (
 	google.golang.org/protobuf v1.30.0
 )
 
-require github.com/mattn/go-colorable v0.1.12 // indirect
-
 require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/benbjohnson/clock v1.3.0 // indirect
@@ -88,6 +86,7 @@ require (
 	github.com/libp2p/go-yamux/v4 v4.0.0 // indirect
 	github.com/libp2p/zeroconf/v2 v2.2.0 // indirect
 	github.com/marten-seemann/tcp v0.0.0-20210406111302-dfbc87cc63fd // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/miekg/dns v1.1.53 // indirect

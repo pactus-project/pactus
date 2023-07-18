@@ -154,11 +154,6 @@ func (l *Logger) Log(level zerolog.Level, msg string, keyvals ...interface{}) {
 	}
 }
 
-func (l *Logger) With(keyvals ...interface{}) *zerolog.Event {
-	fields := keyvalsToFields(keyvals...)
-	return l.logger.Log().Fields(fields)
-}
-
 func (l *Logger) Trace(msg string, keyvals ...interface{}) {
 	l.Log(zerolog.TraceLevel, msg, keyvals...)
 }

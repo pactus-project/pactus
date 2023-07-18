@@ -79,12 +79,6 @@ func TestLog(t *testing.T) {
 
 	assert.Panics(t, func() { logger.Panic("should panic") }, "Expected Panic to panic")
 }
-func TestWith(t *testing.T) {
-	logger := NewLogger("test", nil)
-
-	event := logger.With("key1", "value1", "key2", "value2")
-	assert.NotNil(t, event)
-}
 
 func TestPackageLoggingFunctions(t *testing.T) {
 	Trace("Trace message")
