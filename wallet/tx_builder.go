@@ -169,20 +169,16 @@ func (m *txBuilder) setSequence() error {
 	return nil
 }
 
-func (m *txBuilder) setFee() {
+func (m *txBuilder) setFee() error {
 	if m.fee == 0 {
-		switch m.typ {
-		case payload.PayloadTypeTransfer,
-			payload.PayloadTypeBond,
-			payload.PayloadTypeWithdraw:
-			{
-				m.fee = calcFee(m.amount)
-			}
-
-		case payload.PayloadTypeUnbond:
-			{
-				m.fee = 0
-			}
+		if m.client == nil {
+			return ErrOffline
 		}
+		fee, err := m.client.getFee(m.amount, m.typ)
+		if err != nil {
+			return err
+		}
+		m.fee = fee
 	}
+	return nil
 }

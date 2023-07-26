@@ -3,7 +3,11 @@ BUILD_LDFLAGS= -ldflags "-X github.com/pactus-project/pactus/version.build=`git 
 
 ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe
+RM = del /q
+else
+RM = rm -rf
 endif
+
 
 all: build test
 
@@ -47,9 +51,9 @@ docker:
 ########################################
 ### proto
 proto:
-	cd www/grpc/ && rm -rf gen && buf generate proto
+	cd www/grpc/ && $(RM) gen && buf generate proto
 
-	# Generate static assets for Swagger-UI
+# Generate static assets for Swagger-UI
 	cd www/grpc/ && statik -m -f -src swagger-ui/
 
 ########################################

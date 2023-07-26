@@ -62,21 +62,15 @@ func (s *transactionServer) SendRawTransaction(_ context.Context,
 	}, nil
 }
 
-func GetTransactionFee(_ context.Context,
-	req *pactus.GetTransactionFeeRequest) (*pactus.GetTransactionFeeResponse, error)  {
-
-	trx, err := tx.FromBytes(req.Data)
+func (s *transactionServer) CalculateFee(_ context.Context,
+	req *pactus.CalculateFeeRequest) (*pactus.CalculateFeeResponse, error) {
+	fee, err := s.state.CalcFee(req.Amount, payload.Type(req.PayloadType))
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
+		return nil, err
 	}
-
-	if err := trx.SanityCheck(); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "couldn't verify transaction: %v", err.Error())
-	}
-
-	
-
-	
+	return &pactus.CalculateFeeResponse{
+		Fee: fee,
+	}, nil
 }
 
 func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {

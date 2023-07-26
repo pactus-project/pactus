@@ -612,7 +612,7 @@
           "type": "string",
           "format": "int64"
         },
-        "PayloadType": {
+        "payloadType": {
           "$ref": "#/definitions/pactusPayloadType"
         },
         "transfer": {

@@ -17,11 +17,13 @@ export 'transaction.pb.dart';
 
 abstract class TransactionServiceBase extends $pb.GeneratedService {
   $async.Future<$0.GetTransactionResponse> getTransaction($pb.ServerContext ctx, $0.GetTransactionRequest request);
+  $async.Future<$0.CalculateFeeResponse> calculateFee($pb.ServerContext ctx, $0.CalculateFeeRequest request);
   $async.Future<$0.SendRawTransactionResponse> sendRawTransaction($pb.ServerContext ctx, $0.SendRawTransactionRequest request);
 
   $pb.GeneratedMessage createRequest($core.String method) {
     switch (method) {
       case 'GetTransaction': return $0.GetTransactionRequest();
+      case 'CalculateFee': return $0.CalculateFeeRequest();
       case 'SendRawTransaction': return $0.SendRawTransactionRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
     }
@@ -30,6 +32,7 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
   $async.Future<$pb.GeneratedMessage> handleCall($pb.ServerContext ctx, $core.String method, $pb.GeneratedMessage request) {
     switch (method) {
       case 'GetTransaction': return this.getTransaction(ctx, request as $0.GetTransactionRequest);
+      case 'CalculateFee': return this.calculateFee(ctx, request as $0.CalculateFeeRequest);
       case 'SendRawTransaction': return this.sendRawTransaction(ctx, request as $0.SendRawTransactionRequest);
       default: throw $core.ArgumentError('Unknown method: $method');
     }

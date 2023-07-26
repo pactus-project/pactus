@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
@@ -208,4 +209,8 @@ func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 }
 func (m *MockState) Params() param.Params {
 	return m.TestParams
+}
+
+func (m *MockState) CalcFee(amount int64, payloadType payload.Type) (int64, error) {
+	return 0, nil
 }

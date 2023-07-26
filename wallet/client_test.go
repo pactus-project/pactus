@@ -77,6 +77,12 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 	return nil, nil
 }
 
+func (s *transactionServer) CalculateFee(_ context.Context,
+	req *pactus.CalculateFeeRequest) (*pactus.CalculateFeeResponse, error) {
+
+	return &pactus.CalculateFeeResponse{Fee: 0}, nil
+}
+
 func (s *transactionServer) SendRawTransaction(_ context.Context,
 	req *pactus.SendRawTransactionRequest) (*pactus.SendRawTransactionResponse, error) {
 	trx, _ := tx.FromBytes(req.Data)
