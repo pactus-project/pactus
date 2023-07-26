@@ -59,16 +59,15 @@ func (c *transactionClient) SendRawTransaction(ctx context.Context, in *SendRawT
 }
 
 // TransactionServer is the server API for Transaction service.
-// All implementations must embed UnimplementedTransactionServer
+// All implementations should embed UnimplementedTransactionServer
 // for forward compatibility
 type TransactionServer interface {
 	GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error)
 	CalculateFee(context.Context, *CalculateFeeRequest) (*CalculateFeeResponse, error)
 	SendRawTransaction(context.Context, *SendRawTransactionRequest) (*SendRawTransactionResponse, error)
-	mustEmbedUnimplementedTransactionServer()
 }
 
-// UnimplementedTransactionServer must be embedded to have forward compatible implementations.
+// UnimplementedTransactionServer should be embedded to have forward compatible implementations.
 type UnimplementedTransactionServer struct {
 }
 
@@ -81,7 +80,6 @@ func (UnimplementedTransactionServer) CalculateFee(context.Context, *CalculateFe
 func (UnimplementedTransactionServer) SendRawTransaction(context.Context, *SendRawTransactionRequest) (*SendRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendRawTransaction not implemented")
 }
-func (UnimplementedTransactionServer) mustEmbedUnimplementedTransactionServer() {}
 
 // UnsafeTransactionServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to TransactionServer will

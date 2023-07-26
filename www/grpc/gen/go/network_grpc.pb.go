@@ -49,15 +49,14 @@ func (c *networkClient) GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest,
 }
 
 // NetworkServer is the server API for Network service.
-// All implementations must embed UnimplementedNetworkServer
+// All implementations should embed UnimplementedNetworkServer
 // for forward compatibility
 type NetworkServer interface {
 	GetNetworkInfo(context.Context, *GetNetworkInfoRequest) (*GetNetworkInfoResponse, error)
 	GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error)
-	mustEmbedUnimplementedNetworkServer()
 }
 
-// UnimplementedNetworkServer must be embedded to have forward compatible implementations.
+// UnimplementedNetworkServer should be embedded to have forward compatible implementations.
 type UnimplementedNetworkServer struct {
 }
 
@@ -67,7 +66,6 @@ func (UnimplementedNetworkServer) GetNetworkInfo(context.Context, *GetNetworkInf
 func (UnimplementedNetworkServer) GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNodeInfo not implemented")
 }
-func (UnimplementedNetworkServer) mustEmbedUnimplementedNetworkServer() {}
 
 // UnsafeNetworkServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to NetworkServer will

@@ -129,7 +129,7 @@ func (c *blockchainClient) GetValidatorAddresses(ctx context.Context, in *GetVal
 }
 
 // BlockchainServer is the server API for Blockchain service.
-// All implementations must embed UnimplementedBlockchainServer
+// All implementations should embed UnimplementedBlockchainServer
 // for forward compatibility
 type BlockchainServer interface {
 	GetBlock(context.Context, *GetBlockRequest) (*GetBlockResponse, error)
@@ -142,10 +142,9 @@ type BlockchainServer interface {
 	GetValidator(context.Context, *GetValidatorRequest) (*GetValidatorResponse, error)
 	GetValidatorByNumber(context.Context, *GetValidatorByNumberRequest) (*GetValidatorResponse, error)
 	GetValidatorAddresses(context.Context, *GetValidatorAddressesRequest) (*GetValidatorAddressesResponse, error)
-	mustEmbedUnimplementedBlockchainServer()
 }
 
-// UnimplementedBlockchainServer must be embedded to have forward compatible implementations.
+// UnimplementedBlockchainServer should be embedded to have forward compatible implementations.
 type UnimplementedBlockchainServer struct {
 }
 
@@ -179,7 +178,6 @@ func (UnimplementedBlockchainServer) GetValidatorByNumber(context.Context, *GetV
 func (UnimplementedBlockchainServer) GetValidatorAddresses(context.Context, *GetValidatorAddressesRequest) (*GetValidatorAddressesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetValidatorAddresses not implemented")
 }
-func (UnimplementedBlockchainServer) mustEmbedUnimplementedBlockchainServer() {}
 
 // UnsafeBlockchainServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to BlockchainServer will

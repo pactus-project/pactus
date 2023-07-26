@@ -79,7 +79,7 @@ func (c *walletClient) UnlockWallet(ctx context.Context, in *UnlockWalletRequest
 }
 
 // WalletServer is the server API for Wallet service.
-// All implementations must embed UnimplementedWalletServer
+// All implementations should embed UnimplementedWalletServer
 // for forward compatibility
 type WalletServer interface {
 	CreateWallet(context.Context, *CreateWalletRequest) (*CreateWalletResponse, error)
@@ -87,10 +87,9 @@ type WalletServer interface {
 	UnloadWallet(context.Context, *UnloadWalletRequest) (*UnloadWalletResponse, error)
 	LockWallet(context.Context, *LockWalletRequest) (*LockWalletResponse, error)
 	UnlockWallet(context.Context, *UnlockWalletRequest) (*UnlockWalletResponse, error)
-	mustEmbedUnimplementedWalletServer()
 }
 
-// UnimplementedWalletServer must be embedded to have forward compatible implementations.
+// UnimplementedWalletServer should be embedded to have forward compatible implementations.
 type UnimplementedWalletServer struct {
 }
 
@@ -109,7 +108,6 @@ func (UnimplementedWalletServer) LockWallet(context.Context, *LockWalletRequest)
 func (UnimplementedWalletServer) UnlockWallet(context.Context, *UnlockWalletRequest) (*UnlockWalletResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnlockWallet not implemented")
 }
-func (UnimplementedWalletServer) mustEmbedUnimplementedWalletServer() {}
 
 // UnsafeWalletServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to WalletServer will
