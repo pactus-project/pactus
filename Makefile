@@ -47,7 +47,7 @@ docker:
 ########################################
 ### proto
 proto:
-	cd www/grpc/ && buf generate proto
+	cd www/grpc/ && rm -rf gen && buf generate proto
 
 	# Generate static assets for Swagger-UI
 	cd www/grpc/ && statik -m -f -src swagger-ui/
