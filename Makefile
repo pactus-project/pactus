@@ -16,6 +16,7 @@ devtools:
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.12
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+	go install github.com/bufbuild/buf/cmd/buf@v1.25.0
 	go install github.com/rakyll/statik@v0.1
 
 ########################################
@@ -46,10 +47,7 @@ docker:
 ########################################
 ### proto
 proto:
-	protoc --proto_path=./www/grpc/proto \
-	  --go_out=paths=source_relative:./www/grpc/gen/go \
-	  --go-grpc_out=paths=source_relative:./www/grpc/gen/go \
-	  ./www/grpc/proto/*.proto
+	cd www/grpc/ && rm -rf gen && buf generate proto
 
 	# Generate static assets for Swagger-UI
 	cd www/grpc/ && statik -m -f -src swagger-ui/
