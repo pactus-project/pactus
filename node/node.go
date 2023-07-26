@@ -42,7 +42,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	// Initialize the logger
 	logger.InitLogger(conf.Logger)
 
-	logger.Info("You are running a pactus Blockchain",
+	logger.Info("You are running a pactus block chain",
 		"version", version.Version(),
 		"network", genDoc.ChainType())
 
