@@ -25,7 +25,6 @@ The following commands are available in the Makefile:
 - `make check` runs various checks on the code, including formatting and linting.
 - `make test` runs the tests to ensure that all functionality is working as intended.
 - `make proto` regenerates the corresponding code if you have made any changes to the proto buffer files.
- ##### Note: To use `make proto`, ensure that you have `protoc` installed on your device. 
 
 ## Commit guidelines
 
