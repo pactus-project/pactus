@@ -97,7 +97,10 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 		return nil, err
 	}
 
-	m.setFee()
+	err = m.setFee()
+	if err != nil {
+		return nil, err
+	}
 
 	var trx *tx.Tx
 	switch m.typ {

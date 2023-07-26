@@ -93,5 +93,4 @@ func (c *grpcClient) getFee(amount int64, payloadType payload.Type) (int64, erro
 		return 0, err
 	}
 	return res.Fee, nil
-
 }

@@ -18,6 +18,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -727,4 +728,38 @@ func TestCommittingInvalidBlock(t *testing.T) {
 	// td.state1 receives a block with version 2 and rejects it.
 	// It is possible that the same block would be considered valid by td.state2.
 	assert.Error(t, td.state1.CommitBlock(2, b, c))
+}
+
+func TestCalcFee(t *testing.T) {
+	td := setup(t)
+	tests := []struct {
+		amount          int64
+		fee             int64
+		expectedFee     int64
+		expectedErrCode int
+	}{
+		{1, 1, td.state1.params.MinimumFee, errors.ErrInvalidFee},
+		{1, 1001, td.state1.params.MinimumFee, errors.ErrInvalidFee},
+		{1, 1000, td.state1.params.MinimumFee, errors.ErrNone},
+
+		{1 * 1e9, 1, 100000, errors.ErrInvalidFee},
+		{1 * 1e9, 100001, 100000, errors.ErrInvalidFee},
+		{1 * 1e9, 100000, 100000, errors.ErrNone},
+
+		{1 * 1e12, 1, 1000000, errors.ErrInvalidFee},
+		{1 * 1e12, 1000001, 1000000, errors.ErrInvalidFee},
+		{1 * 1e12, 1000000, 1000000, errors.ErrNone},
+	}
+	for _, test := range tests {
+		fee, err := td.state2.CalcFee(int64(test.amount), payload.PayloadTypeTransfer)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(test.expectedFee), fee)
+
+		fee, err = td.state2.CalcFee(int64(test.amount), payload.PayloadTypeUnbond)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(0), fee)
+
+		_, err = td.state2.CalcFee(int64(test.amount), 6)
+		assert.Error(t, err)
+	}
 }

@@ -211,6 +211,6 @@ func (m *MockState) Params() param.Params {
 	return m.TestParams
 }
 
-func (m *MockState) CalcFee(amount int64, payloadType payload.Type) (int64, error) {
+func (m *MockState) CalcFee(_ int64, payloadType payload.Type) (int64, error) {
 	return 0, nil
 }

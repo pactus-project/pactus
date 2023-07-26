@@ -68,6 +68,7 @@ func (s *transactionServer) CalculateFee(_ context.Context,
 	if err != nil {
 		return nil, err
 	}
+
 	return &pactus.CalculateFeeResponse{
 		Fee: fee,
 	}, nil
