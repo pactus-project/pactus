@@ -4,7 +4,7 @@ BUILD_LDFLAGS= -ldflags "-X github.com/pactus-project/pactus/version.build=`git 
 ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe
 RM = del /q
-else
+else 
 RM = rm -rf
 endif
 
