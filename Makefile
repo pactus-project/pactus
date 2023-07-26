@@ -47,11 +47,7 @@ docker:
 ########################################
 ### proto
 proto:
-	cd www/grpc/ && rm -rf gen && buf generate \
-		--path ./proto/blockchain.proto \
-		--path ./proto/network.proto \
-		--path ./proto/transaction.proto \
-		--path ./proto/wallet.proto
+	cd www/grpc/ && buf generate proto
 
 	# Generate static assets for Swagger-UI
 	cd www/grpc/ && statik -m -f -src swagger-ui/
