@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
 )
 
@@ -49,4 +50,5 @@ type Facade interface {
 	Params() param.Params
 	Close() error
 	Fingerprint() string
+	CalcFee(amount int64, payloadType payload.Type) (int64, error)
 }

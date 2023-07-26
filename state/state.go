@@ -19,6 +19,7 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
@@ -701,5 +702,25 @@ func (st *state) publishEvents(height uint32, block *block.Block) {
 		tx := block.Transactions().Get(i)
 		TxEvent := event.CreateNewTransactionEvent(tx.ID(), height)
 		st.eventCh <- TxEvent
+	}
+}
+
+func (st *state) CalcFee(amount int64, payloadType payload.Type) (int64, error) {
+	switch payloadType {
+	case payload.PayloadTypeTransfer,
+		payload.PayloadTypeBond,
+		payload.PayloadTypeWithdraw:
+		{
+			return execution.CalculateFee(amount, st.params), nil
+		}
+
+	case payload.PayloadTypeUnbond,
+		payload.PayloadTypeSortition:
+		{
+			return 0, nil
+		}
+
+	default:
+		return 0, errors.Errorf(errors.ErrInvalidTx, "unexpected tx type: %v", payloadType)
 	}
 }

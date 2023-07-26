@@ -62,6 +62,17 @@ func (s *transactionServer) SendRawTransaction(_ context.Context,
 	}, nil
 }
 
+func (s *transactionServer) CalculateFee(_ context.Context,
+	req *pactus.CalculateFeeRequest) (*pactus.CalculateFeeResponse, error) {
+	fee, err := s.state.CalcFee(req.Amount, payload.Type(req.PayloadType))
+	if err != nil {
+		return nil, err
+	}
+	return &pactus.CalculateFeeResponse{
+		Fee: fee,
+	}, nil
+}
+
 func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 	data, _ := trx.Bytes()
 	transaction := &pactus.TransactionInfo{
