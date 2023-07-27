@@ -1,69 +1,54 @@
 package cache
 
 import (
-	lru "github.com/hashicorp/golang-lru"
+	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/pactus-project/pactus/types/block"
-	"github.com/pactus-project/pactus/util"
 )
-
-const (
-	blockPrefix       = 0x01
-	certificatePrefix = 0x02
-)
-
-type key [32]byte
-
-func blockKey(height uint32) key {
-	var k key
-	k[0] = blockPrefix
-	copy(k[1:], util.Uint32ToSlice(height))
-	return k
-}
-
-func certificateKey(height uint32) key {
-	var k key
-	k[0] = certificatePrefix
-	copy(k[1:], util.Uint32ToSlice(height))
-	return k
-}
 
 type Cache struct {
-	cache *lru.Cache // it's thread safe
+	block       *lru.Cache[uint32, *block.Block] // it's thread safe
+	certificate *lru.Cache[uint32, *block.Certificate]
 }
 
 func NewCache(size int) (*Cache, error) {
-	c, err := lru.New(size)
+	b, err := lru.New[uint32, *block.Block](size)
 	if err != nil {
 		return nil, err
 	}
+
+	c, err := lru.New[uint32, *block.Certificate](size)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Cache{
-		cache: c,
+		block:       b,
+		certificate: c,
 	}, nil
 }
 
 func (c *Cache) HasBlockInCache(height uint32) bool {
-	_, ok := c.cache.Get(blockKey(height))
-	return ok
+	return c.block.Contains(height)
 }
 
 func (c *Cache) GetBlock(height uint32) *block.Block {
-	i, ok := c.cache.Get(blockKey(height))
+	block, ok := c.block.Get(height)
 	if ok {
-		return i.(*block.Block)
+		return block
 	}
 
 	return nil
 }
 
 func (c *Cache) AddBlock(height uint32, block *block.Block) {
-	c.cache.Add(blockKey(height), block)
+	c.block.Add(height, block)
 	c.AddCertificate(height-1, block.PrevCertificate())
 }
 
 func (c *Cache) GetCertificate(height uint32) *block.Certificate {
-	i, ok := c.cache.Get(certificateKey(height))
+	certificate, ok := c.certificate.Get(height)
 	if ok {
-		return i.(*block.Certificate)
+		return certificate
 	}
 
 	return nil
@@ -71,14 +56,18 @@ func (c *Cache) GetCertificate(height uint32) *block.Certificate {
 
 func (c *Cache) AddCertificate(height uint32, cert *block.Certificate) {
 	if cert != nil {
-		c.cache.Add(certificateKey(height), cert)
+		c.certificate.Add(height, cert)
 	}
 }
 
 func (c *Cache) Len() int {
-	return c.cache.Len()
+	if c.block.Len() > c.certificate.Len() {
+		return c.block.Len()
+	}
+	return c.certificate.Len()
 }
 
 func (c *Cache) Clear() {
-	c.cache.Purge()
+	c.block.Purge()
+	c.certificate.Purge()
 }
