@@ -1,147 +1,285 @@
 -------------------------------- MODULE Pactus --------------------------------
 (***************************************************************************)
-(* The specification of the Pactus consensus algorithm based on            *)
-(* Practical Byzantine Fault Tolerant.                                     *)
-(* For more information check here:                                        *)
+(* The specification of the Pactus consensus algorithm:                    *)
 (* `^\url{https://pactus.org/learn/consensus/protocol/}^'                  *)
 (***************************************************************************)
 EXTENDS Integers, Sequences, FiniteSets, TLC
 
 CONSTANT
-    \* The total number of faulty nodes
-    NumFaulty,
+    \* The maximum number of height.
+    \* this is to restrict the allowed behaviours that TLC scans through.
+    MaxHeight,
     \* The maximum number of round per height.
     \* this is to restrict the allowed behaviours that TLC scans through.
-    MaxRound
-
-ASSUME
-    /\ NumFaulty >= 1
+    MaxRound,
+    \* The maximum number of cp-round per height.
+    \* this is to restrict the allowed behaviours that TLC scans through.
+    MaxCPRound,
+    \* The total number of faulty nodes
+    NumFaulty,
+    \* The index of faulty nodes
+    FaultyNodes
 
 VARIABLES
+    \* `log` is a set of received messages in the system.
     log,
+    \* `states` represents the state of each replica in the consensus protocol.
     states
 
-\* Total number of replicas that is `3f+1' where `f' is number of faulty nodes.
+\* Total number of replicas, which is `3f+1', where `f' is the number of faulty nodes.
 Replicas == (3 * NumFaulty) + 1
-\* 2/3 of total replicas that is `2f+1'
-QuorumCnt == (2 * NumFaulty) + 1
-\* 1/3 of total replicas that is `f+1'
+\* Quorum is 2/3+ of total replicas that is `2f+1'
+Quorum == (2 * NumFaulty) + 1
+\* OneThird is 1/3+ of total  replicas that is `f+1'
 OneThird == NumFaulty + 1
 
 \* A tuple with all variables in the spec (for ease of use in temporal conditions)
 vars == <<states, log>>
 
+ASSUME
+    /\ NumFaulty >= 1
+    /\ FaultyNodes \subseteq 0..Replicas-1
+
 -----------------------------------------------------------------------------
 (***************************************************************************)
 (* Helper functions                                                        *)
 (***************************************************************************)
+
 \* Fetch a subset of messages in the network based on the params filter.
 SubsetOfMsgs(params) ==
     {msg \in log: \A field \in DOMAIN params: msg[field] = params[field]}
 
-
-\* IsProposer checks if the replica is the proposer for this round
-\* To simplify, we assume the proposer always starts with the first replica
+\* IsProposer checks if the replica is the proposer for this round.
+\* To simplify, we assume the proposer always starts with the first replica,
 \* and moves to the next by the change-proposer phase.
 IsProposer(index) ==
     states[index].round % Replicas = index
 
-\* HasPrepareQuorum checks if there is a quorum of the PREPARE votes in each round.
+\* Helper function to check if a node is faulty or not.
+IsFaulty(index) == index \in FaultyNodes
+
+\* HasPrepareQuorum checks if there is a quorum of
+\* the PREPARE votes in this round.
 HasPrepareQuorum(index) ==
     Cardinality(SubsetOfMsgs([
-        type   |-> "PREPARE",
-        height |-> states[index].height,
-        round  |-> states[index].round])) >= QuorumCnt
+        type     |-> "PREPARE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> 0])) >= Quorum
 
-\* HasPrecommitQuorum checks if there is a quorum of the PRECOMMIT votes in each round.
+\* HasPrecommitQuorum checks if there is a quorum of
+\* the PRECOMMIT votes in this round.
 HasPrecommitQuorum(index) ==
     Cardinality(SubsetOfMsgs([
-        type   |-> "PRECOMMIT",
-        height |-> states[index].height,
-        round  |-> states[index].round])) >= QuorumCnt
+        type     |-> "PRECOMMIT",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> 0])) >= Quorum
 
-\* HasChangeProposerQuorum checks if there is a quorum of the CHANGE-PROPOSER votes in each round.
-HasChangeProposerQuorum(index) ==
+CPHasPreVotesQuorum(index) ==
     Cardinality(SubsetOfMsgs([
-        type   |-> "CHANGE-PROPOSER",
-        height |-> states[index].height,
-        round  |-> states[index].round])) >= QuorumCnt
+        type     |-> "CP:PRE-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> states[index].cp_round])) >= Quorum
 
-HasOneThirdOfChangeProposer(index) ==
+CPHasPreVotesQuorumForOne(index) ==
     Cardinality(SubsetOfMsgs([
-        type   |-> "CHANGE-PROPOSER",
-        height |-> states[index].height,
-        round  |-> states[index].round])) >= OneThird
+        type     |-> "CP:PRE-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> states[index].cp_round,
+        cp_val   |-> 1])) >= Quorum
+
+CPHasPreVotesQuorumForZero(index) ==
+    Cardinality(SubsetOfMsgs([
+        type     |-> "CP:PRE-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> states[index].cp_round,
+        cp_val   |-> 0])) >= Quorum
+
+CPHasPreVotesForZeroAndOne(index) ==
+    /\ Cardinality(SubsetOfMsgs([
+        type     |-> "CP:PRE-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> states[index].cp_round,
+        cp_val   |-> 0])) >= 1
+    /\ Cardinality(SubsetOfMsgs([
+        type     |-> "CP:PRE-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> states[index].cp_round,
+        cp_val   |-> 1])) >= 1
+
+CPHasOneMainVotesZeroInPrvRound(index) ==
+    Cardinality(SubsetOfMsgs([
+        type     |-> "CP:MAIN-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> states[index].cp_round - 1,
+        cp_val   |-> 0])) > 0
+
+CPHasOneThirdMainVotesOneInPrvRound(index) ==
+    Cardinality(SubsetOfMsgs([
+        type     |-> "CP:MAIN-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> states[index].cp_round - 1,
+        cp_val   |-> 1])) >= OneThird
+
+CPHasOneMainVotesOneInPrvRound(index) ==
+    Cardinality(SubsetOfMsgs([
+        type     |-> "CP:MAIN-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> states[index].cp_round - 1,
+        cp_val   |-> 1])) > 0
+
+CPAllMainVotesAbstainInPrvRound(index) ==
+    Cardinality(SubsetOfMsgs([
+        type     |-> "CP:MAIN-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> states[index].cp_round - 1,
+        cp_val   |-> 2])) >= Quorum
+
+
+CPHasMainVotesQuorum(index) ==
+    Cardinality(SubsetOfMsgs([
+        type     |-> "CP:MAIN-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> states[index].cp_round])) >= Quorum
+
+CPHasMainVotesQuorumForOne(index) ==
+    Cardinality(SubsetOfMsgs([
+        type     |-> "CP:MAIN-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> states[index].cp_round,
+        cp_val   |-> 1])) >= Quorum
+
+CPHasMainVotesQuorumForZero(index) ==
+    Cardinality(SubsetOfMsgs([
+        type     |-> "CP:MAIN-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> states[index].cp_round,
+        cp_val   |-> 0])) >= Quorum
 
 GetProposal(height, round) ==
     SubsetOfMsgs([type |-> "PROPOSAL", height |-> height, round |-> round])
 
-HasProposal(height, round) ==
-    Cardinality(GetProposal(height, round)) > 0
+HasProposal(index) ==
+    Cardinality(GetProposal(states[index].height, states[index].round)) > 0
 
-IsCommitted(height) ==
-    Cardinality(SubsetOfMsgs([type |-> "BLOCK-ANNOUNCE", height |-> height])) > 0
-
-HasVoted(index, type) ==
+HasBlockAnnounce(index) ==
     Cardinality(SubsetOfMsgs([
-        type |-> type,
-        height |-> states[index].height,
-        round |-> states[index].round,
-        index |-> index])) > 0
+        type     |-> "BLOCK-ANNOUNCE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        cp_round |-> 0,
+        cp_val   |-> 0])) >= 1
+
+\* Helper function to check if the block is committed or not.
+\* A block is considered committed iff supermajority of non-faulty replicas announce the same block.
+IsCommitted(height) ==
+    LET subset == SubsetOfMsgs([
+        type     |-> "BLOCK-ANNOUNCE",
+        height   |-> height,
+        cp_round |-> 0,
+        cp_val   |-> 0])
+    IN /\ Cardinality(subset) >= Quorum
+       /\ \A m1, m2 \in subset : m1.round = m2.round
 
 -----------------------------------------------------------------------------
 (***************************************************************************)
 (* Network functions                                                       *)
 (***************************************************************************)
 
-\* SendMsg broadcasts the message iff the current height is not committed yet.
+\* `SendMsg` simulates a replica sending a message by appending it to the `log`.
 SendMsg(msg) ==
-    IF ~IsCommitted(msg.height)
-    THEN log' = log \cup {msg}
-    ELSE log' = log
-
+    log' = log \cup msg
 
 \* SendProposal is used to broadcast the PROPOSAL into the network.
 SendProposal(index) ==
-    SendMsg([
-        type    |-> "PROPOSAL",
-        height  |-> states[index].height,
-        round   |-> states[index].round,
-        index   |-> index])
+    SendMsg({[
+        type     |-> "PROPOSAL",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        index    |-> index,
+        cp_round |-> 0,
+        cp_val   |-> 0]})
 
 \* SendPrepareVote is used to broadcast PREPARE votes into the network.
 SendPrepareVote(index) ==
-    SendMsg([
-        type    |-> "PREPARE",
-        height  |-> states[index].height,
-        round   |-> states[index].round,
-        index   |-> index])
+    SendMsg({[
+        type     |-> "PREPARE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        index    |-> index,
+        cp_round |-> 0,
+        cp_val   |-> 0]})
 
 \* SendPrecommitVote is used to broadcast PRECOMMIT votes into the network.
 SendPrecommitVote(index) ==
-    SendMsg([
-        type    |-> "PRECOMMIT",
-        height  |-> states[index].height,
-        round   |-> states[index].round,
-        index   |-> index])
+    SendMsg({[
+        type     |-> "PRECOMMIT",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        index    |-> index,
+        cp_round |-> 0,
+        cp_val   |-> 0]})
 
-\* SendChangeProposerRequest is used to broadcast CHANGE-PROPOSER votes into the network.
-SendChangeProposerRequest(index) ==
-    SendMsg([
-        type    |-> "CHANGE-PROPOSER",
-        height  |-> states[index].height,
-        round   |-> states[index].round,
-        index   |-> index])
+\* SendCPPreVote is used to broadcast CP:PRE-VOTE votes into the network.
+SendCPPreVote(index, cp_val) ==
+    SendMsg({[
+        type     |-> "CP:PRE-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        index    |-> index,
+        cp_round |-> states[index].cp_round,
+        cp_val   |-> cp_val]})
 
-\* AnnounceBlock announces the block for the current height and clears the logs.
+\* SendCPMainVote is used to broadcast CP:MAIN-VOTE votes into the network.
+SendCPMainVote(index, cp_val) ==
+    SendMsg({[
+        type     |-> "CP:MAIN-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        index    |-> index,
+        cp_round |-> states[index].cp_round,
+        cp_val   |-> cp_val]})
+
+SendCPVotesForNextRound(index, cp_val) ==
+    SendMsg({
+    [
+        type     |-> "CP:PRE-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        index    |-> index,
+        cp_round |-> states[index].cp_round + 1,
+        cp_val   |-> cp_val],
+    [
+        type     |-> "CP:MAIN-VOTE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        index    |-> index,
+        cp_round |-> states[index].cp_round + 1,
+        cp_val   |-> cp_val]})
+
+\* AnnounceBlock is used to broadcast BLOCK-ANNOUNCE messages into the network.
 AnnounceBlock(index)  ==
-    log' = {msg \in log: (msg.type = "BLOCK-ANNOUNCE") \/ msg.height > states[index].height } \cup {[
-        type    |-> "BLOCK-ANNOUNCE",
-        height  |-> states[index].height,
-        round   |-> states[index].round,
-        index   |-> -1]}
+    SendMsg({[
+        type     |-> "BLOCK-ANNOUNCE",
+        height   |-> states[index].height,
+        round    |-> states[index].round,
+        index    |-> index,
+        cp_round |-> 0,
+        cp_val   |-> 0]})
 
-IsFaulty(index) == index >= 3 * NumFaulty
 -----------------------------------------------------------------------------
 (***************************************************************************)
 (* States functions                                                        *)
@@ -149,123 +287,180 @@ IsFaulty(index) == index >= 3 * NumFaulty
 
 \* NewHeight state
 NewHeight(index) ==
-    /\ states[index].name = "new-height"
-    /\ ~IsFaulty(index)
-    /\ states' = [states EXCEPT
-        ![index].name = "propose",
-        ![index].height = states[index].height + 1,
-        ![index].round = 0]
-    /\ UNCHANGED <<log>>
-
-
-\* Propose state
-Propose(index) ==
-    /\ states[index].name = "propose"
-    /\ ~IsFaulty(index)
-    /\ IF IsProposer(index)
-       THEN SendProposal(index)
-       ELSE log' = log
-    /\ states' = [states EXCEPT
-        ![index].name = "prepare"]
-
-
-\* Prepare state
-Prepare(index) ==
-    /\ states[index].name = "prepare"
-    /\ ~IsFaulty(index)
-    /\ ~HasOneThirdOfChangeProposer(index) \* This check is optional
-    /\ HasProposal(states[index].height, states[index].round)
-    /\ SendPrepareVote(index)
-    /\ IF  /\ HasPrepareQuorum(index)
-       THEN states' = [states EXCEPT ![index].name = "precommit"]
-       ELSE states' = states
-
-
-\* Precommit state
-Precommit(index) ==
-    /\ states[index].name = "precommit"
-    /\ ~IsFaulty(index)
-    /\ ~HasOneThirdOfChangeProposer(index) \* This check is optional
-    /\ SendPrecommitVote(index)
-    /\ IF  /\ HasPrecommitQuorum(index)
-           /\ HasVoted(index, "PRECOMMIT")
-       THEN states' = [states EXCEPT ![index].name = "commit"]
-       ELSE states' = states
-
-
-Timeout(index) ==
-    /\
-        \/ states[index].name = "prepare"
-        \/ states[index].name = "precommit"
-    /\ ~IsFaulty(index)
-    /\ (states[index].round < MaxRound)
-    /\ SendChangeProposerRequest(index)
-    /\ states' = [states EXCEPT
-        ![index].name = "change-proposer"]
-
-
-Byzantine(index) ==
-    /\ IsFaulty(index)
-    /\ SendChangeProposerRequest(index)
-    /\ states' = [states EXCEPT
-        ![index].name = "change-proposer"]
-
-\* Commit state
-Commit(index) ==
-    /\ states[index].name = "commit"
-    /\ ~IsFaulty(index)
-    /\ AnnounceBlock(index) \* this clear the logs
-    /\ states' = [states EXCEPT
-        ![index].name = "new-height"]
-
-
-\* ChangeProposer state
-ChangeProposer(index) ==
-    /\ states[index].name = "change-proposer"
-    /\ ~IsFaulty(index)
-    /\ IF HasChangeProposerQuorum(index)
-       THEN states' = [states EXCEPT
-            ![index].name = "propose",
-            ![index].round = states[index].round + 1]
-       ELSE states' = states
-    /\ UNCHANGED <<log>>
-
-\* Sync checks the log for the committed blocks at the current height.
-\* If such a block exists, it commits and moves to the next height.
-Sync(index) ==
-    LET
-        blocks == SubsetOfMsgs([type |-> "BLOCK-ANNOUNCE", height |-> states[index].height])
-    IN
-        /\ Cardinality(blocks) > 0
+    IF states[index].height >= MaxHeight
+    THEN UNCHANGED <<states, log>>
+    ELSE
+        /\ ~IsFaulty(index)
+        /\ states[index].name = "new-height"
+        /\ states[index].height < MaxHeight
         /\ states' = [states EXCEPT
             ![index].name = "propose",
             ![index].height = states[index].height + 1,
             ![index].round = 0]
-        /\ log' = log
+        /\ UNCHANGED <<log>>
+
+
+\* Propose state
+Propose(index) ==
+    /\ ~IsFaulty(index)
+    /\ states[index].name = "propose"
+    /\ IF IsProposer(index)
+       THEN SendProposal(index)
+       ELSE UNCHANGED <<log>>
+    /\ states' = [states EXCEPT
+        ![index].name = "prepare",
+        ![index].timeout = FALSE,
+        ![index].cp_round = 0]
+
+
+\* Prepare state
+Prepare(index) ==
+    /\ ~IsFaulty(index)
+    /\ states[index].name = "prepare"
+    /\ IF HasPrepareQuorum(index)
+       THEN /\ states' = [states EXCEPT ![index].name = "precommit"]
+            /\ UNCHANGED <<log>>
+       ELSE /\ HasProposal(index)
+            /\ SendPrepareVote(index)
+            /\ UNCHANGED <<states>>
+
+\* Precommit state
+Precommit(index) ==
+    /\ ~IsFaulty(index)
+    /\ states[index].name = "precommit"
+    /\ IF HasPrecommitQuorum(index)
+       THEN /\ states' = [states EXCEPT ![index].name = "commit"]
+            /\ UNCHANGED <<log>>
+       ELSE /\ HasProposal(index)
+            /\ SendPrecommitVote(index)
+            /\ UNCHANGED <<states>>
+
+\* Commit state
+Commit(index) ==
+    /\ ~IsFaulty(index)
+    /\ states[index].name = "commit"
+    /\ AnnounceBlock(index)
+    /\ states' = [states EXCEPT
+        ![index].name = "new-height"]
+
+\* Timeout: A non-faulty Replica try to change the proposer if its timer expires.
+Timeout(index) ==
+    /\ ~IsFaulty(index)
+    /\ states[index].round < MaxRound
+    /\ states[index].timeout = FALSE
+    /\
+        \/
+            /\ states[index].name = "prepare"
+            /\ SendCPPreVote(index, 1)
+
+        \/
+            /\ states[index].name = "precommit"
+            /\ SendCPPreVote(index, 0)
+    /\ states' = [states EXCEPT
+            ![index].name = "cp:main-vote",
+            ![index].timeout = TRUE]
+
+
+
+CPPreVote(index) ==
+    /\ ~IsFaulty(index)
+    /\ states[index].name = "cp:pre-vote"
+    /\
+        \/
+            /\
+                \/ states[index].cp_round = MaxCPRound
+                \/ CPHasOneThirdMainVotesOneInPrvRound(index)
+            /\ CPHasOneMainVotesOneInPrvRound(index)
+            /\ SendCPPreVote(index, 1)
+        \/
+            /\ CPHasOneMainVotesZeroInPrvRound(index)
+            /\ SendCPPreVote(index, 0)
+        \/
+            /\ CPAllMainVotesAbstainInPrvRound(index)
+            /\ SendCPPreVote(index, 0) \* biased to zero
+    /\ states' = [states EXCEPT ![index].name = "cp:main-vote"]
+
+
+CPMainVote(index) ==
+    /\ ~IsFaulty(index)
+    /\ states[index].name = "cp:main-vote"
+    /\ CPHasPreVotesQuorum(index)
+    /\
+        \/
+               \* all votes for 1
+            /\ CPHasPreVotesQuorumForOne(index)
+            /\ SendCPMainVote(index, 1)
+            /\ states' = [states EXCEPT ![index].name = "cp:decide"]
+        \/
+               \* all votes for 0
+            /\ CPHasPreVotesQuorumForZero(index)
+            /\ SendCPMainVote(index, 0)
+            /\ states' = [states EXCEPT ![index].name = "cp:decide"]
+        \/
+               \* Abstain vote
+            /\ CPHasPreVotesForZeroAndOne(index)
+            /\ SendCPMainVote(index, 2)
+            /\ states' = [states EXCEPT ![index].name = "cp:decide"]
+
+CPDecide(index) ==
+    /\ ~IsFaulty(index)
+    /\ states[index].name = "cp:decide"
+    /\ CPHasMainVotesQuorum(index)
+    /\ IF CPHasMainVotesQuorumForOne(index)
+       THEN /\ SendCPVotesForNextRound(index, 1)
+            /\ states' = [states EXCEPT ![index].name = "propose",
+                                        ![index].round = states[index].round + 1]
+       ELSE IF CPHasMainVotesQuorumForZero(index)
+            THEN /\ SendCPVotesForNextRound(index, 0)
+                 /\ states' = [states EXCEPT ![index].name = "prepare"]
+            ELSE
+                 /\ states' = [states EXCEPT ![index].name = "cp:pre-vote",
+                                             ![index].cp_round = states[index].cp_round + 1]
+                 /\ log' = log
+
+
+Sync(index) ==
+    /\ ~IsFaulty(index)
+    /\
+        \/ states[index].name = "cp:pre-vote"
+        \/ states[index].name = "cp:main-vote"
+        \/ states[index].name = "cp:decide"
+    /\ HasBlockAnnounce(index)
+    /\ states' = [states EXCEPT ![index].name = "prepare"]
+    /\ log' = log
 
 -----------------------------------------------------------------------------
 
 Init ==
     /\ log = {}
     /\ states = [index \in 0..Replicas-1 |-> [
-        name            |-> "new-height",
-        height          |-> 0,
-        round           |-> 0]]
+        name     |-> "new-height",
+        height   |-> 0,
+        round    |-> 0,
+        timeout  |-> FALSE,
+        cp_round |-> 0]]
 
 Next ==
     \E index \in 0..Replicas-1:
-       \/ Sync(index)
-       \/ NewHeight(index)
-       \/ Propose(index)
-       \/ Prepare(index)
-       \/ Precommit(index)
-       \/ Timeout(index)
-       \/ Commit(index)
-       \/ ChangeProposer(index)
-       \/ Byzantine(index)
+        \/ NewHeight(index)
+        \/ Propose(index)
+        \/ Prepare(index)
+        \/ Precommit(index)
+        \/ Timeout(index)
+        \/ Commit(index)
+        \/ Sync(index)
+        \/ CPPreVote(index)
+        \/ CPMainVote(index)
+        \/ CPDecide(index)
 
 Spec ==
-    Init /\ [][Next]_vars
+    Init /\ [][Next]_vars /\ WF_vars(Next)
+
+
+(***************************************************************************)
+(* Success: All non-faulty nodes eventually commit at MaxHeight.           *)
+(***************************************************************************)
+Success == <>(IsCommitted(MaxHeight))
 
 (***************************************************************************)
 (* TypeOK is the type-correctness invariant.                               *)
@@ -273,24 +468,21 @@ Spec ==
 TypeOK ==
     /\ \A index \in 0..Replicas-1:
         /\ states[index].name \in {"new-height", "propose", "prepare",
-            "precommit", "commit", "change-proposer"}
-        /\ ~IsCommitted(states[index].height) =>
-            /\ states[index].name = "new-height" /\ states[index].height > 1 =>
-                IsCommitted(states[index].height - 1)
-            /\ states[index].name = "propose" /\ states[index].round > 0 =>
-                /\ Cardinality(SubsetOfMsgs([
-                        type   |-> "CHANGE-PROPOSER",
-                        height |-> states[index].height,
-                        round  |-> states[index].round - 1])) >= QuorumCnt
-            /\ states[index].name = "precommit" =>
-                /\ HasPrepareQuorum(index)
-                /\ HasProposal(states[index].height, states[index].round)
-            /\ states[index].name = "commit" =>
-                /\ HasPrepareQuorum(index)
-                /\ HasPrecommitQuorum(index)
-                /\ HasProposal(states[index].height, states[index].round)
-            /\ \A round \in 0..states[index].round:
-                \* Not more than one proposal per round
-                /\ Cardinality(GetProposal(states[index].height, round)) <= 1
+            "precommit", "commit", "cp:pre-vote", "cp:main-vote", "cp:decide"}
+        /\ states[index].height <= MaxHeight
+        /\ states[index].round <= MaxRound
+        /\ states[index].cp_round <= MaxCPRound + 1
+        /\ states[index].name = "new-height" /\ states[index].height > 1 =>
+            /\ IsCommitted(states[index].height - 1)
+        /\ states[index].name = "precommit" =>
+            /\ HasPrepareQuorum(index)
+            /\ HasProposal(index)
+        /\ states[index].name = "commit" =>
+            /\ HasPrepareQuorum(index)
+            /\ HasPrecommitQuorum(index)
+            /\ HasProposal(index)
+        /\ \A round \in 0..states[index].round:
+            \* Not more than one proposal per round
+            /\ Cardinality(GetProposal(states[index].height, round)) <= 1
 
 =============================================================================
