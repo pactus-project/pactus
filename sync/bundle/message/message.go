@@ -23,7 +23,7 @@ func (c ResponseCode) String() string {
 	case ResponseCodeOK:
 		return "ok"
 	case ResponseCodeRejected:
-		return "rejected"
+		return "too many requests"
 	case ResponseCodeBusy:
 		return "busy"
 	case ResponseCodeMoreBlocks:

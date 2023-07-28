@@ -16,6 +16,7 @@ type BlocksResponseMessage struct {
 	From            uint32             `cbor:"3,keyasint"`
 	BlocksData      [][]byte           `cbor:"4,keyasint"`
 	LastCertificate *block.Certificate `cbor:"6,keyasint"`
+	Reason          string             `cbor:"7,keyasint"`
 }
 
 func NewBlocksResponseMessage(code ResponseCode, sid int, from uint32,
@@ -26,6 +27,7 @@ func NewBlocksResponseMessage(code ResponseCode, sid int, from uint32,
 		From:            from,
 		BlocksData:      blocksData,
 		LastCertificate: lastCert,
+		Reason:          code.String(),
 	}
 }
 func (m *BlocksResponseMessage) SanityCheck() error {
