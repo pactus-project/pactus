@@ -25,6 +25,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 100, [][]byte{d}, c)
 
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidRound)
+		assert.Equal(t, m.Reason, ResponseCodeMoreBlocks.String())
 	})
 
 	t.Run("Unexpected block for height zero", func(t *testing.T) {
@@ -33,6 +34,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, sid, 0, [][]byte{d}, nil)
 
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
+		assert.Equal(t, m.Reason, ResponseCodeMoreBlocks.String())
 	})
 
 	t.Run("OK", func(t *testing.T) {
@@ -45,6 +47,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 		assert.NoError(t, m.SanityCheck())
 		assert.Zero(t, m.LastCertificateHeight())
 		assert.Contains(t, m.Fingerprint(), "100")
+		assert.Equal(t, m.Reason, ResponseCodeMoreBlocks.String())
 	})
 }
 
@@ -59,6 +62,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		assert.Zero(t, m.To())
 		assert.Zero(t, m.Count())
 		assert.True(t, m.IsRequestRejected())
+		assert.Equal(t, m.Reason, ResponseCodeBusy.String())
 	})
 
 	t.Run("rejected", func(t *testing.T) {
@@ -69,6 +73,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		assert.Zero(t, m.To())
 		assert.Zero(t, m.Count())
 		assert.True(t, m.IsRequestRejected())
+		assert.Equal(t, m.Reason, ResponseCodeRejected.String())
 	})
 
 	t.Run("OK - MoreBlocks", func(t *testing.T) {
@@ -84,6 +89,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		assert.Equal(t, m.Count(), uint32(2))
 		assert.Zero(t, m.LastCertificateHeight())
 		assert.False(t, m.IsRequestRejected())
+		assert.Equal(t, m.Reason, ResponseCodeMoreBlocks.String())
 	})
 
 	t.Run("OK - Synced", func(t *testing.T) {
@@ -96,5 +102,6 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		assert.Zero(t, m.Count())
 		assert.Equal(t, m.LastCertificateHeight(), uint32(100))
 		assert.False(t, m.IsRequestRejected())
+		assert.Equal(t, m.Reason, ResponseCodeSynced.String())
 	})
 }
