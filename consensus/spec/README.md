@@ -11,13 +11,14 @@ More info can be found [here](https://pactus.org/learn/consensus/specification/)
 To run the model checker, you will need to download and install the [TLA+ Toolbox](https://lamport.azurewebsites.net/tla/toolbox.html),
 which includes the TLC model checker. Follow the steps below to run the TLC model checker:
 
-- Add the `Pactus_Liveness.tla` spec to your TLA+ Toolbox project.
-- Create a new model and specify the temporal formula as `LiveSpec`.
-- Specify the invariants formula as `TypeOK`.
-- Specify the properties formula as `Success`.
-- Since we are checking for liveness, add the `Constraint` formula as the "State Constraint".
+- Add the `Pactus.tla` spec to your TLA+ Toolbox project.
+- Create a new model and specify a temporal formula as `Spec`.
+- Specify an invariants formula as `TypeOK`.
+- Specify a properties formula as `Success`.
 - Define the required constants:
     - `NumFaulty`: the number of faulty nodes (e.g. 1)
-    - `MaxHeight`: the maximum height of the system (e.g. 2)
-    - `MaxRound`: the maximum round of the consensus algorithm (e.g. 2)
+    - `FaultyNodes`: the index of faulty nodes (e.g. {3})
+    - `MaxHeight`: the maximum height of the system (e.g. 1)
+    - `MaxRound`: the maximum block-creation round of the consensus algorithm (e.g. 1)
+    - `MaxCPRound`: the maximum change-proposer round of the consensus algorithm (e.g. 1)
 - Run the TLC checker to check the correctness of the specification.
