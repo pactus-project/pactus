@@ -6,8 +6,8 @@ import (
 )
 
 type Cache struct {
-	block       *lru.Cache[uint32, *block.Block] // it's thread safe
-	certificate *lru.Cache[uint32, *block.Certificate]
+	blocks *lru.Cache[uint32, *block.Block] // it's thread safe
+	certs  *lru.Cache[uint32, *block.Certificate]
 }
 
 func NewCache(size int) (*Cache, error) {
@@ -22,17 +22,17 @@ func NewCache(size int) (*Cache, error) {
 	}
 
 	return &Cache{
-		block:       b,
-		certificate: c,
+		blocks: b,
+		certs:  c,
 	}, nil
 }
 
 func (c *Cache) HasBlockInCache(height uint32) bool {
-	return c.block.Contains(height)
+	return c.blocks.Contains(height)
 }
 
 func (c *Cache) GetBlock(height uint32) *block.Block {
-	block, ok := c.block.Get(height)
+	block, ok := c.blocks.Get(height)
 	if ok {
 		return block
 	}
@@ -41,12 +41,12 @@ func (c *Cache) GetBlock(height uint32) *block.Block {
 }
 
 func (c *Cache) AddBlock(height uint32, block *block.Block) {
-	c.block.Add(height, block)
+	c.blocks.Add(height, block)
 	c.AddCertificate(height-1, block.PrevCertificate())
 }
 
 func (c *Cache) GetCertificate(height uint32) *block.Certificate {
-	certificate, ok := c.certificate.Get(height)
+	certificate, ok := c.certs.Get(height)
 	if ok {
 		return certificate
 	}
@@ -56,18 +56,18 @@ func (c *Cache) GetCertificate(height uint32) *block.Certificate {
 
 func (c *Cache) AddCertificate(height uint32, cert *block.Certificate) {
 	if cert != nil {
-		c.certificate.Add(height, cert)
+		c.certs.Add(height, cert)
 	}
 }
 
 func (c *Cache) Len() int {
-	if c.block.Len() > c.certificate.Len() {
-		return c.block.Len()
+	if c.blocks.Len() > c.certs.Len() {
+		return c.blocks.Len()
 	}
-	return c.certificate.Len()
+	return c.certs.Len()
 }
 
 func (c *Cache) Clear() {
-	c.block.Purge()
-	c.certificate.Purge()
+	c.blocks.Purge()
+	c.certs.Purge()
 }
