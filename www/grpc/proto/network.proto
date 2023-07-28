@@ -9,6 +9,7 @@ service Network {
   rpc GetNodeInfo(GetNodeInfoRequest) returns (GetNodeInfoResponse);
 }
 
+
 message GetNetworkInfoRequest {}
 
 message GetNetworkInfoResponse {
@@ -16,6 +17,8 @@ message GetNetworkInfoResponse {
   int32 total_received_bytes = 2;
   int64 started_at = 3;
   repeated PeerInfo peers = 4;
+  map<int32, int64> sent_bytes = 5;
+  map<int32, int64> received_bytes = 6;
 }
 
 message GetNodeInfoRequest {}

@@ -9,7 +9,7 @@ import (
 
 func TestQueryProposalType(t *testing.T) {
 	m := &QueryProposalMessage{}
-	assert.Equal(t, m.Type(), MessageTypeQueryProposal)
+	assert.Equal(t, m.Type(), TypeQueryProposal)
 }
 
 func TestQueryProposalMessage(t *testing.T) {

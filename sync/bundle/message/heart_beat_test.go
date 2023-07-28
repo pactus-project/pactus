@@ -10,7 +10,7 @@ import (
 
 func TestHeartBeatType(t *testing.T) {
 	m := &HeartBeatMessage{}
-	assert.Equal(t, m.Type(), MessageTypeHeartBeat)
+	assert.Equal(t, m.Type(), TypeHeartBeat)
 }
 
 func TestHeartBeatMessage(t *testing.T) {

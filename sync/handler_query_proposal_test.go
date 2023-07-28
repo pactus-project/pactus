@@ -27,13 +27,13 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight+1, 0)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeProposal)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeProposal)
 	})
 	t.Run("In the committee, should respond to the query proposal message", func(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight, 0)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeProposal)
+		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeProposal)
 		assert.Equal(t, bdl.Message.(*message.ProposalMessage).Proposal.Hash(), prop.Hash())
 	})
 
@@ -41,7 +41,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight, 1)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeProposal)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeProposal)
 	})
 }
 
@@ -54,7 +54,7 @@ func TestBroadcastingQueryProposalMessages(t *testing.T) {
 	t.Run("Not in the committee, should not send query proposal message", func(t *testing.T) {
 		td.sync.broadcast(msg)
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeQueryProposal)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeQueryProposal)
 	})
 
 	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.signers[0].PublicKey())
@@ -62,6 +62,6 @@ func TestBroadcastingQueryProposalMessages(t *testing.T) {
 	t.Run("In the committee, should send query proposal message", func(t *testing.T) {
 		td.sync.broadcast(msg)
 
-		td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeQueryProposal)
+		td.shouldPublishMessageWithThisType(t, td.network, message.TypeQueryProposal)
 	})
 }

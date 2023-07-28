@@ -23,11 +23,34 @@ const GetNetworkInfoResponse$json = const {
     const {'1': 'total_received_bytes', '3': 2, '4': 1, '5': 5, '10': 'totalReceivedBytes'},
     const {'1': 'started_at', '3': 3, '4': 1, '5': 3, '10': 'startedAt'},
     const {'1': 'peers', '3': 4, '4': 3, '5': 11, '6': '.pactus.PeerInfo', '10': 'peers'},
+    const {'1': 'sent_bytes', '3': 5, '4': 3, '5': 11, '6': '.pactus.GetNetworkInfoResponse.SentBytesEntry', '10': 'sentBytes'},
+    const {'1': 'received_bytes', '3': 6, '4': 3, '5': 11, '6': '.pactus.GetNetworkInfoResponse.ReceivedBytesEntry', '10': 'receivedBytes'},
   ],
+  '3': const [GetNetworkInfoResponse_SentBytesEntry$json, GetNetworkInfoResponse_ReceivedBytesEntry$json],
+};
+
+@$core.Deprecated('Use getNetworkInfoResponseDescriptor instead')
+const GetNetworkInfoResponse_SentBytesEntry$json = const {
+  '1': 'SentBytesEntry',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 5, '10': 'key'},
+    const {'1': 'value', '3': 2, '4': 1, '5': 3, '10': 'value'},
+  ],
+  '7': const {'7': true},
+};
+
+@$core.Deprecated('Use getNetworkInfoResponseDescriptor instead')
+const GetNetworkInfoResponse_ReceivedBytesEntry$json = const {
+  '1': 'ReceivedBytesEntry',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 5, '10': 'key'},
+    const {'1': 'value', '3': 2, '4': 1, '5': 3, '10': 'value'},
+  ],
+  '7': const {'7': true},
 };
 
 /// Descriptor for `GetNetworkInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNetworkInfoResponseDescriptor = $convert.base64Decode('ChZHZXROZXR3b3JrSW5mb1Jlc3BvbnNlEigKEHRvdGFsX3NlbnRfYnl0ZXMYASABKAVSDnRvdGFsU2VudEJ5dGVzEjAKFHRvdGFsX3JlY2VpdmVkX2J5dGVzGAIgASgFUhJ0b3RhbFJlY2VpdmVkQnl0ZXMSHQoKc3RhcnRlZF9hdBgDIAEoA1IJc3RhcnRlZEF0EiYKBXBlZXJzGAQgAygLMhAucGFjdHVzLlBlZXJJbmZvUgVwZWVycw==');
+final $typed_data.Uint8List getNetworkInfoResponseDescriptor = $convert.base64Decode('ChZHZXROZXR3b3JrSW5mb1Jlc3BvbnNlEigKEHRvdGFsX3NlbnRfYnl0ZXMYASABKAVSDnRvdGFsU2VudEJ5dGVzEjAKFHRvdGFsX3JlY2VpdmVkX2J5dGVzGAIgASgFUhJ0b3RhbFJlY2VpdmVkQnl0ZXMSHQoKc3RhcnRlZF9hdBgDIAEoA1IJc3RhcnRlZEF0EiYKBXBlZXJzGAQgAygLMhAucGFjdHVzLlBlZXJJbmZvUgVwZWVycxJMCgpzZW50X2J5dGVzGAUgAygLMi0ucGFjdHVzLkdldE5ldHdvcmtJbmZvUmVzcG9uc2UuU2VudEJ5dGVzRW50cnlSCXNlbnRCeXRlcxJYCg5yZWNlaXZlZF9ieXRlcxgGIAMoCzIxLnBhY3R1cy5HZXROZXR3b3JrSW5mb1Jlc3BvbnNlLlJlY2VpdmVkQnl0ZXNFbnRyeVINcmVjZWl2ZWRCeXRlcxo8Cg5TZW50Qnl0ZXNFbnRyeRIQCgNrZXkYASABKAVSA2tleRIUCgV2YWx1ZRgCIAEoA1IFdmFsdWU6AjgBGkAKElJlY2VpdmVkQnl0ZXNFbnRyeRIQCgNrZXkYASABKAVSA2tleRIUCgV2YWx1ZRgCIAEoA1IFdmFsdWU6AjgB');
 @$core.Deprecated('Use getNodeInfoRequestDescriptor instead')
 const GetNodeInfoRequest$json = const {
   '1': 'GetNodeInfoRequest',
@@ -84,6 +107,8 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> NetworkSer
   '.pactus.GetNetworkInfoRequest': GetNetworkInfoRequest$json,
   '.pactus.GetNetworkInfoResponse': GetNetworkInfoResponse$json,
   '.pactus.PeerInfo': PeerInfo$json,
+  '.pactus.GetNetworkInfoResponse.SentBytesEntry': GetNetworkInfoResponse_SentBytesEntry$json,
+  '.pactus.GetNetworkInfoResponse.ReceivedBytesEntry': GetNetworkInfoResponse_ReceivedBytesEntry$json,
   '.pactus.GetNodeInfoRequest': GetNodeInfoRequest$json,
   '.pactus.GetNodeInfoResponse': GetNodeInfoResponse$json,
 };

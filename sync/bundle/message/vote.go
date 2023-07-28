@@ -19,7 +19,7 @@ func (m *VoteMessage) SanityCheck() error {
 }
 
 func (m *VoteMessage) Type() Type {
-	return MessageTypeVote
+	return TypeVote
 }
 
 func (m *VoteMessage) Fingerprint() string {

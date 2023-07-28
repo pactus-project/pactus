@@ -19,7 +19,7 @@ func (m *ProposalMessage) SanityCheck() error {
 }
 
 func (m *ProposalMessage) Type() Type {
-	return MessageTypeProposal
+	return TypeProposal
 }
 
 func (m *ProposalMessage) Fingerprint() string {
