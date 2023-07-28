@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"unsafe"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync"
@@ -50,9 +51,14 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		}
 	}
 
+	sentBytes := peerset.SentBytes()
+	receivedBytes := peerset.ReceivedBytes()
+
 	return &pactus.GetNetworkInfoResponse{
 		TotalSentBytes:     int32(peerset.TotalSentBytes()),
 		TotalReceivedBytes: int32(peerset.TotalReceivedBytes()),
+		SentBytes:          *(*map[int32]int64)(unsafe.Pointer(&sentBytes)),
+		ReceivedBytes:      *(*map[int32]int64)(unsafe.Pointer(&receivedBytes)),
 		StartedAt:          peerset.StartedAt().Unix(),
 		Peers:              peers,
 	}, nil

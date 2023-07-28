@@ -149,7 +149,7 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, ha
 		case msg := <-cons.broadcastCh:
 			logger.Info("shouldPublishBlockAnnounce", "message", msg)
 
-			if msg.Type() == message.MessageTypeBlockAnnounce {
+			if msg.Type() == message.TypeBlockAnnounce {
 				m := msg.(*message.BlockAnnounceMessage)
 				assert.Equal(t, m.Block.Hash(), hash)
 				return
@@ -175,7 +175,7 @@ func shouldPublishProposal(t *testing.T, cons *consensus,
 		case msg := <-cons.broadcastCh:
 			logger.Info("shouldPublishProposal", "message", msg)
 
-			if msg.Type() == message.MessageTypeProposal {
+			if msg.Type() == message.TypeProposal {
 				m := msg.(*message.ProposalMessage)
 				require.Equal(t, m.Proposal.Height(), height)
 				require.Equal(t, m.Proposal.Round(), round)
@@ -196,7 +196,7 @@ func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, he
 		case msg := <-cons.broadcastCh:
 			logger.Info("shouldPublishQueryProposal", "message", msg)
 
-			if msg.Type() == message.MessageTypeQueryProposal {
+			if msg.Type() == message.TypeQueryProposal {
 				m := msg.(*message.QueryProposalMessage)
 				assert.Equal(t, m.Height, height)
 				assert.Equal(t, m.Round, round)
@@ -216,7 +216,7 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vo
 		case msg := <-cons.broadcastCh:
 			logger.Info("shouldPublishVote", "message", msg)
 
-			if msg.Type() == message.MessageTypeVote {
+			if msg.Type() == message.TypeVote {
 				m := msg.(*message.VoteMessage)
 				if m.Vote.Type() == voteType &&
 					m.Vote.BlockHash().EqualsTo(hash) {

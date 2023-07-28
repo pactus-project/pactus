@@ -28,7 +28,7 @@ func (m *BlockAnnounceMessage) SanityCheck() error {
 }
 
 func (m *BlockAnnounceMessage) Type() Type {
-	return MessageTypeBlockAnnounce
+	return TypeBlockAnnounce
 }
 
 func (m *BlockAnnounceMessage) Fingerprint() string {

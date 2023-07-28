@@ -65,7 +65,7 @@ func (m *HelloMessage) SetPublicKey(pub crypto.PublicKey) {
 }
 
 func (m *HelloMessage) Type() Type {
-	return MessageTypeHello
+	return TypeHello
 }
 
 func (m *HelloMessage) Fingerprint() string {

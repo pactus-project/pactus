@@ -32,7 +32,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	t.Run("In the committee, should respond to the query vote message", func(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeVote)
+		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeVote)
 		assert.Equal(t, bdl.Message.(*message.VoteMessage).Vote.Hash(), v1.Hash())
 	})
 
@@ -40,7 +40,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 		msg := message.NewQueryVotesMessage(consensusHeight+1, 1)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeVote)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeVote)
 	})
 }
 
@@ -53,13 +53,13 @@ func TestBroadcastingQueryVotesMessages(t *testing.T) {
 	t.Run("Not in the committee, should not send query vote message", func(t *testing.T) {
 		td.sync.broadcast(msg)
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeQueryVotes)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeQueryVotes)
 	})
 
 	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.signers[0].PublicKey())
 	t.Run("In the committee, should send query vote message", func(t *testing.T) {
 		td.sync.broadcast(msg)
 
-		td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeQueryVotes)
+		td.shouldPublishMessageWithThisType(t, td.network, message.TypeQueryVotes)
 	})
 }

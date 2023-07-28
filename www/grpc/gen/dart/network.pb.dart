@@ -46,6 +46,8 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
     ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalReceivedBytes', $pb.PbFieldType.O3)
     ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'startedAt')
     ..pc<PeerInfo>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peers', $pb.PbFieldType.PM, subBuilder: PeerInfo.create)
+    ..m<$core.int, $fixnum.Int64>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sentBytes', entryClassName: 'GetNetworkInfoResponse.SentBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
+    ..m<$core.int, $fixnum.Int64>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', entryClassName: 'GetNetworkInfoResponse.ReceivedBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
     ..hasRequiredFields = false
   ;
 
@@ -55,6 +57,8 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
     $core.int? totalReceivedBytes,
     $fixnum.Int64? startedAt,
     $core.Iterable<PeerInfo>? peers,
+    $core.Map<$core.int, $fixnum.Int64>? sentBytes,
+    $core.Map<$core.int, $fixnum.Int64>? receivedBytes,
   }) {
     final _result = create();
     if (totalSentBytes != null) {
@@ -68,6 +72,12 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
     }
     if (peers != null) {
       _result.peers.addAll(peers);
+    }
+    if (sentBytes != null) {
+      _result.sentBytes.addAll(sentBytes);
+    }
+    if (receivedBytes != null) {
+      _result.receivedBytes.addAll(receivedBytes);
     }
     return _result;
   }
@@ -121,6 +131,12 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(4)
   $core.List<PeerInfo> get peers => $_getList(3);
+
+  @$pb.TagNumber(5)
+  $core.Map<$core.int, $fixnum.Int64> get sentBytes => $_getMap(4);
+
+  @$pb.TagNumber(6)
+  $core.Map<$core.int, $fixnum.Int64> get receivedBytes => $_getMap(5);
 }
 
 class GetNodeInfoRequest extends $pb.GeneratedMessage {

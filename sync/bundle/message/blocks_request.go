@@ -35,7 +35,7 @@ func (m *BlocksRequestMessage) SanityCheck() error {
 }
 
 func (m *BlocksRequestMessage) Type() Type {
-	return MessageTypeBlocksRequest
+	return TypeBlocksRequest
 }
 
 func (m *BlocksRequestMessage) Fingerprint() string {

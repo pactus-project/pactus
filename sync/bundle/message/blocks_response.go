@@ -42,7 +42,7 @@ func (m *BlocksResponseMessage) SanityCheck() error {
 }
 
 func (m *BlocksResponseMessage) Type() Type {
-	return MessageTypeBlocksResponse
+	return TypeBlocksResponse
 }
 
 func (m *BlocksResponseMessage) Count() uint32 {
