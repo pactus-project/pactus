@@ -29,7 +29,7 @@ func (m *HeartBeatMessage) SanityCheck() error {
 }
 
 func (m *HeartBeatMessage) Type() Type {
-	return MessageTypeHeartBeat
+	return TypeHeartBeat
 }
 
 func (m *HeartBeatMessage) Fingerprint() string {

@@ -32,7 +32,7 @@ func (m *TransactionsMessage) SanityCheck() error {
 }
 
 func (m *TransactionsMessage) Type() Type {
-	return MessageTypeTransactions
+	return TypeTransactions
 }
 
 func (m *TransactionsMessage) Fingerprint() string {

@@ -11,7 +11,7 @@ import (
 
 func TestLatestBlocksResponseType(t *testing.T) {
 	m := &BlocksResponseMessage{}
-	assert.Equal(t, m.Type(), MessageTypeBlocksResponse)
+	assert.Equal(t, m.Type(), TypeBlocksResponse)
 }
 
 func TestBlocksResponseMessage(t *testing.T) {

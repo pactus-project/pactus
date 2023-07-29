@@ -79,17 +79,17 @@ func NewSynchronizer(
 
 	handlers := make(map[message.Type]messageHandler)
 
-	handlers[message.MessageTypeHello] = newHelloHandler(sync)
-	handlers[message.MessageTypeHeartBeat] = newHeartBeatHandler(sync)
-	handlers[message.MessageTypeVote] = newVoteHandler(sync)
-	handlers[message.MessageTypeProposal] = newProposalHandler(sync)
-	handlers[message.MessageTypeTransactions] = newTransactionsHandler(sync)
-	handlers[message.MessageTypeHeartBeat] = newHeartBeatHandler(sync)
-	handlers[message.MessageTypeQueryVotes] = newQueryVotesHandler(sync)
-	handlers[message.MessageTypeQueryProposal] = newQueryProposalHandler(sync)
-	handlers[message.MessageTypeBlockAnnounce] = newBlockAnnounceHandler(sync)
-	handlers[message.MessageTypeBlocksRequest] = newBlocksRequestHandler(sync)
-	handlers[message.MessageTypeBlocksResponse] = newBlocksResponseHandler(sync)
+	handlers[message.TypeHello] = newHelloHandler(sync)
+	handlers[message.TypeHeartBeat] = newHeartBeatHandler(sync)
+	handlers[message.TypeVote] = newVoteHandler(sync)
+	handlers[message.TypeProposal] = newProposalHandler(sync)
+	handlers[message.TypeTransactions] = newTransactionsHandler(sync)
+	handlers[message.TypeHeartBeat] = newHeartBeatHandler(sync)
+	handlers[message.TypeQueryVotes] = newQueryVotesHandler(sync)
+	handlers[message.TypeQueryProposal] = newQueryProposalHandler(sync)
+	handlers[message.TypeBlockAnnounce] = newBlockAnnounceHandler(sync)
+	handlers[message.TypeBlocksRequest] = newBlocksRequestHandler(sync)
+	handlers[message.TypeBlocksResponse] = newBlocksResponseHandler(sync)
 
 	sync.handlers = handlers
 
@@ -327,7 +327,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID, sessionID int)
 			sync.logger.Info("sending bundle to a peer", "bundle", bdl, "to", to)
 			sync.peerSet.IncreaseSendSuccessCounter(to)
 		}
-		sync.peerSet.IncreaseTotalSentBytesCounter(len(data))
+		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), len(data))
 	}
 }
 
@@ -343,7 +343,7 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 		} else {
 			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
 		}
-		sync.peerSet.IncreaseTotalSentBytesCounter(len(data))
+		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), len(data))
 	}
 }
 

@@ -40,7 +40,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
 			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
-			td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeHello)
+			td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
 			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
 		})
 
@@ -55,8 +55,8 @@ func TestParsingHelloMessages(t *testing.T) {
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeHello) // Alice key 1
-			td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeHello) // Alice key 2
+			td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello) // Alice key 1
+			td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello) // Alice key 2
 
 			// Check if the peer info is updated
 			p := td.sync.peerSet.GetPeer(pid)
@@ -81,7 +81,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer.SignMsg(msg)
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-			td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeHello)
+			td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
 			td.checkPeerStatus(t, pid, peerset.StatusCodeKnown)
 
 			// Check if the peer info is updated
@@ -100,7 +100,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer.SignMsg(msg)
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-			td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+			td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 			td.checkPeerStatus(t, pid, peerset.StatusCodeKnown)
 			assert.Equal(t, td.sync.peerSet.MaxClaimedHeight(), claimedHeight)
 		})
@@ -111,7 +111,7 @@ func TestBroadcastingHelloMessages(t *testing.T) {
 
 	td.sync.sayHello(true)
 
-	bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeHello)
+	bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
 	assert.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHelloMessage))
 	assert.True(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Flags, message.FlagHelloAck))
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
@@ -98,10 +99,11 @@ func (f *Firewall) openBundle(r io.Reader, source peer.ID) (*bundle.Bundle, erro
 func (f *Firewall) decodeBundle(r io.Reader, pid peer.ID) (*bundle.Bundle, error) {
 	bdl := new(bundle.Bundle)
 	bytesRead, err := bdl.Decode(r)
-	f.peerSet.IncreaseReceivedBytesCounter(pid, bytesRead)
 	if err != nil {
+		f.peerSet.IncreaseReceivedBytesCounter(pid, message.TypeUnspecified, bytesRead)
 		return nil, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
+	f.peerSet.IncreaseReceivedBytesCounter(pid, bdl.Message.Type(), bytesRead)
 
 	return bdl, nil
 }

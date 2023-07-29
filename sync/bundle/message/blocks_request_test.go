@@ -9,7 +9,7 @@ import (
 
 func TestLatestBlocksRequestType(t *testing.T) {
 	m := &BlocksRequestMessage{}
-	assert.Equal(t, m.Type(), MessageTypeBlocksRequest)
+	assert.Equal(t, m.Type(), TypeBlocksRequest)
 }
 
 func TestBlocksRequestMessage(t *testing.T) {

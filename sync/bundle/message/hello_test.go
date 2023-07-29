@@ -10,7 +10,7 @@ import (
 
 func TestHelloType(t *testing.T) {
 	m := &HelloMessage{}
-	assert.Equal(t, m.Type(), MessageTypeHello)
+	assert.Equal(t, m.Type(), TypeHello)
 }
 
 func TestHelloMessage(t *testing.T) {

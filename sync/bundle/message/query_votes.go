@@ -26,7 +26,7 @@ func (m *QueryVotesMessage) SanityCheck() error {
 }
 
 func (m *QueryVotesMessage) Type() Type {
-	return MessageTypeQueryVotes
+	return TypeQueryVotes
 }
 
 func (m *QueryVotesMessage) Fingerprint() string {

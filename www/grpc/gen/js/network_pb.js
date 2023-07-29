@@ -275,7 +275,9 @@ proto.pactus.GetNetworkInfoResponse.toObject = function(includeInstance, msg) {
     totalReceivedBytes: jspb.Message.getFieldWithDefault(msg, 2, 0),
     startedAt: jspb.Message.getFieldWithDefault(msg, 3, 0),
     peersList: jspb.Message.toObjectList(msg.getPeersList(),
-    proto.pactus.PeerInfo.toObject, includeInstance)
+    proto.pactus.PeerInfo.toObject, includeInstance),
+    sentBytesMap: (f = msg.getSentBytesMap()) ? f.toObject(includeInstance, undefined) : [],
+    receivedBytesMap: (f = msg.getReceivedBytesMap()) ? f.toObject(includeInstance, undefined) : []
   };
 
   if (includeInstance) {
@@ -328,6 +330,18 @@ proto.pactus.GetNetworkInfoResponse.deserializeBinaryFromReader = function(msg, 
       var value = new proto.pactus.PeerInfo;
       reader.readMessage(value,proto.pactus.PeerInfo.deserializeBinaryFromReader);
       msg.addPeers(value);
+      break;
+    case 5:
+      var value = msg.getSentBytesMap();
+      reader.readMessage(value, function(message, reader) {
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readInt64, null, 0, 0);
+         });
+      break;
+    case 6:
+      var value = msg.getReceivedBytesMap();
+      reader.readMessage(value, function(message, reader) {
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readInt64, null, 0, 0);
+         });
       break;
     default:
       reader.skipField();
@@ -386,6 +400,14 @@ proto.pactus.GetNetworkInfoResponse.serializeBinaryToWriter = function(message, 
       f,
       proto.pactus.PeerInfo.serializeBinaryToWriter
     );
+  }
+  f = message.getSentBytesMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(5, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeInt64);
+  }
+  f = message.getReceivedBytesMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(6, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeInt64);
   }
 };
 
@@ -479,6 +501,52 @@ proto.pactus.GetNetworkInfoResponse.prototype.addPeers = function(opt_value, opt
  */
 proto.pactus.GetNetworkInfoResponse.prototype.clearPeersList = function() {
   return this.setPeersList([]);
+};
+
+
+/**
+ * map<int32, int64> sent_bytes = 5;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<number,number>}
+ */
+proto.pactus.GetNetworkInfoResponse.prototype.getSentBytesMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<number,number>} */ (
+      jspb.Message.getMapField(this, 5, opt_noLazyCreate,
+      null));
+};
+
+
+/**
+ * Clears values from the map. The map will be non-null.
+ * @return {!proto.pactus.GetNetworkInfoResponse} returns this
+ */
+proto.pactus.GetNetworkInfoResponse.prototype.clearSentBytesMap = function() {
+  this.getSentBytesMap().clear();
+  return this;
+};
+
+
+/**
+ * map<int32, int64> received_bytes = 6;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<number,number>}
+ */
+proto.pactus.GetNetworkInfoResponse.prototype.getReceivedBytesMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<number,number>} */ (
+      jspb.Message.getMapField(this, 6, opt_noLazyCreate,
+      null));
+};
+
+
+/**
+ * Clears values from the map. The map will be non-null.
+ * @return {!proto.pactus.GetNetworkInfoResponse} returns this
+ */
+proto.pactus.GetNetworkInfoResponse.prototype.clearReceivedBytesMap = function() {
+  this.getReceivedBytesMap().clear();
+  return this;
 };
 
 

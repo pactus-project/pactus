@@ -19,7 +19,7 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 	t.Run("Not in the committee, but processes heartbeat messages", func(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeQueryVotes)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeQueryVotes)
 	})
 
 	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.signers[0].PublicKey())
@@ -27,21 +27,21 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 	t.Run("In the committee, should query for votes", func(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeQueryVotes)
+		td.shouldPublishMessageWithThisType(t, td.network, message.TypeQueryVotes)
 	})
 
 	t.Run("Should not query for votes for previous round", func(t *testing.T) {
 		msg := message.NewHeartBeatMessage(h, 0, td.RandomHash())
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeQueryVotes)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeQueryVotes)
 	})
 
 	t.Run("Should not query for votes for same round", func(t *testing.T) {
 		msg := message.NewHeartBeatMessage(h, 1, td.RandomHash())
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeQueryVotes)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeQueryVotes)
 	})
 }
 
@@ -52,8 +52,8 @@ func TestBroadcastingHeartbeatMessages(t *testing.T) {
 
 	t.Run("It is not in committee", func(t *testing.T) {
 		td.sync.broadcastHeartBeat()
-		td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeHeartBeat)
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeVote)
+		td.shouldPublishMessageWithThisType(t, td.network, message.TypeHeartBeat)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeVote)
 	})
 
 	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.signers[1].PublicKey())
@@ -64,7 +64,7 @@ func TestBroadcastingHeartbeatMessages(t *testing.T) {
 		td.consMgr.AddVote(v1)
 
 		td.sync.broadcastHeartBeat()
-		td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeHeartBeat)
-		td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeVote)
+		td.shouldPublishMessageWithThisType(t, td.network, message.TypeHeartBeat)
+		td.shouldPublishMessageWithThisType(t, td.network, message.TypeVote)
 	})
 }

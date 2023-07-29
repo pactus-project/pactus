@@ -7,6 +7,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -24,6 +25,8 @@ type PeerSet struct {
 	sessionTimeout     time.Duration
 	totalSentBytes     int
 	totalReceivedBytes int
+	sentBytes          map[message.Type]int64
+	receivedBytes      map[message.Type]int64
 	startedAt          time.Time
 }
 
@@ -32,6 +35,8 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 		peers:          make(map[peer.ID]*Peer),
 		sessions:       make(map[int]*Session),
 		sessionTimeout: sessionTimeout,
+		sentBytes:      make(map[message.Type]int64),
+		receivedBytes:  make(map[message.Type]int64),
 		startedAt:      time.Now(),
 	}
 }
@@ -306,20 +311,23 @@ func (ps *PeerSet) IncreaseInvalidBundlesCounter(pid peer.ID) {
 	p.InvalidBundles++
 }
 
-func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, c int) {
+func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, msgType message.Type, c int) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
 	p.ReceivedBytes += c
+
 	ps.totalReceivedBytes += c
+	ps.receivedBytes[msgType] += int64(c)
 }
 
-func (ps *PeerSet) IncreaseTotalSentBytesCounter(c int) {
+func (ps *PeerSet) IncreaseSentBytesCounter(msgType message.Type, c int) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	ps.totalSentBytes += c
+	ps.sentBytes[msgType] += int64(c)
 }
 
 func (ps *PeerSet) IncreaseSendSuccessCounter(pid peer.ID) {
@@ -350,6 +358,28 @@ func (ps *PeerSet) TotalReceivedBytes() int {
 	defer ps.lk.RUnlock()
 
 	return ps.totalReceivedBytes
+}
+
+func (ps *PeerSet) SentBytesMessageType(msgType message.Type) int64 {
+	if sentBytes, ok := ps.sentBytes[msgType]; ok {
+		return sentBytes
+	}
+	return 0
+}
+
+func (ps *PeerSet) ReceivedBytesMessageType(msgType message.Type) int64 {
+	if receivedBytes, ok := ps.receivedBytes[msgType]; ok {
+		return receivedBytes
+	}
+	return 0
+}
+
+func (ps *PeerSet) SentBytes() map[message.Type]int64 {
+	return ps.sentBytes
+}
+
+func (ps *PeerSet) ReceivedBytes() map[message.Type]int64 {
+	return ps.receivedBytes
 }
 
 func (ps *PeerSet) StartedAt() time.Time {

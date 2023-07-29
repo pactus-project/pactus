@@ -459,6 +459,74 @@ public final class NetworkOuterClass {
      */
     pactus.network.NetworkOuterClass.PeerInfoOrBuilder getPeersOrBuilder(
         int index);
+
+    /**
+     * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+     */
+    int getSentBytesCount();
+    /**
+     * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+     */
+    boolean containsSentBytes(
+        int key);
+    /**
+     * Use {@link #getSentBytesMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.Integer, java.lang.Long>
+    getSentBytes();
+    /**
+     * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+     */
+    java.util.Map<java.lang.Integer, java.lang.Long>
+    getSentBytesMap();
+    /**
+     * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+     */
+
+    long getSentBytesOrDefault(
+        int key,
+        long defaultValue);
+    /**
+     * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+     */
+
+    long getSentBytesOrThrow(
+        int key);
+
+    /**
+     * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+     */
+    int getReceivedBytesCount();
+    /**
+     * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+     */
+    boolean containsReceivedBytes(
+        int key);
+    /**
+     * Use {@link #getReceivedBytesMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.Integer, java.lang.Long>
+    getReceivedBytes();
+    /**
+     * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+     */
+    java.util.Map<java.lang.Integer, java.lang.Long>
+    getReceivedBytesMap();
+    /**
+     * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+     */
+
+    long getReceivedBytesOrDefault(
+        int key,
+        long defaultValue);
+    /**
+     * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+     */
+
+    long getReceivedBytesOrThrow(
+        int key);
   }
   /**
    * Protobuf type {@code pactus.GetNetworkInfoResponse}
@@ -493,6 +561,20 @@ public final class NetworkOuterClass {
       return pactus.network.NetworkOuterClass.internal_static_pactus_GetNetworkInfoResponse_descriptor;
     }
 
+    @SuppressWarnings({"rawtypes"})
+    @java.lang.Override
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 5:
+          return internalGetSentBytes();
+        case 6:
+          return internalGetReceivedBytes();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
@@ -574,6 +656,168 @@ public final class NetworkOuterClass {
       return peers_.get(index);
     }
 
+    public static final int SENT_BYTES_FIELD_NUMBER = 5;
+    private static final class SentBytesDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.Integer, java.lang.Long> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.Integer, java.lang.Long>newDefaultInstance(
+                  pactus.network.NetworkOuterClass.internal_static_pactus_GetNetworkInfoResponse_SentBytesEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.INT32,
+                  0,
+                  com.google.protobuf.WireFormat.FieldType.INT64,
+                  0L);
+    }
+    private com.google.protobuf.MapField<
+        java.lang.Integer, java.lang.Long> sentBytes_;
+    private com.google.protobuf.MapField<java.lang.Integer, java.lang.Long>
+    internalGetSentBytes() {
+      if (sentBytes_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            SentBytesDefaultEntryHolder.defaultEntry);
+      }
+      return sentBytes_;
+    }
+
+    public int getSentBytesCount() {
+      return internalGetSentBytes().getMap().size();
+    }
+    /**
+     * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+     */
+
+    @java.lang.Override
+    public boolean containsSentBytes(
+        int key) {
+      
+      return internalGetSentBytes().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getSentBytesMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.Integer, java.lang.Long> getSentBytes() {
+      return getSentBytesMap();
+    }
+    /**
+     * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+     */
+    @java.lang.Override
+
+    public java.util.Map<java.lang.Integer, java.lang.Long> getSentBytesMap() {
+      return internalGetSentBytes().getMap();
+    }
+    /**
+     * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+     */
+    @java.lang.Override
+
+    public long getSentBytesOrDefault(
+        int key,
+        long defaultValue) {
+      
+      java.util.Map<java.lang.Integer, java.lang.Long> map =
+          internalGetSentBytes().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+     */
+    @java.lang.Override
+
+    public long getSentBytesOrThrow(
+        int key) {
+      
+      java.util.Map<java.lang.Integer, java.lang.Long> map =
+          internalGetSentBytes().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    public static final int RECEIVED_BYTES_FIELD_NUMBER = 6;
+    private static final class ReceivedBytesDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.Integer, java.lang.Long> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.Integer, java.lang.Long>newDefaultInstance(
+                  pactus.network.NetworkOuterClass.internal_static_pactus_GetNetworkInfoResponse_ReceivedBytesEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.INT32,
+                  0,
+                  com.google.protobuf.WireFormat.FieldType.INT64,
+                  0L);
+    }
+    private com.google.protobuf.MapField<
+        java.lang.Integer, java.lang.Long> receivedBytes_;
+    private com.google.protobuf.MapField<java.lang.Integer, java.lang.Long>
+    internalGetReceivedBytes() {
+      if (receivedBytes_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            ReceivedBytesDefaultEntryHolder.defaultEntry);
+      }
+      return receivedBytes_;
+    }
+
+    public int getReceivedBytesCount() {
+      return internalGetReceivedBytes().getMap().size();
+    }
+    /**
+     * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+     */
+
+    @java.lang.Override
+    public boolean containsReceivedBytes(
+        int key) {
+      
+      return internalGetReceivedBytes().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getReceivedBytesMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.Integer, java.lang.Long> getReceivedBytes() {
+      return getReceivedBytesMap();
+    }
+    /**
+     * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+     */
+    @java.lang.Override
+
+    public java.util.Map<java.lang.Integer, java.lang.Long> getReceivedBytesMap() {
+      return internalGetReceivedBytes().getMap();
+    }
+    /**
+     * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+     */
+    @java.lang.Override
+
+    public long getReceivedBytesOrDefault(
+        int key,
+        long defaultValue) {
+      
+      java.util.Map<java.lang.Integer, java.lang.Long> map =
+          internalGetReceivedBytes().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+     */
+    @java.lang.Override
+
+    public long getReceivedBytesOrThrow(
+        int key) {
+      
+      java.util.Map<java.lang.Integer, java.lang.Long> map =
+          internalGetReceivedBytes().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -600,6 +844,18 @@ public final class NetworkOuterClass {
       for (int i = 0; i < peers_.size(); i++) {
         output.writeMessage(4, peers_.get(i));
       }
+      com.google.protobuf.GeneratedMessageV3
+        .serializeIntegerMapTo(
+          output,
+          internalGetSentBytes(),
+          SentBytesDefaultEntryHolder.defaultEntry,
+          5);
+      com.google.protobuf.GeneratedMessageV3
+        .serializeIntegerMapTo(
+          output,
+          internalGetReceivedBytes(),
+          ReceivedBytesDefaultEntryHolder.defaultEntry,
+          6);
       getUnknownFields().writeTo(output);
     }
 
@@ -625,6 +881,26 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(4, peers_.get(i));
       }
+      for (java.util.Map.Entry<java.lang.Integer, java.lang.Long> entry
+           : internalGetSentBytes().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.Integer, java.lang.Long>
+        sentBytes__ = SentBytesDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(5, sentBytes__);
+      }
+      for (java.util.Map.Entry<java.lang.Integer, java.lang.Long> entry
+           : internalGetReceivedBytes().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.Integer, java.lang.Long>
+        receivedBytes__ = ReceivedBytesDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(6, receivedBytes__);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -648,6 +924,10 @@ public final class NetworkOuterClass {
           != other.getStartedAt()) return false;
       if (!getPeersList()
           .equals(other.getPeersList())) return false;
+      if (!internalGetSentBytes().equals(
+          other.internalGetSentBytes())) return false;
+      if (!internalGetReceivedBytes().equals(
+          other.internalGetReceivedBytes())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -669,6 +949,14 @@ public final class NetworkOuterClass {
       if (getPeersCount() > 0) {
         hash = (37 * hash) + PEERS_FIELD_NUMBER;
         hash = (53 * hash) + getPeersList().hashCode();
+      }
+      if (!internalGetSentBytes().getMap().isEmpty()) {
+        hash = (37 * hash) + SENT_BYTES_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetSentBytes().hashCode();
+      }
+      if (!internalGetReceivedBytes().getMap().isEmpty()) {
+        hash = (37 * hash) + RECEIVED_BYTES_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetReceivedBytes().hashCode();
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
@@ -777,6 +1065,32 @@ public final class NetworkOuterClass {
         return pactus.network.NetworkOuterClass.internal_static_pactus_GetNetworkInfoResponse_descriptor;
       }
 
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMapField(
+          int number) {
+        switch (number) {
+          case 5:
+            return internalGetSentBytes();
+          case 6:
+            return internalGetReceivedBytes();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMutableMapField(
+          int number) {
+        switch (number) {
+          case 5:
+            return internalGetMutableSentBytes();
+          case 6:
+            return internalGetMutableReceivedBytes();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
@@ -811,6 +1125,8 @@ public final class NetworkOuterClass {
           peersBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000001);
+        internalGetMutableSentBytes().clear();
+        internalGetMutableReceivedBytes().clear();
         return this;
       }
 
@@ -850,6 +1166,10 @@ public final class NetworkOuterClass {
         } else {
           result.peers_ = peersBuilder_.build();
         }
+        result.sentBytes_ = internalGetSentBytes();
+        result.sentBytes_.makeImmutable();
+        result.receivedBytes_ = internalGetReceivedBytes();
+        result.receivedBytes_.makeImmutable();
         onBuilt();
         return result;
       }
@@ -933,6 +1253,10 @@ public final class NetworkOuterClass {
             }
           }
         }
+        internalGetMutableSentBytes().mergeFrom(
+            other.internalGetSentBytes());
+        internalGetMutableReceivedBytes().mergeFrom(
+            other.internalGetReceivedBytes());
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -987,6 +1311,22 @@ public final class NetworkOuterClass {
                 }
                 break;
               } // case 34
+              case 42: {
+                com.google.protobuf.MapEntry<java.lang.Integer, java.lang.Long>
+                sentBytes__ = input.readMessage(
+                    SentBytesDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+                internalGetMutableSentBytes().getMutableMap().put(
+                    sentBytes__.getKey(), sentBytes__.getValue());
+                break;
+              } // case 42
+              case 50: {
+                com.google.protobuf.MapEntry<java.lang.Integer, java.lang.Long>
+                receivedBytes__ = input.readMessage(
+                    ReceivedBytesDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+                internalGetMutableReceivedBytes().getMutableMap().put(
+                    receivedBytes__.getKey(), receivedBytes__.getValue());
+                break;
+              } // case 50
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -1335,6 +1675,262 @@ public final class NetworkOuterClass {
           peers_ = null;
         }
         return peersBuilder_;
+      }
+
+      private com.google.protobuf.MapField<
+          java.lang.Integer, java.lang.Long> sentBytes_;
+      private com.google.protobuf.MapField<java.lang.Integer, java.lang.Long>
+      internalGetSentBytes() {
+        if (sentBytes_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              SentBytesDefaultEntryHolder.defaultEntry);
+        }
+        return sentBytes_;
+      }
+      private com.google.protobuf.MapField<java.lang.Integer, java.lang.Long>
+      internalGetMutableSentBytes() {
+        onChanged();;
+        if (sentBytes_ == null) {
+          sentBytes_ = com.google.protobuf.MapField.newMapField(
+              SentBytesDefaultEntryHolder.defaultEntry);
+        }
+        if (!sentBytes_.isMutable()) {
+          sentBytes_ = sentBytes_.copy();
+        }
+        return sentBytes_;
+      }
+
+      public int getSentBytesCount() {
+        return internalGetSentBytes().getMap().size();
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+       */
+
+      @java.lang.Override
+      public boolean containsSentBytes(
+          int key) {
+        
+        return internalGetSentBytes().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getSentBytesMap()} instead.
+       */
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.Integer, java.lang.Long> getSentBytes() {
+        return getSentBytesMap();
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+       */
+      @java.lang.Override
+
+      public java.util.Map<java.lang.Integer, java.lang.Long> getSentBytesMap() {
+        return internalGetSentBytes().getMap();
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+       */
+      @java.lang.Override
+
+      public long getSentBytesOrDefault(
+          int key,
+          long defaultValue) {
+        
+        java.util.Map<java.lang.Integer, java.lang.Long> map =
+            internalGetSentBytes().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+       */
+      @java.lang.Override
+
+      public long getSentBytesOrThrow(
+          int key) {
+        
+        java.util.Map<java.lang.Integer, java.lang.Long> map =
+            internalGetSentBytes().getMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+
+      public Builder clearSentBytes() {
+        internalGetMutableSentBytes().getMutableMap()
+            .clear();
+        return this;
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+       */
+
+      public Builder removeSentBytes(
+          int key) {
+        
+        internalGetMutableSentBytes().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.Integer, java.lang.Long>
+      getMutableSentBytes() {
+        return internalGetMutableSentBytes().getMutableMap();
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+       */
+      public Builder putSentBytes(
+          int key,
+          long value) {
+        
+        
+        internalGetMutableSentBytes().getMutableMap()
+            .put(key, value);
+        return this;
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; sent_bytes = 5 [json_name = "sentBytes"];</code>
+       */
+
+      public Builder putAllSentBytes(
+          java.util.Map<java.lang.Integer, java.lang.Long> values) {
+        internalGetMutableSentBytes().getMutableMap()
+            .putAll(values);
+        return this;
+      }
+
+      private com.google.protobuf.MapField<
+          java.lang.Integer, java.lang.Long> receivedBytes_;
+      private com.google.protobuf.MapField<java.lang.Integer, java.lang.Long>
+      internalGetReceivedBytes() {
+        if (receivedBytes_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              ReceivedBytesDefaultEntryHolder.defaultEntry);
+        }
+        return receivedBytes_;
+      }
+      private com.google.protobuf.MapField<java.lang.Integer, java.lang.Long>
+      internalGetMutableReceivedBytes() {
+        onChanged();;
+        if (receivedBytes_ == null) {
+          receivedBytes_ = com.google.protobuf.MapField.newMapField(
+              ReceivedBytesDefaultEntryHolder.defaultEntry);
+        }
+        if (!receivedBytes_.isMutable()) {
+          receivedBytes_ = receivedBytes_.copy();
+        }
+        return receivedBytes_;
+      }
+
+      public int getReceivedBytesCount() {
+        return internalGetReceivedBytes().getMap().size();
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+       */
+
+      @java.lang.Override
+      public boolean containsReceivedBytes(
+          int key) {
+        
+        return internalGetReceivedBytes().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getReceivedBytesMap()} instead.
+       */
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.Integer, java.lang.Long> getReceivedBytes() {
+        return getReceivedBytesMap();
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+       */
+      @java.lang.Override
+
+      public java.util.Map<java.lang.Integer, java.lang.Long> getReceivedBytesMap() {
+        return internalGetReceivedBytes().getMap();
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+       */
+      @java.lang.Override
+
+      public long getReceivedBytesOrDefault(
+          int key,
+          long defaultValue) {
+        
+        java.util.Map<java.lang.Integer, java.lang.Long> map =
+            internalGetReceivedBytes().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+       */
+      @java.lang.Override
+
+      public long getReceivedBytesOrThrow(
+          int key) {
+        
+        java.util.Map<java.lang.Integer, java.lang.Long> map =
+            internalGetReceivedBytes().getMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+
+      public Builder clearReceivedBytes() {
+        internalGetMutableReceivedBytes().getMutableMap()
+            .clear();
+        return this;
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+       */
+
+      public Builder removeReceivedBytes(
+          int key) {
+        
+        internalGetMutableReceivedBytes().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.Integer, java.lang.Long>
+      getMutableReceivedBytes() {
+        return internalGetMutableReceivedBytes().getMutableMap();
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+       */
+      public Builder putReceivedBytes(
+          int key,
+          long value) {
+        
+        
+        internalGetMutableReceivedBytes().getMutableMap()
+            .put(key, value);
+        return this;
+      }
+      /**
+       * <code>map&lt;int32, int64&gt; received_bytes = 6 [json_name = "receivedBytes"];</code>
+       */
+
+      public Builder putAllReceivedBytes(
+          java.util.Map<java.lang.Integer, java.lang.Long> values) {
+        internalGetMutableReceivedBytes().getMutableMap()
+            .putAll(values);
+        return this;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -4344,6 +4940,16 @@ public final class NetworkOuterClass {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_GetNetworkInfoResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_GetNetworkInfoResponse_SentBytesEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_GetNetworkInfoResponse_SentBytesEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_GetNetworkInfoResponse_ReceivedBytesEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_GetNetworkInfoResponse_ReceivedBytesEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_GetNodeInfoRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -4368,33 +4974,40 @@ public final class NetworkOuterClass {
   static {
     java.lang.String[] descriptorData = {
       "\n\rnetwork.proto\022\006pactus\"\027\n\025GetNetworkInf" +
-      "oRequest\"\273\001\n\026GetNetworkInfoResponse\022(\n\020t" +
+      "oRequest\"\343\003\n\026GetNetworkInfoResponse\022(\n\020t" +
       "otal_sent_bytes\030\001 \001(\005R\016totalSentBytes\0220\n" +
       "\024total_received_bytes\030\002 \001(\005R\022totalReceiv" +
       "edBytes\022\035\n\nstarted_at\030\003 \001(\003R\tstartedAt\022&" +
-      "\n\005peers\030\004 \003(\0132\020.pactus.PeerInfoR\005peers\"\024" +
-      "\n\022GetNodeInfoRequest\"^\n\023GetNodeInfoRespo" +
-      "nse\022\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002" +
-      " \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peerId\"\355\003\n" +
-      "\010PeerInfo\022\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005a" +
-      "gent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peer" +
-      "Id\022%\n\016consensus_keys\030\004 \003(\tR\rconsensusKey" +
-      "s\022\024\n\005flags\030\005 \001(\005R\005flags\022\026\n\006height\030\006 \001(\rR" +
-      "\006height\022+\n\021received_messages\030\007 \001(\005R\020rece" +
-      "ivedMessages\022)\n\020invalid_messages\030\010 \001(\005R\017" +
-      "invalidMessages\022%\n\016received_bytes\030\t \001(\005R" +
-      "\rreceivedBytes\022\026\n\006status\030\n \001(\005R\006status\022\033" +
-      "\n\tlast_sent\030\013 \001(\003R\010lastSent\022#\n\rlast_rece" +
-      "ived\030\014 \001(\003R\014lastReceived\022!\n\014send_success" +
-      "\030\r \001(\005R\013sendSuccess\022\037\n\013send_failed\030\016 \001(\005" +
-      "R\nsendFailed\022&\n\017last_block_hash\030\017 \001(\014R\rl" +
-      "astBlockHash2\242\001\n\007Network\022O\n\016GetNetworkIn" +
-      "fo\022\035.pactus.GetNetworkInfoRequest\032\036.pact" +
-      "us.GetNetworkInfoResponse\022F\n\013GetNodeInfo" +
-      "\022\032.pactus.GetNodeInfoRequest\032\033.pactus.Ge" +
-      "tNodeInfoResponseBB\n\016pactus.networkZ0git" +
-      "hub.com/pactus-project/pactus/www/grpc/p" +
-      "actusb\006proto3"
+      "\n\005peers\030\004 \003(\0132\020.pactus.PeerInfoR\005peers\022L" +
+      "\n\nsent_bytes\030\005 \003(\0132-.pactus.GetNetworkIn" +
+      "foResponse.SentBytesEntryR\tsentBytes\022X\n\016" +
+      "received_bytes\030\006 \003(\01321.pactus.GetNetwork" +
+      "InfoResponse.ReceivedBytesEntryR\rreceive" +
+      "dBytes\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005R\003k" +
+      "ey\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@\n\022Received" +
+      "BytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 " +
+      "\001(\003R\005value:\0028\001\"\024\n\022GetNodeInfoRequest\"^\n\023" +
+      "GetNodeInfoResponse\022\030\n\007moniker\030\001 \001(\tR\007mo" +
+      "niker\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003" +
+      " \001(\014R\006peerId\"\355\003\n\010PeerInfo\022\030\n\007moniker\030\001 \001" +
+      "(\tR\007moniker\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007pee" +
+      "r_id\030\003 \001(\014R\006peerId\022%\n\016consensus_keys\030\004 \003" +
+      "(\tR\rconsensusKeys\022\024\n\005flags\030\005 \001(\005R\005flags\022" +
+      "\026\n\006height\030\006 \001(\rR\006height\022+\n\021received_mess" +
+      "ages\030\007 \001(\005R\020receivedMessages\022)\n\020invalid_" +
+      "messages\030\010 \001(\005R\017invalidMessages\022%\n\016recei" +
+      "ved_bytes\030\t \001(\005R\rreceivedBytes\022\026\n\006status" +
+      "\030\n \001(\005R\006status\022\033\n\tlast_sent\030\013 \001(\003R\010lastS" +
+      "ent\022#\n\rlast_received\030\014 \001(\003R\014lastReceived" +
+      "\022!\n\014send_success\030\r \001(\005R\013sendSuccess\022\037\n\013s" +
+      "end_failed\030\016 \001(\005R\nsendFailed\022&\n\017last_blo" +
+      "ck_hash\030\017 \001(\014R\rlastBlockHash2\242\001\n\007Network" +
+      "\022O\n\016GetNetworkInfo\022\035.pactus.GetNetworkIn" +
+      "foRequest\032\036.pactus.GetNetworkInfoRespons" +
+      "e\022F\n\013GetNodeInfo\022\032.pactus.GetNodeInfoReq" +
+      "uest\032\033.pactus.GetNodeInfoResponseBB\n\016pac" +
+      "tus.networkZ0github.com/pactus-project/p" +
+      "actus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -4411,7 +5024,19 @@ public final class NetworkOuterClass {
     internal_static_pactus_GetNetworkInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNetworkInfoResponse_descriptor,
-        new java.lang.String[] { "TotalSentBytes", "TotalReceivedBytes", "StartedAt", "Peers", });
+        new java.lang.String[] { "TotalSentBytes", "TotalReceivedBytes", "StartedAt", "Peers", "SentBytes", "ReceivedBytes", });
+    internal_static_pactus_GetNetworkInfoResponse_SentBytesEntry_descriptor =
+      internal_static_pactus_GetNetworkInfoResponse_descriptor.getNestedTypes().get(0);
+    internal_static_pactus_GetNetworkInfoResponse_SentBytesEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_GetNetworkInfoResponse_SentBytesEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_pactus_GetNetworkInfoResponse_ReceivedBytesEntry_descriptor =
+      internal_static_pactus_GetNetworkInfoResponse_descriptor.getNestedTypes().get(1);
+    internal_static_pactus_GetNetworkInfoResponse_ReceivedBytesEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_GetNetworkInfoResponse_ReceivedBytesEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
     internal_static_pactus_GetNodeInfoRequest_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_pactus_GetNodeInfoRequest_fieldAccessorTable = new
