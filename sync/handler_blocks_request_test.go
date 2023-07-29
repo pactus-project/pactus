@@ -164,7 +164,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(s.SessionID(), 100, 105)
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
-			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeBusy)
+			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 	})
 }

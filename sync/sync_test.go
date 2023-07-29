@@ -280,7 +280,8 @@ func TestDownload(t *testing.T) {
 
 	t.Run("download request is rejected", func(t *testing.T) {
 		session := td.sync.peerSet.OpenSession(pid)
-		msg2 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, session.SessionID(), 1, nil, nil)
+		msg2 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, message.ResponseCodeRejected.String(),
+			session.SessionID(), 1, nil, nil)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg2, pid))
 		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 
