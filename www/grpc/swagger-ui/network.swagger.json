@@ -82,6 +82,20 @@
           "items": {
             "$ref": "#/definitions/pactusPeerInfo"
           }
+        },
+        "sentBytes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "int64"
+          }
+        },
+        "receivedBytes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "int64"
+          }
         }
       }
     },

@@ -26,7 +26,7 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	t.Run("Receiving new block announce message, without committing previous block", func(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg2, pid))
 
-		msg1 := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+		msg1 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 		assert.Equal(t, msg1.Message.(*message.BlocksRequestMessage).From, lastBlockHeight+1)
 
 		peer := td.sync.peerSet.GetPeer(pid)
@@ -54,7 +54,7 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 	t.Run("Not in the committee, should not broadcast block announce message", func(t *testing.T) {
 		td.sync.broadcast(msg)
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeBlockAnnounce)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlockAnnounce)
 	})
 
 	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.signers[0].PublicKey())
@@ -62,7 +62,7 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 	t.Run("In the committee, should broadcast block announce message", func(t *testing.T) {
 		td.sync.broadcast(msg)
 
-		msg1 := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlockAnnounce)
+		msg1 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlockAnnounce)
 		assert.Equal(t, msg1.Message.(*message.BlockAnnounceMessage).Height, msg.Height)
 	})
 }
