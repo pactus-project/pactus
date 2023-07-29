@@ -20,7 +20,7 @@ type testData struct {
 }
 
 func setup(t *testing.T) *testData {
-	ts := testsuite.NewTestSuiteForSeed(1690599430437501977)
+	ts := testsuite.NewTestSuite(t)
 
 	sandbox := sandbox.MockingSandbox(ts)
 	randHeight := ts.RandUint32NonZero(500000)

@@ -249,7 +249,7 @@ func TestOldestDidNotPropose(t *testing.T) {
 	updateCommittee(td)
 
 	// Let's update committee
-	height := uint32(td.randHeight)
+	height := td.randHeight
 	for i := uint32(0); i < 7; i++ {
 		height++
 		b := td.sandbox.TestStore.AddTestBlock(height)
