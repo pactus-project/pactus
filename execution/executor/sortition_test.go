@@ -3,11 +3,25 @@ package executor
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/stretchr/testify/assert"
 )
+
+func updateCommittee(td *testData) {
+	joiningCommittee := make([]*validator.Validator, 0)
+	td.sandbox.IterateValidators(func(val *validator.Validator, updated bool, joined bool) {
+		if joined {
+			joiningCommittee = append(joiningCommittee, val)
+		}
+	})
+
+	td.sandbox.TestCommittee.Update(0, joiningCommittee)
+	td.sandbox.TestJoinedValidators = make(map[crypto.Address]bool)
+	// fmt.Println(td.sandbox.TestCommittee.String())
+}
 
 func TestExecuteSortitionTx(t *testing.T) {
 	td := setup(t)
@@ -27,51 +41,71 @@ func TestExecuteSortitionTx(t *testing.T) {
 
 	newVal.UpdateLastBondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().BondInterval)
 	td.sandbox.UpdateValidator(newVal)
+	assert.Zero(t, td.sandbox.Validator(newVal.Address()).LastSortitionHeight())
+	assert.False(t, td.sandbox.IsJoinedCommittee(newVal.Address()))
 
 	t.Run("Should fail, Invalid address", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.stamp500000, 1, td.RandomAddress(), proof)
+		trx := tx.NewSortitionTx(td.randStamp, 1, td.RandomAddress(), proof)
 		td.sandbox.TestAcceptSortition = true
-		assert.Equal(t, errors.Code(exe.Execute(trx, td.sandbox)), errors.ErrInvalidAddress)
+		err := exe.Execute(trx, td.sandbox)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	newVal.UpdateLastBondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().BondInterval + 1)
 	td.sandbox.UpdateValidator(newVal)
+
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.stamp500000, newVal.Sequence()+1, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(td.randStamp, newVal.Sequence()+1, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
-		assert.Equal(t, errors.Code(exe.Execute(trx, td.sandbox)), errors.ErrInvalidHeight)
+		err := exe.Execute(trx, td.sandbox)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
 	})
 
-	td.sandbox.TestStore.AddTestBlock(500001)
+	// Let's add one more block
+	td.sandbox.TestStore.AddTestBlock(td.randHeight + 1)
 
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.stamp500000, newVal.Sequence()+2, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(td.randStamp, newVal.Sequence(), newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
-		assert.Equal(t, errors.Code(exe.Execute(trx, td.sandbox)), errors.ErrInvalidSequence)
+		err := exe.Execute(trx, td.sandbox)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
 	})
 
 	t.Run("Should fail, Invalid proof", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.stamp500000, newVal.Sequence()+1, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(td.randStamp, newVal.Sequence()+1, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = false
-		assert.Equal(t, errors.Code(exe.Execute(trx, td.sandbox)), errors.ErrInvalidProof)
+		err := exe.Execute(trx, td.sandbox)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidProof)
 	})
 
 	t.Run("Should fail, Committee has free seats and validator is in the committee", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.stamp500000, existingVal.Sequence()+1, existingVal.Address(), proof)
+		trx := tx.NewSortitionTx(td.randStamp, existingVal.Sequence()+1, existingVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
-		assert.Equal(t, errors.Code(exe.Execute(trx, td.sandbox)), errors.ErrInvalidTx)
+		err := exe.Execute(trx, td.sandbox)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
 
 	t.Run("Should be ok", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.stamp500000, newVal.Sequence()+1, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(td.randStamp, newVal.Sequence()+1, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
-		assert.NoError(t, exe.Execute(trx, td.sandbox))
+		err := exe.Execute(trx, td.sandbox)
+		assert.NoError(t, err)
 
 		// Execute again, should fail
-		assert.Error(t, exe.Execute(trx, td.sandbox))
+		err = exe.Execute(trx, td.sandbox)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
 	})
 
-	assert.Equal(t, td.sandbox.Validator(newVal.Address()).LastJoinedHeight(), td.sandbox.CurrentHeight())
+	t.Run("Should fail, duplicated sortition", func(t *testing.T) {
+		trx := tx.NewSortitionTx(td.randStamp, newVal.Sequence()+2, newVal.Address(), proof)
+		td.sandbox.TestAcceptSortition = true
+		err := exe.Execute(trx, td.sandbox)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
+	})
+
+	assert.Equal(t, td.sandbox.CurrentHeight(), td.randHeight+2)
+	assert.Equal(t, td.sandbox.Validator(newVal.Address()).LastSortitionHeight(), td.randHeight)
+	assert.True(t, td.sandbox.IsJoinedCommittee(newVal.Address()))
 	assert.Zero(t, exe.Fee())
 
 	td.checkTotalCoin(t, 0)
@@ -86,15 +120,20 @@ func TestSortitionNonStrictMode(t *testing.T) {
 	proof := td.RandomProof()
 
 	td.sandbox.TestAcceptSortition = true
-	trx := tx.NewSortitionTx(td.stamp500000, val.Sequence(), val.Address(), proof)
-	assert.Error(t, exe1.Execute(trx, td.sandbox))
-	assert.NoError(t, exe2.Execute(trx, td.sandbox))
+	trx := tx.NewSortitionTx(td.randStamp, val.Sequence(), val.Address(), proof)
+	err := exe1.Execute(trx, td.sandbox)
+	assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
+	err = exe2.Execute(trx, td.sandbox)
+	assert.NoError(t, err)
 }
 
 func TestChangePower1(t *testing.T) {
 	td := setup(t)
 
 	exe := NewSortitionExecutor(true)
+
+	// This moves proposer to next validator
+	updateCommittee(td)
 
 	// Let's create validators first
 	pub1, _ := td.RandomBLSKeyPair()
@@ -117,21 +156,27 @@ func TestChangePower1(t *testing.T) {
 
 	td.sandbox.TestParams.CommitteeSize = 4
 	td.sandbox.TestAcceptSortition = true
-	trx1 := tx.NewSortitionTx(td.stamp500000, val1.Sequence()+1, val1.Address(), proof1)
-	assert.NoError(t, exe.Execute(trx1, td.sandbox))
+	trx1 := tx.NewSortitionTx(td.randStamp, val1.Sequence()+1, val1.Address(), proof1)
+	err := exe.Execute(trx1, td.sandbox)
+	assert.NoError(t, err)
 
-	trx2 := tx.NewSortitionTx(td.stamp500000, val2.Sequence()+1, val2.Address(), proof2)
-	assert.Error(t, exe.Execute(trx2, td.sandbox), "More than 1/3 of power is joining at the same height")
+	trx2 := tx.NewSortitionTx(td.randStamp, val2.Sequence()+1, val2.Address(), proof2)
+	err = exe.Execute(trx2, td.sandbox)
+	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx, "More than 1/3 of power is joining at the same height")
 
 	// Committee member
-	trx3 := tx.NewSortitionTx(td.stamp500000, val3.Sequence()+1, val3.Address(), proof3)
-	assert.NoError(t, exe.Execute(trx3, td.sandbox))
+	trx3 := tx.NewSortitionTx(td.randStamp, val3.Sequence()+1, val3.Address(), proof3)
+	err = exe.Execute(trx3, td.sandbox)
+	assert.NoError(t, err)
 }
 
 func TestChangePower2(t *testing.T) {
 	td := setup(t)
 
 	exe := NewSortitionExecutor(true)
+
+	// This moves proposer to next validator
+	updateCommittee(td)
 
 	// Let's create validators first
 	pub1, _ := td.RandomBLSKeyPair()
@@ -160,18 +205,22 @@ func TestChangePower2(t *testing.T) {
 
 	td.sandbox.TestParams.CommitteeSize = 7
 	td.sandbox.TestAcceptSortition = true
-	trx1 := tx.NewSortitionTx(td.stamp500000, val1.Sequence()+1, val1.Address(), proof1)
-	assert.NoError(t, exe.Execute(trx1, td.sandbox))
+	trx1 := tx.NewSortitionTx(td.randStamp, val1.Sequence()+1, val1.Address(), proof1)
+	err := exe.Execute(trx1, td.sandbox)
+	assert.NoError(t, err)
 
-	trx2 := tx.NewSortitionTx(td.stamp500000, val2.Sequence()+1, val2.Address(), proof2)
-	assert.NoError(t, exe.Execute(trx2, td.sandbox))
+	trx2 := tx.NewSortitionTx(td.randStamp, val2.Sequence()+1, val2.Address(), proof2)
+	err = exe.Execute(trx2, td.sandbox)
+	assert.NoError(t, err)
 
-	trx3 := tx.NewSortitionTx(td.stamp500000, val3.Sequence()+1, val3.Address(), proof3)
-	assert.Error(t, exe.Execute(trx3, td.sandbox), "More than 1/3 of power is leaving at the same height")
+	trx3 := tx.NewSortitionTx(td.randStamp, val3.Sequence()+1, val3.Address(), proof3)
+	err = exe.Execute(trx3, td.sandbox)
+	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx, "More than 1/3 of power is leaving at the same height")
 
 	// Committee member
-	trx4 := tx.NewSortitionTx(td.stamp500000, val4.Sequence()+1, val4.Address(), proof4)
-	assert.NoError(t, exe.Execute(trx4, td.sandbox))
+	trx4 := tx.NewSortitionTx(td.randStamp, val4.Sequence()+1, val4.Address(), proof4)
+	err = exe.Execute(trx4, td.sandbox)
+	assert.NoError(t, err)
 }
 
 // TestOldestDidNotPropose tests if the oldest validator in the committee had
@@ -187,7 +236,8 @@ func TestOldestDidNotPropose(t *testing.T) {
 		pub, _ := td.RandomBLSKeyPair()
 		val := td.sandbox.MakeNewValidator(pub)
 		val.AddToStake(10 * 1e9)
-		val.UpdateLastBondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().BondInterval)
+		val.UpdateLastBondingHeight(
+			td.sandbox.CurrentHeight() - td.sandbox.Params().BondInterval)
 		td.sandbox.UpdateValidator(val)
 		vals[i] = val
 	}
@@ -195,26 +245,44 @@ func TestOldestDidNotPropose(t *testing.T) {
 	td.sandbox.TestParams.CommitteeSize = 7
 	td.sandbox.TestAcceptSortition = true
 
-	stamp := td.stamp500000
-	for i := 0; i < 8; i = i + 2 {
-		b := td.sandbox.TestStore.AddTestBlock(uint32(500001 + (i / 2)))
-		stamp = b.Stamp()
+	// This moves proposer to the next validator
+	updateCommittee(td)
 
-		trx1 := tx.NewSortitionTx(stamp, vals[i].Sequence()+1, vals[i].Address(), td.RandomProof())
-		assert.NoError(t, exe.Execute(trx1, td.sandbox))
+	// Let's update committee
+	height := uint32(td.randHeight)
+	for i := uint32(0); i < 7; i++ {
+		height++
+		b := td.sandbox.TestStore.AddTestBlock(height)
+		stamp := b.Stamp()
 
-		trx2 := tx.NewSortitionTx(stamp, vals[i+1].Sequence()+1, vals[i+1].Address(), td.RandomProof())
-		assert.NoError(t, exe.Execute(trx2, td.sandbox))
+		trx1 := tx.NewSortitionTx(stamp,
+			vals[i].Sequence()+1,
+			vals[i].Address(), td.RandomProof())
+		err := exe.Execute(trx1, td.sandbox)
+		assert.NoError(t, err)
 
-		joined := make([]*validator.Validator, 0)
-		td.sandbox.IterateValidators(func(val *validator.Validator, updated bool) {
-			if val.LastJoinedHeight() == td.sandbox.CurrentHeight() {
-				joined = append(joined, val)
-			}
-		})
-		td.sandbox.TestCommittee.Update(0, joined)
+		updateCommittee(td)
 	}
 
-	trx := tx.NewSortitionTx(stamp, vals[8].Sequence()+1, vals[8].Address(), td.RandomProof())
-	assert.Error(t, exe.Execute(trx, td.sandbox))
+	height++
+	b := td.sandbox.TestStore.AddTestBlock(height)
+	stamp := b.Stamp()
+
+	trx1 := tx.NewSortitionTx(stamp, vals[7].Sequence()+1, vals[7].Address(), td.RandomProof())
+	err := exe.Execute(trx1, td.sandbox)
+	assert.NoError(t, err)
+
+	trx2 := tx.NewSortitionTx(stamp, vals[8].Sequence()+1, vals[8].Address(), td.RandomProof())
+	err = exe.Execute(trx2, td.sandbox)
+	assert.NoError(t, err)
+	updateCommittee(td)
+
+	height++
+	b = td.sandbox.TestStore.AddTestBlock(height)
+	stamp = b.Stamp()
+
+	// Entering validator 16
+	trx3 := tx.NewSortitionTx(stamp, vals[8].Sequence()+2, vals[8].Address(), td.RandomProof())
+	err = exe.Execute(trx3, td.sandbox)
+	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 }

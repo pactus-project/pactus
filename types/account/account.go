@@ -70,11 +70,13 @@ func (acc *Account) AddToBalance(amt int64) {
 	acc.data.Balance += amt
 }
 
+// IncSequence increments the account's sequence every time it signs a transaction.
 // IncSequence increases the sequence anytime this account signs a transaction.
 func (acc *Account) IncSequence() {
 	acc.data.Sequence++
 }
 
+// Hash returns the hash of this account.
 // Hash calculates and returns the hash of the account.
 func (acc *Account) Hash() hash.Hash {
 	bs, err := acc.Bytes()

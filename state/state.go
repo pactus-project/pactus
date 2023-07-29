@@ -504,16 +504,15 @@ func (st *state) Fingerprint() string {
 }
 
 func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
-	joined := make([]*validator.Validator, 0)
-	currentHeight := sb.CurrentHeight()
-	sb.IterateValidators(func(val *validator.Validator, updated bool) {
-		if val.LastJoinedHeight() == currentHeight {
+	joiningCommittee := make([]*validator.Validator, 0)
+	sb.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
+		if joined {
 			st.logger.Info("new validator joined", "address", val.Address(), "power", val.Power())
 
-			joined = append(joined, val)
+			joiningCommittee = append(joiningCommittee, val)
 		}
 	})
-	st.committee.Update(round, joined)
+	st.committee.Update(round, joiningCommittee)
 
 	sb.IterateAccounts(func(addr crypto.Address, acc *account.Account, updated bool) {
 		if updated {
@@ -522,7 +521,7 @@ func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
 		}
 	})
 
-	sb.IterateValidators(func(val *validator.Validator, updated bool) {
+	sb.IterateValidators(func(val *validator.Validator, updated bool, _ bool) {
 		if updated {
 			st.store.UpdateValidator(val)
 			st.validatorMerkle.SetHash(int(val.Number()), val.Hash())
