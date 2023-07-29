@@ -44,7 +44,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			return errors.Errorf(errors.ErrInvalidSequence,
 				"expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 		}
-		// Check for the duplicated sortition transactions
+		// Check for the duplicated or expired sortition transactions
 		if sortitionHeight <= val.LastSortitionHeight() {
 			return errors.Errorf(errors.ErrInvalidTx,
 				"duplicated sortition transaction")

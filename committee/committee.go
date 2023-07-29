@@ -69,8 +69,6 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 		} else {
 			committeeVal.UpdateLastSortitionHeight(val.LastSortitionHeight())
 
-			// TODO: PRoofread the comments here
-			//
 			// Ensure that a validator's stake and bonding properties
 			// remain unchanged while they are part of the committee.
 			// Refer to the Bond executor for additional details.
