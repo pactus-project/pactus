@@ -211,6 +211,22 @@ func (m *MockState) Params() param.Params {
 	return m.TestParams
 }
 
-func (m *MockState) CalcFee(_ int64, _ payload.Type) (int64, error) {
-	return 0, nil
+func (m *MockState) CalculateFee(_ int64, payloadType payload.Type) (int64, error) {
+	switch payloadType {
+		case payload.PayloadTypeTransfer,
+			payload.PayloadTypeBond,
+			payload.PayloadTypeWithdraw:
+			{
+				return m.ts.RandInt64(1e9), nil
+			}
+	
+		case payload.PayloadTypeUnbond,
+			payload.PayloadTypeSortition:
+			{
+				return 0, nil
+			}
+	
+		default:
+			return 0, errors.Errorf(errors.ErrInvalidTx, "unexpected tx type: %v", payloadType)
+		}
 }

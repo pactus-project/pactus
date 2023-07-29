@@ -14,6 +14,7 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
@@ -181,7 +182,11 @@ func updateFeeHint(lbl *gtk.Label, amtStr string, w *wallet.Wallet) {
 	if err != nil {
 		updateHintLabel(lbl, "")
 	} else {
-		fee := w.CalculateFee(amount)
+		fee, err := w.CalculateFee(amount, payload.PayloadTypeTransfer)
+		if err != nil {
+			errorCheck(err)
+			return
+		}
 		hint := fmt.Sprintf("payable: %v, fee: %v",
 			util.ChangeToString(fee+amount), util.ChangeToString(fee))
 		updateHintLabel(lbl, hint)

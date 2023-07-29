@@ -705,7 +705,7 @@ func (st *state) publishEvents(height uint32, block *block.Block) {
 	}
 }
 
-func (st *state) CalcFee(amount int64, payloadType payload.Type) (int64, error) {
+func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, error) {
 	switch payloadType {
 	case payload.PayloadTypeTransfer,
 		payload.PayloadTypeBond,

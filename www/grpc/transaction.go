@@ -64,7 +64,7 @@ func (s *transactionServer) SendRawTransaction(_ context.Context,
 
 func (s *transactionServer) CalculateFee(_ context.Context,
 	req *pactus.CalculateFeeRequest) (*pactus.CalculateFeeResponse, error) {
-	fee, err := s.state.CalcFee(req.Amount, payload.Type(req.PayloadType))
+	fee, err := s.state.CalculateFee(req.Amount, payload.Type(req.PayloadType))
 	if err != nil {
 		return nil, err
 	}

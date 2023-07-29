@@ -50,5 +50,5 @@ type Facade interface {
 	Params() param.Params
 	Close() error
 	Fingerprint() string
-	CalcFee(amount int64, payloadType payload.Type) (int64, error)
+	CalculateFee(amount int64, payloadType payload.Type) (int64, error)
 }
