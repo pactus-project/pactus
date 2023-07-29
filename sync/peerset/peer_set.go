@@ -268,7 +268,7 @@ func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32, lastBlockHash hash.H
 	p := ps.mustGetPeer(pid)
 	p.Height = height
 	p.LastBlockHash = lastBlockHash
-	ps.maxClaimedHeight = util.MaxU32(ps.maxClaimedHeight, height)
+	ps.maxClaimedHeight = util.Max(ps.maxClaimedHeight, height)
 }
 
 func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {

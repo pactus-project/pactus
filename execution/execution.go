@@ -133,7 +133,7 @@ func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 func calculateFee(amt int64, sb sandbox.Sandbox) int64 {
 	params := sb.Params()
 	fee := int64(float64(amt) * params.FeeFraction)
-	fee = util.Max64(fee, params.MinimumFee)
-	fee = util.Min64(fee, params.MaximumFee)
+	fee = util.Max(fee, params.MinimumFee)
+	fee = util.Min(fee, params.MaximumFee)
 	return fee
 }

@@ -3,6 +3,7 @@ package cache
 import (
 	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/util"
 )
 
 type Cache struct {
@@ -62,10 +63,7 @@ func (c *Cache) AddCertificate(height uint32, cert *block.Certificate) {
 
 // Len returns the maximum number of items in the blocks and certificates cache.
 func (c *Cache) Len() int {
-	if c.blocks.Len() > c.certs.Len() {
-		return c.blocks.Len()
-	}
-	return c.certs.Len()
+	return util.Max(c.blocks.Len(), c.certs.Len())
 }
 
 func (c *Cache) Clear() {
