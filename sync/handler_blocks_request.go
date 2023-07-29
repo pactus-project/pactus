@@ -63,7 +63,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 
 	// Help this peer to sync up
 	for {
-		blockToRead := util.MinU32(handler.config.BlockPerMessage, count)
+		blockToRead := util.Min(handler.config.BlockPerMessage, count)
 		blocksData := handler.prepareBlocks(height, blockToRead)
 		if len(blocksData) == 0 {
 			break

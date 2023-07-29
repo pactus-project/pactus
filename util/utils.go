@@ -6,6 +6,8 @@ import (
 	"math/big"
 	"os"
 	"strconv"
+
+	"golang.org/x/exp/constraints"
 )
 
 const MaxUint16 = ^uint16(0)
@@ -23,52 +25,20 @@ const MinUint64 = 0
 const MaxInt64 = int64(MaxUint64 >> 1)
 const MinInt64 = -MaxInt64 - 1
 
-// Max32 returns the biggest of two 32-bits numbers.
-func Max32(a, b int32) int32 {
-	if a < b {
-		return b
-	}
-	return a
-}
-
-// Min32 returns the smallest of two 32-bits numbers.
-func Min32(a, b int32) int32 {
-	if a < b {
+// Max returns the biggest of two integer numbers.
+func Max[T constraints.Integer](a, b T) T {
+	if a > b {
 		return a
 	}
 	return b
 }
 
-// MaxU32 returns the biggest of two 32-bits unsigned numbers.
-func MaxU32(a, b uint32) uint32 {
-	if a < b {
-		return b
-	}
-	return a
-}
-
-// MinU32 returns the smallest of two 32-bits unsigned numbers.
-func MinU32(a, b uint32) uint32 {
+// Min returns the smallest of two integer numbers.
+func Min[T constraints.Integer](a, b T) T {
 	if a < b {
 		return a
 	}
 	return b
-}
-
-// Min64 returns the smallest of two 64-bits numbers.
-func Min64(a, b int64) int64 {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-// Max64 returns the biggest of two 64-bits numbers.
-func Max64(a, b int64) int64 {
-	if a < b {
-		return b
-	}
-	return a
 }
 
 // RandInt32 returns a random int16 in between 0 and max.

@@ -409,8 +409,8 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 func calcFee(amount int64) int64 {
 	params := param.DefaultParams() // TODO: Get parameter from the node
 	fee := int64(float64(amount) * params.FeeFraction)
-	fee = util.Max64(fee, params.MinimumFee)
-	fee = util.Min64(fee, params.MaximumFee)
+	fee = util.Max(fee, params.MinimumFee)
+	fee = util.Min(fee, params.MaximumFee)
 	return fee
 }
 
