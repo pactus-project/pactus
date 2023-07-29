@@ -753,13 +753,13 @@ func TestCalcFee(t *testing.T) {
 	for _, test := range tests {
 		fee, err := td.state2.CalcFee(int64(test.amount), payload.PayloadTypeTransfer)
 		assert.NoError(t, err)
-		assert.Equal(t, int64(test.expectedFee), fee)
+		assert.Equal(t, test.expectedFee, fee)
 
 		fee, err = td.state2.CalcFee(int64(test.amount), payload.PayloadTypeUnbond)
 		assert.NoError(t, err)
 		assert.Equal(t, int64(0), fee)
 
-		_, err = td.state2.CalcFee(int64(test.amount), 6)
+		_, err = td.state2.CalcFee(test.amount, 6)
 		assert.Error(t, err)
 	}
 }

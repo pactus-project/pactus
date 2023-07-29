@@ -79,13 +79,11 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 
 func (s *transactionServer) CalculateFee(_ context.Context,
 	_ *pactus.CalculateFeeRequest) (*pactus.CalculateFeeResponse, error) {
-
 	return &pactus.CalculateFeeResponse{Fee: 0}, nil
 }
 
 func (s *transactionServer) GetFee(_ context.Context,
 	_ *pactus.CalculateFeeRequest) (*pactus.CalculateFeeResponse, error) {
-
 	return &pactus.CalculateFeeResponse{Fee: 0}, nil
 }
 
