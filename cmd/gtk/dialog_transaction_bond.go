@@ -55,7 +55,7 @@ func broadcastTransactionBond(wallet *wallet.Wallet, valAddrs []crypto.Address) 
 
 	onAmountChanged := func() {
 		amtStr, _ := amountEntry.GetText()
-		updateFeeHint(amountHint, amtStr, wallet,payload.PayloadTypeBond)
+		updateFeeHint(amountHint, amtStr, wallet, payload.PayloadTypeBond)
 	}
 
 	onSend := func() {

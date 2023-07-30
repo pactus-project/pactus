@@ -177,7 +177,7 @@ func updateAccountHint(lbl *gtk.Label, addr string, w *wallet.Wallet) {
 	}
 }
 
-func updateFeeHint(lbl *gtk.Label, amtStr string, w *wallet.Wallet,payloadType payload.Type) {
+func updateFeeHint(lbl *gtk.Label, amtStr string, w *wallet.Wallet, payloadType payload.Type) {
 	amount, err := util.StringToChange(amtStr)
 	if err != nil {
 		updateHintLabel(lbl, "")

@@ -47,7 +47,7 @@ func broadcastTransactionSend(wallet *wallet.Wallet) {
 
 	onAmountChanged := func() {
 		amtStr, _ := amountEntry.GetText()
-		updateFeeHint(amountHint, amtStr, wallet,payload.PayloadTypeTransfer)
+		updateFeeHint(amountHint, amtStr, wallet, payload.PayloadTypeTransfer)
 	}
 
 	onSend := func() {
