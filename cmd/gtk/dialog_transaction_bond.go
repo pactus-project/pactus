@@ -8,6 +8,7 @@ import (
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
@@ -54,7 +55,7 @@ func broadcastTransactionBond(wallet *wallet.Wallet, valAddrs []crypto.Address) 
 
 	onAmountChanged := func() {
 		amtStr, _ := amountEntry.GetText()
-		updateFeeHint(amountHint, amtStr, wallet)
+		updateFeeHint(amountHint, amtStr, wallet,payload.PayloadTypeBond)
 	}
 
 	onSend := func() {
