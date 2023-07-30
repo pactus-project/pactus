@@ -11,5 +11,4 @@ type Synchronizer interface {
 	Moniker() string
 	SelfID() peer.ID
 	PeerSet() *peerset.PeerSet
-	Fingerprint() string
 }

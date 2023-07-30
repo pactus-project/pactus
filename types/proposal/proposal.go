@@ -95,7 +95,7 @@ func (p *Proposal) IsForBlock(hash hash.Hash) bool {
 	return p.Block().Hash().EqualsTo(hash)
 }
 
-func (p Proposal) Fingerprint() string {
+func (p Proposal) String() string {
 	b := p.Block()
-	return fmt.Sprintf("{%v/%v 🗃 %v}", p.data.Height, p.data.Round, b.Fingerprint())
+	return fmt.Sprintf("{%v/%v 🗃 %v}", p.data.Height, p.data.Round, b.String())
 }

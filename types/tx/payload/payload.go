@@ -41,5 +41,5 @@ type Payload interface {
 	Encode(io.Writer) error
 	Decode(io.Reader) error
 	SanityCheck() error
-	Fingerprint() string
+	String() string
 }

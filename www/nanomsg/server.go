@@ -20,7 +20,7 @@ type Server struct {
 	config    *Config
 	publisher mangos.Socket
 	listener  net.Listener
-	logger    *logger.Logger
+	logger    *logger.SubLogger
 	eventCh   <-chan event.Event
 	seqNum    uint32
 }
@@ -29,7 +29,7 @@ func NewServer(conf *Config, eventCh <-chan event.Event) *Server {
 	return &Server{
 		ctx:     context.Background(),
 		config:  conf,
-		logger:  logger.NewLogger("_nonomsg", nil),
+		logger:  logger.NewSubLogger("_nonomsg", nil),
 		eventCh: eventCh,
 		seqNum:  0,
 	}

@@ -14,11 +14,11 @@ type dhtService struct {
 	host      lp2phost.Host
 	kademlia  *lp2pdht.IpfsDHT
 	bootstrap *bootstrap
-	logger    *logger.Logger
+	logger    *logger.SubLogger
 }
 
 func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.ProtocolID,
-	conf *BootstrapConfig, logger *logger.Logger) *dhtService {
+	conf *BootstrapConfig, logger *logger.SubLogger) *dhtService {
 	opts := []lp2pdht.Option{
 		lp2pdht.Mode(lp2pdht.ModeAuto),
 		lp2pdht.ProtocolPrefix(protocolID),

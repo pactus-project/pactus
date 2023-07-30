@@ -23,11 +23,11 @@ func TestAddressKeyEqualsTo(t *testing.T) {
 	assert.NotEqual(t, addr1, addr2)
 }
 
-func TestFingerprint(t *testing.T) {
+func TestString(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	addr1 := ts.RandomAddress()
-	assert.Contains(t, addr1.String(), addr1.Fingerprint())
+	assert.Contains(t, addr1.String(), addr1.ShortString())
 }
 
 func TestToString(t *testing.T) {

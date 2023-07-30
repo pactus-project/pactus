@@ -107,12 +107,12 @@ func (v *Vote) SanityCheck() error {
 	return nil
 }
 
-func (v *Vote) Fingerprint() string {
+func (v *Vote) String() string {
 	return fmt.Sprintf("{%v/%d/%s ⌘ %v 👤 %s}",
 		v.Height(),
 		v.Round(),
 		v.Type(),
-		v.BlockHash().Fingerprint(),
-		v.Signer().Fingerprint(),
+		v.BlockHash().ShortString(),
+		v.Signer().ShortString(),
 	)
 }

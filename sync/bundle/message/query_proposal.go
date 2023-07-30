@@ -30,6 +30,6 @@ func (m *QueryProposalMessage) Type() Type {
 	return TypeQueryProposal
 }
 
-func (m *QueryProposalMessage) Fingerprint() string {
+func (m *QueryProposalMessage) String() string {
 	return fmt.Sprintf("{%v/%v}", m.Height, m.Round)
 }

@@ -46,7 +46,7 @@ func (m *MockTxPool) Size() int {
 	return len(m.Txs)
 }
 
-func (m *MockTxPool) Fingerprint() string {
+func (m *MockTxPool) String() string {
 	return ""
 }
 

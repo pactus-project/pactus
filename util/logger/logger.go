@@ -1,35 +1,31 @@
 package logger
 
 import (
-	"encoding/hex"
 	"fmt"
-	"reflect"
+	"os"
 
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
-type fingerprintable interface {
-	Fingerprint() string
-}
-
-type loggers struct {
-	config  *Config
-	loggers map[string]*Logger
+type logger struct {
+	config *Config
+	subs   map[string]*SubLogger
 }
 
 var (
-	loggersInst *loggers
+	globalInst *logger
 )
 
-type Logger struct {
-	logger *logrus.Logger
+type SubLogger struct {
+	logger zerolog.Logger
 	name   string
-	obj    interface{}
+	obj    fmt.Stringer
 }
 
-func getLoggersInst() *loggers {
-	if loggersInst == nil {
-		// Only during tests the loggersInst is nil
+func getLoggersInst() *logger {
+	if globalInst == nil {
+		// Only during tests the globalInst is nil
 
 		conf := &Config{
 			Levels:   make(map[string]string),
@@ -43,184 +39,117 @@ func getLoggersInst() *loggers {
 		conf.Levels["_pool"] = "debug"
 		conf.Levels["_http"] = "debug"
 		conf.Levels["_grpc"] = "debug"
-		loggersInst = &loggers{
-			config:  conf,
-			loggers: make(map[string]*Logger),
+		globalInst = &logger{
+			config: conf,
+			subs:   make(map[string]*SubLogger),
 		}
 	}
 
-	return loggersInst
+	return globalInst
 }
 
-func InitLogger(conf *Config) {
-	if loggersInst == nil {
-		loggersInst = &loggers{
-			config:  conf,
-			loggers: make(map[string]*Logger),
+func InitGlobalLogger(conf *Config) {
+	if globalInst == nil {
+		globalInst = &logger{
+			config: conf,
+			subs:   make(map[string]*SubLogger),
 		}
 		if conf.Colorful {
-			logrus.SetFormatter(&logrus.TextFormatter{ForceColors: true})
-		} else {
-			logrus.SetFormatter(&logrus.TextFormatter{DisableColors: true})
+			log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 		}
 
-		lvl, err := logrus.ParseLevel(conf.Levels["default"])
+		lvl, err := zerolog.ParseLevel(conf.Levels["default"])
 		if err == nil {
-			logrus.SetLevel(lvl)
+			zerolog.SetGlobalLevel(lvl)
 		}
 	}
 }
 
-func NewLogger(name string, obj interface{}) *Logger {
-	l := &Logger{
-		logger: logrus.New(),
+func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
+	sl := &SubLogger{
+		logger: zerolog.New(os.Stderr).With().Timestamp().Logger(),
 		name:   name,
 		obj:    obj,
 	}
+
 	if getLoggersInst().config.Colorful {
-		l.logger.SetFormatter(&logrus.TextFormatter{ForceColors: true})
-	} else {
-		l.logger.SetFormatter(&logrus.TextFormatter{DisableColors: true})
+		sl.logger = sl.logger.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
 
-	lvl := getLoggersInst().config.Levels[name]
-	if lvl == "" {
-		lvl = getLoggersInst().config.Levels["default"]
+	lvlStr := getLoggersInst().config.Levels[name]
+	if lvlStr == "" {
+		lvlStr = getLoggersInst().config.Levels["default"]
 	}
 
-	level, err := logrus.ParseLevel(lvl)
+	lvl, err := zerolog.ParseLevel(lvlStr)
 	if err == nil {
-		l.SetLevel(level)
+		sl.logger.Level(lvl)
 	}
 
-	getLoggersInst().loggers[name] = l
-	return l
+	getLoggersInst().subs[name] = sl
+	return sl
 }
 
-func isNil(i interface{}) bool {
-	if i == nil {
-		return true
-	}
-	switch reflect.TypeOf(i).Kind() {
-	case reflect.Ptr:
-		return reflect.ValueOf(i).IsNil()
-	}
-	return false
-}
-
-func keyvalsToFields(keyvals ...interface{}) logrus.Fields {
-	if len(keyvals)%2 != 0 {
-		keyvals = append(keyvals, "<MISSING VALUE>")
-	}
-	fields := make(logrus.Fields)
-	for i := 0; i < len(keyvals); i += 2 {
-		key, ok := keyvals[i].(string)
-		if !ok {
-			key = "invalid-key"
-		}
-		///
-		val := "nil"
-		switch v := keyvals[i+1].(type) {
-		case fingerprintable:
-			if !isNil(v) {
-				val = fmt.Sprintf("%v", v.Fingerprint())
-			}
-		case []byte:
-			{
-				val = fmt.Sprintf("%v", hex.EncodeToString(v))
-			}
-		default:
-			val = fmt.Sprintf("%v", keyvals[i+1])
-		}
-		fields[key] = val
-	}
-
-	return fields
-}
-
-func (l *Logger) SetLevel(level logrus.Level) {
-	l.logger.SetLevel(level)
-}
-
-func (l *Logger) withDefaultFields() *logrus.Entry {
-	var fields logrus.Fields
-	if f, ok := l.obj.(fingerprintable); ok {
-		fields = keyvalsToFields(l.name, f.Fingerprint())
+func (sl *SubLogger) checkEvent(event *zerolog.Event, msg string, keyvals ...interface{}) {
+	if sl.obj != nil {
+		event.Str(sl.name, sl.obj.String()).Fields(keyvals).Msg(msg)
 	} else {
-		fields = keyvalsToFields("module", l.name)
-	}
-	return l.logger.WithFields(fields)
-}
-
-func (l *Logger) log(level logrus.Level, msg string, keyvals ...interface{}) {
-	if l.logger.IsLevelEnabled(level) {
-		l.withDefaultFields().WithFields(keyvalsToFields(keyvals...)).Log(level, msg)
+		event.Fields(keyvals).Msg(msg)
 	}
 }
 
-func (l *Logger) With(keyvals ...interface{}) *logrus.Entry {
-	fields := keyvalsToFields(keyvals...)
-	return l.logger.WithFields(fields)
+func (sl *SubLogger) Trace(msg string, keyvals ...interface{}) {
+	sl.checkEvent(sl.logger.Trace(), msg, keyvals...)
 }
 
-func (l *Logger) Trace(msg string, keyvals ...interface{}) {
-	l.log(logrus.TraceLevel, msg, keyvals...)
+func (sl *SubLogger) Debug(msg string, keyvals ...interface{}) {
+	sl.checkEvent(sl.logger.Debug(), msg, keyvals...)
 }
 
-func (l *Logger) Debug(msg string, keyvals ...interface{}) {
-	l.log(logrus.DebugLevel, msg, keyvals...)
+func (sl *SubLogger) Info(msg string, keyvals ...interface{}) {
+	sl.checkEvent(sl.logger.Info(), msg, keyvals...)
 }
 
-func (l *Logger) Info(msg string, keyvals ...interface{}) {
-	l.log(logrus.InfoLevel, msg, keyvals...)
+func (sl *SubLogger) Warn(msg string, keyvals ...interface{}) {
+	sl.checkEvent(sl.logger.Warn(), msg, keyvals...)
 }
 
-func (l *Logger) Warn(msg string, keyvals ...interface{}) {
-	l.log(logrus.WarnLevel, msg, keyvals...)
+func (sl *SubLogger) Error(msg string, keyvals ...interface{}) {
+	sl.checkEvent(sl.logger.Error(), msg, keyvals...)
 }
 
-func (l *Logger) Error(msg string, keyvals ...interface{}) {
-	l.log(logrus.ErrorLevel, msg, keyvals...)
+func (sl *SubLogger) Fatal(msg string, keyvals ...interface{}) {
+	sl.checkEvent(sl.logger.Fatal(), msg, keyvals...)
 }
 
-func (l *Logger) Fatal(msg string, keyvals ...interface{}) {
-	l.log(logrus.FatalLevel, msg, keyvals...)
-}
-
-func (l *Logger) Panic(msg string, keyvals ...interface{}) {
-	l.log(logrus.PanicLevel, msg, keyvals...)
-}
-
-func log(level logrus.Level, msg string, keyvals ...interface{}) {
-	if logrus.IsLevelEnabled(level) {
-		logrus.WithFields(keyvalsToFields(keyvals...)).Log(level, msg)
-	}
+func (sl *SubLogger) Panic(msg string, keyvals ...interface{}) {
+	sl.checkEvent(sl.logger.Panic(), msg, keyvals...)
 }
 
 func Trace(msg string, keyvals ...interface{}) {
-	log(logrus.TraceLevel, msg, keyvals...)
+	log.Trace().Fields(keyvals).Msg(msg)
 }
 
 func Debug(msg string, keyvals ...interface{}) {
-	log(logrus.DebugLevel, msg, keyvals...)
+	log.Debug().Fields(keyvals).Msg(msg)
 }
 
 func Info(msg string, keyvals ...interface{}) {
-	log(logrus.InfoLevel, msg, keyvals...)
+	log.Info().Fields(keyvals).Msg(msg)
 }
 
 func Warn(msg string, keyvals ...interface{}) {
-	log(logrus.WarnLevel, msg, keyvals...)
+	log.Warn().Fields(keyvals).Msg(msg)
 }
 
 func Error(msg string, keyvals ...interface{}) {
-	log(logrus.ErrorLevel, msg, keyvals...)
+	log.Error().Fields(keyvals).Msg(msg)
 }
 
 func Fatal(msg string, keyvals ...interface{}) {
-	log(logrus.FatalLevel, msg, keyvals...)
+	log.Fatal().Fields(keyvals).Msg(msg)
 }
 
 func Panic(msg string, keyvals ...interface{}) {
-	log(logrus.PanicLevel, msg, keyvals...)
+	log.Panic().Fields(keyvals).Msg(msg)
 }

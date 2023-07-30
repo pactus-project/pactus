@@ -64,9 +64,9 @@ func (p *WithdrawPayload) Decode(r io.Reader) error {
 	return nil
 }
 
-func (p *WithdrawPayload) Fingerprint() string {
+func (p *WithdrawPayload) String() string {
 	return fmt.Sprintf("{WithdrawPayload 🧾 %v->%v %v",
-		p.From.Fingerprint(),
-		p.To.Fingerprint(),
+		p.From.ShortString(),
+		p.To.ShortString(),
 		p.Amount)
 }

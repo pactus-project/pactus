@@ -44,8 +44,8 @@ func (b *Bundle) SanityCheck() error {
 	return nil
 }
 
-func (b *Bundle) Fingerprint() string {
-	return fmt.Sprintf("%s%s", b.Message.Type(), b.Message.Fingerprint())
+func (b *Bundle) String() string {
+	return fmt.Sprintf("%s%s", b.Message.Type(), b.Message.String())
 }
 
 func (b *Bundle) CompressIt() {

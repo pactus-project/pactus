@@ -64,8 +64,8 @@ func (addr Address) Bytes() []byte {
 	return addr[:]
 }
 
-// Fingerprint returns a short string for the address useful for logger.
-func (addr Address) Fingerprint() string {
+// ShortString returns a short string for the address useful for logger.
+func (addr Address) ShortString() string {
 	return addr.String()[0:12]
 }
 

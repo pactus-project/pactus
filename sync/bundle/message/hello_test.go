@@ -50,6 +50,6 @@ func TestHelloMessage(t *testing.T) {
 		signer.SignMsg(m)
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Contains(t, m.Fingerprint(), "Alice")
+		assert.Contains(t, m.String(), "Alice")
 	})
 }
