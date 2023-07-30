@@ -38,7 +38,7 @@ type consensus struct {
 	changeProposerState consState
 	broadcastCh         chan message.Message
 	mediator            mediator
-	logger              *logger.Logger
+	logger              *logger.SubLogger
 }
 
 func NewConsensus(
@@ -57,7 +57,7 @@ func NewConsensus(
 
 	// Update height later, See enterNewHeight.
 	cs.log = log.NewLog()
-	cs.logger = logger.NewLogger("_consensus", cs)
+	cs.logger = logger.NewSubLogger("_consensus", cs)
 	cs.rewardAddr = rewardAddr
 
 	cs.newHeightState = &newHeightState{cs}
@@ -82,9 +82,9 @@ func NewConsensus(
 	return cs
 }
 
-func (cs *consensus) Fingerprint() string {
+func (cs *consensus) String() string {
 	return fmt.Sprintf("{%s %d/%d/%s}",
-		cs.signer.Address().Fingerprint(),
+		cs.signer.Address().ShortString(),
 		cs.height, cs.round, cs.currentState.name())
 }
 

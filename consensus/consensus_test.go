@@ -46,8 +46,8 @@ type testData struct {
 	consP   *consensus // Partitioned peer
 }
 
-type OverrideFingerprint struct {
-	cons Consensus
+type OverrideStringer struct {
+	cons *consensus
 	name string
 }
 
@@ -58,8 +58,8 @@ func testConfig() *Config {
 	}
 }
 
-func (o *OverrideFingerprint) Fingerprint() string {
-	return o.name + o.cons.Fingerprint()
+func (o *OverrideStringer) String() string {
+	return o.name + o.cons.String()
 }
 
 func setup(t *testing.T) *testData {
@@ -114,8 +114,8 @@ func setup(t *testing.T) *testData {
 	// -------------------------------
 	// For better logging when testing
 	overrideLogger := func(cons *consensus, name string) {
-		cons.logger = logger.NewLogger("_consensus",
-			&OverrideFingerprint{name: fmt.Sprintf("%s - %s: ", name, t.Name()), cons: cons})
+		cons.logger = logger.NewSubLogger("_consensus",
+			&OverrideStringer{name: fmt.Sprintf("%s - %s: ", name, t.Name()), cons: cons})
 	}
 
 	overrideLogger(consX, "consX")

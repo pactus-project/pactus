@@ -15,7 +15,7 @@ func TestHashFromString(t *testing.T) {
 
 	hash1 := ts.RandomHash()
 	hash2, err := hash.FromString(hash1.String())
-	assert.Contains(t, strings.ToUpper(hash1.String()), hash1.Fingerprint())
+	assert.Contains(t, strings.ToUpper(hash1.String()), hash1.ShortString())
 	assert.NoError(t, err)
 	assert.True(t, hash1.EqualsTo(hash2))
 

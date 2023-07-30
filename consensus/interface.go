@@ -15,7 +15,6 @@ type Reader interface {
 	HasVote(hash hash.Hash) bool
 	HeightRound() (uint32, int16)
 	IsActive() bool
-	Fingerprint() string
 }
 
 type Consensus interface {

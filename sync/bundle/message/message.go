@@ -125,5 +125,5 @@ func MakeMessage(t Type) Message {
 type Message interface {
 	SanityCheck() error
 	Type() Type
-	Fingerprint() string
+	String() string
 }

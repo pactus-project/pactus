@@ -103,9 +103,9 @@ func (p *BondPayload) Decode(r io.Reader) error {
 	return nil
 }
 
-func (p *BondPayload) Fingerprint() string {
+func (p *BondPayload) String() string {
 	return fmt.Sprintf("{Bond 🔐 %v->%v %v",
-		p.Sender.Fingerprint(),
-		p.Receiver.Fingerprint(),
+		p.Sender.ShortString(),
+		p.Receiver.ShortString(),
 		p.Stake)
 }

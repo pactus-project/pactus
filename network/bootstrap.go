@@ -28,13 +28,13 @@ type bootstrap struct {
 	dialer  lp2pnet.Dialer
 	routing lp2prouting.Routing
 
-	logger *logger.Logger
+	logger *logger.SubLogger
 }
 
 // newBootstrap returns a new Bootstrap that will attempt to keep connected
 // to the network by connecting to the given bootstrap peers.
 func newBootstrap(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, r lp2prouting.Routing,
-	conf *BootstrapConfig, logger *logger.Logger) *bootstrap {
+	conf *BootstrapConfig, logger *logger.SubLogger) *bootstrap {
 	b := &bootstrap{
 		ctx:     ctx,
 		config:  conf,

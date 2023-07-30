@@ -47,7 +47,7 @@ func (p *SortitionPayload) Decode(r io.Reader) error {
 	return encoding.ReadElements(r, &p.Address, &p.Proof)
 }
 
-func (p *SortitionPayload) Fingerprint() string {
+func (p *SortitionPayload) String() string {
 	return fmt.Sprintf("{Sortition 🎯 %v",
-		p.Address.Fingerprint())
+		p.Address.ShortString())
 }

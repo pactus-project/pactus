@@ -68,7 +68,7 @@ func (m *HelloMessage) Type() Type {
 	return TypeHello
 }
 
-func (m *HelloMessage) Fingerprint() string {
+func (m *HelloMessage) String() string {
 	ack := ""
 	if util.IsFlagSet(m.Flags, FlagHelloAck) {
 		ack = " ack"

@@ -47,7 +47,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 
 		assert.NoError(t, m.SanityCheck())
 		assert.Zero(t, m.LastCertificateHeight())
-		assert.Contains(t, m.Fingerprint(), "100")
+		assert.Contains(t, m.String(), "100")
 		assert.Equal(t, m.Reason, ResponseCodeMoreBlocks.String())
 	})
 }

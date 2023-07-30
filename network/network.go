@@ -39,7 +39,7 @@ type network struct {
 	generalTopic   *lp2pps.Topic
 	consensusTopic *lp2pps.Topic
 	eventChannel   chan Event
-	logger         *logger.Logger
+	logger         *logger.SubLogger
 }
 
 func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
@@ -159,7 +159,7 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 		eventChannel: make(chan Event, 100),
 	}
 
-	n.logger = logger.NewLogger("_network", n)
+	n.logger = logger.NewSubLogger("_network", n)
 
 	if conf.EnableMdns {
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
@@ -291,7 +291,7 @@ func (n *network) CloseConnection(pid lp2ppeer.ID) {
 	}
 }
 
-func (n *network) Fingerprint() string {
+func (n *network) String() string {
 	return fmt.Sprintf("{%d}", n.NumConnectedPeers())
 }
 

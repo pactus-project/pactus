@@ -30,14 +30,14 @@ type Server struct {
 	transaction pactus.TransactionClient
 	network     pactus.NetworkClient
 	listener    net.Listener
-	logger      *logger.Logger
+	logger      *logger.SubLogger
 }
 
 func NewServer(conf *Config) *Server {
 	return &Server{
 		ctx:    context.Background(),
 		config: conf,
-		logger: logger.NewLogger("_http", nil),
+		logger: logger.NewSubLogger("_http", nil),
 	}
 }
 

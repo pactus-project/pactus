@@ -46,8 +46,8 @@ func (p *UnbondPayload) Decode(r io.Reader) error {
 	return encoding.ReadElements(r, &p.Validator)
 }
 
-func (p *UnbondPayload) Fingerprint() string {
+func (p *UnbondPayload) String() string {
 	return fmt.Sprintf("{Unbond 🔓 %v",
-		p.Validator.Fingerprint(),
+		p.Validator.ShortString(),
 	)
 }

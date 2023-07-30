@@ -42,7 +42,7 @@ type state struct {
 	lastInfo        *lastinfo.LastInfo
 	accountMerkle   *persistentmerkle.Tree
 	validatorMerkle *persistentmerkle.Tree
-	logger          *logger.Logger
+	logger          *logger.SubLogger
 	eventCh         chan event.Event
 }
 
@@ -62,7 +62,7 @@ func LoadOrNewState(
 		validatorMerkle: persistentmerkle.New(),
 		eventCh:         eventCh,
 	}
-	st.logger = logger.NewLogger("_state", st)
+	st.logger = logger.NewSubLogger("_state", st)
 	st.store = store
 
 	// The first account is Treasury Account at the genesis time.
@@ -86,7 +86,7 @@ func LoadOrNewState(
 
 	txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 
-	st.logger.Debug("last info", "committers", st.committee.Committers(), "state_root", st.stateRoot().Fingerprint())
+	st.logger.Debug("last info", "committers", st.committee.Committers(), "state_root", st.stateRoot().ShortString())
 
 	return st, nil
 }
@@ -497,10 +497,10 @@ func (st *state) evaluateSortition() bool {
 	return evaluated
 }
 
-func (st *state) Fingerprint() string {
+func (st *state) String() string {
 	return fmt.Sprintf("{#%d ⌘ %v 🕣 %v}",
 		st.lastInfo.BlockHeight(),
-		st.lastInfo.BlockHash().Fingerprint(),
+		st.lastInfo.BlockHash().ShortString(),
 		st.lastInfo.BlockTime().Format("15.04.05"))
 }
 

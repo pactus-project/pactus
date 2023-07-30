@@ -32,6 +32,6 @@ func (m *HeartBeatMessage) Type() Type {
 	return TypeHeartBeat
 }
 
-func (m *HeartBeatMessage) Fingerprint() string {
+func (m *HeartBeatMessage) String() string {
 	return fmt.Sprintf("{%d/%d}", m.Height, m.Round)
 }

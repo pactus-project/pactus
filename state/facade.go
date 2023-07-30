@@ -49,6 +49,5 @@ type Facade interface {
 	ValidatorAddresses() []crypto.Address
 	Params() param.Params
 	Close() error
-	Fingerprint() string
 	CalculateFee(amount int64, payloadType payload.Type) (int64, error)
 }

@@ -117,11 +117,11 @@ func (b *Block) Stamp() hash.Stamp {
 	return b.Hash().Stamp()
 }
 
-func (b *Block) Fingerprint() string {
+func (b *Block) String() string {
 	return fmt.Sprintf("{⌘ %v 👤 %v 💻 %v 📨 %d}",
-		b.Hash().Fingerprint(),
-		b.data.Header.ProposerAddress().Fingerprint(),
-		b.data.Header.StateRoot().Fingerprint(),
+		b.Hash().ShortString(),
+		b.data.Header.ProposerAddress().ShortString(),
+		b.data.Header.StateRoot().ShortString(),
 		b.data.Txs.Len(),
 	)
 }

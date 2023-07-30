@@ -21,7 +21,7 @@ type loadedWallet struct {
 type walletServer struct {
 	wallets map[string]*loadedWallet
 	chain   genesis.ChainType
-	logger  *logger.Logger
+	logger  *logger.SubLogger
 }
 
 func walletPath(name string) string {

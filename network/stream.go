@@ -19,12 +19,12 @@ type streamService struct {
 	protocolID lp2pcore.ProtocolID
 	relayAddrs []ma.Multiaddr
 	eventCh    chan Event
-	logger     *logger.Logger
+	logger     *logger.SubLogger
 }
 
 func newStreamService(ctx context.Context, host lp2phost.Host,
 	protocolID lp2pcore.ProtocolID, relayAddrs []ma.Multiaddr,
-	eventCh chan Event, logger *logger.Logger) *streamService {
+	eventCh chan Event, logger *logger.SubLogger) *streamService {
 	s := &streamService{
 		ctx:        ctx,
 		host:       host,

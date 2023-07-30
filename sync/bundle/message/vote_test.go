@@ -28,6 +28,6 @@ func TestVoteMessage(t *testing.T) {
 		m := NewVoteMessage(v)
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Contains(t, m.Fingerprint(), v.Fingerprint())
+		assert.Contains(t, m.String(), v.String())
 	})
 }
