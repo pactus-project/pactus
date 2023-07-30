@@ -51,9 +51,6 @@ func (m *MockSync) Start() error {
 }
 func (m *MockSync) Stop() {
 }
-func (m *MockSync) Fingerprint() string {
-	return ""
-}
 
 func (m *MockSync) SelfID() peer.ID {
 	return m.TestID

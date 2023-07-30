@@ -26,6 +26,6 @@ func TestHeartBeatMessage(t *testing.T) {
 		m := NewHeartBeatMessage(100, 1, ts.RandomHash())
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Contains(t, m.Fingerprint(), "100")
+		assert.Contains(t, m.String(), "100")
 	})
 }

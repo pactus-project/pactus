@@ -29,6 +29,6 @@ func TestBlocksRequestMessage(t *testing.T) {
 
 		assert.NoError(t, m.SanityCheck())
 		assert.Equal(t, m.To(), uint32(106))
-		assert.Contains(t, m.Fingerprint(), "100")
+		assert.Contains(t, m.String(), "100")
 	})
 }

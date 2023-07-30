@@ -23,6 +23,6 @@ func TestQueryProposalMessage(t *testing.T) {
 		m := NewQueryProposalMessage(100, 0)
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Contains(t, m.Fingerprint(), "100")
+		assert.Contains(t, m.String(), "100")
 	})
 }

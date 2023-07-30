@@ -31,7 +31,7 @@ type testData struct {
 func setup(t *testing.T) *testData {
 	ts := testsuite.NewTestSuite(t)
 
-	logger := logger.NewLogger("firewall", nil)
+	logger := logger.NewSubLogger("firewall", nil)
 	peerSet := peerset.NewPeerSet(3 * time.Second)
 	state := state.MockingState(ts)
 	net := network.MockingNetwork(ts, ts.RandomPeerID())

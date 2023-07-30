@@ -48,5 +48,4 @@ type Facade interface {
 	ValidatorAddresses() []crypto.Address
 	Params() param.Params
 	Close() error
-	Fingerprint() string
 }

@@ -11,7 +11,6 @@ type Reader interface {
 	PendingTx(id tx.ID) *tx.Tx
 	HasTx(id tx.ID) bool
 	Size() int
-	Fingerprint() string
 }
 
 type TxPool interface {

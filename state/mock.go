@@ -87,9 +87,7 @@ func (m *MockState) UpdateLastCertificate(cert *block.Certificate) error {
 	m.TestStore.LastCert = cert
 	return nil
 }
-func (m *MockState) Fingerprint() string {
-	return ""
-}
+
 func (m *MockState) CommitBlock(h uint32, b *block.Block, cert *block.Certificate) error {
 	m.lk.Lock()
 	defer m.lk.Unlock()

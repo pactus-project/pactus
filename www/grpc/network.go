@@ -13,7 +13,7 @@ import (
 
 type networkServer struct {
 	sync   sync.Synchronizer
-	logger *logger.Logger
+	logger *logger.SubLogger
 }
 
 func (s *networkServer) GetNetworkInfo(_ context.Context,

@@ -19,7 +19,7 @@ import (
 type blockchainServer struct {
 	state   state.Facade
 	consMgr consensus.ManagerReader
-	logger  *logger.Logger
+	logger  *logger.SubLogger
 }
 
 func (s *blockchainServer) GetBlockchainInfo(_ context.Context,

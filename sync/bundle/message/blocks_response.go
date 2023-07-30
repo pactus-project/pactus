@@ -64,7 +64,7 @@ func (m *BlocksResponseMessage) LastCertificateHeight() uint32 {
 	return 0
 }
 
-func (m *BlocksResponseMessage) Fingerprint() string {
+func (m *BlocksResponseMessage) String() string {
 	return fmt.Sprintf("{⚓ %d %s %v-%v}", m.SessionID, m.ResponseCode, m.From, m.To())
 }
 

@@ -114,7 +114,7 @@ func TestSyncing(t *testing.T) {
 	// -------------------------------
 	// For better logging when testing
 	overrideLogger := func(sync *synchronizer, name string) {
-		sync.logger = logger.NewLogger("_sync", &OverrideFingerprint{
+		sync.logger = logger.NewSubLogger("_sync", &OverrideStringer{
 			name: fmt.Sprintf("%s - %s: ", name, t.Name()), sync: sync})
 	}
 

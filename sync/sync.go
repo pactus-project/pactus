@@ -43,7 +43,7 @@ type synchronizer struct {
 	networkCh       <-chan network.Event
 	network         network.Network
 	heartBeatTicker *time.Ticker
-	logger          *logger.Logger
+	logger          *logger.SubLogger
 }
 
 func NewSynchronizer(
@@ -65,7 +65,7 @@ func NewSynchronizer(
 	}
 
 	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
-	logger := logger.NewLogger("_sync", sync)
+	logger := logger.NewSubLogger("_sync", sync)
 	firewall := firewall.NewFirewall(conf.Firewall, net, peerSet, state, logger)
 	cache, err := cache.NewCache(conf.CacheSize)
 	if err != nil {
@@ -244,7 +244,7 @@ func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle) error {
 	return h.ParseMessage(bdl.Message, bdl.Initiator)
 }
 
-func (sync *synchronizer) Fingerprint() string {
+func (sync *synchronizer) String() string {
 	return fmt.Sprintf("{☍ %d ⛃ %d ⇈ %d ↑ %d}",
 		sync.peerSet.Len(),
 		sync.cache.Len(),

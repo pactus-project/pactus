@@ -72,7 +72,7 @@ func (h Hash) Stamp() Stamp {
 	return stamp
 }
 
-func (h Hash) Fingerprint() string {
+func (h Hash) ShortString() string {
 	return fmt.Sprintf("%X", h[:6])
 }
 

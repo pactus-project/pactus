@@ -171,6 +171,6 @@ func (vs *VoteSet) ToCertificate() *block.Certificate {
 	return block.NewCertificate(vs.Round(), committers, absentees, sig)
 }
 
-func (vs *VoteSet) Fingerprint() string {
+func (vs *VoteSet) String() string {
 	return fmt.Sprintf("{%v/%s SUM:%v}", vs.round, vs.voteType, vs.Len())
 }

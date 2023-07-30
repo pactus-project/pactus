@@ -15,7 +15,7 @@ import (
 
 type transactionServer struct {
 	state  state.Facade
-	logger *logger.Logger
+	logger *logger.SubLogger
 }
 
 func (s *transactionServer) GetTransaction(_ context.Context,
