@@ -47,8 +47,8 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	}
 	if e.strict {
 		// In strict mode, bond transactions will be rejected if a validator is
-		// in the committee.
-		// In non-strict mode, we accept them and keep them inside the transaction pool
+		// already in the committee.
+		// In non-strict mode, we accept them and keep them in the transaction pool
 		// to process them when the validator leaves the committee.
 		if sb.Committee().Contains(pld.Receiver) {
 			return errors.Errorf(errors.ErrInvalidTx,
@@ -56,10 +56,10 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		}
 
 		// In strict mode, bond transactions will be rejected if a validator is
-		// going to be in the committee for the next height.
-		// In non-strict mode, we accept it and keep it inside the transaction pool to
+		// going to join the committee in the next height.
+		// In non-strict mode, we accept it and keep it in the transaction pool to
 		// process it when the validator leaves the committee.
-		if receiverVal.LastJoinedHeight() == sb.CurrentHeight() {
+		if sb.IsJoinedCommittee(pld.Receiver) {
 			return errors.Errorf(errors.ErrInvalidTx,
 				"validator %v joins committee in the next height", pld.Receiver)
 		}
@@ -68,7 +68,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Error(errors.ErrInsufficientFunds)
 	}
 	if receiverVal.Stake()+pld.Stake > sb.Params().MaximumStake {
-		return errors.Errorf(errors.ErrInvalidTx,
+		return errors.Errorf(errors.ErrInvalidAmount,
 			"validator's stake can't be more than %v", sb.Params().MaximumStake)
 	}
 

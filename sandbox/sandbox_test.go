@@ -151,7 +151,7 @@ func TestValidatorChange(t *testing.T) {
 		invAddr := td.RandomAddress()
 		assert.Nil(t, td.sandbox.Validator(invAddr))
 
-		td.sandbox.IterateValidators(func(_ *validator.Validator, _ bool) {
+		td.sandbox.IterateValidators(func(_ *validator.Validator, _ bool, _ bool) {
 			panic("should be empty")
 		})
 	})
@@ -192,8 +192,9 @@ func TestValidatorChange(t *testing.T) {
 		})
 
 		t.Run("Should be iterated", func(t *testing.T) {
-			td.sandbox.IterateValidators(func(val *validator.Validator, updated bool) {
+			td.sandbox.IterateValidators(func(val *validator.Validator, updated bool, joined bool) {
 				assert.True(t, updated)
+				assert.False(t, joined)
 				assert.Equal(t, val.Stake(), stk+2)
 			})
 		})
@@ -211,9 +212,10 @@ func TestValidatorChange(t *testing.T) {
 		assert.Equal(t, val, sbVal)
 
 		t.Run("Should be iterated", func(t *testing.T) {
-			td.sandbox.IterateValidators(func(val *validator.Validator, updated bool) {
+			td.sandbox.IterateValidators(func(val *validator.Validator, updated bool, joined bool) {
 				if val.PublicKey() == pub {
 					assert.True(t, updated)
+					assert.False(t, joined)
 					assert.Equal(t, val.Stake(), int64(1))
 				}
 			})

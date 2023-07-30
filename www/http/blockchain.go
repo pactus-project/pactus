@@ -26,15 +26,7 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, _ *http.Request) {
 	tm.addRowAmount("Committee Power", res.CommitteePower)
 	for i, val := range res.CommitteeValidators {
 		tm.addRowInt("--- Validator", i+1)
-		tm.addRowString("Public Key", val.PublicKey)
-		tm.addRowValAddress("Address", val.Address)
-		tm.addRowInt("Number", int(val.Number))
-		tm.addRowInt("Sequence", int(val.Sequence))
-		tm.addRowAmount("Stake", val.Stake)
-		tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight))
-		tm.addRowInt("LastJoinedHeight", int(val.LastJoinedHeight))
-		tm.addRowInt("UnbondingHeight", int(val.UnbondingHeight))
-		tm.addRowBytes("Hash", val.Hash)
+		s.writeValidatorTable(w, val)
 	}
 
 	s.writeHTML(w, tm.html())

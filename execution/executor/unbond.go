@@ -45,7 +45,7 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		// going to be in the committee for the next height.
 		// In non-strict mode, we accept it and keep it inside the transaction pool to
 		// process it when the validator leaves the committee.
-		if val.LastJoinedHeight() == sb.CurrentHeight() {
+		if sb.IsJoinedCommittee(pld.Validator) {
 			return errors.Errorf(errors.ErrInvalidHeight,
 				"validator %v joins committee in the next height", pld.Validator)
 		}

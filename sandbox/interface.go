@@ -20,6 +20,8 @@ type Sandbox interface {
 	Validator(crypto.Address) *validator.Validator
 	MakeNewValidator(*bls.PublicKey) *validator.Validator
 	UpdateValidator(*validator.Validator)
+	JoinedToCommittee(crypto.Address)
+	IsJoinedCommittee(crypto.Address) bool
 	UpdatePowerDelta(delta int64)
 	PowerDelta() int64
 
@@ -30,6 +32,6 @@ type Sandbox interface {
 	Params() param.Params
 	CurrentHeight() uint32
 
-	IterateAccounts(consumer func(addr crypto.Address, acc *account.Account, updated bool))
-	IterateValidators(consumer func(val *validator.Validator, updated bool))
+	IterateAccounts(consumer func(crypto.Address, *account.Account, bool))
+	IterateValidators(consumer func(*validator.Validator, bool, bool))
 }
