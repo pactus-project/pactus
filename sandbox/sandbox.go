@@ -35,6 +35,7 @@ type sandbox struct {
 type sandboxValidator struct {
 	validator *validator.Validator
 	updated   bool
+	joined    bool // Is joined committee
 }
 
 type sandboxAccount struct {
@@ -61,19 +62,20 @@ func NewSandbox(store store.Reader, params param.Params,
 
 func (sb *sandbox) shouldPanicForDuplicatedAddress() {
 	//
-	// Why we should panic here?
+	// Why is it necessary to panic here?
 	//
-	// Try to make a new item which already exists in store.
+	// An attempt is made to create a new item that already exists in the store.
 	//
 	logger.Panic("duplicated address")
 }
 
 func (sb *sandbox) shouldPanicForUnknownAddress() {
 	//
-	// Why we should panic here?
+	// Why is it necessary to panic here?
 	//
-	// We only update accounts or validators which we have them inside the sandbox.
-	// We must either make a new one (i.e. `MakeNewAccount`) or get it from store (i.e. `Account`) in advance.
+	// We only update accounts or validators that are already present within the sandbox.
+	// This can be achieved either by creating a new account using MakeNewAccount or
+	// retrieving it from the store using Account.
 	//
 	logger.Panic("unknown address")
 }
@@ -149,6 +151,29 @@ func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
 	return val.Clone()
 }
 
+func (sb *sandbox) JoinedToCommittee(addr crypto.Address) {
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
+
+	s, ok := sb.validators[addr]
+	if !ok {
+		sb.shouldPanicForUnknownAddress()
+	}
+
+	s.joined = true
+}
+
+func (sb *sandbox) IsJoinedCommittee(addr crypto.Address) bool {
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
+
+	s, ok := sb.validators[addr]
+	if ok {
+		return s.joined
+	}
+	return false
+}
+
 func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
@@ -201,7 +226,8 @@ func (sb *sandbox) currentHeight() uint32 {
 	return h + 1
 }
 
-func (sb *sandbox) IterateAccounts(consumer func(crypto.Address, *account.Account, bool)) {
+func (sb *sandbox) IterateAccounts(
+	consumer func(crypto.Address, *account.Account, bool)) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -210,12 +236,13 @@ func (sb *sandbox) IterateAccounts(consumer func(crypto.Address, *account.Accoun
 	}
 }
 
-func (sb *sandbox) IterateValidators(consumer func(*validator.Validator, bool)) {
+func (sb *sandbox) IterateValidators(
+	consumer func(*validator.Validator, bool, bool)) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
 	for _, sv := range sb.validators {
-		consumer(sv.validator, sv.updated)
+		consumer(sv.validator, sv.updated, sv.joined)
 	}
 }
 

@@ -11252,10 +11252,10 @@ public final class BlockchainOuterClass {
     int getLastBondingHeight();
 
     /**
-     * <code>uint32 last_joined_height = 8 [json_name = "lastJoinedHeight"];</code>
-     * @return The lastJoinedHeight.
+     * <code>uint32 last_sortition_height = 8 [json_name = "lastSortitionHeight"];</code>
+     * @return The lastSortitionHeight.
      */
-    int getLastJoinedHeight();
+    int getLastSortitionHeight();
 
     /**
      * <code>uint32 unbonding_height = 9 [json_name = "unbondingHeight"];</code>
@@ -11423,15 +11423,15 @@ public final class BlockchainOuterClass {
       return lastBondingHeight_;
     }
 
-    public static final int LAST_JOINED_HEIGHT_FIELD_NUMBER = 8;
-    private int lastJoinedHeight_;
+    public static final int LAST_SORTITION_HEIGHT_FIELD_NUMBER = 8;
+    private int lastSortitionHeight_;
     /**
-     * <code>uint32 last_joined_height = 8 [json_name = "lastJoinedHeight"];</code>
-     * @return The lastJoinedHeight.
+     * <code>uint32 last_sortition_height = 8 [json_name = "lastSortitionHeight"];</code>
+     * @return The lastSortitionHeight.
      */
     @java.lang.Override
-    public int getLastJoinedHeight() {
-      return lastJoinedHeight_;
+    public int getLastSortitionHeight() {
+      return lastSortitionHeight_;
     }
 
     public static final int UNBONDING_HEIGHT_FIELD_NUMBER = 9;
@@ -11518,8 +11518,8 @@ public final class BlockchainOuterClass {
       if (lastBondingHeight_ != 0) {
         output.writeUInt32(7, lastBondingHeight_);
       }
-      if (lastJoinedHeight_ != 0) {
-        output.writeUInt32(8, lastJoinedHeight_);
+      if (lastSortitionHeight_ != 0) {
+        output.writeUInt32(8, lastSortitionHeight_);
       }
       if (unbondingHeight_ != 0) {
         output.writeUInt32(9, unbondingHeight_);
@@ -11563,9 +11563,9 @@ public final class BlockchainOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt32Size(7, lastBondingHeight_);
       }
-      if (lastJoinedHeight_ != 0) {
+      if (lastSortitionHeight_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(8, lastJoinedHeight_);
+          .computeUInt32Size(8, lastSortitionHeight_);
       }
       if (unbondingHeight_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -11603,8 +11603,8 @@ public final class BlockchainOuterClass {
           != other.getStake()) return false;
       if (getLastBondingHeight()
           != other.getLastBondingHeight()) return false;
-      if (getLastJoinedHeight()
-          != other.getLastJoinedHeight()) return false;
+      if (getLastSortitionHeight()
+          != other.getLastSortitionHeight()) return false;
       if (getUnbondingHeight()
           != other.getUnbondingHeight()) return false;
       if (!getAddress()
@@ -11635,8 +11635,8 @@ public final class BlockchainOuterClass {
           getStake());
       hash = (37 * hash) + LAST_BONDING_HEIGHT_FIELD_NUMBER;
       hash = (53 * hash) + getLastBondingHeight();
-      hash = (37 * hash) + LAST_JOINED_HEIGHT_FIELD_NUMBER;
-      hash = (53 * hash) + getLastJoinedHeight();
+      hash = (37 * hash) + LAST_SORTITION_HEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getLastSortitionHeight();
       hash = (37 * hash) + UNBONDING_HEIGHT_FIELD_NUMBER;
       hash = (53 * hash) + getUnbondingHeight();
       hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
@@ -11783,7 +11783,7 @@ public final class BlockchainOuterClass {
 
         lastBondingHeight_ = 0;
 
-        lastJoinedHeight_ = 0;
+        lastSortitionHeight_ = 0;
 
         unbondingHeight_ = 0;
 
@@ -11822,7 +11822,7 @@ public final class BlockchainOuterClass {
         result.sequence_ = sequence_;
         result.stake_ = stake_;
         result.lastBondingHeight_ = lastBondingHeight_;
-        result.lastJoinedHeight_ = lastJoinedHeight_;
+        result.lastSortitionHeight_ = lastSortitionHeight_;
         result.unbondingHeight_ = unbondingHeight_;
         result.address_ = address_;
         onBuilt();
@@ -11895,8 +11895,8 @@ public final class BlockchainOuterClass {
         if (other.getLastBondingHeight() != 0) {
           setLastBondingHeight(other.getLastBondingHeight());
         }
-        if (other.getLastJoinedHeight() != 0) {
-          setLastJoinedHeight(other.getLastJoinedHeight());
+        if (other.getLastSortitionHeight() != 0) {
+          setLastSortitionHeight(other.getLastSortitionHeight());
         }
         if (other.getUnbondingHeight() != 0) {
           setUnbondingHeight(other.getUnbondingHeight());
@@ -11967,7 +11967,7 @@ public final class BlockchainOuterClass {
                 break;
               } // case 56
               case 64: {
-                lastJoinedHeight_ = input.readUInt32();
+                lastSortitionHeight_ = input.readUInt32();
 
                 break;
               } // case 64
@@ -12265,33 +12265,33 @@ public final class BlockchainOuterClass {
         return this;
       }
 
-      private int lastJoinedHeight_ ;
+      private int lastSortitionHeight_ ;
       /**
-       * <code>uint32 last_joined_height = 8 [json_name = "lastJoinedHeight"];</code>
-       * @return The lastJoinedHeight.
+       * <code>uint32 last_sortition_height = 8 [json_name = "lastSortitionHeight"];</code>
+       * @return The lastSortitionHeight.
        */
       @java.lang.Override
-      public int getLastJoinedHeight() {
-        return lastJoinedHeight_;
+      public int getLastSortitionHeight() {
+        return lastSortitionHeight_;
       }
       /**
-       * <code>uint32 last_joined_height = 8 [json_name = "lastJoinedHeight"];</code>
-       * @param value The lastJoinedHeight to set.
+       * <code>uint32 last_sortition_height = 8 [json_name = "lastSortitionHeight"];</code>
+       * @param value The lastSortitionHeight to set.
        * @return This builder for chaining.
        */
-      public Builder setLastJoinedHeight(int value) {
+      public Builder setLastSortitionHeight(int value) {
         
-        lastJoinedHeight_ = value;
+        lastSortitionHeight_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>uint32 last_joined_height = 8 [json_name = "lastJoinedHeight"];</code>
+       * <code>uint32 last_sortition_height = 8 [json_name = "lastSortitionHeight"];</code>
        * @return This builder for chaining.
        */
-      public Builder clearLastJoinedHeight() {
+      public Builder clearLastSortitionHeight() {
         
-        lastJoinedHeight_ = 0;
+        lastSortitionHeight_ = 0;
         onChanged();
         return this;
       }
@@ -17157,62 +17157,62 @@ public final class BlockchainOuterClass {
       "\003(\0132\025.pactus.ValidatorInfoR\023committeeVal" +
       "idators\"\031\n\027GetConsensusInfoRequest\"O\n\030Ge" +
       "tConsensusInfoResponse\0223\n\tinstances\030\001 \003(" +
-      "\0132\025.pactus.ConsensusInfoR\tinstances\"\303\002\n\r" +
+      "\0132\025.pactus.ConsensusInfoR\tinstances\"\311\002\n\r" +
       "ValidatorInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n\004dat" +
       "a\030\002 \001(\014R\004data\022\035\n\npublic_key\030\003 \001(\tR\tpubli" +
       "cKey\022\026\n\006number\030\004 \001(\005R\006number\022\032\n\010sequence" +
       "\030\005 \001(\005R\010sequence\022\024\n\005stake\030\006 \001(\003R\005stake\022." +
       "\n\023last_bonding_height\030\007 \001(\rR\021lastBonding" +
-      "Height\022,\n\022last_joined_height\030\010 \001(\rR\020last" +
-      "JoinedHeight\022)\n\020unbonding_height\030\t \001(\rR\017" +
-      "unbondingHeight\022\030\n\007address\030\n \001(\tR\007addres" +
-      "s\"\203\001\n\013AccountInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n" +
-      "\004data\030\002 \001(\014R\004data\022\026\n\006number\030\003 \001(\005R\006numbe" +
-      "r\022\032\n\010sequence\030\004 \001(\005R\010sequence\022\030\n\007balance" +
-      "\030\005 \001(\003R\007balance\"\304\001\n\017BlockHeaderInfo\022\030\n\007v" +
-      "ersion\030\001 \001(\005R\007version\022&\n\017prev_block_hash" +
-      "\030\002 \001(\014R\rprevBlockHash\022\035\n\nstate_root\030\003 \001(" +
-      "\014R\tstateRoot\022%\n\016sortition_seed\030\004 \001(\014R\rso" +
-      "rtitionSeed\022)\n\020proposer_address\030\005 \001(\tR\017p" +
-      "roposerAddress\"\227\001\n\017CertificateInfo\022\022\n\004ha" +
-      "sh\030\001 \001(\014R\004hash\022\024\n\005round\030\002 \001(\005R\005round\022\036\n\n" +
-      "committers\030\003 \003(\005R\ncommitters\022\034\n\tabsentee" +
-      "s\030\004 \003(\005R\tabsentees\022\034\n\tsignature\030\005 \001(\014R\ts" +
-      "ignature\"{\n\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.pac" +
-      "tus.VoteTypeR\004type\022\024\n\005voter\030\002 \001(\tR\005voter" +
-      "\022\035\n\nblock_hash\030\003 \001(\014R\tblockHash\022\024\n\005round" +
-      "\030\004 \001(\005R\005round\"\227\001\n\rConsensusInfo\022\030\n\007addre" +
-      "ss\030\001 \001(\tR\007address\022\026\n\006Active\030\002 \001(\010R\006Activ" +
-      "e\022\026\n\006height\030\003 \001(\rR\006height\022\024\n\005round\030\004 \001(\005" +
-      "R\005round\022&\n\005votes\030\005 \003(\0132\020.pactus.VoteInfo" +
-      "R\005votes*H\n\016BlockVerbosity\022\016\n\nBLOCK_DATA\020" +
-      "\000\022\016\n\nBLOCK_INFO\020\001\022\026\n\022BLOCK_TRANSACTIONS\020" +
-      "\002*\\\n\010VoteType\022\020\n\014VOTE_UNKNOWN\020\000\022\020\n\014VOTE_" +
-      "PREPARE\020\001\022\022\n\016VOTE_PRECOMMIT\020\002\022\030\n\024VOTE_CH" +
-      "ANGE_PROPOSER\020\0032\276\006\n\nBlockchain\022=\n\010GetBlo" +
-      "ck\022\027.pactus.GetBlockRequest\032\030.pactus.Get" +
-      "BlockResponse\022I\n\014GetBlockHash\022\033.pactus.G" +
-      "etBlockHashRequest\032\034.pactus.GetBlockHash" +
-      "Response\022O\n\016GetBlockHeight\022\035.pactus.GetB" +
-      "lockHeightRequest\032\036.pactus.GetBlockHeigh" +
-      "tResponse\022X\n\021GetBlockchainInfo\022 .pactus." +
-      "GetBlockchainInfoRequest\032!.pactus.GetBlo" +
-      "ckchainInfoResponse\022U\n\020GetConsensusInfo\022" +
-      "\037.pactus.GetConsensusInfoRequest\032 .pactu" +
-      "s.GetConsensusInfoResponse\022C\n\nGetAccount" +
-      "\022\031.pactus.GetAccountRequest\032\032.pactus.Get" +
-      "AccountResponse\022S\n\022GetAccountByNumber\022!." +
-      "pactus.GetAccountByNumberRequest\032\032.pactu" +
-      "s.GetAccountResponse\022I\n\014GetValidator\022\033.p" +
-      "actus.GetValidatorRequest\032\034.pactus.GetVa" +
-      "lidatorResponse\022Y\n\024GetValidatorByNumber\022" +
-      "#.pactus.GetValidatorByNumberRequest\032\034.p" +
-      "actus.GetValidatorResponse\022d\n\025GetValidat" +
-      "orAddresses\022$.pactus.GetValidatorAddress" +
-      "esRequest\032%.pactus.GetValidatorAddresses" +
-      "ResponseBE\n\021pactus.blockchainZ0github.co" +
-      "m/pactus-project/pactus/www/grpc/pactusb" +
-      "\006proto3"
+      "Height\0222\n\025last_sortition_height\030\010 \001(\rR\023l" +
+      "astSortitionHeight\022)\n\020unbonding_height\030\t" +
+      " \001(\rR\017unbondingHeight\022\030\n\007address\030\n \001(\tR\007" +
+      "address\"\203\001\n\013AccountInfo\022\022\n\004hash\030\001 \001(\014R\004h" +
+      "ash\022\022\n\004data\030\002 \001(\014R\004data\022\026\n\006number\030\003 \001(\005R" +
+      "\006number\022\032\n\010sequence\030\004 \001(\005R\010sequence\022\030\n\007b" +
+      "alance\030\005 \001(\003R\007balance\"\304\001\n\017BlockHeaderInf" +
+      "o\022\030\n\007version\030\001 \001(\005R\007version\022&\n\017prev_bloc" +
+      "k_hash\030\002 \001(\014R\rprevBlockHash\022\035\n\nstate_roo" +
+      "t\030\003 \001(\014R\tstateRoot\022%\n\016sortition_seed\030\004 \001" +
+      "(\014R\rsortitionSeed\022)\n\020proposer_address\030\005 " +
+      "\001(\tR\017proposerAddress\"\227\001\n\017CertificateInfo" +
+      "\022\022\n\004hash\030\001 \001(\014R\004hash\022\024\n\005round\030\002 \001(\005R\005rou" +
+      "nd\022\036\n\ncommitters\030\003 \003(\005R\ncommitters\022\034\n\tab" +
+      "sentees\030\004 \003(\005R\tabsentees\022\034\n\tsignature\030\005 " +
+      "\001(\014R\tsignature\"{\n\010VoteInfo\022$\n\004type\030\001 \001(\016" +
+      "2\020.pactus.VoteTypeR\004type\022\024\n\005voter\030\002 \001(\tR" +
+      "\005voter\022\035\n\nblock_hash\030\003 \001(\014R\tblockHash\022\024\n" +
+      "\005round\030\004 \001(\005R\005round\"\227\001\n\rConsensusInfo\022\030\n" +
+      "\007address\030\001 \001(\tR\007address\022\026\n\006Active\030\002 \001(\010R" +
+      "\006Active\022\026\n\006height\030\003 \001(\rR\006height\022\024\n\005round" +
+      "\030\004 \001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.pactus.Vo" +
+      "teInfoR\005votes*H\n\016BlockVerbosity\022\016\n\nBLOCK" +
+      "_DATA\020\000\022\016\n\nBLOCK_INFO\020\001\022\026\n\022BLOCK_TRANSAC" +
+      "TIONS\020\002*\\\n\010VoteType\022\020\n\014VOTE_UNKNOWN\020\000\022\020\n" +
+      "\014VOTE_PREPARE\020\001\022\022\n\016VOTE_PRECOMMIT\020\002\022\030\n\024V" +
+      "OTE_CHANGE_PROPOSER\020\0032\276\006\n\nBlockchain\022=\n\010" +
+      "GetBlock\022\027.pactus.GetBlockRequest\032\030.pact" +
+      "us.GetBlockResponse\022I\n\014GetBlockHash\022\033.pa" +
+      "ctus.GetBlockHashRequest\032\034.pactus.GetBlo" +
+      "ckHashResponse\022O\n\016GetBlockHeight\022\035.pactu" +
+      "s.GetBlockHeightRequest\032\036.pactus.GetBloc" +
+      "kHeightResponse\022X\n\021GetBlockchainInfo\022 .p" +
+      "actus.GetBlockchainInfoRequest\032!.pactus." +
+      "GetBlockchainInfoResponse\022U\n\020GetConsensu" +
+      "sInfo\022\037.pactus.GetConsensusInfoRequest\032 " +
+      ".pactus.GetConsensusInfoResponse\022C\n\nGetA" +
+      "ccount\022\031.pactus.GetAccountRequest\032\032.pact" +
+      "us.GetAccountResponse\022S\n\022GetAccountByNum" +
+      "ber\022!.pactus.GetAccountByNumberRequest\032\032" +
+      ".pactus.GetAccountResponse\022I\n\014GetValidat" +
+      "or\022\033.pactus.GetValidatorRequest\032\034.pactus" +
+      ".GetValidatorResponse\022Y\n\024GetValidatorByN" +
+      "umber\022#.pactus.GetValidatorByNumberReque" +
+      "st\032\034.pactus.GetValidatorResponse\022d\n\025GetV" +
+      "alidatorAddresses\022$.pactus.GetValidatorA" +
+      "ddressesRequest\032%.pactus.GetValidatorAdd" +
+      "ressesResponseBE\n\021pactus.blockchainZ0git" +
+      "hub.com/pactus-project/pactus/www/grpc/p" +
+      "actusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -17332,7 +17332,7 @@ public final class BlockchainOuterClass {
     internal_static_pactus_ValidatorInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_ValidatorInfo_descriptor,
-        new java.lang.String[] { "Hash", "Data", "PublicKey", "Number", "Sequence", "Stake", "LastBondingHeight", "LastJoinedHeight", "UnbondingHeight", "Address", });
+        new java.lang.String[] { "Hash", "Data", "PublicKey", "Number", "Sequence", "Stake", "LastBondingHeight", "LastSortitionHeight", "UnbondingHeight", "Address", });
     internal_static_pactus_AccountInfo_descriptor =
       getDescriptor().getMessageTypes().get(19);
     internal_static_pactus_AccountInfo_fieldAccessorTable = new

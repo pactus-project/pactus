@@ -17,13 +17,13 @@ type Validator struct {
 
 // validatorData contains the data associated with a validator.
 type validatorData struct {
-	PublicKey         *bls.PublicKey
-	Number            int32
-	Sequence          int32
-	Stake             int64
-	LastBondingHeight uint32
-	UnbondingHeight   uint32
-	LastJoinedHeight  uint32
+	PublicKey           *bls.PublicKey
+	Number              int32
+	Sequence            int32
+	Stake               int64
+	LastBondingHeight   uint32
+	UnbondingHeight     uint32
+	LastSortitionHeight uint32
 }
 
 // NewValidator constructs a new validator from the given public key and number.
@@ -53,7 +53,7 @@ func FromBytes(data []byte) (*Validator, error) {
 		&acc.data.Stake,
 		&acc.data.LastBondingHeight,
 		&acc.data.UnbondingHeight,
-		&acc.data.LastJoinedHeight,
+		&acc.data.LastSortitionHeight,
 	)
 
 	if err != nil {
@@ -98,9 +98,9 @@ func (val *Validator) UnbondingHeight() uint32 {
 	return val.data.UnbondingHeight
 }
 
-// LastJoinedHeight returns the last height in which the validator joined the committee.
-func (val *Validator) LastJoinedHeight() uint32 {
-	return val.data.LastJoinedHeight
+// LastSortitionHeight returns the last height in which the validator evaluated sortition.
+func (val *Validator) LastSortitionHeight() uint32 {
+	return val.data.LastSortitionHeight
 }
 
 // Power returns the power of the validator.
@@ -131,8 +131,8 @@ func (val *Validator) IncSequence() {
 }
 
 // UpdateLastJoinedHeight updates the last height at which the validator joined the committee.
-func (val *Validator) UpdateLastJoinedHeight(height uint32) {
-	val.data.LastJoinedHeight = height
+func (val *Validator) UpdateLastSortitionHeight(height uint32) {
+	val.data.LastSortitionHeight = height
 }
 
 // UpdateLastBondingHeight updates the last height at which the validator bonded some stakes.
@@ -173,7 +173,7 @@ func (val *Validator) Bytes() ([]byte, error) {
 		val.data.Stake,
 		val.data.LastBondingHeight,
 		val.data.UnbondingHeight,
-		val.data.LastJoinedHeight)
+		val.data.LastSortitionHeight)
 	if err != nil {
 		return nil, err
 	}

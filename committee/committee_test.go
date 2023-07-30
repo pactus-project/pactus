@@ -140,7 +140,7 @@ func TestProposerJoin(t *testing.T) {
 
 	// Height 1000
 	// Val2 is in the committee
-	val2.UpdateLastJoinedHeight(1000)
+	val2.UpdateLastSortitionHeight(1000)
 	committee.Update(0, []*validator.Validator{val2})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
 	assert.Equal(t, committee.Committers(), []int32{1, 2, 3, 4})
@@ -148,7 +148,7 @@ func TestProposerJoin(t *testing.T) {
 	fmt.Println(committee.String())
 
 	// Height 1001
-	val5.UpdateLastJoinedHeight(1001)
+	val5.UpdateLastSortitionHeight(1001)
 	committee.Update(0, []*validator.Validator{val5})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(3))
 	assert.Equal(t, committee.Proposer(1).Number(), int32(4))
@@ -163,9 +163,9 @@ func TestProposerJoin(t *testing.T) {
 	fmt.Println(committee.String())
 
 	// Height 1003
-	val3.UpdateLastJoinedHeight(1003)
-	val6.UpdateLastJoinedHeight(1003)
-	val7.UpdateLastJoinedHeight(1003)
+	val3.UpdateLastSortitionHeight(1003)
+	val6.UpdateLastSortitionHeight(1003)
+	val7.UpdateLastSortitionHeight(1003)
 	committee.Update(1, []*validator.Validator{val7, val3, val6})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
 	assert.Equal(t, committee.Committers(), []int32{6, 7, 1, 5, 2, 3, 4})
@@ -258,7 +258,7 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +$+-+-+-+$+-+$+
 
 	// Height 1001
-	val8.UpdateLastJoinedHeight(1001)
+	val8.UpdateLastSortitionHeight(1001)
 	committee.Update(0, []*validator.Validator{val8})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
 	assert.Equal(t, committee.Proposer(1).Number(), int32(3))
@@ -267,14 +267,14 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	fmt.Println(committee.String())
 
 	// Height 1002
-	val3.UpdateLastJoinedHeight(1002)
+	val3.UpdateLastSortitionHeight(1002)
 	committee.Update(3, []*validator.Validator{val3})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(6))
 	fmt.Println(committee.String())
 
 	// Height 1003
-	val2.UpdateLastJoinedHeight(1003)
-	val9.UpdateLastJoinedHeight(1003)
+	val2.UpdateLastSortitionHeight(1003)
+	val9.UpdateLastSortitionHeight(1003)
 	committee.Update(0, []*validator.Validator{val9, val2})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(7))
 	assert.Equal(t, committee.Proposer(1).Number(), int32(8))
@@ -282,15 +282,15 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	fmt.Println(committee.String())
 
 	// Height 1004
-	valA.UpdateLastJoinedHeight(1004)
+	valA.UpdateLastSortitionHeight(1004)
 	committee.Update(1, []*validator.Validator{valA})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
 	assert.Equal(t, committee.Committers(), []int32{8, 2, 3, 9, 6, 10, 7})
 	fmt.Println(committee.String())
 
 	// Height 1005
-	valB.UpdateLastJoinedHeight(1005)
-	valC.UpdateLastJoinedHeight(1005)
+	valB.UpdateLastSortitionHeight(1005)
+	valC.UpdateLastSortitionHeight(1005)
 	committee.Update(0, []*validator.Validator{valC, valB})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(3))
 	assert.Equal(t, committee.Proposer(1).Number(), int32(9))
@@ -299,17 +299,17 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	fmt.Println(committee.String())
 
 	// Height 1006
-	val1.UpdateLastJoinedHeight(1006)
+	val1.UpdateLastSortitionHeight(1006)
 	committee.Update(2, []*validator.Validator{val1})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(11))
 	assert.Equal(t, committee.Committers(), []int32{11, 12, 2, 1, 3, 9, 10})
 	fmt.Println(committee.String())
 
 	// Height 1007
-	val2.UpdateLastJoinedHeight(1007)
-	val3.UpdateLastJoinedHeight(1007)
-	val5.UpdateLastJoinedHeight(1007)
-	val6.UpdateLastJoinedHeight(1007)
+	val2.UpdateLastSortitionHeight(1007)
+	val3.UpdateLastSortitionHeight(1007)
+	val5.UpdateLastSortitionHeight(1007)
+	val6.UpdateLastSortitionHeight(1007)
 	committee.Update(4, []*validator.Validator{val2, val3, val5, val6})
 	assert.Equal(t, committee.Proposer(0).Number(), int32(5))
 	assert.Equal(t, committee.Committers(), []int32{5, 6, 11, 12, 2, 1, 3})
