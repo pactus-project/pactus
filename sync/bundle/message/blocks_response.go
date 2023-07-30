@@ -16,9 +16,10 @@ type BlocksResponseMessage struct {
 	From            uint32             `cbor:"3,keyasint"`
 	BlocksData      [][]byte           `cbor:"4,keyasint"`
 	LastCertificate *block.Certificate `cbor:"6,keyasint"`
+	Reason          string             `cbor:"7,keyasint"`
 }
 
-func NewBlocksResponseMessage(code ResponseCode, sid int, from uint32,
+func NewBlocksResponseMessage(code ResponseCode, reason string, sid int, from uint32,
 	blocksData [][]byte, lastCert *block.Certificate) *BlocksResponseMessage {
 	return &BlocksResponseMessage{
 		ResponseCode:    code,
@@ -26,6 +27,7 @@ func NewBlocksResponseMessage(code ResponseCode, sid int, from uint32,
 		From:            from,
 		BlocksData:      blocksData,
 		LastCertificate: lastCert,
+		Reason:          reason,
 	}
 }
 func (m *BlocksResponseMessage) SanityCheck() error {
@@ -69,10 +71,5 @@ func (m *BlocksResponseMessage) Fingerprint() string {
 }
 
 func (m *BlocksResponseMessage) IsRequestRejected() bool {
-	if m.ResponseCode == ResponseCodeBusy ||
-		m.ResponseCode == ResponseCodeRejected {
-		return true
-	}
-
-	return false
+	return m.ResponseCode == ResponseCodeRejected
 }

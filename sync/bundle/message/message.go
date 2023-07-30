@@ -12,10 +12,9 @@ const (
 	ResponseCodeNone         = ResponseCode(-1)
 	ResponseCodeOK           = ResponseCode(0)
 	ResponseCodeRejected     = ResponseCode(1)
-	ResponseCodeBusy         = ResponseCode(2)
-	ResponseCodeMoreBlocks   = ResponseCode(3)
-	ResponseCodeNoMoreBlocks = ResponseCode(4)
-	ResponseCodeSynced       = ResponseCode(5)
+	ResponseCodeMoreBlocks   = ResponseCode(2)
+	ResponseCodeNoMoreBlocks = ResponseCode(3)
+	ResponseCodeSynced       = ResponseCode(4)
 )
 
 func (c ResponseCode) String() string {
@@ -24,8 +23,6 @@ func (c ResponseCode) String() string {
 		return "ok"
 	case ResponseCodeRejected:
 		return "rejected"
-	case ResponseCodeBusy:
-		return "busy"
 	case ResponseCodeMoreBlocks:
 		return "more-blocks"
 	case ResponseCodeNoMoreBlocks:

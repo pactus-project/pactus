@@ -19,7 +19,7 @@ func TestInvalidBlockData(t *testing.T) {
 
 	pid := td.RandomPeerID()
 	sid := td.sync.peerSet.OpenSession(pid).SessionID()
-	msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, sid,
+	msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
 		0, [][]byte{{1, 2, 3}}, nil)
 
 	assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
@@ -40,7 +40,7 @@ func TestOneBlockShorter(t *testing.T) {
 
 	t.Run("Peer is busy. Session should be closed", func(t *testing.T) {
 		sid := td.sync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, sid,
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, message.ResponseCodeRejected.String(), sid,
 			0, nil, nil)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
@@ -49,7 +49,7 @@ func TestOneBlockShorter(t *testing.T) {
 
 	t.Run("Request is rejected. Session should be closed", func(t *testing.T) {
 		sid := td.sync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, sid,
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, message.ResponseCodeRejected.String(), sid,
 			0, nil, nil)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
@@ -58,7 +58,7 @@ func TestOneBlockShorter(t *testing.T) {
 
 	t.Run("Commit one block", func(t *testing.T) {
 		sid := td.sync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, sid,
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, message.ResponseCodeRejected.String(), sid,
 			lastBlockHeight+1, [][]byte{d1}, c1)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
