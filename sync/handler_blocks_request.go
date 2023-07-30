@@ -24,7 +24,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 
 	if handler.peerSet.NumberOfOpenSessions() > handler.config.MaxOpenSessions {
 		handler.logger.Warn("we are busy", "message", msg, "pid", initiator)
-		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, message.ResponseCodeRejected.String(),
+		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected, "we are busy",
 			msg.SessionID, 0, nil, nil)
 		handler.sendTo(response, initiator, msg.SessionID)
 
