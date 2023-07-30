@@ -19,6 +19,11 @@ class TransactionStub(object):
                 request_serializer=transaction__pb2.GetTransactionRequest.SerializeToString,
                 response_deserializer=transaction__pb2.GetTransactionResponse.FromString,
                 )
+        self.CalculateFee = channel.unary_unary(
+                '/pactus.Transaction/CalculateFee',
+                request_serializer=transaction__pb2.CalculateFeeRequest.SerializeToString,
+                response_deserializer=transaction__pb2.CalculateFeeResponse.FromString,
+                )
         self.SendRawTransaction = channel.unary_unary(
                 '/pactus.Transaction/SendRawTransaction',
                 request_serializer=transaction__pb2.SendRawTransactionRequest.SerializeToString,
@@ -30,6 +35,12 @@ class TransactionServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetTransaction(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CalculateFee(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -48,6 +59,11 @@ def add_TransactionServicer_to_server(servicer, server):
                     servicer.GetTransaction,
                     request_deserializer=transaction__pb2.GetTransactionRequest.FromString,
                     response_serializer=transaction__pb2.GetTransactionResponse.SerializeToString,
+            ),
+            'CalculateFee': grpc.unary_unary_rpc_method_handler(
+                    servicer.CalculateFee,
+                    request_deserializer=transaction__pb2.CalculateFeeRequest.FromString,
+                    response_serializer=transaction__pb2.CalculateFeeResponse.SerializeToString,
             ),
             'SendRawTransaction': grpc.unary_unary_rpc_method_handler(
                     servicer.SendRawTransaction,
@@ -78,6 +94,23 @@ class Transaction(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/GetTransaction',
             transaction__pb2.GetTransactionRequest.SerializeToString,
             transaction__pb2.GetTransactionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CalculateFee(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/CalculateFee',
+            transaction__pb2.CalculateFeeRequest.SerializeToString,
+            transaction__pb2.CalculateFeeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

@@ -258,7 +258,7 @@ func TestFee(t *testing.T) {
 		assert.Equal(t, errors.Code(err), test.expectedErrCode,
 			"test %v failed. unexpected error", i)
 
-		assert.Equal(t, calculateFee(test.amount, sb), test.expectedFee,
+		assert.Equal(t, CalculateFee(test.amount, sb.Params()), test.expectedFee,
 			"test %v failed. invalid fee", i)
 	}
 }

@@ -46,6 +46,37 @@ public final class TransactionGrpc {
     return getGetTransactionMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.CalculateFeeRequest,
+      pactus.transaction.TransactionOuterClass.CalculateFeeResponse> getCalculateFeeMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "CalculateFee",
+      requestType = pactus.transaction.TransactionOuterClass.CalculateFeeRequest.class,
+      responseType = pactus.transaction.TransactionOuterClass.CalculateFeeResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.CalculateFeeRequest,
+      pactus.transaction.TransactionOuterClass.CalculateFeeResponse> getCalculateFeeMethod() {
+    io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.CalculateFeeRequest, pactus.transaction.TransactionOuterClass.CalculateFeeResponse> getCalculateFeeMethod;
+    if ((getCalculateFeeMethod = TransactionGrpc.getCalculateFeeMethod) == null) {
+      synchronized (TransactionGrpc.class) {
+        if ((getCalculateFeeMethod = TransactionGrpc.getCalculateFeeMethod) == null) {
+          TransactionGrpc.getCalculateFeeMethod = getCalculateFeeMethod =
+              io.grpc.MethodDescriptor.<pactus.transaction.TransactionOuterClass.CalculateFeeRequest, pactus.transaction.TransactionOuterClass.CalculateFeeResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CalculateFee"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.transaction.TransactionOuterClass.CalculateFeeRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.transaction.TransactionOuterClass.CalculateFeeResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new TransactionMethodDescriptorSupplier("CalculateFee"))
+              .build();
+        }
+      }
+    }
+    return getCalculateFeeMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.SendRawTransactionRequest,
       pactus.transaction.TransactionOuterClass.SendRawTransactionResponse> getSendRawTransactionMethod;
 
@@ -134,6 +165,13 @@ public final class TransactionGrpc {
 
     /**
      */
+    public void calculateFee(pactus.transaction.TransactionOuterClass.CalculateFeeRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.CalculateFeeResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCalculateFeeMethod(), responseObserver);
+    }
+
+    /**
+     */
     public void sendRawTransaction(pactus.transaction.TransactionOuterClass.SendRawTransactionRequest request,
         io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.SendRawTransactionResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSendRawTransactionMethod(), responseObserver);
@@ -148,6 +186,13 @@ public final class TransactionGrpc {
                 pactus.transaction.TransactionOuterClass.GetTransactionRequest,
                 pactus.transaction.TransactionOuterClass.GetTransactionResponse>(
                   this, METHODID_GET_TRANSACTION)))
+          .addMethod(
+            getCalculateFeeMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.transaction.TransactionOuterClass.CalculateFeeRequest,
+                pactus.transaction.TransactionOuterClass.CalculateFeeResponse>(
+                  this, METHODID_CALCULATE_FEE)))
           .addMethod(
             getSendRawTransactionMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -183,6 +228,14 @@ public final class TransactionGrpc {
 
     /**
      */
+    public void calculateFee(pactus.transaction.TransactionOuterClass.CalculateFeeRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.CalculateFeeResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCalculateFeeMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
     public void sendRawTransaction(pactus.transaction.TransactionOuterClass.SendRawTransactionRequest request,
         io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.SendRawTransactionResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
@@ -209,6 +262,13 @@ public final class TransactionGrpc {
     public pactus.transaction.TransactionOuterClass.GetTransactionResponse getTransaction(pactus.transaction.TransactionOuterClass.GetTransactionRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetTransactionMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public pactus.transaction.TransactionOuterClass.CalculateFeeResponse calculateFee(pactus.transaction.TransactionOuterClass.CalculateFeeRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCalculateFeeMethod(), getCallOptions(), request);
     }
 
     /**
@@ -243,6 +303,14 @@ public final class TransactionGrpc {
 
     /**
      */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.CalculateFeeResponse> calculateFee(
+        pactus.transaction.TransactionOuterClass.CalculateFeeRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCalculateFeeMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
     public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.SendRawTransactionResponse> sendRawTransaction(
         pactus.transaction.TransactionOuterClass.SendRawTransactionRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
@@ -251,7 +319,8 @@ public final class TransactionGrpc {
   }
 
   private static final int METHODID_GET_TRANSACTION = 0;
-  private static final int METHODID_SEND_RAW_TRANSACTION = 1;
+  private static final int METHODID_CALCULATE_FEE = 1;
+  private static final int METHODID_SEND_RAW_TRANSACTION = 2;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -273,6 +342,10 @@ public final class TransactionGrpc {
         case METHODID_GET_TRANSACTION:
           serviceImpl.getTransaction((pactus.transaction.TransactionOuterClass.GetTransactionRequest) request,
               (io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetTransactionResponse>) responseObserver);
+          break;
+        case METHODID_CALCULATE_FEE:
+          serviceImpl.calculateFee((pactus.transaction.TransactionOuterClass.CalculateFeeRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.CalculateFeeResponse>) responseObserver);
           break;
         case METHODID_SEND_RAW_TRANSACTION:
           serviceImpl.sendRawTransaction((pactus.transaction.TransactionOuterClass.SendRawTransactionRequest) request,
@@ -340,6 +413,7 @@ public final class TransactionGrpc {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new TransactionFileDescriptorSupplier())
               .addMethod(getGetTransactionMethod())
+              .addMethod(getCalculateFeeMethod())
               .addMethod(getSendRawTransactionMethod())
               .build();
         }

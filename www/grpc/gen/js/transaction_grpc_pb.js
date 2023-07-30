@@ -4,6 +4,28 @@
 var grpc = require('grpc');
 var transaction_pb = require('./transaction_pb.js');
 
+function serialize_pactus_CalculateFeeRequest(arg) {
+  if (!(arg instanceof transaction_pb.CalculateFeeRequest)) {
+    throw new Error('Expected argument of type pactus.CalculateFeeRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_CalculateFeeRequest(buffer_arg) {
+  return transaction_pb.CalculateFeeRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_CalculateFeeResponse(arg) {
+  if (!(arg instanceof transaction_pb.CalculateFeeResponse)) {
+    throw new Error('Expected argument of type pactus.CalculateFeeResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_CalculateFeeResponse(buffer_arg) {
+  return transaction_pb.CalculateFeeResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetTransactionRequest(arg) {
   if (!(arg instanceof transaction_pb.GetTransactionRequest)) {
     throw new Error('Expected argument of type pactus.GetTransactionRequest');
@@ -60,6 +82,17 @@ var TransactionService = exports.TransactionService = {
     requestDeserialize: deserialize_pactus_GetTransactionRequest,
     responseSerialize: serialize_pactus_GetTransactionResponse,
     responseDeserialize: deserialize_pactus_GetTransactionResponse,
+  },
+  calculateFee: {
+    path: '/pactus.Transaction/CalculateFee',
+    requestStream: false,
+    responseStream: false,
+    requestType: transaction_pb.CalculateFeeRequest,
+    responseType: transaction_pb.CalculateFeeResponse,
+    requestSerialize: serialize_pactus_CalculateFeeRequest,
+    requestDeserialize: deserialize_pactus_CalculateFeeRequest,
+    responseSerialize: serialize_pactus_CalculateFeeResponse,
+    responseDeserialize: deserialize_pactus_CalculateFeeResponse,
   },
   sendRawTransaction: {
     path: '/pactus.Transaction/SendRawTransaction',
