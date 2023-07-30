@@ -202,7 +202,7 @@ func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.Pub
 	td.addPeer(t, pub, pid, true)
 	val := validator.NewValidator(pub.(*bls.PublicKey), td.RandInt32(1000))
 	// Note: This may not be completely accurate, but it poses no harm for testing purposes.
-	val.UpdateLastJoinedHeight(td.state.TestCommittee.Proposer(0).LastJoinedHeight() + 1)
+	val.UpdateLastSortitionHeight(td.state.TestCommittee.Proposer(0).LastSortitionHeight() + 1)
 	td.state.TestStore.UpdateValidator(val)
 	td.state.TestCommittee.Update(0, []*validator.Validator{val})
 	require.True(t, td.state.TestCommittee.Contains(pub.Address()))
@@ -280,7 +280,8 @@ func TestDownload(t *testing.T) {
 
 	t.Run("download request is rejected", func(t *testing.T) {
 		session := td.sync.peerSet.OpenSession(pid)
-		msg2 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, session.SessionID(), 1, nil, nil)
+		msg2 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, message.ResponseCodeRejected.String(),
+			session.SessionID(), 1, nil, nil)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg2, pid))
 		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 

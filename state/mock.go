@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
@@ -206,4 +207,24 @@ func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 }
 func (m *MockState) Params() param.Params {
 	return m.TestParams
+}
+
+func (m *MockState) CalculateFee(_ int64, payloadType payload.Type) (int64, error) {
+	switch payloadType {
+	case payload.PayloadTypeTransfer,
+		payload.PayloadTypeBond,
+		payload.PayloadTypeWithdraw:
+		{
+			return m.ts.RandInt64(1e9), nil
+		}
+
+	case payload.PayloadTypeUnbond,
+		payload.PayloadTypeSortition:
+		{
+			return 0, nil
+		}
+
+	default:
+		return 0, errors.Errorf(errors.ErrInvalidTx, "unexpected tx type: %v", payloadType)
+	}
 }

@@ -2,7 +2,6 @@ package validator_test
 
 import (
 	"encoding/hex"
-	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -17,9 +16,8 @@ func TestFromBytes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	val, _ := ts.GenerateTestValidator(ts.RandInt32(1000000))
-	fmt.Println(val.PublicKey().Address().String())
 	val.UpdateLastBondingHeight(ts.RandUint32(1000000))
-	val.UpdateLastJoinedHeight(ts.RandUint32(1000000))
+	val.UpdateLastSortitionHeight(ts.RandUint32(1000000))
 	val.UpdateUnbondingHeight(ts.RandUint32(1000000))
 	bs, err := val.Bytes()
 	require.NoError(t, err)
@@ -31,7 +29,7 @@ func TestFromBytes(t *testing.T) {
 	assert.Equal(t, val.Number(), val2.Number())
 	assert.Equal(t, val.Stake(), val2.Stake())
 	assert.Equal(t, val.LastBondingHeight(), val2.LastBondingHeight())
-	assert.Equal(t, val.LastJoinedHeight(), val2.LastJoinedHeight())
+	assert.Equal(t, val.LastSortitionHeight(), val2.LastSortitionHeight())
 	assert.Equal(t, val.UnbondingHeight(), val2.UnbondingHeight())
 
 	_, err = validator.FromBytes([]byte("asdfghjkl"))

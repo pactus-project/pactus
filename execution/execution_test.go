@@ -34,61 +34,71 @@ func TestExecution(t *testing.T) {
 
 	t.Run("Invalid transaction, Should returns error", func(t *testing.T) {
 		trx, _ := ts.GenerateTestTransferTx()
-		assert.Error(t, exe.Execute(trx, sb))
+		err := exe.Execute(trx, sb)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 		assert.Zero(t, exe.AccumulatedFee())
 	})
 
 	t.Run("Genesis stamp (expired), Should returns error", func(t *testing.T) {
 		trx := tx.NewTransferTx(hash.UndefHash.Stamp(), 1, addr1, rcvAddr, 1000, 1000, "expired-stamp")
 		signer1.SignMsg(trx)
-		assert.Error(t, exe.Execute(trx, sb))
+		err := exe.Execute(trx, sb)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
 
 	t.Run("Expired stamp, Should returns error", func(t *testing.T) {
 		trx := tx.NewTransferTx(block1.Stamp(), 1, addr1, rcvAddr, 1000, 1000,
 			"expired-stamp")
 		signer1.SignMsg(trx)
-		assert.Error(t, exe.Execute(trx, sb))
+		err := exe.Execute(trx, sb)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
 
 	t.Run("stamp is valid", func(t *testing.T) {
 		trx := tx.NewTransferTx(block3.Stamp(), 1, addr1, rcvAddr, 1000, 1000, "ok")
 		signer1.SignMsg(trx)
-		assert.NoError(t, exe.Execute(trx, sb))
+		err := exe.Execute(trx, sb)
+		assert.NoError(t, err)
 	})
 
 	t.Run("Subsidy transaction has an invalid stamp", func(t *testing.T) {
 		trx := tx.NewSubsidyTx(block8641.Stamp(), 1, rcvAddr, 1000,
 			"expired-stamp")
-		assert.Error(t, exe.Execute(trx, sb))
+		err := exe.Execute(trx, sb)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
 
 	t.Run("Subsidy stamp is ok", func(t *testing.T) {
 		trx := tx.NewSubsidyTx(block8642.Stamp(), 1, rcvAddr, 1000, "ok")
-		assert.NoError(t, exe.Execute(trx, sb))
+		err := exe.Execute(trx, sb)
+		assert.NoError(t, err)
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
 		trx := tx.NewTransferTx(block3.Stamp(), 2, addr1, rcvAddr, 1000, 1, "invalid fee")
 		signer1.SignMsg(trx)
-		assert.Error(t, exe.Execute(trx, sb))
+		err := exe.Execute(trx, sb)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
 		trx := tx.NewTransferTx(block3.Stamp(), 2, addr1, rcvAddr, 1000, 1001, "invalid fee")
 		signer1.SignMsg(trx)
-		assert.Error(t, exe.Execute(trx, sb))
+		err := exe.Execute(trx, sb)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
 	})
 
 	t.Run("Invalid fee (subsidy tx), Should returns error", func(t *testing.T) {
 		trx := tx.NewTransferTx(block3.Stamp(), 2, crypto.TreasuryAddress, rcvAddr, 1000, 1, "invalid fee")
-		assert.Error(t, exe.Execute(trx, sb))
+		err := exe.Execute(trx, sb)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
 		assert.Error(t, exe.checkFee(trx, sb))
 	})
 
 	t.Run("Invalid fee (send tx), Should returns error", func(t *testing.T) {
 		trx := tx.NewTransferTx(block3.Stamp(), 2, addr1, rcvAddr, 1000, 0, "invalid fee")
-		assert.Error(t, exe.Execute(trx, sb))
+		err := exe.Execute(trx, sb)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
 		assert.Error(t, exe.checkFee(trx, sb))
 	})
 
@@ -96,14 +106,16 @@ func TestExecution(t *testing.T) {
 		proof := ts.RandomProof()
 		trx := tx.NewSortitionTx(block8635.Stamp(), 1, addr1, proof)
 		signer1.SignMsg(trx)
-		assert.Error(t, exe.Execute(trx, sb))
+		err := exe.Execute(trx, sb)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
 
 	t.Run("Execution failed", func(t *testing.T) {
 		proof := ts.RandomProof()
 		trx := tx.NewSortitionTx(block8642.Stamp(), 1, addr1, proof)
 		signer1.SignMsg(trx)
-		assert.Error(t, exe.Execute(trx, sb))
+		err := exe.Execute(trx, sb)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 }
 
@@ -246,7 +258,7 @@ func TestFee(t *testing.T) {
 		assert.Equal(t, errors.Code(err), test.expectedErrCode,
 			"test %v failed. unexpected error", i)
 
-		assert.Equal(t, calculateFee(test.amount, sb), test.expectedFee,
+		assert.Equal(t, CalculateFee(test.amount, sb.Params()), test.expectedFee,
 			"test %v failed. invalid fee", i)
 	}
 }

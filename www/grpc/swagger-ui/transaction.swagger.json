@@ -90,6 +90,15 @@
     }
   },
   "definitions": {
+    "pactusCalculateFeeResponse": {
+      "type": "object",
+      "properties": {
+        "fee": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
     "pactusGetTransactionResponse": {
       "type": "object",
       "properties": {
@@ -223,7 +232,7 @@
           "type": "string",
           "format": "int64"
         },
-        "PayloadType": {
+        "payloadType": {
           "$ref": "#/definitions/pactusPayloadType"
         },
         "transfer": {

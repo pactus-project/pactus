@@ -42,6 +42,9 @@ http:
     - selector: pactus.Network.GetNodeInfo
       get: "/v1/network/node"
 
+    - selector: pactus.Transaction.CalculateFee
+      get: "/v1/transaction/amount/{amount}/payloadType/{payloadType}"
+
     # Wallet APIs
     - selector: pactus.Wallet.CreateWallet
       get: "/v1/wallet/create/name/{name}/mnemonic/{mnemonic}/language/{language}"

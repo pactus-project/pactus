@@ -230,14 +230,14 @@ const ValidatorInfo$json = const {
     const {'1': 'sequence', '3': 5, '4': 1, '5': 5, '10': 'sequence'},
     const {'1': 'stake', '3': 6, '4': 1, '5': 3, '10': 'stake'},
     const {'1': 'last_bonding_height', '3': 7, '4': 1, '5': 13, '10': 'lastBondingHeight'},
-    const {'1': 'last_joined_height', '3': 8, '4': 1, '5': 13, '10': 'lastJoinedHeight'},
+    const {'1': 'last_sortition_height', '3': 8, '4': 1, '5': 13, '10': 'lastSortitionHeight'},
     const {'1': 'unbonding_height', '3': 9, '4': 1, '5': 13, '10': 'unbondingHeight'},
     const {'1': 'address', '3': 10, '4': 1, '5': 9, '10': 'address'},
   ],
 };
 
 /// Descriptor for `ValidatorInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List validatorInfoDescriptor = $convert.base64Decode('Cg1WYWxpZGF0b3JJbmZvEhIKBGhhc2gYASABKAxSBGhhc2gSEgoEZGF0YRgCIAEoDFIEZGF0YRIdCgpwdWJsaWNfa2V5GAMgASgJUglwdWJsaWNLZXkSFgoGbnVtYmVyGAQgASgFUgZudW1iZXISGgoIc2VxdWVuY2UYBSABKAVSCHNlcXVlbmNlEhQKBXN0YWtlGAYgASgDUgVzdGFrZRIuChNsYXN0X2JvbmRpbmdfaGVpZ2h0GAcgASgNUhFsYXN0Qm9uZGluZ0hlaWdodBIsChJsYXN0X2pvaW5lZF9oZWlnaHQYCCABKA1SEGxhc3RKb2luZWRIZWlnaHQSKQoQdW5ib25kaW5nX2hlaWdodBgJIAEoDVIPdW5ib25kaW5nSGVpZ2h0EhgKB2FkZHJlc3MYCiABKAlSB2FkZHJlc3M=');
+final $typed_data.Uint8List validatorInfoDescriptor = $convert.base64Decode('Cg1WYWxpZGF0b3JJbmZvEhIKBGhhc2gYASABKAxSBGhhc2gSEgoEZGF0YRgCIAEoDFIEZGF0YRIdCgpwdWJsaWNfa2V5GAMgASgJUglwdWJsaWNLZXkSFgoGbnVtYmVyGAQgASgFUgZudW1iZXISGgoIc2VxdWVuY2UYBSABKAVSCHNlcXVlbmNlEhQKBXN0YWtlGAYgASgDUgVzdGFrZRIuChNsYXN0X2JvbmRpbmdfaGVpZ2h0GAcgASgNUhFsYXN0Qm9uZGluZ0hlaWdodBIyChVsYXN0X3NvcnRpdGlvbl9oZWlnaHQYCCABKA1SE2xhc3RTb3J0aXRpb25IZWlnaHQSKQoQdW5ib25kaW5nX2hlaWdodBgJIAEoDVIPdW5ib25kaW5nSGVpZ2h0EhgKB2FkZHJlc3MYCiABKAlSB2FkZHJlc3M=');
 @$core.Deprecated('Use accountInfoDescriptor instead')
 const AccountInfo$json = const {
   '1': 'AccountInfo',

@@ -612,7 +612,7 @@
           "type": "string",
           "format": "int64"
         },
-        "PayloadType": {
+        "payloadType": {
           "$ref": "#/definitions/pactusPayloadType"
         },
         "transfer": {
@@ -672,7 +672,7 @@
           "type": "integer",
           "format": "int64"
         },
-        "lastJoinedHeight": {
+        "lastSortitionHeight": {
           "type": "integer",
           "format": "int64"
         },

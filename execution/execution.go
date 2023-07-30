@@ -3,6 +3,7 @@ package execution
 import (
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
@@ -122,7 +123,7 @@ func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 			return errors.Errorf(errors.ErrInvalidTx, "fee is wrong, expected: 0, got: %v", trx.Fee())
 		}
 	} else {
-		fee := calculateFee(trx.Payload().Value(), sb)
+		fee := CalculateFee(trx.Payload().Value(), sb.Params())
 		if trx.Fee() != fee {
 			return errors.Errorf(errors.ErrInvalidFee, "fee is wrong, expected: %v, got: %v", fee, trx.Fee())
 		}
@@ -130,8 +131,7 @@ func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 	return nil
 }
 
-func calculateFee(amt int64, sb sandbox.Sandbox) int64 {
-	params := sb.Params()
+func CalculateFee(amt int64, params param.Params) int64 {
 	fee := int64(float64(amt) * params.FeeFraction)
 	fee = util.Max(fee, params.MinimumFee)
 	fee = util.Min(fee, params.MaximumFee)

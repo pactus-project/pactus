@@ -25,6 +25,7 @@ type MockSandbox struct {
 	TestCommittee        committee.Committee
 	TestCommitteeSigners []crypto.Signer
 	TestAcceptSortition  bool
+	TestJoinedValidators map[crypto.Address]bool
 	TestPowerDelta       int64
 }
 
@@ -37,6 +38,7 @@ func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 		TestStore:            store.MockingStore(ts),
 		TestCommittee:        committee,
 		TestCommitteeSigners: signers,
+		TestJoinedValidators: make(map[crypto.Address]bool),
 	}
 
 	treasuryAmt := int64(21000000 * 1e9)
@@ -71,6 +73,12 @@ func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
 	val, _ := m.TestStore.Validator(addr)
 	return val
 }
+func (m *MockSandbox) JoinedToCommittee(addr crypto.Address) {
+	m.TestJoinedValidators[addr] = true
+}
+func (m *MockSandbox) IsJoinedCommittee(addr crypto.Address) bool {
+	return m.TestJoinedValidators[addr]
+}
 func (m *MockSandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 	return validator.NewValidator(pub, m.TestStore.TotalValidators())
 }
@@ -92,9 +100,9 @@ func (m *MockSandbox) IterateAccounts(consumer func(crypto.Address, *account.Acc
 		return false
 	})
 }
-func (m *MockSandbox) IterateValidators(consumer func(*validator.Validator, bool)) {
+func (m *MockSandbox) IterateValidators(consumer func(*validator.Validator, bool, bool)) {
 	m.TestStore.IterateValidators(func(val *validator.Validator) bool {
-		consumer(val, true)
+		consumer(val, true, m.TestJoinedValidators[val.Address()])
 		return false
 	})
 }

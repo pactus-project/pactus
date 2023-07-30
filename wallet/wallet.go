@@ -11,7 +11,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
@@ -406,17 +405,8 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	return id.String(), nil
 }
 
-func calcFee(amount int64) int64 {
-	params := param.DefaultParams() // TODO: Get parameter from the node
-	fee := int64(float64(amount) * params.FeeFraction)
-	fee = util.Max(fee, params.MinimumFee)
-	fee = util.Min(fee, params.MaximumFee)
-	return fee
-}
-
-// TODO: query fee from grpc client
-func (w *Wallet) CalculateFee(amount int64) int64 {
-	return calcFee(amount)
+func (w *Wallet) CalculateFee(amount int64, payloadType payload.Type) (int64, error) {
+	return w.client.getFee(amount, payloadType)
 }
 
 func (w *Wallet) UpdatePassword(oldPassword, newPassword string) error {

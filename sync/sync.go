@@ -482,11 +482,6 @@ func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code message
 		sync.peerSet.IncreaseSendFailedCounter(pid)
 		sync.updateBlockchain()
 
-	case message.ResponseCodeBusy:
-		sync.logger.Debug("peer is busy. close session", "session-id", sessionID)
-		sync.peerSet.CloseSession(sessionID)
-		sync.updateBlockchain()
-
 	case message.ResponseCodeMoreBlocks:
 		sync.logger.Debug("peer responding us. keep session open", "session-id", sessionID)
 

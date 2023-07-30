@@ -305,7 +305,9 @@ func TestMakeTransferTx(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, trx.Sequence(), seq+1)
 		assert.Equal(t, trx.Payload().Value(), amount)
-		assert.Equal(t, trx.Fee(), td.wallet.CalculateFee(amount))
+		fee, err := td.wallet.CalculateFee(amount, payload.PayloadTypeTransfer)
+		assert.NoError(t, err)
+		assert.Equal(t, trx.Fee(), fee)
 		assert.Equal(t, trx.Stamp(), lastBlockHash.Stamp())
 	})
 
@@ -363,7 +365,9 @@ func TestMakeBondTx(t *testing.T) {
 		assert.Equal(t, trx.Sequence(), seq+1)
 		assert.True(t, trx.Payload().(*payload.BondPayload).PublicKey.EqualsTo(receiver.PublicKey()))
 		assert.Equal(t, trx.Payload().Value(), amount)
-		assert.Equal(t, trx.Fee(), td.wallet.CalculateFee(amount))
+		fee, err := td.wallet.CalculateFee(amount, payload.PayloadTypeBond)
+		assert.NoError(t, err)
+		assert.Equal(t, trx.Fee(), fee)
 		assert.Equal(t, trx.Stamp(), lastBlockHash.Stamp())
 	})
 
@@ -533,7 +537,9 @@ func TestMakeWithdrawTx(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, trx.Sequence(), seq+1)
 		assert.Equal(t, trx.Payload().Value(), amount)
-		assert.Equal(t, trx.Fee(), td.wallet.CalculateFee(amount))
+		fee, err := td.wallet.CalculateFee(amount, payload.PayloadTypeWithdraw)
+		assert.NoError(t, err)
+		assert.Equal(t, trx.Fee(), fee)
 		assert.Equal(t, trx.Stamp(), lastBlockHash.Stamp())
 	})
 
