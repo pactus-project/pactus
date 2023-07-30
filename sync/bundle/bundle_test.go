@@ -39,7 +39,7 @@ func TestMessageCompress(t *testing.T) {
 		d, _ := b.Bytes()
 		blocksData = append(blocksData, d)
 	}
-	msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, message.ResponseCodeRejected.String(),
+	msg := message.NewBlocksResponseMessage(message.ResponseCodeOK, message.ResponseCodeOK.String(),
 		1234, 888, blocksData, nil)
 	bdl := NewBundle(ts.RandomPeerID(), msg)
 	bs0, err := bdl.Encode()
