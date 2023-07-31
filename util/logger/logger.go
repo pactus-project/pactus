@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"encoding/hex"
 	"fmt"
 	"os"
 
@@ -65,6 +66,28 @@ func InitGlobalLogger(conf *Config) {
 	}
 }
 
+func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
+	if len(keyvals)%2 != 0 {
+		keyvals = append(keyvals, "!MISSING-VALUE!")
+	}
+	for i := 0; i < len(keyvals); i += 2 {
+		key, ok := keyvals[i].(string)
+		if !ok {
+			key = "!INVALID-KEY!"
+		}
+		///
+		switch v := keyvals[i+1].(type) {
+		case fmt.Stringer:
+			event.Stringer(key, v)
+		case []byte:
+			event.Str(key, fmt.Sprintf("%v", hex.EncodeToString(v)))
+		default:
+			event.Any(key, v)
+		}
+	}
+	return event
+}
+
 func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 	sl := &SubLogger{
 		logger: zerolog.New(os.Stderr).With().Timestamp().Logger(),
@@ -90,66 +113,66 @@ func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 	return sl
 }
 
-func (sl *SubLogger) checkEvent(event *zerolog.Event, msg string, keyvals ...interface{}) {
+func (sl *SubLogger) logObj(event *zerolog.Event, msg string, keyvals ...interface{}) {
 	if sl.obj != nil {
-		event.Str(sl.name, sl.obj.String()).Fields(keyvals).Msg(msg)
+		addFields(event.Str(sl.name, sl.obj.String()), keyvals...).Msg(msg)
 	} else {
-		event.Fields(keyvals).Msg(msg)
+		addFields(event, keyvals...).Msg(msg)
 	}
 }
 
 func (sl *SubLogger) Trace(msg string, keyvals ...interface{}) {
-	sl.checkEvent(sl.logger.Trace(), msg, keyvals...)
+	sl.logObj(sl.logger.Trace(), msg, keyvals...)
 }
 
 func (sl *SubLogger) Debug(msg string, keyvals ...interface{}) {
-	sl.checkEvent(sl.logger.Debug(), msg, keyvals...)
+	sl.logObj(sl.logger.Debug(), msg, keyvals...)
 }
 
 func (sl *SubLogger) Info(msg string, keyvals ...interface{}) {
-	sl.checkEvent(sl.logger.Info(), msg, keyvals...)
+	sl.logObj(sl.logger.Info(), msg, keyvals...)
 }
 
 func (sl *SubLogger) Warn(msg string, keyvals ...interface{}) {
-	sl.checkEvent(sl.logger.Warn(), msg, keyvals...)
+	sl.logObj(sl.logger.Warn(), msg, keyvals...)
 }
 
 func (sl *SubLogger) Error(msg string, keyvals ...interface{}) {
-	sl.checkEvent(sl.logger.Error(), msg, keyvals...)
+	sl.logObj(sl.logger.Error(), msg, keyvals...)
 }
 
 func (sl *SubLogger) Fatal(msg string, keyvals ...interface{}) {
-	sl.checkEvent(sl.logger.Fatal(), msg, keyvals...)
+	sl.logObj(sl.logger.Fatal(), msg, keyvals...)
 }
 
 func (sl *SubLogger) Panic(msg string, keyvals ...interface{}) {
-	sl.checkEvent(sl.logger.Panic(), msg, keyvals...)
+	sl.logObj(sl.logger.Panic(), msg, keyvals...)
 }
 
 func Trace(msg string, keyvals ...interface{}) {
-	log.Trace().Fields(keyvals).Msg(msg)
+	addFields(log.Trace(), keyvals...).Msg(msg)
 }
 
 func Debug(msg string, keyvals ...interface{}) {
-	log.Debug().Fields(keyvals).Msg(msg)
+	addFields(log.Debug(), keyvals...).Msg(msg)
 }
 
 func Info(msg string, keyvals ...interface{}) {
-	log.Info().Fields(keyvals).Msg(msg)
+	addFields(log.Info(), keyvals...).Msg(msg)
 }
 
 func Warn(msg string, keyvals ...interface{}) {
-	log.Warn().Fields(keyvals).Msg(msg)
+	addFields(log.Warn(), keyvals...).Msg(msg)
 }
 
 func Error(msg string, keyvals ...interface{}) {
-	log.Error().Fields(keyvals).Msg(msg)
+	addFields(log.Error(), keyvals...).Msg(msg)
 }
 
 func Fatal(msg string, keyvals ...interface{}) {
-	log.Fatal().Fields(keyvals).Msg(msg)
+	addFields(log.Fatal(), keyvals...).Msg(msg)
 }
 
 func Panic(msg string, keyvals ...interface{}) {
-	log.Panic().Fields(keyvals).Msg(msg)
+	addFields(log.Panic(), keyvals...).Msg(msg)
 }

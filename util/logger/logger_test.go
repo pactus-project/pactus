@@ -1,110 +1,82 @@
 package logger
 
-// import (
-// 	"bytes"
-// 	// "fmt"
-// 	"testing"
+import (
+	"bytes"
+	"fmt"
+	"testing"
 
-// 	// "github.com/rs/zerolog"
-// 	"github.com/stretchr/testify/assert"
-// )
+	"github.com/rs/zerolog/log"
+	"github.com/stretchr/testify/assert"
+)
 
-// type Foo struct{}
+type Foo struct{}
 
-// func (f Foo) String() string {
-// 	return "foo"
-// }
+func (f Foo) String() string {
+	return "foo"
+}
 
-// type Bar struct{}
+func TestNilObjLogger(t *testing.T) {
+	l := NewSubLogger("test", nil)
+	var buf bytes.Buffer
+	l.logger = l.logger.Output(&buf)
 
-// func (b *Bar) String() string {
-// 	return "bar"
-// }
+	l.Info("hello")
+	assert.Contains(t, buf.String(), "hello")
+}
 
-// func TestFingerprint(t *testing.T) {
-// 	f1 := Foo{}
-// 	f2 := &Foo{}
-// 	b1 := Bar{}
-// 	b2 := &Bar{}
+func TestObjLogger(t *testing.T) {
+	globalInst = nil
+	c := DefaultConfig()
+	c.Colorful = false
+	InitGlobalLogger(c)
 
-// 	assert.Equal(t, keyvalsToFields("key", f1)["key"], "foo")
-// 	assert.Equal(t, keyvalsToFields("key", &f1)["key"], "foo")
-// 	assert.Equal(t, keyvalsToFields("key", f2)["key"], "foo")
-// 	assert.Equal(t, keyvalsToFields("key", b1)["key"], "{}")
-// 	assert.Equal(t, keyvalsToFields("key", &b1)["key"], "bar")
-// 	assert.Equal(t, keyvalsToFields("key", b2)["key"], "bar")
-// 	assert.Nil(t, keyvalsToFields(1)["key"])
-// 	assert.Nil(t, keyvalsToFields(nil, 1)["key"])
-// 	assert.Nil(t, keyvalsToFields(1, nil)["key"])
-// }
+	l := NewSubLogger("test", Foo{})
+	var buf bytes.Buffer
+	l.logger = l.logger.Output(&buf)
 
-// func TestNilFingerprint(t *testing.T) {
-// 	var f1 Foo
-// 	var f2 *Foo
-// 	var b1 Bar
-// 	var b2 *Bar
+	l.Trace("a")
+	l.Debug("b")
+	l.Info("c")
+	l.Warn("d")
+	l.Error("e")
 
-// 	assert.Equal(t, keyvalsToFields("key", f1)["key"], "foo")
-// 	assert.Equal(t, keyvalsToFields("key", &f1)["key"], "foo")
-// 	assert.Equal(t, keyvalsToFields("key", f2)["key"], "nil")
-// 	assert.Equal(t, keyvalsToFields("key", b1)["key"], "{}")
-// 	assert.Equal(t, keyvalsToFields("key", &b1)["key"], "bar")
-// 	assert.Equal(t, keyvalsToFields("key", b2)["key"], "nil")
-// 	assert.Nil(t, keyvalsToFields(1)["key"])
-// 	assert.Nil(t, keyvalsToFields(nil, 1)["key"])
-// 	assert.Nil(t, keyvalsToFields(1, nil)["key"])
-// }
+	out := buf.String()
 
-// func TestObjLogger(t *testing.T) {
-// 	globalInst = nil
-// 	c := DefaultConfig()
-// 	c.Colorful = false
-// 	InitGlobalLogger(c)
+	assert.Contains(t, out, "foo")
+	assert.NotContains(t, out, "trace")
+	assert.NotContains(t, out, "debug")
+	assert.Contains(t, out, "info")
+	assert.Contains(t, out, "warn")
+	assert.Contains(t, out, "err")
+}
 
-// 	l := NewSubLogger("test", Foo{})
-// 	var buf bytes.Buffer
-// 	l.logger.Output(&buf)
+func TestLogger(t *testing.T) {
+	globalInst = nil
+	c := DefaultConfig()
+	c.Colorful = true
+	InitGlobalLogger(c)
 
-// 	l.Trace("a")
-// 	l.Debug("b")
-// 	l.Info("c")
-// 	l.Warn("d")
-// 	l.Error("e")
+	var buf bytes.Buffer
+	log.Logger = log.Output(&buf)
 
-// 	out := buf.String()
+	Trace("a")
+	Info("b", nil)
+	Info("b", "a", nil)
+	Info("c", "b", []byte{1, 2, 3})
+	Warn("d", "x")
+	Error("e", "y", Foo{})
 
-// 	assert.Contains(t, out, "foo")
-// 	assert.NotContains(t, out, "trace")
-// 	assert.NotContains(t, out, "debug")
-// 	assert.Contains(t, out, "info")
-// 	assert.Contains(t, out, "warn")
-// 	assert.Contains(t, out, "err")
-// }
+	out := buf.String()
 
-// func TestLogger(t *testing.T) {
-// 	globalInst = nil
-// 	c := DefaultConfig()
-// 	c.Colorful = true
-// 	InitGlobalLogger(c)
-
-// 	var buf bytes.Buffer
-// 	zerolog.DefaultContextLogger.Output(&buf)
-
-// 	Trace("a")
-// 	Debug("b", "a", nil)
-// 	Info("c", "b", []byte{1, 2, 3})
-// 	Warn("d", "x")
-// 	Error("e", "y", Foo{})
-
-// 	out := buf.String()
-
-// 	fmt.Println(out)
-// 	assert.Contains(t, out, "foo")
-// 	assert.Contains(t, out, "010203")
-// 	assert.Contains(t, out, "<MISSING VALUE>")
-// 	assert.NotContains(t, out, "TRACE")
-// 	assert.NotContains(t, out, "DEBU")
-// 	assert.Contains(t, out, "INFO")
-// 	assert.Contains(t, out, "WARN")
-// 	assert.Contains(t, out, "ERR")
-// }
+	fmt.Println(out)
+	assert.Contains(t, out, "foo")
+	assert.Contains(t, out, "010203")
+	assert.Contains(t, out, "!INVALID-KEY!")
+	assert.Contains(t, out, "!MISSING-VALUE!")
+	assert.Contains(t, out, "null")
+	assert.NotContains(t, out, "trace")
+	assert.NotContains(t, out, "debug")
+	assert.Contains(t, out, "info")
+	assert.Contains(t, out, "warn")
+	assert.Contains(t, out, "error")
+}
