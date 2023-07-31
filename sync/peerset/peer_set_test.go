@@ -83,6 +83,7 @@ func TestPeerSet(t *testing.T) {
 
 		receivedBytes := make(map[message.Type]int64)
 		receivedBytes[message.TypeBlocksResponse] = 100
+		receivedBytes[message.TypeTransactions] = 150
 
 		sentBytes := make(map[message.Type]int64)
 		sentBytes[message.TypeBlocksRequest] = 450
@@ -95,8 +96,9 @@ func TestPeerSet(t *testing.T) {
 		assert.Equal(t, peer1.SendSuccess, 1)
 		assert.Equal(t, peer1.SentBytes[message.TypeBlocksRequest], int64(250))
 
-		assert.Equal(t, peerSet.TotalReceivedBytes(), int64(100))
+		assert.Equal(t, peerSet.TotalReceivedBytes(), int64(250))
 		assert.Equal(t, peerSet.ReceivedBytesMessageType(message.TypeBlocksResponse), int64(100))
+		assert.Equal(t, peerSet.ReceivedBytesMessageType(message.TypeTransactions), int64(150))
 		assert.Equal(t, peerSet.ReceivedBytes(), receivedBytes)
 		assert.Equal(t, peerSet.TotalSentBytes(), int64(450))
 		assert.Equal(t, peerSet.SentBytesMessageType(message.TypeBlocksRequest), int64(450))

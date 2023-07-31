@@ -329,7 +329,7 @@ func (ps *PeerSet) IncreaseSentBytesCounter(msgType message.Type, c int64, pid *
 	defer ps.lk.Unlock()
 
 	ps.totalSentBytes += c
-	ps.sentBytes[msgType] += int64(c)
+	ps.sentBytes[msgType] += c
 
 	if pid != nil {
 		p := ps.mustGetPeer(*pid)
