@@ -10,8 +10,6 @@ import (
 	"github.com/pactus-project/pactus/util"
 )
 
-// TODO: write tests for me
-
 const (
 	PeerFlagNodeNetwork = 0x01
 )
