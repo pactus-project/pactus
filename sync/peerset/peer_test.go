@@ -3,9 +3,8 @@ package peerset
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/libp2p/go-libp2p/core/peer"
-
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPeer(t *testing.T) {
@@ -19,7 +18,7 @@ func TestPeer(t *testing.T) {
 
 	p2.Status = StatusCodeKnown
 	p3.Status = StatusCodeBanned
-	
+
 	p1.Flags = PeerFlagNodeNetwork
 
 	t.Run("NewPeer", func(t *testing.T) {
@@ -28,7 +27,7 @@ func TestPeer(t *testing.T) {
 	})
 
 	t.Run("status check", func(t *testing.T) {
-		unknown :=  p1.IsKnownOrTrusty()
+		unknown := p1.IsKnownOrTrusty()
 		known := p2.IsKnownOrTrusty()
 		banned := p3.IsBanned()
 
@@ -45,4 +44,3 @@ func TestPeer(t *testing.T) {
 		assert.False(t, notNodeNetwork)
 	})
 }
-
