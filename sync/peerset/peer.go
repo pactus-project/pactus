@@ -29,6 +29,7 @@ type Peer struct {
 	ReceivedBundles int
 	InvalidBundles  int
 	ReceivedBytes   int
+	SentBytes       int
 	SendSuccess     int
 	SendFailed      int
 }

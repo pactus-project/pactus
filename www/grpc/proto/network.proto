@@ -39,10 +39,11 @@ message PeerInfo {
   int32 received_messages = 7;
   int32 invalid_messages = 8;
   int32 received_bytes = 9;
-  int32 status = 10;
-  int64 last_sent = 11;
-  int64 last_received = 12;
-  int32 send_success = 13;
-  int32 send_failed = 14;
-  bytes last_block_hash = 15;
+  int32 sent_bytes = 10;
+  int32 status = 11;
+  int64 last_sent = 12;
+  int64 last_received = 13;
+  int32 send_success = 14;
+  int32 send_failed = 15;
+  bytes last_block_hash = 16;
 }

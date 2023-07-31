@@ -322,12 +322,17 @@ func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, msgType message.Typ
 	ps.receivedBytes[msgType] += int64(c)
 }
 
-func (ps *PeerSet) IncreaseSentBytesCounter(msgType message.Type, c int) {
+func (ps *PeerSet) IncreaseSentBytesCounter(msgType message.Type, c int, pid ...peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	ps.totalSentBytes += c
 	ps.sentBytes[msgType] += int64(c)
+
+	if pid != nil {
+		p := ps.mustGetPeer(pid[0])
+		p.SentBytes += c
+	}
 }
 
 func (ps *PeerSet) IncreaseSendSuccessCounter(pid peer.ID) {

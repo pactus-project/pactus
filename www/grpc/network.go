@@ -40,6 +40,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		p.ReceivedMessages = int32(peer.ReceivedBundles)
 		p.InvalidMessages = int32(peer.InvalidBundles)
 		p.ReceivedBytes = int32(peer.ReceivedBytes)
+		p.SentBytes = int32(peer.SentBytes)
 		p.Status = int32(peer.Status)
 		p.LastReceived = peer.LastReceived.Unix()
 		p.SendSuccess = int32(peer.SendSuccess)

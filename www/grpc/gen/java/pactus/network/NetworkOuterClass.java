@@ -3258,37 +3258,43 @@ public final class NetworkOuterClass {
     int getReceivedBytes();
 
     /**
-     * <code>int32 status = 10 [json_name = "status"];</code>
+     * <code>int32 sent_bytes = 10 [json_name = "sentBytes"];</code>
+     * @return The sentBytes.
+     */
+    int getSentBytes();
+
+    /**
+     * <code>int32 status = 11 [json_name = "status"];</code>
      * @return The status.
      */
     int getStatus();
 
     /**
-     * <code>int64 last_sent = 11 [json_name = "lastSent"];</code>
+     * <code>int64 last_sent = 12 [json_name = "lastSent"];</code>
      * @return The lastSent.
      */
     long getLastSent();
 
     /**
-     * <code>int64 last_received = 12 [json_name = "lastReceived"];</code>
+     * <code>int64 last_received = 13 [json_name = "lastReceived"];</code>
      * @return The lastReceived.
      */
     long getLastReceived();
 
     /**
-     * <code>int32 send_success = 13 [json_name = "sendSuccess"];</code>
+     * <code>int32 send_success = 14 [json_name = "sendSuccess"];</code>
      * @return The sendSuccess.
      */
     int getSendSuccess();
 
     /**
-     * <code>int32 send_failed = 14 [json_name = "sendFailed"];</code>
+     * <code>int32 send_failed = 15 [json_name = "sendFailed"];</code>
      * @return The sendFailed.
      */
     int getSendFailed();
 
     /**
-     * <code>bytes last_block_hash = 15 [json_name = "lastBlockHash"];</code>
+     * <code>bytes last_block_hash = 16 [json_name = "lastBlockHash"];</code>
      * @return The lastBlockHash.
      */
     com.google.protobuf.ByteString getLastBlockHash();
@@ -3515,10 +3521,21 @@ public final class NetworkOuterClass {
       return receivedBytes_;
     }
 
-    public static final int STATUS_FIELD_NUMBER = 10;
+    public static final int SENT_BYTES_FIELD_NUMBER = 10;
+    private int sentBytes_;
+    /**
+     * <code>int32 sent_bytes = 10 [json_name = "sentBytes"];</code>
+     * @return The sentBytes.
+     */
+    @java.lang.Override
+    public int getSentBytes() {
+      return sentBytes_;
+    }
+
+    public static final int STATUS_FIELD_NUMBER = 11;
     private int status_;
     /**
-     * <code>int32 status = 10 [json_name = "status"];</code>
+     * <code>int32 status = 11 [json_name = "status"];</code>
      * @return The status.
      */
     @java.lang.Override
@@ -3526,10 +3543,10 @@ public final class NetworkOuterClass {
       return status_;
     }
 
-    public static final int LAST_SENT_FIELD_NUMBER = 11;
+    public static final int LAST_SENT_FIELD_NUMBER = 12;
     private long lastSent_;
     /**
-     * <code>int64 last_sent = 11 [json_name = "lastSent"];</code>
+     * <code>int64 last_sent = 12 [json_name = "lastSent"];</code>
      * @return The lastSent.
      */
     @java.lang.Override
@@ -3537,10 +3554,10 @@ public final class NetworkOuterClass {
       return lastSent_;
     }
 
-    public static final int LAST_RECEIVED_FIELD_NUMBER = 12;
+    public static final int LAST_RECEIVED_FIELD_NUMBER = 13;
     private long lastReceived_;
     /**
-     * <code>int64 last_received = 12 [json_name = "lastReceived"];</code>
+     * <code>int64 last_received = 13 [json_name = "lastReceived"];</code>
      * @return The lastReceived.
      */
     @java.lang.Override
@@ -3548,10 +3565,10 @@ public final class NetworkOuterClass {
       return lastReceived_;
     }
 
-    public static final int SEND_SUCCESS_FIELD_NUMBER = 13;
+    public static final int SEND_SUCCESS_FIELD_NUMBER = 14;
     private int sendSuccess_;
     /**
-     * <code>int32 send_success = 13 [json_name = "sendSuccess"];</code>
+     * <code>int32 send_success = 14 [json_name = "sendSuccess"];</code>
      * @return The sendSuccess.
      */
     @java.lang.Override
@@ -3559,10 +3576,10 @@ public final class NetworkOuterClass {
       return sendSuccess_;
     }
 
-    public static final int SEND_FAILED_FIELD_NUMBER = 14;
+    public static final int SEND_FAILED_FIELD_NUMBER = 15;
     private int sendFailed_;
     /**
-     * <code>int32 send_failed = 14 [json_name = "sendFailed"];</code>
+     * <code>int32 send_failed = 15 [json_name = "sendFailed"];</code>
      * @return The sendFailed.
      */
     @java.lang.Override
@@ -3570,10 +3587,10 @@ public final class NetworkOuterClass {
       return sendFailed_;
     }
 
-    public static final int LAST_BLOCK_HASH_FIELD_NUMBER = 15;
+    public static final int LAST_BLOCK_HASH_FIELD_NUMBER = 16;
     private com.google.protobuf.ByteString lastBlockHash_;
     /**
-     * <code>bytes last_block_hash = 15 [json_name = "lastBlockHash"];</code>
+     * <code>bytes last_block_hash = 16 [json_name = "lastBlockHash"];</code>
      * @return The lastBlockHash.
      */
     @java.lang.Override
@@ -3622,23 +3639,26 @@ public final class NetworkOuterClass {
       if (receivedBytes_ != 0) {
         output.writeInt32(9, receivedBytes_);
       }
+      if (sentBytes_ != 0) {
+        output.writeInt32(10, sentBytes_);
+      }
       if (status_ != 0) {
-        output.writeInt32(10, status_);
+        output.writeInt32(11, status_);
       }
       if (lastSent_ != 0L) {
-        output.writeInt64(11, lastSent_);
+        output.writeInt64(12, lastSent_);
       }
       if (lastReceived_ != 0L) {
-        output.writeInt64(12, lastReceived_);
+        output.writeInt64(13, lastReceived_);
       }
       if (sendSuccess_ != 0) {
-        output.writeInt32(13, sendSuccess_);
+        output.writeInt32(14, sendSuccess_);
       }
       if (sendFailed_ != 0) {
-        output.writeInt32(14, sendFailed_);
+        output.writeInt32(15, sendFailed_);
       }
       if (!lastBlockHash_.isEmpty()) {
-        output.writeBytes(15, lastBlockHash_);
+        output.writeBytes(16, lastBlockHash_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -3687,29 +3707,33 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(9, receivedBytes_);
       }
+      if (sentBytes_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(10, sentBytes_);
+      }
       if (status_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(10, status_);
+          .computeInt32Size(11, status_);
       }
       if (lastSent_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(11, lastSent_);
+          .computeInt64Size(12, lastSent_);
       }
       if (lastReceived_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(12, lastReceived_);
+          .computeInt64Size(13, lastReceived_);
       }
       if (sendSuccess_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(13, sendSuccess_);
+          .computeInt32Size(14, sendSuccess_);
       }
       if (sendFailed_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(14, sendFailed_);
+          .computeInt32Size(15, sendFailed_);
       }
       if (!lastBlockHash_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(15, lastBlockHash_);
+          .computeBytesSize(16, lastBlockHash_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -3744,6 +3768,8 @@ public final class NetworkOuterClass {
           != other.getInvalidMessages()) return false;
       if (getReceivedBytes()
           != other.getReceivedBytes()) return false;
+      if (getSentBytes()
+          != other.getSentBytes()) return false;
       if (getStatus()
           != other.getStatus()) return false;
       if (getLastSent()
@@ -3787,6 +3813,8 @@ public final class NetworkOuterClass {
       hash = (53 * hash) + getInvalidMessages();
       hash = (37 * hash) + RECEIVED_BYTES_FIELD_NUMBER;
       hash = (53 * hash) + getReceivedBytes();
+      hash = (37 * hash) + SENT_BYTES_FIELD_NUMBER;
+      hash = (53 * hash) + getSentBytes();
       hash = (37 * hash) + STATUS_FIELD_NUMBER;
       hash = (53 * hash) + getStatus();
       hash = (37 * hash) + LAST_SENT_FIELD_NUMBER;
@@ -3947,6 +3975,8 @@ public final class NetworkOuterClass {
 
         receivedBytes_ = 0;
 
+        sentBytes_ = 0;
+
         status_ = 0;
 
         lastSent_ = 0L;
@@ -3999,6 +4029,7 @@ public final class NetworkOuterClass {
         result.receivedMessages_ = receivedMessages_;
         result.invalidMessages_ = invalidMessages_;
         result.receivedBytes_ = receivedBytes_;
+        result.sentBytes_ = sentBytes_;
         result.status_ = status_;
         result.lastSent_ = lastSent_;
         result.lastReceived_ = lastReceived_;
@@ -4088,6 +4119,9 @@ public final class NetworkOuterClass {
         }
         if (other.getReceivedBytes() != 0) {
           setReceivedBytes(other.getReceivedBytes());
+        }
+        if (other.getSentBytes() != 0) {
+          setSentBytes(other.getSentBytes());
         }
         if (other.getStatus() != 0) {
           setStatus(other.getStatus());
@@ -4180,35 +4214,40 @@ public final class NetworkOuterClass {
                 break;
               } // case 72
               case 80: {
-                status_ = input.readInt32();
+                sentBytes_ = input.readInt32();
 
                 break;
               } // case 80
               case 88: {
-                lastSent_ = input.readInt64();
+                status_ = input.readInt32();
 
                 break;
               } // case 88
               case 96: {
-                lastReceived_ = input.readInt64();
+                lastSent_ = input.readInt64();
 
                 break;
               } // case 96
               case 104: {
-                sendSuccess_ = input.readInt32();
+                lastReceived_ = input.readInt64();
 
                 break;
               } // case 104
               case 112: {
-                sendFailed_ = input.readInt32();
+                sendSuccess_ = input.readInt32();
 
                 break;
               } // case 112
-              case 122: {
+              case 120: {
+                sendFailed_ = input.readInt32();
+
+                break;
+              } // case 120
+              case 130: {
                 lastBlockHash_ = input.readBytes();
 
                 break;
-              } // case 122
+              } // case 130
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -4677,9 +4716,40 @@ public final class NetworkOuterClass {
         return this;
       }
 
+      private int sentBytes_ ;
+      /**
+       * <code>int32 sent_bytes = 10 [json_name = "sentBytes"];</code>
+       * @return The sentBytes.
+       */
+      @java.lang.Override
+      public int getSentBytes() {
+        return sentBytes_;
+      }
+      /**
+       * <code>int32 sent_bytes = 10 [json_name = "sentBytes"];</code>
+       * @param value The sentBytes to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSentBytes(int value) {
+        
+        sentBytes_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 sent_bytes = 10 [json_name = "sentBytes"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSentBytes() {
+        
+        sentBytes_ = 0;
+        onChanged();
+        return this;
+      }
+
       private int status_ ;
       /**
-       * <code>int32 status = 10 [json_name = "status"];</code>
+       * <code>int32 status = 11 [json_name = "status"];</code>
        * @return The status.
        */
       @java.lang.Override
@@ -4687,7 +4757,7 @@ public final class NetworkOuterClass {
         return status_;
       }
       /**
-       * <code>int32 status = 10 [json_name = "status"];</code>
+       * <code>int32 status = 11 [json_name = "status"];</code>
        * @param value The status to set.
        * @return This builder for chaining.
        */
@@ -4698,7 +4768,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>int32 status = 10 [json_name = "status"];</code>
+       * <code>int32 status = 11 [json_name = "status"];</code>
        * @return This builder for chaining.
        */
       public Builder clearStatus() {
@@ -4710,7 +4780,7 @@ public final class NetworkOuterClass {
 
       private long lastSent_ ;
       /**
-       * <code>int64 last_sent = 11 [json_name = "lastSent"];</code>
+       * <code>int64 last_sent = 12 [json_name = "lastSent"];</code>
        * @return The lastSent.
        */
       @java.lang.Override
@@ -4718,7 +4788,7 @@ public final class NetworkOuterClass {
         return lastSent_;
       }
       /**
-       * <code>int64 last_sent = 11 [json_name = "lastSent"];</code>
+       * <code>int64 last_sent = 12 [json_name = "lastSent"];</code>
        * @param value The lastSent to set.
        * @return This builder for chaining.
        */
@@ -4729,7 +4799,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>int64 last_sent = 11 [json_name = "lastSent"];</code>
+       * <code>int64 last_sent = 12 [json_name = "lastSent"];</code>
        * @return This builder for chaining.
        */
       public Builder clearLastSent() {
@@ -4741,7 +4811,7 @@ public final class NetworkOuterClass {
 
       private long lastReceived_ ;
       /**
-       * <code>int64 last_received = 12 [json_name = "lastReceived"];</code>
+       * <code>int64 last_received = 13 [json_name = "lastReceived"];</code>
        * @return The lastReceived.
        */
       @java.lang.Override
@@ -4749,7 +4819,7 @@ public final class NetworkOuterClass {
         return lastReceived_;
       }
       /**
-       * <code>int64 last_received = 12 [json_name = "lastReceived"];</code>
+       * <code>int64 last_received = 13 [json_name = "lastReceived"];</code>
        * @param value The lastReceived to set.
        * @return This builder for chaining.
        */
@@ -4760,7 +4830,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>int64 last_received = 12 [json_name = "lastReceived"];</code>
+       * <code>int64 last_received = 13 [json_name = "lastReceived"];</code>
        * @return This builder for chaining.
        */
       public Builder clearLastReceived() {
@@ -4772,7 +4842,7 @@ public final class NetworkOuterClass {
 
       private int sendSuccess_ ;
       /**
-       * <code>int32 send_success = 13 [json_name = "sendSuccess"];</code>
+       * <code>int32 send_success = 14 [json_name = "sendSuccess"];</code>
        * @return The sendSuccess.
        */
       @java.lang.Override
@@ -4780,7 +4850,7 @@ public final class NetworkOuterClass {
         return sendSuccess_;
       }
       /**
-       * <code>int32 send_success = 13 [json_name = "sendSuccess"];</code>
+       * <code>int32 send_success = 14 [json_name = "sendSuccess"];</code>
        * @param value The sendSuccess to set.
        * @return This builder for chaining.
        */
@@ -4791,7 +4861,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>int32 send_success = 13 [json_name = "sendSuccess"];</code>
+       * <code>int32 send_success = 14 [json_name = "sendSuccess"];</code>
        * @return This builder for chaining.
        */
       public Builder clearSendSuccess() {
@@ -4803,7 +4873,7 @@ public final class NetworkOuterClass {
 
       private int sendFailed_ ;
       /**
-       * <code>int32 send_failed = 14 [json_name = "sendFailed"];</code>
+       * <code>int32 send_failed = 15 [json_name = "sendFailed"];</code>
        * @return The sendFailed.
        */
       @java.lang.Override
@@ -4811,7 +4881,7 @@ public final class NetworkOuterClass {
         return sendFailed_;
       }
       /**
-       * <code>int32 send_failed = 14 [json_name = "sendFailed"];</code>
+       * <code>int32 send_failed = 15 [json_name = "sendFailed"];</code>
        * @param value The sendFailed to set.
        * @return This builder for chaining.
        */
@@ -4822,7 +4892,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>int32 send_failed = 14 [json_name = "sendFailed"];</code>
+       * <code>int32 send_failed = 15 [json_name = "sendFailed"];</code>
        * @return This builder for chaining.
        */
       public Builder clearSendFailed() {
@@ -4834,7 +4904,7 @@ public final class NetworkOuterClass {
 
       private com.google.protobuf.ByteString lastBlockHash_ = com.google.protobuf.ByteString.EMPTY;
       /**
-       * <code>bytes last_block_hash = 15 [json_name = "lastBlockHash"];</code>
+       * <code>bytes last_block_hash = 16 [json_name = "lastBlockHash"];</code>
        * @return The lastBlockHash.
        */
       @java.lang.Override
@@ -4842,7 +4912,7 @@ public final class NetworkOuterClass {
         return lastBlockHash_;
       }
       /**
-       * <code>bytes last_block_hash = 15 [json_name = "lastBlockHash"];</code>
+       * <code>bytes last_block_hash = 16 [json_name = "lastBlockHash"];</code>
        * @param value The lastBlockHash to set.
        * @return This builder for chaining.
        */
@@ -4856,7 +4926,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>bytes last_block_hash = 15 [json_name = "lastBlockHash"];</code>
+       * <code>bytes last_block_hash = 16 [json_name = "lastBlockHash"];</code>
        * @return This builder for chaining.
        */
       public Builder clearLastBlockHash() {
@@ -4989,25 +5059,26 @@ public final class NetworkOuterClass {
       "\001(\003R\005value:\0028\001\"\024\n\022GetNodeInfoRequest\"^\n\023" +
       "GetNodeInfoResponse\022\030\n\007moniker\030\001 \001(\tR\007mo" +
       "niker\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003" +
-      " \001(\014R\006peerId\"\355\003\n\010PeerInfo\022\030\n\007moniker\030\001 \001" +
+      " \001(\014R\006peerId\"\214\004\n\010PeerInfo\022\030\n\007moniker\030\001 \001" +
       "(\tR\007moniker\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007pee" +
       "r_id\030\003 \001(\014R\006peerId\022%\n\016consensus_keys\030\004 \003" +
       "(\tR\rconsensusKeys\022\024\n\005flags\030\005 \001(\005R\005flags\022" +
       "\026\n\006height\030\006 \001(\rR\006height\022+\n\021received_mess" +
       "ages\030\007 \001(\005R\020receivedMessages\022)\n\020invalid_" +
       "messages\030\010 \001(\005R\017invalidMessages\022%\n\016recei" +
-      "ved_bytes\030\t \001(\005R\rreceivedBytes\022\026\n\006status" +
-      "\030\n \001(\005R\006status\022\033\n\tlast_sent\030\013 \001(\003R\010lastS" +
-      "ent\022#\n\rlast_received\030\014 \001(\003R\014lastReceived" +
-      "\022!\n\014send_success\030\r \001(\005R\013sendSuccess\022\037\n\013s" +
-      "end_failed\030\016 \001(\005R\nsendFailed\022&\n\017last_blo" +
-      "ck_hash\030\017 \001(\014R\rlastBlockHash2\242\001\n\007Network" +
-      "\022O\n\016GetNetworkInfo\022\035.pactus.GetNetworkIn" +
-      "foRequest\032\036.pactus.GetNetworkInfoRespons" +
-      "e\022F\n\013GetNodeInfo\022\032.pactus.GetNodeInfoReq" +
-      "uest\032\033.pactus.GetNodeInfoResponseBB\n\016pac" +
-      "tus.networkZ0github.com/pactus-project/p" +
-      "actus/www/grpc/pactusb\006proto3"
+      "ved_bytes\030\t \001(\005R\rreceivedBytes\022\035\n\nsent_b" +
+      "ytes\030\n \001(\005R\tsentBytes\022\026\n\006status\030\013 \001(\005R\006s" +
+      "tatus\022\033\n\tlast_sent\030\014 \001(\003R\010lastSent\022#\n\rla" +
+      "st_received\030\r \001(\003R\014lastReceived\022!\n\014send_" +
+      "success\030\016 \001(\005R\013sendSuccess\022\037\n\013send_faile" +
+      "d\030\017 \001(\005R\nsendFailed\022&\n\017last_block_hash\030\020" +
+      " \001(\014R\rlastBlockHash2\242\001\n\007Network\022O\n\016GetNe" +
+      "tworkInfo\022\035.pactus.GetNetworkInfoRequest" +
+      "\032\036.pactus.GetNetworkInfoResponse\022F\n\013GetN" +
+      "odeInfo\022\032.pactus.GetNodeInfoRequest\032\033.pa" +
+      "ctus.GetNodeInfoResponseBB\n\016pactus.netwo" +
+      "rkZ0github.com/pactus-project/pactus/www" +
+      "/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -5054,7 +5125,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "ConsensusKeys", "Flags", "Height", "ReceivedMessages", "InvalidMessages", "ReceivedBytes", "Status", "LastSent", "LastReceived", "SendSuccess", "SendFailed", "LastBlockHash", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "ConsensusKeys", "Flags", "Height", "ReceivedMessages", "InvalidMessages", "ReceivedBytes", "SentBytes", "Status", "LastSent", "LastReceived", "SendSuccess", "SendFailed", "LastBlockHash", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

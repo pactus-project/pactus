@@ -327,7 +327,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID, sessionID int)
 			sync.logger.Info("sending bundle to a peer", "bundle", bdl, "to", to)
 			sync.peerSet.IncreaseSendSuccessCounter(to)
 		}
-		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), len(data))
+		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), len(data), sync.SelfID())
 	}
 }
 

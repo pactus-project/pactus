@@ -74,6 +74,7 @@ func TestPeerSet(t *testing.T) {
 		peerSet.IncreaseReceivedBundlesCounter(pid1)
 		peerSet.IncreaseReceivedBytesCounter(pid1, message.TypeBlocksResponse, 100)
 		peerSet.IncreaseSentBytesCounter(message.TypeBlocksRequest, 200)
+		peerSet.IncreaseSentBytesCounter(message.TypeBlocksRequest, 250, pid1)
 		peerSet.IncreaseSendFailedCounter(pid1)
 		peerSet.IncreaseSendSuccessCounter(pid1)
 
@@ -83,18 +84,20 @@ func TestPeerSet(t *testing.T) {
 		receivedBytes[message.TypeBlocksResponse] = 100
 
 		sentBytes := make(map[message.Type]int64)
-		sentBytes[message.TypeBlocksRequest] = 200
+		sentBytes[message.TypeBlocksRequest] = 450
 
 		assert.Equal(t, peer1.InvalidBundles, 1)
 		assert.Equal(t, peer1.ReceivedBundles, 1)
 		assert.Equal(t, peer1.ReceivedBytes, 100)
 		assert.Equal(t, peer1.SendFailed, 1)
 		assert.Equal(t, peer1.SendSuccess, 1)
+		assert.Equal(t, peer1.SentBytes, 250)
+
 		assert.Equal(t, peerSet.TotalReceivedBytes(), 100)
 		assert.Equal(t, peerSet.ReceivedBytesMessageType(message.TypeBlocksResponse), int64(100))
 		assert.Equal(t, peerSet.ReceivedBytes(), receivedBytes)
-		assert.Equal(t, peerSet.TotalSentBytes(), 200)
-		assert.Equal(t, peerSet.SentBytesMessageType(message.TypeBlocksRequest), int64(200))
+		assert.Equal(t, peerSet.TotalSentBytes(), 450)
+		assert.Equal(t, peerSet.SentBytesMessageType(message.TypeBlocksRequest), int64(450))
 		assert.Equal(t, peerSet.SentBytes(), sentBytes)
 	})
 
