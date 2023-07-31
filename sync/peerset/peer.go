@@ -6,6 +6,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -28,8 +29,8 @@ type Peer struct {
 	Height          uint32
 	ReceivedBundles int
 	InvalidBundles  int
-	ReceivedBytes   int
-	SentBytes       int
+	ReceivedBytes   map[message.Type]int64
+	SentBytes       map[message.Type]int64
 	SendSuccess     int
 	SendFailed      int
 }
@@ -39,6 +40,8 @@ func NewPeer(peerID peer.ID) *Peer {
 		ConsensusKeys: make(map[bls.PublicKey]bool),
 		Status:        StatusCodeUnknown,
 		PeerID:        peerID,
+		ReceivedBytes: make(map[message.Type]int64),
+		SentBytes:     make(map[message.Type]int64),
 	}
 }
 

@@ -149,13 +149,19 @@
           "type": "integer",
           "format": "int32"
         },
-        "receivedBytes": {
-          "type": "integer",
-          "format": "int32"
-        },
         "sentBytes": {
-          "type": "integer",
-          "format": "int32"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "int64"
+          }
+        },
+        "receivedBytes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "int64"
+          }
         },
         "status": {
           "type": "integer",

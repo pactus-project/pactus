@@ -912,8 +912,8 @@ proto.pactus.PeerInfo.toObject = function(includeInstance, msg) {
     height: jspb.Message.getFieldWithDefault(msg, 6, 0),
     receivedMessages: jspb.Message.getFieldWithDefault(msg, 7, 0),
     invalidMessages: jspb.Message.getFieldWithDefault(msg, 8, 0),
-    receivedBytes: jspb.Message.getFieldWithDefault(msg, 9, 0),
-    sentBytes: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    sentBytesMap: (f = msg.getSentBytesMap()) ? f.toObject(includeInstance, undefined) : [],
+    receivedBytesMap: (f = msg.getReceivedBytesMap()) ? f.toObject(includeInstance, undefined) : [],
     status: jspb.Message.getFieldWithDefault(msg, 11, 0),
     lastSent: jspb.Message.getFieldWithDefault(msg, 12, 0),
     lastReceived: jspb.Message.getFieldWithDefault(msg, 13, 0),
@@ -989,12 +989,16 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setInvalidMessages(value);
       break;
     case 9:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setReceivedBytes(value);
+      var value = msg.getSentBytesMap();
+      reader.readMessage(value, function(message, reader) {
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readInt64, null, 0, 0);
+         });
       break;
     case 10:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setSentBytes(value);
+      var value = msg.getReceivedBytesMap();
+      reader.readMessage(value, function(message, reader) {
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readInt64, null, 0, 0);
+         });
       break;
     case 11:
       var value = /** @type {number} */ (reader.readInt32());
@@ -1105,19 +1109,13 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getReceivedBytes();
-  if (f !== 0) {
-    writer.writeInt32(
-      9,
-      f
-    );
+  f = message.getSentBytesMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(9, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeInt64);
   }
-  f = message.getSentBytes();
-  if (f !== 0) {
-    writer.writeInt32(
-      10,
-      f
-    );
+  f = message.getReceivedBytesMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(10, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeInt64);
   }
   f = message.getStatus();
   if (f !== 0) {
@@ -1352,38 +1350,48 @@ proto.pactus.PeerInfo.prototype.setInvalidMessages = function(value) {
 
 
 /**
- * optional int32 received_bytes = 9;
- * @return {number}
+ * map<int32, int64> sent_bytes = 9;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<number,number>}
  */
-proto.pactus.PeerInfo.prototype.getReceivedBytes = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+proto.pactus.PeerInfo.prototype.getSentBytesMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<number,number>} */ (
+      jspb.Message.getMapField(this, 9, opt_noLazyCreate,
+      null));
 };
 
 
 /**
- * @param {number} value
+ * Clears values from the map. The map will be non-null.
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setReceivedBytes = function(value) {
-  return jspb.Message.setProto3IntField(this, 9, value);
+proto.pactus.PeerInfo.prototype.clearSentBytesMap = function() {
+  this.getSentBytesMap().clear();
+  return this;
 };
 
 
 /**
- * optional int32 sent_bytes = 10;
- * @return {number}
+ * map<int32, int64> received_bytes = 10;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<number,number>}
  */
-proto.pactus.PeerInfo.prototype.getSentBytes = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+proto.pactus.PeerInfo.prototype.getReceivedBytesMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<number,number>} */ (
+      jspb.Message.getMapField(this, 10, opt_noLazyCreate,
+      null));
 };
 
 
 /**
- * @param {number} value
+ * Clears values from the map. The map will be non-null.
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setSentBytes = function(value) {
-  return jspb.Message.setProto3IntField(this, 10, value);
+proto.pactus.PeerInfo.prototype.clearReceivedBytesMap = function() {
+  this.getReceivedBytesMap().clear();
+  return this;
 };
 
 

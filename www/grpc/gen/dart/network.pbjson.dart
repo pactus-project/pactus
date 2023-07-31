@@ -82,8 +82,8 @@ const PeerInfo$json = const {
     const {'1': 'height', '3': 6, '4': 1, '5': 13, '10': 'height'},
     const {'1': 'received_messages', '3': 7, '4': 1, '5': 5, '10': 'receivedMessages'},
     const {'1': 'invalid_messages', '3': 8, '4': 1, '5': 5, '10': 'invalidMessages'},
-    const {'1': 'received_bytes', '3': 9, '4': 1, '5': 5, '10': 'receivedBytes'},
-    const {'1': 'sent_bytes', '3': 10, '4': 1, '5': 5, '10': 'sentBytes'},
+    const {'1': 'sent_bytes', '3': 9, '4': 3, '5': 11, '6': '.pactus.PeerInfo.SentBytesEntry', '10': 'sentBytes'},
+    const {'1': 'received_bytes', '3': 10, '4': 3, '5': 11, '6': '.pactus.PeerInfo.ReceivedBytesEntry', '10': 'receivedBytes'},
     const {'1': 'status', '3': 11, '4': 1, '5': 5, '10': 'status'},
     const {'1': 'last_sent', '3': 12, '4': 1, '5': 3, '10': 'lastSent'},
     const {'1': 'last_received', '3': 13, '4': 1, '5': 3, '10': 'lastReceived'},
@@ -91,10 +91,31 @@ const PeerInfo$json = const {
     const {'1': 'send_failed', '3': 15, '4': 1, '5': 5, '10': 'sendFailed'},
     const {'1': 'last_block_hash', '3': 16, '4': 1, '5': 12, '10': 'lastBlockHash'},
   ],
+  '3': const [PeerInfo_SentBytesEntry$json, PeerInfo_ReceivedBytesEntry$json],
+};
+
+@$core.Deprecated('Use peerInfoDescriptor instead')
+const PeerInfo_SentBytesEntry$json = const {
+  '1': 'SentBytesEntry',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 5, '10': 'key'},
+    const {'1': 'value', '3': 2, '4': 1, '5': 3, '10': 'value'},
+  ],
+  '7': const {'7': true},
+};
+
+@$core.Deprecated('Use peerInfoDescriptor instead')
+const PeerInfo_ReceivedBytesEntry$json = const {
+  '1': 'ReceivedBytesEntry',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 5, '10': 'key'},
+    const {'1': 'value', '3': 2, '4': 1, '5': 3, '10': 'value'},
+  ],
+  '7': const {'7': true},
 };
 
 /// Descriptor for `PeerInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode('CghQZWVySW5mbxIYCgdtb25pa2VyGAEgASgJUgdtb25pa2VyEhQKBWFnZW50GAIgASgJUgVhZ2VudBIXCgdwZWVyX2lkGAMgASgMUgZwZWVySWQSJQoOY29uc2Vuc3VzX2tleXMYBCADKAlSDWNvbnNlbnN1c0tleXMSFAoFZmxhZ3MYBSABKAVSBWZsYWdzEhYKBmhlaWdodBgGIAEoDVIGaGVpZ2h0EisKEXJlY2VpdmVkX21lc3NhZ2VzGAcgASgFUhByZWNlaXZlZE1lc3NhZ2VzEikKEGludmFsaWRfbWVzc2FnZXMYCCABKAVSD2ludmFsaWRNZXNzYWdlcxIlCg5yZWNlaXZlZF9ieXRlcxgJIAEoBVINcmVjZWl2ZWRCeXRlcxIdCgpzZW50X2J5dGVzGAogASgFUglzZW50Qnl0ZXMSFgoGc3RhdHVzGAsgASgFUgZzdGF0dXMSGwoJbGFzdF9zZW50GAwgASgDUghsYXN0U2VudBIjCg1sYXN0X3JlY2VpdmVkGA0gASgDUgxsYXN0UmVjZWl2ZWQSIQoMc2VuZF9zdWNjZXNzGA4gASgFUgtzZW5kU3VjY2VzcxIfCgtzZW5kX2ZhaWxlZBgPIAEoBVIKc2VuZEZhaWxlZBImCg9sYXN0X2Jsb2NrX2hhc2gYECABKAxSDWxhc3RCbG9ja0hhc2g=');
+final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode('CghQZWVySW5mbxIYCgdtb25pa2VyGAEgASgJUgdtb25pa2VyEhQKBWFnZW50GAIgASgJUgVhZ2VudBIXCgdwZWVyX2lkGAMgASgMUgZwZWVySWQSJQoOY29uc2Vuc3VzX2tleXMYBCADKAlSDWNvbnNlbnN1c0tleXMSFAoFZmxhZ3MYBSABKAVSBWZsYWdzEhYKBmhlaWdodBgGIAEoDVIGaGVpZ2h0EisKEXJlY2VpdmVkX21lc3NhZ2VzGAcgASgFUhByZWNlaXZlZE1lc3NhZ2VzEikKEGludmFsaWRfbWVzc2FnZXMYCCABKAVSD2ludmFsaWRNZXNzYWdlcxI+CgpzZW50X2J5dGVzGAkgAygLMh8ucGFjdHVzLlBlZXJJbmZvLlNlbnRCeXRlc0VudHJ5UglzZW50Qnl0ZXMSSgoOcmVjZWl2ZWRfYnl0ZXMYCiADKAsyIy5wYWN0dXMuUGVlckluZm8uUmVjZWl2ZWRCeXRlc0VudHJ5Ug1yZWNlaXZlZEJ5dGVzEhYKBnN0YXR1cxgLIAEoBVIGc3RhdHVzEhsKCWxhc3Rfc2VudBgMIAEoA1IIbGFzdFNlbnQSIwoNbGFzdF9yZWNlaXZlZBgNIAEoA1IMbGFzdFJlY2VpdmVkEiEKDHNlbmRfc3VjY2VzcxgOIAEoBVILc2VuZFN1Y2Nlc3MSHwoLc2VuZF9mYWlsZWQYDyABKAVSCnNlbmRGYWlsZWQSJgoPbGFzdF9ibG9ja19oYXNoGBAgASgMUg1sYXN0QmxvY2tIYXNoGjwKDlNlbnRCeXRlc0VudHJ5EhAKA2tleRgBIAEoBVIDa2V5EhQKBXZhbHVlGAIgASgDUgV2YWx1ZToCOAEaQAoSUmVjZWl2ZWRCeXRlc0VudHJ5EhAKA2tleRgBIAEoBVIDa2V5EhQKBXZhbHVlGAIgASgDUgV2YWx1ZToCOAE=');
 const $core.Map<$core.String, $core.dynamic> NetworkServiceBase$json = const {
   '1': 'Network',
   '2': const [
@@ -108,6 +129,8 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> NetworkSer
   '.pactus.GetNetworkInfoRequest': GetNetworkInfoRequest$json,
   '.pactus.GetNetworkInfoResponse': GetNetworkInfoResponse$json,
   '.pactus.PeerInfo': PeerInfo$json,
+  '.pactus.PeerInfo.SentBytesEntry': PeerInfo_SentBytesEntry$json,
+  '.pactus.PeerInfo.ReceivedBytesEntry': PeerInfo_ReceivedBytesEntry$json,
   '.pactus.GetNetworkInfoResponse.SentBytesEntry': GetNetworkInfoResponse_SentBytesEntry$json,
   '.pactus.GetNetworkInfoResponse.ReceivedBytesEntry': GetNetworkInfoResponse_ReceivedBytesEntry$json,
   '.pactus.GetNodeInfoRequest': GetNodeInfoRequest$json,

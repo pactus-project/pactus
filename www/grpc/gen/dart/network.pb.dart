@@ -253,8 +253,8 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedMessages', $pb.PbFieldType.O3)
     ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invalidMessages', $pb.PbFieldType.O3)
-    ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', $pb.PbFieldType.O3)
-    ..a<$core.int>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sentBytes', $pb.PbFieldType.O3)
+    ..m<$core.int, $fixnum.Int64>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sentBytes', entryClassName: 'PeerInfo.SentBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
+    ..m<$core.int, $fixnum.Int64>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', entryClassName: 'PeerInfo.ReceivedBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
     ..a<$core.int>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.O3)
     ..aInt64(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSent')
     ..aInt64(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastReceived')
@@ -274,8 +274,8 @@ class PeerInfo extends $pb.GeneratedMessage {
     $core.int? height,
     $core.int? receivedMessages,
     $core.int? invalidMessages,
-    $core.int? receivedBytes,
-    $core.int? sentBytes,
+    $core.Map<$core.int, $fixnum.Int64>? sentBytes,
+    $core.Map<$core.int, $fixnum.Int64>? receivedBytes,
     $core.int? status,
     $fixnum.Int64? lastSent,
     $fixnum.Int64? lastReceived,
@@ -308,11 +308,11 @@ class PeerInfo extends $pb.GeneratedMessage {
     if (invalidMessages != null) {
       _result.invalidMessages = invalidMessages;
     }
-    if (receivedBytes != null) {
-      _result.receivedBytes = receivedBytes;
-    }
     if (sentBytes != null) {
-      _result.sentBytes = sentBytes;
+      _result.sentBytes.addAll(sentBytes);
+    }
+    if (receivedBytes != null) {
+      _result.receivedBytes.addAll(receivedBytes);
     }
     if (status != null) {
       _result.status = status;
@@ -422,22 +422,10 @@ class PeerInfo extends $pb.GeneratedMessage {
   void clearInvalidMessages() => clearField(8);
 
   @$pb.TagNumber(9)
-  $core.int get receivedBytes => $_getIZ(8);
-  @$pb.TagNumber(9)
-  set receivedBytes($core.int v) { $_setSignedInt32(8, v); }
-  @$pb.TagNumber(9)
-  $core.bool hasReceivedBytes() => $_has(8);
-  @$pb.TagNumber(9)
-  void clearReceivedBytes() => clearField(9);
+  $core.Map<$core.int, $fixnum.Int64> get sentBytes => $_getMap(8);
 
   @$pb.TagNumber(10)
-  $core.int get sentBytes => $_getIZ(9);
-  @$pb.TagNumber(10)
-  set sentBytes($core.int v) { $_setSignedInt32(9, v); }
-  @$pb.TagNumber(10)
-  $core.bool hasSentBytes() => $_has(9);
-  @$pb.TagNumber(10)
-  void clearSentBytes() => clearField(10);
+  $core.Map<$core.int, $fixnum.Int64> get receivedBytes => $_getMap(9);
 
   @$pb.TagNumber(11)
   $core.int get status => $_getIZ(10);

@@ -100,10 +100,10 @@ func (f *Firewall) decodeBundle(r io.Reader, pid peer.ID) (*bundle.Bundle, error
 	bdl := new(bundle.Bundle)
 	bytesRead, err := bdl.Decode(r)
 	if err != nil {
-		f.peerSet.IncreaseReceivedBytesCounter(pid, message.TypeUnspecified, bytesRead)
+		f.peerSet.IncreaseReceivedBytesCounter(pid, message.TypeUnspecified, int64(bytesRead))
 		return nil, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
-	f.peerSet.IncreaseReceivedBytesCounter(pid, bdl.Message.Type(), bytesRead)
+	f.peerSet.IncreaseReceivedBytesCounter(pid, bdl.Message.Type(), int64(bytesRead))
 
 	return bdl, nil
 }
