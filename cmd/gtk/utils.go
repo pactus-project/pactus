@@ -16,6 +16,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -143,6 +144,7 @@ func setTextViewContent(tv *gtk.TextView, content string) {
 	buf, err := tv.GetBuffer()
 	if err != nil {
 		// TODO: Log error
+		logger.Error("",)
 		return
 	}
 	buf.SetText(content)

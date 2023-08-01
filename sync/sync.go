@@ -328,7 +328,6 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID, sessionID int)
 			sync.peerSet.IncreaseSendSuccessCounter(to)
 		}
 
-		// pid := sync.SelfID()
 		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
 	}
 }
