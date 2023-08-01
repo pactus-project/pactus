@@ -43,11 +43,6 @@ func (f *Firewall) OpenGossipBundle(data []byte, source peer.ID, from peer.ID) *
 			f.closeConnection(from)
 			return nil
 		}
-		if !f.isTrusted(from) {
-			f.logger.Warn("firewall: from peer not trusted", "from", from)
-			f.closeConnection(from)
-			return nil
-		}
 	}
 
 	bdl, err := f.openBundle(bytes.NewReader(data), source)
@@ -126,6 +121,11 @@ func (f *Firewall) checkBundle(bdl *bundle.Bundle, pid peer.ID) error {
 	if bdl.Initiator != pid {
 		return errors.Errorf(errors.ErrInvalidMessage,
 			"source is not same as initiator. source: %v, initiator: %v", pid, bdl.Initiator)
+	}
+
+	if !f.isTrusted(bdl.Initiator) {
+		return errors.Errorf(errors.ErrInvalidAddress,
+			"peer is not trusted. peer: %v", bdl.Initiator)
 	}
 
 	switch f.state.Genesis().ChainType() {

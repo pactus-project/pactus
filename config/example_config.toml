@@ -110,6 +110,8 @@
    ## enable = false
     # Default is [] (all peers)
    ## trusted_peers = []
+    # Default is false
+   ## only_accept_from_validator = false
 
 # `tx_pool` contains configuration options for the transaction pool module.
 [tx_pool]
