@@ -108,6 +108,8 @@
     # `enable` indicates whether the firewall should be enabled or not.
     # Default is false
    ## enable = false
+    # Default is [] (all peers)
+   ## trusted_peers = []
 
 # `tx_pool` contains configuration options for the transaction pool module.
 [tx_pool]
