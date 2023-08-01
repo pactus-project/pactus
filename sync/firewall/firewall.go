@@ -43,6 +43,11 @@ func (f *Firewall) OpenGossipBundle(data []byte, source peer.ID, from peer.ID) *
 			f.closeConnection(from)
 			return nil
 		}
+		if !f.isTrusted(from) {
+			f.logger.Warn("firewall: from peer not trusted", "from", from)
+			f.closeConnection(from)
+			return nil
+		}
 	}
 
 	bdl, err := f.openBundle(bytes.NewReader(data), source)
@@ -62,6 +67,11 @@ func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
 	bdl, err := f.openBundle(r, from)
 	if err != nil {
 		f.logger.Warn("firewall: unable to open a stream bundle", "err", err)
+		f.closeConnection(from)
+		return nil
+	}
+	if !f.isTrusted(from) {
+		f.logger.Warn("firewall: from peer not trusted", "from", from)
 		f.closeConnection(from)
 		return nil
 	}
@@ -156,4 +166,17 @@ func (f *Firewall) closeConnection(pid peer.ID) {
 	}
 
 	f.network.CloseConnection(pid)
+}
+
+func (f *Firewall) isTrusted(pid peer.ID) bool {
+	if f.config.TrustedPeers != nil {
+		return true
+	}
+
+	for _, p := range f.config.TrustedPeers {
+		if pid == p {
+			return true
+		}
+	}
+	return false
 }

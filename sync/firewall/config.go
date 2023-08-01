@@ -9,7 +9,7 @@ type Config struct {
 
 func DefaultConfig() *Config {
 	return &Config{
-		Enabled: false,
+		Enabled:      false,
 		TrustedPeers: []peer.ID{},
 	}
 }
