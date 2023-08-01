@@ -144,7 +144,6 @@ func setTextViewContent(tv *gtk.TextView, content string) {
 	buf, err := tv.GetBuffer()
 	if err != nil {
 		// TODO: Log error
-		logger.Error("",)
 		return
 	}
 	buf.SetText(content)
