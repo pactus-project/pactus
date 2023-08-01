@@ -128,6 +128,13 @@ func (f *Firewall) checkBundle(bdl *bundle.Bundle, pid peer.ID) error {
 			"peer is not trusted. peer: %v", bdl.Initiator)
 	}
 
+	if f.config.OnlyAcceptFromValidator {
+		if !f.isValidator(bdl.Initiator) {
+			return errors.Errorf(errors.ErrInvalidAddress,
+				"peer is not validator. peer: %v", bdl.Initiator)
+		}
+	}
+
 	switch f.state.Genesis().ChainType() {
 	case genesis.Mainnet:
 		if bdl.Flags&0x3 != bundle.BundleFlagNetworkMainnet {
@@ -177,6 +184,14 @@ func (f *Firewall) isTrusted(pid peer.ID) bool {
 		if pid == p {
 			return true
 		}
+	}
+	return false
+}
+
+func (f *Firewall) isValidator(pid peer.ID) bool {
+	p := f.peerSet.GetPeer(pid)
+	if p.ConsensusKeys != nil {
+		return true
 	}
 	return false
 }
