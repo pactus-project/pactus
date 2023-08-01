@@ -6,6 +6,7 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
@@ -64,7 +65,14 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 		tm.addRowInt("Height", int(p.Height))
 		tm.addRowInt("InvalidBundles", int(p.InvalidMessages))
 		tm.addRowInt("ReceivedBundles", int(p.ReceivedMessages))
-		tm.addRowInt("ReceivedBytes", int(p.ReceivedBytes))
+		tm.addRowString("ReceivedBytes", "---")
+		for key, value := range p.ReceivedBytes {
+			tm.addRowInt(message.Type(key).String(), int(value))
+		}
+		tm.addRowString("SentBytes", "---")
+		for key, value := range p.SentBytes {
+			tm.addRowInt(message.Type(key).String(), int(value))
+		}
 		tm.addRowInt("SendSuccess", int(p.SendSuccess))
 		tm.addRowInt("SendFailed", int(p.SendFailed))
 		tm.addRowInt("Flags", int(p.Flags))

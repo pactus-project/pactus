@@ -253,13 +253,14 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedMessages', $pb.PbFieldType.O3)
     ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invalidMessages', $pb.PbFieldType.O3)
-    ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', $pb.PbFieldType.O3)
-    ..a<$core.int>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.O3)
-    ..aInt64(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSent')
-    ..aInt64(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastReceived')
-    ..a<$core.int>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sendSuccess', $pb.PbFieldType.O3)
-    ..a<$core.int>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sendFailed', $pb.PbFieldType.O3)
-    ..a<$core.List<$core.int>>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBlockHash', $pb.PbFieldType.OY)
+    ..m<$core.int, $fixnum.Int64>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sentBytes', entryClassName: 'PeerInfo.SentBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
+    ..m<$core.int, $fixnum.Int64>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', entryClassName: 'PeerInfo.ReceivedBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
+    ..a<$core.int>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.O3)
+    ..aInt64(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSent')
+    ..aInt64(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastReceived')
+    ..a<$core.int>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sendSuccess', $pb.PbFieldType.O3)
+    ..a<$core.int>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sendFailed', $pb.PbFieldType.O3)
+    ..a<$core.List<$core.int>>(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBlockHash', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
@@ -273,7 +274,8 @@ class PeerInfo extends $pb.GeneratedMessage {
     $core.int? height,
     $core.int? receivedMessages,
     $core.int? invalidMessages,
-    $core.int? receivedBytes,
+    $core.Map<$core.int, $fixnum.Int64>? sentBytes,
+    $core.Map<$core.int, $fixnum.Int64>? receivedBytes,
     $core.int? status,
     $fixnum.Int64? lastSent,
     $fixnum.Int64? lastReceived,
@@ -306,8 +308,11 @@ class PeerInfo extends $pb.GeneratedMessage {
     if (invalidMessages != null) {
       _result.invalidMessages = invalidMessages;
     }
+    if (sentBytes != null) {
+      _result.sentBytes.addAll(sentBytes);
+    }
     if (receivedBytes != null) {
-      _result.receivedBytes = receivedBytes;
+      _result.receivedBytes.addAll(receivedBytes);
     }
     if (status != null) {
       _result.status = status;
@@ -417,67 +422,64 @@ class PeerInfo extends $pb.GeneratedMessage {
   void clearInvalidMessages() => clearField(8);
 
   @$pb.TagNumber(9)
-  $core.int get receivedBytes => $_getIZ(8);
-  @$pb.TagNumber(9)
-  set receivedBytes($core.int v) { $_setSignedInt32(8, v); }
-  @$pb.TagNumber(9)
-  $core.bool hasReceivedBytes() => $_has(8);
-  @$pb.TagNumber(9)
-  void clearReceivedBytes() => clearField(9);
+  $core.Map<$core.int, $fixnum.Int64> get sentBytes => $_getMap(8);
 
   @$pb.TagNumber(10)
-  $core.int get status => $_getIZ(9);
-  @$pb.TagNumber(10)
-  set status($core.int v) { $_setSignedInt32(9, v); }
-  @$pb.TagNumber(10)
-  $core.bool hasStatus() => $_has(9);
-  @$pb.TagNumber(10)
-  void clearStatus() => clearField(10);
+  $core.Map<$core.int, $fixnum.Int64> get receivedBytes => $_getMap(9);
 
   @$pb.TagNumber(11)
-  $fixnum.Int64 get lastSent => $_getI64(10);
+  $core.int get status => $_getIZ(10);
   @$pb.TagNumber(11)
-  set lastSent($fixnum.Int64 v) { $_setInt64(10, v); }
+  set status($core.int v) { $_setSignedInt32(10, v); }
   @$pb.TagNumber(11)
-  $core.bool hasLastSent() => $_has(10);
+  $core.bool hasStatus() => $_has(10);
   @$pb.TagNumber(11)
-  void clearLastSent() => clearField(11);
+  void clearStatus() => clearField(11);
 
   @$pb.TagNumber(12)
-  $fixnum.Int64 get lastReceived => $_getI64(11);
+  $fixnum.Int64 get lastSent => $_getI64(11);
   @$pb.TagNumber(12)
-  set lastReceived($fixnum.Int64 v) { $_setInt64(11, v); }
+  set lastSent($fixnum.Int64 v) { $_setInt64(11, v); }
   @$pb.TagNumber(12)
-  $core.bool hasLastReceived() => $_has(11);
+  $core.bool hasLastSent() => $_has(11);
   @$pb.TagNumber(12)
-  void clearLastReceived() => clearField(12);
+  void clearLastSent() => clearField(12);
 
   @$pb.TagNumber(13)
-  $core.int get sendSuccess => $_getIZ(12);
+  $fixnum.Int64 get lastReceived => $_getI64(12);
   @$pb.TagNumber(13)
-  set sendSuccess($core.int v) { $_setSignedInt32(12, v); }
+  set lastReceived($fixnum.Int64 v) { $_setInt64(12, v); }
   @$pb.TagNumber(13)
-  $core.bool hasSendSuccess() => $_has(12);
+  $core.bool hasLastReceived() => $_has(12);
   @$pb.TagNumber(13)
-  void clearSendSuccess() => clearField(13);
+  void clearLastReceived() => clearField(13);
 
   @$pb.TagNumber(14)
-  $core.int get sendFailed => $_getIZ(13);
+  $core.int get sendSuccess => $_getIZ(13);
   @$pb.TagNumber(14)
-  set sendFailed($core.int v) { $_setSignedInt32(13, v); }
+  set sendSuccess($core.int v) { $_setSignedInt32(13, v); }
   @$pb.TagNumber(14)
-  $core.bool hasSendFailed() => $_has(13);
+  $core.bool hasSendSuccess() => $_has(13);
   @$pb.TagNumber(14)
-  void clearSendFailed() => clearField(14);
+  void clearSendSuccess() => clearField(14);
 
   @$pb.TagNumber(15)
-  $core.List<$core.int> get lastBlockHash => $_getN(14);
+  $core.int get sendFailed => $_getIZ(14);
   @$pb.TagNumber(15)
-  set lastBlockHash($core.List<$core.int> v) { $_setBytes(14, v); }
+  set sendFailed($core.int v) { $_setSignedInt32(14, v); }
   @$pb.TagNumber(15)
-  $core.bool hasLastBlockHash() => $_has(14);
+  $core.bool hasSendFailed() => $_has(14);
   @$pb.TagNumber(15)
-  void clearLastBlockHash() => clearField(15);
+  void clearSendFailed() => clearField(15);
+
+  @$pb.TagNumber(16)
+  $core.List<$core.int> get lastBlockHash => $_getN(15);
+  @$pb.TagNumber(16)
+  set lastBlockHash($core.List<$core.int> v) { $_setBytes(15, v); }
+  @$pb.TagNumber(16)
+  $core.bool hasLastBlockHash() => $_has(15);
+  @$pb.TagNumber(16)
+  void clearLastBlockHash() => clearField(16);
 }
 
 class NetworkApi {

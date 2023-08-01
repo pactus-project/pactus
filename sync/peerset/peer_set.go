@@ -1,6 +1,7 @@
 package peerset
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -23,8 +24,8 @@ type PeerSet struct {
 	nextSessionID      int
 	maxClaimedHeight   uint32
 	sessionTimeout     time.Duration
-	totalSentBytes     int
-	totalReceivedBytes int
+	totalSentBytes     int64
+	totalReceivedBytes int64
 	sentBytes          map[message.Type]int64
 	receivedBytes      map[message.Type]int64
 	startedAt          time.Time
@@ -311,23 +312,29 @@ func (ps *PeerSet) IncreaseInvalidBundlesCounter(pid peer.ID) {
 	p.InvalidBundles++
 }
 
-func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, msgType message.Type, c int) {
+func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, msgType message.Type, c int64) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
-	p.ReceivedBytes += c
+	fmt.Println(&p)
+	p.ReceivedBytes[msgType] += c
 
 	ps.totalReceivedBytes += c
-	ps.receivedBytes[msgType] += int64(c)
+	ps.receivedBytes[msgType] += c
 }
 
-func (ps *PeerSet) IncreaseSentBytesCounter(msgType message.Type, c int) {
+func (ps *PeerSet) IncreaseSentBytesCounter(msgType message.Type, c int64, pid *peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	ps.totalSentBytes += c
-	ps.sentBytes[msgType] += int64(c)
+	ps.sentBytes[msgType] += c
+
+	if pid != nil {
+		p := ps.mustGetPeer(*pid)
+		p.SentBytes[msgType] += c
+	}
 }
 
 func (ps *PeerSet) IncreaseSendSuccessCounter(pid peer.ID) {
@@ -346,14 +353,14 @@ func (ps *PeerSet) IncreaseSendFailedCounter(pid peer.ID) {
 	p.SendFailed++
 }
 
-func (ps *PeerSet) TotalSentBytes() int {
+func (ps *PeerSet) TotalSentBytes() int64 {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
 	return ps.totalSentBytes
 }
 
-func (ps *PeerSet) TotalReceivedBytes() int {
+func (ps *PeerSet) TotalReceivedBytes() int64 {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 

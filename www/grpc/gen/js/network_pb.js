@@ -912,12 +912,13 @@ proto.pactus.PeerInfo.toObject = function(includeInstance, msg) {
     height: jspb.Message.getFieldWithDefault(msg, 6, 0),
     receivedMessages: jspb.Message.getFieldWithDefault(msg, 7, 0),
     invalidMessages: jspb.Message.getFieldWithDefault(msg, 8, 0),
-    receivedBytes: jspb.Message.getFieldWithDefault(msg, 9, 0),
-    status: jspb.Message.getFieldWithDefault(msg, 10, 0),
-    lastSent: jspb.Message.getFieldWithDefault(msg, 11, 0),
-    lastReceived: jspb.Message.getFieldWithDefault(msg, 12, 0),
-    sendSuccess: jspb.Message.getFieldWithDefault(msg, 13, 0),
-    sendFailed: jspb.Message.getFieldWithDefault(msg, 14, 0),
+    sentBytesMap: (f = msg.getSentBytesMap()) ? f.toObject(includeInstance, undefined) : [],
+    receivedBytesMap: (f = msg.getReceivedBytesMap()) ? f.toObject(includeInstance, undefined) : [],
+    status: jspb.Message.getFieldWithDefault(msg, 11, 0),
+    lastSent: jspb.Message.getFieldWithDefault(msg, 12, 0),
+    lastReceived: jspb.Message.getFieldWithDefault(msg, 13, 0),
+    sendSuccess: jspb.Message.getFieldWithDefault(msg, 14, 0),
+    sendFailed: jspb.Message.getFieldWithDefault(msg, 15, 0),
     lastBlockHash: msg.getLastBlockHash_asB64()
   };
 
@@ -988,30 +989,38 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setInvalidMessages(value);
       break;
     case 9:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setReceivedBytes(value);
+      var value = msg.getSentBytesMap();
+      reader.readMessage(value, function(message, reader) {
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readInt64, null, 0, 0);
+         });
       break;
     case 10:
+      var value = msg.getReceivedBytesMap();
+      reader.readMessage(value, function(message, reader) {
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readInt64, null, 0, 0);
+         });
+      break;
+    case 11:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
-    case 11:
+    case 12:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setLastSent(value);
       break;
-    case 12:
+    case 13:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setLastReceived(value);
       break;
-    case 13:
+    case 14:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setSendSuccess(value);
       break;
-    case 14:
+    case 15:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setSendFailed(value);
       break;
-    case 15:
+    case 16:
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setLastBlockHash(value);
       break;
@@ -1100,52 +1109,53 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getReceivedBytes();
-  if (f !== 0) {
-    writer.writeInt32(
-      9,
-      f
-    );
+  f = message.getSentBytesMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(9, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeInt64);
+  }
+  f = message.getReceivedBytesMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(10, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeInt64);
   }
   f = message.getStatus();
   if (f !== 0) {
     writer.writeInt32(
-      10,
+      11,
       f
     );
   }
   f = message.getLastSent();
   if (f !== 0) {
     writer.writeInt64(
-      11,
+      12,
       f
     );
   }
   f = message.getLastReceived();
   if (f !== 0) {
     writer.writeInt64(
-      12,
+      13,
       f
     );
   }
   f = message.getSendSuccess();
   if (f !== 0) {
     writer.writeInt32(
-      13,
+      14,
       f
     );
   }
   f = message.getSendFailed();
   if (f !== 0) {
     writer.writeInt32(
-      14,
+      15,
       f
     );
   }
   f = message.getLastBlockHash_asU8();
   if (f.length > 0) {
     writer.writeBytes(
-      15,
+      16,
       f
     );
   }
@@ -1340,46 +1350,56 @@ proto.pactus.PeerInfo.prototype.setInvalidMessages = function(value) {
 
 
 /**
- * optional int32 received_bytes = 9;
- * @return {number}
+ * map<int32, int64> sent_bytes = 9;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<number,number>}
  */
-proto.pactus.PeerInfo.prototype.getReceivedBytes = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+proto.pactus.PeerInfo.prototype.getSentBytesMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<number,number>} */ (
+      jspb.Message.getMapField(this, 9, opt_noLazyCreate,
+      null));
 };
 
 
 /**
- * @param {number} value
+ * Clears values from the map. The map will be non-null.
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setReceivedBytes = function(value) {
-  return jspb.Message.setProto3IntField(this, 9, value);
+proto.pactus.PeerInfo.prototype.clearSentBytesMap = function() {
+  this.getSentBytesMap().clear();
+  return this;
 };
 
 
 /**
- * optional int32 status = 10;
+ * map<int32, int64> received_bytes = 10;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<number,number>}
+ */
+proto.pactus.PeerInfo.prototype.getReceivedBytesMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<number,number>} */ (
+      jspb.Message.getMapField(this, 10, opt_noLazyCreate,
+      null));
+};
+
+
+/**
+ * Clears values from the map. The map will be non-null.
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.clearReceivedBytesMap = function() {
+  this.getReceivedBytesMap().clear();
+  return this;
+};
+
+
+/**
+ * optional int32 status = 11;
  * @return {number}
  */
 proto.pactus.PeerInfo.prototype.getStatus = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.PeerInfo} returns this
- */
-proto.pactus.PeerInfo.prototype.setStatus = function(value) {
-  return jspb.Message.setProto3IntField(this, 10, value);
-};
-
-
-/**
- * optional int64 last_sent = 11;
- * @return {number}
- */
-proto.pactus.PeerInfo.prototype.getLastSent = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
 };
 
@@ -1388,16 +1408,16 @@ proto.pactus.PeerInfo.prototype.getLastSent = function() {
  * @param {number} value
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setLastSent = function(value) {
+proto.pactus.PeerInfo.prototype.setStatus = function(value) {
   return jspb.Message.setProto3IntField(this, 11, value);
 };
 
 
 /**
- * optional int64 last_received = 12;
+ * optional int64 last_sent = 12;
  * @return {number}
  */
-proto.pactus.PeerInfo.prototype.getLastReceived = function() {
+proto.pactus.PeerInfo.prototype.getLastSent = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
 };
 
@@ -1406,16 +1426,16 @@ proto.pactus.PeerInfo.prototype.getLastReceived = function() {
  * @param {number} value
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setLastReceived = function(value) {
+proto.pactus.PeerInfo.prototype.setLastSent = function(value) {
   return jspb.Message.setProto3IntField(this, 12, value);
 };
 
 
 /**
- * optional int32 send_success = 13;
+ * optional int64 last_received = 13;
  * @return {number}
  */
-proto.pactus.PeerInfo.prototype.getSendSuccess = function() {
+proto.pactus.PeerInfo.prototype.getLastReceived = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 13, 0));
 };
 
@@ -1424,16 +1444,16 @@ proto.pactus.PeerInfo.prototype.getSendSuccess = function() {
  * @param {number} value
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setSendSuccess = function(value) {
+proto.pactus.PeerInfo.prototype.setLastReceived = function(value) {
   return jspb.Message.setProto3IntField(this, 13, value);
 };
 
 
 /**
- * optional int32 send_failed = 14;
+ * optional int32 send_success = 14;
  * @return {number}
  */
-proto.pactus.PeerInfo.prototype.getSendFailed = function() {
+proto.pactus.PeerInfo.prototype.getSendSuccess = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 14, 0));
 };
 
@@ -1442,22 +1462,40 @@ proto.pactus.PeerInfo.prototype.getSendFailed = function() {
  * @param {number} value
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setSendFailed = function(value) {
+proto.pactus.PeerInfo.prototype.setSendSuccess = function(value) {
   return jspb.Message.setProto3IntField(this, 14, value);
 };
 
 
 /**
- * optional bytes last_block_hash = 15;
- * @return {!(string|Uint8Array)}
+ * optional int32 send_failed = 15;
+ * @return {number}
  */
-proto.pactus.PeerInfo.prototype.getLastBlockHash = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 15, ""));
+proto.pactus.PeerInfo.prototype.getSendFailed = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 15, 0));
 };
 
 
 /**
- * optional bytes last_block_hash = 15;
+ * @param {number} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setSendFailed = function(value) {
+  return jspb.Message.setProto3IntField(this, 15, value);
+};
+
+
+/**
+ * optional bytes last_block_hash = 16;
+ * @return {!(string|Uint8Array)}
+ */
+proto.pactus.PeerInfo.prototype.getLastBlockHash = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 16, ""));
+};
+
+
+/**
+ * optional bytes last_block_hash = 16;
  * This is a type-conversion wrapper around `getLastBlockHash()`
  * @return {string}
  */
@@ -1468,7 +1506,7 @@ proto.pactus.PeerInfo.prototype.getLastBlockHash_asB64 = function() {
 
 
 /**
- * optional bytes last_block_hash = 15;
+ * optional bytes last_block_hash = 16;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
  * This is a type-conversion wrapper around `getLastBlockHash()`
@@ -1485,7 +1523,7 @@ proto.pactus.PeerInfo.prototype.getLastBlockHash_asU8 = function() {
  * @return {!proto.pactus.PeerInfo} returns this
  */
 proto.pactus.PeerInfo.prototype.setLastBlockHash = function(value) {
-  return jspb.Message.setProto3BytesField(this, 15, value);
+  return jspb.Message.setProto3BytesField(this, 16, value);
 };
 
 
