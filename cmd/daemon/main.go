@@ -1,19 +1,36 @@
 package main
 
 import (
-	"os"
+	"fmt"
 
-	cli "github.com/jawher/mow.cli"
+	"github.com/spf13/cobra"
+)
+
+var (
+	// startCmd = &cobra.Command{
+	// 	Use: "start",
+	// 	Short: "Start the Pactus blockchain",
+	// 	Run: Start(),
+	// }
+
 )
 
 func main() {
-	app := cli.App("pactus-daemon", "Pactus daemon")
-
-	app.Command("init", "Initialize the Pactus blockchain", Init())
-	app.Command("start", "Start the Pactus blockchain", Start())
-	app.Command("version", "Print the Pactus version", Version())
-
-	if err := app.Run(os.Args); err != nil {
-		panic(err)
+	var rootCmd = &cobra.Command{
+		Use: "pactus-daemon",
+		Short: "Pactus daemon",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println("use --help")
+		},
 	}
+
+	var initCmd = &cobra.Command{
+		Use: "init",
+		Short: "Initialize the Pactus blockchain",
+		Run: Init(),
+	}
+
+	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(initCmd)
+	rootCmd.Execute()
 }

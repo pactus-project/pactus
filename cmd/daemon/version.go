@@ -1,20 +1,19 @@
 package main
 
 import (
-	"fmt"
-
-	cli "github.com/jawher/mow.cli"
-	"github.com/pactus-project/pactus/cmd"
+	"github.com/spf13/cobra"
 	"github.com/pactus-project/pactus/version"
 )
 
+var versionCmd = &cobra.Command{
+	Use: "version",
+	Short: "Print the Pactus version",
+	Run: Version(),
+}
+
 // Version prints the version of the Pactus node.
-func Version() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		c.Before = func() { fmt.Println(cmd.Pactus) }
-		c.Action = func() {
-			fmt.Println()
-			cmd.PrintInfoMsg("Pactus version: %v", version.Version())
-		}
+func Version() func(c *cobra.Command, args []string) {
+	return func(c *cobra.Command, args []string) {
+		c.Printf("Pactus version: %v\n", version.Version())
 	}
 }

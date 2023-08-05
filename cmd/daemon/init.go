@@ -1,43 +1,31 @@
 package main
 
 import (
-	"fmt"
 	"path/filepath"
 
-	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/spf13/cobra"
 )
 
 // Init initializes a node for the Pactus blockchain.
-func Init() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		workingDirOpt := c.String(cli.StringOpt{
-			Name:  "w working-dir",
-			Desc:  "A path to the working directory to save the wallet and node files",
-			Value: cmd.PactusHomeDir(),
-		})
-		testnetOpt := c.Bool(cli.BoolOpt{
-			Name:  "testnet",
-			Desc:  "Initialize working directory for joining the testnet",
-			Value: true, // TODO: make it false after mainnet launch
-		})
-		localnetOpt := c.Bool(cli.BoolOpt{
-			Name:  "localnet",
-			Desc:  "Initialize working directory for localnet (for developers)",
-			Value: false,
-		})
-		restoreOpt := c.String(cli.StringOpt{
-			Name:  "restore",
-			Desc:  "Restore the default_wallet using a mnemonic (seed phrase)",
-			Value: "",
-		})
+func Init() func(c *cobra.Command, args []string) {
+	return func(c *cobra.Command, args []string) {
 
-		c.LongDesc = "Initializing the working directory"
-		c.Before = func() { fmt.Println(cmd.Pactus) }
-		c.Action = func() {
+		workingDirOpt := c.Flags().StringP("working-dir", "w", 
+		cmd.PactusHomeDir(),"A path to the working directory to save the wallet and node files")
+
+		testnetOpt := c.Flags().Bool("testnet", true, 
+		"Initialize working directory for joining the testnet") // TODO: make it false after mainnet launch
+
+		localnetOpt := c.Flags().Bool("localnet", false, 
+		"Initialize working directory for localnet (for developers)")
+
+		restoreOpt := c.Flags().String("restore", "", "Restore the default_wallet using a mnemonic (seed phrase)")
+
+		c.Run = func(cc *cobra.Command, args []string) {
 			workingDir, _ := filepath.Abs(*workingDirOpt)
 			if !util.IsDirNotExistsOrEmpty(workingDir) {
 				cmd.PrintErrorMsg("The working directory is not empty: %s", workingDir)
