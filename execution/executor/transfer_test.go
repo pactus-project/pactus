@@ -61,7 +61,7 @@ func TestExecuteTransferTx(t *testing.T) {
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
 	receiverAddr := td.RandomAddress()
-	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumFee, senderBalance)
+	amt, fee := td.randomAmountAndFee(0, senderBalance)
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
 		trx := tx.NewTransferTx(td.stamp500000, 1, td.RandomAddress(),
@@ -106,7 +106,7 @@ func TestTransferToSelf(t *testing.T) {
 
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
-	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumFee ,senderBalance)
+	amt, fee := td.randomAmountAndFee(0, senderBalance)
 
 	trx := tx.NewTransferTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr, senderAddr, amt, fee, "ok")
 	assert.NoError(t, exe.Execute(trx, td.sandbox))

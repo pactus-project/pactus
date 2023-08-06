@@ -121,7 +121,7 @@ func TestBondInsideCommittee(t *testing.T) {
 	exe2 := NewBondExecutor(false)
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
-	fee, amt := td.randomAmountAndFee(td.sandbox.TestParams.MinimumFee, senderBalance)
+	fee, amt := td.randomAmountAndFee(0, senderBalance)
 
 	pub := td.sandbox.Committee().Proposer(0).PublicKey()
 	trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
@@ -142,7 +142,7 @@ func TestBondJoiningCommittee(t *testing.T) {
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
 	pub, _ := td.RandomBLSKeyPair()
-	fee, amt := td.randomAmountAndFee(td.sandbox.TestParams.MinimumFee, senderBalance)
+	fee, amt := td.randomAmountAndFee(0, senderBalance)
 
 	val := td.sandbox.MakeNewValidator(pub)
 	val.UpdateLastJoinedHeight(td.sandbox.CurrentHeight())
