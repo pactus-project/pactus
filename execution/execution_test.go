@@ -119,12 +119,12 @@ func TestChecker(t *testing.T) {
 	t.Run("In strict mode transaction should be rejected.", func(t *testing.T) {
 		signer := ts.RandomSigner()
 		acc := sb.MakeNewAccount(signer.Address())
-		acc.AddToBalance(10000)
+		acc.AddToBalance(10000000000)
 		sb.UpdateAccount(signer.Address(), acc)
 		valPub := sb.TestCommitteeSigners[0].PublicKey()
 
 		trx := tx.NewBondTx(block1000.Stamp(), acc.Sequence()+1, signer.Address(),
-			valPub.Address(), nil, 1000, 1000, "")
+			valPub.Address(), nil, 1000000000, 100000, "")
 		signer.SignMsg(trx)
 		assert.Error(t, executor.Execute(trx, sb))
 		assert.NoError(t, checker.Execute(trx, sb))

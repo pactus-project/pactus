@@ -17,9 +17,9 @@ func TestExecuteBondTx(t *testing.T) {
 	senderBalance := senderAcc.Balance()
 	pub, _ := td.RandomBLSKeyPair()
 	receiverAddr := pub.Address()
-	fee, amt := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, senderBalance)
+	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, senderBalance)
 	t.Run("Should fail, invalid sender", func(t *testing.T) {
-		trx := tx.NewBondTx(td.stamp500000, 1, td.RandomAddress(),
+		trx := tx.NewBondTx(td.RandomStamp(), 1, td.RandomAddress(),
 			receiverAddr, pub, amt, fee, "invalid sender")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -27,7 +27,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, treasury address as receiver", func(t *testing.T) {
-		trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
+		trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+1, senderAddr,
 			crypto.TreasuryAddress, nil, amt, fee, "invalid ")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -35,7 +35,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, invalid sequence", func(t *testing.T) {
-		trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+2, senderAddr,
+		trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+2, senderAddr,
 			receiverAddr, pub, amt, fee, "invalid sequence")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -43,7 +43,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
+		trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+1, senderAddr,
 			receiverAddr, pub, senderBalance+1, 0, "insufficient balance")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -52,7 +52,7 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Should fail, inside committee", func(t *testing.T) {
 		pub := td.sandbox.Committee().Proposer(0).PublicKey()
-		trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
+		trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+1, senderAddr,
 			pub.Address(), nil, amt, fee, "inside committee")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -64,7 +64,7 @@ func TestExecuteBondTx(t *testing.T) {
 		val := td.sandbox.MakeNewValidator(pub)
 		val.UpdateUnbondingHeight(td.sandbox.CurrentHeight())
 		td.sandbox.UpdateValidator(val)
-		trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
+		trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+1, senderAddr,
 			pub.Address(), nil, amt, fee, "unbonded before")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -72,7 +72,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, public key is not set", func(t *testing.T) {
-		trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
+		trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+1, senderAddr,
 			receiverAddr, nil, amt, fee, "no public key")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -80,7 +80,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, amount less than MinimumStake", func(t *testing.T) {
-		trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
+		trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+1, senderAddr,
 			receiverAddr, pub, 1000, fee, "less than MinimumStake")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -88,7 +88,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
+		trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+1, senderAddr,
 			receiverAddr, pub, amt, fee, "ok")
 
 		assert.NoError(t, exe.Execute(trx, td.sandbox), "Ok")
@@ -96,7 +96,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, public key should not set for existing validators", func(t *testing.T) {
-		trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+2, senderAddr,
+		trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+2, senderAddr,
 			receiverAddr, pub, amt, fee, "with public key")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -121,10 +121,10 @@ func TestBondInsideCommittee(t *testing.T) {
 	exe2 := NewBondExecutor(false)
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
-	fee, amt := td.randomAmountAndFee(0, senderBalance)
+	amt, fee := td.randomAmountAndFee(0, senderBalance)
 
 	pub := td.sandbox.Committee().Proposer(0).PublicKey()
-	trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
+	trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+1, senderAddr,
 		pub.Address(), nil, amt, fee, "inside committee")
 
 	assert.Error(t, exe1.Execute(trx, td.sandbox))
@@ -142,13 +142,13 @@ func TestBondJoiningCommittee(t *testing.T) {
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
 	pub, _ := td.RandomBLSKeyPair()
-	fee, amt := td.randomAmountAndFee(0, senderBalance)
+	amt, fee := td.randomAmountAndFee(0, senderBalance)
 
 	val := td.sandbox.MakeNewValidator(pub)
 	val.UpdateLastJoinedHeight(td.sandbox.CurrentHeight())
 	td.sandbox.UpdateValidator(val)
 
-	trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
+	trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+1, senderAddr,
 		pub.Address(), nil, amt, fee, "joining committee")
 
 	assert.Error(t, exe1.Execute(trx, td.sandbox))
@@ -168,7 +168,7 @@ func TestStakeExceeded(t *testing.T) {
 	td.sandbox.UpdateAccount(senderAddr, senderAcc)
 	pub, _ := td.RandomBLSKeyPair()
 
-	trx := tx.NewBondTx(td.stamp500000, senderAcc.Sequence()+1, senderAddr,
+	trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+1, senderAddr,
 		pub.Address(), pub, amt, fee, "stake exceeded")
 
 	assert.Error(t, exe.Execute(trx, td.sandbox))

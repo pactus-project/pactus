@@ -51,7 +51,7 @@ func (td *testData) randomAmountAndFee(min int64, max int64) (int64, int64) {
 	}
 
 	fee := int64(float64(amt) * td.sandbox.Params().FeeFraction)
-	return fee, amt
+	return amt, fee
 }
 
 func TestExecuteTransferTx(t *testing.T) {

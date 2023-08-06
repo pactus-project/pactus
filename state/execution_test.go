@@ -13,9 +13,14 @@ import (
 func TestProposeBlock(t *testing.T) {
 	td := setup(t)
 
+	curHeight := uint32(7)
+	for i := uint32(0); i < curHeight; i++ {
+		td.moveToNextHeightForAllStates(t)
+	}
 	b1, c1 := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3)
-	assert.NoError(t, td.state1.CommitBlock(1, b1, c1))
-	assert.NoError(t, td.state2.CommitBlock(1, b1, c1))
+	assert.NoError(t, td.state1.CommitBlock(curHeight+1, b1, c1))
+	assert.NoError(t, td.state2.CommitBlock(curHeight+1, b1, c1))
+	assert.Equal(t, td.state1.LastBlockHeight(), curHeight+1)
 
 	invSubsidyTx := tx.NewSubsidyTx(td.state1.lastInfo.BlockHash().Stamp(), 1, td.valSigner2.Address(),
 		td.state1.params.BlockReward, "duplicated subsidy transaction")
@@ -27,7 +32,7 @@ func TestProposeBlock(t *testing.T) {
 	trx1 := tx.NewTransferTx(b1.Stamp(), 1, td.valSigner1.Address(), td.valSigner1.Address(), 1, 1000, "")
 	td.valSigner1.SignMsg(trx1)
 
-	trx2 := tx.NewBondTx(b1.Stamp(), 2, td.valSigner1.Address(), pub.Address(), pub, 1000, 1000, "")
+	trx2 := tx.NewBondTx(b1.Stamp(), 2, td.valSigner1.Address(), pub.Address(), pub, 1000000000, 100000, "")
 	td.valSigner1.SignMsg(trx2)
 
 	assert.NoError(t, td.state1.txPool.AppendTx(invTransferTx))
@@ -41,9 +46,9 @@ func TestProposeBlock(t *testing.T) {
 	assert.Equal(t, b2.Header().PrevBlockHash(), b1.Hash())
 	assert.Equal(t, b2.Transactions()[1:], block.Txs{trx1, trx2})
 	assert.True(t, b2.Transactions()[0].IsSubsidyTx())
-	assert.NoError(t, td.state1.CommitBlock(2, b2, c2))
+	assert.NoError(t, td.state1.CommitBlock(curHeight+2, b2, c2))
 
-	assert.Equal(t, td.state1.TotalPower(), int64(1004))
+	assert.Equal(t, td.state1.TotalPower(), int64(1000000004))
 	assert.Equal(t, td.state1.committee.TotalPower(), int64(4))
 }
 
