@@ -54,6 +54,9 @@ func (e *TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidSequence,
 			"expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
 	}
+	if senderAcc.Balance() < pld.Amount+trx.Fee() {
+		return errors.Error(errors.ErrInsufficientFunds)
+	}
 
 	senderAcc.IncSequence()
 	senderAcc.SubtractFromBalance(pld.Amount + trx.Fee())
