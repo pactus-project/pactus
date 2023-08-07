@@ -2,7 +2,6 @@ package genesis_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 	"time"
 
@@ -58,7 +57,6 @@ func TestGenesisTestNet(t *testing.T) {
 	genTime, _ := time.Parse("2006-01-02", "2023-05-08")
 	assert.Equal(t, g.GenesisTime(), genTime)
 	assert.Equal(t, g.Params().BondInterval, uint32(120))
-	fmt.Println(g.Hash())
 	expected, _ := hash.FromString("63f32d682050bd03eb832c9d99fc3b48855d7f4193e5c09205be68d6e16546af")
 	assert.Equal(t, g.Hash(), expected)
 }
