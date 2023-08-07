@@ -396,10 +396,10 @@ func TestSortition(t *testing.T) {
 	assert.Equal(t, td.state1.CommitteePower(), int64(4))
 
 	height := uint32(1)
-	for ; height <= 11; height++ {
-		if height == 2 {
+	for ; height <= 15; height++ {
+		if height == 6 {
 			trx := tx.NewBondTx(td.state1.lastInfo.BlockHash().Stamp(), 1, td.valSigner1.Address(),
-				pub.Address(), pub, 10000000, 1000, "")
+				pub.Address(), pub, 1000000000, 100000, "")
 			td.valSigner1.SignMsg(trx)
 
 			assert.NoError(t, td.commonTxPool.AppendTx(trx))
@@ -459,7 +459,7 @@ func TestSortition(t *testing.T) {
 	assert.NoError(t, td.state3.CommitBlock(height, b14, c14))
 	assert.NoError(t, td.state4.CommitBlock(height, b14, c14))
 
-	assert.Equal(t, td.state1.CommitteePower(), int64(10000004))
+	assert.Equal(t, td.state1.CommitteePower(), int64(1000000004))
 	assert.Equal(t, td.state1.TotalValidators(), int32(5))
 }
 

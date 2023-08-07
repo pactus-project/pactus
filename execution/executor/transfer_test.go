@@ -46,8 +46,12 @@ func (td *testData) checkTotalCoin(t *testing.T, fee int64) {
 	assert.Equal(t, total+fee, int64(21000000*1e9))
 }
 
-func (td *testData) randomAmountAndFee(max int64) (int64, int64) {
-	amt := td.RandInt64(max / 2)
+func (td *testData) randomAmountAndFee(min int64, max int64) (int64, int64) {
+	amt := td.RandInt64NonZero(max)
+	for amt < min {
+		amt = td.RandInt64NonZero(max)
+	}
+
 	fee := int64(float64(amt) * td.sandbox.Params().FeeFraction)
 	return amt, fee
 }
@@ -59,7 +63,7 @@ func TestExecuteTransferTx(t *testing.T) {
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
 	receiverAddr := td.RandomAddress()
-	amt, fee := td.randomAmountAndFee(senderBalance)
+	amt, fee := td.randomAmountAndFee(0, senderBalance)
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
 		trx := tx.NewTransferTx(td.randStamp, 1, td.RandomAddress(),
@@ -109,7 +113,7 @@ func TestTransferToSelf(t *testing.T) {
 
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
-	amt, fee := td.randomAmountAndFee(senderBalance)
+	amt, fee := td.randomAmountAndFee(0, senderBalance)
 
 	trx := tx.NewTransferTx(td.randStamp, senderAcc.Sequence()+1, senderAddr, senderAddr, amt, fee, "ok")
 	err := exe.Execute(trx, td.sandbox)

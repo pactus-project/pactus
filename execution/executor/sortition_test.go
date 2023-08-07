@@ -31,7 +31,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	pub, _ := td.RandomBLSKeyPair()
 	newVal := td.sandbox.MakeNewValidator(pub)
 	accAddr, acc := td.sandbox.TestStore.RandomTestAcc()
-	amt, fee := td.randomAmountAndFee(acc.Balance())
+	amt, fee := td.randomAmountAndFee(0, acc.Balance())
 	newVal.AddToStake(amt + fee)
 	acc.SubtractFromBalance(amt + fee)
 	td.sandbox.UpdateAccount(accAddr, acc)

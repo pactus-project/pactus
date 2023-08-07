@@ -17,8 +17,7 @@ func TestExecuteBondTx(t *testing.T) {
 	senderBalance := senderAcc.Balance()
 	pub, _ := td.RandomBLSKeyPair()
 	receiverAddr := pub.Address()
-	fee, amt := td.randomAmountAndFee(senderBalance / 2)
-
+	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, senderBalance)
 	t.Run("Should fail, invalid sender", func(t *testing.T) {
 		trx := tx.NewBondTx(td.randStamp, 1, td.RandomAddress(),
 			receiverAddr, pub, amt, fee, "invalid sender")
@@ -80,6 +79,14 @@ func TestExecuteBondTx(t *testing.T) {
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 
+	t.Run("Should fail, amount less than MinimumStake", func(t *testing.T) {
+		trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+1, senderAddr,
+			receiverAddr, pub, 1000, fee, "less than MinimumStake")
+
+		err := exe.Execute(trx, td.sandbox)
+		assert.Equal(t, errors.ErrInvalidTx, errors.Code(err))
+	})
+
 	t.Run("Ok", func(t *testing.T) {
 		trx := tx.NewBondTx(td.randStamp, senderAcc.Sequence()+1, senderAddr,
 			receiverAddr, pub, amt, fee, "ok")
@@ -116,7 +123,7 @@ func TestBondInsideCommittee(t *testing.T) {
 	exe2 := NewBondExecutor(false)
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
-	fee, amt := td.randomAmountAndFee(senderBalance)
+	amt, fee := td.randomAmountAndFee(0, senderBalance)
 
 	pub := td.sandbox.Committee().Proposer(0).PublicKey()
 	trx := tx.NewBondTx(td.randStamp, senderAcc.Sequence()+1, senderAddr,
@@ -137,7 +144,7 @@ func TestBondJoiningCommittee(t *testing.T) {
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
 	pub, _ := td.RandomBLSKeyPair()
-	fee, amt := td.randomAmountAndFee(senderBalance)
+	amt, fee := td.randomAmountAndFee(0, senderBalance)
 
 	val := td.sandbox.MakeNewValidator(pub)
 	val.UpdateLastSortitionHeight(td.sandbox.CurrentHeight())

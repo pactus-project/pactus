@@ -47,12 +47,12 @@ func (e *TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			receiverAcc = sb.MakeNewAccount(pld.Receiver)
 		}
 	}
-	if senderAcc.Balance() < pld.Amount+trx.Fee() {
-		return errors.Error(errors.ErrInsufficientFunds)
-	}
 	if senderAcc.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidSequence,
 			"expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
+	}
+	if senderAcc.Balance() < pld.Amount+trx.Fee() {
+		return errors.Error(errors.ErrInsufficientFunds)
 	}
 
 	senderAcc.IncSequence()

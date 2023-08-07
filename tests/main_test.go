@@ -119,6 +119,7 @@ func TestMain(m *testing.M) {
 	vals[2] = validator.NewValidator(tSigners[tNodeIdx3][0].PublicKey().(*bls.PublicKey), 2)
 	vals[3] = validator.NewValidator(tSigners[tNodeIdx4][0].PublicKey().(*bls.PublicKey), 3)
 	params := param.DefaultParams()
+	params.MinimumStake = 1000
 	params.BlockTimeInSecond = 2
 	params.BondInterval = 8
 	params.CommitteeSize = tCommitteeSize
