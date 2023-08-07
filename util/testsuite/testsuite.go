@@ -287,7 +287,7 @@ func (ts *TestSuite) GenerateTestCertificate(blockHash hash.Hash) *block.Certifi
 		priv3.Sign(blockHash.Bytes()).(*bls.Signature),
 		priv4.Sign(blockHash.Bytes()).(*bls.Signature),
 	}
-	sig := bls.Aggregate(sigs)
+	sig := bls.SignatureAggregate(sigs)
 
 	c1 := ts.RandInt32(10)
 	c2 := ts.RandInt32(10) + 10
@@ -405,14 +405,13 @@ func (ts *TestSuite) GenerateTestChangeProposerVote(height uint32, round int16) 
 func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []crypto.Signer) {
 	signers := make([]crypto.Signer, num)
 	vals := make([]*validator.Validator, num)
-	h1 := ts.RandUint32(100000)
 	for i := int32(0); i < int32(num); i++ {
 		val, s := ts.GenerateTestValidator(i)
 		signers[i] = s
 		vals[i] = val
 
-		val.UpdateLastBondingHeight(h1 + uint32(i))
-		val.UpdateLastJoinedHeight(h1 + 100 + uint32(i))
+		val.UpdateLastBondingHeight(1 + uint32(i))
+		val.UpdateLastSortitionHeight(1 + uint32(i))
 		val.SubtractFromStake(val.Stake())
 		val.AddToStake(10 * 1e9)
 	}

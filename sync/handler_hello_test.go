@@ -20,7 +20,8 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer := td.RandomSigner()
 			pid := td.RandomPeerID()
 			initiator := td.RandomPeerID()
-			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0, td.state.Genesis().Hash())
+			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			signer.SignMsg(msg)
 			assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
@@ -33,12 +34,13 @@ func TestParsingHelloMessages(t *testing.T) {
 			invGenHash := td.RandomHash()
 			signer := td.RandomSigner()
 			pid := td.RandomPeerID()
-			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0, invGenHash)
+			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
+				td.state.LastBlockHash(), invGenHash)
 			signer.SignMsg(msg)
 			assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
 
 			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
-			td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeHello)
+			td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
 			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
 		})
 
@@ -47,13 +49,14 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer := td.RandomSigner()
 			height := td.RandUint32(td.state.LastBlockHeight())
 			pid := td.RandomPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork, td.state.Genesis().Hash())
+			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork,
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			signer.SignMsg(msg)
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeHello) // Alice key 1
-			td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeHello) // Alice key 2
+			td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello) // Alice key 1
+			td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello) // Alice key 2
 
 			// Check if the peer info is updated
 			p := td.sync.peerSet.GetPeer(pid)
@@ -73,11 +76,12 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer := td.RandomSigner()
 			height := td.RandUint32(td.state.LastBlockHeight())
 			pid := td.RandomPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagHelloAck, td.state.Genesis().Hash())
+			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagHelloAck,
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			signer.SignMsg(msg)
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-			td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeHello)
+			td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
 			td.checkPeerStatus(t, pid, peerset.StatusCodeKnown)
 
 			// Check if the peer info is updated
@@ -91,11 +95,12 @@ func TestParsingHelloMessages(t *testing.T) {
 			signer := td.RandomSigner()
 			claimedHeight := td.state.LastBlockHeight() + 5
 			pid := td.RandomPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck, td.state.Genesis().Hash())
+			msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck,
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			signer.SignMsg(msg)
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-			td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+			td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 			td.checkPeerStatus(t, pid, peerset.StatusCodeKnown)
 			assert.Equal(t, td.sync.peerSet.MaxClaimedHeight(), claimedHeight)
 		})
@@ -106,7 +111,7 @@ func TestBroadcastingHelloMessages(t *testing.T) {
 
 	td.sync.sayHello(true)
 
-	bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeHello)
+	bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
 	assert.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHelloMessage))
 	assert.True(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Flags, message.FlagHelloAck))
 }

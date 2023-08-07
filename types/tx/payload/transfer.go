@@ -92,9 +92,9 @@ func (p *TransferPayload) Decode(r io.Reader) error {
 	return nil
 }
 
-func (p *TransferPayload) Fingerprint() string {
+func (p *TransferPayload) String() string {
 	return fmt.Sprintf("{Send 💸 %v->%v %v",
-		p.Sender.Fingerprint(),
-		p.Receiver.Fingerprint(),
+		p.Sender.ShortString(),
+		p.Receiver.ShortString(),
 		p.Amount)
 }

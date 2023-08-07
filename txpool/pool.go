@@ -22,7 +22,7 @@ type txPool struct {
 	sandbox     sandbox.Sandbox
 	pools       map[payload.Type]*linkedmap.LinkedMap[tx.ID, *tx.Tx]
 	broadcastCh chan message.Message
-	logger      *logger.Logger
+	logger      *logger.SubLogger
 }
 
 func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
@@ -41,7 +41,7 @@ func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 		broadcastCh: broadcastCh,
 	}
 
-	pool.logger = logger.NewLogger("_pool", pool)
+	pool.logger = logger.NewSubLogger("_pool", pool)
 	return pool
 }
 
@@ -207,7 +207,7 @@ func (p *txPool) Size() int {
 	return size
 }
 
-func (p *txPool) Fingerprint() string {
+func (p *txPool) String() string {
 	return fmt.Sprintf("{💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
 		p.pools[payload.PayloadTypeTransfer].Size(),
 		p.pools[payload.PayloadTypeBond].Size(),

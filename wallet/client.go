@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -73,6 +74,7 @@ func (c *grpcClient) sendTx(tx *tx.Tx) (tx.ID, error) {
 	return hash.FromBytes(res.Id)
 }
 
+// TODO: check the return value type
 func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, error) {
 	res, err := c.transactionClient.GetTransaction(context.Background(), &pactus.GetTransactionRequest{
 		Id:        id.Bytes(),
@@ -83,4 +85,13 @@ func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, e
 	}
 
 	return res, nil
+}
+
+func (c *grpcClient) getFee(amount int64, payloadType payload.Type) (int64, error) {
+	res, err := c.transactionClient.CalculateFee(context.Background(), &pactus.CalculateFeeRequest{
+		Amount: amount, PayloadType: pactus.PayloadType(payloadType)})
+	if err != nil {
+		return 0, err
+	}
+	return res.Fee, nil
 }

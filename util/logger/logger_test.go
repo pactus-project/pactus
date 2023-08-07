@@ -5,64 +5,34 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 )
 
 type Foo struct{}
 
-func (f Foo) Fingerprint() string {
+func (f Foo) String() string {
 	return "foo"
 }
 
-type Bar struct{}
+func TestNilObjLogger(t *testing.T) {
+	l := NewSubLogger("test", nil)
+	var buf bytes.Buffer
+	l.logger = l.logger.Output(&buf)
 
-func (b *Bar) Fingerprint() string {
-	return "bar"
-}
-func TestFingerprint(t *testing.T) {
-	f1 := Foo{}
-	f2 := &Foo{}
-	b1 := Bar{}
-	b2 := &Bar{}
-
-	assert.Equal(t, keyvalsToFields("key", f1)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", &f1)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", f2)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", b1)["key"], "{}")
-	assert.Equal(t, keyvalsToFields("key", &b1)["key"], "bar")
-	assert.Equal(t, keyvalsToFields("key", b2)["key"], "bar")
-	assert.Nil(t, keyvalsToFields(1)["key"])
-	assert.Nil(t, keyvalsToFields(nil, 1)["key"])
-	assert.Nil(t, keyvalsToFields(1, nil)["key"])
-}
-
-func TestNilFingerprint(t *testing.T) {
-	var f1 Foo
-	var f2 *Foo
-	var b1 Bar
-	var b2 *Bar
-
-	assert.Equal(t, keyvalsToFields("key", f1)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", &f1)["key"], "foo")
-	assert.Equal(t, keyvalsToFields("key", f2)["key"], "nil")
-	assert.Equal(t, keyvalsToFields("key", b1)["key"], "{}")
-	assert.Equal(t, keyvalsToFields("key", &b1)["key"], "bar")
-	assert.Equal(t, keyvalsToFields("key", b2)["key"], "nil")
-	assert.Nil(t, keyvalsToFields(1)["key"])
-	assert.Nil(t, keyvalsToFields(nil, 1)["key"])
-	assert.Nil(t, keyvalsToFields(1, nil)["key"])
+	l.Info("hello")
+	assert.Contains(t, buf.String(), "hello")
 }
 
 func TestObjLogger(t *testing.T) {
-	loggersInst = nil
+	globalInst = nil
 	c := DefaultConfig()
 	c.Colorful = false
-	InitLogger(c)
+	InitGlobalLogger(c)
 
-	l := NewLogger("test", Foo{})
+	l := NewSubLogger("test", Foo{})
 	var buf bytes.Buffer
-	l.logger.SetOutput(&buf)
+	l.logger = l.logger.Output(&buf)
 
 	l.Trace("a")
 	l.Debug("b")
@@ -81,16 +51,17 @@ func TestObjLogger(t *testing.T) {
 }
 
 func TestLogger(t *testing.T) {
-	loggersInst = nil
+	globalInst = nil
 	c := DefaultConfig()
 	c.Colorful = true
-	InitLogger(c)
+	InitGlobalLogger(c)
 
 	var buf bytes.Buffer
-	logrus.SetOutput(&buf)
+	log.Logger = log.Output(&buf)
 
 	Trace("a")
-	Debug("b", "a", nil)
+	Info("b", nil)
+	Info("b", "a", nil)
 	Info("c", "b", []byte{1, 2, 3})
 	Warn("d", "x")
 	Error("e", "y", Foo{})
@@ -100,10 +71,12 @@ func TestLogger(t *testing.T) {
 	fmt.Println(out)
 	assert.Contains(t, out, "foo")
 	assert.Contains(t, out, "010203")
-	assert.Contains(t, out, "<MISSING VALUE>")
-	assert.NotContains(t, out, "TRACE")
-	assert.NotContains(t, out, "DEBU")
-	assert.Contains(t, out, "INFO")
-	assert.Contains(t, out, "WARN")
-	assert.Contains(t, out, "ERR")
+	assert.Contains(t, out, "!INVALID-KEY!")
+	assert.Contains(t, out, "!MISSING-VALUE!")
+	assert.Contains(t, out, "null")
+	assert.NotContains(t, out, "trace")
+	assert.NotContains(t, out, "debug")
+	assert.Contains(t, out, "info")
+	assert.Contains(t, out, "warn")
+	assert.Contains(t, out, "error")
 }

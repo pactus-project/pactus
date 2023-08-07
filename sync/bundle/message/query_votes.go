@@ -26,9 +26,9 @@ func (m *QueryVotesMessage) SanityCheck() error {
 }
 
 func (m *QueryVotesMessage) Type() Type {
-	return MessageTypeQueryVotes
+	return TypeQueryVotes
 }
 
-func (m *QueryVotesMessage) Fingerprint() string {
+func (m *QueryVotesMessage) String() string {
 	return fmt.Sprintf("{%d/%d}", m.Height, m.Round)
 }

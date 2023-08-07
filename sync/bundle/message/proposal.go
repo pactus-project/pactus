@@ -19,9 +19,9 @@ func (m *ProposalMessage) SanityCheck() error {
 }
 
 func (m *ProposalMessage) Type() Type {
-	return MessageTypeProposal
+	return TypeProposal
 }
 
-func (m *ProposalMessage) Fingerprint() string {
-	return m.Proposal.Fingerprint()
+func (m *ProposalMessage) String() string {
+	return m.Proposal.String()
 }

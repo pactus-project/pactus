@@ -19,7 +19,7 @@ import (
 type blockchainServer struct {
 	state   state.Facade
 	consMgr consensus.ManagerReader
-	logger  *logger.Logger
+	logger  *logger.SubLogger
 }
 
 func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
@@ -212,16 +212,6 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 	}, nil
 }
 
-func (s *blockchainServer) GetValidators(_ context.Context,
-	_ *pactus.GetValidatorsRequest) (*pactus.GetValidatorsResponse, error) {
-	validators := s.state.CommitteeValidators()
-	validatorsInfo := make([]*pactus.ValidatorInfo, 0, len(validators))
-	for _, val := range validators {
-		validatorsInfo = append(validatorsInfo, validatorToProto(val))
-	}
-	return &pactus.GetValidatorsResponse{Validators: validatorsInfo}, nil
-}
-
 func (s *blockchainServer) GetValidatorAddresses(_ context.Context,
 	_ *pactus.GetValidatorAddressesRequest) (*pactus.GetValidatorAddressesResponse, error) {
 	addresses := s.state.ValidatorAddresses()
@@ -235,16 +225,16 @@ func (s *blockchainServer) GetValidatorAddresses(_ context.Context,
 func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 	data, _ := val.Bytes()
 	return &pactus.ValidatorInfo{
-		Hash:              val.Hash().Bytes(),
-		Data:              data,
-		PublicKey:         val.PublicKey().String(),
-		Address:           val.Address().String(),
-		Number:            val.Number(),
-		Sequence:          val.Sequence(),
-		Stake:             val.Stake(),
-		LastBondingHeight: val.LastBondingHeight(),
-		LastJoinedHeight:  val.LastJoinedHeight(),
-		UnbondingHeight:   val.UnbondingHeight(),
+		Hash:                val.Hash().Bytes(),
+		Data:                data,
+		PublicKey:           val.PublicKey().String(),
+		Address:             val.Address().String(),
+		Number:              val.Number(),
+		Sequence:            val.Sequence(),
+		Stake:               val.Stake(),
+		LastBondingHeight:   val.LastBondingHeight(),
+		LastSortitionHeight: val.LastSortitionHeight(),
+		UnbondingHeight:     val.UnbondingHeight(),
 	}
 }
 

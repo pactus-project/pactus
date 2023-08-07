@@ -325,37 +325,6 @@ public final class BlockchainGrpc {
     return getGetValidatorAddressesMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest,
-      pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> getGetValidatorsMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "GetValidators",
-      requestType = pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest.class,
-      responseType = pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest,
-      pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> getGetValidatorsMethod() {
-    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest, pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> getGetValidatorsMethod;
-    if ((getGetValidatorsMethod = BlockchainGrpc.getGetValidatorsMethod) == null) {
-      synchronized (BlockchainGrpc.class) {
-        if ((getGetValidatorsMethod = BlockchainGrpc.getGetValidatorsMethod) == null) {
-          BlockchainGrpc.getGetValidatorsMethod = getGetValidatorsMethod =
-              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest, pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetValidators"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetValidators"))
-              .build();
-        }
-      }
-    }
-    return getGetValidatorsMethod;
-  }
-
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -474,13 +443,6 @@ public final class BlockchainGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetValidatorAddressesMethod(), responseObserver);
     }
 
-    /**
-     */
-    public void getValidators(pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetValidatorsMethod(), responseObserver);
-    }
-
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -553,13 +515,6 @@ public final class BlockchainGrpc {
                 pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest,
                 pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse>(
                   this, METHODID_GET_VALIDATOR_ADDRESSES)))
-          .addMethod(
-            getGetValidatorsMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest,
-                pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse>(
-                  this, METHODID_GET_VALIDATORS)))
           .build();
     }
   }
@@ -657,14 +612,6 @@ public final class BlockchainGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetValidatorAddressesMethod(), getCallOptions()), request, responseObserver);
     }
-
-    /**
-     */
-    public void getValidators(pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest request,
-        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getGetValidatorsMethod(), getCallOptions()), request, responseObserver);
-    }
   }
 
   /**
@@ -749,13 +696,6 @@ public final class BlockchainGrpc {
     public pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse getValidatorAddresses(pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetValidatorAddressesMethod(), getCallOptions(), request);
-    }
-
-    /**
-     */
-    public pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse getValidators(pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getGetValidatorsMethod(), getCallOptions(), request);
     }
   }
 
@@ -852,14 +792,6 @@ public final class BlockchainGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetValidatorAddressesMethod(), getCallOptions()), request);
     }
-
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse> getValidators(
-        pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getGetValidatorsMethod(), getCallOptions()), request);
-    }
   }
 
   private static final int METHODID_GET_BLOCK = 0;
@@ -872,7 +804,6 @@ public final class BlockchainGrpc {
   private static final int METHODID_GET_VALIDATOR = 7;
   private static final int METHODID_GET_VALIDATOR_BY_NUMBER = 8;
   private static final int METHODID_GET_VALIDATOR_ADDRESSES = 9;
-  private static final int METHODID_GET_VALIDATORS = 10;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -930,10 +861,6 @@ public final class BlockchainGrpc {
         case METHODID_GET_VALIDATOR_ADDRESSES:
           serviceImpl.getValidatorAddresses((pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesRequest) request,
               (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorAddressesResponse>) responseObserver);
-          break;
-        case METHODID_GET_VALIDATORS:
-          serviceImpl.getValidators((pactus.blockchain.BlockchainOuterClass.GetValidatorsRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetValidatorsResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1006,7 +933,6 @@ public final class BlockchainGrpc {
               .addMethod(getGetValidatorMethod())
               .addMethod(getGetValidatorByNumberMethod())
               .addMethod(getGetValidatorAddressesMethod())
-              .addMethod(getGetValidatorsMethod())
               .build();
         }
       }

@@ -16,6 +16,51 @@
     "application/json"
   ],
   "paths": {
+    "/v1/transaction/amount/{amount}/payloadType/{payloadType}": {
+      "get": {
+        "operationId": "Transaction_CalculateFee",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusCalculateFeeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "amount",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "payloadType",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "TRANSFER_PAYLOAD",
+              "BOND_PAYLOAD",
+              "SORTITION_PAYLOAD",
+              "UNBOND_PAYLOAD",
+              "WITHDRAW_PAYLOAD"
+            ]
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
     "/v1/transaction/id/{id}/verbosity/{verbosity}": {
       "get": {
         "operationId": "Transaction_GetTransaction",
@@ -90,6 +135,15 @@
     }
   },
   "definitions": {
+    "pactusCalculateFeeResponse": {
+      "type": "object",
+      "properties": {
+        "fee": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
     "pactusGetTransactionResponse": {
       "type": "object",
       "properties": {
@@ -223,7 +277,7 @@
           "type": "string",
           "format": "int64"
         },
-        "PayloadType": {
+        "payloadType": {
           "$ref": "#/definitions/pactusPayloadType"
         },
         "transfer": {

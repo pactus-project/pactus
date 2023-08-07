@@ -43,7 +43,7 @@ type synchronizer struct {
 	networkCh       <-chan network.Event
 	network         network.Network
 	heartBeatTicker *time.Ticker
-	logger          *logger.Logger
+	logger          *logger.SubLogger
 }
 
 func NewSynchronizer(
@@ -65,7 +65,7 @@ func NewSynchronizer(
 	}
 
 	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
-	logger := logger.NewLogger("_sync", sync)
+	logger := logger.NewSubLogger("_sync", sync)
 	firewall := firewall.NewFirewall(conf.Firewall, net, peerSet, state, logger)
 	cache, err := cache.NewCache(conf.CacheSize)
 	if err != nil {
@@ -79,17 +79,17 @@ func NewSynchronizer(
 
 	handlers := make(map[message.Type]messageHandler)
 
-	handlers[message.MessageTypeHello] = newHelloHandler(sync)
-	handlers[message.MessageTypeHeartBeat] = newHeartBeatHandler(sync)
-	handlers[message.MessageTypeVote] = newVoteHandler(sync)
-	handlers[message.MessageTypeProposal] = newProposalHandler(sync)
-	handlers[message.MessageTypeTransactions] = newTransactionsHandler(sync)
-	handlers[message.MessageTypeHeartBeat] = newHeartBeatHandler(sync)
-	handlers[message.MessageTypeQueryVotes] = newQueryVotesHandler(sync)
-	handlers[message.MessageTypeQueryProposal] = newQueryProposalHandler(sync)
-	handlers[message.MessageTypeBlockAnnounce] = newBlockAnnounceHandler(sync)
-	handlers[message.MessageTypeBlocksRequest] = newBlocksRequestHandler(sync)
-	handlers[message.MessageTypeBlocksResponse] = newBlocksResponseHandler(sync)
+	handlers[message.TypeHello] = newHelloHandler(sync)
+	handlers[message.TypeHeartBeat] = newHeartBeatHandler(sync)
+	handlers[message.TypeVote] = newVoteHandler(sync)
+	handlers[message.TypeProposal] = newProposalHandler(sync)
+	handlers[message.TypeTransactions] = newTransactionsHandler(sync)
+	handlers[message.TypeHeartBeat] = newHeartBeatHandler(sync)
+	handlers[message.TypeQueryVotes] = newQueryVotesHandler(sync)
+	handlers[message.TypeQueryProposal] = newQueryProposalHandler(sync)
+	handlers[message.TypeBlockAnnounce] = newBlockAnnounceHandler(sync)
+	handlers[message.TypeBlocksRequest] = newBlocksRequestHandler(sync)
+	handlers[message.TypeBlocksResponse] = newBlocksResponseHandler(sync)
 
 	sync.handlers = handlers
 
@@ -144,17 +144,24 @@ func (sync *synchronizer) heartBeatTickerLoop() {
 func (sync *synchronizer) broadcastHeartBeat() {
 	// Broadcast a random vote if we are inside the committee
 	if sync.weAreInTheCommittee() {
-		v := sync.consMgr.PickRandomVote()
+		_, round := sync.consMgr.HeightRound()
+		v := sync.consMgr.PickRandomVote(round)
 		if v != nil {
 			msg := message.NewVoteMessage(v)
 			sync.broadcast(msg)
 		}
-	}
 
-	height, round := sync.consMgr.HeightRound()
-	if height > 0 {
-		msg := message.NewHeartBeatMessage(height, round, sync.state.LastBlockHash())
-		sync.broadcast(msg)
+		height, round := sync.consMgr.HeightRound()
+		if height > 0 {
+			msg := message.NewHeartBeatMessage(height, round, sync.state.LastBlockHash())
+			sync.broadcast(msg)
+		}
+	} else {
+		height := sync.state.LastBlockHeight()
+		if height > 0 {
+			msg := message.NewHeartBeatMessage(height, -1, sync.state.LastBlockHash())
+			sync.broadcast(msg)
+		}
 	}
 }
 
@@ -170,7 +177,9 @@ func (sync *synchronizer) sayHello(helloAck bool) {
 		sync.SelfID(),
 		sync.config.Moniker,
 		sync.state.LastBlockHeight(),
-		flags, sync.state.Genesis().Hash())
+		flags,
+		sync.state.LastBlockHash(),
+		sync.state.Genesis().Hash())
 
 	for _, signer := range sync.signers {
 		signer.SignMsg(msg)
@@ -235,7 +244,7 @@ func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle) error {
 	return h.ParseMessage(bdl.Message, bdl.Initiator)
 }
 
-func (sync *synchronizer) Fingerprint() string {
+func (sync *synchronizer) String() string {
 	return fmt.Sprintf("{☍ %d ⛃ %d ⇈ %d ↑ %d}",
 		sync.peerSet.Len(),
 		sync.cache.Len(),
@@ -318,7 +327,8 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID, sessionID int)
 			sync.logger.Info("sending bundle to a peer", "bundle", bdl, "to", to)
 			sync.peerSet.IncreaseSendSuccessCounter(to)
 		}
-		sync.peerSet.IncreaseTotalSentBytesCounter(len(data))
+
+		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
 	}
 }
 
@@ -334,7 +344,7 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 		} else {
 			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
 		}
-		sync.peerSet.IncreaseTotalSentBytesCounter(len(data))
+		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), nil)
 	}
 }
 
@@ -471,11 +481,6 @@ func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code message
 		sync.logger.Debug("session rejected, close session", "session-id", sessionID)
 		sync.peerSet.CloseSession(sessionID)
 		sync.peerSet.IncreaseSendFailedCounter(pid)
-		sync.updateBlockchain()
-
-	case message.ResponseCodeBusy:
-		sync.logger.Debug("peer is busy. close session", "session-id", sessionID)
-		sync.peerSet.CloseSession(sessionID)
 		sync.updateBlockchain()
 
 	case message.ResponseCodeMoreBlocks:

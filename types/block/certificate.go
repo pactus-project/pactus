@@ -35,10 +35,21 @@ func NewCertificate(round int16, committers, absentees []int32, signature *bls.S
 	return cert
 }
 
-func (cert *Certificate) Round() int16              { return cert.data.Round }
-func (cert *Certificate) Committers() []int32       { return cert.data.Committers }
-func (cert *Certificate) Absentees() []int32        { return cert.data.Absentees }
-func (cert *Certificate) Signature() *bls.Signature { return cert.data.Signature }
+func (cert *Certificate) Round() int16 {
+	return cert.data.Round
+}
+
+func (cert *Certificate) Committers() []int32 {
+	return cert.data.Committers
+}
+
+func (cert *Certificate) Absentees() []int32 {
+	return cert.data.Absentees
+}
+
+func (cert *Certificate) Signature() *bls.Signature {
+	return cert.data.Signature
+}
 
 func (cert *Certificate) SanityCheck() error {
 	if cert.Round() < 0 {
@@ -61,35 +72,13 @@ func (cert *Certificate) SanityCheck() error {
 	return nil
 }
 
-// Remove this function later
-// read below comment
-func (cert *Certificate) HashBytes() []byte {
-	w := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
-	if err := encoding.WriteVarInt(w, uint64(cert.Round())); err != nil {
-		return nil
-	}
-	if err := encoding.WriteVarInt(w, uint64(len(cert.data.Absentees))); err != nil {
-		return nil
-	}
-	for _, n := range cert.data.Absentees {
-		if err := encoding.WriteVarInt(w, uint64(n)); err != nil {
-			return nil
-		}
-	}
-	if err := cert.data.Signature.Encode(w); err != nil {
-		return nil
-	}
-	return w.Bytes()
-}
-
 func (cert *Certificate) Hash() hash.Hash {
-	// TODO: Add a comment on certificate hash
-	// Technically, we don't need to include the committers list inside the certificate.
-	// At each height, the committers are the same as the committee members.
-	// As a possible enhancement in the future, we can remove the committers from the certificate.
-	// In this case, increasing the committee size won't increase the size of the certificate.
+	w := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
+	if err := cert.Encode(w); err != nil {
+		return hash.UndefHash
+	}
 
-	return hash.CalcHash(cert.HashBytes())
+	return hash.CalcHash(w.Bytes())
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the block.

@@ -18,12 +18,13 @@ func TestSessionTimeout(t *testing.T) {
 		signer := td.RandomSigner()
 		pid := td.RandomPeerID()
 		claimedHeight := uint32(6666)
-		msg := message.NewHelloMessage(pid, "Oscar", claimedHeight, message.FlagNodeNetwork, td.state.Genesis().Hash())
+		msg := message.NewHelloMessage(pid, "Oscar", claimedHeight, message.FlagNodeNetwork,
+			td.state.LastBlockHash(), td.state.Genesis().Hash())
 		signer.SignMsg(msg)
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+		td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 
 		assert.True(t, td.sync.peerSet.HasAnyOpenSession())
 		time.Sleep(2 * config.SessionTimeout)
@@ -58,7 +59,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
 			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
+			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, uint32(0))
 		})
@@ -70,7 +71,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)
 			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
+			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, uint32(0))
 		})
@@ -79,7 +80,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 0, LatestBlockInterval+1)
 			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
+			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
@@ -88,66 +89,47 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 				msg := message.NewBlocksRequestMessage(sid, curHeight-config.BlockPerMessage, config.BlockPerMessage)
 				assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-				bdl1 := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
+				bdl1 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeMoreBlocks)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).From, curHeight-config.BlockPerMessage)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).To(), curHeight-1)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).Count(), config.BlockPerMessage)
 				assert.Zero(t, bdl1.Message.(*message.BlocksResponseMessage).LastCertificateHeight())
 
-				bdl2 := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
+				bdl2 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeNoMoreBlocks)
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).From)
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).To())
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).Count())
 				assert.Zero(t, bdl1.Message.(*message.BlocksResponseMessage).LastCertificateHeight())
-
-				peer := td.sync.peerSet.GetPeer(pid)
-				assert.Equal(t, peer.Height, curHeight-1) // Peer needs one more block
 			})
 
 			t.Run("Peer synced", func(t *testing.T) {
 				msg := message.NewBlocksRequestMessage(sid, curHeight-config.BlockPerMessage+1, config.BlockPerMessage)
 				assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-				bdl1 := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
+				bdl1 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeMoreBlocks)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).From, curHeight-config.BlockPerMessage+1)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).To(), curHeight)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).Count(), config.BlockPerMessage)
 				assert.Zero(t, bdl1.Message.(*message.BlocksResponseMessage).LastCertificateHeight())
 
-				bdl2 := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
+				bdl2 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
 				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).From, curHeight)
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).To())
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).Count())
 				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).LastCertificateHeight(), curHeight)
-
-				peer := td.sync.peerSet.GetPeer(pid)
-				assert.Equal(t, peer.Height, curHeight) // Peer is synced
 			})
 		})
-
-		// t.Run("Peer requests to send the blocks again, It should be rejected", func(t *testing.T) {
-		// 	msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
-		// 	assert.Error(t, td.testReceivingNewMessage(td.sync, msg, pid))
-
-		// 	bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
-		// 	assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
-		// 	assert.Zero(t, bdl.Message.(*message.BlocksResponseMessage).LastCertificateHeight())
-
-		// })
 
 		t.Run("Peer requests blocks that we don't have", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight+100, 1)
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
+			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
-
-			peer := td.sync.peerSet.GetPeer(pid)
-			assert.Equal(t, peer.Height, curHeight+99)
 		})
 	})
 
@@ -163,14 +145,11 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			msg1 := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
+			msg1 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 			assert.Equal(t, msg1.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeMoreBlocks)
 
-			msg2 := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
+			msg2 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 			assert.Equal(t, msg2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeNoMoreBlocks)
-
-			peer := td.sync.peerSet.GetPeer(pid)
-			assert.Equal(t, peer.Height, uint32(2))
 		})
 
 		t.Run("Peer is busy", func(t *testing.T) {
@@ -184,8 +163,8 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			s := td.sync.peerSet.OpenSession(td.network.SelfID())
 			msg := message.NewBlocksRequestMessage(s.SessionID(), 100, 105)
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksResponse)
-			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeBusy)
+			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
+			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 	})
 }

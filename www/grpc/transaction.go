@@ -15,7 +15,7 @@ import (
 
 type transactionServer struct {
 	state  state.Facade
-	logger *logger.Logger
+	logger *logger.SubLogger
 }
 
 func (s *transactionServer) GetTransaction(_ context.Context,
@@ -59,6 +59,18 @@ func (s *transactionServer) SendRawTransaction(_ context.Context,
 
 	return &pactus.SendRawTransactionResponse{
 		Id: trx.ID().Bytes(),
+	}, nil
+}
+
+func (s *transactionServer) CalculateFee(_ context.Context,
+	req *pactus.CalculateFeeRequest) (*pactus.CalculateFeeResponse, error) {
+	fee, err := s.state.CalculateFee(req.Amount, payload.Type(req.PayloadType))
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.CalculateFeeResponse{
+		Fee: fee,
 	}, nil
 }
 

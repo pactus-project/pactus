@@ -10,7 +10,7 @@ import (
 
 func TestProposalType(t *testing.T) {
 	m := &ProposalMessage{}
-	assert.Equal(t, m.Type(), MessageTypeProposal)
+	assert.Equal(t, m.Type(), TypeProposal)
 }
 
 func TestProposalMessage(t *testing.T) {
@@ -28,6 +28,6 @@ func TestProposalMessage(t *testing.T) {
 		m := NewProposalMessage(proposal)
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Contains(t, m.Fingerprint(), "100")
+		assert.Contains(t, m.String(), "100")
 	})
 }

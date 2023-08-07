@@ -19,9 +19,9 @@ func (m *VoteMessage) SanityCheck() error {
 }
 
 func (m *VoteMessage) Type() Type {
-	return MessageTypeVote
+	return TypeVote
 }
 
-func (m *VoteMessage) Fingerprint() string {
-	return m.Vote.Fingerprint()
+func (m *VoteMessage) String() string {
+	return m.Vote.String()
 }

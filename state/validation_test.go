@@ -16,7 +16,7 @@ func aggregate(sigs []crypto.Signature) *bls.Signature {
 	for i, s := range sigs {
 		blsSigs[i] = s.(*bls.Signature)
 	}
-	return bls.Aggregate(blsSigs)
+	return bls.SignatureAggregate(blsSigs)
 }
 
 func TestCertificateValidation(t *testing.T) {

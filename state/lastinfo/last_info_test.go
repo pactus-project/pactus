@@ -50,11 +50,11 @@ func setup(t *testing.T) *testData {
 	val3.AddToStake(100)
 	val4.AddToStake(100)
 
-	val0.UpdateLastJoinedHeight(0)
-	val1.UpdateLastJoinedHeight(0)
-	val2.UpdateLastJoinedHeight(0)
-	val3.UpdateLastJoinedHeight(0)
-	val4.UpdateLastJoinedHeight(100)
+	val0.UpdateLastSortitionHeight(0)
+	val1.UpdateLastSortitionHeight(0)
+	val2.UpdateLastSortitionHeight(0)
+	val3.UpdateLastSortitionHeight(0)
+	val4.UpdateLastSortitionHeight(100)
 
 	store.UpdateValidator(val0)
 	store.UpdateValidator(val1)

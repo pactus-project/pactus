@@ -10,7 +10,7 @@ import (
 
 func TestHeartBeatType(t *testing.T) {
 	m := &HeartBeatMessage{}
-	assert.Equal(t, m.Type(), MessageTypeHeartBeat)
+	assert.Equal(t, m.Type(), TypeHeartBeat)
 }
 
 func TestHeartBeatMessage(t *testing.T) {
@@ -21,16 +21,11 @@ func TestHeartBeatMessage(t *testing.T) {
 
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
 	})
-	t.Run("Invalid round", func(t *testing.T) {
-		m := NewHeartBeatMessage(100, -1, ts.RandomHash())
-
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidRound)
-	})
 
 	t.Run("OK", func(t *testing.T) {
 		m := NewHeartBeatMessage(100, 1, ts.RandomHash())
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Contains(t, m.Fingerprint(), "100")
+		assert.Contains(t, m.String(), "100")
 	})
 }

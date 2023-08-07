@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"unsafe"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync"
@@ -12,7 +13,7 @@ import (
 
 type networkServer struct {
 	sync   sync.Synchronizer
-	logger *logger.Logger
+	logger *logger.SubLogger
 }
 
 func (s *networkServer) GetNetworkInfo(_ context.Context,
@@ -38,20 +39,27 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		p.Height = peer.Height
 		p.ReceivedMessages = int32(peer.ReceivedBundles)
 		p.InvalidMessages = int32(peer.InvalidBundles)
-		p.ReceivedBytes = int32(peer.ReceivedBytes)
+		p.ReceivedBytes = *(*map[int32]int64)(unsafe.Pointer(&peer.ReceivedBytes))
+		p.SentBytes = *(*map[int32]int64)(unsafe.Pointer(&peer.SentBytes))
 		p.Status = int32(peer.Status)
 		p.LastReceived = peer.LastReceived.Unix()
 		p.SendSuccess = int32(peer.SendSuccess)
 		p.SendFailed = int32(peer.SendFailed)
+		p.LastBlockHash = peer.LastBlockHash.Bytes()
 
 		for key := range peer.ConsensusKeys {
 			p.ConsensusKeys = append(p.ConsensusKeys, key.String())
 		}
 	}
 
+	sentBytes := peerset.SentBytes()
+	receivedBytes := peerset.ReceivedBytes()
+
 	return &pactus.GetNetworkInfoResponse{
 		TotalSentBytes:     int32(peerset.TotalSentBytes()),
 		TotalReceivedBytes: int32(peerset.TotalReceivedBytes()),
+		SentBytes:          *(*map[int32]int64)(unsafe.Pointer(&sentBytes)),
+		ReceivedBytes:      *(*map[int32]int64)(unsafe.Pointer(&receivedBytes)),
 		StartedAt:          peerset.StartedAt().Unix(),
 		Peers:              peers,
 	}, nil

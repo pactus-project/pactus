@@ -6,6 +6,7 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
@@ -26,15 +27,7 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, _ *http.Request) {
 	tm.addRowAmount("Committee Power", res.CommitteePower)
 	for i, val := range res.CommitteeValidators {
 		tm.addRowInt("--- Validator", i+1)
-		tm.addRowString("Public Key", val.PublicKey)
-		tm.addRowValAddress("Address", val.Address)
-		tm.addRowInt("Number", int(val.Number))
-		tm.addRowInt("Sequence", int(val.Sequence))
-		tm.addRowAmount("Stake", val.Stake)
-		tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight))
-		tm.addRowInt("LastJoinedHeight", int(val.LastJoinedHeight))
-		tm.addRowInt("UnbondingHeight", int(val.UnbondingHeight))
-		tm.addRowBytes("Hash", val.Hash)
+		s.writeValidatorTable(w, val)
 	}
 
 	s.writeHTML(w, tm.html())
@@ -68,10 +61,18 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 		tm.addRowString("Moniker", p.Moniker)
 		tm.addRowString("LastSent", time.Unix(p.LastSent, 0).String())
 		tm.addRowString("LastReceived", time.Unix(p.LastReceived, 0).String())
+		tm.addRowBlockHash("Last block Hash", p.LastBlockHash)
 		tm.addRowInt("Height", int(p.Height))
 		tm.addRowInt("InvalidBundles", int(p.InvalidMessages))
 		tm.addRowInt("ReceivedBundles", int(p.ReceivedMessages))
-		tm.addRowInt("ReceivedBytes", int(p.ReceivedBytes))
+		tm.addRowString("ReceivedBytes", "---")
+		for key, value := range p.ReceivedBytes {
+			tm.addRowInt(message.Type(key).String(), int(value))
+		}
+		tm.addRowString("SentBytes", "---")
+		for key, value := range p.SentBytes {
+			tm.addRowInt(message.Type(key).String(), int(value))
+		}
 		tm.addRowInt("SendSuccess", int(p.SendSuccess))
 		tm.addRowInt("SendFailed", int(p.SendFailed))
 		tm.addRowInt("Flags", int(p.Flags))

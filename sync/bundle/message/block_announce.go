@@ -28,9 +28,9 @@ func (m *BlockAnnounceMessage) SanityCheck() error {
 }
 
 func (m *BlockAnnounceMessage) Type() Type {
-	return MessageTypeBlockAnnounce
+	return TypeBlockAnnounce
 }
 
-func (m *BlockAnnounceMessage) Fingerprint() string {
-	return fmt.Sprintf("{⌘ %d %v}", m.Height, m.Block.Hash().Fingerprint())
+func (m *BlockAnnounceMessage) String() string {
+	return fmt.Sprintf("{⌘ %d %v}", m.Height, m.Block.Hash().ShortString())
 }

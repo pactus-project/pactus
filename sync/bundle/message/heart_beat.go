@@ -25,16 +25,13 @@ func (m *HeartBeatMessage) SanityCheck() error {
 	if m.Height == 0 {
 		return errors.Errorf(errors.ErrInvalidHeight, "invalid height")
 	}
-	if m.Round < 0 {
-		return errors.Error(errors.ErrInvalidRound)
-	}
 	return nil
 }
 
 func (m *HeartBeatMessage) Type() Type {
-	return MessageTypeHeartBeat
+	return TypeHeartBeat
 }
 
-func (m *HeartBeatMessage) Fingerprint() string {
+func (m *HeartBeatMessage) String() string {
 	return fmt.Sprintf("{%d/%d}", m.Height, m.Round)
 }

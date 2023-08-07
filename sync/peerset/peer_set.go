@@ -1,11 +1,14 @@
 package peerset
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -21,8 +24,10 @@ type PeerSet struct {
 	nextSessionID      int
 	maxClaimedHeight   uint32
 	sessionTimeout     time.Duration
-	totalSentBytes     int
-	totalReceivedBytes int
+	totalSentBytes     int64
+	totalReceivedBytes int64
+	sentBytes          map[message.Type]int64
+	receivedBytes      map[message.Type]int64
 	startedAt          time.Time
 }
 
@@ -31,6 +36,8 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 		peers:          make(map[peer.ID]*Peer),
 		sessions:       make(map[int]*Session),
 		sessionTimeout: sessionTimeout,
+		sentBytes:      make(map[message.Type]int64),
+		receivedBytes:  make(map[message.Type]int64),
 		startedAt:      time.Now(),
 	}
 }
@@ -255,13 +262,14 @@ func (ps *PeerSet) UpdatePeerInfo(
 	}
 }
 
-func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32) {
+func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32, lastBlockHash hash.Hash) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
-	p.Height = util.MaxU32(p.Height, height)
-	ps.maxClaimedHeight = util.MaxU32(ps.maxClaimedHeight, height)
+	p.Height = height
+	p.LastBlockHash = lastBlockHash
+	ps.maxClaimedHeight = util.Max(ps.maxClaimedHeight, height)
 }
 
 func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {
@@ -304,20 +312,29 @@ func (ps *PeerSet) IncreaseInvalidBundlesCounter(pid peer.ID) {
 	p.InvalidBundles++
 }
 
-func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, c int) {
+func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, msgType message.Type, c int64) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
-	p.ReceivedBytes += c
+	fmt.Println(&p)
+	p.ReceivedBytes[msgType] += c
+
 	ps.totalReceivedBytes += c
+	ps.receivedBytes[msgType] += c
 }
 
-func (ps *PeerSet) IncreaseTotalSentBytesCounter(c int) {
+func (ps *PeerSet) IncreaseSentBytesCounter(msgType message.Type, c int64, pid *peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	ps.totalSentBytes += c
+	ps.sentBytes[msgType] += c
+
+	if pid != nil {
+		p := ps.mustGetPeer(*pid)
+		p.SentBytes[msgType] += c
+	}
 }
 
 func (ps *PeerSet) IncreaseSendSuccessCounter(pid peer.ID) {
@@ -336,18 +353,40 @@ func (ps *PeerSet) IncreaseSendFailedCounter(pid peer.ID) {
 	p.SendFailed++
 }
 
-func (ps *PeerSet) TotalSentBytes() int {
+func (ps *PeerSet) TotalSentBytes() int64 {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
 	return ps.totalSentBytes
 }
 
-func (ps *PeerSet) TotalReceivedBytes() int {
+func (ps *PeerSet) TotalReceivedBytes() int64 {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
 	return ps.totalReceivedBytes
+}
+
+func (ps *PeerSet) SentBytesMessageType(msgType message.Type) int64 {
+	if sentBytes, ok := ps.sentBytes[msgType]; ok {
+		return sentBytes
+	}
+	return 0
+}
+
+func (ps *PeerSet) ReceivedBytesMessageType(msgType message.Type) int64 {
+	if receivedBytes, ok := ps.receivedBytes[msgType]; ok {
+		return receivedBytes
+	}
+	return 0
+}
+
+func (ps *PeerSet) SentBytes() map[message.Type]int64 {
+	return ps.sentBytes
+}
+
+func (ps *PeerSet) ReceivedBytes() map[message.Type]int64 {
+	return ps.receivedBytes
 }
 
 func (ps *PeerSet) StartedAt() time.Time {

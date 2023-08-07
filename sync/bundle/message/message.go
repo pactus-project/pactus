@@ -12,10 +12,9 @@ const (
 	ResponseCodeNone         = ResponseCode(-1)
 	ResponseCodeOK           = ResponseCode(0)
 	ResponseCodeRejected     = ResponseCode(1)
-	ResponseCodeBusy         = ResponseCode(2)
-	ResponseCodeMoreBlocks   = ResponseCode(3)
-	ResponseCodeNoMoreBlocks = ResponseCode(4)
-	ResponseCodeSynced       = ResponseCode(5)
+	ResponseCodeMoreBlocks   = ResponseCode(2)
+	ResponseCodeNoMoreBlocks = ResponseCode(3)
+	ResponseCodeSynced       = ResponseCode(4)
 )
 
 func (c ResponseCode) String() string {
@@ -24,8 +23,6 @@ func (c ResponseCode) String() string {
 		return "ok"
 	case ResponseCodeRejected:
 		return "rejected"
-	case ResponseCodeBusy:
-		return "busy"
 	case ResponseCodeMoreBlocks:
 		return "more-blocks"
 	case ResponseCodeNoMoreBlocks:
@@ -36,33 +33,34 @@ func (c ResponseCode) String() string {
 	return fmt.Sprintf("%d", c)
 }
 
-type Type int
+type Type int32
 
 const (
-	MessageTypeHello          = Type(1)
-	MessageTypeHeartBeat      = Type(2)
-	MessageTypeTransactions   = Type(3)
-	MessageTypeQueryProposal  = Type(4)
-	MessageTypeProposal       = Type(5)
-	MessageTypeQueryVotes     = Type(6)
-	MessageTypeVote           = Type(7)
-	MessageTypeBlockAnnounce  = Type(8)
-	MessageTypeBlocksRequest  = Type(9)
-	MessageTypeBlocksResponse = Type(10)
+	TypeUnspecified    = Type(0)
+	TypeHello          = Type(1)
+	TypeHeartBeat      = Type(2)
+	TypeTransactions   = Type(3)
+	TypeQueryProposal  = Type(4)
+	TypeProposal       = Type(5)
+	TypeQueryVotes     = Type(6)
+	TypeVote           = Type(7)
+	TypeBlockAnnounce  = Type(8)
+	TypeBlocksRequest  = Type(9)
+	TypeBlocksResponse = Type(10)
 )
 
 func (t Type) TopicID() network.TopicID {
 	switch t {
-	case MessageTypeHello,
-		MessageTypeHeartBeat,
-		MessageTypeTransactions,
-		MessageTypeBlockAnnounce:
+	case TypeHello,
+		TypeHeartBeat,
+		TypeTransactions,
+		TypeBlockAnnounce:
 		return network.TopicIDGeneral
 
-	case MessageTypeQueryProposal,
-		MessageTypeProposal,
-		MessageTypeQueryVotes,
-		MessageTypeVote:
+	case TypeQueryProposal,
+		TypeProposal,
+		TypeQueryVotes,
+		TypeVote:
 		return network.TopicIDConsensus
 
 	default:
@@ -72,25 +70,25 @@ func (t Type) TopicID() network.TopicID {
 
 func (t Type) String() string {
 	switch t {
-	case MessageTypeHello:
+	case TypeHello:
 		return "hello"
-	case MessageTypeHeartBeat:
+	case TypeHeartBeat:
 		return "heart-beat"
-	case MessageTypeTransactions:
+	case TypeTransactions:
 		return "txs"
-	case MessageTypeQueryProposal:
+	case TypeQueryProposal:
 		return "query-proposal"
-	case MessageTypeProposal:
+	case TypeProposal:
 		return "proposal"
-	case MessageTypeQueryVotes:
+	case TypeQueryVotes:
 		return "query-votes"
-	case MessageTypeVote:
+	case TypeVote:
 		return "vote"
-	case MessageTypeBlockAnnounce:
+	case TypeBlockAnnounce:
 		return "block-announce"
-	case MessageTypeBlocksRequest:
+	case TypeBlocksRequest:
 		return "blocks-req"
-	case MessageTypeBlocksResponse:
+	case TypeBlocksResponse:
 		return "blocks-res"
 	}
 	return fmt.Sprintf("%d", t)
@@ -98,25 +96,25 @@ func (t Type) String() string {
 
 func MakeMessage(t Type) Message {
 	switch t {
-	case MessageTypeHello:
+	case TypeHello:
 		return &HelloMessage{}
-	case MessageTypeHeartBeat:
+	case TypeHeartBeat:
 		return &HeartBeatMessage{}
-	case MessageTypeTransactions:
+	case TypeTransactions:
 		return &TransactionsMessage{}
-	case MessageTypeQueryProposal:
+	case TypeQueryProposal:
 		return &QueryProposalMessage{}
-	case MessageTypeProposal:
+	case TypeProposal:
 		return &ProposalMessage{}
-	case MessageTypeQueryVotes:
+	case TypeQueryVotes:
 		return &QueryVotesMessage{}
-	case MessageTypeVote:
+	case TypeVote:
 		return &VoteMessage{}
-	case MessageTypeBlockAnnounce:
+	case TypeBlockAnnounce:
 		return &BlockAnnounceMessage{}
-	case MessageTypeBlocksRequest:
+	case TypeBlocksRequest:
 		return &BlocksRequestMessage{}
-	case MessageTypeBlocksResponse:
+	case TypeBlocksResponse:
 		return &BlocksResponseMessage{}
 	}
 
@@ -127,5 +125,5 @@ func MakeMessage(t Type) Message {
 type Message interface {
 	SanityCheck() error
 	Type() Type
-	Fingerprint() string
+	String() string
 }

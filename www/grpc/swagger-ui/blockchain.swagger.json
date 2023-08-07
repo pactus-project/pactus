@@ -263,28 +263,6 @@
           "Blockchain"
         ]
       }
-    },
-    "/v1/blockchain/validators": {
-      "get": {
-        "operationId": "Blockchain_GetValidators",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusGetValidatorsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "Blockchain"
-        ]
-      }
     }
   },
   "definitions": {
@@ -526,17 +504,6 @@
         }
       }
     },
-    "pactusGetValidatorsResponse": {
-      "type": "object",
-      "properties": {
-        "validators": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/pactusValidatorInfo"
-          }
-        }
-      }
-    },
     "pactusPayloadBond": {
       "type": "object",
       "properties": {
@@ -645,7 +612,7 @@
           "type": "string",
           "format": "int64"
         },
-        "PayloadType": {
+        "payloadType": {
           "$ref": "#/definitions/pactusPayloadType"
         },
         "transfer": {
@@ -705,7 +672,7 @@
           "type": "integer",
           "format": "int64"
         },
-        "lastJoinedHeight": {
+        "lastSortitionHeight": {
           "type": "integer",
           "format": "int64"
         },

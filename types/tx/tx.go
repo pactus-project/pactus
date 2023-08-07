@@ -381,11 +381,11 @@ func (tx *Tx) Decode(r io.Reader) error {
 	return nil
 }
 
-func (tx *Tx) Fingerprint() string {
+func (tx *Tx) String() string {
 	return fmt.Sprintf("{⌘ %v 🏵 %v %v}",
-		tx.ID().Fingerprint(),
+		tx.ID().ShortString(),
 		tx.data.Stamp.String(),
-		tx.data.Payload.Fingerprint())
+		tx.data.Payload.String())
 }
 
 func (tx *Tx) SignBytes() []byte {

@@ -37,8 +37,8 @@ type testData struct {
 	broadcastCh chan message.Message
 }
 
-type OverrideFingerprint struct {
-	sync Synchronizer
+type OverrideStringer struct {
+	sync *synchronizer
 	name string
 }
 
@@ -46,8 +46,8 @@ func init() {
 	LatestBlockInterval = 23
 }
 
-func (o *OverrideFingerprint) Fingerprint() string {
-	return o.name + o.sync.Fingerprint()
+func (o *OverrideStringer) String() string {
+	return o.name + o.sync.String()
 }
 
 func testConfig() *Config {
@@ -102,8 +102,8 @@ func setup(t *testing.T, config *Config) *testData {
 	assert.NoError(t, td.sync.Start())
 	assert.Equal(t, td.sync.Moniker(), config.Moniker)
 
-	td.shouldPublishMessageWithThisType(t, network, message.MessageTypeHello) // Alice key 1
-	td.shouldPublishMessageWithThisType(t, network, message.MessageTypeHello) // Alice key 2
+	td.shouldPublishMessageWithThisType(t, network, message.TypeHello) // Alice key 1
+	td.shouldPublishMessageWithThisType(t, network, message.TypeHello) // Alice key 2
 
 	logger.Info("setup finished, running the tests", "name", t.Name())
 
@@ -137,7 +137,7 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 				require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagBroadcasted), "invalid flag: %v", bdl)
 			}
 
-			if bdl.Message.Type() == message.MessageTypeHello {
+			if bdl.Message.Type() == message.TypeHello {
 				require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHelloMessage), "invalid flag: %v", bdl)
 			} else {
 				require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHelloMessage), "invalid flag: %v", bdl)
@@ -202,7 +202,7 @@ func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.Pub
 	td.addPeer(t, pub, pid, true)
 	val := validator.NewValidator(pub.(*bls.PublicKey), td.RandInt32(1000))
 	// Note: This may not be completely accurate, but it poses no harm for testing purposes.
-	val.UpdateLastJoinedHeight(td.state.TestCommittee.Proposer(0).LastJoinedHeight() + 1)
+	val.UpdateLastSortitionHeight(td.state.TestCommittee.Proposer(0).LastSortitionHeight() + 1)
 	td.state.TestStore.UpdateValidator(val)
 	td.state.TestCommittee.Update(0, []*validator.Validator{val})
 	require.True(t, td.state.TestCommittee.Contains(pub.Address()))
@@ -244,13 +244,13 @@ func TestDownload(t *testing.T) {
 	t.Run("try to query latest blocks, but the peer is not known", func(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 	})
 
 	t.Run("try to download blocks, but the peer is not known", func(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 	})
 
 	t.Run("try to download blocks, but the peer is not a network node", func(t *testing.T) {
@@ -259,7 +259,7 @@ func TestDownload(t *testing.T) {
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendSuccess, 0)
 		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendFailed, 0)
 	})
@@ -270,7 +270,7 @@ func TestDownload(t *testing.T) {
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendSuccess, 1)
 		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendFailed, 0)
 
@@ -280,9 +280,10 @@ func TestDownload(t *testing.T) {
 
 	t.Run("download request is rejected", func(t *testing.T) {
 		session := td.sync.peerSet.OpenSession(pid)
-		msg2 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, session.SessionID(), 1, nil, nil)
+		msg2 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, message.ResponseCodeRejected.String(),
+			session.SessionID(), 1, nil, nil)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg2, pid))
-		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 
 		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendSuccess, 2)
 		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendFailed, 1)
@@ -296,7 +297,7 @@ func TestDownload(t *testing.T) {
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.MessageTypeBlocksRequest)
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 		assert.Equal(t, td.sync.peerSet.GetPeer(pid).SendSuccess, 2)
 		// Since the test pid is the only peer in the peerSet list, it always tries to connect to it.
 		// After the second attempt, the requested height is higher than that of the test peer.

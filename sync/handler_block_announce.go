@@ -25,7 +25,7 @@ func (handler *blockAnnounceHandler) ParseMessage(m message.Message, initiator p
 	handler.tryCommitBlocks()
 	handler.moveConsensusToNewHeight()
 
-	handler.peerSet.UpdateHeight(initiator, msg.Height)
+	handler.peerSet.UpdateHeight(initiator, msg.Height, msg.Block.Hash())
 	handler.updateBlockchain()
 
 	return nil

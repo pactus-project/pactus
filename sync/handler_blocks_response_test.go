@@ -19,7 +19,7 @@ func TestInvalidBlockData(t *testing.T) {
 
 	pid := td.RandomPeerID()
 	sid := td.sync.peerSet.OpenSession(pid).SessionID()
-	msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, sid,
+	msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
 		0, [][]byte{{1, 2, 3}}, nil)
 
 	assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
@@ -40,7 +40,7 @@ func TestOneBlockShorter(t *testing.T) {
 
 	t.Run("Peer is busy. Session should be closed", func(t *testing.T) {
 		sid := td.sync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeBusy, sid,
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, message.ResponseCodeRejected.String(), sid,
 			0, nil, nil)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
@@ -49,7 +49,7 @@ func TestOneBlockShorter(t *testing.T) {
 
 	t.Run("Request is rejected. Session should be closed", func(t *testing.T) {
 		sid := td.sync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, sid,
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, message.ResponseCodeRejected.String(), sid,
 			0, nil, nil)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
@@ -58,7 +58,7 @@ func TestOneBlockShorter(t *testing.T) {
 
 	t.Run("Commit one block", func(t *testing.T) {
 		sid := td.sync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, sid,
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, message.ResponseCodeRejected.String(), sid,
 			lastBlockHeight+1, [][]byte{d1}, c1)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
@@ -114,7 +114,7 @@ func TestSyncing(t *testing.T) {
 	// -------------------------------
 	// For better logging when testing
 	overrideLogger := func(sync *synchronizer, name string) {
-		sync.logger = logger.NewLogger("_sync", &OverrideFingerprint{
+		sync.logger = logger.NewSubLogger("_sync", &OverrideStringer{
 			name: fmt.Sprintf("%s - %s: ", name, t.Name()), sync: sync})
 	}
 
@@ -126,12 +126,12 @@ func TestSyncing(t *testing.T) {
 	assert.NoError(t, syncBob.Start())
 
 	// Verify that Hello messages are exchanged between Alice and Bob
-	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeHello)
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeHello)
+	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
 
 	// Verify that Hello-ack messages are exchanged between Alice and Bob
-	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeHello)
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeHello)
+	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
 
 	// Ensure peers are connected and block heights are correct
 	assert.Equal(t, syncAlice.PeerSet().Len(), 1)
@@ -140,34 +140,34 @@ func TestSyncing(t *testing.T) {
 	assert.Equal(t, syncBob.state.LastBlockHeight(), uint32(100))
 
 	// Perform block syncing
-	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 1-11
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 12-22
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 23-23
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // NoMoreBlock
+	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 1-11
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 12-22
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 23-23
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // NoMoreBlock
 
-	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 24-34
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 35-45
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 46-46
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // NoMoreBlock
+	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 24-34
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 35-45
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 46-46
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // NoMoreBlock
 
-	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 47-57
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 58-68
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 69-69
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // NoMoreBlock
+	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 47-57
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 58-68
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 69-69
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // NoMoreBlock
 
-	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 70-80
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 81-91
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // 92-92
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // NoMoreBlock
+	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 70-80
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 81-91
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 92-92
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // NoMoreBlock
 
 	// Last block requests
-	shouldPublishMessageWithThisType(t, networkAlice, message.MessageTypeBlocksRequest)
-	shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse)        // 93-100
-	bdl := shouldPublishMessageWithThisType(t, networkBob, message.MessageTypeBlocksResponse) // Synced
+	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse)        // 93-100
+	bdl := shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // Synced
 
 	assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
 	// Alice needs more time to process all the bundles,

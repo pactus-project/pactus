@@ -48,7 +48,7 @@ func init() {
 	tCtx = context.Background()
 
 	tMockState.CommitTestBlocks(10)
-	logger := logger.NewLogger("_grpc", nil)
+	logger := logger.NewSubLogger("_grpc", nil)
 
 	s := grpc.NewServer()
 	blockchainServer := &blockchainServer{

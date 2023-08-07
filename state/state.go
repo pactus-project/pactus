@@ -19,6 +19,7 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
@@ -41,7 +42,7 @@ type state struct {
 	lastInfo        *lastinfo.LastInfo
 	accountMerkle   *persistentmerkle.Tree
 	validatorMerkle *persistentmerkle.Tree
-	logger          *logger.Logger
+	logger          *logger.SubLogger
 	eventCh         chan event.Event
 }
 
@@ -61,7 +62,7 @@ func LoadOrNewState(
 		validatorMerkle: persistentmerkle.New(),
 		eventCh:         eventCh,
 	}
-	st.logger = logger.NewLogger("_state", st)
+	st.logger = logger.NewSubLogger("_state", st)
 	st.store = store
 
 	// The first account is Treasury Account at the genesis time.
@@ -85,7 +86,7 @@ func LoadOrNewState(
 
 	txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 
-	st.logger.Debug("last info", "committers", st.committee.Committers(), "state_root", st.stateRoot().Fingerprint())
+	st.logger.Debug("last info", "committers", st.committee.Committers(), "state_root", st.stateRoot().ShortString())
 
 	return st, nil
 }
@@ -496,24 +497,23 @@ func (st *state) evaluateSortition() bool {
 	return evaluated
 }
 
-func (st *state) Fingerprint() string {
+func (st *state) String() string {
 	return fmt.Sprintf("{#%d ⌘ %v 🕣 %v}",
 		st.lastInfo.BlockHeight(),
-		st.lastInfo.BlockHash().Fingerprint(),
+		st.lastInfo.BlockHash().ShortString(),
 		st.lastInfo.BlockTime().Format("15.04.05"))
 }
 
 func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
-	joined := make([]*validator.Validator, 0)
-	currentHeight := sb.CurrentHeight()
-	sb.IterateValidators(func(val *validator.Validator, updated bool) {
-		if val.LastJoinedHeight() == currentHeight {
+	joiningCommittee := make([]*validator.Validator, 0)
+	sb.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
+		if joined {
 			st.logger.Info("new validator joined", "address", val.Address(), "power", val.Power())
 
-			joined = append(joined, val)
+			joiningCommittee = append(joiningCommittee, val)
 		}
 	})
-	st.committee.Update(round, joined)
+	st.committee.Update(round, joiningCommittee)
 
 	sb.IterateAccounts(func(addr crypto.Address, acc *account.Account, updated bool) {
 		if updated {
@@ -522,7 +522,7 @@ func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
 		}
 	})
 
-	sb.IterateValidators(func(val *validator.Validator, updated bool) {
+	sb.IterateValidators(func(val *validator.Validator, updated bool, _ bool) {
 		if updated {
 			st.store.UpdateValidator(val)
 			st.validatorMerkle.SetHash(int(val.Number()), val.Hash())
@@ -701,5 +701,25 @@ func (st *state) publishEvents(height uint32, block *block.Block) {
 		tx := block.Transactions().Get(i)
 		TxEvent := event.CreateNewTransactionEvent(tx.ID(), height)
 		st.eventCh <- TxEvent
+	}
+}
+
+func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, error) {
+	switch payloadType {
+	case payload.PayloadTypeTransfer,
+		payload.PayloadTypeBond,
+		payload.PayloadTypeWithdraw:
+		{
+			return execution.CalculateFee(amount, st.params), nil
+		}
+
+	case payload.PayloadTypeUnbond,
+		payload.PayloadTypeSortition:
+		{
+			return 0, nil
+		}
+
+	default:
+		return 0, errors.Errorf(errors.ErrInvalidTx, "unexpected tx type: %v", payloadType)
 	}
 }

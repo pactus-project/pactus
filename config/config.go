@@ -113,7 +113,7 @@ func SaveTestnetConfig(path string, numValidators int) error {
 		"/ip4/94.101.184.118/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
 	conf.GRPC.Enable = true
-	conf.GRPC.Listen = "[::]:9090"
+	conf.GRPC.Listen = "[::]:5105"
 	conf.GRPC.Gateway.Enable = true
 	conf.GRPC.Gateway.Listen = "[::]:80"
 	conf.HTTP.Enable = true

@@ -15,6 +15,6 @@ func TestParsingVoteMessages(t *testing.T) {
 		msg := message.NewVoteMessage(v)
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, td.RandomPeerID()))
-		assert.Equal(t, td.consMgr.PickRandomVote().Hash(), v.Hash())
+		assert.Equal(t, td.consMgr.PickRandomVote(0).Hash(), v.Hash())
 	})
 }

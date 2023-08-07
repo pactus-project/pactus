@@ -72,14 +72,14 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 	return nil, fmt.Errorf("unknown request")
 }
 
-func (s *blockchainServer) GetValidators(_ context.Context,
-	_ *pactus.GetValidatorsRequest) (*pactus.GetValidatorsResponse, error) {
-	return nil, nil
-}
-
 func (s *transactionServer) GetTransaction(_ context.Context,
 	_ *pactus.GetTransactionRequest) (*pactus.GetTransactionResponse, error) {
 	return nil, nil
+}
+
+func (s *transactionServer) CalculateFee(_ context.Context,
+	_ *pactus.CalculateFeeRequest) (*pactus.CalculateFeeResponse, error) {
+	return &pactus.CalculateFeeResponse{Fee: 0}, nil
 }
 
 func (s *transactionServer) SendRawTransaction(_ context.Context,

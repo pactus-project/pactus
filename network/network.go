@@ -11,11 +11,14 @@ import (
 	lp2pcrypto "github.com/libp2p/go-libp2p/core/crypto"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
+	rcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
+	rcmgrObs "github.com/libp2p/go-libp2p/p2p/host/resource-manager/obs"
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 var _ Network = &network{}
@@ -36,7 +39,7 @@ type network struct {
 	generalTopic   *lp2pps.Topic
 	consensusTopic *lp2pps.Topic
 	eventChannel   chan Event
-	logger         *logger.Logger
+	logger         *logger.SubLogger
 }
 
 func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
@@ -81,11 +84,34 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}
 
+	if conf.EnableMetrics {
+		rcmgrObs.MustRegisterWith(prometheus.DefaultRegisterer)
+	}
+
+	str, err := rcmgrObs.NewStatsTraceReporter()
+	if err != nil {
+		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+	}
+
+	rmgr, err := rcmgr.NewResourceManager(
+		rcmgr.NewFixedLimiter(rcmgr.DefaultLimits.AutoScale()),
+		rcmgr.WithTraceReporter(str),
+	)
+
+	if err != nil {
+		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+	}
+
 	opts = append(opts,
 		lp2p.Identity(networkKey),
 		lp2p.ListenAddrStrings(conf.Listens...),
 		lp2p.UserAgent(version.Agent()),
+		lp2p.ResourceManager(rmgr),
 	)
+
+	if !conf.EnableMetrics {
+		opts = append(opts, lp2p.DisableMetrics())
+	}
 
 	if conf.EnableNAT {
 		opts = append(opts,
@@ -133,7 +159,7 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 		eventChannel: make(chan Event, 100),
 	}
 
-	n.logger = logger.NewLogger("_network", n)
+	n.logger = logger.NewSubLogger("_network", n)
 
 	if conf.EnableMdns {
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
@@ -265,7 +291,7 @@ func (n *network) CloseConnection(pid lp2ppeer.ID) {
 	}
 }
 
-func (n *network) Fingerprint() string {
+func (n *network) String() string {
 	return fmt.Sprintf("{%d}", n.NumConnectedPeers())
 }
 

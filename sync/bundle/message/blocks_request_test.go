@@ -9,7 +9,7 @@ import (
 
 func TestLatestBlocksRequestType(t *testing.T) {
 	m := &BlocksRequestMessage{}
-	assert.Equal(t, m.Type(), MessageTypeBlocksRequest)
+	assert.Equal(t, m.Type(), TypeBlocksRequest)
 }
 
 func TestBlocksRequestMessage(t *testing.T) {
@@ -29,6 +29,6 @@ func TestBlocksRequestMessage(t *testing.T) {
 
 		assert.NoError(t, m.SanityCheck())
 		assert.Equal(t, m.To(), uint32(106))
-		assert.Contains(t, m.Fingerprint(), "100")
+		assert.Contains(t, m.String(), "100")
 	})
 }

@@ -35,9 +35,9 @@ func (m *BlocksRequestMessage) SanityCheck() error {
 }
 
 func (m *BlocksRequestMessage) Type() Type {
-	return MessageTypeBlocksRequest
+	return TypeBlocksRequest
 }
 
-func (m *BlocksRequestMessage) Fingerprint() string {
+func (m *BlocksRequestMessage) String() string {
 	return fmt.Sprintf("{⚓ %d %v:%v}", m.SessionID, m.From, m.To())
 }

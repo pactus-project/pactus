@@ -26,7 +26,7 @@ func (handler *queryVotesHandler) ParseMessage(m message.Message, initiator peer
 		if !handler.peerIsInTheCommittee(initiator) {
 			return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the committee")
 		}
-		v := handler.consMgr.PickRandomVote()
+		v := handler.consMgr.PickRandomVote(msg.Round)
 		if v != nil {
 			response := message.NewVoteMessage(v)
 			handler.broadcast(response)

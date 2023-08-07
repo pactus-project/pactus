@@ -9,7 +9,7 @@ import (
 
 func TestQueryVotesType(t *testing.T) {
 	m := &QueryVotesMessage{}
-	assert.Equal(t, m.Type(), MessageTypeQueryVotes)
+	assert.Equal(t, m.Type(), TypeQueryVotes)
 }
 
 func TestQueryVotesMessage(t *testing.T) {
@@ -23,6 +23,6 @@ func TestQueryVotesMessage(t *testing.T) {
 		m := NewQueryVotesMessage(100, 0)
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Contains(t, m.Fingerprint(), "100")
+		assert.Contains(t, m.String(), "100")
 	})
 }

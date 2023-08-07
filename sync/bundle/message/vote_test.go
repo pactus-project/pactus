@@ -10,7 +10,7 @@ import (
 
 func TestVoteType(t *testing.T) {
 	m := &VoteMessage{}
-	assert.Equal(t, m.Type(), MessageTypeVote)
+	assert.Equal(t, m.Type(), TypeVote)
 }
 
 func TestVoteMessage(t *testing.T) {
@@ -28,6 +28,6 @@ func TestVoteMessage(t *testing.T) {
 		m := NewVoteMessage(v)
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Contains(t, m.Fingerprint(), v.Fingerprint())
+		assert.Contains(t, m.String(), v.String())
 	})
 }

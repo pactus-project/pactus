@@ -9,7 +9,7 @@ import (
 
 func TestQueryProposalType(t *testing.T) {
 	m := &QueryProposalMessage{}
-	assert.Equal(t, m.Type(), MessageTypeQueryProposal)
+	assert.Equal(t, m.Type(), TypeQueryProposal)
 }
 
 func TestQueryProposalMessage(t *testing.T) {
@@ -23,6 +23,6 @@ func TestQueryProposalMessage(t *testing.T) {
 		m := NewQueryProposalMessage(100, 0)
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Contains(t, m.Fingerprint(), "100")
+		assert.Contains(t, m.String(), "100")
 	})
 }

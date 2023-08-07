@@ -82,6 +82,20 @@
           "items": {
             "$ref": "#/definitions/pactusPeerInfo"
           }
+        },
+        "sentBytes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "int64"
+          }
+        },
+        "receivedBytes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "int64"
+          }
         }
       }
     },
@@ -135,9 +149,19 @@
           "type": "integer",
           "format": "int32"
         },
+        "sentBytes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "int64"
+          }
+        },
         "receivedBytes": {
-          "type": "integer",
-          "format": "int32"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "int64"
+          }
         },
         "status": {
           "type": "integer",
@@ -158,6 +182,10 @@
         "sendFailed": {
           "type": "integer",
           "format": "int32"
+        },
+        "lastBlockHash": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },

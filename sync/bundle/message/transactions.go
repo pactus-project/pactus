@@ -32,14 +32,14 @@ func (m *TransactionsMessage) SanityCheck() error {
 }
 
 func (m *TransactionsMessage) Type() Type {
-	return MessageTypeTransactions
+	return TypeTransactions
 }
 
-func (m *TransactionsMessage) Fingerprint() string {
+func (m *TransactionsMessage) String() string {
 	var builder strings.Builder
 
 	for _, tx := range m.Transactions {
-		builder.WriteString(fmt.Sprintf("%v ", tx.ID().Fingerprint()))
+		builder.WriteString(fmt.Sprintf("%v ", tx.ID().ShortString()))
 	}
 	builder.WriteString(fmt.Sprintf("{%v: ⌘ [%v]}", len(m.Transactions), builder.String()))
 	return builder.String()

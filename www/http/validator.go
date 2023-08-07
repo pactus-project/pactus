@@ -18,19 +18,7 @@ func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	val := res.Validator
-	tm := newTableMaker()
-	tm.addRowString("Public Key", val.PublicKey)
-	tm.addRowValAddress("Address", val.Address)
-	tm.addRowInt("Number", int(val.Number))
-	tm.addRowInt("Sequence", int(val.Sequence))
-	tm.addRowAmount("Stake", val.Stake)
-	tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight))
-	tm.addRowInt("LastJoinedHeight", int(val.LastJoinedHeight))
-	tm.addRowInt("UnbondingHeight", int(val.UnbondingHeight))
-	tm.addRowBytes("Hash", val.Hash)
-
-	s.writeHTML(w, tm.html())
+	s.writeValidatorTable(w, res.Validator)
 }
 
 // GetValidatorByNumberHandler returns a handler to get validator by number.
@@ -51,7 +39,10 @@ func (s *Server) GetValidatorByNumberHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	val := res.Validator
+	s.writeValidatorTable(w, res.Validator)
+}
+
+func (s *Server) writeValidatorTable(w http.ResponseWriter, val *pactus.ValidatorInfo) {
 	tm := newTableMaker()
 	tm.addRowString("Public Key", val.PublicKey)
 	tm.addRowValAddress("Address", val.Address)
@@ -59,7 +50,7 @@ func (s *Server) GetValidatorByNumberHandler(w http.ResponseWriter, r *http.Requ
 	tm.addRowInt("Sequence", int(val.Sequence))
 	tm.addRowAmount("Stake", val.Stake)
 	tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight))
-	tm.addRowInt("LastJoinedHeight", int(val.LastJoinedHeight))
+	tm.addRowInt("LastSortitionHeight", int(val.LastSortitionHeight))
 	tm.addRowInt("UnbondingHeight", int(val.UnbondingHeight))
 	tm.addRowBytes("Hash", val.Hash)
 

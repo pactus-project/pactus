@@ -9,6 +9,7 @@ service Network {
   rpc GetNodeInfo(GetNodeInfoRequest) returns (GetNodeInfoResponse);
 }
 
+
 message GetNetworkInfoRequest {}
 
 message GetNetworkInfoResponse {
@@ -16,6 +17,8 @@ message GetNetworkInfoResponse {
   int32 total_received_bytes = 2;
   int64 started_at = 3;
   repeated PeerInfo peers = 4;
+  map<int32, int64> sent_bytes = 5;
+  map<int32, int64> received_bytes = 6;
 }
 
 message GetNodeInfoRequest {}
@@ -35,10 +38,12 @@ message PeerInfo {
   uint32 height = 6;
   int32 received_messages = 7;
   int32 invalid_messages = 8;
-  int32 received_bytes = 9;
-  int32 status = 10;
-  int64 last_sent = 11;
-  int64 last_received = 12;
-  int32 send_success = 13;
-  int32 send_failed = 14;
+  map<int32, int64> sent_bytes = 9;
+  map<int32, int64> received_bytes = 10;
+  int32 status = 11;
+  int64 last_sent = 12;
+  int64 last_received = 13;
+  int32 send_success = 14;
+  int32 send_failed = 15;
+  bytes last_block_hash = 16;
 }

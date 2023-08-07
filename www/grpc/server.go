@@ -21,7 +21,7 @@ type Server struct {
 	state    state.Facade
 	sync     sync.Synchronizer
 	consMgr  consensus.ManagerReader
-	logger   *logger.Logger
+	logger   *logger.SubLogger
 }
 
 func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
@@ -32,7 +32,7 @@ func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
 		state:   state,
 		sync:    sync,
 		consMgr: consMgr,
-		logger:  logger.NewLogger("_grpc", nil),
+		logger:  logger.NewSubLogger("_grpc", nil),
 	}
 }
 

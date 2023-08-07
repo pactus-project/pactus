@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/pactus-project/pactus/util"
@@ -28,14 +30,14 @@ type Server struct {
 	transaction pactus.TransactionClient
 	network     pactus.NetworkClient
 	listener    net.Listener
-	logger      *logger.Logger
+	logger      *logger.SubLogger
 }
 
 func NewServer(conf *Config) *Server {
 	return &Server{
 		ctx:    context.Background(),
 		config: conf,
-		logger: logger.NewLogger("_http", nil),
+		logger: logger.NewSubLogger("_http", nil),
 	}
 }
 
@@ -72,6 +74,7 @@ func (s *Server) StartServer(grpcServer string) error {
 	s.router.HandleFunc("/account/number/{number}", s.GetAccountByNumberHandler)
 	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)
 	s.router.HandleFunc("/validator/number/{number}", s.GetValidatorByNumberHandler)
+	http.Handle("/metrics/prometheus", promhttp.Handler())
 	http.Handle("/", handlers.RecoveryHandler()(s.router))
 
 	l, err := net.Listen("tcp", s.config.Listen)
@@ -130,6 +133,7 @@ func (s *Server) RootHandler(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
+	buf.WriteString("<a href=\"/metrics/prometheus\">/metrics/prometheus</a></br>")
 	buf.WriteString("</body></html>")
 	s.writeHTML(w, buf.String())
 }

@@ -46,8 +46,8 @@ type testData struct {
 	consP   *consensus // Partitioned peer
 }
 
-type OverrideFingerprint struct {
-	cons Consensus
+type OverrideStringer struct {
+	cons *consensus
 	name string
 }
 
@@ -58,8 +58,8 @@ func testConfig() *Config {
 	}
 }
 
-func (o *OverrideFingerprint) Fingerprint() string {
-	return o.name + o.cons.Fingerprint()
+func (o *OverrideStringer) String() string {
+	return o.name + o.cons.String()
 }
 
 func setup(t *testing.T) *testData {
@@ -114,8 +114,8 @@ func setup(t *testing.T) *testData {
 	// -------------------------------
 	// For better logging when testing
 	overrideLogger := func(cons *consensus, name string) {
-		cons.logger = logger.NewLogger("_consensus",
-			&OverrideFingerprint{name: fmt.Sprintf("%s - %s: ", name, t.Name()), cons: cons})
+		cons.logger = logger.NewSubLogger("_consensus",
+			&OverrideStringer{name: fmt.Sprintf("%s - %s: ", name, t.Name()), cons: cons})
 	}
 
 	overrideLogger(consX, "consX")
@@ -149,7 +149,7 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, ha
 		case msg := <-cons.broadcastCh:
 			logger.Info("shouldPublishBlockAnnounce", "message", msg)
 
-			if msg.Type() == message.MessageTypeBlockAnnounce {
+			if msg.Type() == message.TypeBlockAnnounce {
 				m := msg.(*message.BlockAnnounceMessage)
 				assert.Equal(t, m.Block.Hash(), hash)
 				return
@@ -175,7 +175,7 @@ func shouldPublishProposal(t *testing.T, cons *consensus,
 		case msg := <-cons.broadcastCh:
 			logger.Info("shouldPublishProposal", "message", msg)
 
-			if msg.Type() == message.MessageTypeProposal {
+			if msg.Type() == message.TypeProposal {
 				m := msg.(*message.ProposalMessage)
 				require.Equal(t, m.Proposal.Height(), height)
 				require.Equal(t, m.Proposal.Round(), round)
@@ -196,7 +196,7 @@ func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, he
 		case msg := <-cons.broadcastCh:
 			logger.Info("shouldPublishQueryProposal", "message", msg)
 
-			if msg.Type() == message.MessageTypeQueryProposal {
+			if msg.Type() == message.TypeQueryProposal {
 				m := msg.(*message.QueryProposalMessage)
 				assert.Equal(t, m.Height, height)
 				assert.Equal(t, m.Round, round)
@@ -216,7 +216,7 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vo
 		case msg := <-cons.broadcastCh:
 			logger.Info("shouldPublishVote", "message", msg)
 
-			if msg.Type() == message.MessageTypeVote {
+			if msg.Type() == message.TypeVote {
 				m := msg.(*message.VoteMessage)
 				if m.Vote.Type() == voteType &&
 					m.Vote.BlockHash().EqualsTo(hash) {
@@ -290,7 +290,7 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *block.
 	sig2 := td.signers[1].SignData(sb).(*bls.Signature)
 	sig4 := td.signers[3].SignData(sb).(*bls.Signature)
 
-	sig := bls.Aggregate([]*bls.Signature{sig1, sig2, sig4})
+	sig := bls.SignatureAggregate([]*bls.Signature{sig1, sig2, sig4})
 	cert := block.NewCertificate(0, []int32{0, 1, 2, 3}, []int32{2}, sig)
 	block := p.Block()
 
@@ -490,10 +490,10 @@ func TestConsensusInvalidVote(t *testing.T) {
 func TestPickRandomVote(t *testing.T) {
 	td := setup(t)
 
-	assert.Nil(t, td.consP.PickRandomVote())
+	assert.Nil(t, td.consP.PickRandomVote(0))
 
 	td.enterNewHeight(td.consP)
-	assert.Nil(t, td.consP.PickRandomVote())
+	assert.Nil(t, td.consP.PickRandomVote(0))
 
 	p1 := td.makeProposal(t, 1, 0)
 	p2 := td.makeProposal(t, 1, 1)
@@ -505,7 +505,7 @@ func TestPickRandomVote(t *testing.T) {
 	td.addVote(td.consP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexX)
 	td.addVote(td.consP, vote.VoteTypePrecommit, 1, 0, p1.Block().Hash(), tIndexY)
 
-	assert.NotNil(t, td.consP.PickRandomVote())
+	assert.NotNil(t, td.consP.PickRandomVote(0))
 
 	td.addVote(td.consP, vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, tIndexX)
 	td.addVote(td.consP, vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, tIndexY)
@@ -522,8 +522,8 @@ func TestPickRandomVote(t *testing.T) {
 	// Round 2
 	td.addVote(td.consP, vote.VoteTypeChangeProposer, 1, 2, hash.UndefHash, tIndexP)
 
-	for i := 0; i < 10; i++ {
-		rndVote := td.consP.PickRandomVote()
+	for r := int16(0); r <= 2; r++ {
+		rndVote := td.consP.PickRandomVote(r)
 		assert.NotNil(t, rndVote)
 		assert.Equal(t, rndVote.Type(), vote.VoteTypeChangeProposer,
 			"Should only pick Change Proposer votes")

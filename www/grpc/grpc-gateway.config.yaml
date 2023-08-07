@@ -19,9 +19,6 @@ http:
     - selector: pactus.Blockchain.GetAccountByNumber
       get: "/v1/blockchain/account/number/{number}"
 
-    - selector: pactus.Blockchain.GetValidators
-      get: "/v1/blockchain/validators"
-
     - selector: pactus.Blockchain.GetValidator
       get: "/v1/blockchain/validator/address/{address}"
 
@@ -44,6 +41,9 @@ http:
 
     - selector: pactus.Network.GetNodeInfo
       get: "/v1/network/node"
+
+    - selector: pactus.Transaction.CalculateFee
+      get: "/v1/transaction/amount/{amount}/payloadType/{payloadType}"
 
     # Wallet APIs
     - selector: pactus.Wallet.CreateWallet

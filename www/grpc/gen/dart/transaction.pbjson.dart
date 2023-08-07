@@ -57,6 +57,27 @@ const GetTransactionResponse$json = const {
 
 /// Descriptor for `GetTransactionResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getTransactionResponseDescriptor = $convert.base64Decode('ChZHZXRUcmFuc2FjdGlvblJlc3BvbnNlEiEKDGJsb2NrX2hlaWdodBgMIAEoDVILYmxvY2tIZWlnaHQSHQoKYmxvY2tfdGltZRgNIAEoDVIJYmxvY2tUaW1lEjkKC3RyYW5zYWN0aW9uGAMgASgLMhcucGFjdHVzLlRyYW5zYWN0aW9uSW5mb1ILdHJhbnNhY3Rpb24=');
+@$core.Deprecated('Use calculateFeeRequestDescriptor instead')
+const CalculateFeeRequest$json = const {
+  '1': 'CalculateFeeRequest',
+  '2': const [
+    const {'1': 'amount', '3': 1, '4': 1, '5': 3, '10': 'amount'},
+    const {'1': 'payloadType', '3': 2, '4': 1, '5': 14, '6': '.pactus.PayloadType', '10': 'payloadType'},
+  ],
+};
+
+/// Descriptor for `CalculateFeeRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List calculateFeeRequestDescriptor = $convert.base64Decode('ChNDYWxjdWxhdGVGZWVSZXF1ZXN0EhYKBmFtb3VudBgBIAEoA1IGYW1vdW50EjUKC3BheWxvYWRUeXBlGAIgASgOMhMucGFjdHVzLlBheWxvYWRUeXBlUgtwYXlsb2FkVHlwZQ==');
+@$core.Deprecated('Use calculateFeeResponseDescriptor instead')
+const CalculateFeeResponse$json = const {
+  '1': 'CalculateFeeResponse',
+  '2': const [
+    const {'1': 'fee', '3': 1, '4': 1, '5': 3, '10': 'fee'},
+  ],
+};
+
+/// Descriptor for `CalculateFeeResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List calculateFeeResponseDescriptor = $convert.base64Decode('ChRDYWxjdWxhdGVGZWVSZXNwb25zZRIQCgNmZWUYASABKANSA2ZlZQ==');
 @$core.Deprecated('Use sendRawTransactionRequestDescriptor instead')
 const SendRawTransactionRequest$json = const {
   '1': 'SendRawTransactionRequest',
@@ -145,7 +166,7 @@ const TransactionInfo$json = const {
     const {'1': 'sequence', '3': 5, '4': 1, '5': 5, '10': 'sequence'},
     const {'1': 'value', '3': 6, '4': 1, '5': 3, '10': 'value'},
     const {'1': 'fee', '3': 7, '4': 1, '5': 3, '10': 'fee'},
-    const {'1': 'PayloadType', '3': 8, '4': 1, '5': 14, '6': '.pactus.PayloadType', '10': 'PayloadType'},
+    const {'1': 'payloadType', '3': 8, '4': 1, '5': 14, '6': '.pactus.PayloadType', '10': 'payloadType'},
     const {'1': 'transfer', '3': 30, '4': 1, '5': 11, '6': '.pactus.PayloadTransfer', '9': 0, '10': 'transfer'},
     const {'1': 'bond', '3': 31, '4': 1, '5': 11, '6': '.pactus.PayloadBond', '9': 0, '10': 'bond'},
     const {'1': 'sortition', '3': 32, '4': 1, '5': 11, '6': '.pactus.PayloadSortition', '9': 0, '10': 'sortition'},
@@ -156,16 +177,17 @@ const TransactionInfo$json = const {
     const {'1': 'signature', '3': 11, '4': 1, '5': 12, '10': 'signature'},
   ],
   '8': const [
-    const {'1': 'Payload'},
+    const {'1': 'payload'},
   ],
 };
 
 /// Descriptor for `TransactionInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List transactionInfoDescriptor = $convert.base64Decode('Cg9UcmFuc2FjdGlvbkluZm8SDgoCaWQYASABKAxSAmlkEhIKBGRhdGEYAiABKAxSBGRhdGESGAoHdmVyc2lvbhgDIAEoBVIHdmVyc2lvbhIUCgVzdGFtcBgEIAEoDFIFc3RhbXASGgoIc2VxdWVuY2UYBSABKAVSCHNlcXVlbmNlEhQKBXZhbHVlGAYgASgDUgV2YWx1ZRIQCgNmZWUYByABKANSA2ZlZRI1CgtQYXlsb2FkVHlwZRgIIAEoDjITLnBhY3R1cy5QYXlsb2FkVHlwZVILUGF5bG9hZFR5cGUSNQoIdHJhbnNmZXIYHiABKAsyFy5wYWN0dXMuUGF5bG9hZFRyYW5zZmVySABSCHRyYW5zZmVyEikKBGJvbmQYHyABKAsyEy5wYWN0dXMuUGF5bG9hZEJvbmRIAFIEYm9uZBI4Cglzb3J0aXRpb24YICABKAsyGC5wYWN0dXMuUGF5bG9hZFNvcnRpdGlvbkgAUglzb3J0aXRpb24SLwoGdW5ib25kGCEgASgLMhUucGFjdHVzLlBheWxvYWRVbmJvbmRIAFIGdW5ib25kEjUKCHdpdGhkcmF3GCIgASgLMhcucGFjdHVzLlBheWxvYWRXaXRoZHJhd0gAUgh3aXRoZHJhdxISCgRtZW1vGAkgASgJUgRtZW1vEh0KCnB1YmxpY19rZXkYCiABKAlSCXB1YmxpY0tleRIcCglzaWduYXR1cmUYCyABKAxSCXNpZ25hdHVyZUIJCgdQYXlsb2Fk');
+final $typed_data.Uint8List transactionInfoDescriptor = $convert.base64Decode('Cg9UcmFuc2FjdGlvbkluZm8SDgoCaWQYASABKAxSAmlkEhIKBGRhdGEYAiABKAxSBGRhdGESGAoHdmVyc2lvbhgDIAEoBVIHdmVyc2lvbhIUCgVzdGFtcBgEIAEoDFIFc3RhbXASGgoIc2VxdWVuY2UYBSABKAVSCHNlcXVlbmNlEhQKBXZhbHVlGAYgASgDUgV2YWx1ZRIQCgNmZWUYByABKANSA2ZlZRI1CgtwYXlsb2FkVHlwZRgIIAEoDjITLnBhY3R1cy5QYXlsb2FkVHlwZVILcGF5bG9hZFR5cGUSNQoIdHJhbnNmZXIYHiABKAsyFy5wYWN0dXMuUGF5bG9hZFRyYW5zZmVySABSCHRyYW5zZmVyEikKBGJvbmQYHyABKAsyEy5wYWN0dXMuUGF5bG9hZEJvbmRIAFIEYm9uZBI4Cglzb3J0aXRpb24YICABKAsyGC5wYWN0dXMuUGF5bG9hZFNvcnRpdGlvbkgAUglzb3J0aXRpb24SLwoGdW5ib25kGCEgASgLMhUucGFjdHVzLlBheWxvYWRVbmJvbmRIAFIGdW5ib25kEjUKCHdpdGhkcmF3GCIgASgLMhcucGFjdHVzLlBheWxvYWRXaXRoZHJhd0gAUgh3aXRoZHJhdxISCgRtZW1vGAkgASgJUgRtZW1vEh0KCnB1YmxpY19rZXkYCiABKAlSCXB1YmxpY0tleRIcCglzaWduYXR1cmUYCyABKAxSCXNpZ25hdHVyZUIJCgdwYXlsb2Fk');
 const $core.Map<$core.String, $core.dynamic> TransactionServiceBase$json = const {
   '1': 'Transaction',
   '2': const [
     const {'1': 'GetTransaction', '2': '.pactus.GetTransactionRequest', '3': '.pactus.GetTransactionResponse'},
+    const {'1': 'CalculateFee', '2': '.pactus.CalculateFeeRequest', '3': '.pactus.CalculateFeeResponse'},
     const {'1': 'SendRawTransaction', '2': '.pactus.SendRawTransactionRequest', '3': '.pactus.SendRawTransactionResponse'},
   ],
 };
@@ -180,9 +202,11 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Transactio
   '.pactus.PayloadSortition': PayloadSortition$json,
   '.pactus.PayloadUnbond': PayloadUnbond$json,
   '.pactus.PayloadWithdraw': PayloadWithdraw$json,
+  '.pactus.CalculateFeeRequest': CalculateFeeRequest$json,
+  '.pactus.CalculateFeeResponse': CalculateFeeResponse$json,
   '.pactus.SendRawTransactionRequest': SendRawTransactionRequest$json,
   '.pactus.SendRawTransactionResponse': SendRawTransactionResponse$json,
 };
 
 /// Descriptor for `Transaction`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode('CgtUcmFuc2FjdGlvbhJPCg5HZXRUcmFuc2FjdGlvbhIdLnBhY3R1cy5HZXRUcmFuc2FjdGlvblJlcXVlc3QaHi5wYWN0dXMuR2V0VHJhbnNhY3Rpb25SZXNwb25zZRJbChJTZW5kUmF3VHJhbnNhY3Rpb24SIS5wYWN0dXMuU2VuZFJhd1RyYW5zYWN0aW9uUmVxdWVzdBoiLnBhY3R1cy5TZW5kUmF3VHJhbnNhY3Rpb25SZXNwb25zZQ==');
+final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode('CgtUcmFuc2FjdGlvbhJPCg5HZXRUcmFuc2FjdGlvbhIdLnBhY3R1cy5HZXRUcmFuc2FjdGlvblJlcXVlc3QaHi5wYWN0dXMuR2V0VHJhbnNhY3Rpb25SZXNwb25zZRJJCgxDYWxjdWxhdGVGZWUSGy5wYWN0dXMuQ2FsY3VsYXRlRmVlUmVxdWVzdBocLnBhY3R1cy5DYWxjdWxhdGVGZWVSZXNwb25zZRJbChJTZW5kUmF3VHJhbnNhY3Rpb24SIS5wYWN0dXMuU2VuZFJhd1RyYW5zYWN0aW9uUmVxdWVzdBoiLnBhY3R1cy5TZW5kUmF3VHJhbnNhY3Rpb25SZXNwb25zZQ==');

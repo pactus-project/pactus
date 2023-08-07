@@ -15,12 +15,12 @@ type mdnsService struct {
 	ctx     context.Context
 	host    lp2phost.Host
 	service lp2pmdns.Service
-	logger  *logger.Logger
+	logger  *logger.SubLogger
 }
 
 // newMdnsService creates an mDNS discovery service and attaches it to the libp2p Host.
 // This lets us automatically discover peers on the same LAN and connect to them.
-func newMdnsService(ctx context.Context, host lp2phost.Host, logger *logger.Logger) *mdnsService {
+func newMdnsService(ctx context.Context, host lp2phost.Host, logger *logger.SubLogger) *mdnsService {
 	mdns := &mdnsService{
 		ctx:    ctx,
 		host:   host,

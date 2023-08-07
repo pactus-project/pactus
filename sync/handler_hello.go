@@ -48,7 +48,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 		msg.Agent,
 		msg.PublicKey,
 		util.IsFlagSet(msg.Flags, message.FlagNodeNetwork))
-	handler.peerSet.UpdateHeight(initiator, msg.Height)
+	handler.peerSet.UpdateHeight(initiator, msg.Height, msg.BlockHash)
 
 	if !util.IsFlagSet(msg.Flags, message.FlagHelloAck) {
 		// TODO: Sends response only if there is a direct connection between two peers.

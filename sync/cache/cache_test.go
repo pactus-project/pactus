@@ -7,13 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestKeys(t *testing.T) {
-	assert.Equal(t, blockKey(1234),
-		key{0x1, 0xd2, 0x4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
-	assert.Equal(t, certificateKey(1234),
-		key{0x2, 0xd2, 0x4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
-}
-
 func TestCacheBlocks(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
@@ -51,7 +44,7 @@ func TestClearCache(t *testing.T) {
 
 	cache.AddBlock(2, b)
 
-	assert.Equal(t, cache.Len(), 2) // block + certificate
+	assert.Equal(t, cache.Len(), 1)
 	cache.Clear()
 	assert.Equal(t, cache.Len(), 0)
 	assert.Nil(t, cache.GetBlock(2))

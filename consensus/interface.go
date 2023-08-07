@@ -10,12 +10,11 @@ import (
 type Reader interface {
 	SignerKey() crypto.PublicKey
 	AllVotes() []*vote.Vote
-	PickRandomVote() *vote.Vote
+	PickRandomVote(round int16) *vote.Vote
 	RoundProposal(round int16) *proposal.Proposal
 	HasVote(hash hash.Hash) bool
 	HeightRound() (uint32, int16)
 	IsActive() bool
-	Fingerprint() string
 }
 
 type Consensus interface {
@@ -28,7 +27,7 @@ type Consensus interface {
 
 type ManagerReader interface {
 	Instances() []Reader
-	PickRandomVote() *vote.Vote
+	PickRandomVote(round int16) *vote.Vote
 	RoundProposal(round int16) *proposal.Proposal
 	HeightRound() (uint32, int16)
 	HasActiveInstance() bool

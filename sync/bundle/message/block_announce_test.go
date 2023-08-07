@@ -11,7 +11,7 @@ import (
 
 func TestBlockAnnounceType(t *testing.T) {
 	m := &BlockAnnounceMessage{}
-	assert.Equal(t, m.Type(), MessageTypeBlockAnnounce)
+	assert.Equal(t, m.Type(), TypeBlockAnnounce)
 }
 
 func TestBlockAnnounceMessage(t *testing.T) {
@@ -31,6 +31,6 @@ func TestBlockAnnounceMessage(t *testing.T) {
 		m := NewBlockAnnounceMessage(100, b, c)
 
 		assert.NoError(t, m.SanityCheck())
-		assert.Contains(t, m.Fingerprint(), "100")
+		assert.Contains(t, m.String(), "100")
 	})
 }

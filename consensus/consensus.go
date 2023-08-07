@@ -38,7 +38,7 @@ type consensus struct {
 	changeProposerState consState
 	broadcastCh         chan message.Message
 	mediator            mediator
-	logger              *logger.Logger
+	logger              *logger.SubLogger
 }
 
 func NewConsensus(
@@ -57,7 +57,7 @@ func NewConsensus(
 
 	// Update height later, See enterNewHeight.
 	cs.log = log.NewLog()
-	cs.logger = logger.NewLogger("_consensus", cs)
+	cs.logger = logger.NewSubLogger("_consensus", cs)
 	cs.rewardAddr = rewardAddr
 
 	cs.newHeightState = &newHeightState{cs}
@@ -82,9 +82,9 @@ func NewConsensus(
 	return cs
 }
 
-func (cs *consensus) Fingerprint() string {
+func (cs *consensus) String() string {
 	return fmt.Sprintf("{%s %d/%d/%s}",
-		cs.signer.Address().Fingerprint(),
+		cs.signer.Address().ShortString(),
 		cs.height, cs.round, cs.currentState.name())
 }
 
@@ -320,18 +320,17 @@ func (cs *consensus) IsActive() bool {
 }
 
 // TODO: Improve the performance?
-func (cs *consensus) PickRandomVote() *vote.Vote {
+func (cs *consensus) PickRandomVote(round int16) *vote.Vote {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	rndRound := util.RandInt16(cs.round + 1)
 	votes := []*vote.Vote{}
-	if rndRound == cs.round {
-		m := cs.log.MustGetRoundMessages(rndRound)
+	if round == cs.round {
+		m := cs.log.MustGetRoundMessages(round)
 		votes = append(votes, m.AllVotes()...)
 	} else {
 		// Don't broadcast prepare and precommit votes for previous rounds
-		vs := cs.log.ChangeProposerVoteSet(rndRound)
+		vs := cs.log.ChangeProposerVoteSet(round)
 		votes = append(votes, vs.AllVotes()...)
 	}
 	if len(votes) == 0 {

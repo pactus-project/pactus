@@ -34,9 +34,9 @@ func TestPeerSet(t *testing.T) {
 	t.Run("Testing MaxClaimedHeight", func(t *testing.T) {
 		assert.Equal(t, uint32(0), peerSet.MaxClaimedHeight())
 
-		peerSet.UpdateHeight(pid1, 100)
-		peerSet.UpdateHeight(pid2, 200)
-		peerSet.UpdateHeight(pid3, 150)
+		peerSet.UpdateHeight(pid1, 100, ts.RandomHash())
+		peerSet.UpdateHeight(pid2, 200, ts.RandomHash())
+		peerSet.UpdateHeight(pid3, 150, ts.RandomHash())
 
 		assert.Equal(t, uint32(200), peerSet.MaxClaimedHeight())
 	})
@@ -72,19 +72,37 @@ func TestPeerSet(t *testing.T) {
 	t.Run("Testing counters", func(t *testing.T) {
 		peerSet.IncreaseInvalidBundlesCounter(pid1)
 		peerSet.IncreaseReceivedBundlesCounter(pid1)
-		peerSet.IncreaseReceivedBytesCounter(pid1, 100)
-		peerSet.IncreaseTotalSentBytesCounter(200)
+		peerSet.IncreaseReceivedBytesCounter(pid1, message.TypeBlocksResponse, 100)
+		peerSet.IncreaseReceivedBytesCounter(pid1, message.TypeTransactions, 150)
+		peerSet.IncreaseSentBytesCounter(message.TypeBlocksRequest, 200, nil)
+		peerSet.IncreaseSentBytesCounter(message.TypeBlocksRequest, 250, &pid1)
 		peerSet.IncreaseSendFailedCounter(pid1)
 		peerSet.IncreaseSendSuccessCounter(pid1)
 
 		peer1 := peerSet.getPeer(pid1)
+
+		receivedBytes := make(map[message.Type]int64)
+		receivedBytes[message.TypeBlocksResponse] = 100
+		receivedBytes[message.TypeTransactions] = 150
+
+		sentBytes := make(map[message.Type]int64)
+		sentBytes[message.TypeBlocksRequest] = 450
+
 		assert.Equal(t, peer1.InvalidBundles, 1)
 		assert.Equal(t, peer1.ReceivedBundles, 1)
-		assert.Equal(t, peer1.ReceivedBytes, 100)
+		assert.Equal(t, peer1.ReceivedBytes[message.TypeBlocksResponse], int64(100))
+		assert.Equal(t, peer1.ReceivedBytes[message.TypeTransactions], int64(150))
 		assert.Equal(t, peer1.SendFailed, 1)
 		assert.Equal(t, peer1.SendSuccess, 1)
-		assert.Equal(t, peerSet.TotalReceivedBytes(), 100)
-		assert.Equal(t, peerSet.TotalSentBytes(), 200)
+		assert.Equal(t, peer1.SentBytes[message.TypeBlocksRequest], int64(250))
+
+		assert.Equal(t, peerSet.TotalReceivedBytes(), int64(250))
+		assert.Equal(t, peerSet.ReceivedBytesMessageType(message.TypeBlocksResponse), int64(100))
+		assert.Equal(t, peerSet.ReceivedBytesMessageType(message.TypeTransactions), int64(150))
+		assert.Equal(t, peerSet.ReceivedBytes(), receivedBytes)
+		assert.Equal(t, peerSet.TotalSentBytes(), int64(450))
+		assert.Equal(t, peerSet.SentBytesMessageType(message.TypeBlocksRequest), int64(450))
+		assert.Equal(t, peerSet.SentBytes(), sentBytes)
 	})
 
 	t.Run("Testing UpdateStatus", func(t *testing.T) {
