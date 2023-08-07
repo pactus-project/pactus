@@ -34,8 +34,8 @@ type synchronizer struct {
 	config          *Config
 	signers         []crypto.Signer
 	state           state.Facade
-	consMgr         consensus.Manager
 	peerSet         *peerset.PeerSet
+	consMgr         consensus.Manager
 	firewall        *firewall.Firewall
 	cache           *cache.Cache
 	handlers        map[message.Type]messageHandler
@@ -219,6 +219,12 @@ func (sync *synchronizer) receiveLoop() {
 					sync.peerSet.IncreaseSendFailedCounter(se.Source)
 					sync.logger.Warn("error on closing stream", "err", err)
 				}
+			case network.EventTypeConnect:
+				ce := e.(*network.ConnectEvent)
+				sync.peerSet.AddNewconnectedPeer(ce.PeerID)
+			case network.EventTypeDisconnect:
+				de := e.(*network.DisconnectEvent)
+				sync.peerSet.AddNewconnectedPeer(de.PeerID)
 			}
 
 			err := sync.processIncomingBundle(bdl)

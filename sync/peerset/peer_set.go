@@ -29,6 +29,7 @@ type PeerSet struct {
 	sentBytes          map[message.Type]int64
 	receivedBytes      map[message.Type]int64
 	startedAt          time.Time
+	connectedPeers     []peer.ID
 }
 
 func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
@@ -394,4 +395,20 @@ func (ps *PeerSet) StartedAt() time.Time {
 	defer ps.lk.RUnlock()
 
 	return ps.startedAt
+}
+
+func (ps *PeerSet) AddNewconnectedPeer(peerID peer.ID) {
+	ps.connectedPeers = append(ps.connectedPeers, peerID)
+}
+
+func (ps *PeerSet) DisconnectedPeer(peerID peer.ID) {
+	for i, p := range ps.connectedPeers {
+		if p == peerID {
+			// Remove the peer from the slice by swapping it with the last element
+			// and then reducing the slice length by one.
+			ps.connectedPeers[i] = ps.connectedPeers[len(ps.connectedPeers)-1]
+			ps.connectedPeers = ps.connectedPeers[:len(ps.connectedPeers)-1]
+			break
+		}
+	}
 }

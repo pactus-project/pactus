@@ -26,8 +26,10 @@ func (t TopicID) String() string {
 type EventType int
 
 const (
-	EventTypeGossip EventType = 1
-	EventTypeStream EventType = 2
+	EventTypeGossip     EventType = 1
+	EventTypeStream     EventType = 2
+	EventTypeConnect    EventType = 3
+	EventTypeDisconnect EventType = 4
 )
 
 func (t EventType) String() string {
@@ -36,6 +38,10 @@ func (t EventType) String() string {
 		return "gossip-msg"
 	case EventTypeStream:
 		return "stream-msg"
+	case EventTypeConnect:
+		return "connect-peer"
+	case EventTypeDisconnect:
+		return "disconnect-peer"
 	}
 	return "invalid"
 }
@@ -66,6 +72,24 @@ type StreamMessage struct {
 
 func (*StreamMessage) Type() EventType {
 	return EventTypeStream
+}
+
+// ConnectEvent represents a peer connection event.
+type ConnectEvent struct {
+	PeerID lp2pcore.PeerID
+}
+
+func (*ConnectEvent) Type() EventType {
+	return EventTypeConnect
+}
+
+// DisconnectEvent represents a peer disconnection event.
+type DisconnectEvent struct {
+	PeerID lp2pcore.PeerID
+}
+
+func (*DisconnectEvent) Type() EventType {
+	return EventTypeDisconnect
 }
 
 type Network interface {
