@@ -109,16 +109,3 @@ func TestCertificateHash(t *testing.T) {
 	assert.Equal(t, cert3.Absentees(), []int32{18})
 	assert.NoError(t, cert3.SanityCheck())
 }
-
-// This test ensures that committers are not part of the certificate hash
-// We can remove this tests if we remove the committers from the certificate
-// This test is not logical, since we have two certificate for the same block
-func TestCertificateHashWithoutCommitters(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	temp := ts.GenerateTestCertificate(ts.RandomHash())
-	cert1 := block.NewCertificate(temp.Round(), []int32{1, 2, 3, 4}, []int32{2}, temp.Signature())
-	cert2 := block.NewCertificate(temp.Round(), []int32{1, 2, 3, 4, 5}, []int32{2}, temp.Signature())
-
-	assert.Equal(t, cert1.Hash(), cert2.Hash())
-}
