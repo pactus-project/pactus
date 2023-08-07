@@ -302,3 +302,20 @@ func TestRemoveExpiredSessions(t *testing.T) {
 	time.Sleep(time.Second)
 	assert.False(t, ps.HasAnyOpenSession())
 }
+
+func TestConnectedPeers(t *testing.T) {
+	ps := NewPeerSet(time.Second)
+	pid1 := peer.ID("peer1")
+	pid2 := peer.ID("peer2")
+
+	assert.Empty(t, ps.connectedPeers)
+
+	ps.AddNewconnectedPeer(pid1)
+	ps.AddNewconnectedPeer(pid2)
+	assert.Contains(t, ps.connectedPeers, pid1)
+	assert.Contains(t, ps.connectedPeers, pid2)
+
+	ps.DisconnectedPeer(pid1)
+	assert.NotContains(t, ps.connectedPeers, pid1)
+	assert.Contains(t, ps.connectedPeers, pid2)
+}

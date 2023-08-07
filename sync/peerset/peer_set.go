@@ -39,6 +39,7 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 		sessionTimeout: sessionTimeout,
 		sentBytes:      make(map[message.Type]int64),
 		receivedBytes:  make(map[message.Type]int64),
+		connectedPeers: []peer.ID{},
 		startedAt:      time.Now(),
 	}
 }
@@ -404,8 +405,6 @@ func (ps *PeerSet) AddNewconnectedPeer(peerID peer.ID) {
 func (ps *PeerSet) DisconnectedPeer(peerID peer.ID) {
 	for i, p := range ps.connectedPeers {
 		if p == peerID {
-			// Remove the peer from the slice by swapping it with the last element
-			// and then reducing the slice length by one.
 			ps.connectedPeers[i] = ps.connectedPeers[len(ps.connectedPeers)-1]
 			ps.connectedPeers = ps.connectedPeers[:len(ps.connectedPeers)-1]
 			break
