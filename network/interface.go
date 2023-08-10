@@ -37,7 +37,7 @@ func (t EventType) String() string {
 	case EventTypeConnect:
 		return "connect-msg"
 	case EventTypeDisconnect:
-		return "disconnect-msg"
+		return "disconnect"
 	case EventTypeGossip:
 		return "gossip-msg"
 	case EventTypeStream:
