@@ -9,7 +9,6 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gotk3/gotk3 v0.6.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.0
-	github.com/jawher/mow.cli v1.2.0
 	github.com/kilic/bls12-381 v0.1.0
 	github.com/libp2p/go-libp2p v0.27.3
 	github.com/libp2p/go-libp2p-kad-dht v0.23.0

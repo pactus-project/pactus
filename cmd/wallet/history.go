@@ -45,7 +45,7 @@ func buildAddToHistoryCmd(parentCmd *cobra.Command) {
 
 func buildShowHistoryCmd(parentCmd *cobra.Command) {
 	var showHistoryCmd = &cobra.Command{
-		Use: "get",
+		Use:   "get",
 		Short: "Show the transaction history of any address",
 	}
 	parentCmd.AddCommand(showHistoryCmd)

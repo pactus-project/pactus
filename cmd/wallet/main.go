@@ -54,27 +54,28 @@ func main() {
 	buildRecoverCmd(rootCmd)
 	buildGetSeedCmd(rootCmd)
 	buildChangePasswordCmd(rootCmd)
-	// history command
+
+	// transaction commands
+	buildTransactionCmd(rootCmd)
+	buildTransferTxCmd(txCmd)
+	buildBondTxCmd(txCmd)
+	buildUnbondTxCmd(txCmd)
+	buildWithdrawTxCmd(txCmd)
+
+	// address commands
+	buildAddrCmd(rootCmd)
+	buildAllAddressesCmd(addrCmd)
+	buildNewAddressCmd(addrCmd)
+	buildBalanceCmd(addrCmd)
+	buildPrivateKeyCmd(addrCmd)
+	buildPublicKeyCmd(addrCmd)
+	buildImportPrivateKeyCmd(addrCmd)
+	buildSetLabelCmd(addrCmd)
+
+	// history commands
 	buildHistoryCmd(rootCmd)
 	buildAddToHistoryCmd(historyCmd)
 	buildShowHistoryCmd(historyCmd)
-
-	app.Command("address", "Manage address book", func(k *cli.Cmd) {
-		k.Command("new", "Creating a new address", NewAddress())
-		k.Command("all", "Show all addresses", AllAddresses())
-		k.Command("label", "Set label for the an address", SetLabel())
-		k.Command("balance", "Show the balance of an address", Balance())
-		k.Command("pub", "Show the public key of an address", PublicKey())
-		k.Command("priv", "Show the private key of an address", PrivateKey())
-		k.Command("import", "Import a private key into wallet", ImportPrivateKey())
-	})
-
-	app.Command("tx", "Create, sign and publish a transaction", func(k *cli.Cmd) {
-		k.Command("bond", "Create, sign and publish a Bond transaction", BondTx())
-		k.Command("transfer", "Create, sign and publish a Transfer transaction", TransferTx())
-		k.Command("unbond", "Create, sign and publish an Unbond transaction", UnbondTx())
-		k.Command("withdraw", "Create, sign and publish a Withdraw transaction", WithdrawTx())
-	})
 
 	err := rootCmd.Execute()
 	if err != nil {

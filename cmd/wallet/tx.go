@@ -1,216 +1,199 @@
 package main
 
 import (
-	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/spf13/cobra"
 )
 
-func TransferTx() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		fromArg := c.String(cli.StringArg{
-			Name: "FROM",
-			Desc: "sender address",
-		})
+var txCmd = &cobra.Command{
+	Use:   "tx",
+	Short: "Create, sign and publish a transaction",
+}
 
-		toArg := c.String(cli.StringArg{
-			Name: "TO",
-			Desc: "receiver address",
-		})
+func buildTransactionCmd(parentCmd *cobra.Command) {
+	parentCmd.AddCommand(txCmd)
+}
 
-		amtArg := c.Float64(cli.Float64Arg{
-			Name: "AMOUNT",
-			Desc: "the amount to be transferred",
-		})
-		stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(c)
-		passOpt := addPasswordOption(c)
+func buildTransferTxCmd(parentCmd *cobra.Command) {
+	var transferCmd = &cobra.Command{
+		Use:   "transfer",
+		Short: "Create, sign and publish a Transfer transaction",
+	}
+	parentCmd.AddCommand(transferCmd)
 
-		c.Action = func() {
-			w, err := openWallet()
-			cmd.FatalErrorCheck(err)
+	fromArg := transferCmd.Flags().String("FROM", "", "sender address")
+	toArg := transferCmd.Flags().String("TO", "", "receiver address")
+	amtArg := transferCmd.Flags().Float64("AMOUNT", 0, "the amount to be transferred")
 
-			opts := []wallet.TxOption{
-				wallet.OptionStamp(*stampOpt),
-				wallet.OptionFee(util.CoinToChange(*feeOpt)),
-				wallet.OptionSequence(int32(*seqOpt)),
-				wallet.OptionMemo(*memoOpt),
-			}
+	stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(parentCmd)
+	passOpt := addPasswordOption(parentCmd)
 
-			trx, err := w.MakeTransferTx(*fromArg, *toArg, util.CoinToChange(*amtArg),
-				opts...)
-			cmd.FatalErrorCheck(err)
+	transferCmd.Run = func(_ *cobra.Command, _ []string) {
+		w, err := openWallet()
+		cmd.FatalErrorCheck(err)
 
-			cmd.PrintLine()
-			cmd.PrintInfoMsg("You are going to sign this \033[1mSend\033[0m transition:")
-			cmd.PrintInfoMsg("From  : %s", *fromArg)
-			cmd.PrintInfoMsg("To    : %s", *toArg)
-			cmd.PrintInfoMsg("Amount: %.9f", *amtArg)
-			cmd.PrintInfoMsg("Fee   : %.9f", util.ChangeToCoin(trx.Fee()))
-
-			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
+		opts := []wallet.TxOption{
+			wallet.OptionStamp(*stampOpt),
+			wallet.OptionFee(util.CoinToChange(*feeOpt)),
+			wallet.OptionSequence(int32(*seqOpt)),
+			wallet.OptionMemo(*memoOpt),
 		}
+
+		trx, err := w.MakeTransferTx(*fromArg, *toArg, util.CoinToChange(*amtArg),
+			opts...)
+		cmd.FatalErrorCheck(err)
+
+		cmd.PrintLine()
+		cmd.PrintInfoMsg("You are going to sign this \033[1mSend\033[0m transition:")
+		cmd.PrintInfoMsg("From  : %s", *fromArg)
+		cmd.PrintInfoMsg("To    : %s", *toArg)
+		cmd.PrintInfoMsg("Amount: %.9f", *amtArg)
+		cmd.PrintInfoMsg("Fee   : %.9f", util.ChangeToCoin(trx.Fee()))
+
+		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 	}
 }
 
-func BondTx() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		fromArg := c.String(cli.StringArg{
-			Name: "FROM",
-			Desc: "sender account address",
-		})
+func buildBondTxCmd(parentCmd *cobra.Command) {
+	var bondTransactionCmd = &cobra.Command{
+		Use:   "bond",
+		Short: "Create, sign and publish a Bond transaction",
+	}
+	parentCmd.AddCommand(bondTransactionCmd)
 
-		toArg := c.String(cli.StringArg{
-			Name: "TO",
-			Desc: "receiver validator address",
-		})
+	fromArg := bondTransactionCmd.Flags().String("FROM", "", "sender address")
+	toArg := bondTransactionCmd.Flags().String("TO", "", "receiver validator address")
+	amtArg := bondTransactionCmd.Flags().Float64("STAKE", 0, "stake amount")
+	pubKeyOpt := bondTransactionCmd.Flags().String("pub", "", "validator public key")
 
-		amtArg := c.Float64(cli.Float64Arg{
-			Name: "STAKE",
-			Desc: "stake amount",
-		})
+	stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(parentCmd)
+	passOpt := addPasswordOption(parentCmd)
 
-		pubKeyOpt := c.String(cli.StringOpt{
-			Name: "pub",
-			Desc: "validator public key",
-		})
+	bondTransactionCmd.Run = func(_ *cobra.Command, _ []string) {
+		w, err := openWallet()
+		cmd.FatalErrorCheck(err)
 
-		stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(c)
-		passOpt := addPasswordOption(c)
-
-		c.Action = func() {
-			w, err := openWallet()
-			cmd.FatalErrorCheck(err)
-
-			opts := []wallet.TxOption{
-				wallet.OptionStamp(*stampOpt),
-				wallet.OptionFee(util.CoinToChange(*feeOpt)),
-				wallet.OptionSequence(int32(*seqOpt)),
-				wallet.OptionMemo(*memoOpt),
-			}
-
-			trx, err := w.MakeBondTx(*fromArg, *toArg, *pubKeyOpt,
-				util.CoinToChange(*amtArg), opts...)
-			cmd.FatalErrorCheck(err)
-
-			cmd.PrintLine()
-			cmd.PrintInfoMsg("You are going to sign this \033[1mBond\033[0m transition:")
-			cmd.PrintInfoMsg("Account  : %s", *fromArg)
-			cmd.PrintInfoMsg("Validator: %s", *toArg)
-			cmd.PrintInfoMsg("Amount   : %.9f", *amtArg)
-			cmd.PrintInfoMsg("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
-
-			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
+		opts := []wallet.TxOption{
+			wallet.OptionStamp(*stampOpt),
+			wallet.OptionFee(util.CoinToChange(*feeOpt)),
+			wallet.OptionSequence(int32(*seqOpt)),
+			wallet.OptionMemo(*memoOpt),
 		}
+
+		trx, err := w.MakeBondTx(*fromArg, *toArg, *pubKeyOpt,
+			util.CoinToChange(*amtArg), opts...)
+		cmd.FatalErrorCheck(err)
+
+		cmd.PrintLine()
+		cmd.PrintInfoMsg("You are going to sign this \033[1mBond\033[0m transition:")
+		cmd.PrintInfoMsg("Account  : %s", *fromArg)
+		cmd.PrintInfoMsg("Validator: %s", *toArg)
+		cmd.PrintInfoMsg("Amount   : %.9f", *amtArg)
+		cmd.PrintInfoMsg("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
+
+		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 	}
 }
 
-func UnbondTx() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		fromArg := c.String(cli.StringArg{
-			Name: "ADDR",
-			Desc: "validator's address",
-		})
-		stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(c)
-		passOpt := addPasswordOption(c)
+func buildUnbondTxCmd(parentCmd *cobra.Command) {
+	var unbondTransactionCmd = &cobra.Command{
+		Use:   "unbond",
+		Short: "Create, sign and publish an Unbond transaction",
+	}
+	parentCmd.AddCommand(unbondTransactionCmd)
 
-		c.Action = func() {
-			w, err := openWallet()
-			cmd.FatalErrorCheck(err)
+	fromArg := unbondTransactionCmd.Flags().String("ADDR", "",
+		"validator's address")
 
-			opts := []wallet.TxOption{
-				wallet.OptionStamp(*stampOpt),
-				wallet.OptionFee(util.CoinToChange(*feeOpt)),
-				wallet.OptionSequence(int32(*seqOpt)),
-				wallet.OptionMemo(*memoOpt),
-			}
+	stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(parentCmd)
+	passOpt := addPasswordOption(parentCmd)
 
-			trx, err := w.MakeUnbondTx(*fromArg, opts...)
-			cmd.FatalErrorCheck(err)
+	unbondTransactionCmd.Run = func(_ *cobra.Command, _ []string) {
+		w, err := openWallet()
+		cmd.FatalErrorCheck(err)
 
-			cmd.PrintLine()
-			cmd.PrintInfoMsg("You are going to sign this \033[1mUnbond\033[0m transition:")
-			cmd.PrintInfoMsg("Validator: %s", *fromArg)
-			cmd.PrintInfoMsg("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
-
-			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
+		opts := []wallet.TxOption{
+			wallet.OptionStamp(*stampOpt),
+			wallet.OptionFee(util.CoinToChange(*feeOpt)),
+			wallet.OptionSequence(int32(*seqOpt)),
+			wallet.OptionMemo(*memoOpt),
 		}
+
+		trx, err := w.MakeUnbondTx(*fromArg, opts...)
+		cmd.FatalErrorCheck(err)
+
+		cmd.PrintLine()
+		cmd.PrintInfoMsg("You are going to sign this \033[1mUnbond\033[0m transition:")
+		cmd.PrintInfoMsg("Validator: %s", *fromArg)
+		cmd.PrintInfoMsg("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
+
+		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 	}
 }
 
-func WithdrawTx() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		fromArg := c.String(cli.StringArg{
-			Name: "FROM",
-			Desc: "withdraw from Validator address",
-		})
+func buildWithdrawTxCmd(parentCmd *cobra.Command) {
+	var withdrawTransactionCmd = &cobra.Command{
+		Use:   "withdraw",
+		Short: "Create, sign and publish a Withdraw transaction",
+	}
+	parentCmd.AddCommand(withdrawTransactionCmd)
 
-		toArg := c.String(cli.StringArg{
-			Name: "TO",
-			Desc: "deposit to account address",
-		})
+	fromArg := withdrawTransactionCmd.Flags().String("FROM",
+		"", "withdraw from Validator address")
 
-		amtArg := c.Float64(cli.Float64Arg{
-			Name: "AMOUNT",
-			Desc: "the amount to be transferred",
-		})
-		stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(c)
-		passOpt := addPasswordOption(c)
+	toArg := withdrawTransactionCmd.Flags().String("TO",
+		"", "deposit to account address")
 
-		c.Action = func() {
-			w, err := openWallet()
-			cmd.FatalErrorCheck(err)
+	amtArg := withdrawTransactionCmd.Flags().Float64("AMOUNT",
+		0, "the amount to be transferred")
 
-			opts := []wallet.TxOption{
-				wallet.OptionStamp(*stampOpt),
-				wallet.OptionFee(util.CoinToChange(*feeOpt)),
-				wallet.OptionSequence(int32(*seqOpt)),
-				wallet.OptionMemo(*memoOpt),
-			}
+	stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(parentCmd)
+	passOpt := addPasswordOption(parentCmd)
 
-			trx, err := w.MakeWithdrawTx(*fromArg, *toArg,
-				util.CoinToChange(*amtArg), opts...)
-			cmd.FatalErrorCheck(err)
+	withdrawTransactionCmd.Run = func(_ *cobra.Command, _ []string) {
+		w, err := openWallet()
+		cmd.FatalErrorCheck(err)
 
-			cmd.PrintLine()
-			cmd.PrintInfoMsg("You are going to sign this \033[1mWithdraw\033[0m transition:")
-			cmd.PrintInfoMsg("Validator: %s", *fromArg)
-			cmd.PrintInfoMsg("Account  : %s", *toArg)
-			cmd.PrintInfoMsg("Amount   : %.9f", *amtArg)
-			cmd.PrintInfoMsg("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
-
-			signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
+		opts := []wallet.TxOption{
+			wallet.OptionStamp(*stampOpt),
+			wallet.OptionFee(util.CoinToChange(*feeOpt)),
+			wallet.OptionSequence(int32(*seqOpt)),
+			wallet.OptionMemo(*memoOpt),
 		}
+
+		trx, err := w.MakeWithdrawTx(*fromArg, *toArg,
+			util.CoinToChange(*amtArg), opts...)
+		cmd.FatalErrorCheck(err)
+
+		cmd.PrintLine()
+		cmd.PrintInfoMsg("You are going to sign this \033[1mWithdraw\033[0m transition:")
+		cmd.PrintInfoMsg("Validator: %s", *fromArg)
+		cmd.PrintInfoMsg("Account  : %s", *toArg)
+		cmd.PrintInfoMsg("Amount   : %.9f", *amtArg)
+		cmd.PrintInfoMsg("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
+
+		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 	}
 }
 
-func addCommonTxOptions(c *cli.Cmd) (*string, *int, *float64, *string, *bool) {
-	stampOpt := c.String(cli.StringOpt{
-		Name:  "stamp",
-		Desc:  "transaction stamp, if not specified will query from gRPC server",
-		Value: "",
-	})
-	seqOpt := c.Int(cli.IntOpt{
-		Name:  "seq",
-		Desc:  "transaction sequence, if not specified will query from gRPC server",
-		Value: 0,
-	})
-	feeOpt := c.Float64(cli.Float64Opt{
-		Name:  "fee",
-		Desc:  "transaction fee, if not specified will calculate automatically",
-		Value: 0,
-	})
-	memoOpt := c.String(cli.StringOpt{
-		Name:  "memo",
-		Desc:  "transaction memo, maximum should be 64 character (optional)",
-		Value: "",
-	})
-	noConfirmOpt := c.Bool(cli.BoolOpt{
-		Name:  "no-confirm",
-		Desc:  "no confirmation question (optional)",
-		Value: false,
-	})
+func addCommonTxOptions(c *cobra.Command) (*string, *int, *float64, *string, *bool) {
+	stampOpt := c.Flags().String("stamp", "",
+		"transaction stamp, if not specified will query from gRPC server")
+
+	seqOpt := c.Flags().Int("seq", 0,
+		"transaction sequence, if not specified will query from gRPC server")
+
+	feeOpt := c.Flags().Float64("fee", 0,
+		"transaction fee, if not specified will calculate automatically")
+
+	memoOpt := c.Flags().String("memo", "",
+		"transaction memo, maximum should be 64 character (optional)")
+
+	noConfirmOpt := c.Flags().Bool("no-confirm", false,
+		"no confirmation question (optional)")
 
 	return stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt
 }
