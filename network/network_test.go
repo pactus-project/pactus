@@ -66,7 +66,7 @@ func testConfig() *Config {
 	}
 }
 
-func shouldReceiveEvent(t *testing.T, net *network) Event {
+func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -75,7 +75,9 @@ func shouldReceiveEvent(t *testing.T, net *network) Event {
 			require.NoError(t, fmt.Errorf("shouldReceiveEvent Timeout, test: %v id:%s", t.Name(), net.SelfID().String()))
 			return nil
 		case e := <-net.EventChannel():
-			return e
+			if e.Type() == eventType {
+				return e
+			}
 		}
 	}
 }
@@ -225,10 +227,10 @@ func TestNetwork(t *testing.T) {
 
 		require.NoError(t, networkP.Broadcast(msg, TopicIDGeneral))
 
-		eB := shouldReceiveEvent(t, networkB).(*GossipMessage)
-		eM := shouldReceiveEvent(t, networkM).(*GossipMessage)
-		eN := shouldReceiveEvent(t, networkN).(*GossipMessage)
-		eX := shouldReceiveEvent(t, networkX).(*GossipMessage)
+		eB := shouldReceiveEvent(t, networkB, EventTypeGossip).(*GossipMessage)
+		eM := shouldReceiveEvent(t, networkM, EventTypeGossip).(*GossipMessage)
+		eN := shouldReceiveEvent(t, networkN, EventTypeGossip).(*GossipMessage)
+		eX := shouldReceiveEvent(t, networkX, EventTypeGossip).(*GossipMessage)
 
 		assert.Equal(t, eB.Source, networkP.SelfID())
 		assert.Equal(t, eM.Source, networkP.SelfID())
@@ -246,9 +248,9 @@ func TestNetwork(t *testing.T) {
 
 		require.NoError(t, networkP.Broadcast(msg, TopicIDConsensus))
 
-		eB := shouldReceiveEvent(t, networkB).(*GossipMessage)
-		eM := shouldReceiveEvent(t, networkM).(*GossipMessage)
-		eN := shouldReceiveEvent(t, networkN).(*GossipMessage)
+		eB := shouldReceiveEvent(t, networkB, EventTypeGossip).(*GossipMessage)
+		eM := shouldReceiveEvent(t, networkM, EventTypeGossip).(*GossipMessage)
+		eN := shouldReceiveEvent(t, networkN, EventTypeGossip).(*GossipMessage)
 		shouldNotReceiveEvent(t, networkX)
 
 		assert.Equal(t, eB.Source, networkP.SelfID())
@@ -270,7 +272,7 @@ func TestNetwork(t *testing.T) {
 		msgB := []byte("test-stream-from-b")
 
 		require.NoError(t, networkB.SendTo(msgB, networkP.SelfID()))
-		eB := shouldReceiveEvent(t, networkP).(*StreamMessage)
+		eB := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
 		assert.Equal(t, eB.Source, networkB.SelfID())
 		assert.Equal(t, readData(t, eB.Reader, len(msgB)), msgB)
 	})
@@ -279,7 +281,7 @@ func TestNetwork(t *testing.T) {
 		msgM := []byte("test-stream-from-m")
 
 		require.NoError(t, networkM.SendTo(msgM, networkN.SelfID()))
-		eM := shouldReceiveEvent(t, networkN).(*StreamMessage)
+		eM := shouldReceiveEvent(t, networkN, EventTypeStream).(*StreamMessage)
 		assert.Equal(t, eM.Source, networkM.SelfID())
 		assert.Equal(t, readData(t, eM.Reader, len(msgM)), msgM)
 	})
@@ -295,7 +297,8 @@ func TestNetwork(t *testing.T) {
 
 		networkP.Stop()
 		networkB.CloseConnection(networkP.SelfID())
-
+		e := shouldReceiveEvent(t, networkB, EventTypeDisconnect).(*DisconnectEvent)
+		assert.Equal(t, e.PeerID, networkP.SelfID())
 		require.Error(t, networkB.SendTo(msgB, networkP.SelfID()))
 	})
 }
