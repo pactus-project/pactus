@@ -172,7 +172,7 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf.Bootstrap, n.logger)
 	n.stream = newStreamService(ctx, n.host, streamProtocolID, relayAddrs, n.eventChannel, n.logger)
 	n.gossip = newGossipService(ctx, n.host, n.eventChannel, n.logger)
-	n.notifee = newNotifeeService(n.host, n.eventChannel)
+	n.notifee = newNotifeeService(n.host, n.eventChannel, n.logger)
 
 	n.host.Network().Notify(n.notifee)
 
