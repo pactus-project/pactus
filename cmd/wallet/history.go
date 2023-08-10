@@ -15,7 +15,6 @@ func AddToHistory() func(c *cli.Cmd) {
 			Desc: "transaction id",
 		})
 
-		c.Before = func() {}
 		c.Action = func() {
 			wallet, err := openWallet()
 			cmd.FatalErrorCheck(err)

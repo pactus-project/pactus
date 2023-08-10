@@ -51,7 +51,6 @@ func ChangePassword() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		passOpt := addPasswordOption(c)
 
-		c.Before = func() {}
 		c.Action = func() {
 			wallet, err := openWallet()
 			cmd.FatalErrorCheck(err)

@@ -15,7 +15,6 @@ func Recover() func(c *cli.Cmd) {
 			Name: "s seed",
 			Desc: "wallet seed phrase (mnemonic)",
 		})
-		c.Before = func() {}
 		c.Action = func() {
 			mnemonic := *seedOpt
 			if mnemonic == "" {
@@ -40,7 +39,6 @@ func GetSeed() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		passOpt := addPasswordOption(c)
 
-		c.Before = func() {}
 		c.Action = func() {
 			wallet, err := openWallet()
 			cmd.FatalErrorCheck(err)

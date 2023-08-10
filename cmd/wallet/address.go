@@ -178,7 +178,6 @@ func SetLabel() func(c *cli.Cmd) {
 	return func(c *cli.Cmd) {
 		addrArg := addAddressArg(c)
 
-		c.Before = func() {}
 		c.Action = func() {
 			wallet, err := openWallet()
 			cmd.FatalErrorCheck(err)

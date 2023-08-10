@@ -27,7 +27,6 @@ func TransferTx() func(c *cli.Cmd) {
 		stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(c)
 		passOpt := addPasswordOption(c)
 
-		c.Before = func() {}
 		c.Action = func() {
 			w, err := openWallet()
 			cmd.FatalErrorCheck(err)
@@ -80,7 +79,6 @@ func BondTx() func(c *cli.Cmd) {
 		stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(c)
 		passOpt := addPasswordOption(c)
 
-		c.Before = func() {}
 		c.Action = func() {
 			w, err := openWallet()
 			cmd.FatalErrorCheck(err)
@@ -117,7 +115,6 @@ func UnbondTx() func(c *cli.Cmd) {
 		stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(c)
 		passOpt := addPasswordOption(c)
 
-		c.Before = func() {}
 		c.Action = func() {
 			w, err := openWallet()
 			cmd.FatalErrorCheck(err)
@@ -161,7 +158,6 @@ func WithdrawTx() func(c *cli.Cmd) {
 		stampOpt, seqOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(c)
 		passOpt := addPasswordOption(c)
 
-		c.Before = func() {}
 		c.Action = func() {
 			w, err := openWallet()
 			cmd.FatalErrorCheck(err)
