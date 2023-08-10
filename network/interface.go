@@ -35,9 +35,9 @@ const (
 func (t EventType) String() string {
 	switch t {
 	case EventTypeConnect:
-		return "connect-msg"
+		return "connect"
 	case EventTypeDisconnect:
-		return "disconnect-msg"
+		return "disconnect"
 	case EventTypeGossip:
 		return "gossip-msg"
 	case EventTypeStream:
@@ -74,6 +74,7 @@ func (*StreamMessage) Type() EventType {
 	return EventTypeStream
 }
 
+// ConnectEvent represents a peer connection event.
 type ConnectEvent struct {
 	PeerID lp2pcore.PeerID
 }
