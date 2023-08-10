@@ -1,15 +1,14 @@
 module github.com/pactus-project/pactus
 
-go 1.19
+go 1.21
 
 require (
 	github.com/fxamacker/cbor/v2 v2.4.0
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
-	github.com/gotk3/gotk3 v0.6.2
+	github.com/gotk3/gotk3 v0.6.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.0
-	github.com/hashicorp/golang-lru/v2 v2.0.2
 	github.com/jawher/mow.cli v1.2.0
 	github.com/kilic/bls12-381 v0.1.0
 	github.com/libp2p/go-libp2p v0.27.3
@@ -20,15 +19,20 @@ require (
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/errors v0.9.1
 	github.com/rakyll/statik v0.1.7
-	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.2
 	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 	github.com/tyler-smith/go-bip39 v1.1.0
 	go.nanomsg.org/mangos/v3 v3.4.2
 	golang.org/x/crypto v0.7.0
-	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
 	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.30.0
+)
+
+require (
+	github.com/hashicorp/golang-lru v0.6.0 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
 )
 
 require (
@@ -60,9 +64,8 @@ require (
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/hashicorp/golang-lru v0.6.0 // indirect
+	github.com/hashicorp/golang-lru/v2 v2.0.2
 	github.com/huin/goupnp v1.1.0 // indirect
-	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/ipfs/boxo v0.8.0 // indirect
 	github.com/ipfs/go-cid v0.4.1 // indirect
 	github.com/ipfs/go-datastore v0.6.0 // indirect
@@ -89,7 +92,6 @@ require (
 	github.com/libp2p/go-yamux/v4 v4.0.0 // indirect
 	github.com/libp2p/zeroconf/v2 v2.2.0 // indirect
 	github.com/marten-seemann/tcp v0.0.0-20210406111302-dfbc87cc63fd // indirect
-	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/miekg/dns v1.1.53 // indirect
@@ -125,7 +127,7 @@ require (
 	github.com/rs/zerolog v1.30.0
 	github.com/smartystreets/assertions v1.13.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/spf13/cobra v1.7.0
 	github.com/whyrusleeping/go-keyspace v0.0.0-20160322163242-5b898ac5add1 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	go.opencensus.io v0.24.0 // indirect
@@ -136,6 +138,7 @@ require (
 	go.uber.org/fx v1.19.2 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect
+	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
 	golang.org/x/mod v0.10.0 // indirect
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect

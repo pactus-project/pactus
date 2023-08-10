@@ -27,8 +27,6 @@ import (
 	"github.com/pactus-project/pactus/wallet"
 )
 
-var Pactus = ``
-
 // terminalSupported returns true if the current terminal supports
 // line editing features.
 func terminalSupported() bool {
