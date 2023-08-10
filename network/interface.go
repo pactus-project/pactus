@@ -35,7 +35,7 @@ const (
 func (t EventType) String() string {
 	switch t {
 	case EventTypeConnect:
-		return "connect-msg"
+		return "connect"
 	case EventTypeDisconnect:
 		return "disconnect"
 	case EventTypeGossip:
