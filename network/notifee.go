@@ -10,7 +10,7 @@ type NotifeeService struct {
 	eventChannel chan<- Event
 }
 
-func NewNotifeeService(host lp2phost.Host, eventChannel chan<- Event) *NotifeeService {
+func newNotifeeService(host lp2phost.Host, eventChannel chan<- Event) *NotifeeService {
 	notifee := &NotifeeService{
 		eventChannel: eventChannel,
 	}
@@ -25,11 +25,14 @@ func (n *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn)
 func (n *NotifeeService) Disconnected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
 	n.eventChannel <- &DisconnectEvent{PeerID: conn.RemotePeer()}
 }
+
 func (n *NotifeeService) Listen(_ lp2pnetwork.Network, _ ma.Multiaddr) {
 	// Handle listen event if needed.
+	// TODO: Log
 }
 
 // ListenClose is called when your node stops listening on an address.
 func (n *NotifeeService) ListenClose(_ lp2pnetwork.Network, _ ma.Multiaddr) {
 	// Handle listen close event if needed.
+	// TODO: Log
 }
