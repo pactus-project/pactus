@@ -54,6 +54,10 @@ func main() {
 	buildRecoverCmd(rootCmd)
 	buildGetSeedCmd(rootCmd)
 	buildChangePasswordCmd(rootCmd)
+	// history command
+	buildHistoryCmd(rootCmd)
+	buildAddToHistoryCmd(historyCmd)
+	buildShowHistoryCmd(historyCmd)
 
 	app.Command("address", "Manage address book", func(k *cli.Cmd) {
 		k.Command("new", "Creating a new address", NewAddress())
@@ -70,11 +74,6 @@ func main() {
 		k.Command("transfer", "Create, sign and publish a Transfer transaction", TransferTx())
 		k.Command("unbond", "Create, sign and publish an Unbond transaction", UnbondTx())
 		k.Command("withdraw", "Create, sign and publish a Withdraw transaction", WithdrawTx())
-	})
-	
-	app.Command("history", "Check the wallet history", func(k *cli.Cmd) {
-		k.Command("add", "Add a transaction to the wallet history", AddToHistory())
-		k.Command("get", "Show the transaction history of any address", ShowHistory())
 	})
 
 	err := rootCmd.Execute()

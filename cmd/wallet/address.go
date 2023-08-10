@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util"
+	"github.com/spf13/cobra"
 )
 
 // AllAddresses lists all the wallet addresses.
@@ -197,11 +198,7 @@ func SetLabel() func(c *cli.Cmd) {
 	}
 }
 
-func addAddressArg(c *cli.Cmd) *string {
-	addrArg := c.String(cli.StringArg{
-		Name: "ADDRESS",
-		Desc: "address string",
-	})
-
-	return addrArg
+func addAddressArg(c *cobra.Command) *string {
+	return c.Flags().String("ADDRESS",
+	 "", "address string")
 }

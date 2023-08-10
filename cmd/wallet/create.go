@@ -43,7 +43,7 @@ func buildGenerateCmd(parentCmd *cobra.Command) {
 // ChangePassword updates the wallet password.
 func buildChangePasswordCmd(parentCmd *cobra.Command) {
 	var changePasswordCmd = &cobra.Command{
-		Use: "password",
+		Use:   "password",
 		Short: "Change wallet password",
 	}
 	parentCmd.AddCommand(changePasswordCmd)
