@@ -21,6 +21,7 @@ devtools:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 	go install github.com/bufbuild/buf/cmd/buf@v1.25.0
+	go install github.com/essentialkaos/aligo@latest
 	go install github.com/rakyll/statik@v0.1
 
 ########################################
@@ -80,7 +81,7 @@ check:
 		--enable=whitespace \
 		--enable=goimports \
 		--enable=gocyclo \
-		--enable=lll
+		--enable=lll && aligo check $(PACKAGES)
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
