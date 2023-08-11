@@ -65,7 +65,9 @@ jobs:
     - uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
-        update: true
+        # Comment this line to install go1.20 instead of go1.21
+        # TODO: Uncomment it later
+        # update: true
         install:
           git
           make
