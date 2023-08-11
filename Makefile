@@ -83,7 +83,7 @@ check:
 		--enable=gocyclo \
 		--enable=lll 
 		
-	aligo check $(PACKAGES)
+	aligo --tags "${BUILD_TAG}" check ./...
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
