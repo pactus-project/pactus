@@ -83,5 +83,11 @@ jobs:
       run: |
         # This fixes a bug in pkgconfig: invalid flag in pkg-config --libs: -Wl,-luuid
         sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
+
+        # It looks like GitHub Actions for Windows has an issue. We received the following error:
+        # "GOPROXY list is not the empty string, but contains no entries."
+        # The line below fixes this issue.
+        # Feel free to delete this line in the future if the issue is resolved.
         export GOPROXY=https://proxy.golang.org
+
         make build_gui
