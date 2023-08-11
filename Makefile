@@ -82,6 +82,7 @@ check:
 		--enable=goimports \
 		--enable=gocyclo \
 		--enable=lll 
+		
 	aligo check $(PACKAGES)
 
 # To avoid unintended conflicts with file names, always add to .PHONY
