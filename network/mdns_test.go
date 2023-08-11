@@ -26,7 +26,9 @@ func TestMDNS(t *testing.T) {
 
 	msg := []byte("test-mdns")
 	assert.NoError(t, net1.SendTo(msg, net2.SelfID()))
-	e := shouldReceiveEvent(t, net2).(*StreamMessage)
-	assert.Equal(t, e.Source, net1.SelfID())
-	assert.Equal(t, readData(t, e.Reader, len(msg)), msg)
+	e1 := shouldReceiveEvent(t, net2, EventTypeConnect).(*ConnectEvent)
+	assert.Equal(t, e1.PeerID, net1.SelfID())
+	e2 := shouldReceiveEvent(t, net2, EventTypeStream).(*StreamMessage)
+	assert.Equal(t, e2.Source, net1.SelfID())
+	assert.Equal(t, readData(t, e2.Reader, len(msg)), msg)
 }
