@@ -9,12 +9,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var addrCmd = &cobra.Command{
-	Use:   "address",
-	Short: "Manage address book",
-}
-
 func buildAllAddrCmd(parentCmd *cobra.Command) {
+	addrCmd := &cobra.Command{
+		Use:   "address",
+		Short: "Manage address book",
+	}
+
 	parentCmd.AddCommand(addrCmd)
 	buildAllAddressesCmd(addrCmd)
 	buildNewAddressCmd(addrCmd)
@@ -27,7 +27,7 @@ func buildAllAddrCmd(parentCmd *cobra.Command) {
 
 // AllAddresses lists all the wallet addresses.
 func buildAllAddressesCmd(parentCmd *cobra.Command) {
-	var allAddressCmd = &cobra.Command{
+	allAddressCmd := &cobra.Command{
 		Use:   "all",
 		Short: "Show all addresses",
 	}
@@ -69,7 +69,7 @@ func buildAllAddressesCmd(parentCmd *cobra.Command) {
 
 // NewAddress creates a new address.
 func buildNewAddressCmd(parentCmd *cobra.Command) {
-	var newAddressCmd = &cobra.Command{
+	newAddressCmd := &cobra.Command{
 		Use:   "new",
 		Short: "Creating a new address",
 	}
@@ -93,7 +93,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 
 // Balance shows the balance of an address.
 func buildBalanceCmd(parentCmd *cobra.Command) {
-	var balanceCmd = &cobra.Command{
+	balanceCmd := &cobra.Command{
 		Use:   "balance",
 		Short: "Show the balance of an address",
 	}
@@ -119,7 +119,7 @@ func buildBalanceCmd(parentCmd *cobra.Command) {
 
 // PrivateKey returns the private key of an address.
 func buildPrivateKeyCmd(parentCmd *cobra.Command) {
-	var privateKeyCmd = &cobra.Command{
+	privateKeyCmd := &cobra.Command{
 		Use:   "priv",
 		Short: "Show the private key of an address",
 	}
@@ -143,7 +143,7 @@ func buildPrivateKeyCmd(parentCmd *cobra.Command) {
 
 // PublicKey returns the public key of an address.
 func buildPublicKeyCmd(parentCmd *cobra.Command) {
-	var publicKeyCmd = &cobra.Command{
+	publicKeyCmd := &cobra.Command{
 		Use:   "pub",
 		Short: "Show the public key of an address",
 	}
@@ -171,7 +171,7 @@ func buildPublicKeyCmd(parentCmd *cobra.Command) {
 
 // ImportPrivateKey imports a private key into the wallet.
 func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
-	var importPrivateKeyCmd = &cobra.Command{
+	importPrivateKeyCmd := &cobra.Command{
 		Use:   "import",
 		Short: "Import a private key into wallet",
 	}
@@ -203,7 +203,7 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 
 // SetLabel set label for the address.
 func buildSetLabelCmd(parentCmd *cobra.Command) {
-	var setLabelCmd = &cobra.Command{
+	setLabelCmd := &cobra.Command{
 		Use:   "label",
 		Short: "Set label for the an address",
 	}

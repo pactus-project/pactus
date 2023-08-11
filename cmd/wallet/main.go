@@ -38,7 +38,7 @@ func openWallet() (*wallet.Wallet, error) {
 }
 
 func main() {
-	var rootCmd = &cobra.Command{
+	rootCmd := &cobra.Command{
 		Use:   "pactus-wallet",
 		Short: "Pactus wallet",
 		Run: func(cmd *cobra.Command, args []string) {

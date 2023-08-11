@@ -8,12 +8,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var historyCmd = &cobra.Command{
-	Use:   "history",
-	Short: "Check the wallet history",
-}
-
 func buildAllHistoryCmd(parentCmd *cobra.Command) {
+	historyCmd := &cobra.Command{
+		Use:   "history",
+		Short: "Check the wallet history",
+	}
+
 	parentCmd.AddCommand(historyCmd)
 	buildAddToHistoryCmd(historyCmd)
 	buildShowHistoryCmd(historyCmd)
@@ -46,7 +46,7 @@ func buildAddToHistoryCmd(parentCmd *cobra.Command) {
 }
 
 func buildShowHistoryCmd(parentCmd *cobra.Command) {
-	var showHistoryCmd = &cobra.Command{
+	showHistoryCmd := &cobra.Command{
 		Use:   "get",
 		Short: "Show the transaction history of any address",
 	}

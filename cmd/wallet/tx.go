@@ -8,12 +8,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var txCmd = &cobra.Command{
-	Use:   "tx",
-	Short: "Create, sign and publish a transaction",
-}
-
 func buildAllTransactionCmd(parentCmd *cobra.Command) {
+	txCmd := &cobra.Command{
+		Use:   "tx",
+		Short: "Create, sign and publish a transaction",
+	}
+
 	parentCmd.AddCommand(txCmd)
 	buildTransferTxCmd(txCmd)
 	buildBondTxCmd(txCmd)
@@ -22,7 +22,7 @@ func buildAllTransactionCmd(parentCmd *cobra.Command) {
 }
 
 func buildTransferTxCmd(parentCmd *cobra.Command) {
-	var transferCmd = &cobra.Command{
+	transferCmd := &cobra.Command{
 		Use:   "transfer",
 		Short: "Create, sign and publish a Transfer transaction",
 	}
@@ -62,7 +62,7 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 }
 
 func buildBondTxCmd(parentCmd *cobra.Command) {
-	var bondTransactionCmd = &cobra.Command{
+	bondTransactionCmd := &cobra.Command{
 		Use:   "bond",
 		Short: "Create, sign and publish a Bond transaction",
 	}
@@ -103,7 +103,7 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 }
 
 func buildUnbondTxCmd(parentCmd *cobra.Command) {
-	var unbondTransactionCmd = &cobra.Command{
+	unbondTransactionCmd := &cobra.Command{
 		Use:   "unbond",
 		Short: "Create, sign and publish an Unbond transaction",
 	}
@@ -139,7 +139,7 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 }
 
 func buildWithdrawTxCmd(parentCmd *cobra.Command) {
-	var withdrawTransactionCmd = &cobra.Command{
+	withdrawTransactionCmd := &cobra.Command{
 		Use:   "withdraw",
 		Short: "Create, sign and publish a Withdraw transaction",
 	}

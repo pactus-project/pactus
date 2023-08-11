@@ -9,7 +9,7 @@ import (
 
 // Generate creates a new wallet.
 func buildGenerateCmd(parentCmd *cobra.Command) {
-	var generateCmd = &cobra.Command{
+	generateCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new wallet",
 	}

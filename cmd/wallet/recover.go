@@ -8,7 +8,7 @@ import (
 
 // Recover recovers a wallet from mnemonic (seed phrase).
 func buildRecoverCmd(parentCmd *cobra.Command) {
-	var recoverCmd = &cobra.Command{
+	recoverCmd := &cobra.Command{
 		Use:   "recover",
 		Short: "Recover waller from the seed phrase (mnemonic)",
 	}
@@ -38,7 +38,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 
 // GetSeed prints the seed phrase (mnemonics).
 func buildGetSeedCmd(parentCmd *cobra.Command) {
-	var getSeedCmd = &cobra.Command{
+	getSeedCmd := &cobra.Command{
 		Use:   "seed",
 		Short: "Show secret seed phrase (mnemonic) that can be used to recover this wallet",
 	}
