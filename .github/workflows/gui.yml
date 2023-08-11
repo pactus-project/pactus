@@ -83,4 +83,5 @@ jobs:
       run: |
         # This fixes a bug in pkgconfig: invalid flag in pkg-config --libs: -Wl,-luuid
         sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
+        export GOPROXY=https://proxy.golang.org
         make build_gui
