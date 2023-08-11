@@ -81,7 +81,8 @@ check:
 		--enable=whitespace \
 		--enable=goimports \
 		--enable=gocyclo \
-		--enable=lll && aligo check $(PACKAGES)
+		--enable=lll 
+	aligo check $(PACKAGES)
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
