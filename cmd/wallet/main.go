@@ -54,28 +54,12 @@ func main() {
 	buildRecoverCmd(rootCmd)
 	buildGetSeedCmd(rootCmd)
 	buildChangePasswordCmd(rootCmd)
-
 	// transaction commands
-	buildTransactionCmd(rootCmd)
-	buildTransferTxCmd(txCmd)
-	buildBondTxCmd(txCmd)
-	buildUnbondTxCmd(txCmd)
-	buildWithdrawTxCmd(txCmd)
-
+	buildAllTransactionCmd(rootCmd)
 	// address commands
-	buildAddrCmd(rootCmd)
-	buildAllAddressesCmd(addrCmd)
-	buildNewAddressCmd(addrCmd)
-	buildBalanceCmd(addrCmd)
-	buildPrivateKeyCmd(addrCmd)
-	buildPublicKeyCmd(addrCmd)
-	buildImportPrivateKeyCmd(addrCmd)
-	buildSetLabelCmd(addrCmd)
-
+	buildAllAddrCmd(rootCmd)
 	// history commands
-	buildHistoryCmd(rootCmd)
-	buildAddToHistoryCmd(historyCmd)
-	buildShowHistoryCmd(historyCmd)
+	buildAllHistoryCmd(rootCmd)
 
 	err := rootCmd.Execute()
 	if err != nil {

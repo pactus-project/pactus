@@ -13,8 +13,12 @@ var txCmd = &cobra.Command{
 	Short: "Create, sign and publish a transaction",
 }
 
-func buildTransactionCmd(parentCmd *cobra.Command) {
+func buildAllTransactionCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(txCmd)
+	buildTransferTxCmd(txCmd)
+	buildBondTxCmd(txCmd)
+	buildUnbondTxCmd(txCmd)
+	buildWithdrawTxCmd(txCmd)
 }
 
 func buildTransferTxCmd(parentCmd *cobra.Command) {

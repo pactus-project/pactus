@@ -14,8 +14,15 @@ var addrCmd = &cobra.Command{
 	Short: "Manage address book",
 }
 
-func buildAddrCmd(parentCmd *cobra.Command) {
+func buildAllAddrCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(addrCmd)
+	buildAllAddressesCmd(addrCmd)
+	buildNewAddressCmd(addrCmd)
+	buildBalanceCmd(addrCmd)
+	buildPrivateKeyCmd(addrCmd)
+	buildPublicKeyCmd(addrCmd)
+	buildImportPrivateKeyCmd(addrCmd)
+	buildSetLabelCmd(addrCmd)
 }
 
 // AllAddresses lists all the wallet addresses.

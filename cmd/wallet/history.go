@@ -13,8 +13,10 @@ var historyCmd = &cobra.Command{
 	Short: "Check the wallet history",
 }
 
-func buildHistoryCmd(parentCmd *cobra.Command) {
+func buildAllHistoryCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(historyCmd)
+	buildAddToHistoryCmd(historyCmd)
+	buildShowHistoryCmd(historyCmd)
 }
 
 func buildAddToHistoryCmd(parentCmd *cobra.Command) {
