@@ -24,6 +24,9 @@ jobs:
 
     - name: Installing golangci-lint
       run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+    
+    - name: Installing aligo
+      run: go install github.com/essentialkaos/aligo@latest
 
     - name: Formatting and linting the project
       run: make check
