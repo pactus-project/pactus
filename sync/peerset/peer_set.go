@@ -1,7 +1,6 @@
 package peerset
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -317,7 +316,6 @@ func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, msgType message.Typ
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
-	fmt.Println(&p)
 	p.ReceivedBytes[msgType] += c
 
 	ps.totalReceivedBytes += c

@@ -66,6 +66,7 @@ func NewConsensus(
 	cs.precommitState = &precommitState{cs, false}
 	cs.commitState = &commitState{cs}
 	cs.changeProposerState = &changeProposerState{cs}
+	cs.currentState = cs.newHeightState
 	cs.mediator = mediator
 
 	cs.height = 0
