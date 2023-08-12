@@ -83,7 +83,7 @@ check:
 		--enable=gocyclo \
 		--enable=lll 
 		
-	GOMEMLIMIT=25MiB
+	GOMEMLIMIT=30MiB
 	aligo --tags "${BUILD_TAG}" check ./...
 
 # To avoid unintended conflicts with file names, always add to .PHONY
