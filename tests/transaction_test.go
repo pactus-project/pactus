@@ -78,14 +78,15 @@ func TestTransactions(t *testing.T) {
 		// These validators are not in the committee now.
 		// Bond transactions are valid and they can enter the committee soon
 		for i := 0; i < tTotalNodes; i++ {
-			amt := ts.RandInt64(1000000 - 1) // fee is always 1000
+			amt := int64(1000000)
+			fee := int64(1000)
 			signer := tSigners[tNodeIdx1][0]
 
-			require.NoError(t, broadcastBondTransaction(t, signer, tSigners[i][1].PublicKey(), amt, 1000))
+			require.NoError(t, broadcastBondTransaction(t, signer, tSigners[i][1].PublicKey(), amt, fee))
 			fmt.Printf("Staking %v to %v\n", amt, tSigners[i][1].Address())
 			incSequence(signer.Address())
 
-			require.NoError(t, broadcastBondTransaction(t, signer, tSigners[i][2].PublicKey(), amt, 1000))
+			require.NoError(t, broadcastBondTransaction(t, signer, tSigners[i][2].PublicKey(), amt, fee))
 			fmt.Printf("Staking %v to %v\n", amt, tSigners[i][2].Address())
 			incSequence(signer.Address())
 		}

@@ -3,55 +3,68 @@ package main
 import (
 	"time"
 
-	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/spf13/cobra"
 )
 
-func AddToHistory() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		txID := c.String(cli.StringArg{
-			Name: "ID",
-			Desc: "transaction id",
-		})
+func buildAllHistoryCmd(parentCmd *cobra.Command) {
+	historyCmd := &cobra.Command{
+		Use:   "history",
+		Short: "Check the wallet history",
+	}
 
-		c.Before = func() {}
-		c.Action = func() {
-			wallet, err := openWallet()
-			cmd.FatalErrorCheck(err)
+	parentCmd.AddCommand(historyCmd)
+	buildAddToHistoryCmd(historyCmd)
+	buildShowHistoryCmd(historyCmd)
+}
 
-			id, err := hash.FromString(*txID)
-			cmd.FatalErrorCheck(err)
+func buildAddToHistoryCmd(parentCmd *cobra.Command) {
+	var addToHistoryCmd = &cobra.Command{
+		Use:   "add",
+		Short: "Add a transaction to the wallet history",
+	}
+	parentCmd.AddCommand(addToHistoryCmd)
 
-			err = wallet.AddTransaction(id)
-			cmd.FatalErrorCheck(err)
+	txID := addToHistoryCmd.Flags().String("ID", "", "transaction id")
 
-			err = wallet.Save()
-			cmd.FatalErrorCheck(err)
+	addToHistoryCmd.Run = func(_ *cobra.Command, _ []string) {
+		wallet, err := openWallet()
+		cmd.FatalErrorCheck(err)
 
-			cmd.PrintInfoMsg("Transaction added to wallet")
-		}
+		id, err := hash.FromString(*txID)
+		cmd.FatalErrorCheck(err)
+
+		err = wallet.AddTransaction(id)
+		cmd.FatalErrorCheck(err)
+
+		err = wallet.Save()
+		cmd.FatalErrorCheck(err)
+
+		cmd.PrintInfoMsg("Transaction added to wallet")
 	}
 }
 
-func ShowHistory() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		addrArg := addAddressArg(c)
+func buildShowHistoryCmd(parentCmd *cobra.Command) {
+	showHistoryCmd := &cobra.Command{
+		Use:   "get",
+		Short: "Show the transaction history of any address",
+	}
+	parentCmd.AddCommand(showHistoryCmd)
+	addrArg := addAddressArg(parentCmd)
 
-		c.Before = func() {}
-		c.Action = func() {
-			wallet, err := openWallet()
-			cmd.FatalErrorCheck(err)
+	showHistoryCmd.Run = func(_ *cobra.Command, _ []string) {
+		wallet, err := openWallet()
+		cmd.FatalErrorCheck(err)
 
-			history := wallet.GetHistory(*addrArg)
-			for i, h := range history {
-				if h.Time != nil {
-					cmd.PrintInfoMsg("%d %v %v %v %s\t%v",
-						i+1, h.Time.Format(time.RFC822), h.TxID, h.PayloadType, h.Desc, h.Amount)
-				} else {
-					cmd.PrintInfoMsg("%d              %v  %s\t%v",
-						i+1, h.TxID, h.Desc, h.Amount)
-				}
+		history := wallet.GetHistory(*addrArg)
+		for i, h := range history {
+			if h.Time != nil {
+				cmd.PrintInfoMsg("%d %v %v %v %s\t%v",
+					i+1, h.Time.Format(time.RFC822), h.TxID, h.PayloadType, h.Desc, h.Amount)
+			} else {
+				cmd.PrintInfoMsg("%d              %v  %s\t%v",
+					i+1, h.TxID, h.Desc, h.Amount)
 			}
 		}
 	}

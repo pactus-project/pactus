@@ -3,206 +3,233 @@ package main
 import (
 	"fmt"
 
-	cli "github.com/jawher/mow.cli"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util"
+	"github.com/spf13/cobra"
 )
 
+func buildAllAddrCmd(parentCmd *cobra.Command) {
+	addrCmd := &cobra.Command{
+		Use:   "address",
+		Short: "Manage address book",
+	}
+
+	parentCmd.AddCommand(addrCmd)
+	buildAllAddressesCmd(addrCmd)
+	buildNewAddressCmd(addrCmd)
+	buildBalanceCmd(addrCmd)
+	buildPrivateKeyCmd(addrCmd)
+	buildPublicKeyCmd(addrCmd)
+	buildImportPrivateKeyCmd(addrCmd)
+	buildSetLabelCmd(addrCmd)
+}
+
 // AllAddresses lists all the wallet addresses.
-func AllAddresses() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		balanceOpt := c.Bool(cli.BoolOpt{
-			Name:  "balance",
-			Desc:  "show account balance",
-			Value: false,
-		})
+func buildAllAddressesCmd(parentCmd *cobra.Command) {
+	allAddressCmd := &cobra.Command{
+		Use:   "all",
+		Short: "Show all addresses",
+	}
+	parentCmd.AddCommand(allAddressCmd)
 
-		stakeOpt := c.Bool(cli.BoolOpt{
-			Name:  "stake",
-			Desc:  "show validator stake",
-			Value: false,
-		})
+	balanceOpt := allAddressCmd.Flags().Bool("balance",
+		false, "show account balance")
 
-		c.Before = func() {}
-		c.Action = func() {
-			wallet, err := openWallet()
-			cmd.FatalErrorCheck(err)
+	stakeOpt := allAddressCmd.Flags().Bool("stake",
+		false, "show validator stake")
 
-			cmd.PrintLine()
-			for i, info := range wallet.AddressLabels() {
-				line := fmt.Sprintf("%v- %s\t", i+1, info.Address)
+	allAddressCmd.Run = func(_ *cobra.Command, _ []string) {
+		wallet, err := openWallet()
+		cmd.FatalErrorCheck(err)
 
-				if *balanceOpt {
-					balance, _ := wallet.Balance(info.Address)
-					line += fmt.Sprintf("%v\t", util.ChangeToCoin(balance))
-				}
+		cmd.PrintLine()
+		for i, info := range wallet.AddressLabels() {
+			line := fmt.Sprintf("%v- %s\t", i+1, info.Address)
 
-				if *stakeOpt {
-					stake, _ := wallet.Stake(info.Address)
-					line += fmt.Sprintf("%v\t", util.ChangeToCoin(stake))
-				}
-
-				line += info.Label
-				if info.Imported {
-					line += " (Imported)"
-				}
-
-				cmd.PrintInfoMsg(line)
+			if *balanceOpt {
+				balance, _ := wallet.Balance(info.Address)
+				line += fmt.Sprintf("%v\t", util.ChangeToCoin(balance))
 			}
+
+			if *stakeOpt {
+				stake, _ := wallet.Stake(info.Address)
+				line += fmt.Sprintf("%v\t", util.ChangeToCoin(stake))
+			}
+
+			line += info.Label
+			if info.Imported {
+				line += " (Imported)"
+			}
+
+			cmd.PrintInfoMsg(line)
 		}
 	}
 }
 
 // NewAddress creates a new address.
-func NewAddress() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		c.Before = func() {}
-		c.Action = func() {
-			label := cmd.PromptInput("Label")
-			wallet, err := openWallet()
-			cmd.FatalErrorCheck(err)
+func buildNewAddressCmd(parentCmd *cobra.Command) {
+	newAddressCmd := &cobra.Command{
+		Use:   "new",
+		Short: "Creating a new address",
+	}
+	parentCmd.AddCommand(newAddressCmd)
 
-			addr, err := wallet.DeriveNewAddress(label)
-			cmd.FatalErrorCheck(err)
+	newAddressCmd.Run = func(_ *cobra.Command, _ []string) {
+		label := cmd.PromptInput("Label")
+		wallet, err := openWallet()
+		cmd.FatalErrorCheck(err)
 
-			err = wallet.Save()
-			cmd.FatalErrorCheck(err)
+		addr, err := wallet.DeriveNewAddress(label)
+		cmd.FatalErrorCheck(err)
 
-			cmd.PrintLine()
-			cmd.PrintInfoMsg("%s", addr)
-		}
+		err = wallet.Save()
+		cmd.FatalErrorCheck(err)
+
+		cmd.PrintLine()
+		cmd.PrintInfoMsg("%s", addr)
 	}
 }
 
 // Balance shows the balance of an address.
-func Balance() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		addrArg := addAddressArg(c)
+func buildBalanceCmd(parentCmd *cobra.Command) {
+	balanceCmd := &cobra.Command{
+		Use:   "balance",
+		Short: "Show the balance of an address",
+	}
+	parentCmd.AddCommand(balanceCmd)
 
-		c.Before = func() {}
-		c.Action = func() {
-			wallet, err := openWallet()
-			cmd.FatalErrorCheck(err)
+	addrArg := addAddressArg(parentCmd)
 
-			cmd.PrintLine()
-			balance, err := wallet.Balance(*addrArg)
-			cmd.FatalErrorCheck(err)
+	balanceCmd.Run = func(_ *cobra.Command, _ []string) {
+		wallet, err := openWallet()
+		cmd.FatalErrorCheck(err)
 
-			stake, err := wallet.Stake(*addrArg)
-			cmd.FatalErrorCheck(err)
+		cmd.PrintLine()
+		balance, err := wallet.Balance(*addrArg)
+		cmd.FatalErrorCheck(err)
 
-			cmd.PrintInfoMsg("balance: %v\tstake: %v",
-				util.ChangeToCoin(balance), util.ChangeToCoin(stake))
-		}
+		stake, err := wallet.Stake(*addrArg)
+		cmd.FatalErrorCheck(err)
+
+		cmd.PrintInfoMsg("balance: %v\tstake: %v",
+			util.ChangeToCoin(balance), util.ChangeToCoin(stake))
 	}
 }
 
 // PrivateKey returns the private key of an address.
-func PrivateKey() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		addrArg := addAddressArg(c)
-		passOpt := addPasswordOption(c)
+func buildPrivateKeyCmd(parentCmd *cobra.Command) {
+	privateKeyCmd := &cobra.Command{
+		Use:   "priv",
+		Short: "Show the private key of an address",
+	}
+	parentCmd.AddCommand(privateKeyCmd)
 
-		c.Before = func() {}
-		c.Action = func() {
-			wallet, err := openWallet()
-			cmd.FatalErrorCheck(err)
+	addrArg := addAddressArg(parentCmd)
+	passOpt := addPasswordOption(parentCmd)
 
-			password := getPassword(wallet, *passOpt)
-			prv, err := wallet.PrivateKey(password, *addrArg)
-			cmd.FatalErrorCheck(err)
+	privateKeyCmd.Run = func(_ *cobra.Command, _ []string) {
+		wallet, err := openWallet()
+		cmd.FatalErrorCheck(err)
 
-			cmd.PrintLine()
-			cmd.PrintWarnMsg("Private Key: %v", prv)
-		}
+		password := getPassword(wallet, *passOpt)
+		prv, err := wallet.PrivateKey(password, *addrArg)
+		cmd.FatalErrorCheck(err)
+
+		cmd.PrintLine()
+		cmd.PrintWarnMsg("Private Key: %v", prv)
 	}
 }
 
 // PublicKey returns the public key of an address.
-func PublicKey() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		addrArg := addAddressArg(c)
+func buildPublicKeyCmd(parentCmd *cobra.Command) {
+	publicKeyCmd := &cobra.Command{
+		Use:   "pub",
+		Short: "Show the public key of an address",
+	}
+	parentCmd.AddCommand(publicKeyCmd)
 
-		c.Before = func() {}
-		c.Action = func() {
-			wallet, err := openWallet()
-			cmd.FatalErrorCheck(err)
+	addrArg := addAddressArg(parentCmd)
 
-			info := wallet.AddressInfo(*addrArg)
-			if info == nil {
-				cmd.PrintErrorMsg("Address not found")
-				return
-			}
+	publicKeyCmd.Run = func(_ *cobra.Command, _ []string) {
+		wallet, err := openWallet()
+		cmd.FatalErrorCheck(err)
 
-			cmd.PrintLine()
-			cmd.PrintInfoMsg("Public Key: %v", info.Pub.String())
-			if !info.Imported {
-				cmd.PrintInfoMsg("Path: %v", info.Path.String())
-			}
+		info := wallet.AddressInfo(*addrArg)
+		if info == nil {
+			cmd.PrintErrorMsg("Address not found")
+			return
+		}
+
+		cmd.PrintLine()
+		cmd.PrintInfoMsg("Public Key: %v", info.Pub.String())
+		if !info.Imported {
+			cmd.PrintInfoMsg("Path: %v", info.Path.String())
 		}
 	}
 }
 
 // ImportPrivateKey imports a private key into the wallet.
-func ImportPrivateKey() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		passOpt := addPasswordOption(c)
+func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
+	importPrivateKeyCmd := &cobra.Command{
+		Use:   "import",
+		Short: "Import a private key into wallet",
+	}
+	parentCmd.AddCommand(importPrivateKeyCmd)
 
-		c.Before = func() {}
-		c.Action = func() {
-			prvStr := cmd.PromptInput("Private Key")
+	passOpt := addPasswordOption(parentCmd)
 
-			wallet, err := openWallet()
-			cmd.FatalErrorCheck(err)
+	importPrivateKeyCmd.Run = func(_ *cobra.Command, _ []string) {
+		prvStr := cmd.PromptInput("Private Key")
 
-			prv, err := bls.PrivateKeyFromString(prvStr)
-			cmd.FatalErrorCheck(err)
+		wallet, err := openWallet()
+		cmd.FatalErrorCheck(err)
 
-			password := getPassword(wallet, *passOpt)
-			err = wallet.ImportPrivateKey(password, prv)
-			cmd.FatalErrorCheck(err)
+		prv, err := bls.PrivateKeyFromString(prvStr)
+		cmd.FatalErrorCheck(err)
 
-			err = wallet.Save()
-			cmd.FatalErrorCheck(err)
+		password := getPassword(wallet, *passOpt)
+		err = wallet.ImportPrivateKey(password, prv)
+		cmd.FatalErrorCheck(err)
 
-			cmd.PrintLine()
-			cmd.PrintSuccessMsg("Private Key imported. Address: %v",
-				prv.PublicKey().Address())
-		}
+		err = wallet.Save()
+		cmd.FatalErrorCheck(err)
+
+		cmd.PrintLine()
+		cmd.PrintSuccessMsg("Private Key imported. Address: %v",
+			prv.PublicKey().Address())
 	}
 }
 
 // SetLabel set label for the address.
-func SetLabel() func(c *cli.Cmd) {
-	return func(c *cli.Cmd) {
-		addrArg := addAddressArg(c)
+func buildSetLabelCmd(parentCmd *cobra.Command) {
+	setLabelCmd := &cobra.Command{
+		Use:   "label",
+		Short: "Set label for the an address",
+	}
+	parentCmd.AddCommand(setLabelCmd)
 
-		c.Before = func() {}
-		c.Action = func() {
-			wallet, err := openWallet()
-			cmd.FatalErrorCheck(err)
+	addrArg := addAddressArg(parentCmd)
 
-			oldLabel := wallet.Label(*addrArg)
-			newLabel := cmd.PromptInputWithSuggestion("Label", oldLabel)
+	setLabelCmd.Run = func(_ *cobra.Command, _ []string) {
+		wallet, err := openWallet()
+		cmd.FatalErrorCheck(err)
 
-			err = wallet.SetLabel(*addrArg, newLabel)
-			cmd.FatalErrorCheck(err)
+		oldLabel := wallet.Label(*addrArg)
+		newLabel := cmd.PromptInputWithSuggestion("Label", oldLabel)
 
-			err = wallet.Save()
-			cmd.FatalErrorCheck(err)
+		err = wallet.SetLabel(*addrArg, newLabel)
+		cmd.FatalErrorCheck(err)
 
-			cmd.PrintLine()
-			cmd.PrintSuccessMsg("Label set successfully")
-		}
+		err = wallet.Save()
+		cmd.FatalErrorCheck(err)
+
+		cmd.PrintLine()
+		cmd.PrintSuccessMsg("Label set successfully")
 	}
 }
 
-func addAddressArg(c *cli.Cmd) *string {
-	addrArg := c.String(cli.StringArg{
-		Name: "ADDRESS",
-		Desc: "address string",
-	})
-
-	return addrArg
+func addAddressArg(c *cobra.Command) *string {
+	return c.Flags().String("ADDRESS",
+		"", "address string")
 }
