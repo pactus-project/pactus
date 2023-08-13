@@ -79,6 +79,8 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 		switch v := keyvals[i+1].(type) {
 		case fmt.Stringer:
 			event.Stringer(key, v)
+		case error:
+			event.AnErr(key, v)
 		case []byte:
 			event.Str(key, fmt.Sprintf("%v", hex.EncodeToString(v)))
 		default:
