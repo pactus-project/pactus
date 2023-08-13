@@ -106,10 +106,10 @@ func TestParsingHelloMessages(t *testing.T) {
 		})
 }
 
-func TestBroadcastingHelloMessages(t *testing.T) {
+func TestSendingHelloMessage(t *testing.T) {
 	td := setup(t, nil)
-
-	td.sync.sayHello(true)
+	to := td.RandomPeerID()
+	td.sync.sayHello(true, to)
 
 	bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
 	assert.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHelloMessage))

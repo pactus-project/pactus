@@ -125,11 +125,9 @@ func TestSyncing(t *testing.T) {
 	assert.NoError(t, syncAlice.Start())
 	assert.NoError(t, syncBob.Start())
 
-	// Verify that Hello messages are exchanged between Alice and Bob
-	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
-	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
+	syncAlice.sayHello(false, syncBob.SelfID())
 
-	// Verify that Hello-ack messages are exchanged between Alice and Bob
+	// Verify that Hello messages are exchanged between Alice and Bob
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
 

@@ -113,7 +113,6 @@ func (sync *synchronizer) Start() error {
 		go sync.heartBeatTickerLoop()
 	}
 
-	sync.sayHello(false)
 	sync.moveConsensusToNewHeight()
 
 	return nil
@@ -165,7 +164,7 @@ func (sync *synchronizer) broadcastHeartBeat() {
 	}
 }
 
-func (sync *synchronizer) sayHello(helloAck bool) {
+func (sync *synchronizer) sayHello(helloAck bool, to peer.ID) {
 	flags := 0
 	if sync.config.NodeNetwork {
 		flags = util.SetFlag(flags, message.FlagNodeNetwork)
@@ -183,8 +182,9 @@ func (sync *synchronizer) sayHello(helloAck bool) {
 
 	for _, signer := range sync.signers {
 		signer.SignMsg(msg)
-		sync.broadcast(msg)
+		sync.sendTo2(msg, to)
 	}
+	sync.logger.Info("Sending Hello message", "to", to, "Ack", helloAck)
 }
 
 func (sync *synchronizer) broadcastLoop() {
@@ -205,26 +205,35 @@ func (sync *synchronizer) receiveLoop() {
 			return
 
 		case e := <-sync.networkCh:
-			var bdl *bundle.Bundle
 			switch e.Type() {
 			case network.EventTypeGossip:
 				ge := e.(*network.GossipMessage)
-				bdl = sync.firewall.OpenGossipBundle(ge.Data, ge.Source, ge.From)
-
+				bdl := sync.firewall.OpenGossipBundle(ge.Data, ge.Source, ge.From)
+				err := sync.processIncomingBundle(bdl)
+				if err != nil {
+					sync.logger.Warn("error on parsing a Gossip bundle", "initiator", bdl.Initiator, "bundle", bdl, "err", err)
+					sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
+				}
 			case network.EventTypeStream:
 				se := e.(*network.StreamMessage)
-				bdl = sync.firewall.OpenStreamBundle(se.Reader, se.Source)
+				bdl := sync.firewall.OpenStreamBundle(se.Reader, se.Source)
 				if err := se.Reader.Close(); err != nil {
 					// TODO: write test for me
 					sync.peerSet.IncreaseSendFailedCounter(se.Source)
 					sync.logger.Warn("error on closing stream", "err", err)
 				}
-			}
-
-			err := sync.processIncomingBundle(bdl)
-			if err != nil {
-				sync.logger.Warn("error on parsing a bundle", "initiator", bdl.Initiator, "bundle", bdl, "err", err)
-				sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
+				err := sync.processIncomingBundle(bdl)
+				if err != nil {
+					sync.logger.Warn("error on parsing a Stream bundle", "initiator", bdl.Initiator, "bundle", bdl, "err", err)
+					sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
+				}
+			case network.EventTypeConnect:
+				ce := e.(*network.ConnectEvent)
+				sync.sayHello(false, ce.PeerID)
+				sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeConnected)
+			case network.EventTypeDisconnect:
+				ce := e.(*network.DisconnectEvent)
+				sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeDisconnected)
 			}
 		}
 	}
@@ -323,6 +332,24 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID, sessionID int)
 			// Let's close the session with this peer because we couldn't establish a connection.
 			// This helps to free sessions and ask blocks from other peers.
 			sync.peerSet.CloseSession(sessionID)
+		} else {
+			sync.logger.Info("sending bundle to a peer", "bundle", bdl, "to", to)
+			sync.peerSet.IncreaseSendSuccessCounter(to)
+		}
+
+		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
+	}
+}
+
+func (sync *synchronizer) sendTo2(msg message.Message, to peer.ID) {
+	bdl := sync.prepareBundle(msg)
+	if bdl != nil {
+		data, _ := bdl.Encode()
+		sync.peerSet.UpdateLastSent(to)
+		err := sync.network.SendTo(data, to)
+		if err != nil {
+			sync.logger.Warn("error on sending bundle", "bundle", bdl, "err", err, "to", to)
+			sync.peerSet.IncreaseSendFailedCounter(to)
 		} else {
 			sync.logger.Info("sending bundle to a peer", "bundle", bdl, "to", to)
 			sync.peerSet.IncreaseSendSuccessCounter(to)
