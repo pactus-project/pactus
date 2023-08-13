@@ -81,7 +81,7 @@ check:
 		--enable=goimports \
 		--enable=gocyclo \
 		--enable=lll \
-		--enable=structcheck \
+		--enable=unused 
 		
 
 # To avoid unintended conflicts with file names, always add to .PHONY
