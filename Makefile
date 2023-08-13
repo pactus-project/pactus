@@ -80,7 +80,9 @@ check:
 		--enable=whitespace \
 		--enable=goimports \
 		--enable=gocyclo \
-		--enable=lll
+		--enable=lll \
+		--enable=structcheck \
+		
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
