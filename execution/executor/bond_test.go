@@ -51,21 +51,21 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, inside committee", func(t *testing.T) {
-		pub := td.sandbox.Committee().Proposer(0).PublicKey()
+		pub0 := td.sandbox.Committee().Proposer(0).PublicKey()
 		trx := tx.NewBondTx(td.randStamp, senderAcc.Sequence()+1, senderAddr,
-			pub.Address(), nil, amt, fee, "inside committee")
+			pub0.Address(), nil, amt, fee, "inside committee")
 
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
 
 	t.Run("Should fail, unbonded before", func(t *testing.T) {
-		pub, _ := td.RandomBLSKeyPair()
-		val := td.sandbox.MakeNewValidator(pub)
+		unbondedPub, _ := td.RandomBLSKeyPair()
+		val := td.sandbox.MakeNewValidator(unbondedPub)
 		val.UpdateUnbondingHeight(td.sandbox.CurrentHeight())
 		td.sandbox.UpdateValidator(val)
 		trx := tx.NewBondTx(td.randStamp, senderAcc.Sequence()+1, senderAddr,
-			pub.Address(), nil, amt, fee, "unbonded before")
+			unbondedPub.Address(), nil, amt, fee, "unbonded before")
 
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
