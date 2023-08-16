@@ -35,7 +35,7 @@ type TestSuite struct {
 func NewTestSuiteForSeed(seed int64) *TestSuite {
 	return &TestSuite{
 		Seed: seed,
-		// nolint:gosec
+		//nolint:gosec
 		Rand: rand.New(rand.NewSource(seed)),
 	}
 }
@@ -46,7 +46,7 @@ func NewTestSuite(t *testing.T) *TestSuite {
 	t.Logf("%v seed is %v", t.Name(), seed)
 	return &TestSuite{
 		Seed: seed,
-		// nolint:gosec
+		//nolint:gosec
 		Rand: rand.New(rand.NewSource(seed)),
 	}
 }

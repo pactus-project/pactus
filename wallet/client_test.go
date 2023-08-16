@@ -23,22 +23,22 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 
 func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 	_ *pactus.GetConsensusInfoRequest) (*pactus.GetConsensusInfoResponse, error) {
-	return nil, nil
+	return &pactus.GetConsensusInfoResponse{}, nil
 }
 
 func (s *blockchainServer) GetBlockHash(_ context.Context,
 	_ *pactus.GetBlockHashRequest) (*pactus.GetBlockHashResponse, error) {
-	return nil, nil
+	return &pactus.GetBlockHashResponse{}, nil
 }
 
 func (s *blockchainServer) GetBlockHeight(_ context.Context,
 	_ *pactus.GetBlockHeightRequest) (*pactus.GetBlockHeightResponse, error) {
-	return nil, nil
+	return &pactus.GetBlockHeightResponse{}, nil
 }
 
 func (s *blockchainServer) GetBlock(_ context.Context,
 	_ *pactus.GetBlockRequest) (*pactus.GetBlockResponse, error) {
-	return nil, nil
+	return &pactus.GetBlockResponse{}, nil
 }
 
 func (s *blockchainServer) GetAccount(_ context.Context,
@@ -51,17 +51,17 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 
 func (s *blockchainServer) GetValidatorAddresses(_ context.Context,
 	_ *pactus.GetValidatorAddressesRequest) (*pactus.GetValidatorAddressesResponse, error) {
-	return nil, nil
+	return &pactus.GetValidatorAddressesResponse{}, nil
 }
 
 func (s *blockchainServer) GetAccountByNumber(_ context.Context,
 	_ *pactus.GetAccountByNumberRequest) (*pactus.GetAccountResponse, error) {
-	return nil, nil
+	return &pactus.GetAccountResponse{}, nil
 }
 
 func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
 	_ *pactus.GetValidatorByNumberRequest) (*pactus.GetValidatorResponse, error) {
-	return nil, nil
+	return &pactus.GetValidatorResponse{}, nil
 }
 
 func (s *blockchainServer) GetValidator(_ context.Context,
@@ -74,7 +74,7 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 
 func (s *transactionServer) GetTransaction(_ context.Context,
 	_ *pactus.GetTransactionRequest) (*pactus.GetTransactionResponse, error) {
-	return nil, nil
+	return &pactus.GetTransactionResponse{}, nil
 }
 
 func (s *transactionServer) CalculateFee(_ context.Context,

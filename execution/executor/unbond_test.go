@@ -30,19 +30,19 @@ func TestExecuteUnbondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, Inside committee", func(t *testing.T) {
-		val := td.sandbox.Committee().Proposer(0)
-		trx := tx.NewUnbondTx(td.randStamp, val.Sequence()+1, val.Address(), "inside committee")
+		val0 := td.sandbox.Committee().Proposer(0)
+		trx := tx.NewUnbondTx(td.randStamp, val0.Sequence()+1, val0.Address(), "inside committee")
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
 
 	t.Run("Should fail, Cannot unbond if unbonded already", func(t *testing.T) {
 		pub, _ := td.RandomBLSKeyPair()
-		val := td.sandbox.MakeNewValidator(pub)
-		val.UpdateUnbondingHeight(td.sandbox.CurrentHeight())
-		td.sandbox.UpdateValidator(val)
+		unbondedVal := td.sandbox.MakeNewValidator(pub)
+		unbondedVal.UpdateUnbondingHeight(td.sandbox.CurrentHeight())
+		td.sandbox.UpdateValidator(unbondedVal)
 
-		trx := tx.NewUnbondTx(td.randStamp, val.Sequence()+1, pub.Address(), "Ok")
+		trx := tx.NewUnbondTx(td.randStamp, unbondedVal.Sequence()+1, pub.Address(), "Ok")
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
 	})

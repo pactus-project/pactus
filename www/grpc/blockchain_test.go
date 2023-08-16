@@ -24,7 +24,6 @@ func TestGetBlock(t *testing.T) {
 	})
 
 	t.Run("Should return an existing block data", func(t *testing.T) {
-		data, _ := b.Bytes()
 		res, err := client.GetBlock(tCtx,
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
 

@@ -1,10 +1,10 @@
-PACKAGES=$(shell go list ./... | grep -v 'tests')
+PACKAGES=$(shell go list ./... | grep -v 'tests' | grep -v 'grpc/gen')
 BUILD_LDFLAGS= -ldflags "-X github.com/pactus-project/pactus/version.build=`git rev-parse --short=8 HEAD`"
 
 ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe
 RM = del /q
-else 
+else
 RM = rm -rf
 endif
 
@@ -62,25 +62,7 @@ fmt:
 	gofmt -s -w .
 
 check:
-	golangci-lint run \
-		--build-tags "${BUILD_TAG}" \
-		--timeout=20m0s \
-		--enable=gofmt \
-		--enable=unconvert \
-		--enable=unparam \
-		--enable=asciicheck \
-		--enable=misspell \
-		--enable=revive \
-		--enable=decorder \
-		--enable=reassign \
-		--enable=usestdlibvars \
-		--enable=nilerr \
-		--enable=gosec \
-		--enable=exportloopref \
-		--enable=whitespace \
-		--enable=goimports \
-		--enable=gocyclo \
-		--enable=lll
+	golangci-lint run --build-tags "${BUILD_TAG}" --timeout=20m0s
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.

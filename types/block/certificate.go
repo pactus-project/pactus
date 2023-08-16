@@ -172,9 +172,6 @@ func (cert *Certificate) Decode(r io.Reader) error {
 		}
 		absentees[i] = int32(n)
 	}
-	if err != nil {
-		return err
-	}
 
 	sig := new(bls.Signature)
 	if err := sig.Decode(r); err != nil {

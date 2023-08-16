@@ -98,13 +98,13 @@ func setup(t *testing.T) *testData {
 	require.NoError(t, err)
 
 	ConsX := NewConsensus(testConfig(), stX, signers[tIndexX], signers[tIndexX].Address(),
-		make(chan message.Message, 100), newMediator())
+		make(chan message.Message, 100), newConcreteMediator())
 	ConsY := NewConsensus(testConfig(), stY, signers[tIndexY], signers[tIndexY].Address(),
-		make(chan message.Message, 100), newMediator())
+		make(chan message.Message, 100), newConcreteMediator())
 	ConsB := NewConsensus(testConfig(), stB, signers[tIndexB], signers[tIndexB].Address(),
-		make(chan message.Message, 100), newMediator())
+		make(chan message.Message, 100), newConcreteMediator())
 	ConsP := NewConsensus(testConfig(), stP, signers[tIndexP], signers[tIndexP].Address(),
-		make(chan message.Message, 100), newMediator())
+		make(chan message.Message, 100), newConcreteMediator())
 
 	consX := ConsX.(*consensus)
 	consY := ConsY.(*consensus)
@@ -343,7 +343,7 @@ func TestNotInCommittee(t *testing.T) {
 
 	st, _ := state.LoadOrNewState(td.genDoc, []crypto.Signer{signer}, store, td.txPool, nil)
 	Cons := NewConsensus(testConfig(), st, signer, signer.Address(), make(chan message.Message, 100),
-		newMediator())
+		newConcreteMediator())
 	cons := Cons.(*consensus)
 
 	td.enterNewHeight(cons)
@@ -587,7 +587,7 @@ func TestNonActiveValidator(t *testing.T) {
 
 	signer := td.RandomSigner()
 	Cons := NewConsensus(testConfig(), state.MockingState(td.TestSuite),
-		signer, signer.Address(), make(chan message.Message, 100), newMediator())
+		signer, signer.Address(), make(chan message.Message, 100), newConcreteMediator())
 	nonActiveCons := Cons.(*consensus)
 
 	t.Run("non-active instances should be in new-height state", func(t *testing.T) {

@@ -23,10 +23,10 @@ func NewManager(
 	mgr := &manager{
 		instances: make([]Consensus, len(signers)),
 	}
-	mediator := newMediator()
+	mediatorConcrete := newConcreteMediator()
 
 	for i, signer := range signers {
-		cons := NewConsensus(conf, state, signer, rewardAddrs[i], broadcastCh, mediator)
+		cons := NewConsensus(conf, state, signer, rewardAddrs[i], broadcastCh, mediatorConcrete)
 
 		mgr.instances[i] = cons
 	}
