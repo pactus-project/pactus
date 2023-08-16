@@ -60,6 +60,7 @@ proto:
 ### Formatting, linting, and vetting
 fmt:
 	gofmt -s -w .
+	godot -w .
 
 check:
 	golangci-lint run --build-tags "${BUILD_TAG}" --timeout=20m0s

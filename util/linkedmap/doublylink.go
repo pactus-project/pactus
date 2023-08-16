@@ -14,7 +14,7 @@ func NewLinkNode[T any](data T) *LinkNode[T] {
 	}
 }
 
-// DoublyLinkedList represents a doubly linked list
+// DoublyLinkedList represents a doubly linked list.
 type DoublyLinkedList[T any] struct {
 	Head   *LinkNode[T]
 	Tail   *LinkNode[T]
@@ -29,7 +29,7 @@ func NewDoublyLinkedList[T any]() *DoublyLinkedList[T] {
 	}
 }
 
-// InsertAtHead inserts a new node at the head of the list
+// InsertAtHead inserts a new node at the head of the list.
 func (l *DoublyLinkedList[T]) InsertAtHead(data T) *LinkNode[T] {
 	newNode := NewLinkNode(data)
 
@@ -48,7 +48,7 @@ func (l *DoublyLinkedList[T]) InsertAtHead(data T) *LinkNode[T] {
 	return newNode
 }
 
-// InsertAtTail appends a new node at the tail of the list
+// InsertAtTail appends a new node at the tail of the list.
 func (l *DoublyLinkedList[T]) InsertAtTail(data T) *LinkNode[T] {
 	newNode := NewLinkNode(data)
 
