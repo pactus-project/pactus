@@ -689,7 +689,7 @@ func (st *state) Params() param.Params {
 	return st.params
 }
 
-// publishEvents publishes block related events
+// publishEvents publishes block related events.
 func (st *state) publishEvents(height uint32, block *block.Block) {
 	if st.eventCh == nil {
 		return

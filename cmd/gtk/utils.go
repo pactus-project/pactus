@@ -223,7 +223,7 @@ func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, w *wallet.Walle
 	}
 }
 
-// openURLInBrowser open specific url in browser base on os
+// openURLInBrowser open specific url in browser base on os.
 func openURLInBrowser(address string) error {
 	cmd := ""
 	args := make([]string, 0)

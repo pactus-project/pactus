@@ -109,7 +109,7 @@ func (pub *PublicKey) Decode(r io.Reader) error {
 }
 
 // The Verify checks that a signature is valid for the given message and public key.
-// It's defined in section 2.6 of the spec: CoreVerify
+// It's defined in section 2.6 of the spec: CoreVerify.
 func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	if sig == nil {
 		return errors.Error(errors.ErrInvalidSignature)

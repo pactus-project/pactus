@@ -22,7 +22,7 @@ type testData struct {
 	importedPrv crypto.PrivateKey
 }
 
-// setup return an instances of vault fo testing
+// setup return an instances of vault fo testing.
 func setup(t *testing.T) *testData {
 	ts := testsuite.NewTestSuite(t)
 

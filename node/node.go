@@ -150,7 +150,7 @@ func (n *Node) Stop() {
 	n.nanomsg.StopServer()
 }
 
-// these methods are using by GUI
+// these methods are using by GUI.
 func (n *Node) ConsManager() consensus.ManagerReader {
 	return n.consMgr
 }

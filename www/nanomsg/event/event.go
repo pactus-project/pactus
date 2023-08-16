@@ -16,7 +16,7 @@ type Event []byte
 
 // CreateBlockEvent creates an event when the new block is committed.
 // The block event structure is like :
-// <topic_id><block_hash><height><sequence_number>
+// <topic_id><block_hash><height><sequence_number>.
 func CreateBlockEvent(blockHash hash.Hash, height uint32) Event {
 	buf := make([]byte, 0, 42)
 	w := bytes.NewBuffer(buf)
@@ -29,7 +29,7 @@ func CreateBlockEvent(blockHash hash.Hash, height uint32) Event {
 
 // CreateBlockEvent creates an event when the new block is committed.
 // The block event structure is like :
-// <topic_id><tx_hash><height><sequence_number>
+// <topic_id><tx_hash><height><sequence_number>.
 func CreateNewTransactionEvent(txHash tx.ID, height uint32) Event {
 	buf := make([]byte, 0, 42)
 	w := bytes.NewBuffer(buf)

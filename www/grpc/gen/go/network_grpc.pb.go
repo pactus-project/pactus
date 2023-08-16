@@ -50,7 +50,7 @@ func (c *networkClient) GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest,
 
 // NetworkServer is the server API for Network service.
 // All implementations should embed UnimplementedNetworkServer
-// for forward compatibility
+// for forward compatibility.
 type NetworkServer interface {
 	GetNetworkInfo(context.Context, *GetNetworkInfoRequest) (*GetNetworkInfoResponse, error)
 	GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error)
@@ -116,7 +116,7 @@ func _Network_GetNodeInfo_Handler(srv interface{}, ctx context.Context, dec func
 
 // Network_ServiceDesc is the grpc.ServiceDesc for Network service.
 // It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
+// and not to be introspected or modified (even as a copy).
 var Network_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pactus.Network",
 	HandlerType: (*NetworkServer)(nil),

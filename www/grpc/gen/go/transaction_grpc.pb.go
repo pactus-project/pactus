@@ -60,7 +60,7 @@ func (c *transactionClient) SendRawTransaction(ctx context.Context, in *SendRawT
 
 // TransactionServer is the server API for Transaction service.
 // All implementations should embed UnimplementedTransactionServer
-// for forward compatibility
+// for forward compatibility.
 type TransactionServer interface {
 	GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error)
 	CalculateFee(context.Context, *CalculateFeeRequest) (*CalculateFeeResponse, error)
@@ -148,7 +148,7 @@ func _Transaction_SendRawTransaction_Handler(srv interface{}, ctx context.Contex
 
 // Transaction_ServiceDesc is the grpc.ServiceDesc for Transaction service.
 // It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
+// and not to be introspected or modified (even as a copy).
 var Transaction_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pactus.Transaction",
 	HandlerType: (*TransactionServer)(nil),

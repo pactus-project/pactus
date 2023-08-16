@@ -29,7 +29,6 @@ linters:
     - forbidigo # Consider to enable it
     - gci  # Consider to enable it (add it to make fmt)
     - gofumpt  # Consider to enable it (add it to make fmt)
-    - godot # Consider to enable it
     - godox # Consider to enable it (only show warning)
     - gocritic # Consider to enable it
     - wsl # Consider to enable it

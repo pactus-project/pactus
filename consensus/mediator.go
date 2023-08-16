@@ -14,7 +14,7 @@ type mediator interface {
 	Register(cons Consensus)
 }
 
-// ConcreteMediator struct
+// ConcreteMediator struct.
 type ConcreteMediator struct {
 	instances []Consensus
 }
@@ -47,7 +47,7 @@ func (m *ConcreteMediator) OnBlockAnnounce(from Consensus) {
 	}
 }
 
-// Register a new Consensus instance to the mediator
+// Register a new Consensus instance to the mediator.
 func (m *ConcreteMediator) Register(cons Consensus) {
 	m.instances = append(m.instances, cons)
 }

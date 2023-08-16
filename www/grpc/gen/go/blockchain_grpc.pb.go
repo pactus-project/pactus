@@ -130,7 +130,7 @@ func (c *blockchainClient) GetValidatorAddresses(ctx context.Context, in *GetVal
 
 // BlockchainServer is the server API for Blockchain service.
 // All implementations should embed UnimplementedBlockchainServer
-// for forward compatibility
+// for forward compatibility.
 type BlockchainServer interface {
 	GetBlock(context.Context, *GetBlockRequest) (*GetBlockResponse, error)
 	GetBlockHash(context.Context, *GetBlockHashRequest) (*GetBlockHashResponse, error)
@@ -372,7 +372,7 @@ func _Blockchain_GetValidatorAddresses_Handler(srv interface{}, ctx context.Cont
 
 // Blockchain_ServiceDesc is the grpc.ServiceDesc for Blockchain service.
 // It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
+// and not to be introspected or modified (even as a copy).
 var Blockchain_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pactus.Blockchain",
 	HandlerType: (*BlockchainServer)(nil),

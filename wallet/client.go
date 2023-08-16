@@ -74,7 +74,7 @@ func (c *grpcClient) sendTx(tx *tx.Tx) (tx.ID, error) {
 	return hash.FromBytes(res.Id)
 }
 
-// TODO: check the return value type
+// TODO: check the return value type.
 func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, error) {
 	res, err := c.transactionClient.GetTransaction(context.Background(), &pactus.GetTransactionRequest{
 		Id:        id.Bytes(),

@@ -38,7 +38,7 @@ func GenerateMnemonic(entropy int) string {
 	return vault.GenerateMnemonic(entropy)
 }
 
-// CheckMnemonic is a wrapper for `vault.CheckMnemonic`
+// CheckMnemonic is a wrapper for `vault.CheckMnemonic`.
 func CheckMnemonic(mnemonic string) error {
 	return vault.CheckMnemonic(mnemonic)
 }
