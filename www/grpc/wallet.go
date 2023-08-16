@@ -86,10 +86,10 @@ func (s *walletServer) UnloadWallet(_ context.Context,
 
 func (s *walletServer) LockWallet(_ context.Context,
 	_ *pactus.LockWalletRequest) (*pactus.LockWalletResponse, error) {
-	return nil, nil
+	return &pactus.LockWalletResponse{}, nil
 }
 
 func (s *walletServer) UnlockWallet(_ context.Context,
 	_ *pactus.UnlockWalletRequest) (*pactus.UnlockWalletResponse, error) {
-	return nil, nil
+	return &pactus.UnlockWalletResponse{}, nil
 }

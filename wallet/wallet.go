@@ -383,9 +383,6 @@ func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
 
 	signer := crypto.NewSigner(prv)
 	signer.SignMsg(trx)
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
