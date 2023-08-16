@@ -56,6 +56,7 @@ func (s *proposeState) onSetProposal(_ *proposal.Proposal) {
 func (s *proposeState) onTimeout(_ *ticker) {
 	panic("Unreachable")
 }
+
 func (s *proposeState) name() string {
 	return "propose"
 }

@@ -34,7 +34,8 @@ type bootstrap struct {
 // newBootstrap returns a new Bootstrap that will attempt to keep connected
 // to the network by connecting to the given bootstrap peers.
 func newBootstrap(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, r lp2prouting.Routing,
-	conf *BootstrapConfig, logger *logger.SubLogger) *bootstrap {
+	conf *BootstrapConfig, logger *logger.SubLogger,
+) *bootstrap {
 	b := &bootstrap{
 		ctx:     ctx,
 		config:  conf,
@@ -79,7 +80,6 @@ func (b *bootstrap) Start() {
 
 // Stop stops the Bootstrap.
 func (b *bootstrap) Stop() {
-
 }
 
 // checkConnectivity does the actual work. If the number of connected peers

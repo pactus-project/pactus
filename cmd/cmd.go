@@ -257,7 +257,8 @@ func TrapSignal(cleanupFunc func()) {
 
 func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	mnemonic string, walletPassword string) (
-	validatorAddrs []string, rewardAddrs []string, err error) {
+	validatorAddrs []string, rewardAddrs []string, err error,
+) {
 	// To make process faster, we update the password after creating the addresses
 	walletPath := PactusDefaultWalletPath(workingDir)
 	wallet, err := wallet.Create(walletPath, mnemonic, "", chain)
@@ -323,7 +324,8 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 }
 
 func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool)) (
-	*node.Node, *wallet.Wallet, error) {
+	*node.Node, *wallet.Wallet, error,
+) {
 	gen, err := genesis.LoadFromFile(PactusGenesisPath(workingDir))
 	if err != nil {
 		return nil, nil, err
@@ -415,8 +417,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 			return nil, nil, fmt.Errorf("not enough addresses in wallet")
 		}
 		for i := 0; i < conf.Node.NumValidators; i++ {
-			rewardAddrs[i], _ =
-				crypto.AddressFromString(addrLabels[conf.Node.NumValidators+i].Address)
+			rewardAddrs[i], _ = crypto.AddressFromString(addrLabels[conf.Node.NumValidators+i].Address)
 		}
 	}
 
@@ -439,7 +440,8 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
 	accs := map[crypto.Address]*account.Account{
-		crypto.TreasuryAddress: acc}
+		crypto.TreasuryAddress: acc,
+	}
 
 	vals := make([]*validator.Validator, 4)
 	for i := 0; i < 4; i++ {

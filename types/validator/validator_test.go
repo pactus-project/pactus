@@ -79,6 +79,7 @@ func TestPower(t *testing.T) {
 	assert.Equal(t, val.Stake(), int64(1))
 	assert.Equal(t, val.Power(), int64(0))
 }
+
 func TestAddToStake(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 

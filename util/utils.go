@@ -10,20 +10,26 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-const MaxUint16 = ^uint16(0)
-const MinUint16 = 0
-const MaxInt16 = int16(MaxUint16 >> 1)
-const MinInt16 = -MaxInt16 - 1
+const (
+	MaxUint16 = ^uint16(0)
+	MinUint16 = 0
+	MaxInt16  = int16(MaxUint16 >> 1)
+	MinInt16  = -MaxInt16 - 1
+)
 
-const MaxUint32 = ^uint32(0)
-const MinUint32 = 0
-const MaxInt32 = int32(MaxUint32 >> 1)
-const MinInt32 = -MaxInt32 - 1
+const (
+	MaxUint32 = ^uint32(0)
+	MinUint32 = 0
+	MaxInt32  = int32(MaxUint32 >> 1)
+	MinInt32  = -MaxInt32 - 1
+)
 
-const MaxUint64 = ^uint64(0)
-const MinUint64 = 0
-const MaxInt64 = int64(MaxUint64 >> 1)
-const MinInt64 = -MaxInt64 - 1
+const (
+	MaxUint64 = ^uint64(0)
+	MinUint64 = 0
+	MaxInt64  = int64(MaxUint64 >> 1)
+	MinInt64  = -MaxInt64 - 1
+)
 
 // Max returns the biggest of two integer numbers.
 func Max[T constraints.Integer](a, b T) T {

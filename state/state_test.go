@@ -104,7 +104,8 @@ func setup(t *testing.T) *testData {
 }
 
 func (td *testData) makeBlockAndCertificate(t *testing.T, round int16,
-	signers ...crypto.Signer) (*block.Block, *block.Certificate) {
+	signers ...crypto.Signer,
+) (*block.Block, *block.Certificate) {
 	var st *state
 	if td.state1.committee.IsProposer(td.state1.signers[0].Address(), round) {
 		st = td.state1
@@ -125,7 +126,8 @@ func (td *testData) makeBlockAndCertificate(t *testing.T, round int16,
 }
 
 func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int16,
-	signers ...crypto.Signer) *block.Certificate {
+	signers ...crypto.Signer,
+) *block.Certificate {
 	assert.NotZero(t, len(signers))
 	sigs := make([]*bls.Signature, len(signers))
 	sb := block.CertificateSignBytes(blockHash, round)

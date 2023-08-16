@@ -35,6 +35,7 @@ func TestNewHeightEntry(t *testing.T) {
 	assert.True(t, td.consX.active)
 	assert.NotEqual(t, td.consX.currentState.name(), "new-height")
 }
+
 func TestUpdateCertificate(t *testing.T) {
 	td := setup(t)
 

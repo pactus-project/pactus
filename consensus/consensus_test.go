@@ -159,12 +159,14 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, ha
 }
 
 func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
-	height uint32, round int16) *proposal.Proposal {
+	height uint32, round int16,
+) *proposal.Proposal {
 	return shouldPublishProposal(t, cons, height, round)
 }
 
 func shouldPublishProposal(t *testing.T, cons *consensus,
-	height uint32, round int16) *proposal.Proposal {
+	height uint32, round int16,
+) *proposal.Proposal {
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -254,7 +256,8 @@ func (td *testData) checkHeightRoundWait(t *testing.T, cons *consensus, height u
 }
 
 func (td *testData) addVote(cons *consensus, voteType vote.Type, height uint32, round int16,
-	blockHash hash.Hash, valID int) *vote.Vote {
+	blockHash hash.Hash, valID int,
+) *vote.Vote {
 	v := vote.NewVote(voteType, height, round, blockHash, td.signers[valID].Address())
 	td.signers[valID].SignMsg(v)
 

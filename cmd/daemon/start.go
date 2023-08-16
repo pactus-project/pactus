@@ -14,7 +14,7 @@ import (
 
 // Start starts the pactus node.
 func buildStartCmd(parentCmd *cobra.Command) {
-	var startCmd = &cobra.Command{
+	startCmd := &cobra.Command{
 		Use:   "start",
 		Short: "Start the Pactus blockchain",
 	}

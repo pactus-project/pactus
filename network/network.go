@@ -98,7 +98,6 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 		rcmgr.NewFixedLimiter(rcmgr.DefaultLimits.AutoScale()),
 		rcmgr.WithTraceReporter(str),
 	)
-
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
 	}

@@ -21,6 +21,7 @@ devtools:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 	go install github.com/bufbuild/buf/cmd/buf@v1.25.0
+	go install mvdan.cc/gofumpt@latest
 	go install github.com/rakyll/statik@v0.1
 
 ########################################
@@ -60,7 +61,7 @@ proto:
 ### Formatting, linting, and vetting
 fmt:
 	gofmt -s -w .
-	godot -w .
+	gofumpt -l -w .
 
 check:
 	golangci-lint run --build-tags "${BUILD_TAG}" --timeout=20m0s

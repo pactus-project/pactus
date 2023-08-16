@@ -153,7 +153,8 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 }
 
 func (td *testData) shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
-	msgType message.Type) *bundle.Bundle {
+	msgType message.Type,
+) *bundle.Bundle {
 	return shouldPublishMessageWithThisType(t, net, msgType)
 }
 

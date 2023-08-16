@@ -162,6 +162,7 @@ func updateValidatorHint(lbl *gtk.Label, addr string, w *wallet.Wallet) {
 		updateHintLabel(lbl, hint)
 	}
 }
+
 func updateAccountHint(lbl *gtk.Label, addr string, w *wallet.Wallet) {
 	balance, err := w.Balance(addr)
 	if err != nil {

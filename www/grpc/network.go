@@ -17,7 +17,8 @@ type networkServer struct {
 }
 
 func (s *networkServer) GetNetworkInfo(_ context.Context,
-	_ *pactus.GetNetworkInfoRequest) (*pactus.GetNetworkInfoResponse, error) {
+	_ *pactus.GetNetworkInfoRequest,
+) (*pactus.GetNetworkInfoResponse, error) {
 	peerset := s.sync.PeerSet()
 	peers := make([]*pactus.PeerInfo, peerset.Len())
 
@@ -66,7 +67,8 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 }
 
 func (s *networkServer) GetNodeInfo(_ context.Context,
-	_ *pactus.GetNodeInfoRequest) (*pactus.GetNodeInfoResponse, error) {
+	_ *pactus.GetNodeInfoRequest,
+) (*pactus.GetNodeInfoResponse, error) {
 	return &pactus.GetNodeInfoResponse{
 		Moniker: s.sync.Moniker(),
 		Agent:   version.Agent(),

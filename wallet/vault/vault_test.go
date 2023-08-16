@@ -295,7 +295,8 @@ func TestNeuter(t *testing.T) {
 	assert.ErrorIs(t, err, ErrNeutered)
 
 	_, err = neutered.PrivateKeys(tPassword, []string{
-		td.RandomAddress().String()})
+		td.RandomAddress().String(),
+	})
 	assert.ErrorIs(t, err, ErrNeutered)
 
 	err = neutered.ImportPrivateKey("any", td.importedPrv)

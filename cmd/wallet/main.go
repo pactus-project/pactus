@@ -7,9 +7,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var pathArg *string
-var offlineOpt *bool
-var serverAddrOpt *string
+var (
+	pathArg       *string
+	offlineOpt    *bool
+	serverAddrOpt *string
+)
 
 func addPasswordOption(c *cobra.Command) *string {
 	return c.Flags().StringP("password", "p",

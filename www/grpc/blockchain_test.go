@@ -17,7 +17,8 @@ func TestGetBlock(t *testing.T) {
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx, &pactus.GetBlockRequest{
-			Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
+			Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_DATA,
+		})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)

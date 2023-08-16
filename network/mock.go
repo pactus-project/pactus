@@ -35,24 +35,30 @@ func MockingNetwork(ts *testsuite.TestSuite, id peer.ID) *MockNetwork {
 		ID:          id,
 	}
 }
+
 func (mock *MockNetwork) Start() error {
 	return nil
 }
+
 func (mock *MockNetwork) Stop() {
 }
 
 func (mock *MockNetwork) EventChannel() <-chan Event {
 	return mock.EventCh
 }
+
 func (mock *MockNetwork) JoinGeneralTopic() error {
 	return nil
 }
+
 func (mock *MockNetwork) JoinConsensusTopic() error {
 	return nil
 }
+
 func (mock *MockNetwork) SelfID() peer.ID {
 	return mock.ID
 }
+
 func (mock *MockNetwork) SendTo(data []byte, pid lp2pcore.PeerID) error {
 	if mock.SendError != nil {
 		return mock.SendError
@@ -63,6 +69,7 @@ func (mock *MockNetwork) SendTo(data []byte, pid lp2pcore.PeerID) error {
 	}
 	return nil
 }
+
 func (mock *MockNetwork) Broadcast(data []byte, _ TopicID) error {
 	mock.BroadcastCh <- BroadcastData{
 		Data:   data,
@@ -91,6 +98,7 @@ func (mock *MockNetwork) SendToOthers(data []byte, target *peer.ID) {
 		}
 	}
 }
+
 func (mock *MockNetwork) CloseConnection(pid peer.ID) {
 	for i, net := range mock.OtherNets {
 		if net.ID == pid {
@@ -98,6 +106,7 @@ func (mock *MockNetwork) CloseConnection(pid peer.ID) {
 		}
 	}
 }
+
 func (mock *MockNetwork) IsClosed(pid peer.ID) bool {
 	for _, net := range mock.OtherNets {
 		if net.ID == pid {
@@ -106,9 +115,11 @@ func (mock *MockNetwork) IsClosed(pid peer.ID) bool {
 	}
 	return true
 }
+
 func (mock *MockNetwork) NumConnectedPeers() int {
 	return len(mock.OtherNets)
 }
+
 func (mock *MockNetwork) AddAnotherNetwork(net *MockNetwork) {
 	mock.OtherNets = append(mock.OtherNets, net)
 }

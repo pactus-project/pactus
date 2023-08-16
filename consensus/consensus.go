@@ -47,7 +47,8 @@ func NewConsensus(
 	signer crypto.Signer,
 	rewardAddr crypto.Address,
 	broadcastCh chan message.Message,
-	mediator mediator) Consensus {
+	mediator mediator,
+) Consensus {
 	cs := &consensus{
 		config:      conf,
 		state:       state,

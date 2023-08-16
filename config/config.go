@@ -103,7 +103,8 @@ func SaveTestnetConfig(path string, numValidators int) error {
 		"/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
 		"/ip4/163.172.178.141/tcp/21777/p2p/12D3KooWDF8a4goNCHriP1y922y4jagaPwHdX4eSrG5WtQpjzS6k",
 		"/ip4/13.230.117.134/tcp/21777/p2p/12D3KooWBGNEH8NqdK1UddSnPV1yRHGLYpaQUcnujC24s7YNWPiq",
-		"/ip6/2400:8901::f03c:93ff:fe1c:c3ec/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"}
+		"/ip6/2400:8901::f03c:93ff:fe1c:c3ec/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
+	}
 	conf.Network.Bootstrap.MinThreshold = 4
 	conf.Network.Bootstrap.MaxThreshold = 8
 	conf.Network.EnableRelay = true

@@ -24,24 +24,28 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-var tSigners [][]crypto.Signer
-var tConfigs []*config.Config
-var tNodes []*node.Node
-var tGRPCAddress = "0.0.0.0:1337"
-var tGenDoc *genesis.Genesis
-var tGRPC *grpc.ClientConn
-var tBlockchain pactus.BlockchainClient
-var tTransaction pactus.TransactionClient
-var tNetwork pactus.NetworkClient
-var tCtx context.Context
-var tSequences map[crypto.Address]int32
+var (
+	tSigners     [][]crypto.Signer
+	tConfigs     []*config.Config
+	tNodes       []*node.Node
+	tGRPCAddress = "0.0.0.0:1337"
+	tGenDoc      *genesis.Genesis
+	tGRPC        *grpc.ClientConn
+	tBlockchain  pactus.BlockchainClient
+	tTransaction pactus.TransactionClient
+	tNetwork     pactus.NetworkClient
+	tCtx         context.Context
+	tSequences   map[crypto.Address]int32
+)
 
-const tNodeIdx1 = 0
-const tNodeIdx2 = 1
-const tNodeIdx3 = 2
-const tNodeIdx4 = 3
-const tTotalNodes = 4 // each node has 3 validators
-const tCommitteeSize = 7
+const (
+	tNodeIdx1      = 0
+	tNodeIdx2      = 1
+	tNodeIdx3      = 2
+	tNodeIdx4      = 3
+	tTotalNodes    = 4 // each node has 3 validators
+	tCommitteeSize = 7
+)
 
 func incSequence(addr crypto.Address) {
 	tSequences[addr] = tSequences[addr] + 1
@@ -132,7 +136,8 @@ func TestMain(m *testing.M) {
 			[]crypto.Address{
 				tSigners[i][0].Address(),
 				tSigners[i][1].Address(),
-				tSigners[i][2].Address()})
+				tSigners[i][2].Address(),
+			})
 
 		if err := tNodes[i].Start(); err != nil {
 			panic(fmt.Sprintf("Error on starting the node: %v", err))

@@ -97,7 +97,8 @@ func TestNodeConfigSanityCheck(t *testing.T) {
 	t.Run("invalid number of reward addresses", func(t *testing.T) {
 		conf := DefaultNodeConfig()
 		conf.RewardAddresses = []string{
-			ts.RandomAddress().String()}
+			ts.RandomAddress().String(),
+		}
 
 		assert.Error(t, conf.SanityCheck())
 	})
@@ -107,7 +108,8 @@ func TestNodeConfigSanityCheck(t *testing.T) {
 		conf.NumValidators = 2
 		conf.RewardAddresses = []string{
 			ts.RandomAddress().String(),
-			"abcd"}
+			"abcd",
+		}
 
 		assert.Error(t, conf.SanityCheck())
 	})
@@ -117,7 +119,8 @@ func TestNodeConfigSanityCheck(t *testing.T) {
 		conf.NumValidators = 2
 		conf.RewardAddresses = []string{
 			ts.RandomAddress().String(),
-			ts.RandomAddress().String()}
+			ts.RandomAddress().String(),
+		}
 
 		assert.NoError(t, conf.SanityCheck())
 	})

@@ -19,7 +19,8 @@ type transactionServer struct {
 }
 
 func (s *transactionServer) GetTransaction(_ context.Context,
-	req *pactus.GetTransactionRequest) (*pactus.GetTransactionResponse, error) {
+	req *pactus.GetTransactionRequest,
+) (*pactus.GetTransactionResponse, error) {
 	id, err := hash.FromBytes(req.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid transaction ID: %v", err.Error())
@@ -43,7 +44,8 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 }
 
 func (s *transactionServer) SendRawTransaction(_ context.Context,
-	req *pactus.SendRawTransactionRequest) (*pactus.SendRawTransactionResponse, error) {
+	req *pactus.SendRawTransactionRequest,
+) (*pactus.SendRawTransactionResponse, error) {
 	trx, err := tx.FromBytes(req.Data)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
@@ -63,7 +65,8 @@ func (s *transactionServer) SendRawTransaction(_ context.Context,
 }
 
 func (s *transactionServer) CalculateFee(_ context.Context,
-	req *pactus.CalculateFeeRequest) (*pactus.CalculateFeeResponse, error) {
+	req *pactus.CalculateFeeRequest,
+) (*pactus.CalculateFeeResponse, error) {
 	fee, err := s.state.CalculateFee(req.Amount, payload.Type(req.PayloadType))
 	if err != nil {
 		return nil, err

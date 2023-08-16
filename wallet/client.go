@@ -66,7 +66,6 @@ func (c *grpcClient) sendTx(tx *tx.Tx) (tx.ID, error) {
 	res, err := c.transactionClient.SendRawTransaction(context.Background(), &pactus.SendRawTransactionRequest{
 		Data: data,
 	})
-
 	if err != nil {
 		return hash.UndefHash, err
 	}
@@ -89,7 +88,8 @@ func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, e
 
 func (c *grpcClient) getFee(amount int64, payloadType payload.Type) (int64, error) {
 	res, err := c.transactionClient.CalculateFee(context.Background(), &pactus.CalculateFeeRequest{
-		Amount: amount, PayloadType: pactus.PayloadType(payloadType)})
+		Amount: amount, PayloadType: pactus.PayloadType(payloadType),
+	})
 	if err != nil {
 		return 0, err
 	}

@@ -166,6 +166,7 @@ func TestSaveWallet(t *testing.T) {
 		assert.Error(t, td.wallet.Save())
 	})
 }
+
 func TestInvalidAddress(t *testing.T) {
 	td := setup(t)
 

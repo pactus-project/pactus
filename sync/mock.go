@@ -49,6 +49,7 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 func (m *MockSync) Start() error {
 	return nil
 }
+
 func (m *MockSync) Stop() {
 }
 
@@ -59,6 +60,7 @@ func (m *MockSync) SelfID() peer.ID {
 func (m *MockSync) Moniker() string {
 	return "test-moniker"
 }
+
 func (m *MockSync) PeerSet() *peerset.PeerSet {
 	return m.TestPeerSet
 }

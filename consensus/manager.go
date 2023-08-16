@@ -19,7 +19,8 @@ func NewManager(
 	state state.Facade,
 	signers []crypto.Signer,
 	rewardAddrs []crypto.Address,
-	broadcastCh chan message.Message) Manager {
+	broadcastCh chan message.Message,
+) Manager {
 	mgr := &manager{
 		instances: make([]Consensus, len(signers)),
 	}

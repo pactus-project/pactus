@@ -78,7 +78,8 @@ func (e *SortitionExecutor) Fee() int64 {
 }
 
 func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
-	val *validator.Validator) error {
+	val *validator.Validator,
+) error {
 	joiningNum := 0
 	joiningPower := int64(0)
 	committee := sb.Committee()

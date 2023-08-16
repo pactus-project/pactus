@@ -127,7 +127,6 @@ func (s *Server) RootHandler(w http.ResponseWriter, _ *http.Request) {
 
 		return nil
 	})
-
 	if err != nil {
 		s.logger.Error("unable to walk through methods", "err", err)
 		return
@@ -168,31 +167,40 @@ func newTableMaker() *tableMaker {
 func (t *tableMaker) addRowBlockHash(key string, val []byte) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/block/hash/%x\">%x</a></td></tr>", key, val, val))
 }
+
 func (t *tableMaker) addRowAccAddress(key, val string) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/account/address/%s\">%s</a></td></tr>", key, val, val))
 }
+
 func (t *tableMaker) addRowValAddress(key, val string) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/validator/address/%s\">%s</a></td></tr>", key, val, val))
 }
+
 func (t *tableMaker) addRowTxID(key string, val []byte) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/transaction/id/%x\">%x</a></td></tr>", key, val, val))
 }
+
 func (t *tableMaker) addRowString(key, val string) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", key, val))
 }
+
 func (t *tableMaker) addRowTime(key string, sec int64) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", key, time.Unix(sec, 0).String()))
 }
+
 func (t *tableMaker) addRowAmount(key string, change int64) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>",
 		key, util.ChangeToString(change)))
 }
+
 func (t *tableMaker) addRowInt(key string, val int) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%d</td></tr>", key, val))
 }
+
 func (t *tableMaker) addRowBool(key string, val bool) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%v</td></tr>", key, val))
 }
+
 func (t *tableMaker) addRowInts(key string, vals []int32) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>", key))
 	for _, n := range vals {
@@ -200,9 +208,11 @@ func (t *tableMaker) addRowInts(key string, vals []int32) {
 	}
 	t.w.WriteString("</td></tr>")
 }
+
 func (t *tableMaker) addRowBytes(key string, val []byte) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%x</td></tr>", key, val))
 }
+
 func (t *tableMaker) html() string {
 	t.w.WriteString("</table>")
 	return t.w.String()

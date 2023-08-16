@@ -81,6 +81,7 @@ func TestWriteAndClosePeacefully(t *testing.T) {
 	assert.NoError(t, td.store.Close())
 	assert.Error(t, td.store.WriteBatch())
 }
+
 func TestRetrieveBlockAndTransactions(t *testing.T) {
 	td := setup(t)
 

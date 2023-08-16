@@ -9,8 +9,10 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 )
 
-const TopicNewBlock = uint16(0x0101)
-const TopicNewTransaction = uint16(0x0201)
+const (
+	TopicNewBlock       = uint16(0x0101)
+	TopicNewTransaction = uint16(0x0201)
+)
 
 type Event []byte
 

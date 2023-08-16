@@ -123,7 +123,8 @@ func makeGenesisValidator(val *validator.Validator) genValidator {
 }
 
 func MakeGenesis(genesisTime time.Time, accounts map[crypto.Address]*account.Account,
-	validators []*validator.Validator, params param.Params) *Genesis {
+	validators []*validator.Validator, params param.Params,
+) *Genesis {
 	genAccs := make([]genAccount, len(accounts))
 	for addr, acc := range accounts {
 		genAcc := makeGenesisAccount(addr, acc)

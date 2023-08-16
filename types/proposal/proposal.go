@@ -87,6 +87,7 @@ func (p *Proposal) Verify(pubKey crypto.PublicKey) error {
 	}
 	return pubKey.Verify(p.SignBytes(), p.data.Signature)
 }
+
 func (p *Proposal) Hash() hash.Hash {
 	return hash.CalcHash(p.SignBytes())
 }

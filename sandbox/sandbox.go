@@ -44,7 +44,8 @@ type sandboxAccount struct {
 }
 
 func NewSandbox(store store.Reader, params param.Params,
-	committee committee.Reader, totalPower int64) Sandbox {
+	committee committee.Reader, totalPower int64,
+) Sandbox {
 	sb := &sandbox{
 		store:      store,
 		committee:  committee,
@@ -227,7 +228,8 @@ func (sb *sandbox) currentHeight() uint32 {
 }
 
 func (sb *sandbox) IterateAccounts(
-	consumer func(crypto.Address, *account.Account, bool)) {
+	consumer func(crypto.Address, *account.Account, bool),
+) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
@@ -237,7 +239,8 @@ func (sb *sandbox) IterateAccounts(
 }
 
 func (sb *sandbox) IterateValidators(
-	consumer func(*validator.Validator, bool, bool)) {
+	consumer func(*validator.Validator, bool, bool),
+) {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 

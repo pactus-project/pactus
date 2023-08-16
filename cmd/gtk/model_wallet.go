@@ -67,7 +67,8 @@ func (model *walletModel) rebuildModel() {
 						IDAddressesColumnAddress,
 						IDAddressesColumnLabel,
 						IDAddressesColumnBalance,
-						IDAddressesColumnStake},
+						IDAddressesColumnStake,
+					},
 					[]interface{}{
 						d[0],
 						d[1],
@@ -97,7 +98,8 @@ func (model *walletModel) createAddress() error {
 			IDAddressesColumnAddress,
 			IDAddressesColumnLabel,
 			IDAddressesColumnBalance,
-			IDAddressesColumnStake},
+			IDAddressesColumnStake,
+		},
 		[]interface{}{
 			fmt.Sprintf("%v", model.wallet.AddressCount()+1),
 			address,

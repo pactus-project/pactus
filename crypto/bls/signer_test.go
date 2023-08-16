@@ -17,9 +17,11 @@ type testSignableMsg struct {
 func (t *testSignableMsg) SignBytes() []byte {
 	return []byte("zarb")
 }
+
 func (t *testSignableMsg) SetSignature(sig crypto.Signature) {
 	t.sig = sig.(*bls.Signature)
 }
+
 func (t *testSignableMsg) SetPublicKey(pub crypto.PublicKey) {
 	t.pub = pub.(*bls.PublicKey)
 }

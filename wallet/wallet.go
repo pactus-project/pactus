@@ -75,8 +75,7 @@ func Create(path, mnemonic, password string, chain genesis.ChainType) (*Wallet, 
 	switch chain {
 	case genesis.Mainnet:
 		coinType = 21888
-	case genesis.Testnet,
-		genesis.Localnet:
+	case genesis.Testnet, genesis.Localnet:
 		coinType = 21777
 	default:
 		return nil, ErrInvalidNetwork
@@ -285,7 +284,8 @@ func (w *Wallet) ValidatorSequence(addrStr string) (int32, error) {
 
 // MakeTransferTx creates a new transfer transaction based on the given parameters.
 func (w *Wallet) MakeTransferTx(sender, receiver string, amount int64,
-	options ...TxOption) (*tx.Tx, error) {
+	options ...TxOption,
+) (*tx.Tx, error) {
 	maker, err := newTxBuilder(w.client, options...)
 	if err != nil {
 		return nil, err
@@ -306,7 +306,8 @@ func (w *Wallet) MakeTransferTx(sender, receiver string, amount int64,
 
 // MakeBondTx creates a new bond transaction based on the given parameters.
 func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
-	options ...TxOption) (*tx.Tx, error) {
+	options ...TxOption,
+) (*tx.Tx, error) {
 	maker, err := newTxBuilder(w.client, options...)
 	if err != nil {
 		return nil, err
@@ -356,7 +357,8 @@ func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
 // MakeWithdrawTx creates a new withdraw transaction based on the given
 // parameters.
 func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount int64,
-	options ...TxOption) (*tx.Tx, error) {
+	options ...TxOption,
+) (*tx.Tx, error) {
 	maker, err := newTxBuilder(w.client, options...)
 	if err != nil {
 		return nil, err

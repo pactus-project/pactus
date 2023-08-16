@@ -52,7 +52,8 @@ func NewSynchronizer(
 	state state.Facade,
 	consMgr consensus.Manager,
 	net network.Network,
-	broadcastCh <-chan message.Message) (Synchronizer, error) {
+	broadcastCh <-chan message.Message,
+) (Synchronizer, error) {
 	sync := &synchronizer{
 		ctx:         context.Background(), // TODO, set proper context
 		config:      conf,
@@ -198,6 +199,7 @@ func (sync *synchronizer) broadcastLoop() {
 		}
 	}
 }
+
 func (sync *synchronizer) receiveLoop() {
 	for {
 		select {

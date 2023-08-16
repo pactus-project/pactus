@@ -36,7 +36,7 @@ func (p *SortitionPayload) SanityCheck() error {
 }
 
 func (p *SortitionPayload) SerializeSize() int {
-	return 69 //48+21
+	return 69 // 48+21
 }
 
 func (p *SortitionPayload) Encode(w io.Writer) error {

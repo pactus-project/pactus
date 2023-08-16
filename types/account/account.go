@@ -37,7 +37,6 @@ func FromBytes(data []byte) (*Account, error) {
 		&acc.data.Number,
 		&acc.data.Sequence,
 		&acc.data.Balance)
-
 	if err != nil {
 		return nil, err
 	}
