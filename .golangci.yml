@@ -1,0 +1,88 @@
+linters:
+  enable-all: true
+  disable:
+    - scopelint # deprecated
+    - maligned # deprecated
+    - nosnakecase # deprecated
+    - interfacer # deprecated
+    - deadcode # deprecated
+    - ifshort # deprecated
+    - golint # deprecated
+    - structcheck # deprecated
+    - varcheck # deprecated
+    - exhaustivestruct # deprecated
+    - varnamelen
+    - wrapcheck
+    - paralleltest
+    - interfacebloat
+    - depguard
+    - gochecknoglobals
+    - gomnd
+    - cyclop
+    - nestif
+    - gochecknoinits
+    - dupl
+    - goconst
+    - errchkjson # Consider to enable it
+    - gocognit # Consider to enable it
+    - funlen # Consider to enable it
+    - forbidigo # Consider to enable it
+    - gci  # Consider to enable it (add it to make fmt)
+    - gofumpt  # Consider to enable it (add it to make fmt)
+    - godot # Consider to enable it
+    - godox # Consider to enable it (only show warning)
+    - gocritic # Consider to enable it
+    - wsl # Consider to enable it
+    - containedctx # Consider to enable it
+    - contextcheck # Consider to enable it
+    - testpackage # Consider to enable it (??)
+    - goprintffuncname # Consider to enable it
+    - exhaustive # Consider to enable it
+    - exhaustruct # Consider to enable it
+    - forcetypeassert # Consider to enable it
+    - musttag  # Consider to enable it (is i possible?)
+    - goerr113 # Consider to enable it
+    - errorlint # Consider to enable it
+    - errname # Consider to enable it
+    - thelper # Consider to enable it
+    - wastedassign # Consider to enable it
+    - nonamedreturns # Consider to enable it
+    - nlreturn # Consider to enable it
+    - ireturn  # Consider to enable it (??)
+    - dupword  # Consider to enable it
+
+linters-settings:
+  gosimple:
+    checks: ["all"]
+
+  govet:
+    enable-all: true
+    disable: fieldalignment
+    shadow:
+        strict: true
+
+  godox:
+    severity: warning
+
+  predeclared:
+    # Comma-separated list of predeclared identifiers to not report on.
+    # Default: ""
+    ignore: "len"
+    # Include method names and field names (i.e., qualified names) in checks.
+    # Default: false
+    q: true
+
+  tagliatelle:
+    # Check the struct tag name case.
+    case:
+      use-field-name: false
+      rules:
+        json: snake
+        yaml: snake
+
+issues:
+  exclude-rules:
+    # disable funlen for all _test.go files
+    - path: _test.go
+      linters:
+        - funlen
