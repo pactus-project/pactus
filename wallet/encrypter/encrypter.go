@@ -95,14 +95,14 @@ func DefaultEncrypter(opts ...Option) Encrypter {
 	method := fmt.Sprintf("%s-%s-%s",
 		nameFuncArgon2ID, nameFuncAES256CTR, nameFuncMACv1)
 
-	params := newParams()
-	params.SetUint32(nameParamIterations, argon2dParameters.iterations)
-	params.SetUint32(nameParamMemory, argon2dParameters.memory)
-	params.SetUint8(nameParamParallelism, argon2dParameters.parallelism)
+	encParams := newParams()
+	encParams.SetUint32(nameParamIterations, argon2dParameters.iterations)
+	encParams.SetUint32(nameParamMemory, argon2dParameters.memory)
+	encParams.SetUint8(nameParamParallelism, argon2dParameters.parallelism)
 
 	return Encrypter{
 		Method: method,
-		Params: params,
+		Params: encParams,
 	}
 }
 

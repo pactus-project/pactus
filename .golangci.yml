@@ -86,7 +86,7 @@ issues:
     - path: _test.go
       linters:
         - funlen
-  
+
     - linters:
         - govet
-      text: "shadow: declaration of "err" shadows"
+      text: "shadow: declaration of \"err\" shadows"
