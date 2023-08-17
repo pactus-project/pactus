@@ -54,6 +54,7 @@ func (m *MockTxPool) AppendTx(trx *tx.Tx) error {
 	m.Txs = append(m.Txs, trx)
 	return nil
 }
+
 func (m *MockTxPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	m.Txs = append(m.Txs, trx)
 	return nil
@@ -61,7 +62,7 @@ func (m *MockTxPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 
 func (m *MockTxPool) RemoveTx(_ hash.Hash) {
 	// This test pools is shared between different test objects
-	//delete(m.Txs, id)
+	// delete(m.Txs, id)
 }
 
 func (m *MockTxPool) PrepareBlockTransactions() block.Txs {

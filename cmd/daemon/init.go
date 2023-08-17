@@ -12,7 +12,7 @@ import (
 
 // BuildInitCmd builds the init command for the Pactus blockchain.
 func buildInitCmd(parentCmd *cobra.Command) {
-	var initCmd = &cobra.Command{
+	initCmd := &cobra.Command{
 		Use:   "init",
 		Short: "Initialize the Pactus blockchain",
 	}

@@ -12,6 +12,7 @@ type params map[string]string
 func newParams() params {
 	return make(map[string]string)
 }
+
 func (p params) SetUint8(key string, val uint8) {
 	p.SetUint64(key, uint64(val))
 }

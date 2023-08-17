@@ -55,7 +55,6 @@ func FromBytes(data []byte) (*Validator, error) {
 		&acc.data.UnbondingHeight,
 		&acc.data.LastSortitionHeight,
 	)
-
 	if err != nil {
 		return nil, err
 	}

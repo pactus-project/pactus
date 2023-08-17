@@ -10,7 +10,7 @@ var (
 	// in wallet.
 	ErrAddressExists = errors.New("address already exists")
 
-	// ErrInvalidPath describes an error in which the key path is invalid
+	// ErrInvalidPath describes an error in which the key path is invalid.
 	ErrInvalidPath = errors.New("the key path is invalid")
 
 	// ErrNeutered describes an error in which the wallet is neutered.

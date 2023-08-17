@@ -33,6 +33,7 @@ func newExecution(strict bool) *Execution {
 		strict:    strict,
 	}
 }
+
 func NewExecutor() *Execution {
 	return newExecution(true)
 }

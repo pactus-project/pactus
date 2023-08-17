@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	// Static files
+	// Static files.
 	_ "github.com/pactus-project/pactus/www/grpc/statik"
 )
 

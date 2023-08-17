@@ -15,19 +15,29 @@ func TestActivitiesSort(t *testing.T) {
 
 	historyMock.addActivity("addr-1", 20, &pactus.GetTransactionResponse{
 		BlockTime: 2, Transaction: &pactus.TransactionInfo{
-			Id: []byte{2}}})
+			Id: []byte{2},
+		},
+	})
 	historyMock.addActivity("addr-1", 40, &pactus.GetTransactionResponse{
 		BlockTime: 4, Transaction: &pactus.TransactionInfo{
-			Id: []byte{4}}})
+			Id: []byte{4},
+		},
+	})
 	historyMock.addActivity("addr-1", 30, &pactus.GetTransactionResponse{
 		BlockTime: 3, Transaction: &pactus.TransactionInfo{
-			Id: []byte{3}}})
+			Id: []byte{3},
+		},
+	})
 	historyMock.addActivity("addr-1", 10, &pactus.GetTransactionResponse{
 		BlockTime: 1, Transaction: &pactus.TransactionInfo{
-			Id: []byte{1}}})
+			Id: []byte{1},
+		},
+	})
 	historyMock.addActivity("addr-2", 50, &pactus.GetTransactionResponse{
 		BlockTime: 5, Transaction: &pactus.TransactionInfo{
-			Id: []byte{5}}})
+			Id: []byte{5},
+		},
+	})
 
 	h := historyMock.getAddrHistory("addr-1")
 	assert.Len(t, h, 4)

@@ -20,11 +20,13 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 )
 
-var tMockState *state.MockState
-var tConsMocks []*consensus.MockConsensus
-var tMockSync *sync.MockSync
-var tListener *bufconn.Listener
-var tCtx context.Context
+var (
+	tMockState *state.MockState
+	tConsMocks []*consensus.MockConsensus
+	tMockSync  *sync.MockSync
+	tListener  *bufconn.Listener
+	tCtx       context.Context
+)
 
 func init() {
 	ts := testsuite.NewTestSuiteForSeed(0x1234)

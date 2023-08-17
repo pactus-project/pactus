@@ -20,7 +20,7 @@ func buildAllHistoryCmd(parentCmd *cobra.Command) {
 }
 
 func buildAddToHistoryCmd(parentCmd *cobra.Command) {
-	var addToHistoryCmd = &cobra.Command{
+	addToHistoryCmd := &cobra.Command{
 		Use:   "add",
 		Short: "Add a transaction to the wallet history",
 	}

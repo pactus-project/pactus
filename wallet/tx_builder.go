@@ -22,6 +22,7 @@ func OptionStamp(stamp string) func(builder *txBuilder) error {
 		return nil
 	}
 }
+
 func OptionSequence(seq int32) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
 		builder.seq = seq
@@ -77,6 +78,7 @@ func (m *txBuilder) setFromAddr(addr string) error {
 	m.from = &from
 	return nil
 }
+
 func (m *txBuilder) setToAddress(addr string) error {
 	to, err := crypto.AddressFromString(addr)
 	if err != nil {

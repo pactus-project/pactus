@@ -50,7 +50,8 @@ func LoadOrNewState(
 	genDoc *genesis.Genesis,
 	signers []crypto.Signer,
 	store store.Store,
-	txPool txpool.TxPool, eventCh chan event.Event) (Facade, error) {
+	txPool txpool.TxPool, eventCh chan event.Event,
+) (Facade, error) {
 	st := &state{
 		signers:         signers,
 		genDoc:          genDoc,
@@ -637,9 +638,11 @@ func (st *state) StoredTx(id tx.ID) *store.StoredTx {
 func (st *state) BlockHash(height uint32) hash.Hash {
 	return st.store.BlockHash(height)
 }
+
 func (st *state) BlockHeight(hash hash.Hash) uint32 {
 	return st.store.BlockHeight(hash)
 }
+
 func (st *state) AccountByAddress(addr crypto.Address) *account.Account {
 	acc, err := st.store.Account(addr)
 	if err != nil {
@@ -676,20 +679,24 @@ func (st *state) ValidatorByNumber(n int32) *validator.Validator {
 	}
 	return val
 }
+
 func (st *state) PendingTx(id tx.ID) *tx.Tx {
 	return st.txPool.PendingTx(id)
 }
+
 func (st *state) AddPendingTx(trx *tx.Tx) error {
 	return st.txPool.AppendTx(trx)
 }
+
 func (st *state) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 	return st.txPool.AppendTxAndBroadcast(trx)
 }
+
 func (st *state) Params() param.Params {
 	return st.params
 }
 
-// publishEvents publishes block related events
+// publishEvents publishes block related events.
 func (st *state) publishEvents(height uint32, block *block.Block) {
 	if st.eventCh == nil {
 		return

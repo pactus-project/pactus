@@ -47,7 +47,8 @@ func TestMerkleTree(t *testing.T) {
 
 	data := []string{
 		"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-		"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
+		"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+	}
 	roots := []string{
 		"a3a0081351bb785d0758ddf68076a95ffd3f10b88bbc9911e9fea4d793c06414",
 		"f8c780ed425c674e458b1e42abc894d144af4660476b63adc900e5ca72ef3a7d",

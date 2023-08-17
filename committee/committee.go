@@ -25,7 +25,8 @@ func cloneValidator(val *validator.Validator) *validator.Validator {
 }
 
 func NewCommittee(validators []*validator.Validator, committeeSize int,
-	proposerAddress crypto.Address) (Committee, error) {
+	proposerAddress crypto.Address,
+) (Committee, error) {
 	validatorList := list.New()
 	var proposerPos *list.Element
 

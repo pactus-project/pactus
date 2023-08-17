@@ -30,10 +30,11 @@ func TestInvalidCBOR(t *testing.T) {
 	_, err = m.Decode(bytes.NewReader(d2))
 	assert.Error(t, err)
 }
+
 func TestMessageCompress(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	var blocksData = [][]byte{}
+	blocksData := [][]byte{}
 	for i := 0; i < 10; i++ {
 		b := ts.GenerateTestBlock(nil, nil)
 		d, _ := b.Bytes()

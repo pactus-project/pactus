@@ -11,7 +11,7 @@ import (
 	mangos "go.nanomsg.org/mangos/v3"
 	"go.nanomsg.org/mangos/v3/protocol/pub"
 
-	// register nano ports transports
+	// register nano ports transports.
 	_ "go.nanomsg.org/mangos/v3/transport/all"
 )
 

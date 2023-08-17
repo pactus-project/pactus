@@ -27,7 +27,7 @@ func (p *WithdrawPayload) Value() int64 {
 	return p.Amount
 }
 
-// TODO: write test for me
+// TODO: write test for me.
 func (p *WithdrawPayload) SanityCheck() error {
 	if err := p.From.SanityCheck(); err != nil {
 		return errors.Error(errors.ErrInvalidAddress)

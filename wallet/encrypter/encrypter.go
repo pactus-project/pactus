@@ -53,11 +53,9 @@ const (
 	nameFuncMACv1     = "MACV1"
 )
 
-var (
-	// ErrNotSupported describes an error in which the encrypted method is no
-	// known or supported.
-	ErrNotSupported = errors.New("encrypted method is not supported")
-)
+// ErrNotSupported describes an error in which the encrypted method is no
+// known or supported.
+var ErrNotSupported = errors.New("encrypted method is not supported")
 
 // encrypter keeps the method and parameters for the cipher algorithm.
 type Encrypter struct {
@@ -110,7 +108,7 @@ func (e *Encrypter) IsEncrypted() bool {
 	return e.Method != nameFuncNope
 }
 
-// Encrypt encrypts the `message` using give `password` and returns the cipher message
+// Encrypt encrypts the `message` using give `password` and returns the cipher message.
 func (e *Encrypter) Encrypt(message string, password string) (string, error) {
 	if e.Method == nameFuncNope {
 		if password != "" {
@@ -188,7 +186,7 @@ func (e *Encrypter) Encrypt(message string, password string) (string, error) {
 	return cipherText, nil
 }
 
-// Decrypt decrypts the `cipher` using give `password` and returns the original message
+// Decrypt decrypts the `cipher` using give `password` and returns the original message.
 func (e *Encrypter) Decrypt(cipher string, password string) (string, error) {
 	if e.Method == nameFuncNope {
 		if password != "" {

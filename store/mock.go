@@ -32,6 +32,7 @@ func MockingStore(ts *testsuite.TestSuite) *MockStore {
 		Validators: make(map[crypto.Address]validator.Validator),
 	}
 }
+
 func (m *MockStore) Block(height uint32) (*StoredBlock, error) {
 	b, ok := m.Blocks[height]
 	if ok {
@@ -44,6 +45,7 @@ func (m *MockStore) Block(height uint32) (*StoredBlock, error) {
 	}
 	return nil, fmt.Errorf("not found")
 }
+
 func (m *MockStore) BlockHash(height uint32) hash.Hash {
 	b, ok := m.Blocks[height]
 	if ok {
@@ -51,6 +53,7 @@ func (m *MockStore) BlockHash(height uint32) hash.Hash {
 	}
 	return hash.UndefHash
 }
+
 func (m *MockStore) BlockHeight(hash hash.Hash) uint32 {
 	for h, b := range m.Blocks {
 		if b.Hash().EqualsTo(hash) {
@@ -59,6 +62,7 @@ func (m *MockStore) BlockHeight(hash hash.Hash) uint32 {
 	}
 	return 0
 }
+
 func (m *MockStore) Transaction(id tx.ID) (*StoredTx, error) {
 	for height, block := range m.Blocks {
 		for _, trx := range block.Transactions() {
@@ -75,10 +79,12 @@ func (m *MockStore) Transaction(id tx.ID) (*StoredTx, error) {
 	}
 	return nil, fmt.Errorf("not found")
 }
+
 func (m *MockStore) HasAccount(addr crypto.Address) bool {
 	_, ok := m.Accounts[addr]
 	return ok
 }
+
 func (m *MockStore) Account(addr crypto.Address) (*account.Account, error) {
 	a, ok := m.Accounts[addr]
 	if ok {
@@ -103,10 +109,12 @@ func (m *MockStore) UpdateAccount(addr crypto.Address, acc *account.Account) {
 func (m *MockStore) TotalAccounts() int32 {
 	return int32(len(m.Accounts))
 }
+
 func (m *MockStore) HasValidator(addr crypto.Address) bool {
 	_, ok := m.Validators[addr]
 	return ok
 }
+
 func (m *MockStore) ValidatorAddresses() []crypto.Address {
 	addrs := make([]crypto.Address, 0, len(m.Validators))
 	for addr := range m.Validators {
@@ -114,6 +122,7 @@ func (m *MockStore) ValidatorAddresses() []crypto.Address {
 	}
 	return addrs
 }
+
 func (m *MockStore) Validator(addr crypto.Address) (*validator.Validator, error) {
 	v, ok := m.Validators[addr]
 	if ok {
@@ -121,6 +130,7 @@ func (m *MockStore) Validator(addr crypto.Address) (*validator.Validator, error)
 	}
 	return nil, fmt.Errorf("not found")
 }
+
 func (m *MockStore) ValidatorByNumber(num int32) (*validator.Validator, error) {
 	for _, v := range m.Validators {
 		if v.Number() == num {
@@ -129,18 +139,23 @@ func (m *MockStore) ValidatorByNumber(num int32) (*validator.Validator, error) {
 	}
 	return nil, fmt.Errorf("not found")
 }
+
 func (m *MockStore) UpdateValidator(val *validator.Validator) {
 	m.Validators[val.Address()] = *val
 }
+
 func (m *MockStore) TotalValidators() int32 {
 	return int32(len(m.Validators))
 }
+
 func (m *MockStore) Close() error {
 	return nil
 }
+
 func (m *MockStore) HasAnyBlock() bool {
 	return len(m.Blocks) > 0
 }
+
 func (m *MockStore) IterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool)) {
 	for addr, acc := range m.Accounts {
 		cloned := acc
@@ -150,6 +165,7 @@ func (m *MockStore) IterateAccounts(consumer func(crypto.Address, *account.Accou
 		}
 	}
 }
+
 func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
 	for _, val := range m.Validators {
 		cloned := val
@@ -159,6 +175,7 @@ func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop 
 		}
 	}
 }
+
 func (m *MockStore) SaveBlock(height uint32, b *block.Block, cert *block.Certificate) {
 	m.Blocks[height] = *b
 	m.LastHeight = height
@@ -171,6 +188,7 @@ func (m *MockStore) LastCertificate() (uint32, *block.Certificate) {
 	}
 	return m.LastHeight, m.LastCert
 }
+
 func (m *MockStore) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
 	for h, b := range m.Blocks {
 		if b.Stamp().EqualsTo(stamp) {
@@ -180,6 +198,7 @@ func (m *MockStore) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) 
 
 	return 0, nil
 }
+
 func (m *MockStore) WriteBatch() error {
 	return nil
 }
@@ -202,6 +221,7 @@ func (m *MockStore) AddTestBlock(height uint32) *block.Block {
 	m.SaveBlock(height, b, cert)
 	return b
 }
+
 func (m *MockStore) RandomTestAcc() (crypto.Address, *account.Account) {
 	for addr, acc := range m.Accounts {
 		// Do not return the Treasury address for tests,
@@ -213,6 +233,7 @@ func (m *MockStore) RandomTestAcc() (crypto.Address, *account.Account) {
 	}
 	panic("no account in sandbox")
 }
+
 func (m *MockStore) RandomTestVal() *validator.Validator {
 	for _, val := range m.Validators {
 		return &val

@@ -244,7 +244,8 @@ func (ps *PeerSet) UpdatePeerInfo(
 	moniker string,
 	agent string,
 	consKey *bls.PublicKey,
-	nodeNetwork bool) {
+	nodeNetwork bool,
+) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 

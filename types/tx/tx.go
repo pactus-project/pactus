@@ -14,8 +14,10 @@ import (
 	"github.com/pactus-project/pactus/util/errors"
 )
 
-const versionLatest = 0x01
-const flagLockTime = 0x80
+const (
+	versionLatest = 0x01
+	flagLockTime  = 0x80
+)
 
 const maxMemoLength = 64
 
@@ -49,7 +51,8 @@ type txData struct {
 }
 
 func NewTx(stamp hash.Stamp, seq int32, pld payload.Payload, fee int64,
-	memo string) *Tx {
+	memo string,
+) *Tx {
 	trx := &Tx{
 		data: txData{
 			Stamp:    stamp,
@@ -65,7 +68,8 @@ func NewTx(stamp hash.Stamp, seq int32, pld payload.Payload, fee int64,
 }
 
 func NewLockTimeTx(lockTime uint32, seq int32, pld payload.Payload, fee int64,
-	memo string) *Tx {
+	memo string,
+) *Tx {
 	trx := &Tx{
 		data: txData{
 			LockTime: lockTime,
@@ -356,6 +360,7 @@ func (tx *Tx) DecodeWithNoSignatory(r io.Reader) error {
 	}
 	return nil
 }
+
 func (tx *Tx) Decode(r io.Reader) error {
 	err := tx.DecodeWithNoSignatory(r)
 	if err != nil {

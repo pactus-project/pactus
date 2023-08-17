@@ -7,7 +7,7 @@ import (
 
 // Version prints the version of the Pactus node.
 func buildVersionCmd(parentCmd *cobra.Command) {
-	var versionCmd = &cobra.Command{
+	versionCmd := &cobra.Command{
 		Use:   "version",
 		Short: "Print the Pactus version",
 	}

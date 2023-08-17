@@ -123,6 +123,7 @@ func (vs *VoteSet) AddVote(v *vote.Vote) error {
 
 	return nil
 }
+
 func (vs *VoteSet) hasTwoThirdOfTotalPower(power int64) bool {
 	return power > (vs.totalPower * 2 / 3)
 }

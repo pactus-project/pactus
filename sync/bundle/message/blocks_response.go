@@ -7,8 +7,10 @@ import (
 	"github.com/pactus-project/pactus/util/errors"
 )
 
-const LatestBlocksResponseCodeOK = 0
-const LatestBlocksResponseCodeNoMoreBlock = 1
+const (
+	LatestBlocksResponseCodeOK          = 0
+	LatestBlocksResponseCodeNoMoreBlock = 1
+)
 
 type BlocksResponseMessage struct {
 	ResponseCode    ResponseCode       `cbor:"1,keyasint"`
@@ -20,7 +22,8 @@ type BlocksResponseMessage struct {
 }
 
 func NewBlocksResponseMessage(code ResponseCode, reason string, sid int, from uint32,
-	blocksData [][]byte, lastCert *block.Certificate) *BlocksResponseMessage {
+	blocksData [][]byte, lastCert *block.Certificate,
+) *BlocksResponseMessage {
 	return &BlocksResponseMessage{
 		ResponseCode:    code,
 		SessionID:       sid,
@@ -30,6 +33,7 @@ func NewBlocksResponseMessage(code ResponseCode, reason string, sid int, from ui
 		Reason:          reason,
 	}
 }
+
 func (m *BlocksResponseMessage) SanityCheck() error {
 	if m.From == 0 && len(m.BlocksData) != 0 {
 		return errors.Errorf(errors.ErrInvalidHeight, "unexpected block for height zero")

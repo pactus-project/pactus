@@ -33,6 +33,7 @@ func TestSliceToInt16(t *testing.T) {
 		assert.Equal(t, v1, test.in)
 	}
 }
+
 func TestSliceToInt32(t *testing.T) {
 	tests := []struct {
 		in    int32

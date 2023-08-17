@@ -347,7 +347,8 @@ func pageSeedRestore(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.W
 }
 
 func pageSeedConfirm(assistant *gtk.Assistant, assistFunc assistantFunc,
-	textViewSeed *gtk.TextView) (*gtk.Widget, string) {
+	textViewSeed *gtk.TextView,
+) (*gtk.Widget, string) {
 	pageWidget := new(gtk.Widget)
 	textViewConfirmSeed, err := gtk.TextViewNew()
 	fatalErrorCheck(err)
@@ -464,7 +465,8 @@ func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widg
 }
 
 func pageNumValidators(assistant *gtk.Assistant,
-	assistFunc assistantFunc) (*gtk.Widget, *gtk.ListStore, *gtk.ComboBox, string) {
+	assistFunc assistantFunc,
+) (*gtk.Widget, *gtk.ListStore, *gtk.ComboBox, string) {
 	var pageWidget *gtk.Widget
 	lsNumValidators, err := gtk.ListStoreNew(glib.TYPE_INT)
 	fatalErrorCheck(err)

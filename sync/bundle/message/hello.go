@@ -30,7 +30,8 @@ type HelloMessage struct {
 }
 
 func NewHelloMessage(pid peer.ID, moniker string,
-	height uint32, flags int, blockHash, genesisHash hash.Hash) *HelloMessage {
+	height uint32, flags int, blockHash, genesisHash hash.Hash,
+) *HelloMessage {
 	return &HelloMessage{
 		PeerID:      pid,
 		Agent:       version.Agent(),

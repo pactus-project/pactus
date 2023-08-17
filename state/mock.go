@@ -57,33 +57,40 @@ func (m *MockState) CommitTestBlocks(num int) {
 		m.TestStore.SaveBlock(m.LastBlockHeight()+1, b, cert)
 	}
 }
+
 func (m *MockState) LastBlockHeight() uint32 {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
 	return m.TestStore.LastHeight
 }
+
 func (m *MockState) Genesis() *genesis.Genesis {
 	return m.TestGenesis
 }
+
 func (m *MockState) LastBlockHash() hash.Hash {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
 	return m.TestStore.BlockHash(m.TestStore.LastHeight)
 }
+
 func (m *MockState) LastBlockTime() time.Time {
 	return util.Now()
 }
+
 func (m *MockState) LastCertificate() *block.Certificate {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
 	return m.TestStore.LastCert
 }
+
 func (m *MockState) BlockTime() time.Duration {
 	return time.Second
 }
+
 func (m *MockState) UpdateLastCertificate(cert *block.Certificate) error {
 	m.TestStore.LastCert = cert
 	return nil
@@ -103,25 +110,32 @@ func (m *MockState) CommitBlock(h uint32, b *block.Block, cert *block.Certificat
 func (m *MockState) Close() error {
 	return nil
 }
+
 func (m *MockState) ProposeBlock(_ crypto.Signer, _ crypto.Address, _ int16) (*block.Block, error) {
 	b := m.ts.GenerateTestBlock(nil, nil)
 	return b, nil
 }
+
 func (m *MockState) ValidateBlock(_ *block.Block) error {
 	return nil
 }
+
 func (m *MockState) CommitteeValidators() []*validator.Validator {
 	return m.TestCommittee.Validators()
 }
+
 func (m *MockState) IsInCommittee(addr crypto.Address) bool {
 	return m.TestCommittee.Contains(addr)
 }
+
 func (m *MockState) Proposer(round int16) *validator.Validator {
 	return m.TestCommittee.Proposer(round)
 }
+
 func (m *MockState) IsProposer(addr crypto.Address, round int16) bool {
 	return m.TestCommittee.IsProposer(addr, round)
 }
+
 func (m *MockState) IsValidator(addr crypto.Address) bool {
 	return m.TestStore.HasValidator(addr)
 }
@@ -142,9 +156,11 @@ func (m *MockState) TotalPower() int64 {
 	})
 	return p
 }
+
 func (m *MockState) CommitteePower() int64 {
 	return m.TestCommittee.TotalPower()
 }
+
 func (m *MockState) StoredBlock(height uint32) *store.StoredBlock {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
@@ -152,6 +168,7 @@ func (m *MockState) StoredBlock(height uint32) *store.StoredBlock {
 	b, _ := m.TestStore.Block(height)
 	return b
 }
+
 func (m *MockState) StoredTx(id tx.ID) *store.StoredTx {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
@@ -159,52 +176,63 @@ func (m *MockState) StoredTx(id tx.ID) *store.StoredTx {
 	trx, _ := m.TestStore.Transaction(id)
 	return trx
 }
+
 func (m *MockState) BlockHash(height uint32) hash.Hash {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
 	return m.TestStore.BlockHash(height)
 }
+
 func (m *MockState) BlockHeight(hash hash.Hash) uint32 {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
 	return m.TestStore.BlockHeight(hash)
 }
+
 func (m *MockState) AccountByAddress(addr crypto.Address) *account.Account {
 	a, _ := m.TestStore.Account(addr)
 	return a
 }
+
 func (m *MockState) AccountByNumber(number int32) *account.Account {
 	a, _ := m.TestStore.AccountByNumber(number)
 	return a
 }
+
 func (m *MockState) ValidatorAddresses() []crypto.Address {
 	return m.TestStore.ValidatorAddresses()
 }
+
 func (m *MockState) ValidatorByAddress(addr crypto.Address) *validator.Validator {
 	v, _ := m.TestStore.Validator(addr)
 	return v
 }
+
 func (m *MockState) ValidatorByNumber(n int32) *validator.Validator {
 	v, _ := m.TestStore.ValidatorByNumber(n)
 	return v
 }
+
 func (m *MockState) PendingTx(id tx.ID) *tx.Tx {
 	return m.TestPool.PendingTx(id)
 }
+
 func (m *MockState) AddPendingTx(trx *tx.Tx) error {
 	if m.TestPool.HasTx(trx.ID()) {
 		return errors.Error(errors.ErrGeneric)
 	}
 	return m.TestPool.AppendTx(trx)
 }
+
 func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 	if m.TestPool.HasTx(trx.ID()) {
 		return errors.Error(errors.ErrGeneric)
 	}
 	return m.TestPool.AppendTxAndBroadcast(trx)
 }
+
 func (m *MockState) Params() param.Params {
 	return m.TestParams
 }

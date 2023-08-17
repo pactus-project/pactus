@@ -29,7 +29,8 @@ func walletPath(name string) string {
 }
 
 func (s *walletServer) CreateWallet(_ context.Context,
-	req *pactus.CreateWalletRequest) (*pactus.CreateWalletResponse, error) {
+	req *pactus.CreateWalletRequest,
+) (*pactus.CreateWalletResponse, error) {
 	if req.Name == "" {
 		return nil, fmt.Errorf("wallet name is required")
 	}
@@ -51,7 +52,8 @@ func (s *walletServer) CreateWallet(_ context.Context,
 }
 
 func (s *walletServer) LoadWallet(_ context.Context,
-	req *pactus.LoadWalletRequest) (*pactus.LoadWalletResponse, error) {
+	req *pactus.LoadWalletRequest,
+) (*pactus.LoadWalletResponse, error) {
 	_, ok := s.wallets[req.Name]
 	if !ok {
 		return nil, status.Errorf(codes.AlreadyExists, "wallet already loaded")
@@ -71,7 +73,8 @@ func (s *walletServer) LoadWallet(_ context.Context,
 }
 
 func (s *walletServer) UnloadWallet(_ context.Context,
-	req *pactus.UnloadWalletRequest) (*pactus.UnloadWalletResponse, error) {
+	req *pactus.UnloadWalletRequest,
+) (*pactus.UnloadWalletResponse, error) {
 	_, ok := s.wallets[req.Name]
 	if !ok {
 		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
@@ -85,11 +88,13 @@ func (s *walletServer) UnloadWallet(_ context.Context,
 }
 
 func (s *walletServer) LockWallet(_ context.Context,
-	_ *pactus.LockWalletRequest) (*pactus.LockWalletResponse, error) {
+	_ *pactus.LockWalletRequest,
+) (*pactus.LockWalletResponse, error) {
 	return &pactus.LockWalletResponse{}, nil
 }
 
 func (s *walletServer) UnlockWallet(_ context.Context,
-	_ *pactus.UnlockWalletRequest) (*pactus.UnlockWalletResponse, error) {
+	_ *pactus.UnlockWalletRequest,
+) (*pactus.UnlockWalletResponse, error) {
 	return &pactus.UnlockWalletResponse{}, nil
 }

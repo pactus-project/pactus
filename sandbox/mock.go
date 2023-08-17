@@ -63,43 +63,55 @@ func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
 	acc, _ := m.TestStore.Account(addr)
 	return acc
 }
+
 func (m *MockSandbox) MakeNewAccount(_ crypto.Address) *account.Account {
 	return account.NewAccount(m.TestStore.TotalAccounts())
 }
+
 func (m *MockSandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	m.TestStore.UpdateAccount(addr, acc)
 }
+
 func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
 	val, _ := m.TestStore.Validator(addr)
 	return val
 }
+
 func (m *MockSandbox) JoinedToCommittee(addr crypto.Address) {
 	m.TestJoinedValidators[addr] = true
 }
+
 func (m *MockSandbox) IsJoinedCommittee(addr crypto.Address) bool {
 	return m.TestJoinedValidators[addr]
 }
+
 func (m *MockSandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 	return validator.NewValidator(pub, m.TestStore.TotalValidators())
 }
+
 func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
 	m.TestStore.UpdateValidator(val)
 }
+
 func (m *MockSandbox) CurrentHeight() uint32 {
 	return m.TestStore.LastHeight + 1
 }
+
 func (m *MockSandbox) Params() param.Params {
 	return m.TestParams
 }
+
 func (m *MockSandbox) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
 	return m.TestStore.RecentBlockByStamp(stamp)
 }
+
 func (m *MockSandbox) IterateAccounts(consumer func(crypto.Address, *account.Account, bool)) {
 	m.TestStore.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
 		consumer(addr, acc, true)
 		return false
 	})
 }
+
 func (m *MockSandbox) IterateValidators(consumer func(*validator.Validator, bool, bool)) {
 	m.TestStore.IterateValidators(func(val *validator.Validator) bool {
 		consumer(val, true, m.TestJoinedValidators[val.Address()])
@@ -110,12 +122,15 @@ func (m *MockSandbox) IterateValidators(consumer func(*validator.Validator, bool
 func (m *MockSandbox) Committee() committee.Reader {
 	return m.TestCommittee
 }
+
 func (m *MockSandbox) UpdatePowerDelta(delta int64) {
 	m.TestPowerDelta += delta
 }
+
 func (m *MockSandbox) PowerDelta() int64 {
 	return m.TestPowerDelta
 }
+
 func (m *MockSandbox) VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool {
 	return m.TestAcceptSortition
 }

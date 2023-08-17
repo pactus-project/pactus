@@ -51,7 +51,8 @@ func FromBytes(data []byte) (*Block, error) {
 
 func MakeBlock(version uint8, timestamp time.Time, txs Txs,
 	prevBlockHash, stateRoot hash.Hash,
-	prevCert *Certificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address) *Block {
+	prevCert *Certificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address,
+) *Block {
 	header := NewHeader(version, timestamp,
 		stateRoot, prevBlockHash, sortitionSeed, proposer)
 

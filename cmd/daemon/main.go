@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	var rootCmd = &cobra.Command{
+	rootCmd := &cobra.Command{
 		Use:   "pactus-daemon",
 		Short: "Pactus daemon",
 		Run: func(cmd *cobra.Command, args []string) {

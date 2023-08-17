@@ -18,8 +18,10 @@ func TestGetTransaction(t *testing.T) {
 	trx1 := testBlock.Transactions()[0]
 
 	t.Run("Should return transaction", func(t *testing.T) {
-		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{Id: trx1.ID().Bytes(),
-			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO})
+		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{
+			Id:        trx1.ID().Bytes(),
+			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
+		})
 		pld := res.Transaction.Payload.(*pactus.TransactionInfo_Transfer)
 
 		assert.NoError(t, err)

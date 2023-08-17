@@ -9,7 +9,8 @@ import (
 )
 
 func NewSubsidyTx(stamp hash.Stamp, seq int32,
-	receiver crypto.Address, amount int64, memo string) *Tx {
+	receiver crypto.Address, amount int64, memo string,
+) *Tx {
 	return NewTransferTx(
 		stamp,
 		seq,
@@ -22,7 +23,8 @@ func NewSubsidyTx(stamp hash.Stamp, seq int32,
 
 func NewTransferTx(stamp hash.Stamp, seq int32,
 	sender, receiver crypto.Address,
-	amount, fee int64, memo string) *Tx {
+	amount, fee int64, memo string,
+) *Tx {
 	pld := &payload.TransferPayload{
 		Sender:   sender,
 		Receiver: receiver,
@@ -34,7 +36,8 @@ func NewTransferTx(stamp hash.Stamp, seq int32,
 func NewBondTx(stamp hash.Stamp, seq int32,
 	sender, receiver crypto.Address,
 	pubKey *bls.PublicKey,
-	stake, fee int64, memo string) *Tx {
+	stake, fee int64, memo string,
+) *Tx {
 	pld := &payload.BondPayload{
 		Sender:    sender,
 		Receiver:  receiver,
@@ -46,7 +49,8 @@ func NewBondTx(stamp hash.Stamp, seq int32,
 
 func NewUnbondTx(stamp hash.Stamp, seq int32,
 	val crypto.Address,
-	memo string) *Tx {
+	memo string,
+) *Tx {
 	pld := &payload.UnbondPayload{
 		Validator: val,
 	}
@@ -57,7 +61,8 @@ func NewWithdrawTx(stamp hash.Stamp, seq int32,
 	val crypto.Address,
 	acc crypto.Address,
 	amount, fee int64,
-	memo string) *Tx {
+	memo string,
+) *Tx {
 	pld := &payload.WithdrawPayload{
 		From:   val,
 		To:     acc,
@@ -68,7 +73,8 @@ func NewWithdrawTx(stamp hash.Stamp, seq int32,
 
 func NewSortitionTx(stamp hash.Stamp, seq int32,
 	addr crypto.Address,
-	proof sortition.Proof) *Tx {
+	proof sortition.Proof,
+) *Tx {
 	pld := &payload.SortitionPayload{
 		Address: addr,
 		Proof:   proof,

@@ -22,7 +22,7 @@ type testData struct {
 	importedPrv crypto.PrivateKey
 }
 
-// setup return an instances of vault fo testing
+// setup return an instances of vault fo testing.
 func setup(t *testing.T) *testData {
 	ts := testsuite.NewTestSuite(t)
 
@@ -295,7 +295,8 @@ func TestNeuter(t *testing.T) {
 	assert.ErrorIs(t, err, ErrNeutered)
 
 	_, err = neutered.PrivateKeys(tPassword, []string{
-		td.RandomAddress().String()})
+		td.RandomAddress().String(),
+	})
 	assert.ErrorIs(t, err, ErrNeutered)
 
 	err = neutered.ImportPrivateKey("any", td.importedPrv)

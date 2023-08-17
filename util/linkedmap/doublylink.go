@@ -14,7 +14,7 @@ func NewLinkNode[T any](data T) *LinkNode[T] {
 	}
 }
 
-// DoublyLinkedList represents a doubly linked list
+// DoublyLinkedList represents a doubly linked list.
 type DoublyLinkedList[T any] struct {
 	Head   *LinkNode[T]
 	Tail   *LinkNode[T]
@@ -29,7 +29,7 @@ func NewDoublyLinkedList[T any]() *DoublyLinkedList[T] {
 	}
 }
 
-// InsertAtHead inserts a new node at the head of the list
+// InsertAtHead inserts a new node at the head of the list.
 func (l *DoublyLinkedList[T]) InsertAtHead(data T) *LinkNode[T] {
 	newNode := NewLinkNode(data)
 
@@ -48,7 +48,7 @@ func (l *DoublyLinkedList[T]) InsertAtHead(data T) *LinkNode[T] {
 	return newNode
 }
 
-// InsertAtTail appends a new node at the tail of the list
+// InsertAtTail appends a new node at the tail of the list.
 func (l *DoublyLinkedList[T]) InsertAtTail(data T) *LinkNode[T] {
 	newNode := NewLinkNode(data)
 
@@ -67,7 +67,7 @@ func (l *DoublyLinkedList[T]) InsertAtTail(data T) *LinkNode[T] {
 	return newNode
 }
 
-// DeleteAtHead deletes the node at the head of the list
+// DeleteAtHead deletes the node at the head of the list.
 func (l *DoublyLinkedList[T]) DeleteAtHead() {
 	if l.Head == nil {
 		// Empty list case
@@ -84,7 +84,7 @@ func (l *DoublyLinkedList[T]) DeleteAtHead() {
 	l.length--
 }
 
-// DeleteAtTail deletes the node at the tail of the list
+// DeleteAtTail deletes the node at the tail of the list.
 func (l *DoublyLinkedList[T]) DeleteAtTail() {
 	if l.Tail == nil {
 		// Empty list case
@@ -101,7 +101,7 @@ func (l *DoublyLinkedList[T]) DeleteAtTail() {
 	l.length--
 }
 
-// Delete removes a specific node from the list
+// Delete removes a specific node from the list.
 func (l *DoublyLinkedList[T]) Delete(ln *LinkNode[T]) {
 	if ln.Prev != nil {
 		ln.Prev.Next = ln.Next
@@ -118,12 +118,12 @@ func (l *DoublyLinkedList[T]) Delete(ln *LinkNode[T]) {
 	l.length--
 }
 
-// Length returns the number of nodes in the list
+// Length returns the number of nodes in the list.
 func (l *DoublyLinkedList[T]) Length() int {
 	return l.length
 }
 
-// Values returns a slice of values in the list
+// Values returns a slice of values in the list.
 func (l *DoublyLinkedList[T]) Values() []T {
 	values := []T{}
 	cur := l.Head
@@ -134,7 +134,7 @@ func (l *DoublyLinkedList[T]) Values() []T {
 	return values
 }
 
-// Clear removes all nodes from the list, making it empty
+// Clear removes all nodes from the list, making it empty.
 func (l *DoublyLinkedList[T]) Clear() {
 	l.Head = nil
 	l.Tail = nil

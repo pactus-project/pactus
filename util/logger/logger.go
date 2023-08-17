@@ -14,9 +14,7 @@ type logger struct {
 	subs   map[string]*SubLogger
 }
 
-var (
-	globalInst *logger
-)
+var globalInst *logger
 
 type SubLogger struct {
 	logger zerolog.Logger

@@ -38,7 +38,8 @@ type Node struct {
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config,
-	signers []crypto.Signer, rewardAddrs []crypto.Address) (*Node, error) {
+	signers []crypto.Signer, rewardAddrs []crypto.Address,
+) (*Node, error) {
 	// Initialize the logger
 	logger.InitGlobalLogger(conf.Logger)
 
@@ -150,16 +151,19 @@ func (n *Node) Stop() {
 	n.nanomsg.StopServer()
 }
 
-// these methods are using by GUI
+// these methods are using by GUI.
 func (n *Node) ConsManager() consensus.ManagerReader {
 	return n.consMgr
 }
+
 func (n *Node) Sync() sync.Synchronizer {
 	return n.sync
 }
+
 func (n *Node) State() state.Facade {
 	return n.state
 }
+
 func (n *Node) GRPC() *grpc.Server {
 	return n.grpc
 }

@@ -350,7 +350,7 @@ func TestDerivation(t *testing.T) {
 	}
 }
 
-// TestInvalidDerivation tests Derive function for invalid data
+// TestInvalidDerivation tests Derive function for invalid data.
 func TestInvalidDerivation(t *testing.T) {
 	t.Run("Private key is 31 bytes. It should be 32 bytes", func(t *testing.T) {
 		key := [31]byte{0}
