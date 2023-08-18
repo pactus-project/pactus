@@ -19,7 +19,7 @@ type Peer struct {
 	Moniker         string
 	Agent           string
 	PeerID          peer.ID
-	ConsensusKeys   map[bls.PublicKey]bool
+	ConsensusKeys   []*bls.PublicKey
 	Flags           int
 	LastSent        time.Time
 	LastReceived    time.Time
@@ -35,7 +35,7 @@ type Peer struct {
 
 func NewPeer(peerID peer.ID) *Peer {
 	return &Peer{
-		ConsensusKeys: make(map[bls.PublicKey]bool),
+		ConsensusKeys: make([]*bls.PublicKey, 0),
 		Status:        StatusCodeUnknown,
 		PeerID:        peerID,
 		ReceivedBytes: make(map[message.Type]int64),

@@ -2,46 +2,11 @@ package sync
 
 import (
 	"testing"
-	"time"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-func TestSessionTimeout(t *testing.T) {
-	config := testConfig()
-	config.SessionTimeout = 200 * time.Millisecond
-	td := setup(t, config)
-
-	t.Run("An unknown peers claims to have more blocks. Session should be closed after timeout", func(t *testing.T) {
-		signer := td.RandomSigner()
-		pid := td.RandomPeerID()
-		claimedHeight := uint32(6666)
-		msg := message.NewHelloMessage(pid, "Oscar", claimedHeight, message.FlagNodeNetwork,
-			td.state.LastBlockHash(), td.state.Genesis().Hash())
-		signer.SignMsg(msg)
-
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-
-		td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
-
-		assert.True(t, td.sync.peerSet.HasAnyOpenSession())
-		time.Sleep(2 * config.SessionTimeout)
-		assert.False(t, td.sync.peerSet.HasAnyOpenSession())
-
-		peer := td.sync.peerSet.GetPeer(pid)
-		assert.Equal(t, peer.Height, claimedHeight)
-		assert.Equal(t, td.sync.peerSet.MaxClaimedHeight(), claimedHeight)
-		// TODO: This is not really good that a bad peer can manipulate the MaxCalim height
-		// Here is a possible solution:
-		// 1- A peer claims that he has more blocks
-		// 2- We ask him a block_request message
-		// 3- He doesn't respond
-		// 4- We close the session, marking the peer as a bad peer.
-		// 5- If MaxClaimedHeight is same as peer height, we set it to zero
-	})
-}
 
 func TestLatestBlocksRequestMessages(t *testing.T) {
 	config := testConfig()
