@@ -170,6 +170,13 @@ func (ts *TestSuite) RandomBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 	return pub, prv
 }
 
+// RandomBLSSignature generates a random BLS signature for testing purposes.
+func (ts TestSuite) RandomBLSSignature() *bls.Signature {
+	_, prv := ts.RandomBLSKeyPair()
+	sig := prv.Sign(ts.RandomBytes(8))
+	return sig.(*bls.Signature)
+}
+
 // RandomHash generates a random hash for testing.
 func (ts *TestSuite) RandomHash() hash.Hash {
 	return hash.CalcHash(util.Int64ToSlice(ts.RandInt64(util.MaxInt64)))

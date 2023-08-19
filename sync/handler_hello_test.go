@@ -22,8 +22,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			initiator := td.RandomPeerID()
 			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
-			signer.SignMsg(msg)
-			assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
+			msg.Sign(signer)
 
 			assert.Error(t, td.receivingNewMessage(td.sync, msg, initiator))
 			assert.Equal(t, td.sync.peerSet.GetPeer(initiator).Status, peerset.StatusCodeBanned)
@@ -36,8 +35,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			pid := td.RandomPeerID()
 			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
 				td.state.LastBlockHash(), invGenHash)
-			signer.SignMsg(msg)
-			assert.True(t, msg.PublicKey.EqualsTo(signer.PublicKey()))
+			msg.Sign(signer)
 
 			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
 			td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
@@ -51,12 +49,11 @@ func TestParsingHelloMessages(t *testing.T) {
 			pid := td.RandomPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork,
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
-			signer.SignMsg(msg)
+			msg.Sign(signer)
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello) // Alice key 1
-			td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello) // Alice key 2
+			td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
 
 			// Check if the peer info is updated
 			p := td.sync.peerSet.GetPeer(pid)
@@ -65,7 +62,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			assert.Equal(t, p.Status, peerset.StatusCodeKnown)
 			assert.Equal(t, p.Agent, version.Agent())
 			assert.Equal(t, p.Moniker, "kitty")
-			assert.Contains(t, p.ConsensusKeys, *pub)
+			assert.Contains(t, p.ConsensusKeys, pub)
 			assert.Equal(t, p.PeerID, pid)
 			assert.Equal(t, p.Height, height)
 			assert.True(t, util.IsFlagSet(p.Flags, peerset.PeerFlagNodeNetwork))
@@ -78,7 +75,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			pid := td.RandomPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagHelloAck,
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
-			signer.SignMsg(msg)
+			msg.Sign(signer)
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 			td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
@@ -97,7 +94,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			pid := td.RandomPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck,
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
-			signer.SignMsg(msg)
+			msg.Sign(signer)
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 			td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)

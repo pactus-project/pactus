@@ -46,7 +46,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 		peerset.StatusCodeKnown,
 		msg.Moniker,
 		msg.Agent,
-		msg.PublicKey,
+		msg.PublicKeys,
 		util.IsFlagSet(msg.Flags, message.FlagNodeNetwork))
 	handler.peerSet.UpdateHeight(initiator, msg.Height, msg.BlockHash)
 

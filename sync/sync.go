@@ -174,18 +174,19 @@ func (sync *synchronizer) sayHello(helloAck bool) {
 	if helloAck {
 		flags = util.SetFlag(flags, message.FlagHelloAck)
 	}
+
 	msg := message.NewHelloMessage(
 		sync.SelfID(),
 		sync.config.Moniker,
 		sync.state.LastBlockHeight(),
 		flags,
 		sync.state.LastBlockHash(),
-		sync.state.Genesis().Hash())
+		sync.state.Genesis().Hash(),
+	)
 
-	for _, signer := range sync.signers {
-		signer.SignMsg(msg)
-		sync.broadcast(msg)
-	}
+	msg.Sign(sync.signers...)
+
+	sync.broadcast(msg)
 }
 
 func (sync *synchronizer) broadcastLoop() {
@@ -401,7 +402,7 @@ func (sync *synchronizer) peerIsInTheCommittee(pid peer.ID) bool {
 		return false
 	}
 
-	for key := range p.ConsensusKeys {
+	for _, key := range p.ConsensusKeys {
 		if sync.state.IsInCommittee(key.Address()) {
 			return true
 		}

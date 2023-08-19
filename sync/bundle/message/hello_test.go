@@ -3,6 +3,8 @@ package message
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls"
+
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -17,11 +19,10 @@ func TestHelloMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid signature", func(t *testing.T) {
-		signer1 := ts.RandomSigner()
-		signer2 := ts.RandomSigner()
+		signer := ts.RandomSigner()
 		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash(), ts.RandomHash())
-		signer1.SignMsg(m)
-		m.SetPublicKey(signer2.PublicKey())
+		m.Sign(signer)
+		m.Signature = ts.RandomBLSSignature()
 
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidSignature)
 	})
@@ -29,17 +30,17 @@ func TestHelloMessage(t *testing.T) {
 	t.Run("Signature is nil", func(t *testing.T) {
 		signer := ts.RandomSigner()
 		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash(), ts.RandomHash())
-		signer.SignMsg(m)
+		m.Sign(signer)
 		m.Signature = nil
 
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidSignature)
 	})
 
-	t.Run("PublicKey is nil", func(t *testing.T) {
+	t.Run("PublicKeys are empty", func(t *testing.T) {
 		signer := ts.RandomSigner()
 		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash(), ts.RandomHash())
-		signer.SignMsg(m)
-		m.PublicKey = nil
+		m.Sign(signer)
+		m.PublicKeys = make([]*bls.PublicKey, 0)
 
 		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidPublicKey)
 	})
@@ -47,7 +48,7 @@ func TestHelloMessage(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		signer := ts.RandomSigner()
 		m := NewHelloMessage(ts.RandomPeerID(), "Alice", 100, 0, ts.RandomHash(), ts.RandomHash())
-		signer.SignMsg(m)
+		m.Sign(signer)
 
 		assert.NoError(t, m.SanityCheck())
 		assert.Contains(t, m.String(), "Alice")

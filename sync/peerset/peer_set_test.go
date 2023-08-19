@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pactus-project/pactus/crypto/bls"
+
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -20,12 +22,14 @@ func TestPeerSet(t *testing.T) {
 	pk1, _ := ts.RandomBLSKeyPair()
 	pk2, _ := ts.RandomBLSKeyPair()
 	pk3, _ := ts.RandomBLSKeyPair()
+	pk4, _ := ts.RandomBLSKeyPair()
+	pk5, _ := ts.RandomBLSKeyPair()
 	pid1 := peer.ID("peer1")
 	pid2 := peer.ID("peer2")
 	pid3 := peer.ID("peer3")
-	peerSet.UpdatePeerInfo(pid1, StatusCodeBanned, "Moniker1", "Agent1", pk1, true)
-	peerSet.UpdatePeerInfo(pid2, StatusCodeKnown, "Moniker2", "Agent2", pk2, false)
-	peerSet.UpdatePeerInfo(pid3, StatusCodeTrusty, "Moniker3", "Agent3", pk3, true)
+	peerSet.UpdatePeerInfo(pid1, StatusCodeBanned, "Moniker1", "Agent1", []*bls.PublicKey{pk1, pk2}, true)
+	peerSet.UpdatePeerInfo(pid2, StatusCodeKnown, "Moniker2", "Agent2", []*bls.PublicKey{pk3}, false)
+	peerSet.UpdatePeerInfo(pid3, StatusCodeTrusty, "Moniker3", "Agent3", []*bls.PublicKey{pk4, pk5}, true)
 
 	t.Run("Testing Len", func(t *testing.T) {
 		assert.Equal(t, 3, peerSet.Len())
@@ -67,6 +71,13 @@ func TestPeerSet(t *testing.T) {
 		p = peerSet.GetPeer(peer.ID("unknown"))
 		assert.Equal(t, peer.ID(""), p.PeerID)
 		assert.Equal(t, StatusCodeUnknown, p.Status)
+	})
+
+	t.Run("Testing PublicKeys", func(t *testing.T) {
+		p := peerSet.GetPeer(pid3)
+
+		assert.Contains(t, p.ConsensusKeys, pk4)
+		assert.Contains(t, p.ConsensusKeys, pk5)
 	})
 
 	t.Run("Testing counters", func(t *testing.T) {
@@ -231,7 +242,7 @@ func TestGetRandomWeightedPeer(t *testing.T) {
 		pid := peer.ID(fmt.Sprintf("peer_%v", i+1))
 		peerSet.UpdatePeerInfo(
 			pid, StatusCodeKnown,
-			fmt.Sprintf("Moniker_%v", i+1), "Agent1", pk, true)
+			fmt.Sprintf("Moniker_%v", i+1), "Agent1", []*bls.PublicKey{pk}, true)
 
 		for s := 0; s < 4; s++ {
 			peerSet.IncreaseSendSuccessCounter(pid)
@@ -262,11 +273,11 @@ func TestGetRandomPeerUnknown(t *testing.T) {
 
 	pk, _ := ts.RandomBLSKeyPair()
 	pidUnknown := peer.ID("peer_unknown")
-	peerSet.UpdatePeerInfo(pidUnknown, StatusCodeUnknown, "Moniker_unknown", "Agent1", pk, true)
+	peerSet.UpdatePeerInfo(pidUnknown, StatusCodeUnknown, "Moniker_unknown", "Agent1", []*bls.PublicKey{pk}, true)
 
 	pk, _ = ts.RandomBLSKeyPair()
 	pidBanned := peer.ID("peer_banned")
-	peerSet.UpdatePeerInfo(pidBanned, StatusCodeBanned, "Moniker_banned", "Agent1", pk, true)
+	peerSet.UpdatePeerInfo(pidBanned, StatusCodeBanned, "Moniker_banned", "Agent1", []*bls.PublicKey{pk}, true)
 
 	p := peerSet.GetRandomPeer()
 
@@ -281,7 +292,7 @@ func TestGetRandomPeerOnePeer(t *testing.T) {
 
 	pk, _ := ts.RandomBLSKeyPair()
 	pid := peer.ID("peer_known")
-	peerSet.UpdatePeerInfo(pid, StatusCodeKnown, "Moniker_known", "Agent1", pk, true)
+	peerSet.UpdatePeerInfo(pid, StatusCodeKnown, "Moniker_known", "Agent1", []*bls.PublicKey{pk}, true)
 	peerSet.IncreaseSendSuccessCounter(pid)
 
 	p := peerSet.GetRandomPeer()

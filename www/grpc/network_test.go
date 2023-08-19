@@ -32,7 +32,7 @@ func TestGetNetworkInfo(t *testing.T) {
 			assert.Equal(t, p.Moniker, pp.Moniker)
 			assert.Equal(t, p.Height, pp.Height)
 			assert.NotEmpty(t, pp.ConsensusKeys)
-			for key := range pp.ConsensusKeys {
+			for _, key := range pp.ConsensusKeys {
 				assert.Contains(t, p.ConsensusKeys, key.String())
 			}
 		}

@@ -102,8 +102,7 @@ func setup(t *testing.T, config *Config) *testData {
 	assert.NoError(t, td.sync.Start())
 	assert.Equal(t, td.sync.Moniker(), config.Moniker)
 
-	td.shouldPublishMessageWithThisType(t, network, message.TypeHello) // Alice key 1
-	td.shouldPublishMessageWithThisType(t, network, message.TypeHello) // Alice key 2
+	td.shouldPublishMessageWithThisType(t, network, message.TypeHello)
 
 	logger.Info("setup finished, running the tests", "name", t.Name())
 
@@ -193,7 +192,7 @@ func (td *testData) addBlocks(t *testing.T, state *state.MockState, count int) {
 
 func (td *testData) addPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID, nodeNetwork bool) {
 	td.sync.peerSet.UpdatePeerInfo(pid, peerset.StatusCodeKnown, t.Name(),
-		version.Agent(), pub.(*bls.PublicKey), nodeNetwork)
+		version.Agent(), []*bls.PublicKey{pub.(*bls.PublicKey)}, nodeNetwork)
 }
 
 func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
