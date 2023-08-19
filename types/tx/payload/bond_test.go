@@ -238,11 +238,11 @@ func TestBondDecoding(t *testing.T) {
 			assert.Equal(t, len(w.Bytes()), pld.SerializeSize())
 			assert.Equal(t, w.Bytes(), test.raw)
 
-			// Sanity check
+			// Basic check
 			if test.sanityErr != nil {
-				assert.ErrorIs(t, pld.SanityCheck(), test.sanityErr)
+				assert.ErrorIs(t, pld.BasicCheck(), test.sanityErr)
 			} else {
-				assert.NoError(t, pld.SanityCheck())
+				assert.NoError(t, pld.BasicCheck())
 
 				// Check signer
 				assert.Equal(t, pld.Signer().Bytes(), test.raw[:21])

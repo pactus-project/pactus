@@ -8,5 +8,5 @@ import (
 
 func TestDefaultConfigCheck(t *testing.T) {
 	c := DefaultConfig()
-	assert.NoError(t, c.SanityCheck())
+	assert.NoError(t, c.BasicCheck())
 }

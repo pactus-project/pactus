@@ -29,11 +29,11 @@ func (p *BondPayload) Value() int64 {
 	return p.Stake
 }
 
-func (p *BondPayload) SanityCheck() error {
-	if err := p.Sender.SanityCheck(); err != nil {
+func (p *BondPayload) BasicCheck() error {
+	if err := p.Sender.BasicCheck(); err != nil {
 		return err
 	}
-	if err := p.Receiver.SanityCheck(); err != nil {
+	if err := p.Receiver.BasicCheck(); err != nil {
 		return err
 	}
 	if p.PublicKey != nil {

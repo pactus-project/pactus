@@ -74,11 +74,11 @@ func NewHeader(version uint8, time time.Time, stateRoot, prevBlockHash hash.Hash
 	}
 }
 
-func (h *Header) SanityCheck() error {
-	if err := h.data.StateRoot.SanityCheck(); err != nil {
+func (h *Header) BasicCheck() error {
+	if err := h.data.StateRoot.BasicCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid state root")
 	}
-	if err := h.data.ProposerAddress.SanityCheck(); err != nil {
+	if err := h.data.ProposerAddress.BasicCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid proposer address")
 	}
 

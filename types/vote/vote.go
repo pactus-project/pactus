@@ -88,7 +88,7 @@ func (v *Vote) Verify(pubKey *bls.PublicKey) error {
 	return pubKey.Verify(v.SignBytes(), v.Signature())
 }
 
-func (v *Vote) SanityCheck() error {
+func (v *Vote) BasicCheck() error {
 	if !v.data.Type.IsValid() {
 		return errors.Errorf(errors.ErrInvalidVote, "invalid vote type")
 	}
@@ -98,7 +98,7 @@ func (v *Vote) SanityCheck() error {
 	if v.data.Round < 0 {
 		return errors.Error(errors.ErrInvalidRound)
 	}
-	if err := v.data.Signer.SanityCheck(); err != nil {
+	if err := v.data.Signer.BasicCheck(); err != nil {
 		return err
 	}
 	if v.Signature() == nil {

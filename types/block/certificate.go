@@ -51,7 +51,7 @@ func (cert *Certificate) Signature() *bls.Signature {
 	return cert.data.Signature
 }
 
-func (cert *Certificate) SanityCheck() error {
+func (cert *Certificate) BasicCheck() error {
 	if cert.Round() < 0 {
 		return errors.Error(errors.ErrInvalidRound)
 	}

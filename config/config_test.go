@@ -16,7 +16,7 @@ func TestSaveMainnetConfig(t *testing.T) {
 	conf, err := LoadFromFile(path, true)
 	assert.NoError(t, err)
 
-	assert.NoError(t, conf.SanityCheck())
+	assert.NoError(t, conf.BasicCheck())
 	assert.Equal(t, conf.Network.Name, "pactus")
 }
 
@@ -27,7 +27,7 @@ func TestSaveTestnetConfig(t *testing.T) {
 	conf, err := LoadFromFile(path, true)
 	assert.NoError(t, err)
 
-	assert.NoError(t, conf.SanityCheck())
+	assert.NoError(t, conf.BasicCheck())
 	assert.Equal(t, conf.Network.Name, "pactus-testnet")
 }
 
@@ -38,7 +38,7 @@ func TestSaveLocalnetConfig(t *testing.T) {
 	conf, err := LoadFromFile(path, true)
 	assert.NoError(t, err)
 
-	assert.NoError(t, conf.SanityCheck())
+	assert.NoError(t, conf.BasicCheck())
 	assert.Equal(t, conf.Network.Name, "pactus-localnet")
 	assert.Empty(t, conf.Network.Listens)
 	assert.Empty(t, conf.Network.RelayAddrs)
@@ -84,14 +84,14 @@ func TestExampleConfig(t *testing.T) {
 	assert.Equal(t, defaultToml, exampleToml)
 }
 
-func TestNodeConfigSanityCheck(t *testing.T) {
+func TestNodeConfigBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("invalid number of validators", func(t *testing.T) {
 		conf := DefaultNodeConfig()
 		conf.NumValidators = 0
 
-		assert.Error(t, conf.SanityCheck())
+		assert.Error(t, conf.BasicCheck())
 	})
 
 	t.Run("invalid number of reward addresses", func(t *testing.T) {
@@ -100,7 +100,7 @@ func TestNodeConfigSanityCheck(t *testing.T) {
 			ts.RandomAddress().String(),
 		}
 
-		assert.Error(t, conf.SanityCheck())
+		assert.Error(t, conf.BasicCheck())
 	})
 
 	t.Run("invalid reward addresses", func(t *testing.T) {
@@ -111,7 +111,7 @@ func TestNodeConfigSanityCheck(t *testing.T) {
 			"abcd",
 		}
 
-		assert.Error(t, conf.SanityCheck())
+		assert.Error(t, conf.BasicCheck())
 	})
 
 	t.Run("ok", func(t *testing.T) {
@@ -122,6 +122,6 @@ func TestNodeConfigSanityCheck(t *testing.T) {
 			ts.RandomAddress().String(),
 		}
 
-		assert.NoError(t, conf.SanityCheck())
+		assert.NoError(t, conf.BasicCheck())
 	})
 }

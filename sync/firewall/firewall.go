@@ -110,7 +110,7 @@ func (f *Firewall) decodeBundle(r io.Reader, pid peer.ID) (*bundle.Bundle, error
 }
 
 func (f *Firewall) checkBundle(bdl *bundle.Bundle, pid peer.ID) error {
-	if err := bdl.SanityCheck(); err != nil {
+	if err := bdl.BasicCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 

@@ -123,7 +123,7 @@ func TestToString(t *testing.T) {
 	}
 }
 
-func TestAddressSanityCheck(t *testing.T) {
+func TestAddressBasicCheck(t *testing.T) {
 	tests := []struct {
 		errMsg  string
 		hex     string
@@ -155,7 +155,7 @@ func TestAddressSanityCheck(t *testing.T) {
 		addr := crypto.Address{}
 		copy(addr[:], data)
 
-		err := addr.SanityCheck()
+		err := addr.BasicCheck()
 		if !test.invalid {
 			assert.NoError(t, err, "test %v unexpected error", no)
 		} else {

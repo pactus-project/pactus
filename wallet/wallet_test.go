@@ -265,7 +265,7 @@ func TestSigningTx(t *testing.T) {
 	err = td.wallet.SignTransaction(td.password, trx)
 	assert.NoError(t, err)
 	assert.NotNil(t, trx.Signature())
-	assert.NoError(t, trx.SanityCheck())
+	assert.NoError(t, trx.BasicCheck())
 
 	id, err := td.wallet.BroadcastTransaction(trx)
 	assert.NoError(t, err)

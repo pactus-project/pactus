@@ -63,8 +63,8 @@ func (b *Block) Header() *Header               { return b.data.Header }
 func (b *Block) PrevCertificate() *Certificate { return b.data.PrevCert }
 func (b *Block) Transactions() Txs             { return b.data.Txs }
 
-func (b *Block) SanityCheck() error {
-	if err := b.Header().SanityCheck(); err != nil {
+func (b *Block) BasicCheck() error {
+	if err := b.Header().BasicCheck(); err != nil {
 		return err
 	}
 	if b.Transactions().Len() == 0 {
@@ -74,7 +74,7 @@ func (b *Block) SanityCheck() error {
 		return errors.Errorf(errors.ErrInvalidBlock, "block is full")
 	}
 	if b.PrevCertificate() != nil {
-		if err := b.PrevCertificate().SanityCheck(); err != nil {
+		if err := b.PrevCertificate().BasicCheck(); err != nil {
 			return err
 		}
 	} else {
@@ -85,7 +85,7 @@ func (b *Block) SanityCheck() error {
 	}
 
 	for _, trx := range b.Transactions() {
-		if err := trx.SanityCheck(); err != nil {
+		if err := trx.BasicCheck(); err != nil {
 			return errors.Errorf(errors.ErrInvalidBlock, err.Error())
 		}
 	}

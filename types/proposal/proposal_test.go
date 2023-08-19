@@ -53,22 +53,22 @@ func TestProposalSignature(t *testing.T) {
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
 }
 
-func TestSanityCheck(t *testing.T) {
+func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("No block", func(t *testing.T) {
 		p := &proposal.Proposal{}
-		assert.Error(t, p.SanityCheck())
+		assert.Error(t, p.BasicCheck())
 	})
 
 	t.Run("Invalid height", func(t *testing.T) {
 		p, _ := ts.GenerateTestProposal(0, 0)
-		assert.Error(t, p.SanityCheck())
+		assert.Error(t, p.BasicCheck())
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
 		p, _ := ts.GenerateTestProposal(1, -1)
-		assert.Error(t, p.SanityCheck())
+		assert.Error(t, p.BasicCheck())
 	})
 
 	t.Run("No signature", func(t *testing.T) {
@@ -82,12 +82,12 @@ func TestSanityCheck(t *testing.T) {
 		err := cbor.Unmarshal(d, &p)
 
 		assert.NoError(t, err)
-		assert.Error(t, p.SanityCheck())
+		assert.Error(t, p.BasicCheck())
 		assert.Error(t, p.Verify(pub))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		p, _ := ts.GenerateTestProposal(100, 0)
-		assert.NoError(t, p.SanityCheck())
+		assert.NoError(t, p.BasicCheck())
 	})
 }

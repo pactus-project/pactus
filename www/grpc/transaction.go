@@ -51,7 +51,7 @@ func (s *transactionServer) SendRawTransaction(_ context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}
 
-	if err := trx.SanityCheck(); err != nil {
+	if err := trx.BasicCheck(); err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't verify transaction: %v", err.Error())
 	}
 

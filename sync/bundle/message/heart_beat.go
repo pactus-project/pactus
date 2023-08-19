@@ -21,7 +21,7 @@ func NewHeartBeatMessage(h uint32, r int16, hash hash.Hash) *HeartBeatMessage {
 	}
 }
 
-func (m *HeartBeatMessage) SanityCheck() error {
+func (m *HeartBeatMessage) BasicCheck() error {
 	if m.Height == 0 {
 		return errors.Errorf(errors.ErrInvalidHeight, "invalid height")
 	}

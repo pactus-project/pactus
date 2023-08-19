@@ -18,7 +18,7 @@ func NewQueryProposalMessage(h uint32, r int16) *QueryProposalMessage {
 	}
 }
 
-func (m *QueryProposalMessage) SanityCheck() error {
+func (m *QueryProposalMessage) BasicCheck() error {
 	if m.Round < 0 {
 		return errors.Error(errors.ErrInvalidRound)
 	}

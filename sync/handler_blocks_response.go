@@ -30,7 +30,7 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, initiator 
 			if err != nil {
 				return err
 			}
-			if err := b.SanityCheck(); err != nil {
+			if err := b.BasicCheck(); err != nil {
 				return err
 			}
 			handler.cache.AddBlock(height, b)

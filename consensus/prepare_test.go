@@ -133,8 +133,8 @@ func TestByzantineVote2(t *testing.T) {
 	p := td.makeProposal(t, h, r)
 
 	// This simple trick prevents "DATA RACE" errors in this test
-	// by memoizing tx.sanityChecked.
-	assert.NoError(t, p.SanityCheck())
+	// by memoizing tx.basicChecked.
+	assert.NoError(t, p.BasicCheck())
 
 	wg := sync.WaitGroup{}
 	wg.Add(2)

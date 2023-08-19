@@ -74,8 +74,8 @@ func validateAddresses(address []string) error {
 	return nil
 }
 
-// SanityCheck performs basic checks on the configuration.
-func (conf *Config) SanityCheck() error {
+// BasicCheck performs basic checks on the configuration.
+func (conf *Config) BasicCheck() error {
 	if conf.EnableRelay {
 		if len(conf.RelayAddrs) == 0 {
 			return errors.Errorf(errors.ErrInvalidConfig, "at least one relay address should be defined")

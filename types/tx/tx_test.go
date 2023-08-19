@@ -72,8 +72,8 @@ func TestFromBytes(t *testing.T) {
 	assert.True(t, trx5.IsSortitionTx())
 
 	for _, trx := range tests {
-		assert.NoError(t, trx.SanityCheck())
-		assert.NoError(t, trx.SanityCheck()) // double sanity check
+		assert.NoError(t, trx.BasicCheck())
+		assert.NoError(t, trx.BasicCheck()) // double basic check
 
 		bz, err := trx.Bytes()
 		assert.NoError(t, err)
@@ -108,12 +108,12 @@ func TestTxIDNoSignatory(t *testing.T) {
 	require.Equal(t, tx1.SignBytes(), tx2.SignBytes())
 }
 
-func TestSanityCheck(t *testing.T) {
+func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid sequence", func(t *testing.T) {
 		trx := tx.NewSortitionTx(ts.RandomStamp(), -1, ts.RandomAddress(), ts.RandomProof())
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
 	})
 
@@ -123,7 +123,7 @@ func TestSanityCheck(t *testing.T) {
 		trx := tx.NewSubsidyTx(ts.RandomStamp(), ts.RandInt32NonZero(100),
 			ts.RandomAddress(), ts.RandInt64(1e9), bigMemo)
 
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidMemo)
 	})
 
@@ -133,7 +133,7 @@ func TestSanityCheck(t *testing.T) {
 		trx := tx.NewSubsidyTx(ts.RandomStamp(), ts.RandInt32NonZero(100),
 			invAddr, 1e9, "invalid address")
 
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
@@ -141,7 +141,7 @@ func TestSanityCheck(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandomStamp(), ts.RandInt32NonZero(100),
 			ts.RandomAddress(), ts.RandomAddress(), -1, 1, "invalid amount")
 
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAmount)
 	})
 
@@ -149,7 +149,7 @@ func TestSanityCheck(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandomStamp(), ts.RandInt32NonZero(100),
 			ts.RandomAddress(), ts.RandomAddress(), 21*1e14+1, 1, "invalid amount")
 
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAmount)
 	})
 
@@ -159,7 +159,7 @@ func TestSanityCheck(t *testing.T) {
 			ts.RandomAddress(), ts.RandomAddress(), 1, 1, "invalid signer")
 		signer.SignMsg(trx)
 
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
@@ -167,7 +167,7 @@ func TestSanityCheck(t *testing.T) {
 		d := ts.DecodingHex("023513630b1a00010001703db2cca1f0deb29fb42b98bd9d12971b1160168094ebdc0300")
 		trx, err := tx.FromBytes(d)
 		assert.NoError(t, err)
-		err = trx.SanityCheck()
+		err = trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
 }
@@ -179,7 +179,7 @@ func TestInvalidFee(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandomStamp(), ts.RandInt32NonZero(100),
 			crypto.TreasuryAddress, ts.RandomAddress(), 1e9, 1, "invalid fee")
 		assert.True(t, trx.IsSubsidyTx())
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
 	})
@@ -188,7 +188,7 @@ func TestInvalidFee(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandomStamp(), ts.RandInt32NonZero(100),
 			crypto.TreasuryAddress, ts.RandomAddress(), 1e9, 1, "invalid fee")
 		assert.True(t, trx.IsSubsidyTx())
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
 	})
@@ -202,7 +202,7 @@ func TestInvalidFee(t *testing.T) {
 			pld, 1, "invalid fee")
 
 		assert.True(t, trx.IsSortitionTx())
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
 	})
 
@@ -210,7 +210,7 @@ func TestInvalidFee(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandomStamp(), ts.RandInt32NonZero(100),
 			ts.RandomAddress(), ts.RandomAddress(), 1, -1, "invalid fee")
 
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
 	})
 }
@@ -225,7 +225,7 @@ func TestSubsidyTx(t *testing.T) {
 		trx := tx.NewSubsidyTx(stamp, 88, pub.Address(), 2500, "subsidy")
 		sig := prv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
 	})
 
@@ -233,7 +233,7 @@ func TestSubsidyTx(t *testing.T) {
 		stamp := ts.RandomStamp()
 		trx := tx.NewSubsidyTx(stamp, 88, pub.Address(), 2500, "subsidy")
 		trx.SetPublicKey(pub)
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 }
@@ -243,20 +243,20 @@ func TestInvalidSignature(t *testing.T) {
 
 	t.Run("Good", func(t *testing.T) {
 		trx, _ := ts.GenerateTestTransferTx()
-		assert.NoError(t, trx.SanityCheck())
+		assert.NoError(t, trx.BasicCheck())
 	})
 
 	t.Run("No signature", func(t *testing.T) {
 		trx, _ := ts.GenerateTestTransferTx()
 		trx.SetSignature(nil)
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
 	})
 
 	t.Run("No public key", func(t *testing.T) {
 		trx, _ := ts.GenerateTestTransferTx()
 		trx.SetPublicKey(nil)
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 
@@ -265,14 +265,14 @@ func TestInvalidSignature(t *testing.T) {
 		trx, _ := ts.GenerateTestTransferTx()
 		sig := pvInv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
 	})
 
 	t.Run("Invalid public key", func(t *testing.T) {
 		trx, _ := ts.GenerateTestTransferTx()
 		trx.SetPublicKey(pbInv)
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
@@ -282,21 +282,21 @@ func TestInvalidSignature(t *testing.T) {
 			"invalidate signature")
 		trx.SetPublicKey(trx0.PublicKey())
 		trx.SetSignature(trx0.Signature())
-		err := trx.SanityCheck()
+		err := trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
-		assert.Error(t, trx.SanityCheck())
+		assert.Error(t, trx.BasicCheck())
 	})
 
 	t.Run("Zero signature", func(t *testing.T) {
 		trx, _ := ts.GenerateTestTransferTx()
 		trx.SetSignature(&bls.Signature{})
-		assert.Error(t, trx.SanityCheck())
+		assert.Error(t, trx.BasicCheck())
 	})
 
 	t.Run("Zero public key", func(t *testing.T) {
 		trx, _ := ts.GenerateTestTransferTx()
 		trx.SetPublicKey(&bls.PublicKey{})
-		assert.Error(t, trx.SanityCheck())
+		assert.Error(t, trx.BasicCheck())
 	})
 }
 

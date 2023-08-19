@@ -54,40 +54,40 @@ func TestVoteSignature(t *testing.T) {
 	assert.Error(t, v2.Verify(pb2), "invalid signature")
 }
 
-func TestSanityCheck(t *testing.T) {
+func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid type", func(t *testing.T) {
 		v := vote.NewVote(4, 100, 0, ts.RandomHash(), ts.RandomAddress())
 
-		err := v.SanityCheck()
+		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
 	})
 
 	t.Run("Invalid height", func(t *testing.T) {
 		v := vote.NewVote(vote.VoteTypePrepare, 0, 0, ts.RandomHash(), ts.RandomAddress())
 
-		err := v.SanityCheck()
+		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
 		v := vote.NewVote(vote.VoteTypePrepare, 100, -1, ts.RandomHash(), ts.RandomAddress())
 
-		err := v.SanityCheck()
+		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
 	})
 
 	t.Run("No signature", func(t *testing.T) {
 		v := vote.NewVote(vote.VoteTypePrepare, 100, 0, ts.RandomHash(), ts.RandomAddress())
 
-		err := v.SanityCheck()
+		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		v, _ := ts.GenerateTestChangeProposerVote(5, 5)
-		assert.NoError(t, v.SanityCheck())
+		assert.NoError(t, v.BasicCheck())
 	})
 }
 

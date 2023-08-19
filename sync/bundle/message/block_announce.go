@@ -20,11 +20,11 @@ func NewBlockAnnounceMessage(h uint32, b *block.Block, c *block.Certificate) *Bl
 	}
 }
 
-func (m *BlockAnnounceMessage) SanityCheck() error {
-	if err := m.Block.SanityCheck(); err != nil {
+func (m *BlockAnnounceMessage) BasicCheck() error {
+	if err := m.Block.BasicCheck(); err != nil {
 		return err
 	}
-	return m.Certificate.SanityCheck()
+	return m.Certificate.BasicCheck()
 }
 
 func (m *BlockAnnounceMessage) Type() Type {

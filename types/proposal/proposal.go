@@ -36,14 +36,14 @@ func (p *Proposal) Round() int16                { return p.data.Round }
 func (p *Proposal) Block() *block.Block         { return p.data.Block }
 func (p *Proposal) Signature() crypto.Signature { return p.data.Signature }
 
-func (p *Proposal) SanityCheck() error {
+func (p *Proposal) BasicCheck() error {
 	if p.data.Block == nil {
 		return errors.Errorf(errors.ErrInvalidSignature, "no block")
 	}
 	if p.data.Signature == nil {
 		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
 	}
-	if err := p.data.Block.SanityCheck(); err != nil {
+	if err := p.data.Block.BasicCheck(); err != nil {
 		return err
 	}
 	if p.data.Height <= 0 {
