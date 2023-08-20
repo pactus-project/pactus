@@ -42,12 +42,12 @@ func (n ChainType) String() string {
 }
 
 type genAccount struct {
-	Address string `cbor:"1,keyasint"`
-	Balance int64  `cbor:"2,keyasint"`
+	Address string `cbor:"1,keyasint" json:"address"`
+	Balance int64  `cbor:"2,keyasint" json:"balance"`
 }
 
 type genValidator struct {
-	PublicKey string `cbor:"1,keyasint"`
+	PublicKey string `cbor:"1,keyasint" json:"public_key"`
 }
 
 // Genesis is stored in the state database.
