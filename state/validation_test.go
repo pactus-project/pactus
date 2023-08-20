@@ -181,7 +181,7 @@ func TestBlockValidation(t *testing.T) {
 	// UnixTime				(TestValidateBlockTime)
 	// PrevBlockHash		(OK)
 	// StateRoot			(OK)
-	// TxsRoot			    (SanityCheck)
+	// TxsRoot			    (BasicCheck)
 	// PrevCertificate   	(OK)
 	// SortitionSeed		(OK)
 	// ProposerAddress		(OK)

@@ -49,8 +49,8 @@ func DefaultNodeConfig() *NodeConfig {
 	}
 }
 
-// SanityCheck performs basic checks on the configuration.
-func (conf *NodeConfig) SanityCheck() error {
+// BasicCheck performs basic checks on the configuration.
+func (conf *NodeConfig) BasicCheck() error {
 	if conf.NumValidators < 1 || conf.NumValidators > 32 {
 		return errors.Errorf(errors.ErrInvalidConfig, "number of validators must be between 1 and 32")
 	}
@@ -174,28 +174,28 @@ func LoadFromFile(file string, strict bool) (*Config, error) {
 	return conf, nil
 }
 
-// SanityCheck performs basic checks on the configuration.
-func (conf *Config) SanityCheck() error {
-	if err := conf.Store.SanityCheck(); err != nil {
+// BasicCheck performs basic checks on the configuration.
+func (conf *Config) BasicCheck() error {
+	if err := conf.Store.BasicCheck(); err != nil {
 		return err
 	}
-	if err := conf.TxPool.SanityCheck(); err != nil {
+	if err := conf.TxPool.BasicCheck(); err != nil {
 		return err
 	}
-	if err := conf.Consensus.SanityCheck(); err != nil {
+	if err := conf.Consensus.BasicCheck(); err != nil {
 		return err
 	}
-	if err := conf.Network.SanityCheck(); err != nil {
+	if err := conf.Network.BasicCheck(); err != nil {
 		return err
 	}
-	if err := conf.Logger.SanityCheck(); err != nil {
+	if err := conf.Logger.BasicCheck(); err != nil {
 		return err
 	}
-	if err := conf.Sync.SanityCheck(); err != nil {
+	if err := conf.Sync.BasicCheck(); err != nil {
 		return err
 	}
-	if err := conf.Nanomsg.SanityCheck(); err != nil {
+	if err := conf.Nanomsg.BasicCheck(); err != nil {
 		return err
 	}
-	return conf.HTTP.SanityCheck()
+	return conf.HTTP.BasicCheck()
 }

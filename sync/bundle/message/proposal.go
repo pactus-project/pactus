@@ -14,8 +14,8 @@ func NewProposalMessage(p *proposal.Proposal) *ProposalMessage {
 	}
 }
 
-func (m *ProposalMessage) SanityCheck() error {
-	return m.Proposal.SanityCheck()
+func (m *ProposalMessage) BasicCheck() error {
+	return m.Proposal.BasicCheck()
 }
 
 func (m *ProposalMessage) Type() Type {

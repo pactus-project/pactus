@@ -43,7 +43,7 @@ func NewChecker() *Execution {
 }
 
 func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
-	if err := trx.SanityCheck(); err != nil {
+	if err := trx.BasicCheck(); err != nil {
 		return err
 	}
 	if trx.IsLockTime() {

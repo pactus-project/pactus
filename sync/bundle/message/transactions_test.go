@@ -20,14 +20,14 @@ func TestTransactionsMessage(t *testing.T) {
 	t.Run("No transactions", func(t *testing.T) {
 		m := NewTransactionsMessage(nil)
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidMessage)
+		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidMessage)
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		trx, _ := ts.GenerateTestTransferTx()
 		m := NewTransactionsMessage([]*tx.Tx{trx})
 
-		assert.NoError(t, m.SanityCheck())
+		assert.NoError(t, m.BasicCheck())
 		assert.Contains(t, m.String(), trx.ID().ShortString())
 	})
 }

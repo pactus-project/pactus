@@ -24,7 +24,7 @@ func (m *BlocksRequestMessage) To() uint32 {
 	return m.From + m.Count - 1
 }
 
-func (m *BlocksRequestMessage) SanityCheck() error {
+func (m *BlocksRequestMessage) BasicCheck() error {
 	if m.From == 0 {
 		return errors.Errorf(errors.ErrInvalidHeight, "height is zero")
 	}

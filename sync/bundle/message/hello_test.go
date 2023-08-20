@@ -24,7 +24,7 @@ func TestHelloMessage(t *testing.T) {
 		m.Sign(signer)
 		m.Signature = ts.RandomBLSSignature()
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidSignature)
+		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidSignature)
 	})
 
 	t.Run("Signature is nil", func(t *testing.T) {
@@ -33,7 +33,7 @@ func TestHelloMessage(t *testing.T) {
 		m.Sign(signer)
 		m.Signature = nil
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidSignature)
+		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidSignature)
 	})
 
 	t.Run("PublicKeys are empty", func(t *testing.T) {
@@ -42,7 +42,7 @@ func TestHelloMessage(t *testing.T) {
 		m.Sign(signer)
 		m.PublicKeys = make([]*bls.PublicKey, 0)
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidPublicKey)
+		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidPublicKey)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -50,7 +50,7 @@ func TestHelloMessage(t *testing.T) {
 		m := NewHelloMessage(ts.RandomPeerID(), "Alice", 100, 0, ts.RandomHash(), ts.RandomHash())
 		m.Sign(signer)
 
-		assert.NoError(t, m.SanityCheck())
+		assert.NoError(t, m.BasicCheck())
 		assert.Contains(t, m.String(), "Alice")
 	})
 }

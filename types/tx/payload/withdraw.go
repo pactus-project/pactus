@@ -28,11 +28,11 @@ func (p *WithdrawPayload) Value() int64 {
 }
 
 // TODO: write test for me.
-func (p *WithdrawPayload) SanityCheck() error {
-	if err := p.From.SanityCheck(); err != nil {
+func (p *WithdrawPayload) BasicCheck() error {
+	if err := p.From.BasicCheck(); err != nil {
 		return errors.Error(errors.ErrInvalidAddress)
 	}
-	if err := p.To.SanityCheck(); err != nil {
+	if err := p.To.BasicCheck(); err != nil {
 		return errors.Error(errors.ErrInvalidAddress)
 	}
 

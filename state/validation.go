@@ -9,7 +9,7 @@ import (
 )
 
 func (st *state) validateBlock(block *block.Block) error {
-	if err := block.SanityCheck(); err != nil {
+	if err := block.BasicCheck(); err != nil {
 		return err
 	}
 
@@ -27,7 +27,7 @@ func (st *state) validateBlock(block *block.Block) error {
 }
 
 func (st *state) checkCertificate(blockHash hash.Hash, cert *block.Certificate) error {
-	if err := cert.SanityCheck(); err != nil {
+	if err := cert.BasicCheck(); err != nil {
 		return err
 	}
 

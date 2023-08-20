@@ -373,7 +373,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		conf, _ = config.LoadFromFile(confPath, true) // This time it should be OK
 	}
 
-	err = conf.SanityCheck()
+	err = conf.BasicCheck()
 	if err != nil {
 		return nil, nil, err
 	}

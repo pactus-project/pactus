@@ -43,7 +43,7 @@ func NewHelloMessage(pid peer.ID, moniker string,
 	}
 }
 
-func (m *HelloMessage) SanityCheck() error {
+func (m *HelloMessage) BasicCheck() error {
 	if m.Signature == nil {
 		return errors.Error(errors.ErrInvalidSignature)
 	}

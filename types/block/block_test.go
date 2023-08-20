@@ -14,21 +14,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSanityCheck(t *testing.T) {
+func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("No transactions", func(t *testing.T) {
 		b0 := ts.GenerateTestBlock(nil, nil)
 		b := block.NewBlock(b0.Header(), b0.PrevCertificate(), block.Txs{})
 
-		assert.Error(t, b.SanityCheck())
+		assert.Error(t, b.BasicCheck())
 	})
 
 	t.Run("Without the previous certificate", func(t *testing.T) {
 		b0 := ts.GenerateTestBlock(nil, nil)
 		b := block.NewBlock(b0.Header(), nil, b0.Transactions())
 
-		assert.Error(t, b.SanityCheck())
+		assert.Error(t, b.BasicCheck())
 	})
 
 	t.Run("Invalid certificate round", func(t *testing.T) {
@@ -37,7 +37,7 @@ func TestSanityCheck(t *testing.T) {
 		invCert := block.NewCertificate(-1, cert0.Committers(), cert0.Absentees(), cert0.Signature())
 		b := block.NewBlock(b0.Header(), invCert, b0.Transactions())
 
-		assert.Error(t, b.SanityCheck())
+		assert.Error(t, b.BasicCheck())
 	})
 
 	t.Run("Invalid transaction", func(t *testing.T) {
@@ -47,7 +47,7 @@ func TestSanityCheck(t *testing.T) {
 		invalidSigner.SignMsg(trxs0[0])
 		b := block.NewBlock(b0.Header(), b0.PrevCertificate(), trxs0)
 
-		assert.Error(t, b.SanityCheck())
+		assert.Error(t, b.BasicCheck())
 	})
 
 	t.Run("Invalid state root hash", func(t *testing.T) {
@@ -64,7 +64,7 @@ func TestSanityCheck(t *testing.T) {
 		b, err := block.FromBytes(d)
 		assert.NoError(t, err)
 
-		assert.Error(t, b.SanityCheck())
+		assert.Error(t, b.BasicCheck())
 	})
 
 	t.Run("Invalid previous block hash", func(t *testing.T) {
@@ -96,12 +96,12 @@ func TestSanityCheck(t *testing.T) {
 		b, err := block.FromBytes(d)
 		assert.NoError(t, err)
 
-		assert.Error(t, b.SanityCheck())
+		assert.Error(t, b.BasicCheck())
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		b := ts.GenerateTestBlock(nil, nil)
-		assert.NoError(t, b.SanityCheck())
+		assert.NoError(t, b.BasicCheck())
 		assert.LessOrEqual(t, b.Header().Time(), time.Now())
 		assert.NotZero(t, b.Header().UnixTime())
 		assert.Equal(t, b.Header().Version(), uint8(1))
@@ -117,7 +117,7 @@ func TestCBORMarshaling(t *testing.T) {
 	var b2 block.Block
 	err = cbor.Unmarshal(bz1, &b2)
 	assert.NoError(t, err)
-	assert.NoError(t, b2.SanityCheck())
+	assert.NoError(t, b2.BasicCheck())
 	assert.Equal(t, b1.Hash(), b2.Hash())
 
 	assert.Equal(t, b1.Hash(), b2.Hash())

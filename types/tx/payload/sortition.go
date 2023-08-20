@@ -27,8 +27,8 @@ func (p *SortitionPayload) Value() int64 {
 	return 0
 }
 
-func (p *SortitionPayload) SanityCheck() error {
-	if err := p.Address.SanityCheck(); err != nil {
+func (p *SortitionPayload) BasicCheck() error {
+	if err := p.Address.BasicCheck(); err != nil {
 		return errors.Error(errors.ErrInvalidAddress)
 	}
 

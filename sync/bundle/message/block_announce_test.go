@@ -22,7 +22,7 @@ func TestBlockAnnounceMessage(t *testing.T) {
 		c := block.NewCertificate(-1, nil, nil, nil)
 		m := NewBlockAnnounceMessage(100, b, c)
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidRound)
+		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidRound)
 	})
 
 	t.Run("OK", func(t *testing.T) {
@@ -30,7 +30,7 @@ func TestBlockAnnounceMessage(t *testing.T) {
 		c := ts.GenerateTestCertificate(b.Hash())
 		m := NewBlockAnnounceMessage(100, b, c)
 
-		assert.NoError(t, m.SanityCheck())
+		assert.NoError(t, m.BasicCheck())
 		assert.Contains(t, m.String(), "100")
 	})
 }
