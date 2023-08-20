@@ -307,35 +307,35 @@ func TestNeuter(t *testing.T) {
 }
 
 func TestValidateMnemonic(t *testing.T) {
-	tests := []struct {
-		mnenomic string
-		errStr   string
-	}{
-		{
-			"",
-			"Invalid mnenomic",
-		},
-		{
-			"abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
-			"Invalid mnenomic",
-		},
-		{
-			"bandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
-			"word `bandon` not found in reverse map",
-		},
-		{
-			"abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
-			"Checksum incorrect",
-		},
-		{
-			"abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus",
-			"",
-		},
-	}
-	for i, test := range tests {
-		err := CheckMnemonic(test.mnenomic)
-		if err != nil {
-			assert.ErrorContains(t, err, test.errStr, "test %v failed", i)
-		}
-	}
+    tests := []struct {
+        mnenomic string
+        errStr   string
+    }{
+        {
+            "",
+            "Invalid mnenomic",
+        },
+        {
+            "abandon ability able about above absent absorb abstract absurd abuse access",
+            "Invalid mnenomic",
+        },
+        {
+            "bandon ability able about above absent absorb abstract absurd abuse access ability",
+            "word `bandon` not found in reverse map",
+        },
+        {
+            "abandon ability able about above absent absorb abstract absurd abuse access accident",
+            "Checksum incorrect",
+        },
+        {
+            "abandon ability able about above absent absorb abstract absurd abuse access ability",
+            "",
+        },
+    }
+    for i, test := range tests {
+        err := CheckMnemonic(test.mnenomic)
+        if err != nil {
+            assert.Equal(t, err.Error(), test.errStr, "test %v failed", i)
+        }
+    }
 }

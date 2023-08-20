@@ -102,10 +102,6 @@ issues:
       linters:
         - funlen
 
-    - path: _test.go
-      linters:
-        - dupword
-
     - linters:
         - govet
       text: "shadow: declaration of \"err\" shadows"
