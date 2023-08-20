@@ -48,7 +48,7 @@ linters:
     - ireturn  # Consider to enable it (??)
 
 linters-settings:
-    dupword:
+  dupword:
       keywords:
         - "the"
         - "and"
