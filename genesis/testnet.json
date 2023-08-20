@@ -12,6 +12,7 @@
         "fee_fraction": 0.0001,
         "minimum_fee": 1000,
         "maximum_fee": 1000000,
+        "minimum_stake": 1000000000,
         "maximum_stake": 1000000000000
     },
     "accounts": [
