@@ -46,9 +46,27 @@ linters:
     - nonamedreturns # Consider to enable it
     - nlreturn # Consider to enable it
     - ireturn  # Consider to enable it (??)
-    - dupword  # Consider to enable it
 
 linters-settings:
+    dupword:
+      keywords:
+        - "the"
+        - "and"
+        - "a"
+        - "abandon"
+        - "ability"
+        - "able"
+        - "about"
+        - "above"
+        - "absent"
+        - "absorb"
+        - "abstract"
+        - "absurd"
+        - "abuse"
+        - "access"
+        - "accident"
+        - "account"
+
   gosimple:
     checks: ["all"]
 
