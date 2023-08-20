@@ -397,7 +397,8 @@ CPDecide(index) ==
     /\
         \/
             /\ states[index].cp_decided = 1
-            /\ states' = [states EXCEPT ![index].name = "propose"]
+            /\ states' = [states EXCEPT ![index].name = "propose",
+                                        ![index].round = states[index].round + 1]
         \/
             /\ states[index].cp_decided = 0
             /\ states' = [states EXCEPT ![index].name = "prepare"]
@@ -405,12 +406,13 @@ CPDecide(index) ==
             /\ states[index].cp_decided = -1
             /\ CPHasMainVotesQuorum(index)
             /\
-                IF  CPHasMainVotesQuorumForOne(index)
+                IF  /\ CPHasMainVotesQuorumForOne(index)
+                    /\ states[index].cp_round /= MaxCPRound - 1
                 THEN states' = [states EXCEPT ![index].name = "cp:pre-vote",
                                               ![index].cp_decided = 1,
                                               ![index].cp_round = states[index].cp_round + 1]
                 ELSE IF \/ CPHasMainVotesQuorumForZero(index)
-                        \/ states[index].cp_round = MaxCPRound
+                        \/ states[index].cp_round = MaxCPRound - 1
                     THEN states' = [states EXCEPT ![index].name = "cp:pre-vote",
                                                   ![index].cp_decided = 0,
                                                   ![index].cp_round = states[index].cp_round + 1]
