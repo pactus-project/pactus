@@ -37,7 +37,6 @@ linters:
     - exhaustive # Consider to enable it
     - exhaustruct # Consider to enable it
     - forcetypeassert # Consider to enable it
-    - musttag  # Consider to enable it (is i possible?)
     - goerr113 # Consider to enable it
     - errorlint # Consider to enable it
     - errname # Consider to enable it
