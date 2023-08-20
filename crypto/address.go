@@ -86,7 +86,7 @@ func (addr Address) String() string {
 	return str
 }
 
-func (addr *Address) SanityCheck() error {
+func (addr *Address) BasicCheck() error {
 	if addr[0] == 0 {
 		if !addr.EqualsTo(TreasuryAddress) {
 			return errors.Errorf(errors.ErrInvalidAddress, "invalid address data")

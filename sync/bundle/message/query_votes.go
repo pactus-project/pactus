@@ -18,7 +18,7 @@ func NewQueryVotesMessage(h uint32, r int16) *QueryVotesMessage {
 	}
 }
 
-func (m *QueryVotesMessage) SanityCheck() error {
+func (m *QueryVotesMessage) BasicCheck() error {
 	if m.Round < 0 {
 		return errors.Error(errors.ErrInvalidRound)
 	}

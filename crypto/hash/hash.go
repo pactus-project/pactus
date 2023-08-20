@@ -80,7 +80,7 @@ func (h Hash) IsUndef() bool {
 	return h.EqualsTo(UndefHash)
 }
 
-func (h Hash) SanityCheck() error {
+func (h Hash) BasicCheck() error {
 	if h.IsUndef() {
 		return fmt.Errorf("hash is zero")
 	}

@@ -57,8 +57,8 @@ func TestMessageCompress(t *testing.T) {
 	assert.NoError(t, err)
 	_, err = msg3.Decode(bytes.NewReader(bs1))
 	assert.NoError(t, err)
-	assert.NoError(t, msg2.SanityCheck())
-	assert.NoError(t, msg3.SanityCheck())
+	assert.NoError(t, msg2.BasicCheck())
+	assert.NoError(t, msg3.BasicCheck())
 	assert.True(t, util.IsFlagSet(bdl.Flags, BundleFlagCompressed))
 }
 
@@ -95,7 +95,7 @@ func TestDecodeVoteCBOR(t *testing.T) {
 	assert.NoError(t, err)
 	_, err = m2.Decode(bytes.NewReader(d2))
 	assert.NoError(t, err)
-	assert.NoError(t, m2.SanityCheck())
+	assert.NoError(t, m2.BasicCheck())
 
 	assert.Equal(t, m1.Message, m2.Message)
 }

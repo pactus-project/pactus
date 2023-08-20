@@ -24,8 +24,8 @@ const maxMemoLength = 64
 type ID = hash.Hash
 
 type Tx struct {
-	memorizedID   *ID
-	sanityChecked bool
+	memorizedID  *ID
+	basicChecked bool
 
 	data txData
 }
@@ -139,17 +139,17 @@ func (tx *Tx) IsLockTime() bool {
 }
 
 func (tx *Tx) SetSignature(sig crypto.Signature) {
-	tx.sanityChecked = false
+	tx.basicChecked = false
 	tx.data.Signature = sig
 }
 
 func (tx *Tx) SetPublicKey(pub crypto.PublicKey) {
-	tx.sanityChecked = false
+	tx.basicChecked = false
 	tx.data.PublicKey = pub
 }
 
-func (tx *Tx) SanityCheck() error {
-	if tx.sanityChecked {
+func (tx *Tx) BasicCheck() error {
+	if tx.basicChecked {
 		return nil
 	}
 	if tx.Version() != versionLatest {
@@ -164,7 +164,7 @@ func (tx *Tx) SanityCheck() error {
 	if err := tx.checkFee(); err != nil {
 		return err
 	}
-	if err := tx.Payload().SanityCheck(); err != nil {
+	if err := tx.Payload().BasicCheck(); err != nil {
 		return err
 	}
 	if len(tx.Memo()) > maxMemoLength {
@@ -174,7 +174,7 @@ func (tx *Tx) SanityCheck() error {
 		return err
 	}
 
-	tx.sanityChecked = true
+	tx.basicChecked = true
 
 	return nil
 }

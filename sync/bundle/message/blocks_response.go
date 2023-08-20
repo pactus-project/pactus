@@ -34,12 +34,12 @@ func NewBlocksResponseMessage(code ResponseCode, reason string, sid int, from ui
 	}
 }
 
-func (m *BlocksResponseMessage) SanityCheck() error {
+func (m *BlocksResponseMessage) BasicCheck() error {
 	if m.From == 0 && len(m.BlocksData) != 0 {
 		return errors.Errorf(errors.ErrInvalidHeight, "unexpected block for height zero")
 	}
 	if m.LastCertificate != nil {
-		if err := m.LastCertificate.SanityCheck(); err != nil {
+		if err := m.LastCertificate.BasicCheck(); err != nil {
 			return err
 		}
 	}

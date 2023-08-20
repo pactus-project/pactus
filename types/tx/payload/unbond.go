@@ -26,8 +26,8 @@ func (p *UnbondPayload) Value() int64 {
 }
 
 // TODO: write test for me.
-func (p *UnbondPayload) SanityCheck() error {
-	if err := p.Validator.SanityCheck(); err != nil {
+func (p *UnbondPayload) BasicCheck() error {
+	if err := p.Validator.BasicCheck(); err != nil {
 		return errors.Error(errors.ErrInvalidAddress)
 	}
 

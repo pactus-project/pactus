@@ -40,6 +40,6 @@ type Payload interface {
 	SerializeSize() int
 	Encode(io.Writer) error
 	Decode(io.Reader) error
-	SanityCheck() error
+	BasicCheck() error
 	String() string
 }

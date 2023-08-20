@@ -123,7 +123,7 @@ func MakeMessage(t Type) Message {
 }
 
 type Message interface {
-	SanityCheck() error
+	BasicCheck() error
 	Type() Type
 	String() string
 }

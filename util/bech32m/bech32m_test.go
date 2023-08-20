@@ -180,7 +180,7 @@ func TestMixedCaseEncode(t *testing.T) {
 func TestCanDecodeUnlimtedBech32(t *testing.T) {
 	input := "11qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqp2krp0"
 
-	// Sanity check that an input of this length errors on regular Decode()
+	// basic check that an input of this length errors on regular Decode()
 	_, _, err := Decode(input)
 	if err == nil {
 		t.Fatalf("Test vector not appropriate")

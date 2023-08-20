@@ -26,11 +26,11 @@ func (p *TransferPayload) Value() int64 {
 	return p.Amount
 }
 
-func (p *TransferPayload) SanityCheck() error {
-	if err := p.Sender.SanityCheck(); err != nil {
+func (p *TransferPayload) BasicCheck() error {
+	if err := p.Sender.BasicCheck(); err != nil {
 		return err
 	}
-	return p.Receiver.SanityCheck()
+	return p.Receiver.BasicCheck()
 }
 
 func (p *TransferPayload) SerializeSize() int {

@@ -24,7 +24,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 		d, _ := b.Bytes()
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, ResponseCodeMoreBlocks.String(), sid, 100, [][]byte{d}, c)
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidRound)
+		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidRound)
 		assert.Equal(t, m.Reason, ResponseCodeMoreBlocks.String())
 	})
 
@@ -33,7 +33,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 		d, _ := b.Bytes()
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, ResponseCodeMoreBlocks.String(), sid, 0, [][]byte{d}, nil)
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidHeight)
+		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidHeight)
 		assert.Equal(t, m.Reason, ResponseCodeMoreBlocks.String())
 	})
 
@@ -45,7 +45,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, ResponseCodeMoreBlocks.String(), sid, 100,
 			[][]byte{d1, d2}, nil)
 
-		assert.NoError(t, m.SanityCheck())
+		assert.NoError(t, m.BasicCheck())
 		assert.Zero(t, m.LastCertificateHeight())
 		assert.Contains(t, m.String(), "100")
 		assert.Equal(t, m.Reason, ResponseCodeMoreBlocks.String())
@@ -58,7 +58,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 	t.Run("busy", func(t *testing.T) {
 		m := NewBlocksResponseMessage(ResponseCodeRejected, ResponseCodeRejected.String(), 1, 0, nil, nil)
 
-		assert.NoError(t, m.SanityCheck())
+		assert.NoError(t, m.BasicCheck())
 		assert.Zero(t, m.From)
 		assert.Zero(t, m.To())
 		assert.Zero(t, m.Count())
@@ -69,7 +69,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 	t.Run("rejected", func(t *testing.T) {
 		m := NewBlocksResponseMessage(ResponseCodeRejected, ResponseCodeRejected.String(), 1, 0, nil, nil)
 
-		assert.NoError(t, m.SanityCheck())
+		assert.NoError(t, m.BasicCheck())
 		assert.Zero(t, m.From)
 		assert.Zero(t, m.To())
 		assert.Zero(t, m.Count())
@@ -84,7 +84,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		d2, _ := b2.Bytes()
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, ResponseCodeMoreBlocks.String(), 1, 100, [][]byte{d1, d2}, nil)
 
-		assert.NoError(t, m.SanityCheck())
+		assert.NoError(t, m.BasicCheck())
 		assert.Equal(t, m.From, uint32(100))
 		assert.Equal(t, m.To(), uint32(101))
 		assert.Equal(t, m.Count(), uint32(2))
@@ -97,7 +97,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		cert := ts.GenerateTestCertificate(ts.RandomHash())
 
 		m := NewBlocksResponseMessage(ResponseCodeSynced, ResponseCodeSynced.String(), 1, 100, nil, cert)
-		assert.NoError(t, m.SanityCheck())
+		assert.NoError(t, m.BasicCheck())
 		assert.Equal(t, m.From, uint32(100))
 		assert.Zero(t, m.To())
 		assert.Zero(t, m.Count())
