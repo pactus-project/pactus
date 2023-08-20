@@ -23,7 +23,6 @@ linters:
     - gochecknoinits
     - dupl
     - goconst
-    - errchkjson # Consider to enable it
     - gocognit # Consider to enable it
     - funlen # Consider to enable it
     - forbidigo # Consider to enable it
