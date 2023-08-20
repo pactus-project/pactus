@@ -60,7 +60,6 @@ proto:
 ########################################
 ### Formatting, linting, and vetting
 fmt:
-	gofmt -s -w .
 	gofumpt -l -w .
 
 check:
