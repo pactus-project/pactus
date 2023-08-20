@@ -56,7 +56,7 @@ type Genesis struct {
 }
 
 type genesisData struct {
-	GenesisTime time.Time      `cbor:"1,keyasint" json:"genesistime"`
+	GenesisTime time.Time      `cbor:"1,keyasint" json:"genesis_time"`
 	Params      param.Params   `cbor:"2,keyasint" json:"params"`
 	Accounts    []genAccount   `cbor:"3,keyasint" json:"accounts"`
 	Validators  []genValidator `cbor:"4,keyasint" json:"validators"`
