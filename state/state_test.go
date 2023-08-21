@@ -107,6 +107,7 @@ func setup(t *testing.T) *testData {
 func (td *testData) makeBlockAndCertificate(t *testing.T, round int16,
 	signers ...crypto.Signer,
 ) (*block.Block, *block.Certificate) {
+	t.Helper()
 	var st *state
 	if td.state1.committee.IsProposer(td.state1.signers[0].Address(), round) {
 		st = td.state1
@@ -129,6 +130,7 @@ func (td *testData) makeBlockAndCertificate(t *testing.T, round int16,
 func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int16,
 	signers ...crypto.Signer,
 ) *block.Certificate {
+	t.Helper()
 	assert.NotZero(t, len(signers))
 	sigs := make([]*bls.Signature, len(signers))
 	sb := block.CertificateSignBytes(blockHash, round)
@@ -159,6 +161,7 @@ func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash, ro
 }
 
 func (td *testData) commitBlockForAllStates(t *testing.T, b *block.Block, c *block.Certificate) {
+	t.Helper()
 	assert.NoError(t, td.state1.CommitBlock(td.state1.lastInfo.BlockHeight()+1, b, c))
 	assert.NoError(t, td.state2.CommitBlock(td.state2.lastInfo.BlockHeight()+1, b, c))
 	assert.NoError(t, td.state3.CommitBlock(td.state3.lastInfo.BlockHeight()+1, b, c))
@@ -166,6 +169,7 @@ func (td *testData) commitBlockForAllStates(t *testing.T, b *block.Block, c *blo
 }
 
 func (td *testData) moveToNextHeightForAllStates(t *testing.T) {
+	t.Helper()
 	b, c := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
 	td.commitBlockForAllStates(t, b, c)
 }
