@@ -45,7 +45,6 @@ linters:
     - nonamedreturns # Consider to enable it
     - nlreturn # Consider to enable it
     - ireturn  # Consider to enable it (??)
-    - dupword  # Consider to enable it
 
 linters-settings:
   gosimple:
