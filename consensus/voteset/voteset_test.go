@@ -14,6 +14,8 @@ import (
 )
 
 func setupCommittee(t *testing.T, ts *testsuite.TestSuite, stakes ...int64) (committee.Committee, []crypto.Signer) {
+	t.Helper()
+
 	signers := []crypto.Signer{}
 	vals := []*validator.Validator{}
 	for i, s := range stakes {

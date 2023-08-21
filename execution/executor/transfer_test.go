@@ -20,6 +20,8 @@ type testData struct {
 }
 
 func setup(t *testing.T) *testData {
+	t.Helper()
+
 	ts := testsuite.NewTestSuite(t)
 
 	sandbox := sandbox.MockingSandbox(ts)
@@ -35,6 +37,8 @@ func setup(t *testing.T) *testData {
 }
 
 func (td *testData) checkTotalCoin(t *testing.T, fee int64) {
+	t.Helper()
+
 	total := int64(0)
 	for _, acc := range td.sandbox.TestStore.Accounts {
 		total += acc.Balance()

@@ -28,6 +28,8 @@ type testData struct {
 }
 
 func setup(t *testing.T) *testData {
+	t.Helper()
+
 	if tTestData != nil {
 		return tTestData
 	}

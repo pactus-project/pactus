@@ -63,6 +63,8 @@ func (o *OverrideStringer) String() string {
 }
 
 func setup(t *testing.T) *testData {
+	t.Helper()
+
 	ts := testsuite.NewTestSuite(t)
 
 	_, signers := ts.GenerateTestCommittee(4)
@@ -139,6 +141,8 @@ func setup(t *testing.T) *testData {
 }
 
 func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash hash.Hash) {
+	t.Helper()
+
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -161,12 +165,16 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, ha
 func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
 	height uint32, round int16,
 ) *proposal.Proposal {
+	t.Helper()
+
 	return shouldPublishProposal(t, cons, height, round)
 }
 
 func shouldPublishProposal(t *testing.T, cons *consensus,
 	height uint32, round int16,
 ) *proposal.Proposal {
+	t.Helper()
+
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -188,6 +196,8 @@ func shouldPublishProposal(t *testing.T, cons *consensus,
 }
 
 func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, height uint32, round int16) {
+	t.Helper()
+
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -209,6 +219,8 @@ func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, he
 }
 
 func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, hash hash.Hash) {
+	t.Helper()
+
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -230,16 +242,22 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vo
 }
 
 func checkHeightRound(t *testing.T, cons *consensus, height uint32, round int16) {
+	t.Helper()
+
 	h, r := cons.HeightRound()
 	assert.Equal(t, h, height)
 	assert.Equal(t, r, round)
 }
 
 func (td *testData) checkHeightRound(t *testing.T, cons *consensus, height uint32, round int16) {
+	t.Helper()
+
 	checkHeightRound(t, cons, height, round)
 }
 
 func checkHeightRoundWait(t *testing.T, cons *consensus, height uint32, round int16) {
+	t.Helper()
+
 	for i := 0; i < 20; i++ {
 		h, r := cons.HeightRound()
 		if h == height && r == round {
@@ -252,6 +270,8 @@ func checkHeightRoundWait(t *testing.T, cons *consensus, height uint32, round in
 }
 
 func (td *testData) checkHeightRoundWait(t *testing.T, cons *consensus, height uint32, round int16) {
+	t.Helper()
+
 	checkHeightRoundWait(t, cons, height, round)
 }
 
@@ -284,6 +304,8 @@ func (td *testData) enterNextRound(cons *consensus) {
 }
 
 func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *block.Certificate) {
+	t.Helper()
+
 	height := td.consX.state.LastBlockHeight()
 	var err error
 	p := td.makeProposal(t, height+1, 0)
@@ -310,6 +332,8 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *block.
 }
 
 func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *proposal.Proposal {
+	t.Helper()
+
 	var p *proposal.Proposal
 	switch (height % 4) + uint32(round) {
 	case 1:

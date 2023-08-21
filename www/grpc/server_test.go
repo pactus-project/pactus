@@ -87,6 +87,8 @@ func bufDialer(context.Context, string) (net.Conn, error) {
 }
 
 func testBlockchainClient(t *testing.T) (*grpc.ClientConn, pactus.BlockchainClient) {
+	t.Helper()
+
 	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -96,6 +98,8 @@ func testBlockchainClient(t *testing.T) (*grpc.ClientConn, pactus.BlockchainClie
 }
 
 func testNetworkClient(t *testing.T) (*grpc.ClientConn, pactus.NetworkClient) {
+	t.Helper()
+
 	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -105,6 +109,8 @@ func testNetworkClient(t *testing.T) (*grpc.ClientConn, pactus.NetworkClient) {
 }
 
 func testTransactionClient(t *testing.T) (*grpc.ClientConn, pactus.TransactionClient) {
+	t.Helper()
+
 	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -114,6 +120,8 @@ func testTransactionClient(t *testing.T) (*grpc.ClientConn, pactus.TransactionCl
 }
 
 func testWalletClient(t *testing.T) (*grpc.ClientConn, pactus.WalletClient) {
+	t.Helper()
+
 	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
