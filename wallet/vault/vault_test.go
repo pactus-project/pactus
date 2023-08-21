@@ -316,26 +316,26 @@ func TestValidateMnemonic(t *testing.T) {
 			"Invalid mnenomic",
 		},
 		{
-			"abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+			"abandon ability able about above absent absorb abstract absurd abuse access",
 			"Invalid mnenomic",
 		},
 		{
-			"bandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+			"bandon ability able about above absent absorb abstract absurd abuse access ability",
 			"word `bandon` not found in reverse map",
 		},
 		{
-			"abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+			"abandon ability able about above absent absorb abstract absurd abuse access accident",
 			"Checksum incorrect",
 		},
 		{
-			"abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus",
+			"abandon ability able about above absent absorb abstract absurd abuse access ability",
 			"",
 		},
 	}
 	for i, test := range tests {
 		err := CheckMnemonic(test.mnenomic)
 		if err != nil {
-			assert.ErrorContains(t, err, test.errStr, "test %v failed", i)
+			assert.Equal(t, err.Error(), test.errStr, "test %v failed", i)
 		}
 	}
 }

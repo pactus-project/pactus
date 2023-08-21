@@ -39,6 +39,9 @@ func (s *store) Save(bs []byte) error {
 }
 
 func (s *store) calcVaultCRC() uint32 {
-	d, _ := json.Marshal(s.Vault)
+	d, err := json.Marshal(s.Vault)
+	if err != nil {
+		return 0
+	}
 	return crc32.ChecksumIEEE(d)
 }

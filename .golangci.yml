@@ -23,7 +23,6 @@ linters:
     - gochecknoinits
     - dupl
     - goconst
-    - errchkjson # Consider to enable it
     - gocognit # Consider to enable it
     - funlen # Consider to enable it
     - forbidigo # Consider to enable it
@@ -38,7 +37,6 @@ linters:
     - exhaustive # Consider to enable it
     - exhaustruct # Consider to enable it
     - forcetypeassert # Consider to enable it
-    - musttag  # Consider to enable it (is i possible?)
     - goerr113 # Consider to enable it
     - errorlint # Consider to enable it
     - errname # Consider to enable it
@@ -47,7 +45,6 @@ linters:
     - nonamedreturns # Consider to enable it
     - nlreturn # Consider to enable it
     - ireturn  # Consider to enable it (??)
-    - dupword  # Consider to enable it
 
 linters-settings:
   gosimple:

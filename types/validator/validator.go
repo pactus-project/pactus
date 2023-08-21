@@ -158,7 +158,7 @@ func (val *Validator) SerializeSize() int {
 	return 124 // 96+4+4+8+4+4+4
 }
 
-// Bytes returns returns the serialized byte representation of the validator.
+// Bytes returns the serialized byte representation of the validator.
 func (val *Validator) Bytes() ([]byte, error) {
 	w := bytes.NewBuffer(make([]byte, 0, val.SerializeSize()))
 

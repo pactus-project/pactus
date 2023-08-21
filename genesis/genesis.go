@@ -42,12 +42,12 @@ func (n ChainType) String() string {
 }
 
 type genAccount struct {
-	Address string `cbor:"1,keyasint"`
-	Balance int64  `cbor:"2,keyasint"`
+	Address string `cbor:"1,keyasint" json:"address"`
+	Balance int64  `cbor:"2,keyasint" json:"balance"`
 }
 
 type genValidator struct {
-	PublicKey string `cbor:"1,keyasint"`
+	PublicKey string `cbor:"1,keyasint" json:"public_key"`
 }
 
 // Genesis is stored in the state database.
@@ -56,10 +56,10 @@ type Genesis struct {
 }
 
 type genesisData struct {
-	GenesisTime time.Time      `cbor:"1,keyasint"`
-	Params      param.Params   `cbor:"2,keyasint"`
-	Accounts    []genAccount   `cbor:"3,keyasint"`
-	Validators  []genValidator `cbor:"4,keyasint"`
+	GenesisTime time.Time      `cbor:"1,keyasint" json:"genesis_time"`
+	Params      param.Params   `cbor:"2,keyasint" json:"params"`
+	Accounts    []genAccount   `cbor:"3,keyasint" json:"accounts"`
+	Validators  []genValidator `cbor:"4,keyasint" json:"validators"`
 }
 
 func (gen *Genesis) Hash() hash.Hash {
