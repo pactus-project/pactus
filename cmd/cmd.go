@@ -77,9 +77,9 @@ func PromptConfirm(label string) bool {
 	result, err := prompt.Run()
 	if err != nil {
 		if !errors.Is(promptui.ErrAbort, err) {
-			PrintErrorMsg("prompt error: %v", err)
+			PrintErrorMsgf("prompt error: %v", err)
 		} else {
-			PrintWarnMsg("Aborted.")
+			PrintWarnMsgf("Aborted.")
 		}
 		os.Exit(1)
 	}
@@ -155,7 +155,7 @@ func FatalErrorCheck(err error) {
 	}
 }
 
-func PrintErrorMsg(format string, a ...interface{}) {
+func PrintErrorMsgf(format string, a ...interface{}) {
 	if terminalSupported() {
 		// Print error msg with red color
 		format = fmt.Sprintf("\033[31m[ERROR] %s\033[0m", format)
@@ -163,7 +163,7 @@ func PrintErrorMsg(format string, a ...interface{}) {
 	fmt.Printf(format+"\n", a...)
 }
 
-func PrintSuccessMsg(format string, a ...interface{}) {
+func PrintSuccessMsgf(format string, a ...interface{}) {
 	if terminalSupported() {
 		// Print successful msg with green color
 		format = fmt.Sprintf("\033[32m%s\033[0m", format)
@@ -171,7 +171,7 @@ func PrintSuccessMsg(format string, a ...interface{}) {
 	fmt.Printf(format+"\n", a...)
 }
 
-func PrintWarnMsg(format string, a ...interface{}) {
+func PrintWarnMsgf(format string, a ...interface{}) {
 	if terminalSupported() {
 		// Print warning msg with yellow color
 		format = fmt.Sprintf("\033[33m%s\033[0m", format)
@@ -179,11 +179,11 @@ func PrintWarnMsg(format string, a ...interface{}) {
 	fmt.Printf(format+"\n", a...)
 }
 
-func PrintInfoMsg(format string, a ...interface{}) {
+func PrintInfoMsgf(format string, a ...interface{}) {
 	fmt.Printf(format+"\n", a...)
 }
 
-func PrintInfoMsgBold(format string, a ...interface{}) {
+func PrintInfoMsgBoldf(format string, a ...interface{}) {
 	if terminalSupported() {
 		format = fmt.Sprintf("\033[1m%s\033[0m", format)
 	}
@@ -199,7 +199,7 @@ func PrintJSONData(data []byte) {
 	err := json.Indent(&out, data, "", "   ")
 	FatalErrorCheck(err)
 
-	PrintInfoMsg(out.String())
+	PrintInfoMsgf(out.String())
 }
 
 func PrintJSONObject(obj interface{}) {
@@ -342,8 +342,8 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	confPath := PactusConfigPath(workingDir)
 	conf, err := config.LoadFromFile(confPath, true)
 	if err != nil {
-		PrintWarnMsg("Unable to load the config: %s", err)
-		PrintInfoMsg("Attempting to restore the config to the default values...")
+		PrintWarnMsgf("Unable to load the config: %s", err)
+		PrintInfoMsgf("Attempting to restore the config to the default values...")
 
 		// First, try to open the old config file in non-strict mode
 		confBack, err := config.LoadFromFile(confPath, false)
@@ -369,7 +369,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 			panic("not yet implemented!")
 		}
 
-		PrintSuccessMsg("Config restored to the default values")
+		PrintSuccessMsgf("Config restored to the default values")
 		conf, _ = config.LoadFromFile(confPath, true) // This time it should be OK
 	}
 

@@ -62,7 +62,7 @@ func buildAllAddressesCmd(parentCmd *cobra.Command) {
 				line += " (Imported)"
 			}
 
-			cmd.PrintInfoMsg(line)
+			cmd.PrintInfoMsgf(line)
 		}
 	}
 }
@@ -87,7 +87,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsg("%s", addr)
+		cmd.PrintInfoMsgf("%s", addr)
 	}
 }
 
@@ -112,7 +112,7 @@ func buildBalanceCmd(parentCmd *cobra.Command) {
 		stake, err := wallet.Stake(*addrArg)
 		cmd.FatalErrorCheck(err)
 
-		cmd.PrintInfoMsg("balance: %v\tstake: %v",
+		cmd.PrintInfoMsgf("balance: %v\tstake: %v",
 			util.ChangeToCoin(balance), util.ChangeToCoin(stake))
 	}
 }
@@ -137,7 +137,7 @@ func buildPrivateKeyCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintWarnMsg("Private Key: %v", prv)
+		cmd.PrintWarnMsgf("Private Key: %v", prv)
 	}
 }
 
@@ -157,14 +157,14 @@ func buildPublicKeyCmd(parentCmd *cobra.Command) {
 
 		info := wallet.AddressInfo(*addrArg)
 		if info == nil {
-			cmd.PrintErrorMsg("Address not found")
+			cmd.PrintErrorMsgf("Address not found")
 			return
 		}
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsg("Public Key: %v", info.Pub.String())
+		cmd.PrintInfoMsgf("Public Key: %v", info.Pub.String())
 		if !info.Imported {
-			cmd.PrintInfoMsg("Path: %v", info.Path.String())
+			cmd.PrintInfoMsgf("Path: %v", info.Path.String())
 		}
 	}
 }
@@ -196,7 +196,7 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintSuccessMsg("Private Key imported. Address: %v",
+		cmd.PrintSuccessMsgf("Private Key imported. Address: %v",
 			prv.PublicKey().Address())
 	}
 }
@@ -225,7 +225,7 @@ func buildSetLabelCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintSuccessMsg("Label set successfully")
+		cmd.PrintSuccessMsgf("Label set successfully")
 	}
 }
 

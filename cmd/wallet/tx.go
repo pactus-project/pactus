@@ -51,11 +51,11 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsg("You are going to sign this \033[1mSend\033[0m transition:")
-		cmd.PrintInfoMsg("From  : %s", *fromArg)
-		cmd.PrintInfoMsg("To    : %s", *toArg)
-		cmd.PrintInfoMsg("Amount: %.9f", *amtArg)
-		cmd.PrintInfoMsg("Fee   : %.9f", util.ChangeToCoin(trx.Fee()))
+		cmd.PrintInfoMsgf("You are going to sign this \033[1mSend\033[0m transition:")
+		cmd.PrintInfoMsgf("From  : %s", *fromArg)
+		cmd.PrintInfoMsgf("To    : %s", *toArg)
+		cmd.PrintInfoMsgf("Amount: %.9f", *amtArg)
+		cmd.PrintInfoMsgf("Fee   : %.9f", util.ChangeToCoin(trx.Fee()))
 
 		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 	}
@@ -92,11 +92,11 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsg("You are going to sign this \033[1mBond\033[0m transition:")
-		cmd.PrintInfoMsg("Account  : %s", *fromArg)
-		cmd.PrintInfoMsg("Validator: %s", *toArg)
-		cmd.PrintInfoMsg("Amount   : %.9f", *amtArg)
-		cmd.PrintInfoMsg("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
+		cmd.PrintInfoMsgf("You are going to sign this \033[1mBond\033[0m transition:")
+		cmd.PrintInfoMsgf("Account  : %s", *fromArg)
+		cmd.PrintInfoMsgf("Validator: %s", *toArg)
+		cmd.PrintInfoMsgf("Amount   : %.9f", *amtArg)
+		cmd.PrintInfoMsgf("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
 
 		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 	}
@@ -130,9 +130,9 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsg("You are going to sign this \033[1mUnbond\033[0m transition:")
-		cmd.PrintInfoMsg("Validator: %s", *fromArg)
-		cmd.PrintInfoMsg("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
+		cmd.PrintInfoMsgf("You are going to sign this \033[1mUnbond\033[0m transition:")
+		cmd.PrintInfoMsgf("Validator: %s", *fromArg)
+		cmd.PrintInfoMsgf("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
 
 		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 	}
@@ -173,11 +173,11 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsg("You are going to sign this \033[1mWithdraw\033[0m transition:")
-		cmd.PrintInfoMsg("Validator: %s", *fromArg)
-		cmd.PrintInfoMsg("Account  : %s", *toArg)
-		cmd.PrintInfoMsg("Amount   : %.9f", *amtArg)
-		cmd.PrintInfoMsg("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
+		cmd.PrintInfoMsgf("You are going to sign this \033[1mWithdraw\033[0m transition:")
+		cmd.PrintInfoMsgf("Validator: %s", *fromArg)
+		cmd.PrintInfoMsgf("Account  : %s", *toArg)
+		cmd.PrintInfoMsgf("Amount   : %.9f", *amtArg)
+		cmd.PrintInfoMsgf("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
 
 		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 	}
@@ -209,13 +209,13 @@ func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string)
 	cmd.FatalErrorCheck(err)
 
 	bs, _ := trx.Bytes()
-	cmd.PrintInfoMsg("Signed transaction data: %x", bs)
+	cmd.PrintInfoMsgf("Signed transaction data: %x", bs)
 	cmd.PrintLine()
 
 	if !w.IsOffline() {
 		if !noConfirm {
-			cmd.PrintInfoMsg("You are going to broadcast the signed transition:")
-			cmd.PrintWarnMsg("THIS ACTION IS NOT REVERSIBLE")
+			cmd.PrintInfoMsgf("You are going to broadcast the signed transition:")
+			cmd.PrintWarnMsgf("THIS ACTION IS NOT REVERSIBLE")
 			confirmed := cmd.PromptConfirm("Do you want to continue")
 			if !confirmed {
 				return
@@ -227,7 +227,7 @@ func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string)
 		err = w.Save()
 		cmd.FatalErrorCheck(err)
 
-		cmd.PrintInfoMsg("Transaction hash: %s", res)
+		cmd.PrintInfoMsgf("Transaction hash: %s", res)
 	}
 }
 

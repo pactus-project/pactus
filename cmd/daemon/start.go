@@ -35,7 +35,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		if *pprofOpt != "" {
-			cmd.PrintWarnMsg("Starting Debug pprof server on: http://%s/debug/pprof/", *pprofOpt)
+			cmd.PrintWarnMsgf("Starting Debug pprof server on: http://%s/debug/pprof/", *pprofOpt)
 			server := &http.Server{
 				Addr:              *pprofOpt,
 				ReadHeaderTimeout: 3 * time.Second,
@@ -65,7 +65,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 
 		cmd.TrapSignal(func() {
 			node.Stop()
-			cmd.PrintInfoMsg("Exiting ...")
+			cmd.PrintInfoMsgf("Exiting ...")
 		})
 
 		// run forever (the node will not be returned)
