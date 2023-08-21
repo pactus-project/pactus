@@ -47,7 +47,7 @@ ASSUME
 
 \* Fetch a subset of messages in the network based on the params filter.
 SubsetOfMsgs(params) ==
-    {msg \in log: \A field \in DOMAIN params: msg[field] = params[field]}
+   {msg \in log: \A field \in DOMAIN params: msg[field] = params[field]}
 
 \* IsProposer checks if the replica is the proposer for this round.
 \* To simplify, we assume the proposer always starts with the first replica,
@@ -120,14 +120,6 @@ CPHasOneMainVotesZeroInPrvRound(index) ==
         round    |-> states[index].round,
         cp_round |-> states[index].cp_round - 1,
         cp_val   |-> 0])) > 0
-
-CPHasOneThirdMainVotesOneInPrvRound(index) ==
-    Cardinality(SubsetOfMsgs([
-        type     |-> "CP:MAIN-VOTE",
-        height   |-> states[index].height,
-        round    |-> states[index].round,
-        cp_round |-> states[index].cp_round - 1,
-        cp_val   |-> 1])) >= OneThird
 
 CPHasOneMainVotesOneInPrvRound(index) ==
     Cardinality(SubsetOfMsgs([
@@ -367,9 +359,6 @@ CPPreVote(index) ==
     /\ states[index].name = "cp:pre-vote"
     /\
         \/
-            /\
-                \/ states[index].cp_round = MaxCPRound
-                \/ CPHasOneThirdMainVotesOneInPrvRound(index)
             /\ CPHasOneMainVotesOneInPrvRound(index)
             /\ SendCPPreVote(index, 1)
         \/
@@ -405,18 +394,32 @@ CPMainVote(index) ==
 CPDecide(index) ==
     /\ ~IsFaulty(index)
     /\ states[index].name = "cp:decide"
-    /\ CPHasMainVotesQuorum(index)
-    /\ IF CPHasMainVotesQuorumForOne(index)
-       THEN /\ SendCPVotesForNextRound(index, 1)
+    /\
+        \/
+            /\ states[index].cp_decided = 1
             /\ states' = [states EXCEPT ![index].name = "propose",
                                         ![index].round = states[index].round + 1]
-       ELSE IF CPHasMainVotesQuorumForZero(index)
-            THEN /\ SendCPVotesForNextRound(index, 0)
-                 /\ states' = [states EXCEPT ![index].name = "prepare"]
-            ELSE
-                 /\ states' = [states EXCEPT ![index].name = "cp:pre-vote",
-                                             ![index].cp_round = states[index].cp_round + 1]
-                 /\ log' = log
+        \/
+            /\ states[index].cp_decided = 0
+            /\ states' = [states EXCEPT ![index].name = "prepare"]
+        \/
+            /\ states[index].cp_decided = -1
+            /\ CPHasMainVotesQuorum(index)
+            /\
+                IF  /\ CPHasMainVotesQuorumForOne(index)
+                    /\ states[index].cp_round /= MaxCPRound - 1
+                THEN states' = [states EXCEPT ![index].name = "cp:pre-vote",
+                                              ![index].cp_decided = 1,
+                                              ![index].cp_round = states[index].cp_round + 1]
+                ELSE IF \/ CPHasMainVotesQuorumForZero(index)
+                        \/ states[index].cp_round = MaxCPRound - 1
+                    THEN states' = [states EXCEPT ![index].name = "cp:pre-vote",
+                                                  ![index].cp_decided = 0,
+                                                  ![index].cp_round = states[index].cp_round + 1]
+                    ELSE states' = [states EXCEPT ![index].name = "cp:pre-vote",
+                                                  ![index].cp_round = states[index].cp_round + 1]
+
+    /\ log' = log
 
 
 Sync(index) ==
@@ -434,11 +437,12 @@ Sync(index) ==
 Init ==
     /\ log = {}
     /\ states = [index \in 0..Replicas-1 |-> [
-        name     |-> "new-height",
-        height   |-> 0,
-        round    |-> 0,
-        timeout  |-> FALSE,
-        cp_round |-> 0]]
+        name       |-> "new-height",
+        height     |-> 0,
+        round      |-> 0,
+        timeout    |-> FALSE,
+        cp_round   |-> 0,
+        cp_decided |-> -1]]
 
 Next ==
     \E index \in 0..Replicas-1:
