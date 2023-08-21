@@ -18,6 +18,7 @@ type testData struct {
 
 func setup(t *testing.T) *testData {
 	t.Helper()
+
 	ts := testsuite.NewTestSuite(t)
 
 	conf := &Config{
@@ -38,6 +39,7 @@ func setup(t *testing.T) *testData {
 
 func (td *testData) saveTestBlocks(t *testing.T, num int) {
 	t.Helper()
+	
 	lastHeight, _ := td.store.LastCertificate()
 	for i := 0; i < num; i++ {
 		b := td.GenerateTestBlock(nil, nil)

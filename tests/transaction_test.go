@@ -15,6 +15,7 @@ import (
 
 func sendRawTx(t *testing.T, raw []byte) error {
 	t.Helper()
+	
 	_, err := tTransaction.SendRawTransaction(tCtx,
 		&pactus.SendRawTransactionRequest{Data: raw})
 	return err
@@ -22,6 +23,7 @@ func sendRawTx(t *testing.T, raw []byte) error {
 
 func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypto.Address, amt, fee int64) error {
 	t.Helper()
+
 	stamp := lastHash().Stamp()
 	seq := getSequence(sender.Address())
 	trx := tx.NewTransferTx(stamp, seq+1, sender.Address(), receiver, amt, fee, "")
@@ -33,6 +35,7 @@ func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypt
 
 func broadcastBondTransaction(t *testing.T, sender crypto.Signer, pub crypto.PublicKey, stake, fee int64) error {
 	t.Helper()
+	
 	stamp := lastHash().Stamp()
 	seq := getSequence(sender.Address())
 	trx := tx.NewBondTx(stamp, seq+1, sender.Address(), pub.Address(), pub.(*bls.PublicKey), stake, fee, "")

@@ -19,6 +19,7 @@ import (
 // https://github.com/libp2p/go-libp2p/blob/master/p2p/host/autorelay/autorelay_test.go
 func makeTestRelay(t *testing.T) host.Host {
 	t.Helper()
+
 	h, err := lp2p.New(
 		lp2p.ListenAddrStrings("/ip4/0.0.0.0/tcp/0"),
 		lp2p.DisableRelay(),
@@ -42,6 +43,7 @@ func makeTestRelay(t *testing.T) host.Host {
 
 func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 	t.Helper()
+	
 	net, err := newNetwork(conf, opts)
 	assert.NoError(t, err)
 
@@ -70,6 +72,7 @@ func testConfig() *Config {
 
 func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
 	t.Helper()
+
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -87,6 +90,7 @@ func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
 
 func shouldNotReceiveEvent(t *testing.T, net *network) {
 	t.Helper()
+
 	timeout := time.NewTimer(100 * time.Millisecond)
 
 	for {
@@ -102,6 +106,7 @@ func shouldNotReceiveEvent(t *testing.T, net *network) {
 
 func readData(t *testing.T, r io.ReadCloser, len int) []byte {
 	t.Helper()
+	
 	buf := make([]byte, len)
 	_, err := r.Read(buf)
 	assert.NoError(t, err)

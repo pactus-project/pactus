@@ -65,6 +65,7 @@ func testConfig() *Config {
 
 func setup(t *testing.T, config *Config) *testData {
 	t.Helper()
+
 	ts := testsuite.NewTestSuite(t)
 
 	if config == nil {
@@ -112,6 +113,7 @@ func setup(t *testing.T, config *Config) *testData {
 
 func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) *bundle.Bundle {
 	t.Helper()
+
 	timeout := time.NewTimer(3 * time.Second)
 
 	for {
@@ -157,11 +159,13 @@ func (td *testData) shouldPublishMessageWithThisType(t *testing.T, net *network.
 	msgType message.Type,
 ) *bundle.Bundle {
 	t.Helper()
+
 	return shouldPublishMessageWithThisType(t, net, msgType)
 }
 
 func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
 	t.Helper()
+
 	timeout := time.NewTimer(300 * time.Millisecond)
 
 	for {
@@ -186,6 +190,7 @@ func (td *testData) receivingNewMessage(sync *synchronizer, msg message.Message,
 
 func addBlocks(t *testing.T, state *state.MockState, count int) {
 	t.Helper()
+
 	h := state.LastBlockHeight()
 	state.CommitTestBlocks(count)
 	assert.Equal(t, h+uint32(count), state.LastBlockHeight())
@@ -193,17 +198,20 @@ func addBlocks(t *testing.T, state *state.MockState, count int) {
 
 func (td *testData) addBlocks(t *testing.T, state *state.MockState, count int) {
 	t.Helper()
+
 	addBlocks(t, state, count)
 }
 
 func (td *testData) addPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID, nodeNetwork bool) {
 	t.Helper()
+
 	td.sync.peerSet.UpdatePeerInfo(pid, peerset.StatusCodeKnown, t.Name(),
 		version.Agent(), []*bls.PublicKey{pub.(*bls.PublicKey)}, nodeNetwork)
 }
 
 func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
 	t.Helper()
+
 	if pub == nil {
 		pub, _ = td.RandomBLSKeyPair()
 	}
@@ -222,6 +230,7 @@ func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.Pub
 
 func (td *testData) checkPeerStatus(t *testing.T, pid peer.ID, code peerset.StatusCode) {
 	t.Helper()
+	
 	require.Equal(t, td.sync.peerSet.GetPeer(pid).Status, code)
 }
 

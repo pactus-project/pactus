@@ -54,6 +54,7 @@ func bufDialer(context.Context, string) (net.Conn, error) {
 
 func setup(t *testing.T) *testData {
 	t.Helper()
+	
 	ts := testsuite.NewTestSuite(t)
 
 	password := ""

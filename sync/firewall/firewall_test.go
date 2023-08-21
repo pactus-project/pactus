@@ -30,6 +30,7 @@ type testData struct {
 
 func setup(t *testing.T) *testData {
 	t.Helper()
+	
 	ts := testsuite.NewTestSuite(t)
 
 	logger := logger.NewSubLogger("firewall", nil)

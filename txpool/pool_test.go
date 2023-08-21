@@ -28,6 +28,7 @@ type testData struct {
 
 func setup(t *testing.T) *testData {
 	t.Helper()
+	
 	ts := testsuite.NewTestSuite(t)
 
 	ch := make(chan message.Message, 10)
@@ -51,6 +52,7 @@ func setup(t *testing.T) *testData {
 
 func (td *testData) shouldPublishTransaction(t *testing.T, id tx.ID) {
 	t.Helper()
+	
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
