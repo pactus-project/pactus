@@ -27,6 +27,7 @@ type testData struct {
 }
 
 func setup(t *testing.T) *testData {
+	t.Helper()
 	ts := testsuite.NewTestSuite(t)
 
 	ch := make(chan message.Message, 10)

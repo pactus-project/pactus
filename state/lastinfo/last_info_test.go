@@ -27,6 +27,7 @@ type testData struct {
 }
 
 func setup(t *testing.T) *testData {
+	t.Helper()
 	ts := testsuite.NewTestSuite(t)
 	store := store.MockingStore(ts)
 	lastInfo := NewLastInfo(store)

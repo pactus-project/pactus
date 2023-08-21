@@ -41,6 +41,7 @@ type testData struct {
 }
 
 func setup(t *testing.T) *testData {
+	t.Helper()
 	ts := testsuite.NewTestSuite(t)
 
 	pub1, prv1 := ts.RandomBLSKeyPair()
