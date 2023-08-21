@@ -69,6 +69,7 @@ func testConfig() *Config {
 }
 
 func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
+	t.Helper()
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -85,6 +86,7 @@ func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
 }
 
 func shouldNotReceiveEvent(t *testing.T, net *network) {
+	t.Helper()
 	timeout := time.NewTimer(100 * time.Millisecond)
 
 	for {
@@ -99,6 +101,7 @@ func shouldNotReceiveEvent(t *testing.T, net *network) {
 }
 
 func readData(t *testing.T, r io.ReadCloser, len int) []byte {
+	t.Helper()
 	buf := make([]byte, len)
 	_, err := r.Read(buf)
 	assert.NoError(t, err)
