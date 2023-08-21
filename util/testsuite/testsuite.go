@@ -42,6 +42,7 @@ func NewTestSuiteForSeed(seed int64) *TestSuite {
 
 // NewTestSuite creates a new TestSuite by generating new seed.
 func NewTestSuite(t *testing.T) *TestSuite {
+	t.Helper()
 	seed := time.Now().UTC().UnixNano()
 	t.Logf("%v seed is %v", t.Name(), seed)
 	return &TestSuite{

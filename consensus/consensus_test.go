@@ -63,6 +63,7 @@ func (o *OverrideStringer) String() string {
 }
 
 func setup(t *testing.T) *testData {
+	t.Helper()
 	ts := testsuite.NewTestSuite(t)
 
 	_, signers := ts.GenerateTestCommittee(4)
@@ -139,6 +140,7 @@ func setup(t *testing.T) *testData {
 }
 
 func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash hash.Hash) {
+	t.Helper()
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
