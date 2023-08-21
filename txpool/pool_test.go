@@ -50,6 +50,7 @@ func setup(t *testing.T) *testData {
 }
 
 func (td *testData) shouldPublishTransaction(t *testing.T, id tx.ID) {
+	t.Helper()
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
