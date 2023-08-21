@@ -33,7 +33,6 @@ linters:
     - containedctx # Consider to enable it
     - contextcheck # Consider to enable it
     - testpackage # Consider to enable it (??)
-    - goprintffuncname # Consider to enable it
     - exhaustive # Consider to enable it
     - exhaustruct # Consider to enable it
     - forcetypeassert # Consider to enable it

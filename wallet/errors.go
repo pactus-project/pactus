@@ -22,11 +22,11 @@ var (
 
 // WalletExitsError describes an error in which a wallet exists in the
 // given path.
-type WalletExitsError struct {
+type WalletExitsError struct { //nolint
 	Path string
 }
 
-func NewErrWalletExits(path string) error {
+func NewWalletExitsError(path string) error {
 	return WalletExitsError{Path: path}
 }
 
