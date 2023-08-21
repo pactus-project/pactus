@@ -58,7 +58,7 @@ proto:
 	cd www/grpc/ && statik -m -f -src swagger-ui/
 
 ########################################
-### Formatting, linting, and vetting
+### Formatting the code
 fmt:
 	gofumpt -l -w .
 
