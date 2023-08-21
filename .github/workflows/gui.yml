@@ -30,7 +30,7 @@ jobs:
       run: make build_gui
 
     - name: Installing golangci-lint
-      run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+      run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@1.54.1
 
     - name: Lint check
       run: BUILD_TAG=gtk make check
