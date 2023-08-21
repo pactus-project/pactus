@@ -35,8 +35,10 @@ func TestBech32M(t *testing.T) {
 		{"\x201xj0phk", InvalidCharacterError('\x20')},
 		{"\x7f1g6xzxy", InvalidCharacterError('\x7f')},
 		{"\x801vctc34", InvalidCharacterError('\x80')},
-		{"an84characterslonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11d6pts4",
-		 InvalidLengthError(91)},
+		{
+			"an84characterslonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11d6pts4",
+			InvalidLengthError(91),
+		},
 		{"qyrz8wqd2c9m", InvalidSeparatorIndexError(-1)},
 		{"1qyrz8wqd2c9m", InvalidSeparatorIndexError(0)},
 		{"y1b0jsk6g", NonCharsetCharError(98)},
