@@ -117,7 +117,6 @@ func Subtracts(slice1 []int32, slice2 []int32) []int32 {
 		for _, s2 := range slice2 {
 			if s1 == s2 {
 				found = true
-
 				break
 			}
 		}
