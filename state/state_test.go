@@ -174,7 +174,7 @@ func (td *testData) commitBlockForAllStates(t *testing.T, b *block.Block, c *blo
 
 func (td *testData) moveToNextHeightForAllStates(t *testing.T) {
 	t.Helper()
-	
+
 	b, c := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
 	td.commitBlockForAllStates(t, b, c)
 }

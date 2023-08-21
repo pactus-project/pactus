@@ -305,7 +305,7 @@ func (td *testData) enterNextRound(cons *consensus) {
 
 func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *block.Certificate) {
 	t.Helper()
-	
+
 	height := td.consX.state.LastBlockHeight()
 	var err error
 	p := td.makeProposal(t, height+1, 0)
@@ -333,7 +333,7 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *block.
 
 func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *proposal.Proposal {
 	t.Helper()
-	
+
 	var p *proposal.Proposal
 	switch (height % 4) + uint32(round) {
 	case 1:

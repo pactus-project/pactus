@@ -25,7 +25,7 @@ type testData struct {
 // setup return an instances of vault fo testing.
 func setup(t *testing.T) *testData {
 	t.Helper()
-	
+
 	ts := testsuite.NewTestSuite(t)
 
 	mnemonic := GenerateMnemonic(128)

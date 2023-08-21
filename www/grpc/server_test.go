@@ -121,7 +121,7 @@ func testTransactionClient(t *testing.T) (*grpc.ClientConn, pactus.TransactionCl
 
 func testWalletClient(t *testing.T) (*grpc.ClientConn, pactus.WalletClient) {
 	t.Helper()
-	
+
 	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

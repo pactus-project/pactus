@@ -230,7 +230,7 @@ func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.Pub
 
 func (td *testData) checkPeerStatus(t *testing.T, pid peer.ID, code peerset.StatusCode) {
 	t.Helper()
-	
+
 	require.Equal(t, td.sync.peerSet.GetPeer(pid).Status, code)
 }
 

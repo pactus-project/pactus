@@ -43,7 +43,7 @@ func makeTestRelay(t *testing.T) host.Host {
 
 func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 	t.Helper()
-	
+
 	net, err := newNetwork(conf, opts)
 	assert.NoError(t, err)
 
@@ -106,7 +106,7 @@ func shouldNotReceiveEvent(t *testing.T, net *network) {
 
 func readData(t *testing.T, r io.ReadCloser, len int) []byte {
 	t.Helper()
-	
+
 	buf := make([]byte, len)
 	_, err := r.Read(buf)
 	assert.NoError(t, err)

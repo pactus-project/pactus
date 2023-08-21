@@ -11,7 +11,7 @@ import (
 
 func getAccount(t *testing.T, addr crypto.Address) *pactus.AccountInfo {
 	t.Helper()
-	
+
 	res, err := tBlockchain.GetAccount(tCtx,
 		&pactus.GetAccountRequest{Address: addr.String()})
 	if err != nil {
