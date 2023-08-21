@@ -15,7 +15,7 @@ all: build test
 ### Tools needed for development
 devtools:
 	@echo "Installing devtools"
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54.1
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.12
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.12
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
@@ -58,9 +58,8 @@ proto:
 	cd www/grpc/ && statik -m -f -src swagger-ui/
 
 ########################################
-### Formatting, linting, and vetting
+### Formatting the code
 fmt:
-	gofmt -s -w .
 	gofumpt -l -w .
 
 check:
