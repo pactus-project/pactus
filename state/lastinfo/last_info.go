@@ -105,7 +105,7 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int) (committee.Committee, err
 	logger.Debug("try to restore last state info", "height", height)
 	sb, err := li.store.Block(height)
 	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve block %v: %v", height, err)
+		return nil, fmt.Errorf("unable to retrieve block %v: %w", height, err)
 	}
 
 	b := sb.ToBlock()
@@ -133,7 +133,7 @@ func (li *LastInfo) restoreCommittee(b *block.Block, committeeSize int) (committ
 			pld := trx.Payload().(*payload.SortitionPayload)
 			val, err := li.store.Validator(pld.Address)
 			if err != nil {
-				return nil, fmt.Errorf("unable to retrieve validator %s: %v", pld.Address, err)
+				return nil, fmt.Errorf("unable to retrieve validator %s: %w", pld.Address, err)
 			}
 			joinedVals = append(joinedVals, val)
 		}
@@ -145,7 +145,7 @@ func (li *LastInfo) restoreCommittee(b *block.Block, committeeSize int) (committ
 	for i, num := range li.lastCertificate.Committers() {
 		val, err := li.store.ValidatorByNumber(num)
 		if err != nil {
-			return nil, fmt.Errorf("unable to retrieve committee member %v: %v", num, err)
+			return nil, fmt.Errorf("unable to retrieve committee member %v: %w", num, err)
 		}
 		if b.Header().ProposerAddress().EqualsTo(val.Address()) {
 			proposerIndex = i
@@ -158,7 +158,7 @@ func (li *LastInfo) restoreCommittee(b *block.Block, committeeSize int) (committ
 		(int(li.lastCertificate.Round()) % curCommitteeSize)) % curCommitteeSize
 	committee, err := committee.NewCommittee(vals, committeeSize, vals[proposerIndex].Address())
 	if err != nil {
-		return nil, fmt.Errorf("unable to create last committee: %v", err)
+		return nil, fmt.Errorf("unable to create last committee: %w", err)
 	}
 	committee.Update(li.lastCertificate.Round(), joinedVals)
 

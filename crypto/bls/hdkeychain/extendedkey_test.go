@@ -534,7 +534,7 @@ func TestInvalidString(t *testing.T) {
 		{
 			desc:          "invalid checksum",
 			str:           "XSECRET1PQP0R4SGK8Y84J2G9LQD2E4W5RYXQRPWKYSG8TT4KUMZD0QF7TT8PSVPNCFWFXK8JKWKNMH8HQC8PV0ZMYL36LRFJJ76K3C94YL38FA7PNGF4LRNP",
-			expectedError: bech32m.ErrInvalidChecksum{Expected: "f4lrnq", Actual: "f4lrnp"},
+			expectedError: bech32m.InvalidChecksumError{Expected: "f4lrnq", Actual: "f4lrnp"},
 		},
 		{
 			desc:          "no path len",

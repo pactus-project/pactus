@@ -20,16 +20,16 @@ var (
 	ErrHistoryExists = errors.New("transaction already exists")
 )
 
-// ErrWalletExits describes an error in which a wallet exists in the
+// WalletExitsError describes an error in which a wallet exists in the
 // given path.
-type ErrWalletExits struct {
+type WalletExitsError struct {
 	Path string
 }
 
 func NewErrWalletExits(path string) error {
-	return ErrWalletExits{Path: path}
+	return WalletExitsError{Path: path}
 }
 
-func (e ErrWalletExits) Error() string {
+func (e WalletExitsError) Error() string {
 	return fmt.Sprintf("a wallet exists at: %s", e.Path)
 }

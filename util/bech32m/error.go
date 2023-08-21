@@ -8,78 +8,78 @@ import (
 	"fmt"
 )
 
-// ErrMixedCase is returned when the bech32 string has both lower and uppercase
+// MixedCaseError is returned when the bech32 string has both lower and uppercase
 // characters.
-type ErrMixedCase struct{}
+type MixedCaseError struct{}
 
-func (e ErrMixedCase) Error() string {
+func (e MixedCaseError) Error() string {
 	return "string not all lowercase or all uppercase"
 }
 
-// ErrInvalidBitGroups is returned when conversion is attempted between byte
+// InvalidBitGroupsError is returned when conversion is attempted between byte
 // slices using bit-per-element of unsupported value.
-type ErrInvalidBitGroups struct{}
+type InvalidBitGroupsError struct{}
 
-func (e ErrInvalidBitGroups) Error() string {
+func (e InvalidBitGroupsError) Error() string {
 	return "only bit groups between 1 and 8 allowed"
 }
 
-// ErrInvalidIncompleteGroup is returned when then byte slice used as input has
+// InvalidIncompleteGroupError is returned when then byte slice used as input has
 // data of wrong length.
-type ErrInvalidIncompleteGroup struct{}
+type InvalidIncompleteGroupError struct{}
 
-func (e ErrInvalidIncompleteGroup) Error() string {
+func (e InvalidIncompleteGroupError) Error() string {
 	return "invalid incomplete group"
 }
 
-// ErrInvalidLength is returned when the bech32 string has an invalid length
+// InvalidLengthError is returned when the bech32 string has an invalid length
 // given the BIP-173 defined restrictions.
-type ErrInvalidLength int
+type InvalidLengthError int
 
-func (e ErrInvalidLength) Error() string {
+func (e InvalidLengthError) Error() string {
 	return fmt.Sprintf("invalid bech32 string length %d", int(e))
 }
 
-// ErrInvalidCharacter is returned when the bech32 string has a character
+// InvalidCharacterError is returned when the bech32 string has a character
 // outside the range of the supported charset.
-type ErrInvalidCharacter rune
+type InvalidCharacterError rune
 
-func (e ErrInvalidCharacter) Error() string {
+func (e InvalidCharacterError) Error() string {
 	return fmt.Sprintf("invalid character in string: '%c'", rune(e))
 }
 
-// ErrInvalidSeparatorIndex is returned when the separator character '1' is
+// InvalidSeparatorIndexError is returned when the separator character '1' is
 // in an invalid position in the bech32 string.
-type ErrInvalidSeparatorIndex int
+type InvalidSeparatorIndexError int
 
-func (e ErrInvalidSeparatorIndex) Error() string {
+func (e InvalidSeparatorIndexError) Error() string {
 	return fmt.Sprintf("invalid separator index %d", int(e))
 }
 
-// ErrNonCharsetChar is returned when a character outside of the specific
+// NonCharsetCharError is returned when a character outside of the specific
 // bech32 charset is used in the string.
-type ErrNonCharsetChar rune
+type NonCharsetCharError rune
 
-func (e ErrNonCharsetChar) Error() string {
+func (e NonCharsetCharError) Error() string {
 	return fmt.Sprintf("invalid character not part of charset: %v", int(e))
 }
 
-// ErrInvalidChecksum is returned when the extracted checksum of the string
+// InvalidChecksumError is returned when the extracted checksum of the string
 // is different than what was expected.
-type ErrInvalidChecksum struct {
+type InvalidChecksumError struct {
 	Expected string
 	Actual   string
 }
 
-func (e ErrInvalidChecksum) Error() string {
+func (e InvalidChecksumError) Error() string {
 	return fmt.Sprintf("invalid checksum (expected %v got %v)",
 		e.Expected, e.Actual)
 }
 
-// ErrInvalidDataByte is returned when a byte outside the range required for
+// InvalidDataByteError is returned when a byte outside the range required for
 // conversion into a string was found.
-type ErrInvalidDataByte byte
+type InvalidDataByteError byte
 
-func (e ErrInvalidDataByte) Error() string {
+func (e InvalidDataByteError) Error() string {
 	return fmt.Sprintf("invalid data byte: %v", byte(e))
 }

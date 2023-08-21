@@ -38,8 +38,6 @@ linters:
     - exhaustruct # Consider to enable it
     - forcetypeassert # Consider to enable it
     - goerr113 # Consider to enable it
-    - errorlint # Consider to enable it
-    - errname # Consider to enable it
     - wastedassign # Consider to enable it
     - nonamedreturns # Consider to enable it
     - nlreturn # Consider to enable it

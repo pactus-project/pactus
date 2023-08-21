@@ -2,6 +2,7 @@ package util
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -34,7 +35,7 @@ func WriteFile(filename string, data []byte) error {
 		return err
 	}
 	if err := os.WriteFile(filename, data, 0o600); err != nil {
-		return fmt.Errorf("failed to write to %s: %v", filename, err)
+		return fmt.Errorf("failed to write to %s: %w", filename, err)
 	}
 	return nil
 }
@@ -78,7 +79,7 @@ func IsDirEmpty(name string) bool {
 	_, err = f.Readdir(1)
 
 	// and if the file is EOF... well, the dir is empty.
-	return err == io.EOF
+	return errors.Is(err, io.EOF)
 }
 
 func IsDirNotExistsOrEmpty(name string) bool {

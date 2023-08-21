@@ -17,16 +17,16 @@ var (
 	ErrNeutered = errors.New("wallet is neutered")
 )
 
-// ErrAddressNotFound describes an error in which the address doesn't exist
+// AddressNotFoundError describes an error in which the address doesn't exist
 // in wallet.
-type ErrAddressNotFound struct {
+type AddressNotFoundError struct {
 	addr string
 }
 
 func NewErrAddressNotFound(addr string) error {
-	return ErrAddressNotFound{addr: addr}
+	return AddressNotFoundError{addr: addr}
 }
 
-func (e ErrAddressNotFound) Error() string {
+func (e AddressNotFoundError) Error() string {
 	return fmt.Sprintf("address not found: %s", e.addr)
 }
