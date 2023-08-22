@@ -203,7 +203,7 @@ func (e *Encrypter) Decrypt(cipher string, password string) (string, error) {
 	data, err := base64.StdEncoding.DecodeString(cipher)
 	util.ExitOnErr(err)
 
-	text := ""
+	var text string
 	// Minimum length of data should be 20 (16 salt + 4 bytes mac)
 	if len(data) < 20 {
 		return "", ErrInvalidCipher
