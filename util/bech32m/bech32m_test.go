@@ -8,6 +8,7 @@ package bech32m
 import (
 	"bytes"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"strings"
 	"testing"
@@ -31,29 +32,32 @@ func TestBech32M(t *testing.T) {
 		{"?1v759aa", nil},
 
 		// Additional test vectors used in bitcoin core
-		{"\x201xj0phk", ErrInvalidCharacter('\x20')},
-		{"\x7f1g6xzxy", ErrInvalidCharacter('\x7f')},
-		{"\x801vctc34", ErrInvalidCharacter('\x80')},
-		{"an84characterslonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11d6pts4", ErrInvalidLength(91)},
-		{"qyrz8wqd2c9m", ErrInvalidSeparatorIndex(-1)},
-		{"1qyrz8wqd2c9m", ErrInvalidSeparatorIndex(0)},
-		{"y1b0jsk6g", ErrNonCharsetChar(98)},
-		{"lt1igcx5c0", ErrNonCharsetChar(105)},
-		{"in1muywd", ErrInvalidSeparatorIndex(2)},
-		{"mm1crxm3i", ErrNonCharsetChar(105)},
-		{"au1s5cgom", ErrNonCharsetChar(111)},
-		{"16plkw9", ErrInvalidLength(7)},
-		{"1p2gdwpf", ErrInvalidSeparatorIndex(0)},
+		{"\x201xj0phk", InvalidCharacterError('\x20')},
+		{"\x7f1g6xzxy", InvalidCharacterError('\x7f')},
+		{"\x801vctc34", InvalidCharacterError('\x80')},
+		{
+			"an84characterslonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11d6pts4",
+			InvalidLengthError(91),
+		},
+		{"qyrz8wqd2c9m", InvalidSeparatorIndexError(-1)},
+		{"1qyrz8wqd2c9m", InvalidSeparatorIndexError(0)},
+		{"y1b0jsk6g", NonCharsetCharError(98)},
+		{"lt1igcx5c0", NonCharsetCharError(105)},
+		{"in1muywd", InvalidSeparatorIndexError(2)},
+		{"mm1crxm3i", NonCharsetCharError(105)},
+		{"au1s5cgom", NonCharsetCharError(111)},
+		{"16plkw9", InvalidLengthError(7)},
+		{"1p2gdwpf", InvalidSeparatorIndexError(0)},
 
-		{" 1nwldj5", ErrInvalidCharacter(' ')},
-		{"\x7f" + "1axkwrx", ErrInvalidCharacter(0x7f)},
-		{"\x801eym55h", ErrInvalidCharacter(0x80)},
+		{" 1nwldj5", InvalidCharacterError(' ')},
+		{"\x7f" + "1axkwrx", InvalidCharacterError(0x7f)},
+		{"\x801eym55h", InvalidCharacterError(0x80)},
 	}
 
 	for i, test := range tests {
 		str := test.str
 		hrp, decoded, err := Decode(str)
-		if test.expectedError != err {
+		if !errors.Is(err, test.expectedError) {
 			t.Errorf("%d: (%v) expected decoding error %v "+
 				"instead got %v", i, str, test.expectedError,
 				err)
@@ -243,50 +247,50 @@ func TestBech32Base256(t *testing.T) {
 	}, {
 		name:    "same as previous but with checksum invalidated",
 		encoded: "split1checkupstagehandshakeupstreamerranterredcaperred2y9e2w",
-		err:     ErrInvalidChecksum{"lc445v", "2y9e2w"},
+		err:     InvalidChecksumError{"lc445v", "2y9e2w"},
 	}, {
 		name:    "hrp with invalid character (space)",
 		encoded: "s lit1checkupstagehandshakeupstreamerranterredcaperredp8hs2p",
-		err:     ErrInvalidCharacter(' '),
+		err:     InvalidCharacterError(' '),
 	}, {
 		name:    "hrp with invalid character (DEL)",
 		encoded: "spl\x7ft1checkupstagehandshakeupstreamerranterredcaperredlc445v",
-		err:     ErrInvalidCharacter(127),
+		err:     InvalidCharacterError(127),
 	}, {
 		name:    "data part with invalid character (o)",
 		encoded: "split1cheo2y9e2w",
-		err:     ErrNonCharsetChar('o'),
+		err:     NonCharsetCharError('o'),
 	}, {
 		name:    "data part too short",
 		encoded: "split1a2y9w",
-		err:     ErrInvalidSeparatorIndex(5),
+		err:     InvalidSeparatorIndexError(5),
 	}, {
 		name:    "empty hrp",
 		encoded: "1checkupstagehandshakeupstreamerranterredcaperredlc445v",
-		err:     ErrInvalidSeparatorIndex(0),
+		err:     InvalidSeparatorIndexError(0),
 	}, {
 		name:    "no separator",
 		encoded: "pzry9x0s0muk",
-		err:     ErrInvalidSeparatorIndex(-1),
+		err:     InvalidSeparatorIndexError(-1),
 	}, {
 		name:    "too long by one char",
 		encoded: "11qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqc8247j",
-		err:     ErrInvalidLength(91),
+		err:     InvalidLengthError(91),
 	}, {
 		name:    "invalid due to mixed case in hrp",
 		encoded: "aBcdef1qpzry9x8gf2tvdw0s3jn54khce6mua7lmqqqxw",
-		err:     ErrMixedCase{},
+		err:     MixedCaseError{},
 	}, {
 		name:    "invalid due to mixed case in data part",
 		encoded: "abcdef1Qpzry9x8gf2tvdw0s3jn54khce6mua7lmqqqxw",
-		err:     ErrMixedCase{},
+		err:     MixedCaseError{},
 	}}
 
 	for _, test := range tests {
 		// Ensure the decode either produces an error or not as expected.
 		str := test.encoded
 		gotHRP, gotData, err := DecodeToBase256(str)
-		if test.err != err {
+		if !errors.Is(test.err, err) {
 			t.Errorf("%q: unexpected decode error -- got %v, want %v",
 				test.name, err, test.err)
 			continue
@@ -503,14 +507,14 @@ func TestConvertBitsFailures(t *testing.T) {
 		err      error
 	}{
 		// Not enough output bytes when not using padding.
-		{"ff", 8, 5, false, ErrInvalidIncompleteGroup{}},
-		{"1f1c10", 5, 8, false, ErrInvalidIncompleteGroup{}},
+		{"ff", 8, 5, false, InvalidIncompleteGroupError{}},
+		{"1f1c10", 5, 8, false, InvalidIncompleteGroupError{}},
 
 		// Unsupported bit conversions.
-		{"", 0, 5, false, ErrInvalidBitGroups{}},
-		{"", 10, 5, false, ErrInvalidBitGroups{}},
-		{"", 5, 0, false, ErrInvalidBitGroups{}},
-		{"", 5, 10, false, ErrInvalidBitGroups{}},
+		{"", 0, 5, false, InvalidBitGroupsError{}},
+		{"", 10, 5, false, InvalidBitGroupsError{}},
+		{"", 5, 0, false, InvalidBitGroupsError{}},
+		{"", 5, 10, false, InvalidBitGroupsError{}},
 	}
 
 	for i, tc := range tests {
@@ -520,7 +524,7 @@ func TestConvertBitsFailures(t *testing.T) {
 		}
 
 		_, err = ConvertBits(input, tc.fromBits, tc.toBits, tc.pad)
-		if err != tc.err {
+		if !errors.Is(err, tc.err) {
 			t.Fatalf("test case %d failure: expected '%v' got '%v'", i,
 				tc.err, err)
 		}
@@ -587,13 +591,13 @@ func TestEncodeFromBase256WithType(t *testing.T) {
 		{"A", 0, "", "a1qy52hkn", nil},
 		{"AbC", 1, "1234", "abc1pzg6qgtt0h8", nil},
 		{"", 1, "abcd", "1p40xsjtqww4", nil},
-		{"", 32, "1", "", ErrInvalidDataByte(32)},
+		{"", 32, "1", "", InvalidDataByteError(32)},
 	}
 
 	for i, tc := range tests {
 		data, _ := hex.DecodeString(tc.input)
 		enc, err := EncodeFromBase256WithType(tc.hrp, tc.typ, data)
-		if tc.expectedError != err {
+		if !errors.Is(err, tc.expectedError) {
 			t.Errorf("%d: (%v) expected encoding error "+
 				"instead got %v", i, tc.expectedError,
 				err)
@@ -619,13 +623,13 @@ func TestDecodeToBase256WithTypeNoLimit(t *testing.T) {
 	}{
 		{"a1qy52hkn", "a", 0, "", nil},
 		{"abc1pzg6qgtt0h8", "abc", 1, "1234", nil},
-		{"1p40xsjtqww4", "", 0, "", ErrInvalidSeparatorIndex(0)},
-		{"a1lqfn3a", "", 0, "", ErrInvalidLength(0)},
+		{"1p40xsjtqww4", "", 0, "", InvalidSeparatorIndexError(0)},
+		{"a1lqfn3a", "", 0, "", InvalidLengthError(0)},
 	}
 
 	for i, tc := range tests {
 		hrp, typ, data, err := DecodeToBase256WithTypeNoLimit(tc.bech)
-		if tc.expectedError != err {
+		if !errors.Is(err, tc.expectedError) {
 			t.Errorf("%d: (%v) expected encoding error "+
 				"instead got %v", i, tc.expectedError,
 				err)

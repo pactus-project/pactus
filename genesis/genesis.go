@@ -65,7 +65,7 @@ type genesisData struct {
 func (gen *Genesis) Hash() hash.Hash {
 	bs, err := cbor.Marshal(gen.data)
 	if err != nil {
-		panic(fmt.Errorf("could not create hash of Genesis: %v", err))
+		panic(fmt.Errorf("could not create hash of Genesis: %w", err))
 	}
 	return hash.CalcHash(bs)
 }

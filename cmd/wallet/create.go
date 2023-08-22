@@ -33,9 +33,9 @@ func buildGenerateCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintSuccessMsg("Wallet created successfully at: %s", wallet.Path())
-		cmd.PrintInfoMsg("Seed: \"%v\"", mnemonic)
-		cmd.PrintWarnMsg("Please keep your seed in a safe place; " +
+		cmd.PrintSuccessMsgf("Wallet created successfully at: %s", wallet.Path())
+		cmd.PrintInfoMsgf("Seed: \"%v\"", mnemonic)
+		cmd.PrintWarnMsgf("Please keep your seed in a safe place; " +
 			"if you lose it, you will not be able to restore your wallet.")
 	}
 }
@@ -63,6 +63,6 @@ func buildChangePasswordCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintWarnMsg("Wallet password updated")
+		cmd.PrintWarnMsgf("Wallet password updated")
 	}
 }

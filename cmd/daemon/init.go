@@ -31,17 +31,17 @@ func buildInitCmd(parentCmd *cobra.Command) {
 	initCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
 		if !util.IsDirNotExistsOrEmpty(workingDir) {
-			cmd.PrintErrorMsg("The working directory is not empty: %s", workingDir)
+			cmd.PrintErrorMsgf("The working directory is not empty: %s", workingDir)
 			return
 		}
 		mnemonic := ""
 		if len(*restoreOpt) == 0 {
 			mnemonic = wallet.GenerateMnemonic(128)
 			cmd.PrintLine()
-			cmd.PrintInfoMsg("Your wallet seed is:")
-			cmd.PrintInfoMsgBold("   " + mnemonic)
+			cmd.PrintInfoMsgf("Your wallet seed is:")
+			cmd.PrintInfoMsgBoldf("   " + mnemonic)
 			cmd.PrintLine()
-			cmd.PrintWarnMsg("Write down this seed on a piece of paper to recover your validator key in future.")
+			cmd.PrintWarnMsgf("Write down this seed on a piece of paper to recover your validator key in future.")
 			cmd.PrintLine()
 			confirmed := cmd.PromptConfirm("Do you want to continue")
 			if !confirmed {
@@ -53,13 +53,13 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			cmd.FatalErrorCheck(err)
 		}
 		cmd.PrintLine()
-		cmd.PrintInfoMsg("Enter a password for wallet")
+		cmd.PrintInfoMsgf("Enter a password for wallet")
 		password := cmd.PromptPassword("Password", true)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsgBold("How many validators do you want to create?")
-		cmd.PrintInfoMsg("Each node can run up to 32 validators, and each validator can hold up to 1000 staked coins.")
-		cmd.PrintInfoMsg("You can define validators based on the amount of coins you want to stake.")
+		cmd.PrintInfoMsgBoldf("How many validators do you want to create?")
+		cmd.PrintInfoMsgf("Each node can run up to 32 validators, and each validator can hold up to 1000 staked coins.")
+		cmd.PrintInfoMsgf("You can define validators based on the amount of coins you want to stake.")
 		numValidators := cmd.PromptInputWithRange("Number of Validators", 7, 1, 32)
 
 		chain := genesis.Mainnet
@@ -74,23 +74,23 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsgBold("Validator addresses:")
+		cmd.PrintInfoMsgBoldf("Validator addresses:")
 		for i, addr := range validatorAddrs {
-			cmd.PrintInfoMsg("%v- %s", i+1, addr)
+			cmd.PrintInfoMsgf("%v- %s", i+1, addr)
 		}
 		cmd.PrintLine()
 
-		cmd.PrintInfoMsgBold("Reward addresses:")
+		cmd.PrintInfoMsgBoldf("Reward addresses:")
 		for i, addr := range rewardAddrs {
-			cmd.PrintInfoMsg("%v- %s", i+1, addr)
+			cmd.PrintInfoMsgf("%v- %s", i+1, addr)
 		}
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsgBold("Network: %v", chain.String())
+		cmd.PrintInfoMsgBoldf("Network: %v", chain.String())
 		cmd.PrintLine()
-		cmd.PrintSuccessMsg("A pactus node is successfully initialized at %v", workingDir)
+		cmd.PrintSuccessMsgf("A pactus node is successfully initialized at %v", workingDir)
 		cmd.PrintLine()
-		cmd.PrintInfoMsg("You can start the node by running this command:")
-		cmd.PrintInfoMsg("./pactus-daemon start -w %v", workingDir)
+		cmd.PrintInfoMsgf("You can start the node by running this command:")
+		cmd.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
 	}
 }

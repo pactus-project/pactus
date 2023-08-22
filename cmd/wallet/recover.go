@@ -32,7 +32,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsg("Wallet recovered successfully at: %s", wallet.Path())
+		cmd.PrintInfoMsgf("Wallet recovered successfully at: %s", wallet.Path())
 	}
 }
 
@@ -55,6 +55,6 @@ func buildGetSeedCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsg("Seed: \"%v\"", mnemonic)
+		cmd.PrintInfoMsgf("Seed: \"%v\"", mnemonic)
 	}
 }

@@ -28,7 +28,7 @@ func toBytes(chars string) ([]byte, error) {
 	for i := 0; i < len(chars); i++ {
 		index := strings.IndexByte(charset, chars[i])
 		if index < 0 {
-			return nil, ErrNonCharsetChar(chars[i])
+			return nil, NonCharsetCharError(chars[i])
 		}
 		decoded = append(decoded, byte(index))
 	}
@@ -163,14 +163,14 @@ func DecodeNoLimit(bech string) (string, []byte, error) {
 	// The minimum allowed size of a bech32 string is 8 characters, since it
 	// needs a non-empty HRP, a separator, and a 6 character checksum.
 	if len(bech) < 8 {
-		return "", nil, ErrInvalidLength(len(bech))
+		return "", nil, InvalidLengthError(len(bech))
 	}
 
 	// Only	ASCII characters between 33 and 126 are allowed.
 	var hasLower, hasUpper bool
 	for i := 0; i < len(bech); i++ {
 		if bech[i] < 33 || bech[i] > 126 {
-			return "", nil, ErrInvalidCharacter(bech[i])
+			return "", nil, InvalidCharacterError(bech[i])
 		}
 
 		// The characters must be either all lowercase or all uppercase. Testing
@@ -178,7 +178,7 @@ func DecodeNoLimit(bech string) (string, []byte, error) {
 		hasLower = hasLower || (bech[i] >= 97 && bech[i] <= 122)
 		hasUpper = hasUpper || (bech[i] >= 65 && bech[i] <= 90)
 		if hasLower && hasUpper {
-			return "", nil, ErrMixedCase{}
+			return "", nil, MixedCaseError{}
 		}
 	}
 
@@ -193,7 +193,7 @@ func DecodeNoLimit(bech string) (string, []byte, error) {
 	// last 6 characters of the string (since checksum cannot contain '1').
 	one := strings.LastIndexByte(bech, '1')
 	if one < 1 || one+7 > len(bech) {
-		return "", nil, ErrInvalidSeparatorIndex(one)
+		return "", nil, InvalidSeparatorIndexError(one)
 	}
 
 	// The human-readable part is everything before the last '1'.
@@ -223,7 +223,7 @@ func DecodeNoLimit(bech string) (string, []byte, error) {
 		writeBech32Checksum(hrp, payload, &expectedBldr)
 		expected := expectedBldr.String()
 
-		err = ErrInvalidChecksum{
+		err = InvalidChecksumError{
 			Expected: expected,
 			Actual:   actual,
 		}
@@ -242,7 +242,7 @@ func DecodeNoLimit(bech string) (string, []byte, error) {
 func Decode(bech string) (string, []byte, error) {
 	// The maximum allowed length for a bech32 string is 90.
 	if len(bech) > 90 {
-		return "", nil, ErrInvalidLength(len(bech))
+		return "", nil, InvalidLengthError(len(bech))
 	}
 
 	return DecodeNoLimit(bech)
@@ -264,7 +264,7 @@ func Encode(hrp string, data []byte) (string, error) {
 	// Write the data part, using the bech32 charset.
 	for _, b := range data {
 		if int(b) >= len(charset) {
-			return "", ErrInvalidDataByte(b)
+			return "", InvalidDataByteError(b)
 		}
 		bldr.WriteByte(charset[b])
 	}
@@ -279,7 +279,7 @@ func Encode(hrp string, data []byte) (string, error) {
 // to a byte slice where each byte is encoding toBits bits.
 func ConvertBits(data []byte, fromBits, toBits uint8, pad bool) ([]byte, error) {
 	if fromBits < 1 || fromBits > 8 || toBits < 1 || toBits > 8 {
-		return nil, ErrInvalidBitGroups{}
+		return nil, InvalidBitGroupsError{}
 	}
 
 	// Determine the maximum size the resulting array can have after base
@@ -344,7 +344,7 @@ func ConvertBits(data []byte, fromBits, toBits uint8, pad bool) ([]byte, error) 
 
 	// Any incomplete group must be <= 4 bits, and all zeroes.
 	if filledBits > 0 && (filledBits > 4 || nextByte != 0) {
-		return nil, ErrInvalidIncompleteGroup{}
+		return nil, InvalidIncompleteGroupError{}
 	}
 
 	return regrouped, nil
@@ -420,7 +420,7 @@ func DecodeToBase256WithTypeNoLimit(bech string) (string, byte, []byte, error) {
 
 	// The first byte of the decoded data is the type, it must exist.
 	if len(data) < 1 {
-		return "", 0, nil, ErrInvalidLength(0)
+		return "", 0, nil, InvalidLengthError(0)
 	}
 
 	// The remaining characters of the data are grouped into

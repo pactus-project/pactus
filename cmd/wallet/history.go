@@ -41,7 +41,7 @@ func buildAddToHistoryCmd(parentCmd *cobra.Command) {
 		err = wallet.Save()
 		cmd.FatalErrorCheck(err)
 
-		cmd.PrintInfoMsg("Transaction added to wallet")
+		cmd.PrintInfoMsgf("Transaction added to wallet")
 	}
 }
 
@@ -60,10 +60,10 @@ func buildShowHistoryCmd(parentCmd *cobra.Command) {
 		history := wallet.GetHistory(*addrArg)
 		for i, h := range history {
 			if h.Time != nil {
-				cmd.PrintInfoMsg("%d %v %v %v %s\t%v",
+				cmd.PrintInfoMsgf("%d %v %v %v %s\t%v",
 					i+1, h.Time.Format(time.RFC822), h.TxID, h.PayloadType, h.Desc, h.Amount)
 			} else {
-				cmd.PrintInfoMsg("%d              %v  %s\t%v",
+				cmd.PrintInfoMsgf("%d              %v  %s\t%v",
 					i+1, h.TxID, h.Desc, h.Amount)
 			}
 		}

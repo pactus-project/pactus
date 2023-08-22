@@ -135,7 +135,7 @@ func TestRecoverWallet(t *testing.T) {
 		assert.NoError(t, td.wallet.Save())
 
 		_, err := Create(td.wallet.path, mnemonic, password, 0)
-		assert.ErrorIs(t, err, NewErrWalletExits(td.wallet.path))
+		assert.ErrorIs(t, err, NewWalletExitsError(td.wallet.path))
 	})
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
