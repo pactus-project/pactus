@@ -172,7 +172,7 @@ func (c *committee) proposer(round int16) *validator.Validator {
 	if ok {
 		return val
 	}
-	return &validator.Validator{}
+	return nil
 }
 
 func (c *committee) Committers() []int32 {
