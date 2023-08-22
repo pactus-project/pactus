@@ -34,7 +34,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			cmd.PrintErrorMsgf("The working directory is not empty: %s", workingDir)
 			return
 		}
-		mnemonic := ""
+		var mnemonic string
 		if len(*restoreOpt) == 0 {
 			mnemonic = wallet.GenerateMnemonic(128)
 			cmd.PrintLine()

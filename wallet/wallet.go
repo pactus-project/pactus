@@ -71,7 +71,7 @@ func Create(path, mnemonic, password string, chain genesis.ChainType) (*Wallet, 
 		return nil, NewWalletExitsError(path)
 	}
 
-	coinType := uint32(0)
+	var coinType uint32
 	switch chain {
 	case genesis.Mainnet:
 		coinType = 21888
