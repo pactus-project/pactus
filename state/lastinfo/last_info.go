@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -130,7 +131,11 @@ func (li *LastInfo) restoreCommittee(b *block.Block, committeeSize int) (committ
 		// If there is any sortition transaction in last block,
 		// we should update last committee
 		if trx.IsSortitionTx() {
-			pld := trx.Payload().(*payload.SortitionPayload)
+			pld, ok := trx.Payload().(*payload.SortitionPayload)
+			if !ok {
+				return nil, errors.Errorf(errors.ErrInvalidTx,
+					"invalid transaction")
+			}
 			val, err := li.store.Validator(pld.Address)
 			if err != nil {
 				return nil, fmt.Errorf("unable to retrieve validator %s: %w", pld.Address, err)

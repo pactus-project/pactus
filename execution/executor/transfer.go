@@ -18,8 +18,11 @@ func NewTransferExecutor(strict bool) *TransferExecutor {
 }
 
 func (e *TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
-	pld := trx.Payload().(*payload.TransferPayload)
-
+	pld, ok := trx.Payload().(*payload.TransferPayload)
+	if !ok {
+		return errors.Errorf(errors.ErrInvalidTx,
+			"invalid transaction")
+	}
 	if !e.strict && trx.IsSubsidyTx() {
 		// In non-strict mode, all subsidy transactions for the current height are considered valid.
 		// There may be more than one valid subsidy transaction per height

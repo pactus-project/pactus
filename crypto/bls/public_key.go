@@ -116,7 +116,11 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	}
 	g1 := bls12381.NewG1()
 
-	r := sig.(*Signature)
+	r, ok := sig.(*Signature)
+	if !ok {
+		return errors.Errorf(errors.ErrInvalidSignature,
+			"invalid signature type")
+	}
 	if g1.IsZero(&r.pointG1) {
 		return errors.Errorf(errors.ErrInvalidSignature,
 			"signature is zero")
@@ -139,8 +143,11 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 
 func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
 	g2 := bls12381.NewG2()
-
-	return g2.Equal(pub.point(), right.(*PublicKey).point())
+	pubKey, ok := right.(*PublicKey)
+	if ok {
+		return g2.Equal(pub.point(), pubKey.point())
+	}
+	return false
 }
 
 func (pub *PublicKey) Address() crypto.Address {

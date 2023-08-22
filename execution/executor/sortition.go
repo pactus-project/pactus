@@ -19,8 +19,11 @@ func NewSortitionExecutor(strict bool) *SortitionExecutor {
 }
 
 func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
-	pld := trx.Payload().(*payload.SortitionPayload)
-
+	pld, ok := trx.Payload().(*payload.SortitionPayload)
+	if !ok {
+		return errors.Errorf(errors.ErrInvalidTx,
+			"invalid transaction")
+	}
 	val := sb.Validator(pld.Address)
 	if val == nil {
 		return errors.Errorf(errors.ErrInvalidAddress,
@@ -31,7 +34,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidHeight,
 			"validator has bonded at height %v", val.LastBondingHeight())
 	}
-	ok := sb.VerifyProof(trx.Stamp(), pld.Proof, val)
+	ok = sb.VerifyProof(trx.Stamp(), pld.Proof, val)
 	if !ok {
 		return errors.Error(errors.ErrInvalidProof)
 	}

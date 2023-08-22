@@ -143,5 +143,9 @@ func (prv *PrivateKey) PublicKey() crypto.PublicKey {
 }
 
 func (prv *PrivateKey) EqualsTo(right crypto.PrivateKey) bool {
-	return prv.fr.Equal(&right.(*PrivateKey).fr)
+	prvKey, ok := right.(*PrivateKey)
+	if ok {
+		return prv.fr.Equal(&prvKey.fr)
+	}
+	return false
 }

@@ -16,8 +16,11 @@ func NewUnbondExecutor(strict bool) *UnbondExecutor {
 }
 
 func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
-	pld := trx.Payload().(*payload.UnbondPayload)
-
+	pld, ok := trx.Payload().(*payload.UnbondPayload)
+	if !ok {
+		return errors.Errorf(errors.ErrInvalidTx,
+			"invalid transaction")
+	}
 	val := sb.Validator(pld.Signer())
 	if val == nil {
 		return errors.Errorf(errors.ErrInvalidAddress,

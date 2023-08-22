@@ -90,8 +90,12 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	}
 
 	sort.SliceStable(oldestFirst, func(i, j int) bool {
-		return oldestFirst[i].Value.(*validator.Validator).LastSortitionHeight() <
-			oldestFirst[j].Value.(*validator.Validator).LastSortitionHeight()
+		valI, valIok := oldestFirst[i].Value.(*validator.Validator)
+		valJ, valJok := oldestFirst[j].Value.(*validator.Validator)
+		if valIok && valJok {
+			return valI.LastSortitionHeight() < valJ.LastSortitionHeight()
+		}
+		return false
 	})
 
 	for i := 0; i <= int(lastRound); i++ {
@@ -164,7 +168,11 @@ func (c *committee) proposer(round int16) *validator.Validator {
 		}
 	}
 
-	return pos.Value.(*validator.Validator)
+	val, ok := pos.Value.(*validator.Validator)
+	if ok {
+		return val
+	}
+	return &validator.Validator{}
 }
 
 func (c *committee) Committers() []int32 {
@@ -204,8 +212,11 @@ func (c *committee) String() string {
 // iterate uses for easy iteration over validators in list.
 func (c *committee) iterate(consumer func(*validator.Validator) (stop bool)) {
 	for e := c.validatorList.Front(); e != nil; e = e.Next() {
-		if consumer(e.Value.(*validator.Validator)) {
-			return
+		val, ok := e.Value.(*validator.Validator)
+		if ok {
+			if consumer(val) {
+				return
+			}
 		}
 	}
 }

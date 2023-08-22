@@ -167,8 +167,10 @@ func (ts *TestSuite) RandomBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 		panic(err)
 	}
 	prv, _ := bls.PrivateKeyFromBytes(buf)
-	pub := prv.PublicKey().(*bls.PublicKey)
-
+	pub, ok := prv.PublicKey().(*bls.PublicKey)
+	if !ok {
+		panic("invalid public key")
+	}
 	return pub, prv
 }
 
@@ -176,7 +178,11 @@ func (ts *TestSuite) RandomBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 func (ts TestSuite) RandomBLSSignature() *bls.Signature {
 	_, prv := ts.RandomBLSKeyPair()
 	sig := prv.Sign(ts.RandomBytes(8))
-	return sig.(*bls.Signature)
+	sing, ok := sig.(*bls.Signature)
+	if ok {
+		return sing
+	}
+	return &bls.Signature{}
 }
 
 // RandomHash generates a random hash for testing.
@@ -291,7 +297,7 @@ func (ts *TestSuite) GenerateTestCertificate(blockHash hash.Hash) *block.Certifi
 	_, priv3 := ts.RandomBLSKeyPair()
 	_, priv4 := ts.RandomBLSKeyPair()
 
-	sigs := []*bls.Signature{
+	sigs := []*bls.Signature{ //nolint
 		priv2.Sign(blockHash.Bytes()).(*bls.Signature),
 		priv3.Sign(blockHash.Bytes()).(*bls.Signature),
 		priv4.Sign(blockHash.Bytes()).(*bls.Signature),

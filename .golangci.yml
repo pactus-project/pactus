@@ -76,6 +76,7 @@ issues:
     - path: _test.go
       linters:
         - funlen
+        - forcetypeassert
 
     - linters:
         - govet

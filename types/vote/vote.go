@@ -59,7 +59,10 @@ func (v *Vote) Signer() crypto.Address    { return v.data.Signer }
 func (v *Vote) Signature() *bls.Signature { return v.data.Signature }
 
 func (v *Vote) SetSignature(sig crypto.Signature) {
-	v.data.Signature = sig.(*bls.Signature)
+	sign, ok := sig.(*bls.Signature)
+	if ok {
+		v.data.Signature = sign
+	}
 }
 
 // SetPublicKey is doing nothing and just satisfies SignableMsg interface.

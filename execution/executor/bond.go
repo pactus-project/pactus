@@ -17,8 +17,11 @@ func NewBondExecutor(strict bool) *BondExecutor {
 }
 
 func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
-	pld := trx.Payload().(*payload.BondPayload)
-
+	pld, ok := trx.Payload().(*payload.BondPayload)
+	if !ok {
+		return errors.Errorf(errors.ErrInvalidTx,
+			"invalid transaction")
+	}
 	senderAcc := sb.Account(pld.Sender)
 	if senderAcc == nil {
 		return errors.Errorf(errors.ErrInvalidAddress,

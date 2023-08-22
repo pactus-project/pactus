@@ -17,8 +17,11 @@ func NewWithdrawExecutor(strict bool) *WithdrawExecutor {
 }
 
 func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
-	pld := trx.Payload().(*payload.WithdrawPayload)
-
+	pld, ok := trx.Payload().(*payload.WithdrawPayload)
+	if !ok {
+		return errors.Errorf(errors.ErrInvalidTx,
+			"invalid transaction")
+	}
 	val := sb.Validator(pld.From)
 	if val == nil {
 		return errors.Errorf(errors.ErrInvalidAddress,

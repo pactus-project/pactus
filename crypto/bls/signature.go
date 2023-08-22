@@ -91,8 +91,11 @@ func (sig *Signature) Decode(r io.Reader) error {
 
 func (sig *Signature) EqualsTo(right crypto.Signature) bool {
 	g1 := bls12381.NewG1()
-
-	return g1.Equal(sig.point(), right.(*Signature).point())
+	sign, ok := right.(*Signature)
+	if ok {
+		return g1.Equal(sig.point(), sign.point())
+	}
+	return false
 }
 
 // clonePoint clones the pointG1 to make sure it remains intact.

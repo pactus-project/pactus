@@ -56,7 +56,10 @@ func (p *Proposal) BasicCheck() error {
 }
 
 func (p *Proposal) SetSignature(sig crypto.Signature) {
-	p.data.Signature = sig.(*bls.Signature)
+	sign, ok := sig.(*bls.Signature)
+	if ok {
+		p.data.Signature = sign
+	}
 }
 
 // SetPublicKey is doing nothing and just satisfies SignableMsg interface.
