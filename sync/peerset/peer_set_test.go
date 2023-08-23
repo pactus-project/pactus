@@ -63,8 +63,7 @@ func TestPeerSet(t *testing.T) {
 	})
 
 	t.Run("Testing GetPeer", func(t *testing.T) {
-		p := peerSet.GetPeer(pid2)
-
+		p := peerSet.GetPeer(peer.ID("connected"))
 		assert.Equal(t, pid2, p.PeerID)
 		assert.Equal(t, StatusCodeKnown, p.Status)
 
@@ -266,14 +265,14 @@ func TestGetRandomWeightedPeer(t *testing.T) {
 	assert.Greater(t, hits[peer.ID("peer_6")], 0)
 }
 
-func TestGetRandomPeerUnknown(t *testing.T) {
+func TestGetRandomPeerConnected(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	peerSet := NewPeerSet(time.Second)
 
 	pk, _ := ts.RandBLSKeyPair()
-	pidUnknown := peer.ID("peer_unknown")
-	peerSet.UpdatePeerInfo(pidUnknown, StatusCodeUnknown, "Moniker_unknown", "Agent1", []*bls.PublicKey{pk}, true)
+	pidConnected := peer.ID("peer_connected")
+	peerSet.UpdatePeerInfo(pidConnected, StatusCodeConnected, "Moniker_unknown", "Agent1", []*bls.PublicKey{pk}, true)
 
 	pk, _ = ts.RandBLSKeyPair()
 	pidBanned := peer.ID("peer_banned")
@@ -281,7 +280,7 @@ func TestGetRandomPeerUnknown(t *testing.T) {
 
 	p := peerSet.GetRandomPeer()
 
-	assert.NotEqual(t, p.PeerID, pidUnknown)
+	assert.NotEqual(t, p.PeerID, pidConnected)
 	assert.NotEqual(t, p.PeerID, pidBanned)
 }
 

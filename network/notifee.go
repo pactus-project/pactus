@@ -22,11 +22,15 @@ func newNotifeeService(host lp2phost.Host, eventChannel chan<- Event, logger *lo
 }
 
 func (n *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
-	n.eventChannel <- &ConnectEvent{PeerID: conn.RemotePeer()}
+	peerID := conn.RemotePeer()
+	n.logger.Info("Connected to peer with peerId:", "PeerID", peerID)
+	n.eventChannel <- &ConnectEvent{PeerID: peerID}
 }
 
 func (n *NotifeeService) Disconnected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
-	n.eventChannel <- &DisconnectEvent{PeerID: conn.RemotePeer()}
+	peerID := conn.RemotePeer()
+	n.logger.Info("Disconnected from peer with peerId:", "PeerID", peerID)
+	n.eventChannel <- &DisconnectEvent{PeerID: peerID}
 }
 
 func (n *NotifeeService) Listen(_ lp2pnetwork.Network, ma ma.Multiaddr) {

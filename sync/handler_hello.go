@@ -54,7 +54,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 		// TODO: Sends response only if there is a direct connection between two peers.
 		// TODO: check if we have handshaked before. Ignore responding again
 		// Response to Hello
-		handler.sayHello(true)
+		handler.sayHello(true, initiator)
 	}
 
 	handler.updateBlockchain()
