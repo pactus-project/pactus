@@ -67,42 +67,36 @@ func (l *LinkedList[T]) InsertAtTail(data T) *Element[T] {
 	return newNode
 }
 
-// insertValue is a convenience wrapper for insert(&Element{Value: v}, at).
-func (l *LinkedList[T]) insertValue(data T, at *Element[T]) *Element[T] {
-	return l.insert(NewElement[T](data), at)
-}
-
-func (l *LinkedList[T]) insert(e, at *Element[T]) *Element[T] {
-	e.Prev = at
-	e.Next = at.Next
-	e.Prev.Next = e
-	e.Next.Prev = e
+func (l *LinkedList[T]) InsertBefore(data T, at *Element[T]) *Element[T] {
+	e := NewElement[T](data)
+	if at == l.Head {
+		l.Head = e
+		e.Next = at
+		e.Next.Prev = e
+	} else {
+		e.Prev = at.Prev
+		e.Next = at
+		e.Next.Prev = e
+		e.Prev.Next = e
+	}
 	l.length++
 	return e
 }
 
-func (l *LinkedList[T]) InsertBefore(data T, at *Element[T]) *Element[T] {
-	if at == l.Head {
-		e := NewElement[T](data)
-		l.Head = e
-		l.Head.Next = at
-		at.Prev = e
-		l.length++
-		return e
-	}
-	return l.insertValue(data, at.Prev)
-}
-
 func (l *LinkedList[T]) InsertAfter(data T, at *Element[T]) *Element[T] {
+	e := NewElement[T](data)
 	if at == l.Tail {
-		e := NewElement[T](data)
 		l.Tail = e
-		l.Tail.Prev = at
-		at.Next = e
-		l.length++
-		return e
+		e.Prev = at
+		e.Prev.Next = e
+	} else {
+		e.Prev = at
+		e.Next = at.Next
+		e.Prev.Next = e
+		e.Next.Prev = e
 	}
-	return l.insertValue(data, at)
+	l.length++
+	return e
 }
 
 // DeleteAtHead deletes the node at the head of the list.
