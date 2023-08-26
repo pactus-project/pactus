@@ -10,8 +10,8 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util/linkedlist"
 	"github.com/pactus-project/pactus/util/linkedmap"
-	"github.com/pactus-project/pactus/util/doublylink"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -53,7 +53,7 @@ func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
 	p.sandbox = sb
 	p.logger.Debug("set new sandbox")
 
-	var next *doublylink.LinkNode[linkedmap.Pair[tx.ID, *tx.Tx]]
+	var next *linkedlist.Element[linkedmap.Pair[tx.ID, *tx.Tx]]
 	for _, pool := range p.pools {
 		for e := pool.HeadNode(); e != nil; e = next {
 			next = e.Next
