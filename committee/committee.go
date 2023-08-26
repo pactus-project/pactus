@@ -1,21 +1,21 @@
 package committee
 
 import (
-	"container/list"
 	"fmt"
 	"sort"
 	"strings"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/util/linkedlist"
 )
 
 var _ Committee = &committee{}
 
 type committee struct {
 	committeeSize int
-	validatorList *list.List
-	proposerPos   *list.Element
+	validatorList *linkedlist.LinkedList[*validator.Validator]
+	proposerPos   *linkedlist.Element[*validator.Validator]
 }
 
 func cloneValidator(val *validator.Validator) *validator.Validator {
@@ -27,11 +27,11 @@ func cloneValidator(val *validator.Validator) *validator.Validator {
 func NewCommittee(validators []*validator.Validator, committeeSize int,
 	proposerAddress crypto.Address,
 ) (Committee, error) {
-	validatorList := list.New()
-	var proposerPos *list.Element
+	validatorList := linkedlist.New[*validator.Validator]()
+	var proposerPos *linkedlist.Element[*validator.Validator]
 
 	for _, val := range validators {
-		el := validatorList.PushBack(cloneValidator(val))
+		el := validatorList.InsertAtTail(cloneValidator(val))
 		if val.Address().EqualsTo(proposerAddress) {
 			proposerPos = el
 		}
@@ -66,6 +66,8 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	for _, val := range joined {
 		committeeVal := c.find(val.Address())
 		if committeeVal == nil {
+			fmt.Println("c.porposerPos is:")
+			fmt.Println(c.proposerPos)
 			c.validatorList.InsertBefore(cloneValidator(val), c.proposerPos)
 		} else {
 			committeeVal.UpdateLastSortitionHeight(val.LastSortitionHeight())
@@ -82,41 +84,40 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	}
 
 	// Now, adjust the list
-	oldestFirst := make([]*list.Element, c.validatorList.Len())
+	oldestFirst := make([]*linkedlist.Element[*validator.Validator], c.validatorList.Length())
 	i := 0
-	for e := c.validatorList.Front(); e != nil; e = e.Next() {
+	for e := c.validatorList.Head; e != nil; e = e.Next {
 		oldestFirst[i] = e
 		i++
 	}
 
 	sort.SliceStable(oldestFirst, func(i, j int) bool {
-		return oldestFirst[i].Value.(*validator.Validator).LastSortitionHeight() <
-			oldestFirst[j].Value.(*validator.Validator).LastSortitionHeight()
+		return oldestFirst[i].Data.LastSortitionHeight() < oldestFirst[j].Data.LastSortitionHeight()
 	})
 
 	for i := 0; i <= int(lastRound); i++ {
-		c.proposerPos = c.proposerPos.Next()
+		c.proposerPos = c.proposerPos.Next
 		if c.proposerPos == nil {
-			c.proposerPos = c.validatorList.Front()
+			c.proposerPos = c.validatorList.Head
 		}
 	}
 
-	adjust := c.validatorList.Len() - c.committeeSize
+	adjust := c.validatorList.Length() - c.committeeSize
 	for i := 0; i < adjust; i++ {
 		if oldestFirst[i] == c.proposerPos {
-			c.proposerPos = c.proposerPos.Next()
+			c.proposerPos = c.proposerPos.Next
 			if c.proposerPos == nil {
-				c.proposerPos = c.validatorList.Front()
+				c.proposerPos = c.validatorList.Head
 			}
 		}
-		c.validatorList.Remove(oldestFirst[i])
+		c.validatorList.Delete(oldestFirst[i])
 	}
 }
 
 // Validators retrieves a list of all validators in the committee.
 // A cloned instance of each validator is returned to avoid modification of the original objects.
 func (c *committee) Validators() []*validator.Validator {
-	vals := make([]*validator.Validator, c.validatorList.Len())
+	vals := make([]*validator.Validator, c.validatorList.Length())
 	i := 0
 	c.iterate(func(v *validator.Validator) (stop bool) {
 		vals[i] = cloneValidator(v)
@@ -158,17 +159,17 @@ func (c *committee) Proposer(round int16) *validator.Validator {
 func (c *committee) proposer(round int16) *validator.Validator {
 	pos := c.proposerPos
 	for i := 0; i < int(round); i++ {
-		pos = pos.Next()
+		pos = pos.Next
 		if pos == nil {
-			pos = c.validatorList.Front()
+			pos = c.validatorList.Head
 		}
 	}
 
-	return pos.Value.(*validator.Validator)
+	return pos.Data
 }
 
 func (c *committee) Committers() []int32 {
-	committers := make([]int32, c.validatorList.Len())
+	committers := make([]int32, c.validatorList.Length())
 	i := 0
 	c.iterate(func(v *validator.Validator) (stop bool) {
 		committers[i] = v.Number()
@@ -180,7 +181,7 @@ func (c *committee) Committers() []int32 {
 }
 
 func (c *committee) Size() int {
-	return c.validatorList.Len()
+	return c.validatorList.Length()
 }
 
 func (c *committee) String() string {
@@ -203,8 +204,8 @@ func (c *committee) String() string {
 
 // iterate uses for easy iteration over validators in list.
 func (c *committee) iterate(consumer func(*validator.Validator) (stop bool)) {
-	for e := c.validatorList.Front(); e != nil; e = e.Next() {
-		if consumer(e.Value.(*validator.Validator)) {
+	for e := c.validatorList.Head; e != nil; e = e.Next {
+		if consumer(e.Data) {
 			return
 		}
 	}
