@@ -1,21 +1,25 @@
 package linkedmap
 
+import (
+	dl "github.com/pactus-project/pactus/util/doublylink"
+)
+
 type Pair[K comparable, V any] struct {
 	Key   K
 	Value V
 }
 
 type LinkedMap[K comparable, V any] struct {
-	list     *DoublyLinkedList[Pair[K, V]]
-	hashmap  map[K]*LinkNode[Pair[K, V]]
+	list     *dl.DoublyLinkedList[Pair[K, V]]
+	hashmap  map[K]*dl.LinkNode[Pair[K, V]]
 	capacity int
 }
 
 // NewLinkedMap creates a new LinkedMap with the specified capacity.
 func NewLinkedMap[K comparable, V any](capacity int) *LinkedMap[K, V] {
 	return &LinkedMap[K, V]{
-		list:     NewDoublyLinkedList[Pair[K, V]](),
-		hashmap:  make(map[K]*LinkNode[Pair[K, V]]),
+		list:     dl.NewDoublyLinkedList[Pair[K, V]](),
+		hashmap:  make(map[K]*dl.LinkNode[Pair[K, V]]),
 		capacity: capacity,
 	}
 }
@@ -66,7 +70,7 @@ func (lm *LinkedMap[K, V]) PushFront(key K, value V) {
 }
 
 // GetNode returns the LinkNode corresponding to the specified key.
-func (lm *LinkedMap[K, V]) GetNode(key K) *LinkNode[Pair[K, V]] {
+func (lm *LinkedMap[K, V]) GetNode(key K) *dl.LinkNode[Pair[K, V]] {
 	ln, found := lm.hashmap[key]
 	if found {
 		return ln
@@ -75,7 +79,7 @@ func (lm *LinkedMap[K, V]) GetNode(key K) *LinkNode[Pair[K, V]] {
 }
 
 // TailNode returns the LinkNode at the end (tail) of the LinkedMap.
-func (lm *LinkedMap[K, V]) TailNode() *LinkNode[Pair[K, V]] {
+func (lm *LinkedMap[K, V]) TailNode() *dl.LinkNode[Pair[K, V]] {
 	ln := lm.list.Tail
 	if ln == nil {
 		return nil
@@ -84,7 +88,7 @@ func (lm *LinkedMap[K, V]) TailNode() *LinkNode[Pair[K, V]] {
 }
 
 // HeadNode returns the LinkNode at the beginning (head) of the LinkedMap.
-func (lm *LinkedMap[K, V]) HeadNode() *LinkNode[Pair[K, V]] {
+func (lm *LinkedMap[K, V]) HeadNode() *dl.LinkNode[Pair[K, V]] {
 	ln := lm.list.Head
 	if ln == nil {
 		return nil
@@ -126,7 +130,7 @@ func (lm *LinkedMap[K, V]) Full() bool {
 // Clear removes all key-value pairs from the LinkedMap, making it empty.
 func (lm *LinkedMap[K, V]) Clear() {
 	lm.list.Clear()
-	lm.hashmap = make(map[K]*LinkNode[Pair[K, V]])
+	lm.hashmap = make(map[K]*dl.LinkNode[Pair[K, V]])
 }
 
 // prune removes excess elements from the LinkedMap if its size exceeds the capacity.

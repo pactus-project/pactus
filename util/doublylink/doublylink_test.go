@@ -1,4 +1,4 @@
-package linkedmap
+package doublylink
 
 import (
 	"testing"

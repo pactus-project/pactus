@@ -1,4 +1,4 @@
-package linkedmap
+package doublylink
 
 type LinkNode[T any] struct {
 	Data T
