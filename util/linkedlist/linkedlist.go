@@ -89,9 +89,8 @@ func (l *LinkedList[T]) InsertBefore(data T, at *Element[T]) *Element[T] {
 		at.Prev = e
 		l.length++
 		return e
-	} else {
-		return l.insertValue(data, at.Prev)
 	}
+	return l.insertValue(data, at.Prev)
 }
 
 func (l *LinkedList[T]) InsertAfter(data T, at *Element[T]) *Element[T] {
@@ -102,9 +101,8 @@ func (l *LinkedList[T]) InsertAfter(data T, at *Element[T]) *Element[T] {
 		at.Next = e
 		l.length++
 		return e
-	} else {
-		return l.insertValue(data, at)
 	}
+	return l.insertValue(data, at)
 }
 
 // DeleteAtHead deletes the node at the head of the list.
