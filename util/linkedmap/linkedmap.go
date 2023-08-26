@@ -1,7 +1,7 @@
 package linkedmap
 
 import (
-	dl "github.com/pactus-project/pactus/util/linkedlist"
+	ll "github.com/pactus-project/pactus/util/linkedlist"
 )
 
 type Pair[K comparable, V any] struct {
@@ -10,16 +10,16 @@ type Pair[K comparable, V any] struct {
 }
 
 type LinkedMap[K comparable, V any] struct {
-	list     *dl.LinkedList[Pair[K, V]]
-	hashmap  map[K]*dl.Element[Pair[K, V]]
+	list     *ll.LinkedList[Pair[K, V]]
+	hashmap  map[K]*ll.Element[Pair[K, V]]
 	capacity int
 }
 
 // NewLinkedMap creates a new LinkedMap with the specified capacity.
 func NewLinkedMap[K comparable, V any](capacity int) *LinkedMap[K, V] {
 	return &LinkedMap[K, V]{
-		list:     dl.New[Pair[K, V]](),
-		hashmap:  make(map[K]*dl.Element[Pair[K, V]]),
+		list:     ll.New[Pair[K, V]](),
+		hashmap:  make(map[K]*ll.Element[Pair[K, V]]),
 		capacity: capacity,
 	}
 }
@@ -70,7 +70,7 @@ func (lm *LinkedMap[K, V]) PushFront(key K, value V) {
 }
 
 // GetNode returns the LinkNode corresponding to the specified key.
-func (lm *LinkedMap[K, V]) GetNode(key K) *dl.Element[Pair[K, V]] {
+func (lm *LinkedMap[K, V]) GetNode(key K) *ll.Element[Pair[K, V]] {
 	ln, found := lm.hashmap[key]
 	if found {
 		return ln
@@ -79,7 +79,7 @@ func (lm *LinkedMap[K, V]) GetNode(key K) *dl.Element[Pair[K, V]] {
 }
 
 // TailNode returns the LinkNode at the end (tail) of the LinkedMap.
-func (lm *LinkedMap[K, V]) TailNode() *dl.Element[Pair[K, V]] {
+func (lm *LinkedMap[K, V]) TailNode() *ll.Element[Pair[K, V]] {
 	ln := lm.list.Tail
 	if ln == nil {
 		return nil
@@ -88,7 +88,7 @@ func (lm *LinkedMap[K, V]) TailNode() *dl.Element[Pair[K, V]] {
 }
 
 // HeadNode returns the LinkNode at the beginning (head) of the LinkedMap.
-func (lm *LinkedMap[K, V]) HeadNode() *dl.Element[Pair[K, V]] {
+func (lm *LinkedMap[K, V]) HeadNode() *ll.Element[Pair[K, V]] {
 	ln := lm.list.Head
 	if ln == nil {
 		return nil
@@ -130,7 +130,7 @@ func (lm *LinkedMap[K, V]) Full() bool {
 // Clear removes all key-value pairs from the LinkedMap, making it empty.
 func (lm *LinkedMap[K, V]) Clear() {
 	lm.list.Clear()
-	lm.hashmap = make(map[K]*dl.Element[Pair[K, V]])
+	lm.hashmap = make(map[K]*ll.Element[Pair[K, V]])
 }
 
 // prune removes excess elements from the LinkedMap if its size exceeds the capacity.
