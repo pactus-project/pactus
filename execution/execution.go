@@ -43,9 +43,6 @@ func NewChecker() *Execution {
 }
 
 func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
-	if err := trx.BasicCheck(); err != nil {
-		return err
-	}
 	if trx.IsLockTime() {
 		if err := exe.checkLockTime(trx, sb); err != nil {
 			return err
@@ -121,7 +118,7 @@ func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if trx.IsFreeTx() {
 		if trx.Fee() != 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "fee is wrong, expected: 0, got: %v", trx.Fee())
+			return errors.Errorf(errors.ErrInvalidFee, "fee is wrong, expected: 0, got: %v", trx.Fee())
 		}
 	} else {
 		fee := CalculateFee(trx.Payload().Value(), sb.Params())

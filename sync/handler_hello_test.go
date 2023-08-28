@@ -17,9 +17,9 @@ func TestParsingHelloMessages(t *testing.T) {
 
 	t.Run("Receiving Hello message from a peer. Peer ID is not same as initiator.",
 		func(t *testing.T) {
-			signer := td.RandomSigner()
-			pid := td.RandomPeerID()
-			initiator := td.RandomPeerID()
+			signer := td.RandSigner()
+			pid := td.RandPeerID()
+			initiator := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign(signer)
@@ -30,9 +30,9 @@ func TestParsingHelloMessages(t *testing.T) {
 
 	t.Run("Receiving Hello message from a peer. Genesis hash is wrong.",
 		func(t *testing.T) {
-			invGenHash := td.RandomHash()
-			signer := td.RandomSigner()
-			pid := td.RandomPeerID()
+			invGenHash := td.RandHash()
+			signer := td.RandSigner()
+			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
 				td.state.LastBlockHash(), invGenHash)
 			msg.Sign(signer)
@@ -44,9 +44,9 @@ func TestParsingHelloMessages(t *testing.T) {
 
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info",
 		func(t *testing.T) {
-			signer := td.RandomSigner()
-			height := td.RandUint32(td.state.LastBlockHeight())
-			pid := td.RandomPeerID()
+			signer := td.RandSigner()
+			height := td.RandUint32NonZero(td.state.LastBlockHeight())
+			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagNodeNetwork,
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign(signer)
@@ -70,9 +70,9 @@ func TestParsingHelloMessages(t *testing.T) {
 
 	t.Run("Receiving Hello-ack message from a peer. It should not be acknowledged, but update the peer info",
 		func(t *testing.T) {
-			signer := td.RandomSigner()
-			height := td.RandUint32(td.state.LastBlockHeight())
-			pid := td.RandomPeerID()
+			signer := td.RandSigner()
+			height := td.RandUint32NonZero(td.state.LastBlockHeight())
+			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", height, message.FlagHelloAck,
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign(signer)
@@ -89,9 +89,9 @@ func TestParsingHelloMessages(t *testing.T) {
 	t.Run("Receiving Hello-ack message from a peer. Peer is ahead. It should request for blocks",
 		func(t *testing.T) {
 			td.sync.peerSet.Clear()
-			signer := td.RandomSigner()
+			signer := td.RandSigner()
 			claimedHeight := td.state.LastBlockHeight() + 5
-			pid := td.RandomPeerID()
+			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", claimedHeight, message.FlagHelloAck,
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign(signer)

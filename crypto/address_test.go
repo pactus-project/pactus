@@ -14,8 +14,8 @@ import (
 func TestAddressKeyEqualsTo(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	addr1 := ts.RandomAddress()
-	addr2 := ts.RandomAddress()
+	addr1 := ts.RandAddress()
+	addr2 := ts.RandAddress()
 
 	assert.True(t, addr1.EqualsTo(addr1))
 	assert.False(t, addr1.EqualsTo(addr2))
@@ -26,7 +26,7 @@ func TestAddressKeyEqualsTo(t *testing.T) {
 func TestString(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	addr1 := ts.RandomAddress()
+	addr1 := ts.RandAddress()
 	assert.Contains(t, addr1.String(), addr1.ShortString())
 }
 

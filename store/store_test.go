@@ -43,7 +43,7 @@ func (td *testData) saveTestBlocks(t *testing.T, num int) {
 	lastHeight, _ := td.store.LastCertificate()
 	for i := 0; i < num; i++ {
 		b := td.GenerateTestBlock(nil, nil)
-		c := td.GenerateTestCertificate(b.Hash())
+		c := td.GenerateTestCertificate()
 
 		td.store.SaveBlock(lastHeight+uint32(i+1), b, c)
 		assert.NoError(t, td.store.WriteBatch())
@@ -66,14 +66,14 @@ func TestBlockHeight(t *testing.T) {
 	sb, _ := td.store.Block(1)
 
 	assert.Equal(t, td.store.BlockHeight(hash.UndefHash), uint32(0))
-	assert.Equal(t, td.store.BlockHeight(td.RandomHash()), uint32(0))
+	assert.Equal(t, td.store.BlockHeight(td.RandHash()), uint32(0))
 	assert.Equal(t, td.store.BlockHeight(sb.BlockHash), uint32(1))
 }
 
 func TestUnknownTransactionID(t *testing.T) {
 	td := setup(t)
 
-	tx, err := td.store.Transaction(td.RandomHash())
+	tx, err := td.store.Transaction(td.RandHash())
 	assert.Error(t, err)
 	assert.Nil(t, tx)
 }

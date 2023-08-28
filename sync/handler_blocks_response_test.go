@@ -17,7 +17,7 @@ import (
 func TestInvalidBlockData(t *testing.T) {
 	td := setup(t, nil)
 
-	pid := td.RandomPeerID()
+	pid := td.RandPeerID()
 	sid := td.sync.peerSet.OpenSession(pid).SessionID()
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
 		0, [][]byte{{1, 2, 3}}, nil)
@@ -31,11 +31,11 @@ func TestOneBlockShorter(t *testing.T) {
 	lastBlockHash := td.state.LastBlockHash()
 	lastBlockHeight := td.state.LastBlockHeight()
 	b1 := td.GenerateTestBlock(nil, &lastBlockHash)
-	c1 := td.GenerateTestCertificate(b1.Hash())
+	c1 := td.GenerateTestCertificate()
 	d1, _ := b1.Bytes()
-	pid := td.RandomPeerID()
+	pid := td.RandPeerID()
 
-	pub, _ := td.RandomBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 	td.addPeer(t, pub, pid, false)
 
 	t.Run("Peer is busy. Session should be closed", func(t *testing.T) {
@@ -75,16 +75,16 @@ func TestSyncing(t *testing.T) {
 
 	configAlice := testConfig()
 	configBob := testConfig()
-	signersAlice := []crypto.Signer{ts.RandomSigner()}
-	signersBob := []crypto.Signer{ts.RandomSigner()}
+	signersAlice := []crypto.Signer{ts.RandSigner()}
+	signersBob := []crypto.Signer{ts.RandSigner()}
 	stateAlice := state.MockingState(ts)
 	stateBob := state.MockingState(ts)
 	consMgrAlice, _ := consensus.MockingManager(ts, signersAlice)
 	consMgrBob, _ := consensus.MockingManager(ts, signersBob)
 	broadcastChAlice := make(chan message.Message, 1000)
 	broadcastChBob := make(chan message.Message, 1000)
-	networkAlice := network.MockingNetwork(ts, ts.RandomPeerID())
-	networkBob := network.MockingNetwork(ts, ts.RandomPeerID())
+	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
+	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
 
 	configBob.NodeNetwork = true
 	networkAlice.AddAnotherNetwork(networkBob)

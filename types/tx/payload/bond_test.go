@@ -16,16 +16,16 @@ func TestBondType(t *testing.T) {
 
 func TestBondDecoding(t *testing.T) {
 	tests := []struct {
-		raw       []byte
-		value     int64
-		readErr   error
-		sanityErr error
+		raw      []byte
+		value    int64
+		readErr  error
+		basicErr error
 	}{
 		{
-			raw:       []byte{},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			raw:      []byte{},
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -33,9 +33,9 @@ func TestBondDecoding(t *testing.T) {
 				0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
 				0x11, 0x12, 0x13, 0x14, // sender
 			},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -46,9 +46,9 @@ func TestBondDecoding(t *testing.T) {
 				0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
 				0x21, 0x12, 0x23, 0x24, // receiver
 			},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -59,9 +59,9 @@ func TestBondDecoding(t *testing.T) {
 				0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
 				0x21, 0x12, 0x23, 0x24, 0x25, // receiver
 			},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -74,9 +74,9 @@ func TestBondDecoding(t *testing.T) {
 				0x00,             // public key size
 				0x80, 0x80, 0x80, // stake
 			},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -89,9 +89,9 @@ func TestBondDecoding(t *testing.T) {
 				0x00,                   // public key size
 				0x80, 0x80, 0x80, 0x01, // stake
 			},
-			value:     0x200000,
-			readErr:   nil,
-			sanityErr: errors.Error(errors.ErrInvalidAddress),
+			value:    0x200000,
+			readErr:  nil,
+			basicErr: errors.Error(errors.ErrInvalidAddress),
 		},
 		{
 			raw: []byte{
@@ -104,9 +104,9 @@ func TestBondDecoding(t *testing.T) {
 				0x00,                   // public key size
 				0x80, 0x80, 0x80, 0x01, // stake
 			},
-			value:     0x200000,
-			readErr:   nil,
-			sanityErr: errors.Error(errors.ErrInvalidAddress),
+			value:    0x200000,
+			readErr:  nil,
+			basicErr: errors.Error(errors.ErrInvalidAddress),
 		},
 		{
 			raw: []byte{
@@ -119,9 +119,9 @@ func TestBondDecoding(t *testing.T) {
 				0x00,                   // public key size
 				0x80, 0x80, 0x80, 0x01, // stake
 			},
-			value:     0x200000,
-			readErr:   nil,
-			sanityErr: nil,
+			value:    0x200000,
+			readErr:  nil,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -134,9 +134,9 @@ func TestBondDecoding(t *testing.T) {
 				0x00, // public key size
 				0x00, // amount
 			},
-			value:     0x0,
-			readErr:   nil,
-			sanityErr: nil,
+			value:    0x0,
+			readErr:  nil,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -148,9 +148,9 @@ func TestBondDecoding(t *testing.T) {
 				0x21, 0x12, 0x23, 0x24, 0x25, // receiver
 				0x01, // public key size
 			},
-			value:     0x200000,
-			readErr:   errors.Error(errors.ErrGeneric),
-			sanityErr: nil,
+			value:    0x200000,
+			readErr:  errors.Error(errors.ErrGeneric),
+			basicErr: nil,
 		},
 
 		{
@@ -164,9 +164,9 @@ func TestBondDecoding(t *testing.T) {
 				0x60, // public key size
 				0xaf, // public key
 			},
-			value:     0x200000,
-			readErr:   errors.Error(errors.ErrGeneric),
-			sanityErr: nil,
+			value:    0x200000,
+			readErr:  errors.Error(errors.ErrGeneric),
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -189,9 +189,9 @@ func TestBondDecoding(t *testing.T) {
 				0xde, 0x56, 0x4e, 0x11, 0x1e, 0x65, // public key
 				0x80, 0x80, 0x80, 0x01, // stake
 			},
-			value:     0x200000,
-			readErr:   nil,
-			sanityErr: errors.Error(errors.ErrInvalidAddress),
+			value:    0x200000,
+			readErr:  nil,
+			basicErr: errors.Error(errors.ErrInvalidAddress),
 		},
 		{
 			raw: []byte{
@@ -214,9 +214,9 @@ func TestBondDecoding(t *testing.T) {
 				0xde, 0x56, 0x4e, 0x11, 0x1e, 0x65, // public key
 				0x80, 0x80, 0x80, 0x01, // stake
 			},
-			value:     0x200000,
-			readErr:   nil,
-			sanityErr: nil,
+			value:    0x200000,
+			readErr:  nil,
+			basicErr: nil,
 		},
 	}
 
@@ -239,8 +239,8 @@ func TestBondDecoding(t *testing.T) {
 			assert.Equal(t, w.Bytes(), test.raw)
 
 			// Basic check
-			if test.sanityErr != nil {
-				assert.ErrorIs(t, pld.BasicCheck(), test.sanityErr)
+			if test.basicErr != nil {
+				assert.ErrorIs(t, pld.BasicCheck(), test.basicErr)
 			} else {
 				assert.NoError(t, pld.BasicCheck())
 

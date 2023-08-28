@@ -153,7 +153,7 @@ func TestValidatorByAddress(t *testing.T) {
 	})
 
 	t.Run("Unknown address", func(t *testing.T) {
-		val, err := td.store.Validator(td.RandomAddress())
+		val, err := td.store.Validator(td.RandAddress())
 		assert.Error(t, err)
 		assert.Nil(t, val)
 	})

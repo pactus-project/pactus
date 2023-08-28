@@ -138,7 +138,7 @@ func TestAccountByAddress(t *testing.T) {
 	})
 
 	t.Run("Unknown address", func(t *testing.T) {
-		acc, err := td.store.Account(td.RandomAddress())
+		acc, err := td.store.Account(td.RandAddress())
 		assert.Error(t, err)
 		assert.Nil(t, acc)
 	})

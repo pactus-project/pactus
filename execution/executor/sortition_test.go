@@ -28,7 +28,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	exe := NewSortitionExecutor(true)
 
 	existingVal := td.sandbox.TestStore.RandomTestVal()
-	pub, _ := td.RandomBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 	newVal := td.sandbox.MakeNewValidator(pub)
 	accAddr, acc := td.sandbox.TestStore.RandomTestAcc()
 	amt, fee := td.randomAmountAndFee(0, acc.Balance())
@@ -37,7 +37,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	td.sandbox.UpdateAccount(accAddr, acc)
 	td.sandbox.UpdateValidator(newVal)
 
-	proof := td.RandomProof()
+	proof := td.RandProof()
 
 	newVal.UpdateLastBondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().BondInterval)
 	td.sandbox.UpdateValidator(newVal)
@@ -45,7 +45,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	assert.False(t, td.sandbox.IsJoinedCommittee(newVal.Address()))
 
 	t.Run("Should fail, Invalid address", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.randStamp, 1, td.RandomAddress(), proof)
+		trx := tx.NewSortitionTx(td.randStamp, 1, td.RandAddress(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
@@ -117,7 +117,7 @@ func TestSortitionNonStrictMode(t *testing.T) {
 	exe2 := NewSortitionExecutor(false)
 
 	val := td.sandbox.TestStore.RandomTestVal()
-	proof := td.RandomProof()
+	proof := td.RandProof()
 
 	td.sandbox.TestAcceptSortition = true
 	trx := tx.NewSortitionTx(td.randStamp, val.Sequence(), val.Address(), proof)
@@ -136,23 +136,23 @@ func TestChangePower1(t *testing.T) {
 	updateCommittee(td)
 
 	// Let's create validators first
-	pub1, _ := td.RandomBLSKeyPair()
+	pub1, _ := td.RandBLSKeyPair()
 	amt1 := td.sandbox.Committee().TotalPower() / 3
 	val1 := td.sandbox.MakeNewValidator(pub1)
 	val1.AddToStake(amt1 - 1)
 	val1.UpdateLastBondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().BondInterval)
 	td.sandbox.UpdateValidator(val1)
-	proof1 := td.RandomProof()
+	proof1 := td.RandProof()
 
-	pub2, _ := td.RandomBLSKeyPair()
+	pub2, _ := td.RandBLSKeyPair()
 	val2 := td.sandbox.MakeNewValidator(pub2)
 	val2.AddToStake(2)
 	val2.UpdateLastBondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().BondInterval)
 	td.sandbox.UpdateValidator(val2)
-	proof2 := td.RandomProof()
+	proof2 := td.RandProof()
 
 	val3 := td.sandbox.Committee().Validators()[0]
-	proof3 := td.RandomProof()
+	proof3 := td.RandProof()
 
 	td.sandbox.TestParams.CommitteeSize = 4
 	td.sandbox.TestAcceptSortition = true
@@ -179,29 +179,29 @@ func TestChangePower2(t *testing.T) {
 	updateCommittee(td)
 
 	// Let's create validators first
-	pub1, _ := td.RandomBLSKeyPair()
+	pub1, _ := td.RandBLSKeyPair()
 	val1 := td.sandbox.MakeNewValidator(pub1)
 	val1.AddToStake(1)
 	val1.UpdateLastBondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().BondInterval)
 	td.sandbox.UpdateValidator(val1)
-	proof1 := td.RandomProof()
+	proof1 := td.RandProof()
 
-	pub2, _ := td.RandomBLSKeyPair()
+	pub2, _ := td.RandBLSKeyPair()
 	val2 := td.sandbox.MakeNewValidator(pub2)
 	val2.AddToStake(1)
 	val2.UpdateLastBondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().BondInterval)
 	td.sandbox.UpdateValidator(val2)
-	proof2 := td.RandomProof()
+	proof2 := td.RandProof()
 
-	pub3, _ := td.RandomBLSKeyPair()
+	pub3, _ := td.RandBLSKeyPair()
 	val3 := td.sandbox.MakeNewValidator(pub3)
 	val3.AddToStake(1)
 	val3.UpdateLastBondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().BondInterval)
 	td.sandbox.UpdateValidator(val3)
-	proof3 := td.RandomProof()
+	proof3 := td.RandProof()
 
 	val4 := td.sandbox.Committee().Validators()[0]
-	proof4 := td.RandomProof()
+	proof4 := td.RandProof()
 
 	td.sandbox.TestParams.CommitteeSize = 7
 	td.sandbox.TestAcceptSortition = true
@@ -233,7 +233,7 @@ func TestOldestDidNotPropose(t *testing.T) {
 	// Let's create validators first
 	vals := make([]*validator.Validator, 9)
 	for i := 0; i < 9; i++ {
-		pub, _ := td.RandomBLSKeyPair()
+		pub, _ := td.RandBLSKeyPair()
 		val := td.sandbox.MakeNewValidator(pub)
 		val.AddToStake(10 * 1e9)
 		val.UpdateLastBondingHeight(
@@ -257,7 +257,7 @@ func TestOldestDidNotPropose(t *testing.T) {
 
 		trx1 := tx.NewSortitionTx(stamp,
 			vals[i].Sequence()+1,
-			vals[i].Address(), td.RandomProof())
+			vals[i].Address(), td.RandProof())
 		err := exe.Execute(trx1, td.sandbox)
 		assert.NoError(t, err)
 
@@ -268,11 +268,11 @@ func TestOldestDidNotPropose(t *testing.T) {
 	b := td.sandbox.TestStore.AddTestBlock(height)
 	stamp := b.Stamp()
 
-	trx1 := tx.NewSortitionTx(stamp, vals[7].Sequence()+1, vals[7].Address(), td.RandomProof())
+	trx1 := tx.NewSortitionTx(stamp, vals[7].Sequence()+1, vals[7].Address(), td.RandProof())
 	err := exe.Execute(trx1, td.sandbox)
 	assert.NoError(t, err)
 
-	trx2 := tx.NewSortitionTx(stamp, vals[8].Sequence()+1, vals[8].Address(), td.RandomProof())
+	trx2 := tx.NewSortitionTx(stamp, vals[8].Sequence()+1, vals[8].Address(), td.RandProof())
 	err = exe.Execute(trx2, td.sandbox)
 	assert.NoError(t, err)
 	updateCommittee(td)
@@ -282,7 +282,7 @@ func TestOldestDidNotPropose(t *testing.T) {
 	stamp = b.Stamp()
 
 	// Entering validator 16
-	trx3 := tx.NewSortitionTx(stamp, vals[8].Sequence()+2, vals[8].Address(), td.RandomProof())
+	trx3 := tx.NewSortitionTx(stamp, vals[8].Sequence()+2, vals[8].Address(), td.RandProof())
 	err = exe.Execute(trx3, td.sandbox)
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 }

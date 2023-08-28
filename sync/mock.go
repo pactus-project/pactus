@@ -20,10 +20,10 @@ type MockSync struct {
 
 func MockingSync(ts *testsuite.TestSuite) *MockSync {
 	ps := peerset.NewPeerSet(1 * time.Second)
-	pub1, _ := ts.RandomBLSKeyPair()
-	pub2, _ := ts.RandomBLSKeyPair()
-	pid1 := ts.RandomPeerID()
-	pid2 := ts.RandomPeerID()
+	pub1, _ := ts.RandBLSKeyPair()
+	pub2, _ := ts.RandBLSKeyPair()
+	pid1 := ts.RandPeerID()
+	pid2 := ts.RandPeerID()
 	ps.UpdatePeerInfo(
 		pid1,
 		peerset.StatusCodeKnown,
@@ -31,7 +31,7 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 		version.Agent(),
 		[]*bls.PublicKey{pub1},
 		true)
-	ps.UpdateHeight(pid1, ts.RandUint32(100000), ts.RandomHash())
+	ps.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
 
 	ps.UpdatePeerInfo(
 		pid2,
@@ -40,10 +40,10 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 		version.Agent(),
 		[]*bls.PublicKey{pub2},
 		false)
-	ps.UpdateHeight(pid1, ts.RandUint32(100000), ts.RandomHash())
+	ps.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
 
 	return &MockSync{
-		TestID:      ts.RandomPeerID(),
+		TestID:      ts.RandPeerID(),
 		TestPeerSet: ps,
 	}
 }

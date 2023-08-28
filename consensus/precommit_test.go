@@ -18,9 +18,13 @@ func TestPrecommitQueryProposal(t *testing.T) {
 
 	p := td.makeProposal(t, 2, 0)
 
-	td.addVote(td.consP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexX)
-	td.addVote(td.consP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
-	td.addVote(td.consP, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
+	td.addPrepareVote(td.consP, p.Block().Hash(), 2, 0, tIndexX)
+	td.addPrepareVote(td.consP, p.Block().Hash(), 2, 0, tIndexY)
+	td.addPrepareVote(td.consP, p.Block().Hash(), 2, 0, tIndexB)
+
+	td.addPrecommitVote(td.consP, p.Block().Hash(), 2, 0, tIndexX)
+	td.addPrecommitVote(td.consP, p.Block().Hash(), 2, 0, tIndexY)
+	td.addPrecommitVote(td.consP, p.Block().Hash(), 2, 0, tIndexB)
 
 	td.shouldPublishQueryProposal(t, td.consP, 2, 0)
 }
@@ -40,9 +44,9 @@ func TestPrecommitInvalidProposal(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 
-	td.addVote(td.consP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexX)
-	td.addVote(td.consP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexY)
-	td.addVote(td.consP, vote.VoteTypePrepare, 2, 0, p1.Block().Hash(), tIndexB)
+	td.addPrepareVote(td.consP, p1.Block().Hash(), 2, 0, tIndexX)
+	td.addPrepareVote(td.consP, p1.Block().Hash(), 2, 0, tIndexY)
+	td.addPrepareVote(td.consP, p1.Block().Hash(), 2, 0, tIndexB)
 
 	td.consP.SetProposal(p2)
 	assert.Nil(t, td.consP.RoundProposal(0))
@@ -51,32 +55,20 @@ func TestPrecommitInvalidProposal(t *testing.T) {
 	assert.NotNil(t, td.consP.RoundProposal(0))
 }
 
-// Np is partitioned by Nb and goes into the change-proposer state.
-// Nx receives prepare votes from Ny and Nb and moves to the precommit state.
-// However, Nb doesn't broadcast its precommit vote.
-// Once the partition heals, Nx should move to the next round.
-func TestPrecommitTimeout(t *testing.T) {
+func TestGoToChangeProposerFromPrecommit(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
 
-	td.enterNewHeight(td.consX)
+	td.enterNewHeight(td.consP)
+	h := td.RandHash()
 
-	p := td.makeProposal(t, 2, 0)
-	td.consX.SetProposal(p)
+	td.addPrepareVote(td.consP, h, 2, 0, tIndexX)
+	td.addPrepareVote(td.consP, h, 2, 0, tIndexY)
+	td.addPrepareVote(td.consP, h, 2, 0, tIndexB)
 
-	td.addVote(td.consX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexY)
-	td.addVote(td.consX, vote.VoteTypePrepare, 2, 0, p.Block().Hash(), tIndexB)
-	td.shouldPublishVote(t, td.consX, vote.VoteTypePrepare, p.Block().Hash())
-	td.shouldPublishVote(t, td.consX, vote.VoteTypePrecommit, p.Block().Hash())
+	td.addCPPreVote(td.consP, hash.UndefHash, 2, 0, 0, vote.CPValueOne, &vote.JustInitOne{}, tIndexX)
+	td.addCPPreVote(td.consP, hash.UndefHash, 2, 0, 0, vote.CPValueOne, &vote.JustInitOne{}, tIndexY)
 
-	// Nx and Ny timeout and broadcast change-proposer.
-	td.addVote(td.consX, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexY)
-	td.shouldPublishVote(t, td.consX, vote.VoteTypeChangeProposer, hash.UndefHash)
-
-	// partition heals.
-	td.addVote(td.consX, vote.VoteTypeChangeProposer, 2, 0, hash.UndefHash, tIndexP)
-
-	// Nx moves to the next round.
-	td.checkHeightRoundWait(t, td.consX, 2, 1)
+	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, h)
 }

@@ -30,7 +30,7 @@ func TestSignable(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	signable := new(testSignableMsg)
-	s := ts.RandomSigner()
+	s := ts.RandSigner()
 	s.SignMsg(signable)
 
 	assert.True(t, s.Address().EqualsTo(s.PublicKey().Address()))

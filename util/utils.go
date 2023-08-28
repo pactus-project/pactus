@@ -47,14 +47,14 @@ func Min[T constraints.Integer](a, b T) T {
 	return b
 }
 
-// RandInt32 returns a random int16 in between 0 and max.
+// RandInt16 returns a random int16 in between 0 and max.
 // If max set to zero or negative, the max will set to MaxInt16.
 func RandInt16(max int16) int16 {
 	return int16(RandUint64(uint64(max)))
 }
 
-// RandUint32 returns a random uint32 in between 0 and max.
-// If max set to zero or negative, the max will set to MaxUint32.
+// RandUint16 returns a random uint16 in between 0 and max.
+// If max set to zero or negative, the max will set to MaxUint16.
 func RandUint16(max uint32) uint16 {
 	return uint16(RandUint64(uint64(max)))
 }

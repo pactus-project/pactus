@@ -3,8 +3,7 @@ package message
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/types/block"
-	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,15 +18,18 @@ func TestBlockAnnounceMessage(t *testing.T) {
 
 	t.Run("Invalid certificate", func(t *testing.T) {
 		b := ts.GenerateTestBlock(nil, nil)
-		c := block.NewCertificate(-1, nil, nil, nil)
+		c := certificate.NewCertificate(0, 0, nil, nil, nil)
 		m := NewBlockAnnounceMessage(100, b, c)
+		err := m.BasicCheck()
 
-		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidRound)
+		assert.ErrorIs(t, err, certificate.BasicCheckError{
+			Reason: "height is not positive: 0",
+		})
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		b := ts.GenerateTestBlock(nil, nil)
-		c := ts.GenerateTestCertificate(b.Hash())
+		c := ts.GenerateTestCertificate()
 		m := NewBlockAnnounceMessage(100, b, c)
 
 		assert.NoError(t, m.BasicCheck())

@@ -15,7 +15,7 @@ func TestParsingProposalMessages(t *testing.T) {
 		prop, _ := td.GenerateTestProposal(consensusHeight, 0)
 		msg := message.NewProposalMessage(prop)
 
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, td.RandomPeerID()))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, td.RandPeerID()))
 		assert.NotNil(t, td.consMgr.RoundProposal(0))
 	})
 }

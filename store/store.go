@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
@@ -114,7 +115,7 @@ func (s *store) updateStampLookup(height uint32, block *block.Block) {
 	s.stampLookup.PushBack(block.Stamp(), pair)
 }
 
-func (s *store) SaveBlock(height uint32, block *block.Block, cert *block.Certificate) {
+func (s *store) SaveBlock(height uint32, block *block.Block, cert *certificate.Certificate) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -310,7 +311,7 @@ func (s *store) UpdateValidator(acc *validator.Validator) {
 	s.validatorStore.updateValidator(s.batch, acc)
 }
 
-func (s *store) LastCertificate() (uint32, *block.Certificate) {
+func (s *store) LastCertificate() (uint32, *certificate.Certificate) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -322,7 +323,7 @@ func (s *store) LastCertificate() (uint32, *block.Certificate) {
 	r := bytes.NewReader(data)
 	version := int32(0)
 	height := uint32(0)
-	cert := new(block.Certificate)
+	cert := new(certificate.Certificate)
 	err := encoding.ReadElements(r, &version, &height)
 	if err != nil {
 		return 0, nil

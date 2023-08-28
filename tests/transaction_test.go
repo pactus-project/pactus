@@ -48,10 +48,10 @@ func broadcastBondTransaction(t *testing.T, sender crypto.Signer, pub crypto.Pub
 func TestTransactions(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pubAlice, prvAlice := ts.RandomBLSKeyPair()
-	pubBob, prvBob := ts.RandomBLSKeyPair()
-	pubCarol, _ := ts.RandomBLSKeyPair()
-	pubDave, _ := ts.RandomBLSKeyPair()
+	pubAlice, prvAlice := ts.RandBLSKeyPair()
+	pubBob, prvBob := ts.RandBLSKeyPair()
+	pubCarol, _ := ts.RandBLSKeyPair()
+	pubDave, _ := ts.RandBLSKeyPair()
 
 	signerAlice := crypto.NewSigner(prvAlice)
 	signerBob := crypto.NewSigner(prvBob)

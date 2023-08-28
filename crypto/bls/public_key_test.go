@@ -16,7 +16,7 @@ import (
 func TestPublicKeyCBORMarshaling(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub1, _ := ts.RandomBLSKeyPair()
+	pub1, _ := ts.RandBLSKeyPair()
 	pub2 := new(bls.PublicKey)
 
 	bs, err := pub1.MarshalCBOR()
@@ -34,8 +34,8 @@ func TestPublicKeyCBORMarshaling(t *testing.T) {
 func TestPublicKeyEqualsTo(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub1, _ := ts.RandomBLSKeyPair()
-	pub2, _ := ts.RandomBLSKeyPair()
+	pub1, _ := ts.RandBLSKeyPair()
+	pub2, _ := ts.RandBLSKeyPair()
 
 	assert.True(t, pub1.EqualsTo(pub1))
 	assert.False(t, pub1.EqualsTo(pub2))
@@ -46,7 +46,7 @@ func TestPublicKeyEqualsTo(t *testing.T) {
 func TestPublicKeyEncoding(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub, _ := ts.RandomBLSKeyPair()
+	pub, _ := ts.RandBLSKeyPair()
 	w1 := util.NewFixedWriter(20)
 	assert.Error(t, pub.Encode(w1))
 
@@ -63,8 +63,8 @@ func TestPublicKeyEncoding(t *testing.T) {
 func TestPublicKeyVerifyAddress(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub1, _ := ts.RandomBLSKeyPair()
-	pub2, _ := ts.RandomBLSKeyPair()
+	pub1, _ := ts.RandBLSKeyPair()
+	pub2, _ := ts.RandBLSKeyPair()
 
 	assert.NoError(t, pub1.VerifyAddress(pub1.Address()))
 	assert.Equal(t, errors.Code(pub1.VerifyAddress(pub2.Address())), errors.ErrInvalidAddress)
@@ -74,7 +74,7 @@ func TestNilPublicKey(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	pub := &bls.PublicKey{}
-	assert.Error(t, pub.VerifyAddress(ts.RandomAddress()))
+	assert.Error(t, pub.VerifyAddress(ts.RandAddress()))
 	assert.Error(t, pub.Verify(nil, nil))
 	assert.Error(t, pub.Verify(nil, &bls.Signature{}))
 }
@@ -82,7 +82,7 @@ func TestNilPublicKey(t *testing.T) {
 func TestNilSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub, _ := ts.RandomBLSKeyPair()
+	pub, _ := ts.RandBLSKeyPair()
 	assert.Error(t, pub.Verify(nil, nil))
 	assert.Error(t, pub.Verify(nil, &bls.Signature{}))
 }

@@ -87,9 +87,9 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 	peerHeight := height - 1
 
 	if msg.To() >= handler.state.LastBlockHeight() {
-		lastCertificate := handler.state.LastCertificate()
+		lastCert := handler.state.LastCertificate()
 		response := message.NewBlocksResponseMessage(message.ResponseCodeSynced, message.ResponseCodeSynced.String(),
-			msg.SessionID, peerHeight, nil, lastCertificate)
+			msg.SessionID, peerHeight, nil, lastCert)
 		handler.sendTo(response, initiator, msg.SessionID)
 	} else {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeNoMoreBlocks,

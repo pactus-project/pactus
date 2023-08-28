@@ -34,6 +34,9 @@ func TestDecoding(t *testing.T) {
 
 	acc, err := account.FromBytes(bs)
 	require.NoError(t, err)
+	assert.Equal(t, acc.Number(), int32(1))
+	assert.Equal(t, acc.Sequence(), int32(2))
+	assert.Equal(t, acc.Balance(), int64(3))
 	bs2, _ := acc.Bytes()
 	assert.Equal(t, bs, bs2)
 	assert.Equal(t, acc.Hash(), hash.CalcHash(bs))

@@ -25,7 +25,7 @@ func setup(t *testing.T) *testData {
 	ts := testsuite.NewTestSuite(t)
 
 	sandbox := sandbox.MockingSandbox(ts)
-	randHeight := ts.RandUint32NonZero(500000)
+	randHeight := ts.RandHeight()
 	randBlock := sandbox.TestStore.AddTestBlock(randHeight)
 
 	return &testData{
@@ -66,11 +66,11 @@ func TestExecuteTransferTx(t *testing.T) {
 
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
-	receiverAddr := td.RandomAddress()
+	receiverAddr := td.RandAddress()
 	amt, fee := td.randomAmountAndFee(0, senderBalance)
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
-		trx := tx.NewTransferTx(td.randStamp, 1, td.RandomAddress(),
+		trx := tx.NewTransferTx(td.randStamp, 1, td.RandAddress(),
 			receiverAddr, amt, fee, "non-existing account")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -132,7 +132,7 @@ func TestTransferNonStrictMode(t *testing.T) {
 	exe1 := NewTransferExecutor(true)
 	exe2 := NewTransferExecutor(false)
 
-	receiver1 := td.RandomAddress()
+	receiver1 := td.RandAddress()
 
 	trx1 := tx.NewSubsidyTx(td.randStamp, int32(td.sandbox.CurrentHeight()), receiver1, 1, "")
 	assert.Equal(t, errors.Code(exe1.Execute(trx1, td.sandbox)), errors.ErrInvalidSequence)

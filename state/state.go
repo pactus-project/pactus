@@ -17,6 +17,7 @@ import (
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -58,7 +59,7 @@ func LoadOrNewState(
 		txPool:          txPool,
 		params:          genDoc.Params(),
 		store:           store,
-		lastInfo:        lastinfo.NewLastInfo(store),
+		lastInfo:        lastinfo.NewLastInfo(),
 		accountMerkle:   persistentmerkle.New(),
 		validatorMerkle: persistentmerkle.New(),
 		eventCh:         eventCh,
@@ -112,7 +113,7 @@ func (st *state) tryLoadLastInfo() error {
 	}
 
 	logger.Debug("try to restore the last state")
-	committee, err := st.lastInfo.RestoreLastInfo(st.params.CommitteeSize)
+	committee, err := st.lastInfo.RestoreLastInfo(st.store, st.params.CommitteeSize)
 	if err != nil {
 		return err
 	}
@@ -147,7 +148,7 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		return err
 	}
 	st.committee = committee
-	st.lastInfo.SetBlockTime(genDoc.GenesisTime())
+	st.lastInfo.UpdateBlockTime(genDoc.GenesisTime())
 
 	return nil
 }
@@ -249,7 +250,7 @@ func (st *state) LastBlockTime() time.Time {
 	return st.lastInfo.BlockTime()
 }
 
-func (st *state) LastCertificate() *block.Certificate {
+func (st *state) LastCertificate() *certificate.Certificate {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
@@ -263,17 +264,17 @@ func (st *state) BlockTime() time.Duration {
 	return st.params.BlockTime()
 }
 
-func (st *state) UpdateLastCertificate(cert *block.Certificate) error {
+func (st *state) UpdateLastCertificate(cert *certificate.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
 	// Check if certificate has more signers ...
 	if len(cert.Absentees()) < len(st.lastInfo.Certificate().Absentees()) {
-		if err := st.validateCertificateForPreviousHeight(st.lastInfo.BlockHash(), cert); err != nil {
+		if err := st.validatePrevCertificate(cert, st.lastInfo.BlockHash()); err != nil {
 			st.logger.Warn("try to update last certificate, but it's invalid", "err", err)
 			return err
 		}
-		st.lastInfo.SetCertificate(cert)
+		st.lastInfo.UpdateCertificate(cert)
 	}
 
 	return nil
@@ -367,7 +368,7 @@ func (st *state) ValidateBlock(block *block.Block) error {
 	return st.executeBlock(block, sb)
 }
 
-func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Certificate) error {
+func (st *state) CommitBlock(height uint32, block *block.Block, cert *certificate.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -378,7 +379,7 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Cert
 		return nil
 	}
 
-	err := st.validateCertificate(block.Hash(), cert)
+	err := st.validateCertificate(cert, block.Hash())
 	if err != nil {
 		return err
 	}
@@ -423,11 +424,12 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *block.Cert
 
 	// -----------------------------------
 	// Commit block
-	st.lastInfo.SetBlockHeight(height)
-	st.lastInfo.SetBlockHash(block.Hash())
-	st.lastInfo.SetBlockTime(block.Header().Time())
-	st.lastInfo.SetSortitionSeed(block.Header().SortitionSeed())
-	st.lastInfo.SetCertificate(cert)
+	st.lastInfo.UpdateBlockHeight(height)
+	st.lastInfo.UpdateBlockHash(block.Hash())
+	st.lastInfo.UpdateBlockTime(block.Header().Time())
+	st.lastInfo.UpdateSortitionSeed(block.Header().SortitionSeed())
+	st.lastInfo.UpdateCertificate(cert)
+	st.lastInfo.UpdateValidators(st.committee.Validators())
 
 	// Commit and update the committee
 	st.commitSandbox(sb, cert.Round())

@@ -3,7 +3,7 @@ package message
 import (
 	"fmt"
 
-	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/util/errors"
 )
 
@@ -13,16 +13,16 @@ const (
 )
 
 type BlocksResponseMessage struct {
-	ResponseCode    ResponseCode       `cbor:"1,keyasint"`
-	SessionID       int                `cbor:"2,keyasint"`
-	From            uint32             `cbor:"3,keyasint"`
-	BlocksData      [][]byte           `cbor:"4,keyasint"`
-	LastCertificate *block.Certificate `cbor:"6,keyasint"`
-	Reason          string             `cbor:"7,keyasint"`
+	ResponseCode    ResponseCode             `cbor:"1,keyasint"`
+	SessionID       int                      `cbor:"2,keyasint"`
+	From            uint32                   `cbor:"3,keyasint"`
+	BlocksData      [][]byte                 `cbor:"4,keyasint"`
+	LastCertificate *certificate.Certificate `cbor:"6,keyasint"`
+	Reason          string                   `cbor:"7,keyasint"`
 }
 
 func NewBlocksResponseMessage(code ResponseCode, reason string, sid int, from uint32,
-	blocksData [][]byte, lastCert *block.Certificate,
+	blocksData [][]byte, lastCert *certificate.Certificate,
 ) *BlocksResponseMessage {
 	return &BlocksResponseMessage{
 		ResponseCode:    code,

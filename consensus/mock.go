@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -20,6 +21,7 @@ type MockConsensus struct {
 	Signer   crypto.Signer
 	Votes    []*vote.Vote
 	Proposal *proposal.Proposal
+	Decided  *block.Block
 	Active   bool
 	Height   uint32
 	Round    int16
@@ -81,6 +83,10 @@ func (m *MockConsensus) SetProposal(p *proposal.Proposal) {
 	defer m.lk.Unlock()
 
 	m.Proposal = p
+}
+
+func (m *MockConsensus) DecidedBlock() *block.Block {
+	return m.ts.GenerateTestBlock(nil, nil)
 }
 
 func (m *MockConsensus) HasVote(hash hash.Hash) bool {

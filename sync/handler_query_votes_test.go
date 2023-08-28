@@ -13,14 +13,14 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	consensusHeight, _ := td.consMgr.HeightRound()
 	v1, _ := td.GenerateTestPrecommitVote(consensusHeight, 0)
 	td.consMgr.AddVote(v1)
-	pid := td.RandomPeerID()
+	pid := td.RandPeerID()
 	msg := message.NewQueryVotesMessage(consensusHeight, 1)
 
 	t.Run("Not known peer, should not respond to the query vote message", func(t *testing.T) {
 		assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
 	})
 
-	pub, _ := td.RandomBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 	td.addPeer(t, pub, pid, false)
 
 	t.Run("Not in the committee, should not respond to the query vote message", func(t *testing.T) {

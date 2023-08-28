@@ -19,11 +19,11 @@ func TestPeerSet(t *testing.T) {
 	peerSet := NewPeerSet(time.Second)
 
 	// Add peers using UpdatePeerInfo
-	pk1, _ := ts.RandomBLSKeyPair()
-	pk2, _ := ts.RandomBLSKeyPair()
-	pk3, _ := ts.RandomBLSKeyPair()
-	pk4, _ := ts.RandomBLSKeyPair()
-	pk5, _ := ts.RandomBLSKeyPair()
+	pk1, _ := ts.RandBLSKeyPair()
+	pk2, _ := ts.RandBLSKeyPair()
+	pk3, _ := ts.RandBLSKeyPair()
+	pk4, _ := ts.RandBLSKeyPair()
+	pk5, _ := ts.RandBLSKeyPair()
 	pid1 := peer.ID("peer1")
 	pid2 := peer.ID("peer2")
 	pid3 := peer.ID("peer3")
@@ -38,9 +38,9 @@ func TestPeerSet(t *testing.T) {
 	t.Run("Testing MaxClaimedHeight", func(t *testing.T) {
 		assert.Equal(t, uint32(0), peerSet.MaxClaimedHeight())
 
-		peerSet.UpdateHeight(pid1, 100, ts.RandomHash())
-		peerSet.UpdateHeight(pid2, 200, ts.RandomHash())
-		peerSet.UpdateHeight(pid3, 150, ts.RandomHash())
+		peerSet.UpdateHeight(pid1, 100, ts.RandHash())
+		peerSet.UpdateHeight(pid2, 200, ts.RandHash())
+		peerSet.UpdateHeight(pid3, 150, ts.RandHash())
 
 		assert.Equal(t, uint32(200), peerSet.MaxClaimedHeight())
 	})
@@ -238,7 +238,7 @@ func TestGetRandomWeightedPeer(t *testing.T) {
 	// peer_7 has 4 successful attempts and 5 failed attempts
 	peerSet := NewPeerSet(time.Second)
 	for i := 0; i < 6; i++ {
-		pk, _ := ts.RandomBLSKeyPair()
+		pk, _ := ts.RandBLSKeyPair()
 		pid := peer.ID(fmt.Sprintf("peer_%v", i+1))
 		peerSet.UpdatePeerInfo(
 			pid, StatusCodeKnown,
@@ -271,11 +271,11 @@ func TestGetRandomPeerUnknown(t *testing.T) {
 
 	peerSet := NewPeerSet(time.Second)
 
-	pk, _ := ts.RandomBLSKeyPair()
+	pk, _ := ts.RandBLSKeyPair()
 	pidUnknown := peer.ID("peer_unknown")
 	peerSet.UpdatePeerInfo(pidUnknown, StatusCodeUnknown, "Moniker_unknown", "Agent1", []*bls.PublicKey{pk}, true)
 
-	pk, _ = ts.RandomBLSKeyPair()
+	pk, _ = ts.RandBLSKeyPair()
 	pidBanned := peer.ID("peer_banned")
 	peerSet.UpdatePeerInfo(pidBanned, StatusCodeBanned, "Moniker_banned", "Agent1", []*bls.PublicKey{pk}, true)
 
@@ -290,7 +290,7 @@ func TestGetRandomPeerOnePeer(t *testing.T) {
 
 	peerSet := NewPeerSet(time.Second)
 
-	pk, _ := ts.RandomBLSKeyPair()
+	pk, _ := ts.RandBLSKeyPair()
 	pid := peer.ID("peer_known")
 	peerSet.UpdatePeerInfo(pid, StatusCodeKnown, "Moniker_known", "Agent1", []*bls.PublicKey{pk}, true)
 	peerSet.IncreaseSendSuccessCounter(pid)

@@ -40,7 +40,7 @@ func init() {
 	const bufSize = 1024 * 1024
 
 	consMgr, consMocks := consensus.MockingManager(ts, []crypto.Signer{
-		ts.RandomSigner(), ts.RandomSigner(),
+		ts.RandSigner(), ts.RandSigner(),
 	})
 
 	tListener = bufconn.Listen(bufSize)

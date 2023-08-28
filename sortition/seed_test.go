@@ -18,8 +18,8 @@ func TestSeedFromString(t *testing.T) {
 func TestValidate(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	signer := ts.RandomSigner()
-	seed1 := ts.RandomSeed()
+	signer := ts.RandSigner()
+	seed1 := ts.RandSeed()
 	seed2 := seed1.GenerateNext(signer)
 	seed3 := sortition.VerifiableSeed{}
 	seed4, _ := sortition.VerifiableSeedFromString(
@@ -27,7 +27,7 @@ func TestValidate(t *testing.T) {
 
 	assert.True(t, seed2.Verify(signer.PublicKey(), seed1))
 	assert.False(t, seed1.Verify(signer.PublicKey(), seed2))
-	assert.False(t, seed2.Verify(signer.PublicKey(), ts.RandomSeed()))
+	assert.False(t, seed2.Verify(signer.PublicKey(), ts.RandSeed()))
 	assert.False(t, seed3.Verify(signer.PublicKey(), seed1))
 	assert.False(t, seed4.Verify(signer.PublicKey(), seed1))
 }

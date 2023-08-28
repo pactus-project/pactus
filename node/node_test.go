@@ -19,7 +19,7 @@ import (
 func TestRunningNode(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub, _ := ts.RandomBLSKeyPair()
+	pub, _ := ts.RandBLSKeyPair()
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
 	val := validator.NewValidator(pub, 0)
@@ -34,8 +34,8 @@ func TestRunningNode(t *testing.T) {
 	conf.Network.EnableRelay = false
 	conf.Network.NetworkKey = util.TempFilePath()
 
-	signers := []crypto.Signer{ts.RandomSigner(), ts.RandomSigner()}
-	rewardAddrs := []crypto.Address{ts.RandomAddress(), ts.RandomAddress()}
+	signers := []crypto.Signer{ts.RandSigner(), ts.RandSigner()}
+	rewardAddrs := []crypto.Address{ts.RandAddress(), ts.RandAddress()}
 	n, err := NewNode(gen, conf, signers, rewardAddrs)
 
 	require.NoError(t, err)

@@ -3,7 +3,7 @@ package message
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -20,12 +20,14 @@ func TestBlocksResponseMessage(t *testing.T) {
 	sid := 123
 	t.Run("Invalid certificate", func(t *testing.T) {
 		b := ts.GenerateTestBlock(nil, nil)
-		c := block.NewCertificate(-1, nil, nil, nil)
+		c := certificate.NewCertificate(0, 0, nil, nil, nil)
 		d, _ := b.Bytes()
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, ResponseCodeMoreBlocks.String(), sid, 100, [][]byte{d}, c)
+		err := m.BasicCheck()
 
-		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidRound)
-		assert.Equal(t, m.Reason, ResponseCodeMoreBlocks.String())
+		assert.ErrorIs(t, err, certificate.BasicCheckError{
+			Reason: "height is not positive: 0",
+		})
 	})
 
 	t.Run("Unexpected block for height zero", func(t *testing.T) {
@@ -34,7 +36,6 @@ func TestBlocksResponseMessage(t *testing.T) {
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, ResponseCodeMoreBlocks.String(), sid, 0, [][]byte{d}, nil)
 
 		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidHeight)
-		assert.Equal(t, m.Reason, ResponseCodeMoreBlocks.String())
 	})
 
 	t.Run("OK", func(t *testing.T) {
@@ -94,7 +95,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 	})
 
 	t.Run("OK - Synced", func(t *testing.T) {
-		cert := ts.GenerateTestCertificate(ts.RandomHash())
+		cert := ts.GenerateTestCertificate()
 
 		m := NewBlocksResponseMessage(ResponseCodeSynced, ResponseCodeSynced.String(), 1, 100, nil, cert)
 		assert.NoError(t, m.BasicCheck())

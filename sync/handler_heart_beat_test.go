@@ -13,8 +13,8 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 
 	td.consMocks[0].Round = 1
 	h, _ := td.consMgr.HeightRound()
-	pid := td.RandomPeerID()
-	msg := message.NewHeartBeatMessage(h, 2, td.RandomHash())
+	pid := td.RandPeerID()
+	msg := message.NewHeartBeatMessage(h, 2, td.RandHash())
 
 	t.Run("Not in the committee, but processes heartbeat messages", func(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
@@ -31,14 +31,14 @@ func TestParsingHeartbeatMessages(t *testing.T) {
 	})
 
 	t.Run("Should not query for votes for previous round", func(t *testing.T) {
-		msg := message.NewHeartBeatMessage(h, 0, td.RandomHash())
+		msg := message.NewHeartBeatMessage(h, 0, td.RandHash())
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeQueryVotes)
 	})
 
 	t.Run("Should not query for votes for same round", func(t *testing.T) {
-		msg := message.NewHeartBeatMessage(h, 1, td.RandomHash())
+		msg := message.NewHeartBeatMessage(h, 1, td.RandHash())
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeQueryVotes)

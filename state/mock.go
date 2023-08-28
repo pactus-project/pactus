@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -51,10 +52,10 @@ func MockingState(ts *testsuite.TestSuite) *MockState {
 func (m *MockState) CommitTestBlocks(num int) {
 	for i := 0; i < num; i++ {
 		lastHash := m.LastBlockHash()
-		b := m.ts.GenerateTestBlock(nil, &lastHash)
-		cert := m.ts.GenerateTestCertificate(b.Hash())
+		blk := m.ts.GenerateTestBlock(nil, &lastHash)
+		cert := m.ts.GenerateTestCertificate()
 
-		m.TestStore.SaveBlock(m.LastBlockHeight()+1, b, cert)
+		m.TestStore.SaveBlock(m.LastBlockHeight()+1, blk, cert)
 	}
 }
 
@@ -80,7 +81,7 @@ func (m *MockState) LastBlockTime() time.Time {
 	return util.Now()
 }
 
-func (m *MockState) LastCertificate() *block.Certificate {
+func (m *MockState) LastCertificate() *certificate.Certificate {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
@@ -91,12 +92,12 @@ func (m *MockState) BlockTime() time.Duration {
 	return time.Second
 }
 
-func (m *MockState) UpdateLastCertificate(cert *block.Certificate) error {
+func (m *MockState) UpdateLastCertificate(cert *certificate.Certificate) error {
 	m.TestStore.LastCert = cert
 	return nil
 }
 
-func (m *MockState) CommitBlock(h uint32, b *block.Block, cert *block.Certificate) error {
+func (m *MockState) CommitBlock(h uint32, b *block.Block, cert *certificate.Certificate) error {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 

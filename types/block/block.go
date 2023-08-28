@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
@@ -24,11 +25,11 @@ type Block struct {
 
 type blockData struct {
 	Header   *Header
-	PrevCert *Certificate
+	PrevCert *certificate.Certificate
 	Txs      Txs
 }
 
-func NewBlock(header *Header, prevCert *Certificate, txs Txs) *Block {
+func NewBlock(header *Header, prevCert *certificate.Certificate, txs Txs) *Block {
 	return &Block{
 		data: blockData{
 			Header:   header,
@@ -51,7 +52,7 @@ func FromBytes(data []byte) (*Block, error) {
 
 func MakeBlock(version uint8, timestamp time.Time, txs Txs,
 	prevBlockHash, stateRoot hash.Hash,
-	prevCert *Certificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address,
+	prevCert *certificate.Certificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address,
 ) *Block {
 	header := NewHeader(version, timestamp,
 		stateRoot, prevBlockHash, sortitionSeed, proposer)
@@ -59,9 +60,17 @@ func MakeBlock(version uint8, timestamp time.Time, txs Txs,
 	return NewBlock(header, prevCert, txs)
 }
 
-func (b *Block) Header() *Header               { return b.data.Header }
-func (b *Block) PrevCertificate() *Certificate { return b.data.PrevCert }
-func (b *Block) Transactions() Txs             { return b.data.Txs }
+func (b *Block) Header() *Header {
+	return b.data.Header
+}
+
+func (b *Block) PrevCertificate() *certificate.Certificate {
+	return b.data.PrevCert
+}
+
+func (b *Block) Transactions() Txs {
+	return b.data.Txs
+}
 
 func (b *Block) BasicCheck() error {
 	if err := b.Header().BasicCheck(); err != nil {
@@ -172,7 +181,7 @@ func (b *Block) Decode(r io.Reader) error {
 		return err
 	}
 	if !b.data.Header.PrevBlockHash().IsUndef() {
-		b.data.PrevCert = new(Certificate)
+		b.data.PrevCert = new(certificate.Certificate)
 		if err := b.data.PrevCert.Decode(r); err != nil {
 			return err
 		}

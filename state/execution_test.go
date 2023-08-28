@@ -28,7 +28,7 @@ func TestProposeBlock(t *testing.T) {
 	invBondTx, _ := td.GenerateTestBondTx()
 	invSortitionTx, _ := td.GenerateTestSortitionTx()
 
-	pub, _ := td.RandomBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 	trx1 := tx.NewTransferTx(b1.Stamp(), 1, td.valSigner1.Address(), td.valSigner1.Address(), 1, 1000, "")
 	td.valSigner1.SignMsg(trx1)
 
@@ -58,8 +58,8 @@ func TestExecuteBlock(t *testing.T) {
 	b1, c1 := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3)
 	assert.NoError(t, td.state1.CommitBlock(1, b1, c1))
 
-	proposerAddr := td.RandomAddress()
-	rewardAddr := td.RandomAddress()
+	proposerAddr := td.RandAddress()
+	rewardAddr := td.RandAddress()
 	invSubsidyTx := td.state1.createSubsidyTx(rewardAddr, 1001)
 	validSubsidyTx := td.state1.createSubsidyTx(rewardAddr, 1000)
 	invTransferTx, _ := td.GenerateTestTransferTx()
