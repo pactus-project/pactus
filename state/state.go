@@ -618,7 +618,7 @@ func (st *state) IsValidator(addr crypto.Address) bool {
 	return st.store.HasValidator(addr)
 }
 
-func (st *state) StoredBlock(height uint32) *store.StoredBlock {
+func (st *state) StoredBlock(height uint32) *store.CommittedBlock {
 	b, err := st.store.Block(height)
 	if err != nil {
 		st.logger.Trace("error on retrieving block", "err", err)
@@ -627,7 +627,7 @@ func (st *state) StoredBlock(height uint32) *store.StoredBlock {
 	return b
 }
 
-func (st *state) StoredTx(id tx.ID) *store.StoredTx {
+func (st *state) StoredTx(id tx.ID) *store.CommittedTx {
 	tx, err := st.store.Transaction(id)
 	if err != nil {
 		st.logger.Trace("searching transaction in local store failed", "id", id, "err", err)

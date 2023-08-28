@@ -161,3 +161,21 @@ func TestRecentBlockByStamp(t *testing.T) {
 	assert.Zero(t, h)
 	assert.Nil(t, b)
 }
+
+func TestIndexingPublicKeys(t *testing.T) {
+	td := setup(t)
+
+	blkData, _ := td.store.Block(1)
+	blk := blkData.ToBlock()
+	for _, trx := range blk.Transactions() {
+		addr := trx.Payload().Signer()
+		pub, found := td.store.PublicKey(addr)
+
+		assert.True(t, found)
+		assert.Equal(t, pub.Address(), addr)
+	}
+
+	pub, found := td.store.PublicKey(td.RandomAddress())
+	assert.False(t, found)
+	assert.Nil(t, pub)
+}

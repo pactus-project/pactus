@@ -164,11 +164,38 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid version", func(t *testing.T) {
-		d := ts.DecodingHex("023513630b1a00010001703db2cca1f0deb29fb42b98bd9d12971b1160168094ebdc0300")
+		d := ts.DecodingHex(
+			"00" + // flags
+				"02" + // version
+				"a1b2c3d4" + // stamp
+				"01" + // sequence
+				"01" + // fee
+				"01" + // payload type
+				"00" + // sender (treasury)
+				"012222222222222222222222222222222222222222" + // receiver
+				"01" + // amount
+				"00") // memo
 		trx, err := tx.FromBytes(d)
 		assert.NoError(t, err)
 		err = trx.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
+	})
+
+	t.Run("Invalid payload", func(t *testing.T) {
+		d := ts.DecodingHex(
+			"00" + // flags
+				"01" + // version
+				"a1b2c3d4" + // stamp
+				"01" + // sequence
+				"01" + // fee
+				"06" + // payload type
+				"00" + // sender (treasury)
+				"012222222222222222222222222222222222222222" + // receiver
+				"01" + // amount
+				"00") // memo
+
+		_, err := tx.FromBytes(d)
+		assert.Error(t, err)
 	})
 }
 
@@ -302,17 +329,42 @@ func TestInvalidSignature(t *testing.T) {
 
 func TestSignBytes(t *testing.T) {
 	d, _ := hex.DecodeString(
-		"01f10c077fcc04f5ef819fc9d6080101d3e45d249a39d806a1faec2fd85820db340b98e30168fc72a1a961933e694439b2e3c8751d27de5a" +
-			"d3b9c3dc91b9c9b59b010c746573742073656e642d7478b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112" +
-			"ac01c80d0d9d64c2320664c77fa2a68d82fa4fcac04a3b565267685e90db1b01420285d2f8295683c138c092c209479983ba159137077884" +
-			"6681b7b558e0611776208c0718006311c84b4a113335c70d1f5c7c5dd93a5625c4af51c48847abd0b590c055306162d2a03ca1cbf7bcc1")
-	h, _ := hash.FromString("2a04aef409194ff72e942346525428f6c030e2875be27205cb2ce46065ec543f")
+		"00" + // flags
+			"01" + // version
+			"a1b2c3d4" + // stamp
+			"01" + // sequence
+			"01" + // fee
+			"01" + // payload type
+			"013333333333333333333333333333333333333333" + // sender
+			"012222222222222222222222222222222222222222" + // receiver
+			"01" + // amount
+			"00" + // memo
+			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // sig
+			"8d82fa4fcac04a3b565267685e90db1b01420285d2f8295683c138c092c209479983ba1591370778846681b7b558e061" + // pub key
+			"1776208c0718006311c84b4a113335c70d1f5c7c5dd93a5625c4af51c48847abd0b590c055306162d2a03ca1cbf7bcc1") // pub key
+
+	h, _ := hash.FromString("33ad1b0533269ac4a3c919886065d0dcaf425945167d2e90ad965332445661b4")
 	trx, err := tx.FromBytes(d)
 	assert.NoError(t, err)
 	assert.Equal(t, trx.SerializeSize(), len(d))
 
-	sb := d[:len(d)-bls.PublicKeySize-bls.SignatureSize]
+	sb := d[1 : len(d)-bls.PublicKeySize-bls.SignatureSize]
 	assert.Equal(t, sb, trx.SignBytes())
 	assert.Equal(t, trx.ID(), h)
 	assert.Equal(t, trx.ID(), hash.CalcHash(sb))
+}
+
+func TestNoPublicKey(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	trx1, _ := ts.GenerateTestTransferTx()
+	trx1.SetPublicKey(nil)
+	bs1, _ := trx1.Bytes()
+
+	trx2, _ := tx.FromBytes(bs1)
+	bs2, _ := trx2.Bytes()
+
+	assert.Equal(t, bs1, bs2)
+	assert.Equal(t, trx1.ID(), trx2.ID())
+	assert.Nil(t, trx2.PublicKey())
 }

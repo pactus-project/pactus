@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
@@ -35,6 +36,7 @@ var (
 	accountPrefix     = []byte{0x05}
 	validatorPrefix   = []byte{0x07}
 	blockHeightPrefix = []byte{0x09}
+	publicKeyPrefix   = []byte{0x0a}
 )
 
 func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
@@ -140,7 +142,7 @@ func (s *store) SaveBlock(height uint32, block *block.Block, cert *block.Certifi
 	s.updateStampLookup(height, block)
 }
 
-func (s *store) Block(height uint32) (*StoredBlock, error) {
+func (s *store) Block(height uint32) (*CommittedBlock, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -154,7 +156,7 @@ func (s *store) Block(height uint32) (*StoredBlock, error) {
 		return nil, err
 	}
 
-	return &StoredBlock{
+	return &CommittedBlock{
 		BlockHash: blockHash,
 		Height:    height,
 		Data:      data[hash.HashSize:],
@@ -192,7 +194,20 @@ func (s *store) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
 	return 0, nil
 }
 
-func (s *store) Transaction(id tx.ID) (*StoredTx, error) {
+func (s *store) PublicKey(addr crypto.Address) (crypto.PublicKey, bool) {
+	bs, err := tryGet(s.db, publicKeyKey(addr))
+	if err != nil {
+		return nil, false
+	}
+	pubKey, err := bls.PublicKeyFromBytes(bs)
+	if err != nil {
+		return nil, false
+	}
+
+	return pubKey, true
+}
+
+func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -211,7 +226,7 @@ func (s *store) Transaction(id tx.ID) (*StoredTx, error) {
 	}
 	blockTime := util.SliceToUint32(data[hash.HashSize+1 : hash.HashSize+5])
 
-	return &StoredTx{
+	return &CommittedTx{
 		TxID:      id,
 		Height:    pos.height,
 		BlockTime: blockTime,

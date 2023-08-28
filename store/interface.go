@@ -1,6 +1,8 @@
 package store
 
 import (
+	"bytes"
+
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/account"
@@ -16,13 +18,13 @@ import (
 
 // TODO: How to undo or rollback at least for last 21 blocks
 
-type StoredBlock struct {
+type CommittedBlock struct {
 	BlockHash hash.Hash
 	Height    uint32
 	Data      []byte
 }
 
-func (s *StoredBlock) ToBlock() *block.Block {
+func (s *CommittedBlock) ToBlock() *block.Block {
 	b, err := block.FromBytes(s.Data)
 	if err != nil {
 		panic(err)
@@ -33,35 +35,42 @@ func (s *StoredBlock) ToBlock() *block.Block {
 	return b
 }
 
-type StoredTx struct {
+type CommittedTx struct {
 	TxID      tx.ID
 	Height    uint32
 	BlockTime uint32
 	Data      []byte
 }
 
-func (s *StoredTx) ToTx() *tx.Tx {
-	trx, err := tx.FromBytes(s.Data)
-	if err != nil {
+func (s *CommittedTx) ToTx() *tx.Tx {
+	trx := new(tx.Tx)
+	r := bytes.NewReader(s.Data)
+	if err := trx.Decode(r); err != nil {
 		panic(err)
 	}
-	if !trx.ID().EqualsTo(s.TxID) {
-		panic("invalid data. transaction id does not match")
-	}
+
+	// TODO: we can set public key, if it doesn't set
+	// pubKey, found := store.PublicKey(trx.Payload().Signer())
+	// if !found {
+	// 	panic("unable to find the public key")
+	// }
+	// trx.SetPublicKey(pubKey)
+
 	return trx
 }
 
 type Reader interface {
-	Block(height uint32) (*StoredBlock, error)
+	Block(height uint32) (*CommittedBlock, error)
 	BlockHeight(hash hash.Hash) uint32
 	BlockHash(height uint32) hash.Hash
 	RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block)
-	Transaction(id tx.ID) (*StoredTx, error)
+	Transaction(id tx.ID) (*CommittedTx, error)
+	PublicKey(addr crypto.Address) (crypto.PublicKey, bool)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
 	AccountByNumber(number int32) (*account.Account, error)
 	TotalAccounts() int32
-	HasValidator(crypto.Address) bool
+	HasValidator(addr crypto.Address) bool
 	ValidatorAddresses() []crypto.Address
 	Validator(addr crypto.Address) (*validator.Validator, error)
 	ValidatorByNumber(num int32) (*validator.Validator, error)

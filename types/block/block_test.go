@@ -2,6 +2,7 @@ package block_test
 
 import (
 	"encoding/hex"
+	"fmt"
 	"testing"
 	"time"
 
@@ -186,6 +187,7 @@ func TestBlockHash(t *testing.T) {
 
 	txHashes := make([]hash.Hash, 0)
 	for _, trx := range b.Transactions() {
+		fmt.Println(trx.ID().String())
 		txHashes = append(txHashes, trx.ID())
 	}
 	txRoot := simplemerkle.NewTreeFromHashes(txHashes).Root()

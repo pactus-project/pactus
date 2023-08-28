@@ -102,7 +102,7 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 	height := req.GetHeight()
 	storedBlock := s.state.StoredBlock(height)
 	if storedBlock == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "block not found")
+		return nil, status.Errorf(codes.NotFound, "block not found")
 	}
 	res := &pactus.GetBlockResponse{
 		Height: storedBlock.Height,
@@ -169,7 +169,7 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 	}
 	acc := s.state.AccountByAddress(addr)
 	if acc == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "account not found")
+		return nil, status.Errorf(codes.NotFound, "account not found")
 	}
 	res := &pactus.GetAccountResponse{
 		Account: accountToProto(acc),

@@ -19,6 +19,8 @@ const (
 	flagLockTime  = 0x80
 )
 
+const decodingOptNoPublicKey = 0x01
+
 const maxMemoLength = 64
 
 type ID = hash.Hash
@@ -250,22 +252,38 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 
 // SerializeSize returns the number of bytes it would take to serialize the transaction.
 func (tx *Tx) SerializeSize() int {
-	n := 150 +
+	n := 7 +
 		encoding.VarIntSerializeSize(uint64(tx.Sequence())) +
 		encoding.VarIntSerializeSize(uint64(tx.Fee())) +
 		encoding.VarStringSerializeSize(tx.Memo())
 	if tx.Payload() != nil {
 		n += tx.Payload().SerializeSize()
 	}
+	if tx.data.Signature != nil {
+		n += bls.SignatureSize
+	}
+	if tx.data.PublicKey != nil {
+		n += bls.PublicKeySize
+	}
 
 	return n
 }
 
 func (tx *Tx) Encode(w io.Writer) error {
-	err := tx.EncodeWithNoSignatory(w)
+	var decodingOpt uint8
+	if tx.data.PublicKey == nil {
+		decodingOpt |= decodingOptNoPublicKey
+	}
+
+	err := encoding.WriteElement(w, decodingOpt)
 	if err != nil {
 		return err
 	}
+	err = tx.encodeWithNoSignatory(w)
+	if err != nil {
+		return err
+	}
+
 	if tx.data.Signature != nil {
 		err = tx.data.Signature.Encode(w)
 		if err != nil {
@@ -282,7 +300,7 @@ func (tx *Tx) Encode(w io.Writer) error {
 	return nil
 }
 
-func (tx *Tx) EncodeWithNoSignatory(w io.Writer) error {
+func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
 	err := encoding.WriteElements(w, tx.data.Version, tx.data.Stamp)
 	if err != nil {
 		return err
@@ -310,8 +328,14 @@ func (tx *Tx) EncodeWithNoSignatory(w io.Writer) error {
 	return nil
 }
 
-func (tx *Tx) DecodeWithNoSignatory(r io.Reader) error {
-	err := encoding.ReadElements(r, &tx.data.Version, &tx.data.Stamp)
+func (tx *Tx) Decode(r io.Reader) error {
+	var decodingOpt uint8
+	err := encoding.ReadElement(r, &decodingOpt)
+	if err != nil {
+		return err
+	}
+
+	err = encoding.ReadElements(r, &tx.data.Version, &tx.data.Stamp)
 	if err != nil {
 		return err
 	}
@@ -358,14 +382,6 @@ func (tx *Tx) DecodeWithNoSignatory(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	return nil
-}
-
-func (tx *Tx) Decode(r io.Reader) error {
-	err := tx.DecodeWithNoSignatory(r)
-	if err != nil {
-		return err
-	}
 
 	if !tx.IsSubsidyTx() {
 		sig := new(bls.Signature)
@@ -375,12 +391,14 @@ func (tx *Tx) Decode(r io.Reader) error {
 		}
 		tx.data.Signature = sig
 
-		pub := new(bls.PublicKey)
-		err = pub.Decode(r)
-		if err != nil {
-			return err
+		if decodingOpt&decodingOptNoPublicKey == 0 {
+			pub := new(bls.PublicKey)
+			err = pub.Decode(r)
+			if err != nil {
+				return err
+			}
+			tx.data.PublicKey = pub
 		}
-		tx.data.PublicKey = pub
 	}
 
 	return nil
@@ -395,7 +413,7 @@ func (tx *Tx) String() string {
 
 func (tx *Tx) SignBytes() []byte {
 	buf := bytes.Buffer{}
-	err := tx.EncodeWithNoSignatory(&buf)
+	err := tx.encodeWithNoSignatory(&buf)
 	if err != nil {
 		return nil
 	}

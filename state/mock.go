@@ -161,7 +161,7 @@ func (m *MockState) CommitteePower() int64 {
 	return m.TestCommittee.TotalPower()
 }
 
-func (m *MockState) StoredBlock(height uint32) *store.StoredBlock {
+func (m *MockState) StoredBlock(height uint32) *store.CommittedBlock {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
@@ -169,7 +169,7 @@ func (m *MockState) StoredBlock(height uint32) *store.StoredBlock {
 	return b
 }
 
-func (m *MockState) StoredTx(id tx.ID) *store.StoredTx {
+func (m *MockState) StoredTx(id tx.ID) *store.CommittedTx {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 

@@ -33,11 +33,11 @@ func MockingStore(ts *testsuite.TestSuite) *MockStore {
 	}
 }
 
-func (m *MockStore) Block(height uint32) (*StoredBlock, error) {
+func (m *MockStore) Block(height uint32) (*CommittedBlock, error) {
 	b, ok := m.Blocks[height]
 	if ok {
 		d, _ := b.Bytes()
-		return &StoredBlock{
+		return &CommittedBlock{
 			BlockHash: b.Hash(),
 			Height:    height,
 			Data:      d,
@@ -63,12 +63,23 @@ func (m *MockStore) BlockHeight(hash hash.Hash) uint32 {
 	return 0
 }
 
-func (m *MockStore) Transaction(id tx.ID) (*StoredTx, error) {
+func (m *MockStore) PublicKey(addr crypto.Address) (crypto.PublicKey, bool) {
+	for _, block := range m.Blocks {
+		for _, trx := range block.Transactions() {
+			if trx.Payload().Signer() == addr {
+				return trx.PublicKey(), true
+			}
+		}
+	}
+	return nil, false
+}
+
+func (m *MockStore) Transaction(id tx.ID) (*CommittedTx, error) {
 	for height, block := range m.Blocks {
 		for _, trx := range block.Transactions() {
 			if trx.ID() == id {
 				d, _ := trx.Bytes()
-				return &StoredTx{
+				return &CommittedTx{
 					TxID:      id,
 					Height:    height,
 					BlockTime: block.Header().UnixTime(),
