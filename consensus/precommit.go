@@ -33,9 +33,9 @@ func (s *precommitState) decide() {
 		}
 	} else {
 		//
-		// If a replica receives a set of f+1 valid change-proposer votes for this round,
-		// it goes to the change-proposer state, even if its timer has not expired;
-		// This prevents it from starting the change-proposer state too late.
+		// If a validator receives a set of f+1 valid cp:PRE-VOTE votes for this round,
+		// it starts the changing proposer phase, even if its timer has not expired;
+		// This prevents it from starting the change-proposer phase too late.
 		//
 		cpPreVotes := s.log.CPPreVoteVoteSet(s.round)
 		if cpPreVotes.HasOneThirdOfTotalPower(0) {

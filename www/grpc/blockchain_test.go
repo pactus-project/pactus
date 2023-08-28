@@ -321,8 +321,6 @@ func TestConsensusInfo(t *testing.T) {
 		assert.True(t, res.Instances[1].Active, true)
 		assert.Equal(t, res.Instances[1].Height, uint32(100))
 		assert.Equal(t, res.Instances[0].Votes[0].Type, pactus.VoteType_VOTE_PREPARE)
-		// TODO FIXME
-		// assert.Equal(t, res.Instances[1].Votes[0].Type, pactus.VoteType_VOTE_CHANGE_PROPOSER)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

@@ -17,9 +17,6 @@ import (
 
 // The best way to test this module is by writing test code in the `state.CommitBlock` function
 // to restore the state after each commit.
-//
-// Testing this part is challenging. :(
-
 type testData struct {
 	*testsuite.TestSuite
 

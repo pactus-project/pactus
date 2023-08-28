@@ -1,6 +1,7 @@
 package log
 
 import (
+	"encoding/hex"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/vote"
@@ -56,16 +57,18 @@ func TestAddValidVote(t *testing.T) {
 	assert.Contains(t, mainVotes.AllVotes(), v4)
 }
 
-func TestAddInvalidVote(t *testing.T) {
+func TestAddInvalidVoteType(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	committee, signers := ts.GenerateTestCommittee(4)
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
-	h := ts.RandHeight()
-	r := ts.RandRound()
 
-	invVote := vote.NewVote(5, ts.RandHash(), h, r, signers[0].Address())
+	data, _ := hex.DecodeString("A701050218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
+		"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
+	invVote := new(vote.Vote)
+	err := invVote.UnmarshalCBOR(data)
+	assert.NoError(t, err)
 	signers[0].SignMsg(invVote)
 
 	added, err := log.AddVote(invVote)

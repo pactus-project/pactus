@@ -18,7 +18,6 @@ func (s *cpDecideState) decide() {
 		s.enterNewState(s.proposeState)
 	} else if s.cpDecided == 0 {
 		s.queryProposal()
-		// s.queryVotes()
 		s.enterNewState(s.prepareState)
 	} else {
 		cpMainVotes := s.log.CPMainVoteVoteSet(s.round)

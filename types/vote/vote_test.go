@@ -309,15 +309,17 @@ func TestCPMainVote(t *testing.T) {
 	})
 }
 
-// TODO: test using marshalized data
-
 func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid type", func(t *testing.T) {
-		v := vote.NewVote(5, ts.RandHash(), 100, 0, ts.RandAddress())
+		data, _ := hex.DecodeString("A701050218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
+			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
+		v := new(vote.Vote)
+		err := v.UnmarshalCBOR(data)
+		assert.NoError(t, err)
 
-		err := v.BasicCheck()
+		err = v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
 	})
 
@@ -415,4 +417,11 @@ func TestLog(t *testing.T) {
 	assert.Contains(t, v2.String(), "100/2/PRECOMMIT")
 	assert.Contains(t, v3.String(), "100/2/PRE-VOTE/1")
 	assert.Contains(t, v4.String(), "100/2/MAIN-VOTE/1")
+}
+
+func TestCPValueToString(t *testing.T) {
+	assert.Equal(t, vote.CPValueZero.String(), "zero")
+	assert.Equal(t, vote.CPValueOne.String(), "one")
+	assert.Equal(t, vote.CPValueAbstain.String(), "abstain")
+	assert.Equal(t, vote.CPValue(-1).String(), "unknown: -1")
 }

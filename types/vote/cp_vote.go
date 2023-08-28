@@ -1,6 +1,8 @@
 package vote
 
 import (
+	"fmt"
+
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/util/errors"
 )
@@ -12,6 +14,19 @@ const (
 	CPValueOne     = CPValue(1)
 	CPValueAbstain = CPValue(2)
 )
+
+func (v CPValue) String() string {
+	switch v {
+	case 0:
+		return "zero"
+	case 1:
+		return "one"
+	case 2:
+		return "abstain"
+	default:
+		return fmt.Sprintf("unknown: %d", v)
+	}
+}
 
 type cpVote struct {
 	Round int16

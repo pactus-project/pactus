@@ -27,21 +27,21 @@ type voteData struct {
 	Signature *bls.Signature `cbor:"7,keyasint"`
 }
 
-// NewPrepareVote creates a new prepare with the specified parameters.
+// NewPrepareVote creates a new PREPARE with the specified parameters.
 func NewPrepareVote(blockHash hash.Hash, height uint32, round int16, signer crypto.Address) *Vote {
-	return NewVote(VoteTypePrepare, blockHash, height, round, signer)
+	return newVote(VoteTypePrepare, blockHash, height, round, signer)
 }
 
-// NewPrecommitVote creates a new prepare with the specified parameters.
+// NewPrecommitVote creates a new PRECOMMIT with the specified parameters.
 func NewPrecommitVote(blockHash hash.Hash, height uint32, round int16, signer crypto.Address) *Vote {
-	return NewVote(VoteTypePrecommit, blockHash, height, round, signer)
+	return newVote(VoteTypePrecommit, blockHash, height, round, signer)
 }
 
-// NewCPPreVote creates a new cp:pre-vote with the specified parameters.
+// NewCPPreVote creates a new cp:PRE-VOTE with the specified parameters.
 func NewCPPreVote(blockHash hash.Hash, height uint32, round int16,
 	cpRound int16, cpValue CPValue, just Just, signer crypto.Address,
 ) *Vote {
-	v := NewVote(VoteTypeCPPreVote, blockHash, height, round, signer)
+	v := newVote(VoteTypeCPPreVote, blockHash, height, round, signer)
 	v.data.CPVote = &cpVote{
 		Round: cpRound,
 		Value: cpValue,
@@ -51,11 +51,11 @@ func NewCPPreVote(blockHash hash.Hash, height uint32, round int16,
 	return v
 }
 
-// NewCPMainVote creates a new cp:pre-vote with the specified parameters.
+// NewCPMainVote creates a new cp:MAIN-VOTE with the specified parameters.
 func NewCPMainVote(blockHash hash.Hash, height uint32, round int16,
 	cpRound int16, cpValue CPValue, just Just, signer crypto.Address,
 ) *Vote {
-	v := NewVote(VoteTypeCPMainVote, blockHash, height, round, signer)
+	v := newVote(VoteTypeCPMainVote, blockHash, height, round, signer)
 	v.data.CPVote = &cpVote{
 		Round: cpRound,
 		Value: cpValue,
@@ -65,8 +65,8 @@ func NewCPMainVote(blockHash hash.Hash, height uint32, round int16,
 	return v
 }
 
-// NewVote creates a new vote with the specified parameters.
-func NewVote(voteType Type, blockHash hash.Hash, height uint32, round int16,
+// newVote creates a new vote with the specified parameters.
+func newVote(voteType Type, blockHash hash.Hash, height uint32, round int16,
 	signer crypto.Address,
 ) *Vote {
 	return &Vote{
