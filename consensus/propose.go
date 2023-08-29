@@ -49,7 +49,7 @@ func (s *proposeState) createProposal(height uint32, round int16) {
 	s.logger.Info("proposal signed and broadcasted", "proposal", proposal)
 }
 
-func (s *proposeState) onAddVote(v *vote.Vote) {
+func (s *proposeState) onAddVote(_ *vote.Vote) {
 	panic("Unreachable")
 }
 

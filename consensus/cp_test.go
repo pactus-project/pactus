@@ -101,7 +101,6 @@ func TestChangeProposerAgreement0(t *testing.T) {
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexX)
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexY)
 	checkHeightRound(t, td.consP, h, r)
-
 }
 
 func TestInvalidJustInitOne(t *testing.T) {
