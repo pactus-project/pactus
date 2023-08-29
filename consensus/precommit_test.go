@@ -31,7 +31,7 @@ func TestPrecommitQueryProposal(t *testing.T) {
 	td.shouldPublishQueryProposal(t, td.consP, h, r)
 }
 
-func TestPrecommitInvalidProposal(t *testing.T) {
+func TestPrecommitDuplicatedProposal(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)

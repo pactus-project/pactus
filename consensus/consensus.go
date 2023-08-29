@@ -289,6 +289,18 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 				v.CPValue() == vote.CPValueAbstain {
 				bh := v.BlockHash()
 				cs.cpWeakValidity = &bh
+
+				roundProposal := cs.log.RoundProposal(cs.round)
+
+				if roundProposal != nil &&
+					roundProposal.Block().Hash() != bh {
+					cs.logger.Warn("double proposal detected",
+						"prepared", bh.ShortString(),
+						"roundProposal", roundProposal.Block().Hash().ShortString())
+
+					cs.log.SetRoundProposal(cs.round, nil)
+					cs.queryProposal()
+				}
 			}
 		}
 	}

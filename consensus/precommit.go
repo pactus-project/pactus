@@ -82,16 +82,8 @@ func (s *precommitState) onAddVote(v *vote.Vote) {
 	}
 }
 
-func (s *precommitState) onSetProposal(p *proposal.Proposal) {
-	prepares := s.log.PrepareVoteSet(s.round)
-	prepareQH := prepares.QuorumHash()
-	if !p.IsForBlock(*prepareQH) {
-		s.log.SetRoundProposal(s.round, nil)
-		s.queryProposal()
-		s.logger.Warn("double proposal detected", "received", p, "prepared", *prepareQH)
-	} else {
-		s.decide()
-	}
+func (s *precommitState) onSetProposal(_ *proposal.Proposal) {
+	s.decide()
 }
 
 func (s *precommitState) onTimeout(t *ticker) {
