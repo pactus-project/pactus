@@ -17,8 +17,8 @@ type BlocksResponseMessage struct {
 	SessionID       int                      `cbor:"2,keyasint"`
 	From            uint32                   `cbor:"3,keyasint"`
 	BlocksData      [][]byte                 `cbor:"4,keyasint"`
-	LastCertificate *certificate.Certificate `cbor:"6,keyasint"`
-	Reason          string                   `cbor:"7,keyasint"`
+	LastCertificate *certificate.Certificate `cbor:"5,keyasint"`
+	Reason          string                   `cbor:"6,keyasint"`
 }
 
 func NewBlocksResponseMessage(code ResponseCode, reason string, sid int, from uint32,

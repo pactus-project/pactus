@@ -1,8 +1,15 @@
 package consensus
 
+import (
+	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/vote"
+)
+
 type consState interface {
 	enter()
 	decide()
-	timeout(t *ticker)
+	onAddVote(v *vote.Vote)
+	onSetProposal(p *proposal.Proposal)
+	onTimeout(t *ticker)
 	name() string
 }

@@ -239,7 +239,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 	cs.logger.Info("proposal set", "proposal", p)
 	cs.log.SetRoundProposal(p.Round(), p)
 
-	cs.currentState.decide()
+	cs.currentState.onSetProposal(p)
 }
 
 func (cs *consensus) handleTimeout(t *ticker) {
@@ -254,7 +254,7 @@ func (cs *consensus) handleTimeout(t *ticker) {
 		return
 	}
 
-	cs.currentState.timeout(t)
+	cs.currentState.onTimeout(t)
 }
 
 func (cs *consensus) AddVote(v *vote.Vote) {
@@ -289,18 +289,6 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 				v.CPValue() == vote.CPValueAbstain {
 				bh := v.BlockHash()
 				cs.cpWeakValidity = &bh
-
-				roundProposal := cs.log.RoundProposal(cs.round)
-
-				if roundProposal != nil &&
-					roundProposal.Block().Hash() != bh {
-					cs.logger.Warn("double proposal detected",
-						"prepared proposal", bh.ShortString(),
-						"our proposal", roundProposal.Block().Hash().ShortString())
-
-					cs.log.SetRoundProposal(cs.round, nil)
-					cs.queryProposal()
-				}
 			}
 		}
 	}
@@ -312,7 +300,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 	if added {
 		cs.logger.Debug("new vote added", "vote", v)
 
-		cs.currentState.decide()
+		cs.currentState.onAddVote(v)
 	}
 }
 

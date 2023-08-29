@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
 
@@ -10,6 +11,7 @@ type cpMainVoteState struct {
 }
 
 func (s *cpMainVoteState) enter() {
+	s.decide()
 }
 
 func (s *cpMainVoteState) decide() {
@@ -51,7 +53,17 @@ func (s *cpMainVoteState) decide() {
 	}
 }
 
-func (s *cpMainVoteState) timeout(_ *ticker) {
+func (s *cpMainVoteState) onAddVote(v *vote.Vote) {
+	if v.Type() == vote.VoteTypeCPPreVote {
+		s.decide()
+	}
+}
+
+func (s *cpMainVoteState) onSetProposal(_ *proposal.Proposal) {
+	// Ignore proposal
+}
+
+func (s *cpMainVoteState) onTimeout(_ *ticker) {
 	// Ignore timeouts
 }
 

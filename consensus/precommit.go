@@ -1,5 +1,10 @@
 package consensus
 
+import (
+	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/vote"
+)
+
 type precommitState struct {
 	*consensus
 	hasVoted bool
@@ -61,7 +66,7 @@ func (s *precommitState) vote() {
 	if !roundProposal.IsForBlock(*prepareQH) {
 		s.log.SetRoundProposal(s.round, nil)
 		s.queryProposal()
-		s.logger.Warn("We don't have the quorum proposal", "our proposal", roundProposal, "quorum hash", *prepareQH)
+		s.logger.Warn("double proposal detected", "roundProposal", roundProposal, "prepared", *prepareQH)
 		return
 	}
 
@@ -70,7 +75,26 @@ func (s *precommitState) vote() {
 	s.hasVoted = true
 }
 
-func (s *precommitState) timeout(t *ticker) {
+func (s *precommitState) onAddVote(v *vote.Vote) {
+	if v.Type() == vote.VoteTypePrecommit ||
+		v.Type() == vote.VoteTypeCPPreVote {
+		s.decide()
+	}
+}
+
+func (s *precommitState) onSetProposal(p *proposal.Proposal) {
+	prepares := s.log.PrepareVoteSet(s.round)
+	prepareQH := prepares.QuorumHash()
+	if !p.IsForBlock(*prepareQH) {
+		s.log.SetRoundProposal(s.round, nil)
+		s.queryProposal()
+		s.logger.Warn("double proposal detected", "received", p, "prepared", *prepareQH)
+	} else {
+		s.decide()
+	}
+}
+
+func (s *precommitState) onTimeout(t *ticker) {
 	s.logger.Debug("timer expired")
 
 	if t.Target == tickerTargetChangeProposer {

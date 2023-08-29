@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
 
@@ -64,7 +65,15 @@ func (s *cpPreVoteState) decide() {
 	s.enterNewState(s.cpMainVoteState)
 }
 
-func (s *cpPreVoteState) timeout(_ *ticker) {
+func (s *cpPreVoteState) onAddVote(v *vote.Vote) {
+	panic("Unreachable")
+}
+
+func (s *cpPreVoteState) onSetProposal(_ *proposal.Proposal) {
+	panic("Unreachable")
+}
+
+func (s *cpPreVoteState) onTimeout(_ *ticker) {
 	panic("Unreachable")
 }
 

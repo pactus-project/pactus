@@ -15,10 +15,10 @@ func TestNewHeightTimeout(t *testing.T) {
 	s := &newHeightState{td.consX}
 
 	// Invalid target
-	s.timeout(&ticker{Height: 2, Target: 3})
+	s.onTimeout(&ticker{Height: 2, Target: 3})
 	td.checkHeightRound(t, td.consX, 1, 0)
 
-	s.timeout(&ticker{Height: 2, Target: tickerTargetNewHeight})
+	s.onTimeout(&ticker{Height: 2, Target: tickerTargetNewHeight})
 	td.checkHeightRound(t, td.consX, 2, 0)
 }
 

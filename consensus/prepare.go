@@ -1,5 +1,10 @@
 package consensus
 
+import (
+	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/vote"
+)
+
 type prepareState struct {
 	*consensus
 	hasVoted bool
@@ -53,15 +58,28 @@ func (s *prepareState) vote() {
 	s.hasVoted = true
 }
 
-func (s *prepareState) timeout(t *ticker) {
+func (s *prepareState) onTimeout(t *ticker) {
 	s.logger.Debug("timer expired", "ticker", t)
 
 	if t.Target == tickerTargetQueryProposal {
-		s.queryProposal()
-		s.decide()
+		roundProposal := s.log.RoundProposal(s.round)
+		if roundProposal == nil {
+			s.queryProposal()
+		}
 	} else if t.Target == tickerTargetChangeProposer {
 		s.startChangingProposer()
 	}
+}
+
+func (s *prepareState) onAddVote(v *vote.Vote) {
+	if v.Type() == vote.VoteTypePrepare ||
+		v.Type() == vote.VoteTypeCPPreVote {
+		s.decide()
+	}
+}
+
+func (s *prepareState) onSetProposal(_ *proposal.Proposal) {
+	s.decide()
 }
 
 func (s *prepareState) name() string {

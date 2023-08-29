@@ -39,11 +39,6 @@ func (vs *voteSet) Round() int16 {
 // verifyVote checks if the given vote is valid.
 // It returns the voting power of if valid, or an error if not.
 func (vs *voteSet) verifyVote(v *vote.Vote) (int64, error) {
-	if v.Round() != vs.Round() ||
-		v.Type() != vs.Type() {
-		panic("remove me later")
-	}
-
 	signer := v.Signer()
 	val := vs.validators[signer]
 	if val == nil {

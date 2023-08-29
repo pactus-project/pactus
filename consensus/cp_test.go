@@ -74,12 +74,10 @@ func TestChangeProposerAgreement0(t *testing.T) {
 	td.checkHeightRound(t, td.consP, h, r)
 
 	p := td.makeProposal(t, h, r)
-	td.consP.SetProposal(p)
 
 	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexX)
 	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexY)
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, p.Block().Hash())
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, p.Block().Hash())
+	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexB)
 
 	td.changeProposerTimeout(td.consP)
 
@@ -99,10 +97,11 @@ func TestChangeProposerAgreement0(t *testing.T) {
 	td.addCPMainVote(td.consP, p.Block().Hash(), h, r, 1, vote.CPValueZero, mainVote1.CPJust(), tIndexX)
 	td.addCPMainVote(td.consP, p.Block().Hash(), h, r, 1, vote.CPValueZero, mainVote1.CPJust(), tIndexY)
 
+	td.shouldPublishQueryProposal(t, td.consP, h, r)
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexX)
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexY)
-	td.newHeightTimeout(td.consP)
-	checkHeightRound(t, td.consP, h+1, 0)
+	checkHeightRound(t, td.consP, h, r)
+
 }
 
 func TestInvalidJustInitOne(t *testing.T) {

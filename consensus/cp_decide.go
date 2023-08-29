@@ -1,6 +1,7 @@
 package consensus
 
 import (
+	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
 
@@ -17,7 +18,10 @@ func (s *cpDecideState) decide() {
 		s.round++
 		s.enterNewState(s.proposeState)
 	} else if s.cpDecided == 0 {
-		s.queryProposal()
+		roundProposal := s.log.RoundProposal(s.round)
+		if roundProposal == nil {
+			s.queryProposal()
+		}
 		s.enterNewState(s.prepareState)
 	} else {
 		cpMainVotes := s.log.CPMainVoteVoteSet(s.round)
@@ -43,7 +47,17 @@ func (s *cpDecideState) decide() {
 	}
 }
 
-func (s *cpDecideState) timeout(_ *ticker) {
+func (s *cpDecideState) onAddVote(v *vote.Vote) {
+	if v.Type() == vote.VoteTypeCPMainVote {
+		s.decide()
+	}
+}
+
+func (s *cpDecideState) onSetProposal(_ *proposal.Proposal) {
+	// Ignore proposal
+}
+
+func (s *cpDecideState) onTimeout(_ *ticker) {
 	// Ignore timeouts
 }
 

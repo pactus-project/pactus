@@ -271,7 +271,7 @@ func (td *testData) addVote(cons *consensus, v *vote.Vote, valID int) *vote.Vote
 
 func newHeightTimeout(cons *consensus) {
 	cons.lk.Lock()
-	cons.currentState.timeout(&ticker{0, cons.height, cons.round, tickerTargetNewHeight})
+	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetNewHeight})
 	cons.lk.Unlock()
 }
 
@@ -281,13 +281,13 @@ func (td *testData) newHeightTimeout(cons *consensus) {
 
 func (td *testData) queryProposalTimeout(cons *consensus) {
 	cons.lk.Lock()
-	cons.currentState.timeout(&ticker{0, cons.height, cons.round, tickerTargetQueryProposal})
+	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetQueryProposal})
 	cons.lk.Unlock()
 }
 
 func (td *testData) changeProposerTimeout(cons *consensus) {
 	cons.lk.Lock()
-	cons.currentState.timeout(&ticker{0, cons.height, cons.round, tickerTargetChangeProposer})
+	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetChangeProposer})
 	cons.lk.Unlock()
 }
 
@@ -679,8 +679,8 @@ func TestCases(t *testing.T) {
 		round       int16
 		description string
 	}{
-		{1693211374125314699, 1, "start changing proposer before timer expires in prepare phase (1/3+ cp:PRE-VOTES)."},
-		{1693221874298096995, 2, "1/3+ cp:PRE-VOTE in precommit step."},
+		{1693211374125314699, 2, "1/3+ cp:PRE-VOTE in prepare step"},
+		{1693221874298096995, 2, "1/3+ cp:PRE-VOTE in precommit step"},
 		{1693221808872419351, 0, "Conflicting votes, cp-round=0"},
 		{1693223513075407741, 0, "Conflicting votes, cp-round=1"},
 	}
@@ -696,9 +696,10 @@ func TestCases(t *testing.T) {
 
 		cert, err := checkConsensus(td, 2, nil)
 		require.NoError(t, err,
-			"%v failed: %s", i, test.description)
+			"test %v failed: %s", i+1, err)
 		require.Equal(t, cert.Round(), test.round,
-			"%v round not matched: %s", i, test.description)
+			"test %v failed. round not matched (expected %s, got %s)",
+			i+1, test.round, cert.Round())
 	}
 }
 

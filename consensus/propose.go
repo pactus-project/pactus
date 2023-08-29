@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/vote"
 )
 
 type proposeState struct {
@@ -48,7 +49,15 @@ func (s *proposeState) createProposal(height uint32, round int16) {
 	s.logger.Info("proposal signed and broadcasted", "proposal", proposal)
 }
 
-func (s *proposeState) timeout(_ *ticker) {
+func (s *proposeState) onAddVote(v *vote.Vote) {
+	panic("Unreachable")
+}
+
+func (s *proposeState) onSetProposal(_ *proposal.Proposal) {
+	panic("Unreachable")
+}
+
+func (s *proposeState) onTimeout(_ *ticker) {
 	panic("Unreachable")
 }
 

@@ -1,6 +1,8 @@
 package consensus
 
 import (
+	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -49,7 +51,15 @@ func (s *newHeightState) decide() {
 	}
 }
 
-func (s *newHeightState) timeout(t *ticker) {
+func (s *newHeightState) onAddVote(_ *vote.Vote) {
+	// Ignore votes
+}
+
+func (s *newHeightState) onSetProposal(_ *proposal.Proposal) {
+	// Ignore proposal
+}
+
+func (s *newHeightState) onTimeout(t *ticker) {
 	if t.Target == tickerTargetNewHeight {
 		s.decide()
 	}
