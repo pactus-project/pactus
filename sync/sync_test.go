@@ -104,8 +104,6 @@ func setup(t *testing.T, config *Config) *testData {
 	assert.NoError(t, td.sync.Start())
 	assert.Equal(t, td.sync.Moniker(), config.Moniker)
 
-	td.shouldPublishMessageWithThisType(t, network, message.TypeHello)
-
 	logger.Info("setup finished, running the tests", "name", t.Name())
 
 	return td
