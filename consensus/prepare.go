@@ -1,7 +1,6 @@
 package consensus
 
 import (
-	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
@@ -18,6 +17,8 @@ func (s *prepareState) enter() {
 	queryProposalTimeout := changeProperTimeout / 2
 	s.scheduleTimeout(queryProposalTimeout, s.height, s.round, tickerTargetQueryProposal)
 	s.scheduleTimeout(changeProperTimeout, s.height, s.round, tickerTargetChangeProposer)
+
+	s.decide()
 }
 
 func (s *prepareState) decide() {
@@ -26,8 +27,18 @@ func (s *prepareState) decide() {
 	prepares := s.log.PrepareVoteSet(s.round)
 	prepareQH := prepares.QuorumHash()
 	if prepareQH != nil {
-		s.logger.Debug("prepare has quorum", "prepareQH", prepareQH)
+		s.logger.Debug("prepare has quorum", "hash", prepareQH.ShortString())
 		s.enterNewState(s.precommitState)
+	} else {
+		//
+		// If a validator receives a set of f+1 valid cp:PRE-VOTE votes for this round,
+		// it starts changing the proposer phase, even if its timer has not expired;
+		// This prevents it from starting the change-proposer phase too late.
+		//
+		cpPreVotes := s.log.CPPreVoteVoteSet(s.round)
+		if cpPreVotes.HasOneThirdOfTotalPower(0) {
+			s.startChangingProposer()
+		}
 	}
 }
 
@@ -36,53 +47,39 @@ func (s *prepareState) vote() {
 		return
 	}
 
-	// Liveness on PBFT
-	//
-	// If a replica receives a set of f+1 valid change-proposer votes for this round,
-	// it sends a change-proposer vote, even if its timer has not expired;
-	// this prevents it from starting the change-proposer state too late.
-	//
-	// Adding this check here doesn't reduce the distinct states in TLA+,
-	// but it avoids sending unnecessary votes.
-	voteset := s.log.ChangeProposerVoteSet(s.round)
-	if voteset.BlockHashHasOneThirdOfTotalPower(hash.UndefHash) {
-		s.enterNewState(s.changeProposerState)
-		return
-	}
-
 	roundProposal := s.log.RoundProposal(s.round)
 	if roundProposal == nil {
-		s.logger.Debug("no proposal yet.")
+		s.logger.Debug("no proposal yet")
 		return
 	}
 
 	// Everything is good
-	s.logger.Info("proposal approved", "proposal", roundProposal)
-	s.signAddVote(vote.VoteTypePrepare, roundProposal.Block().Hash())
+	s.signAddPrepareVote(roundProposal.Block().Hash())
 	s.hasVoted = true
 }
 
-func (s *prepareState) onAddVote(v *vote.Vote) {
-	s.doAddVote(v)
-	if v.Round() == s.round {
-		s.decide()
-	}
-}
-
-func (s *prepareState) onSetProposal(p *proposal.Proposal) {
-	s.doSetProposal(p)
-	if p.Round() == s.round {
-		s.decide()
-	}
-}
-
 func (s *prepareState) onTimeout(t *ticker) {
+	s.logger.Debug("timer expired", "ticker", t)
+
 	if t.Target == tickerTargetQueryProposal {
-		s.queryProposal()
-		s.decide()
+		roundProposal := s.log.RoundProposal(s.round)
+		if roundProposal == nil {
+			s.queryProposal()
+		}
 	} else if t.Target == tickerTargetChangeProposer {
-		s.enterNewState(s.changeProposerState)
+		s.startChangingProposer()
 	}
+}
+
+func (s *prepareState) onAddVote(v *vote.Vote) {
+	if v.Type() == vote.VoteTypePrepare ||
+		v.Type() == vote.VoteTypeCPPreVote {
+		s.decide()
+	}
+}
+
+func (s *prepareState) onSetProposal(_ *proposal.Proposal) {
+	s.decide()
 }
 
 func (s *prepareState) name() string {

@@ -4,15 +4,16 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 )
 
 type BlockAnnounceMessage struct {
-	Height      uint32             `cbor:"1,keyasint"`
-	Block       *block.Block       `cbor:"2,keyasint"`
-	Certificate *block.Certificate `cbor:"3,keyasint"`
+	Height      uint32                   `cbor:"1,keyasint"`
+	Block       *block.Block             `cbor:"2,keyasint"`
+	Certificate *certificate.Certificate `cbor:"3,keyasint"`
 }
 
-func NewBlockAnnounceMessage(h uint32, b *block.Block, c *block.Certificate) *BlockAnnounceMessage {
+func NewBlockAnnounceMessage(h uint32, b *block.Block, c *certificate.Certificate) *BlockAnnounceMessage {
 	return &BlockAnnounceMessage{
 		Height:      h,
 		Block:       b,

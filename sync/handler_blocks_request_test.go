@@ -18,7 +18,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		curHeight := td.state.LastBlockHeight()
 
 		sid := td.RandInt(100)
-		pid := td.RandomPeerID()
+		pid := td.RandPeerID()
 
 		t.Run("Reject request from unknown peers", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
@@ -29,7 +29,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, uint32(0))
 		})
 
-		pub, _ := td.RandomBLSKeyPair()
+		pub, _ := td.RandBLSKeyPair()
 		td.addPeer(t, pub, pid, false)
 
 		t.Run("Reject requests not within `LatestBlockInterval`", func(t *testing.T) {
@@ -102,8 +102,8 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		td.sync.config.NodeNetwork = true
 
 		sid := td.RandInt(100)
-		pid := td.RandomPeerID()
-		pub, _ := td.RandomBLSKeyPair()
+		pid := td.RandPeerID()
+		pub, _ := td.RandBLSKeyPair()
 		td.addPeer(t, pub, pid, false)
 
 		t.Run("Requesting one block", func(t *testing.T) {
@@ -118,11 +118,11 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		})
 
 		t.Run("Peer is busy", func(t *testing.T) {
-			td.sync.peerSet.OpenSession(td.RandomPeerID())
-			td.sync.peerSet.OpenSession(td.RandomPeerID())
-			td.sync.peerSet.OpenSession(td.RandomPeerID())
-			td.sync.peerSet.OpenSession(td.RandomPeerID())
-			td.sync.peerSet.OpenSession(td.RandomPeerID())
+			td.sync.peerSet.OpenSession(td.RandPeerID())
+			td.sync.peerSet.OpenSession(td.RandPeerID())
+			td.sync.peerSet.OpenSession(td.RandPeerID())
+			td.sync.peerSet.OpenSession(td.RandPeerID())
+			td.sync.peerSet.OpenSession(td.RandPeerID())
 			require.Equal(t, td.sync.peerSet.NumberOfOpenSessions(), 5)
 
 			s := td.sync.peerSet.OpenSession(td.network.SelfID())

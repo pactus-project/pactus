@@ -1,9 +1,11 @@
 package vote_test
 
 import (
+	"encoding/hex"
 	"testing"
 
-	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -11,33 +13,203 @@ import (
 )
 
 func TestVoteMarshaling(t *testing.T) {
+	tests := []struct {
+		data      string
+		justType  string
+		signBytes string
+	}{
+		{
+			"A7" + // map(7)
+				"0101" + // Type: 1 (prepare vote)
+				"021832" + // Height: 50
+				"0301" + // Round: 1
+				"045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // Block Hash
+				"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // Signer
+				"06f6" + // CP_vote -> Null
+				"07f6", // Signature -> Null
+			"",
+			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB32000000010050524550415245",
+		},
+		{
+			"A7" + // map(7)
+				"0102" + // Type: 2 (precommit vote)
+				"021832" + // Height: 50
+				"0301" + // Round: 1
+				"045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // Block Hash
+				"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // Signer
+				"06f6" + // CP_vote -> Null
+				"07f6", // Signature -> Null
+			"",
+			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB320000000100",
+		},
+		{
+			"A7" + // map(7)
+				"0103" + // Type: 3 (cp:pre-vote)
+				"021832" + // Height: 50
+				"0301" + // Round: 1
+				"045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // Block Hash
+				"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // Signer
+				"06" + // CP_vote
+				"A4" + // map(4)
+				"0100" + // CP_Round: 0
+				"0200" + // CP_Value: 0
+				"0301" + // Just type: 1
+				"045840" + // Just: JustTypeInitZero
+				"A1" + // map(1)
+				"01583C" + // Certificate (60 bytes)
+				"32000000010004010203040094D25422904AC1D130AC981374AA4424F988" + // Certificate Data
+				"61E99131078EFEFD62FC52CF072B0C08BB04E4E6496BA48DE4F3D3309AAB" +
+				"07f6", // Signature -> Null
+			"JustInitZero",
+			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB3200000001005052452d564f5445000000",
+		},
+		{
+			"A7" + // map(7)
+				"0103" + // Type: 3 (cp:pre-vote)
+				"021832" + // Height: 50
+				"0301" + // Round: 1
+				"0458200000000000000000000000000000000000000000000000000000000000000000" + // Block Hash
+				"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // Signer
+				"06" + // CP_vote
+				"A4" + // map(4)
+				"0100" + // CP_Round: 0
+				"0201" + // CP_Value: 1
+				"0302" + // Just type: 2
+				"0441" + // Just: JustTypeInitOne
+				"A0" + // Empty Array
+				"07f6", // Signature -> Null
+			"JustInitOne",
+			"00000000000000000000000000000000000000000000000000000000000000003200000001005052452d564f5445000001",
+		},
+		{
+			"A7" + // map(7)
+				"0103" + // Type: 3 (cp:pre-vote)
+				"021832" + // Height: 50
+				"0301" + // Round: 1
+				"045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // Block Hash
+				"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // Signer
+				"06" + // CP_vote
+				"A4" + // map(4)
+				"0101" + // CP_Round: 1
+				"0200" + // CP_Value: 0
+				"0303" + // Just type: 3
+				"045840" + // Just: JustPreVoteSoft
+				"A1" + // map(1)
+				"01583C" + // Certificate (60 bytes)
+				"32000000010004010203040094D25422904AC1D130AC981374AA4424F988" + // Certificate Data
+				"61E99131078EFEFD62FC52CF072B0C08BB04E4E6496BA48DE4F3D3309AAB" +
+				"07f6", // Signature -> Null
+			"JustPreVoteSoft",
+			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB3200000001005052452d564f5445010000",
+		},
+		{
+			"A7" + // map(7)
+				"0103" + // Type: 3 (cp:pre-vote)
+				"021832" + // Height: 50
+				"0301" + // Round: 1
+				"045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // Block Hash
+				"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // Signer
+				"06" + // CP_vote
+				"A4" + // map(4)
+				"0101" + // CP_Round: 1
+				"0200" + // CP_Value: 0
+				"0304" + // Just type: 4
+				"045840" + // Just: JustPreVoteHard
+				"A1" + // map(1)
+				"01583C" + // Certificate (60 bytes)
+				"32000000010004010203040094D25422904AC1D130AC981374AA4424F988" + // Certificate Data
+				"61E99131078EFEFD62FC52CF072B0C08BB04E4E6496BA48DE4F3D3309AAB" +
+				"07f6", // Signature -> Null
+			"JustPreVoteHard",
+			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB3200000001005052452d564f5445010000",
+		},
+		{
+			"A7" + // map(7)
+				"0104" + // Type: 4 (cp:main-vote)
+				"021832" + // Height: 50
+				"0301" + // Round: 1
+				"045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // Block Hash
+				"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // Signer
+				"06" + // CP_vote
+				"A4" + // map(4)
+				"0101" + // CP_Round: 1
+				"0202" + // CP_Value: 2 (abstain)
+				"0305" + // Just type: 5
+				"04584b" + // Just: JustTypeMainVoteConflict
+				"A4" + // map(4)
+				"0101" + // Just0: Type (JustTypeInitZero)
+				"025840" + // Just0Data
+				"A1" + // map(1)
+				"01583C" + // Certificate (60 bytes)
+				"32000000010004010203040094D25422904AC1D130AC981374AA4424F988" + // Certificate Data
+				"61E99131078EFEFD62FC52CF072B0C08BB04E4E6496BA48DE4F3D3309AAB" +
+				"0302" + // Just1: Type (JustTypeInitOne)
+				"0441" + // Just1Data
+				"A0" + // Empty Array
+				"07f6", // Signature -> Null
+			"JustMainVoteConflict",
+			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB3200000001004d41494e2d564f5445010002",
+		},
+		{
+			"A7" + // map(7)
+				"0104" + // Type: 4 (cp:main-vote)
+				"021832" + // Height: 50
+				"0301" + // Round: 1
+				"0458200000000000000000000000000000000000000000000000000000000000000000" + // Block Hash
+				"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // Signer
+				"06" + // CP_vote
+				"A4" + // map(4)
+				"0101" + // CP_Round: 1
+				"0201" + // CP_Value: 1
+				"0306" + // Just type: 6
+				"045840" + // Just: JustTypeMainVoteNoConflict
+				"A1" + // map(1)
+				"01583C" + // Certificate (60 bytes)
+				"32000000010004010203040094D25422904AC1D130AC981374AA4424F988" + // Certificate Data
+				"61E99131078EFEFD62FC52CF072B0C08BB04E4E6496BA48DE4F3D3309AAB" +
+				"07f6", // Signature -> Null
+			"JustMainVoteNoConflict",
+			"00000000000000000000000000000000000000000000000000000000000000003200000001004d41494e2d564f5445010001",
+		},
+	}
+
 	ts := testsuite.NewTestSuite(t)
-	v1, _ := ts.GenerateTestPrepareVote(10, 10)
+	for _, test := range tests {
+		bz1, _ := hex.DecodeString(test.data)
 
-	bz1, err := v1.MarshalCBOR()
-	assert.NoError(t, err)
-	var v2 vote.Vote
-	err = v2.UnmarshalCBOR(bz1)
-	assert.NoError(t, err)
-	bz2, _ := v2.MarshalCBOR()
+		v := new(vote.Vote)
+		err := v.UnmarshalCBOR(bz1)
+		assert.NoError(t, err)
 
-	assert.Equal(t, bz1, bz2)
-	assert.Equal(t, v1.Hash(), v2.Hash())
-	assert.Equal(t, v1.Height(), v2.Height())
-	assert.Equal(t, v1.Round(), v2.Round())
-	assert.Equal(t, v1.BlockHash(), v2.BlockHash())
-	assert.Equal(t, v1.Signer(), v2.Signer())
+		bz2, err := v.MarshalCBOR()
+		assert.NoError(t, err)
+
+		assert.Equal(t, bz1, bz2)
+
+		expectedHash := hash.CalcHash(bz1)
+		assert.Equal(t, v.Hash(), expectedHash)
+
+		v.SetSignature(ts.RandBLSSignature())
+		assert.NoError(t, v.BasicCheck())
+
+		expectedSignBytes, _ := hex.DecodeString(test.signBytes)
+		assert.Equal(t, v.SignBytes(), expectedSignBytes)
+
+		if test.justType != "" {
+			assert.Equal(t, v.CPJust().Type().String(), test.justType)
+		}
+	}
 }
 
 func TestVoteSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	h1 := ts.RandomHash()
-	pb1, pv1 := ts.RandomBLSKeyPair()
-	pb2, pv2 := ts.RandomBLSKeyPair()
+	h1 := ts.RandHash()
+	pb1, pv1 := ts.RandBLSKeyPair()
+	pb2, pv2 := ts.RandBLSKeyPair()
 
-	v1 := vote.NewVote(vote.VoteTypePrepare, 101, 5, h1, pb1.Address())
-	v2 := vote.NewVote(vote.VoteTypePrepare, 101, 5, h1, pb2.Address())
+	v1 := vote.NewPrepareVote(h1, 101, 5, pb1.Address())
+	v2 := vote.NewPrepareVote(h1, 101, 5, pb2.Address())
 
 	assert.Error(t, v1.Verify(pb1), "No signature")
 
@@ -54,39 +226,139 @@ func TestVoteSignature(t *testing.T) {
 	assert.Error(t, v2.Verify(pb2), "invalid signature")
 }
 
-func TestBasicCheck(t *testing.T) {
+func TestCPPreVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	t.Run("Invalid type", func(t *testing.T) {
-		v := vote.NewVote(4, 100, 0, ts.RandomHash(), ts.RandomAddress())
-
-		err := v.BasicCheck()
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
-	})
-
-	t.Run("Invalid height", func(t *testing.T) {
-		v := vote.NewVote(vote.VoteTypePrepare, 0, 0, ts.RandomHash(), ts.RandomAddress())
-
-		err := v.BasicCheck()
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
-	})
+	h := ts.RandHeight()
+	r := ts.RandRound()
+	just := &vote.JustInitOne{}
 
 	t.Run("Invalid round", func(t *testing.T) {
-		v := vote.NewVote(vote.VoteTypePrepare, 100, -1, ts.RandomHash(), ts.RandomAddress())
+		v := vote.NewCPPreVote(hash.UndefHash, h, r,
+			-1, vote.CPValueOne, just, ts.RandAddress())
 
 		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
 	})
 
-	t.Run("No signature", func(t *testing.T) {
-		v := vote.NewVote(vote.VoteTypePrepare, 100, 0, ts.RandomHash(), ts.RandomAddress())
+	t.Run("Invalid value", func(t *testing.T) {
+		v := vote.NewCPPreVote(hash.UndefHash, h, r,
+			1, vote.CPValueAbstain, just, ts.RandAddress())
 
 		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		v, _ := ts.GenerateTestChangeProposerVote(5, 5)
+		v := vote.NewCPPreVote(hash.UndefHash, h, r, 1,
+			vote.CPValueZero, just, ts.RandAddress())
+		v.SetSignature(ts.RandBLSSignature())
+
+		err := v.BasicCheck()
+		assert.NoError(t, err)
+		assert.Equal(t, v.CPRound(), int16(1))
+		assert.Equal(t, v.CPValue(), vote.CPValueZero)
+		assert.NotNil(t, v.CPJust())
+	})
+}
+
+func TestCPMainVote(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	h := ts.RandHeight()
+	r := ts.RandRound()
+	just := &vote.JustInitOne{}
+
+	t.Run("Invalid round", func(t *testing.T) {
+		v := vote.NewCPMainVote(hash.UndefHash, h, r,
+			-1, vote.CPValueZero, just, ts.RandAddress())
+
+		err := v.BasicCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
+	})
+
+	t.Run("No CP data", func(t *testing.T) {
+		data, _ := hex.DecodeString("A701040218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
+			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
+		v := new(vote.Vote)
+		err := v.UnmarshalCBOR(data)
+		assert.NoError(t, err)
+		v.SetSignature(ts.RandBLSSignature())
+
+		assert.Error(t, v.BasicCheck())
+	})
+
+	t.Run("Invalid value", func(t *testing.T) {
+		v := vote.NewCPMainVote(hash.UndefHash, h, r, 1,
+			4, just, ts.RandAddress())
+
+		err := v.BasicCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		v := vote.NewCPMainVote(hash.UndefHash, h, r,
+			1, vote.CPValueAbstain, just, ts.RandAddress())
+		v.SetSignature(ts.RandBLSSignature())
+
+		err := v.BasicCheck()
+		assert.NoError(t, err)
+		assert.Equal(t, v.CPRound(), int16(1))
+		assert.Equal(t, v.CPValue(), vote.CPValueAbstain)
+		assert.NotNil(t, v.CPJust())
+	})
+}
+
+func TestBasicCheck(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	t.Run("Invalid type", func(t *testing.T) {
+		data, _ := hex.DecodeString("A701050218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
+			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
+		v := new(vote.Vote)
+		err := v.UnmarshalCBOR(data)
+		assert.NoError(t, err)
+
+		err = v.BasicCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
+	})
+
+	t.Run("Invalid height", func(t *testing.T) {
+		v := vote.NewPrepareVote(ts.RandHash(), 0, 0, ts.RandAddress())
+
+		err := v.BasicCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
+	})
+
+	t.Run("Invalid round", func(t *testing.T) {
+		v := vote.NewPrepareVote(ts.RandHash(), 100, -1, ts.RandAddress())
+
+		err := v.BasicCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
+	})
+
+	t.Run("No signature", func(t *testing.T) {
+		v := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAddress())
+
+		err := v.BasicCheck()
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
+	})
+
+	t.Run("Has CP data", func(t *testing.T) {
+		data, _ := hex.DecodeString("A701020218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
+			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06A40100020103020441A007f6")
+		v := new(vote.Vote)
+		err := v.UnmarshalCBOR(data)
+		assert.NoError(t, err)
+		v.SetSignature(ts.RandBLSSignature())
+
+		assert.Error(t, v.BasicCheck())
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		v := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAddress())
+		v.SetSignature(ts.RandBLSSignature())
+
 		assert.NoError(t, v.BasicCheck())
 	})
 }
@@ -94,25 +366,62 @@ func TestBasicCheck(t *testing.T) {
 func TestSignBytes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	signer := ts.RandomAddress()
-	blockHash := ts.RandomHash()
-	height := ts.RandUint32(100000)
-	round := ts.RandInt16(10)
+	signer := ts.RandAddress()
+	blockHash := ts.RandHash()
+	height := uint32(100)
+	round := int16(2)
+	just := &vote.JustInitZero{}
 
-	v1 := vote.NewVote(vote.VoteTypePrepare, height, round, blockHash, signer)
-	v2 := vote.NewVote(vote.VoteTypeChangeProposer, height, round, blockHash, signer)
-	v3 := vote.NewVote(vote.VoteTypePrecommit, height, round, blockHash, signer)
+	v1 := vote.NewPrepareVote(blockHash, height, round, signer)
+	v2 := vote.NewPrecommitVote(blockHash, height, round, signer)
+	v3 := vote.NewCPPreVote(blockHash, height, round, 1, vote.CPValueZero, just, signer)
+	v4 := vote.NewCPMainVote(blockHash, height, round, 1, vote.CPValueAbstain, just, signer)
 
 	sb1 := v1.SignBytes()
 	sb2 := v2.SignBytes()
 	sb3 := v3.SignBytes()
-	sb4 := block.CertificateSignBytes(blockHash, round)
+	sb4 := v4.SignBytes()
+	sb5 := certificate.BlockCertificateSignBytes(blockHash, height, round)
 
-	assert.Contains(t, string(sb1), "prepare")
-	assert.Contains(t, string(sb2), "change-proposer")
-	assert.Equal(t, len(sb3), 34)
+	assert.Equal(t, len(sb1), 45)
+	assert.Equal(t, len(sb2), 38)
+	assert.Equal(t, len(sb3), 49)
+	assert.Equal(t, len(sb4), 50)
+
+	assert.Contains(t, string(sb1), "PREPARE")
+	assert.Contains(t, string(sb3), "PRE-VOTE")
+	assert.Contains(t, string(sb4), "MAIN-VOTE")
 	assert.NotEqual(t, sb1, sb2)
 	assert.NotEqual(t, sb1, sb3)
+	assert.NotEqual(t, sb1, sb4)
 	assert.NotEqual(t, sb2, sb3)
-	assert.Equal(t, sb3, sb4)
+	assert.NotEqual(t, sb3, sb4)
+	assert.Equal(t, sb2, sb5)
+}
+
+func TestLog(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	signer := ts.RandAddress()
+	blockHash := ts.RandHash()
+	height := uint32(100)
+	round := int16(2)
+	just := &vote.JustInitZero{}
+
+	v1 := vote.NewPrepareVote(blockHash, height, round, signer)
+	v2 := vote.NewPrecommitVote(blockHash, height, round, signer)
+	v3 := vote.NewCPPreVote(blockHash, height, round, 1, vote.CPValueZero, just, signer)
+	v4 := vote.NewCPMainVote(blockHash, height, round, 1, vote.CPValueAbstain, just, signer)
+
+	assert.Contains(t, v1.String(), "100/2/PREPARE")
+	assert.Contains(t, v2.String(), "100/2/PRECOMMIT")
+	assert.Contains(t, v3.String(), "100/2/PRE-VOTE/1")
+	assert.Contains(t, v4.String(), "100/2/MAIN-VOTE/1")
+}
+
+func TestCPValueToString(t *testing.T) {
+	assert.Equal(t, vote.CPValueZero.String(), "zero")
+	assert.Equal(t, vote.CPValueOne.String(), "one")
+	assert.Equal(t, vote.CPValueAbstain.String(), "abstain")
+	assert.Equal(t, vote.CPValue(-1).String(), "unknown: -1")
 }

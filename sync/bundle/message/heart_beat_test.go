@@ -17,13 +17,13 @@ func TestHeartBeatMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid height", func(t *testing.T) {
-		m := NewHeartBeatMessage(0, 0, ts.RandomHash())
+		m := NewHeartBeatMessage(0, 0, ts.RandHash())
 
 		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidHeight)
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		m := NewHeartBeatMessage(100, 1, ts.RandomHash())
+		m := NewHeartBeatMessage(100, 1, ts.RandHash())
 
 		assert.NoError(t, m.BasicCheck())
 		assert.Contains(t, m.String(), "100")

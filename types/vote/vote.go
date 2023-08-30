@@ -7,12 +7,12 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 )
 
-// Vote represents a prepare, precommit, or commit vote from validators for
-// consensus.
+// Vote is a struct that represents a consensus vote.
 type Vote struct {
 	data voteData
 }
@@ -23,23 +23,52 @@ type voteData struct {
 	Round     int16          `cbor:"3,keyasint"`
 	BlockHash hash.Hash      `cbor:"4,keyasint"`
 	Signer    crypto.Address `cbor:"5,keyasint"`
-	Signature *bls.Signature `cbor:"6,keyasint"`
+	CPVote    *cpVote        `cbor:"6,keyasint"`
+	Signature *bls.Signature `cbor:"7,keyasint"`
 }
 
-func (v *Vote) SignBytes() []byte {
-	// Note:
-	// We omit block height, because finally block height is not matter, block hash is matter
-	sb := block.CertificateSignBytes(v.data.BlockHash, v.data.Round)
-	if v.Type() == VoteTypePrepare {
-		sb = append(sb, []byte("prepare")...)
-	} else if v.Type() == VoteTypeChangeProposer {
-		sb = append(sb, []byte("change-proposer")...)
+// NewPrepareVote creates a new PREPARE with the specified parameters.
+func NewPrepareVote(blockHash hash.Hash, height uint32, round int16, signer crypto.Address) *Vote {
+	return newVote(VoteTypePrepare, blockHash, height, round, signer)
+}
+
+// NewPrecommitVote creates a new PRECOMMIT with the specified parameters.
+func NewPrecommitVote(blockHash hash.Hash, height uint32, round int16, signer crypto.Address) *Vote {
+	return newVote(VoteTypePrecommit, blockHash, height, round, signer)
+}
+
+// NewCPPreVote creates a new cp:PRE-VOTE with the specified parameters.
+func NewCPPreVote(blockHash hash.Hash, height uint32, round int16,
+	cpRound int16, cpValue CPValue, just Just, signer crypto.Address,
+) *Vote {
+	v := newVote(VoteTypeCPPreVote, blockHash, height, round, signer)
+	v.data.CPVote = &cpVote{
+		Round: cpRound,
+		Value: cpValue,
+		Just:  just,
 	}
 
-	return sb
+	return v
 }
 
-func NewVote(voteType Type, height uint32, round int16, blockHash hash.Hash, signer crypto.Address) *Vote {
+// NewCPMainVote creates a new cp:MAIN-VOTE with the specified parameters.
+func NewCPMainVote(blockHash hash.Hash, height uint32, round int16,
+	cpRound int16, cpValue CPValue, just Just, signer crypto.Address,
+) *Vote {
+	v := newVote(VoteTypeCPMainVote, blockHash, height, round, signer)
+	v.data.CPVote = &cpVote{
+		Round: cpRound,
+		Value: cpValue,
+		Just:  just,
+	}
+
+	return v
+}
+
+// newVote creates a new vote with the specified parameters.
+func newVote(voteType Type, blockHash hash.Hash, height uint32, round int16,
+	signer crypto.Address,
+) *Vote {
 	return &Vote{
 		data: voteData{
 			Type:      voteType,
@@ -51,13 +80,71 @@ func NewVote(voteType Type, height uint32, round int16, blockHash hash.Hash, sig
 	}
 }
 
-func (v *Vote) Type() Type                { return v.data.Type }
-func (v *Vote) Height() uint32            { return v.data.Height }
-func (v *Vote) Round() int16              { return v.data.Round }
-func (v *Vote) BlockHash() hash.Hash      { return v.data.BlockHash }
-func (v *Vote) Signer() crypto.Address    { return v.data.Signer }
-func (v *Vote) Signature() *bls.Signature { return v.data.Signature }
+// SignBytes generates the bytes to be signed for the vote.
+func (v *Vote) SignBytes() []byte {
+	sb := certificate.BlockCertificateSignBytes(v.data.BlockHash, v.data.Height, v.data.Round)
+	switch t := v.Type(); t {
+	case VoteTypePrecommit:
+		// Nothing
 
+	case VoteTypePrepare:
+		sb = append(sb, util.StringToBytes(t.String())...)
+
+	case VoteTypeCPPreVote, VoteTypeCPMainVote:
+		sb = append(sb, util.StringToBytes(t.String())...)
+		sb = append(sb, util.Int16ToSlice(v.data.CPVote.Round)...)
+		sb = append(sb, byte(v.data.CPVote.Value))
+	}
+
+	return sb
+}
+
+// Type returns the type of the vote.
+func (v *Vote) Type() Type {
+	return v.data.Type
+}
+
+// Height returns the height of the block in the vote.
+func (v *Vote) Height() uint32 {
+	return v.data.Height
+}
+
+// Round returns the round the vote.
+func (v *Vote) Round() int16 {
+	return v.data.Round
+}
+
+// CPRound returns the change proposer round the vote.
+func (v *Vote) CPRound() int16 {
+	return v.data.CPVote.Round
+}
+
+// CPValue returns the change proposer value the vote.
+func (v *Vote) CPValue() CPValue {
+	return v.data.CPVote.Value
+}
+
+// CPValue returns the change proposer justification for the vote.
+func (v *Vote) CPJust() Just {
+	return v.data.CPVote.Just
+}
+
+// BlockHash returns the hash of the block in the vote.
+func (v *Vote) BlockHash() hash.Hash {
+	return v.data.BlockHash
+}
+
+// Signer returns the address of the signer of the vote.
+func (v *Vote) Signer() crypto.Address {
+	return v.data.Signer
+}
+
+// Signature returns the signature of the vote.
+func (v *Vote) Signature() *bls.Signature {
+	return v.data.Signature
+}
+
+// SetSignature sets the signature of the vote.
 func (v *Vote) SetSignature(sig crypto.Signature) {
 	v.data.Signature = sig.(*bls.Signature)
 }
@@ -65,19 +152,23 @@ func (v *Vote) SetSignature(sig crypto.Signature) {
 // SetPublicKey is doing nothing and just satisfies SignableMsg interface.
 func (v *Vote) SetPublicKey(crypto.PublicKey) {}
 
+// MarshalCBOR marshals the vote into CBOR format.
 func (v *Vote) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(v.data)
 }
 
+// UnmarshalCBOR unmarshals the vote from CBOR format.
 func (v *Vote) UnmarshalCBOR(bs []byte) error {
 	return cbor.Unmarshal(bs, &v.data)
 }
 
+// Hash calculates the hash of the vote.
 func (v *Vote) Hash() hash.Hash {
 	bz, _ := cbor.Marshal(v.data)
 	return hash.CalcHash(bz)
 }
 
+// Verify checks the signature of the vote with the given public key.
 func (v *Vote) Verify(pubKey *bls.PublicKey) error {
 	if v.Signature() == nil {
 		return errors.Errorf(errors.ErrInvalidVote, "no signature")
@@ -88,6 +179,7 @@ func (v *Vote) Verify(pubKey *bls.PublicKey) error {
 	return pubKey.Verify(v.SignBytes(), v.Signature())
 }
 
+// BasicCheck performs a basic check on the vote.
 func (v *Vote) BasicCheck() error {
 	if !v.data.Type.IsValid() {
 		return errors.Errorf(errors.ErrInvalidVote, "invalid vote type")
@@ -101,6 +193,19 @@ func (v *Vote) BasicCheck() error {
 	if err := v.data.Signer.BasicCheck(); err != nil {
 		return err
 	}
+	if v.data.Type == VoteTypeCPPreVote ||
+		v.data.Type == VoteTypeCPMainVote {
+		if v.data.CPVote == nil {
+			return errors.Errorf(errors.ErrInvalidVote, "should have cp data")
+		}
+		if err := v.data.CPVote.BasicCheck(); err != nil {
+			return err
+		}
+	} else {
+		if v.data.CPVote != nil {
+			return errors.Errorf(errors.ErrInvalidVote, "should not have cp data")
+		}
+	}
 	if v.Signature() == nil {
 		return errors.Errorf(errors.ErrInvalidVote, "no signature")
 	}
@@ -108,11 +213,27 @@ func (v *Vote) BasicCheck() error {
 }
 
 func (v *Vote) String() string {
-	return fmt.Sprintf("{%v/%d/%s ⌘ %v 👤 %s}",
-		v.Height(),
-		v.Round(),
-		v.Type(),
-		v.BlockHash().ShortString(),
-		v.Signer().ShortString(),
-	)
+	switch v.Type() {
+	case VoteTypePrepare, VoteTypePrecommit:
+		return fmt.Sprintf("{%d/%d/%s ⌘ %v 👤 %s}",
+			v.Height(),
+			v.Round(),
+			v.Type(),
+			v.BlockHash().ShortString(),
+			v.Signer().ShortString(),
+		)
+	case VoteTypeCPPreVote, VoteTypeCPMainVote:
+		return fmt.Sprintf("{%d/%d/%s/%d/%d ⌘ %v 👤 %s}",
+			v.Height(),
+			v.Round(),
+			v.Type(),
+			v.CPRound(),
+			v.CPValue(),
+			v.BlockHash().ShortString(),
+			v.Signer().ShortString(),
+		)
+
+	default:
+		return "unknown type"
+	}
 }

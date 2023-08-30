@@ -39,7 +39,7 @@ func setup(t *testing.T) *testData {
 	mockState := state.MockingState(ts)
 	mockSync := sync.MockingSync(ts)
 	mockConsMgr, _ := consensus.MockingManager(ts, []crypto.Signer{
-		ts.RandomSigner(), ts.RandomSigner(),
+		ts.RandSigner(), ts.RandSigner(),
 	})
 
 	grpcConf := &grpc.Config{

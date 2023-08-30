@@ -19,17 +19,17 @@ func TestHelloMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid signature", func(t *testing.T) {
-		signer := ts.RandomSigner()
-		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash(), ts.RandomHash())
+		signer := ts.RandSigner()
+		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash())
 		m.Sign(signer)
-		m.Signature = ts.RandomBLSSignature()
+		m.Signature = ts.RandBLSSignature()
 
 		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidSignature)
 	})
 
 	t.Run("Signature is nil", func(t *testing.T) {
-		signer := ts.RandomSigner()
-		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash(), ts.RandomHash())
+		signer := ts.RandSigner()
+		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash())
 		m.Sign(signer)
 		m.Signature = nil
 
@@ -37,8 +37,8 @@ func TestHelloMessage(t *testing.T) {
 	})
 
 	t.Run("PublicKeys are empty", func(t *testing.T) {
-		signer := ts.RandomSigner()
-		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash(), ts.RandomHash())
+		signer := ts.RandSigner()
+		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash())
 		m.Sign(signer)
 		m.PublicKeys = make([]*bls.PublicKey, 0)
 
@@ -46,8 +46,8 @@ func TestHelloMessage(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		signer := ts.RandomSigner()
-		m := NewHelloMessage(ts.RandomPeerID(), "Alice", 100, 0, ts.RandomHash(), ts.RandomHash())
+		signer := ts.RandSigner()
+		m := NewHelloMessage(ts.RandPeerID(), "Alice", 100, 0, ts.RandHash(), ts.RandHash())
 		m.Sign(signer)
 
 		assert.NoError(t, m.BasicCheck())

@@ -1,12 +1,12 @@
 package consensus
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/store"
@@ -18,10 +18,36 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func shouldPublishProposal(t *testing.T, broadcastCh chan message.Message,
+	height uint32, round int16,
+) *proposal.Proposal {
+	t.Helper()
+
+	timeout := time.NewTimer(1 * time.Second)
+
+	for {
+		select {
+		case <-timeout.C:
+			require.NoError(t, fmt.Errorf("Timeout"))
+			return nil
+		case msg := <-broadcastCh:
+			logger.Info("shouldPublishProposal", "message", msg)
+
+			if msg.Type() == message.TypeProposal {
+				m := msg.(*message.ProposalMessage)
+				require.Equal(t, m.Proposal.Height(), height)
+				require.Equal(t, m.Proposal.Round(), round)
+				return m.Proposal
+			}
+		}
+	}
+}
 
 func TestManager(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
@@ -42,16 +68,16 @@ func TestManager(t *testing.T) {
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
 
 	rewardAddrs := []crypto.Address{
-		ts.RandomAddress(), ts.RandomAddress(),
-		ts.RandomAddress(), ts.RandomAddress(),
-		ts.RandomAddress(),
+		ts.RandAddress(), ts.RandAddress(),
+		ts.RandAddress(), ts.RandAddress(),
+		ts.RandAddress(),
 	}
 	signers := make([]crypto.Signer, 5)
 	signers[0] = committeeSigners[0]
-	signers[1] = committeeSigners[1]
-	signers[2] = ts.RandomSigner()
-	signers[3] = ts.RandomSigner()
-	signers[4] = ts.RandomSigner()
+	signers[1] = ts.RandSigner()
+	signers[2] = committeeSigners[1]
+	signers[3] = ts.RandSigner()
+	signers[4] = ts.RandSigner()
 	broadcastCh := make(chan message.Message, 500)
 	txPool := txpool.MockingTxPool()
 
@@ -62,84 +88,68 @@ func TestManager(t *testing.T) {
 	mgr := Mgr.(*manager)
 
 	consA := mgr.instances[0].(*consensus) // active
-	consB := mgr.instances[1].(*consensus) // active
-	consC := mgr.instances[2].(*consensus) // inactive
+	consB := mgr.instances[1].(*consensus) // inactive
+	consC := mgr.instances[2].(*consensus) // active
 	consD := mgr.instances[3].(*consensus) // inactive
 	consE := mgr.instances[4].(*consensus) // inactive
 
 	assert.False(t, mgr.HasActiveInstance())
+	mgr.MoveToNewHeight()
+	newHeightTimeout(consA)
+	newHeightTimeout(consB)
+	newHeightTimeout(consC)
+	newHeightTimeout(consD)
+	newHeightTimeout(consE)
 
 	t.Run("Check if keys are assigned properly", func(t *testing.T) {
-		instances := mgr.Instances()
-
-		assert.Equal(t, signers[0].PublicKey(), instances[0].SignerKey())
-		assert.Equal(t, signers[1].PublicKey(), instances[1].SignerKey())
-		assert.Equal(t, signers[2].PublicKey(), instances[2].SignerKey())
-		assert.Equal(t, signers[3].PublicKey(), instances[3].SignerKey())
-		assert.Equal(t, signers[4].PublicKey(), instances[4].SignerKey())
+		assert.Equal(t, signers[0].PublicKey(), consA.SignerKey())
+		assert.Equal(t, signers[1].PublicKey(), consB.SignerKey())
+		assert.Equal(t, signers[2].PublicKey(), consC.SignerKey())
+		assert.Equal(t, signers[3].PublicKey(), consD.SignerKey())
+		assert.Equal(t, signers[4].PublicKey(), consE.SignerKey())
 	})
 
 	t.Run("Check if all instances move to new height", func(t *testing.T) {
-		mgr.MoveToNewHeight()
+		assert.True(t, mgr.HasActiveInstance())
+	})
 
-		checkHeightRoundWait(t, consA, 1, 0)
-		checkHeightRoundWait(t, consB, 1, 0)
-		checkHeightRoundWait(t, consC, 1, 0)
-		checkHeightRoundWait(t, consD, 1, 0)
-		checkHeightRoundWait(t, consE, 1, 0)
-
+	t.Run("Check if all instances move to new height", func(t *testing.T) {
+		h, r := mgr.HeightRound()
+		assert.Equal(t, h, uint32(1))
+		assert.Equal(t, r, int16(0))
 		assert.True(t, mgr.HasActiveInstance())
 	})
 
 	t.Run("Testing add vote", func(t *testing.T) {
-		v := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, committeeSigners[2].Address())
+		v := vote.NewPrepareVote(ts.RandHash(), 1, 0, committeeSigners[2].Address())
 		committeeSigners[2].SignMsg(v)
 
 		mgr.AddVote(v)
 
 		assert.True(t, consA.HasVote(v.Hash()))
-		assert.True(t, consB.HasVote(v.Hash()))
-		assert.False(t, consC.HasVote(v.Hash()))
+		assert.False(t, consB.HasVote(v.Hash()))
+		assert.True(t, consC.HasVote(v.Hash()))
 		assert.False(t, consD.HasVote(v.Hash()))
 	})
 
 	t.Run("Testing set proposal", func(t *testing.T) {
-		b, _ := state.ProposeBlock(committeeSigners[2], committeeSigners[2].Address(), 2)
-		p := proposal.NewProposal(1, 2, b)
-		committeeSigners[2].SignMsg(p)
+		b, _ := state.ProposeBlock(committeeSigners[1], committeeSigners[1].Address(), 1)
+		p := proposal.NewProposal(1, 1, b)
+		committeeSigners[1].SignMsg(p)
 
 		mgr.SetProposal(p)
 
-		assert.Equal(t, consA.RoundProposal(2), p)
-		assert.Equal(t, consB.RoundProposal(2), p)
-		assert.Nil(t, consC.RoundProposal(2))
-		assert.Nil(t, consD.RoundProposal(2))
+		assert.Equal(t, consA.RoundProposal(1), p)
+		assert.Nil(t, consB.RoundProposal(1))
+		assert.Equal(t, consC.RoundProposal(1), p)
+		assert.Nil(t, consD.RoundProposal(1))
 	})
 
 	t.Run("Check if one instance publishes a proposal, the other instances receive it", func(t *testing.T) {
-		p := shouldPublishProposal(t, consA, 1, 0)
+		p := shouldPublishProposal(t, broadcastCh, 1, 0)
 
+		assert.Equal(t, mgr.RoundProposal(0), p)
 		assert.Equal(t, consA.RoundProposal(0), p)
-		assert.Equal(t, consB.RoundProposal(0), p)
-		assert.Nil(t, consC.RoundProposal(0))
-		assert.Nil(t, consD.RoundProposal(0))
-	})
-
-	t.Run("Testing moving to the next round proposal", func(t *testing.T) {
-		v3 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, committeeSigners[2].Address())
-		committeeSigners[2].SignMsg(v3)
-
-		v4 := vote.NewVote(vote.VoteTypeChangeProposer, 1, 0, hash.UndefHash, committeeSigners[3].Address())
-		committeeSigners[3].SignMsg(v4)
-
-		mgr.AddVote(v3)
-		mgr.AddVote(v4)
-
-		checkHeightRoundWait(t, consA, 1, 1)
-
-		h, r := mgr.HeightRound()
-		assert.Equal(t, h, uint32(1))
-		assert.Equal(t, r, int16(1))
-		assert.Nil(t, mgr.RoundProposal(0))
+		assert.Nil(t, consB.RoundProposal(0))
 	})
 }

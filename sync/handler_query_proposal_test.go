@@ -12,7 +12,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 
 	consensusHeight, _ := td.consMgr.HeightRound()
 	prop, _ := td.GenerateTestProposal(consensusHeight, 0)
-	pid := td.RandomPeerID()
+	pid := td.RandPeerID()
 	td.consMgr.SetProposal(prop)
 
 	t.Run("Not in the committee, should not respond to the query proposal message", func(t *testing.T) {

@@ -39,7 +39,7 @@ func setup(t *testing.T) *testData {
 	assert.NotNil(t, pool)
 
 	block88 := sandbox.TestStore.AddTestBlock(88)
-	testTx := tx.NewSubsidyTx(block88.Stamp(), 89, ts.RandomAddress(), 25000000, "subsidy-tx")
+	testTx := tx.NewSubsidyTx(block88.Stamp(), 89, ts.RandAddress(), 25000000, "subsidy-tx")
 
 	return &testData{
 		TestSuite: ts,
@@ -96,7 +96,7 @@ func TestFullPool(t *testing.T) {
 	block10000 := td.sandbox.TestStore.AddTestBlock(10000)
 	trxs := make([]*tx.Tx, td.pool.config.sendPoolSize()+1)
 
-	signer := td.RandomSigner()
+	signer := td.RandSigner()
 	acc := account.NewAccount(0)
 	acc.AddToBalance(10000000000)
 	td.sandbox.UpdateAccount(signer.Address(), acc)
@@ -106,7 +106,7 @@ func TestFullPool(t *testing.T) {
 
 	for i := 0; i < len(trxs); i++ {
 		trx := tx.NewTransferTx(block10000.Stamp(), acc.Sequence()+int32(i+1), signer.Address(),
-			td.RandomAddress(), 1000, 1000, "ok")
+			td.RandAddress(), 1000, 1000, "ok")
 		signer.SignMsg(trx)
 		assert.NoError(t, td.pool.AppendTx(trx))
 		trxs[i] = trx
@@ -128,35 +128,35 @@ func TestPrepareBlockTransactions(t *testing.T) {
 
 	block1000000 := td.sandbox.TestStore.AddTestBlock(1000000)
 
-	acc1Signer := td.RandomSigner()
+	acc1Signer := td.RandSigner()
 	acc1 := account.NewAccount(0)
 	acc1.AddToBalance(10000000000)
 	td.sandbox.UpdateAccount(acc1Signer.Address(), acc1)
 
-	val1Signer := td.RandomSigner()
+	val1Signer := td.RandSigner()
 	val1Pub := val1Signer.PublicKey().(*bls.PublicKey)
 	val1 := validator.NewValidator(val1Pub, 0)
 	val1.AddToStake(10000000000)
 	td.sandbox.UpdateValidator(val1)
 
-	val2Signer := td.RandomSigner()
+	val2Signer := td.RandSigner()
 	val2Pub := val2Signer.PublicKey().(*bls.PublicKey)
 	val2 := validator.NewValidator(val2Pub, 0)
 	val2.AddToStake(10000000000)
 	val2.UpdateUnbondingHeight(1)
 	td.sandbox.UpdateValidator(val2)
 
-	val3Signer := td.RandomSigner()
+	val3Signer := td.RandSigner()
 	val3Pub := val3Signer.PublicKey().(*bls.PublicKey)
 	val3 := validator.NewValidator(val3Pub, 0)
 	val3.AddToStake(10000000000)
 	td.sandbox.UpdateValidator(val3)
 
 	transferTx := tx.NewTransferTx(block1000000.Stamp(), acc1.Sequence()+1, acc1Signer.Address(),
-		td.RandomAddress(), 1000, 1000, "send-tx")
+		td.RandAddress(), 1000, 1000, "send-tx")
 	acc1Signer.SignMsg(transferTx)
 
-	pub, _ := td.RandomBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 	bondTx := tx.NewBondTx(block1000000.Stamp(), acc1.Sequence()+2, acc1Signer.Address(),
 		pub.Address(), pub, 1000000000, 100000, "bond-tx")
 	acc1Signer.SignMsg(bondTx)
@@ -165,12 +165,12 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	val1Signer.SignMsg(unbondTx)
 
 	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(),
-		td.RandomAddress(), 1000, 1000, "withdraw-tx")
+		td.RandAddress(), 1000, 1000, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
 	td.sandbox.TestAcceptSortition = true
 	sortitionTx := tx.NewSortitionTx(block1000000.Stamp(), val3.Sequence()+1, val3.Address(),
-		td.RandomProof())
+		td.RandProof())
 	val3Signer.SignMsg(sortitionTx)
 
 	assert.NoError(t, td.pool.AppendTx(transferTx))
@@ -202,8 +202,8 @@ func TestAddSubsidyTransactions(t *testing.T) {
 	td := setup(t)
 
 	block88 := td.sandbox.TestStore.AddTestBlock(88)
-	proposer1 := td.RandomAddress()
-	proposer2 := td.RandomAddress()
+	proposer1 := td.RandAddress()
+	proposer2 := td.RandAddress()
 	trx1 := tx.NewSubsidyTx(block88.Stamp(), 88, proposer1, 25000000, "subsidy-tx-1")
 	trx2 := tx.NewSubsidyTx(block88.Stamp(), 89, proposer1, 25000000, "subsidy-tx-1")
 	trx3 := tx.NewSubsidyTx(block88.Stamp(), 89, proposer2, 25000000, "subsidy-tx-2")

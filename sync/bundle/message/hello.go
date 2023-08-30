@@ -21,7 +21,7 @@ type HelloMessage struct {
 	PeerID      peer.ID          `cbor:"1,keyasint"`
 	Agent       string           `cbor:"2,keyasint"`
 	Moniker     string           `cbor:"3,keyasint"`
-	PublicKeys  []*bls.PublicKey `cbor:"4,keyasint,"`
+	PublicKeys  []*bls.PublicKey `cbor:"4,keyasint"`
 	Signature   *bls.Signature   `cbor:"5,keyasint"`
 	Height      uint32           `cbor:"6,keyasint"`
 	Flags       int              `cbor:"7,keyasint"`
@@ -50,7 +50,7 @@ func (m *HelloMessage) BasicCheck() error {
 	if len(m.PublicKeys) == 0 {
 		return errors.Error(errors.ErrInvalidPublicKey)
 	}
-	aggPublicKey := bls.PublicKeyAggregate(m.PublicKeys)
+	aggPublicKey := bls.PublicKeyAggregate(m.PublicKeys...)
 	return aggPublicKey.Verify(m.SignBytes(), m.Signature)
 }
 
@@ -78,7 +78,7 @@ func (m *HelloMessage) Sign(signers ...crypto.Signer) {
 		signatures[i] = signer.SignData(signBytes).(*bls.Signature)
 		publicKeys[i] = signer.PublicKey().(*bls.PublicKey)
 	}
-	aggSignature := bls.SignatureAggregate(signatures)
+	aggSignature := bls.SignatureAggregate(signatures...)
 	m.Signature = aggSignature
 	m.PublicKeys = publicKeys
 }

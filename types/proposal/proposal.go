@@ -31,10 +31,22 @@ func NewProposal(height uint32, round int16, block *block.Block) *Proposal {
 		},
 	}
 }
-func (p *Proposal) Height() uint32              { return p.data.Height }
-func (p *Proposal) Round() int16                { return p.data.Round }
-func (p *Proposal) Block() *block.Block         { return p.data.Block }
-func (p *Proposal) Signature() crypto.Signature { return p.data.Signature }
+
+func (p *Proposal) Height() uint32 {
+	return p.data.Height
+}
+
+func (p *Proposal) Round() int16 {
+	return p.data.Round
+}
+
+func (p *Proposal) Block() *block.Block {
+	return p.data.Block
+}
+
+func (p *Proposal) Signature() crypto.Signature {
+	return p.data.Signature
+}
 
 func (p *Proposal) BasicCheck() error {
 	if p.data.Block == nil {

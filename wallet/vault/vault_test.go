@@ -29,7 +29,7 @@ func setup(t *testing.T) *testData {
 	ts := testsuite.NewTestSuite(t)
 
 	mnemonic := GenerateMnemonic(128)
-	_, importedPrv := ts.RandomBLSKeyPair()
+	_, importedPrv := ts.RandBLSKeyPair()
 	vault, err := CreateVaultFromMnemonic(mnemonic, 21888)
 	assert.NoError(t, err)
 
@@ -149,7 +149,7 @@ func TestGetPrivateKeys(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Unknown address", func(t *testing.T) {
-		addr := td.RandomAddress()
+		addr := td.RandAddress()
 		_, err := td.vault.PrivateKeys(tPassword, []string{addr.String()})
 		assert.ErrorIs(t, err, NewErrAddressNotFound(addr.String()))
 	})
@@ -186,13 +186,13 @@ func TestImportPrivateKey(t *testing.T) {
 	})
 
 	t.Run("Invalid password", func(t *testing.T) {
-		_, prv := td.RandomBLSKeyPair()
+		_, prv := td.RandBLSKeyPair()
 		err := td.vault.ImportPrivateKey("invalid-password", prv)
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		_, prv := td.RandomBLSKeyPair()
+		_, prv := td.RandBLSKeyPair()
 		assert.NoError(t, td.vault.ImportPrivateKey(tPassword, prv))
 		assert.True(t, td.vault.Contains(prv.PublicKey().Address().String()))
 	})
@@ -266,7 +266,7 @@ func TestSetLabel(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Set label for unknown address", func(t *testing.T) {
-		invAddr := td.RandomAddress().String()
+		invAddr := td.RandAddress().String()
 		err := td.vault.SetLabel(invAddr, "i have label")
 		assert.ErrorIs(t, err, NewErrAddressNotFound(invAddr))
 		assert.Equal(t, td.vault.Label(invAddr), "")
@@ -297,7 +297,7 @@ func TestNeuter(t *testing.T) {
 	assert.ErrorIs(t, err, ErrNeutered)
 
 	_, err = neutered.PrivateKeys(tPassword, []string{
-		td.RandomAddress().String(),
+		td.RandAddress().String(),
 	})
 	assert.ErrorIs(t, err, ErrNeutered)
 

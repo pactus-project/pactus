@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -20,12 +21,12 @@ type Facade interface {
 	LastBlockHeight() uint32
 	LastBlockHash() hash.Hash
 	LastBlockTime() time.Time
-	LastCertificate() *block.Certificate
+	LastCertificate() *certificate.Certificate
 	BlockTime() time.Duration
-	UpdateLastCertificate(lastCertificate *block.Certificate) error
+	UpdateLastCertificate(lastCertificate *certificate.Certificate) error
 	ProposeBlock(consSigner crypto.Signer, rewardAddr crypto.Address, round int16) (*block.Block, error)
 	ValidateBlock(block *block.Block) error
-	CommitBlock(height uint32, block *block.Block, cert *block.Certificate) error
+	CommitBlock(height uint32, block *block.Block, cert *certificate.Certificate) error
 	CommitteeValidators() []*validator.Validator
 	IsInCommittee(addr crypto.Address) bool
 	Proposer(round int16) *validator.Validator

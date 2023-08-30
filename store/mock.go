@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -20,7 +21,7 @@ type MockStore struct {
 	Blocks     map[uint32]block.Block
 	Accounts   map[crypto.Address]account.Account
 	Validators map[crypto.Address]validator.Validator
-	LastCert   *block.Certificate
+	LastCert   *certificate.Certificate
 	LastHeight uint32
 }
 
@@ -176,13 +177,13 @@ func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop 
 	}
 }
 
-func (m *MockStore) SaveBlock(height uint32, b *block.Block, cert *block.Certificate) {
+func (m *MockStore) SaveBlock(height uint32, b *block.Block, cert *certificate.Certificate) {
 	m.Blocks[height] = *b
 	m.LastHeight = height
 	m.LastCert = cert
 }
 
-func (m *MockStore) LastCertificate() (uint32, *block.Certificate) {
+func (m *MockStore) LastCertificate() (uint32, *certificate.Certificate) {
 	if m.LastHeight == 0 {
 		return 0, nil
 	}
@@ -216,10 +217,10 @@ func (m *MockStore) AddTestAccount() (*account.Account, crypto.Signer) {
 }
 
 func (m *MockStore) AddTestBlock(height uint32) *block.Block {
-	b := m.ts.GenerateTestBlock(nil, nil)
-	cert := m.ts.GenerateTestCertificate(b.Hash())
-	m.SaveBlock(height, b, cert)
-	return b
+	blk := m.ts.GenerateTestBlock(nil, nil)
+	cert := m.ts.GenerateTestCertificate()
+	m.SaveBlock(height, blk, cert)
+	return blk
 }
 
 func (m *MockStore) RandomTestAcc() (crypto.Address, *account.Account) {

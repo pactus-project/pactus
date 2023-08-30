@@ -67,7 +67,7 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 	accs := map[crypto.Address]*account.Account{}
 	vals := []*validator.Validator{}
 	for i := int32(0); i < 10; i++ {
-		pub, _ := ts.RandomBLSKeyPair()
+		pub, _ := ts.RandBLSKeyPair()
 		acc := account.NewAccount(i)
 		val := validator.NewValidator(pub, i)
 

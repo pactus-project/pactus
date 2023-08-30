@@ -17,16 +17,16 @@ func TestSortitionType(t *testing.T) {
 
 func TestSortitionDecoding(t *testing.T) {
 	tests := []struct {
-		raw       []byte
-		value     int64
-		readErr   error
-		sanityErr error
+		raw      []byte
+		value    int64
+		readErr  error
+		basicErr error
 	}{
 		{
-			raw:       []byte{},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			raw:      []byte{},
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -34,9 +34,9 @@ func TestSortitionDecoding(t *testing.T) {
 				0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
 				0x11, 0x12, 0x13, 0x14, // address
 			},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -50,9 +50,9 @@ func TestSortitionDecoding(t *testing.T) {
 				0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
 				0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, // proof
 			},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -66,9 +66,9 @@ func TestSortitionDecoding(t *testing.T) {
 				0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
 				0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, // proof
 			},
-			value:     0,
-			readErr:   nil,
-			sanityErr: nil,
+			value:    0,
+			readErr:  nil,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -82,9 +82,9 @@ func TestSortitionDecoding(t *testing.T) {
 				0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
 				0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, // proof
 			},
-			value:     0,
-			readErr:   nil,
-			sanityErr: errors.Error(errors.ErrInvalidAddress),
+			value:    0,
+			readErr:  nil,
+			basicErr: errors.Error(errors.ErrInvalidAddress),
 		},
 	}
 
@@ -107,8 +107,8 @@ func TestSortitionDecoding(t *testing.T) {
 			assert.Equal(t, w.Bytes(), test.raw)
 
 			// Basic check
-			if test.sanityErr != nil {
-				assert.ErrorIs(t, pld.BasicCheck(), test.sanityErr)
+			if test.basicErr != nil {
+				assert.ErrorIs(t, pld.BasicCheck(), test.basicErr)
 			} else {
 				assert.NoError(t, pld.BasicCheck())
 

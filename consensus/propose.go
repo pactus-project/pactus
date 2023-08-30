@@ -22,6 +22,9 @@ func (s *proposeState) decide() {
 		s.logger.Debug("not our turn to propose", "proposer", proposer.Address())
 	}
 
+	s.cpRound = 0
+	s.cpDecided = -1
+	s.cpWeakValidity = nil
 	s.enterNewState(s.prepareState)
 }
 
@@ -38,11 +41,12 @@ func (s *proposeState) createProposal(height uint32, round int16) {
 
 	proposal := proposal.NewProposal(height, round, block)
 	s.signer.SignMsg(proposal)
-	s.doSetProposal(proposal)
 
-	s.logger.Info("proposal signed and broadcasted", "proposal", proposal)
+	s.log.SetRoundProposal(round, proposal)
 
 	s.broadcastProposal(proposal)
+
+	s.logger.Info("proposal signed and broadcasted", "proposal", proposal)
 }
 
 func (s *proposeState) onAddVote(_ *vote.Vote) {

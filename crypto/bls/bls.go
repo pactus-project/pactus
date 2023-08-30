@@ -8,7 +8,7 @@ import (
 // https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bls-signature-04#section-4.2.1
 var dst = []byte("BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_")
 
-func SignatureAggregate(sigs []*Signature) *Signature {
+func SignatureAggregate(sigs ...*Signature) *Signature {
 	if len(sigs) == 0 {
 		return nil
 	}
@@ -26,7 +26,7 @@ func SignatureAggregate(sigs []*Signature) *Signature {
 	}
 }
 
-func PublicKeyAggregate(pubs []*PublicKey) *PublicKey {
+func PublicKeyAggregate(pubs ...*PublicKey) *PublicKey {
 	if len(pubs) == 0 {
 		return nil
 	}
@@ -47,6 +47,6 @@ func PublicKeyAggregate(pubs []*PublicKey) *PublicKey {
 }
 
 func VerifyAggregated(sig *Signature, pubs []*PublicKey, msg []byte) bool {
-	aggPub := PublicKeyAggregate(pubs)
+	aggPub := PublicKeyAggregate(pubs...)
 	return aggPub.Verify(msg, sig) == nil
 }

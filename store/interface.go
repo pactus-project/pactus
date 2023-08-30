@@ -5,6 +5,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 )
@@ -68,7 +69,7 @@ type Reader interface {
 	IterateValidators(consumer func(*validator.Validator) (stop bool))
 	IterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool))
 	TotalValidators() int32
-	LastCertificate() (uint32, *block.Certificate)
+	LastCertificate() (uint32, *certificate.Certificate)
 }
 
 type Store interface {
@@ -76,7 +77,7 @@ type Store interface {
 
 	UpdateAccount(addr crypto.Address, acc *account.Account)
 	UpdateValidator(val *validator.Validator)
-	SaveBlock(height uint32, block *block.Block, cert *block.Certificate)
+	SaveBlock(height uint32, block *block.Block, cert *certificate.Certificate)
 	WriteBatch() error
 	Close() error
 }

@@ -1,23 +1,35 @@
 package log
 
 import (
+	"fmt"
+
 	"github.com/pactus-project/pactus/consensus/voteset"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/logger"
 )
 
 type Messages struct {
-	prepareVotes        *voteset.VoteSet
-	precommitVotes      *voteset.VoteSet
-	changeProposerVotes *voteset.VoteSet
-	proposal            *proposal.Proposal
+	prepareVotes   *voteset.BlockVoteSet  // Prepare votes
+	precommitVotes *voteset.BlockVoteSet  // Precommit votes
+	cpPreVotes     *voteset.BinaryVoteSet // Change proposer Pre-votes
+	cpMainVotes    *voteset.BinaryVoteSet // Change proposer Main-votes
+	proposal       *proposal.Proposal
 }
 
-func (m *Messages) addVote(v *vote.Vote) error {
-	vs := m.voteSet(v.Type())
-	return vs.AddVote(v)
+func (m *Messages) addVote(v *vote.Vote) (bool, error) {
+	switch v.Type() {
+	case vote.VoteTypePrepare:
+		return m.prepareVotes.AddVote(v)
+	case vote.VoteTypePrecommit:
+		return m.precommitVotes.AddVote(v)
+	case vote.VoteTypeCPPreVote:
+		return m.cpPreVotes.AddVote(v)
+	case vote.VoteTypeCPMainVote:
+		return m.cpMainVotes.AddVote(v)
+	}
+
+	return false, fmt.Errorf("unexpected vote type: %v", v.Type())
 }
 
 func (m *Messages) HasVote(hash hash.Hash) bool {
@@ -34,21 +46,8 @@ func (m *Messages) AllVotes() []*vote.Vote {
 	votes := []*vote.Vote{}
 	votes = append(votes, m.prepareVotes.AllVotes()...)
 	votes = append(votes, m.precommitVotes.AllVotes()...)
-	votes = append(votes, m.changeProposerVotes.AllVotes()...)
+	votes = append(votes, m.cpPreVotes.AllVotes()...)
+	votes = append(votes, m.cpMainVotes.AllVotes()...)
 
 	return votes
-}
-
-func (m *Messages) voteSet(voteType vote.Type) *voteset.VoteSet {
-	switch voteType {
-	case vote.VoteTypePrepare:
-		return m.prepareVotes
-	case vote.VoteTypePrecommit:
-		return m.precommitVotes
-	case vote.VoteTypeChangeProposer:
-		return m.changeProposerVotes
-	}
-
-	logger.Panic("unexpected vote type", "voteType", voteType)
-	return nil
 }

@@ -7,10 +7,12 @@ import (
 
 	"github.com/pactus-project/pactus/consensus/log"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
@@ -18,27 +20,35 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 )
 
+type broadcaster func(crypto.Signer, message.Message)
+
 type consensus struct {
 	lk sync.RWMutex
 
-	config              *Config
-	log                 *log.Log
-	signer              crypto.Signer
-	rewardAddr          crypto.Address
-	state               state.Facade // TODO: rename `state` to `bcState` (blockchain state)
-	height              uint32
-	round               int16
-	active              bool
-	newHeightState      consState
-	proposeState        consState
-	prepareState        consState
-	precommitState      consState
-	commitState         consState
-	currentState        consState
-	changeProposerState consState
-	broadcastCh         chan message.Message
-	mediator            mediator
-	logger              *logger.SubLogger
+	config          *Config
+	logger          *logger.SubLogger
+	log             *log.Log
+	validators      []*validator.Validator
+	cpWeakValidity  *hash.Hash // The change proposer's weak validity that is a prepared block hash
+	cpDecided       int
+	height          uint32
+	round           int16
+	cpRound         int16
+	signer          crypto.Signer
+	rewardAddr      crypto.Address
+	state           state.Facade // TODO: rename `state` to `bcState` (blockchain state)
+	newHeightState  consState
+	proposeState    consState
+	prepareState    consState
+	precommitState  consState
+	commitState     consState
+	cpPreVoteState  consState
+	cpMainVoteState consState
+	cpDecideState   consState
+	currentState    consState
+	broadcaster     broadcaster
+	mediator        mediator
+	active          bool
 }
 
 func NewConsensus(
@@ -49,10 +59,25 @@ func NewConsensus(
 	broadcastCh chan message.Message,
 	mediator mediator,
 ) Consensus {
+	broadcaster := func(_ crypto.Signer, msg message.Message) {
+		broadcastCh <- msg
+	}
+	return newConsensus(conf, state,
+		signer, rewardAddr, broadcaster, mediator)
+}
+
+func newConsensus(
+	conf *Config,
+	state state.Facade,
+	signer crypto.Signer,
+	rewardAddr crypto.Address,
+	broadcaster broadcaster,
+	mediator mediator,
+) *consensus {
 	cs := &consensus{
 		config:      conf,
 		state:       state,
-		broadcastCh: broadcastCh,
+		broadcaster: broadcaster,
 		signer:      signer,
 	}
 
@@ -66,7 +91,9 @@ func NewConsensus(
 	cs.prepareState = &prepareState{cs, false}
 	cs.precommitState = &precommitState{cs, false}
 	cs.commitState = &commitState{cs}
-	cs.changeProposerState = &changeProposerState{cs}
+	cs.cpPreVoteState = &cpPreVoteState{cs}
+	cs.cpMainVoteState = &cpMainVoteState{cs}
+	cs.cpDecideState = &cpDecideState{cs}
 	cs.currentState = cs.newHeightState
 	cs.mediator = mediator
 
@@ -85,9 +112,9 @@ func NewConsensus(
 }
 
 func (cs *consensus) String() string {
-	return fmt.Sprintf("{%s %d/%d/%s}",
+	return fmt.Sprintf("{%s %d/%d/%s/%d}",
 		cs.signer.Address().ShortString(),
-		cs.height, cs.round, cs.currentState.name())
+		cs.height, cs.round, cs.currentState.name(), cs.cpRound)
 }
 
 func (cs *consensus) SignerKey() crypto.PublicKey {
@@ -118,13 +145,16 @@ func (cs *consensus) HasVote(hash hash.Hash) bool {
 	return cs.log.HasVote(hash)
 }
 
+// AllVotes returns all valid votes inside the consensus log up to and including
+// the current consensus round.
+// Valid votes from subsequent rounds are not included.
 func (cs *consensus) AllVotes() []*vote.Vote {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
 	votes := []*vote.Vote{}
 	for r := int16(0); r <= cs.round; r++ {
-		m := cs.log.MustGetRoundMessages(r)
+		m := cs.log.RoundMessages(r)
 		votes = append(votes, m.AllVotes()...)
 	}
 	return votes
@@ -139,9 +169,7 @@ func (cs *consensus) MoveToNewHeight() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	if cs.state.LastBlockHeight()+1 > cs.height {
-		cs.enterNewState(cs.newHeightState)
-	}
+	cs.enterNewState(cs.newHeightState)
 }
 
 func (cs *consensus) scheduleTimeout(duration time.Duration, height uint32, round int16, target tickerTarget) {
@@ -166,6 +194,11 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 
 	if p.Height() != cs.height {
 		cs.logger.Trace("invalid height", "proposal", p)
+		return
+	}
+
+	if p.Round() > cs.round+2 {
+		cs.logger.Trace("proposal round number exceeding the round limit", "proposal", p)
 		return
 	}
 
@@ -203,12 +236,10 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		}
 	}
 
-	cs.currentState.onSetProposal(p)
-}
-
-func (cs *consensus) doSetProposal(p *proposal.Proposal) {
 	cs.logger.Info("proposal set", "proposal", p)
 	cs.log.SetRoundProposal(p.Round(), p)
+
+	cs.currentState.onSetProposal(p)
 }
 
 func (cs *consensus) handleTimeout(t *ticker) {
@@ -245,72 +276,428 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		return
 	}
 
-	if cs.log.HasVote(v.Hash()) {
-		cs.logger.Trace("vote exists", "vote", v)
-		return
+	if v.Type() == vote.VoteTypeCPPreVote ||
+		v.Type() == vote.VoteTypeCPMainVote {
+		err := cs.checkJust(v)
+		if err != nil {
+			cs.logger.Error("error on adding a cp vote", "vote", v, "err", err)
+			return
+		}
+
+		if v.Round() == cs.round && cs.cpWeakValidity == nil {
+			if v.CPValue() == vote.CPValueZero ||
+				v.CPValue() == vote.CPValueAbstain {
+				bh := v.BlockHash()
+				cs.cpWeakValidity = &bh
+
+				roundProposal := cs.log.RoundProposal(cs.round)
+
+				if roundProposal != nil &&
+					roundProposal.Block().Hash() != bh {
+					cs.logger.Warn("double proposal detected",
+						"prepared", bh.ShortString(),
+						"roundProposal", roundProposal.Block().Hash().ShortString())
+
+					cs.log.SetRoundProposal(cs.round, nil)
+					cs.queryProposal()
+				}
+			}
+		}
 	}
 
-	cs.currentState.onAddVote(v)
-}
-
-func (cs *consensus) doAddVote(v *vote.Vote) {
-	err := cs.log.AddVote(v)
+	added, err := cs.log.AddVote(v)
 	if err != nil {
 		cs.logger.Error("error on adding a vote", "vote", v, "err", err)
 	}
+	if added {
+		cs.logger.Debug("new vote added", "vote", v)
 
-	cs.logger.Debug("new vote added", "vote", v)
+		cs.currentState.onAddVote(v)
+	}
+}
+
+func (cs *consensus) checkCPValue(vote *vote.Vote, allowedValues ...vote.CPValue) error {
+	for _, v := range allowedValues {
+		if vote.CPValue() == v {
+			return nil
+		}
+	}
+
+	return invalidJustificationError{
+		JustType: vote.CPJust().Type(),
+		Reason:   fmt.Sprintf("invalid value: %v", vote.CPValue()),
+	}
+}
+
+func (cs *consensus) checkJustInitZero(just vote.Just, blockHash hash.Hash) error {
+	j, ok := just.(*vote.JustInitZero)
+	if !ok {
+		return invalidJustificationError{
+			JustType: just.Type(),
+			Reason:   "invalid just data",
+		}
+	}
+
+	sb := certificate.BlockCertificateSignBytes(blockHash,
+		j.QCert.Height(),
+		j.QCert.Round())
+	sb = append(sb, util.StringToBytes(vote.VoteTypePrepare.String())...)
+
+	err := j.QCert.Validate(cs.height, cs.validators, sb)
+	if err != nil {
+		return invalidJustificationError{
+			JustType: j.Type(),
+			Reason:   err.Error(),
+		}
+	}
+	return nil
+}
+
+func (cs *consensus) checkJustInitOne(just vote.Just) error {
+	_, ok := just.(*vote.JustInitOne)
+	if !ok {
+		return invalidJustificationError{
+			JustType: just.Type(),
+			Reason:   "invalid just data",
+		}
+	}
+
+	return nil
+}
+
+func (cs *consensus) checkJustPreVoteHard(just vote.Just,
+	blockHash hash.Hash, cpRound int16, cpValue vote.CPValue,
+) error {
+	j, ok := just.(*vote.JustPreVoteHard)
+	if !ok {
+		return invalidJustificationError{
+			JustType: just.Type(),
+			Reason:   "invalid just data",
+		}
+	}
+
+	sb := certificate.BlockCertificateSignBytes(blockHash,
+		j.QCert.Height(),
+		j.QCert.Round())
+	sb = append(sb, util.StringToBytes(vote.VoteTypeCPPreVote.String())...)
+	sb = append(sb, util.Int16ToSlice(cpRound-1)...)
+	sb = append(sb, byte(cpValue))
+
+	err := j.QCert.Validate(cs.height, cs.validators, sb)
+	if err != nil {
+		return invalidJustificationError{
+			JustType: just.Type(),
+			Reason:   err.Error(),
+		}
+	}
+	return nil
+}
+
+func (cs *consensus) checkJustPreVoteSoft(just vote.Just,
+	blockHash hash.Hash, cpRound int16,
+) error {
+	j, ok := just.(*vote.JustPreVoteSoft)
+	if !ok {
+		return invalidJustificationError{
+			JustType: just.Type(),
+			Reason:   "invalid just data",
+		}
+	}
+
+	sb := certificate.BlockCertificateSignBytes(blockHash,
+		j.QCert.Height(),
+		j.QCert.Round())
+	sb = append(sb, util.StringToBytes(vote.VoteTypeCPMainVote.String())...)
+	sb = append(sb, util.Int16ToSlice(cpRound-1)...)
+	sb = append(sb, byte(vote.CPValueAbstain))
+
+	err := j.QCert.Validate(cs.height, cs.validators, sb)
+	if err != nil {
+		return invalidJustificationError{
+			JustType: just.Type(),
+			Reason:   err.Error(),
+		}
+	}
+	return nil
+}
+
+func (cs *consensus) checkJustMainVoteNoConflict(just vote.Just,
+	blockHash hash.Hash, cpRound int16, cpValue vote.CPValue,
+) error {
+	j, ok := just.(*vote.JustMainVoteNoConflict)
+	if !ok {
+		return invalidJustificationError{
+			JustType: just.Type(),
+			Reason:   "invalid just data",
+		}
+	}
+
+	sb := certificate.BlockCertificateSignBytes(blockHash,
+		j.QCert.Height(),
+		j.QCert.Round())
+	sb = append(sb, util.StringToBytes(vote.VoteTypeCPPreVote.String())...)
+	sb = append(sb, util.Int16ToSlice(cpRound)...)
+	sb = append(sb, byte(cpValue))
+
+	err := j.QCert.Validate(cs.height, cs.validators, sb)
+	if err != nil {
+		return invalidJustificationError{
+			JustType: j.Type(),
+			Reason:   err.Error(),
+		}
+	}
+	return nil
+}
+
+func (cs *consensus) checkJustMainVoteConflict(just vote.Just,
+	blockHash hash.Hash, cpRound int16,
+) error {
+	j, ok := just.(*vote.JustMainVoteConflict)
+	if !ok {
+		return invalidJustificationError{
+			JustType: just.Type(),
+			Reason:   "invalid just data",
+		}
+	}
+
+	if cpRound == 0 {
+		switch j.Just0.Type() {
+		case vote.JustTypeInitZero:
+			err := cs.checkJustInitZero(j.Just0, blockHash)
+			if err != nil {
+				return err
+			}
+
+		default:
+			return invalidJustificationError{
+				JustType: just.Type(),
+				Reason:   fmt.Sprintf("unexpected justification: %s", j.Just0.Type()),
+			}
+		}
+
+		switch j.Just1.Type() {
+		case vote.JustTypeInitOne:
+			err := cs.checkJustInitOne(j.Just1)
+			if err != nil {
+				return err
+			}
+
+		default:
+			return invalidJustificationError{
+				JustType: just.Type(),
+				Reason:   fmt.Sprintf("unexpected justification: %s", j.Just1.Type()),
+			}
+		}
+	} else {
+		switch j.Just0.Type() {
+		case vote.JustTypePreVoteSoft:
+			err := cs.checkJustPreVoteSoft(j.Just0, blockHash, cpRound)
+			if err != nil {
+				return err
+			}
+		case vote.JustTypePreVoteHard:
+			err := cs.checkJustPreVoteHard(j.Just0, blockHash, cpRound, vote.CPValueZero)
+			if err != nil {
+				return err
+			}
+		default:
+			return invalidJustificationError{
+				JustType: just.Type(),
+				Reason:   fmt.Sprintf("unexpected justification: %s", j.Just0.Type()),
+			}
+		}
+
+		switch j.Just1.Type() {
+		case vote.JustTypePreVoteHard:
+			err := cs.checkJustPreVoteHard(j.Just1, hash.UndefHash, cpRound, vote.CPValueOne)
+			if err != nil {
+				return err
+			}
+
+		default:
+			return invalidJustificationError{
+				JustType: just.Type(),
+				Reason:   fmt.Sprintf("unexpected justification: %s", j.Just1.Type()),
+			}
+		}
+	}
+
+	return nil
+}
+
+func (cs *consensus) checkJustPreVote(v *vote.Vote) error {
+	just := v.CPJust()
+	if v.CPRound() == 0 {
+		switch just.Type() {
+		case vote.JustTypeInitZero:
+			err := cs.checkCPValue(v, vote.CPValueZero)
+			if err != nil {
+				return err
+			}
+			return cs.checkJustInitZero(just, v.BlockHash())
+
+		case vote.JustTypeInitOne:
+			err := cs.checkCPValue(v, vote.CPValueOne)
+			if err != nil {
+				return err
+			}
+			if v.BlockHash() != hash.UndefHash {
+				return invalidJustificationError{
+					JustType: just.Type(),
+					Reason:   "invalid block hash",
+				}
+			}
+			return cs.checkJustInitOne(just)
+		default:
+			return invalidJustificationError{
+				JustType: just.Type(),
+				Reason:   "invalid pre-vote justification",
+			}
+		}
+	} else {
+		switch just.Type() {
+		case vote.JustTypePreVoteSoft:
+			err := cs.checkCPValue(v, vote.CPValueZero, vote.CPValueOne)
+			if err != nil {
+				return err
+			}
+			return cs.checkJustPreVoteSoft(just, v.BlockHash(), v.CPRound())
+
+		case vote.JustTypePreVoteHard:
+			err := cs.checkCPValue(v, vote.CPValueZero, vote.CPValueOne)
+			if err != nil {
+				return err
+			}
+			return cs.checkJustPreVoteHard(just, v.BlockHash(), v.CPRound(), v.CPValue())
+
+		default:
+			return invalidJustificationError{
+				JustType: just.Type(),
+				Reason:   "invalid pre-vote justification",
+			}
+		}
+	}
+}
+
+func (cs *consensus) checkJustMainVote(v *vote.Vote) error {
+	just := v.CPJust()
+	switch just.Type() {
+	case vote.JustTypeMainVoteNoConflict:
+		err := cs.checkCPValue(v, vote.CPValueZero, vote.CPValueOne)
+		if err != nil {
+			return err
+		}
+		return cs.checkJustMainVoteNoConflict(just, v.BlockHash(), v.CPRound(), v.CPValue())
+
+	case vote.JustTypeMainVoteConflict:
+		err := cs.checkCPValue(v, vote.CPValueAbstain)
+		if err != nil {
+			return err
+		}
+		return cs.checkJustMainVoteConflict(just, v.BlockHash(), v.CPRound())
+
+	default:
+		return invalidJustificationError{
+			JustType: just.Type(),
+			Reason:   "invalid main-vote justification",
+		}
+	}
+}
+
+func (cs *consensus) checkJust(v *vote.Vote) error {
+	if v.Type() == vote.VoteTypeCPPreVote {
+		return cs.checkJustPreVote(v)
+	} else if v.Type() == vote.VoteTypeCPMainVote {
+		return cs.checkJustMainVote(v)
+	} else {
+		panic("unreachable")
+	}
 }
 
 func (cs *consensus) proposer(round int16) *validator.Validator {
 	return cs.state.Proposer(round)
 }
 
-func (cs *consensus) signAddVote(msgType vote.Type, hash hash.Hash) {
-	address := cs.signer.Address()
-	if !cs.log.CanVote(address) {
-		cs.logger.Trace("this node is not in committee", "addr", address)
-		return
-	}
+func (cs *consensus) signAddCPPreVote(hash hash.Hash,
+	cpRound int16, cpValue vote.CPValue, just vote.Just,
+) {
+	v := vote.NewCPPreVote(hash, cs.height,
+		cs.round, cpRound, cpValue, just, cs.signer.Address())
+	cs.signAddVote(v)
+}
 
-	// Sign the vote
-	v := vote.NewVote(msgType, cs.height, cs.round, hash, address)
+func (cs *consensus) signAddCPMainVote(hash hash.Hash,
+	cpRound int16, cpValue vote.CPValue, just vote.Just,
+) {
+	v := vote.NewCPMainVote(hash, cs.height, cs.round,
+		cpRound, cpValue, just, cs.signer.Address())
+	cs.signAddVote(v)
+}
+
+func (cs *consensus) signAddPrepareVote(hash hash.Hash) {
+	v := vote.NewPrepareVote(hash, cs.height, cs.round, cs.signer.Address())
+	cs.signAddVote(v)
+}
+
+func (cs *consensus) signAddPrecommitVote(hash hash.Hash) {
+	v := vote.NewPrecommitVote(hash, cs.height, cs.round, cs.signer.Address())
+	cs.signAddVote(v)
+}
+
+func (cs *consensus) signAddVote(v *vote.Vote) {
 	cs.signer.SignMsg(v)
 	cs.logger.Info("our vote signed and broadcasted", "vote", v)
 
-	err := cs.log.AddVote(v)
+	_, err := cs.log.AddVote(v)
 	if err != nil {
 		cs.logger.Error("error on adding our vote", "err", err, "vote", v)
-	} else {
-		cs.broadcastVote(v)
 	}
+	cs.broadcastVote(v)
 }
 
 func (cs *consensus) queryProposal() {
-	cs.broadcast(message.NewQueryProposalMessage(cs.height, cs.round))
+	cs.broadcaster(cs.signer,
+		message.NewQueryProposalMessage(cs.height, cs.round))
 }
 
 func (cs *consensus) broadcastProposal(p *proposal.Proposal) {
 	go cs.mediator.OnPublishProposal(cs, p)
-	cs.broadcast(message.NewProposalMessage(p))
+	cs.broadcaster(cs.signer,
+		message.NewProposalMessage(p))
 }
 
 func (cs *consensus) broadcastVote(v *vote.Vote) {
 	go cs.mediator.OnPublishVote(cs, v)
-	cs.broadcast(message.NewVoteMessage(v))
+	cs.broadcaster(cs.signer,
+		message.NewVoteMessage(v))
 }
 
-func (cs *consensus) announceNewBlock(h uint32, b *block.Block, c *block.Certificate) {
+func (cs *consensus) announceNewBlock(h uint32, b *block.Block, c *certificate.Certificate) {
 	go cs.mediator.OnBlockAnnounce(cs)
-	cs.broadcast(message.NewBlockAnnounceMessage(h, b, c))
+	cs.broadcaster(cs.signer,
+		message.NewBlockAnnounceMessage(h, b, c))
 }
 
-func (cs *consensus) broadcast(msg message.Message) {
-	if !cs.active {
-		cs.logger.Warn("non-active validators should not publish messages")
+func (cs *consensus) makeCertificate(votes map[crypto.Address]*vote.Vote) *certificate.Certificate {
+	vals := cs.state.CommitteeValidators()
+	committers := make([]int32, len(vals))
+	absentees := make([]int32, 0)
+	sigs := make([]*bls.Signature, 0)
+
+	for i, val := range vals {
+		vote := votes[val.Address()]
+		if vote != nil {
+			sigs = append(sigs, vote.Signature())
+		} else {
+			absentees = append(absentees, val.Number())
+		}
+
+		committers[i] = val.Number()
 	}
 
-	cs.broadcastCh <- msg
+	aggSig := bls.SignatureAggregate(sigs...)
+
+	return certificate.NewCertificate(cs.height, cs.round, committers, absentees, aggSig)
 }
 
 // IsActive checks if the consensus is in an active state and participating in the consensus algorithm.
@@ -328,15 +715,25 @@ func (cs *consensus) PickRandomVote(round int16) *vote.Vote {
 
 	votes := []*vote.Vote{}
 	if round == cs.round {
-		m := cs.log.MustGetRoundMessages(round)
+		m := cs.log.RoundMessages(round)
 		votes = append(votes, m.AllVotes()...)
 	} else {
 		// Don't broadcast prepare and precommit votes for previous rounds
-		vs := cs.log.ChangeProposerVoteSet(round)
-		votes = append(votes, vs.AllVotes()...)
+		vs0 := cs.log.CPPreVoteVoteSet(round)
+		vs1 := cs.log.CPMainVoteVoteSet(round)
+		votes = append(votes, vs0.AllVotes()...)
+		votes = append(votes, vs1.AllVotes()...)
 	}
 	if len(votes) == 0 {
 		return nil
 	}
 	return votes[util.RandInt32(int32(len(votes)))]
+}
+
+func (cs *consensus) startChangingProposer() {
+	// It is not timeout before
+	if cs.cpDecided == -1 {
+		cs.logger.Debug("changing proposer started")
+		cs.enterNewState(cs.cpPreVoteState)
+	}
 }

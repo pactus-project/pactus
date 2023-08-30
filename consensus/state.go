@@ -7,8 +7,9 @@ import (
 
 type consState interface {
 	enter()
-	onSetProposal(p *proposal.Proposal)
+	decide()
 	onAddVote(v *vote.Vote)
+	onSetProposal(p *proposal.Proposal)
 	onTimeout(t *ticker)
 	name() string
 }

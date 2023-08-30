@@ -48,7 +48,7 @@ func TestBlock(t *testing.T) {
 	t.Run("Shall return an error, non exists", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"hash": td.RandomHash().String()})
+		r = mux.SetURLVars(r, map[string]string{"hash": td.RandHash().String()})
 		td.httpServer.GetBlockByHashHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)

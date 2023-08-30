@@ -54,13 +54,13 @@ func (mgr *manager) Instances() []Reader {
 	return readers
 }
 
-// PickRandomVote retrieves a random vote from a random consensus instance.
+// PickRandomVote returns a random vote from a random consensus instance.
 func (mgr *manager) PickRandomVote(round int16) *vote.Vote {
 	cons := mgr.getBestInstance()
 	return cons.PickRandomVote(round)
 }
 
-// RoundProposal retrieves the proposal for a specific round from a random consensus instance.
+// RoundProposal returns the proposal for a specific round from a random consensus instance.
 func (mgr *manager) RoundProposal(round int16) *proposal.Proposal {
 	cons := mgr.getBestInstance()
 	return cons.RoundProposal(round)

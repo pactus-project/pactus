@@ -14,8 +14,8 @@ import (
 func TestPrivateKeyEqualsTo(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	_, prv1 := ts.RandomBLSKeyPair()
-	_, prv2 := ts.RandomBLSKeyPair()
+	_, prv1 := ts.RandBLSKeyPair()
+	_, prv2 := ts.RandBLSKeyPair()
 
 	assert.True(t, prv1.EqualsTo(prv1))
 	assert.False(t, prv1.EqualsTo(prv2))

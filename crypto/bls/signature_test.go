@@ -16,8 +16,8 @@ import (
 func TestSignatureCBORMarshaling(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	_, prv := ts.RandomBLSKeyPair()
-	sig1 := prv.Sign(ts.RandomBytes(16))
+	_, prv := ts.RandBLSKeyPair()
+	sig1 := prv.Sign(ts.RandBytes(16))
 	sig2 := new(bls.Signature)
 
 	bs, err := sig1.MarshalCBOR()
@@ -35,7 +35,7 @@ func TestSignatureCBORMarshaling(t *testing.T) {
 func TestSignatureEqualsTo(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	signer := ts.RandomSigner()
+	signer := ts.RandSigner()
 	sig1 := signer.SignData([]byte("foo"))
 	sig2 := signer.SignData([]byte("bar"))
 
@@ -48,8 +48,8 @@ func TestSignatureEqualsTo(t *testing.T) {
 func TestSignatureEncoding(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	_, prv := ts.RandomBLSKeyPair()
-	sig := prv.Sign(ts.RandomBytes(16))
+	_, prv := ts.RandBLSKeyPair()
+	sig := prv.Sign(ts.RandBytes(16))
 	w1 := util.NewFixedWriter(20)
 	assert.Error(t, sig.Encode(w1))
 
@@ -68,8 +68,8 @@ func TestVerifyingSignature(t *testing.T) {
 
 	msg := []byte("zarb")
 
-	pb1, pv1 := ts.RandomBLSKeyPair()
-	pb2, pv2 := ts.RandomBLSKeyPair()
+	pb1, pv1 := ts.RandBLSKeyPair()
+	pb2, pv2 := ts.RandBLSKeyPair()
 	sig1 := pv1.Sign(msg)
 	sig2 := pv2.Sign(msg)
 

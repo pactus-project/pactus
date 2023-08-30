@@ -12,15 +12,15 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 
 	lastBlockHeight := td.state.LastBlockHeight()
 	b1 := td.GenerateTestBlock(nil, nil)
-	c1 := td.GenerateTestCertificate(b1.Hash())
+	c1 := td.GenerateTestCertificate()
 	b2 := td.GenerateTestBlock(nil, nil)
-	c2 := td.GenerateTestCertificate(b2.Hash())
+	c2 := td.GenerateTestCertificate()
 
-	pid := td.RandomPeerID()
+	pid := td.RandPeerID()
 	msg1 := message.NewBlockAnnounceMessage(lastBlockHeight+1, b1, c1)
 	msg2 := message.NewBlockAnnounceMessage(lastBlockHeight+2, b2, c2)
 
-	pub, _ := td.RandomBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 	td.addPeer(t, pub, pid, false)
 
 	t.Run("Receiving new block announce message, without committing previous block", func(t *testing.T) {

@@ -19,13 +19,13 @@ func TestExecution(t *testing.T) {
 	sb := sandbox.MockingSandbox(ts)
 	exe := NewExecutor()
 
-	signer1 := ts.RandomSigner()
+	signer1 := ts.RandSigner()
 	addr1 := signer1.Address()
 	acc1 := sb.MakeNewAccount(addr1)
 	acc1.AddToBalance(100 * 1e9)
 	sb.UpdateAccount(addr1, acc1)
 
-	rcvAddr := ts.RandomAddress()
+	rcvAddr := ts.RandAddress()
 	block1 := sb.TestStore.AddTestBlock(1)
 	block3 := sb.TestStore.AddTestBlock(3)
 	block8635 := sb.TestStore.AddTestBlock(8635)
@@ -89,7 +89,7 @@ func TestExecution(t *testing.T) {
 	})
 
 	t.Run("Invalid fee (subsidy tx), Should returns error", func(t *testing.T) {
-		trx := tx.NewTransferTx(block3.Stamp(), 2, crypto.TreasuryAddress, rcvAddr, 1000, 1, "invalid fee")
+		trx := tx.NewTransferTx(block8642.Stamp(), 2, crypto.TreasuryAddress, rcvAddr, 1000, 1, "invalid fee")
 		err := exe.Execute(trx, sb)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
 		assert.Error(t, exe.checkFee(trx, sb))
@@ -103,7 +103,7 @@ func TestExecution(t *testing.T) {
 	})
 
 	t.Run("Sortition tx - Expired stamp, Should returns error", func(t *testing.T) {
-		proof := ts.RandomProof()
+		proof := ts.RandProof()
 		trx := tx.NewSortitionTx(block8635.Stamp(), 1, addr1, proof)
 		signer1.SignMsg(trx)
 		err := exe.Execute(trx, sb)
@@ -111,7 +111,7 @@ func TestExecution(t *testing.T) {
 	})
 
 	t.Run("Execution failed", func(t *testing.T) {
-		proof := ts.RandomProof()
+		proof := ts.RandProof()
 		trx := tx.NewSortitionTx(block8642.Stamp(), 1, addr1, proof)
 		signer1.SignMsg(trx)
 		err := exe.Execute(trx, sb)
@@ -129,7 +129,7 @@ func TestChecker(t *testing.T) {
 	block1000 := sb.TestStore.AddTestBlock(1000)
 
 	t.Run("In strict mode transaction should be rejected.", func(t *testing.T) {
-		signer := ts.RandomSigner()
+		signer := ts.RandSigner()
 		acc := sb.MakeNewAccount(signer.Address())
 		acc.AddToBalance(10000000000)
 		sb.UpdateAccount(signer.Address(), acc)
@@ -154,7 +154,7 @@ func TestLockTime(t *testing.T) {
 	sb.TestStore.AddTestBlock(curHeight)
 
 	t.Run("Should reject sortition transactions with lock time", func(t *testing.T) {
-		pub, prv := ts.RandomBLSKeyPair()
+		pub, prv := ts.RandBLSKeyPair()
 		signer := crypto.NewSigner(prv)
 		val := sb.MakeNewValidator(pub)
 		sb.UpdateValidator(val)
@@ -162,7 +162,7 @@ func TestLockTime(t *testing.T) {
 		sb.TestAcceptSortition = true
 		pld := &payload.SortitionPayload{
 			Address: pub.Address(),
-			Proof:   ts.RandomProof(),
+			Proof:   ts.RandProof(),
 		}
 		trx := tx.NewLockTimeTx(curHeight+10, 1, pld, 0, "")
 		signer.SignMsg(trx)
@@ -173,7 +173,7 @@ func TestLockTime(t *testing.T) {
 	t.Run("Should reject subsidy transactions with lock time", func(t *testing.T) {
 		pld := &payload.TransferPayload{
 			Sender:   crypto.TreasuryAddress,
-			Receiver: ts.RandomAddress(),
+			Receiver: ts.RandAddress(),
 			Amount:   1234,
 		}
 		trx := tx.NewLockTimeTx(curHeight+10, 1, pld, 0, "")
@@ -182,13 +182,13 @@ func TestLockTime(t *testing.T) {
 	})
 
 	t.Run("Should reject expired transactions", func(t *testing.T) {
-		signer := ts.RandomSigner()
+		signer := ts.RandSigner()
 		acc := sb.MakeNewAccount(signer.Address())
 		acc.AddToBalance(10000)
 		sb.UpdateAccount(signer.Address(), acc)
 		pld := &payload.TransferPayload{
 			Sender:   signer.Address(),
-			Receiver: ts.RandomAddress(),
+			Receiver: ts.RandAddress(),
 			Amount:   1234,
 		}
 
@@ -200,13 +200,13 @@ func TestLockTime(t *testing.T) {
 	})
 
 	t.Run("Not finalized transaction", func(t *testing.T) {
-		signer := ts.RandomSigner()
+		signer := ts.RandSigner()
 		acc := sb.MakeNewAccount(signer.Address())
 		acc.AddToBalance(10000)
 		sb.UpdateAccount(signer.Address(), acc)
 		pld := &payload.TransferPayload{
 			Sender:   signer.Address(),
-			Receiver: ts.RandomAddress(),
+			Receiver: ts.RandAddress(),
 			Amount:   1234,
 		}
 
@@ -247,9 +247,9 @@ func TestFee(t *testing.T) {
 		{1 * 1e12, 1000000, 1000000, errors.ErrNone},
 	}
 
-	sender := ts.RandomAddress()
-	receiver := ts.RandomAddress()
-	stamp := ts.RandomStamp()
+	sender := ts.RandAddress()
+	receiver := ts.RandAddress()
+	stamp := ts.RandStamp()
 	for i, test := range tests {
 		trx := tx.NewTransferTx(stamp, 1, sender, receiver, test.amount, test.fee,
 			"testing fee")

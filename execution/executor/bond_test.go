@@ -15,11 +15,11 @@ func TestExecuteBondTx(t *testing.T) {
 
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
-	pub, _ := td.RandomBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 	receiverAddr := pub.Address()
 	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, senderBalance)
 	t.Run("Should fail, invalid sender", func(t *testing.T) {
-		trx := tx.NewBondTx(td.randStamp, 1, td.RandomAddress(),
+		trx := tx.NewBondTx(td.randStamp, 1, td.RandAddress(),
 			receiverAddr, pub, amt, fee, "invalid sender")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -60,7 +60,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, unbonded before", func(t *testing.T) {
-		unbondedPub, _ := td.RandomBLSKeyPair()
+		unbondedPub, _ := td.RandBLSKeyPair()
 		val := td.sandbox.MakeNewValidator(unbondedPub)
 		val.UpdateUnbondingHeight(td.sandbox.CurrentHeight())
 		td.sandbox.UpdateValidator(val)
@@ -80,7 +80,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, amount less than MinimumStake", func(t *testing.T) {
-		trx := tx.NewBondTx(td.RandomStamp(), senderAcc.Sequence()+1, senderAddr,
+		trx := tx.NewBondTx(td.RandStamp(), senderAcc.Sequence()+1, senderAddr,
 			receiverAddr, pub, 1000, fee, "less than MinimumStake")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -143,7 +143,7 @@ func TestBondJoiningCommittee(t *testing.T) {
 	exe2 := NewBondExecutor(false)
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
-	pub, _ := td.RandomBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, senderBalance)
 
 	val := td.sandbox.MakeNewValidator(pub)
@@ -168,7 +168,7 @@ func TestStakeExceeded(t *testing.T) {
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderAcc.AddToBalance(td.sandbox.TestParams.MaximumStake + 1)
 	td.sandbox.UpdateAccount(senderAddr, senderAcc)
-	pub, _ := td.RandomBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 
 	trx := tx.NewBondTx(td.randStamp, senderAcc.Sequence()+1, senderAddr,
 		pub.Address(), pub, amt, fee, "stake exceeded")

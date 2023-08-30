@@ -13,7 +13,7 @@ import (
 func TestHashFromString(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	hash1 := ts.RandomHash()
+	hash1 := ts.RandHash()
 	hash2, err := hash.FromString(hash1.String())
 	assert.Contains(t, strings.ToUpper(hash1.String()), hash1.ShortString())
 	assert.NoError(t, err)

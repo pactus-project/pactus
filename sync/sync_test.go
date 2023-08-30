@@ -72,11 +72,11 @@ func setup(t *testing.T, config *Config) *testData {
 		config = testConfig()
 		config.Moniker = "Alice"
 	}
-	signers := []crypto.Signer{ts.RandomSigner(), ts.RandomSigner()}
+	signers := []crypto.Signer{ts.RandSigner(), ts.RandSigner()}
 	state := state.MockingState(ts)
 	consMgr, consMocks := consensus.MockingManager(ts, signers)
 	broadcastCh := make(chan message.Message, 1000)
-	network := network.MockingNetwork(ts, ts.RandomPeerID())
+	network := network.MockingNetwork(ts, ts.RandPeerID())
 
 	Sync, err := NewSynchronizer(config,
 		signers,
@@ -213,7 +213,7 @@ func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.Pub
 	t.Helper()
 
 	if pub == nil {
-		pub, _ = td.RandomBLSKeyPair()
+		pub, _ = td.RandBLSKeyPair()
 	}
 	td.addPeer(t, pub, pid, true)
 	val := validator.NewValidator(pub.(*bls.PublicKey), td.RandInt32(1000))
@@ -245,7 +245,7 @@ func TestTestNetFlags(t *testing.T) {
 	td := setup(t, nil)
 
 	td.state.TestParams.BlockVersion = 0x3f
-	bdl := td.sync.prepareBundle(message.NewHeartBeatMessage(1, 0, td.RandomHash()))
+	bdl := td.sync.prepareBundle(message.NewHeartBeatMessage(1, 0, td.RandHash()))
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
 }
@@ -255,8 +255,8 @@ func TestDownload(t *testing.T) {
 
 	ourBlockHeight := td.state.LastBlockHeight()
 	b := td.GenerateTestBlock(nil, nil)
-	c := td.GenerateTestCertificate(b.Hash())
-	pid := td.RandomPeerID()
+	c := td.GenerateTestCertificate()
+	pid := td.RandPeerID()
 	msg := message.NewBlockAnnounceMessage(ourBlockHeight+LatestBlockInterval+1, b, c)
 
 	t.Run("try to query latest blocks, but the peer is not known", func(t *testing.T) {
@@ -272,7 +272,7 @@ func TestDownload(t *testing.T) {
 	})
 
 	t.Run("try to download blocks, but the peer is not a network node", func(t *testing.T) {
-		pub, _ := td.RandomBLSKeyPair()
+		pub, _ := td.RandBLSKeyPair()
 		td.addPeer(t, pub, pid, false)
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
@@ -283,7 +283,7 @@ func TestDownload(t *testing.T) {
 	})
 
 	t.Run("try to download blocks and the peer is a network node", func(t *testing.T) {
-		pub, _ := td.RandomBLSKeyPair()
+		pub, _ := td.RandBLSKeyPair()
 		td.addPeer(t, pub, pid, true)
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))

@@ -41,7 +41,7 @@ func (p *TransferPayload) SerializeSize() int {
 }
 
 func (p *TransferPayload) Encode(w io.Writer) error {
-	// If the transaction is a subsidy transaction (sender is treasury address)
+	// If the transaction is a subsidy transaction (sender is the Treasury address)
 	// compress the address to one byte.
 	// This helps to reduce the size of each block by 20 bytes.
 	if p.Sender.EqualsTo(crypto.TreasuryAddress) {

@@ -49,7 +49,7 @@ func TestGetTransaction(t *testing.T) {
 	})
 
 	t.Run("Should return nil value because transaction doesn't exist", func(t *testing.T) {
-		id := ts.RandomHash()
+		id := ts.RandHash()
 		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{Id: id.Bytes()})
 		assert.Error(t, err)
 		assert.Nil(t, res)
