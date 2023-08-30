@@ -29,7 +29,7 @@ func (n *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn)
 
 func (n *NotifeeService) Disconnected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
 	peerID := conn.RemotePeer()
-	n.logger.Info("Disconnected from peer with peerId:", "PeerID", peerID)
+	n.logger.Info("Disconnected from peer with peerID:", "PeerID", peerID)
 	n.eventChannel <- &DisconnectEvent{PeerID: peerID}
 }
 
