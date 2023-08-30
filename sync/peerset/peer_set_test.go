@@ -63,11 +63,11 @@ func TestPeerSet(t *testing.T) {
 	})
 
 	t.Run("Testing GetPeer", func(t *testing.T) {
-		p := peerSet.GetPeer(peer.ID("connected"))
+		p := peerSet.GetPeer(pid2)
 		assert.Equal(t, pid2, p.PeerID)
 		assert.Equal(t, StatusCodeKnown, p.Status)
 
-		p = peerSet.GetPeer(peer.ID("unknown"))
+		p = peerSet.GetPeer(ts.RandPeerID())
 		assert.Equal(t, peer.ID(""), p.PeerID)
 		assert.Equal(t, StatusCodeUnknown, p.Status)
 	})

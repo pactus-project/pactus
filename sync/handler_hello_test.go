@@ -106,7 +106,7 @@ func TestParsingHelloMessages(t *testing.T) {
 func TestSendingHelloMessage(t *testing.T) {
 	td := setup(t, nil)
 
-	to := td.RandomPeerID()
+	to := td.RandPeerID()
 	td.sync.sayHello(true, to)
 
 	bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
