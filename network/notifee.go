@@ -23,7 +23,7 @@ func newNotifeeService(host lp2phost.Host, eventChannel chan<- Event, logger *lo
 
 func (n *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
 	peerID := conn.RemotePeer()
-	n.logger.Info("Connected to peer with peerId:", "PeerID", peerID)
+	n.logger.Info("Connected to peer with peerID:", "PeerID", peerID)
 	n.eventChannel <- &ConnectEvent{PeerID: peerID}
 }
 
