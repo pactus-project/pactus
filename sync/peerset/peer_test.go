@@ -23,7 +23,7 @@ func TestPeer(t *testing.T) {
 
 	t.Run("NewPeer", func(t *testing.T) {
 		assert.NotNil(t, p1)
-		assert.Equal(t, p1.Status, StatusCodeUnknown)
+		assert.Equal(t, p1.Status, StatusCodeConnected)
 	})
 
 	t.Run("status check", func(t *testing.T) {

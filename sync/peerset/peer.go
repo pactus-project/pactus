@@ -36,7 +36,7 @@ type Peer struct {
 func NewPeer(peerID peer.ID) *Peer {
 	return &Peer{
 		ConsensusKeys: make([]*bls.PublicKey, 0),
-		Status:        StatusCodeUnknown,
+		Status:        StatusCodeConnected,
 		PeerID:        peerID,
 		ReceivedBytes: make(map[message.Type]int64),
 		SentBytes:     make(map[message.Type]int64),
