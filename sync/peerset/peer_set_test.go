@@ -271,7 +271,7 @@ func TestGetRandomPeerConnected(t *testing.T) {
 	peerSet := NewPeerSet(time.Second)
 
 	pk, _ := ts.RandBLSKeyPair()
-	pidConnected := peer.ID("peer_connected")
+	pidConnected := ts.RandPeerID()
 	peerSet.UpdatePeerInfo(pidConnected, StatusCodeConnected, "Moniker_unknown", "Agent1", []*bls.PublicKey{pk}, true)
 
 	pk, _ = ts.RandBLSKeyPair()
