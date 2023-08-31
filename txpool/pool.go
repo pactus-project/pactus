@@ -29,11 +29,11 @@ type txPool struct {
 func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 	pending := make(map[payload.Type]*linkedmap.LinkedMap[tx.ID, *tx.Tx])
 
-	pending[payload.PayloadTypeTransfer] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sendPoolSize())
-	pending[payload.PayloadTypeBond] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.bondPoolSize())
-	pending[payload.PayloadTypeUnbond] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.unbondPoolSize())
-	pending[payload.PayloadTypeWithdraw] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.withdrawPoolSize())
-	pending[payload.PayloadTypeSortition] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sortitionPoolSize())
+	pending[payload.TypeTransfer] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sendPoolSize())
+	pending[payload.TypeBond] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.bondPoolSize())
+	pending[payload.TypeUnbound] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.unbondPoolSize())
+	pending[payload.TypeWithdraw] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.withdrawPoolSize())
+	pending[payload.TypeSortition] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sortitionPoolSize())
 
 	pool := &txPool{
 		config:      conf,
@@ -152,31 +152,31 @@ func (p *txPool) PrepareBlockTransactions() block.Txs {
 	defer p.lk.RUnlock()
 
 	// Appending one sortition transaction
-	poolSortition := p.pools[payload.PayloadTypeSortition]
+	poolSortition := p.pools[payload.TypeSortition]
 	for n := poolSortition.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending bond transactions
-	poolBond := p.pools[payload.PayloadTypeBond]
+	poolBond := p.pools[payload.TypeBond]
 	for n := poolBond.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending unbond transactions
-	poolUnbond := p.pools[payload.PayloadTypeUnbond]
+	poolUnbond := p.pools[payload.TypeUnbound]
 	for n := poolUnbond.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending withdraw transactions
-	poolWithdraw := p.pools[payload.PayloadTypeWithdraw]
+	poolWithdraw := p.pools[payload.TypeWithdraw]
 	for n := poolWithdraw.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending transfer transactions
-	poolSend := p.pools[payload.PayloadTypeTransfer]
+	poolSend := p.pools[payload.TypeTransfer]
 	for n := poolSend.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
@@ -210,10 +210,10 @@ func (p *txPool) Size() int {
 
 func (p *txPool) String() string {
 	return fmt.Sprintf("{💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
-		p.pools[payload.PayloadTypeTransfer].Size(),
-		p.pools[payload.PayloadTypeBond].Size(),
-		p.pools[payload.PayloadTypeUnbond].Size(),
-		p.pools[payload.PayloadTypeSortition].Size(),
-		p.pools[payload.PayloadTypeWithdraw].Size(),
+		p.pools[payload.TypeTransfer].Size(),
+		p.pools[payload.TypeBond].Size(),
+		p.pools[payload.TypeUnbound].Size(),
+		p.pools[payload.TypeSortition].Size(),
+		p.pools[payload.TypeWithdraw].Size(),
 	)
 }

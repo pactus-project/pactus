@@ -16,7 +16,7 @@ type WithdrawPayload struct {
 }
 
 func (p *WithdrawPayload) Type() Type {
-	return PayloadTypeWithdraw
+	return TypeWithdraw
 }
 
 func (p *WithdrawPayload) Signer() crypto.Address {

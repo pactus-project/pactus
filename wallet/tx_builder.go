@@ -106,9 +106,9 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 
 	var trx *tx.Tx
 	switch m.typ {
-	case payload.PayloadTypeTransfer:
+	case payload.TypeTransfer:
 		trx = tx.NewTransferTx(*m.stamp, m.seq, *m.from, *m.to, m.amount, m.fee, m.memo)
-	case payload.PayloadTypeBond:
+	case payload.TypeBond:
 		{
 			pub := m.pub
 			val, _ := m.client.getValidator(*m.to)
@@ -118,9 +118,9 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 			}
 			trx = tx.NewBondTx(*m.stamp, m.seq, *m.from, *m.to, pub, m.amount, m.fee, m.memo)
 		}
-	case payload.PayloadTypeUnbond:
+	case payload.TypeUnbound:
 		trx = tx.NewUnbondTx(*m.stamp, m.seq, *m.from, m.memo)
-	case payload.PayloadTypeWithdraw:
+	case payload.TypeWithdraw:
 		trx = tx.NewWithdrawTx(*m.stamp, m.seq, *m.from, *m.to, m.amount, m.fee, m.memo)
 	}
 
@@ -150,8 +150,8 @@ func (m *txBuilder) setSequence() error {
 		}
 
 		switch m.typ {
-		case payload.PayloadTypeTransfer,
-			payload.PayloadTypeBond:
+		case payload.TypeTransfer,
+			payload.TypeBond:
 			{
 				acc, err := m.client.getAccount(*m.from)
 				if err != nil {
@@ -160,8 +160,8 @@ func (m *txBuilder) setSequence() error {
 				m.seq = acc.Sequence + 1
 			}
 
-		case payload.PayloadTypeUnbond,
-			payload.PayloadTypeWithdraw:
+		case payload.TypeUnbound,
+			payload.TypeWithdraw:
 			{
 				val, err := m.client.getValidator(*m.from)
 				if err != nil {

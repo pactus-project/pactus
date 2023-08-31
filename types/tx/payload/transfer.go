@@ -15,7 +15,7 @@ type TransferPayload struct {
 }
 
 func (p *TransferPayload) Type() Type {
-	return PayloadTypeTransfer
+	return TypeTransfer
 }
 
 func (p *TransferPayload) Signer() crypto.Address {

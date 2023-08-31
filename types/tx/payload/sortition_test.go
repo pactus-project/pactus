@@ -12,7 +12,7 @@ import (
 
 func TestSortitionType(t *testing.T) {
 	pld := SortitionPayload{}
-	assert.Equal(t, pld.Type(), PayloadTypeSortition)
+	assert.Equal(t, pld.Type(), TypeSortition)
 }
 
 func TestSortitionDecoding(t *testing.T) {

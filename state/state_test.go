@@ -755,20 +755,20 @@ func TestCalcFee(t *testing.T) {
 		expectedFee     int64
 		expectedErrCode int
 	}{
-		{1, payload.PayloadTypeTransfer, 1, td.state1.params.MinimumFee, errors.ErrInvalidFee},
-		{1, payload.PayloadTypeWithdraw, 1001, td.state1.params.MinimumFee, errors.ErrInvalidFee},
-		{1, payload.PayloadTypeBond, 1000, td.state1.params.MinimumFee, errors.ErrNone},
+		{1, payload.TypeTransfer, 1, td.state1.params.MinimumFee, errors.ErrInvalidFee},
+		{1, payload.TypeWithdraw, 1001, td.state1.params.MinimumFee, errors.ErrInvalidFee},
+		{1, payload.TypeBond, 1000, td.state1.params.MinimumFee, errors.ErrNone},
 
-		{1 * 1e9, payload.PayloadTypeTransfer, 1, 100000, errors.ErrInvalidFee},
-		{1 * 1e9, payload.PayloadTypeWithdraw, 100001, 100000, errors.ErrInvalidFee},
-		{1 * 1e9, payload.PayloadTypeBond, 100000, 100000, errors.ErrNone},
+		{1 * 1e9, payload.TypeTransfer, 1, 100000, errors.ErrInvalidFee},
+		{1 * 1e9, payload.TypeWithdraw, 100001, 100000, errors.ErrInvalidFee},
+		{1 * 1e9, payload.TypeBond, 100000, 100000, errors.ErrNone},
 
-		{1 * 1e12, payload.PayloadTypeTransfer, 1, 1000000, errors.ErrInvalidFee},
-		{1 * 1e12, payload.PayloadTypeWithdraw, 1000001, 1000000, errors.ErrInvalidFee},
-		{1 * 1e12, payload.PayloadTypeBond, 1000000, 1000000, errors.ErrNone},
+		{1 * 1e12, payload.TypeTransfer, 1, 1000000, errors.ErrInvalidFee},
+		{1 * 1e12, payload.TypeWithdraw, 1000001, 1000000, errors.ErrInvalidFee},
+		{1 * 1e12, payload.TypeBond, 1000000, 1000000, errors.ErrNone},
 
-		{1 * 1e12, payload.PayloadTypeSortition, 0, 0, errors.ErrInvalidFee},
-		{1 * 1e12, payload.PayloadTypeUnbond, 0, 0, errors.ErrNone},
+		{1 * 1e12, payload.TypeSortition, 0, 0, errors.ErrInvalidFee},
+		{1 * 1e12, payload.TypeUnbound, 0, 0, errors.ErrNone},
 	}
 	for _, test := range tests {
 		fee, err := td.state2.CalculateFee(test.amount, test.pldType)

@@ -299,7 +299,7 @@ func (w *Wallet) MakeTransferTx(sender, receiver string, amount int64,
 		return nil, err
 	}
 	maker.amount = amount
-	maker.typ = payload.PayloadTypeTransfer
+	maker.typ = payload.TypeTransfer
 
 	return maker.build()
 }
@@ -334,7 +334,7 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
 		}
 	}
 	maker.amount = amount
-	maker.typ = payload.PayloadTypeBond
+	maker.typ = payload.TypeBond
 
 	return maker.build()
 }
@@ -349,7 +349,7 @@ func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
 	if err != nil {
 		return nil, err
 	}
-	maker.typ = payload.PayloadTypeUnbond
+	maker.typ = payload.TypeUnbound
 
 	return maker.build()
 }
@@ -372,7 +372,7 @@ func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount int64,
 		return nil, err
 	}
 	maker.amount = amount
-	maker.typ = payload.PayloadTypeWithdraw
+	maker.typ = payload.TypeWithdraw
 
 	return maker.build()
 }

@@ -16,7 +16,7 @@ type SortitionPayload struct {
 }
 
 func (p *SortitionPayload) Type() Type {
-	return PayloadTypeSortition
+	return TypeSortition
 }
 
 func (p *SortitionPayload) Signer() crypto.Address {

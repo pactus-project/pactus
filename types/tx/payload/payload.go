@@ -10,24 +10,24 @@ import (
 type Type uint8
 
 const (
-	PayloadTypeTransfer  = Type(1)
-	PayloadTypeBond      = Type(2)
-	PayloadTypeSortition = Type(3)
-	PayloadTypeUnbond    = Type(4)
-	PayloadTypeWithdraw  = Type(5)
+	TypeTransfer  = Type(1)
+	TypeBond      = Type(2)
+	TypeSortition = Type(3)
+	TypeUnbound   = Type(4)
+	TypeWithdraw  = Type(5)
 )
 
 func (t Type) String() string {
 	switch t {
-	case PayloadTypeTransfer:
+	case TypeTransfer:
 		return "transfer"
-	case PayloadTypeBond:
+	case TypeBond:
 		return "bond"
-	case PayloadTypeUnbond:
-		return "unbond"
-	case PayloadTypeWithdraw:
+	case TypeUnbound:
+		return "unbound"
+	case TypeWithdraw:
 		return "withdraw"
-	case PayloadTypeSortition:
+	case TypeSortition:
 		return "sortition"
 	}
 	return fmt.Sprintf("%d", t)
