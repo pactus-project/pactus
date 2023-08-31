@@ -12,7 +12,7 @@ import (
 
 func TestTransferType(t *testing.T) {
 	pld := TransferPayload{}
-	assert.Equal(t, pld.Type(), PayloadTypeTransfer)
+	assert.Equal(t, pld.Type(), TypeTransfer)
 }
 
 func TestTransferDecoding(t *testing.T) {

@@ -22,11 +22,11 @@ type Execution struct {
 
 func newExecution(strict bool) *Execution {
 	execs := make(map[payload.Type]Executor)
-	execs[payload.PayloadTypeTransfer] = executor.NewTransferExecutor(strict)
-	execs[payload.PayloadTypeBond] = executor.NewBondExecutor(strict)
-	execs[payload.PayloadTypeSortition] = executor.NewSortitionExecutor(strict)
-	execs[payload.PayloadTypeUnbond] = executor.NewUnbondExecutor(strict)
-	execs[payload.PayloadTypeWithdraw] = executor.NewWithdrawExecutor(strict)
+	execs[payload.TypeTransfer] = executor.NewTransferExecutor(strict)
+	execs[payload.TypeBond] = executor.NewBondExecutor(strict)
+	execs[payload.TypeSortition] = executor.NewSortitionExecutor(strict)
+	execs[payload.TypeUnbound] = executor.NewUnbondExecutor(strict)
+	execs[payload.TypeWithdraw] = executor.NewWithdrawExecutor(strict)
 
 	return &Execution{
 		executors: execs,

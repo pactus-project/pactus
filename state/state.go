@@ -715,15 +715,15 @@ func (st *state) publishEvents(height uint32, block *block.Block) {
 
 func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, error) {
 	switch payloadType {
-	case payload.PayloadTypeTransfer,
-		payload.PayloadTypeBond,
-		payload.PayloadTypeWithdraw:
+	case payload.TypeTransfer,
+		payload.TypeBond,
+		payload.TypeWithdraw:
 		{
 			return execution.CalculateFee(amount, st.params), nil
 		}
 
-	case payload.PayloadTypeUnbond,
-		payload.PayloadTypeSortition:
+	case payload.TypeUnbound,
+		payload.TypeSortition:
 		{
 			return 0, nil
 		}

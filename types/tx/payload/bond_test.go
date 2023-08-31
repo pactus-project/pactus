@@ -11,7 +11,7 @@ import (
 
 func TestBondType(t *testing.T) {
 	pld := BondPayload{}
-	assert.Equal(t, pld.Type(), PayloadTypeBond)
+	assert.Equal(t, pld.Type(), TypeBond)
 }
 
 func TestBondDecoding(t *testing.T) {

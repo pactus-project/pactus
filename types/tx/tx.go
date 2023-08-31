@@ -335,15 +335,15 @@ func (tx *Tx) DecodeWithNoSignatory(r io.Reader) error {
 	}
 
 	switch payload.Type(payloadType) {
-	case payload.PayloadTypeTransfer:
+	case payload.TypeTransfer:
 		tx.data.Payload = &payload.TransferPayload{}
-	case payload.PayloadTypeBond:
+	case payload.TypeBond:
 		tx.data.Payload = &payload.BondPayload{}
-	case payload.PayloadTypeUnbond:
+	case payload.TypeUnbound:
 		tx.data.Payload = &payload.UnbondPayload{}
-	case payload.PayloadTypeWithdraw:
+	case payload.TypeWithdraw:
 		tx.data.Payload = &payload.WithdrawPayload{}
-	case payload.PayloadTypeSortition:
+	case payload.TypeSortition:
 		tx.data.Payload = &payload.SortitionPayload{}
 
 	default:
@@ -412,29 +412,29 @@ func (tx *Tx) ID() ID {
 }
 
 func (tx *Tx) IsTransferTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeTransfer &&
+	return tx.Payload().Type() == payload.TypeTransfer &&
 		!tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }
 
 func (tx *Tx) IsBondTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeBond
+	return tx.Payload().Type() == payload.TypeBond
 }
 
 func (tx *Tx) IsSubsidyTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeTransfer &&
+	return tx.Payload().Type() == payload.TypeTransfer &&
 		tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }
 
 func (tx *Tx) IsSortitionTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeSortition
+	return tx.Payload().Type() == payload.TypeSortition
 }
 
 func (tx *Tx) IsUnbondTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeUnbond
+	return tx.Payload().Type() == payload.TypeUnbound
 }
 
 func (tx *Tx) IsWithdrawTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeWithdraw
+	return tx.Payload().Type() == payload.TypeWithdraw
 }
 
 // IsFreeTx will checks if transaction fee is 0.

@@ -240,15 +240,15 @@ func (m *MockState) Params() param.Params {
 
 func (m *MockState) CalculateFee(_ int64, payloadType payload.Type) (int64, error) {
 	switch payloadType {
-	case payload.PayloadTypeTransfer,
-		payload.PayloadTypeBond,
-		payload.PayloadTypeWithdraw:
+	case payload.TypeTransfer,
+		payload.TypeBond,
+		payload.TypeWithdraw:
 		{
 			return m.ts.RandInt64(1e9), nil
 		}
 
-	case payload.PayloadTypeUnbond,
-		payload.PayloadTypeSortition:
+	case payload.TypeUnbound,
+		payload.TypeSortition:
 		{
 			return 0, nil
 		}

@@ -18,7 +18,7 @@ type BondPayload struct {
 }
 
 func (p *BondPayload) Type() Type {
-	return PayloadTypeBond
+	return TypeBond
 }
 
 func (p *BondPayload) Signer() crypto.Address {

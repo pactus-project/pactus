@@ -100,7 +100,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 	}
 
 	switch trx.Payload().Type() {
-	case payload.PayloadTypeTransfer:
+	case payload.TypeTransfer:
 		pld := trx.Payload().(*payload.TransferPayload)
 		transaction.Payload = &pactus.TransactionInfo_Transfer{
 			Transfer: &pactus.PayloadTransfer{
@@ -109,7 +109,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 				Amount:   pld.Amount,
 			},
 		}
-	case payload.PayloadTypeBond:
+	case payload.TypeBond:
 		pld := trx.Payload().(*payload.BondPayload)
 		transaction.Payload = &pactus.TransactionInfo_Bond{
 			Bond: &pactus.PayloadBond{
@@ -118,7 +118,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 				Stake:    pld.Stake,
 			},
 		}
-	case payload.PayloadTypeSortition:
+	case payload.TypeSortition:
 		pld := trx.Payload().(*payload.SortitionPayload)
 		transaction.Payload = &pactus.TransactionInfo_Sortition{
 			Sortition: &pactus.PayloadSortition{
@@ -126,14 +126,14 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 				Proof:   pld.Proof[:],
 			},
 		}
-	case payload.PayloadTypeUnbond:
+	case payload.TypeUnbound:
 		pld := trx.Payload().(*payload.UnbondPayload)
 		transaction.Payload = &pactus.TransactionInfo_Unbond{
 			Unbond: &pactus.PayloadUnbond{
 				Validator: pld.Validator.String(),
 			},
 		}
-	case payload.PayloadTypeWithdraw:
+	case payload.TypeWithdraw:
 		pld := trx.Payload().(*payload.WithdrawPayload)
 		transaction.Payload = &pactus.TransactionInfo_Withdraw{
 			Withdraw: &pactus.PayloadWithdraw{
