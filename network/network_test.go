@@ -1,6 +1,7 @@
 package network
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"testing"
@@ -109,7 +110,7 @@ func readData(t *testing.T, r io.ReadCloser, len int) []byte {
 
 	buf := make([]byte, len)
 	_, err := r.Read(buf)
-	if err != io.EOF {
+	if !errors.Is(err, io.EOF) {
 		assert.NoError(t, err)
 		assert.NoError(t, r.Close())
 	}
@@ -329,6 +330,8 @@ func TestInvalidRelayAddress(t *testing.T) {
 }
 
 func TestConnections(t *testing.T) {
+	t.Parallel() // run the tests in parallel
+
 	ts := testsuite.NewTestSuite(t)
 
 	tests := []struct {
