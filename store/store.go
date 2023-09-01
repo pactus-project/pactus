@@ -197,17 +197,17 @@ func (s *store) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
 	return 0, nil
 }
 
-func (s *store) PublicKey(addr crypto.Address) (crypto.PublicKey, bool) {
+func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
 	bs, err := tryGet(s.db, publicKeyKey(addr))
 	if err != nil {
-		return nil, false
+		return nil, err
 	}
 	pubKey, err := bls.PublicKeyFromBytes(bs)
 	if err != nil {
-		return nil, false
+		return nil, err
 	}
 
-	return pubKey, true
+	return pubKey, err
 }
 
 func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {

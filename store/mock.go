@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
@@ -64,15 +65,15 @@ func (m *MockStore) BlockHeight(hash hash.Hash) uint32 {
 	return 0
 }
 
-func (m *MockStore) PublicKey(addr crypto.Address) (crypto.PublicKey, bool) {
+func (m *MockStore) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
 	for _, block := range m.Blocks {
 		for _, trx := range block.Transactions() {
 			if trx.Payload().Signer() == addr {
-				return trx.PublicKey(), true
+				return trx.PublicKey().(*bls.PublicKey), nil
 			}
 		}
 	}
-	return nil, false
+	return nil, nil
 }
 
 func (m *MockStore) Transaction(id tx.ID) (*CommittedTx, error) {

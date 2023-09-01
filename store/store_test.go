@@ -172,12 +172,12 @@ func TestIndexingPublicKeys(t *testing.T) {
 		addr := trx.Payload().Signer()
 		pub, found := td.store.PublicKey(addr)
 
-		assert.True(t, found)
+		assert.NoError(t, found)
 		assert.Equal(t, pub.Address(), addr)
 	}
 
 	pub, found := td.store.PublicKey(td.RandAddress())
-	assert.False(t, found)
+	assert.Error(t, found)
 	assert.Nil(t, pub)
 }
 

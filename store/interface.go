@@ -2,6 +2,7 @@ package store
 
 import (
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
@@ -35,8 +36,8 @@ func (s *CommittedBlock) ToBlock() (*block.Block, error) {
 	for i := 0; i < trxs.Len(); i++ {
 		trx := trxs[i]
 		if trx.IsPublicKeyStriped() {
-			pub, exists := s.PublicKey(trx.Payload().Signer())
-			if !exists {
+			pub, err := s.PublicKey(trx.Payload().Signer())
+			if err != nil {
 				return nil, PublicKeyNotFoundError{
 					Address: trx.Payload().Signer(),
 				}
@@ -64,8 +65,8 @@ func (s *CommittedTx) ToTx() (*tx.Tx, error) {
 	}
 
 	if trx.IsPublicKeyStriped() {
-		pub, exists := s.PublicKey(trx.Payload().Signer())
-		if !exists {
+		pub, err := s.PublicKey(trx.Payload().Signer())
+		if err != nil {
 			return nil, PublicKeyNotFoundError{
 				Address: trx.Payload().Signer(),
 			}
@@ -82,7 +83,7 @@ type Reader interface {
 	BlockHash(height uint32) hash.Hash
 	RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block)
 	Transaction(id tx.ID) (*CommittedTx, error)
-	PublicKey(addr crypto.Address) (crypto.PublicKey, bool)
+	PublicKey(addr crypto.Address) (*bls.PublicKey, error)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
 	AccountByNumber(number int32) (*account.Account, error)
