@@ -350,7 +350,7 @@ func TestSignBytes(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, trx.SerializeSize(), len(d))
 
-	sb := d[2 : len(d)-bls.PublicKeySize-bls.SignatureSize]
+	sb := d[1 : len(d)-bls.PublicKeySize-bls.SignatureSize]
 	assert.Equal(t, sb, trx.SignBytes())
 	assert.Equal(t, trx.ID(), h)
 	assert.Equal(t, trx.ID(), hash.CalcHash(sb))
