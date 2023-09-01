@@ -383,8 +383,9 @@ func testConnection(t *testing.T, networkP *network, networkB *network) {
 	t.Helper()
 
 	// Ensure that peers are connected to each other
-	for {
-		if networkP.NumConnectedPeers() >= 1 {
+	for i := 0; i < 20; i++ {
+		if networkP.NumConnectedPeers() >= 1 &&
+			networkB.NumConnectedPeers() >= 1 {
 			break
 		}
 		time.Sleep(100 * time.Millisecond)
@@ -393,7 +394,6 @@ func testConnection(t *testing.T, networkP *network, networkB *network) {
 	assert.Equal(t, networkB.NumConnectedPeers(), 1)
 	assert.Equal(t, networkP.NumConnectedPeers(), 1)
 
-	time.Sleep(1 * time.Second)
 	msg := []byte("test-msg")
 
 	require.NoError(t, networkP.SendTo(msg, networkB.SelfID()))
