@@ -11,7 +11,7 @@ func TestBlockStore(t *testing.T) {
 	td := setup(t)
 
 	lastHeight, _ := td.store.LastCertificate()
-	b1 := td.GenerateTestBlock(nil, nil)
+	b1 := td.GenerateTestBlock(nil)
 	c1 := td.GenerateTestCertificate()
 
 	t.Run("Missed block, Should panic ", func(t *testing.T) {

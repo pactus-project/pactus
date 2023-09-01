@@ -269,7 +269,7 @@ func (ts *TestSuite) GenerateTestValidator(number int32) (*validator.Validator, 
 }
 
 // GenerateTestBlock generates a block for testing purposes.
-func (ts *TestSuite) GenerateTestBlock(proposer *crypto.Address, prevBlockHash *hash.Hash) *block.Block {
+func (ts *TestSuite) GenerateTestBlock(proposer *crypto.Address) *block.Block {
 	if proposer == nil {
 		addr := ts.RandAddress()
 		proposer = &addr
@@ -287,19 +287,11 @@ func (ts *TestSuite) GenerateTestBlock(proposer *crypto.Address, prevBlockHash *
 	txs.Append(tx4)
 	txs.Append(tx5)
 
-	if prevBlockHash == nil {
-		h := ts.RandHash()
-		prevBlockHash = &h
-	}
 	cert := ts.GenerateTestCertificate()
-	if prevBlockHash.IsUndef() {
-		cert = nil
-	}
-	sortitionSeed := ts.RandSeed()
 	header := block.NewHeader(1, util.Now(),
 		ts.RandHash(),
-		*prevBlockHash,
-		sortitionSeed,
+		ts.RandHash(),
+		ts.RandSeed(),
 		*proposer)
 
 	return block.NewBlock(header, cert, txs)
@@ -325,7 +317,7 @@ func (ts *TestSuite) GenerateTestCertificate() *certificate.Certificate {
 func (ts *TestSuite) GenerateTestProposal(height uint32, round int16) (*proposal.Proposal, crypto.Signer) {
 	signer := ts.RandSigner()
 	addr := signer.Address()
-	b := ts.GenerateTestBlock(&addr, nil)
+	b := ts.GenerateTestBlock(&addr)
 	p := proposal.NewProposal(height, round, b)
 	signer.SignMsg(p)
 	return p, signer

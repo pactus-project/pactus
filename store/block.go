@@ -3,6 +3,7 @@ package store
 import (
 	"bytes"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util"
@@ -12,6 +13,10 @@ import (
 )
 
 func blockKey(height uint32) []byte { return append(blockPrefix, util.Uint32ToSlice(height)...) }
+func publicKeyKey(addr crypto.Address) []byte {
+	return append(publicKeyPrefix, addr.Bytes()...)
+}
+
 func blockHashKey(hash hash.Hash) []byte {
 	return append(blockHeightPrefix, hash.Bytes()...)
 }
@@ -62,11 +67,24 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, block *bloc
 		regs[i].height = height
 		regs[i].offset = uint32(offset)
 
+		pubKey := trx.PublicKey()
+		if pubKey != nil {
+			if !bs.hasPublicKey(trx.Payload().Signer()) {
+				publicKeyKey := publicKeyKey(trx.Payload().Signer())
+				batch.Put(publicKeyKey, pubKey.Bytes())
+			} else {
+				// we have indexed this public key, se we can remove it
+				trx.SetPublicKey(nil)
+			}
+		}
+
 		err := trx.Encode(w)
 		if err != nil {
 			panic(err) // Should we panic?
 		}
 		regs[i].length = uint32(w.Len() - offset)
+
+		trx.SetPublicKey(pubKey)
 	}
 	blockKey := blockKey(height)
 	blockHashKey := blockHashKey(blockHash)
@@ -96,6 +114,14 @@ func (bs *blockStore) blockHeight(hash hash.Hash) uint32 {
 
 func (bs *blockStore) hasBlock(height uint32) bool {
 	has, err := bs.db.Has(blockKey(height), nil)
+	if err != nil {
+		return false
+	}
+	return has
+}
+
+func (bs *blockStore) hasPublicKey(addr crypto.Address) bool {
+	has, err := bs.db.Has(publicKeyKey(addr), nil)
 	if err != nil {
 		return false
 	}

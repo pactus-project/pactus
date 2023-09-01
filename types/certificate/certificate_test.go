@@ -1,11 +1,14 @@
 package certificate_test
 
 import (
+	"bytes"
+	"encoding/hex"
 	"fmt"
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
@@ -13,11 +16,33 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestCertificate(t *testing.T) {
+	d, _ := hex.DecodeString(
+		"04030201" + // Height
+			"0100" + // Round
+			"0401020304" + // Committers
+			"0102" + // Absentees
+			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6") // Signature
+
+	h, _ := hash.FromString("6d5fee07c7cc35384f2f1bc695f6b6afa339df6d867dec0d324a60a48803e1aa")
+	r := bytes.NewReader(d)
+	cert := new(certificate.Certificate)
+	err := cert.Decode(r)
+	assert.NoError(t, err)
+	assert.Equal(t, cert.Height(), uint32(0x01020304))
+	assert.Equal(t, cert.Round(), int16(0x0001))
+	assert.Equal(t, cert.Committers(), []int32{1, 2, 3, 4})
+	assert.Equal(t, cert.Absentees(), []int32{2})
+	assert.Equal(t, cert.Hash(), h)
+}
+
 func TestCertificateCBORMarshaling(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	c1 := ts.GenerateTestCertificate()
 	bz1, err := cbor.Marshal(c1)
+	fmt.Printf("%v\n", c1.Committers())
+	fmt.Printf("%x", bz1)
 	assert.NoError(t, err)
 	var c2 certificate.Certificate
 	err = cbor.Unmarshal(bz1, &c2)

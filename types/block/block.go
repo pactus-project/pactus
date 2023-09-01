@@ -14,7 +14,6 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type Block struct {
@@ -77,25 +76,36 @@ func (b *Block) BasicCheck() error {
 		return err
 	}
 	if b.Transactions().Len() == 0 {
-		return errors.Errorf(errors.ErrInvalidBlock, "block at least should have one transaction")
+		// block at least should have one transaction
+		return BasicCheckError{
+			Reason: "no subsidy transaction",
+		}
 	}
 	if b.Transactions().Len() > 1000 {
-		return errors.Errorf(errors.ErrInvalidBlock, "block is full")
+		return BasicCheckError{
+			Reason: "block is full",
+		}
 	}
 	if b.PrevCertificate() != nil {
 		if err := b.PrevCertificate().BasicCheck(); err != nil {
-			return err
+			return BasicCheckError{
+				Reason: fmt.Sprintf("invalid certificate: %s", err.Error()),
+			}
 		}
 	} else {
 		// Genesis block checks
 		if !b.Header().PrevBlockHash().IsUndef() {
-			return errors.Errorf(errors.ErrInvalidBlock, "invalid previous block hash")
+			return BasicCheckError{
+				Reason: "invalid genesis block hash",
+			}
 		}
 	}
 
 	for _, trx := range b.Transactions() {
 		if err := trx.BasicCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidBlock, err.Error())
+			return BasicCheckError{
+				Reason: fmt.Sprintf("invalid transaction: %s", err.Error()),
+			}
 		}
 	}
 

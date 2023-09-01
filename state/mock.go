@@ -51,8 +51,7 @@ func MockingState(ts *testsuite.TestSuite) *MockState {
 
 func (m *MockState) CommitTestBlocks(num int) {
 	for i := 0; i < num; i++ {
-		lastHash := m.LastBlockHash()
-		blk := m.ts.GenerateTestBlock(nil, &lastHash)
+		blk := m.ts.GenerateTestBlock(nil)
 		cert := m.ts.GenerateTestCertificate()
 
 		m.TestStore.SaveBlock(m.LastBlockHeight()+1, blk, cert)
@@ -113,7 +112,7 @@ func (m *MockState) Close() error {
 }
 
 func (m *MockState) ProposeBlock(_ crypto.Signer, _ crypto.Address, _ int16) (*block.Block, error) {
-	b := m.ts.GenerateTestBlock(nil, nil)
+	b := m.ts.GenerateTestBlock(nil)
 	return b, nil
 }
 
@@ -162,7 +161,16 @@ func (m *MockState) CommitteePower() int64 {
 	return m.TestCommittee.TotalPower()
 }
 
-func (m *MockState) StoredBlock(height uint32) *store.StoredBlock {
+func (m *MockState) MakeCommittedBlock(data []byte, height uint32, blockHash hash.Hash) *store.CommittedBlock {
+	return &store.CommittedBlock{
+		Store:     m.TestStore,
+		Data:      data,
+		BlockHash: blockHash,
+		Height:    height,
+	}
+}
+
+func (m *MockState) CommittedBlock(height uint32) *store.CommittedBlock {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
@@ -170,7 +178,7 @@ func (m *MockState) StoredBlock(height uint32) *store.StoredBlock {
 	return b
 }
 
-func (m *MockState) StoredTx(id tx.ID) *store.StoredTx {
+func (m *MockState) CommittedTx(id tx.ID) *store.CommittedTx {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 

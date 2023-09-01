@@ -17,52 +17,77 @@ import (
 
 // TODO: How to undo or rollback at least for last 21 blocks
 
-type StoredBlock struct {
+type CommittedBlock struct {
+	Store
+
 	BlockHash hash.Hash
 	Height    uint32
 	Data      []byte
 }
 
-func (s *StoredBlock) ToBlock() *block.Block {
-	b, err := block.FromBytes(s.Data)
+func (s *CommittedBlock) ToBlock() (*block.Block, error) {
+	blk, err := block.FromBytes(s.Data)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	if !b.Hash().EqualsTo(s.BlockHash) {
-		panic("invalid data. block hash does not match")
+
+	trxs := blk.Transactions()
+	for i := 0; i < trxs.Len(); i++ {
+		trx := trxs[i]
+		if trx.IsPublicKeyStriped() {
+			pub, exists := s.PublicKey(trx.Payload().Signer())
+			if !exists {
+				return nil, PublicKeyNotFoundError{
+					Address: trx.Payload().Signer(),
+				}
+			}
+			trx.SetPublicKey(pub)
+		}
 	}
-	return b
+
+	return blk, nil
 }
 
-type StoredTx struct {
+type CommittedTx struct {
+	Store
+
 	TxID      tx.ID
 	Height    uint32
 	BlockTime uint32
 	Data      []byte
 }
 
-func (s *StoredTx) ToTx() *tx.Tx {
+func (s *CommittedTx) ToTx() (*tx.Tx, error) {
 	trx, err := tx.FromBytes(s.Data)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	if !trx.ID().EqualsTo(s.TxID) {
-		panic("invalid data. transaction id does not match")
+
+	if trx.IsPublicKeyStriped() {
+		pub, exists := s.PublicKey(trx.Payload().Signer())
+		if !exists {
+			return nil, PublicKeyNotFoundError{
+				Address: trx.Payload().Signer(),
+			}
+		}
+		trx.SetPublicKey(pub)
 	}
-	return trx
+
+	return trx, nil
 }
 
 type Reader interface {
-	Block(height uint32) (*StoredBlock, error)
+	Block(height uint32) (*CommittedBlock, error)
 	BlockHeight(hash hash.Hash) uint32
 	BlockHash(height uint32) hash.Hash
 	RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block)
-	Transaction(id tx.ID) (*StoredTx, error)
+	Transaction(id tx.ID) (*CommittedTx, error)
+	PublicKey(addr crypto.Address) (crypto.PublicKey, bool)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
 	AccountByNumber(number int32) (*account.Account, error)
 	TotalAccounts() int32
-	HasValidator(crypto.Address) bool
+	HasValidator(addr crypto.Address) bool
 	ValidatorAddresses() []crypto.Address
 	Validator(addr crypto.Address) (*validator.Validator, error)
 	ValidatorByNumber(num int32) (*validator.Validator, error)

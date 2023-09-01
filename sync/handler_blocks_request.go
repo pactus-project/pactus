@@ -106,6 +106,7 @@ func (handler *blocksRequestHandler) PrepareBundle(m message.Message) *bundle.Bu
 
 func (handler *blocksRequestHandler) sendBlocks(msg message.Message, to peer.ID, sessionID int) {
 	if err := handler.sendTo(msg, to); err != nil {
+		// TODO: test me
 		// Let's close the session with this peer because we couldn't establish a connection.
 		// This helps to free sessions and ask blocks from other peers.
 		handler.peerSet.CloseSession(sessionID)

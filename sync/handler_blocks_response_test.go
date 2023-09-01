@@ -2,13 +2,18 @@ package sync
 
 import (
 	"fmt"
+	"io"
 	"testing"
+	"time"
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -17,20 +22,41 @@ import (
 func TestInvalidBlockData(t *testing.T) {
 	td := setup(t, nil)
 
-	pid := td.RandPeerID()
-	sid := td.sync.peerSet.OpenSession(pid).SessionID()
-	msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
-		0, [][]byte{{1, 2, 3}}, nil)
+	blk := block.MakeBlock(1, time.Now(), nil, td.RandHash(), td.RandHash(),
+		td.GenerateTestCertificate(), td.RandSeed(), td.RandAddress())
+	data, _ := blk.Bytes()
+	tests := []struct {
+		data []byte
+		err  error
+	}{
+		{
+			td.RandBytes(16),
+			io.ErrUnexpectedEOF,
+		},
+		{
+			data,
+			block.BasicCheckError{
+				Reason: "no subsidy transaction",
+			},
+		},
+	}
 
-	assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
+	for _, test := range tests {
+		pid := td.RandPeerID()
+		sid := td.sync.peerSet.OpenSession(pid).SessionID()
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
+			td.RandHeight(), [][]byte{test.data}, nil)
+
+		err := td.receivingNewMessage(td.sync, msg, pid)
+		assert.ErrorIs(t, err, test.err)
+	}
 }
 
 func TestOneBlockShorter(t *testing.T) {
 	td := setup(t, nil)
 
-	lastBlockHash := td.state.LastBlockHash()
 	lastBlockHeight := td.state.LastBlockHeight()
-	b1 := td.GenerateTestBlock(nil, &lastBlockHash)
+	b1 := td.GenerateTestBlock(nil)
 	c1 := td.GenerateTestCertificate()
 	d1, _ := b1.Bytes()
 	pid := td.RandPeerID()
@@ -65,6 +91,50 @@ func TestOneBlockShorter(t *testing.T) {
 		assert.Nil(t, td.sync.peerSet.FindSession(sid))
 		assert.Equal(t, td.state.LastBlockHeight(), lastBlockHeight+1)
 	})
+}
+
+func TestStrippedPublicKey(t *testing.T) {
+	td := setup(t, nil)
+
+	// Add a peer
+	pid := td.RandPeerID()
+	pub, _ := td.RandBLSKeyPair()
+	td.addPeer(t, pub, pid, false)
+
+	blk1 := td.GenerateTestBlock(nil)
+	trx := *td.state.TestStore.Blocks[1].Transactions()[0]
+	trxs := []*tx.Tx{&trx}
+	blk2 := block.MakeBlock(1, time.Now(), trxs, td.RandHash(), td.RandHash(),
+		td.GenerateTestCertificate(), td.RandSeed(), td.RandAddress())
+
+	tests := []struct {
+		blk *block.Block
+		err error
+	}{
+		{
+			blk1,
+			store.PublicKeyNotFoundError{
+				Address: blk1.Transactions()[0].PublicKey().Address(),
+			},
+		},
+		{
+			blk2,
+			nil,
+		},
+	}
+
+	for _, test := range tests {
+		assert.NoError(t, test.blk.BasicCheck())
+		trx1 := test.blk.Transactions()[0]
+		trx1.StripPublicKey()
+		d1, _ := test.blk.Bytes()
+		sid := td.sync.peerSet.OpenSession(pid).SessionID()
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeRejected.String(), sid,
+			td.RandHeight(), [][]byte{d1}, nil)
+		err := td.receivingNewMessage(td.sync, msg, pid)
+
+		assert.ErrorIs(t, err, test.err)
+	}
 }
 
 // TestSyncing is an important test to verify the syncing process between two

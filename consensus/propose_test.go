@@ -22,7 +22,7 @@ func TestSetProposalInvalidProposer(t *testing.T) {
 	assert.Nil(t, td.consY.RoundProposal(0))
 
 	addr := td.signers[tIndexB].Address()
-	b := td.GenerateTestBlock(&addr, nil)
+	b := td.GenerateTestBlock(&addr)
 	p := proposal.NewProposal(1, 0, b)
 
 	td.consY.SetProposal(p)
@@ -36,8 +36,8 @@ func TestSetProposalInvalidProposer(t *testing.T) {
 func TestSetProposalInvalidBlock(t *testing.T) {
 	td := setup(t)
 
-	a := td.signers[tIndexB].Address()
-	invBlock := td.GenerateTestBlock(&a, nil)
+	addr := td.signers[tIndexB].Address()
+	invBlock := td.GenerateTestBlock(&addr)
 	p := proposal.NewProposal(1, 2, invBlock)
 	td.signers[tIndexB].SignMsg(p)
 
@@ -52,8 +52,8 @@ func TestSetProposalInvalidBlock(t *testing.T) {
 func TestSetProposalInvalidHeight(t *testing.T) {
 	td := setup(t)
 
-	a := td.signers[tIndexB].Address()
-	invBlock := td.GenerateTestBlock(&a, nil)
+	addr := td.signers[tIndexB].Address()
+	invBlock := td.GenerateTestBlock(&addr)
 	p := proposal.NewProposal(2, 0, invBlock)
 	td.signers[tIndexB].SignMsg(p)
 

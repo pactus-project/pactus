@@ -17,7 +17,23 @@ func TestGetTransaction(t *testing.T) {
 	testBlock := tMockState.TestStore.AddTestBlock(1)
 	trx1 := testBlock.Transactions()[0]
 
-	t.Run("Should return transaction", func(t *testing.T) {
+	t.Run("Should return transaction (verbosity: 0)", func(t *testing.T) {
+		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{
+			Id:        trx1.ID().Bytes(),
+			Verbosity: pactus.TransactionVerbosity_TRANSACTION_DATA,
+		})
+		data, _ := trx1.Bytes()
+
+		assert.NoError(t, err)
+		assert.NotNil(t, res)
+		assert.NotEmpty(t, res.Transaction)
+		assert.Equal(t, uint32(0x1), res.BlockHeight)
+		assert.Equal(t, trx1.ID().Bytes(), res.Transaction.Id)
+		assert.Equal(t, data, res.Transaction.Data)
+		assert.Nil(t, res.Transaction.Payload)
+	})
+
+	t.Run("Should return transaction (verbosity: 1)", func(t *testing.T) {
 		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{
 			Id:        trx1.ID().Bytes(),
 			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,

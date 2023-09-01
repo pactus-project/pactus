@@ -225,7 +225,7 @@ func TestCommitBlocks(t *testing.T) {
 	td := setup(t)
 
 	b1, c1 := td.makeBlockAndCertificate(t, 1, td.valSigner1, td.valSigner2, td.valSigner3)
-	invBlock := td.GenerateTestBlock(nil, nil)
+	invBlock := td.GenerateTestBlock(nil)
 	assert.Error(t, td.state1.CommitBlock(1, invBlock, c1))
 	// No error here but block is ignored, because the height is invalid
 	assert.NoError(t, td.state1.CommitBlock(2, b1, c1))
@@ -366,7 +366,7 @@ func TestBlockProposal(t *testing.T) {
 func TestInvalidBlock(t *testing.T) {
 	td := setup(t)
 
-	b := td.GenerateTestBlock(nil, nil)
+	b := td.GenerateTestBlock(nil)
 	assert.Error(t, td.state1.ValidateBlock(b))
 }
 
@@ -778,4 +778,17 @@ func TestCalcFee(t *testing.T) {
 		_, err = td.state2.CalculateFee(test.amount, 6)
 		assert.Error(t, err)
 	}
+}
+
+func TestMakeCommittedBlock(t *testing.T) {
+	td := setup(t)
+
+	data := td.RandBytes(128)
+	height := td.RandHeight()
+	hash := td.RandHash()
+	cb := td.state1.MakeCommittedBlock(data, height, hash)
+	assert.Equal(t, data, cb.Data)
+	assert.Equal(t, hash, cb.BlockHash)
+	assert.Equal(t, height, cb.Height)
+	assert.NotNil(t, cb.Store)
 }

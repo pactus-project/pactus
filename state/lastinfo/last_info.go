@@ -123,7 +123,10 @@ func (li *LastInfo) RestoreLastInfo(store store.Store, committeeSize int) (commi
 		return nil, fmt.Errorf("unable to retrieve block %v: %w", height, err)
 	}
 
-	lastBlock := sb.ToBlock()
+	lastBlock, err := sb.ToBlock()
+	if err != nil {
+		return nil, err
+	}
 
 	li.lastBlockHeight = height
 	li.lastCert = cert
