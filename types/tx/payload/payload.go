@@ -13,7 +13,7 @@ const (
 	TypeTransfer  = Type(1)
 	TypeBond      = Type(2)
 	TypeSortition = Type(3)
-	TypeUnbond   = Type(4)
+	TypeUnbond    = Type(4)
 	TypeWithdraw  = Type(5)
 )
 
