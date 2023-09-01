@@ -345,7 +345,7 @@ func TestSignBytes(t *testing.T) {
 			"8d82fa4fcac04a3b565267685e90db1b01420285d2f8295683c138c092c209479983ba1591370778846681b7b558e061" + // PublicKey
 			"1776208c0718006311c84b4a113335c70d1f5c7c5dd93a5625c4af51c48847abd0b590c055306162d2a03ca1cbf7bcc1")
 
-	h, _ := hash.FromString("223f5eec2145d3592ffad4e079a07ffe89044e930dc03b5d47f2ad829d2a09c6")
+	h, _ := hash.FromString("85b0af97280eda00256a0814452d5294128377ad27f62dd8643f403c230245e5")
 	trx, err := tx.FromBytes(d)
 	assert.NoError(t, err)
 	assert.Equal(t, trx.SerializeSize(), len(d))
