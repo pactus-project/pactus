@@ -409,7 +409,7 @@ func (tx *Tx) SignBytes() []byte {
 	if err != nil {
 		return nil
 	}
-	return buf.Bytes()[2:] // Exclude flags
+	return buf.Bytes()[1:] // Exclude flags
 }
 
 func (tx *Tx) ID() ID {
