@@ -13,7 +13,7 @@ const (
 	TypeTransfer  = Type(1)
 	TypeBond      = Type(2)
 	TypeSortition = Type(3)
-	TypeUnbound   = Type(4)
+	TypeUnbond   = Type(4)
 	TypeWithdraw  = Type(5)
 )
 
@@ -23,8 +23,8 @@ func (t Type) String() string {
 		return "transfer"
 	case TypeBond:
 		return "bond"
-	case TypeUnbound:
-		return "unbound"
+	case TypeUnbond:
+		return "unbond"
 	case TypeWithdraw:
 		return "withdraw"
 	case TypeSortition:

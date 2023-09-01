@@ -31,7 +31,7 @@ func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 
 	pending[payload.TypeTransfer] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sendPoolSize())
 	pending[payload.TypeBond] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.bondPoolSize())
-	pending[payload.TypeUnbound] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.unbondPoolSize())
+	pending[payload.TypeUnbond] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.unbondPoolSize())
 	pending[payload.TypeWithdraw] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.withdrawPoolSize())
 	pending[payload.TypeSortition] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sortitionPoolSize())
 
@@ -164,7 +164,7 @@ func (p *txPool) PrepareBlockTransactions() block.Txs {
 	}
 
 	// Appending unbond transactions
-	poolUnbond := p.pools[payload.TypeUnbound]
+	poolUnbond := p.pools[payload.TypeUnbond]
 	for n := poolUnbond.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
@@ -212,7 +212,7 @@ func (p *txPool) String() string {
 	return fmt.Sprintf("{💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
 		p.pools[payload.TypeTransfer].Size(),
 		p.pools[payload.TypeBond].Size(),
-		p.pools[payload.TypeUnbound].Size(),
+		p.pools[payload.TypeUnbond].Size(),
 		p.pools[payload.TypeSortition].Size(),
 		p.pools[payload.TypeWithdraw].Size(),
 	)

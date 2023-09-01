@@ -349,7 +349,7 @@ func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
 	if err != nil {
 		return nil, err
 	}
-	maker.typ = payload.TypeUnbound
+	maker.typ = payload.TypeUnbond
 
 	return maker.build()
 }
