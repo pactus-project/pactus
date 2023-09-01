@@ -330,30 +330,30 @@ func TestInvalidSignature(t *testing.T) {
 }
 
 func TestSignBytes(t *testing.T) {
-	d, _ := hex.DecodeString(
-		"00" + // Flags
-			"01" + // Version
-			"a1b2c3d4" + // Stamp
-			"01" + // Sequence
-			"01" + // Fee
-			"00" + // Memo
-			"01" + // PayloadType
-			"013333333333333333333333333333333333333333" + // Sender
-			"012222222222222222222222222222222222222222" + // Receiver
-			"01" + // Amount
-			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // Signature
-			"8d82fa4fcac04a3b565267685e90db1b01420285d2f8295683c138c092c209479983ba1591370778846681b7b558e061" + // PublicKey
-			"1776208c0718006311c84b4a113335c70d1f5c7c5dd93a5625c4af51c48847abd0b590c055306162d2a03ca1cbf7bcc1")
+    d, _ := hex.DecodeString(
+        "00" + // Flags
+            "01" + // Version
+            "a1b2c3d4" + // Stamp
+            "01" + // Sequence
+            "01" + // Fee
+            "00" + // Memo
+            "01" + // PayloadType
+            "013333333333333333333333333333333333333333" + // Sender
+            "012222222222222222222222222222222222222222" + // Receiver
+            "01" + // Amount
+            "b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // Signature
+            "8d82fa4fcac04a3b565267685e90db1b01420285d2f8295683c138c092c209479983ba1591370778846681b7b558e061" + // PublicKey
+            "1776208c0718006311c84b4a113335c70d1f5c7c5dd93a5625c4af51c48847abd0b590c055306162d2a03ca1cbf7bcc1")
 
-	h, _ := hash.FromString("223f5eec2145d3592ffad4e079a07ffe89044e930dc03b5d47f2ad829d2a09c6")
-	trx, err := tx.FromBytes(d)
-	assert.NoError(t, err)
-	assert.Equal(t, trx.SerializeSize(), len(d))
+    h, _ := hash.FromString("223f5eec2145d3592ffad4e079a07ffe89044e930dc03b5d47f2ad829d2a09c6")
+    trx, err := tx.FromBytes(d)
+    assert.NoError(t, err)
+    assert.Equal(t, trx.SerializeSize(), len(d))
 
-	sb := d[2 : len(d)-bls.PublicKeySize-bls.SignatureSize]
-	assert.Equal(t, sb, trx.SignBytes())
-	assert.Equal(t, trx.ID(), h)
-	assert.Equal(t, trx.ID(), hash.CalcHash(sb))
+    sb := d[2 : len(d)-bls.PublicKeySize-bls.SignatureSize]
+    assert.Equal(t, sb, trx.SignBytes())
+    assert.Equal(t, trx.ID(), h)
+    assert.Equal(t, trx.ID(), hash.CalcHash(sb))
 }
 
 func TestStripPublicKey(t *testing.T) {

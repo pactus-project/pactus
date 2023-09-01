@@ -309,10 +309,10 @@ func TestBlockHash(t *testing.T) {
 	hashData = append(hashData, util.Int32ToSlice(int32(b.Transactions().Len()))...)
 
 	expected1 := hash.CalcHash(hashData)
-	expected2, _ := hash.FromString("26f911e9c72a0619c010b396f83b09edef70e56bd47c121699b12520ba5f02ed")
+	expected2, _ := hash.FromString("2f9e14e66a6d2e3695dad65d273414e5aec92949c7f64a5b18fc6a1bf8006db5")
 	assert.Equal(t, b.Hash(), expected1)
 	assert.Equal(t, b.Hash(), expected2)
-	assert.Equal(t, b.Stamp(), hash.Stamp{0x26, 0xf9, 0x11, 0xe9})
+	assert.Equal(t, b.Stamp(), hash.Stamp{0x2f, 0x9e, 0x14, 0xe6})
 }
 
 func TestMakeBlock(t *testing.T) {

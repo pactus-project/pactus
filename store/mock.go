@@ -66,14 +66,14 @@ func (m *MockStore) BlockHeight(hash hash.Hash) uint32 {
 }
 
 func (m *MockStore) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
-	for _, block := range m.Blocks {
-		for _, trx := range block.Transactions() {
-			if trx.Payload().Signer() == addr {
-				return trx.PublicKey().(*bls.PublicKey), nil
-			}
-		}
-	}
-	return nil, nil
+    for _, block := range m.Blocks {
+        for _, trx := range block.Transactions() {
+            if trx.Payload().Signer() == addr {
+                return trx.PublicKey().(*bls.PublicKey), nil
+            }
+        }
+    }
+    return nil, ErrNotFound
 }
 
 func (m *MockStore) Transaction(id tx.ID) (*CommittedTx, error) {
