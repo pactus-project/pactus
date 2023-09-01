@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TODO: check error types and clean the test
+// TODO: check error types and clean the test.
 func TestLatestBlocksRequestMessages(t *testing.T) {
 	config := testConfig()
 	config.NodeNetwork = false
