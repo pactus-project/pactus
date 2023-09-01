@@ -1,6 +1,7 @@
 package account_test
 
 import (
+	"encoding/hex"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -26,20 +27,19 @@ func TestFromBytes(t *testing.T) {
 }
 
 func TestDecoding(t *testing.T) {
-	bs := []byte{
-		0x1, 0x0, 0x0, 0x0, // number
-		0x2, 0x0, 0x0, 0x0, // sequence
-		0x3, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, // balance
-	}
+	d, _ := hex.DecodeString(
+		"01000000" + // number
+			"02000000" + // sequence
+			"0300000000000000") // balance
 
-	acc, err := account.FromBytes(bs)
+	acc, err := account.FromBytes(d)
 	require.NoError(t, err)
 	assert.Equal(t, acc.Number(), int32(1))
 	assert.Equal(t, acc.Sequence(), int32(2))
 	assert.Equal(t, acc.Balance(), int64(3))
-	bs2, _ := acc.Bytes()
-	assert.Equal(t, bs, bs2)
-	assert.Equal(t, acc.Hash(), hash.CalcHash(bs))
+	d2, _ := acc.Bytes()
+	assert.Equal(t, d, d2)
+	assert.Equal(t, acc.Hash(), hash.CalcHash(d))
 	expected, _ := hash.FromString("74280903e6b73b79e56b1f15cee24c444776cfeee3bea9476b549b660176f773")
 	assert.Equal(t, acc.Hash(), expected)
 }

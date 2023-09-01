@@ -25,19 +25,28 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid transaction ID: %v", err.Error())
 	}
-	// TODO: Use RawTransaction here
-	storedTx := s.state.StoredTx(id)
-	if storedTx == nil {
+
+	committedTx := s.state.CommittedTx(id)
+	if committedTx == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "transaction not found")
 	}
 
 	res := &pactus.GetTransactionResponse{
-		BlockHeight: storedTx.Height,
-		BlockTime:   storedTx.BlockTime,
+		BlockHeight: committedTx.Height,
+		BlockTime:   committedTx.BlockTime,
 	}
 
-	if req.Verbosity > pactus.TransactionVerbosity_TRANSACTION_DATA {
-		res.Transaction = transactionToProto(storedTx.ToTx())
+	if req.Verbosity == pactus.TransactionVerbosity_TRANSACTION_DATA {
+		res.Transaction = &pactus.TransactionInfo{
+			Data: committedTx.Data,
+			Id:   committedTx.TxID.Bytes(),
+		}
+	} else {
+		trx, err := committedTx.ToTx()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
+		res.Transaction = transactionToProto(trx)
 	}
 
 	return res, nil

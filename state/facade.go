@@ -39,8 +39,9 @@ type Facade interface {
 	PendingTx(id tx.ID) *tx.Tx
 	AddPendingTx(trx *tx.Tx) error
 	AddPendingTxAndBroadcast(trx *tx.Tx) error
-	StoredBlock(height uint32) *store.StoredBlock
-	StoredTx(id tx.ID) *store.StoredTx
+	MakeCommittedBlock(data []byte, height uint32, blockHash hash.Hash) *store.CommittedBlock
+	CommittedBlock(height uint32) *store.CommittedBlock
+	CommittedTx(id tx.ID) *store.CommittedTx
 	BlockHash(height uint32) hash.Hash
 	BlockHeight(hash hash.Hash) uint32
 	AccountByAddress(addr crypto.Address) *account.Account

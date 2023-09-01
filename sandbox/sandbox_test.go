@@ -53,7 +53,7 @@ func setup(t *testing.T) *testData {
 	assert.Equal(t, sandbox.CurrentHeight(), uint32(1))
 	lastHeight := uint32(21)
 	for i := uint32(1); i < lastHeight; i++ {
-		b := ts.GenerateTestBlock(nil, nil)
+		b := ts.GenerateTestBlock(nil)
 		c := ts.GenerateTestCertificate()
 		store.SaveBlock(i, b, c)
 	}

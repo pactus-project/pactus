@@ -91,19 +91,19 @@ func RandUint64(max uint64) uint64 {
 }
 
 // SetFlag applies mask to the flags.
-func SetFlag(flags, mask int) int {
+func SetFlag[T constraints.Integer](flags, mask T) T {
 	flags = flags | mask
 	return flags
 }
 
 // UnsetFlag removes mask from the flags.
-func UnsetFlag(flags, mask int) int {
+func UnsetFlag[T constraints.Integer](flags, mask T) T {
 	flags = flags & ^mask
 	return flags
 }
 
 // IsFlagSet checks if the mask is set for the given flags.
-func IsFlagSet(flags, mask int) bool {
+func IsFlagSet[T constraints.Integer](flags, mask T) bool {
 	return flags&mask == mask
 }
 

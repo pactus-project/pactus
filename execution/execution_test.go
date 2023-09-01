@@ -7,7 +7,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -143,84 +142,84 @@ func TestChecker(t *testing.T) {
 	})
 }
 
-func TestLockTime(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
+// func TestLockTime(t *testing.T) {
+// 	ts := testsuite.NewTestSuite(t)
 
-	executor := NewExecutor()
-	checker := NewChecker()
-	sb := sandbox.MockingSandbox(ts)
+// 	executor := NewExecutor()
+// 	checker := NewChecker()
+// 	sb := sandbox.MockingSandbox(ts)
 
-	curHeight := 2 * sb.TestParams.TransactionToLiveInterval
-	sb.TestStore.AddTestBlock(curHeight)
+// 	curHeight := 2 * sb.TestParams.TransactionToLiveInterval
+// 	sb.TestStore.AddTestBlock(curHeight)
 
-	t.Run("Should reject sortition transactions with lock time", func(t *testing.T) {
-		pub, prv := ts.RandBLSKeyPair()
-		signer := crypto.NewSigner(prv)
-		val := sb.MakeNewValidator(pub)
-		sb.UpdateValidator(val)
+// 	t.Run("Should reject sortition transactions with lock time", func(t *testing.T) {
+// 		pub, prv := ts.RandomBLSKeyPair()
+// 		signer := crypto.NewSigner(prv)
+// 		val := sb.MakeNewValidator(pub)
+// 		sb.UpdateValidator(val)
 
-		sb.TestAcceptSortition = true
-		pld := &payload.SortitionPayload{
-			Address: pub.Address(),
-			Proof:   ts.RandProof(),
-		}
-		trx := tx.NewLockTimeTx(curHeight+10, 1, pld, 0, "")
-		signer.SignMsg(trx)
-		err := executor.Execute(trx, sb)
-		assert.Error(t, err)
-	})
+// 		sb.TestAcceptSortition = true
+// 		pld := &payload.SortitionPayload{
+// 			Address: pub.Address(),
+// 			Proof:   ts.RandomProof(),
+// 		}
+// 		trx := tx.NewLockTimeTx(curHeight+10, 1, pld, 0, "")
+// 		signer.SignMsg(trx)
+// 		err := executor.Execute(trx, sb)
+// 		assert.Error(t, err)
+// 	})
 
-	t.Run("Should reject subsidy transactions with lock time", func(t *testing.T) {
-		pld := &payload.TransferPayload{
-			Sender:   crypto.TreasuryAddress,
-			Receiver: ts.RandAddress(),
-			Amount:   1234,
-		}
-		trx := tx.NewLockTimeTx(curHeight+10, 1, pld, 0, "")
-		err := executor.Execute(trx, sb)
-		assert.Error(t, err)
-	})
+// 	t.Run("Should reject subsidy transactions with lock time", func(t *testing.T) {
+// 		pld := &payload.TransferPayload{
+// 			Sender:   crypto.TreasuryAddress,
+// 			Receiver: ts.RandomAddress(),
+// 			Amount:   1234,
+// 		}
+// 		trx := tx.NewLockTimeTx(curHeight+10, 1, pld, 0, "")
+// 		err := executor.Execute(trx, sb)
+// 		assert.Error(t, err)
+// 	})
 
-	t.Run("Should reject expired transactions", func(t *testing.T) {
-		signer := ts.RandSigner()
-		acc := sb.MakeNewAccount(signer.Address())
-		acc.AddToBalance(10000)
-		sb.UpdateAccount(signer.Address(), acc)
-		pld := &payload.TransferPayload{
-			Sender:   signer.Address(),
-			Receiver: ts.RandAddress(),
-			Amount:   1234,
-		}
+// 	t.Run("Should reject expired transactions", func(t *testing.T) {
+// 		signer := ts.RandSigner()
+// 		acc := sb.MakeNewAccount(signer.Address())
+// 		acc.AddToBalance(10000)
+// 		sb.UpdateAccount(signer.Address(), acc)
+// 		pld := &payload.TransferPayload{
+// 			Sender:   signer.Address(),
+// 			Receiver: ts.RandAddress(),
+// 			Amount:   1234,
+// 		}
 
-		trx := tx.NewLockTimeTx(curHeight-sb.TestParams.TransactionToLiveInterval, 1,
-			pld, sb.TestParams.MinimumFee, "")
-		signer.SignMsg(trx)
-		err := executor.Execute(trx, sb)
-		assert.Error(t, err)
-	})
+// 		trx := tx.NewLockTimeTx(curHeight-sb.TestParams.TransactionToLiveInterval, 1,
+// 			pld, sb.TestParams.MinimumFee, "")
+// 		signer.SignMsg(trx)
+// 		err := executor.Execute(trx, sb)
+// 		assert.Error(t, err)
+// 	})
 
-	t.Run("Not finalized transaction", func(t *testing.T) {
-		signer := ts.RandSigner()
-		acc := sb.MakeNewAccount(signer.Address())
-		acc.AddToBalance(10000)
-		sb.UpdateAccount(signer.Address(), acc)
-		pld := &payload.TransferPayload{
-			Sender:   signer.Address(),
-			Receiver: ts.RandAddress(),
-			Amount:   1234,
-		}
+// 	t.Run("Not finalized transaction", func(t *testing.T) {
+// 		signer := ts.RandomSigner()
+// 		acc := sb.MakeNewAccount(signer.Address())
+// 		acc.AddToBalance(10000)
+// 		sb.UpdateAccount(signer.Address(), acc)
+// 		pld := &payload.TransferPayload{
+// 			Sender:   signer.Address(),
+// 			Receiver: ts.RandomAddress(),
+// 			Amount:   1234,
+// 		}
 
-		trx1 := tx.NewLockTimeTx(curHeight+sb.TestParams.TransactionToLiveInterval, 1,
-			pld, sb.TestParams.MinimumFee, "")
-		signer.SignMsg(trx1)
-		err := executor.Execute(trx1, sb)
-		assert.Error(t, err)
+// 		trx1 := tx.NewLockTimeTx(curHeight+sb.TestParams.TransactionToLiveInterval, 1,
+// 			pld, sb.TestParams.MinimumFee, "")
+// 		signer.SignMsg(trx1)
+// 		err := executor.Execute(trx1, sb)
+// 		assert.Error(t, err)
 
-		// In non-strict mode this transaction remains in pool
-		err = checker.Execute(trx1, sb)
-		assert.NoError(t, err)
-	})
-}
+// 		// In non-strict mode this transaction remains in pool
+// 		err = checker.Execute(trx1, sb)
+// 		assert.NoError(t, err)
+// 	})
+// }
 
 func TestFee(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)

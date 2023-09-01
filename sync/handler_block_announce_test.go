@@ -11,9 +11,9 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	lastBlockHeight := td.state.LastBlockHeight()
-	b1 := td.GenerateTestBlock(nil, nil)
+	b1 := td.GenerateTestBlock(nil)
 	c1 := td.GenerateTestCertificate()
-	b2 := td.GenerateTestBlock(nil, nil)
+	b2 := td.GenerateTestBlock(nil)
 	c2 := td.GenerateTestCertificate()
 
 	pid := td.RandPeerID()
@@ -46,10 +46,9 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 	td := setup(t, nil)
 
+	blk, _ := td.state.CommittedBlock(td.state.LastBlockHeight()).ToBlock()
 	msg := message.NewBlockAnnounceMessage(
-		td.state.LastBlockHeight(),
-		td.state.StoredBlock(td.state.LastBlockHeight()).ToBlock(),
-		td.state.LastCertificate())
+		td.state.LastBlockHeight(), blk, td.state.LastCertificate())
 
 	t.Run("Not in the committee, should not broadcast block announce message", func(t *testing.T) {
 		td.sync.broadcast(msg)

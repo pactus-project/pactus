@@ -37,7 +37,7 @@ func TestMessageCompress(t *testing.T) {
 
 	blocksData := [][]byte{}
 	for i := 0; i < 10; i++ {
-		b := ts.GenerateTestBlock(nil, nil)
+		b := ts.GenerateTestBlock(nil)
 		d, _ := b.Bytes()
 		blocksData = append(blocksData, d)
 	}

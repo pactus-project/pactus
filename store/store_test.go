@@ -42,7 +42,7 @@ func (td *testData) saveTestBlocks(t *testing.T, num int) {
 
 	lastHeight, _ := td.store.LastCertificate()
 	for i := 0; i < num; i++ {
-		b := td.GenerateTestBlock(nil, nil)
+		b := td.GenerateTestBlock(nil)
 		c := td.GenerateTestCertificate()
 
 		td.store.SaveBlock(lastHeight+uint32(i+1), b, c)
@@ -90,16 +90,17 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	td := setup(t)
 
 	height, _ := td.store.LastCertificate()
-	storedBlock, err := td.store.Block(height)
+	committedBlock, err := td.store.Block(height)
 	assert.NoError(t, err)
-	assert.Equal(t, height, storedBlock.Height)
-	block := storedBlock.ToBlock()
+	assert.Equal(t, height, committedBlock.Height)
+	block, _ := committedBlock.ToBlock()
 	for _, trx := range block.Transactions() {
-		storedTx, err := td.store.Transaction(trx.ID())
+		committedTx, err := td.store.Transaction(trx.ID())
 		assert.NoError(t, err)
-		assert.Equal(t, storedTx.TxID, trx.ID())
-		assert.Equal(t, storedTx.BlockTime, block.Header().UnixTime())
-		assert.Equal(t, storedTx.ToTx().ID(), trx.ID())
+		assert.Equal(t, committedTx.TxID, trx.ID())
+		assert.Equal(t, committedTx.BlockTime, block.Header().UnixTime())
+		trx2, _ := committedTx.ToTx()
+		assert.Equal(t, trx2.ID(), trx.ID())
 	}
 }
 
@@ -160,4 +161,55 @@ func TestRecentBlockByStamp(t *testing.T) {
 	h, b = td.store.RecentBlockByStamp(hash.UndefHash.Stamp())
 	assert.Zero(t, h)
 	assert.Nil(t, b)
+}
+
+func TestIndexingPublicKeys(t *testing.T) {
+	td := setup(t)
+
+	committedBlock, _ := td.store.Block(1)
+	blk, _ := committedBlock.ToBlock()
+	for _, trx := range blk.Transactions() {
+		addr := trx.Payload().Signer()
+		pub, found := td.store.PublicKey(addr)
+
+		assert.NoError(t, found)
+		assert.Equal(t, pub.Address(), addr)
+	}
+
+	pub, found := td.store.PublicKey(td.RandAddress())
+	assert.Error(t, found)
+	assert.Nil(t, pub)
+}
+
+func TestCommittedBlockToBlock(t *testing.T) {
+	td := setup(t)
+
+	// Use a tricky way to save transactions from the first block again.
+	committedBlock1, _ := td.store.Block(1)
+	committedBlock2, _ := td.store.Block(2)
+	blk1, _ := committedBlock1.ToBlock()
+	blk2, _ := committedBlock2.ToBlock()
+	td.store.SaveBlock(11, blk1, blk2.PrevCertificate())
+	err := td.store.WriteBatch()
+	assert.NoError(t, err)
+
+	// Ensure that the committed block can obtain the public key.
+	committedBlock11, err := td.store.Block(11)
+	assert.NoError(t, err)
+
+	blk11, err := committedBlock11.ToBlock()
+	assert.NoError(t, err)
+
+	err = blk11.BasicCheck()
+	assert.NoError(t, err)
+
+	// Ensure that the committed transactions can obtain the public key.
+	committedTrx, err := td.store.Transaction(blk11.Transactions()[0].ID())
+	assert.NoError(t, err)
+
+	trx, err := committedTrx.ToTx()
+	assert.NoError(t, err)
+
+	err = trx.BasicCheck()
+	assert.NoError(t, err)
 }

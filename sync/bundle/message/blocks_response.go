@@ -13,29 +13,29 @@ const (
 )
 
 type BlocksResponseMessage struct {
-	ResponseCode    ResponseCode             `cbor:"1,keyasint"`
-	SessionID       int                      `cbor:"2,keyasint"`
-	From            uint32                   `cbor:"3,keyasint"`
-	BlocksData      [][]byte                 `cbor:"4,keyasint"`
-	LastCertificate *certificate.Certificate `cbor:"5,keyasint"`
-	Reason          string                   `cbor:"6,keyasint"`
+	ResponseCode        ResponseCode             `cbor:"1,keyasint"`
+	SessionID           int                      `cbor:"2,keyasint"`
+	From                uint32                   `cbor:"3,keyasint"`
+	CommittedBlocksData [][]byte                 `cbor:"4,keyasint"`
+	LastCertificate     *certificate.Certificate `cbor:"5,keyasint"`
+	Reason              string                   `cbor:"6,keyasint"`
 }
 
 func NewBlocksResponseMessage(code ResponseCode, reason string, sid int, from uint32,
 	blocksData [][]byte, lastCert *certificate.Certificate,
 ) *BlocksResponseMessage {
 	return &BlocksResponseMessage{
-		ResponseCode:    code,
-		SessionID:       sid,
-		From:            from,
-		BlocksData:      blocksData,
-		LastCertificate: lastCert,
-		Reason:          reason,
+		ResponseCode:        code,
+		SessionID:           sid,
+		From:                from,
+		CommittedBlocksData: blocksData,
+		LastCertificate:     lastCert,
+		Reason:              reason,
 	}
 }
 
 func (m *BlocksResponseMessage) BasicCheck() error {
-	if m.From == 0 && len(m.BlocksData) != 0 {
+	if m.From == 0 && len(m.CommittedBlocksData) != 0 {
 		return errors.Errorf(errors.ErrInvalidHeight, "unexpected block for height zero")
 	}
 	if m.LastCertificate != nil {
@@ -52,12 +52,12 @@ func (m *BlocksResponseMessage) Type() Type {
 }
 
 func (m *BlocksResponseMessage) Count() uint32 {
-	return uint32(len(m.BlocksData))
+	return uint32(len(m.CommittedBlocksData))
 }
 
 func (m *BlocksResponseMessage) To() uint32 {
 	// response message without any block
-	if len(m.BlocksData) == 0 {
+	if len(m.CommittedBlocksData) == 0 {
 		return 0
 	}
 	return m.From + m.Count() - 1

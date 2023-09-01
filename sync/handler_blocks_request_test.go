@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TODO: check error types and clean the test.
 func TestLatestBlocksRequestMessages(t *testing.T) {
 	config := testConfig()
 	config.NodeNetwork = false
@@ -42,7 +43,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		})
 
 		t.Run("Request blocks more than `LatestBlockInterval`", func(t *testing.T) {
-			msg := message.NewBlocksRequestMessage(sid, 0, LatestBlockInterval+1)
+			msg := message.NewBlocksRequestMessage(sid, 10, LatestBlockInterval+1)
 			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
 
 			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)

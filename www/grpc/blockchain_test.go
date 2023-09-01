@@ -24,7 +24,7 @@ func TestGetBlock(t *testing.T) {
 		assert.Nil(t, res)
 	})
 
-	t.Run("Should return an existing block data", func(t *testing.T) {
+	t.Run("Should return an existing block data (verbosity: 0)", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx,
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
 
@@ -37,7 +37,7 @@ func TestGetBlock(t *testing.T) {
 		assert.Empty(t, res.Txs)
 	})
 
-	t.Run("Should return object with verbosity 1 ", func(t *testing.T) {
+	t.Run("Should return object with  (verbosity: 1)", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx,
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_INFO})
 
@@ -52,7 +52,7 @@ func TestGetBlock(t *testing.T) {
 		assert.Equal(t, res.PrevCert.Absentees, b.PrevCertificate().Absentees())
 	})
 
-	t.Run("Should return object with verbosity 2 ", func(t *testing.T) {
+	t.Run("Should return object with  (verbosity: 2)", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx,
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_TRANSACTIONS})
 

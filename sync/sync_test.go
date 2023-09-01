@@ -252,7 +252,7 @@ func TestDownload(t *testing.T) {
 	td := setup(t, nil)
 
 	ourBlockHeight := td.state.LastBlockHeight()
-	b := td.GenerateTestBlock(nil, nil)
+	b := td.GenerateTestBlock(nil)
 	c := td.GenerateTestCertificate()
 	pid := td.RandPeerID()
 	msg := message.NewBlockAnnounceMessage(ourBlockHeight+LatestBlockInterval+1, b, c)

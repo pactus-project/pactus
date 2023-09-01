@@ -100,18 +100,21 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 	req *pactus.GetBlockRequest,
 ) (*pactus.GetBlockResponse, error) {
 	height := req.GetHeight()
-	storedBlock := s.state.StoredBlock(height)
-	if storedBlock == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "block not found")
+	committedBlock := s.state.CommittedBlock(height)
+	if committedBlock == nil {
+		return nil, status.Errorf(codes.NotFound, "block not found")
 	}
 	res := &pactus.GetBlockResponse{
-		Height: storedBlock.Height,
-		Hash:   storedBlock.BlockHash.Bytes(),
-		Data:   storedBlock.Data,
+		Height: committedBlock.Height,
+		Hash:   committedBlock.BlockHash.Bytes(),
+		Data:   committedBlock.Data,
 	}
 
 	if req.Verbosity > pactus.BlockVerbosity_BLOCK_DATA {
-		block := storedBlock.ToBlock()
+		block, err := committedBlock.ToBlock()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
 		blockTime := block.Header().UnixTime()
 		seed := block.Header().SortitionSeed()
 		cert := block.PrevCertificate()
@@ -169,7 +172,7 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 	}
 	acc := s.state.AccountByAddress(addr)
 	if acc == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "account not found")
+		return nil, status.Errorf(codes.NotFound, "account not found")
 	}
 	res := &pactus.GetAccountResponse{
 		Account: accountToProto(acc),

@@ -1,6 +1,7 @@
 package block
 
 import (
+	"fmt"
 	"io"
 	"time"
 
@@ -8,7 +9,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type Header struct {
@@ -76,10 +76,14 @@ func NewHeader(version uint8, time time.Time, stateRoot, prevBlockHash hash.Hash
 
 func (h *Header) BasicCheck() error {
 	if err := h.data.StateRoot.BasicCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidBlock, "invalid state root")
+		return BasicCheckError{
+			Reason: fmt.Sprintf("invalid state root: %s", err.Error()),
+		}
 	}
 	if err := h.data.ProposerAddress.BasicCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidBlock, "invalid proposer address")
+		return BasicCheckError{
+			Reason: fmt.Sprintf("invalid proposer address: %s", err.Error()),
+		}
 	}
 
 	return nil

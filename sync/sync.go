@@ -468,7 +468,7 @@ func (sync *synchronizer) prepareBlocks(from uint32, count uint32) [][]byte {
 	blocks := make([][]byte, 0, count)
 
 	for h := from; h < from+count; h++ {
-		b := sync.state.StoredBlock(h)
+		b := sync.state.CommittedBlock(h)
 		if b == nil {
 			sync.logger.Warn("unable to find a block", "height", h)
 			return nil
@@ -478,40 +478,4 @@ func (sync *synchronizer) prepareBlocks(from uint32, count uint32) [][]byte {
 	}
 
 	return blocks
-}
-
-func (sync *synchronizer) updateSession(sessionID int, pid peer.ID, code message.ResponseCode) {
-	s := sync.peerSet.FindSession(sessionID)
-	if s == nil {
-		sync.logger.Debug("session not found or closed", "session-id", sessionID)
-		return
-	}
-
-	if s.PeerID() != pid {
-		sync.logger.Warn("peer ID is not known", "session-id", sessionID, "pid", pid)
-		return
-	}
-
-	s.SetLastResponseCode(code)
-
-	switch code {
-	case message.ResponseCodeRejected:
-		sync.logger.Debug("session rejected, close session", "session-id", sessionID)
-		sync.peerSet.CloseSession(sessionID)
-		sync.peerSet.IncreaseSendFailedCounter(pid)
-		sync.updateBlockchain()
-
-	case message.ResponseCodeMoreBlocks:
-		sync.logger.Debug("peer responding us. keep session open", "session-id", sessionID)
-
-	case message.ResponseCodeNoMoreBlocks:
-		sync.logger.Debug("peer has no more block. close session", "session-id", sessionID)
-		sync.peerSet.CloseSession(sessionID)
-		sync.updateBlockchain()
-
-	case message.ResponseCodeSynced:
-		sync.logger.Debug("peer informed us we are synced. close session", "session-id", sessionID)
-		sync.peerSet.CloseSession(sessionID)
-		sync.moveConsensusToNewHeight()
-	}
 }
