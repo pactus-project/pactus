@@ -41,8 +41,6 @@ func TestCertificateCBORMarshaling(t *testing.T) {
 
 	c1 := ts.GenerateTestCertificate()
 	bz1, err := cbor.Marshal(c1)
-	fmt.Printf("%v\n", c1.Committers())
-	fmt.Printf("%x", bz1)
 	assert.NoError(t, err)
 	var c2 certificate.Certificate
 	err = cbor.Unmarshal(bz1, &c2)
