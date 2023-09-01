@@ -768,7 +768,7 @@ func TestCalcFee(t *testing.T) {
 		{1 * 1e12, payload.TypeBond, 1000000, 1000000, errors.ErrNone},
 
 		{1 * 1e12, payload.TypeSortition, 0, 0, errors.ErrInvalidFee},
-		{1 * 1e12, payload.TypeUnbound, 0, 0, errors.ErrNone},
+		{1 * 1e12, payload.TypeUnbond, 0, 0, errors.ErrNone},
 	}
 	for _, test := range tests {
 		fee, err := td.state2.CalculateFee(test.amount, test.pldType)

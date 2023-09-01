@@ -736,7 +736,7 @@ func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, er
 			return execution.CalculateFee(amount, st.params), nil
 		}
 
-	case payload.TypeUnbound,
+	case payload.TypeUnbond,
 		payload.TypeSortition:
 		{
 			return 0, nil
