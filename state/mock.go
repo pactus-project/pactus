@@ -247,7 +247,7 @@ func (m *MockState) CalculateFee(_ int64, payloadType payload.Type) (int64, erro
 			return m.ts.RandInt64(1e9), nil
 		}
 
-	case payload.TypeUnbound,
+	case payload.TypeUnbond,
 		payload.TypeSortition:
 		{
 			return 0, nil

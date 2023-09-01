@@ -14,7 +14,7 @@ type UnbondPayload struct {
 }
 
 func (p *UnbondPayload) Type() Type {
-	return TypeUnbound
+	return TypeUnbond
 }
 
 func (p *UnbondPayload) Signer() crypto.Address {

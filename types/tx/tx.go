@@ -339,7 +339,7 @@ func (tx *Tx) DecodeWithNoSignatory(r io.Reader) error {
 		tx.data.Payload = &payload.TransferPayload{}
 	case payload.TypeBond:
 		tx.data.Payload = &payload.BondPayload{}
-	case payload.TypeUnbound:
+	case payload.TypeUnbond:
 		tx.data.Payload = &payload.UnbondPayload{}
 	case payload.TypeWithdraw:
 		tx.data.Payload = &payload.WithdrawPayload{}
@@ -430,7 +430,7 @@ func (tx *Tx) IsSortitionTx() bool {
 }
 
 func (tx *Tx) IsUnbondTx() bool {
-	return tx.Payload().Type() == payload.TypeUnbound
+	return tx.Payload().Type() == payload.TypeUnbond
 }
 
 func (tx *Tx) IsWithdrawTx() bool {

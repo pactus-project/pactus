@@ -126,7 +126,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 				Proof:   pld.Proof[:],
 			},
 		}
-	case payload.TypeUnbound:
+	case payload.TypeUnbond:
 		pld := trx.Payload().(*payload.UnbondPayload)
 		transaction.Payload = &pactus.TransactionInfo_Unbond{
 			Unbond: &pactus.PayloadUnbond{

@@ -25,7 +25,7 @@ func newExecution(strict bool) *Execution {
 	execs[payload.TypeTransfer] = executor.NewTransferExecutor(strict)
 	execs[payload.TypeBond] = executor.NewBondExecutor(strict)
 	execs[payload.TypeSortition] = executor.NewSortitionExecutor(strict)
-	execs[payload.TypeUnbound] = executor.NewUnbondExecutor(strict)
+	execs[payload.TypeUnbond] = executor.NewUnbondExecutor(strict)
 	execs[payload.TypeWithdraw] = executor.NewWithdrawExecutor(strict)
 
 	return &Execution{

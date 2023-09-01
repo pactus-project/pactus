@@ -118,7 +118,7 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 			}
 			trx = tx.NewBondTx(*m.stamp, m.seq, *m.from, *m.to, pub, m.amount, m.fee, m.memo)
 		}
-	case payload.TypeUnbound:
+	case payload.TypeUnbond:
 		trx = tx.NewUnbondTx(*m.stamp, m.seq, *m.from, m.memo)
 	case payload.TypeWithdraw:
 		trx = tx.NewWithdrawTx(*m.stamp, m.seq, *m.from, *m.to, m.amount, m.fee, m.memo)
@@ -160,7 +160,7 @@ func (m *txBuilder) setSequence() error {
 				m.seq = acc.Sequence + 1
 			}
 
-		case payload.TypeUnbound,
+		case payload.TypeUnbond,
 			payload.TypeWithdraw:
 			{
 				val, err := m.client.getValidator(*m.from)
