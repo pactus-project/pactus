@@ -28,7 +28,7 @@ var (
 	tSigners     [][]crypto.Signer
 	tConfigs     []*config.Config
 	tNodes       []*node.Node
-	tGRPCAddress = "0.0.0.0:1337"
+	tGRPCAddress = "127.0.0.1:1337"
 	tGenDoc      *genesis.Genesis
 	tGRPC        *grpc.ClientConn
 	tBlockchain  pactus.BlockchainClient
@@ -89,7 +89,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Sync.Firewall.Enabled = false
 		tConfigs[i].Network.EnableMdns = true
 		tConfigs[i].Network.NetworkKey = util.TempFilePath()
-		tConfigs[i].Network.Listens = []string{"/ip4/0.0.0.0/tcp/0", "/ip4/0.0.0.0/udp/0/quic"}
+		tConfigs[i].Network.Listens = []string{"/ip4/127.0.0.1/tcp/0", "/ip4/127.0.0.1/udp/0/quic"}
 		tConfigs[i].Network.Bootstrap.Addresses = []string{}
 		tConfigs[i].Network.Bootstrap.Period = 10 * time.Second
 		tConfigs[i].Network.Bootstrap.MinThreshold = 3
