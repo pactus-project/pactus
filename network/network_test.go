@@ -345,8 +345,6 @@ func TestConnections(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		test := test // capture range variable
-
 		// Bootstrap node
 		confB := testConfig()
 		bootstrapPort := ts.RandInt32(9999) + 10000
