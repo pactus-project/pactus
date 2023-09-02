@@ -22,7 +22,7 @@ func makeTestRelay(t *testing.T) host.Host {
 	t.Helper()
 
 	h, err := lp2p.New(
-		lp2p.ListenAddrStrings("/ip4/0.0.0.0/tcp/0"),
+		lp2p.ListenAddrStrings("/ip4/127.0.0.1/tcp/0"),
 		lp2p.DisableRelay(),
 		lp2p.EnableRelayService(),
 		lp2p.ForceReachabilityPublic(),
@@ -158,8 +158,8 @@ func TestNetwork(t *testing.T) {
 	confB := testConfig()
 	bootstrapPort := ts.RandInt32(9999) + 10000
 	confB.Listens = []string{
-		fmt.Sprintf("/ip4/0.0.0.0/tcp/%v", bootstrapPort),
-		fmt.Sprintf("/ip6/::/tcp/%v", bootstrapPort),
+		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", bootstrapPort),
+		fmt.Sprintf("/ip6/::1/tcp/%v", bootstrapPort),
 	}
 	fmt.Println("Starting Bootstrap node")
 	networkB := makeTestNetwork(t, confB, []lp2p.Option{})
@@ -174,8 +174,8 @@ func TestNetwork(t *testing.T) {
 	confP.EnableNAT = true
 	confP.Bootstrap.Addresses = bootstrapAddresses
 	confP.Listens = []string{
-		"/ip4/0.0.0.0/tcp/0",
-		"/ip6/::/tcp/0",
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
 	}
 	fmt.Println("Starting Public node")
 	networkP := makeTestNetwork(t, confP, []lp2p.Option{
@@ -189,8 +189,8 @@ func TestNetwork(t *testing.T) {
 	confM.RelayAddrs = relayAddrs
 	confM.Bootstrap.Addresses = bootstrapAddresses
 	confM.Listens = []string{
-		"/ip4/0.0.0.0/tcp/0",
-		"/ip6/::/tcp/0",
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
 	}
 	fmt.Println("Starting Private node M")
 	networkM := makeTestNetwork(t, confM, []lp2p.Option{
@@ -204,8 +204,8 @@ func TestNetwork(t *testing.T) {
 	confN.RelayAddrs = relayAddrs
 	confN.Bootstrap.Addresses = bootstrapAddresses
 	confN.Listens = []string{
-		"/ip4/0.0.0.0/tcp/0",
-		"/ip6/::/tcp/0",
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
 	}
 	fmt.Println("Starting Private node N")
 	networkN := makeTestNetwork(t, confN, []lp2p.Option{
@@ -218,8 +218,8 @@ func TestNetwork(t *testing.T) {
 	confX.EnableRelay = false
 	confX.Bootstrap.Addresses = bootstrapAddresses
 	confX.Listens = []string{
-		"/ip4/0.0.0.0/tcp/0",
-		"/ip6/::/tcp/0",
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
 	}
 	fmt.Println("Starting Private node X")
 	networkX := makeTestNetwork(t, confX, []lp2p.Option{
@@ -338,10 +338,10 @@ func TestConnections(t *testing.T) {
 		bootstrapAddr string
 		peerAddr      string
 	}{
-		{"/ip4/0.0.0.0/tcp/%d", "/ip4/0.0.0.0/tcp/0"},
-		{"/ip4/0.0.0.0/udp/%d/quic", "/ip4/0.0.0.0/udp/0/quic"},
-		{"/ip6/::/tcp/%d", "/ip6/::/tcp/0"},
-		// {"/ip6/::/udp/%d/quic", "/ip6/::/udp/0/quic"},
+		{"/ip4/127.0.0.1/tcp/%d", "/ip4/127.0.0.1/tcp/0"},
+		{"/ip4/127.0.0.1/udp/%d/quic", "/ip4/127.0.0.1/udp/0/quic"},
+		{"/ip6/::1/tcp/%d", "/ip6/::1/tcp/0"},
+		{"/ip6/::1/udp/%d/quic", "/ip6/::1/udp/0/quic"},
 	}
 
 	for i, test := range tests {
