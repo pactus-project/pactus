@@ -9,7 +9,7 @@ type NotSubscribedError struct {
 }
 
 func (e NotSubscribedError) Error() string {
-	return fmt.Sprintf("Not subscribed to the '%s' topic", e.TopicID.String())
+	return fmt.Sprintf("not subscribed to the '%s' topic", e.TopicID.String())
 }
 
 // InvalidTopicError is returned when the Pub-Sub topic is invalid.
@@ -18,7 +18,7 @@ type InvalidTopicError struct {
 }
 
 func (e InvalidTopicError) Error() string {
-	return fmt.Sprintf("invalid topic: %s",
+	return fmt.Sprintf("invalid topic: '%s'",
 		e.TopicID.String())
 }
 
