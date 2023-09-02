@@ -6,7 +6,6 @@ import (
 
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -50,11 +49,11 @@ func (g *gossipService) BroadcastMessage(msg []byte, topic *lp2pps.Topic) error 
 func (g *gossipService) JoinTopic(name string) (*lp2pps.Topic, error) {
 	topic, err := g.pubsub.Join(name)
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, LibP2PError{Err: err}
 	}
 	sub, err := topic.Subscribe()
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, LibP2PError{Err: err}
 	}
 
 	g.topics = append(g.topics, topic)

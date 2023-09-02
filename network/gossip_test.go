@@ -12,7 +12,10 @@ func TestJoinConsensusTopic(t *testing.T) {
 
 	msg := []byte("test-consensus-topic")
 
-	require.Error(t, net.Broadcast(msg, TopicIDConsensus))
+	require.ErrorIs(t, net.Broadcast(msg, TopicIDConsensus),
+		NotSubscribedError{
+			TopicID: TopicIDConsensus,
+		})
 	require.NoError(t, net.JoinConsensusTopic())
 	require.NoError(t, net.Broadcast(msg, TopicIDConsensus))
 }
@@ -23,5 +26,8 @@ func TestInvalidTopic(t *testing.T) {
 
 	msg := []byte("test-invalid-topic")
 
-	require.Error(t, net.Broadcast(msg, -1))
+	require.ErrorIs(t, net.Broadcast(msg, -1),
+		InvalidTopicError{
+			TopicID: TopicID(-1),
+		})
 }

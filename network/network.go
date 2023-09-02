@@ -15,7 +15,6 @@ import (
 	rcmgrObs "github.com/libp2p/go-libp2p/p2p/host/resource-manager/obs"
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
 	"github.com/prometheus/client_golang/prometheus"
@@ -82,7 +81,7 @@ func NewNetwork(conf *Config) (Network, error) {
 func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 	networkKey, err := loadOrCreateKey(conf.NetworkKey)
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, LibP2PError{Err: err}
 	}
 
 	if conf.EnableMetrics {
@@ -91,7 +90,7 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 
 	str, err := rcmgrObs.NewStatsTraceReporter()
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, LibP2PError{Err: err}
 	}
 
 	rmgr, err := rcmgr.NewResourceManager(
@@ -99,7 +98,7 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 		rcmgr.WithTraceReporter(str),
 	)
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, LibP2PError{Err: err}
 	}
 
 	opts = append(opts,
@@ -125,14 +124,14 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 		for _, s := range conf.RelayAddrs {
 			addr, err := ma.NewMultiaddr(s)
 			if err != nil {
-				return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+				return nil, LibP2PError{Err: err}
 			}
 			relayAddrs = append(relayAddrs, addr)
 		}
 
 		static, err := lp2ppeer.AddrInfosFromP2pAddrs(relayAddrs...)
 		if err != nil {
-			return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+			return nil, LibP2PError{Err: err}
 		}
 		opts = append(opts,
 			lp2p.EnableRelay(),
@@ -146,7 +145,7 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 
 	host, err := lp2p.New(opts...)
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, LibP2PError{Err: err}
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -186,11 +185,11 @@ func (n *network) EventChannel() <-chan Event {
 
 func (n *network) Start() error {
 	if err := n.dht.Start(); err != nil {
-		return errors.Errorf(errors.ErrNetwork, err.Error())
+		return LibP2PError{Err: err}
 	}
 	if n.mdns != nil {
 		if err := n.mdns.Start(); err != nil {
-			return errors.Errorf(errors.ErrNetwork, err.Error())
+			return LibP2PError{Err: err}
 		}
 	}
 	n.gossip.Start()
@@ -235,18 +234,18 @@ func (n *network) Broadcast(msg []byte, topicID TopicID) error {
 	switch topicID {
 	case TopicIDGeneral:
 		if n.generalTopic == nil {
-			return errors.Errorf(errors.ErrNetwork, "not subscribed to general topic")
+			return NotSubscribedError{TopicID: topicID}
 		}
 		return n.gossip.BroadcastMessage(msg, n.generalTopic)
 
 	case TopicIDConsensus:
 		if n.consensusTopic == nil {
-			return errors.Errorf(errors.ErrNetwork, "not subscribed to consensus topic")
+			return NotSubscribedError{TopicID: topicID}
 		}
 		return n.gossip.BroadcastMessage(msg, n.consensusTopic)
 
 	default:
-		return errors.Errorf(errors.ErrNetwork, "invalid topic")
+		return InvalidTopicError{TopicID: topicID}
 	}
 }
 

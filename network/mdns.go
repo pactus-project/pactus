@@ -7,7 +7,6 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2pmdns "github.com/libp2p/go-libp2p/p2p/discovery/mdns"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -50,7 +49,7 @@ func (mdns *mdnsService) HandlePeerFound(pi lp2ppeer.AddrInfo) {
 func (mdns *mdnsService) Start() error {
 	err := mdns.service.Start()
 	if err != nil {
-		return errors.Errorf(errors.ErrNetwork, err.Error())
+		return LibP2PError{Err: err}
 	}
 
 	return nil
