@@ -3,7 +3,10 @@ package logger
 import (
 	"encoding/hex"
 	"fmt"
+	"io"
 	"os"
+
+	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -89,14 +92,37 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 }
 
 func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
+	var writers []io.Writer
+
+	if getLoggersInst().config.ConsoleLoggingEnabled {
+		writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr})
+	}
+
+	if getLoggersInst().config.FileLoggingEnabled {
+		if err := os.MkdirAll(getLoggersInst().config.Directory, 0o744); err != nil {
+			log.Error().Err(err).Str("path", getLoggersInst().config.Directory).
+				Msg("can't create log directory")
+			goto ConsoleLogger
+		}
+		fl := &lumberjack.Logger{
+			Filename:   getLoggersInst().config.Filename,
+			MaxBackups: getLoggersInst().config.MaxBackups,
+			MaxSize:    getLoggersInst().config.MaxSize,
+			MaxAge:     getLoggersInst().config.MaxAge,
+		}
+		writers = append(writers, fl)
+	}
+
+ConsoleLogger:
+	mw := io.MultiWriter(writers...)
 	sl := &SubLogger{
-		logger: zerolog.New(os.Stderr).With().Timestamp().Logger(),
+		logger: zerolog.New(mw).With().Timestamp().Logger(),
 		name:   name,
 		obj:    obj,
 	}
 
 	if getLoggersInst().config.Colorful {
-		sl.logger = sl.logger.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+		sl.logger = sl.logger.Output(mw)
 	}
 
 	lvlStr := getLoggersInst().config.Levels[name]
@@ -108,6 +134,16 @@ func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 	if err == nil {
 		sl.logger.Level(lvl)
 	}
+
+	sl.logger.Info().
+		Bool("fileLogging", getLoggersInst().config.FileLoggingEnabled).
+		Bool("jsonLogOutput", getLoggersInst().config.EncodeLogsAsJSON).
+		Str("logDirectory", getLoggersInst().config.Directory).
+		Str("fileName", getLoggersInst().config.Filename).
+		Int("maxSizeMB", getLoggersInst().config.MaxSize).
+		Int("maxBackups", getLoggersInst().config.MaxBackups).
+		Int("maxAgeInDays", getLoggersInst().config.MaxAge).
+		Msg("logging configured")
 
 	getLoggersInst().subs[name] = sl
 	return sl

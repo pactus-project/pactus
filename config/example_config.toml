@@ -130,6 +130,30 @@
 
 # `logger` contains configuration options for the logger.
 [logger]
+  # 'console_logging_enabled' indicates whether logs should stderr or stdout.
+  # Default is true.
+ ## console_logging_enabled = true
+  # 'encode_logs_as_json' indicates whether logs should encode as json or not.
+  # Default is true.
+ ## encode_logs_as_json = true
+  # 'file_logging_enabled' indicates whether logs should write into file or not.
+  # Default is false.
+ ## file_logging_enabled = false
+  # 'directory' indicates what is the directory path of log file.
+  # Default is working dir when you path through command line.
+ ## directory = ""
+  # 'filename' indicates what is the file path of log file.
+  # Default is combine of working dir when you path through command line plus pactus.log.
+ ## filename = ""
+  # 'max_size' indicates what is maximum size of log file.
+  # Default is 500 megabytes.
+ ## max_size = 500
+  # 'max_backups' indicates what is maximum backups from log file.
+  # Default is 3 files.
+ ## max_backups = 3
+  # 'max_age' indicates what is maximum period to hold log file.
+  # Default is 30 days.
+ ## max_age = 30
   # `colorful` indicates whether log can be colorful or not.
   # Default is true.
  ## colorful = true
