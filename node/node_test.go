@@ -27,7 +27,6 @@ func TestRunningNode(t *testing.T) {
 		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
 		[]*validator.Validator{val}, param.DefaultParams())
 	conf := config.DefaultConfig()
-	conf.Network.Listens = []string{"/ip4/0.0.0.0/tcp/0"}
 	conf.GRPC.Enable = false
 	conf.HTTP.Enable = false
 	conf.Store.Path = util.TempDirPath()

@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -50,11 +51,12 @@ func getBlockAt(height uint32) *pactus.GetBlockResponse {
 			},
 		)
 		if err != nil {
+			fmt.Printf("getBlockAt err: %s\n", err.Error())
 			time.Sleep(1 * time.Second)
 			continue
 		}
 		return res
 	}
-	logger.Panic("get block timeout", "height", height)
+	logger.Panic("getBlockAt timeout", "height", height)
 	return nil
 }

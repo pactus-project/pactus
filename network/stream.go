@@ -9,7 +9,6 @@ import (
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2peer "github.com/libp2p/go-libp2p/core/peer"
 	ma "github.com/multiformats/go-multiaddr"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -64,7 +63,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 	s.logger.Trace("sending stream", "to", pid)
 	_, err := s.host.Peerstore().SupportsProtocols(pid, s.protocolID)
 	if err != nil {
-		return errors.Errorf(errors.ErrNetwork, err.Error())
+		return LibP2PError{Err: err}
 	}
 
 	// Attempt to open a new stream to the target peer assuming there's already direct a connection
@@ -87,7 +86,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 			// https://docs.libp2p.io/concepts/nat/circuit-relay/#relay-addresses
 			circuitAddr, err := ma.NewMultiaddr(fmt.Sprintf("%s/p2p-circuit/p2p/%s", addr.String(), pid))
 			if err != nil {
-				return errors.Errorf(errors.ErrNetwork, err.Error())
+				return LibP2PError{Err: err}
 			}
 			// fmt.Println(circuitAddr)
 			circuitAddrs[i] = circuitAddr
@@ -102,7 +101,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 		if err := s.host.Connect(s.ctx, unreachableRelayInfo); err != nil {
 			// There is no relay connection to peer as well
 			s.logger.Warn("unable to connect to peer using relay", "pid", pid, "err", err)
-			return errors.Errorf(errors.ErrNetwork, err.Error())
+			return LibP2PError{Err: err}
 		}
 		s.logger.Debug("connected to peer using relay", "pid", pid)
 
@@ -112,17 +111,17 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 			lp2pnetwork.WithUseTransient(s.ctx, string(s.protocolID)), pid, s.protocolID)
 		if err != nil {
 			s.logger.Warn("unable to open relay stream", "pid", pid, "err", err)
-			return errors.Errorf(errors.ErrNetwork, err.Error())
+			return LibP2PError{Err: err}
 		}
 	}
 
 	_, err = stream.Write(msg)
 	if err != nil {
-		return errors.Errorf(errors.ErrNetwork, err.Error())
+		return LibP2PError{Err: err}
 	}
 	err = stream.Close()
 	if err != nil {
-		return errors.Errorf(errors.ErrNetwork, err.Error())
+		return LibP2PError{Err: err}
 	}
 
 	return nil

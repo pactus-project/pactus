@@ -66,8 +66,6 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	for _, val := range joined {
 		committeeVal := c.find(val.Address())
 		if committeeVal == nil {
-			fmt.Println("c.porposerPos is:")
-			fmt.Println(c.proposerPos)
 			c.validatorList.InsertBefore(cloneValidator(val), c.proposerPos)
 		} else {
 			committeeVal.UpdateLastSortitionHeight(val.LastSortitionHeight())

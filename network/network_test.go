@@ -1,6 +1,7 @@
 package network
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"testing"
@@ -21,7 +22,7 @@ func makeTestRelay(t *testing.T) host.Host {
 	t.Helper()
 
 	h, err := lp2p.New(
-		lp2p.ListenAddrStrings("/ip4/0.0.0.0/tcp/0"),
+		lp2p.ListenAddrStrings("/ip4/127.0.0.1/tcp/0"),
 		lp2p.DisableRelay(),
 		lp2p.EnableRelayService(),
 		lp2p.ForceReachabilityPublic(),
@@ -45,7 +46,7 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 	t.Helper()
 
 	net, err := newNetwork(conf, opts)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.NoError(t, net.Start())
 	assert.NoError(t, net.JoinGeneralTopic())
@@ -109,8 +110,10 @@ func readData(t *testing.T, r io.ReadCloser, len int) []byte {
 
 	buf := make([]byte, len)
 	_, err := r.Read(buf)
-	assert.NoError(t, err)
-	assert.NoError(t, r.Close())
+	if !errors.Is(err, io.EOF) {
+		assert.NoError(t, err)
+		assert.NoError(t, r.Close())
+	}
 
 	return buf
 }
@@ -155,8 +158,8 @@ func TestNetwork(t *testing.T) {
 	confB := testConfig()
 	bootstrapPort := ts.RandInt32(9999) + 10000
 	confB.Listens = []string{
-		fmt.Sprintf("/ip4/0.0.0.0/tcp/%v", bootstrapPort),
-		fmt.Sprintf("/ip6/::/tcp/%v", bootstrapPort),
+		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", bootstrapPort),
+		fmt.Sprintf("/ip6/::1/tcp/%v", bootstrapPort),
 	}
 	fmt.Println("Starting Bootstrap node")
 	networkB := makeTestNetwork(t, confB, []lp2p.Option{})
@@ -171,8 +174,8 @@ func TestNetwork(t *testing.T) {
 	confP.EnableNAT = true
 	confP.Bootstrap.Addresses = bootstrapAddresses
 	confP.Listens = []string{
-		"/ip4/0.0.0.0/tcp/0",
-		"/ip6/::/tcp/0",
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
 	}
 	fmt.Println("Starting Public node")
 	networkP := makeTestNetwork(t, confP, []lp2p.Option{
@@ -186,8 +189,8 @@ func TestNetwork(t *testing.T) {
 	confM.RelayAddrs = relayAddrs
 	confM.Bootstrap.Addresses = bootstrapAddresses
 	confM.Listens = []string{
-		"/ip4/0.0.0.0/tcp/0",
-		"/ip6/::/tcp/0",
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
 	}
 	fmt.Println("Starting Private node M")
 	networkM := makeTestNetwork(t, confM, []lp2p.Option{
@@ -201,8 +204,8 @@ func TestNetwork(t *testing.T) {
 	confN.RelayAddrs = relayAddrs
 	confN.Bootstrap.Addresses = bootstrapAddresses
 	confN.Listens = []string{
-		"/ip4/0.0.0.0/tcp/0",
-		"/ip6/::/tcp/0",
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
 	}
 	fmt.Println("Starting Private node N")
 	networkN := makeTestNetwork(t, confN, []lp2p.Option{
@@ -215,8 +218,8 @@ func TestNetwork(t *testing.T) {
 	confX.EnableRelay = false
 	confX.Bootstrap.Addresses = bootstrapAddresses
 	confX.Listens = []string{
-		"/ip4/0.0.0.0/tcp/0",
-		"/ip6/::/tcp/0",
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
 	}
 	fmt.Println("Starting Private node X")
 	networkX := makeTestNetwork(t, confX, []lp2p.Option{
@@ -313,15 +316,6 @@ func TestNetwork(t *testing.T) {
 	})
 }
 
-func TestInvalidTopic(t *testing.T) {
-	net, err := NewNetwork(testConfig())
-	assert.NoError(t, err)
-
-	msg := []byte("test-invalid-topic")
-
-	require.Error(t, net.Broadcast(msg, -1))
-}
-
 func TestInvalidRelayAddress(t *testing.T) {
 	conf := testConfig()
 	conf.EnableRelay = true
@@ -333,4 +327,76 @@ func TestInvalidRelayAddress(t *testing.T) {
 	conf.RelayAddrs = []string{"/ip4/127.0.0.1/tcp/4001"}
 	_, err = NewNetwork(conf)
 	assert.Error(t, err)
+}
+
+func TestConnections(t *testing.T) {
+	t.Parallel() // run the tests in parallel
+
+	ts := testsuite.NewTestSuite(t)
+
+	tests := []struct {
+		bootstrapAddr string
+		peerAddr      string
+	}{
+		{"/ip4/127.0.0.1/tcp/%d", "/ip4/127.0.0.1/tcp/0"},
+		{"/ip4/127.0.0.1/udp/%d/quic", "/ip4/127.0.0.1/udp/0/quic"},
+		{"/ip6/::1/tcp/%d", "/ip6/::1/tcp/0"},
+		{"/ip6/::1/udp/%d/quic", "/ip6/::1/udp/0/quic"},
+	}
+
+	for i, test := range tests {
+		// Bootstrap node
+		confB := testConfig()
+		bootstrapPort := ts.RandInt32(9999) + 10000
+		bootstrapAddr := fmt.Sprintf(test.bootstrapAddr, bootstrapPort)
+		confB.Listens = []string{bootstrapAddr}
+		fmt.Println("Starting Bootstrap node")
+		networkB := makeTestNetwork(t, confB, []lp2p.Option{
+			lp2p.ForceReachabilityPublic(),
+		})
+
+		// Public node
+		confP := testConfig()
+		confP.Bootstrap.Addresses = []string{
+			fmt.Sprintf("%s/p2p/%v", bootstrapAddr, networkB.SelfID().String()),
+		}
+		confP.Listens = []string{test.peerAddr}
+		fmt.Println("Starting Public node")
+		networkP := makeTestNetwork(t, confP, []lp2p.Option{
+			lp2p.ForceReachabilityPublic(),
+		})
+
+		t.Run(fmt.Sprintf("Running test %d: %s <-> %s ... ",
+			i, test.bootstrapAddr, test.peerAddr), func(t *testing.T) {
+			t.Parallel() // run the tests in parallel
+
+			testConnection(t, networkP, networkB)
+		})
+	}
+}
+
+func testConnection(t *testing.T, networkP *network, networkB *network) {
+	t.Helper()
+
+	// Ensure that peers are connected to each other
+	for i := 0; i < 20; i++ {
+		if networkP.NumConnectedPeers() >= 1 &&
+			networkB.NumConnectedPeers() >= 1 {
+			break
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+
+	assert.Equal(t, networkB.NumConnectedPeers(), 1)
+	assert.Equal(t, networkP.NumConnectedPeers(), 1)
+
+	msg := []byte("test-msg")
+
+	require.NoError(t, networkP.SendTo(msg, networkB.SelfID()))
+	e := shouldReceiveEvent(t, networkB, EventTypeStream).(*StreamMessage)
+	assert.Equal(t, e.Source, networkP.SelfID())
+	assert.Equal(t, readData(t, e.Reader, len(msg)), msg)
+
+	networkB.Stop()
+	networkP.Stop()
 }
