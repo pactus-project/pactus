@@ -18,7 +18,6 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	stake := td.RandInt64(1000000000000)
 	val.AddToStake(stake) // MaximumStake
 	td.sandbox.UpdateValidator(val)
-	
 
 	accAddr, acc := td.sandbox.TestStore.RandomTestAcc()
 	acc.SubtractFromBalance(stake)
