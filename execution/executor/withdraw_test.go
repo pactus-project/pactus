@@ -38,14 +38,6 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
 	})
 
-	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(td.randStamp, val.Sequence()+1, val.Address(), addr,
-			amt+1, fee, "insufficient balance")
-
-		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInsufficientFunds)
-	})
-
 	t.Run("Should fail, hasn't unbonded yet", func(t *testing.T) {
 		assert.Zero(t, val.UnbondingHeight())
 		trx := tx.NewWithdrawTx(td.randStamp, val.Sequence()+1, val.Address(), addr,
@@ -78,12 +70,19 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence, "Execute again, should fail")
 	})
 
+	t.Run("Should fail, can't withdraw less than stake amount", func(t *testing.T) {
+		trx := tx.NewWithdrawTx(td.randStamp, val.Sequence()+1, val.Address(), addr,
+			val.Stake()-1, fee, "can't withdraw less than stake amount")
+
+		assert.Error(t, exe.Execute(trx, td.sandbox))
+	})
+
 	t.Run("Should fail, can't withdraw empty stake", func(t *testing.T) {
 		trx := tx.NewWithdrawTx(td.randStamp, val.Sequence()+2, val.Address(), addr,
 			1, fee, "can't withdraw empty stake")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInsufficientFunds)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidAmount)
 	})
 
 	assert.Equal(t, exe.Fee(), fee)

@@ -165,7 +165,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	val1Signer.SignMsg(unbondTx)
 
 	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(),
-		td.RandAddress(), 1000, 1000, "withdraw-tx")
+		td.RandAddress(), val2.Stake(), 1000, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
 	td.sandbox.TestAcceptSortition = true

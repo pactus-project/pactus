@@ -29,8 +29,9 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidSequence,
 			"expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
 	}
-	if val.Stake() < pld.Amount+trx.Fee() {
-		return errors.Error(errors.ErrInsufficientFunds)
+	if val.Stake() != pld.Amount+trx.Fee() {
+		return errors.Errorf(errors.ErrInvalidAmount,
+			"withdraw transaction amount must be equal to all stake amount")
 	}
 	if val.UnbondingHeight() == 0 {
 		return errors.Errorf(errors.ErrInvalidHeight,
