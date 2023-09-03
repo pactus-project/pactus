@@ -61,7 +61,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	t.Run("Should fail, can't withdraw less than stake amount", func(t *testing.T) {
 		trx := tx.NewWithdrawTx(td.randStamp, val.Sequence()+1, val.Address(), addr,
 			val.Stake()-1, fee, "can't withdraw less than stake amount")
-		
+
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAmount)
 	})
