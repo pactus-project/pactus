@@ -449,7 +449,7 @@ func (tx *Tx) IsWithdrawTx() bool {
 
 // IsFreeTx will checks if transaction fee is 0.
 func (tx *Tx) IsFreeTx() bool {
-	return tx.IsSubsidyTx() || tx.IsSortitionTx() || tx.IsUnbondTx()
+	return tx.IsSubsidyTx() || tx.IsSortitionTx() || tx.IsUnbondTx() || tx.IsWithdrawTx()
 }
 
 // StripPublicKey removes public key from the transaction.

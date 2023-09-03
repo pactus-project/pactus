@@ -146,9 +146,8 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 		pld := trx.Payload().(*payload.WithdrawPayload)
 		transaction.Payload = &pactus.TransactionInfo_Withdraw{
 			Withdraw: &pactus.PayloadWithdraw{
-				From:   pld.From.String(),
-				To:     pld.To.String(),
-				Amount: pld.Amount,
+				From: pld.From.String(),
+				To:   pld.To.String(),
 			},
 		}
 	default:

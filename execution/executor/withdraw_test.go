@@ -1,7 +1,6 @@
 package executor
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/tx"
@@ -20,10 +19,9 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	td.sandbox.UpdateValidator(val)
 
 	accAddr, acc := td.sandbox.TestStore.RandomTestAcc()
-	acc.SubtractFromBalance(stake)
+	acc.SubtractFromBalance(acc.Balance())
 	td.sandbox.UpdateAccount(accAddr, acc)
 
-	fmt.Println(acc.Balance())
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {
 		trx := tx.NewWithdrawTx(td.randStamp, 1, td.RandAddress(), accAddr,
 			0, 0, "invalid validator")
@@ -59,7 +57,6 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
 	})
-
 	td.sandbox.TestStore.AddTestBlock(td.randHeight + 1)
 
 	t.Run("Should pass, Everything is Ok!", func(t *testing.T) {
@@ -68,8 +65,6 @@ func TestExecuteWithdrawTx(t *testing.T) {
 
 		err := exe.Execute(trx, td.sandbox)
 		assert.NoError(t, err)
-		err = exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence, "Execute again, should fail")
 	})
 
 	assert.Zero(t, td.sandbox.Validator(val.Address()).Stake())

@@ -10,9 +10,8 @@ import (
 )
 
 type WithdrawPayload struct {
-	From   crypto.Address // withdraw from validator address
-	To     crypto.Address // deposit to account address
-	Amount int64          // amount to deposit
+	From crypto.Address // withdraw from validator address
+	To   crypto.Address // deposit to account address
 }
 
 func (p *WithdrawPayload) Type() Type {
@@ -24,7 +23,7 @@ func (p *WithdrawPayload) Signer() crypto.Address {
 }
 
 func (p *WithdrawPayload) Value() int64 {
-	return p.Amount
+	return 0
 }
 
 // TODO: write test for me.
@@ -40,7 +39,7 @@ func (p *WithdrawPayload) BasicCheck() error {
 }
 
 func (p *WithdrawPayload) SerializeSize() int {
-	return 42 + encoding.VarIntSerializeSize(uint64(p.Amount))
+	return 42 + encoding.VarIntSerializeSize(uint64(0))
 }
 
 func (p *WithdrawPayload) Encode(w io.Writer) error {
@@ -48,7 +47,7 @@ func (p *WithdrawPayload) Encode(w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	return encoding.WriteVarInt(w, uint64(p.Amount))
+	return encoding.WriteVarInt(w, uint64(0))
 }
 
 func (p *WithdrawPayload) Decode(r io.Reader) error {
@@ -56,17 +55,11 @@ func (p *WithdrawPayload) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	amount, err := encoding.ReadVarInt(r)
-	if err != nil {
-		return err
-	}
-	p.Amount = int64(amount)
 	return nil
 }
 
 func (p *WithdrawPayload) String() string {
-	return fmt.Sprintf("{WithdrawPayload 🧾 %v->%v %v",
+	return fmt.Sprintf("{WithdrawPayload 🧾 %v->%v",
 		p.From.ShortString(),
-		p.To.ShortString(),
-		p.Amount)
+		p.To.ShortString())
 }

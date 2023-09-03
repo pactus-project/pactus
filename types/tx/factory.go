@@ -64,9 +64,8 @@ func NewWithdrawTx(stamp hash.Stamp, seq int32,
 	memo string,
 ) *Tx {
 	pld := &payload.WithdrawPayload{
-		From:   val,
-		To:     acc,
-		Amount: amount,
+		From: val,
+		To:   acc,
 	}
 	return NewTx(stamp, seq, pld, fee, memo)
 }
