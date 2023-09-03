@@ -58,6 +58,14 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
 	})
 
+	t.Run("Should fail, can't withdraw less than stake amount", func(t *testing.T) {
+		trx := tx.NewWithdrawTx(td.randStamp, val.Sequence()+1, val.Address(), addr,
+			val.Stake()-1, fee, "can't withdraw less than stake amount")
+		
+		err := exe.Execute(trx, td.sandbox)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidAmount)
+	})
+
 	td.sandbox.TestStore.AddTestBlock(td.randHeight + 1)
 
 	t.Run("Should pass, Everything is Ok!", func(t *testing.T) {
@@ -68,13 +76,6 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		assert.NoError(t, err)
 		err = exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence, "Execute again, should fail")
-	})
-
-	t.Run("Should fail, can't withdraw less than stake amount", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(td.randStamp, val.Sequence()+1, val.Address(), addr,
-			val.Stake()-1, fee, "can't withdraw less than stake amount")
-
-		assert.Error(t, exe.Execute(trx, td.sandbox))
 	})
 
 	t.Run("Should fail, can't withdraw empty stake", func(t *testing.T) {
