@@ -24,14 +24,9 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidAddress,
 			"unable to retrieve validator account")
 	}
-
 	if val.Sequence()+1 != trx.Sequence() {
 		return errors.Errorf(errors.ErrInvalidSequence,
 			"expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
-	}
-	if val.Stake() != pld.Amount+trx.Fee() {
-		return errors.Errorf(errors.ErrInvalidAmount,
-			"withdraw transaction amount must be equal to all stake amount")
 	}
 	if val.UnbondingHeight() == 0 {
 		return errors.Errorf(errors.ErrInvalidHeight,
@@ -49,13 +44,11 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	}
 
 	val.IncSequence()
-	val.SubtractFromStake(pld.Amount + trx.Fee())
-	acc.AddToBalance(pld.Amount)
+	val.SubtractFromStake(val.Stake())
+	acc.AddToBalance(val.Stake())
 
 	sb.UpdateValidator(val)
 	sb.UpdateAccount(pld.To, acc)
-
-	e.fee = trx.Fee()
 
 	return nil
 }
