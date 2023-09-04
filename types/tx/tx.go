@@ -30,6 +30,7 @@ type Tx struct {
 }
 
 type txData struct {
+	// implementation of pip-4: https://github.com/pactus-project/PIPs/blob/main/PIPs/pip-4.md
 	Flags     uint8
 	Version   uint8
 	Stamp     hash.Stamp
