@@ -40,6 +40,11 @@
   # Default is true.
  ## enable_relay = false
 
+  # `enable_hole_punching` indicates whether hole punching service  should be enabled or not.
+  # Hole punching service is a decentralized feature that allows for firewall and NAT traversal without the need for central coordination servers like STUN and TURN.
+  # Default is true.
+ ## enable_hole_punching = false
+
   # `relay_addresses` provides the necessary relay addresses. These should be specified if 'enable_relay' is 'true'.
   # Note: this parameter will be ignored if 'enable_relay' is 'false'.
  ## relay_addresses = []

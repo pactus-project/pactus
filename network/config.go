@@ -9,15 +9,16 @@ import (
 )
 
 type Config struct {
-	Name          string           `toml:"name"`
-	Listens       []string         `toml:"listens"`
-	NetworkKey    string           `toml:"network_key"`
-	EnableNAT     bool             `toml:"enable_nat"`
-	EnableRelay   bool             `toml:"enable_relay"`
-	RelayAddrs    []string         `toml:"relay_addresses"`
-	EnableMdns    bool             `toml:"enable_mdns"`
-	EnableMetrics bool             `toml:"enable_metrics"`
-	Bootstrap     *BootstrapConfig `toml:"bootstrap"`
+	Name               string           `toml:"name"`
+	Listens            []string         `toml:"listens"`
+	NetworkKey         string           `toml:"network_key"`
+	EnableNAT          bool             `toml:"enable_nat"`
+	EnableRelay        bool             `toml:"enable_relay"`
+	EnableHolePunching bool             `toml:"enable_hole_punching"`
+	RelayAddrs         []string         `toml:"relay_addresses"`
+	EnableMdns         bool             `toml:"enable_mdns"`
+	EnableMetrics      bool             `toml:"enable_metrics"`
+	Bootstrap          *BootstrapConfig `toml:"bootstrap"`
 }
 
 // BootstrapConfig holds all configuration options related to bootstrap nodes.
@@ -48,13 +49,14 @@ func DefaultConfig() *Config {
 	}
 
 	return &Config{
-		Name:          "pactus",
-		Listens:       []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"},
-		NetworkKey:    "network_key",
-		EnableNAT:     true,
-		EnableRelay:   false,
-		EnableMdns:    false,
-		EnableMetrics: false,
+		Name:               "pactus",
+		Listens:            []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"},
+		NetworkKey:         "network_key",
+		EnableNAT:          true,
+		EnableRelay:        false,
+		EnableHolePunching: true,
+		EnableMdns:         false,
+		EnableMetrics:      false,
 		Bootstrap: &BootstrapConfig{
 			Addresses:    addresses,
 			MinThreshold: 8,
@@ -76,7 +78,7 @@ func validateAddresses(address []string) error {
 
 // BasicCheck performs basic checks on the configuration.
 func (conf *Config) BasicCheck() error {
-	if conf.EnableRelay {
+	if conf.EnableRelay || conf.EnableHolePunching {
 		if len(conf.RelayAddrs) == 0 {
 			return errors.Errorf(errors.ErrInvalidConfig, "at least one relay address should be defined")
 		}

@@ -119,8 +119,12 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 		)
 	}
 
+	if conf.EnableHolePunching {
+		opts = append(opts, lp2p.EnableHolePunching())
+	}
+
 	relayAddrs := []ma.Multiaddr{}
-	if conf.EnableRelay {
+	if conf.EnableRelay || conf.EnableHolePunching {
 		for _, s := range conf.RelayAddrs {
 			addr, err := ma.NewMultiaddr(s)
 			if err != nil {
