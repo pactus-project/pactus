@@ -4,16 +4,16 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/sync/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-// TODO: check error types and clean the test.
 func TestLatestBlocksRequestMessages(t *testing.T) {
 	config := testConfig()
 	config.NodeNetwork = false
 	td := setup(t, config)
-	td.addBlocks(t, td.state, 10)
+	td.state.CommitTestBlocks(31)
 
 	t.Run("NodeNetwork flag is not set", func(t *testing.T) {
 		curHeight := td.state.LastBlockHeight()
@@ -23,7 +23,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Reject request from unknown peers", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
-			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
@@ -31,11 +31,11 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		})
 
 		pub, _ := td.RandBLSKeyPair()
-		td.addPeer(t, pub, pid, false)
+		td.addPeer(t, pub, pid, services.New(services.None))
 
 		t.Run("Reject requests not within `LatestBlockInterval`", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)
-			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
@@ -44,7 +44,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Request blocks more than `LatestBlockInterval`", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 10, LatestBlockInterval+1)
-			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
@@ -105,7 +105,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		sid := td.RandInt(100)
 		pid := td.RandPeerID()
 		pub, _ := td.RandBLSKeyPair()
-		td.addPeer(t, pub, pid, false)
+		td.addPeer(t, pub, pid, services.New(services.None))
 
 		t.Run("Requesting one block", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)

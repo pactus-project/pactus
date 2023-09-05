@@ -11,7 +11,7 @@ import (
 
 var _ Network = &MockNetwork{}
 
-type BroadcastData struct {
+type PublishData struct {
 	Data   []byte
 	Target *lp2pcore.PeerID
 }
@@ -19,20 +19,20 @@ type BroadcastData struct {
 type MockNetwork struct {
 	*testsuite.TestSuite
 
-	BroadcastCh chan BroadcastData
-	EventCh     chan Event
-	ID          peer.ID
-	OtherNets   []*MockNetwork
-	SendError   error
+	PublishCh chan PublishData
+	EventCh   chan Event
+	ID        peer.ID
+	OtherNets []*MockNetwork
+	SendError error
 }
 
 func MockingNetwork(ts *testsuite.TestSuite, id peer.ID) *MockNetwork {
 	return &MockNetwork{
-		TestSuite:   ts,
-		BroadcastCh: make(chan BroadcastData, 100),
-		EventCh:     make(chan Event, 100),
-		OtherNets:   make([]*MockNetwork, 0),
-		ID:          id,
+		TestSuite: ts,
+		PublishCh: make(chan PublishData, 100),
+		EventCh:   make(chan Event, 100),
+		OtherNets: make([]*MockNetwork, 0),
+		ID:        id,
 	}
 }
 
@@ -63,7 +63,7 @@ func (mock *MockNetwork) SendTo(data []byte, pid lp2pcore.PeerID) error {
 	if mock.SendError != nil {
 		return mock.SendError
 	}
-	mock.BroadcastCh <- BroadcastData{
+	mock.PublishCh <- PublishData{
 		Data:   data,
 		Target: &pid,
 	}
@@ -71,7 +71,7 @@ func (mock *MockNetwork) SendTo(data []byte, pid lp2pcore.PeerID) error {
 }
 
 func (mock *MockNetwork) Broadcast(data []byte, _ TopicID) error {
-	mock.BroadcastCh <- BroadcastData{
+	mock.PublishCh <- PublishData{
 		Data:   data,
 		Target: nil, // Send to all
 	}

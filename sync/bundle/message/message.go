@@ -9,7 +9,6 @@ import (
 type ResponseCode int
 
 const (
-	ResponseCodeNone         = ResponseCode(-1)
 	ResponseCodeOK           = ResponseCode(0)
 	ResponseCodeRejected     = ResponseCode(1)
 	ResponseCodeMoreBlocks   = ResponseCode(2)
@@ -38,7 +37,7 @@ type Type int32
 const (
 	TypeUnspecified    = Type(0)
 	TypeHello          = Type(1)
-	TypeHeartBeat      = Type(2)
+	TypeHelloAck       = Type(2)
 	TypeTransactions   = Type(3)
 	TypeQueryProposal  = Type(4)
 	TypeProposal       = Type(5)
@@ -51,10 +50,7 @@ const (
 
 func (t Type) TopicID() network.TopicID {
 	switch t {
-	case TypeHello,
-		TypeHeartBeat,
-		TypeTransactions,
-		TypeBlockAnnounce:
+	case TypeTransactions, TypeBlockAnnounce:
 		return network.TopicIDGeneral
 
 	case TypeQueryProposal,
@@ -72,8 +68,8 @@ func (t Type) String() string {
 	switch t {
 	case TypeHello:
 		return "hello"
-	case TypeHeartBeat:
-		return "heart-beat"
+	case TypeHelloAck:
+		return "hello-ack"
 	case TypeTransactions:
 		return "txs"
 	case TypeQueryProposal:
@@ -98,8 +94,8 @@ func MakeMessage(t Type) Message {
 	switch t {
 	case TypeHello:
 		return &HelloMessage{}
-	case TypeHeartBeat:
-		return &HeartBeatMessage{}
+	case TypeHelloAck:
+		return &HelloAckMessage{}
 	case TypeTransactions:
 		return &TransactionsMessage{}
 	case TypeQueryProposal:

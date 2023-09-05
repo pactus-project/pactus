@@ -98,7 +98,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	params.CommitteeSize = 4
 
 	// to prevent triggering timers before starting the tests to avoid double entries for new heights in some tests.
-	getTime := util.RoundNow(params.BlockTimeInSecond).Add(time.Duration(params.BlockTimeInSecond) * time.Second)
+	getTime := util.RoundNow(params.BlockIntervalInSecond).Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
 	stX, err := state.LoadOrNewState(genDoc, []crypto.Signer{signers[tIndexX]},
 		store.MockingStore(ts), txPool, nil)

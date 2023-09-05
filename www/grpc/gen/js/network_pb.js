@@ -871,7 +871,7 @@ proto.pactus.GetNodeInfoResponse.prototype.setPeerId = function(value) {
  * @private {!Array<number>}
  * @const
  */
-proto.pactus.PeerInfo.repeatedFields_ = [4];
+proto.pactus.PeerInfo.repeatedFields_ = [5];
 
 
 
@@ -904,22 +904,20 @@ proto.pactus.PeerInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.PeerInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    moniker: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    agent: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    status: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    moniker: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    agent: jspb.Message.getFieldWithDefault(msg, 3, ""),
     peerId: msg.getPeerId_asB64(),
-    consensusKeysList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f,
-    flags: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    height: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    receivedMessages: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    invalidMessages: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    consensusKeysList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f,
+    services: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    lastBlockHash: msg.getLastBlockHash_asB64(),
+    height: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    receivedMessages: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    invalidMessages: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    lastSent: jspb.Message.getFieldWithDefault(msg, 11, 0),
+    lastReceived: jspb.Message.getFieldWithDefault(msg, 12, 0),
     sentBytesMap: (f = msg.getSentBytesMap()) ? f.toObject(includeInstance, undefined) : [],
-    receivedBytesMap: (f = msg.getReceivedBytesMap()) ? f.toObject(includeInstance, undefined) : [],
-    status: jspb.Message.getFieldWithDefault(msg, 11, 0),
-    lastSent: jspb.Message.getFieldWithDefault(msg, 12, 0),
-    lastReceived: jspb.Message.getFieldWithDefault(msg, 13, 0),
-    sendSuccess: jspb.Message.getFieldWithDefault(msg, 14, 0),
-    sendFailed: jspb.Message.getFieldWithDefault(msg, 15, 0),
-    lastBlockHash: msg.getLastBlockHash_asB64()
+    receivedBytesMap: (f = msg.getReceivedBytesMap()) ? f.toObject(includeInstance, undefined) : []
   };
 
   if (includeInstance) {
@@ -957,72 +955,64 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setMoniker(value);
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setStatus(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setAgent(value);
+      msg.setMoniker(value);
       break;
     case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setAgent(value);
+      break;
+    case 4:
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setPeerId(value);
       break;
-    case 4:
+    case 5:
       var value = /** @type {string} */ (reader.readString());
       msg.addConsensusKeys(value);
       break;
-    case 5:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setFlags(value);
-      break;
     case 6:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setServices(value);
+      break;
+    case 7:
+      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      msg.setLastBlockHash(value);
+      break;
+    case 8:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setHeight(value);
       break;
-    case 7:
+    case 9:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setReceivedMessages(value);
       break;
-    case 8:
+    case 10:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setInvalidMessages(value);
       break;
-    case 9:
+    case 11:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setLastSent(value);
+      break;
+    case 12:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setLastReceived(value);
+      break;
+    case 13:
       var value = msg.getSentBytesMap();
       reader.readMessage(value, function(message, reader) {
         jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readInt64, null, 0, 0);
          });
       break;
-    case 10:
+    case 14:
       var value = msg.getReceivedBytesMap();
       reader.readMessage(value, function(message, reader) {
         jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readInt64, null, 0, 0);
          });
-      break;
-    case 11:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setStatus(value);
-      break;
-    case 12:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setLastSent(value);
-      break;
-    case 13:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setLastReceived(value);
-      break;
-    case 14:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setSendSuccess(value);
-      break;
-    case 15:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setSendFailed(value);
-      break;
-    case 16:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
-      msg.setLastBlockHash(value);
       break;
     default:
       reader.skipField();
@@ -1053,138 +1043,124 @@ proto.pactus.PeerInfo.prototype.serializeBinary = function() {
  */
 proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getMoniker();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getStatus();
+  if (f !== 0) {
+    writer.writeInt32(
       1,
       f
     );
   }
-  f = message.getAgent();
+  f = message.getMoniker();
   if (f.length > 0) {
     writer.writeString(
       2,
       f
     );
   }
+  f = message.getAgent();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
   f = message.getPeerId_asU8();
   if (f.length > 0) {
     writer.writeBytes(
-      3,
+      4,
       f
     );
   }
   f = message.getConsensusKeysList();
   if (f.length > 0) {
     writer.writeRepeatedString(
-      4,
-      f
-    );
-  }
-  f = message.getFlags();
-  if (f !== 0) {
-    writer.writeInt32(
       5,
       f
     );
   }
-  f = message.getHeight();
+  f = message.getServices();
   if (f !== 0) {
     writer.writeUint32(
       6,
       f
     );
   }
+  f = message.getLastBlockHash_asU8();
+  if (f.length > 0) {
+    writer.writeBytes(
+      7,
+      f
+    );
+  }
+  f = message.getHeight();
+  if (f !== 0) {
+    writer.writeUint32(
+      8,
+      f
+    );
+  }
   f = message.getReceivedMessages();
   if (f !== 0) {
     writer.writeInt32(
-      7,
+      9,
       f
     );
   }
   f = message.getInvalidMessages();
   if (f !== 0) {
     writer.writeInt32(
-      8,
-      f
-    );
-  }
-  f = message.getSentBytesMap(true);
-  if (f && f.getLength() > 0) {
-    f.serializeBinary(9, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeInt64);
-  }
-  f = message.getReceivedBytesMap(true);
-  if (f && f.getLength() > 0) {
-    f.serializeBinary(10, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeInt64);
-  }
-  f = message.getStatus();
-  if (f !== 0) {
-    writer.writeInt32(
-      11,
+      10,
       f
     );
   }
   f = message.getLastSent();
   if (f !== 0) {
     writer.writeInt64(
-      12,
+      11,
       f
     );
   }
   f = message.getLastReceived();
   if (f !== 0) {
     writer.writeInt64(
-      13,
+      12,
       f
     );
   }
-  f = message.getSendSuccess();
-  if (f !== 0) {
-    writer.writeInt32(
-      14,
-      f
-    );
+  f = message.getSentBytesMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(13, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeInt64);
   }
-  f = message.getSendFailed();
-  if (f !== 0) {
-    writer.writeInt32(
-      15,
-      f
-    );
-  }
-  f = message.getLastBlockHash_asU8();
-  if (f.length > 0) {
-    writer.writeBytes(
-      16,
-      f
-    );
+  f = message.getReceivedBytesMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(14, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeInt64);
   }
 };
 
 
 /**
- * optional string moniker = 1;
+ * optional int32 status = 1;
+ * @return {number}
+ */
+proto.pactus.PeerInfo.prototype.getStatus = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional string moniker = 2;
  * @return {string}
  */
 proto.pactus.PeerInfo.prototype.getMoniker = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.pactus.PeerInfo} returns this
- */
-proto.pactus.PeerInfo.prototype.setMoniker = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
-};
-
-
-/**
- * optional string agent = 2;
- * @return {string}
- */
-proto.pactus.PeerInfo.prototype.getAgent = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -1193,22 +1169,40 @@ proto.pactus.PeerInfo.prototype.getAgent = function() {
  * @param {string} value
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setAgent = function(value) {
+proto.pactus.PeerInfo.prototype.setMoniker = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional bytes peer_id = 3;
- * @return {!(string|Uint8Array)}
+ * optional string agent = 3;
+ * @return {string}
  */
-proto.pactus.PeerInfo.prototype.getPeerId = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+proto.pactus.PeerInfo.prototype.getAgent = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
 /**
- * optional bytes peer_id = 3;
+ * @param {string} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setAgent = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional bytes peer_id = 4;
+ * @return {!(string|Uint8Array)}
+ */
+proto.pactus.PeerInfo.prototype.getPeerId = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * optional bytes peer_id = 4;
  * This is a type-conversion wrapper around `getPeerId()`
  * @return {string}
  */
@@ -1219,7 +1213,7 @@ proto.pactus.PeerInfo.prototype.getPeerId_asB64 = function() {
 
 
 /**
- * optional bytes peer_id = 3;
+ * optional bytes peer_id = 4;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
  * This is a type-conversion wrapper around `getPeerId()`
@@ -1236,16 +1230,16 @@ proto.pactus.PeerInfo.prototype.getPeerId_asU8 = function() {
  * @return {!proto.pactus.PeerInfo} returns this
  */
 proto.pactus.PeerInfo.prototype.setPeerId = function(value) {
-  return jspb.Message.setProto3BytesField(this, 3, value);
+  return jspb.Message.setProto3BytesField(this, 4, value);
 };
 
 
 /**
- * repeated string consensus_keys = 4;
+ * repeated string consensus_keys = 5;
  * @return {!Array<string>}
  */
 proto.pactus.PeerInfo.prototype.getConsensusKeysList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 4));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 5));
 };
 
 
@@ -1254,7 +1248,7 @@ proto.pactus.PeerInfo.prototype.getConsensusKeysList = function() {
  * @return {!proto.pactus.PeerInfo} returns this
  */
 proto.pactus.PeerInfo.prototype.setConsensusKeysList = function(value) {
-  return jspb.Message.setField(this, 4, value || []);
+  return jspb.Message.setField(this, 5, value || []);
 };
 
 
@@ -1264,7 +1258,7 @@ proto.pactus.PeerInfo.prototype.setConsensusKeysList = function(value) {
  * @return {!proto.pactus.PeerInfo} returns this
  */
 proto.pactus.PeerInfo.prototype.addConsensusKeys = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 4, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 5, value, opt_index);
 };
 
 
@@ -1278,28 +1272,10 @@ proto.pactus.PeerInfo.prototype.clearConsensusKeysList = function() {
 
 
 /**
- * optional int32 flags = 5;
+ * optional uint32 services = 6;
  * @return {number}
  */
-proto.pactus.PeerInfo.prototype.getFlags = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.PeerInfo} returns this
- */
-proto.pactus.PeerInfo.prototype.setFlags = function(value) {
-  return jspb.Message.setProto3IntField(this, 5, value);
-};
-
-
-/**
- * optional uint32 height = 6;
- * @return {number}
- */
-proto.pactus.PeerInfo.prototype.getHeight = function() {
+proto.pactus.PeerInfo.prototype.getServices = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
@@ -1308,194 +1284,22 @@ proto.pactus.PeerInfo.prototype.getHeight = function() {
  * @param {number} value
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setHeight = function(value) {
+proto.pactus.PeerInfo.prototype.setServices = function(value) {
   return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 
 /**
- * optional int32 received_messages = 7;
- * @return {number}
- */
-proto.pactus.PeerInfo.prototype.getReceivedMessages = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.PeerInfo} returns this
- */
-proto.pactus.PeerInfo.prototype.setReceivedMessages = function(value) {
-  return jspb.Message.setProto3IntField(this, 7, value);
-};
-
-
-/**
- * optional int32 invalid_messages = 8;
- * @return {number}
- */
-proto.pactus.PeerInfo.prototype.getInvalidMessages = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.PeerInfo} returns this
- */
-proto.pactus.PeerInfo.prototype.setInvalidMessages = function(value) {
-  return jspb.Message.setProto3IntField(this, 8, value);
-};
-
-
-/**
- * map<int32, int64> sent_bytes = 9;
- * @param {boolean=} opt_noLazyCreate Do not create the map if
- * empty, instead returning `undefined`
- * @return {!jspb.Map<number,number>}
- */
-proto.pactus.PeerInfo.prototype.getSentBytesMap = function(opt_noLazyCreate) {
-  return /** @type {!jspb.Map<number,number>} */ (
-      jspb.Message.getMapField(this, 9, opt_noLazyCreate,
-      null));
-};
-
-
-/**
- * Clears values from the map. The map will be non-null.
- * @return {!proto.pactus.PeerInfo} returns this
- */
-proto.pactus.PeerInfo.prototype.clearSentBytesMap = function() {
-  this.getSentBytesMap().clear();
-  return this;
-};
-
-
-/**
- * map<int32, int64> received_bytes = 10;
- * @param {boolean=} opt_noLazyCreate Do not create the map if
- * empty, instead returning `undefined`
- * @return {!jspb.Map<number,number>}
- */
-proto.pactus.PeerInfo.prototype.getReceivedBytesMap = function(opt_noLazyCreate) {
-  return /** @type {!jspb.Map<number,number>} */ (
-      jspb.Message.getMapField(this, 10, opt_noLazyCreate,
-      null));
-};
-
-
-/**
- * Clears values from the map. The map will be non-null.
- * @return {!proto.pactus.PeerInfo} returns this
- */
-proto.pactus.PeerInfo.prototype.clearReceivedBytesMap = function() {
-  this.getReceivedBytesMap().clear();
-  return this;
-};
-
-
-/**
- * optional int32 status = 11;
- * @return {number}
- */
-proto.pactus.PeerInfo.prototype.getStatus = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.PeerInfo} returns this
- */
-proto.pactus.PeerInfo.prototype.setStatus = function(value) {
-  return jspb.Message.setProto3IntField(this, 11, value);
-};
-
-
-/**
- * optional int64 last_sent = 12;
- * @return {number}
- */
-proto.pactus.PeerInfo.prototype.getLastSent = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.PeerInfo} returns this
- */
-proto.pactus.PeerInfo.prototype.setLastSent = function(value) {
-  return jspb.Message.setProto3IntField(this, 12, value);
-};
-
-
-/**
- * optional int64 last_received = 13;
- * @return {number}
- */
-proto.pactus.PeerInfo.prototype.getLastReceived = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 13, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.PeerInfo} returns this
- */
-proto.pactus.PeerInfo.prototype.setLastReceived = function(value) {
-  return jspb.Message.setProto3IntField(this, 13, value);
-};
-
-
-/**
- * optional int32 send_success = 14;
- * @return {number}
- */
-proto.pactus.PeerInfo.prototype.getSendSuccess = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 14, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.PeerInfo} returns this
- */
-proto.pactus.PeerInfo.prototype.setSendSuccess = function(value) {
-  return jspb.Message.setProto3IntField(this, 14, value);
-};
-
-
-/**
- * optional int32 send_failed = 15;
- * @return {number}
- */
-proto.pactus.PeerInfo.prototype.getSendFailed = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 15, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.PeerInfo} returns this
- */
-proto.pactus.PeerInfo.prototype.setSendFailed = function(value) {
-  return jspb.Message.setProto3IntField(this, 15, value);
-};
-
-
-/**
- * optional bytes last_block_hash = 16;
+ * optional bytes last_block_hash = 7;
  * @return {!(string|Uint8Array)}
  */
 proto.pactus.PeerInfo.prototype.getLastBlockHash = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 16, ""));
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
 
 /**
- * optional bytes last_block_hash = 16;
+ * optional bytes last_block_hash = 7;
  * This is a type-conversion wrapper around `getLastBlockHash()`
  * @return {string}
  */
@@ -1506,7 +1310,7 @@ proto.pactus.PeerInfo.prototype.getLastBlockHash_asB64 = function() {
 
 
 /**
- * optional bytes last_block_hash = 16;
+ * optional bytes last_block_hash = 7;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
  * This is a type-conversion wrapper around `getLastBlockHash()`
@@ -1523,7 +1327,143 @@ proto.pactus.PeerInfo.prototype.getLastBlockHash_asU8 = function() {
  * @return {!proto.pactus.PeerInfo} returns this
  */
 proto.pactus.PeerInfo.prototype.setLastBlockHash = function(value) {
-  return jspb.Message.setProto3BytesField(this, 16, value);
+  return jspb.Message.setProto3BytesField(this, 7, value);
+};
+
+
+/**
+ * optional uint32 height = 8;
+ * @return {number}
+ */
+proto.pactus.PeerInfo.prototype.getHeight = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setHeight = function(value) {
+  return jspb.Message.setProto3IntField(this, 8, value);
+};
+
+
+/**
+ * optional int32 received_messages = 9;
+ * @return {number}
+ */
+proto.pactus.PeerInfo.prototype.getReceivedMessages = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setReceivedMessages = function(value) {
+  return jspb.Message.setProto3IntField(this, 9, value);
+};
+
+
+/**
+ * optional int32 invalid_messages = 10;
+ * @return {number}
+ */
+proto.pactus.PeerInfo.prototype.getInvalidMessages = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setInvalidMessages = function(value) {
+  return jspb.Message.setProto3IntField(this, 10, value);
+};
+
+
+/**
+ * optional int64 last_sent = 11;
+ * @return {number}
+ */
+proto.pactus.PeerInfo.prototype.getLastSent = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setLastSent = function(value) {
+  return jspb.Message.setProto3IntField(this, 11, value);
+};
+
+
+/**
+ * optional int64 last_received = 12;
+ * @return {number}
+ */
+proto.pactus.PeerInfo.prototype.getLastReceived = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setLastReceived = function(value) {
+  return jspb.Message.setProto3IntField(this, 12, value);
+};
+
+
+/**
+ * map<int32, int64> sent_bytes = 13;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<number,number>}
+ */
+proto.pactus.PeerInfo.prototype.getSentBytesMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<number,number>} */ (
+      jspb.Message.getMapField(this, 13, opt_noLazyCreate,
+      null));
+};
+
+
+/**
+ * Clears values from the map. The map will be non-null.
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.clearSentBytesMap = function() {
+  this.getSentBytesMap().clear();
+  return this;
+};
+
+
+/**
+ * map<int32, int64> received_bytes = 14;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<number,number>}
+ */
+proto.pactus.PeerInfo.prototype.getReceivedBytesMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<number,number>} */ (
+      jspb.Message.getMapField(this, 14, opt_noLazyCreate,
+      null));
+};
+
+
+/**
+ * Clears values from the map. The map will be non-null.
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.clearReceivedBytesMap = function() {
+  this.getReceivedBytesMap().clear();
+  return this;
 };
 
 

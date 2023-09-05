@@ -268,8 +268,8 @@ func (ts *TestSuite) GenerateTestValidator(number int32) (*validator.Validator, 
 	return val, crypto.NewSigner(pv)
 }
 
-// GenerateTestBlock generates a block for testing purposes.
-func (ts *TestSuite) GenerateTestBlock(proposer *crypto.Address) *block.Block {
+// GenerateTestBlockWithTime generates a block at the give time for testing purposes.
+func (ts *TestSuite) GenerateTestBlockWithTime(proposer *crypto.Address, time time.Time) *block.Block {
 	if proposer == nil {
 		addr := ts.RandAddress()
 		proposer = &addr
@@ -288,13 +288,18 @@ func (ts *TestSuite) GenerateTestBlock(proposer *crypto.Address) *block.Block {
 	txs.Append(tx5)
 
 	cert := ts.GenerateTestCertificate()
-	header := block.NewHeader(1, util.Now(),
+	header := block.NewHeader(1, time,
 		ts.RandHash(),
 		ts.RandHash(),
 		ts.RandSeed(),
 		*proposer)
 
 	return block.NewBlock(header, cert, txs)
+}
+
+// GenerateTestBlock generates a block for testing purposes.
+func (ts *TestSuite) GenerateTestBlock(proposer *crypto.Address) *block.Block {
+	return ts.GenerateTestBlockWithTime(proposer, util.Now())
 }
 
 // GenerateTestCertificate generates a certificate for testing purposes.
