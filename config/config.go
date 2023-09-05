@@ -108,6 +108,7 @@ func SaveTestnetConfig(path string, numValidators int) error {
 	conf.Network.Bootstrap.MinThreshold = 4
 	conf.Network.Bootstrap.MaxThreshold = 8
 	conf.Network.EnableRelay = true
+	conf.Network.EnableHolePunching = true
 	conf.Network.RelayAddrs = []string{
 		"/ip4/172.104.46.145/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip6/2400:8901::f03c:93ff:fe1c:c3ec/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
