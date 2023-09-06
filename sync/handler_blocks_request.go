@@ -28,7 +28,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("peer status is %v", peer.Status), msg.SessionID, 0, nil, nil)
 
-		return handler.respond(response, initiator, msg.SessionID)
+		return handler.respond(response, initiator)
 	}
 
 	if !handler.config.NodeNetwork {
@@ -37,7 +37,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 			response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 				fmt.Sprintf("the request height is not acceptable: %v", msg.From), msg.SessionID, 0, nil, nil)
 
-			return handler.respond(response, initiator, msg.SessionID)
+			return handler.respond(response, initiator)
 		}
 	}
 	height := msg.From
@@ -47,7 +47,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("too many blocks requested: %v-%v", msg.From, msg.Count), msg.SessionID, 0, nil, nil)
 
-		return handler.respond(response, initiator, msg.SessionID)
+		return handler.respond(response, initiator)
 	}
 
 	// Help this peer to sync up
@@ -60,7 +60,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 
 		response := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks,
 			message.ResponseCodeMoreBlocks.String(), msg.SessionID, height, blocksData, nil)
-		err := handler.respond(response, initiator, msg.SessionID)
+		err := handler.respond(response, initiator)
 		if err != nil {
 			return err
 		}
@@ -80,33 +80,25 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 		response := message.NewBlocksResponseMessage(message.ResponseCodeSynced,
 			message.ResponseCodeSynced.String(), msg.SessionID, peerHeight, nil, lastCert)
 
-		return handler.respond(response, initiator, msg.SessionID)
+		return handler.respond(response, initiator)
 	}
 
 	response := message.NewBlocksResponseMessage(message.ResponseCodeNoMoreBlocks,
 		message.ResponseCodeNoMoreBlocks.String(), msg.SessionID, 0, nil, nil)
 
-	return handler.respond(response, initiator, msg.SessionID)
+	return handler.respond(response, initiator)
 }
 
 func (handler *blocksRequestHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	return bundle.NewBundle(handler.SelfID(), m)
 }
 
-func (handler *blocksRequestHandler) respond(msg *message.BlocksResponseMessage, to peer.ID, sessionID int) error {
+func (handler *blocksRequestHandler) respond(msg *message.BlocksResponseMessage, to peer.ID) error {
 	if msg.ResponseCode == message.ResponseCodeRejected {
 		handler.logger.Warn("rejecting block request message", "message", msg, "to", to, "reason", msg.Reason)
 	} else {
 		handler.logger.Info("responding block request message", "message", msg, "to", to)
 	}
 
-	if err := handler.sendTo(msg, to); err != nil {
-		// TODO: test me
-		// Let's close the session with this peer because we couldn't establish a connection.
-		// This helps to free sessions and ask blocks from other peers.
-		handler.peerSet.CloseSession(sessionID)
-		return err
-	}
-
-	return nil
+	return handler.sendTo(msg, to)
 }

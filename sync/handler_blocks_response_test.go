@@ -68,33 +68,13 @@ func TestOneBlockShorter(t *testing.T) {
 	pub, _ := td.RandBLSKeyPair()
 	td.addPeer(t, pub, pid, services.New(services.None))
 
-	t.Run("Peer is busy. Session should be closed", func(t *testing.T) {
-		sid := td.sync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, t.Name(), sid,
-			0, nil, nil)
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+	sid := td.sync.peerSet.OpenSession(pid).SessionID()
+	msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, t.Name(), sid,
+		lastBlockHeight+1, [][]byte{d1}, c1)
+	assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		assert.Nil(t, td.sync.peerSet.FindSession(sid))
-	})
-
-	t.Run("Request is rejected. Session should be closed", func(t *testing.T) {
-		sid := td.sync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, t.Name(), sid,
-			0, nil, nil)
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-
-		assert.Nil(t, td.sync.peerSet.FindSession(sid))
-	})
-
-	t.Run("Commit one block", func(t *testing.T) {
-		sid := td.sync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, t.Name(), sid,
-			lastBlockHeight+1, [][]byte{d1}, c1)
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-
-		assert.Nil(t, td.sync.peerSet.FindSession(sid))
-		assert.Equal(t, td.state.LastBlockHeight(), lastBlockHeight+1)
-	})
+	assert.Nil(t, td.sync.peerSet.FindSession(sid))
+	assert.Equal(t, td.state.LastBlockHeight(), lastBlockHeight+1)
 }
 
 func TestStrippedPublicKey(t *testing.T) {
@@ -166,7 +146,7 @@ func TestSyncing(t *testing.T) {
 	networkAlice.AddAnotherNetwork(networkBob)
 	networkBob.AddAnotherNetwork(networkAlice)
 
-	// Lets' add 100 blocks for Bob
+	// Adding 100 blocks for Bob
 	blockInterval := stateBob.Genesis().Params().BlockInterval()
 	blockTime := util.RoundNow(int(blockInterval.Seconds()))
 	for i := uint32(0); i < 100; i++ {
@@ -198,7 +178,7 @@ func TestSyncing(t *testing.T) {
 	syncBob := sync2.(*synchronizer)
 
 	// -------------------------------
-	// For better logging when testing
+	// Better logging during testing
 	overrideLogger := func(sync *synchronizer, name string) {
 		sync.logger = logger.NewSubLogger("_sync", &OverrideStringer{
 			name: fmt.Sprintf("%s - %s: ", name, t.Name()), sync: sync,

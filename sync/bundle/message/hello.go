@@ -21,7 +21,7 @@ type HelloMessage struct {
 	Height      uint32            `cbor:"6,keyasint"`
 	Services    services.Services `cbor:"7,keyasint"`
 	GenesisHash hash.Hash         `cbor:"8,keyasint"`
-	BlockHash   hash.Hash         `cbor:"10,keyasint"`
+	BlockHash   hash.Hash         `cbor:"9,keyasint"`
 }
 
 func NewHelloMessage(pid peer.ID, moniker string,

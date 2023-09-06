@@ -138,7 +138,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		broadcaster, newConcreteMediator())
 
 	// -------------------------------
-	// For better logging when testing
+	// Better logging during testing
 	overrideLogger := func(cons *consensus, name string) {
 		cons.logger = logger.NewSubLogger("_consensus",
 			&OverrideStringer{name: fmt.Sprintf("%s - %s: ", name, t.Name()), cons: cons})
