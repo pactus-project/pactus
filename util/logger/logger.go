@@ -108,8 +108,8 @@ func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 		goto ConsoleLogger
 	}
 
-	logDirectory = filepath.Join(currentDirectory, "logs")
-	logFilename = filepath.Join(logDirectory, "pactus.log")
+	logDirectory = filepath.Join(currentDirectory, LogDirectory)
+	logFilename = filepath.Join(logDirectory, LogFilename)
 
 	if err = os.MkdirAll(logDirectory, 0o744); err != nil {
 		log.Error().Err(err).Str("path", logDirectory).

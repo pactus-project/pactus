@@ -7,3 +7,4 @@ todo
 dist/
 .releaser.yml
 pactus-*
+*pactus.log*
