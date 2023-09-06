@@ -14,7 +14,7 @@ import (
 
 // TODO:
 // - Add tests for peerset
-// - Implementing garbage collection for peerset
+// - Is it thread safe (GetPeer and IteratePeers) ??
 
 type PeerSet struct {
 	lk sync.RWMutex

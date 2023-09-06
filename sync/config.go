@@ -10,9 +10,9 @@ var LatestBlockInterval = uint32(720) // 720 blocks is about two hours
 
 type Config struct {
 	Moniker         string           `toml:"moniker"`
-	SessionTimeout  time.Duration    `toml:"session_timeout"`   // TODO: can we remove it
-	BlockPerMessage uint32           `toml:"block_per_message"` // TODO: can we remove it
-	CacheSize       int              `toml:"cache_size"`        // TODO: can we remove it
+	SessionTimeout  time.Duration    `toml:"session_timeout"`
+	BlockPerMessage uint32           `toml:"block_per_message"` // TODO: Does the user need to change it?
+	CacheSize       int              `toml:"cache_size"`        // TODO: Does the user need to change it?
 	NodeNetwork     bool             `toml:"node_network"`
 	Firewall        *firewall.Config `toml:"firewall"`
 }
