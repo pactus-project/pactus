@@ -294,7 +294,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 			return nil, nil, err
 		}
 
-		err = config.SaveTestnetConfig(workingDir, confPath, numValidators)
+		err = config.SaveTestnetConfig(confPath, numValidators)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -361,7 +361,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		// Now, attempt to restore the config file with the number of validators from the old config.
 		switch gen.ChainType() {
 		case genesis.Testnet:
-			err = config.SaveTestnetConfig(workingDir, confPath, confBack.Node.NumValidators)
+			err = config.SaveTestnetConfig(confPath, confBack.Node.NumValidators)
 			if err != nil {
 				return nil, nil, err
 			}

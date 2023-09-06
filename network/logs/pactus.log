@@ -1,0 +1,253 @@
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:06+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWJbaNj9Q6FBZy49UGZYt1hQrqVR5eKyxJn9PqFe3utCXM","address":[],"time":"2023-09-06T10:25:06+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:06+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:06+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","time":"2023-09-06T10:25:06+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{0}","addr":["/ip4/127.0.0.1/tcp/40815","/ip4/127.0.0.1/udp/40125/quic","/ip4/127.0.0.1/udp/40125/quic-v1","/ip4/127.0.0.1/udp/46562/quic-v1/webtransport/certhash/uEiAZ3RsF1l6N_3mkq37O83seX_RMfG5flHTtrowaSC--BQ/certhash/uEiAjF3Z8runPIDiEAegz-ut7xG4dD8FEU-GvY6sesyFDdA","/ip4/192.168.1.6/tcp/40815","/ip4/192.168.1.6/udp/40125/quic","/ip4/192.168.1.6/udp/40125/quic-v1","/ip4/192.168.1.6/udp/46562/quic-v1/webtransport/certhash/uEiAZ3RsF1l6N_3mkq37O83seX_RMfG5flHTtrowaSC--BQ/certhash/uEiAjF3Z8runPIDiEAegz-ut7xG4dD8FEU-GvY6sesyFDdA","/ip6/::1/tcp/42047","/ip6/::1/udp/45678/quic-v1/webtransport/certhash/uEiAZ3RsF1l6N_3mkq37O83seX_RMfG5flHTtrowaSC--BQ/certhash/uEiAjF3Z8runPIDiEAegz-ut7xG4dD8FEU-GvY6sesyFDdA","/ip6/::1/udp/47020/quic","/ip6/::1/udp/47020/quic-v1"],"time":"2023-09-06T10:25:06+03:30","message":"network started"}
+{"level":"debug","_network":"{0}","topic":"consensus","time":"2023-09-06T10:25:06+03:30","message":"publishing new message"}
+{"level":"debug","_network":"{0}","topic":"consensus","time":"2023-09-06T10:25:06+03:30","message":"publishing new message"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:08+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:08+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","time":"2023-09-06T10:25:08+03:30","message":"expanding the connections"}
+yGkhg4jFtCZonwaW","address":[],"time":"2023-09-06T10:25:06+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","topic":"invalid","time":"2023-09-06T10:25:06+03:30","message":"publishing new message"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:06+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWJGCYvzukEEE6h8L2P8pQ5BzVkeEznT6qchRCPLAY59au","address":["/ip4/127.0.0.1/tcp/0"],"time":"2023-09-06T10:25:06+03:30","message":"network setup"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:06+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWS4SBXYmPVBNo92tuvqHpzFTZchVsXW7vaoqe5RbgTEqN","address":["/ip4/127.0.0.1/tcp/0"],"time":"2023-09-06T10:25:06+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:06+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:06+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","time":"2023-09-06T10:25:06+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{0}","addr":["/ip4/127.0.0.1/tcp/32827"],"time":"2023-09-06T10:25:06+03:30","message":"network started"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:07+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:07+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","time":"2023-09-06T10:25:07+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{0}","addr":["/ip4/127.0.0.1/tcp/34581"],"time":"2023-09-06T10:25:07+03:30","message":"network started"}
+{"level":"debug","_network":"{0}","addr":["/ip4/127.0.0.1/tcp/34581"],"id":"12D3KooWS4SBXYmPVBNo92tuvqHpzFTZchVsXW7vaoqe5RbgTEqN","time":"2023-09-06T10:25:07+03:30","message":"connecting to new peer"}
+{"level":"debug","_network":"{0}","addr":["/ip4/127.0.0.1/tcp/32827"],"id":"12D3KooWJGCYvzukEEE6h8L2P8pQ5BzVkeEznT6qchRCPLAY59au","time":"2023-09-06T10:25:07+03:30","message":"connecting to new peer"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWS4SBXYmPVBNo92tuvqHpzFTZchVsXW7vaoqe5RbgTEqN","time":"2023-09-06T10:25:07+03:30","message":"Connected to peer with peerID:"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWJGCYvzukEEE6h8L2P8pQ5BzVkeEznT6qchRCPLAY59au","time":"2023-09-06T10:25:07+03:30","message":"Connected to peer with peerID:"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWS4SBXYmPVBNo92tuvqHpzFTZchVsXW7vaoqe5RbgTEqN","time":"2023-09-06T10:25:07+03:30","message":"Connected to peer with peerID:"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWJGCYvzukEEE6h8L2P8pQ5BzVkeEznT6qchRCPLAY59au","time":"2023-09-06T10:25:07+03:30","message":"Connected to peer with peerID:"}
+{"level":"trace","_network":"{1}","to":"12D3KooWS4SBXYmPVBNo92tuvqHpzFTZchVsXW7vaoqe5RbgTEqN","time":"2023-09-06T10:25:07+03:30","message":"sending stream"}
+{"level":"debug","_network":"{1}","from":"12D3KooWJGCYvzukEEE6h8L2P8pQ5BzVkeEznT6qchRCPLAY59au","time":"2023-09-06T10:25:07+03:30","message":"receiving stream"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:07+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWK2sjbHAWKrxw2ZbyZPa4Q2zJAmRPME5FcQZvnmq5FbAu","address":[],"time":"2023-09-06T10:25:07+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:07+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:07+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","time":"2023-09-06T10:25:07+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{0}","addr":["/ip4/127.0.0.1/tcp/43581","/ip4/127.0.0.1/udp/34315/quic","/ip4/127.0.0.1/udp/34315/quic-v1","/ip4/127.0.0.1/udp/40741/quic-v1/webtransport/certhash/uEiAGsDFiBxM514CiwMmPuSgL1RxmANpAwbO8_YPAaCRzUw/certhash/uEiDW03ts_uk5ogjmHQvhKhxRND7EPRH11efUYMhl9YWhMw","/ip4/192.168.1.6/tcp/43581","/ip4/192.168.1.6/udp/34315/quic","/ip4/192.168.1.6/udp/34315/quic-v1","/ip4/192.168.1.6/udp/40741/quic-v1/webtransport/certhash/uEiAGsDFiBxM514CiwMmPuSgL1RxmANpAwbO8_YPAaCRzUw/certhash/uEiDW03ts_uk5ogjmHQvhKhxRND7EPRH11efUYMhl9YWhMw","/ip6/::1/tcp/44551","/ip6/::1/udp/37268/quic","/ip6/::1/udp/37268/quic-v1","/ip6/::1/udp/48845/quic-v1/webtransport/certhash/uEiAGsDFiBxM514CiwMmPuSgL1RxmANpAwbO8_YPAaCRzUw/certhash/uEiDW03ts_uk5ogjmHQvhKhxRND7EPRH11efUYMhl9YWhMw"],"time":"2023-09-06T10:25:07+03:30","message":"network started"}
+{"level":"debug","_network":"{0}","err":"context canceled","time":"2023-09-06T10:25:07+03:30","message":"readLoop error"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip6/::/tcp/44551","time":"2023-09-06T10:25:07+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip6/::/udp/48845/quic-v1/webtransport/certhash/uEiAGsDFiBxM514CiwMmPuSgL1RxmANpAwbO8_YPAaCRzUw/certhash/uEiDW03ts_uk5ogjmHQvhKhxRND7EPRH11efUYMhl9YWhMw","time":"2023-09-06T10:25:07+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip4/0.0.0.0/udp/40741/quic-v1/webtransport/certhash/uEiAGsDFiBxM514CiwMmPuSgL1RxmANpAwbO8_YPAaCRzUw/certhash/uEiDW03ts_uk5ogjmHQvhKhxRND7EPRH11efUYMhl9YWhMw","time":"2023-09-06T10:25:07+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip6/::/udp/37268/quic-v1","time":"2023-09-06T10:25:07+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip6/::/udp/37268/quic","time":"2023-09-06T10:25:07+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip4/0.0.0.0/tcp/43581","time":"2023-09-06T10:25:07+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip4/0.0.0.0/udp/34315/quic","time":"2023-09-06T10:25:07+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip4/0.0.0.0/udp/34315/quic-v1","time":"2023-09-06T10:25:07+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:07+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo","address":["/ip4/127.0.0.1/tcp/15794","/ip6/::1/tcp/15794"],"time":"2023-09-06T10:25:07+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:07+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:07+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","time":"2023-09-06T10:25:07+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{0}","addr":["/ip4/127.0.0.1/tcp/15794","/ip6/::1/tcp/15794"],"time":"2023-09-06T10:25:07+03:30","message":"network started"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:07+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","address":["/ip4/127.0.0.1/tcp/0","/ip6/::1/tcp/0"],"time":"2023-09-06T10:25:07+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:07+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:07+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip4/127.0.0.1/tcp/15794]}","time":"2023-09-06T10:25:07+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","time":"2023-09-06T10:25:07+03:30","message":"Connected to peer with peerID:"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo","time":"2023-09-06T10:25:07+03:30","message":"Connected to peer with peerID:"}
+{"level":"debug","_network":"{1}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip6/::1/tcp/15794]}","time":"2023-09-06T10:25:07+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"debug","_network":"{1}","time":"2023-09-06T10:25:07+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{1}","addr":["/ip4/127.0.0.1/tcp/33159","/ip6/::1/tcp/44125"],"time":"2023-09-06T10:25:07+03:30","message":"network started"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:07+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWAuonG1Ldnfe3AHykgD6cJpiCSVYpt1M7EKYhWfKkPydb","address":["/ip4/127.0.0.1/tcp/0","/ip6/::1/tcp/0"],"time":"2023-09-06T10:25:07+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:07+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:07+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip4/127.0.0.1/tcp/15794]}","time":"2023-09-06T10:25:07+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"info","_network":"{2}","PeerID":"12D3KooWAuonG1Ldnfe3AHykgD6cJpiCSVYpt1M7EKYhWfKkPydb","time":"2023-09-06T10:25:07+03:30","message":"Connected to peer with peerID:"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo","time":"2023-09-06T10:25:07+03:30","message":"Connected to peer with peerID:"}
+{"level":"debug","_network":"{1}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip6/::1/tcp/15794]}","time":"2023-09-06T10:25:07+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"debug","_network":"{1}","time":"2023-09-06T10:25:07+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{2}","PeerID":"12D3KooWCHEXjXnmpftxuQ7uYthbCw23NqqC24iKnWWUwa1rt7Nn","time":"2023-09-06T10:25:07+03:30","message":"Connected to peer with peerID:"}
+{"level":"info","_network":"{2}","addr":["/ip4/127.0.0.1/tcp/44601","/ip6/::1/tcp/38933"],"time":"2023-09-06T10:25:07+03:30","message":"network started"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:07+03:30","message":"logging configured"}
+{"level":"info","_network":"{1}","id":"12D3KooWBbdGU8XkkdFShmqoaDM2NcZx5LR7sTFodRLcUHGs45jm","address":["/ip4/127.0.0.1/tcp/0","/ip6/::1/tcp/0"],"time":"2023-09-06T10:25:07+03:30","message":"network setup"}
+{"level":"debug","_network":"{1}","peers":1,"time":"2023-09-06T10:25:07+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{1}","count":1,"threshold":4,"time":"2023-09-06T10:25:07+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{1}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip4/127.0.0.1/tcp/15794]}","time":"2023-09-06T10:25:07+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"info","_network":"{3}","PeerID":"12D3KooWBbdGU8XkkdFShmqoaDM2NcZx5LR7sTFodRLcUHGs45jm","time":"2023-09-06T10:25:07+03:30","message":"Connected to peer with peerID:"}
+{"level":"info","_network":"{2}","PeerID":"12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo","time":"2023-09-06T10:25:07+03:30","message":"Connected to peer with peerID:"}
+{"level":"debug","_network":"{2}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip6/::1/tcp/15794]}","time":"2023-09-06T10:25:07+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"debug","_network":"{2}","time":"2023-09-06T10:25:07+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{2}","addr":["/ip4/127.0.0.1/tcp/41991","/ip6/::1/tcp/36647"],"time":"2023-09-06T10:25:07+03:30","message":"network started"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:07+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWDppMRx8JypaFVTMpNmzrUGonqt8xYEBvRuctWFPMCUx1","address":["/ip4/127.0.0.1/tcp/0","/ip6/::1/tcp/0"],"time":"2023-09-06T10:25:07+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:07+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:07+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip4/127.0.0.1/tcp/15794]}","time":"2023-09-06T10:25:07+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"info","_network":"{4}","PeerID":"12D3KooWDppMRx8JypaFVTMpNmzrUGonqt8xYEBvRuctWFPMCUx1","time":"2023-09-06T10:25:07+03:30","message":"Connected to peer with peerID:"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo","time":"2023-09-06T10:25:07+03:30","message":"Connected to peer with peerID:"}
+{"level":"debug","_network":"{1}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip6/::1/tcp/15794]}","time":"2023-09-06T10:25:07+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"debug","_network":"{1}","time":"2023-09-06T10:25:07+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{1}","addr":["/ip4/127.0.0.1/tcp/33567","/ip6/::1/tcp/34057"],"time":"2023-09-06T10:25:07+03:30","message":"network started"}
+{"level":"debug","_network":"{1}","peers":1,"time":"2023-09-06T10:25:08+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{1}","count":1,"threshold":4,"time":"2023-09-06T10:25:08+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{1}","time":"2023-09-06T10:25:08+03:30","message":"expanding the connections"}
+{"level":"debug","_network":"{1}","peers":1,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{1}","count":1,"threshold":4,"time":"2023-09-06T10:25:09+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{1}","time":"2023-09-06T10:25:09+03:30","message":"expanding the connections"}
+{"level":"debug","_network":"{4}","peers":4,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{1}","peers":1,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{1}","count":1,"threshold":4,"time":"2023-09-06T10:25:09+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{1}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip4/127.0.0.1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"trace","_network":"{1}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip4/127.0.0.1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"already connected"}
+{"level":"debug","_network":"{1}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip6/::1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"trace","_network":"{1}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip6/::1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"already connected"}
+{"level":"debug","_network":"{1}","time":"2023-09-06T10:25:09+03:30","message":"expanding the connections"}
+{"level":"debug","_network":"{2}","peers":2,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{2}","count":2,"threshold":4,"time":"2023-09-06T10:25:09+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{2}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip4/127.0.0.1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"trace","_network":"{2}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip4/127.0.0.1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"already connected"}
+{"level":"debug","_network":"{2}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip6/::1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"trace","_network":"{2}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip6/::1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"already connected"}
+{"level":"debug","_network":"{2}","time":"2023-09-06T10:25:09+03:30","message":"expanding the connections"}
+{"level":"debug","_network":"{2}","peers":2,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{2}","count":2,"threshold":4,"time":"2023-09-06T10:25:09+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{2}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip4/127.0.0.1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"trace","_network":"{2}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip4/127.0.0.1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"already connected"}
+{"level":"debug","_network":"{2}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip6/::1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"trace","_network":"{2}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip6/::1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"already connected"}
+{"level":"debug","_network":"{2}","time":"2023-09-06T10:25:09+03:30","message":"expanding the connections"}
+{"level":"debug","_network":"{1}","peers":1,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{1}","topic":"general","time":"2023-09-06T10:25:09+03:30","message":"publishing new message"}
+{"level":"debug","_network":"{1}","count":1,"threshold":4,"time":"2023-09-06T10:25:09+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{1}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip4/127.0.0.1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"trace","_network":"{1}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip4/127.0.0.1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"already connected"}
+{"level":"debug","_network":"{1}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip6/::1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"trace","_network":"{1}","peer":"{12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo: [/ip6/::1/tcp/15794]}","time":"2023-09-06T10:25:09+03:30","message":"already connected"}
+{"level":"debug","_network":"{1}","time":"2023-09-06T10:25:09+03:30","message":"expanding the connections"}
+{"level":"debug","_network":"{4}","from":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","received from":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","time":"2023-09-06T10:25:09+03:30","message":"receiving new gossip message"}
+{"level":"debug","_network":"{2}","from":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","received from":"12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo","time":"2023-09-06T10:25:09+03:30","message":"receiving new gossip message"}
+{"level":"debug","_network":"{2}","from":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","received from":"12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo","time":"2023-09-06T10:25:09+03:30","message":"receiving new gossip message"}
+{"level":"debug","_network":"{1}","from":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","received from":"12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo","time":"2023-09-06T10:25:09+03:30","message":"receiving new gossip message"}
+{"level":"debug","_network":"{1}","topic":"consensus","time":"2023-09-06T10:25:09+03:30","message":"publishing new message"}
+{"level":"debug","_network":"{4}","from":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","received from":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","time":"2023-09-06T10:25:09+03:30","message":"receiving new gossip message"}
+{"level":"debug","_network":"{2}","from":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","received from":"12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo","time":"2023-09-06T10:25:09+03:30","message":"receiving new gossip message"}
+{"level":"debug","_network":"{2}","from":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","received from":"12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo","time":"2023-09-06T10:25:09+03:30","message":"receiving new gossip message"}
+{"level":"trace","_network":"{2}","to":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","time":"2023-09-06T10:25:09+03:30","message":"sending stream"}
+{"level":"debug","_network":"{2}","pid":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","err":"connection failed","time":"2023-09-06T10:25:09+03:30","message":"unable to open direct stream"}
+{"level":"warn","_network":"{2}","pid":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","err":"failed to dial 12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz:\n  * [/ip4/127.0.0.1/tcp/44883/p2p/12D3KooWCHEXjXnmpftxuQ7uYthbCw23NqqC24iKnWWUwa1rt7Nn/p2p-circuit] error opening relay circuit: NO_RESERVATION (204)","time":"2023-09-06T10:25:09+03:30","message":"unable to connect to peer using relay"}
+{"level":"trace","_network":"{4}","to":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","time":"2023-09-06T10:25:09+03:30","message":"sending stream"}
+{"level":"debug","_network":"{1}","from":"12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo","time":"2023-09-06T10:25:09+03:30","message":"receiving stream"}
+{"level":"trace","_network":"{2}","to":"12D3KooWBbdGU8XkkdFShmqoaDM2NcZx5LR7sTFodRLcUHGs45jm","time":"2023-09-06T10:25:09+03:30","message":"sending stream"}
+{"level":"debug","_network":"{2}","pid":"12D3KooWBbdGU8XkkdFShmqoaDM2NcZx5LR7sTFodRLcUHGs45jm","err":"connection failed","time":"2023-09-06T10:25:09+03:30","message":"unable to open direct stream"}
+{"level":"info","_network":"{3}","PeerID":"12D3KooWBbdGU8XkkdFShmqoaDM2NcZx5LR7sTFodRLcUHGs45jm","time":"2023-09-06T10:25:09+03:30","message":"Connected to peer with peerID:"}
+{"level":"info","_network":"{3}","PeerID":"12D3KooWAuonG1Ldnfe3AHykgD6cJpiCSVYpt1M7EKYhWfKkPydb","time":"2023-09-06T10:25:09+03:30","message":"Connected to peer with peerID:"}
+{"level":"debug","_network":"{3}","pid":"12D3KooWBbdGU8XkkdFShmqoaDM2NcZx5LR7sTFodRLcUHGs45jm","time":"2023-09-06T10:25:09+03:30","message":"connected to peer using relay"}
+{"level":"debug","_network":"{3}","from":"12D3KooWAuonG1Ldnfe3AHykgD6cJpiCSVYpt1M7EKYhWfKkPydb","time":"2023-09-06T10:25:09+03:30","message":"receiving stream"}
+{"level":"trace","_network":"{3}","to":"12D3KooWDppMRx8JypaFVTMpNmzrUGonqt8xYEBvRuctWFPMCUx1","time":"2023-09-06T10:25:09+03:30","message":"sending stream"}
+{"level":"debug","_network":"{3}","pid":"12D3KooWDppMRx8JypaFVTMpNmzrUGonqt8xYEBvRuctWFPMCUx1","err":"connection failed","time":"2023-09-06T10:25:09+03:30","message":"unable to open direct stream"}
+{"level":"warn","_network":"{3}","pid":"12D3KooWDppMRx8JypaFVTMpNmzrUGonqt8xYEBvRuctWFPMCUx1","err":"failed to dial 12D3KooWDppMRx8JypaFVTMpNmzrUGonqt8xYEBvRuctWFPMCUx1:\n  * [/ip4/127.0.0.1/tcp/44883/p2p/12D3KooWCHEXjXnmpftxuQ7uYthbCw23NqqC24iKnWWUwa1rt7Nn/p2p-circuit] error opening relay circuit: NO_RESERVATION (204)","time":"2023-09-06T10:25:09+03:30","message":"unable to connect to peer using relay"}
+{"level":"debug","_network":"{1}","err":"context canceled","time":"2023-09-06T10:25:09+03:30","message":"readLoop error"}
+{"level":"debug","_network":"{1}","err":"context canceled","time":"2023-09-06T10:25:09+03:30","message":"readLoop error"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip6/::1/tcp/44125","time":"2023-09-06T10:25:09+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip4/127.0.0.1/tcp/33159","time":"2023-09-06T10:25:09+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"info","_network":"{0}","PeerID":"12D3KooWH9PWcJNgpRoqMA3C2bg2YDvCHdS8mutE2pSa7uS78Loo","time":"2023-09-06T10:25:09+03:30","message":"Disconnected from peer with peerID:"}
+{"level":"info","_network":"{3}","PeerID":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","time":"2023-09-06T10:25:09+03:30","message":"Disconnected from peer with peerID:"}
+{"level":"trace","_network":"{3}","to":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","time":"2023-09-06T10:25:09+03:30","message":"sending stream"}
+{"level":"debug","_network":"{3}","pid":"12D3KooWC6mFx74zeDauXKF5EyrqQMuXrKkGxTdNkfo1nE1UMaqz","err":"connection failed","time":"2023-09-06T10:25:09+03:30","message":"unable to open direct stream"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:09+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWQXSiwjN9AcMkaKzu1PrJgQLAwBYwRS8TMjaJZ19XkAuT","address":["/ip4/127.0.0.1/tcp/17548"],"time":"2023-09-06T10:25:09+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:09+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","time":"2023-09-06T10:25:09+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{0}","addr":["/ip4/127.0.0.1/tcp/17548"],"time":"2023-09-06T10:25:09+03:30","message":"network started"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:09+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWBoUYNf3D4htXPwV1pzNzqPw5i2t1puTCbLgVV8fvcXQQ","address":["/ip4/127.0.0.1/tcp/0"],"time":"2023-09-06T10:25:09+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:09+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","peer":"{12D3KooWQXSiwjN9AcMkaKzu1PrJgQLAwBYwRS8TMjaJZ19XkAuT: [/ip4/127.0.0.1/tcp/17548]}","time":"2023-09-06T10:25:09+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWQXSiwjN9AcMkaKzu1PrJgQLAwBYwRS8TMjaJZ19XkAuT","time":"2023-09-06T10:25:09+03:30","message":"Connected to peer with peerID:"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWBoUYNf3D4htXPwV1pzNzqPw5i2t1puTCbLgVV8fvcXQQ","time":"2023-09-06T10:25:09+03:30","message":"Connected to peer with peerID:"}
+{"level":"debug","_network":"{1}","time":"2023-09-06T10:25:09+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{1}","addr":["/ip4/127.0.0.1/tcp/39831"],"time":"2023-09-06T10:25:09+03:30","message":"network started"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:09+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWP2GRsjekxfiie9ivrFz2VHGwKWauvd516svcPGNQ472U","address":["/ip4/127.0.0.1/udp/19119/quic"],"time":"2023-09-06T10:25:09+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:09+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","time":"2023-09-06T10:25:09+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{0}","addr":["/ip4/127.0.0.1/udp/19119/quic"],"time":"2023-09-06T10:25:09+03:30","message":"network started"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:09+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooW9uXnqaPiFPmd2hjqYEUkpGcczJSJu8Ai2VTUZqtdDENm","address":["/ip4/127.0.0.1/udp/0/quic"],"time":"2023-09-06T10:25:09+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:09+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","peer":"{12D3KooWP2GRsjekxfiie9ivrFz2VHGwKWauvd516svcPGNQ472U: [/ip4/127.0.0.1/udp/19119/quic]}","time":"2023-09-06T10:25:09+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWP2GRsjekxfiie9ivrFz2VHGwKWauvd516svcPGNQ472U","time":"2023-09-06T10:25:09+03:30","message":"Connected to peer with peerID:"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooW9uXnqaPiFPmd2hjqYEUkpGcczJSJu8Ai2VTUZqtdDENm","time":"2023-09-06T10:25:09+03:30","message":"Connected to peer with peerID:"}
+{"level":"debug","_network":"{1}","time":"2023-09-06T10:25:09+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{1}","addr":["/ip4/127.0.0.1/udp/43193/quic"],"time":"2023-09-06T10:25:09+03:30","message":"network started"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:09+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWG2cCWUS285DcwtnVzVJUM4EtMUFBZRTSPUnmvREiSJ5C","address":["/ip6/::1/tcp/18336"],"time":"2023-09-06T10:25:09+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:09+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","time":"2023-09-06T10:25:09+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{0}","addr":["/ip6/::1/tcp/18336"],"time":"2023-09-06T10:25:09+03:30","message":"network started"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:09+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWMYHqZMHkDeTAvjMttXzP5fCRJ2hfXi5gDXtSKjBBkjbA","address":["/ip6/::1/tcp/0"],"time":"2023-09-06T10:25:09+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:09+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","peer":"{12D3KooWG2cCWUS285DcwtnVzVJUM4EtMUFBZRTSPUnmvREiSJ5C: [/ip6/::1/tcp/18336]}","time":"2023-09-06T10:25:09+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWMYHqZMHkDeTAvjMttXzP5fCRJ2hfXi5gDXtSKjBBkjbA","time":"2023-09-06T10:25:09+03:30","message":"Connected to peer with peerID:"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWG2cCWUS285DcwtnVzVJUM4EtMUFBZRTSPUnmvREiSJ5C","time":"2023-09-06T10:25:09+03:30","message":"Connected to peer with peerID:"}
+{"level":"debug","_network":"{1}","time":"2023-09-06T10:25:09+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{1}","addr":["/ip6/::1/tcp/37887"],"time":"2023-09-06T10:25:09+03:30","message":"network started"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:09+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWJpLn7WxKe7iES7uHPt1GbY7fTPytNjsiPvbvGY2XmCct","address":["/ip6/::1/udp/10545/quic"],"time":"2023-09-06T10:25:09+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:09+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","time":"2023-09-06T10:25:09+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{0}","addr":["/ip6/::1/udp/10545/quic"],"time":"2023-09-06T10:25:09+03:30","message":"network started"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/network/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/network/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:09+03:30","message":"logging configured"}
+{"level":"info","_network":"{0}","id":"12D3KooWLnDi9E5NzdDw7tqiQwvCizrZW9tLUD7QawqfWQGfBj81","address":["/ip6/::1/udp/0/quic"],"time":"2023-09-06T10:25:09+03:30","message":"network setup"}
+{"level":"debug","_network":"{0}","peers":0,"time":"2023-09-06T10:25:09+03:30","message":"check connectivity"}
+{"level":"debug","_network":"{0}","count":0,"threshold":4,"time":"2023-09-06T10:25:09+03:30","message":"peer count is less than minimum threshold"}
+{"level":"debug","_network":"{0}","peer":"{12D3KooWJpLn7WxKe7iES7uHPt1GbY7fTPytNjsiPvbvGY2XmCct: [/ip6/::1/udp/10545/quic]}","time":"2023-09-06T10:25:09+03:30","message":"try connecting to a bootstrap peer"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWJpLn7WxKe7iES7uHPt1GbY7fTPytNjsiPvbvGY2XmCct","time":"2023-09-06T10:25:09+03:30","message":"Connected to peer with peerID:"}
+{"level":"info","_network":"{1}","PeerID":"12D3KooWLnDi9E5NzdDw7tqiQwvCizrZW9tLUD7QawqfWQGfBj81","time":"2023-09-06T10:25:09+03:30","message":"Connected to peer with peerID:"}
+{"level":"debug","_network":"{1}","time":"2023-09-06T10:25:09+03:30","message":"expanding the connections"}
+{"level":"info","_network":"{1}","addr":["/ip6/::1/udp/49739/quic"],"time":"2023-09-06T10:25:09+03:30","message":"network started"}
+{"level":"trace","_network":"{1}","to":"12D3KooWQXSiwjN9AcMkaKzu1PrJgQLAwBYwRS8TMjaJZ19XkAuT","time":"2023-09-06T10:25:09+03:30","message":"sending stream"}
+{"level":"trace","_network":"{1}","to":"12D3KooWJpLn7WxKe7iES7uHPt1GbY7fTPytNjsiPvbvGY2XmCct","time":"2023-09-06T10:25:09+03:30","message":"sending stream"}
+{"level":"trace","_network":"{1}","to":"12D3KooWG2cCWUS285DcwtnVzVJUM4EtMUFBZRTSPUnmvREiSJ5C","time":"2023-09-06T10:25:09+03:30","message":"sending stream"}
+{"level":"trace","_network":"{1}","to":"12D3KooWP2GRsjekxfiie9ivrFz2VHGwKWauvd516svcPGNQ472U","time":"2023-09-06T10:25:09+03:30","message":"sending stream"}
+{"level":"debug","_network":"{1}","from":"12D3KooWBoUYNf3D4htXPwV1pzNzqPw5i2t1puTCbLgVV8fvcXQQ","time":"2023-09-06T10:25:09+03:30","message":"receiving stream"}
+{"level":"debug","_network":"{1}","from":"12D3KooWMYHqZMHkDeTAvjMttXzP5fCRJ2hfXi5gDXtSKjBBkjbA","time":"2023-09-06T10:25:09+03:30","message":"receiving stream"}
+{"level":"debug","_network":"{1}","err":"context canceled","time":"2023-09-06T10:25:09+03:30","message":"readLoop error"}
+{"level":"debug","_network":"{1}","err":"context canceled","time":"2023-09-06T10:25:09+03:30","message":"readLoop error"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip4/127.0.0.1/tcp/17548","time":"2023-09-06T10:25:09+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"debug","_network":"{1}","from":"12D3KooW9uXnqaPiFPmd2hjqYEUkpGcczJSJu8Ai2VTUZqtdDENm","time":"2023-09-06T10:25:09+03:30","message":"receiving stream"}
+{"level":"info","_network":"{0}","PeerID":"12D3KooWBoUYNf3D4htXPwV1pzNzqPw5i2t1puTCbLgVV8fvcXQQ","time":"2023-09-06T10:25:09+03:30","message":"Disconnected from peer with peerID:"}
+{"level":"debug","_network":"{1}","err":"context canceled","time":"2023-09-06T10:25:09+03:30","message":"readLoop error"}
+{"level":"debug","_network":"{1}","err":"context canceled","time":"2023-09-06T10:25:09+03:30","message":"readLoop error"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip6/::1/tcp/18336","time":"2023-09-06T10:25:09+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip4/127.0.0.1/tcp/39831","time":"2023-09-06T10:25:09+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"info","_network":"{0}","PeerID":"12D3KooWQXSiwjN9AcMkaKzu1PrJgQLAwBYwRS8TMjaJZ19XkAuT","time":"2023-09-06T10:25:09+03:30","message":"Disconnected from peer with peerID:"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip4/127.0.0.1/udp/19119/quic","time":"2023-09-06T10:25:09+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"info","_network":"{0}","PeerID":"12D3KooW9uXnqaPiFPmd2hjqYEUkpGcczJSJu8Ai2VTUZqtdDENm","time":"2023-09-06T10:25:09+03:30","message":"Disconnected from peer with peerID:"}
+{"level":"debug","_network":"{1}","from":"12D3KooWLnDi9E5NzdDw7tqiQwvCizrZW9tLUD7QawqfWQGfBj81","time":"2023-09-06T10:25:09+03:30","message":"receiving stream"}
+{"level":"debug","_network":"{0}","err":"context canceled","time":"2023-09-06T10:25:09+03:30","message":"readLoop error"}
+{"level":"info","_network":"{0}","PeerID":"12D3KooWP2GRsjekxfiie9ivrFz2VHGwKWauvd516svcPGNQ472U","time":"2023-09-06T10:25:09+03:30","message":"Disconnected from peer with peerID:"}
+{"level":"debug","_network":"{1}","err":"context canceled","time":"2023-09-06T10:25:09+03:30","message":"readLoop error"}
+{"level":"info","_network":"{0}","PeerID":"12D3KooWG2cCWUS285DcwtnVzVJUM4EtMUFBZRTSPUnmvREiSJ5C","time":"2023-09-06T10:25:09+03:30","message":"Disconnected from peer with peerID:"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip6/::1/udp/10545/quic","time":"2023-09-06T10:25:09+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"info","_network":"{0}","PeerID":"12D3KooWJpLn7WxKe7iES7uHPt1GbY7fTPytNjsiPvbvGY2XmCct","time":"2023-09-06T10:25:09+03:30","message":"Disconnected from peer with peerID:"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip4/127.0.0.1/udp/43193/quic","time":"2023-09-06T10:25:09+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"info","_network":"{0}","PeerID":"12D3KooWMYHqZMHkDeTAvjMttXzP5fCRJ2hfXi5gDXtSKjBBkjbA","time":"2023-09-06T10:25:09+03:30","message":"Disconnected from peer with peerID:"}
+{"level":"info","_network":"{0}","PeerID":"12D3KooWLnDi9E5NzdDw7tqiQwvCizrZW9tLUD7QawqfWQGfBj81","time":"2023-09-06T10:25:09+03:30","message":"Disconnected from peer with peerID:"}
+{"level":"debug","_network":"{0}","err":"context canceled","time":"2023-09-06T10:25:09+03:30","message":"readLoop error"}
+{"level":"debug","_network":"{0}","err":"context canceled","time":"2023-09-06T10:25:09+03:30","message":"readLoop error"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip6/::1/udp/49739/quic","time":"2023-09-06T10:25:09+03:30","message":"Notifee ListenClose event emitted"}
+{"level":"debug","_network":"{0}","Multiaddr":"/ip6/::1/tcp/37887","time":"2023-09-06T10:25:09+03:30","message":"Notifee ListenClose event emitted"}

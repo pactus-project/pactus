@@ -1,7 +1,6 @@
 package config
 
 import (
-	"path/filepath"
 	"strings"
 	"testing"
 
@@ -23,7 +22,7 @@ func TestSaveMainnetConfig(t *testing.T) {
 
 func TestSaveTestnetConfig(t *testing.T) {
 	path := util.TempFilePath()
-	assert.NoError(t, SaveTestnetConfig(filepath.Dir(path), path, 7))
+	assert.NoError(t, SaveTestnetConfig(path, 7))
 
 	conf, err := LoadFromFile(path, true)
 	assert.NoError(t, err)

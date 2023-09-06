@@ -68,7 +68,7 @@ func (conf *NodeConfig) BasicCheck() error {
 	return nil
 }
 
-func DefaultConfig(workingDir ...string) *Config {
+func DefaultConfig() *Config {
 	conf := &Config{
 		Node:      DefaultNodeConfig(),
 		Store:     store.DefaultConfig(),
@@ -76,7 +76,7 @@ func DefaultConfig(workingDir ...string) *Config {
 		Sync:      sync.DefaultConfig(),
 		TxPool:    txpool.DefaultConfig(),
 		Consensus: consensus.DefaultConfig(),
-		Logger:    logger.DefaultConfig(workingDir...),
+		Logger:    logger.DefaultConfig(),
 		GRPC:      grpc.DefaultConfig(),
 		HTTP:      http.DefaultConfig(),
 		Nanomsg:   nanomsg.DefaultConfig(),
@@ -93,8 +93,8 @@ func SaveMainnetConfig(path string, numValidators int) error {
 	return util.WriteFile(path, []byte(conf))
 }
 
-func SaveTestnetConfig(workingDir, path string, numValidators int) error {
-	conf := DefaultConfig(workingDir)
+func SaveTestnetConfig(path string, numValidators int) error {
+	conf := DefaultConfig()
 	conf.Node.NumValidators = numValidators
 	conf.Network.Name = "pactus-testnet"
 	conf.Network.Listens = []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"}

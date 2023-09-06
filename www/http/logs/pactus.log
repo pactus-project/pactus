@@ -1,0 +1,25 @@
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/www/http/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/www/http/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:16+03:30","message":"logging configured"}
+{"level":"info","fileLogging":true,"jsonLogOutput":true,"logDirectory":"/home/amirvalhalla/codes/opensource/pactus/www/http/logs","fileName":"/home/amirvalhalla/codes/opensource/pactus/www/http/logs/pactus.log","maxSizeMB":100,"time":"2023-09-06T10:25:16+03:30","message":"logging configured"}
+{"level":"info","address":"[::]:34897","time":"2023-09-06T10:25:16+03:30","message":"http started listening"}
+{"level":"error","err":"rpc error: code = NotFound desc = account not found","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"rpc error: code = InvalidArgument desc = invalid address: invalid address: invalid separator index -1","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"rpc error: code = InvalidArgument desc = invalid address: invalid address: invalid bech32 string length 0","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"rpc error: code = InvalidArgument desc = invalid address: invalid address: invalid bech32 string length 0","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"rpc error: code = InvalidArgument desc = account not found","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"strconv.ParseInt: parsing \"not-a-number\": invalid syntax","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"strconv.ParseInt: parsing \"\": invalid syntax","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"strconv.ParseInt: parsing \"\": invalid syntax","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"strconv.ParseInt: parsing \"x\": invalid syntax","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"rpc error: code = NotFound desc = block not found with this hash","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"encoding/hex: odd length hex string","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"Hash should be 32 bytes, but it is 0 bytes","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"Hash should be 32 bytes, but it is 0 bytes","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"rpc error: code = InvalidArgument desc = invalid transaction ID: Hash should be 32 bytes, but it is 0 bytes","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"rpc error: code = NotFound desc = validator not found","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"rpc error: code = InvalidArgument desc = invalid validator address: invalid address: invalid separator index -1","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"rpc error: code = InvalidArgument desc = invalid validator address: invalid address: invalid bech32 string length 0","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"rpc error: code = InvalidArgument desc = invalid validator address: invalid address: invalid bech32 string length 0","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"rpc error: code = NotFound desc = validator not found","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"strconv.ParseInt: parsing \"\": invalid syntax","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"strconv.ParseInt: parsing \"not-a-number\": invalid syntax","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
+{"level":"error","err":"strconv.ParseInt: parsing \"\": invalid syntax","time":"2023-09-06T10:25:16+03:30","message":"an error occurred"}
