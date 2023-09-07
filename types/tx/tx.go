@@ -137,7 +137,9 @@ func (tx *Tx) SetPublicKey(pub crypto.PublicKey) {
 	tx.basicChecked = false
 	tx.data.PublicKey = pub
 	if pub == nil {
-		tx.data.Flags = util.SetFlag(tx.data.Flags, flagStripedPublicKey)
+		if !tx.IsSubsidyTx() {
+			tx.data.Flags = util.SetFlag(tx.data.Flags, flagStripedPublicKey)
+		}
 	} else {
 		tx.data.Flags = util.UnsetFlag(tx.data.Flags, flagStripedPublicKey)
 	}
@@ -452,7 +454,8 @@ func (tx *Tx) IsFreeTx() bool {
 	return tx.IsSubsidyTx() || tx.IsSortitionTx() || tx.IsUnbondTx()
 }
 
-// StripPublicKey removes public key from the transaction.
+// StripPublicKey removes the public key from the transaction.
+// It is an alias function for `SetPublicKey(nil)`.
 func (tx *Tx) StripPublicKey() {
 	tx.SetPublicKey(nil)
 }
