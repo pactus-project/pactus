@@ -94,35 +94,18 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 
 func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 	var writers []io.Writer
-	var fl *lumberjack.Logger
-	var logDirectory string
-	var logFilename string
 	maxLogSize := 100
 
 	// console writer
 	writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr})
+	logFilename := filepath.Join("./", LogFilename)
 
-	// file writer
-	currentDirectory, err := os.Getwd()
-	if err != nil {
-		goto ConsoleLogger
-	}
-
-	logDirectory = filepath.Join(currentDirectory, LogDirectory)
-	logFilename = filepath.Join(logDirectory, LogFilename)
-
-	if err = os.MkdirAll(logDirectory, 0o744); err != nil {
-		log.Error().Err(err).Str("path", logDirectory).
-			Msg("can't create log directory")
-		goto ConsoleLogger
-	}
-	fl = &lumberjack.Logger{
+	fl := &lumberjack.Logger{
 		Filename: logFilename,
 		MaxSize:  maxLogSize,
 	}
 	writers = append(writers, fl)
 
-ConsoleLogger:
 	mw := io.MultiWriter(writers...)
 	sl := &SubLogger{
 		logger: zerolog.New(mw).With().Timestamp().Logger(),
@@ -147,7 +130,6 @@ ConsoleLogger:
 	sl.logger.Info().
 		Bool("fileLogging", true).
 		Bool("jsonLogOutput", true).
-		Str("logDirectory", logDirectory).
 		Str("fileName", logFilename).
 		Int("maxSizeMB", maxLogSize).
 		Msg("logging configured")
