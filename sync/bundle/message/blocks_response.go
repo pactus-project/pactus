@@ -7,11 +7,6 @@ import (
 	"github.com/pactus-project/pactus/util/errors"
 )
 
-const (
-	LatestBlocksResponseCodeOK          = 0
-	LatestBlocksResponseCodeNoMoreBlock = 1
-)
-
 type BlocksResponseMessage struct {
 	ResponseCode        ResponseCode             `cbor:"1,keyasint"`
 	SessionID           int                      `cbor:"2,keyasint"`

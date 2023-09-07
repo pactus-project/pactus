@@ -7,6 +7,7 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/sync/services"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/version"
 )
@@ -24,22 +25,20 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 	pub2, _ := ts.RandBLSKeyPair()
 	pid1 := ts.RandPeerID()
 	pid2 := ts.RandPeerID()
-	ps.UpdatePeerInfo(
+	ps.UpdateInfo(
 		pid1,
-		peerset.StatusCodeKnown,
 		"test-peer-1",
 		version.Agent(),
 		[]*bls.PublicKey{pub1},
-		true)
+		services.New(services.Network))
 	ps.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
 
-	ps.UpdatePeerInfo(
+	ps.UpdateInfo(
 		pid2,
-		peerset.StatusCodeBanned,
 		"test-peer-2",
 		version.Agent(),
 		[]*bls.PublicKey{pub2},
-		false)
+		services.New(services.None))
 	ps.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
 
 	return &MockSync{

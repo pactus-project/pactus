@@ -7,11 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/util"
-)
-
-const (
-	PeerFlagNodeNetwork = 0x01
+	"github.com/pactus-project/pactus/sync/services"
 )
 
 type Peer struct {
@@ -20,7 +16,7 @@ type Peer struct {
 	Agent           string
 	PeerID          peer.ID
 	ConsensusKeys   []*bls.PublicKey
-	Flags           int
+	Services        services.Services
 	LastSent        time.Time
 	LastReceived    time.Time
 	LastBlockHash   hash.Hash
@@ -29,14 +25,12 @@ type Peer struct {
 	InvalidBundles  int
 	ReceivedBytes   map[message.Type]int64
 	SentBytes       map[message.Type]int64
-	SendSuccess     int
-	SendFailed      int
 }
 
 func NewPeer(peerID peer.ID) *Peer {
 	return &Peer{
 		ConsensusKeys: make([]*bls.PublicKey, 0),
-		Status:        StatusCodeConnected,
+		Status:        StatusCodeUnknown,
 		PeerID:        peerID,
 		ReceivedBytes: make(map[message.Type]int64),
 		SentBytes:     make(map[message.Type]int64),
@@ -51,6 +45,6 @@ func (p *Peer) IsBanned() bool {
 	return p.Status == StatusCodeBanned
 }
 
-func (p *Peer) IsNodeNetwork() bool {
-	return util.IsFlagSet(p.Flags, PeerFlagNodeNetwork)
+func (p *Peer) HasNetworkService() bool {
+	return p.Services.IsNetwork()
 }

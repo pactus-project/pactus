@@ -28,7 +28,7 @@ func TestMarshaling(t *testing.T) {
 		[]*validator.Validator{val}, param.DefaultParams())
 	gen2 := new(genesis.Genesis)
 
-	assert.Equal(t, gen1.Params().BlockTimeInSecond, 10)
+	assert.Equal(t, gen1.Params().BlockIntervalInSecond, 10)
 
 	bz, err := json.MarshalIndent(gen1, " ", " ")
 	require.NoError(t, err)

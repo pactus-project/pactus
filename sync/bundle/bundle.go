@@ -17,7 +17,7 @@ const (
 	BundleFlagCarrierLibP2P  = 0x0010
 	BundleFlagCompressed     = 0x0100
 	BundleFlagBroadcasted    = 0x0200
-	BundleFlagHelloMessage   = 0x0400
+	BundleFlagHandshaking    = 0x0400
 )
 
 type Bundle struct {

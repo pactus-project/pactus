@@ -16,6 +16,7 @@ import (
 	"github.com/pactus-project/pactus/sync/cache"
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/sync/services"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
@@ -81,13 +82,12 @@ func NewSynchronizer(
 	handlers := make(map[message.Type]messageHandler)
 
 	handlers[message.TypeHello] = newHelloHandler(sync)
-	handlers[message.TypeHeartBeat] = newHeartBeatHandler(sync)
-	handlers[message.TypeVote] = newVoteHandler(sync)
-	handlers[message.TypeProposal] = newProposalHandler(sync)
+	handlers[message.TypeHelloAck] = newHelloAckHandler(sync)
 	handlers[message.TypeTransactions] = newTransactionsHandler(sync)
-	handlers[message.TypeHeartBeat] = newHeartBeatHandler(sync)
-	handlers[message.TypeQueryVotes] = newQueryVotesHandler(sync)
 	handlers[message.TypeQueryProposal] = newQueryProposalHandler(sync)
+	handlers[message.TypeProposal] = newProposalHandler(sync)
+	handlers[message.TypeQueryVotes] = newQueryVotesHandler(sync)
+	handlers[message.TypeVote] = newVoteHandler(sync)
 	handlers[message.TypeBlockAnnounce] = newBlockAnnounceHandler(sync)
 	handlers[message.TypeBlocksRequest] = newBlocksRequestHandler(sync)
 	handlers[message.TypeBlocksResponse] = newBlocksResponseHandler(sync)
@@ -109,11 +109,6 @@ func (sync *synchronizer) Start() error {
 	go sync.receiveLoop()
 	go sync.broadcastLoop()
 
-	if sync.config.HeartBeatTimer > 0 {
-		sync.heartBeatTicker = time.NewTicker(sync.config.HeartBeatTimer)
-		go sync.heartBeatTickerLoop()
-	}
-
 	sync.moveConsensusToNewHeight()
 
 	return nil
@@ -130,66 +125,26 @@ func (sync *synchronizer) moveConsensusToNewHeight() {
 	sync.consMgr.MoveToNewHeight()
 }
 
-func (sync *synchronizer) heartBeatTickerLoop() {
-	for {
-		select {
-		case <-sync.ctx.Done():
-			return
-		case <-sync.heartBeatTicker.C:
-			sync.broadcastHeartBeat()
-		}
-	}
-}
-
-func (sync *synchronizer) broadcastHeartBeat() {
-	// Broadcast a random vote if we are inside the committee
-	if sync.weAreInTheCommittee() {
-		_, round := sync.consMgr.HeightRound()
-		v := sync.consMgr.PickRandomVote(round)
-		if v != nil {
-			msg := message.NewVoteMessage(v)
-			sync.broadcast(msg)
-		}
-
-		height, round := sync.consMgr.HeightRound()
-		if height > 0 {
-			msg := message.NewHeartBeatMessage(height, round, sync.state.LastBlockHash())
-			sync.broadcast(msg)
-		}
-	} else {
-		height := sync.state.LastBlockHeight()
-		if height > 0 {
-			msg := message.NewHeartBeatMessage(height, -1, sync.state.LastBlockHash())
-			sync.broadcast(msg)
-		}
-	}
-}
-
-func (sync *synchronizer) sayHello(helloAck bool, to peer.ID) {
-	flags := 0
+func (sync *synchronizer) sayHello(to peer.ID) error {
+	nodeServices := []int{}
 	if sync.config.NodeNetwork {
-		flags = util.SetFlag(flags, message.FlagNodeNetwork)
-	}
-	if helloAck {
-		flags = util.SetFlag(flags, message.FlagHelloAck)
+		nodeServices = append(nodeServices, services.Network)
 	}
 
 	msg := message.NewHelloMessage(
 		sync.SelfID(),
 		sync.config.Moniker,
 		sync.state.LastBlockHeight(),
-		flags,
+		services.New(nodeServices...),
 		sync.state.LastBlockHash(),
 		sync.state.Genesis().Hash(),
 	)
-
 	msg.Sign(sync.signers...)
 
-	err := sync.sendTo(msg, to)
-	if err != nil {
-		sync.logger.Error("Sending Hello message Faild", "to", to, "Ack", helloAck, "error", err)
-	}
-	sync.logger.Info("Sending Hello message", "to", to, "Ack", helloAck)
+	sync.peerSet.UpdateStatus(to, peerset.StatusCodeConnected)
+
+	sync.logger.Info("sending Hello message", "to", to)
+	return sync.sendTo(msg, to)
 }
 
 func (sync *synchronizer) broadcastLoop() {
@@ -227,7 +182,6 @@ func (sync *synchronizer) receiveLoop() {
 				bdl := sync.firewall.OpenStreamBundle(se.Reader, se.Source)
 				if err := se.Reader.Close(); err != nil {
 					// TODO: write test for me
-					sync.peerSet.IncreaseSendFailedCounter(se.Source)
 					sync.logger.Warn("error on closing stream", "err", err)
 				}
 				err := sync.processIncomingBundle(bdl)
@@ -237,11 +191,12 @@ func (sync *synchronizer) receiveLoop() {
 				}
 			case network.EventTypeConnect:
 				ce := e.(*network.ConnectEvent)
-				sync.sayHello(false, ce.PeerID)
-				sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeConnected)
+				if err := sync.sayHello(ce.PeerID); err != nil {
+					sync.logger.Warn("sending Hello message failed", "to", ce.PeerID, "error", err)
+				}
 			case network.EventTypeDisconnect:
-				ce := e.(*network.DisconnectEvent)
-				sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeDisconnected)
+				de := e.(*network.DisconnectEvent)
+				sync.peerSet.UpdateStatus(de.PeerID, peerset.StatusCodeDisconnected)
 			}
 		}
 	}
@@ -262,11 +217,9 @@ func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle) error {
 }
 
 func (sync *synchronizer) String() string {
-	return fmt.Sprintf("{☍ %d ⛃ %d ⇈ %d ↑ %d}",
+	return fmt.Sprintf("{☍ %d ⛃ %d}",
 		sync.peerSet.Len(),
-		sync.cache.Len(),
-		sync.peerSet.MaxClaimedHeight(),
-		sync.state.LastBlockHeight())
+		sync.cache.Len())
 }
 
 // updateBlockchain checks whether the node's height is shorter than the network's height or not.
@@ -283,21 +236,28 @@ func (sync *synchronizer) updateBlockchain() {
 		return
 	}
 
-	ourHeight := sync.state.LastBlockHeight()
-	claimedHeight := sync.peerSet.MaxClaimedHeight()
-	if claimedHeight > ourHeight {
-		from := ourHeight
-		// Make sure we have committed the latest blocks inside the cache
-		for sync.cache.HasBlockInCache(from + 1) {
-			from++
-		}
+	blockInterval := sync.state.Params().BlockInterval()
+	curTime := util.RoundNow(int(blockInterval.Seconds()))
+	lastBlockTime := sync.state.LastBlockTime()
+	diff := curTime.Sub(lastBlockTime)
+	numOfBlocks := uint32(diff.Seconds() / blockInterval.Seconds())
 
-		sync.logger.Info("start syncing with the network")
-		if claimedHeight > ourHeight+LatestBlockInterval {
-			sync.downloadBlocks(from, true)
-		} else {
-			sync.downloadBlocks(from, false)
-		}
+	if numOfBlocks <= 1 {
+		// We are sync
+		return
+	}
+
+	// Make sure we have committed the latest blocks inside the cache
+	LastBlockHeight := sync.state.LastBlockHeight()
+	for sync.cache.HasBlockInCache(LastBlockHeight + 1) {
+		LastBlockHeight++
+	}
+
+	sync.logger.Info("start syncing with the network", "numOfBlocks", numOfBlocks)
+	if numOfBlocks > LatestBlockInterval {
+		sync.downloadBlocks(LastBlockHeight, true)
+	} else {
+		sync.downloadBlocks(LastBlockHeight, false)
 	}
 }
 
@@ -332,17 +292,15 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
 	if bdl != nil {
 		data, _ := bdl.Encode()
 		sync.peerSet.UpdateLastSent(to)
+		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
+
 		err := sync.network.SendTo(data, to)
 		if err != nil {
 			sync.logger.Warn("error on sending bundle", "bundle", bdl, "err", err, "to", to)
-			sync.peerSet.IncreaseSendFailedCounter(to)
-			sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
+
 			return err
 		}
 		sync.logger.Info("sending bundle to a peer", "bundle", bdl, "to", to)
-		sync.peerSet.IncreaseSendSuccessCounter(to)
-
-		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
 	}
 	return nil
 }
@@ -378,23 +336,24 @@ func (sync *synchronizer) PeerSet() *peerset.PeerSet {
 // downloadBlocks starts downloading blocks from the network.
 func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 	sync.logger.Debug("downloading blocks", "from", from)
-	for i := sync.peerSet.NumberOfOpenSessions(); i < sync.config.MaxOpenSessions; i++ {
-		p := sync.peerSet.GetRandomPeer()
 
+	sync.peerSet.IteratePeers(func(p *peerset.Peer) {
 		// Don't open a new session if we already have an open session with the same peer.
 		// This helps us to get blocks from different peers.
 		// TODO: write test for me
 		if sync.peerSet.HasOpenSession(p.PeerID) {
-			continue
+			return
 		}
 
-		if onlyNodeNetwork && !p.IsNodeNetwork() {
-			continue
+		if !p.IsKnownOrTrusty() {
+			return
 		}
 
-		// TODO: write test for me
-		if p.Height < from+1 {
-			continue
+		if onlyNodeNetwork && !p.HasNetworkService() {
+			if onlyNodeNetwork {
+				sync.network.CloseConnection(p.PeerID)
+			}
+			return
 		}
 
 		count := LatestBlockInterval
@@ -404,9 +363,10 @@ func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 		err := sync.sendTo(msg, p.PeerID)
 		if err != nil {
 			sync.peerSet.CloseSession(session.SessionID())
+		} else {
+			from += count
 		}
-		from += count
-	}
+	})
 }
 
 // peerIsInTheCommittee checks if the peer is a member of the committee

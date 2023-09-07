@@ -221,6 +221,22 @@ func TestBlockSubsidyTx(t *testing.T) {
 	assert.Equal(t, trx.Payload().(*payload.TransferPayload).Receiver, rewardAddr)
 }
 
+func TestBlockTime(t *testing.T) {
+	td := setup(t)
+
+	t.Run("No blocks: LastBlockTime is the genesis time", func(t *testing.T) {
+		assert.Equal(t, td.state1.LastBlockTime(), td.state1.Genesis().GenesisTime())
+	})
+
+	t.Run("Commit one block: LastBlockTime is the time of the first block", func(t *testing.T) {
+		b1, c1 := td.makeBlockAndCertificate(t, 1, td.valSigner1, td.valSigner2, td.valSigner3)
+		assert.NoError(t, td.state1.CommitBlock(1, b1, c1))
+
+		assert.NotEqual(t, td.state1.LastBlockTime(), td.state1.Genesis().GenesisTime())
+		assert.Equal(t, td.state1.LastBlockTime(), b1.Header().Time())
+	})
+}
+
 func TestCommitBlocks(t *testing.T) {
 	td := setup(t)
 
@@ -482,7 +498,7 @@ func TestSortition(t *testing.T) {
 func TestValidateBlockTime(t *testing.T) {
 	td := setup(t)
 
-	fmt.Printf("BlockTimeInSecond: %d\n", td.state1.params.BlockTimeInSecond)
+	fmt.Printf("BlockTimeInSecond: %d\n", td.state1.params.BlockIntervalInSecond)
 
 	// Time not rounded
 	roundedNow := util.RoundNow(10)
@@ -667,8 +683,6 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 
 func TestSetBlockTime(t *testing.T) {
 	td := setup(t)
-
-	assert.Equal(t, td.state1.BlockTime(), 10*time.Second)
 
 	t.Run("Last block time is a bit far in past", func(t *testing.T) {
 		td.state1.lastInfo.UpdateBlockTime(util.RoundNow(10).Add(-20 * time.Second))
