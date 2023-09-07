@@ -99,8 +99,8 @@ func TestBasicCheck(t *testing.T) {
 	t.Run("Big memo, Should returns error", func(t *testing.T) {
 		bigMemo := strings.Repeat("a", 65)
 
-		trx := tx.NewSubsidyTx(ts.RandStamp(), ts.RandInt32NonZero(100),
-			ts.RandAddress(), ts.RandInt64(1e9), bigMemo)
+		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandInt32NonZero(100),
+			ts.RandAddress(), ts.RandAddress(), ts.RandInt64(1e9), ts.RandInt64(1e6), bigMemo)
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -111,8 +111,8 @@ func TestBasicCheck(t *testing.T) {
 	t.Run("Invalid payload, Should returns error", func(t *testing.T) {
 		invAddr := ts.RandAddress()
 		invAddr[0] = 2
-		trx := tx.NewSubsidyTx(ts.RandStamp(), ts.RandInt32NonZero(100),
-			invAddr, 1e9, "invalid address")
+		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandInt32NonZero(100),
+			ts.RandAddress(), invAddr, 1e9, ts.RandInt64(1e6), "invalid address")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -241,6 +241,16 @@ func TestSubsidyTx(t *testing.T) {
 		assert.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "public key set for subsidy transaction",
 		})
+	})
+
+	t.Run("Strip public key", func(t *testing.T) {
+		stamp := ts.RandStamp()
+		trx := tx.NewSubsidyTx(stamp, 88, pub.Address(), 2500, "subsidy")
+		trx.StripPublicKey()
+
+		err := trx.BasicCheck()
+		assert.NoError(t, err)
+		assert.False(t, trx.IsPublicKeyStriped())
 	})
 }
 
