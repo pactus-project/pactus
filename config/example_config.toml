@@ -21,9 +21,6 @@
 # `network` contains configuration options for the network module, which manages communication between nodes.
 [network]
 
-  # `name` specifies the name of the network. For the mainnet, this should be set to "pactus".
- ## name = "pactus"
-
   # `listens` specifies the addresses and ports where the node will listen for incoming connections from other nodes.
  ## listens = ["/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"]
 

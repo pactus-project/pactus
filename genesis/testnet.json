@@ -3,7 +3,7 @@
     "params": {
         "block_version": 63,
         "block_interval_in_second": 10,
-        "committee_size": 21,
+        "committee_size": 51,
         "block_reward": 1000000000,
         "transaction_to_live_interval": 2880,
         "bond_interval": 120,

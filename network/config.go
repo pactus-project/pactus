@@ -9,7 +9,6 @@ import (
 )
 
 type Config struct {
-	Name          string           `toml:"name"`
 	Listens       []string         `toml:"listens"`
 	NetworkKey    string           `toml:"network_key"`
 	EnableNAT     bool             `toml:"enable_nat"`
@@ -48,7 +47,6 @@ func DefaultConfig() *Config {
 	}
 
 	return &Config{
-		Name:          "pactus",
 		Listens:       []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"},
 		NetworkKey:    "network_key",
 		EnableNAT:     true,
