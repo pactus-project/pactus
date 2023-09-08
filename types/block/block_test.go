@@ -319,7 +319,7 @@ func TestMakeBlock(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	b0 := ts.GenerateTestBlock(nil)
-	b1 := block.MakeBlock(1, util.Now(), b0.Transactions(),
+	b1 := block.MakeBlock(1, b0.Header().Time(), b0.Transactions(),
 		b0.Header().PrevBlockHash(),
 		b0.Header().StateRoot(),
 		b0.PrevCertificate(),
