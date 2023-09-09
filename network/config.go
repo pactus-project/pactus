@@ -49,7 +49,6 @@ func DefaultConfig() *Config {
 	}
 
 	return &Config{
-		Name:               "pactus",
 		Listens:            []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"},
 		NetworkKey:         "network_key",
 		EnableNAT:          true,

@@ -56,7 +56,6 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 
 func testConfig() *Config {
 	return &Config{
-		Name:               "test-network",
 		Listens:            []string{},
 		NetworkKey:         util.TempFilePath(),
 		EnableNAT:          false,
