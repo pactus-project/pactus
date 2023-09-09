@@ -30,20 +30,18 @@ message GetNodeInfoResponse {
 }
 
 message PeerInfo {
-  string moniker = 1;
-  string agent = 2;
-  bytes peer_id = 3;
-  repeated string consensus_keys = 4;
-  int32 flags = 5;
-  uint32 height = 6;
-  int32 received_messages = 7;
-  int32 invalid_messages = 8;
-  map<int32, int64> sent_bytes = 9;
-  map<int32, int64> received_bytes = 10;
-  int32 status = 11;
-  int64 last_sent = 12;
-  int64 last_received = 13;
-  int32 send_success = 14;
-  int32 send_failed = 15;
-  bytes last_block_hash = 16;
+  int32 status = 1;
+  string moniker = 2;
+  string agent = 3;
+  bytes peer_id = 4;
+  repeated string consensus_keys = 5;
+  uint32 services = 6;
+  bytes last_block_hash = 7;
+  uint32 height = 8;
+  int32 received_messages = 9;
+  int32 invalid_messages = 10;
+  int64 last_sent = 11;
+  int64 last_received = 12;
+  map<int32, int64> sent_bytes = 13;
+  map<int32, int64> received_bytes = 14;
 }

@@ -96,14 +96,23 @@ func SaveMainnetConfig(path string, numValidators int) error {
 func SaveTestnetConfig(path string, numValidators int) error {
 	conf := DefaultConfig()
 	conf.Node.NumValidators = numValidators
-	conf.Network.Name = "pactus-testnet"
-	conf.Network.Listens = []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"}
+	conf.Network.Listens = []string{
+		"/ip4/0.0.0.0/tcp/21777", "/ip4/0.0.0.0/udp/21777/quic",
+		"/ip6/::/tcp/21777", "/ip6/::/udp/21777/quic",
+	}
 	conf.Network.Bootstrap.Addresses = []string{
 		"/ip4/94.101.184.118/tcp/21777/p2p/12D3KooWCwQZt8UriVXobQHPXPR8m83eceXVoeT6brPNiBHomebc",
+		"/ip4/94.101.184.118/udp/21777/quic/p2p/12D3KooWCwQZt8UriVXobQHPXPR8m83eceXVoeT6brPNiBHomebc",
 		"/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
-		"/ip4/163.172.178.141/tcp/21777/p2p/12D3KooWDF8a4goNCHriP1y922y4jagaPwHdX4eSrG5WtQpjzS6k",
-		"/ip4/13.230.117.134/tcp/21777/p2p/12D3KooWBGNEH8NqdK1UddSnPV1yRHGLYpaQUcnujC24s7YNWPiq",
+		"/ip4/172.104.46.145/udp/21777/quic/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
 		"/ip6/2400:8901::f03c:93ff:fe1c:c3ec/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
+		"/ip6/2400:8901::f03c:93ff:fe1c:c3ec/udp/21777/quic/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
+		"/ip4/13.115.190.71/tcp/21777/p2p/12D3KooWBGNEH8NqdK1UddSnPV1yRHGLYpaQUcnujC24s7YNWPiq",
+		"/ip4/13.115.190.71/udp/21777/quic/p2p/12D3KooWBGNEH8NqdK1UddSnPV1yRHGLYpaQUcnujC24s7YNWPiq",
+		"/ip4/163.172.178.141/tcp/21777/p2p/12D3KooWDF8a4goNCHriP1y922y4jagaPwHdX4eSrG5WtQpjzS6k",
+		"/ip4/163.172.178.141/udp/21777/quic/p2p/12D3KooWDF8a4goNCHriP1y922y4jagaPwHdX4eSrG5WtQpjzS6k",
+		"/ip6/2001:bc8:700:8017::1/tcp/21777/p2p/12D3KooWDF8a4goNCHriP1y922y4jagaPwHdX4eSrG5WtQpjzS6k",
+		"/ip6/2001:bc8:700:8017::1/udp/21777/quic/p2p/12D3KooWDF8a4goNCHriP1y922y4jagaPwHdX4eSrG5WtQpjzS6k",
 	}
 	conf.Network.Bootstrap.MinThreshold = 4
 	conf.Network.Bootstrap.MaxThreshold = 8
@@ -111,8 +120,11 @@ func SaveTestnetConfig(path string, numValidators int) error {
 	conf.Network.EnableHolePunching = true
 	conf.Network.RelayAddrs = []string{
 		"/ip4/172.104.46.145/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
+		"/ip4/172.104.46.145/udp/4002/quic/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip6/2400:8901::f03c:93ff:fe1c:c3ec/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
+		"/ip6/2400:8901::f03c:93ff:fe1c:c3ec/udp/4002/quic/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/94.101.184.118/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
+		"/ip4/94.101.184.118/udp/4002/quic/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "[::]:5105"
@@ -129,7 +141,6 @@ func SaveTestnetConfig(path string, numValidators int) error {
 func SaveLocalnetConfig(path string, numValidators int) error {
 	conf := DefaultConfig()
 	conf.Node.NumValidators = numValidators
-	conf.Network.Name = "pactus-localnet"
 	conf.Network.Listens = []string{}
 	conf.Network.EnableNAT = false
 	conf.Network.Bootstrap.Addresses = []string{}

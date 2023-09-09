@@ -21,9 +21,6 @@
 # `network` contains configuration options for the network module, which manages communication between nodes.
 [network]
 
-  # `name` specifies the name of the network. For the mainnet, this should be set to "pactus".
- ## name = "pactus"
-
   # `listens` specifies the addresses and ports where the node will listen for incoming connections from other nodes.
  ## listens = ["/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"]
 
@@ -83,18 +80,9 @@
   # `moniker` is a custom human-readable name for this node.
  ## moniker = ""
 
-  # `heartbeat_timer` is a timer for broadcasting a heartbeat message to the network.
-  # Default is 5 seconds
-  # Set the value to zero e.g heartbeat_timer = "0s" to disable heartbeat broadcasing.
- ## heartbeat_timer = "5s"
-
   # `session_timeout` is a timeout for a session to be opened.
   # Default is 10 seconds
  ## session_timeout = "10s"
-
-  # `max_open_sessions` is the maximum number of open sessions.
-  # Default is 8
- ## max_open_sessions = 8
 
   # `block_per_message` is the number of blocks per message.
   # Default is 60.

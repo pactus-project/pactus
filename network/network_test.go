@@ -45,7 +45,7 @@ func makeTestRelay(t *testing.T) host.Host {
 func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 	t.Helper()
 
-	net, err := newNetwork(conf, opts)
+	net, err := newNetwork("test", conf, opts)
 	require.NoError(t, err)
 
 	assert.NoError(t, net.Start())
@@ -119,7 +119,7 @@ func readData(t *testing.T, r io.ReadCloser, len int) []byte {
 }
 
 func TestStoppingNetwork(t *testing.T) {
-	net, err := NewNetwork(testConfig())
+	net, err := NewNetwork("test", testConfig())
 	assert.NoError(t, err)
 
 	assert.NoError(t, net.Start())
@@ -321,11 +321,11 @@ func TestInvalidRelayAddress(t *testing.T) {
 	conf.EnableRelay = true
 
 	conf.RelayAddrs = []string{"127.0.0.1:4001"}
-	_, err := NewNetwork(conf)
+	_, err := NewNetwork("test", conf)
 	assert.Error(t, err)
 
 	conf.RelayAddrs = []string{"/ip4/127.0.0.1/tcp/4001"}
-	_, err = NewNetwork(conf)
+	_, err = NewNetwork("test", conf)
 	assert.Error(t, err)
 }
 

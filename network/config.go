@@ -9,7 +9,6 @@ import (
 )
 
 type Config struct {
-	Name               string           `toml:"name"`
 	Listens            []string         `toml:"listens"`
 	NetworkKey         string           `toml:"network_key"`
 	EnableNAT          bool             `toml:"enable_nat"`

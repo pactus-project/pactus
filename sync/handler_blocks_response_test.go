@@ -12,11 +12,15 @@ import (
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/sync/services"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestInvalidBlockData(t *testing.T) {
@@ -62,44 +66,26 @@ func TestOneBlockShorter(t *testing.T) {
 	pid := td.RandPeerID()
 
 	pub, _ := td.RandBLSKeyPair()
-	td.addPeer(t, pub, pid, false)
+	td.addPeer(t, pub, pid, services.New(services.None))
 
-	t.Run("Peer is busy. Session should be closed", func(t *testing.T) {
-		sid := td.sync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, message.ResponseCodeRejected.String(), sid,
-			0, nil, nil)
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+	sid := td.sync.peerSet.OpenSession(pid).SessionID()
+	msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, t.Name(), sid,
+		lastBlockHeight+1, [][]byte{d1}, c1)
+	assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		assert.Nil(t, td.sync.peerSet.FindSession(sid))
-	})
-
-	t.Run("Request is rejected. Session should be closed", func(t *testing.T) {
-		sid := td.sync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, message.ResponseCodeRejected.String(), sid,
-			0, nil, nil)
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-
-		assert.Nil(t, td.sync.peerSet.FindSession(sid))
-	})
-
-	t.Run("Commit one block", func(t *testing.T) {
-		sid := td.sync.peerSet.OpenSession(pid).SessionID()
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, message.ResponseCodeRejected.String(), sid,
-			lastBlockHeight+1, [][]byte{d1}, c1)
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-
-		assert.Nil(t, td.sync.peerSet.FindSession(sid))
-		assert.Equal(t, td.state.LastBlockHeight(), lastBlockHeight+1)
-	})
+	assert.Nil(t, td.sync.peerSet.FindSession(sid))
+	assert.Equal(t, td.state.LastBlockHeight(), lastBlockHeight+1)
 }
 
 func TestStrippedPublicKey(t *testing.T) {
 	td := setup(t, nil)
 
+	td.state.CommitTestBlocks(2)
+
 	// Add a peer
 	pid := td.RandPeerID()
 	pub, _ := td.RandBLSKeyPair()
-	td.addPeer(t, pub, pid, false)
+	td.addPeer(t, pub, pid, services.New(services.None))
 
 	blk1 := td.GenerateTestBlock(nil)
 	trx := *td.state.TestStore.Blocks[1].Transactions()[0]
@@ -159,7 +145,17 @@ func TestSyncing(t *testing.T) {
 	configBob.NodeNetwork = true
 	networkAlice.AddAnotherNetwork(networkBob)
 	networkBob.AddAnotherNetwork(networkAlice)
-	addBlocks(t, stateBob, 100)
+
+	// Adding 100 blocks for Bob
+	blockInterval := stateBob.Genesis().Params().BlockInterval()
+	blockTime := util.RoundNow(int(blockInterval.Seconds()))
+	for i := uint32(0); i < 100; i++ {
+		blk := ts.GenerateTestBlockWithTime(nil, blockTime)
+		cert := ts.GenerateTestCertificate()
+		assert.NoError(t, stateBob.CommitBlock(i+1, blk, cert))
+
+		blockTime = blockTime.Add(blockInterval)
+	}
 
 	sync1, err := NewSynchronizer(configAlice,
 		signersAlice,
@@ -182,7 +178,7 @@ func TestSyncing(t *testing.T) {
 	syncBob := sync2.(*synchronizer)
 
 	// -------------------------------
-	// For better logging when testing
+	// Better logging during testing
 	overrideLogger := func(sync *synchronizer, name string) {
 		sync.logger = logger.NewSubLogger("_sync", &OverrideStringer{
 			name: fmt.Sprintf("%s - %s: ", name, t.Name()), sync: sync,
@@ -196,17 +192,28 @@ func TestSyncing(t *testing.T) {
 	assert.NoError(t, syncAlice.Start())
 	assert.NoError(t, syncBob.Start())
 
-	syncAlice.sayHello(false, syncBob.SelfID())
-
 	// Verify that Hello messages are exchanged between Alice and Bob
+	assert.NoError(t, syncAlice.sayHello(syncBob.SelfID()))
+	assert.NoError(t, syncBob.sayHello(syncAlice.SelfID()))
+
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
 
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeHelloAck)
+	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHelloAck)
+
+	time.Sleep(1 * time.Second)
+
 	// Ensure peers are connected and block heights are correct
-	assert.Equal(t, syncAlice.PeerSet().Len(), 1)
-	assert.Equal(t, syncBob.PeerSet().Len(), 1)
-	assert.Equal(t, syncAlice.state.LastBlockHeight(), uint32(0))
-	assert.Equal(t, syncBob.state.LastBlockHeight(), uint32(100))
+	assert.Equal(t, 1, syncAlice.PeerSet().Len())
+	assert.Equal(t, 1, syncBob.PeerSet().Len())
+	require.Equal(t, peerset.StatusCodeKnown, syncAlice.PeerSet().GetPeer(syncBob.SelfID()).Status)
+	require.Equal(t, peerset.StatusCodeKnown, syncBob.PeerSet().GetPeer(syncAlice.SelfID()).Status)
+	assert.Equal(t, uint32(0), syncAlice.state.LastBlockHeight())
+	assert.Equal(t, uint32(100), syncBob.state.LastBlockHeight())
+
+	// Alice receives a BlockAnnounce message and starts updating its blockchain
+	syncAlice.updateBlockchain()
 
 	// Perform block syncing
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)

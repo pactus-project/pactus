@@ -36,7 +36,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		p.PeerId = []byte(peer.PeerID)
 		p.Moniker = peer.Moniker
 		p.Agent = peer.Agent
-		p.Flags = int32(peer.Flags)
+		p.Services = uint32(peer.Services)
 		p.Height = peer.Height
 		p.ReceivedMessages = int32(peer.ReceivedBundles)
 		p.InvalidMessages = int32(peer.InvalidBundles)
@@ -44,8 +44,6 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		p.SentBytes = *(*map[int32]int64)(unsafe.Pointer(&peer.SentBytes))
 		p.Status = int32(peer.Status)
 		p.LastReceived = peer.LastReceived.Unix()
-		p.SendSuccess = int32(peer.SendSuccess)
-		p.SendFailed = int32(peer.SendFailed)
 		p.LastBlockHash = peer.LastBlockHash.Bytes()
 
 		for _, key := range peer.ConsensusKeys {

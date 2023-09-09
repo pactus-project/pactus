@@ -262,13 +262,6 @@ func (st *state) LastCertificate() *certificate.Certificate {
 	return st.lastInfo.Certificate()
 }
 
-func (st *state) BlockTime() time.Duration {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
-
-	return st.params.BlockTime()
-}
-
 func (st *state) UpdateLastCertificate(cert *certificate.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
@@ -541,7 +534,7 @@ func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
 }
 
 func (st *state) validateBlockTime(t time.Time) error {
-	if t.Second()%st.params.BlockTimeInSecond != 0 {
+	if t.Second()%st.params.BlockIntervalInSecond != 0 {
 		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is not rounded", t.String())
 	}
 	if t.Before(st.lastInfo.BlockTime()) {
@@ -551,7 +544,7 @@ func (st *state) validateBlockTime(t time.Time) error {
 		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is same as the last block time", t.String())
 	}
 	proposeTime := st.proposeNextBlockTime()
-	threshold := st.params.BlockTime()
+	threshold := st.params.BlockInterval()
 	if t.After(proposeTime.Add(threshold)) {
 		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is more than threshold (%s)",
 			t.String(), proposeTime.String())
@@ -575,12 +568,12 @@ func (st *state) CommitteePower() int64 {
 }
 
 func (st *state) proposeNextBlockTime() time.Time {
-	timestamp := st.lastInfo.BlockTime().Add(st.params.BlockTime())
+	timestamp := st.lastInfo.BlockTime().Add(st.params.BlockInterval())
 
 	now := util.Now()
 	if now.After(timestamp.Add(1 * time.Second)) {
 		st.logger.Debug("it looks the last block had delay", "delay", now.Sub(timestamp))
-		timestamp = util.RoundNow(st.params.BlockTimeInSecond)
+		timestamp = util.RoundNow(st.params.BlockIntervalInSecond)
 	}
 	return timestamp
 }

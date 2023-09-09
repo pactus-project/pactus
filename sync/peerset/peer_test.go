@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/sync/services"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,11 +20,11 @@ func TestPeer(t *testing.T) {
 	p2.Status = StatusCodeKnown
 	p3.Status = StatusCodeBanned
 
-	p1.Flags = PeerFlagNodeNetwork
+	p1.Services = services.New(services.Network)
 
 	t.Run("NewPeer", func(t *testing.T) {
 		assert.NotNil(t, p1)
-		assert.Equal(t, p1.Status, StatusCodeConnected)
+		assert.Equal(t, p1.Status, StatusCodeUnknown)
 	})
 
 	t.Run("status check", func(t *testing.T) {
@@ -36,11 +37,8 @@ func TestPeer(t *testing.T) {
 		assert.True(t, banned)
 	})
 
-	t.Run("is node network", func(t *testing.T) {
-		nodeNetwork := p1.IsNodeNetwork()
-		notNodeNetwork := p2.IsNodeNetwork()
-
-		assert.True(t, nodeNetwork)
-		assert.False(t, notNodeNetwork)
+	t.Run("has network service", func(t *testing.T) {
+		assert.True(t, p1.HasNetworkService())
+		assert.False(t, p2.HasNetworkService())
 	})
 }

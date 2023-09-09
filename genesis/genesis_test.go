@@ -28,7 +28,7 @@ func TestMarshaling(t *testing.T) {
 		[]*validator.Validator{val}, param.DefaultParams())
 	gen2 := new(genesis.Genesis)
 
-	assert.Equal(t, gen1.Params().BlockTimeInSecond, 10)
+	assert.Equal(t, gen1.Params().BlockIntervalInSecond, 10)
 
 	bz, err := json.MarshalIndent(gen1, " ", " ")
 	require.NoError(t, err)
@@ -54,10 +54,10 @@ func TestGenesisTestNet(t *testing.T) {
 
 	assert.Equal(t, g.Accounts()[crypto.TreasuryAddress].Balance(), int64(21e15))
 
-	genTime, _ := time.Parse("2006-01-02", "2023-05-08")
+	genTime, _ := time.Parse("2006-01-02", "2023-09-07")
 	assert.Equal(t, g.GenesisTime(), genTime)
 	assert.Equal(t, g.Params().BondInterval, uint32(120))
-	expected, _ := hash.FromString("f5718d6686a1a1066749a671b67b8e9506709c3e6326e6216a4a09ada56a6b01")
+	expected, _ := hash.FromString("7b105c84a220a1acd928befdd8af78b9c8b13e2297f6cc5b4b784baff28bd22f")
 	assert.Equal(t, g.Hash(), expected)
 }
 

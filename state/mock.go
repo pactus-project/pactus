@@ -18,7 +18,6 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 )
@@ -39,13 +38,14 @@ type MockState struct {
 
 func MockingState(ts *testsuite.TestSuite) *MockState {
 	committee, _ := ts.GenerateTestCommittee(21)
+	genDoc := genesis.TestnetGenesis()
 	return &MockState{
 		ts:            ts,
-		TestGenesis:   genesis.TestnetGenesis(), // TODO: replace me with the Mainnet genesis
+		TestGenesis:   genDoc,
 		TestStore:     store.MockingStore(ts),
 		TestPool:      txpool.MockingTxPool(),
 		TestCommittee: committee,
-		TestParams:    param.DefaultParams(),
+		TestParams:    genDoc.Params(),
 	}
 }
 
@@ -77,7 +77,11 @@ func (m *MockState) LastBlockHash() hash.Hash {
 }
 
 func (m *MockState) LastBlockTime() time.Time {
-	return util.Now()
+	if len(m.TestStore.Blocks) > 0 {
+		return m.TestStore.Blocks[m.TestStore.LastHeight].Header().Time()
+	}
+
+	return m.Genesis().GenesisTime()
 }
 
 func (m *MockState) LastCertificate() *certificate.Certificate {
@@ -85,10 +89,6 @@ func (m *MockState) LastCertificate() *certificate.Certificate {
 	defer m.lk.RUnlock()
 
 	return m.TestStore.LastCert
-}
-
-func (m *MockState) BlockTime() time.Duration {
-	return time.Second
 }
 
 func (m *MockState) UpdateLastCertificate(cert *certificate.Certificate) error {

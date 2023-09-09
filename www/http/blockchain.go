@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/sync/services"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
@@ -50,8 +51,9 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 	for i, p := range res.Peers {
 		pid, _ := peer.IDFromBytes(p.PeerId)
 		tm.addRowInt("-- Peer #", i+1)
-		tm.addRowString("PeerID", pid.String())
 		tm.addRowString("Status", peerset.StatusCode(p.Status).String())
+		tm.addRowString("PeerID", pid.String())
+		tm.addRowString("Services", services.Services(p.Services).String())
 		for _, key := range p.ConsensusKeys {
 			pub, _ := bls.PublicKeyFromString(key)
 			tm.addRowString("  PublicKey", pub.String())
@@ -73,9 +75,6 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 		for key, value := range p.SentBytes {
 			tm.addRowInt(message.Type(key).String(), int(value))
 		}
-		tm.addRowInt("SendSuccess", int(p.SendSuccess))
-		tm.addRowInt("SendFailed", int(p.SendFailed))
-		tm.addRowInt("Flags", int(p.Flags))
 	}
 	s.writeHTML(w, tm.html())
 }
