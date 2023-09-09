@@ -56,12 +56,13 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 
 func testConfig() *Config {
 	return &Config{
-		Name:        "test-network",
-		Listens:     []string{},
-		NetworkKey:  util.TempFilePath(),
-		EnableNAT:   false,
-		EnableRelay: false,
-		EnableMdns:  false,
+		Name:               "test-network",
+		Listens:            []string{},
+		NetworkKey:         util.TempFilePath(),
+		EnableNAT:          false,
+		EnableRelay:        false,
+		EnableHolePunching: false,
+		EnableMdns:         false,
 		Bootstrap: &BootstrapConfig{
 			Addresses:    []string{},
 			MinThreshold: 4,
@@ -399,4 +400,88 @@ func testConnection(t *testing.T, networkP *network, networkB *network) {
 
 	networkB.Stop()
 	networkP.Stop()
+}
+
+// In this test, we are setting up a simulated Hole Punching that consists of four nodes:
+//   - R is a Relay node
+//   - B is a Bootstrap node
+//   - P is a Public node
+//   - M is Private Node behind a Network Address Translation (NAT)
+//
+// The test will evaluate the following scenarios:
+//   - Node P and M make a direct connection with hole punching
+func TestHolePunching(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	// Relay
+	nodeR := makeTestRelay(t)
+
+	relayAddrs := []string{}
+	for _, addr := range nodeR.Addrs() {
+		addr2 := fmt.Sprintf("%s/p2p/%s", addr, nodeR.ID().String())
+		fmt.Printf("relay address: %s\n", addr2)
+		relayAddrs = append(relayAddrs, addr2)
+	}
+
+	// Bootstrap node
+	confB := testConfig()
+	bootstrapPort := ts.RandInt32(9999) + 10000
+	confB.Listens = []string{
+		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", bootstrapPort),
+		fmt.Sprintf("/ip6/::1/tcp/%v", bootstrapPort),
+	}
+	fmt.Println("Starting Bootstrap node")
+	networkB := makeTestNetwork(t, confB, []lp2p.Option{})
+	bootstrapAddresses := []string{
+		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%v", bootstrapPort, networkB.SelfID().String()),
+		fmt.Sprintf("/ip6/::1/tcp/%v/p2p/%v", bootstrapPort, networkB.SelfID().String()),
+	}
+
+	// Public node P
+	confP := testConfig()
+	confP.EnableNAT = true
+	confP.Bootstrap.Addresses = bootstrapAddresses
+	confP.Listens = []string{
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
+	}
+	confP.EnableHolePunching = true // Enable hole punching for the public node
+	fmt.Println("Starting Public node")
+	networkP := makeTestNetwork(t, confP, []lp2p.Option{
+		lp2p.ForceReachabilityPublic(),
+	})
+
+	// Private node M
+	confM := testConfig()
+	confM.EnableRelay = true
+	confM.RelayAddrs = relayAddrs
+	confM.Bootstrap.Addresses = bootstrapAddresses
+	confM.Listens = []string{
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
+	}
+	confM.EnableHolePunching = true // Enable hole punching for private node M
+	fmt.Println("Starting Private node M")
+	networkM := makeTestNetwork(t, confM, []lp2p.Option{
+		lp2p.ForceReachabilityPrivate(),
+	})
+
+	// Wait for peers to connect to each other
+	time.Sleep(2 * time.Second)
+
+	t.Run("sending messages using hole punching", func(t *testing.T) {
+		msgP := []byte("test-msg-public-to-private")
+		require.NoError(t, networkP.SendTo(msgP, networkM.SelfID())) // Send message from public node to private node
+
+		msgM := []byte("test-msg-private-to-public")
+		require.NoError(t, networkM.SendTo(msgM, networkP.SelfID())) // Send message from private node to public node
+
+		eP := shouldReceiveEvent(t, networkM, EventTypeStream).(*StreamMessage)
+		assert.Equal(t, eP.Source, networkP.SelfID())
+		assert.Equal(t, readData(t, eP.Reader, len(msgP)), msgP)
+
+		eM := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
+		assert.Equal(t, eM.Source, networkM.SelfID())
+		assert.Equal(t, readData(t, eM.Reader, len(msgM)), msgM)
+	})
 }
