@@ -404,8 +404,7 @@ func testConnection(t *testing.T, networkP *network, networkB *network) {
 // In this test, we are setting up a simulated Hole Punching that consists of four nodes:
 //   - R is a Relay node
 //   - B is a Bootstrap node
-//   - P is a Private node
-//   - M is Private node
+//   - P and M are Private nodes
 //
 // The test will evaluate the following scenarios:
 //   - Node P and M make a direct connection with hole punching
@@ -470,10 +469,14 @@ func TestHolePunching(t *testing.T) {
 
 	t.Run("sending messages using hole punching", func(t *testing.T) {
 		msgP := []byte("test-msg-public-to-private")
-		require.NoError(t, networkP.SendTo(msgP, networkM.SelfID()))
+		msgPErr := networkP.SendTo(msgP, networkM.SelfID())
+		fmt.Println(msgPErr)
+		require.NoError(t, msgPErr)
 
 		msgM := []byte("test-msg-private-to-public")
-		require.NoError(t, networkM.SendTo(msgM, networkP.SelfID())) 
+		msgMErr := networkM.SendTo(msgM, networkP.SelfID())
+		fmt.Println(msgMErr)
+		require.NoError(t, msgMErr) 
 
 		eP := shouldReceiveEvent(t, networkM, EventTypeStream).(*StreamMessage)
 		assert.Equal(t, eP.Source, networkP.SelfID())
