@@ -113,7 +113,10 @@ func TestOpenWallet(t *testing.T) {
 		assert.NoError(t, util.WriteFile(td.wallet.path, bs))
 
 		_, err := Open(td.wallet.path, true)
-		assert.ErrorIs(t, err, ErrInvalidCRC)
+		assert.ErrorIs(t, err, CRCNotMatchError{
+			Expected: td.wallet.store.calcVaultCRC(),
+			Got:      0,
+		})
 	})
 
 	t.Run("Invalid json", func(t *testing.T) {
@@ -135,7 +138,9 @@ func TestRecoverWallet(t *testing.T) {
 		assert.NoError(t, td.wallet.Save())
 
 		_, err := Create(td.wallet.path, mnemonic, password, 0)
-		assert.ErrorIs(t, err, NewWalletExitsError(td.wallet.path))
+		assert.ErrorIs(t, err, WalletExitsError{
+			Path: td.wallet.path,
+		})
 	})
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {

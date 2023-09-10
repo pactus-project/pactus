@@ -12,11 +12,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Start starts the pactus node.
+// buildStartCmd builds a sub-command to starts the Pactus blockchain node.
 func buildStartCmd(parentCmd *cobra.Command) {
 	startCmd := &cobra.Command{
 		Use:   "start",
-		Short: "Start the Pactus blockchain",
+		Short: "Start the Pactus blockchain node",
 	}
 
 	parentCmd.AddCommand(startCmd)
