@@ -29,7 +29,7 @@ func newValidatorStore(db *leveldb.DB) *validatorStore {
 
 		val, err := validator.FromBytes(value)
 		if err != nil {
-			logger.Panic("unable to decode validator", "err", err)
+			logger.Panic("unable to decode validator", "error", err)
 		}
 
 		numberMap[val.Number()] = val
@@ -92,7 +92,7 @@ func (vs *validatorStore) iterateValidators(consumer func(*validator.Validator) 
 func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.Validator) {
 	data, err := val.Bytes()
 	if err != nil {
-		logger.Panic("unable to encode validator", "err", err)
+		logger.Panic("unable to encode validator", "error", err)
 	}
 	if !vs.hasValidator(val.Address()) {
 		vs.total++

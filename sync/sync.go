@@ -173,7 +173,7 @@ func (sync *synchronizer) receiveLoop() {
 				bdl := sync.firewall.OpenGossipBundle(ge.Data, ge.Source, ge.From)
 				err := sync.processIncomingBundle(bdl)
 				if err != nil {
-					sync.logger.Warn("error on parsing a Gossip bundle", "initiator", bdl.Initiator, "bundle", bdl, "err", err)
+					sync.logger.Warn("error on parsing a Gossip bundle", "initiator", bdl.Initiator, "bundle", bdl, "error", err)
 					sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
 				}
 
@@ -182,11 +182,11 @@ func (sync *synchronizer) receiveLoop() {
 				bdl := sync.firewall.OpenStreamBundle(se.Reader, se.Source)
 				if err := se.Reader.Close(); err != nil {
 					// TODO: write test for me
-					sync.logger.Warn("error on closing stream", "err", err)
+					sync.logger.Warn("error on closing stream", "error", err)
 				}
 				err := sync.processIncomingBundle(bdl)
 				if err != nil {
-					sync.logger.Warn("error on parsing a Stream bundle", "initiator", bdl.Initiator, "bundle", bdl, "err", err)
+					sync.logger.Warn("error on parsing a Stream bundle", "initiator", bdl.Initiator, "bundle", bdl, "error", err)
 					sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
 				}
 			case network.EventTypeConnect:
@@ -296,7 +296,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
 
 		err := sync.network.SendTo(data, to)
 		if err != nil {
-			sync.logger.Warn("error on sending bundle", "bundle", bdl, "err", err, "to", to)
+			sync.logger.Warn("error on sending bundle", "bundle", bdl, "error", err, "to", to)
 
 			return err
 		}
@@ -313,7 +313,7 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 		data, _ := bdl.Encode()
 		err := sync.network.Broadcast(data, msg.Type().TopicID())
 		if err != nil {
-			sync.logger.Error("error on broadcasting bundle", "bundle", bdl, "err", err)
+			sync.logger.Error("error on broadcasting bundle", "bundle", bdl, "error", err)
 		} else {
 			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
 		}
@@ -405,7 +405,7 @@ func (sync *synchronizer) tryCommitBlocks() {
 		}
 		sync.logger.Trace("committing block", "height", height, "block", b)
 		if err := sync.state.CommitBlock(height, b, c); err != nil {
-			sync.logger.Warn("committing block failed", "block", b, "err", err, "height", height)
+			sync.logger.Warn("committing block failed", "block", b, "error", err, "height", height)
 			// We will ask network to re-send this block again ...
 			break
 		}

@@ -70,7 +70,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 	stream, err := s.host.NewStream(
 		lp2pnetwork.WithNoDial(s.ctx, "should already have connection"), pid, s.protocolID)
 	if err != nil {
-		s.logger.Debug("unable to open direct stream", "pid", pid, "err", err)
+		s.logger.Debug("unable to open direct stream", "pid", pid, "error", err)
 		if len(s.relayAddrs) == 0 {
 			return err
 		}
@@ -100,7 +100,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 
 		if err := s.host.Connect(s.ctx, unreachableRelayInfo); err != nil {
 			// There is no relay connection to peer as well
-			s.logger.Warn("unable to connect to peer using relay", "pid", pid, "err", err)
+			s.logger.Warn("unable to connect to peer using relay", "pid", pid, "error", err)
 			return LibP2PError{Err: err}
 		}
 		s.logger.Debug("connected to peer using relay", "pid", pid)
@@ -110,7 +110,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 		stream, err = s.host.NewStream(
 			lp2pnetwork.WithUseTransient(s.ctx, string(s.protocolID)), pid, s.protocolID)
 		if err != nil {
-			s.logger.Warn("unable to open relay stream", "pid", pid, "err", err)
+			s.logger.Warn("unable to open relay stream", "pid", pid, "error", err)
 			return LibP2PError{Err: err}
 		}
 	}

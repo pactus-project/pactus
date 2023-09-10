@@ -48,7 +48,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, source peer.ID, from peer.ID) *
 
 	bdl, err := f.openBundle(bytes.NewReader(data), source)
 	if err != nil {
-		f.logger.Warn("firewall: unable to open a gossip bundle", "err", err)
+		f.logger.Warn("firewall: unable to open a gossip bundle", "error", err)
 		f.closeConnection(from)
 		return nil
 	}
@@ -62,7 +62,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, source peer.ID, from peer.ID) *
 func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
 	bdl, err := f.openBundle(r, from)
 	if err != nil {
-		f.logger.Warn("firewall: unable to open a stream bundle", "err", err)
+		f.logger.Warn("firewall: unable to open a stream bundle", "error", err)
 		f.closeConnection(from)
 		return nil
 	}

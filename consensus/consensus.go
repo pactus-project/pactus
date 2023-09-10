@@ -226,12 +226,12 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 	} else {
 		proposer := cs.proposer(p.Round())
 		if err := p.Verify(proposer.PublicKey()); err != nil {
-			cs.logger.Warn("proposal has invalid signature", "proposal", p, "err", err)
+			cs.logger.Warn("proposal has invalid signature", "proposal", p, "error", err)
 			return
 		}
 
 		if err := cs.state.ValidateBlock(p.Block()); err != nil {
-			cs.logger.Warn("invalid block", "proposal", p, "err", err)
+			cs.logger.Warn("invalid block", "proposal", p, "error", err)
 			return
 		}
 	}
@@ -280,7 +280,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		v.Type() == vote.VoteTypeCPMainVote {
 		err := cs.checkJust(v)
 		if err != nil {
-			cs.logger.Error("error on adding a cp vote", "vote", v, "err", err)
+			cs.logger.Error("error on adding a cp vote", "vote", v, "error", err)
 			return
 		}
 
@@ -307,7 +307,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 
 	added, err := cs.log.AddVote(v)
 	if err != nil {
-		cs.logger.Error("error on adding a vote", "vote", v, "err", err)
+		cs.logger.Error("error on adding a vote", "vote", v, "error", err)
 	}
 	if added {
 		cs.logger.Debug("new vote added", "vote", v)
@@ -650,7 +650,7 @@ func (cs *consensus) signAddVote(v *vote.Vote) {
 
 	_, err := cs.log.AddVote(v)
 	if err != nil {
-		cs.logger.Error("error on adding our vote", "err", err, "vote", v)
+		cs.logger.Error("error on adding our vote", "error", err, "vote", v)
 	}
 	cs.broadcastVote(v)
 }

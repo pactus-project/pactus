@@ -22,7 +22,7 @@ func (handler *transactionsHandler) ParseMessage(m message.Message, _ peer.ID) e
 
 	for _, trx := range msg.Transactions {
 		if err := handler.state.AddPendingTx(trx); err != nil {
-			handler.logger.Debug("cannot append transaction", "tx", trx, "err", err)
+			handler.logger.Debug("cannot append transaction", "tx", trx, "error", err)
 
 			// TODO: set peer as bad peer?
 		}

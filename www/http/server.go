@@ -94,7 +94,7 @@ func (s *Server) StartServer(grpcServer string) error {
 		for {
 			err := server.Serve(l)
 			if err != nil {
-				s.logger.Error("error on a connection", "err", err)
+				s.logger.Error("error on a connection", "error", err)
 			}
 		}
 	}()
@@ -128,7 +128,7 @@ func (s *Server) RootHandler(w http.ResponseWriter, _ *http.Request) {
 		return nil
 	})
 	if err != nil {
-		s.logger.Error("unable to walk through methods", "err", err)
+		s.logger.Error("unable to walk through methods", "error", err)
 		return
 	}
 
@@ -138,7 +138,7 @@ func (s *Server) RootHandler(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (s *Server) writeError(w http.ResponseWriter, err error) int {
-	s.logger.Error("an error occurred", "err", err)
+	s.logger.Error("an error occurred", "error", err)
 
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusBadRequest)

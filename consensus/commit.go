@@ -21,7 +21,7 @@ func (s *commitState) decide() {
 	cert := s.makeCertificate(votes)
 	err := s.state.CommitBlock(s.height, certBlock, cert)
 	if err != nil {
-		s.logger.Error("committing block failed", "block", certBlock, "err", err)
+		s.logger.Error("committing block failed", "block", certBlock, "error", err)
 	} else {
 		s.logger.Info("block committed, schedule new height", "hash", certBlock.Hash().ShortString())
 	}
