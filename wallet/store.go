@@ -31,8 +31,12 @@ func (s *store) Save(bs []byte) error {
 		return err
 	}
 
-	if s.VaultCRC != s.calcVaultCRC() {
-		return ErrInvalidCRC
+	crc := s.calcVaultCRC()
+	if s.VaultCRC != crc {
+		return CRCNotMatchError{
+			Expected: crc,
+			Got:      s.VaultCRC,
+		}
 	}
 
 	return nil

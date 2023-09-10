@@ -7,16 +7,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Generate creates a new wallet.
-func buildGenerateCmd(parentCmd *cobra.Command) {
+// buildCreateCmd builds a command to create a new wallet.
+func buildCreateCmd(parentCmd *cobra.Command) {
 	generateCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new wallet",
 	}
 	parentCmd.AddCommand(generateCmd)
 
-	testnetOpt := generateCmd.Flags().Bool("testnet", false, "creating wallet for testnet")
-	entropyOpt := generateCmd.Flags().Int("entropy", 128, "Entropy bit length")
+	testnetOpt := generateCmd.Flags().Bool("testnet", false,
+		"Create a wallet for the testnet environment")
+	entropyOpt := generateCmd.Flags().Int("entropy", 128,
+		"Specify the entropy bit length")
 
 	generateCmd.Run = func(_ *cobra.Command, _ []string) {
 		password := cmd.PromptPassword("Password", true)
@@ -26,28 +28,28 @@ func buildGenerateCmd(parentCmd *cobra.Command) {
 		if *testnetOpt {
 			network = genesis.Testnet
 		}
-		wallet, err := wallet.Create(*pathArg, mnemonic, password, network)
+		wallet, err := wallet.Create(*pathOpt, mnemonic, password, network)
 		cmd.FatalErrorCheck(err)
 
 		err = wallet.Save()
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintSuccessMsgf("Wallet created successfully at: %s", wallet.Path())
-		cmd.PrintInfoMsgf("Seed: \"%v\"", mnemonic)
+		cmd.PrintSuccessMsgf("Your wallet was successfully created at: %s", wallet.Path())
+		cmd.PrintInfoMsgf("Seed phrase: \"%v\"", mnemonic)
 		cmd.PrintWarnMsgf("Please keep your seed in a safe place; " +
 			"if you lose it, you will not be able to restore your wallet.")
 	}
 }
 
-// ChangePassword updates the wallet password.
+// buildChangePasswordCmd builds a command to update the wallet's password.
 func buildChangePasswordCmd(parentCmd *cobra.Command) {
 	changePasswordCmd := &cobra.Command{
 		Use:   "password",
-		Short: "Change wallet password",
+		Short: "Change the wallet's password",
 	}
 	parentCmd.AddCommand(changePasswordCmd)
-	passOpt := addPasswordOption(parentCmd)
+	passOpt := addPasswordOption(changePasswordCmd)
 
 	changePasswordCmd.Run = func(_ *cobra.Command, _ []string) {
 		wallet, err := openWallet()
@@ -63,6 +65,6 @@ func buildChangePasswordCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintWarnMsgf("Wallet password updated")
+		cmd.PrintWarnMsgf("Your wallet password successfully updated.")
 	}
 }
