@@ -24,7 +24,7 @@ func CreateBlockEvent(blockHash hash.Hash, height uint32) Event {
 	w := bytes.NewBuffer(buf)
 	err := encoding.WriteElements(w, TopicNewBlock, blockHash, height)
 	if err != nil {
-		logger.Error("error on encoding event", "err", err)
+		logger.Error("error on encoding event", "error", err)
 	}
 	return w.Bytes()
 }
@@ -37,7 +37,7 @@ func CreateNewTransactionEvent(txHash tx.ID, height uint32) Event {
 	w := bytes.NewBuffer(buf)
 	err := encoding.WriteElements(w, TopicNewTransaction, txHash, height)
 	if err != nil {
-		logger.Error("error on encoding event in transaction event", "err", err)
+		logger.Error("error on encoding event in transaction event", "error", err)
 	}
 	return w.Bytes()
 }

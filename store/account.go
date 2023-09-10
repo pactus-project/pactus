@@ -29,7 +29,7 @@ func newAccountStore(db *leveldb.DB) *accountStore {
 
 		acc, err := account.FromBytes(value)
 		if err != nil {
-			logger.Panic("unable to decode account", "err", err)
+			logger.Panic("unable to decode account", "error", err)
 		}
 
 		var addr crypto.Address
@@ -87,7 +87,7 @@ func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.A
 func (as *accountStore) updateAccount(batch *leveldb.Batch, addr crypto.Address, acc *account.Account) {
 	data, err := acc.Bytes()
 	if err != nil {
-		logger.Panic("unable to encode account", "err", err)
+		logger.Panic("unable to encode account", "error", err)
 	}
 	if !as.hasAccount(addr) {
 		as.total++

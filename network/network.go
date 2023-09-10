@@ -219,7 +219,7 @@ func (n *network) Stop() {
 	n.stream.Stop()
 
 	if err := n.host.Close(); err != nil {
-		n.logger.Error("unable to close the network", "err", err)
+		n.logger.Error("unable to close the network", "error", err)
 	}
 }
 
