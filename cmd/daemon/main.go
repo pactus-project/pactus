@@ -12,7 +12,7 @@ func main() {
 		CompletionOptions: cobra.CompletionOptions{HiddenDefaultCmd: true},
 	}
 
-	// Hide the sub-command
+	// Hide the "help" sub-command
 	rootCmd.SetHelpCommand(&cobra.Command{Hidden: true})
 
 	buildVersionCmd(rootCmd)

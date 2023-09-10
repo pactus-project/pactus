@@ -380,10 +380,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		}
 
 		PrintSuccessMsgf("Config restored to the default values")
-		conf, err = config.LoadFromFile(confPath, true) // This time it should be OK
-		if err != nil {
-			return nil, nil, err
-		}
+		conf, _ = config.LoadFromFile(confPath, true) // This time it should be OK
 	}
 
 	err = conf.BasicCheck()

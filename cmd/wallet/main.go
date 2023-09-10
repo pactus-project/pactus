@@ -47,7 +47,7 @@ func main() {
 		CompletionOptions: cobra.CompletionOptions{HiddenDefaultCmd: true},
 	}
 
-	// Hide the sub-command
+	// Hide the "help" sub-command
 	rootCmd.SetHelpCommand(&cobra.Command{Hidden: true})
 
 	pathOpt = rootCmd.PersistentFlags().String("path", "default_wallet", "the path to the wallet file")
