@@ -166,7 +166,7 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
 	}
 
-	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/kad/v1", n.name))
+	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/gossip/v1", n.name))
 	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", n.name))
 
 	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf.Bootstrap, n.logger)

@@ -1,6 +1,8 @@
 package network
 
 import (
+	"time"
+
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/protocol"
@@ -28,33 +30,39 @@ func newNotifeeService(host lp2phost.Host, eventChannel chan<- Event,
 
 func (n *NotifeeService) Connected(lp2pn lp2pnetwork.Network, conn lp2pnetwork.Conn) {
 	peerID := conn.RemotePeer()
-	protocols, err := lp2pn.Peerstore().SupportsProtocols(peerID, n.protocolID)
-	if len(protocols) == 0 || err != nil {
-		n.logger.Info("This node doesn't support stream protocol", "peer", peerID)
-		return
-	}
-	n.logger.Info("Connected to peer with peerID:", "PeerID", peerID)
-	n.eventChannel <- &ConnectEvent{PeerID: peerID}
+
+	go func() {
+		for i := 0; i < 6; i++ {
+			// TODO: better way?
+			// Wait to complete libp2p identify
+			time.Sleep(200 * time.Millisecond)
+
+			protocols, _ := lp2pn.Peerstore().SupportsProtocols(peerID, n.protocolID)
+			if len(protocols) > 0 {
+				n.logger.Info("connected to peer", "pid", peerID)
+				n.eventChannel <- &ConnectEvent{PeerID: peerID}
+
+				return
+			}
+		}
+
+		n.logger.Info("this node doesn't support stream protocol", "pid", peerID)
+	}()
 }
 
-func (n *NotifeeService) Disconnected(lp2pn lp2pnetwork.Network, conn lp2pnetwork.Conn) {
+func (n *NotifeeService) Disconnected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
 	peerID := conn.RemotePeer()
-	protocols, err := lp2pn.Peerstore().SupportsProtocols(peerID, n.protocolID)
-	if len(protocols) == 0 || err != nil {
-		n.logger.Info("This node doesn't support stream protocol", "peer", peerID)
-		return
-	}
-	n.logger.Info("Disconnected from peer with peerID:", "PeerID", peerID)
+	n.logger.Info("disconnected from peer", "pid", peerID)
 	n.eventChannel <- &DisconnectEvent{PeerID: peerID}
 }
 
 func (n *NotifeeService) Listen(_ lp2pnetwork.Network, ma ma.Multiaddr) {
 	// Handle listen event if needed.
-	n.logger.Debug("Notifee Listen event emitted", "Multiaddr", ma.String())
+	n.logger.Debug("notifee Listen event emitted", "addr", ma.String())
 }
 
 // ListenClose is called when your node stops listening on an address.
 func (n *NotifeeService) ListenClose(_ lp2pnetwork.Network, ma ma.Multiaddr) {
 	// Handle listen close event if needed.
-	n.logger.Debug("Notifee ListenClose event emitted", "Multiaddr", ma.String())
+	n.logger.Debug("notifee ListenClose event emitted", "addr", ma.String())
 }
