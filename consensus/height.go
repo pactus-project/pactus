@@ -11,7 +11,7 @@ type newHeightState struct {
 }
 
 func (s *newHeightState) enter() {
-	sleep := s.state.LastBlockTime().Add(s.state.BlockTime()).Sub(util.Now())
+	sleep := s.state.LastBlockTime().Add(s.state.Params().BlockInterval()).Sub(util.Now())
 	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetNewHeight)
 }
 
@@ -30,7 +30,7 @@ func (s *newHeightState) decide() {
 				lastCert := s.makeCertificate(votes)
 				if lastCert != nil {
 					if err := s.state.UpdateLastCertificate(lastCert); err != nil {
-						s.logger.Warn("updating last certificate failed", "err", err)
+						s.logger.Warn("updating last certificate failed", "error", err)
 					}
 				}
 			}

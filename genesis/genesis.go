@@ -179,3 +179,16 @@ func (gen *Genesis) ChainType() ChainType {
 
 	return Localnet
 }
+
+func (gen *Genesis) NetworkName() string {
+	switch gen.ChainType() {
+	case Mainnet:
+		return "pactus"
+	case Testnet:
+		return "pactus-testnet"
+	case Localnet:
+		return "pactus-localnet"
+	default:
+		return "unknown"
+	}
+}

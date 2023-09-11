@@ -29,6 +29,7 @@ type network struct {
 	// Adding these linter later:  contextcheck and containedctx
 	ctx            context.Context
 	cancel         func()
+	name           string
 	config         *Config
 	host           lp2phost.Host
 	mdns           *mdnsService
@@ -74,11 +75,11 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 	return key, nil
 }
 
-func NewNetwork(conf *Config) (Network, error) {
-	return newNetwork(conf, []lp2p.Option{})
+func NewNetwork(networkName string, conf *Config) (Network, error) {
+	return newNetwork(networkName, conf, []lp2p.Option{})
 }
 
-func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
+func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network, error) {
 	networkKey, err := loadOrCreateKey(conf.NetworkKey)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
@@ -153,6 +154,7 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 	n := &network{
 		ctx:          ctx,
 		cancel:       cancel,
+		name:         networkName,
 		config:       conf,
 		host:         host,
 		eventChannel: make(chan Event, 100),
@@ -164,8 +166,8 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
 	}
 
-	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/kad/v1", n.config.Name))
-	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", n.config.Name))
+	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/kad/v1", n.name))
+	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", n.name))
 
 	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf.Bootstrap, n.logger)
 	n.stream = newStreamService(ctx, n.host, streamProtocolID, relayAddrs, n.eventChannel, n.logger)
@@ -217,7 +219,7 @@ func (n *network) Stop() {
 	n.stream.Stop()
 
 	if err := n.host.Close(); err != nil {
-		n.logger.Error("unable to close the network", "err", err)
+		n.logger.Error("unable to close the network", "error", err)
 	}
 }
 
@@ -284,7 +286,7 @@ func (n *network) consensusTopicName() string {
 }
 
 func (n *network) TopicName(topic string) string {
-	return fmt.Sprintf("/%s/topic/%s/v1", n.config.Name, topic)
+	return fmt.Sprintf("/%s/topic/%s/v1", n.name, topic)
 }
 
 func (n *network) CloseConnection(pid lp2ppeer.ID) {

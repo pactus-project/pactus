@@ -117,6 +117,10 @@
     "pactusPeerInfo": {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "integer",
+          "format": "int32"
+        },
         "moniker": {
           "type": "string"
         },
@@ -133,9 +137,13 @@
             "type": "string"
           }
         },
-        "flags": {
+        "services": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
+        },
+        "lastBlockHash": {
+          "type": "string",
+          "format": "byte"
         },
         "height": {
           "type": "integer",
@@ -148,6 +156,14 @@
         "invalidMessages": {
           "type": "integer",
           "format": "int32"
+        },
+        "lastSent": {
+          "type": "string",
+          "format": "int64"
+        },
+        "lastReceived": {
+          "type": "string",
+          "format": "int64"
         },
         "sentBytes": {
           "type": "object",
@@ -162,30 +178,6 @@
             "type": "string",
             "format": "int64"
           }
-        },
-        "status": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "lastSent": {
-          "type": "string",
-          "format": "int64"
-        },
-        "lastReceived": {
-          "type": "string",
-          "format": "int64"
-        },
-        "sendSuccess": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "sendFailed": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "lastBlockHash": {
-          "type": "string",
-          "format": "byte"
         }
       }
     },

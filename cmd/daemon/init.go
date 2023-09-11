@@ -10,11 +10,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// BuildInitCmd builds the init command for the Pactus blockchain.
+// buildInitCmd builds a sub-command to initialized the Pactus blockchain node.
 func buildInitCmd(parentCmd *cobra.Command) {
 	initCmd := &cobra.Command{
 		Use:   "init",
-		Short: "Initialize the Pactus blockchain",
+		Short: "Initialize the Pactus blockchain node",
 	}
 	parentCmd.AddCommand(initCmd)
 	workingDirOpt := initCmd.Flags().StringP("working-dir", "w",

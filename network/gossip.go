@@ -25,7 +25,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 ) *gossipService {
 	pubsub, err := lp2pps.NewGossipSub(ctx, host)
 	if err != nil {
-		logger.Panic("unable to start Gossip service", "err", err)
+		logger.Panic("unable to start Gossip service", "error", err)
 		return nil
 	}
 
@@ -66,7 +66,7 @@ func (g *gossipService) JoinTopic(name string) (*lp2pps.Topic, error) {
 		for {
 			m, err := sub.Next(g.ctx)
 			if err != nil {
-				g.logger.Debug("readLoop error", "err", err)
+				g.logger.Debug("readLoop error", "error", err)
 				return
 			}
 

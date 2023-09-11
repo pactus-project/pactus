@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/sync/services"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +22,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	})
 
 	pub, _ := td.RandBLSKeyPair()
-	td.addPeer(t, pub, pid, false)
+	td.addPeer(t, pub, pid, services.New(services.None))
 
 	t.Run("Not in the committee, should not respond to the query vote message", func(t *testing.T) {
 		assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))

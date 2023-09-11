@@ -21,7 +21,7 @@ func TestJoinConsensusTopic(t *testing.T) {
 }
 
 func TestInvalidTopic(t *testing.T) {
-	net, err := NewNetwork(testConfig())
+	net, err := NewNetwork("test", testConfig())
 	assert.NoError(t, err)
 
 	msg := []byte("test-invalid-topic")

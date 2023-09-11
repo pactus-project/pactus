@@ -2,11 +2,12 @@ package main
 
 import (
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
 
-// Recover recovers a wallet from mnemonic (seed phrase).
+// buildRecoverCmd builds a command to recover a wallet using a mnemonic (seed phrase).
 func buildRecoverCmd(parentCmd *cobra.Command) {
 	recoverCmd := &cobra.Command{
 		Use:   "recover",
@@ -14,37 +15,40 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(recoverCmd)
 
-	passwordOpt := addPasswordOption(parentCmd)
-
-	seedOpt := recoverCmd.Flags().StringP("seed", "s", "", "wallet seed phrase (mnemonic)")
+	passOpt := addPasswordOption(recoverCmd)
+	testnetOpt := recoverCmd.Flags().Bool("testnet", true,
+		"Recover the wallet for the testnet environment")
+	seedOpt := recoverCmd.Flags().StringP("seed", "s", "", "Mnemonic (seed phrase) used for wallet recovery")
 
 	recoverCmd.Run = func(_ *cobra.Command, _ []string) {
 		mnemonic := *seedOpt
 		if mnemonic == "" {
 			mnemonic = cmd.PromptInput("Seed")
 		}
-		password := *passwordOpt
-
-		wallet, err := wallet.Create(*pathArg, mnemonic, password, 0)
+		chainType := genesis.Mainnet
+		if *testnetOpt {
+			chainType = genesis.Testnet
+		}
+		wallet, err := wallet.Create(*pathOpt, mnemonic, *passOpt, chainType)
 		cmd.FatalErrorCheck(err)
 
 		err = wallet.Save()
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsgf("Wallet recovered successfully at: %s", wallet.Path())
+		cmd.PrintInfoMsgf("Wallet successfully recovered and saved at: %s", wallet.Path())
 	}
 }
 
-// GetSeed prints the seed phrase (mnemonics).
+// buildGetSeedCmd builds a command to display the wallet's mnemonic (seed phrase).
 func buildGetSeedCmd(parentCmd *cobra.Command) {
 	getSeedCmd := &cobra.Command{
 		Use:   "seed",
-		Short: "Show secret seed phrase (mnemonic) that can be used to recover this wallet",
+		Short: "Display the mnemonic (seed phrase) that can be used to recover this wallet",
 	}
 	parentCmd.AddCommand(getSeedCmd)
 
-	passOpt := addPasswordOption(parentCmd)
+	passOpt := addPasswordOption(getSeedCmd)
 
 	getSeedCmd.Run = func(_ *cobra.Command, _ []string) {
 		wallet, err := openWallet()
@@ -55,6 +59,6 @@ func buildGetSeedCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsgf("Seed: \"%v\"", mnemonic)
+		cmd.PrintInfoMsgf("Your wallet's seed phrase is: \"%v\"", mnemonic)
 	}
 }

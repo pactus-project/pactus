@@ -22,7 +22,7 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, initiator 
 	handler.logger.Trace("parsing BlocksResponse message", "message", msg)
 
 	if msg.IsRequestRejected() {
-		handler.logger.Warn("blocks request is rejected", "pid", initiator, "response", msg.ResponseCode)
+		handler.logger.Warn("blocks request is rejected", "pid", initiator, "reason", msg.Reason)
 	} else {
 		height := msg.From
 		for _, data := range msg.CommittedBlocksData {
@@ -73,7 +73,6 @@ func (handler *blocksResponseHandler) updateSession(sessionID int, pid peer.ID, 
 	case message.ResponseCodeRejected:
 		handler.logger.Debug("session rejected, close session", "session-id", sessionID)
 		handler.peerSet.CloseSession(sessionID)
-		handler.peerSet.IncreaseSendFailedCounter(pid)
 		handler.updateBlockchain()
 
 	case message.ResponseCodeMoreBlocks:

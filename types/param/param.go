@@ -4,7 +4,7 @@ import "time"
 
 type Params struct {
 	BlockVersion              uint8   `cbor:"1,keyasint"  json:"block_version"`
-	BlockTimeInSecond         int     `cbor:"2,keyasint"  json:"block_time_in_second"`
+	BlockIntervalInSecond     int     `cbor:"2,keyasint"  json:"block_interval_in_second"`
 	CommitteeSize             int     `cbor:"3,keyasint"  json:"committee_size"`
 	BlockReward               int64   `cbor:"4,keyasint"  json:"block_reward"`
 	TransactionToLiveInterval uint32  `cbor:"5,keyasint"  json:"transaction_to_live_interval"`
@@ -21,7 +21,7 @@ type Params struct {
 func DefaultParams() Params {
 	return Params{
 		BlockVersion:              1,
-		BlockTimeInSecond:         10,
+		BlockIntervalInSecond:     10,
 		CommitteeSize:             21,
 		BlockReward:               1000000000,
 		TransactionToLiveInterval: 8640,   // one day
@@ -36,6 +36,6 @@ func DefaultParams() Params {
 	}
 }
 
-func (p Params) BlockTime() time.Duration {
-	return time.Duration(p.BlockTimeInSecond) * time.Second
+func (p Params) BlockInterval() time.Duration {
+	return time.Duration(p.BlockIntervalInSecond) * time.Second
 }

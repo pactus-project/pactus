@@ -17,7 +17,6 @@ func TestSaveMainnetConfig(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
-	assert.Equal(t, conf.Network.Name, "pactus")
 }
 
 func TestSaveTestnetConfig(t *testing.T) {
@@ -28,7 +27,6 @@ func TestSaveTestnetConfig(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
-	assert.Equal(t, conf.Network.Name, "pactus-testnet")
 }
 
 func TestSaveLocalnetConfig(t *testing.T) {
@@ -39,7 +37,6 @@ func TestSaveLocalnetConfig(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
-	assert.Equal(t, conf.Network.Name, "pactus-localnet")
 	assert.Empty(t, conf.Network.Listens)
 	assert.Empty(t, conf.Network.RelayAddrs)
 }

@@ -112,7 +112,7 @@ func (p *txPool) appendTx(trx *tx.Tx) error {
 
 func (p *txPool) checkTx(trx *tx.Tx) error {
 	if err := p.checker.Execute(trx, p.sandbox); err != nil {
-		p.logger.Debug("invalid transaction", "tx", trx, "err", err)
+		p.logger.Debug("invalid transaction", "tx", trx, "error", err)
 		return err
 	}
 	return nil

@@ -8,10 +8,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// buildAllHistoryCmd builds all sub-commands related to the wallet history.
 func buildAllHistoryCmd(parentCmd *cobra.Command) {
 	historyCmd := &cobra.Command{
 		Use:   "history",
-		Short: "Check the wallet history",
+		Short: "Retrieve the transaction history of the wallet.",
 	}
 
 	parentCmd.AddCommand(historyCmd)
@@ -19,20 +20,21 @@ func buildAllHistoryCmd(parentCmd *cobra.Command) {
 	buildShowHistoryCmd(historyCmd)
 }
 
+// buildAddToHistoryCmd builds a command for adding a transaction to the wallet's history.
 func buildAddToHistoryCmd(parentCmd *cobra.Command) {
 	addToHistoryCmd := &cobra.Command{
-		Use:   "add",
-		Short: "Add a transaction to the wallet history",
+		Use:   "add [flags] <ID>",
+		Short: "Add a transaction to the wallet's history.",
 	}
 	parentCmd.AddCommand(addToHistoryCmd)
 
-	txID := addToHistoryCmd.Flags().String("ID", "", "transaction id")
+	addToHistoryCmd.Run = func(_ *cobra.Command, args []string) {
+		txID := args[0]
 
-	addToHistoryCmd.Run = func(_ *cobra.Command, _ []string) {
 		wallet, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
-		id, err := hash.FromString(*txID)
+		id, err := hash.FromString(txID)
 		cmd.FatalErrorCheck(err)
 
 		err = wallet.AddTransaction(id)
@@ -41,23 +43,26 @@ func buildAddToHistoryCmd(parentCmd *cobra.Command) {
 		err = wallet.Save()
 		cmd.FatalErrorCheck(err)
 
-		cmd.PrintInfoMsgf("Transaction added to wallet")
+		cmd.PrintInfoMsgf("Transaction successfully added to the wallet.")
 	}
 }
 
+// buildShowHistoryCmd builds a command for displaying the transaction history of a specific address.
 func buildShowHistoryCmd(parentCmd *cobra.Command) {
 	showHistoryCmd := &cobra.Command{
-		Use:   "get",
-		Short: "Show the transaction history of any address",
+		Use:   "get [flags] <ADDRESS>",
+		Short: "Display the transaction history for a given address.",
+		Args:  cobra.ExactArgs(1),
 	}
 	parentCmd.AddCommand(showHistoryCmd)
-	addrArg := addAddressArg(parentCmd)
 
-	showHistoryCmd.Run = func(_ *cobra.Command, _ []string) {
+	showHistoryCmd.Run = func(_ *cobra.Command, args []string) {
+		addr := args[0]
+
 		wallet, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
-		history := wallet.GetHistory(*addrArg)
+		history := wallet.GetHistory(addr)
 		for i, h := range history {
 			if h.Time != nil {
 				cmd.PrintInfoMsgf("%d %v %v %v %s\t%v",

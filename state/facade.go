@@ -22,7 +22,6 @@ type Facade interface {
 	LastBlockHash() hash.Hash
 	LastBlockTime() time.Time
 	LastCertificate() *certificate.Certificate
-	BlockTime() time.Duration
 	UpdateLastCertificate(lastCertificate *certificate.Certificate) error
 	ProposeBlock(consSigner crypto.Signer, rewardAddr crypto.Address, round int16) (*block.Block, error)
 	ValidateBlock(block *block.Block) error

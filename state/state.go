@@ -262,13 +262,6 @@ func (st *state) LastCertificate() *certificate.Certificate {
 	return st.lastInfo.Certificate()
 }
 
-func (st *state) BlockTime() time.Duration {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
-
-	return st.params.BlockTime()
-}
-
 func (st *state) UpdateLastCertificate(cert *certificate.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
@@ -276,7 +269,7 @@ func (st *state) UpdateLastCertificate(cert *certificate.Certificate) error {
 	// Check if certificate has more signers ...
 	if len(cert.Absentees()) < len(st.lastInfo.Certificate().Absentees()) {
 		if err := st.validatePrevCertificate(cert, st.lastInfo.BlockHash()); err != nil {
-			st.logger.Warn("try to update last certificate, but it's invalid", "err", err)
+			st.logger.Warn("try to update last certificate, but it's invalid", "error", err)
 			return err
 		}
 		st.lastInfo.UpdateCertificate(cert)
@@ -324,7 +317,7 @@ func (st *state) ProposeBlock(signer crypto.Signer, rewardAddr crypto.Address, r
 		}
 
 		if err := exe.Execute(txs[i], sb); err != nil {
-			st.logger.Debug("found invalid transaction", "tx", txs[i], "err", err)
+			st.logger.Debug("found invalid transaction", "tx", txs[i], "error", err)
 			txs.Remove(i)
 			i--
 		}
@@ -447,7 +440,7 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *certificat
 	}
 
 	if err := st.store.WriteBatch(); err != nil {
-		st.logger.Panic("unable to update state", "err", err)
+		st.logger.Panic("unable to update state", "error", err)
 	}
 
 	st.logger.Info("new block committed", "block", block, "round", cert.Round())
@@ -497,7 +490,7 @@ func (st *state) evaluateSortition() bool {
 				evaluated = true
 			} else {
 				st.logger.Error("our sortition transaction is invalid!",
-					"address", signer.Address(), "power", val.Power(), "tx", trx, "err", err)
+					"address", signer.Address(), "power", val.Power(), "tx", trx, "error", err)
 			}
 		}
 	}
@@ -541,7 +534,7 @@ func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
 }
 
 func (st *state) validateBlockTime(t time.Time) error {
-	if t.Second()%st.params.BlockTimeInSecond != 0 {
+	if t.Second()%st.params.BlockIntervalInSecond != 0 {
 		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is not rounded", t.String())
 	}
 	if t.Before(st.lastInfo.BlockTime()) {
@@ -551,7 +544,7 @@ func (st *state) validateBlockTime(t time.Time) error {
 		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is same as the last block time", t.String())
 	}
 	proposeTime := st.proposeNextBlockTime()
-	threshold := st.params.BlockTime()
+	threshold := st.params.BlockInterval()
 	if t.After(proposeTime.Add(threshold)) {
 		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is more than threshold (%s)",
 			t.String(), proposeTime.String())
@@ -575,12 +568,12 @@ func (st *state) CommitteePower() int64 {
 }
 
 func (st *state) proposeNextBlockTime() time.Time {
-	timestamp := st.lastInfo.BlockTime().Add(st.params.BlockTime())
+	timestamp := st.lastInfo.BlockTime().Add(st.params.BlockInterval())
 
 	now := util.Now()
 	if now.After(timestamp.Add(1 * time.Second)) {
 		st.logger.Debug("it looks the last block had delay", "delay", now.Sub(timestamp))
-		timestamp = util.RoundNow(st.params.BlockTimeInSecond)
+		timestamp = util.RoundNow(st.params.BlockIntervalInSecond)
 	}
 	return timestamp
 }
@@ -637,7 +630,7 @@ func (st *state) MakeCommittedBlock(data []byte, height uint32, blockHash hash.H
 func (st *state) CommittedBlock(height uint32) *store.CommittedBlock {
 	b, err := st.store.Block(height)
 	if err != nil {
-		st.logger.Trace("error on retrieving block", "err", err)
+		st.logger.Trace("error on retrieving block", "error", err)
 		return nil
 	}
 	return b
@@ -646,7 +639,7 @@ func (st *state) CommittedBlock(height uint32) *store.CommittedBlock {
 func (st *state) CommittedTx(id tx.ID) *store.CommittedTx {
 	tx, err := st.store.Transaction(id)
 	if err != nil {
-		st.logger.Trace("searching transaction in local store failed", "id", id, "err", err)
+		st.logger.Trace("searching transaction in local store failed", "id", id, "error", err)
 	}
 	return tx
 }
@@ -662,7 +655,7 @@ func (st *state) BlockHeight(hash hash.Hash) uint32 {
 func (st *state) AccountByAddress(addr crypto.Address) *account.Account {
 	acc, err := st.store.Account(addr)
 	if err != nil {
-		st.logger.Trace("error on retrieving account", "err", err)
+		st.logger.Trace("error on retrieving account", "error", err)
 	}
 	return acc
 }
@@ -670,7 +663,7 @@ func (st *state) AccountByAddress(addr crypto.Address) *account.Account {
 func (st *state) AccountByNumber(number int32) *account.Account {
 	acc, err := st.store.AccountByNumber(number)
 	if err != nil {
-		st.logger.Trace("error on retrieving account", "err", err)
+		st.logger.Trace("error on retrieving account", "error", err)
 	}
 	return acc
 }
@@ -682,7 +675,7 @@ func (st *state) ValidatorAddresses() []crypto.Address {
 func (st *state) ValidatorByAddress(addr crypto.Address) *validator.Validator {
 	val, err := st.store.Validator(addr)
 	if err != nil {
-		st.logger.Trace("error on retrieving validator", "err", err)
+		st.logger.Trace("error on retrieving validator", "error", err)
 	}
 	return val
 }
@@ -691,7 +684,7 @@ func (st *state) ValidatorByAddress(addr crypto.Address) *validator.Validator {
 func (st *state) ValidatorByNumber(n int32) *validator.Validator {
 	val, err := st.store.ValidatorByNumber(n)
 	if err != nil {
-		st.logger.Trace("error on retrieving validator", "err", err)
+		st.logger.Trace("error on retrieving validator", "error", err)
 	}
 	return val
 }

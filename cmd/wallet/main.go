@@ -3,12 +3,13 @@ package main
 import (
 	"fmt"
 
+	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
 
 var (
-	pathArg       *string
+	pathOpt       *string
 	offlineOpt    *bool
 	serverAddrOpt *string
 )
@@ -20,7 +21,7 @@ func addPasswordOption(c *cobra.Command) *string {
 
 func openWallet() (*wallet.Wallet, error) {
 	if !*offlineOpt && *serverAddrOpt != "" {
-		wallet, err := wallet.Open(*pathArg, true)
+		wallet, err := wallet.Open(*pathOpt, true)
 		if err != nil {
 			return nil, err
 		}
@@ -32,7 +33,7 @@ func openWallet() (*wallet.Wallet, error) {
 		}
 		return wallet, err
 	}
-	wallet, err := wallet.Open(*pathArg, *offlineOpt)
+	wallet, err := wallet.Open(*pathOpt, *offlineOpt)
 	if err != nil {
 		return nil, err
 	}
@@ -41,30 +42,28 @@ func openWallet() (*wallet.Wallet, error) {
 
 func main() {
 	rootCmd := &cobra.Command{
-		Use:   "pactus-wallet",
-		Short: "Pactus wallet",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("use --help")
-		},
+		Use:               "pactus-wallet",
+		Short:             "Pactus wallet",
+		CompletionOptions: cobra.CompletionOptions{HiddenDefaultCmd: true},
 	}
 
-	pathArg = rootCmd.Flags().String("PATH", "", "the path to the wallet file")
-	offlineOpt = rootCmd.Flags().Bool("offline", false, "offline mode")
-	serverAddrOpt = rootCmd.Flags().String("server", "", "server gRPC address")
+	// Hide the "help" sub-command
+	rootCmd.SetHelpCommand(&cobra.Command{Hidden: true})
 
-	buildGenerateCmd(rootCmd)
+	pathOpt = rootCmd.PersistentFlags().String("path", "default_wallet", "the path to the wallet file")
+	offlineOpt = rootCmd.PersistentFlags().Bool("offline", false, "offline mode")
+	serverAddrOpt = rootCmd.PersistentFlags().String("server", "", "server gRPC address")
+
+	buildCreateCmd(rootCmd)
 	buildRecoverCmd(rootCmd)
 	buildGetSeedCmd(rootCmd)
 	buildChangePasswordCmd(rootCmd)
-	// transaction commands
 	buildAllTransactionCmd(rootCmd)
-	// address commands
 	buildAllAddrCmd(rootCmd)
-	// history commands
 	buildAllHistoryCmd(rootCmd)
 
 	err := rootCmd.Execute()
 	if err != nil {
-		panic(err)
+		cmd.PrintErrorMsgf("%s", err)
 	}
 }
