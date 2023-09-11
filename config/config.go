@@ -126,13 +126,13 @@ func SaveTestnetConfig(path string, numValidators int) error {
 		"/ip4/94.101.184.118/udp/4002/quic/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
 	conf.GRPC.Enable = true
-	conf.GRPC.Listen = "[::]:5105"
+	conf.GRPC.Listen = "[::]:50052"
 	conf.GRPC.Gateway.Enable = true
-	conf.GRPC.Gateway.Listen = "[::]:80"
+	conf.GRPC.Gateway.Listen = "[::]:8080"
 	conf.HTTP.Enable = true
-	conf.HTTP.Listen = "[::]:8080"
+	conf.HTTP.Listen = "[::]:80"
 	conf.Nanomsg.Enable = true
-	conf.Nanomsg.Listen = "tcp://127.0.0.1:40899"
+	conf.Nanomsg.Listen = "tcp://127.0.0.1:40799"
 
 	return util.WriteFile(path, conf.toTOML())
 }
