@@ -22,7 +22,7 @@
 [network]
 
   # `listens` specifies the addresses and ports where the node will listen for incoming connections from other nodes.
- ## listens = ["/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"]
+ ## listens = ["/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888", "/ip4/0.0.0.0/udp/21888/quic", "/ip6/::/udp/21888/quic"]
 
   # `network_key` specifies the private key filename to use for node authentication and encryption in the p2p protocol.
  ## network_key = "network_key"
@@ -143,7 +143,7 @@
  ## enable = false
 
   # `listen` is the address to listen for incoming connections for gRPC server.
- ## listen = ""
+ ## listen = "50051"
 
   # `grpc.gateway` contains configuration for the gRPC Gateway server
   # which translates a RESTful HTTP API into gRPC.
@@ -154,7 +154,7 @@
    ## enable = false
 
     # `listen` is the address to listen for incoming connections for gRPCGateway server.
-   ## listen = ""
+   ## listen = "8080"
 
     # `enable_cors` indicates whether Cross-Origin Request Sharing (CORS)
     # protection should be enabled or not.
@@ -169,7 +169,7 @@
  ## enable = false
 
   # `listen` is the address address to listen for incoming connections for HTTP server.
- ## listen = ""
+ ## listen = "80"
 
 # Nanomsg configuration.
 [nanomsg]
@@ -179,4 +179,4 @@
  ## enable = false
 
   # `listen` is the address to listen for incoming connections for nanomsg server.
- ## listen = ""
+ ## listen = "40899"
