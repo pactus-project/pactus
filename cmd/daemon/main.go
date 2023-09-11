@@ -1,25 +1,26 @@
 package main
 
 import (
-	"fmt"
-
+	"github.com/pactus-project/pactus/cmd"
 	"github.com/spf13/cobra"
 )
 
 func main() {
 	rootCmd := &cobra.Command{
-		Use:   "pactus-daemon",
-		Short: "Pactus daemon",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("use --help")
-		},
+		Use:               "pactus-daemon",
+		Short:             "Pactus daemon",
+		CompletionOptions: cobra.CompletionOptions{HiddenDefaultCmd: true},
 	}
+
+	// Hide the "help" sub-command
+	rootCmd.SetHelpCommand(&cobra.Command{Hidden: true})
 
 	buildVersionCmd(rootCmd)
 	buildInitCmd(rootCmd)
 	buildStartCmd(rootCmd)
+
 	err := rootCmd.Execute()
 	if err != nil {
-		panic(err)
+		cmd.PrintErrorMsgf("%s", err)
 	}
 }
