@@ -3,7 +3,11 @@ package logger
 import (
 	"encoding/hex"
 	"fmt"
+	"io"
 	"os"
+	"path/filepath"
+
+	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -89,14 +93,28 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 }
 
 func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
+	var writers []io.Writer
+	maxLogSize := 100
+
+	// console writer
+	writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr})
+	logFilename := filepath.Join("./", LogFilename)
+
+	fl := &lumberjack.Logger{
+		Filename: logFilename,
+		MaxSize:  maxLogSize,
+	}
+	writers = append(writers, fl)
+
+	mw := io.MultiWriter(writers...)
 	sl := &SubLogger{
-		logger: zerolog.New(os.Stderr).With().Timestamp().Logger(),
+		logger: zerolog.New(mw).With().Timestamp().Logger(),
 		name:   name,
 		obj:    obj,
 	}
 
 	if getLoggersInst().config.Colorful {
-		sl.logger = sl.logger.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+		sl.logger = sl.logger.Output(mw)
 	}
 
 	lvlStr := getLoggersInst().config.Levels[name]
@@ -108,6 +126,13 @@ func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 	if err == nil {
 		sl.logger.Level(lvl)
 	}
+
+	sl.logger.Info().
+		Bool("fileLogging", true).
+		Bool("jsonLogOutput", true).
+		Str("fileName", logFilename).
+		Int("maxSizeMB", maxLogSize).
+		Msg("logging configured")
 
 	getLoggersInst().subs[name] = sl
 	return sl

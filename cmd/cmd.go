@@ -261,13 +261,13 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 ) {
 	// To make process faster, we update the password after creating the addresses
 	walletPath := PactusDefaultWalletPath(workingDir)
-	wallet, err := wallet.Create(walletPath, mnemonic, "", chain)
+	walletInstance, err := wallet.Create(walletPath, mnemonic, "", chain)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	for i := 0; i < numValidators; i++ {
-		addr, err := wallet.DeriveNewAddress(fmt.Sprintf("Validator address %v", i+1))
+		addr, err := walletInstance.DeriveNewAddress(fmt.Sprintf("Validator address %v", i+1))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -275,7 +275,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	}
 
 	for i := 0; i < numValidators; i++ {
-		addr, err := wallet.DeriveNewAddress(fmt.Sprintf("Reward address %v", i+1))
+		addr, err := walletInstance.DeriveNewAddress(fmt.Sprintf("Reward address %v", i+1))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -299,7 +299,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 			return nil, nil, err
 		}
 	case genesis.Localnet:
-		err = makeLocalGenesis(*wallet).SaveToFile(genPath)
+		err = makeLocalGenesis(*walletInstance).SaveToFile(genPath)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -310,12 +310,12 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		}
 	}
 
-	err = wallet.UpdatePassword("", walletPassword)
+	err = walletInstance.UpdatePassword("", walletPassword)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	err = wallet.Save()
+	err = walletInstance.Save()
 	if err != nil {
 		return nil, nil, err
 	}
@@ -389,11 +389,11 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 
 	walletPath := PactusDefaultWalletPath(workingDir)
-	wallet, err := wallet.Open(walletPath, true)
+	walletInstance, err := wallet.Open(walletPath, true)
 	if err != nil {
 		return nil, nil, err
 	}
-	addrLabels := wallet.AddressLabels()
+	addrLabels := walletInstance.AddressLabels()
 
 	// Create signers
 	if len(addrLabels) < conf.Node.NumValidators {
@@ -404,11 +404,11 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		validatorAddrs[i] = addrLabels[i].Address
 	}
 	signers := make([]crypto.Signer, conf.Node.NumValidators)
-	password, ok := passwordFetcher(wallet)
+	password, ok := passwordFetcher(walletInstance)
 	if !ok {
 		return nil, nil, fmt.Errorf("aborted")
 	}
-	prvKeys, err := wallet.PrivateKeys(password, validatorAddrs)
+	prvKeys, err := walletInstance.PrivateKeys(password, validatorAddrs)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -431,17 +431,17 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		}
 	}
 
-	node, err := node.NewNode(gen, conf, signers, rewardAddrs)
+	nodeInstance, err := node.NewNode(gen, conf, signers, rewardAddrs)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	err = node.Start()
+	err = nodeInstance.Start()
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return node, wallet, nil
+	return nodeInstance, walletInstance, nil
 }
 
 // makeLocalGenesis makes genesis file for the local network.

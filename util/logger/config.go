@@ -1,5 +1,10 @@
 package logger
 
+const (
+	LogDirectory = "logs"
+	LogFilename  = "pactus.log"
+)
+
 type Config struct {
 	Colorful bool              `toml:"colorful"`
 	Levels   map[string]string `toml:"levels"`
