@@ -26,6 +26,7 @@ type sandbox struct {
 	accounts        map[crypto.Address]*sandboxAccount
 	validators      map[crypto.Address]*sandboxValidator
 	params          param.Params
+	height          uint32
 	totalAccounts   int32
 	totalValidators int32
 	totalPower      int64
@@ -43,10 +44,11 @@ type sandboxAccount struct {
 	updated bool
 }
 
-func NewSandbox(store store.Reader, params param.Params,
+func NewSandbox(height uint32, store store.Reader, params param.Params,
 	committee committee.Reader, totalPower int64,
 ) Sandbox {
 	sb := &sandbox{
+		height:     height,
 		store:      store,
 		committee:  committee,
 		totalPower: totalPower,
@@ -218,13 +220,7 @@ func (sb *sandbox) CurrentHeight() uint32 {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	return sb.currentHeight()
-}
-
-func (sb *sandbox) currentHeight() uint32 {
-	h, _ := sb.store.LastCertificate()
-
-	return h + 1
+	return sb.height + 1
 }
 
 func (sb *sandbox) IterateAccounts(
