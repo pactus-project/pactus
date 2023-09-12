@@ -165,7 +165,7 @@ func (tx *Tx) BasicCheck() error {
 			Reason: fmt.Sprintf("invalid amount: %d", tx.Payload().Value()),
 		}
 	}
-	if tx.Fee() < 0 || tx.Fee() >  42*1e15{
+	if tx.Fee() < 0 || tx.Fee() > 42*1e15 {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("invalid fee: %d", tx.Fee()),
 		}
