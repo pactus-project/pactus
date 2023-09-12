@@ -129,7 +129,7 @@ func SaveTestnetConfig(path string, numValidators int) error {
 	conf.GRPC.Listen = "[::]:50052"
 	conf.GRPC.Gateway.Enable = true
 	conf.GRPC.Gateway.Listen = "[::]:8080"
-	conf.HTTP.Enable = true
+	conf.HTTP.Enable = false
 	conf.HTTP.Listen = "[::]:80"
 	conf.Nanomsg.Enable = true
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:40799"
@@ -149,7 +149,7 @@ func SaveLocalnetConfig(path string, numValidators int) error {
 	conf.GRPC.Listen = "[::]:0"
 	conf.GRPC.Gateway.Enable = true
 	conf.GRPC.Gateway.Listen = "[::]:0"
-	conf.HTTP.Enable = true
+	conf.HTTP.Enable = false
 	conf.HTTP.Listen = "[::]:0"
 	conf.Nanomsg.Enable = true
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:0"
