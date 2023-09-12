@@ -3,7 +3,7 @@
 ## Requirements
 
 You need to make sure you have installed [Git](https://git-scm.com/downloads)
-and [Go 1.19 or higher](https://golang.org/) on your machine.
+and [Go 1.21 or higher](https://golang.org/) on your machine.
 If you want to install a GUI application, make sure you have installed
 [GTK+3](https://www.gtk.org/docs/getting-started/) as well.
 
