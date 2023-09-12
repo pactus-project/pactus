@@ -67,15 +67,15 @@ func LoadOrNewState(
 	st.logger = logger.NewSubLogger("_state", st)
 	st.store = store
 
-	// The first account is Treasury Account at the genesis time.
-	// So if we have more account, we are not in the genesis height anymore.
-	if store.TotalAccounts() > 1 {
+	// Check if the number of accounts is greater than the genesis time;
+	// this indicates we are not at the genesis height anymore.
+	if store.TotalAccounts() > int32(len(genDoc.Accounts())) {
 		err := st.tryLoadLastInfo()
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		// We are at the genesis height
+		// We are at the genesis height.
 		err := st.makeGenesisState(genDoc)
 		if err != nil {
 			return nil, err
@@ -94,7 +94,8 @@ func LoadOrNewState(
 }
 
 func (st *state) concreteSandbox() sandbox.Sandbox {
-	return sandbox.NewSandbox(st.store, st.params, st.committee, st.totalPower)
+	return sandbox.NewSandbox(st.lastInfo.BlockHeight(),
+		st.store, st.params, st.committee, st.totalPower)
 }
 
 func (st *state) tryLoadLastInfo() error {
