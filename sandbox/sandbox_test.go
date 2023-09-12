@@ -48,15 +48,14 @@ func setup(t *testing.T) *testData {
 		totalPower += val.Power()
 	}
 
-	sandbox := NewSandbox(store, params, committee, totalPower).(*sandbox)
-
-	assert.Equal(t, sandbox.CurrentHeight(), uint32(1))
 	lastHeight := uint32(21)
 	for i := uint32(1); i < lastHeight; i++ {
 		b := ts.GenerateTestBlock(nil)
 		c := ts.GenerateTestCertificate()
 		store.SaveBlock(i, b, c)
 	}
+	sandbox := NewSandbox(store.LastHeight,
+		store, params, committee, totalPower).(*sandbox)
 	assert.Equal(t, sandbox.CurrentHeight(), lastHeight)
 	assert.Equal(t, sandbox.Params(), params)
 
