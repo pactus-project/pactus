@@ -64,8 +64,6 @@ func setup(t *testing.T) *testData {
 	store3 := store.MockingStore(ts)
 	store4 := store.MockingStore(ts)
 
-	acc := account.NewAccount(0)
-	acc.AddToBalance(21 * 1e14) // 2,100,000,000,000,000
 	val1 := validator.NewValidator(pub1, 0)
 	val2 := validator.NewValidator(pub2, 1)
 	val3 := validator.NewValidator(pub3, 2)
@@ -74,7 +72,15 @@ func setup(t *testing.T) *testData {
 	params.CommitteeSize = 5
 	params.BondInterval = 10
 
-	accs := map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc}
+	acc1 := account.NewAccount(0)
+	acc1.AddToBalance(21 * 1e15) // 21,000,000,000,000,000
+	acc2 := account.NewAccount(1)
+	acc2.AddToBalance(21 * 1e15) // 21,000,000,000,000,000
+
+	accs := map[crypto.Address]*account.Account{
+		crypto.TreasuryAddress: acc1,
+		ts.RandAddress():       acc2,
+	}
 	vals := []*validator.Validator{val1, val2, val3, val4}
 	gnDoc := genesis.MakeGenesis(genTime, accs, vals, params)
 
@@ -647,7 +653,7 @@ func TestLoadState(t *testing.T) {
 	assert.Equal(t, td.state1.committee.Committers(), st1Load.(*state).committee.Committers())
 	assert.Equal(t, td.state1.committee.TotalPower(), st1Load.(*state).committee.TotalPower())
 	assert.Equal(t, td.state1.TotalPower(), st1Load.(*state).TotalPower())
-	assert.Equal(t, td.state1.store.TotalAccounts(), int32(5))
+	assert.Equal(t, td.state1.store.TotalAccounts(), int32(6))
 
 	require.NoError(t, st1Load.CommitBlock(6, b6, c6))
 	require.NoError(t, td.state2.CommitBlock(6, b6, c6))

@@ -143,6 +143,6 @@ func TestExecuteBlock(t *testing.T) {
 		// Check if fee is claimed
 		treasury := sb.Account(crypto.TreasuryAddress)
 		subsidy := td.state1.params.BlockReward
-		assert.Equal(t, treasury.Balance(), 21*1e14-(2*subsidy)) // Two blocks has committed yet
+		assert.Equal(t, treasury.Balance(), 21*1e15-(2*subsidy)) // Two blocks has committed yet
 	})
 }

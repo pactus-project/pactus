@@ -118,10 +118,10 @@ func SaveTestnetConfig(path string, numValidators int) error {
 	conf.Network.Bootstrap.MaxThreshold = 8
 	conf.Network.EnableRelay = true
 	conf.Network.RelayAddrs = []string{
-		"/ip4/172.104.46.145/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
-		"/ip4/172.104.46.145/udp/4002/quic/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
-		"/ip6/2400:8901::f03c:93ff:fe1c:c3ec/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
-		"/ip6/2400:8901::f03c:93ff:fe1c:c3ec/udp/4002/quic/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
+		"/ip4/139.162.153.10/udp/4002/quic/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
+		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
+		"/ip6/2a01:7e01::f03c:93ff:fed2:84c5/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
+		"/ip6/2a01:7e01::f03c:93ff:fed2:84c5/udp/4002/quic/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/94.101.184.118/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 		"/ip4/94.101.184.118/udp/4002/quic/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
