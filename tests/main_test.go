@@ -19,6 +19,7 @@ import (
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -56,6 +57,9 @@ func getSequence(addr crypto.Address) int32 {
 }
 
 func TestMain(m *testing.M) {
+	// Prevent log from messing the workspace
+	logger.LogFilename = util.TempFilePath()
+
 	tSigners = make([][]crypto.Signer, tTotalNodes)
 	tConfigs = make([]*config.Config, tTotalNodes)
 	tNodes = make([]*node.Node, tTotalNodes)

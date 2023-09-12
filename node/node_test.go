@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -19,6 +20,8 @@ import (
 func TestRunningNode(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
+	// Prevent log from messing the workspace
+	logger.LogFilename = util.TempFilePath()
 	pub, _ := ts.RandBLSKeyPair()
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
