@@ -1,6 +1,6 @@
 module github.com/pactus-project/pactus
 
-go 1.21.0
+go 1.21
 
 require (
 	github.com/fxamacker/cbor/v2 v2.5.0
