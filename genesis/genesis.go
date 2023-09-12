@@ -171,6 +171,14 @@ func (gen *Genesis) SaveToFile(file string) error {
 	return util.WriteFile(file, json)
 }
 
+func (gen *Genesis) TotalSupply() int64 {
+	totalSuppyly := int64(0)
+	for _, acc := range gen.data.Accounts {
+		totalSuppyly += acc.Balance
+	}
+	return totalSuppyly
+}
+
 func (gen *Genesis) ChainType() ChainType {
 	if gen.Hash() == TestnetGenesis().Hash() {
 		return Testnet

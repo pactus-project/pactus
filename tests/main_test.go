@@ -113,9 +113,16 @@ func TestMain(m *testing.M) {
 		fmt.Printf("Node %d created.\n", i+1)
 	}
 
-	acc := account.NewAccount(0)
-	acc.AddToBalance(21 * 1e14)
-	accs := map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc}
+	acc1 := account.NewAccount(0)
+	acc1.AddToBalance(21 * 1e14)
+	key, _ := bls.KeyGen(ikm.Bytes(), nil)
+	acc2 := account.NewAccount(1)
+	acc2.AddToBalance(21 * 1e14)
+
+	accs := map[crypto.Address]*account.Account{
+		crypto.TreasuryAddress:    acc1,
+		key.PublicKey().Address(): acc2,
+	}
 
 	vals := make([]*validator.Validator, 4)
 	vals[0] = validator.NewValidator(tSigners[tNodeIdx1][0].PublicKey().(*bls.PublicKey), 0)
@@ -196,8 +203,8 @@ func TestMain(m *testing.M) {
 		total += v.Stake()
 		return false
 	})
-	if total != int64(21*1e14) {
-		panic(fmt.Sprintf("Some coins missed: %v", total-21*1e14))
+	if total != tGenDoc.TotalSupply() {
+		panic(fmt.Sprintf("Some coins missed: %v", tGenDoc.TotalSupply()-total))
 	}
 
 	os.Exit(exitCode)

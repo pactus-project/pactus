@@ -159,13 +159,13 @@ func (tx *Tx) BasicCheck() error {
 			Reason: fmt.Sprintf("invalid sequence: %d", tx.Sequence()),
 		}
 	}
-	// TODO: Define it globally ( 21*1e14 )?
-	if tx.Payload().Value() < 0 || tx.Payload().Value() > 21*1e14 {
+	// TODO: Define it globally (  42*1e15 )?
+	if tx.Payload().Value() < 0 || tx.Payload().Value() > 42*1e15 {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("invalid amount: %d", tx.Payload().Value()),
 		}
 	}
-	if tx.Fee() < 0 || tx.Fee() > 21*1e14 {
+	if tx.Fee() < 0 || tx.Fee() >  42*1e15{
 		return BasicCheckError{
 			Reason: fmt.Sprintf("invalid fee: %d", tx.Fee()),
 		}

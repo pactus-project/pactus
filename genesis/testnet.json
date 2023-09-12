@@ -19,6 +19,10 @@
         {
             "address": "000000000000000000000000000000000000000000",
             "balance": 21000000000000000
+        },
+        {
+            "address": "tpc1pc8uyt3w7napj704leypexr02ws6lx2ggfu9e2j",
+            "balance": 21000000000000000
         }
     ],
     "validators": [
