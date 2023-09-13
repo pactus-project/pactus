@@ -11,8 +11,7 @@ import (
 	lp2pcrypto "github.com/libp2p/go-libp2p/core/crypto"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
-	rcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
-	rcmgrObs "github.com/libp2p/go-libp2p/p2p/host/resource-manager/obs"
+	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -86,17 +85,17 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 	}
 
 	if conf.EnableMetrics {
-		rcmgrObs.MustRegisterWith(prometheus.DefaultRegisterer)
+		lp2prcmgr.MustRegisterWith(prometheus.DefaultRegisterer)
 	}
 
-	str, err := rcmgrObs.NewStatsTraceReporter()
+	str, err := lp2prcmgr.NewStatsTraceReporter()
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
 
-	rmgr, err := rcmgr.NewResourceManager(
-		rcmgr.NewFixedLimiter(rcmgr.DefaultLimits.AutoScale()),
-		rcmgr.WithTraceReporter(str),
+	rmgr, err := lp2prcmgr.NewResourceManager(
+		lp2prcmgr.NewFixedLimiter(lp2prcmgr.DefaultLimits.AutoScale()),
+		lp2prcmgr.WithTraceReporter(str),
 	)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
