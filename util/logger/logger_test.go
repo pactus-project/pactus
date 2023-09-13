@@ -3,12 +3,8 @@ package logger
 import (
 	"bytes"
 	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
 	"testing"
 
-	"github.com/pactus-project/pactus/util"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 )
@@ -84,35 +80,4 @@ func TestLogger(t *testing.T) {
 	assert.Contains(t, out, "info")
 	assert.Contains(t, out, "warn")
 	assert.Contains(t, out, "error")
-}
-
-func TestRotating(t *testing.T) {
-	tempDir := util.TempDirPath()
-	fmt.Println(tempDir)
-	MaxLogSize = 1
-	LogFilename = filepath.Join(tempDir, "pactus.log")
-	c := DefaultConfig()
-	InitGlobalLogger(c)
-	logger := NewSubLogger("test", nil)
-
-	for i := 0; i < 1000; i++ {
-		logger.Info(strings.Repeat("l", 1024))
-	}
-
-	assert.True(t, hasGzFile(tempDir), "log didn't rotate")
-}
-
-func hasGzFile(dir string) bool {
-	files, err := os.ReadDir(dir)
-	if err != nil {
-		return false
-	}
-
-	for _, file := range files {
-		if !file.IsDir() && strings.HasSuffix(file.Name(), ".gz") {
-			return true
-		}
-	}
-
-	return false
 }

@@ -95,9 +95,11 @@ func (handler *blocksRequestHandler) PrepareBundle(m message.Message) *bundle.Bu
 
 func (handler *blocksRequestHandler) respond(msg *message.BlocksResponseMessage, to peer.ID) error {
 	if msg.ResponseCode == message.ResponseCodeRejected {
-		handler.logger.Warn("rejecting block request message", "message", msg, "to", to, "reason", msg.Reason)
+		handler.logger.Warn("rejecting block request message", "message", msg,
+			"to", to.ShortString(), "reason", msg.Reason)
 	} else {
-		handler.logger.Info("responding block request message", "message", msg, "to", to)
+		handler.logger.Info("responding block request message", "message", msg,
+			"to", to.ShortString())
 	}
 
 	return handler.sendTo(msg, to)

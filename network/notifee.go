@@ -39,20 +39,20 @@ func (n *NotifeeService) Connected(lp2pn lp2pnetwork.Network, conn lp2pnetwork.C
 
 			protocols, _ := lp2pn.Peerstore().SupportsProtocols(peerID, n.protocolID)
 			if len(protocols) > 0 {
-				n.logger.Info("connected to peer", "pid", peerID)
+				n.logger.Info("connected to peer", "pid", peerID.ShortString())
 				n.eventChannel <- &ConnectEvent{PeerID: peerID}
 
 				return
 			}
 		}
 
-		n.logger.Info("this node doesn't support stream protocol", "pid", peerID)
+		n.logger.Info("this node doesn't support stream protocol", "pid", peerID.ShortString())
 	}()
 }
 
 func (n *NotifeeService) Disconnected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
 	peerID := conn.RemotePeer()
-	n.logger.Info("disconnected from peer", "pid", peerID)
+	n.logger.Info("disconnected from peer", "pid", peerID.ShortString())
 	n.eventChannel <- &DisconnectEvent{PeerID: peerID}
 }
 
