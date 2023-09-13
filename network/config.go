@@ -9,14 +9,15 @@ import (
 )
 
 type Config struct {
-	Listens       []string         `toml:"listens"`
-	NetworkKey    string           `toml:"network_key"`
-	EnableNAT     bool             `toml:"enable_nat"`
-	EnableRelay   bool             `toml:"enable_relay"`
-	RelayAddrs    []string         `toml:"relay_addresses"`
-	EnableMdns    bool             `toml:"enable_mdns"`
-	EnableMetrics bool             `toml:"enable_metrics"`
-	Bootstrap     *BootstrapConfig `toml:"bootstrap"`
+	Listens            []string         `toml:"listens"`
+	NetworkKey         string           `toml:"network_key"`
+	EnableNAT          bool             `toml:"enable_nat"`
+	EnableRelay        bool             `toml:"enable_relay"`
+	EnableHolePunching bool             `toml:"enable_hole_punching"`
+	RelayAddrs         []string         `toml:"relay_addresses"`
+	EnableMdns         bool             `toml:"enable_mdns"`
+	EnableMetrics      bool             `toml:"enable_metrics"`
+	Bootstrap          *BootstrapConfig `toml:"bootstrap"`
 }
 
 // BootstrapConfig holds all configuration options related to bootstrap nodes.
@@ -51,11 +52,12 @@ func DefaultConfig() *Config {
 			"/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888",
 			"/ip4/0.0.0.0/udp/21888/quic", "/ip6/::/udp/21888/quic",
 		},
-		NetworkKey:    "network_key",
-		EnableNAT:     true,
-		EnableRelay:   false,
-		EnableMdns:    false,
-		EnableMetrics: false,
+		NetworkKey:         "network_key",
+		EnableNAT:          true,
+		EnableRelay:        false,
+		EnableHolePunching: false,
+		EnableMdns:         false,
+		EnableMetrics:      false,
 		Bootstrap: &BootstrapConfig{
 			Addresses:    addresses,
 			MinThreshold: 8,

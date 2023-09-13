@@ -143,6 +143,10 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		)
 	}
 
+	if conf.EnableHolePunching {
+		opts = append(opts, lp2p.EnableHolePunching())
+	}
+
 	host, err := lp2p.New(opts...)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
