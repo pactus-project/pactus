@@ -1,8 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "transaction.proto",
-    "version": "version not set"
+    "title": "Pactus APIs",
+    "version": "1.0"
   },
   "tags": [
     {
@@ -128,7 +128,7 @@
         ]
       }
     },
-    "/v1/blockchain/block_hash/{height}": {
+    "/v1/blockchain/block_hash/height/{height}": {
       "get": {
         "operationId": "Blockchain_GetBlockHash",
         "responses": {
@@ -159,7 +159,7 @@
         ]
       }
     },
-    "/v1/blockchain/block_height/{hash}": {
+    "/v1/blockchain/block_height/hash/{hash}": {
       "get": {
         "operationId": "Blockchain_GetBlockHeight",
         "responses": {
@@ -242,7 +242,7 @@
         ]
       }
     },
-    "/v1/blockchain/validator/{number}": {
+    "/v1/blockchain/validator/number/{number}": {
       "get": {
         "operationId": "Blockchain_GetValidatorByNumber",
         "responses": {
@@ -317,7 +317,7 @@
         ]
       }
     },
-    "/v1/transaction/amount/{amount}/payloadType/{payloadType}": {
+    "/v1/transaction/calculate_fee/amount/{amount}/payload_type/{payloadType}": {
       "get": {
         "operationId": "Transaction_CalculateFee",
         "responses": {
@@ -362,7 +362,7 @@
         ]
       }
     },
-    "/v1/transaction/id/{id}/verbosity/{verbosity}": {
+    "/v1/transaction/get/id/{id}/verbosity/{verbosity}": {
       "get": {
         "operationId": "Transaction_GetTransaction",
         "responses": {
@@ -403,7 +403,7 @@
         ]
       }
     },
-    "/v1/transaction/send_raw_transaction/{data}": {
+    "/v1/transaction/send/data/{data}": {
       "put": {
         "operationId": "Transaction_SendRawTransaction",
         "responses": {

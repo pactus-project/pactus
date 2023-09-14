@@ -1,0 +1,9 @@
+# Example
+# https://github.com/grpc-ecosystem/grpc-gateway/blob/main/examples/internal/proto/examplepb/unannotated_echo_service.swagger.yaml#L4
+openapiOptions:
+  file:
+    - file: "transaction.proto"
+      option:
+        info:
+          title: Pactus APIs
+          version: "1.0"
