@@ -39,11 +39,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if e.strict {
 		// It is possible for a validator to generate multiple sortition transactions
 		// before entering the committee.
-		// In non-strict mode, we do not check the sequence number.
-		if val.Sequence()+1 != trx.Sequence() {
-			return errors.Errorf(errors.ErrInvalidSequence,
-				"expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
-		}
+
 		// Check for the duplicated or expired sortition transactions
 		if sortitionHeight <= val.LastSortitionHeight() {
 			return errors.Errorf(errors.ErrInvalidTx,
@@ -64,7 +60,6 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		}
 	}
 
-	val.IncSequence()
 	val.UpdateLastSortitionHeight(sortitionHeight)
 
 	sb.JoinedToCommittee(pld.Address)

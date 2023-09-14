@@ -93,6 +93,17 @@ func (m *MockStore) Transaction(id tx.ID) (*CommittedTx, error) {
 	return nil, fmt.Errorf("not found")
 }
 
+func (m *MockStore) AnyRecentTransaction(id tx.ID) bool {
+	for _, block := range m.Blocks {
+		for _, trx := range block.Transactions() {
+			if trx.ID() == id {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func (m *MockStore) HasAccount(addr crypto.Address) bool {
 	_, ok := m.Accounts[addr]
 	return ok

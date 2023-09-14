@@ -246,44 +246,6 @@ func (w *Wallet) Stake(addrStr string) (int64, error) {
 	return 0, nil
 }
 
-// AccountSequence returns the sequence of the account associated with the address.
-func (w *Wallet) AccountSequence(addrStr string) (int32, error) {
-	addr, err := crypto.AddressFromString(addrStr)
-	if err != nil {
-		return 0, err
-	}
-
-	if w.client == nil {
-		return 0, ErrOffline
-	}
-
-	acc, err := w.client.getAccount(addr)
-	if err != nil {
-		return 0, err
-	}
-
-	return acc.Sequence, nil
-}
-
-// ValidatorSequence returns the sequence of the validator associated with the address.
-func (w *Wallet) ValidatorSequence(addrStr string) (int32, error) {
-	addr, err := crypto.AddressFromString(addrStr)
-	if err != nil {
-		return 0, err
-	}
-
-	if w.client == nil {
-		return 0, ErrOffline
-	}
-
-	val, err := w.client.getValidator(addr)
-	if err != nil {
-		return 0, err
-	}
-
-	return val.Sequence, nil
-}
-
 // MakeTransferTx creates a new transfer transaction based on the given parameters.
 func (w *Wallet) MakeTransferTx(sender, receiver string, amount int64,
 	options ...TxOption,

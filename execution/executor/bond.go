@@ -24,10 +24,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidAddress,
 			"unable to retrieve sender account")
 	}
-	if senderAcc.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidSequence,
-			"expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
-	}
+
 	receiverVal := sb.Validator(pld.Receiver)
 	if receiverVal == nil {
 		if pld.PublicKey == nil {
@@ -75,7 +72,6 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			"validator's stake can't be less than %v", sb.Params().MinimumStake)
 	}
 
-	senderAcc.IncSequence()
 	senderAcc.SubtractFromBalance(pld.Stake + trx.Fee())
 	receiverVal.AddToStake(pld.Stake)
 	receiverVal.UpdateLastBondingHeight(sb.CurrentHeight())

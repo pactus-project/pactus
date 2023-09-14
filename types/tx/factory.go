@@ -8,12 +8,12 @@ import (
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
-func NewSubsidyTx(stamp hash.Stamp, seq int32,
+func NewSubsidyTx(stamp hash.Stamp, lockTime uint32,
 	receiver crypto.Address, amount int64, memo string,
 ) *Tx {
 	return NewTransferTx(
 		stamp,
-		seq,
+		lockTime,
 		crypto.TreasuryAddress,
 		receiver,
 		amount,
@@ -21,7 +21,7 @@ func NewSubsidyTx(stamp hash.Stamp, seq int32,
 		memo)
 }
 
-func NewTransferTx(stamp hash.Stamp, seq int32,
+func NewTransferTx(stamp hash.Stamp, lockTime uint32,
 	sender, receiver crypto.Address,
 	amount, fee int64, memo string,
 ) *Tx {
@@ -30,10 +30,10 @@ func NewTransferTx(stamp hash.Stamp, seq int32,
 		Receiver: receiver,
 		Amount:   amount,
 	}
-	return NewTx(stamp, seq, pld, fee, memo)
+	return NewTx(stamp, lockTime, pld, fee, memo)
 }
 
-func NewBondTx(stamp hash.Stamp, seq int32,
+func NewBondTx(stamp hash.Stamp, lockTime uint32,
 	sender, receiver crypto.Address,
 	pubKey *bls.PublicKey,
 	stake, fee int64, memo string,
@@ -44,20 +44,20 @@ func NewBondTx(stamp hash.Stamp, seq int32,
 		PublicKey: pubKey,
 		Stake:     stake,
 	}
-	return NewTx(stamp, seq, pld, fee, memo)
+	return NewTx(stamp, lockTime, pld, fee, memo)
 }
 
-func NewUnbondTx(stamp hash.Stamp, seq int32,
+func NewUnbondTx(stamp hash.Stamp, lockTime uint32,
 	val crypto.Address,
 	memo string,
 ) *Tx {
 	pld := &payload.UnbondPayload{
 		Validator: val,
 	}
-	return NewTx(stamp, seq, pld, 0, memo)
+	return NewTx(stamp, lockTime, pld, 0, memo)
 }
 
-func NewWithdrawTx(stamp hash.Stamp, seq int32,
+func NewWithdrawTx(stamp hash.Stamp, lockTime uint32,
 	val crypto.Address,
 	acc crypto.Address,
 	amount, fee int64,
@@ -68,10 +68,10 @@ func NewWithdrawTx(stamp hash.Stamp, seq int32,
 		To:     acc,
 		Amount: amount,
 	}
-	return NewTx(stamp, seq, pld, fee, memo)
+	return NewTx(stamp, lockTime, pld, fee, memo)
 }
 
-func NewSortitionTx(stamp hash.Stamp, seq int32,
+func NewSortitionTx(stamp hash.Stamp, lockTime uint32,
 	addr crypto.Address,
 	proof sortition.Proof,
 ) *Tx {
@@ -79,5 +79,5 @@ func NewSortitionTx(stamp hash.Stamp, seq int32,
 		Address: addr,
 		Proof:   proof,
 	}
-	return NewTx(stamp, seq, pld, 0, "")
+	return NewTx(stamp, lockTime, pld, 0, "")
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
 )
@@ -70,6 +71,10 @@ func (m *MockSandbox) MakeNewAccount(_ crypto.Address) *account.Account {
 
 func (m *MockSandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	m.TestStore.UpdateAccount(addr, acc)
+}
+
+func (m *MockSandbox) AnyRecentTransaction(txID tx.ID) bool {
+	return m.TestStore.AnyRecentTransaction(txID)
 }
 
 func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {

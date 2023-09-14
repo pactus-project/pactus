@@ -15,9 +15,8 @@ type Account struct {
 
 // accountData contains the data associated with a account.
 type accountData struct {
-	Number   int32
-	Sequence int32
-	Balance  int64
+	Number  int32
+	Balance int64
 }
 
 // NewAccount constructs a new account from the given number.
@@ -35,7 +34,6 @@ func FromBytes(data []byte) (*Account, error) {
 	r := bytes.NewReader(data)
 	err := encoding.ReadElements(r,
 		&acc.data.Number,
-		&acc.data.Sequence,
 		&acc.data.Balance)
 	if err != nil {
 		return nil, err
@@ -47,11 +45,6 @@ func FromBytes(data []byte) (*Account, error) {
 // Number returns the number of the account.
 func (acc Account) Number() int32 {
 	return acc.data.Number
-}
-
-// Sequence returns the sequence number of the account.
-func (acc Account) Sequence() int32 {
-	return acc.data.Sequence
 }
 
 // Balance returns the balance of the account.
@@ -69,11 +62,6 @@ func (acc *Account) AddToBalance(amt int64) {
 	acc.data.Balance += amt
 }
 
-// IncSequence increases the sequence anytime this account signs a transaction.
-func (acc *Account) IncSequence() {
-	acc.data.Sequence++
-}
-
 // Hash calculates and returns the hash of the account.
 func (acc *Account) Hash() hash.Hash {
 	bs, err := acc.Bytes()
@@ -85,7 +73,7 @@ func (acc *Account) Hash() hash.Hash {
 
 // SerializeSize returns the size in bytes required to serialize the account.
 func (acc *Account) SerializeSize() int {
-	return 16 // 4+4+8
+	return 12 // 4+8
 }
 
 // Bytes returns the serialized byte representation of the account.
@@ -93,7 +81,6 @@ func (acc *Account) Bytes() ([]byte, error) {
 	w := bytes.NewBuffer(make([]byte, 0, acc.SerializeSize()))
 	err := encoding.WriteElements(w,
 		acc.data.Number,
-		acc.data.Sequence,
 		acc.data.Balance)
 	if err != nil {
 		return nil, err

@@ -23,10 +23,7 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidAddress,
 			"unable to retrieve validator")
 	}
-	if val.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidSequence,
-			"expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
-	}
+
 	if val.UnbondingHeight() > 0 {
 		return errors.Errorf(errors.ErrInvalidHeight,
 			"validator has unbonded at height %v", val.UnbondingHeight())
@@ -51,7 +48,6 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		}
 	}
 
-	val.IncSequence()
 	val.UpdateUnbondingHeight(sb.CurrentHeight())
 
 	// At this point, the validator's power is zero.

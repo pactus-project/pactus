@@ -68,7 +68,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 		trx := tx.NewSortitionTx(td.randStamp, newVal.Sequence(), newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidLockTime)
 	})
 
 	t.Run("Should fail, Invalid proof", func(t *testing.T) {
@@ -93,7 +93,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 
 		// Execute again, should fail
 		err = exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidLockTime)
 	})
 
 	t.Run("Should fail, duplicated sortition", func(t *testing.T) {
@@ -122,7 +122,7 @@ func TestSortitionNonStrictMode(t *testing.T) {
 	td.sandbox.TestAcceptSortition = true
 	trx := tx.NewSortitionTx(td.randStamp, val.Sequence(), val.Address(), proof)
 	err := exe1.Execute(trx, td.sandbox)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
+	assert.Equal(t, errors.Code(err), errors.ErrInvalidLockTime)
 	err = exe2.Execute(trx, td.sandbox)
 	assert.NoError(t, err)
 }

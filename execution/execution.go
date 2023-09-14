@@ -43,14 +43,12 @@ func NewChecker() *Execution {
 }
 
 func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
-	if trx.IsLockTime() {
-		if err := exe.checkLockTime(trx, sb); err != nil {
-			return err
-		}
-	} else {
-		if err := exe.checkStamp(trx, sb); err != nil {
-			return err
-		}
+	if exists := sb.AnyRecentTransaction(trx.ID()); exists {
+		return errors.Errorf(errors.ErrInvalidTx, "the transaction committed before: %v", trx.ID())
+	}
+
+	if err := exe.checkStamp(trx, sb); err != nil {
+		return err
 	}
 
 	if err := exe.checkFee(trx, sb); err != nil {

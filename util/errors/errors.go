@@ -15,7 +15,7 @@ const (
 	ErrInvalidPublicKey
 	ErrInvalidPrivateKey
 	ErrInvalidSignature
-	ErrInvalidSequence
+	ErrInvalidLockTime
 	ErrInvalidTx
 	ErrInvalidMemo
 	ErrInvalidProof
@@ -42,7 +42,7 @@ var messages = map[int]string{
 	ErrInvalidPublicKey:  "invalid public key",
 	ErrInvalidPrivateKey: "invalid private key",
 	ErrInvalidSignature:  "invalid signature",
-	ErrInvalidSequence:   "invalid sequence",
+	ErrInvalidLockTime:   "invalid lock time",
 	ErrInvalidTx:         "invalid transaction",
 	ErrInvalidMemo:       "invalid memo",
 	ErrInvalidProof:      "invalid proof",

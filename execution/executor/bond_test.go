@@ -39,7 +39,7 @@ func TestExecuteBondTx(t *testing.T) {
 			receiverAddr, pub, amt, fee, "invalid sequence")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidLockTime)
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
@@ -94,7 +94,7 @@ func TestExecuteBondTx(t *testing.T) {
 		err := exe.Execute(trx, td.sandbox)
 		assert.NoError(t, err, "Ok")
 		err = exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence, "Execute again, should fail")
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidLockTime, "Execute again, should fail")
 	})
 
 	t.Run("Should fail, public key should not set for existing validators", func(t *testing.T) {

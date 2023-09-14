@@ -65,7 +65,7 @@ message TransactionInfo {
   bytes data = 2;
   int32 version = 3;
   bytes stamp = 4;
-  int32 sequence = 5;
+  uint32 lock_time = 5;
   int64 value = 6;
   int64 fee = 7;
   PayloadType payloadType = 8;

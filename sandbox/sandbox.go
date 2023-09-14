@@ -1,6 +1,7 @@
 package sandbox
 
 import (
+	"github.com/pactus-project/pactus/types/tx"
 	"sync"
 
 	"github.com/pactus-project/pactus/committee"
@@ -133,6 +134,10 @@ func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	}
 	s.account = acc
 	s.updated = true
+}
+
+func (sb *sandbox) AnyRecentTransaction(txID tx.ID) bool {
+	return sb.store.AnyRecentTransaction(txID)
 }
 
 func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {

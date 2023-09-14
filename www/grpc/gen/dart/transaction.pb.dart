@@ -712,7 +712,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
     ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
     ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'version', $pb.PbFieldType.O3)
     ..a<$core.List<$core.int>>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stamp', $pb.PbFieldType.OY)
-    ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sequence', $pb.PbFieldType.O3)
+    ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lockTime', $pb.PbFieldType.OU3)
     ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'value')
     ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
     ..e<PayloadType>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'payloadType', $pb.PbFieldType.OE, protoName: 'payloadType', defaultOrMaker: PayloadType.UNKNOWN, valueOf: PayloadType.valueOf, enumValues: PayloadType.values)
@@ -733,7 +733,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
     $core.List<$core.int>? data,
     $core.int? version,
     $core.List<$core.int>? stamp,
-    $core.int? sequence,
+    $core.int? lockTime,
     $fixnum.Int64? value,
     $fixnum.Int64? fee,
     PayloadType? payloadType,
@@ -759,8 +759,8 @@ class TransactionInfo extends $pb.GeneratedMessage {
     if (stamp != null) {
       _result.stamp = stamp;
     }
-    if (sequence != null) {
-      _result.sequence = sequence;
+    if (lockTime != null) {
+      _result.lockTime = lockTime;
     }
     if (value != null) {
       _result.value = value;
@@ -858,13 +858,13 @@ class TransactionInfo extends $pb.GeneratedMessage {
   void clearStamp() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.int get sequence => $_getIZ(4);
+  $core.int get lockTime => $_getIZ(4);
   @$pb.TagNumber(5)
-  set sequence($core.int v) { $_setSignedInt32(4, v); }
+  set lockTime($core.int v) { $_setUnsignedInt32(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasSequence() => $_has(4);
+  $core.bool hasLockTime() => $_has(4);
   @$pb.TagNumber(5)
-  void clearSequence() => clearField(5);
+  void clearLockTime() => clearField(5);
 
   @$pb.TagNumber(6)
   $fixnum.Int64 get value => $_getI64(5);

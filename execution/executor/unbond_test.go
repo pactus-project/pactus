@@ -26,7 +26,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
 		trx := tx.NewUnbondTx(td.randStamp, val.Sequence()+2, valAddr, "invalid sequence")
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidLockTime)
 	})
 
 	t.Run("Should fail, Inside committee", func(t *testing.T) {

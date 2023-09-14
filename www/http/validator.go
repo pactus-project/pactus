@@ -47,7 +47,6 @@ func (s *Server) writeValidatorTable(w http.ResponseWriter, val *pactus.Validato
 	tm.addRowString("Public Key", val.PublicKey)
 	tm.addRowValAddress("Address", val.Address)
 	tm.addRowInt("Number", int(val.Number))
-	tm.addRowInt("Sequence", int(val.Sequence))
 	tm.addRowAmount("Stake", val.Stake)
 	tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight))
 	tm.addRowInt("LastSortitionHeight", int(val.LastSortitionHeight))

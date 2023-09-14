@@ -24,10 +24,10 @@ func (e *TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		// In non-strict mode, all subsidy transactions for the current height are considered valid.
 		// There may be more than one valid subsidy transaction per height
 		// as there might be multiple proposals at the same height.
-		if uint32(trx.Sequence()) != sb.CurrentHeight() {
-			return errors.Errorf(errors.ErrInvalidSequence,
+		if trx.LockTime() != sb.CurrentHeight() {
+			return errors.Errorf(errors.ErrInvalidLockTime,
 				"subsidy transaction is not for current height, expected :%d, got: %d",
-				sb.CurrentHeight(), trx.Sequence())
+				sb.CurrentHeight(), trx.LockTime())
 		}
 
 		return nil
@@ -47,15 +47,11 @@ func (e *TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			receiverAcc = sb.MakeNewAccount(pld.Receiver)
 		}
 	}
-	if senderAcc.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidSequence,
-			"expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
-	}
+
 	if senderAcc.Balance() < pld.Amount+trx.Fee() {
 		return errors.Error(errors.ErrInsufficientFunds)
 	}
 
-	senderAcc.IncSequence()
 	senderAcc.SubtractFromBalance(pld.Amount + trx.Fee())
 	receiverAcc.AddToBalance(pld.Amount)
 

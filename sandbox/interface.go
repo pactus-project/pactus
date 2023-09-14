@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 )
 
@@ -16,6 +17,8 @@ type Sandbox interface {
 	Account(crypto.Address) *account.Account
 	MakeNewAccount(crypto.Address) *account.Account
 	UpdateAccount(crypto.Address, *account.Account)
+
+	AnyRecentTransaction(txID tx.ID) bool
 
 	Validator(crypto.Address) *validator.Validator
 	MakeNewValidator(*bls.PublicKey) *validator.Validator

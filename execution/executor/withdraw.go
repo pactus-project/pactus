@@ -25,10 +25,6 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			"unable to retrieve validator account")
 	}
 
-	if val.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidSequence,
-			"expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
-	}
 	if val.Stake() < pld.Amount+trx.Fee() {
 		return errors.Error(errors.ErrInsufficientFunds)
 	}
@@ -47,7 +43,6 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		acc = sb.MakeNewAccount(pld.To)
 	}
 
-	val.IncSequence()
 	val.SubtractFromStake(pld.Amount + trx.Fee())
 	acc.AddToBalance(pld.Amount)
 

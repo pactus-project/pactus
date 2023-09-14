@@ -90,7 +90,7 @@ func TestExecuteTransferTx(t *testing.T) {
 			receiverAddr, amt, fee, "invalid sequence")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidLockTime)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -102,7 +102,7 @@ func TestExecuteTransferTx(t *testing.T) {
 
 		// Execute again, should fail
 		err = exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
+		assert.Equal(t, errors.Code(err), errors.ErrInvalidLockTime)
 	})
 
 	assert.Equal(t, td.sandbox.Account(senderAddr).Balance(), senderBalance-(amt+fee))
@@ -135,10 +135,10 @@ func TestTransferNonStrictMode(t *testing.T) {
 	receiver1 := td.RandAddress()
 
 	trx1 := tx.NewSubsidyTx(td.randStamp, int32(td.sandbox.CurrentHeight()), receiver1, 1, "")
-	assert.Equal(t, errors.Code(exe1.Execute(trx1, td.sandbox)), errors.ErrInvalidSequence)
+	assert.Equal(t, errors.Code(exe1.Execute(trx1, td.sandbox)), errors.ErrInvalidLockTime)
 	assert.NoError(t, exe2.Execute(trx1, td.sandbox))
 
 	trx2 := tx.NewSubsidyTx(td.randStamp, int32(td.sandbox.CurrentHeight()+1), receiver1, 1, "")
-	assert.Equal(t, errors.Code(exe1.Execute(trx2, td.sandbox)), errors.ErrInvalidSequence)
-	assert.Equal(t, errors.Code(exe2.Execute(trx2, td.sandbox)), errors.ErrInvalidSequence)
+	assert.Equal(t, errors.Code(exe1.Execute(trx2, td.sandbox)), errors.ErrInvalidLockTime)
+	assert.Equal(t, errors.Code(exe2.Execute(trx2, td.sandbox)), errors.ErrInvalidLockTime)
 }

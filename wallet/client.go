@@ -40,6 +40,15 @@ func (c *grpcClient) getStamp() (hash.Stamp, error) {
 	return h.Stamp(), nil
 }
 
+func (c *grpcClient) getBlockchainInfo() (*pactus.GetBlockchainInfoResponse, error) {
+	info, err := c.blockchainClient.GetBlockchainInfo(context.Background(),
+		&pactus.GetBlockchainInfoRequest{})
+	if err != nil {
+		return nil, err
+	}
+	return info, nil
+}
+
 func (c *grpcClient) getAccount(addr crypto.Address) (*pactus.AccountInfo, error) {
 	res, err := c.blockchainClient.GetAccount(context.Background(),
 		&pactus.GetAccountRequest{Address: addr.String()})
