@@ -232,38 +232,18 @@ func TestStake(t *testing.T) {
 	assert.Equal(t, amt, int64(1))
 }
 
-func TestAccountSequence(t *testing.T) {
-	td := setup(t)
-
-	addr := td.RandAddress()
-	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Sequence: 123}}
-	seq, err := td.wallet.AccountSequence(addr.String())
-	assert.NoError(t, err)
-	assert.Equal(t, seq, int32(123))
-}
-
-func TestValidatorSequence(t *testing.T) {
-	td := setup(t)
-
-	addr := td.RandAddress()
-	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: 123}}
-	seq, err := td.wallet.ValidatorSequence(addr.String())
-	assert.NoError(t, err)
-	assert.Equal(t, seq, int32(123))
-}
-
 func TestSigningTx(t *testing.T) {
 	td := setup(t)
 
 	sender, _ := td.wallet.DeriveNewAddress("testing addr")
 	receiver := td.RandAddress()
 	amount := td.RandInt64(10000)
-	seq := td.RandInt32(10000)
+	lockTime := td.RandUint32NonZero(10000)
 
 	opts := []TxOption{
 		OptionStamp(td.RandStamp().String()),
 		OptionFee(util.CoinToChange(10)),
-		OptionSequence(seq),
+		OptionLockTime(lockTime),
 		OptionMemo("test"),
 	}
 
@@ -285,14 +265,14 @@ func TestMakeTransferTx(t *testing.T) {
 	sender, _ := td.wallet.DeriveNewAddress("testing addr")
 	receiver := td.RandAddress()
 	amount := td.RandInt64(10000)
-	seq := td.RandInt32(10000)
+	lockTime := td.RandUint32NonZero(10000)
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		stamp := td.RandStamp()
 		opts := []TxOption{
 			OptionStamp(stamp.String()),
 			OptionFee(util.CoinToChange(10)),
-			OptionSequence(seq),
+			OptionLockTime(lockTime),
 			OptionMemo("test"),
 		}
 
@@ -300,18 +280,17 @@ func TestMakeTransferTx(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, trx.Stamp(), stamp)
 		assert.Equal(t, trx.Fee(), util.CoinToChange(10))
-		assert.Equal(t, trx.Sequence(), seq)
+		assert.Equal(t, trx.LockTime(), lockTime)
 		assert.Equal(t, trx.Memo(), "test")
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		lastBlockHash := td.RandHash()
 		tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHash.Bytes()}
-		tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Sequence: seq}}
 
 		trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amount)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.Sequence(), seq+1)
+		assert.Equal(t, trx.LockTime(), lockTime+1)
 		assert.Equal(t, trx.Payload().Value(), amount)
 		fee, err := td.wallet.CalculateFee(amount, payload.TypeTransfer)
 		assert.NoError(t, err)
@@ -343,14 +322,14 @@ func TestMakeBondTx(t *testing.T) {
 	sender, _ := td.wallet.DeriveNewAddress("testing addr")
 	receiver := td.RandSigner()
 	amount := td.RandInt64(10000)
-	seq := td.RandInt32(10000)
+	lockTime := td.RandUint32NonZero(10000)
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		stamp := td.RandStamp()
 		opts := []TxOption{
 			OptionStamp(stamp.String()),
 			OptionFee(util.CoinToChange(10)),
-			OptionSequence(seq),
+			OptionLockTime(lockTime),
 			OptionMemo("test"),
 		}
 
@@ -359,18 +338,17 @@ func TestMakeBondTx(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, trx.Stamp(), stamp)
 		assert.Equal(t, trx.Fee(), util.CoinToChange(10))
-		assert.Equal(t, trx.Sequence(), seq)
+		assert.Equal(t, trx.LockTime(), lockTime)
 		assert.Equal(t, trx.Memo(), "test")
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		lastBlockHash := td.RandHash()
-		tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Sequence: seq}}
 		tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHash.Bytes()}
 
 		trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amount)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.Sequence(), seq+1)
+		assert.Equal(t, trx.LockTime(), lockTime+1)
 		assert.True(t, trx.Payload().(*payload.BondPayload).PublicKey.EqualsTo(receiver.PublicKey()))
 		assert.Equal(t, trx.Payload().Value(), amount)
 		fee, err := td.wallet.CalculateFee(amount, payload.TypeBond)
@@ -466,14 +444,14 @@ func TestMakeUnbondTx(t *testing.T) {
 	td := setup(t)
 
 	sender, _ := td.wallet.DeriveNewAddress("testing addr")
-	seq := td.RandInt32(10000)
+	lockTime := td.RandUint32NonZero(10000)
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		stamp := td.RandStamp()
 		opts := []TxOption{
 			OptionStamp(stamp.String()),
 			OptionFee(util.CoinToChange(10)),
-			OptionSequence(seq),
+			OptionLockTime(lockTime),
 			OptionMemo("test"),
 		}
 
@@ -481,18 +459,17 @@ func TestMakeUnbondTx(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, trx.Stamp(), stamp)
 		assert.Zero(t, trx.Fee()) // Fee for unbond transaction is zero
-		assert.Equal(t, trx.Sequence(), seq)
+		assert.Equal(t, trx.LockTime(), lockTime)
 		assert.Equal(t, trx.Memo(), "test")
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		lastBlockHash := td.RandHash()
-		tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: seq}}
 		tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHash.Bytes()}
 
 		trx, err := td.wallet.MakeUnbondTx(sender)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.Sequence(), seq+1)
+		assert.Equal(t, trx.LockTime(), lockTime+1)
 		assert.Zero(t, trx.Payload().Value())
 		assert.Zero(t, trx.Fee())
 		assert.Equal(t, trx.Stamp(), lastBlockHash.Stamp())
@@ -517,14 +494,14 @@ func TestMakeWithdrawTx(t *testing.T) {
 	sender, _ := td.wallet.DeriveNewAddress("testing addr")
 	receiver, _ := td.wallet.DeriveNewAddress("testing addr")
 	amount := td.RandInt64(10000)
-	seq := td.RandInt32(10000)
+	lockTime := td.RandUint32NonZero(10000)
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		stamp := td.RandStamp()
 		opts := []TxOption{
 			OptionStamp(stamp.String()),
 			OptionFee(util.CoinToChange(10)),
-			OptionSequence(seq),
+			OptionLockTime(lockTime),
 			OptionMemo("test"),
 		}
 
@@ -532,18 +509,17 @@ func TestMakeWithdrawTx(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, trx.Stamp(), stamp)
 		assert.Equal(t, trx.Fee(), util.CoinToChange(10)) // Fee for unbond transaction is zero
-		assert.Equal(t, trx.Sequence(), seq)
+		assert.Equal(t, trx.LockTime(), lockTime)
 		assert.Equal(t, trx.Memo(), "test")
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		lastBlockHash := td.RandHash()
-		tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Sequence: seq}}
 		tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHash.Bytes()}
 
 		trx, err := td.wallet.MakeWithdrawTx(sender, receiver, amount)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.Sequence(), seq+1)
+		assert.Equal(t, trx.LockTime(), lockTime+1)
 		assert.Equal(t, trx.Payload().Value(), amount)
 		fee, err := td.wallet.CalculateFee(amount, payload.TypeWithdraw)
 		assert.NoError(t, err)

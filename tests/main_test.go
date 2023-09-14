@@ -36,7 +36,6 @@ var (
 	tTransaction pactus.TransactionClient
 	tNetwork     pactus.NetworkClient
 	tCtx         context.Context
-	tSequences   map[crypto.Address]int32
 )
 
 const (
@@ -48,14 +47,6 @@ const (
 	tCommitteeSize = 7
 )
 
-func incSequence(addr crypto.Address) {
-	tSequences[addr] = tSequences[addr] + 1
-}
-
-func getSequence(addr crypto.Address) int32 {
-	return tSequences[addr]
-}
-
 func TestMain(m *testing.M) {
 	// Prevent log from messing the workspace
 	logger.LogFilename = util.TempFilePath()
@@ -63,7 +54,6 @@ func TestMain(m *testing.M) {
 	tSigners = make([][]crypto.Signer, tTotalNodes)
 	tConfigs = make([]*config.Config, tTotalNodes)
 	tNodes = make([]*node.Node, tTotalNodes)
-	tSequences = make(map[crypto.Address]int32)
 
 	ikm := hash.CalcHash([]byte{})
 	for i := 0; i < tTotalNodes; i++ {

@@ -55,7 +55,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	td.sandbox.UpdateValidator(newVal)
 
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.randStamp, newVal.Sequence()+1, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(td.randStamp, td.sandbox.CurrentHeight()+1, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
@@ -64,29 +64,22 @@ func TestExecuteSortitionTx(t *testing.T) {
 	// Let's add one more block
 	td.sandbox.TestStore.AddTestBlock(td.randHeight + 1)
 
-	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.randStamp, newVal.Sequence(), newVal.Address(), proof)
-		td.sandbox.TestAcceptSortition = true
-		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidLockTime)
-	})
-
 	t.Run("Should fail, Invalid proof", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.randStamp, newVal.Sequence()+1, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(td.randStamp, td.sandbox.CurrentHeight()+2, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = false
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidProof)
 	})
 
 	t.Run("Should fail, Committee has free seats and validator is in the committee", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.randStamp, existingVal.Sequence()+1, existingVal.Address(), proof)
+		trx := tx.NewSortitionTx(td.randStamp, td.sandbox.CurrentHeight()+3, existingVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
 
 	t.Run("Should be ok", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.randStamp, newVal.Sequence()+1, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(td.randStamp, td.sandbox.CurrentHeight()+4, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
 		assert.NoError(t, err)
@@ -97,7 +90,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, duplicated sortition", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.randStamp, newVal.Sequence()+2, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(td.randStamp, td.sandbox.CurrentHeight()+5, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
@@ -120,7 +113,7 @@ func TestSortitionNonStrictMode(t *testing.T) {
 	proof := td.RandProof()
 
 	td.sandbox.TestAcceptSortition = true
-	trx := tx.NewSortitionTx(td.randStamp, val.Sequence(), val.Address(), proof)
+	trx := tx.NewSortitionTx(td.randStamp, td.sandbox.CurrentHeight()+1, val.Address(), proof)
 	err := exe1.Execute(trx, td.sandbox)
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidLockTime)
 	err = exe2.Execute(trx, td.sandbox)
@@ -156,16 +149,16 @@ func TestChangePower1(t *testing.T) {
 
 	td.sandbox.TestParams.CommitteeSize = 4
 	td.sandbox.TestAcceptSortition = true
-	trx1 := tx.NewSortitionTx(td.randStamp, val1.Sequence()+1, val1.Address(), proof1)
+	trx1 := tx.NewSortitionTx(td.randStamp, td.sandbox.CurrentHeight()+1, val1.Address(), proof1)
 	err := exe.Execute(trx1, td.sandbox)
 	assert.NoError(t, err)
 
-	trx2 := tx.NewSortitionTx(td.randStamp, val2.Sequence()+1, val2.Address(), proof2)
+	trx2 := tx.NewSortitionTx(td.randStamp, td.sandbox.CurrentHeight()+2, val2.Address(), proof2)
 	err = exe.Execute(trx2, td.sandbox)
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx, "More than 1/3 of power is joining at the same height")
 
 	// Committee member
-	trx3 := tx.NewSortitionTx(td.randStamp, val3.Sequence()+1, val3.Address(), proof3)
+	trx3 := tx.NewSortitionTx(td.randStamp, td.sandbox.CurrentHeight()+3, val3.Address(), proof3)
 	err = exe.Execute(trx3, td.sandbox)
 	assert.NoError(t, err)
 }
@@ -205,20 +198,20 @@ func TestChangePower2(t *testing.T) {
 
 	td.sandbox.TestParams.CommitteeSize = 7
 	td.sandbox.TestAcceptSortition = true
-	trx1 := tx.NewSortitionTx(td.randStamp, val1.Sequence()+1, val1.Address(), proof1)
+	trx1 := tx.NewSortitionTx(td.randStamp, td.sandbox.CurrentHeight()+1, val1.Address(), proof1)
 	err := exe.Execute(trx1, td.sandbox)
 	assert.NoError(t, err)
 
-	trx2 := tx.NewSortitionTx(td.randStamp, val2.Sequence()+1, val2.Address(), proof2)
+	trx2 := tx.NewSortitionTx(td.randStamp, td.sandbox.CurrentHeight()+2, val2.Address(), proof2)
 	err = exe.Execute(trx2, td.sandbox)
 	assert.NoError(t, err)
 
-	trx3 := tx.NewSortitionTx(td.randStamp, val3.Sequence()+1, val3.Address(), proof3)
+	trx3 := tx.NewSortitionTx(td.randStamp, td.sandbox.CurrentHeight()+3, val3.Address(), proof3)
 	err = exe.Execute(trx3, td.sandbox)
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx, "More than 1/3 of power is leaving at the same height")
 
 	// Committee member
-	trx4 := tx.NewSortitionTx(td.randStamp, val4.Sequence()+1, val4.Address(), proof4)
+	trx4 := tx.NewSortitionTx(td.randStamp, td.sandbox.CurrentHeight()+4, val4.Address(), proof4)
 	err = exe.Execute(trx4, td.sandbox)
 	assert.NoError(t, err)
 }
@@ -256,7 +249,7 @@ func TestOldestDidNotPropose(t *testing.T) {
 		stamp := b.Stamp()
 
 		trx1 := tx.NewSortitionTx(stamp,
-			vals[i].Sequence()+1,
+			td.sandbox.CurrentHeight()+1,
 			vals[i].Address(), td.RandProof())
 		err := exe.Execute(trx1, td.sandbox)
 		assert.NoError(t, err)
@@ -268,11 +261,11 @@ func TestOldestDidNotPropose(t *testing.T) {
 	b := td.sandbox.TestStore.AddTestBlock(height)
 	stamp := b.Stamp()
 
-	trx1 := tx.NewSortitionTx(stamp, vals[7].Sequence()+1, vals[7].Address(), td.RandProof())
+	trx1 := tx.NewSortitionTx(stamp, td.sandbox.CurrentHeight()+1, vals[7].Address(), td.RandProof())
 	err := exe.Execute(trx1, td.sandbox)
 	assert.NoError(t, err)
 
-	trx2 := tx.NewSortitionTx(stamp, vals[8].Sequence()+1, vals[8].Address(), td.RandProof())
+	trx2 := tx.NewSortitionTx(stamp, td.sandbox.CurrentHeight()+2, vals[8].Address(), td.RandProof())
 	err = exe.Execute(trx2, td.sandbox)
 	assert.NoError(t, err)
 	updateCommittee(td)
@@ -282,7 +275,7 @@ func TestOldestDidNotPropose(t *testing.T) {
 	stamp = b.Stamp()
 
 	// Entering validator 16
-	trx3 := tx.NewSortitionTx(stamp, vals[8].Sequence()+2, vals[8].Address(), td.RandProof())
+	trx3 := tx.NewSortitionTx(stamp, td.sandbox.CurrentHeight()+3, vals[8].Address(), td.RandProof())
 	err = exe.Execute(trx3, td.sandbox)
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 }

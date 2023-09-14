@@ -125,7 +125,8 @@ func TestChecker(t *testing.T) {
 	checker := NewChecker()
 	sb := sandbox.MockingSandbox(ts)
 
-	block1000 := sb.TestStore.AddTestBlock(1000)
+	height := uint32(1000)
+	block1000 := sb.TestStore.AddTestBlock(height)
 
 	t.Run("In strict mode transaction should be rejected.", func(t *testing.T) {
 		signer := ts.RandSigner()
@@ -134,7 +135,7 @@ func TestChecker(t *testing.T) {
 		sb.UpdateAccount(signer.Address(), acc)
 		valPub := sb.TestCommitteeSigners[0].PublicKey()
 
-		trx := tx.NewBondTx(block1000.Stamp(), acc.Sequence()+1, signer.Address(),
+		trx := tx.NewBondTx(block1000.Stamp(), height+1, signer.Address(),
 			valPub.Address(), nil, 1000000000, 100000, "")
 		signer.SignMsg(trx)
 		assert.Error(t, executor.Execute(trx, sb))
@@ -250,7 +251,7 @@ func TestFee(t *testing.T) {
 	receiver := ts.RandAddress()
 	stamp := ts.RandStamp()
 	for i, test := range tests {
-		trx := tx.NewTransferTx(stamp, 1, sender, receiver, test.amount, test.fee,
+		trx := tx.NewTransferTx(stamp, sb.CurrentHeight()+1, sender, receiver, test.amount, test.fee,
 			"testing fee")
 		err := exe.checkFee(trx, sb)
 

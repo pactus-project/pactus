@@ -105,7 +105,7 @@ func TestFullPool(t *testing.T) {
 	assert.Equal(t, td.pool.Size(), 0)
 
 	for i := 0; i < len(trxs); i++ {
-		trx := tx.NewTransferTx(block10000.Stamp(), acc.Sequence()+int32(i+1), signer.Address(),
+		trx := tx.NewTransferTx(block10000.Stamp(), td.sandbox.CurrentHeight()+1, signer.Address(),
 			td.RandAddress(), 1000, 1000, "ok")
 		signer.SignMsg(trx)
 		assert.NoError(t, td.pool.AppendTx(trx))
@@ -152,24 +152,24 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	val3.AddToStake(10000000000)
 	td.sandbox.UpdateValidator(val3)
 
-	transferTx := tx.NewTransferTx(block1000000.Stamp(), acc1.Sequence()+1, acc1Signer.Address(),
+	transferTx := tx.NewTransferTx(block1000000.Stamp(), td.sandbox.CurrentHeight()+1, acc1Signer.Address(),
 		td.RandAddress(), 1000, 1000, "send-tx")
 	acc1Signer.SignMsg(transferTx)
 
 	pub, _ := td.RandBLSKeyPair()
-	bondTx := tx.NewBondTx(block1000000.Stamp(), acc1.Sequence()+2, acc1Signer.Address(),
+	bondTx := tx.NewBondTx(block1000000.Stamp(), td.sandbox.CurrentHeight()+2, acc1Signer.Address(),
 		pub.Address(), pub, 1000000000, 100000, "bond-tx")
 	acc1Signer.SignMsg(bondTx)
 
-	unbondTx := tx.NewUnbondTx(block1000000.Stamp(), val1.Sequence()+1, val1.Address(), "unbond-tx")
+	unbondTx := tx.NewUnbondTx(block1000000.Stamp(), td.sandbox.CurrentHeight()+3, val1.Address(), "unbond-tx")
 	val1Signer.SignMsg(unbondTx)
 
-	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(),
+	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), td.sandbox.CurrentHeight()+4, val2.Address(),
 		td.RandAddress(), 1000, 1000, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
 	td.sandbox.TestAcceptSortition = true
-	sortitionTx := tx.NewSortitionTx(block1000000.Stamp(), val3.Sequence()+1, val3.Address(),
+	sortitionTx := tx.NewSortitionTx(block1000000.Stamp(), td.sandbox.CurrentHeight()+4, val3.Address(),
 		td.RandProof())
 	val3Signer.SignMsg(sortitionTx)
 

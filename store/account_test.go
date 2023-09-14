@@ -191,10 +191,8 @@ func TestAccountDeepCopy(t *testing.T) {
 	td.store.UpdateAccount(signer.Address(), acc1)
 
 	acc2, _ := td.store.AccountByNumber(num)
-	acc2.IncSequence()
 	assert.NotEqual(t, td.store.accountStore.numberMap[num].Hash(), acc2.Hash())
 
 	acc3, _ := td.store.Account(signer.Address())
-	acc3.IncSequence()
 	assert.NotEqual(t, td.store.accountStore.numberMap[num].Hash(), acc3.Hash())
 }

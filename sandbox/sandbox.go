@@ -1,8 +1,9 @@
 package sandbox
 
 import (
-	"github.com/pactus-project/pactus/types/tx"
 	"sync"
+
+	"github.com/pactus-project/pactus/types/tx"
 
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"

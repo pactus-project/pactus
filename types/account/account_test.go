@@ -35,7 +35,6 @@ func TestDecoding(t *testing.T) {
 	acc, err := account.FromBytes(d)
 	require.NoError(t, err)
 	assert.Equal(t, acc.Number(), int32(1))
-	assert.Equal(t, acc.Sequence(), int32(2))
 	assert.Equal(t, acc.Balance(), int64(3))
 	d2, _ := acc.Bytes()
 	assert.Equal(t, d, d2)
@@ -48,9 +47,6 @@ func TestIncSequence(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	acc, _ := ts.GenerateTestAccount(100)
-	seq := acc.Sequence()
-	acc.IncSequence()
-	assert.Equal(t, acc.Sequence(), seq+1)
 	assert.Equal(t, acc.Number(), int32(100))
 }
 
@@ -77,7 +73,6 @@ func TestClone(t *testing.T) {
 
 	acc, _ := ts.GenerateTestAccount(100)
 	cloned := acc.Clone()
-	cloned.IncSequence()
 
-	assert.NotEqual(t, acc.Sequence(), cloned.Sequence())
+	assert.NotEqual(t, acc.Hash(), cloned.Hash())
 }

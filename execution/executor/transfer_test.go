@@ -70,7 +70,7 @@ func TestExecuteTransferTx(t *testing.T) {
 	amt, fee := td.randomAmountAndFee(0, senderBalance)
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
-		trx := tx.NewTransferTx(td.randStamp, 1, td.RandAddress(),
+		trx := tx.NewTransferTx(td.randStamp, td.sandbox.CurrentHeight()+1, td.RandAddress(),
 			receiverAddr, amt, fee, "non-existing account")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -78,23 +78,15 @@ func TestExecuteTransferTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewTransferTx(td.randStamp, senderAcc.Sequence()+1, senderAddr,
+		trx := tx.NewTransferTx(td.randStamp, td.sandbox.CurrentHeight()+2, senderAddr,
 			receiverAddr, senderBalance+1, 0, "insufficient balance")
 
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInsufficientFunds)
 	})
 
-	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewTransferTx(td.randStamp, senderAcc.Sequence()+2, senderAddr,
-			receiverAddr, amt, fee, "invalid sequence")
-
-		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidLockTime)
-	})
-
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewTransferTx(td.randStamp, senderAcc.Sequence()+1, senderAddr,
+		trx := tx.NewTransferTx(td.randStamp, td.sandbox.CurrentHeight()+3, senderAddr,
 			receiverAddr, amt, fee, "ok")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -119,7 +111,7 @@ func TestTransferToSelf(t *testing.T) {
 	senderBalance := senderAcc.Balance()
 	amt, fee := td.randomAmountAndFee(0, senderBalance)
 
-	trx := tx.NewTransferTx(td.randStamp, senderAcc.Sequence()+1, senderAddr, senderAddr, amt, fee, "ok")
+	trx := tx.NewTransferTx(td.randStamp, td.sandbox.CurrentHeight()+1, senderAddr, senderAddr, amt, fee, "ok")
 	err := exe.Execute(trx, td.sandbox)
 	assert.NoError(t, err)
 
@@ -134,11 +126,11 @@ func TestTransferNonStrictMode(t *testing.T) {
 
 	receiver1 := td.RandAddress()
 
-	trx1 := tx.NewSubsidyTx(td.randStamp, int32(td.sandbox.CurrentHeight()), receiver1, 1, "")
+	trx1 := tx.NewSubsidyTx(td.randStamp, td.sandbox.CurrentHeight()+1, receiver1, 1, "")
 	assert.Equal(t, errors.Code(exe1.Execute(trx1, td.sandbox)), errors.ErrInvalidLockTime)
 	assert.NoError(t, exe2.Execute(trx1, td.sandbox))
 
-	trx2 := tx.NewSubsidyTx(td.randStamp, int32(td.sandbox.CurrentHeight()+1), receiver1, 1, "")
+	trx2 := tx.NewSubsidyTx(td.randStamp, td.sandbox.CurrentHeight()+2, receiver1, 1, "")
 	assert.Equal(t, errors.Code(exe1.Execute(trx2, td.sandbox)), errors.ErrInvalidLockTime)
 	assert.Equal(t, errors.Code(exe2.Execute(trx2, td.sandbox)), errors.ErrInvalidLockTime)
 }

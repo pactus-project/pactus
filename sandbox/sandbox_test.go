@@ -83,35 +83,28 @@ func TestAccountChange(t *testing.T) {
 		acc, signer := td.GenerateTestAccount(td.RandInt32(10000))
 		addr := signer.Address()
 		bal := acc.Balance()
-		seq := acc.Sequence()
 		td.store.UpdateAccount(addr, acc)
 
 		sbAcc1 := td.sandbox.Account(addr)
 		assert.Equal(t, acc, sbAcc1)
 
-		sbAcc1.IncSequence()
 		sbAcc1.AddToBalance(1)
 
 		assert.False(t, td.sandbox.accounts[addr].updated)
 		assert.Equal(t, td.sandbox.Account(addr).Balance(), bal)
-		assert.Equal(t, td.sandbox.Account(addr).Sequence(), seq)
 		td.sandbox.UpdateAccount(addr, sbAcc1)
 		assert.True(t, td.sandbox.accounts[addr].updated)
 		assert.Equal(t, td.sandbox.Account(addr).Balance(), bal+1)
-		assert.Equal(t, td.sandbox.Account(addr).Sequence(), seq+1)
 
 		t.Run("Update the same account again", func(t *testing.T) {
 			sbAcc2 := td.sandbox.Account(addr)
-			sbAcc2.IncSequence()
 			sbAcc2.AddToBalance(1)
 
 			assert.True(t, td.sandbox.accounts[addr].updated, "it is updated before")
 			assert.Equal(t, td.sandbox.Account(addr).Balance(), bal+1)
-			assert.Equal(t, td.sandbox.Account(addr).Sequence(), seq+1)
 			td.sandbox.UpdateAccount(addr, sbAcc2)
 			assert.True(t, td.sandbox.accounts[addr].updated)
 			assert.Equal(t, td.sandbox.Account(addr).Balance(), bal+2)
-			assert.Equal(t, td.sandbox.Account(addr).Sequence(), seq+2)
 		})
 
 		t.Run("Should be iterated", func(t *testing.T) {
@@ -127,7 +120,6 @@ func TestAccountChange(t *testing.T) {
 		addr := td.RandAddress()
 		acc := td.sandbox.MakeNewAccount(addr)
 
-		acc.IncSequence()
 		acc.AddToBalance(1)
 
 		td.sandbox.UpdateAccount(addr, acc)
@@ -161,35 +153,28 @@ func TestValidatorChange(t *testing.T) {
 		val, _ := td.GenerateTestValidator(td.RandInt32(10000))
 		addr := val.Address()
 		stk := val.Stake()
-		seq := val.Sequence()
 		td.store.UpdateValidator(val)
 
 		sbVal1 := td.sandbox.Validator(addr)
 		assert.Equal(t, val.Hash(), sbVal1.Hash())
 
-		sbVal1.IncSequence()
 		sbVal1.AddToStake(1)
 
 		assert.False(t, td.sandbox.validators[addr].updated)
 		assert.Equal(t, td.sandbox.Validator(addr).Stake(), stk)
-		assert.Equal(t, td.sandbox.Validator(addr).Sequence(), seq)
 		td.sandbox.UpdateValidator(sbVal1)
 		assert.True(t, td.sandbox.validators[sbVal1.Address()].updated)
 		assert.Equal(t, td.sandbox.Validator(addr).Stake(), stk+1)
-		assert.Equal(t, td.sandbox.Validator(addr).Sequence(), seq+1)
 
 		t.Run("Update the same validator again", func(t *testing.T) {
 			sbVal2 := td.sandbox.Validator(addr)
-			sbVal2.IncSequence()
 			sbVal2.AddToStake(1)
 
 			assert.True(t, td.sandbox.validators[addr].updated, "it is updated before")
 			assert.Equal(t, td.sandbox.Validator(addr).Stake(), stk+1)
-			assert.Equal(t, td.sandbox.Validator(addr).Sequence(), seq+1)
 			td.sandbox.UpdateValidator(sbVal2)
 			assert.True(t, td.sandbox.validators[sbVal1.Address()].updated)
 			assert.Equal(t, td.sandbox.Validator(addr).Stake(), stk+2)
-			assert.Equal(t, td.sandbox.Validator(addr).Sequence(), seq+2)
 		})
 
 		t.Run("Should be iterated", func(t *testing.T) {
@@ -205,7 +190,6 @@ func TestValidatorChange(t *testing.T) {
 		pub, _ := td.RandBLSKeyPair()
 		val := td.sandbox.MakeNewValidator(pub)
 
-		val.IncSequence()
 		val.AddToStake(1)
 
 		td.sandbox.UpdateValidator(val)
@@ -315,7 +299,6 @@ func TestAccountDeepCopy(t *testing.T) {
 	t.Run("non existing account", func(t *testing.T) {
 		addr := td.RandAddress()
 		acc := td.sandbox.MakeNewAccount(addr)
-		acc.IncSequence()
 
 		assert.NotEqual(t, td.sandbox.Account(addr), acc)
 	})
@@ -323,7 +306,6 @@ func TestAccountDeepCopy(t *testing.T) {
 	t.Run("existing account", func(t *testing.T) {
 		addr := crypto.TreasuryAddress
 		acc := td.sandbox.Account(addr)
-		acc.IncSequence()
 
 		assert.NotEqual(t, td.sandbox.Account(addr), acc)
 	})
@@ -331,10 +313,8 @@ func TestAccountDeepCopy(t *testing.T) {
 	t.Run("sandbox account", func(t *testing.T) {
 		addr := crypto.TreasuryAddress
 		acc := td.sandbox.Account(addr)
-		acc.IncSequence()
 
 		assert.NotEqual(t, td.sandbox.Account(addr), acc)
-		assert.NotEqual(t, acc.Sequence(), 1)
 	})
 }
 
@@ -344,7 +324,6 @@ func TestValidatorDeepCopy(t *testing.T) {
 	t.Run("non existing validator", func(t *testing.T) {
 		pub, _ := td.RandBLSKeyPair()
 		acc := td.sandbox.MakeNewValidator(pub)
-		acc.IncSequence()
 
 		assert.NotEqual(t, td.sandbox.Validator(pub.Address()), acc)
 	})
@@ -353,17 +332,14 @@ func TestValidatorDeepCopy(t *testing.T) {
 	addr := val0.Address()
 	t.Run("existing validator", func(t *testing.T) {
 		acc := td.sandbox.Validator(addr)
-		acc.IncSequence()
 
 		assert.NotEqual(t, td.sandbox.Validator(addr), acc)
 	})
 
 	t.Run("sandbox validator", func(t *testing.T) {
 		acc := td.sandbox.Validator(addr)
-		acc.IncSequence()
 
 		assert.NotEqual(t, td.sandbox.Validator(addr), acc)
-		assert.NotEqual(t, acc.Sequence(), 1)
 	})
 }
 

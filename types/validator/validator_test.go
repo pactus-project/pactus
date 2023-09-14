@@ -25,7 +25,6 @@ func TestFromBytes(t *testing.T) {
 	val2, err := validator.FromBytes(bs)
 	require.NoError(t, err)
 	assert.Equal(t, val.Address(), val2.Address())
-	assert.Equal(t, val.Sequence(), val2.Sequence())
 	assert.Equal(t, val.Number(), val2.Number())
 	assert.Equal(t, val.Stake(), val2.Stake())
 	assert.Equal(t, val.LastBondingHeight(), val2.LastBondingHeight())
@@ -54,7 +53,6 @@ func TestDecoding(t *testing.T) {
 	val, err := validator.FromBytes(d)
 	require.NoError(t, err)
 	assert.Equal(t, val.Number(), int32(1))
-	assert.Equal(t, val.Sequence(), int32(2))
 	assert.Equal(t, val.Stake(), int64(3))
 	assert.Equal(t, val.LastBondingHeight(), uint32(4))
 	assert.Equal(t, val.UnbondingHeight(), uint32(5))
@@ -66,15 +64,6 @@ func TestDecoding(t *testing.T) {
 	assert.Equal(t, val.Hash(), expected)
 	pub, _ := bls.PublicKeyFromBytes(d[:96])
 	assert.True(t, val.PublicKey().EqualsTo(pub))
-}
-
-func TestIncSequence(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	val, _ := ts.GenerateTestValidator(ts.RandInt32(1000))
-	seq := val.Sequence()
-	val.IncSequence()
-	assert.Equal(t, val.Sequence(), seq+1)
 }
 
 func TestPower(t *testing.T) {
@@ -115,7 +104,8 @@ func TestClone(t *testing.T) {
 
 	val, _ := ts.GenerateTestValidator(100)
 	cloned := val.Clone()
-	cloned.IncSequence()
 
-	assert.NotEqual(t, val.Sequence(), cloned.Sequence())
+	actual, _ := val.Bytes()
+	expected, _ := cloned.Bytes()
+	assert.NotEqual(t, actual, expected)
 }

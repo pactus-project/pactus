@@ -88,18 +88,10 @@ func TestTxIDNoSignatory(t *testing.T) {
 func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	t.Run("Invalid sequence", func(t *testing.T) {
-		trx := tx.NewSortitionTx(ts.RandStamp(), -1, ts.RandAddress(), ts.RandProof())
-		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid sequence: -1",
-		})
-	})
-
 	t.Run("Big memo, Should returns error", func(t *testing.T) {
 		bigMemo := strings.Repeat("a", 65)
 
-		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandInt32NonZero(100),
+		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandUint32NonZero(100),
 			ts.RandAddress(), ts.RandAddress(), ts.RandInt64(1e9), ts.RandInt64(1e6), bigMemo)
 
 		err := trx.BasicCheck()
@@ -111,7 +103,7 @@ func TestBasicCheck(t *testing.T) {
 	t.Run("Invalid payload, Should returns error", func(t *testing.T) {
 		invAddr := ts.RandAddress()
 		invAddr[0] = 2
-		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandInt32NonZero(100),
+		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandUint32NonZero(100),
 			ts.RandAddress(), invAddr, 1e9, ts.RandInt64(1e6), "invalid address")
 
 		err := trx.BasicCheck()
@@ -121,7 +113,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid amount", func(t *testing.T) {
-		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandInt32NonZero(100),
+		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandUint32NonZero(100),
 			ts.RandAddress(), ts.RandAddress(), -1, 1, "invalid amount")
 
 		err := trx.BasicCheck()
@@ -131,7 +123,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid amount", func(t *testing.T) {
-		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandInt32NonZero(100),
+		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandUint32NonZero(100),
 			ts.RandAddress(), ts.RandAddress(), (42*1e15)+1, 1, "invalid amount")
 
 		err := trx.BasicCheck()
@@ -141,7 +133,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
-		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandInt32NonZero(100),
+		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandUint32NonZero(100),
 			ts.RandAddress(), ts.RandAddress(), 1, -1, "invalid fee")
 
 		err := trx.BasicCheck()
@@ -151,7 +143,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
-		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandInt32NonZero(100),
+		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandUint32NonZero(100),
 			ts.RandAddress(), ts.RandAddress(), 1, (42*1e15)+1, "invalid fee")
 
 		err := trx.BasicCheck()
@@ -162,7 +154,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("Invalid signer address", func(t *testing.T) {
 		signer := ts.RandSigner()
-		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandInt32NonZero(100),
+		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandUint32NonZero(100),
 			ts.RandAddress(), ts.RandAddress(), 1, 1, "invalid signer")
 		signer.SignMsg(trx)
 
@@ -306,7 +298,7 @@ func TestInvalidSignature(t *testing.T) {
 
 	t.Run("Invalid sign Bytes", func(t *testing.T) {
 		trx0, _ := ts.GenerateTestUnbondTx()
-		trx := tx.NewUnbondTx(trx0.Stamp(), trx0.Sequence(), trx0.PublicKey().Address(),
+		trx := tx.NewUnbondTx(trx0.Stamp(), trx0.LockTime(), trx0.PublicKey().Address(),
 			"invalidate signature")
 		trx.SetPublicKey(trx0.PublicKey())
 		trx.SetSignature(trx0.Signature())
