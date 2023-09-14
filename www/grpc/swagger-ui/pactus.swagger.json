@@ -190,6 +190,28 @@
         ]
       }
     },
+    "/v1/blockchain/consensus": {
+      "get": {
+        "operationId": "Blockchain_GetConsensusInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetConsensusInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
     "/v1/blockchain/info": {
       "get": {
         "operationId": "Blockchain_GetBlockchainInfo",
@@ -268,6 +290,28 @@
             "format": "int32"
           }
         ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/v1/blockchain/validator_addresses": {
+      "get": {
+        "operationId": "Blockchain_GetValidatorAddresses",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetValidatorAddressesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
         "tags": [
           "Blockchain"
         ]
