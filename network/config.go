@@ -13,7 +13,6 @@ type Config struct {
 	NetworkKey         string           `toml:"network_key"`
 	EnableNAT          bool             `toml:"enable_nat"`
 	EnableRelay        bool             `toml:"enable_relay"`
-	EnableHolePunching bool             `toml:"enable_hole_punching"`
 	RelayAddrs         []string         `toml:"relay_addresses"`
 	EnableMdns         bool             `toml:"enable_mdns"`
 	EnableMetrics      bool             `toml:"enable_metrics"`
@@ -55,7 +54,6 @@ func DefaultConfig() *Config {
 		NetworkKey:         "network_key",
 		EnableNAT:          true,
 		EnableRelay:        false,
-		EnableHolePunching: false,
 		EnableMdns:         false,
 		EnableMetrics:      false,
 		Bootstrap: &BootstrapConfig{

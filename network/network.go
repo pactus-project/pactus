@@ -136,15 +136,12 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		opts = append(opts,
 			lp2p.EnableRelay(),
 			lp2p.EnableAutoRelayWithStaticRelays(static),
+			lp2p.EnableHolePunching(),
 		)
 	} else {
 		opts = append(opts,
 			lp2p.DisableRelay(),
 		)
-	}
-
-	if conf.EnableHolePunching {
-		opts = append(opts, lp2p.EnableHolePunching())
 	}
 
 	host, err := lp2p.New(opts...)

@@ -37,11 +37,6 @@
   # Default is true.
  ## enable_relay = false
 
-  # `enable_hole_punching` indicates whether Hole Punch service  should be enabled or not.
-  # Hole Punch service is an approach to NAT traversal.
-  # Default is true.
- ## enable_hole_punching = false
-
   # `relay_addresses` provides the necessary relay addresses. These should be specified if 'enable_relay' is 'true'.
   # Note: this parameter will be ignored if 'enable_relay' is 'false'.
  ## relay_addresses = []
