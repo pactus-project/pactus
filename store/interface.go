@@ -83,6 +83,7 @@ type Reader interface {
 	BlockHash(height uint32) hash.Hash
 	RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block)
 	Transaction(id tx.ID) (*CommittedTx, error)
+	AnyRecentTransaction(id tx.ID) bool
 	PublicKey(addr crypto.Address) (*bls.PublicKey, error)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)

@@ -7087,10 +7087,10 @@ public final class TransactionOuterClass {
     com.google.protobuf.ByteString getStamp();
 
     /**
-     * <code>int32 sequence = 5 [json_name = "sequence"];</code>
-     * @return The sequence.
+     * <code>uint32 lock_time = 5 [json_name = "lockTime"];</code>
+     * @return The lockTime.
      */
-    int getSequence();
+    int getLockTime();
 
     /**
      * <code>int64 value = 6 [json_name = "value"];</code>
@@ -7360,15 +7360,15 @@ public final class TransactionOuterClass {
       return stamp_;
     }
 
-    public static final int SEQUENCE_FIELD_NUMBER = 5;
-    private int sequence_;
+    public static final int LOCK_TIME_FIELD_NUMBER = 5;
+    private int lockTime_;
     /**
-     * <code>int32 sequence = 5 [json_name = "sequence"];</code>
-     * @return The sequence.
+     * <code>uint32 lock_time = 5 [json_name = "lockTime"];</code>
+     * @return The lockTime.
      */
     @java.lang.Override
-    public int getSequence() {
-      return sequence_;
+    public int getLockTime() {
+      return lockTime_;
     }
 
     public static final int VALUE_FIELD_NUMBER = 6;
@@ -7680,8 +7680,8 @@ public final class TransactionOuterClass {
       if (!stamp_.isEmpty()) {
         output.writeBytes(4, stamp_);
       }
-      if (sequence_ != 0) {
-        output.writeInt32(5, sequence_);
+      if (lockTime_ != 0) {
+        output.writeUInt32(5, lockTime_);
       }
       if (value_ != 0L) {
         output.writeInt64(6, value_);
@@ -7741,9 +7741,9 @@ public final class TransactionOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(4, stamp_);
       }
-      if (sequence_ != 0) {
+      if (lockTime_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(5, sequence_);
+          .computeUInt32Size(5, lockTime_);
       }
       if (value_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
@@ -7810,8 +7810,8 @@ public final class TransactionOuterClass {
           != other.getVersion()) return false;
       if (!getStamp()
           .equals(other.getStamp())) return false;
-      if (getSequence()
-          != other.getSequence()) return false;
+      if (getLockTime()
+          != other.getLockTime()) return false;
       if (getValue()
           != other.getValue()) return false;
       if (getFee()
@@ -7867,8 +7867,8 @@ public final class TransactionOuterClass {
       hash = (53 * hash) + getVersion();
       hash = (37 * hash) + STAMP_FIELD_NUMBER;
       hash = (53 * hash) + getStamp().hashCode();
-      hash = (37 * hash) + SEQUENCE_FIELD_NUMBER;
-      hash = (53 * hash) + getSequence();
+      hash = (37 * hash) + LOCK_TIME_FIELD_NUMBER;
+      hash = (53 * hash) + getLockTime();
       hash = (37 * hash) + VALUE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getValue());
@@ -8043,7 +8043,7 @@ public final class TransactionOuterClass {
 
         stamp_ = com.google.protobuf.ByteString.EMPTY;
 
-        sequence_ = 0;
+        lockTime_ = 0;
 
         value_ = 0L;
 
@@ -8104,7 +8104,7 @@ public final class TransactionOuterClass {
         result.data_ = data_;
         result.version_ = version_;
         result.stamp_ = stamp_;
-        result.sequence_ = sequence_;
+        result.lockTime_ = lockTime_;
         result.value_ = value_;
         result.fee_ = fee_;
         result.payloadType_ = payloadType_;
@@ -8207,8 +8207,8 @@ public final class TransactionOuterClass {
         if (other.getStamp() != com.google.protobuf.ByteString.EMPTY) {
           setStamp(other.getStamp());
         }
-        if (other.getSequence() != 0) {
-          setSequence(other.getSequence());
+        if (other.getLockTime() != 0) {
+          setLockTime(other.getLockTime());
         }
         if (other.getValue() != 0L) {
           setValue(other.getValue());
@@ -8302,7 +8302,7 @@ public final class TransactionOuterClass {
                 break;
               } // case 34
               case 40: {
-                sequence_ = input.readInt32();
+                lockTime_ = input.readUInt32();
 
                 break;
               } // case 40
@@ -8535,33 +8535,33 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private int sequence_ ;
+      private int lockTime_ ;
       /**
-       * <code>int32 sequence = 5 [json_name = "sequence"];</code>
-       * @return The sequence.
+       * <code>uint32 lock_time = 5 [json_name = "lockTime"];</code>
+       * @return The lockTime.
        */
       @java.lang.Override
-      public int getSequence() {
-        return sequence_;
+      public int getLockTime() {
+        return lockTime_;
       }
       /**
-       * <code>int32 sequence = 5 [json_name = "sequence"];</code>
-       * @param value The sequence to set.
+       * <code>uint32 lock_time = 5 [json_name = "lockTime"];</code>
+       * @param value The lockTime to set.
        * @return This builder for chaining.
        */
-      public Builder setSequence(int value) {
+      public Builder setLockTime(int value) {
         
-        sequence_ = value;
+        lockTime_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 sequence = 5 [json_name = "sequence"];</code>
+       * <code>uint32 lock_time = 5 [json_name = "lockTime"];</code>
        * @return This builder for chaining.
        */
-      public Builder clearSequence() {
+      public Builder clearLockTime() {
         
-        sequence_ = 0;
+        lockTime_ = 0;
         onChanged();
         return this;
       }
@@ -9732,35 +9732,35 @@ public final class TransactionOuterClass {
       " \001(\014R\005proof\"-\n\rPayloadUnbond\022\034\n\tvalidato" +
       "r\030\001 \001(\tR\tvalidator\"M\n\017PayloadWithdraw\022\022\n" +
       "\004from\030\001 \001(\tR\004from\022\016\n\002to\030\002 \001(\tR\002to\022\026\n\006amo" +
-      "unt\030\003 \001(\003R\006amount\"\300\004\n\017TransactionInfo\022\016\n" +
+      "unt\030\003 \001(\003R\006amount\"\301\004\n\017TransactionInfo\022\016\n" +
       "\002id\030\001 \001(\014R\002id\022\022\n\004data\030\002 \001(\014R\004data\022\030\n\007ver" +
       "sion\030\003 \001(\005R\007version\022\024\n\005stamp\030\004 \001(\014R\005stam" +
-      "p\022\032\n\010sequence\030\005 \001(\005R\010sequence\022\024\n\005value\030\006" +
-      " \001(\003R\005value\022\020\n\003fee\030\007 \001(\003R\003fee\0225\n\013payload" +
-      "Type\030\010 \001(\0162\023.pactus.PayloadTypeR\013payload" +
-      "Type\0225\n\010transfer\030\036 \001(\0132\027.pactus.PayloadT" +
-      "ransferH\000R\010transfer\022)\n\004bond\030\037 \001(\0132\023.pact" +
-      "us.PayloadBondH\000R\004bond\0228\n\tsortition\030  \001(" +
-      "\0132\030.pactus.PayloadSortitionH\000R\tsortition" +
-      "\022/\n\006unbond\030! \001(\0132\025.pactus.PayloadUnbondH" +
-      "\000R\006unbond\0225\n\010withdraw\030\" \001(\0132\027.pactus.Pay" +
-      "loadWithdrawH\000R\010withdraw\022\022\n\004memo\030\t \001(\tR\004" +
-      "memo\022\035\n\npublic_key\030\n \001(\tR\tpublicKey\022\034\n\ts" +
-      "ignature\030\013 \001(\014R\tsignatureB\t\n\007payload*\203\001\n" +
-      "\013PayloadType\022\013\n\007UNKNOWN\020\000\022\024\n\020TRANSFER_PA" +
-      "YLOAD\020\001\022\020\n\014BOND_PAYLOAD\020\002\022\025\n\021SORTITION_P" +
-      "AYLOAD\020\003\022\022\n\016UNBOND_PAYLOAD\020\004\022\024\n\020WITHDRAW" +
-      "_PAYLOAD\020\005*B\n\024TransactionVerbosity\022\024\n\020TR" +
-      "ANSACTION_DATA\020\000\022\024\n\020TRANSACTION_INFO\020\0012\206" +
-      "\002\n\013Transaction\022O\n\016GetTransaction\022\035.pactu" +
-      "s.GetTransactionRequest\032\036.pactus.GetTran" +
-      "sactionResponse\022I\n\014CalculateFee\022\033.pactus" +
-      ".CalculateFeeRequest\032\034.pactus.CalculateF" +
-      "eeResponse\022[\n\022SendRawTransaction\022!.pactu" +
-      "s.SendRawTransactionRequest\032\".pactus.Sen" +
-      "dRawTransactionResponseBF\n\022pactus.transa" +
-      "ctionZ0github.com/pactus-project/pactus/" +
-      "www/grpc/pactusb\006proto3"
+      "p\022\033\n\tlock_time\030\005 \001(\rR\010lockTime\022\024\n\005value\030" +
+      "\006 \001(\003R\005value\022\020\n\003fee\030\007 \001(\003R\003fee\0225\n\013payloa" +
+      "dType\030\010 \001(\0162\023.pactus.PayloadTypeR\013payloa" +
+      "dType\0225\n\010transfer\030\036 \001(\0132\027.pactus.Payload" +
+      "TransferH\000R\010transfer\022)\n\004bond\030\037 \001(\0132\023.pac" +
+      "tus.PayloadBondH\000R\004bond\0228\n\tsortition\030  \001" +
+      "(\0132\030.pactus.PayloadSortitionH\000R\tsortitio" +
+      "n\022/\n\006unbond\030! \001(\0132\025.pactus.PayloadUnbond" +
+      "H\000R\006unbond\0225\n\010withdraw\030\" \001(\0132\027.pactus.Pa" +
+      "yloadWithdrawH\000R\010withdraw\022\022\n\004memo\030\t \001(\tR" +
+      "\004memo\022\035\n\npublic_key\030\n \001(\tR\tpublicKey\022\034\n\t" +
+      "signature\030\013 \001(\014R\tsignatureB\t\n\007payload*\203\001" +
+      "\n\013PayloadType\022\013\n\007UNKNOWN\020\000\022\024\n\020TRANSFER_P" +
+      "AYLOAD\020\001\022\020\n\014BOND_PAYLOAD\020\002\022\025\n\021SORTITION_" +
+      "PAYLOAD\020\003\022\022\n\016UNBOND_PAYLOAD\020\004\022\024\n\020WITHDRA" +
+      "W_PAYLOAD\020\005*B\n\024TransactionVerbosity\022\024\n\020T" +
+      "RANSACTION_DATA\020\000\022\024\n\020TRANSACTION_INFO\020\0012" +
+      "\206\002\n\013Transaction\022O\n\016GetTransaction\022\035.pact" +
+      "us.GetTransactionRequest\032\036.pactus.GetTra" +
+      "nsactionResponse\022I\n\014CalculateFee\022\033.pactu" +
+      "s.CalculateFeeRequest\032\034.pactus.Calculate" +
+      "FeeResponse\022[\n\022SendRawTransaction\022!.pact" +
+      "us.SendRawTransactionRequest\032\".pactus.Se" +
+      "ndRawTransactionResponseBF\n\022pactus.trans" +
+      "actionZ0github.com/pactus-project/pactus" +
+      "/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -9837,7 +9837,7 @@ public final class TransactionOuterClass {
     internal_static_pactus_TransactionInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_TransactionInfo_descriptor,
-        new java.lang.String[] { "Id", "Data", "Version", "Stamp", "Sequence", "Value", "Fee", "PayloadType", "Transfer", "Bond", "Sortition", "Unbond", "Withdraw", "Memo", "PublicKey", "Signature", "Payload", });
+        new java.lang.String[] { "Id", "Data", "Version", "Stamp", "LockTime", "Value", "Fee", "PayloadType", "Transfer", "Bond", "Sortition", "Unbond", "Withdraw", "Memo", "PublicKey", "Signature", "Payload", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

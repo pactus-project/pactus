@@ -50,7 +50,7 @@ func TestGetTransaction(t *testing.T) {
 		assert.Equal(t, trx1.Fee(), res.Transaction.Fee)
 		assert.Equal(t, trx1.Memo(), res.Transaction.Memo)
 		assert.Equal(t, trx1.Payload().Type(), payload.Type(res.Transaction.PayloadType))
-		assert.Equal(t, trx1.Sequence(), res.Transaction.Sequence)
+		assert.Equal(t, trx1.LockTime(), res.Transaction.LockTime)
 		assert.Equal(t, trx1.Signature().Bytes(), res.Transaction.Signature)
 		assert.Equal(t, trx1.PublicKey().String(), res.Transaction.PublicKey)
 		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).Amount, pld.Transfer.Amount)

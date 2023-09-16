@@ -633,10 +633,6 @@
           "type": "integer",
           "format": "int32"
         },
-        "sequence": {
-          "type": "integer",
-          "format": "int32"
-        },
         "balance": {
           "type": "string",
           "format": "int64"
@@ -736,7 +732,6 @@
         "votes": {
           "type": "array",
           "items": {
-            "type": "object",
             "$ref": "#/definitions/pactusVoteInfo"
           }
         }
@@ -799,7 +794,6 @@
         "txs": {
           "type": "array",
           "items": {
-            "type": "object",
             "$ref": "#/definitions/pactusTransactionInfo"
           }
         }
@@ -835,7 +829,6 @@
         "committeeValidators": {
           "type": "array",
           "items": {
-            "type": "object",
             "$ref": "#/definitions/pactusValidatorInfo"
           }
         }
@@ -847,7 +840,6 @@
         "instances": {
           "type": "array",
           "items": {
-            "type": "object",
             "$ref": "#/definitions/pactusConsensusInfo"
           }
         }
@@ -871,7 +863,6 @@
         "peers": {
           "type": "array",
           "items": {
-            "type": "object",
             "$ref": "#/definitions/pactusPeerInfo"
           }
         },
@@ -1124,9 +1115,9 @@
           "type": "string",
           "format": "byte"
         },
-        "sequence": {
+        "lockTime": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "value": {
           "type": "string",
@@ -1203,10 +1194,6 @@
           "type": "integer",
           "format": "int32"
         },
-        "sequence": {
-          "type": "integer",
-          "format": "int32"
-        },
         "stake": {
           "type": "string",
           "format": "int64"
@@ -1279,7 +1266,6 @@
         "details": {
           "type": "array",
           "items": {
-            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }

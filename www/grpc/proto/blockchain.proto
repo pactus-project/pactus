@@ -87,20 +87,18 @@ message ValidatorInfo {
   bytes data = 2;
   string public_key = 3;
   int32 number = 4;
-  int32 sequence = 5;
-  int64 stake = 6;
-  uint32 last_bonding_height = 7;
-  uint32 last_sortition_height = 8;
-  uint32 unbonding_height = 9;
-  string address = 10;
+  int64 stake = 5;
+  uint32 last_bonding_height = 6;
+  uint32 last_sortition_height = 7;
+  uint32 unbonding_height = 8;
+  string address = 9;
 }
 
 message AccountInfo {
   bytes hash = 1;
   bytes data = 2;
   int32 number = 3;
-  int32 sequence = 4;
-  int64 balance = 5;
+  int64 balance = 4;
 }
 
 message BlockHeaderInfo {

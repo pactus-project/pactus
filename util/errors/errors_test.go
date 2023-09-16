@@ -8,8 +8,8 @@ import (
 )
 
 func TestCode(t *testing.T) {
-	err1 := Error(ErrInsufficientFunds)
-	assert.Equal(t, Code(err1), ErrInsufficientFunds)
+	err1 := Error(ErrInvalidAmount)
+	assert.Equal(t, Code(err1), ErrInvalidAmount)
 
 	err2 := fmt.Errorf("Nope")
 	assert.Equal(t, Code(err2), ErrGeneric)
@@ -24,14 +24,13 @@ func TestMessages(t *testing.T) {
 }
 
 func TestErrorCode(t *testing.T) {
-	err1 := Error(ErrInsufficientFunds)
+	err1 := Error(ErrInvalidAmount)
 	err2 := Errorf(ErrInvalidTx, err1.Error())
 	err3 := Errorf(ErrInvalidBlock, err1.Error())
 
-	assert.Equal(t, Code(err1), ErrInsufficientFunds)
 	assert.Equal(t, Code(err2), ErrInvalidTx)
 	assert.Equal(t, Code(err3), ErrInvalidBlock)
-	assert.Equal(t, "insufficient funds", err1.Error())
-	assert.Equal(t, "invalid transaction: insufficient funds", err2.Error())
-	assert.Equal(t, "invalid block: insufficient funds", err3.Error())
+	assert.Equal(t, "invalid amount", err1.Error())
+	assert.Equal(t, "invalid transaction: invalid amount", err2.Error())
+	assert.Equal(t, "invalid block: invalid amount", err3.Error())
 }

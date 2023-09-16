@@ -243,7 +243,6 @@ func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 		PublicKey:           val.PublicKey().String(),
 		Address:             val.Address().String(),
 		Number:              val.Number(),
-		Sequence:            val.Sequence(),
 		Stake:               val.Stake(),
 		LastBondingHeight:   val.LastBondingHeight(),
 		LastSortitionHeight: val.LastSortitionHeight(),
@@ -254,11 +253,10 @@ func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 func accountToProto(acc *account.Account) *pactus.AccountInfo {
 	data, _ := acc.Bytes()
 	return &pactus.AccountInfo{
-		Hash:     acc.Hash().Bytes(),
-		Data:     data,
-		Number:   acc.Number(),
-		Sequence: acc.Sequence(),
-		Balance:  acc.Balance(),
+		Hash:    acc.Hash().Bytes(),
+		Data:    data,
+		Number:  acc.Number(),
+		Balance: acc.Balance(),
 	}
 }
 

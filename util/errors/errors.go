@@ -15,7 +15,6 @@ const (
 	ErrInvalidPublicKey
 	ErrInvalidPrivateKey
 	ErrInvalidSignature
-	ErrInvalidSequence
 	ErrInvalidTx
 	ErrInvalidMemo
 	ErrInvalidProof
@@ -26,7 +25,6 @@ const (
 	ErrInvalidMessage
 	ErrInvalidConfig
 	ErrDuplicateVote
-	ErrInsufficientFunds
 
 	ErrCount
 )
@@ -42,7 +40,6 @@ var messages = map[int]string{
 	ErrInvalidPublicKey:  "invalid public key",
 	ErrInvalidPrivateKey: "invalid private key",
 	ErrInvalidSignature:  "invalid signature",
-	ErrInvalidSequence:   "invalid sequence",
 	ErrInvalidTx:         "invalid transaction",
 	ErrInvalidMemo:       "invalid memo",
 	ErrInvalidProof:      "invalid proof",
@@ -53,7 +50,6 @@ var messages = map[int]string{
 	ErrInvalidMessage:    "invalid message",
 	ErrInvalidConfig:     "invalid config",
 	ErrDuplicateVote:     "duplicate vote",
-	ErrInsufficientFunds: "insufficient funds",
 }
 
 type withCodeError struct {

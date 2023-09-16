@@ -2230,7 +2230,7 @@ proto.pactus.TransactionInfo.toObject = function(includeInstance, msg) {
     data: msg.getData_asB64(),
     version: jspb.Message.getFieldWithDefault(msg, 3, 0),
     stamp: msg.getStamp_asB64(),
-    sequence: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    lockTime: jspb.Message.getFieldWithDefault(msg, 5, 0),
     value: jspb.Message.getFieldWithDefault(msg, 6, 0),
     fee: jspb.Message.getFieldWithDefault(msg, 7, 0),
     payloadtype: jspb.Message.getFieldWithDefault(msg, 8, 0),
@@ -2295,8 +2295,8 @@ proto.pactus.TransactionInfo.deserializeBinaryFromReader = function(msg, reader)
       msg.setStamp(value);
       break;
     case 5:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setSequence(value);
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setLockTime(value);
       break;
     case 6:
       var value = /** @type {number} */ (reader.readInt64());
@@ -2404,9 +2404,9 @@ proto.pactus.TransactionInfo.serializeBinaryToWriter = function(message, writer)
       f
     );
   }
-  f = message.getSequence();
+  f = message.getLockTime();
   if (f !== 0) {
-    writer.writeInt32(
+    writer.writeUint32(
       5,
       f
     );
@@ -2641,10 +2641,10 @@ proto.pactus.TransactionInfo.prototype.setStamp = function(value) {
 
 
 /**
- * optional int32 sequence = 5;
+ * optional uint32 lock_time = 5;
  * @return {number}
  */
-proto.pactus.TransactionInfo.prototype.getSequence = function() {
+proto.pactus.TransactionInfo.prototype.getLockTime = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
@@ -2653,7 +2653,7 @@ proto.pactus.TransactionInfo.prototype.getSequence = function() {
  * @param {number} value
  * @return {!proto.pactus.TransactionInfo} returns this
  */
-proto.pactus.TransactionInfo.prototype.setSequence = function(value) {
+proto.pactus.TransactionInfo.prototype.setLockTime = function(value) {
   return jspb.Message.setProto3IntField(this, 5, value);
 };
 

@@ -33,7 +33,7 @@ type txData struct {
 	Flags     uint8
 	Version   uint8
 	Stamp     hash.Stamp
-	Sequence  int32
+	LockTime  uint32
 	Fee       int64
 	Memo      string
 	Payload   payload.Payload
@@ -41,29 +41,13 @@ type txData struct {
 	PublicKey crypto.PublicKey
 }
 
-func NewTx(stamp hash.Stamp, seq int32, pld payload.Payload, fee int64,
+func NewTx(stamp hash.Stamp, lockTime uint32, pld payload.Payload, fee int64,
 	memo string,
 ) *Tx {
 	trx := &Tx{
 		data: txData{
 			Stamp:    stamp,
-			Sequence: seq,
-			Version:  versionLatest,
-			Payload:  pld,
-			Fee:      fee,
-			Memo:     memo,
-		},
-	}
-
-	return trx
-}
-
-func NewLockTimeTx(_ /*lockTime*/ uint32, seq int32, pld payload.Payload, fee int64,
-	memo string,
-) *Tx {
-	trx := &Tx{
-		data: txData{
-			Sequence: seq,
+			LockTime: lockTime,
 			Version:  versionLatest,
 			Payload:  pld,
 			Fee:      fee,
@@ -92,8 +76,8 @@ func (tx *Tx) Stamp() hash.Stamp {
 	return tx.data.Stamp
 }
 
-func (tx *Tx) Sequence() int32 {
-	return tx.data.Sequence
+func (tx *Tx) LockTime() uint32 {
+	return tx.data.LockTime
 }
 
 func (tx *Tx) Payload() payload.Payload {
@@ -116,16 +100,8 @@ func (tx *Tx) Signature() crypto.Signature {
 	return tx.data.Signature
 }
 
-func (tx *Tx) LockTime() uint32 {
-	return 0
-}
-
 func (tx *Tx) IsStamped() bool {
 	return true
-}
-
-func (tx *Tx) IsLockTime() bool {
-	return false
 }
 
 func (tx *Tx) SetSignature(sig crypto.Signature) {
@@ -154,9 +130,9 @@ func (tx *Tx) BasicCheck() error {
 			Reason: fmt.Sprintf("invalid version: %d", tx.Version()),
 		}
 	}
-	if tx.Sequence() < 0 {
+	if tx.LockTime() == 0 {
 		return BasicCheckError{
-			Reason: fmt.Sprintf("invalid sequence: %d", tx.Sequence()),
+			Reason: "lock time is not defined",
 		}
 	}
 	// TODO: Define it globally (  42*1e15 )?
@@ -259,7 +235,7 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 // SerializeSize returns the number of bytes it would take to serialize the transaction.
 func (tx *Tx) SerializeSize() int {
 	n := 7 +
-		encoding.VarIntSerializeSize(uint64(tx.Sequence())) +
+		4 + // for tx.LockTime
 		encoding.VarIntSerializeSize(uint64(tx.Fee())) +
 		encoding.VarStringSerializeSize(tx.Memo())
 	if tx.Payload() != nil {
@@ -298,11 +274,7 @@ func (tx *Tx) Encode(w io.Writer) error {
 }
 
 func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
-	err := encoding.WriteElements(w, tx.data.Flags, tx.data.Version, tx.data.Stamp)
-	if err != nil {
-		return err
-	}
-	err = encoding.WriteVarInt(w, uint64(tx.data.Sequence))
+	err := encoding.WriteElements(w, tx.data.Flags, tx.data.Version, tx.data.Stamp, tx.data.LockTime)
 	if err != nil {
 		return err
 	}
@@ -326,16 +298,10 @@ func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
 }
 
 func (tx *Tx) Decode(r io.Reader) error {
-	err := encoding.ReadElements(r, &tx.data.Flags, &tx.data.Version, &tx.data.Stamp)
+	err := encoding.ReadElements(r, &tx.data.Flags, &tx.data.Version, &tx.data.Stamp, &tx.data.LockTime)
 	if err != nil {
 		return err
 	}
-
-	seq, err := encoding.ReadVarInt(r)
-	if err != nil {
-		return err
-	}
-	tx.data.Sequence = int32(seq)
 
 	fee, err := encoding.ReadVarInt(r)
 	if err != nil {
@@ -356,15 +322,15 @@ func (tx *Tx) Decode(r io.Reader) error {
 
 	switch t := payload.Type(payloadType); t {
 	case payload.TypeTransfer:
-		tx.data.Payload = &payload.TransferPayload{}
+		tx.data.Payload = new(payload.TransferPayload)
 	case payload.TypeBond:
-		tx.data.Payload = &payload.BondPayload{}
+		tx.data.Payload = new(payload.BondPayload)
 	case payload.TypeUnbond:
-		tx.data.Payload = &payload.UnbondPayload{}
+		tx.data.Payload = new(payload.UnbondPayload)
 	case payload.TypeWithdraw:
-		tx.data.Payload = &payload.WithdrawPayload{}
+		tx.data.Payload = new(payload.WithdrawPayload)
 	case payload.TypeSortition:
-		tx.data.Payload = &payload.SortitionPayload{}
+		tx.data.Payload = new(payload.SortitionPayload)
 
 	default:
 		return InvalidPayloadTypeError{

@@ -280,16 +280,9 @@ func (st *state) UpdateLastCertificate(cert *certificate.Certificate) error {
 }
 
 func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee int64) *tx.Tx {
-	acc, err := st.store.Account(crypto.TreasuryAddress)
-	if err != nil {
-		// TODO: This can happen when a node is shutting down
-		// We can prevent it by using global context.
-		// Then we can close state before closing store.
-		return nil
-	}
 	stamp := st.lastInfo.BlockHash().Stamp()
-	seq := acc.Sequence() + 1
-	tx := tx.NewSubsidyTx(stamp, seq, rewardAddr, st.params.BlockReward+fee, "")
+	lockTime := st.lastInfo.BlockHeight() + 1
+	tx := tx.NewSubsidyTx(stamp, lockTime, rewardAddr, st.params.BlockReward+fee, "")
 	return tx
 }
 
@@ -328,7 +321,7 @@ func (st *state) ProposeBlock(signer crypto.Signer, rewardAddr crypto.Address, r
 		}
 	}
 
-	subsidyTx := st.createSubsidyTx(rewardAddr, exe.AccumulatedFee())
+	subsidyTx := st.createSubsidyTx(rewardAddr, sb.AccumulatedFee())
 	if subsidyTx == nil {
 		// probably the node is shutting down.
 		st.logger.Error("no subsidy transaction")
@@ -480,7 +473,7 @@ func (st *state) evaluateSortition() bool {
 
 		ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), signer, st.totalPower, val.Power())
 		if ok {
-			trx := tx.NewSortitionTx(st.lastInfo.BlockHash().Stamp(), val.Sequence()+1, val.Address(), proof)
+			trx := tx.NewSortitionTx(st.lastInfo.BlockHash().Stamp(), st.lastInfo.BlockHeight()+1, val.Address(), proof)
 			signer.SignMsg(trx)
 
 			err := st.txPool.AppendTxAndBroadcast(trx)

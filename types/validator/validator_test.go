@@ -25,7 +25,6 @@ func TestFromBytes(t *testing.T) {
 	val2, err := validator.FromBytes(bs)
 	require.NoError(t, err)
 	assert.Equal(t, val.Address(), val2.Address())
-	assert.Equal(t, val.Sequence(), val2.Sequence())
 	assert.Equal(t, val.Number(), val2.Number())
 	assert.Equal(t, val.Stake(), val2.Stake())
 	assert.Equal(t, val.LastBondingHeight(), val2.LastBondingHeight())
@@ -45,36 +44,26 @@ func TestDecoding(t *testing.T) {
 		"8d82fa4fcac04a3b565267685e90db1b01420285d2f8295683c138c092c209479983ba1591370778846681b7b558e061" + // PublicKey
 			"1776208c0718006311c84b4a113335c70d1f5c7c5dd93a5625c4af51c48847abd0b590c055306162d2a03ca1cbf7bcc1" +
 			"01000000" + // Number
-			"02000000" + // Sequence
-			"0300000000000000" + // Stake
-			"04000000" + // LastBondingHeight
-			"05000000" + // UnbondingHeight
-			"06000000") // LastSortitionHeight
+			"0200000000000000" + // Stake
+			"03000000" + // LastBondingHeight
+			"04000000" + // UnbondingHeight
+			"05000000") // LastSortitionHeight
 
 	val, err := validator.FromBytes(d)
 	require.NoError(t, err)
 	assert.Equal(t, val.Number(), int32(1))
-	assert.Equal(t, val.Sequence(), int32(2))
-	assert.Equal(t, val.Stake(), int64(3))
-	assert.Equal(t, val.LastBondingHeight(), uint32(4))
-	assert.Equal(t, val.UnbondingHeight(), uint32(5))
-	assert.Equal(t, val.LastSortitionHeight(), uint32(6))
+	assert.Equal(t, val.Stake(), int64(2))
+	assert.Equal(t, val.LastBondingHeight(), uint32(3))
+	assert.Equal(t, val.UnbondingHeight(), uint32(4))
+	assert.Equal(t, val.LastSortitionHeight(), uint32(5))
 	d2, _ := val.Bytes()
 	assert.Equal(t, d, d2)
 	assert.Equal(t, val.Hash(), hash.CalcHash(d))
-	expected, _ := hash.FromString("6a42857652fbd8a7fbbe63b3d4b177cd4c93de2c29d633e33aa9e83d69831bda")
+	expected, _ := hash.FromString("243e65ae04727f21d5f7618cea9ff8d4bc82fded1179cf8bd9e11a6b99ac42b2")
 	assert.Equal(t, val.Hash(), expected)
 	pub, _ := bls.PublicKeyFromBytes(d[:96])
 	assert.True(t, val.PublicKey().EqualsTo(pub))
-}
-
-func TestIncSequence(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	val, _ := ts.GenerateTestValidator(ts.RandInt32(1000))
-	seq := val.Sequence()
-	val.IncSequence()
-	assert.Equal(t, val.Sequence(), seq+1)
+	assert.Equal(t, val.SerializeSize(), len(d))
 }
 
 func TestPower(t *testing.T) {
@@ -115,7 +104,7 @@ func TestClone(t *testing.T) {
 
 	val, _ := ts.GenerateTestValidator(100)
 	cloned := val.Clone()
-	cloned.IncSequence()
+	cloned.AddToStake(1)
 
-	assert.NotEqual(t, val.Sequence(), cloned.Sequence())
+	assert.NotEqual(t, val.Stake(), cloned.Stake())
 }

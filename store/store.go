@@ -238,6 +238,16 @@ func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {
 	}, nil
 }
 
+// TODO implement Dequeue for this function, for the better performance.
+func (s *store) AnyRecentTransaction(id tx.ID) bool {
+	s.lk.Lock()
+	defer s.lk.Unlock()
+
+	pos, _ := s.txStore.tx(id)
+
+	return pos != nil
+}
+
 func (s *store) HasAccount(addr crypto.Address) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()

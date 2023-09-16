@@ -981,12 +981,11 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
-    ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sequence', $pb.PbFieldType.O3)
-    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stake')
-    ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBondingHeight', $pb.PbFieldType.OU3)
-    ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSortitionHeight', $pb.PbFieldType.OU3)
-    ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unbondingHeight', $pb.PbFieldType.OU3)
-    ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
+    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stake')
+    ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBondingHeight', $pb.PbFieldType.OU3)
+    ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSortitionHeight', $pb.PbFieldType.OU3)
+    ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unbondingHeight', $pb.PbFieldType.OU3)
+    ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
     ..hasRequiredFields = false
   ;
 
@@ -996,7 +995,6 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     $core.List<$core.int>? data,
     $core.String? publicKey,
     $core.int? number,
-    $core.int? sequence,
     $fixnum.Int64? stake,
     $core.int? lastBondingHeight,
     $core.int? lastSortitionHeight,
@@ -1015,9 +1013,6 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     }
     if (number != null) {
       _result.number = number;
-    }
-    if (sequence != null) {
-      _result.sequence = sequence;
     }
     if (stake != null) {
       _result.stake = stake;
@@ -1094,58 +1089,49 @@ class ValidatorInfo extends $pb.GeneratedMessage {
   void clearNumber() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.int get sequence => $_getIZ(4);
+  $fixnum.Int64 get stake => $_getI64(4);
   @$pb.TagNumber(5)
-  set sequence($core.int v) { $_setSignedInt32(4, v); }
+  set stake($fixnum.Int64 v) { $_setInt64(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasSequence() => $_has(4);
+  $core.bool hasStake() => $_has(4);
   @$pb.TagNumber(5)
-  void clearSequence() => clearField(5);
+  void clearStake() => clearField(5);
 
   @$pb.TagNumber(6)
-  $fixnum.Int64 get stake => $_getI64(5);
+  $core.int get lastBondingHeight => $_getIZ(5);
   @$pb.TagNumber(6)
-  set stake($fixnum.Int64 v) { $_setInt64(5, v); }
+  set lastBondingHeight($core.int v) { $_setUnsignedInt32(5, v); }
   @$pb.TagNumber(6)
-  $core.bool hasStake() => $_has(5);
+  $core.bool hasLastBondingHeight() => $_has(5);
   @$pb.TagNumber(6)
-  void clearStake() => clearField(6);
+  void clearLastBondingHeight() => clearField(6);
 
   @$pb.TagNumber(7)
-  $core.int get lastBondingHeight => $_getIZ(6);
+  $core.int get lastSortitionHeight => $_getIZ(6);
   @$pb.TagNumber(7)
-  set lastBondingHeight($core.int v) { $_setUnsignedInt32(6, v); }
+  set lastSortitionHeight($core.int v) { $_setUnsignedInt32(6, v); }
   @$pb.TagNumber(7)
-  $core.bool hasLastBondingHeight() => $_has(6);
+  $core.bool hasLastSortitionHeight() => $_has(6);
   @$pb.TagNumber(7)
-  void clearLastBondingHeight() => clearField(7);
+  void clearLastSortitionHeight() => clearField(7);
 
   @$pb.TagNumber(8)
-  $core.int get lastSortitionHeight => $_getIZ(7);
+  $core.int get unbondingHeight => $_getIZ(7);
   @$pb.TagNumber(8)
-  set lastSortitionHeight($core.int v) { $_setUnsignedInt32(7, v); }
+  set unbondingHeight($core.int v) { $_setUnsignedInt32(7, v); }
   @$pb.TagNumber(8)
-  $core.bool hasLastSortitionHeight() => $_has(7);
+  $core.bool hasUnbondingHeight() => $_has(7);
   @$pb.TagNumber(8)
-  void clearLastSortitionHeight() => clearField(8);
+  void clearUnbondingHeight() => clearField(8);
 
   @$pb.TagNumber(9)
-  $core.int get unbondingHeight => $_getIZ(8);
+  $core.String get address => $_getSZ(8);
   @$pb.TagNumber(9)
-  set unbondingHeight($core.int v) { $_setUnsignedInt32(8, v); }
+  set address($core.String v) { $_setString(8, v); }
   @$pb.TagNumber(9)
-  $core.bool hasUnbondingHeight() => $_has(8);
+  $core.bool hasAddress() => $_has(8);
   @$pb.TagNumber(9)
-  void clearUnbondingHeight() => clearField(9);
-
-  @$pb.TagNumber(10)
-  $core.String get address => $_getSZ(9);
-  @$pb.TagNumber(10)
-  set address($core.String v) { $_setString(9, v); }
-  @$pb.TagNumber(10)
-  $core.bool hasAddress() => $_has(9);
-  @$pb.TagNumber(10)
-  void clearAddress() => clearField(10);
+  void clearAddress() => clearField(9);
 }
 
 class AccountInfo extends $pb.GeneratedMessage {
@@ -1153,8 +1139,7 @@ class AccountInfo extends $pb.GeneratedMessage {
     ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash', $pb.PbFieldType.OY)
     ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
     ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
-    ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sequence', $pb.PbFieldType.O3)
-    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'balance')
+    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'balance')
     ..hasRequiredFields = false
   ;
 
@@ -1163,7 +1148,6 @@ class AccountInfo extends $pb.GeneratedMessage {
     $core.List<$core.int>? hash,
     $core.List<$core.int>? data,
     $core.int? number,
-    $core.int? sequence,
     $fixnum.Int64? balance,
   }) {
     final _result = create();
@@ -1175,9 +1159,6 @@ class AccountInfo extends $pb.GeneratedMessage {
     }
     if (number != null) {
       _result.number = number;
-    }
-    if (sequence != null) {
-      _result.sequence = sequence;
     }
     if (balance != null) {
       _result.balance = balance;
@@ -1233,22 +1214,13 @@ class AccountInfo extends $pb.GeneratedMessage {
   void clearNumber() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.int get sequence => $_getIZ(3);
+  $fixnum.Int64 get balance => $_getI64(3);
   @$pb.TagNumber(4)
-  set sequence($core.int v) { $_setSignedInt32(3, v); }
+  set balance($fixnum.Int64 v) { $_setInt64(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasSequence() => $_has(3);
+  $core.bool hasBalance() => $_has(3);
   @$pb.TagNumber(4)
-  void clearSequence() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $fixnum.Int64 get balance => $_getI64(4);
-  @$pb.TagNumber(5)
-  set balance($fixnum.Int64 v) { $_setInt64(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasBalance() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearBalance() => clearField(5);
+  void clearBalance() => clearField(4);
 }
 
 class BlockHeaderInfo extends $pb.GeneratedMessage {

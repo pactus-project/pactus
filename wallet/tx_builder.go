@@ -23,9 +23,9 @@ func OptionStamp(stamp string) func(builder *txBuilder) error {
 	}
 }
 
-func OptionSequence(seq int32) func(builder *txBuilder) error {
+func OptionLockTime(lockTime uint32) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
-		builder.seq = seq
+		builder.lockTime = lockTime
 		return nil
 	}
 }
@@ -45,16 +45,16 @@ func OptionMemo(memo string) func(builder *txBuilder) error {
 }
 
 type txBuilder struct {
-	client *grpcClient
-	stamp  *hash.Stamp
-	from   *crypto.Address
-	to     *crypto.Address
-	pub    *bls.PublicKey
-	typ    payload.Type
-	seq    int32
-	amount int64
-	fee    int64
-	memo   string
+	client   *grpcClient
+	stamp    *hash.Stamp
+	from     *crypto.Address
+	to       *crypto.Address
+	pub      *bls.PublicKey
+	typ      payload.Type
+	lockTime uint32
+	amount   int64
+	fee      int64
+	memo     string
 }
 
 func newTxBuilder(client *grpcClient, options ...TxOption) (*txBuilder, error) {
@@ -94,11 +94,6 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 		return nil, err
 	}
 
-	err = m.setSequence()
-	if err != nil {
-		return nil, err
-	}
-
 	err = m.setFee()
 	if err != nil {
 		return nil, err
@@ -107,7 +102,7 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 	var trx *tx.Tx
 	switch m.typ {
 	case payload.TypeTransfer:
-		trx = tx.NewTransferTx(*m.stamp, m.seq, *m.from, *m.to, m.amount, m.fee, m.memo)
+		trx = tx.NewTransferTx(*m.stamp, m.lockTime, *m.from, *m.to, m.amount, m.fee, m.memo)
 	case payload.TypeBond:
 		{
 			pub := m.pub
@@ -116,12 +111,12 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 				// validator exists
 				pub = nil
 			}
-			trx = tx.NewBondTx(*m.stamp, m.seq, *m.from, *m.to, pub, m.amount, m.fee, m.memo)
+			trx = tx.NewBondTx(*m.stamp, m.lockTime, *m.from, *m.to, pub, m.amount, m.fee, m.memo)
 		}
 	case payload.TypeUnbond:
-		trx = tx.NewUnbondTx(*m.stamp, m.seq, *m.from, m.memo)
+		trx = tx.NewUnbondTx(*m.stamp, m.lockTime, *m.from, m.memo)
 	case payload.TypeWithdraw:
-		trx = tx.NewWithdrawTx(*m.stamp, m.seq, *m.from, *m.to, m.amount, m.fee, m.memo)
+		trx = tx.NewWithdrawTx(*m.stamp, m.lockTime, *m.from, *m.to, m.amount, m.fee, m.memo)
 	}
 
 	return trx, nil
@@ -133,44 +128,16 @@ func (m *txBuilder) setStamp() error {
 			return ErrOffline
 		}
 
-		stamp, err := m.client.getStamp()
+		info, err := m.client.getBlockchainInfo()
 		if err != nil {
 			return err
 		}
+		h, _ := hash.FromBytes(info.LastBlockHash)
+		stamp := h.Stamp()
 		m.stamp = &stamp
+		m.lockTime = info.LastBlockHeight + 1
 	}
 
-	return nil
-}
-
-func (m *txBuilder) setSequence() error {
-	if m.seq == 0 {
-		if m.client == nil {
-			return ErrOffline
-		}
-
-		switch m.typ {
-		case payload.TypeTransfer,
-			payload.TypeBond:
-			{
-				acc, err := m.client.getAccount(*m.from)
-				if err != nil {
-					return err
-				}
-				m.seq = acc.Sequence + 1
-			}
-
-		case payload.TypeUnbond,
-			payload.TypeWithdraw:
-			{
-				val, err := m.client.getValidator(*m.from)
-				if err != nil {
-					return err
-				}
-				m.seq = val.Sequence + 1
-			}
-		}
-	}
 	return nil
 }
 
