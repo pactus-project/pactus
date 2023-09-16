@@ -18,6 +18,7 @@ type Sandbox interface {
 	MakeNewAccount(crypto.Address) *account.Account
 	UpdateAccount(crypto.Address, *account.Account)
 
+	CommitTransaction(trx *tx.Tx)
 	AnyRecentTransaction(txID tx.ID) bool
 
 	Validator(crypto.Address) *validator.Validator
@@ -27,6 +28,7 @@ type Sandbox interface {
 	IsJoinedCommittee(crypto.Address) bool
 	UpdatePowerDelta(delta int64)
 	PowerDelta() int64
+	AccumulatedFee() int64
 
 	VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool
 	Committee() committee.Reader

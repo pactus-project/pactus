@@ -321,7 +321,7 @@ func (st *state) ProposeBlock(signer crypto.Signer, rewardAddr crypto.Address, r
 		}
 	}
 
-	subsidyTx := st.createSubsidyTx(rewardAddr, exe.AccumulatedFee())
+	subsidyTx := st.createSubsidyTx(rewardAddr, sb.AccumulatedFee())
 	if subsidyTx == nil {
 		// probably the node is shutting down.
 		st.logger.Error("no subsidy transaction")

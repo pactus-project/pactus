@@ -31,8 +31,8 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if e.strict {
 		// In strict mode, the unbond transaction will be rejected if the
 		// validator is in the committee.
-		// In non-strict mode, we accept it and keep it inside the transaction pool to
-		// process it when the validator leaves the committee.
+		// In non-strict mode, they are added to the transaction pool and
+		// processed once eligible.
 		if sb.Committee().Contains(pld.Validator) {
 			return errors.Errorf(errors.ErrInvalidTx,
 				"validator %v is in committee", pld.Validator)
@@ -40,8 +40,8 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 		// In strict mode, unbond transactions will be rejected if a validator is
 		// going to be in the committee for the next height.
-		// In non-strict mode, we accept it and keep it inside the transaction pool to
-		// process it when the validator leaves the committee.
+		// In non-strict mode, they are added to the transaction pool and
+		// processed once eligible.
 		if sb.IsJoinedCommittee(pld.Validator) {
 			return errors.Errorf(errors.ErrInvalidHeight,
 				"validator %v joins committee in the next height", pld.Validator)
@@ -57,9 +57,4 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	sb.UpdateValidator(val)
 
 	return nil
-}
-
-// Fee will return unbond execution fee.
-func (e *UnbondExecutor) Fee() int64 {
-	return 0
 }

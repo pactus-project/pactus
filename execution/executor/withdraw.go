@@ -8,7 +8,6 @@ import (
 )
 
 type WithdrawExecutor struct {
-	fee    int64
 	strict bool
 }
 
@@ -26,7 +25,7 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	}
 
 	if val.Stake() < pld.Amount+trx.Fee() {
-		return errors.Error(errors.ErrInsufficientFunds)
+		return ErrInsufficientFunds
 	}
 	if val.UnbondingHeight() == 0 {
 		return errors.Errorf(errors.ErrInvalidHeight,
@@ -49,11 +48,5 @@ func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	sb.UpdateValidator(val)
 	sb.UpdateAccount(pld.To, acc)
 
-	e.fee = trx.Fee()
-
 	return nil
-}
-
-func (e *WithdrawExecutor) Fee() int64 {
-	return e.fee
 }

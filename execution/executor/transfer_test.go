@@ -68,9 +68,10 @@ func TestExecuteTransferTx(t *testing.T) {
 	senderBalance := senderAcc.Balance()
 	receiverAddr := td.RandAddress()
 	amt, fee := td.randomAmountAndFee(0, senderBalance)
+	lockTime := td.sandbox.CurrentHeight()
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
-		trx := tx.NewTransferTx(td.randStamp, td.sandbox.CurrentHeight()+1, td.RandAddress(),
+		trx := tx.NewTransferTx(td.randStamp, lockTime, td.RandAddress(),
 			receiverAddr, amt, fee, "non-existing account")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -78,23 +79,19 @@ func TestExecuteTransferTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewTransferTx(td.randStamp, td.sandbox.CurrentHeight()+2, senderAddr,
+		trx := tx.NewTransferTx(td.randStamp, lockTime, senderAddr,
 			receiverAddr, senderBalance+1, 0, "insufficient balance")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInsufficientFunds)
+		assert.ErrorIs(t, err, ErrInsufficientFunds)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewTransferTx(td.randStamp, td.sandbox.CurrentHeight()+3, senderAddr,
+		trx := tx.NewTransferTx(td.randStamp, lockTime, senderAddr,
 			receiverAddr, amt, fee, "ok")
 
 		err := exe.Execute(trx, td.sandbox)
 		assert.NoError(t, err)
-
-		// Execute again, should fail
-		err = exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidLockTime)
 	})
 
 	assert.Equal(t, td.sandbox.Account(senderAddr).Balance(), senderBalance-(amt+fee))
@@ -110,27 +107,11 @@ func TestTransferToSelf(t *testing.T) {
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
 	amt, fee := td.randomAmountAndFee(0, senderBalance)
+	lockTime := td.sandbox.CurrentHeight()
 
-	trx := tx.NewTransferTx(td.randStamp, td.sandbox.CurrentHeight()+1, senderAddr, senderAddr, amt, fee, "ok")
+	trx := tx.NewTransferTx(td.randStamp, lockTime, senderAddr, senderAddr, amt, fee, "ok")
 	err := exe.Execute(trx, td.sandbox)
 	assert.NoError(t, err)
 
 	assert.Equal(t, td.sandbox.Account(senderAddr).Balance(), senderBalance-fee) // Fee should be deducted
-	assert.Equal(t, exe.Fee(), fee)
-}
-
-func TestTransferNonStrictMode(t *testing.T) {
-	td := setup(t)
-	exe1 := NewTransferExecutor(true)
-	exe2 := NewTransferExecutor(false)
-
-	receiver1 := td.RandAddress()
-
-	trx1 := tx.NewSubsidyTx(td.randStamp, td.sandbox.CurrentHeight()+1, receiver1, 1, "")
-	assert.Equal(t, errors.Code(exe1.Execute(trx1, td.sandbox)), errors.ErrInvalidLockTime)
-	assert.NoError(t, exe2.Execute(trx1, td.sandbox))
-
-	trx2 := tx.NewSubsidyTx(td.randStamp, td.sandbox.CurrentHeight()+2, receiver1, 1, "")
-	assert.Equal(t, errors.Code(exe1.Execute(trx2, td.sandbox)), errors.ErrInvalidLockTime)
-	assert.Equal(t, errors.Code(exe2.Execute(trx2, td.sandbox)), errors.ErrInvalidLockTime)
 }

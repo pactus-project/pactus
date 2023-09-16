@@ -93,5 +93,6 @@ func (acc *Account) Bytes() ([]byte, error) {
 func (acc *Account) Clone() *Account {
 	cloned := new(Account)
 	*cloned = *acc
+
 	return cloned
 }

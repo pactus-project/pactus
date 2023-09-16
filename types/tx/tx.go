@@ -130,6 +130,11 @@ func (tx *Tx) BasicCheck() error {
 			Reason: fmt.Sprintf("invalid version: %d", tx.Version()),
 		}
 	}
+	if tx.LockTime() == 0 {
+		return BasicCheckError{
+			Reason: "lock time is not defined",
+		}
+	}
 	// TODO: Define it globally (  42*1e15 )?
 	if tx.Payload().Value() < 0 || tx.Payload().Value() > 42*1e15 {
 		return BasicCheckError{
@@ -317,15 +322,15 @@ func (tx *Tx) Decode(r io.Reader) error {
 
 	switch t := payload.Type(payloadType); t {
 	case payload.TypeTransfer:
-		tx.data.Payload = &payload.TransferPayload{}
+		tx.data.Payload = new(payload.TransferPayload)
 	case payload.TypeBond:
-		tx.data.Payload = &payload.BondPayload{}
+		tx.data.Payload = new(payload.BondPayload)
 	case payload.TypeUnbond:
-		tx.data.Payload = &payload.UnbondPayload{}
+		tx.data.Payload = new(payload.UnbondPayload)
 	case payload.TypeWithdraw:
-		tx.data.Payload = &payload.WithdrawPayload{}
+		tx.data.Payload = new(payload.WithdrawPayload)
 	case payload.TypeSortition:
-		tx.data.Payload = &payload.SortitionPayload{}
+		tx.data.Payload = new(payload.SortitionPayload)
 
 	default:
 		return InvalidPayloadTypeError{

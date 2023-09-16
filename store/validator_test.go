@@ -208,8 +208,10 @@ func TestValidatorDeepCopy(t *testing.T) {
 	td.store.UpdateValidator(val1)
 
 	val2, _ := td.store.ValidatorByNumber(num)
+	val2.AddToStake(1)
 	assert.NotEqual(t, td.store.validatorStore.numberMap[num].Hash(), val2.Hash())
 
 	val3, _ := td.store.Validator(val1.Address())
+	val3.AddToStake(1)
 	assert.NotEqual(t, td.store.validatorStore.numberMap[num].Hash(), val3.Hash())
 }

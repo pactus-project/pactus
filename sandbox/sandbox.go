@@ -27,12 +27,14 @@ type sandbox struct {
 	committee       committee.Reader
 	accounts        map[crypto.Address]*sandboxAccount
 	validators      map[crypto.Address]*sandboxValidator
+	committedTrxs   map[tx.ID]*tx.Tx
 	params          param.Params
 	height          uint32
 	totalAccounts   int32
 	totalValidators int32
 	totalPower      int64
 	powerDelta      int64
+	accumulatedFee  int64
 }
 
 type sandboxValidator struct {
@@ -59,6 +61,7 @@ func NewSandbox(height uint32, store store.Reader, params param.Params,
 
 	sb.accounts = make(map[crypto.Address]*sandboxAccount)
 	sb.validators = make(map[crypto.Address]*sandboxValidator)
+	sb.committedTrxs = make(map[tx.ID]*tx.Tx)
 	sb.totalAccounts = sb.store.TotalAccounts()
 	sb.totalValidators = sb.store.TotalValidators()
 
@@ -138,6 +141,10 @@ func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 }
 
 func (sb *sandbox) AnyRecentTransaction(txID tx.ID) bool {
+	if sb.committedTrxs[txID] != nil {
+		return true
+	}
+
 	return sb.store.AnyRecentTransaction(txID)
 }
 
@@ -283,4 +290,19 @@ func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *val
 	}
 	seed := b.Header().SortitionSeed()
 	return sortition.VerifyProof(seed, proof, val.PublicKey(), sb.totalPower, val.Power())
+}
+
+func (sb *sandbox) CommitTransaction(trx *tx.Tx) {
+	sb.lk.Lock()
+	defer sb.lk.Unlock()
+
+	sb.committedTrxs[trx.ID()] = trx
+	sb.accumulatedFee += trx.Fee()
+}
+
+func (sb *sandbox) AccumulatedFee() int64 {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	return sb.accumulatedFee
 }

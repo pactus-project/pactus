@@ -135,7 +135,7 @@ func (m *txBuilder) setStamp() error {
 		h, _ := hash.FromBytes(info.LastBlockHash)
 		stamp := h.Stamp()
 		m.stamp = &stamp
-		m.lockTime = info.LastBlockHeight
+		m.lockTime = info.LastBlockHeight + 1
 	}
 
 	return nil

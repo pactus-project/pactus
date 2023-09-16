@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/account"
@@ -201,19 +202,25 @@ func TestAppendAndBroadcast(t *testing.T) {
 func TestAddSubsidyTransactions(t *testing.T) {
 	td := setup(t)
 
-	block88 := td.sandbox.TestStore.AddTestBlock(88)
+	randHeight := td.RandHeight()
+	randBlock := td.sandbox.TestStore.AddTestBlock(randHeight)
 	proposer1 := td.RandAddress()
 	proposer2 := td.RandAddress()
-	trx1 := tx.NewSubsidyTx(block88.Stamp(), 88, proposer1, 25000000, "subsidy-tx-1")
-	trx2 := tx.NewSubsidyTx(block88.Stamp(), 89, proposer1, 25000000, "subsidy-tx-1")
-	trx3 := tx.NewSubsidyTx(block88.Stamp(), 89, proposer2, 25000000, "subsidy-tx-2")
+	trx1 := tx.NewSubsidyTx(randBlock.Stamp(), randHeight, proposer1, 25000000, "subsidy-tx-1")
+	trx2 := tx.NewSubsidyTx(randBlock.Stamp(), randHeight+1, proposer1, 25000000, "subsidy-tx-1")
+	trx3 := tx.NewSubsidyTx(randBlock.Stamp(), randHeight+1, proposer2, 25000000, "subsidy-tx-2")
 
-	assert.Error(t, td.pool.AppendTx(trx1), "Expired subsidy transaction")
-	assert.NoError(t, td.pool.AppendTx(trx2))
-	assert.NoError(t, td.pool.AppendTx(trx3))
+	err := td.pool.AppendTx(trx1)
+	assert.ErrorIs(t, err, execution.PastLockTimeError{LockTime: randHeight})
 
-	td.sandbox.TestStore.AddTestBlock(89)
+	err = td.pool.AppendTx(trx2)
+	assert.NoError(t, err)
 
-	td.pool.SetNewSandboxAndRecheck(sandbox.MockingSandbox(td.TestSuite))
+	err = td.pool.AppendTx(trx3)
+	assert.NoError(t, err)
+
+	td.sandbox.TestStore.AddTestBlock(randHeight + 1)
+
+	td.pool.SetNewSandboxAndRecheck(td.sandbox)
 	assert.Zero(t, td.pool.Size())
 }

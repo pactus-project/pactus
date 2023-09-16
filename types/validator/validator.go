@@ -171,5 +171,6 @@ func (val *Validator) Bytes() ([]byte, error) {
 func (val *Validator) Clone() *Validator {
 	cloned := new(Validator)
 	*cloned = *val
+
 	return cloned
 }

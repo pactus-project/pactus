@@ -679,10 +679,10 @@ func TestCases(t *testing.T) {
 		round       int16
 		description string
 	}{
-		{1693211374125314699, 2, "1/3+ cp:PRE-VOTE in prepare step"},
-		{1693221874298096995, 2, "1/3+ cp:PRE-VOTE in precommit step"},
-		{1693221808872419351, 0, "Conflicting votes, cp-round=0"},
-		{1693223513075407741, 0, "Conflicting votes, cp-round=1"},
+		{1694848856237853398, 2, "1/3+ cp:PRE-VOTE in prepare step"},
+		{1694848907840926239, 0, "1/3+ cp:PRE-VOTE in precommit step"},
+		{1694849103290580532, 1, "Conflicting votes, cp-round=0"},
+		{1694849186681644508, 1, "Conflicting votes, cp-round=1"},
 	}
 
 	for i, test := range tests {
@@ -698,7 +698,7 @@ func TestCases(t *testing.T) {
 		require.NoError(t, err,
 			"test %v failed: %s", i+1, err)
 		require.Equal(t, cert.Round(), test.round,
-			"test %v failed. round not matched (expected %s, got %s)",
+			"test %v failed. round not matched (expected %d, got %d)",
 			i+1, test.round, cert.Round())
 	}
 }

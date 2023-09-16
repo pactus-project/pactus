@@ -8,7 +8,6 @@ import (
 )
 
 type BondExecutor struct {
-	fee    int64
 	strict bool
 }
 
@@ -45,8 +44,8 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if e.strict {
 		// In strict mode, bond transactions will be rejected if a validator is
 		// already in the committee.
-		// In non-strict mode, we accept them and keep them in the transaction pool
-		// to process them when the validator leaves the committee.
+		// In non-strict mode, they are added to the transaction pool and
+		// processed once eligible.
 		if sb.Committee().Contains(pld.Receiver) {
 			return errors.Errorf(errors.ErrInvalidTx,
 				"validator %v is in committee", pld.Receiver)
@@ -54,15 +53,15 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 		// In strict mode, bond transactions will be rejected if a validator is
 		// going to join the committee in the next height.
-		// In non-strict mode, we accept it and keep it in the transaction pool to
-		// process it when the validator leaves the committee.
+		// In non-strict mode, they are added to the transaction pool and
+		// processed once eligible.
 		if sb.IsJoinedCommittee(pld.Receiver) {
 			return errors.Errorf(errors.ErrInvalidTx,
 				"validator %v joins committee in the next height", pld.Receiver)
 		}
 	}
 	if senderAcc.Balance() < pld.Stake+trx.Fee() {
-		return errors.Error(errors.ErrInsufficientFunds)
+		return ErrInsufficientFunds
 	}
 	if receiverVal.Stake()+pld.Stake > sb.Params().MaximumStake {
 		return errors.Errorf(errors.ErrInvalidAmount,
@@ -80,11 +79,5 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	sb.UpdateAccount(pld.Sender, senderAcc)
 	sb.UpdateValidator(receiverVal)
 
-	e.fee = trx.Fee()
-
 	return nil
-}
-
-func (e *BondExecutor) Fee() int64 {
-	return e.fee
 }

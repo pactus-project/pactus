@@ -27,6 +27,7 @@ type MockSandbox struct {
 	TestCommitteeSigners []crypto.Signer
 	TestAcceptSortition  bool
 	TestJoinedValidators map[crypto.Address]bool
+	TestCommittedTrxs    map[tx.ID]*tx.Tx
 	TestPowerDelta       int64
 }
 
@@ -40,6 +41,7 @@ func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 		TestCommittee:        committee,
 		TestCommitteeSigners: signers,
 		TestJoinedValidators: make(map[crypto.Address]bool),
+		TestCommittedTrxs:    make(map[tx.ID]*tx.Tx),
 	}
 
 	treasuryAmt := int64(21000000 * 1e9)
@@ -74,6 +76,9 @@ func (m *MockSandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 }
 
 func (m *MockSandbox) AnyRecentTransaction(txID tx.ID) bool {
+	if m.TestCommittedTrxs[txID] != nil {
+		return true
+	}
 	return m.TestStore.AnyRecentTransaction(txID)
 }
 
@@ -138,4 +143,12 @@ func (m *MockSandbox) PowerDelta() int64 {
 
 func (m *MockSandbox) VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool {
 	return m.TestAcceptSortition
+}
+
+func (m *MockSandbox) CommitTransaction(trx *tx.Tx) {
+	m.TestCommittedTrxs[trx.ID()] = trx
+}
+
+func (m *MockSandbox) AccumulatedFee() int64 {
+	return 0
 }

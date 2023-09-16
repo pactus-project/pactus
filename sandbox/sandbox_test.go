@@ -299,6 +299,7 @@ func TestAccountDeepCopy(t *testing.T) {
 	t.Run("non existing account", func(t *testing.T) {
 		addr := td.RandAddress()
 		acc := td.sandbox.MakeNewAccount(addr)
+		acc.AddToBalance(1)
 
 		assert.NotEqual(t, td.sandbox.Account(addr), acc)
 	})
@@ -306,6 +307,7 @@ func TestAccountDeepCopy(t *testing.T) {
 	t.Run("existing account", func(t *testing.T) {
 		addr := crypto.TreasuryAddress
 		acc := td.sandbox.Account(addr)
+		acc.AddToBalance(1)
 
 		assert.NotEqual(t, td.sandbox.Account(addr), acc)
 	})
@@ -313,6 +315,7 @@ func TestAccountDeepCopy(t *testing.T) {
 	t.Run("sandbox account", func(t *testing.T) {
 		addr := crypto.TreasuryAddress
 		acc := td.sandbox.Account(addr)
+		acc.AddToBalance(1)
 
 		assert.NotEqual(t, td.sandbox.Account(addr), acc)
 	})
@@ -323,23 +326,26 @@ func TestValidatorDeepCopy(t *testing.T) {
 
 	t.Run("non existing validator", func(t *testing.T) {
 		pub, _ := td.RandBLSKeyPair()
-		acc := td.sandbox.MakeNewValidator(pub)
+		val := td.sandbox.MakeNewValidator(pub)
+		val.AddToStake(1)
 
-		assert.NotEqual(t, td.sandbox.Validator(pub.Address()), acc)
+		assert.NotEqual(t, td.sandbox.Validator(pub.Address()), val)
 	})
 
 	val0, _ := td.store.ValidatorByNumber(0)
 	addr := val0.Address()
 	t.Run("existing validator", func(t *testing.T) {
-		acc := td.sandbox.Validator(addr)
+		val := td.sandbox.Validator(addr)
+		val.AddToStake(1)
 
-		assert.NotEqual(t, td.sandbox.Validator(addr), acc)
+		assert.NotEqual(t, td.sandbox.Validator(addr), val)
 	})
 
 	t.Run("sandbox validator", func(t *testing.T) {
-		acc := td.sandbox.Validator(addr)
+		val := td.sandbox.Validator(addr)
+		val.AddToStake(1)
 
-		assert.NotEqual(t, td.sandbox.Validator(addr), acc)
+		assert.NotEqual(t, td.sandbox.Validator(addr), val)
 	})
 }
 
