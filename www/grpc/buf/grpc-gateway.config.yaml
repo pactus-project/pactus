@@ -14,10 +14,10 @@ http:
       get: "/v1/blockchain/blocks/{height}/verbosity/{verbosity}"
 
     - selector: pactus.Blockchain.GetBlockHash
-      get: "/v1/blockchain/block_hash/height/{height}"
+      get: "/v1/blockchain/block_hashes/height/{height}"
 
     - selector: pactus.Blockchain.GetBlockHeight
-      get: "/v1/blockchain/block_height/hash/{hash}"
+      get: "/v1/blockchain/block_heights/hash/{hash}"
 
     - selector: pactus.Blockchain.GetAccount
       get: "/v1/blockchain/accounts/address/{address}"
