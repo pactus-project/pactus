@@ -137,6 +137,21 @@ func TestAccountChange(t *testing.T) {
 	})
 }
 
+func TestAnyRecentTransaction(t *testing.T) {
+	td := setup(t)
+
+	randTx1, _ := td.GenerateTestTransferTx()
+	randTx2, _ := td.GenerateTestTransferTx()
+	td.sandbox.CommitTransaction(randTx1)
+	td.sandbox.CommitTransaction(randTx2)
+
+	assert.True(t, td.sandbox.AnyRecentTransaction(randTx1.ID()))
+	assert.True(t, td.sandbox.AnyRecentTransaction(randTx2.ID()))
+
+	totalTxFees := randTx1.Fee() + randTx2.Fee()
+	assert.Equal(t, td.sandbox.AccumulatedFee(), totalTxFees)
+}
+
 func TestValidatorChange(t *testing.T) {
 	td := setup(t)
 

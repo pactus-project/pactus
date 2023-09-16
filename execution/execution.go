@@ -1,8 +1,6 @@
 package execution
 
 import (
-	"fmt"
-
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/param"
@@ -83,7 +81,6 @@ func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
 	}
 
 	if sb.CurrentHeight() > interval {
-		fmt.Printf("trx.LockTime() %d , sb.CurrentHeight() %d, interval: %d\n", trx.LockTime(), sb.CurrentHeight(), interval)
 		if trx.LockTime() < sb.CurrentHeight()-interval {
 			return PastLockTimeError{
 				LockTime: trx.LockTime(),

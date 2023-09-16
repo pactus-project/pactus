@@ -43,13 +43,6 @@ func TestDecoding(t *testing.T) {
 	assert.Equal(t, acc.SerializeSize(), len(d))
 }
 
-func TestIncSequence(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	acc, _ := ts.GenerateTestAccount(100)
-	assert.Equal(t, acc.Number(), int32(100))
-}
-
 func TestAddToBalance(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
