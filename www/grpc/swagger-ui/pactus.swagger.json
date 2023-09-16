@@ -25,7 +25,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/blockchain/account/address/{address}": {
+    "/v1/blockchain/accounts/address/{address}": {
       "get": {
         "operationId": "Blockchain_GetAccount",
         "responses": {
@@ -55,7 +55,7 @@
         ]
       }
     },
-    "/v1/blockchain/account/number/{number}": {
+    "/v1/blockchain/accounts/number/{number}": {
       "get": {
         "operationId": "Blockchain_GetAccountByNumber",
         "responses": {
@@ -79,48 +79,6 @@
             "required": true,
             "type": "integer",
             "format": "int32"
-          }
-        ],
-        "tags": [
-          "Blockchain"
-        ]
-      }
-    },
-    "/v1/blockchain/block/height/{height}/verbosity/{verbosity}": {
-      "get": {
-        "operationId": "Blockchain_GetBlock",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusGetBlockResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "height",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "verbosity",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "enum": [
-              "BLOCK_DATA",
-              "BLOCK_INFO",
-              "BLOCK_TRANSACTIONS"
-            ]
           }
         ],
         "tags": [
@@ -190,6 +148,48 @@
         ]
       }
     },
+    "/v1/blockchain/blocks/{height}/verbosity/{verbosity}": {
+      "get": {
+        "operationId": "Blockchain_GetBlock",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetBlockResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "height",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "verbosity",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "BLOCK_DATA",
+              "BLOCK_INFO",
+              "BLOCK_TRANSACTIONS"
+            ]
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
     "/v1/blockchain/consensus": {
       "get": {
         "operationId": "Blockchain_GetConsensusInfo",
@@ -234,7 +234,29 @@
         ]
       }
     },
-    "/v1/blockchain/validator/address/{address}": {
+    "/v1/blockchain/validator_addresses": {
+      "get": {
+        "operationId": "Blockchain_GetValidatorAddresses",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetValidatorAddressesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/v1/blockchain/validators/address/{address}": {
       "get": {
         "operationId": "Blockchain_GetValidator",
         "responses": {
@@ -264,7 +286,7 @@
         ]
       }
     },
-    "/v1/blockchain/validator/number/{number}": {
+    "/v1/blockchain/validators/number/{number}": {
       "get": {
         "operationId": "Blockchain_GetValidatorByNumber",
         "responses": {
@@ -290,28 +312,6 @@
             "format": "int32"
           }
         ],
-        "tags": [
-          "Blockchain"
-        ]
-      }
-    },
-    "/v1/blockchain/validator_addresses": {
-      "get": {
-        "operationId": "Blockchain_GetValidatorAddresses",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusGetValidatorAddressesResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
         "tags": [
           "Blockchain"
         ]
@@ -406,7 +406,38 @@
         ]
       }
     },
-    "/v1/transaction/get/id/{id}/verbosity/{verbosity}": {
+    "/v1/transaction/send/data/{data}": {
+      "put": {
+        "operationId": "Transaction_SendRawTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusSendRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "data",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "byte"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/v1/transactions/{id}/verbosity/{verbosity}": {
       "get": {
         "operationId": "Transaction_GetTransaction",
         "responses": {
@@ -440,37 +471,6 @@
               "TRANSACTION_DATA",
               "TRANSACTION_INFO"
             ]
-          }
-        ],
-        "tags": [
-          "Transaction"
-        ]
-      }
-    },
-    "/v1/transaction/send/data/{data}": {
-      "put": {
-        "operationId": "Transaction_SendRawTransaction",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusSendRawTransactionResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "data",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "byte"
           }
         ],
         "tags": [

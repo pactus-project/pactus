@@ -11,7 +11,7 @@ http:
       get: "/v1/blockchain/consensus"
 
     - selector: pactus.Blockchain.GetBlock
-      get: "/v1/blockchain/block/height/{height}/verbosity/{verbosity}"
+      get: "/v1/blockchain/blocks/{height}/verbosity/{verbosity}"
 
     - selector: pactus.Blockchain.GetBlockHash
       get: "/v1/blockchain/block_hash/height/{height}"
@@ -20,23 +20,23 @@ http:
       get: "/v1/blockchain/block_height/hash/{hash}"
 
     - selector: pactus.Blockchain.GetAccount
-      get: "/v1/blockchain/account/address/{address}"
+      get: "/v1/blockchain/accounts/address/{address}"
 
     - selector: pactus.Blockchain.GetAccountByNumber
-      get: "/v1/blockchain/account/number/{number}"
+      get: "/v1/blockchain/accounts/number/{number}"
 
     - selector: pactus.Blockchain.GetValidator
-      get: "/v1/blockchain/validator/address/{address}"
+      get: "/v1/blockchain/validators/address/{address}"
 
     - selector: pactus.Blockchain.GetValidatorByNumber
-      get: "/v1/blockchain/validator/number/{number}"
+      get: "/v1/blockchain/validators/number/{number}"
 
     - selector: pactus.Blockchain.GetValidatorAddresses
       get: "/v1/blockchain/validator_addresses"
 
     # Transaction APIs
     - selector: pactus.Transaction.GetTransaction
-      get: "/v1/transaction/get/id/{id}/verbosity/{verbosity}"
+      get: "/v1/transactions/{id}/verbosity/{verbosity}"
 
     - selector: pactus.Transaction.CalculateFee
       get: "/v1/transaction/calculate_fee/amount/{amount}/payload_type/{payloadType}"
