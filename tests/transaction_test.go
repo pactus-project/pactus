@@ -25,7 +25,8 @@ func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypt
 	t.Helper()
 
 	stamp := lastHash().Stamp()
-	trx := tx.NewTransferTx(stamp, 1, sender.Address(), receiver, amt, fee, "")
+	lockTime := lastHeight() + 1
+	trx := tx.NewTransferTx(stamp, lockTime, sender.Address(), receiver, amt, fee, "")
 	sender.SignMsg(trx)
 
 	d, _ := trx.Bytes()
@@ -36,7 +37,8 @@ func broadcastBondTransaction(t *testing.T, sender crypto.Signer, pub crypto.Pub
 	t.Helper()
 
 	stamp := lastHash().Stamp()
-	trx := tx.NewBondTx(stamp, 1, sender.Address(), pub.Address(), pub.(*bls.PublicKey), stake, fee, "")
+	lockTime := lastHeight() + 1
+	trx := tx.NewBondTx(stamp, lockTime, sender.Address(), pub.Address(), pub.(*bls.PublicKey), stake, fee, "")
 	sender.SignMsg(trx)
 
 	d, _ := trx.Bytes()
