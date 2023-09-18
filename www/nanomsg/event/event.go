@@ -11,20 +11,20 @@ import (
 )
 
 const (
-	TopicNewBlock       = uint16(0x0101)
-	TopicNewTransaction = uint16(0x0201)
-	TopicNewAccount     = uint16(0x0301)
+	TopicBlock       = uint16(0x0101)
+	TopicTransaction = uint16(0x0201)
+	TopicAccountChange     = uint16(0x0301)
 )
 
 type Event []byte
 
 // CreateBlockEvent creates an event when the new block is committed.
-// The new block event structure is like :
+// The block event structure is like :
 // <topic_id><block_hash><height><sequence_number>.
 func CreateBlockEvent(blockHash hash.Hash, height uint32) Event {
 	buf := make([]byte, 0, 42)
 	w := bytes.NewBuffer(buf)
-	err := encoding.WriteElements(w, TopicNewBlock, blockHash, height)
+	err := encoding.WriteElements(w, TopicBlock, blockHash, height)
 	if err != nil {
 		logger.Error("error on encoding event in new block", "error", err)
 	}
@@ -37,7 +37,7 @@ func CreateBlockEvent(blockHash hash.Hash, height uint32) Event {
 func CreateTransactionEvent(txHash tx.ID, height uint32) Event {
 	buf := make([]byte, 0, 42)
 	w := bytes.NewBuffer(buf)
-	err := encoding.WriteElements(w, TopicNewTransaction, txHash, height)
+	err := encoding.WriteElements(w, TopicTransaction, txHash, height)
 	if err != nil {
 		logger.Error("error on encoding event in new transaction", "error", err)
 	}
@@ -50,7 +50,7 @@ func CreateTransactionEvent(txHash tx.ID, height uint32) Event {
 func CreateAccountChangeEvent(accountAddr crypto.Address, height uint32) Event {
 	buf := make([]byte, 0, 42)
 	w := bytes.NewBuffer(buf)
-	err := encoding.WriteElements(w, TopicNewAccount, accountAddr, height)
+	err := encoding.WriteElements(w, TopicAccountChange, accountAddr, height)
 	if err != nil {
 		logger.Error("error on encoding event in new account", "error", err)
 	}
