@@ -44,7 +44,6 @@ type Facade interface {
 	BlockHash(height uint32) hash.Hash
 	BlockHeight(hash hash.Hash) uint32
 	AccountByAddress(addr crypto.Address) *account.Account
-	AccountByNumber(number int32) *account.Account
 	ValidatorByAddress(addr crypto.Address) *validator.Validator
 	ValidatorByNumber(number int32) *validator.Validator
 	ValidatorAddresses() []crypto.Address

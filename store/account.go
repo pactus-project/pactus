@@ -63,15 +63,6 @@ func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
 	return nil, ErrNotFound
 }
 
-func (as *accountStore) accountByNumber(number int32) (*account.Account, error) {
-	acc, ok := as.numberMap[number]
-	if ok {
-		return acc.Clone(), nil
-	}
-
-	return nil, ErrNotFound
-}
-
 func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool)) {
 	for addr, acc := range as.addressMap {
 		stopped := consumer(addr, acc.Clone())
