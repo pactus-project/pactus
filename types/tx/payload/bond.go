@@ -109,3 +109,7 @@ func (p *BondPayload) String() string {
 		p.Receiver.ShortString(),
 		p.Stake)
 }
+
+func (p *BondPayload) ReceiverAddr() crypto.Address {
+	return p.Receiver
+}
