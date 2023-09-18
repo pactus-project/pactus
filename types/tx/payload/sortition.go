@@ -51,3 +51,7 @@ func (p *SortitionPayload) String() string {
 	return fmt.Sprintf("{Sortition 🎯 %v",
 		p.Address.ShortString())
 }
+
+func (p *SortitionPayload) ReceiverAddr() *crypto.Address {
+	return nil
+}

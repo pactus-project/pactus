@@ -430,3 +430,8 @@ func (tx *Tx) StripPublicKey() {
 func (tx *Tx) IsPublicKeyStriped() bool {
 	return util.IsFlagSet(tx.data.Flags, flagStripedPublicKey)
 }
+
+// Flags returns flags of transaction.
+func (tx *Tx) Flags() uint8 {
+	return tx.data.Flags
+}
