@@ -140,5 +140,5 @@ func TestAccountDeepCopy(t *testing.T) {
 
 	acc2, _ := td.store.Account(signer.Address())
 	acc2.AddToBalance(1)
-	assert.NotEqual(t, td.store.accountStore.numberMap[num].Hash(), acc2.Hash())
+	assert.NotEqual(t, td.store.accountStore.addressMap[signer.Address()].Hash(), acc2.Hash())
 }
