@@ -52,6 +52,6 @@ func (p *SortitionPayload) String() string {
 		p.Address.ShortString())
 }
 
-func (p *SortitionPayload) ReceiverAddr() crypto.Address {
-	return crypto.Address{}
+func (p *SortitionPayload) ReceiverAddr() *crypto.Address {
+	return nil
 }

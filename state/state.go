@@ -710,17 +710,15 @@ func (st *state) publishEvents(height uint32, block *block.Block) {
 	for i := 1; i < block.Transactions().Len(); i++ {
 		tx := block.Transactions().Get(i)
 
-		if tx.IsBondTx() {
-			NewValEvent := event.CreateValidatorEvent(tx.Payload().ReceiverAddr(), height)
-			st.eventCh <- NewValEvent
+		accChangeEvent := event.CreateAccountChangeEvent(tx.Payload().Signer(), height)
+		st.eventCh <- accChangeEvent
+
+		if tx.Payload().ReceiverAddr() != nil {
+			accChangeEvent := event.CreateAccountChangeEvent(*tx.Payload().ReceiverAddr(), height)
+			st.eventCh <- accChangeEvent
 		}
 
-		if tx.Flags() == 0 { // base on PIP-4 the account is not indexed yet.
-			NewAccEvent := event.CreateAccountEvent(tx.Payload().Signer(), height)
-			st.eventCh <- NewAccEvent
-		}
-
-		TxEvent := event.CreateNewTransactionEvent(tx.ID(), height)
+		TxEvent := event.CreateTransactionEvent(tx.ID(), height)
 		st.eventCh <- TxEvent
 	}
 }

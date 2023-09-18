@@ -99,6 +99,6 @@ func (p *TransferPayload) String() string {
 		p.Amount)
 }
 
-func (p *TransferPayload) ReceiverAddr() crypto.Address {
-	return p.Receiver
+func (p *TransferPayload) ReceiverAddr() *crypto.Address {
+	return &p.Receiver
 }

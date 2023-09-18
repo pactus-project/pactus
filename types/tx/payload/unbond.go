@@ -52,6 +52,6 @@ func (p *UnbondPayload) String() string {
 	)
 }
 
-func (p *UnbondPayload) ReceiverAddr() crypto.Address {
-	return crypto.Address{}
+func (p *UnbondPayload) ReceiverAddr() *crypto.Address {
+	return nil
 }

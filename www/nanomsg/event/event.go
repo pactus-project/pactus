@@ -13,8 +13,7 @@ import (
 const (
 	TopicNewBlock       = uint16(0x0101)
 	TopicNewTransaction = uint16(0x0201)
-	TopicNewValidator   = uint16(0x0301)
-	TopicNewAccount     = uint16(0x0401)
+	TopicNewAccount     = uint16(0x0301)
 )
 
 type Event []byte
@@ -32,10 +31,10 @@ func CreateBlockEvent(blockHash hash.Hash, height uint32) Event {
 	return w.Bytes()
 }
 
-// CreateNewTransactionEvent creates an event when a new transaction sent.
+// CreateTransactionEvent creates an event when a new transaction sent.
 // The new transaction event structure is like :
 // <topic_id><tx_hash><height><sequence_number>.
-func CreateNewTransactionEvent(txHash tx.ID, height uint32) Event {
+func CreateTransactionEvent(txHash tx.ID, height uint32) Event {
 	buf := make([]byte, 0, 42)
 	w := bytes.NewBuffer(buf)
 	err := encoding.WriteElements(w, TopicNewTransaction, txHash, height)
@@ -45,23 +44,10 @@ func CreateNewTransactionEvent(txHash tx.ID, height uint32) Event {
 	return w.Bytes()
 }
 
-// CreateValidatorEvent creates an event when the new Validator is created.
-// The validator event structure is like :
-// <topic_id><validator_address><height><sequence_number>.
-func CreateValidatorEvent(validatorAddr crypto.Address, height uint32) Event {
-	buf := make([]byte, 0, 42)
-	w := bytes.NewBuffer(buf)
-	err := encoding.WriteElements(w, TopicNewValidator, validatorAddr, height)
-	if err != nil {
-		logger.Error("error on encoding event in new validator", "error", err)
-	}
-	return w.Bytes()
-}
-
-// CreateAccountEvent creates an event when the new account is created.
+// CreateAccountChangeEvent creates an event when the new account is created.
 // The account event structure is like :
 // <topic_id><account_address><height><sequence_number>.
-func CreateAccountEvent(accountAddr crypto.Address, height uint32) Event {
+func CreateAccountChangeEvent(accountAddr crypto.Address, height uint32) Event {
 	buf := make([]byte, 0, 42)
 	w := bytes.NewBuffer(buf)
 	err := encoding.WriteElements(w, TopicNewAccount, accountAddr, height)

@@ -71,6 +71,6 @@ func (p *WithdrawPayload) String() string {
 		p.Amount)
 }
 
-func (p *WithdrawPayload) ReceiverAddr() crypto.Address {
-	return p.To
+func (p *WithdrawPayload) ReceiverAddr() *crypto.Address {
+	return &p.To
 }

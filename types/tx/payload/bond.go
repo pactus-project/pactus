@@ -110,6 +110,6 @@ func (p *BondPayload) String() string {
 		p.Stake)
 }
 
-func (p *BondPayload) ReceiverAddr() crypto.Address {
-	return p.Receiver
+func (p *BondPayload) ReceiverAddr() *crypto.Address {
+	return &p.Receiver
 }
