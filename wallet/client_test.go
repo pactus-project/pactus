@@ -63,12 +63,6 @@ func (s *blockchainServer) GetValidatorAddresses(_ context.Context,
 	return &pactus.GetValidatorAddressesResponse{}, nil
 }
 
-func (s *blockchainServer) GetAccountByNumber(_ context.Context,
-	_ *pactus.GetAccountByNumberRequest,
-) (*pactus.GetAccountResponse, error) {
-	return &pactus.GetAccountResponse{}, nil
-}
-
 func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
 	_ *pactus.GetValidatorByNumberRequest,
 ) (*pactus.GetValidatorResponse, error) {

@@ -806,476 +806,6 @@ public final class BlockchainOuterClass {
 
   }
 
-  public interface GetAccountByNumberRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:pactus.GetAccountByNumberRequest)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>int32 number = 1 [json_name = "number"];</code>
-     * @return The number.
-     */
-    int getNumber();
-  }
-  /**
-   * Protobuf type {@code pactus.GetAccountByNumberRequest}
-   */
-  public static final class GetAccountByNumberRequest extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:pactus.GetAccountByNumberRequest)
-      GetAccountByNumberRequestOrBuilder {
-  private static final long serialVersionUID = 0L;
-    // Use GetAccountByNumberRequest.newBuilder() to construct.
-    private GetAccountByNumberRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private GetAccountByNumberRequest() {
-    }
-
-    @java.lang.Override
-    @SuppressWarnings({"unused"})
-    protected java.lang.Object newInstance(
-        UnusedPrivateParameter unused) {
-      return new GetAccountByNumberRequest();
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetAccountByNumberRequest_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetAccountByNumberRequest_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest.class, pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest.Builder.class);
-    }
-
-    public static final int NUMBER_FIELD_NUMBER = 1;
-    private int number_;
-    /**
-     * <code>int32 number = 1 [json_name = "number"];</code>
-     * @return The number.
-     */
-    @java.lang.Override
-    public int getNumber() {
-      return number_;
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (number_ != 0) {
-        output.writeInt32(1, number_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (number_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, number_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest)) {
-        return super.equals(obj);
-      }
-      pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest other = (pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest) obj;
-
-      if (getNumber()
-          != other.getNumber()) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + NUMBER_FIELD_NUMBER;
-      hash = (53 * hash) + getNumber();
-      hash = (29 * hash) + getUnknownFields().hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code pactus.GetAccountByNumberRequest}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:pactus.GetAccountByNumberRequest)
-        pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequestOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetAccountByNumberRequest_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetAccountByNumberRequest_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest.class, pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest.Builder.class);
-      }
-
-      // Construct using pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest.newBuilder()
-      private Builder() {
-
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        number_ = 0;
-
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetAccountByNumberRequest_descriptor;
-      }
-
-      @java.lang.Override
-      public pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest getDefaultInstanceForType() {
-        return pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest build() {
-        pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest buildPartial() {
-        pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest result = new pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest(this);
-        result.number_ = number_;
-        onBuilt();
-        return result;
-      }
-
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
-      }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest) {
-          return mergeFrom((pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest other) {
-        if (other == pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest.getDefaultInstance()) return this;
-        if (other.getNumber() != 0) {
-          setNumber(other.getNumber());
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 8: {
-                number_ = input.readInt32();
-
-                break;
-              } // case 8
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.unwrapIOException();
-        } finally {
-          onChanged();
-        } // finally
-        return this;
-      }
-
-      private int number_ ;
-      /**
-       * <code>int32 number = 1 [json_name = "number"];</code>
-       * @return The number.
-       */
-      @java.lang.Override
-      public int getNumber() {
-        return number_;
-      }
-      /**
-       * <code>int32 number = 1 [json_name = "number"];</code>
-       * @param value The number to set.
-       * @return This builder for chaining.
-       */
-      public Builder setNumber(int value) {
-        
-        number_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 number = 1 [json_name = "number"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearNumber() {
-        
-        number_ = 0;
-        onChanged();
-        return this;
-      }
-      @java.lang.Override
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFields(unknownFields);
-      }
-
-      @java.lang.Override
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:pactus.GetAccountByNumberRequest)
-    }
-
-    // @@protoc_insertion_point(class_scope:pactus.GetAccountByNumberRequest)
-    private static final pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest();
-    }
-
-    public static pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<GetAccountByNumberRequest>
-        PARSER = new com.google.protobuf.AbstractParser<GetAccountByNumberRequest>() {
-      @java.lang.Override
-      public GetAccountByNumberRequest parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
-      }
-    };
-
-    public static com.google.protobuf.Parser<GetAccountByNumberRequest> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<GetAccountByNumberRequest> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public pactus.blockchain.BlockchainOuterClass.GetAccountByNumberRequest getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
   public interface GetAccountResponseOrBuilder extends
       // @@protoc_insertion_point(interface_extends:pactus.GetAccountResponse)
       com.google.protobuf.MessageOrBuilder {
@@ -12423,6 +11953,18 @@ public final class BlockchainOuterClass {
      * @return The balance.
      */
     long getBalance();
+
+    /**
+     * <code>string address = 5 [json_name = "address"];</code>
+     * @return The address.
+     */
+    java.lang.String getAddress();
+    /**
+     * <code>string address = 5 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    com.google.protobuf.ByteString
+        getAddressBytes();
   }
   /**
    * Protobuf type {@code pactus.AccountInfo}
@@ -12439,6 +11981,7 @@ public final class BlockchainOuterClass {
     private AccountInfo() {
       hash_ = com.google.protobuf.ByteString.EMPTY;
       data_ = com.google.protobuf.ByteString.EMPTY;
+      address_ = "";
     }
 
     @java.lang.Override
@@ -12510,6 +12053,44 @@ public final class BlockchainOuterClass {
       return balance_;
     }
 
+    public static final int ADDRESS_FIELD_NUMBER = 5;
+    private volatile java.lang.Object address_;
+    /**
+     * <code>string address = 5 [json_name = "address"];</code>
+     * @return The address.
+     */
+    @java.lang.Override
+    public java.lang.String getAddress() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        address_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string address = 5 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getAddressBytes() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        address_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -12536,6 +12117,9 @@ public final class BlockchainOuterClass {
       if (balance_ != 0L) {
         output.writeInt64(4, balance_);
       }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, address_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -12561,6 +12145,9 @@ public final class BlockchainOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(4, balance_);
       }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, address_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -12584,6 +12171,8 @@ public final class BlockchainOuterClass {
           != other.getNumber()) return false;
       if (getBalance()
           != other.getBalance()) return false;
+      if (!getAddress()
+          .equals(other.getAddress())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -12604,6 +12193,8 @@ public final class BlockchainOuterClass {
       hash = (37 * hash) + BALANCE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getBalance());
+      hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getAddress().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -12740,6 +12331,8 @@ public final class BlockchainOuterClass {
 
         balance_ = 0L;
 
+        address_ = "";
+
         return this;
       }
 
@@ -12770,6 +12363,7 @@ public final class BlockchainOuterClass {
         result.data_ = data_;
         result.number_ = number_;
         result.balance_ = balance_;
+        result.address_ = address_;
         onBuilt();
         return result;
       }
@@ -12830,6 +12424,10 @@ public final class BlockchainOuterClass {
         if (other.getBalance() != 0L) {
           setBalance(other.getBalance());
         }
+        if (!other.getAddress().isEmpty()) {
+          address_ = other.address_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -12876,6 +12474,11 @@ public final class BlockchainOuterClass {
 
                 break;
               } // case 32
+              case 42: {
+                address_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 42
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -13018,6 +12621,82 @@ public final class BlockchainOuterClass {
       public Builder clearBalance() {
         
         balance_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object address_ = "";
+      /**
+       * <code>string address = 5 [json_name = "address"];</code>
+       * @return The address.
+       */
+      public java.lang.String getAddress() {
+        java.lang.Object ref = address_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          address_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string address = 5 [json_name = "address"];</code>
+       * @return The bytes for address.
+       */
+      public com.google.protobuf.ByteString
+          getAddressBytes() {
+        java.lang.Object ref = address_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          address_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string address = 5 [json_name = "address"];</code>
+       * @param value The address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddress(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        address_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string address = 5 [json_name = "address"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAddress() {
+        
+        address_ = getDefaultInstance().getAddress();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string address = 5 [json_name = "address"];</code>
+       * @param value The bytes for address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddressBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        address_ = value;
         onChanged();
         return this;
       }
@@ -16857,11 +16536,6 @@ public final class BlockchainOuterClass {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_GetAccountRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_pactus_GetAccountByNumberRequest_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_pactus_GetAccountByNumberRequest_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_GetAccountResponse_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -16982,95 +16656,93 @@ public final class BlockchainOuterClass {
     java.lang.String[] descriptorData = {
       "\n\020blockchain.proto\022\006pactus\032\021transaction." +
       "proto\"-\n\021GetAccountRequest\022\030\n\007address\030\001 " +
-      "\001(\tR\007address\"3\n\031GetAccountByNumberReques" +
-      "t\022\026\n\006number\030\001 \001(\005R\006number\"C\n\022GetAccountR" +
-      "esponse\022-\n\007account\030\001 \001(\0132\023.pactus.Accoun" +
-      "tInfoR\007account\"\036\n\034GetValidatorAddressesR" +
-      "equest\"=\n\035GetValidatorAddressesResponse\022" +
-      "\034\n\taddresses\030\001 \003(\tR\taddresses\"/\n\023GetVali" +
-      "datorRequest\022\030\n\007address\030\001 \001(\tR\007address\"5" +
-      "\n\033GetValidatorByNumberRequest\022\026\n\006number\030" +
-      "\001 \001(\005R\006number\"K\n\024GetValidatorResponse\0223\n" +
-      "\tvalidator\030\001 \001(\0132\025.pactus.ValidatorInfoR" +
-      "\tvalidator\"_\n\017GetBlockRequest\022\026\n\006height\030" +
-      "\001 \001(\rR\006height\0224\n\tverbosity\030\002 \001(\0162\026.pactu" +
-      "s.BlockVerbosityR\tverbosity\"\203\002\n\020GetBlock" +
-      "Response\022\026\n\006height\030\001 \001(\rR\006height\022\022\n\004hash" +
-      "\030\002 \001(\014R\004hash\022\022\n\004data\030\003 \001(\014R\004data\022\035\n\nbloc" +
-      "k_time\030\004 \001(\rR\tblockTime\022/\n\006header\030\005 \001(\0132" +
-      "\027.pactus.BlockHeaderInfoR\006header\0224\n\tprev" +
-      "_cert\030\006 \001(\0132\027.pactus.CertificateInfoR\010pr" +
-      "evCert\022)\n\003txs\030\007 \003(\0132\027.pactus.Transaction" +
-      "InfoR\003txs\"-\n\023GetBlockHashRequest\022\026\n\006heig" +
-      "ht\030\001 \001(\rR\006height\"*\n\024GetBlockHashResponse" +
-      "\022\022\n\004hash\030\001 \001(\014R\004hash\"+\n\025GetBlockHeightRe" +
-      "quest\022\022\n\004hash\030\001 \001(\014R\004hash\"0\n\026GetBlockHei" +
-      "ghtResponse\022\026\n\006height\030\001 \001(\rR\006height\"\032\n\030G" +
-      "etBlockchainInfoRequest\"\325\002\n\031GetBlockchai" +
-      "nInfoResponse\022*\n\021last_block_height\030\001 \001(\r" +
-      "R\017lastBlockHeight\022&\n\017last_block_hash\030\002 \001" +
-      "(\014R\rlastBlockHash\022%\n\016total_accounts\030\003 \001(" +
-      "\005R\rtotalAccounts\022)\n\020total_validators\030\004 \001" +
-      "(\005R\017totalValidators\022\037\n\013total_power\030\005 \001(\003" +
-      "R\ntotalPower\022\'\n\017committee_power\030\006 \001(\003R\016c" +
-      "ommitteePower\022H\n\024committee_validators\030\007 " +
-      "\003(\0132\025.pactus.ValidatorInfoR\023committeeVal" +
-      "idators\"\031\n\027GetConsensusInfoRequest\"O\n\030Ge" +
-      "tConsensusInfoResponse\0223\n\tinstances\030\001 \003(" +
-      "\0132\025.pactus.ConsensusInfoR\tinstances\"\255\002\n\r" +
-      "ValidatorInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n\004dat" +
-      "a\030\002 \001(\014R\004data\022\035\n\npublic_key\030\003 \001(\tR\tpubli" +
-      "cKey\022\026\n\006number\030\004 \001(\005R\006number\022\024\n\005stake\030\005 " +
-      "\001(\003R\005stake\022.\n\023last_bonding_height\030\006 \001(\rR" +
-      "\021lastBondingHeight\0222\n\025last_sortition_hei" +
-      "ght\030\007 \001(\rR\023lastSortitionHeight\022)\n\020unbond" +
-      "ing_height\030\010 \001(\rR\017unbondingHeight\022\030\n\007add" +
-      "ress\030\t \001(\tR\007address\"g\n\013AccountInfo\022\022\n\004ha" +
-      "sh\030\001 \001(\014R\004hash\022\022\n\004data\030\002 \001(\014R\004data\022\026\n\006nu" +
-      "mber\030\003 \001(\005R\006number\022\030\n\007balance\030\004 \001(\003R\007bal" +
-      "ance\"\304\001\n\017BlockHeaderInfo\022\030\n\007version\030\001 \001(" +
-      "\005R\007version\022&\n\017prev_block_hash\030\002 \001(\014R\rpre" +
-      "vBlockHash\022\035\n\nstate_root\030\003 \001(\014R\tstateRoo" +
-      "t\022%\n\016sortition_seed\030\004 \001(\014R\rsortitionSeed" +
-      "\022)\n\020proposer_address\030\005 \001(\tR\017proposerAddr" +
-      "ess\"\227\001\n\017CertificateInfo\022\022\n\004hash\030\001 \001(\014R\004h" +
-      "ash\022\024\n\005round\030\002 \001(\005R\005round\022\036\n\ncommitters\030" +
-      "\003 \003(\005R\ncommitters\022\034\n\tabsentees\030\004 \003(\005R\tab" +
-      "sentees\022\034\n\tsignature\030\005 \001(\014R\tsignature\"{\n" +
-      "\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.pactus.VoteTyp" +
-      "eR\004type\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nblock_h" +
-      "ash\030\003 \001(\014R\tblockHash\022\024\n\005round\030\004 \001(\005R\005rou" +
-      "nd\"\227\001\n\rConsensusInfo\022\030\n\007address\030\001 \001(\tR\007a" +
-      "ddress\022\026\n\006Active\030\002 \001(\010R\006Active\022\026\n\006height" +
-      "\030\003 \001(\rR\006height\022\024\n\005round\030\004 \001(\005R\005round\022&\n\005" +
-      "votes\030\005 \003(\0132\020.pactus.VoteInfoR\005votes*H\n\016" +
-      "BlockVerbosity\022\016\n\nBLOCK_DATA\020\000\022\016\n\nBLOCK_" +
-      "INFO\020\001\022\026\n\022BLOCK_TRANSACTIONS\020\002*\\\n\010VoteTy" +
-      "pe\022\020\n\014VOTE_UNKNOWN\020\000\022\020\n\014VOTE_PREPARE\020\001\022\022" +
-      "\n\016VOTE_PRECOMMIT\020\002\022\030\n\024VOTE_CHANGE_PROPOS" +
-      "ER\020\0032\276\006\n\nBlockchain\022=\n\010GetBlock\022\027.pactus" +
-      ".GetBlockRequest\032\030.pactus.GetBlockRespon" +
-      "se\022I\n\014GetBlockHash\022\033.pactus.GetBlockHash" +
-      "Request\032\034.pactus.GetBlockHashResponse\022O\n" +
-      "\016GetBlockHeight\022\035.pactus.GetBlockHeightR" +
-      "equest\032\036.pactus.GetBlockHeightResponse\022X" +
-      "\n\021GetBlockchainInfo\022 .pactus.GetBlockcha" +
-      "inInfoRequest\032!.pactus.GetBlockchainInfo" +
-      "Response\022U\n\020GetConsensusInfo\022\037.pactus.Ge" +
-      "tConsensusInfoRequest\032 .pactus.GetConsen" +
-      "susInfoResponse\022C\n\nGetAccount\022\031.pactus.G" +
-      "etAccountRequest\032\032.pactus.GetAccountResp" +
-      "onse\022S\n\022GetAccountByNumber\022!.pactus.GetA" +
-      "ccountByNumberRequest\032\032.pactus.GetAccoun" +
-      "tResponse\022I\n\014GetValidator\022\033.pactus.GetVa" +
-      "lidatorRequest\032\034.pactus.GetValidatorResp" +
-      "onse\022Y\n\024GetValidatorByNumber\022#.pactus.Ge" +
-      "tValidatorByNumberRequest\032\034.pactus.GetVa" +
-      "lidatorResponse\022d\n\025GetValidatorAddresses" +
-      "\022$.pactus.GetValidatorAddressesRequest\032%" +
-      ".pactus.GetValidatorAddressesResponseBE\n" +
-      "\021pactus.blockchainZ0github.com/pactus-pr" +
-      "oject/pactus/www/grpc/pactusb\006proto3"
+      "\001(\tR\007address\"C\n\022GetAccountResponse\022-\n\007ac" +
+      "count\030\001 \001(\0132\023.pactus.AccountInfoR\007accoun" +
+      "t\"\036\n\034GetValidatorAddressesRequest\"=\n\035Get" +
+      "ValidatorAddressesResponse\022\034\n\taddresses\030" +
+      "\001 \003(\tR\taddresses\"/\n\023GetValidatorRequest\022" +
+      "\030\n\007address\030\001 \001(\tR\007address\"5\n\033GetValidato" +
+      "rByNumberRequest\022\026\n\006number\030\001 \001(\005R\006number" +
+      "\"K\n\024GetValidatorResponse\0223\n\tvalidator\030\001 " +
+      "\001(\0132\025.pactus.ValidatorInfoR\tvalidator\"_\n" +
+      "\017GetBlockRequest\022\026\n\006height\030\001 \001(\rR\006height" +
+      "\0224\n\tverbosity\030\002 \001(\0162\026.pactus.BlockVerbos" +
+      "ityR\tverbosity\"\203\002\n\020GetBlockResponse\022\026\n\006h" +
+      "eight\030\001 \001(\rR\006height\022\022\n\004hash\030\002 \001(\014R\004hash\022" +
+      "\022\n\004data\030\003 \001(\014R\004data\022\035\n\nblock_time\030\004 \001(\rR" +
+      "\tblockTime\022/\n\006header\030\005 \001(\0132\027.pactus.Bloc" +
+      "kHeaderInfoR\006header\0224\n\tprev_cert\030\006 \001(\0132\027" +
+      ".pactus.CertificateInfoR\010prevCert\022)\n\003txs" +
+      "\030\007 \003(\0132\027.pactus.TransactionInfoR\003txs\"-\n\023" +
+      "GetBlockHashRequest\022\026\n\006height\030\001 \001(\rR\006hei" +
+      "ght\"*\n\024GetBlockHashResponse\022\022\n\004hash\030\001 \001(" +
+      "\014R\004hash\"+\n\025GetBlockHeightRequest\022\022\n\004hash" +
+      "\030\001 \001(\014R\004hash\"0\n\026GetBlockHeightResponse\022\026" +
+      "\n\006height\030\001 \001(\rR\006height\"\032\n\030GetBlockchainI" +
+      "nfoRequest\"\325\002\n\031GetBlockchainInfoResponse" +
+      "\022*\n\021last_block_height\030\001 \001(\rR\017lastBlockHe" +
+      "ight\022&\n\017last_block_hash\030\002 \001(\014R\rlastBlock" +
+      "Hash\022%\n\016total_accounts\030\003 \001(\005R\rtotalAccou" +
+      "nts\022)\n\020total_validators\030\004 \001(\005R\017totalVali" +
+      "dators\022\037\n\013total_power\030\005 \001(\003R\ntotalPower\022" +
+      "\'\n\017committee_power\030\006 \001(\003R\016committeePower" +
+      "\022H\n\024committee_validators\030\007 \003(\0132\025.pactus." +
+      "ValidatorInfoR\023committeeValidators\"\031\n\027Ge" +
+      "tConsensusInfoRequest\"O\n\030GetConsensusInf" +
+      "oResponse\0223\n\tinstances\030\001 \003(\0132\025.pactus.Co" +
+      "nsensusInfoR\tinstances\"\255\002\n\rValidatorInfo" +
+      "\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n\004data\030\002 \001(\014R\004data" +
+      "\022\035\n\npublic_key\030\003 \001(\tR\tpublicKey\022\026\n\006numbe" +
+      "r\030\004 \001(\005R\006number\022\024\n\005stake\030\005 \001(\003R\005stake\022.\n" +
+      "\023last_bonding_height\030\006 \001(\rR\021lastBondingH" +
+      "eight\0222\n\025last_sortition_height\030\007 \001(\rR\023la" +
+      "stSortitionHeight\022)\n\020unbonding_height\030\010 " +
+      "\001(\rR\017unbondingHeight\022\030\n\007address\030\t \001(\tR\007a" +
+      "ddress\"\201\001\n\013AccountInfo\022\022\n\004hash\030\001 \001(\014R\004ha" +
+      "sh\022\022\n\004data\030\002 \001(\014R\004data\022\026\n\006number\030\003 \001(\005R\006" +
+      "number\022\030\n\007balance\030\004 \001(\003R\007balance\022\030\n\007addr" +
+      "ess\030\005 \001(\tR\007address\"\304\001\n\017BlockHeaderInfo\022\030" +
+      "\n\007version\030\001 \001(\005R\007version\022&\n\017prev_block_h" +
+      "ash\030\002 \001(\014R\rprevBlockHash\022\035\n\nstate_root\030\003" +
+      " \001(\014R\tstateRoot\022%\n\016sortition_seed\030\004 \001(\014R" +
+      "\rsortitionSeed\022)\n\020proposer_address\030\005 \001(\t" +
+      "R\017proposerAddress\"\227\001\n\017CertificateInfo\022\022\n" +
+      "\004hash\030\001 \001(\014R\004hash\022\024\n\005round\030\002 \001(\005R\005round\022" +
+      "\036\n\ncommitters\030\003 \003(\005R\ncommitters\022\034\n\tabsen" +
+      "tees\030\004 \003(\005R\tabsentees\022\034\n\tsignature\030\005 \001(\014" +
+      "R\tsignature\"{\n\010VoteInfo\022$\n\004type\030\001 \001(\0162\020." +
+      "pactus.VoteTypeR\004type\022\024\n\005voter\030\002 \001(\tR\005vo" +
+      "ter\022\035\n\nblock_hash\030\003 \001(\014R\tblockHash\022\024\n\005ro" +
+      "und\030\004 \001(\005R\005round\"\227\001\n\rConsensusInfo\022\030\n\007ad" +
+      "dress\030\001 \001(\tR\007address\022\026\n\006Active\030\002 \001(\010R\006Ac" +
+      "tive\022\026\n\006height\030\003 \001(\rR\006height\022\024\n\005round\030\004 " +
+      "\001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.pactus.VoteI" +
+      "nfoR\005votes*H\n\016BlockVerbosity\022\016\n\nBLOCK_DA" +
+      "TA\020\000\022\016\n\nBLOCK_INFO\020\001\022\026\n\022BLOCK_TRANSACTIO" +
+      "NS\020\002*\\\n\010VoteType\022\020\n\014VOTE_UNKNOWN\020\000\022\020\n\014VO" +
+      "TE_PREPARE\020\001\022\022\n\016VOTE_PRECOMMIT\020\002\022\030\n\024VOTE" +
+      "_CHANGE_PROPOSER\020\0032\351\005\n\nBlockchain\022=\n\010Get" +
+      "Block\022\027.pactus.GetBlockRequest\032\030.pactus." +
+      "GetBlockResponse\022I\n\014GetBlockHash\022\033.pactu" +
+      "s.GetBlockHashRequest\032\034.pactus.GetBlockH" +
+      "ashResponse\022O\n\016GetBlockHeight\022\035.pactus.G" +
+      "etBlockHeightRequest\032\036.pactus.GetBlockHe" +
+      "ightResponse\022X\n\021GetBlockchainInfo\022 .pact" +
+      "us.GetBlockchainInfoRequest\032!.pactus.Get" +
+      "BlockchainInfoResponse\022U\n\020GetConsensusIn" +
+      "fo\022\037.pactus.GetConsensusInfoRequest\032 .pa" +
+      "ctus.GetConsensusInfoResponse\022C\n\nGetAcco" +
+      "unt\022\031.pactus.GetAccountRequest\032\032.pactus." +
+      "GetAccountResponse\022I\n\014GetValidator\022\033.pac" +
+      "tus.GetValidatorRequest\032\034.pactus.GetVali" +
+      "datorResponse\022Y\n\024GetValidatorByNumber\022#." +
+      "pactus.GetValidatorByNumberRequest\032\034.pac" +
+      "tus.GetValidatorResponse\022d\n\025GetValidator" +
+      "Addresses\022$.pactus.GetValidatorAddresses" +
+      "Request\032%.pactus.GetValidatorAddressesRe" +
+      "sponseBE\n\021pactus.blockchainZ0github.com/" +
+      "pactus-project/pactus/www/grpc/pactusb\006p" +
+      "roto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -17083,140 +16755,134 @@ public final class BlockchainOuterClass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetAccountRequest_descriptor,
         new java.lang.String[] { "Address", });
-    internal_static_pactus_GetAccountByNumberRequest_descriptor =
-      getDescriptor().getMessageTypes().get(1);
-    internal_static_pactus_GetAccountByNumberRequest_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_pactus_GetAccountByNumberRequest_descriptor,
-        new java.lang.String[] { "Number", });
     internal_static_pactus_GetAccountResponse_descriptor =
-      getDescriptor().getMessageTypes().get(2);
+      getDescriptor().getMessageTypes().get(1);
     internal_static_pactus_GetAccountResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetAccountResponse_descriptor,
         new java.lang.String[] { "Account", });
     internal_static_pactus_GetValidatorAddressesRequest_descriptor =
-      getDescriptor().getMessageTypes().get(3);
+      getDescriptor().getMessageTypes().get(2);
     internal_static_pactus_GetValidatorAddressesRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetValidatorAddressesRequest_descriptor,
         new java.lang.String[] { });
     internal_static_pactus_GetValidatorAddressesResponse_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(3);
     internal_static_pactus_GetValidatorAddressesResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetValidatorAddressesResponse_descriptor,
         new java.lang.String[] { "Addresses", });
     internal_static_pactus_GetValidatorRequest_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(4);
     internal_static_pactus_GetValidatorRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetValidatorRequest_descriptor,
         new java.lang.String[] { "Address", });
     internal_static_pactus_GetValidatorByNumberRequest_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_pactus_GetValidatorByNumberRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetValidatorByNumberRequest_descriptor,
         new java.lang.String[] { "Number", });
     internal_static_pactus_GetValidatorResponse_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_pactus_GetValidatorResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetValidatorResponse_descriptor,
         new java.lang.String[] { "Validator", });
     internal_static_pactus_GetBlockRequest_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_pactus_GetBlockRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockRequest_descriptor,
         new java.lang.String[] { "Height", "Verbosity", });
     internal_static_pactus_GetBlockResponse_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_pactus_GetBlockResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockResponse_descriptor,
         new java.lang.String[] { "Height", "Hash", "Data", "BlockTime", "Header", "PrevCert", "Txs", });
     internal_static_pactus_GetBlockHashRequest_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_pactus_GetBlockHashRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockHashRequest_descriptor,
         new java.lang.String[] { "Height", });
     internal_static_pactus_GetBlockHashResponse_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_pactus_GetBlockHashResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockHashResponse_descriptor,
         new java.lang.String[] { "Hash", });
     internal_static_pactus_GetBlockHeightRequest_descriptor =
-      getDescriptor().getMessageTypes().get(12);
+      getDescriptor().getMessageTypes().get(11);
     internal_static_pactus_GetBlockHeightRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockHeightRequest_descriptor,
         new java.lang.String[] { "Hash", });
     internal_static_pactus_GetBlockHeightResponse_descriptor =
-      getDescriptor().getMessageTypes().get(13);
+      getDescriptor().getMessageTypes().get(12);
     internal_static_pactus_GetBlockHeightResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockHeightResponse_descriptor,
         new java.lang.String[] { "Height", });
     internal_static_pactus_GetBlockchainInfoRequest_descriptor =
-      getDescriptor().getMessageTypes().get(14);
+      getDescriptor().getMessageTypes().get(13);
     internal_static_pactus_GetBlockchainInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockchainInfoRequest_descriptor,
         new java.lang.String[] { });
     internal_static_pactus_GetBlockchainInfoResponse_descriptor =
-      getDescriptor().getMessageTypes().get(15);
+      getDescriptor().getMessageTypes().get(14);
     internal_static_pactus_GetBlockchainInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockchainInfoResponse_descriptor,
         new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "TotalAccounts", "TotalValidators", "TotalPower", "CommitteePower", "CommitteeValidators", });
     internal_static_pactus_GetConsensusInfoRequest_descriptor =
-      getDescriptor().getMessageTypes().get(16);
+      getDescriptor().getMessageTypes().get(15);
     internal_static_pactus_GetConsensusInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetConsensusInfoRequest_descriptor,
         new java.lang.String[] { });
     internal_static_pactus_GetConsensusInfoResponse_descriptor =
-      getDescriptor().getMessageTypes().get(17);
+      getDescriptor().getMessageTypes().get(16);
     internal_static_pactus_GetConsensusInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetConsensusInfoResponse_descriptor,
         new java.lang.String[] { "Instances", });
     internal_static_pactus_ValidatorInfo_descriptor =
-      getDescriptor().getMessageTypes().get(18);
+      getDescriptor().getMessageTypes().get(17);
     internal_static_pactus_ValidatorInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_ValidatorInfo_descriptor,
         new java.lang.String[] { "Hash", "Data", "PublicKey", "Number", "Stake", "LastBondingHeight", "LastSortitionHeight", "UnbondingHeight", "Address", });
     internal_static_pactus_AccountInfo_descriptor =
-      getDescriptor().getMessageTypes().get(19);
+      getDescriptor().getMessageTypes().get(18);
     internal_static_pactus_AccountInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_AccountInfo_descriptor,
-        new java.lang.String[] { "Hash", "Data", "Number", "Balance", });
+        new java.lang.String[] { "Hash", "Data", "Number", "Balance", "Address", });
     internal_static_pactus_BlockHeaderInfo_descriptor =
-      getDescriptor().getMessageTypes().get(20);
+      getDescriptor().getMessageTypes().get(19);
     internal_static_pactus_BlockHeaderInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_BlockHeaderInfo_descriptor,
         new java.lang.String[] { "Version", "PrevBlockHash", "StateRoot", "SortitionSeed", "ProposerAddress", });
     internal_static_pactus_CertificateInfo_descriptor =
-      getDescriptor().getMessageTypes().get(21);
+      getDescriptor().getMessageTypes().get(20);
     internal_static_pactus_CertificateInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_CertificateInfo_descriptor,
         new java.lang.String[] { "Hash", "Round", "Committers", "Absentees", "Signature", });
     internal_static_pactus_VoteInfo_descriptor =
-      getDescriptor().getMessageTypes().get(22);
+      getDescriptor().getMessageTypes().get(21);
     internal_static_pactus_VoteInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_VoteInfo_descriptor,
         new java.lang.String[] { "Type", "Voter", "BlockHash", "Round", });
     internal_static_pactus_ConsensusInfo_descriptor =
-      getDescriptor().getMessageTypes().get(23);
+      getDescriptor().getMessageTypes().get(22);
     internal_static_pactus_ConsensusInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_ConsensusInfo_descriptor,
