@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	TopicBlock       = uint16(0x0101)
-	TopicTransaction = uint16(0x0201)
-	TopicAccountChange     = uint16(0x0301)
+	TopicBlock         = uint16(0x0101)
+	TopicTransaction   = uint16(0x0201)
+	TopicAccountChange = uint16(0x0301)
 )
 
 type Event []byte
