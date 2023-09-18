@@ -3,6 +3,7 @@ package message
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -17,39 +18,38 @@ func TestHelloMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid signature", func(t *testing.T) {
-		signer1 := ts.RandomSigner()
-		signer2 := ts.RandomSigner()
-		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash(), ts.RandomHash())
-		signer1.SignMsg(m)
-		m.SetPublicKey(signer2.PublicKey())
+		signer := ts.RandSigner()
+		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash())
+		m.Sign(signer)
+		m.Signature = ts.RandBLSSignature()
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidSignature)
+		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidSignature)
 	})
 
 	t.Run("Signature is nil", func(t *testing.T) {
-		signer := ts.RandomSigner()
-		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash(), ts.RandomHash())
-		signer.SignMsg(m)
+		signer := ts.RandSigner()
+		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash())
+		m.Sign(signer)
 		m.Signature = nil
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidSignature)
+		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidSignature)
 	})
 
-	t.Run("PublicKey is nil", func(t *testing.T) {
-		signer := ts.RandomSigner()
-		m := NewHelloMessage(ts.RandomPeerID(), "Oscar", 100, 0, ts.RandomHash(), ts.RandomHash())
-		signer.SignMsg(m)
-		m.PublicKey = nil
+	t.Run("PublicKeys are empty", func(t *testing.T) {
+		signer := ts.RandSigner()
+		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash())
+		m.Sign(signer)
+		m.PublicKeys = make([]*bls.PublicKey, 0)
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidPublicKey)
+		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidPublicKey)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		signer := ts.RandomSigner()
-		m := NewHelloMessage(ts.RandomPeerID(), "Alice", 100, 0, ts.RandomHash(), ts.RandomHash())
-		signer.SignMsg(m)
+		signer := ts.RandSigner()
+		m := NewHelloMessage(ts.RandPeerID(), "Alice", 100, 0, ts.RandHash(), ts.RandHash())
+		m.Sign(signer)
 
-		assert.NoError(t, m.SanityCheck())
+		assert.NoError(t, m.BasicCheck())
 		assert.Contains(t, m.String(), "Alice")
 	})
 }

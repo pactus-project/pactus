@@ -53,11 +53,9 @@ const (
 	nameFuncMACv1     = "MACV1"
 )
 
-var (
-	// ErrNotSupported describes an error in which the encrypted method is no
-	// known or supported.
-	ErrNotSupported = errors.New("encrypted method is not supported")
-)
+// ErrNotSupported describes an error in which the encrypted method is no
+// known or supported.
+var ErrNotSupported = errors.New("encrypted method is not supported")
 
 // encrypter keeps the method and parameters for the cipher algorithm.
 type Encrypter struct {
@@ -95,14 +93,14 @@ func DefaultEncrypter(opts ...Option) Encrypter {
 	method := fmt.Sprintf("%s-%s-%s",
 		nameFuncArgon2ID, nameFuncAES256CTR, nameFuncMACv1)
 
-	params := newParams()
-	params.SetUint32(nameParamIterations, argon2dParameters.iterations)
-	params.SetUint32(nameParamMemory, argon2dParameters.memory)
-	params.SetUint8(nameParamParallelism, argon2dParameters.parallelism)
+	encParams := newParams()
+	encParams.SetUint32(nameParamIterations, argon2dParameters.iterations)
+	encParams.SetUint32(nameParamMemory, argon2dParameters.memory)
+	encParams.SetUint8(nameParamParallelism, argon2dParameters.parallelism)
 
 	return Encrypter{
 		Method: method,
-		Params: params,
+		Params: encParams,
 	}
 }
 
@@ -110,7 +108,7 @@ func (e *Encrypter) IsEncrypted() bool {
 	return e.Method != nameFuncNope
 }
 
-// Encrypt encrypts the `message` using give `password` and returns the cipher message
+// Encrypt encrypts the `message` using give `password` and returns the cipher message.
 func (e *Encrypter) Encrypt(message string, password string) (string, error) {
 	if e.Method == nameFuncNope {
 		if password != "" {
@@ -188,7 +186,7 @@ func (e *Encrypter) Encrypt(message string, password string) (string, error) {
 	return cipherText, nil
 }
 
-// Decrypt decrypts the `cipher` using give `password` and returns the original message
+// Decrypt decrypts the `cipher` using give `password` and returns the original message.
 func (e *Encrypter) Decrypt(cipher string, password string) (string, error) {
 	if e.Method == nameFuncNope {
 		if password != "" {
@@ -205,7 +203,7 @@ func (e *Encrypter) Decrypt(cipher string, password string) (string, error) {
 	data, err := base64.StdEncoding.DecodeString(cipher)
 	util.ExitOnErr(err)
 
-	text := ""
+	var text string
 	// Minimum length of data should be 20 (16 salt + 4 bytes mac)
 	if len(data) < 20 {
 		return "", ErrInvalidCipher

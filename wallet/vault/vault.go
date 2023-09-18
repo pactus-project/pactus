@@ -79,8 +79,8 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 
 	purposeKey, err := masterKey.DerivePath([]uint32{
 		12381 + hdkeychain.HardenedKeyStart,
-		coinType + hdkeychain.HardenedKeyStart})
-
+		coinType + hdkeychain.HardenedKeyStart,
+	})
 	if err != nil {
 		return nil, err
 	}

@@ -12,21 +12,21 @@ import (
 
 func TestTransferType(t *testing.T) {
 	pld := TransferPayload{}
-	assert.Equal(t, pld.Type(), PayloadTypeTransfer)
+	assert.Equal(t, pld.Type(), TypeTransfer)
 }
 
 func TestTransferDecoding(t *testing.T) {
 	tests := []struct {
-		raw       []byte
-		value     int64
-		readErr   error
-		sanityErr error
+		raw      []byte
+		value    int64
+		readErr  error
+		basicErr error
 	}{
 		{
-			raw:       []byte{},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			raw:      []byte{},
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -34,9 +34,9 @@ func TestTransferDecoding(t *testing.T) {
 				0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
 				0x11, 0x12, 0x13, 0x14, // sender
 			},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -45,9 +45,9 @@ func TestTransferDecoding(t *testing.T) {
 				0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
 				0x21, 0x12, 0x23, 0x24, // receiver
 			},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -57,9 +57,9 @@ func TestTransferDecoding(t *testing.T) {
 				0x21, 0x12, 0x23, 0x24, 0x25, // receiver
 				0x80, 0x80, 0x80, // amount
 			},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -71,9 +71,9 @@ func TestTransferDecoding(t *testing.T) {
 				0x21, 0x12, 0x23, 0x24, 0x25, // receiver
 				0x80, 0x80, 0x80, 0x01, // amount
 			},
-			value:     0x200000,
-			readErr:   nil,
-			sanityErr: errors.Error(errors.ErrInvalidAddress),
+			value:    0x200000,
+			readErr:  nil,
+			basicErr: errors.Error(errors.ErrInvalidAddress),
 		},
 		{
 			raw: []byte{
@@ -85,9 +85,9 @@ func TestTransferDecoding(t *testing.T) {
 				0x21, 0x12, 0x23, 0x24, 0x25, // receiver
 				0x80, 0x80, 0x80, 0x01, // amount
 			},
-			value:     0x200000,
-			readErr:   nil,
-			sanityErr: errors.Error(errors.ErrInvalidAddress),
+			value:    0x200000,
+			readErr:  nil,
+			basicErr: errors.Error(errors.ErrInvalidAddress),
 		},
 		{
 			raw: []byte{
@@ -99,9 +99,9 @@ func TestTransferDecoding(t *testing.T) {
 				0x21, 0x12, 0x23, 0x24, 0x25, // receiver
 				0x80, 0x80, 0x80, 0x01, // amount
 			},
-			value:     0x200000,
-			readErr:   nil,
-			sanityErr: nil,
+			value:    0x200000,
+			readErr:  nil,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -111,9 +111,9 @@ func TestTransferDecoding(t *testing.T) {
 				0x21, 0x12, 0x23, 0x24, 0x25, // receiver
 				0x80, 0x80, 0x80, 0x01, // amount
 			},
-			value:     0x200000,
-			readErr:   nil,
-			sanityErr: nil,
+			value:    0x200000,
+			readErr:  nil,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -125,9 +125,9 @@ func TestTransferDecoding(t *testing.T) {
 				0x00, 0x00, 0x00, 0x00, 0x00, // receiver
 				0x00, // amount
 			},
-			value:     0x0,
-			readErr:   nil,
-			sanityErr: nil,
+			value:    0x0,
+			readErr:  nil,
+			basicErr: nil,
 		},
 	}
 
@@ -149,11 +149,11 @@ func TestTransferDecoding(t *testing.T) {
 			assert.Equal(t, len(w.Bytes()), pld.SerializeSize())
 			assert.Equal(t, w.Bytes(), test.raw)
 
-			// Sanity check
-			if test.sanityErr != nil {
-				assert.ErrorIs(t, pld.SanityCheck(), test.sanityErr)
+			// Basic check
+			if test.basicErr != nil {
+				assert.ErrorIs(t, pld.BasicCheck(), test.basicErr)
 			} else {
-				assert.NoError(t, pld.SanityCheck())
+				assert.NoError(t, pld.BasicCheck())
 
 				// Check signer
 				if test.raw[0] != 0 {

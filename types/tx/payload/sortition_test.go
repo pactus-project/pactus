@@ -12,21 +12,21 @@ import (
 
 func TestSortitionType(t *testing.T) {
 	pld := SortitionPayload{}
-	assert.Equal(t, pld.Type(), PayloadTypeSortition)
+	assert.Equal(t, pld.Type(), TypeSortition)
 }
 
 func TestSortitionDecoding(t *testing.T) {
 	tests := []struct {
-		raw       []byte
-		value     int64
-		readErr   error
-		sanityErr error
+		raw      []byte
+		value    int64
+		readErr  error
+		basicErr error
 	}{
 		{
-			raw:       []byte{},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			raw:      []byte{},
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -34,9 +34,9 @@ func TestSortitionDecoding(t *testing.T) {
 				0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
 				0x11, 0x12, 0x13, 0x14, // address
 			},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -48,11 +48,11 @@ func TestSortitionDecoding(t *testing.T) {
 				0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
 				0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
 				0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
-				0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, //proof
+				0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, // proof
 			},
-			value:     0,
-			readErr:   io.EOF,
-			sanityErr: nil,
+			value:    0,
+			readErr:  io.EOF,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -64,11 +64,11 @@ func TestSortitionDecoding(t *testing.T) {
 				0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
 				0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
 				0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
-				0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, //proof
+				0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, // proof
 			},
-			value:     0,
-			readErr:   nil,
-			sanityErr: nil,
+			value:    0,
+			readErr:  nil,
+			basicErr: nil,
 		},
 		{
 			raw: []byte{
@@ -80,11 +80,11 @@ func TestSortitionDecoding(t *testing.T) {
 				0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
 				0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
 				0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
-				0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, //proof
+				0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, // proof
 			},
-			value:     0,
-			readErr:   nil,
-			sanityErr: errors.Error(errors.ErrInvalidAddress),
+			value:    0,
+			readErr:  nil,
+			basicErr: errors.Error(errors.ErrInvalidAddress),
 		},
 	}
 
@@ -106,11 +106,11 @@ func TestSortitionDecoding(t *testing.T) {
 			assert.Equal(t, len(w.Bytes()), pld.SerializeSize())
 			assert.Equal(t, w.Bytes(), test.raw)
 
-			// Sanity check
-			if test.sanityErr != nil {
-				assert.ErrorIs(t, pld.SanityCheck(), test.sanityErr)
+			// Basic check
+			if test.basicErr != nil {
+				assert.ErrorIs(t, pld.BasicCheck(), test.basicErr)
 			} else {
-				assert.NoError(t, pld.SanityCheck())
+				assert.NoError(t, pld.BasicCheck())
 
 				// Check signer
 				if test.raw[0] != 0 {

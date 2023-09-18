@@ -25,7 +25,8 @@ type Firewall struct {
 }
 
 func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, state state.Facade,
-	logger *logger.SubLogger) *Firewall {
+	logger *logger.SubLogger,
+) *Firewall {
 	return &Firewall{
 		config:  conf,
 		network: net,
@@ -39,7 +40,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, source peer.ID, from peer.ID) *
 	if from != source {
 		f.peerSet.UpdateLastReceived(from)
 		if f.isPeerBanned(from) {
-			f.logger.Warn("firewall: from peer banned", "from", from)
+			f.logger.Warn("firewall: from peer banned", "from", from.ShortString())
 			f.closeConnection(from)
 			return nil
 		}
@@ -47,7 +48,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, source peer.ID, from peer.ID) *
 
 	bdl, err := f.openBundle(bytes.NewReader(data), source)
 	if err != nil {
-		f.logger.Warn("firewall: unable to open a gossip bundle", "err", err)
+		f.logger.Warn("firewall: unable to open a gossip bundle", "error", err)
 		f.closeConnection(from)
 		return nil
 	}
@@ -61,7 +62,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, source peer.ID, from peer.ID) *
 func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
 	bdl, err := f.openBundle(r, from)
 	if err != nil {
-		f.logger.Warn("firewall: unable to open a stream bundle", "err", err)
+		f.logger.Warn("firewall: unable to open a stream bundle", "error", err)
 		f.closeConnection(from)
 		return nil
 	}
@@ -105,16 +106,16 @@ func (f *Firewall) decodeBundle(r io.Reader, pid peer.ID) (*bundle.Bundle, error
 	bdl := new(bundle.Bundle)
 	bytesRead, err := bdl.Decode(r)
 	if err != nil {
-		f.peerSet.IncreaseReceivedBytesCounter(pid, message.TypeUnspecified, bytesRead)
+		f.peerSet.IncreaseReceivedBytesCounter(pid, message.TypeUnspecified, int64(bytesRead))
 		return nil, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
-	f.peerSet.IncreaseReceivedBytesCounter(pid, bdl.Message.Type(), bytesRead)
+	f.peerSet.IncreaseReceivedBytesCounter(pid, bdl.Message.Type(), int64(bytesRead))
 
 	return bdl, nil
 }
 
 func (f *Firewall) checkBundle(bdl *bundle.Bundle, pid peer.ID) error {
-	if err := bdl.SanityCheck(); err != nil {
+	if err := bdl.BasicCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 

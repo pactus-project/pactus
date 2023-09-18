@@ -11,11 +11,9 @@ import (
 	lp2pcrypto "github.com/libp2p/go-libp2p/core/crypto"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
-	rcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
-	rcmgrObs "github.com/libp2p/go-libp2p/p2p/host/resource-manager/obs"
+	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
 	"github.com/prometheus/client_golang/prometheus"
@@ -30,12 +28,14 @@ type network struct {
 	// Adding these linter later:  contextcheck and containedctx
 	ctx            context.Context
 	cancel         func()
+	name           string
 	config         *Config
 	host           lp2phost.Host
 	mdns           *mdnsService
 	dht            *dhtService
 	stream         *streamService
 	gossip         *gossipService
+	notifee        *NotifeeService
 	generalTopic   *lp2pps.Topic
 	consensusTopic *lp2pps.Topic
 	eventChannel   chan Event
@@ -74,32 +74,31 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 	return key, nil
 }
 
-func NewNetwork(conf *Config) (Network, error) {
-	return newNetwork(conf, []lp2p.Option{})
+func NewNetwork(networkName string, conf *Config) (Network, error) {
+	return newNetwork(networkName, conf, []lp2p.Option{})
 }
 
-func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
+func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network, error) {
 	networkKey, err := loadOrCreateKey(conf.NetworkKey)
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, LibP2PError{Err: err}
 	}
 
 	if conf.EnableMetrics {
-		rcmgrObs.MustRegisterWith(prometheus.DefaultRegisterer)
+		lp2prcmgr.MustRegisterWith(prometheus.DefaultRegisterer)
 	}
 
-	str, err := rcmgrObs.NewStatsTraceReporter()
+	str, err := lp2prcmgr.NewStatsTraceReporter()
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, LibP2PError{Err: err}
 	}
 
-	rmgr, err := rcmgr.NewResourceManager(
-		rcmgr.NewFixedLimiter(rcmgr.DefaultLimits.AutoScale()),
-		rcmgr.WithTraceReporter(str),
+	rmgr, err := lp2prcmgr.NewResourceManager(
+		lp2prcmgr.NewFixedLimiter(lp2prcmgr.DefaultLimits.AutoScale()),
+		lp2prcmgr.WithTraceReporter(str),
 	)
-
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, LibP2PError{Err: err}
 	}
 
 	opts = append(opts,
@@ -125,18 +124,19 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 		for _, s := range conf.RelayAddrs {
 			addr, err := ma.NewMultiaddr(s)
 			if err != nil {
-				return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+				return nil, LibP2PError{Err: err}
 			}
 			relayAddrs = append(relayAddrs, addr)
 		}
 
 		static, err := lp2ppeer.AddrInfosFromP2pAddrs(relayAddrs...)
 		if err != nil {
-			return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+			return nil, LibP2PError{Err: err}
 		}
 		opts = append(opts,
 			lp2p.EnableRelay(),
 			lp2p.EnableAutoRelayWithStaticRelays(static),
+			lp2p.EnableHolePunching(),
 		)
 	} else {
 		opts = append(opts,
@@ -146,7 +146,7 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 
 	host, err := lp2p.New(opts...)
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, LibP2PError{Err: err}
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -154,6 +154,7 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 	n := &network{
 		ctx:          ctx,
 		cancel:       cancel,
+		name:         networkName,
 		config:       conf,
 		host:         host,
 		eventChannel: make(chan Event, 100),
@@ -165,12 +166,15 @@ func newNetwork(conf *Config, opts []lp2p.Option) (*network, error) {
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
 	}
 
-	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/kad/v1", n.config.Name))
-	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", n.config.Name))
+	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/gossip/v1", n.name))
+	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", n.name))
 
 	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf.Bootstrap, n.logger)
 	n.stream = newStreamService(ctx, n.host, streamProtocolID, relayAddrs, n.eventChannel, n.logger)
 	n.gossip = newGossipService(ctx, n.host, n.eventChannel, n.logger)
+	n.notifee = newNotifeeService(n.host, n.eventChannel, n.logger, streamProtocolID)
+
+	n.host.Network().Notify(n.notifee)
 
 	n.logger.Info("network setup", "id", n.host.ID(), "address", conf.Listens)
 
@@ -183,11 +187,11 @@ func (n *network) EventChannel() <-chan Event {
 
 func (n *network) Start() error {
 	if err := n.dht.Start(); err != nil {
-		return errors.Errorf(errors.ErrNetwork, err.Error())
+		return LibP2PError{Err: err}
 	}
 	if n.mdns != nil {
 		if err := n.mdns.Start(); err != nil {
-			return errors.Errorf(errors.ErrNetwork, err.Error())
+			return LibP2PError{Err: err}
 		}
 	}
 	n.gossip.Start()
@@ -215,7 +219,7 @@ func (n *network) Stop() {
 	n.stream.Stop()
 
 	if err := n.host.Close(); err != nil {
-		n.logger.Error("unable to close the network", "err", err)
+		n.logger.Error("unable to close the network", "error", err)
 	}
 }
 
@@ -232,18 +236,18 @@ func (n *network) Broadcast(msg []byte, topicID TopicID) error {
 	switch topicID {
 	case TopicIDGeneral:
 		if n.generalTopic == nil {
-			return errors.Errorf(errors.ErrNetwork, "not subscribed to general topic")
+			return NotSubscribedError{TopicID: topicID}
 		}
 		return n.gossip.BroadcastMessage(msg, n.generalTopic)
 
 	case TopicIDConsensus:
 		if n.consensusTopic == nil {
-			return errors.Errorf(errors.ErrNetwork, "not subscribed to consensus topic")
+			return NotSubscribedError{TopicID: topicID}
 		}
 		return n.gossip.BroadcastMessage(msg, n.consensusTopic)
 
 	default:
-		return errors.Errorf(errors.ErrNetwork, "invalid topic")
+		return InvalidTopicError{TopicID: topicID}
 	}
 }
 
@@ -282,7 +286,7 @@ func (n *network) consensusTopicName() string {
 }
 
 func (n *network) TopicName(topic string) string {
-	return fmt.Sprintf("/%s/topic/%s/v1", n.config.Name, topic)
+	return fmt.Sprintf("/%s/topic/%s/v1", n.name, topic)
 }
 
 func (n *network) CloseConnection(pid lp2ppeer.ID) {

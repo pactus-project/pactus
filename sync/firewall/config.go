@@ -16,7 +16,7 @@ func DefaultConfig() *Config {
 	}
 }
 
-// SanityCheck performs basic checks on the configuration.
-func (conf *Config) SanityCheck() error {
+// BasicCheck performs basic checks on the configuration.
+func (conf *Config) BasicCheck() error {
 	return nil
 }

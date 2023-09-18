@@ -38,7 +38,7 @@ func GenerateMnemonic(entropy int) string {
 	return vault.GenerateMnemonic(entropy)
 }
 
-// CheckMnemonic is a wrapper for `vault.CheckMnemonic`
+// CheckMnemonic is a wrapper for `vault.CheckMnemonic`.
 func CheckMnemonic(mnemonic string) error {
 	return vault.CheckMnemonic(mnemonic)
 }
@@ -68,15 +68,16 @@ func Open(path string, offline bool) (*Wallet, error) {
 func Create(path, mnemonic, password string, chain genesis.ChainType) (*Wallet, error) {
 	path = util.MakeAbs(path)
 	if util.PathExists(path) {
-		return nil, NewErrWalletExits(path)
+		return nil, WalletExitsError{
+			Path: path,
+		}
 	}
 
-	coinType := uint32(0)
+	var coinType uint32
 	switch chain {
 	case genesis.Mainnet:
 		coinType = 21888
-	case genesis.Testnet,
-		genesis.Localnet:
+	case genesis.Testnet, genesis.Localnet:
 		coinType = 21777
 	default:
 		return nil, ErrInvalidNetwork
@@ -245,47 +246,10 @@ func (w *Wallet) Stake(addrStr string) (int64, error) {
 	return 0, nil
 }
 
-// AccountSequence returns the sequence of the account associated with the address.
-func (w *Wallet) AccountSequence(addrStr string) (int32, error) {
-	addr, err := crypto.AddressFromString(addrStr)
-	if err != nil {
-		return 0, err
-	}
-
-	if w.client == nil {
-		return 0, ErrOffline
-	}
-
-	acc, err := w.client.getAccount(addr)
-	if err != nil {
-		return 0, err
-	}
-
-	return acc.Sequence, nil
-}
-
-// ValidatorSequence returns the sequence of the validator associated with the address.
-func (w *Wallet) ValidatorSequence(addrStr string) (int32, error) {
-	addr, err := crypto.AddressFromString(addrStr)
-	if err != nil {
-		return 0, err
-	}
-
-	if w.client == nil {
-		return 0, ErrOffline
-	}
-
-	val, err := w.client.getValidator(addr)
-	if err != nil {
-		return 0, err
-	}
-
-	return val.Sequence, nil
-}
-
 // MakeTransferTx creates a new transfer transaction based on the given parameters.
 func (w *Wallet) MakeTransferTx(sender, receiver string, amount int64,
-	options ...TxOption) (*tx.Tx, error) {
+	options ...TxOption,
+) (*tx.Tx, error) {
 	maker, err := newTxBuilder(w.client, options...)
 	if err != nil {
 		return nil, err
@@ -299,14 +263,15 @@ func (w *Wallet) MakeTransferTx(sender, receiver string, amount int64,
 		return nil, err
 	}
 	maker.amount = amount
-	maker.typ = payload.PayloadTypeTransfer
+	maker.typ = payload.TypeTransfer
 
 	return maker.build()
 }
 
 // MakeBondTx creates a new bond transaction based on the given parameters.
 func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
-	options ...TxOption) (*tx.Tx, error) {
+	options ...TxOption,
+) (*tx.Tx, error) {
 	maker, err := newTxBuilder(w.client, options...)
 	if err != nil {
 		return nil, err
@@ -333,7 +298,7 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
 		}
 	}
 	maker.amount = amount
-	maker.typ = payload.PayloadTypeBond
+	maker.typ = payload.TypeBond
 
 	return maker.build()
 }
@@ -348,7 +313,7 @@ func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
 	if err != nil {
 		return nil, err
 	}
-	maker.typ = payload.PayloadTypeUnbond
+	maker.typ = payload.TypeUnbond
 
 	return maker.build()
 }
@@ -356,7 +321,8 @@ func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
 // MakeWithdrawTx creates a new withdraw transaction based on the given
 // parameters.
 func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount int64,
-	options ...TxOption) (*tx.Tx, error) {
+	options ...TxOption,
+) (*tx.Tx, error) {
 	maker, err := newTxBuilder(w.client, options...)
 	if err != nil {
 		return nil, err
@@ -370,7 +336,7 @@ func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount int64,
 		return nil, err
 	}
 	maker.amount = amount
-	maker.typ = payload.PayloadTypeWithdraw
+	maker.typ = payload.TypeWithdraw
 
 	return maker.build()
 }
@@ -383,9 +349,6 @@ func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
 
 	signer := crypto.NewSigner(prv)
 	signer.SignMsg(trx)
-	if err != nil {
-		return err
-	}
 	return nil
 }
 

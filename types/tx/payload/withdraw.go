@@ -16,7 +16,7 @@ type WithdrawPayload struct {
 }
 
 func (p *WithdrawPayload) Type() Type {
-	return PayloadTypeWithdraw
+	return TypeWithdraw
 }
 
 func (p *WithdrawPayload) Signer() crypto.Address {
@@ -27,12 +27,12 @@ func (p *WithdrawPayload) Value() int64 {
 	return p.Amount
 }
 
-// TODO: write test for me
-func (p *WithdrawPayload) SanityCheck() error {
-	if err := p.From.SanityCheck(); err != nil {
+// TODO: write test for me.
+func (p *WithdrawPayload) BasicCheck() error {
+	if err := p.From.BasicCheck(); err != nil {
 		return errors.Error(errors.ErrInvalidAddress)
 	}
-	if err := p.To.SanityCheck(); err != nil {
+	if err := p.To.BasicCheck(); err != nil {
 		return errors.Error(errors.ErrInvalidAddress)
 	}
 
@@ -69,4 +69,8 @@ func (p *WithdrawPayload) String() string {
 		p.From.ShortString(),
 		p.To.ShortString(),
 		p.Amount)
+}
+
+func (p *WithdrawPayload) ReceiverAddr() *crypto.Address {
+	return &p.To
 }

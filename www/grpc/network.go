@@ -17,7 +17,8 @@ type networkServer struct {
 }
 
 func (s *networkServer) GetNetworkInfo(_ context.Context,
-	_ *pactus.GetNetworkInfoRequest) (*pactus.GetNetworkInfoResponse, error) {
+	_ *pactus.GetNetworkInfoRequest,
+) (*pactus.GetNetworkInfoResponse, error) {
 	peerset := s.sync.PeerSet()
 	peers := make([]*pactus.PeerInfo, peerset.Len())
 
@@ -27,7 +28,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 
 		bs, err := cbor.Marshal(peer.Agent)
 		if err != nil {
-			s.logger.Error("couldn't marshal agent", "err", err)
+			s.logger.Error("couldn't marshal agent", "error", err)
 			continue
 		}
 		p.Agent = string(bs)
@@ -35,18 +36,17 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		p.PeerId = []byte(peer.PeerID)
 		p.Moniker = peer.Moniker
 		p.Agent = peer.Agent
-		p.Flags = int32(peer.Flags)
+		p.Services = uint32(peer.Services)
 		p.Height = peer.Height
 		p.ReceivedMessages = int32(peer.ReceivedBundles)
 		p.InvalidMessages = int32(peer.InvalidBundles)
-		p.ReceivedBytes = int32(peer.ReceivedBytes)
+		p.ReceivedBytes = *(*map[int32]int64)(unsafe.Pointer(&peer.ReceivedBytes))
+		p.SentBytes = *(*map[int32]int64)(unsafe.Pointer(&peer.SentBytes))
 		p.Status = int32(peer.Status)
 		p.LastReceived = peer.LastReceived.Unix()
-		p.SendSuccess = int32(peer.SendSuccess)
-		p.SendFailed = int32(peer.SendFailed)
 		p.LastBlockHash = peer.LastBlockHash.Bytes()
 
-		for key := range peer.ConsensusKeys {
+		for _, key := range peer.ConsensusKeys {
 			p.ConsensusKeys = append(p.ConsensusKeys, key.String())
 		}
 	}
@@ -65,7 +65,8 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 }
 
 func (s *networkServer) GetNodeInfo(_ context.Context,
-	_ *pactus.GetNodeInfoRequest) (*pactus.GetNodeInfoResponse, error) {
+	_ *pactus.GetNodeInfoRequest,
+) (*pactus.GetNodeInfoResponse, error) {
 	return &pactus.GetNodeInfoResponse{
 		Moniker: s.sync.Moniker(),
 		Agent:   version.Agent(),

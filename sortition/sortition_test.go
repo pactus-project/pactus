@@ -19,8 +19,6 @@ func TestEvaluation(t *testing.T) {
 		"SECRET1P838V87AW42JS8YWLYYK0AYFJQ9445VR72H23D6LR7GEJ8KW9UQ0QVE8WHE")
 	seed, _ := sortition.VerifiableSeedFromString(
 		"b63179137423ab2da8279d7aa3726d7ad05ae7d3ab3f744db0a9a719d12a720e72dc1d1e9222360243007f2f4adf7009")
-	proof, _ := sortition.ProofFromString(
-		"8cb689ec126465ddadd32493b71dc7ee3bfa2ef5a0a0f4b9b8aa777fb915a5f88def3305a3579e97b96ac862a6d67316")
 	signer := crypto.NewSigner(prv)
 
 	t.Run("Total stake is zero", func(t *testing.T) {
@@ -39,17 +37,19 @@ func TestEvaluation(t *testing.T) {
 	})
 
 	t.Run("OK!", func(t *testing.T) {
+		proof1, _ := sortition.ProofFromString(
+			"8cb689ec126465ddadd32493b71dc7ee3bfa2ef5a0a0f4b9b8aa777fb915a5f88def3305a3579e97b96ac862a6d67316")
 		total := int64(1 * 1e14)
 
 		ok, proof2 := sortition.EvaluateSortition(seed, signer, total, total/100)
 		require.True(t, ok)
-		require.Equal(t, proof, proof2)
+		require.Equal(t, proof1, proof2)
 
-		require.True(t, sortition.VerifyProof(seed, proof, signer.PublicKey(), total, total/100))
-		require.False(t, sortition.VerifyProof(seed, proof, signer.PublicKey(), total, 0))
-		require.False(t, sortition.VerifyProof(seed, ts.RandomProof(), signer.PublicKey(), total, total/10))
+		require.True(t, sortition.VerifyProof(seed, proof1, signer.PublicKey(), total, total/100))
+		require.False(t, sortition.VerifyProof(seed, proof1, signer.PublicKey(), total, 0))
+		require.False(t, sortition.VerifyProof(seed, ts.RandProof(), signer.PublicKey(), total, total/10))
 		require.False(t, sortition.VerifyProof(seed, sortition.Proof{}, signer.PublicKey(), total, total/10))
-		require.False(t, sortition.VerifyProof(ts.RandomSeed(), proof, signer.PublicKey(), total, total/10))
+		require.False(t, sortition.VerifyProof(ts.RandSeed(), proof1, signer.PublicKey(), total, total/10))
 	})
 }
 
@@ -58,8 +58,8 @@ func TestInvalidProof(t *testing.T) {
 
 	t.Run("Invalid proof (Zero proof)", func(t *testing.T) {
 		total := ts.RandInt64(1 * 1e14)
-		seed := ts.RandomSeed()
-		pub, _ := ts.RandomBLSKeyPair()
+		seed := ts.RandSeed()
+		pub, _ := ts.RandBLSKeyPair()
 		proof, _ := sortition.ProofFromString(
 			"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
 
@@ -68,8 +68,8 @@ func TestInvalidProof(t *testing.T) {
 
 	t.Run("Invalid proof (Infinity proof)", func(t *testing.T) {
 		total := ts.RandInt64(1 * 1e14)
-		seed := ts.RandomSeed()
-		pub, _ := ts.RandomBLSKeyPair()
+		seed := ts.RandSeed()
+		pub, _ := ts.RandBLSKeyPair()
 		proof, _ := sortition.ProofFromString(
 			"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
 
@@ -81,12 +81,12 @@ func TestSortitionMedian(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	total := int64(1 * 1e9)
-	signer := ts.RandomSigner()
+	signer := ts.RandSigner()
 
 	count := 1000
 	median := 0
 	for j := 0; j < count; j++ {
-		seed := ts.RandomSeed()
+		seed := ts.RandSeed()
 		ok, _ := sortition.EvaluateSortition(seed, signer, total, total/10)
 		if ok {
 			median++

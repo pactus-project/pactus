@@ -1,6 +1,7 @@
 package network
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"testing"
@@ -18,8 +19,10 @@ import (
 // Original code from:
 // https://github.com/libp2p/go-libp2p/blob/master/p2p/host/autorelay/autorelay_test.go
 func makeTestRelay(t *testing.T) host.Host {
+	t.Helper()
+
 	h, err := lp2p.New(
-		lp2p.ListenAddrStrings("/ip4/0.0.0.0/tcp/0"),
+		lp2p.ListenAddrStrings("/ip4/127.0.0.1/tcp/0"),
 		lp2p.DisableRelay(),
 		lp2p.EnableRelayService(),
 		lp2p.ForceReachabilityPublic(),
@@ -40,8 +43,10 @@ func makeTestRelay(t *testing.T) host.Host {
 }
 
 func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
-	net, err := newNetwork(conf, opts)
-	assert.NoError(t, err)
+	t.Helper()
+
+	net, err := newNetwork("test", conf, opts)
+	require.NoError(t, err)
 
 	assert.NoError(t, net.Start())
 	assert.NoError(t, net.JoinGeneralTopic())
@@ -51,7 +56,6 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 
 func testConfig() *Config {
 	return &Config{
-		Name:        "test-network",
 		Listens:     []string{},
 		NetworkKey:  util.TempFilePath(),
 		EnableNAT:   false,
@@ -66,7 +70,9 @@ func testConfig() *Config {
 	}
 }
 
-func shouldReceiveEvent(t *testing.T, net *network) Event {
+func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
+	t.Helper()
+
 	timeout := time.NewTimer(2 * time.Second)
 
 	for {
@@ -75,12 +81,16 @@ func shouldReceiveEvent(t *testing.T, net *network) Event {
 			require.NoError(t, fmt.Errorf("shouldReceiveEvent Timeout, test: %v id:%s", t.Name(), net.SelfID().String()))
 			return nil
 		case e := <-net.EventChannel():
-			return e
+			if e.Type() == eventType {
+				return e
+			}
 		}
 	}
 }
 
 func shouldNotReceiveEvent(t *testing.T, net *network) {
+	t.Helper()
+
 	timeout := time.NewTimer(100 * time.Millisecond)
 
 	for {
@@ -95,16 +105,20 @@ func shouldNotReceiveEvent(t *testing.T, net *network) {
 }
 
 func readData(t *testing.T, r io.ReadCloser, len int) []byte {
+	t.Helper()
+
 	buf := make([]byte, len)
 	_, err := r.Read(buf)
-	assert.NoError(t, err)
-	assert.NoError(t, r.Close())
+	if !errors.Is(err, io.EOF) {
+		assert.NoError(t, err)
+		assert.NoError(t, r.Close())
+	}
 
 	return buf
 }
 
 func TestStoppingNetwork(t *testing.T) {
-	net, err := NewNetwork(testConfig())
+	net, err := NewNetwork("test", testConfig())
 	assert.NoError(t, err)
 
 	assert.NoError(t, net.Start())
@@ -143,8 +157,8 @@ func TestNetwork(t *testing.T) {
 	confB := testConfig()
 	bootstrapPort := ts.RandInt32(9999) + 10000
 	confB.Listens = []string{
-		fmt.Sprintf("/ip4/0.0.0.0/tcp/%v", bootstrapPort),
-		fmt.Sprintf("/ip6/::/tcp/%v", bootstrapPort),
+		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", bootstrapPort),
+		fmt.Sprintf("/ip6/::1/tcp/%v", bootstrapPort),
 	}
 	fmt.Println("Starting Bootstrap node")
 	networkB := makeTestNetwork(t, confB, []lp2p.Option{})
@@ -159,8 +173,8 @@ func TestNetwork(t *testing.T) {
 	confP.EnableNAT = true
 	confP.Bootstrap.Addresses = bootstrapAddresses
 	confP.Listens = []string{
-		"/ip4/0.0.0.0/tcp/0",
-		"/ip6/::/tcp/0",
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
 	}
 	fmt.Println("Starting Public node")
 	networkP := makeTestNetwork(t, confP, []lp2p.Option{
@@ -174,8 +188,8 @@ func TestNetwork(t *testing.T) {
 	confM.RelayAddrs = relayAddrs
 	confM.Bootstrap.Addresses = bootstrapAddresses
 	confM.Listens = []string{
-		"/ip4/0.0.0.0/tcp/0",
-		"/ip6/::/tcp/0",
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
 	}
 	fmt.Println("Starting Private node M")
 	networkM := makeTestNetwork(t, confM, []lp2p.Option{
@@ -189,8 +203,8 @@ func TestNetwork(t *testing.T) {
 	confN.RelayAddrs = relayAddrs
 	confN.Bootstrap.Addresses = bootstrapAddresses
 	confN.Listens = []string{
-		"/ip4/0.0.0.0/tcp/0",
-		"/ip6/::/tcp/0",
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
 	}
 	fmt.Println("Starting Private node N")
 	networkN := makeTestNetwork(t, confN, []lp2p.Option{
@@ -203,8 +217,8 @@ func TestNetwork(t *testing.T) {
 	confX.EnableRelay = false
 	confX.Bootstrap.Addresses = bootstrapAddresses
 	confX.Listens = []string{
-		"/ip4/0.0.0.0/tcp/0",
-		"/ip6/::/tcp/0",
+		"/ip4/127.0.0.1/tcp/0",
+		"/ip6/::1/tcp/0",
 	}
 	fmt.Println("Starting Private node X")
 	networkX := makeTestNetwork(t, confX, []lp2p.Option{
@@ -225,10 +239,10 @@ func TestNetwork(t *testing.T) {
 
 		require.NoError(t, networkP.Broadcast(msg, TopicIDGeneral))
 
-		eB := shouldReceiveEvent(t, networkB).(*GossipMessage)
-		eM := shouldReceiveEvent(t, networkM).(*GossipMessage)
-		eN := shouldReceiveEvent(t, networkN).(*GossipMessage)
-		eX := shouldReceiveEvent(t, networkX).(*GossipMessage)
+		eB := shouldReceiveEvent(t, networkB, EventTypeGossip).(*GossipMessage)
+		eM := shouldReceiveEvent(t, networkM, EventTypeGossip).(*GossipMessage)
+		eN := shouldReceiveEvent(t, networkN, EventTypeGossip).(*GossipMessage)
+		eX := shouldReceiveEvent(t, networkX, EventTypeGossip).(*GossipMessage)
 
 		assert.Equal(t, eB.Source, networkP.SelfID())
 		assert.Equal(t, eM.Source, networkP.SelfID())
@@ -246,9 +260,9 @@ func TestNetwork(t *testing.T) {
 
 		require.NoError(t, networkP.Broadcast(msg, TopicIDConsensus))
 
-		eB := shouldReceiveEvent(t, networkB).(*GossipMessage)
-		eM := shouldReceiveEvent(t, networkM).(*GossipMessage)
-		eN := shouldReceiveEvent(t, networkN).(*GossipMessage)
+		eB := shouldReceiveEvent(t, networkB, EventTypeGossip).(*GossipMessage)
+		eM := shouldReceiveEvent(t, networkM, EventTypeGossip).(*GossipMessage)
+		eN := shouldReceiveEvent(t, networkN, EventTypeGossip).(*GossipMessage)
 		shouldNotReceiveEvent(t, networkX)
 
 		assert.Equal(t, eB.Source, networkP.SelfID())
@@ -270,7 +284,7 @@ func TestNetwork(t *testing.T) {
 		msgB := []byte("test-stream-from-b")
 
 		require.NoError(t, networkB.SendTo(msgB, networkP.SelfID()))
-		eB := shouldReceiveEvent(t, networkP).(*StreamMessage)
+		eB := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
 		assert.Equal(t, eB.Source, networkB.SelfID())
 		assert.Equal(t, readData(t, eB.Reader, len(msgB)), msgB)
 	})
@@ -279,7 +293,7 @@ func TestNetwork(t *testing.T) {
 		msgM := []byte("test-stream-from-m")
 
 		require.NoError(t, networkM.SendTo(msgM, networkN.SelfID()))
-		eM := shouldReceiveEvent(t, networkN).(*StreamMessage)
+		eM := shouldReceiveEvent(t, networkN, EventTypeStream).(*StreamMessage)
 		assert.Equal(t, eM.Source, networkM.SelfID())
 		assert.Equal(t, readData(t, eM.Reader, len(msgM)), msgM)
 	})
@@ -295,18 +309,10 @@ func TestNetwork(t *testing.T) {
 
 		networkP.Stop()
 		networkB.CloseConnection(networkP.SelfID())
-
+		e := shouldReceiveEvent(t, networkB, EventTypeDisconnect).(*DisconnectEvent)
+		assert.Equal(t, e.PeerID, networkP.SelfID())
 		require.Error(t, networkB.SendTo(msgB, networkP.SelfID()))
 	})
-}
-
-func TestInvalidTopic(t *testing.T) {
-	net, err := NewNetwork(testConfig())
-	assert.NoError(t, err)
-
-	msg := []byte("test-invalid-topic")
-
-	require.Error(t, net.Broadcast(msg, -1))
 }
 
 func TestInvalidRelayAddress(t *testing.T) {
@@ -314,10 +320,10 @@ func TestInvalidRelayAddress(t *testing.T) {
 	conf.EnableRelay = true
 
 	conf.RelayAddrs = []string{"127.0.0.1:4001"}
-	_, err := NewNetwork(conf)
+	_, err := NewNetwork("test", conf)
 	assert.Error(t, err)
 
 	conf.RelayAddrs = []string{"/ip4/127.0.0.1/tcp/4001"}
-	_, err = NewNetwork(conf)
+	_, err = NewNetwork("test", conf)
 	assert.Error(t, err)
 }

@@ -40,6 +40,15 @@ func (c *grpcClient) getStamp() (hash.Stamp, error) {
 	return h.Stamp(), nil
 }
 
+func (c *grpcClient) getBlockchainInfo() (*pactus.GetBlockchainInfoResponse, error) {
+	info, err := c.blockchainClient.GetBlockchainInfo(context.Background(),
+		&pactus.GetBlockchainInfoRequest{})
+	if err != nil {
+		return nil, err
+	}
+	return info, nil
+}
+
 func (c *grpcClient) getAccount(addr crypto.Address) (*pactus.AccountInfo, error) {
 	res, err := c.blockchainClient.GetAccount(context.Background(),
 		&pactus.GetAccountRequest{Address: addr.String()})
@@ -66,7 +75,6 @@ func (c *grpcClient) sendTx(tx *tx.Tx) (tx.ID, error) {
 	res, err := c.transactionClient.SendRawTransaction(context.Background(), &pactus.SendRawTransactionRequest{
 		Data: data,
 	})
-
 	if err != nil {
 		return hash.UndefHash, err
 	}
@@ -74,7 +82,7 @@ func (c *grpcClient) sendTx(tx *tx.Tx) (tx.ID, error) {
 	return hash.FromBytes(res.Id)
 }
 
-// TODO: check the return value type
+// TODO: check the return value type.
 func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, error) {
 	res, err := c.transactionClient.GetTransaction(context.Background(), &pactus.GetTransactionRequest{
 		Id:        id.Bytes(),
@@ -89,7 +97,8 @@ func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, e
 
 func (c *grpcClient) getFee(amount int64, payloadType payload.Type) (int64, error) {
 	res, err := c.transactionClient.CalculateFee(context.Background(), &pactus.CalculateFeeRequest{
-		Amount: amount, PayloadType: pactus.PayloadType(payloadType)})
+		Amount: amount, PayloadType: pactus.PayloadType(payloadType),
+	})
 	if err != nil {
 		return 0, err
 	}

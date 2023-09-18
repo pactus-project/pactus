@@ -15,7 +15,7 @@ type TransferPayload struct {
 }
 
 func (p *TransferPayload) Type() Type {
-	return PayloadTypeTransfer
+	return TypeTransfer
 }
 
 func (p *TransferPayload) Signer() crypto.Address {
@@ -26,11 +26,11 @@ func (p *TransferPayload) Value() int64 {
 	return p.Amount
 }
 
-func (p *TransferPayload) SanityCheck() error {
-	if err := p.Sender.SanityCheck(); err != nil {
+func (p *TransferPayload) BasicCheck() error {
+	if err := p.Sender.BasicCheck(); err != nil {
 		return err
 	}
-	return p.Receiver.SanityCheck()
+	return p.Receiver.BasicCheck()
 }
 
 func (p *TransferPayload) SerializeSize() int {
@@ -41,7 +41,7 @@ func (p *TransferPayload) SerializeSize() int {
 }
 
 func (p *TransferPayload) Encode(w io.Writer) error {
-	// If the transaction is a subsidy transaction (sender is treasury address)
+	// If the transaction is a subsidy transaction (sender is the Treasury address)
 	// compress the address to one byte.
 	// This helps to reduce the size of each block by 20 bytes.
 	if p.Sender.EqualsTo(crypto.TreasuryAddress) {
@@ -97,4 +97,8 @@ func (p *TransferPayload) String() string {
 		p.Sender.ShortString(),
 		p.Receiver.ShortString(),
 		p.Amount)
+}
+
+func (p *TransferPayload) ReceiverAddr() *crypto.Address {
+	return &p.Receiver
 }

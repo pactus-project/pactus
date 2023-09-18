@@ -10,20 +10,26 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-const MaxUint16 = ^uint16(0)
-const MinUint16 = 0
-const MaxInt16 = int16(MaxUint16 >> 1)
-const MinInt16 = -MaxInt16 - 1
+const (
+	MaxUint16 = ^uint16(0)
+	MinUint16 = 0
+	MaxInt16  = int16(MaxUint16 >> 1)
+	MinInt16  = -MaxInt16 - 1
+)
 
-const MaxUint32 = ^uint32(0)
-const MinUint32 = 0
-const MaxInt32 = int32(MaxUint32 >> 1)
-const MinInt32 = -MaxInt32 - 1
+const (
+	MaxUint32 = ^uint32(0)
+	MinUint32 = 0
+	MaxInt32  = int32(MaxUint32 >> 1)
+	MinInt32  = -MaxInt32 - 1
+)
 
-const MaxUint64 = ^uint64(0)
-const MinUint64 = 0
-const MaxInt64 = int64(MaxUint64 >> 1)
-const MinInt64 = -MaxInt64 - 1
+const (
+	MaxUint64 = ^uint64(0)
+	MinUint64 = 0
+	MaxInt64  = int64(MaxUint64 >> 1)
+	MinInt64  = -MaxInt64 - 1
+)
 
 // Max returns the biggest of two integer numbers.
 func Max[T constraints.Integer](a, b T) T {
@@ -41,14 +47,14 @@ func Min[T constraints.Integer](a, b T) T {
 	return b
 }
 
-// RandInt32 returns a random int16 in between 0 and max.
+// RandInt16 returns a random int16 in between 0 and max.
 // If max set to zero or negative, the max will set to MaxInt16.
 func RandInt16(max int16) int16 {
 	return int16(RandUint64(uint64(max)))
 }
 
-// RandUint32 returns a random uint32 in between 0 and max.
-// If max set to zero or negative, the max will set to MaxUint32.
+// RandUint16 returns a random uint16 in between 0 and max.
+// If max set to zero or negative, the max will set to MaxUint16.
 func RandUint16(max uint32) uint16 {
 	return uint16(RandUint64(uint64(max)))
 }
@@ -85,19 +91,17 @@ func RandUint64(max uint64) uint64 {
 }
 
 // SetFlag applies mask to the flags.
-func SetFlag(flags, mask int) int {
-	flags = flags | mask
-	return flags
+func SetFlag[T constraints.Integer](flags, mask T) T {
+	return flags | mask
 }
 
 // UnsetFlag removes mask from the flags.
-func UnsetFlag(flags, mask int) int {
-	flags = flags & ^mask
-	return flags
+func UnsetFlag[T constraints.Integer](flags, mask T) T {
+	return flags & ^mask
 }
 
 // IsFlagSet checks if the mask is set for the given flags.
-func IsFlagSet(flags, mask int) bool {
+func IsFlagSet[T constraints.Integer](flags, mask T) bool {
 	return flags&mask == mask
 }
 

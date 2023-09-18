@@ -19,9 +19,6 @@ func Int16ToSlice(n int16) []byte {
 }
 
 func SliceToUint16(bs []byte) uint16 {
-	if len(bs) != 2 {
-		panic("invalid data")
-	}
 	return binary.LittleEndian.Uint16(bs)
 }
 
@@ -40,9 +37,6 @@ func Int32ToSlice(n int32) []byte {
 }
 
 func SliceToUint32(bs []byte) uint32 {
-	if len(bs) != 4 {
-		panic("invalid data")
-	}
 	return binary.LittleEndian.Uint32(bs)
 }
 
@@ -67,6 +61,11 @@ func SliceToUint64(bs []byte) uint64 {
 
 func SliceToInt64(bs []byte) int64 {
 	return int64(SliceToUint64(bs))
+}
+
+// StringToBytes converts a string to a slice of bytes.
+func StringToBytes(s string) []byte {
+	return []byte(s)
 }
 
 func CompressBuffer(s []byte) ([]byte, error) {
@@ -185,4 +184,30 @@ func Reverse[S ~[]E, E any](s S) {
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
 		s[i], s[j] = s[j], s[i]
 	}
+}
+
+// ExtendSlice extends the slice 's' to length 'n' by appending zero-valued elements.
+func ExtendSlice[T any](s *[]T, n int) {
+	if len(*s) < n {
+		temp := make([]T, n-len(*s))
+		*s = append(*s, temp...)
+	}
+}
+
+// IsSubset checks if subSet is a subset of parentSet.
+// It returns true if all elements of subSet are in parentSet.
+func IsSubset[T comparable](parentSet, subSet []T) bool {
+	for i := 0; i < len(subSet); i++ {
+		matchFound := false
+		for j := 0; j < len(parentSet); j++ {
+			if subSet[i] == parentSet[j] {
+				matchFound = true
+				break
+			}
+		}
+		if !matchFound {
+			return false
+		}
+	}
+	return true
 }

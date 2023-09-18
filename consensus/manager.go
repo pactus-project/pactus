@@ -19,14 +19,15 @@ func NewManager(
 	state state.Facade,
 	signers []crypto.Signer,
 	rewardAddrs []crypto.Address,
-	broadcastCh chan message.Message) Manager {
+	broadcastCh chan message.Message,
+) Manager {
 	mgr := &manager{
 		instances: make([]Consensus, len(signers)),
 	}
-	mediator := newMediator()
+	mediatorConcrete := newConcreteMediator()
 
 	for i, signer := range signers {
-		cons := NewConsensus(conf, state, signer, rewardAddrs[i], broadcastCh, mediator)
+		cons := NewConsensus(conf, state, signer, rewardAddrs[i], broadcastCh, mediatorConcrete)
 
 		mgr.instances[i] = cons
 	}
@@ -53,13 +54,13 @@ func (mgr *manager) Instances() []Reader {
 	return readers
 }
 
-// PickRandomVote retrieves a random vote from a random consensus instance.
+// PickRandomVote returns a random vote from a random consensus instance.
 func (mgr *manager) PickRandomVote(round int16) *vote.Vote {
 	cons := mgr.getBestInstance()
 	return cons.PickRandomVote(round)
 }
 
-// RoundProposal retrieves the proposal for a specific round from a random consensus instance.
+// RoundProposal returns the proposal for a specific round from a random consensus instance.
 func (mgr *manager) RoundProposal(round int16) *proposal.Proposal {
 	cons := mgr.getBestInstance()
 	return cons.RoundProposal(round)

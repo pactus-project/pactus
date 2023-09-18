@@ -1,37 +1,42 @@
 {
-    "GenesisTime": "2023-05-08T00:00:00Z",
-    "Params": {
-        "BlockVersion": 63,
-        "BlockTimeInSecond": 10,
-        "CommitteeSize": 21,
-        "BlockReward": 1000000000,
-        "TransactionToLiveInterval": 2880,
-        "SortitionInterval": 7,
-        "BondInterval": 120,
-        "UnbondInterval": 60480,
-        "FeeFraction": 0.0001,
-        "MinimumFee": 1000,
-        "MaximumFee": 1000000,
-        "MaximumStake": 1000000000000
+    "genesis_time": "2023-09-07T00:00:00Z",
+    "params": {
+        "block_version": 63,
+        "block_interval_in_second": 10,
+        "committee_size": 51,
+        "block_reward": 1000000000,
+        "transaction_to_live_interval": 2880,
+        "bond_interval": 120,
+        "unbond_interval": 60480,
+        "sortition_interval": 7,
+        "fee_fraction": 0.0001,
+        "minimum_fee": 1000,
+        "maximum_fee": 1000000,
+        "minimum_stake": 0,
+        "maximum_stake": 1000000000000
     },
-    "Accounts": [
+    "accounts": [
         {
-            "Address": "000000000000000000000000000000000000000000",
-            "Balance": 21000000000000000
+            "address": "000000000000000000000000000000000000000000",
+            "balance": 21000000000000000
+        },
+        {
+            "address": "tpc1pc8uyt3w7napj704leypexr02ws6lx2ggfu9e2j",
+            "balance": 21000000000000000
         }
     ],
-    "Validators": [
+    "validators": [
         {
-            "PublicKey": "tpublic1p5gw4naty9nyzqhqll3x6mk56d675908th62t3ezt2d822z3xzs2gl5907gu0fpeederje9ecks5lcrn2a8svatrsjwterv9hwzfqk7lf5rn43aee5kvfv8vfy87z9ecdnrzcv55zpt94xrgpm6nxkxxxfsadjr8q"
+            "public_key": "tpublic1p5gw4naty9nyzqhqll3x6mk56d675908th62t3ezt2d822z3xzs2gl5907gu0fpeederje9ecks5lcrn2a8svatrsjwterv9hwzfqk7lf5rn43aee5kvfv8vfy87z9ecdnrzcv55zpt94xrgpm6nxkxxxfsadjr8q"
         },
         {
-            "PublicKey": "tpublic1psxph0f83gx7ay26z948m8qutnal3qlmc79caacn3kgfl6gml7cqt3yrh3kgdkxqyxxl7vc9mpnutjxzt0nnkw2h4zzwlp264dznz0ssp2lytl79a395977065ygpqsm2cm3ln44ag0g28689xuwfj6u08qqu8wl6"
+            "public_key": "tpublic1psxph0f83gx7ay26z948m8qutnal3qlmc79caacn3kgfl6gml7cqt3yrh3kgdkxqyxxl7vc9mpnutjxzt0nnkw2h4zzwlp264dznz0ssp2lytl79a395977065ygpqsm2cm3ln44ag0g28689xuwfj6u08qqu8wl6"
         },
         {
-            "PublicKey": "tpublic1p42tae04aa40ltshyryeet7hm5050h0fdla9w988lr98emly8g9eqrkz8xg6qq3rqhg8pelps9zlrqz6xfge0w2uq6ksyxearzmha9zmdyzcagx0pe6kcfx57chfa8u4s37uftza0c75xj40x0w0khfha0cpgaua4"
+            "public_key": "tpublic1p42tae04aa40ltshyryeet7hm5050h0fdla9w988lr98emly8g9eqrkz8xg6qq3rqhg8pelps9zlrqz6xfge0w2uq6ksyxearzmha9zmdyzcagx0pe6kcfx57chfa8u4s37uftza0c75xj40x0w0khfha0cpgaua4"
         },
         {
-            "PublicKey": "tpublic1p5a77fv2rwgs6ywsutawwcpfqascd82nygmsnsdr7mghey0jp48q3qgywumtmelc4zurexua8kgqtyr829uqm8tju99sydxx5akhlgrdzz5lu0jgtepct4lglqhk446awj6h2nk49eweswhljkfs3dfe8esy0k6qa"
+            "public_key": "tpublic1p5a77fv2rwgs6ywsutawwcpfqascd82nygmsnsdr7mghey0jp48q3qgywumtmelc4zurexua8kgqtyr829uqm8tju99sydxx5akhlgrdzz5lu0jgtepct4lglqhk446awj6h2nk49eweswhljkfs3dfe8esy0k6qa"
         }
     ]
 }

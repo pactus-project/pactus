@@ -3,20 +3,26 @@ package logger
 import (
 	"encoding/hex"
 	"fmt"
+	"io"
 	"os"
 
+	"github.com/pactus-project/pactus/util"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
+
+var (
+	LogFilename = "pactus.log"
+	MaxLogSize  = 10 // 10MB to rotate a log file
+)
+
+var globalInst *logger
 
 type logger struct {
 	config *Config
 	subs   map[string]*SubLogger
 }
-
-var (
-	globalInst *logger
-)
 
 type SubLogger struct {
 	logger zerolog.Logger
@@ -27,6 +33,8 @@ type SubLogger struct {
 func getLoggersInst() *logger {
 	if globalInst == nil {
 		// Only during tests the globalInst is nil
+
+		LogFilename = util.TempFilePath()
 
 		conf := &Config{
 			Levels:   make(map[string]string),
@@ -55,9 +63,7 @@ func InitGlobalLogger(conf *Config) {
 			config: conf,
 			subs:   make(map[string]*SubLogger),
 		}
-		if conf.Colorful {
-			log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-		}
+		log.Logger = zerolog.New(globalInst.writers()).With().Timestamp().Logger()
 
 		lvl, err := zerolog.ParseLevel(conf.Levels["default"])
 		if err == nil {
@@ -79,6 +85,8 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 		switch v := keyvals[i+1].(type) {
 		case fmt.Stringer:
 			event.Stringer(key, v)
+		case error:
+			event.AnErr(key, v)
 		case []byte:
 			event.Str(key, fmt.Sprintf("%v", hex.EncodeToString(v)))
 		default:
@@ -89,19 +97,17 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 }
 
 func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
+	inst := getLoggersInst()
+
 	sl := &SubLogger{
-		logger: zerolog.New(os.Stderr).With().Timestamp().Logger(),
+		logger: zerolog.New(inst.writers()).With().Timestamp().Logger(),
 		name:   name,
 		obj:    obj,
 	}
 
-	if getLoggersInst().config.Colorful {
-		sl.logger = sl.logger.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	}
-
-	lvlStr := getLoggersInst().config.Levels[name]
+	lvlStr := inst.config.Levels[name]
 	if lvlStr == "" {
-		lvlStr = getLoggersInst().config.Levels["default"]
+		lvlStr = inst.config.Levels["default"]
 	}
 
 	lvl, err := zerolog.ParseLevel(lvlStr)
@@ -109,8 +115,29 @@ func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 		sl.logger.Level(lvl)
 	}
 
-	getLoggersInst().subs[name] = sl
+	inst.subs[name] = sl
 	return sl
+}
+
+func (l *logger) writers() io.Writer {
+	writers := []io.Writer{}
+	// console writer
+	if l.config.Colorful {
+		writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr})
+	} else {
+		writers = append(writers, os.Stderr)
+	}
+
+	// file writer
+	fw := &lumberjack.Logger{
+		Filename:   LogFilename,
+		MaxSize:    MaxLogSize,
+		MaxBackups: 0,
+		Compress:   true,
+	}
+	writers = append(writers, fw)
+
+	return io.MultiWriter(writers...)
 }
 
 func (sl *SubLogger) logObj(event *zerolog.Event, msg string, keyvals ...interface{}) {

@@ -9,7 +9,6 @@ import (
 )
 
 type TransferExecutor struct {
-	fee    int64
 	strict bool
 }
 
@@ -19,19 +18,6 @@ func NewTransferExecutor(strict bool) *TransferExecutor {
 
 func (e *TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	pld := trx.Payload().(*payload.TransferPayload)
-
-	if !e.strict && trx.IsSubsidyTx() {
-		// In non-strict mode, all subsidy transactions for the current height are considered valid.
-		// There may be more than one valid subsidy transaction per height
-		// as there might be multiple proposals at the same height.
-		if uint32(trx.Sequence()) != sb.CurrentHeight() {
-			return errors.Errorf(errors.ErrInvalidSequence,
-				"subsidy transaction is not for current height, expected :%d, got: %d",
-				sb.CurrentHeight(), trx.Sequence())
-		}
-
-		return nil
-	}
 
 	senderAcc := sb.Account(pld.Sender)
 	if senderAcc == nil {
@@ -47,26 +33,16 @@ func (e *TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			receiverAcc = sb.MakeNewAccount(pld.Receiver)
 		}
 	}
+
 	if senderAcc.Balance() < pld.Amount+trx.Fee() {
-		return errors.Error(errors.ErrInsufficientFunds)
-	}
-	if senderAcc.Sequence()+1 != trx.Sequence() {
-		return errors.Errorf(errors.ErrInvalidSequence,
-			"expected: %v, got: %v", senderAcc.Sequence()+1, trx.Sequence())
+		return ErrInsufficientFunds
 	}
 
-	senderAcc.IncSequence()
 	senderAcc.SubtractFromBalance(pld.Amount + trx.Fee())
 	receiverAcc.AddToBalance(pld.Amount)
 
 	sb.UpdateAccount(pld.Sender, senderAcc)
 	sb.UpdateAccount(pld.Receiver, receiverAcc)
 
-	e.fee = trx.Fee()
-
 	return nil
-}
-
-func (e *TransferExecutor) Fee() int64 {
-	return e.fee
 }

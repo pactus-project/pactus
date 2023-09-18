@@ -12,43 +12,38 @@ func TestExecuteUnbondTx(t *testing.T) {
 	td := setup(t)
 	exe := NewUnbondExecutor(true)
 
-	pub, _ := td.RandomBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 	valAddr := pub.Address()
 	val := td.sandbox.MakeNewValidator(pub)
 	td.sandbox.UpdateValidator(val)
+	lockTime := td.sandbox.CurrentHeight()
 
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {
-		trx := tx.NewUnbondTx(td.randStamp, val.Sequence()+1, td.RandomAddress(), "invalid validator")
+		trx := tx.NewUnbondTx(td.randStamp, lockTime, td.RandAddress(), "invalid validator")
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
-	t.Run("Should fail, Invalid sequence", func(t *testing.T) {
-		trx := tx.NewUnbondTx(td.randStamp, val.Sequence()+2, valAddr, "invalid sequence")
-		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidSequence)
-	})
-
 	t.Run("Should fail, Inside committee", func(t *testing.T) {
-		val := td.sandbox.Committee().Proposer(0)
-		trx := tx.NewUnbondTx(td.randStamp, val.Sequence()+1, val.Address(), "inside committee")
+		val0 := td.sandbox.Committee().Proposer(0)
+		trx := tx.NewUnbondTx(td.randStamp, lockTime, val0.Address(), "inside committee")
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
 
 	t.Run("Should fail, Cannot unbond if unbonded already", func(t *testing.T) {
-		pub, _ := td.RandomBLSKeyPair()
-		val := td.sandbox.MakeNewValidator(pub)
-		val.UpdateUnbondingHeight(td.sandbox.CurrentHeight())
-		td.sandbox.UpdateValidator(val)
+		pub, _ := td.RandBLSKeyPair()
+		unbondedVal := td.sandbox.MakeNewValidator(pub)
+		unbondedVal.UpdateUnbondingHeight(td.sandbox.CurrentHeight())
+		td.sandbox.UpdateValidator(unbondedVal)
 
-		trx := tx.NewUnbondTx(td.randStamp, val.Sequence()+1, pub.Address(), "Ok")
+		trx := tx.NewUnbondTx(td.randStamp, lockTime, pub.Address(), "Ok")
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewUnbondTx(td.randStamp, val.Sequence()+1, valAddr, "Ok")
+		trx := tx.NewUnbondTx(td.randStamp, lockTime, valAddr, "Ok")
 
 		err := exe.Execute(trx, td.sandbox)
 		assert.NoError(t, err)
@@ -62,7 +57,6 @@ func TestExecuteUnbondTx(t *testing.T) {
 	assert.Zero(t, td.sandbox.Validator(valAddr).Power())
 	assert.Equal(t, td.sandbox.Validator(valAddr).UnbondingHeight(), td.sandbox.CurrentHeight())
 	assert.Equal(t, td.sandbox.PowerDelta(), -1*val.Stake())
-	assert.Zero(t, exe.Fee())
 
 	td.checkTotalCoin(t, 0)
 }
@@ -72,11 +66,13 @@ func TestExecuteUnbondTx(t *testing.T) {
 // In non-strict mode it should be accepted.
 func TestUnbondInsideCommittee(t *testing.T) {
 	td := setup(t)
+
 	exe1 := NewUnbondExecutor(true)
 	exe2 := NewUnbondExecutor(false)
+	lockTime := td.sandbox.CurrentHeight()
 
 	val := td.sandbox.Committee().Proposer(0)
-	trx := tx.NewUnbondTx(td.randStamp, val.Sequence()+1, val.Address(), "")
+	trx := tx.NewUnbondTx(td.randStamp, lockTime, val.Address(), "")
 
 	assert.Error(t, exe1.Execute(trx, td.sandbox))
 	assert.NoError(t, exe2.Execute(trx, td.sandbox))
@@ -89,14 +85,15 @@ func TestUnbondJoiningCommittee(t *testing.T) {
 	td := setup(t)
 	exe1 := NewUnbondExecutor(true)
 	exe2 := NewUnbondExecutor(false)
-	pub, _ := td.RandomBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 
 	val := td.sandbox.MakeNewValidator(pub)
 	val.UpdateLastSortitionHeight(td.randHeight)
 	td.sandbox.UpdateValidator(val)
 	td.sandbox.JoinedToCommittee(val.Address())
+	lockTime := td.sandbox.CurrentHeight()
 
-	trx := tx.NewUnbondTx(td.randStamp, val.Sequence()+1, pub.Address(), "Ok")
+	trx := tx.NewUnbondTx(td.randStamp, lockTime, pub.Address(), "Ok")
 	assert.Error(t, exe1.Execute(trx, td.sandbox))
 	assert.NoError(t, exe2.Execute(trx, td.sandbox))
 }

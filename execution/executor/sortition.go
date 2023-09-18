@@ -35,20 +35,14 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if !ok {
 		return errors.Error(errors.ErrInvalidProof)
 	}
-	sortitionHeight, _ := sb.RecentBlockByStamp(trx.Stamp())
+	sortitionHeight := trx.LockTime()
+	// Check for the duplicated or expired sortition transactions
+	if sortitionHeight <= val.LastSortitionHeight() {
+		return errors.Errorf(errors.ErrInvalidTx,
+			"duplicated sortition transaction")
+	}
+
 	if e.strict {
-		// It is possible for a validator to generate multiple sortition transactions
-		// before entering the committee.
-		// In non-strict mode, we do not check the sequence number.
-		if val.Sequence()+1 != trx.Sequence() {
-			return errors.Errorf(errors.ErrInvalidSequence,
-				"expected: %v, got: %v", val.Sequence()+1, trx.Sequence())
-		}
-		// Check for the duplicated or expired sortition transactions
-		if sortitionHeight <= val.LastSortitionHeight() {
-			return errors.Errorf(errors.ErrInvalidTx,
-				"duplicated sortition transaction")
-		}
 		if sb.Committee().Size() >= sb.Params().CommitteeSize {
 			if err := e.joinCommittee(sb, val); err != nil {
 				return err
@@ -64,7 +58,6 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		}
 	}
 
-	val.IncSequence()
 	val.UpdateLastSortitionHeight(sortitionHeight)
 
 	sb.JoinedToCommittee(pld.Address)
@@ -73,12 +66,9 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	return nil
 }
 
-func (e *SortitionExecutor) Fee() int64 {
-	return 0
-}
-
 func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
-	val *validator.Validator) error {
+	val *validator.Validator,
+) error {
 	joiningNum := 0
 	joiningPower := int64(0)
 	committee := sb.Committee()

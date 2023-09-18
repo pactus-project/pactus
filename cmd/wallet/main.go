@@ -2,26 +2,26 @@ package main
 
 import (
 	"fmt"
-	"os"
 
-	cli "github.com/jawher/mow.cli"
+	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/spf13/cobra"
 )
 
-var pathArg *string
-var offlineOpt *bool
-var serverAddrOpt *string
+var (
+	pathOpt       *string
+	offlineOpt    *bool
+	serverAddrOpt *string
+)
 
-func addPasswordOption(c *cli.Cmd) *string {
-	return c.String(cli.StringOpt{
-		Name: "p password",
-		Desc: "the wallet password",
-	})
+func addPasswordOption(c *cobra.Command) *string {
+	return c.Flags().StringP("password", "p",
+		"", "the wallet password")
 }
 
 func openWallet() (*wallet.Wallet, error) {
 	if !*offlineOpt && *serverAddrOpt != "" {
-		wallet, err := wallet.Open(*pathArg, true)
+		wallet, err := wallet.Open(*pathOpt, true)
 		if err != nil {
 			return nil, err
 		}
@@ -33,7 +33,7 @@ func openWallet() (*wallet.Wallet, error) {
 		}
 		return wallet, err
 	}
-	wallet, err := wallet.Open(*pathArg, *offlineOpt)
+	wallet, err := wallet.Open(*pathOpt, *offlineOpt)
 	if err != nil {
 		return nil, err
 	}
@@ -41,49 +41,29 @@ func openWallet() (*wallet.Wallet, error) {
 }
 
 func main() {
-	app := cli.App("pactus-wallet", "Pactus wallet")
+	rootCmd := &cobra.Command{
+		Use:               "pactus-wallet",
+		Short:             "Pactus wallet",
+		CompletionOptions: cobra.CompletionOptions{HiddenDefaultCmd: true},
+	}
 
-	pathArg = app.String(cli.StringArg{
-		Name: "PATH",
-		Desc: "the path to the wallet file",
-	})
+	// Hide the "help" sub-command
+	rootCmd.SetHelpCommand(&cobra.Command{Hidden: true})
 
-	offlineOpt = app.Bool(cli.BoolOpt{
-		Name:  "offline",
-		Desc:  "offline mode",
-		Value: false,
-	})
+	pathOpt = rootCmd.PersistentFlags().String("path", "default_wallet", "the path to the wallet file")
+	offlineOpt = rootCmd.PersistentFlags().Bool("offline", false, "offline mode")
+	serverAddrOpt = rootCmd.PersistentFlags().String("server", "", "server gRPC address")
 
-	serverAddrOpt = app.String(cli.StringOpt{
-		Name: "server",
-		Desc: "server gRPC address",
-	})
+	buildCreateCmd(rootCmd)
+	buildRecoverCmd(rootCmd)
+	buildGetSeedCmd(rootCmd)
+	buildChangePasswordCmd(rootCmd)
+	buildAllTransactionCmd(rootCmd)
+	buildAllAddrCmd(rootCmd)
+	buildAllHistoryCmd(rootCmd)
 
-	app.Command("create", "Create a new wallet", Generate())
-	app.Command("recover", "Recover waller from the seed phrase (mnemonic)", Recover())
-	app.Command("seed", "Show secret seed phrase (mnemonic) that can be used to recover this wallet", GetSeed())
-	app.Command("password", "Change wallet password", ChangePassword())
-	app.Command("address", "Manage address book", func(k *cli.Cmd) {
-		k.Command("new", "Creating a new address", NewAddress())
-		k.Command("all", "Show all addresses", AllAddresses())
-		k.Command("label", "Set label for the an address", SetLabel())
-		k.Command("balance", "Show the balance of an address", Balance())
-		k.Command("pub", "Show the public key of an address", PublicKey())
-		k.Command("priv", "Show the private key of an address", PrivateKey())
-		k.Command("import", "Import a private key into wallet", ImportPrivateKey())
-	})
-	app.Command("tx", "Create, sign and publish a transaction", func(k *cli.Cmd) {
-		k.Command("bond", "Create, sign and publish a Bond transaction", BondTx())
-		k.Command("transfer", "Create, sign and publish a Transfer transaction", TransferTx())
-		k.Command("unbond", "Create, sign and publish an Unbond transaction", UnbondTx())
-		k.Command("withdraw", "Create, sign and publish a Withdraw transaction", WithdrawTx())
-	})
-	app.Command("history", "Check the wallet history", func(k *cli.Cmd) {
-		k.Command("add", "Add a transaction to the wallet history", AddToHistory())
-		k.Command("get", "Show the transaction history of any address", ShowHistory())
-	})
-
-	if err := app.Run(os.Args); err != nil {
-		panic(err)
+	err := rootCmd.Execute()
+	if err != nil {
+		cmd.PrintErrorMsgf("%s", err)
 	}
 }

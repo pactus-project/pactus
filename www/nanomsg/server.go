@@ -11,7 +11,7 @@ import (
 	mangos "go.nanomsg.org/mangos/v3"
 	"go.nanomsg.org/mangos/v3/protocol/pub"
 
-	// register nano ports transports
+	// register nano ports transports.
 	_ "go.nanomsg.org/mangos/v3/transport/all"
 )
 
@@ -43,10 +43,10 @@ func (s *Server) StartServer() error {
 		var publisher mangos.Socket
 		var err error
 		if publisher, err = pub.NewSocket(); err != nil {
-			s.logger.Error("error on nanomsg creating new socket", "err", err)
+			s.logger.Error("error on nanomsg creating new socket", "error", err)
 		}
 		if err = publisher.Listen(s.config.Listen); err != nil {
-			s.logger.Error("error on nanomsg publisher binding", "err", err)
+			s.logger.Error("error on nanomsg publisher binding", "error", err)
 		}
 		s.publisher = publisher
 		go s.eventLoop()
@@ -71,12 +71,12 @@ func (s *Server) eventLoop() {
 			w := bytes.NewBuffer(e)
 			err := encoding.WriteElement(w, s.seqNum)
 			if err != nil {
-				s.logger.Error("error on encoding event", "err", err)
+				s.logger.Error("error on encoding event", "error", err)
 				return
 			}
 			err = s.publisher.Send(w.Bytes())
 			if err != nil {
-				s.logger.Error("error on emitting event", "err", err)
+				s.logger.Error("error on emitting event", "error", err)
 				return
 			}
 			s.seqNum++

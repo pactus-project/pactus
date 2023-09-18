@@ -10,12 +10,13 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pid := ts.RandomPeerID()
+	pid := ts.RandPeerID()
 	msg := NewBundle(pid, message.NewQueryProposalMessage(100, 0))
 	assert.Zero(t, msg.Flags)
 	assert.Equal(t, msg.Initiator, pid)
@@ -30,18 +31,19 @@ func TestInvalidCBOR(t *testing.T) {
 	_, err = m.Decode(bytes.NewReader(d2))
 	assert.Error(t, err)
 }
+
 func TestMessageCompress(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	var blocksData = [][]byte{}
+	blocksData := [][]byte{}
 	for i := 0; i < 10; i++ {
-		b := ts.GenerateTestBlock(nil, nil)
+		b := ts.GenerateTestBlock(nil)
 		d, _ := b.Bytes()
 		blocksData = append(blocksData, d)
 	}
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeOK, message.ResponseCodeOK.String(),
 		1234, 888, blocksData, nil)
-	bdl := NewBundle(ts.RandomPeerID(), msg)
+	bdl := NewBundle(ts.RandPeerID(), msg)
 	bs0, err := bdl.Encode()
 	assert.NoError(t, err)
 	bdl.CompressIt()
@@ -56,8 +58,8 @@ func TestMessageCompress(t *testing.T) {
 	assert.NoError(t, err)
 	_, err = msg3.Decode(bytes.NewReader(bs1))
 	assert.NoError(t, err)
-	assert.NoError(t, msg2.SanityCheck())
-	assert.NoError(t, msg3.SanityCheck())
+	assert.NoError(t, msg2.BasicCheck())
+	assert.NoError(t, msg3.BasicCheck())
 	assert.True(t, util.IsFlagSet(bdl.Flags, BundleFlagCompressed))
 }
 
@@ -66,7 +68,7 @@ func TestDecodeVoteMessage(t *testing.T) {
 
 	v, _ := ts.GenerateTestPrecommitVote(88, 0)
 	msg := message.NewVoteMessage(v)
-	bdl := NewBundle(ts.RandomPeerID(), msg)
+	bdl := NewBundle(ts.RandPeerID(), msg)
 	bs0, err := bdl.Encode()
 	assert.NoError(t, err)
 	bdl.CompressIt()
@@ -79,22 +81,23 @@ func TestDecodeVoteMessage(t *testing.T) {
 
 func TestDecodeVoteCBOR(t *testing.T) {
 	d1, _ := hex.DecodeString(
-		"a40119001102582212206e58a3dbd95357010000000000000000000000000000000000000000000000000307045877a101a6010202185803" +
-			"000458205ffca0da6582ee795bdb73a518797bd4f2ccde1f8692e2b2a5ba0dd60f576410055501c94b4b3489c5370ae23923c2325cd80eee" +
-			"749231065830a009f5f3ebe4fef05602813d099c539d13ba6ae209ecefe1ca72c55fd9b392ddb828d35a9d64abb3ca9694963e2d8338")
-	// Compressed
+		"a401000258221220aa8ece876ceabec6bd64430d0ad8d7bd5dbd72500f0a1642a13bd71b5b3522a90307045879a101a70101" +
+			"02186403010458200264572d4d6bfcd2140d4f885fd5a32fe42fdbf40551e4ff89f3d235e32b4b92055501c0067d277f2dff" +
+			"99943016d6a0f379cf09846c6f06f60758308ab7aecbe03c4ed5b688bcb7e848baffa62bcbf1a4021522c56693f0a7bbcc1f" +
+			"e865277556ee59c1f63ba592acfe1b43")
 	d2, _ := hex.DecodeString(
-		"a40119011102582212206e58a3dbd953570100000000000000000000000000000000000000000000000003070458931f8b08000000000000" +
-			"ff00770088ffa101a6010202185803000458205ffca0da6582ee795bdb73a518797bd4f2ccde1f8692e2b2a5ba0dd60f576410055501c94b" +
-			"4b3489c5370ae23923c2325cd80eee749231065830a009f5f3ebe4fef05602813d099c539d13ba6ae209ecefe1ca72c55fd9b392ddb828d3" +
-			"5a9d64abb3ca9694963e2d8338010000ffffcf174a7977000000")
-	m1 := new(Bundle)
-	m2 := new(Bundle)
-	_, err := m1.Decode(bytes.NewReader(d1))
-	assert.NoError(t, err)
-	_, err = m2.Decode(bytes.NewReader(d2))
-	assert.NoError(t, err)
-	assert.NoError(t, m2.SanityCheck())
+		"a4011901000258221220aa8ece876ceabec6bd64430d0ad8d7bd5dbd72500f0a1642a13bd71b5b3522a903070458951f8b08" +
+			"000000000000ff00790086ffa101a7010102186403010458200264572d4d6bfcd2140d4f885fd5a32fe42fdbf40551e4ff89" +
+			"f3d235e32b4b92055501c0067d277f2dff99943016d6a0f379cf09846c6f06f60758308ab7aecbe03c4ed5b688bcb7e848ba" +
+			"ffa62bcbf1a4021522c56693f0a7bbcc1fe865277556ee59c1f63ba592acfe1b43010000ffff798ce7ec79000000")
 
-	assert.Equal(t, m1.Message, m2.Message)
+	bdl1 := new(Bundle)
+	bdl2 := new(Bundle)
+	_, err := bdl1.Decode(bytes.NewReader(d1))
+	require.NoError(t, err)
+	_, err = bdl2.Decode(bytes.NewReader(d2))
+	require.NoError(t, err)
+	assert.NoError(t, bdl2.BasicCheck())
+
+	assert.Equal(t, bdl1.Message, bdl2.Message)
 }

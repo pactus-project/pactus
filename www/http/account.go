@@ -21,7 +21,6 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 	acc := res.Account
 	tm := newTableMaker()
 	tm.addRowInt("Number", int(acc.Number))
-	tm.addRowInt("Sequence", int(acc.Sequence))
 	tm.addRowAmount("Balance", acc.Balance)
 	tm.addRowBytes("Hash", acc.Hash)
 
@@ -49,7 +48,6 @@ func (s *Server) GetAccountByNumberHandler(w http.ResponseWriter, r *http.Reques
 	acc := res.Account
 	tm := newTableMaker()
 	tm.addRowInt("Number", int(acc.Number))
-	tm.addRowInt("Sequence", int(acc.Sequence))
 	tm.addRowAmount("Balance", acc.Balance)
 	tm.addRowBytes("Hash", acc.Hash)
 

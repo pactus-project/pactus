@@ -14,8 +14,8 @@ import (
 func TestAddressKeyEqualsTo(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	addr1 := ts.RandomAddress()
-	addr2 := ts.RandomAddress()
+	addr1 := ts.RandAddress()
+	addr2 := ts.RandAddress()
 
 	assert.True(t, addr1.EqualsTo(addr1))
 	assert.False(t, addr1.EqualsTo(addr2))
@@ -26,7 +26,7 @@ func TestAddressKeyEqualsTo(t *testing.T) {
 func TestString(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	addr1 := ts.RandomAddress()
+	addr1 := ts.RandAddress()
 	assert.Contains(t, addr1.String(), addr1.ShortString())
 }
 
@@ -95,15 +95,19 @@ func TestToString(t *testing.T) {
 			"",
 			"PC1P0HRCT7EFLRPW4CCRTTXZS4QUD2AXEX4DCDZDFR", // UPPERCASE
 			true,
-			&crypto.Address{0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
-				0x3, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad},
+			&crypto.Address{
+				0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
+				0x3, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad,
+			},
 		},
 		{
 			"",
 			"pc1p0hrct7eflrpw4ccrttxzs4qud2axex4dcdzdfr",
 			true,
-			&crypto.Address{0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
-				0x3, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad},
+			&crypto.Address{
+				0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
+				0x3, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad,
+			},
 		},
 	}
 	for no, test := range tests {
@@ -119,7 +123,7 @@ func TestToString(t *testing.T) {
 	}
 }
 
-func TestAddressSanityCheck(t *testing.T) {
+func TestAddressBasicCheck(t *testing.T) {
 	tests := []struct {
 		errMsg  string
 		hex     string
@@ -151,7 +155,7 @@ func TestAddressSanityCheck(t *testing.T) {
 		addr := crypto.Address{}
 		copy(addr[:], data)
 
-		err := addr.SanityCheck()
+		err := addr.BasicCheck()
 		if !test.invalid {
 			assert.NoError(t, err, "test %v unexpected error", no)
 		} else {

@@ -14,7 +14,7 @@ func TestContains(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	committee, signers := ts.GenerateTestCommittee(21)
-	nonExist := ts.RandomAddress()
+	nonExist := ts.RandAddress()
 
 	assert.True(t, committee.Contains(signers[0].Address()))
 	assert.False(t, committee.Contains(nonExist))
@@ -181,18 +181,18 @@ func TestProposerJoin(t *testing.T) {
 func TestProposerJoinAndLeave(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub1, _ := ts.RandomBLSKeyPair()
-	pub2, _ := ts.RandomBLSKeyPair()
-	pub3, _ := ts.RandomBLSKeyPair()
-	pub4, _ := ts.RandomBLSKeyPair()
-	pub5, _ := ts.RandomBLSKeyPair()
-	pub6, _ := ts.RandomBLSKeyPair()
-	pub7, _ := ts.RandomBLSKeyPair()
-	pub8, _ := ts.RandomBLSKeyPair()
-	pub9, _ := ts.RandomBLSKeyPair()
-	pubA, _ := ts.RandomBLSKeyPair()
-	pubB, _ := ts.RandomBLSKeyPair()
-	pubC, _ := ts.RandomBLSKeyPair()
+	pub1, _ := ts.RandBLSKeyPair()
+	pub2, _ := ts.RandBLSKeyPair()
+	pub3, _ := ts.RandBLSKeyPair()
+	pub4, _ := ts.RandBLSKeyPair()
+	pub5, _ := ts.RandBLSKeyPair()
+	pub6, _ := ts.RandBLSKeyPair()
+	pub7, _ := ts.RandBLSKeyPair()
+	pub8, _ := ts.RandBLSKeyPair()
+	pub9, _ := ts.RandBLSKeyPair()
+	pubA, _ := ts.RandBLSKeyPair()
+	pubB, _ := ts.RandBLSKeyPair()
+	pubC, _ := ts.RandBLSKeyPair()
 
 	val1 := validator.NewValidator(pub1, 1)
 	val2 := validator.NewValidator(pub2, 2)
@@ -331,7 +331,7 @@ func TestIsProposer(t *testing.T) {
 	assert.Equal(t, committee.Proposer(1).Number(), int32(1))
 	assert.True(t, committee.IsProposer(val3.Address(), 2))
 	assert.False(t, committee.IsProposer(val4.Address(), 2))
-	assert.False(t, committee.IsProposer(ts.RandomAddress(), 2))
+	assert.False(t, committee.IsProposer(ts.RandAddress(), 2))
 	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4})
 }
 
@@ -371,7 +371,7 @@ func TestSortJoined(t *testing.T) {
 func TestTotalPower(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub, _ := ts.RandomBLSKeyPair()
+	pub, _ := ts.RandBLSKeyPair()
 	val0 := validator.NewValidator(pub, 0) // Bootstrap validator
 	val1, _ := ts.GenerateTestValidator(0)
 	val2, _ := ts.GenerateTestValidator(1)

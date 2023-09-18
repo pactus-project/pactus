@@ -31,14 +31,21 @@ func (s *store) Save(bs []byte) error {
 		return err
 	}
 
-	if s.VaultCRC != s.calcVaultCRC() {
-		return ErrInvalidCRC
+	crc := s.calcVaultCRC()
+	if s.VaultCRC != crc {
+		return CRCNotMatchError{
+			Expected: crc,
+			Got:      s.VaultCRC,
+		}
 	}
 
 	return nil
 }
 
 func (s *store) calcVaultCRC() uint32 {
-	d, _ := json.Marshal(s.Vault)
+	d, err := json.Marshal(s.Vault)
+	if err != nil {
+		return 0
+	}
 	return crc32.ChecksumIEEE(d)
 }

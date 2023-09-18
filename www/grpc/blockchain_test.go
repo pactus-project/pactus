@@ -17,14 +17,14 @@ func TestGetBlock(t *testing.T) {
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx, &pactus.GetBlockRequest{
-			Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
+			Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_DATA,
+		})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
-	t.Run("Should return an existing block data", func(t *testing.T) {
-		data, _ := b.Bytes()
+	t.Run("Should return an existing block data (verbosity: 0)", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx,
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
 
@@ -37,7 +37,7 @@ func TestGetBlock(t *testing.T) {
 		assert.Empty(t, res.Txs)
 	})
 
-	t.Run("Should return object with verbosity 1 ", func(t *testing.T) {
+	t.Run("Should return object with  (verbosity: 1)", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx,
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_INFO})
 
@@ -52,7 +52,7 @@ func TestGetBlock(t *testing.T) {
 		assert.Equal(t, res.PrevCert.Absentees, b.PrevCertificate().Absentees())
 	})
 
-	t.Run("Should return object with verbosity 2 ", func(t *testing.T) {
+	t.Run("Should return object with  (verbosity: 2)", func(t *testing.T) {
 		res, err := client.GetBlock(tCtx,
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_TRANSACTIONS})
 
@@ -115,7 +115,7 @@ func TestGetBlockHeight(t *testing.T) {
 
 	t.Run("Should return error for non existing block", func(t *testing.T) {
 		res, err := client.GetBlockHeight(tCtx,
-			&pactus.GetBlockHeightRequest{Hash: ts.RandomHash().Bytes()})
+			&pactus.GetBlockHeightRequest{Hash: ts.RandHash().Bytes()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -163,7 +163,7 @@ func TestGetAccount(t *testing.T) {
 
 	t.Run("Should return nil for non existing account ", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx,
-			&pactus.GetAccountRequest{Address: ts.RandomAddress().String()})
+			&pactus.GetAccountRequest{Address: ts.RandAddress().String()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -177,7 +177,6 @@ func TestGetAccount(t *testing.T) {
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Account.Balance, acc.Balance())
 		assert.Equal(t, res.Account.Number, acc.Number())
-		assert.Equal(t, res.Account.Sequence, acc.Sequence())
 	})
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }
@@ -212,7 +211,6 @@ func TestGetAccountByNumber(t *testing.T) {
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Account.Balance, acc.Balance())
 		assert.Equal(t, res.Account.Number, acc.Number())
-		assert.Equal(t, res.Account.Sequence, acc.Sequence())
 	})
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }
@@ -233,7 +231,7 @@ func TestGetValidator(t *testing.T) {
 
 	t.Run("should return Not Found", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx,
-			&pactus.GetValidatorRequest{Address: ts.RandomAddress().String()})
+			&pactus.GetValidatorRequest{Address: ts.RandAddress().String()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -306,7 +304,7 @@ func TestConsensusInfo(t *testing.T) {
 	conn, client := testBlockchainClient(t)
 
 	v1, _ := ts.GenerateTestPrepareVote(100, 2)
-	v2, _ := ts.GenerateTestChangeProposerVote(100, 2)
+	v2, _ := ts.GenerateTestPrepareVote(100, 2)
 	tConsMocks[1].Active = true
 	tConsMocks[1].Height = 100
 	tConsMocks[0].AddVote(v1)
@@ -321,7 +319,6 @@ func TestConsensusInfo(t *testing.T) {
 		assert.True(t, res.Instances[1].Active, true)
 		assert.Equal(t, res.Instances[1].Height, uint32(100))
 		assert.Equal(t, res.Instances[0].Votes[0].Type, pactus.VoteType_VOTE_PREPARE)
-		assert.Equal(t, res.Instances[1].Votes[0].Type, pactus.VoteType_VOTE_CHANGE_PROPOSER)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

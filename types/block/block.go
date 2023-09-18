@@ -10,10 +10,10 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type Block struct {
@@ -24,11 +24,11 @@ type Block struct {
 
 type blockData struct {
 	Header   *Header
-	PrevCert *Certificate
+	PrevCert *certificate.Certificate
 	Txs      Txs
 }
 
-func NewBlock(header *Header, prevCert *Certificate, txs Txs) *Block {
+func NewBlock(header *Header, prevCert *certificate.Certificate, txs Txs) *Block {
 	return &Block{
 		data: blockData{
 			Header:   header,
@@ -51,41 +51,61 @@ func FromBytes(data []byte) (*Block, error) {
 
 func MakeBlock(version uint8, timestamp time.Time, txs Txs,
 	prevBlockHash, stateRoot hash.Hash,
-	prevCert *Certificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address) *Block {
+	prevCert *certificate.Certificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address,
+) *Block {
 	header := NewHeader(version, timestamp,
 		stateRoot, prevBlockHash, sortitionSeed, proposer)
 
 	return NewBlock(header, prevCert, txs)
 }
 
-func (b *Block) Header() *Header               { return b.data.Header }
-func (b *Block) PrevCertificate() *Certificate { return b.data.PrevCert }
-func (b *Block) Transactions() Txs             { return b.data.Txs }
+func (b *Block) Header() *Header {
+	return b.data.Header
+}
 
-func (b *Block) SanityCheck() error {
-	if err := b.Header().SanityCheck(); err != nil {
+func (b *Block) PrevCertificate() *certificate.Certificate {
+	return b.data.PrevCert
+}
+
+func (b *Block) Transactions() Txs {
+	return b.data.Txs
+}
+
+func (b *Block) BasicCheck() error {
+	if err := b.Header().BasicCheck(); err != nil {
 		return err
 	}
 	if b.Transactions().Len() == 0 {
-		return errors.Errorf(errors.ErrInvalidBlock, "block at least should have one transaction")
+		// block at least should have one transaction
+		return BasicCheckError{
+			Reason: "no subsidy transaction",
+		}
 	}
 	if b.Transactions().Len() > 1000 {
-		return errors.Errorf(errors.ErrInvalidBlock, "block is full")
+		return BasicCheckError{
+			Reason: "block is full",
+		}
 	}
 	if b.PrevCertificate() != nil {
-		if err := b.PrevCertificate().SanityCheck(); err != nil {
-			return err
+		if err := b.PrevCertificate().BasicCheck(); err != nil {
+			return BasicCheckError{
+				Reason: fmt.Sprintf("invalid certificate: %s", err.Error()),
+			}
 		}
 	} else {
 		// Genesis block checks
 		if !b.Header().PrevBlockHash().IsUndef() {
-			return errors.Errorf(errors.ErrInvalidBlock, "invalid previous block hash")
+			return BasicCheckError{
+				Reason: "invalid genesis block hash",
+			}
 		}
 	}
 
 	for _, trx := range b.Transactions() {
-		if err := trx.SanityCheck(); err != nil {
-			return errors.Errorf(errors.ErrInvalidBlock, err.Error())
+		if err := trx.BasicCheck(); err != nil {
+			return BasicCheckError{
+				Reason: fmt.Sprintf("invalid transaction: %s", err.Error()),
+			}
 		}
 	}
 
@@ -171,7 +191,7 @@ func (b *Block) Decode(r io.Reader) error {
 		return err
 	}
 	if !b.data.Header.PrevBlockHash().IsUndef() {
-		b.data.PrevCert = new(Certificate)
+		b.data.PrevCert = new(certificate.Certificate)
 		if err := b.data.PrevCert.Decode(r); err != nil {
 			return err
 		}

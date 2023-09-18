@@ -15,7 +15,6 @@ const (
 	ErrInvalidPublicKey
 	ErrInvalidPrivateKey
 	ErrInvalidSignature
-	ErrInvalidSequence
 	ErrInvalidTx
 	ErrInvalidMemo
 	ErrInvalidProof
@@ -26,7 +25,6 @@ const (
 	ErrInvalidMessage
 	ErrInvalidConfig
 	ErrDuplicateVote
-	ErrInsufficientFunds
 
 	ErrCount
 )
@@ -42,7 +40,6 @@ var messages = map[int]string{
 	ErrInvalidPublicKey:  "invalid public key",
 	ErrInvalidPrivateKey: "invalid private key",
 	ErrInvalidSignature:  "invalid signature",
-	ErrInvalidSequence:   "invalid sequence",
 	ErrInvalidTx:         "invalid transaction",
 	ErrInvalidMemo:       "invalid memo",
 	ErrInvalidProof:      "invalid proof",
@@ -53,10 +50,9 @@ var messages = map[int]string{
 	ErrInvalidMessage:    "invalid message",
 	ErrInvalidConfig:     "invalid config",
 	ErrDuplicateVote:     "duplicate vote",
-	ErrInsufficientFunds: "insufficient funds",
 }
 
-type withCode struct {
+type withCodeError struct {
 	code    int
 	message string
 }
@@ -67,7 +63,7 @@ func Error(code int) error {
 		message = "Unknown error code"
 	}
 
-	return &withCode{
+	return &withCodeError{
 		code:    code,
 		message: message,
 	}
@@ -79,7 +75,7 @@ func Errorf(code int, format string, a ...interface{}) error {
 		message = "Unknown error code"
 	}
 
-	return &withCode{
+	return &withCodeError{
 		code:    code,
 		message: message + ": " + fmt.Sprintf(format, a...),
 	}
@@ -93,21 +89,21 @@ func Code(err error) int {
 	if err == nil {
 		return ErrNone
 	}
-	_e, ok := err.(i)
+	_e, ok := err.(i) //nolint
 	if !ok {
 		return ErrGeneric
 	}
 	return _e.Code()
 }
 
-func (e *withCode) Error() string {
+func (e *withCodeError) Error() string {
 	return e.message
 }
 
-func (e *withCode) Code() int {
+func (e *withCodeError) Code() int {
 	return e.code
 }
 
-func (e *withCode) Is(target error) bool {
+func (e *withCodeError) Is(target error) bool {
 	return e.code == Code(target)
 }

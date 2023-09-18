@@ -31,19 +31,31 @@ func NewProposal(height uint32, round int16, block *block.Block) *Proposal {
 		},
 	}
 }
-func (p *Proposal) Height() uint32              { return p.data.Height }
-func (p *Proposal) Round() int16                { return p.data.Round }
-func (p *Proposal) Block() *block.Block         { return p.data.Block }
-func (p *Proposal) Signature() crypto.Signature { return p.data.Signature }
 
-func (p *Proposal) SanityCheck() error {
+func (p *Proposal) Height() uint32 {
+	return p.data.Height
+}
+
+func (p *Proposal) Round() int16 {
+	return p.data.Round
+}
+
+func (p *Proposal) Block() *block.Block {
+	return p.data.Block
+}
+
+func (p *Proposal) Signature() crypto.Signature {
+	return p.data.Signature
+}
+
+func (p *Proposal) BasicCheck() error {
 	if p.data.Block == nil {
 		return errors.Errorf(errors.ErrInvalidSignature, "no block")
 	}
 	if p.data.Signature == nil {
 		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
 	}
-	if err := p.data.Block.SanityCheck(); err != nil {
+	if err := p.data.Block.BasicCheck(); err != nil {
 		return err
 	}
 	if p.data.Height <= 0 {
@@ -87,6 +99,7 @@ func (p *Proposal) Verify(pubKey crypto.PublicKey) error {
 	}
 	return pubKey.Verify(p.SignBytes(), p.data.Signature)
 }
+
 func (p *Proposal) Hash() hash.Hash {
 	return hash.CalcHash(p.SignBytes())
 }

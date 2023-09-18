@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -41,12 +42,14 @@ type testData struct {
 }
 
 func setup(t *testing.T) *testData {
+	t.Helper()
+
 	ts := testsuite.NewTestSuite(t)
 
-	pub1, prv1 := ts.RandomBLSKeyPair()
-	pub2, prv2 := ts.RandomBLSKeyPair()
-	pub3, prv3 := ts.RandomBLSKeyPair()
-	pub4, prv4 := ts.RandomBLSKeyPair()
+	pub1, prv1 := ts.RandBLSKeyPair()
+	pub2, prv2 := ts.RandBLSKeyPair()
+	pub3, prv3 := ts.RandBLSKeyPair()
+	pub4, prv4 := ts.RandBLSKeyPair()
 
 	valSigner1 := crypto.NewSigner(prv1)
 	valSigner2 := crypto.NewSigner(prv2)
@@ -61,8 +64,6 @@ func setup(t *testing.T) *testData {
 	store3 := store.MockingStore(ts)
 	store4 := store.MockingStore(ts)
 
-	acc := account.NewAccount(0)
-	acc.AddToBalance(21 * 1e14) // 2,100,000,000,000,000
 	val1 := validator.NewValidator(pub1, 0)
 	val2 := validator.NewValidator(pub2, 1)
 	val3 := validator.NewValidator(pub3, 2)
@@ -71,7 +72,15 @@ func setup(t *testing.T) *testData {
 	params.CommitteeSize = 5
 	params.BondInterval = 10
 
-	accs := map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc}
+	acc1 := account.NewAccount(0)
+	acc1.AddToBalance(21 * 1e15) // 21,000,000,000,000,000
+	acc2 := account.NewAccount(1)
+	acc2.AddToBalance(21 * 1e15) // 21,000,000,000,000,000
+
+	accs := map[crypto.Address]*account.Account{
+		crypto.TreasuryAddress: acc1,
+		ts.RandAddress():       acc2,
+	}
 	vals := []*validator.Validator{val1, val2, val3, val4}
 	gnDoc := genesis.MakeGenesis(genTime, accs, vals, params)
 
@@ -104,7 +113,10 @@ func setup(t *testing.T) *testData {
 }
 
 func (td *testData) makeBlockAndCertificate(t *testing.T, round int16,
-	signers ...crypto.Signer) (*block.Block, *block.Certificate) {
+	signers ...crypto.Signer,
+) (*block.Block, *certificate.Certificate) {
+	t.Helper()
+
 	var st *state
 	if td.state1.committee.IsProposer(td.state1.signers[0].Address(), round) {
 		st = td.state1
@@ -125,10 +137,14 @@ func (td *testData) makeBlockAndCertificate(t *testing.T, round int16,
 }
 
 func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int16,
-	signers ...crypto.Signer) *block.Certificate {
+	signers ...crypto.Signer,
+) *certificate.Certificate {
+	t.Helper()
+
 	assert.NotZero(t, len(signers))
 	sigs := make([]*bls.Signature, len(signers))
-	sb := block.CertificateSignBytes(blockHash, round)
+	height := td.state1.LastBlockHeight()
+	sb := certificate.BlockCertificateSignBytes(blockHash, height+1, round)
 	committers := []int32{0, 1, 2, 3}
 	signedBy := []int32{}
 
@@ -152,10 +168,12 @@ func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash, ro
 	}
 
 	absentees := util.Subtracts(committers, signedBy)
-	return block.NewCertificate(round, committers, absentees, bls.SignatureAggregate(sigs))
+	return certificate.NewCertificate(height+1, round, committers, absentees, bls.SignatureAggregate(sigs...))
 }
 
-func (td *testData) commitBlockForAllStates(t *testing.T, b *block.Block, c *block.Certificate) {
+func (td *testData) commitBlockForAllStates(t *testing.T, b *block.Block, c *certificate.Certificate) {
+	t.Helper()
+
 	assert.NoError(t, td.state1.CommitBlock(td.state1.lastInfo.BlockHeight()+1, b, c))
 	assert.NoError(t, td.state2.CommitBlock(td.state2.lastInfo.BlockHeight()+1, b, c))
 	assert.NoError(t, td.state3.CommitBlock(td.state3.lastInfo.BlockHeight()+1, b, c))
@@ -163,6 +181,8 @@ func (td *testData) commitBlockForAllStates(t *testing.T, b *block.Block, c *blo
 }
 
 func (td *testData) moveToNextHeightForAllStates(t *testing.T) {
+	t.Helper()
+
 	b, c := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
 	td.commitBlockForAllStates(t, b, c)
 }
@@ -172,7 +192,7 @@ func TestProposeBlockAndValidation(t *testing.T) {
 
 	td.moveToNextHeightForAllStates(t)
 
-	b1, err := td.state1.ProposeBlock(td.state1.signers[0], td.RandomAddress(), 0)
+	b1, err := td.state1.ProposeBlock(td.state1.signers[0], td.RandAddress(), 0)
 	assert.Error(t, err, "Should not propose")
 	assert.Nil(t, b1)
 
@@ -181,14 +201,14 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	td.valSigner1.SignMsg(trx)
 	assert.NoError(t, td.commonTxPool.AppendTx(trx))
 
-	b2, err := td.state2.ProposeBlock(td.state2.signers[0], td.RandomAddress(), 0)
+	b2, err := td.state2.ProposeBlock(td.state2.signers[0], td.RandAddress(), 0)
 	assert.NoError(t, err)
 	assert.NotNil(t, b2)
 	assert.Equal(t, b2.Transactions().Len(), 2)
 	require.NoError(t, td.state1.ValidateBlock(b2))
 
 	// Propose and validate again
-	b3, err := td.state2.ProposeBlock(td.state2.signers[0], td.RandomAddress(), 0)
+	b3, err := td.state2.ProposeBlock(td.state2.signers[0], td.RandAddress(), 0)
 	assert.NoError(t, err)
 	assert.NotNil(t, b3)
 	assert.Equal(t, b3.Transactions().Len(), 2)
@@ -199,7 +219,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 	td := setup(t)
 
 	// Without reward address in config
-	rewardAddr := td.RandomAddress()
+	rewardAddr := td.RandAddress()
 	trx := td.state1.createSubsidyTx(rewardAddr, 7)
 	assert.True(t, trx.IsSubsidyTx())
 	assert.Equal(t, trx.Payload().Value(), td.state1.params.BlockReward+7)
@@ -207,11 +227,27 @@ func TestBlockSubsidyTx(t *testing.T) {
 	assert.Equal(t, trx.Payload().(*payload.TransferPayload).Receiver, rewardAddr)
 }
 
+func TestBlockTime(t *testing.T) {
+	td := setup(t)
+
+	t.Run("No blocks: LastBlockTime is the genesis time", func(t *testing.T) {
+		assert.Equal(t, td.state1.LastBlockTime(), td.state1.Genesis().GenesisTime())
+	})
+
+	t.Run("Commit one block: LastBlockTime is the time of the first block", func(t *testing.T) {
+		b1, c1 := td.makeBlockAndCertificate(t, 1, td.valSigner1, td.valSigner2, td.valSigner3)
+		assert.NoError(t, td.state1.CommitBlock(1, b1, c1))
+
+		assert.NotEqual(t, td.state1.LastBlockTime(), td.state1.Genesis().GenesisTime())
+		assert.Equal(t, td.state1.LastBlockTime(), b1.Header().Time())
+	})
+}
+
 func TestCommitBlocks(t *testing.T) {
 	td := setup(t)
 
 	b1, c1 := td.makeBlockAndCertificate(t, 1, td.valSigner1, td.valSigner2, td.valSigner3)
-	invBlock := td.GenerateTestBlock(nil, nil)
+	invBlock := td.GenerateTestBlock(nil)
 	assert.Error(t, td.state1.CommitBlock(1, invBlock, c1))
 	// No error here but block is ignored, because the height is invalid
 	assert.NoError(t, td.state1.CommitBlock(2, b1, c1))
@@ -228,7 +264,7 @@ func TestCommitSandbox(t *testing.T) {
 	t.Run("Add new account", func(t *testing.T) {
 		td := setup(t)
 
-		addr := td.RandomAddress()
+		addr := td.RandAddress()
 		sb := td.state1.concreteSandbox()
 		newAcc := sb.MakeNewAccount(addr)
 		newAcc.AddToBalance(1)
@@ -240,7 +276,7 @@ func TestCommitSandbox(t *testing.T) {
 	t.Run("Add new validator", func(t *testing.T) {
 		td := setup(t)
 
-		pub, _ := td.RandomBLSKeyPair()
+		pub, _ := td.RandBLSKeyPair()
 		sb := td.state1.concreteSandbox()
 		newVal := sb.MakeNewValidator(pub)
 		newVal.AddToStake(123)
@@ -320,9 +356,9 @@ func TestUpdateLastCertificate(t *testing.T) {
 func TestInvalidProposerProposeBlock(t *testing.T) {
 	td := setup(t)
 
-	_, err := td.state2.ProposeBlock(td.state2.signers[0], td.RandomAddress(), 0)
+	_, err := td.state2.ProposeBlock(td.state2.signers[0], td.RandAddress(), 0)
 	assert.Error(t, err, "Should not propose")
-	_, err = td.state2.ProposeBlock(td.state2.signers[0], td.RandomAddress(), 1)
+	_, err = td.state2.ProposeBlock(td.state2.signers[0], td.RandAddress(), 1)
 	assert.NoError(t, err, "Should propose")
 }
 
@@ -332,17 +368,17 @@ func TestBlockProposal(t *testing.T) {
 	td.moveToNextHeightForAllStates(t)
 
 	t.Run("validity of proposed block", func(t *testing.T) {
-		b, err := td.state2.ProposeBlock(td.state2.signers[0], td.RandomAddress(), 0)
+		b, err := td.state2.ProposeBlock(td.state2.signers[0], td.RandAddress(), 0)
 		assert.NoError(t, err)
 		assert.NoError(t, td.state1.ValidateBlock(b))
 	})
 
 	t.Run("Tx pool has two subsidy transactions", func(t *testing.T) {
-		trx := td.state3.createSubsidyTx(td.RandomAddress(), 0)
+		trx := td.state3.createSubsidyTx(td.RandAddress(), 0)
 		assert.NoError(t, td.state3.txPool.AppendTx(trx))
 
 		// Moving to the next round
-		b, err := td.state3.ProposeBlock(td.state3.signers[0], td.RandomAddress(), 1)
+		b, err := td.state3.ProposeBlock(td.state3.signers[0], td.RandAddress(), 1)
 		assert.NoError(t, err)
 		assert.NoError(t, td.state1.ValidateBlock(b))
 		assert.Equal(t, b.Transactions().Len(), 1)
@@ -352,7 +388,7 @@ func TestBlockProposal(t *testing.T) {
 func TestInvalidBlock(t *testing.T) {
 	td := setup(t)
 
-	b := td.GenerateTestBlock(nil, nil)
+	b := td.GenerateTestBlock(nil)
 	assert.Error(t, td.state1.ValidateBlock(b))
 }
 
@@ -386,7 +422,7 @@ func TestForkDetection(t *testing.T) {
 func TestSortition(t *testing.T) {
 	td := setup(t)
 
-	pub, prv := td.RandomBLSKeyPair()
+	pub, prv := td.RandBLSKeyPair()
 	signer := crypto.NewSigner(prv)
 	store := store.MockingStore(td.TestSuite)
 	St1, _ := LoadOrNewState(td.state1.genDoc, []crypto.Signer{signer}, store, td.commonTxPool, nil)
@@ -396,10 +432,10 @@ func TestSortition(t *testing.T) {
 	assert.Equal(t, td.state1.CommitteePower(), int64(4))
 
 	height := uint32(1)
-	for ; height <= 11; height++ {
-		if height == 2 {
+	for ; height <= 15; height++ {
+		if height == 6 {
 			trx := tx.NewBondTx(td.state1.lastInfo.BlockHash().Stamp(), 1, td.valSigner1.Address(),
-				pub.Address(), pub, 10000000, 1000, "")
+				pub.Address(), pub, 1000000000, 100000, "")
 			td.valSigner1.SignMsg(trx)
 
 			assert.NoError(t, td.commonTxPool.AppendTx(trx))
@@ -439,34 +475,36 @@ func TestSortition(t *testing.T) {
 
 	// ---------------------------------------------
 	// Let's commit another block with the new committee
-	b14, err := stNew.ProposeBlock(stNew.signers[0], td.RandomAddress(), 3)
+	height++
+
+	b14, err := stNew.ProposeBlock(stNew.signers[0], td.RandAddress(), 3)
 	require.NoError(t, err)
 	require.NotNil(t, b14)
 
 	sigs := make([]*bls.Signature, 4)
-	sb := block.CertificateSignBytes(b14.Hash(), 3)
+	sb := certificate.BlockCertificateSignBytes(b14.Hash(), height, 3)
 
 	sigs[0] = td.valSigner2.SignData(sb).(*bls.Signature)
 	sigs[1] = td.valSigner3.SignData(sb).(*bls.Signature)
 	sigs[2] = td.valSigner4.SignData(sb).(*bls.Signature)
 	sigs[3] = signer.SignData(sb).(*bls.Signature)
-	c14 := block.NewCertificate(3, []int32{4, 0, 1, 2, 3}, []int32{0}, bls.SignatureAggregate(sigs))
 
-	height++
+	c14 := certificate.NewCertificate(height, 3, []int32{4, 0, 1, 2, 3}, []int32{0}, bls.SignatureAggregate(sigs...))
+
 	assert.NoError(t, st1.CommitBlock(height, b14, c14))
 	assert.NoError(t, td.state1.CommitBlock(height, b14, c14))
 	assert.NoError(t, td.state2.CommitBlock(height, b14, c14))
 	assert.NoError(t, td.state3.CommitBlock(height, b14, c14))
 	assert.NoError(t, td.state4.CommitBlock(height, b14, c14))
 
-	assert.Equal(t, td.state1.CommitteePower(), int64(10000004))
+	assert.Equal(t, td.state1.CommitteePower(), int64(1000000004))
 	assert.Equal(t, td.state1.TotalValidators(), int32(5))
 }
 
 func TestValidateBlockTime(t *testing.T) {
 	td := setup(t)
 
-	fmt.Printf("BlockTimeInSecond: %d\n", td.state1.params.BlockTimeInSecond)
+	fmt.Printf("BlockTimeInSecond: %d\n", td.state1.params.BlockIntervalInSecond)
 
 	// Time not rounded
 	roundedNow := util.RoundNow(10)
@@ -476,7 +514,7 @@ func TestValidateBlockTime(t *testing.T) {
 	assert.Error(t, td.state1.validateBlockTime(roundedNow.Add(15*time.Second)))
 
 	t.Run("Last block is committed 10 seconds ago", func(t *testing.T) {
-		td.state1.lastInfo.SetBlockTime(roundedNow.Add(-10 * time.Second))
+		td.state1.lastInfo.UpdateBlockTime(roundedNow.Add(-10 * time.Second))
 
 		// Before or same as the last block time
 		assert.Error(t, td.state1.validateBlockTime(roundedNow.Add(-20*time.Second)))
@@ -492,7 +530,7 @@ func TestValidateBlockTime(t *testing.T) {
 	})
 
 	t.Run("Last block is committed one minute ago", func(t *testing.T) {
-		td.state1.lastInfo.SetBlockTime(roundedNow.Add(-1 * time.Minute)) // One minute ago
+		td.state1.lastInfo.UpdateBlockTime(roundedNow.Add(-1 * time.Minute)) // One minute ago
 
 		// Before or same as the last block time
 		assert.Error(t, td.state1.validateBlockTime(td.state1.lastInfo.BlockTime().Add(-10*time.Second)))
@@ -509,7 +547,7 @@ func TestValidateBlockTime(t *testing.T) {
 	})
 
 	t.Run("Last block is committed in future", func(t *testing.T) {
-		td.state1.lastInfo.SetBlockTime(roundedNow.Add(1 * time.Minute)) // One minute later
+		td.state1.lastInfo.UpdateBlockTime(roundedNow.Add(1 * time.Minute)) // One minute later
 
 		assert.Error(t, td.state1.validateBlockTime(td.state1.lastInfo.BlockTime().Add(+1*time.Minute)))
 
@@ -530,7 +568,7 @@ func TestInvalidBlockVersion(t *testing.T) {
 	td := setup(t)
 
 	td.state1.params.BlockVersion = 2
-	b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandomAddress(), 0)
+	b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandAddress(), 0)
 	assert.Error(t, td.state2.ValidateBlock(b))
 }
 
@@ -558,7 +596,7 @@ func TestValidatorHelpers(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Should return nil for non-existing Validator Address", func(t *testing.T) {
-		_, prv5 := td.RandomBLSKeyPair()
+		_, prv5 := td.RandBLSKeyPair()
 		nonExistenceValidator := td.state1.ValidatorByAddress(prv5.PublicKey().Address())
 		assert.Nil(t, nonExistenceValidator, "State 1 returned non-nil For non-existing validator")
 		nonExistenceValidator = td.state2.ValidatorByAddress(prv5.PublicKey().Address())
@@ -591,7 +629,7 @@ func TestLoadState(t *testing.T) {
 	td := setup(t)
 
 	// Add a bond transactions to change total power (stake)
-	pub, _ := td.RandomBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 	tx2 := tx.NewBondTx(td.state1.LastBlockHash().Stamp(), 1, td.valSigner1.Address(),
 		pub.Address(), pub, 8888000, 8888, "")
 	td.valSigner1.SignMsg((tx2))
@@ -615,7 +653,7 @@ func TestLoadState(t *testing.T) {
 	assert.Equal(t, td.state1.committee.Committers(), st1Load.(*state).committee.Committers())
 	assert.Equal(t, td.state1.committee.TotalPower(), st1Load.(*state).committee.TotalPower())
 	assert.Equal(t, td.state1.TotalPower(), st1Load.(*state).TotalPower())
-	assert.Equal(t, td.state1.store.TotalAccounts(), int32(5))
+	assert.Equal(t, td.state1.store.TotalAccounts(), int32(6))
 
 	require.NoError(t, st1Load.CommitBlock(6, b6, c6))
 	require.NoError(t, td.state2.CommitBlock(6, b6, c6))
@@ -634,7 +672,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 		td.state1.store, txpool.MockingTxPool(), nil)
 	require.NoError(t, err)
 
-	pub, _ := td.RandomBLSKeyPair()
+	pub, _ := td.RandBLSKeyPair()
 	val := validator.NewValidator(pub, 4)
 	vals := append(td.state1.genDoc.Validators(), val)
 
@@ -652,11 +690,9 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 func TestSetBlockTime(t *testing.T) {
 	td := setup(t)
 
-	assert.Equal(t, td.state1.BlockTime(), 10*time.Second)
-
 	t.Run("Last block time is a bit far in past", func(t *testing.T) {
-		td.state1.lastInfo.SetBlockTime(util.RoundNow(10).Add(-20 * time.Second))
-		b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandomAddress(), 0)
+		td.state1.lastInfo.UpdateBlockTime(util.RoundNow(10).Add(-20 * time.Second))
+		b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandAddress(), 0)
 		fmt.Printf("last block time: %s\nproposed time  : %s\n", td.state1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(td.state1.lastInfo.BlockTime()))
 		assert.True(t, b.Header().Time().Before(util.Now().Add(10*time.Second)))
@@ -664,8 +700,8 @@ func TestSetBlockTime(t *testing.T) {
 	})
 
 	t.Run("Last block time is almost good", func(t *testing.T) {
-		td.state1.lastInfo.SetBlockTime(util.RoundNow(10).Add(-10 * time.Second))
-		b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandomAddress(), 0)
+		td.state1.lastInfo.UpdateBlockTime(util.RoundNow(10).Add(-10 * time.Second))
+		b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandAddress(), 0)
 		fmt.Printf("last block time: %s\nproposed time  : %s\n", td.state1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(td.state1.lastInfo.BlockTime()))
 		assert.True(t, b.Header().Time().Before(util.Now().Add(10*time.Second)))
@@ -674,16 +710,16 @@ func TestSetBlockTime(t *testing.T) {
 
 	// After our time
 	t.Run("Last block time is in near future", func(t *testing.T) {
-		td.state1.lastInfo.SetBlockTime(util.RoundNow(10).Add(+10 * time.Second))
-		b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandomAddress(), 0)
+		td.state1.lastInfo.UpdateBlockTime(util.RoundNow(10).Add(+10 * time.Second))
+		b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandAddress(), 0)
 		fmt.Printf("last block time: %s\nproposed time  : %s\n", td.state1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(td.state1.lastInfo.BlockTime()))
 		assert.Zero(t, b.Header().Time().Second()%10)
 	})
 
 	t.Run("Last block time is more than a block in future", func(t *testing.T) {
-		td.state1.lastInfo.SetBlockTime(util.RoundNow(10).Add(+20 * time.Second))
-		b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandomAddress(), 0)
+		td.state1.lastInfo.UpdateBlockTime(util.RoundNow(10).Add(+20 * time.Second))
+		b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandAddress(), 0)
 		fmt.Printf("last block time: %s\nproposed time  : %s\n", td.state1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(td.state1.lastInfo.BlockTime()))
 		assert.Zero(t, b.Header().Time().Second()%10)
@@ -699,7 +735,7 @@ func TestIsValidator(t *testing.T) {
 	assert.True(t, td.state1.IsInCommittee(td.valSigner2.Address()))
 	assert.True(t, td.state1.IsValidator(td.valSigner2.Address()))
 
-	addr := td.RandomAddress()
+	addr := td.RandAddress()
 	assert.False(t, td.state1.IsInCommittee(addr))
 	assert.False(t, td.state1.IsProposer(addr, 0))
 	assert.False(t, td.state1.IsInCommittee(addr))
@@ -719,7 +755,7 @@ func TestCommittingInvalidBlock(t *testing.T) {
 	td.moveToNextHeightForAllStates(t)
 
 	txs := block.NewTxs()
-	trx := td.state2.createSubsidyTx(td.RandomAddress(), 0)
+	trx := td.state2.createSubsidyTx(td.RandAddress(), 0)
 	txs.Append(trx)
 	b := block.MakeBlock(2, util.Now(), txs, td.state2.lastInfo.BlockHash(), td.state2.stateRoot(),
 		td.state2.lastInfo.Certificate(), td.state2.lastInfo.SortitionSeed(), td.state2.signers[0].Address())
@@ -739,20 +775,20 @@ func TestCalcFee(t *testing.T) {
 		expectedFee     int64
 		expectedErrCode int
 	}{
-		{1, payload.PayloadTypeTransfer, 1, td.state1.params.MinimumFee, errors.ErrInvalidFee},
-		{1, payload.PayloadTypeWithdraw, 1001, td.state1.params.MinimumFee, errors.ErrInvalidFee},
-		{1, payload.PayloadTypeBond, 1000, td.state1.params.MinimumFee, errors.ErrNone},
+		{1, payload.TypeTransfer, 1, td.state1.params.MinimumFee, errors.ErrInvalidFee},
+		{1, payload.TypeWithdraw, 1001, td.state1.params.MinimumFee, errors.ErrInvalidFee},
+		{1, payload.TypeBond, 1000, td.state1.params.MinimumFee, errors.ErrNone},
 
-		{1 * 1e9, payload.PayloadTypeTransfer, 1, 100000, errors.ErrInvalidFee},
-		{1 * 1e9, payload.PayloadTypeWithdraw, 100001, 100000, errors.ErrInvalidFee},
-		{1 * 1e9, payload.PayloadTypeBond, 100000, 100000, errors.ErrNone},
+		{1 * 1e9, payload.TypeTransfer, 1, 100000, errors.ErrInvalidFee},
+		{1 * 1e9, payload.TypeWithdraw, 100001, 100000, errors.ErrInvalidFee},
+		{1 * 1e9, payload.TypeBond, 100000, 100000, errors.ErrNone},
 
-		{1 * 1e12, payload.PayloadTypeTransfer, 1, 1000000, errors.ErrInvalidFee},
-		{1 * 1e12, payload.PayloadTypeWithdraw, 1000001, 1000000, errors.ErrInvalidFee},
-		{1 * 1e12, payload.PayloadTypeBond, 1000000, 1000000, errors.ErrNone},
+		{1 * 1e12, payload.TypeTransfer, 1, 1000000, errors.ErrInvalidFee},
+		{1 * 1e12, payload.TypeWithdraw, 1000001, 1000000, errors.ErrInvalidFee},
+		{1 * 1e12, payload.TypeBond, 1000000, 1000000, errors.ErrNone},
 
-		{1 * 1e12, payload.PayloadTypeSortition, 0, 0, errors.ErrInvalidFee},
-		{1 * 1e12, payload.PayloadTypeUnbond, 0, 0, errors.ErrNone},
+		{1 * 1e12, payload.TypeSortition, 0, 0, errors.ErrInvalidFee},
+		{1 * 1e12, payload.TypeUnbond, 0, 0, errors.ErrNone},
 	}
 	for _, test := range tests {
 		fee, err := td.state2.CalculateFee(test.amount, test.pldType)
@@ -762,4 +798,17 @@ func TestCalcFee(t *testing.T) {
 		_, err = td.state2.CalculateFee(test.amount, 6)
 		assert.Error(t, err)
 	}
+}
+
+func TestMakeCommittedBlock(t *testing.T) {
+	td := setup(t)
+
+	data := td.RandBytes(128)
+	height := td.RandHeight()
+	hash := td.RandHash()
+	cb := td.state1.MakeCommittedBlock(data, height, hash)
+	assert.Equal(t, data, cb.Data)
+	assert.Equal(t, hash, cb.BlockHash)
+	assert.Equal(t, height, cb.Height)
+	assert.NotNil(t, cb.Store)
 }

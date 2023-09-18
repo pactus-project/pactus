@@ -39,7 +39,7 @@ func main() {
 	var err error
 	workingDir, err := filepath.Abs(*workingDirOpt)
 	if err != nil {
-		cmd.PrintErrorMsg("Aborted! %v", err)
+		cmd.PrintErrorMsgf("Aborted! %v", err)
 		return
 	}
 

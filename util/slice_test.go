@@ -33,6 +33,7 @@ func TestSliceToInt16(t *testing.T) {
 		assert.Equal(t, v1, test.in)
 	}
 }
+
 func TestSliceToInt32(t *testing.T) {
 	tests := []struct {
 		in    int32
@@ -218,5 +219,60 @@ func TestReverse(t *testing.T) {
 	for _, test := range tests {
 		Reverse(test.slice)
 		assert.Equal(t, test.slice, test.reversed)
+	}
+}
+
+func TestExtendSlice(t *testing.T) {
+	cases := []struct {
+		in   []int
+		size int
+		want []int
+	}{
+		{[]int{1, 2, 3}, 5, []int{1, 2, 3, 0, 0}},
+		{[]int{1, 2, 3}, 3, []int{1, 2, 3}},
+		{[]int{1, 2, 3}, 2, []int{1, 2, 3}},
+		{[]int{}, 5, []int{0, 0, 0, 0, 0}},
+	}
+
+	for _, c := range cases {
+		ExtendSlice(&c.in, c.size)
+		assert.Equal(t, c.in, c.want, "ExtendSlice(%v, %v) == %v, want %v", c.in, c.size, c.in, c.want)
+	}
+}
+
+func TestIsSubset(t *testing.T) {
+	tests := []struct {
+		arr1, arr2 []int
+		want       bool
+	}{
+		{[]int{11, 1, 13, 21, 3, 7}, []int{11, 3, 7, 1}, true},
+		{[]int{1, 2, 3, 4, 5}, []int{1, 2, 3}, true},
+		{[]int{1, 2, 3}, []int{1, 2, 3, 4}, false},
+		{[]int{1, 2, 3, 4, 5}, []int{6, 7, 8}, false},
+		{[]int{}, []int{1, 2, 3, 4, 5}, false},
+		{[]int{1, 2, 3, 4, 5}, []int{}, true},
+		{[]int{}, []int{}, true},
+	}
+
+	for _, tt := range tests {
+		got := IsSubset(tt.arr1, tt.arr2)
+		assert.Equal(t, got, tt.want,
+			"isSubset(%v, %v) = %v; want %v", tt.arr1, tt.arr2, got, tt.want)
+	}
+}
+
+func TestStringToBytes(t *testing.T) {
+	tests := []struct {
+		input  string
+		output []byte
+	}{
+		{"Hello", []byte("Hello")},
+		{"Go", []byte("Go")},
+		{"", []byte("")},
+	}
+
+	for _, test := range tests {
+		got := StringToBytes(test.input)
+		assert.Equal(t, got, test.output, "StringToBytes('%s') =  %v, want %v", test.input, got, test.output)
 	}
 }

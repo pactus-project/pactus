@@ -1,6 +1,7 @@
 package block
 
 import (
+	"fmt"
 	"io"
 	"time"
 
@@ -8,7 +9,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type Header struct {
@@ -24,43 +24,44 @@ type headerData struct {
 	ProposerAddress crypto.Address
 }
 
-// Version returns the block version
+// Version returns the block version.
 func (h *Header) Version() uint8 {
 	return h.data.Version
 }
 
-// Time returns the block time
+// Time returns the block time.
 func (h *Header) Time() time.Time {
 	return time.Unix(int64(h.data.UnixTime), 0)
 }
 
-// UnixTime returns the block time in Unix value
+// UnixTime returns the block time in Unix value.
 func (h *Header) UnixTime() uint32 {
 	return h.data.UnixTime
 }
 
-// StateRoot returns the state root hash
+// StateRoot returns the state root hash.
 func (h *Header) StateRoot() hash.Hash {
 	return h.data.StateRoot
 }
 
-// PrevBlockHash returns the previous block hash
+// PrevBlockHash returns the previous block hash.
 func (h *Header) PrevBlockHash() hash.Hash {
 	return h.data.PrevBlockHash
 }
 
-// SortitionSeed returns the sortition seed
+// SortitionSeed returns the sortition seed.
 func (h *Header) SortitionSeed() sortition.VerifiableSeed {
 	return h.data.SortitionSeed
 }
 
-// ProposerAddress returns the proposer address
+// ProposerAddress returns the proposer address.
 func (h *Header) ProposerAddress() crypto.Address {
 	return h.data.ProposerAddress
 }
 
 func NewHeader(version uint8, time time.Time, stateRoot, prevBlockHash hash.Hash,
-	sortitionSeed sortition.VerifiableSeed, proposerAddress crypto.Address) *Header {
+	sortitionSeed sortition.VerifiableSeed, proposerAddress crypto.Address,
+) *Header {
 	return &Header{
 		data: headerData{
 			Version:         version,
@@ -73,12 +74,16 @@ func NewHeader(version uint8, time time.Time, stateRoot, prevBlockHash hash.Hash
 	}
 }
 
-func (h *Header) SanityCheck() error {
-	if err := h.data.StateRoot.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidBlock, "invalid state root")
+func (h *Header) BasicCheck() error {
+	if err := h.data.StateRoot.BasicCheck(); err != nil {
+		return BasicCheckError{
+			Reason: fmt.Sprintf("invalid state root: %s", err.Error()),
+		}
 	}
-	if err := h.data.ProposerAddress.SanityCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidBlock, "invalid proposer address")
+	if err := h.data.ProposerAddress.BasicCheck(); err != nil {
+		return BasicCheckError{
+			Reason: fmt.Sprintf("invalid proposer address: %s", err.Error()),
+		}
 	}
 
 	return nil

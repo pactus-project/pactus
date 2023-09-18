@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -20,12 +21,11 @@ type Facade interface {
 	LastBlockHeight() uint32
 	LastBlockHash() hash.Hash
 	LastBlockTime() time.Time
-	LastCertificate() *block.Certificate
-	BlockTime() time.Duration
-	UpdateLastCertificate(lastCertificate *block.Certificate) error
+	LastCertificate() *certificate.Certificate
+	UpdateLastCertificate(lastCertificate *certificate.Certificate) error
 	ProposeBlock(consSigner crypto.Signer, rewardAddr crypto.Address, round int16) (*block.Block, error)
 	ValidateBlock(block *block.Block) error
-	CommitBlock(height uint32, block *block.Block, cert *block.Certificate) error
+	CommitBlock(height uint32, block *block.Block, cert *certificate.Certificate) error
 	CommitteeValidators() []*validator.Validator
 	IsInCommittee(addr crypto.Address) bool
 	Proposer(round int16) *validator.Validator
@@ -38,8 +38,9 @@ type Facade interface {
 	PendingTx(id tx.ID) *tx.Tx
 	AddPendingTx(trx *tx.Tx) error
 	AddPendingTxAndBroadcast(trx *tx.Tx) error
-	StoredBlock(height uint32) *store.StoredBlock
-	StoredTx(id tx.ID) *store.StoredTx
+	MakeCommittedBlock(data []byte, height uint32, blockHash hash.Hash) *store.CommittedBlock
+	CommittedBlock(height uint32) *store.CommittedBlock
+	CommittedTx(id tx.ID) *store.CommittedTx
 	BlockHash(height uint32) hash.Hash
 	BlockHeight(hash hash.Hash) uint32
 	AccountByAddress(addr crypto.Address) *account.Account

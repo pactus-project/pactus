@@ -8,12 +8,13 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/sync/services"
 	"github.com/pactus-project/pactus/util"
 )
 
 // TODO:
 // - Add tests for peerset
-// - Implementing garbage collection for peerset
+// - Is it thread safe (GetPeer and IteratePeers) ??
 
 type PeerSet struct {
 	lk sync.RWMutex
@@ -21,10 +22,9 @@ type PeerSet struct {
 	peers              map[peer.ID]*Peer
 	sessions           map[int]*Session
 	nextSessionID      int
-	maxClaimedHeight   uint32
 	sessionTimeout     time.Duration
-	totalSentBytes     int
-	totalReceivedBytes int
+	totalSentBytes     int64
+	totalReceivedBytes int64
 	sentBytes          map[message.Type]int64
 	receivedBytes      map[message.Type]int64
 	startedAt          time.Time
@@ -118,26 +118,6 @@ func (ps *PeerSet) Len() int {
 	return len(ps.peers)
 }
 
-// MaxClaimedHeight returns the maximum claimed height.
-//
-// Note: This value might not be accurate.
-// A bad peer can claim invalid height.
-func (ps *PeerSet) MaxClaimedHeight() uint32 {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
-
-	return ps.maxClaimedHeight
-}
-
-func (ps *PeerSet) Clear() {
-	ps.lk.Lock()
-	defer ps.lk.Unlock()
-
-	ps.peers = make(map[peer.ID]*Peer)
-	ps.sessions = make(map[int]*Session)
-	ps.maxClaimedHeight = 0
-}
-
 func (ps *PeerSet) RemovePeer(pid peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
@@ -171,57 +151,6 @@ func (ps *PeerSet) GetPeer(pid peer.ID) Peer {
 	return Peer{}
 }
 
-// GetRandomPeer selects a random peer from the peer set based on their weights.
-// The weight of each peer is determined by the difference between the number of successful
-// and failed send attempts. Peers with higher weights are more likely to be selected.
-// TODO: can this code be better?
-func (ps *PeerSet) GetRandomPeer() Peer {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
-
-	type weightedPeer struct {
-		peer   *Peer
-		weight int
-	}
-
-	//
-	totalWeight := 0
-	peers := make([]weightedPeer, 0, len(ps.peers))
-	for _, p := range ps.peers {
-		if !p.IsKnownOrTrusty() {
-			continue
-		}
-
-		weight := p.SendSuccess - p.SendFailed
-		if weight <= 0 {
-			weight = 0
-		}
-		weight++
-
-		totalWeight += weight
-		peers = append(peers, weightedPeer{
-			peer:   p,
-			weight: weight,
-		})
-	}
-
-	if len(peers) == 0 {
-		return Peer{}
-	}
-
-	rnd := int(util.RandUint32(uint32(totalWeight)))
-
-	// Find the index where the random number falls
-	for _, p := range peers {
-		totalWeight -= p.weight
-
-		if rnd >= totalWeight {
-			return *p.peer
-		}
-	}
-	panic("unreachable code")
-}
-
 func (ps *PeerSet) getPeer(pid peer.ID) *Peer {
 	if peer, ok := ps.peers[pid]; ok {
 		return peer
@@ -238,27 +167,21 @@ func (ps *PeerSet) mustGetPeer(pid peer.ID) *Peer {
 	return p
 }
 
-func (ps *PeerSet) UpdatePeerInfo(
+func (ps *PeerSet) UpdateInfo(
 	pid peer.ID,
-	status StatusCode,
 	moniker string,
 	agent string,
-	consKey *bls.PublicKey,
-	nodeNetwork bool) {
+	consKeys []*bls.PublicKey,
+	services services.Services,
+) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
-	p.Status = status
 	p.Moniker = moniker
 	p.Agent = agent
-	p.ConsensusKeys[*consKey] = true
-
-	if nodeNetwork {
-		p.Flags = util.SetFlag(p.Flags, PeerFlagNodeNetwork)
-	} else {
-		p.Flags = util.UnsetFlag(p.Flags, PeerFlagNodeNetwork)
-	}
+	p.ConsensusKeys = consKeys
+	p.Services = services
 }
 
 func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32, lastBlockHash hash.Hash) {
@@ -268,7 +191,6 @@ func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32, lastBlockHash hash.H
 	p := ps.mustGetPeer(pid)
 	p.Height = height
 	p.LastBlockHash = lastBlockHash
-	ps.maxClaimedHeight = util.Max(ps.maxClaimedHeight, height)
 }
 
 func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {
@@ -311,49 +233,38 @@ func (ps *PeerSet) IncreaseInvalidBundlesCounter(pid peer.ID) {
 	p.InvalidBundles++
 }
 
-func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, msgType message.Type, c int) {
+func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, msgType message.Type, c int64) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
-	p.ReceivedBytes += c
+	p.ReceivedBytes[msgType] += c
 
 	ps.totalReceivedBytes += c
-	ps.receivedBytes[msgType] += int64(c)
+	ps.receivedBytes[msgType] += c
 }
 
-func (ps *PeerSet) IncreaseSentBytesCounter(msgType message.Type, c int) {
+func (ps *PeerSet) IncreaseSentBytesCounter(msgType message.Type, c int64, pid *peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	ps.totalSentBytes += c
-	ps.sentBytes[msgType] += int64(c)
+	ps.sentBytes[msgType] += c
+
+	if pid != nil {
+		p := ps.mustGetPeer(*pid)
+		p.SentBytes[msgType] += c
+	}
 }
 
-func (ps *PeerSet) IncreaseSendSuccessCounter(pid peer.ID) {
-	ps.lk.Lock()
-	defer ps.lk.Unlock()
-
-	p := ps.mustGetPeer(pid)
-	p.SendSuccess++
-}
-
-func (ps *PeerSet) IncreaseSendFailedCounter(pid peer.ID) {
-	ps.lk.Lock()
-	defer ps.lk.Unlock()
-
-	p := ps.mustGetPeer(pid)
-	p.SendFailed++
-}
-
-func (ps *PeerSet) TotalSentBytes() int {
+func (ps *PeerSet) TotalSentBytes() int64 {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
 	return ps.totalSentBytes
 }
 
-func (ps *PeerSet) TotalReceivedBytes() int {
+func (ps *PeerSet) TotalReceivedBytes() int64 {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
@@ -387,4 +298,10 @@ func (ps *PeerSet) StartedAt() time.Time {
 	defer ps.lk.RUnlock()
 
 	return ps.startedAt
+}
+
+func (ps *PeerSet) IteratePeers(consumer func(peer *Peer)) {
+	for _, p := range ps.peers {
+		consumer(p)
+	}
 }

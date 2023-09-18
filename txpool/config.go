@@ -14,8 +14,8 @@ func DefaultConfig() *Config {
 	}
 }
 
-// SanityCheck performs basic checks on the configuration.
-func (conf *Config) SanityCheck() error {
+// BasicCheck performs basic checks on the configuration.
+func (conf *Config) BasicCheck() error {
 	if conf.MaxSize == 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "maxSize can't be negative or zero")
 	}

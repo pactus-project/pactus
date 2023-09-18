@@ -20,14 +20,14 @@ func TestVoteMessage(t *testing.T) {
 		v, _ := ts.GenerateTestPrepareVote(100, -1)
 		m := NewVoteMessage(v)
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidRound)
+		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidRound)
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		v, _ := ts.GenerateTestPrepareVote(100, 0)
 		m := NewVoteMessage(v)
 
-		assert.NoError(t, m.SanityCheck())
+		assert.NoError(t, m.BasicCheck())
 		assert.Contains(t, m.String(), v.String())
 	})
 }

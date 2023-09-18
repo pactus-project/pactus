@@ -10,24 +10,25 @@ import (
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
 type LastInfo struct {
-	lk sync.RWMutex
+	lk sync.RWMutex // TODO: this lock looks unnecessary
 
-	store             store.Store
 	lastBlockHeight   uint32
 	lastSortitionSeed sortition.VerifiableSeed
 	lastBlockHash     hash.Hash
-	lastCertificate   *block.Certificate
+	lastCert          *certificate.Certificate
 	lastBlockTime     time.Time
+	lastValidators    []*validator.Validator
 }
 
-func NewLastInfo(store store.Store) *LastInfo {
-	return &LastInfo{store: store}
+func NewLastInfo() *LastInfo {
+	return &LastInfo{}
 }
 
 func (li *LastInfo) SortitionSeed() sortition.VerifiableSeed {
@@ -51,11 +52,11 @@ func (li *LastInfo) BlockHash() hash.Hash {
 	return li.lastBlockHash
 }
 
-func (li *LastInfo) Certificate() *block.Certificate {
+func (li *LastInfo) Certificate() *certificate.Certificate {
 	li.lk.RLock()
 	defer li.lk.RUnlock()
 
-	return li.lastCertificate
+	return li.lastCert
 }
 
 func (li *LastInfo) BlockTime() time.Time {
@@ -65,58 +66,75 @@ func (li *LastInfo) BlockTime() time.Time {
 	return li.lastBlockTime
 }
 
-func (li *LastInfo) SetSortitionSeed(lastSortitionSeed sortition.VerifiableSeed) {
+func (li *LastInfo) Validators() []*validator.Validator {
+	li.lk.RLock()
+	defer li.lk.RUnlock()
+
+	return li.lastValidators
+}
+
+func (li *LastInfo) UpdateSortitionSeed(lastSortitionSeed sortition.VerifiableSeed) {
 	li.lk.Lock()
 	defer li.lk.Unlock()
 
 	li.lastSortitionSeed = lastSortitionSeed
 }
 
-func (li *LastInfo) SetBlockHeight(lastBlockHeight uint32) {
+func (li *LastInfo) UpdateBlockHeight(lastBlockHeight uint32) {
 	li.lk.Lock()
 	defer li.lk.Unlock()
 
 	li.lastBlockHeight = lastBlockHeight
 }
 
-func (li *LastInfo) SetBlockHash(lastBlockHash hash.Hash) {
+func (li *LastInfo) UpdateBlockHash(lastBlockHash hash.Hash) {
 	li.lk.Lock()
 	defer li.lk.Unlock()
 
 	li.lastBlockHash = lastBlockHash
 }
 
-func (li *LastInfo) SetCertificate(lastCertificate *block.Certificate) {
+func (li *LastInfo) UpdateCertificate(lastCertificate *certificate.Certificate) {
 	li.lk.Lock()
 	defer li.lk.Unlock()
 
-	li.lastCertificate = lastCertificate
+	li.lastCert = lastCertificate
 }
 
-func (li *LastInfo) SetBlockTime(lastBlockTime time.Time) {
+func (li *LastInfo) UpdateBlockTime(lastBlockTime time.Time) {
 	li.lk.Lock()
 	defer li.lk.Unlock()
 
 	li.lastBlockTime = lastBlockTime
 }
 
-func (li *LastInfo) RestoreLastInfo(committeeSize int) (committee.Committee, error) {
-	height, cert := li.store.LastCertificate()
+func (li *LastInfo) UpdateValidators(vals []*validator.Validator) {
+	li.lk.Lock()
+	defer li.lk.Unlock()
+
+	li.lastValidators = vals
+}
+
+func (li *LastInfo) RestoreLastInfo(store store.Store, committeeSize int) (committee.Committee, error) {
+	height, cert := store.LastCertificate()
 	logger.Debug("try to restore last state info", "height", height)
-	sb, err := li.store.Block(height)
+	sb, err := store.Block(height)
 	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve block %v: %v", height, err)
+		return nil, fmt.Errorf("unable to retrieve block %v: %w", height, err)
 	}
 
-	b := sb.ToBlock()
+	lastBlock, err := sb.ToBlock()
+	if err != nil {
+		return nil, err
+	}
 
 	li.lastBlockHeight = height
-	li.lastCertificate = cert
-	li.lastSortitionSeed = b.Header().SortitionSeed()
-	li.lastBlockHash = b.Hash()
-	li.lastBlockTime = b.Header().Time()
+	li.lastCert = cert
+	li.lastSortitionSeed = lastBlock.Header().SortitionSeed()
+	li.lastBlockHash = lastBlock.Hash()
+	li.lastBlockTime = lastBlock.Header().Time()
 
-	cmt, err := li.restoreCommittee(b, committeeSize)
+	cmt, err := li.restoreCommittee(store, lastBlock, committeeSize)
 	if err != nil {
 		return nil, err
 	}
@@ -124,43 +142,46 @@ func (li *LastInfo) RestoreLastInfo(committeeSize int) (committee.Committee, err
 	return cmt, nil
 }
 
-func (li *LastInfo) restoreCommittee(b *block.Block, committeeSize int) (committee.Committee, error) {
+func (li *LastInfo) restoreCommittee(store store.Store, lastBlock *block.Block,
+	committeeSize int,
+) (committee.Committee, error) {
 	joinedVals := make([]*validator.Validator, 0)
-	for _, trx := range b.Transactions() {
-		// If there is any sortition transaction in last block,
-		// we should update last committee
+	for _, trx := range lastBlock.Transactions() {
+		// If there is any sortition transaction in the last block,
+		// we should update the last committee.
 		if trx.IsSortitionTx() {
 			pld := trx.Payload().(*payload.SortitionPayload)
-			val, err := li.store.Validator(pld.Address)
+			val, err := store.Validator(pld.Address)
 			if err != nil {
-				return nil, fmt.Errorf("unable to retrieve validator %s: %v", pld.Address, err)
+				return nil, fmt.Errorf("unable to retrieve validator %s: %w", pld.Address, err)
 			}
 			joinedVals = append(joinedVals, val)
 		}
 	}
 
 	proposerIndex := -1
-	curCommitteeSize := len(li.lastCertificate.Committers())
-	vals := make([]*validator.Validator, len(li.lastCertificate.Committers()))
-	for i, num := range li.lastCertificate.Committers() {
-		val, err := li.store.ValidatorByNumber(num)
+	curCommitteeSize := len(li.lastCert.Committers())
+	vals := make([]*validator.Validator, len(li.lastCert.Committers()))
+	for i, num := range li.lastCert.Committers() {
+		val, err := store.ValidatorByNumber(num)
 		if err != nil {
-			return nil, fmt.Errorf("unable to retrieve committee member %v: %v", num, err)
+			return nil, fmt.Errorf("unable to retrieve committee member %v: %w", num, err)
 		}
-		if b.Header().ProposerAddress().EqualsTo(val.Address()) {
+		if lastBlock.Header().ProposerAddress().EqualsTo(val.Address()) {
 			proposerIndex = i
 		}
 		vals[i] = val
 	}
+	li.lastValidators = vals
 
-	// First we restore previous committee, then we update it to get the latest committee.
+	// First, we restore the previous committee; then, we update it to get the latest committee.
 	proposerIndex = (proposerIndex + curCommitteeSize -
-		(int(li.lastCertificate.Round()) % curCommitteeSize)) % curCommitteeSize
-	committee, err := committee.NewCommittee(vals, committeeSize, vals[proposerIndex].Address())
+		(int(li.lastCert.Round()) % curCommitteeSize)) % curCommitteeSize
+	cmt, err := committee.NewCommittee(vals, committeeSize, vals[proposerIndex].Address())
 	if err != nil {
-		return nil, fmt.Errorf("unable to create last committee: %v", err)
+		return nil, fmt.Errorf("unable to create last committee: %w", err)
 	}
-	committee.Update(li.lastCertificate.Round(), joinedVals)
+	cmt.Update(li.lastCert.Round(), joinedVals)
 
-	return committee, nil
+	return cmt, nil
 }

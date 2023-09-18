@@ -80,6 +80,7 @@ func isRoot() bool {
 	}
 	return i == 0
 }
+
 func TestIsValidPath(t *testing.T) {
 	// To pass this tests inside docker
 	if runtime.GOOS != "windows" && !isRoot() {

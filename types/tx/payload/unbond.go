@@ -14,7 +14,7 @@ type UnbondPayload struct {
 }
 
 func (p *UnbondPayload) Type() Type {
-	return PayloadTypeUnbond
+	return TypeUnbond
 }
 
 func (p *UnbondPayload) Signer() crypto.Address {
@@ -25,9 +25,9 @@ func (p *UnbondPayload) Value() int64 {
 	return 0
 }
 
-// TODO: write test for me
-func (p *UnbondPayload) SanityCheck() error {
-	if err := p.Validator.SanityCheck(); err != nil {
+// TODO: write test for me.
+func (p *UnbondPayload) BasicCheck() error {
+	if err := p.Validator.BasicCheck(); err != nil {
 		return errors.Error(errors.ErrInvalidAddress)
 	}
 
@@ -50,4 +50,8 @@ func (p *UnbondPayload) String() string {
 	return fmt.Sprintf("{Unbond 🔓 %v",
 		p.Validator.ShortString(),
 	)
+}
+
+func (p *UnbondPayload) ReceiverAddr() *crypto.Address {
+	return nil
 }

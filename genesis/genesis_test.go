@@ -28,7 +28,7 @@ func TestMarshaling(t *testing.T) {
 		[]*validator.Validator{val}, param.DefaultParams())
 	gen2 := new(genesis.Genesis)
 
-	assert.Equal(t, gen1.Params().BlockTimeInSecond, 10)
+	assert.Equal(t, gen1.Params().BlockIntervalInSecond, 10)
 
 	bz, err := json.MarshalIndent(gen1, " ", " ")
 	require.NoError(t, err)
@@ -54,12 +54,13 @@ func TestGenesisTestNet(t *testing.T) {
 
 	assert.Equal(t, g.Accounts()[crypto.TreasuryAddress].Balance(), int64(21e15))
 
-	genTime, _ := time.Parse("2006-01-02", "2023-05-08")
+	genTime, _ := time.Parse("2006-01-02", "2023-09-07")
+	expected, _ := hash.FromString("b7285501eee807780a8ab62e60b8248597b155260c118b5a76b586b00e9cfaa9")
+	assert.Equal(t, g.Hash(), expected)
 	assert.Equal(t, g.GenesisTime(), genTime)
 	assert.Equal(t, g.Params().BondInterval, uint32(120))
-
-	expected, _ := hash.FromString("d5b41d8c2d45a951329512915ae7b2f4a445aeda380a1d40c50b5a5743dfb3fa")
-	assert.Equal(t, g.Hash(), expected)
+	assert.Equal(t, g.ChainType(), genesis.Testnet)
+	assert.Equal(t, g.TotalSupply(), int64(42*1e15))
 }
 
 func TestCheckGenesisAccountAndValidator(t *testing.T) {
@@ -68,7 +69,7 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 	accs := map[crypto.Address]*account.Account{}
 	vals := []*validator.Validator{}
 	for i := int32(0); i < 10; i++ {
-		pub, _ := ts.RandomBLSKeyPair()
+		pub, _ := ts.RandBLSKeyPair()
 		acc := account.NewAccount(i)
 		val := validator.NewValidator(pub, i)
 

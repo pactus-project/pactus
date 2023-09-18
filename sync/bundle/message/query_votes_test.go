@@ -16,13 +16,13 @@ func TestQueryVotesMessage(t *testing.T) {
 	t.Run("Invalid round", func(t *testing.T) {
 		m := NewQueryVotesMessage(0, -1)
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidRound)
+		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidRound)
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		m := NewQueryVotesMessage(100, 0)
 
-		assert.NoError(t, m.SanityCheck())
+		assert.NoError(t, m.BasicCheck())
 		assert.Contains(t, m.String(), "100")
 	})
 }

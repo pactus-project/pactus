@@ -138,7 +138,7 @@ func TestAccountByAddress(t *testing.T) {
 	})
 
 	t.Run("Unknown address", func(t *testing.T) {
-		acc, err := td.store.Account(td.RandomAddress())
+		acc, err := td.store.Account(td.RandAddress())
 		assert.Error(t, err)
 		assert.Nil(t, acc)
 	})
@@ -191,10 +191,10 @@ func TestAccountDeepCopy(t *testing.T) {
 	td.store.UpdateAccount(signer.Address(), acc1)
 
 	acc2, _ := td.store.AccountByNumber(num)
-	acc2.IncSequence()
+	acc2.AddToBalance(1)
 	assert.NotEqual(t, td.store.accountStore.numberMap[num].Hash(), acc2.Hash())
 
 	acc3, _ := td.store.Account(signer.Address())
-	acc3.IncSequence()
+	acc3.AddToBalance(1)
 	assert.NotEqual(t, td.store.accountStore.numberMap[num].Hash(), acc3.Hash())
 }

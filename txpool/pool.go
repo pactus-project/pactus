@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util/linkedlist"
 	"github.com/pactus-project/pactus/util/linkedmap"
 	"github.com/pactus-project/pactus/util/logger"
 )
@@ -28,11 +29,11 @@ type txPool struct {
 func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 	pending := make(map[payload.Type]*linkedmap.LinkedMap[tx.ID, *tx.Tx])
 
-	pending[payload.PayloadTypeTransfer] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sendPoolSize())
-	pending[payload.PayloadTypeBond] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.bondPoolSize())
-	pending[payload.PayloadTypeUnbond] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.unbondPoolSize())
-	pending[payload.PayloadTypeWithdraw] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.withdrawPoolSize())
-	pending[payload.PayloadTypeSortition] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sortitionPoolSize())
+	pending[payload.TypeTransfer] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sendPoolSize())
+	pending[payload.TypeBond] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.bondPoolSize())
+	pending[payload.TypeUnbond] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.unbondPoolSize())
+	pending[payload.TypeWithdraw] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.withdrawPoolSize())
+	pending[payload.TypeSortition] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sortitionPoolSize())
 
 	pool := &txPool{
 		config:      conf,
@@ -52,7 +53,7 @@ func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
 	p.sandbox = sb
 	p.logger.Debug("set new sandbox")
 
-	var next *linkedmap.LinkNode[linkedmap.Pair[tx.ID, *tx.Tx]]
+	var next *linkedlist.Element[linkedmap.Pair[tx.ID, *tx.Tx]]
 	for _, pool := range p.pools {
 		for e := pool.HeadNode(); e != nil; e = next {
 			next = e.Next
@@ -111,7 +112,7 @@ func (p *txPool) appendTx(trx *tx.Tx) error {
 
 func (p *txPool) checkTx(trx *tx.Tx) error {
 	if err := p.checker.Execute(trx, p.sandbox); err != nil {
-		p.logger.Debug("invalid transaction", "tx", trx, "err", err)
+		p.logger.Debug("invalid transaction", "tx", trx, "error", err)
 		return err
 	}
 	return nil
@@ -151,31 +152,31 @@ func (p *txPool) PrepareBlockTransactions() block.Txs {
 	defer p.lk.RUnlock()
 
 	// Appending one sortition transaction
-	poolSortition := p.pools[payload.PayloadTypeSortition]
+	poolSortition := p.pools[payload.TypeSortition]
 	for n := poolSortition.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending bond transactions
-	poolBond := p.pools[payload.PayloadTypeBond]
+	poolBond := p.pools[payload.TypeBond]
 	for n := poolBond.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending unbond transactions
-	poolUnbond := p.pools[payload.PayloadTypeUnbond]
+	poolUnbond := p.pools[payload.TypeUnbond]
 	for n := poolUnbond.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending withdraw transactions
-	poolWithdraw := p.pools[payload.PayloadTypeWithdraw]
+	poolWithdraw := p.pools[payload.TypeWithdraw]
 	for n := poolWithdraw.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending transfer transactions
-	poolSend := p.pools[payload.PayloadTypeTransfer]
+	poolSend := p.pools[payload.TypeTransfer]
 	for n := poolSend.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
@@ -209,10 +210,10 @@ func (p *txPool) Size() int {
 
 func (p *txPool) String() string {
 	return fmt.Sprintf("{💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
-		p.pools[payload.PayloadTypeTransfer].Size(),
-		p.pools[payload.PayloadTypeBond].Size(),
-		p.pools[payload.PayloadTypeUnbond].Size(),
-		p.pools[payload.PayloadTypeSortition].Size(),
-		p.pools[payload.PayloadTypeWithdraw].Size(),
+		p.pools[payload.TypeTransfer].Size(),
+		p.pools[payload.TypeBond].Size(),
+		p.pools[payload.TypeUnbond].Size(),
+		p.pools[payload.TypeSortition].Size(),
+		p.pools[payload.TypeWithdraw].Size(),
 	)
 }

@@ -18,7 +18,8 @@ type dhtService struct {
 }
 
 func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.ProtocolID,
-	conf *BootstrapConfig, logger *logger.SubLogger) *dhtService {
+	conf *BootstrapConfig, logger *logger.SubLogger,
+) *dhtService {
 	opts := []lp2pdht.Option{
 		lp2pdht.Mode(lp2pdht.ModeAuto),
 		lp2pdht.ProtocolPrefix(protocolID),
@@ -26,7 +27,7 @@ func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.
 
 	kademlia, err := lp2pdht.New(ctx, host, opts...)
 	if err != nil {
-		logger.Panic("unable to start DHT service", "err", err)
+		logger.Panic("unable to start DHT service", "error", err)
 		return nil
 	}
 
@@ -50,7 +51,7 @@ func (dht *dhtService) Start() error {
 
 func (dht *dhtService) Stop() {
 	if err := dht.kademlia.Close(); err != nil {
-		dht.logger.Error("unable to close Kademlia", "err", err)
+		dht.logger.Error("unable to close Kademlia", "error", err)
 	}
 
 	dht.bootstrap.Stop()

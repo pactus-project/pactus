@@ -350,7 +350,7 @@ func TestDerivation(t *testing.T) {
 	}
 }
 
-// TestInvalidDerivation tests Derive function for invalid data
+// TestInvalidDerivation tests Derive function for invalid data.
 func TestInvalidDerivation(t *testing.T) {
 	t.Run("Private key is 31 bytes. It should be 32 bytes", func(t *testing.T) {
 		key := [31]byte{0}
@@ -534,7 +534,7 @@ func TestInvalidString(t *testing.T) {
 		{
 			desc:          "invalid checksum",
 			str:           "XSECRET1PQP0R4SGK8Y84J2G9LQD2E4W5RYXQRPWKYSG8TT4KUMZD0QF7TT8PSVPNCFWFXK8JKWKNMH8HQC8PV0ZMYL36LRFJJ76K3C94YL38FA7PNGF4LRNP",
-			expectedError: bech32m.ErrInvalidChecksum{Expected: "f4lrnq", Actual: "f4lrnp"},
+			expectedError: bech32m.InvalidChecksumError{Expected: "f4lrnq", Actual: "f4lrnp"},
 		},
 		{
 			desc:          "no path len",

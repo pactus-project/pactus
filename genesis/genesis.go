@@ -42,12 +42,12 @@ func (n ChainType) String() string {
 }
 
 type genAccount struct {
-	Address string `cbor:"1,keyasint"`
-	Balance int64  `cbor:"2,keyasint"`
+	Address string `cbor:"1,keyasint" json:"address"`
+	Balance int64  `cbor:"2,keyasint" json:"balance"`
 }
 
 type genValidator struct {
-	PublicKey string `cbor:"1,keyasint"`
+	PublicKey string `cbor:"1,keyasint" json:"public_key"`
 }
 
 // Genesis is stored in the state database.
@@ -56,16 +56,16 @@ type Genesis struct {
 }
 
 type genesisData struct {
-	GenesisTime time.Time      `cbor:"1,keyasint"`
-	Params      param.Params   `cbor:"2,keyasint"`
-	Accounts    []genAccount   `cbor:"3,keyasint"`
-	Validators  []genValidator `cbor:"4,keyasint"`
+	GenesisTime time.Time      `cbor:"1,keyasint" json:"genesis_time"`
+	Params      param.Params   `cbor:"2,keyasint" json:"params"`
+	Accounts    []genAccount   `cbor:"3,keyasint" json:"accounts"`
+	Validators  []genValidator `cbor:"4,keyasint" json:"validators"`
 }
 
 func (gen *Genesis) Hash() hash.Hash {
 	bs, err := cbor.Marshal(gen.data)
 	if err != nil {
-		panic(fmt.Errorf("could not create hash of Genesis: %v", err))
+		panic(fmt.Errorf("could not create hash of Genesis: %w", err))
 	}
 	return hash.CalcHash(bs)
 }
@@ -123,7 +123,8 @@ func makeGenesisValidator(val *validator.Validator) genValidator {
 }
 
 func MakeGenesis(genesisTime time.Time, accounts map[crypto.Address]*account.Account,
-	validators []*validator.Validator, params param.Params) *Genesis {
+	validators []*validator.Validator, params param.Params,
+) *Genesis {
 	genAccs := make([]genAccount, len(accounts))
 	for addr, acc := range accounts {
 		genAcc := makeGenesisAccount(addr, acc)
@@ -170,6 +171,14 @@ func (gen *Genesis) SaveToFile(file string) error {
 	return util.WriteFile(file, json)
 }
 
+func (gen *Genesis) TotalSupply() int64 {
+	totalSuppyly := int64(0)
+	for _, acc := range gen.data.Accounts {
+		totalSuppyly += acc.Balance
+	}
+	return totalSuppyly
+}
+
 func (gen *Genesis) ChainType() ChainType {
 	if gen.Hash() == TestnetGenesis().Hash() {
 		return Testnet
@@ -177,4 +186,17 @@ func (gen *Genesis) ChainType() ChainType {
 	// TODO: add mainnet here
 
 	return Localnet
+}
+
+func (gen *Genesis) NetworkName() string {
+	switch gen.ChainType() {
+	case Mainnet:
+		return "pactus"
+	case Testnet:
+		return "pactus-testnet"
+	case Localnet:
+		return "pactus-localnet"
+	default:
+		return "unknown"
+	}
 }

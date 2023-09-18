@@ -34,7 +34,8 @@ type bootstrap struct {
 // newBootstrap returns a new Bootstrap that will attempt to keep connected
 // to the network by connecting to the given bootstrap peers.
 func newBootstrap(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, r lp2prouting.Routing,
-	conf *BootstrapConfig, logger *logger.SubLogger) *bootstrap {
+	conf *BootstrapConfig, logger *logger.SubLogger,
+) *bootstrap {
 	b := &bootstrap{
 		ctx:     ctx,
 		config:  conf,
@@ -46,7 +47,7 @@ func newBootstrap(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, r lp2p
 
 	addresses, err := PeerAddrsToAddrInfo(conf.Addresses)
 	if err != nil {
-		b.logger.Panic("couldn't parse bootstrap addresses", "err", err, "addresses", conf.Addresses)
+		b.logger.Panic("couldn't parse bootstrap addresses", "error", err, "addresses", conf.Addresses)
 	}
 	b.bootstrapPeers = addresses
 
@@ -79,7 +80,6 @@ func (b *bootstrap) Start() {
 
 // Stop stops the Bootstrap.
 func (b *bootstrap) Stop() {
-
 }
 
 // checkConnectivity does the actual work. If the number of connected peers
@@ -122,7 +122,7 @@ func (b *bootstrap) checkConnectivity() {
 			}
 
 			if err := b.host.Connect(b.ctx, pi); err != nil {
-				b.logger.Error("error trying to connect to bootstrap node", "info", pi, "err", err)
+				b.logger.Error("error trying to connect to bootstrap node", "info", pi, "error", err)
 			}
 		}
 
@@ -149,6 +149,6 @@ func (b *bootstrap) expand() {
 
 	err := dht.Bootstrap(b.ctx)
 	if err != nil {
-		b.logger.Warn("peer discovery may suffer", "err", err)
+		b.logger.Warn("peer discovery may suffer", "error", err)
 	}
 }

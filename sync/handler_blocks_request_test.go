@@ -1,75 +1,42 @@
 package sync
 
 import (
+	"fmt"
 	"testing"
-	"time"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/sync/services"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
-
-func TestSessionTimeout(t *testing.T) {
-	config := testConfig()
-	config.SessionTimeout = 200 * time.Millisecond
-	td := setup(t, config)
-
-	t.Run("An unknown peers claims to have more blocks. Session should be closed after timeout", func(t *testing.T) {
-		signer := td.RandomSigner()
-		pid := td.RandomPeerID()
-		claimedHeight := uint32(6666)
-		msg := message.NewHelloMessage(pid, "Oscar", claimedHeight, message.FlagNodeNetwork,
-			td.state.LastBlockHash(), td.state.Genesis().Hash())
-		signer.SignMsg(msg)
-
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-
-		td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
-
-		assert.True(t, td.sync.peerSet.HasAnyOpenSession())
-		time.Sleep(2 * config.SessionTimeout)
-		assert.False(t, td.sync.peerSet.HasAnyOpenSession())
-
-		peer := td.sync.peerSet.GetPeer(pid)
-		assert.Equal(t, peer.Height, claimedHeight)
-		assert.Equal(t, td.sync.peerSet.MaxClaimedHeight(), claimedHeight)
-		// TODO: This is not really good that a bad peer can manipulate the MaxCalim height
-		// Here is a possible solution:
-		// 1- A peer claims that he has more blocks
-		// 2- We ask him a block_request message
-		// 3- He doesn't respond
-		// 4- We close the session, marking the peer as a bad peer.
-		// 5- If MaxClaimedHeight is same as peer height, we set it to zero
-	})
-}
 
 func TestLatestBlocksRequestMessages(t *testing.T) {
 	config := testConfig()
 	config.NodeNetwork = false
+
 	td := setup(t, config)
-	td.addBlocks(t, td.state, 10)
+	sid := td.RandInt(100)
+	pid := td.RandPeerID()
+
+	td.state.CommitTestBlocks(31)
 
 	t.Run("NodeNetwork flag is not set", func(t *testing.T) {
 		curHeight := td.state.LastBlockHeight()
 
-		sid := td.RandInt(100)
-		pid := td.RandomPeerID()
-
 		t.Run("Reject request from unknown peers", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
-			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, uint32(0))
 		})
 
-		pub, _ := td.RandomBLSKeyPair()
-		td.addPeer(t, pub, pid, false)
+		pub, _ := td.RandBLSKeyPair()
+		td.addPeer(t, pub, pid, services.New(services.None))
 
 		t.Run("Reject requests not within `LatestBlockInterval`", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)
-			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
@@ -77,8 +44,8 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		})
 
 		t.Run("Request blocks more than `LatestBlockInterval`", func(t *testing.T) {
-			msg := message.NewBlocksRequestMessage(sid, 0, LatestBlockInterval+1)
-			assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
+			msg := message.NewBlocksRequestMessage(sid, 10, LatestBlockInterval+1)
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
@@ -136,11 +103,6 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 	t.Run("NodeNetwork flag set", func(t *testing.T) {
 		td.sync.config.NodeNetwork = true
 
-		sid := td.RandInt(100)
-		pid := td.RandomPeerID()
-		pub, _ := td.RandomBLSKeyPair()
-		td.addPeer(t, pub, pid, false)
-
 		t.Run("Requesting one block", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
@@ -151,20 +113,13 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			msg2 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 			assert.Equal(t, msg2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeNoMoreBlocks)
 		})
+	})
 
-		t.Run("Peer is busy", func(t *testing.T) {
-			td.sync.peerSet.OpenSession(td.RandomPeerID())
-			td.sync.peerSet.OpenSession(td.RandomPeerID())
-			td.sync.peerSet.OpenSession(td.RandomPeerID())
-			td.sync.peerSet.OpenSession(td.RandomPeerID())
-			td.sync.peerSet.OpenSession(td.RandomPeerID())
-			require.Equal(t, td.sync.peerSet.NumberOfOpenSessions(), 5)
+	t.Run("Respond error", func(t *testing.T) {
+		td.network.SendError = fmt.Errorf("send error")
 
-			s := td.sync.peerSet.OpenSession(td.network.SelfID())
-			msg := message.NewBlocksRequestMessage(s.SessionID(), 100, 105)
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
-			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
-		})
+		msg := message.NewBlocksRequestMessage(sid, 1, 2)
+		err := td.receivingNewMessage(td.sync, msg, pid)
+		assert.ErrorIs(t, err, td.network.SendError)
 	})
 }

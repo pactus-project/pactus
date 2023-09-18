@@ -14,8 +14,8 @@ func NewVoteMessage(v *vote.Vote) *VoteMessage {
 	}
 }
 
-func (m *VoteMessage) SanityCheck() error {
-	return m.Vote.SanityCheck()
+func (m *VoteMessage) BasicCheck() error {
+	return m.Vote.BasicCheck()
 }
 
 func (m *VoteMessage) Type() Type {

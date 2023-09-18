@@ -1,12 +1,14 @@
 package peerset
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
+	"github.com/pactus-project/pactus/crypto/bls"
+
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/sync/services"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -16,29 +18,23 @@ func TestPeerSet(t *testing.T) {
 
 	peerSet := NewPeerSet(time.Second)
 
-	// Add peers using UpdatePeerInfo
-	pk1, _ := ts.RandomBLSKeyPair()
-	pk2, _ := ts.RandomBLSKeyPair()
-	pk3, _ := ts.RandomBLSKeyPair()
+	pk1, _ := ts.RandBLSKeyPair()
+	pk2, _ := ts.RandBLSKeyPair()
+	pk3, _ := ts.RandBLSKeyPair()
+	pk4, _ := ts.RandBLSKeyPair()
+	pk5, _ := ts.RandBLSKeyPair()
 	pid1 := peer.ID("peer1")
 	pid2 := peer.ID("peer2")
 	pid3 := peer.ID("peer3")
-	peerSet.UpdatePeerInfo(pid1, StatusCodeBanned, "Moniker1", "Agent1", pk1, true)
-	peerSet.UpdatePeerInfo(pid2, StatusCodeKnown, "Moniker2", "Agent2", pk2, false)
-	peerSet.UpdatePeerInfo(pid3, StatusCodeTrusty, "Moniker3", "Agent3", pk3, true)
+	peerSet.UpdateInfo(pid1, "Moniker1", "Agent1",
+		[]*bls.PublicKey{pk1, pk2}, services.New(services.Network))
+	peerSet.UpdateInfo(pid2, "Moniker2", "Agent2",
+		[]*bls.PublicKey{pk3}, services.New(services.None))
+	peerSet.UpdateInfo(pid3, "Moniker3", "Agent3",
+		[]*bls.PublicKey{pk4, pk5}, services.New(services.Network))
 
 	t.Run("Testing Len", func(t *testing.T) {
 		assert.Equal(t, 3, peerSet.Len())
-	})
-
-	t.Run("Testing MaxClaimedHeight", func(t *testing.T) {
-		assert.Equal(t, uint32(0), peerSet.MaxClaimedHeight())
-
-		peerSet.UpdateHeight(pid1, 100, ts.RandomHash())
-		peerSet.UpdateHeight(pid2, 200, ts.RandomHash())
-		peerSet.UpdateHeight(pid3, 150, ts.RandomHash())
-
-		assert.Equal(t, uint32(200), peerSet.MaxClaimedHeight())
 	})
 
 	t.Run("Testing GetPeerList", func(t *testing.T) {
@@ -60,41 +56,50 @@ func TestPeerSet(t *testing.T) {
 
 	t.Run("Testing GetPeer", func(t *testing.T) {
 		p := peerSet.GetPeer(pid2)
-
 		assert.Equal(t, pid2, p.PeerID)
-		assert.Equal(t, StatusCodeKnown, p.Status)
+		assert.Equal(t, StatusCodeUnknown, p.Status)
 
-		p = peerSet.GetPeer(peer.ID("unknown"))
+		p = peerSet.GetPeer(ts.RandPeerID())
 		assert.Equal(t, peer.ID(""), p.PeerID)
 		assert.Equal(t, StatusCodeUnknown, p.Status)
+	})
+
+	t.Run("Testing PublicKeys", func(t *testing.T) {
+		p := peerSet.GetPeer(pid3)
+
+		assert.Contains(t, p.ConsensusKeys, pk4)
+		assert.Contains(t, p.ConsensusKeys, pk5)
 	})
 
 	t.Run("Testing counters", func(t *testing.T) {
 		peerSet.IncreaseInvalidBundlesCounter(pid1)
 		peerSet.IncreaseReceivedBundlesCounter(pid1)
 		peerSet.IncreaseReceivedBytesCounter(pid1, message.TypeBlocksResponse, 100)
-		peerSet.IncreaseSentBytesCounter(message.TypeBlocksRequest, 200)
-		peerSet.IncreaseSendFailedCounter(pid1)
-		peerSet.IncreaseSendSuccessCounter(pid1)
+		peerSet.IncreaseReceivedBytesCounter(pid1, message.TypeTransactions, 150)
+		peerSet.IncreaseSentBytesCounter(message.TypeBlocksRequest, 200, nil)
+		peerSet.IncreaseSentBytesCounter(message.TypeBlocksRequest, 250, &pid1)
 
 		peer1 := peerSet.getPeer(pid1)
 
 		receivedBytes := make(map[message.Type]int64)
 		receivedBytes[message.TypeBlocksResponse] = 100
+		receivedBytes[message.TypeTransactions] = 150
 
 		sentBytes := make(map[message.Type]int64)
-		sentBytes[message.TypeBlocksRequest] = 200
+		sentBytes[message.TypeBlocksRequest] = 450
 
 		assert.Equal(t, peer1.InvalidBundles, 1)
 		assert.Equal(t, peer1.ReceivedBundles, 1)
-		assert.Equal(t, peer1.ReceivedBytes, 100)
-		assert.Equal(t, peer1.SendFailed, 1)
-		assert.Equal(t, peer1.SendSuccess, 1)
-		assert.Equal(t, peerSet.TotalReceivedBytes(), 100)
+		assert.Equal(t, peer1.ReceivedBytes[message.TypeBlocksResponse], int64(100))
+		assert.Equal(t, peer1.ReceivedBytes[message.TypeTransactions], int64(150))
+		assert.Equal(t, peer1.SentBytes[message.TypeBlocksRequest], int64(250))
+
+		assert.Equal(t, peerSet.TotalReceivedBytes(), int64(250))
 		assert.Equal(t, peerSet.ReceivedBytesMessageType(message.TypeBlocksResponse), int64(100))
+		assert.Equal(t, peerSet.ReceivedBytesMessageType(message.TypeTransactions), int64(150))
 		assert.Equal(t, peerSet.ReceivedBytes(), receivedBytes)
-		assert.Equal(t, peerSet.TotalSentBytes(), 200)
-		assert.Equal(t, peerSet.SentBytesMessageType(message.TypeBlocksRequest), int64(200))
+		assert.Equal(t, peerSet.TotalSentBytes(), int64(450))
+		assert.Equal(t, peerSet.SentBytesMessageType(message.TypeBlocksRequest), int64(450))
 		assert.Equal(t, peerSet.SentBytes(), sentBytes)
 	})
 
@@ -131,13 +136,6 @@ func TestPeerSet(t *testing.T) {
 
 		peerSet.RemovePeer(peer.ID("peer2"))
 		assert.Equal(t, peerSet.Len(), 2)
-	})
-
-	t.Run("Testing Clear", func(t *testing.T) {
-		peerSet.Clear()
-
-		assert.Equal(t, 0, peerSet.Len())
-		assert.Equal(t, uint32(0), peerSet.MaxClaimedHeight())
 	})
 }
 
@@ -207,79 +205,6 @@ func TestCloseSession(t *testing.T) {
 	ps.CloseSession(999)
 
 	assert.Equal(t, 0, ps.NumberOfOpenSessions())
-}
-
-func TestGetRandomWeightedPeer(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	// We create 6 peers with varying success and failure counts:
-	// peer_1 has 4 successful attempts and 0 failed attempts
-	// peer_2 has 4 successful attempts and 1 failed attempt
-	// ...
-	// peer_6 has 4 successful attempts and 4 failed attempts
-	// peer_7 has 4 successful attempts and 5 failed attempts
-	peerSet := NewPeerSet(time.Second)
-	for i := 0; i < 6; i++ {
-		pk, _ := ts.RandomBLSKeyPair()
-		pid := peer.ID(fmt.Sprintf("peer_%v", i+1))
-		peerSet.UpdatePeerInfo(
-			pid, StatusCodeKnown,
-			fmt.Sprintf("Moniker_%v", i+1), "Agent1", pk, true)
-
-		for s := 0; s < 4; s++ {
-			peerSet.IncreaseSendSuccessCounter(pid)
-		}
-		for f := 0; f < i; f++ {
-			peerSet.IncreaseSendFailedCounter(pid)
-		}
-	}
-
-	// Now let's run TestGetRandomPeer for 1000 times
-
-	hits := make(map[peer.ID]int)
-	for i := 0; i < 1000; i++ {
-		p := peerSet.GetRandomPeer()
-		hits[p.PeerID]++
-	}
-
-	assert.Greater(t, hits[peer.ID("peer_1")], hits[peer.ID("peer_3")])
-	assert.Greater(t, hits[peer.ID("peer_3")], hits[peer.ID("peer_5")])
-	assert.Greater(t, hits[peer.ID("peer_5")], 0)
-	assert.Greater(t, hits[peer.ID("peer_6")], 0)
-}
-
-func TestGetRandomPeerUnknown(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	peerSet := NewPeerSet(time.Second)
-
-	pk, _ := ts.RandomBLSKeyPair()
-	pidUnknown := peer.ID("peer_unknown")
-	peerSet.UpdatePeerInfo(pidUnknown, StatusCodeUnknown, "Moniker_unknown", "Agent1", pk, true)
-
-	pk, _ = ts.RandomBLSKeyPair()
-	pidBanned := peer.ID("peer_banned")
-	peerSet.UpdatePeerInfo(pidBanned, StatusCodeBanned, "Moniker_banned", "Agent1", pk, true)
-
-	p := peerSet.GetRandomPeer()
-
-	assert.NotEqual(t, p.PeerID, pidUnknown)
-	assert.NotEqual(t, p.PeerID, pidBanned)
-}
-
-func TestGetRandomPeerOnePeer(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	peerSet := NewPeerSet(time.Second)
-
-	pk, _ := ts.RandomBLSKeyPair()
-	pid := peer.ID("peer_known")
-	peerSet.UpdatePeerInfo(pid, StatusCodeKnown, "Moniker_known", "Agent1", pk, true)
-	peerSet.IncreaseSendSuccessCounter(pid)
-
-	p := peerSet.GetRandomPeer()
-
-	assert.Equal(t, p.PeerID, pid)
 }
 
 func TestRemoveExpiredSessions(t *testing.T) {

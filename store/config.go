@@ -26,8 +26,8 @@ func (conf *Config) StorePath() string {
 	return fmt.Sprintf("%s%c%s", conf.DataPath(), os.PathSeparator, "store.db")
 }
 
-// SanityCheck performs basic checks on the configuration.
-func (conf *Config) SanityCheck() error {
+// BasicCheck performs basic checks on the configuration.
+func (conf *Config) BasicCheck() error {
 	if !util.IsValidDirPath(conf.Path) {
 		return errors.Errorf(errors.ErrInvalidConfig, "path is not valid")
 	}

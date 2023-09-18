@@ -10,67 +10,45 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
-const versionLatest = 0x01
-const flagLockTime = 0x80
-
-const maxMemoLength = 64
+const (
+	versionLatest        = 0x01
+	flagStripedPublicKey = 0x01
+	maxMemoLength        = 64
+)
 
 type ID = hash.Hash
 
 type Tx struct {
-	memorizedID   *ID
-	sanityChecked bool
+	memorizedID  *ID
+	basicChecked bool
 
 	data txData
 }
 
 type txData struct {
-	// Version format
-	//  7             0
-	// +-+-+-+-+-+-+-+-+
-	// |L|R|R|R|VERSION|
-	// +-+-+-+-+-+-+-+-+
-	// L: Lock Time transaction
-	// R: Reserved bit
-	//
+	Flags     uint8
 	Version   uint8
 	Stamp     hash.Stamp
 	LockTime  uint32
-	Sequence  int32
 	Fee       int64
-	Payload   payload.Payload
 	Memo      string
-	PublicKey crypto.PublicKey
+	Payload   payload.Payload
 	Signature crypto.Signature
+	PublicKey crypto.PublicKey
 }
 
-func NewTx(stamp hash.Stamp, seq int32, pld payload.Payload, fee int64,
-	memo string) *Tx {
+func NewTx(stamp hash.Stamp, lockTime uint32, pld payload.Payload, fee int64,
+	memo string,
+) *Tx {
 	trx := &Tx{
 		data: txData{
 			Stamp:    stamp,
-			Sequence: seq,
-			Version:  versionLatest,
-			Payload:  pld,
-			Fee:      fee,
-			Memo:     memo,
-		},
-	}
-
-	return trx
-}
-
-func NewLockTimeTx(lockTime uint32, seq int32, pld payload.Payload, fee int64,
-	memo string) *Tx {
-	trx := &Tx{
-		data: txData{
 			LockTime: lockTime,
-			Sequence: seq,
-			Version:  versionLatest | flagLockTime,
+			Version:  versionLatest,
 			Payload:  pld,
 			Fee:      fee,
 			Memo:     memo,
@@ -98,8 +76,8 @@ func (tx *Tx) Stamp() hash.Stamp {
 	return tx.data.Stamp
 }
 
-func (tx *Tx) Sequence() int32 {
-	return tx.data.Sequence
+func (tx *Tx) LockTime() uint32 {
+	return tx.data.LockTime
 }
 
 func (tx *Tx) Payload() payload.Payload {
@@ -122,69 +100,67 @@ func (tx *Tx) Signature() crypto.Signature {
 	return tx.data.Signature
 }
 
-func (tx *Tx) LockTime() uint32 {
-	return tx.data.LockTime
-}
-
 func (tx *Tx) IsStamped() bool {
-	return tx.data.Version&flagLockTime == 0x00
-}
-
-func (tx *Tx) IsLockTime() bool {
-	return tx.data.Version&flagLockTime == flagLockTime
+	return true
 }
 
 func (tx *Tx) SetSignature(sig crypto.Signature) {
-	tx.sanityChecked = false
+	tx.basicChecked = false
 	tx.data.Signature = sig
 }
 
 func (tx *Tx) SetPublicKey(pub crypto.PublicKey) {
-	tx.sanityChecked = false
+	tx.basicChecked = false
 	tx.data.PublicKey = pub
+	if pub == nil {
+		if !tx.IsSubsidyTx() {
+			tx.data.Flags = util.SetFlag(tx.data.Flags, flagStripedPublicKey)
+		}
+	} else {
+		tx.data.Flags = util.UnsetFlag(tx.data.Flags, flagStripedPublicKey)
+	}
 }
 
-func (tx *Tx) SanityCheck() error {
-	if tx.sanityChecked {
+func (tx *Tx) BasicCheck() error {
+	if tx.basicChecked {
 		return nil
 	}
 	if tx.Version() != versionLatest {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid version")
+		return BasicCheckError{
+			Reason: fmt.Sprintf("invalid version: %d", tx.Version()),
+		}
 	}
-	if tx.Sequence() < 0 {
-		return errors.Error(errors.ErrInvalidSequence)
+	if tx.LockTime() == 0 {
+		return BasicCheckError{
+			Reason: "lock time is not defined",
+		}
 	}
-	if tx.Payload().Value() < 0 || tx.Payload().Value() > 21*1e14 {
-		return errors.Error(errors.ErrInvalidAmount)
+	// TODO: Define it globally (  42*1e15 )?
+	if tx.Payload().Value() < 0 || tx.Payload().Value() > 42*1e15 {
+		return BasicCheckError{
+			Reason: fmt.Sprintf("invalid amount: %d", tx.Payload().Value()),
+		}
 	}
-	if err := tx.checkFee(); err != nil {
-		return err
-	}
-	if err := tx.Payload().SanityCheck(); err != nil {
-		return err
+	if tx.Fee() < 0 || tx.Fee() > 42*1e15 {
+		return BasicCheckError{
+			Reason: fmt.Sprintf("invalid fee: %d", tx.Fee()),
+		}
 	}
 	if len(tx.Memo()) > maxMemoLength {
-		return errors.Error(errors.ErrInvalidMemo)
+		return BasicCheckError{
+			Reason: fmt.Sprintf("memo length exceeded: %d", len(tx.Memo())),
+		}
+	}
+	if err := tx.Payload().BasicCheck(); err != nil {
+		return BasicCheckError{
+			Reason: fmt.Sprintf("invalid payload: %s", err.Error()),
+		}
 	}
 	if err := tx.checkSignature(); err != nil {
 		return err
 	}
 
-	tx.sanityChecked = true
-
-	return nil
-}
-
-func (tx *Tx) checkFee() error {
-	if tx.IsFreeTx() {
-		if tx.Fee() != 0 {
-			return errors.Errorf(errors.ErrInvalidFee, "fee should set to zero")
-		}
-	} else {
-		if tx.Fee() <= 0 {
-			return errors.Errorf(errors.ErrInvalidFee, "fee should not be negative")
-		}
-	}
+	tx.basicChecked = true
 
 	return nil
 }
@@ -192,24 +168,36 @@ func (tx *Tx) checkFee() error {
 func (tx *Tx) checkSignature() error {
 	if tx.IsSubsidyTx() {
 		if tx.PublicKey() != nil {
-			return errors.Errorf(errors.ErrInvalidPublicKey, "subsidy transaction should not have public key")
+			return BasicCheckError{
+				Reason: "public key set for subsidy transaction",
+			}
 		}
 		if tx.Signature() != nil {
-			return errors.Errorf(errors.ErrInvalidSignature, "subsidy transaction should not have signature")
+			return BasicCheckError{
+				Reason: "signature set for subsidy transaction",
+			}
 		}
 	} else {
 		if tx.PublicKey() == nil {
-			return errors.Errorf(errors.ErrInvalidPublicKey, "no public key")
+			return BasicCheckError{
+				Reason: "no public key",
+			}
 		}
 		if tx.Signature() == nil {
-			return errors.Errorf(errors.ErrInvalidSignature, "no signature")
+			return BasicCheckError{
+				Reason: "no signature",
+			}
 		}
 		if err := tx.PublicKey().VerifyAddress(tx.Payload().Signer()); err != nil {
-			return err
+			return BasicCheckError{
+				Reason: fmt.Sprintf("invalid address: %s", err.Error()),
+			}
 		}
 		bs := tx.SignBytes()
 		if err := tx.PublicKey().Verify(bs, tx.Signature()); err != nil {
-			return errors.Error(errors.ErrInvalidSignature)
+			return BasicCheckError{
+				Reason: fmt.Sprintf("invalid signature: %s", tx.Signature().String()),
+			}
 		}
 	}
 	return nil
@@ -246,22 +234,29 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 
 // SerializeSize returns the number of bytes it would take to serialize the transaction.
 func (tx *Tx) SerializeSize() int {
-	n := 150 +
-		encoding.VarIntSerializeSize(uint64(tx.Sequence())) +
+	n := 7 +
+		4 + // for tx.LockTime
 		encoding.VarIntSerializeSize(uint64(tx.Fee())) +
 		encoding.VarStringSerializeSize(tx.Memo())
 	if tx.Payload() != nil {
 		n += tx.Payload().SerializeSize()
+	}
+	if tx.data.Signature != nil {
+		n += bls.SignatureSize
+	}
+	if tx.data.PublicKey != nil {
+		n += bls.PublicKeySize
 	}
 
 	return n
 }
 
 func (tx *Tx) Encode(w io.Writer) error {
-	err := tx.EncodeWithNoSignatory(w)
+	err := tx.encodeWithNoSignatory(w)
 	if err != nil {
 		return err
 	}
+
 	if tx.data.Signature != nil {
 		err = tx.data.Signature.Encode(w)
 		if err != nil {
@@ -278,16 +273,16 @@ func (tx *Tx) Encode(w io.Writer) error {
 	return nil
 }
 
-func (tx *Tx) EncodeWithNoSignatory(w io.Writer) error {
-	err := encoding.WriteElements(w, tx.data.Version, tx.data.Stamp)
-	if err != nil {
-		return err
-	}
-	err = encoding.WriteVarInt(w, uint64(tx.data.Sequence))
+func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
+	err := encoding.WriteElements(w, tx.data.Flags, tx.data.Version, tx.data.Stamp, tx.data.LockTime)
 	if err != nil {
 		return err
 	}
 	err = encoding.WriteVarInt(w, uint64(tx.data.Fee))
+	if err != nil {
+		return err
+	}
+	err = encoding.WriteVarString(w, tx.data.Memo)
 	if err != nil {
 		return err
 	}
@@ -299,24 +294,14 @@ func (tx *Tx) EncodeWithNoSignatory(w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	err = encoding.WriteVarString(w, tx.data.Memo)
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
-func (tx *Tx) DecodeWithNoSignatory(r io.Reader) error {
-	err := encoding.ReadElements(r, &tx.data.Version, &tx.data.Stamp)
+func (tx *Tx) Decode(r io.Reader) error {
+	err := encoding.ReadElements(r, &tx.data.Flags, &tx.data.Version, &tx.data.Stamp, &tx.data.LockTime)
 	if err != nil {
 		return err
 	}
-
-	seq, err := encoding.ReadVarInt(r)
-	if err != nil {
-		return err
-	}
-	tx.data.Sequence = int32(seq)
 
 	fee, err := encoding.ReadVarInt(r)
 	if err != nil {
@@ -324,40 +309,36 @@ func (tx *Tx) DecodeWithNoSignatory(r io.Reader) error {
 	}
 	tx.data.Fee = int64(fee)
 
+	tx.data.Memo, err = encoding.ReadVarString(r)
+	if err != nil {
+		return err
+	}
+
 	payloadType := uint8(0)
 	err = encoding.ReadElement(r, &payloadType)
 	if err != nil {
 		return err
 	}
 
-	switch payload.Type(payloadType) {
-	case payload.PayloadTypeTransfer:
-		tx.data.Payload = &payload.TransferPayload{}
-	case payload.PayloadTypeBond:
-		tx.data.Payload = &payload.BondPayload{}
-	case payload.PayloadTypeUnbond:
-		tx.data.Payload = &payload.UnbondPayload{}
-	case payload.PayloadTypeWithdraw:
-		tx.data.Payload = &payload.WithdrawPayload{}
-	case payload.PayloadTypeSortition:
-		tx.data.Payload = &payload.SortitionPayload{}
+	switch t := payload.Type(payloadType); t {
+	case payload.TypeTransfer:
+		tx.data.Payload = new(payload.TransferPayload)
+	case payload.TypeBond:
+		tx.data.Payload = new(payload.BondPayload)
+	case payload.TypeUnbond:
+		tx.data.Payload = new(payload.UnbondPayload)
+	case payload.TypeWithdraw:
+		tx.data.Payload = new(payload.WithdrawPayload)
+	case payload.TypeSortition:
+		tx.data.Payload = new(payload.SortitionPayload)
 
 	default:
-		return errors.Errorf(errors.ErrInvalidTx, "invalid payload")
+		return InvalidPayloadTypeError{
+			PayloadType: t,
+		}
 	}
 
 	err = tx.data.Payload.Decode(r)
-	if err != nil {
-		return err
-	}
-	tx.data.Memo, err = encoding.ReadVarString(r)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-func (tx *Tx) Decode(r io.Reader) error {
-	err := tx.DecodeWithNoSignatory(r)
 	if err != nil {
 		return err
 	}
@@ -370,12 +351,14 @@ func (tx *Tx) Decode(r io.Reader) error {
 		}
 		tx.data.Signature = sig
 
-		pub := new(bls.PublicKey)
-		err = pub.Decode(r)
-		if err != nil {
-			return err
+		if !tx.IsPublicKeyStriped() {
+			pub := new(bls.PublicKey)
+			err = pub.Decode(r)
+			if err != nil {
+				return err
+			}
+			tx.data.PublicKey = pub
 		}
-		tx.data.PublicKey = pub
 	}
 
 	return nil
@@ -390,11 +373,11 @@ func (tx *Tx) String() string {
 
 func (tx *Tx) SignBytes() []byte {
 	buf := bytes.Buffer{}
-	err := tx.EncodeWithNoSignatory(&buf)
+	err := tx.encodeWithNoSignatory(&buf)
 	if err != nil {
 		return nil
 	}
-	return buf.Bytes()
+	return buf.Bytes()[1:] // Exclude flags
 }
 
 func (tx *Tx) ID() ID {
@@ -407,32 +390,48 @@ func (tx *Tx) ID() ID {
 }
 
 func (tx *Tx) IsTransferTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeTransfer &&
+	return tx.Payload().Type() == payload.TypeTransfer &&
 		!tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }
 
 func (tx *Tx) IsBondTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeBond
+	return tx.Payload().Type() == payload.TypeBond
 }
 
 func (tx *Tx) IsSubsidyTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeTransfer &&
+	return tx.Payload().Type() == payload.TypeTransfer &&
 		tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
 }
 
 func (tx *Tx) IsSortitionTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeSortition
+	return tx.Payload().Type() == payload.TypeSortition
 }
 
 func (tx *Tx) IsUnbondTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeUnbond
+	return tx.Payload().Type() == payload.TypeUnbond
 }
 
 func (tx *Tx) IsWithdrawTx() bool {
-	return tx.Payload().Type() == payload.PayloadTypeWithdraw
+	return tx.Payload().Type() == payload.TypeWithdraw
 }
 
 // IsFreeTx will checks if transaction fee is 0.
 func (tx *Tx) IsFreeTx() bool {
 	return tx.IsSubsidyTx() || tx.IsSortitionTx() || tx.IsUnbondTx()
+}
+
+// StripPublicKey removes the public key from the transaction.
+// It is an alias function for `SetPublicKey(nil)`.
+func (tx *Tx) StripPublicKey() {
+	tx.SetPublicKey(nil)
+}
+
+// IsPublicKeyStriped returns true if the public key stripped from the transaction.
+func (tx *Tx) IsPublicKeyStriped() bool {
+	return util.IsFlagSet(tx.data.Flags, flagStripedPublicKey)
+}
+
+// Flags returns flags of transaction.
+func (tx *Tx) Flags() uint8 {
+	return tx.data.Flags
 }

@@ -24,13 +24,13 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.19
+        go-version: 1.21
 
     - name: Build the binary
       run: make build_gui
 
     - name: Installing golangci-lint
-      run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+      run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54.1
 
     - name: Lint check
       run: BUILD_TAG=gtk make check
@@ -47,7 +47,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.19
+        go-version: 1.21
 
     - name: Build the binary
       run: make build_gui
@@ -65,7 +65,6 @@ jobs:
     - uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
-        update: true
         install:
           git
           make

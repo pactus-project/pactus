@@ -9,7 +9,6 @@ import (
 )
 
 type Config struct {
-	Name          string           `toml:"name"`
 	Listens       []string         `toml:"listens"`
 	NetworkKey    string           `toml:"network_key"`
 	EnableNAT     bool             `toml:"enable_nat"`
@@ -48,8 +47,10 @@ func DefaultConfig() *Config {
 	}
 
 	return &Config{
-		Name:          "pactus",
-		Listens:       []string{"/ip4/0.0.0.0/tcp/21777", "/ip6/::/tcp/21777"},
+		Listens: []string{
+			"/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888",
+			"/ip4/0.0.0.0/udp/21888/quic", "/ip6/::/udp/21888/quic",
+		},
 		NetworkKey:    "network_key",
 		EnableNAT:     true,
 		EnableRelay:   false,
@@ -74,8 +75,8 @@ func validateAddresses(address []string) error {
 	return nil
 }
 
-// SanityCheck performs basic checks on the configuration.
-func (conf *Config) SanityCheck() error {
+// BasicCheck performs basic checks on the configuration.
+func (conf *Config) BasicCheck() error {
 	if conf.EnableRelay {
 		if len(conf.RelayAddrs) == 0 {
 			return errors.Errorf(errors.ErrInvalidConfig, "at least one relay address should be defined")

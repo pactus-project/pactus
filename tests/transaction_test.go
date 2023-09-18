@@ -13,16 +13,20 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func sendRawTx(_ *testing.T, raw []byte) error {
+func sendRawTx(t *testing.T, raw []byte) error {
+	t.Helper()
+
 	_, err := tTransaction.SendRawTransaction(tCtx,
 		&pactus.SendRawTransactionRequest{Data: raw})
 	return err
 }
 
 func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypto.Address, amt, fee int64) error {
+	t.Helper()
+
 	stamp := lastHash().Stamp()
-	seq := getSequence(sender.Address())
-	trx := tx.NewTransferTx(stamp, seq+1, sender.Address(), receiver, amt, fee, "")
+	lockTime := lastHeight() + 1
+	trx := tx.NewTransferTx(stamp, lockTime, sender.Address(), receiver, amt, fee, "")
 	sender.SignMsg(trx)
 
 	d, _ := trx.Bytes()
@@ -30,9 +34,11 @@ func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypt
 }
 
 func broadcastBondTransaction(t *testing.T, sender crypto.Signer, pub crypto.PublicKey, stake, fee int64) error {
+	t.Helper()
+
 	stamp := lastHash().Stamp()
-	seq := getSequence(sender.Address())
-	trx := tx.NewBondTx(stamp, seq+1, sender.Address(), pub.Address(), pub.(*bls.PublicKey), stake, fee, "")
+	lockTime := lastHeight() + 1
+	trx := tx.NewBondTx(stamp, lockTime, sender.Address(), pub.Address(), pub.(*bls.PublicKey), stake, fee, "")
 	sender.SignMsg(trx)
 
 	d, _ := trx.Bytes()
@@ -42,17 +48,16 @@ func broadcastBondTransaction(t *testing.T, sender crypto.Signer, pub crypto.Pub
 func TestTransactions(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pubAlice, prvAlice := ts.RandomBLSKeyPair()
-	pubBob, prvBob := ts.RandomBLSKeyPair()
-	pubCarol, _ := ts.RandomBLSKeyPair()
-	pubDave, _ := ts.RandomBLSKeyPair()
+	pubAlice, prvAlice := ts.RandBLSKeyPair()
+	pubBob, prvBob := ts.RandBLSKeyPair()
+	pubCarol, _ := ts.RandBLSKeyPair()
+	pubDave, _ := ts.RandBLSKeyPair()
 
 	signerAlice := crypto.NewSigner(prvAlice)
 	signerBob := crypto.NewSigner(prvBob)
 
 	t.Run("Sending normal transaction", func(t *testing.T) {
 		require.NoError(t, broadcastSendTransaction(t, tSigners[tNodeIdx2][0], pubAlice.Address(), 80000000, 8000))
-		incSequence(tSigners[tNodeIdx2][0].Address())
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
@@ -61,33 +66,29 @@ func TestTransactions(t *testing.T) {
 
 	t.Run("Alice tries double spending", func(t *testing.T) {
 		require.NoError(t, broadcastSendTransaction(t, signerAlice, pubBob.Address(), 50000000, 5000))
-		incSequence(signerAlice.Address())
 
 		require.Error(t, broadcastSendTransaction(t, signerAlice, pubCarol.Address(), 50000000, 5000))
 	})
 
 	t.Run("Bob sends two transaction at once", func(t *testing.T) {
 		require.NoError(t, broadcastSendTransaction(t, signerBob, pubCarol.Address(), 10, 1000))
-		incSequence(signerBob.Address())
 
 		require.NoError(t, broadcastSendTransaction(t, signerBob, pubDave.Address(), 1, 1000))
-		incSequence(signerBob.Address())
 	})
 
 	t.Run("Bonding transactions", func(t *testing.T) {
 		// These validators are not in the committee now.
 		// Bond transactions are valid and they can enter the committee soon
 		for i := 0; i < tTotalNodes; i++ {
-			amt := ts.RandInt64(1000000 - 1) // fee is always 1000
+			amt := int64(1000000)
+			fee := int64(1000)
 			signer := tSigners[tNodeIdx1][0]
 
-			require.NoError(t, broadcastBondTransaction(t, signer, tSigners[i][1].PublicKey(), amt, 1000))
+			require.NoError(t, broadcastBondTransaction(t, signer, tSigners[i][1].PublicKey(), amt, fee))
 			fmt.Printf("Staking %v to %v\n", amt, tSigners[i][1].Address())
-			incSequence(signer.Address())
 
-			require.NoError(t, broadcastBondTransaction(t, signer, tSigners[i][2].PublicKey(), amt, 1000))
+			require.NoError(t, broadcastBondTransaction(t, signer, tSigners[i][2].PublicKey(), amt, fee))
 			fmt.Printf("Staking %v to %v\n", amt, tSigners[i][2].Address())
-			incSequence(signer.Address())
 		}
 	})
 

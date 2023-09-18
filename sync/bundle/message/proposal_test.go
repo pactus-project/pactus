@@ -20,14 +20,14 @@ func TestProposalMessage(t *testing.T) {
 		proposal, _ := ts.GenerateTestProposal(100, -1)
 		m := NewProposalMessage(proposal)
 
-		assert.Equal(t, errors.Code(m.SanityCheck()), errors.ErrInvalidRound)
+		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidRound)
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		proposal, _ := ts.GenerateTestProposal(100, 0)
 		m := NewProposalMessage(proposal)
 
-		assert.NoError(t, m.SanityCheck())
+		assert.NoError(t, m.BasicCheck())
 		assert.Contains(t, m.String(), "100")
 	})
 }

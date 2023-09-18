@@ -23,7 +23,8 @@ type blockchainServer struct {
 }
 
 func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
-	_ *pactus.GetBlockchainInfoRequest) (*pactus.GetBlockchainInfoResponse, error) {
+	_ *pactus.GetBlockchainInfoRequest,
+) (*pactus.GetBlockchainInfoResponse, error) {
 	vals := s.state.CommitteeValidators()
 	cv := make([]*pactus.ValidatorInfo, 0, len(vals))
 	for _, v := range vals {
@@ -42,7 +43,8 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 }
 
 func (s *blockchainServer) GetConsensusInfo(_ context.Context,
-	_ *pactus.GetConsensusInfoRequest) (*pactus.GetConsensusInfoResponse, error) {
+	_ *pactus.GetConsensusInfoRequest,
+) (*pactus.GetConsensusInfoResponse, error) {
 	instances := make([]*pactus.ConsensusInfo, 0)
 	for _, cons := range s.consMgr.Instances() {
 		height, round := cons.HeightRound()
@@ -66,7 +68,8 @@ func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 }
 
 func (s *blockchainServer) GetBlockHash(_ context.Context,
-	req *pactus.GetBlockHashRequest) (*pactus.GetBlockHashResponse, error) {
+	req *pactus.GetBlockHashRequest,
+) (*pactus.GetBlockHashResponse, error) {
 	height := req.GetHeight()
 	hash := s.state.BlockHash(height)
 	if hash.IsUndef() {
@@ -78,7 +81,8 @@ func (s *blockchainServer) GetBlockHash(_ context.Context,
 }
 
 func (s *blockchainServer) GetBlockHeight(_ context.Context,
-	req *pactus.GetBlockHeightRequest) (*pactus.GetBlockHeightResponse, error) {
+	req *pactus.GetBlockHeightRequest,
+) (*pactus.GetBlockHeightResponse, error) {
 	hash, err := hash.FromBytes(req.GetHash())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid hash: %v", err)
@@ -93,20 +97,24 @@ func (s *blockchainServer) GetBlockHeight(_ context.Context,
 }
 
 func (s *blockchainServer) GetBlock(_ context.Context,
-	req *pactus.GetBlockRequest) (*pactus.GetBlockResponse, error) {
+	req *pactus.GetBlockRequest,
+) (*pactus.GetBlockResponse, error) {
 	height := req.GetHeight()
-	storedBlock := s.state.StoredBlock(height)
-	if storedBlock == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "block not found")
+	committedBlock := s.state.CommittedBlock(height)
+	if committedBlock == nil {
+		return nil, status.Errorf(codes.NotFound, "block not found")
 	}
 	res := &pactus.GetBlockResponse{
-		Height: storedBlock.Height,
-		Hash:   storedBlock.BlockHash.Bytes(),
-		Data:   storedBlock.Data,
+		Height: committedBlock.Height,
+		Hash:   committedBlock.BlockHash.Bytes(),
+		Data:   committedBlock.Data,
 	}
 
 	if req.Verbosity > pactus.BlockVerbosity_BLOCK_DATA {
-		block := storedBlock.ToBlock()
+		block, err := committedBlock.ToBlock()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
 		blockTime := block.Header().UnixTime()
 		seed := block.Header().SortitionSeed()
 		cert := block.PrevCertificate()
@@ -156,14 +164,15 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 }
 
 func (s *blockchainServer) GetAccount(_ context.Context,
-	req *pactus.GetAccountRequest) (*pactus.GetAccountResponse, error) {
+	req *pactus.GetAccountRequest,
+) (*pactus.GetAccountResponse, error) {
 	addr, err := crypto.AddressFromString(req.Address)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid address: %v", err)
 	}
 	acc := s.state.AccountByAddress(addr)
 	if acc == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "account not found")
+		return nil, status.Errorf(codes.NotFound, "account not found")
 	}
 	res := &pactus.GetAccountResponse{
 		Account: accountToProto(acc),
@@ -173,7 +182,8 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 }
 
 func (s *blockchainServer) GetAccountByNumber(_ context.Context,
-	req *pactus.GetAccountByNumberRequest) (*pactus.GetAccountResponse, error) {
+	req *pactus.GetAccountByNumberRequest,
+) (*pactus.GetAccountResponse, error) {
 	acc := s.state.AccountByNumber(req.Number)
 	if acc == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "account not found")
@@ -185,7 +195,8 @@ func (s *blockchainServer) GetAccountByNumber(_ context.Context,
 }
 
 func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
-	req *pactus.GetValidatorByNumberRequest) (*pactus.GetValidatorResponse, error) {
+	req *pactus.GetValidatorByNumberRequest,
+) (*pactus.GetValidatorResponse, error) {
 	val := s.state.ValidatorByNumber(req.Number)
 	if val == nil {
 		return nil, status.Errorf(codes.NotFound, "validator not found")
@@ -197,7 +208,8 @@ func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
 }
 
 func (s *blockchainServer) GetValidator(_ context.Context,
-	req *pactus.GetValidatorRequest) (*pactus.GetValidatorResponse, error) {
+	req *pactus.GetValidatorRequest,
+) (*pactus.GetValidatorResponse, error) {
 	addr, err := crypto.AddressFromString(req.Address)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid validator address: %v", err.Error())
@@ -213,7 +225,8 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 }
 
 func (s *blockchainServer) GetValidatorAddresses(_ context.Context,
-	_ *pactus.GetValidatorAddressesRequest) (*pactus.GetValidatorAddressesResponse, error) {
+	_ *pactus.GetValidatorAddressesRequest,
+) (*pactus.GetValidatorAddressesResponse, error) {
 	addresses := s.state.ValidatorAddresses()
 	addressesPB := make([]string, 0, len(addresses))
 	for _, address := range addresses {
@@ -230,7 +243,6 @@ func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 		PublicKey:           val.PublicKey().String(),
 		Address:             val.Address().String(),
 		Number:              val.Number(),
-		Sequence:            val.Sequence(),
 		Stake:               val.Stake(),
 		LastBondingHeight:   val.LastBondingHeight(),
 		LastSortitionHeight: val.LastSortitionHeight(),
@@ -241,11 +253,10 @@ func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 func accountToProto(acc *account.Account) *pactus.AccountInfo {
 	data, _ := acc.Bytes()
 	return &pactus.AccountInfo{
-		Hash:     acc.Hash().Bytes(),
-		Data:     data,
-		Number:   acc.Number(),
-		Sequence: acc.Sequence(),
-		Balance:  acc.Balance(),
+		Hash:    acc.Hash().Bytes(),
+		Data:    data,
+		Number:  acc.Number(),
+		Balance: acc.Balance(),
 	}
 }
 

@@ -45,15 +45,18 @@ func MockingConsensus(ts *testsuite.TestSuite, signer crypto.Signer) *MockConsen
 		Signer: signer,
 	}
 }
+
 func (m *MockConsensus) SignerKey() crypto.PublicKey {
 	return m.Signer.PublicKey()
 }
+
 func (m *MockConsensus) MoveToNewHeight() {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
 	m.Height++
 }
+
 func (m *MockConsensus) Start() error {
 	return nil
 }
@@ -65,18 +68,21 @@ func (m *MockConsensus) AddVote(v *vote.Vote) {
 
 	m.Votes = append(m.Votes, v)
 }
+
 func (m *MockConsensus) AllVotes() []*vote.Vote {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
 	return m.Votes
 }
+
 func (m *MockConsensus) SetProposal(p *proposal.Proposal) {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
 	m.Proposal = p
 }
+
 func (m *MockConsensus) HasVote(hash hash.Hash) bool {
 	m.lk.Lock()
 	defer m.lk.Unlock()
@@ -88,6 +94,7 @@ func (m *MockConsensus) HasVote(hash hash.Hash) bool {
 	}
 	return false
 }
+
 func (m *MockConsensus) RoundProposal(round int16) *proposal.Proposal {
 	m.lk.Lock()
 	defer m.lk.Unlock()
@@ -97,15 +104,18 @@ func (m *MockConsensus) RoundProposal(round int16) *proposal.Proposal {
 	}
 	return m.Proposal
 }
+
 func (m *MockConsensus) HeightRound() (uint32, int16) {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
 	return m.Height, m.Round
 }
+
 func (m *MockConsensus) String() string {
 	return ""
 }
+
 func (m *MockConsensus) PickRandomVote(_ int16) *vote.Vote {
 	m.lk.Lock()
 	defer m.lk.Unlock()
@@ -116,6 +126,7 @@ func (m *MockConsensus) PickRandomVote(_ int16) *vote.Vote {
 	r := m.ts.RandInt32(int32(len(m.Votes)))
 	return m.Votes[r]
 }
+
 func (m *MockConsensus) IsActive() bool {
 	m.lk.Lock()
 	defer m.lk.Unlock()

@@ -3,12 +3,13 @@ package cache
 import (
 	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/util"
 )
 
 type Cache struct {
 	blocks *lru.Cache[uint32, *block.Block] // it's thread safe
-	certs  *lru.Cache[uint32, *block.Certificate]
+	certs  *lru.Cache[uint32, *certificate.Certificate]
 }
 
 func NewCache(size int) (*Cache, error) {
@@ -17,7 +18,7 @@ func NewCache(size int) (*Cache, error) {
 		return nil, err
 	}
 
-	c, err := lru.New[uint32, *block.Certificate](size)
+	c, err := lru.New[uint32, *certificate.Certificate](size)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +47,7 @@ func (c *Cache) AddBlock(height uint32, block *block.Block) {
 	c.AddCertificate(height-1, block.PrevCertificate())
 }
 
-func (c *Cache) GetCertificate(height uint32) *block.Certificate {
+func (c *Cache) GetCertificate(height uint32) *certificate.Certificate {
 	certificate, ok := c.certs.Get(height)
 	if ok {
 		return certificate
@@ -55,7 +56,7 @@ func (c *Cache) GetCertificate(height uint32) *block.Certificate {
 	return nil
 }
 
-func (c *Cache) AddCertificate(height uint32, cert *block.Certificate) {
+func (c *Cache) AddCertificate(height uint32, cert *certificate.Certificate) {
 	if cert != nil {
 		c.certs.Add(height, cert)
 	}

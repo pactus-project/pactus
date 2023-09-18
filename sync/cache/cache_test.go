@@ -12,10 +12,9 @@ func TestCacheBlocks(t *testing.T) {
 
 	cache, _ := NewCache(10)
 
-	b1 := ts.GenerateTestBlock(nil, nil)
-	h1 := b1.Hash()
-	b2 := ts.GenerateTestBlock(nil, &h1)
-	testHeight := ts.RandUint32(10000)
+	b1 := ts.GenerateTestBlock(nil)
+	b2 := ts.GenerateTestBlock(nil)
+	testHeight := ts.RandHeight()
 
 	cache.AddBlock(testHeight, b1)
 	cache.AddBlock(testHeight+1, b2)
@@ -40,7 +39,7 @@ func TestClearCache(t *testing.T) {
 
 	cache, _ := NewCache(10)
 
-	b := ts.GenerateTestBlock(nil, nil)
+	b := ts.GenerateTestBlock(nil)
 
 	cache.AddBlock(2, b)
 
@@ -57,11 +56,11 @@ func TestCacheIsFull(t *testing.T) {
 
 	i := int32(0)
 	for ; i < 10; i++ {
-		b := ts.GenerateTestBlock(nil, nil)
+		b := ts.GenerateTestBlock(nil)
 		cache.AddBlock(uint32(i+1), b)
 	}
 
-	newBlock := ts.GenerateTestBlock(nil, nil)
+	newBlock := ts.GenerateTestBlock(nil)
 	cache.AddBlock(uint32(i+1), newBlock)
 
 	assert.NotNil(t, cache.GetBlock(uint32(i+1)))

@@ -16,7 +16,7 @@ type SortitionPayload struct {
 }
 
 func (p *SortitionPayload) Type() Type {
-	return PayloadTypeSortition
+	return TypeSortition
 }
 
 func (p *SortitionPayload) Signer() crypto.Address {
@@ -27,8 +27,8 @@ func (p *SortitionPayload) Value() int64 {
 	return 0
 }
 
-func (p *SortitionPayload) SanityCheck() error {
-	if err := p.Address.SanityCheck(); err != nil {
+func (p *SortitionPayload) BasicCheck() error {
+	if err := p.Address.BasicCheck(); err != nil {
 		return errors.Error(errors.ErrInvalidAddress)
 	}
 
@@ -36,7 +36,7 @@ func (p *SortitionPayload) SanityCheck() error {
 }
 
 func (p *SortitionPayload) SerializeSize() int {
-	return 69 //48+21
+	return 69 // 48+21
 }
 
 func (p *SortitionPayload) Encode(w io.Writer) error {
@@ -50,4 +50,8 @@ func (p *SortitionPayload) Decode(r io.Reader) error {
 func (p *SortitionPayload) String() string {
 	return fmt.Sprintf("{Sortition 🎯 %v",
 		p.Address.ShortString())
+}
+
+func (p *SortitionPayload) ReceiverAddr() *crypto.Address {
+	return nil
 }

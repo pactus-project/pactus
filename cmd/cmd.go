@@ -27,8 +27,6 @@ import (
 	"github.com/pactus-project/pactus/wallet"
 )
 
-var Pactus = ``
-
 // terminalSupported returns true if the current terminal supports
 // line editing features.
 func terminalSupported() bool {
@@ -78,10 +76,10 @@ func PromptConfirm(label string) bool {
 	}
 	result, err := prompt.Run()
 	if err != nil {
-		if err != promptui.ErrAbort {
-			PrintErrorMsg("prompt error: %v", err)
+		if !errors.Is(promptui.ErrAbort, err) {
+			PrintErrorMsgf("prompt error: %v", err)
 		} else {
-			PrintWarnMsg("Aborted.")
+			PrintWarnMsgf("Aborted.")
 		}
 		os.Exit(1)
 	}
@@ -157,7 +155,7 @@ func FatalErrorCheck(err error) {
 	}
 }
 
-func PrintErrorMsg(format string, a ...interface{}) {
+func PrintErrorMsgf(format string, a ...interface{}) {
 	if terminalSupported() {
 		// Print error msg with red color
 		format = fmt.Sprintf("\033[31m[ERROR] %s\033[0m", format)
@@ -165,7 +163,7 @@ func PrintErrorMsg(format string, a ...interface{}) {
 	fmt.Printf(format+"\n", a...)
 }
 
-func PrintSuccessMsg(format string, a ...interface{}) {
+func PrintSuccessMsgf(format string, a ...interface{}) {
 	if terminalSupported() {
 		// Print successful msg with green color
 		format = fmt.Sprintf("\033[32m%s\033[0m", format)
@@ -173,7 +171,7 @@ func PrintSuccessMsg(format string, a ...interface{}) {
 	fmt.Printf(format+"\n", a...)
 }
 
-func PrintWarnMsg(format string, a ...interface{}) {
+func PrintWarnMsgf(format string, a ...interface{}) {
 	if terminalSupported() {
 		// Print warning msg with yellow color
 		format = fmt.Sprintf("\033[33m%s\033[0m", format)
@@ -181,11 +179,11 @@ func PrintWarnMsg(format string, a ...interface{}) {
 	fmt.Printf(format+"\n", a...)
 }
 
-func PrintInfoMsg(format string, a ...interface{}) {
+func PrintInfoMsgf(format string, a ...interface{}) {
 	fmt.Printf(format+"\n", a...)
 }
 
-func PrintInfoMsgBold(format string, a ...interface{}) {
+func PrintInfoMsgBoldf(format string, a ...interface{}) {
 	if terminalSupported() {
 		format = fmt.Sprintf("\033[1m%s\033[0m", format)
 	}
@@ -201,7 +199,7 @@ func PrintJSONData(data []byte) {
 	err := json.Indent(&out, data, "", "   ")
 	FatalErrorCheck(err)
 
-	PrintInfoMsg(out.String())
+	PrintInfoMsgf(out.String())
 }
 
 func PrintJSONObject(obj interface{}) {
@@ -259,16 +257,17 @@ func TrapSignal(cleanupFunc func()) {
 
 func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	mnemonic string, walletPassword string) (
-	validatorAddrs []string, rewardAddrs []string, err error) {
+	validatorAddrs []string, rewardAddrs []string, err error,
+) {
 	// To make process faster, we update the password after creating the addresses
 	walletPath := PactusDefaultWalletPath(workingDir)
-	wallet, err := wallet.Create(walletPath, mnemonic, "", chain)
+	walletInstance, err := wallet.Create(walletPath, mnemonic, "", chain)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	for i := 0; i < numValidators; i++ {
-		addr, err := wallet.DeriveNewAddress(fmt.Sprintf("Validator address %v", i+1))
+		addr, err := walletInstance.DeriveNewAddress(fmt.Sprintf("Validator address %v", i+1))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -276,7 +275,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	}
 
 	for i := 0; i < numValidators; i++ {
-		addr, err := wallet.DeriveNewAddress(fmt.Sprintf("Reward address %v", i+1))
+		addr, err := walletInstance.DeriveNewAddress(fmt.Sprintf("Reward address %v", i+1))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -300,7 +299,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 			return nil, nil, err
 		}
 	case genesis.Localnet:
-		err = makeLocalGenesis(*wallet).SaveToFile(genPath)
+		err = makeLocalGenesis(*walletInstance).SaveToFile(genPath)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -311,12 +310,12 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		}
 	}
 
-	err = wallet.UpdatePassword("", walletPassword)
+	err = walletInstance.UpdatePassword("", walletPassword)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	err = wallet.Save()
+	err = walletInstance.Save()
 	if err != nil {
 		return nil, nil, err
 	}
@@ -325,7 +324,8 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 }
 
 func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool)) (
-	*node.Node, *wallet.Wallet, error) {
+	*node.Node, *wallet.Wallet, error,
+) {
 	gen, err := genesis.LoadFromFile(PactusGenesisPath(workingDir))
 	if err != nil {
 		return nil, nil, err
@@ -342,8 +342,8 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	confPath := PactusConfigPath(workingDir)
 	conf, err := config.LoadFromFile(confPath, true)
 	if err != nil {
-		PrintWarnMsg("Unable to load the config: %s", err)
-		PrintInfoMsg("Attempting to restore the config to the default values...")
+		PrintWarnMsgf("Unable to load the config: %s", err)
+		PrintInfoMsgf("Attempting to restore the config to the default values...")
 
 		// First, try to open the old config file in non-strict mode
 		confBack, err := config.LoadFromFile(confPath, false)
@@ -360,30 +360,40 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 
 		// Now, attempt to restore the config file with the number of validators from the old config.
 		switch gen.ChainType() {
+		case genesis.Mainnet:
+			panic("not yet implemented!")
+
 		case genesis.Testnet:
 			err = config.SaveTestnetConfig(confPath, confBack.Node.NumValidators)
 			if err != nil {
 				return nil, nil, err
 			}
-		case genesis.Mainnet:
-			panic("not yet implemented!")
+
+		case genesis.Localnet:
+			err = config.SaveLocalnetConfig(confPath, confBack.Node.NumValidators)
+			if err != nil {
+				return nil, nil, err
+			}
+
+		default:
+			return nil, nil, fmt.Errorf("invalid chain type")
 		}
 
-		PrintSuccessMsg("Config restored to the default values")
+		PrintSuccessMsgf("Config restored to the default values")
 		conf, _ = config.LoadFromFile(confPath, true) // This time it should be OK
 	}
 
-	err = conf.SanityCheck()
+	err = conf.BasicCheck()
 	if err != nil {
 		return nil, nil, err
 	}
 
 	walletPath := PactusDefaultWalletPath(workingDir)
-	wallet, err := wallet.Open(walletPath, true)
+	walletInstance, err := wallet.Open(walletPath, true)
 	if err != nil {
 		return nil, nil, err
 	}
-	addrLabels := wallet.AddressLabels()
+	addrLabels := walletInstance.AddressLabels()
 
 	// Create signers
 	if len(addrLabels) < conf.Node.NumValidators {
@@ -394,11 +404,11 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		validatorAddrs[i] = addrLabels[i].Address
 	}
 	signers := make([]crypto.Signer, conf.Node.NumValidators)
-	password, ok := passwordFetcher(wallet)
+	password, ok := passwordFetcher(walletInstance)
 	if !ok {
 		return nil, nil, fmt.Errorf("aborted")
 	}
-	prvKeys, err := wallet.PrivateKeys(password, validatorAddrs)
+	prvKeys, err := walletInstance.PrivateKeys(password, validatorAddrs)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -417,22 +427,21 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 			return nil, nil, fmt.Errorf("not enough addresses in wallet")
 		}
 		for i := 0; i < conf.Node.NumValidators; i++ {
-			rewardAddrs[i], _ =
-				crypto.AddressFromString(addrLabels[conf.Node.NumValidators+i].Address)
+			rewardAddrs[i], _ = crypto.AddressFromString(addrLabels[conf.Node.NumValidators+i].Address)
 		}
 	}
 
-	node, err := node.NewNode(gen, conf, signers, rewardAddrs)
+	nodeInstance, err := node.NewNode(gen, conf, signers, rewardAddrs)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	err = node.Start()
+	err = nodeInstance.Start()
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return node, wallet, nil
+	return nodeInstance, walletInstance, nil
 }
 
 // makeLocalGenesis makes genesis file for the local network.
@@ -441,7 +450,8 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
 	accs := map[crypto.Address]*account.Account{
-		crypto.TreasuryAddress: acc}
+		crypto.TreasuryAddress: acc,
+	}
 
 	vals := make([]*validator.Validator, 4)
 	for i := 0; i < 4; i++ {

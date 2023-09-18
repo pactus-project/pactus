@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/account"
@@ -27,6 +28,8 @@ type testData struct {
 }
 
 func setup(t *testing.T) *testData {
+	t.Helper()
+
 	ts := testsuite.NewTestSuite(t)
 
 	ch := make(chan message.Message, 10)
@@ -37,7 +40,7 @@ func setup(t *testing.T) *testData {
 	assert.NotNil(t, pool)
 
 	block88 := sandbox.TestStore.AddTestBlock(88)
-	testTx := tx.NewSubsidyTx(block88.Stamp(), 89, ts.RandomAddress(), 25000000, "subsidy-tx")
+	testTx := tx.NewSubsidyTx(block88.Stamp(), 89, ts.RandAddress(), 25000000, "subsidy-tx")
 
 	return &testData{
 		TestSuite: ts,
@@ -49,6 +52,8 @@ func setup(t *testing.T) *testData {
 }
 
 func (td *testData) shouldPublishTransaction(t *testing.T, id tx.ID) {
+	t.Helper()
+
 	timeout := time.NewTimer(1 * time.Second)
 
 	for {
@@ -92,7 +97,7 @@ func TestFullPool(t *testing.T) {
 	block10000 := td.sandbox.TestStore.AddTestBlock(10000)
 	trxs := make([]*tx.Tx, td.pool.config.sendPoolSize()+1)
 
-	signer := td.RandomSigner()
+	signer := td.RandSigner()
 	acc := account.NewAccount(0)
 	acc.AddToBalance(10000000000)
 	td.sandbox.UpdateAccount(signer.Address(), acc)
@@ -101,8 +106,8 @@ func TestFullPool(t *testing.T) {
 	assert.Equal(t, td.pool.Size(), 0)
 
 	for i := 0; i < len(trxs); i++ {
-		trx := tx.NewTransferTx(block10000.Stamp(), acc.Sequence()+int32(i+1), signer.Address(),
-			td.RandomAddress(), 1000, 1000, "ok")
+		trx := tx.NewTransferTx(block10000.Stamp(), td.sandbox.CurrentHeight()+1, signer.Address(),
+			td.RandAddress(), 1000, 1000, "ok")
 		signer.SignMsg(trx)
 		assert.NoError(t, td.pool.AppendTx(trx))
 		trxs[i] = trx
@@ -122,51 +127,52 @@ func TestEmptyPool(t *testing.T) {
 func TestPrepareBlockTransactions(t *testing.T) {
 	td := setup(t)
 
-	block1000000 := td.sandbox.TestStore.AddTestBlock(1000000)
+	randHeight := td.RandHeight()
+	randBlock := td.sandbox.TestStore.AddTestBlock(randHeight)
 
-	acc1Signer := td.RandomSigner()
+	acc1Signer := td.RandSigner()
 	acc1 := account.NewAccount(0)
 	acc1.AddToBalance(10000000000)
 	td.sandbox.UpdateAccount(acc1Signer.Address(), acc1)
 
-	val1Signer := td.RandomSigner()
+	val1Signer := td.RandSigner()
 	val1Pub := val1Signer.PublicKey().(*bls.PublicKey)
 	val1 := validator.NewValidator(val1Pub, 0)
 	val1.AddToStake(10000000000)
 	td.sandbox.UpdateValidator(val1)
 
-	val2Signer := td.RandomSigner()
+	val2Signer := td.RandSigner()
 	val2Pub := val2Signer.PublicKey().(*bls.PublicKey)
 	val2 := validator.NewValidator(val2Pub, 0)
 	val2.AddToStake(10000000000)
 	val2.UpdateUnbondingHeight(1)
 	td.sandbox.UpdateValidator(val2)
 
-	val3Signer := td.RandomSigner()
+	val3Signer := td.RandSigner()
 	val3Pub := val3Signer.PublicKey().(*bls.PublicKey)
 	val3 := validator.NewValidator(val3Pub, 0)
 	val3.AddToStake(10000000000)
 	td.sandbox.UpdateValidator(val3)
 
-	transferTx := tx.NewTransferTx(block1000000.Stamp(), acc1.Sequence()+1, acc1Signer.Address(),
-		td.RandomAddress(), 1000, 1000, "send-tx")
+	transferTx := tx.NewTransferTx(randBlock.Stamp(), randHeight+1, acc1Signer.Address(),
+		td.RandAddress(), 1000, 1000, "send-tx")
 	acc1Signer.SignMsg(transferTx)
 
-	pub, _ := td.RandomBLSKeyPair()
-	bondTx := tx.NewBondTx(block1000000.Stamp(), acc1.Sequence()+2, acc1Signer.Address(),
-		pub.Address(), pub, 1000, 1000, "bond-tx")
+	pub, _ := td.RandBLSKeyPair()
+	bondTx := tx.NewBondTx(randBlock.Stamp(), randHeight+2, acc1Signer.Address(),
+		pub.Address(), pub, 1000000000, 100000, "bond-tx")
 	acc1Signer.SignMsg(bondTx)
 
-	unbondTx := tx.NewUnbondTx(block1000000.Stamp(), val1.Sequence()+1, val1.Address(), "unbond-tx")
+	unbondTx := tx.NewUnbondTx(randBlock.Stamp(), randHeight+3, val1.Address(), "unbond-tx")
 	val1Signer.SignMsg(unbondTx)
 
-	withdrawTx := tx.NewWithdrawTx(block1000000.Stamp(), val2.Sequence()+1, val2.Address(),
-		td.RandomAddress(), 1000, 1000, "withdraw-tx")
+	withdrawTx := tx.NewWithdrawTx(randBlock.Stamp(), randHeight+4, val2.Address(),
+		td.RandAddress(), 1000, 1000, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
 	td.sandbox.TestAcceptSortition = true
-	sortitionTx := tx.NewSortitionTx(block1000000.Stamp(), val3.Sequence()+1, val3.Address(),
-		td.RandomProof())
+	sortitionTx := tx.NewSortitionTx(randBlock.Stamp(), randHeight+4, val3.Address(),
+		td.RandProof())
 	val3Signer.SignMsg(sortitionTx)
 
 	assert.NoError(t, td.pool.AppendTx(transferTx))
@@ -197,19 +203,25 @@ func TestAppendAndBroadcast(t *testing.T) {
 func TestAddSubsidyTransactions(t *testing.T) {
 	td := setup(t)
 
-	block88 := td.sandbox.TestStore.AddTestBlock(88)
-	proposer1 := td.RandomAddress()
-	proposer2 := td.RandomAddress()
-	trx1 := tx.NewSubsidyTx(block88.Stamp(), 88, proposer1, 25000000, "subsidy-tx-1")
-	trx2 := tx.NewSubsidyTx(block88.Stamp(), 89, proposer1, 25000000, "subsidy-tx-1")
-	trx3 := tx.NewSubsidyTx(block88.Stamp(), 89, proposer2, 25000000, "subsidy-tx-2")
+	randHeight := td.RandHeight()
+	randBlock := td.sandbox.TestStore.AddTestBlock(randHeight)
+	proposer1 := td.RandAddress()
+	proposer2 := td.RandAddress()
+	trx1 := tx.NewSubsidyTx(randBlock.Stamp(), randHeight, proposer1, 25000000, "subsidy-tx-1")
+	trx2 := tx.NewSubsidyTx(randBlock.Stamp(), randHeight+1, proposer1, 25000000, "subsidy-tx-1")
+	trx3 := tx.NewSubsidyTx(randBlock.Stamp(), randHeight+1, proposer2, 25000000, "subsidy-tx-2")
 
-	assert.Error(t, td.pool.AppendTx(trx1), "Expired subsidy transaction")
-	assert.NoError(t, td.pool.AppendTx(trx2))
-	assert.NoError(t, td.pool.AppendTx(trx3))
+	err := td.pool.AppendTx(trx1)
+	assert.ErrorIs(t, err, execution.PastLockTimeError{LockTime: randHeight})
 
-	td.sandbox.TestStore.AddTestBlock(89)
+	err = td.pool.AppendTx(trx2)
+	assert.NoError(t, err)
 
-	td.pool.SetNewSandboxAndRecheck(sandbox.MockingSandbox(td.TestSuite))
+	err = td.pool.AppendTx(trx3)
+	assert.NoError(t, err)
+
+	td.sandbox.TestStore.AddTestBlock(randHeight + 1)
+
+	td.pool.SetNewSandboxAndRecheck(td.sandbox)
 	assert.Zero(t, td.pool.Size())
 }

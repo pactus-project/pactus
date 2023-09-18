@@ -16,8 +16,8 @@ import (
 func TestSignatureCBORMarshaling(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	_, prv := ts.RandomBLSKeyPair()
-	sig1 := prv.Sign(ts.RandomBytes(16))
+	_, prv := ts.RandBLSKeyPair()
+	sig1 := prv.Sign(ts.RandBytes(16))
 	sig2 := new(bls.Signature)
 
 	bs, err := sig1.MarshalCBOR()
@@ -35,7 +35,7 @@ func TestSignatureCBORMarshaling(t *testing.T) {
 func TestSignatureEqualsTo(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	signer := ts.RandomSigner()
+	signer := ts.RandSigner()
 	sig1 := signer.SignData([]byte("foo"))
 	sig2 := signer.SignData([]byte("bar"))
 
@@ -48,8 +48,8 @@ func TestSignatureEqualsTo(t *testing.T) {
 func TestSignatureEncoding(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	_, prv := ts.RandomBLSKeyPair()
-	sig := prv.Sign(ts.RandomBytes(16))
+	_, prv := ts.RandBLSKeyPair()
+	sig := prv.Sign(ts.RandBytes(16))
 	w1 := util.NewFixedWriter(20)
 	assert.Error(t, sig.Encode(w1))
 
@@ -68,8 +68,8 @@ func TestVerifyingSignature(t *testing.T) {
 
 	msg := []byte("zarb")
 
-	pb1, pv1 := ts.RandomBLSKeyPair()
-	pb2, pv2 := ts.RandomBLSKeyPair()
+	pb1, pv1 := ts.RandBLSKeyPair()
+	pb2, pv2 := ts.RandBLSKeyPair()
 	sig1 := pv1.Sign(msg)
 	sig2 := pv2.Sign(msg)
 
@@ -127,9 +127,11 @@ func TestSignatureBytes(t *testing.T) {
 			"",
 			"ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792",
 			true,
-			[]byte{0xad, 0x0f, 0x88, 0xce, 0xc8, 0x15, 0xe9, 0xb8, 0xaf, 0x3f, 0x01, 0x36, 0x29, 0x7c, 0xb2, 0x42,
+			[]byte{
+				0xad, 0x0f, 0x88, 0xce, 0xc8, 0x15, 0xe9, 0xb8, 0xaf, 0x3f, 0x01, 0x36, 0x29, 0x7c, 0xb2, 0x42,
 				0xed, 0x8b, 0x63, 0x69, 0xaf, 0x72, 0x3f, 0xbd, 0xac, 0x07, 0x7f, 0xa9, 0x27, 0xf5, 0x78, 0x0d,
-				0xb7, 0xdf, 0x47, 0xc7, 0x7f, 0xb5, 0x3f, 0x3a, 0x22, 0x32, 0x46, 0x73, 0xf0, 0x00, 0xc7, 0x92},
+				0xb7, 0xdf, 0x47, 0xc7, 0x7f, 0xb5, 0x3f, 0x3a, 0x22, 0x32, 0x46, 0x73, 0xf0, 0x00, 0xc7, 0x92,
+			},
 		},
 	}
 

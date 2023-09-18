@@ -3,8 +3,11 @@ package sync
 import (
 	"time"
 
+	"github.com/pactus-project/pactus/crypto/bls"
+
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/sync/services"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/version"
 )
@@ -18,30 +21,28 @@ type MockSync struct {
 
 func MockingSync(ts *testsuite.TestSuite) *MockSync {
 	ps := peerset.NewPeerSet(1 * time.Second)
-	pub1, _ := ts.RandomBLSKeyPair()
-	pub2, _ := ts.RandomBLSKeyPair()
-	pid1 := ts.RandomPeerID()
-	pid2 := ts.RandomPeerID()
-	ps.UpdatePeerInfo(
+	pub1, _ := ts.RandBLSKeyPair()
+	pub2, _ := ts.RandBLSKeyPair()
+	pid1 := ts.RandPeerID()
+	pid2 := ts.RandPeerID()
+	ps.UpdateInfo(
 		pid1,
-		peerset.StatusCodeKnown,
 		"test-peer-1",
 		version.Agent(),
-		pub1,
-		true)
-	ps.UpdateHeight(pid1, ts.RandUint32(100000), ts.RandomHash())
+		[]*bls.PublicKey{pub1},
+		services.New(services.Network))
+	ps.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
 
-	ps.UpdatePeerInfo(
+	ps.UpdateInfo(
 		pid2,
-		peerset.StatusCodeBanned,
 		"test-peer-2",
 		version.Agent(),
-		pub2,
-		false)
-	ps.UpdateHeight(pid1, ts.RandUint32(100000), ts.RandomHash())
+		[]*bls.PublicKey{pub2},
+		services.New(services.None))
+	ps.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
 
 	return &MockSync{
-		TestID:      ts.RandomPeerID(),
+		TestID:      ts.RandPeerID(),
 		TestPeerSet: ps,
 	}
 }
@@ -49,6 +50,7 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 func (m *MockSync) Start() error {
 	return nil
 }
+
 func (m *MockSync) Stop() {
 }
 
@@ -59,6 +61,7 @@ func (m *MockSync) SelfID() peer.ID {
 func (m *MockSync) Moniker() string {
 	return "test-moniker"
 }
+
 func (m *MockSync) PeerSet() *peerset.PeerSet {
 	return m.TestPeerSet
 }

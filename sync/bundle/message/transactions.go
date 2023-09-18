@@ -18,12 +18,12 @@ func NewTransactionsMessage(trxs []*tx.Tx) *TransactionsMessage {
 	}
 }
 
-func (m *TransactionsMessage) SanityCheck() error {
+func (m *TransactionsMessage) BasicCheck() error {
 	if len(m.Transactions) == 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "no transaction")
 	}
 	for _, tx := range m.Transactions {
-		if err := tx.SanityCheck(); err != nil {
+		if err := tx.BasicCheck(); err != nil {
 			return err
 		}
 	}

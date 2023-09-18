@@ -3552,12 +3552,11 @@ proto.pactus.ValidatorInfo.toObject = function(includeInstance, msg) {
     data: msg.getData_asB64(),
     publicKey: jspb.Message.getFieldWithDefault(msg, 3, ""),
     number: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    sequence: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    stake: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    lastBondingHeight: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    lastSortitionHeight: jspb.Message.getFieldWithDefault(msg, 8, 0),
-    unbondingHeight: jspb.Message.getFieldWithDefault(msg, 9, 0),
-    address: jspb.Message.getFieldWithDefault(msg, 10, "")
+    stake: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    lastBondingHeight: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    lastSortitionHeight: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    unbondingHeight: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    address: jspb.Message.getFieldWithDefault(msg, 9, "")
   };
 
   if (includeInstance) {
@@ -3611,26 +3610,22 @@ proto.pactus.ValidatorInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setNumber(value);
       break;
     case 5:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setSequence(value);
-      break;
-    case 6:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setStake(value);
       break;
-    case 7:
+    case 6:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setLastBondingHeight(value);
       break;
-    case 8:
+    case 7:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setLastSortitionHeight(value);
       break;
-    case 9:
+    case 8:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setUnbondingHeight(value);
       break;
-    case 10:
+    case 9:
       var value = /** @type {string} */ (reader.readString());
       msg.setAddress(value);
       break;
@@ -3691,45 +3686,38 @@ proto.pactus.ValidatorInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getSequence();
-  if (f !== 0) {
-    writer.writeInt32(
-      5,
-      f
-    );
-  }
   f = message.getStake();
   if (f !== 0) {
     writer.writeInt64(
-      6,
+      5,
       f
     );
   }
   f = message.getLastBondingHeight();
   if (f !== 0) {
     writer.writeUint32(
-      7,
+      6,
       f
     );
   }
   f = message.getLastSortitionHeight();
   if (f !== 0) {
     writer.writeUint32(
-      8,
+      7,
       f
     );
   }
   f = message.getUnbondingHeight();
   if (f !== 0) {
     writer.writeUint32(
-      9,
+      8,
       f
     );
   }
   f = message.getAddress();
   if (f.length > 0) {
     writer.writeString(
-      10,
+      9,
       f
     );
   }
@@ -3857,10 +3845,10 @@ proto.pactus.ValidatorInfo.prototype.setNumber = function(value) {
 
 
 /**
- * optional int32 sequence = 5;
+ * optional int64 stake = 5;
  * @return {number}
  */
-proto.pactus.ValidatorInfo.prototype.getSequence = function() {
+proto.pactus.ValidatorInfo.prototype.getStake = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
@@ -3869,16 +3857,16 @@ proto.pactus.ValidatorInfo.prototype.getSequence = function() {
  * @param {number} value
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
-proto.pactus.ValidatorInfo.prototype.setSequence = function(value) {
+proto.pactus.ValidatorInfo.prototype.setStake = function(value) {
   return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 
 /**
- * optional int64 stake = 6;
+ * optional uint32 last_bonding_height = 6;
  * @return {number}
  */
-proto.pactus.ValidatorInfo.prototype.getStake = function() {
+proto.pactus.ValidatorInfo.prototype.getLastBondingHeight = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
@@ -3887,16 +3875,16 @@ proto.pactus.ValidatorInfo.prototype.getStake = function() {
  * @param {number} value
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
-proto.pactus.ValidatorInfo.prototype.setStake = function(value) {
+proto.pactus.ValidatorInfo.prototype.setLastBondingHeight = function(value) {
   return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 
 /**
- * optional uint32 last_bonding_height = 7;
+ * optional uint32 last_sortition_height = 7;
  * @return {number}
  */
-proto.pactus.ValidatorInfo.prototype.getLastBondingHeight = function() {
+proto.pactus.ValidatorInfo.prototype.getLastSortitionHeight = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
@@ -3905,16 +3893,16 @@ proto.pactus.ValidatorInfo.prototype.getLastBondingHeight = function() {
  * @param {number} value
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
-proto.pactus.ValidatorInfo.prototype.setLastBondingHeight = function(value) {
+proto.pactus.ValidatorInfo.prototype.setLastSortitionHeight = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
 /**
- * optional uint32 last_sortition_height = 8;
+ * optional uint32 unbonding_height = 8;
  * @return {number}
  */
-proto.pactus.ValidatorInfo.prototype.getLastSortitionHeight = function() {
+proto.pactus.ValidatorInfo.prototype.getUnbondingHeight = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
 };
 
@@ -3923,35 +3911,17 @@ proto.pactus.ValidatorInfo.prototype.getLastSortitionHeight = function() {
  * @param {number} value
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
-proto.pactus.ValidatorInfo.prototype.setLastSortitionHeight = function(value) {
+proto.pactus.ValidatorInfo.prototype.setUnbondingHeight = function(value) {
   return jspb.Message.setProto3IntField(this, 8, value);
 };
 
 
 /**
- * optional uint32 unbonding_height = 9;
- * @return {number}
- */
-proto.pactus.ValidatorInfo.prototype.getUnbondingHeight = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.ValidatorInfo} returns this
- */
-proto.pactus.ValidatorInfo.prototype.setUnbondingHeight = function(value) {
-  return jspb.Message.setProto3IntField(this, 9, value);
-};
-
-
-/**
- * optional string address = 10;
+ * optional string address = 9;
  * @return {string}
  */
 proto.pactus.ValidatorInfo.prototype.getAddress = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
 };
 
 
@@ -3960,7 +3930,7 @@ proto.pactus.ValidatorInfo.prototype.getAddress = function() {
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
 proto.pactus.ValidatorInfo.prototype.setAddress = function(value) {
-  return jspb.Message.setProto3StringField(this, 10, value);
+  return jspb.Message.setProto3StringField(this, 9, value);
 };
 
 
@@ -3999,8 +3969,7 @@ proto.pactus.AccountInfo.toObject = function(includeInstance, msg) {
     hash: msg.getHash_asB64(),
     data: msg.getData_asB64(),
     number: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    sequence: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    balance: jspb.Message.getFieldWithDefault(msg, 5, 0)
+    balance: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -4050,10 +4019,6 @@ proto.pactus.AccountInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setNumber(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setSequence(value);
-      break;
-    case 5:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setBalance(value);
       break;
@@ -4107,17 +4072,10 @@ proto.pactus.AccountInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getSequence();
-  if (f !== 0) {
-    writer.writeInt32(
-      4,
-      f
-    );
-  }
   f = message.getBalance();
   if (f !== 0) {
     writer.writeInt64(
-      5,
+      4,
       f
     );
   }
@@ -4227,10 +4185,10 @@ proto.pactus.AccountInfo.prototype.setNumber = function(value) {
 
 
 /**
- * optional int32 sequence = 4;
+ * optional int64 balance = 4;
  * @return {number}
  */
-proto.pactus.AccountInfo.prototype.getSequence = function() {
+proto.pactus.AccountInfo.prototype.getBalance = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
@@ -4239,26 +4197,8 @@ proto.pactus.AccountInfo.prototype.getSequence = function() {
  * @param {number} value
  * @return {!proto.pactus.AccountInfo} returns this
  */
-proto.pactus.AccountInfo.prototype.setSequence = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
-};
-
-
-/**
- * optional int64 balance = 5;
- * @return {number}
- */
-proto.pactus.AccountInfo.prototype.getBalance = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.AccountInfo} returns this
- */
 proto.pactus.AccountInfo.prototype.setBalance = function(value) {
-  return jspb.Message.setProto3IntField(this, 5, value);
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 

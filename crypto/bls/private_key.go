@@ -121,7 +121,7 @@ func (prv *PrivateKey) Bytes() []byte {
 }
 
 // Sign calculates the signature from the private key and given message.
-// It's defined in section 2.6 of the spec: CoreSign
+// It's defined in section 2.6 of the spec: CoreSign.
 func (prv *PrivateKey) Sign(msg []byte) crypto.Signature {
 	g1 := bls12381.NewG1()
 

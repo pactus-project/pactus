@@ -1,10 +1,10 @@
-PACKAGES=$(shell go list ./... | grep -v 'tests')
+PACKAGES=$(shell go list ./... | grep -v 'tests' | grep -v 'grpc/gen')
 BUILD_LDFLAGS= -ldflags "-X github.com/pactus-project/pactus/version.build=`git rev-parse --short=8 HEAD`"
 
 ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe
 RM = del /q
-else 
+else
 RM = rm -rf
 endif
 
@@ -15,12 +15,13 @@ all: build test
 ### Tools needed for development
 devtools:
 	@echo "Installing devtools"
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54.1
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.12
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.12
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 	go install github.com/bufbuild/buf/cmd/buf@v1.25.0
+	go install mvdan.cc/gofumpt@latest
 	go install github.com/rakyll/statik@v0.1
 
 ########################################
@@ -57,30 +58,12 @@ proto:
 	cd www/grpc/ && statik -m -f -src swagger-ui/
 
 ########################################
-### Formatting, linting, and vetting
+### Formatting the code
 fmt:
-	gofmt -s -w .
+	gofumpt -l -w .
 
 check:
-	golangci-lint run \
-		--build-tags "${BUILD_TAG}" \
-		--timeout=20m0s \
-		--enable=gofmt \
-		--enable=unconvert \
-		--enable=unparam \
-		--enable=asciicheck \
-		--enable=misspell \
-		--enable=revive \
-		--enable=decorder \
-		--enable=reassign \
-		--enable=usestdlibvars \
-		--enable=nilerr \
-		--enable=gosec \
-		--enable=exportloopref \
-		--enable=whitespace \
-		--enable=goimports \
-		--enable=gocyclo \
-		--enable=lll
+	golangci-lint run --build-tags "${BUILD_TAG}" --timeout=20m0s
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.

@@ -17,7 +17,7 @@ const (
 	BundleFlagCarrierLibP2P  = 0x0010
 	BundleFlagCompressed     = 0x0100
 	BundleFlagBroadcasted    = 0x0200
-	BundleFlagHelloMessage   = 0x0400
+	BundleFlagHandshaking    = 0x0400
 )
 
 type Bundle struct {
@@ -34,8 +34,8 @@ func NewBundle(initiator peer.ID, msg message.Message) *Bundle {
 	}
 }
 
-func (b *Bundle) SanityCheck() error {
-	if err := b.Message.SanityCheck(); err != nil {
+func (b *Bundle) BasicCheck() error {
+	if err := b.Message.BasicCheck(); err != nil {
 		return err
 	}
 	if err := b.Initiator.Validate(); err != nil {

@@ -17,9 +17,27 @@ func TestGetTransaction(t *testing.T) {
 	testBlock := tMockState.TestStore.AddTestBlock(1)
 	trx1 := testBlock.Transactions()[0]
 
-	t.Run("Should return transaction", func(t *testing.T) {
-		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{Id: trx1.ID().Bytes(),
-			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO})
+	t.Run("Should return transaction (verbosity: 0)", func(t *testing.T) {
+		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{
+			Id:        trx1.ID().Bytes(),
+			Verbosity: pactus.TransactionVerbosity_TRANSACTION_DATA,
+		})
+		data, _ := trx1.Bytes()
+
+		assert.NoError(t, err)
+		assert.NotNil(t, res)
+		assert.NotEmpty(t, res.Transaction)
+		assert.Equal(t, uint32(0x1), res.BlockHeight)
+		assert.Equal(t, trx1.ID().Bytes(), res.Transaction.Id)
+		assert.Equal(t, data, res.Transaction.Data)
+		assert.Nil(t, res.Transaction.Payload)
+	})
+
+	t.Run("Should return transaction (verbosity: 1)", func(t *testing.T) {
+		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{
+			Id:        trx1.ID().Bytes(),
+			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
+		})
 		pld := res.Transaction.Payload.(*pactus.TransactionInfo_Transfer)
 
 		assert.NoError(t, err)
@@ -32,7 +50,7 @@ func TestGetTransaction(t *testing.T) {
 		assert.Equal(t, trx1.Fee(), res.Transaction.Fee)
 		assert.Equal(t, trx1.Memo(), res.Transaction.Memo)
 		assert.Equal(t, trx1.Payload().Type(), payload.Type(res.Transaction.PayloadType))
-		assert.Equal(t, trx1.Sequence(), res.Transaction.Sequence)
+		assert.Equal(t, trx1.LockTime(), res.Transaction.LockTime)
 		assert.Equal(t, trx1.Signature().Bytes(), res.Transaction.Signature)
 		assert.Equal(t, trx1.PublicKey().String(), res.Transaction.PublicKey)
 		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).Amount, pld.Transfer.Amount)
@@ -47,7 +65,7 @@ func TestGetTransaction(t *testing.T) {
 	})
 
 	t.Run("Should return nil value because transaction doesn't exist", func(t *testing.T) {
-		id := ts.RandomHash()
+		id := ts.RandHash()
 		res, err := client.GetTransaction(tCtx, &pactus.GetTransactionRequest{Id: id.Bytes()})
 		assert.Error(t, err)
 		assert.Nil(t, res)

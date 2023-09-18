@@ -12,16 +12,16 @@ func TestDefaultConfigCheck(t *testing.T) {
 	c2 := DefaultConfig()
 	c3 := DefaultConfig()
 	c4 := DefaultConfig()
-	assert.NoError(t, c1.SanityCheck())
+	assert.NoError(t, c1.BasicCheck())
 
 	c2.ChangeProposerDelta = 0 * time.Second
-	assert.Error(t, c2.SanityCheck())
+	assert.Error(t, c2.BasicCheck())
 
 	c3.ChangeProposerTimeout = 0 * time.Second
-	assert.Error(t, c3.SanityCheck())
+	assert.Error(t, c3.BasicCheck())
 
 	c4.ChangeProposerTimeout = -1 * time.Second
-	assert.Error(t, c4.SanityCheck())
+	assert.Error(t, c4.BasicCheck())
 }
 
 func TestCalculateChangeProposerTimeout(t *testing.T) {

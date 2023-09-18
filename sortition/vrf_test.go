@@ -14,10 +14,10 @@ import (
 func TestVRF(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pk, pv := ts.RandomBLSKeyPair()
+	pk, pv := ts.RandBLSKeyPair()
 	signer := crypto.NewSigner(pv)
 	for i := 0; i < 100; i++ {
-		seed := ts.RandomSeed()
+		seed := ts.RandSeed()
 		fmt.Printf("seed is: %x \n", seed)
 
 		max := uint64(1 * 1e6)
@@ -47,13 +47,13 @@ func TestRandomUint64(t *testing.T) {
 	badRNG := "The random number generator on this system is clearly " +
 		"terrible since we got %d values less than %d in %d runs " +
 		"when only %d was expected"
-	_, pv := ts.RandomBLSKeyPair()
+	_, pv := ts.RandBLSKeyPair()
 
 	signer := crypto.NewSigner(pv)
 
 	numHits := 0
 	for i := 0; i < tries; i++ {
-		seed := ts.RandomSeed()
+		seed := ts.RandSeed()
 
 		nonce, _ := sortition.Evaluate(seed, signer, util.MaxUint64)
 		if nonce < watermark {

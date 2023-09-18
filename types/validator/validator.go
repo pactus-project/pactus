@@ -19,7 +19,6 @@ type Validator struct {
 type validatorData struct {
 	PublicKey           *bls.PublicKey
 	Number              int32
-	Sequence            int32
 	Stake               int64
 	LastBondingHeight   uint32
 	UnbondingHeight     uint32
@@ -49,13 +48,11 @@ func FromBytes(data []byte) (*Validator, error) {
 
 	err := encoding.ReadElements(r,
 		&acc.data.Number,
-		&acc.data.Sequence,
 		&acc.data.Stake,
 		&acc.data.LastBondingHeight,
 		&acc.data.UnbondingHeight,
 		&acc.data.LastSortitionHeight,
 	)
-
 	if err != nil {
 		return nil, err
 	}
@@ -76,11 +73,6 @@ func (val *Validator) Address() crypto.Address {
 // Number returns the number of the validator.
 func (val *Validator) Number() int32 {
 	return val.data.Number
-}
-
-// Sequence returns the sequence number of the validator.
-func (val *Validator) Sequence() int32 {
-	return val.data.Sequence
 }
 
 // Stake returns the stake of the validator.
@@ -125,11 +117,6 @@ func (val *Validator) AddToStake(amt int64) {
 	val.data.Stake += amt
 }
 
-// IncSequence increases the sequence anytime this validator signs a transaction.
-func (val *Validator) IncSequence() {
-	val.data.Sequence++
-}
-
 // UpdateLastJoinedHeight updates the last height at which the validator joined the committee.
 func (val *Validator) UpdateLastSortitionHeight(height uint32) {
 	val.data.LastSortitionHeight = height
@@ -156,10 +143,10 @@ func (val *Validator) Hash() hash.Hash {
 
 // SerializeSize returns the size in bytes required to serialize the validator.
 func (val *Validator) SerializeSize() int {
-	return 124 // 96+4+4+8+4+4+4
+	return 120 // 96+4+4+8+4+4
 }
 
-// Bytes returns returns the serialized byte representation of the validator.
+// Bytes returns the serialized byte representation of the validator.
 func (val *Validator) Bytes() ([]byte, error) {
 	w := bytes.NewBuffer(make([]byte, 0, val.SerializeSize()))
 
@@ -169,7 +156,6 @@ func (val *Validator) Bytes() ([]byte, error) {
 
 	err := encoding.WriteElements(w,
 		val.data.Number,
-		val.data.Sequence,
 		val.data.Stake,
 		val.data.LastBondingHeight,
 		val.data.UnbondingHeight,
@@ -185,5 +171,6 @@ func (val *Validator) Bytes() ([]byte, error) {
 func (val *Validator) Clone() *Validator {
 	cloned := new(Validator)
 	*cloned = *val
+
 	return cloned
 }

@@ -22,27 +22,31 @@ func (s *proposeState) decide() {
 		s.logger.Debug("not our turn to propose", "proposer", proposer.Address())
 	}
 
+	s.cpRound = 0
+	s.cpDecided = -1
+	s.cpWeakValidity = nil
 	s.enterNewState(s.prepareState)
 }
 
 func (s *proposeState) createProposal(height uint32, round int16) {
 	block, err := s.state.ProposeBlock(s.signer, s.rewardAddr, round)
 	if err != nil {
-		s.logger.Error("unable to propose a block!", "err", err)
+		s.logger.Error("unable to propose a block!", "error", err)
 		return
 	}
 	if err := s.state.ValidateBlock(block); err != nil {
-		s.logger.Error("proposed block is invalid!", "err", err)
+		s.logger.Error("proposed block is invalid!", "error", err)
 		return
 	}
 
 	proposal := proposal.NewProposal(height, round, block)
 	s.signer.SignMsg(proposal)
-	s.doSetProposal(proposal)
 
-	s.logger.Info("proposal signed and broadcasted", "proposal", proposal)
+	s.log.SetRoundProposal(round, proposal)
 
 	s.broadcastProposal(proposal)
+
+	s.logger.Info("proposal signed and broadcasted", "proposal", proposal)
 }
 
 func (s *proposeState) onAddVote(_ *vote.Vote) {
@@ -56,6 +60,7 @@ func (s *proposeState) onSetProposal(_ *proposal.Proposal) {
 func (s *proposeState) onTimeout(_ *ticker) {
 	panic("Unreachable")
 }
+
 func (s *proposeState) name() string {
 	return "propose"
 }

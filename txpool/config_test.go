@@ -8,7 +8,7 @@ import (
 
 func TestDefaultConfigCheck(t *testing.T) {
 	c := DefaultConfig()
-	assert.NoError(t, c.SanityCheck())
+	assert.NoError(t, c.BasicCheck())
 
 	assert.Equal(t,
 		c.sendPoolSize()+
@@ -18,5 +18,5 @@ func TestDefaultConfigCheck(t *testing.T) {
 			c.sortitionPoolSize(), c.MaxSize)
 
 	c.MaxSize = 0
-	assert.Error(t, c.SanityCheck())
+	assert.Error(t, c.BasicCheck())
 }

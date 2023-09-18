@@ -17,9 +17,11 @@ type testSignableMsg struct {
 func (t *testSignableMsg) SignBytes() []byte {
 	return []byte("zarb")
 }
+
 func (t *testSignableMsg) SetSignature(sig crypto.Signature) {
 	t.sig = sig.(*bls.Signature)
 }
+
 func (t *testSignableMsg) SetPublicKey(pub crypto.PublicKey) {
 	t.pub = pub.(*bls.PublicKey)
 }
@@ -28,7 +30,7 @@ func TestSignable(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	signable := new(testSignableMsg)
-	s := ts.RandomSigner()
+	s := ts.RandSigner()
 	s.SignMsg(signable)
 
 	assert.True(t, s.Address().EqualsTo(s.PublicKey().Address()))

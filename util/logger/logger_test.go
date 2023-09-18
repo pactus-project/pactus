@@ -20,8 +20,9 @@ func TestNilObjLogger(t *testing.T) {
 	var buf bytes.Buffer
 	l.logger = l.logger.Output(&buf)
 
-	l.Info("hello")
+	l.Info("hello", "error", fmt.Errorf("error"))
 	assert.Contains(t, buf.String(), "hello")
+	assert.Contains(t, buf.String(), "error")
 }
 
 func TestObjLogger(t *testing.T) {
@@ -47,7 +48,7 @@ func TestObjLogger(t *testing.T) {
 	assert.NotContains(t, out, "debug")
 	assert.Contains(t, out, "info")
 	assert.Contains(t, out, "warn")
-	assert.Contains(t, out, "err")
+	assert.Contains(t, out, "error")
 }
 
 func TestLogger(t *testing.T) {

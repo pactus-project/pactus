@@ -35,8 +35,8 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox) error {
 		}
 	}
 
-	accumulatedFee := exe.AccumulatedFee()
-	subsidyAmt := st.params.BlockReward + exe.AccumulatedFee()
+	accumulatedFee := sb.AccumulatedFee()
+	subsidyAmt := st.params.BlockReward + sb.AccumulatedFee()
 	if subsidyTrx.Payload().Value() != subsidyAmt {
 		return errors.Errorf(errors.ErrInvalidTx,
 			"invalid subsidy amount, expected %v, got %v", subsidyAmt, subsidyTrx.Payload().Value())

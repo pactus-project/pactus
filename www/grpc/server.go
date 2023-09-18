@@ -25,7 +25,8 @@ type Server struct {
 }
 
 func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
-	consMgr consensus.ManagerReader) *Server {
+	consMgr consensus.ManagerReader,
+) *Server {
 	return &Server{
 		ctx:     context.Background(),
 		config:  conf,
@@ -80,13 +81,13 @@ func (s *Server) StartServer() error {
 	s.grpc = grpc
 	go func() {
 		if err := s.grpc.Serve(listener); err != nil {
-			s.logger.Error("error on grpc serve", "err", err)
+			s.logger.Error("error on grpc serve", "error", err)
 		}
 	}()
 
 	go func() {
 		if err := s.startGateway(); err != nil {
-			s.logger.Error("error on grpc-gateway serve", "err", err)
+			s.logger.Error("error on grpc-gateway serve", "error", err)
 		}
 	}()
 

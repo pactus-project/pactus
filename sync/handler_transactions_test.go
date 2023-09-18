@@ -15,7 +15,7 @@ func TestParsingTransactionsMessages(t *testing.T) {
 		trx1, _ := td.GenerateTestBondTx()
 		msg := message.NewTransactionsMessage([]*tx.Tx{trx1})
 
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, td.RandomPeerID()))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, td.RandPeerID()))
 
 		assert.NotNil(t, td.sync.state.PendingTx(trx1.ID()))
 	})

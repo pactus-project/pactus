@@ -1,6 +1,7 @@
 package log
 
 import (
+	"encoding/hex"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/vote"
@@ -14,49 +15,66 @@ func TestMustGetRound(t *testing.T) {
 	committee, _ := ts.GenerateTestCommittee(4)
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
-	log.MustGetRoundMessages(4)
-	assert.Nil(t, log.RoundMessages(5))
-	assert.NotNil(t, log.RoundMessages(1))
-	assert.NotNil(t, log.RoundMessages(4))
-	assert.Equal(t, len(log.roundMessages), 5)
+	assert.NotNil(t, log.RoundMessages(ts.RandRound()))
 }
 
-func TestAddVotes(t *testing.T) {
+func TestAddValidVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	committee, signers := ts.GenerateTestCommittee(4)
-
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
-	invalidVote, _ := ts.GenerateTestPrecommitVote(55, 5)
-	err := log.AddVote(invalidVote) // invalid height
-	assert.Error(t, err)
+	h := ts.RandHeight()
+	r := ts.RandRound()
 
-	v1, _ := ts.GenerateTestPrecommitVote(101, 5)
-	err = log.AddVote(v1) // invalid signer
-	assert.Error(t, err)
+	prepares := log.PrepareVoteSet(r)
+	precommits := log.PrecommitVoteSet(r)
+	preVotes := log.CPPreVoteVoteSet(r)
+	mainVotes := log.CPMainVoteVoteSet(r)
 
-	validVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, ts.RandomHash(), signers[0].Address())
-	signers[0].SignMsg(validVote)
+	v1 := vote.NewPrepareVote(ts.RandHash(), h, r, signers[0].Address())
+	v2 := vote.NewPrecommitVote(ts.RandHash(), h, r, signers[0].Address())
+	v3 := vote.NewCPPreVote(ts.RandHash(), h, r, 0, vote.CPValueOne, &vote.JustInitOne{}, signers[0].Address())
+	v4 := vote.NewCPMainVote(ts.RandHash(), h, r, 0, vote.CPValueZero, &vote.JustInitOne{}, signers[0].Address())
 
-	duplicateVote := vote.NewVote(vote.VoteTypePrepare, 101, 1, ts.RandomHash(), signers[0].Address())
-	signers[0].SignMsg(duplicateVote)
+	for _, v := range []*vote.Vote{v1, v2, v3, v4} {
+		signers[0].SignMsg(v)
 
-	err = log.AddVote(validVote)
+		added, err := log.AddVote(v)
+		assert.NoError(t, err)
+		assert.True(t, added)
+	}
+
+	assert.True(t, log.HasVote(v1.Hash()))
+	assert.True(t, log.HasVote(v2.Hash()))
+	assert.True(t, log.HasVote(v3.Hash()))
+	assert.True(t, log.HasVote(v4.Hash()))
+	assert.False(t, log.HasVote(ts.RandHash()))
+
+	assert.Contains(t, prepares.AllVotes(), v1)
+	assert.Contains(t, precommits.AllVotes(), v2)
+	assert.Contains(t, preVotes.AllVotes(), v3)
+	assert.Contains(t, mainVotes.AllVotes(), v4)
+}
+
+func TestAddInvalidVoteType(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	committee, signers := ts.GenerateTestCommittee(4)
+	log := NewLog()
+	log.MoveToNewHeight(committee.Validators())
+
+	data, _ := hex.DecodeString("A701050218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
+		"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
+	invVote := new(vote.Vote)
+	err := invVote.UnmarshalCBOR(data)
 	assert.NoError(t, err)
+	signers[0].SignMsg(invVote)
 
-	// Definitely it is a duplicated error
-	err = log.AddVote(duplicateVote)
-	assert.Error(t, err) // duplicated vote error
-
-	prepares := log.PrepareVoteSet(1)
-	precommits := log.PrecommitVoteSet(1)
-	assert.Equal(t, prepares.Len(), 2)   //  Vote + Duplicated
-	assert.Equal(t, precommits.Len(), 0) // no precommit votes
-	assert.Equal(t, len(log.RoundMessages(1).AllVotes()), 2)
-	assert.True(t, log.HasVote(duplicateVote.Hash()))
-	assert.True(t, log.HasVote(validVote.Hash()))
-	assert.False(t, log.HasVote(invalidVote.Hash()))
+	added, err := log.AddVote(invVote)
+	assert.Error(t, err)
+	assert.False(t, added)
+	assert.False(t, log.HasVote(invVote.Hash()))
 }
 
 func TestSetRoundProposal(t *testing.T) {
@@ -82,7 +100,7 @@ func TestCanVote(t *testing.T) {
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
 
-	addr := ts.RandomAddress()
+	addr := ts.RandAddress()
 	assert.True(t, log.CanVote(signers[0].Address()))
 	assert.False(t, log.CanVote(addr))
 }

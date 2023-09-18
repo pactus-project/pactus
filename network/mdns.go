@@ -7,7 +7,6 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2pmdns "github.com/libp2p/go-libp2p/p2p/discovery/mdns"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -42,7 +41,7 @@ func (mdns *mdnsService) HandlePeerFound(pi lp2ppeer.AddrInfo) {
 	if pi.ID != mdns.host.ID() {
 		mdns.logger.Debug("connecting to new peer", "addr", pi.Addrs, "id", pi.ID.Pretty())
 		if err := mdns.host.Connect(ctx, pi); err != nil {
-			mdns.logger.Error("error on connecting to peer", "id", pi.ID.Pretty(), "err", err)
+			mdns.logger.Error("error on connecting to peer", "id", pi.ID.Pretty(), "error", err)
 		}
 	}
 }
@@ -50,7 +49,7 @@ func (mdns *mdnsService) HandlePeerFound(pi lp2ppeer.AddrInfo) {
 func (mdns *mdnsService) Start() error {
 	err := mdns.service.Start()
 	if err != nil {
-		return errors.Errorf(errors.ErrNetwork, err.Error())
+		return LibP2PError{Err: err}
 	}
 
 	return nil
@@ -59,6 +58,6 @@ func (mdns *mdnsService) Start() error {
 func (mdns *mdnsService) Stop() {
 	err := mdns.service.Close()
 	if err != nil {
-		mdns.logger.Error("unable to close the network", "err", err)
+		mdns.logger.Error("unable to close the network", "error", err)
 	}
 }

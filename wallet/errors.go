@@ -6,9 +6,6 @@ import (
 )
 
 var (
-	// ErrInvalidCRC describes an error in which the wallet CRC is invalid.
-	ErrInvalidCRC = errors.New("invalid CRC")
-
 	// ErrInvalidNetwork describes an error in which the network is invalid.
 	ErrInvalidNetwork = errors.New("invalid network")
 
@@ -20,16 +17,22 @@ var (
 	ErrHistoryExists = errors.New("transaction already exists")
 )
 
-// ErrWalletExits describes an error in which a wallet exists in the
+// CRCNotMatchError describes an error in which the wallet CRC is not macthed.
+type CRCNotMatchError struct {
+	Expected uint32
+	Got      uint32
+}
+
+func (e CRCNotMatchError) Error() string {
+	return fmt.Sprintf("crc not matched, expected: %d, got: %d", e.Expected, e.Got)
+}
+
+// WalletExitsError describes an error in which a wallet exists in the
 // given path.
-type ErrWalletExits struct {
+type WalletExitsError struct { //nolint
 	Path string
 }
 
-func NewErrWalletExits(path string) error {
-	return ErrWalletExits{Path: path}
-}
-
-func (e ErrWalletExits) Error() string {
+func (e WalletExitsError) Error() string {
 	return fmt.Sprintf("a wallet exists at: %s", e.Path)
 }

@@ -6,9 +6,11 @@ import (
 	"sync"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
@@ -35,13 +37,14 @@ var (
 	accountPrefix     = []byte{0x05}
 	validatorPrefix   = []byte{0x07}
 	blockHeightPrefix = []byte{0x09}
+	publicKeyPrefix   = []byte{0x0a}
 )
 
 func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 	data, err := db.Get(key, nil)
 	if err != nil {
 		// Probably key doesn't exist in database
-		logger.Trace("database error", "err", err, "key", key)
+		logger.Trace("database error", "error", err, "key", key)
 		return nil, err
 	}
 	return data, nil
@@ -92,8 +95,9 @@ func NewStore(conf *Config, stampLookupCapacity int) (Store, error) {
 		height = lastHeight - uint32(stampLookupCapacity)
 	}
 	for ; height <= lastHeight; height++ {
-		storedBlock, _ := s.Block(height)
-		s.updateStampLookup(height, storedBlock.ToBlock())
+		committedBlock, _ := s.Block(height)
+		block, _ := committedBlock.ToBlock()
+		s.updateStampLookup(height, block)
 	}
 
 	return s, nil
@@ -114,7 +118,7 @@ func (s *store) updateStampLookup(height uint32, block *block.Block) {
 	s.stampLookup.PushBack(block.Stamp(), pair)
 }
 
-func (s *store) SaveBlock(height uint32, block *block.Block, cert *block.Certificate) {
+func (s *store) SaveBlock(height uint32, block *block.Block, cert *certificate.Certificate) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -140,7 +144,7 @@ func (s *store) SaveBlock(height uint32, block *block.Block, cert *block.Certifi
 	s.updateStampLookup(height, block)
 }
 
-func (s *store) Block(height uint32) (*StoredBlock, error) {
+func (s *store) Block(height uint32) (*CommittedBlock, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -154,7 +158,8 @@ func (s *store) Block(height uint32) (*StoredBlock, error) {
 		return nil, err
 	}
 
-	return &StoredBlock{
+	return &CommittedBlock{
+		Store:     s,
 		BlockHash: blockHash,
 		Height:    height,
 		Data:      data[hash.HashSize:],
@@ -192,7 +197,20 @@ func (s *store) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
 	return 0, nil
 }
 
-func (s *store) Transaction(id tx.ID) (*StoredTx, error) {
+func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
+	bs, err := tryGet(s.db, publicKeyKey(addr))
+	if err != nil {
+		return nil, err
+	}
+	pubKey, err := bls.PublicKeyFromBytes(bs)
+	if err != nil {
+		return nil, err
+	}
+
+	return pubKey, err
+}
+
+func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -211,12 +229,23 @@ func (s *store) Transaction(id tx.ID) (*StoredTx, error) {
 	}
 	blockTime := util.SliceToUint32(data[hash.HashSize+1 : hash.HashSize+5])
 
-	return &StoredTx{
+	return &CommittedTx{
+		Store:     s,
 		TxID:      id,
 		Height:    pos.height,
 		BlockTime: blockTime,
 		Data:      data[start:end],
 	}, nil
+}
+
+// TODO implement Dequeue for this function, for the better performance.
+func (s *store) AnyRecentTransaction(id tx.ID) bool {
+	s.lk.Lock()
+	defer s.lk.Unlock()
+
+	pos, _ := s.txStore.tx(id)
+
+	return pos != nil
 }
 
 func (s *store) HasAccount(addr crypto.Address) bool {
@@ -310,7 +339,7 @@ func (s *store) UpdateValidator(acc *validator.Validator) {
 	s.validatorStore.updateValidator(s.batch, acc)
 }
 
-func (s *store) LastCertificate() (uint32, *block.Certificate) {
+func (s *store) LastCertificate() (uint32, *certificate.Certificate) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -322,7 +351,7 @@ func (s *store) LastCertificate() (uint32, *block.Certificate) {
 	r := bytes.NewReader(data)
 	version := int32(0)
 	height := uint32(0)
-	cert := new(block.Certificate)
+	cert := new(certificate.Certificate)
 	err := encoding.ReadElements(r, &version, &height)
 	if err != nil {
 		return 0, nil

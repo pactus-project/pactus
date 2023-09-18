@@ -8,7 +8,7 @@ import (
 // PeerAddrsToAddrInfo converts a slice of string peer addresses
 // to AddrInfo.
 func PeerAddrsToAddrInfo(addrs []string) ([]lp2ppeer.AddrInfo, error) {
-	var pis []lp2ppeer.AddrInfo
+	pis := make([]lp2ppeer.AddrInfo, 0, len(addrs))
 	for _, addr := range addrs {
 		a, err := multiaddr.NewMultiaddr(addr)
 		if err != nil {

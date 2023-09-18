@@ -6,7 +6,6 @@ import (
 
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -22,10 +21,11 @@ type gossipService struct {
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	logger *logger.SubLogger) *gossipService {
+	logger *logger.SubLogger,
+) *gossipService {
 	pubsub, err := lp2pps.NewGossipSub(ctx, host)
 	if err != nil {
-		logger.Panic("unable to start Gossip service", "err", err)
+		logger.Panic("unable to start Gossip service", "error", err)
 		return nil
 	}
 
@@ -49,11 +49,11 @@ func (g *gossipService) BroadcastMessage(msg []byte, topic *lp2pps.Topic) error 
 func (g *gossipService) JoinTopic(name string) (*lp2pps.Topic, error) {
 	topic, err := g.pubsub.Join(name)
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, LibP2PError{Err: err}
 	}
 	sub, err := topic.Subscribe()
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrNetwork, err.Error())
+		return nil, LibP2PError{Err: err}
 	}
 
 	g.topics = append(g.topics, topic)
@@ -66,7 +66,7 @@ func (g *gossipService) JoinTopic(name string) (*lp2pps.Topic, error) {
 		for {
 			m, err := sub.Next(g.ctx)
 			if err != nil {
-				g.logger.Debug("readLoop error", "err", err)
+				g.logger.Debug("readLoop error", "error", err)
 				return
 			}
 
@@ -100,7 +100,8 @@ func (g *gossipService) onReceiveMessage(m *lp2pps.Message) {
 		return
 	}
 
-	g.logger.Debug("receiving new gossip message", "from", m.GetFrom(), "received from", m.ReceivedFrom)
+	g.logger.Debug("receiving new gossip message",
+		"source", m.GetFrom().ShortString(), "from", m.ReceivedFrom.ShortString())
 	event := &GossipMessage{
 		Source: m.GetFrom(),
 		From:   m.ReceivedFrom,

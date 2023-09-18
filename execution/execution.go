@@ -12,27 +12,26 @@ import (
 
 type Executor interface {
 	Execute(trx *tx.Tx, sb sandbox.Sandbox) error
-	Fee() int64
 }
 type Execution struct {
-	executors      map[payload.Type]Executor
-	accumulatedFee int64
-	strict         bool
+	executors map[payload.Type]Executor
+	strict    bool
 }
 
 func newExecution(strict bool) *Execution {
 	execs := make(map[payload.Type]Executor)
-	execs[payload.PayloadTypeTransfer] = executor.NewTransferExecutor(strict)
-	execs[payload.PayloadTypeBond] = executor.NewBondExecutor(strict)
-	execs[payload.PayloadTypeSortition] = executor.NewSortitionExecutor(strict)
-	execs[payload.PayloadTypeUnbond] = executor.NewUnbondExecutor(strict)
-	execs[payload.PayloadTypeWithdraw] = executor.NewWithdrawExecutor(strict)
+	execs[payload.TypeTransfer] = executor.NewTransferExecutor(strict)
+	execs[payload.TypeBond] = executor.NewBondExecutor(strict)
+	execs[payload.TypeSortition] = executor.NewSortitionExecutor(strict)
+	execs[payload.TypeUnbond] = executor.NewUnbondExecutor(strict)
+	execs[payload.TypeWithdraw] = executor.NewWithdrawExecutor(strict)
 
 	return &Execution{
 		executors: execs,
 		strict:    strict,
 	}
 }
+
 func NewExecutor() *Execution {
 	return newExecution(true)
 }
@@ -42,17 +41,14 @@ func NewChecker() *Execution {
 }
 
 func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
-	if err := trx.SanityCheck(); err != nil {
-		return err
+	if exists := sb.AnyRecentTransaction(trx.ID()); exists {
+		return TransactionCommittedError{
+			ID: trx.ID(),
+		}
 	}
-	if trx.IsLockTime() {
-		if err := exe.checkLockTime(trx, sb); err != nil {
-			return err
-		}
-	} else {
-		if err := exe.checkStamp(trx, sb); err != nil {
-			return err
-		}
+
+	if err := exe.checkLockTime(trx, sb); err != nil {
+		return err
 	}
 
 	if err := exe.checkFee(trx, sb); err != nil {
@@ -61,57 +57,46 @@ func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 	e, ok := exe.executors[trx.Payload().Type()]
 	if !ok {
-		return errors.Errorf(errors.ErrInvalidTx, "unknown transaction type: %v", trx.Payload().Type())
+		return UnknownPayloadTypeError{
+			PayloadType: trx.Payload().Type(),
+		}
 	}
 
 	if err := e.Execute(trx, sb); err != nil {
 		return err
 	}
 
-	exe.accumulatedFee += e.Fee()
+	sb.CommitTransaction(trx)
 
 	return nil
-}
-
-func (exe *Execution) AccumulatedFee() int64 {
-	return exe.accumulatedFee
 }
 
 func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
-	curHeight := sb.CurrentHeight()
-	lockTimeHeight := trx.LockTime()
-	interval := sb.Params().TransactionToLiveInterval
-
-	if trx.IsSubsidyTx() || trx.IsSortitionTx() {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid lock time")
-	}
-
-	if curHeight > lockTimeHeight+interval {
-		return errors.Errorf(errors.ErrInvalidTx, "expired lock time")
-	}
-
-	if curHeight < lockTimeHeight {
-		if exe.strict {
-			return errors.Errorf(errors.ErrInvalidTx, "unfinalized transaction")
-		}
-	}
-
-	return nil
-}
-
-func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
-	curHeight := sb.CurrentHeight()
-	height, _ := sb.RecentBlockByStamp(trx.Stamp())
 	interval := sb.Params().TransactionToLiveInterval
 
 	if trx.IsSubsidyTx() {
-		interval = 1
+		interval = 0
 	} else if trx.IsSortitionTx() {
 		interval = sb.Params().SortitionInterval
 	}
 
-	if curHeight-height > interval {
-		return errors.Errorf(errors.ErrInvalidTx, "invalid stamp")
+	if sb.CurrentHeight() > interval {
+		if trx.LockTime() < sb.CurrentHeight()-interval {
+			return PastLockTimeError{
+				LockTime: trx.LockTime(),
+			}
+		}
+	}
+
+	if exe.strict {
+		// In strict mode, transactions with future lock times are rejected.
+		// In non-strict mode, they are added to the transaction pool and
+		// processed once eligible.
+		if trx.LockTime() > sb.CurrentHeight() {
+			return FutureLockTimeError{
+				LockTime: trx.LockTime(),
+			}
+		}
 	}
 
 	return nil
@@ -120,7 +105,7 @@ func (exe *Execution) checkStamp(trx *tx.Tx, sb sandbox.Sandbox) error {
 func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if trx.IsFreeTx() {
 		if trx.Fee() != 0 {
-			return errors.Errorf(errors.ErrInvalidTx, "fee is wrong, expected: 0, got: %v", trx.Fee())
+			return errors.Errorf(errors.ErrInvalidFee, "fee is wrong, expected: 0, got: %v", trx.Fee())
 		}
 	} else {
 		fee := CalculateFee(trx.Payload().Value(), sb.Params())
