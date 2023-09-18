@@ -70,3 +70,7 @@ func (p *WithdrawPayload) String() string {
 		p.To.ShortString(),
 		p.Amount)
 }
+
+func (p *WithdrawPayload) ReceiverAddr() *crypto.Address {
+	return &p.To
+}

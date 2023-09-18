@@ -709,7 +709,16 @@ func (st *state) publishEvents(height uint32, block *block.Block) {
 
 	for i := 1; i < block.Transactions().Len(); i++ {
 		tx := block.Transactions().Get(i)
-		TxEvent := event.CreateNewTransactionEvent(tx.ID(), height)
+
+		accChangeEvent := event.CreateAccountChangeEvent(tx.Payload().Signer(), height)
+		st.eventCh <- accChangeEvent
+
+		if tx.Payload().ReceiverAddr() != nil {
+			accChangeEvent := event.CreateAccountChangeEvent(*tx.Payload().ReceiverAddr(), height)
+			st.eventCh <- accChangeEvent
+		}
+
+		TxEvent := event.CreateTransactionEvent(tx.ID(), height)
 		st.eventCh <- TxEvent
 	}
 }

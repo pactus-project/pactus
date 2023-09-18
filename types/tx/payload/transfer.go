@@ -98,3 +98,7 @@ func (p *TransferPayload) String() string {
 		p.Receiver.ShortString(),
 		p.Amount)
 }
+
+func (p *TransferPayload) ReceiverAddr() *crypto.Address {
+	return &p.Receiver
+}

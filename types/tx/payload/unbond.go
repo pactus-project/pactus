@@ -51,3 +51,7 @@ func (p *UnbondPayload) String() string {
 		p.Validator.ShortString(),
 	)
 }
+
+func (p *UnbondPayload) ReceiverAddr() *crypto.Address {
+	return nil
+}
