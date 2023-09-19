@@ -232,7 +232,7 @@ func (s *blockchainServer) GetPublicKey(_ context.Context,
 
 	publicKey, err := s.state.GetPublicKey(addr)
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "account not found")
+		return nil, status.Errorf(codes.NotFound, "public key not found")
 	}
 
 	return &pactus.GetPublicKeyResponse{PublicKey: publicKey.String()}, nil
