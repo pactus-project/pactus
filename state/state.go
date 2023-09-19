@@ -737,5 +737,9 @@ func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, er
 }
 
 func (st *state) GetPublicKey(addr crypto.Address) (*bls.PublicKey, error) {
-	return st.store.PublicKey(addr)
+	pubKey, err := st.store.PublicKey(addr)
+	if err != nil {
+		return &bls.PublicKey{}, err
+	}
+	return pubKey, nil
 }
