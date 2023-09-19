@@ -268,5 +268,5 @@ func (m *MockState) CalculateFee(_ int64, payloadType payload.Type) (int64, erro
 }
 
 func (m *MockState) GetPublicKey(_ crypto.Address) (*bls.PublicKey, error) {
-	return &bls.PublicKey{}, nil
+	return m.store.PublicKey(addr)
 }
