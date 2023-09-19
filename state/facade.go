@@ -51,5 +51,5 @@ type Facade interface {
 	Params() param.Params
 	Close() error
 	CalculateFee(amount int64, payloadType payload.Type) (int64, error)
-	GetPublicKey(addr crypto.Address) (*bls.PublicKey, error)
+	PublicKey(addr crypto.Address) (crypto.PublicKey, error)
 }
