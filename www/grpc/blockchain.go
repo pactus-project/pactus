@@ -230,7 +230,7 @@ func (s *blockchainServer) GetPublicKey(_ context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "invalid account address: %v", err.Error())
 	}
 
-	publicKey, err := s.state.GetPublicKey(addr)
+	publicKey, err := s.state.PublicKey(addr)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "public key not found")
 	}

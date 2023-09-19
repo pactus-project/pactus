@@ -268,7 +268,7 @@ func TestGetPublicKey(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	conn, client := testBlockchainClient(t)
-	_, signer := tMockState.TestStore.AddTestAccount()
+	val := tMockState.TestStore.AddTestValidator()
 
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
 		res, err := client.GetPublicKey(tCtx,
@@ -288,11 +288,11 @@ func TestGetPublicKey(t *testing.T) {
 
 	t.Run("Should return the public key", func(t *testing.T) {
 		res, err := client.GetPublicKey(tCtx,
-			&pactus.GetPublicKeyRequest{Address: signer.Address().String()})
+			&pactus.GetPublicKeyRequest{Address: val.Address().String()})
 
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, res.PublicKey, signer.PublicKey().String())
+		assert.Equal(t, res.PublicKey, val.PublicKey().String())
 	})
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }

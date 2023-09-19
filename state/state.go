@@ -7,7 +7,6 @@ import (
 
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/genesis"
@@ -736,10 +735,6 @@ func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, er
 	}
 }
 
-func (st *state) GetPublicKey(addr crypto.Address) (*bls.PublicKey, error) {
-	pubKey, err := st.store.PublicKey(addr)
-	if err != nil {
-		return nil, err
-	}
-	return pubKey, nil
+func (st *state) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
+	return st.store.PublicKey(addr)
 }

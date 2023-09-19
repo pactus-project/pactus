@@ -7,7 +7,6 @@ import (
 
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/store"
@@ -267,6 +266,6 @@ func (m *MockState) CalculateFee(_ int64, payloadType payload.Type) (int64, erro
 	}
 }
 
-func (m *MockState) GetPublicKey(_ crypto.Address) (*bls.PublicKey, error) {
-	return m.store.PublicKey(addr)
+func (m *MockState) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
+	return m.TestStore.PublicKey(addr)
 }
