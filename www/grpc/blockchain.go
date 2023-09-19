@@ -175,23 +175,10 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 		return nil, status.Errorf(codes.NotFound, "account not found")
 	}
 	res := &pactus.GetAccountResponse{
-		Account: accountToProto(acc),
+		Account: accountToProto(addr, acc),
 	}
 
 	return res, nil
-}
-
-func (s *blockchainServer) GetAccountByNumber(_ context.Context,
-	req *pactus.GetAccountByNumberRequest,
-) (*pactus.GetAccountResponse, error) {
-	acc := s.state.AccountByNumber(req.Number)
-	if acc == nil {
-		return nil, status.Errorf(codes.InvalidArgument, "account not found")
-	}
-
-	return &pactus.GetAccountResponse{
-		Account: accountToProto(acc),
-	}, nil
 }
 
 func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
@@ -250,13 +237,14 @@ func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 	}
 }
 
-func accountToProto(acc *account.Account) *pactus.AccountInfo {
+func accountToProto(addr crypto.Address, acc *account.Account) *pactus.AccountInfo {
 	data, _ := acc.Bytes()
 	return &pactus.AccountInfo{
 		Hash:    acc.Hash().Bytes(),
 		Data:    data,
 		Number:  acc.Number(),
 		Balance: acc.Balance(),
+		Address: addr.String(),
 	}
 }
 

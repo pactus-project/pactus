@@ -10,7 +10,6 @@ import (
 
 type accountStore struct {
 	db         *leveldb.DB
-	numberMap  map[int32]*account.Account
 	addressMap map[crypto.Address]*account.Account
 	total      int32
 }
@@ -44,7 +43,6 @@ func newAccountStore(db *leveldb.DB) *accountStore {
 	return &accountStore{
 		db:         db,
 		total:      total,
-		numberMap:  numberMap,
 		addressMap: addressMap,
 	}
 }
@@ -56,15 +54,6 @@ func (as *accountStore) hasAccount(addr crypto.Address) bool {
 
 func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
 	acc, ok := as.addressMap[addr]
-	if ok {
-		return acc.Clone(), nil
-	}
-
-	return nil, ErrNotFound
-}
-
-func (as *accountStore) accountByNumber(number int32) (*account.Account, error) {
-	acc, ok := as.numberMap[number]
 	if ok {
 		return acc.Clone(), nil
 	}
@@ -92,7 +81,6 @@ func (as *accountStore) updateAccount(batch *leveldb.Batch, addr crypto.Address,
 	if !as.hasAccount(addr) {
 		as.total++
 	}
-	as.numberMap[acc.Number()] = acc
 	as.addressMap[addr] = acc
 
 	batch.Put(accountKey(addr), data)

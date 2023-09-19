@@ -64,53 +64,6 @@ class GetAccountRequest extends $pb.GeneratedMessage {
   void clearAddress() => clearField(1);
 }
 
-class GetAccountByNumberRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetAccountByNumberRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
-    ..hasRequiredFields = false
-  ;
-
-  GetAccountByNumberRequest._() : super();
-  factory GetAccountByNumberRequest({
-    $core.int? number,
-  }) {
-    final _result = create();
-    if (number != null) {
-      _result.number = number;
-    }
-    return _result;
-  }
-  factory GetAccountByNumberRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory GetAccountByNumberRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  GetAccountByNumberRequest clone() => GetAccountByNumberRequest()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  GetAccountByNumberRequest copyWith(void Function(GetAccountByNumberRequest) updates) => super.copyWith((message) => updates(message as GetAccountByNumberRequest)) as GetAccountByNumberRequest; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static GetAccountByNumberRequest create() => GetAccountByNumberRequest._();
-  GetAccountByNumberRequest createEmptyInstance() => create();
-  static $pb.PbList<GetAccountByNumberRequest> createRepeated() => $pb.PbList<GetAccountByNumberRequest>();
-  @$core.pragma('dart2js:noInline')
-  static GetAccountByNumberRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetAccountByNumberRequest>(create);
-  static GetAccountByNumberRequest? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.int get number => $_getIZ(0);
-  @$pb.TagNumber(1)
-  set number($core.int v) { $_setSignedInt32(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasNumber() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearNumber() => clearField(1);
-}
-
 class GetAccountResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetAccountResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOM<AccountInfo>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'account', subBuilder: AccountInfo.create)
@@ -1140,6 +1093,7 @@ class AccountInfo extends $pb.GeneratedMessage {
     ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
     ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
     ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'balance')
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
     ..hasRequiredFields = false
   ;
 
@@ -1149,6 +1103,7 @@ class AccountInfo extends $pb.GeneratedMessage {
     $core.List<$core.int>? data,
     $core.int? number,
     $fixnum.Int64? balance,
+    $core.String? address,
   }) {
     final _result = create();
     if (hash != null) {
@@ -1162,6 +1117,9 @@ class AccountInfo extends $pb.GeneratedMessage {
     }
     if (balance != null) {
       _result.balance = balance;
+    }
+    if (address != null) {
+      _result.address = address;
     }
     return _result;
   }
@@ -1221,6 +1179,15 @@ class AccountInfo extends $pb.GeneratedMessage {
   $core.bool hasBalance() => $_has(3);
   @$pb.TagNumber(4)
   void clearBalance() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get address => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set address($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasAddress() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearAddress() => clearField(5);
 }
 
 class BlockHeaderInfo extends $pb.GeneratedMessage {
@@ -1630,10 +1597,6 @@ class BlockchainApi {
   $async.Future<GetAccountResponse> getAccount($pb.ClientContext? ctx, GetAccountRequest request) {
     var emptyResponse = GetAccountResponse();
     return _client.invoke<GetAccountResponse>(ctx, 'Blockchain', 'GetAccount', request, emptyResponse);
-  }
-  $async.Future<GetAccountResponse> getAccountByNumber($pb.ClientContext? ctx, GetAccountByNumberRequest request) {
-    var emptyResponse = GetAccountResponse();
-    return _client.invoke<GetAccountResponse>(ctx, 'Blockchain', 'GetAccountByNumber', request, emptyResponse);
   }
   $async.Future<GetValidatorResponse> getValidator($pb.ClientContext? ctx, GetValidatorRequest request) {
     var emptyResponse = GetValidatorResponse();

@@ -44,11 +44,6 @@ class BlockchainStub(object):
                 request_serializer=blockchain__pb2.GetAccountRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetAccountResponse.FromString,
                 )
-        self.GetAccountByNumber = channel.unary_unary(
-                '/pactus.Blockchain/GetAccountByNumber',
-                request_serializer=blockchain__pb2.GetAccountByNumberRequest.SerializeToString,
-                response_deserializer=blockchain__pb2.GetAccountResponse.FromString,
-                )
         self.GetValidator = channel.unary_unary(
                 '/pactus.Blockchain/GetValidator',
                 request_serializer=blockchain__pb2.GetValidatorRequest.SerializeToString,
@@ -105,12 +100,6 @@ class BlockchainServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetAccountByNumber(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def GetValidator(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -160,11 +149,6 @@ def add_BlockchainServicer_to_server(servicer, server):
             'GetAccount': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAccount,
                     request_deserializer=blockchain__pb2.GetAccountRequest.FromString,
-                    response_serializer=blockchain__pb2.GetAccountResponse.SerializeToString,
-            ),
-            'GetAccountByNumber': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetAccountByNumber,
-                    request_deserializer=blockchain__pb2.GetAccountByNumberRequest.FromString,
                     response_serializer=blockchain__pb2.GetAccountResponse.SerializeToString,
             ),
             'GetValidator': grpc.unary_unary_rpc_method_handler(
@@ -290,23 +274,6 @@ class Blockchain(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/pactus.Blockchain/GetAccount',
             blockchain__pb2.GetAccountRequest.SerializeToString,
-            blockchain__pb2.GetAccountResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetAccountByNumber(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Blockchain/GetAccountByNumber',
-            blockchain__pb2.GetAccountByNumberRequest.SerializeToString,
             blockchain__pb2.GetAccountResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

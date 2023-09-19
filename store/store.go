@@ -262,13 +262,6 @@ func (s *store) Account(addr crypto.Address) (*account.Account, error) {
 	return s.accountStore.account(addr)
 }
 
-func (s *store) AccountByNumber(number int32) (*account.Account, error) {
-	s.lk.RLock()
-	defer s.lk.RUnlock()
-
-	return s.accountStore.accountByNumber(number)
-}
-
 func (s *store) TotalAccounts() int32 {
 	s.lk.Lock()
 	defer s.lk.Unlock()

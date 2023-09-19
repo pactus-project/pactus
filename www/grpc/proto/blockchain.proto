@@ -15,7 +15,6 @@ service Blockchain {
   rpc GetConsensusInfo(GetConsensusInfoRequest)
       returns (GetConsensusInfoResponse);
   rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
-  rpc GetAccountByNumber(GetAccountByNumberRequest) returns(GetAccountResponse);
   rpc GetValidator(GetValidatorRequest) returns (GetValidatorResponse);
   rpc GetValidatorByNumber(GetValidatorByNumberRequest)
       returns (GetValidatorResponse);
@@ -24,10 +23,6 @@ service Blockchain {
 }
 
 message GetAccountRequest { string address = 1; }
-
-message  GetAccountByNumberRequest {
-  int32 number = 1;
-}
 
 message GetAccountResponse { AccountInfo account = 1; }
 
@@ -99,6 +94,7 @@ message AccountInfo {
   bytes data = 2;
   int32 number = 3;
   int64 balance = 4;
+  string address = 5;
 }
 
 message BlockHeaderInfo {

@@ -181,40 +181,6 @@ func TestGetAccount(t *testing.T) {
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }
 
-func TestGetAccountByNumber(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	conn, client := testBlockchainClient(t)
-	acc, _ := tMockState.TestStore.AddTestAccount()
-
-	t.Run("Should return nil value due to invalid number ", func(t *testing.T) {
-		res, err := client.GetAccountByNumber(tCtx,
-			&pactus.GetAccountByNumberRequest{Number: -1})
-
-		assert.Error(t, err)
-		assert.Nil(t, res)
-	})
-
-	t.Run("Should return nil for non existing account ", func(t *testing.T) {
-		res, err := client.GetAccountByNumber(tCtx,
-			&pactus.GetAccountByNumberRequest{Number: ts.RandInt32(1000)})
-
-		assert.Error(t, err)
-		assert.Nil(t, res)
-	})
-
-	t.Run("Should return account details", func(t *testing.T) {
-		res, err := client.GetAccountByNumber(tCtx,
-			&pactus.GetAccountByNumberRequest{Number: acc.Number()})
-
-		assert.Nil(t, err)
-		assert.NotNil(t, res)
-		assert.Equal(t, res.Account.Balance, acc.Balance())
-		assert.Equal(t, res.Account.Number, acc.Number())
-	})
-	assert.Nil(t, conn.Close(), "Error closing connection")
-}
-
 func TestGetValidator(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 

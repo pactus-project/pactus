@@ -36,10 +36,7 @@ func TestAccountCounter(t *testing.T) {
 		acc1, err := td.store.Account(signer.Address())
 		assert.NoError(t, err)
 
-		acc2, err := td.store.AccountByNumber(num)
-		assert.NoError(t, err)
-
-		assert.Equal(t, acc1.Hash(), acc2.Hash())
+		assert.Equal(t, acc1.Hash(), acc.Hash())
 		assert.Equal(t, td.store.TotalAccounts(), int32(1))
 		assert.True(t, td.store.HasAccount(signer.Address()))
 	})
@@ -62,55 +59,6 @@ func TestAccountBatchSaving(t *testing.T) {
 		td.store.Close()
 		store, _ := NewStore(td.store.config, 21)
 		assert.Equal(t, store.TotalAccounts(), total)
-	})
-}
-
-func TestAccountByNumber(t *testing.T) {
-	td := setup(t)
-
-	total := td.RandInt32NonZero(100)
-	t.Run("Add some accounts", func(t *testing.T) {
-		for i := int32(0); i < total; i++ {
-			acc, signer := td.GenerateTestAccount(i)
-			td.store.UpdateAccount(signer.Address(), acc)
-		}
-		assert.NoError(t, td.store.WriteBatch())
-		assert.Equal(t, td.store.TotalAccounts(), total)
-	})
-
-	t.Run("Get a random account", func(t *testing.T) {
-		num := td.RandInt32(total)
-		acc, err := td.store.AccountByNumber(num)
-		assert.NoError(t, err)
-		require.NotNil(t, acc)
-		assert.Equal(t, acc.Number(), num)
-	})
-
-	t.Run("negative number", func(t *testing.T) {
-		acc, err := td.store.AccountByNumber(-1)
-		assert.Error(t, err)
-		assert.Nil(t, acc)
-	})
-
-	t.Run("Non existing account", func(t *testing.T) {
-		acc, err := td.store.AccountByNumber(total + 1)
-		assert.Error(t, err)
-		assert.Nil(t, acc)
-	})
-
-	t.Run("Reopen the store", func(t *testing.T) {
-		td.store.Close()
-		store, _ := NewStore(td.store.config, 21)
-
-		num := td.RandInt32(total)
-		acc, err := store.AccountByNumber(num)
-		assert.NoError(t, err)
-		require.NotNil(t, acc)
-		assert.Equal(t, acc.Number(), num)
-
-		acc, err = td.store.AccountByNumber(total + 1)
-		assert.Error(t, err)
-		assert.Nil(t, acc)
 	})
 }
 
@@ -190,11 +138,7 @@ func TestAccountDeepCopy(t *testing.T) {
 	acc1, signer := td.GenerateTestAccount(num)
 	td.store.UpdateAccount(signer.Address(), acc1)
 
-	acc2, _ := td.store.AccountByNumber(num)
+	acc2, _ := td.store.Account(signer.Address())
 	acc2.AddToBalance(1)
-	assert.NotEqual(t, td.store.accountStore.numberMap[num].Hash(), acc2.Hash())
-
-	acc3, _ := td.store.Account(signer.Address())
-	acc3.AddToBalance(1)
-	assert.NotEqual(t, td.store.accountStore.numberMap[num].Hash(), acc3.Hash())
+	assert.NotEqual(t, td.store.accountStore.addressMap[signer.Address()].Hash(), acc2.Hash())
 }

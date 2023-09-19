@@ -654,14 +654,6 @@ func (st *state) AccountByAddress(addr crypto.Address) *account.Account {
 	return acc
 }
 
-func (st *state) AccountByNumber(number int32) *account.Account {
-	acc, err := st.store.AccountByNumber(number)
-	if err != nil {
-		st.logger.Trace("error on retrieving account", "error", err)
-	}
-	return acc
-}
-
 func (st *state) ValidatorAddresses() []crypto.Address {
 	return st.store.ValidatorAddresses()
 }
