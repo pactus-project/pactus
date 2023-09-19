@@ -711,14 +711,13 @@ class TransactionInfo extends $pb.GeneratedMessage {
     ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id', $pb.PbFieldType.OY)
     ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
     ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'version', $pb.PbFieldType.O3)
-    ..a<$core.List<$core.int>>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stamp', $pb.PbFieldType.OY)
-    ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lockTime', $pb.PbFieldType.OU3)
-    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'value')
-    ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
-    ..e<PayloadType>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'payloadType', $pb.PbFieldType.OE, protoName: 'payloadType', defaultOrMaker: PayloadType.UNKNOWN, valueOf: PayloadType.valueOf, enumValues: PayloadType.values)
-    ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'memo')
-    ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
-    ..a<$core.List<$core.int>>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', $pb.PbFieldType.OY)
+    ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lockTime', $pb.PbFieldType.OU3)
+    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'value')
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
+    ..e<PayloadType>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'payloadType', $pb.PbFieldType.OE, protoName: 'payloadType', defaultOrMaker: PayloadType.UNKNOWN, valueOf: PayloadType.valueOf, enumValues: PayloadType.values)
+    ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'memo')
+    ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
+    ..a<$core.List<$core.int>>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', $pb.PbFieldType.OY)
     ..aOM<PayloadTransfer>(30, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transfer', subBuilder: PayloadTransfer.create)
     ..aOM<PayloadBond>(31, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'bond', subBuilder: PayloadBond.create)
     ..aOM<PayloadSortition>(32, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sortition', subBuilder: PayloadSortition.create)
@@ -732,7 +731,6 @@ class TransactionInfo extends $pb.GeneratedMessage {
     $core.List<$core.int>? id,
     $core.List<$core.int>? data,
     $core.int? version,
-    $core.List<$core.int>? stamp,
     $core.int? lockTime,
     $fixnum.Int64? value,
     $fixnum.Int64? fee,
@@ -755,9 +753,6 @@ class TransactionInfo extends $pb.GeneratedMessage {
     }
     if (version != null) {
       _result.version = version;
-    }
-    if (stamp != null) {
-      _result.stamp = stamp;
     }
     if (lockTime != null) {
       _result.lockTime = lockTime;
@@ -849,131 +844,122 @@ class TransactionInfo extends $pb.GeneratedMessage {
   void clearVersion() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.List<$core.int> get stamp => $_getN(3);
+  $core.int get lockTime => $_getIZ(3);
   @$pb.TagNumber(4)
-  set stamp($core.List<$core.int> v) { $_setBytes(3, v); }
+  set lockTime($core.int v) { $_setUnsignedInt32(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasStamp() => $_has(3);
+  $core.bool hasLockTime() => $_has(3);
   @$pb.TagNumber(4)
-  void clearStamp() => clearField(4);
+  void clearLockTime() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.int get lockTime => $_getIZ(4);
+  $fixnum.Int64 get value => $_getI64(4);
   @$pb.TagNumber(5)
-  set lockTime($core.int v) { $_setUnsignedInt32(4, v); }
+  set value($fixnum.Int64 v) { $_setInt64(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasLockTime() => $_has(4);
+  $core.bool hasValue() => $_has(4);
   @$pb.TagNumber(5)
-  void clearLockTime() => clearField(5);
+  void clearValue() => clearField(5);
 
   @$pb.TagNumber(6)
-  $fixnum.Int64 get value => $_getI64(5);
+  $fixnum.Int64 get fee => $_getI64(5);
   @$pb.TagNumber(6)
-  set value($fixnum.Int64 v) { $_setInt64(5, v); }
+  set fee($fixnum.Int64 v) { $_setInt64(5, v); }
   @$pb.TagNumber(6)
-  $core.bool hasValue() => $_has(5);
+  $core.bool hasFee() => $_has(5);
   @$pb.TagNumber(6)
-  void clearValue() => clearField(6);
+  void clearFee() => clearField(6);
 
   @$pb.TagNumber(7)
-  $fixnum.Int64 get fee => $_getI64(6);
+  PayloadType get payloadType => $_getN(6);
   @$pb.TagNumber(7)
-  set fee($fixnum.Int64 v) { $_setInt64(6, v); }
+  set payloadType(PayloadType v) { setField(7, v); }
   @$pb.TagNumber(7)
-  $core.bool hasFee() => $_has(6);
+  $core.bool hasPayloadType() => $_has(6);
   @$pb.TagNumber(7)
-  void clearFee() => clearField(7);
+  void clearPayloadType() => clearField(7);
 
   @$pb.TagNumber(8)
-  PayloadType get payloadType => $_getN(7);
+  $core.String get memo => $_getSZ(7);
   @$pb.TagNumber(8)
-  set payloadType(PayloadType v) { setField(8, v); }
+  set memo($core.String v) { $_setString(7, v); }
   @$pb.TagNumber(8)
-  $core.bool hasPayloadType() => $_has(7);
+  $core.bool hasMemo() => $_has(7);
   @$pb.TagNumber(8)
-  void clearPayloadType() => clearField(8);
+  void clearMemo() => clearField(8);
 
   @$pb.TagNumber(9)
-  $core.String get memo => $_getSZ(8);
+  $core.String get publicKey => $_getSZ(8);
   @$pb.TagNumber(9)
-  set memo($core.String v) { $_setString(8, v); }
+  set publicKey($core.String v) { $_setString(8, v); }
   @$pb.TagNumber(9)
-  $core.bool hasMemo() => $_has(8);
+  $core.bool hasPublicKey() => $_has(8);
   @$pb.TagNumber(9)
-  void clearMemo() => clearField(9);
+  void clearPublicKey() => clearField(9);
 
   @$pb.TagNumber(10)
-  $core.String get publicKey => $_getSZ(9);
+  $core.List<$core.int> get signature => $_getN(9);
   @$pb.TagNumber(10)
-  set publicKey($core.String v) { $_setString(9, v); }
+  set signature($core.List<$core.int> v) { $_setBytes(9, v); }
   @$pb.TagNumber(10)
-  $core.bool hasPublicKey() => $_has(9);
+  $core.bool hasSignature() => $_has(9);
   @$pb.TagNumber(10)
-  void clearPublicKey() => clearField(10);
-
-  @$pb.TagNumber(11)
-  $core.List<$core.int> get signature => $_getN(10);
-  @$pb.TagNumber(11)
-  set signature($core.List<$core.int> v) { $_setBytes(10, v); }
-  @$pb.TagNumber(11)
-  $core.bool hasSignature() => $_has(10);
-  @$pb.TagNumber(11)
-  void clearSignature() => clearField(11);
+  void clearSignature() => clearField(10);
 
   @$pb.TagNumber(30)
-  PayloadTransfer get transfer => $_getN(11);
+  PayloadTransfer get transfer => $_getN(10);
   @$pb.TagNumber(30)
   set transfer(PayloadTransfer v) { setField(30, v); }
   @$pb.TagNumber(30)
-  $core.bool hasTransfer() => $_has(11);
+  $core.bool hasTransfer() => $_has(10);
   @$pb.TagNumber(30)
   void clearTransfer() => clearField(30);
   @$pb.TagNumber(30)
-  PayloadTransfer ensureTransfer() => $_ensure(11);
+  PayloadTransfer ensureTransfer() => $_ensure(10);
 
   @$pb.TagNumber(31)
-  PayloadBond get bond => $_getN(12);
+  PayloadBond get bond => $_getN(11);
   @$pb.TagNumber(31)
   set bond(PayloadBond v) { setField(31, v); }
   @$pb.TagNumber(31)
-  $core.bool hasBond() => $_has(12);
+  $core.bool hasBond() => $_has(11);
   @$pb.TagNumber(31)
   void clearBond() => clearField(31);
   @$pb.TagNumber(31)
-  PayloadBond ensureBond() => $_ensure(12);
+  PayloadBond ensureBond() => $_ensure(11);
 
   @$pb.TagNumber(32)
-  PayloadSortition get sortition => $_getN(13);
+  PayloadSortition get sortition => $_getN(12);
   @$pb.TagNumber(32)
   set sortition(PayloadSortition v) { setField(32, v); }
   @$pb.TagNumber(32)
-  $core.bool hasSortition() => $_has(13);
+  $core.bool hasSortition() => $_has(12);
   @$pb.TagNumber(32)
   void clearSortition() => clearField(32);
   @$pb.TagNumber(32)
-  PayloadSortition ensureSortition() => $_ensure(13);
+  PayloadSortition ensureSortition() => $_ensure(12);
 
   @$pb.TagNumber(33)
-  PayloadUnbond get unbond => $_getN(14);
+  PayloadUnbond get unbond => $_getN(13);
   @$pb.TagNumber(33)
   set unbond(PayloadUnbond v) { setField(33, v); }
   @$pb.TagNumber(33)
-  $core.bool hasUnbond() => $_has(14);
+  $core.bool hasUnbond() => $_has(13);
   @$pb.TagNumber(33)
   void clearUnbond() => clearField(33);
   @$pb.TagNumber(33)
-  PayloadUnbond ensureUnbond() => $_ensure(14);
+  PayloadUnbond ensureUnbond() => $_ensure(13);
 
   @$pb.TagNumber(34)
-  PayloadWithdraw get withdraw => $_getN(15);
+  PayloadWithdraw get withdraw => $_getN(14);
   @$pb.TagNumber(34)
   set withdraw(PayloadWithdraw v) { setField(34, v); }
   @$pb.TagNumber(34)
-  $core.bool hasWithdraw() => $_has(15);
+  $core.bool hasWithdraw() => $_has(14);
   @$pb.TagNumber(34)
   void clearWithdraw() => clearField(34);
   @$pb.TagNumber(34)
-  PayloadWithdraw ensureWithdraw() => $_ensure(15);
+  PayloadWithdraw ensureWithdraw() => $_ensure(14);
 }
 
 class TransactionApi {

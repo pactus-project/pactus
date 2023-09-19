@@ -39,8 +39,9 @@ func setup(t *testing.T) *testData {
 	pool := p.(*txPool)
 	assert.NotNil(t, pool)
 
-	block88 := sandbox.TestStore.AddTestBlock(88)
-	testTx := tx.NewSubsidyTx(block88.Stamp(), 89, ts.RandAddress(), 25000000, "subsidy-tx")
+	randHeight := ts.RandHeight()
+	_ = sandbox.TestStore.AddTestBlock(randHeight)
+	testTx := tx.NewSubsidyTx(randHeight+1, ts.RandAddress(), 25000000, "subsidy-tx")
 
 	return &testData{
 		TestSuite: ts,
@@ -94,7 +95,8 @@ func TestAppendInvalidTransaction(t *testing.T) {
 func TestFullPool(t *testing.T) {
 	td := setup(t)
 
-	block10000 := td.sandbox.TestStore.AddTestBlock(10000)
+	randHeight := td.RandHeight()
+	_ = td.sandbox.TestStore.AddTestBlock(randHeight)
 	trxs := make([]*tx.Tx, td.pool.config.sendPoolSize()+1)
 
 	signer := td.RandSigner()
@@ -106,7 +108,7 @@ func TestFullPool(t *testing.T) {
 	assert.Equal(t, td.pool.Size(), 0)
 
 	for i := 0; i < len(trxs); i++ {
-		trx := tx.NewTransferTx(block10000.Stamp(), td.sandbox.CurrentHeight()+1, signer.Address(),
+		trx := tx.NewTransferTx(randHeight+1, signer.Address(),
 			td.RandAddress(), 1000, 1000, "ok")
 		signer.SignMsg(trx)
 		assert.NoError(t, td.pool.AppendTx(trx))
@@ -128,7 +130,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	td := setup(t)
 
 	randHeight := td.RandHeight() + td.sandbox.TestParams.UnbondInterval
-	randBlock := td.sandbox.TestStore.AddTestBlock(randHeight)
+	_ = td.sandbox.TestStore.AddTestBlock(randHeight)
 
 	acc1Signer := td.RandSigner()
 	acc1 := account.NewAccount(0)
@@ -154,24 +156,24 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	val3.AddToStake(10000000000)
 	td.sandbox.UpdateValidator(val3)
 
-	transferTx := tx.NewTransferTx(randBlock.Stamp(), randHeight, acc1Signer.Address(),
+	transferTx := tx.NewTransferTx(randHeight, acc1Signer.Address(),
 		td.RandAddress(), 1000, 1000, "send-tx")
 	acc1Signer.SignMsg(transferTx)
 
 	pub, _ := td.RandBLSKeyPair()
-	bondTx := tx.NewBondTx(randBlock.Stamp(), randHeight, acc1Signer.Address(),
+	bondTx := tx.NewBondTx(randHeight, acc1Signer.Address(),
 		pub.Address(), pub, 1000000000, 100000, "bond-tx")
 	acc1Signer.SignMsg(bondTx)
 
-	unbondTx := tx.NewUnbondTx(randBlock.Stamp(), randHeight, val1.Address(), "unbond-tx")
+	unbondTx := tx.NewUnbondTx(randHeight, val1.Address(), "unbond-tx")
 	val1Signer.SignMsg(unbondTx)
 
-	withdrawTx := tx.NewWithdrawTx(randBlock.Stamp(), randHeight, val2.Address(),
+	withdrawTx := tx.NewWithdrawTx(randHeight, val2.Address(),
 		td.RandAddress(), 1000, 1000, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
 	td.sandbox.TestAcceptSortition = true
-	sortitionTx := tx.NewSortitionTx(randBlock.Stamp(), randHeight, val3.Address(),
+	sortitionTx := tx.NewSortitionTx(randHeight, val3.Address(),
 		td.RandProof())
 	val3Signer.SignMsg(sortitionTx)
 
@@ -204,12 +206,12 @@ func TestAddSubsidyTransactions(t *testing.T) {
 	td := setup(t)
 
 	randHeight := td.RandHeight()
-	randBlock := td.sandbox.TestStore.AddTestBlock(randHeight)
+	_ = td.sandbox.TestStore.AddTestBlock(randHeight)
 	proposer1 := td.RandAddress()
 	proposer2 := td.RandAddress()
-	trx1 := tx.NewSubsidyTx(randBlock.Stamp(), randHeight, proposer1, 25000000, "subsidy-tx-1")
-	trx2 := tx.NewSubsidyTx(randBlock.Stamp(), randHeight+1, proposer1, 25000000, "subsidy-tx-1")
-	trx3 := tx.NewSubsidyTx(randBlock.Stamp(), randHeight+1, proposer2, 25000000, "subsidy-tx-2")
+	trx1 := tx.NewSubsidyTx(randHeight, proposer1, 25000000, "subsidy-tx-1")
+	trx2 := tx.NewSubsidyTx(randHeight+1, proposer1, 25000000, "subsidy-tx-1")
+	trx3 := tx.NewSubsidyTx(randHeight+1, proposer2, 25000000, "subsidy-tx-2")
 
 	err := td.pool.AppendTx(trx1)
 	assert.ErrorIs(t, err, execution.PastLockTimeError{LockTime: randHeight})

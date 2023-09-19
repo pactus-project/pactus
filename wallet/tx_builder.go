@@ -3,25 +3,11 @@ package wallet
 import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
 type TxOption func(builder *txBuilder) error
-
-func OptionStamp(stamp string) func(builder *txBuilder) error {
-	return func(builder *txBuilder) error {
-		if stamp != "" {
-			stamp, err := hash.StampFromString(stamp)
-			if err != nil {
-				return err
-			}
-			builder.stamp = &stamp
-		}
-		return nil
-	}
-}
 
 func OptionLockTime(lockTime uint32) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
@@ -46,7 +32,6 @@ func OptionMemo(memo string) func(builder *txBuilder) error {
 
 type txBuilder struct {
 	client   *grpcClient
-	stamp    *hash.Stamp
 	from     *crypto.Address
 	to       *crypto.Address
 	pub      *bls.PublicKey
@@ -89,7 +74,7 @@ func (m *txBuilder) setToAddress(addr string) error {
 }
 
 func (m *txBuilder) build() (*tx.Tx, error) {
-	err := m.setStamp()
+	err := m.setLockTime()
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +87,7 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 	var trx *tx.Tx
 	switch m.typ {
 	case payload.TypeTransfer:
-		trx = tx.NewTransferTx(*m.stamp, m.lockTime, *m.from, *m.to, m.amount, m.fee, m.memo)
+		trx = tx.NewTransferTx(m.lockTime, *m.from, *m.to, m.amount, m.fee, m.memo)
 	case payload.TypeBond:
 		{
 			pub := m.pub
@@ -111,19 +96,19 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 				// validator exists
 				pub = nil
 			}
-			trx = tx.NewBondTx(*m.stamp, m.lockTime, *m.from, *m.to, pub, m.amount, m.fee, m.memo)
+			trx = tx.NewBondTx(m.lockTime, *m.from, *m.to, pub, m.amount, m.fee, m.memo)
 		}
 	case payload.TypeUnbond:
-		trx = tx.NewUnbondTx(*m.stamp, m.lockTime, *m.from, m.memo)
+		trx = tx.NewUnbondTx(m.lockTime, *m.from, m.memo)
 	case payload.TypeWithdraw:
-		trx = tx.NewWithdrawTx(*m.stamp, m.lockTime, *m.from, *m.to, m.amount, m.fee, m.memo)
+		trx = tx.NewWithdrawTx(m.lockTime, *m.from, *m.to, m.amount, m.fee, m.memo)
 	}
 
 	return trx, nil
 }
 
-func (m *txBuilder) setStamp() error {
-	if m.stamp == nil {
+func (m *txBuilder) setLockTime() error {
+	if m.lockTime == 0 {
 		if m.client == nil {
 			return ErrOffline
 		}
@@ -132,12 +117,8 @@ func (m *txBuilder) setStamp() error {
 		if err != nil {
 			return err
 		}
-		h, _ := hash.FromBytes(info.LastBlockHash)
-		stamp := h.Stamp()
-		m.stamp = &stamp
 		m.lockTime = info.LastBlockHeight + 1
 	}
-
 	return nil
 }
 

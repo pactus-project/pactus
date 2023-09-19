@@ -162,19 +162,18 @@ const TransactionInfo$json = const {
     const {'1': 'id', '3': 1, '4': 1, '5': 12, '10': 'id'},
     const {'1': 'data', '3': 2, '4': 1, '5': 12, '10': 'data'},
     const {'1': 'version', '3': 3, '4': 1, '5': 5, '10': 'version'},
-    const {'1': 'stamp', '3': 4, '4': 1, '5': 12, '10': 'stamp'},
-    const {'1': 'lock_time', '3': 5, '4': 1, '5': 13, '10': 'lockTime'},
-    const {'1': 'value', '3': 6, '4': 1, '5': 3, '10': 'value'},
-    const {'1': 'fee', '3': 7, '4': 1, '5': 3, '10': 'fee'},
-    const {'1': 'payloadType', '3': 8, '4': 1, '5': 14, '6': '.pactus.PayloadType', '10': 'payloadType'},
+    const {'1': 'lock_time', '3': 4, '4': 1, '5': 13, '10': 'lockTime'},
+    const {'1': 'value', '3': 5, '4': 1, '5': 3, '10': 'value'},
+    const {'1': 'fee', '3': 6, '4': 1, '5': 3, '10': 'fee'},
+    const {'1': 'payloadType', '3': 7, '4': 1, '5': 14, '6': '.pactus.PayloadType', '10': 'payloadType'},
     const {'1': 'transfer', '3': 30, '4': 1, '5': 11, '6': '.pactus.PayloadTransfer', '9': 0, '10': 'transfer'},
     const {'1': 'bond', '3': 31, '4': 1, '5': 11, '6': '.pactus.PayloadBond', '9': 0, '10': 'bond'},
     const {'1': 'sortition', '3': 32, '4': 1, '5': 11, '6': '.pactus.PayloadSortition', '9': 0, '10': 'sortition'},
     const {'1': 'unbond', '3': 33, '4': 1, '5': 11, '6': '.pactus.PayloadUnbond', '9': 0, '10': 'unbond'},
     const {'1': 'withdraw', '3': 34, '4': 1, '5': 11, '6': '.pactus.PayloadWithdraw', '9': 0, '10': 'withdraw'},
-    const {'1': 'memo', '3': 9, '4': 1, '5': 9, '10': 'memo'},
-    const {'1': 'public_key', '3': 10, '4': 1, '5': 9, '10': 'publicKey'},
-    const {'1': 'signature', '3': 11, '4': 1, '5': 12, '10': 'signature'},
+    const {'1': 'memo', '3': 8, '4': 1, '5': 9, '10': 'memo'},
+    const {'1': 'public_key', '3': 9, '4': 1, '5': 9, '10': 'publicKey'},
+    const {'1': 'signature', '3': 10, '4': 1, '5': 12, '10': 'signature'},
   ],
   '8': const [
     const {'1': 'payload'},
@@ -182,7 +181,7 @@ const TransactionInfo$json = const {
 };
 
 /// Descriptor for `TransactionInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List transactionInfoDescriptor = $convert.base64Decode('Cg9UcmFuc2FjdGlvbkluZm8SDgoCaWQYASABKAxSAmlkEhIKBGRhdGEYAiABKAxSBGRhdGESGAoHdmVyc2lvbhgDIAEoBVIHdmVyc2lvbhIUCgVzdGFtcBgEIAEoDFIFc3RhbXASGwoJbG9ja190aW1lGAUgASgNUghsb2NrVGltZRIUCgV2YWx1ZRgGIAEoA1IFdmFsdWUSEAoDZmVlGAcgASgDUgNmZWUSNQoLcGF5bG9hZFR5cGUYCCABKA4yEy5wYWN0dXMuUGF5bG9hZFR5cGVSC3BheWxvYWRUeXBlEjUKCHRyYW5zZmVyGB4gASgLMhcucGFjdHVzLlBheWxvYWRUcmFuc2ZlckgAUgh0cmFuc2ZlchIpCgRib25kGB8gASgLMhMucGFjdHVzLlBheWxvYWRCb25kSABSBGJvbmQSOAoJc29ydGl0aW9uGCAgASgLMhgucGFjdHVzLlBheWxvYWRTb3J0aXRpb25IAFIJc29ydGl0aW9uEi8KBnVuYm9uZBghIAEoCzIVLnBhY3R1cy5QYXlsb2FkVW5ib25kSABSBnVuYm9uZBI1Cgh3aXRoZHJhdxgiIAEoCzIXLnBhY3R1cy5QYXlsb2FkV2l0aGRyYXdIAFIId2l0aGRyYXcSEgoEbWVtbxgJIAEoCVIEbWVtbxIdCgpwdWJsaWNfa2V5GAogASgJUglwdWJsaWNLZXkSHAoJc2lnbmF0dXJlGAsgASgMUglzaWduYXR1cmVCCQoHcGF5bG9hZA==');
+final $typed_data.Uint8List transactionInfoDescriptor = $convert.base64Decode('Cg9UcmFuc2FjdGlvbkluZm8SDgoCaWQYASABKAxSAmlkEhIKBGRhdGEYAiABKAxSBGRhdGESGAoHdmVyc2lvbhgDIAEoBVIHdmVyc2lvbhIbCglsb2NrX3RpbWUYBCABKA1SCGxvY2tUaW1lEhQKBXZhbHVlGAUgASgDUgV2YWx1ZRIQCgNmZWUYBiABKANSA2ZlZRI1CgtwYXlsb2FkVHlwZRgHIAEoDjITLnBhY3R1cy5QYXlsb2FkVHlwZVILcGF5bG9hZFR5cGUSNQoIdHJhbnNmZXIYHiABKAsyFy5wYWN0dXMuUGF5bG9hZFRyYW5zZmVySABSCHRyYW5zZmVyEikKBGJvbmQYHyABKAsyEy5wYWN0dXMuUGF5bG9hZEJvbmRIAFIEYm9uZBI4Cglzb3J0aXRpb24YICABKAsyGC5wYWN0dXMuUGF5bG9hZFNvcnRpdGlvbkgAUglzb3J0aXRpb24SLwoGdW5ib25kGCEgASgLMhUucGFjdHVzLlBheWxvYWRVbmJvbmRIAFIGdW5ib25kEjUKCHdpdGhkcmF3GCIgASgLMhcucGFjdHVzLlBheWxvYWRXaXRoZHJhd0gAUgh3aXRoZHJhdxISCgRtZW1vGAggASgJUgRtZW1vEh0KCnB1YmxpY19rZXkYCSABKAlSCXB1YmxpY0tleRIcCglzaWduYXR1cmUYCiABKAxSCXNpZ25hdHVyZUIJCgdwYXlsb2Fk');
 const $core.Map<$core.String, $core.dynamic> TransactionServiceBase$json = const {
   '1': 'Transaction',
   '2': const [

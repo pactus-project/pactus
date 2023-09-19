@@ -19,14 +19,14 @@ func TestExecuteUnbondTx(t *testing.T) {
 	lockTime := td.sandbox.CurrentHeight()
 
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {
-		trx := tx.NewUnbondTx(td.randStamp, lockTime, td.RandAddress(), "invalid validator")
+		trx := tx.NewUnbondTx(lockTime, td.RandAddress(), "invalid validator")
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("Should fail, Inside committee", func(t *testing.T) {
 		val0 := td.sandbox.Committee().Proposer(0)
-		trx := tx.NewUnbondTx(td.randStamp, lockTime, val0.Address(), "inside committee")
+		trx := tx.NewUnbondTx(lockTime, val0.Address(), "inside committee")
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
@@ -37,13 +37,13 @@ func TestExecuteUnbondTx(t *testing.T) {
 		unbondedVal.UpdateUnbondingHeight(td.sandbox.CurrentHeight())
 		td.sandbox.UpdateValidator(unbondedVal)
 
-		trx := tx.NewUnbondTx(td.randStamp, lockTime, pub.Address(), "Ok")
+		trx := tx.NewUnbondTx(lockTime, pub.Address(), "Ok")
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewUnbondTx(td.randStamp, lockTime, valAddr, "Ok")
+		trx := tx.NewUnbondTx(lockTime, valAddr, "Ok")
 
 		err := exe.Execute(trx, td.sandbox)
 		assert.NoError(t, err)
@@ -72,7 +72,7 @@ func TestUnbondInsideCommittee(t *testing.T) {
 	lockTime := td.sandbox.CurrentHeight()
 
 	val := td.sandbox.Committee().Proposer(0)
-	trx := tx.NewUnbondTx(td.randStamp, lockTime, val.Address(), "")
+	trx := tx.NewUnbondTx(lockTime, val.Address(), "")
 
 	assert.Error(t, exe1.Execute(trx, td.sandbox))
 	assert.NoError(t, exe2.Execute(trx, td.sandbox))
@@ -93,7 +93,7 @@ func TestUnbondJoiningCommittee(t *testing.T) {
 	td.sandbox.JoinedToCommittee(val.Address())
 	lockTime := td.sandbox.CurrentHeight()
 
-	trx := tx.NewUnbondTx(td.randStamp, lockTime, pub.Address(), "Ok")
+	trx := tx.NewUnbondTx(lockTime, pub.Address(), "Ok")
 	assert.Error(t, exe1.Execute(trx, td.sandbox))
 	assert.NoError(t, exe2.Execute(trx, td.sandbox))
 }

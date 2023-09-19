@@ -7081,36 +7081,30 @@ public final class TransactionOuterClass {
     int getVersion();
 
     /**
-     * <code>bytes stamp = 4 [json_name = "stamp"];</code>
-     * @return The stamp.
-     */
-    com.google.protobuf.ByteString getStamp();
-
-    /**
-     * <code>uint32 lock_time = 5 [json_name = "lockTime"];</code>
+     * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
      * @return The lockTime.
      */
     int getLockTime();
 
     /**
-     * <code>int64 value = 6 [json_name = "value"];</code>
+     * <code>int64 value = 5 [json_name = "value"];</code>
      * @return The value.
      */
     long getValue();
 
     /**
-     * <code>int64 fee = 7 [json_name = "fee"];</code>
+     * <code>int64 fee = 6 [json_name = "fee"];</code>
      * @return The fee.
      */
     long getFee();
 
     /**
-     * <code>.pactus.PayloadType payloadType = 8 [json_name = "payloadType"];</code>
+     * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
      * @return The enum numeric value on the wire for payloadType.
      */
     int getPayloadTypeValue();
     /**
-     * <code>.pactus.PayloadType payloadType = 8 [json_name = "payloadType"];</code>
+     * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
      * @return The payloadType.
      */
     pactus.transaction.TransactionOuterClass.PayloadType getPayloadType();
@@ -7191,31 +7185,31 @@ public final class TransactionOuterClass {
     pactus.transaction.TransactionOuterClass.PayloadWithdrawOrBuilder getWithdrawOrBuilder();
 
     /**
-     * <code>string memo = 9 [json_name = "memo"];</code>
+     * <code>string memo = 8 [json_name = "memo"];</code>
      * @return The memo.
      */
     java.lang.String getMemo();
     /**
-     * <code>string memo = 9 [json_name = "memo"];</code>
+     * <code>string memo = 8 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
     com.google.protobuf.ByteString
         getMemoBytes();
 
     /**
-     * <code>string public_key = 10 [json_name = "publicKey"];</code>
+     * <code>string public_key = 9 [json_name = "publicKey"];</code>
      * @return The publicKey.
      */
     java.lang.String getPublicKey();
     /**
-     * <code>string public_key = 10 [json_name = "publicKey"];</code>
+     * <code>string public_key = 9 [json_name = "publicKey"];</code>
      * @return The bytes for publicKey.
      */
     com.google.protobuf.ByteString
         getPublicKeyBytes();
 
     /**
-     * <code>bytes signature = 11 [json_name = "signature"];</code>
+     * <code>bytes signature = 10 [json_name = "signature"];</code>
      * @return The signature.
      */
     com.google.protobuf.ByteString getSignature();
@@ -7237,7 +7231,6 @@ public final class TransactionOuterClass {
     private TransactionInfo() {
       id_ = com.google.protobuf.ByteString.EMPTY;
       data_ = com.google.protobuf.ByteString.EMPTY;
-      stamp_ = com.google.protobuf.ByteString.EMPTY;
       payloadType_ = 0;
       memo_ = "";
       publicKey_ = "";
@@ -7349,21 +7342,10 @@ public final class TransactionOuterClass {
       return version_;
     }
 
-    public static final int STAMP_FIELD_NUMBER = 4;
-    private com.google.protobuf.ByteString stamp_;
-    /**
-     * <code>bytes stamp = 4 [json_name = "stamp"];</code>
-     * @return The stamp.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString getStamp() {
-      return stamp_;
-    }
-
-    public static final int LOCK_TIME_FIELD_NUMBER = 5;
+    public static final int LOCK_TIME_FIELD_NUMBER = 4;
     private int lockTime_;
     /**
-     * <code>uint32 lock_time = 5 [json_name = "lockTime"];</code>
+     * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
      * @return The lockTime.
      */
     @java.lang.Override
@@ -7371,10 +7353,10 @@ public final class TransactionOuterClass {
       return lockTime_;
     }
 
-    public static final int VALUE_FIELD_NUMBER = 6;
+    public static final int VALUE_FIELD_NUMBER = 5;
     private long value_;
     /**
-     * <code>int64 value = 6 [json_name = "value"];</code>
+     * <code>int64 value = 5 [json_name = "value"];</code>
      * @return The value.
      */
     @java.lang.Override
@@ -7382,10 +7364,10 @@ public final class TransactionOuterClass {
       return value_;
     }
 
-    public static final int FEE_FIELD_NUMBER = 7;
+    public static final int FEE_FIELD_NUMBER = 6;
     private long fee_;
     /**
-     * <code>int64 fee = 7 [json_name = "fee"];</code>
+     * <code>int64 fee = 6 [json_name = "fee"];</code>
      * @return The fee.
      */
     @java.lang.Override
@@ -7393,17 +7375,17 @@ public final class TransactionOuterClass {
       return fee_;
     }
 
-    public static final int PAYLOADTYPE_FIELD_NUMBER = 8;
+    public static final int PAYLOADTYPE_FIELD_NUMBER = 7;
     private int payloadType_;
     /**
-     * <code>.pactus.PayloadType payloadType = 8 [json_name = "payloadType"];</code>
+     * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
      * @return The enum numeric value on the wire for payloadType.
      */
     @java.lang.Override public int getPayloadTypeValue() {
       return payloadType_;
     }
     /**
-     * <code>.pactus.PayloadType payloadType = 8 [json_name = "payloadType"];</code>
+     * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
      * @return The payloadType.
      */
     @java.lang.Override public pactus.transaction.TransactionOuterClass.PayloadType getPayloadType() {
@@ -7567,10 +7549,10 @@ public final class TransactionOuterClass {
       return pactus.transaction.TransactionOuterClass.PayloadWithdraw.getDefaultInstance();
     }
 
-    public static final int MEMO_FIELD_NUMBER = 9;
+    public static final int MEMO_FIELD_NUMBER = 8;
     private volatile java.lang.Object memo_;
     /**
-     * <code>string memo = 9 [json_name = "memo"];</code>
+     * <code>string memo = 8 [json_name = "memo"];</code>
      * @return The memo.
      */
     @java.lang.Override
@@ -7587,7 +7569,7 @@ public final class TransactionOuterClass {
       }
     }
     /**
-     * <code>string memo = 9 [json_name = "memo"];</code>
+     * <code>string memo = 8 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
     @java.lang.Override
@@ -7605,10 +7587,10 @@ public final class TransactionOuterClass {
       }
     }
 
-    public static final int PUBLIC_KEY_FIELD_NUMBER = 10;
+    public static final int PUBLIC_KEY_FIELD_NUMBER = 9;
     private volatile java.lang.Object publicKey_;
     /**
-     * <code>string public_key = 10 [json_name = "publicKey"];</code>
+     * <code>string public_key = 9 [json_name = "publicKey"];</code>
      * @return The publicKey.
      */
     @java.lang.Override
@@ -7625,7 +7607,7 @@ public final class TransactionOuterClass {
       }
     }
     /**
-     * <code>string public_key = 10 [json_name = "publicKey"];</code>
+     * <code>string public_key = 9 [json_name = "publicKey"];</code>
      * @return The bytes for publicKey.
      */
     @java.lang.Override
@@ -7643,10 +7625,10 @@ public final class TransactionOuterClass {
       }
     }
 
-    public static final int SIGNATURE_FIELD_NUMBER = 11;
+    public static final int SIGNATURE_FIELD_NUMBER = 10;
     private com.google.protobuf.ByteString signature_;
     /**
-     * <code>bytes signature = 11 [json_name = "signature"];</code>
+     * <code>bytes signature = 10 [json_name = "signature"];</code>
      * @return The signature.
      */
     @java.lang.Override
@@ -7677,29 +7659,26 @@ public final class TransactionOuterClass {
       if (version_ != 0) {
         output.writeInt32(3, version_);
       }
-      if (!stamp_.isEmpty()) {
-        output.writeBytes(4, stamp_);
-      }
       if (lockTime_ != 0) {
-        output.writeUInt32(5, lockTime_);
+        output.writeUInt32(4, lockTime_);
       }
       if (value_ != 0L) {
-        output.writeInt64(6, value_);
+        output.writeInt64(5, value_);
       }
       if (fee_ != 0L) {
-        output.writeInt64(7, fee_);
+        output.writeInt64(6, fee_);
       }
       if (payloadType_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
-        output.writeEnum(8, payloadType_);
+        output.writeEnum(7, payloadType_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, memo_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, memo_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, publicKey_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, publicKey_);
       }
       if (!signature_.isEmpty()) {
-        output.writeBytes(11, signature_);
+        output.writeBytes(10, signature_);
       }
       if (payloadCase_ == 30) {
         output.writeMessage(30, (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_);
@@ -7737,35 +7716,31 @@ public final class TransactionOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(3, version_);
       }
-      if (!stamp_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(4, stamp_);
-      }
       if (lockTime_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(5, lockTime_);
+          .computeUInt32Size(4, lockTime_);
       }
       if (value_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(6, value_);
+          .computeInt64Size(5, value_);
       }
       if (fee_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(7, fee_);
+          .computeInt64Size(6, fee_);
       }
       if (payloadType_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(8, payloadType_);
+          .computeEnumSize(7, payloadType_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, memo_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, memo_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, publicKey_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, publicKey_);
       }
       if (!signature_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(11, signature_);
+          .computeBytesSize(10, signature_);
       }
       if (payloadCase_ == 30) {
         size += com.google.protobuf.CodedOutputStream
@@ -7808,8 +7783,6 @@ public final class TransactionOuterClass {
           .equals(other.getData())) return false;
       if (getVersion()
           != other.getVersion()) return false;
-      if (!getStamp()
-          .equals(other.getStamp())) return false;
       if (getLockTime()
           != other.getLockTime()) return false;
       if (getValue()
@@ -7865,8 +7838,6 @@ public final class TransactionOuterClass {
       hash = (53 * hash) + getData().hashCode();
       hash = (37 * hash) + VERSION_FIELD_NUMBER;
       hash = (53 * hash) + getVersion();
-      hash = (37 * hash) + STAMP_FIELD_NUMBER;
-      hash = (53 * hash) + getStamp().hashCode();
       hash = (37 * hash) + LOCK_TIME_FIELD_NUMBER;
       hash = (53 * hash) + getLockTime();
       hash = (37 * hash) + VALUE_FIELD_NUMBER;
@@ -8041,8 +8012,6 @@ public final class TransactionOuterClass {
 
         version_ = 0;
 
-        stamp_ = com.google.protobuf.ByteString.EMPTY;
-
         lockTime_ = 0;
 
         value_ = 0L;
@@ -8103,7 +8072,6 @@ public final class TransactionOuterClass {
         result.id_ = id_;
         result.data_ = data_;
         result.version_ = version_;
-        result.stamp_ = stamp_;
         result.lockTime_ = lockTime_;
         result.value_ = value_;
         result.fee_ = fee_;
@@ -8204,9 +8172,6 @@ public final class TransactionOuterClass {
         if (other.getVersion() != 0) {
           setVersion(other.getVersion());
         }
-        if (other.getStamp() != com.google.protobuf.ByteString.EMPTY) {
-          setStamp(other.getStamp());
-        }
         if (other.getLockTime() != 0) {
           setLockTime(other.getLockTime());
         }
@@ -8296,46 +8261,41 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 24
-              case 34: {
-                stamp_ = input.readBytes();
+              case 32: {
+                lockTime_ = input.readUInt32();
 
                 break;
-              } // case 34
+              } // case 32
               case 40: {
-                lockTime_ = input.readUInt32();
+                value_ = input.readInt64();
 
                 break;
               } // case 40
               case 48: {
-                value_ = input.readInt64();
+                fee_ = input.readInt64();
 
                 break;
               } // case 48
               case 56: {
-                fee_ = input.readInt64();
-
-                break;
-              } // case 56
-              case 64: {
                 payloadType_ = input.readEnum();
 
                 break;
-              } // case 64
-              case 74: {
+              } // case 56
+              case 66: {
                 memo_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 66
+              case 74: {
+                publicKey_ = input.readStringRequireUtf8();
 
                 break;
               } // case 74
               case 82: {
-                publicKey_ = input.readStringRequireUtf8();
-
-                break;
-              } // case 82
-              case 90: {
                 signature_ = input.readBytes();
 
                 break;
-              } // case 90
+              } // case 82
               case 242: {
                 input.readMessage(
                     getTransferFieldBuilder().getBuilder(),
@@ -8501,43 +8461,9 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString stamp_ = com.google.protobuf.ByteString.EMPTY;
-      /**
-       * <code>bytes stamp = 4 [json_name = "stamp"];</code>
-       * @return The stamp.
-       */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getStamp() {
-        return stamp_;
-      }
-      /**
-       * <code>bytes stamp = 4 [json_name = "stamp"];</code>
-       * @param value The stamp to set.
-       * @return This builder for chaining.
-       */
-      public Builder setStamp(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        stamp_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bytes stamp = 4 [json_name = "stamp"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearStamp() {
-        
-        stamp_ = getDefaultInstance().getStamp();
-        onChanged();
-        return this;
-      }
-
       private int lockTime_ ;
       /**
-       * <code>uint32 lock_time = 5 [json_name = "lockTime"];</code>
+       * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
        * @return The lockTime.
        */
       @java.lang.Override
@@ -8545,7 +8471,7 @@ public final class TransactionOuterClass {
         return lockTime_;
       }
       /**
-       * <code>uint32 lock_time = 5 [json_name = "lockTime"];</code>
+       * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
        * @param value The lockTime to set.
        * @return This builder for chaining.
        */
@@ -8556,7 +8482,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>uint32 lock_time = 5 [json_name = "lockTime"];</code>
+       * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
        * @return This builder for chaining.
        */
       public Builder clearLockTime() {
@@ -8568,7 +8494,7 @@ public final class TransactionOuterClass {
 
       private long value_ ;
       /**
-       * <code>int64 value = 6 [json_name = "value"];</code>
+       * <code>int64 value = 5 [json_name = "value"];</code>
        * @return The value.
        */
       @java.lang.Override
@@ -8576,7 +8502,7 @@ public final class TransactionOuterClass {
         return value_;
       }
       /**
-       * <code>int64 value = 6 [json_name = "value"];</code>
+       * <code>int64 value = 5 [json_name = "value"];</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -8587,7 +8513,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>int64 value = 6 [json_name = "value"];</code>
+       * <code>int64 value = 5 [json_name = "value"];</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -8599,7 +8525,7 @@ public final class TransactionOuterClass {
 
       private long fee_ ;
       /**
-       * <code>int64 fee = 7 [json_name = "fee"];</code>
+       * <code>int64 fee = 6 [json_name = "fee"];</code>
        * @return The fee.
        */
       @java.lang.Override
@@ -8607,7 +8533,7 @@ public final class TransactionOuterClass {
         return fee_;
       }
       /**
-       * <code>int64 fee = 7 [json_name = "fee"];</code>
+       * <code>int64 fee = 6 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
        */
@@ -8618,7 +8544,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>int64 fee = 7 [json_name = "fee"];</code>
+       * <code>int64 fee = 6 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
       public Builder clearFee() {
@@ -8630,14 +8556,14 @@ public final class TransactionOuterClass {
 
       private int payloadType_ = 0;
       /**
-       * <code>.pactus.PayloadType payloadType = 8 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
        * @return The enum numeric value on the wire for payloadType.
        */
       @java.lang.Override public int getPayloadTypeValue() {
         return payloadType_;
       }
       /**
-       * <code>.pactus.PayloadType payloadType = 8 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
        * @param value The enum numeric value on the wire for payloadType to set.
        * @return This builder for chaining.
        */
@@ -8648,7 +8574,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>.pactus.PayloadType payloadType = 8 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
        * @return The payloadType.
        */
       @java.lang.Override
@@ -8658,7 +8584,7 @@ public final class TransactionOuterClass {
         return result == null ? pactus.transaction.TransactionOuterClass.PayloadType.UNRECOGNIZED : result;
       }
       /**
-       * <code>.pactus.PayloadType payloadType = 8 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
        * @param value The payloadType to set.
        * @return This builder for chaining.
        */
@@ -8672,7 +8598,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>.pactus.PayloadType payloadType = 8 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
        * @return This builder for chaining.
        */
       public Builder clearPayloadType() {
@@ -9394,7 +9320,7 @@ public final class TransactionOuterClass {
 
       private java.lang.Object memo_ = "";
       /**
-       * <code>string memo = 9 [json_name = "memo"];</code>
+       * <code>string memo = 8 [json_name = "memo"];</code>
        * @return The memo.
        */
       public java.lang.String getMemo() {
@@ -9410,7 +9336,7 @@ public final class TransactionOuterClass {
         }
       }
       /**
-       * <code>string memo = 9 [json_name = "memo"];</code>
+       * <code>string memo = 8 [json_name = "memo"];</code>
        * @return The bytes for memo.
        */
       public com.google.protobuf.ByteString
@@ -9427,7 +9353,7 @@ public final class TransactionOuterClass {
         }
       }
       /**
-       * <code>string memo = 9 [json_name = "memo"];</code>
+       * <code>string memo = 8 [json_name = "memo"];</code>
        * @param value The memo to set.
        * @return This builder for chaining.
        */
@@ -9442,7 +9368,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>string memo = 9 [json_name = "memo"];</code>
+       * <code>string memo = 8 [json_name = "memo"];</code>
        * @return This builder for chaining.
        */
       public Builder clearMemo() {
@@ -9452,7 +9378,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>string memo = 9 [json_name = "memo"];</code>
+       * <code>string memo = 8 [json_name = "memo"];</code>
        * @param value The bytes for memo to set.
        * @return This builder for chaining.
        */
@@ -9470,7 +9396,7 @@ public final class TransactionOuterClass {
 
       private java.lang.Object publicKey_ = "";
       /**
-       * <code>string public_key = 10 [json_name = "publicKey"];</code>
+       * <code>string public_key = 9 [json_name = "publicKey"];</code>
        * @return The publicKey.
        */
       public java.lang.String getPublicKey() {
@@ -9486,7 +9412,7 @@ public final class TransactionOuterClass {
         }
       }
       /**
-       * <code>string public_key = 10 [json_name = "publicKey"];</code>
+       * <code>string public_key = 9 [json_name = "publicKey"];</code>
        * @return The bytes for publicKey.
        */
       public com.google.protobuf.ByteString
@@ -9503,7 +9429,7 @@ public final class TransactionOuterClass {
         }
       }
       /**
-       * <code>string public_key = 10 [json_name = "publicKey"];</code>
+       * <code>string public_key = 9 [json_name = "publicKey"];</code>
        * @param value The publicKey to set.
        * @return This builder for chaining.
        */
@@ -9518,7 +9444,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>string public_key = 10 [json_name = "publicKey"];</code>
+       * <code>string public_key = 9 [json_name = "publicKey"];</code>
        * @return This builder for chaining.
        */
       public Builder clearPublicKey() {
@@ -9528,7 +9454,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>string public_key = 10 [json_name = "publicKey"];</code>
+       * <code>string public_key = 9 [json_name = "publicKey"];</code>
        * @param value The bytes for publicKey to set.
        * @return This builder for chaining.
        */
@@ -9546,7 +9472,7 @@ public final class TransactionOuterClass {
 
       private com.google.protobuf.ByteString signature_ = com.google.protobuf.ByteString.EMPTY;
       /**
-       * <code>bytes signature = 11 [json_name = "signature"];</code>
+       * <code>bytes signature = 10 [json_name = "signature"];</code>
        * @return The signature.
        */
       @java.lang.Override
@@ -9554,7 +9480,7 @@ public final class TransactionOuterClass {
         return signature_;
       }
       /**
-       * <code>bytes signature = 11 [json_name = "signature"];</code>
+       * <code>bytes signature = 10 [json_name = "signature"];</code>
        * @param value The signature to set.
        * @return This builder for chaining.
        */
@@ -9568,7 +9494,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>bytes signature = 11 [json_name = "signature"];</code>
+       * <code>bytes signature = 10 [json_name = "signature"];</code>
        * @return This builder for chaining.
        */
       public Builder clearSignature() {
@@ -9732,35 +9658,35 @@ public final class TransactionOuterClass {
       " \001(\014R\005proof\"-\n\rPayloadUnbond\022\034\n\tvalidato" +
       "r\030\001 \001(\tR\tvalidator\"M\n\017PayloadWithdraw\022\022\n" +
       "\004from\030\001 \001(\tR\004from\022\016\n\002to\030\002 \001(\tR\002to\022\026\n\006amo" +
-      "unt\030\003 \001(\003R\006amount\"\301\004\n\017TransactionInfo\022\016\n" +
+      "unt\030\003 \001(\003R\006amount\"\253\004\n\017TransactionInfo\022\016\n" +
       "\002id\030\001 \001(\014R\002id\022\022\n\004data\030\002 \001(\014R\004data\022\030\n\007ver" +
-      "sion\030\003 \001(\005R\007version\022\024\n\005stamp\030\004 \001(\014R\005stam" +
-      "p\022\033\n\tlock_time\030\005 \001(\rR\010lockTime\022\024\n\005value\030" +
-      "\006 \001(\003R\005value\022\020\n\003fee\030\007 \001(\003R\003fee\0225\n\013payloa" +
-      "dType\030\010 \001(\0162\023.pactus.PayloadTypeR\013payloa" +
-      "dType\0225\n\010transfer\030\036 \001(\0132\027.pactus.Payload" +
-      "TransferH\000R\010transfer\022)\n\004bond\030\037 \001(\0132\023.pac" +
-      "tus.PayloadBondH\000R\004bond\0228\n\tsortition\030  \001" +
-      "(\0132\030.pactus.PayloadSortitionH\000R\tsortitio" +
-      "n\022/\n\006unbond\030! \001(\0132\025.pactus.PayloadUnbond" +
-      "H\000R\006unbond\0225\n\010withdraw\030\" \001(\0132\027.pactus.Pa" +
-      "yloadWithdrawH\000R\010withdraw\022\022\n\004memo\030\t \001(\tR" +
-      "\004memo\022\035\n\npublic_key\030\n \001(\tR\tpublicKey\022\034\n\t" +
-      "signature\030\013 \001(\014R\tsignatureB\t\n\007payload*\203\001" +
-      "\n\013PayloadType\022\013\n\007UNKNOWN\020\000\022\024\n\020TRANSFER_P" +
-      "AYLOAD\020\001\022\020\n\014BOND_PAYLOAD\020\002\022\025\n\021SORTITION_" +
-      "PAYLOAD\020\003\022\022\n\016UNBOND_PAYLOAD\020\004\022\024\n\020WITHDRA" +
-      "W_PAYLOAD\020\005*B\n\024TransactionVerbosity\022\024\n\020T" +
-      "RANSACTION_DATA\020\000\022\024\n\020TRANSACTION_INFO\020\0012" +
-      "\206\002\n\013Transaction\022O\n\016GetTransaction\022\035.pact" +
-      "us.GetTransactionRequest\032\036.pactus.GetTra" +
-      "nsactionResponse\022I\n\014CalculateFee\022\033.pactu" +
-      "s.CalculateFeeRequest\032\034.pactus.Calculate" +
-      "FeeResponse\022[\n\022SendRawTransaction\022!.pact" +
-      "us.SendRawTransactionRequest\032\".pactus.Se" +
-      "ndRawTransactionResponseBF\n\022pactus.trans" +
-      "actionZ0github.com/pactus-project/pactus" +
-      "/www/grpc/pactusb\006proto3"
+      "sion\030\003 \001(\005R\007version\022\033\n\tlock_time\030\004 \001(\rR\010" +
+      "lockTime\022\024\n\005value\030\005 \001(\003R\005value\022\020\n\003fee\030\006 " +
+      "\001(\003R\003fee\0225\n\013payloadType\030\007 \001(\0162\023.pactus.P" +
+      "ayloadTypeR\013payloadType\0225\n\010transfer\030\036 \001(" +
+      "\0132\027.pactus.PayloadTransferH\000R\010transfer\022)" +
+      "\n\004bond\030\037 \001(\0132\023.pactus.PayloadBondH\000R\004bon" +
+      "d\0228\n\tsortition\030  \001(\0132\030.pactus.PayloadSor" +
+      "titionH\000R\tsortition\022/\n\006unbond\030! \001(\0132\025.pa" +
+      "ctus.PayloadUnbondH\000R\006unbond\0225\n\010withdraw" +
+      "\030\" \001(\0132\027.pactus.PayloadWithdrawH\000R\010withd" +
+      "raw\022\022\n\004memo\030\010 \001(\tR\004memo\022\035\n\npublic_key\030\t " +
+      "\001(\tR\tpublicKey\022\034\n\tsignature\030\n \001(\014R\tsigna" +
+      "tureB\t\n\007payload*\203\001\n\013PayloadType\022\013\n\007UNKNO" +
+      "WN\020\000\022\024\n\020TRANSFER_PAYLOAD\020\001\022\020\n\014BOND_PAYLO" +
+      "AD\020\002\022\025\n\021SORTITION_PAYLOAD\020\003\022\022\n\016UNBOND_PA" +
+      "YLOAD\020\004\022\024\n\020WITHDRAW_PAYLOAD\020\005*B\n\024Transac" +
+      "tionVerbosity\022\024\n\020TRANSACTION_DATA\020\000\022\024\n\020T" +
+      "RANSACTION_INFO\020\0012\206\002\n\013Transaction\022O\n\016Get" +
+      "Transaction\022\035.pactus.GetTransactionReque" +
+      "st\032\036.pactus.GetTransactionResponse\022I\n\014Ca" +
+      "lculateFee\022\033.pactus.CalculateFeeRequest\032" +
+      "\034.pactus.CalculateFeeResponse\022[\n\022SendRaw" +
+      "Transaction\022!.pactus.SendRawTransactionR" +
+      "equest\032\".pactus.SendRawTransactionRespon" +
+      "seBF\n\022pactus.transactionZ0github.com/pac" +
+      "tus-project/pactus/www/grpc/pactusb\006prot" +
+      "o3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -9837,7 +9763,7 @@ public final class TransactionOuterClass {
     internal_static_pactus_TransactionInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_TransactionInfo_descriptor,
-        new java.lang.String[] { "Id", "Data", "Version", "Stamp", "LockTime", "Value", "Fee", "PayloadType", "Transfer", "Bond", "Sortition", "Unbond", "Withdraw", "Memo", "PublicKey", "Signature", "Payload", });
+        new java.lang.String[] { "Id", "Data", "Version", "LockTime", "Value", "Fee", "PayloadType", "Transfer", "Bond", "Sortition", "Unbond", "Withdraw", "Memo", "PublicKey", "Signature", "Payload", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

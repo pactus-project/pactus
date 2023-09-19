@@ -24,7 +24,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	lockTime := td.sandbox.CurrentHeight()
 
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(td.randStamp, lockTime, td.RandAddress(), addr,
+		trx := tx.NewWithdrawTx(lockTime, td.RandAddress(), addr,
 			amt, fee, "invalid validator")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -32,7 +32,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(td.randStamp, lockTime, val.Address(), addr,
+		trx := tx.NewWithdrawTx(lockTime, val.Address(), addr,
 			amt+1, fee, "insufficient balance")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -41,7 +41,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 
 	t.Run("Should fail, hasn't unbonded yet", func(t *testing.T) {
 		assert.Zero(t, val.UnbondingHeight())
-		trx := tx.NewWithdrawTx(td.randStamp, lockTime, val.Address(), addr,
+		trx := tx.NewWithdrawTx(lockTime, val.Address(), addr,
 			amt, fee, "need to unbond first")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -52,7 +52,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	td.sandbox.UpdateValidator(val)
 	t.Run("Should fail, hasn't passed unbonding interval", func(t *testing.T) {
 		assert.NotZero(t, val.UnbondingHeight())
-		trx := tx.NewWithdrawTx(td.randStamp, lockTime, val.Address(), addr,
+		trx := tx.NewWithdrawTx(lockTime, val.Address(), addr,
 			amt, fee, "not passed unbonding interval")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -62,7 +62,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	td.sandbox.TestStore.AddTestBlock(td.randHeight + 1)
 
 	t.Run("Should pass, Everything is Ok!", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(td.randStamp, lockTime, val.Address(), addr,
+		trx := tx.NewWithdrawTx(lockTime, val.Address(), addr,
 			amt, fee, "should be able to empty stake")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -70,7 +70,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, can't withdraw empty stake", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(td.randStamp, lockTime, val.Address(), addr,
+		trx := tx.NewWithdrawTx(lockTime, val.Address(), addr,
 			1, fee, "can't withdraw empty stake")
 
 		err := exe.Execute(trx, td.sandbox)

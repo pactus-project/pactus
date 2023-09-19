@@ -30,16 +30,6 @@ func newGRPCClient(rpcEndpoint string) (*grpcClient, error) {
 	}, nil
 }
 
-func (c *grpcClient) getStamp() (hash.Stamp, error) {
-	info, err := c.blockchainClient.GetBlockchainInfo(context.Background(),
-		&pactus.GetBlockchainInfoRequest{})
-	if err != nil {
-		return hash.Stamp{}, err
-	}
-	h, _ := hash.FromBytes(info.LastBlockHash)
-	return h.Stamp(), nil
-}
-
 func (c *grpcClient) getBlockchainInfo() (*pactus.GetBlockchainInfoResponse, error) {
 	info, err := c.blockchainClient.GetBlockchainInfo(context.Background(),
 		&pactus.GetBlockchainInfoRequest{})

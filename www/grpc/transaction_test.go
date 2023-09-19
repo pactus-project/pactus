@@ -46,7 +46,6 @@ func TestGetTransaction(t *testing.T) {
 		assert.Equal(t, uint32(0x1), res.BlockHeight)
 		assert.Equal(t, testBlock.Header().UnixTime(), res.BlockTime)
 		assert.Equal(t, trx1.ID().Bytes(), res.Transaction.Id)
-		assert.Equal(t, trx1.Stamp().Bytes(), res.Transaction.Stamp)
 		assert.Equal(t, trx1.Fee(), res.Transaction.Fee)
 		assert.Equal(t, trx1.Memo(), res.Transaction.Memo)
 		assert.Equal(t, trx1.Payload().Type(), payload.Type(res.Transaction.PayloadType))

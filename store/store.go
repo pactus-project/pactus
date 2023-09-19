@@ -15,7 +15,6 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/linkedmap"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
@@ -50,11 +49,6 @@ func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 	return data, nil
 }
 
-type blockHeightPair struct {
-	Height uint32
-	Block  *block.Block
-}
-
 type store struct {
 	lk sync.RWMutex
 
@@ -65,10 +59,9 @@ type store struct {
 	txStore        *txStore
 	accountStore   *accountStore
 	validatorStore *validatorStore
-	stampLookup    *linkedmap.LinkedMap[hash.Stamp, blockHeightPair]
 }
 
-func NewStore(conf *Config, stampLookupCapacity int) (Store, error) {
+func NewStore(conf *Config) (Store, error) {
 	options := &opt.Options{
 		Strict:      opt.DefaultStrict,
 		Compression: opt.NoCompression,
@@ -77,7 +70,6 @@ func NewStore(conf *Config, stampLookupCapacity int) (Store, error) {
 	if err != nil {
 		return nil, err
 	}
-	stampLookup := linkedmap.NewLinkedMap[hash.Stamp, blockHeightPair](stampLookupCapacity)
 	s := &store{
 		config:         conf,
 		db:             db,
@@ -86,20 +78,7 @@ func NewStore(conf *Config, stampLookupCapacity int) (Store, error) {
 		txStore:        newTxStore(db),
 		accountStore:   newAccountStore(db),
 		validatorStore: newValidatorStore(db),
-		stampLookup:    stampLookup,
 	}
-
-	lastHeight, _ := s.LastCertificate()
-	height := uint32(1)
-	if lastHeight > uint32(stampLookupCapacity) {
-		height = lastHeight - uint32(stampLookupCapacity)
-	}
-	for ; height <= lastHeight; height++ {
-		committedBlock, _ := s.Block(height)
-		block, _ := committedBlock.ToBlock()
-		s.updateStampLookup(height, block)
-	}
-
 	return s, nil
 }
 
@@ -108,14 +87,6 @@ func (s *store) Close() error {
 	defer s.lk.Unlock()
 
 	return s.db.Close()
-}
-
-func (s *store) updateStampLookup(height uint32, block *block.Block) {
-	pair := blockHeightPair{
-		Height: height,
-		Block:  block,
-	}
-	s.stampLookup.PushBack(block.Stamp(), pair)
 }
 
 func (s *store) SaveBlock(height uint32, block *block.Block, cert *certificate.Certificate) {
@@ -139,9 +110,6 @@ func (s *store) SaveBlock(height uint32, block *block.Block, cert *certificate.C
 	}
 
 	s.batch.Put(lastInfoKey, w.Bytes())
-
-	// Update stamp lookup
-	s.updateStampLookup(height, block)
 }
 
 func (s *store) Block(height uint32) (*CommittedBlock, error) {
@@ -184,17 +152,6 @@ func (s *store) BlockHash(height uint32) hash.Hash {
 	}
 
 	return hash.UndefHash
-}
-
-func (s *store) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
-	s.lk.RLock()
-	defer s.lk.RUnlock()
-
-	n := s.stampLookup.GetNode(stamp)
-	if n != nil {
-		return n.Data.Value.Height, n.Data.Value.Block
-	}
-	return 0, nil
 }
 
 func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {

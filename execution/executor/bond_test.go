@@ -21,7 +21,7 @@ func TestExecuteBondTx(t *testing.T) {
 	lockTime := td.sandbox.CurrentHeight()
 
 	t.Run("Should fail, invalid sender", func(t *testing.T) {
-		trx := tx.NewBondTx(td.randStamp, lockTime, td.RandAddress(),
+		trx := tx.NewBondTx(lockTime, td.RandAddress(),
 			receiverAddr, pub, amt, fee, "invalid sender")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -29,7 +29,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, treasury address as receiver", func(t *testing.T) {
-		trx := tx.NewBondTx(td.randStamp, lockTime, senderAddr,
+		trx := tx.NewBondTx(lockTime, senderAddr,
 			crypto.TreasuryAddress, nil, amt, fee, "invalid ")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -37,7 +37,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewBondTx(td.randStamp, lockTime, senderAddr,
+		trx := tx.NewBondTx(lockTime, senderAddr,
 			receiverAddr, pub, senderBalance+1, 0, "insufficient balance")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -46,7 +46,7 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Should fail, inside committee", func(t *testing.T) {
 		pub0 := td.sandbox.Committee().Proposer(0).PublicKey()
-		trx := tx.NewBondTx(td.randStamp, lockTime, senderAddr,
+		trx := tx.NewBondTx(lockTime, senderAddr,
 			pub0.Address(), nil, amt, fee, "inside committee")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -58,7 +58,7 @@ func TestExecuteBondTx(t *testing.T) {
 		val := td.sandbox.MakeNewValidator(unbondedPub)
 		val.UpdateUnbondingHeight(td.sandbox.CurrentHeight())
 		td.sandbox.UpdateValidator(val)
-		trx := tx.NewBondTx(td.randStamp, lockTime, senderAddr,
+		trx := tx.NewBondTx(lockTime, senderAddr,
 			unbondedPub.Address(), nil, amt, fee, "unbonded before")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -66,7 +66,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, public key is not set", func(t *testing.T) {
-		trx := tx.NewBondTx(td.randStamp, lockTime, senderAddr,
+		trx := tx.NewBondTx(lockTime, senderAddr,
 			receiverAddr, nil, amt, fee, "no public key")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -74,7 +74,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, amount less than MinimumStake", func(t *testing.T) {
-		trx := tx.NewBondTx(td.RandStamp(), lockTime, senderAddr,
+		trx := tx.NewBondTx(lockTime, senderAddr,
 			receiverAddr, pub, 1000, fee, "less than MinimumStake")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -82,7 +82,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewBondTx(td.randStamp, lockTime, senderAddr,
+		trx := tx.NewBondTx(lockTime, senderAddr,
 			receiverAddr, pub, amt, fee, "ok")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -90,7 +90,7 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, public key should not set for existing validators", func(t *testing.T) {
-		trx := tx.NewBondTx(td.randStamp, lockTime, senderAddr,
+		trx := tx.NewBondTx(lockTime, senderAddr,
 			receiverAddr, pub, amt, fee, "with public key")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -118,7 +118,7 @@ func TestBondInsideCommittee(t *testing.T) {
 	lockTime := td.sandbox.CurrentHeight()
 
 	pub := td.sandbox.Committee().Proposer(0).PublicKey()
-	trx := tx.NewBondTx(td.randStamp, lockTime, senderAddr,
+	trx := tx.NewBondTx(lockTime, senderAddr,
 		pub.Address(), nil, amt, fee, "inside committee")
 
 	assert.Error(t, exe1.Execute(trx, td.sandbox))
@@ -144,7 +144,7 @@ func TestBondJoiningCommittee(t *testing.T) {
 	td.sandbox.UpdateValidator(val)
 	td.sandbox.JoinedToCommittee(val.Address())
 
-	trx := tx.NewBondTx(td.randStamp, lockTime, senderAddr,
+	trx := tx.NewBondTx(lockTime, senderAddr,
 		pub.Address(), nil, amt, fee, "joining committee")
 
 	assert.Error(t, exe1.Execute(trx, td.sandbox))
@@ -164,7 +164,7 @@ func TestStakeExceeded(t *testing.T) {
 	pub, _ := td.RandBLSKeyPair()
 	lockTime := td.sandbox.CurrentHeight()
 
-	trx := tx.NewBondTx(td.randStamp, lockTime, senderAddr,
+	trx := tx.NewBondTx(lockTime, senderAddr,
 		pub.Address(), pub, amt, fee, "stake exceeded")
 
 	err := exe.Execute(trx, td.sandbox)

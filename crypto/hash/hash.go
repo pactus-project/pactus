@@ -66,12 +66,6 @@ func (h Hash) Bytes() []byte {
 	return h[:]
 }
 
-func (h Hash) Stamp() Stamp {
-	var stamp Stamp
-	copy(stamp[:], h[0:4])
-	return stamp
-}
-
 func (h Hash) ShortString() string {
 	return fmt.Sprintf("%X", h[:6])
 }

@@ -39,7 +39,6 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 	tm.addRowTxID("ID", trx.Id)
 	tm.addRowBytes("Data", trx.Data)
 	tm.addRowInt("Version", int(trx.Version))
-	tm.addRowBytes("Stamp", trx.Stamp)
 	tm.addRowInt("LockTime", int(trx.LockTime))
 	tm.addRowInt("Fee", int(trx.Fee))
 	tm.addRowString("Memo", trx.Memo)

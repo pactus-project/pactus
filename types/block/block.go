@@ -133,10 +133,6 @@ func (b *Block) Hash() hash.Hash {
 	return h
 }
 
-func (b *Block) Stamp() hash.Stamp {
-	return b.Hash().Stamp()
-}
-
 func (b *Block) String() string {
 	return fmt.Sprintf("{⌘ %v 👤 %v 💻 %v 📨 %d}",
 		b.Hash().ShortString(),

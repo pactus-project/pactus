@@ -186,7 +186,7 @@ func TestMain(m *testing.M) {
 		tNodes[i].Stop()
 	}
 
-	s, _ := store.NewStore(tConfigs[tNodeIdx1].Store, 0)
+	s, _ := store.NewStore(tConfigs[tNodeIdx1].Store)
 	total := int64(0)
 	s.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
 		total += acc.Balance()

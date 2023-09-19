@@ -204,11 +204,6 @@ func (ts *TestSuite) RandHash() hash.Hash {
 	return hash.CalcHash(util.Int64ToSlice(ts.RandInt64(util.MaxInt64)))
 }
 
-// RandStamp generates a random stamp for testing purposes.
-func (ts *TestSuite) RandStamp() hash.Stamp {
-	return ts.RandHash().Stamp()
-}
-
 // RandAddress generates a random address for testing purposes.
 func (ts *TestSuite) RandAddress() crypto.Address {
 	data := make([]byte, 20)
@@ -324,10 +319,9 @@ func (ts *TestSuite) GenerateTestProposal(height uint32, round int16) (*proposal
 
 // GenerateTestTransferTx generates a transfer transaction for testing purposes.
 func (ts *TestSuite) GenerateTestTransferTx() (*tx.Tx, crypto.Signer) {
-	stamp := ts.RandStamp()
 	s := ts.RandSigner()
 	pub, _ := ts.RandBLSKeyPair()
-	tx := tx.NewTransferTx(stamp, ts.RandHeight(), s.Address(), pub.Address(),
+	tx := tx.NewTransferTx(ts.RandHeight(), s.Address(), pub.Address(),
 		ts.RandInt64(1000*1e10), ts.RandInt64(1*1e10), "test send-tx")
 	s.SignMsg(tx)
 	return tx, s
@@ -335,10 +329,9 @@ func (ts *TestSuite) GenerateTestTransferTx() (*tx.Tx, crypto.Signer) {
 
 // GenerateTestBondTx generates a bond transaction for testing purposes.
 func (ts *TestSuite) GenerateTestBondTx() (*tx.Tx, crypto.Signer) {
-	stamp := ts.RandStamp()
 	s := ts.RandSigner()
 	pub, _ := ts.RandBLSKeyPair()
-	tx := tx.NewBondTx(stamp, ts.RandHeight(), s.Address(), pub.Address(),
+	tx := tx.NewBondTx(ts.RandHeight(), s.Address(), pub.Address(),
 		pub, ts.RandInt64(1000*1e10), ts.RandInt64(1*1e10), "test bond-tx")
 	s.SignMsg(tx)
 	return tx, s
@@ -346,28 +339,25 @@ func (ts *TestSuite) GenerateTestBondTx() (*tx.Tx, crypto.Signer) {
 
 // GenerateTestSortitionTx generates a sortition transaction for testing purposes.
 func (ts *TestSuite) GenerateTestSortitionTx() (*tx.Tx, crypto.Signer) {
-	stamp := ts.RandStamp()
 	s := ts.RandSigner()
 	proof := ts.RandProof()
-	tx := tx.NewSortitionTx(stamp, ts.RandHeight(), s.Address(), proof)
+	tx := tx.NewSortitionTx(ts.RandHeight(), s.Address(), proof)
 	s.SignMsg(tx)
 	return tx, s
 }
 
 // GenerateTestUnbondTx generates an unbond transaction for testing purposes.
 func (ts *TestSuite) GenerateTestUnbondTx() (*tx.Tx, crypto.Signer) {
-	stamp := ts.RandStamp()
 	s := ts.RandSigner()
-	tx := tx.NewUnbondTx(stamp, ts.RandHeight(), s.Address(), "test unbond-tx")
+	tx := tx.NewUnbondTx(ts.RandHeight(), s.Address(), "test unbond-tx")
 	s.SignMsg(tx)
 	return tx, s
 }
 
 // GenerateTestWithdrawTx generates a withdraw transaction for testing purposes.
 func (ts *TestSuite) GenerateTestWithdrawTx() (*tx.Tx, crypto.Signer) {
-	stamp := ts.RandStamp()
 	s := ts.RandSigner()
-	tx := tx.NewWithdrawTx(stamp, ts.RandHeight(), s.Address(), ts.RandAddress(),
+	tx := tx.NewWithdrawTx(ts.RandHeight(), s.Address(), ts.RandAddress(),
 		ts.RandInt64(1000*1e10), ts.RandInt64(1*1e10), "test withdraw-tx")
 	s.SignMsg(tx)
 	return tx, s

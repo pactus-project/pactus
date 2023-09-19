@@ -92,7 +92,6 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 		Id:          trx.ID().Bytes(),
 		Data:        data,
 		Version:     int32(trx.Version()),
-		Stamp:       trx.Stamp().Bytes(),
 		LockTime:    trx.LockTime(),
 		Fee:         trx.Fee(),
 		Value:       trx.Payload().Value(),

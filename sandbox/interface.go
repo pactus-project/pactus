@@ -4,10 +4,8 @@ import (
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/account"
-	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
@@ -30,9 +28,8 @@ type Sandbox interface {
 	PowerDelta() int64
 	AccumulatedFee() int64
 
-	VerifyProof(hash.Stamp, sortition.Proof, *validator.Validator) bool
+	VerifyProof(uint32, sortition.Proof, *validator.Validator) bool
 	Committee() committee.Reader
-	RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block)
 
 	Params() param.Params
 	CurrentHeight() uint32

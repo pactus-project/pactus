@@ -3,7 +3,6 @@ package executor
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/errors"
@@ -15,7 +14,6 @@ type testData struct {
 	*testsuite.TestSuite
 
 	sandbox    *sandbox.MockSandbox
-	randStamp  hash.Stamp
 	randHeight uint32
 }
 
@@ -26,12 +24,11 @@ func setup(t *testing.T) *testData {
 
 	sandbox := sandbox.MockingSandbox(ts)
 	randHeight := ts.RandHeight()
-	randBlock := sandbox.TestStore.AddTestBlock(randHeight)
+	_ = sandbox.TestStore.AddTestBlock(randHeight)
 
 	return &testData{
 		TestSuite:  ts,
 		sandbox:    sandbox,
-		randStamp:  randBlock.Stamp(),
 		randHeight: randHeight,
 	}
 }
@@ -71,7 +68,7 @@ func TestExecuteTransferTx(t *testing.T) {
 	lockTime := td.sandbox.CurrentHeight()
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
-		trx := tx.NewTransferTx(td.randStamp, lockTime, td.RandAddress(),
+		trx := tx.NewTransferTx(lockTime, td.RandAddress(),
 			receiverAddr, amt, fee, "non-existing account")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -79,7 +76,7 @@ func TestExecuteTransferTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewTransferTx(td.randStamp, lockTime, senderAddr,
+		trx := tx.NewTransferTx(lockTime, senderAddr,
 			receiverAddr, senderBalance+1, 0, "insufficient balance")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -87,7 +84,7 @@ func TestExecuteTransferTx(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewTransferTx(td.randStamp, lockTime, senderAddr,
+		trx := tx.NewTransferTx(lockTime, senderAddr,
 			receiverAddr, amt, fee, "ok")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -109,7 +106,7 @@ func TestTransferToSelf(t *testing.T) {
 	amt, fee := td.randomAmountAndFee(0, senderBalance)
 	lockTime := td.sandbox.CurrentHeight()
 
-	trx := tx.NewTransferTx(td.randStamp, lockTime, senderAddr, senderAddr, amt, fee, "ok")
+	trx := tx.NewTransferTx(lockTime, senderAddr, senderAddr, amt, fee, "ok")
 	err := exe.Execute(trx, td.sandbox)
 	assert.NoError(t, err)
 
