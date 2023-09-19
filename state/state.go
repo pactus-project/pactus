@@ -7,6 +7,7 @@ import (
 
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/genesis"
@@ -733,4 +734,8 @@ func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, er
 	default:
 		return 0, errors.Errorf(errors.ErrInvalidTx, "unexpected tx type: %v", payloadType)
 	}
+}
+
+func (st *state) GetPublicKey(addr crypto.Address) (*bls.PublicKey, error) {
+	return st.store.PublicKey(addr)
 }

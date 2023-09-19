@@ -6,7 +6,6 @@ import (
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/state"
-	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -20,20 +19,18 @@ type Server struct {
 	address  string
 	grpc     *grpc.Server
 	state    state.Facade
-	store    store.Reader
 	sync     sync.Synchronizer
 	consMgr  consensus.ManagerReader
 	logger   *logger.SubLogger
 }
 
-func NewServer(conf *Config, state state.Facade, store store.Reader, sync sync.Synchronizer,
+func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
 	consMgr consensus.ManagerReader,
 ) *Server {
 	return &Server{
 		ctx:     context.Background(),
 		config:  conf,
 		state:   state,
-		store:   store,
 		sync:    sync,
 		consMgr: consMgr,
 		logger:  logger.NewSubLogger("_grpc", nil),
@@ -52,7 +49,6 @@ func (s *Server) StartServer() error {
 	grpc := grpc.NewServer()
 	blockchainServer := &blockchainServer{
 		state:   s.state,
-		store:   s.store,
 		consMgr: s.consMgr,
 		logger:  s.logger,
 	}

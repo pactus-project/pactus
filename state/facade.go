@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/store"
@@ -50,4 +51,5 @@ type Facade interface {
 	Params() param.Params
 	Close() error
 	CalculateFee(amount int64, payloadType payload.Type) (int64, error)
+	GetPublicKey(addr crypto.Address) (*bls.PublicKey, error)
 }
