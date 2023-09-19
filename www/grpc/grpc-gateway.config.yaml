@@ -26,7 +26,7 @@ http:
       get: "/v1/blockchain/info"
 
     - selector: pactus.Blockchain.GetPublicKey
-      get: "/v1/blockchain/public_key/address/{address}"
+      get: "/v1/blockchain/public_keys/address/{address}"
 
     # Transaction APIs
     - selector: pactus.Transaction.GetTransaction
