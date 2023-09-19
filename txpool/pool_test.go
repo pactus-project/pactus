@@ -127,7 +127,7 @@ func TestEmptyPool(t *testing.T) {
 func TestPrepareBlockTransactions(t *testing.T) {
 	td := setup(t)
 
-	randHeight := td.RandHeight()
+	randHeight := td.RandHeight() + td.sandbox.TestParams.UnbondInterval
 	randBlock := td.sandbox.TestStore.AddTestBlock(randHeight)
 
 	acc1Signer := td.RandSigner()
@@ -154,24 +154,24 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	val3.AddToStake(10000000000)
 	td.sandbox.UpdateValidator(val3)
 
-	transferTx := tx.NewTransferTx(randBlock.Stamp(), randHeight+1, acc1Signer.Address(),
+	transferTx := tx.NewTransferTx(randBlock.Stamp(), randHeight, acc1Signer.Address(),
 		td.RandAddress(), 1000, 1000, "send-tx")
 	acc1Signer.SignMsg(transferTx)
 
 	pub, _ := td.RandBLSKeyPair()
-	bondTx := tx.NewBondTx(randBlock.Stamp(), randHeight+2, acc1Signer.Address(),
+	bondTx := tx.NewBondTx(randBlock.Stamp(), randHeight, acc1Signer.Address(),
 		pub.Address(), pub, 1000000000, 100000, "bond-tx")
 	acc1Signer.SignMsg(bondTx)
 
-	unbondTx := tx.NewUnbondTx(randBlock.Stamp(), randHeight+3, val1.Address(), "unbond-tx")
+	unbondTx := tx.NewUnbondTx(randBlock.Stamp(), randHeight, val1.Address(), "unbond-tx")
 	val1Signer.SignMsg(unbondTx)
 
-	withdrawTx := tx.NewWithdrawTx(randBlock.Stamp(), randHeight+4, val2.Address(),
+	withdrawTx := tx.NewWithdrawTx(randBlock.Stamp(), randHeight, val2.Address(),
 		td.RandAddress(), 1000, 1000, "withdraw-tx")
 	val2Signer.SignMsg(withdrawTx)
 
 	td.sandbox.TestAcceptSortition = true
-	sortitionTx := tx.NewSortitionTx(randBlock.Stamp(), randHeight+4, val3.Address(),
+	sortitionTx := tx.NewSortitionTx(randBlock.Stamp(), randHeight, val3.Address(),
 		td.RandProof())
 	val3Signer.SignMsg(sortitionTx)
 
