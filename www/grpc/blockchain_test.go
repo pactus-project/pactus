@@ -278,7 +278,7 @@ func TestGetPublicKey(t *testing.T) {
 		assert.Nil(t, res)
 	})
 
-	t.Run("Should return nil for non existing account ", func(t *testing.T) {
+	t.Run("Should return nil for non existing public key ", func(t *testing.T) {
 		res, err := client.GetPublicKey(tCtx,
 			&pactus.GetPublicKeyRequest{Address: ts.RandAddress().String()})
 
