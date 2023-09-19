@@ -265,3 +265,7 @@ func (m *MockState) CalculateFee(_ int64, payloadType payload.Type) (int64, erro
 		return 0, errors.Errorf(errors.ErrInvalidTx, "unexpected tx type: %v", payloadType)
 	}
 }
+
+func (m *MockState) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
+	return m.TestStore.PublicKey(addr)
+}
