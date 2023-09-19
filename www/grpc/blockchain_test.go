@@ -264,6 +264,39 @@ func TestGetValidatorAddresses(t *testing.T) {
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }
 
+func TestGetPublicKey(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	conn, client := testBlockchainClient(t)
+	_, signer := tMockState.TestStore.AddTestAccount()
+
+	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
+		res, err := client.GetPublicKey(tCtx,
+			&pactus.GetPublicKeyRequest{Address: ""})
+
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("Should return nil for non existing account ", func(t *testing.T) {
+		res, err := client.GetPublicKey(tCtx,
+			&pactus.GetPublicKeyRequest{Address: ts.RandAddress().String()})
+
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("Should return account public key", func(t *testing.T) {
+		res, err := client.GetPublicKey(tCtx,
+			&pactus.GetPublicKeyRequest{Address: signer.Address().String()})
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, res.PublicKey, signer.PublicKey().String())
+	})
+	assert.Nil(t, conn.Close(), "Error closing connection")
+}
+
 func TestConsensusInfo(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 

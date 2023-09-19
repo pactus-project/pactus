@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/www/grpc"
@@ -37,6 +38,7 @@ func setup(t *testing.T) *testData {
 	ts := testsuite.NewTestSuite(t)
 
 	mockState := state.MockingState(ts)
+	mockStore := store.MockingStore(ts)
 	mockSync := sync.MockingSync(ts)
 	mockConsMgr, _ := consensus.MockingManager(ts, []crypto.Signer{
 		ts.RandSigner(), ts.RandSigner(),
@@ -51,7 +53,7 @@ func setup(t *testing.T) *testData {
 		Listen: "[::]:0",
 	}
 
-	gRPCServer := grpc.NewServer(grpcConf, mockState, mockSync, mockConsMgr)
+	gRPCServer := grpc.NewServer(grpcConf, mockState, mockStore, mockSync, mockConsMgr)
 	assert.NoError(t, gRPCServer.StartServer())
 
 	httpServer := NewServer(httpConf)

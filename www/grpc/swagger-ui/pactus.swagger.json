@@ -869,6 +869,14 @@
         }
       }
     },
+    "pactusGetPublicKeyResponse": {
+      "type": "object",
+      "properties": {
+        "publicKey": {
+          "type": "string"
+        }
+      }
+    },
     "pactusGetTransactionResponse": {
       "type": "object",
       "properties": {

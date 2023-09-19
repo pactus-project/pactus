@@ -137,6 +137,28 @@ function deserialize_pactus_GetConsensusInfoResponse(buffer_arg) {
   return blockchain_pb.GetConsensusInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_GetPublicKeyRequest(arg) {
+  if (!(arg instanceof blockchain_pb.GetPublicKeyRequest)) {
+    throw new Error('Expected argument of type pactus.GetPublicKeyRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetPublicKeyRequest(buffer_arg) {
+  return blockchain_pb.GetPublicKeyRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetPublicKeyResponse(arg) {
+  if (!(arg instanceof blockchain_pb.GetPublicKeyResponse)) {
+    throw new Error('Expected argument of type pactus.GetPublicKeyResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetPublicKeyResponse(buffer_arg) {
+  return blockchain_pb.GetPublicKeyResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetValidatorAddressesRequest(arg) {
   if (!(arg instanceof blockchain_pb.GetValidatorAddressesRequest)) {
     throw new Error('Expected argument of type pactus.GetValidatorAddressesRequest');
@@ -292,6 +314,17 @@ var BlockchainService = exports.BlockchainService = {
     requestDeserialize: deserialize_pactus_GetValidatorAddressesRequest,
     responseSerialize: serialize_pactus_GetValidatorAddressesResponse,
     responseDeserialize: deserialize_pactus_GetValidatorAddressesResponse,
+  },
+  getPublicKey: {
+    path: '/pactus.Blockchain/GetPublicKey',
+    requestStream: false,
+    responseStream: false,
+    requestType: blockchain_pb.GetPublicKeyRequest,
+    responseType: blockchain_pb.GetPublicKeyResponse,
+    requestSerialize: serialize_pactus_GetPublicKeyRequest,
+    requestDeserialize: deserialize_pactus_GetPublicKeyRequest,
+    responseSerialize: serialize_pactus_GetPublicKeyResponse,
+    responseDeserialize: deserialize_pactus_GetPublicKeyResponse,
   },
 };
 

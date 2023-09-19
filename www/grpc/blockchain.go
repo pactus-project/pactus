@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
@@ -18,6 +19,7 @@ import (
 
 type blockchainServer struct {
 	state   state.Facade
+	store   store.Reader
 	consMgr consensus.ManagerReader
 	logger  *logger.SubLogger
 }
@@ -220,6 +222,22 @@ func (s *blockchainServer) GetValidatorAddresses(_ context.Context,
 		addressesPB = append(addressesPB, address.String())
 	}
 	return &pactus.GetValidatorAddressesResponse{Addresses: addressesPB}, nil
+}
+
+func (s *blockchainServer) GetPublicKey(_ context.Context,
+	req *pactus.GetPublicKeyRequest,
+) (*pactus.GetPublicKeyResponse, error) {
+	addr, err := crypto.AddressFromString(req.Address)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid account address: %v", err.Error())
+	}
+
+	publicKey, err := s.store.PublicKey(addr)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "account not found")
+	}
+
+	return &pactus.GetPublicKeyResponse{PublicKey: publicKey.String()}, nil
 }
 
 func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {

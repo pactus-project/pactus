@@ -78,6 +78,12 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 	return nil, fmt.Errorf("unknown request")
 }
 
+func (s *blockchainServer) GetPublicKey(_ context.Context,
+	_ *pactus.GetPublicKeyRequest,
+) (*pactus.GetPublicKeyResponse, error) {
+	return &pactus.GetPublicKeyResponse{}, nil
+}
+
 func (s *transactionServer) GetTransaction(_ context.Context,
 	_ *pactus.GetTransactionRequest,
 ) (*pactus.GetTransactionResponse, error) {

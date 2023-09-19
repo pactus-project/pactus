@@ -102,6 +102,26 @@ const GetValidatorResponse$json = const {
 
 /// Descriptor for `GetValidatorResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getValidatorResponseDescriptor = $convert.base64Decode('ChRHZXRWYWxpZGF0b3JSZXNwb25zZRIzCgl2YWxpZGF0b3IYASABKAsyFS5wYWN0dXMuVmFsaWRhdG9ySW5mb1IJdmFsaWRhdG9y');
+@$core.Deprecated('Use getPublicKeyRequestDescriptor instead')
+const GetPublicKeyRequest$json = const {
+  '1': 'GetPublicKeyRequest',
+  '2': const [
+    const {'1': 'address', '3': 1, '4': 1, '5': 9, '10': 'address'},
+  ],
+};
+
+/// Descriptor for `GetPublicKeyRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getPublicKeyRequestDescriptor = $convert.base64Decode('ChNHZXRQdWJsaWNLZXlSZXF1ZXN0EhgKB2FkZHJlc3MYASABKAlSB2FkZHJlc3M=');
+@$core.Deprecated('Use getPublicKeyResponseDescriptor instead')
+const GetPublicKeyResponse$json = const {
+  '1': 'GetPublicKeyResponse',
+  '2': const [
+    const {'1': 'public_key', '3': 1, '4': 1, '5': 9, '10': 'publicKey'},
+  ],
+};
+
+/// Descriptor for `GetPublicKeyResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getPublicKeyResponseDescriptor = $convert.base64Decode('ChRHZXRQdWJsaWNLZXlSZXNwb25zZRIdCgpwdWJsaWNfa2V5GAEgASgJUglwdWJsaWNLZXk=');
 @$core.Deprecated('Use getBlockRequestDescriptor instead')
 const GetBlockRequest$json = const {
   '1': 'GetBlockRequest',
@@ -308,6 +328,7 @@ const $core.Map<$core.String, $core.dynamic> BlockchainServiceBase$json = const 
     const {'1': 'GetValidator', '2': '.pactus.GetValidatorRequest', '3': '.pactus.GetValidatorResponse'},
     const {'1': 'GetValidatorByNumber', '2': '.pactus.GetValidatorByNumberRequest', '3': '.pactus.GetValidatorResponse'},
     const {'1': 'GetValidatorAddresses', '2': '.pactus.GetValidatorAddressesRequest', '3': '.pactus.GetValidatorAddressesResponse'},
+    const {'1': 'GetPublicKey', '2': '.pactus.GetPublicKeyRequest', '3': '.pactus.GetPublicKeyResponse'},
   ],
 };
 
@@ -342,7 +363,9 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Blockchain
   '.pactus.GetValidatorByNumberRequest': GetValidatorByNumberRequest$json,
   '.pactus.GetValidatorAddressesRequest': GetValidatorAddressesRequest$json,
   '.pactus.GetValidatorAddressesResponse': GetValidatorAddressesResponse$json,
+  '.pactus.GetPublicKeyRequest': GetPublicKeyRequest$json,
+  '.pactus.GetPublicKeyResponse': GetPublicKeyResponse$json,
 };
 
 /// Descriptor for `Blockchain`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List blockchainServiceDescriptor = $convert.base64Decode('CgpCbG9ja2NoYWluEj0KCEdldEJsb2NrEhcucGFjdHVzLkdldEJsb2NrUmVxdWVzdBoYLnBhY3R1cy5HZXRCbG9ja1Jlc3BvbnNlEkkKDEdldEJsb2NrSGFzaBIbLnBhY3R1cy5HZXRCbG9ja0hhc2hSZXF1ZXN0GhwucGFjdHVzLkdldEJsb2NrSGFzaFJlc3BvbnNlEk8KDkdldEJsb2NrSGVpZ2h0Eh0ucGFjdHVzLkdldEJsb2NrSGVpZ2h0UmVxdWVzdBoeLnBhY3R1cy5HZXRCbG9ja0hlaWdodFJlc3BvbnNlElgKEUdldEJsb2NrY2hhaW5JbmZvEiAucGFjdHVzLkdldEJsb2NrY2hhaW5JbmZvUmVxdWVzdBohLnBhY3R1cy5HZXRCbG9ja2NoYWluSW5mb1Jlc3BvbnNlElUKEEdldENvbnNlbnN1c0luZm8SHy5wYWN0dXMuR2V0Q29uc2Vuc3VzSW5mb1JlcXVlc3QaIC5wYWN0dXMuR2V0Q29uc2Vuc3VzSW5mb1Jlc3BvbnNlEkMKCkdldEFjY291bnQSGS5wYWN0dXMuR2V0QWNjb3VudFJlcXVlc3QaGi5wYWN0dXMuR2V0QWNjb3VudFJlc3BvbnNlEkkKDEdldFZhbGlkYXRvchIbLnBhY3R1cy5HZXRWYWxpZGF0b3JSZXF1ZXN0GhwucGFjdHVzLkdldFZhbGlkYXRvclJlc3BvbnNlElkKFEdldFZhbGlkYXRvckJ5TnVtYmVyEiMucGFjdHVzLkdldFZhbGlkYXRvckJ5TnVtYmVyUmVxdWVzdBocLnBhY3R1cy5HZXRWYWxpZGF0b3JSZXNwb25zZRJkChVHZXRWYWxpZGF0b3JBZGRyZXNzZXMSJC5wYWN0dXMuR2V0VmFsaWRhdG9yQWRkcmVzc2VzUmVxdWVzdBolLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzZXNSZXNwb25zZQ==');
+final $typed_data.Uint8List blockchainServiceDescriptor = $convert.base64Decode('CgpCbG9ja2NoYWluEj0KCEdldEJsb2NrEhcucGFjdHVzLkdldEJsb2NrUmVxdWVzdBoYLnBhY3R1cy5HZXRCbG9ja1Jlc3BvbnNlEkkKDEdldEJsb2NrSGFzaBIbLnBhY3R1cy5HZXRCbG9ja0hhc2hSZXF1ZXN0GhwucGFjdHVzLkdldEJsb2NrSGFzaFJlc3BvbnNlEk8KDkdldEJsb2NrSGVpZ2h0Eh0ucGFjdHVzLkdldEJsb2NrSGVpZ2h0UmVxdWVzdBoeLnBhY3R1cy5HZXRCbG9ja0hlaWdodFJlc3BvbnNlElgKEUdldEJsb2NrY2hhaW5JbmZvEiAucGFjdHVzLkdldEJsb2NrY2hhaW5JbmZvUmVxdWVzdBohLnBhY3R1cy5HZXRCbG9ja2NoYWluSW5mb1Jlc3BvbnNlElUKEEdldENvbnNlbnN1c0luZm8SHy5wYWN0dXMuR2V0Q29uc2Vuc3VzSW5mb1JlcXVlc3QaIC5wYWN0dXMuR2V0Q29uc2Vuc3VzSW5mb1Jlc3BvbnNlEkMKCkdldEFjY291bnQSGS5wYWN0dXMuR2V0QWNjb3VudFJlcXVlc3QaGi5wYWN0dXMuR2V0QWNjb3VudFJlc3BvbnNlEkkKDEdldFZhbGlkYXRvchIbLnBhY3R1cy5HZXRWYWxpZGF0b3JSZXF1ZXN0GhwucGFjdHVzLkdldFZhbGlkYXRvclJlc3BvbnNlElkKFEdldFZhbGlkYXRvckJ5TnVtYmVyEiMucGFjdHVzLkdldFZhbGlkYXRvckJ5TnVtYmVyUmVxdWVzdBocLnBhY3R1cy5HZXRWYWxpZGF0b3JSZXNwb25zZRJkChVHZXRWYWxpZGF0b3JBZGRyZXNzZXMSJC5wYWN0dXMuR2V0VmFsaWRhdG9yQWRkcmVzc2VzUmVxdWVzdBolLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzZXNSZXNwb25zZRJJCgxHZXRQdWJsaWNLZXkSGy5wYWN0dXMuR2V0UHVibGljS2V5UmVxdWVzdBocLnBhY3R1cy5HZXRQdWJsaWNLZXlSZXNwb25zZQ==');
