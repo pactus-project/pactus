@@ -70,7 +70,7 @@ func TestAddressInfo(t *testing.T) {
 	td := setup(t)
 
 	assert.Equal(t, td.vault.AddressCount(), 4)
-	infos := td.vault.AddressLabels()
+	infos := td.vault.AddressInfos()
 	blsIndex := 0
 	importedIndex := 0
 	for _, i := range infos {
@@ -91,7 +91,7 @@ func TestAddressInfo(t *testing.T) {
 	// Neutered
 	neutered := td.vault.Neuter()
 	assert.Equal(t, neutered.AddressCount(), 3)
-	infos = neutered.AddressLabels()
+	infos = neutered.AddressInfos()
 	blsIndex = 0
 	for _, i := range infos {
 		info := td.vault.AddressInfo(i.Address)
@@ -149,25 +149,25 @@ func TestGetPrivateKeys(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Unknown address", func(t *testing.T) {
-		addr := td.RandAddress()
+		addr := td.RandAccAddress()
 		_, err := td.vault.PrivateKeys(tPassword, []string{addr.String()})
 		assert.ErrorIs(t, err, NewErrAddressNotFound(addr.String()))
 	})
 
 	t.Run("No password", func(t *testing.T) {
-		addr := td.vault.AddressLabels()[0].Address
+		addr := td.vault.AddressInfos()[0].Address
 		_, err := td.vault.PrivateKeys("", []string{addr})
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Invalid password", func(t *testing.T) {
-		addr := td.vault.AddressLabels()[0].Address
+		addr := td.vault.AddressInfos()[0].Address
 		_, err := td.vault.PrivateKeys("wrong_password", []string{addr})
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Check all the private keys", func(t *testing.T) {
-		for _, info := range td.vault.AddressLabels() {
+		for _, info := range td.vault.AddressInfos() {
 			prv, err := td.vault.PrivateKeys(tPassword, []string{info.Address})
 			assert.NoError(t, err)
 			i := td.vault.AddressInfo(info.Address)
@@ -227,7 +227,7 @@ func TestUpdatePassword(t *testing.T) {
 	td := setup(t)
 
 	infos := make([]*AddressInfo, 0, td.vault.AddressCount())
-	for _, info := range td.vault.AddressLabels() {
+	for _, info := range td.vault.AddressInfos() {
 		info := td.vault.AddressInfo(info.Address)
 		infos = append(infos, info)
 	}
@@ -266,21 +266,21 @@ func TestSetLabel(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Set label for unknown address", func(t *testing.T) {
-		invAddr := td.RandAddress().String()
+		invAddr := td.RandAccAddress().String()
 		err := td.vault.SetLabel(invAddr, "i have label")
 		assert.ErrorIs(t, err, NewErrAddressNotFound(invAddr))
 		assert.Equal(t, td.vault.Label(invAddr), "")
 	})
 
 	t.Run("Update label", func(t *testing.T) {
-		testAddr := td.vault.AddressLabels()[0].Address
+		testAddr := td.vault.AddressInfos()[0].Address
 		err := td.vault.SetLabel(testAddr, "i have label")
 		assert.NoError(t, err)
 		assert.Equal(t, td.vault.Label(testAddr), "i have label")
 	})
 
 	t.Run("Remove label", func(t *testing.T) {
-		testAddr := td.vault.AddressLabels()[0].Address
+		testAddr := td.vault.AddressInfos()[0].Address
 		err := td.vault.SetLabel(testAddr, "")
 		assert.NoError(t, err)
 		assert.Empty(t, td.vault.Label(testAddr))
@@ -297,7 +297,7 @@ func TestNeuter(t *testing.T) {
 	assert.ErrorIs(t, err, ErrNeutered)
 
 	_, err = neutered.PrivateKeys(tPassword, []string{
-		td.RandAddress().String(),
+		td.RandAccAddress().String(),
 	})
 	assert.ErrorIs(t, err, ErrNeutered)
 

@@ -21,10 +21,10 @@ var _ Sandbox = &MockSandbox{}
 type MockSandbox struct {
 	ts *testsuite.TestSuite
 
-	TestParams           param.Params
-	TestStore            *store.MockStore
-	TestCommittee        committee.Committee
-	TestCommitteeSigners []crypto.Signer
+	TestParams    param.Params
+	TestStore     *store.MockStore
+	TestCommittee committee.Committee
+	// TestCommitteeSigners []crypto.Signer
 	TestAcceptSortition  bool
 	TestJoinedValidators map[crypto.Address]bool
 	TestCommittedTrxs    map[tx.ID]*tx.Tx
@@ -32,14 +32,14 @@ type MockSandbox struct {
 }
 
 func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
-	committee, signers := ts.GenerateTestCommittee(7)
+	committee, _ := ts.GenerateTestCommittee(7)
 
 	sb := &MockSandbox{
-		ts:                   ts,
-		TestParams:           param.DefaultParams(),
-		TestStore:            store.MockingStore(ts),
-		TestCommittee:        committee,
-		TestCommitteeSigners: signers,
+		ts:            ts,
+		TestParams:    param.DefaultParams(),
+		TestStore:     store.MockingStore(ts),
+		TestCommittee: committee,
+		// TestCommitteeSigners: signers,
 		TestJoinedValidators: make(map[crypto.Address]bool),
 		TestCommittedTrxs:    make(map[tx.ID]*tx.Tx),
 	}

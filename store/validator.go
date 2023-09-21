@@ -15,7 +15,7 @@ type validatorStore struct {
 	total      int32
 }
 
-func validatorKey(addr crypto.Address) []byte { return append(validatorPrefix, addr.Bytes()...) }
+func valKey(addr crypto.Address) []byte { return append(validatorPrefix, addr.Bytes()...) }
 
 func newValidatorStore(db *leveldb.DB) *validatorStore {
 	total := int32(0)
@@ -100,5 +100,5 @@ func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.V
 	vs.numberMap[val.Number()] = val
 	vs.addressMap[val.Address()] = val
 
-	batch.Put(validatorKey(val.Address()), data)
+	batch.Put(valKey(val.Address()), data)
 }

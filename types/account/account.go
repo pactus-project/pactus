@@ -8,12 +8,12 @@ import (
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
-// The Account struct represents a account object.
+// The Account struct represents an account object.
 type Account struct {
 	data accountData
 }
 
-// accountData contains the data associated with a account.
+// accountData contains the data associated with an account.
 type accountData struct {
 	Number  int32
 	Balance int64

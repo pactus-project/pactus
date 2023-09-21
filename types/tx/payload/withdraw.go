@@ -6,7 +6,6 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type WithdrawPayload struct {
@@ -29,11 +28,15 @@ func (p *WithdrawPayload) Value() int64 {
 
 // TODO: write test for me.
 func (p *WithdrawPayload) BasicCheck() error {
-	if err := p.From.BasicCheck(); err != nil {
-		return errors.Error(errors.ErrInvalidAddress)
+	if !p.From.IsValidatorAddress() {
+		return BasicCheckError{
+			Reason: "sender is not a validator address",
+		}
 	}
-	if err := p.To.BasicCheck(); err != nil {
-		return errors.Error(errors.ErrInvalidAddress)
+	if !p.To.IsAccountAddress() {
+		return BasicCheckError{
+			Reason: "receiver is not an account address",
+		}
 	}
 
 	return nil
@@ -44,18 +47,30 @@ func (p *WithdrawPayload) SerializeSize() int {
 }
 
 func (p *WithdrawPayload) Encode(w io.Writer) error {
-	err := encoding.WriteElements(w, &p.From, &p.To)
+	err := p.From.Encode(w)
 	if err != nil {
 		return err
 	}
+
+	err = p.To.Encode(w)
+	if err != nil {
+		return err
+	}
+
 	return encoding.WriteVarInt(w, uint64(p.Amount))
 }
 
 func (p *WithdrawPayload) Decode(r io.Reader) error {
-	err := encoding.ReadElements(r, &p.From, &p.To)
+	err := p.From.Decode(r)
 	if err != nil {
 		return err
 	}
+
+	err = p.To.Decode(r)
+	if err != nil {
+		return err
+	}
+
 	amount, err := encoding.ReadVarInt(r)
 	if err != nil {
 		return err
@@ -71,6 +86,6 @@ func (p *WithdrawPayload) String() string {
 		p.Amount)
 }
 
-func (p *WithdrawPayload) ReceiverAddr() *crypto.Address {
+func (p *WithdrawPayload) Receiver() *crypto.Address {
 	return &p.To
 }

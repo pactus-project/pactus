@@ -183,16 +183,19 @@ func (tx *Tx) checkSignature() error {
 				Reason: "no public key",
 			}
 		}
+
 		if tx.Signature() == nil {
 			return BasicCheckError{
 				Reason: "no signature",
 			}
 		}
+
 		if err := tx.PublicKey().VerifyAddress(tx.Payload().Signer()); err != nil {
 			return BasicCheckError{
-				Reason: fmt.Sprintf("invalid address: %s", err.Error()),
+				Reason: err.Error(),
 			}
 		}
+
 		bs := tx.SignBytes()
 		if err := tx.PublicKey().Verify(bs, tx.Signature()); err != nil {
 			return BasicCheckError{
@@ -391,7 +394,7 @@ func (tx *Tx) ID() ID {
 
 func (tx *Tx) IsTransferTx() bool {
 	return tx.Payload().Type() == payload.TypeTransfer &&
-		!tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
+		tx.Payload().Signer() != crypto.TreasuryAddress
 }
 
 func (tx *Tx) IsBondTx() bool {
@@ -400,7 +403,7 @@ func (tx *Tx) IsBondTx() bool {
 
 func (tx *Tx) IsSubsidyTx() bool {
 	return tx.Payload().Type() == payload.TypeTransfer &&
-		tx.data.Payload.Signer().EqualsTo(crypto.TreasuryAddress)
+		tx.Payload().Signer() == crypto.TreasuryAddress
 }
 
 func (tx *Tx) IsSortitionTx() bool {

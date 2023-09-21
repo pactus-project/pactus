@@ -208,8 +208,8 @@ func TestVoteSignature(t *testing.T) {
 	pb1, pv1 := ts.RandBLSKeyPair()
 	pb2, pv2 := ts.RandBLSKeyPair()
 
-	v1 := vote.NewPrepareVote(h1, 101, 5, pb1.Address())
-	v2 := vote.NewPrepareVote(h1, 101, 5, pb2.Address())
+	v1 := vote.NewPrepareVote(h1, 101, 5, pb1.ValidatorAddress())
+	v2 := vote.NewPrepareVote(h1, 101, 5, pb2.ValidatorAddress())
 
 	assert.Error(t, v1.Verify(pb1), "No signature")
 
@@ -235,7 +235,7 @@ func TestCPPreVote(t *testing.T) {
 
 	t.Run("Invalid round", func(t *testing.T) {
 		v := vote.NewCPPreVote(hash.UndefHash, h, r,
-			-1, vote.CPValueOne, just, ts.RandAddress())
+			-1, vote.CPValueOne, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
@@ -243,7 +243,7 @@ func TestCPPreVote(t *testing.T) {
 
 	t.Run("Invalid value", func(t *testing.T) {
 		v := vote.NewCPPreVote(hash.UndefHash, h, r,
-			1, vote.CPValueAbstain, just, ts.RandAddress())
+			1, vote.CPValueAbstain, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
@@ -251,7 +251,7 @@ func TestCPPreVote(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		v := vote.NewCPPreVote(hash.UndefHash, h, r, 1,
-			vote.CPValueZero, just, ts.RandAddress())
+			vote.CPValueZero, just, ts.RandAccAddress())
 		v.SetSignature(ts.RandBLSSignature())
 
 		err := v.BasicCheck()
@@ -271,7 +271,7 @@ func TestCPMainVote(t *testing.T) {
 
 	t.Run("Invalid round", func(t *testing.T) {
 		v := vote.NewCPMainVote(hash.UndefHash, h, r,
-			-1, vote.CPValueZero, just, ts.RandAddress())
+			-1, vote.CPValueZero, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
@@ -290,7 +290,7 @@ func TestCPMainVote(t *testing.T) {
 
 	t.Run("Invalid value", func(t *testing.T) {
 		v := vote.NewCPMainVote(hash.UndefHash, h, r, 1,
-			4, just, ts.RandAddress())
+			4, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
@@ -298,7 +298,7 @@ func TestCPMainVote(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		v := vote.NewCPMainVote(hash.UndefHash, h, r,
-			1, vote.CPValueAbstain, just, ts.RandAddress())
+			1, vote.CPValueAbstain, just, ts.RandAccAddress())
 		v.SetSignature(ts.RandBLSSignature())
 
 		err := v.BasicCheck()
@@ -324,21 +324,21 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid height", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), 0, 0, ts.RandAddress())
+		v := vote.NewPrepareVote(ts.RandHash(), 0, 0, ts.RandAccAddress())
 
 		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), 100, -1, ts.RandAddress())
+		v := vote.NewPrepareVote(ts.RandHash(), 100, -1, ts.RandAccAddress())
 
 		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
 	})
 
 	t.Run("No signature", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAddress())
+		v := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAccAddress())
 
 		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
@@ -356,7 +356,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAddress())
+		v := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAccAddress())
 		v.SetSignature(ts.RandBLSSignature())
 
 		assert.NoError(t, v.BasicCheck())
@@ -366,7 +366,7 @@ func TestBasicCheck(t *testing.T) {
 func TestSignBytes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	signer := ts.RandAddress()
+	signer := ts.RandAccAddress()
 	blockHash := ts.RandHash()
 	height := uint32(100)
 	round := int16(2)
@@ -402,7 +402,7 @@ func TestSignBytes(t *testing.T) {
 func TestLog(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	signer := ts.RandAddress()
+	signer := ts.RandAccAddress()
 	blockHash := ts.RandHash()
 	height := uint32(100)
 	round := int16(2)

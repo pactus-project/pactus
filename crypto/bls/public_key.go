@@ -13,6 +13,8 @@ import (
 	"github.com/pactus-project/pactus/util/errors"
 )
 
+var _ crypto.PublicKey = &PublicKey{}
+
 const PublicKeySize = 96
 
 type PublicKey struct {
@@ -143,18 +145,35 @@ func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
 	return g2.Equal(pub.point(), right.(*PublicKey).point())
 }
 
-func (pub *PublicKey) Address() crypto.Address {
+func (pub *PublicKey) AccountAddress() crypto.Address {
 	data := hash.Hash160(hash.Hash256(pub.Bytes()))
-	data = append([]byte{crypto.SignatureTypeBLS}, data...)
-	var addr crypto.Address
-	copy(addr[:], data[:])
+	addr := crypto.NewAddress(crypto.AddressTypeBLSAccount, data)
+	return addr
+}
+
+func (pub *PublicKey) ValidatorAddress() crypto.Address {
+	data := hash.Hash160(hash.Hash256(pub.Bytes()))
+	addr := crypto.NewAddress(crypto.AddressTypeValidator, data)
 	return addr
 }
 
 func (pub *PublicKey) VerifyAddress(addr crypto.Address) error {
-	if !addr.EqualsTo(pub.Address()) {
-		return errors.Error(errors.ErrInvalidAddress)
+	if addr.IsValidatorAddress() {
+		if addr != pub.ValidatorAddress() {
+			return crypto.AddressMismatchError{
+				Expected: pub.ValidatorAddress(),
+				Got:      addr,
+			}
+		}
+	} else {
+		if addr != pub.AccountAddress() {
+			return crypto.AddressMismatchError{
+				Expected: pub.AccountAddress(),
+				Got:      addr,
+			}
+		}
 	}
+
 	return nil
 }
 

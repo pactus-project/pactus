@@ -7,12 +7,11 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type SortitionPayload struct {
-	Address crypto.Address
-	Proof   sortition.Proof
+	Validator crypto.Address
+	Proof     sortition.Proof
 }
 
 func (p *SortitionPayload) Type() Type {
@@ -20,7 +19,7 @@ func (p *SortitionPayload) Type() Type {
 }
 
 func (p *SortitionPayload) Signer() crypto.Address {
-	return p.Address
+	return p.Validator
 }
 
 func (p *SortitionPayload) Value() int64 {
@@ -28,8 +27,10 @@ func (p *SortitionPayload) Value() int64 {
 }
 
 func (p *SortitionPayload) BasicCheck() error {
-	if err := p.Address.BasicCheck(); err != nil {
-		return errors.Error(errors.ErrInvalidAddress)
+	if !p.Validator.IsValidatorAddress() {
+		return BasicCheckError{
+			Reason: "address is not a validator address",
+		}
 	}
 
 	return nil
@@ -40,18 +41,23 @@ func (p *SortitionPayload) SerializeSize() int {
 }
 
 func (p *SortitionPayload) Encode(w io.Writer) error {
-	return encoding.WriteElements(w, &p.Address, &p.Proof)
+	err := p.Validator.Encode(w)
+	if err != nil {
+		return err
+	}
+
+	return encoding.WriteElements(w, &p.Proof)
 }
 
 func (p *SortitionPayload) Decode(r io.Reader) error {
-	return encoding.ReadElements(r, &p.Address, &p.Proof)
+	return encoding.ReadElements(r, &p.Validator, &p.Proof)
 }
 
 func (p *SortitionPayload) String() string {
 	return fmt.Sprintf("{Sortition 🎯 %v",
-		p.Address.ShortString())
+		p.Validator.ShortString())
 }
 
-func (p *SortitionPayload) ReceiverAddr() *crypto.Address {
+func (p *SortitionPayload) Receiver() *crypto.Address {
 	return nil
 }

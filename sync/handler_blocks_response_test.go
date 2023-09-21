@@ -27,7 +27,7 @@ func TestInvalidBlockData(t *testing.T) {
 	td := setup(t, nil)
 
 	blk := block.MakeBlock(1, time.Now(), nil, td.RandHash(), td.RandHash(),
-		td.GenerateTestCertificate(), td.RandSeed(), td.RandAddress())
+		td.GenerateTestCertificate(), td.RandSeed(), td.RandAccAddress())
 	data, _ := blk.Bytes()
 	tests := []struct {
 		data []byte
@@ -60,7 +60,7 @@ func TestOneBlockShorter(t *testing.T) {
 	td := setup(t, nil)
 
 	lastBlockHeight := td.state.LastBlockHeight()
-	b1 := td.GenerateTestBlock(nil)
+	b1 := td.GenerateTestBlock()
 	c1 := td.GenerateTestCertificate()
 	d1, _ := b1.Bytes()
 	pid := td.RandPeerID()
@@ -87,11 +87,11 @@ func TestStrippedPublicKey(t *testing.T) {
 	pub, _ := td.RandBLSKeyPair()
 	td.addPeer(t, pub, pid, services.New(services.None))
 
-	blk1 := td.GenerateTestBlock(nil)
+	blk1 := td.GenerateTestBlock()
 	trx := *td.state.TestStore.Blocks[1].Transactions()[0]
 	trxs := []*tx.Tx{&trx}
 	blk2 := block.MakeBlock(1, time.Now(), trxs, td.RandHash(), td.RandHash(),
-		td.GenerateTestCertificate(), td.RandSeed(), td.RandAddress())
+		td.GenerateTestCertificate(), td.RandSeed(), td.RandAccAddress())
 
 	tests := []struct {
 		blk *block.Block

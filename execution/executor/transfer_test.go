@@ -66,12 +66,12 @@ func TestExecuteTransferTx(t *testing.T) {
 
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
-	receiverAddr := td.RandAddress()
+	receiverAddr := td.RandAccAddress()
 	amt, fee := td.randomAmountAndFee(0, senderBalance)
 	lockTime := td.sandbox.CurrentHeight()
 
 	t.Run("Should fail, Sender has no account", func(t *testing.T) {
-		trx := tx.NewTransferTx(td.randStamp, lockTime, td.RandAddress(),
+		trx := tx.NewTransferTx(td.randStamp, lockTime, td.RandAccAddress(),
 			receiverAddr, amt, fee, "non-existing account")
 
 		err := exe.Execute(trx, td.sandbox)

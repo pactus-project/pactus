@@ -1,14 +1,14 @@
 package consensus
 
 import (
-	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
 
 type Reader interface {
-	SignerKey() crypto.PublicKey
+	ConsensusKey() *bls.PublicKey
 	AllVotes() []*vote.Vote
 	PickRandomVote(round int16) *vote.Vote
 	RoundProposal(round int16) *proposal.Proposal

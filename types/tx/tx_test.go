@@ -90,7 +90,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("LockTime is not defined", func(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandStamp(), 0,
-			ts.RandAddress(), ts.RandAddress(), ts.RandInt64(1e9), ts.RandInt64(1e6), "")
+			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandInt64(1e9), ts.RandInt64(1e6), "")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -102,7 +102,7 @@ func TestBasicCheck(t *testing.T) {
 		bigMemo := strings.Repeat("a", 65)
 
 		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandHeight(),
-			ts.RandAddress(), ts.RandAddress(), ts.RandInt64(1e9), ts.RandInt64(1e6), bigMemo)
+			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandInt64(1e9), ts.RandInt64(1e6), bigMemo)
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -111,10 +111,10 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid payload, Should returns error", func(t *testing.T) {
-		invAddr := ts.RandAddress()
+		invAddr := ts.RandAccAddress()
 		invAddr[0] = 2
 		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandHeight(),
-			ts.RandAddress(), invAddr, 1e9, ts.RandInt64(1e6), "invalid address")
+			ts.RandAccAddress(), invAddr, 1e9, ts.RandInt64(1e6), "invalid address")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -124,7 +124,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("Invalid amount", func(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandHeight(),
-			ts.RandAddress(), ts.RandAddress(), -1, 1, "invalid amount")
+			ts.RandAccAddress(), ts.RandAccAddress(), -1, 1, "invalid amount")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -134,7 +134,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("Invalid amount", func(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandHeight(),
-			ts.RandAddress(), ts.RandAddress(), (42*1e15)+1, 1, "invalid amount")
+			ts.RandAccAddress(), ts.RandAccAddress(), (42*1e15)+1, 1, "invalid amount")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -144,7 +144,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("Invalid fee", func(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandHeight(),
-			ts.RandAddress(), ts.RandAddress(), 1, -1, "invalid fee")
+			ts.RandAccAddress(), ts.RandAccAddress(), 1, -1, "invalid fee")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -154,7 +154,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("Invalid fee", func(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandHeight(),
-			ts.RandAddress(), ts.RandAddress(), 1, (42*1e15)+1, "invalid fee")
+			ts.RandAccAddress(), ts.RandAccAddress(), 1, (42*1e15)+1, "invalid fee")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -165,8 +165,8 @@ func TestBasicCheck(t *testing.T) {
 	t.Run("Invalid signer address", func(t *testing.T) {
 		signer := ts.RandSigner()
 		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandHeight(),
-			ts.RandAddress(), ts.RandAddress(), 1, 1, "invalid signer")
-		signer.SignMsg(trx)
+			ts.RandAccAddress(), ts.RandAccAddress(), 1, 1, "invalid signer")
+		signer.Sign(trx)
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -224,7 +224,7 @@ func TestSubsidyTx(t *testing.T) {
 	pub, prv := ts.RandBLSKeyPair()
 
 	t.Run("Has signature", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(ts.RandStamp(), ts.RandHeight(), pub.Address(), 2500, "subsidy")
+		trx := tx.NewSubsidyTx(ts.RandStamp(), ts.RandHeight(), pub.AccountAddress(), 2500, "subsidy")
 		sig := prv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
 
@@ -235,7 +235,7 @@ func TestSubsidyTx(t *testing.T) {
 	})
 
 	t.Run("Has public key", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(ts.RandStamp(), ts.RandHeight(), pub.Address(), 2500, "subsidy")
+		trx := tx.NewSubsidyTx(ts.RandStamp(), ts.RandHeight(), pub.AccountAddress(), 2500, "subsidy")
 		trx.SetPublicKey(pub)
 
 		err := trx.BasicCheck()
@@ -245,7 +245,7 @@ func TestSubsidyTx(t *testing.T) {
 	})
 
 	t.Run("Strip public key", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(ts.RandStamp(), ts.RandHeight(), pub.Address(), 2500, "subsidy")
+		trx := tx.NewSubsidyTx(ts.RandStamp(), ts.RandHeight(), pub.AccountAddress(), 2500, "subsidy")
 		trx.StripPublicKey()
 
 		err := trx.BasicCheck()

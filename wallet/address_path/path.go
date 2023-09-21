@@ -1,10 +1,12 @@
-package hdkeychain
+package address_path
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
 )
+
+const HardenedKeyStart = uint32(0x80000000) // 2^31
 
 type Path []uint32
 

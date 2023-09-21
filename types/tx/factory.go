@@ -26,9 +26,9 @@ func NewTransferTx(stamp hash.Stamp, lockTime uint32,
 	amount, fee int64, memo string,
 ) *Tx {
 	pld := &payload.TransferPayload{
-		Sender:   sender,
-		Receiver: receiver,
-		Amount:   amount,
+		From:   sender,
+		To:     receiver,
+		Amount: amount,
 	}
 	return NewTx(stamp, lockTime, pld, fee, memo)
 }
@@ -39,8 +39,8 @@ func NewBondTx(stamp hash.Stamp, lockTime uint32,
 	stake, fee int64, memo string,
 ) *Tx {
 	pld := &payload.BondPayload{
-		Sender:    sender,
-		Receiver:  receiver,
+		From:      sender,
+		To:        receiver,
 		PublicKey: pubKey,
 		Stake:     stake,
 	}
@@ -76,8 +76,8 @@ func NewSortitionTx(stamp hash.Stamp, lockTime uint32,
 	proof sortition.Proof,
 ) *Tx {
 	pld := &payload.SortitionPayload{
-		Address: addr,
-		Proof:   proof,
+		Validator: addr,
+		Proof:     proof,
 	}
 	return NewTx(stamp, lockTime, pld, 0, "")
 }

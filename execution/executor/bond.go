@@ -18,13 +18,13 @@ func NewBondExecutor(strict bool) *BondExecutor {
 func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	pld := trx.Payload().(*payload.BondPayload)
 
-	senderAcc := sb.Account(pld.Sender)
+	senderAcc := sb.Account(pld.From)
 	if senderAcc == nil {
 		return errors.Errorf(errors.ErrInvalidAddress,
 			"unable to retrieve sender account")
 	}
 
-	receiverVal := sb.Validator(pld.Receiver)
+	receiverVal := sb.Validator(pld.To)
 	if receiverVal == nil {
 		if pld.PublicKey == nil {
 			return errors.Errorf(errors.ErrInvalidPublicKey,
@@ -46,18 +46,18 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		// already in the committee.
 		// In non-strict mode, they are added to the transaction pool and
 		// processed once eligible.
-		if sb.Committee().Contains(pld.Receiver) {
+		if sb.Committee().Contains(pld.To) {
 			return errors.Errorf(errors.ErrInvalidTx,
-				"validator %v is in committee", pld.Receiver)
+				"validator %v is in committee", pld.To)
 		}
 
 		// In strict mode, bond transactions will be rejected if a validator is
 		// going to join the committee in the next height.
 		// In non-strict mode, they are added to the transaction pool and
 		// processed once eligible.
-		if sb.IsJoinedCommittee(pld.Receiver) {
+		if sb.IsJoinedCommittee(pld.To) {
 			return errors.Errorf(errors.ErrInvalidTx,
-				"validator %v joins committee in the next height", pld.Receiver)
+				"validator %v joins committee in the next height", pld.To)
 		}
 	}
 	if senderAcc.Balance() < pld.Stake+trx.Fee() {
@@ -76,7 +76,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	receiverVal.UpdateLastBondingHeight(sb.CurrentHeight())
 
 	sb.UpdatePowerDelta(pld.Stake)
-	sb.UpdateAccount(pld.Sender, senderAcc)
+	sb.UpdateAccount(pld.From, senderAcc)
 	sb.UpdateValidator(receiverVal)
 
 	return nil

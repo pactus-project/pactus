@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -38,7 +39,7 @@ type Node struct {
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config,
-	signers []crypto.Signer, rewardAddrs []crypto.Address,
+	valKeys []*bls.ValidatorKey, rewardAddrs []crypto.Address,
 ) (*Node, error) {
 	// Initialize the logger
 	logger.InitGlobalLogger(conf.Logger)
@@ -65,14 +66,14 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	state, err := state.LoadOrNewState(genDoc, signers, store, txPool, eventCh)
+	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool, eventCh)
 	if err != nil {
 		return nil, err
 	}
 
-	consMgr := consensus.NewManager(conf.Consensus, state, signers, rewardAddrs, messageCh)
+	consMgr := consensus.NewManager(conf.Consensus, state, valKeys, rewardAddrs, messageCh)
 
-	sync, err := sync.NewSynchronizer(conf.Sync, signers, state, consMgr, network, messageCh)
+	sync, err := sync.NewSynchronizer(conf.Sync, valKeys, state, consMgr, network, messageCh)
 	if err != nil {
 		return nil, err
 	}

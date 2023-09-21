@@ -19,18 +19,18 @@ func NewTransferExecutor(strict bool) *TransferExecutor {
 func (e *TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	pld := trx.Payload().(*payload.TransferPayload)
 
-	senderAcc := sb.Account(pld.Sender)
+	senderAcc := sb.Account(pld.From)
 	if senderAcc == nil {
 		return errors.Errorf(errors.ErrInvalidAddress,
 			"unable to retrieve sender account")
 	}
 	var receiverAcc *account.Account
-	if pld.Receiver.EqualsTo(pld.Sender) {
+	if pld.To.EqualsTo(pld.From) {
 		receiverAcc = senderAcc
 	} else {
-		receiverAcc = sb.Account(pld.Receiver)
+		receiverAcc = sb.Account(pld.To)
 		if receiverAcc == nil {
-			receiverAcc = sb.MakeNewAccount(pld.Receiver)
+			receiverAcc = sb.MakeNewAccount(pld.To)
 		}
 	}
 
@@ -41,8 +41,8 @@ func (e *TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	senderAcc.SubtractFromBalance(pld.Amount + trx.Fee())
 	receiverAcc.AddToBalance(pld.Amount)
 
-	sb.UpdateAccount(pld.Sender, senderAcc)
-	sb.UpdateAccount(pld.Receiver, receiverAcc)
+	sb.UpdateAccount(pld.From, senderAcc)
+	sb.UpdateAccount(pld.To, receiverAcc)
 
 	return nil
 }

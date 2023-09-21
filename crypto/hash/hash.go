@@ -77,7 +77,7 @@ func (h Hash) ShortString() string {
 }
 
 func (h Hash) IsUndef() bool {
-	return h.EqualsTo(UndefHash)
+	return h == UndefHash
 }
 
 func (h Hash) BasicCheck() error {
@@ -86,8 +86,4 @@ func (h Hash) BasicCheck() error {
 	}
 
 	return nil
-}
-
-func (h Hash) EqualsTo(r Hash) bool {
-	return h == r
 }

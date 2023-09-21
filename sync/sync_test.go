@@ -209,7 +209,7 @@ func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.Pub
 	require.True(t, td.state.TestCommittee.Contains(pub.Address()))
 
 	for _, cons := range td.consMocks {
-		cons.SetActive(cons.Signer.PublicKey().EqualsTo(pub))
+		cons.SetActive(cons.ConsKey.PublicKey().EqualsTo(pub))
 	}
 }
 
@@ -254,7 +254,7 @@ func TestDownload(t *testing.T) {
 	// To make sure the peer is not synced,
 	// we add a block in past (more than 2 hours)
 
-	blk := td.GenerateTestBlock(nil)
+	blk := td.GenerateTestBlock()
 	cert := td.GenerateTestCertificate()
 	pid := td.RandPeerID()
 	msg := message.NewBlockAnnounceMessage(ourBlockHeight+LatestBlockInterval+1, blk, cert)

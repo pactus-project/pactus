@@ -58,8 +58,8 @@ func TestExecuteBlock(t *testing.T) {
 	b1, c1 := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3)
 	assert.NoError(t, td.state1.CommitBlock(1, b1, c1))
 
-	proposerAddr := td.RandAddress()
-	rewardAddr := td.RandAddress()
+	proposerAddr := td.RandAccAddress()
+	rewardAddr := td.RandAccAddress()
 	invSubsidyTx := td.state1.createSubsidyTx(rewardAddr, 1001)
 	validSubsidyTx := td.state1.createSubsidyTx(rewardAddr, 1000)
 	invTransferTx, _ := td.GenerateTestTransferTx()

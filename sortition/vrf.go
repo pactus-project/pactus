@@ -3,7 +3,6 @@ package sortition
 import (
 	"math/big"
 
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 )
@@ -16,9 +15,9 @@ func init() {
 }
 
 // Evaluate returns a random number between 0 and max with the proof.
-func Evaluate(seed VerifiableSeed, signer crypto.Signer, max uint64) (index uint64, proof Proof) {
-	signData := append(seed[:], signer.PublicKey().Bytes()...)
-	sig := signer.SignData(signData)
+func Evaluate(seed VerifiableSeed, prv *bls.PrivateKey, max uint64) (index uint64, proof Proof) {
+	signData := append(seed[:], prv.PublicKey().Bytes()...)
+	sig := prv.Sign(signData)
 
 	proof, _ = ProofFromBytes(sig.Bytes())
 	index = GetIndex(proof, max)
@@ -27,15 +26,15 @@ func Evaluate(seed VerifiableSeed, signer crypto.Signer, max uint64) (index uint
 }
 
 // Verify ensures the proof is valid.
-func Verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max uint64) (index uint64, result bool) {
+func Verify(seed VerifiableSeed, pub *bls.PublicKey, proof Proof, max uint64) (index uint64, result bool) {
 	proofSig, err := bls.SignatureFromBytes(proof[:])
 	if err != nil {
 		return 0, false
 	}
 
 	// Verify signature (proof)
-	signData := append(seed[:], publicKey.Bytes()...)
-	if err := publicKey.Verify(signData, proofSig); err != nil {
+	signData := append(seed[:], pub.Bytes()...)
+	if err := pub.Verify(signData, proofSig); err != nil {
 		return 0, false
 	}
 

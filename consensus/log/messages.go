@@ -35,7 +35,7 @@ func (m *Messages) addVote(v *vote.Vote) (bool, error) {
 func (m *Messages) HasVote(hash hash.Hash) bool {
 	votes := m.AllVotes()
 	for _, v := range votes {
-		if v.Hash().EqualsTo(hash) {
+		if v.Hash() == hash {
 			return true
 		}
 	}

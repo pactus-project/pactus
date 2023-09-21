@@ -42,7 +42,7 @@ func (td *testData) saveTestBlocks(t *testing.T, num int) {
 
 	lastHeight, _ := td.store.LastCertificate()
 	for i := 0; i < num; i++ {
-		b := td.GenerateTestBlock(nil)
+		b := td.GenerateTestBlock()
 		c := td.GenerateTestCertificate()
 
 		td.store.SaveBlock(lastHeight+uint32(i+1), b, c)
@@ -173,10 +173,10 @@ func TestIndexingPublicKeys(t *testing.T) {
 		pub, found := td.store.PublicKey(addr)
 
 		assert.NoError(t, found)
-		assert.Equal(t, pub.Address(), addr)
+		assert.Equal(t, pub.AccountAddress(), addr)
 	}
 
-	pub, found := td.store.PublicKey(td.RandAddress())
+	pub, found := td.store.PublicKey(td.RandAccAddress())
 	assert.Error(t, found)
 	assert.Nil(t, pub)
 }

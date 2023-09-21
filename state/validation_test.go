@@ -32,7 +32,7 @@ func TestCertificateValidation(t *testing.T) {
 	td.state1.store.UpdateValidator(val5)
 	td.state2.store.UpdateValidator(val5)
 
-	nextBlock, _ := td.state2.ProposeBlock(td.state2.signers[0], td.RandAddress(), 0)
+	nextBlock, _ := td.state2.ProposeBlock(td.state2.valKeys[0], td.RandAccAddress(), 0)
 	nextBlockHash := nextBlock.Hash()
 	height := uint32(6)
 	round := int16(0)
@@ -218,8 +218,8 @@ func TestBlockValidation(t *testing.T) {
 	// SortitionSeed		(OK)
 	// ProposerAddress		(OK)
 	//
-	proposerAddr := td.state2.signers[0].Address()
-	trx := td.state2.createSubsidyTx(td.RandAddress(), 0)
+	proposerAddr := td.state2.valKeys[0].Address()
+	trx := td.state2.createSubsidyTx(td.RandAccAddress(), 0)
 	txs := block.NewTxs()
 	txs.Append(trx)
 
@@ -247,7 +247,7 @@ func TestBlockValidation(t *testing.T) {
 	})
 
 	t.Run("Invalid ProposerAddress", func(t *testing.T) {
-		invAddr := td.RandAddress()
+		invAddr := td.RandAccAddress()
 		b := block.MakeBlock(1, util.Now(), txs, td.state1.lastInfo.BlockHash(), td.state1.stateRoot(),
 			td.state1.lastInfo.Certificate(), td.state1.lastInfo.SortitionSeed(), invAddr)
 		c := td.makeCertificateAndSign(t, b.Hash(), 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
@@ -269,7 +269,7 @@ func TestBlockValidation(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		seed := td.state1.lastInfo.SortitionSeed()
 		b := block.MakeBlock(1, util.Now(), txs, td.state1.lastInfo.BlockHash(), td.state1.stateRoot(),
-			td.state1.lastInfo.Certificate(), seed.GenerateNext(td.state2.signers[0]), proposerAddr)
+			td.state1.lastInfo.Certificate(), seed.GenerateNext(td.state2.valKeys[0]), proposerAddr)
 		c := td.makeCertificateAndSign(t, b.Hash(), 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
 
 		assert.NoError(t, td.state1.validateBlock(b))

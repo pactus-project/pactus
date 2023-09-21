@@ -7,6 +7,7 @@ import (
 
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/store"
@@ -51,7 +52,7 @@ func MockingState(ts *testsuite.TestSuite) *MockState {
 
 func (m *MockState) CommitTestBlocks(num int) {
 	for i := 0; i < num; i++ {
-		blk := m.ts.GenerateTestBlock(nil)
+		blk := m.ts.GenerateTestBlock()
 		cert := m.ts.GenerateTestCertificate()
 
 		m.TestStore.SaveBlock(m.LastBlockHeight()+1, blk, cert)
@@ -111,8 +112,8 @@ func (m *MockState) Close() error {
 	return nil
 }
 
-func (m *MockState) ProposeBlock(_ crypto.Signer, _ crypto.Address, _ int16) (*block.Block, error) {
-	b := m.ts.GenerateTestBlock(nil)
+func (m *MockState) ProposeBlock(_ *bls.ValidatorKey, _ crypto.Address, _ int16) (*block.Block, error) {
+	b := m.ts.GenerateTestBlock()
 	return b, nil
 }
 

@@ -2,13 +2,23 @@ package crypto
 
 import (
 	"bytes"
+	"fmt"
+	"io"
 
 	"github.com/pactus-project/pactus/util/bech32m"
-	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/encoding"
 )
 
 // Address format:
 // hrp + `1` + type + data + checksum
+
+type AddressType byte
+
+const (
+	AddressTypeTreasury   AddressType = 0
+	AddressTypeValidator  AddressType = 1
+	AddressTypeBLSAccount AddressType = 2
+)
 
 const (
 	SignatureTypeTreasury byte = 0
@@ -34,22 +44,25 @@ func AddressFromString(text string) (Address, error) {
 	// Decode the bech32m encoded address.
 	hrp, typ, data, err := bech32m.DecodeToBase256WithTypeNoLimit(text)
 	if err != nil {
-		return Address{}, errors.Errorf(errors.ErrInvalidAddress, err.Error())
+		return Address{}, err
 	}
 
 	// Check if hrp is valid
 	if hrp != AddressHRP {
-		return Address{}, errors.Errorf(errors.ErrInvalidAddress, "invalid hrp: %v", hrp)
+		return Address{}, fmt.Errorf("invalid hrp: %v", hrp)
 	}
 
-	if typ != SignatureTypeBLS {
-		return Address{}, errors.Errorf(errors.ErrInvalidAddress, "invalid address key type: %v", typ)
-	}
+	switch AddressType(typ) {
+	case AddressTypeValidator,
+		AddressTypeBLSAccount:
+		// The regrouped data must be 20 bytes.
+		if len(data) != 20 {
+			return Address{}, fmt.Errorf(
+				"address should be %d bytes, but it is %v bytes", AddressSize, len(data)+1)
+		}
+	default:
+		return Address{}, fmt.Errorf("invalid address key type: %v", typ)
 
-	// The regrouped data must be 20 bytes.
-	if len(data) != 20 {
-		return Address{}, errors.Errorf(errors.ErrInvalidAddress,
-			"address should be %d bytes, but it is %v bytes", AddressSize, len(data)+1)
 	}
 
 	var addr Address
@@ -57,6 +70,14 @@ func AddressFromString(text string) (Address, error) {
 	copy(addr[1:], data[:])
 
 	return addr, nil
+}
+
+// NewAddress create a new address based
+func NewAddress(typ AddressType, data []byte) Address {
+	var addr Address
+	addr[0] = byte(typ)
+	copy(addr[1:], data[:])
+	return addr
 }
 
 // Bytes returns the 21 bytes of the address data.
@@ -77,7 +98,7 @@ func (addr Address) String() string {
 
 	str, err := bech32m.EncodeFromBase256WithType(
 		AddressHRP,
-		SignatureTypeBLS,
+		addr[0],
 		addr[1:])
 	if err != nil {
 		panic(err.Error())
@@ -86,17 +107,74 @@ func (addr Address) String() string {
 	return str
 }
 
-func (addr *Address) BasicCheck() error {
-	if addr[0] == 0 {
-		if !addr.EqualsTo(TreasuryAddress) {
-			return errors.Errorf(errors.ErrInvalidAddress, "invalid address data")
-		}
-	} else if addr[0] != SignatureTypeBLS {
-		return errors.Errorf(errors.ErrInvalidAddress, "invalid address type")
-	}
-	return nil
-}
-
 func (addr Address) EqualsTo(right Address) bool {
 	return bytes.Equal(addr.Bytes(), right.Bytes())
+}
+
+func (addr Address) Type() AddressType {
+	return AddressType(addr[0])
+}
+
+func (addr Address) Encode(w io.Writer) error {
+	switch t := addr.Type(); t {
+	case AddressTypeTreasury:
+		{
+			return encoding.WriteElement(w, uint8(0))
+		}
+	case AddressTypeValidator,
+		AddressTypeBLSAccount:
+		return encoding.WriteElement(w, addr)
+	default:
+		return InvalidAddressTypeError{
+			Type: t,
+		}
+	}
+}
+
+func (addr Address) Decode(r io.Reader) error {
+	err := encoding.ReadElement(r, &addr[0])
+	if err != nil {
+		return err
+	}
+	switch t := addr.Type(); t {
+	case AddressTypeTreasury:
+		{
+			return nil
+		}
+	case AddressTypeValidator,
+		AddressTypeBLSAccount:
+		return encoding.ReadElement(r, addr[1:])
+	default:
+		return InvalidAddressTypeError{
+			Type: t,
+		}
+	}
+}
+
+// SerializeSize returns the number of bytes it would take to serialize the address.
+func (addr Address) SerializeSize() int {
+	switch t := addr.Type(); t {
+	case AddressTypeTreasury:
+		{
+			return 1
+		}
+	case AddressTypeValidator,
+		AddressTypeBLSAccount:
+		return AddressSize
+	default:
+		return 0
+	}
+}
+
+func (addr Address) IsTreasuryAddress() bool {
+	return addr.Type() == AddressTypeTreasury
+}
+
+func (addr Address) IsAccountAddress() bool {
+	return addr.Type() == AddressTypeTreasury ||
+		addr.Type() == AddressTypeBLSAccount
+}
+
+func (addr Address) IsValidatorAddress() bool {
+	return addr.Type() == AddressTypeValidator
 }

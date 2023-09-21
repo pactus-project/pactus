@@ -54,8 +54,8 @@ func TestGetTransaction(t *testing.T) {
 		assert.Equal(t, trx1.Signature().Bytes(), res.Transaction.Signature)
 		assert.Equal(t, trx1.PublicKey().String(), res.Transaction.PublicKey)
 		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).Amount, pld.Transfer.Amount)
-		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).Sender.String(), pld.Transfer.Sender)
-		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).Receiver.String(), pld.Transfer.Receiver)
+		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).From.String(), pld.Transfer.Sender)
+		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).To.String(), pld.Transfer.Receiver)
 	})
 
 	t.Run("Should return nil value because transaction id is invalid", func(t *testing.T) {

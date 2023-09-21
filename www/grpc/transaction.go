@@ -113,8 +113,8 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 		pld := trx.Payload().(*payload.TransferPayload)
 		transaction.Payload = &pactus.TransactionInfo_Transfer{
 			Transfer: &pactus.PayloadTransfer{
-				Sender:   pld.Sender.String(),
-				Receiver: pld.Receiver.String(),
+				Sender:   pld.From.String(),
+				Receiver: pld.To.String(),
 				Amount:   pld.Amount,
 			},
 		}
@@ -122,8 +122,8 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 		pld := trx.Payload().(*payload.BondPayload)
 		transaction.Payload = &pactus.TransactionInfo_Bond{
 			Bond: &pactus.PayloadBond{
-				Sender:   pld.Sender.String(),
-				Receiver: pld.Receiver.String(),
+				Sender:   pld.From.String(),
+				Receiver: pld.To.String(),
 				Stake:    pld.Stake,
 			},
 		}
@@ -131,7 +131,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 		pld := trx.Payload().(*payload.SortitionPayload)
 		transaction.Payload = &pactus.TransactionInfo_Sortition{
 			Sortition: &pactus.PayloadSortition{
-				Address: pld.Address.String(),
+				Address: pld.Validator.String(),
 				Proof:   pld.Proof[:],
 			},
 		}

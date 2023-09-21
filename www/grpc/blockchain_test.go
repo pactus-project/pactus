@@ -163,7 +163,7 @@ func TestGetAccount(t *testing.T) {
 
 	t.Run("Should return nil for non existing account ", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx,
-			&pactus.GetAccountRequest{Address: ts.RandAddress().String()})
+			&pactus.GetAccountRequest{Address: ts.RandAccAddress().String()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -197,7 +197,7 @@ func TestGetValidator(t *testing.T) {
 
 	t.Run("should return Not Found", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx,
-			&pactus.GetValidatorRequest{Address: ts.RandAddress().String()})
+			&pactus.GetValidatorRequest{Address: ts.RandAccAddress().String()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)

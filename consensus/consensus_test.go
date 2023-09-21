@@ -43,7 +43,7 @@ type consMessage struct {
 type testData struct {
 	*testsuite.TestSuite
 
-	signers      []crypto.Signer
+	valKeys      []*bls.ValidatorKey
 	txPool       *txpool.MockTxPool
 	genDoc       *genesis.Genesis
 	consX        *consensus // Good peer
@@ -82,12 +82,12 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 
 	ts := testsuite.NewTestSuiteForSeed(seed)
 
-	_, signers := ts.GenerateTestCommittee(4)
+	_, valKeys := ts.GenerateTestCommittee(4)
 	txPool := txpool.MockingTxPool()
 
 	vals := make([]*validator.Validator, 4)
-	for i, s := range signers {
-		val := validator.NewValidator(s.PublicKey().(*bls.PublicKey), int32(i))
+	for i, key := range valKeys {
+		val := validator.NewValidator(key.PublicKey(), int32(i))
 		vals[i] = val
 	}
 
@@ -100,41 +100,41 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	// to prevent triggering timers before starting the tests to avoid double entries for new heights in some tests.
 	getTime := util.RoundNow(params.BlockIntervalInSecond).Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
-	stX, err := state.LoadOrNewState(genDoc, []crypto.Signer{signers[tIndexX]},
+	stX, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
 		store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
-	stY, err := state.LoadOrNewState(genDoc, []crypto.Signer{signers[tIndexY]},
+	stY, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexY]},
 		store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
-	stB, err := state.LoadOrNewState(genDoc, []crypto.Signer{signers[tIndexB]},
+	stB, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexB]},
 		store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
-	stP, err := state.LoadOrNewState(genDoc, []crypto.Signer{signers[tIndexP]},
+	stP, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexP]},
 		store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
 
 	consMessages := make([]consMessage, 0)
 	td := &testData{
 		TestSuite:    ts,
-		signers:      signers,
+		valKeys:      valKeys,
 		txPool:       txPool,
 		genDoc:       genDoc,
 		consMessages: consMessages,
 	}
-	broadcaster := func(signer crypto.Signer, msg message.Message) {
+	broadcaster := func(sender crypto.Address, msg message.Message) {
 		fmt.Printf("received a message %s: %s\n", msg.Type(), msg.String())
 		td.consMessages = append(td.consMessages, consMessage{
-			sender:  signer.Address(),
+			sender:  sender,
 			message: msg,
 		})
 	}
-	td.consX = newConsensus(testConfig(), stX, signers[tIndexX], signers[tIndexX].Address(),
+	td.consX = newConsensus(testConfig(), stX, valKeys[tIndexX], valKeys[tIndexX].Address(),
 		broadcaster, newConcreteMediator())
-	td.consY = newConsensus(testConfig(), stY, signers[tIndexY], signers[tIndexY].Address(),
+	td.consY = newConsensus(testConfig(), stY, valKeys[tIndexY], valKeys[tIndexY].Address(),
 		broadcaster, newConcreteMediator())
-	td.consB = newConsensus(testConfig(), stB, signers[tIndexB], signers[tIndexB].Address(),
+	td.consB = newConsensus(testConfig(), stB, valKeys[tIndexB], valKeys[tIndexB].Address(),
 		broadcaster, newConcreteMediator())
-	td.consP = newConsensus(testConfig(), stP, signers[tIndexP], signers[tIndexP].Address(),
+	td.consP = newConsensus(testConfig(), stP, valKeys[tIndexP], valKeys[tIndexP].Address(),
 		broadcaster, newConcreteMediator())
 
 	// -------------------------------
@@ -159,7 +159,7 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, ha
 	t.Helper()
 
 	for _, consMsg := range td.consMessages {
-		if consMsg.sender == cons.signer.Address() &&
+		if consMsg.sender == cons.valKey.Address() &&
 			consMsg.message.Type() == message.TypeBlockAnnounce {
 			m := consMsg.message.(*message.BlockAnnounceMessage)
 			assert.Equal(t, m.Block.Hash(), hash)
@@ -175,7 +175,7 @@ func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
 	t.Helper()
 
 	for _, consMsg := range td.consMessages {
-		if consMsg.sender == cons.signer.Address() &&
+		if consMsg.sender == cons.valKey.Address() &&
 			consMsg.message.Type() == message.TypeProposal {
 			m := consMsg.message.(*message.ProposalMessage)
 			require.Equal(t, m.Proposal.Height(), height)
@@ -191,7 +191,7 @@ func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, he
 	t.Helper()
 
 	for _, consMsg := range td.consMessages {
-		if consMsg.sender == cons.signer.Address() &&
+		if consMsg.sender == cons.valKey.Address() &&
 			consMsg.message.Type() == message.TypeQueryProposal {
 			m := consMsg.message.(*message.QueryProposalMessage)
 			assert.Equal(t, m.Height, height)
@@ -207,11 +207,11 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vo
 
 	for i := len(td.consMessages) - 1; i >= 0; i-- {
 		consMsg := td.consMessages[i]
-		if consMsg.sender == cons.signer.Address() &&
+		if consMsg.sender == cons.valKey.Address() &&
 			consMsg.message.Type() == message.TypeVote {
 			m := consMsg.message.(*message.VoteMessage)
 			if m.Vote.Type() == voteType &&
-				m.Vote.BlockHash().EqualsTo(hash) {
+				m.Vote.BlockHash() == hash {
 				return m.Vote
 			}
 		}
@@ -237,33 +237,33 @@ func (td *testData) checkHeightRound(t *testing.T, cons *consensus, height uint3
 func (td *testData) addPrepareVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
 	valID int,
 ) *vote.Vote {
-	v := vote.NewPrepareVote(blockHash, height, round, td.signers[valID].Address())
+	v := vote.NewPrepareVote(blockHash, height, round, td.valKeys[valID].Address())
 	return td.addVote(cons, v, valID)
 }
 
 func (td *testData) addPrecommitVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
 	valID int,
 ) *vote.Vote {
-	v := vote.NewPrecommitVote(blockHash, height, round, td.signers[valID].Address())
+	v := vote.NewPrecommitVote(blockHash, height, round, td.valKeys[valID].Address())
 	return td.addVote(cons, v, valID)
 }
 
 func (td *testData) addCPPreVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
 	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
 ) *vote.Vote {
-	v := vote.NewCPPreVote(blockHash, height, round, cpRound, cpVal, just, td.signers[valID].Address())
+	v := vote.NewCPPreVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
 	return td.addVote(cons, v, valID)
 }
 
 func (td *testData) addCPMainVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
 	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
 ) *vote.Vote {
-	v := vote.NewCPMainVote(blockHash, height, round, cpRound, cpVal, just, td.signers[valID].Address())
+	v := vote.NewCPMainVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
 	return td.addVote(cons, v, valID)
 }
 
 func (td *testData) addVote(cons *consensus, v *vote.Vote, valID int) *vote.Vote {
-	td.signers[valID].SignMsg(v)
+	td.HelperSignVote(td.valKeys[valID], v)
 	cons.AddVote(v)
 
 	return v
@@ -317,9 +317,9 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	p := td.makeProposal(t, height+1, 0)
 
 	sb := certificate.BlockCertificateSignBytes(p.Block().Hash(), height+1, 0)
-	sig1 := td.signers[0].SignData(sb).(*bls.Signature)
-	sig2 := td.signers[1].SignData(sb).(*bls.Signature)
-	sig4 := td.signers[3].SignData(sb).(*bls.Signature)
+	sig1 := td.valKeys[0].Sign(sb)
+	sig2 := td.valKeys[1].Sign(sb)
+	sig4 := td.valKeys[3].Sign(sb)
 
 	sig := bls.SignatureAggregate(sig1, sig2, sig4)
 	cert := certificate.NewCertificate(height+1, 0, []int32{0, 1, 2, 3}, []int32{2}, sig)
@@ -343,25 +343,25 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 	var p *proposal.Proposal
 	switch (height % 4) + uint32(round) {
 	case 1:
-		blk, err := td.consX.state.ProposeBlock(td.consX.signer, td.consX.rewardAddr, round)
+		blk, err := td.consX.state.ProposeBlock(td.consX.valKey, td.consX.rewardAddr, round)
 		require.NoError(t, err)
 		p = proposal.NewProposal(height, round, blk)
-		td.consX.signer.SignMsg(p)
+		td.HelperSignProposal(td.consX.valKey, p)
 	case 2:
-		blk, err := td.consY.state.ProposeBlock(td.consY.signer, td.consY.rewardAddr, round)
+		blk, err := td.consY.state.ProposeBlock(td.consY.valKey, td.consY.rewardAddr, round)
 		require.NoError(t, err)
 		p = proposal.NewProposal(height, round, blk)
-		td.consY.signer.SignMsg(p)
+		td.HelperSignProposal(td.consY.valKey, p)
 	case 3:
-		blk, err := td.consB.state.ProposeBlock(td.consB.signer, td.consB.rewardAddr, round)
+		blk, err := td.consB.state.ProposeBlock(td.consB.valKey, td.consB.rewardAddr, round)
 		require.NoError(t, err)
 		p = proposal.NewProposal(height, round, blk)
-		td.consB.signer.SignMsg(p)
+		td.HelperSignProposal(td.consB.valKey, p)
 	case 0, 4:
-		blk, err := td.consP.state.ProposeBlock(td.consP.signer, td.consP.rewardAddr, round)
+		blk, err := td.consP.state.ProposeBlock(td.consP.valKey, td.consP.rewardAddr, round)
 		require.NoError(t, err)
 		p = proposal.NewProposal(height, round, blk)
-		td.consP.signer.SignMsg(p)
+		td.HelperSignProposal(td.consP.valKey, p)
 	}
 
 	return p
@@ -370,12 +370,11 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 func TestNotInCommittee(t *testing.T) {
 	td := setup(t)
 
-	_, prv := td.RandBLSKeyPair()
-	signer := crypto.NewSigner(prv)
+	valKey := td.RandValKey()
 	store := store.MockingStore(td.TestSuite)
 
-	st, _ := state.LoadOrNewState(td.genDoc, []crypto.Signer{signer}, store, td.txPool, nil)
-	Cons := NewConsensus(testConfig(), st, signer, signer.Address(), make(chan message.Message, 100),
+	st, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, store, td.txPool, nil)
+	Cons := NewConsensus(testConfig(), st, valKey, valKey.Address(), make(chan message.Message, 100),
 		newConcreteMediator())
 	cons := Cons.(*consensus)
 
@@ -582,9 +581,9 @@ func TestDuplicateProposal(t *testing.T) {
 	h := uint32(4)
 	r := int16(0)
 	p1 := td.makeProposal(t, h, r)
-	trx := tx.NewTransferTx(hash.UndefHash.Stamp(), 1, td.signers[0].Address(),
-		td.signers[1].Address(), 1000, 1000, "proposal changer")
-	td.signers[0].SignMsg(trx)
+	trx := tx.NewTransferTx(hash.UndefHash.Stamp(), 1, td.valKeys[0].Address(),
+		td.valKeys[1].Address(), 1000, 1000, "proposal changer")
+	td.HelperSignTransaction(td.valKeys[0].PrivateKey(), trx)
 	assert.NoError(t, td.txPool.AppendTx(trx))
 	p2 := td.makeProposal(t, h, r)
 	assert.NotEqual(t, p1.Hash(), p2.Hash())
@@ -598,9 +597,9 @@ func TestDuplicateProposal(t *testing.T) {
 func TestNonActiveValidator(t *testing.T) {
 	td := setup(t)
 
-	signer := td.RandSigner()
+	valKey := td.RandValKey()
 	Cons := NewConsensus(testConfig(), state.MockingState(td.TestSuite),
-		signer, signer.Address(), make(chan message.Message, 100), newConcreteMediator())
+		valKey, valKey.Address(), make(chan message.Message, 100), newConcreteMediator())
 	nonActiveCons := Cons.(*consensus)
 
 	t.Run("non-active instances should be in new-height state", func(t *testing.T) {
@@ -782,13 +781,13 @@ func TestByzantine(t *testing.T) {
 	// P votes
 	// Byzantine node create the second proposal and send it to the partitioned node P
 	byzTrx := tx.NewTransferTx(hash.UndefHash.Stamp(), 1,
-		td.consB.rewardAddr, td.RandAddress(), 1000, 1000, "")
+		td.consB.rewardAddr, td.RandAccAddress(), 1000, 1000, "")
 	assert.NoError(t, td.txPool.AppendTx(byzTrx))
 	p2 := td.makeProposal(t, h, r)
 
 	require.NotEqual(t, p1.Block().Hash(), p2.Block().Hash())
-	require.Equal(t, p1.Block().Header().ProposerAddress(), td.consB.SignerKey().Address())
-	require.Equal(t, p2.Block().Header().ProposerAddress(), td.consB.SignerKey().Address())
+	require.Equal(t, p1.Block().Header().ProposerAddress(), td.consB.valKey.Address())
+	require.Equal(t, p2.Block().Header().ProposerAddress(), td.consB.valKey.Address())
 
 	td.enterNewHeight(td.consP)
 
@@ -813,7 +812,7 @@ func TestByzantine(t *testing.T) {
 
 	// Let's make Byzantine node happy by removing his votes from the log
 	for j := len(td.consMessages) - 1; j >= 0; j-- {
-		if td.consMessages[j].sender == td.consB.SignerKey().Address() {
+		if td.consMessages[j].sender == td.consB.valKey.Address() {
 			td.consMessages = slices.Delete(td.consMessages, j, j+1)
 		}
 	}
@@ -874,7 +873,7 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 				p := cons.RoundProposal(m.Round)
 				if p != nil {
 					td.consMessages = append(td.consMessages, consMessage{
-						sender:  cons.signer.Address(),
+						sender:  cons.valKey.Address(),
 						message: message.NewProposalMessage(p),
 					})
 				}

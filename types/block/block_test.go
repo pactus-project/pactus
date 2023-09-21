@@ -20,7 +20,7 @@ func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("No transactions", func(t *testing.T) {
-		b0 := ts.GenerateTestBlock(nil)
+		b0 := ts.GenerateTestBlock()
 		b := block.NewBlock(b0.Header(), b0.PrevCertificate(), block.Txs{})
 
 		err := b.BasicCheck()
@@ -30,7 +30,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Without the previous certificate", func(t *testing.T) {
-		b0 := ts.GenerateTestBlock(nil)
+		b0 := ts.GenerateTestBlock()
 		b := block.NewBlock(b0.Header(), nil, b0.Transactions())
 
 		err := b.BasicCheck()
@@ -40,7 +40,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid certificate", func(t *testing.T) {
-		b0 := ts.GenerateTestBlock(nil)
+		b0 := ts.GenerateTestBlock()
 		cert0 := b0.PrevCertificate()
 		invCert := certificate.NewCertificate(0, 0, cert0.Committers(), cert0.Absentees(), cert0.Signature())
 		b := block.NewBlock(b0.Header(), invCert, b0.Transactions())
@@ -52,7 +52,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid transaction", func(t *testing.T) {
-		b0 := ts.GenerateTestBlock(nil)
+		b0 := ts.GenerateTestBlock()
 		trxs0 := b0.Transactions()
 		invalidSigner := ts.RandSigner()
 		invalidSigner.SignMsg(trxs0[0])
@@ -203,7 +203,7 @@ func TestBasicCheck(t *testing.T) {
 func TestCBORMarshaling(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	b1 := ts.GenerateTestBlock(nil)
+	b1 := ts.GenerateTestBlock()
 	bz1, err := cbor.Marshal(b1)
 	assert.NoError(t, err)
 	var b2 block.Block
@@ -221,7 +221,7 @@ func TestCBORMarshaling(t *testing.T) {
 func TestEncodingBlock(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	blk := ts.GenerateTestBlock(nil)
+	blk := ts.GenerateTestBlock()
 	length := blk.SerializeSize()
 
 	for i := 0; i < length; i++ {
@@ -247,7 +247,7 @@ func TestEncodingBlock(t *testing.T) {
 func TestTxFromBytes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	blk := ts.GenerateTestBlock(nil)
+	blk := ts.GenerateTestBlock()
 	bs, _ := blk.Bytes()
 	_, err := block.FromBytes(bs)
 	assert.NoError(t, err)
@@ -318,7 +318,7 @@ func TestBlockHash(t *testing.T) {
 func TestMakeBlock(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	b0 := ts.GenerateTestBlock(nil)
+	b0 := ts.GenerateTestBlock()
 	b1 := block.MakeBlock(1, b0.Header().Time(), b0.Transactions(),
 		b0.Header().PrevBlockHash(),
 		b0.Header().StateRoot(),

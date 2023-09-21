@@ -50,7 +50,7 @@ func setup(t *testing.T) *testData {
 
 	lastHeight := uint32(21)
 	for i := uint32(1); i < lastHeight; i++ {
-		b := ts.GenerateTestBlock(nil)
+		b := ts.GenerateTestBlock()
 		c := ts.GenerateTestCertificate()
 		store.SaveBlock(i, b, c)
 	}
@@ -71,7 +71,7 @@ func TestAccountChange(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Should returns nil for invalid address", func(t *testing.T) {
-		invAddr := td.RandAddress()
+		invAddr := td.RandAccAddress()
 		assert.Nil(t, td.sandbox.Account(invAddr))
 
 		td.sandbox.IterateAccounts(func(_ crypto.Address, _ *account.Account, _ bool) {
@@ -117,7 +117,7 @@ func TestAccountChange(t *testing.T) {
 	})
 
 	t.Run("Make new account", func(t *testing.T) {
-		addr := td.RandAddress()
+		addr := td.RandAccAddress()
 		acc := td.sandbox.MakeNewAccount(addr)
 
 		acc.AddToBalance(1)
@@ -156,7 +156,7 @@ func TestValidatorChange(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Should returns nil for invalid address", func(t *testing.T) {
-		invAddr := td.RandAddress()
+		invAddr := td.RandAccAddress()
 		assert.Nil(t, td.sandbox.Validator(invAddr))
 
 		td.sandbox.IterateValidators(func(_ *validator.Validator, _ bool, _ bool) {
@@ -229,8 +229,8 @@ func TestTotalAccountCounter(t *testing.T) {
 	t.Run("Should update total account counter", func(t *testing.T) {
 		assert.Equal(t, td.store.TotalAccounts(), int32(len(td.signers)+1))
 
-		addr1 := td.RandAddress()
-		addr2 := td.RandAddress()
+		addr1 := td.RandAccAddress()
+		addr2 := td.RandAccAddress()
 		acc := td.sandbox.MakeNewAccount(addr1)
 		assert.Equal(t, acc.Number(), int32(td.sandbox.Committee().Size()+1))
 		acc2 := td.sandbox.MakeNewAccount(addr2)
@@ -312,7 +312,7 @@ func TestAccountDeepCopy(t *testing.T) {
 	td := setup(t)
 
 	t.Run("non existing account", func(t *testing.T) {
-		addr := td.RandAddress()
+		addr := td.RandAccAddress()
 		acc := td.sandbox.MakeNewAccount(addr)
 		acc.AddToBalance(1)
 

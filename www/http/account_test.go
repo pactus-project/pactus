@@ -30,7 +30,7 @@ func TestAccount(t *testing.T) {
 	t.Run("Shall return nil, non exist", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"address": td.RandAddress().String()})
+		r = mux.SetURLVars(r, map[string]string{"address": td.RandAccAddress().String()})
 		td.httpServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)

@@ -6,7 +6,6 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,7 +34,7 @@ func TestSortitionDecoding(t *testing.T) {
 				0x11, 0x12, 0x13, 0x14, // address
 			},
 			value:    0,
-			readErr:  io.EOF,
+			readErr:  io.ErrUnexpectedEOF,
 			basicErr: nil,
 		},
 		{
@@ -51,7 +50,7 @@ func TestSortitionDecoding(t *testing.T) {
 				0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, // proof
 			},
 			value:    0,
-			readErr:  io.EOF,
+			readErr:  io.ErrUnexpectedEOF,
 			basicErr: nil,
 		},
 		{
@@ -82,9 +81,11 @@ func TestSortitionDecoding(t *testing.T) {
 				0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
 				0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, // proof
 			},
-			value:    0,
-			readErr:  nil,
-			basicErr: errors.Error(errors.ErrInvalidAddress),
+			value:   0,
+			readErr: nil,
+			basicErr: BasicCheckError{
+				Reason: "address is not a validator address",
+			},
 		},
 	}
 
@@ -93,7 +94,7 @@ func TestSortitionDecoding(t *testing.T) {
 		r := util.NewFixedReader(len(test.raw), test.raw)
 		err := pld.Decode(r)
 		if test.readErr != nil {
-			assert.Error(t, err)
+			assert.ErrorIs(t, err, test.readErr)
 		} else {
 			assert.NoError(t, err)
 
@@ -114,12 +115,13 @@ func TestSortitionDecoding(t *testing.T) {
 
 				// Check signer
 				if test.raw[0] != 0 {
-					assert.Equal(t, pld.Signer().Bytes(), test.raw[:21])
+					assert.Equal(t, pld.Signer(), crypto.Address(test.raw[:21]))
 				} else {
 					assert.Equal(t, pld.Signer(), crypto.TreasuryAddress)
 				}
-				// Check amount
+
 				assert.Equal(t, pld.Value(), test.value)
+				assert.Nil(t, pld.Receiver())
 			}
 		}
 	}

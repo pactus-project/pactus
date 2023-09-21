@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/services"
@@ -61,13 +60,13 @@ func (m *HelloMessage) String() string {
 	return fmt.Sprintf("{%s %d %s}", m.Moniker, m.Height, m.Services)
 }
 
-func (m *HelloMessage) Sign(signers ...crypto.Signer) {
-	signatures := make([]*bls.Signature, len(signers))
-	publicKeys := make([]*bls.PublicKey, len(signers))
+func (m *HelloMessage) Sign(valKeys []*bls.ValidatorKey) {
+	signatures := make([]*bls.Signature, len(valKeys))
+	publicKeys := make([]*bls.PublicKey, len(valKeys))
 	signBytes := m.SignBytes()
-	for i, signer := range signers {
-		signatures[i] = signer.SignData(signBytes).(*bls.Signature)
-		publicKeys[i] = signer.PublicKey().(*bls.PublicKey)
+	for i, key := range valKeys {
+		signatures[i] = key.Sign(signBytes)
+		publicKeys[i] = key.PublicKey()
 	}
 	aggSignature := bls.SignatureAggregate(signatures...)
 	m.Signature = aggSignature

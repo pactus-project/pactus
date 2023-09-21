@@ -164,7 +164,6 @@ func (b *Block) UnmarshalCBOR(bs []byte) error {
 	return b.Decode(buf)
 }
 
-// Encode encodes the receiver to w.
 func (b *Block) Encode(w io.Writer) error {
 	if err := b.data.Header.Encode(w); err != nil {
 		return err

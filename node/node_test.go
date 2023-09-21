@@ -37,7 +37,7 @@ func TestRunningNode(t *testing.T) {
 	conf.Network.NetworkKey = util.TempFilePath()
 
 	signers := []crypto.Signer{ts.RandSigner(), ts.RandSigner()}
-	rewardAddrs := []crypto.Address{ts.RandAddress(), ts.RandAddress()}
+	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()}
 	n, err := NewNode(gen, conf, signers, rewardAddrs)
 
 	require.NoError(t, err)

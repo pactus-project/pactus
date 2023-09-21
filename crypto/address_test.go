@@ -1,6 +1,7 @@
 package crypto_test
 
 import (
+	"bytes"
 	"encoding/hex"
 	"strings"
 	"testing"
@@ -14,8 +15,8 @@ import (
 func TestAddressKeyEqualsTo(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	addr1 := ts.RandAddress()
-	addr2 := ts.RandAddress()
+	addr1 := ts.RandAccAddress()
+	addr2 := ts.RandAccAddress()
 
 	assert.True(t, addr1.EqualsTo(addr1))
 	assert.False(t, addr1.EqualsTo(addr2))
@@ -26,7 +27,7 @@ func TestAddressKeyEqualsTo(t *testing.T) {
 func TestString(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	addr1 := ts.RandAddress()
+	addr1 := ts.RandAccAddress()
 	assert.Contains(t, addr1.String(), addr1.ShortString())
 }
 
@@ -123,44 +124,43 @@ func TestToString(t *testing.T) {
 	}
 }
 
-func TestAddressBasicCheck(t *testing.T) {
+func TestAddressEncoding(t *testing.T) {
 	tests := []struct {
-		errMsg  string
-		hex     string
-		invalid bool
+		errMsg string
+		hex    string
+		err    error
 	}{
 		{
-			"invalid address data",
-			"00ffffffffffffffffffffffffffffffffffffffff",
-			true,
+			"Treasury address",
+			"00",
+			nil,
 		},
 		{
 			"invalid address type",
-			"020000000000000000000000000000000000000000",
-			true,
+			"030000000000000000000000000000000000000000",
+			crypto.InvalidAddressTypeError{Type: 3},
 		},
 		{
-			"",
-			"000000000000000000000000000000000000000000",
-			false,
-		},
-		{
-			"",
-			"010000000000000000000000000000000000000000",
-			false,
+			"invalid address type",
+			"02000102030405060708090a0b0c0d0e0f0001020304",
+			crypto.InvalidAddressTypeError{Type: 3},
 		},
 	}
 	for no, test := range tests {
 		data, _ := hex.DecodeString(test.hex)
-		addr := crypto.Address{}
-		copy(addr[:], data)
+		r := bytes.NewBuffer(data)
+		addr := new(crypto.Address)
 
-		err := addr.BasicCheck()
-		if !test.invalid {
-			assert.NoError(t, err, "test %v unexpected error", no)
+		err := addr.Decode(r)
+		if test.err != nil {
+			assert.ErrorIs(t, test.err, err, "test %v: error not matched", no)
 		} else {
-			assert.Error(t, err, "test %v expected error", no)
-			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
+			assert.NoError(t, err, "test %v expected no error", no)
+
+			w := bytes.Buffer{}
+			err := addr.Encode(&w)
+			assert.NoError(t, err)
+			assert.Equal(t, data, w.Bytes())
 		}
 	}
 }

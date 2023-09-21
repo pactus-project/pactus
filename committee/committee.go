@@ -32,7 +32,7 @@ func NewCommittee(validators []*validator.Validator, committeeSize int,
 
 	for _, val := range validators {
 		el := validatorList.InsertAtTail(cloneValidator(val))
-		if val.Address().EqualsTo(proposerAddress) {
+		if val.Address() == proposerAddress {
 			proposerPos = el
 		}
 	}
@@ -133,7 +133,7 @@ func (c *committee) Contains(addr crypto.Address) bool {
 func (c *committee) find(addr crypto.Address) *validator.Validator {
 	var found *validator.Validator
 	c.iterate(func(v *validator.Validator) (stop bool) {
-		if v.Address().EqualsTo(addr) {
+		if v.Address() == addr {
 			found = v
 			return true
 		}
@@ -145,7 +145,7 @@ func (c *committee) find(addr crypto.Address) *validator.Validator {
 // IsProposer checks if the given address is the proposer for the specified round.
 func (c *committee) IsProposer(addr crypto.Address, round int16) bool {
 	p := c.proposer(round)
-	return p.Address().EqualsTo(addr)
+	return p.Address() == addr
 }
 
 // Proposer returns an instance of the proposer validator for the specified round.

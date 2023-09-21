@@ -177,7 +177,7 @@ func TestSaveWallet(t *testing.T) {
 func TestInvalidAddress(t *testing.T) {
 	td := setup(t)
 
-	addr := td.RandAddress().String()
+	addr := td.RandAccAddress().String()
 	_, err := td.wallet.PrivateKey(td.password, addr)
 	assert.Error(t, err)
 }
@@ -215,7 +215,7 @@ func TestTestKeyInfo(t *testing.T) {
 func TestBalance(t *testing.T) {
 	td := setup(t)
 
-	addr := td.RandAddress()
+	addr := td.RandAccAddress()
 	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Balance: 1}}
 	amt, err := td.wallet.Balance(addr.String())
 	assert.NoError(t, err)
@@ -225,7 +225,7 @@ func TestBalance(t *testing.T) {
 func TestStake(t *testing.T) {
 	td := setup(t)
 
-	addr := td.RandAddress()
+	addr := td.RandAccAddress()
 	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Stake: 1}}
 	amt, err := td.wallet.Stake(addr.String())
 	assert.NoError(t, err)
@@ -236,7 +236,7 @@ func TestSigningTx(t *testing.T) {
 	td := setup(t)
 
 	sender, _ := td.wallet.DeriveNewAddress("testing addr")
-	receiver := td.RandAddress()
+	receiver := td.RandAccAddress()
 	amount := td.RandInt64(10000)
 	lockTime := td.RandHeight()
 
@@ -263,7 +263,7 @@ func TestMakeTransferTx(t *testing.T) {
 	td := setup(t)
 
 	sender, _ := td.wallet.DeriveNewAddress("testing addr")
-	receiver := td.RandAddress()
+	receiver := td.RandAccAddress()
 	amount := td.RandInt64(10000)
 	lockTime := td.RandHeight()
 
@@ -311,7 +311,7 @@ func TestMakeTransferTx(t *testing.T) {
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
 		tBlockchainInfoResponse = nil
 
-		_, err := td.wallet.MakeTransferTx(td.RandAddress().String(), receiver.String(), amount)
+		_, err := td.wallet.MakeTransferTx(td.RandAccAddress().String(), receiver.String(), amount)
 		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
 }
@@ -439,7 +439,7 @@ func TestMakeBondTx(t *testing.T) {
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
 		tBlockchainInfoResponse = nil
 
-		_, err := td.wallet.MakeBondTx(td.RandAddress().String(), receiver.Address().String(), "", amount)
+		_, err := td.wallet.MakeBondTx(td.RandAccAddress().String(), receiver.Address().String(), "", amount)
 		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
 }
@@ -491,7 +491,7 @@ func TestMakeUnbondTx(t *testing.T) {
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
 		tBlockchainInfoResponse = nil
 
-		_, err := td.wallet.MakeUnbondTx(td.RandAddress().String())
+		_, err := td.wallet.MakeUnbondTx(td.RandAccAddress().String())
 		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
 }
@@ -547,7 +547,7 @@ func TestMakeWithdrawTx(t *testing.T) {
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
 		tBlockchainInfoResponse = nil
 
-		_, err := td.wallet.MakeWithdrawTx(td.RandAddress().String(), receiver, amount)
+		_, err := td.wallet.MakeWithdrawTx(td.RandAccAddress().String(), receiver, amount)
 		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
 }

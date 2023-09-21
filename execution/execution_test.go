@@ -24,7 +24,7 @@ func TestLockTime(t *testing.T) {
 	acc1 := sb.MakeNewAccount(addr1)
 	acc1.AddToBalance(100 * 1e9)
 	sb.UpdateAccount(addr1, acc1)
-	rcvAddr := ts.RandAddress()
+	rcvAddr := ts.RandAccAddress()
 	block8642 := sb.TestStore.AddTestBlock(8642)
 
 	t.Run("Future LockTime, Should returns error (+1)", func(t *testing.T) {
@@ -125,12 +125,12 @@ func TestExecution(t *testing.T) {
 	acc1 := sb.MakeNewAccount(addr1)
 	acc1.AddToBalance(100 * 1e9)
 	sb.UpdateAccount(addr1, acc1)
-	rcvAddr := ts.RandAddress()
+	rcvAddr := ts.RandAccAddress()
 	block8642 := sb.TestStore.AddTestBlock(8642)
 	lockTime := sb.CurrentHeight()
 
 	t.Run("Invalid transaction, Should returns error", func(t *testing.T) {
-		trx := tx.NewTransferTx(hash.UndefHash.Stamp(), lockTime, ts.RandAddress(), rcvAddr, 1000, 1000, "invalid-tx")
+		trx := tx.NewTransferTx(hash.UndefHash.Stamp(), lockTime, ts.RandAccAddress(), rcvAddr, 1000, 1000, "invalid-tx")
 		err := exe.Execute(trx, sb)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
@@ -184,7 +184,7 @@ func TestReplay(t *testing.T) {
 	lockTime := sb.CurrentHeight()
 
 	trx := tx.NewTransferTx(hash.UndefHash.Stamp(), lockTime,
-		signer.Address(), ts.RandAddress(), 10000, 1000, "")
+		signer.Address(), ts.RandAccAddress(), 10000, 1000, "")
 	signer.SignMsg(trx)
 
 	err := executor.Execute(trx, sb)
@@ -208,7 +208,7 @@ func TestChecker(t *testing.T) {
 	lockTime := sb.CurrentHeight() + 1
 
 	trx := tx.NewTransferTx(hash.UndefHash.Stamp(), lockTime,
-		signer.Address(), ts.RandAddress(), 10000, 1000, "")
+		signer.Address(), ts.RandAccAddress(), 10000, 1000, "")
 	signer.SignMsg(trx)
 
 	err := executor.Execute(trx, sb)
@@ -242,8 +242,8 @@ func TestFee(t *testing.T) {
 		{1 * 1e12, 1000000, 1000000, errors.ErrNone},
 	}
 
-	sender := ts.RandAddress()
-	receiver := ts.RandAddress()
+	sender := ts.RandAccAddress()
+	receiver := ts.RandAccAddress()
 	stamp := ts.RandStamp()
 	for i, test := range tests {
 		trx := tx.NewTransferTx(stamp, sb.CurrentHeight()+1, sender, receiver, test.amount, test.fee,

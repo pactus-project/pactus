@@ -79,7 +79,7 @@ func setup(t *testing.T) *testData {
 
 	accs := map[crypto.Address]*account.Account{
 		crypto.TreasuryAddress: acc1,
-		ts.RandAddress():       acc2,
+		ts.RandAccAddress():    acc2,
 	}
 	vals := []*validator.Validator{val1, val2, val3, val4}
 	gnDoc := genesis.MakeGenesis(genTime, accs, vals, params)
@@ -118,18 +118,18 @@ func (td *testData) makeBlockAndCertificate(t *testing.T, round int16,
 	t.Helper()
 
 	var st *state
-	if td.state1.committee.IsProposer(td.state1.signers[0].Address(), round) {
+	if td.state1.committee.IsProposer(td.state1.valKeys[0].Address(), round) {
 		st = td.state1
-	} else if td.state1.committee.IsProposer(td.state2.signers[0].Address(), round) {
+	} else if td.state1.committee.IsProposer(td.state2.valKeys[0].Address(), round) {
 		st = td.state2
-	} else if td.state1.committee.IsProposer(td.state3.signers[0].Address(), round) {
+	} else if td.state1.committee.IsProposer(td.state3.valKeys[0].Address(), round) {
 		st = td.state3
 	} else {
 		st = td.state4
 	}
 
-	rewardAddr := st.signers[0].Address()
-	b, err := st.ProposeBlock(st.signers[0], rewardAddr, round)
+	rewardAddr := st.valKeys[0].Address()
+	b, err := st.ProposeBlock(st.valKeys[0], rewardAddr, round)
 	require.NoError(t, err)
 	c := td.makeCertificateAndSign(t, b.Hash(), round, signers...)
 
@@ -192,7 +192,7 @@ func TestProposeBlockAndValidation(t *testing.T) {
 
 	td.moveToNextHeightForAllStates(t)
 
-	b1, err := td.state1.ProposeBlock(td.state1.signers[0], td.RandAddress(), 0)
+	b1, err := td.state1.ProposeBlock(td.state1.valKeys[0], td.RandAccAddress(), 0)
 	assert.Error(t, err, "Should not propose")
 	assert.Nil(t, b1)
 
@@ -201,14 +201,14 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	td.valSigner1.SignMsg(trx)
 	assert.NoError(t, td.commonTxPool.AppendTx(trx))
 
-	b2, err := td.state2.ProposeBlock(td.state2.signers[0], td.RandAddress(), 0)
+	b2, err := td.state2.ProposeBlock(td.state2.valKeys[0], td.RandAccAddress(), 0)
 	assert.NoError(t, err)
 	assert.NotNil(t, b2)
 	assert.Equal(t, b2.Transactions().Len(), 2)
 	require.NoError(t, td.state1.ValidateBlock(b2))
 
 	// Propose and validate again
-	b3, err := td.state2.ProposeBlock(td.state2.signers[0], td.RandAddress(), 0)
+	b3, err := td.state2.ProposeBlock(td.state2.valKeys[0], td.RandAccAddress(), 0)
 	assert.NoError(t, err)
 	assert.NotNil(t, b3)
 	assert.Equal(t, b3.Transactions().Len(), 2)
@@ -219,12 +219,12 @@ func TestBlockSubsidyTx(t *testing.T) {
 	td := setup(t)
 
 	// Without reward address in config
-	rewardAddr := td.RandAddress()
+	rewardAddr := td.RandAccAddress()
 	trx := td.state1.createSubsidyTx(rewardAddr, 7)
 	assert.True(t, trx.IsSubsidyTx())
 	assert.Equal(t, trx.Payload().Value(), td.state1.params.BlockReward+7)
-	assert.Equal(t, trx.Payload().(*payload.TransferPayload).Sender, crypto.TreasuryAddress)
-	assert.Equal(t, trx.Payload().(*payload.TransferPayload).Receiver, rewardAddr)
+	assert.Equal(t, trx.Payload().(*payload.TransferPayload).From, crypto.TreasuryAddress)
+	assert.Equal(t, trx.Payload().(*payload.TransferPayload).To, rewardAddr)
 }
 
 func TestBlockTime(t *testing.T) {
@@ -247,7 +247,7 @@ func TestCommitBlocks(t *testing.T) {
 	td := setup(t)
 
 	b1, c1 := td.makeBlockAndCertificate(t, 1, td.valSigner1, td.valSigner2, td.valSigner3)
-	invBlock := td.GenerateTestBlock(nil)
+	invBlock := td.GenerateTestBlock()
 	assert.Error(t, td.state1.CommitBlock(1, invBlock, c1))
 	// No error here but block is ignored, because the height is invalid
 	assert.NoError(t, td.state1.CommitBlock(2, b1, c1))
@@ -264,7 +264,7 @@ func TestCommitSandbox(t *testing.T) {
 	t.Run("Add new account", func(t *testing.T) {
 		td := setup(t)
 
-		addr := td.RandAddress()
+		addr := td.RandAccAddress()
 		sb := td.state1.concreteSandbox()
 		newAcc := sb.MakeNewAccount(addr)
 		newAcc.AddToBalance(1)
@@ -356,9 +356,9 @@ func TestUpdateLastCertificate(t *testing.T) {
 func TestInvalidProposerProposeBlock(t *testing.T) {
 	td := setup(t)
 
-	_, err := td.state2.ProposeBlock(td.state2.signers[0], td.RandAddress(), 0)
+	_, err := td.state2.ProposeBlock(td.state2.valKeys[0], td.RandAccAddress(), 0)
 	assert.Error(t, err, "Should not propose")
-	_, err = td.state2.ProposeBlock(td.state2.signers[0], td.RandAddress(), 1)
+	_, err = td.state2.ProposeBlock(td.state2.valKeys[0], td.RandAccAddress(), 1)
 	assert.NoError(t, err, "Should propose")
 }
 
@@ -368,17 +368,17 @@ func TestBlockProposal(t *testing.T) {
 	td.moveToNextHeightForAllStates(t)
 
 	t.Run("validity of proposed block", func(t *testing.T) {
-		b, err := td.state2.ProposeBlock(td.state2.signers[0], td.RandAddress(), 0)
+		b, err := td.state2.ProposeBlock(td.state2.valKeys[0], td.RandAccAddress(), 0)
 		assert.NoError(t, err)
 		assert.NoError(t, td.state1.ValidateBlock(b))
 	})
 
 	t.Run("Tx pool has two subsidy transactions", func(t *testing.T) {
-		trx := td.state3.createSubsidyTx(td.RandAddress(), 0)
+		trx := td.state3.createSubsidyTx(td.RandAccAddress(), 0)
 		assert.NoError(t, td.state3.txPool.AppendTx(trx))
 
 		// Moving to the next round
-		b, err := td.state3.ProposeBlock(td.state3.signers[0], td.RandAddress(), 1)
+		b, err := td.state3.ProposeBlock(td.state3.valKeys[0], td.RandAccAddress(), 1)
 		assert.NoError(t, err)
 		assert.NoError(t, td.state1.ValidateBlock(b))
 		assert.Equal(t, b.Transactions().Len(), 1)
@@ -388,7 +388,7 @@ func TestBlockProposal(t *testing.T) {
 func TestInvalidBlock(t *testing.T) {
 	td := setup(t)
 
-	b := td.GenerateTestBlock(nil)
+	b := td.GenerateTestBlock()
 	assert.Error(t, td.state1.ValidateBlock(b))
 }
 
@@ -477,7 +477,7 @@ func TestSortition(t *testing.T) {
 	// Let's commit another block with the new committee
 	height++
 
-	b14, err := stNew.ProposeBlock(stNew.signers[0], td.RandAddress(), 3)
+	b14, err := stNew.ProposeBlock(stNew.valKeys[0], td.RandAccAddress(), 3)
 	require.NoError(t, err)
 	require.NotNil(t, b14)
 
@@ -568,7 +568,7 @@ func TestInvalidBlockVersion(t *testing.T) {
 	td := setup(t)
 
 	td.state1.params.BlockVersion = 2
-	b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandAddress(), 0)
+	b, _ := td.state1.ProposeBlock(td.state1.valKeys[0], td.RandAccAddress(), 0)
 	assert.Error(t, td.state2.ValidateBlock(b))
 }
 
@@ -692,7 +692,7 @@ func TestSetBlockTime(t *testing.T) {
 
 	t.Run("Last block time is a bit far in past", func(t *testing.T) {
 		td.state1.lastInfo.UpdateBlockTime(util.RoundNow(10).Add(-20 * time.Second))
-		b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandAddress(), 0)
+		b, _ := td.state1.ProposeBlock(td.state1.valKeys[0], td.RandAccAddress(), 0)
 		fmt.Printf("last block time: %s\nproposed time  : %s\n", td.state1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(td.state1.lastInfo.BlockTime()))
 		assert.True(t, b.Header().Time().Before(util.Now().Add(10*time.Second)))
@@ -701,7 +701,7 @@ func TestSetBlockTime(t *testing.T) {
 
 	t.Run("Last block time is almost good", func(t *testing.T) {
 		td.state1.lastInfo.UpdateBlockTime(util.RoundNow(10).Add(-10 * time.Second))
-		b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandAddress(), 0)
+		b, _ := td.state1.ProposeBlock(td.state1.valKeys[0], td.RandAccAddress(), 0)
 		fmt.Printf("last block time: %s\nproposed time  : %s\n", td.state1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(td.state1.lastInfo.BlockTime()))
 		assert.True(t, b.Header().Time().Before(util.Now().Add(10*time.Second)))
@@ -711,7 +711,7 @@ func TestSetBlockTime(t *testing.T) {
 	// After our time
 	t.Run("Last block time is in near future", func(t *testing.T) {
 		td.state1.lastInfo.UpdateBlockTime(util.RoundNow(10).Add(+10 * time.Second))
-		b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandAddress(), 0)
+		b, _ := td.state1.ProposeBlock(td.state1.valKeys[0], td.RandAccAddress(), 0)
 		fmt.Printf("last block time: %s\nproposed time  : %s\n", td.state1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(td.state1.lastInfo.BlockTime()))
 		assert.Zero(t, b.Header().Time().Second()%10)
@@ -719,7 +719,7 @@ func TestSetBlockTime(t *testing.T) {
 
 	t.Run("Last block time is more than a block in future", func(t *testing.T) {
 		td.state1.lastInfo.UpdateBlockTime(util.RoundNow(10).Add(+20 * time.Second))
-		b, _ := td.state1.ProposeBlock(td.state1.signers[0], td.RandAddress(), 0)
+		b, _ := td.state1.ProposeBlock(td.state1.valKeys[0], td.RandAccAddress(), 0)
 		fmt.Printf("last block time: %s\nproposed time  : %s\n", td.state1.lastInfo.BlockTime(), b.Header().Time().UTC())
 		assert.True(t, b.Header().Time().After(td.state1.lastInfo.BlockTime()))
 		assert.Zero(t, b.Header().Time().Second()%10)
@@ -735,7 +735,7 @@ func TestIsValidator(t *testing.T) {
 	assert.True(t, td.state1.IsInCommittee(td.valSigner2.Address()))
 	assert.True(t, td.state1.IsValidator(td.valSigner2.Address()))
 
-	addr := td.RandAddress()
+	addr := td.RandAccAddress()
 	assert.False(t, td.state1.IsInCommittee(addr))
 	assert.False(t, td.state1.IsProposer(addr, 0))
 	assert.False(t, td.state1.IsInCommittee(addr))
@@ -755,10 +755,10 @@ func TestCommittingInvalidBlock(t *testing.T) {
 	td.moveToNextHeightForAllStates(t)
 
 	txs := block.NewTxs()
-	trx := td.state2.createSubsidyTx(td.RandAddress(), 0)
+	trx := td.state2.createSubsidyTx(td.RandAccAddress(), 0)
 	txs.Append(trx)
 	b := block.MakeBlock(2, util.Now(), txs, td.state2.lastInfo.BlockHash(), td.state2.stateRoot(),
-		td.state2.lastInfo.Certificate(), td.state2.lastInfo.SortitionSeed(), td.state2.signers[0].Address())
+		td.state2.lastInfo.Certificate(), td.state2.lastInfo.SortitionSeed(), td.state2.valKeys[0].Address())
 	c := td.makeCertificateAndSign(t, b.Hash(), 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
 
 	// td.state1 receives a block with version 2 and rejects it.

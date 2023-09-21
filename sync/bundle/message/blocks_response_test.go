@@ -19,7 +19,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 
 	sid := 123
 	t.Run("Invalid certificate", func(t *testing.T) {
-		b := ts.GenerateTestBlock(nil)
+		b := ts.GenerateTestBlock()
 		c := certificate.NewCertificate(0, 0, nil, nil, nil)
 		d, _ := b.Bytes()
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, ResponseCodeMoreBlocks.String(), sid, 100, [][]byte{d}, c)
@@ -31,7 +31,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 	})
 
 	t.Run("Unexpected block for height zero", func(t *testing.T) {
-		b := ts.GenerateTestBlock(nil)
+		b := ts.GenerateTestBlock()
 		d, _ := b.Bytes()
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, ResponseCodeMoreBlocks.String(), sid, 0, [][]byte{d}, nil)
 
@@ -39,8 +39,8 @@ func TestBlocksResponseMessage(t *testing.T) {
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		b1 := ts.GenerateTestBlock(nil)
-		b2 := ts.GenerateTestBlock(nil)
+		b1 := ts.GenerateTestBlock()
+		b2 := ts.GenerateTestBlock()
 		d1, _ := b1.Bytes()
 		d2, _ := b2.Bytes()
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, ResponseCodeMoreBlocks.String(), sid, 100,
@@ -69,8 +69,8 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 	})
 
 	t.Run("OK - MoreBlocks", func(t *testing.T) {
-		b1 := ts.GenerateTestBlock(nil)
-		b2 := ts.GenerateTestBlock(nil)
+		b1 := ts.GenerateTestBlock()
+		b2 := ts.GenerateTestBlock()
 		d1, _ := b1.Bytes()
 		d2, _ := b2.Bytes()
 		reason := ts.RandString(16)

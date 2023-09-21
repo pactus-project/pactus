@@ -35,9 +35,9 @@ func TestSignatureCBORMarshaling(t *testing.T) {
 func TestSignatureEqualsTo(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	signer := ts.RandSigner()
-	sig1 := signer.SignData([]byte("foo"))
-	sig2 := signer.SignData([]byte("bar"))
+	_, prv := ts.RandBLSKeyPair()
+	sig1 := prv.Sign([]byte("foo"))
+	sig2 := prv.Sign([]byte("bar"))
 
 	assert.True(t, sig1.EqualsTo(sig1))
 	assert.False(t, sig1.EqualsTo(sig2))
