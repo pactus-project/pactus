@@ -161,7 +161,7 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 
 func (st *state) loadMerkels() {
 	totalAccount := st.store.TotalAccounts()
-	st.store.IterateAccounts(func(addr crypto.Address, acc *account.Account) (stop bool) {
+	st.store.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
 		// Let's keep this check, even we have tested it
 		if acc.Number() >= totalAccount {
 			panic("Account number is out of range")
@@ -172,20 +172,20 @@ func (st *state) loadMerkels() {
 	})
 
 	totalValidator := st.store.TotalValidators()
-	st.store.IterateValidators(func(val *validator.Validator) (stop bool) {
+	st.store.IterateValidators(func(val *validator.Validator) bool {
 		// Let's keep this check, even we have tested it
 		if val.Number() >= totalValidator {
 			panic("Validator number is out of range")
 		}
 		st.validatorMerkle.SetHash(int(val.Number()), val.Hash())
 
-		return
+		return false
 	})
 }
 
 func (st *state) retrieveTotalPower() int64 {
 	totalPower := int64(0)
-	st.store.IterateValidators(func(val *validator.Validator) (stop bool) {
+	st.store.IterateValidators(func(val *validator.Validator) bool {
 		totalPower += val.Power()
 		return false
 	})

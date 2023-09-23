@@ -256,9 +256,8 @@ func TrapSignal(cleanupFunc func()) {
 }
 
 func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
-	mnemonic string, walletPassword string) (
-	validatorAddrs []string, rewardAddrs []string, err error,
-) {
+	mnemonic string, walletPassword string,
+) ([]string, []string, error) {
 	// To make process faster, we update the password after creating the addresses
 	walletPath := PactusDefaultWalletPath(workingDir)
 	walletInstance, err := wallet.Create(walletPath, mnemonic, "", chain)
@@ -266,6 +265,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		return nil, nil, err
 	}
 
+	validatorAddrs := []string{}
 	for i := 0; i < numValidators; i++ {
 		addr, err := walletInstance.DeriveNewAddress(fmt.Sprintf("Validator address %v", i+1))
 		if err != nil {
@@ -274,6 +274,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		validatorAddrs = append(validatorAddrs, addr)
 	}
 
+	rewardAddrs := []string{}
 	for i := 0; i < numValidators; i++ {
 		addr, err := walletInstance.DeriveNewAddress(fmt.Sprintf("Reward address %v", i+1))
 		if err != nil {
