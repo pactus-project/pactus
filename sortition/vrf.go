@@ -26,7 +26,9 @@ func Evaluate(seed VerifiableSeed, signer crypto.Signer, max uint64) (uint64, Pr
 	return index, proof
 }
 
-// Verify ensures the proof is valid.
+// Verify checks if the provided proof, based on the seed and public key, is valid.
+// If the proof is valid, it calculates the random number that
+// can be generated based on the given proof.
 func Verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max uint64) (uint64, bool) {
 	proofSig, err := bls.SignatureFromBytes(proof[:])
 	if err != nil {
