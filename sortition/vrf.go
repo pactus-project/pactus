@@ -15,7 +15,9 @@ func init() {
 	denominator.SetString("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16)
 }
 
-// Evaluate returns a random number between 0 and max with the proof.
+// Evaluate returns a provable random number between [0, max) along with a proof.
+// It returns the random number and the proof that can regenerate the random number using
+// the public key of the signer, without revealing the private key.
 func Evaluate(seed VerifiableSeed, signer crypto.Signer, max uint64) (uint64, Proof) {
 	signData := append(seed[:], signer.PublicKey().Bytes()...)
 	sig := signer.SignData(signData)
