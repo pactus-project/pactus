@@ -737,3 +737,7 @@ func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, er
 		return 0, errors.Errorf(errors.ErrInvalidTx, "unexpected tx type: %v", payloadType)
 	}
 }
+
+func (st *state) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
+	return st.store.PublicKey(addr)
+}

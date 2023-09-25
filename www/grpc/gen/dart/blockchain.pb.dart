@@ -326,6 +326,100 @@ class GetValidatorResponse extends $pb.GeneratedMessage {
   ValidatorInfo ensureValidator() => $_ensure(0);
 }
 
+class GetPublicKeyRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetPublicKeyRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
+    ..hasRequiredFields = false
+  ;
+
+  GetPublicKeyRequest._() : super();
+  factory GetPublicKeyRequest({
+    $core.String? address,
+  }) {
+    final _result = create();
+    if (address != null) {
+      _result.address = address;
+    }
+    return _result;
+  }
+  factory GetPublicKeyRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetPublicKeyRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetPublicKeyRequest clone() => GetPublicKeyRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetPublicKeyRequest copyWith(void Function(GetPublicKeyRequest) updates) => super.copyWith((message) => updates(message as GetPublicKeyRequest)) as GetPublicKeyRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetPublicKeyRequest create() => GetPublicKeyRequest._();
+  GetPublicKeyRequest createEmptyInstance() => create();
+  static $pb.PbList<GetPublicKeyRequest> createRepeated() => $pb.PbList<GetPublicKeyRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetPublicKeyRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetPublicKeyRequest>(create);
+  static GetPublicKeyRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get address => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set address($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasAddress() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearAddress() => clearField(1);
+}
+
+class GetPublicKeyResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetPublicKeyResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
+    ..hasRequiredFields = false
+  ;
+
+  GetPublicKeyResponse._() : super();
+  factory GetPublicKeyResponse({
+    $core.String? publicKey,
+  }) {
+    final _result = create();
+    if (publicKey != null) {
+      _result.publicKey = publicKey;
+    }
+    return _result;
+  }
+  factory GetPublicKeyResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetPublicKeyResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetPublicKeyResponse clone() => GetPublicKeyResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetPublicKeyResponse copyWith(void Function(GetPublicKeyResponse) updates) => super.copyWith((message) => updates(message as GetPublicKeyResponse)) as GetPublicKeyResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetPublicKeyResponse create() => GetPublicKeyResponse._();
+  GetPublicKeyResponse createEmptyInstance() => create();
+  static $pb.PbList<GetPublicKeyResponse> createRepeated() => $pb.PbList<GetPublicKeyResponse>();
+  @$core.pragma('dart2js:noInline')
+  static GetPublicKeyResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetPublicKeyResponse>(create);
+  static GetPublicKeyResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get publicKey => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set publicKey($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasPublicKey() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPublicKey() => clearField(1);
+}
+
 class GetBlockRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetBlockRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
@@ -1609,6 +1703,10 @@ class BlockchainApi {
   $async.Future<GetValidatorAddressesResponse> getValidatorAddresses($pb.ClientContext? ctx, GetValidatorAddressesRequest request) {
     var emptyResponse = GetValidatorAddressesResponse();
     return _client.invoke<GetValidatorAddressesResponse>(ctx, 'Blockchain', 'GetValidatorAddresses', request, emptyResponse);
+  }
+  $async.Future<GetPublicKeyResponse> getPublicKey($pb.ClientContext? ctx, GetPublicKeyRequest request) {
+    var emptyResponse = GetPublicKeyResponse();
+    return _client.invoke<GetPublicKeyResponse>(ctx, 'Blockchain', 'GetPublicKey', request, emptyResponse);
   }
 }
 

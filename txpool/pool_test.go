@@ -126,7 +126,7 @@ func TestEmptyPool(t *testing.T) {
 func TestPrepareBlockTransactions(t *testing.T) {
 	td := setup(t)
 
-	randHeight := td.RandHeight()
+	randHeight := td.RandHeight() + td.sandbox.TestParams.UnbondInterval
 	randBlock := td.sandbox.TestStore.AddTestBlock(randHeight)
 
 	acc1ValKey := td.RandValKey()
@@ -153,6 +153,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	val3.AddToStake(10000000000)
 	td.sandbox.UpdateValidator(val3)
 
+
 	transferTx := tx.NewTransferTx(randBlock.Stamp(), randHeight+1, acc1ValKey.Address(),
 		td.RandAccAddress(), 1000, 1000, "send-tx")
 	td.HelperSignTransaction(acc1ValKey.PrivateKey(), transferTx)
@@ -170,7 +171,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	td.HelperSignTransaction(valKey2.PrivateKey(), withdrawTx)
 
 	td.sandbox.TestAcceptSortition = true
-	sortitionTx := tx.NewSortitionTx(randBlock.Stamp(), randHeight+4, val3.Address(),
+	sortitionTx := tx.NewSortitionTx(randBlock.Stamp(), randHeight, val3.Address(),
 		td.RandProof())
 	td.HelperSignTransaction(valKey3.PrivateKey(), sortitionTx)
 

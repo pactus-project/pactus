@@ -73,6 +73,11 @@ func (m *MockStore) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
 			}
 		}
 	}
+	for _, val := range m.Validators {
+		if val.Address() == addr {
+			return val.PublicKey(), nil
+		}
+	}
 	return nil, ErrNotFound
 }
 

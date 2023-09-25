@@ -222,6 +222,22 @@ func (s *blockchainServer) GetValidatorAddresses(_ context.Context,
 	return &pactus.GetValidatorAddressesResponse{Addresses: addressesPB}, nil
 }
 
+func (s *blockchainServer) GetPublicKey(_ context.Context,
+	req *pactus.GetPublicKeyRequest,
+) (*pactus.GetPublicKeyResponse, error) {
+	addr, err := crypto.AddressFromString(req.Address)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid account address: %v", err.Error())
+	}
+
+	publicKey, err := s.state.PublicKey(addr)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "public key not found")
+	}
+
+	return &pactus.GetPublicKeyResponse{PublicKey: publicKey.String()}, nil
+}
+
 func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 	data, _ := val.Bytes()
 	return &pactus.ValidatorInfo{
