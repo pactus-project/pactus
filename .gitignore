@@ -11,7 +11,3 @@ pactus-*
 # vim artifacts
 .swp
 .*.sw*
-
-# env files
-.env
-.envrc
