@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"strings"
 
+	"golang.org/x/exp/slices"
+
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
-	"github.com/pactus-project/pactus/wallet/address_path"
+	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/tyler-smith/go-bip39"
 )
@@ -119,14 +121,14 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 		return nil, err
 	}
 
-	keyStore := keyStore{
+	ks := keyStore{
 		MasterNode: masterNode{
 			Mnemonic: mnemonic,
 		},
 		ImportedKeys: make(map[string]imported),
 	}
 
-	keyStoreDate, err := json.Marshal(keyStore)
+	keyStoreDate, err := json.Marshal(ks)
 	if err != nil {
 		return nil, err
 	}
@@ -174,15 +176,16 @@ func (v *Vault) UpdatePassword(oldPassword, newPassword string, opts ...encrypte
 		return ErrNeutered
 	}
 
-	newEncrypter := encrypter.NopeEncrypter()
-	if newPassword != "" {
-		newEncrypter = encrypter.DefaultEncrypter(opts...)
-	}
-
 	keyStore, err := v.decryptKeyStore(oldPassword)
 	if err != nil {
 		return err
 	}
+
+	newEncrypter := encrypter.NopeEncrypter()
+	if newPassword != "" {
+		newEncrypter = encrypter.DefaultEncrypter(opts...)
+	}
+	v.Encrypter = newEncrypter
 	err = v.encryptKeyStore(keyStore, newPassword)
 	if err != nil {
 		return err
@@ -207,7 +210,7 @@ func (v *Vault) SetLabel(addr, label string) error {
 	}
 
 	info.Label = label
-
+	v.Addresses[addr] = info
 	return nil
 }
 
@@ -218,7 +221,9 @@ func (v *Vault) AddressInfos() []AddressInfo {
 		addrs = append(addrs, info)
 	}
 
-	/// TODO sort by patj
+	slices.SortFunc(addrs, func(a, b AddressInfo) int {
+		return strings.Compare(a.Path, b.Path)
+	})
 
 	return addrs
 }
@@ -261,13 +266,15 @@ func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 	}
 
 	v.Addresses[accAddr.String()] = AddressInfo{
-		Address: accAddr.String(),
-		Path:    "",
+		Address:   accAddr.String(),
+		PublicKey: prv.PublicKeyNative().String(),
+		Path:      "",
 	}
 
 	v.Addresses[valAddr.String()] = AddressInfo{
-		Address: valAddr.String(),
-		Path:    "",
+		Address:   valAddr.String(),
+		PublicKey: prv.PublicKeyNative().String(),
+		Path:      "",
 	}
 
 	return nil
@@ -301,41 +308,40 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 			}
 			keys[i] = prvKey
 			continue
-		} else {
-			seed, err := bip39.NewSeedWithErrorChecking(keyStore.MasterNode.Mnemonic, "")
-			if err != nil {
-				return nil, err
-			}
-			masterKey, err := hdkeychain.NewMaster(seed, false)
-			if err != nil {
-				return nil, err
-			}
-			path, err := address_path.NewPathFromString(info.Path)
-			if err != nil {
-				return nil, err
-			}
-			ext, err := masterKey.DerivePath(path)
-			if err != nil {
-				return nil, err
-			}
-			prvBytes, err := ext.RawPrivateKey()
-			if err != nil {
-				return nil, err
-			}
-
-			prvKey, err := bls.PrivateKeyFromBytes(prvBytes)
-			if err != nil {
-				return nil, err
-			}
-
-			keys[i] = prvKey
 		}
+		seed, err := bip39.NewSeedWithErrorChecking(keyStore.MasterNode.Mnemonic, "")
+		if err != nil {
+			return nil, err
+		}
+		masterKey, err := hdkeychain.NewMaster(seed, false)
+		if err != nil {
+			return nil, err
+		}
+		path, err := addresspath.NewPathFromString(info.Path)
+		if err != nil {
+			return nil, err
+		}
+		ext, err := masterKey.DerivePath(path)
+		if err != nil {
+			return nil, err
+		}
+		prvBytes, err := ext.RawPrivateKey()
+		if err != nil {
+			return nil, err
+		}
+
+		prvKey, err := bls.PrivateKeyFromBytes(prvBytes)
+		if err != nil {
+			return nil, err
+		}
+
+		keys[i] = prvKey
 	}
 
 	return keys, nil
 }
 
-func (v *Vault) NewBLSAccountAddress(label string, purpose uint32) (string, error) {
+func (v *Vault) NewBLSAccountAddress(label string) (string, error) {
 	ext, err := hdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
 	if err != nil {
 		return "", err
@@ -355,15 +361,15 @@ func (v *Vault) NewBLSAccountAddress(label string, purpose uint32) (string, erro
 	v.Addresses[addr] = AddressInfo{
 		Address: addr,
 		Label:   label,
-		Path:    address_path.NewPath(ext.Path()...).String(),
+		Path:    addresspath.NewPath(ext.Path()...).String(),
 	}
 	v.Purposes.PurposeBLS.NextAccountIndex++
 
 	return addr, nil
 }
 
-func (v *Vault) NewValidatorAddress(label string, purpose uint32) (string, error) {
-	ext, err := hdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
+func (v *Vault) NewValidatorAddress(label string) (string, error) {
+	ext, err := hdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubValidator)
 	if err != nil {
 		return "", err
 	}
@@ -378,19 +384,61 @@ func (v *Vault) NewValidatorAddress(label string, purpose uint32) (string, error
 		return "", err
 	}
 
-	addr := blsPubKey.AccountAddress().String()
+	addr := blsPubKey.ValidatorAddress().String()
 	v.Addresses[addr] = AddressInfo{
 		Address: addr,
 		Label:   label,
-		Path:    address_path.NewPath(ext.Path()...).String(),
+		Path:    addresspath.NewPath(ext.Path()...).String(),
 	}
 	v.Purposes.PurposeBLS.NextValidatorIndex++
 
 	return addr, nil
 }
 
+// TODO change structure of AddressInfo to more informativelay object
+
+// AddressInfo like it can return bls.PublicKey instead of string.
 func (v *Vault) AddressInfo(addr string) *AddressInfo {
-	info := v.Addresses[addr]
+	info, ok := v.Addresses[addr]
+	if !ok {
+		return nil
+	}
+	if info.Path != "" {
+		addr, err := crypto.AddressFromString(info.Address)
+		if err != nil {
+			return nil
+		}
+
+		var xFub string
+		if addr.IsAccountAddress() {
+			xFub = v.Purposes.PurposeBLS.XPubAccount
+		} else if addr.IsValidatorAddress() {
+			xFub = v.Purposes.PurposeBLS.XPubValidator
+		}
+
+		ext, err := hdkeychain.NewKeyFromString(xFub)
+		if err != nil {
+			return nil
+		}
+
+		p, err := addresspath.NewPathFromString(info.Path)
+		if err != nil {
+			return nil
+		}
+
+		extendedKey, err := ext.Derive(p.LastIndex())
+		if err != nil {
+			return nil
+		}
+
+		blsPubKey, err := bls.PublicKeyFromBytes(extendedKey.RawPublicKey())
+		if err != nil {
+			return nil
+		}
+
+		info.PublicKey = blsPubKey.String()
+	}
+
 	return &info
 }
 

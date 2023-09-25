@@ -96,7 +96,7 @@ func (k *ExtendedKey) IsPrivate() bool {
 	return k.isPrivate
 }
 
-// Derive returns a derived child extended key from this master key at the
+// DerivePath returns a derived child extended key from this master key at the
 // given path.
 func (k *ExtendedKey) DerivePath(path []uint32) (*ExtendedKey, error) {
 	ext := k

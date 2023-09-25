@@ -26,7 +26,7 @@ import (
 )
 
 var (
-	tSigners     [][]crypto.Signer
+	tValKeys     [][]*bls.ValidatorKey
 	tConfigs     []*config.Config
 	tNodes       []*node.Node
 	tGRPCAddress = "127.0.0.1:1337"
@@ -51,7 +51,7 @@ func TestMain(m *testing.M) {
 	// Prevent log from messing the workspace
 	logger.LogFilename = util.TempFilePath()
 
-	tSigners = make([][]crypto.Signer, tTotalNodes)
+	tValKeys = make([][]*bls.ValidatorKey, tTotalNodes)
 	tConfigs = make([]*config.Config, tTotalNodes)
 	tNodes = make([]*node.Node, tTotalNodes)
 
@@ -64,10 +64,10 @@ func TestMain(m *testing.M) {
 		ikm = hash.CalcHash(ikm.Bytes())
 		key2, _ := bls.KeyGen(ikm.Bytes(), nil)
 
-		tSigners[i] = make([]crypto.Signer, 3)
-		tSigners[i][0] = crypto.NewSigner(key0)
-		tSigners[i][1] = crypto.NewSigner(key1)
-		tSigners[i][2] = crypto.NewSigner(key2)
+		tValKeys[i] = make([]*bls.ValidatorKey, 3)
+		tValKeys[i][0] = bls.NewValidatorKey(key0)
+		tValKeys[i][1] = bls.NewValidatorKey(key1)
+		tValKeys[i][2] = bls.NewValidatorKey(key2)
 		tConfigs[i] = config.DefaultConfig()
 
 		tConfigs[i].Store.Path = util.TempDirPath()
@@ -114,15 +114,15 @@ func TestMain(m *testing.M) {
 	acc2.AddToBalance(21 * 1e14)
 
 	accs := map[crypto.Address]*account.Account{
-		crypto.TreasuryAddress:    acc1,
-		key.PublicKey().Address(): acc2,
+		crypto.TreasuryAddress:                 acc1,
+		key.PublicKeyNative().AccountAddress(): acc2,
 	}
 
 	vals := make([]*validator.Validator, 4)
-	vals[0] = validator.NewValidator(tSigners[tNodeIdx1][0].PublicKey().(*bls.PublicKey), 0)
-	vals[1] = validator.NewValidator(tSigners[tNodeIdx2][0].PublicKey().(*bls.PublicKey), 1)
-	vals[2] = validator.NewValidator(tSigners[tNodeIdx3][0].PublicKey().(*bls.PublicKey), 2)
-	vals[3] = validator.NewValidator(tSigners[tNodeIdx4][0].PublicKey().(*bls.PublicKey), 3)
+	vals[0] = validator.NewValidator(tValKeys[tNodeIdx1][0].PublicKey(), 0)
+	vals[1] = validator.NewValidator(tValKeys[tNodeIdx2][0].PublicKey(), 1)
+	vals[2] = validator.NewValidator(tValKeys[tNodeIdx3][0].PublicKey(), 2)
+	vals[3] = validator.NewValidator(tValKeys[tNodeIdx4][0].PublicKey(), 3)
 	params := param.DefaultParams()
 	params.MinimumStake = 1000
 	params.BlockIntervalInSecond = 2
@@ -133,11 +133,11 @@ func TestMain(m *testing.M) {
 
 	for i := 0; i < tTotalNodes; i++ {
 		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i],
-			tSigners[i],
+			tValKeys[i],
 			[]crypto.Address{
-				tSigners[i][0].Address(),
-				tSigners[i][1].Address(),
-				tSigners[i][2].Address(),
+				tValKeys[i][0].PublicKey().AccountAddress(),
+				tValKeys[i][1].PublicKey().AccountAddress(),
+				tValKeys[i][2].PublicKey().AccountAddress(),
 			})
 
 		if err := tNodes[i].Start(); err != nil {

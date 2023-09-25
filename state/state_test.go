@@ -34,10 +34,10 @@ type testData struct {
 	state2       *state
 	state3       *state
 	state4       *state
-	valSigner1   crypto.Signer
-	valSigner2   crypto.Signer
-	valSigner3   crypto.Signer
-	valSigner4   crypto.Signer
+	valKey1      *bls.ValidatorKey
+	valKey2      *bls.ValidatorKey
+	valKey3      *bls.ValidatorKey
+	valKey4      *bls.ValidatorKey
 	commonTxPool *txpool.MockTxPool
 }
 
@@ -51,10 +51,10 @@ func setup(t *testing.T) *testData {
 	pub3, prv3 := ts.RandBLSKeyPair()
 	pub4, prv4 := ts.RandBLSKeyPair()
 
-	valSigner1 := crypto.NewSigner(prv1)
-	valSigner2 := crypto.NewSigner(prv2)
-	valSigner3 := crypto.NewSigner(prv3)
-	valSigner4 := crypto.NewSigner(prv4)
+	valKey1 := bls.NewValidatorKey(prv1)
+	valKey2 := bls.NewValidatorKey(prv2)
+	valKey3 := bls.NewValidatorKey(prv3)
+	valKey4 := bls.NewValidatorKey(prv4)
 
 	genTime := util.RoundNow(10)
 	commonTxPool := txpool.MockingTxPool()
@@ -84,13 +84,13 @@ func setup(t *testing.T) *testData {
 	vals := []*validator.Validator{val1, val2, val3, val4}
 	gnDoc := genesis.MakeGenesis(genTime, accs, vals, params)
 
-	st1, err := LoadOrNewState(gnDoc, []crypto.Signer{valSigner1}, store1, commonTxPool, nil)
+	st1, err := LoadOrNewState(gnDoc, []*bls.ValidatorKey{valKey1}, store1, commonTxPool, nil)
 	require.NoError(t, err)
-	st2, err := LoadOrNewState(gnDoc, []crypto.Signer{valSigner2}, store2, commonTxPool, nil)
+	st2, err := LoadOrNewState(gnDoc, []*bls.ValidatorKey{valKey2}, store2, commonTxPool, nil)
 	require.NoError(t, err)
-	st3, err := LoadOrNewState(gnDoc, []crypto.Signer{valSigner3}, store3, commonTxPool, nil)
+	st3, err := LoadOrNewState(gnDoc, []*bls.ValidatorKey{valKey3}, store3, commonTxPool, nil)
 	require.NoError(t, err)
-	st4, err := LoadOrNewState(gnDoc, []crypto.Signer{valSigner4}, store4, commonTxPool, nil)
+	st4, err := LoadOrNewState(gnDoc, []*bls.ValidatorKey{valKey4}, store4, commonTxPool, nil)
 	require.NoError(t, err)
 
 	state1, _ := st1.(*state)
@@ -104,16 +104,16 @@ func setup(t *testing.T) *testData {
 		state2:       state2,
 		state3:       state3,
 		state4:       state4,
-		valSigner1:   valSigner1,
-		valSigner2:   valSigner2,
-		valSigner3:   valSigner3,
-		valSigner4:   valSigner4,
+		valKey1:      valKey1,
+		valKey2:      valKey2,
+		valKey3:      valKey3,
+		valKey4:      valKey4,
 		commonTxPool: commonTxPool,
 	}
 }
 
 func (td *testData) makeBlockAndCertificate(t *testing.T, round int16,
-	signers ...crypto.Signer,
+	valKeys ...*bls.ValidatorKey,
 ) (*block.Block, *certificate.Certificate) {
 	t.Helper()
 
@@ -131,40 +131,40 @@ func (td *testData) makeBlockAndCertificate(t *testing.T, round int16,
 	rewardAddr := st.valKeys[0].Address()
 	b, err := st.ProposeBlock(st.valKeys[0], rewardAddr, round)
 	require.NoError(t, err)
-	c := td.makeCertificateAndSign(t, b.Hash(), round, signers...)
+	c := td.makeCertificateAndSign(t, b.Hash(), round, valKeys...)
 
 	return b, c
 }
 
 func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int16,
-	signers ...crypto.Signer,
+	valKeys ...*bls.ValidatorKey,
 ) *certificate.Certificate {
 	t.Helper()
 
-	assert.NotZero(t, len(signers))
-	sigs := make([]*bls.Signature, len(signers))
+	assert.NotZero(t, len(valKeys))
+	sigs := make([]*bls.Signature, len(valKeys))
 	height := td.state1.LastBlockHeight()
 	sb := certificate.BlockCertificateSignBytes(blockHash, height+1, round)
 	committers := []int32{0, 1, 2, 3}
-	signedBy := []int32{}
+	var signedBy []int32
 
-	for i, s := range signers {
-		if s.Address().EqualsTo(td.valSigner1.Address()) {
+	for i, s := range valKeys {
+		if s.Address().EqualsTo(td.valKey1.Address()) {
 			signedBy = append(signedBy, 0)
 		}
 
-		if s.Address().EqualsTo(td.valSigner2.Address()) {
+		if s.Address().EqualsTo(td.valKey2.Address()) {
 			signedBy = append(signedBy, 1)
 		}
 
-		if s.Address().EqualsTo(td.valSigner3.Address()) {
+		if s.Address().EqualsTo(td.valKey3.Address()) {
 			signedBy = append(signedBy, 2)
 		}
 
-		if s.Address().EqualsTo(td.valSigner4.Address()) {
+		if s.Address().EqualsTo(td.valKey4.Address()) {
 			signedBy = append(signedBy, 3)
 		}
-		sigs[i] = s.SignData(sb).(*bls.Signature)
+		sigs[i] = s.Sign(sb)
 	}
 
 	absentees := util.Subtracts(committers, signedBy)
@@ -183,7 +183,7 @@ func (td *testData) commitBlockForAllStates(t *testing.T, b *block.Block, c *cer
 func (td *testData) moveToNextHeightForAllStates(t *testing.T) {
 	t.Helper()
 
-	b, c := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
+	b, c := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 	td.commitBlockForAllStates(t, b, c)
 }
 
@@ -196,9 +196,9 @@ func TestProposeBlockAndValidation(t *testing.T) {
 	assert.Error(t, err, "Should not propose")
 	assert.Nil(t, b1)
 
-	trx := tx.NewTransferTx(td.state2.lastInfo.BlockHash().Stamp(), 1, td.valSigner1.Address(),
-		td.valSigner2.Address(), 1000, 1000, "")
-	td.valSigner1.SignMsg(trx)
+	trx := tx.NewTransferTx(td.state2.lastInfo.BlockHash().Stamp(), 1, td.valKey1.Address(),
+		td.valKey2.Address(), 1000, 1000, "")
+	td.HelperSignTransaction(td.valKey1.PrivateKey(), trx)
 	assert.NoError(t, td.commonTxPool.AppendTx(trx))
 
 	b2, err := td.state2.ProposeBlock(td.state2.valKeys[0], td.RandAccAddress(), 0)
@@ -235,7 +235,7 @@ func TestBlockTime(t *testing.T) {
 	})
 
 	t.Run("Commit one block: LastBlockTime is the time of the first block", func(t *testing.T) {
-		b1, c1 := td.makeBlockAndCertificate(t, 1, td.valSigner1, td.valSigner2, td.valSigner3)
+		b1, c1 := td.makeBlockAndCertificate(t, 1, td.valKey1, td.valKey2, td.valKey3)
 		assert.NoError(t, td.state1.CommitBlock(1, b1, c1))
 
 		assert.NotEqual(t, td.state1.LastBlockTime(), td.state1.Genesis().GenesisTime())
@@ -246,7 +246,7 @@ func TestBlockTime(t *testing.T) {
 func TestCommitBlocks(t *testing.T) {
 	td := setup(t)
 
-	b1, c1 := td.makeBlockAndCertificate(t, 1, td.valSigner1, td.valSigner2, td.valSigner3)
+	b1, c1 := td.makeBlockAndCertificate(t, 1, td.valKey1, td.valKey2, td.valKey3)
 	invBlock := td.GenerateTestBlock()
 	assert.Error(t, td.state1.CommitBlock(1, invBlock, c1))
 	// No error here but block is ignored, because the height is invalid
@@ -283,7 +283,7 @@ func TestCommitSandbox(t *testing.T) {
 		sb.UpdateValidator(newVal)
 		td.state1.commitSandbox(sb, 0)
 
-		assert.True(t, td.state1.store.HasValidator(pub.Address()))
+		assert.True(t, td.state1.store.HasValidator(pub.ValidatorAddress()))
 	})
 
 	t.Run("Modify account", func(t *testing.T) {
@@ -303,12 +303,12 @@ func TestCommitSandbox(t *testing.T) {
 		td := setup(t)
 
 		sb := td.state1.concreteSandbox()
-		val := sb.Validator(td.valSigner2.Address())
+		val := sb.Validator(td.valKey2.Address())
 		val.AddToStake(2002)
 		sb.UpdateValidator(val)
 		td.state1.commitSandbox(sb, 0)
 
-		val1, _ := td.state1.store.Validator(td.valSigner2.Address())
+		val1, _ := td.state1.store.Validator(td.valKey2.Address())
 		assert.Equal(t, val1.Stake(), val.Stake())
 	})
 
@@ -338,9 +338,9 @@ func TestCommitSandbox(t *testing.T) {
 func TestUpdateLastCertificate(t *testing.T) {
 	td := setup(t)
 
-	b1, c1 := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner3, td.valSigner4)
-	b11, c11 := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
-	_, c12 := td.makeBlockAndCertificate(t, 1, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
+	b1, c1 := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey3, td.valKey4)
+	b11, c11 := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
+	_, c12 := td.makeBlockAndCertificate(t, 1, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 
 	td.commitBlockForAllStates(t, b1, c1)
 
@@ -397,14 +397,14 @@ func TestForkDetection(t *testing.T) {
 
 	td.moveToNextHeightForAllStates(t)
 
-	b5m, c5m := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3)
-	b5f, c5f := td.makeBlockAndCertificate(t, 1, td.valSigner1, td.valSigner2, td.valSigner3)
+	b5m, c5m := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3)
+	b5f, c5f := td.makeBlockAndCertificate(t, 1, td.valKey1, td.valKey2, td.valKey3)
 	assert.NoError(t, td.state1.CommitBlock(2, b5m, c5m))
 	assert.NoError(t, td.state2.CommitBlock(2, b5m, c5m))
 	assert.NoError(t, td.state3.CommitBlock(2, b5m, c5m))
 	assert.NoError(t, td.state4.CommitBlock(2, b5f, c5f))
 
-	b6, c6 := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3)
+	b6, c6 := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3)
 
 	assert.NoError(t, td.state1.CommitBlock(3, b6, c6))
 	assert.NoError(t, td.state2.CommitBlock(3, b6, c6))
@@ -423,9 +423,9 @@ func TestSortition(t *testing.T) {
 	td := setup(t)
 
 	pub, prv := td.RandBLSKeyPair()
-	signer := crypto.NewSigner(prv)
-	store := store.MockingStore(td.TestSuite)
-	St1, _ := LoadOrNewState(td.state1.genDoc, []crypto.Signer{signer}, store, td.commonTxPool, nil)
+	valKey := bls.NewValidatorKey(prv)
+	mockStore := store.MockingStore(td.TestSuite)
+	St1, _ := LoadOrNewState(td.state1.genDoc, []*bls.ValidatorKey{valKey}, mockStore, td.commonTxPool, nil)
 	stNew := St1.(*state)
 
 	assert.False(t, stNew.evaluateSortition()) //  not a validator
@@ -434,14 +434,14 @@ func TestSortition(t *testing.T) {
 	height := uint32(1)
 	for ; height <= 15; height++ {
 		if height == 6 {
-			trx := tx.NewBondTx(td.state1.lastInfo.BlockHash().Stamp(), 1, td.valSigner1.Address(),
-				pub.Address(), pub, 1000000000, 100000, "")
-			td.valSigner1.SignMsg(trx)
+			trx := tx.NewBondTx(td.state1.lastInfo.BlockHash().Stamp(), 1, td.valKey1.Address(),
+				pub.ValidatorAddress(), pub, 1000000000, 100000, "")
+			td.HelperSignTransaction(td.valKey1.PrivateKey(), trx)
 
 			assert.NoError(t, td.commonTxPool.AppendTx(trx))
 		}
 
-		b, c := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
+		b, c := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 		td.commitBlockForAllStates(t, b, c)
 		require.NoError(t, stNew.CommitBlock(height, b, c))
 	}
@@ -449,28 +449,28 @@ func TestSortition(t *testing.T) {
 	assert.False(t, stNew.evaluateSortition()) //  bonding period
 
 	// Certificate next block
-	b, c := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
+	b, c := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 	td.commitBlockForAllStates(t, b, c)
 	require.NoError(t, stNew.CommitBlock(height, b, c))
 	height++
 
-	assert.True(t, stNew.evaluateSortition())                    //  ok
-	assert.False(t, td.state1.committee.Contains(pub.Address())) // still not in the committee
+	assert.True(t, stNew.evaluateSortition())                             //  ok
+	assert.False(t, td.state1.committee.Contains(pub.ValidatorAddress())) // still not in the committee
 
 	// ---------------------------------------------
 	// Certificate next block, new validator should be in the committee now
-	b, c = td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
+	b, c = td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 	td.commitBlockForAllStates(t, b, c)
 	require.NoError(t, stNew.CommitBlock(height, b, c))
 
 	assert.True(t, stNew.evaluateSortition()) // in the committee
-	assert.True(t, td.state1.committee.Contains(td.valSigner1.Address()))
-	assert.True(t, td.state1.committee.Contains(pub.Address()))
+	assert.True(t, td.state1.committee.Contains(td.valKey1.Address()))
+	assert.True(t, td.state1.committee.Contains(pub.ValidatorAddress()))
 
 	// ---------------------------------------------
 	// Let's save and load td.state1
-	td.state1.Close()
-	St1, _ = LoadOrNewState(td.state1.genDoc, []crypto.Signer{td.valSigner1}, store, td.commonTxPool, nil)
+	_ = td.state1.Close()
+	St1, _ = LoadOrNewState(td.state1.genDoc, []*bls.ValidatorKey{td.valKey1}, mockStore, td.commonTxPool, nil)
 	st1 := St1.(*state)
 
 	// ---------------------------------------------
@@ -484,10 +484,10 @@ func TestSortition(t *testing.T) {
 	sigs := make([]*bls.Signature, 4)
 	sb := certificate.BlockCertificateSignBytes(b14.Hash(), height, 3)
 
-	sigs[0] = td.valSigner2.SignData(sb).(*bls.Signature)
-	sigs[1] = td.valSigner3.SignData(sb).(*bls.Signature)
-	sigs[2] = td.valSigner4.SignData(sb).(*bls.Signature)
-	sigs[3] = signer.SignData(sb).(*bls.Signature)
+	sigs[0] = td.valKey2.Sign(sb)
+	sigs[1] = td.valKey3.Sign(sb)
+	sigs[2] = td.valKey4.Sign(sb)
+	sigs[3] = valKey.Sign(sb)
 
 	c14 := certificate.NewCertificate(height, 3, []int32{4, 0, 1, 2, 3}, []int32{0}, bls.SignatureAggregate(sigs...))
 
@@ -506,7 +506,7 @@ func TestValidateBlockTime(t *testing.T) {
 
 	fmt.Printf("BlockTimeInSecond: %d\n", td.state1.params.BlockIntervalInSecond)
 
-	// Time not rounded
+	// Time is not rounded
 	roundedNow := util.RoundNow(10)
 	assert.Error(t, td.state1.validateBlockTime(roundedNow.Add(-15*time.Second)))
 	assert.Error(t, td.state1.validateBlockTime(roundedNow.Add(-5*time.Second)))
@@ -525,7 +525,7 @@ func TestValidateBlockTime(t *testing.T) {
 		assert.NoError(t, td.state1.validateBlockTime(roundedNow.Add(10*time.Second)))
 		assert.Equal(t, td.state1.proposeNextBlockTime(), roundedNow, "Invalid proposed time for the next block")
 
-		// More than threshold
+		// More than the threshold
 		assert.Error(t, td.state1.validateBlockTime(roundedNow.Add(20*time.Second)))
 	})
 
@@ -542,7 +542,7 @@ func TestValidateBlockTime(t *testing.T) {
 		assert.NoError(t, td.state1.validateBlockTime(roundedNow.Add(10*time.Second)))
 		assert.Equal(t, td.state1.proposeNextBlockTime(), roundedNow, "Invalid proposed time for the next block")
 
-		// More than threshold
+		// More than the threshold
 		assert.Error(t, td.state1.validateBlockTime(roundedNow.Add(20*time.Second)))
 	})
 
@@ -559,7 +559,7 @@ func TestValidateBlockTime(t *testing.T) {
 		assert.NoError(t, td.state1.validateBlockTime(td.state1.lastInfo.BlockTime().Add(10*time.Second)))
 		assert.NoError(t, td.state1.validateBlockTime(td.state1.lastInfo.BlockTime().Add(20*time.Second)))
 
-		// More than threshold
+		// More than the threshold
 		assert.Error(t, td.state1.validateBlockTime(td.state1.lastInfo.BlockTime().Add(30*time.Second)))
 	})
 }
@@ -577,7 +577,7 @@ func TestInvalidBlockTime(t *testing.T) {
 
 	td.moveToNextHeightForAllStates(t)
 
-	validBlock, _ := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
+	validBlock, _ := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 	invalidBlock := block.MakeBlock(
 		validBlock.Header().Version(),
 		validBlock.Header().Time().Add(30*time.Second),
@@ -597,18 +597,19 @@ func TestValidatorHelpers(t *testing.T) {
 
 	t.Run("Should return nil for non-existing Validator Address", func(t *testing.T) {
 		_, prv5 := td.RandBLSKeyPair()
-		nonExistenceValidator := td.state1.ValidatorByAddress(prv5.PublicKey().Address())
+		valKey := bls.NewValidatorKey(prv5)
+		nonExistenceValidator := td.state1.ValidatorByAddress(valKey.PublicKey().ValidatorAddress())
 		assert.Nil(t, nonExistenceValidator, "State 1 returned non-nil For non-existing validator")
-		nonExistenceValidator = td.state2.ValidatorByAddress(prv5.PublicKey().Address())
+		nonExistenceValidator = td.state2.ValidatorByAddress(valKey.PublicKey().ValidatorAddress())
 		assert.Nil(t, nonExistenceValidator, "State 2 returned non-nil For non-existing validator")
-		nonExistenceValidator = td.state3.ValidatorByAddress(prv5.PublicKey().Address())
+		nonExistenceValidator = td.state3.ValidatorByAddress(valKey.PublicKey().ValidatorAddress())
 		assert.Nil(t, nonExistenceValidator, "State 3 returned non-nil For non-existing validator")
-		nonExistenceValidator = td.state4.ValidatorByAddress(prv5.PublicKey().Address())
+		nonExistenceValidator = td.state4.ValidatorByAddress(valKey.PublicKey().ValidatorAddress())
 		assert.Nil(t, nonExistenceValidator, "State 4 returned non-nil For non-existing validator")
 	})
 
 	t.Run("Should return validator for valid committee Validator Address", func(t *testing.T) {
-		existingValidator := td.state4.ValidatorByAddress(td.valSigner1.Address())
+		existingValidator := td.state4.ValidatorByAddress(td.valKey1.Address())
 		assert.NotNil(t, existingValidator)
 		assert.Zero(t, existingValidator.Number())
 	})
@@ -616,7 +617,7 @@ func TestValidatorHelpers(t *testing.T) {
 	t.Run("Should return validator for corresponding Validator number", func(t *testing.T) {
 		existingValidator := td.state4.ValidatorByNumber(1)
 		assert.NotNil(t, existingValidator)
-		assert.Equal(t, td.valSigner2.Address(), existingValidator.Address())
+		assert.Equal(t, td.valKey2.Address(), existingValidator.Address())
 	})
 
 	t.Run("Should return nil for invalid Validator number", func(t *testing.T) {
@@ -630,22 +631,23 @@ func TestLoadState(t *testing.T) {
 
 	// Add a bond transactions to change total power (stake)
 	pub, _ := td.RandBLSKeyPair()
-	tx2 := tx.NewBondTx(td.state1.LastBlockHash().Stamp(), 1, td.valSigner1.Address(),
-		pub.Address(), pub, 8888000, 8888, "")
-	td.valSigner1.SignMsg((tx2))
+	tx2 := tx.NewBondTx(td.state1.LastBlockHash().Stamp(), 1, td.valKey1.Address(),
+		pub.ValidatorAddress(), pub, 8888000, 8888, "")
+	td.HelperSignTransaction(td.valKey1.PrivateKey(), tx2)
 
 	assert.NoError(t, td.commonTxPool.AppendTx(tx2))
 
 	for i := 0; i < 4; i++ {
 		td.moveToNextHeightForAllStates(t)
 	}
-	b5, c5 := td.makeBlockAndCertificate(t, 1, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
+	b5, c5 := td.makeBlockAndCertificate(t, 1, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 	td.commitBlockForAllStates(t, b5, c5)
 
-	b6, c6 := td.makeBlockAndCertificate(t, 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
+	b6, c6 := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 
 	// Load last state info
-	st1Load, err := LoadOrNewState(td.state1.genDoc, []crypto.Signer{td.valSigner1}, td.state1.store, td.commonTxPool, nil)
+	st1Load, err := LoadOrNewState(td.state1.genDoc, []*bls.ValidatorKey{td.valKey1},
+		td.state1.store, td.commonTxPool, nil)
 	require.NoError(t, err)
 
 	assert.Equal(t, td.state1.store.TotalAccounts(), st1Load.(*state).store.TotalAccounts())
@@ -668,7 +670,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 		td.moveToNextHeightForAllStates(t)
 	}
 
-	_, err := LoadOrNewState(td.state1.genDoc, []crypto.Signer{td.valSigner1},
+	_, err := LoadOrNewState(td.state1.genDoc, []*bls.ValidatorKey{td.valKey1},
 		td.state1.store, txpool.MockingTxPool(), nil)
 	require.NoError(t, err)
 
@@ -683,7 +685,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 		td.state1.genDoc.Params())
 
 	// Load last state info after modifying genesis
-	_, err = LoadOrNewState(genDoc, []crypto.Signer{td.valSigner1}, td.state1.store, txpool.MockingTxPool(), nil)
+	_, err = LoadOrNewState(genDoc, []*bls.ValidatorKey{td.valKey1}, td.state1.store, txpool.MockingTxPool(), nil)
 	require.Error(t, err)
 }
 
@@ -729,11 +731,11 @@ func TestSetBlockTime(t *testing.T) {
 func TestIsValidator(t *testing.T) {
 	td := setup(t)
 
-	assert.True(t, td.state1.IsInCommittee(td.valSigner1.Address()))
-	assert.True(t, td.state1.IsProposer(td.valSigner1.Address(), 0))
-	assert.True(t, td.state1.IsProposer(td.valSigner2.Address(), 1))
-	assert.True(t, td.state1.IsInCommittee(td.valSigner2.Address()))
-	assert.True(t, td.state1.IsValidator(td.valSigner2.Address()))
+	assert.True(t, td.state1.IsInCommittee(td.valKey1.Address()))
+	assert.True(t, td.state1.IsProposer(td.valKey1.Address(), 0))
+	assert.True(t, td.state1.IsProposer(td.valKey2.Address(), 1))
+	assert.True(t, td.state1.IsInCommittee(td.valKey2.Address()))
+	assert.True(t, td.state1.IsValidator(td.valKey2.Address()))
 
 	addr := td.RandAccAddress()
 	assert.False(t, td.state1.IsInCommittee(addr))
@@ -759,7 +761,7 @@ func TestCommittingInvalidBlock(t *testing.T) {
 	txs.Append(trx)
 	b := block.MakeBlock(2, util.Now(), txs, td.state2.lastInfo.BlockHash(), td.state2.stateRoot(),
 		td.state2.lastInfo.Certificate(), td.state2.lastInfo.SortitionSeed(), td.state2.valKeys[0].Address())
-	c := td.makeCertificateAndSign(t, b.Hash(), 0, td.valSigner1, td.valSigner2, td.valSigner3, td.valSigner4)
+	c := td.makeCertificateAndSign(t, b.Hash(), 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 
 	// td.state1 receives a block with version 2 and rejects it.
 	// It is possible that the same block would be considered valid by td.state2.
@@ -805,10 +807,10 @@ func TestMakeCommittedBlock(t *testing.T) {
 
 	data := td.RandBytes(128)
 	height := td.RandHeight()
-	hash := td.RandHash()
-	cb := td.state1.MakeCommittedBlock(data, height, hash)
+	rndHash := td.RandHash()
+	cb := td.state1.MakeCommittedBlock(data, height, rndHash)
 	assert.Equal(t, data, cb.Data)
-	assert.Equal(t, hash, cb.BlockHash)
+	assert.Equal(t, rndHash, cb.BlockHash)
 	assert.Equal(t, height, cb.Height)
 	assert.NotNil(t, cb.Store)
 }

@@ -57,7 +57,7 @@ func TestBroadcastingQueryProposalMessages(t *testing.T) {
 		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeQueryProposal)
 	})
 
-	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.signers[0].PublicKey())
+	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.valKeys[0].PublicKey())
 
 	t.Run("In the committee, should send query proposal message", func(t *testing.T) {
 		td.sync.broadcast(msg)

@@ -2,7 +2,6 @@ package crypto
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 
 	"github.com/pactus-project/pactus/util/bech32m"
@@ -49,7 +48,7 @@ func AddressFromString(text string) (Address, error) {
 
 	// Check if hrp is valid
 	if hrp != AddressHRP {
-		return Address{}, fmt.Errorf("invalid hrp: %v", hrp)
+		return Address{}, InvalidHRPError(hrp)
 	}
 
 	switch AddressType(typ) {
@@ -57,12 +56,10 @@ func AddressFromString(text string) (Address, error) {
 		AddressTypeBLSAccount:
 		// The regrouped data must be 20 bytes.
 		if len(data) != 20 {
-			return Address{}, fmt.Errorf(
-				"address should be %d bytes, but it is %v bytes", AddressSize, len(data)+1)
+			return Address{}, InvalidLengthError(len(data) + 1)
 		}
 	default:
-		return Address{}, fmt.Errorf("invalid address key type: %v", typ)
-
+		return Address{}, InvalidAddressTypeError(typ)
 	}
 
 	var addr Address
@@ -72,7 +69,7 @@ func AddressFromString(text string) (Address, error) {
 	return addr, nil
 }
 
-// NewAddress create a new address based
+// NewAddress create a new address based.
 func NewAddress(typ AddressType, data []byte) Address {
 	var addr Address
 	addr[0] = byte(typ)
@@ -125,13 +122,11 @@ func (addr Address) Encode(w io.Writer) error {
 		AddressTypeBLSAccount:
 		return encoding.WriteElement(w, addr)
 	default:
-		return InvalidAddressTypeError{
-			Type: t,
-		}
+		return InvalidAddressTypeError(t)
 	}
 }
 
-func (addr Address) Decode(r io.Reader) error {
+func (addr *Address) Decode(r io.Reader) error {
 	err := encoding.ReadElement(r, &addr[0])
 	if err != nil {
 		return err
@@ -145,9 +140,7 @@ func (addr Address) Decode(r io.Reader) error {
 		AddressTypeBLSAccount:
 		return encoding.ReadElement(r, addr[1:])
 	default:
-		return InvalidAddressTypeError{
-			Type: t,
-		}
+		return InvalidAddressTypeError(t)
 	}
 }
 

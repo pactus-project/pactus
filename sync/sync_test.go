@@ -71,17 +71,17 @@ func setup(t *testing.T, config *Config) *testData {
 		config = testConfig()
 		config.Moniker = "Alice"
 	}
-	signers := []crypto.Signer{ts.RandSigner(), ts.RandSigner()}
-	state := state.MockingState(ts)
-	consMgr, consMocks := consensus.MockingManager(ts, signers)
+	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
+	mockState := state.MockingState(ts)
+	consMgr, consMocks := consensus.MockingManager(ts, []*bls.PrivateKey{valKeys[0].PrivateKey(), valKeys[1].PrivateKey()})
 	broadcastCh := make(chan message.Message, 1000)
-	network := network.MockingNetwork(ts, ts.RandPeerID())
+	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())
 
 	Sync, err := NewSynchronizer(config,
-		signers,
-		state,
+		valKeys,
+		mockState,
 		consMgr,
-		network,
+		mockNetwork,
 		broadcastCh,
 	)
 	assert.NoError(t, err)
@@ -90,10 +90,10 @@ func setup(t *testing.T, config *Config) *testData {
 	td := &testData{
 		TestSuite:   ts,
 		config:      config,
-		state:       state,
+		state:       mockState,
 		consMgr:     consMgr,
 		consMocks:   consMocks,
-		network:     network,
+		network:     mockNetwork,
 		sync:        sync,
 		broadcastCh: broadcastCh,
 	}
@@ -206,7 +206,7 @@ func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.Pub
 	val.UpdateLastSortitionHeight(td.state.TestCommittee.Proposer(0).LastSortitionHeight() + 1)
 	td.state.TestStore.UpdateValidator(val)
 	td.state.TestCommittee.Update(0, []*validator.Validator{val})
-	require.True(t, td.state.TestCommittee.Contains(pub.Address()))
+	require.True(t, td.state.TestCommittee.Contains(pub.(*bls.PublicKey).ValidatorAddress()))
 
 	for _, cons := range td.consMocks {
 		cons.SetActive(cons.ConsKey.PublicKey().EqualsTo(pub))
@@ -240,7 +240,7 @@ func TestConnectEvents(t *testing.T) {
 func TestTestNetFlags(t *testing.T) {
 	td := setup(t, nil)
 
-	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.signers[0].PublicKey())
+	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.valKeys[0].PublicKey())
 	td.state.TestParams.BlockVersion = 0x3f
 	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(td.RandHeight(), td.RandRound()))
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)

@@ -20,12 +20,12 @@ func TestParsingHelloMessages(t *testing.T) {
 
 	t.Run("Receiving Hello message from a peer. Peer ID is not same as initiator.",
 		func(t *testing.T) {
-			signer := td.RandSigner()
+			valKey := td.RandValKey()
 			pid := td.RandPeerID()
 			initiator := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
-			msg.Sign(signer)
+			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, initiator))
 			assert.Equal(t, td.sync.peerSet.GetPeer(initiator).Status, peerset.StatusCodeBanned)
@@ -36,11 +36,11 @@ func TestParsingHelloMessages(t *testing.T) {
 	t.Run("Receiving Hello message from a peer. Genesis hash is wrong.",
 		func(t *testing.T) {
 			invGenHash := td.RandHash()
-			signer := td.RandSigner()
+			valKey := td.RandValKey()
 			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
 				td.state.LastBlockHash(), invGenHash)
-			msg.Sign(signer)
+			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
@@ -50,12 +50,12 @@ func TestParsingHelloMessages(t *testing.T) {
 
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info",
 		func(t *testing.T) {
-			signer := td.RandSigner()
+			valKey := td.RandValKey()
 			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", height, services.New(services.Network),
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
-			msg.Sign(signer)
+			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
@@ -65,7 +65,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			// Check if the peer info is updated
 			p := td.sync.peerSet.GetPeer(pid)
 
-			pub := signer.PublicKey().(*bls.PublicKey)
+			pub := valKey.PublicKey()
 			assert.Equal(t, p.Status, peerset.StatusCodeConnected)
 			assert.Equal(t, p.Agent, version.Agent())
 			assert.Equal(t, p.Moniker, "kitty")

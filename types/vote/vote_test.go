@@ -4,6 +4,8 @@ import (
 	"encoding/hex"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls"
+
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/vote"
@@ -214,15 +216,15 @@ func TestVoteSignature(t *testing.T) {
 	assert.Error(t, v1.Verify(pb1), "No signature")
 
 	sig1 := pv1.Sign(v1.SignBytes())
-	v1.SetSignature(sig1)
+	v1.SetSignature(sig1.(*bls.Signature))
 	assert.NoError(t, v1.Verify(pb1), "Ok")
 
 	sig2 := pv2.Sign(v2.SignBytes())
-	v2.SetSignature(sig2)
+	v2.SetSignature(sig2.(*bls.Signature))
 	assert.Error(t, v2.Verify(pb1), "invalid public key")
 
 	sig3 := pv1.Sign(v2.SignBytes())
-	v2.SetSignature(sig3)
+	v2.SetSignature(sig3.(*bls.Signature))
 	assert.Error(t, v2.Verify(pb2), "invalid signature")
 }
 
@@ -327,14 +329,14 @@ func TestBasicCheck(t *testing.T) {
 		v := vote.NewPrepareVote(ts.RandHash(), 0, 0, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
+		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid height"})
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
 		v := vote.NewPrepareVote(ts.RandHash(), 100, -1, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
+		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid round"})
 	})
 
 	t.Run("No signature", func(t *testing.T) {

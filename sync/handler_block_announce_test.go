@@ -16,12 +16,12 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	lastBlockHeight := td.state.LastBlockHeight()
 	blockInterval := td.state.Genesis().Params().BlockInterval()
 	blockTime := util.RoundNow(int(blockInterval.Seconds()))
-	b1 := td.GenerateTestBlockWithTime(nil, blockTime)
+	b1 := td.GenerateTestBlockWithTime(blockTime)
 	c1 := td.GenerateTestCertificate()
 	msg1 := message.NewBlockAnnounceMessage(lastBlockHeight+1, b1, c1)
 
 	blockTime = blockTime.Add(blockInterval)
-	b2 := td.GenerateTestBlockWithTime(nil, blockTime)
+	b2 := td.GenerateTestBlockWithTime(blockTime)
 	c2 := td.GenerateTestCertificate()
 	msg2 := message.NewBlockAnnounceMessage(lastBlockHeight+2, b2, c2)
 
@@ -50,7 +50,6 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	td.state.CommitTestBlocks(21)
-
 	blk, _ := td.state.CommittedBlock(td.state.LastBlockHeight()).ToBlock()
 	msg := message.NewBlockAnnounceMessage(
 		td.state.LastBlockHeight(), blk, td.state.LastCertificate())
@@ -61,7 +60,7 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlockAnnounce)
 	})
 
-	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.signers[0].PublicKey())
+	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.valKeys[0].PublicKey())
 
 	t.Run("In the committee, should broadcast block announce message", func(t *testing.T) {
 		td.sync.broadcast(msg)

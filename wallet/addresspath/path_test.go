@@ -1,4 +1,4 @@
-package address_path
+package addresspath
 
 import (
 	"strconv"

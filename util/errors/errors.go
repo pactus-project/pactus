@@ -93,6 +93,7 @@ func Code(err error) int {
 	if !ok {
 		return ErrGeneric
 	}
+
 	return _e.Code()
 }
 

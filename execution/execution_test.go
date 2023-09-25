@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/tx"
@@ -19,8 +18,8 @@ func TestLockTime(t *testing.T) {
 	sb := sandbox.MockingSandbox(ts)
 	sb.TestAcceptSortition = true
 	exe := NewExecutor()
-	signer1 := ts.RandSigner()
-	addr1 := signer1.Address()
+	rndValKey := ts.RandValKey()
+	addr1 := rndValKey.Address()
 	acc1 := sb.MakeNewAccount(addr1)
 	acc1.AddToBalance(100 * 1e9)
 	sb.UpdateAccount(addr1, acc1)
@@ -30,7 +29,7 @@ func TestLockTime(t *testing.T) {
 	t.Run("Future LockTime, Should returns error (+1)", func(t *testing.T) {
 		lockTime := sb.CurrentHeight() + 1
 		trx := tx.NewTransferTx(hash.UndefHash.Stamp(), lockTime, addr1, rcvAddr, 1000, 1000, "expired-stamp")
-		signer1.SignMsg(trx)
+		ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 		err := exe.Execute(trx, sb)
 		assert.ErrorIs(t, err, FutureLockTimeError{LockTime: lockTime})
 	})
@@ -38,7 +37,7 @@ func TestLockTime(t *testing.T) {
 	t.Run("Past LockTime, Should returns error (-8641)", func(t *testing.T) {
 		lockTime := sb.CurrentHeight() - sb.TestParams.TransactionToLiveInterval - 1
 		trx := tx.NewTransferTx(hash.UndefHash.Stamp(), lockTime, addr1, rcvAddr, 1000, 1000, "expired-stamp")
-		signer1.SignMsg(trx)
+		ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 		err := exe.Execute(trx, sb)
 		assert.ErrorIs(t, err, PastLockTimeError{LockTime: lockTime})
 	})
@@ -46,7 +45,7 @@ func TestLockTime(t *testing.T) {
 	t.Run("Transaction has valid LockTime (-8640)", func(t *testing.T) {
 		lockTime := sb.CurrentHeight() - sb.TestParams.TransactionToLiveInterval
 		trx := tx.NewTransferTx(hash.UndefHash.Stamp(), lockTime, addr1, rcvAddr, 1000, 1000, "ok")
-		signer1.SignMsg(trx)
+		ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 		err := exe.Execute(trx, sb)
 		assert.NoError(t, err)
 	})
@@ -54,7 +53,7 @@ func TestLockTime(t *testing.T) {
 	t.Run("Transaction has valid LockTime (0)", func(t *testing.T) {
 		lockTime := sb.CurrentHeight()
 		trx := tx.NewTransferTx(hash.UndefHash.Stamp(), lockTime, addr1, rcvAddr, 1000, 1000, "ok")
-		signer1.SignMsg(trx)
+		ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 		err := exe.Execute(trx, sb)
 		assert.NoError(t, err)
 	})
@@ -86,7 +85,7 @@ func TestLockTime(t *testing.T) {
 		lockTime := sb.CurrentHeight() + 1
 		proof := ts.RandProof()
 		trx := tx.NewSortitionTx(hash.UndefHash.Stamp(), lockTime, addr1, proof)
-		signer1.SignMsg(trx)
+		ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 		err := exe.Execute(trx, sb)
 		assert.ErrorIs(t, err, FutureLockTimeError{LockTime: lockTime})
 	})
@@ -95,7 +94,7 @@ func TestLockTime(t *testing.T) {
 		lockTime := sb.CurrentHeight() - sb.TestParams.SortitionInterval - 1
 		proof := ts.RandProof()
 		trx := tx.NewSortitionTx(hash.UndefHash.Stamp(), lockTime, addr1, proof)
-		signer1.SignMsg(trx)
+		ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 		err := exe.Execute(trx, sb)
 		assert.ErrorIs(t, err, PastLockTimeError{LockTime: lockTime})
 	})
@@ -103,12 +102,12 @@ func TestLockTime(t *testing.T) {
 	t.Run("Sortition transaction has valid LockTime (-7)", func(t *testing.T) {
 		lockTime := sb.CurrentHeight() - sb.TestParams.SortitionInterval
 		proof := ts.RandProof()
-		val1 := sb.MakeNewValidator(signer1.PublicKey().(*bls.PublicKey))
+		val1 := sb.MakeNewValidator(rndValKey.PublicKey())
 		val1.AddToStake(100 * 1e9)
 		sb.UpdateValidator(val1)
 
 		trx := tx.NewSortitionTx(hash.UndefHash.Stamp(), lockTime, addr1, proof)
-		signer1.SignMsg(trx)
+		ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 		err := exe.Execute(trx, sb)
 		assert.NoError(t, err)
 	})
@@ -120,8 +119,8 @@ func TestExecution(t *testing.T) {
 	sb := sandbox.MockingSandbox(ts)
 	exe := NewExecutor()
 
-	signer1 := ts.RandSigner()
-	addr1 := signer1.Address()
+	rndValKey := ts.RandValKey()
+	addr1 := rndValKey.Address()
 	acc1 := sb.MakeNewAccount(addr1)
 	acc1.AddToBalance(100 * 1e9)
 	sb.UpdateAccount(addr1, acc1)
@@ -137,14 +136,14 @@ func TestExecution(t *testing.T) {
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
 		trx := tx.NewTransferTx(hash.UndefHash.Stamp(), lockTime, addr1, rcvAddr, 1000, 1, "invalid fee")
-		signer1.SignMsg(trx)
+		ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 		err := exe.Execute(trx, sb)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
 		trx := tx.NewTransferTx(hash.UndefHash.Stamp(), lockTime, addr1, rcvAddr, 1000, 1001, "invalid fee")
-		signer1.SignMsg(trx)
+		ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 		err := exe.Execute(trx, sb)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
 	})
@@ -166,7 +165,7 @@ func TestExecution(t *testing.T) {
 	t.Run("Execution failed", func(t *testing.T) {
 		proof := ts.RandProof()
 		trx := tx.NewSortitionTx(block8642.Stamp(), lockTime, addr1, proof)
-		signer1.SignMsg(trx)
+		ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 		err := exe.Execute(trx, sb)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
@@ -177,15 +176,16 @@ func TestReplay(t *testing.T) {
 
 	executor := NewExecutor()
 	sb := sandbox.MockingSandbox(ts)
-	signer := ts.RandSigner()
-	acc := sb.MakeNewAccount(signer.Address())
+	rndValKey := ts.RandValKey()
+	addr1 := rndValKey.Address()
+	acc := sb.MakeNewAccount(addr1)
 	acc.AddToBalance(1e9)
-	sb.UpdateAccount(signer.Address(), acc)
+	sb.UpdateAccount(addr1, acc)
 	lockTime := sb.CurrentHeight()
 
 	trx := tx.NewTransferTx(hash.UndefHash.Stamp(), lockTime,
-		signer.Address(), ts.RandAccAddress(), 10000, 1000, "")
-	signer.SignMsg(trx)
+		addr1, ts.RandAccAddress(), 10000, 1000, "")
+	ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 
 	err := executor.Execute(trx, sb)
 	assert.NoError(t, err)
@@ -201,15 +201,16 @@ func TestChecker(t *testing.T) {
 	executor := NewExecutor()
 	checker := NewChecker()
 	sb := sandbox.MockingSandbox(ts)
-	signer := ts.RandSigner()
-	acc := sb.MakeNewAccount(signer.Address())
+	rndValKey := ts.RandValKey()
+	addr1 := rndValKey.Address()
+	acc := sb.MakeNewAccount(addr1)
 	acc.AddToBalance(1e9)
-	sb.UpdateAccount(signer.Address(), acc)
+	sb.UpdateAccount(addr1, acc)
 	lockTime := sb.CurrentHeight() + 1
 
 	trx := tx.NewTransferTx(hash.UndefHash.Stamp(), lockTime,
-		signer.Address(), ts.RandAccAddress(), 10000, 1000, "")
-	signer.SignMsg(trx)
+		addr1, ts.RandAccAddress(), 10000, 1000, "")
+	ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 
 	err := executor.Execute(trx, sb)
 	assert.ErrorIs(t, err, FutureLockTimeError{LockTime: lockTime})

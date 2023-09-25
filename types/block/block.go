@@ -130,6 +130,7 @@ func (b *Block) Hash() hash.Hash {
 
 	h := hash.CalcHash(w.Bytes())
 	b.memorizedHash = &h
+
 	return h
 }
 

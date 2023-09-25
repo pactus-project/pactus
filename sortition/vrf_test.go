@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
+
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -15,13 +16,13 @@ func TestVRF(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	pk, pv := ts.RandBLSKeyPair()
-	signer := crypto.NewSigner(pv)
+	valKey := bls.NewValidatorKey(pv)
 	for i := 0; i < 100; i++ {
 		seed := ts.RandSeed()
 		fmt.Printf("seed is: %x \n", seed)
 
 		max := uint64(1 * 1e6)
-		index, proof := sortition.Evaluate(seed, signer, max)
+		index, proof := sortition.Evaluate(seed, valKey.PrivateKey(), max)
 
 		assert.LessOrEqual(t, index, max)
 
@@ -49,13 +50,13 @@ func TestRandomUint64(t *testing.T) {
 		"when only %d was expected"
 	_, pv := ts.RandBLSKeyPair()
 
-	signer := crypto.NewSigner(pv)
+	valKey := bls.NewValidatorKey(pv)
 
 	numHits := 0
 	for i := 0; i < tries; i++ {
 		seed := ts.RandSeed()
 
-		nonce, _ := sortition.Evaluate(seed, signer, util.MaxUint64)
+		nonce, _ := sortition.Evaluate(seed, valKey.PrivateKey(), util.MaxUint64)
 		if nonce < watermark {
 			numHits++
 		}

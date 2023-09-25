@@ -1,14 +1,14 @@
 package crypto
 
 var (
-	// Human Readable Part (HRP) for address.
+	// AddressHRP Human Readable Part (HRP) for address.
 	AddressHRP = "pc"
-	// Human Readable Part (HRP) for public key.
+	// PublicKeyHRP Human Readable Part (HRP) for public key.
 	PublicKeyHRP = "public"
-	// Human Readable Part (HRP) for private key.
+	// PrivateKeyHRP Human Readable Part (HRP) for private key.
 	PrivateKeyHRP = "secret"
-	// Human Readable Part (HRP) for extended public key.
+	// XPublicKeyHRP Human Readable Part (HRP) for extended public key.
 	XPublicKeyHRP = "xpublic"
-	// Human Readable Part (HRP) for extended private key.
+	// XPrivateKeyHRP Human Readable Part (HRP) for extended private key.
 	XPrivateKeyHRP = "xsecret"
 )

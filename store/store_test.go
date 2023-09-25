@@ -173,10 +173,15 @@ func TestIndexingPublicKeys(t *testing.T) {
 		pub, found := td.store.PublicKey(addr)
 
 		assert.NoError(t, found)
-		assert.Equal(t, pub.AccountAddress(), addr)
+
+		if addr.IsAccountAddress() {
+			assert.Equal(t, pub.AccountAddress(), addr)
+		} else if addr.IsValidatorAddress() {
+			assert.Equal(t, pub.ValidatorAddress(), addr)
+		}
 	}
 
-	pub, found := td.store.PublicKey(td.RandAccAddress())
+	pub, found := td.store.PublicKey(td.RandValAddress())
 	assert.Error(t, found)
 	assert.Nil(t, pub)
 }

@@ -154,7 +154,7 @@ func TestRecoverWallet(t *testing.T) {
 		recovered, err := Create(path, mnemonic, password, genesis.Mainnet)
 		assert.NoError(t, err)
 
-		addr1, err := recovered.DeriveNewAddress("addr-1")
+		addr1, err := recovered.NewBLSAccountAddress("addr-1")
 		assert.NoError(t, err)
 
 		assert.NoFileExists(t, path)
@@ -188,7 +188,7 @@ func TestImportPrivateKey(t *testing.T) {
 	_, prv := td.RandBLSKeyPair()
 	assert.NoError(t, td.wallet.ImportPrivateKey(td.password, prv))
 
-	addr := prv.PublicKey().Address().String()
+	addr := prv.PublicKeyNative().AccountAddress().String()
 	assert.True(t, td.wallet.Contains(addr))
 }
 
@@ -199,13 +199,13 @@ func TestTestKeyInfo(t *testing.T) {
 	w1, err := Create(util.TempFilePath(), mnemonic, td.password,
 		genesis.Mainnet)
 	assert.NoError(t, err)
-	addrStr1, _ := w1.DeriveNewAddress("")
+	addrStr1, _ := w1.NewBLSAccountAddress("")
 	prv1, _ := w1.PrivateKey("", addrStr1)
 
 	w2, err := Create(util.TempFilePath(), mnemonic, td.password,
 		genesis.Testnet)
 	assert.NoError(t, err)
-	addrStr2, _ := w2.DeriveNewAddress("")
+	addrStr2, _ := w2.NewBLSAccountAddress("")
 	prv2, _ := w2.PrivateKey("", addrStr2)
 
 	assert.NotEqual(t, prv1.Bytes(), prv2.Bytes(),
@@ -235,7 +235,7 @@ func TestStake(t *testing.T) {
 func TestSigningTx(t *testing.T) {
 	td := setup(t)
 
-	sender, _ := td.wallet.DeriveNewAddress("testing addr")
+	sender, _ := td.wallet.NewBLSAccountAddress("testing addr")
 	receiver := td.RandAccAddress()
 	amount := td.RandInt64(10000)
 	lockTime := td.RandHeight()
@@ -262,7 +262,7 @@ func TestSigningTx(t *testing.T) {
 func TestMakeTransferTx(t *testing.T) {
 	td := setup(t)
 
-	sender, _ := td.wallet.DeriveNewAddress("testing addr")
+	sender, _ := td.wallet.NewBLSAccountAddress("testing addr")
 	receiver := td.RandAccAddress()
 	amount := td.RandInt64(10000)
 	lockTime := td.RandHeight()
@@ -319,8 +319,8 @@ func TestMakeTransferTx(t *testing.T) {
 func TestMakeBondTx(t *testing.T) {
 	td := setup(t)
 
-	sender, _ := td.wallet.DeriveNewAddress("testing addr")
-	receiver := td.RandSigner()
+	sender, _ := td.wallet.NewValidatorAddress("testing addr")
+	receiver := td.RandValKey()
 	amount := td.RandInt64(10000)
 
 	t.Run("set parameters manually", func(t *testing.T) {
@@ -389,21 +389,21 @@ func TestMakeBondTx(t *testing.T) {
 	})
 
 	t.Run("validator address stored in wallet", func(t *testing.T) {
-		receiver, _ := td.wallet.DeriveNewAddress("validator-address")
+		receiver, _ := td.wallet.NewValidatorAddress("validator-address")
 		receiverInfo := td.wallet.AddressInfo(receiver)
 
 		t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
 			tValidatorResponse = nil
 			trx, err := td.wallet.MakeBondTx(sender, receiver, "", amount)
 			assert.NoError(t, err)
-			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiverInfo.Pub.String())
+			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiverInfo.PublicKey)
 		})
 
 		t.Run("validator doesn't exist and public key set", func(t *testing.T) {
 			receiverInfo := td.wallet.AddressInfo(receiver)
-			trx, err := td.wallet.MakeBondTx(sender, receiver, receiverInfo.Pub.String(), amount)
+			trx, err := td.wallet.MakeBondTx(sender, receiver, receiverInfo.PublicKey, amount)
 			assert.NoError(t, err)
-			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiverInfo.Pub.String())
+			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiverInfo.PublicKey)
 		})
 
 		t.Run("validator exists and public key not set", func(t *testing.T) {
@@ -415,7 +415,7 @@ func TestMakeBondTx(t *testing.T) {
 
 		t.Run("validator exists and public key set", func(t *testing.T) {
 			receiverInfo := td.wallet.AddressInfo(receiver)
-			trx, err := td.wallet.MakeBondTx(sender, receiver, receiverInfo.Pub.String(), amount)
+			trx, err := td.wallet.MakeBondTx(sender, receiver, receiverInfo.PublicKey, amount)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
@@ -447,7 +447,7 @@ func TestMakeBondTx(t *testing.T) {
 func TestMakeUnbondTx(t *testing.T) {
 	td := setup(t)
 
-	sender, _ := td.wallet.DeriveNewAddress("testing addr")
+	sender, _ := td.wallet.NewValidatorAddress("testing addr")
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		stamp := td.RandStamp()
@@ -499,8 +499,8 @@ func TestMakeUnbondTx(t *testing.T) {
 func TestMakeWithdrawTx(t *testing.T) {
 	td := setup(t)
 
-	sender, _ := td.wallet.DeriveNewAddress("testing addr")
-	receiver, _ := td.wallet.DeriveNewAddress("testing addr")
+	sender, _ := td.wallet.NewBLSAccountAddress("testing addr")
+	receiver, _ := td.wallet.NewBLSAccountAddress("testing addr")
 	amount := td.RandInt64(10000)
 
 	t.Run("set parameters manually", func(t *testing.T) {

@@ -18,7 +18,7 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	signers []crypto.Signer
+	valKeys []*bls.ValidatorKey
 	store   *store.MockStore
 	sandbox *sandbox
 }
@@ -27,23 +27,23 @@ func setup(t *testing.T) *testData {
 	t.Helper()
 
 	ts := testsuite.NewTestSuite(t)
-	store := store.MockingStore(ts)
+	mockStore := store.MockingStore(ts)
 	params := param.DefaultParams()
 	params.TransactionToLiveInterval = 64
 
-	committee, signers := ts.GenerateTestCommittee(21)
+	committee, valKeys := ts.GenerateTestCommittee(21)
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
-	store.UpdateAccount(crypto.TreasuryAddress, acc)
+	mockStore.UpdateAccount(crypto.TreasuryAddress, acc)
 
 	totalPower := int64(0)
 	for _, val := range committee.Validators() {
-		// For testing purpose we create some test accounts first.
+		// For testing purpose, we create some test accounts first.
 		// Account number is the validator number plus one,
 		// since account #0 is the Treasury account.
 		acc := account.NewAccount(val.Number() + 1)
-		store.UpdateValidator(val)
-		store.UpdateAccount(val.Address(), acc)
+		mockStore.UpdateValidator(val)
+		mockStore.UpdateAccount(val.Address(), acc)
 
 		totalPower += val.Power()
 	}
@@ -52,17 +52,17 @@ func setup(t *testing.T) *testData {
 	for i := uint32(1); i < lastHeight; i++ {
 		b := ts.GenerateTestBlock()
 		c := ts.GenerateTestCertificate()
-		store.SaveBlock(i, b, c)
+		mockStore.SaveBlock(i, b, c)
 	}
-	sandbox := NewSandbox(store.LastHeight,
-		store, params, committee, totalPower).(*sandbox)
+	sandbox := NewSandbox(mockStore.LastHeight,
+		mockStore, params, committee, totalPower).(*sandbox)
 	assert.Equal(t, sandbox.CurrentHeight(), lastHeight)
 	assert.Equal(t, sandbox.Params(), params)
 
 	return &testData{
 		TestSuite: ts,
-		signers:   signers,
-		store:     store,
+		valKeys:   valKeys,
+		store:     mockStore,
 		sandbox:   sandbox,
 	}
 }
@@ -80,8 +80,7 @@ func TestAccountChange(t *testing.T) {
 	})
 
 	t.Run("Retrieve an account from store and update it", func(t *testing.T) {
-		acc, signer := td.GenerateTestAccount(td.RandInt32(10000))
-		addr := signer.Address()
+		acc, addr := td.GenerateTestAccount(td.RandInt32(10000))
 		bal := acc.Balance()
 		td.store.UpdateAccount(addr, acc)
 
@@ -227,7 +226,7 @@ func TestTotalAccountCounter(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Should update total account counter", func(t *testing.T) {
-		assert.Equal(t, td.store.TotalAccounts(), int32(len(td.signers)+1))
+		assert.Equal(t, td.store.TotalAccounts(), int32(len(td.valKeys)+1))
 
 		addr1 := td.RandAccAddress()
 		addr2 := td.RandAccAddress()
@@ -279,8 +278,8 @@ func TestCreateDuplicated(t *testing.T) {
 				t.Errorf("The code did not panic")
 			}
 		}()
-		pub := td.signers[3].PublicKey()
-		td.sandbox.MakeNewValidator(pub.(*bls.PublicKey))
+		pub := td.valKeys[3].PublicKey()
+		td.sandbox.MakeNewValidator(pub)
 	})
 }
 
@@ -293,8 +292,8 @@ func TestUpdateFromOutsideTheSandbox(t *testing.T) {
 				t.Errorf("The code did not panic")
 			}
 		}()
-		acc, signer := td.GenerateTestAccount(td.RandInt32(0))
-		td.sandbox.UpdateAccount(signer.Address(), acc)
+		acc, addr := td.GenerateTestAccount(td.RandInt32(0))
+		td.sandbox.UpdateAccount(addr, acc)
 	})
 
 	t.Run("Try update a validator from outside the sandbox, Should panic", func(t *testing.T) {
@@ -344,7 +343,7 @@ func TestValidatorDeepCopy(t *testing.T) {
 		val := td.sandbox.MakeNewValidator(pub)
 		val.AddToStake(1)
 
-		assert.NotEqual(t, td.sandbox.Validator(pub.Address()), val)
+		assert.NotEqual(t, td.sandbox.Validator(pub.ValidatorAddress()), val)
 	})
 
 	val0, _ := td.store.ValidatorByNumber(0)
@@ -398,11 +397,11 @@ func TestVerifyProof(t *testing.T) {
 	var validProof sortition.Proof
 	var validStamp hash.Stamp
 	var validVal *validator.Validator
-	for i := lastHeight; i > 0; i-- {
-		block := td.store.Blocks[i]
-		for i, signer := range td.signers {
+	for height := lastHeight; height > 0; height-- {
+		block := td.store.Blocks[height]
+		for i, valKey := range td.valKeys {
 			ok, proof := sortition.EvaluateSortition(
-				block.Header().SortitionSeed(), signer,
+				block.Header().SortitionSeed(), valKey.PrivateKey(),
 				td.sandbox.totalPower, vals[i].Power())
 
 			if ok {

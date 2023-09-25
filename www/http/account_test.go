@@ -14,12 +14,12 @@ import (
 func TestAccount(t *testing.T) {
 	td := setup(t)
 
-	acc, signer := td.mockState.TestStore.AddTestAccount()
+	acc, addr := td.mockState.TestStore.AddTestAccount()
 
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"address": signer.Address().String()})
+		r = mux.SetURLVars(r, map[string]string{"address": addr.String()})
 		td.httpServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)

@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sync/bundle/message"
@@ -97,18 +96,18 @@ func TestFullPool(t *testing.T) {
 	block10000 := td.sandbox.TestStore.AddTestBlock(10000)
 	trxs := make([]*tx.Tx, td.pool.config.sendPoolSize()+1)
 
-	signer := td.RandSigner()
+	valKey := td.RandValKey()
 	acc := account.NewAccount(0)
 	acc.AddToBalance(10000000000)
-	td.sandbox.UpdateAccount(signer.Address(), acc)
+	td.sandbox.UpdateAccount(valKey.Address(), acc)
 
 	// Make sure the pool is empty
 	assert.Equal(t, td.pool.Size(), 0)
 
 	for i := 0; i < len(trxs); i++ {
-		trx := tx.NewTransferTx(block10000.Stamp(), td.sandbox.CurrentHeight()+1, signer.Address(),
+		trx := tx.NewTransferTx(block10000.Stamp(), td.sandbox.CurrentHeight()+1, valKey.Address(),
 			td.RandAccAddress(), 1000, 1000, "ok")
-		signer.Sign(trx)
+		valKey.Sign(trx.SignBytes())
 		assert.NoError(t, td.pool.AppendTx(trx))
 		trxs[i] = trx
 	}
@@ -130,50 +129,50 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	randHeight := td.RandHeight()
 	randBlock := td.sandbox.TestStore.AddTestBlock(randHeight)
 
-	acc1Signer := td.RandSigner()
+	acc1ValKey := td.RandValKey()
 	acc1 := account.NewAccount(0)
 	acc1.AddToBalance(10000000000)
-	td.sandbox.UpdateAccount(acc1Signer.Address(), acc1)
+	td.sandbox.UpdateAccount(acc1ValKey.Address(), acc1)
 
-	val1Signer := td.RandSigner()
-	val1Pub := val1Signer.PublicKey().(*bls.PublicKey)
+	valKey1 := td.RandValKey()
+	val1Pub := valKey1.PublicKey()
 	val1 := validator.NewValidator(val1Pub, 0)
 	val1.AddToStake(10000000000)
 	td.sandbox.UpdateValidator(val1)
 
-	val2Signer := td.RandSigner()
-	val2Pub := val2Signer.PublicKey().(*bls.PublicKey)
+	valKey2 := td.RandValKey()
+	val2Pub := valKey2.PublicKey()
 	val2 := validator.NewValidator(val2Pub, 0)
 	val2.AddToStake(10000000000)
 	val2.UpdateUnbondingHeight(1)
 	td.sandbox.UpdateValidator(val2)
 
-	val3Signer := td.RandSigner()
-	val3Pub := val3Signer.PublicKey().(*bls.PublicKey)
+	valKey3 := td.RandValKey()
+	val3Pub := valKey3.PublicKey()
 	val3 := validator.NewValidator(val3Pub, 0)
 	val3.AddToStake(10000000000)
 	td.sandbox.UpdateValidator(val3)
 
-	transferTx := tx.NewTransferTx(randBlock.Stamp(), randHeight+1, acc1Signer.Address(),
+	transferTx := tx.NewTransferTx(randBlock.Stamp(), randHeight+1, acc1ValKey.Address(),
 		td.RandAccAddress(), 1000, 1000, "send-tx")
-	acc1Signer.SignMsg(transferTx)
+	td.HelperSignTransaction(acc1ValKey.PrivateKey(), transferTx)
 
 	pub, _ := td.RandBLSKeyPair()
-	bondTx := tx.NewBondTx(randBlock.Stamp(), randHeight+2, acc1Signer.Address(),
-		pub.Address(), pub, 1000000000, 100000, "bond-tx")
-	acc1Signer.SignMsg(bondTx)
+	bondTx := tx.NewBondTx(randBlock.Stamp(), randHeight+2, acc1ValKey.Address(),
+		pub.ValidatorAddress(), pub, 1000000000, 100000, "bond-tx")
+	td.HelperSignTransaction(acc1ValKey.PrivateKey(), bondTx)
 
 	unbondTx := tx.NewUnbondTx(randBlock.Stamp(), randHeight+3, val1.Address(), "unbond-tx")
-	val1Signer.SignMsg(unbondTx)
+	td.HelperSignTransaction(valKey1.PrivateKey(), unbondTx)
 
 	withdrawTx := tx.NewWithdrawTx(randBlock.Stamp(), randHeight+4, val2.Address(),
 		td.RandAccAddress(), 1000, 1000, "withdraw-tx")
-	val2Signer.SignMsg(withdrawTx)
+	td.HelperSignTransaction(valKey2.PrivateKey(), withdrawTx)
 
 	td.sandbox.TestAcceptSortition = true
 	sortitionTx := tx.NewSortitionTx(randBlock.Stamp(), randHeight+4, val3.Address(),
 		td.RandProof())
-	val3Signer.SignMsg(sortitionTx)
+	td.HelperSignTransaction(valKey3.PrivateKey(), sortitionTx)
 
 	assert.NoError(t, td.pool.AppendTx(transferTx))
 	assert.NoError(t, td.pool.AppendTx(unbondTx))

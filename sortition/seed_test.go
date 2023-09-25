@@ -18,16 +18,16 @@ func TestSeedFromString(t *testing.T) {
 func TestValidate(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	signer := ts.RandSigner()
+	valKey := ts.RandValKey()
 	seed1 := ts.RandSeed()
-	seed2 := seed1.GenerateNext(signer)
+	seed2 := seed1.GenerateNext(valKey.PrivateKey())
 	seed3 := sortition.VerifiableSeed{}
 	seed4, _ := sortition.VerifiableSeedFromString(
 		"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
 
-	assert.True(t, seed2.Verify(signer.PublicKey(), seed1))
-	assert.False(t, seed1.Verify(signer.PublicKey(), seed2))
-	assert.False(t, seed2.Verify(signer.PublicKey(), ts.RandSeed()))
-	assert.False(t, seed3.Verify(signer.PublicKey(), seed1))
-	assert.False(t, seed4.Verify(signer.PublicKey(), seed1))
+	assert.True(t, seed2.Verify(valKey.PublicKey(), seed1))
+	assert.False(t, seed1.Verify(valKey.PublicKey(), seed2))
+	assert.False(t, seed2.Verify(valKey.PublicKey(), ts.RandSeed()))
+	assert.False(t, seed3.Verify(valKey.PublicKey(), seed1))
+	assert.False(t, seed4.Verify(valKey.PublicKey(), seed1))
 }

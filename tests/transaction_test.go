@@ -21,25 +21,31 @@ func sendRawTx(t *testing.T, raw []byte) error {
 	return err
 }
 
-func broadcastSendTransaction(t *testing.T, sender crypto.Signer, receiver crypto.Address, amt, fee int64) error {
+func broadcastSendTransaction(t *testing.T, sender *bls.ValidatorKey, receiver crypto.Address, amt, fee int64) error {
 	t.Helper()
 
 	stamp := lastHash().Stamp()
 	lockTime := lastHeight() + 1
-	trx := tx.NewTransferTx(stamp, lockTime, sender.Address(), receiver, amt, fee, "")
-	sender.SignMsg(trx)
+	trx := tx.NewTransferTx(stamp, lockTime, sender.PublicKey().AccountAddress(), receiver, amt, fee, "")
+	sig := sender.Sign(trx.SignBytes())
+
+	trx.SetPublicKey(sender.PublicKey())
+	trx.SetSignature(sig)
 
 	d, _ := trx.Bytes()
 	return sendRawTx(t, d)
 }
 
-func broadcastBondTransaction(t *testing.T, sender crypto.Signer, pub crypto.PublicKey, stake, fee int64) error {
+func broadcastBondTransaction(t *testing.T, sender *bls.ValidatorKey, pub *bls.PublicKey, stake, fee int64) error {
 	t.Helper()
 
 	stamp := lastHash().Stamp()
 	lockTime := lastHeight() + 1
-	trx := tx.NewBondTx(stamp, lockTime, sender.Address(), pub.Address(), pub.(*bls.PublicKey), stake, fee, "")
-	sender.SignMsg(trx)
+	trx := tx.NewBondTx(stamp, lockTime, sender.PublicKey().AccountAddress(), pub.ValidatorAddress(), pub, stake, fee, "")
+	sig := sender.Sign(trx.SignBytes())
+
+	trx.SetPublicKey(sender.PublicKey())
+	trx.SetSignature(sig)
 
 	d, _ := trx.Bytes()
 	return sendRawTx(t, d)
@@ -53,27 +59,27 @@ func TestTransactions(t *testing.T) {
 	pubCarol, _ := ts.RandBLSKeyPair()
 	pubDave, _ := ts.RandBLSKeyPair()
 
-	signerAlice := crypto.NewSigner(prvAlice)
-	signerBob := crypto.NewSigner(prvBob)
+	signerAlice := bls.NewValidatorKey(prvAlice)
+	signerBob := bls.NewValidatorKey(prvBob)
 
 	t.Run("Sending normal transaction", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, tSigners[tNodeIdx2][0], pubAlice.Address(), 80000000, 8000))
+		require.NoError(t, broadcastSendTransaction(t, tValKeys[tNodeIdx2][0], pubAlice.AccountAddress(), 80000000, 8000))
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
-		require.Error(t, broadcastSendTransaction(t, signerAlice, pubBob.Address(), 500000, 0))
+		require.Error(t, broadcastSendTransaction(t, signerAlice, pubBob.AccountAddress(), 500000, 0))
 	})
 
 	t.Run("Alice tries double spending", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, signerAlice, pubBob.Address(), 50000000, 5000))
+		require.NoError(t, broadcastSendTransaction(t, signerAlice, pubBob.AccountAddress(), 50000000, 5000))
 
-		require.Error(t, broadcastSendTransaction(t, signerAlice, pubCarol.Address(), 50000000, 5000))
+		require.Error(t, broadcastSendTransaction(t, signerAlice, pubCarol.AccountAddress(), 50000000, 5000))
 	})
 
 	t.Run("Bob sends two transaction at once", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, signerBob, pubCarol.Address(), 10, 1000))
+		require.NoError(t, broadcastSendTransaction(t, signerBob, pubCarol.AccountAddress(), 10, 1000))
 
-		require.NoError(t, broadcastSendTransaction(t, signerBob, pubDave.Address(), 1, 1000))
+		require.NoError(t, broadcastSendTransaction(t, signerBob, pubDave.AccountAddress(), 1, 1000))
 	})
 
 	t.Run("Bonding transactions", func(t *testing.T) {
@@ -82,23 +88,23 @@ func TestTransactions(t *testing.T) {
 		for i := 0; i < tTotalNodes; i++ {
 			amt := int64(1000000)
 			fee := int64(1000)
-			signer := tSigners[tNodeIdx1][0]
+			signer := tValKeys[tNodeIdx1][0]
 
-			require.NoError(t, broadcastBondTransaction(t, signer, tSigners[i][1].PublicKey(), amt, fee))
-			fmt.Printf("Staking %v to %v\n", amt, tSigners[i][1].Address())
+			require.NoError(t, broadcastBondTransaction(t, signer, tValKeys[i][1].PublicKey(), amt, fee))
+			fmt.Printf("Staking %v to %v\n", amt, tValKeys[i][1].Address())
 
-			require.NoError(t, broadcastBondTransaction(t, signer, tSigners[i][2].PublicKey(), amt, fee))
-			fmt.Printf("Staking %v to %v\n", amt, tSigners[i][2].Address())
+			require.NoError(t, broadcastBondTransaction(t, signer, tValKeys[i][2].PublicKey(), amt, fee))
+			fmt.Printf("Staking %v to %v\n", amt, tValKeys[i][2].Address())
 		}
 	})
 
 	// Make sure all transactions are confirmed
 	waitForNewBlocks(8)
 
-	accAlice := getAccount(t, pubAlice.Address())
-	accBob := getAccount(t, pubBob.Address())
-	accCarol := getAccount(t, pubCarol.Address())
-	accDave := getAccount(t, pubDave.Address())
+	accAlice := getAccount(t, pubAlice.AccountAddress())
+	accBob := getAccount(t, pubBob.AccountAddress())
+	accCarol := getAccount(t, pubCarol.AccountAddress())
+	accDave := getAccount(t, pubDave.AccountAddress())
 	require.NotNil(t, accAlice)
 	require.NotNil(t, accBob)
 	require.NotNil(t, accCarol)

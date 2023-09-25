@@ -151,7 +151,7 @@ func TestGetAccount(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	conn, client := testBlockchainClient(t)
-	acc, signer := tMockState.TestStore.AddTestAccount()
+	acc, addr := tMockState.TestStore.AddTestAccount()
 
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx,
@@ -171,7 +171,7 @@ func TestGetAccount(t *testing.T) {
 
 	t.Run("Should return account details", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx,
-			&pactus.GetAccountRequest{Address: signer.Address().String()})
+			&pactus.GetAccountRequest{Address: addr.String()})
 
 		assert.Nil(t, err)
 		assert.NotNil(t, res)

@@ -265,12 +265,12 @@ func (ts *TestSuite) GenerateTestBlockWithProposer(proposer crypto.Address) *blo
 
 // GenerateTestBlockWithTime generates a block with the given time for testing purposes.
 func (ts *TestSuite) GenerateTestBlockWithTime(time time.Time) *block.Block {
-	return ts.generateTestBlock(ts.RandAccAddress(), time)
+	return ts.generateTestBlock(ts.RandValAddress(), time)
 }
 
 // GenerateTestBlock generates a block for testing purposes.
 func (ts *TestSuite) GenerateTestBlock() *block.Block {
-	return ts.generateTestBlock(ts.RandAccAddress(), util.Now())
+	return ts.generateTestBlock(ts.RandValAddress(), util.Now())
 }
 
 func (ts *TestSuite) generateTestBlock(proposer crypto.Address, time time.Time) *block.Block {
@@ -316,7 +316,7 @@ func (ts *TestSuite) GenerateTestCertificate() *certificate.Certificate {
 // GenerateTestProposal generates a proposal for testing purposes.
 func (ts *TestSuite) GenerateTestProposal(height uint32, round int16) (*proposal.Proposal, *bls.ValidatorKey) {
 	valKey := ts.RandValKey()
-	b := ts.GenerateTestBlock()
+	b := ts.GenerateTestBlockWithProposer(valKey.Address())
 	p := proposal.NewProposal(height, round, b)
 	ts.HelperSignProposal(valKey, p)
 

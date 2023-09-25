@@ -6,33 +6,25 @@ import (
 
 // InvalidLengthError is returned when the length of the data
 // does not match the expected length.
-type InvalidLengthError struct {
-	Expected int
-	Got      int
-}
+type InvalidLengthError int
 
 func (e InvalidLengthError) Error() string {
-	return fmt.Sprintf("invalid length: expected %d, got %d", e.Expected, e.Got)
+	return fmt.Sprintf("invalid length: %d", int(e))
 }
 
 // InvalidHRPError is returned when the provided HRP code
 // does not match the expected value.
-type InvalidHRPError struct {
-	Expected string
-	Got      string
-}
+type InvalidHRPError string
 
 func (e InvalidHRPError) Error() string {
-	return fmt.Sprintf("the HRP code is invalid: expected %s, got %s", e.Expected, e.Got)
+	return fmt.Sprintf("invalid HRP: %s", string(e))
 }
 
 // InvalidAddressTypeError is returned when the address type is not recognized or supported.
-type InvalidAddressTypeError struct {
-	Type AddressType
-}
+type InvalidAddressTypeError int
 
 func (e InvalidAddressTypeError) Error() string {
-	return fmt.Sprintf("invalid address type: got %d", e.Type)
+	return fmt.Sprintf("invalid address type: %d", int(e))
 }
 
 // AddressMismatchError is returned when the provided address is not derived

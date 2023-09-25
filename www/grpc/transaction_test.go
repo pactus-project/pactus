@@ -85,8 +85,8 @@ func TestSendRawTransaction(t *testing.T) {
 	})
 	t.Run("Should fail, transaction with invalid signature", func(t *testing.T) {
 		trx, _ := ts.GenerateTestTransferTx()
-		_, signer := ts.GenerateTestTransferTx()
-		trx.SetSignature(signer.SignData(trx.SignBytes()))
+		_, pValKey := ts.GenerateTestTransferTx()
+		trx.SetSignature(pValKey.Sign(trx.SignBytes()))
 		data, _ := trx.Bytes()
 		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: data})
 		assert.Error(t, err)

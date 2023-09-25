@@ -39,7 +39,7 @@ func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 		TestParams:    param.DefaultParams(),
 		TestStore:     store.MockingStore(ts),
 		TestCommittee: committee,
-		// TestCommitteeSigners: signers,
+		// TestCommitteeSigners: valKeys,
 		TestJoinedValidators: make(map[crypto.Address]bool),
 		TestCommittedTrxs:    make(map[tx.ID]*tx.Tx),
 	}

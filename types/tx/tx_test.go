@@ -2,6 +2,7 @@ package tx_test
 
 import (
 	"encoding/hex"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -112,13 +113,13 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("Invalid payload, Should returns error", func(t *testing.T) {
 		invAddr := ts.RandAccAddress()
-		invAddr[0] = 2
+		invAddr[0] = 3
 		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandHeight(),
 			ts.RandAccAddress(), invAddr, 1e9, ts.RandInt64(1e6), "invalid address")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid payload: invalid address: invalid address type",
+			Reason: "invalid payload: payload basic check failed: receiver is not an account address",
 		})
 	})
 
@@ -163,14 +164,15 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid signer address", func(t *testing.T) {
-		signer := ts.RandSigner()
+		valKey := ts.RandValKey()
 		trx := tx.NewTransferTx(ts.RandStamp(), ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), 1, 1, "invalid signer")
-		signer.Sign(trx)
+			ts.RandAccAddress(), ts.RandAccAddress(), 1, 1, "invalid valKey")
+		ts.HelperSignTransaction(valKey.PrivateKey(), trx)
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid address: invalid address",
+			Reason: fmt.Sprintf("address mismatch: expected %s, got %s",
+				valKey.PublicKey().AccountAddress(), trx.Payload().Signer()),
 		})
 	})
 
@@ -300,13 +302,14 @@ func TestInvalidSignature(t *testing.T) {
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid address: invalid address",
+			Reason: fmt.Sprintf("address mismatch: expected %s, got %s", pbInv.AccountAddress(), trx.Payload().Signer()),
 		})
 	})
 
 	t.Run("Invalid sign Bytes", func(t *testing.T) {
-		trx0, _ := ts.GenerateTestUnbondTx()
-		trx := tx.NewUnbondTx(trx0.Stamp(), trx0.LockTime(), trx0.PublicKey().Address(),
+		trx0, pValKey := ts.GenerateTestUnbondTx()
+		valKey := bls.NewValidatorKey(pValKey)
+		trx := tx.NewUnbondTx(trx0.Stamp(), trx0.LockTime(), valKey.Address(),
 			"invalidate signature")
 		trx.SetPublicKey(trx0.PublicKey())
 		trx.SetSignature(trx0.Signature())
@@ -330,11 +333,13 @@ func TestInvalidSignature(t *testing.T) {
 
 	t.Run("Zero public key", func(t *testing.T) {
 		trx, _ := ts.GenerateTestTransferTx()
-		trx.SetPublicKey(&bls.PublicKey{})
+		zeroPubKey := &bls.PublicKey{}
+		trx.SetPublicKey(zeroPubKey)
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid address: invalid address",
+			Reason: fmt.Sprintf("address mismatch: expected %s, got %s",
+				zeroPubKey.AccountAddress().String(), trx.Payload().Signer()),
 		})
 	})
 }
