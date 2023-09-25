@@ -84,3 +84,4 @@ issues:
     - linters:
         - govet
       text: "shadow: declaration of \"err\" shadows"
+
