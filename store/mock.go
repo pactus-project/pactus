@@ -216,16 +216,6 @@ func (m *MockStore) LastCertificate() (uint32, *certificate.Certificate) {
 	return m.LastHeight, m.LastCert
 }
 
-func (m *MockStore) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
-	for h, b := range m.Blocks {
-		if b.Stamp().EqualsTo(stamp) {
-			return h, b
-		}
-	}
-
-	return 0, nil
-}
-
 func (m *MockStore) WriteBatch() error {
 	return nil
 }

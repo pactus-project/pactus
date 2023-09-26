@@ -31,7 +31,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidHeight,
 			"validator has bonded at height %v", val.LastBondingHeight())
 	}
-	ok := sb.VerifyProof(trx.Stamp(), pld.Proof, val)
+	ok := sb.VerifyProof(trx.LockTime(), pld.Proof, val)
 	if !ok {
 		return errors.Error(errors.ErrInvalidProof)
 	}

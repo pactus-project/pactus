@@ -31,7 +31,7 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(transferCmd)
 
-	stampOpt, lockTimeOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(transferCmd)
+	lockTimeOpt, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(transferCmd)
 	passOpt := addPasswordOption(transferCmd)
 
 	transferCmd.Run = func(_ *cobra.Command, args []string) {
@@ -44,7 +44,6 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionStamp(*stampOpt),
 			wallet.OptionFee(util.CoinToChange(*feeOpt)),
 			wallet.OptionLockTime(uint32(*lockTimeOpt)),
 			wallet.OptionMemo(*memoOpt),
@@ -74,7 +73,7 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(bondCmd)
 
 	pubKeyOpt := bondCmd.Flags().String("pub", "", "Validator's public key")
-	stampOpt, lockTime, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(bondCmd)
+	lockTime, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(bondCmd)
 	passOpt := addPasswordOption(bondCmd)
 
 	bondCmd.Run = func(_ *cobra.Command, args []string) {
@@ -87,7 +86,6 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionStamp(*stampOpt),
 			wallet.OptionFee(util.CoinToChange(*feeOpt)),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
@@ -116,7 +114,7 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(unbondCmd)
 
-	stampOpt, lockTime, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(unbondCmd)
+	lockTime, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(unbondCmd)
 	passOpt := addPasswordOption(unbondCmd)
 
 	unbondCmd.Run = func(_ *cobra.Command, args []string) {
@@ -126,7 +124,6 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionStamp(*stampOpt),
 			wallet.OptionFee(util.CoinToChange(*feeOpt)),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
@@ -153,7 +150,7 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(withdrawCmd)
 
-	stampOpt, lockTime, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(withdrawCmd)
+	lockTime, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(withdrawCmd)
 	passOpt := addPasswordOption(withdrawCmd)
 
 	withdrawCmd.Run = func(_ *cobra.Command, args []string) {
@@ -166,7 +163,6 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionStamp(*stampOpt),
 			wallet.OptionFee(util.CoinToChange(*feeOpt)),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
@@ -186,10 +182,7 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 	}
 }
 
-func addCommonTxOptions(c *cobra.Command) (*string, *int, *float64, *string, *bool) {
-	stampOpt := c.Flags().String("stamp", "",
-		"transaction stamp, if not specified will query from gRPC server")
-
+func addCommonTxOptions(c *cobra.Command) (*int, *float64, *string, *bool) {
 	lockTimeOpt := c.Flags().Int("lock-time", 0,
 		"transaction lock-time, if not specified will be the current height")
 
@@ -202,7 +195,7 @@ func addCommonTxOptions(c *cobra.Command) (*string, *int, *float64, *string, *bo
 	noConfirmOpt := c.Flags().Bool("no-confirm", false,
 		"no confirmation question")
 
-	return stampOpt, lockTimeOpt, feeOpt, memoOpt, noConfirmOpt
+	return lockTimeOpt, feeOpt, memoOpt, noConfirmOpt
 }
 
 func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string) {

@@ -64,7 +64,7 @@ func setup(t *testing.T) *testData {
 
 	// Last block
 	committers := []int32{0, 1, 2, 3}
-	trx := tx.NewSortitionTx(ts.RandStamp(), 1, pub4.Address(), ts.RandProof())
+	trx := tx.NewSortitionTx(1, pub4.Address(), ts.RandProof())
 	signer.SignMsg(trx)
 	prevHash := ts.RandHash()
 	prevCert := ts.GenerateTestCertificate()

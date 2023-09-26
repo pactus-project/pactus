@@ -181,6 +181,36 @@
         ]
       }
     },
+    "/v1/blockchain/public_keys/address/{address}": {
+      "get": {
+        "operationId": "Blockchain_GetPublicKey",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetPublicKeyResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
     "/v1/blockchain/validator/address/{address}": {
       "get": {
         "operationId": "Blockchain_GetValidator",
@@ -1090,10 +1120,6 @@
         "version": {
           "type": "integer",
           "format": "int32"
-        },
-        "stamp": {
-          "type": "string",
-          "format": "byte"
         },
         "lockTime": {
           "type": "integer",

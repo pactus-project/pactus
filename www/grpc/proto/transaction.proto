@@ -29,9 +29,9 @@ message CalculateFeeResponse {
   int64 fee = 1;
 }
 
-message SendRawTransactionRequest { bytes data = 1; }
+message SendRawTransactionRequest {bytes data = 1;}
 
-message SendRawTransactionResponse { bytes id = 2; }
+message SendRawTransactionResponse {bytes id = 2;}
 
 message PayloadTransfer {
   string sender = 1;
@@ -64,11 +64,10 @@ message TransactionInfo {
   bytes id = 1;
   bytes data = 2;
   int32 version = 3;
-  bytes stamp = 4;
-  uint32 lock_time = 5;
-  int64 value = 6;
-  int64 fee = 7;
-  PayloadType payloadType = 8;
+  uint32 lock_time = 4;
+  int64 value = 5;
+  int64 fee = 6;
+  PayloadType payloadType = 7;
   oneof payload {
     PayloadTransfer transfer = 30;
     PayloadBond bond = 31;
@@ -76,9 +75,9 @@ message TransactionInfo {
     PayloadUnbond unbond = 33;
     PayloadWithdraw withdraw = 34;
   };
-  string memo = 9;
-  string public_key = 10;
-  bytes signature = 11;
+  string memo = 8;
+  string public_key = 9;
+  bytes signature = 10;
 }
 
 enum PayloadType {

@@ -2,14 +2,13 @@ package block_test
 
 import (
 	"encoding/hex"
+	"io"
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
-	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/simplemerkle"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -82,7 +81,6 @@ func TestBasicCheck(t *testing.T) {
 				"01" + // Txs: Len
 				"00" + // Tx[0]: Flags
 				"01" + // Tx[0]: Version
-				"a1b2c3d4" + // Tx[0]: Stamp
 				"01000000" + // Tx[0]: LockTime
 				"01" + // Tx[0]: Fee
 				"00" + // Tx[0]: Memo
@@ -117,7 +115,6 @@ func TestBasicCheck(t *testing.T) {
 				"01" + // Txs: Len
 				"00" + // Tx[0]: Flags
 				"01" + // Tx[0]: Version
-				"a1b2c3d4" + // Tx[0]: Stamp
 				"01000000" + // Tx[0]: LockTime
 				"01" + // Tx[0]: Fee
 				"00" + // Tx[0]: Memo
@@ -127,9 +124,7 @@ func TestBasicCheck(t *testing.T) {
 				"01") // Tx[0]: Amount
 
 		_, err := block.FromBytes(d)
-		assert.ErrorIs(t, err, tx.InvalidPayloadTypeError{
-			PayloadType: payload.Type(121),
-		})
+		assert.ErrorIs(t, err, io.ErrUnexpectedEOF)
 	})
 
 	t.Run("Invalid proposer address (type is 2)", func(t *testing.T) {
@@ -150,7 +145,6 @@ func TestBasicCheck(t *testing.T) {
 				"01" + // Txs: Len
 				"00" + // Tx[0]: Flags
 				"01" + // Tx[0]: Version
-				"a1b2c3d4" + // Tx[0]: Stamp
 				"01000000" + // Tx[0]: LockTime
 				"01" + // Tx[0]: Fee
 				"00" + // Tx[0]: Memo
@@ -184,7 +178,6 @@ func TestBasicCheck(t *testing.T) {
 				"01" + // Txs: Len
 				"00" + // Tx[0]: Flags
 				"01" + // Tx[0]: Version
-				"a1b2c3d4" + // Tx[0]: Stamp
 				"01000000" + // Tx[0]: LockTime
 				"01" + // Tx[0]: Fee
 				"00" + // Tx[0]: Memo
@@ -276,7 +269,6 @@ func TestBlockHash(t *testing.T) {
 			"01" + // Txs: Len
 			"00" + // Tx[0]: Flags
 			"01" + // Tx[0]: Version
-			"a1b2c3d4" + // Tx[0]: Stamp
 			"01000000" + // Tx[0]: LockTime
 			"01" + // Tx[0]: Fee
 			"00" + // Tx[0]: Memo
@@ -309,10 +301,9 @@ func TestBlockHash(t *testing.T) {
 	hashData = append(hashData, util.Int32ToSlice(int32(b.Transactions().Len()))...)
 
 	expected1 := hash.CalcHash(hashData)
-	expected2, _ := hash.FromString("3f8364675a5a458eee7c594e92dce03223c87ee66107a6c11de0978b7c7c4bd3")
+	expected2, _ := hash.FromString("43399fa59adcfb7d8c515460ec9ca27b6a1cb865f5b7d9bde8fe56c18eaec9ab")
 	assert.Equal(t, b.Hash(), expected1)
 	assert.Equal(t, b.Hash(), expected2)
-	assert.Equal(t, b.Stamp(), hash.Stamp{0x3f, 0x83, 0x64, 0x67})
 }
 
 func TestMakeBlock(t *testing.T) {

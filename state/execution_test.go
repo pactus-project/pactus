@@ -22,17 +22,17 @@ func TestProposeBlock(t *testing.T) {
 	assert.NoError(t, td.state2.CommitBlock(curHeight+1, b1, c1))
 	assert.Equal(t, td.state1.LastBlockHeight(), curHeight+1)
 
-	invSubsidyTx := tx.NewSubsidyTx(td.state1.lastInfo.BlockHash().Stamp(), 1, td.valSigner2.Address(),
+	invSubsidyTx := tx.NewSubsidyTx(1, td.valSigner2.Address(),
 		td.state1.params.BlockReward, "duplicated subsidy transaction")
 	invTransferTx, _ := td.GenerateTestTransferTx()
 	invBondTx, _ := td.GenerateTestBondTx()
 	invSortitionTx, _ := td.GenerateTestSortitionTx()
 
 	pub, _ := td.RandBLSKeyPair()
-	trx1 := tx.NewTransferTx(b1.Stamp(), 1, td.valSigner1.Address(), td.valSigner1.Address(), 1, 1000, "")
+	trx1 := tx.NewTransferTx(1, td.valSigner1.Address(), td.valSigner1.Address(), 1, 1000, "")
 	td.valSigner1.SignMsg(trx1)
 
-	trx2 := tx.NewBondTx(b1.Stamp(), 2, td.valSigner1.Address(), pub.Address(), pub, 1000000000, 100000, "")
+	trx2 := tx.NewBondTx(2, td.valSigner1.Address(), pub.Address(), pub, 1000000000, 100000, "")
 	td.valSigner1.SignMsg(trx2)
 
 	assert.NoError(t, td.state1.txPool.AppendTx(invTransferTx))
@@ -64,7 +64,7 @@ func TestExecuteBlock(t *testing.T) {
 	validSubsidyTx := td.state1.createSubsidyTx(rewardAddr, 1000)
 	invTransferTx, _ := td.GenerateTestTransferTx()
 
-	validTx1 := tx.NewTransferTx(b1.Stamp(), 1, td.valSigner1.Address(), td.valSigner1.Address(), 1, 1000, "")
+	validTx1 := tx.NewTransferTx(1, td.valSigner1.Address(), td.valSigner1.Address(), 1, 1000, "")
 	td.valSigner1.SignMsg(validTx1)
 
 	assert.NoError(t, td.state1.txPool.AppendTx(invTransferTx))

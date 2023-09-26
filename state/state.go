@@ -280,10 +280,9 @@ func (st *state) UpdateLastCertificate(cert *certificate.Certificate) error {
 }
 
 func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee int64) *tx.Tx {
-	stamp := st.lastInfo.BlockHash().Stamp()
 	lockTime := st.lastInfo.BlockHeight() + 1
-	tx := tx.NewSubsidyTx(stamp, lockTime, rewardAddr, st.params.BlockReward+fee, "")
-	return tx
+	transaction := tx.NewSubsidyTx(lockTime, rewardAddr, st.params.BlockReward+fee, "")
+	return transaction
 }
 
 func (st *state) ProposeBlock(signer crypto.Signer, rewardAddr crypto.Address, round int16) (*block.Block, error) {
@@ -473,7 +472,7 @@ func (st *state) evaluateSortition() bool {
 
 		ok, proof := sortition.EvaluateSortition(st.lastInfo.SortitionSeed(), signer, st.totalPower, val.Power())
 		if ok {
-			trx := tx.NewSortitionTx(st.lastInfo.BlockHash().Stamp(), st.lastInfo.BlockHeight()+1, val.Address(), proof)
+			trx := tx.NewSortitionTx(st.lastInfo.BlockHeight(), val.Address(), proof)
 			signer.SignMsg(trx)
 
 			err := st.txPool.AppendTxAndBroadcast(trx)

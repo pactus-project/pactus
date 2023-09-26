@@ -2229,18 +2229,17 @@ proto.pactus.TransactionInfo.toObject = function(includeInstance, msg) {
     id: msg.getId_asB64(),
     data: msg.getData_asB64(),
     version: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    stamp: msg.getStamp_asB64(),
-    lockTime: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    value: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    fee: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    payloadtype: jspb.Message.getFieldWithDefault(msg, 8, 0),
+    lockTime: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    value: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    fee: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    payloadtype: jspb.Message.getFieldWithDefault(msg, 7, 0),
     transfer: (f = msg.getTransfer()) && proto.pactus.PayloadTransfer.toObject(includeInstance, f),
     bond: (f = msg.getBond()) && proto.pactus.PayloadBond.toObject(includeInstance, f),
     sortition: (f = msg.getSortition()) && proto.pactus.PayloadSortition.toObject(includeInstance, f),
     unbond: (f = msg.getUnbond()) && proto.pactus.PayloadUnbond.toObject(includeInstance, f),
     withdraw: (f = msg.getWithdraw()) && proto.pactus.PayloadWithdraw.toObject(includeInstance, f),
-    memo: jspb.Message.getFieldWithDefault(msg, 9, ""),
-    publicKey: jspb.Message.getFieldWithDefault(msg, 10, ""),
+    memo: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    publicKey: jspb.Message.getFieldWithDefault(msg, 9, ""),
     signature: msg.getSignature_asB64()
   };
 
@@ -2291,22 +2290,18 @@ proto.pactus.TransactionInfo.deserializeBinaryFromReader = function(msg, reader)
       msg.setVersion(value);
       break;
     case 4:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
-      msg.setStamp(value);
-      break;
-    case 5:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setLockTime(value);
       break;
-    case 6:
+    case 5:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setValue(value);
       break;
-    case 7:
+    case 6:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setFee(value);
       break;
-    case 8:
+    case 7:
       var value = /** @type {!proto.pactus.PayloadType} */ (reader.readEnum());
       msg.setPayloadtype(value);
       break;
@@ -2335,15 +2330,15 @@ proto.pactus.TransactionInfo.deserializeBinaryFromReader = function(msg, reader)
       reader.readMessage(value,proto.pactus.PayloadWithdraw.deserializeBinaryFromReader);
       msg.setWithdraw(value);
       break;
-    case 9:
+    case 8:
       var value = /** @type {string} */ (reader.readString());
       msg.setMemo(value);
       break;
-    case 10:
+    case 9:
       var value = /** @type {string} */ (reader.readString());
       msg.setPublicKey(value);
       break;
-    case 11:
+    case 10:
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setSignature(value);
       break;
@@ -2397,38 +2392,31 @@ proto.pactus.TransactionInfo.serializeBinaryToWriter = function(message, writer)
       f
     );
   }
-  f = message.getStamp_asU8();
-  if (f.length > 0) {
-    writer.writeBytes(
-      4,
-      f
-    );
-  }
   f = message.getLockTime();
   if (f !== 0) {
     writer.writeUint32(
-      5,
+      4,
       f
     );
   }
   f = message.getValue();
   if (f !== 0) {
     writer.writeInt64(
-      6,
+      5,
       f
     );
   }
   f = message.getFee();
   if (f !== 0) {
     writer.writeInt64(
-      7,
+      6,
       f
     );
   }
   f = message.getPayloadtype();
   if (f !== 0.0) {
     writer.writeEnum(
-      8,
+      7,
       f
     );
   }
@@ -2475,21 +2463,21 @@ proto.pactus.TransactionInfo.serializeBinaryToWriter = function(message, writer)
   f = message.getMemo();
   if (f.length > 0) {
     writer.writeString(
-      9,
+      8,
       f
     );
   }
   f = message.getPublicKey();
   if (f.length > 0) {
     writer.writeString(
-      10,
+      9,
       f
     );
   }
   f = message.getSignature_asU8();
   if (f.length > 0) {
     writer.writeBytes(
-      11,
+      10,
       f
     );
   }
@@ -2599,53 +2587,11 @@ proto.pactus.TransactionInfo.prototype.setVersion = function(value) {
 
 
 /**
- * optional bytes stamp = 4;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.TransactionInfo.prototype.getStamp = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
-};
-
-
-/**
- * optional bytes stamp = 4;
- * This is a type-conversion wrapper around `getStamp()`
- * @return {string}
- */
-proto.pactus.TransactionInfo.prototype.getStamp_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getStamp()));
-};
-
-
-/**
- * optional bytes stamp = 4;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getStamp()`
- * @return {!Uint8Array}
- */
-proto.pactus.TransactionInfo.prototype.getStamp_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getStamp()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
- * @return {!proto.pactus.TransactionInfo} returns this
- */
-proto.pactus.TransactionInfo.prototype.setStamp = function(value) {
-  return jspb.Message.setProto3BytesField(this, 4, value);
-};
-
-
-/**
- * optional uint32 lock_time = 5;
+ * optional uint32 lock_time = 4;
  * @return {number}
  */
 proto.pactus.TransactionInfo.prototype.getLockTime = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
 
@@ -2654,16 +2600,16 @@ proto.pactus.TransactionInfo.prototype.getLockTime = function() {
  * @return {!proto.pactus.TransactionInfo} returns this
  */
 proto.pactus.TransactionInfo.prototype.setLockTime = function(value) {
-  return jspb.Message.setProto3IntField(this, 5, value);
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
 /**
- * optional int64 value = 6;
+ * optional int64 value = 5;
  * @return {number}
  */
 proto.pactus.TransactionInfo.prototype.getValue = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
 };
 
 
@@ -2672,16 +2618,16 @@ proto.pactus.TransactionInfo.prototype.getValue = function() {
  * @return {!proto.pactus.TransactionInfo} returns this
  */
 proto.pactus.TransactionInfo.prototype.setValue = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
+  return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 
 /**
- * optional int64 fee = 7;
+ * optional int64 fee = 6;
  * @return {number}
  */
 proto.pactus.TransactionInfo.prototype.getFee = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
 
@@ -2690,16 +2636,16 @@ proto.pactus.TransactionInfo.prototype.getFee = function() {
  * @return {!proto.pactus.TransactionInfo} returns this
  */
 proto.pactus.TransactionInfo.prototype.setFee = function(value) {
-  return jspb.Message.setProto3IntField(this, 7, value);
+  return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 
 /**
- * optional PayloadType payloadType = 8;
+ * optional PayloadType payloadType = 7;
  * @return {!proto.pactus.PayloadType}
  */
 proto.pactus.TransactionInfo.prototype.getPayloadtype = function() {
-  return /** @type {!proto.pactus.PayloadType} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+  return /** @type {!proto.pactus.PayloadType} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
 
@@ -2708,7 +2654,7 @@ proto.pactus.TransactionInfo.prototype.getPayloadtype = function() {
  * @return {!proto.pactus.TransactionInfo} returns this
  */
 proto.pactus.TransactionInfo.prototype.setPayloadtype = function(value) {
-  return jspb.Message.setProto3EnumField(this, 8, value);
+  return jspb.Message.setProto3EnumField(this, 7, value);
 };
 
 
@@ -2898,11 +2844,11 @@ proto.pactus.TransactionInfo.prototype.hasWithdraw = function() {
 
 
 /**
- * optional string memo = 9;
+ * optional string memo = 8;
  * @return {string}
  */
 proto.pactus.TransactionInfo.prototype.getMemo = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
 };
 
 
@@ -2911,16 +2857,16 @@ proto.pactus.TransactionInfo.prototype.getMemo = function() {
  * @return {!proto.pactus.TransactionInfo} returns this
  */
 proto.pactus.TransactionInfo.prototype.setMemo = function(value) {
-  return jspb.Message.setProto3StringField(this, 9, value);
+  return jspb.Message.setProto3StringField(this, 8, value);
 };
 
 
 /**
- * optional string public_key = 10;
+ * optional string public_key = 9;
  * @return {string}
  */
 proto.pactus.TransactionInfo.prototype.getPublicKey = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
 };
 
 
@@ -2929,21 +2875,21 @@ proto.pactus.TransactionInfo.prototype.getPublicKey = function() {
  * @return {!proto.pactus.TransactionInfo} returns this
  */
 proto.pactus.TransactionInfo.prototype.setPublicKey = function(value) {
-  return jspb.Message.setProto3StringField(this, 10, value);
+  return jspb.Message.setProto3StringField(this, 9, value);
 };
 
 
 /**
- * optional bytes signature = 11;
+ * optional bytes signature = 10;
  * @return {!(string|Uint8Array)}
  */
 proto.pactus.TransactionInfo.prototype.getSignature = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 11, ""));
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
 };
 
 
 /**
- * optional bytes signature = 11;
+ * optional bytes signature = 10;
  * This is a type-conversion wrapper around `getSignature()`
  * @return {string}
  */
@@ -2954,7 +2900,7 @@ proto.pactus.TransactionInfo.prototype.getSignature_asB64 = function() {
 
 
 /**
- * optional bytes signature = 11;
+ * optional bytes signature = 10;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
  * This is a type-conversion wrapper around `getSignature()`
@@ -2971,7 +2917,7 @@ proto.pactus.TransactionInfo.prototype.getSignature_asU8 = function() {
  * @return {!proto.pactus.TransactionInfo} returns this
  */
 proto.pactus.TransactionInfo.prototype.setSignature = function(value) {
-  return jspb.Message.setProto3BytesField(this, 11, value);
+  return jspb.Message.setProto3BytesField(this, 10, value);
 };
 
 

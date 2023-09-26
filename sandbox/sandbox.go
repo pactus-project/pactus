@@ -6,11 +6,9 @@ import (
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
-	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
@@ -257,10 +255,6 @@ func (sb *sandbox) IterateValidators(
 	}
 }
 
-func (sb *sandbox) RecentBlockByStamp(stamp hash.Stamp) (uint32, *block.Block) {
-	return sb.store.RecentBlockByStamp(stamp)
-}
-
 func (sb *sandbox) Committee() committee.Reader {
 	return sb.committee
 }
@@ -282,12 +276,16 @@ func (sb *sandbox) PowerDelta() int64 {
 }
 
 // VerifyProof verifies proof of a sortition transaction.
-func (sb *sandbox) VerifyProof(stamp hash.Stamp, proof sortition.Proof, val *validator.Validator) bool {
-	_, b := sb.store.RecentBlockByStamp(stamp)
-	if b == nil {
+func (sb *sandbox) VerifyProof(blockHeight uint32, proof sortition.Proof, val *validator.Validator) bool {
+	committedBlock, err := sb.store.Block(blockHeight)
+	if err != nil {
 		return false
 	}
-	seed := b.Header().SortitionSeed()
+	blk, err := committedBlock.ToBlock()
+	if err != nil {
+		return false
+	}
+	seed := blk.Header().SortitionSeed()
 	return sortition.VerifyProof(seed, proof, val.PublicKey(), sb.totalPower, val.Power())
 }
 

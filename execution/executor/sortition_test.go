@@ -45,7 +45,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	assert.False(t, td.sandbox.IsJoinedCommittee(newVal.Address()))
 
 	t.Run("Should fail, Invalid address", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.randStamp, lockTime, td.RandAddress(), proof)
+		trx := tx.NewSortitionTx(lockTime, td.RandAddress(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
@@ -55,7 +55,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	td.sandbox.UpdateValidator(newVal)
 
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.randStamp, lockTime, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
@@ -65,28 +65,28 @@ func TestExecuteSortitionTx(t *testing.T) {
 	td.sandbox.TestStore.AddTestBlock(td.randHeight + 1)
 
 	t.Run("Should fail, Invalid proof", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.randStamp, lockTime, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = false
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidProof)
 	})
 
 	t.Run("Should fail, Committee has free seats and validator is in the committee", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.randStamp, lockTime, existingVal.Address(), proof)
+		trx := tx.NewSortitionTx(lockTime, existingVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
 
 	t.Run("Should be ok", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.randStamp, lockTime, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
 		assert.NoError(t, err)
 	})
 
 	t.Run("Should fail, duplicated sortition", func(t *testing.T) {
-		trx := tx.NewSortitionTx(td.randStamp, lockTime, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
@@ -109,7 +109,7 @@ func TestSortitionNonStrictMode(t *testing.T) {
 	proof := td.RandProof()
 
 	td.sandbox.TestAcceptSortition = true
-	trx := tx.NewSortitionTx(td.randStamp, lockTime, val.Address(), proof)
+	trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 	err := exe1.Execute(trx, td.sandbox)
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	err = exe2.Execute(trx, td.sandbox)
@@ -145,16 +145,16 @@ func TestChangePower1(t *testing.T) {
 
 	td.sandbox.TestParams.CommitteeSize = 4
 	td.sandbox.TestAcceptSortition = true
-	trx1 := tx.NewSortitionTx(td.randStamp, lockTime, val1.Address(), proof1)
+	trx1 := tx.NewSortitionTx(lockTime, val1.Address(), proof1)
 	err := exe.Execute(trx1, td.sandbox)
 	assert.NoError(t, err)
 
-	trx2 := tx.NewSortitionTx(td.randStamp, lockTime, val2.Address(), proof2)
+	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof2)
 	err = exe.Execute(trx2, td.sandbox)
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx, "More than 1/3 of power is joining at the same height")
 
 	// Val3 is a Committee member
-	trx3 := tx.NewSortitionTx(td.randStamp, lockTime, val3.Address(), proof3)
+	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof3)
 	err = exe.Execute(trx3, td.sandbox)
 	assert.NoError(t, err)
 }
@@ -194,20 +194,20 @@ func TestChangePower2(t *testing.T) {
 
 	td.sandbox.TestParams.CommitteeSize = 7
 	td.sandbox.TestAcceptSortition = true
-	trx1 := tx.NewSortitionTx(td.randStamp, lockTime, val1.Address(), proof1)
+	trx1 := tx.NewSortitionTx(lockTime, val1.Address(), proof1)
 	err := exe.Execute(trx1, td.sandbox)
 	assert.NoError(t, err)
 
-	trx2 := tx.NewSortitionTx(td.randStamp, lockTime, val2.Address(), proof2)
+	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof2)
 	err = exe.Execute(trx2, td.sandbox)
 	assert.NoError(t, err)
 
-	trx3 := tx.NewSortitionTx(td.randStamp, lockTime, val3.Address(), proof3)
+	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof3)
 	err = exe.Execute(trx3, td.sandbox)
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx, "More than 1/3 of power is leaving at the same height")
 
 	// Committee member
-	trx4 := tx.NewSortitionTx(td.randStamp, lockTime, val4.Address(), proof4)
+	trx4 := tx.NewSortitionTx(lockTime, val4.Address(), proof4)
 	err = exe.Execute(trx4, td.sandbox)
 	assert.NoError(t, err)
 }
@@ -241,11 +241,10 @@ func TestOldestDidNotPropose(t *testing.T) {
 	height := td.randHeight
 	for i := uint32(0); i < 7; i++ {
 		height++
-		b := td.sandbox.TestStore.AddTestBlock(height)
-		stamp := b.Stamp()
+		_ = td.sandbox.TestStore.AddTestBlock(height)
 
 		lockTime := td.sandbox.CurrentHeight()
-		trx1 := tx.NewSortitionTx(stamp, lockTime,
+		trx1 := tx.NewSortitionTx(lockTime,
 			vals[i].Address(), td.RandProof())
 		err := exe.Execute(trx1, td.sandbox)
 		assert.NoError(t, err)
@@ -254,25 +253,22 @@ func TestOldestDidNotPropose(t *testing.T) {
 	}
 
 	height++
-	b := td.sandbox.TestStore.AddTestBlock(height)
-	stamp := b.Stamp()
+	_ = td.sandbox.TestStore.AddTestBlock(height)
 	lockTime := td.sandbox.CurrentHeight()
 
-	trx1 := tx.NewSortitionTx(stamp, lockTime, vals[7].Address(), td.RandProof())
+	trx1 := tx.NewSortitionTx(lockTime, vals[7].Address(), td.RandProof())
 	err := exe.Execute(trx1, td.sandbox)
 	assert.NoError(t, err)
 
-	trx2 := tx.NewSortitionTx(stamp, lockTime, vals[8].Address(), td.RandProof())
+	trx2 := tx.NewSortitionTx(lockTime, vals[8].Address(), td.RandProof())
 	err = exe.Execute(trx2, td.sandbox)
 	assert.NoError(t, err)
 	updateCommittee(td)
 
 	height++
-	b = td.sandbox.TestStore.AddTestBlock(height)
-	stamp = b.Stamp()
-
+	_ = td.sandbox.TestStore.AddTestBlock(height)
 	// Entering validator 16
-	trx3 := tx.NewSortitionTx(stamp, lockTime, vals[8].Address(), td.RandProof())
+	trx3 := tx.NewSortitionTx(lockTime, vals[8].Address(), td.RandProof())
 	err = exe.Execute(trx3, td.sandbox)
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 }
