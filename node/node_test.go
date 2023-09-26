@@ -3,10 +3,9 @@ package node
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto/bls"
-
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/account"

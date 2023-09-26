@@ -384,7 +384,6 @@ func (sync *synchronizer) peerIsInTheCommittee(pid peer.ID) bool {
 	}
 
 	for _, key := range p.ConsensusKeys {
-		// TODO: cache address for the better performance
 		if sync.state.IsInCommittee(key.ValidatorAddress()) {
 			return true
 		}

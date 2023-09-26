@@ -3,13 +3,12 @@ package proposal_test
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/util/errors"
-
 	"github.com/fxamacker/cbor/v2"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )

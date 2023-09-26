@@ -27,7 +27,7 @@ func TestLockTime(t *testing.T) {
 
 	t.Run("Future LockTime, Should returns error (+1)", func(t *testing.T) {
 		lockTime := sb.CurrentHeight() + 1
-		trx := tx.NewTransferTx(lockTime, addr1, rcvAddr, 1000, 1000, "expired-stamp")
+		trx := tx.NewTransferTx(lockTime, addr1, rcvAddr, 1000, 1000, "future-lockTime")
 		ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 		err := exe.Execute(trx, sb)
 		assert.ErrorIs(t, err, FutureLockTimeError{LockTime: lockTime})
@@ -35,7 +35,7 @@ func TestLockTime(t *testing.T) {
 
 	t.Run("Past LockTime, Should returns error (-8641)", func(t *testing.T) {
 		lockTime := sb.CurrentHeight() - sb.TestParams.TransactionToLiveInterval - 1
-		trx := tx.NewTransferTx(lockTime, addr1, rcvAddr, 1000, 1000, "expired-stamp")
+		trx := tx.NewTransferTx(lockTime, addr1, rcvAddr, 1000, 1000, "past-lockTime")
 		ts.HelperSignTransaction(rndValKey.PrivateKey(), trx)
 		err := exe.Execute(trx, sb)
 		assert.ErrorIs(t, err, PastLockTimeError{LockTime: lockTime})

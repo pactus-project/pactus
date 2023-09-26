@@ -6,9 +6,6 @@ import (
 	"strings"
 )
 
-// m/12381'/21888'/1' -> public key
-// m/12381'/21888'/1'/0 -> address
-
 const HardenedKeyStart = uint32(0x80000000) // 2^31
 
 type Path []uint32
