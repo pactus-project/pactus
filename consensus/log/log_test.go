@@ -21,7 +21,7 @@ func TestMustGetRound(t *testing.T) {
 func TestAddValidVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	committee, signers := ts.GenerateTestCommittee(4)
+	committee, valKeys := ts.GenerateTestCommittee(4)
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
 	h := ts.RandHeight()
@@ -32,13 +32,13 @@ func TestAddValidVote(t *testing.T) {
 	preVotes := log.CPPreVoteVoteSet(r)
 	mainVotes := log.CPMainVoteVoteSet(r)
 
-	v1 := vote.NewPrepareVote(ts.RandHash(), h, r, signers[0].Address())
-	v2 := vote.NewPrecommitVote(ts.RandHash(), h, r, signers[0].Address())
-	v3 := vote.NewCPPreVote(ts.RandHash(), h, r, 0, vote.CPValueOne, &vote.JustInitOne{}, signers[0].Address())
-	v4 := vote.NewCPMainVote(ts.RandHash(), h, r, 0, vote.CPValueZero, &vote.JustInitOne{}, signers[0].Address())
+	v1 := vote.NewPrepareVote(ts.RandHash(), h, r, valKeys[0].Address())
+	v2 := vote.NewPrecommitVote(ts.RandHash(), h, r, valKeys[0].Address())
+	v3 := vote.NewCPPreVote(ts.RandHash(), h, r, 0, vote.CPValueOne, &vote.JustInitOne{}, valKeys[0].Address())
+	v4 := vote.NewCPMainVote(ts.RandHash(), h, r, 0, vote.CPValueZero, &vote.JustInitOne{}, valKeys[0].Address())
 
 	for _, v := range []*vote.Vote{v1, v2, v3, v4} {
-		signers[0].SignMsg(v)
+		ts.HelperSignVote(valKeys[0], v)
 
 		added, err := log.AddVote(v)
 		assert.NoError(t, err)
@@ -60,7 +60,7 @@ func TestAddValidVote(t *testing.T) {
 func TestAddInvalidVoteType(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	committee, signers := ts.GenerateTestCommittee(4)
+	committee, valKeys := ts.GenerateTestCommittee(4)
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
 
@@ -69,7 +69,7 @@ func TestAddInvalidVoteType(t *testing.T) {
 	invVote := new(vote.Vote)
 	err := invVote.UnmarshalCBOR(data)
 	assert.NoError(t, err)
-	signers[0].SignMsg(invVote)
+	ts.HelperSignVote(valKeys[0], invVote)
 
 	added, err := log.AddVote(invVote)
 	assert.Error(t, err)
@@ -100,7 +100,7 @@ func TestCanVote(t *testing.T) {
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
 
-	addr := ts.RandAddress()
+	addr := ts.RandAccAddress()
 	assert.True(t, log.CanVote(signers[0].Address()))
 	assert.False(t, log.CanVote(addr))
 }

@@ -14,6 +14,8 @@ import (
 	"golang.org/x/crypto/hkdf"
 )
 
+var _ crypto.PrivateKey = &PrivateKey{}
+
 const PrivateKeySize = 32
 
 type PrivateKey struct {
@@ -123,6 +125,10 @@ func (prv *PrivateKey) Bytes() []byte {
 // Sign calculates the signature from the private key and given message.
 // It's defined in section 2.6 of the spec: CoreSign.
 func (prv *PrivateKey) Sign(msg []byte) crypto.Signature {
+	return prv.SignNative(msg)
+}
+
+func (prv *PrivateKey) SignNative(msg []byte) *Signature {
 	g1 := bls12381.NewG1()
 
 	q, err := g1.HashToCurve(msg, dst)
@@ -133,13 +139,17 @@ func (prv *PrivateKey) Sign(msg []byte) crypto.Signature {
 	return &Signature{pointG1: *s}
 }
 
-func (prv *PrivateKey) PublicKey() crypto.PublicKey {
+func (prv *PrivateKey) PublicKeyNative() *PublicKey {
 	g2 := bls12381.NewG2()
 
 	pointG2 := g2.MulScalar(g2.New(), g2.One(), &prv.fr)
 	return &PublicKey{
 		pointG2: *pointG2,
 	}
+}
+
+func (prv *PrivateKey) PublicKey() crypto.PublicKey {
+	return prv.PublicKeyNative()
 }
 
 func (prv *PrivateKey) EqualsTo(right crypto.PrivateKey) bool {

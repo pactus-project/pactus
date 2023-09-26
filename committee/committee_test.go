@@ -13,10 +13,10 @@ import (
 func TestContains(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	committee, signers := ts.GenerateTestCommittee(21)
-	nonExist := ts.RandAddress()
+	committee, valKeys := ts.GenerateTestCommittee(21)
+	nonExist := ts.RandAccAddress()
 
-	assert.True(t, committee.Contains(signers[0].Address()))
+	assert.True(t, committee.Contains(valKeys[0].Address()))
 	assert.False(t, committee.Contains(nonExist))
 }
 
@@ -331,7 +331,7 @@ func TestIsProposer(t *testing.T) {
 	assert.Equal(t, committee.Proposer(1).Number(), int32(1))
 	assert.True(t, committee.IsProposer(val3.Address(), 2))
 	assert.False(t, committee.IsProposer(val4.Address(), 2))
-	assert.False(t, committee.IsProposer(ts.RandAddress(), 2))
+	assert.False(t, committee.IsProposer(ts.RandAccAddress(), 2))
 	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4})
 }
 

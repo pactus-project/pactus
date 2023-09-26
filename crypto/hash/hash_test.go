@@ -17,7 +17,7 @@ func TestHashFromString(t *testing.T) {
 	hash2, err := hash.FromString(hash1.String())
 	assert.Contains(t, strings.ToUpper(hash1.String()), hash1.ShortString())
 	assert.NoError(t, err)
-	assert.True(t, hash1.EqualsTo(hash2))
+	assert.Equal(t, hash1, hash2)
 
 	_, err = hash.FromString("")
 	assert.Error(t, err)

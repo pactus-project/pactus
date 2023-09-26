@@ -6,8 +6,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pactus-project/pactus/crypto/bls"
+
 	"github.com/pactus-project/pactus/consensus"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/store"
@@ -27,7 +28,7 @@ func TestInvalidBlockData(t *testing.T) {
 	td := setup(t, nil)
 
 	blk := block.MakeBlock(1, time.Now(), nil, td.RandHash(), td.RandHash(),
-		td.GenerateTestCertificate(), td.RandSeed(), td.RandAddress())
+		td.GenerateTestCertificate(), td.RandSeed(), td.RandValAddress())
 	data, _ := blk.Bytes()
 	tests := []struct {
 		data []byte
@@ -60,7 +61,7 @@ func TestOneBlockShorter(t *testing.T) {
 	td := setup(t, nil)
 
 	lastBlockHeight := td.state.LastBlockHeight()
-	b1 := td.GenerateTestBlock(nil)
+	b1 := td.GenerateTestBlock()
 	c1 := td.GenerateTestCertificate()
 	d1, _ := b1.Bytes()
 	pid := td.RandPeerID()
@@ -87,11 +88,11 @@ func TestStrippedPublicKey(t *testing.T) {
 	pub, _ := td.RandBLSKeyPair()
 	td.addPeer(t, pub, pid, services.New(services.None))
 
-	blk1 := td.GenerateTestBlock(nil)
+	blk1 := td.GenerateTestBlock()
 	trx := *td.state.TestStore.Blocks[1].Transactions()[0]
 	trxs := []*tx.Tx{&trx}
 	blk2 := block.MakeBlock(1, time.Now(), trxs, td.RandHash(), td.RandHash(),
-		td.GenerateTestCertificate(), td.RandSeed(), td.RandAddress())
+		td.GenerateTestCertificate(), td.RandSeed(), td.RandValAddress())
 
 	tests := []struct {
 		blk *block.Block
@@ -100,7 +101,7 @@ func TestStrippedPublicKey(t *testing.T) {
 		{
 			blk1,
 			store.PublicKeyNotFoundError{
-				Address: blk1.Transactions()[0].PublicKey().Address(),
+				Address: blk1.Transactions()[0].Payload().Signer(),
 			},
 		},
 		{
@@ -131,12 +132,13 @@ func TestSyncing(t *testing.T) {
 
 	configAlice := testConfig()
 	configBob := testConfig()
-	signersAlice := []crypto.Signer{ts.RandSigner()}
-	signersBob := []crypto.Signer{ts.RandSigner()}
+
+	valKeyAlice := []*bls.ValidatorKey{ts.RandValKey()}
+	valKeyBob := []*bls.ValidatorKey{ts.RandValKey()}
 	stateAlice := state.MockingState(ts)
 	stateBob := state.MockingState(ts)
-	consMgrAlice, _ := consensus.MockingManager(ts, signersAlice)
-	consMgrBob, _ := consensus.MockingManager(ts, signersBob)
+	consMgrAlice, _ := consensus.MockingManager(ts, []*bls.PrivateKey{valKeyAlice[0].PrivateKey()})
+	consMgrBob, _ := consensus.MockingManager(ts, []*bls.PrivateKey{valKeyBob[0].PrivateKey()})
 	broadcastChAlice := make(chan message.Message, 1000)
 	broadcastChBob := make(chan message.Message, 1000)
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
@@ -150,7 +152,7 @@ func TestSyncing(t *testing.T) {
 	blockInterval := stateBob.Genesis().Params().BlockInterval()
 	blockTime := util.RoundNow(int(blockInterval.Seconds()))
 	for i := uint32(0); i < 100; i++ {
-		blk := ts.GenerateTestBlockWithTime(nil, blockTime)
+		blk := ts.GenerateTestBlockWithTime(blockTime)
 		cert := ts.GenerateTestCertificate()
 		assert.NoError(t, stateBob.CommitBlock(i+1, blk, cert))
 
@@ -158,7 +160,7 @@ func TestSyncing(t *testing.T) {
 	}
 
 	sync1, err := NewSynchronizer(configAlice,
-		signersAlice,
+		valKeyAlice,
 		stateAlice,
 		consMgrAlice,
 		networkAlice,
@@ -168,7 +170,7 @@ func TestSyncing(t *testing.T) {
 	syncAlice := sync1.(*synchronizer)
 
 	sync2, err := NewSynchronizer(configBob,
-		signersBob,
+		valKeyBob,
 		stateBob,
 		consMgrBob,
 		networkBob,

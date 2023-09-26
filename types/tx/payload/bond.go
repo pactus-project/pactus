@@ -1,7 +1,6 @@
 package payload
 
 import (
-	"errors"
 	"fmt"
 	"io"
 
@@ -11,8 +10,8 @@ import (
 )
 
 type BondPayload struct {
-	Sender    crypto.Address
-	Receiver  crypto.Address
+	From      crypto.Address
+	To        crypto.Address
 	PublicKey *bls.PublicKey
 	Stake     int64
 }
@@ -22,7 +21,7 @@ func (p *BondPayload) Type() Type {
 }
 
 func (p *BondPayload) Signer() crypto.Address {
-	return p.Sender
+	return p.From
 }
 
 func (p *BondPayload) Value() int64 {
@@ -30,14 +29,20 @@ func (p *BondPayload) Value() int64 {
 }
 
 func (p *BondPayload) BasicCheck() error {
-	if err := p.Sender.BasicCheck(); err != nil {
-		return err
+	if !p.From.IsAccountAddress() {
+		return BasicCheckError{
+			Reason: "sender is not an account address",
+		}
 	}
-	if err := p.Receiver.BasicCheck(); err != nil {
-		return err
+
+	if !p.To.IsValidatorAddress() {
+		return BasicCheckError{
+			Reason: "receiver is not a validator address",
+		}
 	}
+
 	if p.PublicKey != nil {
-		if err := p.PublicKey.VerifyAddress(p.Receiver); err != nil {
+		if err := p.PublicKey.VerifyAddress(p.To); err != nil {
 			return err
 		}
 	}
@@ -53,10 +58,16 @@ func (p *BondPayload) SerializeSize() int {
 }
 
 func (p *BondPayload) Encode(w io.Writer) error {
-	err := encoding.WriteElements(w, &p.Sender, &p.Receiver)
+	err := p.From.Encode(w)
 	if err != nil {
 		return err
 	}
+
+	err = p.To.Encode(w)
+	if err != nil {
+		return err
+	}
+
 	if p.PublicKey != nil {
 		err := encoding.WriteElements(w, uint8(bls.PublicKeySize))
 		if err != nil {
@@ -77,10 +88,16 @@ func (p *BondPayload) Encode(w io.Writer) error {
 }
 
 func (p *BondPayload) Decode(r io.Reader) error {
-	err := encoding.ReadElements(r, &p.Sender, &p.Receiver)
+	err := p.From.Decode(r)
 	if err != nil {
 		return err
 	}
+
+	err = p.To.Decode(r)
+	if err != nil {
+		return err
+	}
+
 	pubKeySize, err := encoding.ReadVarInt(r)
 	if err != nil {
 		return err
@@ -92,7 +109,7 @@ func (p *BondPayload) Decode(r io.Reader) error {
 			return err
 		}
 	} else if pubKeySize != 0 {
-		return errors.New("invalid public key size")
+		return ErrInvalidPublicKeySize
 	}
 
 	stake, err := encoding.ReadVarInt(r)
@@ -105,11 +122,11 @@ func (p *BondPayload) Decode(r io.Reader) error {
 
 func (p *BondPayload) String() string {
 	return fmt.Sprintf("{Bond 🔐 %v->%v %v",
-		p.Sender.ShortString(),
-		p.Receiver.ShortString(),
+		p.From.ShortString(),
+		p.To.ShortString(),
 		p.Stake)
 }
 
-func (p *BondPayload) ReceiverAddr() *crypto.Address {
-	return &p.Receiver
+func (p *BondPayload) Receiver() *crypto.Address {
+	return &p.To
 }

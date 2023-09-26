@@ -30,7 +30,7 @@ func broadcastTransactionSend(wallet *wallet.Wallet) {
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
-	for _, i := range wallet.AddressLabels() {
+	for _, i := range wallet.AddressInfos() {
 		senderEntry.Append(i.Address, i.Address)
 	}
 	senderEntry.SetActive(0)

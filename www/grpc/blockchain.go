@@ -56,7 +56,7 @@ func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 
 		instances = append(instances,
 			&pactus.ConsensusInfo{
-				Address: cons.SignerKey().Address().String(),
+				Address: cons.ConsensusKey().ValidatorAddress().String(),
 				Active:  cons.IsActive(),
 				Height:  height,
 				Round:   int32(round),

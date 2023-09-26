@@ -25,7 +25,7 @@ func TestSigning(t *testing.T) {
 	sig1 := prv.Sign(msg)
 	assert.Equal(t, sig1.Bytes(), sig.Bytes())
 	assert.NoError(t, pub.Verify(msg, sig))
-	assert.Equal(t, pub.Address(), addr)
+	assert.Equal(t, pub.ValidatorAddress(), addr)
 }
 
 func TestSignatureAggregate(t *testing.T) {

@@ -21,14 +21,14 @@ func TestSetProposalInvalidProposer(t *testing.T) {
 	td.enterNewHeight(td.consY)
 	assert.Nil(t, td.consY.RoundProposal(0))
 
-	addr := td.signers[tIndexB].Address()
-	b := td.GenerateTestBlock(&addr)
+	addr := td.valKeys[tIndexB].Address()
+	b := td.GenerateTestBlockWithProposer(addr)
 	p := proposal.NewProposal(1, 0, b)
 
 	td.consY.SetProposal(p)
 	assert.Nil(t, td.consY.RoundProposal(0))
 
-	td.signers[tIndexB].SignMsg(p) // Invalid signature
+	td.HelperSignProposal(td.valKeys[tIndexB], p) // Invalid signature
 	td.consY.SetProposal(p)
 	assert.Nil(t, td.consY.RoundProposal(0))
 }
@@ -36,10 +36,10 @@ func TestSetProposalInvalidProposer(t *testing.T) {
 func TestSetProposalInvalidBlock(t *testing.T) {
 	td := setup(t)
 
-	addr := td.signers[tIndexB].Address()
-	invBlock := td.GenerateTestBlock(&addr)
+	addr := td.valKeys[tIndexB].Address()
+	invBlock := td.GenerateTestBlockWithProposer(addr)
 	p := proposal.NewProposal(1, 2, invBlock)
-	td.signers[tIndexB].SignMsg(p)
+	td.HelperSignProposal(td.valKeys[tIndexB], p)
 
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
@@ -52,10 +52,10 @@ func TestSetProposalInvalidBlock(t *testing.T) {
 func TestSetProposalInvalidHeight(t *testing.T) {
 	td := setup(t)
 
-	addr := td.signers[tIndexB].Address()
-	invBlock := td.GenerateTestBlock(&addr)
+	addr := td.valKeys[tIndexB].Address()
+	invBlock := td.GenerateTestBlockWithProposer(addr)
 	p := proposal.NewProposal(2, 0, invBlock)
-	td.signers[tIndexB].SignMsg(p)
+	td.HelperSignProposal(td.valKeys[tIndexB], p)
 
 	td.enterNewHeight(td.consY)
 	td.consY.SetProposal(p)
@@ -109,10 +109,10 @@ func TestProposalNextRound(t *testing.T) {
 	td.enterNewHeight(td.consX)
 
 	// Byzantine node sends proposal for the second round (his turn) even before the first round is started
-	b, err := td.consB.state.ProposeBlock(td.consB.signer, td.consB.rewardAddr, 1)
+	b, err := td.consB.state.ProposeBlock(td.consB.valKey, td.consB.rewardAddr, 1)
 	assert.NoError(t, err)
 	p := proposal.NewProposal(2, 1, b)
-	td.signers[tIndexB].SignMsg(p)
+	td.HelperSignProposal(td.valKeys[tIndexB], p)
 
 	td.consX.SetProposal(p)
 

@@ -45,7 +45,7 @@ func buildAllAddressesCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		for i, info := range wallet.AddressLabels() {
+		for i, info := range wallet.AddressInfos() {
 			line := fmt.Sprintf("%v- %s\t", i+1, info.Address)
 
 			if *balanceOpt {
@@ -59,7 +59,7 @@ func buildAllAddressesCmd(parentCmd *cobra.Command) {
 			}
 
 			line += info.Label
-			if info.Imported {
+			if info.Path == "" {
 				line += " (Imported)"
 			}
 
@@ -81,7 +81,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		wallet, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
-		addr, err := wallet.DeriveNewAddress(label)
+		addr, err := wallet.NewBLSAccountAddress(label)
 		cmd.FatalErrorCheck(err)
 
 		err = wallet.Save()
@@ -167,9 +167,9 @@ func buildPublicKeyCmd(parentCmd *cobra.Command) {
 		}
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsgf("Public Key: %v", info.Pub.String())
-		if !info.Imported {
-			cmd.PrintInfoMsgf("Path: %v", info.Path.String())
+		cmd.PrintInfoMsgf("Public Key: %v", info.PublicKey)
+		if info.Path != "" {
+			cmd.PrintInfoMsgf("Path: %v", info.Path)
 		}
 	}
 }
@@ -201,8 +201,7 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintSuccessMsgf("Private Key imported. Address: %v",
-			prv.PublicKey().Address())
+		cmd.PrintSuccessMsgf("Private Key imported.") // TODO: display imported addresses
 	}
 }
 

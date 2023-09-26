@@ -12,6 +12,8 @@ import (
 	"github.com/pactus-project/pactus/util/errors"
 )
 
+var _ crypto.Signature = &Signature{}
+
 const SignatureSize = 48
 
 type Signature struct {

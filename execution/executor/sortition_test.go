@@ -45,7 +45,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	assert.False(t, td.sandbox.IsJoinedCommittee(newVal.Address()))
 
 	t.Run("Should fail, Invalid address", func(t *testing.T) {
-		trx := tx.NewSortitionTx(lockTime, td.RandAddress(), proof)
+		trx := tx.NewSortitionTx(lockTime, td.RandAccAddress(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)

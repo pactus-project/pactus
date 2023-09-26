@@ -3,7 +3,7 @@ package consensus
 import (
 	"sync"
 
-	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
@@ -17,7 +17,7 @@ type MockConsensus struct {
 	lk sync.RWMutex
 	ts *testsuite.TestSuite
 
-	Signer   crypto.Signer
+	ConsKey  *bls.PrivateKey
 	Votes    []*vote.Vote
 	Proposal *proposal.Proposal
 	Active   bool
@@ -25,10 +25,10 @@ type MockConsensus struct {
 	Round    int16
 }
 
-func MockingManager(ts *testsuite.TestSuite, signers []crypto.Signer) (Manager, []*MockConsensus) {
-	mocks := make([]*MockConsensus, len(signers))
-	instances := make([]Consensus, len(signers))
-	for i, s := range signers {
+func MockingManager(ts *testsuite.TestSuite, valKeys []*bls.PrivateKey) (Manager, []*MockConsensus) {
+	mocks := make([]*MockConsensus, len(valKeys))
+	instances := make([]Consensus, len(valKeys))
+	for i, s := range valKeys {
 		cons := MockingConsensus(ts, s)
 		mocks[i] = cons
 		instances[i] = cons
@@ -39,15 +39,15 @@ func MockingManager(ts *testsuite.TestSuite, signers []crypto.Signer) (Manager, 
 	}, mocks
 }
 
-func MockingConsensus(ts *testsuite.TestSuite, signer crypto.Signer) *MockConsensus {
+func MockingConsensus(ts *testsuite.TestSuite, consKey *bls.PrivateKey) *MockConsensus {
 	return &MockConsensus{
-		ts:     ts,
-		Signer: signer,
+		ts:      ts,
+		ConsKey: consKey,
 	}
 }
 
-func (m *MockConsensus) SignerKey() crypto.PublicKey {
-	return m.Signer.PublicKey()
+func (m *MockConsensus) ConsensusKey() *bls.PublicKey {
+	return m.ConsKey.PublicKeyNative()
 }
 
 func (m *MockConsensus) MoveToNewHeight() {

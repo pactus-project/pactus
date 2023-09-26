@@ -22,7 +22,7 @@ func MockingTxPool() *MockTxPool {
 func (m *MockTxPool) SetNewSandboxAndRecheck(_ sandbox.Sandbox) {}
 func (m *MockTxPool) PendingTx(id tx.ID) *tx.Tx {
 	for _, t := range m.Txs {
-		if t.ID().EqualsTo(id) {
+		if t.ID() == id {
 			return t
 		}
 	}
@@ -35,7 +35,7 @@ func (m *MockTxPool) QueryTx(id tx.ID) *tx.Tx {
 
 func (m *MockTxPool) HasTx(id tx.ID) bool {
 	for _, t := range m.Txs {
-		if t.ID().EqualsTo(id) {
+		if t.ID() == id {
 			return true
 		}
 	}

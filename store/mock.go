@@ -58,7 +58,7 @@ func (m *MockStore) BlockHash(height uint32) hash.Hash {
 
 func (m *MockStore) BlockHeight(hash hash.Hash) uint32 {
 	for h, b := range m.Blocks {
-		if b.Hash().EqualsTo(hash) {
+		if b.Hash() == hash {
 			return h
 		}
 	}
@@ -226,14 +226,14 @@ func (m *MockStore) AddTestValidator() *validator.Validator {
 	return val
 }
 
-func (m *MockStore) AddTestAccount() (*account.Account, crypto.Signer) {
-	acc, signer := m.ts.GenerateTestAccount(m.ts.RandInt32(10000))
-	m.UpdateAccount(signer.Address(), acc)
-	return acc, signer
+func (m *MockStore) AddTestAccount() (*account.Account, crypto.Address) {
+	acc, addr := m.ts.GenerateTestAccount(m.ts.RandInt32(10000))
+	m.UpdateAccount(addr, acc)
+	return acc, addr
 }
 
 func (m *MockStore) AddTestBlock(height uint32) *block.Block {
-	blk := m.ts.GenerateTestBlock(nil)
+	blk := m.ts.GenerateTestBlock()
 	cert := m.ts.GenerateTestCertificate()
 	m.SaveBlock(height, blk, cert)
 	return blk

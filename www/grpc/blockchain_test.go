@@ -151,7 +151,7 @@ func TestGetAccount(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	conn, client := testBlockchainClient(t)
-	acc, signer := tMockState.TestStore.AddTestAccount()
+	acc, addr := tMockState.TestStore.AddTestAccount()
 
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx,
@@ -163,7 +163,7 @@ func TestGetAccount(t *testing.T) {
 
 	t.Run("Should return nil for non existing account ", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx,
-			&pactus.GetAccountRequest{Address: ts.RandAddress().String()})
+			&pactus.GetAccountRequest{Address: ts.RandAccAddress().String()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -171,7 +171,7 @@ func TestGetAccount(t *testing.T) {
 
 	t.Run("Should return account details", func(t *testing.T) {
 		res, err := client.GetAccount(tCtx,
-			&pactus.GetAccountRequest{Address: signer.Address().String()})
+			&pactus.GetAccountRequest{Address: addr.String()})
 
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
@@ -197,7 +197,7 @@ func TestGetValidator(t *testing.T) {
 
 	t.Run("should return Not Found", func(t *testing.T) {
 		res, err := client.GetValidator(tCtx,
-			&pactus.GetValidatorRequest{Address: ts.RandAddress().String()})
+			&pactus.GetValidatorRequest{Address: ts.RandAccAddress().String()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -280,7 +280,7 @@ func TestGetPublicKey(t *testing.T) {
 
 	t.Run("Should return nil for non existing public key ", func(t *testing.T) {
 		res, err := client.GetPublicKey(tCtx,
-			&pactus.GetPublicKeyRequest{Address: ts.RandAddress().String()})
+			&pactus.GetPublicKeyRequest{Address: ts.RandAccAddress().String()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)

@@ -13,13 +13,13 @@ func TestExecuteUnbondTx(t *testing.T) {
 	exe := NewUnbondExecutor(true)
 
 	pub, _ := td.RandBLSKeyPair()
-	valAddr := pub.Address()
+	valAddr := pub.ValidatorAddress()
 	val := td.sandbox.MakeNewValidator(pub)
 	td.sandbox.UpdateValidator(val)
 	lockTime := td.sandbox.CurrentHeight()
 
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {
-		trx := tx.NewUnbondTx(lockTime, td.RandAddress(), "invalid validator")
+		trx := tx.NewUnbondTx(lockTime, td.RandAccAddress(), "invalid validator")
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
@@ -37,7 +37,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 		unbondedVal.UpdateUnbondingHeight(td.sandbox.CurrentHeight())
 		td.sandbox.UpdateValidator(unbondedVal)
 
-		trx := tx.NewUnbondTx(lockTime, pub.Address(), "Ok")
+		trx := tx.NewUnbondTx(lockTime, pub.ValidatorAddress(), "Ok")
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
 	})
@@ -93,7 +93,7 @@ func TestUnbondJoiningCommittee(t *testing.T) {
 	td.sandbox.JoinedToCommittee(val.Address())
 	lockTime := td.sandbox.CurrentHeight()
 
-	trx := tx.NewUnbondTx(lockTime, pub.Address(), "Ok")
+	trx := tx.NewUnbondTx(lockTime, pub.ValidatorAddress(), "Ok")
 	assert.Error(t, exe1.Execute(trx, td.sandbox))
 	assert.NoError(t, exe2.Execute(trx, td.sandbox))
 }

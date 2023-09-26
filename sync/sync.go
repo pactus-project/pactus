@@ -7,7 +7,7 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/consensus"
-	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -33,7 +33,7 @@ import (
 type synchronizer struct {
 	ctx             context.Context
 	config          *Config
-	signers         []crypto.Signer
+	valKeys         []*bls.ValidatorKey
 	state           state.Facade
 	consMgr         consensus.Manager
 	peerSet         *peerset.PeerSet
@@ -49,7 +49,7 @@ type synchronizer struct {
 
 func NewSynchronizer(
 	conf *Config,
-	signers []crypto.Signer,
+	valKeys []*bls.ValidatorKey,
 	state state.Facade,
 	consMgr consensus.Manager,
 	net network.Network,
@@ -58,7 +58,7 @@ func NewSynchronizer(
 	sync := &synchronizer{
 		ctx:         context.Background(), // TODO, set proper context
 		config:      conf,
-		signers:     signers,
+		valKeys:     valKeys,
 		state:       state,
 		consMgr:     consMgr,
 		network:     net,
@@ -139,7 +139,7 @@ func (sync *synchronizer) sayHello(to peer.ID) error {
 		sync.state.LastBlockHash(),
 		sync.state.Genesis().Hash(),
 	)
-	msg.Sign(sync.signers...)
+	msg.Sign(sync.valKeys)
 
 	sync.peerSet.UpdateStatus(to, peerset.StatusCodeConnected)
 
@@ -384,7 +384,8 @@ func (sync *synchronizer) peerIsInTheCommittee(pid peer.ID) bool {
 	}
 
 	for _, key := range p.ConsensusKeys {
-		if sync.state.IsInCommittee(key.Address()) {
+		// TODO: cache address for the better performance
+		if sync.state.IsInCommittee(key.ValidatorAddress()) {
 			return true
 		}
 	}

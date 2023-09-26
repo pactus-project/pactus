@@ -41,7 +41,7 @@ const (
 type ExtendedKey struct {
 	key       []byte // This will be the bytes of extended public or private key
 	chainCode []byte
-	path      Path
+	path      []uint32
 	isPrivate bool
 	pubOnG1   bool
 }
@@ -49,7 +49,7 @@ type ExtendedKey struct {
 // newExtendedKey returns a new instance of an extended key with the given
 // fields. No error checking is performed here as it's only intended to be a
 // convenience method used to create a populated struct.
-func newExtendedKey(key, chainCode []byte, path Path, isPrivate bool, pubOnG1 bool) *ExtendedKey {
+func newExtendedKey(key, chainCode []byte, path []uint32, isPrivate bool, pubOnG1 bool) *ExtendedKey {
 	return &ExtendedKey{
 		key:       key,
 		chainCode: chainCode,
@@ -96,9 +96,9 @@ func (k *ExtendedKey) IsPrivate() bool {
 	return k.isPrivate
 }
 
-// Derive returns a derived child extended key from this master key at the
+// DerivePath returns a derived child extended key from this master key at the
 // given path.
-func (k *ExtendedKey) DerivePath(path Path) (*ExtendedKey, error) {
+func (k *ExtendedKey) DerivePath(path []uint32) (*ExtendedKey, error) {
 	ext := k
 	var err error
 	for _, index := range path {
@@ -260,7 +260,7 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 		}
 	}
 
-	newPath := make(Path, 0, len(k.path)+1)
+	newPath := make([]uint32, 0, len(k.path)+1)
 	copy(newPath, k.path)
 	newPath = append(k.path, index)
 	return newExtendedKey(childKey, childChainCode,
@@ -271,7 +271,7 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 //
 // Path with values between 0 and 2^31-1 are normal child keys,
 // and those values between 2^31 and 2^32-1 are hardened keys.
-func (k *ExtendedKey) Path() Path {
+func (k *ExtendedKey) Path() []uint32 {
 	return k.path
 }
 
@@ -372,7 +372,7 @@ func NewKeyFromString(key string) (*ExtendedKey, error) {
 	}
 
 	r := bytes.NewReader(data)
-	path := Path{}
+	path := []uint32{}
 	pathLen := byte(0)
 	err = encoding.ReadElement(r, &pathLen)
 	if err != nil {
@@ -456,7 +456,7 @@ func NewMaster(seed []byte, pubOnG1 bool) (*ExtendedKey, error) {
 		return nil, err
 	}
 
-	return newExtendedKey(privKey.Bytes(), chainCode, Path{}, true, pubOnG1), nil
+	return newExtendedKey(privKey.Bytes(), chainCode, []uint32{}, true, pubOnG1), nil
 }
 
 // GenerateSeed returns a cryptographically secure random seed that can be used

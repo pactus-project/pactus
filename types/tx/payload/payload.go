@@ -42,5 +42,5 @@ type Payload interface {
 	Decode(io.Reader) error
 	BasicCheck() error
 	String() string
-	ReceiverAddr() *crypto.Address
+	Receiver() *crypto.Address
 }

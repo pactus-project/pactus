@@ -12,7 +12,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	td := setup(t)
 	exe := NewWithdrawExecutor(true)
 
-	addr := td.RandAddress()
+	addr := td.RandAccAddress()
 	pub, _ := td.RandBLSKeyPair()
 	val := td.sandbox.MakeNewValidator(pub)
 	accAddr, acc := td.sandbox.TestStore.RandomTestAcc()
@@ -24,7 +24,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	lockTime := td.sandbox.CurrentHeight()
 
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, td.RandAddress(), addr,
+		trx := tx.NewWithdrawTx(lockTime, td.RandAccAddress(), addr,
 			amt, fee, "invalid validator")
 
 		err := exe.Execute(trx, td.sandbox)

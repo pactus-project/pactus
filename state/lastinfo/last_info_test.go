@@ -28,7 +28,7 @@ func setup(t *testing.T) *testData {
 	t.Helper()
 
 	ts := testsuite.NewTestSuite(t)
-	store := store.MockingStore(ts)
+	mockStore := store.MockingStore(ts)
 	lastInfo := NewLastInfo()
 
 	pub0, _ := ts.RandBLSKeyPair()
@@ -36,7 +36,7 @@ func setup(t *testing.T) *testData {
 	pub2, _ := ts.RandBLSKeyPair()
 	pub3, _ := ts.RandBLSKeyPair()
 	pub4, prv4 := ts.RandBLSKeyPair()
-	signer := crypto.NewSigner(prv4)
+	valKey := bls.NewValidatorKey(prv4)
 
 	val0 := validator.NewValidator(pub0, 0)
 	val1 := validator.NewValidator(pub1, 1)
@@ -56,16 +56,16 @@ func setup(t *testing.T) *testData {
 	val3.UpdateLastSortitionHeight(0)
 	val4.UpdateLastSortitionHeight(100)
 
-	store.UpdateValidator(val0)
-	store.UpdateValidator(val1)
-	store.UpdateValidator(val2)
-	store.UpdateValidator(val3)
-	store.UpdateValidator(val4)
+	mockStore.UpdateValidator(val0)
+	mockStore.UpdateValidator(val1)
+	mockStore.UpdateValidator(val2)
+	mockStore.UpdateValidator(val3)
+	mockStore.UpdateValidator(val4)
 
 	// Last block
 	committers := []int32{0, 1, 2, 3}
-	trx := tx.NewSortitionTx(1, pub4.Address(), ts.RandProof())
-	signer.SignMsg(trx)
+	trx := tx.NewSortitionTx(1, pub4.ValidatorAddress(), ts.RandProof())
+	ts.HelperSignTransaction(prv4, trx)
 	prevHash := ts.RandHash()
 	prevCert := ts.GenerateTestCertificate()
 	lastHeight := ts.RandHeight()
@@ -75,10 +75,10 @@ func setup(t *testing.T) *testData {
 		ts.RandHash(),
 		prevCert, lastSeed, val2.Address())
 
-	sig := signer.SignData([]byte("fatdog"))
-	lastCert := certificate.NewCertificate(lastHeight, 0, committers, []int32{}, sig.(*bls.Signature))
-	store.SaveBlock(lastHeight, lastBlock, lastCert)
-	assert.Equal(t, store.LastHeight, lastHeight)
+	sig := valKey.Sign([]byte("fatdog"))
+	lastCert := certificate.NewCertificate(lastHeight, 0, committers, []int32{}, sig)
+	mockStore.SaveBlock(lastHeight, lastBlock, lastCert)
+	assert.Equal(t, mockStore.LastHeight, lastHeight)
 
 	lastInfo.UpdateSortitionSeed(lastSeed)
 	lastInfo.UpdateBlockHeight(lastHeight)
@@ -89,7 +89,7 @@ func setup(t *testing.T) *testData {
 
 	return &testData{
 		TestSuite: ts,
-		store:     store,
+		store:     mockStore,
 		lastInfo:  lastInfo,
 	}
 }

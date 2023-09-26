@@ -16,7 +16,7 @@ func TestNonHardenedDerivation(t *testing.T) {
 	testSeed, _ := hex.DecodeString("000102030405060708090a0b0c0d0e0f")
 	tests := []struct {
 		name       string
-		path       Path
+		path       []uint32
 		wantPrivG1 string
 		wantPrivG2 string
 		wantPubG1  string
@@ -24,7 +24,7 @@ func TestNonHardenedDerivation(t *testing.T) {
 	}{
 		{
 			name:       "derivation path: m",
-			path:       Path{},
+			path:       []uint32{},
 			wantPrivG1: "38167a7b6fcea7929deb6af40123e37b2ef21e488f4871f16d411914490657f5",
 			wantPrivG2: "38167a7b6fcea7929deb6af40123e37b2ef21e488f4871f16d411914490657f5",
 			wantPubG1:  "b99b512321d9dbae271f4d418b10a2345fa84c1c883d0f9a82163b84c405948ea123f01141258cdbed2d033eae4a551a",
@@ -33,7 +33,7 @@ func TestNonHardenedDerivation(t *testing.T) {
 		},
 		{
 			name:       "derivation path: m/0",
-			path:       Path{0},
+			path:       []uint32{0},
 			wantPrivG1: "32833bcae69d2296e71356dc444d08c9d78671a6dbc1234fd22ee78ddd21359a",
 			wantPrivG2: "3914227ccdfedae713b1289c14a4125de77dc8ae3dcb9c4ede1912819d03f807",
 			wantPubG1:  "a33ee09eee91c2d7b345f8ca28daf9fcbc92d2fd9b0be0f582ff3e5e71b9b13999fc4918d6894ba6b5ab6acdc556f665",
@@ -42,7 +42,7 @@ func TestNonHardenedDerivation(t *testing.T) {
 		},
 		{
 			name:       "derivation path: m/0/1",
-			path:       Path{0, 1},
+			path:       []uint32{0, 1},
 			wantPrivG1: "67a6f33ab789e703bc33364591230662b4a067fd217c0bf94781a0438447f7e6",
 			wantPrivG2: "1571b4b6c4233eb6132b98682e430919b32ab4e0b18b27edf4e7505a78814c9c",
 			wantPubG1:  "82de21510f071ff70f6eba967e6876487a7e63d8fa43e9d37d0e89af8ccad9d177d3fbdaac566fe7a9a19e8288b9df7c",
@@ -51,7 +51,7 @@ func TestNonHardenedDerivation(t *testing.T) {
 		},
 		{
 			name:       "derivation path: m/0/1/2",
-			path:       Path{0, 1, 2},
+			path:       []uint32{0, 1, 2},
 			wantPrivG1: "083e105a2722e56a473c8ce703d264789e9f4642e0163d6d7f2e91133a4f6c14",
 			wantPrivG2: "0ab855d785a73ac1d434993238eac9465398848c940c569304a6cf8104432323",
 			wantPubG1:  "a931438adb1639201f1d5ea7445a5cfeb319c0143f83964bd2650ea7b835ec9360e55eb5f48345f8cff6297bde663773",
@@ -60,7 +60,7 @@ func TestNonHardenedDerivation(t *testing.T) {
 		},
 		{
 			name:       "derivation path: m/0/1/2/2",
-			path:       Path{0, 1, 2, 2},
+			path:       []uint32{0, 1, 2, 2},
 			wantPrivG1: "45dc329488337cce410446a6735abb1f2885ef3edcc717e4a1541ff5e0a302e5",
 			wantPrivG2: "1af4a741d566a744bad2ea4d632138af1084b1a85c9deb486920421ceacee200",
 			wantPubG1:  "8dca90a2ef835d22b6a1a31a0f35a42afa9f995d7ff5050391d63246e9d870f9da7d30201006d60b2b2520edd49123a5",
@@ -69,7 +69,7 @@ func TestNonHardenedDerivation(t *testing.T) {
 		},
 		{
 			name:       "derivation path: m/0/1/2/2/1000000000",
-			path:       Path{0, 1, 2, 2, 1000000000},
+			path:       []uint32{0, 1, 2, 2, 1000000000},
 			wantPrivG1: "3255d4c3b4839073d8bd8e58a49cb35579b23c3ab393844efb6f382901642ffe",
 			wantPrivG2: "59fef95b26def9f7c068d821025f87b7b7d05b5a4a983ccdff3c375faa1cdaf5",
 			wantPubG1:  "9660f7ef3d08328dd166063a47ab6a9858b56833ac5d1f991195e8a75698b07a45b8cb3e620835062862693f80e1b012",
@@ -142,14 +142,14 @@ func TestHardenedDerivationG2(t *testing.T) {
 	h := HardenedKeyStart
 	tests := []struct {
 		name      string
-		path      Path
+		path      []uint32
 		wantPriv  string
 		wantPubG1 string
 		wantPubG2 string
 	}{
 		{
 			name:      "derivation path: m/0H",
-			path:      Path{0 + h},
+			path:      []uint32{0 + h},
 			wantPriv:  "0da9a671ff3cc10514fa9cf8368af0756ad01e242bb3ae4d06a4061e6c3ec6be",
 			wantPubG1: "ad880d92cb1276c8d5768d26dcc3ebf23de4f0a1d12c9b99fdb6b745ff931d2c01925b4fec4147d7452faddc18564b98",
 			wantPubG2: "b5bfa5aa0ee3c8c4f9222f4f244c3fd6fddcdd0accf484e56d09c70a4e2eada059073c890bbfc30d2693a8a68262c3ac" +
@@ -157,7 +157,7 @@ func TestHardenedDerivationG2(t *testing.T) {
 		},
 		{
 			name:      "derivation path: m/0H/1H",
-			path:      Path{0 + h, 1 + h},
+			path:      []uint32{0 + h, 1 + h},
 			wantPriv:  "319ebd81870da6bc3608b80fa22418c3dbb854f8719c19be687533266cb0f291",
 			wantPubG1: "95dae848c45f54076c720be4d1c9f543993ccdb8850d47b9d21450b0e861de12473f5a68193d2f60e1d44ef37d57dd32",
 			wantPubG2: "94c2ef2238d79c7148719a9faade73c7c27f33ce6526b3d374950f76f074d1ef3a4798f8d4dbd97b6c800640421bbb4d" +
@@ -165,7 +165,7 @@ func TestHardenedDerivationG2(t *testing.T) {
 		},
 		{
 			name:      "derivation path: m/0H/1H/2H",
-			path:      Path{0 + h, 1 + h, 2 + h},
+			path:      []uint32{0 + h, 1 + h, 2 + h},
 			wantPriv:  "028a08fe12f776e2538749510644c9ad78e020c36b9cee216518ba6d52fd7549",
 			wantPubG1: "829d3fa8890ddad5289c9429af9a3a6fa284ecdc3ca6a91dc7af466b1edd3e03952869def6baec191bdbfd76de79d754",
 			wantPubG2: "923c884ce3f91e9cc4595114c5fbe3aee03b8698c7d35ae358f76816d132c6972c6612ad18c2178cf1c9e47d8e0e5822" +
@@ -173,7 +173,7 @@ func TestHardenedDerivationG2(t *testing.T) {
 		},
 		{
 			name:      "derivation path: m/0H/1H/2H/2H",
-			path:      Path{0 + h, 1 + h, 2 + h, 2 + h},
+			path:      []uint32{0 + h, 1 + h, 2 + h, 2 + h},
 			wantPriv:  "67a7b55c4cf0620cd99e55c77b8075f3ec5ce2ac9f840678dada4047849d4e91",
 			wantPubG1: "91a562e2f28d775560426db45dda4b9b12cd9c55bff4501c8a1253ffee26e2299f18c13c81d586b40955c120a7bd0ea4",
 			wantPubG2: "a800a88b89dcbf614e498e4dacfcaccb9735fad06b5ca722e75debf4b22a0ffdfb761898f880de07220d584e3ea4e28e" +
@@ -181,7 +181,7 @@ func TestHardenedDerivationG2(t *testing.T) {
 		},
 		{
 			name:      "derivation path: m/0H/1H/2H/2H/1000000000H",
-			path:      Path{0 + h, 1 + h, 2 + h, 2 + h, 1000000000 + h},
+			path:      []uint32{0 + h, 1 + h, 2 + h, 2 + h, 1000000000 + h},
 			wantPriv:  "5fa9eb585d673c081b07d56639a980b69d7a1f31f4725d23884aaeb2bf0e6fdc",
 			wantPubG1: "949a2b9d20bd8c260f1c9f0b4631dc3abff6bcf3b723652e65c06447b1f0b7ca1f2f9b5fecd3692222d1e7280e8c0a2d",
 			wantPubG2: "952ca984734510e531507cdb653a3bce2ed4b9689d917718663ab04c84bb78596d7f46252a1ea0e3dd7a380a5a5bf8f2" +
@@ -236,7 +236,7 @@ func TestDerivation(t *testing.T) {
 	h := HardenedKeyStart
 	tests := []struct {
 		name       string
-		path       Path
+		path       []uint32
 		wantPrivG1 string
 		wantPrivG2 string
 		wantPubG1  string
@@ -244,7 +244,7 @@ func TestDerivation(t *testing.T) {
 	}{
 		{
 			name:       "derivation path: m",
-			path:       Path{},
+			path:       []uint32{},
 			wantPrivG1: "38167a7b6fcea7929deb6af40123e37b2ef21e488f4871f16d411914490657f5",
 			wantPrivG2: "38167a7b6fcea7929deb6af40123e37b2ef21e488f4871f16d411914490657f5",
 			wantPubG1:  "b99b512321d9dbae271f4d418b10a2345fa84c1c883d0f9a82163b84c405948ea123f01141258cdbed2d033eae4a551a",
@@ -253,7 +253,7 @@ func TestDerivation(t *testing.T) {
 		},
 		{
 			name:       "derivation path: m/0H",
-			path:       Path{h},
+			path:       []uint32{h},
 			wantPrivG1: "0da9a671ff3cc10514fa9cf8368af0756ad01e242bb3ae4d06a4061e6c3ec6be",
 			wantPrivG2: "0da9a671ff3cc10514fa9cf8368af0756ad01e242bb3ae4d06a4061e6c3ec6be",
 			wantPubG1:  "ad880d92cb1276c8d5768d26dcc3ebf23de4f0a1d12c9b99fdb6b745ff931d2c01925b4fec4147d7452faddc18564b98",
@@ -262,7 +262,7 @@ func TestDerivation(t *testing.T) {
 		},
 		{
 			name:       "derivation path: m/0H/1",
-			path:       Path{h, 1},
+			path:       []uint32{h, 1},
 			wantPrivG1: "0f356ce1bc5fd0d8c6ac274c7b206c2cb868b502af7a7065e836ca28f0d865a5",
 			wantPrivG2: "647e9be74b8648a198267e18c40d988b74f1ff8a33132fb012187ffd22c96fc4",
 			wantPubG1:  "92c9d3908b636a383c174bd3d27a8ae5b116240b90aa4d4b2425405b11eded72419284f04c66438578adffbc62e3698d",
@@ -271,7 +271,7 @@ func TestDerivation(t *testing.T) {
 		},
 		{
 			name:       "derivation path: m/0H/1/2H",
-			path:       Path{h, 1, 2 + h},
+			path:       []uint32{h, 1, 2 + h},
 			wantPrivG1: "1f8dd29cf00257ffd4bc4001580d2011ce23a0727ce20ee4156c7a6fb61964ce",
 			wantPrivG2: "578d64b2246b6b8c8906073b2de5cad50313997206ba872d38886d3d2d5eb508",
 			wantPubG1:  "93981a7ebf6ec8ffe6a5be1a4dfda93c8e9b192f79417ba5d4c4590c034306666ae3408146c33325ed8bab3fc0b01926",
@@ -280,7 +280,7 @@ func TestDerivation(t *testing.T) {
 		},
 		{
 			name:       "derivation path: m/0H/1/2H/2",
-			path:       Path{h, 1, 2 + h, 2},
+			path:       []uint32{h, 1, 2 + h, 2},
 			wantPrivG1: "1ff1c89c8ac0387cb6b66d79c3da6b4bdc400d991d71ae78aa569e8d005d84ae",
 			wantPrivG2: "22d2d08809f4fe0103b1b4750565da52147d8694c6c382320a988368ea0fe14c",
 			wantPubG1:  "8eec88f3d3dd95b6d234ca83a9862989c3b960196a482d7c81eafd207faf60acac5624101184394a9dd4a7848115320e",
@@ -289,7 +289,7 @@ func TestDerivation(t *testing.T) {
 		},
 		{
 			name:       "derivation path: m/0H/1/2H/2/1000000000",
-			path:       Path{h, 1, 2 + h, 2, 1000000000},
+			path:       []uint32{h, 1, 2 + h, 2, 1000000000},
 			wantPrivG1: "3475af3ba6a3dbb5c181d9be4eaf0bea3ba6d1493a7a028978b563acd0799a67",
 			wantPrivG2: "4a19cfe432a510604ca9e6cdfda424e021f477ebbdd7e4130c01d32d567a92ee",
 			wantPubG1:  "860c0f97c1e8ed8d8c0265898e872428a4d6f33a10700e26a2536a333a6a5579029e9dd870c3801867667dba6b750fff",
@@ -355,7 +355,7 @@ func TestInvalidDerivation(t *testing.T) {
 	t.Run("Private key is 31 bytes. It should be 32 bytes", func(t *testing.T) {
 		key := [31]byte{0}
 		chainCode := [32]byte{0}
-		ext := newExtendedKey(key[:], chainCode[:], Path{}, true, false)
+		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, true, false)
 		_, err := ext.Derive(HardenedKeyStart)
 		assert.ErrorIs(t, err, ErrInvalidKeyData)
 	})
@@ -363,7 +363,7 @@ func TestInvalidDerivation(t *testing.T) {
 	t.Run("Public key on G1 is 96 bytes. It should be 48 bytes", func(t *testing.T) {
 		key := [96]byte{0}
 		chainCode := [32]byte{0}
-		ext := newExtendedKey(key[:], chainCode[:], Path{}, false, true)
+		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, false, true)
 		_, err := ext.Derive(0)
 		assert.ErrorIs(t, err, ErrInvalidKeyData)
 	})
@@ -371,7 +371,7 @@ func TestInvalidDerivation(t *testing.T) {
 	t.Run("Public key on G2 is 42 bytes. It should be 96 bytes", func(t *testing.T) {
 		key := [95]byte{0}
 		chainCode := [32]byte{0}
-		ext := newExtendedKey(key[:], chainCode[:], Path{}, false, false)
+		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, false, false)
 		_, err := ext.Derive(0)
 		assert.ErrorIs(t, err, ErrInvalidKeyData)
 	})
@@ -379,7 +379,7 @@ func TestInvalidDerivation(t *testing.T) {
 	t.Run("Invalid key", func(t *testing.T) {
 		key := [95]byte{0}
 		chainCode := [32]byte{0}
-		ext := newExtendedKey(key[:], chainCode[:], Path{}, false, false)
+		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, false, false)
 		_, err := ext.Derive(0)
 		assert.ErrorIs(t, err, ErrInvalidKeyData)
 	})
@@ -387,7 +387,7 @@ func TestInvalidDerivation(t *testing.T) {
 	t.Run("Derive public key from hardened key", func(t *testing.T) {
 		key := [32]byte{0}
 		chainCode := [32]byte{0}
-		ext := newExtendedKey(key[:], chainCode[:], Path{}, false, false)
+		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, false, false)
 		_, err := ext.Derive(HardenedKeyStart)
 		assert.ErrorIs(t, err, ErrDeriveHardFromPublic)
 	})
@@ -433,7 +433,7 @@ func TestKeyToString(t *testing.T) {
 	h := HardenedKeyStart
 	tests := []struct {
 		name        string
-		path        Path
+		path        []uint32
 		wantXPrivG1 string
 		wantXPrivG2 string
 		wantXPubG1  string
@@ -441,7 +441,7 @@ func TestKeyToString(t *testing.T) {
 	}{
 		{
 			name:        "derivation path: m",
-			path:        Path{},
+			path:        []uint32{},
 			wantXPrivG1: "XSECRET1PQP3PH9J2P809LAD5S8G2T5MCD32Z7KS9QA2LEY8WRR2ASUDKT4R5JVPCZEA8KM7W57FFM6M27SQJ8CMM9MEPUJY0FPCLZM2PRY2YJPJH753GQ87P",
 			wantXPrivG2: "XSECRET1PQP3PH9J2P809LAD5S8G2T5MCD32Z7KS9QA2LEY8WRR2ASUDKT4R5JCPCZEA8KM7W57FFM6M27SQJ8CMM9MEPUJY0FPCLZM2PRY2YJPJH752EG3YW",
 			wantXPubG1:  "xpublic1pqp3ph9j2p809lad5s8g2t5mcd32z7ks9qa2ley8wrr2asudkt4r5jv9endgjxgwemwhzw86dgx93pg35t75yc8yg858e4qsk8wzvgpv536sj8uq3gyjcekld95pnatj225dqkj87e7",
@@ -449,7 +449,7 @@ func TestKeyToString(t *testing.T) {
 		},
 		{
 			name:        "derivation path: m/0H",
-			path:        Path{h},
+			path:        []uint32{h},
 			wantXPrivG1: "XSECRET1PQXQGPQYQPZLR8Y9H6D4SCKKR707WUTDW22J2K5K0X77J45PLNFU8UTS3DDSJ2VQD4XN8RLEUCYZ3F75ULQMG4UR4DTGPUFPTKWHY6P4YQC0XC0KXHCC8M7LE",
 			wantXPrivG2: "XSECRET1PQXQGPQYQPZLR8Y9H6D4SCKKR707WUTDW22J2K5K0X77J45PLNFU8UTS3DDSJ2CQD4XN8RLEUCYZ3F75ULQMG4UR4DTGPUFPTKWHY6P4YQC0XC0KXHCRKNG9K",
 			wantXPubG1:  "xpublic1pqxqgpqyqpzlr8y9h6d4sckkr707wutdw22j2k5k0x77j45plnfu8uts3ddsj2v9d3qxe9jcjwmyd2a5dymwv86lj8hj0pgw39jdenldkkazllyca9sqeyk60a3q5046997kacxzkfwvq90zc4g",
@@ -457,7 +457,7 @@ func TestKeyToString(t *testing.T) {
 		},
 		{
 			name:        "derivation path: m/0H/1",
-			path:        Path{h, 1},
+			path:        []uint32{h, 1},
 			wantXPrivG1: "XSECRET1PQ2QGPQYQPQQ65UA6MN3X4QULRNLCTZY30LX8U38KJ0NX3W88K8RVSP3KS06NA6PSPU6KECDUTLGD334VYAX8KGRV9JUX3DGZ4AA8QE0GXM9Z3UXCVKJSU8APV0",
 			wantXPrivG2: "XSECRET1PQ2QGPQYQPQQJCR83YKMDJ39MCEN24DDMK2ESK935LZT6J4WDUN47GXWDPCGUEVNQV3LFHE6TSEY2RXPX0CVVGRVC3D60RLU2XVFJLVQJRPLL6GKFDLZQT4UW7A",
 			wantXPubG1:  "xpublic1pq2qgpqyqpqq65ua6mn3x4qulrnlctzy30lx8u38kj0nx3w88k8rvsp3ks06na6psjtya8yytvd4rs0qhf0fay752ukc3vfqtjz4y6jeyy4q9ky0da4eyry5y7pxxvsu90zkll0rzud5c6p4824p",
@@ -465,7 +465,7 @@ func TestKeyToString(t *testing.T) {
 		},
 		{
 			name:        "derivation path: m/0H/1/2H",
-			path:        Path{h, 1, 2 + h},
+			path:        []uint32{h, 1, 2 + h},
 			wantXPrivG1: "XSECRET1PQWQGPQYQPQQC9QYQSQY2WE42YAR2XHFJKE9PG5734DUFWY84SPPNQU28A2NXTEW7RQX3KFESR7XA988SQFTLL49UGQQ4SRFQZ88Z8GRJ0N3QAEQ4D3AXLDSEVN8QSYHQXG",
 			wantXPrivG2: "XSECRET1PQWQGPQYQPQQC9QYQSQYXKJF465QLR30NMALS94SHVQ53KQ76J3DRVRURLZM7ZHYM8W279YMQ27XKFV3YDD4CEZGXQUAJMEW265P38XTJQ6AGWTFC3PKN6T27K5YQFFDQ0M",
 			wantXPubG1:  "xpublic1pqwqgpqyqpqqc9qyqsqy2we42yar2xhfjke9pg5734dufwy84sppnqu28a2nxtew7rqx3kfesjwvp5l4ldmy0le49hcdymldf8j8fkxf009qhhfw5c3vscq6rqenx4c6qs9rvxve9ak96k07qkqvjvvplzpf",
@@ -473,7 +473,7 @@ func TestKeyToString(t *testing.T) {
 		},
 		{
 			name:        "derivation path: m/0H/1/2H/2",
-			path:        Path{h, 1, 2 + h, 2},
+			path:        []uint32{h, 1, 2 + h, 2},
 			wantXPrivG1: "XSECRET1PQJQGPQYQPQQC9QYQSQYQ9P9NU8EW0SLNHN9YY0KWD9CR4VR30CLFD3Y085WAXSREUC94J8JAXQ0LRJYU3TQRSL9KKEKHNS76DD9ACSQDNYWHRTNC4FTFARGQTKZ2UX2Z56E",
 			wantXPrivG2: "XSECRET1PQJQGPQYQPQQC9QYQSQYQ9LLEUG0UDJJ8WZVAXSA3HW9VFPM3D2DJJXNK9S0K6R74CF9ZTE7RVQ3D95YGP860UQGRKX682PT9MFFPGLVXJNRV8Q3JP2VGX682PLS5CA364WS",
 			wantXPubG1:  "xpublic1pqjqgpqyqpqqc9qyqsqyq9p9nu8ew0slnhn9yy0kwd9cr4vr30clfd3y085waxsreuc94j8jaxz8wez8n60wetdkjxn9g82vx9xyu8wtqr94ysttus8406grl4as2etzkysgprppef2waffuysy2nyrslzejaa",
@@ -481,7 +481,7 @@ func TestKeyToString(t *testing.T) {
 		},
 		{
 			name:        "derivation path: m/0H/1/2H/2/1000000000",
-			path:        Path{h, 1, 2 + h, 2, 1000000000},
+			path:        []uint32{h, 1, 2 + h, 2, 1000000000},
 			wantXPrivG1: "XSECRET1PQKQGPQYQPQQC9QYQSQYQ9QY5A0WQ8PVGMPS3CW8PX6JX68GKNJ3FJU9GHDQK9ZY8S4UKMFDVX9MW7HFDXQ68TTEM563AHDWPS8VMUN40P04RHFK3FYA85Q5F0Z6K8TXS0XDXWJ5TMS2",
 			wantXPrivG2: "XSECRET1PQKQGPQYQPQQC9QYQSQYQ9QY5A0WQX58Q3Z4FS7DY3Z5QZ82LHG056HEL6RMTG0JTVC5E050DWFCZKDPWVP9PNNLYX2J3QCZV48NVMLDYYNSZRARHAW7A0EQNPSQAXT2K02FWUY38N3L",
 			wantXPubG1:  "xpublic1pqkqgpqyqpqqc9qyqsqyq9qy5a0wq8pvgmps3cw8px6jx68gknj3fju9ghdqk9zy8s4ukmfdvx9mw7hfdxzrqcruhc85wmrvvqfjcnr58ys52f4hn8gg8qr3x5ffk5ve6df2hjq57nhv8psuqrpnkvld6dd6sllcvmc8y5",

@@ -153,7 +153,7 @@ func TestValidatorByAddress(t *testing.T) {
 	})
 
 	t.Run("Unknown address", func(t *testing.T) {
-		val, err := td.store.Validator(td.RandAddress())
+		val, err := td.store.Validator(td.RandAccAddress())
 		assert.Error(t, err)
 		assert.Nil(t, val)
 	})
@@ -175,24 +175,24 @@ func TestIterateValidators(t *testing.T) {
 	td := setup(t)
 
 	total := td.RandInt32NonZero(100)
-	vals1 := []hash.Hash{}
+	hashes1 := []hash.Hash{}
 	for i := int32(0); i < total; i++ {
 		val, _ := td.GenerateTestValidator(i)
 		td.store.UpdateValidator(val)
-		vals1 = append(vals1, val.Hash())
+		hashes1 = append(hashes1, val.Hash())
 	}
 	assert.NoError(t, td.store.WriteBatch())
 
-	vals2 := []hash.Hash{}
+	hashes2 := []hash.Hash{}
 	td.store.IterateValidators(func(val *validator.Validator) bool {
-		vals2 = append(vals2, val.Hash())
+		hashes2 = append(hashes2, val.Hash())
 		return false
 	})
-	assert.ElementsMatch(t, vals1, vals2)
+	assert.ElementsMatch(t, hashes1, hashes2)
 
 	stopped := false
 	td.store.IterateValidators(func(val *validator.Validator) bool {
-		if val.Hash().EqualsTo(vals1[0]) {
+		if val.Hash() == hashes1[0] {
 			stopped = true
 		}
 		return stopped

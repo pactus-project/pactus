@@ -94,7 +94,7 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 	t.Run("invalid number of reward addresses", func(t *testing.T) {
 		conf := DefaultNodeConfig()
 		conf.RewardAddresses = []string{
-			ts.RandAddress().String(),
+			ts.RandAccAddress().String(),
 		}
 
 		assert.Error(t, conf.BasicCheck())
@@ -104,7 +104,7 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 		conf := DefaultNodeConfig()
 		conf.NumValidators = 2
 		conf.RewardAddresses = []string{
-			ts.RandAddress().String(),
+			ts.RandAccAddress().String(),
 			"abcd",
 		}
 
@@ -115,8 +115,8 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 		conf := DefaultNodeConfig()
 		conf.NumValidators = 2
 		conf.RewardAddresses = []string{
-			ts.RandAddress().String(),
-			ts.RandAddress().String(),
+			ts.RandAccAddress().String(),
+			ts.RandAccAddress().String(),
 		}
 
 		assert.NoError(t, conf.BasicCheck())

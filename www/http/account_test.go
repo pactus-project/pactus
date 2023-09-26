@@ -14,12 +14,12 @@ import (
 func TestAccount(t *testing.T) {
 	td := setup(t)
 
-	acc, signer := td.mockState.TestStore.AddTestAccount()
+	acc, addr := td.mockState.TestStore.AddTestAccount()
 
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"address": signer.Address().String()})
+		r = mux.SetURLVars(r, map[string]string{"address": addr.String()})
 		td.httpServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
@@ -30,7 +30,7 @@ func TestAccount(t *testing.T) {
 	t.Run("Shall return nil, non exist", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"address": td.RandAddress().String()})
+		r = mux.SetURLVars(r, map[string]string{"address": td.RandAccAddress().String()})
 		td.httpServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)

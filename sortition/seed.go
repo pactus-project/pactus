@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 )
@@ -33,14 +32,14 @@ func VerifiableSeedFromBytes(data []byte) (VerifiableSeed, error) {
 	return s, nil
 }
 
-func (s *VerifiableSeed) GenerateNext(signer crypto.Signer) VerifiableSeed {
+func (s *VerifiableSeed) GenerateNext(prv *bls.PrivateKey) VerifiableSeed {
 	hash := hash.CalcHash(s[:])
-	sig := signer.SignData(hash.Bytes())
+	sig := prv.Sign(hash.Bytes())
 	newSeed, _ := VerifiableSeedFromBytes(sig.Bytes())
 	return newSeed
 }
 
-func (s *VerifiableSeed) Verify(public crypto.PublicKey, prevSeed VerifiableSeed) bool {
+func (s *VerifiableSeed) Verify(public *bls.PublicKey, prevSeed VerifiableSeed) bool {
 	sig, err := bls.SignatureFromBytes(s[:])
 	if err != nil {
 		return false

@@ -3,6 +3,8 @@ package node
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls"
+
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -36,9 +38,9 @@ func TestRunningNode(t *testing.T) {
 	conf.Network.EnableRelay = false
 	conf.Network.NetworkKey = util.TempFilePath()
 
-	signers := []crypto.Signer{ts.RandSigner(), ts.RandSigner()}
-	rewardAddrs := []crypto.Address{ts.RandAddress(), ts.RandAddress()}
-	n, err := NewNode(gen, conf, signers, rewardAddrs)
+	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
+	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()}
+	n, err := NewNode(gen, conf, valKeys, rewardAddrs)
 
 	require.NoError(t, err)
 	assert.Equal(t, n.state.LastBlockHash(), hash.UndefHash)

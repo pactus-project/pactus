@@ -1,4 +1,4 @@
-package hdkeychain
+package addresspath
 
 import (
 	"strconv"

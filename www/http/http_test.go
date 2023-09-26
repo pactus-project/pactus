@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/consensus"
-	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -38,8 +38,8 @@ func setup(t *testing.T) *testData {
 
 	mockState := state.MockingState(ts)
 	mockSync := sync.MockingSync(ts)
-	mockConsMgr, _ := consensus.MockingManager(ts, []crypto.Signer{
-		ts.RandSigner(), ts.RandSigner(),
+	mockConsMgr, _ := consensus.MockingManager(ts, []*bls.PrivateKey{
+		ts.RandValKey().PrivateKey(), ts.RandValKey().PrivateKey(),
 	})
 
 	grpcConf := &grpc.Config{
