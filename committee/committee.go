@@ -50,7 +50,7 @@ func NewCommittee(validators []*validator.Validator, committeeSize int,
 
 func (c *committee) TotalPower() int64 {
 	p := int64(0)
-	c.iterate(func(v *validator.Validator) (stop bool) {
+	c.iterate(func(v *validator.Validator) bool {
 		p += v.Power()
 		return false
 	})
@@ -117,7 +117,7 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 func (c *committee) Validators() []*validator.Validator {
 	vals := make([]*validator.Validator, c.validatorList.Length())
 	i := 0
-	c.iterate(func(v *validator.Validator) (stop bool) {
+	c.iterate(func(v *validator.Validator) bool {
 		vals[i] = cloneValidator(v)
 		i++
 		return false
@@ -132,7 +132,7 @@ func (c *committee) Contains(addr crypto.Address) bool {
 
 func (c *committee) find(addr crypto.Address) *validator.Validator {
 	var found *validator.Validator
-	c.iterate(func(v *validator.Validator) (stop bool) {
+	c.iterate(func(v *validator.Validator) bool {
 		if v.Address().EqualsTo(addr) {
 			found = v
 			return true
@@ -169,7 +169,7 @@ func (c *committee) proposer(round int16) *validator.Validator {
 func (c *committee) Committers() []int32 {
 	committers := make([]int32, c.validatorList.Length())
 	i := 0
-	c.iterate(func(v *validator.Validator) (stop bool) {
+	c.iterate(func(v *validator.Validator) bool {
 		committers[i] = v.Number()
 		i++
 		return false

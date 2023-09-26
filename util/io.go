@@ -124,14 +124,15 @@ type FixedWriter struct {
 // io.ErrShortWrite is returned and the writer is left unchanged.
 //
 // This satisfies the io.Writer interface.
-func (w *FixedWriter) Write(p []byte) (n int, err error) {
+func (w *FixedWriter) Write(p []byte) (int, error) {
 	lenp := len(p)
+
 	if w.pos+lenp > cap(w.b) {
 		return 0, io.ErrShortWrite
 	}
-	n = lenp
+
 	w.pos += copy(w.b[w.pos:], p)
-	return
+	return lenp, nil
 }
 
 // Bytes returns the bytes already written to the fixed writer.
@@ -160,10 +161,14 @@ type FixedReader struct {
 // the fixed writer, an error is returned.
 //
 // This satisfies the io.Reader interface.
-func (fr *FixedReader) Read(p []byte) (n int, err error) {
-	n, err = fr.iobuf.Read(p)
+func (fr *FixedReader) Read(p []byte) (int, error) {
+	n, err := fr.iobuf.Read(p)
+	if err != nil {
+		return 0, err
+	}
+
 	fr.pos += n
-	return
+	return n, nil
 }
 
 // newFixedReader returns a new io.Reader that will error once more bytes than

@@ -15,19 +15,23 @@ func init() {
 	denominator.SetString("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16)
 }
 
-// Evaluate returns a random number between 0 and max with the proof.
-func Evaluate(seed VerifiableSeed, signer crypto.Signer, max uint64) (index uint64, proof Proof) {
+// Evaluate returns a provable random number between [0, max) along with a proof.
+// It returns the random number and the proof that can regenerate the random number using
+// the public key of the signer, without revealing the private key.
+func Evaluate(seed VerifiableSeed, signer crypto.Signer, max uint64) (uint64, Proof) {
 	signData := append(seed[:], signer.PublicKey().Bytes()...)
 	sig := signer.SignData(signData)
 
-	proof, _ = ProofFromBytes(sig.Bytes())
-	index = GetIndex(proof, max)
+	proof, _ := ProofFromBytes(sig.Bytes())
+	index := GetIndex(proof, max)
 
 	return index, proof
 }
 
-// Verify ensures the proof is valid.
-func Verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max uint64) (index uint64, result bool) {
+// Verify checks if the provided proof, based on the seed and public key, is valid.
+// If the proof is valid, it calculates the random number that
+// can be generated based on the given proof.
+func Verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max uint64) (uint64, bool) {
 	proofSig, err := bls.SignatureFromBytes(proof[:])
 	if err != nil {
 		return 0, false
@@ -39,7 +43,7 @@ func Verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max ui
 		return 0, false
 	}
 
-	index = GetIndex(proof, max)
+	index := GetIndex(proof, max)
 
 	return index, true
 }

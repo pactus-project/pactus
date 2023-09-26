@@ -7,3 +7,8 @@ todo
 dist/
 .releaser.yml
 pactus-*
+
+# vim artifacts
+.swp
+.*.sw*
+

@@ -37,7 +37,6 @@ linters:
     - exhaustruct # Consider to enable it
     - forcetypeassert # Consider to enable it
     - goerr113 # Consider to enable it
-    - nonamedreturns # Consider to enable it
     - nlreturn # Consider to enable it
     - ireturn  # Consider to enable it (??)
 
@@ -70,6 +69,11 @@ linters-settings:
         json: snake
         yaml: snake
 
+  nonamedreturns:
+    # Report named error if it is assigned inside defer.
+    # Default: false
+     report-error-in-defer: false 
+
 issues:
   exclude-rules:
     # disable funlen for all _test.go files
@@ -80,3 +84,4 @@ issues:
     - linters:
         - govet
       text: "shadow: declaration of \"err\" shadows"
+
