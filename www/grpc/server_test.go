@@ -39,8 +39,8 @@ func init() {
 
 	const bufSize = 1024 * 1024
 
-	consMgr, consMocks := consensus.MockingManager(ts, []*bls.PrivateKey{
-		ts.RandValKey().PrivateKey(), ts.RandValKey().PrivateKey(),
+	consMgr, consMocks := consensus.MockingManager(ts, []*bls.ValidatorKey{
+		ts.RandValKey(), ts.RandValKey(),
 	})
 
 	tListener = bufconn.Listen(bufSize)

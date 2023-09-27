@@ -96,11 +96,11 @@ func TestSetRoundProposal(t *testing.T) {
 func TestCanVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	committee, signers := ts.GenerateTestCommittee(4)
+	committee, valKeys := ts.GenerateTestCommittee(4)
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
 
 	addr := ts.RandAccAddress()
-	assert.True(t, log.CanVote(signers[0].Address()))
+	assert.True(t, log.CanVote(valKeys[0].Address()))
 	assert.False(t, log.CanVote(addr))
 }

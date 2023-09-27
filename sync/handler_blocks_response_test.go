@@ -136,8 +136,8 @@ func TestSyncing(t *testing.T) {
 	valKeyBob := []*bls.ValidatorKey{ts.RandValKey()}
 	stateAlice := state.MockingState(ts)
 	stateBob := state.MockingState(ts)
-	consMgrAlice, _ := consensus.MockingManager(ts, []*bls.PrivateKey{valKeyAlice[0].PrivateKey()})
-	consMgrBob, _ := consensus.MockingManager(ts, []*bls.PrivateKey{valKeyBob[0].PrivateKey()})
+	consMgrAlice, _ := consensus.MockingManager(ts, valKeyAlice)
+	consMgrBob, _ := consensus.MockingManager(ts, valKeyBob)
 	broadcastChAlice := make(chan message.Message, 1000)
 	broadcastChBob := make(chan message.Message, 1000)
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())

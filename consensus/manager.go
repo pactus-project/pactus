@@ -14,7 +14,7 @@ type manager struct {
 }
 
 // NewManager creates a new manager instance that manages a set of consensus instances,
-// each associated with a signer and reward address.
+// each associated with a validator key and a reward address.
 func NewManager(
 	conf *Config,
 	state state.Facade,

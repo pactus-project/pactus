@@ -69,10 +69,18 @@ func TestPublicKeyVerifyAddress(t *testing.T) {
 
 	err := pub1.VerifyAddress(pub1.AccountAddress())
 	assert.NoError(t, err)
+	err = pub1.VerifyAddress(pub1.ValidatorAddress())
+	assert.NoError(t, err)
+
 	err = pub1.VerifyAddress(pub2.AccountAddress())
 	assert.Equal(t, err, crypto.AddressMismatchError{
 		Expected: pub1.AccountAddress(),
 		Got:      pub2.AccountAddress(),
+	})
+	err = pub1.VerifyAddress(pub2.ValidatorAddress())
+	assert.Equal(t, err, crypto.AddressMismatchError{
+		Expected: pub1.ValidatorAddress(),
+		Got:      pub2.ValidatorAddress(),
 	})
 }
 

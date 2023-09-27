@@ -73,7 +73,7 @@ func setup(t *testing.T, config *Config) *testData {
 	}
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	mockState := state.MockingState(ts)
-	consMgr, consMocks := consensus.MockingManager(ts, []*bls.PrivateKey{valKeys[0].PrivateKey(), valKeys[1].PrivateKey()})
+	consMgr, consMocks := consensus.MockingManager(ts, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
 	broadcastCh := make(chan message.Message, 1000)
 	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())
 
@@ -209,7 +209,7 @@ func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.Pub
 	require.True(t, td.state.TestCommittee.Contains(pub.(*bls.PublicKey).ValidatorAddress()))
 
 	for _, cons := range td.consMocks {
-		cons.SetActive(cons.ConsKey.PublicKey().EqualsTo(pub))
+		cons.SetActive(cons.ValKey.PublicKey().EqualsTo(pub))
 	}
 }
 

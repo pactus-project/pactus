@@ -396,7 +396,6 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 	addrLabels := walletInstance.AddressInfos()
 
-	// Create signers
 	if len(addrLabels) < conf.Node.NumValidators {
 		return nil, nil, fmt.Errorf("not enough addresses in wallet")
 	}

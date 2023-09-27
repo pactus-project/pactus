@@ -38,8 +38,8 @@ func setup(t *testing.T) *testData {
 
 	mockState := state.MockingState(ts)
 	mockSync := sync.MockingSync(ts)
-	mockConsMgr, _ := consensus.MockingManager(ts, []*bls.PrivateKey{
-		ts.RandValKey().PrivateKey(), ts.RandValKey().PrivateKey(),
+	mockConsMgr, _ := consensus.MockingManager(ts, []*bls.ValidatorKey{
+		ts.RandValKey(), ts.RandValKey(),
 	})
 
 	grpcConf := &grpc.Config{

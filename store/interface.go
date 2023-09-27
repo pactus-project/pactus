@@ -68,7 +68,7 @@ func (s *CommittedTx) ToTx() (*tx.Tx, error) {
 		pub, err := s.PublicKey(trx.Payload().Signer())
 		if err != nil {
 			return nil, PublicKeyNotFoundError{
-				Address: trx.PublicKey().(*bls.PublicKey).ValidatorAddress(),
+				Address: trx.Payload().Signer(),
 			}
 		}
 		trx.SetPublicKey(pub)

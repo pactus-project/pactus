@@ -17,7 +17,7 @@ type MockConsensus struct {
 	lk sync.RWMutex
 	ts *testsuite.TestSuite
 
-	ConsKey  *bls.PrivateKey
+	ValKey   *bls.ValidatorKey
 	Votes    []*vote.Vote
 	Proposal *proposal.Proposal
 	Active   bool
@@ -25,7 +25,7 @@ type MockConsensus struct {
 	Round    int16
 }
 
-func MockingManager(ts *testsuite.TestSuite, valKeys []*bls.PrivateKey) (Manager, []*MockConsensus) {
+func MockingManager(ts *testsuite.TestSuite, valKeys []*bls.ValidatorKey) (Manager, []*MockConsensus) {
 	mocks := make([]*MockConsensus, len(valKeys))
 	instances := make([]Consensus, len(valKeys))
 	for i, s := range valKeys {
@@ -39,15 +39,15 @@ func MockingManager(ts *testsuite.TestSuite, valKeys []*bls.PrivateKey) (Manager
 	}, mocks
 }
 
-func MockingConsensus(ts *testsuite.TestSuite, consKey *bls.PrivateKey) *MockConsensus {
+func MockingConsensus(ts *testsuite.TestSuite, valKey *bls.ValidatorKey) *MockConsensus {
 	return &MockConsensus{
-		ts:      ts,
-		ConsKey: consKey,
+		ts:     ts,
+		ValKey: valKey,
 	}
 }
 
 func (m *MockConsensus) ConsensusKey() *bls.PublicKey {
-	return m.ConsKey.PublicKeyNative()
+	return m.ValKey.PublicKey()
 }
 
 func (m *MockConsensus) MoveToNewHeight() {

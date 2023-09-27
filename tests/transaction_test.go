@@ -57,27 +57,27 @@ func TestTransactions(t *testing.T) {
 	pubCarol, _ := ts.RandBLSKeyPair()
 	pubDave, _ := ts.RandBLSKeyPair()
 
-	signerAlice := bls.NewValidatorKey(prvAlice)
-	signerBob := bls.NewValidatorKey(prvBob)
+	valKeyAlice := bls.NewValidatorKey(prvAlice)
+	valKeyBob := bls.NewValidatorKey(prvBob)
 
 	t.Run("Sending normal transaction", func(t *testing.T) {
 		require.NoError(t, broadcastSendTransaction(t, tValKeys[tNodeIdx2][0], pubAlice.AccountAddress(), 80000000, 8000))
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
-		require.Error(t, broadcastSendTransaction(t, signerAlice, pubBob.AccountAddress(), 500000, 0))
+		require.Error(t, broadcastSendTransaction(t, valKeyAlice, pubBob.AccountAddress(), 500000, 0))
 	})
 
 	t.Run("Alice tries double spending", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, signerAlice, pubBob.AccountAddress(), 50000000, 5000))
+		require.NoError(t, broadcastSendTransaction(t, valKeyAlice, pubBob.AccountAddress(), 50000000, 5000))
 
-		require.Error(t, broadcastSendTransaction(t, signerAlice, pubCarol.AccountAddress(), 50000000, 5000))
+		require.Error(t, broadcastSendTransaction(t, valKeyAlice, pubCarol.AccountAddress(), 50000000, 5000))
 	})
 
 	t.Run("Bob sends two transaction at once", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, signerBob, pubCarol.AccountAddress(), 10, 1000))
+		require.NoError(t, broadcastSendTransaction(t, valKeyBob, pubCarol.AccountAddress(), 10, 1000))
 
-		require.NoError(t, broadcastSendTransaction(t, signerBob, pubDave.AccountAddress(), 1, 1000))
+		require.NoError(t, broadcastSendTransaction(t, valKeyBob, pubDave.AccountAddress(), 1, 1000))
 	})
 
 	t.Run("Bonding transactions", func(t *testing.T) {
@@ -86,12 +86,12 @@ func TestTransactions(t *testing.T) {
 		for i := 0; i < tTotalNodes; i++ {
 			amt := int64(1000000)
 			fee := int64(1000)
-			signer := tValKeys[tNodeIdx1][0]
+			valKey := tValKeys[tNodeIdx1][0]
 
-			require.NoError(t, broadcastBondTransaction(t, signer, tValKeys[i][1].PublicKey(), amt, fee))
+			require.NoError(t, broadcastBondTransaction(t, valKey, tValKeys[i][1].PublicKey(), amt, fee))
 			fmt.Printf("Staking %v to %v\n", amt, tValKeys[i][1].Address())
 
-			require.NoError(t, broadcastBondTransaction(t, signer, tValKeys[i][2].PublicKey(), amt, fee))
+			require.NoError(t, broadcastBondTransaction(t, valKey, tValKeys[i][2].PublicKey(), amt, fee))
 			fmt.Printf("Staking %v to %v\n", amt, tValKeys[i][2].Address())
 		}
 	})
