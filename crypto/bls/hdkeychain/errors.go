@@ -30,7 +30,4 @@ var (
 	// ErrInvalidKeyData describes an error in which the provided key is
 	// not valid.
 	ErrInvalidKeyData = errors.New("key data is invalid")
-
-	// ErrInvalidPath describes an error in which the key path is invalid.
-	ErrInvalidPath = errors.New("the key path is invalid")
 )

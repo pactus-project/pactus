@@ -57,7 +57,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 		for _, key := range p.ConsensusKeys {
 			pub, _ := bls.PublicKeyFromString(key)
 			tm.addRowString("  PublicKey", pub.String())
-			tm.addRowValAddress("  Address", pub.Address().String())
+			tm.addRowValAddress("  Address", pub.ValidatorAddress().String())
 		}
 		tm.addRowString("Agent", p.Agent)
 		tm.addRowString("Moniker", p.Moniker)

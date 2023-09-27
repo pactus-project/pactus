@@ -6,7 +6,8 @@ option java_package = "pactus.transaction";
 service Transaction {
   rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
   rpc CalculateFee(CalculateFeeRequest) returns (CalculateFeeResponse);
-  rpc SendRawTransaction(SendRawTransactionRequest) returns (SendRawTransactionResponse);
+  rpc SendRawTransaction(SendRawTransactionRequest)
+      returns (SendRawTransactionResponse);
 }
 
 message GetTransactionRequest {
@@ -25,9 +26,7 @@ message CalculateFeeRequest {
   PayloadType payloadType = 2;
 }
 
-message CalculateFeeResponse {
-  int64 fee = 1;
-}
+message CalculateFeeResponse { int64 fee = 1; }
 
 message SendRawTransactionRequest {bytes data = 1;}
 
@@ -50,9 +49,7 @@ message PayloadSortition {
   bytes proof = 2;
 }
 
-message PayloadUnbond {
-  string validator = 1;
-}
+message PayloadUnbond { string validator = 1; }
 
 message PayloadWithdraw {
   string from = 1;

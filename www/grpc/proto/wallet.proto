@@ -21,23 +21,13 @@ message CreateWalletRequest {
 
 message CreateWalletResponse {}
 
+message LoadWalletRequest { string name = 1; }
 
-message LoadWalletRequest {
-  string name = 1;
-}
+message LoadWalletResponse { string name = 1; }
 
-message LoadWalletResponse {
-  string name = 1;
-}
+message UnloadWalletRequest { string name = 1; }
 
-
-message UnloadWalletRequest {
-  string name = 1;
-}
-
-message UnloadWalletResponse {
-  string name = 1;
-}
+message UnloadWalletResponse { string name = 1; }
 
 message LockWalletRequest {
   string password = 1;

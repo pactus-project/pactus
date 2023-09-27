@@ -282,7 +282,7 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
 		// Let's check if we can get public key from the wallet
 		info := w.store.Vault.AddressInfo(receiver)
 		if info != nil {
-			pubKey = info.Pub.String()
+			pubKey = info.PublicKey
 		}
 	}
 	if pubKey != "" {
@@ -341,8 +341,9 @@ func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
 		return err
 	}
 
-	signer := crypto.NewSigner(prv)
-	signer.SignMsg(trx)
+	sig := prv.Sign(trx.SignBytes())
+	trx.SetSignature(sig)
+	trx.SetPublicKey(prv.PublicKey())
 	return nil
 }
 
@@ -378,8 +379,8 @@ func (w *Wallet) AddressInfo(addr string) *vault.AddressInfo {
 	return w.store.Vault.AddressInfo(addr)
 }
 
-func (w *Wallet) AddressLabels() []vault.AddressInfo {
-	return w.store.Vault.AddressLabels()
+func (w *Wallet) AddressInfos() []vault.AddressInfo {
+	return w.store.Vault.AddressInfos()
 }
 
 // AddressCount returns the number of addresses inside the wallet.
@@ -387,7 +388,7 @@ func (w *Wallet) AddressCount() int {
 	return w.store.Vault.AddressCount()
 }
 
-func (w *Wallet) ImportPrivateKey(password string, prv crypto.PrivateKey) error {
+func (w *Wallet) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 	return w.store.Vault.ImportPrivateKey(password, prv)
 }
 
@@ -403,8 +404,16 @@ func (w *Wallet) PrivateKeys(password string, addrs []string) ([]crypto.PrivateK
 	return w.store.Vault.PrivateKeys(password, addrs)
 }
 
-func (w *Wallet) DeriveNewAddress(label string) (string, error) {
-	return w.store.Vault.DeriveNewAddress(label, vault.PurposeBLS12381)
+// NewBLSAccountAddress create a new BLS-based account address and
+// associates it with the given label.
+func (w *Wallet) NewBLSAccountAddress(label string) (string, error) {
+	return w.store.Vault.NewBLSAccountAddress(label)
+}
+
+// NewValidatorAddress creates a new BLS validator address and
+// associates it with the given label.
+func (w *Wallet) NewValidatorAddress(label string) (string, error) {
+	return w.store.Vault.NewValidatorAddress(label)
 }
 
 func (w *Wallet) Contains(addr string) bool {

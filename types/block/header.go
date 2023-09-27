@@ -80,9 +80,10 @@ func (h *Header) BasicCheck() error {
 			Reason: fmt.Sprintf("invalid state root: %s", err.Error()),
 		}
 	}
-	if err := h.data.ProposerAddress.BasicCheck(); err != nil {
+	if !h.data.ProposerAddress.IsValidatorAddress() {
 		return BasicCheckError{
-			Reason: fmt.Sprintf("invalid proposer address: %s", err.Error()),
+			Reason: fmt.Sprintf("invalid proposer address: %s",
+				h.data.ProposerAddress.String()),
 		}
 	}
 
@@ -94,7 +95,6 @@ func (h *Header) SerializeSize() int {
 	return 138 // 5 + (2 * 32) + 48 + 21
 }
 
-// Encode encodes the receiver to w.
 func (h *Header) Encode(w io.Writer) error {
 	return encoding.WriteElements(w,
 		h.data.Version,

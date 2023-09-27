@@ -72,7 +72,7 @@ linters-settings:
   nonamedreturns:
     # Report named error if it is assigned inside defer.
     # Default: false
-     report-error-in-defer: false 
+     report-error-in-defer: false
 
 issues:
   exclude-rules:
@@ -80,8 +80,8 @@ issues:
     - path: _test.go
       linters:
         - funlen
+        - maintidx
 
     - linters:
         - govet
       text: "shadow: declaration of \"err\" shadows"
-

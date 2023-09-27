@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/consensus"
-	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util"
@@ -39,8 +39,8 @@ func init() {
 
 	const bufSize = 1024 * 1024
 
-	consMgr, consMocks := consensus.MockingManager(ts, []crypto.Signer{
-		ts.RandSigner(), ts.RandSigner(),
+	consMgr, consMocks := consensus.MockingManager(ts, []*bls.ValidatorKey{
+		ts.RandValKey(), ts.RandValKey(),
 	})
 
 	tListener = bufconn.Listen(bufSize)

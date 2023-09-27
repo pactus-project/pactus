@@ -3,7 +3,6 @@ package sortition
 import (
 	"math/big"
 
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 )
@@ -18,9 +17,9 @@ func init() {
 // Evaluate returns a provable random number between [0, max) along with a proof.
 // It returns the random number and the proof that can regenerate the random number using
 // the public key of the signer, without revealing the private key.
-func Evaluate(seed VerifiableSeed, signer crypto.Signer, max uint64) (uint64, Proof) {
-	signData := append(seed[:], signer.PublicKey().Bytes()...)
-	sig := signer.SignData(signData)
+func Evaluate(seed VerifiableSeed, prv *bls.PrivateKey, max uint64) (uint64, Proof) {
+	signData := append(seed[:], prv.PublicKey().Bytes()...)
+	sig := prv.Sign(signData)
 
 	proof, _ := ProofFromBytes(sig.Bytes())
 	index := GetIndex(proof, max)
@@ -31,15 +30,15 @@ func Evaluate(seed VerifiableSeed, signer crypto.Signer, max uint64) (uint64, Pr
 // Verify checks if the provided proof, based on the seed and public key, is valid.
 // If the proof is valid, it calculates the random number that
 // can be generated based on the given proof.
-func Verify(seed VerifiableSeed, publicKey crypto.PublicKey, proof Proof, max uint64) (uint64, bool) {
+func Verify(seed VerifiableSeed, pub *bls.PublicKey, proof Proof, max uint64) (uint64, bool) {
 	proofSig, err := bls.SignatureFromBytes(proof[:])
 	if err != nil {
 		return 0, false
 	}
 
 	// Verify signature (proof)
-	signData := append(seed[:], publicKey.Bytes()...)
-	if err := publicKey.Verify(signData, proofSig); err != nil {
+	signData := append(seed[:], pub.Bytes()...)
+	if err := pub.Verify(signData, proofSig); err != nil {
 		return 0, false
 	}
 

@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/proposal"
@@ -13,21 +14,21 @@ type manager struct {
 }
 
 // NewManager creates a new manager instance that manages a set of consensus instances,
-// each associated with a signer and reward address.
+// each associated with a validator key and a reward address.
 func NewManager(
 	conf *Config,
 	state state.Facade,
-	signers []crypto.Signer,
+	valKeys []*bls.ValidatorKey,
 	rewardAddrs []crypto.Address,
 	broadcastCh chan message.Message,
 ) Manager {
 	mgr := &manager{
-		instances: make([]Consensus, len(signers)),
+		instances: make([]Consensus, len(valKeys)),
 	}
 	mediatorConcrete := newConcreteMediator()
 
-	for i, signer := range signers {
-		cons := NewConsensus(conf, state, signer, rewardAddrs[i], broadcastCh, mediatorConcrete)
+	for i, key := range valKeys {
+		cons := NewConsensus(conf, state, key, rewardAddrs[i], broadcastCh, mediatorConcrete)
 
 		mgr.instances[i] = cons
 	}

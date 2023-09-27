@@ -52,14 +52,14 @@ func shouldPublishProposal(t *testing.T, broadcastCh chan message.Message,
 func TestManager(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	_, committeeSigners := ts.GenerateTestCommittee(5)
+	_, committeeValKeys := ts.GenerateTestCommittee(5)
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
 	params := param.DefaultParams()
 	params.BlockIntervalInSecond = 1
 	vals := make([]*validator.Validator, 5)
-	for i, s := range committeeSigners {
-		val := validator.NewValidator(s.PublicKey().(*bls.PublicKey), int32(i))
+	for i, s := range committeeValKeys {
+		val := validator.NewValidator(s.PublicKey(), int32(i))
 		vals[i] = val
 	}
 	accs := map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc}
@@ -68,23 +68,23 @@ func TestManager(t *testing.T) {
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
 
 	rewardAddrs := []crypto.Address{
-		ts.RandAddress(), ts.RandAddress(),
-		ts.RandAddress(), ts.RandAddress(),
-		ts.RandAddress(),
+		ts.RandAccAddress(), ts.RandAccAddress(),
+		ts.RandAccAddress(), ts.RandAccAddress(),
+		ts.RandAccAddress(),
 	}
-	signers := make([]crypto.Signer, 5)
-	signers[0] = committeeSigners[0]
-	signers[1] = ts.RandSigner()
-	signers[2] = committeeSigners[1]
-	signers[3] = ts.RandSigner()
-	signers[4] = ts.RandSigner()
+	valKeys := make([]*bls.ValidatorKey, 5)
+	valKeys[0] = committeeValKeys[0]
+	valKeys[1] = ts.RandValKey()
+	valKeys[2] = committeeValKeys[1]
+	valKeys[3] = ts.RandValKey()
+	valKeys[4] = ts.RandValKey()
 	broadcastCh := make(chan message.Message, 500)
 	txPool := txpool.MockingTxPool()
 
-	state, err := state.LoadOrNewState(genDoc, signers, store.MockingStore(ts), txPool, nil)
+	state, err := state.LoadOrNewState(genDoc, valKeys, store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
 
-	Mgr := NewManager(testConfig(), state, signers, rewardAddrs, broadcastCh)
+	Mgr := NewManager(testConfig(), state, valKeys, rewardAddrs, broadcastCh)
 	mgr := Mgr.(*manager)
 
 	consA := mgr.instances[0].(*consensus) // active
@@ -102,11 +102,11 @@ func TestManager(t *testing.T) {
 	newHeightTimeout(consE)
 
 	t.Run("Check if keys are assigned properly", func(t *testing.T) {
-		assert.Equal(t, signers[0].PublicKey(), consA.SignerKey())
-		assert.Equal(t, signers[1].PublicKey(), consB.SignerKey())
-		assert.Equal(t, signers[2].PublicKey(), consC.SignerKey())
-		assert.Equal(t, signers[3].PublicKey(), consD.SignerKey())
-		assert.Equal(t, signers[4].PublicKey(), consE.SignerKey())
+		assert.Equal(t, valKeys[0].PublicKey(), consA.ConsensusKey())
+		assert.Equal(t, valKeys[1].PublicKey(), consB.ConsensusKey())
+		assert.Equal(t, valKeys[2].PublicKey(), consC.ConsensusKey())
+		assert.Equal(t, valKeys[3].PublicKey(), consD.ConsensusKey())
+		assert.Equal(t, valKeys[4].PublicKey(), consE.ConsensusKey())
 	})
 
 	t.Run("Check if all instances move to new height", func(t *testing.T) {
@@ -121,8 +121,8 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Testing add vote", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), 1, 0, committeeSigners[2].Address())
-		committeeSigners[2].SignMsg(v)
+		v := vote.NewPrepareVote(ts.RandHash(), 1, 0, committeeValKeys[2].Address())
+		ts.HelperSignVote(committeeValKeys[2], v)
 
 		mgr.AddVote(v)
 
@@ -133,9 +133,9 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Testing set proposal", func(t *testing.T) {
-		b, _ := state.ProposeBlock(committeeSigners[1], committeeSigners[1].Address(), 1)
+		b, _ := state.ProposeBlock(committeeValKeys[1], committeeValKeys[1].Address(), 1)
 		p := proposal.NewProposal(1, 1, b)
-		committeeSigners[1].SignMsg(p)
+		ts.HelperSignProposal(committeeValKeys[1], p)
 
 		mgr.SetProposal(p)
 

@@ -16,12 +16,12 @@ func TestExecuteBondTx(t *testing.T) {
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
 	pub, _ := td.RandBLSKeyPair()
-	receiverAddr := pub.Address()
+	receiverAddr := pub.ValidatorAddress()
 	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, senderBalance)
 	lockTime := td.sandbox.CurrentHeight()
 
 	t.Run("Should fail, invalid sender", func(t *testing.T) {
-		trx := tx.NewBondTx(lockTime, td.RandAddress(),
+		trx := tx.NewBondTx(lockTime, td.RandAccAddress(),
 			receiverAddr, pub, amt, fee, "invalid sender")
 
 		err := exe.Execute(trx, td.sandbox)
@@ -47,7 +47,7 @@ func TestExecuteBondTx(t *testing.T) {
 	t.Run("Should fail, inside committee", func(t *testing.T) {
 		pub0 := td.sandbox.Committee().Proposer(0).PublicKey()
 		trx := tx.NewBondTx(lockTime, senderAddr,
-			pub0.Address(), nil, amt, fee, "inside committee")
+			pub0.ValidatorAddress(), nil, amt, fee, "inside committee")
 
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
@@ -59,7 +59,7 @@ func TestExecuteBondTx(t *testing.T) {
 		val.UpdateUnbondingHeight(td.sandbox.CurrentHeight())
 		td.sandbox.UpdateValidator(val)
 		trx := tx.NewBondTx(lockTime, senderAddr,
-			unbondedPub.Address(), nil, amt, fee, "unbonded before")
+			unbondedPub.ValidatorAddress(), nil, amt, fee, "unbonded before")
 
 		err := exe.Execute(trx, td.sandbox)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
@@ -119,7 +119,7 @@ func TestBondInsideCommittee(t *testing.T) {
 
 	pub := td.sandbox.Committee().Proposer(0).PublicKey()
 	trx := tx.NewBondTx(lockTime, senderAddr,
-		pub.Address(), nil, amt, fee, "inside committee")
+		pub.ValidatorAddress(), nil, amt, fee, "inside committee")
 
 	assert.Error(t, exe1.Execute(trx, td.sandbox))
 	assert.NoError(t, exe2.Execute(trx, td.sandbox))
@@ -145,7 +145,7 @@ func TestBondJoiningCommittee(t *testing.T) {
 	td.sandbox.JoinedToCommittee(val.Address())
 
 	trx := tx.NewBondTx(lockTime, senderAddr,
-		pub.Address(), nil, amt, fee, "joining committee")
+		pub.ValidatorAddress(), nil, amt, fee, "joining committee")
 
 	assert.Error(t, exe1.Execute(trx, td.sandbox))
 	assert.NoError(t, exe2.Execute(trx, td.sandbox))
@@ -165,7 +165,7 @@ func TestStakeExceeded(t *testing.T) {
 	lockTime := td.sandbox.CurrentHeight()
 
 	trx := tx.NewBondTx(lockTime, senderAddr,
-		pub.Address(), pub, amt, fee, "stake exceeded")
+		pub.ValidatorAddress(), pub, amt, fee, "stake exceeded")
 
 	err := exe.Execute(trx, td.sandbox)
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidAmount)

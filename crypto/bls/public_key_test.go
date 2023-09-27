@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	cbor "github.com/fxamacker/cbor/v2"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
@@ -66,15 +67,28 @@ func TestPublicKeyVerifyAddress(t *testing.T) {
 	pub1, _ := ts.RandBLSKeyPair()
 	pub2, _ := ts.RandBLSKeyPair()
 
-	assert.NoError(t, pub1.VerifyAddress(pub1.Address()))
-	assert.Equal(t, errors.Code(pub1.VerifyAddress(pub2.Address())), errors.ErrInvalidAddress)
+	err := pub1.VerifyAddress(pub1.AccountAddress())
+	assert.NoError(t, err)
+	err = pub1.VerifyAddress(pub1.ValidatorAddress())
+	assert.NoError(t, err)
+
+	err = pub1.VerifyAddress(pub2.AccountAddress())
+	assert.Equal(t, err, crypto.AddressMismatchError{
+		Expected: pub1.AccountAddress(),
+		Got:      pub2.AccountAddress(),
+	})
+	err = pub1.VerifyAddress(pub2.ValidatorAddress())
+	assert.Equal(t, err, crypto.AddressMismatchError{
+		Expected: pub1.ValidatorAddress(),
+		Got:      pub2.ValidatorAddress(),
+	})
 }
 
 func TestNilPublicKey(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	pub := &bls.PublicKey{}
-	assert.Error(t, pub.VerifyAddress(ts.RandAddress()))
+	assert.Error(t, pub.VerifyAddress(ts.RandAccAddress()))
 	assert.Error(t, pub.Verify(nil, nil))
 	assert.Error(t, pub.Verify(nil, &bls.Signature{}))
 }

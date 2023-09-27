@@ -9,7 +9,6 @@ service Network {
   rpc GetNodeInfo(GetNodeInfoRequest) returns (GetNodeInfoResponse);
 }
 
-
 message GetNetworkInfoRequest {}
 
 message GetNetworkInfoResponse {

@@ -20,7 +20,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 )
 
-type broadcaster func(crypto.Signer, message.Message)
+type broadcaster func(crypto.Address, message.Message)
 
 type consensus struct {
 	lk sync.RWMutex
@@ -34,7 +34,7 @@ type consensus struct {
 	height          uint32
 	round           int16
 	cpRound         int16
-	signer          crypto.Signer
+	valKey          *bls.ValidatorKey
 	rewardAddr      crypto.Address
 	state           state.Facade // TODO: rename `state` to `bcState` (blockchain state)
 	newHeightState  consState
@@ -54,22 +54,22 @@ type consensus struct {
 func NewConsensus(
 	conf *Config,
 	state state.Facade,
-	signer crypto.Signer,
+	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcastCh chan message.Message,
 	mediator mediator,
 ) Consensus {
-	broadcaster := func(_ crypto.Signer, msg message.Message) {
+	broadcaster := func(_ crypto.Address, msg message.Message) {
 		broadcastCh <- msg
 	}
 	return newConsensus(conf, state,
-		signer, rewardAddr, broadcaster, mediator)
+		valKey, rewardAddr, broadcaster, mediator)
 }
 
 func newConsensus(
 	conf *Config,
 	state state.Facade,
-	signer crypto.Signer,
+	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcaster broadcaster,
 	mediator mediator,
@@ -78,7 +78,7 @@ func newConsensus(
 		config:      conf,
 		state:       state,
 		broadcaster: broadcaster,
-		signer:      signer,
+		valKey:      valKey,
 	}
 
 	// Update height later, See enterNewHeight.
@@ -105,7 +105,7 @@ func newConsensus(
 	mediator.Register(cs)
 
 	logger.Info("consensus instance created",
-		"validator address", signer.Address().String(),
+		"validator address", valKey.Address().String(),
 		"reward address", rewardAddr.String())
 
 	return cs
@@ -113,15 +113,15 @@ func newConsensus(
 
 func (cs *consensus) String() string {
 	return fmt.Sprintf("{%s %d/%d/%s/%d}",
-		cs.signer.Address().ShortString(),
+		cs.valKey.Address().ShortString(),
 		cs.height, cs.round, cs.currentState.name(), cs.cpRound)
 }
 
-func (cs *consensus) SignerKey() crypto.PublicKey {
+func (cs *consensus) ConsensusKey() *bls.PublicKey {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	return cs.signer.PublicKey()
+	return cs.valKey.PublicKey()
 }
 
 func (cs *consensus) HeightRound() (uint32, int16) {
@@ -622,7 +622,7 @@ func (cs *consensus) signAddCPPreVote(hash hash.Hash,
 	cpRound int16, cpValue vote.CPValue, just vote.Just,
 ) {
 	v := vote.NewCPPreVote(hash, cs.height,
-		cs.round, cpRound, cpValue, just, cs.signer.Address())
+		cs.round, cpRound, cpValue, just, cs.valKey.Address())
 	cs.signAddVote(v)
 }
 
@@ -630,22 +630,23 @@ func (cs *consensus) signAddCPMainVote(hash hash.Hash,
 	cpRound int16, cpValue vote.CPValue, just vote.Just,
 ) {
 	v := vote.NewCPMainVote(hash, cs.height, cs.round,
-		cpRound, cpValue, just, cs.signer.Address())
+		cpRound, cpValue, just, cs.valKey.Address())
 	cs.signAddVote(v)
 }
 
 func (cs *consensus) signAddPrepareVote(hash hash.Hash) {
-	v := vote.NewPrepareVote(hash, cs.height, cs.round, cs.signer.Address())
+	v := vote.NewPrepareVote(hash, cs.height, cs.round, cs.valKey.Address())
 	cs.signAddVote(v)
 }
 
 func (cs *consensus) signAddPrecommitVote(hash hash.Hash) {
-	v := vote.NewPrecommitVote(hash, cs.height, cs.round, cs.signer.Address())
+	v := vote.NewPrecommitVote(hash, cs.height, cs.round, cs.valKey.Address())
 	cs.signAddVote(v)
 }
 
 func (cs *consensus) signAddVote(v *vote.Vote) {
-	cs.signer.SignMsg(v)
+	sig := cs.valKey.Sign(v.SignBytes())
+	v.SetSignature(sig)
 	cs.logger.Info("our vote signed and broadcasted", "vote", v)
 
 	_, err := cs.log.AddVote(v)
@@ -656,25 +657,25 @@ func (cs *consensus) signAddVote(v *vote.Vote) {
 }
 
 func (cs *consensus) queryProposal() {
-	cs.broadcaster(cs.signer,
+	cs.broadcaster(cs.valKey.Address(),
 		message.NewQueryProposalMessage(cs.height, cs.round))
 }
 
 func (cs *consensus) broadcastProposal(p *proposal.Proposal) {
 	go cs.mediator.OnPublishProposal(cs, p)
-	cs.broadcaster(cs.signer,
+	cs.broadcaster(cs.valKey.Address(),
 		message.NewProposalMessage(p))
 }
 
 func (cs *consensus) broadcastVote(v *vote.Vote) {
 	go cs.mediator.OnPublishVote(cs, v)
-	cs.broadcaster(cs.signer,
+	cs.broadcaster(cs.valKey.Address(),
 		message.NewVoteMessage(v))
 }
 
 func (cs *consensus) announceNewBlock(h uint32, b *block.Block, c *certificate.Certificate) {
 	go cs.mediator.OnBlockAnnounce(cs)
-	cs.broadcaster(cs.signer,
+	cs.broadcaster(cs.valKey.Address(),
 		message.NewBlockAnnounceMessage(h, b, c))
 }
 

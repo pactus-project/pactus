@@ -28,8 +28,8 @@ func showAddressDetails(wallet *wallet.Wallet, addr string) {
 	pathEntry := getEntryObj(builder, "id_entry_path")
 
 	addressEntry.SetText(info.Address)
-	pubKeyEntry.SetText(info.Pub.String())
-	pathEntry.SetText(info.Path.String())
+	pubKeyEntry.SetText(info.PublicKey)
+	pathEntry.SetText(info.Path)
 
 	getButtonObj(builder, "id_button_close").SetImage(CloseIcon())
 

@@ -173,12 +173,6 @@ func (ts *TestSuite) DecodingHex(in string) []byte {
 	return d
 }
 
-// RandSigner generates a random signer for testing purposes.
-func (ts *TestSuite) RandSigner() crypto.Signer {
-	_, prv := ts.RandBLSKeyPair()
-	return crypto.NewSigner(prv)
-}
-
 // RandBLSKeyPair generates a random BLS key pair for testing purposes.
 func (ts *TestSuite) RandBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 	buf := make([]byte, bls.PrivateKeySize)
@@ -187,9 +181,13 @@ func (ts *TestSuite) RandBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 		panic(err)
 	}
 	prv, _ := bls.PrivateKeyFromBytes(buf)
-	pub := prv.PublicKey().(*bls.PublicKey)
+	return prv.PublicKeyNative(), prv
+}
 
-	return pub, prv
+// RandValKey generates a random validator key for testing purposes.
+func (ts *TestSuite) RandValKey() *bls.ValidatorKey {
+	_, prv := ts.RandBLSKeyPair()
+	return bls.NewValidatorKey(prv)
 }
 
 // RandBLSSignature generates a random BLS signature for testing purposes.
@@ -204,31 +202,29 @@ func (ts *TestSuite) RandHash() hash.Hash {
 	return hash.CalcHash(util.Int64ToSlice(ts.RandInt64(util.MaxInt64)))
 }
 
-// RandAddress generates a random address for testing purposes.
-func (ts *TestSuite) RandAddress() crypto.Address {
-	data := make([]byte, 20)
-	_, err := ts.Rand.Read(data)
-	if err != nil {
-		panic(err)
-	}
-	data = append([]byte{1}, data...)
-	var addr crypto.Address
-	copy(addr[:], data[:])
+// RandAccAddress generates a random account address for testing purposes.
+func (ts *TestSuite) RandAccAddress() crypto.Address {
+	addr := crypto.NewAddress(crypto.AddressTypeBLSAccount, ts.RandBytes(20))
+	return addr
+}
+
+// RandValAddress generates a random validator address for testing purposes.
+func (ts *TestSuite) RandValAddress() crypto.Address {
+	addr := crypto.NewAddress(crypto.AddressTypeValidator, ts.RandBytes(20))
 	return addr
 }
 
 // RandSeed generates a random VerifiableSeed for testing purposes.
 func (ts *TestSuite) RandSeed() sortition.VerifiableSeed {
-	h := ts.RandHash()
-	signer := ts.RandSigner()
-	sig := signer.SignData(h.Bytes())
+	sig := ts.RandBLSSignature()
 	seed, _ := sortition.VerifiableSeedFromBytes(sig.Bytes())
 	return seed
 }
 
 // RandProof generates a random Proof for testing purposes.
 func (ts *TestSuite) RandProof() sortition.Proof {
-	sig := ts.RandSigner().SignData(ts.RandHash().Bytes())
+	_, prv := ts.RandBLSKeyPair()
+	sig := prv.Sign(ts.RandHash().Bytes())
 	proof, _ := sortition.ProofFromBytes(sig.Bytes())
 	return proof
 }
@@ -242,27 +238,37 @@ func (ts *TestSuite) RandPeerID() peer.ID {
 }
 
 // GenerateTestAccount generates an account for testing purposes.
-func (ts *TestSuite) GenerateTestAccount(number int32) (*account.Account, crypto.Signer) {
-	signer := ts.RandSigner()
+func (ts *TestSuite) GenerateTestAccount(number int32) (*account.Account, crypto.Address) {
+	_, prv := ts.RandBLSKeyPair()
 	acc := account.NewAccount(number)
 	acc.AddToBalance(ts.RandInt64(100 * 1e14))
-	return acc, signer
+	return acc, prv.PublicKeyNative().AccountAddress()
 }
 
 // GenerateTestValidator generates a validator for testing purposes.
-func (ts *TestSuite) GenerateTestValidator(number int32) (*validator.Validator, crypto.Signer) {
-	pub, pv := ts.RandBLSKeyPair()
+func (ts *TestSuite) GenerateTestValidator(number int32) (*validator.Validator, *bls.ValidatorKey) {
+	pub, prv := ts.RandBLSKeyPair()
 	val := validator.NewValidator(pub, number)
 	val.AddToStake(ts.RandInt64(100 * 1e9))
-	return val, crypto.NewSigner(pv)
+	return val, bls.NewValidatorKey(prv)
 }
 
-// GenerateTestBlockWithTime generates a block at the give time for testing purposes.
-func (ts *TestSuite) GenerateTestBlockWithTime(proposer *crypto.Address, time time.Time) *block.Block {
-	if proposer == nil {
-		addr := ts.RandAddress()
-		proposer = &addr
-	}
+// GenerateTestBlockWithProposer generates a block with the give proposer address for testing purposes.
+func (ts *TestSuite) GenerateTestBlockWithProposer(proposer crypto.Address) *block.Block {
+	return ts.generateTestBlock(proposer, util.Now())
+}
+
+// GenerateTestBlockWithTime generates a block with the given time for testing purposes.
+func (ts *TestSuite) GenerateTestBlockWithTime(time time.Time) *block.Block {
+	return ts.generateTestBlock(ts.RandValAddress(), time)
+}
+
+// GenerateTestBlock generates a block for testing purposes.
+func (ts *TestSuite) GenerateTestBlock() *block.Block {
+	return ts.generateTestBlock(ts.RandValAddress(), util.Now())
+}
+
+func (ts *TestSuite) generateTestBlock(proposer crypto.Address, time time.Time) *block.Block {
 	txs := block.NewTxs()
 	tx1, _ := ts.GenerateTestTransferTx()
 	tx2, _ := ts.GenerateTestSortitionTx()
@@ -281,14 +287,9 @@ func (ts *TestSuite) GenerateTestBlockWithTime(proposer *crypto.Address, time ti
 		ts.RandHash(),
 		ts.RandHash(),
 		ts.RandSeed(),
-		*proposer)
+		proposer)
 
 	return block.NewBlock(header, cert, txs)
-}
-
-// GenerateTestBlock generates a block for testing purposes.
-func (ts *TestSuite) GenerateTestBlock(proposer *crypto.Address) *block.Block {
-	return ts.GenerateTestBlockWithTime(proposer, util.Now())
 }
 
 // GenerateTestCertificate generates a certificate for testing purposes.
@@ -308,93 +309,96 @@ func (ts *TestSuite) GenerateTestCertificate() *certificate.Certificate {
 }
 
 // GenerateTestProposal generates a proposal for testing purposes.
-func (ts *TestSuite) GenerateTestProposal(height uint32, round int16) (*proposal.Proposal, crypto.Signer) {
-	signer := ts.RandSigner()
-	addr := signer.Address()
-	b := ts.GenerateTestBlock(&addr)
+func (ts *TestSuite) GenerateTestProposal(height uint32, round int16) (*proposal.Proposal, *bls.ValidatorKey) {
+	valKey := ts.RandValKey()
+	b := ts.GenerateTestBlockWithProposer(valKey.Address())
 	p := proposal.NewProposal(height, round, b)
-	signer.SignMsg(p)
-	return p, signer
+	ts.HelperSignProposal(valKey, p)
+
+	return p, valKey
 }
 
 // GenerateTestTransferTx generates a transfer transaction for testing purposes.
-func (ts *TestSuite) GenerateTestTransferTx() (*tx.Tx, crypto.Signer) {
-	s := ts.RandSigner()
-	pub, _ := ts.RandBLSKeyPair()
-	tx := tx.NewTransferTx(ts.RandHeight(), s.Address(), pub.Address(),
+func (ts *TestSuite) GenerateTestTransferTx() (*tx.Tx, *bls.PrivateKey) {
+	pub, prv := ts.RandBLSKeyPair()
+	trx := tx.NewTransferTx(ts.RandHeight(), pub.AccountAddress(), ts.RandAccAddress(),
 		ts.RandInt64(1000*1e10), ts.RandInt64(1*1e10), "test send-tx")
-	s.SignMsg(tx)
-	return tx, s
+	ts.HelperSignTransaction(prv, trx)
+
+	return trx, prv
 }
 
 // GenerateTestBondTx generates a bond transaction for testing purposes.
-func (ts *TestSuite) GenerateTestBondTx() (*tx.Tx, crypto.Signer) {
-	s := ts.RandSigner()
-	pub, _ := ts.RandBLSKeyPair()
-	tx := tx.NewBondTx(ts.RandHeight(), s.Address(), pub.Address(),
-		pub, ts.RandInt64(1000*1e10), ts.RandInt64(1*1e10), "test bond-tx")
-	s.SignMsg(tx)
-	return tx, s
+func (ts *TestSuite) GenerateTestBondTx() (*tx.Tx, *bls.PrivateKey) {
+	pub, prv := ts.RandBLSKeyPair()
+	trx := tx.NewBondTx(ts.RandHeight(), pub.AccountAddress(), ts.RandValAddress(),
+		nil, ts.RandInt64(1000*1e10), ts.RandInt64(1*1e10), "test bond-tx")
+	ts.HelperSignTransaction(prv, trx)
+
+	return trx, prv
 }
 
 // GenerateTestSortitionTx generates a sortition transaction for testing purposes.
-func (ts *TestSuite) GenerateTestSortitionTx() (*tx.Tx, crypto.Signer) {
-	s := ts.RandSigner()
+func (ts *TestSuite) GenerateTestSortitionTx() (*tx.Tx, *bls.PrivateKey) {
+	pub, prv := ts.RandBLSKeyPair()
 	proof := ts.RandProof()
-	tx := tx.NewSortitionTx(ts.RandHeight(), s.Address(), proof)
-	s.SignMsg(tx)
-	return tx, s
+	trx := tx.NewSortitionTx(ts.RandHeight(), pub.ValidatorAddress(), proof)
+	ts.HelperSignTransaction(prv, trx)
+
+	return trx, prv
 }
 
 // GenerateTestUnbondTx generates an unbond transaction for testing purposes.
-func (ts *TestSuite) GenerateTestUnbondTx() (*tx.Tx, crypto.Signer) {
-	s := ts.RandSigner()
-	tx := tx.NewUnbondTx(ts.RandHeight(), s.Address(), "test unbond-tx")
-	s.SignMsg(tx)
-	return tx, s
+func (ts *TestSuite) GenerateTestUnbondTx() (*tx.Tx, *bls.PrivateKey) {
+	pub, prv := ts.RandBLSKeyPair()
+	trx := tx.NewUnbondTx(ts.RandHeight(), pub.ValidatorAddress(), "test unbond-tx")
+	ts.HelperSignTransaction(prv, trx)
+
+	return trx, prv
 }
 
 // GenerateTestWithdrawTx generates a withdraw transaction for testing purposes.
-func (ts *TestSuite) GenerateTestWithdrawTx() (*tx.Tx, crypto.Signer) {
-	s := ts.RandSigner()
-	tx := tx.NewWithdrawTx(ts.RandHeight(), s.Address(), ts.RandAddress(),
+func (ts *TestSuite) GenerateTestWithdrawTx() (*tx.Tx, *bls.PrivateKey) {
+	pub, prv := ts.RandBLSKeyPair()
+	trx := tx.NewWithdrawTx(ts.RandHeight(), pub.ValidatorAddress(), ts.RandAccAddress(),
 		ts.RandInt64(1000*1e10), ts.RandInt64(1*1e10), "test withdraw-tx")
-	s.SignMsg(tx)
-	return tx, s
+	ts.HelperSignTransaction(prv, trx)
+
+	return trx, prv
 }
 
 // GenerateTestPrecommitVote generates a precommit vote for testing purposes.
-func (ts *TestSuite) GenerateTestPrecommitVote(height uint32, round int16) (*vote.Vote, crypto.Signer) {
-	s := ts.RandSigner()
+func (ts *TestSuite) GenerateTestPrecommitVote(height uint32, round int16) (*vote.Vote, *bls.ValidatorKey) {
+	valKey := ts.RandValKey()
 	v := vote.NewPrecommitVote(
 		ts.RandHash(),
 		height, round,
-		s.Address())
-	s.SignMsg(v)
+		valKey.Address())
+	ts.HelperSignVote(valKey, v)
 
-	return v, s
+	return v, valKey
 }
 
 // GenerateTestPrepareVote generates a prepare vote for testing purposes.
-func (ts *TestSuite) GenerateTestPrepareVote(height uint32, round int16) (*vote.Vote, crypto.Signer) {
-	s := ts.RandSigner()
+func (ts *TestSuite) GenerateTestPrepareVote(height uint32, round int16) (*vote.Vote, *bls.ValidatorKey) {
+	valKey := ts.RandValKey()
 	v := vote.NewPrepareVote(
 		ts.RandHash(),
 		height, round,
-		s.Address())
-	s.SignMsg(v)
+		valKey.Address())
+	ts.HelperSignVote(valKey, v)
 
-	return v, s
+	return v, valKey
 }
 
 // GenerateTestCommittee generates a committee for testing purposes.
 // All committee members have the same power.
-func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []crypto.Signer) {
-	signers := make([]crypto.Signer, num)
+func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls.ValidatorKey) {
+	valKeys := make([]*bls.ValidatorKey, num)
 	vals := make([]*validator.Validator, num)
 	for i := int32(0); i < int32(num); i++ {
 		val, s := ts.GenerateTestValidator(i)
-		signers[i] = s
+		valKeys[i] = s
 		vals[i] = val
 
 		val.UpdateLastBondingHeight(1 + uint32(i))
@@ -404,5 +408,21 @@ func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []cryp
 	}
 
 	committee, _ := committee.NewCommittee(vals, num, vals[0].Address())
-	return committee, signers
+	return committee, valKeys
+}
+
+func (ts *TestSuite) HelperSignVote(valKey *bls.ValidatorKey, v *vote.Vote) {
+	sig := valKey.Sign(v.SignBytes())
+	v.SetSignature(sig)
+}
+
+func (ts *TestSuite) HelperSignProposal(valKey *bls.ValidatorKey, p *proposal.Proposal) {
+	sig := valKey.Sign(p.SignBytes())
+	p.SetSignature(sig)
+}
+
+func (ts *TestSuite) HelperSignTransaction(prv crypto.PrivateKey, trx *tx.Tx) {
+	sig := prv.Sign(trx.SignBytes())
+	trx.SetSignature(sig)
+	trx.SetPublicKey(prv.PublicKey())
 }

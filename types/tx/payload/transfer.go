@@ -9,9 +9,9 @@ import (
 )
 
 type TransferPayload struct {
-	Sender   crypto.Address
-	Receiver crypto.Address
-	Amount   int64
+	From   crypto.Address
+	To     crypto.Address
+	Amount int64
 }
 
 func (p *TransferPayload) Type() Type {
@@ -19,7 +19,7 @@ func (p *TransferPayload) Type() Type {
 }
 
 func (p *TransferPayload) Signer() crypto.Address {
-	return p.Sender
+	return p.From
 }
 
 func (p *TransferPayload) Value() int64 {
@@ -27,63 +27,50 @@ func (p *TransferPayload) Value() int64 {
 }
 
 func (p *TransferPayload) BasicCheck() error {
-	if err := p.Sender.BasicCheck(); err != nil {
-		return err
+	if !p.From.IsAccountAddress() {
+		return BasicCheckError{
+			Reason: "sender is not an account address",
+		}
 	}
-	return p.Receiver.BasicCheck()
+	if !p.To.IsAccountAddress() {
+		return BasicCheckError{
+			Reason: "receiver is not an account address",
+		}
+	}
+	return nil
 }
 
 func (p *TransferPayload) SerializeSize() int {
-	if p.Sender.EqualsTo(crypto.TreasuryAddress) {
-		return 22 + encoding.VarIntSerializeSize(uint64(p.Amount))
-	}
-	return 42 + encoding.VarIntSerializeSize(uint64(p.Amount))
+	return p.From.SerializeSize() +
+		p.To.SerializeSize() +
+		encoding.VarIntSerializeSize(uint64(p.Amount))
 }
 
 func (p *TransferPayload) Encode(w io.Writer) error {
-	// If the transaction is a subsidy transaction (sender is the Treasury address)
-	// compress the address to one byte.
-	// This helps to reduce the size of each block by 20 bytes.
-	if p.Sender.EqualsTo(crypto.TreasuryAddress) {
-		err := encoding.WriteElement(w, uint8(0))
-		if err != nil {
-			return err
-		}
-	} else {
-		err := encoding.WriteElement(w, &p.Sender)
-		if err != nil {
-			return err
-		}
-	}
-
-	err := encoding.WriteElement(w, &p.Receiver)
+	err := p.From.Encode(w)
 	if err != nil {
 		return err
 	}
+
+	err = p.To.Encode(w)
+	if err != nil {
+		return err
+	}
+
 	return encoding.WriteVarInt(w, uint64(p.Amount))
 }
 
 func (p *TransferPayload) Decode(r io.Reader) error {
-	var sigType uint8
-	err := encoding.ReadElement(r, &sigType)
+	err := p.From.Decode(r)
 	if err != nil {
 		return err
 	}
 
-	if sigType == crypto.SignatureTypeTreasury {
-		p.Sender = crypto.TreasuryAddress
-	} else {
-		p.Sender[0] = sigType
-
-		err := encoding.ReadElement(r, p.Sender[1:])
-		if err != nil {
-			return err
-		}
-	}
-	err = encoding.ReadElement(r, &p.Receiver)
+	err = p.To.Decode(r)
 	if err != nil {
 		return err
 	}
+
 	amount, err := encoding.ReadVarInt(r)
 	if err != nil {
 		return err
@@ -94,11 +81,11 @@ func (p *TransferPayload) Decode(r io.Reader) error {
 
 func (p *TransferPayload) String() string {
 	return fmt.Sprintf("{Send 💸 %v->%v %v",
-		p.Sender.ShortString(),
-		p.Receiver.ShortString(),
+		p.From.ShortString(),
+		p.To.ShortString(),
 		p.Amount)
 }
 
-func (p *TransferPayload) ReceiverAddr() *crypto.Address {
-	return &p.Receiver
+func (p *TransferPayload) Receiver() *crypto.Address {
+	return &p.To
 }

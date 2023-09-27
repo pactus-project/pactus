@@ -15,7 +15,7 @@ func (s *proposeState) enter() {
 
 func (s *proposeState) decide() {
 	proposer := s.proposer(s.round)
-	if proposer.Address().EqualsTo(s.signer.Address()) {
+	if proposer.Address().EqualsTo(s.valKey.Address()) {
 		s.logger.Info("our turn to propose", "proposer", proposer.Address())
 		s.createProposal(s.height, s.round)
 	} else {
@@ -29,7 +29,7 @@ func (s *proposeState) decide() {
 }
 
 func (s *proposeState) createProposal(height uint32, round int16) {
-	block, err := s.state.ProposeBlock(s.signer, s.rewardAddr, round)
+	block, err := s.state.ProposeBlock(s.valKey, s.rewardAddr, round)
 	if err != nil {
 		s.logger.Error("unable to propose a block!", "error", err)
 		return
@@ -40,7 +40,8 @@ func (s *proposeState) createProposal(height uint32, round int16) {
 	}
 
 	proposal := proposal.NewProposal(height, round, block)
-	s.signer.SignMsg(proposal)
+	sig := s.valKey.Sign(proposal.SignBytes())
+	proposal.SetSignature(sig)
 
 	s.log.SetRoundProposal(round, proposal)
 

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/util"
@@ -38,17 +39,20 @@ func TestProposalSignBytes(t *testing.T) {
 func TestProposalSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	signer := ts.RandSigner()
-	p, prv := ts.GenerateTestProposal(ts.RandHeight(), ts.RandRound())
-	pub := prv.PublicKey()
+	rndValKey := ts.RandValKey()
+	p, valKey := ts.GenerateTestProposal(ts.RandHeight(), ts.RandRound())
+	pub := valKey.PublicKey()
 	assert.NoError(t, p.Verify(pub))
 	assert.False(t, p.IsForBlock(ts.RandHash()))
 	assert.True(t, p.IsForBlock(p.Block().Hash()))
 
-	err := p.Verify(signer.PublicKey())
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+	err := p.Verify(rndValKey.PublicKey())
+	assert.ErrorIs(t, err, crypto.AddressMismatchError{
+		Expected: rndValKey.Address(),
+		Got:      valKey.Address(),
+	})
 
-	signer.SignMsg(p)
+	ts.HelperSignProposal(rndValKey, p)
 	err = p.Verify(pub)
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
 }

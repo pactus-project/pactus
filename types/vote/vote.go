@@ -145,12 +145,9 @@ func (v *Vote) Signature() *bls.Signature {
 }
 
 // SetSignature sets the signature of the vote.
-func (v *Vote) SetSignature(sig crypto.Signature) {
-	v.data.Signature = sig.(*bls.Signature)
+func (v *Vote) SetSignature(sig *bls.Signature) {
+	v.data.Signature = sig
 }
-
-// SetPublicKey is doing nothing and just satisfies SignableMsg interface.
-func (v *Vote) SetPublicKey(crypto.PublicKey) {}
 
 // MarshalCBOR marshals the vote into CBOR format.
 func (v *Vote) MarshalCBOR() ([]byte, error) {
@@ -173,8 +170,12 @@ func (v *Vote) Verify(pubKey *bls.PublicKey) error {
 	if v.Signature() == nil {
 		return errors.Errorf(errors.ErrInvalidVote, "no signature")
 	}
-	if err := pubKey.VerifyAddress(v.Signer()); err != nil {
-		return err
+
+	if v.Signer() != pubKey.ValidatorAddress() {
+		return InvalidSignerError{
+			Expected: pubKey.ValidatorAddress(),
+			Got:      v.Signer(),
+		}
 	}
 	return pubKey.Verify(v.SignBytes(), v.Signature())
 }
@@ -185,13 +186,14 @@ func (v *Vote) BasicCheck() error {
 		return errors.Errorf(errors.ErrInvalidVote, "invalid vote type")
 	}
 	if v.data.Height <= 0 {
-		return errors.Error(errors.ErrInvalidHeight)
+		return BasicCheckError{
+			Reason: "invalid height",
+		}
 	}
 	if v.data.Round < 0 {
-		return errors.Error(errors.ErrInvalidRound)
-	}
-	if err := v.data.Signer.BasicCheck(); err != nil {
-		return err
+		return BasicCheckError{
+			Reason: "invalid round",
+		}
 	}
 	if v.data.Type == VoteTypeCPPreVote ||
 		v.data.Type == VoteTypeCPMainVote {

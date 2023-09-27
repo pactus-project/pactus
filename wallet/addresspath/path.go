@@ -1,10 +1,12 @@
-package hdkeychain
+package addresspath
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
 )
+
+const HardenedKeyStart = uint32(0x80000000) // 2^31
 
 type Path []uint32
 
@@ -48,4 +50,8 @@ func (p Path) String() string {
 		}
 	}
 	return builder.String()
+}
+
+func (p Path) LastIndex() uint32 {
+	return p[len(p)-1]
 }

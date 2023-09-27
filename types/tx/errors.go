@@ -2,7 +2,7 @@ package tx
 
 import "github.com/pactus-project/pactus/types/tx/payload"
 
-// BasicCheckError is returned when the basic check on the certificate fails.
+// BasicCheckError is returned when the basic check on the transaction fails.
 type BasicCheckError struct {
 	Reason string
 }

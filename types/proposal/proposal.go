@@ -67,12 +67,9 @@ func (p *Proposal) BasicCheck() error {
 	return nil
 }
 
-func (p *Proposal) SetSignature(sig crypto.Signature) {
-	p.data.Signature = sig.(*bls.Signature)
+func (p *Proposal) SetSignature(sig *bls.Signature) {
+	p.data.Signature = sig
 }
-
-// SetPublicKey is doing nothing and just satisfies SignableMsg interface.
-func (p *Proposal) SetPublicKey(crypto.PublicKey) {}
 
 func (p *Proposal) SignBytes() []byte {
 	sb := p.Block().Hash().Bytes()
@@ -105,7 +102,7 @@ func (p *Proposal) Hash() hash.Hash {
 }
 
 func (p *Proposal) IsForBlock(hash hash.Hash) bool {
-	return p.Block().Hash().EqualsTo(hash)
+	return p.Block().Hash() == hash
 }
 
 func (p Proposal) String() string {

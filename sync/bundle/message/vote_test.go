@@ -3,7 +3,7 @@ package message
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,7 +20,7 @@ func TestVoteMessage(t *testing.T) {
 		v, _ := ts.GenerateTestPrepareVote(100, -1)
 		m := NewVoteMessage(v)
 
-		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidRound)
+		assert.ErrorIs(t, m.BasicCheck(), vote.BasicCheckError{Reason: "invalid round"})
 	})
 
 	t.Run("OK", func(t *testing.T) {

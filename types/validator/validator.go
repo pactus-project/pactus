@@ -67,7 +67,7 @@ func (val *Validator) PublicKey() *bls.PublicKey {
 
 // Address returns the address of the validator.
 func (val *Validator) Address() crypto.Address {
-	return val.data.PublicKey.Address()
+	return val.data.PublicKey.ValidatorAddress()
 }
 
 // Number returns the number of the validator.

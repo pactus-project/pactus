@@ -138,7 +138,6 @@ func (cert *Certificate) UnmarshalCBOR(bs []byte) error {
 	return cert.Decode(buf)
 }
 
-// Encode encodes the receiver to w.
 func (cert *Certificate) Encode(w io.Writer) error {
 	if err := encoding.WriteElements(w, cert.data.Height, cert.data.Round); err != nil {
 		return err

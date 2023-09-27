@@ -5,8 +5,6 @@ import (
 	"io"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type UnbondPayload struct {
@@ -27,8 +25,10 @@ func (p *UnbondPayload) Value() int64 {
 
 // TODO: write test for me.
 func (p *UnbondPayload) BasicCheck() error {
-	if err := p.Validator.BasicCheck(); err != nil {
-		return errors.Error(errors.ErrInvalidAddress)
+	if !p.Validator.IsValidatorAddress() {
+		return BasicCheckError{
+			Reason: "address is not a validator address",
+		}
 	}
 
 	return nil
@@ -39,11 +39,11 @@ func (p *UnbondPayload) SerializeSize() int {
 }
 
 func (p *UnbondPayload) Encode(w io.Writer) error {
-	return encoding.WriteElements(w, &p.Validator)
+	return p.Validator.Encode(w)
 }
 
 func (p *UnbondPayload) Decode(r io.Reader) error {
-	return encoding.ReadElements(r, &p.Validator)
+	return p.Validator.Decode(r)
 }
 
 func (p *UnbondPayload) String() string {
@@ -52,6 +52,6 @@ func (p *UnbondPayload) String() string {
 	)
 }
 
-func (p *UnbondPayload) ReceiverAddr() *crypto.Address {
+func (p *UnbondPayload) Receiver() *crypto.Address {
 	return nil
 }

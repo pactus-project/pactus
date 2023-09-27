@@ -191,7 +191,7 @@ func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 	sb.lk.Lock()
 	defer sb.lk.Unlock()
 
-	addr := pub.Address()
+	addr := pub.ValidatorAddress()
 	if sb.store.HasValidator(addr) {
 		sb.shouldPanicForDuplicatedAddress()
 	}

@@ -267,7 +267,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 
 	validatorAddrs := []string{}
 	for i := 0; i < numValidators; i++ {
-		addr, err := walletInstance.DeriveNewAddress(fmt.Sprintf("Validator address %v", i+1))
+		addr, err := walletInstance.NewValidatorAddress(fmt.Sprintf("Validator address %v", i+1))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -276,7 +276,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 
 	rewardAddrs := []string{}
 	for i := 0; i < numValidators; i++ {
-		addr, err := walletInstance.DeriveNewAddress(fmt.Sprintf("Reward address %v", i+1))
+		addr, err := walletInstance.NewBLSAccountAddress(fmt.Sprintf("Reward address %v", i+1))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -394,9 +394,8 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	if err != nil {
 		return nil, nil, err
 	}
-	addrLabels := walletInstance.AddressLabels()
+	addrLabels := walletInstance.AddressInfos()
 
-	// Create signers
 	if len(addrLabels) < conf.Node.NumValidators {
 		return nil, nil, fmt.Errorf("not enough addresses in wallet")
 	}
@@ -404,7 +403,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	for i := 0; i < conf.Node.NumValidators; i++ {
 		validatorAddrs[i] = addrLabels[i].Address
 	}
-	signers := make([]crypto.Signer, conf.Node.NumValidators)
+	valKeys := make([]*bls.ValidatorKey, conf.Node.NumValidators)
 	password, ok := passwordFetcher(walletInstance)
 	if !ok {
 		return nil, nil, fmt.Errorf("aborted")
@@ -413,8 +412,8 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	if err != nil {
 		return nil, nil, err
 	}
-	for i, key := range prvKeys {
-		signers[i] = crypto.NewSigner(key)
+	for i, prv := range prvKeys {
+		valKeys[i] = bls.NewValidatorKey(prv.(*bls.PrivateKey))
 	}
 
 	// Create reward addresses
@@ -432,7 +431,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		}
 	}
 
-	nodeInstance, err := node.NewNode(gen, conf, signers, rewardAddrs)
+	nodeInstance, err := node.NewNode(gen, conf, valKeys, rewardAddrs)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -456,9 +455,9 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 
 	vals := make([]*validator.Validator, 4)
 	for i := 0; i < 4; i++ {
-		ai := w.AddressInfo(w.AddressLabels()[i].Address)
-		vals[i] = validator.NewValidator(
-			ai.Pub.(*bls.PublicKey), int32(i))
+		info := w.AddressInfo(w.AddressInfos()[i].Address)
+		pub, _ := bls.PublicKeyFromString(info.PublicKey)
+		vals[i] = validator.NewValidator(pub, int32(i))
 	}
 
 	// create genesis

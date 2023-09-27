@@ -13,7 +13,7 @@ func (st *state) validateBlock(block *block.Block) error {
 			"invalid version")
 	}
 
-	if !block.Header().StateRoot().EqualsTo(st.stateRoot()) {
+	if block.Header().StateRoot() != st.stateRoot() {
 		return errors.Errorf(errors.ErrInvalidBlock,
 			"state root is not same as we expected, expected %v, got %v", st.stateRoot(), block.Header().StateRoot())
 	}

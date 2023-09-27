@@ -65,7 +65,7 @@ func TestUpdateCertificate(t *testing.T) {
 
 	td.newHeightTimeout(td.consX)
 
-	// This certificate has all signers' vote
+	// This certificate has no absentees
 	cert2 := td.consX.state.LastCertificate()
 	assert.Empty(t, cert2.Absentees())
 }

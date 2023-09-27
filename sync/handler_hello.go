@@ -31,7 +31,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 		return handler.acknowledge(response, initiator)
 	}
 
-	if !msg.GenesisHash.EqualsTo(handler.state.Genesis().Hash()) {
+	if msg.GenesisHash != handler.state.Genesis().Hash() {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("peer ID is not matched, expected: %v, got: %v", msg.PeerID, initiator))
 
