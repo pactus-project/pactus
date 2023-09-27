@@ -1,8 +1,8 @@
 package hdkeychain
 
 // References:
-//   [BIP32]: BIP0032 - Hierarchical Deterministic Wallets
-//   https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki
+//  [PIP-11]: Deterministic key hierarchy for BLS-12381 curve
+//  https://pips.pactus.org/PIPs/pip-11
 
 import (
 	"bytes"
@@ -10,6 +10,7 @@ import (
 	"crypto/rand"
 	"crypto/sha512"
 	"encoding/binary"
+	"math/big"
 	"strings"
 
 	bls12381 "github.com/kilic/bls12-381"
@@ -140,11 +141,11 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	// child is hardened.
 	//
 	// For hardened children:
-	//   data (36 bytes) = parent_private_key (32 bytes)  || index (4 bytes)
+	//   0x00 || ser256(parentKey) || ser32(i)
 	//
 	// For normal children:
-	//   data (52 bytes)  = parent_public_key_g1 (48 bytes)  || index (4 bytes)
-	//   data (100 bytes) = parent_public_key_g2 (96 bytes)  || index (4 bytes)
+	//   serE1(parentPubKey) || ser32(i) : if Point is in E1
+	//   serE2(parentPubKey) || ser32(i) : if Point is in E2
 	data := make([]byte, 0, 100)
 	if isChildHardened {
 		// Case #1 and #4.
@@ -153,10 +154,16 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 			//
 			// When the child is a hardened child, the key is known to be a
 			// private key.
-			data = append(data, k.key...)
-			if len(data) != 32 {
+			// Pad it with a leading zero as required by [BIP32] for deriving the child.
+			if len(k.key) != 32 {
 				return nil, ErrInvalidKeyData
 			}
+			if k.pubOnG1 {
+				data = append(data, 0x01)
+			} else {
+				data = append(data, 0x00)
+			}
+			data = append(data, k.key...)
 		} else {
 			// Case #4
 			//
@@ -178,25 +185,45 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 			return nil, ErrInvalidKeyData
 		}
 	}
-	bs := make([]byte, 4)
-	binary.BigEndian.PutUint32(bs, index)
-	data = append(data, bs...)
+	indexData := make([]byte, 4)
+	binary.BigEndian.PutUint32(indexData, index)
+	data = append(data, indexData...)
 
-	// Take the HMAC-SHA512 of the current key's chain code and the derived
-	// data:
-	//   I = HMAC-SHA512(Key = chainCode, Data = data)
-	hmac512 := hmac.New(sha512.New, k.chainCode)
-	_, _ = hmac512.Write(data)
-	ilr := hmac512.Sum(nil)
+	// The order is same for all three groups (g1, g2, and gt).
+	gt := bls12381.NewGT()
+	order := gt.Q()
 
-	// Split "I" into two 32-byte sequences Il and Ir where:
-	//   Il = intermediate key used to derive the child
-	//   Ir = child chain code
-	il := ilr[:len(ilr)/2]
-	childChainCode := ilr[len(ilr)/2:]
+	var childChainCode, il []byte
 
-	ilNum := new(bls12381.Fr)
-	ilNum.FromBytes(il)
+	for {
+		// Take the HMAC-SHA512 of the current key's chain code and the derived
+		// data:
+		//   I = HMAC-SHA512(Key = chainCode, Data = data)
+		hmac512 := hmac.New(sha512.New, k.chainCode)
+		_, _ = hmac512.Write(data)
+		ilr := hmac512.Sum(nil)
+
+		// Split "I" into two 32-byte sequences Il and Ir where:
+		//   Il = intermediate key used to derive the child
+		//   Ir = child chain code
+		il = ilr[:len(ilr)/2]
+		childChainCode = ilr[len(ilr)/2:]
+
+		// If Il greater or equal to the order of the group, or it is zero,
+		// generate a new "I" with data equals to 0x1 || Ir || indexData
+		ilNum := big.Int{}
+		ilNum.SetBytes(il)
+		if ilNum.Cmp(order) == -1 && ilNum.Cmp(big.NewInt(0)) != 0 {
+			break
+		}
+
+		data = []byte{0x01}
+		data = append(data, childChainCode...)
+		data = append(data, indexData...)
+	}
+
+	ilFr := new(bls12381.Fr)
+	ilFr.FromBytes(il)
 
 	var childKey []byte
 	if k.isPrivate {
@@ -204,17 +231,14 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 		// Add the parent private key to the intermediate private key to
 		// derive the final child key.
 		//
-		// childKey = parse256(Il) + parenKey
+		// childKey = parse256(Il) + parentKey
 
 		keyNum := new(bls12381.Fr)
 		keyNum.FromBytes(k.key)
 
 		childKeyNum := bls12381.NewFr()
-		childKeyNum.Add(keyNum, ilNum)
+		childKeyNum.Add(keyNum, ilFr)
 
-		if childKeyNum.IsZero() {
-			return nil, ErrInvalidKeyData
-		}
 		childKey = childKeyNum.ToBytes()
 	} else {
 		// Case #3.
@@ -226,7 +250,7 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 
 			// Public key is in G1 subgroup
 			ilPoint := new(bls12381.PointG1)
-			g1.MulScalar(ilPoint, g1.One(), ilNum)
+			g1.MulScalar(ilPoint, g1.One(), ilFr)
 
 			pubKey, err := g1.FromCompressed(k.key)
 			if err != nil {
@@ -235,16 +259,13 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 			childPubKey := new(bls12381.PointG1)
 			g1.Add(childPubKey, pubKey, ilPoint)
 
-			if g1.IsZero(childPubKey) {
-				return nil, ErrInvalidKeyData
-			}
 			childKey = g1.ToCompressed(childPubKey)
 		} else {
 			g2 := bls12381.NewG2()
 
 			// Public key is in G2 subgroup
 			ilPoint := new(bls12381.PointG2)
-			g2.MulScalar(ilPoint, g2.One(), ilNum)
+			g2.MulScalar(ilPoint, g2.One(), ilFr)
 
 			pubKey, err := g2.FromCompressed(k.key)
 			if err != nil {
@@ -253,9 +274,6 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 			childPubKey := new(bls12381.PointG2)
 			g2.Add(childPubKey, pubKey, ilPoint)
 
-			if g2.IsZero(childPubKey) {
-				return nil, ErrInvalidKeyData
-			}
 			childKey = g2.ToCompressed(childPubKey)
 		}
 	}
@@ -436,10 +454,10 @@ func NewMaster(seed []byte, pubOnG1 bool) (*ExtendedKey, error) {
 
 	// masterKey is the master key used along with a random seed used to generate
 	// the master node in the hierarchical tree.
-	masterKey := []byte("BLS12381-HD-KEYCHAIN")
+	masterKey := []byte("BLS12381 seed")
 
 	// First take the HMAC-SHA512 of the master key and the seed data:
-	//   I = HMAC-SHA512(Key = "BLS12381-HD-KEYCHAIN", Data = S)
+	//   I = HMAC-SHA512(Key = "BLS12381-HD seed", Data = S)
 	hmac512 := hmac.New(sha512.New, masterKey)
 	_, _ = hmac512.Write(seed)
 	lr := hmac512.Sum(nil)
