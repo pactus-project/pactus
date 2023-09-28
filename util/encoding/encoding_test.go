@@ -34,6 +34,8 @@ func TestElementEncoding(t *testing.T) {
 		{int64(-65536), []byte{0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}},
 		{int64(65536), []byte{0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00}},
 		{uint64(4294967296), []byte{0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00}},
+		{true, []byte{0x01}},
+		{false, []byte{0x00}},
 		{
 			&hash.Hash{
 				0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
@@ -90,12 +92,14 @@ func TestElementEncodingErrors(t *testing.T) {
 	}{
 		{int8(127), 0, io.ErrShortWrite, io.EOF},
 		{uint8(1), 0, io.ErrShortWrite, io.EOF},
-		{int16(127), 0, io.ErrShortWrite, io.EOF},
-		{uint16(256), 0, io.ErrShortWrite, io.EOF},
-		{int32(256), 0, io.ErrShortWrite, io.EOF},
-		{uint32(256), 0, io.ErrShortWrite, io.EOF},
-		{int64(65536), 0, io.ErrShortWrite, io.EOF},
-		{uint64(4294967296), 0, io.ErrShortWrite, io.EOF},
+		{int16(127), 1, io.ErrShortWrite, io.ErrUnexpectedEOF},
+		{uint16(256), 1, io.ErrShortWrite, io.ErrUnexpectedEOF},
+		{int32(256), 3, io.ErrShortWrite, io.ErrUnexpectedEOF},
+		{uint32(256), 3, io.ErrShortWrite, io.ErrUnexpectedEOF},
+		{int64(65536), 7, io.ErrShortWrite, io.ErrUnexpectedEOF},
+		{uint64(4294967296), 7, io.ErrShortWrite, io.ErrUnexpectedEOF},
+		{true, 0, io.ErrShortWrite, io.EOF},
+		{false, 0, io.ErrShortWrite, io.EOF},
 		{
 			&hash.Hash{
 				0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
