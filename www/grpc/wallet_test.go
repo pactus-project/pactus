@@ -21,7 +21,7 @@ func TestCreateWallet(t *testing.T) {
 	})
 
 	t.Run("No name, should return an error", func(t *testing.T) {
-		mnemonic := wallet.GenerateMnemonic(128)
+		mnemonic, _ := wallet.GenerateMnemonic(128)
 		res, err := client.CreateWallet(tCtx, &pactus.CreateWalletRequest{
 			Name:     "",
 			Mnemonic: mnemonic,
@@ -31,7 +31,7 @@ func TestCreateWallet(t *testing.T) {
 	})
 
 	t.Run("Bad name, should return an error", func(t *testing.T) {
-		mnemonic := wallet.GenerateMnemonic(128)
+		mnemonic, _ := wallet.GenerateMnemonic(128)
 		res, err := client.CreateWallet(tCtx, &pactus.CreateWalletRequest{
 			Name:     "..",
 			Mnemonic: mnemonic,
@@ -41,7 +41,7 @@ func TestCreateWallet(t *testing.T) {
 	})
 
 	t.Run("Should create wallet", func(t *testing.T) {
-		mnemonic := wallet.GenerateMnemonic(128)
+		mnemonic, _ := wallet.GenerateMnemonic(128)
 		res, err := client.CreateWallet(tCtx, &pactus.CreateWalletRequest{
 			Name:     "test",
 			Mnemonic: mnemonic,

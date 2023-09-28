@@ -31,7 +31,7 @@ func setup(t *testing.T) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 
-	mnemonic := GenerateMnemonic(128)
+	mnemonic, _ := GenerateMnemonic(128)
 	_, importedPrv := ts.RandBLSKeyPair()
 	vault, err := CreateVaultFromMnemonic(mnemonic, 21888)
 	assert.NoError(t, err)
@@ -326,38 +326,4 @@ func TestNeuter(t *testing.T) {
 
 	err = td.vault.Neuter().UpdatePassword("any", "any")
 	assert.ErrorIs(t, err, ErrNeutered)
-}
-
-func TestValidateMnemonic(t *testing.T) {
-	tests := []struct {
-		mnenomic string
-		errStr   string
-	}{
-		{
-			"",
-			"Invalid mnenomic",
-		},
-		{
-			"abandon ability able about above absent absorb abstract absurd abuse access",
-			"Invalid mnenomic",
-		},
-		{
-			"bandon ability able about above absent absorb abstract absurd abuse access ability",
-			"word `bandon` not found in reverse map",
-		},
-		{
-			"abandon ability able about above absent absorb abstract absurd abuse access accident",
-			"Checksum incorrect",
-		},
-		{
-			"abandon ability able about above absent absorb abstract absurd abuse access ability",
-			"",
-		},
-	}
-	for i, test := range tests {
-		err := CheckMnemonic(test.mnenomic)
-		if err != nil {
-			assert.Equal(t, err.Error(), test.errStr, "test %v failed", i)
-		}
-	}
 }

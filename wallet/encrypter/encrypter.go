@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/pactus-project/pactus/util"
@@ -201,7 +202,7 @@ func (e *Encrypter) Decrypt(cipher string, password string) (string, error) {
 	}
 
 	data, err := base64.StdEncoding.DecodeString(cipher)
-	util.ExitOnErr(err)
+	exitOnErr(err)
 
 	var text string
 	// Minimum length of data should be 20 (16 salt + 4 bytes mac)
@@ -258,7 +259,7 @@ func aesCrypt(message []byte, iv, cipherKey []byte) []byte {
 	// Generate the cipher message
 	cipherMsg := make([]byte, len(message))
 	aesCipher, err := aes.NewCipher(cipherKey)
-	util.ExitOnErr(err)
+	exitOnErr(err)
 
 	stream := cipher.NewCTR(aesCipher, iv)
 	stream.XORKeyStream(cipherMsg, message)
@@ -271,8 +272,18 @@ func calcMACv1(data ...[]byte) []byte {
 	h := sha256.New()
 	for _, d := range data {
 		_, err := h.Write(d)
-		util.ExitOnErr(err)
+		exitOnErr(err)
 	}
 
 	return h.Sum(nil)[:4]
+}
+
+// exitOnErr exit the software immediately if an error happens.
+// Panics are not safe because panics print a stack trace,
+// which may not be relevant to the error at all.
+func exitOnErr(e error) {
+	if e != nil {
+		fmt.Println(e.Error())
+		os.Exit(1)
+	}
 }

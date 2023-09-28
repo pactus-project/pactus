@@ -1,53 +1,55 @@
 package vault
 
 import (
-	"strconv"
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPathToString(t *testing.T) {
-	h := hdkeychain.HardenedKeyStart
-	tests := []struct {
-		path    []uint32
-		wantStr string
-	}{
-		{[]uint32{}, "m"},
-		{[]uint32{0}, "m/0"},
-		{[]uint32{0, 1}, "m/0/1"},
-		{[]uint32{0, 1, 1000000000}, "m/0/1/1000000000"},
-		{[]uint32{h}, "m/0'"},
-		{[]uint32{h, h + 1}, "m/0'/1'"},
-		{[]uint32{h, h + 1, h + 1000000000}, "m/0'/1'/1000000000'"},
-	}
-	for i, test := range tests {
-		assert.Equal(t, derivePathToString(test.path), test.wantStr, "case %d failed", i)
-	}
+func TestGenerateMnemonic(t *testing.T) {
+	_, err := GenerateMnemonic(127)
+	assert.Error(t, err, "low entropy")
+
+	_, err = GenerateMnemonic(128)
+	assert.NoError(t, err)
+
+	_, err = GenerateMnemonic(257)
+	assert.Error(t, err, "high entropy")
+
+	_, err = GenerateMnemonic(256)
+	assert.NoError(t, err)
 }
 
-func TestStringToPath(t *testing.T) {
-	h := hdkeychain.HardenedKeyStart
+func TestValidateMnemonic(t *testing.T) {
 	tests := []struct {
-		str      string
-		wantPath []uint32
-		wantErr  error
+		mnenomic string
+		errStr   string
 	}{
-		{"m", []uint32{}, nil},
-		{"m/0", []uint32{0}, nil},
-		{"m/0/1", []uint32{0, 1}, nil},
-		{"m/0/1/1000000000", []uint32{0, 1, 1000000000}, nil},
-		{"m/0'", []uint32{h}, nil},
-		{"m/0'/1'", []uint32{h, h + 1}, nil},
-		{"m/0'/1'/1000000000'", []uint32{h, h + 1, h + 1000000000}, nil},
-		{"i", nil, ErrInvalidPath},
-		{"m/'", nil, strconv.ErrSyntax},
-		{"m/abc'", nil, strconv.ErrSyntax},
+		{
+			"",
+			"Invalid mnenomic",
+		},
+		{
+			"abandon ability able about above absent absorb abstract absurd abuse access",
+			"Invalid mnenomic",
+		},
+		{
+			"bandon ability able about above absent absorb abstract absurd abuse access ability",
+			"word `bandon` not found in reverse map",
+		},
+		{
+			"abandon ability able about above absent absorb abstract absurd abuse access accident",
+			"Checksum incorrect",
+		},
+		{
+			"abandon ability able about above absent absorb abstract absurd abuse access ability",
+			"",
+		},
 	}
 	for i, test := range tests {
-		path, err := stringToDerivePath(test.str)
-		assert.Equal(t, path, test.wantPath, "case %d failed", i)
-		assert.ErrorIsf(t, err, test.wantErr, "case %d failed", i)
+		err := CheckMnemonic(test.mnenomic)
+		if err != nil {
+			assert.Equal(t, err.Error(), test.errStr, "test %v failed", i)
+		}
 	}
 }

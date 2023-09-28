@@ -1,7 +1,7 @@
 package hdkeychain
 
 // References:
-//  [PIP-11]: Deterministic key hierarchy for BLS-12381 curve
+//  [PIP-11]: Deterministic key hierarchy for BLS12-381 curve
 //  https://pips.pactus.org/PIPs/pip-11
 
 import (
@@ -16,7 +16,6 @@ import (
 	bls12381 "github.com/kilic/bls12-381"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/bech32m"
 	"github.com/pactus-project/pactus/util/encoding"
 )
@@ -144,8 +143,8 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	//   0x00 || ser256(parentKey) || ser32(i)
 	//
 	// For normal children:
-	//   serE1(parentPubKey) || ser32(i) : if Point is in E1
-	//   serE2(parentPubKey) || ser32(i) : if Point is in E2
+	//   serG1(parentPubKey) || ser32(i) : if Point is in G1
+	//   serG2(parentPubKey) || ser32(i) : if Point is in G2
 	data := make([]byte, 0, 100)
 	if isChildHardened {
 		// Case #1 and #4.
@@ -244,6 +243,9 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 		// Case #3.
 		// Calculate the corresponding intermediate public key for the
 		// intermediate private key
+		//
+		// childKey = parseG1(Il) + parentKey (if public key is on G1)
+		// childKey = parseG2(Il) + parentKey (if public key is on G2)
 
 		if k.pubOnG1 {
 			g1 := bls12381.NewG1()
@@ -335,35 +337,37 @@ func (k *ExtendedKey) Neuter() *ExtendedKey {
 // String returns the extended key as a bech32-encoded string.
 func (k *ExtendedKey) String() string {
 	// The serialized format is:
-	// path (variant) || chain code (32) || pubkey length (1 byte) || key data (32, 48 or 96)
+	// depth (1 bytes) || path (depth * 4) || chain code (32) || G1 or G2 (1 byte) || key length (1 byte) || key data (32, 48 or 96)
 	w := bytes.NewBuffer(make([]byte, 0))
 	err := encoding.WriteElement(w, byte(len(k.path)))
-	util.ExitOnErr(err)
+	if err != nil {
+		return err.Error()
+	}
 
 	for _, p := range k.path {
-		err := encoding.WriteVarInt(w, uint64(p))
-		util.ExitOnErr(err)
+		err := encoding.WriteElement(w, uint32(p))
+		if err != nil {
+			return err.Error()
+		}
 	}
-	err = encoding.WriteElement(w, k.chainCode)
-	util.ExitOnErr(err)
+	err = encoding.WriteVarBytes(w, k.chainCode)
+	if err != nil {
+		return err.Error()
+	}
+
+	err = encoding.WriteElement(w, k.pubOnG1)
+	if err != nil {
+		return err.Error()
+	}
+
+	err = encoding.WriteVarBytes(w, k.key)
+	if err != nil {
+		return err.Error()
+	}
 
 	hrp := crypto.XPublicKeyHRP
 	if k.isPrivate {
 		hrp = crypto.XPrivateKeyHRP
-
-		pubKeyLen := byte(96)
-		if k.pubOnG1 {
-			pubKeyLen = 48
-		}
-
-		err := encoding.WriteElement(w, pubKeyLen)
-		util.ExitOnErr(err)
-
-		err = encoding.WriteElement(w, k.key)
-		util.ExitOnErr(err)
-	} else {
-		err = encoding.WriteVarBytes(w, k.key)
-		util.ExitOnErr(err)
 	}
 
 	str, err := bech32m.EncodeFromBase256WithType(hrp, crypto.SignatureTypeBLS, w.Bytes())
@@ -379,8 +383,8 @@ func (k *ExtendedKey) String() string {
 }
 
 // NewKeyFromString returns a new extended key instance from a bech32-encoded string.
-func NewKeyFromString(key string) (*ExtendedKey, error) {
-	hrp, typ, data, err := bech32m.DecodeToBase256WithTypeNoLimit(strings.ToLower(key))
+func NewKeyFromString(str string) (*ExtendedKey, error) {
+	hrp, typ, data, err := bech32m.DecodeToBase256WithTypeNoLimit(strings.ToLower(str))
 	if err != nil {
 		return nil, err
 	}
@@ -390,57 +394,42 @@ func NewKeyFromString(key string) (*ExtendedKey, error) {
 	}
 
 	r := bytes.NewReader(data)
-	path := []uint32{}
-	pathLen := byte(0)
-	err = encoding.ReadElement(r, &pathLen)
+	depth := uint8(0)
+	err = encoding.ReadElement(r, &depth)
 	if err != nil {
 		return nil, err
 	}
-	for i := byte(0); i < pathLen; i++ {
-		p, err := encoding.ReadVarInt(r)
+
+	path := make([]uint32, depth)
+	for i := byte(0); i < depth; i++ {
+		err := encoding.ReadElement(r, &path[i])
 		if err != nil {
 			return nil, err
 		}
-		path = append(path, uint32(p))
 	}
 
-	switch hrp {
-	case crypto.XPrivateKeyHRP:
-		if r.Len() != 65 {
-			return nil, ErrInvalidKeyData
-		}
-		chainCode := make([]byte, 32)
-		key := make([]byte, 32)
-
-		err := encoding.ReadElement(r, chainCode)
-		util.ExitOnErr(err)
-
-		pubKeyLen, _ := encoding.ReadVarInt(r)
-
-		err = encoding.ReadElement(r, key)
-		util.ExitOnErr(err)
-
-		pubOnG1 := pubKeyLen == 48
-		return newExtendedKey(key[:], chainCode[:], path, true, pubOnG1), nil
-
-	case crypto.XPublicKeyHRP:
-		if r.Len() != 64 && r.Len() != 81 && r.Len() != 129 {
-			return nil, ErrInvalidKeyData
-		}
-		chainCode := make([]byte, 32)
-
-		err := encoding.ReadElement(r, chainCode)
-		util.ExitOnErr(err)
-
-		key, err := encoding.ReadVarBytes(r)
-		util.ExitOnErr(err)
-
-		pubOnG1 := len(key) == 48
-		return newExtendedKey(key[:], chainCode[:], path, false, pubOnG1), nil
-
-	default:
-		return nil, ErrInvalidKeyData
+	chainCode, err := encoding.ReadVarBytes(r)
+	if err != nil {
+		return nil, err
 	}
+
+	var pubOnG1 bool
+	err = encoding.ReadElement(r, &pubOnG1)
+	if err != nil {
+		return nil, err
+	}
+
+	key, err := encoding.ReadVarBytes(r)
+	if err != nil {
+		return nil, err
+	}
+
+	isPrivate := true
+	if hrp == crypto.XPublicKeyHRP {
+		isPrivate = false
+	}
+
+	return newExtendedKey(key[:], chainCode[:], path, isPrivate, pubOnG1), nil
 }
 
 // NewMaster creates a new master node for use in creating a hierarchical
