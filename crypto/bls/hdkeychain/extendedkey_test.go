@@ -2,6 +2,7 @@ package hdkeychain
 
 import (
 	"encoding/hex"
+	"io"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -375,43 +376,47 @@ func TestInvalidString(t *testing.T) {
 	}{
 		{
 			desc:          "invalid checksum",
-			str:           "XSECRET1PQKQGPQYQPQQC9QYQSQYQ9QY5A0WQXGZL3D0FT888SA9SZZEJ2RLK8SUXPSQ97UAMYXDW0EFCZJJDRETUXYQJQ39HGWC9NSHYEDEQX7857RK6JD56RUPZJNS5PE4ZU3ZTLHFKKXKE5N9ZTL",
-			expectedError: bech32m.InvalidChecksumError{Expected: "5n9zlt", Actual: "5n9ztl"},
+			str:           "XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJAT3FD4",
+			expectedError: bech32m.InvalidChecksumError{Expected: "at3f4d", Actual: "at3fd4"},
 		},
-		// {
-		// 	desc:          "no path len",
-		// 	str:           "XSECRET1P6NTYTF",
-		// 	expectedError: io.EOF,
-		// },
-		// {
-		// 	desc:          "wrong path",
-		// 	str:           "XSECRET1PQ2QGPQYQPQZ0DRED",
-		// 	expectedError: io.EOF,
-		// },
-		// {
-		// 	desc:          "no key",
-		// 	str:           "XSECRET1PQ2QGPQYQPQQLSPCJLQWPR645ALQJ7F6297W6CDEJRSWW5F2MVV4DMY903MVCJSCAN908R",
-		// 	expectedError: ErrInvalidKeyData,
-		// },
-		// {
-		// 	desc:          "invalid type",
-		// 	str:           "XSECRET1LQ2QGPQYQPQQLSPCJLQWPR645ALQJ7F6297W6CDEJRSWW5F2MVV4DMY903MVCJS6JSJ5CVRJREG4940E8JSMDPU3HVVT7UA7A5N72AJY9TRNVZZV25QL9W9UJ",
-		// 	expectedError: ErrInvalidKeyData,
-		// },
-		// {
-		// 	desc:          "no key",
-		// 	str:           "xpublic1pq2qgpqyqpqqlspcjlqwpr645alqj7f6297w6cdejrsww5f2mvv4dmy903mvcjscn8ga0y",
-		// 	expectedError: ErrInvalidKeyData,
-		// },
-		// {
-		// 	desc:          "invalid type",
-		// 	str:           "xpublic1lq2qgpqyqpqqlspcjlqwpr645alqj7f6297w6cdejrsww5f2mvv4dmy903mvcjsu99mrrh4yjc28dxljnyqfr5n0t85jw49fu775gpnde6faj967sr2t2xld8ucaggthxk3em7ptfdwwpvjs5240z5gpngprjaswsju38rr3myqpz2vguspp0cvrf7lkx4r40uv5smrky2v52qypk0njjfe4phxhhu2",
-		// 	expectedError: ErrInvalidKeyData,
-		// },
-		// {
-		// 	str:           "SECRET1PQ2QGPQYQPQQLSPCJLQWPR645ALQJ7F6297W6CDEJRSWW5F2MVV4DMY903MVCJS6JSJ5CVRJREG4940E8JSMDPU3HVVT7UA7A5N72AJY9TRNVZZV25QMJLMS4",
-		// 	expectedError: ErrInvalidKeyData,
-		// },
+		{
+			desc:          "no depth",
+			str:           "XSECRET1P6NTYTF",
+			expectedError: io.EOF,
+		},
+		{
+			desc:          "wrong path",
+			str:           "XSECRET1PQ5QQQQYQQYQQQQQZQQQGQESEG08",
+			expectedError: io.EOF,
+		},
+		{
+			desc:          "no chain code",
+			str:           "XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568V5G6A4P",
+			expectedError: io.EOF,
+		},
+		{
+			desc:          "no group",
+			str:           "XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGS579U6",
+			expectedError: io.EOF,
+		},
+		{
+			desc:          "no key",
+			str:           "XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPJCMNNE",
+			expectedError: io.EOF,
+		},
+		{
+			desc:          "invalid type",
+			str:           "XSECRET1ZQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJPJKVRX",
+			expectedError: ErrInvalidKeyData,
+		},
+		{
+			str:           "SECRET1ZQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJE7XP6L",
+			expectedError: ErrInvalidKeyData,
+		},
+		{
+			str:           "XPUBLIC1ZQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJ3HALEC",
+			expectedError: ErrInvalidKeyData,
+		},
 	}
 
 	for i, test := range tests {
@@ -424,8 +429,8 @@ func TestInvalidString(t *testing.T) {
 //
 //nolint:lll
 func TestNeuter(t *testing.T) {
-	extKey, _ := NewKeyFromString("XSECRET1PQKQGPQYQPQQC9QYQSQYQ9QY5A0WQXGZL3D0FT888SA9SZZEJ2RLK8SUXPSQ97UAMYXDW0EFCZJJDRETUXYQJQ39HGWC9NSHYEDEQX7857RK6JD56RUPZJNS5PE4ZU3ZTLHFKKXKE5N9ZLT")
+	extKey, _ := NewKeyFromString("XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJAT3F4D")
 	neuterKey := extKey.Neuter()
-	assert.Equal(t, neuterKey.String(), "xpublic1pqkqgpqyqpqqc9qyqsqyq9qy5a0wqxgzl3d0ft888sa9szzej2rlk8suxpsq97uamyxdw0efczjjdretuxyqnpxd5qsfs5xhxkmweph0j5fwxjt6q25m0acgsgcjha446z93f7yq6mqr933suqw0s2g77f3hf7k99eqsr5vd8")
+	assert.Equal(t, neuterKey.String(), "xpublic1pq5qqqqyqqyqqqqqzqqqgqqsqqqqqpj568vs9lz67jkww0p6tqy9ny58lv0pcvrqqtaemkgv6uljns99y68jhcvgpxzvmgpqnpgdwddkajrwl9gjudyh5q4fklms3q3390mtt5ytznugp4kqxtrrpcqulq53aunrwnav2tjqzv47re")
 	assert.Equal(t, neuterKey, neuterKey.Neuter())
 }
