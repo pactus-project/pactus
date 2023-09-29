@@ -140,11 +140,13 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	// child is hardened.
 	//
 	// For hardened children:
-	//   0x00 || ser256(parentKey) || ser32(i)
+	//   G1: 0x01 || ser256(parentKey) || ser32(i)
+	//   G2: 0x00 || ser256(parentKey) || ser32(i)
 	//
 	// For normal children:
-	//   serG1(parentPubKey) || ser32(i) : if Point is in G1
-	//   serG2(parentPubKey) || ser32(i) : if Point is in G2
+	//   G1: serG1(parentPubKey) || ser32(i)
+	//   G2: serG2(parentPubKey) || ser32(i)
+	//
 	data := make([]byte, 0, 100)
 	if isChildHardened {
 		// Case #1 and #4.
@@ -209,7 +211,7 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 		childChainCode = ilr[len(ilr)/2:]
 
 		// If Il greater or equal to the order of the group, or it is zero,
-		// generate a new "I" with data equals to 0x1 || Ir || indexData
+		// generate a new "I" with data equals to 0x01 || Ir || ser32(i)
 		ilNum := big.Int{}
 		ilNum.SetBytes(il)
 		if ilNum.Cmp(order) == -1 && ilNum.Cmp(big.NewInt(0)) != 0 {
@@ -242,15 +244,14 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	} else {
 		// Case #3.
 		// Calculate the corresponding intermediate public key for the
-		// intermediate private key
+		// intermediate private key.
 		//
-		// childKey = parseG1(Il) + parentKey (if public key is on G1)
-		// childKey = parseG2(Il) + parentKey (if public key is on G2)
-
 		if k.pubOnG1 {
+			// Public key is in G1 subgroup
+			//
+			// childKey = pointG1(parse256(Il)) + parentKey
 			g1 := bls12381.NewG1()
 
-			// Public key is in G1 subgroup
 			ilPoint := new(bls12381.PointG1)
 			g1.MulScalar(ilPoint, g1.One(), ilFr)
 
@@ -263,9 +264,11 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 
 			childKey = g1.ToCompressed(childPubKey)
 		} else {
+			// Public key is in G2 subgroup
+			//
+			// childKey = pointG2(parse256(Il)) + parentKey
 			g2 := bls12381.NewG2()
 
-			// Public key is in G2 subgroup
 			ilPoint := new(bls12381.PointG2)
 			g2.MulScalar(ilPoint, g2.One(), ilFr)
 
