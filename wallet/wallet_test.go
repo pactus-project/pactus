@@ -59,7 +59,7 @@ func setup(t *testing.T) *testData {
 
 	password := ""
 	walletPath := util.TempFilePath()
-	mnemonic := GenerateMnemonic(128)
+	mnemonic, _ := GenerateMnemonic(128)
 	wallet, err := Create(walletPath, mnemonic, password, genesis.Mainnet)
 	assert.NoError(t, err)
 	assert.False(t, wallet.IsEncrypted())
@@ -195,7 +195,7 @@ func TestImportPrivateKey(t *testing.T) {
 func TestTestKeyInfo(t *testing.T) {
 	td := setup(t)
 
-	mnemonic := GenerateMnemonic(128)
+	mnemonic, _ := GenerateMnemonic(128)
 	w1, err := Create(util.TempFilePath(), mnemonic, td.password,
 		genesis.Mainnet)
 	assert.NoError(t, err)
@@ -536,6 +536,6 @@ func TestMakeWithdrawTx(t *testing.T) {
 }
 
 func TestCheckMnemonic(t *testing.T) {
-	mnemonic := GenerateMnemonic(128)
+	mnemonic, _ := GenerateMnemonic(128)
 	assert.NoError(t, CheckMnemonic(mnemonic))
 }

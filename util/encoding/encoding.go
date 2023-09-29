@@ -164,6 +164,14 @@ func ReadElement(r io.Reader, element interface{}) error {
 	// type assertions first.
 	var err error
 	switch e := element.(type) {
+	case *bool:
+		rv := uint8(0)
+		err = binarySerializer.Uint8(r, &rv)
+		if rv == 0x00 {
+			*e = false
+		} else {
+			*e = true
+		}
 	case *int8:
 		rv := uint8(0)
 		err = binarySerializer.Uint8(r, &rv)
@@ -217,6 +225,12 @@ func WriteElement(w io.Writer, element interface{}) error {
 	// type assertions first.
 	var err error
 	switch e := element.(type) {
+	case bool:
+		if e {
+			err = binarySerializer.PutUint8(w, 0x01)
+		} else {
+			err = binarySerializer.PutUint8(w, 0x00)
+		}
 	case int8:
 		err = binarySerializer.PutUint8(w, uint8(e))
 	case uint8:

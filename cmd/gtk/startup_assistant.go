@@ -113,7 +113,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 					}
 					assistantPageComplete(assistant, seedGenerate, false)
 				} else {
-					mnemonic = wallet.GenerateMnemonic(128)
+					mnemonic, _ = wallet.GenerateMnemonic(128)
 					setTextViewContent(textViewSeed, mnemonic)
 					assistantPageComplete(assistant, seedGenerate, true)
 				}

@@ -22,7 +22,8 @@ func buildCreateCmd(parentCmd *cobra.Command) {
 
 	generateCmd.Run = func(_ *cobra.Command, _ []string) {
 		password := cmd.PromptPassword("Password", true)
-		mnemonic := wallet.GenerateMnemonic(*entropyOpt)
+		mnemonic, err := wallet.GenerateMnemonic(*entropyOpt)
+		cmd.FatalErrorCheck(err)
 
 		network := genesis.Mainnet
 		if *testnetOpt {

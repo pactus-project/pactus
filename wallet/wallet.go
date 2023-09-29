@@ -34,7 +34,7 @@ type serverInfo struct {
 type servers = map[string][]serverInfo
 
 // GenerateMnemonic is a wrapper for `vault.GenerateMnemonic`.
-func GenerateMnemonic(entropy int) string {
+func GenerateMnemonic(entropy int) (string, error) {
 	return vault.GenerateMnemonic(entropy)
 }
 
