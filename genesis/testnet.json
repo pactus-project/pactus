@@ -1,7 +1,7 @@
 {
     "genesis_time": "2023-09-28T00:00:00Z",
     "params": {
-        "block_version": 63,
+        "block_version": 1,
         "block_interval_in_second": 10,
         "committee_size": 7,
         "block_reward": 1000000000,
