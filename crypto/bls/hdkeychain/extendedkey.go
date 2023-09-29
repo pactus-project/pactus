@@ -336,8 +336,23 @@ func (k *ExtendedKey) Neuter() *ExtendedKey {
 
 // String returns the extended key as a bech32-encoded string.
 func (k *ExtendedKey) String() string {
-	// The serialized format is:
-	// depth (1 bytes) || path (depth * 4) || chain code (32) || G1 or G2 (1 byte) || key length (1 byte) || key data (32, 48 or 96)
+	//
+	// The serialized format is structured as follows:
+	// +-------+---------+------------+-------+------------+----------+
+	// | Depth | Path    | Chain code | G1/G2 | Key length | Key data |
+	// +-------+---------+------------+-------+------------+----------+
+	// | 1     | depth*4 | 32         | 1     | 1          | 32/48/96 |
+	// +-------+---------+------------+-------+------------+----------+
+	//
+	// Description:
+	// - Depth: 1 byte representing the depth of derivation path.
+	// - Path: serialized BIP-32 path; each entry is encoded as 32-bit unsigned integer, least significant byte first
+	// - Chain code: 32 bytes chain code
+	// - G1 or G2: 1 byte to specify the group.
+	// - Key length: 1 byte representing the length of the key data.
+	// - Key data: Can be 32, 48, or 96 bytes.
+	//
+
 	w := bytes.NewBuffer(make([]byte, 0))
 	err := encoding.WriteElement(w, byte(len(k.path)))
 	if err != nil {
@@ -345,7 +360,7 @@ func (k *ExtendedKey) String() string {
 	}
 
 	for _, p := range k.path {
-		err := encoding.WriteElement(w, uint32(p))
+		err := encoding.WriteElement(w, p)
 		if err != nil {
 			return err.Error()
 		}
