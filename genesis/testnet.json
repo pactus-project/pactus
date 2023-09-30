@@ -1,9 +1,9 @@
 {
-    "genesis_time": "2023-09-07T00:00:00Z",
+    "genesis_time": "2023-09-28T00:00:00Z",
     "params": {
-        "block_version": 63,
+        "block_version": 1,
         "block_interval_in_second": 10,
-        "committee_size": 51,
+        "committee_size": 7,
         "block_reward": 1000000000,
         "transaction_to_live_interval": 2880,
         "bond_interval": 120,
@@ -21,22 +21,22 @@
             "balance": 21000000000000000
         },
         {
-            "address": "tpc1pc8uyt3w7napj704leypexr02ws6lx2ggfu9e2j",
+            "address": "tpc1zwrzfhge53z0ydey2hz6zca7tjfznmr58xmhh67",
             "balance": 21000000000000000
         }
     ],
     "validators": [
         {
-            "public_key": "tpublic1p5gw4naty9nyzqhqll3x6mk56d675908th62t3ezt2d822z3xzs2gl5907gu0fpeederje9ecks5lcrn2a8svatrsjwterv9hwzfqk7lf5rn43aee5kvfv8vfy87z9ecdnrzcv55zpt94xrgpm6nxkxxxfsadjr8q"
+            "public_key": "tpublic1pksusffz7832s6hwyanjh5ujldq25gexmycsq59m9afwn78w0unfu2p7qzzljvzy8dkc2tp3039k3yqvvwd72g23ujxe2uuxhjvus08st47mxfp34d4pdlazwk2ntutzu8l9xu466cu0hzvgas3ddy9j00c2ewaky"
         },
         {
-            "public_key": "tpublic1psxph0f83gx7ay26z948m8qutnal3qlmc79caacn3kgfl6gml7cqt3yrh3kgdkxqyxxl7vc9mpnutjxzt0nnkw2h4zzwlp264dznz0ssp2lytl79a395977065ygpqsm2cm3ln44ag0g28689xuwfj6u08qqu8wl6"
+            "public_key": "tpublic1p4g3h7pgcs74d8afncr6vus3zddv0ze7gar89l9326gx5y42fd229lercktqeq2lzy3ruspvpls0rkzkclyryljzar2q46r93nuf0pl7sumwu39vv5nxtsfhm8jj4ef0xf7pftv3q4e4y94gcdaqf9cxh8s8zhyxy"
         },
         {
-            "public_key": "tpublic1p42tae04aa40ltshyryeet7hm5050h0fdla9w988lr98emly8g9eqrkz8xg6qq3rqhg8pelps9zlrqz6xfge0w2uq6ksyxearzmha9zmdyzcagx0pe6kcfx57chfa8u4s37uftza0c75xj40x0w0khfha0cpgaua4"
+            "public_key": "tpublic1pjd8zewq8m7xxqxt22u9k287c6dlx5pf7kdwf2f5c6vnaj8lu9cr7ttt4rzmgnqc0j3xqrvz5mmfew9xjrfqxfa68ha0uq7znmqvs9ykmmzf3nl38yfxua0updrdnudqtv0zx67k8rlndyl39pqespg95zuz9uukc"
         },
         {
-            "public_key": "tpublic1p5a77fv2rwgs6ywsutawwcpfqascd82nygmsnsdr7mghey0jp48q3qgywumtmelc4zurexua8kgqtyr829uqm8tju99sydxx5akhlgrdzz5lu0jgtepct4lglqhk446awj6h2nk49eweswhljkfs3dfe8esy0k6qa"
+            "public_key": "tpublic1p5x2hzaskgy9rulqmgy2wdkfkkaj7p5hsgqjqtwaf67x9xkszdrrf06f3038x0xwyjpecjsffkdkw5xx9k7v89vga23afg45sclsm4l7kufung5wzc6y8lvh0em7t9v3y7mxncg3y8u4fh3zlsm0ql45lgs4navjn"
         }
     ]
 }
