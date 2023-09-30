@@ -13,7 +13,7 @@ type BasicCheckError struct {
 }
 
 func (e BasicCheckError) Error() string {
-	return "certificate basic check failed: " + e.Reason
+	return e.Reason
 }
 
 // UnexpectedHeightError is returned when the height of the certificate

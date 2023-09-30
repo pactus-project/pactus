@@ -30,12 +30,12 @@ func (p *WithdrawPayload) Value() int64 {
 func (p *WithdrawPayload) BasicCheck() error {
 	if !p.From.IsValidatorAddress() {
 		return BasicCheckError{
-			Reason: "sender is not a validator address",
+			Reason: "sender is not a validator address: " + p.From.ShortString(),
 		}
 	}
 	if !p.To.IsAccountAddress() {
 		return BasicCheckError{
-			Reason: "receiver is not an account address",
+			Reason: "receiver is not an account address: " + p.To.ShortString(),
 		}
 	}
 

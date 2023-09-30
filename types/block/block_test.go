@@ -45,23 +45,24 @@ func TestBasicCheck(t *testing.T) {
 
 		err := b.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
-			Reason: "invalid certificate: certificate basic check failed: height is not positive: 0",
+			Reason: "invalid certificate: height is not positive: 0",
 		})
 	})
 
-	//TODO fix me later
-	//t.Run("Invalid transaction", func(t *testing.T) {
-	//	b0 := ts.GenerateTestBlock()
-	//	trxs0 := b0.Transactions()
-	//	invalidValKey := ts.RandValKey()
-	//	invalidValKey.Sign(trxs0[0].SignBytes())
-	//	b := block.NewBlock(b0.Header(), b0.PrevCertificate(), trxs0)
-	//
-	//	err := b.BasicCheck()
-	//	assert.ErrorIs(t, err, block.BasicCheckError{
-	//		Reason: "invalid transaction: transaction basic check failed: invalid address: invalid address",
-	//	})
-	//})
+	t.Run("Invalid transaction", func(t *testing.T) {
+		b0 := ts.GenerateTestBlock()
+		trxs0 := b0.Transactions()
+		invalidValKey := ts.RandValKey()
+		invSig := invalidValKey.Sign(trxs0[0].SignBytes())
+		trxs0[0].SetSignature(invSig)
+
+		b := block.NewBlock(b0.Header(), b0.PrevCertificate(), trxs0)
+
+		err := b.BasicCheck()
+		assert.ErrorIs(t, err, block.BasicCheckError{
+			Reason: "invalid transaction: invalid signature",
+		})
+	})
 
 	t.Run("Invalid state root hash", func(t *testing.T) {
 		d := ts.DecodingHex(

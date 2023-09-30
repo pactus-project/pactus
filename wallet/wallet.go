@@ -68,7 +68,7 @@ func Open(path string, offline bool) (*Wallet, error) {
 func Create(path, mnemonic, password string, chain genesis.ChainType) (*Wallet, error) {
 	path = util.MakeAbs(path)
 	if util.PathExists(path) {
-		return nil, WalletExitsError{
+		return nil, ExitsError{
 			Path: path,
 		}
 	}
@@ -137,6 +137,12 @@ func (w *Wallet) Connect(addr string) error {
 
 func (w *Wallet) tryToConnect(addr string) error {
 	client, err := newGRPCClient(addr)
+	if err != nil {
+		return err
+	}
+
+	// Check if client is responding
+	_, err = client.getBlockchainInfo()
 	if err != nil {
 		return err
 	}

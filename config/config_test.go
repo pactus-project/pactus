@@ -111,6 +111,16 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 		assert.Error(t, conf.BasicCheck())
 	})
 
+	t.Run("validator address as reward address", func(t *testing.T) {
+		conf := DefaultNodeConfig()
+		conf.NumValidators = 1
+		conf.RewardAddresses = []string{
+			ts.RandValAddress().String(),
+		}
+
+		assert.Error(t, conf.BasicCheck())
+	})
+
 	t.Run("ok", func(t *testing.T) {
 		conf := DefaultNodeConfig()
 		conf.NumValidators = 2
@@ -118,6 +128,14 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 			ts.RandAccAddress().String(),
 			ts.RandAccAddress().String(),
 		}
+
+		assert.NoError(t, conf.BasicCheck())
+	})
+
+	t.Run("no reward addresses inside config, Ok", func(t *testing.T) {
+		conf := DefaultNodeConfig()
+		conf.NumValidators = 2
+		conf.RewardAddresses = []string{}
 
 		assert.NoError(t, conf.BasicCheck())
 	})

@@ -138,7 +138,7 @@ func TestRecoverWallet(t *testing.T) {
 		assert.NoError(t, td.wallet.Save())
 
 		_, err := Create(td.wallet.path, mnemonic, password, 0)
-		assert.ErrorIs(t, err, WalletExitsError{
+		assert.ErrorIs(t, err, ExitsError{
 			Path: td.wallet.path,
 		})
 	})

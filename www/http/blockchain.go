@@ -21,14 +21,15 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 
 	tm := newTableMaker()
-	tm.addRowBlockHash("Hash", res.LastBlockHash)
-	tm.addRowInt("Height", int(res.LastBlockHeight))
+	tm.addRowBlockHash("Last Block Hash", res.LastBlockHash)
+	tm.addRowInt("Last Block Height", int(res.LastBlockHeight))
 	tm.addRowString("--- Committee", "---")
 	tm.addRowAmount("Total Power", res.TotalPower)
 	tm.addRowAmount("Committee Power", res.CommitteePower)
 	for i, val := range res.CommitteeValidators {
 		tm.addRowInt("--- Validator", i+1)
-		s.writeValidatorTable(w, val)
+		tmVal := s.writeValidatorTable(val)
+		tm.addRowString("", tmVal.html())
 	}
 
 	s.writeHTML(w, tm.html())

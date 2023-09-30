@@ -12,7 +12,7 @@ type BasicCheckError struct {
 }
 
 func (e BasicCheckError) Error() string {
-	return "transaction basic check failed: " + e.Reason
+	return e.Reason
 }
 
 // InvalidSignerError is returned when the vote signer does not match with the

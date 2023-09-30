@@ -55,14 +55,19 @@ func (conf *NodeConfig) BasicCheck() error {
 		return errors.Errorf(errors.ErrInvalidConfig, "number of validators must be between 1 and 32")
 	}
 
-	if len(conf.RewardAddresses) != conf.NumValidators {
+	if len(conf.RewardAddresses) > 0 &&
+		len(conf.RewardAddresses) != conf.NumValidators {
 		return errors.Errorf(errors.ErrInvalidConfig, "reward addresses should be %v", conf.NumValidators)
 	}
 
-	for _, addr := range conf.RewardAddresses {
-		_, err := crypto.AddressFromString(addr)
+	for _, addrStr := range conf.RewardAddresses {
+		addr, err := crypto.AddressFromString(addrStr)
 		if err != nil {
 			return errors.Errorf(errors.ErrInvalidConfig, "invalid reward address: %v", err.Error())
+		}
+
+		if !addr.IsAccountAddress() {
+			return errors.Errorf(errors.ErrInvalidConfig, "reward address is not an account address: %s", addrStr)
 		}
 	}
 	return nil
@@ -118,8 +123,8 @@ func SaveTestnetConfig(path string, numValidators int) error {
 	conf.Network.Bootstrap.MaxThreshold = 8
 	conf.Network.EnableRelay = true
 	conf.Network.RelayAddrs = []string{
-		"/ip4/139.162.153.10/udp/4002/quic/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
+		"/ip4/139.162.153.10/udp/4002/quic/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip6/2a01:7e01::f03c:93ff:fed2:84c5/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip6/2a01:7e01::f03c:93ff:fed2:84c5/udp/4002/quic/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/94.101.184.118/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
@@ -131,7 +136,7 @@ func SaveTestnetConfig(path string, numValidators int) error {
 	conf.GRPC.Gateway.Listen = "[::]:8080"
 	conf.HTTP.Enable = false
 	conf.HTTP.Listen = "[::]:80"
-	conf.Nanomsg.Enable = true
+	conf.Nanomsg.Enable = false
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:40799"
 
 	return util.WriteFile(path, conf.toTOML())
@@ -187,6 +192,9 @@ func LoadFromFile(file string, strict bool) (*Config, error) {
 
 // BasicCheck performs basic checks on the configuration.
 func (conf *Config) BasicCheck() error {
+	if err := conf.Node.BasicCheck(); err != nil {
+		return err
+	}
 	if err := conf.Store.BasicCheck(); err != nil {
 		return err
 	}

@@ -6,5 +6,5 @@ type BasicCheckError struct {
 }
 
 func (e BasicCheckError) Error() string {
-	return "block basic check failed: " + e.Reason
+	return e.Reason
 }

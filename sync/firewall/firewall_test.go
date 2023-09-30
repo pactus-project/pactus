@@ -112,6 +112,16 @@ func TestGossipMessage(t *testing.T) {
 		assert.True(t, td.network.IsClosed(td.badPeerID))
 	})
 
+	t.Run("Message is nil => should close the connection", func(t *testing.T) {
+		td := setup(t)
+
+		assert.False(t, td.network.IsClosed(td.badPeerID))
+		assert.False(t, td.network.IsClosed(td.unknownPeerID))
+		assert.Nil(t, td.firewall.OpenGossipBundle(nil, td.badPeerID, td.unknownPeerID))
+		assert.True(t, td.network.IsClosed(td.badPeerID))
+		assert.True(t, td.network.IsClosed(td.unknownPeerID))
+	})
+
 	t.Run("Message source: bad, from: unknown => should close the connection", func(t *testing.T) {
 		td := setup(t)
 
@@ -151,6 +161,14 @@ func TestGossipMessage(t *testing.T) {
 }
 
 func TestStreamMessage(t *testing.T) {
+	t.Run("Message is nil => should close the connection", func(t *testing.T) {
+		td := setup(t)
+
+		assert.False(t, td.network.IsClosed(td.badPeerID))
+		assert.Nil(t, td.firewall.OpenStreamBundle(bytes.NewReader(nil), td.badPeerID))
+		assert.True(t, td.network.IsClosed(td.badPeerID))
+	})
+
 	t.Run("Message source: bad => should close the connection", func(t *testing.T) {
 		td := setup(t)
 

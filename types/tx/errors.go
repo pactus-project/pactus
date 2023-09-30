@@ -8,7 +8,7 @@ type BasicCheckError struct {
 }
 
 func (e BasicCheckError) Error() string {
-	return "transaction basic check failed: " + e.Reason
+	return e.Reason
 }
 
 // InvalidPayloadTypeError is returned when the payload type is not valid.

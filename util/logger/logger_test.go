@@ -35,11 +35,11 @@ func TestObjLogger(t *testing.T) {
 	var buf bytes.Buffer
 	l.logger = l.logger.Output(&buf)
 
-	l.Trace("a")
-	l.Debug("b")
-	l.Info("c")
-	l.Warn("d")
-	l.Error("e")
+	l.Trace("msg")
+	l.Debug("msg")
+	l.Info("msg")
+	l.Warn("msg")
+	l.Error("msg")
 
 	out := buf.String()
 
@@ -60,16 +60,19 @@ func TestLogger(t *testing.T) {
 	var buf bytes.Buffer
 	log.Logger = log.Output(&buf)
 
-	Trace("a")
-	Info("b", nil)
-	Info("b", "a", nil)
-	Info("c", "b", []byte{1, 2, 3})
-	Warn("d", "x")
-	Error("e", "y", Foo{})
+	Trace("msg", "trace", "trace")
+	Debug("msg", "trace", "trace")
+	Info("msg", nil)
+	Info("msg", "a", nil)
+	Info("msg", "b", []byte{1, 2, 3})
+	Warn("msg", "x")
+	Error("msg", "y", Foo{})
 
 	out := buf.String()
 
 	fmt.Println(out)
+	assert.NotContains(t, out, "trace")
+	assert.NotContains(t, out, "debug")
 	assert.Contains(t, out, "foo")
 	assert.Contains(t, out, "010203")
 	assert.Contains(t, out, "!INVALID-KEY!")
@@ -80,4 +83,26 @@ func TestLogger(t *testing.T) {
 	assert.Contains(t, out, "info")
 	assert.Contains(t, out, "warn")
 	assert.Contains(t, out, "error")
+}
+
+func TestNilValue(t *testing.T) {
+	var buf bytes.Buffer
+	log.Logger = log.Output(&buf)
+
+	foo := new(Foo)
+	if true {
+		// to avoid some linting errors
+		foo = nil
+	}
+
+	Info("msg", "null", nil)
+	Info("msg", "error", error(nil))
+	Info("msg", "stringer", foo)
+
+	out := buf.String()
+
+	fmt.Println(out)
+	assert.Contains(t, out, "null")
+	assert.Contains(t, out, "error")
+	assert.Contains(t, out, "stringer")
 }

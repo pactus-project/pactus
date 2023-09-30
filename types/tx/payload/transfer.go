@@ -29,12 +29,12 @@ func (p *TransferPayload) Value() int64 {
 func (p *TransferPayload) BasicCheck() error {
 	if !p.From.IsAccountAddress() {
 		return BasicCheckError{
-			Reason: "sender is not an account address",
+			Reason: "sender is not an account address: " + p.From.ShortString(),
 		}
 	}
 	if !p.To.IsAccountAddress() {
 		return BasicCheckError{
-			Reason: "receiver is not an account address",
+			Reason: "receiver is not an account address: " + p.To.ShortString(),
 		}
 	}
 	return nil

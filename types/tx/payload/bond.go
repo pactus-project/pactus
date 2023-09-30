@@ -31,13 +31,13 @@ func (p *BondPayload) Value() int64 {
 func (p *BondPayload) BasicCheck() error {
 	if !p.From.IsAccountAddress() {
 		return BasicCheckError{
-			Reason: "sender is not an account address",
+			Reason: "sender is not an account address: " + p.From.ShortString(),
 		}
 	}
 
 	if !p.To.IsValidatorAddress() {
 		return BasicCheckError{
-			Reason: "receiver is not a validator address",
+			Reason: "receiver is not a validator address: " + p.To.ShortString(),
 		}
 	}
 
