@@ -68,7 +68,7 @@ func Open(path string, offline bool) (*Wallet, error) {
 func Create(path, mnemonic, password string, chain genesis.ChainType) (*Wallet, error) {
 	path = util.MakeAbs(path)
 	if util.PathExists(path) {
-		return nil, WalletExitsError{
+		return nil, ExitsError{
 			Path: path,
 		}
 	}

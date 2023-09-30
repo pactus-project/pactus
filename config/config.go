@@ -55,7 +55,8 @@ func (conf *NodeConfig) BasicCheck() error {
 		return errors.Errorf(errors.ErrInvalidConfig, "number of validators must be between 1 and 32")
 	}
 
-	if len(conf.RewardAddresses) != conf.NumValidators {
+	if len(conf.RewardAddresses) > 0 &&
+		len(conf.RewardAddresses) != conf.NumValidators {
 		return errors.Errorf(errors.ErrInvalidConfig, "reward addresses should be %v", conf.NumValidators)
 	}
 

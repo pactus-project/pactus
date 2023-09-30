@@ -90,7 +90,10 @@ func TestNilValue(t *testing.T) {
 	log.Logger = log.Output(&buf)
 
 	foo := new(Foo)
-	foo = nil
+	if true {
+		// to avoid some linting errors
+		foo = nil
+	}
 
 	Info("msg", "null", nil)
 	Info("msg", "error", error(nil))

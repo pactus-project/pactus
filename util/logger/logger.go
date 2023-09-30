@@ -97,7 +97,6 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 			event.Str(key, fmt.Sprintf("%v", hex.EncodeToString(v)))
 		default:
 			event.Any(key, v)
-
 		}
 	}
 	return event

@@ -27,12 +27,12 @@ func (e CRCNotMatchError) Error() string {
 	return fmt.Sprintf("crc not matched, expected: %d, got: %d", e.Expected, e.Got)
 }
 
-// WalletExitsError describes an error in which a wallet exists in the
+// ExitsError describes an error in which a wallet exists in the
 // given path.
-type WalletExitsError struct { //nolint
+type ExitsError struct {
 	Path string
 }
 
-func (e WalletExitsError) Error() string {
+func (e ExitsError) Error() string {
 	return fmt.Sprintf("a wallet exists at: %s", e.Path)
 }

@@ -131,4 +131,12 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 
 		assert.NoError(t, conf.BasicCheck())
 	})
+
+	t.Run("no reward addresses inside config, Ok", func(t *testing.T) {
+		conf := DefaultNodeConfig()
+		conf.NumValidators = 2
+		conf.RewardAddresses = []string{}
+
+		assert.NoError(t, conf.BasicCheck())
+	})
 }
