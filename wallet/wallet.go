@@ -141,6 +141,12 @@ func (w *Wallet) tryToConnect(addr string) error {
 		return err
 	}
 
+	// Check if client is responding
+	_, err = client.getBlockchainInfo()
+	if err != nil {
+		return err
+	}
+
 	w.client = client
 	return nil
 }

@@ -73,7 +73,7 @@ func TestTransferDecoding(t *testing.T) {
 			value:   0x200000,
 			readErr: nil,
 			basicErr: BasicCheckError{
-				Reason: "sender is not an account address",
+				Reason: "sender is not an account address: pc1pqgpsgpgx",
 			},
 		},
 		{
@@ -89,7 +89,7 @@ func TestTransferDecoding(t *testing.T) {
 			value:   0x200000,
 			readErr: nil,
 			basicErr: BasicCheckError{
-				Reason: "receiver is not an account address",
+				Reason: "receiver is not an account address: pc1pzgf3g9gk",
 			},
 		},
 		{

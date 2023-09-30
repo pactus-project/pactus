@@ -19,6 +19,7 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 
 	acc := res.Account
 	tm := newTableMaker()
+	tm.addRowAccAddress("Address", acc.Address)
 	tm.addRowInt("Number", int(acc.Number))
 	tm.addRowAmount("Balance", acc.Balance)
 	tm.addRowBytes("Hash", acc.Hash)

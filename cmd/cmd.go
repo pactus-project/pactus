@@ -401,7 +401,11 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 	validatorAddrs := make([]string, conf.Node.NumValidators)
 	for i := 0; i < conf.Node.NumValidators; i++ {
-		validatorAddrs[i] = addrLabels[i].Address
+		valAddr, _ := crypto.AddressFromString(addrLabels[i].Address)
+		if !valAddr.IsValidatorAddress() {
+			return nil, nil, fmt.Errorf("invalid validator address: %s", addrLabels[i].Address)
+		}
+		validatorAddrs[i] = valAddr.String()
 	}
 	valKeys := make([]*bls.ValidatorKey, conf.Node.NumValidators)
 	password, ok := passwordFetcher(walletInstance)
@@ -417,18 +421,25 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 
 	// Create reward addresses
-	rewardAddrs := make([]crypto.Address, conf.Node.NumValidators)
+	rewardAddrs := make([]crypto.Address, 0, conf.Node.NumValidators)
 	if len(conf.Node.RewardAddresses) != 0 {
-		for i, addrStr := range conf.Node.RewardAddresses {
-			rewardAddrs[i], _ = crypto.AddressFromString(addrStr)
+		for _, addrStr := range conf.Node.RewardAddresses {
+			addr, _ := crypto.AddressFromString(addrStr)
+			rewardAddrs = append(rewardAddrs, addr)
 		}
 	} else {
-		if len(addrLabels) < 2*conf.Node.NumValidators {
-			return nil, nil, fmt.Errorf("not enough addresses in wallet")
+		for i := conf.Node.NumValidators; i < len(addrLabels); i++ {
+			addr, _ := crypto.AddressFromString(addrLabels[i].Address)
+			if addr.IsAccountAddress() {
+				rewardAddrs = append(rewardAddrs, addr)
+				if len(rewardAddrs) == conf.Node.NumValidators {
+					break
+				}
+			}
 		}
-		for i := 0; i < conf.Node.NumValidators; i++ {
-			rewardAddrs[i], _ = crypto.AddressFromString(addrLabels[conf.Node.NumValidators+i].Address)
-		}
+	}
+	if len(rewardAddrs) != conf.Node.NumValidators {
+		return nil, nil, fmt.Errorf("not enough addresses in wallet")
 	}
 
 	nodeInstance, err := node.NewNode(gen, conf, valKeys, rewardAddrs)

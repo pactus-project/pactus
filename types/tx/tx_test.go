@@ -119,7 +119,7 @@ func TestBasicCheck(t *testing.T) {
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid payload: payload basic check failed: receiver is not an account address",
+			Reason: "invalid payload: receiver is not an account address: " + invAddr.ShortString(),
 		})
 	})
 
@@ -290,7 +290,7 @@ func TestInvalidSignature(t *testing.T) {
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid signature: " + trx.Signature().String(),
+			Reason: "invalid signature",
 		})
 	})
 
@@ -314,7 +314,7 @@ func TestInvalidSignature(t *testing.T) {
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid signature: " + trx.Signature().String(),
+			Reason: "invalid signature",
 		})
 	})
 
@@ -324,8 +324,7 @@ func TestInvalidSignature(t *testing.T) {
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid signature: " +
-				"c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+			Reason: "invalid signature",
 		})
 	})
 

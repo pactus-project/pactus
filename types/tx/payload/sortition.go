@@ -29,7 +29,7 @@ func (p *SortitionPayload) Value() int64 {
 func (p *SortitionPayload) BasicCheck() error {
 	if !p.Validator.IsValidatorAddress() {
 		return BasicCheckError{
-			Reason: "address is not a validator address",
+			Reason: "address is not a validator address: " + p.Validator.ShortString(),
 		}
 	}
 

@@ -189,7 +189,7 @@ func (tx *Tx) checkSignature() error {
 		bs := tx.SignBytes()
 		if err := tx.PublicKey().Verify(bs, tx.Signature()); err != nil {
 			return BasicCheckError{
-				Reason: fmt.Sprintf("invalid signature: %s", tx.Signature().String()),
+				Reason: "invalid signature",
 			}
 		}
 	}

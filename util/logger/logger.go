@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"reflect"
 
 	"github.com/pactus-project/pactus/util"
 	"github.com/rs/zerolog"
@@ -82,15 +83,21 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 			key = "!INVALID-KEY!"
 		}
 		///
-		switch v := keyvals[i+1].(type) {
+		value := keyvals[i+1]
+		switch v := value.(type) {
 		case fmt.Stringer:
-			event.Stringer(key, v)
+			if isNil(v) {
+				event.Any(key, v)
+			} else {
+				event.Stringer(key, v)
+			}
 		case error:
 			event.AnErr(key, v)
 		case []byte:
 			event.Str(key, fmt.Sprintf("%v", hex.EncodeToString(v)))
 		default:
 			event.Any(key, v)
+
 		}
 	}
 	return event
@@ -202,4 +209,15 @@ func Fatal(msg string, keyvals ...interface{}) {
 
 func Panic(msg string, keyvals ...interface{}) {
 	addFields(log.Panic(), keyvals...).Msg(msg)
+}
+
+func isNil(i interface{}) bool {
+	if i == nil {
+		return true
+	}
+	switch reflect.TypeOf(i).Kind() {
+	case reflect.Ptr:
+		return reflect.ValueOf(i).IsNil()
+	}
+	return false
 }
