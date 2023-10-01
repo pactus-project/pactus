@@ -2,9 +2,9 @@ package sync
 
 import (
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types/block"
 )
 
 type blocksResponseHandler struct {
@@ -26,19 +26,18 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, initiator 
 	} else {
 		height := msg.From
 		for _, data := range msg.CommittedBlocksData {
-			committedBlock := handler.state.MakeCommittedBlock(data, height, hash.UndefHash)
-			b, err := committedBlock.ToBlock()
+			blk, err := block.FromBytes(data)
 			if err != nil {
 				return err
 			}
-			if err := b.BasicCheck(); err != nil {
-				return err
-			}
-			handler.cache.AddBlock(height, b)
+			handler.cache.AddBlock(height, blk)
 			height++
 		}
 		handler.cache.AddCertificate(msg.From, msg.LastCertificate)
-		handler.tryCommitBlocks()
+		err := handler.tryCommitBlocks()
+		if err != nil {
+			return err
+		}
 	}
 
 	handler.updateSession(msg.SessionID, initiator, msg.ResponseCode)

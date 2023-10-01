@@ -39,7 +39,6 @@ type Facade interface {
 	PendingTx(id tx.ID) *tx.Tx
 	AddPendingTx(trx *tx.Tx) error
 	AddPendingTxAndBroadcast(trx *tx.Tx) error
-	MakeCommittedBlock(data []byte, height uint32, blockHash hash.Hash) *store.CommittedBlock
 	CommittedBlock(height uint32) *store.CommittedBlock
 	CommittedTx(id tx.ID) *store.CommittedTx
 	BlockHash(height uint32) hash.Hash

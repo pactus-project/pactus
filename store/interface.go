@@ -19,7 +19,7 @@ import (
 // TODO: How to undo or rollback at least for last 21 blocks
 
 type CommittedBlock struct {
-	Store
+	store *store
 
 	BlockHash hash.Hash
 	Height    uint32
@@ -36,7 +36,7 @@ func (s *CommittedBlock) ToBlock() (*block.Block, error) {
 	for i := 0; i < trxs.Len(); i++ {
 		trx := trxs[i]
 		if trx.IsPublicKeyStriped() {
-			pub, err := s.PublicKey(trx.Payload().Signer())
+			pub, err := s.store.PublicKey(trx.Payload().Signer())
 			if err != nil {
 				return nil, PublicKeyNotFoundError{
 					Address: trx.Payload().Signer(),
@@ -50,7 +50,7 @@ func (s *CommittedBlock) ToBlock() (*block.Block, error) {
 }
 
 type CommittedTx struct {
-	Store
+	store *store
 
 	TxID      tx.ID
 	Height    uint32
@@ -65,7 +65,7 @@ func (s *CommittedTx) ToTx() (*tx.Tx, error) {
 	}
 
 	if trx.IsPublicKeyStriped() {
-		pub, err := s.PublicKey(trx.Payload().Signer())
+		pub, err := s.store.PublicKey(trx.Payload().Signer())
 		if err != nil {
 			return nil, PublicKeyNotFoundError{
 				Address: trx.Payload().Signer(),

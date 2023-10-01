@@ -48,8 +48,9 @@ func TestInvalidBlockData(t *testing.T) {
 	for _, test := range tests {
 		pid := td.RandPeerID()
 		sid := td.sync.peerSet.OpenSession(pid).SessionID()
+		cert := td.GenerateTestCertificate()
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
-			td.RandHeight(), [][]byte{test.data}, nil)
+			td.state.LastBlockHeight()+1, [][]byte{test.data}, cert)
 
 		err := td.receivingNewMessage(td.sync, msg, pid)
 		assert.ErrorIs(t, err, test.err)
@@ -99,9 +100,7 @@ func TestStrippedPublicKey(t *testing.T) {
 	}{
 		{
 			blk1,
-			store.PublicKeyNotFoundError{
-				Address: blk1.Transactions()[0].Payload().Signer(),
-			},
+			store.ErrNotFound,
 		},
 		{
 			blk2,
@@ -111,12 +110,13 @@ func TestStrippedPublicKey(t *testing.T) {
 
 	for _, test := range tests {
 		assert.NoError(t, test.blk.BasicCheck())
-		trx1 := test.blk.Transactions()[0]
-		trx1.StripPublicKey()
-		d1, _ := test.blk.Bytes()
+		trx0 := test.blk.Transactions()[0]
+		trx0.StripPublicKey()
+		cert := td.GenerateTestCertificate()
+		blkData, _ := test.blk.Bytes()
 		sid := td.sync.peerSet.OpenSession(pid).SessionID()
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeRejected.String(), sid,
-			td.RandHeight(), [][]byte{d1}, nil)
+			td.state.LastBlockHeight()+1, [][]byte{blkData}, cert)
 		err := td.receivingNewMessage(td.sync, msg, pid)
 
 		assert.ErrorIs(t, err, test.err)
@@ -245,10 +245,10 @@ func TestSyncing(t *testing.T) {
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse)        // 93-100
 	bdl := shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // Synced
-
 	assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
+
 	// Alice needs more time to process all the bundles,
 	// but the block height should be greater than zero
-	assert.Greater(t, syncAlice.state.LastBlockHeight(), uint32(0))
+	assert.Greater(t, syncAlice.state.LastBlockHeight(), uint32(20))
 	assert.Equal(t, syncBob.state.LastBlockHeight(), uint32(100))
 }

@@ -22,7 +22,11 @@ func (handler *blockAnnounceHandler) ParseMessage(m message.Message, initiator p
 
 	handler.cache.AddCertificate(msg.Height, msg.Certificate)
 	handler.cache.AddBlock(msg.Height, msg.Block)
-	handler.tryCommitBlocks()
+
+	err := handler.tryCommitBlocks()
+	if err != nil {
+		return err
+	}
 	handler.moveConsensusToNewHeight()
 
 	handler.peerSet.UpdateHeight(initiator, msg.Height, msg.Block.Hash())

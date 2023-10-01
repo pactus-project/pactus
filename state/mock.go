@@ -162,15 +162,6 @@ func (m *MockState) CommitteePower() int64 {
 	return m.TestCommittee.TotalPower()
 }
 
-func (m *MockState) MakeCommittedBlock(data []byte, height uint32, blockHash hash.Hash) *store.CommittedBlock {
-	return &store.CommittedBlock{
-		Store:     m.TestStore,
-		Data:      data,
-		BlockHash: blockHash,
-		Height:    height,
-	}
-}
-
 func (m *MockState) CommittedBlock(height uint32) *store.CommittedBlock {
 	m.lk.RLock()
 	defer m.lk.RUnlock()

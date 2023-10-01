@@ -614,15 +614,6 @@ func (st *state) IsValidator(addr crypto.Address) bool {
 	return st.store.HasValidator(addr)
 }
 
-func (st *state) MakeCommittedBlock(data []byte, height uint32, blockHash hash.Hash) *store.CommittedBlock {
-	return &store.CommittedBlock{
-		Store:     st.store,
-		Data:      data,
-		BlockHash: blockHash,
-		Height:    height,
-	}
-}
-
 func (st *state) CommittedBlock(height uint32) *store.CommittedBlock {
 	b, err := st.store.Block(height)
 	if err != nil {

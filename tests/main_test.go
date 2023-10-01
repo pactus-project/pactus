@@ -143,6 +143,8 @@ func TestMain(m *testing.M) {
 		if err := tNodes[i].Start(); err != nil {
 			panic(fmt.Sprintf("Error on starting the node: %v", err))
 		}
+
+		time.Sleep(1 * time.Second)
 	}
 
 	tCtx = context.Background()

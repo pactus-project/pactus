@@ -801,16 +801,3 @@ func TestCalcFee(t *testing.T) {
 		assert.Error(t, err)
 	}
 }
-
-func TestMakeCommittedBlock(t *testing.T) {
-	td := setup(t)
-
-	data := td.RandBytes(128)
-	height := td.RandHeight()
-	rndHash := td.RandHash()
-	cb := td.state1.MakeCommittedBlock(data, height, rndHash)
-	assert.Equal(t, data, cb.Data)
-	assert.Equal(t, rndHash, cb.BlockHash)
-	assert.Equal(t, height, cb.Height)
-	assert.NotNil(t, cb.Store)
-}
