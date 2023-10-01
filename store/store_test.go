@@ -3,7 +3,10 @@ package store
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -89,10 +92,10 @@ func TestWriteAndClosePeacefully(t *testing.T) {
 func TestRetrieveBlockAndTransactions(t *testing.T) {
 	td := setup(t)
 
-	height, _ := td.store.LastCertificate()
-	committedBlock, err := td.store.Block(height)
+	lastHeight, _ := td.store.LastCertificate()
+	committedBlock, err := td.store.Block(lastHeight)
 	assert.NoError(t, err)
-	assert.Equal(t, height, committedBlock.Height)
+	assert.Equal(t, lastHeight, committedBlock.Height)
 	block, _ := committedBlock.ToBlock()
 	for _, trx := range block.Transactions() {
 		committedTx, err := td.store.Transaction(trx.ID())
@@ -127,35 +130,82 @@ func TestIndexingPublicKeys(t *testing.T) {
 	assert.Nil(t, pub)
 }
 
-func TestCommittedBlockToBlock(t *testing.T) {
+func TestStrippedPublicKey(t *testing.T) {
 	td := setup(t)
 
-	// Use a tricky way to save transactions from the first block again.
+	// Find a public key that we have already indexed in the database.
 	committedBlock1, _ := td.store.Block(1)
-	committedBlock2, _ := td.store.Block(2)
 	blk1, _ := committedBlock1.ToBlock()
-	blk2, _ := committedBlock2.ToBlock()
-	td.store.SaveBlock(11, blk1, blk2.PrevCertificate())
-	err := td.store.WriteBatch()
-	assert.NoError(t, err)
+	trx0PubKey := blk1.Transactions()[0].PublicKey()
+	assert.NotNil(t, trx0PubKey)
+	knownPubKey := trx0PubKey.(*bls.PublicKey)
 
-	// Ensure that the committed block can obtain the public key.
-	committedBlock11, err := td.store.Block(11)
-	assert.NoError(t, err)
+	lastHeight, _ := td.store.LastCertificate()
+	lockTime := lastHeight
+	randPubkey, _ := td.RandBLSKeyPair()
 
-	blk11, err := committedBlock11.ToBlock()
-	assert.NoError(t, err)
+	trx0 := tx.NewTransferTx(lockTime, knownPubKey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
+	trx1 := tx.NewTransferTx(lockTime, randPubkey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
+	trx2 := tx.NewTransferTx(lockTime, randPubkey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
 
-	err = blk11.BasicCheck()
-	assert.NoError(t, err)
+	trx0.SetSignature(td.RandBLSSignature())
+	trx1.SetSignature(td.RandBLSSignature())
+	trx2.SetSignature(td.RandBLSSignature())
 
-	// Ensure that the committed transactions can obtain the public key.
-	committedTrx, err := td.store.Transaction(blk11.Transactions()[0].ID())
-	assert.NoError(t, err)
+	trx0.StripPublicKey()
+	trx1.SetPublicKey(randPubkey)
+	trx2.StripPublicKey()
 
-	trx, err := committedTrx.ToTx()
-	assert.NoError(t, err)
+	tests := []struct {
+		trx    *tx.Tx
+		failed bool
+	}{
+		{trx0, false}, // indexed public key and stripped
+		{trx1, false}, // not stripped
+		{trx2, true},  // unknown public key and stripped
+	}
 
-	err = trx.BasicCheck()
-	assert.NoError(t, err)
+	for _, test := range tests {
+		trxs := block.Txs{test.trx}
+
+		// Make a block
+		prevCert := td.GenerateTestCertificate()
+		blk := block.MakeBlock(1, util.Now(), trxs, td.RandHash(), td.RandHash(),
+			prevCert, td.RandSeed(), td.RandValAddress())
+
+		trxData, _ := test.trx.Bytes()
+		blkData, _ := blk.Bytes()
+
+		committedTrx := CommittedTx{
+			store:  td.store,
+			TxID:   test.trx.ID(),
+			Height: lastHeight + 1,
+			Data:   trxData,
+		}
+		committedBlock := CommittedBlock{
+			store:     td.store,
+			BlockHash: blk.Hash(),
+			Height:    lastHeight + 1,
+			Data:      blkData,
+		}
+
+		//
+		if test.failed {
+			_, err := committedBlock.ToBlock()
+			assert.ErrorIs(t, err, PublicKeyNotFoundError{
+				Address: test.trx.Payload().Signer(),
+			})
+
+			_, err = committedTrx.ToTx()
+			assert.ErrorIs(t, err, PublicKeyNotFoundError{
+				Address: test.trx.Payload().Signer(),
+			})
+		} else {
+			_, err := committedBlock.ToBlock()
+			assert.NoError(t, err)
+
+			_, err = committedTrx.ToTx()
+			assert.NoError(t, err)
+		}
+	}
 }

@@ -69,6 +69,7 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, block *bloc
 
 		pubKey := trx.PublicKey()
 		if pubKey != nil {
+			// TODO: improve my performance by caching public keys
 			if !bs.hasPublicKey(trx.Payload().Signer()) {
 				publicKeyKey := publicKeyKey(trx.Payload().Signer())
 				batch.Put(publicKeyKey, pubKey.Bytes())

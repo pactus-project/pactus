@@ -127,7 +127,7 @@ func (s *store) Block(height uint32) (*CommittedBlock, error) {
 	}
 
 	return &CommittedBlock{
-		Store:     s,
+		store:     s,
 		BlockHash: blockHash,
 		Height:    height,
 		Data:      data[hash.HashSize:],
@@ -187,7 +187,7 @@ func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {
 	blockTime := util.SliceToUint32(data[hash.HashSize+1 : hash.HashSize+5])
 
 	return &CommittedTx{
-		Store:     s,
+		store:     s,
 		TxID:      id,
 		Height:    pos.height,
 		BlockTime: blockTime,

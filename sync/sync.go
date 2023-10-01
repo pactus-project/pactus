@@ -3,7 +3,6 @@ package sync
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/consensus"
@@ -31,20 +30,19 @@ import (
 // such as state or consensus, should be thread-safe.
 
 type synchronizer struct {
-	ctx             context.Context
-	config          *Config
-	valKeys         []*bls.ValidatorKey
-	state           state.Facade
-	consMgr         consensus.Manager
-	peerSet         *peerset.PeerSet
-	firewall        *firewall.Firewall
-	cache           *cache.Cache
-	handlers        map[message.Type]messageHandler
-	broadcastCh     <-chan message.Message
-	networkCh       <-chan network.Event
-	network         network.Network
-	heartBeatTicker *time.Ticker
-	logger          *logger.SubLogger
+	ctx         context.Context
+	config      *Config
+	valKeys     []*bls.ValidatorKey
+	state       state.Facade
+	consMgr     consensus.Manager
+	peerSet     *peerset.PeerSet
+	firewall    *firewall.Firewall
+	cache       *cache.Cache
+	handlers    map[message.Type]messageHandler
+	broadcastCh <-chan message.Message
+	networkCh   <-chan network.Event
+	network     network.Network
+	logger      *logger.SubLogger
 }
 
 func NewSynchronizer(
@@ -116,9 +114,6 @@ func (sync *synchronizer) Start() error {
 
 func (sync *synchronizer) Stop() {
 	sync.ctx.Done()
-	if sync.heartBeatTicker != nil {
-		sync.heartBeatTicker.Stop()
-	}
 }
 
 func (sync *synchronizer) moveConsensusToNewHeight() {
@@ -398,25 +393,44 @@ func (sync *synchronizer) weAreInTheCommittee() bool {
 	return sync.consMgr.HasActiveInstance()
 }
 
-func (sync *synchronizer) tryCommitBlocks() {
+func (sync *synchronizer) tryCommitBlocks() error {
 	height := sync.state.LastBlockHeight() + 1
 	for {
-		b := sync.cache.GetBlock(height)
-		if b == nil {
+		blk := sync.cache.GetBlock(height)
+		if blk == nil {
 			break
 		}
-		c := sync.cache.GetCertificate(height)
-		if c == nil {
+		cert := sync.cache.GetCertificate(height)
+		if cert == nil {
 			break
 		}
-		sync.logger.Trace("committing block", "height", height, "block", b)
-		if err := sync.state.CommitBlock(height, b, c); err != nil {
-			sync.logger.Warn("committing block failed", "block", b, "error", err, "height", height)
-			// We will ask network to re-send this block again ...
-			break
+		trxs := blk.Transactions()
+		for i := 0; i < trxs.Len(); i++ {
+			trx := trxs[i]
+			if trx.IsPublicKeyStriped() {
+				pub, err := sync.state.PublicKey(trx.Payload().Signer())
+				if err != nil {
+					return err
+				}
+				trx.SetPublicKey(pub)
+			}
+		}
+
+		if err := blk.BasicCheck(); err != nil {
+			return err
+		}
+		if err := cert.BasicCheck(); err != nil {
+			return err
+		}
+
+		sync.logger.Trace("committing block", "height", height, "block", blk)
+		if err := sync.state.CommitBlock(height, blk, cert); err != nil {
+			return err
 		}
 		height = height + 1
 	}
+
+	return nil
 }
 
 func (sync *synchronizer) prepareBlocks(from uint32, count uint32) [][]byte {

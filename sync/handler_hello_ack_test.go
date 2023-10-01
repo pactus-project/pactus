@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/sync/services"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,9 +23,12 @@ func TestParsingHelloAckMessages(t *testing.T) {
 	t.Run("Receiving HelloAck message: OK hello",
 		func(t *testing.T) {
 			pid := td.RandPeerID()
+			pub, _ := td.RandBLSKeyPair()
+			td.addPeer(t, pub, pid, services.New(services.Network))
 			msg := message.NewHelloAckMessage(message.ResponseCodeOK, "ok")
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 			td.checkPeerStatus(t, pid, peerset.StatusCodeKnown)
+			shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 		})
 }
