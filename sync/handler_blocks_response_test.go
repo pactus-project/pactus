@@ -213,6 +213,9 @@ func TestSyncing(t *testing.T) {
 	assert.Equal(t, uint32(0), syncAlice.state.LastBlockHeight())
 	assert.Equal(t, uint32(100), syncBob.state.LastBlockHeight())
 
+	// Alice receives a BlockAnnounce message and starts updating its blockchain
+	syncAlice.updateBlockchain()
+
 	// Perform block syncing
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 1-11
@@ -248,8 +251,9 @@ func TestSyncing(t *testing.T) {
 
 	// Last block requests
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)
-	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 93-100
-	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // Synced
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse)        // 93-100
+	bdl := shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // Synced
+	assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
 
 	// Alice needs more time to process all the bundles,
 	// but the block height should be greater than zero
