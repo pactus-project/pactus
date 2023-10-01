@@ -223,15 +223,11 @@ func TestSyncing(t *testing.T) {
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 23-23
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // NoMoreBlock
 
-	time.Sleep(100 * time.Millisecond)
-
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 24-34
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 35-45
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 46-46
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // NoMoreBlock
-
-	time.Sleep(100 * time.Millisecond)
 
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 47-57
@@ -239,15 +235,11 @@ func TestSyncing(t *testing.T) {
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 69-69
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // NoMoreBlock
 
-	time.Sleep(100 * time.Millisecond)
-
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 70-80
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 81-91
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 92-92
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // NoMoreBlock
-
-	time.Sleep(100 * time.Millisecond)
 
 	// Last block requests
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)

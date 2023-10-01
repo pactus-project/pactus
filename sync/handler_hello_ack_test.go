@@ -11,7 +11,7 @@ import (
 func TestParsingHelloAckMessages(t *testing.T) {
 	td := setup(t, nil)
 
-	t.Run("Receiving HelloAck message: Rejected",
+	t.Run("Receiving HelloAck message: Rejected hello",
 		func(t *testing.T) {
 			pid := td.RandPeerID()
 			msg := message.NewHelloAckMessage(message.ResponseCodeRejected, "rejected")
@@ -19,7 +19,7 @@ func TestParsingHelloAckMessages(t *testing.T) {
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 		})
 
-	t.Run("Receiving HelloAck message: OK",
+	t.Run("Receiving HelloAck message: OK hello",
 		func(t *testing.T) {
 			pid := td.RandPeerID()
 			msg := message.NewHelloAckMessage(message.ResponseCodeOK, "ok")
