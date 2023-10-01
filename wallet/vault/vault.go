@@ -2,6 +2,7 @@ package vault
 
 import (
 	"encoding/json"
+	"sort"
 	"strings"
 
 	"golang.org/x/exp/slices"
@@ -205,16 +206,43 @@ func (v *Vault) SetLabel(addr, label string) error {
 }
 
 func (v *Vault) AddressInfos() []AddressInfo {
+	importedAddrs := make([]AddressInfo, 0)
 	addrs := make([]AddressInfo, 0, v.AddressCount())
+	addrsMap := make(map[int][]AddressInfo)
 
 	for _, info := range v.Addresses {
-		addrs = append(addrs, info)
+		if strings.TrimSpace(info.Path) == "" {
+			importedAddrs = append(importedAddrs, info)
+			continue
+		}
+
+		path, _ := addresspath.NewPathFromString(info.Path)
+		addressType := path.AddressType()
+		addrsMap[int(addressType)] = append(addrsMap[int(addressType)], info)
 	}
 
-	slices.SortFunc(addrs, func(a, b AddressInfo) int {
-		return strings.Compare(a.Path, b.Path)
-	})
+	keys := make([]int, 0)
+	for key := range addrsMap {
+		keys = append(keys, key)
+	}
 
+	sort.Ints(keys)
+	for _, key := range keys {
+		addrsValue := addrsMap[key]
+		slices.SortFunc(addrsValue, func(a, b AddressInfo) int {
+			pathA, _ := addresspath.NewPathFromString(a.Path)
+			pathB, _ := addresspath.NewPathFromString(b.Path)
+
+			if pathA.LastIndex() < pathB.LastIndex() {
+				return -1
+			}
+			return 1
+		})
+
+		addrs = append(addrs, addrsValue...)
+	}
+
+	addrs = append(importedAddrs, addrs...)
 	return addrs
 }
 
@@ -385,7 +413,8 @@ func (v *Vault) NewValidatorAddress(label string) (string, error) {
 	return addr, nil
 }
 
-// TODO change structure of AddressInfo to more informativelay object
+// TODO change structure of AddressInfo to more informatively object
+
 // AddressInfo like it can return bls.PublicKey instead of string.
 func (v *Vault) AddressInfo(addr string) *AddressInfo {
 	info, ok := v.Addresses[addr]
