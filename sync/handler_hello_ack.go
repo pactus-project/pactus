@@ -33,8 +33,6 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, initiator peer.I
 	handler.logger.Debug("hello message acknowledged",
 		"from", initiator.ShortString())
 
-	handler.updateBlockchain()
-
 	return nil
 }
 
