@@ -661,6 +661,11 @@ func (cs *consensus) queryProposal() {
 		message.NewQueryProposalMessage(cs.height, cs.round))
 }
 
+func (cs *consensus) queryVotes() {
+	cs.broadcaster(cs.valKey.Address(),
+		message.NewQueryVotesMessage(cs.height, cs.round))
+}
+
 func (cs *consensus) broadcastProposal(p *proposal.Proposal) {
 	go cs.mediator.OnPublishProposal(cs, p)
 	cs.broadcaster(cs.valKey.Address(),
