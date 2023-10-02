@@ -242,7 +242,7 @@ func (v *Vault) AddressInfos() []AddressInfo {
 		addrs = append(addrs, addrsValue...)
 	}
 
-	addrs = append(importedAddrs, addrs...)
+	addrs = append(addrs, importedAddrs...)
 	return addrs
 }
 
