@@ -130,6 +130,7 @@
    ## _grpc = "error"
    ## _http = "error"
    ## _network = "info"
+   ## _nonomsg = "error"
    ## _pool = "error"
    ## _state = "info"
    ## _sync = "warning"

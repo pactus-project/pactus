@@ -19,6 +19,7 @@ func DefaultConfig() *Config {
 	conf.Levels["_pool"] = "error"
 	conf.Levels["_http"] = "error"
 	conf.Levels["_grpc"] = "error"
+	conf.Levels["_nonomsg"] = "error"
 
 	return conf
 }
