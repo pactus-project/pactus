@@ -118,7 +118,7 @@ func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 
 	lvl, err := zerolog.ParseLevel(lvlStr)
 	if err == nil {
-		sl.logger.Level(lvl)
+		sl.logger = sl.logger.Level(lvl)
 	}
 
 	inst.subs[name] = sl
