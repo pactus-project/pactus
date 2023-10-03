@@ -33,7 +33,7 @@ func TestStringToPath(t *testing.T) {
 		wantPath Path
 		wantErr  error
 	}{
-		{"m", Path{}, nil},
+		{"m", nil, nil},
 		{"m/0", Path{0}, nil},
 		{"m/0/1", Path{0, 1}, nil},
 		{"m/0/1/1000000000", Path{0, 1, 1000000000}, nil},
