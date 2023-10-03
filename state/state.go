@@ -23,6 +23,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
@@ -264,20 +265,37 @@ func (st *state) LastCertificate() *certificate.Certificate {
 	return st.lastInfo.Certificate()
 }
 
-func (st *state) UpdateLastCertificate(cert *certificate.Certificate) error {
+func (st *state) UpdateLastCertificate(v *vote.Vote) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	// Check if certificate has more signatures ...
-	if len(cert.Absentees()) < len(st.lastInfo.Certificate().Absentees()) {
-		if err := st.validatePrevCertificate(cert, st.lastInfo.BlockHash()); err != nil {
-			st.logger.Warn("try to update last certificate, but it's invalid", "error", err)
-			return err
+	lastCert := st.lastInfo.Certificate()
+	if v.Type() != vote.VoteTypePrecommit ||
+		v.Height() != lastCert.Height() ||
+		v.Round() != lastCert.Round() {
+		return InvalidVoteForCertificateError{
+			Vote: v,
 		}
-		st.lastInfo.UpdateCertificate(cert)
 	}
 
-	return nil
+	val, err := st.store.Validator(v.Signer())
+	if err != nil {
+		return err
+	}
+
+	err = v.Verify(val.PublicKey())
+	if err != nil {
+		return err
+	}
+
+	if util.Contains(lastCert.Absentees(), val.Number()) {
+		lastCert.AddSignature(val.Number(), v.Signature())
+		st.lastInfo.UpdateCertificate(lastCert)
+
+		return nil
+	}
+
+	return InvalidVoteForCertificateError{Vote: v}
 }
 
 func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee int64) *tx.Tx {
@@ -397,7 +415,7 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *certificat
 
 	// Verify proposer
 	proposer := st.committee.Proposer(cert.Round())
-	if !proposer.Address().EqualsTo(block.Header().ProposerAddress()) {
+	if proposer.Address() != block.Header().ProposerAddress() {
 		return errors.Errorf(errors.ErrInvalidBlock,
 			"invalid proposer, expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
 	}

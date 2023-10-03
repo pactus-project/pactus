@@ -3,8 +3,6 @@ package certificate
 import (
 	"fmt"
 	"reflect"
-
-	"github.com/pactus-project/pactus/crypto"
 )
 
 // BasicCheckError is returned when the basic check on the certificate fails.
@@ -53,14 +51,4 @@ type InsufficientPowerError struct {
 func (e InsufficientPowerError) Error() string {
 	return fmt.Sprintf("accumulated power is %v, should be at least %v",
 		e.SignedPower, e.RequiredPower)
-}
-
-// InvalidSignatureError is returned when the signature in the certificate is invalid.
-type InvalidSignatureError struct {
-	Signature crypto.Signature
-}
-
-func (e InvalidSignatureError) Error() string {
-	return fmt.Sprintf("certificate has an invalid signature: %s",
-		e.Signature.String())
 }

@@ -134,7 +134,7 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	eng.AddPairInv(&r.pointG1, g2one)
 
 	if !eng.Check() {
-		return errors.Error(errors.ErrInvalidSignature)
+		return crypto.ErrInvalidSignature
 	}
 	return nil
 }

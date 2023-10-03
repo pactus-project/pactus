@@ -8,7 +8,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -54,7 +53,7 @@ func TestProposalSignature(t *testing.T) {
 
 	ts.HelperSignProposal(rndValKey, p)
 	err = p.Verify(pub)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
+	assert.ErrorIs(t, crypto.ErrInvalidSignature, err)
 }
 
 func TestBasicCheck(t *testing.T) {

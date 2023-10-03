@@ -7,10 +7,18 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/util/logger"
+	"golang.org/x/exp/slices"
 )
 
 type manager struct {
 	instances []Consensus
+
+	// Caching future votes and proposals due to potential server time misalignments.
+	// Votes and proposals for upcoming blocks may be received before
+	// the current block's consensus is complete.
+	upcomingVotes     []*vote.Vote         // Map to cache votes for future block heights
+	upcomingProposals []*proposal.Proposal // Map to cache proposals for future block heights
 }
 
 // NewManager creates a new manager instance that manages a set of consensus instances,
@@ -23,7 +31,9 @@ func NewManager(
 	broadcastCh chan message.Message,
 ) Manager {
 	mgr := &manager{
-		instances: make([]Consensus, len(valKeys)),
+		instances:         make([]Consensus, len(valKeys)),
+		upcomingVotes:     make([]*vote.Vote, 0),
+		upcomingProposals: make([]*proposal.Proposal, 0),
 	}
 	mediatorConcrete := newConcreteMediator()
 
@@ -89,19 +99,81 @@ func (mgr *manager) MoveToNewHeight() {
 	for _, cons := range mgr.instances {
 		cons.MoveToNewHeight()
 	}
+
+	inst := mgr.getBestInstance()
+	curHeight, _ := inst.HeightRound()
+	for i := len(mgr.upcomingProposals) - 1; i >= 0; i-- {
+		p := mgr.upcomingProposals[i]
+		switch {
+		case p.Height() < curHeight:
+			logger.Warn("consensus moved to new height before processing the proposal cache", "height", curHeight)
+
+		case p.Height() > curHeight:
+			// keep this vote
+			continue
+
+		case p.Height() == curHeight:
+			for _, cons := range mgr.instances {
+				cons.SetProposal(p)
+			}
+		}
+
+		mgr.upcomingProposals = slices.Delete(mgr.upcomingProposals, i, i+1)
+	}
+
+	for i := len(mgr.upcomingVotes) - 1; i >= 0; i-- {
+		v := mgr.upcomingVotes[i]
+		switch {
+		case v.Height() < curHeight:
+			logger.Warn("consensus moved to new height before processing the votes cache", "height", curHeight)
+
+		case v.Height() > curHeight:
+			// keep this vote
+			continue
+
+		case v.Height() == curHeight:
+			for _, cons := range mgr.instances {
+				cons.AddVote(v)
+			}
+		}
+
+		mgr.upcomingVotes = slices.Delete(mgr.upcomingVotes, i, i+1)
+	}
 }
 
 // AddVote adds a vote to all consensus instances.
 func (mgr *manager) AddVote(v *vote.Vote) {
-	for _, cons := range mgr.instances {
-		cons.AddVote(v)
+	inst := mgr.getBestInstance()
+	curHeight, _ := inst.HeightRound()
+	switch {
+	case v.Height() < curHeight:
+		// discard the old vote
+
+	case v.Height() > curHeight:
+		mgr.upcomingVotes = append(mgr.upcomingVotes, v)
+
+	case v.Height() == curHeight:
+		for _, cons := range mgr.instances {
+			cons.AddVote(v)
+		}
 	}
 }
 
 // SetProposal sets the proposal for all consensus instances.
-func (mgr *manager) SetProposal(proposal *proposal.Proposal) {
-	for _, cons := range mgr.instances {
-		cons.SetProposal(proposal)
+func (mgr *manager) SetProposal(p *proposal.Proposal) {
+	inst := mgr.getBestInstance()
+	curHeight, _ := inst.HeightRound()
+	switch {
+	case p.Height() < curHeight:
+		// discard the old proposal
+
+	case p.Height() > curHeight:
+		mgr.upcomingProposals = append(mgr.upcomingProposals, p)
+
+	case p.Height() == curHeight:
+		for _, cons := range mgr.instances {
+			cons.SetProposal(p)
+		}
 	}
 }
 

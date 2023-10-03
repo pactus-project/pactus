@@ -3,6 +3,7 @@ package message
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -23,7 +24,7 @@ func TestHelloMessage(t *testing.T) {
 		m.Sign([]*bls.ValidatorKey{valKey})
 		m.Signature = ts.RandBLSSignature()
 
-		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidSignature)
+		assert.ErrorIs(t, crypto.ErrInvalidSignature, m.BasicCheck())
 	})
 
 	t.Run("Signature is nil", func(t *testing.T) {

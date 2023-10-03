@@ -9,17 +9,19 @@ import (
 func TestNewHeightTimeout(t *testing.T) {
 	td := setup(t)
 
-	td.enterNewHeight(td.consX)
+	td.enterNewHeight(td.consY)
 	td.commitBlockForAllStates(t)
 
-	s := &newHeightState{td.consX}
+	s := &newHeightState{td.consY}
+	s.enter()
 
 	// Invalid target
-	s.onTimeout(&ticker{Height: 2, Target: 3})
-	td.checkHeightRound(t, td.consX, 1, 0)
+	s.onTimeout(&ticker{Height: 2, Target: -1})
+	td.checkHeightRound(t, td.consY, 2, 0)
 
 	s.onTimeout(&ticker{Height: 2, Target: tickerTargetNewHeight})
-	td.checkHeightRound(t, td.consX, 2, 0)
+	td.checkHeightRound(t, td.consY, 2, 0)
+	td.shouldPublishProposal(t, td.consY, 2, 0)
 }
 
 func TestNewHeightEntry(t *testing.T) {
@@ -37,35 +39,4 @@ func TestNewHeightEntry(t *testing.T) {
 	td.checkHeightRound(t, td.consX, 2, 0)
 	assert.True(t, td.consX.active)
 	assert.NotEqual(t, td.consX.currentState.name(), "new-height")
-}
-
-func TestUpdateCertificate(t *testing.T) {
-	td := setup(t)
-
-	td.commitBlockForAllStates(t)
-
-	td.enterNewHeight(td.consX)
-
-	p := td.makeProposal(t, 2, 0)
-	td.consX.SetProposal(p)
-
-	td.addPrepareVote(td.consX, p.Block().Hash(), 2, 0, tIndexX)
-	td.addPrepareVote(td.consX, p.Block().Hash(), 2, 0, tIndexY)
-	td.addPrepareVote(td.consX, p.Block().Hash(), 2, 0, tIndexB)
-
-	td.addPrecommitVote(td.consX, p.Block().Hash(), 2, 0, tIndexX)
-	td.addPrecommitVote(td.consX, p.Block().Hash(), 2, 0, tIndexY)
-	td.addPrecommitVote(td.consX, p.Block().Hash(), 2, 0, tIndexB)
-
-	cert1 := td.consX.state.LastCertificate()
-	assert.Contains(t, cert1.Committers(), int32(tIndexP))
-	assert.Contains(t, cert1.Absentees(), int32(tIndexP))
-
-	td.addPrecommitVote(td.consX, p.Block().Hash(), 2, 0, tIndexP)
-
-	td.newHeightTimeout(td.consX)
-
-	// This certificate has no absentees
-	cert2 := td.consX.state.LastCertificate()
-	assert.Empty(t, cert2.Absentees())
 }

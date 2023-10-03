@@ -130,74 +130,6 @@ func TestCertificateValidation(t *testing.T) {
 
 		assert.NoError(t, td.state1.CommitBlock(height, nextBlock, cert))
 	})
-
-	t.Run("Update last certificate, Invalid committers", func(t *testing.T) {
-		committers := td.state2.committee.Committers()
-		committers = append(committers, val5.Number())
-		signBytes := certificate.BlockCertificateSignBytes(nextBlockHash, height, 0)
-		sig1 := td.valKey1.Sign(signBytes)
-		sig2 := td.valKey2.Sign(signBytes)
-		sig3 := td.valKey3.Sign(signBytes)
-		sig4 := td.valKey4.Sign(signBytes)
-		sig5 := valKey5.Sign(signBytes)
-		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4, sig5})
-		cert := certificate.NewCertificate(height, 0, committers, []int32{}, aggSig)
-
-		assert.Error(t, td.state1.UpdateLastCertificate(cert))
-	})
-
-	t.Run("Update last certificate, Invalid block hash", func(t *testing.T) {
-		committers := td.state2.committee.Committers()
-		invBlockHash := td.RandHash()
-		signBytes := certificate.BlockCertificateSignBytes(invBlockHash, height, 0)
-		sig1 := td.valKey1.Sign(signBytes)
-		sig2 := td.valKey2.Sign(signBytes)
-		sig3 := td.valKey3.Sign(signBytes)
-		sig4 := td.valKey4.Sign(signBytes)
-		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
-		cert := certificate.NewCertificate(height, 0, committers, []int32{}, aggSig)
-
-		assert.Error(t, td.state1.UpdateLastCertificate(cert))
-	})
-
-	t.Run("Update last certificate, Invalid round", func(t *testing.T) {
-		committers := td.state2.committee.Committers()
-		signBytes := certificate.BlockCertificateSignBytes(nextBlockHash, height, 1)
-		sig1 := td.valKey1.Sign(signBytes)
-		sig2 := td.valKey2.Sign(signBytes)
-		sig3 := td.valKey3.Sign(signBytes)
-		sig4 := td.valKey4.Sign(signBytes)
-		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
-		cert := certificate.NewCertificate(height, 1, committers, []int32{}, aggSig)
-
-		assert.Error(t, td.state1.UpdateLastCertificate(cert))
-	})
-
-	t.Run("Update last certificate, Invalid height", func(t *testing.T) {
-		committers := td.state2.committee.Committers()
-		signBytes := certificate.BlockCertificateSignBytes(nextBlockHash, height+1, 0)
-		sig1 := td.valKey1.Sign(signBytes)
-		sig2 := td.valKey2.Sign(signBytes)
-		sig3 := td.valKey3.Sign(signBytes)
-		sig4 := td.valKey4.Sign(signBytes)
-		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
-		cert := certificate.NewCertificate(height+1, 0, committers, []int32{}, aggSig)
-
-		assert.Error(t, td.state1.UpdateLastCertificate(cert))
-	})
-
-	t.Run("Update last certificate, Ok", func(t *testing.T) {
-		committers := td.state2.committee.Committers()
-		signBytes := certificate.BlockCertificateSignBytes(nextBlockHash, height, 0)
-		sig1 := td.valKey1.Sign(signBytes)
-		sig2 := td.valKey2.Sign(signBytes)
-		sig3 := td.valKey3.Sign(signBytes)
-		sig4 := td.valKey4.Sign(signBytes)
-		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
-		cert := certificate.NewCertificate(height, 0, committers, []int32{}, aggSig)
-
-		assert.NoError(t, td.state1.UpdateLastCertificate(cert))
-	})
 }
 
 func TestBlockValidation(t *testing.T) {
@@ -217,6 +149,7 @@ func TestBlockValidation(t *testing.T) {
 	// SortitionSeed		(OK)
 	// ProposerAddress		(OK)
 	//
+	prevCert := td.state1.lastInfo.Certificate()
 	proposerAddr := td.state2.valKeys[0].Address()
 	trx := td.state2.createSubsidyTx(td.RandAccAddress(), 0)
 	txs := block.NewTxs()
@@ -224,7 +157,7 @@ func TestBlockValidation(t *testing.T) {
 
 	t.Run("Invalid version", func(t *testing.T) {
 		b := block.MakeBlock(2, util.Now(), txs, td.state1.lastInfo.BlockHash(), td.state1.stateRoot(),
-			td.state1.lastInfo.Certificate(), td.state1.lastInfo.SortitionSeed(), proposerAddr)
+			prevCert, td.state1.lastInfo.SortitionSeed(), proposerAddr)
 
 		assert.Error(t, td.state1.validateBlock(b), "Invalid Version")
 	})
@@ -232,23 +165,35 @@ func TestBlockValidation(t *testing.T) {
 	t.Run("Invalid StateRoot", func(t *testing.T) {
 		invHash := td.RandHash()
 		b := block.MakeBlock(1, util.Now(), txs, td.state1.lastInfo.BlockHash(), invHash,
-			td.state1.lastInfo.Certificate(), td.state1.lastInfo.SortitionSeed(), proposerAddr)
+			prevCert, td.state1.lastInfo.SortitionSeed(), proposerAddr)
 
 		assert.Error(t, td.state1.validateBlock(b), "Invalid StateRoot")
 	})
 
-	t.Run("Invalid PrevCertificate", func(t *testing.T) {
-		invCert := td.GenerateTestCertificate()
+	t.Run("Invalid PrevCertificate round", func(t *testing.T) {
+		invCert := certificate.NewCertificate(prevCert.Height(), prevCert.Round()+1,
+			prevCert.Committers(), prevCert.Absentees(), prevCert.Signature())
 		b := block.MakeBlock(1, util.Now(), txs, td.state1.lastInfo.BlockHash(), td.state1.stateRoot(),
 			invCert, td.state1.lastInfo.SortitionSeed(), proposerAddr)
 
-		assert.Error(t, td.state1.validateBlock(b), "Invalid PrevCertificate")
+		err := td.state1.validateBlock(b)
+		assert.ErrorIs(t, InvalidCertificateError{Cert: invCert}, err)
+	})
+
+	t.Run("Invalid PrevCertificate signature", func(t *testing.T) {
+		invCert := certificate.NewCertificate(prevCert.Height(), prevCert.Round(),
+			prevCert.Committers(), prevCert.Absentees(), td.RandBLSSignature())
+		b := block.MakeBlock(1, util.Now(), txs, td.state1.lastInfo.BlockHash(), td.state1.stateRoot(),
+			invCert, td.state1.lastInfo.SortitionSeed(), proposerAddr)
+
+		err := td.state1.validateBlock(b)
+		assert.ErrorIs(t, crypto.ErrInvalidSignature, err)
 	})
 
 	t.Run("Invalid ProposerAddress", func(t *testing.T) {
 		invAddr := td.RandAccAddress()
 		b := block.MakeBlock(1, util.Now(), txs, td.state1.lastInfo.BlockHash(), td.state1.stateRoot(),
-			td.state1.lastInfo.Certificate(), td.state1.lastInfo.SortitionSeed(), invAddr)
+			prevCert, td.state1.lastInfo.SortitionSeed(), invAddr)
 		c := td.makeCertificateAndSign(t, b.Hash(), 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 
 		assert.NoError(t, td.state1.validateBlock(b))
@@ -258,7 +203,7 @@ func TestBlockValidation(t *testing.T) {
 	t.Run("Invalid SortitionSeed", func(t *testing.T) {
 		invSeed := td.RandSeed()
 		b := block.MakeBlock(1, util.Now(), txs, td.state1.lastInfo.BlockHash(), td.state1.stateRoot(),
-			td.state1.lastInfo.Certificate(), invSeed, proposerAddr)
+			prevCert, invSeed, proposerAddr)
 		c := td.makeCertificateAndSign(t, b.Hash(), 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 
 		assert.NoError(t, td.state1.validateBlock(b))
@@ -268,7 +213,7 @@ func TestBlockValidation(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		seed := td.state1.lastInfo.SortitionSeed()
 		b := block.MakeBlock(1, util.Now(), txs, td.state1.lastInfo.BlockHash(), td.state1.stateRoot(),
-			td.state1.lastInfo.Certificate(), seed.GenerateNext(td.state2.valKeys[0].PrivateKey()), proposerAddr)
+			prevCert, seed.GenerateNext(td.state2.valKeys[0].PrivateKey()), proposerAddr)
 		c := td.makeCertificateAndSign(t, b.Hash(), 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 
 		assert.NoError(t, td.state1.validateBlock(b))

@@ -192,16 +192,6 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		return
 	}
 
-	if p.Height() != cs.height {
-		cs.logger.Trace("invalid height", "proposal", p)
-		return
-	}
-
-	if p.Round() > cs.round+2 {
-		cs.logger.Trace("proposal round number exceeding the round limit", "proposal", p)
-		return
-	}
-
 	if p.Round() < cs.round {
 		cs.logger.Trace("expired round", "proposal", p)
 		return
@@ -226,7 +216,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 	} else {
 		proposer := cs.proposer(p.Round())
 		if err := p.Verify(proposer.PublicKey()); err != nil {
-			cs.logger.Warn("proposal has invalid signature", "proposal", p, "error", err)
+			cs.logger.Warn("proposal is invalid", "proposal", p, "error", err)
 			return
 		}
 
@@ -263,16 +253,6 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 
 	if !cs.active {
 		cs.logger.Trace("we are not in the committee")
-		return
-	}
-
-	if v.Height() != cs.height {
-		cs.logger.Trace("vote has invalid height", "vote", v)
-		return
-	}
-
-	if v.Round() > cs.round+2 {
-		cs.logger.Trace("vote round number exceeding the round limit", "vote", v)
 		return
 	}
 

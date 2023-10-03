@@ -167,7 +167,7 @@ func (li *LastInfo) restoreCommittee(store store.Store, lastBlock *block.Block,
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve committee member %v: %w", num, err)
 		}
-		if lastBlock.Header().ProposerAddress().EqualsTo(val.Address()) {
+		if lastBlock.Header().ProposerAddress() == val.Address() {
 			proposerIndex = i
 		}
 		vals[i] = val

@@ -11,12 +11,11 @@ import (
 func TestConsensusInfo(t *testing.T) {
 	td := setup(t)
 
-	v1, _ := td.GenerateTestPrepareVote(1000, 1)
-	v2, _ := td.GenerateTestPrecommitVote(1000, 2)
+	h, _ := td.mockConsMgr.HeightRound()
+	v1, _ := td.GenerateTestPrepareVote(h, 1)
+	v2, _ := td.GenerateTestPrecommitVote(h, 2)
 	td.mockConsMgr.AddVote(v1)
 	td.mockConsMgr.AddVote(v2)
-	td.mockConsMgr.MoveToNewHeight()
-	td.mockConsMgr.MoveToNewHeight()
 
 	w := httptest.NewRecorder()
 	r := new(http.Request)
