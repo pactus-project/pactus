@@ -306,6 +306,13 @@ func TestRemoveFirstOccurrenceOf(t *testing.T) {
 			want:    []int{1, 3},
 			removed: true,
 		},
+		{
+			name:    "element in slice",
+			s:       []int{1, 2, 2, 3},
+			e:       2,
+			want:    []int{1, 2, 3},
+			removed: true,
+		},
 	}
 
 	for _, tt := range tests {
