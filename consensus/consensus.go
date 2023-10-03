@@ -169,7 +169,10 @@ func (cs *consensus) MoveToNewHeight() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.enterNewState(cs.newHeightState)
+	stateHeight := cs.state.LastBlockHeight()
+	if cs.height != stateHeight+1 {
+		cs.enterNewState(cs.newHeightState)
+	}
 }
 
 func (cs *consensus) scheduleTimeout(duration time.Duration, height uint32, round int16, target tickerTarget) {
@@ -264,9 +267,10 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 			return
 		}
 
-		if v.Round() == cs.round && cs.cpWeakValidity == nil {
+		if cs.cpWeakValidity == nil {
 			if v.CPValue() == vote.CPValueZero ||
 				v.CPValue() == vote.CPValueAbstain {
+				// TODO: Should we check the vote signature first before proceeding with this?"
 				bh := v.BlockHash()
 				cs.cpWeakValidity = &bh
 
@@ -290,7 +294,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		cs.logger.Error("error on adding a vote", "vote", v, "error", err)
 	}
 	if added {
-		cs.logger.Debug("new vote added", "vote", v)
+		cs.logger.Info("new vote added", "vote", v)
 
 		cs.currentState.onAddVote(v)
 	}
@@ -665,7 +669,7 @@ func (cs *consensus) announceNewBlock(h uint32, b *block.Block, c *certificate.C
 }
 
 func (cs *consensus) makeCertificate(votes map[crypto.Address]*vote.Vote) *certificate.Certificate {
-	vals := cs.state.CommitteeValidators()
+	vals := cs.validators
 	committers := make([]int32, len(vals))
 	absentees := make([]int32, 0)
 	sigs := make([]*bls.Signature, 0)

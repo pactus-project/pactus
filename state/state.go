@@ -383,9 +383,7 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *certificat
 	defer st.lk.Unlock()
 
 	if height != st.lastInfo.BlockHeight()+1 {
-		// Returning error here will cause so many error logs during syncing blockchain
-		// Syncing is asynchronous job and we might receive blocks not in order
-		st.logger.Debug("unexpected block height", "height", height)
+		st.logger.Debug("block is committed", "height", height)
 		return nil
 	}
 

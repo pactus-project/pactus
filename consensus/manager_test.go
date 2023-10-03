@@ -203,8 +203,9 @@ func TestManager(t *testing.T) {
 		err := state.CommitBlock(curHeight,
 			ts.GenerateTestBlockWithTime(util.Now().Add(1*time.Hour)), ts.GenerateTestCertificate())
 		assert.NoError(t, err)
+		curHeight++
 
-		err = state.CommitBlock(curHeight+1,
+		err = state.CommitBlock(curHeight,
 			ts.GenerateTestBlockWithTime(util.Now().Add(1*time.Hour)), ts.GenerateTestCertificate())
 		assert.NoError(t, err)
 
