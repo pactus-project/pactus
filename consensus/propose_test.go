@@ -12,7 +12,8 @@ func TestProposeBlock(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
-	td.shouldPublishProposal(t, td.consX, 1, 0)
+	p := td.shouldPublishProposal(t, td.consX, 1, 0)
+	assert.Equal(t, td.consX.valKey.Address(), p.Block().Header().ProposerAddress())
 }
 
 func TestSetProposalInvalidProposer(t *testing.T) {

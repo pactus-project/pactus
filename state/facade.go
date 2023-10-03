@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/types/vote"
 )
 
 type Facade interface {
@@ -23,7 +24,7 @@ type Facade interface {
 	LastBlockHash() hash.Hash
 	LastBlockTime() time.Time
 	LastCertificate() *certificate.Certificate
-	UpdateLastCertificate(lastCertificate *certificate.Certificate) error
+	UpdateLastCertificate(v *vote.Vote) error
 	ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address, round int16) (*block.Block, error)
 	ValidateBlock(block *block.Block) error
 	CommitBlock(height uint32, block *block.Block, cert *certificate.Certificate) error

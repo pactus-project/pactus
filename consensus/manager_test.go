@@ -7,15 +7,9 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/state"
-	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/txpool"
-	"github.com/pactus-project/pactus/types/account"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/proposal"
-	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -52,20 +46,10 @@ func shouldPublishProposal(t *testing.T, broadcastCh chan message.Message,
 func TestManager(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	_, committeeValKeys := ts.GenerateTestCommittee(5)
-	acc := account.NewAccount(0)
-	acc.AddToBalance(21 * 1e14)
-	params := param.DefaultParams()
-	params.BlockIntervalInSecond = 1
-	vals := make([]*validator.Validator, 5)
-	for i, s := range committeeValKeys {
-		val := validator.NewValidator(s.PublicKey(), int32(i))
-		vals[i] = val
-	}
-	accs := map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc}
-	// to prevent triggering timers before starting the tests to avoid double entries for new heights in some tests.
-	getTime := util.RoundNow(params.BlockIntervalInSecond).Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
-	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
+	state := state.MockingState(ts)
+	state.TestCommittee.Validators()
+
+	committeeValKeys := state.TestValKeys
 
 	rewardAddrs := []crypto.Address{
 		ts.RandAccAddress(), ts.RandAccAddress(),
@@ -79,10 +63,8 @@ func TestManager(t *testing.T) {
 	valKeys[3] = ts.RandValKey()
 	valKeys[4] = ts.RandValKey()
 	broadcastCh := make(chan message.Message, 500)
-	txPool := txpool.MockingTxPool()
 
-	state, err := state.LoadOrNewState(genDoc, valKeys, store.MockingStore(ts), txPool, nil)
-	require.NoError(t, err)
+	state.TestStore.SaveBlock(ts.RandHeight(), ts.GenerateTestBlock(), ts.GenerateTestCertificate())
 
 	Mgr := NewManager(testConfig(), state, valKeys, rewardAddrs, broadcastCh)
 	mgr := Mgr.(*manager)
@@ -95,11 +77,9 @@ func TestManager(t *testing.T) {
 
 	assert.False(t, mgr.HasActiveInstance())
 	mgr.MoveToNewHeight()
+	curHeight := state.TestStore.LastHeight + 1
+
 	newHeightTimeout(consA)
-	newHeightTimeout(consB)
-	newHeightTimeout(consC)
-	newHeightTimeout(consD)
-	newHeightTimeout(consE)
 
 	t.Run("Check if keys are assigned properly", func(t *testing.T) {
 		assert.Equal(t, valKeys[0].PublicKey(), consA.ConsensusKey())
@@ -115,13 +95,13 @@ func TestManager(t *testing.T) {
 
 	t.Run("Check if all instances move to new height", func(t *testing.T) {
 		h, r := mgr.HeightRound()
-		assert.Equal(t, h, uint32(1))
+		assert.Equal(t, h, curHeight)
 		assert.Equal(t, r, int16(0))
 		assert.True(t, mgr.HasActiveInstance())
 	})
 
 	t.Run("Testing add vote", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), 1, 0, committeeValKeys[2].Address())
+		v := vote.NewPrepareVote(ts.RandHash(), curHeight, 0, committeeValKeys[2].Address())
 		ts.HelperSignVote(committeeValKeys[2], v)
 
 		mgr.AddVote(v)
@@ -134,7 +114,7 @@ func TestManager(t *testing.T) {
 
 	t.Run("Testing set proposal", func(t *testing.T) {
 		b, _ := state.ProposeBlock(committeeValKeys[1], committeeValKeys[1].Address(), 1)
-		p := proposal.NewProposal(1, 1, b)
+		p := proposal.NewProposal(curHeight, 1, b)
 		ts.HelperSignProposal(committeeValKeys[1], p)
 
 		mgr.SetProposal(p)
@@ -146,10 +126,90 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Check if one instance publishes a proposal, the other instances receive it", func(t *testing.T) {
-		p := shouldPublishProposal(t, broadcastCh, 1, 0)
+		p := shouldPublishProposal(t, broadcastCh, curHeight, 0)
 
 		assert.Equal(t, mgr.RoundProposal(0), p)
 		assert.Equal(t, consA.RoundProposal(0), p)
 		assert.Nil(t, consB.RoundProposal(0))
+	})
+
+	t.Run("Check discarding old votes", func(t *testing.T) {
+		v := vote.NewPrepareVote(ts.RandHash(), curHeight-1, 0, committeeValKeys[2].Address())
+		ts.HelperSignVote(committeeValKeys[2], v)
+
+		mgr.AddVote(v)
+		assert.Empty(t, mgr.upcomingVotes)
+	})
+
+	t.Run("Check discarding old proposals", func(t *testing.T) {
+		b, _ := state.ProposeBlock(committeeValKeys[1], committeeValKeys[1].Address(), 1)
+		p := proposal.NewProposal(curHeight-1, 1, b)
+		ts.HelperSignProposal(committeeValKeys[1], p)
+
+		mgr.SetProposal(p)
+		assert.Empty(t, mgr.upcomingProposals)
+	})
+
+	t.Run("Processing upcoming votes", func(t *testing.T) {
+		v1 := vote.NewPrepareVote(ts.RandHash(), curHeight+1, 0, committeeValKeys[2].Address())
+		v2 := vote.NewPrepareVote(ts.RandHash(), curHeight+2, 0, committeeValKeys[2].Address())
+		v3 := vote.NewPrepareVote(ts.RandHash(), curHeight+3, 0, committeeValKeys[2].Address())
+
+		ts.HelperSignVote(committeeValKeys[2], v1)
+		ts.HelperSignVote(committeeValKeys[2], v2)
+		ts.HelperSignVote(committeeValKeys[2], v3)
+
+		mgr.AddVote(v1)
+		mgr.AddVote(v2)
+		mgr.AddVote(v3)
+
+		assert.Len(t, mgr.upcomingVotes, 3)
+
+		err := state.CommitBlock(curHeight,
+			ts.GenerateTestBlockWithTime(util.Now().Add(1*time.Hour)), ts.GenerateTestCertificate())
+		assert.NoError(t, err)
+		curHeight++
+
+		err = state.CommitBlock(curHeight,
+			ts.GenerateTestBlockWithTime(util.Now().Add(1*time.Hour)), ts.GenerateTestCertificate())
+		assert.NoError(t, err)
+		curHeight++
+
+		mgr.MoveToNewHeight()
+
+		assert.Len(t, mgr.upcomingVotes, 1)
+	})
+
+	t.Run("Processing upcoming proposal", func(t *testing.T) {
+		b1, _ := state.ProposeBlock(committeeValKeys[1], committeeValKeys[1].Address(), 1)
+		p1 := proposal.NewProposal(curHeight+1, 1, b1)
+
+		b2, _ := state.ProposeBlock(committeeValKeys[1], committeeValKeys[1].Address(), 1)
+		p2 := proposal.NewProposal(curHeight+2, 1, b2)
+
+		b3, _ := state.ProposeBlock(committeeValKeys[1], committeeValKeys[1].Address(), 1)
+		p3 := proposal.NewProposal(curHeight+3, 1, b3)
+
+		ts.HelperSignProposal(committeeValKeys[1], p1)
+		ts.HelperSignProposal(committeeValKeys[1], p2)
+		ts.HelperSignProposal(committeeValKeys[1], p3)
+
+		mgr.SetProposal(p1)
+		mgr.SetProposal(p2)
+		mgr.SetProposal(p3)
+
+		assert.Len(t, mgr.upcomingProposals, 3)
+
+		err := state.CommitBlock(curHeight,
+			ts.GenerateTestBlockWithTime(util.Now().Add(1*time.Hour)), ts.GenerateTestCertificate())
+		assert.NoError(t, err)
+
+		err = state.CommitBlock(curHeight+1,
+			ts.GenerateTestBlockWithTime(util.Now().Add(1*time.Hour)), ts.GenerateTestCertificate())
+		assert.NoError(t, err)
+
+		mgr.MoveToNewHeight()
+
+		assert.Len(t, mgr.upcomingProposals, 1)
 	})
 }

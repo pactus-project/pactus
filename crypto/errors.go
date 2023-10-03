@@ -1,8 +1,12 @@
 package crypto
 
 import (
+	"errors"
 	"fmt"
 )
+
+// ErrInvalidSignature is returned when a signature is invalid.
+var ErrInvalidSignature = errors.New("invalid signature")
 
 // InvalidLengthError is returned when the length of the data
 // does not match the expected length.

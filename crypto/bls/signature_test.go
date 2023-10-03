@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	cbor "github.com/fxamacker/cbor/v2"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
@@ -76,9 +77,9 @@ func TestVerifyingSignature(t *testing.T) {
 	assert.False(t, sig1.EqualsTo(sig2))
 	assert.NoError(t, pb1.Verify(msg, sig1))
 	assert.NoError(t, pb2.Verify(msg, sig2))
-	assert.Equal(t, errors.Code(pb1.Verify(msg, sig2)), errors.ErrInvalidSignature)
-	assert.Equal(t, errors.Code(pb2.Verify(msg, sig1)), errors.ErrInvalidSignature)
-	assert.Equal(t, errors.Code(pb1.Verify(msg[1:], sig1)), errors.ErrInvalidSignature)
+	assert.ErrorIs(t, crypto.ErrInvalidSignature, pb1.Verify(msg, sig2))
+	assert.ErrorIs(t, crypto.ErrInvalidSignature, pb2.Verify(msg, sig1))
+	assert.ErrorIs(t, crypto.ErrInvalidSignature, pb1.Verify(msg[1:], sig1))
 }
 
 func TestSignatureBytes(t *testing.T) {

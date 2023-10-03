@@ -84,18 +84,18 @@ func TestAggregateFailed(t *testing.T) {
 	assert.Error(t, pub2.Verify(msg1, agg1))
 	assert.Error(t, pub3.Verify(msg1, agg1))
 
-	assert.True(t, bls.VerifyAggregated(agg1, pubs1, msg1))
-	assert.False(t, bls.VerifyAggregated(agg1, pubs1, msg2))
-	assert.False(t, bls.VerifyAggregated(agg2, pubs1, msg1))
-	assert.False(t, bls.VerifyAggregated(agg1, pubs2, msg1))
-	assert.True(t, bls.VerifyAggregated(agg2, pubs2, msg1))
-	assert.False(t, bls.VerifyAggregated(agg2, pubs2, msg2))
-	assert.False(t, bls.VerifyAggregated(agg3, pubs1, msg1))
-	assert.False(t, bls.VerifyAggregated(agg3, pubs1, msg2))
-	assert.False(t, bls.VerifyAggregated(agg4, pubs1, msg1))
-	assert.False(t, bls.VerifyAggregated(agg1, pubs3, msg1))
-	assert.True(t, bls.VerifyAggregated(agg5, pubs1, msg1))
-	assert.True(t, bls.VerifyAggregated(agg1, pubs4, msg1))
+	assert.NoError(t, bls.VerifyAggregated(agg1, pubs1, msg1))
+	assert.Error(t, bls.VerifyAggregated(agg1, pubs1, msg2))
+	assert.Error(t, bls.VerifyAggregated(agg2, pubs1, msg1))
+	assert.Error(t, bls.VerifyAggregated(agg1, pubs2, msg1))
+	assert.NoError(t, bls.VerifyAggregated(agg2, pubs2, msg1))
+	assert.Error(t, bls.VerifyAggregated(agg2, pubs2, msg2))
+	assert.Error(t, bls.VerifyAggregated(agg3, pubs1, msg1))
+	assert.Error(t, bls.VerifyAggregated(agg3, pubs1, msg2))
+	assert.Error(t, bls.VerifyAggregated(agg4, pubs1, msg1))
+	assert.Error(t, bls.VerifyAggregated(agg1, pubs3, msg1))
+	assert.NoError(t, bls.VerifyAggregated(agg5, pubs1, msg1))
+	assert.NoError(t, bls.VerifyAggregated(agg1, pubs4, msg1))
 
 	assert.Nil(t, pubAgg1.Verify(msg1, agg1))
 	assert.NotNil(t, pubAgg1.Verify(msg2, agg1))
@@ -153,10 +153,10 @@ func TestDuplicatedAggregate(t *testing.T) {
 	pubAgg2 := bls.PublicKeyAggregate(pubs2...)
 	assert.False(t, pubAgg1.EqualsTo(pubAgg2))
 
-	assert.False(t, bls.VerifyAggregated(agg1, pubs1, msg1))
+	assert.Error(t, bls.VerifyAggregated(agg1, pubs1, msg1))
 	assert.NotNil(t, pubAgg1.Verify(msg1, agg1))
 
-	assert.True(t, bls.VerifyAggregated(agg1, pubs2, msg1))
+	assert.NoError(t, bls.VerifyAggregated(agg1, pubs2, msg1))
 	assert.Nil(t, pubAgg2.Verify(msg1, agg1))
 }
 

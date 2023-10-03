@@ -157,7 +157,7 @@ func (m *MockStore) Validator(addr crypto.Address) (*validator.Validator, error)
 	if ok {
 		return v.Clone(), nil
 	}
-	return nil, fmt.Errorf("not found")
+	return nil, ErrNotFound
 }
 
 func (m *MockStore) ValidatorByNumber(num int32) (*validator.Validator, error) {

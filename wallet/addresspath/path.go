@@ -22,7 +22,7 @@ func NewPathFromString(str string) (Path, error) {
 	if sub[0] != "m" {
 		return nil, ErrInvalidPath
 	}
-	var path []uint32
+	path := []uint32{}
 	for i := 1; i < len(sub); i++ {
 		indexStr := sub[i]
 		added := uint32(0)
@@ -54,8 +54,4 @@ func (p Path) String() string {
 
 func (p Path) LastIndex() uint32 {
 	return p[len(p)-1]
-}
-
-func (p Path) AddressType() uint32 {
-	return p[len(p)-2] - HardenedKeyStart
 }

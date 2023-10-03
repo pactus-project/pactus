@@ -46,7 +46,7 @@ func PublicKeyAggregate(pubs ...*PublicKey) *PublicKey {
 	}
 }
 
-func VerifyAggregated(sig *Signature, pubs []*PublicKey, msg []byte) bool {
+func VerifyAggregated(sig *Signature, pubs []*PublicKey, msg []byte) error {
 	aggPub := PublicKeyAggregate(pubs...)
-	return aggPub.Verify(msg, sig) == nil
+	return aggPub.Verify(msg, sig)
 }

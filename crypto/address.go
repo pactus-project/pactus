@@ -1,7 +1,6 @@
 package crypto
 
 import (
-	"bytes"
 	"io"
 
 	"github.com/pactus-project/pactus/util/bech32m"
@@ -89,7 +88,7 @@ func (addr Address) ShortString() string {
 
 // String returns a human-readable string for the address.
 func (addr Address) String() string {
-	if addr.EqualsTo(TreasuryAddress) {
+	if addr == TreasuryAddress {
 		return treasuryAddressString
 	}
 
@@ -102,10 +101,6 @@ func (addr Address) String() string {
 	}
 
 	return str
-}
-
-func (addr Address) EqualsTo(right Address) bool {
-	return bytes.Equal(addr.Bytes(), right.Bytes())
 }
 
 func (addr Address) Type() AddressType {

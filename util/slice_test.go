@@ -276,3 +276,47 @@ func TestStringToBytes(t *testing.T) {
 		assert.Equal(t, got, test.output, "StringToBytes('%s') =  %v, want %v", test.input, got, test.output)
 	}
 }
+
+func TestRemoveFirstOccurrenceOf(t *testing.T) {
+	tests := []struct {
+		name    string
+		s       []int
+		e       int
+		want    []int
+		removed bool
+	}{
+		{
+			name:    "empty slice",
+			s:       []int{},
+			e:       1,
+			want:    []int{},
+			removed: false,
+		},
+		{
+			name:    "element not in slice",
+			s:       []int{1, 2, 3},
+			e:       4,
+			want:    []int{1, 2, 3},
+			removed: false,
+		},
+		{
+			name:    "element in slice",
+			s:       []int{1, 2, 3},
+			e:       2,
+			want:    []int{1, 3},
+			removed: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, removed := RemoveFirstOccurrenceOf(tt.s, tt.e)
+			if !Equal(got, tt.want) {
+				t.Errorf("got %v, want %v", got, tt.want)
+			}
+			if removed != tt.removed {
+				t.Errorf("got %v, want %v", removed, tt.removed)
+			}
+		})
+	}
+}

@@ -18,6 +18,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -149,19 +150,19 @@ func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash, ro
 	var signedBy []int32
 
 	for i, s := range valKeys {
-		if s.Address().EqualsTo(td.valKey1.Address()) {
+		if s.Address() == td.valKey1.Address() {
 			signedBy = append(signedBy, 0)
 		}
 
-		if s.Address().EqualsTo(td.valKey2.Address()) {
+		if s.Address() == td.valKey2.Address() {
 			signedBy = append(signedBy, 1)
 		}
 
-		if s.Address().EqualsTo(td.valKey3.Address()) {
+		if s.Address() == td.valKey3.Address() {
 			signedBy = append(signedBy, 2)
 		}
 
-		if s.Address().EqualsTo(td.valKey4.Address()) {
+		if s.Address() == td.valKey4.Address() {
 			signedBy = append(signedBy, 3)
 		}
 		sigs[i] = s.Sign(sb)
@@ -338,19 +339,47 @@ func TestCommitSandbox(t *testing.T) {
 func TestUpdateLastCertificate(t *testing.T) {
 	td := setup(t)
 
-	b1, c1 := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey3, td.valKey4)
-	b11, c11 := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
-	_, c12 := td.makeBlockAndCertificate(t, 1, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
+	blk, cert := td.makeBlockAndCertificate(t, 1, td.valKey1, td.valKey2, td.valKey3)
+	td.commitBlockForAllStates(t, blk, cert)
 
-	td.commitBlockForAllStates(t, b1, c1)
+	invValKey := td.RandValKey()
+	notActiveValKey := td.RandValKey()
+	val := validator.NewValidator(notActiveValKey.PublicKey(), td.RandInt32(100))
+	td.state1.store.UpdateValidator(val)
 
-	assert.Equal(t, b1.Hash(), b11.Hash())
-	assert.Equal(t, td.state1.lastInfo.Certificate().Hash(), c1.Hash())
-	assert.Error(t, td.state1.UpdateLastCertificate(c12))
-	assert.NoError(t, td.state1.UpdateLastCertificate(c1))
-	assert.Equal(t, td.state1.lastInfo.Certificate().Hash(), c1.Hash())
-	assert.NoError(t, td.state1.UpdateLastCertificate(c11))
-	assert.Equal(t, td.state1.lastInfo.Certificate().Hash(), c11.Hash())
+	v1 := vote.NewPrepareVote(blk.Hash(), cert.Height(), cert.Round(), td.valKey3.Address())
+	v2 := vote.NewPrecommitVote(blk.Hash(), cert.Height()+1, cert.Round(), td.valKey3.Address())
+	v3 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round()-1, td.valKey3.Address())
+	v4 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), td.valKey4.Address())
+	v5 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), invValKey.Address())
+	v6 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), notActiveValKey.Address())
+	v7 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), td.valKey4.Address())
+
+	td.HelperSignVote(td.valKey3, v1)
+	td.HelperSignVote(td.valKey3, v2)
+	td.HelperSignVote(td.valKey3, v3)
+	td.HelperSignVote(invValKey, v4)
+	td.HelperSignVote(invValKey, v5)
+	td.HelperSignVote(notActiveValKey, v6)
+	td.HelperSignVote(td.valKey4, v7)
+
+	tests := []struct {
+		vote *vote.Vote
+		err  error
+	}{
+		{v1, InvalidVoteForCertificateError{Vote: v1}},
+		{v2, InvalidVoteForCertificateError{Vote: v2}},
+		{v3, InvalidVoteForCertificateError{Vote: v3}},
+		{v4, crypto.ErrInvalidSignature},
+		{v5, store.ErrNotFound},
+		{v6, InvalidVoteForCertificateError{Vote: v6}},
+		{v7, nil},
+	}
+
+	for i, test := range tests {
+		err := td.state1.UpdateLastCertificate(test.vote)
+		assert.ErrorIs(t, test.err, err, "error not matched for test %v", i)
+	}
 }
 
 func TestInvalidProposerProposeBlock(t *testing.T) {

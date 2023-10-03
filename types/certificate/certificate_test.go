@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/certificate"
@@ -191,14 +192,14 @@ func TestEncodingCertificate(t *testing.T) {
 func TestCertificateValidation(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub1, prv1 := ts.RandBLSKeyPair()
-	pub2, _ := ts.RandBLSKeyPair()
-	pub3, prv3 := ts.RandBLSKeyPair()
-	pub4, prv4 := ts.RandBLSKeyPair()
-	val1 := validator.NewValidator(pub1, ts.RandInt32(10000))
-	val2 := validator.NewValidator(pub2, ts.RandInt32(10000))
-	val3 := validator.NewValidator(pub3, ts.RandInt32(10000))
-	val4 := validator.NewValidator(pub4, ts.RandInt32(10000))
+	valKey1 := ts.RandValKey()
+	valKey2 := ts.RandValKey()
+	valKey3 := ts.RandValKey()
+	valKey4 := ts.RandValKey()
+	val1 := validator.NewValidator(valKey1.PublicKey(), ts.RandInt32(10000))
+	val2 := validator.NewValidator(valKey2.PublicKey(), ts.RandInt32(10000))
+	val3 := validator.NewValidator(valKey3.PublicKey(), ts.RandInt32(10000))
+	val4 := validator.NewValidator(valKey4.PublicKey(), ts.RandInt32(10000))
 
 	validators := []*validator.Validator{val1, val2, val3, val4}
 	committers := []int32{
@@ -208,9 +209,9 @@ func TestCertificateValidation(t *testing.T) {
 	blockHeight := ts.RandHeight()
 	blockRound := ts.RandRound()
 	signBytes := certificate.BlockCertificateSignBytes(blockHash, blockHeight, blockRound)
-	sig1 := prv1.Sign(signBytes).(*bls.Signature)
-	sig3 := prv3.Sign(signBytes).(*bls.Signature)
-	sig4 := prv4.Sign(signBytes).(*bls.Signature)
+	sig1 := valKey1.Sign(signBytes)
+	sig3 := valKey3.Sign(signBytes)
+	sig4 := valKey4.Sign(signBytes)
 	aggSig := bls.SignatureAggregate(sig1, sig3, sig4)
 
 	t.Run("Invalid height, should return error", func(t *testing.T) {
@@ -265,9 +266,7 @@ func TestCertificateValidation(t *testing.T) {
 			[]int32{val3.Number()}, aggSig)
 
 		err := cert.Validate(blockHeight, validators, signBytes)
-		assert.ErrorIs(t, err, certificate.InvalidSignatureError{
-			Signature: aggSig,
-		})
+		assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	})
 	t.Run("Ok, should return no error", func(t *testing.T) {
 		cert := certificate.NewCertificate(blockHeight, blockRound, committers,
@@ -276,4 +275,36 @@ func TestCertificateValidation(t *testing.T) {
 		err := cert.Validate(blockHeight, validators, signBytes)
 		assert.NoError(t, err)
 	})
+}
+
+func TestAddSignature(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	valKey1 := ts.RandValKey()
+	valKey2 := ts.RandValKey()
+	valKey3 := ts.RandValKey()
+	valKey4 := ts.RandValKey()
+	blockHeight := ts.RandHeight()
+	blockRound := ts.RandRound()
+	blockHash := ts.RandHash()
+
+	val1 := validator.NewValidator(valKey1.PublicKey(), ts.RandInt32(10000))
+	val2 := validator.NewValidator(valKey2.PublicKey(), ts.RandInt32(10000))
+	val3 := validator.NewValidator(valKey3.PublicKey(), ts.RandInt32(10000))
+	val4 := validator.NewValidator(valKey4.PublicKey(), ts.RandInt32(10000))
+
+	signBytes := certificate.BlockCertificateSignBytes(blockHash, blockHeight, blockRound)
+	sig1 := valKey1.Sign(signBytes)
+	sig2 := valKey2.Sign(signBytes)
+	sig3 := valKey3.Sign(signBytes)
+	sig4 := valKey4.Sign(signBytes)
+	aggSig := bls.SignatureAggregate(sig1, sig2, sig3)
+
+	cert := certificate.NewCertificate(blockHeight, blockRound,
+		[]int32{val1.Number(), val2.Number(), val3.Number(), val4.Number()}, []int32{val4.Number()}, aggSig)
+
+	assert.Equal(t, []int32{val4.Number()}, cert.Absentees())
+	cert.AddSignature(val4.Number(), sig4)
+	assert.Empty(t, cert.Absentees())
+	assert.NoError(t, cert.Validate(blockHeight, []*validator.Validator{val1, val2, val3, val4}, signBytes))
 }
