@@ -4,7 +4,9 @@ Pactus node offers [Prometheus](https://prometheus.io/) metrics to monitor and a
 
 # Usage
 
-To activate this feature, inside the `config.toml`,  set the `enable_metrics` parameter to true.  Also, ensure that the HTTP module is enabled. You can enable HTTP module under the `[http]` section of the `config.toml` file. Once enabled, the metrics can be accessed at [http://localhost:8080/metrics/prometheus](http://localhost:8080/metrics/prometheus).
+To activate this feature, inside the `config.toml`,  set the `enable_metrics` parameter to true.
+Also, ensure that the HTTP module is enabled. You can enable HTTP module under the `[http]` section of the `config.toml` file. 
+Once enabled, the metrics can be accessed at [http://localhost:80/metrics/prometheus](http://localhost:80/metrics/prometheus) (this url going to be use by prometheus).
 
 > NOTE: if you are running Pactus with docker image, make sure to expose `:80` port.
 
