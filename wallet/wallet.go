@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"path"
 	"time"
 
@@ -395,7 +396,7 @@ func (w *Wallet) AddressCount() int {
 }
 
 func (w *Wallet) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
-	return w.store.Vault.ImportPrivateKey(password, prv)
+	return fmt.Errorf("not supported yet")
 }
 
 func (w *Wallet) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
