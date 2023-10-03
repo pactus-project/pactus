@@ -383,7 +383,7 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *certificat
 	defer st.lk.Unlock()
 
 	if height != st.lastInfo.BlockHeight()+1 {
-		st.logger.Debug("block is committed", "height", height)
+		st.logger.Debug("block is committed before", "height", height)
 		return nil
 	}
 
