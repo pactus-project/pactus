@@ -383,11 +383,21 @@ func TestNotInCommittee(t *testing.T) {
 	assert.Equal(t, cons.currentState.name(), "new-height")
 }
 
-func TestRoundVotes(t *testing.T) {
+func TestVoteWithInvalidHeight(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t) // height 1
 	td.enterNewHeight(td.consP)
+
+	v1 := td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexX)
+	v2 := td.addPrepareVote(td.consP, td.RandHash(), 2, 0, tIndexX)
+	v3 := td.addPrepareVote(td.consP, td.RandHash(), 2, 0, tIndexY)
+	v4 := td.addPrepareVote(td.consP, td.RandHash(), 3, 0, tIndexX)
+
+	require.False(t, td.consP.HasVote(v1.Hash()))
+	require.True(t, td.consP.HasVote(v2.Hash()))
+	require.True(t, td.consP.HasVote(v3.Hash()))
+	require.False(t, td.consP.HasVote(v4.Hash()))
 }
 
 func TestConsensusNormalCase(t *testing.T) {
@@ -532,6 +542,19 @@ func TestSetProposalFromPreviousRound(t *testing.T) {
 
 	assert.Nil(t, td.consP.RoundProposal(0))
 	td.checkHeightRound(t, td.consP, 1, 1)
+}
+
+func TestSetProposalFromPreviousHeight(t *testing.T) {
+	td := setup(t)
+
+	p := td.makeProposal(t, 1, 0)
+	td.commitBlockForAllStates(t) // height 1
+
+	td.enterNewHeight(td.consP)
+
+	td.consP.SetProposal(p)
+	assert.Nil(t, td.consP.RoundProposal(0))
+	td.checkHeightRound(t, td.consP, 2, 0)
 }
 
 func TestDuplicateProposal(t *testing.T) {
@@ -852,7 +875,7 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 	}
 
 	// Check if more than 1/3 of nodes has committed the same block
-	if len(blockAnnounces) >= 2 {
+	if len(blockAnnounces) >= 3 {
 		var firstAnnounce *message.BlockAnnounceMessage
 		for _, msg := range blockAnnounces {
 			if firstAnnounce == nil {

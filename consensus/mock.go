@@ -35,7 +35,9 @@ func MockingManager(ts *testsuite.TestSuite, valKeys []*bls.ValidatorKey) (Manag
 	}
 
 	return &manager{
-		instances: instances,
+		instances:         instances,
+		upcomingVotes:     make([]*vote.Vote, 0),
+		upcomingProposals: make([]*proposal.Proposal, 0),
 	}, mocks
 }
 

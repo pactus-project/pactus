@@ -7,7 +7,6 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/logger"
 	"golang.org/x/exp/slices"
 )
 
@@ -23,6 +22,7 @@ type manager struct {
 
 // NewManager creates a new manager instance that manages a set of consensus instances,
 // each associated with a validator key and a reward address.
+// It is not thread-safe.
 func NewManager(
 	conf *Config,
 	state state.Facade,
@@ -106,7 +106,7 @@ func (mgr *manager) MoveToNewHeight() {
 		p := mgr.upcomingProposals[i]
 		switch {
 		case p.Height() < curHeight:
-			logger.Warn("consensus moved to new height before processing the proposal cache", "height", curHeight)
+			// Ignore old proposals
 
 		case p.Height() > curHeight:
 			// keep this vote
@@ -125,7 +125,7 @@ func (mgr *manager) MoveToNewHeight() {
 		v := mgr.upcomingVotes[i]
 		switch {
 		case v.Height() < curHeight:
-			logger.Warn("consensus moved to new height before processing the votes cache", "height", curHeight)
+			// Ignore old votes
 
 		case v.Height() > curHeight:
 			// keep this vote

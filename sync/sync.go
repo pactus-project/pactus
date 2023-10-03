@@ -117,7 +117,11 @@ func (sync *synchronizer) Stop() {
 }
 
 func (sync *synchronizer) moveConsensusToNewHeight() {
-	sync.consMgr.MoveToNewHeight()
+	stateHeight := sync.state.LastBlockHeight()
+	consHeight, _ := sync.consMgr.HeightRound()
+	if stateHeight >= consHeight {
+		sync.consMgr.MoveToNewHeight()
+	}
 }
 
 func (sync *synchronizer) sayHello(to peer.ID) error {

@@ -24,7 +24,7 @@ func TestNewHeightTimeout(t *testing.T) {
 	td.shouldPublishProposal(t, td.consY, 2, 0)
 }
 
-func TestNewHeightEntry(t *testing.T) {
+func TestNewHeightDoubleEntry(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
@@ -34,7 +34,6 @@ func TestNewHeightEntry(t *testing.T) {
 
 	// double entry and timeout
 	td.consX.MoveToNewHeight()
-	td.newHeightTimeout(td.consX)
 
 	td.checkHeightRound(t, td.consX, 2, 0)
 	assert.True(t, td.consX.active)
