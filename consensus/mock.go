@@ -26,7 +26,8 @@ type MockConsensus struct {
 }
 
 func MockingManager(ts *testsuite.TestSuite,
-	valKeys []*bls.ValidatorKey) (Manager, []*MockConsensus) {
+	valKeys []*bls.ValidatorKey,
+) (Manager, []*MockConsensus) {
 	mocks := make([]*MockConsensus, len(valKeys))
 	instances := make([]Consensus, len(valKeys))
 	for i, s := range valKeys {
