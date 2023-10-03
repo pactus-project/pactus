@@ -31,6 +31,7 @@ func TestObjLogger(t *testing.T) {
 	c.Colorful = false
 	InitGlobalLogger(c)
 
+	globalInst.config.Levels["test"] = "warn"
 	l := NewSubLogger("test", Foo{})
 	var buf bytes.Buffer
 	l.logger = l.logger.Output(&buf)
@@ -46,7 +47,7 @@ func TestObjLogger(t *testing.T) {
 	assert.Contains(t, out, "foo")
 	assert.NotContains(t, out, "trace")
 	assert.NotContains(t, out, "debug")
-	assert.Contains(t, out, "info")
+	assert.NotContains(t, out, "info")
 	assert.Contains(t, out, "warn")
 	assert.Contains(t, out, "error")
 }
