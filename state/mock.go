@@ -19,6 +19,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 )
@@ -34,11 +35,12 @@ type MockState struct {
 	TestStore     *store.MockStore
 	TestPool      *txpool.MockTxPool
 	TestCommittee committee.Committee
+	TestValKeys   []*bls.ValidatorKey
 	TestParams    param.Params
 }
 
 func MockingState(ts *testsuite.TestSuite) *MockState {
-	committee, _ := ts.GenerateTestCommittee(21)
+	committee, valKeys := ts.GenerateTestCommittee(21)
 	genDoc := genesis.TestnetGenesis()
 	return &MockState{
 		ts:            ts,
@@ -46,6 +48,7 @@ func MockingState(ts *testsuite.TestSuite) *MockState {
 		TestStore:     store.MockingStore(ts),
 		TestPool:      txpool.MockingTxPool(),
 		TestCommittee: committee,
+		TestValKeys:   valKeys,
 		TestParams:    genDoc.Params(),
 	}
 }
@@ -92,8 +95,7 @@ func (m *MockState) LastCertificate() *certificate.Certificate {
 	return m.TestStore.LastCert
 }
 
-func (m *MockState) UpdateLastCertificate(cert *certificate.Certificate) error {
-	m.TestStore.LastCert = cert
+func (m *MockState) UpdateLastCertificate(_ *vote.Vote) error {
 	return nil
 }
 
@@ -112,8 +114,8 @@ func (m *MockState) Close() error {
 	return nil
 }
 
-func (m *MockState) ProposeBlock(_ *bls.ValidatorKey, _ crypto.Address, _ int16) (*block.Block, error) {
-	b := m.ts.GenerateTestBlock()
+func (m *MockState) ProposeBlock(valKey *bls.ValidatorKey, _ crypto.Address, _ int16) (*block.Block, error) {
+	b := m.ts.GenerateTestBlockWithProposer(valKey.Address())
 	return b, nil
 }
 

@@ -139,7 +139,7 @@ func Contains[T comparable](slice []T, item T) bool {
 
 // Equal tells whether a and b contain the same elements.
 // A nil argument is equivalent to an empty slice.
-func Equal(a, b []int32) bool {
+func Equal[T comparable](a, b []T) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -210,4 +210,15 @@ func IsSubset[T comparable](parentSet, subSet []T) bool {
 		}
 	}
 	return true
+}
+
+// RemoveFirstOccurrenceOf removes the first occurrence of element e from slice s.
+// It returns the modified slice and a boolean indicating whether an element was removed.
+func RemoveFirstOccurrenceOf[T comparable](s []T, e T) ([]T, bool) {
+	for i, v := range s {
+		if v == e {
+			return append(s[:i], s[i+1:]...), true
+		}
+	}
+	return s, false
 }

@@ -12,12 +12,12 @@ import (
 type Log struct {
 	validators    map[crypto.Address]*validator.Validator
 	totalPower    int64
-	roundMessages []*Messages
+	roundMessages map[int16]*Messages
 }
 
 func NewLog() *Log {
 	return &Log{
-		roundMessages: make([]*Messages, 0),
+		roundMessages: make(map[int16]*Messages, 0),
 	}
 }
 
@@ -35,18 +35,18 @@ func (log *Log) HasVote(h hash.Hash) bool {
 }
 
 func (log *Log) mustGetRoundMessages(round int16) *Messages {
-	for i := int16(len(log.roundMessages)); i <= round; i++ {
-		rv := &Messages{
-			prepareVotes:   voteset.NewPrepareVoteSet(i, log.totalPower, log.validators),
-			precommitVotes: voteset.NewPrecommitVoteSet(i, log.totalPower, log.validators),
-			cpPreVotes:     voteset.NewCPPreVoteVoteSet(i, log.totalPower, log.validators),
-			cpMainVotes:    voteset.NewCPMainVoteVoteSet(i, log.totalPower, log.validators),
+	rm, ok := log.roundMessages[round]
+	if !ok {
+		rm = &Messages{
+			prepareVotes:   voteset.NewPrepareVoteSet(round, log.totalPower, log.validators),
+			precommitVotes: voteset.NewPrecommitVoteSet(round, log.totalPower, log.validators),
+			cpPreVotes:     voteset.NewCPPreVoteVoteSet(round, log.totalPower, log.validators),
+			cpMainVotes:    voteset.NewCPMainVoteVoteSet(round, log.totalPower, log.validators),
 		}
-
-		log.roundMessages = append(log.roundMessages, rv)
+		log.roundMessages[round] = rm
 	}
 
-	return log.roundMessages[round]
+	return rm
 }
 
 func (log *Log) AddVote(v *vote.Vote) (bool, error) {
@@ -92,7 +92,7 @@ func (log *Log) SetRoundProposal(round int16, proposal *proposal.Proposal) {
 }
 
 func (log *Log) MoveToNewHeight(validators []*validator.Validator) {
-	log.roundMessages = make([]*Messages, 0)
+	log.roundMessages = make(map[int16]*Messages)
 	log.validators = make(map[crypto.Address]*validator.Validator)
 	log.totalPower = 0
 	for _, val := range validators {
@@ -103,7 +103,7 @@ func (log *Log) MoveToNewHeight(validators []*validator.Validator) {
 
 func (log *Log) CanVote(addr crypto.Address) bool {
 	for _, val := range log.validators {
-		if val.Address().EqualsTo(addr) {
+		if val.Address() == addr {
 			return true
 		}
 	}

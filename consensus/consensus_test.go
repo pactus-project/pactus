@@ -250,16 +250,16 @@ func (td *testData) addPrecommitVote(cons *consensus, blockHash hash.Hash, heigh
 
 func (td *testData) addCPPreVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
 	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
-) *vote.Vote {
+) {
 	v := vote.NewCPPreVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
-	return td.addVote(cons, v, valID)
+	td.addVote(cons, v, valID)
 }
 
 func (td *testData) addCPMainVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
 	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
-) *vote.Vote {
+) {
 	v := vote.NewCPMainVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
-	return td.addVote(cons, v, valID)
+	td.addVote(cons, v, valID)
 }
 
 func (td *testData) addVote(cons *consensus, v *vote.Vote, valID int) *vote.Vote {
@@ -341,7 +341,7 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 	t.Helper()
 
 	var p *proposal.Proposal
-	switch (height % 4) + uint32(round) {
+	switch (height % 4) + uint32(round%4) {
 	case 1:
 		blk, err := td.consX.state.ProposeBlock(td.consX.valKey, td.consX.rewardAddr, round)
 		require.NoError(t, err)
@@ -388,18 +388,6 @@ func TestRoundVotes(t *testing.T) {
 
 	td.commitBlockForAllStates(t) // height 1
 	td.enterNewHeight(td.consP)
-
-	t.Run("Ignore votes from invalid height", func(t *testing.T) {
-		v1 := td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexX)
-		v2 := td.addPrepareVote(td.consP, td.RandHash(), 2, 0, tIndexX)
-		v3 := td.addPrepareVote(td.consP, td.RandHash(), 2, 0, tIndexY)
-		v4 := td.addPrepareVote(td.consP, td.RandHash(), 3, 0, tIndexX)
-
-		require.False(t, td.consP.HasVote(v1.Hash()))
-		require.True(t, td.consP.HasVote(v2.Hash()))
-		require.True(t, td.consP.HasVote(v3.Hash()))
-		require.False(t, td.consP.HasVote(v4.Hash()))
-	})
 }
 
 func TestConsensusNormalCase(t *testing.T) {
@@ -508,16 +496,6 @@ func TestConsensusVeryLateProposal(t *testing.T) {
 	td.shouldPublishBlockAnnounce(t, td.consP, p.Block().Hash())
 }
 
-func TestConsensusInvalidVote(t *testing.T) {
-	td := setup(t)
-
-	td.enterNewHeight(td.consX)
-
-	invVote := td.addPrecommitVote(td.consX, td.RandHash(), 2, 0, tIndexB)
-
-	assert.False(t, td.consX.HasVote(invVote.Hash()))
-}
-
 func TestPickRandomVote(t *testing.T) {
 	td := setup(t)
 
@@ -554,19 +532,6 @@ func TestSetProposalFromPreviousRound(t *testing.T) {
 
 	assert.Nil(t, td.consP.RoundProposal(0))
 	td.checkHeightRound(t, td.consP, 1, 1)
-}
-
-func TestSetProposalFromPreviousHeight(t *testing.T) {
-	td := setup(t)
-
-	p := td.makeProposal(t, 1, 0)
-	td.commitBlockForAllStates(t) // height 1
-
-	td.enterNewHeight(td.consP)
-
-	td.consP.SetProposal(p)
-	assert.Nil(t, td.consP.RoundProposal(0))
-	td.checkHeightRound(t, td.consP, 2, 0)
 }
 
 func TestDuplicateProposal(t *testing.T) {
@@ -650,15 +615,8 @@ func TestVoteWithBigRound(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 
-	v1 := td.addPrepareVote(td.consX, td.RandHash(), 1, util.MaxInt16, tIndexB)
-	v2 := td.addPrecommitVote(td.consX, td.RandHash(), 1, util.MaxInt16, tIndexB)
-	v3 := td.addCPPreVote(td.consX, td.RandHash(), 1, 0, util.MaxInt16, vote.CPValueOne, &vote.JustInitOne{}, tIndexB)
-	v4 := td.addCPMainVote(td.consX, td.RandHash(), 1, 0, util.MaxInt16, vote.CPValueOne, &vote.JustInitOne{}, tIndexB)
-
-	assert.False(t, td.consX.HasVote(v1.Hash()))
-	assert.False(t, td.consX.HasVote(v2.Hash()))
-	assert.False(t, td.consX.HasVote(v3.Hash()))
-	assert.False(t, td.consX.HasVote(v4.Hash()))
+	v := td.addPrepareVote(td.consX, td.RandHash(), 1, util.MaxInt16, tIndexB)
+	assert.True(t, td.consX.HasVote(v.Hash()))
 }
 
 func TestProposalWithBigRound(t *testing.T) {
@@ -666,10 +624,9 @@ func TestProposalWithBigRound(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 
-	p := td.makeProposal(t, 1, 3)
-
+	p := td.makeProposal(t, 1, util.MaxInt16)
 	td.consX.SetProposal(p)
-	assert.Nil(t, td.consX.RoundProposal(3))
+	assert.Equal(t, td.consX.RoundProposal(util.MaxInt16), p)
 }
 
 func TestCases(t *testing.T) {

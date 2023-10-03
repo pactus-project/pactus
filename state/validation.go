@@ -32,9 +32,9 @@ func (st *state) validatePrevCertificate(cert *certificate.Certificate, blockHas
 		if cert.Round() != st.lastInfo.Certificate().Round() {
 			// TODO: we should panic here.
 			// It is impossible, unless we have a fork on the latest block
-			return errors.Errorf(errors.ErrInvalidBlock,
-				"certificate has invalid round, expected %v, got %v",
-				st.lastInfo.Certificate().Round(), cert.Round())
+			return InvalidCertificateError{
+				Cert: cert,
+			}
 		}
 
 		signBytes := certificate.BlockCertificateSignBytes(blockHash, cert.Height(), cert.Round())

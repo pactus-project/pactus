@@ -11,32 +11,11 @@ type newHeightState struct {
 }
 
 func (s *newHeightState) enter() {
-	sleep := s.state.LastBlockTime().Add(s.state.Params().BlockInterval()).Sub(util.Now())
-	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetNewHeight)
+	s.decide()
 }
 
 func (s *newHeightState) decide() {
 	sateHeight := s.state.LastBlockHeight()
-
-	// Try to update the last certificate. We may have more votes now.
-	if s.height == sateHeight {
-		precommits := s.log.PrecommitVoteSet(s.round)
-		if precommits != nil {
-			roundProposal := s.log.RoundProposal(s.round)
-			if roundProposal != nil {
-				// The last certificate is updated at this point since consensus has
-				// had sufficient time to populate additional votes.
-				votes := precommits.BlockVotes(roundProposal.Block().Hash())
-				lastCert := s.makeCertificate(votes)
-				if lastCert != nil {
-					if err := s.state.UpdateLastCertificate(lastCert); err != nil {
-						s.logger.Warn("updating last certificate failed", "error", err)
-					}
-				}
-			}
-		}
-	}
-
 	validators := s.state.CommitteeValidators()
 	s.log.MoveToNewHeight(validators)
 
@@ -46,9 +25,8 @@ func (s *newHeightState) decide() {
 	s.active = s.state.IsInCommittee(s.valKey.Address())
 	s.logger.Info("entering new height", "height", s.height, "active", s.active)
 
-	if s.active {
-		s.enterNewState(s.proposeState)
-	}
+	sleep := s.state.LastBlockTime().Add(s.state.Params().BlockInterval()).Sub(util.Now())
+	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetNewHeight)
 }
 
 func (s *newHeightState) onAddVote(_ *vote.Vote) {
@@ -61,7 +39,9 @@ func (s *newHeightState) onSetProposal(_ *proposal.Proposal) {
 
 func (s *newHeightState) onTimeout(t *ticker) {
 	if t.Target == tickerTargetNewHeight {
-		s.decide()
+		if s.active {
+			s.enterNewState(s.proposeState)
+		}
 	}
 }
 

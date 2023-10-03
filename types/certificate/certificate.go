@@ -250,13 +250,23 @@ func (cert *Certificate) Validate(height uint32,
 	}
 
 	// Check signature
-	if !bls.VerifyAggregated(cert.Signature(), pubs, signBytes) {
-		return InvalidSignatureError{
-			Signature: cert.Signature(),
-		}
+	err := bls.VerifyAggregated(cert.Signature(), pubs, signBytes)
+	if err != nil {
+		return err
 	}
 
 	return nil
+}
+
+// AddSignature adds a new signature to the certificate.
+// It does not check the validity of the signature.
+// The caller should ensure that the signature is valid.
+func (cert *Certificate) AddSignature(valNum int32, sig *bls.Signature) {
+	absentees, removed := util.RemoveFirstOccurrenceOf(cert.data.Absentees, valNum)
+	if removed {
+		cert.data.Signature = bls.SignatureAggregate(cert.data.Signature, sig)
+		cert.data.Absentees = absentees
+	}
 }
 
 func BlockCertificateSignBytes(blockHash hash.Hash, height uint32, round int16) []byte {

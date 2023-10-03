@@ -23,8 +23,6 @@ func TestAddressKeyType(t *testing.T) {
 	valAddr := pub.ValidatorAddress()
 	treasury := crypto.TreasuryAddress
 
-	assert.True(t, accAddr.EqualsTo(accAddr))
-	assert.False(t, accAddr.EqualsTo(valAddr))
 	assert.True(t, accAddr.IsAccountAddress())
 	assert.False(t, accAddr.IsValidatorAddress())
 	assert.False(t, accAddr.IsTreasuryAddress())
