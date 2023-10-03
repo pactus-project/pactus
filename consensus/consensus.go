@@ -195,6 +195,11 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		return
 	}
 
+	if p.Height() != cs.height {
+		cs.logger.Trace("invalid height", "proposal", p)
+		return
+	}
+
 	if p.Round() < cs.round {
 		cs.logger.Trace("expired round", "proposal", p)
 		return
@@ -259,6 +264,11 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		return
 	}
 
+	if v.Height() != cs.height {
+		cs.logger.Trace("vote has invalid height", "vote", v)
+		return
+	}
+
 	if v.Type() == vote.VoteTypeCPPreVote ||
 		v.Type() == vote.VoteTypeCPMainVote {
 		err := cs.checkJust(v)
@@ -267,7 +277,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 			return
 		}
 
-		if cs.cpWeakValidity == nil {
+		if v.Round() == cs.round && cs.cpWeakValidity == nil {
 			if v.CPValue() == vote.CPValueZero ||
 				v.CPValue() == vote.CPValueAbstain {
 				// TODO: Should we check the vote signature first before proceeding with this?"
