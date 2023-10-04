@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
@@ -101,6 +102,46 @@ func TestChangeProposerAgreement0(t *testing.T) {
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexX)
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexY)
 	checkHeightRound(t, td.consP, h, r)
+}
+
+// ConsP receives all PRE-VOTE:0 votes before receiving a proposal or prepare votes.
+// It should vote PRE-VOTES:1 and MAIN-VOTE:0.
+func TestCrashOnTestnet(t *testing.T) {
+	td := setup(t)
+
+	td.commitBlockForAllStates(t) // height 1
+
+	h := uint32(2)
+	r := int16(0)
+	td.consP.MoveToNewHeight()
+
+	blockHash := td.RandHash()
+	v1 := vote.NewPrepareVote(blockHash, h, r, td.consX.valKey.Address())
+	v2 := vote.NewPrepareVote(blockHash, h, r, td.consY.valKey.Address())
+	v3 := vote.NewPrepareVote(blockHash, h, r, td.consB.valKey.Address())
+
+	td.HelperSignVote(td.consX.valKey, v1)
+	td.HelperSignVote(td.consY.valKey, v2)
+	td.HelperSignVote(td.consB.valKey, v3)
+
+	votes := map[crypto.Address]*vote.Vote{}
+	votes[v1.Signer()] = v1
+	votes[v2.Signer()] = v2
+	votes[v3.Signer()] = v3
+
+	qCert := td.consP.makeCertificate(votes)
+	just0 := &vote.JustInitZero{QCert: qCert}
+	td.addCPPreVote(td.consP, blockHash, h, r, 0, vote.CPValueZero, just0, tIndexX)
+	td.addCPPreVote(td.consP, blockHash, h, r, 0, vote.CPValueZero, just0, tIndexY)
+	td.addCPPreVote(td.consP, blockHash, h, r, 0, vote.CPValueZero, just0, tIndexB)
+
+	td.newHeightTimeout(td.consP)
+	td.changeProposerTimeout(td.consP)
+
+	preVote := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
+	mainVote := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPMainVote, blockHash)
+	assert.Equal(t, vote.CPValueOne, preVote.CPValue())
+	assert.Equal(t, vote.CPValueZero, mainVote.CPValue())
 }
 
 func TestInvalidJustInitOne(t *testing.T) {

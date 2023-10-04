@@ -276,27 +276,6 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 			cs.logger.Error("error on adding a cp vote", "vote", v, "error", err)
 			return
 		}
-
-		if v.Round() == cs.round && cs.cpWeakValidity == nil {
-			if v.CPValue() == vote.CPValueZero ||
-				v.CPValue() == vote.CPValueAbstain {
-				// TODO: Should we check the vote signature first before proceeding with this?"
-				bh := v.BlockHash()
-				cs.cpWeakValidity = &bh
-
-				roundProposal := cs.log.RoundProposal(cs.round)
-
-				if roundProposal != nil &&
-					roundProposal.Block().Hash() != bh {
-					cs.logger.Warn("double proposal detected",
-						"prepared", bh.ShortString(),
-						"roundProposal", roundProposal.Block().Hash().ShortString())
-
-					cs.log.SetRoundProposal(cs.round, nil)
-					cs.queryProposal()
-				}
-			}
-		}
 	}
 
 	added, err := cs.log.AddVote(v)
