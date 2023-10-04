@@ -33,7 +33,7 @@ func (s *cpPreVoteState) decide() {
 	} else {
 		cpMainVotes := s.log.CPMainVoteVoteSet(s.round)
 		if cpMainVotes.HasAnyVoteFor(s.cpRound-1, vote.CPValueOne) {
-			s.logger.Info("cp: one main-vote for one", "b", "1")
+			s.logger.Debug("cp: one main-vote for one", "b", "1")
 
 			vote1 := cpMainVotes.GetRandomVote(s.cpRound-1, vote.CPValueOne)
 			just1 := &vote.JustPreVoteHard{
@@ -41,7 +41,7 @@ func (s *cpPreVoteState) decide() {
 			}
 			s.signAddCPPreVote(hash.UndefHash, s.cpRound, vote.CPValueOne, just1)
 		} else if cpMainVotes.HasAnyVoteFor(s.cpRound-1, vote.CPValueZero) {
-			s.logger.Info("cp: one main-vote for zero", "b", "0")
+			s.logger.Debug("cp: one main-vote for zero", "b", "0")
 
 			vote0 := cpMainVotes.GetRandomVote(s.cpRound-1, vote.CPValueZero)
 			just0 := &vote.JustPreVoteHard{
@@ -49,7 +49,7 @@ func (s *cpPreVoteState) decide() {
 			}
 			s.signAddCPPreVote(*s.cpWeakValidity, s.cpRound, vote.CPValueZero, just0)
 		} else if cpMainVotes.HasAllVotesFor(s.cpRound-1, vote.CPValueAbstain) {
-			s.logger.Info("cp: all main-votes are abstain", "b", "0 (biased)")
+			s.logger.Debug("cp: all main-votes are abstain", "b", "0 (biased)")
 
 			votes := cpMainVotes.BinaryVotes(s.cpRound-1, vote.CPValueAbstain)
 			cert := s.makeCertificate(votes)

@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/util/logger"
 	"golang.org/x/exp/slices"
 )
 
@@ -113,6 +114,7 @@ func (mgr *manager) MoveToNewHeight() {
 			continue
 
 		case p.Height() == curHeight:
+			logger.Warn("p.Height() == curHeight", "height", p.Height())
 			for _, cons := range mgr.instances {
 				cons.SetProposal(p)
 			}
@@ -132,6 +134,7 @@ func (mgr *manager) MoveToNewHeight() {
 			continue
 
 		case v.Height() == curHeight:
+			logger.Warn("v.Height() == curHeight", "height", v.Height())
 			for _, cons := range mgr.instances {
 				cons.AddVote(v)
 			}
