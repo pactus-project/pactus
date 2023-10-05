@@ -31,7 +31,7 @@ func newBlockStore(db *leveldb.DB) *blockStore {
 	}
 }
 
-func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, block *block.Block) []blockRegion {
+func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.Block) []blockRegion {
 	if height > 1 {
 		if !bs.hasBlock(height - 1) {
 			logger.Panic("previous block not found", "height", height)
@@ -41,28 +41,28 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, block *bloc
 		logger.Panic("duplicated block", "height", height)
 	}
 
-	blockHash := block.Hash()
-	regs := make([]blockRegion, block.Transactions().Len())
-	w := bytes.NewBuffer(make([]byte, 0, block.SerializeSize()+hash.HashSize))
+	blockHash := blk.Hash()
+	regs := make([]blockRegion, blk.Transactions().Len())
+	w := bytes.NewBuffer(make([]byte, 0, blk.SerializeSize()+hash.HashSize))
 	err := encoding.WriteElement(w, &blockHash)
 	if err != nil {
 		panic(err) // Should we panic?
 	}
-	err = block.Header().Encode(w)
+	err = blk.Header().Encode(w)
 	if err != nil {
 		panic(err) // Should we panic?
 	}
-	if block.PrevCertificate() != nil {
-		err = block.PrevCertificate().Encode(w)
+	if blk.PrevCertificate() != nil {
+		err = blk.PrevCertificate().Encode(w)
 		if err != nil {
 			panic(err) // Should we panic?
 		}
 	}
-	err = encoding.WriteVarInt(w, uint64(block.Transactions().Len()))
+	err = encoding.WriteVarInt(w, uint64(blk.Transactions().Len()))
 	if err != nil {
 		panic(err) // Should we panic?
 	}
-	for i, trx := range block.Transactions() {
+	for i, trx := range blk.Transactions() {
 		offset := w.Len()
 		regs[i].height = height
 		regs[i].offset = uint32(offset)

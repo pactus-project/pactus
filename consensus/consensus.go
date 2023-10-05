@@ -651,10 +651,10 @@ func (cs *consensus) broadcastVote(v *vote.Vote) {
 		message.NewVoteMessage(v))
 }
 
-func (cs *consensus) announceNewBlock(h uint32, b *block.Block, c *certificate.Certificate) {
+func (cs *consensus) announceNewBlock(blk *block.Block, cert *certificate.Certificate) {
 	go cs.mediator.OnBlockAnnounce(cs)
 	cs.broadcaster(cs.valKey.Address(),
-		message.NewBlockAnnounceMessage(h, b, c))
+		message.NewBlockAnnounceMessage(blk, cert))
 }
 
 func (cs *consensus) makeCertificate(votes map[crypto.Address]*vote.Vote) *certificate.Certificate {

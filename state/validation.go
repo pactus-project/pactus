@@ -7,18 +7,18 @@ import (
 	"github.com/pactus-project/pactus/util/errors"
 )
 
-func (st *state) validateBlock(block *block.Block) error {
-	if block.Header().Version() != st.params.BlockVersion {
+func (st *state) validateBlock(blk *block.Block) error {
+	if blk.Header().Version() != st.params.BlockVersion {
 		return errors.Errorf(errors.ErrInvalidBlock,
 			"invalid version")
 	}
 
-	if block.Header().StateRoot() != st.stateRoot() {
+	if blk.Header().StateRoot() != st.stateRoot() {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"state root is not same as we expected, expected %v, got %v", st.stateRoot(), block.Header().StateRoot())
+			"state root is not same as we expected, expected %v, got %v", st.stateRoot(), blk.Header().StateRoot())
 	}
 
-	return st.validatePrevCertificate(block.PrevCertificate(), block.Header().PrevBlockHash())
+	return st.validatePrevCertificate(blk.PrevCertificate(), blk.Header().PrevBlockHash())
 }
 
 // validatePrevCertificate validates certificate for the previous block.

@@ -203,17 +203,17 @@ func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop 
 	}
 }
 
-func (m *MockStore) SaveBlock(height uint32, b *block.Block, cert *certificate.Certificate) {
-	m.Blocks[height] = b
-	m.LastHeight = height
+func (m *MockStore) SaveBlock(b *block.Block, cert *certificate.Certificate) {
+	m.Blocks[cert.Height()] = b
+	m.LastHeight = cert.Height()
 	m.LastCert = cert
 }
 
-func (m *MockStore) LastCertificate() (uint32, *certificate.Certificate) {
+func (m *MockStore) LastCertificate() *certificate.Certificate {
 	if m.LastHeight == 0 {
-		return 0, nil
+		return nil
 	}
-	return m.LastHeight, m.LastCert
+	return m.LastCert
 }
 
 func (m *MockStore) WriteBatch() error {
@@ -233,9 +233,8 @@ func (m *MockStore) AddTestAccount() (*account.Account, crypto.Address) {
 }
 
 func (m *MockStore) AddTestBlock(height uint32) *block.Block {
-	blk := m.ts.GenerateTestBlock()
-	cert := m.ts.GenerateTestCertificate()
-	m.SaveBlock(height, blk, cert)
+	blk, cert := m.ts.GenerateTestBlock(height)
+	m.SaveBlock(blk, cert)
 	return blk
 }
 

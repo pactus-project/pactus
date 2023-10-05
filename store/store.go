@@ -89,18 +89,19 @@ func (s *store) Close() error {
 	return s.db.Close()
 }
 
-func (s *store) SaveBlock(height uint32, block *block.Block, cert *certificate.Certificate) {
+func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	reg := s.blockStore.saveBlock(s.batch, height, block)
-	for i, trx := range block.Transactions() {
+	height := cert.Height()
+	reg := s.blockStore.saveBlock(s.batch, height, blk)
+	for i, trx := range blk.Transactions() {
 		s.txStore.saveTx(s.batch, trx.ID(), &reg[i])
 	}
 
-	// Save last certificate
-	w := bytes.NewBuffer(make([]byte, 0, 8+cert.SerializeSize()))
-	err := encoding.WriteElements(w, lastStoreVersion, height)
+	// Save last certificate: [version: 4 bytes]+[certificate: variant]
+	w := bytes.NewBuffer(make([]byte, 0, 4+cert.SerializeSize()))
+	err := encoding.WriteElements(w, lastStoreVersion)
 	if err != nil {
 		panic(err)
 	}
@@ -289,28 +290,27 @@ func (s *store) UpdateValidator(acc *validator.Validator) {
 	s.validatorStore.updateValidator(s.batch, acc)
 }
 
-func (s *store) LastCertificate() (uint32, *certificate.Certificate) {
+func (s *store) LastCertificate() *certificate.Certificate {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	data, _ := tryGet(s.db, lastInfoKey)
 	if data == nil {
 		// Genesis block
-		return 0, nil
+		return nil
 	}
 	r := bytes.NewReader(data)
 	version := int32(0)
-	height := uint32(0)
 	cert := new(certificate.Certificate)
-	err := encoding.ReadElements(r, &version, &height)
+	err := encoding.ReadElements(r, &version)
 	if err != nil {
-		return 0, nil
+		return nil
 	}
 	err = cert.Decode(r)
 	if err != nil {
-		return 0, nil
+		return nil
 	}
-	return height, cert
+	return cert
 }
 
 func (s *store) WriteBatch() error {

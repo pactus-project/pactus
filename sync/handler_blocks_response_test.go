@@ -26,8 +26,11 @@ import (
 func TestInvalidBlockData(t *testing.T) {
 	td := setup(t, nil)
 
+	lastHeight := td.state.LastBlockHeight()
+	prevCert := td.GenerateTestCertificate(lastHeight)
+	cert := td.GenerateTestCertificate(lastHeight + 1)
 	blk := block.MakeBlock(1, time.Now(), nil, td.RandHash(), td.RandHash(),
-		td.GenerateTestCertificate(), td.RandSeed(), td.RandValAddress())
+		prevCert, td.RandSeed(), td.RandValAddress())
 	data, _ := blk.Bytes()
 	tests := []struct {
 		data []byte
@@ -48,9 +51,8 @@ func TestInvalidBlockData(t *testing.T) {
 	for _, test := range tests {
 		pid := td.RandPeerID()
 		sid := td.sync.peerSet.OpenSession(pid).SessionID()
-		cert := td.GenerateTestCertificate()
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
-			td.state.LastBlockHeight()+1, [][]byte{test.data}, cert)
+			lastHeight+1, [][]byte{test.data}, cert)
 
 		err := td.receivingNewMessage(td.sync, msg, pid)
 		assert.ErrorIs(t, err, test.err)
@@ -60,10 +62,9 @@ func TestInvalidBlockData(t *testing.T) {
 func TestOneBlockShorter(t *testing.T) {
 	td := setup(t, nil)
 
-	lastBlockHeight := td.state.LastBlockHeight()
-	b1 := td.GenerateTestBlock()
-	c1 := td.GenerateTestCertificate()
-	d1, _ := b1.Bytes()
+	lastHeight := td.state.LastBlockHeight()
+	blk1, cert1 := td.GenerateTestBlock(lastHeight + 1)
+	d1, _ := blk1.Bytes()
 	pid := td.RandPeerID()
 
 	pub, _ := td.RandBLSKeyPair()
@@ -71,28 +72,45 @@ func TestOneBlockShorter(t *testing.T) {
 
 	sid := td.sync.peerSet.OpenSession(pid).SessionID()
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, t.Name(), sid,
-		lastBlockHeight+1, [][]byte{d1}, c1)
+		lastHeight+1, [][]byte{d1}, cert1)
 	assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 	assert.Nil(t, td.sync.peerSet.FindSession(sid))
-	assert.Equal(t, td.state.LastBlockHeight(), lastBlockHeight+1)
+	assert.Equal(t, td.state.LastBlockHeight(), lastHeight+1)
 }
 
 func TestStrippedPublicKey(t *testing.T) {
 	td := setup(t, nil)
 
-	td.state.CommitTestBlocks(2)
+	lastHeight := td.state.LastBlockHeight()
 
-	// Add a peer
-	pid := td.RandPeerID()
-	pub, _ := td.RandBLSKeyPair()
-	td.addPeer(t, pub, pid, services.New(services.None))
+	// Add a new block and keep the signer key
+	indexedPub, indexedPrv := td.RandBLSKeyPair()
+	trx0 := tx.NewTransferTx(lastHeight, indexedPub.AccountAddress(), td.RandAccAddress(), 1, 1, "")
+	td.HelperSignTransaction(indexedPrv, trx0)
+	trxs0 := []*tx.Tx{trx0}
+	blk0 := block.MakeBlock(1, time.Now(), trxs0, td.RandHash(), td.RandHash(),
+		td.state.LastCertificate(), td.RandSeed(), td.RandValAddress())
+	cert0 := td.GenerateTestCertificate(lastHeight + 1)
+	err := td.state.CommitBlock(blk0, cert0)
+	require.NoError(t, err)
+	lastHeight++
+	// -----
 
-	blk1 := td.GenerateTestBlock()
-	trx := *td.state.TestStore.Blocks[1].Transactions()[0]
-	trxs := []*tx.Tx{&trx}
-	blk2 := block.MakeBlock(1, time.Now(), trxs, td.RandHash(), td.RandHash(),
-		td.GenerateTestCertificate(), td.RandSeed(), td.RandValAddress())
+	rndPub, rndPrv := td.RandBLSKeyPair()
+	trx1 := tx.NewTransferTx(lastHeight, rndPub.AccountAddress(), td.RandAccAddress(), 1, 1, "")
+	td.HelperSignTransaction(rndPrv, trx1)
+	trx1.StripPublicKey()
+	trxs1 := []*tx.Tx{trx1}
+	blk1 := block.MakeBlock(1, time.Now(), trxs1, td.RandHash(), td.RandHash(),
+		cert0, td.RandSeed(), td.RandValAddress())
+
+	trx2 := tx.NewTransferTx(lastHeight, indexedPub.AccountAddress(), td.RandAccAddress(), 1, 1, "")
+	td.HelperSignTransaction(indexedPrv, trx2)
+	trx2.StripPublicKey()
+	trxs2 := []*tx.Tx{trx2}
+	blk2 := block.MakeBlock(1, time.Now(), trxs2, td.RandHash(), td.RandHash(),
+		cert0, td.RandSeed(), td.RandValAddress())
 
 	tests := []struct {
 		blk *block.Block
@@ -108,15 +126,17 @@ func TestStrippedPublicKey(t *testing.T) {
 		},
 	}
 
+	// Add a peer
+	pid := td.RandPeerID()
+	peerPubKey, _ := td.RandBLSKeyPair()
+	td.addPeer(t, peerPubKey, pid, services.New(services.None))
+
 	for _, test := range tests {
-		assert.NoError(t, test.blk.BasicCheck())
-		trx0 := test.blk.Transactions()[0]
-		trx0.StripPublicKey()
-		cert := td.GenerateTestCertificate()
 		blkData, _ := test.blk.Bytes()
 		sid := td.sync.peerSet.OpenSession(pid).SessionID()
+		cert := td.GenerateTestCertificate(lastHeight + 1)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeRejected.String(), sid,
-			td.state.LastBlockHeight()+1, [][]byte{blkData}, cert)
+			lastHeight+1, [][]byte{blkData}, cert)
 		err := td.receivingNewMessage(td.sync, msg, pid)
 
 		assert.ErrorIs(t, err, test.err)
@@ -151,9 +171,8 @@ func TestSyncing(t *testing.T) {
 	blockInterval := stateBob.Genesis().Params().BlockInterval()
 	blockTime := util.RoundNow(int(blockInterval.Seconds()))
 	for i := uint32(0); i < 100; i++ {
-		blk := ts.GenerateTestBlockWithTime(blockTime)
-		cert := ts.GenerateTestCertificate()
-		assert.NoError(t, stateBob.CommitBlock(i+1, blk, cert))
+		blk, cert := ts.GenerateTestBlockWithTime(i+1, blockTime)
+		assert.NoError(t, stateBob.CommitBlock(blk, cert))
 
 		blockTime = blockTime.Add(blockInterval)
 	}

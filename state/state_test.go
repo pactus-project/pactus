@@ -172,13 +172,15 @@ func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash, ro
 	return certificate.NewCertificate(height+1, round, committers, absentees, bls.SignatureAggregate(sigs...))
 }
 
-func (td *testData) commitBlockForAllStates(t *testing.T, b *block.Block, c *certificate.Certificate) {
+func (td *testData) commitBlockForAllStates(t *testing.T,
+	blk *block.Block, cert *certificate.Certificate,
+) {
 	t.Helper()
 
-	assert.NoError(t, td.state1.CommitBlock(td.state1.lastInfo.BlockHeight()+1, b, c))
-	assert.NoError(t, td.state2.CommitBlock(td.state2.lastInfo.BlockHeight()+1, b, c))
-	assert.NoError(t, td.state3.CommitBlock(td.state3.lastInfo.BlockHeight()+1, b, c))
-	assert.NoError(t, td.state4.CommitBlock(td.state4.lastInfo.BlockHeight()+1, b, c))
+	assert.NoError(t, td.state1.CommitBlock(blk, cert))
+	assert.NoError(t, td.state2.CommitBlock(blk, cert))
+	assert.NoError(t, td.state3.CommitBlock(blk, cert))
+	assert.NoError(t, td.state4.CommitBlock(blk, cert))
 }
 
 func (td *testData) moveToNextHeightForAllStates(t *testing.T) {
@@ -236,11 +238,11 @@ func TestBlockTime(t *testing.T) {
 	})
 
 	t.Run("Commit one block: LastBlockTime is the time of the first block", func(t *testing.T) {
-		b1, c1 := td.makeBlockAndCertificate(t, 1, td.valKey1, td.valKey2, td.valKey3)
-		assert.NoError(t, td.state1.CommitBlock(1, b1, c1))
+		blk, cert := td.makeBlockAndCertificate(t, 1, td.valKey1, td.valKey2, td.valKey3)
+		assert.NoError(t, td.state1.CommitBlock(blk, cert))
 
 		assert.NotEqual(t, td.state1.LastBlockTime(), td.state1.Genesis().GenesisTime())
-		assert.Equal(t, td.state1.LastBlockTime(), b1.Header().Time())
+		assert.Equal(t, td.state1.LastBlockTime(), blk.Header().Time())
 	})
 }
 
@@ -248,11 +250,12 @@ func TestCommitBlocks(t *testing.T) {
 	td := setup(t)
 
 	b1, c1 := td.makeBlockAndCertificate(t, 1, td.valKey1, td.valKey2, td.valKey3)
-	invBlock := td.GenerateTestBlock()
-	assert.Error(t, td.state1.CommitBlock(1, invBlock, c1))
+	invBlock, invCert := td.GenerateTestBlock(1)
+	assert.Error(t, td.state1.CommitBlock(invBlock, c1))
+	assert.Error(t, td.state1.CommitBlock(b1, invCert))
 	// No error here but block is ignored, because the height is invalid
-	assert.NoError(t, td.state1.CommitBlock(2, b1, c1))
-	assert.NoError(t, td.state1.CommitBlock(1, b1, c1))
+	assert.NoError(t, td.state1.CommitBlock(b1, c1))
+	assert.NoError(t, td.state1.CommitBlock(b1, c1))
 
 	assert.Equal(t, td.state1.LastBlockHash(), b1.Hash())
 	assert.Equal(t, td.state1.LastBlockTime(), b1.Header().Time())
@@ -344,7 +347,8 @@ func TestUpdateLastCertificate(t *testing.T) {
 
 	invValKey := td.RandValKey()
 	notActiveValKey := td.RandValKey()
-	val := validator.NewValidator(notActiveValKey.PublicKey(), td.RandInt32(100))
+	valNum := int32(4) // [0..3] are in the committee now
+	val := validator.NewValidator(notActiveValKey.PublicKey(), valNum)
 	td.state1.store.UpdateValidator(val)
 
 	v1 := vote.NewPrepareVote(blk.Hash(), cert.Height(), cert.Round(), td.valKey3.Address())
@@ -417,8 +421,8 @@ func TestBlockProposal(t *testing.T) {
 func TestInvalidBlock(t *testing.T) {
 	td := setup(t)
 
-	b := td.GenerateTestBlock()
-	assert.Error(t, td.state1.ValidateBlock(b))
+	invBlk, _ := td.GenerateTestBlock(td.RandHeight())
+	assert.Error(t, td.state1.ValidateBlock(invBlk))
 }
 
 func TestForkDetection(t *testing.T) {
@@ -426,25 +430,25 @@ func TestForkDetection(t *testing.T) {
 
 	td.moveToNextHeightForAllStates(t)
 
-	b5m, c5m := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3)
-	b5f, c5f := td.makeBlockAndCertificate(t, 1, td.valKey1, td.valKey2, td.valKey3)
-	assert.NoError(t, td.state1.CommitBlock(2, b5m, c5m))
-	assert.NoError(t, td.state2.CommitBlock(2, b5m, c5m))
-	assert.NoError(t, td.state3.CommitBlock(2, b5m, c5m))
-	assert.NoError(t, td.state4.CommitBlock(2, b5f, c5f))
+	b2m, c2m := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3)
+	b2f, c2f := td.makeBlockAndCertificate(t, 1, td.valKey1, td.valKey2, td.valKey3)
+	assert.NoError(t, td.state1.CommitBlock(b2m, c2m))
+	assert.NoError(t, td.state2.CommitBlock(b2m, c2m))
+	assert.NoError(t, td.state3.CommitBlock(b2m, c2m))
+	assert.NoError(t, td.state4.CommitBlock(b2f, c2f))
 
-	b6, c6 := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3)
+	b3, c3 := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3)
 
-	assert.NoError(t, td.state1.CommitBlock(3, b6, c6))
-	assert.NoError(t, td.state2.CommitBlock(3, b6, c6))
-	assert.NoError(t, td.state3.CommitBlock(3, b6, c6))
+	assert.NoError(t, td.state1.CommitBlock(b3, c3))
+	assert.NoError(t, td.state2.CommitBlock(b3, c3))
+	assert.NoError(t, td.state3.CommitBlock(b3, c3))
 	t.Run("Fork is detected, Should panic ", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r == nil {
 				t.Errorf("The code did not panic")
 			}
 		}()
-		assert.Error(t, td.state4.CommitBlock(3, b6, c6))
+		assert.Error(t, td.state4.CommitBlock(b3, c3))
 	})
 }
 
@@ -472,7 +476,7 @@ func TestSortition(t *testing.T) {
 
 		b, c := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 		td.commitBlockForAllStates(t, b, c)
-		require.NoError(t, stNew.CommitBlock(height, b, c))
+		require.NoError(t, stNew.CommitBlock(b, c))
 	}
 
 	assert.False(t, stNew.evaluateSortition()) //  bonding period
@@ -480,7 +484,7 @@ func TestSortition(t *testing.T) {
 	// Certificate next block
 	b, c := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 	td.commitBlockForAllStates(t, b, c)
-	require.NoError(t, stNew.CommitBlock(height, b, c))
+	require.NoError(t, stNew.CommitBlock(b, c))
 	height++
 
 	assert.True(t, stNew.evaluateSortition())                             //  ok
@@ -490,7 +494,7 @@ func TestSortition(t *testing.T) {
 	// Certificate next block, new validator should be in the committee now
 	b, c = td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 	td.commitBlockForAllStates(t, b, c)
-	require.NoError(t, stNew.CommitBlock(height, b, c))
+	require.NoError(t, stNew.CommitBlock(b, c))
 
 	assert.True(t, stNew.evaluateSortition()) // in the committee
 	assert.True(t, td.state1.committee.Contains(td.valKey1.Address()))
@@ -520,11 +524,11 @@ func TestSortition(t *testing.T) {
 
 	c14 := certificate.NewCertificate(height, 3, []int32{4, 0, 1, 2, 3}, []int32{0}, bls.SignatureAggregate(sigs...))
 
-	assert.NoError(t, st1.CommitBlock(height, b14, c14))
-	assert.NoError(t, td.state1.CommitBlock(height, b14, c14))
-	assert.NoError(t, td.state2.CommitBlock(height, b14, c14))
-	assert.NoError(t, td.state3.CommitBlock(height, b14, c14))
-	assert.NoError(t, td.state4.CommitBlock(height, b14, c14))
+	assert.NoError(t, st1.CommitBlock(b14, c14))
+	assert.NoError(t, td.state1.CommitBlock(b14, c14))
+	assert.NoError(t, td.state2.CommitBlock(b14, c14))
+	assert.NoError(t, td.state3.CommitBlock(b14, c14))
+	assert.NoError(t, td.state4.CommitBlock(b14, c14))
 
 	assert.Equal(t, td.state1.CommitteePower(), int64(1000000004))
 	assert.Equal(t, td.state1.TotalValidators(), int32(5))
@@ -686,8 +690,8 @@ func TestLoadState(t *testing.T) {
 	assert.Equal(t, td.state1.TotalPower(), st1Load.(*state).TotalPower())
 	assert.Equal(t, td.state1.store.TotalAccounts(), int32(6))
 
-	require.NoError(t, st1Load.CommitBlock(6, b6, c6))
-	require.NoError(t, td.state2.CommitBlock(6, b6, c6))
+	require.NoError(t, st1Load.CommitBlock(b6, c6))
+	require.NoError(t, td.state2.CommitBlock(b6, c6))
 }
 
 func TestLoadStateAfterChangingGenesis(t *testing.T) {
@@ -794,7 +798,7 @@ func TestCommittingInvalidBlock(t *testing.T) {
 
 	// td.state1 receives a block with version 2 and rejects it.
 	// It is possible that the same block would be considered valid by td.state2.
-	assert.Error(t, td.state1.CommitBlock(2, b, c))
+	assert.Error(t, td.state1.CommitBlock(b, c))
 }
 
 func TestCalcFee(t *testing.T) {

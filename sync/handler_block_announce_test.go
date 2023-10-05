@@ -6,7 +6,6 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/services"
 	"github.com/pactus-project/pactus/types/certificate"
-	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,17 +13,12 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	pid := td.RandPeerID()
-	lastBlockHeight := td.state.LastBlockHeight()
-	blockInterval := td.state.Genesis().Params().BlockInterval()
-	blockTime := util.RoundNow(int(blockInterval.Seconds()))
-	b1 := td.GenerateTestBlockWithTime(blockTime)
-	c1 := td.GenerateTestCertificate()
-	msg1 := message.NewBlockAnnounceMessage(lastBlockHeight+1, b1, c1)
+	lastHeight := td.state.LastBlockHeight()
+	blk1, cert1 := td.GenerateTestBlock(lastHeight + 1)
+	msg1 := message.NewBlockAnnounceMessage(blk1, cert1)
 
-	blockTime = blockTime.Add(blockInterval)
-	b2 := td.GenerateTestBlockWithTime(blockTime)
-	c2 := td.GenerateTestCertificate()
-	msg2 := message.NewBlockAnnounceMessage(lastBlockHeight+2, b2, c2)
+	blk2, cert2 := td.GenerateTestBlock(lastHeight + 2)
+	msg2 := message.NewBlockAnnounceMessage(blk2, cert2)
 
 	pub, _ := td.RandBLSKeyPair()
 	td.addPeer(t, pub, pid, services.New(services.Network))
@@ -33,17 +27,17 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg2, pid))
 
 		msg1 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
-		assert.Equal(t, msg1.Message.(*message.BlocksRequestMessage).From, lastBlockHeight+1)
+		assert.Equal(t, msg1.Message.(*message.BlocksRequestMessage).From, lastHeight+1)
 
 		peer := td.sync.peerSet.GetPeer(pid)
-		assert.Equal(t, peer.Height, lastBlockHeight+2)
-		assert.Equal(t, td.sync.state.LastBlockHeight(), lastBlockHeight)
+		assert.Equal(t, peer.Height, lastHeight+2)
+		assert.Equal(t, td.sync.state.LastBlockHeight(), lastHeight)
 	})
 
 	t.Run("Receiving missed block, should commit both blocks", func(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg1, pid))
 
-		assert.Equal(t, td.sync.state.LastBlockHeight(), lastBlockHeight+2)
+		assert.Equal(t, td.sync.state.LastBlockHeight(), lastHeight+2)
 	})
 }
 
@@ -51,10 +45,10 @@ func TestInvalidBlockAnnounce(t *testing.T) {
 	td := setup(t, nil)
 
 	pid := td.RandPeerID()
-	lastBlockHeight := td.state.LastBlockHeight()
-	blk := td.GenerateTestBlock()
-	invCert := certificate.NewCertificate(td.RandHeight(), 0, nil, nil, nil)
-	msg := message.NewBlockAnnounceMessage(lastBlockHeight+1, blk, invCert)
+	lastHeight := td.state.LastBlockHeight()
+	blk, _ := td.GenerateTestBlock(lastHeight + 1)
+	invCert := certificate.NewCertificate(lastHeight+1, 0, nil, nil, nil)
+	msg := message.NewBlockAnnounceMessage(blk, invCert)
 
 	err := td.receivingNewMessage(td.sync, msg, pid)
 	assert.Error(t, err)
@@ -66,7 +60,7 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 	td.state.CommitTestBlocks(21)
 	blk, _ := td.state.CommittedBlock(td.state.LastBlockHeight()).ToBlock()
 	msg := message.NewBlockAnnounceMessage(
-		td.state.LastBlockHeight(), blk, td.state.LastCertificate())
+		blk, td.state.LastCertificate())
 
 	t.Run("Not in the committee, should not broadcast block announce message", func(t *testing.T) {
 		td.sync.broadcast(msg)
@@ -80,6 +74,6 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 		td.sync.broadcast(msg)
 
 		msg1 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlockAnnounce)
-		assert.Equal(t, msg1.Message.(*message.BlockAnnounceMessage).Height, msg.Height)
+		assert.Equal(t, msg1.Message.(*message.BlockAnnounceMessage).Certificate.Height(), msg.Certificate.Height())
 	})
 }

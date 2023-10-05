@@ -37,8 +37,8 @@ func TestMessageCompress(t *testing.T) {
 
 	blocksData := [][]byte{}
 	for i := 0; i < 10; i++ {
-		b := ts.GenerateTestBlock()
-		d, _ := b.Bytes()
+		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
+		d, _ := blk.Bytes()
 		blocksData = append(blocksData, d)
 	}
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeOK, message.ResponseCodeOK.String(),

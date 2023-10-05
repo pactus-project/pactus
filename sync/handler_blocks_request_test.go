@@ -61,14 +61,12 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).From, curHeight-config.BlockPerMessage)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).To(), curHeight-1)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).Count(), config.BlockPerMessage)
-				assert.Zero(t, bdl1.Message.(*message.BlocksResponseMessage).LastCertificateHeight())
 
 				bdl2 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeNoMoreBlocks)
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).From)
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).To())
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).Count())
-				assert.Zero(t, bdl1.Message.(*message.BlocksResponseMessage).LastCertificateHeight())
 			})
 
 			t.Run("Peer synced", func(t *testing.T) {
@@ -80,14 +78,12 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).From, curHeight-config.BlockPerMessage+1)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).To(), curHeight)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).Count(), config.BlockPerMessage)
-				assert.Zero(t, bdl1.Message.(*message.BlocksResponseMessage).LastCertificateHeight())
 
 				bdl2 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
 				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
 				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).From, curHeight)
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).To())
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).Count())
-				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).LastCertificateHeight(), curHeight)
 			})
 		})
 

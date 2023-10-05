@@ -428,7 +428,7 @@ func (sync *synchronizer) tryCommitBlocks() error {
 		}
 
 		sync.logger.Trace("committing block", "height", height, "block", blk)
-		if err := sync.state.CommitBlock(height, blk, cert); err != nil {
+		if err := sync.state.CommitBlock(blk, cert); err != nil {
 			return err
 		}
 		height = height + 1
