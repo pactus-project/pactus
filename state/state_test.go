@@ -347,7 +347,8 @@ func TestUpdateLastCertificate(t *testing.T) {
 
 	invValKey := td.RandValKey()
 	notActiveValKey := td.RandValKey()
-	val := validator.NewValidator(notActiveValKey.PublicKey(), td.RandInt32(100))
+	valNum := int32(4) // [0..3] are in the committee now
+	val := validator.NewValidator(notActiveValKey.PublicKey(), valNum)
 	td.state1.store.UpdateValidator(val)
 
 	v1 := vote.NewPrepareVote(blk.Hash(), cert.Height(), cert.Round(), td.valKey3.Address())
