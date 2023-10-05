@@ -2,6 +2,7 @@ package message
 
 import (
 	"testing"
+	"time"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -13,6 +14,17 @@ import (
 func TestHelloType(t *testing.T) {
 	m := &HelloMessage{}
 	assert.Equal(t, m.Type(), TypeHello)
+}
+
+func TestHelloMessageMyTimeUnix(t *testing.T) {
+	myTime := time.Now()
+	myTimeUnixMilli := myTime.UnixMilli()
+	m := &HelloMessage{
+		MyTimeUnixMilli: myTimeUnixMilli,
+	}
+
+	assert.Equal(t, myTimeUnixMilli, m.MyTimeUnixMilli)
+	assert.Equal(t, myTimeUnixMilli, m.MyTime().UnixMilli())
 }
 
 func TestHelloMessage(t *testing.T) {
