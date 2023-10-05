@@ -30,7 +30,8 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, initiator 
 			if err != nil {
 				return err
 			}
-			handler.cache.AddBlock(height, blk)
+			handler.cache.AddBlock(blk)
+
 			height++
 		}
 		handler.cache.AddCertificate(msg.LastCertificate)

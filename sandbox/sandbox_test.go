@@ -48,10 +48,9 @@ func setup(t *testing.T) *testData {
 	}
 
 	lastHeight := uint32(21)
-	for i := uint32(1); i < lastHeight; i++ {
-		b := ts.GenerateTestBlock()
-		c := ts.GenerateTestCertificate()
-		mockStore.SaveBlock(i, b, c)
+	for height := uint32(1); height < lastHeight; height++ {
+		blk, cert := ts.GenerateTestBlock(height)
+		mockStore.SaveBlock(blk, cert)
 	}
 	sandbox := NewSandbox(mockStore.LastHeight,
 		mockStore, params, committee, totalPower).(*sandbox)
@@ -375,7 +374,8 @@ func TestPowerDelta(t *testing.T) {
 func TestVerifyProof(t *testing.T) {
 	td := setup(t)
 
-	lastHeight, _ := td.store.LastCertificate()
+	lastCert := td.store.LastCertificate()
+	lastHeight := lastCert.Height()
 	vals := td.sandbox.committee.Validators()
 
 	// Try to evaluate a valid sortition

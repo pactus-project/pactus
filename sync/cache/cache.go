@@ -42,9 +42,14 @@ func (c *Cache) GetBlock(height uint32) *block.Block {
 	return nil
 }
 
-func (c *Cache) AddBlock(height uint32, block *block.Block) {
-	c.blocks.Add(height, block)
-	c.AddCertificate(block.PrevCertificate())
+func (c *Cache) AddBlock(blk *block.Block) {
+	prvCert := blk.PrevCertificate()
+	if prvCert == nil {
+		c.blocks.Add(1, blk)
+	} else {
+		c.blocks.Add(prvCert.Height()+1, blk)
+		c.certs.Add(prvCert.Height(), prvCert)
+	}
 }
 
 func (c *Cache) GetCertificate(height uint32) *certificate.Certificate {

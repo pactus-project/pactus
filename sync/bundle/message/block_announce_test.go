@@ -1,6 +1,7 @@
 package message
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/certificate"
@@ -17,9 +18,8 @@ func TestBlockAnnounceMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid certificate", func(t *testing.T) {
-		b := ts.GenerateTestBlock()
-		c := certificate.NewCertificate(0, 0, nil, nil, nil)
-		m := NewBlockAnnounceMessage(100, b, c)
+		blk, cert := ts.GenerateTestBlock(0)
+		m := NewBlockAnnounceMessage(blk, cert)
 		err := m.BasicCheck()
 
 		assert.ErrorIs(t, err, certificate.BasicCheckError{
@@ -28,11 +28,12 @@ func TestBlockAnnounceMessage(t *testing.T) {
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		b := ts.GenerateTestBlock()
-		c := ts.GenerateTestCertificate()
-		m := NewBlockAnnounceMessage(100, b, c)
+		height := ts.RandHeight()
+		blk, cert := ts.GenerateTestBlock(height)
+		m := NewBlockAnnounceMessage(blk, cert)
 
 		assert.NoError(t, m.BasicCheck())
-		assert.Contains(t, m.String(), "100")
+		assert.Equal(t, height, m.Height())
+		assert.Contains(t, m.String(), fmt.Sprintf("%d", height))
 	})
 }

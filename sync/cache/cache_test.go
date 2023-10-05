@@ -7,31 +7,40 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCacheBlocks(t *testing.T) {
+func TestAddBlockOne(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
-
 	cache, _ := NewCache(10)
 
-	b1 := ts.GenerateTestBlock()
-	b2 := ts.GenerateTestBlock()
-	testHeight := ts.RandHeight()
+	blk1, _ := ts.GenerateTestBlock(1)
+	cache.AddBlock(blk1)
 
-	cache.AddBlock(testHeight, b1)
-	cache.AddBlock(testHeight+1, b2)
+	assert.True(t, cache.HasBlockInCache(1))
+	assert.Equal(t, blk1, cache.GetBlock(1))
+	assert.Nil(t, cache.GetCertificate(0))
+}
+
+func TestAddBlocks(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	cache, _ := NewCache(10)
+
+	testHeight := ts.RandHeight()
+	blk1, _ := ts.GenerateTestBlock(testHeight)
+	cache.AddBlock(blk1)
 
 	assert.True(t, cache.HasBlockInCache(testHeight))
-	assert.True(t, cache.HasBlockInCache(testHeight+1))
-	assert.False(t, cache.HasBlockInCache(testHeight+3))
+	assert.Equal(t, blk1, cache.GetBlock(testHeight))
+	assert.Equal(t, blk1.PrevCertificate(), cache.GetCertificate(testHeight-1))
+}
 
-	assert.NotNil(t, cache.GetBlock(testHeight))
-	assert.NotNil(t, cache.GetBlock(testHeight+1))
-	assert.Nil(t, cache.GetBlock(testHeight+2))
+func TestAddCertificate(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	cache, _ := NewCache(10)
 
-	assert.Equal(t, cache.GetBlock(testHeight).Hash(), b1.Hash())
-	assert.Equal(t, cache.GetBlock(testHeight+1).Hash(), b2.Hash())
-	assert.Nil(t, cache.GetCertificate(0))
-	assert.Equal(t, cache.GetCertificate(testHeight).Hash(), b2.PrevCertificate().Hash())
-	assert.Nil(t, cache.GetCertificate(4))
+	testHeight := ts.RandHeight()
+	_, cert1 := ts.GenerateTestBlock(testHeight)
+	cache.AddCertificate(cert1)
+
+	assert.Equal(t, cert1, cache.GetCertificate(testHeight))
 }
 
 func TestClearCache(t *testing.T) {
@@ -39,9 +48,8 @@ func TestClearCache(t *testing.T) {
 
 	cache, _ := NewCache(10)
 
-	b := ts.GenerateTestBlock()
-
-	cache.AddBlock(2, b)
+	blk, _ := ts.GenerateTestBlock(ts.RandHeight())
+	cache.AddBlock(blk)
 
 	assert.Equal(t, cache.Len(), 1)
 	cache.Clear()
@@ -56,12 +64,12 @@ func TestCacheIsFull(t *testing.T) {
 
 	i := int32(0)
 	for ; i < 10; i++ {
-		b := ts.GenerateTestBlock()
-		cache.AddBlock(uint32(i+1), b)
+		blk, _ := ts.GenerateTestBlock(uint32(i + 1))
+		cache.AddBlock(blk)
 	}
 
-	newBlock := ts.GenerateTestBlock()
-	cache.AddBlock(uint32(i+1), newBlock)
+	newBlock, _ := ts.GenerateTestBlock(uint32(i + 1))
+	cache.AddBlock(newBlock)
 
 	assert.NotNil(t, cache.GetBlock(uint32(i+1)))
 	assert.Nil(t, cache.GetBlock(1))
@@ -73,12 +81,12 @@ func TestAddAgain(t *testing.T) {
 	cache, _ := NewCache(10)
 
 	height := ts.RandHeight()
-	blk1 := ts.GenerateTestBlock()
-	blk2 := ts.GenerateTestBlock()
+	firstBlk, _ := ts.GenerateTestBlock(height)
+	secondBlk, _ := ts.GenerateTestBlock(height)
 
-	cache.AddBlock(height, blk1)
-	assert.Equal(t, blk1, cache.GetBlock(height))
+	cache.AddBlock(firstBlk)
+	assert.Equal(t, firstBlk, cache.GetBlock(height))
 
-	cache.AddBlock(height, blk2)
-	assert.Equal(t, blk2, cache.GetBlock(height))
+	cache.AddBlock(secondBlk)
+	assert.Equal(t, secondBlk, cache.GetBlock(height))
 }

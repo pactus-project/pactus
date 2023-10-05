@@ -27,7 +27,7 @@ type Facade interface {
 	UpdateLastCertificate(v *vote.Vote) error
 	ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address, round int16) (*block.Block, error)
 	ValidateBlock(block *block.Block) error
-	CommitBlock(height uint32, block *block.Block, cert *certificate.Certificate) error
+	CommitBlock(block *block.Block, cert *certificate.Certificate) error
 	CommitteeValidators() []*validator.Validator
 	IsInCommittee(addr crypto.Address) bool
 	Proposer(round int16) *validator.Validator

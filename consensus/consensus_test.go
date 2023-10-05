@@ -325,13 +325,13 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	cert := certificate.NewCertificate(height+1, 0, []int32{0, 1, 2, 3}, []int32{2}, sig)
 	block := p.Block()
 
-	err = td.consX.state.CommitBlock(height+1, block, cert)
+	err = td.consX.state.CommitBlock(block, cert)
 	assert.NoError(t, err)
-	err = td.consY.state.CommitBlock(height+1, block, cert)
+	err = td.consY.state.CommitBlock(block, cert)
 	assert.NoError(t, err)
-	err = td.consB.state.CommitBlock(height+1, block, cert)
+	err = td.consB.state.CommitBlock(block, cert)
 	assert.NoError(t, err)
-	err = td.consP.state.CommitBlock(height+1, block, cert)
+	err = td.consP.state.CommitBlock(block, cert)
 	assert.NoError(t, err)
 
 	return block, cert
@@ -619,17 +619,15 @@ func TestNonActiveValidator(t *testing.T) {
 
 	t.Run("non-active instances should move to new height", func(t *testing.T) {
 		b1, cert1 := td.commitBlockForAllStates(t)
-		b2, cert2 := td.commitBlockForAllStates(t)
 
 		nonActiveCons.MoveToNewHeight()
 		td.checkHeightRound(t, nonActiveCons, 1, 0)
 
-		assert.NoError(t, nonActiveCons.state.CommitBlock(1, b1, cert1))
-		assert.NoError(t, nonActiveCons.state.CommitBlock(2, b2, cert2))
+		assert.NoError(t, nonActiveCons.state.CommitBlock(b1, cert1))
 
 		nonActiveCons.MoveToNewHeight()
 		td.newHeightTimeout(nonActiveCons)
-		td.checkHeightRound(t, nonActiveCons, 3, 0)
+		td.checkHeightRound(t, nonActiveCons, 2, 0)
 	})
 }
 

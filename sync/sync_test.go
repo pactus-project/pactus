@@ -250,14 +250,12 @@ func TestTestNetFlags(t *testing.T) {
 func TestDownload(t *testing.T) {
 	td := setup(t, nil)
 
-	ourBlockHeight := td.state.LastBlockHeight()
-	// To make sure the peer is not synced,
-	// we add a block in past (more than 2 hours)
+	// LastBlockTime is the genesis time (Testnet)
+	// It should request blocks to get synced.
 
-	blk := td.GenerateTestBlock()
-	cert := td.GenerateTestCertificate()
+	blk, cert := td.GenerateTestBlock(td.RandHeight())
 	pid := td.RandPeerID()
-	msg := message.NewBlockAnnounceMessage(ourBlockHeight+LatestBlockInterval+1, blk, cert)
+	msg := message.NewBlockAnnounceMessage(blk, cert)
 
 	t.Run("try to download blocks, but the peer is not known", func(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))

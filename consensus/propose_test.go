@@ -23,14 +23,14 @@ func TestSetProposalInvalidProposer(t *testing.T) {
 	assert.Nil(t, td.consY.RoundProposal(0))
 
 	addr := td.valKeys[tIndexB].Address()
-	b := td.GenerateTestBlockWithProposer(addr)
-	p := proposal.NewProposal(1, 0, b)
+	blk, _ := td.GenerateTestBlockWithProposer(1, addr)
+	invalidProp := proposal.NewProposal(1, 0, blk)
 
-	td.consY.SetProposal(p)
+	td.consY.SetProposal(invalidProp)
 	assert.Nil(t, td.consY.RoundProposal(0))
 
-	td.HelperSignProposal(td.valKeys[tIndexB], p) // Invalid signature
-	td.consY.SetProposal(p)
+	td.HelperSignProposal(td.valKeys[tIndexB], invalidProp)
+	td.consY.SetProposal(invalidProp)
 	assert.Nil(t, td.consY.RoundProposal(0))
 }
 
@@ -38,15 +38,15 @@ func TestSetProposalInvalidBlock(t *testing.T) {
 	td := setup(t)
 
 	addr := td.valKeys[tIndexB].Address()
-	invBlock := td.GenerateTestBlockWithProposer(addr)
-	p := proposal.NewProposal(1, 2, invBlock)
-	td.HelperSignProposal(td.valKeys[tIndexB], p)
+	blk, _ := td.GenerateTestBlockWithProposer(1, addr)
+	invProp := proposal.NewProposal(1, 2, blk)
+	td.HelperSignProposal(td.valKeys[tIndexB], invProp)
 
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
 	td.enterNextRound(td.consP)
 
-	td.consP.SetProposal(p)
+	td.consP.SetProposal(invProp)
 	assert.Nil(t, td.consP.RoundProposal(2))
 }
 
@@ -54,12 +54,12 @@ func TestSetProposalInvalidHeight(t *testing.T) {
 	td := setup(t)
 
 	addr := td.valKeys[tIndexB].Address()
-	invBlock := td.GenerateTestBlockWithProposer(addr)
-	p := proposal.NewProposal(2, 0, invBlock)
-	td.HelperSignProposal(td.valKeys[tIndexB], p)
+	blk, _ := td.GenerateTestBlockWithProposer(2, addr)
+	invProp := proposal.NewProposal(2, 0, blk)
+	td.HelperSignProposal(td.valKeys[tIndexB], invProp)
 
 	td.enterNewHeight(td.consY)
-	td.consY.SetProposal(p)
+	td.consY.SetProposal(invProp)
 	assert.Nil(t, td.consY.RoundProposal(2))
 }
 

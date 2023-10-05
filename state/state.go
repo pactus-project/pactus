@@ -378,10 +378,11 @@ func (st *state) ValidateBlock(block *block.Block) error {
 	return st.executeBlock(block, sb)
 }
 
-func (st *state) CommitBlock(height uint32, block *block.Block, cert *certificate.Certificate) error {
+func (st *state) CommitBlock(block *block.Block, cert *certificate.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
+	height := cert.Height()
 	if height != st.lastInfo.BlockHeight()+1 {
 		st.logger.Debug("block is committed before", "height", height)
 		return nil
@@ -432,7 +433,6 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *certificat
 
 	// -----------------------------------
 	// Commit block
-	st.lastInfo.UpdateBlockHeight(height)
 	st.lastInfo.UpdateBlockHash(block.Hash())
 	st.lastInfo.UpdateBlockTime(block.Header().Time())
 	st.lastInfo.UpdateSortitionSeed(block.Header().SortitionSeed())
@@ -442,7 +442,7 @@ func (st *state) CommitBlock(height uint32, block *block.Block, cert *certificat
 	// Commit and update the committee
 	st.commitSandbox(sb, cert.Round())
 
-	st.store.SaveBlock(height, block, cert)
+	st.store.SaveBlock(block, cert)
 
 	// Remove transactions from pool
 	for _, trx := range block.Transactions() {

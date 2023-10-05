@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
@@ -13,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // The best way to test this module is by writing test code in the `state.CommitBlock` function
@@ -30,6 +32,9 @@ func setup(t *testing.T) *testData {
 	ts := testsuite.NewTestSuite(t)
 	mockStore := store.MockingStore(ts)
 	lastInfo := NewLastInfo()
+
+	require.Zero(t, lastInfo.BlockHeight())
+	require.Equal(t, hash.UndefHash, lastInfo.BlockHash())
 
 	pub0, _ := ts.RandBLSKeyPair()
 	pub1, _ := ts.RandBLSKeyPair()
@@ -67,8 +72,8 @@ func setup(t *testing.T) *testData {
 	trx := tx.NewSortitionTx(1, pub4.ValidatorAddress(), ts.RandProof())
 	ts.HelperSignTransaction(prv4, trx)
 	prevHash := ts.RandHash()
-	prevCert := ts.GenerateTestCertificate()
 	lastHeight := ts.RandHeight()
+	prevCert := ts.GenerateTestCertificate(lastHeight - 1)
 	lastSeed := ts.RandSeed()
 	lastBlock := block.MakeBlock(1, util.Now(), block.Txs{trx},
 		prevHash,
@@ -77,11 +82,10 @@ func setup(t *testing.T) *testData {
 
 	sig := valKey.Sign([]byte("fatdog"))
 	lastCert := certificate.NewCertificate(lastHeight, 0, committers, []int32{}, sig)
-	mockStore.SaveBlock(lastHeight, lastBlock, lastCert)
+	mockStore.SaveBlock(lastBlock, lastCert)
 	assert.Equal(t, mockStore.LastHeight, lastHeight)
 
 	lastInfo.UpdateSortitionSeed(lastSeed)
-	lastInfo.UpdateBlockHeight(lastHeight)
 	lastInfo.UpdateBlockHash(lastBlock.Hash())
 	lastInfo.UpdateCertificate(lastCert)
 	lastInfo.UpdateBlockTime(lastBlock.Header().Time())

@@ -8,16 +8,14 @@ import (
 )
 
 type BlockAnnounceMessage struct {
-	Height      uint32                   `cbor:"1,keyasint"`
-	Block       *block.Block             `cbor:"2,keyasint"`
-	Certificate *certificate.Certificate `cbor:"3,keyasint"`
+	Block       *block.Block             `cbor:"1,keyasint"`
+	Certificate *certificate.Certificate `cbor:"2,keyasint"`
 }
 
-func NewBlockAnnounceMessage(h uint32, b *block.Block, c *certificate.Certificate) *BlockAnnounceMessage {
+func NewBlockAnnounceMessage(blk *block.Block, cert *certificate.Certificate) *BlockAnnounceMessage {
 	return &BlockAnnounceMessage{
-		Height:      h,
-		Block:       b,
-		Certificate: c,
+		Block:       blk,
+		Certificate: cert,
 	}
 }
 
@@ -28,10 +26,16 @@ func (m *BlockAnnounceMessage) BasicCheck() error {
 	return m.Certificate.BasicCheck()
 }
 
+func (m *BlockAnnounceMessage) Height() uint32 {
+	return m.Certificate.Height()
+}
+
 func (m *BlockAnnounceMessage) Type() Type {
 	return TypeBlockAnnounce
 }
 
 func (m *BlockAnnounceMessage) String() string {
-	return fmt.Sprintf("{⌘ %d %v}", m.Height, m.Block.Hash().ShortString())
+	return fmt.Sprintf("{⌘ %d %v}",
+		m.Certificate.Height(),
+		m.Block.Hash().ShortString())
 }

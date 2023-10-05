@@ -201,7 +201,7 @@ func TestInvalidJustInitZero(t *testing.T) {
 	h := uint32(1)
 	r := int16(0)
 	just := &vote.JustInitZero{
-		QCert: td.GenerateTestCertificate(),
+		QCert: td.GenerateTestCertificate(h),
 	}
 
 	t.Run("invalid value: one", func(t *testing.T) {
@@ -230,7 +230,7 @@ func TestInvalidJustInitZero(t *testing.T) {
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
 			JustType: just.Type(),
-			Reason:   fmt.Sprintf("certificate height is invalid (expected 1 got %v)", just.QCert.Height()),
+			Reason:   fmt.Sprintf("certificate has an unexpected committers: %v", just.QCert.Committers()),
 		})
 	})
 }
@@ -242,7 +242,7 @@ func TestInvalidJustPreVoteHard(t *testing.T) {
 	h := uint32(1)
 	r := int16(0)
 	just := &vote.JustPreVoteHard{
-		QCert: td.GenerateTestCertificate(),
+		QCert: td.GenerateTestCertificate(h),
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {
@@ -271,7 +271,7 @@ func TestInvalidJustPreVoteHard(t *testing.T) {
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
 			JustType: just.Type(),
-			Reason:   fmt.Sprintf("certificate height is invalid (expected 1 got %v)", just.QCert.Height()),
+			Reason:   fmt.Sprintf("certificate has an unexpected committers: %v", just.QCert.Committers()),
 		})
 	})
 }
@@ -283,7 +283,7 @@ func TestInvalidJustPreVoteSoft(t *testing.T) {
 	h := uint32(1)
 	r := int16(0)
 	just := &vote.JustPreVoteSoft{
-		QCert: td.GenerateTestCertificate(),
+		QCert: td.GenerateTestCertificate(h),
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {
@@ -312,7 +312,7 @@ func TestInvalidJustPreVoteSoft(t *testing.T) {
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
 			JustType: just.Type(),
-			Reason:   fmt.Sprintf("certificate height is invalid (expected 1 got %v)", just.QCert.Height()),
+			Reason:   fmt.Sprintf("certificate has an unexpected committers: %v", just.QCert.Committers()),
 		})
 	})
 }
@@ -324,7 +324,7 @@ func TestInvalidJustMainVoteNoConflict(t *testing.T) {
 	h := uint32(1)
 	r := int16(0)
 	just := &vote.JustMainVoteNoConflict{
-		QCert: td.GenerateTestCertificate(),
+		QCert: td.GenerateTestCertificate(h),
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {
@@ -343,7 +343,7 @@ func TestInvalidJustMainVoteNoConflict(t *testing.T) {
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
 			JustType: just.Type(),
-			Reason:   fmt.Sprintf("certificate height is invalid (expected 1 got %v)", just.QCert.Height()),
+			Reason:   fmt.Sprintf("certificate has an unexpected committers: %v", just.QCert.Committers()),
 		})
 	})
 }
@@ -358,7 +358,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 	t.Run("invalid value: zero", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
 			Just0: &vote.JustInitZero{
-				QCert: td.GenerateTestCertificate(),
+				QCert: td.GenerateTestCertificate(h),
 			},
 			Just1: &vote.JustInitOne{},
 		}
@@ -374,7 +374,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 	t.Run("invalid value: one", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
 			Just0: &vote.JustInitZero{
-				QCert: td.GenerateTestCertificate(),
+				QCert: td.GenerateTestCertificate(h),
 			},
 			Just1: &vote.JustInitOne{},
 		}
@@ -390,7 +390,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 	t.Run("invalid value: unexpected justification (just0)", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
 			Just0: &vote.JustPreVoteSoft{
-				QCert: td.GenerateTestCertificate(),
+				QCert: td.GenerateTestCertificate(h),
 			},
 			Just1: &vote.JustInitOne{},
 		}
@@ -406,10 +406,10 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 	t.Run("invalid value: unexpected justification", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
 			Just0: &vote.JustInitZero{
-				QCert: td.GenerateTestCertificate(),
+				QCert: td.GenerateTestCertificate(h),
 			},
 			Just1: &vote.JustPreVoteSoft{
-				QCert: td.GenerateTestCertificate(),
+				QCert: td.GenerateTestCertificate(h),
 			},
 		}
 		v := vote.NewCPMainVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.valKeys[tIndexB].Address())
@@ -423,7 +423,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 
 	t.Run("invalid certificate", func(t *testing.T) {
 		just0 := &vote.JustInitZero{
-			QCert: td.GenerateTestCertificate(),
+			QCert: td.GenerateTestCertificate(h),
 		}
 		just := &vote.JustMainVoteConflict{
 			Just0: just0,
@@ -434,18 +434,18 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
 			JustType: just0.Type(),
-			Reason:   fmt.Sprintf("certificate height is invalid (expected 1 got %v)", just0.QCert.Height()),
+			Reason:   fmt.Sprintf("certificate has an unexpected committers: %v", just0.QCert.Committers()),
 		})
 	})
 
 	t.Run("invalid certificate", func(t *testing.T) {
 		just0 := &vote.JustPreVoteSoft{
-			QCert: td.GenerateTestCertificate(),
+			QCert: td.GenerateTestCertificate(h),
 		}
 		just := &vote.JustMainVoteConflict{
 			Just0: just0,
 			Just1: &vote.JustPreVoteSoft{
-				QCert: td.GenerateTestCertificate(),
+				QCert: td.GenerateTestCertificate(h),
 			},
 		}
 		v := vote.NewCPMainVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.valKeys[tIndexB].Address())
@@ -453,7 +453,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
 			JustType: just0.Type(),
-			Reason:   fmt.Sprintf("certificate height is invalid (expected 1 got %v)", just0.QCert.Height()),
+			Reason:   fmt.Sprintf("certificate has an unexpected committers: %v", just0.QCert.Committers()),
 		})
 	})
 }
