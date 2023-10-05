@@ -33,7 +33,7 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, initiator 
 			handler.cache.AddBlock(height, blk)
 			height++
 		}
-		handler.cache.AddCertificate(msg.From, msg.LastCertificate)
+		handler.cache.AddCertificate(msg.LastCertificate)
 		err := handler.tryCommitBlocks()
 		if err != nil {
 			return err

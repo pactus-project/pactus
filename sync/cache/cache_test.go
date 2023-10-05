@@ -66,3 +66,19 @@ func TestCacheIsFull(t *testing.T) {
 	assert.NotNil(t, cache.GetBlock(uint32(i+1)))
 	assert.Nil(t, cache.GetBlock(1))
 }
+
+func TestAddAgain(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	cache, _ := NewCache(10)
+
+	height := ts.RandHeight()
+	blk1 := ts.GenerateTestBlock()
+	blk2 := ts.GenerateTestBlock()
+
+	cache.AddBlock(height, blk1)
+	assert.Equal(t, blk1, cache.GetBlock(height))
+
+	cache.AddBlock(height, blk2)
+	assert.Equal(t, blk2, cache.GetBlock(height))
+}
