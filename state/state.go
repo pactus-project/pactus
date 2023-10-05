@@ -361,24 +361,24 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 	return block, nil
 }
 
-func (st *state) ValidateBlock(block *block.Block) error {
+func (st *state) ValidateBlock(blk *block.Block) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if err := st.validateBlock(block); err != nil {
+	if err := st.validateBlock(blk); err != nil {
 		return err
 	}
 
-	t := block.Header().Time()
+	t := blk.Header().Time()
 	if err := st.validateBlockTime(t); err != nil {
 		return err
 	}
 
 	sb := st.concreteSandbox()
-	return st.executeBlock(block, sb)
+	return st.executeBlock(blk, sb)
 }
 
-func (st *state) CommitBlock(block *block.Block, cert *certificate.Certificate) error {
+func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -388,7 +388,7 @@ func (st *state) CommitBlock(block *block.Block, cert *certificate.Certificate) 
 		return nil
 	}
 
-	err := st.validateCertificate(cert, block.Hash())
+	err := st.validateCertificate(cert, blk.Hash())
 	if err != nil {
 		return err
 	}
@@ -400,26 +400,26 @@ func (st *state) CommitBlock(block *block.Block, cert *certificate.Certificate) 
 	// tries to commit them.
 	// We should never have a fork in our blockchain.
 	// But if it happens, here we can catch it.
-	if block.Header().PrevBlockHash() != st.lastInfo.BlockHash() {
+	if blk.Header().PrevBlockHash() != st.lastInfo.BlockHash() {
 		st.logger.Panic("a possible fork is detected",
 			"our hash", st.lastInfo.BlockHash(),
-			"block hash", block.Header().PrevBlockHash())
+			"block hash", blk.Header().PrevBlockHash())
 		return errors.Error(errors.ErrInvalidBlock)
 	}
 
-	err = st.validateBlock(block)
+	err = st.validateBlock(blk)
 	if err != nil {
 		return err
 	}
 
 	// Verify proposer
 	proposer := st.committee.Proposer(cert.Round())
-	if proposer.Address() != block.Header().ProposerAddress() {
+	if proposer.Address() != blk.Header().ProposerAddress() {
 		return errors.Errorf(errors.ErrInvalidBlock,
-			"invalid proposer, expected %s, got %s", proposer.Address(), block.Header().ProposerAddress())
+			"invalid proposer, expected %s, got %s", proposer.Address(), blk.Header().ProposerAddress())
 	}
 	// Validate sortition seed
-	seed := block.Header().SortitionSeed()
+	seed := blk.Header().SortitionSeed()
 	if !seed.Verify(proposer.PublicKey(), st.lastInfo.SortitionSeed()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed")
 	}
@@ -427,25 +427,25 @@ func (st *state) CommitBlock(block *block.Block, cert *certificate.Certificate) 
 	// -----------------------------------
 	// Execute block
 	sb := st.concreteSandbox()
-	if err := st.executeBlock(block, sb); err != nil {
+	if err := st.executeBlock(blk, sb); err != nil {
 		return err
 	}
 
 	// -----------------------------------
 	// Commit block
-	st.lastInfo.UpdateBlockHash(block.Hash())
-	st.lastInfo.UpdateBlockTime(block.Header().Time())
-	st.lastInfo.UpdateSortitionSeed(block.Header().SortitionSeed())
+	st.lastInfo.UpdateBlockHash(blk.Hash())
+	st.lastInfo.UpdateBlockTime(blk.Header().Time())
+	st.lastInfo.UpdateSortitionSeed(blk.Header().SortitionSeed())
 	st.lastInfo.UpdateCertificate(cert)
 	st.lastInfo.UpdateValidators(st.committee.Validators())
 
 	// Commit and update the committee
 	st.commitSandbox(sb, cert.Round())
 
-	st.store.SaveBlock(block, cert)
+	st.store.SaveBlock(blk, cert)
 
 	// Remove transactions from pool
-	for _, trx := range block.Transactions() {
+	for _, trx := range blk.Transactions() {
 		st.txPool.RemoveTx(trx.ID())
 	}
 
@@ -453,7 +453,7 @@ func (st *state) CommitBlock(block *block.Block, cert *certificate.Certificate) 
 		st.logger.Panic("unable to update state", "error", err)
 	}
 
-	st.logger.Info("new block committed", "block", block, "round", cert.Round())
+	st.logger.Info("new block committed", "block", blk, "round", cert.Round())
 
 	st.evaluateSortition()
 
@@ -463,7 +463,7 @@ func (st *state) CommitBlock(block *block.Block, cert *certificate.Certificate) 
 
 	// -----------------------------------
 	// Publishing the events to the zmq
-	st.publishEvents(height, block)
+	st.publishEvents(height, blk)
 
 	return nil
 }
@@ -701,15 +701,15 @@ func (st *state) Params() param.Params {
 }
 
 // publishEvents publishes block related events.
-func (st *state) publishEvents(height uint32, block *block.Block) {
+func (st *state) publishEvents(height uint32, blk *block.Block) {
 	if st.eventCh == nil {
 		return
 	}
-	blockEvent := event.CreateBlockEvent(block.Hash(), height)
+	blockEvent := event.CreateBlockEvent(blk.Hash(), height)
 	st.eventCh <- blockEvent
 
-	for i := 1; i < block.Transactions().Len(); i++ {
-		tx := block.Transactions().Get(i)
+	for i := 1; i < blk.Transactions().Len(); i++ {
+		tx := blk.Transactions().Get(i)
 
 		accChangeEvent := event.CreateAccountChangeEvent(tx.Payload().Signer(), height)
 		st.eventCh <- accChangeEvent

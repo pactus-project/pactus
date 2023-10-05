@@ -102,7 +102,7 @@ type Store interface {
 
 	UpdateAccount(addr crypto.Address, acc *account.Account)
 	UpdateValidator(val *validator.Validator)
-	SaveBlock(block *block.Block, cert *certificate.Certificate)
+	SaveBlock(blk *block.Block, cert *certificate.Certificate)
 	WriteBatch() error
 	Close() error
 }

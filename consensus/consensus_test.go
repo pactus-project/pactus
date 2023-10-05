@@ -323,18 +323,18 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 
 	sig := bls.SignatureAggregate(sig1, sig2, sig4)
 	cert := certificate.NewCertificate(height+1, 0, []int32{0, 1, 2, 3}, []int32{2}, sig)
-	block := p.Block()
+	blk := p.Block()
 
-	err = td.consX.state.CommitBlock(block, cert)
+	err = td.consX.state.CommitBlock(blk, cert)
 	assert.NoError(t, err)
-	err = td.consY.state.CommitBlock(block, cert)
+	err = td.consY.state.CommitBlock(blk, cert)
 	assert.NoError(t, err)
-	err = td.consB.state.CommitBlock(block, cert)
+	err = td.consB.state.CommitBlock(blk, cert)
 	assert.NoError(t, err)
-	err = td.consP.state.CommitBlock(block, cert)
+	err = td.consP.state.CommitBlock(blk, cert)
 	assert.NoError(t, err)
 
-	return block, cert
+	return blk, cert
 }
 
 func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *proposal.Proposal {

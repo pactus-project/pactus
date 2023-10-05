@@ -89,17 +89,17 @@ func (s *store) Close() error {
 	return s.db.Close()
 }
 
-func (s *store) SaveBlock(block *block.Block, cert *certificate.Certificate) {
+func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	height := cert.Height()
-	reg := s.blockStore.saveBlock(s.batch, height, block)
-	for i, trx := range block.Transactions() {
+	reg := s.blockStore.saveBlock(s.batch, height, blk)
+	for i, trx := range blk.Transactions() {
 		s.txStore.saveTx(s.batch, trx.ID(), &reg[i])
 	}
 
-	// Save last certificate
+	// Save last certificate: [version: 4 bytes]+[certificate: variant]
 	w := bytes.NewBuffer(make([]byte, 0, 4+cert.SerializeSize()))
 	err := encoding.WriteElements(w, lastStoreVersion)
 	if err != nil {
