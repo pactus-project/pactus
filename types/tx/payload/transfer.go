@@ -29,12 +29,12 @@ func (p *TransferPayload) Value() int64 {
 func (p *TransferPayload) BasicCheck() error {
 	if !p.From.IsAccountAddress() {
 		return BasicCheckError{
-			Reason: "sender is not an account address: " + p.From.ShortString(),
+			Reason: "sender is not an account address: " + p.From.String(),
 		}
 	}
 	if !p.To.IsAccountAddress() {
 		return BasicCheckError{
-			Reason: "receiver is not an account address: " + p.To.ShortString(),
+			Reason: "receiver is not an account address: " + p.To.String(),
 		}
 	}
 	return nil
@@ -81,8 +81,8 @@ func (p *TransferPayload) Decode(r io.Reader) error {
 
 func (p *TransferPayload) String() string {
 	return fmt.Sprintf("{Send 💸 %v->%v %v",
-		p.From.ShortString(),
-		p.To.ShortString(),
+		p.From,
+		p.To,
 		p.Amount)
 }
 

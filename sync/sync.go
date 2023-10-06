@@ -142,7 +142,7 @@ func (sync *synchronizer) sayHello(to peer.ID) error {
 
 	sync.peerSet.UpdateStatus(to, peerset.StatusCodeConnected)
 
-	sync.logger.Info("sending Hello message", "to", to.ShortString())
+	sync.logger.Info("sending Hello message", "to", to)
 	return sync.sendTo(msg, to)
 }
 
@@ -173,7 +173,7 @@ func (sync *synchronizer) receiveLoop() {
 				err := sync.processIncomingBundle(bdl)
 				if err != nil {
 					sync.logger.Warn("error on parsing a Gossip bundle",
-						"initiator", bdl.Initiator.ShortString(), "bundle", bdl, "error", err)
+						"initiator", bdl.Initiator, "bundle", bdl, "error", err)
 					sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
 				}
 
@@ -187,14 +187,14 @@ func (sync *synchronizer) receiveLoop() {
 				err := sync.processIncomingBundle(bdl)
 				if err != nil {
 					sync.logger.Warn("error on parsing a Stream bundle",
-						"initiator", bdl.Initiator.ShortString(), "bundle", bdl, "error", err)
+						"initiator", bdl.Initiator, "bundle", bdl, "error", err)
 					sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
 				}
 			case network.EventTypeConnect:
 				ce := e.(*network.ConnectEvent)
 				if err := sync.sayHello(ce.PeerID); err != nil {
 					sync.logger.Warn("sending Hello message failed",
-						"to", ce.PeerID.ShortString(), "error", err)
+						"to", ce.PeerID, "error", err)
 				}
 			case network.EventTypeDisconnect:
 				de := e.(*network.DisconnectEvent)
@@ -210,7 +210,7 @@ func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle) error {
 	}
 
 	sync.logger.Info("received a bundle",
-		"initiator", bdl.Initiator.ShortString(), "bundle", bdl)
+		"initiator", bdl.Initiator, "bundle", bdl)
 	h := sync.handlers[bdl.Message.Type()]
 	if h == nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid message type: %v", bdl.Message.Type())
@@ -300,12 +300,12 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
 		err := sync.network.SendTo(data, to)
 		if err != nil {
 			sync.logger.Warn("error on sending bundle",
-				"bundle", bdl, "to", to.ShortString(), "error", err)
+				"bundle", bdl, "to", to, "error", err)
 
 			return err
 		}
 		sync.logger.Info("sending bundle to a peer",
-			"bundle", bdl, "to", to.ShortString())
+			"bundle", bdl, "to", to)
 	}
 	return nil
 }
@@ -362,7 +362,7 @@ func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 		}
 
 		count := LatestBlockInterval
-		sync.logger.Debug("sending download request", "from", from+1, "count", count, "pid", p.PeerID.ShortString())
+		sync.logger.Debug("sending download request", "from", from+1, "count", count, "pid", p.PeerID)
 		session := sync.peerSet.OpenSession(p.PeerID)
 		msg := message.NewBlocksRequestMessage(session.SessionID(), from+1, count)
 		err := sync.sendTo(msg, p.PeerID)

@@ -31,13 +31,13 @@ func (p *BondPayload) Value() int64 {
 func (p *BondPayload) BasicCheck() error {
 	if !p.From.IsAccountAddress() {
 		return BasicCheckError{
-			Reason: "sender is not an account address: " + p.From.ShortString(),
+			Reason: "sender is not an account address: " + p.From.String(),
 		}
 	}
 
 	if !p.To.IsValidatorAddress() {
 		return BasicCheckError{
-			Reason: "receiver is not a validator address: " + p.To.ShortString(),
+			Reason: "receiver is not a validator address: " + p.To.String(),
 		}
 	}
 
@@ -122,8 +122,8 @@ func (p *BondPayload) Decode(r io.Reader) error {
 
 func (p *BondPayload) String() string {
 	return fmt.Sprintf("{Bond 🔐 %v->%v %v",
-		p.From.ShortString(),
-		p.To.ShortString(),
+		p.From,
+		p.To,
 		p.Stake)
 }
 

@@ -16,10 +16,10 @@ func (s *proposeState) enter() {
 func (s *proposeState) decide() {
 	proposer := s.proposer(s.round)
 	if proposer.Address() == s.valKey.Address() {
-		s.logger.Info("our turn to propose", "proposer", proposer.Address().ShortString())
+		s.logger.Info("our turn to propose", "proposer", proposer.Address())
 		s.createProposal(s.height, s.round)
 	} else {
-		s.logger.Debug("not our turn to propose", "proposer", proposer.Address().ShortString())
+		s.logger.Debug("not our turn to propose", "proposer", proposer.Address())
 	}
 
 	s.cpRound = 0

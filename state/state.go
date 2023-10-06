@@ -90,7 +90,7 @@ func LoadOrNewState(
 
 	txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 
-	st.logger.Debug("last info", "committers", st.committee.Committers(), "state_root", st.stateRoot().ShortString())
+	st.logger.Debug("last info", "committers", st.committee.Committers(), "state_root", st.stateRoot())
 
 	return st, nil
 }
@@ -513,7 +513,7 @@ func (st *state) evaluateSortition() bool {
 func (st *state) String() string {
 	return fmt.Sprintf("{#%d ⌘ %v 🕣 %v}",
 		st.lastInfo.BlockHeight(),
-		st.lastInfo.BlockHash().ShortString(),
+		st.lastInfo.BlockHash(),
 		st.lastInfo.BlockTime().Format("15.04.05"))
 }
 

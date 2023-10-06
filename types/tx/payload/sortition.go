@@ -29,7 +29,7 @@ func (p *SortitionPayload) Value() int64 {
 func (p *SortitionPayload) BasicCheck() error {
 	if !p.Validator.IsValidatorAddress() {
 		return BasicCheckError{
-			Reason: "address is not a validator address: " + p.Validator.ShortString(),
+			Reason: "address is not a validator address: " + p.Validator.String(),
 		}
 	}
 
@@ -55,7 +55,7 @@ func (p *SortitionPayload) Decode(r io.Reader) error {
 
 func (p *SortitionPayload) String() string {
 	return fmt.Sprintf("{Sortition 🎯 %v",
-		p.Validator.ShortString())
+		p.Validator)
 }
 
 func (p *SortitionPayload) Receiver() *crypto.Address {

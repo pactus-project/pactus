@@ -15,6 +15,12 @@ func (f Foo) String() string {
 	return "foo"
 }
 
+type Bar struct{}
+
+func (f Bar) ShortString() string {
+    return "bar"
+}
+
 func TestNilObjLogger(t *testing.T) {
 	l := NewSubLogger("test", nil)
 	var buf bytes.Buffer
@@ -106,4 +112,21 @@ func TestNilValue(t *testing.T) {
 	assert.Contains(t, out, "null")
 	assert.Contains(t, out, "error")
 	assert.Contains(t, out, "stringer")
+}
+
+func TestShortStringer(t *testing.T) {
+    globalInst = nil
+    c := DefaultConfig()
+    c.Colorful = false
+    InitGlobalLogger(c)
+
+    l := NewSubLogger("test", &Foo{})
+    var buf bytes.Buffer
+    l.logger = l.logger.Output(&buf)
+
+    l.Info("msg", "f", Bar{})
+
+    out := buf.String()
+
+    assert.Contains(t, out, "bar")
 }

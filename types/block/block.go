@@ -136,9 +136,9 @@ func (b *Block) Hash() hash.Hash {
 
 func (b *Block) String() string {
 	return fmt.Sprintf("{⌘ %v 👤 %v 💻 %v 📨 %d}",
-		b.Hash().ShortString(),
-		b.data.Header.ProposerAddress().ShortString(),
-		b.data.Header.StateRoot().ShortString(),
+		b.Hash(),
+		b.data.Header.ProposerAddress(),
+		b.data.Header.StateRoot(),
 		b.data.Txs.Len(),
 	)
 }

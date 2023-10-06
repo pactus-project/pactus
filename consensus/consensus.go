@@ -113,7 +113,7 @@ func newConsensus(
 
 func (cs *consensus) String() string {
 	return fmt.Sprintf("{%s %d/%d/%s/%d}",
-		cs.valKey.Address().ShortString(),
+		cs.valKey.Address(),
 		cs.height, cs.round, cs.currentState.name(), cs.cpRound)
 }
 

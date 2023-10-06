@@ -39,7 +39,7 @@ func (m *TransactionsMessage) String() string {
 	var builder strings.Builder
 
 	for _, tx := range m.Transactions {
-		builder.WriteString(fmt.Sprintf("%v ", tx.ID().ShortString()))
+		builder.WriteString(fmt.Sprintf("%v ", tx.ID()))
 	}
 	builder.WriteString(fmt.Sprintf("{%v: ⌘ [%v]}", len(m.Transactions), builder.String()))
 	return builder.String()

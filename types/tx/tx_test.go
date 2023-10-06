@@ -119,7 +119,7 @@ func TestBasicCheck(t *testing.T) {
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid payload: receiver is not an account address: " + invAddr.ShortString(),
+			Reason: "invalid payload: receiver is not an account address: " + invAddr.String(),
 		})
 	})
 

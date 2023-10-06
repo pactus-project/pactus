@@ -13,6 +13,10 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+type ShortStringer interface {
+	ShortString() string
+}
+
 var (
 	LogFilename = "pactus.log"
 	MaxLogSize  = 10 // 10MB to rotate a log file
@@ -90,6 +94,12 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 				event.Any(key, v)
 			} else {
 				event.Stringer(key, v)
+			}
+		case ShortStringer:
+			if isNil(v) {
+				event.Any(key, v)
+			} else {
+				event.Str(key, v.ShortString())
 			}
 		case error:
 			event.AnErr(key, v)

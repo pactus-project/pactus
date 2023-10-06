@@ -39,7 +39,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 	}
 
 	handler.logger.Debug("updating peer info",
-		"pid", initiator.ShortString(),
+		"pid", initiator,
 		"moniker", msg.Moniker,
 		"services", msg.Services)
 
@@ -66,10 +66,10 @@ func (handler *helloHandler) acknowledge(msg *message.HelloAckMessage, to peer.I
 		handler.peerSet.UpdateStatus(to, peerset.StatusCodeBanned)
 
 		handler.logger.Warn("rejecting hello message", "message", msg,
-			"to", to.ShortString(), "reason", msg.Reason)
+			"to", to, "reason", msg.Reason)
 	} else {
 		handler.logger.Info("acknowledging hello message", "message", msg,
-			"to", to.ShortString())
+			"to", to)
 	}
 
 	return handler.sendTo(msg, to)
