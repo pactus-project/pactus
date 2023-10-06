@@ -250,7 +250,7 @@ func TestTestNetFlags(t *testing.T) {
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
 }
 
-func TestNotSayHelloForKnownPeer(t *testing.T) {
+func TestSayHelloForKnownPeer(t *testing.T) {
 	td := setup(t, nil)
 
 	pid := td.RandPeerID()
