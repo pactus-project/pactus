@@ -15,7 +15,7 @@ func DefaultConfig() *Config {
 	conf.Levels["_network"] = "info"
 	conf.Levels["_consensus"] = "info"
 	conf.Levels["_state"] = "info"
-	conf.Levels["_sync"] = "warning"
+	conf.Levels["_sync"] = "warn"
 	conf.Levels["_pool"] = "error"
 	conf.Levels["_http"] = "error"
 	conf.Levels["_grpc"] = "error"
