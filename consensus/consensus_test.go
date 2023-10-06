@@ -187,13 +187,27 @@ func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
 	return nil
 }
 
-func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, height uint32, round int16) {
+func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, height uint32) {
 	t.Helper()
 
 	for _, consMsg := range td.consMessages {
 		if consMsg.sender == cons.valKey.Address() &&
 			consMsg.message.Type() == message.TypeQueryProposal {
 			m := consMsg.message.(*message.QueryProposalMessage)
+			assert.Equal(t, m.Height, height)
+			return
+		}
+	}
+	require.NoError(t, fmt.Errorf("Not found"))
+}
+
+func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height uint32, round int16) {
+	t.Helper()
+
+	for _, consMsg := range td.consMessages {
+		if consMsg.sender == cons.valKey.Address() &&
+			consMsg.message.Type() == message.TypeQueryVotes {
+			m := consMsg.message.(*message.QueryVotesMessage)
 			assert.Equal(t, m.Height, height)
 			assert.Equal(t, m.Round, round)
 			return
@@ -540,7 +554,7 @@ func TestSetProposalFromPreviousRound(t *testing.T) {
 	// It should ignore proposal for previous rounds
 	td.consP.SetProposal(p)
 
-	assert.Nil(t, td.consP.RoundProposal(0))
+	assert.Nil(t, td.consP.Proposal())
 	td.checkHeightRound(t, td.consP, 1, 1)
 }
 
@@ -553,7 +567,7 @@ func TestSetProposalFromPreviousHeight(t *testing.T) {
 	td.enterNewHeight(td.consP)
 
 	td.consP.SetProposal(p)
-	assert.Nil(t, td.consP.RoundProposal(0))
+	assert.Nil(t, td.consP.Proposal())
 	td.checkHeightRound(t, td.consP, 2, 0)
 }
 
@@ -579,7 +593,7 @@ func TestDuplicateProposal(t *testing.T) {
 	td.consX.SetProposal(p1)
 	td.consX.SetProposal(p2)
 
-	assert.Equal(t, td.consX.RoundProposal(0).Hash(), p1.Hash())
+	assert.Equal(t, td.consX.Proposal().Hash(), p1.Hash())
 }
 
 func TestNonActiveValidator(t *testing.T) {
@@ -608,7 +622,7 @@ func TestNonActiveValidator(t *testing.T) {
 		p := td.makeProposal(t, 1, 0)
 		nonActiveCons.SetProposal(p)
 
-		assert.Nil(t, nonActiveCons.RoundProposal(0))
+		assert.Nil(t, nonActiveCons.Proposal())
 	})
 
 	t.Run("non-active instances should ignore votes", func(t *testing.T) {
@@ -643,11 +657,12 @@ func TestVoteWithBigRound(t *testing.T) {
 func TestProposalWithBigRound(t *testing.T) {
 	td := setup(t)
 
-	td.enterNewHeight(td.consX)
+	td.enterNewHeight(td.consP)
 
 	p := td.makeProposal(t, 1, util.MaxInt16)
-	td.consX.SetProposal(p)
-	assert.Equal(t, td.consX.RoundProposal(util.MaxInt16), p)
+	td.consP.SetProposal(p)
+	assert.Equal(t, td.consP.log.RoundProposal(util.MaxInt16), p)
+	assert.Nil(t, td.consP.Proposal())
 }
 
 func TestCases(t *testing.T) {
@@ -846,9 +861,8 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 			}
 
 		case message.TypeQueryProposal:
-			m := rndMsg.message.(*message.QueryProposalMessage)
 			for _, cons := range instances {
-				p := cons.RoundProposal(m.Round)
+				p := cons.Proposal()
 				if p != nil {
 					td.consMessages = append(td.consMessages, consMessage{
 						sender:  cons.valKey.Address(),

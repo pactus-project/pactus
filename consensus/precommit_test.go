@@ -28,7 +28,7 @@ func TestPrecommitQueryProposal(t *testing.T) {
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexY)
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexB)
 
-	td.shouldPublishQueryProposal(t, td.consP, h, r)
+	td.shouldPublishQueryProposal(t, td.consP, h)
 }
 
 func TestPrecommitDuplicatedProposal(t *testing.T) {
@@ -49,26 +49,26 @@ func TestPrecommitDuplicatedProposal(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 
-	// Bynzatine node sends second proposal to Partitioned node
+	// Byzantine node sends second proposal to Partitioned node
 	// in prepare step
 	td.consP.SetProposal(p2)
-	assert.NotNil(t, td.consP.RoundProposal(0))
+	assert.NotNil(t, td.consP.Proposal())
 
 	td.addPrepareVote(td.consP, p1.Block().Hash(), h, r, tIndexX)
 	td.addPrepareVote(td.consP, p1.Block().Hash(), h, r, tIndexY)
 	td.addPrepareVote(td.consP, p1.Block().Hash(), h, r, tIndexB)
 
-	assert.Nil(t, td.consP.RoundProposal(0))
-	td.shouldPublishQueryProposal(t, td.consP, h, r)
+	assert.Nil(t, td.consP.Proposal())
+	td.shouldPublishQueryProposal(t, td.consP, h)
 
-	// Bynzatine node sends second proposal to Partitioned node,
+	// Byzantine node sends second proposal to Partitioned node,
 	// in precommit step
 	td.consP.SetProposal(p2)
-	assert.Nil(t, td.consP.RoundProposal(0))
-	td.shouldPublishQueryProposal(t, td.consP, h, r)
+	assert.Nil(t, td.consP.Proposal())
+	td.shouldPublishQueryProposal(t, td.consP, h)
 
 	td.consP.SetProposal(p1)
-	assert.NotNil(t, td.consP.RoundProposal(0))
+	assert.NotNil(t, td.consP.Proposal())
 }
 
 func TestGoToChangeProposerFromPrecommit(t *testing.T) {

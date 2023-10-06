@@ -65,8 +65,8 @@ func (s *prepareState) onTimeout(t *ticker) {
 		roundProposal := s.log.RoundProposal(s.round)
 		if roundProposal == nil {
 			s.queryProposal()
-			s.queryVotes()
 		}
+		s.queryVotes()
 	} else if t.Target == tickerTargetChangeProposer {
 		s.startChangingProposer()
 	}

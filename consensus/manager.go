@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/util/logger"
 	"golang.org/x/exp/slices"
 )
 
@@ -48,6 +49,10 @@ func NewManager(
 
 // Start starts the manager.
 func (mgr *manager) Start() error {
+	logger.Debug("starting consensus instances")
+	for _, cons := range mgr.instances {
+		cons.Start()
+	}
 	return nil
 }
 
@@ -72,9 +77,9 @@ func (mgr *manager) PickRandomVote(round int16) *vote.Vote {
 }
 
 // RoundProposal returns the proposal for a specific round from a random consensus instance.
-func (mgr *manager) RoundProposal(round int16) *proposal.Proposal {
+func (mgr *manager) Proposal() *proposal.Proposal {
 	cons := mgr.getBestInstance()
-	return cons.RoundProposal(round)
+	return cons.Proposal()
 }
 
 // HeightRound retrieves the current height and round from a random consensus instance.
@@ -113,6 +118,7 @@ func (mgr *manager) MoveToNewHeight() {
 			continue
 
 		case p.Height() == curHeight:
+			logger.Debug("upcoming proposal processed", "height", curHeight)
 			for _, cons := range mgr.instances {
 				cons.SetProposal(p)
 			}
@@ -132,6 +138,7 @@ func (mgr *manager) MoveToNewHeight() {
 			continue
 
 		case v.Height() == curHeight:
+			logger.Debug("upcoming votes processed", "height", curHeight)
 			for _, cons := range mgr.instances {
 				cons.AddVote(v)
 			}

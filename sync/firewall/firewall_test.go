@@ -69,12 +69,12 @@ func TestInvalidBundlesCounter(t *testing.T) {
 	assert.Nil(t, td.firewall.OpenGossipBundle([]byte("bad"), td.unknownPeerID, td.unknownPeerID))
 	assert.Nil(t, td.firewall.OpenGossipBundle(nil, td.unknownPeerID, td.unknownPeerID))
 
-	bdl := bundle.NewBundle(td.unknownPeerID, message.NewQueryProposalMessage(0, -1))
+	bdl := bundle.NewBundle(td.unknownPeerID, message.NewQueryVotesMessage(0, -1))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	d, _ := bdl.Encode()
 	assert.Nil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID, td.unknownPeerID))
 
-	bdl = bundle.NewBundle(td.badPeerID, message.NewQueryProposalMessage(0, 1))
+	bdl = bundle.NewBundle(td.badPeerID, message.NewQueryVotesMessage(0, 1))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	d, _ = bdl.Encode()
 	assert.Nil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID, td.unknownPeerID))
@@ -87,7 +87,7 @@ func TestGossipMessage(t *testing.T) {
 	t.Run("Message source: unknown, from: unknown => should NOT close the connection", func(t *testing.T) {
 		td := setup(t)
 
-		bdl := bundle.NewBundle(td.unknownPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl := bundle.NewBundle(td.unknownPeerID, message.NewQueryVotesMessage(100, 1))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
@@ -101,7 +101,7 @@ func TestGossipMessage(t *testing.T) {
 	t.Run("Message source: unknown, from: bad => should close the connection", func(t *testing.T) {
 		td := setup(t)
 
-		bdl := bundle.NewBundle(td.unknownPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl := bundle.NewBundle(td.unknownPeerID, message.NewQueryVotesMessage(100, 1))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
@@ -125,7 +125,7 @@ func TestGossipMessage(t *testing.T) {
 	t.Run("Message source: bad, from: unknown => should close the connection", func(t *testing.T) {
 		td := setup(t)
 
-		bdl := bundle.NewBundle(td.badPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl := bundle.NewBundle(td.badPeerID, message.NewQueryVotesMessage(100, 1))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
@@ -139,7 +139,7 @@ func TestGossipMessage(t *testing.T) {
 	t.Run("Message initiator is not the same as source => should close the connection", func(t *testing.T) {
 		td := setup(t)
 
-		bdl := bundle.NewBundle(td.badPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl := bundle.NewBundle(td.badPeerID, message.NewQueryVotesMessage(100, 1))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
@@ -150,7 +150,7 @@ func TestGossipMessage(t *testing.T) {
 	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
 		td := setup(t)
 
-		bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryProposalMessage(100, 1))
+		bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryVotesMessage(100, 1))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		d, _ := bdl.Encode()
 
@@ -197,7 +197,7 @@ func TestStreamMessage(t *testing.T) {
 func TestDisabledFirewall(t *testing.T) {
 	td := setup(t)
 
-	bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryProposalMessage(0, -1))
+	bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryVotesMessage(0, -1))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	d, _ := bdl.Encode()
 
@@ -209,7 +209,7 @@ func TestDisabledFirewall(t *testing.T) {
 func TestUpdateLastReceived(t *testing.T) {
 	td := setup(t)
 
-	bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryProposalMessage(100, 1))
+	bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryVotesMessage(100, 1))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	d, _ := bdl.Encode()
 	now := time.Now().UnixNano()
@@ -225,7 +225,7 @@ func TestNetworkFlags(t *testing.T) {
 	td := setup(t)
 
 	// TODO: add tests for Mainnet and Testnet flags
-	bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryProposalMessage(100, 1))
+	bdl := bundle.NewBundle(td.goodPeerID, message.NewQueryVotesMessage(100, 1))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	assert.NoError(t, td.firewall.checkBundle(bdl, td.goodPeerID))
 

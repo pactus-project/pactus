@@ -16,16 +16,37 @@ func TestChangeProposerTimeout(t *testing.T) {
 	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
 }
 
-func TestQueryProposalTimeout(t *testing.T) {
+func TestQueryProposal(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
+	h := uint32(2)
+	r := int16(1)
 
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
 	td.queryProposalTimeout(td.consP)
 
-	td.shouldPublishQueryProposal(t, td.consP, 2, 1)
+	td.shouldPublishQueryProposal(t, td.consP, h)
+	td.shouldPublishQueryVote(t, td.consP, h, r)
+}
+
+func TestQueryVotes(t *testing.T) {
+	td := setup(t)
+
+	td.commitBlockForAllStates(t)
+	h := uint32(2)
+	r := int16(1)
+
+	td.enterNewHeight(td.consP)
+	td.enterNextRound(td.consP)
+
+	p := td.makeProposal(t, h, r)
+	td.consP.SetProposal(p)
+
+	// consP has a valid proposal but not enough votes.
+	td.queryProposalTimeout(td.consP)
+	td.shouldPublishQueryVote(t, td.consP, h, r)
 }
 
 func TestGoToChangeProposerFromPrepare(t *testing.T) {
@@ -43,15 +64,4 @@ func TestGoToChangeProposerFromPrepare(t *testing.T) {
 	p := td.makeProposal(t, 2, 0)
 	td.consP.SetProposal(p)
 	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
-}
-
-func TestQueryProposal(t *testing.T) {
-	td := setup(t)
-
-	td.commitBlockForAllStates(t)
-	td.enterNewHeight(td.consX)
-	td.enterNextRound(td.consX)
-	td.queryProposalTimeout(td.consX)
-
-	td.shouldPublishQueryProposal(t, td.consX, 2, 1)
 }

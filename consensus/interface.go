@@ -11,7 +11,7 @@ type Reader interface {
 	ConsensusKey() *bls.PublicKey
 	AllVotes() []*vote.Vote
 	PickRandomVote(round int16) *vote.Vote
-	RoundProposal(round int16) *proposal.Proposal
+	Proposal() *proposal.Proposal
 	HasVote(hash hash.Hash) bool
 	HeightRound() (uint32, int16)
 	IsActive() bool
@@ -20,6 +20,7 @@ type Reader interface {
 type Consensus interface {
 	Reader
 
+	Start()
 	MoveToNewHeight()
 	AddVote(vote *vote.Vote)
 	SetProposal(proposal *proposal.Proposal)
@@ -28,7 +29,7 @@ type Consensus interface {
 type ManagerReader interface {
 	Instances() []Reader
 	PickRandomVote(round int16) *vote.Vote
-	RoundProposal(round int16) *proposal.Proposal
+	Proposal() *proposal.Proposal
 	HeightRound() (uint32, int16)
 	HasActiveInstance() bool
 }

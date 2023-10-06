@@ -115,11 +115,11 @@ func (n *Node) Start() error {
 	// Wait for network to started
 	time.Sleep(1 * time.Second)
 
-	if err := n.consMgr.Start(); err != nil {
+	if err := n.sync.Start(); err != nil {
 		return err
 	}
 
-	if err := n.sync.Start(); err != nil {
+	if err := n.consMgr.Start(); err != nil {
 		return err
 	}
 

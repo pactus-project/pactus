@@ -107,8 +107,6 @@ func (sync *synchronizer) Start() error {
 	go sync.receiveLoop()
 	go sync.broadcastLoop()
 
-	sync.moveConsensusToNewHeight()
-
 	return nil
 }
 

@@ -16,7 +16,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	td.consMgr.SetProposal(prop)
 
 	t.Run("Not in the committee, should not respond to the query proposal message", func(t *testing.T) {
-		msg := message.NewQueryProposalMessage(consensusHeight, 0)
+		msg := message.NewQueryProposalMessage(consensusHeight)
 
 		assert.Error(t, td.receivingNewMessage(td.sync, msg, pid))
 	})
@@ -24,13 +24,13 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	td.addPeerToCommittee(t, pid, nil)
 
 	t.Run("In the committee, but not the same height", func(t *testing.T) {
-		msg := message.NewQueryProposalMessage(consensusHeight+1, 0)
+		msg := message.NewQueryProposalMessage(consensusHeight + 1)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeProposal)
 	})
 	t.Run("In the committee, should respond to the query proposal message", func(t *testing.T) {
-		msg := message.NewQueryProposalMessage(consensusHeight, 0)
+		msg := message.NewQueryProposalMessage(consensusHeight)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeProposal)
@@ -38,7 +38,8 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	})
 
 	t.Run("In the committee, but doesn't have the proposal", func(t *testing.T) {
-		msg := message.NewQueryProposalMessage(consensusHeight, 1)
+		td.consMocks[0].CurProposal = nil
+		msg := message.NewQueryProposalMessage(consensusHeight)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeProposal)
@@ -49,7 +50,7 @@ func TestBroadcastingQueryProposalMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	consensusHeight := td.state.LastBlockHeight() + 1
-	msg := message.NewQueryProposalMessage(consensusHeight, 0)
+	msg := message.NewQueryProposalMessage(consensusHeight)
 
 	t.Run("Not in the committee, should not send query proposal message", func(t *testing.T) {
 		td.sync.broadcast(msg)
