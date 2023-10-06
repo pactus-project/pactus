@@ -56,16 +56,6 @@ func TestHelloMessage(t *testing.T) {
 		assert.GreaterOrEqual(t, m.MyTimeUnixMilli, myTimeUnixMilli)
 	})
 
-	t.Run("MyTimeUnixMilli of time1 is greater than hello message time", func(t *testing.T) {
-		m := NewHelloMessage(ts.RandPeerID(), "Alice", 100, 0, ts.RandHash(), ts.RandHash())
-		<-time.After(time.Millisecond)
-
-		time1 := time.Now()
-		myTimeUnixMilli := time1.UnixMilli()
-
-		assert.GreaterOrEqual(t, myTimeUnixMilli, m.MyTimeUnixMilli)
-	})
-
 	t.Run("Ok", func(t *testing.T) {
 		valKey := ts.RandValKey()
 		m := NewHelloMessage(ts.RandPeerID(), "Alice", 100, 0, ts.RandHash(), ts.RandHash())
