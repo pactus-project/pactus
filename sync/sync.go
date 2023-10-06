@@ -138,7 +138,10 @@ func (sync *synchronizer) sayHello(to peer.ID) error {
 	)
 	msg.Sign(sync.valKeys)
 
-	sync.peerSet.UpdateStatus(to, peerset.StatusCodeConnected)
+	peer := sync.peerSet.GetPeer(to)
+	if !peer.IsKnownOrTrusty() {
+		sync.peerSet.UpdateStatus(to, peerset.StatusCodeConnected)
+	}
 
 	sync.logger.Info("sending Hello message", "to", to.ShortString())
 	return sync.sendTo(msg, to)
