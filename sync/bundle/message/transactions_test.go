@@ -28,6 +28,6 @@ func TestTransactionsMessage(t *testing.T) {
 		m := NewTransactionsMessage([]*tx.Tx{trx})
 
 		assert.NoError(t, m.BasicCheck())
-		assert.Contains(t, m.String(), trx.ID())
+		assert.Contains(t, m.String(), trx.ID().ShortString())
 	})
 }

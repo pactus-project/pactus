@@ -37,5 +37,5 @@ func (m *BlockAnnounceMessage) Type() Type {
 func (m *BlockAnnounceMessage) String() string {
 	return fmt.Sprintf("{⌘ %d %v}",
 		m.Certificate.Height(),
-		m.Block.Hash())
+		m.Block.Hash().ShortString())
 }

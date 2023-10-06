@@ -221,8 +221,8 @@ func (v *Vote) String() string {
 			v.Height(),
 			v.Round(),
 			v.Type(),
-			v.BlockHash(),
-			v.Signer(),
+			v.BlockHash().ShortString(),
+			v.Signer().ShortString(),
 		)
 	case VoteTypeCPPreVote, VoteTypeCPMainVote:
 		return fmt.Sprintf("{%d/%d/%s/%d/%d ⌘ %v 👤 %s}",

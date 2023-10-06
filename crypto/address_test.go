@@ -41,7 +41,7 @@ func TestString(t *testing.T) {
 	fmt.Println(a.String())
 
 	addr1 := ts.RandAccAddress()
-	assert.Contains(t, addr1.String(), addr1)
+	assert.Contains(t, addr1.String(), addr1.ShortString())
 }
 
 func TestToString(t *testing.T) {

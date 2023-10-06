@@ -55,7 +55,7 @@ func (p *SortitionPayload) Decode(r io.Reader) error {
 
 func (p *SortitionPayload) String() string {
 	return fmt.Sprintf("{Sortition 🎯 %v",
-		p.Validator)
+		p.Validator.ShortString())
 }
 
 func (p *SortitionPayload) Receiver() *crypto.Address {
