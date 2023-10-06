@@ -2,6 +2,7 @@ package sync
 
 import (
 	"testing"
+	"time"
 
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sync/bundle"
@@ -29,8 +30,8 @@ func TestParsingHelloMessages(t *testing.T) {
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, initiator))
 			assert.Equal(t, td.sync.peerSet.GetPeer(initiator).Status, peerset.StatusCodeBanned)
-			bundle := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
-			assert.Equal(t, bundle.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
+			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
 	t.Run("Receiving Hello message from a peer. Genesis hash is wrong.",
@@ -44,8 +45,40 @@ func TestParsingHelloMessages(t *testing.T) {
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
-			bundle := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
-			assert.Equal(t, bundle.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
+			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
+		})
+
+	t.Run("Receiving Hello message from a peer. Difference is greater or equal than -10 seconds.",
+		func(t *testing.T) {
+			valKey := td.RandValKey()
+			height := td.RandUint32NonZero(td.state.LastBlockHeight())
+			pid := td.RandPeerID()
+			msg := message.NewHelloMessage(pid, "kitty", height, services.New(services.Network),
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
+			msg.Sign([]*bls.ValidatorKey{valKey})
+
+			msg.MyTimeUnixMilli = msg.MyTime().Add(-10 * time.Second).UnixMilli()
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
+			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
+		})
+
+	t.Run("Receiving Hello message from a peer. Difference is less or equal than 20 seconds.",
+		func(t *testing.T) {
+			valKey := td.RandValKey()
+			height := td.RandUint32NonZero(td.state.LastBlockHeight())
+			pid := td.RandPeerID()
+			msg := message.NewHelloMessage(pid, "kitty", height, services.New(services.Network),
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
+			msg.Sign([]*bls.ValidatorKey{valKey})
+
+			msg.MyTimeUnixMilli = msg.MyTime().Add(20 * time.Second).UnixMilli()
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
+			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info",
@@ -59,8 +92,8 @@ func TestParsingHelloMessages(t *testing.T) {
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			bundle := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
-			assert.Equal(t, bundle.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeOK)
+			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeOK)
 
 			// Check if the peer info is updated
 			p := td.sync.peerSet.GetPeer(pid)
