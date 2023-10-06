@@ -117,7 +117,11 @@ func (sync *synchronizer) Stop() {
 }
 
 func (sync *synchronizer) moveConsensusToNewHeight() {
-	sync.consMgr.MoveToNewHeight()
+	stateHeight := sync.state.LastBlockHeight()
+	consHeight, _ := sync.consMgr.HeightRound()
+	if stateHeight >= consHeight {
+		sync.consMgr.MoveToNewHeight()
+	}
 }
 
 func (sync *synchronizer) sayHello(to peer.ID) error {
@@ -424,7 +428,7 @@ func (sync *synchronizer) tryCommitBlocks() error {
 		}
 
 		sync.logger.Trace("committing block", "height", height, "block", blk)
-		if err := sync.state.CommitBlock(height, blk, cert); err != nil {
+		if err := sync.state.CommitBlock(blk, cert); err != nil {
 			return err
 		}
 		height = height + 1

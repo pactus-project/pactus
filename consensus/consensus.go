@@ -169,7 +169,10 @@ func (cs *consensus) MoveToNewHeight() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.enterNewState(cs.newHeightState)
+	stateHeight := cs.state.LastBlockHeight()
+	if cs.height != stateHeight+1 {
+		cs.enterNewState(cs.newHeightState)
+	}
 }
 
 func (cs *consensus) scheduleTimeout(duration time.Duration, height uint32, round int16, target tickerTarget) {
@@ -189,6 +192,11 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 
 	if !cs.active {
 		cs.logger.Trace("we are not in the committee")
+		return
+	}
+
+	if p.Height() != cs.height {
+		cs.logger.Trace("invalid height", "proposal", p)
 		return
 	}
 
@@ -256,32 +264,17 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		return
 	}
 
+	if v.Height() != cs.height {
+		cs.logger.Trace("vote has invalid height", "vote", v)
+		return
+	}
+
 	if v.Type() == vote.VoteTypeCPPreVote ||
 		v.Type() == vote.VoteTypeCPMainVote {
 		err := cs.checkJust(v)
 		if err != nil {
 			cs.logger.Error("error on adding a cp vote", "vote", v, "error", err)
 			return
-		}
-
-		if v.Round() == cs.round && cs.cpWeakValidity == nil {
-			if v.CPValue() == vote.CPValueZero ||
-				v.CPValue() == vote.CPValueAbstain {
-				bh := v.BlockHash()
-				cs.cpWeakValidity = &bh
-
-				roundProposal := cs.log.RoundProposal(cs.round)
-
-				if roundProposal != nil &&
-					roundProposal.Block().Hash() != bh {
-					cs.logger.Warn("double proposal detected",
-						"prepared", bh.ShortString(),
-						"roundProposal", roundProposal.Block().Hash().ShortString())
-
-					cs.log.SetRoundProposal(cs.round, nil)
-					cs.queryProposal()
-				}
-			}
 		}
 	}
 
@@ -290,7 +283,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		cs.logger.Error("error on adding a vote", "vote", v, "error", err)
 	}
 	if added {
-		cs.logger.Debug("new vote added", "vote", v)
+		cs.logger.Info("new vote added", "vote", v)
 
 		cs.currentState.onAddVote(v)
 	}
@@ -658,14 +651,14 @@ func (cs *consensus) broadcastVote(v *vote.Vote) {
 		message.NewVoteMessage(v))
 }
 
-func (cs *consensus) announceNewBlock(h uint32, b *block.Block, c *certificate.Certificate) {
+func (cs *consensus) announceNewBlock(blk *block.Block, cert *certificate.Certificate) {
 	go cs.mediator.OnBlockAnnounce(cs)
 	cs.broadcaster(cs.valKey.Address(),
-		message.NewBlockAnnounceMessage(h, b, c))
+		message.NewBlockAnnounceMessage(blk, cert))
 }
 
 func (cs *consensus) makeCertificate(votes map[crypto.Address]*vote.Vote) *certificate.Certificate {
-	vals := cs.state.CommitteeValidators()
+	vals := cs.validators
 	committers := make([]int32, len(vals))
 	absentees := make([]int32, 0)
 	sigs := make([]*bls.Signature, 0)

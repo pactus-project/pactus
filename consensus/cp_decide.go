@@ -38,7 +38,7 @@ func (s *cpDecideState) decide() {
 				s.cpDecided = 0
 			} else {
 				// conflicting votes
-				s.logger.Info("conflicting main votes", "round", s.cpRound)
+				s.logger.Debug("conflicting main votes", "round", s.cpRound)
 			}
 
 			s.cpRound++

@@ -55,10 +55,10 @@ func MockingState(ts *testsuite.TestSuite) *MockState {
 
 func (m *MockState) CommitTestBlocks(num int) {
 	for i := 0; i < num; i++ {
-		blk := m.ts.GenerateTestBlock()
-		cert := m.ts.GenerateTestCertificate()
+		height := m.LastBlockHeight() + 1
+		blk, cert := m.ts.GenerateTestBlock(height)
 
-		m.TestStore.SaveBlock(m.LastBlockHeight()+1, blk, cert)
+		m.TestStore.SaveBlock(blk, cert)
 	}
 }
 
@@ -99,14 +99,14 @@ func (m *MockState) UpdateLastCertificate(_ *vote.Vote) error {
 	return nil
 }
 
-func (m *MockState) CommitBlock(h uint32, b *block.Block, cert *certificate.Certificate) error {
+func (m *MockState) CommitBlock(b *block.Block, cert *certificate.Certificate) error {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
-	if h != m.TestStore.LastHeight+1 {
+	if cert.Height() != m.TestStore.LastHeight+1 {
 		return fmt.Errorf("invalid height")
 	}
-	m.TestStore.SaveBlock(h, b, cert)
+	m.TestStore.SaveBlock(b, cert)
 	return nil
 }
 
@@ -115,8 +115,8 @@ func (m *MockState) Close() error {
 }
 
 func (m *MockState) ProposeBlock(valKey *bls.ValidatorKey, _ crypto.Address, _ int16) (*block.Block, error) {
-	b := m.ts.GenerateTestBlockWithProposer(valKey.Address())
-	return b, nil
+	blk, _ := m.ts.GenerateTestBlockWithProposer(m.TestStore.LastHeight, valKey.Address())
+	return blk, nil
 }
 
 func (m *MockState) ValidateBlock(_ *block.Block) error {

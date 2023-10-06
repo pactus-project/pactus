@@ -18,8 +18,8 @@ func TestProposeBlock(t *testing.T) {
 		td.moveToNextHeightForAllStates(t)
 	}
 	b1, c1 := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3)
-	assert.NoError(t, td.state1.CommitBlock(curHeight+1, b1, c1))
-	assert.NoError(t, td.state2.CommitBlock(curHeight+1, b1, c1))
+	assert.NoError(t, td.state1.CommitBlock(b1, c1))
+	assert.NoError(t, td.state2.CommitBlock(b1, c1))
 	assert.Equal(t, td.state1.LastBlockHeight(), curHeight+1)
 
 	invSubsidyTx := tx.NewSubsidyTx(1, td.valKey2.Address(),
@@ -46,7 +46,7 @@ func TestProposeBlock(t *testing.T) {
 	assert.Equal(t, b2.Header().PrevBlockHash(), b1.Hash())
 	assert.Equal(t, b2.Transactions()[1:], block.Txs{trx1, trx2})
 	assert.True(t, b2.Transactions()[0].IsSubsidyTx())
-	assert.NoError(t, td.state1.CommitBlock(curHeight+2, b2, c2))
+	assert.NoError(t, td.state1.CommitBlock(b2, c2))
 
 	assert.Equal(t, td.state1.TotalPower(), int64(1000000004))
 	assert.Equal(t, td.state1.committee.TotalPower(), int64(4))
@@ -56,7 +56,7 @@ func TestExecuteBlock(t *testing.T) {
 	td := setup(t)
 
 	b1, c1 := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3)
-	assert.NoError(t, td.state1.CommitBlock(1, b1, c1))
+	assert.NoError(t, td.state1.CommitBlock(b1, c1))
 
 	proposerAddr := td.RandAccAddress()
 	rewardAddr := td.RandAccAddress()

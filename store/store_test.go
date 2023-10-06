@@ -35,22 +35,14 @@ func setup(t *testing.T) *testData {
 		store:     s.(*store),
 	}
 
-	td.saveTestBlocks(t, 10)
+	// Save 10 blocks
+	for height := uint32(0); height < 10; height++ {
+		blk, cert := td.GenerateTestBlock(height + 1)
 
-	return td
-}
-
-func (td *testData) saveTestBlocks(t *testing.T, num int) {
-	t.Helper()
-
-	lastHeight, _ := td.store.LastCertificate()
-	for i := 0; i < num; i++ {
-		b := td.GenerateTestBlock()
-		c := td.GenerateTestCertificate()
-
-		td.store.SaveBlock(lastHeight+uint32(i+1), b, c)
+		td.store.SaveBlock(blk, cert)
 		assert.NoError(t, td.store.WriteBatch())
 	}
+	return td
 }
 
 func TestBlockHash(t *testing.T) {
@@ -92,16 +84,20 @@ func TestWriteAndClosePeacefully(t *testing.T) {
 func TestRetrieveBlockAndTransactions(t *testing.T) {
 	td := setup(t)
 
-	lastHeight, _ := td.store.LastCertificate()
+	lastCert := td.store.LastCertificate()
+	lastHeight := lastCert.Height()
 	committedBlock, err := td.store.Block(lastHeight)
 	assert.NoError(t, err)
 	assert.Equal(t, lastHeight, committedBlock.Height)
 	block, _ := committedBlock.ToBlock()
+	assert.Equal(t, block.PrevCertificate().Height(), lastHeight-1)
+
 	for _, trx := range block.Transactions() {
 		committedTx, err := td.store.Transaction(trx.ID())
 		assert.NoError(t, err)
-		assert.Equal(t, committedTx.TxID, trx.ID())
-		assert.Equal(t, committedTx.BlockTime, block.Header().UnixTime())
+		assert.Equal(t, block.Header().UnixTime(), committedTx.BlockTime)
+		assert.Equal(t, trx.ID(), committedTx.TxID)
+		assert.Equal(t, lastHeight, committedTx.Height)
 		trx2, _ := committedTx.ToTx()
 		assert.Equal(t, trx2.ID(), trx.ID())
 	}
@@ -140,13 +136,13 @@ func TestStrippedPublicKey(t *testing.T) {
 	assert.NotNil(t, trx0PubKey)
 	knownPubKey := trx0PubKey.(*bls.PublicKey)
 
-	lastHeight, _ := td.store.LastCertificate()
-	lockTime := lastHeight
+	lastCert := td.store.LastCertificate()
+	lastHeight := lastCert.Height()
 	randPubkey, _ := td.RandBLSKeyPair()
 
-	trx0 := tx.NewTransferTx(lockTime, knownPubKey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
-	trx1 := tx.NewTransferTx(lockTime, randPubkey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
-	trx2 := tx.NewTransferTx(lockTime, randPubkey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
+	trx0 := tx.NewTransferTx(lastHeight, knownPubKey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
+	trx1 := tx.NewTransferTx(lastHeight, randPubkey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
+	trx2 := tx.NewTransferTx(lastHeight, randPubkey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
 
 	trx0.SetSignature(td.RandBLSSignature())
 	trx1.SetSignature(td.RandBLSSignature())
@@ -169,9 +165,8 @@ func TestStrippedPublicKey(t *testing.T) {
 		trxs := block.Txs{test.trx}
 
 		// Make a block
-		prevCert := td.GenerateTestCertificate()
 		blk := block.MakeBlock(1, util.Now(), trxs, td.RandHash(), td.RandHash(),
-			prevCert, td.RandSeed(), td.RandValAddress())
+			lastCert, td.RandSeed(), td.RandValAddress())
 
 		trxData, _ := test.trx.Bytes()
 		blkData, _ := blk.Bytes()

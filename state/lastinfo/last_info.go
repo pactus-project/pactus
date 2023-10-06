@@ -19,7 +19,6 @@ import (
 type LastInfo struct {
 	lk sync.RWMutex // TODO: this lock looks unnecessary
 
-	lastBlockHeight   uint32
 	lastSortitionSeed sortition.VerifiableSeed
 	lastBlockHash     hash.Hash
 	lastCert          *certificate.Certificate
@@ -42,7 +41,11 @@ func (li *LastInfo) BlockHeight() uint32 {
 	li.lk.RLock()
 	defer li.lk.RUnlock()
 
-	return li.lastBlockHeight
+	if li.lastCert == nil {
+		return 0
+	}
+
+	return li.lastCert.Height()
 }
 
 func (li *LastInfo) BlockHash() hash.Hash {
@@ -80,13 +83,6 @@ func (li *LastInfo) UpdateSortitionSeed(lastSortitionSeed sortition.VerifiableSe
 	li.lastSortitionSeed = lastSortitionSeed
 }
 
-func (li *LastInfo) UpdateBlockHeight(lastBlockHeight uint32) {
-	li.lk.Lock()
-	defer li.lk.Unlock()
-
-	li.lastBlockHeight = lastBlockHeight
-}
-
 func (li *LastInfo) UpdateBlockHash(lastBlockHash hash.Hash) {
 	li.lk.Lock()
 	defer li.lk.Unlock()
@@ -116,11 +112,12 @@ func (li *LastInfo) UpdateValidators(vals []*validator.Validator) {
 }
 
 func (li *LastInfo) RestoreLastInfo(store store.Store, committeeSize int) (committee.Committee, error) {
-	height, cert := store.LastCertificate()
-	logger.Debug("try to restore last state info", "height", height)
-	sb, err := store.Block(height)
+	lastCert := store.LastCertificate()
+	lastHeight := lastCert.Height()
+	logger.Debug("try to restore last state info", "height", lastHeight)
+	sb, err := store.Block(lastHeight)
 	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve block %v: %w", height, err)
+		return nil, fmt.Errorf("unable to retrieve block %v: %w", lastHeight, err)
 	}
 
 	lastBlock, err := sb.ToBlock()
@@ -128,8 +125,7 @@ func (li *LastInfo) RestoreLastInfo(store store.Store, committeeSize int) (commi
 		return nil, err
 	}
 
-	li.lastBlockHeight = height
-	li.lastCert = cert
+	li.lastCert = lastCert
 	li.lastSortitionSeed = lastBlock.Header().SortitionSeed()
 	li.lastBlockHash = lastBlock.Hash()
 	li.lastBlockTime = lastBlock.Header().Time()

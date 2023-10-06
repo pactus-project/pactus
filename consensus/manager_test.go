@@ -64,7 +64,9 @@ func TestManager(t *testing.T) {
 	valKeys[4] = ts.RandValKey()
 	broadcastCh := make(chan message.Message, 500)
 
-	state.TestStore.SaveBlock(ts.RandHeight(), ts.GenerateTestBlock(), ts.GenerateTestCertificate())
+	height := ts.RandHeight()
+	blk, cert := ts.GenerateTestBlock(height)
+	state.TestStore.SaveBlock(blk, cert)
 
 	Mgr := NewManager(testConfig(), state, valKeys, rewardAddrs, broadcastCh)
 	mgr := Mgr.(*manager)
@@ -77,7 +79,7 @@ func TestManager(t *testing.T) {
 
 	assert.False(t, mgr.HasActiveInstance())
 	mgr.MoveToNewHeight()
-	curHeight := state.TestStore.LastHeight + 1
+	curHeight, _ := mgr.HeightRound()
 
 	newHeightTimeout(consA)
 
@@ -165,13 +167,13 @@ func TestManager(t *testing.T) {
 
 		assert.Len(t, mgr.upcomingVotes, 3)
 
-		err := state.CommitBlock(curHeight,
-			ts.GenerateTestBlockWithTime(util.Now().Add(1*time.Hour)), ts.GenerateTestCertificate())
+		blk, cert := ts.GenerateTestBlockWithTime(curHeight, util.Now().Add(1*time.Hour))
+		err := state.CommitBlock(blk, cert)
 		assert.NoError(t, err)
 		curHeight++
 
-		err = state.CommitBlock(curHeight,
-			ts.GenerateTestBlockWithTime(util.Now().Add(1*time.Hour)), ts.GenerateTestCertificate())
+		blk, cert = ts.GenerateTestBlockWithTime(curHeight, util.Now().Add(2*time.Hour))
+		err = state.CommitBlock(blk, cert)
 		assert.NoError(t, err)
 		curHeight++
 
@@ -200,12 +202,13 @@ func TestManager(t *testing.T) {
 
 		assert.Len(t, mgr.upcomingProposals, 3)
 
-		err := state.CommitBlock(curHeight,
-			ts.GenerateTestBlockWithTime(util.Now().Add(1*time.Hour)), ts.GenerateTestCertificate())
+		blk, cert := ts.GenerateTestBlockWithTime(curHeight, util.Now().Add(1*time.Hour))
+		err := state.CommitBlock(blk, cert)
 		assert.NoError(t, err)
+		curHeight++
 
-		err = state.CommitBlock(curHeight+1,
-			ts.GenerateTestBlockWithTime(util.Now().Add(1*time.Hour)), ts.GenerateTestCertificate())
+		blk, cert = ts.GenerateTestBlockWithTime(curHeight, util.Now().Add(2*time.Hour))
+		err = state.CommitBlock(blk, cert)
 		assert.NoError(t, err)
 
 		mgr.MoveToNewHeight()

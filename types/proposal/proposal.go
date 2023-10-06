@@ -22,12 +22,12 @@ type proposalData struct {
 	Signature *bls.Signature `cbor:"4,keyasint"`
 }
 
-func NewProposal(height uint32, round int16, block *block.Block) *Proposal {
+func NewProposal(height uint32, round int16, blk *block.Block) *Proposal {
 	return &Proposal{
 		data: proposalData{
 			Height: height,
 			Round:  round,
-			Block:  block,
+			Block:  blk,
 		},
 	}
 }

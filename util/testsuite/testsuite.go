@@ -254,21 +254,24 @@ func (ts *TestSuite) GenerateTestValidator(number int32) (*validator.Validator, 
 }
 
 // GenerateTestBlockWithProposer generates a block with the give proposer address for testing purposes.
-func (ts *TestSuite) GenerateTestBlockWithProposer(proposer crypto.Address) *block.Block {
-	return ts.generateTestBlock(proposer, util.Now())
+func (ts *TestSuite) GenerateTestBlockWithProposer(height uint32, proposer crypto.Address,
+) (*block.Block, *certificate.Certificate) {
+	return ts.generateTestBlock(height, proposer, util.Now())
 }
 
 // GenerateTestBlockWithTime generates a block with the given time for testing purposes.
-func (ts *TestSuite) GenerateTestBlockWithTime(time time.Time) *block.Block {
-	return ts.generateTestBlock(ts.RandValAddress(), time)
+func (ts *TestSuite) GenerateTestBlockWithTime(height uint32, time time.Time,
+) (*block.Block, *certificate.Certificate) {
+	return ts.generateTestBlock(height, ts.RandValAddress(), time)
 }
 
 // GenerateTestBlock generates a block for testing purposes.
-func (ts *TestSuite) GenerateTestBlock() *block.Block {
-	return ts.generateTestBlock(ts.RandValAddress(), util.Now())
+func (ts *TestSuite) GenerateTestBlock(height uint32) (*block.Block, *certificate.Certificate) {
+	return ts.generateTestBlock(height, ts.RandValAddress(), util.Now())
 }
 
-func (ts *TestSuite) generateTestBlock(proposer crypto.Address, time time.Time) *block.Block {
+func (ts *TestSuite) generateTestBlock(height uint32, proposer crypto.Address, time time.Time,
+) (*block.Block, *certificate.Certificate) {
 	txs := block.NewTxs()
 	tx1, _ := ts.GenerateTestTransferTx()
 	tx2, _ := ts.GenerateTestSortitionTx()
@@ -282,18 +285,25 @@ func (ts *TestSuite) generateTestBlock(proposer crypto.Address, time time.Time) 
 	txs.Append(tx4)
 	txs.Append(tx5)
 
-	cert := ts.GenerateTestCertificate()
+	prevCert := ts.GenerateTestCertificate(height - 1)
+	prevBlockHash := ts.RandHash()
+	if height == 1 {
+		prevCert = nil
+		prevBlockHash = hash.UndefHash
+	}
+	blockCert := ts.GenerateTestCertificate(height)
 	header := block.NewHeader(1, time,
 		ts.RandHash(),
-		ts.RandHash(),
+		prevBlockHash,
 		ts.RandSeed(),
 		proposer)
 
-	return block.NewBlock(header, cert, txs)
+	blk := block.NewBlock(header, prevCert, txs)
+	return blk, blockCert
 }
 
 // GenerateTestCertificate generates a certificate for testing purposes.
-func (ts *TestSuite) GenerateTestCertificate() *certificate.Certificate {
+func (ts *TestSuite) GenerateTestCertificate(height uint32) *certificate.Certificate {
 	sig := ts.RandBLSSignature()
 
 	c1 := ts.RandInt32NonZero(10)
@@ -301,7 +311,7 @@ func (ts *TestSuite) GenerateTestCertificate() *certificate.Certificate {
 	c3 := ts.RandInt32NonZero(10) + 20
 	c4 := ts.RandInt32NonZero(10) + 30
 	return certificate.NewCertificate(
-		ts.RandHeight(),
+		height,
 		ts.RandRound(),
 		[]int32{c1, c2, c3, c4},
 		[]int32{c2},
@@ -311,11 +321,11 @@ func (ts *TestSuite) GenerateTestCertificate() *certificate.Certificate {
 // GenerateTestProposal generates a proposal for testing purposes.
 func (ts *TestSuite) GenerateTestProposal(height uint32, round int16) (*proposal.Proposal, *bls.ValidatorKey) {
 	valKey := ts.RandValKey()
-	b := ts.GenerateTestBlockWithProposer(valKey.Address())
-	p := proposal.NewProposal(height, round, b)
-	ts.HelperSignProposal(valKey, p)
+	blk, _ := ts.GenerateTestBlockWithProposer(height, valKey.Address())
+	proposal := proposal.NewProposal(height, round, blk)
+	ts.HelperSignProposal(valKey, proposal)
 
-	return p, valKey
+	return proposal, valKey
 }
 
 // GenerateTestTransferTx generates a transfer transaction for testing purposes.

@@ -7,7 +7,6 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/block"
-	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/simplemerkle"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -18,8 +17,23 @@ func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("No transactions", func(t *testing.T) {
-		b0 := ts.GenerateTestBlock()
-		b := block.NewBlock(b0.Header(), b0.PrevCertificate(), block.Txs{})
+		d := ts.DecodingHex(
+			"01" + // Version
+				"00000000" + // UnixTime
+				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
+				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // StateRoot
+				"333333333333333333333333333333333333333333333333" + // SortitionSeed
+				"333333333333333333333333333333333333333333333333" +
+				"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
+				"04030201" + // PrevCert: Height
+				"0100" + // PrevCert: Round
+				"0401020304" + // PrevCert: Committers
+				"0102" + // PrevCert: Absentees
+				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
+				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
+				"00") // Txs: Len
+
+		b, _ := block.FromBytes(d)
 
 		err := b.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
@@ -28,7 +42,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Without the previous certificate", func(t *testing.T) {
-		b0 := ts.GenerateTestBlock()
+		b0, _ := ts.GenerateTestBlock(ts.RandHeight())
 		b := block.NewBlock(b0.Header(), nil, b0.Transactions())
 
 		err := b.BasicCheck()
@@ -38,10 +52,32 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid certificate", func(t *testing.T) {
-		b0 := ts.GenerateTestBlock()
-		cert0 := b0.PrevCertificate()
-		invCert := certificate.NewCertificate(0, 0, cert0.Committers(), cert0.Absentees(), cert0.Signature())
-		b := block.NewBlock(b0.Header(), invCert, b0.Transactions())
+		d := ts.DecodingHex(
+			"01" + // Version
+				"00000000" + // UnixTime
+				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
+				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // StateRoot
+				"333333333333333333333333333333333333333333333333" + // SortitionSeed
+				"333333333333333333333333333333333333333333333333" +
+				"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
+				"00000000" + // PrevCert: Height
+				"0100" + // PrevCert: Round
+				"0401020304" + // PrevCert: Committers
+				"0102" + // PrevCert: Absentees
+				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
+				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
+				"01" + // Txs: Len
+				"00" + // Tx[0]: Flags
+				"01" + // Tx[0]: Version
+				"01000000" + // Tx[0]: LockTime
+				"01" + // Tx[0]: Fee
+				"00" + // Tx[0]: Memo
+				"01" + // Tx[0]: PayloadType
+				"00" + // Tx[0]: Sender (treasury)
+				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
+				"01") // Tx[0]: Amount
+
+		b, _ := block.FromBytes(d)
 
 		err := b.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
@@ -50,17 +86,36 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid transaction", func(t *testing.T) {
-		b0 := ts.GenerateTestBlock()
-		trxs0 := b0.Transactions()
-		invalidValKey := ts.RandValKey()
-		invSig := invalidValKey.Sign(trxs0[0].SignBytes())
-		trxs0[0].SetSignature(invSig)
+		d := ts.DecodingHex(
+			"01" + // Version
+				"00000000" + // UnixTime
+				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
+				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // StateRoot
+				"333333333333333333333333333333333333333333333333" + // SortitionSeed
+				"333333333333333333333333333333333333333333333333" +
+				"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
+				"04030201" + // PrevCert: Height
+				"0100" + // PrevCert: Round
+				"0401020304" + // PrevCert: Committers
+				"0102" + // PrevCert: Absentees
+				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
+				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
+				"01" + // Txs: Len
+				"00" + // Tx[0]: Flags
+				"00" + // Tx[0]: Version
+				"00000000" + // Tx[0]: LockTime
+				"00" + // Tx[0]: Fee
+				"00" + // Tx[0]: Memo
+				"01" + // Tx[0]: PayloadType
+				"00" + // Tx[0]: Sender (treasury)
+				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
+				"01") // Tx[0]: Amount
 
-		b := block.NewBlock(b0.Header(), b0.PrevCertificate(), trxs0)
+		b, _ := block.FromBytes(d)
 
 		err := b.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
-			Reason: "invalid transaction: invalid signature",
+			Reason: "invalid transaction: invalid version: 0",
 		})
 	})
 
@@ -87,7 +142,7 @@ func TestBasicCheck(t *testing.T) {
 				"00" + // Tx[0]: Memo
 				"01" + // Tx[0]: PayloadType
 				"00" + // Tx[0]: Sender (treasury)
-				"012222222222222222222222222222222222222222" + // Tx[0]: Receiver
+				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
 				"01") // Tx[0]: Amount
 
 		b, _ := block.FromBytes(d)
@@ -121,7 +176,7 @@ func TestBasicCheck(t *testing.T) {
 				"00" + // Tx[0]: Memo
 				"01" + // Tx[0]: PayloadType
 				"00" + // Tx[0]: Sender (treasury)
-				"012222222222222222222222222222222222222222" + // Tx[0]: Receiver
+				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
 				"01") // Tx[0]: Amount
 
 		_, err := block.FromBytes(d)
@@ -151,7 +206,7 @@ func TestBasicCheck(t *testing.T) {
 				"00" + // Tx[0]: Memo
 				"01" + // Tx[0]: PayloadType
 				"00" + // Tx[0]: Sender (treasury)
-				"012222222222222222222222222222222222222222" + // Tx[0]: Receiver
+				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
 				"01") // Tx[0]: Amount
 
 		b, _ := block.FromBytes(d)
@@ -197,25 +252,25 @@ func TestBasicCheck(t *testing.T) {
 func TestCBORMarshaling(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	b1 := ts.GenerateTestBlock()
-	bz1, err := cbor.Marshal(b1)
+	blk1, _ := ts.GenerateTestBlock(ts.RandHeight())
+	bz1, err := cbor.Marshal(blk1)
 	assert.NoError(t, err)
-	var b2 block.Block
-	err = cbor.Unmarshal(bz1, &b2)
+	var blk2 block.Block
+	err = cbor.Unmarshal(bz1, &blk2)
 	assert.NoError(t, err)
-	assert.NoError(t, b2.BasicCheck())
-	assert.Equal(t, b1.Hash(), b2.Hash())
+	assert.NoError(t, blk2.BasicCheck())
+	assert.Equal(t, blk1.Hash(), blk2.Hash())
 
-	assert.Equal(t, b1.Hash(), b2.Hash())
+	assert.Equal(t, blk1.Hash(), blk2.Hash())
 
-	err = cbor.Unmarshal([]byte{1}, &b2)
+	err = cbor.Unmarshal([]byte{1}, &blk2)
 	assert.Error(t, err)
 }
 
 func TestEncodingBlock(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	blk := ts.GenerateTestBlock()
+	blk, _ := ts.GenerateTestBlock(ts.RandHeight())
 	length := blk.SerializeSize()
 
 	for i := 0; i < length; i++ {
@@ -241,7 +296,7 @@ func TestEncodingBlock(t *testing.T) {
 func TestTxFromBytes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	blk := ts.GenerateTestBlock()
+	blk, _ := ts.GenerateTestBlock(ts.RandHeight())
 	bs, _ := blk.Bytes()
 	_, err := block.FromBytes(bs)
 	assert.NoError(t, err)
@@ -310,13 +365,13 @@ func TestBlockHash(t *testing.T) {
 func TestMakeBlock(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	b0 := ts.GenerateTestBlock()
-	b1 := block.MakeBlock(1, b0.Header().Time(), b0.Transactions(),
-		b0.Header().PrevBlockHash(),
-		b0.Header().StateRoot(),
-		b0.PrevCertificate(),
-		b0.Header().SortitionSeed(),
-		b0.Header().ProposerAddress())
+	blk0, _ := ts.GenerateTestBlock(ts.RandHeight())
+	blk1 := block.MakeBlock(1, blk0.Header().Time(), blk0.Transactions(),
+		blk0.Header().PrevBlockHash(),
+		blk0.Header().StateRoot(),
+		blk0.PrevCertificate(),
+		blk0.Header().SortitionSeed(),
+		blk0.Header().ProposerAddress())
 
-	assert.Equal(t, b0.Hash(), b1.Hash())
+	assert.Equal(t, blk0.Hash(), blk1.Hash())
 }

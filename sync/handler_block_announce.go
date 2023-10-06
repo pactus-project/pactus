@@ -20,8 +20,8 @@ func (handler *blockAnnounceHandler) ParseMessage(m message.Message, initiator p
 	msg := m.(*message.BlockAnnounceMessage)
 	handler.logger.Trace("parsing BlockAnnounce message", "message", msg)
 
-	handler.cache.AddCertificate(msg.Height, msg.Certificate)
-	handler.cache.AddBlock(msg.Height, msg.Block)
+	handler.cache.AddCertificate(msg.Certificate)
+	handler.cache.AddBlock(msg.Block)
 
 	err := handler.tryCommitBlocks()
 	if err != nil {
@@ -29,7 +29,7 @@ func (handler *blockAnnounceHandler) ParseMessage(m message.Message, initiator p
 	}
 	handler.moveConsensusToNewHeight()
 
-	handler.peerSet.UpdateHeight(initiator, msg.Height, msg.Block.Hash())
+	handler.peerSet.UpdateHeight(initiator, msg.Height(), msg.Block.Hash())
 	handler.updateBlockchain()
 
 	return nil

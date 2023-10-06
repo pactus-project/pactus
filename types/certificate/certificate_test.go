@@ -40,18 +40,18 @@ func TestCertificate(t *testing.T) {
 func TestCertificateCBORMarshaling(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	c1 := ts.GenerateTestCertificate()
-	bz1, err := cbor.Marshal(c1)
+	cert1 := ts.GenerateTestCertificate(ts.RandHeight())
+	bz1, err := cbor.Marshal(cert1)
 	assert.NoError(t, err)
-	var c2 certificate.Certificate
-	err = cbor.Unmarshal(bz1, &c2)
+	var cert2 certificate.Certificate
+	err = cbor.Unmarshal(bz1, &cert2)
 	assert.NoError(t, err)
-	assert.NoError(t, c2.BasicCheck())
-	assert.Equal(t, c1.Hash(), c1.Hash())
+	assert.NoError(t, cert2.BasicCheck())
+	assert.Equal(t, cert1.Hash(), cert1.Hash())
 
-	assert.Equal(t, c1.Hash(), c2.Hash())
+	assert.Equal(t, cert1.Hash(), cert2.Hash())
 
-	err = cbor.Unmarshal([]byte{1}, &c2)
+	err = cbor.Unmarshal([]byte{1}, &cert2)
 	assert.Error(t, err)
 }
 
@@ -60,16 +60,16 @@ func TestCertificateSignBytes(t *testing.T) {
 
 	hash := ts.RandHash()
 	height := ts.RandHeight()
-	c1 := ts.GenerateTestCertificate()
-	bz := certificate.BlockCertificateSignBytes(hash, height, c1.Round())
-	assert.NotEqual(t, bz, certificate.BlockCertificateSignBytes(hash, height, c1.Round()+1))
-	assert.NotEqual(t, bz, certificate.BlockCertificateSignBytes(ts.RandHash(), height, c1.Round()))
+	cert := ts.GenerateTestCertificate(height)
+	bz := certificate.BlockCertificateSignBytes(hash, height, cert.Round())
+	assert.NotEqual(t, bz, certificate.BlockCertificateSignBytes(hash, height, cert.Round()+1))
+	assert.NotEqual(t, bz, certificate.BlockCertificateSignBytes(ts.RandHash(), height, cert.Round()))
 }
 
 func TestInvalidCertificate(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	cert0 := ts.GenerateTestCertificate()
+	cert0 := ts.GenerateTestCertificate(ts.RandHeight())
 
 	t.Run("Invalid height", func(t *testing.T) {
 		cert := certificate.NewCertificate(0, 0, cert0.Committers(), cert0.Absentees(), cert0.Signature())
@@ -143,22 +143,22 @@ func TestInvalidCertificate(t *testing.T) {
 func TestCertificateHash(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	temp := ts.GenerateTestCertificate()
+	cert0 := ts.GenerateTestCertificate(ts.RandHeight())
 
-	cert1 := certificate.NewCertificate(temp.Height(), temp.Round(),
-		[]int32{10, 18, 2, 6}, []int32{}, temp.Signature())
+	cert1 := certificate.NewCertificate(cert0.Height(), cert0.Round(),
+		[]int32{10, 18, 2, 6}, []int32{}, cert0.Signature())
 	assert.Equal(t, cert1.Committers(), []int32{10, 18, 2, 6})
 	assert.Equal(t, cert1.Absentees(), []int32{})
 	assert.NoError(t, cert1.BasicCheck())
 
-	cert2 := certificate.NewCertificate(temp.Height(), temp.Round(),
-		[]int32{10, 18, 2, 6}, []int32{2, 6}, temp.Signature())
+	cert2 := certificate.NewCertificate(cert0.Height(), cert0.Round(),
+		[]int32{10, 18, 2, 6}, []int32{2, 6}, cert0.Signature())
 	assert.Equal(t, cert2.Committers(), []int32{10, 18, 2, 6})
 	assert.Equal(t, cert2.Absentees(), []int32{2, 6})
 	assert.NoError(t, cert2.BasicCheck())
 
-	cert3 := certificate.NewCertificate(temp.Height(), temp.Round(),
-		[]int32{10, 18, 2, 6}, []int32{18}, temp.Signature())
+	cert3 := certificate.NewCertificate(cert0.Height(), cert0.Round(),
+		[]int32{10, 18, 2, 6}, []int32{18}, cert0.Signature())
 	assert.Equal(t, cert3.Committers(), []int32{10, 18, 2, 6})
 	assert.Equal(t, cert3.Absentees(), []int32{18})
 	assert.NoError(t, cert3.BasicCheck())
@@ -167,7 +167,7 @@ func TestCertificateHash(t *testing.T) {
 func TestEncodingCertificate(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	cert1 := ts.GenerateTestCertificate()
+	cert1 := ts.GenerateTestCertificate(ts.RandHeight())
 	length := cert1.SerializeSize()
 
 	for i := 0; i < length; i++ {

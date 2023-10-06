@@ -42,7 +42,7 @@ func TestCertificateValidation(t *testing.T) {
 		aggSig := valKey5.Sign(signBytes)
 		cert := certificate.NewCertificate(height, 0, committers, []int32{2}, aggSig)
 
-		assert.Error(t, td.state1.CommitBlock(height, nextBlock, cert))
+		assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
 	})
 
 	t.Run("Invalid round, should return error", func(t *testing.T) {
@@ -54,19 +54,7 @@ func TestCertificateValidation(t *testing.T) {
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
 		cert := certificate.NewCertificate(height, 0, committers, []int32{2}, aggSig)
 
-		assert.Error(t, td.state1.CommitBlock(height, nextBlock, cert))
-	})
-
-	t.Run("Invalid height, should return error", func(t *testing.T) {
-		committers := td.state2.committee.Committers()
-		signBytes := certificate.BlockCertificateSignBytes(nextBlockHash, height+1, round)
-		sig1 := td.valKey1.Sign(signBytes)
-		sig2 := td.valKey2.Sign(signBytes)
-		sig4 := td.valKey4.Sign(signBytes)
-		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
-		cert := certificate.NewCertificate(height+1, 0, committers, []int32{2}, aggSig)
-
-		assert.Error(t, td.state1.CommitBlock(height, nextBlock, cert))
+		assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
 	})
 
 	t.Run("Invalid block hash, should return error", func(t *testing.T) {
@@ -79,7 +67,7 @@ func TestCertificateValidation(t *testing.T) {
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
 		cert := certificate.NewCertificate(height, 0, committers, []int32{2}, aggSig)
 
-		assert.Error(t, td.state1.CommitBlock(height, nextBlock, cert))
+		assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
 	})
 
 	t.Run("Invalid committer, should return error", func(t *testing.T) {
@@ -92,7 +80,7 @@ func TestCertificateValidation(t *testing.T) {
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
 		cert := certificate.NewCertificate(height, 0, committers, []int32{2}, aggSig)
 
-		assert.Error(t, td.state1.CommitBlock(height, nextBlock, cert))
+		assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
 	})
 
 	t.Run("Invalid committers, should return error", func(t *testing.T) {
@@ -105,7 +93,7 @@ func TestCertificateValidation(t *testing.T) {
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
 		cert := certificate.NewCertificate(height, 0, committers, []int32{2}, aggSig)
 
-		assert.Error(t, td.state1.CommitBlock(height, nextBlock, cert))
+		assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
 	})
 
 	t.Run("Doesn't have 2/3 majority", func(t *testing.T) {
@@ -116,7 +104,7 @@ func TestCertificateValidation(t *testing.T) {
 		aggSig := aggregate([]crypto.Signature{sig1, sig2})
 		cert := certificate.NewCertificate(height, 0, committers, []int32{2, 3}, aggSig)
 
-		assert.Error(t, td.state1.CommitBlock(height, nextBlock, cert))
+		assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
 	})
 
 	t.Run("Ok, should return no error", func(t *testing.T) {
@@ -128,7 +116,7 @@ func TestCertificateValidation(t *testing.T) {
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
 		cert := certificate.NewCertificate(height, 0, committers, []int32{2}, aggSig)
 
-		assert.NoError(t, td.state1.CommitBlock(height, nextBlock, cert))
+		assert.NoError(t, td.state1.CommitBlock(nextBlock, cert))
 	})
 }
 
@@ -197,7 +185,7 @@ func TestBlockValidation(t *testing.T) {
 		c := td.makeCertificateAndSign(t, b.Hash(), 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 
 		assert.NoError(t, td.state1.validateBlock(b))
-		assert.Error(t, td.state1.CommitBlock(2, b, c), "Invalid ProposerAddress")
+		assert.Error(t, td.state1.CommitBlock(b, c), "Invalid ProposerAddress")
 	})
 
 	t.Run("Invalid SortitionSeed", func(t *testing.T) {
@@ -207,7 +195,7 @@ func TestBlockValidation(t *testing.T) {
 		c := td.makeCertificateAndSign(t, b.Hash(), 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 
 		assert.NoError(t, td.state1.validateBlock(b))
-		assert.Error(t, td.state1.CommitBlock(2, b, c), "Invalid SortitionSeed")
+		assert.Error(t, td.state1.CommitBlock(b, c), "Invalid SortitionSeed")
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -217,6 +205,6 @@ func TestBlockValidation(t *testing.T) {
 		c := td.makeCertificateAndSign(t, b.Hash(), 0, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 
 		assert.NoError(t, td.state1.validateBlock(b))
-		assert.NoError(t, td.state1.CommitBlock(2, b, c), "Looks Good")
+		assert.NoError(t, td.state1.CommitBlock(b, c), "Looks Good")
 	})
 }

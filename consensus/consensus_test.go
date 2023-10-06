@@ -323,18 +323,18 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 
 	sig := bls.SignatureAggregate(sig1, sig2, sig4)
 	cert := certificate.NewCertificate(height+1, 0, []int32{0, 1, 2, 3}, []int32{2}, sig)
-	block := p.Block()
+	blk := p.Block()
 
-	err = td.consX.state.CommitBlock(height+1, block, cert)
+	err = td.consX.state.CommitBlock(blk, cert)
 	assert.NoError(t, err)
-	err = td.consY.state.CommitBlock(height+1, block, cert)
+	err = td.consY.state.CommitBlock(blk, cert)
 	assert.NoError(t, err)
-	err = td.consB.state.CommitBlock(height+1, block, cert)
+	err = td.consB.state.CommitBlock(blk, cert)
 	assert.NoError(t, err)
-	err = td.consP.state.CommitBlock(height+1, block, cert)
+	err = td.consP.state.CommitBlock(blk, cert)
 	assert.NoError(t, err)
 
-	return block, cert
+	return blk, cert
 }
 
 func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *proposal.Proposal {
@@ -383,11 +383,21 @@ func TestNotInCommittee(t *testing.T) {
 	assert.Equal(t, cons.currentState.name(), "new-height")
 }
 
-func TestRoundVotes(t *testing.T) {
+func TestVoteWithInvalidHeight(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t) // height 1
 	td.enterNewHeight(td.consP)
+
+	v1 := td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexX)
+	v2 := td.addPrepareVote(td.consP, td.RandHash(), 2, 0, tIndexX)
+	v3 := td.addPrepareVote(td.consP, td.RandHash(), 2, 0, tIndexY)
+	v4 := td.addPrepareVote(td.consP, td.RandHash(), 3, 0, tIndexX)
+
+	require.False(t, td.consP.HasVote(v1.Hash()))
+	require.True(t, td.consP.HasVote(v2.Hash()))
+	require.True(t, td.consP.HasVote(v3.Hash()))
+	require.False(t, td.consP.HasVote(v4.Hash()))
 }
 
 func TestConsensusNormalCase(t *testing.T) {
@@ -534,6 +544,19 @@ func TestSetProposalFromPreviousRound(t *testing.T) {
 	td.checkHeightRound(t, td.consP, 1, 1)
 }
 
+func TestSetProposalFromPreviousHeight(t *testing.T) {
+	td := setup(t)
+
+	p := td.makeProposal(t, 1, 0)
+	td.commitBlockForAllStates(t) // height 1
+
+	td.enterNewHeight(td.consP)
+
+	td.consP.SetProposal(p)
+	assert.Nil(t, td.consP.RoundProposal(0))
+	td.checkHeightRound(t, td.consP, 2, 0)
+}
+
 func TestDuplicateProposal(t *testing.T) {
 	td := setup(t)
 
@@ -596,17 +619,15 @@ func TestNonActiveValidator(t *testing.T) {
 
 	t.Run("non-active instances should move to new height", func(t *testing.T) {
 		b1, cert1 := td.commitBlockForAllStates(t)
-		b2, cert2 := td.commitBlockForAllStates(t)
 
 		nonActiveCons.MoveToNewHeight()
 		td.checkHeightRound(t, nonActiveCons, 1, 0)
 
-		assert.NoError(t, nonActiveCons.state.CommitBlock(1, b1, cert1))
-		assert.NoError(t, nonActiveCons.state.CommitBlock(2, b2, cert2))
+		assert.NoError(t, nonActiveCons.state.CommitBlock(b1, cert1))
 
 		nonActiveCons.MoveToNewHeight()
 		td.newHeightTimeout(nonActiveCons)
-		td.checkHeightRound(t, nonActiveCons, 3, 0)
+		td.checkHeightRound(t, nonActiveCons, 2, 0)
 	})
 }
 
@@ -852,7 +873,7 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 	}
 
 	// Check if more than 1/3 of nodes has committed the same block
-	if len(blockAnnounces) >= 2 {
+	if len(blockAnnounces) >= 3 {
 		var firstAnnounce *message.BlockAnnounceMessage
 		for _, msg := range blockAnnounces {
 			if firstAnnounce == nil {
