@@ -381,6 +381,14 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 	return p
 }
 
+func TestStart(t *testing.T) {
+	td := setup(t)
+
+	td.consX.Start()
+	td.shouldPublishQueryProposal(t, td.consX, 1)
+	td.shouldPublishQueryVote(t, td.consX, 1, 0)
+}
+
 func TestNotInCommittee(t *testing.T) {
 	td := setup(t)
 
