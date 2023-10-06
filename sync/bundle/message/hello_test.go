@@ -16,17 +16,6 @@ func TestHelloType(t *testing.T) {
 	assert.Equal(t, m.Type(), TypeHello)
 }
 
-func TestHelloMessageMyTimeUnix(t *testing.T) {
-	myTime := time.Now()
-	myTimeUnixMilli := myTime.UnixMilli()
-	m := &HelloMessage{
-		MyTimeUnixMilli: myTimeUnixMilli,
-	}
-
-	assert.Equal(t, myTimeUnixMilli, m.MyTimeUnixMilli)
-	assert.Equal(t, myTimeUnixMilli, m.MyTime().UnixMilli())
-}
-
 func TestHelloMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
@@ -55,6 +44,26 @@ func TestHelloMessage(t *testing.T) {
 		m.PublicKeys = make([]*bls.PublicKey, 0)
 
 		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidPublicKey)
+	})
+
+	t.Run("MyTimeUnixMilli of time1 is less or equal than hello message time", func(t *testing.T) {
+		time1 := time.Now()
+		myTimeUnixMilli := time1.UnixMilli()
+
+		m := NewHelloMessage(ts.RandPeerID(), "Alice", 100, 0, ts.RandHash(), ts.RandHash())
+
+		assert.LessOrEqual(t, m.MyTimeUnixMilli, time.Now().UnixMilli())
+		assert.GreaterOrEqual(t, m.MyTimeUnixMilli, myTimeUnixMilli)
+	})
+
+	t.Run("MyTimeUnixMilli of time1 is greater than hello message time", func(t *testing.T) {
+		m := NewHelloMessage(ts.RandPeerID(), "Alice", 100, 0, ts.RandHash(), ts.RandHash())
+		<-time.After(time.Millisecond)
+
+		time1 := time.Now()
+		myTimeUnixMilli := time1.UnixMilli()
+
+		assert.GreaterOrEqual(t, myTimeUnixMilli, m.MyTimeUnixMilli)
 	})
 
 	t.Run("Ok", func(t *testing.T) {

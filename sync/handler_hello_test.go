@@ -49,7 +49,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
-	t.Run("Receiving Hello message from a peer. Difference of Hello Message Time with node time is a lot.",
+	t.Run("Receiving Hello message from a peer. Difference is greater or equal than -10 seconds.",
 		func(t *testing.T) {
 			valKey := td.RandValKey()
 			height := td.RandUint32NonZero(td.state.LastBlockHeight())
@@ -58,7 +58,23 @@ func TestParsingHelloMessages(t *testing.T) {
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
-			msg.MyTimeUnixMilli = msg.MyTime().Add(-11 * time.Second).UnixMilli()
+			msg.MyTimeUnixMilli = msg.MyTime().Add(-10 * time.Second).UnixMilli()
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
+			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
+		})
+
+	t.Run("Receiving Hello message from a peer. Difference is less or equal than 20 seconds.",
+		func(t *testing.T) {
+			valKey := td.RandValKey()
+			height := td.RandUint32NonZero(td.state.LastBlockHeight())
+			pid := td.RandPeerID()
+			msg := message.NewHelloMessage(pid, "kitty", height, services.New(services.Network),
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
+			msg.Sign([]*bls.ValidatorKey{valKey})
+
+			msg.MyTimeUnixMilli = msg.MyTime().Add(20 * time.Second).UnixMilli()
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)

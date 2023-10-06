@@ -2,6 +2,7 @@ package sync
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -39,10 +40,9 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 		return handler.acknowledge(response, initiator)
 	}
 
-	if time.Since(msg.MyTime()) > 10*time.Second {
+	if math.Abs(time.Since(msg.MyTime()).Seconds()) > 10 {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
-			fmt.Sprintf("hello message difference time is more than 10 seconds,"+
-				" my node time: %v, hello message time: %v", time.Now().UTC(), msg.MyTime().UTC()))
+			"time discrepancy exceeds 10 seconds")
 
 		return handler.acknowledge(response, initiator)
 	}
