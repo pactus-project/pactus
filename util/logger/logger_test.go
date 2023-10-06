@@ -107,3 +107,28 @@ func TestNilValue(t *testing.T) {
 	assert.Contains(t, out, "error")
 	assert.Contains(t, out, "stringer")
 }
+
+func TestInvalidLevel(t *testing.T) {
+	globalInst = nil
+	c := DefaultConfig()
+	c.Colorful = false
+	InitGlobalLogger(c)
+
+	var buf bytes.Buffer
+	log.Logger = log.Logger.Output(&buf)
+
+	globalInst.config.Levels["test"] = "invalid"
+	l := NewSubLogger("test", Foo{})
+
+	var buf2 bytes.Buffer
+	l.logger = l.logger.Output(&buf2)
+
+	l.Error("message", "key", "val")
+
+	out := buf.String()
+	out2 := buf2.String()
+	fmt.Println(out)
+	assert.Contains(t, out, "Unknown Level String")
+	assert.NotContains(t, out2, "error")
+	assert.NotContains(t, out2, "message")
+}

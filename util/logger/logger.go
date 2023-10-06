@@ -67,9 +67,10 @@ func InitGlobalLogger(conf *Config) {
 		log.Logger = zerolog.New(globalInst.writers()).With().Timestamp().Logger()
 
 		lvl, err := zerolog.ParseLevel(conf.Levels["default"])
-		if err == nil {
-			zerolog.SetGlobalLevel(lvl)
+		if err != nil {
+			Warn("invalid default log level", "error", err)
 		}
+		log.Logger = log.Logger.Level(lvl)
 	}
 }
 
@@ -117,9 +118,10 @@ func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 	}
 
 	lvl, err := zerolog.ParseLevel(lvlStr)
-	if err == nil {
-		sl.logger = sl.logger.Level(lvl)
+	if err != nil {
+		Warn("invalid log level", "error", err, "name", name)
 	}
+	sl.logger = sl.logger.Level(lvl)
 
 	inst.subs[name] = sl
 	return sl

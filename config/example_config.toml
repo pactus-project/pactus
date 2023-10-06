@@ -124,7 +124,7 @@
 
   # `logger.levels` contains the level of logger per module.
   # Available log levels are:
-  #   "trace", "debug", "info", "warning", and "error".
+  #   "trace", "debug", "info", "warn", and "error".
   [logger.levels]
    ## _consensus = "info"
    ## _grpc = "error"
@@ -133,7 +133,7 @@
    ## _nonomsg = "error"
    ## _pool = "error"
    ## _state = "info"
-   ## _sync = "warning"
+   ## _sync = "warn"
    ## default = "info"
 
 # `grpc` contains configuration of the gRRC module.
