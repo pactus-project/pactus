@@ -1,6 +1,14 @@
 # Metrics
 
-The Pactus blockchain offers [Prometheus](https://prometheus.io/) metrics for its network module, enabling users to monitor and analyze various network-related statistics. To activate this feature, inside the `config.toml`,  set the `enable_metrics` parameter to true.  Also, ensure that the HTTP module is enabled. You can enable HTTP module under the `[http]` section of the `config.toml` file. Once enabled, the metrics can be accessed at [http://localhost:8080/metrics/prometheus](http://localhost:8080/metrics/prometheus).
+Pactus node offers [Prometheus](https://prometheus.io/) metrics to monitor and analyze various network-related and resource statistics.
+
+# Usage
+
+To activate this feature, inside the `config.toml`,  set the `enable_metrics` parameter to true.
+Also, ensure that the HTTP module is enabled. You can enable HTTP module under the `[http]` section of the `config.toml` file. 
+Once enabled, the metrics can be accessed at [http://localhost:80/metrics/prometheus](http://localhost:80/metrics/prometheus) (this url going to be use by prometheus).
+
+> NOTE: if you are running Pactus with docker image, make sure to expose `:80` port.
 
 After these changes, restart the Pactus node; you should now be able to view the metrics.
 
@@ -19,9 +27,6 @@ docker pull prom/prometheus
 3- Create a configuration file named `prometheus.yml` to define the Prometheus configuration. You can refer to the Prometheus [documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/) for more guidance. As an example, here's a simple configuration:
 
 ```yaml
-global:
-  scrape_interval: 1m
-
 scrape_configs:
   - job_name: "prometheus"
     scrape_interval: 1m
@@ -31,8 +36,10 @@ scrape_configs:
   - job_name: "pactus-metrics"
     metrics_path: /metrics/prometheus
     static_configs:
-      - targets: [ "127.0.0.1:8080" ]
+      - targets: [ "localhost:80" ]
 ```
+> NOTE: you should replace localhost with your server IP if you are running Pactus in server.
+
 4- Start Prometheus as a Docker container:
 
 ```text
