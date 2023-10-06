@@ -36,9 +36,9 @@ scrape_configs:
   - job_name: "pactus-metrics"
     metrics_path: /metrics/prometheus
     static_configs:
-      - targets: [ "node_IP:80" ]
+      - targets: [ "localhost:80" ]
 ```
-> NOTE: you should relace node_IP with your server IP or 127.0.0.1 if you are running Pactus locally.
+> NOTE: you should replace localhost with your server IP if you are running Pactus in server.
 
 4- Start Prometheus as a Docker container:
 
