@@ -232,7 +232,7 @@ func (v *Vote) String() string {
 			v.CPRound(),
 			v.CPValue(),
 			v.BlockHash(),
-			v.Signer(),
+			v.Signer().ShortString(),
 		)
 
 	default:
