@@ -231,7 +231,7 @@ func (v *Vote) String() string {
 			v.Type(),
 			v.CPRound(),
 			v.CPValue(),
-			v.BlockHash(),
+			v.BlockHash().ShortString(),
 			v.Signer().ShortString(),
 		)
 
