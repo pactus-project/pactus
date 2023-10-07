@@ -3,7 +3,6 @@ package message
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,16 +12,6 @@ func TestQueryProposalType(t *testing.T) {
 }
 
 func TestQueryProposalMessage(t *testing.T) {
-	t.Run("Invalid round", func(t *testing.T) {
-		m := NewQueryProposalMessage(0, -1)
-
-		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidRound)
-	})
-
-	t.Run("OK", func(t *testing.T) {
-		m := NewQueryProposalMessage(100, 0)
-
-		assert.NoError(t, m.BasicCheck())
-		assert.Contains(t, m.String(), "100")
-	})
+	m := NewQueryProposalMessage(0)
+	assert.NoError(t, m.BasicCheck())
 }

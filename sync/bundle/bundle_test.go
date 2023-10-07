@@ -17,7 +17,7 @@ func TestNewMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	pid := ts.RandPeerID()
-	msg := NewBundle(pid, message.NewQueryProposalMessage(100, 0))
+	msg := NewBundle(pid, message.NewQueryProposalMessage(100))
 	assert.Zero(t, msg.Flags)
 	assert.Equal(t, msg.Initiator, pid)
 }

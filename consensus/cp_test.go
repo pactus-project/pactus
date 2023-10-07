@@ -31,7 +31,7 @@ func TestSetProposalAfterChangeProposer(t *testing.T) {
 
 	p := td.makeProposal(t, 2, 0)
 	td.consP.SetProposal(p)
-	assert.NotNil(t, td.consP.RoundProposal(0))
+	assert.NotNil(t, td.consP.Proposal())
 }
 
 func TestChangeProposerAgreement1(t *testing.T) {
@@ -60,7 +60,7 @@ func TestChangeProposerAgreement1(t *testing.T) {
 	td.addCPMainVote(td.consP, hash.UndefHash, h, r, 1, vote.CPValueOne, mainVote1.CPJust(), tIndexX)
 	td.addCPMainVote(td.consP, hash.UndefHash, h, r, 1, vote.CPValueOne, mainVote1.CPJust(), tIndexY)
 
-	checkHeightRound(t, td.consP, 1, 1)
+	checkHeightRound(t, td.consP, h, r+1)
 }
 
 func TestChangeProposerAgreement0(t *testing.T) {
@@ -98,7 +98,7 @@ func TestChangeProposerAgreement0(t *testing.T) {
 	td.addCPMainVote(td.consP, p.Block().Hash(), h, r, 1, vote.CPValueZero, mainVote1.CPJust(), tIndexX)
 	td.addCPMainVote(td.consP, p.Block().Hash(), h, r, 1, vote.CPValueZero, mainVote1.CPJust(), tIndexY)
 
-	td.shouldPublishQueryProposal(t, td.consP, h, r)
+	td.shouldPublishQueryProposal(t, td.consP, h)
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexX)
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexY)
 	checkHeightRound(t, td.consP, h, r)

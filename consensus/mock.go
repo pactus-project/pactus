@@ -17,12 +17,12 @@ type MockConsensus struct {
 	lk sync.RWMutex
 	ts *testsuite.TestSuite
 
-	ValKey   *bls.ValidatorKey
-	Votes    []*vote.Vote
-	Proposal *proposal.Proposal
-	Active   bool
-	Height   uint32
-	Round    int16
+	ValKey      *bls.ValidatorKey
+	Votes       []*vote.Vote
+	CurProposal *proposal.Proposal
+	Active      bool
+	Height      uint32
+	Round       int16
 }
 
 func MockingManager(ts *testsuite.TestSuite, valKeys []*bls.ValidatorKey) (Manager, []*MockConsensus) {
@@ -59,10 +59,7 @@ func (m *MockConsensus) MoveToNewHeight() {
 	m.Height++
 }
 
-func (m *MockConsensus) Start() error {
-	return nil
-}
-func (m *MockConsensus) Stop() {}
+func (m *MockConsensus) Start() {}
 
 func (m *MockConsensus) AddVote(v *vote.Vote) {
 	m.lk.Lock()
@@ -82,7 +79,7 @@ func (m *MockConsensus) SetProposal(p *proposal.Proposal) {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
-	m.Proposal = p
+	m.CurProposal = p
 }
 
 func (m *MockConsensus) HasVote(hash hash.Hash) bool {
@@ -97,14 +94,11 @@ func (m *MockConsensus) HasVote(hash hash.Hash) bool {
 	return false
 }
 
-func (m *MockConsensus) RoundProposal(round int16) *proposal.Proposal {
+func (m *MockConsensus) Proposal() *proposal.Proposal {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
-	if m.Proposal == nil || m.Proposal.Round() != round {
-		return nil
-	}
-	return m.Proposal
+	return m.CurProposal
 }
 
 func (m *MockConsensus) HeightRound() (uint32, int16) {

@@ -107,8 +107,6 @@ func (sync *synchronizer) Start() error {
 	go sync.receiveLoop()
 	go sync.broadcastLoop()
 
-	sync.moveConsensusToNewHeight()
-
 	return nil
 }
 
@@ -140,7 +138,12 @@ func (sync *synchronizer) sayHello(to peer.ID) error {
 	)
 	msg.Sign(sync.valKeys)
 
-	sync.peerSet.UpdateStatus(to, peerset.StatusCodeConnected)
+	peer := sync.peerSet.GetPeer(to)
+	// Don't change the status to "connected" if reconnecting to a known node.
+	// Has the node restarted?
+	if !peer.IsKnownOrTrusty() {
+		sync.peerSet.UpdateStatus(to, peerset.StatusCodeConnected)
+	}
 
 	sync.logger.Info("sending Hello message", "to", to)
 	return sync.sendTo(msg, to)

@@ -111,6 +111,17 @@ func newConsensus(
 	return cs
 }
 
+func (cs *consensus) Start() {
+	cs.lk.Lock()
+	defer cs.lk.Unlock()
+
+	cs.moveToNewHeight()
+	if cs.active {
+		cs.queryProposal()
+		cs.queryVotes()
+	}
+}
+
 func (cs *consensus) String() string {
 	return fmt.Sprintf("{%s %d/%d/%s/%d}",
 		cs.valKey.Address().ShortString(),
@@ -131,11 +142,11 @@ func (cs *consensus) HeightRound() (uint32, int16) {
 	return cs.height, cs.round
 }
 
-func (cs *consensus) RoundProposal(round int16) *proposal.Proposal {
+func (cs *consensus) Proposal() *proposal.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	return cs.log.RoundProposal(round)
+	return cs.log.RoundProposal(cs.round)
 }
 
 func (cs *consensus) HasVote(hash hash.Hash) bool {
@@ -169,6 +180,10 @@ func (cs *consensus) MoveToNewHeight() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
+	cs.moveToNewHeight()
+}
+
+func (cs *consensus) moveToNewHeight() {
 	stateHeight := cs.state.LastBlockHeight()
 	if cs.height != stateHeight+1 {
 		cs.enterNewState(cs.newHeightState)
@@ -591,6 +606,10 @@ func (cs *consensus) proposer(round int16) *validator.Validator {
 	return cs.state.Proposer(round)
 }
 
+func (cs *consensus) isProposer() bool {
+	return cs.proposer(cs.round).Address() == cs.valKey.Address()
+}
+
 func (cs *consensus) signAddCPPreVote(hash hash.Hash,
 	cpRound int16, cpValue vote.CPValue, just vote.Just,
 ) {
@@ -631,9 +650,12 @@ func (cs *consensus) signAddVote(v *vote.Vote) {
 
 func (cs *consensus) queryProposal() {
 	cs.broadcaster(cs.valKey.Address(),
-		message.NewQueryProposalMessage(cs.height, cs.round))
+		message.NewQueryProposalMessage(cs.height))
 }
 
+// queryVotes is an anti-entropy mechanism to retrieve missed votes
+// when a validator falls behind the network.
+// However, invoking this method might result in unnecessary bandwidth usage.
 func (cs *consensus) queryVotes() {
 	cs.broadcaster(cs.valKey.Address(),
 		message.NewQueryVotesMessage(cs.height, cs.round))
@@ -710,9 +732,10 @@ func (cs *consensus) PickRandomVote(round int16) *vote.Vote {
 }
 
 func (cs *consensus) startChangingProposer() {
-	// It is not timeout before
+	// If it is not decided yet.
+	// TODO: can we remove this condition in new consensus model?
 	if cs.cpDecided == -1 {
-		cs.logger.Debug("changing proposer started")
+		cs.logger.Debug("changing proposer started", "cpRound", cs.cpRound)
 		cs.enterNewState(cs.cpPreVoteState)
 	}
 }
