@@ -187,6 +187,17 @@ func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
 	return nil
 }
 
+func (td *testData) shouldNotPublish(t *testing.T, cons *consensus, msgType message.Type) {
+	t.Helper()
+
+	for _, consMsg := range td.consMessages {
+		if consMsg.sender == cons.valKey.Address() &&
+			consMsg.message.Type() == msgType {
+			require.Error(t, fmt.Errorf("should not public %s", msgType))
+		}
+	}
+}
+
 func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, height uint32) {
 	t.Helper()
 

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/vote"
 )
 
@@ -21,32 +22,31 @@ func TestQueryProposal(t *testing.T) {
 
 	td.commitBlockForAllStates(t)
 	h := uint32(2)
-	r := int16(1)
 
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
 	td.queryProposalTimeout(td.consP)
 
 	td.shouldPublishQueryProposal(t, td.consP, h)
-	td.shouldPublishQueryVote(t, td.consP, h, r)
+	td.shouldNotPublish(t, td.consP, message.TypeQueryVotes)
 }
 
 func TestQueryVotes(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
-	h := uint32(2)
+	td.commitBlockForAllStates(t)
+	h := uint32(3)
 	r := int16(1)
 
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
 
-	p := td.makeProposal(t, h, r)
-	td.consP.SetProposal(p)
-
-	// consP has a valid proposal but not enough votes.
+	// consP is the proposer for this round, but there are not enough votes.
 	td.queryProposalTimeout(td.consP)
+	td.shouldPublishProposal(t, td.consP, h, r)
 	td.shouldPublishQueryVote(t, td.consP, h, r)
+	td.shouldNotPublish(t, td.consP, message.TypeQueryProposal)
 }
 
 func TestGoToChangeProposerFromPrepare(t *testing.T) {

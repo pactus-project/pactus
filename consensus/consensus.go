@@ -606,6 +606,10 @@ func (cs *consensus) proposer(round int16) *validator.Validator {
 	return cs.state.Proposer(round)
 }
 
+func (cs *consensus) isProposer() bool {
+	return cs.proposer(cs.round).Address() == cs.valKey.Address()
+}
+
 func (cs *consensus) signAddCPPreVote(hash hash.Hash,
 	cpRound int16, cpValue vote.CPValue, just vote.Just,
 ) {
