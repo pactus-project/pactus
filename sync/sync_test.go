@@ -73,7 +73,10 @@ func setup(t *testing.T, config *Config) *testData {
 	}
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	mockState := state.MockingState(ts)
+
 	consMgr, consMocks := consensus.MockingManager(ts, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
+	consMgr.MoveToNewHeight()
+
 	broadcastCh := make(chan message.Message, 1000)
 	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())
 
@@ -242,9 +245,24 @@ func TestTestNetFlags(t *testing.T) {
 
 	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.valKeys[0].PublicKey())
 	td.state.TestParams.BlockVersion = 0x3f
-	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(td.RandHeight(), td.RandRound()))
+	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(td.RandHeight()))
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
+}
+
+func TestSayHelloForKnownPeer(t *testing.T) {
+	td := setup(t, nil)
+
+	pid := td.RandPeerID()
+	pub, _ := td.RandBLSKeyPair()
+	td.addPeer(t, pub, pid, services.New(services.None))
+
+	err := td.sync.sayHello(pid)
+	assert.NoError(t, err)
+
+	// Probably the peer restarted...
+	peer := td.sync.peerSet.GetPeer(pid)
+	assert.Equal(t, peerset.StatusCodeKnown, peer.Status)
 }
 
 func TestDownload(t *testing.T) {

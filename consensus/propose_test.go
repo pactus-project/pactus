@@ -20,18 +20,18 @@ func TestSetProposalInvalidProposer(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consY)
-	assert.Nil(t, td.consY.RoundProposal(0))
+	assert.Nil(t, td.consY.Proposal())
 
 	addr := td.valKeys[tIndexB].Address()
 	blk, _ := td.GenerateTestBlockWithProposer(1, addr)
 	invalidProp := proposal.NewProposal(1, 0, blk)
 
 	td.consY.SetProposal(invalidProp)
-	assert.Nil(t, td.consY.RoundProposal(0))
+	assert.Nil(t, td.consY.Proposal())
 
 	td.HelperSignProposal(td.valKeys[tIndexB], invalidProp)
 	td.consY.SetProposal(invalidProp)
-	assert.Nil(t, td.consY.RoundProposal(0))
+	assert.Nil(t, td.consY.Proposal())
 }
 
 func TestSetProposalInvalidBlock(t *testing.T) {
@@ -47,7 +47,7 @@ func TestSetProposalInvalidBlock(t *testing.T) {
 	td.enterNextRound(td.consP)
 
 	td.consP.SetProposal(invProp)
-	assert.Nil(t, td.consP.RoundProposal(2))
+	assert.Nil(t, td.consP.Proposal())
 }
 
 func TestSetProposalInvalidHeight(t *testing.T) {
@@ -60,23 +60,7 @@ func TestSetProposalInvalidHeight(t *testing.T) {
 
 	td.enterNewHeight(td.consY)
 	td.consY.SetProposal(invProp)
-	assert.Nil(t, td.consY.RoundProposal(2))
-}
-
-func TestSetProposalAfterCommit(t *testing.T) {
-	td := setup(t)
-
-	p0 := td.makeProposal(t, 1, 0)
-	p1 := td.makeProposal(t, 1, 1)
-
-	td.enterNewHeight(td.consP)
-	td.commitBlockForAllStates(t)
-
-	td.consP.SetProposal(p0)
-	assert.NotNil(t, td.consP.RoundProposal(0))
-
-	td.consP.SetProposal(p1)
-	assert.Nil(t, td.consP.RoundProposal(1))
+	assert.Nil(t, td.consY.Proposal())
 }
 
 func TestNetworkLagging(t *testing.T) {
@@ -93,7 +77,7 @@ func TestNetworkLagging(t *testing.T) {
 	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexY)
 
 	td.queryProposalTimeout(td.consP)
-	td.shouldPublishQueryProposal(t, td.consP, h, r)
+	td.shouldPublishQueryProposal(t, td.consP, h)
 
 	// Proposal is received now
 	td.consP.SetProposal(p)
@@ -118,7 +102,8 @@ func TestProposalNextRound(t *testing.T) {
 	td.consX.SetProposal(p)
 
 	// consX accepts his proposal, but doesn't move to the next round
-	assert.NotNil(t, td.consX.RoundProposal(1))
+	assert.NotNil(t, td.consX.log.RoundProposal(1))
+	assert.Nil(t, td.consX.Proposal())
 	assert.Equal(t, td.consX.height, uint32(2))
 	assert.Equal(t, td.consX.round, int16(0))
 }
