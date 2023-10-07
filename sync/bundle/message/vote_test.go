@@ -17,7 +17,7 @@ func TestVoteMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid vote", func(t *testing.T) {
-		v, _ := ts.GenerateTestPrepareVote(100, -1)
+		v := vote.NewPrepareVote(ts.RandHash(), ts.RandHeight(), -1, ts.RandValAddress())
 		m := NewVoteMessage(v)
 
 		assert.ErrorIs(t, m.BasicCheck(), vote.BasicCheckError{Reason: "invalid round"})

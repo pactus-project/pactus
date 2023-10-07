@@ -128,14 +128,14 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 			message: msg,
 		})
 	}
-	td.consX = newConsensus(testConfig(), stX, valKeys[tIndexX], valKeys[tIndexX].Address(),
-		broadcaster, newConcreteMediator())
-	td.consY = newConsensus(testConfig(), stY, valKeys[tIndexY], valKeys[tIndexY].Address(),
-		broadcaster, newConcreteMediator())
-	td.consB = newConsensus(testConfig(), stB, valKeys[tIndexB], valKeys[tIndexB].Address(),
-		broadcaster, newConcreteMediator())
-	td.consP = newConsensus(testConfig(), stP, valKeys[tIndexP], valKeys[tIndexP].Address(),
-		broadcaster, newConcreteMediator())
+	td.consX = newConsensus(testConfig(), stX, valKeys[tIndexX],
+		valKeys[tIndexX].PublicKey().AccountAddress(), broadcaster, newConcreteMediator())
+	td.consY = newConsensus(testConfig(), stY, valKeys[tIndexY],
+		valKeys[tIndexY].PublicKey().AccountAddress(), broadcaster, newConcreteMediator())
+	td.consB = newConsensus(testConfig(), stB, valKeys[tIndexB],
+		valKeys[tIndexB].PublicKey().AccountAddress(), broadcaster, newConcreteMediator())
+	td.consP = newConsensus(testConfig(), stP, valKeys[tIndexP],
+		valKeys[tIndexP].PublicKey().AccountAddress(), broadcaster, newConcreteMediator())
 
 	// -------------------------------
 	// Better logging during testing
@@ -342,12 +342,13 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	p := td.makeProposal(t, height+1, 0)
 
 	sb := certificate.BlockCertificateSignBytes(p.Block().Hash(), height+1, 0)
-	sig1 := td.valKeys[0].Sign(sb)
-	sig2 := td.valKeys[1].Sign(sb)
-	sig4 := td.valKeys[3].Sign(sb)
+	sig1 := td.consX.valKey.Sign(sb)
+	sig2 := td.consY.valKey.Sign(sb)
+	sig4 := td.consP.valKey.Sign(sb)
 
 	sig := bls.SignatureAggregate(sig1, sig2, sig4)
-	cert := certificate.NewCertificate(height+1, 0, []int32{0, 1, 2, 3}, []int32{2}, sig)
+	cert := certificate.NewCertificate(height+1, 0,
+		[]int32{tIndexX, tIndexY, tIndexB, tIndexP}, []int32{tIndexB}, sig)
 	blk := p.Block()
 
 	err = td.consX.state.CommitBlock(blk, cert)
@@ -368,22 +369,22 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 	var p *proposal.Proposal
 	switch (height % 4) + uint32(round%4) {
 	case 1:
-		blk, err := td.consX.state.ProposeBlock(td.consX.valKey, td.consX.rewardAddr, round)
+		blk, err := td.consX.state.ProposeBlock(td.consX.valKey, td.consX.rewardAddr)
 		require.NoError(t, err)
 		p = proposal.NewProposal(height, round, blk)
 		td.HelperSignProposal(td.consX.valKey, p)
 	case 2:
-		blk, err := td.consY.state.ProposeBlock(td.consY.valKey, td.consY.rewardAddr, round)
+		blk, err := td.consY.state.ProposeBlock(td.consY.valKey, td.consY.rewardAddr)
 		require.NoError(t, err)
 		p = proposal.NewProposal(height, round, blk)
 		td.HelperSignProposal(td.consY.valKey, p)
 	case 3:
-		blk, err := td.consB.state.ProposeBlock(td.consB.valKey, td.consB.rewardAddr, round)
+		blk, err := td.consB.state.ProposeBlock(td.consB.valKey, td.consB.rewardAddr)
 		require.NoError(t, err)
 		p = proposal.NewProposal(height, round, blk)
 		td.HelperSignProposal(td.consB.valKey, p)
 	case 0, 4:
-		blk, err := td.consP.state.ProposeBlock(td.consP.valKey, td.consP.rewardAddr, round)
+		blk, err := td.consP.state.ProposeBlock(td.consP.valKey, td.consP.rewardAddr)
 		require.NoError(t, err)
 		p = proposal.NewProposal(height, round, blk)
 		td.HelperSignProposal(td.consP.valKey, p)
@@ -602,9 +603,10 @@ func TestDuplicateProposal(t *testing.T) {
 	h := uint32(4)
 	r := int16(0)
 	p1 := td.makeProposal(t, h, r)
-	trx := tx.NewTransferTx(h, td.valKeys[0].Address(),
-		td.valKeys[1].Address(), 1000, 1000, "proposal changer")
-	td.HelperSignTransaction(td.valKeys[0].PrivateKey(), trx)
+	trx := tx.NewTransferTx(h, td.consX.rewardAddr,
+		td.RandAccAddress(), 1000, 1000, "proposal changer")
+	td.HelperSignTransaction(td.consX.valKey.PrivateKey(), trx)
+
 	assert.NoError(t, td.txPool.AppendTx(trx))
 	p2 := td.makeProposal(t, h, r)
 	assert.NotEqual(t, p1.Hash(), p2.Hash())
@@ -794,6 +796,7 @@ func TestByzantine(t *testing.T) {
 	// Byzantine node create the second proposal and send it to the partitioned node P
 	byzTrx := tx.NewTransferTx(h,
 		td.consB.rewardAddr, td.RandAccAddress(), 1000, 1000, "")
+	td.HelperSignTransaction(td.consB.valKey.PrivateKey(), byzTrx)
 	assert.NoError(t, td.txPool.AppendTx(byzTrx))
 	p2 := td.makeProposal(t, h, r)
 

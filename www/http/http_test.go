@@ -42,6 +42,8 @@ func setup(t *testing.T) *testData {
 		ts.RandValKey(), ts.RandValKey(),
 	})
 
+	mockConsMgr.MoveToNewHeight()
+
 	grpcConf := &grpc.Config{
 		Enable: true,
 		Listen: "[::]:0",

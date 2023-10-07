@@ -25,7 +25,7 @@ type Facade interface {
 	LastBlockTime() time.Time
 	LastCertificate() *certificate.Certificate
 	UpdateLastCertificate(v *vote.Vote) error
-	ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address, round int16) (*block.Block, error)
+	ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address) (*block.Block, error)
 	ValidateBlock(blk *block.Block) error
 	CommitBlock(blk *block.Block, cert *certificate.Certificate) error
 	CommitteeValidators() []*validator.Validator

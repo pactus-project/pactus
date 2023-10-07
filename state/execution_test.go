@@ -29,10 +29,10 @@ func TestProposeBlock(t *testing.T) {
 	invSortitionTx, _ := td.GenerateTestSortitionTx()
 
 	pub, _ := td.RandBLSKeyPair()
-	trx1 := tx.NewTransferTx(1, td.valKey1.Address(), td.valKey1.Address(), 1, 1000, "")
+	trx1 := tx.NewTransferTx(1, td.valKey1.PublicKey().AccountAddress(), td.RandAccAddress(), 1, 1000, "")
 	td.HelperSignTransaction(td.valKey1.PrivateKey(), trx1)
 
-	trx2 := tx.NewBondTx(2, td.valKey1.Address(), pub.ValidatorAddress(), pub, 1000000000, 100000, "")
+	trx2 := tx.NewBondTx(2, td.valKey1.PublicKey().AccountAddress(), pub.ValidatorAddress(), pub, 1000000000, 100000, "")
 	td.HelperSignTransaction(td.valKey1.PrivateKey(), trx2)
 
 	assert.NoError(t, td.state1.txPool.AppendTx(invTransferTx))
@@ -64,7 +64,7 @@ func TestExecuteBlock(t *testing.T) {
 	validSubsidyTx := td.state1.createSubsidyTx(rewardAddr, 1000)
 	invTransferTx, _ := td.GenerateTestTransferTx()
 
-	validTx1 := tx.NewTransferTx(1, td.valKey1.Address(), td.valKey1.Address(), 1, 1000, "")
+	validTx1 := tx.NewTransferTx(1, td.valKey1.PublicKey().AccountAddress(), td.RandAccAddress(), 1, 1000, "")
 	td.HelperSignTransaction(td.valKey1.PrivateKey(), validTx1)
 
 	assert.NoError(t, td.state1.txPool.AppendTx(invTransferTx))

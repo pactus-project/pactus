@@ -285,11 +285,13 @@ func (ts *TestSuite) generateTestBlock(height uint32, proposer crypto.Address, t
 	txs.Append(tx4)
 	txs.Append(tx5)
 
-	prevCert := ts.GenerateTestCertificate(height - 1)
+	var prevCert *certificate.Certificate
 	prevBlockHash := ts.RandHash()
 	if height == 1 {
 		prevCert = nil
 		prevBlockHash = hash.UndefHash
+	} else {
+		prevCert = ts.GenerateTestCertificate(height - 1)
 	}
 	blockCert := ts.GenerateTestCertificate(height)
 	header := block.NewHeader(1, time,
@@ -299,6 +301,11 @@ func (ts *TestSuite) generateTestBlock(height uint32, proposer crypto.Address, t
 		proposer)
 
 	blk := block.NewBlock(header, prevCert, txs)
+
+	err := blk.BasicCheck()
+	if err != nil {
+		panic(err)
+	}
 	return blk, blockCert
 }
 
@@ -310,12 +317,18 @@ func (ts *TestSuite) GenerateTestCertificate(height uint32) *certificate.Certifi
 	c2 := ts.RandInt32NonZero(10) + 10
 	c3 := ts.RandInt32NonZero(10) + 20
 	c4 := ts.RandInt32NonZero(10) + 30
-	return certificate.NewCertificate(
+	cert := certificate.NewCertificate(
 		height,
 		ts.RandRound(),
 		[]int32{c1, c2, c3, c4},
 		[]int32{c2},
 		sig)
+
+	err := cert.BasicCheck()
+	if err != nil {
+		panic(err)
+	}
+	return cert
 }
 
 // GenerateTestProposal generates a proposal for testing purposes.
@@ -424,15 +437,27 @@ func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls
 func (ts *TestSuite) HelperSignVote(valKey *bls.ValidatorKey, v *vote.Vote) {
 	sig := valKey.Sign(v.SignBytes())
 	v.SetSignature(sig)
+
+	if err := v.BasicCheck(); err != nil {
+		panic(err)
+	}
 }
 
 func (ts *TestSuite) HelperSignProposal(valKey *bls.ValidatorKey, p *proposal.Proposal) {
 	sig := valKey.Sign(p.SignBytes())
 	p.SetSignature(sig)
+
+	if err := p.BasicCheck(); err != nil {
+		panic(err)
+	}
 }
 
 func (ts *TestSuite) HelperSignTransaction(prv crypto.PrivateKey, trx *tx.Tx) {
 	sig := prv.Sign(trx.SignBytes())
 	trx.SetSignature(sig)
 	trx.SetPublicKey(prv.PublicKey())
+
+	if err := trx.BasicCheck(); err != nil {
+		panic(err)
+	}
 }
