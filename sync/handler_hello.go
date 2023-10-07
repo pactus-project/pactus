@@ -2,6 +2,8 @@ package sync
 
 import (
 	"fmt"
+	"math"
+	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/sync/bundle"
@@ -34,6 +36,13 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 	if msg.GenesisHash != handler.state.Genesis().Hash() {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("peer ID is not matched, expected: %v, got: %v", msg.PeerID, initiator))
+
+		return handler.acknowledge(response, initiator)
+	}
+
+	if math.Abs(time.Since(msg.MyTime()).Seconds()) > 10 {
+		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
+			"time discrepancy exceeds 10 seconds")
 
 		return handler.acknowledge(response, initiator)
 	}
