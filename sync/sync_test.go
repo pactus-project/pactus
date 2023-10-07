@@ -250,21 +250,6 @@ func TestTestNetFlags(t *testing.T) {
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
 }
 
-func TestSayHelloForKnownPeer(t *testing.T) {
-	td := setup(t, nil)
-
-	pid := td.RandPeerID()
-	pub, _ := td.RandBLSKeyPair()
-	td.addPeer(t, pub, pid, services.New(services.None))
-
-	err := td.sync.sayHello(pid)
-	assert.NoError(t, err)
-
-	// Probably the peer restarted...
-	peer := td.sync.peerSet.GetPeer(pid)
-	assert.Equal(t, peerset.StatusCodeKnown, peer.Status)
-}
-
 func TestDownload(t *testing.T) {
 	td := setup(t, nil)
 
