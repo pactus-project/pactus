@@ -26,6 +26,12 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 	msg := m.(*message.HelloMessage)
 	handler.logger.Trace("parsing Hello message", "message", msg)
 
+	handler.peerSet.UpdateInfo(initiator,
+		msg.Moniker,
+		msg.Agent,
+		msg.PublicKeys,
+		msg.Services)
+
 	if msg.PeerID != initiator {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("peer ID is not matched, expected: %v, got: %v", msg.PeerID, initiator))
@@ -52,11 +58,6 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 		"moniker", msg.Moniker,
 		"services", msg.Services)
 
-	handler.peerSet.UpdateInfo(initiator,
-		msg.Moniker,
-		msg.Agent,
-		msg.PublicKeys,
-		msg.Services)
 	handler.peerSet.UpdateHeight(initiator, msg.Height, msg.BlockHash)
 	handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeConnected)
 

@@ -138,12 +138,7 @@ func (sync *synchronizer) sayHello(to peer.ID) error {
 	)
 	msg.Sign(sync.valKeys)
 
-	peer := sync.peerSet.GetPeer(to)
-	// Don't change the status to "connected" if reconnecting to a known node.
-	// Has the node restarted?
-	if !peer.IsKnownOrTrusty() {
-		sync.peerSet.UpdateStatus(to, peerset.StatusCodeConnected)
-	}
+	sync.peerSet.UpdateStatus(to, peerset.StatusCodeConnected)
 
 	sync.logger.Info("sending Hello message", "to", to.ShortString())
 	return sync.sendTo(msg, to)
@@ -377,22 +372,22 @@ func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 	})
 }
 
-// peerIsInTheCommittee checks if the peer is a member of the committee
-// at the current height.
-func (sync *synchronizer) peerIsInTheCommittee(pid peer.ID) bool {
-	p := sync.peerSet.GetPeer(pid)
-	if !p.IsKnownOrTrusty() {
-		return false
-	}
+// // peerIsInTheCommittee checks if the peer is a member of the committee
+// // at the current height.
+// func (sync *synchronizer) peerIsInTheCommittee(pid peer.ID) bool {
+// 	p := sync.peerSet.GetPeer(pid)
+// 	if !p.IsKnownOrTrusty() {
+// 		return false
+// 	}
 
-	for _, key := range p.ConsensusKeys {
-		if sync.state.IsInCommittee(key.ValidatorAddress()) {
-			return true
-		}
-	}
+// 	for _, key := range p.ConsensusKeys {
+// 		if sync.state.IsInCommittee(key.ValidatorAddress()) {
+// 			return true
+// 		}
+// 	}
 
-	return false
-}
+// 	return false
+// }
 
 // weAreInTheCommittee checks if one of the validators is a member of the committee
 // at the current height.

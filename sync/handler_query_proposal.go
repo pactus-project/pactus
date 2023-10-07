@@ -4,7 +4,6 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type queryProposalHandler struct {
@@ -19,13 +18,14 @@ func newQueryProposalHandler(sync *synchronizer) messageHandler {
 
 func (handler *queryProposalHandler) ParseMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.QueryProposalMessage)
-	handler.logger.Trace("parsing QueryProposal message", "message", msg)
+	handler.logger.Trace("parsing QueryProposal message", "message", msg, "initiator", initiator)
 
 	height, _ := handler.consMgr.HeightRound()
 	if msg.Height == height {
-		if !handler.peerIsInTheCommittee(initiator) {
-			return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the committee")
-		}
+		// TODO: this should be refactored
+		// if !handler.peerIsInTheCommittee(initiator) {
+		// 	return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the committee")
+		// }
 		prop := handler.consMgr.Proposal()
 		if prop != nil {
 			response := message.NewProposalMessage(prop)
