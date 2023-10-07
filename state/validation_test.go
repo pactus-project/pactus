@@ -31,7 +31,7 @@ func TestCertificateValidation(t *testing.T) {
 	td.state1.store.UpdateValidator(val5)
 	td.state2.store.UpdateValidator(val5)
 
-	nextBlock, _ := td.state2.ProposeBlock(td.state2.valKeys[0], td.RandAccAddress(), 0)
+	nextBlock, _ := td.state2.ProposeBlock(td.state2.valKeys[0], td.RandAccAddress())
 	nextBlockHash := nextBlock.Hash()
 	height := uint32(6)
 	round := int16(0)

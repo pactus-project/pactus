@@ -50,7 +50,7 @@ func (p *Proposal) Signature() crypto.Signature {
 
 func (p *Proposal) BasicCheck() error {
 	if p.data.Block == nil {
-		return errors.Errorf(errors.ErrInvalidSignature, "no block")
+		return errors.Errorf(errors.ErrInvalidBlock, "no block")
 	}
 	if p.data.Signature == nil {
 		return errors.Errorf(errors.ErrInvalidSignature, "no signature")

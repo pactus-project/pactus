@@ -65,12 +65,16 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid height", func(t *testing.T) {
-		p, _ := ts.GenerateTestProposal(0, 0)
+		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
+		p := proposal.NewProposal(0, 0, blk)
+		p.SetSignature(ts.RandBLSSignature())
 		assert.Error(t, p.BasicCheck())
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
-		p, _ := ts.GenerateTestProposal(1, -1)
+		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
+		p := proposal.NewProposal(ts.RandHeight(), -1, blk)
+		p.SetSignature(ts.RandBLSSignature())
 		assert.Error(t, p.BasicCheck())
 	})
 

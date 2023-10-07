@@ -61,7 +61,7 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Testing set proposal", func(t *testing.T) {
-		b, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address(), 1)
+		b, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address())
 		p := proposal.NewProposal(stateHeight+1, 0, b)
 		ts.HelperSignProposal(valKeys[0], p)
 
@@ -81,7 +81,7 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Check discarding old proposals", func(t *testing.T) {
-		b, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address(), 1)
+		b, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address())
 		p := proposal.NewProposal(stateHeight-1, 1, b)
 		ts.HelperSignProposal(valKeys[0], p)
 
@@ -120,13 +120,13 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Processing upcoming proposal", func(t *testing.T) {
-		b1, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address(), 1)
+		b1, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address())
 		p1 := proposal.NewProposal(stateHeight+2, 0, b1)
 
-		b2, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address(), 1)
+		b2, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address())
 		p2 := proposal.NewProposal(stateHeight+3, 0, b2)
 
-		b3, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address(), 1)
+		b3, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address())
 		p3 := proposal.NewProposal(stateHeight+4, 0, b3)
 
 		ts.HelperSignProposal(valKeys[0], p1)

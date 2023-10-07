@@ -18,7 +18,8 @@ func TestBlockAnnounceMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid certificate", func(t *testing.T) {
-		blk, cert := ts.GenerateTestBlock(0)
+		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
+		cert := certificate.NewCertificate(0, 0, nil, nil, nil)
 		m := NewBlockAnnounceMessage(blk, cert)
 		err := m.BasicCheck()
 

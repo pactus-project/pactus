@@ -26,6 +26,8 @@ import (
 func TestInvalidBlockData(t *testing.T) {
 	td := setup(t, nil)
 
+	td.state.CommitTestBlocks(10)
+
 	lastHeight := td.state.LastBlockHeight()
 	prevCert := td.GenerateTestCertificate(lastHeight)
 	cert := td.GenerateTestCertificate(lastHeight + 1)
@@ -81,6 +83,8 @@ func TestOneBlockShorter(t *testing.T) {
 
 func TestStrippedPublicKey(t *testing.T) {
 	td := setup(t, nil)
+
+	td.state.CommitTestBlocks(10)
 
 	lastHeight := td.state.LastBlockHeight()
 
