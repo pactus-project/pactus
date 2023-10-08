@@ -186,8 +186,8 @@ func Reverse[S ~[]E, E any](s S) {
 	}
 }
 
-// ExtendSlice extends the slice 's' to length 'n' by appending zero-valued elements.
-func ExtendSlice[T any](s *[]T, n int) {
+// Extend extends the slice 's' to length 'n' by appending zero-valued elements.
+func Extend[T any](s *[]T, n int) {
 	if len(*s) < n {
 		temp := make([]T, n-len(*s))
 		*s = append(*s, temp...)
@@ -221,4 +221,11 @@ func RemoveFirstOccurrenceOf[T comparable](s []T, e T) ([]T, bool) {
 		}
 	}
 	return s, false
+}
+
+func Trim[T any](s []T, newLength int) []T {
+	if newLength <= len(s) {
+		return s[:newLength]
+	}
+	return s
 }

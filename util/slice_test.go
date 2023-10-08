@@ -235,7 +235,7 @@ func TestExtendSlice(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		ExtendSlice(&c.in, c.size)
+		Extend(&c.in, c.size)
 		assert.Equal(t, c.in, c.want, "ExtendSlice(%v, %v) == %v, want %v", c.in, c.size, c.in, c.want)
 	}
 }
@@ -325,5 +325,23 @@ func TestRemoveFirstOccurrenceOf(t *testing.T) {
 				t.Errorf("got %v, want %v", removed, tt.removed)
 			}
 		})
+	}
+}
+
+func TestTrimSlice(t *testing.T) {
+	tests := []struct {
+		input     []int
+		newLength int
+		want      []int
+	}{
+		{[]int{1, 2, 3, 4, 5}, 3, []int{1, 2, 3}},
+		{[]int{1}, 3, []int{1}},
+		{[]int{}, 3, []int{}},
+		{[]int{1, 2, 3, 4, 5}, 0, []int{}},
+	}
+
+	for _, tt := range tests {
+		got := Trim(tt.input, tt.newLength)
+		assert.Equal(t, got, tt.want, "Trim() = %v, want %v", got, tt.want)
 	}
 }
