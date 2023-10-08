@@ -1,13 +1,14 @@
 package consensus
 
 import (
+	"time"
+
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
 
 type cpPreVoteState struct {
-	*consensus
+	*changeProposer
 }
 
 func (s *cpPreVoteState) enter() {
@@ -30,6 +31,7 @@ func (s *cpPreVoteState) decide() {
 			just := &vote.JustInitOne{}
 			s.signAddCPPreVote(hash.UndefHash, s.cpRound, 1, just)
 		}
+		s.scheduleTimeout(2*time.Second, s.height, s.round, tickerTargetQueryVotes)
 	} else {
 		cpMainVotes := s.log.CPMainVoteVoteSet(s.round)
 		if cpMainVotes.HasAnyVoteFor(s.cpRound-1, vote.CPValueOne) {
@@ -66,14 +68,6 @@ func (s *cpPreVoteState) decide() {
 }
 
 func (s *cpPreVoteState) onAddVote(_ *vote.Vote) {
-	panic("Unreachable")
-}
-
-func (s *cpPreVoteState) onSetProposal(_ *proposal.Proposal) {
-	panic("Unreachable")
-}
-
-func (s *cpPreVoteState) onTimeout(_ *ticker) {
 	panic("Unreachable")
 }
 

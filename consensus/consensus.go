@@ -37,6 +37,7 @@ type consensus struct {
 	valKey          *bls.ValidatorKey
 	rewardAddr      crypto.Address
 	state           state.Facade // TODO: rename `state` to `bcState` (blockchain state)
+	changeProposer  *changeProposer
 	newHeightState  consState
 	proposeState    consState
 	prepareState    consState
@@ -86,14 +87,15 @@ func newConsensus(
 	cs.logger = logger.NewSubLogger("_consensus", cs)
 	cs.rewardAddr = rewardAddr
 
+	cs.changeProposer = &changeProposer{cs}
 	cs.newHeightState = &newHeightState{cs}
 	cs.proposeState = &proposeState{cs}
 	cs.prepareState = &prepareState{cs, false}
 	cs.precommitState = &precommitState{cs, false}
 	cs.commitState = &commitState{cs}
-	cs.cpPreVoteState = &cpPreVoteState{cs}
-	cs.cpMainVoteState = &cpMainVoteState{cs}
-	cs.cpDecideState = &cpDecideState{cs}
+	cs.cpPreVoteState = &cpPreVoteState{cs.changeProposer}
+	cs.cpMainVoteState = &cpMainVoteState{cs.changeProposer}
+	cs.cpDecideState = &cpDecideState{cs.changeProposer}
 	cs.currentState = cs.newHeightState
 	cs.mediator = mediator
 
@@ -267,6 +269,7 @@ func (cs *consensus) handleTimeout(t *ticker) {
 		return
 	}
 
+	cs.logger.Debug("timer expired", "ticker", t)
 	cs.currentState.onTimeout(t)
 }
 
@@ -286,7 +289,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 
 	if v.Type() == vote.VoteTypeCPPreVote ||
 		v.Type() == vote.VoteTypeCPMainVote {
-		err := cs.checkJust(v)
+		err := cs.changeProposer.checkJust(v)
 		if err != nil {
 			cs.logger.Error("error on adding a cp vote", "vote", v, "error", err)
 			return
@@ -301,304 +304,6 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		cs.logger.Info("new vote added", "vote", v)
 
 		cs.currentState.onAddVote(v)
-	}
-}
-
-func (cs *consensus) checkCPValue(vote *vote.Vote, allowedValues ...vote.CPValue) error {
-	for _, v := range allowedValues {
-		if vote.CPValue() == v {
-			return nil
-		}
-	}
-
-	return invalidJustificationError{
-		JustType: vote.CPJust().Type(),
-		Reason:   fmt.Sprintf("invalid value: %v", vote.CPValue()),
-	}
-}
-
-func (cs *consensus) checkJustInitZero(just vote.Just, blockHash hash.Hash) error {
-	j, ok := just.(*vote.JustInitZero)
-	if !ok {
-		return invalidJustificationError{
-			JustType: just.Type(),
-			Reason:   "invalid just data",
-		}
-	}
-
-	sb := certificate.BlockCertificateSignBytes(blockHash,
-		j.QCert.Height(),
-		j.QCert.Round())
-	sb = append(sb, util.StringToBytes(vote.VoteTypePrepare.String())...)
-
-	err := j.QCert.Validate(cs.height, cs.validators, sb)
-	if err != nil {
-		return invalidJustificationError{
-			JustType: j.Type(),
-			Reason:   err.Error(),
-		}
-	}
-	return nil
-}
-
-func (cs *consensus) checkJustInitOne(just vote.Just) error {
-	_, ok := just.(*vote.JustInitOne)
-	if !ok {
-		return invalidJustificationError{
-			JustType: just.Type(),
-			Reason:   "invalid just data",
-		}
-	}
-
-	return nil
-}
-
-func (cs *consensus) checkJustPreVoteHard(just vote.Just,
-	blockHash hash.Hash, cpRound int16, cpValue vote.CPValue,
-) error {
-	j, ok := just.(*vote.JustPreVoteHard)
-	if !ok {
-		return invalidJustificationError{
-			JustType: just.Type(),
-			Reason:   "invalid just data",
-		}
-	}
-
-	sb := certificate.BlockCertificateSignBytes(blockHash,
-		j.QCert.Height(),
-		j.QCert.Round())
-	sb = append(sb, util.StringToBytes(vote.VoteTypeCPPreVote.String())...)
-	sb = append(sb, util.Int16ToSlice(cpRound-1)...)
-	sb = append(sb, byte(cpValue))
-
-	err := j.QCert.Validate(cs.height, cs.validators, sb)
-	if err != nil {
-		return invalidJustificationError{
-			JustType: just.Type(),
-			Reason:   err.Error(),
-		}
-	}
-	return nil
-}
-
-func (cs *consensus) checkJustPreVoteSoft(just vote.Just,
-	blockHash hash.Hash, cpRound int16,
-) error {
-	j, ok := just.(*vote.JustPreVoteSoft)
-	if !ok {
-		return invalidJustificationError{
-			JustType: just.Type(),
-			Reason:   "invalid just data",
-		}
-	}
-
-	sb := certificate.BlockCertificateSignBytes(blockHash,
-		j.QCert.Height(),
-		j.QCert.Round())
-	sb = append(sb, util.StringToBytes(vote.VoteTypeCPMainVote.String())...)
-	sb = append(sb, util.Int16ToSlice(cpRound-1)...)
-	sb = append(sb, byte(vote.CPValueAbstain))
-
-	err := j.QCert.Validate(cs.height, cs.validators, sb)
-	if err != nil {
-		return invalidJustificationError{
-			JustType: just.Type(),
-			Reason:   err.Error(),
-		}
-	}
-	return nil
-}
-
-func (cs *consensus) checkJustMainVoteNoConflict(just vote.Just,
-	blockHash hash.Hash, cpRound int16, cpValue vote.CPValue,
-) error {
-	j, ok := just.(*vote.JustMainVoteNoConflict)
-	if !ok {
-		return invalidJustificationError{
-			JustType: just.Type(),
-			Reason:   "invalid just data",
-		}
-	}
-
-	sb := certificate.BlockCertificateSignBytes(blockHash,
-		j.QCert.Height(),
-		j.QCert.Round())
-	sb = append(sb, util.StringToBytes(vote.VoteTypeCPPreVote.String())...)
-	sb = append(sb, util.Int16ToSlice(cpRound)...)
-	sb = append(sb, byte(cpValue))
-
-	err := j.QCert.Validate(cs.height, cs.validators, sb)
-	if err != nil {
-		return invalidJustificationError{
-			JustType: j.Type(),
-			Reason:   err.Error(),
-		}
-	}
-	return nil
-}
-
-func (cs *consensus) checkJustMainVoteConflict(just vote.Just,
-	blockHash hash.Hash, cpRound int16,
-) error {
-	j, ok := just.(*vote.JustMainVoteConflict)
-	if !ok {
-		return invalidJustificationError{
-			JustType: just.Type(),
-			Reason:   "invalid just data",
-		}
-	}
-
-	if cpRound == 0 {
-		switch j.Just0.Type() {
-		case vote.JustTypeInitZero:
-			err := cs.checkJustInitZero(j.Just0, blockHash)
-			if err != nil {
-				return err
-			}
-
-		default:
-			return invalidJustificationError{
-				JustType: just.Type(),
-				Reason:   fmt.Sprintf("unexpected justification: %s", j.Just0.Type()),
-			}
-		}
-
-		switch j.Just1.Type() {
-		case vote.JustTypeInitOne:
-			err := cs.checkJustInitOne(j.Just1)
-			if err != nil {
-				return err
-			}
-
-		default:
-			return invalidJustificationError{
-				JustType: just.Type(),
-				Reason:   fmt.Sprintf("unexpected justification: %s", j.Just1.Type()),
-			}
-		}
-	} else {
-		switch j.Just0.Type() {
-		case vote.JustTypePreVoteSoft:
-			err := cs.checkJustPreVoteSoft(j.Just0, blockHash, cpRound)
-			if err != nil {
-				return err
-			}
-		case vote.JustTypePreVoteHard:
-			err := cs.checkJustPreVoteHard(j.Just0, blockHash, cpRound, vote.CPValueZero)
-			if err != nil {
-				return err
-			}
-		default:
-			return invalidJustificationError{
-				JustType: just.Type(),
-				Reason:   fmt.Sprintf("unexpected justification: %s", j.Just0.Type()),
-			}
-		}
-
-		switch j.Just1.Type() {
-		case vote.JustTypePreVoteHard:
-			err := cs.checkJustPreVoteHard(j.Just1, hash.UndefHash, cpRound, vote.CPValueOne)
-			if err != nil {
-				return err
-			}
-
-		default:
-			return invalidJustificationError{
-				JustType: just.Type(),
-				Reason:   fmt.Sprintf("unexpected justification: %s", j.Just1.Type()),
-			}
-		}
-	}
-
-	return nil
-}
-
-func (cs *consensus) checkJustPreVote(v *vote.Vote) error {
-	just := v.CPJust()
-	if v.CPRound() == 0 {
-		switch just.Type() {
-		case vote.JustTypeInitZero:
-			err := cs.checkCPValue(v, vote.CPValueZero)
-			if err != nil {
-				return err
-			}
-			return cs.checkJustInitZero(just, v.BlockHash())
-
-		case vote.JustTypeInitOne:
-			err := cs.checkCPValue(v, vote.CPValueOne)
-			if err != nil {
-				return err
-			}
-			if v.BlockHash() != hash.UndefHash {
-				return invalidJustificationError{
-					JustType: just.Type(),
-					Reason:   "invalid block hash",
-				}
-			}
-			return cs.checkJustInitOne(just)
-		default:
-			return invalidJustificationError{
-				JustType: just.Type(),
-				Reason:   "invalid pre-vote justification",
-			}
-		}
-	} else {
-		switch just.Type() {
-		case vote.JustTypePreVoteSoft:
-			err := cs.checkCPValue(v, vote.CPValueZero, vote.CPValueOne)
-			if err != nil {
-				return err
-			}
-			return cs.checkJustPreVoteSoft(just, v.BlockHash(), v.CPRound())
-
-		case vote.JustTypePreVoteHard:
-			err := cs.checkCPValue(v, vote.CPValueZero, vote.CPValueOne)
-			if err != nil {
-				return err
-			}
-			return cs.checkJustPreVoteHard(just, v.BlockHash(), v.CPRound(), v.CPValue())
-
-		default:
-			return invalidJustificationError{
-				JustType: just.Type(),
-				Reason:   "invalid pre-vote justification",
-			}
-		}
-	}
-}
-
-func (cs *consensus) checkJustMainVote(v *vote.Vote) error {
-	just := v.CPJust()
-	switch just.Type() {
-	case vote.JustTypeMainVoteNoConflict:
-		err := cs.checkCPValue(v, vote.CPValueZero, vote.CPValueOne)
-		if err != nil {
-			return err
-		}
-		return cs.checkJustMainVoteNoConflict(just, v.BlockHash(), v.CPRound(), v.CPValue())
-
-	case vote.JustTypeMainVoteConflict:
-		err := cs.checkCPValue(v, vote.CPValueAbstain)
-		if err != nil {
-			return err
-		}
-		return cs.checkJustMainVoteConflict(just, v.BlockHash(), v.CPRound())
-
-	default:
-		return invalidJustificationError{
-			JustType: just.Type(),
-			Reason:   "invalid main-vote justification",
-		}
-	}
-}
-
-func (cs *consensus) checkJust(v *vote.Vote) error {
-	if v.Type() == vote.VoteTypeCPPreVote {
-		return cs.checkJustPreVote(v)
-	} else if v.Type() == vote.VoteTypeCPMainVote {
-		return cs.checkJustMainVote(v)
-	} else {
-		panic("unreachable")
 	}
 }
 
