@@ -92,7 +92,7 @@ func LoadOrNewState(
 
 	txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 
-	st.logger.Debug("last info", "committers", st.committee.Committers(), "state_root", st.stateRoot().ShortString())
+	st.logger.Debug("last info", "committers", st.committee.Committers(), "state_root", st.stateRoot())
 
 	return st, nil
 }

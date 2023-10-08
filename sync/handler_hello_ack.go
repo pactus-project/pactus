@@ -24,14 +24,14 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, initiator peer.I
 
 	if msg.ResponseCode != message.ResponseCodeOK {
 		handler.logger.Warn("hello message rejected",
-			"from", initiator.ShortString(), "reason", msg.Reason)
+			"from", initiator, "reason", msg.Reason)
 
 		handler.network.CloseConnection(initiator)
 		return nil
 	}
 	handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeKnown)
 	handler.logger.Debug("hello message acknowledged",
-		"from", initiator.ShortString())
+		"from", initiator)
 
 	return nil
 }

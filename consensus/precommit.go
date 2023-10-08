@@ -22,13 +22,13 @@ func (s *precommitState) decide() {
 	precommits := s.log.PrecommitVoteSet(s.round)
 	precommitQH := precommits.QuorumHash()
 	if precommitQH != nil {
-		s.logger.Debug("pre-commit has quorum", "hash", precommitQH.ShortString())
+		s.logger.Debug("pre-commit has quorum", "hash", precommitQH)
 
 		roundProposal := s.log.RoundProposal(s.round)
 		if roundProposal == nil {
 			// There is a consensus about a proposal that we don't have yet.
 			// Ask peers for this proposal.
-			s.logger.Info("query for a decided proposal", "hash", precommitQH.ShortString())
+			s.logger.Info("query for a decided proposal", "hash", precommitQH)
 			s.queryProposal()
 		} else {
 			// To ensure we have voted and won't be absent from the certificate

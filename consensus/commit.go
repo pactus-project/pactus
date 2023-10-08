@@ -23,7 +23,7 @@ func (s *commitState) decide() {
 	if err != nil {
 		s.logger.Error("committing block failed", "block", certBlock, "error", err)
 	} else {
-		s.logger.Info("block committed, schedule new height", "hash", certBlock.Hash().ShortString())
+		s.logger.Info("block committed, schedule new height", "hash", certBlock.Hash())
 	}
 
 	// Now we can announce the committed block and certificate

@@ -76,8 +76,8 @@ func (s *cpMainVoteState) detectByzantineProposal() {
 		if roundProposal != nil &&
 			roundProposal.Block().Hash() != *s.cpWeakValidity {
 			s.logger.Warn("double proposal detected",
-				"prepared", s.cpWeakValidity.ShortString(),
-				"roundProposal", roundProposal.Block().Hash().ShortString())
+				"prepared", s.cpWeakValidity,
+				"roundProposal", roundProposal.Block().Hash())
 
 			s.log.SetRoundProposal(s.round, nil)
 			s.queryProposal()

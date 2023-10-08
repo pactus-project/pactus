@@ -84,7 +84,7 @@ func TestSortitionDecoding(t *testing.T) {
 			value:   0,
 			readErr: nil,
 			basicErr: BasicCheckError{
-				Reason: "address is not a validator address: pc1zqgpsgpgx",
+				Reason: "address is not a validator address: pc1zqgpsgpgxquyqjzstpsxsurcszyfpx9q4350xtk",
 			},
 		},
 	}
