@@ -87,8 +87,6 @@ func (s *precommitState) onSetProposal(_ *proposal.Proposal) {
 }
 
 func (s *precommitState) onTimeout(t *ticker) {
-	s.logger.Debug("timer expired")
-
 	if t.Target == tickerTargetChangeProposer {
 		s.startChangingProposer()
 	}

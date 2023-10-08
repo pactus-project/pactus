@@ -59,8 +59,6 @@ func (s *prepareState) vote() {
 }
 
 func (s *prepareState) onTimeout(t *ticker) {
-	s.logger.Debug("timer expired", "ticker", t)
-
 	if t.Target == tickerTargetQueryProposal {
 		roundProposal := s.log.RoundProposal(s.round)
 		if roundProposal == nil {

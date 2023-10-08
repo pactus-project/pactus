@@ -73,11 +73,11 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
 		tConfigs[i].Logger.Levels["default"] = "warn"
-		tConfigs[i].Logger.Levels["_state"] = "info"
-		tConfigs[i].Logger.Levels["_sync"] = "error"
-		tConfigs[i].Logger.Levels["_consensus"] = "error"
-		tConfigs[i].Logger.Levels["_network"] = "error"
-		tConfigs[i].Logger.Levels["_pool"] = "error"
+		tConfigs[i].Logger.Levels["_state"] = "warn"
+		tConfigs[i].Logger.Levels["_sync"] = "warn"
+		tConfigs[i].Logger.Levels["_consensus"] = "warn"
+		tConfigs[i].Logger.Levels["_network"] = "warn"
+		tConfigs[i].Logger.Levels["_pool"] = "warn"
 		tConfigs[i].Sync.CacheSize = 1000
 		tConfigs[i].Sync.NodeNetwork = false
 		tConfigs[i].Sync.Firewall.Enabled = false
