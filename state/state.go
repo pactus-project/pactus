@@ -316,6 +316,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 
 	// Re-check all transactions strictly and remove invalid ones
 	txs := st.txPool.PrepareBlockTransactions()
+	txs = util.Trim(txs, maxTransactionsPerBlock-1)
 	for i := 0; i < txs.Len(); i++ {
 		// Only one subsidy transaction per block
 		if txs[i].IsSubsidyTx() {
@@ -328,10 +329,6 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 
 		if err := exe.Execute(txs[i], sb); err != nil {
 			st.logger.Debug("found invalid transaction", "tx", txs[i], "error", err)
-			txs.Remove(i)
-			i--
-		}
-		if i >= maxTransactionsPerBlock-1 {
 			txs.Remove(i)
 			i--
 		}
