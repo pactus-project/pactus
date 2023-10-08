@@ -167,7 +167,9 @@ func TestBasicCheck(t *testing.T) {
 		valKey := ts.RandValKey()
 		trx := tx.NewTransferTx(ts.RandHeight(),
 			ts.RandAccAddress(), ts.RandAccAddress(), 1, 1, "invalid valKey")
-		ts.HelperSignTransaction(valKey.PrivateKey(), trx)
+		sig := valKey.PrivateKey().Sign(trx.SignBytes())
+		trx.SetSignature(sig)
+		trx.SetPublicKey(valKey.PublicKey())
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{

@@ -22,14 +22,14 @@ func TestSetProposalInvalidProposer(t *testing.T) {
 	td.enterNewHeight(td.consY)
 	assert.Nil(t, td.consY.Proposal())
 
-	addr := td.valKeys[tIndexB].Address()
+	addr := td.consB.valKey.Address()
 	blk, _ := td.GenerateTestBlockWithProposer(1, addr)
 	invalidProp := proposal.NewProposal(1, 0, blk)
 
 	td.consY.SetProposal(invalidProp)
 	assert.Nil(t, td.consY.Proposal())
 
-	td.HelperSignProposal(td.valKeys[tIndexB], invalidProp)
+	td.HelperSignProposal(td.consB.valKey, invalidProp)
 	td.consY.SetProposal(invalidProp)
 	assert.Nil(t, td.consY.Proposal())
 }
@@ -37,10 +37,10 @@ func TestSetProposalInvalidProposer(t *testing.T) {
 func TestSetProposalInvalidBlock(t *testing.T) {
 	td := setup(t)
 
-	addr := td.valKeys[tIndexB].Address()
+	addr := td.consB.valKey.Address()
 	blk, _ := td.GenerateTestBlockWithProposer(1, addr)
 	invProp := proposal.NewProposal(1, 2, blk)
-	td.HelperSignProposal(td.valKeys[tIndexB], invProp)
+	td.HelperSignProposal(td.consB.valKey, invProp)
 
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
@@ -53,10 +53,10 @@ func TestSetProposalInvalidBlock(t *testing.T) {
 func TestSetProposalInvalidHeight(t *testing.T) {
 	td := setup(t)
 
-	addr := td.valKeys[tIndexB].Address()
+	addr := td.consB.valKey.Address()
 	blk, _ := td.GenerateTestBlockWithProposer(2, addr)
 	invProp := proposal.NewProposal(2, 0, blk)
-	td.HelperSignProposal(td.valKeys[tIndexB], invProp)
+	td.HelperSignProposal(td.consB.valKey, invProp)
 
 	td.enterNewHeight(td.consY)
 	td.consY.SetProposal(invProp)
@@ -94,10 +94,10 @@ func TestProposalNextRound(t *testing.T) {
 	td.enterNewHeight(td.consX)
 
 	// Byzantine node sends proposal for the second round (his turn) even before the first round is started
-	b, err := td.consB.state.ProposeBlock(td.consB.valKey, td.consB.rewardAddr, 1)
+	b, err := td.consB.state.ProposeBlock(td.consB.valKey, td.consB.rewardAddr)
 	assert.NoError(t, err)
 	p := proposal.NewProposal(2, 1, b)
-	td.HelperSignProposal(td.valKeys[tIndexB], p)
+	td.HelperSignProposal(td.consB.valKey, p)
 
 	td.consX.SetProposal(p)
 

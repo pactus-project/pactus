@@ -114,7 +114,7 @@ func (m *MockState) Close() error {
 	return nil
 }
 
-func (m *MockState) ProposeBlock(valKey *bls.ValidatorKey, _ crypto.Address, _ int16) (*block.Block, error) {
+func (m *MockState) ProposeBlock(valKey *bls.ValidatorKey, _ crypto.Address) (*block.Block, error) {
 	blk, _ := m.ts.GenerateTestBlockWithProposer(m.TestStore.LastHeight, valKey.Address())
 	return blk, nil
 }

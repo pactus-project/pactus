@@ -153,7 +153,7 @@ func TestInvalidJustInitOne(t *testing.T) {
 	just := &vote.JustInitOne{}
 
 	t.Run("invalid value: zero", func(t *testing.T) {
-		v := vote.NewCPPreVote(hash.UndefHash, h, r, 0, vote.CPValueZero, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPPreVote(hash.UndefHash, h, r, 0, vote.CPValueZero, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -163,7 +163,7 @@ func TestInvalidJustInitOne(t *testing.T) {
 	})
 
 	t.Run("invalid block hash", func(t *testing.T) {
-		v := vote.NewCPPreVote(hash.UndefHash, h, r, 1, vote.CPValueOne, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPPreVote(hash.UndefHash, h, r, 1, vote.CPValueOne, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -173,7 +173,7 @@ func TestInvalidJustInitOne(t *testing.T) {
 	})
 
 	t.Run("cp-round should be zero", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueOne, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueOne, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -184,7 +184,7 @@ func TestInvalidJustInitOne(t *testing.T) {
 
 	t.Run("with main-vote justification", func(t *testing.T) {
 		invJust := &vote.JustMainVoteNoConflict{}
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueOne, invJust, td.valKeys[tIndexB].Address())
+		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueOne, invJust, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -205,7 +205,7 @@ func TestInvalidJustInitZero(t *testing.T) {
 	}
 
 	t.Run("invalid value: one", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueOne, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueOne, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -215,7 +215,7 @@ func TestInvalidJustInitZero(t *testing.T) {
 	})
 
 	t.Run("cp-round should be zero", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueZero, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueZero, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -225,7 +225,7 @@ func TestInvalidJustInitZero(t *testing.T) {
 	})
 
 	t.Run("invalid certificate", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueZero, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueZero, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -246,7 +246,7 @@ func TestInvalidJustPreVoteHard(t *testing.T) {
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -256,7 +256,7 @@ func TestInvalidJustPreVoteHard(t *testing.T) {
 	})
 
 	t.Run("cp-round should not be zero", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueZero, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueZero, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -266,7 +266,7 @@ func TestInvalidJustPreVoteHard(t *testing.T) {
 	})
 
 	t.Run("invalid certificate", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueZero, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueZero, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -287,7 +287,7 @@ func TestInvalidJustPreVoteSoft(t *testing.T) {
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -297,7 +297,7 @@ func TestInvalidJustPreVoteSoft(t *testing.T) {
 	})
 
 	t.Run("cp-round should not be zero", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueZero, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueZero, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -307,7 +307,7 @@ func TestInvalidJustPreVoteSoft(t *testing.T) {
 	})
 
 	t.Run("invalid certificate", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueZero, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPPreVote(td.RandHash(), h, r, 1, vote.CPValueZero, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -328,7 +328,7 @@ func TestInvalidJustMainVoteNoConflict(t *testing.T) {
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {
-		v := vote.NewCPMainVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPMainVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -338,7 +338,7 @@ func TestInvalidJustMainVoteNoConflict(t *testing.T) {
 	})
 
 	t.Run("invalid certificate", func(t *testing.T) {
-		v := vote.NewCPMainVote(td.RandHash(), h, r, 1, vote.CPValueZero, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPMainVote(td.RandHash(), h, r, 1, vote.CPValueZero, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -362,7 +362,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 			},
 			Just1: &vote.JustInitOne{},
 		}
-		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueZero, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueZero, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -378,7 +378,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 			},
 			Just1: &vote.JustInitOne{},
 		}
-		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueOne, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueOne, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -394,7 +394,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 			},
 			Just1: &vote.JustInitOne{},
 		}
-		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueAbstain, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -412,7 +412,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 				QCert: td.GenerateTestCertificate(h),
 			},
 		}
-		v := vote.NewCPMainVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPMainVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -429,7 +429,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 			Just0: just0,
 			Just1: &vote.JustInitOne{},
 		}
-		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueAbstain, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
@@ -448,7 +448,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 				QCert: td.GenerateTestCertificate(h),
 			},
 		}
-		v := vote.NewCPMainVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.valKeys[tIndexB].Address())
+		v := vote.NewCPMainVote(td.RandHash(), h, r, 1, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consX.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{

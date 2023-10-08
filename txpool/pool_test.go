@@ -134,50 +134,48 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	randHeight := td.RandHeight() + td.sandbox.TestParams.UnbondInterval
 	_ = td.sandbox.TestStore.AddTestBlock(randHeight)
 
-	acc1ValKey := td.RandValKey()
+	acc1PubKey, acc1PrvKey := td.RandBLSKeyPair()
+	acc1Addr := acc1PubKey.AccountAddress()
 	acc1 := account.NewAccount(0)
 	acc1.AddToBalance(10000000000)
-	td.sandbox.UpdateAccount(acc1ValKey.Address(), acc1)
+	td.sandbox.UpdateAccount(acc1Addr, acc1)
 
-	valKey1 := td.RandValKey()
-	val1Pub := valKey1.PublicKey()
-	val1 := validator.NewValidator(val1Pub, 0)
+	val1PubKey, val1PrvKey := td.RandBLSKeyPair()
+	val1 := validator.NewValidator(val1PubKey, 0)
 	val1.AddToStake(10000000000)
 	td.sandbox.UpdateValidator(val1)
 
-	valKey2 := td.RandValKey()
-	val2Pub := valKey2.PublicKey()
-	val2 := validator.NewValidator(val2Pub, 0)
+	val2PubKey, val2PrvKey := td.RandBLSKeyPair()
+	val2 := validator.NewValidator(val2PubKey, 0)
 	val2.AddToStake(10000000000)
 	val2.UpdateUnbondingHeight(1)
 	td.sandbox.UpdateValidator(val2)
 
-	valKey3 := td.RandValKey()
-	val3Pub := valKey3.PublicKey()
-	val3 := validator.NewValidator(val3Pub, 0)
+	val3PubKey, val3PrvKey := td.RandBLSKeyPair()
+	val3 := validator.NewValidator(val3PubKey, 0)
 	val3.AddToStake(10000000000)
 	td.sandbox.UpdateValidator(val3)
 
-	transferTx := tx.NewTransferTx(randHeight+1, acc1ValKey.Address(),
+	transferTx := tx.NewTransferTx(randHeight+1, acc1Addr,
 		td.RandAccAddress(), 1000, 1000, "send-tx")
-	td.HelperSignTransaction(acc1ValKey.PrivateKey(), transferTx)
+	td.HelperSignTransaction(acc1PrvKey, transferTx)
 
 	pub, _ := td.RandBLSKeyPair()
-	bondTx := tx.NewBondTx(randHeight+2, acc1ValKey.Address(),
+	bondTx := tx.NewBondTx(randHeight+2, acc1Addr,
 		pub.ValidatorAddress(), pub, 1000000000, 100000, "bond-tx")
-	td.HelperSignTransaction(acc1ValKey.PrivateKey(), bondTx)
+	td.HelperSignTransaction(acc1PrvKey, bondTx)
 
 	unbondTx := tx.NewUnbondTx(randHeight+3, val1.Address(), "unbond-tx")
-	td.HelperSignTransaction(valKey1.PrivateKey(), unbondTx)
+	td.HelperSignTransaction(val1PrvKey, unbondTx)
 
 	withdrawTx := tx.NewWithdrawTx(randHeight+4, val2.Address(),
 		td.RandAccAddress(), 1000, 1000, "withdraw-tx")
-	td.HelperSignTransaction(valKey2.PrivateKey(), withdrawTx)
+	td.HelperSignTransaction(val2PrvKey, withdrawTx)
 
 	td.sandbox.TestAcceptSortition = true
 	sortitionTx := tx.NewSortitionTx(randHeight, val3.Address(),
 		td.RandProof())
-	td.HelperSignTransaction(valKey3.PrivateKey(), sortitionTx)
+	td.HelperSignTransaction(val3PrvKey, sortitionTx)
 
 	assert.NoError(t, td.pool.AppendTx(transferTx))
 	assert.NoError(t, td.pool.AppendTx(unbondTx))

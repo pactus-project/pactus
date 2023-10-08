@@ -60,7 +60,7 @@ func TestAddValidVote(t *testing.T) {
 func TestAddInvalidVoteType(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	committee, valKeys := ts.GenerateTestCommittee(4)
+	committee, _ := ts.GenerateTestCommittee(4)
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
 
@@ -69,7 +69,6 @@ func TestAddInvalidVoteType(t *testing.T) {
 	invVote := new(vote.Vote)
 	err := invVote.UnmarshalCBOR(data)
 	assert.NoError(t, err)
-	ts.HelperSignVote(valKeys[0], invVote)
 
 	added, err := log.AddVote(invVote)
 	assert.Error(t, err)

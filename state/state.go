@@ -32,6 +32,8 @@ import (
 	"github.com/pactus-project/pactus/www/nanomsg/event"
 )
 
+var maxTransactionsPerBlock = 1000
+
 type state struct {
 	lk sync.RWMutex
 
@@ -304,13 +306,9 @@ func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee int64) *tx.Tx {
 	return transaction
 }
 
-func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address, round int16) (*block.Block, error) {
+func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address) (*block.Block, error) {
 	st.lk.Lock()
 	defer st.lk.Unlock()
-
-	if !st.committee.IsProposer(valKey.Address(), round) {
-		return nil, errors.Errorf(errors.ErrGeneric, "we are not proposer for this round")
-	}
 
 	// Create new sandbox and execute transactions
 	sb := st.concreteSandbox()
@@ -318,6 +316,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 
 	// Re-check all transactions strictly and remove invalid ones
 	txs := st.txPool.PrepareBlockTransactions()
+	txs = util.Trim(txs, maxTransactionsPerBlock-1)
 	for i := 0; i < txs.Len(); i++ {
 		// Only one subsidy transaction per block
 		if txs[i].IsSubsidyTx() {
@@ -332,10 +331,6 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 			st.logger.Debug("found invalid transaction", "tx", txs[i], "error", err)
 			txs.Remove(i)
 			i--
-		}
-		// Maximum 1000 transactions per block
-		if txs.Len() >= 1000 {
-			break
 		}
 	}
 
