@@ -236,10 +236,8 @@ func TestSyncing(t *testing.T) {
 	assert.Equal(t, uint32(0), syncAlice.state.LastBlockHeight())
 	assert.Equal(t, uint32(100), syncBob.state.LastBlockHeight())
 
-	// Alice receives a BlockAnnounce message and starts updating its blockchain
-	syncAlice.updateBlockchain()
-
 	// Perform block syncing
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksRequest)
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeBlocksRequest)
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 1-11
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlocksResponse) // 12-22
