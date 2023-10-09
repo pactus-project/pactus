@@ -22,7 +22,7 @@
 [network]
 
   # `listens` specifies the addresses and ports where the node will listen for incoming connections from other nodes.
- ## listens = ["/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888", "/ip4/0.0.0.0/udp/21888/quic", "/ip6/::/udp/21888/quic"]
+ ## listens = ["/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888"]
 
   # `network_key` specifies the private key filename to use for node authentication and encryption in the p2p protocol.
  ## network_key = "network_key"
