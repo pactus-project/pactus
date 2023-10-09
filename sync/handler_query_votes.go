@@ -16,16 +16,12 @@ func newQueryVotesHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *queryVotesHandler) ParseMessage(m message.Message, initiator peer.ID) error {
+func (handler *queryVotesHandler) ParseMessage(m message.Message, _ peer.ID) error {
 	msg := m.(*message.QueryVotesMessage)
-	handler.logger.Trace("parsing QueryVotes message", "message", msg, "initiator", initiator)
+	handler.logger.Trace("parsing QueryVotes message", "message", msg)
 
 	height, _ := handler.consMgr.HeightRound()
 	if msg.Height == height {
-		// TODO: this should be refactored
-		// if !handler.peerIsInTheCommittee(initiator) {
-		// 	return errors.Errorf(errors.ErrInvalidMessage, "peers is not in the committee")
-		// }
 		v := handler.consMgr.PickRandomVote(msg.Round)
 		if v != nil {
 			response := message.NewVoteMessage(v)
@@ -37,10 +33,6 @@ func (handler *queryVotesHandler) ParseMessage(m message.Message, initiator peer
 }
 
 func (handler *queryVotesHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	if !handler.weAreInTheCommittee() {
-		handler.logger.Debug("sending QueryVotes ignored. We are not in the committee")
-		return nil
-	}
 	bdl := bundle.NewBundle(handler.SelfID(), m)
 
 	return bdl

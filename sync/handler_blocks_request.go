@@ -95,7 +95,7 @@ func (handler *blocksRequestHandler) PrepareBundle(m message.Message) *bundle.Bu
 
 func (handler *blocksRequestHandler) respond(msg *message.BlocksResponseMessage, to peer.ID) error {
 	if msg.ResponseCode == message.ResponseCodeRejected {
-		handler.logger.Error("rejecting block request message", "message", msg,
+		handler.logger.Debug("rejecting block request message", "message", msg,
 			"to", to, "reason", msg.Reason)
 		handler.network.CloseConnection(to)
 	} else {
