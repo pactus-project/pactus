@@ -74,9 +74,9 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
 		tConfigs[i].Logger.Levels["default"] = "warn"
 		tConfigs[i].Logger.Levels["_state"] = "warn"
-		tConfigs[i].Logger.Levels["_sync"] = "warn"
+		tConfigs[i].Logger.Levels["_sync"] = "debug"
 		tConfigs[i].Logger.Levels["_consensus"] = "warn"
-		tConfigs[i].Logger.Levels["_network"] = "warn"
+		tConfigs[i].Logger.Levels["_network"] = "debug"
 		tConfigs[i].Logger.Levels["_pool"] = "warn"
 		tConfigs[i].Sync.CacheSize = 1000
 		tConfigs[i].Sync.NodeNetwork = false
