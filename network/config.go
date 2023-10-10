@@ -49,7 +49,7 @@ func DefaultConfig() *Config {
 	return &Config{
 		Listens: []string{
 			"/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888",
-			"/ip4/0.0.0.0/udp/21888/quic", "/ip6/::/udp/21888/quic",
+			"/ip4/0.0.0.0/udp/21888/quic-v1", "/ip6/::/udp/21888/quic-v1",
 		},
 		NetworkKey:    "network_key",
 		EnableNAT:     true,

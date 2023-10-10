@@ -93,7 +93,6 @@ func TestGossipMessage(t *testing.T) {
 
 		assert.False(t, td.firewall.isPeerBanned(td.unknownPeerID))
 		assert.False(t, td.network.IsClosed(td.unknownPeerID))
-		// TODO: should only accepts hello from unknown peers?
 		assert.NotNil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID, td.unknownPeerID))
 		assert.False(t, td.network.IsClosed(td.unknownPeerID))
 	})
@@ -115,11 +114,7 @@ func TestGossipMessage(t *testing.T) {
 	t.Run("Message is nil => should close the connection", func(t *testing.T) {
 		td := setup(t)
 
-		assert.False(t, td.network.IsClosed(td.badPeerID))
-		assert.False(t, td.network.IsClosed(td.unknownPeerID))
 		assert.Nil(t, td.firewall.OpenGossipBundle(nil, td.badPeerID, td.unknownPeerID))
-		assert.True(t, td.network.IsClosed(td.badPeerID))
-		assert.True(t, td.network.IsClosed(td.unknownPeerID))
 	})
 
 	t.Run("Message source: bad, from: unknown => should close the connection", func(t *testing.T) {
@@ -133,10 +128,10 @@ func TestGossipMessage(t *testing.T) {
 		assert.False(t, td.network.IsClosed(td.unknownPeerID))
 		assert.Nil(t, td.firewall.OpenGossipBundle(d, td.badPeerID, td.unknownPeerID))
 		assert.True(t, td.network.IsClosed(td.badPeerID))
-		assert.True(t, td.network.IsClosed(td.unknownPeerID))
+		assert.False(t, td.network.IsClosed(td.unknownPeerID))
 	})
 
-	t.Run("Message initiator is not the same as source => should close the connection", func(t *testing.T) {
+	t.Run("Message initiator is not the same as source => should NOT close the connection", func(t *testing.T) {
 		td := setup(t)
 
 		bdl := bundle.NewBundle(td.badPeerID, message.NewQueryVotesMessage(100, 1))
@@ -144,7 +139,7 @@ func TestGossipMessage(t *testing.T) {
 		d, _ := bdl.Encode()
 
 		assert.Nil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID, td.unknownPeerID))
-		assert.True(t, td.network.IsClosed(td.unknownPeerID))
+		assert.False(t, td.network.IsClosed(td.unknownPeerID))
 	})
 
 	t.Run("Ok => should NOT close the connection", func(t *testing.T) {

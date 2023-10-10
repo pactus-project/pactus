@@ -163,7 +163,6 @@ func (sync *synchronizer) receiveLoop() {
 			return
 
 		case e := <-sync.networkCh:
-
 			switch e.Type() {
 			case network.EventTypeGossip:
 				ge := e.(*network.GossipMessage)
@@ -297,9 +296,6 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
 
 		err := sync.network.SendTo(data, to)
 		if err != nil {
-			sync.logger.Warn("error on sending bundle",
-				"bundle", bdl, "to", to, "error", err)
-
 			return err
 		}
 		sync.logger.Info("sending bundle to a peer",
