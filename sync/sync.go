@@ -163,7 +163,6 @@ func (sync *synchronizer) receiveLoop() {
 			return
 
 		case e := <-sync.networkCh:
-
 			switch e.Type() {
 			case network.EventTypeGossip:
 				ge := e.(*network.GossipMessage)
@@ -171,7 +170,7 @@ func (sync *synchronizer) receiveLoop() {
 				err := sync.processIncomingBundle(bdl)
 				if err != nil {
 					sync.logger.Warn("error on parsing a Gossip bundle",
-						"initiator", bdl.Initiator, "bundle", bdl, "error", err)
+						"from", ge.From, "source", ge.Source, "bundle", bdl, "error", err)
 					sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
 				}
 
@@ -180,12 +179,12 @@ func (sync *synchronizer) receiveLoop() {
 				bdl := sync.firewall.OpenStreamBundle(se.Reader, se.Source)
 				if err := se.Reader.Close(); err != nil {
 					// TODO: write test for me
-					sync.logger.Warn("error on closing stream", "error", err)
+					sync.logger.Warn("error on closing stream", "error", err, "source", se.Source)
 				}
 				err := sync.processIncomingBundle(bdl)
 				if err != nil {
 					sync.logger.Warn("error on parsing a Stream bundle",
-						"initiator", bdl.Initiator, "bundle", bdl, "error", err)
+						"source", se.Source, "bundle", bdl, "error", err)
 					sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
 				}
 			case network.EventTypeConnect:
@@ -297,9 +296,6 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
 
 		err := sync.network.SendTo(data, to)
 		if err != nil {
-			sync.logger.Warn("error on sending bundle",
-				"bundle", bdl, "to", to, "error", err)
-
 			return err
 		}
 		sync.logger.Info("sending bundle to a peer",

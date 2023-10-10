@@ -97,7 +97,6 @@ func (handler *blocksRequestHandler) respond(msg *message.BlocksResponseMessage,
 	if msg.ResponseCode == message.ResponseCodeRejected {
 		handler.logger.Debug("rejecting block request message", "message", msg,
 			"to", to, "reason", msg.Reason)
-		handler.network.CloseConnection(to)
 	} else {
 		handler.logger.Info("responding block request message", "message", msg,
 			"to", to)
