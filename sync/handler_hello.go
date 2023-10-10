@@ -26,6 +26,11 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 	msg := m.(*message.HelloMessage)
 	handler.logger.Trace("parsing Hello message", "message", msg)
 
+	handler.logger.Debug("updating peer info",
+		"pid", msg.PeerID,
+		"moniker", msg.Moniker,
+		"services", msg.Services)
+
 	handler.peerSet.UpdateInfo(initiator,
 		msg.Moniker,
 		msg.Agent,
@@ -34,14 +39,16 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 
 	if msg.PeerID != initiator {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
-			fmt.Sprintf("peer ID is not matched, expected: %v, got: %v", msg.PeerID, initiator))
+			fmt.Sprintf("peer ID is not matched, expected: %v, got: %v",
+				msg.PeerID, initiator))
 
 		return handler.acknowledge(response, initiator)
 	}
 
 	if msg.GenesisHash != handler.state.Genesis().Hash() {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
-			fmt.Sprintf("peer ID is not matched, expected: %v, got: %v", msg.PeerID, initiator))
+			fmt.Sprintf("invalid genesis hash, expected: %v, got: %v",
+				handler.state.Genesis().Hash(), msg.GenesisHash))
 
 		return handler.acknowledge(response, initiator)
 	}
@@ -52,11 +59,6 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 
 		return handler.acknowledge(response, initiator)
 	}
-
-	handler.logger.Debug("updating peer info",
-		"pid", initiator,
-		"moniker", msg.Moniker,
-		"services", msg.Services)
 
 	handler.peerSet.UpdateHeight(initiator, msg.Height, msg.BlockHash)
 	handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeConnected)
@@ -75,8 +77,9 @@ func (handler *helloHandler) acknowledge(msg *message.HelloAckMessage, to peer.I
 	if msg.ResponseCode == message.ResponseCodeRejected {
 		handler.peerSet.UpdateStatus(to, peerset.StatusCodeBanned)
 
-		handler.logger.Warn("rejecting hello message", "message", msg,
+		handler.logger.Debug("rejecting hello message", "message", msg,
 			"to", to, "reason", msg.Reason)
+		handler.network.CloseConnection(to)
 	} else {
 		handler.logger.Info("acknowledging hello message", "message", msg,
 			"to", to)

@@ -36,10 +36,6 @@ func (handler *blockAnnounceHandler) ParseMessage(m message.Message, initiator p
 }
 
 func (handler *blockAnnounceHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	if !handler.weAreInTheCommittee() {
-		handler.logger.Debug("sending BlockAnnounce ignored. We are not in the committee")
-		return nil
-	}
 	bdl := bundle.NewBundle(handler.SelfID(), m)
 
 	return bdl

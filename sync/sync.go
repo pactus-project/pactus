@@ -368,29 +368,6 @@ func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 	})
 }
 
-// // peerIsInTheCommittee checks if the peer is a member of the committee
-// // at the current height.
-// func (sync *synchronizer) peerIsInTheCommittee(pid peer.ID) bool {
-// 	p := sync.peerSet.GetPeer(pid)
-// 	if !p.IsKnownOrTrusty() {
-// 		return false
-// 	}
-
-// 	for _, key := range p.ConsensusKeys {
-// 		if sync.state.IsInCommittee(key.ValidatorAddress()) {
-// 			return true
-// 		}
-// 	}
-
-// 	return false
-// }
-
-// weAreInTheCommittee checks if one of the validators is a member of the committee
-// at the current height.
-func (sync *synchronizer) weAreInTheCommittee() bool {
-	return sync.consMgr.HasActiveInstance()
-}
-
 func (sync *synchronizer) tryCommitBlocks() error {
 	height := sync.state.LastBlockHeight() + 1
 	for {

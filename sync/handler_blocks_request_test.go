@@ -111,7 +111,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		})
 	})
 
-	t.Run("Respond error", func(t *testing.T) {
+	t.Run("Send error", func(t *testing.T) {
 		td.network.SendError = fmt.Errorf("send error")
 
 		msg := message.NewBlocksRequestMessage(sid, 1, 2)
