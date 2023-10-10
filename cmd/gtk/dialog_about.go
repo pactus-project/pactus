@@ -18,7 +18,7 @@ var (
 	pactusLogo []byte
 )
 
-func showAboutDialog() {
+func aboutDialog() *gtk.AboutDialog {
 	builder, err := gtk.BuilderNewFromString(string(uiAboutDialog))
 	fatalErrorCheck(err)
 
@@ -30,5 +30,5 @@ func showAboutDialog() {
 	dlg.SetLogo(pxLogo)
 	dlg.SetVersion(version.Version())
 
-	dlg.Show()
+	return dlg
 }

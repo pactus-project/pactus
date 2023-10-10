@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
@@ -67,7 +68,34 @@ func main() {
 	// Connect function to application activate event
 	app.Connect("activate", func() {
 		log.Println("application activate")
-		start(workingDir, app)
+
+		// Show about dialog as splash screen
+		splashDlg := aboutDialog()
+		splashDlg.SetDecorated(false)
+		splashDlg.SetResizable(false)
+		splashDlg.SetPosition(gtk.WIN_POS_CENTER)
+		splashDlg.SetTypeHint(gdk.WINDOW_TYPE_HINT_SPLASHSCREEN)
+
+		gtk.WindowSetAutoStartupNotification(false)
+		splashDlg.ShowAll()
+		gtk.WindowSetAutoStartupNotification(true)
+
+		app.AddWindow(splashDlg)
+
+		// This might also force GTK to draw the splash screen
+		for gtk.EventsPending() {
+			gtk.MainIteration()
+		}
+
+		// Running the start-up logic in a separate goroutine
+		glib.TimeoutAdd(uint(100), func() bool {
+
+			start(workingDir, app)
+			splashDlg.Destroy()
+
+			// Ensures the function is not called again
+			return false
+		})
 	})
 
 	// Connect function to application shutdown event, this is not required.
@@ -92,7 +120,6 @@ func start(workingDir string, app *gtk.Application) {
 		}
 		return getWalletPassword(wallet)
 	}
-
 	node, wallet, err := cmd.StartNode(workingDir, passwordFetcher)
 	fatalErrorCheck(err)
 
@@ -109,7 +136,7 @@ func start(workingDir string, app *gtk.Application) {
 	win := buildMainWindow(nodeModel, walletModel)
 
 	// Show the Window and all of its components.
-	win.Show()
+	win.ShowAll()
 
 	walletModel.rebuildModel()
 
