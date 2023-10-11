@@ -121,9 +121,7 @@ func (b *bootstrap) checkConnectivity() {
 				continue
 			}
 
-			if err := b.host.Connect(b.ctx, pi); err != nil {
-				b.logger.Error("error trying to connect to bootstrap node", "info", pi, "error", err)
-			}
+			ConnectAsync(b.ctx, b.host, pi, b.logger)
 		}
 
 		b.logger.Debug("expanding the connections")
