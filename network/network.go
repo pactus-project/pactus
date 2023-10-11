@@ -197,10 +197,12 @@ func (n *network) Start() error {
 	n.gossip.Start()
 	n.stream.Start()
 
-	for _, addr := range n.config.RelayAddrs {
-		if err := dialRelayNode(n.ctx, n.host, addr); err != nil {
-			n.logger.Error("could not dial relay node", "relay", addr)
+	for _, relayAddr := range n.config.RelayAddrs {
+		addrInfo, err := MakeAddressInfo(relayAddr)
+		if err != nil {
+			return err
 		}
+		ConnectAsync(n.ctx, n.host, *addrInfo, n.logger)
 	}
 
 	n.logger.Info("network started", "addr", n.host.Addrs())
