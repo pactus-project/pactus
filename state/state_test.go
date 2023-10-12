@@ -349,17 +349,13 @@ func TestUpdateLastCertificate(t *testing.T) {
 	td.commitBlockForAllStates(t, blk, cert)
 
 	invValKey := td.RandValKey()
-	notActiveValKey := td.RandValKey()
-	valNum := int32(4) // [0..3] are in the committee now
-	val := validator.NewValidator(notActiveValKey.PublicKey(), valNum)
-	td.state1.store.UpdateValidator(val)
 
 	v1 := vote.NewPrepareVote(blk.Hash(), cert.Height(), cert.Round(), td.valKey3.Address())
 	v2 := vote.NewPrecommitVote(blk.Hash(), cert.Height()+1, cert.Round(), td.valKey3.Address())
 	v3 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round()-1, td.valKey3.Address())
 	v4 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), td.valKey4.Address())
 	v5 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), invValKey.Address())
-	v6 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), notActiveValKey.Address())
+	v6 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), td.valKey1.Address())
 	v7 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), td.valKey4.Address())
 
 	td.HelperSignVote(td.valKey3, v1)
@@ -367,20 +363,21 @@ func TestUpdateLastCertificate(t *testing.T) {
 	td.HelperSignVote(td.valKey3, v3)
 	td.HelperSignVote(invValKey, v4)
 	td.HelperSignVote(invValKey, v5)
-	td.HelperSignVote(notActiveValKey, v6)
+	td.HelperSignVote(td.valKey1, v6)
 	td.HelperSignVote(td.valKey4, v7)
 
 	tests := []struct {
-		vote *vote.Vote
-		err  error
+		vote   *vote.Vote
+		err    error
+		reason string
 	}{
-		{v1, InvalidVoteForCertificateError{Vote: v1}},
-		{v2, InvalidVoteForCertificateError{Vote: v2}},
-		{v3, InvalidVoteForCertificateError{Vote: v3}},
-		{v4, crypto.ErrInvalidSignature},
-		{v5, store.ErrNotFound},
-		{v6, InvalidVoteForCertificateError{Vote: v6}},
-		{v7, nil},
+		{v1, InvalidVoteForCertificateError{Vote: v1}, "invalid vote type"},
+		{v2, InvalidVoteForCertificateError{Vote: v2}, "invalid height"},
+		{v3, InvalidVoteForCertificateError{Vote: v3}, "invalid round"},
+		{v4, crypto.ErrInvalidSignature, "invalid signature"},
+		{v5, store.ErrNotFound, "unknown validator"},
+		{v6, InvalidVoteForCertificateError{Vote: v6}, "not absentee"},
+		{v7, nil, "ok"},
 	}
 
 	for i, test := range tests {

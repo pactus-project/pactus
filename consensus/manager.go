@@ -19,6 +19,7 @@ type manager struct {
 	// the current block's consensus is complete.
 	upcomingVotes     []*vote.Vote         // Map to cache votes for future block heights
 	upcomingProposals []*proposal.Proposal // Map to cache proposals for future block heights
+	state             state.Facade
 }
 
 // NewManager creates a new manager instance that manages a set of consensus instances,
@@ -35,6 +36,7 @@ func NewManager(
 		instances:         make([]Consensus, len(valKeys)),
 		upcomingVotes:     make([]*vote.Vote, 0),
 		upcomingProposals: make([]*proposal.Proposal, 0),
+		state:             state,
 	}
 	mediatorConcrete := newConcreteMediator()
 
@@ -60,7 +62,7 @@ func (mgr *manager) Start() error {
 func (mgr *manager) Stop() {
 }
 
-// Instances returns all consensus instances that are read-only and
+// Instances return all consensus instances that are read-only and
 // can be safely accessed without modifying their state.
 func (mgr *manager) Instances() []Reader {
 	readers := make([]Reader, len(mgr.instances))
@@ -76,7 +78,7 @@ func (mgr *manager) PickRandomVote(round int16) *vote.Vote {
 	return cons.PickRandomVote(round)
 }
 
-// RoundProposal returns the proposal for a specific round from a random consensus instance.
+// Proposal returns the proposal for a specific round from a random consensus instance.
 func (mgr *manager) Proposal() *proposal.Proposal {
 	cons := mgr.getBestInstance()
 	return cons.Proposal()
@@ -154,7 +156,7 @@ func (mgr *manager) AddVote(v *vote.Vote) {
 	curHeight, _ := inst.HeightRound()
 	switch {
 	case v.Height() < curHeight:
-		// discard the old vote
+		_ = mgr.state.UpdateLastCertificate(v)
 
 	case v.Height() > curHeight:
 		mgr.upcomingVotes = append(mgr.upcomingVotes, v)

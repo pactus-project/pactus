@@ -103,6 +103,18 @@ func (cert *Certificate) Hash() hash.Hash {
 	return hash.CalcHash(w.Bytes())
 }
 
+func (cert *Certificate) Clone() *Certificate {
+	return &Certificate{
+		data: certificateData{
+			Height:     cert.Height(),
+			Round:      cert.Round(),
+			Committers: cert.Committers(),
+			Absentees:  cert.Absentees(),
+			Signature:  cert.Signature(),
+		},
+	}
+}
+
 // SerializeSize returns the number of bytes it would take to serialize the block.
 func (cert *Certificate) SerializeSize() int {
 	sz := 6 + // height (4) + round(2)

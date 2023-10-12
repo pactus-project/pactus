@@ -7,6 +7,8 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 )
 
+var queryVoteInitialTimeout = 2 * time.Second
+
 type cpPreVoteState struct {
 	*changeProposer
 }
@@ -31,7 +33,7 @@ func (s *cpPreVoteState) decide() {
 			just := &vote.JustInitOne{}
 			s.signAddCPPreVote(hash.UndefHash, s.cpRound, 1, just)
 		}
-		s.scheduleTimeout(2*time.Second, s.height, s.round, tickerTargetQueryVotes)
+		s.scheduleTimeout(queryVoteInitialTimeout, s.height, s.round, tickerTargetQueryVotes)
 	} else {
 		cpMainVotes := s.log.CPMainVoteVoteSet(s.round)
 		if cpMainVotes.HasAnyVoteFor(s.cpRound-1, vote.CPValueOne) {
