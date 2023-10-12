@@ -3,13 +3,14 @@ package certificate
 import (
 	"bytes"
 	"fmt"
+	"io"
+
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
-	"io"
 )
 
 type Certificate struct {
