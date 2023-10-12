@@ -123,12 +123,12 @@ func (st *state) tryLoadLastInfo() error {
 	}
 
 	logger.Debug("try to restore the last state")
-	committee, err := st.lastInfo.RestoreLastInfo(st.store, st.params.CommitteeSize)
+	committeeInstance, err := st.lastInfo.RestoreLastInfo(st.store, st.params.CommitteeSize)
 	if err != nil {
 		return err
 	}
 
-	st.committee = committee
+	st.committee = committeeInstance
 
 	logger.Info("last state restored",
 		"last height", st.lastInfo.BlockHeight(),
@@ -153,11 +153,11 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		return err
 	}
 
-	committee, err := committee.NewCommittee(vals, st.params.CommitteeSize, vals[0].Address())
+	committeeInstance, err := committee.NewCommittee(vals, st.params.CommitteeSize, vals[0].Address())
 	if err != nil {
 		return err
 	}
-	st.committee = committee
+	st.committee = committeeInstance
 	st.lastInfo.UpdateBlockTime(genDoc.GenesisTime())
 
 	return nil
@@ -285,19 +285,24 @@ func (st *state) UpdateLastCertificate(v *vote.Vote) error {
 		return err
 	}
 
+	if !util.Contains(lastCert.Absentees(), val.Number()) {
+		return InvalidVoteForCertificateError{
+			Vote: v,
+		}
+	}
+
 	err = v.Verify(val.PublicKey())
 	if err != nil {
 		return err
 	}
 
-	if util.Contains(lastCert.Absentees(), val.Number()) {
-		lastCert.AddSignature(val.Number(), v.Signature())
-		st.lastInfo.UpdateCertificate(lastCert)
+	// prevent race condition
+	cloneLastCert := lastCert.Clone()
 
-		return nil
-	}
+	cloneLastCert.AddSignature(val.Number(), v.Signature())
+	st.lastInfo.UpdateCertificate(cloneLastCert)
 
-	return InvalidVoteForCertificateError{Vote: v}
+	return nil
 }
 
 func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee int64) *tx.Tx {
@@ -318,7 +323,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 	txs := st.txPool.PrepareBlockTransactions()
 	txs = util.Trim(txs, maxTransactionsPerBlock-1)
 	for i := 0; i < txs.Len(); i++ {
-		// Only one subsidy transaction per block
+		// Only one subsidy transaction per blk
 		if txs[i].IsSubsidyTx() {
 			st.logger.Error("found duplicated subsidy transaction", "tx", txs[i])
 			st.txPool.RemoveTx(txs[i].ID())
@@ -343,7 +348,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 	txs.Prepend(subsidyTx)
 	preSeed := st.lastInfo.SortitionSeed()
 
-	block := block.MakeBlock(
+	blk := block.MakeBlock(
 		st.params.BlockVersion,
 		st.proposeNextBlockTime(),
 		txs,
@@ -353,7 +358,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		preSeed.GenerateNext(valKey.PrivateKey()),
 		valKey.Address())
 
-	return block, nil
+	return blk, nil
 }
 
 func (st *state) ValidateBlock(blk *block.Block) error {
@@ -389,7 +394,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 	}
 
 	// There are two modules that can commit a block: Consensus and Sync.
-	// Consensus engine is ours, we have full control over that and we know when
+	// The Consensus engine is ours, we have full control over that, and we know when
 	// and why a block should be committed.
 	// On the other hand, Sync module receives new blocks from the network and
 	// tries to commit them.
@@ -453,7 +458,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 	st.evaluateSortition()
 
 	// -----------------------------------
-	// At this point we can assign new sandbox to tx pool
+	// At this point we can assign a new sandbox to tx pool
 	st.txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 
 	// -----------------------------------
@@ -635,11 +640,11 @@ func (st *state) CommittedBlock(height uint32) *store.CommittedBlock {
 }
 
 func (st *state) CommittedTx(id tx.ID) *store.CommittedTx {
-	tx, err := st.store.Transaction(id)
+	transaction, err := st.store.Transaction(id)
 	if err != nil {
 		st.logger.Trace("searching transaction in local store failed", "id", id, "error", err)
 	}
-	return tx
+	return transaction
 }
 
 func (st *state) BlockHash(height uint32) hash.Hash {
@@ -704,17 +709,17 @@ func (st *state) publishEvents(height uint32, blk *block.Block) {
 	st.eventCh <- blockEvent
 
 	for i := 1; i < blk.Transactions().Len(); i++ {
-		tx := blk.Transactions().Get(i)
+		transaction := blk.Transactions().Get(i)
 
-		accChangeEvent := event.CreateAccountChangeEvent(tx.Payload().Signer(), height)
+		accChangeEvent := event.CreateAccountChangeEvent(transaction.Payload().Signer(), height)
 		st.eventCh <- accChangeEvent
 
-		if tx.Payload().Receiver() != nil {
-			accChangeEvent := event.CreateAccountChangeEvent(*tx.Payload().Receiver(), height)
+		if transaction.Payload().Receiver() != nil {
+			accChangeEvent := event.CreateAccountChangeEvent(*transaction.Payload().Receiver(), height)
 			st.eventCh <- accChangeEvent
 		}
 
-		TxEvent := event.CreateTransactionEvent(tx.ID(), height)
+		TxEvent := event.CreateTransactionEvent(transaction.ID(), height)
 		st.eventCh <- TxEvent
 	}
 }

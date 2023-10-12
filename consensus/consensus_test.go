@@ -71,6 +71,7 @@ func (o *OverrideStringer) String() string {
 
 func setup(t *testing.T) *testData {
 	t.Helper()
+	queryVoteInitialTimeout = 2 * time.Hour
 
 	return setupWithSeed(t, testsuite.GenerateSeed())
 }
@@ -121,7 +122,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		genDoc:       genDoc,
 		consMessages: consMessages,
 	}
-	broadcaster := func(sender crypto.Address, msg message.Message) {
+	broadcasterFunc := func(sender crypto.Address, msg message.Message) {
 		fmt.Printf("received a message %s: %s\n", msg.Type(), msg.String())
 		td.consMessages = append(td.consMessages, consMessage{
 			sender:  sender,
@@ -129,13 +130,13 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		})
 	}
 	td.consX = newConsensus(testConfig(), stX, valKeys[tIndexX],
-		valKeys[tIndexX].PublicKey().AccountAddress(), broadcaster, newConcreteMediator())
+		valKeys[tIndexX].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
 	td.consY = newConsensus(testConfig(), stY, valKeys[tIndexY],
-		valKeys[tIndexY].PublicKey().AccountAddress(), broadcaster, newConcreteMediator())
+		valKeys[tIndexY].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
 	td.consB = newConsensus(testConfig(), stB, valKeys[tIndexB],
-		valKeys[tIndexB].PublicKey().AccountAddress(), broadcaster, newConcreteMediator())
+		valKeys[tIndexB].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
 	td.consP = newConsensus(testConfig(), stP, valKeys[tIndexP],
-		valKeys[tIndexP].PublicKey().AccountAddress(), broadcaster, newConcreteMediator())
+		valKeys[tIndexP].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
 
 	// -------------------------------
 	// Better logging during testing
