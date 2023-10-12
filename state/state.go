@@ -272,6 +272,9 @@ func (st *state) UpdateLastCertificate(v *vote.Vote) error {
 	defer st.lk.Unlock()
 
 	lastCert := st.lastInfo.Certificate()
+	// prevent race condition
+	cloneLastCert := lastCert.Clone()
+
 	if v.Type() != vote.VoteTypePrecommit ||
 		v.Height() != lastCert.Height() ||
 		v.Round() != lastCert.Round() {
@@ -296,8 +299,8 @@ func (st *state) UpdateLastCertificate(v *vote.Vote) error {
 		return err
 	}
 
-	lastCert.AddSignature(val.Number(), v.Signature())
-	st.lastInfo.UpdateCertificate(lastCert)
+	cloneLastCert.AddSignature(val.Number(), v.Signature())
+	st.lastInfo.UpdateCertificate(cloneLastCert)
 
 	return nil
 }

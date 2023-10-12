@@ -308,3 +308,13 @@ func TestAddSignature(t *testing.T) {
 	assert.Empty(t, cert.Absentees())
 	assert.NoError(t, cert.Validate(blockHeight, []*validator.Validator{val1, val2, val3, val4}, signBytes))
 }
+
+func TestClone(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	cert1 := ts.GenerateTestCertificate(ts.RandHeight())
+	cert2 := cert1.Clone()
+
+	cert1.AddSignature(cert1.Absentees()[0], ts.RandBLSSignature())
+	assert.NotEqual(t, cert1, cert2)
+}

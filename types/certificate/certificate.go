@@ -3,14 +3,13 @@ package certificate
 import (
 	"bytes"
 	"fmt"
-	"io"
-
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
+	"io"
 )
 
 type Certificate struct {
@@ -101,6 +100,18 @@ func (cert *Certificate) Hash() hash.Hash {
 	}
 
 	return hash.CalcHash(w.Bytes())
+}
+
+func (cert *Certificate) Clone() *Certificate {
+	return &Certificate{
+		data: certificateData{
+			Height:     cert.Height(),
+			Round:      cert.Round(),
+			Committers: cert.Committers(),
+			Absentees:  cert.Absentees(),
+			Signature:  cert.Signature(),
+		},
+	}
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the block.
