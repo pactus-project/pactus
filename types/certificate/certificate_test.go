@@ -315,6 +315,6 @@ func TestClone(t *testing.T) {
 	cert1 := ts.GenerateTestCertificate(ts.RandHeight())
 	cert2 := cert1.Clone()
 
-	cert1.AddSignature(cert1.Absentees()[0], ts.RandBLSSignature())
+	cert2.AddSignature(cert2.Absentees()[0], ts.RandBLSSignature())
 	assert.NotEqual(t, cert1, cert2)
 }
