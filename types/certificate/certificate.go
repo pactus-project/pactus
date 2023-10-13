@@ -104,15 +104,21 @@ func (cert *Certificate) Hash() hash.Hash {
 }
 
 func (cert *Certificate) Clone() *Certificate {
-	return &Certificate{
+	cloned := &Certificate{
 		data: certificateData{
 			Height:     cert.Height(),
 			Round:      cert.Round(),
-			Committers: cert.Committers(),
-			Absentees:  cert.Absentees(),
-			Signature:  cert.Signature(),
+			Committers: make([]int32, len(cert.data.Committers)),
+			Absentees:  make([]int32, len(cert.data.Absentees)),
+			Signature:  new(bls.Signature),
 		},
 	}
+
+	copy(cloned.data.Committers, cert.data.Committers)
+	copy(cloned.data.Absentees, cert.data.Absentees)
+	*cloned.data.Signature = *cert.data.Signature
+
+	return cloned
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the block.
