@@ -22,12 +22,12 @@ func DefaultParams() Params {
 	return Params{
 		BlockVersion:              1,
 		BlockIntervalInSecond:     10,
-		CommitteeSize:             21,
+		CommitteeSize:             51,
 		BlockReward:               1000000000,
 		TransactionToLiveInterval: 8640,   // one day
 		BondInterval:              360,    // one hour
 		UnbondInterval:            181440, // 21 days
-		SortitionInterval:         7,
+		SortitionInterval:         17,
 		FeeFraction:               0.0001,
 		MinimumFee:                1000,
 		MaximumFee:                1000000,
