@@ -124,13 +124,13 @@ func SaveTestnetConfig(path string, numValidators int) error {
 	conf.Network.EnableRelay = true
 	conf.Network.RelayAddrs = []string{
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
-		"/ip4/139.162.153.10/udp/4002/quic-v1/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
+		"/ip4/139.162.153.10/udp/4002/quic/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip6/2a01:7e01::f03c:93ff:fed2:84c5/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
-		"/ip6/2a01:7e01::f03c:93ff:fed2:84c5/udp/4002/quic-v1/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
+		"/ip6/2a01:7e01::f03c:93ff:fed2:84c5/udp/4002/quic/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/188.121.102.178/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
-		"/ip4/188.121.102.178/udp/4002/quic-v1/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
+		"/ip4/188.121.102.178/udp/4002/quic/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 		"/ip6/2a07:3900:1:1::113/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
-		"/ip6/2a07:3900:1:1::113/udp/4002/quic-v1/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
+		"/ip6/2a07:3900:1:1::113/udp/4002/quic/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "[::]:50052"
