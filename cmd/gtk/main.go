@@ -89,7 +89,6 @@ func main() {
 
 		// Running the start-up logic in a separate goroutine
 		glib.TimeoutAdd(uint(100), func() bool {
-
 			start(workingDir, app)
 			splashDlg.Destroy()
 
