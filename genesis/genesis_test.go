@@ -54,8 +54,8 @@ func TestGenesisTestNet(t *testing.T) {
 
 	assert.Equal(t, g.Accounts()[crypto.TreasuryAddress].Balance(), int64(21e15))
 
-	genTime, _ := time.Parse("2006-01-02", "2023-09-28")
-	expected, _ := hash.FromString("7d360d11517748531bd3ce22937615d6629c3972d56d21e848549b3e762e342c")
+	genTime, _ := time.Parse("2006-01-02", "2023-10-15")
+	expected, _ := hash.FromString("da602b28f75902c35e3bafeb5733a686c94d5508c92aae68cbd9b37d81cfccf4")
 	assert.Equal(t, g.Hash(), expected)
 	assert.Equal(t, g.GenesisTime(), genTime)
 	assert.Equal(t, g.Params().BondInterval, uint32(120))

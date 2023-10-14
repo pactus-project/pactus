@@ -1,14 +1,14 @@
 {
-    "genesis_time": "2023-09-28T00:00:00Z",
+    "genesis_time": "2023-10-15T00:00:00Z",
     "params": {
         "block_version": 1,
         "block_interval_in_second": 10,
-        "committee_size": 7,
+        "committee_size": 51,
         "block_reward": 1000000000,
         "transaction_to_live_interval": 2880,
         "bond_interval": 120,
         "unbond_interval": 60480,
-        "sortition_interval": 7,
+        "sortition_interval": 17,
         "fee_fraction": 0.0001,
         "minimum_fee": 1000,
         "maximum_fee": 1000000,
