@@ -106,7 +106,7 @@ func (mw *mainWindow) onMenuItemActivateWebsite(_ *gtk.MenuItem) {
 }
 
 func (mw *mainWindow) onMenuItemActivateExplorer(_ *gtk.MenuItem) {
-	if err := openURLInBrowser("https://pactusscan.com/"); err != nil {
+	if err := openURLInBrowser("https://pacscan.org/"); err != nil {
 		fatalErrorCheck(err)
 	}
 }
