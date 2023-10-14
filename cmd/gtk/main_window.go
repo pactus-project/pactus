@@ -91,7 +91,8 @@ func (mw *mainWindow) onAboutGtk() {
 }
 
 func (mw *mainWindow) onAbout() {
-	showAboutDialog()
+	dlg := aboutDialog()
+	dlg.ShowAll()
 }
 
 func (mw *mainWindow) OnTransactionTransfer() {
@@ -105,7 +106,7 @@ func (mw *mainWindow) onMenuItemActivateWebsite(_ *gtk.MenuItem) {
 }
 
 func (mw *mainWindow) onMenuItemActivateExplorer(_ *gtk.MenuItem) {
-	if err := openURLInBrowser("https://pactusscan.com/"); err != nil {
+	if err := openURLInBrowser("https://pacscan.org/"); err != nil {
 		fatalErrorCheck(err)
 	}
 }
