@@ -64,12 +64,14 @@ sed -E -i 's/\(#([0-9]+)\)/([#\1](https:\/\/github.com\/pactus-project\/pactus\/
 
 6. Create release PR
 
-Create a new PR against the `main` branch:
+Create a new PR against the `main` branch.
+We use [GiyhUb CLI](https://github.com/cli/cli/) to create the PR, but you can create it manually.
 
 ```bash
 git checkout -b releasing_${CUR_VER}
 git commit -a -m "chore: releasing version ${CUR_VER}"
 git push origin HEAD
+gh pr create --title "chore: releasing version ${CUR_VER}" --body "Releasing version ${CUR_VER}"
 ```
 
 Wait for the PR to be approved and merged into the `main` branch.
@@ -111,6 +113,7 @@ Create a new PR against `main` branch:
 git checkout -b bumping_${NEXT_VER}
 git commit -a -m "chore: bumping version to ${NEXT_VER}"
 git push origin HEAD
+gh pr create --title "chore: bumping version to ${NEXT_VER}" --body "Bumping version to ${NEXT_VER}"
 ```
 
 Wait for the PR to be approved and merged into the `main` branch.
