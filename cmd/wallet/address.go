@@ -76,12 +76,33 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(newAddressCmd)
 
+	blsAddressOption := "bls_account"
+	validatorAddressOption := "validator"
+
+	addressType := newAddressCmd.Flags().String("address_type",
+		blsAddressOption, "Address type to create")
+
 	newAddressCmd.Run = func(_ *cobra.Command, _ []string) {
+		var addr string
+		var err error
+
 		label := cmd.PromptInput("Label")
 		wallet, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
-		addr, err := wallet.NewBLSAccountAddress(label)
+		if *addressType != blsAddressOption || *addressType != validatorAddressOption {
+			cmd.PrintErrorMsgf("Invalid address type. Supported address types are 'validator' and 'bls_account'")
+			return
+		}
+
+		if *addressType == blsAddressOption {
+			addr, err = wallet.NewBLSAccountAddress(label)
+		}
+
+		if *addressType == validatorAddressOption {
+			addr, err = wallet.NewValidatorAddress(label)
+		}
+
 		cmd.FatalErrorCheck(err)
 
 		err = wallet.Save()

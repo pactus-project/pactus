@@ -12,6 +12,7 @@ var (
 	pathOpt       *string
 	offlineOpt    *bool
 	serverAddrOpt *string
+	walletAddrOpt *string
 )
 
 func addPasswordOption(c *cobra.Command) *string {
@@ -53,6 +54,7 @@ func main() {
 	pathOpt = rootCmd.PersistentFlags().String("path", "default_wallet", "the path to the wallet file")
 	offlineOpt = rootCmd.PersistentFlags().Bool("offline", false, "offline mode")
 	serverAddrOpt = rootCmd.PersistentFlags().String("server", "", "server gRPC address")
+	walletAddrOpt = rootCmd.PersistentFlags().String("address_type", "", "type of address")
 
 	buildCreateCmd(rootCmd)
 	buildRecoverCmd(rootCmd)
