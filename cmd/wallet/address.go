@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util"
+	w "github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
 
@@ -76,11 +77,8 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(newAddressCmd)
 
-	blsAddressOption := "bls_account"
-	validatorAddressOption := "validator"
-
 	addressType := newAddressCmd.Flags().String("address_type",
-		blsAddressOption, "Address type to create")
+		w.AddressTypeBLSAccount.String(), "Address type to create")
 
 	newAddressCmd.Run = func(_ *cobra.Command, _ []string) {
 		var addr string
@@ -90,16 +88,19 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		wallet, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
-		if *addressType != blsAddressOption || *addressType != validatorAddressOption {
-			cmd.PrintErrorMsgf("Invalid address type. Supported address types are 'validator' and 'bls_account'")
+		isForBLSAccount := *addressType == w.AddressTypeBLSAccount.String()
+		isForValidatorAccount := *addressType == w.AddressTypeValidator.String()
+
+		if !isForBLSAccount || !isForValidatorAccount {
+			cmd.PrintErrorMsgf("Invalid address type. Supported address types are '%s' and '%s'", w.AddressTypeBLSAccount, w.AddressTypeValidator)
 			return
 		}
 
-		if *addressType == blsAddressOption {
+		if isForBLSAccount {
 			addr, err = wallet.NewBLSAccountAddress(label)
 		}
 
-		if *addressType == validatorAddressOption {
+		if isForValidatorAccount {
 			addr, err = wallet.NewValidatorAddress(label)
 		}
 

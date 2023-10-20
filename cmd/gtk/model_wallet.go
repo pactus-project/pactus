@@ -85,8 +85,16 @@ func (model *walletModel) rebuildModel() {
 	}()
 }
 
-func (model *walletModel) createAddress() error {
-	address, err := model.wallet.NewBLSAccountAddress("")
+func (model *walletModel) createAddress(accountType wallet.AddressType) error {
+	var address string
+	var err error
+
+	if accountType == wallet.AddressTypeBLSAccount {
+		address, err = model.wallet.NewBLSAccountAddress("")
+	} else {
+		address, err = model.wallet.NewValidatorAddress("")
+	}
+
 	if err != nil {
 		return err
 	}
