@@ -133,7 +133,7 @@ func (ts *TestSuite) RandIntNonZero(max int) int {
 	return ts.RandInt(max) + 1
 }
 
-// RandHeight returns a random number between [1,000, 1,000,000] for block height.
+// RandHeight returns a random number between [1000, 1000000] for block height.
 func (ts *TestSuite) RandHeight() uint32 {
 	return ts.RandUint32NonZero(1e6-1000) + 1000
 }
