@@ -82,6 +82,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Sync.NodeNetwork = false
 		tConfigs[i].Sync.Firewall.Enabled = false
 		tConfigs[i].Network.EnableMdns = true
+		tConfigs[i].Network.Bootstrapper = true
 		tConfigs[i].Network.NetworkKey = util.TempFilePath()
 		tConfigs[i].Network.Listens = []string{"/ip4/127.0.0.1/tcp/0", "/ip4/127.0.0.1/udp/0/quic-v1"}
 		tConfigs[i].Network.Bootstrap.Addresses = []string{}

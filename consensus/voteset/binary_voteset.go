@@ -27,10 +27,9 @@ func newRoundVotes() *roundVotes {
 	}
 }
 
-func (bs *roundVotes) addVote(v *vote.Vote, power int64) {
-	vb := bs.voteBoxes[v.CPValue()]
+func (rv *roundVotes) addVote(v *vote.Vote, power int64) {
+	vb := rv.voteBoxes[v.CPValue()]
 	vb.addVote(v, power)
-	bs.votedPower += power
 }
 
 type BinaryVoteSet struct {
@@ -97,6 +96,7 @@ func (vs *BinaryVoteSet) AddVote(v *vote.Vote) (bool, error) {
 		}
 	} else {
 		roundVotes.allVotes[v.Signer()] = v
+		roundVotes.votedPower += power
 	}
 
 	roundVotes.addVote(v, power)
