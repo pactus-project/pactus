@@ -91,8 +91,8 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		isForBLSAccount := *addressType == w.AddressTypeBLSAccount.String()
 		isForValidatorAccount := *addressType == w.AddressTypeValidator.String()
 
-		if !isForBLSAccount || !isForValidatorAccount {
-			cmd.PrintErrorMsgf("Invalid address type. Supported address types are '%s' and '%s'", w.AddressTypeBLSAccount, w.AddressTypeValidator)
+		if !isForBLSAccount && !isForValidatorAccount {
+			cmd.PrintErrorMsgf("Invalid address type '%s'. Supported address types are '%s' and '%s'", *addressType, w.AddressTypeBLSAccount, w.AddressTypeValidator)
 			return
 		}
 
