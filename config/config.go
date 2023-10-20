@@ -98,6 +98,7 @@ func SaveMainnetConfig(path string, numValidators int) error {
 	return util.WriteFile(path, []byte(conf))
 }
 
+//nolint:all
 func SaveTestnetConfig(path string, numValidators int) error {
 	conf := DefaultConfig()
 	conf.Node.NumValidators = numValidators
@@ -107,30 +108,25 @@ func SaveTestnetConfig(path string, numValidators int) error {
 	}
 	conf.Network.Bootstrap.Addresses = []string{
 		"/ip4/94.101.184.118/tcp/21777/p2p/12D3KooWCwQZt8UriVXobQHPXPR8m83eceXVoeT6brPNiBHomebc",
-		"/ip4/94.101.184.118/udp/21777/quic-v1/p2p/12D3KooWCwQZt8UriVXobQHPXPR8m83eceXVoeT6brPNiBHomebc",
 		"/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
-		"/ip4/172.104.46.145/udp/21777/quic-v1/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
-		"/ip6/2400:8901::f03c:93ff:fe1c:c3ec/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
-		"/ip6/2400:8901::f03c:93ff:fe1c:c3ec/udp/21777/quic-v1/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
 		"/ip4/13.115.190.71/tcp/21777/p2p/12D3KooWBGNEH8NqdK1UddSnPV1yRHGLYpaQUcnujC24s7YNWPiq",
-		"/ip4/13.115.190.71/udp/21777/quic-v1/p2p/12D3KooWBGNEH8NqdK1UddSnPV1yRHGLYpaQUcnujC24s7YNWPiq",
 		"/ip4/51.158.118.181/tcp/21777/p2p/12D3KooWDF8a4goNCHriP1y922y4jagaPwHdX4eSrG5WtQpjzS6k",
-		"/ip4/51.158.118.181/udp/21777/quic-v1/p2p/12D3KooWDF8a4goNCHriP1y922y4jagaPwHdX4eSrG5WtQpjzS6k",
+		"/ip4/159.148.146.149/tcp/21777/p2p/12D3KooWPQAGVMdxbUCeNETPiMkeascvMRorZAwtMUs2UVxftKgZ",     // SGTstake (adorid@sgtstake.com)
+		"/ip4/109.123.246.47/tcp/21777/p2p/12D3KooWERCpnEzD7QgTa7uLhqQjj3L4YmQtAGbW6w76Ckjaop7s",      // Stakes.Works (info@stake.works)
+		"/ip4/173.249.27.146/tcp/21777/p2p/12D3KooWSJREEzTZRzc9wpkU3EW2m9ZGfzrC9jjuwS6wR5uaAZme",      // Karma Nodes (karma.nodes@proton.me)
+		"/ip4/16.170.148.83/tcp/21777/p2p/12D3KooWGaU7u6D9XT8rXnpGWSbNVF3Ezts7ZV3gCV5vuJ4d2jAo",       // Mr HoDL (1llusiv387@gmail.com)
+		"/dns/pactus.nodesync.top/tcp/21777/p2p/12D3KooWP25ejVsd7cL5DvWAPwEu4JTUwnPniHBf4w93tgSezVt8", // NodeSync.Top (lthuan2011@gmail.com)
+		"/ip6/2400:8901::f03c:93ff:fe1c:c3ec/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
 		"/ip6/2001:bc8:700:8017::1/tcp/21777/p2p/12D3KooWDF8a4goNCHriP1y922y4jagaPwHdX4eSrG5WtQpjzS6k",
-		"/ip6/2001:bc8:700:8017::1/udp/21777/quic-v1/p2p/12D3KooWDF8a4goNCHriP1y922y4jagaPwHdX4eSrG5WtQpjzS6k",
 	}
 	conf.Network.Bootstrap.MinThreshold = 4
 	conf.Network.Bootstrap.MaxThreshold = 8
 	conf.Network.EnableRelay = true
 	conf.Network.RelayAddrs = []string{
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
-		"/ip4/139.162.153.10/udp/4002/quic/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
-		"/ip6/2a01:7e01::f03c:93ff:fed2:84c5/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
-		"/ip6/2a01:7e01::f03c:93ff:fed2:84c5/udp/4002/quic/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/188.121.102.178/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
-		"/ip4/188.121.102.178/udp/4002/quic/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
+		"/ip6/2a01:7e01::f03c:93ff:fed2:84c5/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip6/2a07:3900:1:1::113/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
-		"/ip6/2a07:3900:1:1::113/udp/4002/quic/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "[::]:50052"
