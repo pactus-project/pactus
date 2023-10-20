@@ -8,7 +8,6 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/wallet"
 )
 
 // IDs to access the tree view columns.
@@ -56,7 +55,6 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	labelEncrypted := getLabelObj(builder, "id_label_wallet_encrypted")
 
 	getToolButtonObj(builder, "id_button_new_address").SetIconWidget(AddIcon())
-	getToolButtonObj(builder, "id_button_new_validator_address").SetIconWidget(AddIcon())
 	getToolButtonObj(builder, "id_button_change_password").SetIconWidget(PasswordIcon())
 	getToolButtonObj(builder, "id_button_show_seed").SetIconWidget(SeedIcon())
 
@@ -138,10 +136,9 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 		})
 
 	signals := map[string]interface{}{
-		"on_new_address":           w.onNewAddress,
-		"on_new_validator_address": w.onNewValidatorAddress,
-		"on_change_password":       w.onChangePassword,
-		"on_show_seed":             w.onShowSeed,
+		"on_new_address":     w.onNewAddress,
+		"on_change_password": w.onChangePassword,
+		"on_show_seed":       w.onShowSeed,
 	}
 	builder.ConnectSignals(signals)
 
@@ -150,18 +147,12 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	return w, nil
 }
 
-func (ww *widgetWallet) onNewAddress() {
-	err := ww.model.createAddress(wallet.AddressTypeBLSAccount)
-	errorCheck(err)
-}
-
-func (ww *widgetWallet) onNewValidatorAddress() {
-	err := ww.model.createAddress(wallet.AddressTypeValidator)
-	errorCheck(err)
-}
-
 func (ww *widgetWallet) onChangePassword() {
 	changePassword(ww.model.wallet)
+}
+
+func (ww *widgetWallet) onNewAddress() {
+	createAddress(ww.model.wallet)
 }
 
 func (ww *widgetWallet) onShowSeed() {

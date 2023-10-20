@@ -85,7 +85,7 @@ func (model *walletModel) rebuildModel() {
 	}()
 }
 
-func (model *walletModel) createAddress(accountType wallet.AddressType) error {
+func (model *walletModel) createAddress(accountType string) error {
 	var address string
 	var err error
 
