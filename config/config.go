@@ -41,6 +41,7 @@ type Config struct {
 type NodeConfig struct {
 	NumValidators   int      `toml:"num_validators"` // TODO: we can remove this now
 	RewardAddresses []string `toml:"reward_addresses"`
+	BootstrapNode   bool 		 `toml:"bootstrap_node"`
 }
 
 func DefaultNodeConfig() *NodeConfig {
