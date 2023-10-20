@@ -48,7 +48,7 @@ func (td *testData) checkTotalCoin(t *testing.T, fee int64) {
 }
 
 func (td *testData) randomAmountAndFee(min int64, max int64) (int64, int64) {
-	amt := td.RandInt64NonZero(max)
+	amt := td.RandInt64NonZero(max - 1) // To make sure amt+fee is less than max
 	for amt < min {
 		amt = td.RandInt64NonZero(max)
 	}
