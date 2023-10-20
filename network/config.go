@@ -16,6 +16,7 @@ type Config struct {
 	RelayAddrs    []string         `toml:"relay_addresses"`
 	EnableMdns    bool             `toml:"enable_mdns"`
 	EnableMetrics bool             `toml:"enable_metrics"`
+	Bootstrapper  bool             `toml:"bootstrapper"`
 	Bootstrap     *BootstrapConfig `toml:"bootstrap"`
 }
 
@@ -56,6 +57,7 @@ func DefaultConfig() *Config {
 		EnableRelay:   false,
 		EnableMdns:    false,
 		EnableMetrics: false,
+		Bootstrapper:  false,
 		Bootstrap: &BootstrapConfig{
 			Addresses:    addresses,
 			MinThreshold: 8,
