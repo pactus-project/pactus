@@ -148,7 +148,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	return w, nil
 }
 
-func (ww *widgetWallet) addAddress(address string, label string) {
+func (ww *widgetWallet) addNewAddressToListStore(address string, label string) {
 	iter := ww.model.listStore.Append()
 	_ = ww.model.listStore.Set(iter,
 		[]int{
@@ -173,7 +173,7 @@ func (ww *widgetWallet) onChangePassword() {
 
 func (ww *widgetWallet) onNewAddress() {
 	var addNewAddressCallback = func(address string, label string) {
-		ww.addAddress(address, label)
+		ww.addNewAddressToListStore(address, label)
 	}
 	createAddress(ww.model.wallet, addNewAddressCallback)
 }
