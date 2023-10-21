@@ -8,7 +8,7 @@ import (
 const (
 	major uint   = 0
 	minor uint   = 15
-	patch uint   = 0
+	patch uint   = 1
 	meta  string = "beta"
 )
 
