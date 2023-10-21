@@ -14,6 +14,7 @@ const (
 	JustTypePreVoteHard        = JustType(4)
 	JustTypeMainVoteConflict   = JustType(5)
 	JustTypeMainVoteNoConflict = JustType(6)
+	JustTypeDecided            = JustType(7)
 )
 
 func (t JustType) String() string {
@@ -30,6 +31,8 @@ func (t JustType) String() string {
 		return "JustMainVoteConflict"
 	case JustTypeMainVoteNoConflict:
 		return "JustMainVoteNoConflict"
+	case JustTypeDecided:
+		return "JustDecided"
 
 	default:
 		return "Unknown"
@@ -55,6 +58,8 @@ func makeJust(t JustType) (Just, error) {
 		return &JustMainVoteConflict{}, nil
 	case JustTypeMainVoteNoConflict:
 		return &JustMainVoteNoConflict{}, nil
+	case JustTypeDecided:
+		return &JustDecided{}, nil
 
 	default:
 		return nil, errors.Errorf(errors.ErrInvalidVote, "invalid justification")
@@ -83,6 +88,10 @@ type JustMainVoteNoConflict struct {
 	QCert *certificate.Certificate `cbor:"1,keyasint"`
 }
 
+type JustDecided struct {
+	QCert *certificate.Certificate `cbor:"1,keyasint"`
+}
+
 func (j *JustInitZero) Type() JustType {
 	return JustTypeInitZero
 }
@@ -105,6 +114,10 @@ func (j *JustMainVoteConflict) Type() JustType {
 
 func (j *JustMainVoteNoConflict) Type() JustType {
 	return JustTypeMainVoteNoConflict
+}
+
+func (j *JustDecided) Type() JustType {
+	return JustTypeDecided
 }
 
 func (j *JustInitZero) BasicCheck() error {
@@ -131,5 +144,9 @@ func (j *JustMainVoteConflict) BasicCheck() error {
 }
 
 func (j *JustMainVoteNoConflict) BasicCheck() error {
+	return j.QCert.BasicCheck()
+}
+
+func (j *JustDecided) BasicCheck() error {
 	return j.QCert.BasicCheck()
 }

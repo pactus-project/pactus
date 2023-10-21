@@ -65,6 +65,20 @@ func NewCPMainVote(blockHash hash.Hash, height uint32, round int16,
 	return v
 }
 
+// NewCPDecidedVote creates a new cp:Decided with the specified parameters.
+func NewCPDecidedVote(blockHash hash.Hash, height uint32, round int16,
+	cpRound int16, cpValue CPValue, just Just, signer crypto.Address,
+) *Vote {
+	v := newVote(VoteTypeCPDecided, blockHash, height, round, signer)
+	v.data.CPVote = &cpVote{
+		Round: cpRound,
+		Value: cpValue,
+		Just:  just,
+	}
+
+	return v
+}
+
 // newVote creates a new vote with the specified parameters.
 func newVote(voteType Type, blockHash hash.Hash, height uint32, round int16,
 	signer crypto.Address,
@@ -90,7 +104,7 @@ func (v *Vote) SignBytes() []byte {
 	case VoteTypePrepare:
 		sb = append(sb, util.StringToBytes(t.String())...)
 
-	case VoteTypeCPPreVote, VoteTypeCPMainVote:
+	case VoteTypeCPPreVote, VoteTypeCPMainVote, VoteTypeCPDecided:
 		sb = append(sb, util.StringToBytes(t.String())...)
 		sb = append(sb, util.Int16ToSlice(v.data.CPVote.Round)...)
 		sb = append(sb, byte(v.data.CPVote.Value))
@@ -196,7 +210,8 @@ func (v *Vote) BasicCheck() error {
 		}
 	}
 	if v.data.Type == VoteTypeCPPreVote ||
-		v.data.Type == VoteTypeCPMainVote {
+		v.data.Type == VoteTypeCPMainVote ||
+		v.data.Type == VoteTypeCPDecided {
 		if v.data.CPVote == nil {
 			return errors.Errorf(errors.ErrInvalidVote, "should have cp data")
 		}
@@ -209,7 +224,7 @@ func (v *Vote) BasicCheck() error {
 		}
 	}
 	if v.Signature() == nil {
-		return errors.Errorf(errors.ErrInvalidVote, "no signature")
+		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
 	}
 	return nil
 }
@@ -224,7 +239,7 @@ func (v *Vote) String() string {
 			v.BlockHash().ShortString(),
 			v.Signer().ShortString(),
 		)
-	case VoteTypeCPPreVote, VoteTypeCPMainVote:
+	case VoteTypeCPPreVote, VoteTypeCPMainVote, VoteTypeCPDecided:
 		return fmt.Sprintf("{%d/%d/%s/%d/%d ⌘ %v 👤 %s}",
 			v.Height(),
 			v.Round(),

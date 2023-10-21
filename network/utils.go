@@ -29,7 +29,7 @@ func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrIn
 			}
 		} else {
 			if logger != nil {
-				logger.Debug("connected", "addr", addrInfo.Addrs, "err", err)
+				logger.Debug("connected", "addr", addrInfo.Addrs)
 			}
 		}
 	}()

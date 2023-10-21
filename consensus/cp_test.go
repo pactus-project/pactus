@@ -52,14 +52,7 @@ func TestChangeProposerAgreement1(t *testing.T) {
 	td.addCPMainVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueOne, mainVote0.CPJust(), tIndexX)
 	td.addCPMainVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueOne, mainVote0.CPJust(), tIndexY)
 
-	preVote1 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
-	td.addCPPreVote(td.consP, hash.UndefHash, h, r, 1, vote.CPValueOne, preVote1.CPJust(), tIndexX)
-	td.addCPPreVote(td.consP, hash.UndefHash, h, r, 1, vote.CPValueOne, preVote1.CPJust(), tIndexY)
-
-	mainVote1 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPMainVote, hash.UndefHash)
-	td.addCPMainVote(td.consP, hash.UndefHash, h, r, 1, vote.CPValueOne, mainVote1.CPJust(), tIndexX)
-	td.addCPMainVote(td.consP, hash.UndefHash, h, r, 1, vote.CPValueOne, mainVote1.CPJust(), tIndexY)
-
+	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPDecided, hash.UndefHash)
 	checkHeightRound(t, td.consP, h, r+1)
 }
 
@@ -90,14 +83,7 @@ func TestChangeProposerAgreement0(t *testing.T) {
 	td.addCPMainVote(td.consP, p.Block().Hash(), h, r, 0, vote.CPValueZero, mainVote0.CPJust(), tIndexX)
 	td.addCPMainVote(td.consP, p.Block().Hash(), h, r, 0, vote.CPValueZero, mainVote0.CPJust(), tIndexY)
 
-	preVote1 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, p.Block().Hash())
-	td.addCPPreVote(td.consP, p.Block().Hash(), h, r, 1, vote.CPValueZero, preVote1.CPJust(), tIndexX)
-	td.addCPPreVote(td.consP, p.Block().Hash(), h, r, 1, vote.CPValueZero, preVote1.CPJust(), tIndexY)
-
-	mainVote1 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPMainVote, p.Block().Hash())
-	td.addCPMainVote(td.consP, p.Block().Hash(), h, r, 1, vote.CPValueZero, mainVote1.CPJust(), tIndexX)
-	td.addCPMainVote(td.consP, p.Block().Hash(), h, r, 1, vote.CPValueZero, mainVote1.CPJust(), tIndexY)
-
+	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPDecided, p.Block().Hash())
 	td.shouldPublishQueryProposal(t, td.consP, h)
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexX)
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexY)
@@ -454,6 +440,37 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 		assert.ErrorIs(t, err, invalidJustificationError{
 			JustType: just0.Type(),
 			Reason:   fmt.Sprintf("certificate has an unexpected committers: %v", just0.QCert.Committers()),
+		})
+	})
+}
+
+func TestInvalidJustDecided(t *testing.T) {
+	td := setup(t)
+
+	td.enterNewHeight(td.consX)
+	h := uint32(1)
+	r := int16(0)
+	just := &vote.JustDecided{
+		QCert: td.GenerateTestCertificate(h),
+	}
+
+	t.Run("invalid value: abstain", func(t *testing.T) {
+		v := vote.NewCPDecidedVote(td.RandHash(), h, r, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
+
+		err := td.consX.changeProposer.checkJust(v)
+		assert.ErrorIs(t, err, invalidJustificationError{
+			JustType: just.Type(),
+			Reason:   "invalid value: abstain",
+		})
+	})
+
+	t.Run("invalid certificate", func(t *testing.T) {
+		v := vote.NewCPDecidedVote(td.RandHash(), h, r, 0, vote.CPValueOne, just, td.consB.valKey.Address())
+
+		err := td.consX.changeProposer.checkJust(v)
+		assert.ErrorIs(t, err, invalidJustificationError{
+			JustType: just.Type(),
+			Reason:   fmt.Sprintf("certificate has an unexpected committers: %v", just.QCert.Committers()),
 		})
 	})
 }
