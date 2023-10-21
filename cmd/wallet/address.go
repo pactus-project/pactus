@@ -93,7 +93,8 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		} else if *addressType == w.AddressTypeValidator {
 			addr, err = wallet.NewValidatorAddress(label)
 		} else {
-			cmd.PrintErrorMsgf("Invalid address type '%s'. Supported address types are '%s' and '%s'", *addressType, w.AddressTypeBLSAccount, w.AddressTypeValidator)
+			formatString := "Invalid address type '%s'. Supported address types are '%s' and '%s'"
+			cmd.PrintErrorMsgf(formatString, *addressType, w.AddressTypeBLSAccount, w.AddressTypeValidator)
 			return
 		}
 
