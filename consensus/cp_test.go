@@ -443,3 +443,34 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 		})
 	})
 }
+
+func TestInvalidJustDecided(t *testing.T) {
+	td := setup(t)
+
+	td.enterNewHeight(td.consX)
+	h := uint32(1)
+	r := int16(0)
+	just := &vote.JustDecided{
+		QCert: td.GenerateTestCertificate(h),
+	}
+
+	t.Run("invalid value: abstain", func(t *testing.T) {
+		v := vote.NewCPDecidedVote(td.RandHash(), h, r, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
+
+		err := td.consX.changeProposer.checkJust(v)
+		assert.ErrorIs(t, err, invalidJustificationError{
+			JustType: just.Type(),
+			Reason:   "invalid value: abstain",
+		})
+	})
+
+	t.Run("invalid certificate", func(t *testing.T) {
+		v := vote.NewCPDecidedVote(td.RandHash(), h, r, 0, vote.CPValueOne, just, td.consB.valKey.Address())
+
+		err := td.consX.changeProposer.checkJust(v)
+		assert.ErrorIs(t, err, invalidJustificationError{
+			JustType: just.Type(),
+			Reason:   fmt.Sprintf("certificate has an unexpected committers: %v", just.QCert.Committers()),
+		})
+	})
+}

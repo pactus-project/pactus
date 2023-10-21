@@ -38,7 +38,6 @@ func (s *cpDecideState) decide() {
 			}
 			s.signAddCPDecidedVote(*s.cpWeakValidity, s.cpRound, vote.CPValueZero, just)
 			s.cpDecide(vote.CPValueZero)
-			s.cpDecided = 0
 		} else {
 			// conflicting votes
 			s.logger.Debug("conflicting main votes", "round", s.cpRound)
