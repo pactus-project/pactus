@@ -40,14 +40,21 @@ type BinaryVoteSet struct {
 func NewCPPreVoteVoteSet(round int16, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BinaryVoteSet {
-	voteSet := newVoteSet(vote.VoteTypeCPPreVote, round, totalPower, validators)
+	voteSet := newVoteSet(round, totalPower, validators)
 	return newBinaryVoteSet(voteSet)
 }
 
 func NewCPMainVoteVoteSet(round int16, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BinaryVoteSet {
-	voteSet := newVoteSet(vote.VoteTypeCPMainVote, round, totalPower, validators)
+	voteSet := newVoteSet(round, totalPower, validators)
+	return newBinaryVoteSet(voteSet)
+}
+
+func NewCPDecidedVoteVoteSet(round int16, totalPower int64,
+	validators map[crypto.Address]*validator.Validator,
+) *BinaryVoteSet {
+	voteSet := newVoteSet(round, totalPower, validators)
 	return newBinaryVoteSet(voteSet)
 }
 

@@ -52,14 +52,7 @@ func TestChangeProposerAgreement1(t *testing.T) {
 	td.addCPMainVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueOne, mainVote0.CPJust(), tIndexX)
 	td.addCPMainVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueOne, mainVote0.CPJust(), tIndexY)
 
-	preVote1 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
-	td.addCPPreVote(td.consP, hash.UndefHash, h, r, 1, vote.CPValueOne, preVote1.CPJust(), tIndexX)
-	td.addCPPreVote(td.consP, hash.UndefHash, h, r, 1, vote.CPValueOne, preVote1.CPJust(), tIndexY)
-
-	mainVote1 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPMainVote, hash.UndefHash)
-	td.addCPMainVote(td.consP, hash.UndefHash, h, r, 1, vote.CPValueOne, mainVote1.CPJust(), tIndexX)
-	td.addCPMainVote(td.consP, hash.UndefHash, h, r, 1, vote.CPValueOne, mainVote1.CPJust(), tIndexY)
-
+	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPDecided, hash.UndefHash)
 	checkHeightRound(t, td.consP, h, r+1)
 }
 
@@ -90,14 +83,7 @@ func TestChangeProposerAgreement0(t *testing.T) {
 	td.addCPMainVote(td.consP, p.Block().Hash(), h, r, 0, vote.CPValueZero, mainVote0.CPJust(), tIndexX)
 	td.addCPMainVote(td.consP, p.Block().Hash(), h, r, 0, vote.CPValueZero, mainVote0.CPJust(), tIndexY)
 
-	preVote1 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, p.Block().Hash())
-	td.addCPPreVote(td.consP, p.Block().Hash(), h, r, 1, vote.CPValueZero, preVote1.CPJust(), tIndexX)
-	td.addCPPreVote(td.consP, p.Block().Hash(), h, r, 1, vote.CPValueZero, preVote1.CPJust(), tIndexY)
-
-	mainVote1 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPMainVote, p.Block().Hash())
-	td.addCPMainVote(td.consP, p.Block().Hash(), h, r, 1, vote.CPValueZero, mainVote1.CPJust(), tIndexX)
-	td.addCPMainVote(td.consP, p.Block().Hash(), h, r, 1, vote.CPValueZero, mainVote1.CPJust(), tIndexY)
-
+	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPDecided, p.Block().Hash())
 	td.shouldPublishQueryProposal(t, td.consP, h)
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexX)
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexY)

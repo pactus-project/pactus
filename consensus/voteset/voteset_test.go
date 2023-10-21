@@ -379,3 +379,23 @@ func TestOneThirdPower(t *testing.T) {
 	assert.Contains(t, bv1, v3.Signer())
 	assert.Contains(t, bv2, v4.Signer())
 }
+
+func TestDecidedVoteset(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 1, 1, 1, 1)
+
+	hash := ts.RandHash()
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	just := &vote.JustInitOne{}
+	vs := NewCPDecidedVoteVoteSet(round, totalPower, valsMap)
+
+	v1 := vote.NewCPDecidedVote(hash, height, round, 0, vote.CPValueOne, just, valKeys[0].Address())
+
+	ts.HelperSignVote(valKeys[0], v1)
+
+	_, err := vs.AddVote(v1)
+	assert.NoError(t, err)
+	assert.True(t, vs.HasAnyVoteFor(0, vote.CPValueOne))
+	assert.False(t, vs.HasAnyVoteFor(0, vote.CPValueZero))
+}

@@ -288,7 +288,8 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 	}
 
 	if v.Type() == vote.VoteTypeCPPreVote ||
-		v.Type() == vote.VoteTypeCPMainVote {
+		v.Type() == vote.VoteTypeCPMainVote ||
+		v.Type() == vote.VoteTypeCPDecided {
 		err := cs.changeProposer.checkJust(v)
 		if err != nil {
 			cs.logger.Error("error on adding a cp vote", "vote", v, "error", err)
@@ -327,6 +328,14 @@ func (cs *consensus) signAddCPMainVote(hash hash.Hash,
 	cpRound int16, cpValue vote.CPValue, just vote.Just,
 ) {
 	v := vote.NewCPMainVote(hash, cs.height, cs.round,
+		cpRound, cpValue, just, cs.valKey.Address())
+	cs.signAddVote(v)
+}
+
+func (cs *consensus) signAddCPDecidedVote(hash hash.Hash,
+	cpRound int16, cpValue vote.CPValue, just vote.Just,
+) {
+	v := vote.NewCPDecidedVote(hash, cs.height, cs.round,
 		cpRound, cpValue, just, cs.valKey.Address())
 	cs.signAddVote(v)
 }
@@ -424,11 +433,9 @@ func (cs *consensus) PickRandomVote(round int16) *vote.Vote {
 		m := cs.log.RoundMessages(round)
 		votes = append(votes, m.AllVotes()...)
 	} else {
-		// Don't broadcast prepare and precommit votes for previous rounds
-		vs0 := cs.log.CPPreVoteVoteSet(round)
-		vs1 := cs.log.CPMainVoteVoteSet(round)
-		votes = append(votes, vs0.AllVotes()...)
-		votes = append(votes, vs1.AllVotes()...)
+		// Only broadcast cp:decided votes
+		vs := cs.log.CPDecidedVoteVoteSet(round)
+		votes = append(votes, vs.AllVotes()...)
 	}
 	if len(votes) == 0 {
 		return nil
@@ -440,7 +447,7 @@ func (cs *consensus) startChangingProposer() {
 	// If it is not decided yet.
 	// TODO: can we remove this condition in new consensus model?
 	if cs.cpDecided == -1 {
-		cs.logger.Debug("changing proposer started", "cpRound", cs.cpRound)
+		cs.logger.Info("changing proposer started", "cpRound", cs.cpRound)
 		cs.enterNewState(cs.cpPreVoteState)
 	}
 }

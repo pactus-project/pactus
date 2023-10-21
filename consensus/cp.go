@@ -313,11 +313,68 @@ func (cp *changeProposer) checkJustMainVote(v *vote.Vote) error {
 	}
 }
 
+func (cp *changeProposer) checkJustDecide(v *vote.Vote) error {
+	err := cp.checkCPValue(v, vote.CPValueZero, vote.CPValueOne)
+	if err != nil {
+		return err
+	}
+	j, ok := v.CPJust().(*vote.JustDecided)
+	if !ok {
+		return invalidJustificationError{
+			JustType: j.Type(),
+			Reason:   "invalid just data",
+		}
+	}
+
+	sb := certificate.BlockCertificateSignBytes(v.BlockHash(),
+		j.QCert.Height(),
+		j.QCert.Round())
+	sb = append(sb, util.StringToBytes(vote.VoteTypeCPMainVote.String())...)
+	sb = append(sb, util.Int16ToSlice(v.CPRound())...)
+	sb = append(sb, byte(v.CPValue()))
+
+	err = j.QCert.Validate(cp.height, cp.validators, sb)
+	if err != nil {
+		return invalidJustificationError{
+			JustType: j.Type(),
+			Reason:   err.Error(),
+		}
+	}
+	return nil
+}
+
 func (cp *changeProposer) checkJust(v *vote.Vote) error {
-	if v.Type() == vote.VoteTypeCPPreVote {
+	switch v.Type() {
+	case vote.VoteTypeCPPreVote:
 		return cp.checkJustPreVote(v)
-	} else if v.Type() == vote.VoteTypeCPMainVote {
+	case vote.VoteTypeCPMainVote:
 		return cp.checkJustMainVote(v)
+	case vote.VoteTypeCPDecided:
+		return cp.checkJustDecide(v)
+	default:
+		panic("unreachable")
+	}
+}
+
+func (cp *changeProposer) checkForTermination(v *vote.Vote) {
+	if v.Type() == vote.VoteTypeCPDecided &&
+		v.Round() == cp.round {
+		cp.cpDecide(v.CPValue())
+	}
+}
+
+func (cp *changeProposer) cpDecide(cpValue vote.CPValue) {
+	if cpValue == vote.CPValueOne {
+		cp.round++
+		cp.cpDecided = 1
+		cp.enterNewState(cp.proposeState)
+	} else if cpValue == vote.CPValueZero {
+		roundProposal := cp.log.RoundProposal(cp.round)
+		if roundProposal == nil {
+			cp.queryProposal()
+		}
+		cp.cpDecided = 0
+		cp.enterNewState(cp.prepareState)
 	} else {
 		panic("unreachable")
 	}

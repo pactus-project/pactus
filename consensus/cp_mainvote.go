@@ -49,6 +49,7 @@ func (s *cpMainVoteState) decide() {
 				Just0: vote0.CPJust(),
 				Just1: vote1.CPJust(),
 			}
+
 			s.signAddCPMainVote(*s.cpWeakValidity, s.cpRound, vote.CPValueAbstain, just)
 			s.enterNewState(s.cpDecideState)
 		}
@@ -88,6 +89,8 @@ func (s *cpMainVoteState) onAddVote(v *vote.Vote) {
 	if v.Type() == vote.VoteTypeCPPreVote {
 		s.decide()
 	}
+
+	s.checkForTermination(v)
 }
 
 func (s *cpMainVoteState) name() string {
