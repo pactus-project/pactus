@@ -4,6 +4,7 @@ package main
 
 import (
 	_ "embed"
+	"fmt"
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -147,12 +148,34 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	return w, nil
 }
 
+func (ww *widgetWallet) addAddress(address string, label string) {
+	iter := ww.model.listStore.Append()
+	_ = ww.model.listStore.Set(iter,
+		[]int{
+			IDAddressesColumnNo,
+			IDAddressesColumnAddress,
+			IDAddressesColumnLabel,
+			IDAddressesColumnBalance,
+			IDAddressesColumnStake,
+		},
+		[]interface{}{
+			fmt.Sprintf("%v", ww.model.wallet.AddressCount()+1),
+			address,
+			label,
+			"0",
+			"0",
+		})
+}
+
 func (ww *widgetWallet) onChangePassword() {
 	changePassword(ww.model.wallet)
 }
 
 func (ww *widgetWallet) onNewAddress() {
-	createAddress(ww.model.wallet)
+	var addNewAddressCallback = func(address string, label string) {
+		ww.addAddress(address, label)
+	}
+	createAddress(ww.model.wallet, addNewAddressCallback)
 }
 
 func (ww *widgetWallet) onShowSeed() {

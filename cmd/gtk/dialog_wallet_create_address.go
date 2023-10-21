@@ -14,7 +14,7 @@ import (
 //go:embed assets/ui/dialog_wallet_create_address.ui
 var uiWalletCreateAddressDialog []byte
 
-func createAddress(wallet *w.Wallet) {
+func createAddress(wallet *w.Wallet, addCreatedAddess func(address string, label string)) {
 	builder, err := gtk.BuilderNewFromString(string(uiWalletCreateAddressDialog))
 	fatalErrorCheck(err)
 
@@ -43,10 +43,11 @@ func createAddress(wallet *w.Wallet) {
 		walletAccountType := accountTypeCombo.GetActiveID()
 		fatalErrorCheck(err)
 
+		var address string
 		if walletAccountType == w.AddressTypeBLSAccount {
-			_, err = wallet.NewBLSAccountAddress(walletAddressLabel)
+			address, err = wallet.NewBLSAccountAddress(walletAddressLabel)
 		} else if walletAccountType == w.AddressTypeValidator {
-			_, err = wallet.NewValidatorAddress(walletAddressLabel)
+			address, err = wallet.NewValidatorAddress(walletAddressLabel)
 		} else {
 			errorMsg := fmt.Sprintf("Invalid address type '%s'. Supported address types are '%s' and '%s'", walletAccountType, w.AddressTypeBLSAccount, w.AddressTypeValidator)
 			showWarningDialog(dlg, errorMsg)
@@ -54,6 +55,7 @@ func createAddress(wallet *w.Wallet) {
 		}
 
 		errorCheck(err)
+		addCreatedAddess(address, walletAddressLabel)
 
 		err = wallet.Save()
 		errorCheck(err)
