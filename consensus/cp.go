@@ -375,7 +375,5 @@ func (cp *changeProposer) cpDecide(cpValue vote.CPValue) {
 		}
 		cp.cpDecided = 0
 		cp.enterNewState(cp.prepareState)
-	} else {
-		panic("unreachable")
 	}
 }
