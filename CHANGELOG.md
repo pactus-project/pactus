@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.1](https://github.com/pactus-project/pactus/compare/v0.15.0...v0.15.1)(2023-10-22)
+
+### Fix
+
+- **consensus**: strong termination for the binary agreement ([#765](https://github.com/pactus-project/pactus/pull/765))
+- **consensus**: not increase the voting power on duplicated binary votes ([#762](https://github.com/pactus-project/pactus/pull/762))
+
 ## [0.15.0](https://github.com/pactus-project/pactus/compare/v0.13.0...v0.15.0)(2023-10-15)
 
 ### Feat
