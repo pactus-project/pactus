@@ -1,8 +1,6 @@
 package voteset
 
 import (
-	"fmt"
-
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
@@ -10,25 +8,19 @@ import (
 )
 
 type voteSet struct {
-	voteType   vote.Type
 	round      int16
 	validators map[crypto.Address]*validator.Validator
 	totalPower int64
 }
 
-func newVoteSet(voteType vote.Type, round int16, totalPower int64,
+func newVoteSet(round int16, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *voteSet {
 	return &voteSet{
 		round:      round,
-		voteType:   voteType,
 		validators: validators,
 		totalPower: totalPower,
 	}
-}
-
-func (vs *voteSet) Type() vote.Type {
-	return vs.voteType
 }
 
 // Round returns the round number for the VoteSet.
@@ -60,8 +52,4 @@ func (vs *voteSet) isTwoThirdOfTotalPower(power int64) bool {
 
 func (vs *voteSet) isOneThirdOfTotalPower(power int64) bool {
 	return power > (vs.totalPower * 1 / 3)
-}
-
-func (vs *voteSet) String() string {
-	return fmt.Sprintf("{%v/%s TOTAL:%v}", vs.round, vs.voteType, vs.totalPower)
 }

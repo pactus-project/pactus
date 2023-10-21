@@ -288,6 +288,13 @@ func (td *testData) addCPMainVote(cons *consensus, blockHash hash.Hash, height u
 	td.addVote(cons, v, valID)
 }
 
+func (td *testData) addCPDecidedVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
+	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
+) {
+	v := vote.NewCPDecidedVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
+	td.addVote(cons, v, valID)
+}
+
 func (td *testData) addVote(cons *consensus, v *vote.Vote, valID int) *vote.Vote {
 	td.HelperSignVote(td.valKeys[valID], v)
 	cons.AddVote(v)
@@ -546,11 +553,44 @@ func TestPickRandomVote(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 	assert.Nil(t, td.consP.PickRandomVote(0))
+	cpRound := int16(1)
+
+	// === make valid certificate
+	sbPreVote := certificate.BlockCertificateSignBytes(hash.UndefHash, 1, 0)
+	sbPreVote = append(sbPreVote, util.StringToBytes(vote.VoteTypeCPPreVote.String())...)
+	sbPreVote = append(sbPreVote, util.Int16ToSlice(cpRound)...)
+	sbPreVote = append(sbPreVote, byte(vote.CPValueOne))
+
+	sbMainVote := certificate.BlockCertificateSignBytes(hash.UndefHash, 1, 0)
+	sbMainVote = append(sbMainVote, util.StringToBytes(vote.VoteTypeCPMainVote.String())...)
+	sbMainVote = append(sbMainVote, util.Int16ToSlice(cpRound)...)
+	sbMainVote = append(sbMainVote, byte(vote.CPValueOne))
+
+	committers := []int32{}
+	preVoteSigs := []*bls.Signature{}
+	mainVoteSigs := []*bls.Signature{}
+	for i, val := range td.consP.validators {
+		committers = append(committers, val.Number())
+		preVoteSigs = append(preVoteSigs, td.valKeys[i].Sign(sbPreVote))
+		mainVoteSigs = append(mainVoteSigs, td.valKeys[i].Sign(sbMainVote))
+	}
+
+	preVoteAggSig := bls.SignatureAggregate(preVoteSigs...)
+	mainVoteAggSig := bls.SignatureAggregate(mainVoteSigs...)
+
+	certPreVote := certificate.NewCertificate(1, 0, committers, []int32{}, preVoteAggSig)
+	certMainVote := certificate.NewCertificate(1, 0, committers, []int32{}, mainVoteAggSig)
+	// ====
 
 	// round 0
 	td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexX)
 	td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexY)
-	td.addCPPreVote(td.consP, hash.UndefHash, 1, 0, 0, vote.CPValueOne, &vote.JustInitOne{}, tIndexY)
+	td.addCPPreVote(td.consP, hash.UndefHash, 1, 0, cpRound+1, vote.CPValueOne,
+		&vote.JustPreVoteHard{QCert: certPreVote}, tIndexY)
+	td.addCPMainVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueOne,
+		&vote.JustMainVoteNoConflict{QCert: certPreVote}, tIndexY)
+	td.addCPDecidedVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueOne,
+		&vote.JustDecided{QCert: certMainVote}, tIndexY)
 
 	assert.NotNil(t, td.consP.PickRandomVote(0))
 
@@ -693,10 +733,11 @@ func TestCases(t *testing.T) {
 		round       int16
 		description string
 	}{
-		{1694848856237853398, 2, "1/3+ cp:PRE-VOTE in prepare step"},
+		{1697898884837384019, 2, "1/3+ cp:PRE-VOTE in prepare step"},
 		{1694848907840926239, 0, "1/3+ cp:PRE-VOTE in precommit step"},
 		{1694849103290580532, 1, "Conflicting votes, cp-round=0"},
-		{1694849186681644508, 1, "Conflicting votes, cp-round=1"},
+		{1697900665869342730, 1, "Conflicting votes, cp-round=1"},
+		{1697887970998950590, 1, "consP & consB: Change Proposer, consX & consY: Commit (2 block announces)"},
 	}
 
 	for i, test := range tests {
@@ -910,7 +951,7 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 	}
 
 	// Check if more than 1/3 of nodes has committed the same block
-	if len(blockAnnounces) >= 3 {
+	if len(blockAnnounces) >= 2 {
 		var firstAnnounce *message.BlockAnnounceMessage
 		for _, msg := range blockAnnounces {
 			if firstAnnounce == nil {
