@@ -4,7 +4,6 @@ package main
 
 import (
 	_ "embed"
-	"fmt"
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -146,25 +145,6 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	glib.TimeoutAdd(15000, w.timeout) // each 15 seconds
 
 	return w, nil
-}
-
-func (ww *widgetWallet) addNewAddressToListStore(address string, label string) error {
-	iter := ww.model.listStore.Append()
-	return ww.model.listStore.Set(iter,
-		[]int{
-			IDAddressesColumnNo,
-			IDAddressesColumnAddress,
-			IDAddressesColumnLabel,
-			IDAddressesColumnBalance,
-			IDAddressesColumnStake,
-		},
-		[]interface{}{
-			fmt.Sprintf("%v", ww.model.wallet.AddressCount()+1),
-			address,
-			label,
-			"0",
-			"0",
-		})
 }
 
 func (ww *widgetWallet) onChangePassword() {

@@ -51,11 +51,11 @@ func buildGetSeedCmd(parentCmd *cobra.Command) {
 	passOpt := addPasswordOption(getSeedCmd)
 
 	getSeedCmd.Run = func(_ *cobra.Command, _ []string) {
-		wallet, err := openWallet()
+		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
-		password := getPassword(wallet, *passOpt)
-		mnemonic, err := wallet.Mnemonic(password)
+		password := getPassword(wlt, *passOpt)
+		mnemonic, err := wlt.Mnemonic(password)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()

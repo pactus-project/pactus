@@ -8,7 +8,7 @@ import (
 
 	"github.com/gotk3/gotk3/gtk"
 
-	w "github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet"
 )
 
 //go:embed assets/ui/dialog_wallet_create_address.ui
@@ -21,11 +21,11 @@ func createAddress(ww *widgetWallet) {
 	dlg := getDialogObj(builder, "id_dialog_wallet_create_address")
 	addressLabel := getEntryObj(builder, "id_entry_account_label")
 
-	accountTypeCombo := getComboBoxTextObj(builder, "id_combo_account_type")
-	accountTypeCombo.Append("bls_account", "Account")
-	accountTypeCombo.Append("validator", "Validator")
+	addressTypeCombo := getComboBoxTextObj(builder, "id_combo_address_type")
+	addressTypeCombo.Append(wallet.AddressTypeBLSAccount, "Account")
+	addressTypeCombo.Append(wallet.AddressTypeValidator, "Validator")
 
-	accountTypeCombo.SetActive(0)
+	addressTypeCombo.SetActive(0)
 
 	getButtonObj(builder, "id_button_ok").SetImage(OkIcon())
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
@@ -34,28 +34,23 @@ func createAddress(ww *widgetWallet) {
 		walletAddressLabel, err := addressLabel.GetText()
 		fatalErrorCheck(err)
 
-		walletAccountType := accountTypeCombo.GetActiveID()
+		walletAddressType := addressTypeCombo.GetActiveID()
 		fatalErrorCheck(err)
 
-		var address string
-		if walletAccountType == w.AddressTypeBLSAccount {
-			address, err = ww.model.wallet.NewBLSAccountAddress(walletAddressLabel)
-		} else if walletAccountType == w.AddressTypeValidator {
-			address, err = ww.model.wallet.NewValidatorAddress(walletAddressLabel)
+		if walletAddressType == wallet.AddressTypeBLSAccount {
+			_, err = ww.model.wallet.NewBLSAccountAddress(walletAddressLabel)
+		} else if walletAddressType == wallet.AddressTypeValidator {
+			_, err = ww.model.wallet.NewValidatorAddress(walletAddressLabel)
 		} else {
-			formatString := "Invalid address type '%s'. Supported address types are '%s' and '%s'"
-			errorMsg := fmt.Sprintf(formatString, walletAccountType, w.AddressTypeBLSAccount, w.AddressTypeValidator)
-			showWarningDialog(dlg, errorMsg)
-			return
+			err = fmt.Errorf("invalid address type '%s'", walletAddressType)
 		}
 
 		errorCheck(err)
 
-		err = ww.addNewAddressToListStore(address, walletAddressLabel)
-		errorCheck(err)
-
 		err = ww.model.wallet.Save()
 		errorCheck(err)
+
+		ww.model.rebuildModel()
 
 		dlg.Close()
 	}
