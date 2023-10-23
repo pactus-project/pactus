@@ -9,6 +9,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	_ "github.com/pactus-project/pactus/www/grpc/statik" // Static files.
 	"github.com/rakyll/statik/fs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/www/nanomsg/event"
 	mangos "go.nanomsg.org/mangos/v3"
 	"go.nanomsg.org/mangos/v3/protocol/pub"
+	_ "go.nanomsg.org/mangos/v3/transport/all" // register nano ports transports.
 )
 
 type Server struct {
