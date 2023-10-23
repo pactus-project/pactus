@@ -18,8 +18,9 @@ type ShortStringer interface {
 }
 
 var (
-	LogFilename = "pactus.log"
-	MaxLogSize  = 10 // 10MB to rotate a log file
+	LogFilename           = "pactus.log"
+	MaxLogSize            = 10 // 10MB to rotate a log file
+	MaxAgeAfterLogsRotate = 24
 )
 
 var globalInst *logger
@@ -57,6 +58,7 @@ func getLoggersInst() *logger {
 			config: conf,
 			subs:   make(map[string]*SubLogger),
 		}
+		MaxAgeAfterLogsRotate = conf.RotateAfterDays * 24
 	}
 
 	return globalInst
@@ -151,6 +153,7 @@ func (l *logger) writers() io.Writer {
 		Filename:   LogFilename,
 		MaxSize:    MaxLogSize,
 		MaxBackups: 0,
+		MaxAge:     MaxAgeAfterLogsRotate,
 		Compress:   true,
 	}
 	writers = append(writers, fw)

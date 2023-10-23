@@ -1,14 +1,16 @@
 package logger
 
 type Config struct {
-	Colorful bool              `toml:"colorful"`
-	Levels   map[string]string `toml:"levels"`
+	RotateAfterDays int               `toml:"rotate_log_after_days"`
+	Colorful        bool              `toml:"colorful"`
+	Levels          map[string]string `toml:"levels"`
 }
 
 func DefaultConfig() *Config {
 	conf := &Config{
-		Levels:   make(map[string]string),
-		Colorful: true,
+		Levels:          make(map[string]string),
+		Colorful:        true,
+		RotateAfterDays: 1,
 	}
 
 	conf.Levels["default"] = "info"
