@@ -10,6 +10,6 @@ type nodeModel struct {
 	node *node.Node
 }
 
-func newNodeModel(node *node.Node) *nodeModel {
-	return &nodeModel{node: node}
+func newNodeModel(nde *node.Node) *nodeModel {
+	return &nodeModel{node: nde}
 }

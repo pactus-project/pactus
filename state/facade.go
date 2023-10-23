@@ -48,7 +48,7 @@ type Facade interface {
 	ValidatorByAddress(addr crypto.Address) *validator.Validator
 	ValidatorByNumber(number int32) *validator.Validator
 	ValidatorAddresses() []crypto.Address
-	Params() param.Params
+	Params() *param.Params
 	Close() error
 	CalculateFee(amount int64, payloadType payload.Type) (int64, error)
 	PublicKey(addr crypto.Address) (crypto.PublicKey, error)

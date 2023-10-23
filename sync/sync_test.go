@@ -16,7 +16,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/services"
+	"github.com/pactus-project/pactus/sync/service"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -189,7 +189,7 @@ func (td *testData) receivingNewMessage(sync *synchronizer, msg message.Message,
 	return sync.processIncomingBundle(bdl)
 }
 
-func (td *testData) addPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID, services services.Services) {
+func (td *testData) addPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID, services service.Services) {
 	t.Helper()
 
 	td.sync.peerSet.UpdateInfo(pid, t.Name(),
@@ -203,7 +203,7 @@ func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.Pub
 	if pub == nil {
 		pub, _ = td.RandBLSKeyPair()
 	}
-	td.addPeer(t, pub, pid, services.New(services.Network))
+	td.addPeer(t, pub, pid, service.New(service.Network))
 	val := validator.NewValidator(pub.(*bls.PublicKey), td.RandInt32(1000))
 	// Note: This may not be completely accurate, but it poses no harm for testing purposes.
 	val.UpdateLastSortitionHeight(td.state.TestCommittee.Proposer(0).LastSortitionHeight() + 1)
@@ -268,7 +268,7 @@ func TestDownload(t *testing.T) {
 
 	t.Run("try to download blocks, but the peer is not a network node", func(t *testing.T) {
 		pub, _ := td.RandBLSKeyPair()
-		td.addPeer(t, pub, pid, services.New(services.None))
+		td.addPeer(t, pub, pid, service.New(service.None))
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
@@ -277,7 +277,7 @@ func TestDownload(t *testing.T) {
 
 	t.Run("try to download blocks and the peer is a network node", func(t *testing.T) {
 		pub, _ := td.RandBLSKeyPair()
-		td.addPeer(t, pub, pid, services.New(services.Network))
+		td.addPeer(t, pub, pid, service.New(service.Network))
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 

@@ -36,7 +36,7 @@ type consensus struct {
 	cpRound         int16
 	valKey          *bls.ValidatorKey
 	rewardAddr      crypto.Address
-	state           state.Facade // TODO: rename `state` to `bcState` (blockchain state)
+	bcState         state.Facade // Blockchain state
 	changeProposer  *changeProposer
 	newHeightState  consState
 	proposeState    consState
@@ -54,7 +54,7 @@ type consensus struct {
 
 func NewConsensus(
 	conf *Config,
-	state state.Facade,
+	bcState state.Facade,
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcastCh chan message.Message,
@@ -63,13 +63,13 @@ func NewConsensus(
 	broadcaster := func(_ crypto.Address, msg message.Message) {
 		broadcastCh <- msg
 	}
-	return newConsensus(conf, state,
+	return newConsensus(conf, bcState,
 		valKey, rewardAddr, broadcaster, mediator)
 }
 
 func newConsensus(
 	conf *Config,
-	state state.Facade,
+	bcState state.Facade,
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcaster broadcaster,
@@ -77,7 +77,7 @@ func newConsensus(
 ) *consensus {
 	cs := &consensus{
 		config:      conf,
-		state:       state,
+		bcState:     bcState,
 		broadcaster: broadcaster,
 		valKey:      valKey,
 	}
@@ -151,11 +151,11 @@ func (cs *consensus) Proposal() *proposal.Proposal {
 	return cs.log.RoundProposal(cs.round)
 }
 
-func (cs *consensus) HasVote(hash hash.Hash) bool {
+func (cs *consensus) HasVote(h hash.Hash) bool {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	return cs.log.HasVote(hash)
+	return cs.log.HasVote(h)
 }
 
 // AllVotes returns all valid votes inside the consensus log up to and including
@@ -186,7 +186,7 @@ func (cs *consensus) MoveToNewHeight() {
 }
 
 func (cs *consensus) moveToNewHeight() {
-	stateHeight := cs.state.LastBlockHeight()
+	stateHeight := cs.bcState.LastBlockHeight()
 	if cs.height != stateHeight+1 {
 		cs.enterNewState(cs.newHeightState)
 	}
@@ -228,13 +228,13 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		return
 	}
 
-	if p.Height() == cs.state.LastBlockHeight() {
+	if p.Height() == cs.bcState.LastBlockHeight() {
 		// A slow node might receive a proposal after committing the proposed block.
 		// In this case, we accept the proposal and allow nodes to continue.
 		// By doing so, we enable the validator to broadcast its votes and
 		// prevent it from being marked as absent in the block certificate.
 		cs.logger.Trace("block is committed for this height", "proposal", p)
-		if p.Block().Hash() != cs.state.LastBlockHash() {
+		if p.Block().Hash() != cs.bcState.LastBlockHash() {
 			cs.logger.Warn("proposal is not for the committed block", "proposal", p)
 			return
 		}
@@ -245,7 +245,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 			return
 		}
 
-		if err := cs.state.ValidateBlock(p.Block()); err != nil {
+		if err := cs.bcState.ValidateBlock(p.Block()); err != nil {
 			cs.logger.Warn("invalid block", "proposal", p, "error", err)
 			return
 		}
@@ -309,44 +309,44 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 }
 
 func (cs *consensus) proposer(round int16) *validator.Validator {
-	return cs.state.Proposer(round)
+	return cs.bcState.Proposer(round)
 }
 
 func (cs *consensus) isProposer() bool {
 	return cs.proposer(cs.round).Address() == cs.valKey.Address()
 }
 
-func (cs *consensus) signAddCPPreVote(hash hash.Hash,
+func (cs *consensus) signAddCPPreVote(h hash.Hash,
 	cpRound int16, cpValue vote.CPValue, just vote.Just,
 ) {
-	v := vote.NewCPPreVote(hash, cs.height,
+	v := vote.NewCPPreVote(h, cs.height,
 		cs.round, cpRound, cpValue, just, cs.valKey.Address())
 	cs.signAddVote(v)
 }
 
-func (cs *consensus) signAddCPMainVote(hash hash.Hash,
+func (cs *consensus) signAddCPMainVote(h hash.Hash,
 	cpRound int16, cpValue vote.CPValue, just vote.Just,
 ) {
-	v := vote.NewCPMainVote(hash, cs.height, cs.round,
+	v := vote.NewCPMainVote(h, cs.height, cs.round,
 		cpRound, cpValue, just, cs.valKey.Address())
 	cs.signAddVote(v)
 }
 
-func (cs *consensus) signAddCPDecidedVote(hash hash.Hash,
+func (cs *consensus) signAddCPDecidedVote(h hash.Hash,
 	cpRound int16, cpValue vote.CPValue, just vote.Just,
 ) {
-	v := vote.NewCPDecidedVote(hash, cs.height, cs.round,
+	v := vote.NewCPDecidedVote(h, cs.height, cs.round,
 		cpRound, cpValue, just, cs.valKey.Address())
 	cs.signAddVote(v)
 }
 
-func (cs *consensus) signAddPrepareVote(hash hash.Hash) {
-	v := vote.NewPrepareVote(hash, cs.height, cs.round, cs.valKey.Address())
+func (cs *consensus) signAddPrepareVote(h hash.Hash) {
+	v := vote.NewPrepareVote(h, cs.height, cs.round, cs.valKey.Address())
 	cs.signAddVote(v)
 }
 
-func (cs *consensus) signAddPrecommitVote(hash hash.Hash) {
-	v := vote.NewPrecommitVote(hash, cs.height, cs.round, cs.valKey.Address())
+func (cs *consensus) signAddPrecommitVote(h hash.Hash) {
+	v := vote.NewPrecommitVote(h, cs.height, cs.round, cs.valKey.Address())
 	cs.signAddVote(v)
 }
 
@@ -400,9 +400,9 @@ func (cs *consensus) makeCertificate(votes map[crypto.Address]*vote.Vote) *certi
 	sigs := make([]*bls.Signature, 0)
 
 	for i, val := range vals {
-		vote := votes[val.Address()]
-		if vote != nil {
-			sigs = append(sigs, vote.Signature())
+		vte := votes[val.Address()]
+		if vte != nil {
+			sigs = append(sigs, vte.Signature())
 		} else {
 			absentees = append(absentees, val.Number())
 		}

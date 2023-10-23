@@ -116,7 +116,7 @@ func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 	return nil
 }
 
-func CalculateFee(amt int64, params param.Params) int64 {
+func CalculateFee(amt int64, params *param.Params) int64 {
 	fee := int64(float64(amt) * params.FeeFraction)
 	fee = util.Max(fee, params.MinimumFee)
 	fee = util.Min(fee, params.MaximumFee)

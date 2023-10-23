@@ -33,8 +33,8 @@ func VerifiableSeedFromBytes(data []byte) (VerifiableSeed, error) {
 }
 
 func (s *VerifiableSeed) GenerateNext(prv *bls.PrivateKey) VerifiableSeed {
-	hash := hash.CalcHash(s[:])
-	sig := prv.Sign(hash.Bytes())
+	h := hash.CalcHash(s[:])
+	sig := prv.Sign(h.Bytes())
 	newSeed, _ := VerifiableSeedFromBytes(sig.Bytes())
 	return newSeed
 }
@@ -44,6 +44,6 @@ func (s *VerifiableSeed) Verify(public *bls.PublicKey, prevSeed VerifiableSeed) 
 	if err != nil {
 		return false
 	}
-	hash := hash.CalcHash(prevSeed[:])
-	return public.Verify(hash.Bytes(), sig) == nil
+	h := hash.CalcHash(prevSeed[:])
+	return public.Verify(h.Bytes(), sig) == nil
 }

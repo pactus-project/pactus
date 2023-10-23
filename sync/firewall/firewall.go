@@ -24,19 +24,19 @@ type Firewall struct {
 	logger  *logger.SubLogger
 }
 
-func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, state state.Facade,
-	logger *logger.SubLogger,
+func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st state.Facade,
+	subLogger *logger.SubLogger,
 ) *Firewall {
 	return &Firewall{
 		config:  conf,
 		network: net,
 		peerSet: peerSet,
-		state:   state,
-		logger:  logger,
+		state:   st,
+		logger:  subLogger,
 	}
 }
 
-func (f *Firewall) OpenGossipBundle(data []byte, source peer.ID, from peer.ID) *bundle.Bundle {
+func (f *Firewall) OpenGossipBundle(data []byte, source, from peer.ID) *bundle.Bundle {
 	if from != source {
 		f.peerSet.UpdateLastReceived(from)
 		if f.isPeerBanned(from) {

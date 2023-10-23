@@ -7,7 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/services"
+	"github.com/pactus-project/pactus/sync/service"
 )
 
 type Peer struct {
@@ -16,7 +16,7 @@ type Peer struct {
 	Agent           string
 	PeerID          peer.ID
 	ConsensusKeys   []*bls.PublicKey
-	Services        services.Services
+	Services        service.Services
 	LastSent        time.Time
 	LastReceived    time.Time
 	LastBlockHash   hash.Hash

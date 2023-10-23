@@ -68,9 +68,9 @@ func TestBlockHeight(t *testing.T) {
 func TestUnknownTransactionID(t *testing.T) {
 	td := setup(t)
 
-	tx, err := td.store.Transaction(td.RandHash())
+	trx, err := td.store.Transaction(td.RandHash())
 	assert.Error(t, err)
-	assert.Nil(t, tx)
+	assert.Nil(t, trx)
 }
 
 func TestWriteAndClosePeacefully(t *testing.T) {
@@ -89,13 +89,13 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	committedBlock, err := td.store.Block(lastHeight)
 	assert.NoError(t, err)
 	assert.Equal(t, lastHeight, committedBlock.Height)
-	block, _ := committedBlock.ToBlock()
-	assert.Equal(t, block.PrevCertificate().Height(), lastHeight-1)
+	blk, _ := committedBlock.ToBlock()
+	assert.Equal(t, blk.PrevCertificate().Height(), lastHeight-1)
 
-	for _, trx := range block.Transactions() {
+	for _, trx := range blk.Transactions() {
 		committedTx, err := td.store.Transaction(trx.ID())
 		assert.NoError(t, err)
-		assert.Equal(t, block.Header().UnixTime(), committedTx.BlockTime)
+		assert.Equal(t, blk.Header().UnixTime(), committedTx.BlockTime)
 		assert.Equal(t, trx.ID(), committedTx.TxID)
 		assert.Equal(t, lastHeight, committedTx.Height)
 		trx2, _ := committedTx.ToTx()

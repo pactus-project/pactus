@@ -93,123 +93,109 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 			curPageName, isRestoreMode, prevPageIndex, curPageIndex)
 		switch curPageName {
 		case pageModeName:
-			{
-				assistantPageComplete(assistant, mode, true)
-			}
+			assistantPageComplete(assistant, mode, true)
 
 		case pageSeedGenerateName:
-			{
-				if isRestoreMode {
-					if isForward {
-						// forward
-						log.Printf("jumping forward from seedGenerate page")
-						assistant.NextPage()
-						prevPageAdjust = 1
-					} else {
-						// backward
-						log.Printf("jumping backward from seedGenerate page")
-						assistant.PreviousPage()
-						prevPageAdjust = -1
-					}
-					assistantPageComplete(assistant, seedGenerate, false)
+			if isRestoreMode {
+				if isForward {
+					// forward
+					log.Printf("jumping forward from seedGenerate page")
+					assistant.NextPage()
+					prevPageAdjust = 1
 				} else {
-					mnemonic, _ = wallet.GenerateMnemonic(128)
-					setTextViewContent(textViewSeed, mnemonic)
-					assistantPageComplete(assistant, seedGenerate, true)
+					// backward
+					log.Printf("jumping backward from seedGenerate page")
+					assistant.PreviousPage()
+					prevPageAdjust = -1
 				}
+				assistantPageComplete(assistant, seedGenerate, false)
+			} else {
+				mnemonic, _ = wallet.GenerateMnemonic(128)
+				setTextViewContent(textViewSeed, mnemonic)
+				assistantPageComplete(assistant, seedGenerate, true)
 			}
 		case pageSeedConfirmName:
-			{
-				if isRestoreMode {
-					if isForward {
-						// forward
-						log.Printf("jumping forward from seedConfirm page")
-						assistant.NextPage()
-						prevPageAdjust = 1
-					} else {
-						// backward
-						log.Printf("jumping backward from seedConfirm page")
-						assistant.PreviousPage()
-						prevPageAdjust = -1
-					}
-					assistantPageComplete(assistant, seedConfirm, false)
+			if isRestoreMode {
+				if isForward {
+					// forward
+					log.Printf("jumping forward from seedConfirm page")
+					assistant.NextPage()
+					prevPageAdjust = 1
 				} else {
-					assistantPageComplete(assistant, seedConfirm, false)
+					// backward
+					log.Printf("jumping backward from seedConfirm page")
+					assistant.PreviousPage()
+					prevPageAdjust = -1
 				}
+				assistantPageComplete(assistant, seedConfirm, false)
+			} else {
+				assistantPageComplete(assistant, seedConfirm, false)
 			}
 		case pageSeedRestoreName:
-			{
-				if !isRestoreMode {
-					if isForward {
-						// forward
-						log.Printf("jumping forward from seedRestore page")
-						assistant.NextPage()
-						prevPageAdjust = 1
-					} else {
-						// backward
-						log.Printf("jumping backward from seedRestore page")
-						assistant.PreviousPage()
-						prevPageAdjust = -1
-					}
-					assistantPageComplete(assistant, seedConfirm, false)
+			if !isRestoreMode {
+				if isForward {
+					// forward
+					log.Printf("jumping forward from seedRestore page")
+					assistant.NextPage()
+					prevPageAdjust = 1
 				} else {
-					assistantPageComplete(assistant, seedRestore, true)
+					// backward
+					log.Printf("jumping backward from seedRestore page")
+					assistant.PreviousPage()
+					prevPageAdjust = -1
 				}
+				assistantPageComplete(assistant, seedConfirm, false)
+			} else {
+				assistantPageComplete(assistant, seedRestore, true)
 			}
 		case pagePasswordName:
-			{
-				if isRestoreMode {
-					mnemonic = getTextViewContent(textViewRestoreSeed)
+			if isRestoreMode {
+				mnemonic = getTextViewContent(textViewRestoreSeed)
 
-					if err := wallet.CheckMnemonic(mnemonic); err != nil {
-						showErrorDialog(assistant, "mnemonic is invalid")
-						assistant.PreviousPage()
-					}
+				if err := wallet.CheckMnemonic(mnemonic); err != nil {
+					showErrorDialog(assistant, "mnemonic is invalid")
+					assistant.PreviousPage()
 				}
-				assistantPageComplete(assistant, password, true)
 			}
+			assistantPageComplete(assistant, password, true)
 		case pageNumValidatorsName:
-			{
-				assistantPageComplete(assistant, numValidators, true)
-			}
+			assistantPageComplete(assistant, numValidators, true)
 
 		case pageFinalName:
-			{
-				iter, err := comboNumValidators.GetActiveIter()
-				fatalErrorCheck(err)
+			iter, err := comboNumValidators.GetActiveIter()
+			fatalErrorCheck(err)
 
-				val, err := lsNumValidators.GetValue(iter, 0)
-				fatalErrorCheck(err)
+			val, err := lsNumValidators.GetValue(iter, 0)
+			fatalErrorCheck(err)
 
-				valueInterface, err := val.GoValue()
-				fatalErrorCheck(err)
+			valueInterface, err := val.GoValue()
+			fatalErrorCheck(err)
 
-				numValidators := valueInterface.(int)
+			numValidators := valueInterface.(int)
 
-				fmt.Println("number of validators:", numValidators)
+			fmt.Println("number of validators:", numValidators)
 
-				walletPassword, err := entryPassword.GetText()
-				fatalErrorCheck(err)
+			walletPassword, err := entryPassword.GetText()
+			fatalErrorCheck(err)
 
-				validatorAddrs, rewardAddrs, err := cmd.CreateNode(numValidators, chain, workingDir, mnemonic, walletPassword)
-				fatalErrorCheck(err)
+			validatorAddrs, rewardAddrs, err := cmd.CreateNode(numValidators, chain, workingDir, mnemonic, walletPassword)
+			fatalErrorCheck(err)
 
-				// Done! showing the node information
-				successful = true
-				nodeInfo := fmt.Sprintf("Working directory: %s\n", workingDir)
-				nodeInfo += fmt.Sprintf("Network: %s\n", chain.String())
-				nodeInfo += "\nValidator addresses:\n"
-				for i, addr := range validatorAddrs {
-					nodeInfo += fmt.Sprintf("%v- %s\n", i+1, addr)
-				}
-
-				nodeInfo += "\nReward addresses:\n"
-				for i, addr := range rewardAddrs {
-					nodeInfo += fmt.Sprintf("%v- %s\n", i+1, addr)
-				}
-
-				setTextViewContent(textViewNodeInfo, nodeInfo)
+			// Done! showing the node information
+			successful = true
+			nodeInfo := fmt.Sprintf("Working directory: %s\n", workingDir)
+			nodeInfo += fmt.Sprintf("Network: %s\n", chain.String())
+			nodeInfo += "\nValidator addresses:\n"
+			for i, addr := range validatorAddrs {
+				nodeInfo += fmt.Sprintf("%v- %s\n", i+1, addr)
 			}
+
+			nodeInfo += "\nReward addresses:\n"
+			for i, addr := range rewardAddrs {
+				nodeInfo += fmt.Sprintf("%v- %s\n", i+1, addr)
+			}
+
+			setTextViewContent(textViewNodeInfo, nodeInfo)
 		}
 		prevPageIndex = curPageIndex + prevPageAdjust
 	})

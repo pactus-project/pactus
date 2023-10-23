@@ -50,24 +50,24 @@ func init() {
 	tCtx = context.Background()
 
 	tMockState.CommitTestBlocks(10)
-	logger := logger.NewSubLogger("_grpc", nil)
+	subLogger := logger.NewSubLogger("_grpc", nil)
 
 	s := grpc.NewServer()
 	blockchainServer := &blockchainServer{
 		state:   tMockState,
 		consMgr: consMgr,
-		logger:  logger,
+		logger:  subLogger,
 	}
 	networkServer := &networkServer{
 		sync:   tMockSync,
-		logger: logger,
+		logger: subLogger,
 	}
 	transactionServer := &transactionServer{
 		state:  tMockState,
-		logger: logger,
+		logger: subLogger,
 	}
 	walletServer := &walletServer{
-		logger: logger,
+		logger: subLogger,
 	}
 
 	pactus.RegisterBlockchainServer(s, blockchainServer)

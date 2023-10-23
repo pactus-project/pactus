@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/services"
+	"github.com/pactus-project/pactus/sync/service"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,7 +32,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		})
 
 		pub, _ := td.RandBLSKeyPair()
-		td.addPeer(t, pub, pid, services.New(services.None))
+		td.addPeer(t, pub, pid, service.New(service.None))
 
 		t.Run("Reject requests not within `LatestBlockInterval`", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)

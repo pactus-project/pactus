@@ -135,11 +135,11 @@ func (s *store) Block(height uint32) (*CommittedBlock, error) {
 	}, nil
 }
 
-func (s *store) BlockHeight(hash hash.Hash) uint32 {
+func (s *store) BlockHeight(h hash.Hash) uint32 {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.blockStore.blockHeight(hash)
+	return s.blockStore.blockHeight(h)
 }
 
 func (s *store) BlockHash(height uint32) hash.Hash {

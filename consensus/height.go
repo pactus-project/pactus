@@ -15,17 +15,17 @@ func (s *newHeightState) enter() {
 }
 
 func (s *newHeightState) decide() {
-	sateHeight := s.state.LastBlockHeight()
-	validators := s.state.CommitteeValidators()
+	sateHeight := s.bcState.LastBlockHeight()
+	validators := s.bcState.CommitteeValidators()
 	s.log.MoveToNewHeight(validators)
 
 	s.validators = validators
 	s.height = sateHeight + 1
 	s.round = 0
-	s.active = s.state.IsInCommittee(s.valKey.Address())
+	s.active = s.bcState.IsInCommittee(s.valKey.Address())
 	s.logger.Info("entering new height", "height", s.height, "active", s.active)
 
-	sleep := s.state.LastBlockTime().Add(s.state.Params().BlockInterval()).Sub(util.Now())
+	sleep := s.bcState.LastBlockTime().Add(s.bcState.Params().BlockInterval()).Sub(util.Now())
 	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetNewHeight)
 }
 

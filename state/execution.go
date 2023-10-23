@@ -22,11 +22,9 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox) error {
 					"first transaction should be a subsidy transaction")
 			}
 			subsidyTrx = trx
-		} else {
-			if trx.IsSubsidyTx() {
-				return errors.Errorf(errors.ErrInvalidTx,
-					"duplicated subsidy transaction")
-			}
+		} else if trx.IsSubsidyTx() {
+			return errors.Errorf(errors.ErrInvalidTx,
+				"duplicated subsidy transaction")
 		}
 
 		err := exe.Execute(trx, sb)

@@ -10,13 +10,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -121,7 +120,7 @@ func (s *Server) RootHandler(w http.ResponseWriter, _ *http.Request) {
 			if i != -1 {
 				link = link[0:i]
 			}
-			buf.WriteString(fmt.Sprintf("<a href=\"%s\">%s</a></br>", link, pathTemplate))
+			fmt.Fprintf(buf, "<a href=\"%s\">%s</a></br>", link, pathTemplate)
 		}
 
 		return nil
@@ -164,52 +163,52 @@ func newTableMaker() *tableMaker {
 }
 
 func (t *tableMaker) addRowBlockHash(key string, val []byte) {
-	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/block/hash/%x\">%x</a></td></tr>", key, val, val))
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/block/hash/%x\">%x</a></td></tr>", key, val, val)
 }
 
 func (t *tableMaker) addRowAccAddress(key, val string) {
-	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/account/address/%s\">%s</a></td></tr>", key, val, val))
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/account/address/%s\">%s</a></td></tr>", key, val, val)
 }
 
 func (t *tableMaker) addRowValAddress(key, val string) {
-	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/validator/address/%s\">%s</a></td></tr>", key, val, val))
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/validator/address/%s\">%s</a></td></tr>", key, val, val)
 }
 
 func (t *tableMaker) addRowTxID(key string, val []byte) {
-	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td><a href=\"/transaction/id/%x\">%x</a></td></tr>", key, val, val))
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/transaction/id/%x\">%x</a></td></tr>", key, val, val)
 }
 
 func (t *tableMaker) addRowString(key, val string) {
-	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", key, val))
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, val)
 }
 
 func (t *tableMaker) addRowTime(key string, sec int64) {
-	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", key, time.Unix(sec, 0).String()))
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, time.Unix(sec, 0).String())
 }
 
 func (t *tableMaker) addRowAmount(key string, change int64) {
-	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>",
-		key, util.ChangeToString(change)))
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>",
+		key, util.ChangeToString(change))
 }
 
 func (t *tableMaker) addRowInt(key string, val int) {
-	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%d</td></tr>", key, val))
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%d</td></tr>", key, val)
 }
 
 func (t *tableMaker) addRowBool(key string, val bool) {
-	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%v</td></tr>", key, val))
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%v</td></tr>", key, val)
 }
 
 func (t *tableMaker) addRowInts(key string, vals []int32) {
-	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>", key))
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>", key)
 	for _, n := range vals {
-		t.w.WriteString(fmt.Sprintf("%d, ", n))
+		fmt.Fprintf(t.w, "%d, ", n)
 	}
 	t.w.WriteString("</td></tr>")
 }
 
 func (t *tableMaker) addRowBytes(key string, val []byte) {
-	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>%x</td></tr>", key, val))
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%x</td></tr>", key, val)
 }
 
 func (t *tableMaker) html() string {

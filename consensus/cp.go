@@ -25,16 +25,16 @@ func (cp *changeProposer) onTimeout(t *ticker) {
 	}
 }
 
-func (cp *changeProposer) checkCPValue(vote *vote.Vote, allowedValues ...vote.CPValue) error {
+func (cp *changeProposer) checkCPValue(vte *vote.Vote, allowedValues ...vote.CPValue) error {
 	for _, v := range allowedValues {
-		if vote.CPValue() == v {
+		if vte.CPValue() == v {
 			return nil
 		}
 	}
 
 	return invalidJustificationError{
-		JustType: vote.CPJust().Type(),
-		Reason:   fmt.Sprintf("invalid value: %v", vote.CPValue()),
+		JustType: vte.CPJust().Type(),
+		Reason:   fmt.Sprintf("invalid value: %v", vte.CPValue()),
 	}
 }
 

@@ -62,8 +62,8 @@ func (c *grpcClient) getValidator(addr crypto.Address) (*pactus.ValidatorInfo, e
 	return res.Validator, nil
 }
 
-func (c *grpcClient) sendTx(tx *tx.Tx) (tx.ID, error) {
-	data, err := tx.Bytes()
+func (c *grpcClient) sendTx(trx *tx.Tx) (tx.ID, error) {
+	data, err := trx.Bytes()
 	if err != nil {
 		return hash.UndefHash, err
 	}

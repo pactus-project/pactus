@@ -18,18 +18,18 @@ import (
 func TestManager(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	state := state.MockingState(ts)
-	state.TestCommittee.Validators()
+	st := state.MockingState(ts)
+	st.TestCommittee.Validators()
 
 	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()}
-	valKeys := []*bls.ValidatorKey{state.TestValKeys[0], ts.RandValKey()}
+	valKeys := []*bls.ValidatorKey{st.TestValKeys[0], ts.RandValKey()}
 	broadcastCh := make(chan message.Message, 500)
 
 	stateHeight := ts.RandHeight()
 	blk, cert := ts.GenerateTestBlock(stateHeight)
-	state.TestStore.SaveBlock(blk, cert)
+	st.TestStore.SaveBlock(blk, cert)
 
-	Mgr := NewManager(testConfig(), state, valKeys, rewardAddrs, broadcastCh)
+	Mgr := NewManager(testConfig(), st, valKeys, rewardAddrs, broadcastCh)
 	mgr := Mgr.(*manager)
 
 	consA := mgr.instances[0].(*consensus) // active
@@ -61,27 +61,26 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Testing set proposal", func(t *testing.T) {
-		b, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address())
+		b, _ := st.ProposeBlock(valKeys[0], valKeys[0].Address())
 		p := proposal.NewProposal(stateHeight+1, 0, b)
 		ts.HelperSignProposal(valKeys[0], p)
 
 		mgr.SetProposal(p)
 
-		// assert.Equal(t, p, mgr.Proposal())
 		assert.Equal(t, p, consA.Proposal())
 		assert.Nil(t, consB.Proposal())
 	})
 
 	t.Run("Check discarding old votes", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), stateHeight-1, 0, state.TestValKeys[2].Address())
-		ts.HelperSignVote(state.TestValKeys[2], v)
+		v := vote.NewPrepareVote(ts.RandHash(), stateHeight-1, 0, st.TestValKeys[2].Address())
+		ts.HelperSignVote(st.TestValKeys[2], v)
 
 		mgr.AddVote(v)
 		assert.Empty(t, mgr.upcomingVotes)
 	})
 
 	t.Run("Check discarding old proposals", func(t *testing.T) {
-		b, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address())
+		b, _ := st.ProposeBlock(valKeys[0], valKeys[0].Address())
 		p := proposal.NewProposal(stateHeight-1, 1, b)
 		ts.HelperSignProposal(valKeys[0], p)
 
@@ -105,12 +104,12 @@ func TestManager(t *testing.T) {
 		assert.Len(t, mgr.upcomingVotes, 3)
 
 		blk, cert := ts.GenerateTestBlock(stateHeight + 1)
-		err := state.CommitBlock(blk, cert)
+		err := st.CommitBlock(blk, cert)
 		assert.NoError(t, err)
 		stateHeight++
 
 		blk, cert = ts.GenerateTestBlock(stateHeight + 1)
-		err = state.CommitBlock(blk, cert)
+		err = st.CommitBlock(blk, cert)
 		assert.NoError(t, err)
 		stateHeight++
 
@@ -120,13 +119,13 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Processing upcoming proposal", func(t *testing.T) {
-		b1, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address())
+		b1, _ := st.ProposeBlock(valKeys[0], valKeys[0].Address())
 		p1 := proposal.NewProposal(stateHeight+2, 0, b1)
 
-		b2, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address())
+		b2, _ := st.ProposeBlock(valKeys[0], valKeys[0].Address())
 		p2 := proposal.NewProposal(stateHeight+3, 0, b2)
 
-		b3, _ := state.ProposeBlock(valKeys[0], valKeys[0].Address())
+		b3, _ := st.ProposeBlock(valKeys[0], valKeys[0].Address())
 		p3 := proposal.NewProposal(stateHeight+4, 0, b3)
 
 		ts.HelperSignProposal(valKeys[0], p1)
@@ -140,12 +139,12 @@ func TestManager(t *testing.T) {
 		assert.Len(t, mgr.upcomingProposals, 3)
 
 		blk, cert := ts.GenerateTestBlock(stateHeight + 1)
-		err := state.CommitBlock(blk, cert)
+		err := st.CommitBlock(blk, cert)
 		assert.NoError(t, err)
 		stateHeight++
 
 		blk, cert = ts.GenerateTestBlock(stateHeight + 1)
-		err = state.CommitBlock(blk, cert)
+		err = st.CommitBlock(blk, cert)
 		assert.NoError(t, err)
 		stateHeight++
 
@@ -158,10 +157,10 @@ func TestManager(t *testing.T) {
 func TestMediator(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	state := state.MockingState(ts)
-	committee, valKeys := ts.GenerateTestCommittee(4)
-	state.TestCommittee = committee
-	state.TestParams.BlockIntervalInSecond = 1
+	st := state.MockingState(ts)
+	cmt, valKeys := ts.GenerateTestCommittee(4)
+	st.TestCommittee = cmt
+	st.TestParams.BlockIntervalInSecond = 1
 
 	rewardAddrs := []crypto.Address{
 		ts.RandAccAddress(), ts.RandAccAddress(),
@@ -171,9 +170,9 @@ func TestMediator(t *testing.T) {
 
 	stateHeight := ts.RandHeight()
 	blk, cert := ts.GenerateTestBlock(stateHeight)
-	state.TestStore.SaveBlock(blk, cert)
+	st.TestStore.SaveBlock(blk, cert)
 
-	Mgr := NewManager(testConfig(), state, valKeys, rewardAddrs, broadcastCh)
+	Mgr := NewManager(testConfig(), st, valKeys, rewardAddrs, broadcastCh)
 	mgr := Mgr.(*manager)
 
 	mgr.MoveToNewHeight()

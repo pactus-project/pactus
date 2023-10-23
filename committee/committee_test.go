@@ -13,24 +13,24 @@ import (
 func TestContains(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	committee, valKeys := ts.GenerateTestCommittee(21)
+	cmt, valKeys := ts.GenerateTestCommittee(21)
 	nonExist := ts.RandAccAddress()
 
-	assert.True(t, committee.Contains(valKeys[0].Address()))
-	assert.False(t, committee.Contains(nonExist))
+	assert.True(t, cmt.Contains(valKeys[0].Address()))
+	assert.False(t, cmt.Contains(nonExist))
 }
 
 func TestProposer(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	committee, _ := ts.GenerateTestCommittee(4)
+	cmt, _ := ts.GenerateTestCommittee(4)
 
-	assert.Equal(t, committee.Proposer(0).Number(), int32(0))
-	assert.Equal(t, committee.Proposer(3).Number(), int32(3))
-	assert.Equal(t, committee.Proposer(4).Number(), int32(0))
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(0))
+	assert.Equal(t, cmt.Proposer(3).Number(), int32(3))
+	assert.Equal(t, cmt.Proposer(4).Number(), int32(0))
 
-	committee.Update(0, nil)
-	assert.Equal(t, committee.Proposer(0).Number(), int32(1))
+	cmt.Update(0, nil)
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(1))
 }
 
 func TestInvalidProposerJoinAndLeave(t *testing.T) {
@@ -42,9 +42,9 @@ func TestInvalidProposerJoinAndLeave(t *testing.T) {
 	val4, _ := ts.GenerateTestValidator(3)
 	val5, _ := ts.GenerateTestValidator(4)
 
-	committee, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val5.Address())
+	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val5.Address())
 	assert.Error(t, err)
-	assert.Nil(t, committee)
+	assert.Nil(t, cmt)
 }
 
 func TestProposerMove(t *testing.T) {
@@ -58,7 +58,7 @@ func TestProposerMove(t *testing.T) {
 	val6, _ := ts.GenerateTestValidator(6)
 	val7, _ := ts.GenerateTestValidator(7)
 
-	committee, err := committee.NewCommittee(
+	cmt, err := committee.NewCommittee(
 		[]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
 	assert.NoError(t, err)
 
@@ -68,30 +68,30 @@ func TestProposerMove(t *testing.T) {
 	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+
 	//
 
-	assert.Equal(t, committee.Proposer(0).Number(), int32(1))
-	assert.Equal(t, committee.Proposer(7).Number(), int32(1))
-	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
-	fmt.Println(committee.String())
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(1))
+	assert.Equal(t, cmt.Proposer(7).Number(), int32(1))
+	assert.Equal(t, cmt.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
+	fmt.Println(cmt.String())
 
 	// Height 1001
-	committee.Update(0, nil)
-	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
-	assert.Equal(t, committee.Proposer(1).Number(), int32(3))
-	assert.Equal(t, committee.Proposer(7).Number(), int32(2))
-	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
-	fmt.Println(committee.String())
+	cmt.Update(0, nil)
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(2))
+	assert.Equal(t, cmt.Proposer(1).Number(), int32(3))
+	assert.Equal(t, cmt.Proposer(7).Number(), int32(2))
+	assert.Equal(t, cmt.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
+	fmt.Println(cmt.String())
 
 	// Height 1002
-	committee.Update(3, nil)
-	assert.Equal(t, committee.Proposer(0).Number(), int32(6))
-	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
-	fmt.Println(committee.String())
+	cmt.Update(3, nil)
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(6))
+	assert.Equal(t, cmt.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
+	fmt.Println(cmt.String())
 
 	// Height 1003
-	committee.Update(1, nil)
-	assert.Equal(t, committee.Proposer(0).Number(), int32(1))
-	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
-	fmt.Println(committee.String())
+	cmt.Update(1, nil)
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(1))
+	assert.Equal(t, cmt.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
+	fmt.Println(cmt.String())
 }
 
 func TestValidatorConsistency(t *testing.T) {
@@ -102,7 +102,7 @@ func TestValidatorConsistency(t *testing.T) {
 	val3, _ := ts.GenerateTestValidator(3)
 	val4, _ := ts.GenerateTestValidator(4)
 
-	committee, _ := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
+	cmt, _ := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
 
 	t.Run("Updating validators' stake, Should panic", func(t *testing.T) {
 		defer func() {
@@ -112,7 +112,7 @@ func TestValidatorConsistency(t *testing.T) {
 		}()
 
 		val1.AddToStake(1)
-		committee.Update(0, []*validator.Validator{val1})
+		cmt.Update(0, []*validator.Validator{val1})
 	})
 }
 
@@ -127,9 +127,9 @@ func TestProposerJoin(t *testing.T) {
 	val6, _ := ts.GenerateTestValidator(6)
 	val7, _ := ts.GenerateTestValidator(7)
 
-	committee, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 7, val1.Address())
+	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 7, val1.Address())
 	assert.NoError(t, err)
-	assert.Equal(t, committee.Size(), 4)
+	assert.Equal(t, cmt.Size(), 4)
 
 	//
 	// h=1000, r=0  h=1001, r=0    h=1002, r=1    h=1003, r=1        h=1004, r=0
@@ -141,41 +141,41 @@ func TestProposerJoin(t *testing.T) {
 	// Height 1000
 	// Val2 is in the committee
 	val2.UpdateLastSortitionHeight(1000)
-	committee.Update(0, []*validator.Validator{val2})
-	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
-	assert.Equal(t, committee.Committers(), []int32{1, 2, 3, 4})
-	assert.Equal(t, committee.Size(), 4)
-	fmt.Println(committee.String())
+	cmt.Update(0, []*validator.Validator{val2})
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(2))
+	assert.Equal(t, cmt.Committers(), []int32{1, 2, 3, 4})
+	assert.Equal(t, cmt.Size(), 4)
+	fmt.Println(cmt.String())
 
 	// Height 1001
 	val5.UpdateLastSortitionHeight(1001)
-	committee.Update(0, []*validator.Validator{val5})
-	assert.Equal(t, committee.Proposer(0).Number(), int32(3))
-	assert.Equal(t, committee.Proposer(1).Number(), int32(4))
-	assert.Equal(t, committee.Committers(), []int32{1, 5, 2, 3, 4})
-	assert.Equal(t, committee.Size(), 5)
-	fmt.Println(committee.String())
+	cmt.Update(0, []*validator.Validator{val5})
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(3))
+	assert.Equal(t, cmt.Proposer(1).Number(), int32(4))
+	assert.Equal(t, cmt.Committers(), []int32{1, 5, 2, 3, 4})
+	assert.Equal(t, cmt.Size(), 5)
+	fmt.Println(cmt.String())
 
 	// Height 1002
-	committee.Update(1, nil)
-	assert.Equal(t, committee.Proposer(0).Number(), int32(1))
-	assert.Equal(t, committee.Proposer(1).Number(), int32(5))
-	fmt.Println(committee.String())
+	cmt.Update(1, nil)
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(1))
+	assert.Equal(t, cmt.Proposer(1).Number(), int32(5))
+	fmt.Println(cmt.String())
 
 	// Height 1003
 	val3.UpdateLastSortitionHeight(1003)
 	val6.UpdateLastSortitionHeight(1003)
 	val7.UpdateLastSortitionHeight(1003)
-	committee.Update(1, []*validator.Validator{val7, val3, val6})
-	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
-	assert.Equal(t, committee.Committers(), []int32{6, 7, 1, 5, 2, 3, 4})
-	assert.Equal(t, committee.Size(), 7)
-	fmt.Println(committee.String())
+	cmt.Update(1, []*validator.Validator{val7, val3, val6})
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(2))
+	assert.Equal(t, cmt.Committers(), []int32{6, 7, 1, 5, 2, 3, 4})
+	assert.Equal(t, cmt.Size(), 7)
+	fmt.Println(cmt.String())
 
 	// Height 1004
-	committee.Update(0, nil)
-	assert.Equal(t, committee.Proposer(0).Number(), int32(3))
-	fmt.Println(committee.String())
+	cmt.Update(0, nil)
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(3))
+	fmt.Println(cmt.String())
 }
 
 func TestProposerJoinAndLeave(t *testing.T) {
@@ -207,10 +207,10 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	valB := validator.NewValidator(pubB, 11)
 	valC := validator.NewValidator(pubC, 12)
 
-	committee, err := committee.NewCommittee(
+	cmt, err := committee.NewCommittee(
 		[]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
 	assert.NoError(t, err)
-	fmt.Println(committee.String())
+	fmt.Println(cmt.String())
 
 	// This code comment explains how the committee changes when new validators join.
 	//
@@ -259,61 +259,61 @@ func TestProposerJoinAndLeave(t *testing.T) {
 
 	// Height 1001
 	val8.UpdateLastSortitionHeight(1001)
-	committee.Update(0, []*validator.Validator{val8})
-	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
-	assert.Equal(t, committee.Proposer(1).Number(), int32(3))
-	assert.Equal(t, committee.Proposer(2).Number(), int32(4))
-	assert.Equal(t, committee.Committers(), []int32{8, 2, 3, 4, 5, 6, 7})
-	fmt.Println(committee.String())
+	cmt.Update(0, []*validator.Validator{val8})
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(2))
+	assert.Equal(t, cmt.Proposer(1).Number(), int32(3))
+	assert.Equal(t, cmt.Proposer(2).Number(), int32(4))
+	assert.Equal(t, cmt.Committers(), []int32{8, 2, 3, 4, 5, 6, 7})
+	fmt.Println(cmt.String())
 
 	// Height 1002
 	val3.UpdateLastSortitionHeight(1002)
-	committee.Update(3, []*validator.Validator{val3})
-	assert.Equal(t, committee.Proposer(0).Number(), int32(6))
-	fmt.Println(committee.String())
+	cmt.Update(3, []*validator.Validator{val3})
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(6))
+	fmt.Println(cmt.String())
 
 	// Height 1003
 	val2.UpdateLastSortitionHeight(1003)
 	val9.UpdateLastSortitionHeight(1003)
-	committee.Update(0, []*validator.Validator{val9, val2})
-	assert.Equal(t, committee.Proposer(0).Number(), int32(7))
-	assert.Equal(t, committee.Proposer(1).Number(), int32(8))
-	assert.Equal(t, committee.Committers(), []int32{8, 2, 3, 5, 9, 6, 7})
-	fmt.Println(committee.String())
+	cmt.Update(0, []*validator.Validator{val9, val2})
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(7))
+	assert.Equal(t, cmt.Proposer(1).Number(), int32(8))
+	assert.Equal(t, cmt.Committers(), []int32{8, 2, 3, 5, 9, 6, 7})
+	fmt.Println(cmt.String())
 
 	// Height 1004
 	valA.UpdateLastSortitionHeight(1004)
-	committee.Update(1, []*validator.Validator{valA})
-	assert.Equal(t, committee.Proposer(0).Number(), int32(2))
-	assert.Equal(t, committee.Committers(), []int32{8, 2, 3, 9, 6, 10, 7})
-	fmt.Println(committee.String())
+	cmt.Update(1, []*validator.Validator{valA})
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(2))
+	assert.Equal(t, cmt.Committers(), []int32{8, 2, 3, 9, 6, 10, 7})
+	fmt.Println(cmt.String())
 
 	// Height 1005
 	valB.UpdateLastSortitionHeight(1005)
 	valC.UpdateLastSortitionHeight(1005)
-	committee.Update(0, []*validator.Validator{valC, valB})
-	assert.Equal(t, committee.Proposer(0).Number(), int32(3))
-	assert.Equal(t, committee.Proposer(1).Number(), int32(9))
-	assert.Equal(t, committee.Proposer(2).Number(), int32(10))
-	assert.Equal(t, committee.Committers(), []int32{8, 11, 12, 2, 3, 9, 10})
-	fmt.Println(committee.String())
+	cmt.Update(0, []*validator.Validator{valC, valB})
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(3))
+	assert.Equal(t, cmt.Proposer(1).Number(), int32(9))
+	assert.Equal(t, cmt.Proposer(2).Number(), int32(10))
+	assert.Equal(t, cmt.Committers(), []int32{8, 11, 12, 2, 3, 9, 10})
+	fmt.Println(cmt.String())
 
 	// Height 1006
 	val1.UpdateLastSortitionHeight(1006)
-	committee.Update(2, []*validator.Validator{val1})
-	assert.Equal(t, committee.Proposer(0).Number(), int32(11))
-	assert.Equal(t, committee.Committers(), []int32{11, 12, 2, 1, 3, 9, 10})
-	fmt.Println(committee.String())
+	cmt.Update(2, []*validator.Validator{val1})
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(11))
+	assert.Equal(t, cmt.Committers(), []int32{11, 12, 2, 1, 3, 9, 10})
+	fmt.Println(cmt.String())
 
 	// Height 1007
 	val2.UpdateLastSortitionHeight(1007)
 	val3.UpdateLastSortitionHeight(1007)
 	val5.UpdateLastSortitionHeight(1007)
 	val6.UpdateLastSortitionHeight(1007)
-	committee.Update(4, []*validator.Validator{val2, val3, val5, val6})
-	assert.Equal(t, committee.Proposer(0).Number(), int32(5))
-	assert.Equal(t, committee.Committers(), []int32{5, 6, 11, 12, 2, 1, 3})
-	fmt.Println(committee.String())
+	cmt.Update(4, []*validator.Validator{val2, val3, val5, val6})
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(5))
+	assert.Equal(t, cmt.Committers(), []int32{5, 6, 11, 12, 2, 1, 3})
+	fmt.Println(cmt.String())
 }
 
 func TestIsProposer(t *testing.T) {
@@ -324,15 +324,15 @@ func TestIsProposer(t *testing.T) {
 	val3, _ := ts.GenerateTestValidator(2)
 	val4, _ := ts.GenerateTestValidator(3)
 
-	committee, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
+	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)
 
-	assert.Equal(t, committee.Proposer(0).Number(), int32(0))
-	assert.Equal(t, committee.Proposer(1).Number(), int32(1))
-	assert.True(t, committee.IsProposer(val3.Address(), 2))
-	assert.False(t, committee.IsProposer(val4.Address(), 2))
-	assert.False(t, committee.IsProposer(ts.RandAccAddress(), 2))
-	assert.Equal(t, committee.Validators(), []*validator.Validator{val1, val2, val3, val4})
+	assert.Equal(t, cmt.Proposer(0).Number(), int32(0))
+	assert.Equal(t, cmt.Proposer(1).Number(), int32(1))
+	assert.True(t, cmt.IsProposer(val3.Address(), 2))
+	assert.False(t, cmt.IsProposer(val4.Address(), 2))
+	assert.False(t, cmt.IsProposer(ts.RandAccAddress(), 2))
+	assert.Equal(t, cmt.Validators(), []*validator.Validator{val1, val2, val3, val4})
 }
 
 func TestCommitters(t *testing.T) {
@@ -343,9 +343,9 @@ func TestCommitters(t *testing.T) {
 	val3, _ := ts.GenerateTestValidator(2)
 	val4, _ := ts.GenerateTestValidator(3)
 
-	committee, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
+	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)
-	assert.Equal(t, committee.Committers(), []int32{0, 1, 2, 3})
+	assert.Equal(t, cmt.Committers(), []int32{0, 1, 2, 3})
 }
 
 func TestSortJoined(t *testing.T) {
@@ -359,12 +359,12 @@ func TestSortJoined(t *testing.T) {
 	val6, _ := ts.GenerateTestValidator(5)
 	val7, _ := ts.GenerateTestValidator(6)
 
-	committee1, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 17, val1.Address())
+	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 17, val1.Address())
 	assert.NoError(t, err)
 	committee2, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 17, val1.Address())
 	assert.NoError(t, err)
 
-	committee1.Update(0, []*validator.Validator{val5, val6, val7})
+	cmt.Update(0, []*validator.Validator{val5, val6, val7})
 	committee2.Update(0, []*validator.Validator{val7, val5, val6})
 }
 
@@ -378,11 +378,11 @@ func TestTotalPower(t *testing.T) {
 	val3, _ := ts.GenerateTestValidator(2)
 	val4, _ := ts.GenerateTestValidator(3)
 
-	committee, err := committee.NewCommittee([]*validator.Validator{val0, val1, val2, val3, val4}, 4, val1.Address())
+	cmt, err := committee.NewCommittee([]*validator.Validator{val0, val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)
 
 	totalPower := val0.Power() + val1.Power() + val2.Power() + val3.Power() + val4.Power()
 	totalStake := val0.Stake() + val1.Stake() + val2.Stake() + val3.Stake() + val4.Stake()
-	assert.Equal(t, committee.TotalPower(), totalPower)
-	assert.Equal(t, committee.TotalPower(), totalStake+1)
+	assert.Equal(t, cmt.TotalPower(), totalPower)
+	assert.Equal(t, cmt.TotalPower(), totalStake+1)
 }

@@ -12,18 +12,18 @@ import (
 func TestMustGetRound(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	committee, _ := ts.GenerateTestCommittee(4)
+	cmt, _ := ts.GenerateTestCommittee(4)
 	log := NewLog()
-	log.MoveToNewHeight(committee.Validators())
+	log.MoveToNewHeight(cmt.Validators())
 	assert.NotNil(t, log.RoundMessages(ts.RandRound()))
 }
 
 func TestAddValidVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	committee, valKeys := ts.GenerateTestCommittee(4)
+	cmt, valKeys := ts.GenerateTestCommittee(4)
 	log := NewLog()
-	log.MoveToNewHeight(committee.Validators())
+	log.MoveToNewHeight(cmt.Validators())
 	h := ts.RandHeight()
 	r := ts.RandRound()
 
@@ -60,9 +60,9 @@ func TestAddValidVote(t *testing.T) {
 func TestAddInvalidVoteType(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	committee, _ := ts.GenerateTestCommittee(4)
+	cmt, _ := ts.GenerateTestCommittee(4)
 	log := NewLog()
-	log.MoveToNewHeight(committee.Validators())
+	log.MoveToNewHeight(cmt.Validators())
 
 	data, _ := hex.DecodeString("A701050218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
 		"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
@@ -79,10 +79,10 @@ func TestAddInvalidVoteType(t *testing.T) {
 func TestSetRoundProposal(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	committee, _ := ts.GenerateTestCommittee(4)
+	cmt, _ := ts.GenerateTestCommittee(4)
 	prop, _ := ts.GenerateTestProposal(101, 0)
 	log := NewLog()
-	log.MoveToNewHeight(committee.Validators())
+	log.MoveToNewHeight(cmt.Validators())
 	log.SetRoundProposal(4, prop)
 	assert.False(t, log.HasRoundProposal(0))
 	assert.True(t, log.HasRoundProposal(4))
@@ -95,9 +95,9 @@ func TestSetRoundProposal(t *testing.T) {
 func TestCanVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	committee, valKeys := ts.GenerateTestCommittee(4)
+	cmt, valKeys := ts.GenerateTestCommittee(4)
 	log := NewLog()
-	log.MoveToNewHeight(committee.Validators())
+	log.MoveToNewHeight(cmt.Validators())
 
 	addr := ts.RandAccAddress()
 	assert.True(t, log.CanVote(valKeys[0].Address()))

@@ -110,7 +110,7 @@ func (e *Encrypter) IsEncrypted() bool {
 }
 
 // Encrypt encrypts the `message` using give `password` and returns the cipher message.
-func (e *Encrypter) Encrypt(message string, password string) (string, error) {
+func (e *Encrypter) Encrypt(message, password string) (string, error) {
 	if e.Method == nameFuncNope {
 		if password != "" {
 			return "", ErrInvalidPassword
@@ -152,28 +152,26 @@ func (e *Encrypter) Encrypt(message string, password string) (string, error) {
 		// Encrypter method
 		switch funcs[1] {
 		case nameFuncAES256CTR:
-			{
-				// Using salt for Initialization Vector (IV)
-				iv := salt
-				ct := aesCrypt([]byte(message), iv, cipherKey)
+			// Using salt for Initialization Vector (IV)
+			iv := salt
+			ct := aesCrypt([]byte(message), iv, cipherKey)
 
-				// MAC method
-				switch funcs[2] {
-				case nameFuncMACv1:
-					{
-						// Calculate the MAC
-						// We use the MAC to check if the password is correct
-						// https: //en.wikipedia.org/wiki/Authenticated_encryption#Encrypt-then-MAC_(EtM)
-						mac := calcMACv1(cipherKey[16:32], ct)
+			// MAC method
+			switch funcs[2] {
+			case nameFuncMACv1:
+				// Calculate the MAC
+				// We use the MAC to check if the password is correct
+				// https: //en.wikipedia.org/wiki/Authenticated_encryption#Encrypt-then-MAC_(EtM)
+				mac := calcMACv1(cipherKey[16:32], ct)
 
-						data = append(data, salt...)
-						data = append(data, ct...)
-						data = append(data, mac...)
-					}
-				default:
-					return "", ErrMethodNotSupported
-				}
+				data = append(data, salt...)
+				data = append(data, ct...)
+				data = append(data, mac...)
+
+			default:
+				return "", ErrMethodNotSupported
 			}
+
 		default:
 			return "", ErrMethodNotSupported
 		}
@@ -188,12 +186,12 @@ func (e *Encrypter) Encrypt(message string, password string) (string, error) {
 }
 
 // Decrypt decrypts the `cipher` using give `password` and returns the original message.
-func (e *Encrypter) Decrypt(cipher string, password string) (string, error) {
+func (e *Encrypter) Decrypt(cipherText, password string) (string, error) {
 	if e.Method == nameFuncNope {
 		if password != "" {
 			return "", ErrInvalidPassword
 		}
-		return cipher, nil
+		return cipherText, nil
 	}
 
 	funcs := strings.Split(e.Method, "-")
@@ -201,7 +199,7 @@ func (e *Encrypter) Decrypt(cipher string, password string) (string, error) {
 		return "", ErrMethodNotSupported
 	}
 
-	data, err := base64.StdEncoding.DecodeString(cipher)
+	data, err := base64.StdEncoding.DecodeString(cipherText)
 	exitOnErr(err)
 
 	var text string
@@ -224,23 +222,19 @@ func (e *Encrypter) Decrypt(cipher string, password string) (string, error) {
 		// Encrypter method
 		switch funcs[1] {
 		case nameFuncAES256CTR:
-			{
-				iv := salt
-				enc := data[16 : len(data)-4]
-				text = string(aesCrypt(enc, iv, cipherKey))
+			iv := salt
+			enc := data[16 : len(data)-4]
+			text = string(aesCrypt(enc, iv, cipherKey))
 
-				// MAC method
-				switch funcs[2] {
-				case nameFuncMACv1:
-					{
-						mac := data[len(data)-4:]
-						if !util.SafeCmp(mac, calcMACv1(cipherKey[16:32], enc)) {
-							return "", ErrInvalidPassword
-						}
-					}
-				default:
-					return "", ErrMethodNotSupported
+			// MAC method
+			switch funcs[2] {
+			case nameFuncMACv1:
+				mac := data[len(data)-4:]
+				if !util.SafeCmp(mac, calcMACv1(cipherKey[16:32], enc)) {
+					return "", ErrInvalidPassword
 				}
+			default:
+				return "", ErrMethodNotSupported
 			}
 		default:
 			return "", ErrMethodNotSupported
@@ -255,7 +249,7 @@ func (e *Encrypter) Decrypt(cipher string, password string) (string, error) {
 
 // aesCrypt encrypts/decrypts a message using AES-256-CTR and
 // returns the encoded/decoded bytes.
-func aesCrypt(message []byte, iv, cipherKey []byte) []byte {
+func aesCrypt(message, iv, cipherKey []byte) []byte {
 	// Generate the cipher message
 	cipherMsg := make([]byte, len(message))
 	aesCipher, err := aes.NewCipher(cipherKey)

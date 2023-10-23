@@ -19,7 +19,7 @@ var _ Sandbox = &MockSandbox{}
 type MockSandbox struct {
 	ts *testsuite.TestSuite
 
-	TestParams           param.Params
+	TestParams           *param.Params
 	TestStore            *store.MockStore
 	TestCommittee        committee.Committee
 	TestAcceptSortition  bool
@@ -29,20 +29,20 @@ type MockSandbox struct {
 }
 
 func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
-	committee, _ := ts.GenerateTestCommittee(7)
+	cmt, _ := ts.GenerateTestCommittee(7)
 
 	sb := &MockSandbox{
 		ts:                   ts,
 		TestParams:           param.DefaultParams(),
 		TestStore:            store.MockingStore(ts),
-		TestCommittee:        committee,
+		TestCommittee:        cmt,
 		TestJoinedValidators: make(map[crypto.Address]bool),
 		TestCommittedTrxs:    make(map[tx.ID]*tx.Tx),
 	}
 
 	treasuryAmt := int64(21000000 * 1e9)
 
-	for i, val := range committee.Validators() {
+	for i, val := range cmt.Validators() {
 		acc := account.NewAccount(int32(i + 1))
 		acc.AddToBalance(100 * 1e9)
 		sb.UpdateAccount(val.Address(), acc)
@@ -103,7 +103,7 @@ func (m *MockSandbox) CurrentHeight() uint32 {
 	return m.TestStore.LastHeight + 1
 }
 
-func (m *MockSandbox) Params() param.Params {
+func (m *MockSandbox) Params() *param.Params {
 	return m.TestParams
 }
 

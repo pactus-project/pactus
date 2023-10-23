@@ -59,13 +59,13 @@ func (h *Header) ProposerAddress() crypto.Address {
 	return h.data.ProposerAddress
 }
 
-func NewHeader(version uint8, time time.Time, stateRoot, prevBlockHash hash.Hash,
+func NewHeader(version uint8, tme time.Time, stateRoot, prevBlockHash hash.Hash,
 	sortitionSeed sortition.VerifiableSeed, proposerAddress crypto.Address,
 ) *Header {
 	return &Header{
 		data: headerData{
 			Version:         version,
-			UnixTime:        uint32(time.Unix()),
+			UnixTime:        uint32(tme.Unix()),
 			PrevBlockHash:   prevBlockHash,
 			StateRoot:       stateRoot,
 			ProposerAddress: proposerAddress,

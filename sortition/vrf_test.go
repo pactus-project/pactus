@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/bls"
-
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -19,7 +18,7 @@ func TestVRF(t *testing.T) {
 	valKey := bls.NewValidatorKey(pv)
 	for i := 0; i < 100; i++ {
 		seed := ts.RandSeed()
-		fmt.Printf("seed is: %x \n", seed)
+		t.Logf("seed is: %x \n", seed)
 
 		max := uint64(1 * 1e6)
 		index, proof := sortition.Evaluate(seed, valKey.PrivateKey(), max)
@@ -69,8 +68,10 @@ func TestRandomUint64(t *testing.T) {
 }
 
 func TestGetIndex(t *testing.T) {
-	//  Total: 1000000
-
+	// The expected values
+	//
+	// Total: 1,000,000
+	//
 	// proof: 0x1719b896ec1cc66a0f44c4bf90890d988e341cb2c1a808907780af844c854291536c12fdaef9a526bb7ef80da17c0b03
 	// proofH: 0xa7b8166584387f4ea76f9caa0969bd6b0bb8df4c3bb8e87f8b6e4dad62bf3359
 	//

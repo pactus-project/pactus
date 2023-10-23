@@ -46,8 +46,8 @@ func buildStartCmd(parentCmd *cobra.Command) {
 			}()
 		}
 
-		passwordFetcher := func(wallet *wallet.Wallet) (string, bool) {
-			if !wallet.IsEncrypted() {
+		passwordFetcher := func(wlt *wallet.Wallet) (string, bool) {
+			if !wlt.IsEncrypted() {
 				return "", true
 			}
 

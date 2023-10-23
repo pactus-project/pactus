@@ -86,8 +86,8 @@ func (vs *BlockVoteSet) AddVote(v *vote.Vote) (bool, error) {
 	blockVotes := vs.mustGetBlockVotes(v.BlockHash())
 	blockVotes.addVote(v, power)
 	if vs.isTwoThirdOfTotalPower(blockVotes.votedPower) {
-		hash := v.BlockHash()
-		vs.quorumHash = &hash
+		h := v.BlockHash()
+		vs.quorumHash = &h
 	}
 
 	return true, err

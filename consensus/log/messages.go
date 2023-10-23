@@ -35,10 +35,10 @@ func (m *Messages) addVote(v *vote.Vote) (bool, error) {
 	return false, fmt.Errorf("unexpected vote type: %v", v.Type())
 }
 
-func (m *Messages) HasVote(hash hash.Hash) bool {
+func (m *Messages) HasVote(h hash.Hash) bool {
 	votes := m.AllVotes()
 	for _, v := range votes {
-		if v.Hash() == hash {
+		if v.Hash() == h {
 			return true
 		}
 	}

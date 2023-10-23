@@ -32,7 +32,6 @@ func TestBlock(t *testing.T) {
 		td.httpServer.GetBlockByHeightHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
-		// fmt.Println(w.Body)
 	})
 
 	t.Run("Shall return an error, invalid height", func(t *testing.T) {
@@ -42,7 +41,6 @@ func TestBlock(t *testing.T) {
 		td.httpServer.GetBlockByHeightHandler(w, r)
 
 		assert.Equal(t, w.Code, 400)
-		// fmt.Println(w.Body)
 	})
 
 	t.Run("Shall return an error, non exists", func(t *testing.T) {

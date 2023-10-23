@@ -49,7 +49,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		"network", genDoc.ChainType())
 
 	networkName := genDoc.NetworkName()
-	network, err := network.NewNetwork(networkName, conf.Network)
+	net, err := network.NewNetwork(networkName, conf.Network)
 	if err != nil {
 		return nil, err
 	}
@@ -62,39 +62,39 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	txPool := txpool.NewTxPool(conf.TxPool, messageCh)
 
 	// TODO implement dequeue for recent transaction
-	store, err := store.NewStore(conf.Store)
+	str, err := store.NewStore(conf.Store)
 	if err != nil {
 		return nil, err
 	}
 
-	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool, eventCh)
+	st, err := state.LoadOrNewState(genDoc, valKeys, str, txPool, eventCh)
 	if err != nil {
 		return nil, err
 	}
 
-	consMgr := consensus.NewManager(conf.Consensus, state, valKeys, rewardAddrs, messageCh)
+	consMgr := consensus.NewManager(conf.Consensus, st, valKeys, rewardAddrs, messageCh)
 
-	sync, err := sync.NewSynchronizer(conf.Sync, valKeys, state, consMgr, network, messageCh)
+	syn, err := sync.NewSynchronizer(conf.Sync, valKeys, st, consMgr, net, messageCh)
 	if err != nil {
 		return nil, err
 	}
 
-	http := http.NewServer(conf.HTTP)
-	grpc := grpc.NewServer(conf.GRPC, state, sync, consMgr)
-	nanomsg := nanomsg.NewServer(conf.Nanomsg, eventCh)
+	httpServer := http.NewServer(conf.HTTP)
+	grpcServer := grpc.NewServer(conf.GRPC, st, syn, consMgr)
+	nanomsgServer := nanomsg.NewServer(conf.Nanomsg, eventCh)
 
 	node := &Node{
 		config:     conf,
 		genesisDoc: genDoc,
-		network:    network,
-		state:      state,
+		network:    net,
+		state:      st,
 		txPool:     txPool,
 		consMgr:    consMgr,
-		sync:       sync,
-		store:      store,
-		http:       http,
-		grpc:       grpc,
-		nanomsg:    nanomsg,
+		sync:       syn,
+		store:      str,
+		http:       httpServer,
+		grpc:       grpcServer,
+		nanomsg:    nanomsgServer,
 	}
 
 	return node, nil

@@ -6,7 +6,7 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/protocol"
-	ma "github.com/multiformats/go-multiaddr"
+	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -18,12 +18,12 @@ type NotifeeService struct {
 }
 
 func newNotifeeService(host lp2phost.Host, eventChannel chan<- Event,
-	logger *logger.SubLogger, protocolID protocol.ID,
+	subLogger *logger.SubLogger, protocolID protocol.ID,
 ) *NotifeeService {
 	notifee := &NotifeeService{
 		host:         host,
 		eventChannel: eventChannel,
-		logger:       logger,
+		logger:       subLogger,
 		protocolID:   protocolID,
 	}
 	host.Network().Notify(notifee)
@@ -60,13 +60,13 @@ func (n *NotifeeService) Disconnected(_ lp2pnetwork.Network, conn lp2pnetwork.Co
 	n.eventChannel <- &DisconnectEvent{PeerID: peerID}
 }
 
-func (n *NotifeeService) Listen(_ lp2pnetwork.Network, ma ma.Multiaddr) {
+func (n *NotifeeService) Listen(_ lp2pnetwork.Network, ma multiaddr.Multiaddr) {
 	// Handle listen event if needed.
 	n.logger.Debug("notifee Listen event emitted", "addr", ma.String())
 }
 
 // ListenClose is called when your node stops listening on an address.
-func (n *NotifeeService) ListenClose(_ lp2pnetwork.Network, ma ma.Multiaddr) {
+func (n *NotifeeService) ListenClose(_ lp2pnetwork.Network, ma multiaddr.Multiaddr) {
 	// Handle listen close event if needed.
 	n.logger.Debug("notifee ListenClose event emitted", "addr", ma.String())
 }

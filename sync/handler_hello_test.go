@@ -8,7 +8,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/services"
+	"github.com/pactus-project/pactus/sync/service"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
@@ -54,7 +54,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			valKey := td.RandValKey()
 			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, services.New(services.Network),
+			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
@@ -70,7 +70,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			valKey := td.RandValKey()
 			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, services.New(services.Network),
+			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
@@ -86,7 +86,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			valKey := td.RandValKey()
 			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, services.New(services.Network),
+			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
@@ -117,5 +117,5 @@ func TestSendingHelloMessage(t *testing.T) {
 
 	bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
 	assert.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHandshaking))
-	assert.True(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Services, services.New(services.Network)))
+	assert.True(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Services, service.New(service.Network)))
 }

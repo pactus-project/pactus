@@ -8,7 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"os/user"
-	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
@@ -217,22 +217,22 @@ func PactusHomeDir() string {
 		if usr.HomeDir == "/root" {
 			home = "/pactus/"
 		} else {
-			home = path.Join(usr.HomeDir, "pactus")
+			home = filepath.Join(usr.HomeDir, "pactus")
 		}
 	}
 	return home
 }
 
 func PactusDefaultWalletPath(home string) string {
-	return path.Join(home, "wallets"+string(os.PathSeparator)+"default_wallet")
+	return filepath.Join(home, "wallets", "default_wallet")
 }
 
 func PactusGenesisPath(home string) string {
-	return path.Join(home, "genesis.json")
+	return filepath.Join(home, "genesis.json")
 }
 
 func PactusConfigPath(home string) string {
-	return path.Join(home, "config.toml")
+	return filepath.Join(home, "config.toml")
 }
 
 // TrapSignal traps SIGINT and SIGTERM and terminates the server correctly.

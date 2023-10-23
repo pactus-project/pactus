@@ -34,9 +34,9 @@ func (c *Cache) HasBlockInCache(height uint32) bool {
 }
 
 func (c *Cache) GetBlock(height uint32) *block.Block {
-	block, ok := c.blocks.Get(height)
+	blk, ok := c.blocks.Get(height)
 	if ok {
-		return block
+		return blk
 	}
 
 	return nil
@@ -53,9 +53,9 @@ func (c *Cache) AddBlock(blk *block.Block) {
 }
 
 func (c *Cache) GetCertificate(height uint32) *certificate.Certificate {
-	certificate, ok := c.certs.Get(height)
+	cert, ok := c.certs.Get(height)
 	if ok {
-		return certificate
+		return cert
 	}
 
 	return nil

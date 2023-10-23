@@ -17,9 +17,9 @@ func newVoteBox() *voteBox {
 	}
 }
 
-func (vs *voteBox) addVote(vote *vote.Vote, power int64) {
-	if vs.votes[vote.Signer()] == nil {
-		vs.votes[vote.Signer()] = vote
+func (vs *voteBox) addVote(vte *vote.Vote, power int64) {
+	if vs.votes[vte.Signer()] == nil {
+		vs.votes[vte.Signer()] = vte
 		vs.votedPower += power
 	}
 }

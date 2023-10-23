@@ -27,7 +27,7 @@ func (p params) SetBytes(key string, val []byte) {
 	p[key] = base64.StdEncoding.EncodeToString(val)
 }
 
-func (p params) SetString(key string, val string) {
+func (p params) SetString(key, val string) {
 	p[key] = val
 }
 

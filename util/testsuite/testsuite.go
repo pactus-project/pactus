@@ -40,7 +40,7 @@ func GenerateSeed() int64 {
 func NewTestSuiteForSeed(seed int64) *TestSuite {
 	return &TestSuite{
 		Seed: seed,
-		//nolint:gosec
+		//nolint:gosec // to reproduce the failed tests
 		Rand: rand.New(rand.NewSource(seed)),
 	}
 }
@@ -53,7 +53,7 @@ func NewTestSuite(t *testing.T) *TestSuite {
 	t.Logf("%v seed is %v", t.Name(), seed)
 	return &TestSuite{
 		Seed: seed,
-		//nolint:gosec
+		//nolint:gosec // to reproduce the failed tests
 		Rand: rand.New(rand.NewSource(seed)),
 	}
 }
@@ -144,8 +144,8 @@ func (ts *TestSuite) RandRound() int16 {
 }
 
 // RandBytes returns a slice of random bytes of the given length.
-func (ts *TestSuite) RandBytes(len int) []byte {
-	buf := make([]byte, len)
+func (ts *TestSuite) RandBytes(length int) []byte {
+	buf := make([]byte, length)
 	_, err := ts.Rand.Read(buf)
 	if err != nil {
 		panic(err)
@@ -154,10 +154,10 @@ func (ts *TestSuite) RandBytes(len int) []byte {
 }
 
 // RandString generates a random string of the given length.
-func (ts *TestSuite) RandString(len int) string {
+func (ts *TestSuite) RandString(length int) string {
 	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-	b := make([]byte, len)
+	b := make([]byte, length)
 	for i := range b {
 		b[i] = letterBytes[ts.RandInt(52)]
 	}
@@ -181,7 +181,8 @@ func (ts *TestSuite) RandBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 		panic(err)
 	}
 	prv, _ := bls.PrivateKeyFromBytes(buf)
-	return prv.PublicKeyNative(), prv
+	pub := prv.PublicKeyNative()
+	return pub, prv
 }
 
 // RandValKey generates a random validator key for testing purposes.
@@ -233,7 +234,7 @@ func (ts *TestSuite) RandProof() sortition.Proof {
 func (ts *TestSuite) RandPeerID() peer.ID {
 	s := ts.RandBytes(32)
 	id := [34]byte{0x12, 32}
-	copy(id[2:], s[:])
+	copy(id[2:], s)
 	return peer.ID(id[:])
 }
 
@@ -260,9 +261,9 @@ func (ts *TestSuite) GenerateTestBlockWithProposer(height uint32, proposer crypt
 }
 
 // GenerateTestBlockWithTime generates a block with the given time for testing purposes.
-func (ts *TestSuite) GenerateTestBlockWithTime(height uint32, time time.Time,
+func (ts *TestSuite) GenerateTestBlockWithTime(height uint32, tme time.Time,
 ) (*block.Block, *certificate.Certificate) {
-	return ts.generateTestBlock(height, ts.RandValAddress(), time)
+	return ts.generateTestBlock(height, ts.RandValAddress(), tme)
 }
 
 // GenerateTestBlock generates a block for testing purposes.
@@ -270,7 +271,7 @@ func (ts *TestSuite) GenerateTestBlock(height uint32) (*block.Block, *certificat
 	return ts.generateTestBlock(height, ts.RandValAddress(), util.Now())
 }
 
-func (ts *TestSuite) generateTestBlock(height uint32, proposer crypto.Address, time time.Time,
+func (ts *TestSuite) generateTestBlock(height uint32, proposer crypto.Address, tme time.Time,
 ) (*block.Block, *certificate.Certificate) {
 	txs := block.NewTxs()
 	tx1, _ := ts.GenerateTestTransferTx()
@@ -294,7 +295,7 @@ func (ts *TestSuite) generateTestBlock(height uint32, proposer crypto.Address, t
 		prevCert = ts.GenerateTestCertificate(height - 1)
 	}
 	blockCert := ts.GenerateTestCertificate(height)
-	header := block.NewHeader(1, time,
+	header := block.NewHeader(1, tme,
 		ts.RandHash(),
 		prevBlockHash,
 		ts.RandSeed(),
@@ -335,10 +336,10 @@ func (ts *TestSuite) GenerateTestCertificate(height uint32) *certificate.Certifi
 func (ts *TestSuite) GenerateTestProposal(height uint32, round int16) (*proposal.Proposal, *bls.ValidatorKey) {
 	valKey := ts.RandValKey()
 	blk, _ := ts.GenerateTestBlockWithProposer(height, valKey.Address())
-	proposal := proposal.NewProposal(height, round, blk)
-	ts.HelperSignProposal(valKey, proposal)
+	prop := proposal.NewProposal(height, round, blk)
+	ts.HelperSignProposal(valKey, prop)
 
-	return proposal, valKey
+	return prop, valKey
 }
 
 // GenerateTestTransferTx generates a transfer transaction for testing purposes.
@@ -430,8 +431,8 @@ func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls
 		val.AddToStake(10 * 1e9)
 	}
 
-	committee, _ := committee.NewCommittee(vals, num, vals[0].Address())
-	return committee, valKeys
+	cmt, _ := committee.NewCommittee(vals, num, vals[0].Address())
+	return cmt, valKeys
 }
 
 func (ts *TestSuite) HelperSignVote(valKey *bls.ValidatorKey, v *vote.Vote) {

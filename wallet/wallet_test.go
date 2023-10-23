@@ -150,17 +150,17 @@ func TestRecoverWallet(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		path := util.TempFilePath()
-		recovered, err := Create(path, mnemonic, password, genesis.Mainnet)
+		walletPath := util.TempFilePath()
+		recovered, err := Create(walletPath, mnemonic, password, genesis.Mainnet)
 		assert.NoError(t, err)
 
 		addr1, err := recovered.NewBLSAccountAddress("addr-1")
 		assert.NoError(t, err)
 
-		assert.NoFileExists(t, path)
+		assert.NoFileExists(t, walletPath)
 		assert.NoError(t, recovered.Save())
 
-		assert.FileExists(t, path)
+		assert.FileExists(t, walletPath)
 		assert.True(t, recovered.Contains(addr1))
 	})
 }

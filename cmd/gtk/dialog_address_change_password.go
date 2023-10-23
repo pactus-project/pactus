@@ -6,14 +6,13 @@ import (
 	_ "embed"
 
 	"github.com/gotk3/gotk3/gtk"
-
 	"github.com/pactus-project/pactus/wallet"
 )
 
 //go:embed assets/ui/dialog_wallet_change_password.ui
 var uiWalletChangePasswordDialog []byte
 
-func changePassword(wallet *wallet.Wallet) {
+func changePassword(wlt *wallet.Wallet) {
 	builder, err := gtk.BuilderNewFromString(string(uiWalletChangePasswordDialog))
 	fatalErrorCheck(err)
 
@@ -26,7 +25,7 @@ func changePassword(wallet *wallet.Wallet) {
 	getButtonObj(builder, "id_button_ok").SetImage(OkIcon())
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 
-	if !wallet.IsEncrypted() {
+	if !wlt.IsEncrypted() {
 		oldPasswordEntry.SetVisible(false)
 		oldPasswordLabel.SetVisible(false)
 	}
@@ -46,10 +45,10 @@ func changePassword(wallet *wallet.Wallet) {
 			return
 		}
 
-		err = wallet.UpdatePassword(oldPassword, newPassword)
+		err = wlt.UpdatePassword(oldPassword, newPassword)
 		errorCheck(err)
 
-		err = wallet.Save()
+		err = wlt.Save()
 		errorCheck(err)
 
 		dlg.Close()

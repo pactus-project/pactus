@@ -5,9 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto/bls"
-
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet/encrypter"

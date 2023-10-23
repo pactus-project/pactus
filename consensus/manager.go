@@ -27,7 +27,7 @@ type manager struct {
 // It is not thread-safe.
 func NewManager(
 	conf *Config,
-	state state.Facade,
+	st state.Facade,
 	valKeys []*bls.ValidatorKey,
 	rewardAddrs []crypto.Address,
 	broadcastCh chan message.Message,
@@ -36,12 +36,12 @@ func NewManager(
 		instances:         make([]Consensus, len(valKeys)),
 		upcomingVotes:     make([]*vote.Vote, 0),
 		upcomingProposals: make([]*proposal.Proposal, 0),
-		state:             state,
+		state:             st,
 	}
 	mediatorConcrete := newConcreteMediator()
 
 	for i, key := range valKeys {
-		cons := NewConsensus(conf, state, key, rewardAddrs[i], broadcastCh, mediatorConcrete)
+		cons := NewConsensus(conf, st, key, rewardAddrs[i], broadcastCh, mediatorConcrete)
 
 		mgr.instances[i] = cons
 	}

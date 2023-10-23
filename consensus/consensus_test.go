@@ -156,14 +156,14 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	return td
 }
 
-func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash hash.Hash) {
+func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, h hash.Hash) {
 	t.Helper()
 
 	for _, consMsg := range td.consMessages {
 		if consMsg.sender == cons.valKey.Address() &&
 			consMsg.message.Type() == message.TypeBlockAnnounce {
 			m := consMsg.message.(*message.BlockAnnounceMessage)
-			assert.Equal(t, m.Block.Hash(), hash)
+			assert.Equal(t, m.Block.Hash(), h)
 			return
 		}
 	}
@@ -228,7 +228,7 @@ func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height
 	require.NoError(t, fmt.Errorf("Not found"))
 }
 
-func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, hash hash.Hash) *vote.Vote {
+func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, h hash.Hash) *vote.Vote {
 	t.Helper()
 
 	for i := len(td.consMessages) - 1; i >= 0; i-- {
@@ -237,7 +237,7 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vo
 			consMsg.message.Type() == message.TypeVote {
 			m := consMsg.message.(*message.VoteMessage)
 			if m.Vote.Type() == voteType &&
-				m.Vote.BlockHash() == hash {
+				m.Vote.BlockHash() == h {
 				return m.Vote
 			}
 		}
@@ -345,7 +345,7 @@ func (td *testData) enterNextRound(cons *consensus) {
 func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certificate.Certificate) {
 	t.Helper()
 
-	height := td.consX.state.LastBlockHeight()
+	height := td.consX.bcState.LastBlockHeight()
 	var err error
 	p := td.makeProposal(t, height+1, 0)
 
@@ -359,13 +359,13 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 		[]int32{tIndexX, tIndexY, tIndexB, tIndexP}, []int32{tIndexB}, sig)
 	blk := p.Block()
 
-	err = td.consX.state.CommitBlock(blk, cert)
+	err = td.consX.bcState.CommitBlock(blk, cert)
 	assert.NoError(t, err)
-	err = td.consY.state.CommitBlock(blk, cert)
+	err = td.consY.bcState.CommitBlock(blk, cert)
 	assert.NoError(t, err)
-	err = td.consB.state.CommitBlock(blk, cert)
+	err = td.consB.bcState.CommitBlock(blk, cert)
 	assert.NoError(t, err)
-	err = td.consP.state.CommitBlock(blk, cert)
+	err = td.consP.bcState.CommitBlock(blk, cert)
 	assert.NoError(t, err)
 
 	return blk, cert
@@ -377,22 +377,22 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 	var p *proposal.Proposal
 	switch (height % 4) + uint32(round%4) {
 	case 1:
-		blk, err := td.consX.state.ProposeBlock(td.consX.valKey, td.consX.rewardAddr)
+		blk, err := td.consX.bcState.ProposeBlock(td.consX.valKey, td.consX.rewardAddr)
 		require.NoError(t, err)
 		p = proposal.NewProposal(height, round, blk)
 		td.HelperSignProposal(td.consX.valKey, p)
 	case 2:
-		blk, err := td.consY.state.ProposeBlock(td.consY.valKey, td.consY.rewardAddr)
+		blk, err := td.consY.bcState.ProposeBlock(td.consY.valKey, td.consY.rewardAddr)
 		require.NoError(t, err)
 		p = proposal.NewProposal(height, round, blk)
 		td.HelperSignProposal(td.consY.valKey, p)
 	case 3:
-		blk, err := td.consB.state.ProposeBlock(td.consB.valKey, td.consB.rewardAddr)
+		blk, err := td.consB.bcState.ProposeBlock(td.consB.valKey, td.consB.rewardAddr)
 		require.NoError(t, err)
 		p = proposal.NewProposal(height, round, blk)
 		td.HelperSignProposal(td.consB.valKey, p)
 	case 0, 4:
-		blk, err := td.consP.state.ProposeBlock(td.consP.valKey, td.consP.rewardAddr)
+		blk, err := td.consP.bcState.ProposeBlock(td.consP.valKey, td.consP.rewardAddr)
 		require.NoError(t, err)
 		p = proposal.NewProposal(height, round, blk)
 		td.HelperSignProposal(td.consP.valKey, p)
@@ -413,9 +413,9 @@ func TestNotInCommittee(t *testing.T) {
 	td := setup(t)
 
 	valKey := td.RandValKey()
-	store := store.MockingStore(td.TestSuite)
+	str := store.MockingStore(td.TestSuite)
 
-	st, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, store, td.txPool, nil)
+	st, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, str, td.txPool, nil)
 	Cons := NewConsensus(testConfig(), st, valKey, valKey.Address(), make(chan message.Message, 100),
 		newConcreteMediator())
 	cons := Cons.(*consensus)
@@ -699,7 +699,7 @@ func TestNonActiveValidator(t *testing.T) {
 		nonActiveCons.MoveToNewHeight()
 		td.checkHeightRound(t, nonActiveCons, 1, 0)
 
-		assert.NoError(t, nonActiveCons.state.CommitBlock(b1, cert1))
+		assert.NoError(t, nonActiveCons.bcState.CommitBlock(b1, cert1))
 
 		nonActiveCons.MoveToNewHeight()
 		td.newHeightTimeout(nonActiveCons)
@@ -956,10 +956,8 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 		for _, msg := range blockAnnounces {
 			if firstAnnounce == nil {
 				firstAnnounce = msg
-			} else {
-				if msg.Block.Hash() != firstAnnounce.Block.Hash() {
-					return nil, fmt.Errorf("consensus violated, seed %v", td.TestSuite.Seed)
-				}
+			} else if msg.Block.Hash() != firstAnnounce.Block.Hash() {
+				return nil, fmt.Errorf("consensus violated, seed %v", td.TestSuite.Seed)
 			}
 		}
 

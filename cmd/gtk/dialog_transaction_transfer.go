@@ -15,7 +15,7 @@ import (
 //go:embed assets/ui/dialog_transaction_transfer.ui
 var uiTransactionTransferDialog []byte
 
-func broadcastTransactionSend(wallet *wallet.Wallet) {
+func broadcastTransactionSend(wlt *wallet.Wallet) {
 	builder, err := gtk.BuilderNewFromString(string(uiTransactionTransferDialog))
 	fatalErrorCheck(err)
 
@@ -30,24 +30,24 @@ func broadcastTransactionSend(wallet *wallet.Wallet) {
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
-	for _, i := range wallet.AddressInfos() {
+	for _, i := range wlt.AddressInfos() {
 		senderEntry.Append(i.Address, i.Address)
 	}
 	senderEntry.SetActive(0)
 
 	onSenderChanged := func() {
 		senderStr := senderEntry.GetActiveID()
-		updateAccountHint(senderHint, senderStr, wallet)
+		updateAccountHint(senderHint, senderStr, wlt)
 	}
 
 	onReceiverChanged := func() {
 		receiverStr, _ := receiverEntry.GetText()
-		updateAccountHint(receiverHint, receiverStr, wallet)
+		updateAccountHint(receiverHint, receiverStr, wlt)
 	}
 
 	onAmountChanged := func() {
 		amtStr, _ := amountEntry.GetText()
-		updateFeeHint(amountHint, amtStr, wallet, payload.TypeTransfer)
+		updateFeeHint(amountHint, amtStr, wlt, payload.TypeTransfer)
 	}
 
 	onSend := func() {
@@ -61,7 +61,7 @@ func broadcastTransactionSend(wallet *wallet.Wallet) {
 			return
 		}
 
-		trx, err := wallet.MakeTransferTx(sender, receiver, amount)
+		trx, err := wlt.MakeTransferTx(sender, receiver, amount)
 		if err != nil {
 			errorCheck(err)
 			return
@@ -77,7 +77,7 @@ Fee: <b>%v</b>
 THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`, sender, receiver,
 			util.ChangeToString(amount), util.ChangeToString(trx.Fee()))
 
-		signAndBroadcastTransaction(dlg, msg, wallet, trx)
+		signAndBroadcastTransaction(dlg, msg, wlt, trx)
 
 		dlg.Close()
 	}

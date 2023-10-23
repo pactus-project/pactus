@@ -30,11 +30,9 @@ func (s *precommitState) decide() {
 			// Ask peers for this proposal.
 			s.logger.Info("query for a decided proposal", "hash", precommitQH)
 			s.queryProposal()
-		} else {
+		} else if s.hasVoted {
 			// To ensure we have voted and won't be absent from the certificate
-			if s.hasVoted {
-				s.enterNewState(s.commitState)
-			}
+			s.enterNewState(s.commitState)
 		}
 	} else {
 		//

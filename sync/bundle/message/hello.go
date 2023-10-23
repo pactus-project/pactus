@@ -7,26 +7,26 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/sync/services"
+	"github.com/pactus-project/pactus/sync/service"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/version"
 )
 
 type HelloMessage struct {
-	PeerID          peer.ID           `cbor:"1,keyasint"`
-	Agent           string            `cbor:"2,keyasint"`
-	Moniker         string            `cbor:"3,keyasint"`
-	PublicKeys      []*bls.PublicKey  `cbor:"4,keyasint"`
-	Signature       *bls.Signature    `cbor:"5,keyasint"`
-	Height          uint32            `cbor:"6,keyasint"`
-	Services        services.Services `cbor:"7,keyasint"`
-	GenesisHash     hash.Hash         `cbor:"8,keyasint"`
-	BlockHash       hash.Hash         `cbor:"9,keyasint"`
-	MyTimeUnixMilli int64             `cbor:"10,keyasint"`
+	PeerID          peer.ID          `cbor:"1,keyasint"`
+	Agent           string           `cbor:"2,keyasint"`
+	Moniker         string           `cbor:"3,keyasint"`
+	PublicKeys      []*bls.PublicKey `cbor:"4,keyasint"`
+	Signature       *bls.Signature   `cbor:"5,keyasint"`
+	Height          uint32           `cbor:"6,keyasint"`
+	Services        service.Services `cbor:"7,keyasint"`
+	GenesisHash     hash.Hash        `cbor:"8,keyasint"`
+	BlockHash       hash.Hash        `cbor:"9,keyasint"`
+	MyTimeUnixMilli int64            `cbor:"10,keyasint"`
 }
 
 func NewHelloMessage(pid peer.ID, moniker string,
-	height uint32, services services.Services, blockHash, genesisHash hash.Hash,
+	height uint32, services service.Services, blockHash, genesisHash hash.Hash,
 ) *HelloMessage {
 	return &HelloMessage{
 		PeerID:          pid,

@@ -227,9 +227,9 @@ func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string)
 	}
 }
 
-func getPassword(wallet *wallet.Wallet, passOpt string) string {
+func getPassword(wlt *wallet.Wallet, passOpt string) string {
 	password := passOpt
-	if wallet.IsEncrypted() && password == "" {
+	if wlt.IsEncrypted() && password == "" {
 		password = cmd.PromptPassword("Wallet password", false)
 	}
 	return password

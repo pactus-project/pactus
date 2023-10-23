@@ -10,19 +10,19 @@ import (
 	"path/filepath"
 )
 
-func IsAbsPath(path string) bool {
-	return filepath.IsAbs(path)
+func IsAbsPath(p string) bool {
+	return filepath.IsAbs(p)
 }
 
-func MakeAbs(path string) string {
-	if IsAbsPath(path) {
-		return path
+func MakeAbs(p string) string {
+	if IsAbsPath(p) {
+		return p
 	}
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
-	return filepath.Clean(filepath.Join(wd, path))
+	return filepath.Clean(filepath.Join(wd, p))
 }
 
 func ReadFile(filename string) ([]byte, error) {
@@ -48,8 +48,8 @@ func Mkdir(dir string) error {
 	return nil
 }
 
-func PathExists(path string) bool {
-	_, err := os.Stat(path)
+func PathExists(p string) bool {
+	_, err := os.Stat(p)
 	if os.IsNotExist(err) {
 		return false
 	}

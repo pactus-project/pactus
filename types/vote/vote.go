@@ -218,10 +218,8 @@ func (v *Vote) BasicCheck() error {
 		if err := v.data.CPVote.BasicCheck(); err != nil {
 			return err
 		}
-	} else {
-		if v.data.CPVote != nil {
-			return errors.Errorf(errors.ErrInvalidVote, "should not have cp data")
-		}
+	} else if v.data.CPVote != nil {
+		return errors.Errorf(errors.ErrInvalidVote, "should not have cp data")
 	}
 	if v.Signature() == nil {
 		return errors.Errorf(errors.ErrInvalidSignature, "no signature")

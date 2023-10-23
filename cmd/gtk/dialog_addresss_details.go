@@ -12,11 +12,11 @@ import (
 //go:embed assets/ui/dialog_address_details.ui
 var uiAddressDetailsDialog []byte
 
-func showAddressDetails(wallet *wallet.Wallet, addr string) {
+func showAddressDetails(wlt *wallet.Wallet, addr string) {
 	builder, err := gtk.BuilderNewFromString(string(uiAddressDetailsDialog))
 	fatalErrorCheck(err)
 
-	info := wallet.AddressInfo(addr)
+	info := wlt.AddressInfo(addr)
 	if info == nil {
 		showErrorDialog(nil, "address not found")
 		return

@@ -58,11 +58,11 @@ func TestCertificateCBORMarshaling(t *testing.T) {
 func TestCertificateSignBytes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	hash := ts.RandHash()
+	h := ts.RandHash()
 	height := ts.RandHeight()
 	cert := ts.GenerateTestCertificate(height)
-	bz := certificate.BlockCertificateSignBytes(hash, height, cert.Round())
-	assert.NotEqual(t, bz, certificate.BlockCertificateSignBytes(hash, height, cert.Round()+1))
+	bz := certificate.BlockCertificateSignBytes(h, height, cert.Round())
+	assert.NotEqual(t, bz, certificate.BlockCertificateSignBytes(h, height, cert.Round()+1))
 	assert.NotEqual(t, bz, certificate.BlockCertificateSignBytes(ts.RandHash(), height, cert.Round()))
 }
 
@@ -226,7 +226,8 @@ func TestCertificateValidation(t *testing.T) {
 	})
 
 	t.Run("Invalid committer, should return error", func(t *testing.T) {
-		invCommitters := append(committers, ts.Rand.Int31n(1000))
+		invCommitters := committers
+		invCommitters = append(invCommitters, ts.Rand.Int31n(1000))
 		cert := certificate.NewCertificate(blockHeight, blockRound, invCommitters,
 			[]int32{}, aggSig)
 

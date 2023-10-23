@@ -49,8 +49,8 @@ func CheckMnemonic(mnemonic string) error {
 // A wallet can be opened in offline or online modes.
 // Offline wallet doesn’t have any connection to any node.
 // Online wallet has a connection to one of the pre-defined servers.
-func Open(path string, offline bool) (*Wallet, error) {
-	data, err := util.ReadFile(path)
+func Open(walletPath string, offline bool) (*Wallet, error) {
+	data, err := util.ReadFile(walletPath)
 	if err != nil {
 		return nil, err
 	}
@@ -61,16 +61,16 @@ func Open(path string, offline bool) (*Wallet, error) {
 		return nil, err
 	}
 
-	return newWallet(path, store, offline)
+	return newWallet(walletPath, store, offline)
 }
 
 // Create creates a wallet from mnemonic (seed phrase) and save it at the
 // given path.
-func Create(path, mnemonic, password string, chain genesis.ChainType) (*Wallet, error) {
-	path = util.MakeAbs(path)
-	if util.PathExists(path) {
+func Create(walletPath, mnemonic, password string, chain genesis.ChainType) (*Wallet, error) {
+	walletPath = util.MakeAbs(walletPath)
+	if util.PathExists(walletPath) {
 		return nil, ExitsError{
-			Path: path,
+			Path: walletPath,
 		}
 	}
 
@@ -91,24 +91,24 @@ func Create(path, mnemonic, password string, chain genesis.ChainType) (*Wallet, 
 		Network:   chain,
 		Vault:     nil,
 	}
-	wallet, err := newWallet(path, store, true)
+	wallet, err := newWallet(walletPath, store, true)
 	if err != nil {
 		return nil, err
 	}
-	vault, err := vault.CreateVaultFromMnemonic(mnemonic, coinType)
+	vlt, err := vault.CreateVaultFromMnemonic(mnemonic, coinType)
 	if err != nil {
 		return nil, err
 	}
-	err = vault.UpdatePassword("", password)
+	err = vlt.UpdatePassword("", password)
 	if err != nil {
 		return nil, err
 	}
-	wallet.store.Vault = vault
+	wallet.store.Vault = vlt
 
 	return wallet, nil
 }
 
-func newWallet(path string, store *store, offline bool) (*Wallet, error) {
+func newWallet(walletPath string, store *store, offline bool) (*Wallet, error) {
 	if !store.Network.IsMainnet() {
 		crypto.AddressHRP = "tpc"
 		crypto.PublicKeyHRP = "tpublic"
@@ -119,7 +119,7 @@ func newWallet(path string, store *store, offline bool) (*Wallet, error) {
 
 	w := &Wallet{
 		store: store,
-		path:  path,
+		path:  walletPath,
 	}
 
 	if !offline {
@@ -170,18 +170,15 @@ func (w *Wallet) connectToRandomServer() error {
 	var netServers []serverInfo
 	switch w.store.Network {
 	case genesis.Mainnet:
-		{ // mainnet
-			netServers = serversInfo["mainnet"]
-		}
+		// mainnet
+		netServers = serversInfo["mainnet"]
+
 	case genesis.Testnet:
-		{ // testnet
-			netServers = serversInfo["testnet"]
-		}
+		// testnet
+		netServers = serversInfo["testnet"]
 
 	default:
-		{
-			return ErrInvalidNetwork
-		}
+		return ErrInvalidNetwork
 	}
 
 	for i := 0; i < 3; i++ {

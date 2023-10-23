@@ -20,7 +20,6 @@ func updateCommittee(td *testData) {
 
 	td.sandbox.TestCommittee.Update(0, joiningCommittee)
 	td.sandbox.TestJoinedValidators = make(map[crypto.Address]bool)
-	// fmt.Println(td.sandbox.TestCommittee.String())
 }
 
 func TestExecuteSortitionTx(t *testing.T) {
