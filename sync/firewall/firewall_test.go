@@ -230,6 +230,7 @@ func TestNetworkFlags(t *testing.T) {
 	bdl.Flags = 0
 	assert.Error(t, td.firewall.checkBundle(bdl, td.goodPeerID))
 
-	td.state.TestParams.BlockVersion = 0x3f
+	td.state.TestParams.BlockVersion = 0x3f // changing genesis hash
+	bdl.Flags = 1
 	assert.Error(t, td.firewall.checkBundle(bdl, td.goodPeerID))
 }

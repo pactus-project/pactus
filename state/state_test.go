@@ -593,6 +593,7 @@ func TestInvalidBlockVersion(t *testing.T) {
 
 	td.state1.params.BlockVersion = 2
 	b, _ := td.state1.ProposeBlock(td.state1.valKeys[0], td.RandAccAddress())
+	td.state1.params.BlockVersion = 1
 	assert.Error(t, td.state2.ValidateBlock(b))
 }
 

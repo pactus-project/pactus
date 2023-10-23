@@ -239,7 +239,7 @@ func TestBondDecoding(t *testing.T) {
 		pld := BondPayload{}
 		r := util.NewFixedReader(len(test.raw), test.raw)
 		err := pld.Decode(r)
-		if test.readErr == nil {
+		if test.readErr != nil {
 			assert.ErrorIs(t, err, test.readErr)
 		} else {
 			assert.NoError(t, err)
