@@ -43,7 +43,7 @@ type Facade interface {
 	CommittedBlock(height uint32) *store.CommittedBlock
 	CommittedTx(id tx.ID) *store.CommittedTx
 	BlockHash(height uint32) hash.Hash
-	BlockHeight(hash hash.Hash) uint32
+	BlockHeight(h hash.Hash) uint32
 	AccountByAddress(addr crypto.Address) *account.Account
 	ValidatorByAddress(addr crypto.Address) *validator.Validator
 	ValidatorByNumber(number int32) *validator.Validator

@@ -12,7 +12,7 @@ type Reader interface {
 	AllVotes() []*vote.Vote
 	PickRandomVote(round int16) *vote.Vote
 	Proposal() *proposal.Proposal
-	HasVote(hash hash.Hash) bool
+	HasVote(h hash.Hash) bool
 	HeightRound() (uint32, int16)
 	IsActive() bool
 }
