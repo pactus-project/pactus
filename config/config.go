@@ -105,7 +105,7 @@ func SaveTestnetConfig(path string, numValidators int) error {
 		"/ip4/0.0.0.0/tcp/21777", "/ip4/0.0.0.0/udp/21777/quic-v1",
 		"/ip6/::/tcp/21777", "/ip6/::/udp/21777/quic-v1",
 	}
-	conf.Network.Bootstrap.Addresses = []string{
+	conf.Network.BootstrapAddrs = []string{
 		"/ip4/94.101.184.118/tcp/21777/p2p/12D3KooWCwQZt8UriVXobQHPXPR8m83eceXVoeT6brPNiBHomebc",
 		"/ip4/94.101.184.118/udp/21777/quic-v1/p2p/12D3KooWCwQZt8UriVXobQHPXPR8m83eceXVoeT6brPNiBHomebc",
 		"/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
@@ -119,8 +119,8 @@ func SaveTestnetConfig(path string, numValidators int) error {
 		"/ip6/2001:bc8:700:8017::1/tcp/21777/p2p/12D3KooWDF8a4goNCHriP1y922y4jagaPwHdX4eSrG5WtQpjzS6k",
 		"/ip6/2001:bc8:700:8017::1/udp/21777/quic-v1/p2p/12D3KooWDF8a4goNCHriP1y922y4jagaPwHdX4eSrG5WtQpjzS6k",
 	}
-	conf.Network.Bootstrap.MinThreshold = 4
-	conf.Network.Bootstrap.MaxThreshold = 8
+	conf.Network.MinConns = 8
+	conf.Network.MaxConns = 16
 	conf.Network.EnableRelay = true
 	conf.Network.RelayAddrs = []string{
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
@@ -148,10 +148,11 @@ func SaveLocalnetConfig(path string, numValidators int) error {
 	conf := DefaultConfig()
 	conf.Node.NumValidators = numValidators
 	conf.Network.Listens = []string{}
+	conf.Network.EnableRelay = false
 	conf.Network.EnableNAT = false
-	conf.Network.Bootstrap.Addresses = []string{}
-	conf.Network.Bootstrap.MinThreshold = 4
-	conf.Network.Bootstrap.MaxThreshold = 8
+	conf.Network.BootstrapAddrs = []string{}
+	conf.Network.MinConns = 0
+	conf.Network.MaxConns = 0
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "[::]:0"
 	conf.GRPC.Gateway.Enable = true

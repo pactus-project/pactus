@@ -10,25 +10,27 @@ import (
 )
 
 type dhtService struct {
-	ctx       context.Context
-	host      lp2phost.Host
-	kademlia  *lp2pdht.IpfsDHT
-	bootstrap *bootstrap
-	logger    *logger.SubLogger
+	ctx      context.Context
+	host     lp2phost.Host
+	kademlia *lp2pdht.IpfsDHT
+	peerMgr  *peerMgr
+	logger   *logger.SubLogger
 }
 
 func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.ProtocolID,
-	conf *BootstrapConfig, bootstrapper bool, logger *logger.SubLogger,
+	conf *Config, logger *logger.SubLogger,
 ) *dhtService {
 	mode := lp2pdht.ModeAuto
-	if bootstrapper {
+	if conf.Bootstrapper {
 		mode = lp2pdht.ModeServer
 	}
+	bootsrapAddrs := PeerAddrsToAddrInfo(conf.BootstrapAddrs)
 	opts := []lp2pdht.Option{
 		lp2pdht.Mode(mode),
 		lp2pdht.ProtocolPrefix(protocolID),
 		lp2pdht.DisableProviders(),
 		lp2pdht.DisableValues(),
+		lp2pdht.BootstrapPeers(bootsrapAddrs...),
 	}
 
 	kademlia, err := lp2pdht.New(ctx, host, opts...)
@@ -42,21 +44,20 @@ func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.
 		panic(err.Error())
 	}
 
-	bootstrap := newBootstrap(ctx,
-		host, host.Network(), kademlia,
-		conf, logger)
+	bootstrap := newPeerMgr(ctx, host, host.Network(), kademlia,
+		bootsrapAddrs, conf.MinConns, conf.MaxConns, logger)
 
 	return &dhtService{
-		ctx:       ctx,
-		host:      host,
-		kademlia:  kademlia,
-		bootstrap: bootstrap,
-		logger:    logger,
+		ctx:      ctx,
+		host:     host,
+		kademlia: kademlia,
+		peerMgr:  bootstrap,
+		logger:   logger,
 	}
 }
 
 func (dht *dhtService) Start() error {
-	dht.bootstrap.Start()
+	dht.peerMgr.Start()
 	return nil
 }
 
@@ -65,5 +66,5 @@ func (dht *dhtService) Stop() {
 		dht.logger.Error("unable to close Kademlia", "error", err)
 	}
 
-	dht.bootstrap.Stop()
+	dht.peerMgr.Stop()
 }
