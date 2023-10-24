@@ -21,9 +21,16 @@ type gossipService struct {
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	logger *logger.SubLogger,
+	config *Config, logger *logger.SubLogger,
 ) *gossipService {
-	pubsub, err := lp2pps.NewGossipSub(ctx, host)
+	opts := []lp2pps.Option{}
+
+	if config.Bootstrapper {
+		// enable Peer eXchange on bootstrappers
+		opts = append(opts, lp2pps.WithPeerExchange(true))
+	}
+
+	pubsub, err := lp2pps.NewGossipSub(ctx, host, opts...)
 	if err != nil {
 		logger.Panic("unable to start Gossip service", "error", err)
 		return nil

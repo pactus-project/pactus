@@ -28,8 +28,6 @@ func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.
 	opts := []lp2pdht.Option{
 		lp2pdht.Mode(mode),
 		lp2pdht.ProtocolPrefix(protocolID),
-		lp2pdht.DisableProviders(),
-		lp2pdht.DisableValues(),
 		lp2pdht.BootstrapPeers(bootsrapAddrs...),
 	}
 
