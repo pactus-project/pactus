@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.15.1](https://github.com/pactus-project/pactus/compare/v0.15.0...v0.15.1)(2023-10-24)
+
+### Feat
+
+- add community bootstrap nodes to testnet config ([#764](https://github.com/pactus-project/pactus/pull/764))
+- **network**: implementing connection manager ([#773](https://github.com/pactus-project/pactus/pull/773))
+- **network**: adding bootstrapper mode to the network config ([#760](https://github.com/pactus-project/pactus/pull/760))
+
+### Fix
+
+- **network**: ensure relay is not used when there is no direct connection
+- **network**: close connection when unbale to get supported protocols ([#781](https://github.com/pactus-project/pactus/pull/781))
+- **network**: enabling peer exchange for bootstrappers ([#779](https://github.com/pactus-project/pactus/pull/779))
+- **network**: set connection limit for the resource manager ([#775](https://github.com/pactus-project/pactus/pull/775))
+- **sync**: peer status set to known on sucessfull handshaking ([#774](https://github.com/pactus-project/pactus/pull/774))
+
 ## [0.15.1](https://github.com/pactus-project/pactus/compare/v0.15.0...v0.15.1)(2023-10-22)
 
 ### Fix

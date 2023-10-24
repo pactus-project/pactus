@@ -7,9 +7,9 @@ To patch a released version, start by creating a dedicated branch for that versi
 Let's create environment variables for the patch version. For the rest of this document, we will use these environment variables in the commands.
 
 ```bash
-PRV_VER="0.15.0"
-CUR_VER="0.15.1"
-NEXT_VER="0.15.2"
+PRV_VER="0.15.1"
+CUR_VER="0.15.2"
+NEXT_VER="0.15.3"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 BASE_VER="0.15.0"
