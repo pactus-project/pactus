@@ -84,37 +84,3 @@ func (model *walletModel) rebuildModel() {
 		})
 	}()
 }
-
-func (model *walletModel) createAddress() error {
-	address, err := model.wallet.NewBLSAccountAddress("")
-	if err != nil {
-		return err
-	}
-
-	iter := model.listStore.Append()
-	err = model.listStore.Set(iter,
-		[]int{
-			IDAddressesColumnNo,
-			IDAddressesColumnAddress,
-			IDAddressesColumnLabel,
-			IDAddressesColumnBalance,
-			IDAddressesColumnStake,
-		},
-		[]interface{}{
-			fmt.Sprintf("%v", model.wallet.AddressCount()+1),
-			address,
-			"",
-			"0",
-			"0",
-		})
-	if err != nil {
-		return err
-	}
-
-	err = model.wallet.Save()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}

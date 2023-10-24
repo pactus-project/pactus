@@ -12,6 +12,11 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+const (
+	AddressTypeBLSAccount string = "bls_account"
+	AddressTypeValidator  string = "validator"
+)
+
 type grpcClient struct {
 	blockchainClient  pactus.BlockchainClient
 	transactionClient pactus.TransactionClient

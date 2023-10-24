@@ -53,16 +53,16 @@ func buildChangePasswordCmd(parentCmd *cobra.Command) {
 	passOpt := addPasswordOption(changePasswordCmd)
 
 	changePasswordCmd.Run = func(_ *cobra.Command, _ []string) {
-		wallet, err := openWallet()
+		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
-		oldPassword := getPassword(wallet, *passOpt)
+		oldPassword := getPassword(wlt, *passOpt)
 		newPassword := cmd.PromptPassword("New Password", true)
 
-		err = wallet.UpdatePassword(oldPassword, newPassword)
+		err = wlt.UpdatePassword(oldPassword, newPassword)
 		cmd.FatalErrorCheck(err)
 
-		err = wallet.Save()
+		err = wlt.Save()
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
