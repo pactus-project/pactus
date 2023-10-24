@@ -195,7 +195,9 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 
 	n.host.Network().Notify(n.notifee)
 
-	n.logger.Info("network setup", "id", n.host.ID(), "address", conf.Listens)
+	n.logger.Info("network setup", "id", n.host.ID(),
+		"address", conf.Listens,
+		"bootstrapper", conf.Bootstrapper)
 
 	return n, nil
 }
