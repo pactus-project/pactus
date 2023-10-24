@@ -21,11 +21,27 @@
 # `network` contains configuration options for the network module, which manages communication between nodes.
 [network]
 
+  # `network_key` specifies the private key filename to use for node authentication and encryption in the p2p protocol.
+ ## network_key = "network_key"
+
   # `listens` specifies the addresses and ports where the node will listen for incoming connections from other nodes.
  ## listens = ["/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888", "/ip4/0.0.0.0/udp/21888/quic-v1", "/ip6/::/udp/21888/quic-v1"]
 
-  # `network_key` specifies the private key filename to use for node authentication and encryption in the p2p protocol.
- ## network_key = "network_key"
+  # `relay_addresses` provides the necessary relay addresses. These should be specified if 'enable_relay' is 'true'.
+  # Note: this parameter will be ignored if 'enable_relay' is 'false'.
+ ## relay_addresses = []
+
+  # `bootstrap_addresses` is a list of peer addresses needed for peer discovery.
+  # These addresses are used by the Pactus node to discover and connect to other peers on the network.
+ ## bootstrap_addresses = ["/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"]
+
+  # `min_connections` is the minimum number of connections that the Pactus node should maintain.
+  # Default is 8
+ ## min_connections = 8
+
+  # `max_connections` is the maximum number of connections that the Pactus node should maintain.
+  # Default is 16
+ ## max_connections = 16
 
   # `enable_nat` indicates whether NAT service should be enabled or not.
   # NAT service allows many machines to share a single public address.
@@ -34,12 +50,8 @@
 
   # `enable_relay` indicates whether relay service  should be enabled or not.
   # Relay service is a transport protocol that routes traffic between two peers over a third-party “relay” peer.
-  # Default is true.
+  # Default is false.
  ## enable_relay = false
-
-  # `relay_addresses` provides the necessary relay addresses. These should be specified if 'enable_relay' is 'true'.
-  # Note: this parameter will be ignored if 'enable_relay' is 'false'.
- ## relay_addresses = []
 
   # `enable_mdns` indicates whether MDNS should be enabled or not.
   # MDNS is a protocol to discover local peers quickly and efficiently.
@@ -53,25 +65,6 @@
   # `bootstrapper` if enabled, it runs the node in bootstrap mode.
   # Default is false.
  ## bootstrapper = false
-
-    # `network.bootstrap` contains configuration for bootstrapping the node.
-  [network.bootstrap]
-
-    # `addresses` is a list of peer addresses needed for peer discovery.
-    # These addresses are used by the Pactus node to discover and connect to other peers on the network.
-   ## addresses = ["/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"]
-
-    # `min_threshold` is the minimum number of connections that the Pactus node should maintain.
-    # Default is 8
-   ## min_threshold = 8
-
-    # `max_threshold` is the maximum number of connections that the Pactus node should maintain.
-    # Default is 16
-   ## max_threshold = 16
-
-    # `period` periodically checks to see if the threshold is maintained.
-    # Default is 1 minute
-   ## period = "1m0s"
 
 # `sync` contains configuration of sync module.
 [sync]

@@ -521,7 +521,7 @@ func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
 	joiningCommittee := make([]*validator.Validator, 0)
 	sb.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
 		if joined {
-			st.logger.Info("new validator joined", "address", val.Address(), "power", val.Power())
+			st.logger.Debug("new validator joined", "address", val.Address(), "power", val.Power())
 
 			joiningCommittee = append(joiningCommittee, val)
 		}

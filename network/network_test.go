@@ -56,17 +56,14 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 
 func testConfig() *Config {
 	return &Config{
-		Listens:     []string{},
-		NetworkKey:  util.TempFilePath(),
-		EnableNAT:   false,
-		EnableRelay: false,
-		EnableMdns:  false,
-		Bootstrap: &BootstrapConfig{
-			Addresses:    []string{},
-			MinThreshold: 4,
-			MaxThreshold: 8,
-			Period:       2 * time.Second,
-		},
+		Listens:        []string{},
+		NetworkKey:     util.TempFilePath(),
+		BootstrapAddrs: []string{},
+		MinConns:       4,
+		MaxConns:       8,
+		EnableNAT:      false,
+		EnableRelay:    false,
+		EnableMdns:     false,
 	}
 }
 
@@ -174,7 +171,7 @@ func TestNetwork(t *testing.T) {
 	// Public node
 	confP := testConfig()
 	confP.EnableNAT = true
-	confP.Bootstrap.Addresses = bootstrapAddresses
+	confP.BootstrapAddrs = bootstrapAddresses
 	confP.Listens = []string{
 		"/ip4/127.0.0.1/tcp/0",
 		"/ip6/::1/tcp/0",
@@ -189,7 +186,7 @@ func TestNetwork(t *testing.T) {
 	confM := testConfig()
 	confM.EnableRelay = true
 	confM.RelayAddrs = relayAddrs
-	confM.Bootstrap.Addresses = bootstrapAddresses
+	confM.BootstrapAddrs = bootstrapAddresses
 	confM.Listens = []string{
 		"/ip4/127.0.0.1/tcp/0",
 		"/ip6/::1/tcp/0",
@@ -204,7 +201,7 @@ func TestNetwork(t *testing.T) {
 	confN := testConfig()
 	confN.EnableRelay = true
 	confN.RelayAddrs = relayAddrs
-	confN.Bootstrap.Addresses = bootstrapAddresses
+	confN.BootstrapAddrs = bootstrapAddresses
 	confN.Listens = []string{
 		"/ip4/127.0.0.1/tcp/0",
 		"/ip6/::1/tcp/0",
@@ -218,7 +215,7 @@ func TestNetwork(t *testing.T) {
 	// Private node X, doesn't join consensus topic
 	confX := testConfig()
 	confX.EnableRelay = false
-	confX.Bootstrap.Addresses = bootstrapAddresses
+	confX.BootstrapAddrs = bootstrapAddresses
 	confX.Listens = []string{
 		"/ip4/127.0.0.1/tcp/0",
 		"/ip6/::1/tcp/0",
@@ -362,7 +359,7 @@ func TestConnections(t *testing.T) {
 
 		// Public node
 		confP := testConfig()
-		confP.Bootstrap.Addresses = []string{
+		confP.BootstrapAddrs = []string{
 			fmt.Sprintf("%s/p2p/%v", bootstrapAddr, networkB.SelfID().String()),
 		}
 		confP.Listens = []string{test.peerAddr}
