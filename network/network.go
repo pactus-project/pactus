@@ -211,10 +211,7 @@ func (n *network) Start() error {
 
 	if n.config.EnableRelay {
 		for _, relayAddr := range n.config.RelayAddrs {
-			addrInfo, err := MakeAddressInfo(relayAddr)
-			if err != nil {
-				return err
-			}
+			addrInfo, _ := MakeAddressInfo(relayAddr)
 			ConnectAsync(n.ctx, n.host, *addrInfo, n.logger)
 		}
 	}

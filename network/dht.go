@@ -24,7 +24,7 @@ func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.
 	if conf.Bootstrapper {
 		mode = lp2pdht.ModeServer
 	}
-	bootsrapAddrs := conf.BootstrapAddrInfos()
+	bootsrapAddrs := PeerAddrsToAddrInfo(conf.BootstrapAddrs)
 	opts := []lp2pdht.Option{
 		lp2pdht.Mode(mode),
 		lp2pdht.ProtocolPrefix(protocolID),

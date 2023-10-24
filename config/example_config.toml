@@ -31,9 +31,9 @@
   # Note: this parameter will be ignored if 'enable_relay' is 'false'.
  ## relay_addresses = []
 
-  # `addresses` is a list of peer addresses needed for peer discovery.
+  # `bootstrap_addresses` is a list of peer addresses needed for peer discovery.
   # These addresses are used by the Pactus node to discover and connect to other peers on the network.
- ## bootstrap_addresses = []
+ ## bootstrap_addresses = ["/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"]
 
   # `min_connections` is the minimum number of connections that the Pactus node should maintain.
   # Default is 8
@@ -50,7 +50,7 @@
 
   # `enable_relay` indicates whether relay service  should be enabled or not.
   # Relay service is a transport protocol that routes traffic between two peers over a third-party “relay” peer.
-  # Default is true.
+  # Default is false.
  ## enable_relay = false
 
   # `enable_mdns` indicates whether MDNS should be enabled or not.

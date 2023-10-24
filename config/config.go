@@ -148,6 +148,7 @@ func SaveLocalnetConfig(path string, numValidators int) error {
 	conf := DefaultConfig()
 	conf.Node.NumValidators = numValidators
 	conf.Network.Listens = []string{}
+	conf.Network.EnableRelay = false
 	conf.Network.EnableNAT = false
 	conf.Network.BootstrapAddrs = []string{}
 	conf.Network.MinConns = 0

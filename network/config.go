@@ -3,7 +3,6 @@ package network
 import (
 	"fmt"
 
-	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/errors"
 )
@@ -35,9 +34,9 @@ func DefaultConfig() *Config {
 		},
 	}
 
-	addresses := []string{}
+	bootstrapAddrs := []string{}
 	for _, n := range nodes {
-		addresses = append(addresses,
+		bootstrapAddrs = append(bootstrapAddrs,
 			fmt.Sprintf("/ip4/%s/tcp/%s/p2p/%s", n.ip, n.port, n.id))
 	}
 
@@ -48,7 +47,7 @@ func DefaultConfig() *Config {
 			"/ip4/0.0.0.0/udp/21888/quic-v1", "/ip6/::/udp/21888/quic-v1",
 		},
 		RelayAddrs:     []string{},
-		BootstrapAddrs: []string{},
+		BootstrapAddrs: bootstrapAddrs,
 		MinConns:       8,
 		MaxConns:       16,
 		EnableNAT:      true,
@@ -83,12 +82,4 @@ func (conf *Config) BasicCheck() error {
 		return err
 	}
 	return validateAddresses(conf.BootstrapAddrs)
-}
-
-func (conf *Config) RelayAddrInfos() []lp2ppeer.AddrInfo {
-	return PeerAddrsToAddrInfo(conf.RelayAddrs)
-}
-
-func (conf *Config) BootstrapAddrInfos() []lp2ppeer.AddrInfo {
-	return PeerAddrsToAddrInfo(conf.BootstrapAddrs)
 }

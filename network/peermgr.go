@@ -31,8 +31,9 @@ type peerMgr struct {
 	logger *logger.SubLogger
 }
 
-// newPeerMgr returns a new Bootstrap that will attempt to keep connected
-// to the network by connecting to the given bootstrap peers.
+// newPeerMgr creates a new Peer Manager instance.
+// Peer Manager attempts to establish connections with other nodes when the
+// number of connections falls below the minimum threshold.
 func newPeerMgr(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, dht *lp2pdht.IpfsDHT,
 	bootstrapAddrs []lp2ppeer.AddrInfo, minConns int, maxConns int, logger *logger.SubLogger,
 ) *peerMgr {
@@ -50,7 +51,7 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, dht *lp2
 	return b
 }
 
-// Start starts the Bootstrap bootstrapping. Cancel `ctx` or call Stop() to stop it.
+// Start starts the Peer  Manager.
 func (mgr *peerMgr) Start() {
 	mgr.checkConnectivity()
 
@@ -71,11 +72,11 @@ func (mgr *peerMgr) Start() {
 
 // Stop stops the Bootstrap.
 func (mgr *peerMgr) Stop() {
+	// TODO: complete me
 }
 
-// checkConnectivity does the actual work. If the number of connected peers
-// has fallen below b.MinPeerThreshold it will attempt to connect to
-// a random subset of its bootstrap peers.
+// checkConnectivity performs the actual work of maintaining connections.
+// It ensures that the number of connections stays within the minimum and maximum thresholds.
 func (mgr *peerMgr) checkConnectivity() {
 	currentPeers := mgr.dialer.Peers()
 	mgr.logger.Debug("check connectivity", "peers", len(currentPeers))
@@ -107,7 +108,7 @@ func (mgr *peerMgr) checkConnectivity() {
 			mgr.logger.Debug("try connecting to a bootstrap peer", "peer", pi.String())
 
 			// Don't try to connect to an already connected peer.
-			if hasPID(connectedPeers, pi.ID) {
+			if HasPID(connectedPeers, pi.ID) {
 				mgr.logger.Trace("already connected", "peer", pi.String())
 				continue
 			}
@@ -126,13 +127,4 @@ func (mgr *peerMgr) checkConnectivity() {
 			mgr.logger.Warn("peer discovery may suffer", "error", err)
 		}
 	}
-}
-
-func hasPID(pids []lp2ppeer.ID, pid lp2ppeer.ID) bool {
-	for _, p := range pids {
-		if p == pid {
-			return true
-		}
-	}
-	return false
 }

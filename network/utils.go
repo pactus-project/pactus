@@ -33,6 +33,16 @@ func MakeAddressInfo(addr string) (*lp2ppeer.AddrInfo, error) {
 	return lp2ppeer.AddrInfoFromP2pAddr(maddr)
 }
 
+// HasPID checks if a peer ID exists in a list of peer IDs.
+func HasPID(pids []lp2ppeer.ID, pid lp2ppeer.ID) bool {
+	for _, p := range pids {
+		if p == pid {
+			return true
+		}
+	}
+	return false
+}
+
 func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrInfo, logger *logger.SubLogger) {
 	go func() {
 		err := h.Connect(lp2pnetwork.WithDialPeerTimeout(ctx, 30*time.Second), addrInfo)
