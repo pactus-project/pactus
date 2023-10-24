@@ -4,7 +4,7 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkDialog" id="id_dialog_wallet_create_address">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Change password</property>
+    <property name="title" translatable="yes">New address</property>
     <property name="default-width">320</property>
     <property name="type-hint">dialog</property>
     <child internal-child="vbox">
@@ -101,7 +101,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">AccountType:</property>
+                <property name="label" translatable="yes">Type:</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -109,7 +109,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkComboBoxText" id="id_combo_account_type">
+              <object class="GtkComboBoxText" id="id_combo_address_type">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
               </object>
