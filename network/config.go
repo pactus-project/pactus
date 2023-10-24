@@ -2,30 +2,24 @@ package network
 
 import (
 	"fmt"
-	"time"
 
+	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/errors"
 )
 
 type Config struct {
-	Listens       []string         `toml:"listens"`
-	NetworkKey    string           `toml:"network_key"`
-	EnableNAT     bool             `toml:"enable_nat"`
-	EnableRelay   bool             `toml:"enable_relay"`
-	RelayAddrs    []string         `toml:"relay_addresses"`
-	EnableMdns    bool             `toml:"enable_mdns"`
-	EnableMetrics bool             `toml:"enable_metrics"`
-	Bootstrapper  bool             `toml:"bootstrapper"`
-	Bootstrap     *BootstrapConfig `toml:"bootstrap"`
-}
-
-// BootstrapConfig holds all configuration options related to bootstrap nodes.
-type BootstrapConfig struct {
-	Addresses    []string      `toml:"addresses"`
-	MinThreshold int           `toml:"min_threshold"`
-	MaxThreshold int           `toml:"max_threshold"`
-	Period       time.Duration `toml:"period"`
+	NetworkKey     string   `toml:"network_key"`
+	Listens        []string `toml:"listens"`
+	RelayAddrs     []string `toml:"relay_addresses"`
+	BootstrapAddrs []string `toml:"bootstrap_addresses"`
+	MinConns       int      `toml:"min_connections"`
+	MaxConns       int      `toml:"max_connections"`
+	EnableNAT      bool     `toml:"enable_nat"`
+	EnableRelay    bool     `toml:"enable_relay"`
+	EnableMdns     bool     `toml:"enable_mdns"`
+	EnableMetrics  bool     `toml:"enable_metrics"`
+	Bootstrapper   bool     `toml:"bootstrapper"`
 }
 
 func DefaultConfig() *Config {
@@ -48,22 +42,20 @@ func DefaultConfig() *Config {
 	}
 
 	return &Config{
+		NetworkKey: "network_key",
 		Listens: []string{
 			"/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888",
 			"/ip4/0.0.0.0/udp/21888/quic-v1", "/ip6/::/udp/21888/quic-v1",
 		},
-		NetworkKey:    "network_key",
-		EnableNAT:     true,
-		EnableRelay:   false,
-		EnableMdns:    false,
-		EnableMetrics: false,
-		Bootstrapper:  false,
-		Bootstrap: &BootstrapConfig{
-			Addresses:    addresses,
-			MinThreshold: 8,
-			MaxThreshold: 16,
-			Period:       1 * time.Minute,
-		},
+		RelayAddrs:     []string{},
+		BootstrapAddrs: []string{},
+		MinConns:       8,
+		MaxConns:       16,
+		EnableNAT:      true,
+		EnableRelay:    false,
+		EnableMdns:     false,
+		EnableMetrics:  false,
+		Bootstrapper:   false,
 	}
 }
 
@@ -87,5 +79,16 @@ func (conf *Config) BasicCheck() error {
 	if err := validateAddresses(conf.RelayAddrs); err != nil {
 		return err
 	}
-	return validateAddresses(conf.Listens)
+	if err := validateAddresses(conf.Listens); err != nil {
+		return err
+	}
+	return validateAddresses(conf.BootstrapAddrs)
+}
+
+func (conf *Config) RelayAddrInfos() []lp2ppeer.AddrInfo {
+	return PeerAddrsToAddrInfo(conf.RelayAddrs)
+}
+
+func (conf *Config) BootstrapAddrInfos() []lp2ppeer.AddrInfo {
+	return PeerAddrsToAddrInfo(conf.BootstrapAddrs)
 }

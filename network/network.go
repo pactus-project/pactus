@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"time"
 
 	lp2p "github.com/libp2p/go-libp2p"
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
@@ -12,6 +13,7 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
+	lp2pconnmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -101,11 +103,21 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		return nil, LibP2PError{Err: err}
 	}
 
+	connMgr, err := lp2pconnmgr.NewConnManager(
+		conf.MinConns, // Low Watermark
+		conf.MaxConns, // High Watermark
+		lp2pconnmgr.WithGracePeriod(time.Minute),
+	)
+	if err != nil {
+		return nil, LibP2PError{Err: err}
+	}
+
 	opts = append(opts,
 		lp2p.Identity(networkKey),
 		lp2p.ListenAddrStrings(conf.Listens...),
 		lp2p.UserAgent(version.Agent()),
 		lp2p.ResourceManager(rmgr),
+		lp2p.ConnectionManager(connMgr),
 	)
 
 	if !conf.EnableMetrics {
@@ -169,7 +181,7 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/gossip/v1", n.name))
 	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", n.name))
 
-	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf.Bootstrap, conf.Bootstrapper, n.logger)
+	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf, n.logger)
 	n.stream = newStreamService(ctx, n.host, streamProtocolID, relayAddrs, n.eventChannel, n.logger)
 	n.gossip = newGossipService(ctx, n.host, n.eventChannel, n.logger)
 	n.notifee = newNotifeeService(n.host, n.eventChannel, n.logger, streamProtocolID)
@@ -197,12 +209,14 @@ func (n *network) Start() error {
 	n.gossip.Start()
 	n.stream.Start()
 
-	for _, relayAddr := range n.config.RelayAddrs {
-		addrInfo, err := MakeAddressInfo(relayAddr)
-		if err != nil {
-			return err
+	if n.config.EnableRelay {
+		for _, relayAddr := range n.config.RelayAddrs {
+			addrInfo, err := MakeAddressInfo(relayAddr)
+			if err != nil {
+				return err
+			}
+			ConnectAsync(n.ctx, n.host, *addrInfo, n.logger)
 		}
-		ConnectAsync(n.ctx, n.host, *addrInfo, n.logger)
 	}
 
 	n.logger.Info("network started", "addr", n.host.Addrs())

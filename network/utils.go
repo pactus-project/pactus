@@ -7,13 +7,26 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
-	ma "github.com/multiformats/go-multiaddr"
+	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
+// PeerAddrsToAddrInfo converts a slice of string peer addresses
+// to AddrInfo.
+func PeerAddrsToAddrInfo(addrs []string) []lp2ppeer.AddrInfo {
+	pis := make([]lp2ppeer.AddrInfo, 0, len(addrs))
+	for _, addr := range addrs {
+		pinfo, _ := MakeAddressInfo(addr)
+		if pinfo != nil {
+			pis = append(pis, *pinfo)
+		}
+	}
+	return pis
+}
+
 // MakeAddressInfo from Multi-address string.
 func MakeAddressInfo(addr string) (*lp2ppeer.AddrInfo, error) {
-	maddr, err := ma.NewMultiaddr(addr)
+	maddr, err := multiaddr.NewMultiaddr(addr)
 	if err != nil {
 		return nil, err
 	}
