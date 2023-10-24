@@ -61,7 +61,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 	}
 
 	handler.peerSet.UpdateHeight(initiator, msg.Height, msg.BlockHash)
-	handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeConnected)
+	handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeKnown)
 
 	response := message.NewHelloAckMessage(message.ResponseCodeOK, "Ok")
 	return handler.acknowledge(response, initiator)

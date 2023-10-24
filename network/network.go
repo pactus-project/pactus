@@ -95,8 +95,15 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		return nil, LibP2PError{Err: err}
 	}
 
-	rmgr, err := lp2prcmgr.NewResourceManager(
-		lp2prcmgr.NewFixedLimiter(lp2prcmgr.DefaultLimits.AutoScale()),
+	maxconns := conf.MaxConns
+	changes := lp2prcmgr.PartialLimitConfig{}
+	changes.System.ConnsInbound = lp2prcmgr.LimitVal(2 * maxconns)
+	changes.System.ConnsOutbound = lp2prcmgr.LimitVal(2 * maxconns)
+	changes.System.Conns = lp2prcmgr.LimitVal(4 * maxconns)
+	limit := changes.Build(lp2prcmgr.DefaultLimits.AutoScale())
+
+	resMgr, err := lp2prcmgr.NewResourceManager(
+		lp2prcmgr.NewFixedLimiter(limit),
 		lp2prcmgr.WithTraceReporter(str),
 	)
 	if err != nil {
@@ -116,7 +123,7 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		lp2p.Identity(networkKey),
 		lp2p.ListenAddrStrings(conf.Listens...),
 		lp2p.UserAgent(version.Agent()),
-		lp2p.ResourceManager(rmgr),
+		lp2p.ResourceManager(resMgr),
 		lp2p.ConnectionManager(connMgr),
 	)
 
@@ -245,7 +252,7 @@ func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) error {
 }
 
 func (n *network) Broadcast(msg []byte, topicID TopicID) error {
-	n.logger.Debug("publishing new message", "topic", topicID)
+	n.logger.Trace("publishing new message", "topic", topicID)
 	switch topicID {
 	case TopicIDGeneral:
 		if n.generalTopic == nil {
