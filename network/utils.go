@@ -2,6 +2,7 @@ package network
 
 import (
 	"context"
+	"math/bits"
 	"time"
 
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
@@ -56,4 +57,9 @@ func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrIn
 			}
 		}
 	}()
+}
+
+func logScale(val int) int {
+	bitlen := bits.Len(uint(val))
+	return 1 << bitlen
 }
