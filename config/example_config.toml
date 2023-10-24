@@ -50,6 +50,10 @@
   # Default is false.
  ## enable_metrics = false
 
+  # `bootstrapper` if enabled, it runs the node in bootstrap mode.
+  # Default is false.
+ ## bootstrapper = false
+
     # `network.bootstrap` contains configuration for bootstrapping the node.
   [network.bootstrap]
 

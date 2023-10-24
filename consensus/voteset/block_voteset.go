@@ -18,14 +18,14 @@ type BlockVoteSet struct {
 func NewPrepareVoteSet(round int16, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BlockVoteSet {
-	voteSet := newVoteSet(vote.VoteTypePrepare, round, totalPower, validators)
+	voteSet := newVoteSet(round, totalPower, validators)
 	return newBlockVoteSet(voteSet)
 }
 
 func NewPrecommitVoteSet(round int16, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BlockVoteSet {
-	voteSet := newVoteSet(vote.VoteTypePrecommit, round, totalPower, validators)
+	voteSet := newVoteSet(round, totalPower, validators)
 	return newBlockVoteSet(voteSet)
 }
 

@@ -118,39 +118,80 @@ func TestAddBinaryVote(t *testing.T) {
 	assert.True(t, added)
 }
 
-func TestDuplicateVote(t *testing.T) {
+func TestDuplicateBlockVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	valsMap, valKeys, totalPower := setupCommittee(ts, 1000, 1500, 2500, 2000)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 1, 1, 1, 1)
 
 	h1 := ts.RandHash()
 	h2 := ts.RandHash()
+	h3 := ts.RandHash()
 	addr := valKeys[0].Address()
 	vs := NewPrepareVoteSet(0, totalPower, valsMap)
 
 	correctVote := vote.NewPrepareVote(h1, 1, 0, addr)
-	duplicatedVote := vote.NewPrepareVote(h2, 1, 0, addr)
+	duplicatedVote1 := vote.NewPrepareVote(h2, 1, 0, addr)
+	duplicatedVote2 := vote.NewPrepareVote(h3, 1, 0, addr)
 
 	// sign the votes
 	ts.HelperSignVote(valKeys[0], correctVote)
-	ts.HelperSignVote(valKeys[0], duplicatedVote)
+	ts.HelperSignVote(valKeys[0], duplicatedVote1)
+	ts.HelperSignVote(valKeys[0], duplicatedVote2)
 
 	added, err := vs.AddVote(correctVote)
 	assert.NoError(t, err)
 	assert.True(t, added)
 
-	added, err = vs.AddVote(duplicatedVote)
+	added, err = vs.AddVote(duplicatedVote1)
 	assert.Equal(t, errors.Code(err), errors.ErrDuplicateVote)
 	assert.True(t, added)
 
-	added, err = vs.AddVote(correctVote)
-	assert.NoError(t, err) // added before
-	assert.False(t, added)
+	added, err = vs.AddVote(duplicatedVote2)
+	assert.Equal(t, errors.Code(err), errors.ErrDuplicateVote)
+	assert.True(t, added)
 
 	bv1 := vs.BlockVotes(h1)
 	bv2 := vs.BlockVotes(h2)
+	bv3 := vs.BlockVotes(h3)
 	assert.Equal(t, bv1[addr], correctVote)
-	assert.Equal(t, bv2[addr], duplicatedVote)
+	assert.Equal(t, bv2[addr], duplicatedVote1)
+	assert.Equal(t, bv3[addr], duplicatedVote2)
+	assert.False(t, vs.HasQuorumHash())
+}
+
+func TestDuplicateBinaryVote(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	valsMap, valKeys, totalPower := setupCommittee(ts, 1, 1, 1, 1)
+
+	h1 := ts.RandHash()
+	h2 := ts.RandHash()
+	h3 := ts.RandHash()
+	addr := valKeys[0].Address()
+	vs := NewCPPreVoteVoteSet(0, totalPower, valsMap)
+
+	correctVote := vote.NewCPPreVote(h1, 1, 0, 0, vote.CPValueOne, &vote.JustInitOne{}, addr)
+	duplicatedVote1 := vote.NewCPPreVote(h2, 1, 0, 0, vote.CPValueOne, &vote.JustInitOne{}, addr)
+	duplicatedVote2 := vote.NewCPPreVote(h3, 1, 0, 0, vote.CPValueOne, &vote.JustInitOne{}, addr)
+
+	// sign the votes
+	ts.HelperSignVote(valKeys[0], correctVote)
+	ts.HelperSignVote(valKeys[0], duplicatedVote1)
+	ts.HelperSignVote(valKeys[0], duplicatedVote2)
+
+	added, err := vs.AddVote(correctVote)
+	assert.NoError(t, err)
+	assert.True(t, added)
+
+	added, err = vs.AddVote(duplicatedVote1)
+	assert.Equal(t, errors.Code(err), errors.ErrDuplicateVote)
+	assert.True(t, added)
+
+	added, err = vs.AddVote(duplicatedVote2)
+	assert.Equal(t, errors.Code(err), errors.ErrDuplicateVote)
+	assert.True(t, added)
+
+	assert.False(t, vs.HasOneThirdOfTotalPower(0))
 }
 
 func TestQuorum(t *testing.T) {
@@ -337,4 +378,24 @@ func TestOneThirdPower(t *testing.T) {
 	assert.Contains(t, bv1, v2.Signer())
 	assert.Contains(t, bv1, v3.Signer())
 	assert.Contains(t, bv2, v4.Signer())
+}
+
+func TestDecidedVoteset(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 1, 1, 1, 1)
+
+	hash := ts.RandHash()
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	just := &vote.JustInitOne{}
+	vs := NewCPDecidedVoteVoteSet(round, totalPower, valsMap)
+
+	v1 := vote.NewCPDecidedVote(hash, height, round, 0, vote.CPValueOne, just, valKeys[0].Address())
+
+	ts.HelperSignVote(valKeys[0], v1)
+
+	_, err := vs.AddVote(v1)
+	assert.NoError(t, err)
+	assert.True(t, vs.HasAnyVoteFor(0, vote.CPValueOne))
+	assert.False(t, vs.HasAnyVoteFor(0, vote.CPValueZero))
 }

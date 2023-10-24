@@ -27,10 +27,9 @@ func newRoundVotes() *roundVotes {
 	}
 }
 
-func (bs *roundVotes) addVote(v *vote.Vote, power int64) {
-	vb := bs.voteBoxes[v.CPValue()]
+func (rv *roundVotes) addVote(v *vote.Vote, power int64) {
+	vb := rv.voteBoxes[v.CPValue()]
 	vb.addVote(v, power)
-	bs.votedPower += power
 }
 
 type BinaryVoteSet struct {
@@ -41,14 +40,21 @@ type BinaryVoteSet struct {
 func NewCPPreVoteVoteSet(round int16, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BinaryVoteSet {
-	voteSet := newVoteSet(vote.VoteTypeCPPreVote, round, totalPower, validators)
+	voteSet := newVoteSet(round, totalPower, validators)
 	return newBinaryVoteSet(voteSet)
 }
 
 func NewCPMainVoteVoteSet(round int16, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BinaryVoteSet {
-	voteSet := newVoteSet(vote.VoteTypeCPMainVote, round, totalPower, validators)
+	voteSet := newVoteSet(round, totalPower, validators)
+	return newBinaryVoteSet(voteSet)
+}
+
+func NewCPDecidedVoteVoteSet(round int16, totalPower int64,
+	validators map[crypto.Address]*validator.Validator,
+) *BinaryVoteSet {
+	voteSet := newVoteSet(round, totalPower, validators)
 	return newBinaryVoteSet(voteSet)
 }
 
@@ -97,6 +103,7 @@ func (vs *BinaryVoteSet) AddVote(v *vote.Vote) (bool, error) {
 		}
 	} else {
 		roundVotes.allVotes[v.Signer()] = v
+		roundVotes.votedPower += power
 	}
 
 	roundVotes.addVote(v, power)
