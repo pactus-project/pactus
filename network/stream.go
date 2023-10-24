@@ -47,7 +47,7 @@ func (s *streamService) Stop() {
 func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 	from := stream.Conn().RemotePeer()
 
-	s.logger.Debug("receiving stream", "from", from)
+	s.logger.Trace("receiving stream", "from", from)
 	event := &StreamMessage{
 		Source: from,
 		Reader: stream,

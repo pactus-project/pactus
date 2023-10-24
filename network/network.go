@@ -218,13 +218,6 @@ func (n *network) Start() error {
 	n.gossip.Start()
 	n.stream.Start()
 
-	if n.config.EnableRelay {
-		for _, relayAddr := range n.config.RelayAddrs {
-			addrInfo, _ := MakeAddressInfo(relayAddr)
-			ConnectAsync(n.ctx, n.host, *addrInfo, n.logger)
-		}
-	}
-
 	n.logger.Info("network started", "addr", n.host.Addrs())
 	return nil
 }
