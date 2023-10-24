@@ -35,7 +35,7 @@ func MakeAddressInfo(addr string) (*lp2ppeer.AddrInfo, error) {
 
 func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrInfo, logger *logger.SubLogger) {
 	go func() {
-		err := h.Connect(lp2pnetwork.WithDialPeerTimeout(ctx, 10*time.Second), addrInfo)
+		err := h.Connect(lp2pnetwork.WithDialPeerTimeout(ctx, 30*time.Second), addrInfo)
 		if err != nil {
 			if logger != nil {
 				logger.Warn("connection failed", "addr", addrInfo.Addrs, "err", err)
