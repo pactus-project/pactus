@@ -147,13 +147,12 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	return w, nil
 }
 
-func (ww *widgetWallet) onNewAddress() {
-	err := ww.model.createAddress()
-	errorCheck(err)
-}
-
 func (ww *widgetWallet) onChangePassword() {
 	changePassword(ww.model.wallet)
+}
+
+func (ww *widgetWallet) onNewAddress() {
+	createAddress(ww)
 }
 
 func (ww *widgetWallet) onShowSeed() {
