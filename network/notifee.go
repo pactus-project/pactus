@@ -30,6 +30,7 @@ func newNotifeeService(host lp2phost.Host, eventChannel chan<- Event,
 
 func (n *NotifeeService) Connected(lp2pn lp2pnetwork.Network, conn lp2pnetwork.Conn) {
 	peerID := conn.RemotePeer()
+	n.logger.Info("connected to peer", "pid", peerID)
 
 	go func() {
 		for i := 0; i < 10; i++ {
@@ -39,9 +40,7 @@ func (n *NotifeeService) Connected(lp2pn lp2pnetwork.Network, conn lp2pnetwork.C
 
 			protocols, _ := lp2pn.Peerstore().SupportsProtocols(peerID, n.protocolID)
 			if len(protocols) > 0 {
-				n.logger.Info("connected to peer", "pid", peerID)
 				n.eventChannel <- &ConnectEvent{PeerID: peerID}
-
 				return
 			}
 		}
