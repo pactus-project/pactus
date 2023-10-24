@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
+	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	"github.com/pactus-project/pactus/util/logger"
 )
@@ -21,9 +22,16 @@ type gossipService struct {
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	logger *logger.SubLogger,
+	config *Config, logger *logger.SubLogger,
 ) *gossipService {
-	pubsub, err := lp2pps.NewGossipSub(ctx, host)
+	opts := []pubsub.Option{}
+
+	if config.Bootstrapper {
+		// enable Peer eXchange on bootstrappers
+		opts = append(opts, lp2pps.WithPeerExchange(true))
+	}
+
+	pubsub, err := lp2pps.NewGossipSub(ctx, host, opts...)
 	if err != nil {
 		logger.Panic("unable to start Gossip service", "error", err)
 		return nil
