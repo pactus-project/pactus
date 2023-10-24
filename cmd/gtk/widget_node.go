@@ -22,7 +22,6 @@ type widgetNode struct {
 
 	genesisTime          time.Time // TODO: move this logic to the state
 	model                *nodeModel
-	labelNetworkID       *gtk.Label
 	labelLastBlockTime   *gtk.Label
 	labelLastBlockHeight *gtk.Label
 	labelBlocksLeft      *gtk.Label
