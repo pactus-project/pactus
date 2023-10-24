@@ -11,6 +11,7 @@ import (
 )
 
 type NotifeeService struct {
+	host         lp2phost.Host
 	eventChannel chan<- Event
 	logger       *logger.SubLogger
 	protocolID   protocol.ID
@@ -20,6 +21,7 @@ func newNotifeeService(host lp2phost.Host, eventChannel chan<- Event,
 	logger *logger.SubLogger, protocolID protocol.ID,
 ) *NotifeeService {
 	notifee := &NotifeeService{
+		host:         host,
 		eventChannel: eventChannel,
 		logger:       logger,
 		protocolID:   protocolID,
@@ -36,7 +38,7 @@ func (n *NotifeeService) Connected(lp2pn lp2pnetwork.Network, conn lp2pnetwork.C
 		for i := 0; i < 10; i++ {
 			// TODO: better way?
 			// Wait to complete libp2p identify
-			time.Sleep(500 * time.Millisecond)
+			time.Sleep(1 * time.Second)
 
 			protocols, _ := lp2pn.Peerstore().SupportsProtocols(peerID, n.protocolID)
 			if len(protocols) > 0 {
@@ -45,7 +47,8 @@ func (n *NotifeeService) Connected(lp2pn lp2pnetwork.Network, conn lp2pnetwork.C
 			}
 		}
 
-		n.logger.Info("this node doesn't support stream protocol", "pid", peerID)
+		n.logger.Info("unable to get supported protocols", "pid", peerID)
+		_ = n.host.Network().ClosePeer(peerID)
 	}()
 }
 
