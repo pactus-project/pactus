@@ -95,11 +95,11 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		return nil, LibP2PError{Err: err}
 	}
 
-	maxconns := conf.MaxConns
+	maxConns := conf.MaxConns
 	changes := lp2prcmgr.PartialLimitConfig{}
-	changes.System.ConnsInbound = lp2prcmgr.LimitVal(2 * maxconns)
-	changes.System.ConnsOutbound = lp2prcmgr.LimitVal(2 * maxconns)
-	changes.System.Conns = lp2prcmgr.LimitVal(4 * maxconns)
+	changes.System.ConnsInbound = lp2prcmgr.LimitVal(logScale(maxConns))
+	changes.System.ConnsOutbound = lp2prcmgr.LimitVal(logScale(maxConns))
+	changes.System.Conns = lp2prcmgr.LimitVal(logScale(2 * maxConns))
 	limit := changes.Build(lp2prcmgr.DefaultLimits.AutoScale())
 
 	resMgr, err := lp2prcmgr.NewResourceManager(
