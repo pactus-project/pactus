@@ -32,10 +32,10 @@ func (n *NotifeeService) Connected(lp2pn lp2pnetwork.Network, conn lp2pnetwork.C
 	peerID := conn.RemotePeer()
 
 	go func() {
-		for i := 0; i < 6; i++ {
+		for i := 0; i < 10; i++ {
 			// TODO: better way?
 			// Wait to complete libp2p identify
-			time.Sleep(200 * time.Millisecond)
+			time.Sleep(500 * time.Millisecond)
 
 			protocols, _ := lp2pn.Peerstore().SupportsProtocols(peerID, n.protocolID)
 			if len(protocols) > 0 {
