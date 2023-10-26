@@ -170,3 +170,7 @@ func (n *Node) State() state.Facade {
 func (n *Node) GRPC() *grpc.Server {
 	return n.grpc
 }
+
+func (n *Node) Network() network.Network {
+	return n.network
+}
