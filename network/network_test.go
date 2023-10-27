@@ -220,11 +220,11 @@ func TestNetwork(t *testing.T) {
 		lp2p.ForceReachabilityPrivate(),
 	})
 
-	networkB.Start()
-	networkP.Start()
-	networkM.Start()
-	networkN.Start()
-	networkX.Start()
+	assert.NoError(t, networkB.Start())
+	assert.NoError(t, networkP.Start())
+	assert.NoError(t, networkM.Start())
+	assert.NoError(t, networkN.Start())
+	assert.NoError(t, networkX.Start())
 
 	time.Sleep(2 * time.Second)
 
