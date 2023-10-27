@@ -34,16 +34,17 @@ type peerMgr struct {
 // newPeerMgr creates a new Peer Manager instance.
 // Peer Manager attempts to establish connections with other nodes when the
 // number of connections falls below the minimum threshold.
-func newPeerMgr(ctx context.Context, h lp2phost.Host, d lp2pnet.Dialer, dht *lp2pdht.IpfsDHT,
-	bootstrapAddrs []lp2ppeer.AddrInfo, minConns int, maxConns int, logger *logger.SubLogger,
+func newPeerMgr(ctx context.Context, h lp2phost.Host, dht *lp2pdht.IpfsDHT,
+	conf *Config, logger *logger.SubLogger,
 ) *peerMgr {
+	bootstrapAddrs := PeerAddrsToAddrInfo(conf.BootstrapAddrs)
 	b := &peerMgr{
 		ctx:            ctx,
 		bootstrapAddrs: bootstrapAddrs,
-		minConns:       minConns,
-		maxConns:       maxConns,
+		minConns:       conf.MinConns,
+		maxConns:       conf.MaxConns,
 		host:           h,
-		dialer:         d,
+		dialer:         h.Network(),
 		dht:            dht,
 		logger:         logger,
 	}
@@ -118,13 +119,6 @@ func (mgr *peerMgr) checkConnectivity() {
 			}
 
 			ConnectAsync(mgr.ctx, mgr.host, pi, mgr.logger)
-		}
-
-		mgr.logger.Debug("expanding the connections")
-
-		err := mgr.dht.Bootstrap(mgr.ctx)
-		if err != nil {
-			mgr.logger.Warn("peer discovery may suffer", "error", err)
 		}
 	}
 }
