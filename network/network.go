@@ -35,6 +35,7 @@ type network struct {
 	host           lp2phost.Host
 	mdns           *mdnsService
 	dht            *dhtService
+	peerMgr        *peerMgr
 	stream         *streamService
 	gossip         *gossipService
 	notifee        *NotifeeService
@@ -152,6 +153,7 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		if err != nil {
 			return nil, LibP2PError{Err: err}
 		}
+
 		opts = append(opts,
 			lp2p.EnableRelay(),
 			lp2p.EnableAutoRelayWithStaticRelays(static),
@@ -189,6 +191,7 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", n.name))
 
 	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf, n.logger)
+	n.peerMgr = newPeerMgr(ctx, host, n.dht.kademlia, conf, n.logger)
 	n.stream = newStreamService(ctx, n.host, streamProtocolID, relayAddrs, n.eventChannel, n.logger)
 	n.gossip = newGossipService(ctx, n.host, n.eventChannel, conf, n.logger)
 	n.notifee = newNotifeeService(n.host, n.eventChannel, n.logger, streamProtocolID)
@@ -217,8 +220,9 @@ func (n *network) Start() error {
 	}
 	n.gossip.Start()
 	n.stream.Start()
+	n.peerMgr.Start()
 
-	n.logger.Info("network started", "addr", n.host.Addrs())
+	n.logger.Info("network started", "addr", n.host.Addrs(), "id", n.host.ID())
 	return nil
 }
 
@@ -232,6 +236,7 @@ func (n *network) Stop() {
 	n.dht.Stop()
 	n.gossip.Stop()
 	n.stream.Stop()
+	n.peerMgr.Stop()
 
 	if err := n.host.Close(); err != nil {
 		n.logger.Error("unable to close the network", "error", err)
