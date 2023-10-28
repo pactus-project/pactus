@@ -151,6 +151,7 @@ func TestNetwork(t *testing.T) {
 	}
 
 	bootstrapPort := ts.RandInt32(9999) + 10000
+	publicPort := ts.RandInt32(9999) + 10000
 
 	// Bootstrap node
 	confB := testConfig()
@@ -172,13 +173,14 @@ func TestNetwork(t *testing.T) {
 	confP.EnableNAT = true
 	confP.BootstrapAddrs = bootstrapAddresses
 	confP.Listens = []string{
-		"/ip4/127.0.0.1/tcp/0",
+		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", publicPort),
 	}
 	fmt.Println("Starting Public node")
 	networkP := makeTestNetwork(t, confP, []lp2p.Option{
 		lp2p.ForceReachabilityPublic(),
 	})
 	assert.NoError(t, networkP.JoinConsensusTopic())
+	publicAddrInfo, _ := MakeAddressInfo(fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%s", publicPort, networkP.SelfID()))
 
 	// Private node M
 	confM := testConfig()
@@ -277,6 +279,8 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node P (public) is directly accessible by nodes M and N (private behind NAT)", func(t *testing.T) {
+		require.NoError(t, networkX.host.Connect(networkX.ctx, *publicAddrInfo))
+
 		msgM := []byte("test-stream-from-m")
 
 		require.NoError(t, networkM.SendTo(msgM, networkP.SelfID()))
@@ -286,6 +290,8 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node P (public) is directly accessible by node X (private behind NAT, without relay)", func(t *testing.T) {
+		require.NoError(t, networkX.host.Connect(networkX.ctx, *publicAddrInfo))
+
 		msgX := []byte("test-stream-from-x")
 
 		require.NoError(t, networkX.SendTo(msgX, networkP.SelfID()))
