@@ -279,7 +279,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node P (public) is directly accessible by nodes M and N (private behind NAT)", func(t *testing.T) {
-		require.NoError(t, networkX.host.Connect(networkX.ctx, *publicAddrInfo))
+		require.NoError(t, networkM.host.Connect(networkM.ctx, *publicAddrInfo))
 
 		msgM := []byte("test-stream-from-m")
 
