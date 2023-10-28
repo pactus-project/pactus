@@ -49,7 +49,7 @@ type ExtendedKey struct {
 // newExtendedKey returns a new instance of an extended key with the given
 // fields. No error checking is performed here as it's only intended to be a
 // convenience method used to create a populated struct.
-func newExtendedKey(key, chainCode []byte, path []uint32, isPrivate bool, pubOnG1 bool) *ExtendedKey {
+func newExtendedKey(key, chainCode []byte, path []uint32, isPrivate, pubOnG1 bool) *ExtendedKey {
 	return &ExtendedKey{
 		key:       key,
 		chainCode: chainCode,
@@ -284,8 +284,8 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	}
 
 	newPath := make([]uint32, 0, len(k.path)+1)
-	copy(newPath, k.path)
-	newPath = append(k.path, index)
+	newPath = append(newPath, k.path...)
+	newPath = append(newPath, index)
 	return newExtendedKey(childKey, childChainCode,
 		newPath, k.isPrivate, k.pubOnG1), nil
 }
@@ -447,7 +447,7 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 		isPrivate = false
 	}
 
-	return newExtendedKey(key[:], chainCode[:], path, isPrivate, pubOnG1), nil
+	return newExtendedKey(key, chainCode, path, isPrivate, pubOnG1), nil
 }
 
 // NewMaster creates a new master node for use in creating a hierarchical

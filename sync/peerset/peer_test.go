@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pactus-project/pactus/sync/services"
+	"github.com/pactus-project/pactus/sync/service"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,7 +20,7 @@ func TestPeer(t *testing.T) {
 	p2.Status = StatusCodeKnown
 	p3.Status = StatusCodeBanned
 
-	p1.Services = services.New(services.Network)
+	p1.Services = service.New(service.Network)
 
 	t.Run("NewPeer", func(t *testing.T) {
 		assert.NotNil(t, p1)

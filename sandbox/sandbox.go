@@ -25,7 +25,7 @@ type sandbox struct {
 	accounts        map[crypto.Address]*sandboxAccount
 	validators      map[crypto.Address]*sandboxValidator
 	committedTrxs   map[tx.ID]*tx.Tx
-	params          param.Params
+	params          *param.Params
 	height          uint32
 	totalAccounts   int32
 	totalValidators int32
@@ -45,13 +45,13 @@ type sandboxAccount struct {
 	updated bool
 }
 
-func NewSandbox(height uint32, store store.Reader, params param.Params,
-	committee committee.Reader, totalPower int64,
+func NewSandbox(height uint32, str store.Reader, params *param.Params,
+	cmt committee.Reader, totalPower int64,
 ) Sandbox {
 	sb := &sandbox{
 		height:     height,
-		store:      store,
-		committee:  committee,
+		store:      str,
+		committee:  cmt,
 		totalPower: totalPower,
 		params:     params,
 	}
@@ -222,7 +222,7 @@ func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 	s.updated = true
 }
 
-func (sb *sandbox) Params() param.Params {
+func (sb *sandbox) Params() *param.Params {
 	return sb.params
 }
 

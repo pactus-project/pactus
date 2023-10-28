@@ -22,13 +22,13 @@ func setup(t *testing.T) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 
-	sandbox := sandbox.MockingSandbox(ts)
+	sb := sandbox.MockingSandbox(ts)
 	randHeight := ts.RandHeight()
-	_ = sandbox.TestStore.AddTestBlock(randHeight)
+	_ = sb.TestStore.AddTestBlock(randHeight)
 
 	return &testData{
 		TestSuite:  ts,
-		sandbox:    sandbox,
+		sandbox:    sb,
 		randHeight: randHeight,
 	}
 }
@@ -47,7 +47,7 @@ func (td *testData) checkTotalCoin(t *testing.T, fee int64) {
 	assert.Equal(t, total+fee, int64(21000000*1e9))
 }
 
-func (td *testData) randomAmountAndFee(min int64, max int64) (int64, int64) {
+func (td *testData) randomAmountAndFee(min, max int64) (int64, int64) {
 	amt := td.RandInt64NonZero(max - 1) // To make sure amt+fee is less than max
 	for amt < min {
 		amt = td.RandInt64NonZero(max)

@@ -4,11 +4,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pactus-project/pactus/crypto/bls"
-
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/services"
+	"github.com/pactus-project/pactus/sync/service"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -27,11 +26,11 @@ func TestPeerSet(t *testing.T) {
 	pid2 := peer.ID("peer2")
 	pid3 := peer.ID("peer3")
 	peerSet.UpdateInfo(pid1, "Moniker1", "Agent1",
-		[]*bls.PublicKey{pk1, pk2}, services.New(services.Network))
+		[]*bls.PublicKey{pk1, pk2}, service.New(service.Network))
 	peerSet.UpdateInfo(pid2, "Moniker2", "Agent2",
-		[]*bls.PublicKey{pk3}, services.New(services.None))
+		[]*bls.PublicKey{pk3}, service.New(service.None))
 	peerSet.UpdateInfo(pid3, "Moniker3", "Agent3",
-		[]*bls.PublicKey{pk4, pk5}, services.New(services.Network))
+		[]*bls.PublicKey{pk4, pk5}, service.New(service.Network))
 
 	t.Run("Testing Len", func(t *testing.T) {
 		assert.Equal(t, 3, peerSet.Len())

@@ -36,18 +36,18 @@ type MockState struct {
 	TestPool      *txpool.MockTxPool
 	TestCommittee committee.Committee
 	TestValKeys   []*bls.ValidatorKey
-	TestParams    param.Params
+	TestParams    *param.Params
 }
 
 func MockingState(ts *testsuite.TestSuite) *MockState {
-	committee, valKeys := ts.GenerateTestCommittee(21)
+	cmt, valKeys := ts.GenerateTestCommittee(21)
 	genDoc := genesis.TestnetGenesis()
 	return &MockState{
 		ts:            ts,
 		TestGenesis:   genDoc,
 		TestStore:     store.MockingStore(ts),
 		TestPool:      txpool.MockingTxPool(),
-		TestCommittee: committee,
+		TestCommittee: cmt,
 		TestValKeys:   valKeys,
 		TestParams:    genDoc.Params(),
 	}
@@ -187,11 +187,11 @@ func (m *MockState) BlockHash(height uint32) hash.Hash {
 	return m.TestStore.BlockHash(height)
 }
 
-func (m *MockState) BlockHeight(hash hash.Hash) uint32 {
+func (m *MockState) BlockHeight(h hash.Hash) uint32 {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
-	return m.TestStore.BlockHeight(hash)
+	return m.TestStore.BlockHeight(h)
 }
 
 func (m *MockState) AccountByAddress(addr crypto.Address) *account.Account {
@@ -236,7 +236,7 @@ func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 	return m.TestPool.AppendTxAndBroadcast(trx)
 }
 
-func (m *MockState) Params() param.Params {
+func (m *MockState) Params() *param.Params {
 	return m.TestParams
 }
 
@@ -245,15 +245,11 @@ func (m *MockState) CalculateFee(_ int64, payloadType payload.Type) (int64, erro
 	case payload.TypeTransfer,
 		payload.TypeBond,
 		payload.TypeWithdraw:
-		{
-			return m.ts.RandInt64(1e9), nil
-		}
+		return m.ts.RandInt64(1e9), nil
 
 	case payload.TypeUnbond,
 		payload.TypeSortition:
-		{
-			return 0, nil
-		}
+		return 0, nil
 
 	default:
 		return 0, errors.Errorf(errors.ErrInvalidTx, "unexpected tx type: %v", payloadType)

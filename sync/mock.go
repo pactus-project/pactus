@@ -3,11 +3,10 @@ package sync
 import (
 	"time"
 
-	"github.com/pactus-project/pactus/crypto/bls"
-
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/services"
+	"github.com/pactus-project/pactus/sync/service"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/version"
 )
@@ -30,7 +29,7 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 		"test-peer-1",
 		version.Agent(),
 		[]*bls.PublicKey{pub1},
-		services.New(services.Network))
+		service.New(service.Network))
 	ps.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
 
 	ps.UpdateInfo(
@@ -38,7 +37,7 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 		"test-peer-2",
 		version.Agent(),
 		[]*bls.PublicKey{pub2},
-		services.New(services.None))
+		service.New(service.None))
 	ps.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
 
 	return &MockSync{

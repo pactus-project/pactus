@@ -92,9 +92,9 @@ func (log *Log) RoundProposal(round int16) *proposal.Proposal {
 	return m.proposal
 }
 
-func (log *Log) SetRoundProposal(round int16, proposal *proposal.Proposal) {
+func (log *Log) SetRoundProposal(round int16, prop *proposal.Proposal) {
 	m := log.mustGetRoundMessages(round)
-	m.proposal = proposal
+	m.proposal = prop
 }
 
 func (log *Log) MoveToNewHeight(validators []*validator.Validator) {

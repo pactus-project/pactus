@@ -9,9 +9,9 @@ import (
 )
 
 func TestCreateBlockEvent(t *testing.T) {
-	hash, _ := hash.FromString("000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f")
+	h, _ := hash.FromString("000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f")
 	height := uint32(0x2134)
-	e := CreateBlockEvent(hash, height)
+	e := CreateBlockEvent(h, height)
 	assert.Equal(t, e, Event{
 		0x1, 0x1, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9,
 		0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8,
@@ -20,9 +20,9 @@ func TestCreateBlockEvent(t *testing.T) {
 }
 
 func TestCreateNewTransactionEvent(t *testing.T) {
-	hash, _ := hash.FromString("000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f")
+	h, _ := hash.FromString("000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f")
 	height := uint32(0x2134)
-	e := CreateTransactionEvent(hash, height)
+	e := CreateTransactionEvent(h, height)
 	assert.Equal(t, e, Event{
 		0x1, 0x2, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9,
 		0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8,

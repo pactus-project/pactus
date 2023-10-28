@@ -24,7 +24,6 @@ func newValidatorStore(db *leveldb.DB) *validatorStore {
 	r := util.BytesPrefix(validatorPrefix)
 	iter := db.NewIterator(r, nil)
 	for iter.Next() {
-		// key := iter.Key()
 		value := iter.Value()
 
 		val, err := validator.FromBytes(value)

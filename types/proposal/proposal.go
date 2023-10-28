@@ -101,8 +101,8 @@ func (p *Proposal) Hash() hash.Hash {
 	return hash.CalcHash(p.SignBytes())
 }
 
-func (p *Proposal) IsForBlock(hash hash.Hash) bool {
-	return p.Block().Hash() == hash
+func (p *Proposal) IsForBlock(h hash.Hash) bool {
+	return p.Block().Hash() == h
 }
 
 func (p Proposal) String() string {

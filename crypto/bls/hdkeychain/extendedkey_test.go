@@ -266,7 +266,7 @@ func TestGenerateSeed(t *testing.T) {
 
 // TestKeyToString ensures the String function works as intended.
 //
-//nolint:lll
+//nolint:lll // long extended keys
 func TestKeyToString(t *testing.T) {
 	testSeed, _ := hex.DecodeString("000102030405060708090a0b0c0d0e0f")
 	h := HardenedKeyStart
@@ -367,7 +367,7 @@ func TestKeyToString(t *testing.T) {
 
 // TestInvalidString checks errors corresponding to the invalid strings
 //
-//nolint:lll
+//nolint:lll // long extended private keys
 func TestInvalidString(t *testing.T) {
 	tests := []struct {
 		desc          string
@@ -427,7 +427,7 @@ func TestInvalidString(t *testing.T) {
 
 // TestNeuter ensures the Neuter function works as intended.
 //
-//nolint:lll
+//nolint:lll // Long extended private key
 func TestNeuter(t *testing.T) {
 	extKey, _ := NewKeyFromString("XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJAT3F4D")
 	neuterKey := extKey.Neuter()

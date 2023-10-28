@@ -25,8 +25,8 @@ func TestProposalMessage(t *testing.T) {
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		proposal, _ := ts.GenerateTestProposal(100, 0)
-		m := NewProposalMessage(proposal)
+		prop, _ := ts.GenerateTestProposal(100, 0)
+		m := NewProposalMessage(prop)
 
 		assert.NoError(t, m.BasicCheck())
 		assert.Contains(t, m.String(), "100")

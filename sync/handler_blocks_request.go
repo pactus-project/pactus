@@ -23,10 +23,10 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 	msg := m.(*message.BlocksRequestMessage)
 	handler.logger.Trace("parsing BlocksRequest message", "message", msg)
 
-	peer := handler.peerSet.GetPeer(initiator)
-	if !peer.IsKnownOrTrusty() {
+	p := handler.peerSet.GetPeer(initiator)
+	if !p.IsKnownOrTrusty() {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
-			fmt.Sprintf("peer status is %v", peer.Status), msg.SessionID, 0, nil, nil)
+			fmt.Sprintf("peer status is %v", p.Status), msg.SessionID, 0, nil, nil)
 
 		return handler.respond(response, initiator)
 	}

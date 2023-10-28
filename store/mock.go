@@ -56,10 +56,10 @@ func (m *MockStore) BlockHash(height uint32) hash.Hash {
 	return hash.UndefHash
 }
 
-func (m *MockStore) BlockHeight(hash hash.Hash) uint32 {
-	for h, b := range m.Blocks {
-		if b.Hash() == hash {
-			return h
+func (m *MockStore) BlockHeight(h hash.Hash) uint32 {
+	for height, b := range m.Blocks {
+		if b.Hash() == h {
+			return height
 		}
 	}
 	return 0

@@ -33,13 +33,13 @@ func setup(t *testing.T) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 
-	logger := logger.NewSubLogger("firewall", nil)
+	subLogger := logger.NewSubLogger("firewall", nil)
 	peerSet := peerset.NewPeerSet(3 * time.Second)
-	state := state.MockingState(ts)
+	st := state.MockingState(ts)
 	net := network.MockingNetwork(ts, ts.RandPeerID())
 	conf := DefaultConfig()
 	conf.Enabled = true
-	firewall := NewFirewall(conf, net, peerSet, state, logger)
+	firewall := NewFirewall(conf, net, peerSet, st, subLogger)
 	assert.NotNil(t, firewall)
 	badPeerID := ts.RandPeerID()
 	goodPeerID := ts.RandPeerID()
@@ -56,7 +56,7 @@ func setup(t *testing.T) *testData {
 		TestSuite:     ts,
 		firewall:      firewall,
 		network:       net,
-		state:         state,
+		state:         st,
 		badPeerID:     badPeerID,
 		goodPeerID:    goodPeerID,
 		unknownPeerID: unknownPeerID,
@@ -79,8 +79,8 @@ func TestInvalidBundlesCounter(t *testing.T) {
 	d, _ = bdl.Encode()
 	assert.Nil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID, td.unknownPeerID))
 
-	peer := td.firewall.peerSet.GetPeer(td.unknownPeerID)
-	assert.Equal(t, peer.InvalidBundles, 4)
+	p := td.firewall.peerSet.GetPeer(td.unknownPeerID)
+	assert.Equal(t, p.InvalidBundles, 4)
 }
 
 func TestGossipMessage(t *testing.T) {
@@ -230,6 +230,7 @@ func TestNetworkFlags(t *testing.T) {
 	bdl.Flags = 0
 	assert.Error(t, td.firewall.checkBundle(bdl, td.goodPeerID))
 
-	td.state.TestParams.BlockVersion = 0x3f
+	td.state.TestParams.BlockVersion = 0x3f // changing genesis hash
+	bdl.Flags = 1
 	assert.Error(t, td.firewall.checkBundle(bdl, td.goodPeerID))
 }

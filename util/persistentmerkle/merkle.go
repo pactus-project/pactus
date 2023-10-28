@@ -87,7 +87,7 @@ func (t *Tree) SetHash(leaf int, h hash.Hash) {
 	w := leaf / 2
 	for h := 1; h < t.maxHeight; h++ {
 		t.invalidateNode(w, h)
-		w = w / 2
+		w /= 2
 	}
 }
 
@@ -114,7 +114,7 @@ func (t *Tree) nodeHash(width, height int) hash.Hash {
 	copy(data[:hash.HashSize], left.Bytes())
 	copy(data[hash.HashSize:], right.Bytes())
 
-	h := hash.CalcHash(data[:])
+	h := hash.CalcHash(data)
 	n.hash = &h
 	return h
 }

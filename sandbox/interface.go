@@ -31,7 +31,7 @@ type Sandbox interface {
 	VerifyProof(uint32, sortition.Proof, *validator.Validator) bool
 	Committee() committee.Reader
 
-	Params() param.Params
+	Params() *param.Params
 	CurrentHeight() uint32
 
 	IterateAccounts(consumer func(crypto.Address, *account.Account, bool))

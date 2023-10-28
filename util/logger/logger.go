@@ -105,7 +105,7 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 		case error:
 			event.AnErr(key, v)
 		case []byte:
-			event.Str(key, fmt.Sprintf("%v", hex.EncodeToString(v)))
+			event.Str(key, hex.EncodeToString(v))
 		default:
 			event.Any(key, v)
 		}
@@ -226,8 +226,7 @@ func isNil(i interface{}) bool {
 	if i == nil {
 		return true
 	}
-	switch reflect.TypeOf(i).Kind() {
-	case reflect.Ptr:
+	if reflect.TypeOf(i).Kind() == reflect.Ptr {
 		return reflect.ValueOf(i).IsNil()
 	}
 	return false

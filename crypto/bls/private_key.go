@@ -48,7 +48,7 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 // KeyGen generates a private key deterministically from a secret octet string
 // IKM and an optional octet string keyInfo.
 // Based on https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bls-signature-04#section-2.3
-func KeyGen(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
+func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 	// L is `ceil((3 * ceil(log2(r))) / 16) = 48`,
 	//    where `r` is the order of the BLS 12-381 curve
 	//    r:  0x73eda753 299d7d48 3339d808 09a1d805 53bda402 fffe5bfe ffffffff 00000001
@@ -77,7 +77,7 @@ func KeyGen(ikm []byte, keyInfo []byte) (*PrivateKey, error) {
 		salt = h[:]
 
 		okm := make([]byte, L)
-		prk := hkdf.Extract(sha256.New, secret, salt[:])
+		prk := hkdf.Extract(sha256.New, secret, salt)
 		reader := hkdf.Expand(sha256.New, prk, pseudoRandomKey)
 		_, _ = reader.Read(okm)
 

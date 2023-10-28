@@ -35,7 +35,7 @@ type peerMgr struct {
 // Peer Manager attempts to establish connections with other nodes when the
 // number of connections falls below the minimum threshold.
 func newPeerMgr(ctx context.Context, h lp2phost.Host, dht *lp2pdht.IpfsDHT,
-	conf *Config, logger *logger.SubLogger,
+	conf *Config, log *logger.SubLogger,
 ) *peerMgr {
 	bootstrapAddrs := PeerAddrsToAddrInfo(conf.BootstrapAddrs)
 	b := &peerMgr{
@@ -46,7 +46,7 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host, dht *lp2pdht.IpfsDHT,
 		host:           h,
 		dialer:         h.Network(),
 		dht:            dht,
-		logger:         logger,
+		logger:         log,
 	}
 
 	return b

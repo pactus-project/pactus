@@ -8,7 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/services"
+	"github.com/pactus-project/pactus/sync/service"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -125,14 +125,14 @@ func (ps *PeerSet) RemovePeer(pid peer.ID) {
 	delete(ps.peers, pid)
 }
 
-func (ps *PeerSet) GetPeerList() []Peer {
+func (ps *PeerSet) GetPeerList() []*Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	l := make([]Peer, len(ps.peers))
+	l := make([]*Peer, len(ps.peers))
 	i := 0
 	for _, p := range ps.peers {
-		l[i] = *p
+		l[i] = p
 		i++
 	}
 	return l
@@ -152,8 +152,8 @@ func (ps *PeerSet) GetPeer(pid peer.ID) Peer {
 }
 
 func (ps *PeerSet) getPeer(pid peer.ID) *Peer {
-	if peer, ok := ps.peers[pid]; ok {
-		return peer
+	if p, ok := ps.peers[pid]; ok {
+		return p
 	}
 	return nil
 }
@@ -172,7 +172,7 @@ func (ps *PeerSet) UpdateInfo(
 	moniker string,
 	agent string,
 	consKeys []*bls.PublicKey,
-	services services.Services,
+	services service.Services,
 ) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()

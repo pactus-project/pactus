@@ -63,7 +63,7 @@ func AddressFromString(text string) (Address, error) {
 
 	var addr Address
 	addr[0] = typ
-	copy(addr[1:], data[:])
+	copy(addr[1:], data)
 
 	return addr, nil
 }
@@ -72,7 +72,7 @@ func AddressFromString(text string) (Address, error) {
 func NewAddress(typ AddressType, data []byte) Address {
 	var addr Address
 	addr[0] = byte(typ)
-	copy(addr[1:], data[:])
+	copy(addr[1:], data)
 	return addr
 }
 
@@ -110,9 +110,7 @@ func (addr Address) Type() AddressType {
 func (addr Address) Encode(w io.Writer) error {
 	switch t := addr.Type(); t {
 	case AddressTypeTreasury:
-		{
-			return encoding.WriteElement(w, uint8(0))
-		}
+		return encoding.WriteElement(w, uint8(0))
 	case AddressTypeValidator,
 		AddressTypeBLSAccount:
 		return encoding.WriteElement(w, addr)
@@ -128,9 +126,7 @@ func (addr *Address) Decode(r io.Reader) error {
 	}
 	switch t := addr.Type(); t {
 	case AddressTypeTreasury:
-		{
-			return nil
-		}
+		return nil
 	case AddressTypeValidator,
 		AddressTypeBLSAccount:
 		return encoding.ReadElement(r, addr[1:])
@@ -143,9 +139,7 @@ func (addr *Address) Decode(r io.Reader) error {
 func (addr Address) SerializeSize() int {
 	switch t := addr.Type(); t {
 	case AddressTypeTreasury:
-		{
-			return 1
-		}
+		return 1
 	case AddressTypeValidator,
 		AddressTypeBLSAccount:
 		return AddressSize

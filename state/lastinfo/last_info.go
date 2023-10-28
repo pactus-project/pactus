@@ -111,11 +111,11 @@ func (li *LastInfo) UpdateValidators(vals []*validator.Validator) {
 	li.lastValidators = vals
 }
 
-func (li *LastInfo) RestoreLastInfo(store store.Store, committeeSize int) (committee.Committee, error) {
-	lastCert := store.LastCertificate()
+func (li *LastInfo) RestoreLastInfo(str store.Store, committeeSize int) (committee.Committee, error) {
+	lastCert := str.LastCertificate()
 	lastHeight := lastCert.Height()
 	logger.Debug("try to restore last state info", "height", lastHeight)
-	sb, err := store.Block(lastHeight)
+	sb, err := str.Block(lastHeight)
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve block %v: %w", lastHeight, err)
 	}
@@ -130,7 +130,7 @@ func (li *LastInfo) RestoreLastInfo(store store.Store, committeeSize int) (commi
 	li.lastBlockHash = lastBlock.Hash()
 	li.lastBlockTime = lastBlock.Header().Time()
 
-	cmt, err := li.restoreCommittee(store, lastBlock, committeeSize)
+	cmt, err := li.restoreCommittee(str, lastBlock, committeeSize)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +138,7 @@ func (li *LastInfo) RestoreLastInfo(store store.Store, committeeSize int) (commi
 	return cmt, nil
 }
 
-func (li *LastInfo) restoreCommittee(store store.Store, lastBlock *block.Block,
+func (li *LastInfo) restoreCommittee(str store.Store, lastBlock *block.Block,
 	committeeSize int,
 ) (committee.Committee, error) {
 	joinedVals := make([]*validator.Validator, 0)
@@ -147,7 +147,7 @@ func (li *LastInfo) restoreCommittee(store store.Store, lastBlock *block.Block,
 		// we should update the last committee.
 		if trx.IsSortitionTx() {
 			pld := trx.Payload().(*payload.SortitionPayload)
-			val, err := store.Validator(pld.Validator)
+			val, err := str.Validator(pld.Validator)
 			if err != nil {
 				return nil, fmt.Errorf("unable to retrieve validator %s: %w", pld.Validator, err)
 			}
@@ -159,7 +159,7 @@ func (li *LastInfo) restoreCommittee(store store.Store, lastBlock *block.Block,
 	curCommitteeSize := len(li.lastCert.Committers())
 	vals := make([]*validator.Validator, len(li.lastCert.Committers()))
 	for i, num := range li.lastCert.Committers() {
-		val, err := store.ValidatorByNumber(num)
+		val, err := str.ValidatorByNumber(num)
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve committee member %v: %w", num, err)
 		}

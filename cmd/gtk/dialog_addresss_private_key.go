@@ -12,16 +12,16 @@ import (
 //go:embed assets/ui/dialog_address_private_key.ui
 var uiAddressPrivateKeyDialog []byte
 
-func showAddressPrivateKey(wallet *wallet.Wallet, addr string) {
+func showAddressPrivateKey(wlt *wallet.Wallet, addr string) {
 	builder, err := gtk.BuilderNewFromString(string(uiAddressPrivateKeyDialog))
 	fatalErrorCheck(err)
 
-	password, ok := getWalletPassword(wallet)
+	password, ok := getWalletPassword(wlt)
 	if !ok {
 		return
 	}
 
-	prv, err := wallet.PrivateKey(password, addr)
+	prv, err := wlt.PrivateKey(password, addr)
 	errorCheck(err)
 
 	dlg := getDialogObj(builder, "id_dialog_address_private_key")

@@ -82,12 +82,12 @@ func (m *MockConsensus) SetProposal(p *proposal.Proposal) {
 	m.CurProposal = p
 }
 
-func (m *MockConsensus) HasVote(hash hash.Hash) bool {
+func (m *MockConsensus) HasVote(h hash.Hash) bool {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
 	for _, v := range m.Votes {
-		if v.Hash() == hash {
+		if v.Hash() == h {
 			return true
 		}
 	}

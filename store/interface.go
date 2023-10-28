@@ -79,7 +79,7 @@ func (s *CommittedTx) ToTx() (*tx.Tx, error) {
 
 type Reader interface {
 	Block(height uint32) (*CommittedBlock, error)
-	BlockHeight(hash hash.Hash) uint32
+	BlockHeight(h hash.Hash) uint32
 	BlockHash(height uint32) hash.Hash
 	Transaction(id tx.ID) (*CommittedTx, error)
 	AnyRecentTransaction(id tx.ID) bool

@@ -94,7 +94,7 @@ func TestProposalNextRound(t *testing.T) {
 	td.enterNewHeight(td.consX)
 
 	// Byzantine node sends proposal for the second round (his turn) even before the first round is started
-	b, err := td.consB.state.ProposeBlock(td.consB.valKey, td.consB.rewardAddr)
+	b, err := td.consB.bcState.ProposeBlock(td.consB.valKey, td.consB.rewardAddr)
 	assert.NoError(t, err)
 	p := proposal.NewProposal(2, 1, b)
 	td.HelperSignProposal(td.consB.valKey, p)

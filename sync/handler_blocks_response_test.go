@@ -13,7 +13,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/services"
+	"github.com/pactus-project/pactus/sync/service"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
@@ -70,7 +70,7 @@ func TestOneBlockShorter(t *testing.T) {
 	pid := td.RandPeerID()
 
 	pub, _ := td.RandBLSKeyPair()
-	td.addPeer(t, pub, pid, services.New(services.None))
+	td.addPeer(t, pub, pid, service.New(service.None))
 
 	sid := td.sync.peerSet.OpenSession(pid).SessionID()
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, t.Name(), sid,
@@ -133,7 +133,7 @@ func TestStrippedPublicKey(t *testing.T) {
 	// Add a peer
 	pid := td.RandPeerID()
 	peerPubKey, _ := td.RandBLSKeyPair()
-	td.addPeer(t, peerPubKey, pid, services.New(services.None))
+	td.addPeer(t, peerPubKey, pid, service.New(service.None))
 
 	for _, test := range tests {
 		blkData, _ := test.blk.Bytes()

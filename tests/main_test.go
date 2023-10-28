@@ -93,13 +93,6 @@ func TestMain(m *testing.M) {
 		sync.LatestBlockInterval = 10
 
 		if i == 0 {
-			// tConfigs[i].Logger.Levels["default"] = "warn"
-			// tConfigs[i].Logger.Levels["_state"] = "info"
-			// tConfigs[i].Logger.Levels["_sync"] = "debug"
-			// tConfigs[i].Logger.Levels["_consensus"] = "debug"
-			// tConfigs[i].Logger.Levels["_network"] = "error"
-			// tConfigs[i].Logger.Levels["_pool"] = "debug"
-
 			tConfigs[i].Sync.NodeNetwork = true
 			tConfigs[i].GRPC.Enable = true
 			tConfigs[i].GRPC.Listen = tGRPCAddress

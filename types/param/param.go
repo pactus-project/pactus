@@ -18,8 +18,8 @@ type Params struct {
 	MaximumStake              int64   `cbor:"13,keyasint" json:"maximum_stake"`
 }
 
-func DefaultParams() Params {
-	return Params{
+func DefaultParams() *Params {
+	return &Params{
 		BlockVersion:              1,
 		BlockIntervalInSecond:     10,
 		CommitteeSize:             51,
@@ -36,6 +36,6 @@ func DefaultParams() Params {
 	}
 }
 
-func (p Params) BlockInterval() time.Duration {
+func (p *Params) BlockInterval() time.Duration {
 	return time.Duration(p.BlockIntervalInSecond) * time.Second
 }

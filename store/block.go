@@ -17,8 +17,8 @@ func publicKeyKey(addr crypto.Address) []byte {
 	return append(publicKeyPrefix, addr.Bytes()...)
 }
 
-func blockHashKey(hash hash.Hash) []byte {
-	return append(blockHeightPrefix, hash.Bytes()...)
+func blockHashKey(h hash.Hash) []byte {
+	return append(blockHeightPrefix, h.Bytes()...)
 }
 
 type blockStore struct {
@@ -105,8 +105,8 @@ func (bs *blockStore) block(height uint32) ([]byte, error) {
 	return data, nil
 }
 
-func (bs *blockStore) blockHeight(hash hash.Hash) uint32 {
-	data, err := tryGet(bs.db, blockHashKey(hash))
+func (bs *blockStore) blockHeight(h hash.Hash) uint32 {
+	data, err := tryGet(bs.db, blockHashKey(h))
 	if err != nil {
 		return 0
 	}

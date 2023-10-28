@@ -30,13 +30,13 @@ func setup(t *testing.T) *testData {
 	params := param.DefaultParams()
 	params.TransactionToLiveInterval = 64
 
-	committee, valKeys := ts.GenerateTestCommittee(21)
+	cmt, valKeys := ts.GenerateTestCommittee(21)
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
 	mockStore.UpdateAccount(crypto.TreasuryAddress, acc)
 
 	totalPower := int64(0)
-	for _, val := range committee.Validators() {
+	for _, val := range cmt.Validators() {
 		// For testing purpose, we create some test accounts first.
 		// Account number is the validator number plus one,
 		// since account #0 is the Treasury account.
@@ -53,7 +53,7 @@ func setup(t *testing.T) *testData {
 		mockStore.SaveBlock(blk, cert)
 	}
 	sandbox := NewSandbox(mockStore.LastHeight,
-		mockStore, params, committee, totalPower).(*sandbox)
+		mockStore, params, cmt, totalPower).(*sandbox)
 	assert.Equal(t, sandbox.CurrentHeight(), lastHeight)
 	assert.Equal(t, sandbox.Params(), params)
 

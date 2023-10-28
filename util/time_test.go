@@ -16,9 +16,6 @@ func TestNow(t *testing.T) {
 	assert.Equal(t, c1.Second(), c2.Second())
 	assert.Equal(t, c3.Nanosecond(), 0)
 	assert.Equal(t, c3.Second()%5, 0)
-	// fmt.Println(c1)
-	// fmt.Println(c2)
-	// fmt.Println(c3)
 }
 
 func TestRoundingTime(t *testing.T) {
@@ -44,10 +41,4 @@ func TestRoundingTime(t *testing.T) {
 	assert.Equal(t, c3.Second(), 30)
 	assert.Equal(t, c4.Second(), 40)
 	assert.Equal(t, c5.Second(), 50)
-
-	// fmt.Println(c1)
-	// fmt.Println(c2)
-	// fmt.Println(c3)
-	// fmt.Println(c4)
-	// fmt.Println(c5)
 }

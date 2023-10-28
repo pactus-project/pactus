@@ -101,10 +101,10 @@ func shouldNotReceiveEvent(t *testing.T, net *network) {
 	}
 }
 
-func readData(t *testing.T, r io.ReadCloser, len int) []byte {
+func readData(t *testing.T, r io.ReadCloser, length int) []byte {
 	t.Helper()
 
-	buf := make([]byte, len)
+	buf := make([]byte, length)
 	_, err := r.Read(buf)
 	if !errors.Is(err, io.EOF) {
 		assert.NoError(t, err)
@@ -394,7 +394,7 @@ func TestConnections(t *testing.T) {
 	}
 }
 
-func testConnection(t *testing.T, networkP *network, networkB *network) {
+func testConnection(t *testing.T, networkP, networkB *network) {
 	t.Helper()
 
 	// Ensure that peers are connected to each other

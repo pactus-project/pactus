@@ -57,7 +57,7 @@ type Genesis struct {
 
 type genesisData struct {
 	GenesisTime time.Time      `cbor:"1,keyasint" json:"genesis_time"`
-	Params      param.Params   `cbor:"2,keyasint" json:"params"`
+	Params      *param.Params  `cbor:"2,keyasint" json:"params"`
 	Accounts    []genAccount   `cbor:"3,keyasint" json:"accounts"`
 	Validators  []genValidator `cbor:"4,keyasint" json:"validators"`
 }
@@ -74,7 +74,7 @@ func (gen *Genesis) GenesisTime() time.Time {
 	return gen.data.GenesisTime
 }
 
-func (gen *Genesis) Params() param.Params {
+func (gen *Genesis) Params() *param.Params {
 	return gen.data.Params
 }
 
@@ -101,7 +101,7 @@ func (gen *Genesis) Validators() []*validator.Validator {
 	return vals
 }
 
-func (gen Genesis) MarshalJSON() ([]byte, error) {
+func (gen *Genesis) MarshalJSON() ([]byte, error) {
 	return json.MarshalIndent(&gen.data, "  ", "  ")
 }
 
@@ -123,7 +123,7 @@ func makeGenesisValidator(val *validator.Validator) genValidator {
 }
 
 func MakeGenesis(genesisTime time.Time, accounts map[crypto.Address]*account.Account,
-	validators []*validator.Validator, params param.Params,
+	validators []*validator.Validator, params *param.Params,
 ) *Genesis {
 	genAccs := make([]genAccount, len(accounts))
 	for addr, acc := range accounts {
@@ -162,13 +162,13 @@ func LoadFromFile(file string) (*Genesis, error) {
 
 // SaveToFile saves the genesis into a JSON file.
 func (gen *Genesis) SaveToFile(file string) error {
-	json, err := gen.MarshalJSON()
+	j, err := gen.MarshalJSON()
 	if err != nil {
 		return err
 	}
 
 	// write  dataContent to file
-	return util.WriteFile(file, json)
+	return util.WriteFile(file, j)
 }
 
 func (gen *Genesis) TotalSupply() int64 {

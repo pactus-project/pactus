@@ -18,7 +18,10 @@ func init() {
 // It returns the random number and the proof that can regenerate the random number using
 // the public key of the signer, without revealing the private key.
 func Evaluate(seed VerifiableSeed, prv *bls.PrivateKey, max uint64) (uint64, Proof) {
-	signData := append(seed[:], prv.PublicKey().Bytes()...)
+	signData := make([]byte, 0, bls.SignatureSize+bls.PublicKeySize)
+	signData = append(signData, seed[:]...)
+	signData = append(signData, prv.PublicKey().Bytes()...)
+
 	sig := prv.Sign(signData)
 
 	proof, _ := ProofFromBytes(sig.Bytes())
@@ -37,7 +40,9 @@ func Verify(seed VerifiableSeed, pub *bls.PublicKey, proof Proof, max uint64) (u
 	}
 
 	// Verify signature (proof)
-	signData := append(seed[:], pub.Bytes()...)
+	signData := make([]byte, 0, bls.SignatureSize+bls.PublicKeySize)
+	signData = append(signData, seed[:]...)
+	signData = append(signData, pub.Bytes()...)
 	if err := pub.Verify(signData, proofSig); err != nil {
 		return 0, false
 	}

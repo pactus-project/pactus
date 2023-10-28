@@ -8,7 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/services"
+	"github.com/pactus-project/pactus/sync/service"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
@@ -54,7 +54,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 		tm.addRowInt("-- Peer #", i+1)
 		tm.addRowString("Status", peerset.StatusCode(p.Status).String())
 		tm.addRowString("PeerID", pid.String())
-		tm.addRowString("Services", services.Services(p.Services).String())
+		tm.addRowString("Services", service.Services(p.Services).String())
 		for _, key := range p.ConsensusKeys {
 			pub, _ := bls.PublicKeyFromString(key)
 			tm.addRowString("  PublicKey", pub.String())

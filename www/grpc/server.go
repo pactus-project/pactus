@@ -24,14 +24,14 @@ type Server struct {
 	logger   *logger.SubLogger
 }
 
-func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
+func NewServer(conf *Config, st state.Facade, syn sync.Synchronizer,
 	consMgr consensus.ManagerReader,
 ) *Server {
 	return &Server{
 		ctx:     context.Background(),
 		config:  conf,
-		state:   state,
-		sync:    sync,
+		state:   st,
+		sync:    syn,
 		consMgr: consMgr,
 		logger:  logger.NewSubLogger("_grpc", nil),
 	}
@@ -46,7 +46,7 @@ func (s *Server) StartServer() error {
 		return nil
 	}
 
-	grpc := grpc.NewServer()
+	grpcServer := grpc.NewServer()
 	blockchainServer := &blockchainServer{
 		state:   s.state,
 		consMgr: s.consMgr,
@@ -66,10 +66,10 @@ func (s *Server) StartServer() error {
 		chain:   network,
 		logger:  s.logger,
 	}
-	pactus.RegisterBlockchainServer(grpc, blockchainServer)
-	pactus.RegisterTransactionServer(grpc, transactionServer)
-	pactus.RegisterNetworkServer(grpc, networkServer)
-	pactus.RegisterWalletServer(grpc, walletServer)
+	pactus.RegisterBlockchainServer(grpcServer, blockchainServer)
+	pactus.RegisterTransactionServer(grpcServer, transactionServer)
+	pactus.RegisterNetworkServer(grpcServer, networkServer)
+	pactus.RegisterWalletServer(grpcServer, walletServer)
 
 	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
@@ -78,7 +78,7 @@ func (s *Server) StartServer() error {
 
 	s.listener = listener
 	s.address = listener.Addr().String()
-	s.grpc = grpc
+	s.grpc = grpcServer
 	go func() {
 		if err := s.grpc.Serve(listener); err != nil {
 			s.logger.Error("error on grpc serve", "error", err)

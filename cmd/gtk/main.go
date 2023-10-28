@@ -113,23 +113,23 @@ func start(workingDir string, app *gtk.Application) {
 		return
 	}
 
-	passwordFetcher := func(wallet *wallet.Wallet) (string, bool) {
+	passwordFetcher := func(wlt *wallet.Wallet) (string, bool) {
 		if *passwordOpt != "" {
 			return *passwordOpt, true
 		}
-		return getWalletPassword(wallet)
+		return getWalletPassword(wlt)
 	}
-	node, wallet, err := cmd.StartNode(workingDir, passwordFetcher)
+	node, wlt, err := cmd.StartNode(workingDir, passwordFetcher)
 	fatalErrorCheck(err)
 
 	grpcAddr := node.GRPC().Address()
 	fmt.Printf("connect wallet to grpc server: %s\n", grpcAddr)
 
-	err = wallet.Connect(grpcAddr)
+	err = wlt.Connect(grpcAddr)
 	fatalErrorCheck(err)
 
 	nodeModel := newNodeModel(node)
-	walletModel := newWalletModel(wallet)
+	walletModel := newWalletModel(wlt)
 
 	// building main window
 	win := buildMainWindow(nodeModel, walletModel)

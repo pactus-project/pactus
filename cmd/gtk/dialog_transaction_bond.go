@@ -16,7 +16,7 @@ import (
 //go:embed assets/ui/dialog_transaction_bond.ui
 var uiTransactionBondDialog []byte
 
-func broadcastTransactionBond(wallet *wallet.Wallet, valAddrs []crypto.Address) {
+func broadcastTransactionBond(wlt *wallet.Wallet, valAddrs []crypto.Address) {
 	builder, err := gtk.BuilderNewFromString(string(uiTransactionBondDialog))
 	fatalErrorCheck(err)
 
@@ -32,7 +32,7 @@ func broadcastTransactionBond(wallet *wallet.Wallet, valAddrs []crypto.Address) 
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
-	for _, i := range wallet.AddressInfos() {
+	for _, i := range wlt.AddressInfos() {
 		senderEntry.Append(i.Address, i.Address)
 	}
 
@@ -44,18 +44,18 @@ func broadcastTransactionBond(wallet *wallet.Wallet, valAddrs []crypto.Address) 
 
 	onSenderChanged := func() {
 		senderStr := senderEntry.GetActiveID()
-		updateAccountHint(senderHint, senderStr, wallet)
+		updateAccountHint(senderHint, senderStr, wlt)
 	}
 
 	onReceiverChanged := func() {
 		receiverEntry, _ := receiverCombo.GetEntry()
 		receiverStr, _ := receiverEntry.GetText()
-		updateValidatorHint(receiverHint, receiverStr, wallet)
+		updateValidatorHint(receiverHint, receiverStr, wlt)
 	}
 
 	onAmountChanged := func() {
 		amtStr, _ := amountEntry.GetText()
-		updateFeeHint(amountHint, amtStr, wallet, payload.TypeBond)
+		updateFeeHint(amountHint, amtStr, wlt, payload.TypeBond)
 	}
 
 	onSend := func() {
@@ -71,7 +71,7 @@ func broadcastTransactionBond(wallet *wallet.Wallet, valAddrs []crypto.Address) 
 			return
 		}
 
-		trx, err := wallet.MakeBondTx(sender, receiver, publicKey, amount)
+		trx, err := wlt.MakeBondTx(sender, receiver, publicKey, amount)
 		if err != nil {
 			errorCheck(err)
 			return
@@ -87,7 +87,7 @@ Fee: <b>%v</b>
 THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`, sender, receiver,
 			util.ChangeToString(amount), util.ChangeToString(trx.Fee()))
 
-		signAndBroadcastTransaction(dlg, msg, wallet, trx)
+		signAndBroadcastTransaction(dlg, msg, wlt, trx)
 
 		dlg.Close()
 	}

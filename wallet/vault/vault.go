@@ -5,14 +5,13 @@ import (
 	"sort"
 	"strings"
 
-	"golang.org/x/exp/slices"
-
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/tyler-smith/go-bip39"
+	"golang.org/x/exp/slices"
 )
 
 //
@@ -92,7 +91,7 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 	if err != nil {
 		return nil, err
 	}
-	encrypter := encrypter.NopeEncrypter()
+	enc := encrypter.NopeEncrypter()
 
 	xPubValidator, err := masterKey.DerivePath([]uint32{
 		12381 + hdkeychain.HardenedKeyStart,
@@ -127,7 +126,7 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 	return &Vault{
 		Type:      TypeFull,
 		CoinType:  coinType,
-		Encrypter: encrypter,
+		Encrypter: enc,
 		Addresses: make(map[string]AddressInfo),
 		KeyStore:  string(keyStoreDate),
 		Purposes: purposes{

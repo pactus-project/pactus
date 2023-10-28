@@ -1,44 +1,92 @@
 linters:
-  enable-all: true
-  disable:
-    - scopelint # deprecated
-    - maligned # deprecated
-    - nosnakecase # deprecated
-    - interfacer # deprecated
-    - deadcode # deprecated
-    - ifshort # deprecated
-    - golint # deprecated
-    - structcheck # deprecated
-    - varcheck # deprecated
-    - exhaustivestruct # deprecated
-    - varnamelen
-    - wrapcheck
-    - paralleltest
-    - interfacebloat
-    - depguard
-    - gochecknoglobals
-    - gomnd
-    - cyclop
-    - nestif
-    - gochecknoinits
-    - dupl
-    - goconst
-    - gocognit # Consider to enable it
-    - funlen # Consider to enable it
-    - forbidigo # Consider to enable it
-    - gci  # Consider to enable it (add it to make fmt)
-    - godox # Consider to enable it (only show warning)
-    - gocritic # Consider to enable it
-    - wsl # Consider to enable it
-    - containedctx # Consider to enable it
-    - contextcheck # Consider to enable it
-    - testpackage # Consider to enable it (??)
-    - exhaustive # Consider to enable it
-    - exhaustruct # Consider to enable it
-    - forcetypeassert # Consider to enable it
-    - goerr113 # Consider to enable it
-    - nlreturn # Consider to enable it
-    - ireturn  # Consider to enable it (??)
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    # - containedctx
+    # - contextcheck
+    - decorder
+    - dogsled
+    # - dupl
+    - dupword
+    - durationcheck
+    - errchkjson
+    - errname
+    - errorlint
+    - execinquery
+    # - exhaustive
+    # - exhaustruct
+    - exportloopref
+    # - forbidigo
+    # - forcetypeassert
+    # - funlen
+    - gci
+    - ginkgolinter
+    - gocheckcompilerdirectives
+    # - gochecknoinits
+    # - gocognit
+    # - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    # - godox
+    # - goerr113
+    - gofmt
+    - gofumpt
+    - goheader
+    - goimports
+    - gomoddirectives
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    - gosmopolitan
+    - grouper
+    - importas
+    # - ireturn
+    - lll
+    - loggercheck
+    - maintidx
+    - makezero
+    - mirror
+    - misspell
+    - musttag
+    - nakedret
+    # - nestif
+    - nilerr
+    - nilnil
+    # - nlreturn
+    - noctx
+    - nolintlint
+    - nosprintfhostport
+    - prealloc
+    - predeclared
+    - promlinter
+    - reassign
+    - revive
+    - rowserrcheck
+    - sqlclosecheck
+    - stylecheck
+    - tagalign
+    - tagliatelle
+    - tenv
+    - testableexamples
+    - thelper
+    - tparallel
+    - unconvert
+    - unparam
+    - usestdlibvars
+    - wastedassign
+    - whitespace
+    # - wrapcheck
+    # - wsl
+    - zerologlint
 
 linters-settings:
   gosimple:
@@ -73,6 +121,15 @@ linters-settings:
     # Report named error if it is assigned inside defer.
     # Default: false
      report-error-in-defer: false
+
+  gocritic:
+    disabled-checks:
+      - ifElseChain
+      - unnamedResult
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
 
 issues:
   exclude-rules:

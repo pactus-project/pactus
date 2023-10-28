@@ -23,18 +23,18 @@ func newConcreteMediator() mediator {
 	return &ConcreteMediator{}
 }
 
-func (m *ConcreteMediator) OnPublishProposal(from Consensus, proposal *proposal.Proposal) {
+func (m *ConcreteMediator) OnPublishProposal(from Consensus, prop *proposal.Proposal) {
 	for _, cons := range m.instances {
 		if cons != from {
-			cons.SetProposal(proposal)
+			cons.SetProposal(prop)
 		}
 	}
 }
 
-func (m *ConcreteMediator) OnPublishVote(from Consensus, vote *vote.Vote) {
+func (m *ConcreteMediator) OnPublishVote(from Consensus, vte *vote.Vote) {
 	for _, cons := range m.instances {
 		if cons != from {
-			cons.AddVote(vote)
+			cons.AddVote(vte)
 		}
 	}
 }

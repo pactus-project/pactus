@@ -19,11 +19,11 @@ type mdnsService struct {
 
 // newMdnsService creates an mDNS discovery service and attaches it to the libp2p Host.
 // This lets us automatically discover peers on the same LAN and connect to them.
-func newMdnsService(ctx context.Context, host lp2phost.Host, logger *logger.SubLogger) *mdnsService {
+func newMdnsService(ctx context.Context, host lp2phost.Host, log *logger.SubLogger) *mdnsService {
 	mdns := &mdnsService{
 		ctx:    ctx,
 		host:   host,
-		logger: logger,
+		logger: log,
 	}
 	// setup mDNS discovery to find local peers
 	mdns.service = lp2pmdns.NewMdnsService(host, "pactus-mdns", mdns)

@@ -20,11 +20,12 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 	_ *pactus.GetNetworkInfoRequest,
 ) (*pactus.GetNetworkInfoResponse, error) {
 	peerset := s.sync.PeerSet()
-	peers := make([]*pactus.PeerInfo, peerset.Len())
+	peerInfos := make([]*pactus.PeerInfo, peerset.Len())
+	peers := peerset.GetPeerList()
 
-	for i, peer := range peerset.GetPeerList() {
-		peers[i] = new(pactus.PeerInfo)
-		p := peers[i]
+	for i, peer := range peers {
+		peerInfos[i] = new(pactus.PeerInfo)
+		p := peerInfos[i]
 
 		bs, err := cbor.Marshal(peer.Agent)
 		if err != nil {
@@ -60,7 +61,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		SentBytes:          *(*map[int32]int64)(unsafe.Pointer(&sentBytes)),
 		ReceivedBytes:      *(*map[int32]int64)(unsafe.Pointer(&receivedBytes)),
 		StartedAt:          peerset.StartedAt().Unix(),
-		Peers:              peers,
+		Peers:              peerInfos,
 	}, nil
 }
 

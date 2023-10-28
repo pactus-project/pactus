@@ -327,16 +327,16 @@ func TestOneThirdPower(t *testing.T) {
 	// 2/3 of total power = 2000
 	valsMap, valKeys, totalPower := setupCommittee(ts, 999, 3, 999, 999)
 
-	hash := ts.RandHash()
+	h := ts.RandHash()
 	height := ts.RandHeight()
 	round := ts.RandRound()
 	just := &vote.JustInitOne{}
 	vs := NewCPPreVoteVoteSet(round, totalPower, valsMap)
 
-	v1 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueOne, just, valKeys[0].Address())
-	v2 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueOne, just, valKeys[1].Address())
-	v3 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueOne, just, valKeys[2].Address())
-	v4 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueZero, just, valKeys[3].Address())
+	v1 := vote.NewCPPreVote(h, height, round, 0, vote.CPValueOne, just, valKeys[0].Address())
+	v2 := vote.NewCPPreVote(h, height, round, 0, vote.CPValueOne, just, valKeys[1].Address())
+	v3 := vote.NewCPPreVote(h, height, round, 0, vote.CPValueOne, just, valKeys[2].Address())
+	v4 := vote.NewCPPreVote(h, height, round, 0, vote.CPValueZero, just, valKeys[3].Address())
 
 	ts.HelperSignVote(valKeys[0], v1)
 	ts.HelperSignVote(valKeys[1], v2)
@@ -384,13 +384,13 @@ func TestDecidedVoteset(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 	valsMap, valKeys, totalPower := setupCommittee(ts, 1, 1, 1, 1)
 
-	hash := ts.RandHash()
+	h := ts.RandHash()
 	height := ts.RandHeight()
 	round := ts.RandRound()
 	just := &vote.JustInitOne{}
 	vs := NewCPDecidedVoteVoteSet(round, totalPower, valsMap)
 
-	v1 := vote.NewCPDecidedVote(hash, height, round, 0, vote.CPValueOne, just, valKeys[0].Address())
+	v1 := vote.NewCPDecidedVote(h, height, round, 0, vote.CPValueOne, just, valKeys[0].Address())
 
 	ts.HelperSignVote(valKeys[0], v1)
 

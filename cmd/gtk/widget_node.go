@@ -127,7 +127,7 @@ func (wn *widgetNode) timeout10() bool {
 			wn.labelValidatorNum.SetText(fmt.Sprintf("%v", validatorNum))
 			wn.labelCommitteeStake.SetText(util.ChangeToString(committeePower))
 			wn.labelTotalStake.SetText(util.ChangeToString(totalPower))
-			wn.labelInCommittee.SetText(fmt.Sprintf("%v", isInCommittee))
+			wn.labelInCommittee.SetText(isInCommittee)
 
 			return false
 		})

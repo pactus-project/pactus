@@ -98,7 +98,7 @@ func SaveMainnetConfig(path string, numValidators int) error {
 	return util.WriteFile(path, []byte(conf))
 }
 
-//nolint:all
+//nolint:lll // long multi-address
 func SaveTestnetConfig(path string, numValidators int) error {
 	conf := DefaultConfig()
 	conf.Node.NumValidators = numValidators

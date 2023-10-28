@@ -105,7 +105,7 @@ func DecompressBuffer(s []byte) ([]byte, error) {
 //	[1,2,3,4] - [4,5] = [1,2,3]
 //
 // .
-func Subtracts(slice1 []int32, slice2 []int32) []int32 {
+func Subtracts(slice1, slice2 []int32) []int32 {
 	sub := []int32{}
 	if slice2 == nil {
 		return slice1

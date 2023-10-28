@@ -89,15 +89,13 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 	case payload.TypeTransfer:
 		trx = tx.NewTransferTx(m.lockTime, *m.from, *m.to, m.amount, m.fee, m.memo)
 	case payload.TypeBond:
-		{
-			pub := m.pub
-			val, _ := m.client.getValidator(*m.to)
-			if val != nil {
-				// validator exists
-				pub = nil
-			}
-			trx = tx.NewBondTx(m.lockTime, *m.from, *m.to, pub, m.amount, m.fee, m.memo)
+		pub := m.pub
+		val, _ := m.client.getValidator(*m.to)
+		if val != nil {
+			// validator exists
+			pub = nil
 		}
+		trx = tx.NewBondTx(m.lockTime, *m.from, *m.to, pub, m.amount, m.fee, m.memo)
 	case payload.TypeUnbond:
 		trx = tx.NewUnbondTx(m.lockTime, *m.from, m.memo)
 	case payload.TypeWithdraw:

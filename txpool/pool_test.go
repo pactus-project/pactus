@@ -31,16 +31,16 @@ func setup(t *testing.T) *testData {
 	ts := testsuite.NewTestSuite(t)
 
 	ch := make(chan message.Message, 10)
-	sandbox := sandbox.MockingSandbox(ts)
+	sb := sandbox.MockingSandbox(ts)
 	p := NewTxPool(DefaultConfig(), ch)
-	p.SetNewSandboxAndRecheck(sandbox)
+	p.SetNewSandboxAndRecheck(sb)
 	pool := p.(*txPool)
 	assert.NotNil(t, pool)
 
 	return &testData{
 		TestSuite: ts,
 		pool:      pool,
-		sandbox:   sandbox,
+		sandbox:   sb,
 		ch:        ch,
 	}
 }

@@ -71,23 +71,23 @@ func (s *blockchainServer) GetBlockHash(_ context.Context,
 	req *pactus.GetBlockHashRequest,
 ) (*pactus.GetBlockHashResponse, error) {
 	height := req.GetHeight()
-	hash := s.state.BlockHash(height)
-	if hash.IsUndef() {
+	h := s.state.BlockHash(height)
+	if h.IsUndef() {
 		return nil, status.Errorf(codes.NotFound, "block not found with this height")
 	}
 	return &pactus.GetBlockHashResponse{
-		Hash: hash.Bytes(),
+		Hash: h.Bytes(),
 	}, nil
 }
 
 func (s *blockchainServer) GetBlockHeight(_ context.Context,
 	req *pactus.GetBlockHeightRequest,
 ) (*pactus.GetBlockHeightResponse, error) {
-	hash, err := hash.FromBytes(req.GetHash())
+	h, err := hash.FromBytes(req.GetHash())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid hash: %v", err)
 	}
-	height := s.state.BlockHeight(hash)
+	height := s.state.BlockHeight(h)
 	if height == 0 {
 		return nil, status.Errorf(codes.NotFound, "block not found with this hash")
 	}

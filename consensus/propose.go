@@ -29,25 +29,25 @@ func (s *proposeState) decide() {
 }
 
 func (s *proposeState) createProposal(height uint32, round int16) {
-	block, err := s.state.ProposeBlock(s.valKey, s.rewardAddr)
+	block, err := s.bcState.ProposeBlock(s.valKey, s.rewardAddr)
 	if err != nil {
 		s.logger.Error("unable to propose a block!", "error", err)
 		return
 	}
-	if err := s.state.ValidateBlock(block); err != nil {
+	if err := s.bcState.ValidateBlock(block); err != nil {
 		s.logger.Error("proposed block is invalid!", "error", err)
 		return
 	}
 
-	proposal := proposal.NewProposal(height, round, block)
-	sig := s.valKey.Sign(proposal.SignBytes())
-	proposal.SetSignature(sig)
+	prop := proposal.NewProposal(height, round, block)
+	sig := s.valKey.Sign(prop.SignBytes())
+	prop.SetSignature(sig)
 
-	s.log.SetRoundProposal(round, proposal)
+	s.log.SetRoundProposal(round, prop)
 
-	s.broadcastProposal(proposal)
+	s.broadcastProposal(prop)
 
-	s.logger.Info("proposal signed and broadcasted", "proposal", proposal)
+	s.logger.Info("proposal signed and broadcasted", "proposal", prop)
 }
 
 func (s *proposeState) onAddVote(_ *vote.Vote) {

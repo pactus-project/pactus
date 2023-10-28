@@ -16,7 +16,7 @@ type walletModel struct {
 	listStore *gtk.ListStore
 }
 
-func newWalletModel(wallet *wallet.Wallet) *walletModel {
+func newWalletModel(wlt *wallet.Wallet) *walletModel {
 	listStore, _ := gtk.ListStoreNew(
 		glib.TYPE_STRING, // Column no
 		glib.TYPE_STRING, // Address
@@ -25,7 +25,7 @@ func newWalletModel(wallet *wallet.Wallet) *walletModel {
 		glib.TYPE_STRING) // Stake
 
 	return &walletModel{
-		wallet:    wallet,
+		wallet:    wlt,
 		listStore: listStore,
 	}
 }

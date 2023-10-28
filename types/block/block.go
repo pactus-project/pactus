@@ -198,11 +198,11 @@ func (b *Block) Decode(r io.Reader) error {
 	}
 	b.data.Txs = make([]*tx.Tx, length)
 	for i := 0; i < int(length); i++ {
-		tx := new(tx.Tx)
-		if err := tx.Decode(r); err != nil {
+		trx := new(tx.Tx)
+		if err := trx.Decode(r); err != nil {
 			return err
 		}
-		b.data.Txs[i] = tx
+		b.data.Txs[i] = trx
 	}
 	return nil
 }

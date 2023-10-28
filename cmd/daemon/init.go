@@ -35,7 +35,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			return
 		}
 		var mnemonic string
-		if len(*restoreOpt) == 0 {
+		if *restoreOpt == "" {
 			mnemonic, _ = wallet.GenerateMnemonic(128)
 			cmd.PrintLine()
 			cmd.PrintInfoMsgf("Your wallet seed is:")

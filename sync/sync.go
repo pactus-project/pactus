@@ -15,7 +15,7 @@ import (
 	"github.com/pactus-project/pactus/sync/cache"
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/services"
+	"github.com/pactus-project/pactus/sync/service"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
@@ -48,7 +48,7 @@ type synchronizer struct {
 func NewSynchronizer(
 	conf *Config,
 	valKeys []*bls.ValidatorKey,
-	state state.Facade,
+	st state.Facade,
 	consMgr consensus.Manager,
 	net network.Network,
 	broadcastCh <-chan message.Message,
@@ -57,7 +57,7 @@ func NewSynchronizer(
 		ctx:         context.Background(), // TODO, set proper context
 		config:      conf,
 		valKeys:     valKeys,
-		state:       state,
+		state:       st,
 		consMgr:     consMgr,
 		network:     net,
 		broadcastCh: broadcastCh,
@@ -65,17 +65,17 @@ func NewSynchronizer(
 	}
 
 	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
-	logger := logger.NewSubLogger("_sync", sync)
-	firewall := firewall.NewFirewall(conf.Firewall, net, peerSet, state, logger)
-	cache, err := cache.NewCache(conf.CacheSize)
+	subLogger := logger.NewSubLogger("_sync", sync)
+	fw := firewall.NewFirewall(conf.Firewall, net, peerSet, st, subLogger)
+	ca, err := cache.NewCache(conf.CacheSize)
 	if err != nil {
 		return nil, err
 	}
 
-	sync.logger = logger
-	sync.cache = cache
+	sync.logger = subLogger
+	sync.cache = ca
 	sync.peerSet = peerSet
-	sync.firewall = firewall
+	sync.firewall = fw
 
 	handlers := make(map[message.Type]messageHandler)
 
@@ -123,16 +123,16 @@ func (sync *synchronizer) moveConsensusToNewHeight() {
 }
 
 func (sync *synchronizer) sayHello(to peer.ID) error {
-	nodeServices := []int{}
+	services := []int{}
 	if sync.config.NodeNetwork {
-		nodeServices = append(nodeServices, services.Network)
+		services = append(services, service.Network)
 	}
 
 	msg := message.NewHelloMessage(
 		sync.SelfID(),
 		sync.config.Moniker,
 		sync.state.LastBlockHeight(),
-		services.New(nodeServices...),
+		service.New(services...),
 		sync.state.LastBlockHash(),
 		sync.state.Genesis().Hash(),
 	)
@@ -402,13 +402,13 @@ func (sync *synchronizer) tryCommitBlocks() error {
 		if err := sync.state.CommitBlock(blk, cert); err != nil {
 			return err
 		}
-		height = height + 1
+		height++
 	}
 
 	return nil
 }
 
-func (sync *synchronizer) prepareBlocks(from uint32, count uint32) [][]byte {
+func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 	ourHeight := sync.state.LastBlockHeight()
 
 	if from > ourHeight {

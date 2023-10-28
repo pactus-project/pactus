@@ -75,7 +75,7 @@ func TestBech32M(t *testing.T) {
 			t.Errorf("encoding failed: %v", err)
 		}
 
-		if encoded != strings.ToLower(str) {
+		if !strings.EqualFold(encoded, str) {
 			t.Errorf("expected data to encode to %v, but got %v",
 				str, encoded)
 		}

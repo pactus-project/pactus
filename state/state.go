@@ -40,7 +40,7 @@ type state struct {
 	valKeys         []*bls.ValidatorKey
 	genDoc          *genesis.Genesis
 	store           store.Store
-	params          param.Params
+	params          *param.Params
 	txPool          txpool.TxPool
 	committee       committee.Committee
 	totalPower      int64
@@ -54,7 +54,7 @@ type state struct {
 func LoadOrNewState(
 	genDoc *genesis.Genesis,
 	valKeys []*bls.ValidatorKey,
-	store store.Store,
+	str store.Store,
 	txPool txpool.TxPool, eventCh chan event.Event,
 ) (Facade, error) {
 	st := &state{
@@ -62,18 +62,18 @@ func LoadOrNewState(
 		genDoc:          genDoc,
 		txPool:          txPool,
 		params:          genDoc.Params(),
-		store:           store,
+		store:           str,
 		lastInfo:        lastinfo.NewLastInfo(),
 		accountMerkle:   persistentmerkle.New(),
 		validatorMerkle: persistentmerkle.New(),
 		eventCh:         eventCh,
 	}
 	st.logger = logger.NewSubLogger("_state", st)
-	st.store = store
+	st.store = str
 
 	// Check if the number of accounts is greater than the genesis time;
 	// this indicates we are not at the genesis height anymore.
-	if store.TotalAccounts() > int32(len(genDoc.Accounts())) {
+	if str.TotalAccounts() > int32(len(genDoc.Accounts())) {
 		err := st.tryLoadLastInfo()
 		if err != nil {
 			return nil, err
@@ -651,8 +651,8 @@ func (st *state) BlockHash(height uint32) hash.Hash {
 	return st.store.BlockHash(height)
 }
 
-func (st *state) BlockHeight(hash hash.Hash) uint32 {
-	return st.store.BlockHeight(hash)
+func (st *state) BlockHeight(h hash.Hash) uint32 {
+	return st.store.BlockHeight(h)
 }
 
 func (st *state) AccountByAddress(addr crypto.Address) *account.Account {
@@ -696,7 +696,7 @@ func (st *state) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 	return st.txPool.AppendTxAndBroadcast(trx)
 }
 
-func (st *state) Params() param.Params {
+func (st *state) Params() *param.Params {
 	return st.params
 }
 
@@ -729,15 +729,11 @@ func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, er
 	case payload.TypeTransfer,
 		payload.TypeBond,
 		payload.TypeWithdraw:
-		{
-			return execution.CalculateFee(amount, st.params), nil
-		}
+		return execution.CalculateFee(amount, st.params), nil
 
 	case payload.TypeUnbond,
 		payload.TypeSortition:
-		{
-			return 0, nil
-		}
+		return 0, nil
 
 	default:
 		return 0, errors.Errorf(errors.ErrInvalidTx, "unexpected tx type: %v", payloadType)
