@@ -96,15 +96,35 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		return nil, LibP2PError{Err: err}
 	}
 
+	//
+	// This is crazy!
+	// Do they even know how to configure it properly?!
+	//
 	maxConns := conf.MaxConns
-	changes := lp2prcmgr.PartialLimitConfig{}
-	changes.System.ConnsInbound = lp2prcmgr.LimitVal(logScale(maxConns))
-	changes.System.ConnsOutbound = lp2prcmgr.LimitVal(logScale(maxConns))
-	changes.System.Conns = lp2prcmgr.LimitVal(logScale(2 * maxConns))
-	limit := changes.Build(lp2prcmgr.DefaultLimits.AutoScale())
+	minConns := conf.MinConns
+	limit := lp2prcmgr.DefaultLimits
+	limit.SystemBaseLimit.ConnsInbound = logScale(maxConns)
+	limit.SystemBaseLimit.Conns = logScale(2 * maxConns)
+	limit.SystemBaseLimit.StreamsInbound = logScale(maxConns)
+	limit.SystemBaseLimit.Streams = logScale(2 * maxConns)
+
+	limit.ServiceLimitIncrease.ConnsInbound = logScale(minConns)
+	limit.ServiceLimitIncrease.Conns = logScale(2 * minConns)
+	limit.ServiceLimitIncrease.StreamsInbound = logScale(minConns)
+	limit.ServiceLimitIncrease.Streams = logScale(2 * minConns)
+
+	limit.TransientBaseLimit.ConnsInbound = logScale(maxConns / 2)
+	limit.TransientBaseLimit.Conns = logScale(2 * maxConns / 2)
+	limit.TransientBaseLimit.StreamsInbound = logScale(maxConns / 2)
+	limit.TransientBaseLimit.Streams = logScale(2 * maxConns / 2)
+
+	limit.TransientLimitIncrease.ConnsInbound = logScale(minConns / 2)
+	limit.TransientLimitIncrease.Conns = logScale(2 * minConns / 2)
+	limit.TransientLimitIncrease.StreamsInbound = logScale(minConns / 2)
+	limit.TransientLimitIncrease.Streams = logScale(2 * minConns / 2)
 
 	resMgr, err := lp2prcmgr.NewResourceManager(
-		lp2prcmgr.NewFixedLimiter(limit),
+		lp2prcmgr.NewFixedLimiter(limit.AutoScale()),
 		lp2prcmgr.WithTraceReporter(str),
 	)
 	if err != nil {
