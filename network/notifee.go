@@ -42,11 +42,15 @@ func (n *NotifeeService) Connected(lp2pn lp2pnetwork.Network, conn lp2pnetwork.C
 
 			protocols, _ := lp2pn.Peerstore().SupportsProtocols(peerID, n.protocolID)
 			if len(protocols) > 0 {
-				break
+				n.eventChannel <- &ConnectEvent{PeerID: peerID}
+				return
 			}
 		}
 
-		n.eventChannel <- &ConnectEvent{PeerID: peerID}
+		n.logger.Info("unable to get supported protocols", "pid", peerID)
+
+		// Close this connection since we can't send a direct message to this peer.
+		_ = n.host.Network().ClosePeer(peerID)
 	}()
 }
 

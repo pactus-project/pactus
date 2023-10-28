@@ -89,7 +89,7 @@ func (mgr *peerMgr) checkConnectivity() {
 		if connectedness == lp2pnet.Connected {
 			connectedPeers = append(connectedPeers, p)
 		} else {
-			mgr.logger.Warn("peer is not connected to us", "peer", p)
+			mgr.logger.Debug("peer is not connected to us", "peer", p)
 		}
 	}
 
@@ -101,7 +101,7 @@ func (mgr *peerMgr) checkConnectivity() {
 	}
 
 	if len(connectedPeers) < mgr.minConns {
-		mgr.logger.Debug("peer count is less than minimum threshold",
+		mgr.logger.Info("peer count is less than minimum threshold",
 			"count", len(connectedPeers),
 			"min", mgr.minConns)
 

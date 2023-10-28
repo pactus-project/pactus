@@ -3,6 +3,7 @@ package network
 import (
 	"context"
 	"fmt"
+	"time"
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
@@ -66,9 +67,13 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 		return LibP2PError{Err: err}
 	}
 
+	// To prevent a broken stream from being open forever.
+	ctxWithTimeout, cancel := context.WithTimeout(s.ctx, 2*time.Second)
+	defer cancel()
+
 	// Attempt to open a new stream to the target peer assuming there's already direct a connection
 	stream, err := s.host.NewStream(
-		lp2pnetwork.WithNoDial(s.ctx, "should already have connection"), pid, s.protocolID)
+		lp2pnetwork.WithNoDial(ctxWithTimeout, "should already have connection"), pid, s.protocolID)
 	if err != nil {
 		s.logger.Debug("unable to open direct stream", "pid", pid, "error", err)
 		if len(s.relayAddrs) == 0 {
@@ -98,7 +103,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 			Addrs: circuitAddrs,
 		}
 
-		if err := s.host.Connect(s.ctx, unreachableRelayInfo); err != nil {
+		if err := s.host.Connect(ctxWithTimeout, unreachableRelayInfo); err != nil {
 			// There is no relay connection to peer as well
 			s.logger.Warn("unable to connect to peer using relay", "pid", pid, "error", err)
 			return LibP2PError{Err: err}
@@ -108,7 +113,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 		// Try to open a new stream to the target peer using the relay connection.
 		// The connection is marked as transient.
 		stream, err = s.host.NewStream(
-			lp2pnetwork.WithUseTransient(s.ctx, string(s.protocolID)), pid, s.protocolID)
+			lp2pnetwork.WithUseTransient(ctxWithTimeout, string(s.protocolID)), pid, s.protocolID)
 		if err != nil {
 			s.logger.Warn("unable to open relay stream", "pid", pid, "error", err)
 			return LibP2PError{Err: err}
