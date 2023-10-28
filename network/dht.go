@@ -17,7 +17,7 @@ type dhtService struct {
 }
 
 func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.ProtocolID,
-	conf *Config, subLogger *logger.SubLogger,
+	conf *Config, log *logger.SubLogger,
 ) *dhtService {
 	mode := lp2pdht.ModeAuto
 	if conf.Bootstrapper {
@@ -39,7 +39,7 @@ func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.
 		ctx:      ctx,
 		host:     host,
 		kademlia: kademlia,
-		logger:   subLogger,
+		logger:   log,
 	}
 }
 

@@ -18,12 +18,12 @@ type NotifeeService struct {
 }
 
 func newNotifeeService(host lp2phost.Host, eventChannel chan<- Event,
-	subLogger *logger.SubLogger, protocolID protocol.ID,
+	log *logger.SubLogger, protocolID protocol.ID,
 ) *NotifeeService {
 	notifee := &NotifeeService{
 		host:         host,
 		eventChannel: eventChannel,
-		logger:       subLogger,
+		logger:       log,
 		protocolID:   protocolID,
 	}
 	host.Network().Notify(notifee)

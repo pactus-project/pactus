@@ -25,14 +25,14 @@ type Firewall struct {
 }
 
 func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st state.Facade,
-	subLogger *logger.SubLogger,
+	log *logger.SubLogger,
 ) *Firewall {
 	return &Firewall{
 		config:  conf,
 		network: net,
 		peerSet: peerSet,
 		state:   st,
-		logger:  subLogger,
+		logger:  log,
 	}
 }
 

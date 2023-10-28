@@ -44,16 +44,16 @@ func HasPID(pids []lp2ppeer.ID, pid lp2ppeer.ID) bool {
 	return false
 }
 
-func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrInfo, subLogger *logger.SubLogger) {
+func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrInfo, log *logger.SubLogger) {
 	go func() {
 		err := h.Connect(lp2pnetwork.WithDialPeerTimeout(ctx, 30*time.Second), addrInfo)
 		if err != nil {
-			if subLogger != nil {
-				subLogger.Warn("connection failed", "addr", addrInfo.Addrs, "err", err)
+			if log != nil {
+				log.Warn("connection failed", "addr", addrInfo.Addrs, "err", err)
 			}
 		} else {
-			if subLogger != nil {
-				subLogger.Debug("connected", "addr", addrInfo.Addrs)
+			if log != nil {
+				log.Debug("connected", "addr", addrInfo.Addrs)
 			}
 		}
 	}()

@@ -21,7 +21,7 @@ type gossipService struct {
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	config *Config, subLogger *logger.SubLogger,
+	config *Config, log *logger.SubLogger,
 ) *gossipService {
 	opts := []lp2pps.Option{}
 
@@ -32,7 +32,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 
 	pubsub, err := lp2pps.NewGossipSub(ctx, host, opts...)
 	if err != nil {
-		subLogger.Panic("unable to start Gossip service", "error", err)
+		log.Panic("unable to start Gossip service", "error", err)
 		return nil
 	}
 
@@ -42,7 +42,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 		pubsub:  pubsub,
 		wg:      sync.WaitGroup{},
 		eventCh: eventCh,
-		logger:  subLogger,
+		logger:  log,
 	}
 }
 
