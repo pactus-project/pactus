@@ -34,20 +34,20 @@ func newMdnsService(ctx context.Context, host lp2phost.Host, logger *logger.SubL
 // HandlePeerFound connects to peers discovered via mDNS. Once they're connected,
 // the PubSub system will automatically start interacting with them if they also
 // support PubSub.
-func (mdns *mdnsService) HandlePeerFound(pi lp2ppeer.AddrInfo) {
-	ctx, cancel := context.WithTimeout(mdns.ctx, time.Second*10)
+func (s *mdnsService) HandlePeerFound(pi lp2ppeer.AddrInfo) {
+	ctx, cancel := context.WithTimeout(s.ctx, time.Second*10)
 	defer cancel()
 
-	if pi.ID != mdns.host.ID() {
-		mdns.logger.Debug("connecting to new peer", "addr", pi.Addrs, "id", pi.ID.Pretty())
-		if err := mdns.host.Connect(ctx, pi); err != nil {
-			mdns.logger.Error("error on connecting to peer", "id", pi.ID.Pretty(), "error", err)
+	if pi.ID != s.host.ID() {
+		s.logger.Debug("connecting to new peer", "addr", pi.Addrs, "id", pi.ID.Pretty())
+		if err := s.host.Connect(ctx, pi); err != nil {
+			s.logger.Error("error on connecting to peer", "id", pi.ID.Pretty(), "error", err)
 		}
 	}
 }
 
-func (mdns *mdnsService) Start() error {
-	err := mdns.service.Start()
+func (s *mdnsService) Start() error {
+	err := s.service.Start()
 	if err != nil {
 		return LibP2PError{Err: err}
 	}
@@ -55,9 +55,9 @@ func (mdns *mdnsService) Start() error {
 	return nil
 }
 
-func (mdns *mdnsService) Stop() {
-	err := mdns.service.Close()
+func (s *mdnsService) Stop() {
+	err := s.service.Close()
 	if err != nil {
-		mdns.logger.Error("unable to close the network", "error", err)
+		s.logger.Error("unable to close the network", "error", err)
 	}
 }
