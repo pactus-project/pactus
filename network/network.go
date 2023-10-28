@@ -222,7 +222,7 @@ func (n *network) Start() error {
 	n.stream.Start()
 	n.peerMgr.Start()
 
-	n.logger.Info("network started", "addr", n.host.Addrs())
+	n.logger.Info("network started", "addr", n.host.Addrs(), "id", n.host.ID())
 	return nil
 }
 
