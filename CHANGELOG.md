@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.16.0](https://github.com/pactus-project/pactus/compare/v0.15.0...v0.16.0)(2023-10-29)
+
+### Feat
+
+- **gui**: display network ID ([#780](https://github.com/pactus-project/pactus/pull/780))
+- create new validator address (CLI and GUI) ([#757](https://github.com/pactus-project/pactus/pull/757))
+- add community bootstrap nodes to testnet config ([#764](https://github.com/pactus-project/pactus/pull/764))
+- **network**: implementing connection manager ([#773](https://github.com/pactus-project/pactus/pull/773))
+- **network**: adding bootstrapper mode to the network config ([#760](https://github.com/pactus-project/pactus/pull/760))
+
+### Fix
+
+- **network**: redefine the network limits ([#788](https://github.com/pactus-project/pactus/pull/788))
+- **consensus**: not increase the vote-box power on duplicated votes ([#785](https://github.com/pactus-project/pactus/pull/785))
+- **network**: close connection when unbale to get supported protocols ([#781](https://github.com/pactus-project/pactus/pull/781))
+- **network**: enabling peer exchange for bootstrappers ([#779](https://github.com/pactus-project/pactus/pull/779))
+- **network**: set connection limit for the resource manager ([#775](https://github.com/pactus-project/pactus/pull/775))
+- **sync**: peer status set to known on sucessfull handshaking ([#774](https://github.com/pactus-project/pactus/pull/774))
+- **consensus**: strong termination for the binary agreement ([#765](https://github.com/pactus-project/pactus/pull/765))
+- **consensus**: not increase the voting power on duplicated binary votes ([#762](https://github.com/pactus-project/pactus/pull/762))
+
+### Refactor
+
+- **network**: refactoring peer manager ([#787](https://github.com/pactus-project/pactus/pull/787))
+
 ## [0.15.0](https://github.com/pactus-project/pactus/compare/v0.13.0...v0.15.0)(2023-10-15)
 
 ### Feat

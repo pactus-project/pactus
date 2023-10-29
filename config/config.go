@@ -114,10 +114,9 @@ func SaveTestnetConfig(path string, numValidators int) error {
 		"/ip4/159.148.146.149/tcp/21777/p2p/12D3KooWPQAGVMdxbUCeNETPiMkeascvMRorZAwtMUs2UVxftKgZ",     // SGTstake (adorid@sgtstake.com)
 		"/ip4/109.123.246.47/tcp/21777/p2p/12D3KooWERCpnEzD7QgTa7uLhqQjj3L4YmQtAGbW6w76Ckjaop7s",      // Stakes.Works (info@stake.works)
 		"/ip4/173.249.27.146/tcp/21777/p2p/12D3KooWSJREEzTZRzc9wpkU3EW2m9ZGfzrC9jjuwS6wR5uaAZme",      // Karma Nodes (karma.nodes@proton.me)
-		"/ip4/16.170.148.83/tcp/21777/p2p/12D3KooWGaU7u6D9XT8rXnpGWSbNVF3Ezts7ZV3gCV5vuJ4d2jAo",       // Mr HoDL (1llusiv387@gmail.com)
+		"/ip4/13.53.97.58/tcp/21777/p2p/12D3KooWGfwqJVbQAQ7e1WHicMhAjsuvB5ZAYjz8mGVoUG8uoSqC",         // Mr HoDL (1llusiv387@gmail.com)
 		"/dns/pactus.nodesync.top/tcp/21777/p2p/12D3KooWP25ejVsd7cL5DvWAPwEu4JTUwnPniHBf4w93tgSezVt8", // NodeSync.Top (lthuan2011@gmail.com)
-		"/ip6/2400:8901::f03c:93ff:fe1c:c3ec/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
-		"/ip6/2001:bc8:700:8017::1/tcp/21777/p2p/12D3KooWDF8a4goNCHriP1y922y4jagaPwHdX4eSrG5WtQpjzS6k",
+		"/ip4/95.217.89.202/tcp/21777/p2p/12D3KooWMsi5oYkbbpyyXctmPXzF8UZu2pCvKPRZGyvymhN9BzTD",       // CodeBlockLabs (emailbuatcariduit@gmail.com)
 	}
 	conf.Network.MinConns = 8
 	conf.Network.MaxConns = 16
@@ -125,8 +124,6 @@ func SaveTestnetConfig(path string, numValidators int) error {
 	conf.Network.RelayAddrs = []string{
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/188.121.102.178/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
-		"/ip6/2a01:7e01::f03c:93ff:fed2:84c5/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
-		"/ip6/2a07:3900:1:1::113/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "[::]:50052"
