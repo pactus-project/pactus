@@ -9,7 +9,7 @@ const (
 	major uint   = 0
 	minor uint   = 16
 	patch uint   = 0
-	meta  string = "beta"
+	meta  string = ""
 )
 
 var build string
