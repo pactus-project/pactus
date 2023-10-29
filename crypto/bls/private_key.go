@@ -2,6 +2,7 @@ package bls
 
 import (
 	"crypto/sha256"
+	"fmt"
 	"math/big"
 	"strings"
 
@@ -54,6 +55,10 @@ func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 	//    r:  0x73eda753 299d7d48 3339d808 09a1d805 53bda402 fffe5bfe ffffffff 00000001
 	// 	  https://datatracker.ietf.org/doc/html/draft-yonezawa-pairing-friendly-curves-02#section-4.2.2
 	//
+
+	if len(ikm) < 32 {
+		return nil, fmt.Errorf("ikm is too short")
+	}
 
 	secret := make([]byte, 0, len(ikm)+1)
 	secret = append(secret, ikm...)
