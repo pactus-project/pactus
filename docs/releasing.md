@@ -31,9 +31,9 @@ Let's create environment variables for the release version.
 For the rest of this document, we will use these environment variables in the commands.
 
 ```bash
-PRV_VER="0.15.0"
-CUR_VER="0.16.0"
-NEXT_VER="0.17.0"
+PRV_VER="0.16.0"
+CUR_VER="0.17.0"
+NEXT_VER="0.18.0"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 BASE_BRANCH="main"
@@ -106,7 +106,8 @@ Pushing the tag will automatically create a release tag and build the binaries.
 
 9. **Bumping version**
 
-Update the version inside the [version.go](../version/version.go) and [patching](./patching.md) docuemnts.
+Update the version inside the [version.go](../version/version.go) and add `beta` to the `meta` field.
+Update [patching](./patching.md) docuemnt.
 If this is a majore release, update the version inside this document in step 3.
 
 Create a new PR against base branch:
