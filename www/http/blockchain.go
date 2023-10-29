@@ -26,8 +26,10 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, _ *http.Request) {
 	tm.addRowString("--- Committee", "---")
 	tm.addRowAmount("Total Power", res.TotalPower)
 	tm.addRowAmount("Committee Power", res.CommitteePower)
+
 	for i, val := range res.CommitteeValidators {
 		tm.addRowInt("--- Validator", i+1)
+
 		tmVal := s.writeValidatorTable(val)
 		tm.addRowString("", tmVal.html())
 	}
@@ -51,15 +53,18 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 
 	for i, p := range res.Peers {
 		pid, _ := peer.IDFromBytes(p.PeerId)
+
 		tm.addRowInt("-- Peer #", i+1)
 		tm.addRowString("Status", peerset.StatusCode(p.Status).String())
 		tm.addRowString("PeerID", pid.String())
 		tm.addRowString("Services", services.Services(p.Services).String())
+
 		for _, key := range p.ConsensusKeys {
 			pub, _ := bls.PublicKeyFromString(key)
 			tm.addRowString("  PublicKey", pub.String())
 			tm.addRowValAddress("  Address", pub.ValidatorAddress().String())
 		}
+
 		tm.addRowString("Agent", p.Agent)
 		tm.addRowString("Moniker", p.Moniker)
 		tm.addRowString("LastSent", time.Unix(p.LastSent, 0).String())
@@ -69,14 +74,18 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 		tm.addRowInt("InvalidBundles", int(p.InvalidMessages))
 		tm.addRowInt("ReceivedBundles", int(p.ReceivedMessages))
 		tm.addRowString("ReceivedBytes", "---")
+
 		for key, value := range p.ReceivedBytes {
 			tm.addRowInt(message.Type(key).String(), int(value))
 		}
+
 		tm.addRowString("SentBytes", "---")
+
 		for key, value := range p.SentBytes {
 			tm.addRowInt(message.Type(key).String(), int(value))
 		}
 	}
+
 	s.writeHTML(w, tm.html())
 }
 

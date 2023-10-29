@@ -19,6 +19,7 @@ func (conf *Config) BasicCheck() error {
 	if conf.MaxSize == 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "maxSize can't be negative or zero")
 	}
+
 	return nil
 }
 

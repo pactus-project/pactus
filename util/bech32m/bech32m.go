@@ -25,13 +25,17 @@ var gen = []int{0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3}
 // index of the correspoding character in 'charset'.
 func toBytes(chars string) ([]byte, error) {
 	decoded := make([]byte, 0, len(chars))
+
 	for i := 0; i < len(chars); i++ {
 		index := strings.IndexByte(charset, chars[i])
+
 		if index < 0 {
 			return nil, NonCharsetCharError(chars[i])
 		}
+
 		decoded = append(decoded, byte(index))
 	}
+
 	return decoded, nil
 }
 
@@ -50,6 +54,7 @@ func bech32Polymod(hrp string, values, checksum []byte) int {
 		b := chk >> 25
 		hiBits := int(hrp[i]) >> 5
 		chk = (chk&0x1ffffff)<<5 ^ hiBits
+
 		for i := 0; i < 5; i++ {
 			if (b>>uint(i))&1 == 1 {
 				chk ^= gen[i]
@@ -61,6 +66,7 @@ func bech32Polymod(hrp string, values, checksum []byte) int {
 	// x^0 == x, so we eliminate the redundant xor used in the other rounds.
 	b := chk >> 25
 	chk = (chk & 0x1ffffff) << 5
+
 	for i := 0; i < 5; i++ {
 		if (b>>uint(i))&1 == 1 {
 			chk ^= gen[i]
@@ -72,6 +78,7 @@ func bech32Polymod(hrp string, values, checksum []byte) int {
 		b := chk >> 25
 		loBits := int(hrp[i]) & 31
 		chk = (chk&0x1ffffff)<<5 ^ loBits
+
 		for i := 0; i < 5; i++ {
 			if (b>>uint(i))&1 == 1 {
 				chk ^= gen[i]
@@ -83,6 +90,7 @@ func bech32Polymod(hrp string, values, checksum []byte) int {
 	for _, v := range values {
 		b := chk >> 25
 		chk = (chk&0x1ffffff)<<5 ^ int(v)
+
 		for i := 0; i < 5; i++ {
 			if (b>>uint(i))&1 == 1 {
 				chk ^= gen[i]
@@ -96,6 +104,7 @@ func bech32Polymod(hrp string, values, checksum []byte) int {
 		for v := 0; v < 6; v++ {
 			b := chk >> 25
 			chk = (chk & 0x1ffffff) << 5
+
 			for i := 0; i < 5; i++ {
 				if (b>>uint(i))&1 == 1 {
 					chk ^= gen[i]
@@ -150,6 +159,7 @@ func bech32VerifyChecksum(hrp string, data []byte) bool {
 	checksum := data[len(data)-6:]
 	values := data[:len(data)-6]
 	polymod := bech32Polymod(hrp, values, checksum)
+
 	return polymod == ChecksumConst
 }
 
@@ -168,6 +178,7 @@ func DecodeNoLimit(bech string) (string, []byte, error) {
 
 	// Only	ASCII characters between 33 and 126 are allowed.
 	var hasLower, hasUpper bool
+
 	for i := 0; i < len(bech); i++ {
 		if bech[i] < 33 || bech[i] > 126 {
 			return "", nil, InvalidCharacterError(bech[i])
@@ -177,6 +188,7 @@ func DecodeNoLimit(bech string) (string, []byte, error) {
 		// directly with ascii codes is safe here, given the previous test.
 		hasLower = hasLower || (bech[i] >= 97 && bech[i] <= 122)
 		hasUpper = hasUpper || (bech[i] >= 65 && bech[i] <= 90)
+
 		if hasLower && hasUpper {
 			return "", nil, MixedCaseError{}
 		}
@@ -209,6 +221,7 @@ func DecodeNoLimit(bech string) (string, []byte, error) {
 
 	// Verify if the checksum (stored inside decoded[:]) is valid, given the
 	// previously decoded hrp.
+	//nolint:all
 	if !bech32VerifyChecksum(hrp, decoded) {
 		// Invalid checksum. Calculate what it should have been, so that the
 		// error contains this information.
@@ -256,7 +269,9 @@ func Encode(hrp string, data []byte) (string, error) {
 	// The resulting bech32 string is the concatenation of the lowercase hrp,
 	// the separator 1, data and the 6-byte checksum.
 	hrp = strings.ToLower(hrp)
+
 	var bldr strings.Builder
+
 	bldr.Grow(len(hrp) + 1 + len(data) + 6)
 	bldr.WriteString(hrp)
 	bldr.WriteString("1")
@@ -266,6 +281,7 @@ func Encode(hrp string, data []byte) (string, error) {
 		if int(b) >= len(charset) {
 			return "", InvalidDataByteError(b)
 		}
+
 		bldr.WriteByte(charset[b])
 	}
 
@@ -360,6 +376,7 @@ func EncodeFromBase256(hrp string, data []byte) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return Encode(hrp, converted)
 }
 
@@ -371,10 +388,12 @@ func DecodeToBase256(bech string) (string, []byte, error) {
 	if err != nil {
 		return "", nil, err
 	}
+
 	converted, err := ConvertBits(data, 5, 8, false)
 	if err != nil {
 		return "", nil, err
 	}
+
 	return hrp, converted, nil
 }
 
@@ -397,6 +416,7 @@ func EncodeFromBase256WithType(hrp string, typ byte, data []byte) (string, error
 	combined := make([]byte, len(converted)+1)
 	combined[0] = typ
 	copy(combined[1:], converted)
+
 	str, err := Encode(hrp, combined)
 	if err != nil {
 		return "", err

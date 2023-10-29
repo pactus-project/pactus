@@ -26,6 +26,7 @@ func (m *MockTxPool) PendingTx(id tx.ID) *tx.Tx {
 			return t
 		}
 	}
+
 	return nil
 }
 
@@ -39,6 +40,7 @@ func (m *MockTxPool) HasTx(id tx.ID) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -68,5 +70,6 @@ func (m *MockTxPool) RemoveTx(_ hash.Hash) {
 func (m *MockTxPool) PrepareBlockTransactions() block.Txs {
 	txs := make([]*tx.Tx, m.Size())
 	copy(txs, m.Txs)
+
 	return txs
 }

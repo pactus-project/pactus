@@ -67,6 +67,7 @@ func (gen *Genesis) Hash() hash.Hash {
 	if err != nil {
 		panic(fmt.Errorf("could not create hash of Genesis: %w", err))
 	}
+
 	return hash.CalcHash(bs)
 }
 
@@ -80,6 +81,7 @@ func (gen *Genesis) Params() param.Params {
 
 func (gen *Genesis) Accounts() map[crypto.Address]*account.Account {
 	accs := make(map[crypto.Address]*account.Account, 0)
+
 	for i, genAcc := range gen.data.Accounts {
 		addr, _ := crypto.AddressFromString(genAcc.Address)
 		acc := account.NewAccount(int32(i))
@@ -92,6 +94,7 @@ func (gen *Genesis) Accounts() map[crypto.Address]*account.Account {
 
 func (gen *Genesis) Validators() []*validator.Validator {
 	vals := make([]*validator.Validator, 0, len(gen.data.Validators))
+
 	for i, genVal := range gen.data.Validators {
 		pub, _ := bls.PublicKeyFromString(genVal.PublicKey)
 		val := validator.NewValidator(pub, int32(i))
@@ -126,12 +129,14 @@ func MakeGenesis(genesisTime time.Time, accounts map[crypto.Address]*account.Acc
 	validators []*validator.Validator, params param.Params,
 ) *Genesis {
 	genAccs := make([]genAccount, len(accounts))
+
 	for addr, acc := range accounts {
 		genAcc := makeGenesisAccount(addr, acc)
 		genAccs[acc.Number()] = genAcc
 	}
 
 	genVals := make([]genValidator, len(validators))
+
 	for _, val := range validators {
 		genVal := makeGenesisValidator(val)
 		genVals[val.Number()] = genVal
@@ -153,10 +158,12 @@ func LoadFromFile(file string) (*Genesis, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	var gen Genesis
 	if err := json.Unmarshal(dat, &gen); err != nil {
 		return nil, err
 	}
+
 	return &gen, nil
 }
 
@@ -176,6 +183,7 @@ func (gen *Genesis) TotalSupply() int64 {
 	for _, acc := range gen.data.Accounts {
 		totalSuppyly += acc.Balance
 	}
+
 	return totalSuppyly
 }
 

@@ -59,6 +59,7 @@ func setup(t *testing.T) *testData {
 	err = vault.UpdatePassword("", tPassword, opts...)
 	assert.NoError(t, err)
 	assert.True(t, vault.IsEncrypted())
+
 	return &testData{
 		TestSuite:   ts,
 		vault:       vault,
@@ -74,6 +75,7 @@ func TestAddressInfo(t *testing.T) {
 	infos := td.vault.AddressInfos()
 	accountIndex := 0
 	validatorIndex := 0
+
 	for _, i := range infos {
 		info := td.vault.AddressInfo(i.Address)
 		assert.Equal(t, i.Address, info.Address)
@@ -81,6 +83,7 @@ func TestAddressInfo(t *testing.T) {
 		// assert.Equal(t, i.Address, info.PublicKey)
 
 		addr, _ := crypto.AddressFromString(info.Address)
+
 		if info.Path == "" {
 			continue
 		}
@@ -102,6 +105,7 @@ func TestAddressInfo(t *testing.T) {
 	infos = neutered.AddressInfos()
 	accountIndex = 0
 	validatorIndex = 0
+
 	for _, i := range infos {
 		info := td.vault.AddressInfo(i.Address)
 		assert.Equal(t, i.Address, info.Address)
@@ -243,12 +247,14 @@ func TestUpdatePassword(t *testing.T) {
 	td := setup(t)
 
 	infos := make([]*AddressInfo, 0, td.vault.AddressCount())
+
 	for _, info := range td.vault.AddressInfos() {
 		info := td.vault.AddressInfo(info.Address)
 		infos = append(infos, info)
 	}
 
 	newPassword := "new-password"
+
 	t.Run("Change password", func(t *testing.T) {
 		opts := []encrypter.Option{
 			encrypter.OptionIteration(1),

@@ -10,6 +10,7 @@ import (
 // GetAccountHandler returns a handler to get account by address.
 func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
 	res, err := s.blockchain.GetAccount(s.ctx,
 		&pactus.GetAccountRequest{Address: vars["address"]})
 	if err != nil {

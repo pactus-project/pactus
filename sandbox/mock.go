@@ -51,6 +51,7 @@ func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 		treasuryAmt -= val.Stake()
 		treasuryAmt -= acc.Balance()
 	}
+
 	acc0 := account.NewAccount(0)
 	acc0.AddToBalance(treasuryAmt)
 	sb.UpdateAccount(crypto.TreasuryAddress, acc0)
@@ -75,6 +76,7 @@ func (m *MockSandbox) AnyRecentTransaction(txID tx.ID) bool {
 	if m.TestCommittedTrxs[txID] != nil {
 		return true
 	}
+
 	return m.TestStore.AnyRecentTransaction(txID)
 }
 

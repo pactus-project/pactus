@@ -22,26 +22,34 @@ func NewPathFromString(str string) (Path, error) {
 	if sub[0] != "m" {
 		return nil, ErrInvalidPath
 	}
+
 	var path []uint32
+
 	for i := 1; i < len(sub); i++ {
 		indexStr := sub[i]
 		added := uint32(0)
+
 		if indexStr[len(indexStr)-1] == '\'' {
 			added = HardenedKeyStart
 			indexStr = indexStr[:len(indexStr)-1]
 		}
+
 		val, err := strconv.ParseInt(indexStr, 10, 32)
 		if err != nil {
 			return nil, err
 		}
+
 		path = append(path, uint32(val)+added)
 	}
+
 	return path, nil
 }
 
 func (p Path) String() string {
 	var builder strings.Builder
+
 	builder.WriteString("m")
+
 	for _, i := range p {
 		if i >= HardenedKeyStart {
 			builder.WriteString(fmt.Sprintf("/%d'", i-HardenedKeyStart))
@@ -49,6 +57,7 @@ func (p Path) String() string {
 			builder.WriteString(fmt.Sprintf("/%d", i))
 		}
 	}
+
 	return builder.String()
 }
 

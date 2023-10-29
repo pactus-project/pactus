@@ -15,12 +15,14 @@ func (tree *Tree) ToString() string {
 	offset := 0
 	indent := ""
 	j := 1
+
 	for i := len(nodes) - 1; i >= 0; i-- {
 		if j == (1 << depth) {
 			lines[offset] += "\n"
 			indent += "   "
 			depth++
 		}
+
 		if nodes[i] != nil {
 			lines[offset] = indent + nodes[i].String()
 		} else {

@@ -29,6 +29,7 @@ func (c ResponseCode) String() string {
 	case ResponseCodeSynced:
 		return "synced"
 	}
+
 	return fmt.Sprintf("%d", c)
 }
 
@@ -87,6 +88,7 @@ func (t Type) String() string {
 	case TypeBlocksResponse:
 		return "blocks-res"
 	}
+
 	return fmt.Sprintf("%d", t)
 }
 

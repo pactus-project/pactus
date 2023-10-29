@@ -142,6 +142,7 @@ func (s *Server) writeError(w http.ResponseWriter, err error) int {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusBadRequest)
 	n, _ := io.WriteString(w, err.Error())
+
 	return n
 }
 
@@ -149,6 +150,7 @@ func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusOK)
 	n, _ := io.WriteString(w, html)
+
 	return n
 }
 
@@ -160,6 +162,7 @@ func newTableMaker() *tableMaker {
 	t := &tableMaker{
 		w: bytes.NewBufferString("<table>"),
 	}
+
 	return t
 }
 
@@ -202,9 +205,11 @@ func (t *tableMaker) addRowBool(key string, val bool) {
 
 func (t *tableMaker) addRowInts(key string, vals []int32) {
 	t.w.WriteString(fmt.Sprintf("<tr><td>%s</td><td>", key))
+
 	for _, n := range vals {
 		t.w.WriteString(fmt.Sprintf("%d, ", n))
 	}
+
 	t.w.WriteString("</td></tr>")
 }
 

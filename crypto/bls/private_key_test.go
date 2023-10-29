@@ -153,6 +153,7 @@ func TestKeyGen(t *testing.T) {
 	for i, test := range tests {
 		ikm, _ := hex.DecodeString(test.ikm)
 		prv, err := bls.KeyGen(ikm, nil)
+
 		if test.sk == "Err" {
 			assert.Error(t, err,
 				"test '%v' failed. no error", i)

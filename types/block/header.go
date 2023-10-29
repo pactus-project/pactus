@@ -80,6 +80,7 @@ func (h *Header) BasicCheck() error {
 			Reason: fmt.Sprintf("invalid state root: %s", err.Error()),
 		}
 	}
+
 	if !h.data.ProposerAddress.IsValidatorAddress() {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("invalid proposer address: %s",

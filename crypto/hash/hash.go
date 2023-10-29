@@ -22,13 +22,16 @@ func Hash256(data []byte) []byte {
 
 func Hash160(data []byte) []byte {
 	h := ripemd160.New()
+
 	n, err := h.Write(data)
 	if err != nil {
 		return nil
 	}
+
 	if n != len(data) {
 		return nil
 	}
+
 	return h.Sum(nil)
 }
 
@@ -37,6 +40,7 @@ func FromString(str string) (Hash, error) {
 	if err != nil {
 		return Hash{}, err
 	}
+
 	if len(data) != HashSize {
 		return Hash{}, fmt.Errorf("Hash should be %d bytes, but it is %v bytes", HashSize, len(data))
 	}
@@ -48,8 +52,11 @@ func FromBytes(data []byte) (Hash, error) {
 	if len(data) != HashSize {
 		return Hash{}, fmt.Errorf("Hash should be %d bytes, but it is %v bytes", HashSize, len(data))
 	}
+
 	var h Hash
+
 	copy(h[:], data[:HashSize])
+
 	return h, nil
 }
 

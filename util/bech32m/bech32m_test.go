@@ -57,10 +57,12 @@ func TestBech32M(t *testing.T) {
 	for i, test := range tests {
 		str := test.str
 		hrp, decoded, err := Decode(str)
+
 		if !errors.Is(err, test.expectedError) {
 			t.Errorf("%d: (%v) expected decoding error %v "+
 				"instead got %v", i, str, test.expectedError,
 				err)
+
 			continue
 		}
 
@@ -83,6 +85,7 @@ func TestBech32M(t *testing.T) {
 		// Flip a bit in the string an make sure it is caught.
 		pos := strings.LastIndexAny(str, "1")
 		flipped := str[:pos+1] + string((str[pos+1] ^ 1)) + str[pos+2:]
+
 		_, _, err = Decode(flipped)
 		if err == nil {
 			t.Error("expected decoding to fail")
@@ -135,17 +138,20 @@ func TestMixedCaseEncode(t *testing.T) {
 			t.Errorf("%q: invalid hex %q: %v", test.name, test.data, err)
 			continue
 		}
+
 		convertedData, err := ConvertBits(data, 8, 5, true)
 		if err != nil {
 			t.Errorf("%q: unexpected convert bits error: %v", test.name,
 				err)
 			continue
 		}
+
 		gotEncoded, err := Encode(test.hrp, convertedData)
 		if err != nil {
 			t.Errorf("%q: unexpected encode error: %v", test.name, err)
 			continue
 		}
+
 		if gotEncoded != test.encoded {
 			t.Errorf("%q: mismatched encoding -- got %q, want %q", test.name,
 				gotEncoded, test.encoded)
@@ -159,18 +165,21 @@ func TestMixedCaseEncode(t *testing.T) {
 			t.Errorf("%q: unexpected decode error: %v", test.name, err)
 			continue
 		}
+
 		wantHRP := strings.ToLower(test.hrp)
 		if gotHRP != wantHRP {
 			t.Errorf("%q: mismatched decoded HRP -- got %q, want %q", test.name,
 				gotHRP, wantHRP)
 			continue
 		}
+
 		convertedGotData, err := ConvertBits(gotData, 5, 8, false)
 		if err != nil {
 			t.Errorf("%q: unexpected convert bits error: %v", test.name,
 				err)
 			continue
 		}
+
 		if !bytes.Equal(convertedGotData, data) {
 			t.Errorf("%q: mismatched data -- got %x, want %x", test.name,
 				convertedGotData, data)
@@ -200,9 +209,11 @@ func TestCanDecodeUnlimtedBech32(t *testing.T) {
 	if hrp != "1" {
 		t.Fatalf("Unexpected hrp: %v", hrp)
 	}
+
 	decodedHex := fmt.Sprintf("%x", data)
 	expected := "00000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
 		"00000000010000000000000000000000000000000000000000000000000000000000000000000000000"
+
 	if decodedHex != expected {
 		t.Fatalf("Unexpected decoded data: %s", decodedHex)
 	}
@@ -290,11 +301,13 @@ func TestBech32Base256(t *testing.T) {
 		// Ensure the decode either produces an error or not as expected.
 		str := test.encoded
 		gotHRP, gotData, err := DecodeToBase256(str)
+
 		if !errors.Is(test.err, err) {
 			t.Errorf("%q: unexpected decode error -- got %v, want %v",
 				test.name, err, test.err)
 			continue
 		}
+
 		if err != nil {
 			// End test case here if a decoding error was expected.
 			continue
@@ -306,11 +319,13 @@ func TestBech32Base256(t *testing.T) {
 				gotHRP, test.hrp)
 			continue
 		}
+
 		data, err := hex.DecodeString(test.data)
 		if err != nil {
 			t.Errorf("%q: invalid hex %q: %v", test.name, test.data, err)
 			continue
 		}
+
 		if !bytes.Equal(gotData, data) {
 			t.Errorf("%q: mismatched data -- got %x, want %x", test.name,
 				gotData, data)
@@ -325,7 +340,9 @@ func TestBech32Base256(t *testing.T) {
 			t.Errorf("%q: unexpected uppercase HRP encode error: %v", test.name,
 				err)
 		}
+
 		wantEncoded := strings.ToLower(str)
+
 		if gotEncoded != wantEncoded {
 			t.Errorf("%q: mismatched encoding -- got %q, want %q", test.name,
 				gotEncoded, wantEncoded)
@@ -339,6 +356,7 @@ func TestBech32Base256(t *testing.T) {
 			t.Errorf("%q: unexpected lowercase HRP encode error: %v", test.name,
 				err)
 		}
+
 		if gotEncoded != wantEncoded {
 			t.Errorf("%q: mismatched encoding -- got %q, want %q", test.name,
 				gotEncoded, wantEncoded)
@@ -348,18 +366,23 @@ func TestBech32Base256(t *testing.T) {
 		// lowercase and ensure the result is the lowercase version of the
 		// original encoded bech32 string.
 		var mixedHRPBuilder strings.Builder
+
 		for i, r := range test.hrp {
 			if i%2 == 0 {
 				mixedHRPBuilder.WriteString(strings.ToUpper(string(r)))
 				continue
 			}
+
 			mixedHRPBuilder.WriteRune(r)
 		}
+
 		gotEncoded, err = EncodeFromBase256(mixedHRPBuilder.String(), data)
+
 		if err != nil {
 			t.Errorf("%q: unexpected lowercase HRP encode error: %v", test.name,
 				err)
 		}
+
 		if gotEncoded != wantEncoded {
 			t.Errorf("%q: mismatched encoding -- got %q, want %q", test.name,
 				gotEncoded, wantEncoded)
@@ -369,6 +392,7 @@ func TestBech32Base256(t *testing.T) {
 		pos := strings.LastIndexAny(test.encoded, "1")
 		flipped := str[:pos+1] + string((str[pos+1] ^ 1)) + str[pos+2:]
 		_, _, err = DecodeToBase256(flipped)
+
 		if err == nil {
 			t.Error("expected decoding to fail")
 		}
@@ -401,6 +425,7 @@ func BenchmarkEncodeDecodeCycle(b *testing.B) {
 	// 2 allocations per reported test op.
 	b.ReportAllocs()
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		str, err := Encode(hrp, base32Input)
 		if err != nil {
@@ -546,6 +571,7 @@ func BenchmarkConvertBitsDown(b *testing.B) {
 
 	b.ReportAllocs()
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_, err := ConvertBits(inputData, 8, 5, true)
 		if err != nil {
@@ -570,6 +596,7 @@ func BenchmarkConvertBitsUp(b *testing.B) {
 
 	b.ReportAllocs()
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_, err := ConvertBits(inputData, 8, 5, true)
 		if err != nil {
@@ -596,11 +623,13 @@ func TestEncodeFromBase256WithType(t *testing.T) {
 
 	for i, tc := range tests {
 		data, _ := hex.DecodeString(tc.input)
+
 		enc, err := EncodeFromBase256WithType(tc.hrp, tc.typ, data)
 		if !errors.Is(err, tc.expectedError) {
 			t.Errorf("%d: (%v) expected encoding error "+
 				"instead got %v", i, tc.expectedError,
 				err)
+
 			continue
 		}
 
@@ -633,6 +662,7 @@ func TestDecodeToBase256WithTypeNoLimit(t *testing.T) {
 			t.Errorf("%d: (%v) expected encoding error "+
 				"instead got %v", i, tc.expectedError,
 				err)
+
 			continue
 		}
 

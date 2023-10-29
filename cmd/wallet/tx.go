@@ -200,6 +200,7 @@ func addCommonTxOptions(c *cobra.Command) (*int, *float64, *string, *bool) {
 
 func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string) {
 	cmd.PrintLine()
+
 	password := getPassword(w, pass)
 	err := w.SignTransaction(password, trx)
 	cmd.FatalErrorCheck(err)
@@ -213,10 +214,12 @@ func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string)
 			cmd.PrintInfoMsgf("You are going to broadcast the signed transition:")
 			cmd.PrintWarnMsgf("THIS ACTION IS NOT REVERSIBLE")
 			confirmed := cmd.PromptConfirm("Do you want to continue")
+
 			if !confirmed {
 				return
 			}
 		}
+
 		res, err := w.BroadcastTransaction(trx)
 		cmd.FatalErrorCheck(err)
 
@@ -232,5 +235,6 @@ func getPassword(wallet *wallet.Wallet, passOpt string) string {
 	if wallet.IsEncrypted() && password == "" {
 		password = cmd.PromptPassword("Wallet password", false)
 	}
+
 	return password
 }

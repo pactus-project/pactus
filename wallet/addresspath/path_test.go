@@ -21,6 +21,7 @@ func TestPathToString(t *testing.T) {
 		{NewPath(h, h+1), "m/0'/1'"},
 		{NewPath(h, h+1, h+1000000000), "m/0'/1'/1000000000'"},
 	}
+
 	for i, test := range tests {
 		assert.Equal(t, test.path.String(), test.wantStr, "case %d failed", i)
 	}
@@ -44,6 +45,7 @@ func TestStringToPath(t *testing.T) {
 		{"m/'", nil, strconv.ErrSyntax},
 		{"m/abc'", nil, strconv.ErrSyntax},
 	}
+
 	for i, test := range tests {
 		path, err := NewPathFromString(test.str)
 		assert.Equal(t, path, test.wantPath, "case %d failed", i)

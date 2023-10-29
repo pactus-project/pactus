@@ -41,8 +41,8 @@ func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 		pools:       pending,
 		broadcastCh: broadcastCh,
 	}
-
 	pool.logger = logger.NewSubLogger("_pool", pool)
+
 	return pool
 }
 
@@ -54,6 +54,7 @@ func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
 	p.logger.Debug("set new sandbox")
 
 	var next *linkedlist.Element[linkedmap.Pair[tx.ID, *tx.Tx]]
+
 	for _, pool := range p.pools {
 		for e := pool.HeadNode(); e != nil; e = next {
 			next = e.Next
@@ -115,6 +116,7 @@ func (p *txPool) checkTx(trx *tx.Tx) error {
 		p.logger.Debug("invalid transaction", "tx", trx, "error", err)
 		return err
 	}
+
 	return nil
 }
 
@@ -153,30 +155,35 @@ func (p *txPool) PrepareBlockTransactions() block.Txs {
 
 	// Appending one sortition transaction
 	poolSortition := p.pools[payload.TypeSortition]
+
 	for n := poolSortition.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending bond transactions
 	poolBond := p.pools[payload.TypeBond]
+
 	for n := poolBond.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending unbond transactions
 	poolUnbond := p.pools[payload.TypeUnbond]
+
 	for n := poolUnbond.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending withdraw transactions
 	poolWithdraw := p.pools[payload.TypeWithdraw]
+
 	for n := poolWithdraw.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
 
 	// Appending transfer transactions
 	poolSend := p.pools[payload.TypeTransfer]
+
 	for n := poolSend.HeadNode(); n != nil; n = n.Next {
 		trxs = append(trxs, n.Data.Value)
 	}
@@ -205,6 +212,7 @@ func (p *txPool) Size() int {
 	for _, pool := range p.pools {
 		size += pool.Size()
 	}
+
 	return size
 }
 

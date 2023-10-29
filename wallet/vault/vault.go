@@ -88,10 +88,12 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	masterKey, err := hdkeychain.NewMaster(seed, false)
 	if err != nil {
 		return nil, err
 	}
+
 	encrypter := encrypter.NopeEncrypter()
 
 	xPubValidator, err := masterKey.DerivePath([]uint32{
@@ -176,13 +178,16 @@ func (v *Vault) UpdatePassword(oldPassword, newPassword string, opts ...encrypte
 	if newPassword != "" {
 		newEncrypter = encrypter.DefaultEncrypter(opts...)
 	}
+
 	v.Encrypter = newEncrypter
+
 	err = v.encryptKeyStore(keyStore, newPassword)
 	if err != nil {
 		return err
 	}
 
 	v.Encrypter = newEncrypter
+
 	return nil
 }
 
@@ -191,6 +196,7 @@ func (v *Vault) Label(addr string) string {
 	if !ok {
 		return ""
 	}
+
 	return info.Label
 }
 
@@ -202,6 +208,7 @@ func (v *Vault) SetLabel(addr, label string) error {
 
 	info.Label = label
 	v.Addresses[addr] = info
+
 	return nil
 }
 
@@ -227,6 +234,7 @@ func (v *Vault) AddressInfos() []AddressInfo {
 	}
 
 	sort.Ints(keys)
+
 	for _, key := range keys {
 		addrsValue := addrsMap[key]
 		slices.SortFunc(addrsValue, func(a, b AddressInfo) int {
@@ -243,6 +251,7 @@ func (v *Vault) AddressInfos() []AddressInfo {
 	}
 
 	addrs = append(addrs, importedAddrs...)
+
 	return addrs
 }
 
@@ -309,6 +318,7 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 	}
 
 	keys := make([]crypto.PrivateKey, len(addrs))
+
 	for i, addr := range addrs {
 		info := v.AddressInfo(addr)
 		if info == nil {
@@ -320,29 +330,37 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 			if !ok {
 				return nil, NewErrAddressNotFound(addr)
 			}
+
 			prvKey, err := bls.PrivateKeyFromString(importedKey.Prv)
 			if err != nil {
 				return nil, err
 			}
+
 			keys[i] = prvKey
+
 			continue
 		}
+
 		seed, err := bip39.NewSeedWithErrorChecking(keyStore.MasterNode.Mnemonic, "")
 		if err != nil {
 			return nil, err
 		}
+
 		masterKey, err := hdkeychain.NewMaster(seed, false)
 		if err != nil {
 			return nil, err
 		}
+
 		path, err := addresspath.NewPathFromString(info.Path)
 		if err != nil {
 			return nil, err
 		}
+
 		ext, err := masterKey.DerivePath(path)
 		if err != nil {
 			return nil, err
 		}
+
 		prvBytes, err := ext.RawPrivateKey()
 		if err != nil {
 			return nil, err
@@ -364,7 +382,9 @@ func (v *Vault) NewBLSAccountAddress(label string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	index := v.Purposes.PurposeBLS.NextAccountIndex
+
 	ext, err = ext.DerivePath([]uint32{index})
 	if err != nil {
 		return "", err
@@ -391,7 +411,9 @@ func (v *Vault) NewValidatorAddress(label string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	index := v.Purposes.PurposeBLS.NextValidatorIndex
+
 	ext, err = ext.DerivePath([]uint32{index})
 	if err != nil {
 		return "", err
@@ -421,6 +443,7 @@ func (v *Vault) AddressInfo(addr string) *AddressInfo {
 	if !ok {
 		return nil
 	}
+
 	if info.Path != "" {
 		addr, err := crypto.AddressFromString(info.Address)
 		if err != nil {
@@ -468,10 +491,12 @@ func (v *Vault) Mnemonic(password string) (string, error) {
 	if v.IsNeutered() {
 		return "", ErrNeutered
 	}
+
 	keyStore, err := v.decryptKeyStore(password)
 	if err != nil {
 		return "", err
 	}
+
 	return keyStore.MasterNode.Mnemonic, nil
 }
 
@@ -482,6 +507,7 @@ func (v *Vault) decryptKeyStore(password string) (*keyStore, error) {
 	}
 
 	keyStore := new(keyStore)
+
 	err = json.Unmarshal([]byte(keyStoreData), keyStore)
 	if err != nil {
 		return nil, err
@@ -500,6 +526,7 @@ func (v *Vault) encryptKeyStore(keyStore *keyStore, password string) error {
 	if err != nil {
 		return err
 	}
+
 	v.KeyStore = keyStoreEnc
 
 	return nil

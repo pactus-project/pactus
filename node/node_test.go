@@ -26,6 +26,7 @@ func TestRunningNode(t *testing.T) {
 	pub, _ := ts.RandBLSKeyPair()
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
+
 	val := validator.NewValidator(pub, 0)
 	gen := genesis.MakeGenesis(util.Now(),
 		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},

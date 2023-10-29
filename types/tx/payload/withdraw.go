@@ -33,6 +33,7 @@ func (p *WithdrawPayload) BasicCheck() error {
 			Reason: "sender is not a validator address: " + p.From.String(),
 		}
 	}
+
 	if !p.To.IsAccountAddress() {
 		return BasicCheckError{
 			Reason: "receiver is not an account address: " + p.To.String(),
@@ -75,7 +76,9 @@ func (p *WithdrawPayload) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+
 	p.Amount = int64(amount)
+
 	return nil
 }
 

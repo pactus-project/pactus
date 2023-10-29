@@ -64,12 +64,14 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 	handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeKnown)
 
 	response := message.NewHelloAckMessage(message.ResponseCodeOK, "Ok")
+
 	return handler.acknowledge(response, initiator)
 }
 
 func (handler *helloHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	bdl := bundle.NewBundle(handler.SelfID(), m)
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagHandshaking)
+
 	return bdl
 }
 

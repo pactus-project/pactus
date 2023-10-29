@@ -24,7 +24,9 @@ func (e *TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidAddress,
 			"unable to retrieve sender account")
 	}
+
 	var receiverAcc *account.Account
+
 	if pld.To == pld.From {
 		receiverAcc = senderAcc
 	} else {

@@ -131,10 +131,12 @@ func (ps *PeerSet) GetPeerList() []Peer {
 
 	l := make([]Peer, len(ps.peers))
 	i := 0
+
 	for _, p := range ps.peers {
 		l[i] = *p
 		i++
 	}
+
 	return l
 }
 
@@ -155,6 +157,7 @@ func (ps *PeerSet) getPeer(pid peer.ID) *Peer {
 	if peer, ok := ps.peers[pid]; ok {
 		return peer
 	}
+
 	return nil
 }
 
@@ -164,6 +167,7 @@ func (ps *PeerSet) mustGetPeer(pid peer.ID) *Peer {
 		p = NewPeer(pid)
 		ps.peers[pid] = p
 	}
+
 	return p
 }
 
@@ -275,6 +279,7 @@ func (ps *PeerSet) SentBytesMessageType(msgType message.Type) int64 {
 	if sentBytes, ok := ps.sentBytes[msgType]; ok {
 		return sentBytes
 	}
+
 	return 0
 }
 
@@ -282,6 +287,7 @@ func (ps *PeerSet) ReceivedBytesMessageType(msgType message.Type) int64 {
 	if receivedBytes, ok := ps.receivedBytes[msgType]; ok {
 		return receivedBytes
 	}
+
 	return 0
 }
 

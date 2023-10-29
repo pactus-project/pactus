@@ -39,9 +39,11 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 func (f *Firewall) OpenGossipBundle(data []byte, source peer.ID, from peer.ID) *bundle.Bundle {
 	if from != source {
 		f.peerSet.UpdateLastReceived(from)
+
 		if f.isPeerBanned(from) {
 			f.logger.Warn("firewall: from peer banned", "from", from)
 			f.closeConnection(from)
+
 			return nil
 		}
 	}
@@ -99,11 +101,13 @@ func (f *Firewall) openBundle(r io.Reader, source peer.ID) (*bundle.Bundle, erro
 
 func (f *Firewall) decodeBundle(r io.Reader, pid peer.ID) (*bundle.Bundle, error) {
 	bdl := new(bundle.Bundle)
+
 	bytesRead, err := bdl.Decode(r)
 	if err != nil {
 		f.peerSet.IncreaseReceivedBytesCounter(pid, message.TypeUnspecified, int64(bytesRead))
 		return nil, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
+
 	f.peerSet.IncreaseReceivedBytesCounter(pid, bdl.Message.Type(), int64(bytesRead))
 
 	return bdl, nil
@@ -148,6 +152,7 @@ func (f *Firewall) isPeerBanned(pid peer.ID) bool {
 	}
 
 	p := f.peerSet.GetPeer(pid)
+
 	return p.IsBanned()
 }
 

@@ -42,6 +42,7 @@ func NewBlock(header *Header, prevCert *certificate.Certificate, txs Txs) *Block
 func FromBytes(data []byte) (*Block, error) {
 	b := new(Block)
 	r := bytes.NewReader(data)
+
 	if err := b.Decode(r); err != nil {
 		return nil, err
 	}
@@ -75,17 +76,20 @@ func (b *Block) BasicCheck() error {
 	if err := b.Header().BasicCheck(); err != nil {
 		return err
 	}
+
 	if b.Transactions().Len() == 0 {
 		// block at least should have one transaction
 		return BasicCheckError{
 			Reason: "no subsidy transaction",
 		}
 	}
+
 	if b.Transactions().Len() > 1000 {
 		return BasicCheckError{
 			Reason: "block is full",
 		}
 	}
+
 	if b.PrevCertificate() != nil {
 		if err := b.PrevCertificate().BasicCheck(); err != nil {
 			return BasicCheckError{
@@ -125,6 +129,7 @@ func (b *Block) Hash() hash.Hash {
 	if b.data.PrevCert != nil {
 		w.Write(b.data.PrevCert.Hash().Bytes())
 	}
+
 	w.Write(b.data.Txs.Root().Bytes())
 	w.Write(util.Int32ToSlice(int32(b.data.Txs.Len())))
 
@@ -148,16 +153,20 @@ func (b *Block) MarshalCBOR() ([]byte, error) {
 	if err := b.Encode(buf); err != nil {
 		return nil, err
 	}
+
 	return cbor.Marshal(buf.Bytes())
 }
 
 func (b *Block) UnmarshalCBOR(bs []byte) error {
 	data := make([]byte, 0, b.SerializeSize())
+
 	err := cbor.Unmarshal(bs, &data)
 	if err != nil {
 		return err
 	}
+
 	buf := bytes.NewBuffer(data)
+
 	return b.Decode(buf)
 }
 
@@ -165,19 +174,23 @@ func (b *Block) Encode(w io.Writer) error {
 	if err := b.data.Header.Encode(w); err != nil {
 		return err
 	}
+
 	if b.data.PrevCert != nil {
 		if err := b.data.PrevCert.Encode(w); err != nil {
 			return err
 		}
 	}
+
 	if err := encoding.WriteVarInt(w, uint64(b.data.Txs.Len())); err != nil {
 		return err
 	}
+
 	for _, tx := range b.Transactions() {
 		if err := tx.Encode(w); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -186,24 +199,30 @@ func (b *Block) Decode(r io.Reader) error {
 	if err := b.data.Header.Decode(r); err != nil {
 		return err
 	}
+
 	if !b.data.Header.PrevBlockHash().IsUndef() {
 		b.data.PrevCert = new(certificate.Certificate)
 		if err := b.data.PrevCert.Decode(r); err != nil {
 			return err
 		}
 	}
+
 	length, err := encoding.ReadVarInt(r)
 	if err != nil {
 		return err
 	}
+
 	b.data.Txs = make([]*tx.Tx, length)
+
 	for i := 0; i < int(length); i++ {
 		tx := new(tx.Tx)
 		if err := tx.Decode(r); err != nil {
 			return err
 		}
+
 		b.data.Txs[i] = tx
 	}
+
 	return nil
 }
 
@@ -219,6 +238,7 @@ func (b *Block) SerializeSize() int {
 	for _, tx := range b.Transactions() {
 		n += tx.SerializeSize()
 	}
+
 	return n
 }
 
@@ -231,6 +251,7 @@ func (b *Block) Bytes() ([]byte, error) {
 	}
 
 	w := bytes.NewBuffer(make([]byte, 0, b.SerializeSize()))
+
 	err := b.Encode(w)
 	if err != nil {
 		return nil, err
@@ -238,5 +259,6 @@ func (b *Block) Bytes() ([]byte, error) {
 
 	// Cache the serialized bytes and return them.
 	b.memorizedData = w.Bytes()
+
 	return b.memorizedData, nil
 }

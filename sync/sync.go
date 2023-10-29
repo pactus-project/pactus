@@ -67,6 +67,7 @@ func NewSynchronizer(
 	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
 	logger := logger.NewSubLogger("_sync", sync)
 	firewall := firewall.NewFirewall(conf.Firewall, net, peerSet, state, logger)
+
 	cache, err := cache.NewCache(conf.CacheSize)
 	if err != nil {
 		return nil, err
@@ -117,6 +118,7 @@ func (sync *synchronizer) Stop() {
 func (sync *synchronizer) moveConsensusToNewHeight() {
 	stateHeight := sync.state.LastBlockHeight()
 	consHeight, _ := sync.consMgr.HeightRound()
+
 	if stateHeight >= consHeight {
 		sync.consMgr.MoveToNewHeight()
 	}
@@ -141,6 +143,7 @@ func (sync *synchronizer) sayHello(to peer.ID) error {
 	sync.peerSet.UpdateStatus(to, peerset.StatusCodeConnected)
 
 	sync.logger.Info("sending Hello message", "to", to)
+
 	return sync.sendTo(msg, to)
 }
 
@@ -167,6 +170,7 @@ func (sync *synchronizer) receiveLoop() {
 			case network.EventTypeGossip:
 				ge := e.(*network.GossipMessage)
 				bdl := sync.firewall.OpenGossipBundle(ge.Data, ge.Source, ge.From)
+
 				err := sync.processIncomingBundle(bdl)
 				if err != nil {
 					sync.logger.Warn("error on parsing a Gossip bundle",
@@ -177,10 +181,12 @@ func (sync *synchronizer) receiveLoop() {
 			case network.EventTypeStream:
 				se := e.(*network.StreamMessage)
 				bdl := sync.firewall.OpenStreamBundle(se.Reader, se.Source)
+
 				if err := se.Reader.Close(); err != nil {
 					// TODO: write test for me
 					sync.logger.Warn("error on closing stream", "error", err, "source", se.Source)
 				}
+
 				err := sync.processIncomingBundle(bdl)
 				if err != nil {
 					sync.logger.Warn("error on parsing a Stream bundle",
@@ -208,6 +214,7 @@ func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle) error {
 
 	sync.logger.Info("received a bundle",
 		"initiator", bdl.Initiator, "bundle", bdl)
+
 	h := sync.handlers[bdl.Message.Type()]
 	if h == nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid message type: %v", bdl.Message.Type())
@@ -254,6 +261,7 @@ func (sync *synchronizer) updateBlockchain() {
 	}
 
 	sync.logger.Info("start syncing with the network", "numOfBlocks", numOfBlocks)
+
 	if numOfBlocks > LatestBlockInterval {
 		sync.downloadBlocks(LastBlockHeight, true)
 	} else {
@@ -267,23 +275,26 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 		sync.logger.Warn("invalid message type: %v", msg.Type())
 		return nil
 	}
+
 	bdl := h.PrepareBundle(msg)
 	if bdl != nil {
 		// Bundles will be carried through LibP2P.
 		// In future we might support other libraries.
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P)
 
+		//nolint:all
 		switch sync.state.Genesis().ChainType() {
 		case genesis.Mainnet:
 			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 		case genesis.Testnet:
 			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 		default:
-			// It's localnet and for testing purpose only
+			/** It's localnet and for testing purpose only **/
 		}
 
 		return bdl
 	}
+
 	return nil
 }
 
@@ -291,6 +302,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
 	bdl := sync.prepareBundle(msg)
 	if bdl != nil {
 		data, _ := bdl.Encode()
+
 		sync.peerSet.UpdateLastSent(to)
 		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
 
@@ -298,9 +310,11 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
 		if err != nil {
 			return err
 		}
+
 		sync.logger.Info("sending bundle to a peer",
 			"bundle", bdl, "to", to)
 	}
+
 	return nil
 }
 
@@ -311,11 +325,13 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 
 		data, _ := bdl.Encode()
 		err := sync.network.Broadcast(data, msg.Type().TopicID())
+
 		if err != nil {
 			sync.logger.Error("error on broadcasting bundle", "bundle", bdl, "error", err)
 		} else {
 			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
 		}
+
 		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), nil)
 	}
 }
@@ -370,16 +386,20 @@ func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 
 func (sync *synchronizer) tryCommitBlocks() error {
 	height := sync.state.LastBlockHeight() + 1
+
 	for {
 		blk := sync.cache.GetBlock(height)
 		if blk == nil {
 			break
 		}
+
 		cert := sync.cache.GetCertificate(height)
 		if cert == nil {
 			break
 		}
+
 		trxs := blk.Transactions()
+
 		for i := 0; i < trxs.Len(); i++ {
 			trx := trxs[i]
 			if trx.IsPublicKeyStriped() {
@@ -387,6 +407,7 @@ func (sync *synchronizer) tryCommitBlocks() error {
 				if err != nil {
 					return err
 				}
+
 				trx.SetPublicKey(pub)
 			}
 		}
@@ -394,14 +415,17 @@ func (sync *synchronizer) tryCommitBlocks() error {
 		if err := blk.BasicCheck(); err != nil {
 			return err
 		}
+
 		if err := cert.BasicCheck(); err != nil {
 			return err
 		}
 
 		sync.logger.Trace("committing block", "height", height, "block", blk)
+
 		if err := sync.state.CommitBlock(blk, cert); err != nil {
 			return err
 		}
+
 		height = height + 1
 	}
 

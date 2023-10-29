@@ -78,8 +78,10 @@ func setup(t *testing.T) *testData {
 
 	acc1 := account.NewAccount(0)
 	acc1.AddToBalance(21 * 1e15) // 21,000,000,000,000,000
+
 	acc2 := account.NewAccount(1)
 	acc2.AddToBalance(21 * 1e15) // 21,000,000,000,000,000
+
 	genAccAddr := pub5.AccountAddress()
 
 	accs := map[crypto.Address]*account.Account{
@@ -154,6 +156,7 @@ func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash, ro
 	height := td.state1.LastBlockHeight()
 	sb := certificate.BlockCertificateSignBytes(blockHash, height+1, round)
 	committers := []int32{0, 1, 2, 3}
+
 	var signedBy []int32
 
 	for i, s := range valKeys {
@@ -172,10 +175,12 @@ func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash, ro
 		if s.Address() == td.valKey4.Address() {
 			signedBy = append(signedBy, 3)
 		}
+
 		sigs[i] = s.Sign(sb)
 	}
 
 	absentees := util.Subtracts(committers, signedBy)
+
 	return certificate.NewCertificate(height+1, round, committers, absentees, bls.SignatureAggregate(sigs...))
 }
 
@@ -664,6 +669,7 @@ func TestLoadState(t *testing.T) {
 	for i := 0; i < 4; i++ {
 		td.moveToNextHeightForAllStates(t)
 	}
+
 	b5, c5 := td.makeBlockAndCertificate(t, 1, td.valKey1, td.valKey2, td.valKey3, td.valKey4)
 	td.commitBlockForAllStates(t, b5, c5)
 

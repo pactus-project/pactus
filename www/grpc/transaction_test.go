@@ -91,8 +91,10 @@ func TestSendRawTransaction(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
+
 	trx, _ := ts.GenerateTestTransferTx()
 	data, _ := trx.Bytes()
+
 	t.Run("Should pass", func(t *testing.T) {
 		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: data})
 		assert.NoError(t, err)

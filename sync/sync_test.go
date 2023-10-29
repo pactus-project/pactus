@@ -71,6 +71,7 @@ func setup(t *testing.T, config *Config) *testData {
 		config = testConfig()
 		config.Moniker = "Alice"
 	}
+
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	mockState := state.MockingState(ts)
 
@@ -88,6 +89,7 @@ func setup(t *testing.T, config *Config) *testData {
 		broadcastCh,
 	)
 	assert.NoError(t, err)
+
 	sync := Sync.(*synchronizer)
 
 	td := &testData{
@@ -186,6 +188,7 @@ func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, net *netwo
 func (td *testData) receivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
 	bdl := bundle.NewBundle(from, msg)
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P|bundle.BundleFlagNetworkMainnet)
+
 	return sync.processIncomingBundle(bdl)
 }
 
@@ -203,6 +206,7 @@ func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.Pub
 	if pub == nil {
 		pub, _ = td.RandBLSKeyPair()
 	}
+
 	td.addPeer(t, pub, pid, services.New(services.Network))
 	val := validator.NewValidator(pub.(*bls.PublicKey), td.RandInt32(1000))
 	// Note: This may not be completely accurate, but it poses no harm for testing purposes.

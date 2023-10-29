@@ -17,6 +17,7 @@ func TestVRF(t *testing.T) {
 
 	pk, pv := ts.RandBLSKeyPair()
 	valKey := bls.NewValidatorKey(pv)
+
 	for i := 0; i < 100; i++ {
 		seed := ts.RandSeed()
 		fmt.Printf("seed is: %x \n", seed)
@@ -53,28 +54,33 @@ func TestRandomUint64(t *testing.T) {
 	valKey := bls.NewValidatorKey(pv)
 
 	numHits := 0
+
 	for i := 0; i < tries; i++ {
 		seed := ts.RandSeed()
 
 		nonce, _ := sortition.Evaluate(seed, valKey.PrivateKey(), util.MaxUint64)
+
 		if nonce < watermark {
 			numHits++
 		}
+
 		if numHits > maxHits {
 			str := fmt.Sprintf(badRNG, numHits, watermark, tries, maxHits)
 			t.Errorf("Random Uint64 iteration %d failed - %v", i, str)
+
 			return
 		}
 	}
 }
 
 func TestGetIndex(t *testing.T) {
-	//  Total: 1000000
+	/** Total: 1000000
 
-	// proof: 0x1719b896ec1cc66a0f44c4bf90890d988e341cb2c1a808907780af844c854291536c12fdaef9a526bb7ef80da17c0b03
-	// proofH: 0xa7b8166584387f4ea76f9caa0969bd6b0bb8df4c3bb8e87f8b6e4dad62bf3359
-	//
-	// proofH * 1000000 / denominator = 655152.7021258341
+	proof: 0x1719b896ec1cc66a0f44c4bf90890d988e341cb2c1a808907780af844c854291536c12fdaef9a526bb7ef80da17c0b03
+	proofH: 0xa7b8166584387f4ea76f9caa0969bd6b0bb8df4c3bb8e87f8b6e4dad62bf3359
+
+	proofH * 1000000 / denominator = 655152.7021258341
+	**/
 	proof1, _ := sortition.ProofFromString(
 		"1719b896ec1cc66a0f44c4bf90890d988e341cb2c1a808907780af844c854291536c12fdaef9a526bb7ef80da17c0b03")
 	assert.Equal(t, sortition.GetIndex(proof1, 1*1e6), uint64(655152))

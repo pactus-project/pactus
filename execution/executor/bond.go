@@ -30,6 +30,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			return errors.Errorf(errors.ErrInvalidPublicKey,
 				"public key is not set")
 		}
+
 		receiverVal = sb.MakeNewValidator(pld.PublicKey)
 	} else {
 		if pld.PublicKey != nil {
@@ -37,10 +38,12 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 				"public key set")
 		}
 	}
+
 	if receiverVal.UnbondingHeight() > 0 {
 		return errors.Errorf(errors.ErrInvalidHeight,
 			"validator has unbonded at height %v", receiverVal.UnbondingHeight())
 	}
+
 	if e.strict {
 		// In strict mode, bond transactions will be rejected if a validator is
 		// already in the committee.
@@ -60,9 +63,11 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 				"validator %v joins committee in the next height", pld.To)
 		}
 	}
+
 	if senderAcc.Balance() < pld.Stake+trx.Fee() {
 		return ErrInsufficientFunds
 	}
+
 	if receiverVal.Stake()+pld.Stake > sb.Params().MaximumStake {
 		return errors.Errorf(errors.ErrInvalidAmount,
 			"validator's stake can't be more than %v", sb.Params().MaximumStake)

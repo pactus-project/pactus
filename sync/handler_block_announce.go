@@ -27,6 +27,7 @@ func (handler *blockAnnounceHandler) ParseMessage(m message.Message, initiator p
 	if err != nil {
 		return err
 	}
+
 	handler.moveConsensusToNewHeight()
 
 	handler.peerSet.UpdateHeight(initiator, msg.Height(), msg.Block.Hash())

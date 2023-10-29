@@ -18,6 +18,7 @@ func TestProposalMarshaling(t *testing.T) {
 	p1, _ := ts.GenerateTestProposal(10, 10)
 	bz1, err := p1.MarshalCBOR()
 	assert.NoError(t, err)
+
 	var p2 proposal.Proposal
 	err = p2.UnmarshalCBOR(bz1)
 	assert.NoError(t, err)

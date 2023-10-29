@@ -13,6 +13,7 @@ func TestPrecommitQueryProposal(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
+
 	h := uint32(2)
 	r := int16(0)
 
@@ -35,6 +36,7 @@ func TestPrecommitDuplicatedProposal(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
+
 	h := uint32(2)
 	r := int16(0)
 
@@ -75,6 +77,7 @@ func TestGoToChangeProposerFromPrecommit(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
+
 	h := uint32(2)
 	r := int16(0)
 

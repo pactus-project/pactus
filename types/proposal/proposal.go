@@ -52,18 +52,23 @@ func (p *Proposal) BasicCheck() error {
 	if p.data.Block == nil {
 		return errors.Errorf(errors.ErrInvalidBlock, "no block")
 	}
+
 	if p.data.Signature == nil {
 		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
 	}
+
 	if err := p.data.Block.BasicCheck(); err != nil {
 		return err
 	}
+
 	if p.data.Height <= 0 {
 		return errors.Error(errors.ErrInvalidHeight)
 	}
+
 	if p.data.Round < 0 {
 		return errors.Error(errors.ErrInvalidRound)
 	}
+
 	return nil
 }
 
@@ -91,9 +96,11 @@ func (p *Proposal) Verify(pubKey crypto.PublicKey) error {
 	if p.data.Signature == nil {
 		return errors.Errorf(errors.ErrInvalidProposal, "no signature")
 	}
+
 	if err := pubKey.VerifyAddress(p.data.Block.Header().ProposerAddress()); err != nil {
 		return err
 	}
+
 	return pubKey.Verify(p.SignBytes(), p.data.Signature)
 }
 

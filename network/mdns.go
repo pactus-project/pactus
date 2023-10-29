@@ -40,6 +40,7 @@ func (mdns *mdnsService) HandlePeerFound(pi lp2ppeer.AddrInfo) {
 
 	if pi.ID != mdns.host.ID() {
 		mdns.logger.Debug("connecting to new peer", "addr", pi.Addrs, "id", pi.ID.Pretty())
+
 		if err := mdns.host.Connect(ctx, pi); err != nil {
 			mdns.logger.Error("error on connecting to peer", "id", pi.ID.Pretty(), "error", err)
 		}

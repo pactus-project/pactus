@@ -28,6 +28,7 @@ type MockConsensus struct {
 func MockingManager(ts *testsuite.TestSuite, valKeys []*bls.ValidatorKey) (Manager, []*MockConsensus) {
 	mocks := make([]*MockConsensus, len(valKeys))
 	instances := make([]Consensus, len(valKeys))
+
 	for i, s := range valKeys {
 		cons := MockingConsensus(ts, s)
 		mocks[i] = cons
@@ -91,6 +92,7 @@ func (m *MockConsensus) HasVote(hash hash.Hash) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -119,7 +121,9 @@ func (m *MockConsensus) PickRandomVote(_ int16) *vote.Vote {
 	if len(m.Votes) == 0 {
 		return nil
 	}
+
 	r := m.ts.RandInt32(int32(len(m.Votes)))
+
 	return m.Votes[r]
 }
 

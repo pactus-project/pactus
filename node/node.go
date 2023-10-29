@@ -49,12 +49,15 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		"network", genDoc.ChainType())
 
 	networkName := genDoc.NetworkName()
+
 	network, err := network.NewNetwork(networkName, conf.Network)
 	if err != nil {
 		return nil, err
 	}
+
 	messageCh := make(chan message.Message, 500)
 	eventCh := make(chan event.Event, 500)
+
 	if !conf.Nanomsg.Enable {
 		eventCh = nil
 	}
@@ -102,6 +105,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 func (n *Node) Start() error {
 	now := util.Now()
+
 	genTime := n.genesisDoc.GenesisTime()
 	if genTime.After(now) {
 		logger.Info("💤 Genesis time is in the future. Sleeping until then...",

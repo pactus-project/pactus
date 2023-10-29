@@ -84,9 +84,11 @@ func TestSortitionMedian(t *testing.T) {
 
 	count := 1000
 	median := 0
+
 	for j := 0; j < count; j++ {
 		seed := ts.RandSeed()
 		ok, _ := sortition.EvaluateSortition(seed, valKey.PrivateKey(), total, total/10)
+
 		if ok {
 			median++
 		}

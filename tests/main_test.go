@@ -92,6 +92,7 @@ func TestMain(m *testing.M) {
 
 		sync.LatestBlockInterval = 10
 
+		//nolint:all
 		if i == 0 {
 			// tConfigs[i].Logger.Levels["default"] = "warn"
 			// tConfigs[i].Logger.Levels["_state"] = "info"
@@ -104,11 +105,13 @@ func TestMain(m *testing.M) {
 			tConfigs[i].GRPC.Enable = true
 			tConfigs[i].GRPC.Listen = tGRPCAddress
 		}
+
 		fmt.Printf("Node %d created.\n", i+1)
 	}
 
 	acc1 := account.NewAccount(0)
 	acc1.AddToBalance(21 * 1e14)
+
 	key, _ := bls.KeyGen(ikm.Bytes(), nil)
 	acc2 := account.NewAccount(1)
 	acc2.AddToBalance(21 * 1e14)
@@ -148,6 +151,7 @@ func TestMain(m *testing.M) {
 	}
 
 	tCtx = context.Background()
+
 	conn, err := grpc.DialContext(
 		tCtx,
 		tGRPCAddress,
@@ -175,21 +179,25 @@ func TestMain(m *testing.M) {
 	// Check if sortition worked or not?
 	block := lastBlock()
 	cert := block.PrevCert
+
 	if block.Height == 1 {
 		panic("block height should be greater than 1")
 	}
+
 	if len(cert.Committers) == 4 {
 		panic("Sortition didn't work")
 	}
 
 	// Let's shutdown the nodes
 	tCtx.Done()
+
 	for i := 0; i < tTotalNodes; i++ {
 		tNodes[i].Stop()
 	}
 
 	s, _ := store.NewStore(tConfigs[tNodeIdx1].Store)
 	total := int64(0)
+
 	s.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
 		total += acc.Balance()
 		return false
@@ -199,6 +207,7 @@ func TestMain(m *testing.M) {
 		total += v.Stake()
 		return false
 	})
+
 	if total != tGenDoc.TotalSupply() {
 		panic(fmt.Sprintf("Some coins missed: %v", tGenDoc.TotalSupply()-total))
 	}

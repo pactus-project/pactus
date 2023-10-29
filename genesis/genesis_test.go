@@ -22,6 +22,7 @@ func TestMarshaling(t *testing.T) {
 
 	acc, prv := ts.GenerateTestAccount(0)
 	acc.AddToBalance(100000)
+
 	val, _ := ts.GenerateTestValidator(0)
 	gen1 := genesis.MakeGenesis(util.Now(),
 		map[crypto.Address]*account.Account{prv: acc},
@@ -68,14 +69,17 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 
 	accs := map[crypto.Address]*account.Account{}
 	vals := []*validator.Validator{}
+
 	for i := int32(0); i < 10; i++ {
 		pub, _ := ts.RandBLSKeyPair()
 		acc := account.NewAccount(i)
 		val := validator.NewValidator(pub, i)
 
 		accs[pub.AccountAddress()] = acc
+
 		vals = append(vals, val)
 	}
+
 	gen := genesis.MakeGenesis(util.Now(), accs, vals, param.DefaultParams())
 
 	for addr, acc := range gen.Accounts() {

@@ -39,6 +39,7 @@ func TestChangeProposerAgreement1(t *testing.T) {
 
 	h := uint32(1)
 	r := int16(0)
+
 	td.enterNewHeight(td.consP)
 	td.checkHeightRound(t, td.consP, h, r)
 
@@ -63,6 +64,7 @@ func TestChangeProposerAgreement0(t *testing.T) {
 
 	h := uint32(2)
 	r := int16(1)
+
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
 	td.checkHeightRound(t, td.consP, h, r)
@@ -99,6 +101,7 @@ func TestCrashOnTestnet(t *testing.T) {
 
 	h := uint32(2)
 	r := int16(0)
+
 	td.consP.MoveToNewHeight()
 
 	blockHash := td.RandHash()
@@ -134,6 +137,7 @@ func TestInvalidJustInitOne(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
+
 	h := uint32(1)
 	r := int16(0)
 	just := &vote.JustInitOne{}
@@ -184,6 +188,7 @@ func TestInvalidJustInitZero(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
+
 	h := uint32(1)
 	r := int16(0)
 	just := &vote.JustInitZero{
@@ -225,6 +230,7 @@ func TestInvalidJustPreVoteHard(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
+
 	h := uint32(1)
 	r := int16(0)
 	just := &vote.JustPreVoteHard{
@@ -266,6 +272,7 @@ func TestInvalidJustPreVoteSoft(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
+
 	h := uint32(1)
 	r := int16(0)
 	just := &vote.JustPreVoteSoft{
@@ -307,6 +314,7 @@ func TestInvalidJustMainVoteNoConflict(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
+
 	h := uint32(1)
 	r := int16(0)
 	just := &vote.JustMainVoteNoConflict{
@@ -338,6 +346,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
+
 	h := uint32(1)
 	r := int16(0)
 
@@ -448,6 +457,7 @@ func TestInvalidJustDecided(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
+
 	h := uint32(1)
 	r := int16(0)
 	just := &vote.JustDecided{

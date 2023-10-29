@@ -168,12 +168,14 @@ func TestSyncing(t *testing.T) {
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
 
 	configBob.NodeNetwork = true
+
 	networkAlice.AddAnotherNetwork(networkBob)
 	networkBob.AddAnotherNetwork(networkAlice)
 
 	// Adding 100 blocks for Bob
 	blockInterval := stateBob.Genesis().Params().BlockInterval()
 	blockTime := util.RoundNow(int(blockInterval.Seconds()))
+
 	for i := uint32(0); i < 100; i++ {
 		blk, cert := ts.GenerateTestBlockWithTime(i+1, blockTime)
 		assert.NoError(t, stateBob.CommitBlock(blk, cert))
@@ -189,6 +191,7 @@ func TestSyncing(t *testing.T) {
 		broadcastChAlice,
 	)
 	assert.NoError(t, err)
+
 	syncAlice := sync1.(*synchronizer)
 
 	sync2, err := NewSynchronizer(configBob,
@@ -199,6 +202,7 @@ func TestSyncing(t *testing.T) {
 		broadcastChBob,
 	)
 	assert.NoError(t, err)
+
 	syncBob := sync2.(*synchronizer)
 
 	// -------------------------------

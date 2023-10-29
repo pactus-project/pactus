@@ -14,6 +14,7 @@ func lastHeight() uint32 {
 	if err != nil {
 		panic(err)
 	}
+
 	return res.LastBlockHeight
 }
 
@@ -23,6 +24,7 @@ func waitForNewBlocks(num uint32) {
 		if lastHeight() > height {
 			break
 		}
+
 		time.Sleep(2 * time.Second)
 	}
 }
@@ -42,10 +44,13 @@ func getBlockAt(height uint32) *pactus.GetBlockResponse {
 		if err != nil {
 			fmt.Printf("getBlockAt err: %s\n", err.Error())
 			time.Sleep(1 * time.Second)
+
 			continue
 		}
+
 		return res
 	}
 	logger.Panic("getBlockAt timeout", "height", height)
+
 	return nil
 }

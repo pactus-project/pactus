@@ -56,13 +56,16 @@ func (s *Server) startGateway() error {
 
 	gwMux := runtime.NewServeMux()
 	err = pactus.RegisterBlockchainHandler(s.ctx, gwMux, conn)
+
 	if err != nil {
 		return err
 	}
+
 	err = pactus.RegisterTransactionHandler(s.ctx, gwMux, conn)
 	if err != nil {
 		return err
 	}
+
 	err = pactus.RegisterNetworkHandler(s.ctx, gwMux, conn)
 	if err != nil {
 		return err
@@ -87,6 +90,7 @@ func (s *Server) startGateway() error {
 	if s.config.Gateway.EnableCORS {
 		gwServer.Handler = allowCORS(gwServer.Handler)
 	}
+
 	return gwServer.ListenAndServe()
 }
 
@@ -96,6 +100,7 @@ func (s *Server) startGateway() error {
 func preflightHandler(w http.ResponseWriter) {
 	headers := []string{"Content-Type", "Accept", "Authorization"}
 	w.Header().Set("Access-Control-Allow-Headers", strings.Join(headers, ","))
+
 	methods := []string{"GET", "HEAD", "POST", "PUT", "DELETE"}
 	w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
 }

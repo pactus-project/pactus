@@ -42,6 +42,7 @@ func (s *CommittedBlock) ToBlock() (*block.Block, error) {
 					Address: trx.Payload().Signer(),
 				}
 			}
+
 			trx.SetPublicKey(pub)
 		}
 	}
@@ -71,6 +72,7 @@ func (s *CommittedTx) ToTx() (*tx.Tx, error) {
 				Address: trx.Payload().Signer(),
 			}
 		}
+
 		trx.SetPublicKey(pub)
 	}
 

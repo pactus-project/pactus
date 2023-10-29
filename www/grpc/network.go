@@ -31,6 +31,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 			s.logger.Error("couldn't marshal agent", "error", err)
 			continue
 		}
+
 		p.Agent = string(bs)
 
 		p.PeerId = []byte(peer.PeerID)

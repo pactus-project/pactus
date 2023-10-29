@@ -12,6 +12,7 @@ func TestDefaultConfigCheck(t *testing.T) {
 	c2 := DefaultConfig()
 	c3 := DefaultConfig()
 	c4 := DefaultConfig()
+
 	assert.NoError(t, c1.BasicCheck())
 
 	c2.ChangeProposerDelta = 0 * time.Second

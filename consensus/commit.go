@@ -20,6 +20,7 @@ func (s *commitState) decide() {
 	votes := precommits.BlockVotes(certBlock.Hash())
 	cert := s.makeCertificate(votes)
 	err := s.state.CommitBlock(certBlock, cert)
+
 	if err != nil {
 		s.logger.Error("committing block failed", "block", certBlock, "error", err)
 	} else {

@@ -27,6 +27,7 @@ func newNotifeeService(host lp2phost.Host, eventChannel chan<- Event,
 		protocolID:   protocolID,
 	}
 	host.Network().Notify(notifee)
+
 	return notifee
 }
 

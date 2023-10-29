@@ -22,6 +22,7 @@ func newAccountStore(db *leveldb.DB) *accountStore {
 	addressMap := make(map[crypto.Address]*account.Account)
 	r := util.BytesPrefix(accountPrefix)
 	iter := db.NewIterator(r, nil)
+
 	for iter.Next() {
 		key := iter.Key()
 		value := iter.Value()
@@ -32,6 +33,7 @@ func newAccountStore(db *leveldb.DB) *accountStore {
 		}
 
 		var addr crypto.Address
+
 		copy(addr[:], key[1:])
 
 		numberMap[acc.Number()] = acc
@@ -78,9 +80,11 @@ func (as *accountStore) updateAccount(batch *leveldb.Batch, addr crypto.Address,
 	if err != nil {
 		logger.Panic("unable to encode account", "error", err)
 	}
+
 	if !as.hasAccount(addr) {
 		as.total++
 	}
+
 	as.addressMap[addr] = acc
 
 	batch.Put(accountKey(addr), data)

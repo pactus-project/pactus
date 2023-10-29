@@ -36,6 +36,7 @@ func setup(t *testing.T) *testData {
 	mockStore.UpdateAccount(crypto.TreasuryAddress, acc)
 
 	totalPower := int64(0)
+
 	for _, val := range committee.Validators() {
 		// For testing purpose, we create some test accounts first.
 		// Account number is the validator number plus one,
@@ -52,6 +53,7 @@ func setup(t *testing.T) *testData {
 		blk, cert := ts.GenerateTestBlock(height)
 		mockStore.SaveBlock(blk, cert)
 	}
+
 	sandbox := NewSandbox(mockStore.LastHeight,
 		mockStore, params, committee, totalPower).(*sandbox)
 	assert.Equal(t, sandbox.CurrentHeight(), lastHeight)
@@ -346,6 +348,7 @@ func TestValidatorDeepCopy(t *testing.T) {
 
 	val0, _ := td.store.ValidatorByNumber(0)
 	addr := val0.Address()
+
 	t.Run("existing validator", func(t *testing.T) {
 		val := td.sandbox.Validator(addr)
 		val.AddToStake(1)
@@ -380,8 +383,11 @@ func TestVerifyProof(t *testing.T) {
 
 	// Try to evaluate a valid sortition
 	var validProof sortition.Proof
+
 	var validLockTime uint32
+
 	var validVal *validator.Validator
+
 	for height := lastHeight; height > 0; height-- {
 		block := td.store.Blocks[height]
 		for i, valKey := range td.valKeys {

@@ -29,7 +29,6 @@ linters:
     - gci  # Consider to enable it (add it to make fmt)
     - godox # Consider to enable it (only show warning)
     - gocritic # Consider to enable it
-    - wsl # Consider to enable it
     - containedctx # Consider to enable it
     - contextcheck # Consider to enable it
     - testpackage # Consider to enable it (??)

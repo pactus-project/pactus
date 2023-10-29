@@ -42,6 +42,7 @@ type MockState struct {
 func MockingState(ts *testsuite.TestSuite) *MockState {
 	committee, valKeys := ts.GenerateTestCommittee(21)
 	genDoc := genesis.TestnetGenesis()
+
 	return &MockState{
 		ts:            ts,
 		TestGenesis:   genDoc,
@@ -106,7 +107,9 @@ func (m *MockState) CommitBlock(b *block.Block, cert *certificate.Certificate) e
 	if cert.Height() != m.TestStore.LastHeight+1 {
 		return fmt.Errorf("invalid height")
 	}
+
 	m.TestStore.SaveBlock(b, cert)
+
 	return nil
 }
 
@@ -153,10 +156,12 @@ func (m *MockState) TotalAccounts() int32 {
 
 func (m *MockState) TotalPower() int64 {
 	p := int64(0)
+
 	m.TestStore.IterateValidators(func(val *validator.Validator) bool {
 		p += val.Power()
 		return false
 	})
+
 	return p
 }
 
@@ -169,6 +174,7 @@ func (m *MockState) CommittedBlock(height uint32) *store.CommittedBlock {
 	defer m.lk.RUnlock()
 
 	b, _ := m.TestStore.Block(height)
+
 	return b
 }
 
@@ -177,6 +183,7 @@ func (m *MockState) CommittedTx(id tx.ID) *store.CommittedTx {
 	defer m.lk.RUnlock()
 
 	trx, _ := m.TestStore.Transaction(id)
+
 	return trx
 }
 
@@ -226,6 +233,7 @@ func (m *MockState) AddPendingTx(trx *tx.Tx) error {
 	if m.TestPool.HasTx(trx.ID()) {
 		return errors.Error(errors.ErrGeneric)
 	}
+
 	return m.TestPool.AppendTx(trx)
 }
 
@@ -233,6 +241,7 @@ func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 	if m.TestPool.HasTx(trx.ID()) {
 		return errors.Error(errors.ErrGeneric)
 	}
+
 	return m.TestPool.AppendTxAndBroadcast(trx)
 }
 

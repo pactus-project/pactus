@@ -196,6 +196,7 @@ func TestVoteMarshaling(t *testing.T) {
 	}
 
 	ts := testsuite.NewTestSuite(t)
+
 	for _, test := range tests {
 		bz1, _ := hex.DecodeString(test.data)
 

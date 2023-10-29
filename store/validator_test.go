@@ -49,6 +49,7 @@ func TestValidatorBatchSaving(t *testing.T) {
 	td := setup(t)
 
 	total := td.RandInt32NonZero(100)
+
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			val, _ := td.GenerateTestValidator(i)
@@ -85,6 +86,7 @@ func TestValidatorByNumber(t *testing.T) {
 	td := setup(t)
 
 	total := td.RandInt32NonZero(100)
+
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			val, _ := td.GenerateTestValidator(i)
@@ -134,6 +136,7 @@ func TestValidatorByAddress(t *testing.T) {
 	td := setup(t)
 
 	total := td.RandInt32NonZero(100)
+
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			val, _ := td.GenerateTestValidator(i)
@@ -176,6 +179,7 @@ func TestIterateValidators(t *testing.T) {
 
 	total := td.RandInt32NonZero(100)
 	hashes1 := []hash.Hash{}
+
 	for i := int32(0); i < total; i++ {
 		val, _ := td.GenerateTestValidator(i)
 		td.store.UpdateValidator(val)
@@ -184,6 +188,7 @@ func TestIterateValidators(t *testing.T) {
 	assert.NoError(t, td.store.WriteBatch())
 
 	hashes2 := []hash.Hash{}
+
 	td.store.IterateValidators(func(val *validator.Validator) bool {
 		hashes2 = append(hashes2, val.Hash())
 		return false
@@ -191,6 +196,7 @@ func TestIterateValidators(t *testing.T) {
 	assert.ElementsMatch(t, hashes1, hashes2)
 
 	stopped := false
+
 	td.store.IterateValidators(func(val *validator.Validator) bool {
 		if val.Hash() == hashes1[0] {
 			stopped = true

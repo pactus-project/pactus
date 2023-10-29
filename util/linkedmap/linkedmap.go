@@ -75,6 +75,7 @@ func (lm *LinkedMap[K, V]) GetNode(key K) *ll.Element[Pair[K, V]] {
 	if found {
 		return ln
 	}
+
 	return nil
 }
 
@@ -84,6 +85,7 @@ func (lm *LinkedMap[K, V]) TailNode() *ll.Element[Pair[K, V]] {
 	if ln == nil {
 		return nil
 	}
+
 	return ln
 }
 
@@ -93,6 +95,7 @@ func (lm *LinkedMap[K, V]) HeadNode() *ll.Element[Pair[K, V]] {
 	if ln == nil {
 		return nil
 	}
+
 	return ln
 }
 
@@ -104,6 +107,7 @@ func (lm *LinkedMap[K, V]) Remove(key K) bool {
 		lm.list.Delete(ln)
 		delete(lm.hashmap, ln.Data.Key)
 	}
+
 	return found
 }
 

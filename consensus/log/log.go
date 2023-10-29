@@ -31,6 +31,7 @@ func (log *Log) HasVote(h hash.Hash) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -89,6 +90,7 @@ func (log *Log) RoundProposal(round int16) *proposal.Proposal {
 	if m == nil {
 		return nil
 	}
+
 	return m.proposal
 }
 
@@ -101,6 +103,7 @@ func (log *Log) MoveToNewHeight(validators []*validator.Validator) {
 	log.roundMessages = make(map[int16]*Messages)
 	log.validators = make(map[crypto.Address]*validator.Validator)
 	log.totalPower = 0
+
 	for _, val := range validators {
 		log.totalPower += val.Power()
 		log.validators[val.Address()] = val
@@ -113,5 +116,6 @@ func (log *Log) CanVote(addr crypto.Address) bool {
 			return true
 		}
 	}
+
 	return false
 }

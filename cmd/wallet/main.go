@@ -31,12 +31,15 @@ func openWallet() (*wallet.Wallet, error) {
 			fmt.Println(err.Error())
 			return nil, err
 		}
+
 		return wallet, err
 	}
+
 	wallet, err := wallet.Open(*pathOpt, *offlineOpt)
 	if err != nil {
 		return nil, err
 	}
+
 	return wallet, nil
 }
 

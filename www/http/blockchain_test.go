@@ -23,6 +23,7 @@ func TestBlockchainInfo(t *testing.T) {
 	assert.Contains(t, w.Body.String(), "10")
 }
 
+//nolint:all
 func TestNetworkInfo(t *testing.T) {
 	td := setup(t)
 
@@ -37,6 +38,7 @@ func TestNetworkInfo(t *testing.T) {
 	//	fmt.Println(w.Body.String())
 }
 
+//nolint:all
 func TestNodeInfo(t *testing.T) {
 	td := setup(t)
 

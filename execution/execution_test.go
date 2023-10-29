@@ -22,6 +22,7 @@ func TestLockTime(t *testing.T) {
 	rndAcc := sb.MakeNewAccount(rndAccAddr)
 	rndAcc.AddToBalance(100 * 1e9)
 	sb.UpdateAccount(rndAccAddr, rndAcc)
+
 	rndValAddr := rndPubKey.ValidatorAddress()
 	rndVal := sb.MakeNewValidator(rndPubKey)
 	rndVal.AddToStake(100 * 1e9)
@@ -244,6 +245,7 @@ func TestFee(t *testing.T) {
 
 	sender := ts.RandAccAddress()
 	receiver := ts.RandAccAddress()
+
 	for i, test := range tests {
 		trx := tx.NewTransferTx(sb.CurrentHeight()+1, sender, receiver, test.amount, test.fee,
 			"testing fee")

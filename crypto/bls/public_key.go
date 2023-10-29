@@ -48,12 +48,14 @@ func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 		return nil, errors.Errorf(errors.ErrInvalidPublicKey,
 			"public key should be %d bytes, but it is %v bytes", PublicKeySize, len(data))
 	}
+
 	g2 := bls12381.NewG2()
 
 	pointG2, err := g2.FromCompressed(data)
 	if err != nil {
 		return nil, errors.Errorf(errors.ErrInvalidPublicKey, err.Error())
 	}
+
 	if g2.IsZero(pointG2) {
 		return nil, errors.Errorf(errors.ErrInvalidPublicKey,
 			"public key is zero")
@@ -97,6 +99,7 @@ func (pub *PublicKey) Encode(w io.Writer) error {
 
 func (pub *PublicKey) Decode(r io.Reader) error {
 	data := make([]byte, PublicKeySize)
+
 	err := encoding.ReadElements(r, data)
 	if err != nil {
 		return err
@@ -106,7 +109,9 @@ func (pub *PublicKey) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+
 	*pub = *p
+
 	return nil
 }
 
@@ -116,6 +121,7 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	if sig == nil {
 		return errors.Error(errors.ErrInvalidSignature)
 	}
+
 	g1 := bls12381.NewG1()
 
 	r := sig.(*Signature)
@@ -123,10 +129,12 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 		return errors.Errorf(errors.ErrInvalidSignature,
 			"signature is zero")
 	}
+
 	q, err := g1.HashToCurve(msg, dst)
 	if err != nil {
 		panic(err)
 	}
+
 	g2one := bls12381.NewG2().New().Set(&bls12381.G2One)
 
 	eng := bls12381.NewEngine()
@@ -136,6 +144,7 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	if !eng.Check() {
 		return crypto.ErrInvalidSignature
 	}
+
 	return nil
 }
 
@@ -148,12 +157,14 @@ func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
 func (pub *PublicKey) AccountAddress() crypto.Address {
 	data := hash.Hash160(hash.Hash256(pub.Bytes()))
 	addr := crypto.NewAddress(crypto.AddressTypeBLSAccount, data)
+
 	return addr
 }
 
 func (pub *PublicKey) ValidatorAddress() crypto.Address {
 	data := hash.Hash160(hash.Hash256(pub.Bytes()))
 	addr := crypto.NewAddress(crypto.AddressTypeValidator, data)
+
 	return addr
 }
 

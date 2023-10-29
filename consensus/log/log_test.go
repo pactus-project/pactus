@@ -24,6 +24,7 @@ func TestAddValidVote(t *testing.T) {
 	committee, valKeys := ts.GenerateTestCommittee(4)
 	log := NewLog()
 	log.MoveToNewHeight(committee.Validators())
+
 	h := ts.RandHeight()
 	r := ts.RandRound()
 
@@ -100,6 +101,7 @@ func TestCanVote(t *testing.T) {
 	log.MoveToNewHeight(committee.Validators())
 
 	addr := ts.RandAccAddress()
+
 	assert.True(t, log.CanVote(valKeys[0].Address()))
 	assert.False(t, log.CanVote(addr))
 }

@@ -115,6 +115,7 @@ func (li *LastInfo) RestoreLastInfo(store store.Store, committeeSize int) (commi
 	lastCert := store.LastCertificate()
 	lastHeight := lastCert.Height()
 	logger.Debug("try to restore last state info", "height", lastHeight)
+
 	sb, err := store.Block(lastHeight)
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve block %v: %w", lastHeight, err)
@@ -142,15 +143,18 @@ func (li *LastInfo) restoreCommittee(store store.Store, lastBlock *block.Block,
 	committeeSize int,
 ) (committee.Committee, error) {
 	joinedVals := make([]*validator.Validator, 0)
+
 	for _, trx := range lastBlock.Transactions() {
 		// If there is any sortition transaction in the last block,
 		// we should update the last committee.
 		if trx.IsSortitionTx() {
 			pld := trx.Payload().(*payload.SortitionPayload)
+
 			val, err := store.Validator(pld.Validator)
 			if err != nil {
 				return nil, fmt.Errorf("unable to retrieve validator %s: %w", pld.Validator, err)
 			}
+
 			joinedVals = append(joinedVals, val)
 		}
 	}
@@ -158,25 +162,31 @@ func (li *LastInfo) restoreCommittee(store store.Store, lastBlock *block.Block,
 	proposerIndex := -1
 	curCommitteeSize := len(li.lastCert.Committers())
 	vals := make([]*validator.Validator, len(li.lastCert.Committers()))
+
 	for i, num := range li.lastCert.Committers() {
 		val, err := store.ValidatorByNumber(num)
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve committee member %v: %w", num, err)
 		}
+
 		if lastBlock.Header().ProposerAddress() == val.Address() {
 			proposerIndex = i
 		}
+
 		vals[i] = val
 	}
+
 	li.lastValidators = vals
 
 	// First, we restore the previous committee; then, we update it to get the latest committee.
 	proposerIndex = (proposerIndex + curCommitteeSize -
 		(int(li.lastCert.Round()) % curCommitteeSize)) % curCommitteeSize
+
 	cmt, err := committee.NewCommittee(vals, committeeSize, vals[proposerIndex].Address())
 	if err != nil {
 		return nil, fmt.Errorf("unable to create last committee: %w", err)
 	}
+
 	cmt.Update(li.lastCert.Round(), joinedVals)
 
 	return cmt, nil

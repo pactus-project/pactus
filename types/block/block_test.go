@@ -255,6 +255,7 @@ func TestCBORMarshaling(t *testing.T) {
 	blk1, _ := ts.GenerateTestBlock(ts.RandHeight())
 	bz1, err := cbor.Marshal(blk1)
 	assert.NoError(t, err)
+
 	var blk2 block.Block
 	err = cbor.Unmarshal(bz1, &blk2)
 	assert.NoError(t, err)
@@ -277,6 +278,7 @@ func TestEncodingBlock(t *testing.T) {
 		w := util.NewFixedWriter(i)
 		assert.Error(t, blk.Encode(w), "encode test %v failed", i)
 	}
+
 	w := util.NewFixedWriter(length)
 	assert.NoError(t, blk.Encode(w))
 
@@ -349,6 +351,7 @@ func TestBlockHash(t *testing.T) {
 	for _, trx := range b.Transactions() {
 		txHashes = append(txHashes, trx.ID())
 	}
+
 	txRoot := simplemerkle.NewTreeFromHashes(txHashes).Root()
 
 	hashData := headerData
@@ -358,6 +361,7 @@ func TestBlockHash(t *testing.T) {
 
 	expected1 := hash.CalcHash(hashData)
 	expected2, _ := hash.FromString("43399fa59adcfb7d8c515460ec9ca27b6a1cb865f5b7d9bde8fe56c18eaec9ab")
+
 	assert.Equal(t, b.Hash(), expected1)
 	assert.Equal(t, b.Hash(), expected2)
 }

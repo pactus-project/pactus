@@ -10,6 +10,7 @@ import (
 
 func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
 	id, err := hex.DecodeString(vars["id"])
 	if err != nil {
 		s.writeError(w, err)
@@ -36,6 +37,7 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 	if trx == nil {
 		return
 	}
+
 	tm.addRowTxID("ID", trx.Id)
 	tm.addRowBytes("Data", trx.Data)
 	tm.addRowInt("Version", int(trx.Version))
@@ -43,6 +45,7 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 	tm.addRowInt("Fee", int(trx.Fee))
 	tm.addRowString("Memo", trx.Memo)
 	tm.addRowString("Payload type", trx.PayloadType.String())
+
 	switch trx.PayloadType {
 	case pactus.PayloadType_TRANSFER_PAYLOAD:
 		pld := trx.Payload.(*pactus.TransactionInfo_Transfer).Transfer
@@ -71,9 +74,11 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 		tm.addRowAccAddress("Receiver", pld.To)
 		tm.addRowAmount("Amount", pld.Amount)
 	}
+
 	if trx.PublicKey != "" {
 		tm.addRowString("PublicKey", trx.PublicKey)
 	}
+
 	if trx.Signature != nil {
 		tm.addRowBytes("Signature", trx.Signature)
 	}

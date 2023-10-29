@@ -36,6 +36,7 @@ type SubLogger struct {
 }
 
 func getLoggersInst() *logger {
+	//nolint:all
 	if globalInst == nil {
 		// Only during tests the globalInst is nil
 
@@ -74,6 +75,7 @@ func InitGlobalLogger(conf *Config) {
 		if err != nil {
 			Warn("invalid default log level", "error", err)
 		}
+
 		log.Logger = log.Logger.Level(lvl)
 	}
 }
@@ -82,6 +84,7 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 	if len(keyvals)%2 != 0 {
 		keyvals = append(keyvals, "!MISSING-VALUE!")
 	}
+
 	for i := 0; i < len(keyvals); i += 2 {
 		key, ok := keyvals[i].(string)
 		if !ok {
@@ -110,6 +113,7 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 			event.Any(key, v)
 		}
 	}
+
 	return event
 }
 
@@ -131,9 +135,11 @@ func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 	if err != nil {
 		Warn("invalid log level", "error", err, "name", name)
 	}
+
 	sl.logger = sl.logger.Level(lvl)
 
 	inst.subs[name] = sl
+
 	return sl
 }
 
@@ -226,9 +232,11 @@ func isNil(i interface{}) bool {
 	if i == nil {
 		return true
 	}
+
 	switch reflect.TypeOf(i).Kind() {
 	case reflect.Ptr:
 		return reflect.ValueOf(i).IsNil()
 	}
+
 	return false
 }

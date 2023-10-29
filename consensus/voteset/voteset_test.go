@@ -19,12 +19,14 @@ func setupCommittee(ts *testsuite.TestSuite, stakes ...int64) (
 	valKeys := []*bls.ValidatorKey{}
 	valsMap := map[crypto.Address]*validator.Validator{}
 	totalPower := int64(0)
+
 	for i, s := range stakes {
 		pub, prv := ts.RandBLSKeyPair()
 		val := validator.NewValidator(pub, int32(i))
 		val.AddToStake(s)
 		valsMap[val.Address()] = val
 		totalPower += val.Power()
+
 		valKeys = append(valKeys, bls.NewValidatorKey(prv))
 	}
 
@@ -153,6 +155,7 @@ func TestDuplicateBlockVote(t *testing.T) {
 	bv1 := vs.BlockVotes(h1)
 	bv2 := vs.BlockVotes(h2)
 	bv3 := vs.BlockVotes(h3)
+
 	assert.Equal(t, bv1[addr], correctVote)
 	assert.Equal(t, bv2[addr], duplicatedVote1)
 	assert.Equal(t, bv3[addr], duplicatedVote2)

@@ -26,6 +26,7 @@ func TestPeerSet(t *testing.T) {
 	pid1 := peer.ID("peer1")
 	pid2 := peer.ID("peer2")
 	pid3 := peer.ID("peer3")
+
 	peerSet.UpdateInfo(pid1, "Moniker1", "Agent1",
 		[]*bls.PublicKey{pk1, pk2}, services.New(services.Network))
 	peerSet.UpdateInfo(pid2, "Moniker2", "Agent2",

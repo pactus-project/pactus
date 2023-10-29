@@ -97,6 +97,7 @@ func newVote(voteType Type, blockHash hash.Hash, height uint32, round int16,
 // SignBytes generates the bytes to be signed for the vote.
 func (v *Vote) SignBytes() []byte {
 	sb := certificate.BlockCertificateSignBytes(v.data.BlockHash, v.data.Height, v.data.Round)
+
 	switch t := v.Type(); t {
 	case VoteTypePrecommit:
 		// Nothing
@@ -191,6 +192,7 @@ func (v *Vote) Verify(pubKey *bls.PublicKey) error {
 			Got:      v.Signer(),
 		}
 	}
+
 	return pubKey.Verify(v.SignBytes(), v.Signature())
 }
 
@@ -199,22 +201,26 @@ func (v *Vote) BasicCheck() error {
 	if !v.data.Type.IsValid() {
 		return errors.Errorf(errors.ErrInvalidVote, "invalid vote type")
 	}
+
 	if v.data.Height <= 0 {
 		return BasicCheckError{
 			Reason: "invalid height",
 		}
 	}
+
 	if v.data.Round < 0 {
 		return BasicCheckError{
 			Reason: "invalid round",
 		}
 	}
+
 	if v.data.Type == VoteTypeCPPreVote ||
 		v.data.Type == VoteTypeCPMainVote ||
 		v.data.Type == VoteTypeCPDecided {
 		if v.data.CPVote == nil {
 			return errors.Errorf(errors.ErrInvalidVote, "should have cp data")
 		}
+
 		if err := v.data.CPVote.BasicCheck(); err != nil {
 			return err
 		}
@@ -223,9 +229,11 @@ func (v *Vote) BasicCheck() error {
 			return errors.Errorf(errors.ErrInvalidVote, "should not have cp data")
 		}
 	}
+
 	if v.Signature() == nil {
 		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
 	}
+
 	return nil
 }
 

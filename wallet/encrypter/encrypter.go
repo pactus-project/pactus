@@ -115,6 +115,7 @@ func (e *Encrypter) Encrypt(message string, password string) (string, error) {
 		if password != "" {
 			return "", ErrInvalidPassword
 		}
+
 		return message, nil
 	}
 
@@ -134,6 +135,7 @@ func (e *Encrypter) Encrypt(message string, password string) (string, error) {
 	switch funcs[0] {
 	case nameFuncArgon2ID:
 		salt := make([]byte, 16)
+
 		_, err := rand.Read(salt)
 		if err != nil {
 			return "", err
@@ -193,6 +195,7 @@ func (e *Encrypter) Decrypt(cipher string, password string) (string, error) {
 		if password != "" {
 			return "", ErrInvalidPassword
 		}
+
 		return cipher, nil
 	}
 

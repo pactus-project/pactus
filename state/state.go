@@ -108,6 +108,7 @@ func (st *state) tryLoadLastInfo() error {
 	// This check is not strictly necessary, since the genesis state is already committed.
 	// However, it is good to perform this check to ensure that the genesis document has not been modified.
 	genStateRoot := st.calculateGenesisStateRootFromGenesisDoc()
+
 	blockOneInfo, err := st.store.Block(1)
 	if err != nil {
 		return err
@@ -123,6 +124,7 @@ func (st *state) tryLoadLastInfo() error {
 	}
 
 	logger.Debug("try to restore the last state")
+
 	committeeInstance, err := st.lastInfo.RestoreLastInfo(st.store, st.params.CommitteeSize)
 	if err != nil {
 		return err
@@ -157,6 +159,7 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 	if err != nil {
 		return err
 	}
+
 	st.committee = committeeInstance
 	st.lastInfo.UpdateBlockTime(genDoc.GenesisTime())
 
@@ -189,10 +192,12 @@ func (st *state) loadMerkels() {
 
 func (st *state) retrieveTotalPower() int64 {
 	totalPower := int64(0)
+
 	st.store.IterateValidators(func(val *validator.Validator) bool {
 		totalPower += val.Power()
 		return false
 	})
+
 	return totalPower
 }
 
@@ -201,6 +206,7 @@ func (st *state) stateRoot() hash.Hash {
 	valRoot := st.validatorMerkle.Root()
 
 	stateRoot := simplemerkle.HashMerkleBranches(&accRoot, &valRoot)
+
 	return *stateRoot
 }
 
@@ -210,9 +216,11 @@ func (st *state) calculateGenesisStateRootFromGenesisDoc() hash.Hash {
 
 	accHashes := make([]hash.Hash, len(accs))
 	valHashes := make([]hash.Hash, len(vals))
+
 	for _, acc := range accs {
 		accHashes[acc.Number()] = acc.Hash()
 	}
+
 	for _, val := range vals {
 		valHashes[val.Number()] = val.Hash()
 	}
@@ -308,6 +316,7 @@ func (st *state) UpdateLastCertificate(v *vote.Vote) error {
 func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee int64) *tx.Tx {
 	lockTime := st.lastInfo.BlockHeight() + 1
 	transaction := tx.NewSubsidyTx(lockTime, rewardAddr, st.params.BlockReward+fee, "")
+
 	return transaction
 }
 
@@ -322,6 +331,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 	// Re-check all transactions strictly and remove invalid ones
 	txs := st.txPool.PrepareBlockTransactions()
 	txs = util.Trim(txs, maxTransactionsPerBlock-1)
+
 	for i := 0; i < txs.Len(); i++ {
 		// Only one subsidy transaction per blk
 		if txs[i].IsSubsidyTx() {
@@ -329,6 +339,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 			st.txPool.RemoveTx(txs[i].ID())
 			txs.Remove(i)
 			i--
+
 			continue
 		}
 
@@ -345,7 +356,9 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		st.logger.Error("no subsidy transaction")
 		return nil, errors.Errorf(errors.ErrInvalidBlock, "no subsidy transaction")
 	}
+
 	txs.Prepend(subsidyTx)
+
 	preSeed := st.lastInfo.SortitionSeed()
 
 	blk := block.MakeBlock(
@@ -375,6 +388,7 @@ func (st *state) ValidateBlock(blk *block.Block) error {
 	}
 
 	sb := st.concreteSandbox()
+
 	return st.executeBlock(blk, sb)
 }
 
@@ -404,6 +418,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 		st.logger.Panic("a possible fork is detected",
 			"our hash", st.lastInfo.BlockHash(),
 			"block hash", blk.Header().PrevBlockHash())
+
 		return errors.Error(errors.ErrInvalidBlock)
 	}
 
@@ -470,6 +485,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 
 func (st *state) evaluateSortition() bool {
 	evaluated := false
+
 	for _, key := range st.valKeys {
 		val, _ := st.store.Validator(key.Address())
 		if val == nil {
@@ -519,6 +535,7 @@ func (st *state) String() string {
 
 func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
 	joiningCommittee := make([]*validator.Validator, 0)
+
 	sb.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
 		if joined {
 			st.logger.Debug("new validator joined", "address", val.Address(), "power", val.Power())
@@ -549,14 +566,18 @@ func (st *state) validateBlockTime(t time.Time) error {
 	if t.Second()%st.params.BlockIntervalInSecond != 0 {
 		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is not rounded", t.String())
 	}
+
 	if t.Before(st.lastInfo.BlockTime()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is before the last block time", t.String())
 	}
+
 	if t.Equal(st.lastInfo.BlockTime()) {
 		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is same as the last block time", t.String())
 	}
+
 	proposeTime := st.proposeNextBlockTime()
 	threshold := st.params.BlockInterval()
+
 	if t.After(proposeTime.Add(threshold)) {
 		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is more than threshold (%s)",
 			t.String(), proposeTime.String())
@@ -587,6 +608,7 @@ func (st *state) proposeNextBlockTime() time.Time {
 		st.logger.Debug("it looks the last block had delay", "delay", now.Sub(timestamp))
 		timestamp = util.RoundNow(st.params.BlockIntervalInSecond)
 	}
+
 	return timestamp
 }
 
@@ -636,6 +658,7 @@ func (st *state) CommittedBlock(height uint32) *store.CommittedBlock {
 		st.logger.Trace("error on retrieving block", "error", err)
 		return nil
 	}
+
 	return b
 }
 
@@ -644,6 +667,7 @@ func (st *state) CommittedTx(id tx.ID) *store.CommittedTx {
 	if err != nil {
 		st.logger.Trace("searching transaction in local store failed", "id", id, "error", err)
 	}
+
 	return transaction
 }
 
@@ -660,6 +684,7 @@ func (st *state) AccountByAddress(addr crypto.Address) *account.Account {
 	if err != nil {
 		st.logger.Trace("error on retrieving account", "error", err)
 	}
+
 	return acc
 }
 
@@ -672,6 +697,7 @@ func (st *state) ValidatorByAddress(addr crypto.Address) *validator.Validator {
 	if err != nil {
 		st.logger.Trace("error on retrieving validator", "error", err)
 	}
+
 	return val
 }
 
@@ -681,6 +707,7 @@ func (st *state) ValidatorByNumber(n int32) *validator.Validator {
 	if err != nil {
 		st.logger.Trace("error on retrieving validator", "error", err)
 	}
+
 	return val
 }
 
@@ -705,6 +732,7 @@ func (st *state) publishEvents(height uint32, blk *block.Block) {
 	if st.eventCh == nil {
 		return
 	}
+
 	blockEvent := event.CreateBlockEvent(blk.Hash(), height)
 	st.eventCh <- blockEvent
 

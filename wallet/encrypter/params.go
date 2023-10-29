@@ -42,12 +42,14 @@ func (p params) GetUint32(key string) uint32 {
 func (p params) GetUint64(key string) uint64 {
 	val, err := strconv.ParseUint(p[key], 10, 64)
 	exitOnErr(err)
+
 	return val
 }
 
 func (p params) GetBytes(key string) []byte {
 	val, err := base64.StdEncoding.DecodeString(p[key])
 	exitOnErr(err)
+
 	return val
 }
 

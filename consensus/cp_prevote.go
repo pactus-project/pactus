@@ -22,6 +22,7 @@ func (s *cpPreVoteState) decide() {
 		// broadcast the initial value
 		prepares := s.log.PrepareVoteSet(s.round)
 		preparesQH := prepares.QuorumHash()
+
 		if preparesQH != nil {
 			s.cpWeakValidity = preparesQH
 			cert := s.makeCertificate(prepares.BlockVotes(*preparesQH))
@@ -33,6 +34,7 @@ func (s *cpPreVoteState) decide() {
 			just := &vote.JustInitOne{}
 			s.signAddCPPreVote(hash.UndefHash, s.cpRound, 1, just)
 		}
+
 		s.scheduleTimeout(queryVoteInitialTimeout, s.height, s.round, tickerTargetQueryVotes)
 	} else {
 		cpMainVotes := s.log.CPMainVoteVoteSet(s.round)

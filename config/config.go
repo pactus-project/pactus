@@ -70,6 +70,7 @@ func (conf *NodeConfig) BasicCheck() error {
 			return errors.Errorf(errors.ErrInvalidConfig, "reward address is not an account address: %s", addrStr)
 		}
 	}
+
 	return nil
 }
 
@@ -165,6 +166,7 @@ func (conf *Config) toTOML() []byte {
 	buf := new(bytes.Buffer)
 	encoder := toml.NewEncoder(buf)
 	encoder.Order(toml.OrderPreserve)
+
 	err := encoder.Encode(conf)
 	if err != nil {
 		panic(err)
@@ -183,9 +185,11 @@ func LoadFromFile(file string, strict bool) (*Config, error) {
 	buf := bytes.NewBuffer(data)
 	decoder := toml.NewDecoder(buf)
 	decoder.Strict(strict)
+
 	if err := decoder.Decode(conf); err != nil {
 		return nil, err
 	}
+
 	return conf, nil
 }
 
@@ -194,26 +198,34 @@ func (conf *Config) BasicCheck() error {
 	if err := conf.Node.BasicCheck(); err != nil {
 		return err
 	}
+
 	if err := conf.Store.BasicCheck(); err != nil {
 		return err
 	}
+
 	if err := conf.TxPool.BasicCheck(); err != nil {
 		return err
 	}
+
 	if err := conf.Consensus.BasicCheck(); err != nil {
 		return err
 	}
+
 	if err := conf.Network.BasicCheck(); err != nil {
 		return err
 	}
+
 	if err := conf.Logger.BasicCheck(); err != nil {
 		return err
 	}
+
 	if err := conf.Sync.BasicCheck(); err != nil {
 		return err
 	}
+
 	if err := conf.Nanomsg.BasicCheck(); err != nil {
 		return err
 	}
+
 	return conf.HTTP.BasicCheck()
 }

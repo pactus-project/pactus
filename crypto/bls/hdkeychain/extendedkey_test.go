@@ -137,6 +137,7 @@ func TestDerivation(t *testing.T) {
 
 	masterKeyG1, _ := NewMaster(testSeed, true)
 	masterKeyG2, _ := NewMaster(testSeed, false)
+
 	for i, test := range tests {
 		extKeyG1, err := masterKeyG1.DerivePath(test.path)
 		require.NoError(t, err)
@@ -259,6 +260,7 @@ func TestGenerateSeed(t *testing.T) {
 			t.Errorf("GenerateSeed #%d (%s): length mismatch -- "+
 				"got %d, want %d", i, test.name, len(seed),
 				test.length)
+
 			continue
 		}
 	}
@@ -330,6 +332,7 @@ func TestKeyToString(t *testing.T) {
 
 	masterKeyG1, _ := NewMaster(testSeed, true)
 	masterKeyG2, _ := NewMaster(testSeed, false)
+
 	for i, test := range tests {
 		extKeyG1, _ := masterKeyG1.DerivePath(test.path)
 		neuterKeyG1 := extKeyG1.Neuter()

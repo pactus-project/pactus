@@ -50,6 +50,7 @@ func PromptPassword(label string, confirmation bool) string {
 			if input != password {
 				return errors.New("passwords do not match")
 			}
+
 			return nil
 		}
 
@@ -74,6 +75,7 @@ func PromptConfirm(label string) bool {
 		IsConfirm: true,
 		Pointer:   promptui.PipeCursor,
 	}
+
 	result, err := prompt.Run()
 	if err != nil {
 		if !errors.Is(promptui.ErrAbort, err) {
@@ -81,12 +83,14 @@ func PromptConfirm(label string) bool {
 		} else {
 			PrintWarnMsgf("Aborted.")
 		}
+
 		os.Exit(1)
 	}
 
 	if len(result) > 0 && strings.ToUpper(result[:1]) == "Y" {
 		return true
 	}
+
 	return false
 }
 
@@ -160,6 +164,7 @@ func PrintErrorMsgf(format string, a ...interface{}) {
 		// Print error msg with red color
 		format = fmt.Sprintf("\033[31m[ERROR] %s\033[0m", format)
 	}
+
 	fmt.Printf(format+"\n", a...)
 }
 
@@ -168,6 +173,7 @@ func PrintSuccessMsgf(format string, a ...interface{}) {
 		// Print successful msg with green color
 		format = fmt.Sprintf("\033[32m%s\033[0m", format)
 	}
+
 	fmt.Printf(format+"\n", a...)
 }
 
@@ -176,6 +182,7 @@ func PrintWarnMsgf(format string, a ...interface{}) {
 		// Print warning msg with yellow color
 		format = fmt.Sprintf("\033[33m%s\033[0m", format)
 	}
+
 	fmt.Printf(format+"\n", a...)
 }
 
@@ -187,6 +194,7 @@ func PrintInfoMsgBoldf(format string, a ...interface{}) {
 	if terminalSupported() {
 		format = fmt.Sprintf("\033[1m%s\033[0m", format)
 	}
+
 	fmt.Printf(format+"\n", a...)
 }
 
@@ -212,6 +220,7 @@ func PrintJSONObject(obj interface{}) {
 func PactusHomeDir() string {
 	home := ""
 	usr, err := user.Current()
+
 	if err == nil {
 		// Running as root, probably inside docker
 		if usr.HomeDir == "/root" {
@@ -220,6 +229,7 @@ func PactusHomeDir() string {
 			home = path.Join(usr.HomeDir, "pactus")
 		}
 	}
+
 	return home
 }
 
@@ -239,18 +249,23 @@ func PactusConfigPath(home string) string {
 func TrapSignal(cleanupFunc func()) {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
 	go func() {
 		sig := <-sigs
+
 		if cleanupFunc != nil {
 			cleanupFunc()
 		}
+
 		exitCode := 128
+
 		switch sig {
 		case syscall.SIGINT:
 			exitCode += int(syscall.SIGINT)
 		case syscall.SIGTERM:
 			exitCode += int(syscall.SIGTERM)
 		}
+
 		os.Exit(exitCode)
 	}()
 }
@@ -258,28 +273,33 @@ func TrapSignal(cleanupFunc func()) {
 func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	mnemonic string, walletPassword string,
 ) ([]string, []string, error) {
-	// To make process faster, we update the password after creating the addresses
 	walletPath := PactusDefaultWalletPath(workingDir)
+	// To make process faster, we update the password after creating the addresses
+
 	walletInstance, err := wallet.Create(walletPath, mnemonic, "", chain)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	validatorAddrs := []string{}
+
 	for i := 0; i < numValidators; i++ {
 		addr, err := walletInstance.NewValidatorAddress(fmt.Sprintf("Validator address %v", i+1))
 		if err != nil {
 			return nil, nil, err
 		}
+
 		validatorAddrs = append(validatorAddrs, addr)
 	}
 
 	rewardAddrs := []string{}
+
 	for i := 0; i < numValidators; i++ {
 		addr, err := walletInstance.NewBLSAccountAddress(fmt.Sprintf("Reward address %v", i+1))
 		if err != nil {
 			return nil, nil, err
 		}
+
 		rewardAddrs = append(rewardAddrs, addr)
 	}
 
@@ -341,6 +361,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 
 	confPath := PactusConfigPath(workingDir)
+
 	conf, err := config.LoadFromFile(confPath, true)
 	if err != nil {
 		PrintWarnMsgf("Unable to load the config: %s", err)
@@ -355,6 +376,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		// Let's create a backup of the config
 		confBackupPath := fmt.Sprintf("%v_bak_%s", confPath, time.Now().Format("2006_01_02"))
 		err = os.Rename(confPath, confBackupPath)
+
 		if err != nil {
 			return nil, nil, err
 		}
@@ -381,6 +403,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		}
 
 		PrintSuccessMsgf("Config restored to the default values")
+
 		conf, _ = config.LoadFromFile(confPath, true) // This time it should be OK
 	}
 
@@ -390,38 +413,48 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 
 	walletPath := PactusDefaultWalletPath(workingDir)
+
 	walletInstance, err := wallet.Open(walletPath, true)
 	if err != nil {
 		return nil, nil, err
 	}
+
 	addrLabels := walletInstance.AddressInfos()
 
 	if len(addrLabels) < conf.Node.NumValidators {
 		return nil, nil, fmt.Errorf("not enough addresses in wallet")
 	}
+
 	validatorAddrs := make([]string, conf.Node.NumValidators)
+
 	for i := 0; i < conf.Node.NumValidators; i++ {
 		valAddr, _ := crypto.AddressFromString(addrLabels[i].Address)
 		if !valAddr.IsValidatorAddress() {
 			return nil, nil, fmt.Errorf("invalid validator address: %s", addrLabels[i].Address)
 		}
+
 		validatorAddrs[i] = valAddr.String()
 	}
+
 	valKeys := make([]*bls.ValidatorKey, conf.Node.NumValidators)
 	password, ok := passwordFetcher(walletInstance)
+
 	if !ok {
 		return nil, nil, fmt.Errorf("aborted")
 	}
+
 	prvKeys, err := walletInstance.PrivateKeys(password, validatorAddrs)
 	if err != nil {
 		return nil, nil, err
 	}
+
 	for i, prv := range prvKeys {
 		valKeys[i] = bls.NewValidatorKey(prv.(*bls.PrivateKey))
 	}
 
 	// Create reward addresses
 	rewardAddrs := make([]crypto.Address, 0, conf.Node.NumValidators)
+
 	if len(conf.Node.RewardAddresses) != 0 {
 		for _, addrStr := range conf.Node.RewardAddresses {
 			addr, _ := crypto.AddressFromString(addrStr)
@@ -438,6 +471,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 			}
 		}
 	}
+
 	if len(rewardAddrs) != conf.Node.NumValidators {
 		return nil, nil, fmt.Errorf("not enough addresses in wallet")
 	}
@@ -465,6 +499,7 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	}
 
 	vals := make([]*validator.Validator, 4)
+
 	for i := 0; i < 4; i++ {
 		info := w.AddressInfo(w.AddressInfos()[i].Address)
 		pub, _ := bls.PublicKeyFromString(info.PublicKey)
@@ -475,5 +510,6 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	params := param.DefaultParams()
 	params.BlockVersion = 0
 	gen := genesis.MakeGenesis(util.RoundNow(60), accs, vals, params)
+
 	return gen
 }

@@ -38,11 +38,13 @@ func (v *cpVote) BasicCheck() error {
 	if v.Round < 0 {
 		return errors.Error(errors.ErrInvalidRound)
 	}
+
 	if v.Value < CPValueZero ||
 		v.Value > CPValueAbstain {
 		// Invalid values
 		return errors.Errorf(errors.ErrInvalidVote, "cp value should be 0, 1 or abstain")
 	}
+
 	return v.Just.BasicCheck()
 }
 
@@ -63,12 +65,15 @@ type _JustMainVoteConflict struct {
 // MarshalCBOR marshals the cpVote into CBOR format.
 func (v *cpVote) MarshalCBOR() ([]byte, error) {
 	justData := []byte{}
+
 	if v.Just.Type() == JustTypeMainVoteConflict {
 		conflictJust := v.Just.(*JustMainVoteConflict)
+
 		data0, err := cbor.Marshal(conflictJust.Just0)
 		if err != nil {
 			return nil, err
 		}
+
 		data1, err := cbor.Marshal(conflictJust.Just1)
 		if err != nil {
 			return nil, err
@@ -80,10 +85,12 @@ func (v *cpVote) MarshalCBOR() ([]byte, error) {
 			Just1Type: conflictJust.Just1.Type(),
 			Just1Data: data1,
 		}
+
 		data, err := cbor.Marshal(_conflictingJust)
 		if err != nil {
 			return nil, err
 		}
+
 		justData = append(justData, data...)
 	} else {
 		data, err := cbor.Marshal(v.Just)
@@ -106,6 +113,7 @@ func (v *cpVote) MarshalCBOR() ([]byte, error) {
 // UnmarshalCBOR unmarshals the cpVote from CBOR format.
 func (v *cpVote) UnmarshalCBOR(bs []byte) error {
 	var _cp _cpVote
+
 	err := cbor.Unmarshal(bs, &_cp)
 	if err != nil {
 		return err
@@ -118,6 +126,7 @@ func (v *cpVote) UnmarshalCBOR(bs []byte) error {
 
 	if _cp.JustType == JustTypeMainVoteConflict {
 		_conflictingJust := &_JustMainVoteConflict{}
+
 		err := cbor.Unmarshal(_cp.JustData, _conflictingJust)
 		if err != nil {
 			return err
@@ -127,6 +136,7 @@ func (v *cpVote) UnmarshalCBOR(bs []byte) error {
 		if err != nil {
 			return err
 		}
+
 		err = cbor.Unmarshal(_conflictingJust.Just0Data, just0)
 		if err != nil {
 			return err
@@ -136,6 +146,7 @@ func (v *cpVote) UnmarshalCBOR(bs []byte) error {
 		if err != nil {
 			return err
 		}
+
 		err = cbor.Unmarshal(_conflictingJust.Just1Data, just1)
 		if err != nil {
 			return err

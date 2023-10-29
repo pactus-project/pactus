@@ -51,6 +51,7 @@ func (m *BlocksResponseMessage) To() uint32 {
 	if len(m.CommittedBlocksData) == 0 {
 		return 0
 	}
+
 	return m.From + m.Count() - 1
 }
 

@@ -53,9 +53,11 @@ func (h *history) addActivity(addr string, amount int64, trx *pactus.GetTransact
 		h.Activities = map[string][]activity{}
 		h.Transactions = map[string]transaction{}
 	}
+
 	if len(h.Activities[addr]) == 0 {
 		h.Activities[addr] = make([]activity, 0, 1)
 	}
+
 	act := activity{
 		TxID:   hex.EncodeToString(trx.Transaction.Id),
 		Amount: amount,
@@ -78,9 +80,11 @@ func (h *history) addPending(addr string, amount int64, txID hash.Hash, data []b
 	if h.Pendings == nil {
 		h.Pendings = map[string][]pending{}
 	}
+
 	if len(h.Pendings[addr]) == 0 {
 		h.Pendings[addr] = make([]pending, 0, 1)
 	}
+
 	pnd := pending{
 		TxID:   txID.String(),
 		Amount: amount,
@@ -93,6 +97,7 @@ func (h *history) getAddrHistory(addr string) []HistoryInfo {
 	addrActs := h.Activities[addr]
 	addrPnds := h.Pendings[addr]
 	history := make([]HistoryInfo, 0, len(addrActs)+len(addrPnds))
+
 	for _, pnd := range addrPnds {
 		history = append(history, HistoryInfo{
 			Amount: pnd.Amount,

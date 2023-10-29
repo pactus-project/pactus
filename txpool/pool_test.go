@@ -61,6 +61,7 @@ func (td *testData) shouldPublishTransaction(t *testing.T, id tx.ID) {
 			if msg.Type() == message.TypeTransactions {
 				m := msg.(*message.TransactionsMessage)
 				assert.Equal(t, m.Transactions[0].ID(), id)
+
 				return
 			}
 		}
