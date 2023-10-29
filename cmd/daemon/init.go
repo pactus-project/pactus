@@ -34,15 +34,18 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			cmd.PrintErrorMsgf("The working directory is not empty: %s", workingDir)
 			return
 		}
+
 		var mnemonic string
 		if *restoreOpt == "" {
 			mnemonic, _ = wallet.GenerateMnemonic(128)
+
 			cmd.PrintLine()
 			cmd.PrintInfoMsgf("Your wallet seed is:")
 			cmd.PrintInfoMsgBoldf("   " + mnemonic)
 			cmd.PrintLine()
 			cmd.PrintWarnMsgf("Write down this seed on a piece of paper to recover your validator key in future.")
 			cmd.PrintLine()
+
 			confirmed := cmd.PromptConfirm("Do you want to continue")
 			if !confirmed {
 				return
@@ -52,6 +55,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			err := wallet.CheckMnemonic(*restoreOpt)
 			cmd.FatalErrorCheck(err)
 		}
+
 		cmd.PrintLine()
 		cmd.PrintInfoMsgf("Enter a password for wallet")
 		password := cmd.PromptPassword("Password", true)
@@ -67,20 +71,25 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		if *testnetOpt {
 			chain = genesis.Testnet
 		}
+
 		if *localnetOpt {
 			chain = genesis.Localnet
 		}
+
 		validatorAddrs, rewardAddrs, err := cmd.CreateNode(numValidators, chain, workingDir, mnemonic, password)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
 		cmd.PrintInfoMsgBoldf("Validator addresses:")
+
 		for i, addr := range validatorAddrs {
 			cmd.PrintInfoMsgf("%v- %s", i+1, addr)
 		}
+
 		cmd.PrintLine()
 
 		cmd.PrintInfoMsgBoldf("Reward addresses:")
+
 		for i, addr := range rewardAddrs {
 			cmd.PrintInfoMsgf("%v- %s", i+1, addr)
 		}

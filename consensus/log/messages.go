@@ -42,6 +42,7 @@ func (m *Messages) HasVote(h hash.Hash) bool {
 			return true
 		}
 	}
+
 	return false
 }
 

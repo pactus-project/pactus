@@ -37,23 +37,30 @@ func (s *Server) StartServer() error {
 	if !s.config.Enable {
 		return nil
 	}
+
 	go func() {
 		var publisher mangos.Socket
+
 		var err error
 		if publisher, err = pub.NewSocket(); err != nil {
 			s.logger.Error("error on nanomsg creating new socket", "error", err)
 		}
+
 		if err = publisher.Listen(s.config.Listen); err != nil {
 			s.logger.Error("error on nanomsg publisher binding", "error", err)
 		}
+
 		s.publisher = publisher
+
 		go s.eventLoop()
 	}()
+
 	return nil
 }
 
 func (s *Server) StopServer() {
 	s.ctx.Done()
+
 	if s.listener != nil {
 		s.listener.Close()
 	}
@@ -67,11 +74,13 @@ func (s *Server) eventLoop() {
 
 		case e := <-s.eventCh:
 			w := bytes.NewBuffer(e)
+
 			err := encoding.WriteElement(w, s.seqNum)
 			if err != nil {
 				s.logger.Error("error on encoding event", "error", err)
 				return
 			}
+
 			err = s.publisher.Send(w.Bytes())
 			if err != nil {
 				s.logger.Error("error on emitting event", "error", err)

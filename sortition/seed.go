@@ -36,6 +36,7 @@ func (s *VerifiableSeed) GenerateNext(prv *bls.PrivateKey) VerifiableSeed {
 	h := hash.CalcHash(s[:])
 	sig := prv.Sign(h.Bytes())
 	newSeed, _ := VerifiableSeedFromBytes(sig.Bytes())
+
 	return newSeed
 }
 
@@ -44,6 +45,8 @@ func (s *VerifiableSeed) Verify(public *bls.PublicKey, prevSeed VerifiableSeed) 
 	if err != nil {
 		return false
 	}
+
 	h := hash.CalcHash(prevSeed[:])
+
 	return public.Verify(h.Bytes(), sig) == nil
 }

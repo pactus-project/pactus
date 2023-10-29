@@ -66,6 +66,7 @@ func (s *Server) StartServer() error {
 		chain:   network,
 		logger:  s.logger,
 	}
+
 	pactus.RegisterBlockchainServer(grpcServer, blockchainServer)
 	pactus.RegisterTransactionServer(grpcServer, transactionServer)
 	pactus.RegisterNetworkServer(grpcServer, networkServer)
@@ -79,6 +80,7 @@ func (s *Server) StartServer() error {
 	s.listener = listener
 	s.address = listener.Addr().String()
 	s.grpc = grpcServer
+
 	go func() {
 		if err := s.grpc.Serve(listener); err != nil {
 			s.logger.Error("error on grpc serve", "error", err)

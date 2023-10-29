@@ -25,10 +25,13 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		if mnemonic == "" {
 			mnemonic = cmd.PromptInput("Seed")
 		}
+
 		chainType := genesis.Mainnet
+
 		if *testnetOpt {
 			chainType = genesis.Testnet
 		}
+
 		wallet, err := wallet.Create(*pathOpt, mnemonic, *passOpt, chainType)
 		cmd.FatalErrorCheck(err)
 

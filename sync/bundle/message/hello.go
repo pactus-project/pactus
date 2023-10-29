@@ -44,10 +44,13 @@ func (m *HelloMessage) BasicCheck() error {
 	if m.Signature == nil {
 		return errors.Error(errors.ErrInvalidSignature)
 	}
+
 	if len(m.PublicKeys) == 0 {
 		return errors.Error(errors.ErrInvalidPublicKey)
 	}
+
 	aggPublicKey := bls.PublicKeyAggregate(m.PublicKeys...)
+
 	return aggPublicKey.Verify(m.SignBytes(), m.Signature)
 }
 
@@ -71,10 +74,12 @@ func (m *HelloMessage) Sign(valKeys []*bls.ValidatorKey) {
 	signatures := make([]*bls.Signature, len(valKeys))
 	publicKeys := make([]*bls.PublicKey, len(valKeys))
 	signBytes := m.SignBytes()
+
 	for i, key := range valKeys {
 		signatures[i] = key.Sign(signBytes)
 		publicKeys[i] = key.PublicKey()
 	}
+
 	aggSignature := bls.SignatureAggregate(signatures...)
 	m.Signature = aggSignature
 	m.PublicKeys = publicKeys

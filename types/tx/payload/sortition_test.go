@@ -93,6 +93,7 @@ func TestSortitionDecoding(t *testing.T) {
 		pld := SortitionPayload{}
 		r := util.NewFixedReader(len(test.raw), test.raw)
 		err := pld.Decode(r)
+
 		if test.readErr != nil {
 			assert.ErrorIs(t, err, test.readErr)
 		} else {

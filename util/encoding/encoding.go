@@ -45,11 +45,13 @@ func (l binaryFreeList) Borrow() []byte {
 	default:
 		buf = make([]byte, 8)
 	}
+
 	return buf[:8]
 }
 
 // Return puts the provided byte slice back on the free list.  The buffer MUST
 // have been obtained via the Borrow function and therefore have a cap of 8.
+//nolint:all
 func (l binaryFreeList) Return(buf []byte) {
 	select {
 	case l <- buf:
@@ -66,8 +68,10 @@ func (l binaryFreeList) Uint8(r io.Reader, val *uint8) error {
 		l.Return(buf)
 		return err
 	}
+
 	*val = buf[0]
 	l.Return(buf)
+
 	return nil
 }
 
@@ -79,8 +83,10 @@ func (l binaryFreeList) Uint16(r io.Reader, val *uint16) error {
 		l.Return(buf)
 		return err
 	}
+
 	*val = binary.LittleEndian.Uint16(buf)
 	l.Return(buf)
+
 	return nil
 }
 
@@ -92,8 +98,10 @@ func (l binaryFreeList) Uint32(r io.Reader, val *uint32) error {
 		l.Return(buf)
 		return err
 	}
+
 	*val = binary.LittleEndian.Uint32(buf)
 	l.Return(buf)
+
 	return nil
 }
 
@@ -105,8 +113,10 @@ func (l binaryFreeList) Uint64(r io.Reader, val *uint64) error {
 		l.Return(buf)
 		return err
 	}
+
 	*val = binary.LittleEndian.Uint64(buf)
 	l.Return(buf)
+
 	return nil
 }
 
@@ -117,6 +127,7 @@ func (l binaryFreeList) PutUint8(w io.Writer, val uint8) error {
 	buf[0] = val
 	_, err := w.Write(buf)
 	l.Return(buf)
+
 	return err
 }
 
@@ -128,6 +139,7 @@ func (l binaryFreeList) PutUint16(w io.Writer, val uint16) error {
 	binary.LittleEndian.PutUint16(buf, val)
 	_, err := w.Write(buf)
 	l.Return(buf)
+
 	return err
 }
 
@@ -139,6 +151,7 @@ func (l binaryFreeList) PutUint32(w io.Writer, val uint32) error {
 	binary.LittleEndian.PutUint32(buf, val)
 	_, err := w.Write(buf)
 	l.Return(buf)
+
 	return err
 }
 
@@ -150,6 +163,7 @@ func (l binaryFreeList) PutUint64(w io.Writer, val uint64) error {
 	binary.LittleEndian.PutUint64(buf, val)
 	_, err := w.Write(buf)
 	l.Return(buf)
+
 	return err
 }
 
@@ -163,10 +177,12 @@ func ReadElement(r io.Reader, element interface{}) error {
 	// Attempt to read the element based on the concrete type via fast
 	// type assertions first.
 	var err error
+
 	switch e := element.(type) {
 	case *bool:
 		rv := uint8(0)
 		err = binarySerializer.Uint8(r, &rv)
+
 		if rv == 0x00 {
 			*e = false
 		} else {
@@ -216,6 +232,7 @@ func ReadElements(r io.Reader, elements ...interface{}) error {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -224,6 +241,7 @@ func WriteElement(w io.Writer, element interface{}) error {
 	// Attempt to write the element based on the concrete type via fast
 	// type assertions first.
 	var err error
+
 	switch e := element.(type) {
 	case bool:
 		if e {
@@ -267,6 +285,7 @@ func WriteElements(w io.Writer, elements ...interface{}) error {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -274,15 +293,19 @@ func WriteElements(w io.Writer, elements ...interface{}) error {
 func ReadVarInt(r io.Reader) (uint64, error) {
 	bits := 64
 	write := uint64(0)
+
 	for shift := 0; ; shift += 7 {
 		b := uint8(0)
+
 		err := binarySerializer.Uint8(r, &b)
 		if err != nil {
 			return 0, err
 		}
+
 		if shift+7 >= bits && b >= 1<<(bits-shift) {
 			return uint64(0), ErrOverflow
 		}
+
 		if b == 0 && shift != 0 {
 			return uint64(0), ErrNonCanonical
 		}
@@ -294,6 +317,7 @@ func ReadVarInt(r io.Reader) (uint64, error) {
 			break
 		}
 	}
+
 	return write, nil
 }
 
@@ -303,12 +327,15 @@ func WriteVarInt(w io.Writer, val uint64) error {
 	// Make sure that there is one after this
 	for val >= 0x80 {
 		n := (uint8(val) & 0x7f) | 0x80
+
 		err := binarySerializer.PutUint8(w, n)
 		if err != nil {
 			return err
 		}
+
 		val >>= 7 // It should be in multiples of 7, this should just get the next part
 	}
+
 	return binarySerializer.PutUint8(w, uint8(val))
 }
 
@@ -334,6 +361,7 @@ func VarIntSerializeSize(val uint64) int {
 	} else if val >= 0x80 {
 		return 2
 	}
+
 	return 1
 }
 
@@ -370,10 +398,12 @@ func ReadVarString(r io.Reader) (string, error) {
 	}
 
 	buf := make([]byte, count)
+
 	_, err = io.ReadFull(r, buf)
 	if err != nil {
 		return "", err
 	}
+
 	return string(buf), nil
 }
 
@@ -385,7 +415,9 @@ func WriteVarString(w io.Writer, str string) error {
 	if err != nil {
 		return err
 	}
+
 	_, err = w.Write([]byte(str))
+
 	return err
 }
 
@@ -409,10 +441,12 @@ func ReadVarBytes(r io.Reader) ([]byte, error) {
 	}
 
 	b := make([]byte, count)
+
 	_, err = io.ReadFull(r, b)
 	if err != nil {
 		return nil, err
 	}
+
 	return b, nil
 }
 
@@ -420,11 +454,13 @@ func ReadVarBytes(r io.Reader) ([]byte, error) {
 // containing the number of bytes, followed by the bytes themselves.
 func WriteVarBytes(w io.Writer, bytes []byte) error {
 	slen := uint64(len(bytes))
+
 	err := WriteVarInt(w, slen)
 	if err != nil {
 		return err
 	}
 
 	_, err = w.Write(bytes)
+
 	return err
 }

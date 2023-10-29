@@ -67,6 +67,7 @@ func (mock *MockNetwork) SendTo(data []byte, pid lp2pcore.PeerID) error {
 		Data:   data,
 		Target: &pid,
 	}
+
 	return nil
 }
 
@@ -75,6 +76,7 @@ func (mock *MockNetwork) Broadcast(data []byte, _ TopicID) error {
 		Data:   data,
 		Target: nil, // Send to all
 	}
+
 	return nil
 }
 
@@ -113,6 +115,7 @@ func (mock *MockNetwork) IsClosed(pid peer.ID) bool {
 			return false
 		}
 	}
+
 	return true
 }
 

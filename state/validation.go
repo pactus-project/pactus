@@ -50,6 +50,7 @@ func (st *state) validatePrevCertificate(cert *certificate.Certificate, blockHas
 // validateCertificate validates certificate for the current height.
 func (st *state) validateCertificate(cert *certificate.Certificate, blockHash hash.Hash) error {
 	signBytes := certificate.BlockCertificateSignBytes(blockHash, cert.Height(), cert.Round())
+
 	err := cert.Validate(st.lastInfo.BlockHeight()+1, st.committee.Validators(), signBytes)
 	if err != nil {
 		return err

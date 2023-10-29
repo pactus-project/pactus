@@ -98,6 +98,7 @@ func (sb *sandbox) Account(addr crypto.Address) *account.Account {
 	if err != nil {
 		return nil
 	}
+
 	sb.accounts[addr] = &sandboxAccount{
 		account: acc,
 	}
@@ -119,6 +120,7 @@ func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 		updated: true,
 	}
 	sb.totalAccounts++
+
 	return acc.Clone()
 }
 
@@ -133,6 +135,7 @@ func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	if !ok {
 		sb.shouldPanicForUnknownAddress()
 	}
+
 	s.account = acc
 	s.updated = true
 }
@@ -158,9 +161,11 @@ func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
 	if err != nil {
 		return nil
 	}
+
 	sb.validators[addr] = &sandboxValidator{
 		validator: val,
 	}
+
 	return val.Clone()
 }
 
@@ -184,6 +189,7 @@ func (sb *sandbox) IsJoinedCommittee(addr crypto.Address) bool {
 	if ok {
 		return s.joined
 	}
+
 	return false
 }
 
@@ -202,6 +208,7 @@ func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 		updated:   true,
 	}
 	sb.totalValidators++
+
 	return val.Clone()
 }
 
@@ -214,6 +221,7 @@ func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 
 	addr := val.Address()
 	s, ok := sb.validators[addr]
+
 	if !ok {
 		sb.shouldPanicForUnknownAddress()
 	}
@@ -281,11 +289,14 @@ func (sb *sandbox) VerifyProof(blockHeight uint32, proof sortition.Proof, val *v
 	if err != nil {
 		return false
 	}
+
 	blk, err := committedBlock.ToBlock()
 	if err != nil {
 		return false
 	}
+
 	seed := blk.Header().SortitionSeed()
+
 	return sortition.VerifyProof(seed, proof, val.PublicKey(), sb.totalPower, val.Power())
 }
 

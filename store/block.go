@@ -37,6 +37,7 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.
 			logger.Panic("previous block not found", "height", height)
 		}
 	}
+
 	if bs.hasBlock(height) {
 		logger.Panic("duplicated block", "height", height)
 	}
@@ -44,24 +45,31 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.
 	blockHash := blk.Hash()
 	regs := make([]blockRegion, blk.Transactions().Len())
 	w := bytes.NewBuffer(make([]byte, 0, blk.SerializeSize()+hash.HashSize))
+
 	err := encoding.WriteElement(w, &blockHash)
 	if err != nil {
 		panic(err) // Should we panic?
 	}
+
 	err = blk.Header().Encode(w)
+
 	if err != nil {
 		panic(err) // Should we panic?
 	}
+
 	if blk.PrevCertificate() != nil {
 		err = blk.PrevCertificate().Encode(w)
 		if err != nil {
 			panic(err) // Should we panic?
 		}
 	}
+
 	err = encoding.WriteVarInt(w, uint64(blk.Transactions().Len()))
+
 	if err != nil {
 		panic(err) // Should we panic?
 	}
+
 	for i, trx := range blk.Transactions() {
 		offset := w.Len()
 		regs[i].height = height
@@ -83,10 +91,12 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.
 		if err != nil {
 			panic(err) // Should we panic?
 		}
+
 		regs[i].length = uint32(w.Len() - offset)
 
 		trx.SetPublicKey(pubKey)
 	}
+
 	blockKey := blockKey(height)
 	blockHashKey := blockHashKey(blockHash)
 
@@ -110,6 +120,7 @@ func (bs *blockStore) blockHeight(h hash.Hash) uint32 {
 	if err != nil {
 		return 0
 	}
+
 	return util.SliceToUint32(data)
 }
 
@@ -118,6 +129,7 @@ func (bs *blockStore) hasBlock(height uint32) bool {
 	if err != nil {
 		return false
 	}
+
 	return has
 }
 
@@ -126,5 +138,6 @@ func (bs *blockStore) hasPublicKey(addr crypto.Address) bool {
 	if err != nil {
 		return false
 	}
+
 	return has
 }

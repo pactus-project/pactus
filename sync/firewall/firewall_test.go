@@ -41,6 +41,7 @@ func setup(t *testing.T) *testData {
 	conf.Enabled = true
 	firewall := NewFirewall(conf, net, peerSet, st, subLogger)
 	assert.NotNil(t, firewall)
+
 	badPeerID := ts.RandPeerID()
 	goodPeerID := ts.RandPeerID()
 	unknownPeerID := ts.RandPeerID()
@@ -208,10 +209,12 @@ func TestUpdateLastReceived(t *testing.T) {
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	d, _ := bdl.Encode()
 	now := time.Now().UnixNano()
+
 	assert.Nil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID, td.goodPeerID))
 
 	peerUnknown := td.firewall.peerSet.GetPeer(td.unknownPeerID)
 	peerGood := td.firewall.peerSet.GetPeer(td.goodPeerID)
+
 	assert.GreaterOrEqual(t, peerUnknown.LastReceived.UnixNano(), now)
 	assert.GreaterOrEqual(t, peerGood.LastReceived.UnixNano(), now)
 }

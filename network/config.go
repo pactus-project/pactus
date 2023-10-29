@@ -65,6 +65,7 @@ func validateAddresses(address []string) error {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -75,11 +76,14 @@ func (conf *Config) BasicCheck() error {
 			return errors.Errorf(errors.ErrInvalidConfig, "at least one relay address should be defined")
 		}
 	}
+
 	if err := validateAddresses(conf.RelayAddrs); err != nil {
 		return err
 	}
+
 	if err := validateAddresses(conf.Listens); err != nil {
 		return err
 	}
+
 	return validateAddresses(conf.BootstrapAddrs)
 }

@@ -11,6 +11,7 @@ import (
 func Uint16ToSlice(n uint16) []byte {
 	bs := make([]byte, 2)
 	binary.LittleEndian.PutUint16(bs, n)
+
 	return bs
 }
 
@@ -29,6 +30,7 @@ func SliceToInt16(bs []byte) int16 {
 func Uint32ToSlice(n uint32) []byte {
 	bs := make([]byte, 4)
 	binary.LittleEndian.PutUint32(bs, n)
+
 	return bs
 }
 
@@ -47,6 +49,7 @@ func SliceToInt32(bs []byte) int32 {
 func Uint64ToSlice(n uint64) []byte {
 	bs := make([]byte, 8)
 	binary.LittleEndian.PutUint64(bs, n)
+
 	return bs
 }
 
@@ -71,18 +74,23 @@ func StringToBytes(s string) []byte {
 func CompressBuffer(s []byte) ([]byte, error) {
 	var b bytes.Buffer
 	gz := gzip.NewWriter(&b)
+
 	if _, err := gz.Write(s); err != nil {
 		return nil, err
 	}
+
 	if err := gz.Close(); err != nil {
 		return nil, err
 	}
+
 	return b.Bytes(), nil
 }
 
 func DecompressBuffer(s []byte) ([]byte, error) {
 	b := bytes.NewBuffer(s)
+
 	var r io.Reader
+
 	r, err := gzip.NewReader(b)
 	if err != nil {
 		return nil, err
@@ -107,18 +115,21 @@ func DecompressBuffer(s []byte) ([]byte, error) {
 // .
 func Subtracts(slice1, slice2 []int32) []int32 {
 	sub := []int32{}
+
 	if slice2 == nil {
 		return slice1
 	}
 
 	for _, s1 := range slice1 {
 		found := false
+
 		for _, s2 := range slice2 {
 			if s1 == s2 {
 				found = true
 				break
 			}
 		}
+
 		if !found {
 			sub = append(sub, s1)
 		}
@@ -134,6 +145,7 @@ func Contains[T comparable](slice []T, item T) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -143,11 +155,13 @@ func Equal[T comparable](a, b []T) bool {
 	if len(a) != len(b) {
 		return false
 	}
+
 	for i, v := range a {
 		if v != b[i] {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -199,16 +213,19 @@ func Extend[T any](s *[]T, n int) {
 func IsSubset[T comparable](parentSet, subSet []T) bool {
 	for i := 0; i < len(subSet); i++ {
 		matchFound := false
+
 		for j := 0; j < len(parentSet); j++ {
 			if subSet[i] == parentSet[j] {
 				matchFound = true
 				break
 			}
 		}
+
 		if !matchFound {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -220,6 +237,7 @@ func RemoveFirstOccurrenceOf[T comparable](s []T, e T) ([]T, bool) {
 			return append(s[:i], s[i+1:]...), true
 		}
 	}
+
 	return s, false
 }
 
@@ -227,5 +245,6 @@ func Trim[T any](s []T, newLength int) []T {
 	if newLength <= len(s) {
 		return s[:newLength]
 	}
+
 	return s
 }

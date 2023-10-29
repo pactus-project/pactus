@@ -38,9 +38,11 @@ func (b *Bundle) BasicCheck() error {
 	if err := b.Message.BasicCheck(); err != nil {
 		return err
 	}
+
 	if err := b.Initiator.Validate(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid initiator peer id: %v", err)
 	}
+
 	return nil
 }
 
@@ -84,15 +86,18 @@ func (b *Bundle) Encode() ([]byte, error) {
 
 func (b *Bundle) Decode(r io.Reader) (int, error) {
 	var bdl _Bundle
+
 	d := cbor.NewDecoder(r)
 	err := d.Decode(&bdl)
 	bytesRead := d.NumBytesRead()
+
 	if err != nil {
 		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 
 	data := bdl.MessageData
 	msg := message.MakeMessage(bdl.MessageType)
+
 	if msg == nil {
 		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, "invalid data")
 	}
@@ -102,11 +107,13 @@ func (b *Bundle) Decode(r io.Reader) (int, error) {
 		if err != nil {
 			return bytesRead, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 		}
+
 		data = c
 	}
 
 	b.Flags = bdl.Flags
 	b.Initiator = bdl.Initiator
 	b.Message = msg
+
 	return bytesRead, cbor.Unmarshal(data, msg)
 }

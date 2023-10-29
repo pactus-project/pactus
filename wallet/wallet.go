@@ -56,6 +56,7 @@ func Open(walletPath string, offline bool) (*Wallet, error) {
 	}
 
 	store := new(store)
+
 	err = store.Save(data)
 	if err != nil {
 		return nil, err
@@ -75,6 +76,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType) (*Wa
 	}
 
 	var coinType uint32
+
 	switch chain {
 	case genesis.Mainnet:
 		coinType = 21888
@@ -91,18 +93,22 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType) (*Wa
 		Network:   chain,
 		Vault:     nil,
 	}
+
 	wallet, err := newWallet(walletPath, store, true)
 	if err != nil {
 		return nil, err
 	}
+
 	vlt, err := vault.CreateVaultFromMnemonic(mnemonic, coinType)
 	if err != nil {
 		return nil, err
 	}
+
 	err = vlt.UpdatePassword("", password)
 	if err != nil {
 		return nil, err
 	}
+
 	wallet.store.Vault = vlt
 
 	return wallet, nil
@@ -149,6 +155,7 @@ func (w *Wallet) tryToConnect(addr string) error {
 	}
 
 	w.client = client
+
 	return nil
 }
 
@@ -162,12 +169,14 @@ func (w *Wallet) IsOffline() bool {
 
 func (w *Wallet) connectToRandomServer() error {
 	serversInfo := servers{}
+
 	err := json.Unmarshal(serversJSON, &serversInfo)
 	if err != nil {
 		return err
 	}
 
 	var netServers []serverInfo
+
 	switch w.store.Network {
 	case genesis.Mainnet:
 		// mainnet
@@ -184,6 +193,7 @@ func (w *Wallet) connectToRandomServer() error {
 	for i := 0; i < 3; i++ {
 		n := util.RandInt32(int32(len(netServers)))
 		serverInfo := netServers[n]
+
 		err := w.tryToConnect(serverInfo.IP)
 		if err == nil {
 			return nil
@@ -252,14 +262,17 @@ func (w *Wallet) MakeTransferTx(sender, receiver string, amount int64,
 	if err != nil {
 		return nil, err
 	}
+
 	err = maker.setFromAddr(sender)
 	if err != nil {
 		return nil, err
 	}
+
 	err = maker.setToAddress(receiver)
 	if err != nil {
 		return nil, err
 	}
+
 	maker.amount = amount
 	maker.typ = payload.TypeTransfer
 
@@ -274,14 +287,17 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
 	if err != nil {
 		return nil, err
 	}
+
 	err = maker.setFromAddr(sender)
 	if err != nil {
 		return nil, err
 	}
+
 	err = maker.setToAddress(receiver)
 	if err != nil {
 		return nil, err
 	}
+
 	if pubKey == "" {
 		// Let's check if we can get public key from the wallet
 		info := w.store.Vault.AddressInfo(receiver)
@@ -289,12 +305,14 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
 			pubKey = info.PublicKey
 		}
 	}
+
 	if pubKey != "" {
 		maker.pub, err = bls.PublicKeyFromString(pubKey)
 		if err != nil {
 			return nil, err
 		}
 	}
+
 	maker.amount = amount
 	maker.typ = payload.TypeBond
 
@@ -307,10 +325,12 @@ func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	err = maker.setFromAddr(addr)
 	if err != nil {
 		return nil, err
 	}
+
 	maker.typ = payload.TypeUnbond
 
 	return maker.build()
@@ -325,14 +345,17 @@ func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount int64,
 	if err != nil {
 		return nil, err
 	}
+
 	err = maker.setFromAddr(sender)
 	if err != nil {
 		return nil, err
 	}
+
 	err = maker.setToAddress(receiver)
 	if err != nil {
 		return nil, err
 	}
+
 	maker.amount = amount
 	maker.typ = payload.TypeWithdraw
 
@@ -348,6 +371,7 @@ func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
 	sig := prv.Sign(trx.SignBytes())
 	trx.SetSignature(sig)
 	trx.SetPublicKey(prv.PublicKey())
+
 	return nil
 }
 
@@ -401,6 +425,7 @@ func (w *Wallet) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return keys[0], nil
 }
 
@@ -450,7 +475,9 @@ func (w *Wallet) AddTransaction(id tx.ID) error {
 	}
 
 	var sender string
+
 	var receiver *string
+
 	switch pld := trxRes.Transaction.Payload.(type) {
 	case *pactus.TransactionInfo_Transfer:
 		sender = pld.Transfer.Sender

@@ -2,7 +2,6 @@ package bls
 
 import (
 	"crypto/sha256"
-	"fmt"
 	"math/big"
 	"strings"
 
@@ -48,16 +47,13 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 // KeyGen generates a private key deterministically from a secret octet string
 // IKM and an optional octet string keyInfo.
 // Based on https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bls-signature-04#section-2.3
+//nolint:all
 func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 	// L is `ceil((3 * ceil(log2(r))) / 16) = 48`,
 	//    where `r` is the order of the BLS 12-381 curve
 	//    r:  0x73eda753 299d7d48 3339d808 09a1d805 53bda402 fffe5bfe ffffffff 00000001
 	// 	  https://datatracker.ietf.org/doc/html/draft-yonezawa-pairing-friendly-curves-02#section-4.2.2
 	//
-
-	if len(ikm) < 32 {
-		return nil, fmt.Errorf("ikm is too short")
-	}
 
 	secret := make([]byte, 0, len(ikm)+1)
 	secret = append(secret, ikm...)
@@ -71,6 +67,7 @@ func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 	g1 := bls12381.NewG1()
 
 	salt := []byte("BLS-SIG-KEYGEN-SALT-")
+
 	x := big.NewInt(0)
 	for x.Sign() == 0 {
 		h := sha256.Sum256(salt)
@@ -87,6 +84,7 @@ func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 
 	sk := make([]byte, 32)
 	x.FillBytes(sk)
+
 	return PrivateKeyFromBytes(sk)
 }
 
@@ -99,6 +97,7 @@ func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 
 	fr := bls12381.NewFr()
 	fr.FromBytes(data)
+
 	if fr.IsZero() {
 		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
 			"private key is zero")
@@ -135,7 +134,9 @@ func (prv *PrivateKey) SignNative(msg []byte) *Signature {
 	if err != nil {
 		panic(err)
 	}
+
 	s := g1.MulScalar(g1.New(), q, &prv.fr)
+
 	return &Signature{pointG1: *s}
 }
 
@@ -143,6 +144,7 @@ func (prv *PrivateKey) PublicKeyNative() *PublicKey {
 	g2 := bls12381.NewG2()
 
 	pointG2 := g2.MulScalar(g2.New(), g2.One(), &prv.fr)
+
 	return &PublicKey{
 		pointG2: *pointG2,
 	}

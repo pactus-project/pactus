@@ -42,6 +42,7 @@ func setup(t *testing.T) *testData {
 		td.store.SaveBlock(blk, cert)
 		assert.NoError(t, td.store.WriteBatch())
 	}
+
 	return td
 }
 
@@ -108,6 +109,7 @@ func TestIndexingPublicKeys(t *testing.T) {
 
 	committedBlock, _ := td.store.Block(1)
 	blk, _ := committedBlock.ToBlock()
+
 	for _, trx := range blk.Transactions() {
 		addr := trx.Payload().Signer()
 		pub, found := td.store.PublicKey(addr)

@@ -57,6 +57,7 @@ func TestLoadFromFile(t *testing.T) {
 func TestExampleConfig(t *testing.T) {
 	lines := strings.Split(string(exampleConfigBytes), "\n")
 	exampleToml := ""
+
 	for _, line := range lines {
 		if !(strings.HasPrefix(line, "# ") ||
 			strings.HasPrefix(line, "###") ||

@@ -28,6 +28,7 @@ func newTxStore(db *leveldb.DB) *txStore {
 
 func (ts *txStore) saveTx(batch *leveldb.Batch, id tx.ID, reg *blockRegion) {
 	w := bytes.NewBuffer(make([]byte, 0, 32+4))
+
 	err := encoding.WriteElements(w, &reg.height, &reg.offset, &reg.length)
 	if err != nil {
 		panic(err)
@@ -42,11 +43,14 @@ func (ts *txStore) tx(id tx.ID) (*blockRegion, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	r := bytes.NewReader(data)
 	reg := new(blockRegion)
 	err = encoding.ReadElements(r, &reg.height, &reg.offset, &reg.length)
+
 	if err != nil {
 		return nil, err
 	}
+
 	return reg, nil
 }

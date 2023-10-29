@@ -23,6 +23,7 @@ func (f Bar) ShortString() string {
 
 func TestNilObjLogger(t *testing.T) {
 	l := NewSubLogger("test", nil)
+
 	var buf bytes.Buffer
 	l.logger = l.logger.Output(&buf)
 
@@ -39,6 +40,7 @@ func TestObjLogger(t *testing.T) {
 
 	globalInst.config.Levels["test"] = "warn"
 	l := NewSubLogger("test", Foo{})
+
 	var buf bytes.Buffer
 	l.logger = l.logger.Output(&buf)
 
@@ -133,6 +135,7 @@ func TestInvalidLevel(t *testing.T) {
 
 	out := buf.String()
 	out2 := buf2.String()
+
 	fmt.Println(out)
 	assert.Contains(t, out, "Unknown Level String")
 	assert.NotContains(t, out2, "error")
@@ -146,6 +149,7 @@ func TestShortStringer(t *testing.T) {
 	InitGlobalLogger(c)
 
 	l := NewSubLogger("test", &Foo{})
+
 	var buf bytes.Buffer
 	l.logger = l.logger.Output(&buf)
 

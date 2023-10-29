@@ -73,6 +73,7 @@ func NewAddress(typ AddressType, data []byte) Address {
 	var addr Address
 	addr[0] = byte(typ)
 	copy(addr[1:], data)
+
 	return addr
 }
 
@@ -124,6 +125,7 @@ func (addr *Address) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+
 	switch t := addr.Type(); t {
 	case AddressTypeTreasury:
 		return nil

@@ -61,6 +61,7 @@ func TestDecoding(t *testing.T) {
 	assert.Equal(t, val.Hash(), hash.CalcHash(d))
 	expected, _ := hash.FromString("243e65ae04727f21d5f7618cea9ff8d4bc82fded1179cf8bd9e11a6b99ac42b2")
 	assert.Equal(t, val.Hash(), expected)
+
 	pub, _ := bls.PublicKeyFromBytes(d[:96])
 	assert.True(t, val.PublicKey().EqualsTo(pub))
 	assert.Equal(t, val.SerializeSize(), len(d))

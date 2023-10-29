@@ -23,6 +23,7 @@ func TestCBORMarshaling(t *testing.T) {
 	tx1, _ := ts.GenerateTestTransferTx()
 	bz, err := cbor.Marshal(tx1)
 	assert.NoError(t, err)
+
 	tx2 := new(tx.Tx)
 	assert.NoError(t, cbor.Unmarshal(bz, tx2))
 	assert.Equal(t, tx1.ID(), tx2.ID())
@@ -38,6 +39,7 @@ func TestEncodingTx(t *testing.T) {
 	trx3, _ := ts.GenerateTestUnbondTx()
 	trx4, _ := ts.GenerateTestWithdrawTx()
 	trx5, _ := ts.GenerateTestSortitionTx()
+
 	assert.True(t, trx1.IsTransferTx())
 	assert.True(t, trx2.IsBondTx())
 	assert.True(t, trx3.IsUnbondTx())
@@ -54,6 +56,7 @@ func TestEncodingTx(t *testing.T) {
 			w := util.NewFixedWriter(i)
 			assert.Error(t, trx.Encode(w), "encode test %v failed", i)
 		}
+
 		w := util.NewFixedWriter(length)
 		assert.NoError(t, trx.Encode(w))
 
@@ -285,6 +288,7 @@ func TestInvalidSignature(t *testing.T) {
 	})
 
 	pbInv, pvInv := ts.RandBLSKeyPair()
+
 	t.Run("Invalid signature", func(t *testing.T) {
 		trx, _ := ts.GenerateTestTransferTx()
 		sig := pvInv.Sign(trx.SignBytes())

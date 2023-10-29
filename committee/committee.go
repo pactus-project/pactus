@@ -21,6 +21,7 @@ type committee struct {
 func cloneValidator(val *validator.Validator) *validator.Validator {
 	cloned := new(validator.Validator)
 	*cloned = *val
+
 	return cloned
 }
 
@@ -28,6 +29,7 @@ func NewCommittee(validators []*validator.Validator, committeeSize int,
 	proposerAddress crypto.Address,
 ) (Committee, error) {
 	validatorList := linkedlist.New[*validator.Validator]()
+
 	var proposerPos *linkedlist.Element[*validator.Validator]
 
 	for _, val := range validators {
@@ -50,10 +52,12 @@ func NewCommittee(validators []*validator.Validator, committeeSize int,
 
 func (c *committee) TotalPower() int64 {
 	p := int64(0)
+
 	c.iterate(func(v *validator.Validator) bool {
 		p += v.Power()
 		return false
 	})
+
 	return p
 }
 
@@ -84,6 +88,7 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	// Now, adjust the list
 	oldestFirst := make([]*linkedlist.Element[*validator.Validator], c.validatorList.Length())
 	i := 0
+
 	for e := c.validatorList.Head; e != nil; e = e.Next {
 		oldestFirst[i] = e
 		i++
@@ -108,6 +113,7 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 				c.proposerPos = c.validatorList.Head
 			}
 		}
+
 		c.validatorList.Delete(oldestFirst[i])
 	}
 }
@@ -117,6 +123,7 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 func (c *committee) Validators() []*validator.Validator {
 	vals := make([]*validator.Validator, c.validatorList.Length())
 	i := 0
+
 	c.iterate(func(v *validator.Validator) bool {
 		vals[i] = cloneValidator(v)
 		i++
@@ -132,6 +139,7 @@ func (c *committee) Contains(addr crypto.Address) bool {
 
 func (c *committee) find(addr crypto.Address) *validator.Validator {
 	var found *validator.Validator
+
 	c.iterate(func(v *validator.Validator) bool {
 		if v.Address() == addr {
 			found = v
@@ -139,6 +147,7 @@ func (c *committee) find(addr crypto.Address) *validator.Validator {
 		}
 		return false
 	})
+
 	return found
 }
 
@@ -169,6 +178,7 @@ func (c *committee) proposer(round int16) *validator.Validator {
 func (c *committee) Committers() []int32 {
 	committers := make([]int32, c.validatorList.Length())
 	i := 0
+
 	c.iterate(func(v *validator.Validator) bool {
 		committers[i] = v.Number()
 		i++
@@ -186,13 +196,17 @@ func (c *committee) String() string {
 	var builder strings.Builder
 
 	builder.WriteString("[ ")
+
 	for _, v := range c.Validators() {
 		builder.WriteString(fmt.Sprintf("%v(%v)", v.Number(), v.LastSortitionHeight()))
+
 		if c.IsProposer(v.Address(), 0) {
 			builder.WriteString("*")
 		}
+
 		builder.WriteString(" ")
 	}
+
 	builder.WriteString("]")
 
 	str := builder.String()

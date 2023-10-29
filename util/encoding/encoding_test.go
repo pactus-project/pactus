@@ -59,6 +59,7 @@ func TestElementEncoding(t *testing.T) {
 	}
 
 	t.Logf("Running %d tests", len(tests))
+
 	for i, test := range tests {
 		var buf bytes.Buffer
 		err := WriteElement(&buf, test.in)
@@ -67,9 +68,11 @@ func TestElementEncoding(t *testing.T) {
 
 		rbuf := bytes.NewReader(test.buf)
 		val := test.in
+
 		if reflect.ValueOf(test.in).Kind() != reflect.Ptr {
 			val = reflect.New(reflect.TypeOf(test.in)).Interface()
 		}
+
 		err = ReadElement(rbuf, val)
 		assert.NoError(t, err, "readElement #%d", i)
 
@@ -77,6 +80,7 @@ func TestElementEncoding(t *testing.T) {
 		if reflect.ValueOf(test.in).Kind() != reflect.Ptr {
 			ival = reflect.Indirect(reflect.ValueOf(val)).Interface()
 		}
+
 		assert.Equal(t, ival, test.in, "readElement #%d", i)
 	}
 }
@@ -112,6 +116,7 @@ func TestElementEncodingErrors(t *testing.T) {
 	}
 
 	t.Logf("Running %d tests", len(tests))
+
 	for i, test := range tests {
 		w := util.NewFixedWriter(test.max)
 		err := WriteElement(w, test.in)
@@ -119,9 +124,11 @@ func TestElementEncodingErrors(t *testing.T) {
 
 		r := util.NewFixedReader(test.max, nil)
 		val := test.in
+
 		if reflect.ValueOf(test.in).Kind() != reflect.Ptr {
 			val = reflect.New(reflect.TypeOf(test.in)).Interface()
 		}
+
 		err = ReadElement(r, val)
 		assert.ErrorIs(t, err, test.readErr, "readElement #%d", i)
 	}
@@ -147,6 +154,7 @@ func TestVarStringEncoding(t *testing.T) {
 	}
 
 	t.Logf("Running %d tests", len(tests))
+
 	for i, test := range tests {
 		var buf bytes.Buffer
 		err := WriteVarString(&buf, test.in)
@@ -184,6 +192,7 @@ func TestVarStringEncodingErrors(t *testing.T) {
 	}
 
 	t.Logf("Running %d tests", len(tests))
+
 	for i, test := range tests {
 		w := util.NewFixedWriter(test.max)
 		err := WriteVarString(w, test.in)
@@ -208,6 +217,7 @@ func TestVarStringOverflowErrors(t *testing.T) {
 	}
 
 	t.Logf("Running %d tests", len(tests))
+
 	for i, test := range tests {
 		rbuf := bytes.NewReader(test.buf)
 		_, err := ReadVarString(rbuf)
@@ -234,6 +244,7 @@ func TestVarBytesEncoding(t *testing.T) {
 	}
 
 	t.Logf("Running %d tests", len(tests))
+
 	for i, test := range tests {
 		var buf bytes.Buffer
 		err := WriteVarBytes(&buf, test.in)
@@ -272,6 +283,7 @@ func TestVarBytesEncodingErrors(t *testing.T) {
 	}
 
 	t.Logf("Running %d tests", len(tests))
+
 	for i, test := range tests {
 		w := util.NewFixedWriter(test.max)
 		err := WriteVarBytes(w, test.in)
@@ -296,6 +308,7 @@ func TestVarBytesOverflowErrors(t *testing.T) {
 	}
 
 	t.Logf("Running %d tests", len(tests))
+
 	for i, test := range tests {
 		rbuf := bytes.NewReader(test.buf)
 		_, err := ReadVarBytes(rbuf)
@@ -364,6 +377,7 @@ func TestVarIntError(t *testing.T) {
 	}
 
 	t.Logf("Running %d tests", len(tests))
+
 	for i, test := range tests {
 		rbuf := bytes.NewReader(test.in)
 		val, err := ReadVarInt(rbuf)
@@ -374,6 +388,7 @@ func TestVarIntError(t *testing.T) {
 
 func TestVarIntOverflow(t *testing.T) {
 	var buf bytes.Buffer
+
 	buf.Write([]byte{0xff, 0x00})
 	_, err := ReadVarInt(&buf)
 	assert.Error(t, err)
@@ -389,6 +404,7 @@ func TestWriteElements(t *testing.T) {
 	el2 := uint16(2)
 	el3 := uint32(3)
 	el4 := uint64(4)
+
 	var buf bytes.Buffer
 	err := WriteElements(&buf, &el1, &el2, &el3, &el4)
 	assert.NoError(t, err)

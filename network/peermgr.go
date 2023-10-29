@@ -84,6 +84,7 @@ func (mgr *peerMgr) checkConnectivity() {
 
 	// Let's check if some peers are disconnected
 	var connectedPeers []lp2ppeer.ID
+
 	for _, p := range currentPeers {
 		connectedness := mgr.dialer.Connectedness(p)
 		if connectedness == lp2pnet.Connected {
@@ -97,6 +98,7 @@ func (mgr *peerMgr) checkConnectivity() {
 		mgr.logger.Debug("peer count is about maximum threshold",
 			"count", len(connectedPeers),
 			"max", mgr.maxConns)
+
 		return
 	}
 

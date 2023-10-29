@@ -23,6 +23,7 @@ func newValidatorStore(db *leveldb.DB) *validatorStore {
 	addressMap := make(map[crypto.Address]*validator.Validator)
 	r := util.BytesPrefix(validatorPrefix)
 	iter := db.NewIterator(r, nil)
+
 	for iter.Next() {
 		value := iter.Value()
 
@@ -55,6 +56,7 @@ func (vs *validatorStore) ValidatorAddresses() []crypto.Address {
 	for addr := range vs.addressMap {
 		addrs = append(addrs, addr)
 	}
+
 	return addrs
 }
 
@@ -93,9 +95,11 @@ func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.V
 	if err != nil {
 		logger.Panic("unable to encode validator", "error", err)
 	}
+
 	if !vs.hasValidator(val.Address()) {
 		vs.total++
 	}
+
 	vs.numberMap[val.Number()] = val
 	vs.addressMap[val.Address()] = val
 

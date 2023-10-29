@@ -58,6 +58,7 @@ func (g *gossipService) JoinTopic(name string) (*lp2pps.Topic, error) {
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
+
 	sub, err := topic.Subscribe()
 	if err != nil {
 		return nil, LibP2PError{Err: err}
@@ -94,6 +95,7 @@ func (g *gossipService) Stop() {
 	for _, t := range g.topics {
 		t.Close()
 	}
+
 	for _, s := range g.subs {
 		s.Cancel()
 	}
@@ -109,6 +111,7 @@ func (g *gossipService) onReceiveMessage(m *lp2pps.Message) {
 
 	g.logger.Trace("receiving new gossip message",
 		"source", m.GetFrom(), "from", m.ReceivedFrom)
+
 	event := &GossipMessage{
 		Source: m.GetFrom(),
 		From:   m.ReceivedFrom,

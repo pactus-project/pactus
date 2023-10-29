@@ -23,6 +23,7 @@ func (s *Server) ConsensusHandler(w http.ResponseWriter, _ *http.Request) {
 		tm.addRowInt("Height", int(cons.Height))
 		tm.addRowInt("Round", int(cons.Round))
 		tm.addRowString("Votes", "---")
+
 		for i, v := range cons.Votes {
 			tm.addRowInt("-- Vote #", i+1)
 			tm.addRowString("Type", vote.Type(v.Type).String())
@@ -31,5 +32,6 @@ func (s *Server) ConsensusHandler(w http.ResponseWriter, _ *http.Request) {
 			tm.addRowBlockHash("BlockHash", v.BlockHash)
 		}
 	}
+
 	s.writeHTML(w, tm.html())
 }

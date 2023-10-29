@@ -12,16 +12,19 @@ import (
 
 func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
 	height, err := strconv.ParseInt(vars["height"], 10, 32)
 	if err != nil {
 		s.writeError(w, err)
 		return
 	}
+
 	s.blockByHeight(w, uint32(height))
 }
 
 func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
 	blockHash, err := hash.FromString(vars["hash"])
 	if err != nil {
 		s.writeError(w, err)
@@ -55,6 +58,7 @@ func (s *Server) blockByHeight(w http.ResponseWriter, blockHeight uint32) {
 	tm.addRowInt("Height", int(res.Height))
 	tm.addRowBytes("Hash", res.Hash)
 	tm.addRowBytes("Data", res.Data)
+
 	if res.Header != nil {
 		tm.addRowString("--- Header", "---")
 		tm.addRowInt("Version", int(res.Header.Version))
@@ -64,6 +68,7 @@ func (s *Server) blockByHeight(w http.ResponseWriter, blockHeight uint32) {
 		tm.addRowBytes("SortitionSeed", res.Header.SortitionSeed)
 		tm.addRowValAddress("ProposerAddress", res.Header.ProposerAddress)
 	}
+
 	if res.PrevCert != nil {
 		tm.addRowString("--- PrevCertificate", "---")
 		tm.addRowBytes("Hash", res.PrevCert.Hash)
@@ -72,7 +77,9 @@ func (s *Server) blockByHeight(w http.ResponseWriter, blockHeight uint32) {
 		tm.addRowInts("Absentees", res.PrevCert.Absentees)
 		tm.addRowBytes("Signature", res.PrevCert.Signature)
 	}
+
 	tm.addRowString("--- Transactions", "---")
+
 	for i, trx := range res.Txs {
 		tm.addRowInt("Transaction #", i+1)
 		txToTable(trx, tm)

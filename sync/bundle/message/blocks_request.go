@@ -28,9 +28,11 @@ func (m *BlocksRequestMessage) BasicCheck() error {
 	if m.From == 0 {
 		return errors.Errorf(errors.ErrInvalidHeight, "height is zero")
 	}
+
 	if m.Count == 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "count is zero")
 	}
+
 	return nil
 }
 

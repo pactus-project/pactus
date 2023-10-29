@@ -26,6 +26,7 @@ func (s *prepareState) decide() {
 
 	prepares := s.log.PrepareVoteSet(s.round)
 	prepareQH := prepares.QuorumHash()
+
 	if prepareQH != nil {
 		s.logger.Debug("prepare has quorum", "hash", prepareQH)
 		s.enterNewState(s.precommitState)
@@ -64,6 +65,7 @@ func (s *prepareState) onTimeout(t *ticker) {
 		if roundProposal == nil {
 			s.queryProposal()
 		}
+
 		if s.isProposer() {
 			s.queryVotes()
 		}

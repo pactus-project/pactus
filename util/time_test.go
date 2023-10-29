@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+//nolint:all
 func TestNow(t *testing.T) {
 	c1 := time.Now()
 	c2 := Now()
@@ -18,6 +19,7 @@ func TestNow(t *testing.T) {
 	assert.Equal(t, c3.Second()%5, 0)
 }
 
+//nolint:all
 func TestRoundingTime(t *testing.T) {
 	t1, _ := time.Parse(time.RFC3339Nano, "2006-01-02T15:04:11.111111111Z")
 	t2, _ := time.Parse(time.RFC3339Nano, "2006-01-02T15:04:24.333333333Z")

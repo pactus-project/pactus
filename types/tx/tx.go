@@ -60,9 +60,11 @@ func NewTx(lockTime uint32, pld payload.Payload, fee int64,
 func FromBytes(bs []byte) (*Tx, error) {
 	tx := new(Tx)
 	r := bytes.NewReader(bs)
+
 	if err := tx.Decode(r); err != nil {
 		return nil, err
 	}
+
 	return tx, nil
 }
 
@@ -102,6 +104,7 @@ func (tx *Tx) SetSignature(sig crypto.Signature) {
 func (tx *Tx) SetPublicKey(pub crypto.PublicKey) {
 	tx.basicChecked = false
 	tx.data.PublicKey = pub
+
 	if pub == nil {
 		if !tx.IsSubsidyTx() {
 			tx.data.Flags = util.SetFlag(tx.data.Flags, flagStripedPublicKey)
@@ -115,11 +118,13 @@ func (tx *Tx) BasicCheck() error {
 	if tx.basicChecked {
 		return nil
 	}
+
 	if tx.Version() != versionLatest {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("invalid version: %d", tx.Version()),
 		}
 	}
+
 	if tx.LockTime() == 0 {
 		return BasicCheckError{
 			Reason: "lock time is not defined",
@@ -131,21 +136,25 @@ func (tx *Tx) BasicCheck() error {
 			Reason: fmt.Sprintf("invalid amount: %d", tx.Payload().Value()),
 		}
 	}
+
 	if tx.Fee() < 0 || tx.Fee() > 42*1e15 {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("invalid fee: %d", tx.Fee()),
 		}
 	}
+
 	if len(tx.Memo()) > maxMemoLength {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("memo length exceeded: %d", len(tx.Memo())),
 		}
 	}
+
 	if err := tx.Payload().BasicCheck(); err != nil {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("invalid payload: %s", err.Error()),
 		}
 	}
+
 	if err := tx.checkSignature(); err != nil {
 		return err
 	}
@@ -162,6 +171,7 @@ func (tx *Tx) checkSignature() error {
 				Reason: "public key set for subsidy transaction",
 			}
 		}
+
 		if tx.Signature() != nil {
 			return BasicCheckError{
 				Reason: "signature set for subsidy transaction",
@@ -193,12 +203,14 @@ func (tx *Tx) checkSignature() error {
 			}
 		}
 	}
+
 	return nil
 }
 
 // Bytes returns the serialized bytes for the Transaction.
 func (tx *Tx) Bytes() ([]byte, error) {
 	w := bytes.NewBuffer(make([]byte, 0, tx.SerializeSize()))
+
 	err := tx.Encode(w)
 	if err != nil {
 		return nil, err
@@ -212,16 +224,20 @@ func (tx *Tx) MarshalCBOR() ([]byte, error) {
 	if err := tx.Encode(buf); err != nil {
 		return nil, err
 	}
+
 	return cbor.Marshal(buf.Bytes())
 }
 
 func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 	data := make([]byte, 0, tx.SerializeSize())
+
 	err := cbor.Unmarshal(bs, &data)
 	if err != nil {
 		return err
 	}
+
 	buf := bytes.NewBuffer(data)
+
 	return tx.Decode(buf)
 }
 
@@ -234,9 +250,11 @@ func (tx *Tx) SerializeSize() int {
 	if tx.Payload() != nil {
 		n += tx.Payload().SerializeSize()
 	}
+
 	if tx.data.Signature != nil {
 		n += bls.SignatureSize
 	}
+
 	if tx.data.PublicKey != nil {
 		n += bls.PublicKeySize
 	}
@@ -256,6 +274,7 @@ func (tx *Tx) Encode(w io.Writer) error {
 			return err
 		}
 	}
+
 	if tx.data.PublicKey != nil {
 		err = tx.data.PublicKey.Encode(w)
 		if err != nil {
@@ -271,22 +290,27 @@ func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
 	if err != nil {
 		return err
 	}
+
 	err = encoding.WriteVarInt(w, uint64(tx.data.Fee))
 	if err != nil {
 		return err
 	}
+
 	err = encoding.WriteVarString(w, tx.data.Memo)
 	if err != nil {
 		return err
 	}
+
 	err = encoding.WriteElement(w, uint8(tx.data.Payload.Type()))
 	if err != nil {
 		return err
 	}
+
 	err = tx.data.Payload.Encode(w)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -300,6 +324,7 @@ func (tx *Tx) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+
 	tx.data.Fee = int64(fee)
 
 	tx.data.Memo, err = encoding.ReadVarString(r)
@@ -308,6 +333,7 @@ func (tx *Tx) Decode(r io.Reader) error {
 	}
 
 	payloadType := uint8(0)
+
 	err = encoding.ReadElement(r, &payloadType)
 	if err != nil {
 		return err
@@ -338,18 +364,22 @@ func (tx *Tx) Decode(r io.Reader) error {
 
 	if !tx.IsSubsidyTx() {
 		sig := new(bls.Signature)
+
 		err = sig.Decode(r)
 		if err != nil {
 			return err
 		}
+
 		tx.data.Signature = sig
 
 		if !tx.IsPublicKeyStriped() {
 			pub := new(bls.PublicKey)
+
 			err = pub.Decode(r)
 			if err != nil {
 				return err
 			}
+
 			tx.data.PublicKey = pub
 		}
 	}
@@ -365,10 +395,12 @@ func (tx *Tx) String() string {
 
 func (tx *Tx) SignBytes() []byte {
 	buf := bytes.Buffer{}
+
 	err := tx.encodeWithNoSignatory(&buf)
 	if err != nil {
 		return nil
 	}
+
 	return buf.Bytes()[1:] // Exclude flags
 }
 
@@ -376,8 +408,10 @@ func (tx *Tx) ID() ID {
 	if tx.memorizedID != nil {
 		return *tx.memorizedID
 	}
+
 	id := hash.CalcHash(tx.SignBytes())
 	tx.memorizedID = &id
+
 	return id
 }
 

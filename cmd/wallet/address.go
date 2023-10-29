@@ -46,6 +46,7 @@ func buildAllAddressesCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
+
 		for i, info := range wlt.AddressInfos() {
 			line := fmt.Sprintf("%v- %s\t", i+1, info.Address)
 
@@ -82,6 +83,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 
 	newAddressCmd.Run = func(_ *cobra.Command, _ []string) {
 		var addr string
+
 		var err error
 
 		label := cmd.PromptInput("Label")
@@ -95,6 +97,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		} else {
 			err = fmt.Errorf("invalid address type '%s'", *addressType)
 		}
+
 		cmd.FatalErrorCheck(err)
 
 		err = wlt.Save()
@@ -121,6 +124,7 @@ func buildBalanceCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
+
 		balance, err := wlt.Balance(addr)
 		cmd.FatalErrorCheck(err)
 
@@ -181,6 +185,7 @@ func buildPublicKeyCmd(parentCmd *cobra.Command) {
 
 		cmd.PrintLine()
 		cmd.PrintInfoMsgf("Public Key: %v", info.PublicKey)
+
 		if info.Path != "" {
 			cmd.PrintInfoMsgf("Path: %v", info.Path)
 		}

@@ -31,5 +31,6 @@ func (conf *Config) BasicCheck() error {
 	if !util.IsValidDirPath(conf.Path) {
 		return errors.Errorf(errors.ErrInvalidConfig, "path is not valid")
 	}
+
 	return nil
 }

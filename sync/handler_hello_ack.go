@@ -27,8 +27,10 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, initiator peer.I
 			"from", initiator, "reason", msg.Reason)
 
 		handler.network.CloseConnection(initiator)
+
 		return nil
 	}
+
 	handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeKnown)
 	handler.logger.Debug("hello message acknowledged",
 		"from", initiator)
@@ -41,5 +43,6 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, initiator peer.I
 func (handler *helloAckHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	bdl := bundle.NewBundle(handler.SelfID(), m)
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagHandshaking)
+
 	return bdl
 }

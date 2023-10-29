@@ -77,11 +77,13 @@ func (vs *BinaryVoteSet) mustGetRoundVotes(cpRound int16) *roundVotes {
 // AllVotes returns a list of all votes in the VoteSet.
 func (vs *BinaryVoteSet) AllVotes() []*vote.Vote {
 	votes := make([]*vote.Vote, 0)
+
 	for _, rv := range vs.roundVotes {
 		for _, v := range rv.allVotes {
 			votes = append(votes, v)
 		}
 	}
+
 	return votes
 }
 
@@ -94,6 +96,7 @@ func (vs *BinaryVoteSet) AddVote(v *vote.Vote) (bool, error) {
 
 	roundVotes := vs.mustGetRoundVotes(v.CPRound())
 	existingVote, ok := roundVotes.allVotes[v.Signer()]
+
 	if ok {
 		if existingVote.Hash() != v.Hash() {
 			err = errors.Error(errors.ErrDuplicateVote)
@@ -140,9 +143,11 @@ func (vs *BinaryVoteSet) BinaryVotes(cpRound int16, cpValue vote.CPValue) map[cr
 	votes := map[crypto.Address]*vote.Vote{}
 	roundVotes := vs.mustGetRoundVotes(cpRound)
 	voteBox := roundVotes.voteBoxes[cpValue]
+
 	for a, v := range voteBox.votes {
 		votes[a] = v
 	}
+
 	return votes
 }
 

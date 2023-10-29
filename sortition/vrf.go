@@ -43,6 +43,7 @@ func Verify(seed VerifiableSeed, pub *bls.PublicKey, proof Proof, max uint64) (u
 	signData := make([]byte, 0, bls.SignatureSize+bls.PublicKeySize)
 	signData = append(signData, seed[:]...)
 	signData = append(signData, pub.Bytes()...)
+
 	if err := pub.Verify(signData, proofSig); err != nil {
 		return 0, false
 	}

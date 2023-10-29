@@ -16,6 +16,7 @@ func TestVRF(t *testing.T) {
 
 	pk, pv := ts.RandBLSKeyPair()
 	valKey := bls.NewValidatorKey(pv)
+
 	for i := 0; i < 100; i++ {
 		seed := ts.RandSeed()
 		t.Logf("seed is: %x \n", seed)
@@ -52,16 +53,20 @@ func TestRandomUint64(t *testing.T) {
 	valKey := bls.NewValidatorKey(pv)
 
 	numHits := 0
+
 	for i := 0; i < tries; i++ {
 		seed := ts.RandSeed()
 
 		nonce, _ := sortition.Evaluate(seed, valKey.PrivateKey(), util.MaxUint64)
+
 		if nonce < watermark {
 			numHits++
 		}
+
 		if numHits > maxHits {
 			str := fmt.Sprintf(badRNG, numHits, watermark, tries, maxHits)
 			t.Errorf("Random Uint64 iteration %d failed - %v", i, str)
+
 			return
 		}
 	}

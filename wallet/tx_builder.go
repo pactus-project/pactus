@@ -52,6 +52,7 @@ func newTxBuilder(client *grpcClient, options ...TxOption) (*txBuilder, error) {
 			return nil, err
 		}
 	}
+
 	return builder, nil
 }
 
@@ -60,7 +61,9 @@ func (m *txBuilder) setFromAddr(addr string) error {
 	if err != nil {
 		return err
 	}
+
 	m.from = &from
+
 	return nil
 }
 
@@ -69,7 +72,9 @@ func (m *txBuilder) setToAddress(addr string) error {
 	if err != nil {
 		return err
 	}
+
 	m.to = &to
+
 	return nil
 }
 
@@ -85,16 +90,19 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 	}
 
 	var trx *tx.Tx
+
 	switch m.typ {
 	case payload.TypeTransfer:
 		trx = tx.NewTransferTx(m.lockTime, *m.from, *m.to, m.amount, m.fee, m.memo)
 	case payload.TypeBond:
 		pub := m.pub
 		val, _ := m.client.getValidator(*m.to)
+
 		if val != nil {
 			// validator exists
 			pub = nil
 		}
+
 		trx = tx.NewBondTx(m.lockTime, *m.from, *m.to, pub, m.amount, m.fee, m.memo)
 	case payload.TypeUnbond:
 		trx = tx.NewUnbondTx(m.lockTime, *m.from, m.memo)
@@ -115,8 +123,10 @@ func (m *txBuilder) setLockTime() error {
 		if err != nil {
 			return err
 		}
+
 		m.lockTime = info.LastBlockHeight + 1
 	}
+
 	return nil
 }
 
@@ -125,11 +135,14 @@ func (m *txBuilder) setFee() error {
 		if m.client == nil {
 			return ErrOffline
 		}
+
 		fee, err := m.client.getFee(m.amount, m.typ)
 		if err != nil {
 			return err
 		}
+
 		m.fee = fee
 	}
+
 	return nil
 }

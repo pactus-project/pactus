@@ -31,10 +31,13 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidHeight,
 			"validator has bonded at height %v", val.LastBondingHeight())
 	}
+
 	ok := sb.VerifyProof(trx.LockTime(), pld.Proof, val)
+
 	if !ok {
 		return errors.Error(errors.ErrInvalidProof)
 	}
+
 	sortitionHeight := trx.LockTime()
 	// Check for the duplicated or expired sortition transactions
 	if sortitionHeight <= val.LastSortitionHeight() {
@@ -80,10 +83,12 @@ func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 			}
 		}
 	})
+
 	if !committee.Contains(val.Address()) {
 		joiningPower += val.Power()
 		joiningNum++
 	}
+
 	if joiningPower >= (committee.TotalPower() / 3) {
 		return errors.Errorf(errors.ErrInvalidTx,
 			"in each height only 1/3 of stake can join")
@@ -93,10 +98,13 @@ func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 	sort.SliceStable(vals, func(i, j int) bool {
 		return vals[i].LastSortitionHeight() < vals[j].LastSortitionHeight()
 	})
+
 	leavingPower := int64(0)
+
 	for i := 0; i < joiningNum; i++ {
 		leavingPower += vals[i].Power()
 	}
+
 	if leavingPower >= (committee.TotalPower() / 3) {
 		return errors.Errorf(errors.ErrInvalidTx,
 			"in each height only 1/3 of stake can leave")
@@ -116,5 +124,6 @@ func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 		return errors.Errorf(errors.ErrInvalidTx,
 			"oldest validator still didn't propose any block")
 	}
+
 	return nil
 }

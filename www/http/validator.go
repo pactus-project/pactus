@@ -11,6 +11,7 @@ import (
 // GetValidatorHandler returns a handler to get validator by address.
 func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
 	res, err := s.blockchain.GetValidator(s.ctx,
 		&pactus.GetValidatorRequest{Address: vars["address"]})
 	if err != nil {

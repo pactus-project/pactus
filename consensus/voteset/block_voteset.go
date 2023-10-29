@@ -40,9 +40,11 @@ func newBlockVoteSet(voteSet *voteSet) *BlockVoteSet {
 func (vs *BlockVoteSet) BlockVotes(blockHash hash.Hash) map[crypto.Address]*vote.Vote {
 	votes := map[crypto.Address]*vote.Vote{}
 	blockVotes := vs.mustGetBlockVotes(blockHash)
+
 	for a, v := range blockVotes.votes {
 		votes[a] = v
 	}
+
 	return votes
 }
 
@@ -52,6 +54,7 @@ func (vs *BlockVoteSet) mustGetBlockVotes(blockHash hash.Hash) *voteBox {
 		bv = newVoteBox()
 		vs.blockVotes[blockHash] = bv
 	}
+
 	return bv
 }
 
@@ -61,6 +64,7 @@ func (vs *BlockVoteSet) AllVotes() []*vote.Vote {
 	for _, v := range vs.allVotes {
 		votes = append(votes, v)
 	}
+
 	return votes
 }
 
@@ -85,6 +89,7 @@ func (vs *BlockVoteSet) AddVote(v *vote.Vote) (bool, error) {
 
 	blockVotes := vs.mustGetBlockVotes(v.BlockHash())
 	blockVotes.addVote(v, power)
+
 	if vs.isTwoThirdOfTotalPower(blockVotes.votedPower) {
 		h := v.BlockHash()
 		vs.quorumHash = &h

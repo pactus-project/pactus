@@ -21,6 +21,7 @@ func TestQueryProposal(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
+
 	h := uint32(2)
 
 	td.enterNewHeight(td.consP)
@@ -36,6 +37,7 @@ func TestQueryVotes(t *testing.T) {
 
 	td.commitBlockForAllStates(t)
 	td.commitBlockForAllStates(t)
+
 	h := uint32(3)
 	r := int16(1)
 

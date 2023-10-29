@@ -36,18 +36,22 @@ func (s *walletServer) CreateWallet(_ context.Context,
 	}
 
 	path := walletPath(req.Name)
+
 	w, err := wallet.Create(path, req.Mnemonic, req.Language, s.chain)
 	if err != nil {
 		return nil, err
 	}
+
 	err = w.UpdatePassword("", req.Password)
 	if err != nil {
 		return nil, err
 	}
+
 	err = w.Save()
 	if err != nil {
 		return nil, err
 	}
+
 	return &pactus.CreateWalletResponse{}, nil
 }
 
@@ -60,6 +64,7 @@ func (s *walletServer) LoadWallet(_ context.Context,
 	}
 
 	path := walletPath(req.Name)
+
 	w, err := wallet.Open(path, true)
 	if err != nil {
 		return nil, err

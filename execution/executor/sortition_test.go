@@ -12,6 +12,7 @@ import (
 
 func updateCommittee(td *testData) {
 	joiningCommittee := make([]*validator.Validator, 0)
+
 	td.sandbox.IterateValidators(func(val *validator.Validator, updated bool, joined bool) {
 		if joined {
 			joiningCommittee = append(joiningCommittee, val)
@@ -220,6 +221,7 @@ func TestOldestDidNotPropose(t *testing.T) {
 
 	// Let's create validators first
 	vals := make([]*validator.Validator, 9)
+
 	for i := 0; i < 9; i++ {
 		pub, _ := td.RandBLSKeyPair()
 		val := td.sandbox.MakeNewValidator(pub)

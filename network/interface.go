@@ -20,6 +20,7 @@ func (t TopicID) String() string {
 	case TopicIDConsensus:
 		return "consensus"
 	}
+
 	return "invalid"
 }
 
@@ -43,6 +44,7 @@ func (t EventType) String() string {
 	case EventTypeStream:
 		return "stream-msg"
 	}
+
 	return "invalid"
 }
 

@@ -29,6 +29,7 @@ func buildCreateCmd(parentCmd *cobra.Command) {
 		if *testnetOpt {
 			network = genesis.Testnet
 		}
+
 		wallet, err := wallet.Create(*pathOpt, mnemonic, password, network)
 		cmd.FatalErrorCheck(err)
 

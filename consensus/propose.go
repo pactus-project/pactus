@@ -34,6 +34,7 @@ func (s *proposeState) createProposal(height uint32, round int16) {
 		s.logger.Error("unable to propose a block!", "error", err)
 		return
 	}
+
 	if err := s.bcState.ValidateBlock(block); err != nil {
 		s.logger.Error("proposed block is invalid!", "error", err)
 		return

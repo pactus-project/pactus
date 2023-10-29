@@ -33,6 +33,7 @@ func (vs *voteSet) Round() int16 {
 func (vs *voteSet) verifyVote(v *vote.Vote) (int64, error) {
 	signer := v.Signer()
 	val := vs.validators[signer]
+
 	if val == nil {
 		return 0, errors.Errorf(errors.ErrInvalidAddress,
 			"cannot find validator %s in committee", signer)

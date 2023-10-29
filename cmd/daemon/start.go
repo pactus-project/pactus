@@ -40,6 +40,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 				Addr:              *pprofOpt,
 				ReadHeaderTimeout: 3 * time.Second,
 			}
+
 			go func() {
 				err := server.ListenAndServe()
 				cmd.FatalErrorCheck(err)
@@ -57,6 +58,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 			} else {
 				password = cmd.PromptPassword("Wallet password", false)
 			}
+
 			return password, true
 		}
 		node, _, err := cmd.StartNode(

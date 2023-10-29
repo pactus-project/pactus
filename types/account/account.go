@@ -32,6 +32,7 @@ func NewAccount(number int32) *Account {
 func FromBytes(data []byte) (*Account, error) {
 	acc := new(Account)
 	r := bytes.NewReader(data)
+
 	err := encoding.ReadElements(r,
 		&acc.data.Number,
 		&acc.data.Balance)
@@ -68,6 +69,7 @@ func (acc *Account) Hash() hash.Hash {
 	if err != nil {
 		panic(err)
 	}
+
 	return hash.CalcHash(bs)
 }
 
@@ -79,6 +81,7 @@ func (acc *Account) SerializeSize() int {
 // Bytes returns the serialized byte representation of the account.
 func (acc *Account) Bytes() ([]byte, error) {
 	w := bytes.NewBuffer(make([]byte, 0, acc.SerializeSize()))
+
 	err := encoding.WriteElements(w,
 		acc.data.Number,
 		acc.data.Balance)

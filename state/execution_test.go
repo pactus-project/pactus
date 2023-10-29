@@ -17,6 +17,7 @@ func TestProposeBlock(t *testing.T) {
 	for i := uint32(0); i < curHeight; i++ {
 		td.moveToNextHeightForAllStates(t)
 	}
+
 	b1, c1 := td.makeBlockAndCertificate(t, 0, td.valKey1, td.valKey2, td.valKey3)
 	assert.NoError(t, td.state1.CommitBlock(b1, c1))
 	assert.NoError(t, td.state2.CommitBlock(b1, c1))

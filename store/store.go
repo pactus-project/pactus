@@ -46,6 +46,7 @@ func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 		logger.Trace("database error", "error", err, "key", key)
 		return nil, err
 	}
+
 	return data, nil
 }
 
@@ -66,10 +67,12 @@ func NewStore(conf *Config) (Store, error) {
 		Strict:      opt.DefaultStrict,
 		Compression: opt.NoCompression,
 	}
+
 	db, err := leveldb.OpenFile(conf.StorePath(), options)
 	if err != nil {
 		return nil, err
 	}
+
 	s := &store{
 		config:         conf,
 		db:             db,
@@ -79,6 +82,7 @@ func NewStore(conf *Config) (Store, error) {
 		accountStore:   newAccountStore(db),
 		validatorStore: newValidatorStore(db),
 	}
+
 	return s, nil
 }
 
@@ -95,17 +99,21 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 
 	height := cert.Height()
 	reg := s.blockStore.saveBlock(s.batch, height, blk)
+
 	for i, trx := range blk.Transactions() {
 		s.txStore.saveTx(s.batch, trx.ID(), &reg[i])
 	}
 
 	// Save last certificate: [version: 4 bytes]+[certificate: variant]
 	w := bytes.NewBuffer(make([]byte, 0, 4+cert.SerializeSize()))
+
 	err := encoding.WriteElements(w, lastStoreVersion)
 	if err != nil {
 		panic(err)
 	}
+
 	err = cert.Encode(w)
+
 	if err != nil {
 		panic(err)
 	}
@@ -160,6 +168,7 @@ func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	pubKey, err := bls.PublicKeyFromBytes(bs)
 	if err != nil {
 		return nil, err
@@ -176,15 +185,19 @@ func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	data, err := s.blockStore.block(pos.height)
 	if err != nil {
 		return nil, err
 	}
+
 	start := pos.offset
 	end := pos.offset + pos.length
+
 	if end > uint32(len(data)) {
 		return nil, ErrBadOffset
 	}
+
 	blockTime := util.SliceToUint32(data[hash.HashSize+1 : hash.HashSize+5])
 
 	return &CommittedTx{
@@ -299,17 +312,22 @@ func (s *store) LastCertificate() *certificate.Certificate {
 		// Genesis block
 		return nil
 	}
+
 	r := bytes.NewReader(data)
 	version := int32(0)
 	cert := new(certificate.Certificate)
+
 	err := encoding.ReadElements(r, &version)
 	if err != nil {
 		return nil
 	}
+
 	err = cert.Decode(r)
+
 	if err != nil {
 		return nil
 	}
+
 	return cert
 }
 
@@ -322,6 +340,8 @@ func (s *store) WriteBatch() error {
 		// The store is unreliable if the stored data does not match the cached data.
 		return err
 	}
+
 	s.batch.Reset()
+
 	return nil
 }

@@ -34,6 +34,7 @@ func Max[T constraints.Integer](a, b T) T {
 	if a > b {
 		return a
 	}
+
 	return b
 }
 
@@ -42,6 +43,7 @@ func Min[T constraints.Integer](a, b T) T {
 	if a < b {
 		return a
 	}
+
 	return b
 }
 
@@ -85,6 +87,7 @@ func RandUint64(max uint64) uint64 {
 	bigMax := &big.Int{}
 	bigMax.SetUint64(max)
 	bigRnd, _ := crand.Int(crand.Reader, bigMax)
+
 	return bigRnd.Uint64()
 }
 
@@ -115,7 +118,9 @@ func IS2OP(x *big.Int, xLen int) []byte {
 	if x.Sign() == -1 {
 		return nil
 	}
+
 	buf := make([]byte, xLen)
+
 	return x.FillBytes(buf)
 }
 
@@ -141,6 +146,7 @@ func StringToChange(amount string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	return CoinToChange(coin), nil
 }
 

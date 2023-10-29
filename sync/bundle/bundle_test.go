@@ -36,11 +36,13 @@ func TestMessageCompress(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	blocksData := [][]byte{}
+
 	for i := 0; i < 10; i++ {
 		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
 		d, _ := blk.Bytes()
 		blocksData = append(blocksData, d)
 	}
+
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeOK, message.ResponseCodeOK.String(),
 		1234, 888, blocksData, nil)
 	bdl := NewBundle(ts.RandPeerID(), msg)
@@ -52,6 +54,7 @@ func TestMessageCompress(t *testing.T) {
 	fmt.Printf("Compressed :%v%%\n", 100-len(bs1)*100/(len(bs0)))
 	fmt.Printf("Uncompressed len :%v\n", len(bs0))
 	fmt.Printf("Compressed len :%v\n", len(bs1))
+
 	msg2 := new(Bundle)
 	msg3 := new(Bundle)
 	_, err = msg2.Decode(bytes.NewReader(bs0))

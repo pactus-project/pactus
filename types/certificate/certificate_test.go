@@ -43,6 +43,7 @@ func TestCertificateCBORMarshaling(t *testing.T) {
 	cert1 := ts.GenerateTestCertificate(ts.RandHeight())
 	bz1, err := cbor.Marshal(cert1)
 	assert.NoError(t, err)
+
 	var cert2 certificate.Certificate
 	err = cbor.Unmarshal(bz1, &cert2)
 	assert.NoError(t, err)
@@ -174,6 +175,7 @@ func TestEncodingCertificate(t *testing.T) {
 		w := util.NewFixedWriter(i)
 		assert.Error(t, cert1.Encode(w), "encode test %v failed", i)
 	}
+
 	w := util.NewFixedWriter(length)
 	assert.NoError(t, cert1.Encode(w))
 

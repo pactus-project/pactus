@@ -36,6 +36,7 @@ func newStreamService(ctx context.Context, host lp2phost.Host,
 	}
 
 	s.host.SetStreamHandler(protocolID, s.handleStream)
+
 	return s
 }
 
@@ -62,6 +63,7 @@ func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 // Returns an error if the sending process fails.
 func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 	s.logger.Trace("sending stream", "to", pid)
+
 	_, err := s.host.Peerstore().SupportsProtocols(pid, s.protocolID)
 	if err != nil {
 		return LibP2PError{Err: err}
@@ -76,6 +78,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 		lp2pnetwork.WithNoDial(ctxWithTimeout, "should already have connection"), pid, s.protocolID)
 	if err != nil {
 		s.logger.Debug("unable to open direct stream", "pid", pid, "error", err)
+
 		if len(s.relayAddrs) == 0 {
 			return err
 		}
@@ -85,6 +88,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 		// An example of a relay connection is described here:
 		// https://github.com/libp2p/go-libp2p/blob/master/examples/relay/main.go
 		circuitAddrs := make([]ma.Multiaddr, len(s.relayAddrs))
+
 		for i, addr := range s.relayAddrs {
 			// To connect a peer over relay, we need a relay address.
 			// The format for the relay address is defined here:
@@ -93,6 +97,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 			if err != nil {
 				return LibP2PError{Err: err}
 			}
+
 			circuitAddrs[i] = circuitAddr
 		}
 
@@ -107,6 +112,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 			s.logger.Warn("unable to connect to peer using relay", "pid", pid, "error", err)
 			return LibP2PError{Err: err}
 		}
+
 		s.logger.Debug("connected to peer using relay", "pid", pid)
 
 		// Try to open a new stream to the target peer using the relay connection.
@@ -123,7 +129,9 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 	if err != nil {
 		return LibP2PError{Err: err}
 	}
+
 	err = stream.CloseWrite()
+
 	if err != nil {
 		return LibP2PError{Err: err}
 	}

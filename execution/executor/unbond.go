@@ -28,6 +28,7 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidHeight,
 			"validator has unbonded at height %v", val.UnbondingHeight())
 	}
+
 	if e.strict {
 		// In strict mode, the unbond transaction will be rejected if the
 		// validator is in the committee.

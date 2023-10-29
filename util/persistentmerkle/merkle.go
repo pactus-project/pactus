@@ -48,11 +48,13 @@ func (t *Tree) getNode(width, height int) *node {
 
 func (t *Tree) getOrCreateNode(width, height int) *node {
 	id := nodeID(width, height)
+
 	node, ok := t.nodes[id]
 	if !ok {
 		node = t.createNode(width, height)
 		t.nodes[id] = node
 	}
+
 	return node
 }
 
@@ -103,6 +105,7 @@ func (t *Tree) nodeHash(width, height int) hash.Hash {
 			panic("invalid merkle tree")
 		}
 	}
+
 	if n.hash != nil {
 		return *n.hash
 	}
@@ -116,5 +119,6 @@ func (t *Tree) nodeHash(width, height int) hash.Hash {
 
 	h := hash.CalcHash(data)
 	n.hash = &h
+
 	return h
 }

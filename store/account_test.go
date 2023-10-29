@@ -46,6 +46,7 @@ func TestAccountBatchSaving(t *testing.T) {
 	td := setup(t)
 
 	total := td.RandInt32NonZero(100)
+
 	t.Run("Add some accounts", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			acc, addr := td.GenerateTestAccount(i)
@@ -66,7 +67,9 @@ func TestAccountByAddress(t *testing.T) {
 	td := setup(t)
 
 	total := td.RandInt32NonZero(100)
+
 	var lastAddr crypto.Address
+
 	t.Run("Add some accounts", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
 			acc, addr := td.GenerateTestAccount(i)
@@ -107,6 +110,7 @@ func TestIterateAccounts(t *testing.T) {
 
 	total := td.RandInt32NonZero(100)
 	hashes1 := []hash.Hash{}
+
 	for i := int32(0); i < total; i++ {
 		acc, addr := td.GenerateTestAccount(i)
 		td.store.UpdateAccount(addr, acc)
@@ -115,6 +119,7 @@ func TestIterateAccounts(t *testing.T) {
 	assert.NoError(t, td.store.WriteBatch())
 
 	hashes2 := []hash.Hash{}
+
 	td.store.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
 		hashes2 = append(hashes2, acc.Hash())
 		return false
@@ -122,6 +127,7 @@ func TestIterateAccounts(t *testing.T) {
 	assert.ElementsMatch(t, hashes1, hashes2)
 
 	stopped := false
+
 	td.store.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
 		if acc.Hash() == hashes1[0] {
 			stopped = true

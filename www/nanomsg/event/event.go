@@ -24,10 +24,12 @@ type Event []byte
 func CreateBlockEvent(blockHash hash.Hash, height uint32) Event {
 	buf := make([]byte, 0, 42)
 	w := bytes.NewBuffer(buf)
+
 	err := encoding.WriteElements(w, TopicBlock, blockHash, height)
 	if err != nil {
 		logger.Error("error on encoding event in new block", "error", err)
 	}
+
 	return w.Bytes()
 }
 
@@ -37,10 +39,12 @@ func CreateBlockEvent(blockHash hash.Hash, height uint32) Event {
 func CreateTransactionEvent(txHash tx.ID, height uint32) Event {
 	buf := make([]byte, 0, 42)
 	w := bytes.NewBuffer(buf)
+
 	err := encoding.WriteElements(w, TopicTransaction, txHash, height)
 	if err != nil {
 		logger.Error("error on encoding event in new transaction", "error", err)
 	}
+
 	return w.Bytes()
 }
 
@@ -50,9 +54,11 @@ func CreateTransactionEvent(txHash tx.ID, height uint32) Event {
 func CreateAccountChangeEvent(accountAddr crypto.Address, height uint32) Event {
 	buf := make([]byte, 0, 42)
 	w := bytes.NewBuffer(buf)
+
 	err := encoding.WriteElements(w, TopicAccountChange, accountAddr, height)
 	if err != nil {
 		logger.Error("error on encoding event in new account", "error", err)
 	}
+
 	return w.Bytes()
 }

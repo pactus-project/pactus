@@ -383,6 +383,7 @@ func TestTotalPower(t *testing.T) {
 
 	totalPower := val0.Power() + val1.Power() + val2.Power() + val3.Power() + val4.Power()
 	totalStake := val0.Stake() + val1.Stake() + val2.Stake() + val3.Stake() + val4.Stake()
+
 	assert.Equal(t, cmt.TotalPower(), totalPower)
 	assert.Equal(t, cmt.TotalPower(), totalStake+1)
 }

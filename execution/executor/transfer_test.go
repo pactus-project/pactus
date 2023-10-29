@@ -44,6 +44,7 @@ func (td *testData) checkTotalCoin(t *testing.T, fee int64) {
 	for _, val := range td.sandbox.TestStore.Validators {
 		total += val.Stake()
 	}
+
 	assert.Equal(t, total+fee, int64(21000000*1e9))
 }
 
@@ -54,6 +55,7 @@ func (td *testData) randomAmountAndFee(min, max int64) (int64, int64) {
 	}
 
 	fee := int64(float64(amt) * td.sandbox.Params().FeeFraction)
+
 	return amt, fee
 }
 

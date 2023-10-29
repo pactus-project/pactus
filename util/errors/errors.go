@@ -89,6 +89,7 @@ func Code(err error) int {
 	if err == nil {
 		return ErrNone
 	}
+
 	_e, ok := err.(i) //nolint
 	if !ok {
 		return ErrGeneric

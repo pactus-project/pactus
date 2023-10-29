@@ -51,29 +51,37 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		bs, err := hex.DecodeString(string(h))
 		if err != nil {
 			return nil, err
 		}
+
 		key, err := lp2pcrypto.UnmarshalPrivateKey(bs)
 		if err != nil {
 			return nil, err
 		}
+
 		return key, nil
 	}
+
 	key, _, err := lp2pcrypto.GenerateEd25519Key(nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate private key")
 	}
+
 	bs, err := lp2pcrypto.MarshalPrivateKey(key)
 	if err != nil {
 		return nil, err
 	}
+
 	h := hex.EncodeToString(bs)
 	err = util.WriteFile(path, []byte(h))
+
 	if err != nil {
 		return nil, err
 	}
+
 	return key, nil
 }
 
@@ -160,12 +168,14 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 	}
 
 	relayAddrs := []ma.Multiaddr{}
+
 	if conf.EnableRelay {
 		for _, s := range conf.RelayAddrs {
 			addr, err := ma.NewMultiaddr(s)
 			if err != nil {
 				return nil, LibP2PError{Err: err}
 			}
+
 			relayAddrs = append(relayAddrs, addr)
 		}
 
@@ -233,16 +243,19 @@ func (n *network) Start() error {
 	if err := n.dht.Start(); err != nil {
 		return LibP2PError{Err: err}
 	}
+
 	if n.mdns != nil {
 		if err := n.mdns.Start(); err != nil {
 			return LibP2PError{Err: err}
 		}
 	}
+
 	n.gossip.Start()
 	n.stream.Start()
 	n.peerMgr.Start()
 
 	n.logger.Info("network started", "addr", n.host.Addrs(), "id", n.host.ID())
+
 	return nil
 }
 
@@ -273,17 +286,20 @@ func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) error {
 
 func (n *network) Broadcast(msg []byte, topicID TopicID) error {
 	n.logger.Trace("publishing new message", "topic", topicID)
+
 	switch topicID {
 	case TopicIDGeneral:
 		if n.generalTopic == nil {
 			return NotSubscribedError{TopicID: topicID}
 		}
+
 		return n.gossip.BroadcastMessage(msg, n.generalTopic)
 
 	case TopicIDConsensus:
 		if n.consensusTopic == nil {
 			return NotSubscribedError{TopicID: topicID}
 		}
+
 		return n.gossip.BroadcastMessage(msg, n.consensusTopic)
 
 	default:
@@ -296,11 +312,14 @@ func (n *network) JoinGeneralTopic() error {
 		n.logger.Debug("already subscribed to general topic")
 		return nil
 	}
+
 	topic, err := n.gossip.JoinTopic(n.generalTopicName())
 	if err != nil {
 		return err
 	}
+
 	n.generalTopic = topic
+
 	return nil
 }
 
@@ -309,11 +328,14 @@ func (n *network) JoinConsensusTopic() error {
 		n.logger.Debug("already subscribed to consensus topic")
 		return nil
 	}
+
 	topic, err := n.gossip.JoinTopic(n.consensusTopicName())
 	if err != nil {
 		return err
 	}
+
 	n.consensusTopic = topic
+
 	return nil
 }
 

@@ -23,6 +23,7 @@ func (conf *Config) BasicCheck() error {
 	if conf.ChangeProposerTimeout <= 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "timeout for change proposer can't be negative")
 	}
+
 	if conf.ChangeProposerDelta <= 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "change proposer delta can't be negative")
 	}

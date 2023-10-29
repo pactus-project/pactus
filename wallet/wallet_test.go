@@ -132,6 +132,7 @@ func TestRecoverWallet(t *testing.T) {
 
 	mnemonic, _ := td.wallet.Mnemonic(td.password)
 	password := ""
+
 	t.Run("Wallet exists", func(t *testing.T) {
 		// Save the test wallet first then
 		// try to recover a wallet at the same place
@@ -200,12 +201,14 @@ func TestTestKeyInfo(t *testing.T) {
 	w1, err := Create(util.TempFilePath(), mnemonic, td.password,
 		genesis.Mainnet)
 	assert.NoError(t, err)
+
 	addrStr1, _ := w1.NewBLSAccountAddress("")
 	prv1, _ := w1.PrivateKey("", addrStr1)
 
 	w2, err := Create(util.TempFilePath(), mnemonic, td.password,
 		genesis.Testnet)
 	assert.NoError(t, err)
+
 	addrStr2, _ := w2.NewBLSAccountAddress("")
 	prv2, _ := w2.PrivateKey("", addrStr2)
 

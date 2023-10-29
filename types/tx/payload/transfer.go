@@ -32,11 +32,13 @@ func (p *TransferPayload) BasicCheck() error {
 			Reason: "sender is not an account address: " + p.From.String(),
 		}
 	}
+
 	if !p.To.IsAccountAddress() {
 		return BasicCheckError{
 			Reason: "receiver is not an account address: " + p.To.String(),
 		}
 	}
+
 	return nil
 }
 
@@ -75,7 +77,9 @@ func (p *TransferPayload) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+
 	p.Amount = int64(amount)
+
 	return nil
 }
 

@@ -70,13 +70,16 @@ func (k *ExtendedKey) pubKeyBytes() []byte {
 	if !k.isPrivate {
 		return k.key
 	}
+
 	g1 := bls12381.NewG1()
 
 	privKey := bls12381.NewFr()
 	privKey.FromBytes(k.key)
+
 	if k.pubOnG1 {
 		pub := new(bls12381.PointG1)
 		g1.MulScalar(pub, g1.One(), privKey)
+
 		return g1.ToCompressed(pub)
 	}
 
@@ -84,6 +87,7 @@ func (k *ExtendedKey) pubKeyBytes() []byte {
 
 	pub := new(bls12381.PointG2)
 	g2.MulScalar(pub, g2.One(), privKey)
+
 	return g2.ToCompressed(pub)
 }
 
@@ -100,13 +104,16 @@ func (k *ExtendedKey) IsPrivate() bool {
 // given path.
 func (k *ExtendedKey) DerivePath(path []uint32) (*ExtendedKey, error) {
 	ext := k
+
 	var err error
+
 	for _, index := range path {
 		ext, err = ext.Derive(index)
 		if err != nil {
 			return nil, err
 		}
 	}
+
 	return ext, nil
 }
 
@@ -127,6 +134,7 @@ func (k *ExtendedKey) DerivePath(path []uint32) (*ExtendedKey, error) {
 // extended public keys can be derived from a parent public extended key (no
 // knowledge of the parent private key) whereas hardened extended keys may not
 // be.
+//nolint:all
 func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	// There are four scenarios that could happen here:
 	// 1) Private extended key -> Hardened child private extended key
@@ -148,6 +156,7 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	//   G2: serG2(parentPubKey) || ser32(i)
 	//
 	data := make([]byte, 0, 100)
+
 	if isChildHardened {
 		// Case #1 and #4.
 		if k.isPrivate {
@@ -164,6 +173,7 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 			} else {
 				data = append(data, 0x00)
 			}
+
 			data = append(data, k.key...)
 		} else {
 			// Case #4
@@ -338,6 +348,7 @@ func (k *ExtendedKey) Neuter() *ExtendedKey {
 }
 
 // String returns the extended key as a bech32-encoded string.
+//nolint:all
 func (k *ExtendedKey) String() string {
 	//
 	// The serialized format is structured as follows:
@@ -414,6 +425,7 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 	r := bytes.NewReader(data)
 	depth := uint8(0)
 	err = encoding.ReadElement(r, &depth)
+
 	if err != nil {
 		return nil, err
 	}
@@ -433,6 +445,7 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 
 	var pubOnG1 bool
 	err = encoding.ReadElement(r, &pubOnG1)
+
 	if err != nil {
 		return nil, err
 	}
@@ -497,6 +510,7 @@ func GenerateSeed(length uint8) ([]byte, error) {
 	}
 
 	buf := make([]byte, length)
+
 	_, err := rand.Read(buf)
 	if err != nil {
 		return nil, err

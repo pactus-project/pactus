@@ -68,6 +68,7 @@ func TestTempFile(t *testing.T) {
 
 func isRoot() bool {
 	cmd := exec.Command("id", "-u")
+
 	output, err := cmd.Output()
 	if err != nil {
 		fmt.Println(err)
@@ -78,6 +79,7 @@ func isRoot() bool {
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	return i == 0
 }
 
@@ -87,6 +89,7 @@ func TestIsValidPath(t *testing.T) {
 		assert.False(t, IsValidDirPath("/root"))
 		assert.False(t, IsValidDirPath("/test"))
 	}
+
 	assert.False(t, IsValidDirPath("./io_test.go"))
 	assert.True(t, IsValidDirPath("/tmp"))
 	assert.True(t, IsValidDirPath("/tmp/pactus"))

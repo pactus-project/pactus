@@ -22,6 +22,7 @@ func (m *QueryVotesMessage) BasicCheck() error {
 	if m.Round < 0 {
 		return errors.Error(errors.ErrInvalidRound)
 	}
+
 	return nil
 }
 

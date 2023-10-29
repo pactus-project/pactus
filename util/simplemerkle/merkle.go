@@ -27,6 +27,7 @@ func nextPowerOfTwo(n int) int {
 
 	// Figure out and return the next power of two.
 	exponent := uint(math.Log2(float64(n))) + 1
+
 	return 1 << exponent // 2^exponent
 }
 
@@ -36,10 +37,12 @@ func nextPowerOfTwo(n int) int {
 func HashMerkleBranches(left, right *hash.Hash) *hash.Hash {
 	// Concatenate the left and right nodes.
 	var h [hash.HashSize * 2]byte
+
 	copy(h[:hash.HashSize], left.Bytes())
 	copy(h[hash.HashSize:], right.Bytes())
 
 	newHash := hasher(h[:])
+
 	return &newHash
 }
 
@@ -69,6 +72,7 @@ func NewTreeFromHashes(hashes []hash.Hash) *Tree {
 	// Start the array offset after the last transaction and adjusted to the
 	// next power of two.
 	offset := nextPoT
+
 	for i := 0; i < arraySize-1; i += 2 {
 		switch {
 		// When there is no left child node, the parent is nil too.
@@ -97,10 +101,13 @@ func (tree *Tree) Root() hash.Hash {
 	if tree == nil {
 		return hash.UndefHash
 	}
+
 	h := tree.merkles[len(tree.merkles)-1]
+
 	if h != nil {
 		return *h
 	}
+
 	return hash.UndefHash
 }
 
@@ -108,5 +115,6 @@ func (tree *Tree) Depth() int {
 	if tree == nil {
 		return 0
 	}
+
 	return int(math.Log2(float64(len(tree.merkles))))
 }

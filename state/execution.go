@@ -13,6 +13,7 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox) error {
 	exe := execution.NewExecutor()
 
 	var subsidyTrx *tx.Tx
+
 	for i, trx := range b.Transactions() {
 		// The first transaction should be subsidy transaction
 		isSubsidyTx := (i == 0)
@@ -21,6 +22,7 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox) error {
 				return errors.Errorf(errors.ErrInvalidTx,
 					"first transaction should be a subsidy transaction")
 			}
+
 			subsidyTrx = trx
 		} else if trx.IsSubsidyTx() {
 			return errors.Errorf(errors.ErrInvalidTx,
@@ -35,6 +37,7 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox) error {
 
 	accumulatedFee := sb.AccumulatedFee()
 	subsidyAmt := st.params.BlockReward + sb.AccumulatedFee()
+
 	if subsidyTrx.Payload().Value() != subsidyAmt {
 		return errors.Errorf(errors.ErrInvalidTx,
 			"invalid subsidy amount, expected %v, got %v", subsidyAmt, subsidyTrx.Payload().Value())

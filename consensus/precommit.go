@@ -21,6 +21,7 @@ func (s *precommitState) decide() {
 
 	precommits := s.log.PrecommitVoteSet(s.round)
 	precommitQH := precommits.QuorumHash()
+
 	if precommitQH != nil {
 		s.logger.Debug("pre-commit has quorum", "hash", precommitQH)
 
@@ -56,15 +57,18 @@ func (s *precommitState) vote() {
 	if roundProposal == nil {
 		s.queryProposal()
 		s.logger.Debug("no proposal yet")
+
 		return
 	}
 
 	prepares := s.log.PrepareVoteSet(s.round)
 	prepareQH := prepares.QuorumHash()
+
 	if !roundProposal.IsForBlock(*prepareQH) {
 		s.log.SetRoundProposal(s.round, nil)
 		s.queryProposal()
 		s.logger.Warn("double proposal detected", "roundProposal", roundProposal, "prepared", *prepareQH)
+
 		return
 	}
 

@@ -63,6 +63,7 @@ func NewConsensus(
 	broadcaster := func(_ crypto.Address, msg message.Message) {
 		broadcastCh <- msg
 	}
+
 	return newConsensus(conf, bcState,
 		valKey, rewardAddr, broadcaster, mediator)
 }
@@ -118,6 +119,7 @@ func (cs *consensus) Start() {
 	defer cs.lk.Unlock()
 
 	cs.moveToNewHeight()
+
 	if cs.active {
 		cs.queryProposal()
 		cs.queryVotes()
@@ -166,10 +168,12 @@ func (cs *consensus) AllVotes() []*vote.Vote {
 	defer cs.lk.RUnlock()
 
 	votes := []*vote.Vote{}
+
 	for r := int16(0); r <= cs.round; r++ {
 		m := cs.log.RoundMessages(r)
 		votes = append(votes, m.AllVotes()...)
 	}
+
 	return votes
 }
 
@@ -234,6 +238,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		// By doing so, we enable the validator to broadcast its votes and
 		// prevent it from being marked as absent in the block certificate.
 		cs.logger.Trace("block is committed for this height", "proposal", p)
+
 		if p.Block().Hash() != cs.bcState.LastBlockHash() {
 			cs.logger.Warn("proposal is not for the committed block", "proposal", p)
 			return
@@ -301,6 +306,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 	if err != nil {
 		cs.logger.Error("error on adding a vote", "vote", v, "error", err)
 	}
+
 	if added {
 		cs.logger.Info("new vote added", "vote", v)
 
@@ -359,6 +365,7 @@ func (cs *consensus) signAddVote(v *vote.Vote) {
 	if err != nil {
 		cs.logger.Error("error on adding our vote", "error", err, "vote", v)
 	}
+
 	cs.broadcastVote(v)
 }
 
@@ -429,6 +436,7 @@ func (cs *consensus) PickRandomVote(round int16) *vote.Vote {
 	defer cs.lk.RUnlock()
 
 	votes := []*vote.Vote{}
+
 	if round == cs.round {
 		m := cs.log.RoundMessages(round)
 		votes = append(votes, m.AllVotes()...)
@@ -437,9 +445,11 @@ func (cs *consensus) PickRandomVote(round int16) *vote.Vote {
 		vs := cs.log.CPDecidedVoteVoteSet(round)
 		votes = append(votes, vs.AllVotes()...)
 	}
+
 	if len(votes) == 0 {
 		return nil
 	}
+
 	return votes[util.RandInt32(int32(len(votes)))]
 }
 

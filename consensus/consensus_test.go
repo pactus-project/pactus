@@ -71,6 +71,7 @@ func (o *OverrideStringer) String() string {
 
 func setup(t *testing.T) *testData {
 	t.Helper()
+
 	queryVoteInitialTimeout = 2 * time.Hour
 
 	return setupWithSeed(t, testsuite.GenerateSeed())
@@ -87,6 +88,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	txPool := txpool.MockingTxPool()
 
 	vals := make([]*validator.Validator, 4)
+
 	for i, key := range valKeys {
 		val := validator.NewValidator(key.PublicKey(), int32(i))
 		vals[i] = val
@@ -164,9 +166,11 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, h 
 			consMsg.message.Type() == message.TypeBlockAnnounce {
 			m := consMsg.message.(*message.BlockAnnounceMessage)
 			assert.Equal(t, m.Block.Hash(), h)
+
 			return
 		}
 	}
+
 	require.NoError(t, fmt.Errorf("Not found"))
 }
 
@@ -181,10 +185,13 @@ func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
 			m := consMsg.message.(*message.ProposalMessage)
 			require.Equal(t, m.Proposal.Height(), height)
 			require.Equal(t, m.Proposal.Round(), round)
+
 			return m.Proposal
 		}
 	}
+
 	require.NoError(t, fmt.Errorf("Not found"))
+
 	return nil
 }
 
@@ -207,9 +214,11 @@ func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, he
 			consMsg.message.Type() == message.TypeQueryProposal {
 			m := consMsg.message.(*message.QueryProposalMessage)
 			assert.Equal(t, m.Height, height)
+
 			return
 		}
 	}
+
 	require.NoError(t, fmt.Errorf("Not found"))
 }
 
@@ -222,9 +231,11 @@ func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height
 			m := consMsg.message.(*message.QueryVotesMessage)
 			assert.Equal(t, m.Height, height)
 			assert.Equal(t, m.Round, round)
+
 			return
 		}
 	}
+
 	require.NoError(t, fmt.Errorf("Not found"))
 }
 
@@ -243,6 +254,7 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vo
 		}
 	}
 	require.NoError(t, fmt.Errorf("Not found"))
+
 	return nil
 }
 
@@ -346,7 +358,9 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	t.Helper()
 
 	height := td.consX.bcState.LastBlockHeight()
+
 	var err error
+
 	p := td.makeProposal(t, height+1, 0)
 
 	sb := certificate.BlockCertificateSignBytes(p.Block().Hash(), height+1, 0)
@@ -375,25 +389,30 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 	t.Helper()
 
 	var p *proposal.Proposal
+
 	switch (height % 4) + uint32(round%4) {
 	case 1:
 		blk, err := td.consX.bcState.ProposeBlock(td.consX.valKey, td.consX.rewardAddr)
 		require.NoError(t, err)
+
 		p = proposal.NewProposal(height, round, blk)
 		td.HelperSignProposal(td.consX.valKey, p)
 	case 2:
 		blk, err := td.consY.bcState.ProposeBlock(td.consY.valKey, td.consY.rewardAddr)
 		require.NoError(t, err)
+
 		p = proposal.NewProposal(height, round, blk)
 		td.HelperSignProposal(td.consY.valKey, p)
 	case 3:
 		blk, err := td.consB.bcState.ProposeBlock(td.consB.valKey, td.consB.rewardAddr)
 		require.NoError(t, err)
+
 		p = proposal.NewProposal(height, round, blk)
 		td.HelperSignProposal(td.consB.valKey, p)
 	case 0, 4:
 		blk, err := td.consP.bcState.ProposeBlock(td.consP.valKey, td.consP.rewardAddr)
 		require.NoError(t, err)
+
 		p = proposal.NewProposal(height, round, blk)
 		td.HelperSignProposal(td.consP.valKey, p)
 	}
@@ -553,6 +572,7 @@ func TestPickRandomVote(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 	assert.Nil(t, td.consP.PickRandomVote(0))
+
 	cpRound := int16(1)
 
 	// === make valid certificate
@@ -569,6 +589,7 @@ func TestPickRandomVote(t *testing.T) {
 	committers := []int32{}
 	preVoteSigs := []*bls.Signature{}
 	mainVoteSigs := []*bls.Signature{}
+
 	for i, val := range td.consP.validators {
 		committers = append(committers, val.Number())
 		preVoteSigs = append(preVoteSigs, td.valKeys[i].Sign(sbPreVote))
@@ -877,6 +898,7 @@ func TestByzantine(t *testing.T) {
 	// =================================
 	// Now, Partition heals
 	fmt.Println("== Partition heals")
+
 	cert, err := checkConsensus(td, h, []*vote.Vote{byzVote1, byzVote2})
 
 	require.NoError(t, err)
@@ -902,6 +924,7 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 	changeProposerChance := 70
 
 	blockAnnounces := map[crypto.Address]*message.BlockAnnounceMessage{}
+
 	for len(td.consMessages) > 0 {
 		rndIndex := td.RandInt(len(td.consMessages))
 		rndMsg := td.consMessages[rndIndex]
@@ -947,6 +970,7 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 				td.changeProposerTimeout(cons)
 			}
 		}
+
 		changeProposerChance -= 5
 	}
 

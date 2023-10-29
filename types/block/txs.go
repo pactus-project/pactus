@@ -34,7 +34,9 @@ func (txs Txs) Root() hash.Hash {
 	for i, trx := range txs {
 		hashes[i] = trx.ID()
 	}
+
 	merkle := simplemerkle.NewTreeFromHashes(hashes)
+
 	return merkle.Root()
 }
 

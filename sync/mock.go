@@ -24,6 +24,7 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 	pub2, _ := ts.RandBLSKeyPair()
 	pid1 := ts.RandPeerID()
 	pid2 := ts.RandPeerID()
+
 	ps.UpdateInfo(
 		pid1,
 		"test-peer-1",

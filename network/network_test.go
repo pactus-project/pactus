@@ -39,6 +39,7 @@ func makeTestRelay(t *testing.T) host.Host {
 		}
 		return false
 	}, time.Second, 10*time.Millisecond)
+
 	return h
 }
 
@@ -106,6 +107,7 @@ func readData(t *testing.T, r io.ReadCloser, length int) []byte {
 
 	buf := make([]byte, length)
 	_, err := r.Read(buf)
+
 	if !errors.Is(err, io.EOF) {
 		assert.NoError(t, err)
 		assert.NoError(t, r.Close())
@@ -144,6 +146,7 @@ func TestNetwork(t *testing.T) {
 	nodeR := makeTestRelay(t)
 
 	relayAddrs := []string{}
+
 	for _, addr := range nodeR.Addrs() {
 		addr2 := fmt.Sprintf("%s/p2p/%s", addr, nodeR.ID().String())
 		fmt.Printf("relay address: %s\n", addr2)
@@ -159,13 +162,16 @@ func TestNetwork(t *testing.T) {
 	confB.Listens = []string{
 		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", bootstrapPort),
 	}
+
 	fmt.Println("Starting Bootstrap node")
+
 	networkB := makeTestNetwork(t, confB, []lp2p.Option{
 		lp2p.ForceReachabilityPublic(),
 	})
 	bootstrapAddresses := []string{
 		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%v", bootstrapPort, networkB.SelfID().String()),
 	}
+
 	assert.NoError(t, networkB.JoinConsensusTopic())
 
 	// Public node
@@ -175,7 +181,9 @@ func TestNetwork(t *testing.T) {
 	confP.Listens = []string{
 		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", publicPort),
 	}
+
 	fmt.Println("Starting Public node")
+
 	networkP := makeTestNetwork(t, confP, []lp2p.Option{
 		lp2p.ForceReachabilityPublic(),
 	})
@@ -190,7 +198,9 @@ func TestNetwork(t *testing.T) {
 	confM.Listens = []string{
 		"/ip4/127.0.0.1/tcp/0",
 	}
+
 	fmt.Println("Starting Private node M")
+
 	networkM := makeTestNetwork(t, confM, []lp2p.Option{
 		lp2p.ForceReachabilityPrivate(),
 	})
@@ -204,7 +214,9 @@ func TestNetwork(t *testing.T) {
 	confN.Listens = []string{
 		"/ip4/127.0.0.1/tcp/0",
 	}
+
 	fmt.Println("Starting Private node N")
+
 	networkN := makeTestNetwork(t, confN, []lp2p.Option{
 		lp2p.ForceReachabilityPrivate(),
 	})
@@ -217,7 +229,9 @@ func TestNetwork(t *testing.T) {
 	confX.Listens = []string{
 		"/ip4/127.0.0.1/tcp/0",
 	}
+
 	fmt.Println("Starting Private node X")
+
 	networkX := makeTestNetwork(t, confX, []lp2p.Option{
 		lp2p.ForceReachabilityPrivate(),
 	})
@@ -369,7 +383,9 @@ func TestConnections(t *testing.T) {
 		bootstrapPort := ts.RandInt32(9999) + 10000
 		bootstrapAddr := fmt.Sprintf(test.bootstrapAddr, bootstrapPort)
 		confB.Listens = []string{bootstrapAddr}
+
 		fmt.Println("Starting Bootstrap node")
+
 		networkB := makeTestNetwork(t, confB, []lp2p.Option{
 			lp2p.ForceReachabilityPublic(),
 		})
@@ -380,7 +396,9 @@ func TestConnections(t *testing.T) {
 			fmt.Sprintf("%s/p2p/%v", bootstrapAddr, networkB.SelfID().String()),
 		}
 		confP.Listens = []string{test.peerAddr}
+
 		fmt.Println("Starting Public node")
+
 		networkP := makeTestNetwork(t, confP, []lp2p.Option{
 			lp2p.ForceReachabilityPublic(),
 		})
@@ -403,6 +421,7 @@ func testConnection(t *testing.T, networkP, networkB *network) {
 			networkB.NumConnectedPeers() >= 1 {
 			break
 		}
+
 		time.Sleep(100 * time.Millisecond)
 	}
 

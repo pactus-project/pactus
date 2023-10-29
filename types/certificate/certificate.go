@@ -64,26 +64,31 @@ func (cert *Certificate) BasicCheck() error {
 			Reason: fmt.Sprintf("height is not positive: %d", cert.Height()),
 		}
 	}
+
 	if cert.Round() < 0 {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("round is negative: %d", cert.Round()),
 		}
 	}
+
 	if cert.Signature() == nil {
 		return BasicCheckError{
 			Reason: "signature is missing",
 		}
 	}
+
 	if cert.Committers() == nil {
 		return BasicCheckError{
 			Reason: "committers is missing",
 		}
 	}
+
 	if cert.Absentees() == nil {
 		return BasicCheckError{
 			Reason: "absentees is missing",
 		}
 	}
+
 	if !util.IsSubset(cert.Committers(), cert.Absentees()) {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("absentees are not a subset of committers: %v, %v",
@@ -135,6 +140,7 @@ func (cert *Certificate) SerializeSize() int {
 	for _, n := range cert.Absentees() {
 		sz += encoding.VarIntSerializeSize(uint64(n))
 	}
+
 	return sz
 }
 
@@ -143,16 +149,20 @@ func (cert *Certificate) MarshalCBOR() ([]byte, error) {
 	if err := cert.Encode(buf); err != nil {
 		return nil, err
 	}
+
 	return cbor.Marshal(buf.Bytes())
 }
 
 func (cert *Certificate) UnmarshalCBOR(bs []byte) error {
 	data := make([]byte, 0, cert.SerializeSize())
+
 	err := cbor.Unmarshal(bs, &data)
 	if err != nil {
 		return err
 	}
+
 	buf := bytes.NewBuffer(data)
+
 	return cert.Decode(buf)
 }
 
@@ -160,17 +170,21 @@ func (cert *Certificate) Encode(w io.Writer) error {
 	if err := encoding.WriteElements(w, cert.data.Height, cert.data.Round); err != nil {
 		return err
 	}
+
 	if err := encoding.WriteVarInt(w, uint64(len(cert.data.Committers))); err != nil {
 		return err
 	}
+
 	for _, n := range cert.data.Committers {
 		if err := encoding.WriteVarInt(w, uint64(n)); err != nil {
 			return err
 		}
 	}
+
 	if err := encoding.WriteVarInt(w, uint64(len(cert.data.Absentees))); err != nil {
 		return err
 	}
+
 	for _, n := range cert.data.Absentees {
 		if err := encoding.WriteVarInt(w, uint64(n)); err != nil {
 			return err
@@ -190,12 +204,15 @@ func (cert *Certificate) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+
 	committers := make([]int32, lenCommitters)
+
 	for i := 0; i < int(lenCommitters); i++ {
 		n, err := encoding.ReadVarInt(r)
 		if err != nil {
 			return err
 		}
+
 		committers[i] = int32(n)
 	}
 
@@ -203,12 +220,15 @@ func (cert *Certificate) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+
 	absentees := make([]int32, lenAbsentees)
+
 	for i := 0; i < int(lenAbsentees); i++ {
 		n, err := encoding.ReadVarInt(r)
 		if err != nil {
 			return err
 		}
+
 		absentees[i] = int32(n)
 	}
 
@@ -256,6 +276,7 @@ func (cert *Certificate) Validate(height uint32,
 			pubs = append(pubs, val.PublicKey())
 			signedPower += val.Power()
 		}
+
 		committeePower += val.Power()
 	}
 

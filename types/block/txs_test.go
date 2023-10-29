@@ -15,6 +15,7 @@ func TestTxsMerkle(t *testing.T) {
 	txs := block.NewTxs()
 	trx1, _ := ts.GenerateTestTransferTx()
 	trx2, _ := ts.GenerateTestTransferTx()
+
 	txs.Append(trx1)
 	merkle := txs.Root()
 	assert.Equal(t, merkle, trx1.ID())
@@ -36,6 +37,7 @@ func TestAppendPrependRemove(t *testing.T) {
 	trx3, _ := ts.GenerateTestTransferTx()
 	trx4, _ := ts.GenerateTestTransferTx()
 	trx5, _ := ts.GenerateTestTransferTx()
+
 	txs.Append(trx2)
 	txs.Append(trx3)
 	txs.Prepend(trx1)
@@ -63,6 +65,7 @@ func TestGetTransaction(t *testing.T) {
 	txs := block.NewTxs()
 	trx1, _ := ts.GenerateTestTransferTx()
 	trx2, _ := ts.GenerateTestTransferTx()
+
 	txs.Append(trx1)
 	txs.Append(trx2)
 	assert.Equal(t, trx1, txs.Get(0))

@@ -52,9 +52,11 @@ func NewManager(
 // Start starts the manager.
 func (mgr *manager) Start() error {
 	logger.Debug("starting consensus instances")
+
 	for _, cons := range mgr.instances {
 		cons.Start()
 	}
+
 	return nil
 }
 
@@ -69,6 +71,7 @@ func (mgr *manager) Instances() []Reader {
 	for i, cons := range mgr.instances {
 		readers[i] = cons
 	}
+
 	return readers
 }
 
@@ -109,8 +112,10 @@ func (mgr *manager) MoveToNewHeight() {
 
 	inst := mgr.getBestInstance()
 	curHeight, _ := inst.HeightRound()
+
 	for i := len(mgr.upcomingProposals) - 1; i >= 0; i-- {
 		p := mgr.upcomingProposals[i]
+
 		switch {
 		case p.Height() < curHeight:
 			// Ignore old proposals
@@ -121,6 +126,7 @@ func (mgr *manager) MoveToNewHeight() {
 
 		case p.Height() == curHeight:
 			logger.Debug("upcoming proposal processed", "height", curHeight)
+
 			for _, cons := range mgr.instances {
 				cons.SetProposal(p)
 			}
@@ -131,6 +137,7 @@ func (mgr *manager) MoveToNewHeight() {
 
 	for i := len(mgr.upcomingVotes) - 1; i >= 0; i-- {
 		v := mgr.upcomingVotes[i]
+
 		switch {
 		case v.Height() < curHeight:
 			// Ignore old votes
@@ -141,6 +148,7 @@ func (mgr *manager) MoveToNewHeight() {
 
 		case v.Height() == curHeight:
 			logger.Debug("upcoming votes processed", "height", curHeight)
+
 			for _, cons := range mgr.instances {
 				cons.AddVote(v)
 			}
@@ -154,6 +162,7 @@ func (mgr *manager) MoveToNewHeight() {
 func (mgr *manager) AddVote(v *vote.Vote) {
 	inst := mgr.getBestInstance()
 	curHeight, _ := inst.HeightRound()
+
 	switch {
 	case v.Height() < curHeight:
 		_ = mgr.state.UpdateLastCertificate(v)
@@ -172,6 +181,7 @@ func (mgr *manager) AddVote(v *vote.Vote) {
 func (mgr *manager) SetProposal(p *proposal.Proposal) {
 	inst := mgr.getBestInstance()
 	curHeight, _ := inst.HeightRound()
+
 	switch {
 	case p.Height() < curHeight:
 		// discard the old proposal

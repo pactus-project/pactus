@@ -40,6 +40,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 			return handler.respond(response, initiator)
 		}
 	}
+
 	height := msg.From
 	count := msg.Count
 
@@ -54,12 +55,14 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 	for {
 		blockToRead := util.Min(handler.config.BlockPerMessage, count)
 		blocksData := handler.prepareBlocks(height, blockToRead)
+
 		if len(blocksData) == 0 {
 			break
 		}
 
 		response := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks,
 			message.ResponseCodeMoreBlocks.String(), msg.SessionID, height, blocksData, nil)
+
 		err := handler.respond(response, initiator)
 		if err != nil {
 			return err
@@ -67,6 +70,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 
 		height += uint32(len(blocksData))
 		count -= uint32(len(blocksData))
+
 		if count <= 0 {
 			break
 		}

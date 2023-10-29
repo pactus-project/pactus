@@ -54,6 +54,7 @@ func (p *BondPayload) SerializeSize() int {
 	if p.PublicKey != nil {
 		return 139 + encoding.VarIntSerializeSize(uint64(p.Stake))
 	}
+
 	return 43 + encoding.VarIntSerializeSize(uint64(p.Stake))
 }
 
@@ -73,6 +74,7 @@ func (p *BondPayload) Encode(w io.Writer) error {
 		if err != nil {
 			return err
 		}
+
 		err = p.PublicKey.Encode(w)
 		if err != nil {
 			return err
@@ -102,9 +104,11 @@ func (p *BondPayload) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+
 	if pubKeySize == bls.PublicKeySize {
 		p.PublicKey = new(bls.PublicKey)
 		err = p.PublicKey.Decode(r)
+
 		if err != nil {
 			return err
 		}
@@ -116,7 +120,9 @@ func (p *BondPayload) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+
 	p.Stake = int64(stake)
+
 	return nil
 }
 
