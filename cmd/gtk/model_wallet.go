@@ -37,6 +37,7 @@ func (model *walletModel) ToTreeModel() *gtk.TreeModel {
 func (model *walletModel) rebuildModel() {
 	go func() {
 		data := [][]string{}
+
 		for no, info := range model.wallet.AddressInfos() {
 			label := info.Label
 			if info.Path == "" {

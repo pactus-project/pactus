@@ -34,6 +34,7 @@ func createAddress(ww *widgetWallet) {
 		fatalErrorCheck(err)
 
 		walletAddressType := addressTypeCombo.GetActiveID()
+
 		fatalErrorCheck(err)
 
 		if walletAddressType == wallet.AddressTypeBLSAccount {

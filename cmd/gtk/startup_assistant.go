@@ -204,6 +204,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 	assistant.ShowAll()
 
 	gtk.Main()
+
 	return successful
 }
 
@@ -246,6 +247,7 @@ func pageAssistant() assistantFunc {
 
 func pageMode(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.RadioButton, string) {
 	var mode *gtk.Widget
+
 	newWalletRadio, err := gtk.RadioButtonNewWithLabel(nil, "Create a new wallet from the scratch")
 	fatalErrorCheck(err)
 
@@ -272,6 +274,7 @@ func pageMode(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, 
 		pageModeTitle,
 		pageModeSubject,
 		pageModeDesc)
+
 	return mode, restoreWalletRadio, pageModeName
 }
 

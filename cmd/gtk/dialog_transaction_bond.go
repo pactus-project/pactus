@@ -76,6 +76,7 @@ func broadcastTransactionBond(wlt *wallet.Wallet, valAddrs []crypto.Address) {
 			errorCheck(err)
 			return
 		}
+
 		msg := fmt.Sprintf(`
 You are going to sign and broadcast this transaction:
 

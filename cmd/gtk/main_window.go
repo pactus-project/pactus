@@ -120,8 +120,10 @@ func (mw *mainWindow) onMenuItemActivateLearn(_ *gtk.MenuItem) {
 func (mw *mainWindow) OnTransactionBond() {
 	valAddrs := []crypto.Address{}
 	consMgr := mw.widgetNode.model.node.ConsManager()
+
 	for _, inst := range consMgr.Instances() {
 		valAddrs = append(valAddrs, inst.ConsensusKey().ValidatorAddress())
 	}
+
 	broadcastTransactionBond(mw.widgetWallet.model.wallet, valAddrs)
 }

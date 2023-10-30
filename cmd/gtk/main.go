@@ -38,6 +38,7 @@ func main() {
 	flag.Parse()
 
 	var err error
+
 	workingDir, err := filepath.Abs(*workingDirOpt)
 	if err != nil {
 		cmd.PrintErrorMsgf("Aborted! %v", err)
@@ -50,6 +51,7 @@ func main() {
 		if *testnetOpt {
 			network = genesis.Testnet
 		}
+
 		if !startupAssistant(workingDir, network) {
 			return
 		}
@@ -117,6 +119,7 @@ func start(workingDir string, app *gtk.Application) {
 		if *passwordOpt != "" {
 			return *passwordOpt, true
 		}
+
 		return getWalletPassword(wlt)
 	}
 	node, wlt, err := cmd.StartNode(workingDir, passwordFetcher)

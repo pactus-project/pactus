@@ -131,11 +131,13 @@ func getMenuItem(builder *gtk.Builder, name string) *gtk.MenuItem {
 func getTextViewContent(tv *gtk.TextView) string {
 	buf, _ := tv.GetBuffer()
 	startIter, endIter := buf.GetBounds()
+
 	content, err := buf.GetText(startIter, endIter, true)
 	if err != nil {
 		// TODO: Log error
 		return ""
 	}
+
 	return content
 }
 
@@ -145,6 +147,7 @@ func setTextViewContent(tv *gtk.TextView, content string) {
 		// TODO: Log error
 		return
 	}
+
 	buf.SetText(content)
 }
 
@@ -201,15 +204,18 @@ func updateHintLabel(lbl *gtk.Label, hint string) {
 
 func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, w *wallet.Wallet, trx *tx.Tx) {
 	if showQuestionDialog(parent, msg) {
+
 		password, ok := getWalletPassword(w)
 		if !ok {
 			return
 		}
+
 		err := w.SignTransaction(password, trx)
 		if err != nil {
 			errorCheck(err)
 			return
 		}
+
 		_, err = w.BroadcastTransaction(trx)
 		if err != nil {
 			errorCheck(err)
@@ -243,6 +249,7 @@ func openURLInBrowser(address string) error {
 	switch runtime.GOOS {
 	case "windows":
 		cmd = "cmd"
+
 		args = []string{"/c", "start"}
 	case "darwin":
 		cmd = "open"

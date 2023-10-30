@@ -33,6 +33,7 @@ func getWalletPassword(wlt *wallet.Wallet) (string, bool) {
 		fatalErrorCheck(err)
 
 		ok = true
+
 		dlg.Close()
 	}
 

@@ -33,6 +33,7 @@ func broadcastTransactionSend(wlt *wallet.Wallet) {
 	for _, i := range wlt.AddressInfos() {
 		senderEntry.Append(i.Address, i.Address)
 	}
+
 	senderEntry.SetActive(0)
 
 	onSenderChanged := func() {
@@ -66,6 +67,7 @@ func broadcastTransactionSend(wlt *wallet.Wallet) {
 			errorCheck(err)
 			return
 		}
+
 		msg := fmt.Sprintf(`
 You are going to sign and broadcast this transaction:
 

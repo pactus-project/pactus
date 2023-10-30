@@ -60,6 +60,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 
 	labelName.SetText(model.wallet.Name())
 	labelLocation.SetText(model.wallet.Path())
+
 	if model.wallet.IsEncrypted() {
 		labelEncrypted.SetText("Yes")
 	} else {

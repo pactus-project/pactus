@@ -29,6 +29,7 @@ func getAddressLabel(oldLabel string) (string, bool) {
 		fatalErrorCheck(err)
 
 		ok = true
+
 		dlg.Close()
 	}
 
