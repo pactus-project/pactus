@@ -15,16 +15,18 @@ type NotifeeService struct {
 	eventChannel chan<- Event
 	logger       *logger.SubLogger
 	protocolID   protocol.ID
+	bootstrapper bool
 }
 
 func newNotifeeService(host lp2phost.Host, eventChannel chan<- Event,
-	log *logger.SubLogger, protocolID protocol.ID,
+	log *logger.SubLogger, protocolID protocol.ID, bootstrapper bool,
 ) *NotifeeService {
 	notifee := &NotifeeService{
 		host:         host,
 		eventChannel: eventChannel,
 		logger:       log,
 		protocolID:   protocolID,
+		bootstrapper: bootstrapper,
 	}
 	host.Network().Notify(notifee)
 	return notifee
@@ -49,8 +51,10 @@ func (n *NotifeeService) Connected(lp2pn lp2pnetwork.Network, conn lp2pnetwork.C
 
 		n.logger.Info("unable to get supported protocols", "pid", peerID)
 
-		// Close this connection since we can't send a direct message to this peer.
-		_ = n.host.Network().ClosePeer(peerID)
+		if !n.bootstrapper {
+			// Close this connection since we can't send a direct message to this peer.
+			_ = n.host.Network().ClosePeer(peerID)
+		}
 	}()
 }
 
