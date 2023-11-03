@@ -194,6 +194,9 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		for _, addr := range as {
 			if conf.PrivateNetwork || !privateFilters.AddrBlocked(addr) {
 				addrs = append(addrs, addr)
+			} else {
+				// TODO: remove me later
+				logger.Debug("private ip filtered", "ip", conf.PrivateNetwork)
 			}
 		}
 		return addrs
