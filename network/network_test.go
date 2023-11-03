@@ -64,6 +64,7 @@ func testConfig() *Config {
 		EnableNAT:      false,
 		EnableRelay:    false,
 		EnableMdns:     false,
+		PrivateNetwork: true,
 	}
 }
 

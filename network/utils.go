@@ -3,6 +3,7 @@ package network
 import (
 	"context"
 	"math/bits"
+	"net"
 	"time"
 
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
@@ -59,7 +60,50 @@ func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrIn
 	}()
 }
 
-func logScale(val int) int {
+func LogScale(val int) int {
 	bitlen := bits.Len(uint(val))
 	return 1 << bitlen
+}
+
+func PrivateSubnets() []*net.IPNet {
+	privateCIDRs := []string{
+		// -- Ipv4 --
+		// localhost
+		"127.0.0.0/8",
+		// private networks
+		"10.0.0.0/8",
+		"100.64.0.0/10",
+		"172.16.0.0/12",
+		"192.168.0.0/16",
+		// link local
+		"169.254.0.0/16",
+
+		// -- Ipv6 --
+		// localhost
+		"::1/128",
+		// ULA reserved
+		"fc00::/7",
+		// link local
+		"fe80::/10",
+	}
+
+	subnets := []*net.IPNet{}
+	for _, cidr := range privateCIDRs {
+		_, sn, err := net.ParseCIDR(cidr)
+		if err != nil {
+			panic(err)
+		}
+		subnets = append(subnets, sn)
+	}
+
+	return subnets
+}
+
+func SubnetsToFilters(subnets []*net.IPNet, action multiaddr.Action) *multiaddr.Filters {
+	filters := multiaddr.NewFilters()
+	for _, sn := range subnets {
+		filters.AddFilter(*sn, action)
+	}
+
+	return filters
 }
