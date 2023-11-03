@@ -214,7 +214,7 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 	n.peerMgr = newPeerMgr(ctx, host, n.dht.kademlia, conf, n.logger)
 	n.stream = newStreamService(ctx, n.host, streamProtocolID, relayAddrs, n.eventChannel, n.logger)
 	n.gossip = newGossipService(ctx, n.host, n.eventChannel, conf, n.logger)
-	n.notifee = newNotifeeService(n.host, n.eventChannel, n.logger, streamProtocolID)
+	n.notifee = newNotifeeService(n.host, n.eventChannel, n.logger, streamProtocolID, conf.Bootstrapper)
 
 	n.host.Network().Notify(n.notifee)
 
