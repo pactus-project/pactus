@@ -18,6 +18,7 @@ type Config struct {
 	EnableRelay    bool     `toml:"enable_relay"`
 	EnableMdns     bool     `toml:"enable_mdns"`
 	EnableMetrics  bool     `toml:"enable_metrics"`
+	PrivateNetwork bool     `toml:"private_network"`
 	Bootstrapper   bool     `toml:"bootstrapper"`
 }
 
@@ -54,6 +55,7 @@ func DefaultConfig() *Config {
 		EnableRelay:    false,
 		EnableMdns:     false,
 		EnableMetrics:  false,
+		PrivateNetwork: false,
 		Bootstrapper:   false,
 	}
 }

@@ -13,6 +13,7 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
+	lp2pconngater "github.com/libp2p/go-libp2p/p2p/net/conngater"
 	lp2pconnmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
@@ -103,25 +104,25 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 	maxConns := conf.MaxConns
 	minConns := conf.MinConns
 	limit := lp2prcmgr.DefaultLimits
-	limit.SystemBaseLimit.ConnsInbound = logScale(maxConns)
-	limit.SystemBaseLimit.Conns = logScale(2 * maxConns)
-	limit.SystemBaseLimit.StreamsInbound = logScale(maxConns)
-	limit.SystemBaseLimit.Streams = logScale(2 * maxConns)
+	limit.SystemBaseLimit.ConnsInbound = LogScale(maxConns)
+	limit.SystemBaseLimit.Conns = LogScale(2 * maxConns)
+	limit.SystemBaseLimit.StreamsInbound = LogScale(maxConns)
+	limit.SystemBaseLimit.Streams = LogScale(2 * maxConns)
 
-	limit.ServiceLimitIncrease.ConnsInbound = logScale(minConns)
-	limit.ServiceLimitIncrease.Conns = logScale(2 * minConns)
-	limit.ServiceLimitIncrease.StreamsInbound = logScale(minConns)
-	limit.ServiceLimitIncrease.Streams = logScale(2 * minConns)
+	limit.ServiceLimitIncrease.ConnsInbound = LogScale(minConns)
+	limit.ServiceLimitIncrease.Conns = LogScale(2 * minConns)
+	limit.ServiceLimitIncrease.StreamsInbound = LogScale(minConns)
+	limit.ServiceLimitIncrease.Streams = LogScale(2 * minConns)
 
-	limit.TransientBaseLimit.ConnsInbound = logScale(maxConns / 2)
-	limit.TransientBaseLimit.Conns = logScale(2 * maxConns / 2)
-	limit.TransientBaseLimit.StreamsInbound = logScale(maxConns / 2)
-	limit.TransientBaseLimit.Streams = logScale(2 * maxConns / 2)
+	limit.TransientBaseLimit.ConnsInbound = LogScale(maxConns / 2)
+	limit.TransientBaseLimit.Conns = LogScale(2 * maxConns / 2)
+	limit.TransientBaseLimit.StreamsInbound = LogScale(maxConns / 2)
+	limit.TransientBaseLimit.Streams = LogScale(2 * maxConns / 2)
 
-	limit.TransientLimitIncrease.ConnsInbound = logScale(minConns / 2)
-	limit.TransientLimitIncrease.Conns = logScale(2 * minConns / 2)
-	limit.TransientLimitIncrease.StreamsInbound = logScale(minConns / 2)
-	limit.TransientLimitIncrease.Streams = logScale(2 * minConns / 2)
+	limit.TransientLimitIncrease.ConnsInbound = LogScale(minConns / 2)
+	limit.TransientLimitIncrease.Conns = LogScale(2 * minConns / 2)
+	limit.TransientLimitIncrease.StreamsInbound = LogScale(minConns / 2)
+	limit.TransientLimitIncrease.Streams = LogScale(2 * minConns / 2)
 
 	resMgr, err := lp2prcmgr.NewResourceManager(
 		lp2prcmgr.NewFixedLimiter(limit.AutoScale()),
@@ -184,6 +185,35 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 			lp2p.DisableRelay(),
 		)
 	}
+
+	// TODO: should include relay addresses
+	privateSubnets := PrivateSubnets()
+	privateFilters := SubnetsToFilters(privateSubnets, ma.ActionDeny)
+	addrFactory := lp2p.AddrsFactory(func(as []ma.Multiaddr) []ma.Multiaddr {
+		addrs := []ma.Multiaddr{}
+		for _, addr := range as {
+			if conf.PrivateNetwork || !privateFilters.AddrBlocked(addr) {
+				addrs = append(addrs, addr)
+			}
+		}
+		return addrs
+	})
+
+	if !conf.PrivateNetwork {
+		connGater, err := lp2pconngater.NewBasicConnectionGater(nil)
+		if err != nil {
+			return nil, LibP2PError{Err: err}
+		}
+		for _, sn := range privateSubnets {
+			err := connGater.BlockSubnet(sn)
+			if err != nil {
+				return nil, LibP2PError{Err: err}
+			}
+		}
+		opts = append(opts, lp2p.ConnectionGater(connGater))
+	}
+
+	opts = append(opts, addrFactory)
 
 	host, err := lp2p.New(opts...)
 	if err != nil {
