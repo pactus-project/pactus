@@ -5,7 +5,7 @@ import (
 	"io"
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
-	"github.com/libp2p/go-libp2p/core/peer"
+	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/util/testsuite"
 )
 
@@ -21,12 +21,12 @@ type MockNetwork struct {
 
 	PublishCh chan PublishData
 	EventCh   chan Event
-	ID        peer.ID
+	ID        lp2ppeer.ID
 	OtherNets []*MockNetwork
 	SendError error
 }
 
-func MockingNetwork(ts *testsuite.TestSuite, id peer.ID) *MockNetwork {
+func MockingNetwork(ts *testsuite.TestSuite, id lp2ppeer.ID) *MockNetwork {
 	return &MockNetwork{
 		TestSuite: ts,
 		PublishCh: make(chan PublishData, 100),
@@ -55,7 +55,7 @@ func (mock *MockNetwork) JoinConsensusTopic() error {
 	return nil
 }
 
-func (mock *MockNetwork) SelfID() peer.ID {
+func (mock *MockNetwork) SelfID() lp2ppeer.ID {
 	return mock.ID
 }
 
@@ -78,7 +78,7 @@ func (mock *MockNetwork) Broadcast(data []byte, _ TopicID) error {
 	return nil
 }
 
-func (mock *MockNetwork) SendToOthers(data []byte, target *peer.ID) {
+func (mock *MockNetwork) SendToOthers(data []byte, target *lp2ppeer.ID) {
 	for _, net := range mock.OtherNets {
 		if target == nil {
 			// Broadcast message
@@ -99,7 +99,7 @@ func (mock *MockNetwork) SendToOthers(data []byte, target *peer.ID) {
 	}
 }
 
-func (mock *MockNetwork) CloseConnection(pid peer.ID) {
+func (mock *MockNetwork) CloseConnection(pid lp2ppeer.ID) {
 	for i, net := range mock.OtherNets {
 		if net.ID == pid {
 			mock.OtherNets = append(mock.OtherNets[:i], mock.OtherNets[i+1:]...)
@@ -107,7 +107,7 @@ func (mock *MockNetwork) CloseConnection(pid peer.ID) {
 	}
 }
 
-func (mock *MockNetwork) IsClosed(pid peer.ID) bool {
+func (mock *MockNetwork) IsClosed(pid lp2ppeer.ID) bool {
 	for _, net := range mock.OtherNets {
 		if net.ID == pid {
 			return false

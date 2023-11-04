@@ -4,7 +4,7 @@ import (
 	lp2pconnmgr "github.com/libp2p/go-libp2p/core/connmgr"
 	lp2pcontrol "github.com/libp2p/go-libp2p/core/control"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
-	"github.com/libp2p/go-libp2p/core/peer"
+	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2pconngater "github.com/libp2p/go-libp2p/p2p/net/conngater"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/logger"
@@ -43,7 +43,7 @@ func (g *ConnectionGater) SetLogger(log *logger.SubLogger) {
 	g.logger = log
 }
 
-func (g *ConnectionGater) InterceptPeerDial(p peer.ID) bool {
+func (g *ConnectionGater) InterceptPeerDial(p lp2ppeer.ID) bool {
 	allow := g.BasicConnectionGater.InterceptPeerDial(p)
 	if !allow {
 		g.logger.Debug("InterceptPeerDial not allowed", "p")
@@ -52,7 +52,7 @@ func (g *ConnectionGater) InterceptPeerDial(p peer.ID) bool {
 	return allow
 }
 
-func (g *ConnectionGater) InterceptAddrDial(p peer.ID, ma multiaddr.Multiaddr) bool {
+func (g *ConnectionGater) InterceptAddrDial(p lp2ppeer.ID, ma multiaddr.Multiaddr) bool {
 	allow := g.BasicConnectionGater.InterceptAddrDial(p, ma)
 	if !allow {
 		g.logger.Debug("InterceptAddrDial not allowed", "p", p, "ma", ma.String())
@@ -70,7 +70,7 @@ func (g *ConnectionGater) InterceptAccept(cma lp2pnetwork.ConnMultiaddrs) bool {
 	return allow
 }
 
-func (g *ConnectionGater) InterceptSecured(dir lp2pnetwork.Direction, p peer.ID, cma lp2pnetwork.ConnMultiaddrs) bool {
+func (g *ConnectionGater) InterceptSecured(dir lp2pnetwork.Direction, p lp2ppeer.ID, cma lp2pnetwork.ConnMultiaddrs) bool {
 	allow := g.BasicConnectionGater.InterceptSecured(dir, p, cma)
 	if !allow {
 		g.logger.Debug("InterceptSecured not allowed", "p", p)
