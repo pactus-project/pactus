@@ -70,7 +70,9 @@ func (g *ConnectionGater) InterceptAccept(cma lp2pnetwork.ConnMultiaddrs) bool {
 	return allow
 }
 
-func (g *ConnectionGater) InterceptSecured(dir lp2pnetwork.Direction, p lp2ppeer.ID, cma lp2pnetwork.ConnMultiaddrs) bool {
+func (g *ConnectionGater) InterceptSecured(dir lp2pnetwork.Direction, p lp2ppeer.ID,
+	cma lp2pnetwork.ConnMultiaddrs,
+) bool {
 	allow := g.BasicConnectionGater.InterceptSecured(dir, p, cma)
 	if !allow {
 		g.logger.Debug("InterceptSecured not allowed", "p", p)
