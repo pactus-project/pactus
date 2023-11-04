@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.16.1](https://github.com/pactus-project/pactus/compare/v0.16.0...v0.16.1)(2023-11-04)
+
+### Feat
+
+- **network**: adding public address to factory ([#795](https://github.com/pactus-project/pactus/pull/795))
+- **network**: filter private ips ([#793](https://github.com/pactus-project/pactus/pull/793))
+
+### Fix
+
+- **network**: not close connection for bootstrap nodes ([#792](https://github.com/pactus-project/pactus/pull/792))
+
 ## [0.16.0](https://github.com/pactus-project/pactus/compare/v0.15.0...v0.16.0)(2023-10-29)
 
 ### Feat
