@@ -27,6 +27,7 @@ func TestSaveTestnetConfig(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
+	assert.Equal(t, conf.Network.DefaultPort, 21777)
 }
 
 func TestSaveLocalnetConfig(t *testing.T) {
@@ -39,6 +40,7 @@ func TestSaveLocalnetConfig(t *testing.T) {
 	assert.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.Listens)
 	assert.Empty(t, conf.Network.RelayAddrs)
+	assert.Equal(t, conf.Network.DefaultPort, 21777)
 }
 
 func TestLoadFromFile(t *testing.T) {

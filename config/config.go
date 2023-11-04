@@ -19,7 +19,7 @@ import (
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/nanomsg"
-	toml "github.com/pelletier/go-toml"
+	"github.com/pelletier/go-toml"
 )
 
 //go:embed example_config.toml
@@ -44,6 +44,7 @@ type NodeConfig struct {
 }
 
 func DefaultNodeConfig() *NodeConfig {
+	// TODO: We should have default config per network: Testnet, Mainnet.
 	return &NodeConfig{
 		NumValidators: 7,
 	}
