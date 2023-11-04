@@ -24,6 +24,15 @@
   # `network_key` specifies the private key filename to use for node authentication and encryption in the p2p protocol.
  ## network_key = "network_key"
 
+  # `public_address` is a list of addresses that are public and accessible to other nodes.
+  # If it is empty, the node attempts to automatically detect its public IP addresses.
+  # It is recommended to set the public address if available.
+  # Example addresses:
+  # - "/ip4/1.2.3.4/tcp/21888"
+  # - "/ip6/2606:4700:4700::1111/udp/21888"
+  # - "/dnsaddr/my-server.amazonaws.com/tcp/21888"
+ ## public_address = []
+
   # `listens` specifies the addresses and ports where the node will listen for incoming connections from other nodes.
  ## listens = ["/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888", "/ip4/0.0.0.0/udp/21888/quic-v1", "/ip6/::/udp/21888/quic-v1"]
 
@@ -58,15 +67,17 @@
   # Default is false.
  ## enable_mdns = false
 
-  # `enable_metrics` if enabled, it provides network metrics for the Prometheus software.
+  # `enable_metrics` provides the network metrics for the Prometheus software.
   # Default is false.
  ## enable_metrics = false
 
-  # `private_network` if enabled, connects to nodes in the private network.
+  # `force_private_network` forces the connection to nodes within a private network.
+  # A private network is a computer network that uses private addresses.
+  # Read more about private networks here: https://en.wikipedia.org/wiki/Private_network
   # Default is false.
- ## private_network = false
+ ## force_private_network = false
 
-  # `bootstrapper` if enabled, it runs the node in bootstrap mode.
+  # `bootstrapper` runs the node in bootstrap mode.
   # Default is false.
  ## bootstrapper = false
 
