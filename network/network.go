@@ -13,9 +13,8 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
-	lp2pconngater "github.com/libp2p/go-libp2p/p2p/net/conngater"
 	lp2pconnmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
-	ma "github.com/multiformats/go-multiaddr"
+	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
@@ -37,6 +36,7 @@ type network struct {
 	mdns           *mdnsService
 	dht            *dhtService
 	peerMgr        *peerMgr
+	connGater      *ConnectionGater
 	stream         *streamService
 	gossip         *gossipService
 	notifee        *NotifeeService
@@ -88,45 +88,24 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		return nil, LibP2PError{Err: err}
 	}
 
+	rcMgrOpt := []lp2prcmgr.Option{}
 	if conf.EnableMetrics {
+		str, err := lp2prcmgr.NewStatsTraceReporter()
+		if err != nil {
+			return nil, LibP2PError{Err: err}
+		}
+
 		lp2prcmgr.MustRegisterWith(prometheus.DefaultRegisterer)
+		rcMgrOpt = append(rcMgrOpt, lp2prcmgr.WithTraceReporter(str))
+	} else {
+		rcMgrOpt = append(rcMgrOpt, lp2prcmgr.WithMetricsDisabled())
+		opts = append(opts, lp2p.DisableMetrics())
 	}
 
-	str, err := lp2prcmgr.NewStatsTraceReporter()
-	if err != nil {
-		return nil, LibP2PError{Err: err}
-	}
-
-	//
-	// This is crazy!
-	// Do they even know how to configure it properly?!
-	//
-	maxConns := conf.MaxConns
-	minConns := conf.MinConns
-	limit := lp2prcmgr.DefaultLimits
-	limit.SystemBaseLimit.ConnsInbound = LogScale(maxConns)
-	limit.SystemBaseLimit.Conns = LogScale(2 * maxConns)
-	limit.SystemBaseLimit.StreamsInbound = LogScale(maxConns)
-	limit.SystemBaseLimit.Streams = LogScale(2 * maxConns)
-
-	limit.ServiceLimitIncrease.ConnsInbound = LogScale(minConns)
-	limit.ServiceLimitIncrease.Conns = LogScale(2 * minConns)
-	limit.ServiceLimitIncrease.StreamsInbound = LogScale(minConns)
-	limit.ServiceLimitIncrease.Streams = LogScale(2 * minConns)
-
-	limit.TransientBaseLimit.ConnsInbound = LogScale(maxConns / 2)
-	limit.TransientBaseLimit.Conns = LogScale(2 * maxConns / 2)
-	limit.TransientBaseLimit.StreamsInbound = LogScale(maxConns / 2)
-	limit.TransientBaseLimit.Streams = LogScale(2 * maxConns / 2)
-
-	limit.TransientLimitIncrease.ConnsInbound = LogScale(minConns / 2)
-	limit.TransientLimitIncrease.Conns = LogScale(2 * minConns / 2)
-	limit.TransientLimitIncrease.StreamsInbound = LogScale(minConns / 2)
-	limit.TransientLimitIncrease.Streams = LogScale(2 * minConns / 2)
-
+	limit := MakeScalingLimitConfig(conf.MinConns, conf.MaxConns)
 	resMgr, err := lp2prcmgr.NewResourceManager(
 		lp2prcmgr.NewFixedLimiter(limit.AutoScale()),
-		lp2prcmgr.WithTraceReporter(str),
+		rcMgrOpt...,
 	)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
@@ -149,10 +128,6 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		lp2p.ConnectionManager(connMgr),
 	)
 
-	if !conf.EnableMetrics {
-		opts = append(opts, lp2p.DisableMetrics())
-	}
-
 	if conf.EnableNAT {
 		opts = append(opts,
 			lp2p.EnableNATService(),
@@ -160,10 +135,10 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		)
 	}
 
-	relayAddrs := []ma.Multiaddr{}
+	relayAddrs := []multiaddr.Multiaddr{}
 	if conf.EnableRelay {
 		for _, s := range conf.RelayAddrs {
-			addr, err := ma.NewMultiaddr(s)
+			addr, err := multiaddr.NewMultiaddr(s)
 			if err != nil {
 				return nil, LibP2PError{Err: err}
 			}
@@ -188,35 +163,44 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 
 	// TODO: should include relay addresses
 	privateSubnets := PrivateSubnets()
-	privateFilters := SubnetsToFilters(privateSubnets, ma.ActionDeny)
-	addrFactory := lp2p.AddrsFactory(func(as []ma.Multiaddr) []ma.Multiaddr {
-		addrs := []ma.Multiaddr{}
-		for _, addr := range as {
-			if conf.PrivateNetwork || !privateFilters.AddrBlocked(addr) {
-				addrs = append(addrs, addr)
-			} else {
-				// TODO: remove me later
-				logger.Debug("private ip filtered", "ip", conf.PrivateNetwork)
+	privateFilters := SubnetsToFilters(privateSubnets, multiaddr.ActionDeny)
+	publicAddrs, _ := MakeMultiAddrs(conf.PublicAddress)
+	if len(publicAddrs) == 0 {
+		addIP := func(detector func() (string, bool)) {
+			ip, ok := detector()
+			if ok {
+				ma, err := IPToMultiAddr(ip, conf.DefaultPort)
+				if err == nil {
+					logger.Debug("ip address is private", "ip", ip)
+					return
+				}
+				if !privateFilters.AddrBlocked(ma) {
+					publicAddrs = append(publicAddrs, ma)
+				}
 			}
 		}
-		return addrs
-	})
 
-	if !conf.PrivateNetwork {
-		connGater, err := lp2pconngater.NewBasicConnectionGater(nil)
-		if err != nil {
-			return nil, LibP2PError{Err: err}
-		}
-		for _, sn := range privateSubnets {
-			err := connGater.BlockSubnet(sn)
-			if err != nil {
-				return nil, LibP2PError{Err: err}
-			}
-		}
-		opts = append(opts, lp2p.ConnectionGater(connGater))
+		addIP(DetectPublicIPv4)
+		addIP(DetectPublicIPv6)
 	}
 
+	addrFactory := lp2p.AddrsFactory(func(mas []multiaddr.Multiaddr) []multiaddr.Multiaddr {
+		addrs := []multiaddr.Multiaddr{}
+		for _, addr := range mas {
+			if conf.ForcePrivateNetwork || !privateFilters.AddrBlocked(addr) {
+				addrs = append(addrs, addr)
+			}
+		}
+		addrs = append(addrs, publicAddrs...)
+		return addrs
+	})
 	opts = append(opts, addrFactory)
+
+	connGater, err := NewConnectionGater(conf)
+	if err != nil {
+		return nil, LibP2PError{Err: err}
+	}
+	opts = append(opts, lp2p.ConnectionGater(connGater))
 
 	host, err := lp2p.New(opts...)
 	if err != nil {
@@ -231,16 +215,18 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		name:         networkName,
 		config:       conf,
 		host:         host,
+		connGater:    connGater,
 		eventChannel: make(chan Event, 100),
 	}
 
 	n.logger = logger.NewSubLogger("_network", n)
+	connGater.SetLogger(n.logger)
 
 	if conf.EnableMdns {
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
 	}
 
-	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/gossip/v1", n.name))
+	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/gossip/v1", n.name)) // TODO: better name?
 	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", n.name))
 
 	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf, n.logger)

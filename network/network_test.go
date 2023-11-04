@@ -56,15 +56,15 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 
 func testConfig() *Config {
 	return &Config{
-		Listens:        []string{},
-		NetworkKey:     util.TempFilePath(),
-		BootstrapAddrs: []string{},
-		MinConns:       4,
-		MaxConns:       8,
-		EnableNAT:      false,
-		EnableRelay:    false,
-		EnableMdns:     false,
-		PrivateNetwork: true,
+		Listens:             []string{},
+		NetworkKey:          util.TempFilePath(),
+		BootstrapAddrs:      []string{},
+		MinConns:            4,
+		MaxConns:            8,
+		EnableNAT:           false,
+		EnableRelay:         false,
+		EnableMdns:          false,
+		ForcePrivateNetwork: true,
 	}
 }
 
@@ -188,6 +188,7 @@ func TestNetwork(t *testing.T) {
 	confM.EnableRelay = true
 	confM.RelayAddrs = relayAddrs
 	confM.BootstrapAddrs = bootstrapAddresses
+	confM.ForcePrivateNetwork = true
 	confM.Listens = []string{
 		"/ip4/127.0.0.1/tcp/0",
 	}
@@ -202,6 +203,7 @@ func TestNetwork(t *testing.T) {
 	confN.EnableRelay = true
 	confN.RelayAddrs = relayAddrs
 	confN.BootstrapAddrs = bootstrapAddresses
+	confN.ForcePrivateNetwork = true
 	confN.Listens = []string{
 		"/ip4/127.0.0.1/tcp/0",
 	}
@@ -215,6 +217,7 @@ func TestNetwork(t *testing.T) {
 	confX := testConfig()
 	confX.EnableRelay = false
 	confX.BootstrapAddrs = bootstrapAddresses
+	confX.ForcePrivateNetwork = true
 	confX.Listens = []string{
 		"/ip4/127.0.0.1/tcp/0",
 	}

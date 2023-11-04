@@ -200,3 +200,16 @@ func (gen *Genesis) NetworkName() string {
 		return "unknown"
 	}
 }
+
+func (gen *Genesis) DefaultPort() int {
+	switch gen.ChainType() {
+	case Mainnet:
+		return 21888
+	case Testnet:
+		return 21777
+	case Localnet:
+		return 21666
+	default:
+		return 0
+	}
+}

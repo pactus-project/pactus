@@ -48,19 +48,21 @@ func TestMarshaling(t *testing.T) {
 }
 
 func TestGenesisTestNet(t *testing.T) {
-	g := genesis.TestnetGenesis()
-	assert.Equal(t, len(g.Validators()), 4)
-	assert.Equal(t, len(g.Accounts()), 1)
+	gen := genesis.TestnetGenesis()
+	assert.Equal(t, len(gen.Validators()), 4)
+	assert.Equal(t, len(gen.Accounts()), 1)
 
-	assert.Equal(t, g.Accounts()[crypto.TreasuryAddress].Balance(), int64(21e15))
+	assert.Equal(t, gen.Accounts()[crypto.TreasuryAddress].Balance(), int64(21e15))
 
 	genTime, _ := time.Parse("2006-01-02", "2023-10-15")
 	expected, _ := hash.FromString("da602b28f75902c35e3bafeb5733a686c94d5508c92aae68cbd9b37d81cfccf4")
-	assert.Equal(t, g.Hash(), expected)
-	assert.Equal(t, g.GenesisTime(), genTime)
-	assert.Equal(t, g.Params().BondInterval, uint32(120))
-	assert.Equal(t, g.ChainType(), genesis.Testnet)
-	assert.Equal(t, g.TotalSupply(), int64(42*1e15))
+	assert.Equal(t, gen.Hash(), expected)
+	assert.Equal(t, gen.GenesisTime(), genTime)
+	assert.Equal(t, gen.Params().BondInterval, uint32(120))
+	assert.Equal(t, gen.ChainType(), genesis.Testnet)
+	assert.Equal(t, gen.TotalSupply(), int64(42*1e15))
+	assert.Equal(t, gen.NetworkName(), "pactus-testnet")
+	assert.Equal(t, gen.DefaultPort(), 21777)
 }
 
 func TestCheckGenesisAccountAndValidator(t *testing.T) {
@@ -85,4 +87,7 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 	for i, val := range gen.Validators() {
 		assert.Equal(t, val.Hash(), vals[i].Hash())
 	}
+
+	assert.Equal(t, gen.NetworkName(), "pactus-localnet")
+	assert.Equal(t, gen.DefaultPort(), 21666)
 }

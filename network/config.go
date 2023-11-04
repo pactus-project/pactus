@@ -8,18 +8,20 @@ import (
 )
 
 type Config struct {
-	NetworkKey     string   `toml:"network_key"`
-	Listens        []string `toml:"listens"`
-	RelayAddrs     []string `toml:"relay_addresses"`
-	BootstrapAddrs []string `toml:"bootstrap_addresses"`
-	MinConns       int      `toml:"min_connections"`
-	MaxConns       int      `toml:"max_connections"`
-	EnableNAT      bool     `toml:"enable_nat"`
-	EnableRelay    bool     `toml:"enable_relay"`
-	EnableMdns     bool     `toml:"enable_mdns"`
-	EnableMetrics  bool     `toml:"enable_metrics"`
-	PrivateNetwork bool     `toml:"private_network"`
-	Bootstrapper   bool     `toml:"bootstrapper"`
+	NetworkKey          string   `toml:"network_key"`
+	PublicAddress       []string `toml:"public_address"`
+	Listens             []string `toml:"listens"`
+	RelayAddrs          []string `toml:"relay_addresses"`
+	BootstrapAddrs      []string `toml:"bootstrap_addresses"`
+	MinConns            int      `toml:"min_connections"`
+	MaxConns            int      `toml:"max_connections"`
+	EnableNAT           bool     `toml:"enable_nat"`
+	EnableRelay         bool     `toml:"enable_relay"`
+	EnableMdns          bool     `toml:"enable_mdns"`
+	EnableMetrics       bool     `toml:"enable_metrics"`
+	ForcePrivateNetwork bool     `toml:"force_private_network"`
+	Bootstrapper        bool     `toml:"bootstrapper"` // TODO: detect it automatically
+	DefaultPort         int      `toml:"-"`
 }
 
 func DefaultConfig() *Config {
@@ -47,16 +49,17 @@ func DefaultConfig() *Config {
 			"/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888",
 			"/ip4/0.0.0.0/udp/21888/quic-v1", "/ip6/::/udp/21888/quic-v1",
 		},
-		RelayAddrs:     []string{},
-		BootstrapAddrs: bootstrapAddrs,
-		MinConns:       8,
-		MaxConns:       16,
-		EnableNAT:      true,
-		EnableRelay:    false,
-		EnableMdns:     false,
-		EnableMetrics:  false,
-		PrivateNetwork: false,
-		Bootstrapper:   false,
+		RelayAddrs:          []string{},
+		BootstrapAddrs:      bootstrapAddrs,
+		MinConns:            8,
+		MaxConns:            16,
+		EnableNAT:           true,
+		EnableRelay:         false,
+		EnableMdns:          false,
+		EnableMetrics:       false,
+		ForcePrivateNetwork: false,
+		Bootstrapper:        false,
+		DefaultPort:         21777,
 	}
 }
 
@@ -76,6 +79,9 @@ func (conf *Config) BasicCheck() error {
 		if len(conf.RelayAddrs) == 0 {
 			return errors.Errorf(errors.ErrInvalidConfig, "at least one relay address should be defined")
 		}
+	}
+	if err := validateAddresses(conf.PublicAddress); err != nil {
+		return err
 	}
 	if err := validateAddresses(conf.RelayAddrs); err != nil {
 		return err
