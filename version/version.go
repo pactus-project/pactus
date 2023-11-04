@@ -8,8 +8,8 @@ import (
 const (
 	major uint   = 0
 	minor uint   = 16
-	patch uint   = 1
-	meta  string = ""
+	patch uint   = 2
+	meta  string = "beta"
 )
 
 var build string
