@@ -24,6 +24,10 @@ func TestDefaultConfigCheck(t *testing.T) {
 	assert.Error(t, conf.BasicCheck())
 
 	conf = DefaultConfig()
+	conf.PublicAddress = []string{"/ip4"}
+	assert.Error(t, conf.BasicCheck())
+
+	conf = DefaultConfig()
 	conf.RelayAddrs = []string{"/ip4"}
 	assert.Error(t, conf.BasicCheck())
 
