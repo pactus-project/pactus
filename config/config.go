@@ -121,7 +121,7 @@ func SaveTestnetConfig(path string, numValidators int) error {
 	}
 	conf.Network.MinConns = 8
 	conf.Network.MaxConns = 16
-	conf.Network.EnableRelay = true
+	conf.Network.EnableRelay = false
 	conf.Network.RelayAddrStrings = []string{
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/188.121.102.178/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
