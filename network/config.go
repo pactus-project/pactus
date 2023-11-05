@@ -10,10 +10,10 @@ import (
 
 type Config struct {
 	NetworkKey           string   `toml:"network_key"`
-	PublicAddrString     string   `toml:"public_address"`
-	ListenAddrStrings    []string `toml:"listen_addresses"`
-	RelayAddrStrings     []string `toml:"relay_addresses"`
-	BootstrapAddrStrings []string `toml:"bootstrap_addresses"`
+	PublicAddrString     string   `toml:"public_addr"`
+	ListenAddrStrings    []string `toml:"listen_addrs"`
+	RelayAddrStrings     []string `toml:"relay_addrs"`
+	BootstrapAddrStrings []string `toml:"bootstrap_addrs"`
 	MinConns             int      `toml:"min_connections"`
 	MaxConns             int      `toml:"max_connections"`
 	EnableNAT            bool     `toml:"enable_nat"`
