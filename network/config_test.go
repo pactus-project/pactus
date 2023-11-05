@@ -12,38 +12,42 @@ func TestDefaultConfigCheck(t *testing.T) {
 	assert.Error(t, conf.BasicCheck())
 
 	conf = DefaultConfig()
-	conf.Listens = []string{""}
+	conf.ListenAddrStrings = []string{""}
 	assert.Error(t, conf.BasicCheck())
 
 	conf = DefaultConfig()
-	conf.Listens = []string{"127.0.0.1"}
+	conf.ListenAddrStrings = []string{"127.0.0.1"}
 	assert.Error(t, conf.BasicCheck())
 
 	conf = DefaultConfig()
-	conf.Listens = []string{"/ip4"}
+	conf.ListenAddrStrings = []string{"/ip4"}
 	assert.Error(t, conf.BasicCheck())
 
 	conf = DefaultConfig()
-	conf.PublicAddress = []string{"/ip4"}
+	conf.PublicAddrString = "/ip4"
 	assert.Error(t, conf.BasicCheck())
 
 	conf = DefaultConfig()
-	conf.RelayAddrs = []string{"/ip4"}
+	conf.RelayAddrStrings = []string{"/ip4/127.0.0.1/"}
 	assert.Error(t, conf.BasicCheck())
 
 	conf = DefaultConfig()
-	conf.BootstrapAddrs = []string{"/ip4"}
+	conf.BootstrapAddrStrings = []string{"/ip4/127.0.0.1/"}
 	assert.Error(t, conf.BasicCheck())
 
 	conf = DefaultConfig()
-	conf.RelayAddrs = []string{"/ip4/127.0.0.1"}
+	conf.PublicAddrString = "/ip4/127.0.0.1/"
 	assert.NoError(t, conf.BasicCheck())
 
 	conf = DefaultConfig()
-	conf.Listens = []string{"/ip4/127.0.0.1"}
+	conf.RelayAddrStrings = []string{"/ip4/127.0.0.1/p2p/12D3KooWQBpPV6NtZy1dvN2oF7dJdLoooRZfEmwtHiDUf42ArDjT"}
 	assert.NoError(t, conf.BasicCheck())
 
 	conf = DefaultConfig()
-	conf.BootstrapAddrs = []string{"/ip4/127.0.0.1"}
+	conf.ListenAddrStrings = []string{"/ip4/127.0.0.1"}
+	assert.NoError(t, conf.BasicCheck())
+
+	conf = DefaultConfig()
+	conf.BootstrapAddrStrings = []string{"/ip4/127.0.0.1/p2p/12D3KooWQBpPV6NtZy1dvN2oF7dJdLoooRZfEmwtHiDUf42ArDjT"}
 	assert.NoError(t, conf.BasicCheck())
 }

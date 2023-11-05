@@ -79,10 +79,11 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 }
 
 func NewNetwork(networkName string, conf *Config) (Network, error) {
-	return newNetwork(networkName, conf, []lp2p.Option{})
+	log := logger.NewSubLogger("_network", nil)
+	return newNetwork(networkName, conf, log, []lp2p.Option{})
 }
 
-func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network, error) {
+func newNetwork(networkName string, conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*network, error) {
 	networkKey, err := loadOrCreateKey(conf.NetworkKey)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
@@ -90,6 +91,7 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 
 	rcMgrOpt := []lp2prcmgr.Option{}
 	if conf.EnableMetrics {
+		log.Info("metric enabled")
 		str, err := lp2prcmgr.NewStatsTraceReporter()
 		if err != nil {
 			return nil, LibP2PError{Err: err}
@@ -122,40 +124,29 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 
 	opts = append(opts,
 		lp2p.Identity(networkKey),
-		lp2p.ListenAddrStrings(conf.Listens...),
+		lp2p.ListenAddrs(conf.ListenAddrs()...),
 		lp2p.UserAgent(version.Agent()),
 		lp2p.ResourceManager(resMgr),
 		lp2p.ConnectionManager(connMgr),
 	)
 
 	if conf.EnableNAT {
+		log.Info("nat enabled")
 		opts = append(opts,
 			lp2p.EnableNATService(),
 			lp2p.NATPortMap(),
 		)
 	}
 
-	relayAddrs := []multiaddr.Multiaddr{}
 	if conf.EnableRelay {
-		for _, s := range conf.RelayAddrs {
-			addr, err := multiaddr.NewMultiaddr(s)
-			if err != nil {
-				return nil, LibP2PError{Err: err}
-			}
-			relayAddrs = append(relayAddrs, addr)
-		}
-
-		static, err := lp2ppeer.AddrInfosFromP2pAddrs(relayAddrs...)
-		if err != nil {
-			return nil, LibP2PError{Err: err}
-		}
-
+		log.Info("relay enabled", "relay addrs", conf.RelayAddrStrings)
 		opts = append(opts,
 			lp2p.EnableRelay(),
-			lp2p.EnableAutoRelayWithStaticRelays(static),
+			lp2p.EnableAutoRelayWithStaticRelays(conf.RelayAddrInfos()),
 			lp2p.EnableHolePunching(),
 		)
 	} else {
+		log.Info("relay disabled")
 		opts = append(opts,
 			lp2p.DisableRelay(),
 		)
@@ -164,25 +155,7 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 	// TODO: should include relay addresses
 	privateSubnets := PrivateSubnets()
 	privateFilters := SubnetsToFilters(privateSubnets, multiaddr.ActionDeny)
-	publicAddrs, _ := MakeMultiAddrs(conf.PublicAddress)
-	if len(publicAddrs) == 0 {
-		addIP := func(detector func() (string, bool)) {
-			ip, ok := detector()
-			if ok {
-				ma, err := IPToMultiAddr(ip, conf.DefaultPort)
-				if err == nil {
-					logger.Debug("ip address is private", "ip", ip)
-					return
-				}
-				if !privateFilters.AddrBlocked(ma) {
-					publicAddrs = append(publicAddrs, ma)
-				}
-			}
-		}
-
-		addIP(DetectPublicIPv4)
-		addIP(DetectPublicIPv6)
-	}
+	publicAddrs := conf.PublicAddr()
 
 	addrFactory := lp2p.AddrsFactory(func(mas []multiaddr.Multiaddr) []multiaddr.Multiaddr {
 		addrs := []multiaddr.Multiaddr{}
@@ -191,12 +164,25 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 				addrs = append(addrs, addr)
 			}
 		}
-		addrs = append(addrs, publicAddrs...)
+		if publicAddrs != nil {
+			addrs = append(addrs, publicAddrs)
+		}
+		// if len(addrs) == 0 {
+		// for _, addr := range conf.RelayAddrStrings {
+		// 	// To connect a peer over relay, we need a relay address.
+		// 	// The format for the relay address is defined here:
+		// 	// https://docs.libp2p.io/concepts/nat/circuit-relay/#relay-addresses
+		// 	pid, _ := peer.IDFromPrivateKey(networkKey)
+		// 	circuitAddr, _ := multiaddr.NewMultiaddr(fmt.Sprintf("%s/p2p-circuit/p2p/%s", addr, pid))
+		// 	addrs = append(addrs, circuitAddr)
+		// }
+
+		// }
 		return addrs
 	})
 	opts = append(opts, addrFactory)
 
-	connGater, err := NewConnectionGater(conf)
+	connGater, err := NewConnectionGater(conf, log)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
@@ -214,31 +200,30 @@ func newNetwork(networkName string, conf *Config, opts []lp2p.Option) (*network,
 		cancel:       cancel,
 		name:         networkName,
 		config:       conf,
+		logger:       log,
 		host:         host,
 		connGater:    connGater,
 		eventChannel: make(chan Event, 100),
 	}
 
-	n.logger = logger.NewSubLogger("_network", n)
-	connGater.SetLogger(n.logger)
-
-	if conf.EnableMdns {
-		n.mdns = newMdnsService(ctx, n.host, n.logger)
-	}
+	log.SetObj(n)
 
 	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/gossip/v1", n.name)) // TODO: better name?
 	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", n.name))
 
+	if conf.EnableMdns {
+		n.mdns = newMdnsService(ctx, n.host, n.logger)
+	}
 	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf, n.logger)
 	n.peerMgr = newPeerMgr(ctx, host, n.dht.kademlia, conf, n.logger)
-	n.stream = newStreamService(ctx, n.host, streamProtocolID, relayAddrs, n.eventChannel, n.logger)
+	n.stream = newStreamService(ctx, n.host, streamProtocolID, n.eventChannel, n.logger)
 	n.gossip = newGossipService(ctx, n.host, n.eventChannel, conf, n.logger)
 	n.notifee = newNotifeeService(n.host, n.eventChannel, n.logger, streamProtocolID, conf.Bootstrapper)
 
 	n.host.Network().Notify(n.notifee)
 
 	n.logger.Info("network setup", "id", n.host.ID(),
-		"address", conf.Listens,
+		"address", conf.ListenAddrStrings,
 		"bootstrapper", conf.Bootstrapper)
 
 	return n, nil

@@ -38,8 +38,8 @@ func TestSaveLocalnetConfig(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
-	assert.Empty(t, conf.Network.Listens)
-	assert.Empty(t, conf.Network.RelayAddrs)
+	assert.Empty(t, conf.Network.ListenAddrStrings)
+	assert.Empty(t, conf.Network.RelayAddrStrings)
 	assert.Equal(t, conf.Network.DefaultPort, 21777)
 }
 

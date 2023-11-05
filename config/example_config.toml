@@ -24,17 +24,11 @@
   # `network_key` specifies the private key filename to use for node authentication and encryption in the p2p protocol.
  ## network_key = "network_key"
 
-  # `public_address` is a list of addresses that are public and accessible to other nodes.
-  # If it is empty, the node attempts to automatically detect its public IP addresses.
-  # It is recommended to set the public address if available.
-  # Example addresses:
-  # - "/ip4/1.2.3.4/tcp/21888"
-  # - "/ip6/2606:4700:4700::1111/udp/21888"
-  # - "/dnsaddr/my-server.amazonaws.com/tcp/21888"
- ## public_address = []
+  # `public_address` is the the address that is public and accessible to other nodes.
+ ## public_address = ""
 
-  # `listens` specifies the addresses and ports where the node will listen for incoming connections from other nodes.
- ## listens = ["/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888", "/ip4/0.0.0.0/udp/21888/quic-v1", "/ip6/::/udp/21888/quic-v1"]
+  # `listen_addresses` specifies the addresses and ports where the node will listen for incoming connections from other nodes.
+ ## listen_addresses = ["/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888", "/ip4/0.0.0.0/udp/21888/quic-v1", "/ip6/::/udp/21888/quic-v1"]
 
   # `relay_addresses` provides the necessary relay addresses. These should be specified if 'enable_relay' is 'true'.
   # Note: this parameter will be ignored if 'enable_relay' is 'false'.

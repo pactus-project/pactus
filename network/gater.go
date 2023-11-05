@@ -18,7 +18,7 @@ type ConnectionGater struct {
 	logger *logger.SubLogger
 }
 
-func NewConnectionGater(conf *Config) (*ConnectionGater, error) {
+func NewConnectionGater(conf *Config, log *logger.SubLogger) (*ConnectionGater, error) {
 	connGater, err := lp2pconngater.NewBasicConnectionGater(nil)
 	if err != nil {
 		return nil, err
@@ -36,11 +36,8 @@ func NewConnectionGater(conf *Config) (*ConnectionGater, error) {
 
 	return &ConnectionGater{
 		BasicConnectionGater: connGater,
+		logger:               log,
 	}, nil
-}
-
-func (g *ConnectionGater) SetLogger(log *logger.SubLogger) {
-	g.logger = log
 }
 
 func (g *ConnectionGater) InterceptPeerDial(p lp2ppeer.ID) bool {

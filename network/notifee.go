@@ -6,8 +6,10 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/protocol"
+	lp2phostbasic "github.com/libp2p/go-libp2p/p2p/host/basic"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/logger"
+	"golang.org/x/exp/slices"
 )
 
 type NotifeeService struct {
@@ -42,19 +44,29 @@ func (n *NotifeeService) Connected(lp2pn lp2pnetwork.Network, conn lp2pnetwork.C
 			// Wait to complete libp2p identify
 			time.Sleep(1 * time.Second)
 
-			protocols, _ := lp2pn.Peerstore().SupportsProtocols(peerID, n.protocolID)
+			basicHost, ok := n.host.(*lp2phostbasic.BasicHost)
+			if ok {
+				idService := basicHost.IDService()
+				idService.IdentifyConn(conn)
+			}
+
+			peerStore := lp2pn.Peerstore()
+			protocols, _ := peerStore.GetProtocols(peerID)
 			if len(protocols) > 0 {
-				n.eventChannel <- &ConnectEvent{PeerID: peerID}
+				if slices.Contains(protocols, n.protocolID) {
+					n.logger.Debug("peer supports the stream protocol",
+						"pid", peerID, "protocols", protocols)
+
+					n.eventChannel <- &ConnectEvent{PeerID: peerID}
+				} else {
+					n.logger.Debug("peer doesn't support the stream protocol",
+						"pid", peerID, "protocols", protocols)
+				}
 				return
 			}
 		}
 
 		n.logger.Info("unable to get supported protocols", "pid", peerID)
-
-		if !n.bootstrapper {
-			// Close this connection since we can't send a direct message to this peer.
-			_ = n.host.Network().ClosePeer(peerID)
-		}
 	}()
 }
 

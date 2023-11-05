@@ -38,17 +38,8 @@ type testData struct {
 	broadcastCh chan message.Message
 }
 
-type OverrideStringer struct {
-	sync *synchronizer
-	name string
-}
-
 func init() {
 	LatestBlockInterval = 23
-}
-
-func (o *OverrideStringer) String() string {
-	return o.name + o.sync.String()
 }
 
 func testConfig() *Config {

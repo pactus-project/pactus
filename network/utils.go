@@ -32,22 +32,13 @@ func MakeMultiAddrs(addrs []string) ([]multiaddr.Multiaddr, error) {
 func MakeAddrInfos(addrs []string) ([]lp2ppeer.AddrInfo, error) {
 	pis := make([]lp2ppeer.AddrInfo, 0, len(addrs))
 	for _, addr := range addrs {
-		pinfo, err := MakeAddressInfo(addr)
+		pinfo, err := lp2ppeer.AddrInfoFromString(addr)
 		if err != nil {
 			return nil, err
 		}
 		pis = append(pis, *pinfo)
 	}
 	return pis, nil
-}
-
-// MakeAddressInfo from Multi-address string.
-func MakeAddressInfo(addr string) (*lp2ppeer.AddrInfo, error) {
-	ma, err := multiaddr.NewMultiaddr(addr)
-	if err != nil {
-		return nil, err
-	}
-	return lp2ppeer.AddrInfoFromP2pAddr(ma)
 }
 
 func IPToMultiAddr(ip string, port int) (multiaddr.Multiaddr, error) {
@@ -169,50 +160,4 @@ func MakeScalingLimitConfig(minConns, maxConns int) lp2prcmgr.ScalingLimitConfig
 	limit.TransientLimitIncrease.Streams = LogScale(2 * minConns / 2)
 
 	return limit
-}
-
-// DetectPublicIPv4 returns the public IPv4 address of the local machine by dialing a list of specific IP addresses.
-func DetectPublicIPv4() (string, bool) {
-	ips := []string{
-		"8.8.8.8",        // Google
-		"1.1.1.1",        // Cloudflare
-		"9.9.9.9",        // Quad9
-		"208.67.222.222", // OpenDNS
-	}
-
-	for _, ip := range ips {
-		conn, err := net.Dial("udp", ip+":53") // Use a UDP connection to avoid blocking
-		if err == nil {
-			conn.Close()
-
-			localAddr := conn.LocalAddr().(*net.UDPAddr)
-			return localAddr.IP.String(), true
-		}
-	}
-
-	// If all attempts failed, return false
-	return "", false
-}
-
-// DetectPublicIPv6 returns the public IPv6 address of the local machine by dialing a list of specific IPv6 addresses.
-func DetectPublicIPv6() (string, bool) {
-	ips := []string{
-		"2001:4860:4860::8888", // Google
-		"2620:0:ccc::2",        // OpenDNS
-		"2620:fe::fe",          // Quad9
-		"2606:4700:4700::1111", // Cloudflare
-	}
-
-	for _, ip := range ips {
-		conn, err := net.Dial("udp", "["+ip+"]:53") // Use a UDP connection to avoid blocking
-		if err == nil {
-			conn.Close()
-
-			localAddr := conn.LocalAddr().(*net.UDPAddr)
-			return localAddr.IP.String(), true
-		}
-	}
-
-	// If all attempts failed, return false
-	return "", false
 }

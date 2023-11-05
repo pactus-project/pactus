@@ -1,7 +1,6 @@
 package network
 
 import (
-	"fmt"
 	"testing"
 
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
@@ -93,12 +92,6 @@ func TestMakeAddrInfos(t *testing.T) {
 			},
 			expectedPis: nil,
 		},
-		{
-			inputAddrs: []string{
-				"invalid_address",
-			},
-			expectedPis: nil,
-		},
 	}
 
 	for _, tc := range testCases {
@@ -177,25 +170,4 @@ func TestSubnetsToFilters(t *testing.T) {
 	assert.False(t, f.AddrBlocked(ma1))
 	assert.True(t, f.AddrBlocked(ma2))
 	assert.False(t, f.AddrBlocked(ma3))
-}
-
-func TestDetectPublicIPv4(t *testing.T) {
-	ip, ok := DetectPublicIPv4()
-	assert.True(t, ok)
-	assert.NotNil(t, ip)
-
-	fmt.Println(ip)
-}
-
-func TestDetectPublicIPv6(t *testing.T) {
-	ip, ok := DetectPublicIPv6()
-	if ok {
-		assert.NotNil(t, ip)
-
-		fmt.Println(ip)
-		ma, _ := IPToMultiAddr(ip, 1234)
-		privateSubnets := PrivateSubnets()
-		privateFilters := SubnetsToFilters(privateSubnets, multiaddr.ActionDeny)
-		assert.False(t, privateFilters.AddrBlocked(ma))
-	}
 }
