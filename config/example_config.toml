@@ -48,8 +48,8 @@
 
   # `enable_nat` indicates whether NAT service should be enabled or not.
   # NAT service allows many machines to share a single public address.
-  # Default is true.
- ## enable_nat = true
+  # Default is false.
+ ## enable_nat = false
 
   # `enable_relay` indicates whether relay service  should be enabled or not.
   # Relay service is a transport protocol that routes traffic between two peers over a third-party “relay” peer.

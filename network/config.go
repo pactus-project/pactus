@@ -55,7 +55,7 @@ func DefaultConfig() *Config {
 		BootstrapAddrStrings: bootstrapAddrs,
 		MinConns:             8,
 		MaxConns:             16,
-		EnableNAT:            true,
+		EnableNAT:            false,
 		EnableRelay:          false,
 		EnableMdns:           false,
 		EnableMetrics:        false,
