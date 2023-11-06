@@ -185,7 +185,8 @@ func TestNetwork(t *testing.T) {
 	networkP := makeTestNetwork(t, confP, []lp2p.Option{
 		lp2p.ForceReachabilityPublic(),
 	})
-	publicAddrInfo, _ := lp2ppeer.AddrInfoFromString(fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%s", publicPort, networkP.SelfID()))
+	publicAddrInfo, _ := lp2ppeer.AddrInfoFromString(
+		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%s", publicPort, networkP.SelfID()))
 
 	// Private node M
 	confM := testConfig()
