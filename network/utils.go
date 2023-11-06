@@ -139,25 +139,25 @@ func SubnetsToFilters(subnets []*net.IPNet, action multiaddr.Action) *multiaddr.
 func MakeScalingLimitConfig(minConns, maxConns int) lp2prcmgr.ScalingLimitConfig {
 	limit := lp2prcmgr.DefaultLimits
 
-	limit.SystemBaseLimit.ConnsInbound = LogScale(maxConns)
-	limit.SystemBaseLimit.Conns = LogScale(2 * maxConns)
-	limit.SystemBaseLimit.StreamsInbound = LogScale(maxConns)
-	limit.SystemBaseLimit.Streams = LogScale(2 * maxConns)
+	limit.SystemBaseLimit.ConnsInbound = LogScale(maxConns / 2)
+	limit.SystemBaseLimit.Conns = LogScale(maxConns)
+	limit.SystemBaseLimit.StreamsInbound = LogScale(maxConns / 2)
+	limit.SystemBaseLimit.Streams = LogScale(maxConns)
 
-	limit.ServiceLimitIncrease.ConnsInbound = LogScale(minConns)
-	limit.ServiceLimitIncrease.Conns = LogScale(2 * minConns)
-	limit.ServiceLimitIncrease.StreamsInbound = LogScale(minConns)
-	limit.ServiceLimitIncrease.Streams = LogScale(2 * minConns)
+	limit.ServiceLimitIncrease.ConnsInbound = LogScale(minConns / 2)
+	limit.ServiceLimitIncrease.Conns = LogScale(minConns)
+	limit.ServiceLimitIncrease.StreamsInbound = LogScale(minConns / 2)
+	limit.ServiceLimitIncrease.Streams = LogScale(minConns)
 
 	limit.TransientBaseLimit.ConnsInbound = LogScale(maxConns / 2)
-	limit.TransientBaseLimit.Conns = LogScale(2 * maxConns / 2)
+	limit.TransientBaseLimit.Conns = LogScale(maxConns)
 	limit.TransientBaseLimit.StreamsInbound = LogScale(maxConns / 2)
-	limit.TransientBaseLimit.Streams = LogScale(2 * maxConns / 2)
+	limit.TransientBaseLimit.Streams = LogScale(maxConns)
 
 	limit.TransientLimitIncrease.ConnsInbound = LogScale(minConns / 2)
-	limit.TransientLimitIncrease.Conns = LogScale(2 * minConns / 2)
+	limit.TransientLimitIncrease.Conns = LogScale(minConns)
 	limit.TransientLimitIncrease.StreamsInbound = LogScale(minConns / 2)
-	limit.TransientLimitIncrease.Streams = LogScale(2 * minConns / 2)
+	limit.TransientLimitIncrease.Streams = LogScale(minConns)
 
 	return limit
 }
