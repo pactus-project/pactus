@@ -103,11 +103,11 @@ func SaveMainnetConfig(path string, numValidators int) error {
 func SaveTestnetConfig(path string, numValidators int) error {
 	conf := DefaultConfig()
 	conf.Node.NumValidators = numValidators
-	conf.Network.Listens = []string{
+	conf.Network.ListenAddrStrings = []string{
 		"/ip4/0.0.0.0/tcp/21777", "/ip4/0.0.0.0/udp/21777/quic-v1",
 		"/ip6/::/tcp/21777", "/ip6/::/udp/21777/quic-v1",
 	}
-	conf.Network.BootstrapAddrs = []string{
+	conf.Network.BootstrapAddrStrings = []string{
 		"/ip4/94.101.184.118/tcp/21777/p2p/12D3KooWCwQZt8UriVXobQHPXPR8m83eceXVoeT6brPNiBHomebc",
 		"/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
 		"/ip4/13.115.190.71/tcp/21777/p2p/12D3KooWBGNEH8NqdK1UddSnPV1yRHGLYpaQUcnujC24s7YNWPiq",
@@ -121,8 +121,9 @@ func SaveTestnetConfig(path string, numValidators int) error {
 	}
 	conf.Network.MinConns = 8
 	conf.Network.MaxConns = 16
-	conf.Network.EnableRelay = true
-	conf.Network.RelayAddrs = []string{
+	conf.Network.EnableNAT = false
+	conf.Network.EnableRelay = false
+	conf.Network.RelayAddrStrings = []string{
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/188.121.102.178/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
@@ -141,10 +142,10 @@ func SaveTestnetConfig(path string, numValidators int) error {
 func SaveLocalnetConfig(path string, numValidators int) error {
 	conf := DefaultConfig()
 	conf.Node.NumValidators = numValidators
-	conf.Network.Listens = []string{}
+	conf.Network.ListenAddrStrings = []string{}
 	conf.Network.EnableRelay = false
 	conf.Network.EnableNAT = false
-	conf.Network.BootstrapAddrs = []string{}
+	conf.Network.BootstrapAddrStrings = []string{}
 	conf.Network.MinConns = 0
 	conf.Network.MaxConns = 0
 	conf.GRPC.Enable = true

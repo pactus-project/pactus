@@ -85,8 +85,8 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Network.ForcePrivateNetwork = true
 		tConfigs[i].Network.Bootstrapper = true
 		tConfigs[i].Network.NetworkKey = util.TempFilePath()
-		tConfigs[i].Network.Listens = []string{"/ip4/127.0.0.1/tcp/0", "/ip4/127.0.0.1/udp/0/quic-v1"}
-		tConfigs[i].Network.BootstrapAddrs = []string{}
+		tConfigs[i].Network.ListenAddrStrings = []string{"/ip4/127.0.0.1/tcp/0", "/ip4/127.0.0.1/udp/0/quic-v1"}
+		tConfigs[i].Network.BootstrapAddrStrings = []string{}
 		tConfigs[i].Network.MinConns = 3
 		tConfigs[i].HTTP.Enable = false
 		tConfigs[i].GRPC.Enable = false

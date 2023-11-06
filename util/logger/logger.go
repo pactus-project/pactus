@@ -231,3 +231,7 @@ func isNil(i interface{}) bool {
 	}
 	return false
 }
+
+func (sl *SubLogger) SetObj(obj fmt.Stringer) {
+	sl.obj = obj
+}

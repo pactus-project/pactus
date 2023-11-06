@@ -53,20 +53,11 @@ type testData struct {
 	consMessages []consMessage
 }
 
-type OverrideStringer struct {
-	cons *consensus
-	name string
-}
-
 func testConfig() *Config {
 	return &Config{
 		ChangeProposerTimeout: 1 * time.Hour, // Disabling timers
 		ChangeProposerDelta:   1 * time.Hour, // Disabling timers
 	}
-}
-
-func (o *OverrideStringer) String() string {
-	return o.name + o.cons.String()
 }
 
 func setup(t *testing.T) *testData {
@@ -142,7 +133,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	// Better logging during testing
 	overrideLogger := func(cons *consensus, name string) {
 		cons.logger = logger.NewSubLogger("_consensus",
-			&OverrideStringer{name: fmt.Sprintf("%s - %s: ", name, t.Name()), cons: cons})
+			testsuite.NewOverrideStringer(fmt.Sprintf("%s - %s: ", name, t.Name()), cons))
 	}
 
 	overrideLogger(td.consX, "consX")

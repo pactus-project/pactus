@@ -37,10 +37,9 @@ type peerMgr struct {
 func newPeerMgr(ctx context.Context, h lp2phost.Host, dht *lp2pdht.IpfsDHT,
 	conf *Config, log *logger.SubLogger,
 ) *peerMgr {
-	bootstrapAddrs, _ := MakeAddrInfos(conf.BootstrapAddrs)
 	b := &peerMgr{
 		ctx:            ctx,
-		bootstrapAddrs: bootstrapAddrs,
+		bootstrapAddrs: conf.BootstrapAddrInfos(),
 		minConns:       conf.MinConns,
 		maxConns:       conf.MaxConns,
 		host:           h,
