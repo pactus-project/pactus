@@ -14,7 +14,6 @@ var _ lp2pconnmgr.ConnectionGater = &ConnectionGater{}
 
 type ConnectionGater struct {
 	*lp2pconngater.BasicConnectionGater
-
 	logger *logger.SubLogger
 }
 

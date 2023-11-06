@@ -67,6 +67,10 @@ func (n *NotifeeService) Connected(lp2pn lp2pnetwork.Network, conn lp2pnetwork.C
 		}
 
 		n.logger.Info("unable to get supported protocols", "pid", peerID)
+		if !n.bootstrapper {
+			// Close this connection since we can't send a direct message to this peer.
+			_ = n.host.Network().ClosePeer(peerID)
+		}
 	}()
 }
 

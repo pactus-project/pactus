@@ -312,10 +312,20 @@ func TestNetwork(t *testing.T) {
 
 	t.Run("node X (private, not connected via relay) is not accessible by node M", func(t *testing.T) {
 		require.Error(t, networkX.host.Connect(networkX.ctx, *circuitAddrInfoN))
+
+		msgM := []byte("test-stream-from-m")
+		require.Error(t, networkM.SendTo(msgM, networkX.SelfID()))
 	})
 
 	t.Run("nodes M and N (private, connected via relay) can communicate using the relay node R", func(t *testing.T) {
 		require.NoError(t, networkM.host.Connect(networkM.ctx, *circuitAddrInfoN))
+
+		// TODO: How to test this?
+		// msgM := []byte("test-stream-from-m")
+		// require.NoError(t, networkM.SendTo(msgM, networkN.SelfID()))
+		// eM := shouldReceiveEvent(t, networkN, EventTypeStream).(*StreamMessage)
+		// assert.Equal(t, eM.Source, networkM.SelfID())
+		// assert.Equal(t, readData(t, eM.Reader, len(msgM)), msgM)
 	})
 
 	t.Run("closing connection", func(t *testing.T) {
