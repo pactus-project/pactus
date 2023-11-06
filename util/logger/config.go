@@ -1,8 +1,9 @@
 package logger
 
 type Config struct {
-	Colorful bool              `toml:"colorful"`
-	Levels   map[string]string `toml:"levels"`
+    Colorful           bool              `toml:"colorful"`
+    Levels             map[string]string `toml:"levels"`
+    RotateLogAfterDays int               `toml:"rotate_log_after_days"
 }
 
 func DefaultConfig() *Config {
