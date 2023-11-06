@@ -185,6 +185,7 @@ func TestNetwork(t *testing.T) {
 	networkP := makeTestNetwork(t, confP, []lp2p.Option{
 		lp2p.ForceReachabilityPublic(),
 	})
+	publicAddrInfo, _ := lp2ppeer.AddrInfoFromString(fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%s", publicPort, networkP.SelfID()))
 
 	// Private node M
 	confM := testConfig()
@@ -281,8 +282,9 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node P (public) is directly accessible by nodes M and N (private behind NAT)", func(t *testing.T) {
-		msgM := []byte("test-stream-from-m")
+		require.NoError(t, networkM.host.Connect(networkM.ctx, *publicAddrInfo))
 
+		msgM := []byte("test-stream-from-m")
 		require.NoError(t, networkM.SendTo(msgM, networkP.SelfID()))
 		eP := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
 		assert.Equal(t, eP.Source, networkM.SelfID())
@@ -290,8 +292,9 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node P (public) is directly accessible by node X (private behind NAT, without relay)", func(t *testing.T) {
-		msgX := []byte("test-stream-from-x")
+		require.NoError(t, networkX.host.Connect(networkX.ctx, *publicAddrInfo))
 
+		msgX := []byte("test-stream-from-x")
 		require.NoError(t, networkX.SendTo(msgX, networkP.SelfID()))
 		eP := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
 		assert.Equal(t, eP.Source, networkX.SelfID())
