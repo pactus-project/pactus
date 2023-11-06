@@ -109,30 +109,36 @@ func (mgr *peerMgr) CheckConnectivity() {
 
 	mgr.logger.Debug("check connectivity", "peers", len(mgr.peers))
 
+	net := mgr.host.Network()
+
+	// Make sure we have connected to at least one peer that supports the stream protocol.
+	hasStreamConn := 0
+	for _, pi := range mgr.peers {
+		if slices.Contains(pi.Protocols, mgr.streamProtocolID) {
+			hasStreamConn++
+		}
+	}
+
+	if hasStreamConn == 0 {
+		// TODO: is it possible?
+		mgr.logger.Warn("no stream connection")
+
+		for pid := range mgr.peers {
+			_ = net.ClosePeer(pid)
+		}
+
+		time.Sleep(1 * time.Second)
+	}
+
 	// Let's check if some peers are disconnected
 	var connectedPeers []lp2ppeer.ID
-	var streamPeers []lp2ppeer.ID
-	net := mgr.host.Network()
-	for pid, pi := range mgr.peers {
+	for pid := range mgr.peers {
 		connectedness := net.Connectedness(pid)
 		if connectedness == lp2pnet.Connected {
 			connectedPeers = append(connectedPeers, pid)
 		} else {
 			mgr.logger.Debug("peer is not connected to us", "peer", pid)
 			delete(mgr.peers, pid)
-		}
-
-		if slices.Contains(pi.Protocols, mgr.streamProtocolID) {
-			streamPeers = append(streamPeers, pid)
-		}
-	}
-
-	// Make sure we have connected to at least one peer that supports the stream protocol.
-	if len(streamPeers) == 0 {
-		mgr.logger.Warn("no stream connection") // TODO: is it possible?
-
-		for pid := range mgr.peers {
-			_ = net.ClosePeer(pid)
 		}
 	}
 
