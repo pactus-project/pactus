@@ -39,12 +39,12 @@
  ## bootstrap_addrs = ["/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"]
 
   # `min_connections` is the minimum number of connections that the Pactus node should maintain.
-  # Default is 8
- ## min_connections = 8
+  # Default is 16
+ ## min_connections = 16
 
   # `max_connections` is the maximum number of connections that the Pactus node should maintain.
-  # Default is 16
- ## max_connections = 16
+  # Default is 32
+ ## max_connections = 32
 
   # `enable_nat` indicates whether NAT service should be enabled or not.
   # NAT service allows many machines to share a single public address.
