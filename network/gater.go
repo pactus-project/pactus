@@ -48,12 +48,12 @@ func (g *ConnectionGater) SetHost(host lp2phost.Host) {
 	g.host = host
 }
 
-func (g *ConnectionGater) checkThreshold() bool {
+func (g *ConnectionGater) hasMaxConnections() bool {
 	return len(g.host.Network().Peers()) > g.maxConn
 }
 
 func (g *ConnectionGater) InterceptPeerDial(p lp2ppeer.ID) bool {
-	if g.checkThreshold() {
+	if g.hasMaxConnections() {
 		g.logger.Debug("InterceptPeerDial rejected: many connections")
 		return false
 	}
@@ -67,7 +67,7 @@ func (g *ConnectionGater) InterceptPeerDial(p lp2ppeer.ID) bool {
 }
 
 func (g *ConnectionGater) InterceptAddrDial(p lp2ppeer.ID, ma multiaddr.Multiaddr) bool {
-	if g.checkThreshold() {
+	if g.hasMaxConnections() {
 		g.logger.Debug("InterceptAddrDial rejected: many connections")
 		return false
 	}
@@ -81,7 +81,7 @@ func (g *ConnectionGater) InterceptAddrDial(p lp2ppeer.ID, ma multiaddr.Multiadd
 }
 
 func (g *ConnectionGater) InterceptAccept(cma lp2pnetwork.ConnMultiaddrs) bool {
-	if g.checkThreshold() {
+	if g.hasMaxConnections() {
 		g.logger.Debug("InterceptAccept rejected: many connections")
 		return false
 	}
