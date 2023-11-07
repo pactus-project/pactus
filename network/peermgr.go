@@ -13,7 +13,6 @@ import (
 	lp2pswarm "github.com/libp2p/go-libp2p/p2p/net/swarm"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/logger"
-	"golang.org/x/exp/slices"
 )
 
 type peerInfo struct {
@@ -131,24 +130,6 @@ func (mgr *peerMgr) CheckConnectivity() {
 	}
 
 	if len(connectedPeers) > mgr.maxConns {
-		// Make sure we have connected to at least one peer that supports the stream protocol.
-		hasStreamConn := false
-		for _, pi := range mgr.peers {
-			if slices.Contains(pi.Protocols, mgr.streamProtocolID) {
-				hasStreamConn = true
-				break
-			}
-		}
-
-		if !hasStreamConn {
-			// TODO: is it possible?
-			mgr.logger.Warn("no stream connection")
-
-			for pid := range mgr.peers {
-				_ = net.ClosePeer(pid)
-			}
-		}
-
 		mgr.logger.Debug("peer count is about maximum threshold",
 			"count", len(connectedPeers),
 			"max", mgr.maxConns)
