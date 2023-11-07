@@ -215,12 +215,13 @@ func newNetwork(networkName string, conf *Config, log *logger.SubLogger, opts []
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
 	}
 	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf, n.logger)
-	n.peerMgr = newPeerMgr(ctx, host, n.dht.kademlia, conf, n.logger)
+	n.peerMgr = newPeerMgr(ctx, host, n.dht.kademlia, streamProtocolID, conf, n.logger)
 	n.stream = newStreamService(ctx, n.host, streamProtocolID, n.eventChannel, n.logger)
 	n.gossip = newGossipService(ctx, n.host, n.eventChannel, conf, n.logger)
-	n.notifee = newNotifeeService(n.host, n.eventChannel, n.logger, streamProtocolID, conf.Bootstrapper)
+	n.notifee = newNotifeeService(n.host, n.eventChannel, n.peerMgr, streamProtocolID, conf.Bootstrapper, n.logger)
 
 	n.host.Network().Notify(n.notifee)
+	n.connGater.SetPeerManager(n.peerMgr)
 
 	n.logger.Info("network setup", "id", n.host.ID(),
 		"address", conf.ListenAddrStrings,
@@ -272,6 +273,7 @@ func (n *network) SelfID() lp2ppeer.ID {
 }
 
 func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) error {
+	n.logger.Trace("Sending new message", "to", pid)
 	return n.stream.SendRequest(msg, pid)
 }
 

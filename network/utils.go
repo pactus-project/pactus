@@ -139,18 +139,24 @@ func SubnetsToFilters(subnets []*net.IPNet, action multiaddr.Action) *multiaddr.
 func MakeScalingLimitConfig(minConns, maxConns int) lp2prcmgr.ScalingLimitConfig {
 	limit := lp2prcmgr.DefaultLimits
 
+	limit.SystemBaseLimit.ConnsOutbound = LogScale(maxConns / 2)
 	limit.SystemBaseLimit.ConnsInbound = LogScale(maxConns / 2)
 	limit.SystemBaseLimit.Conns = LogScale(maxConns)
+	limit.SystemBaseLimit.StreamsOutbound = LogScale(maxConns / 2)
 	limit.SystemBaseLimit.StreamsInbound = LogScale(maxConns / 2)
 	limit.SystemBaseLimit.Streams = LogScale(maxConns)
 
+	limit.ServiceLimitIncrease.ConnsOutbound = LogScale(minConns / 2)
 	limit.ServiceLimitIncrease.ConnsInbound = LogScale(minConns / 2)
 	limit.ServiceLimitIncrease.Conns = LogScale(minConns)
+	limit.ServiceLimitIncrease.StreamsOutbound = LogScale(minConns / 2)
 	limit.ServiceLimitIncrease.StreamsInbound = LogScale(minConns / 2)
 	limit.ServiceLimitIncrease.Streams = LogScale(minConns)
 
+	limit.TransientBaseLimit.ConnsOutbound = LogScale(maxConns / 2)
 	limit.TransientBaseLimit.ConnsInbound = LogScale(maxConns / 2)
 	limit.TransientBaseLimit.Conns = LogScale(maxConns)
+	limit.TransientBaseLimit.StreamsOutbound = LogScale(maxConns / 2)
 	limit.TransientBaseLimit.StreamsInbound = LogScale(maxConns / 2)
 	limit.TransientBaseLimit.Streams = LogScale(maxConns)
 

@@ -119,8 +119,8 @@ func SaveTestnetConfig(path string, numValidators int) error {
 		"/dns/pactus.nodesync.top/tcp/21777/p2p/12D3KooWP25ejVsd7cL5DvWAPwEu4JTUwnPniHBf4w93tgSezVt8", // NodeSync.Top (lthuan2011@gmail.com)
 		"/ip4/95.217.89.202/tcp/21777/p2p/12D3KooWMsi5oYkbbpyyXctmPXzF8UZu2pCvKPRZGyvymhN9BzTD",       // CodeBlockLabs (emailbuatcariduit@gmail.com)
 	}
-	conf.Network.MinConns = 8
-	conf.Network.MaxConns = 16
+	conf.Network.MinConns = 16
+	conf.Network.MaxConns = 32
 	conf.Network.EnableNAT = false
 	conf.Network.EnableRelay = false
 	conf.Network.RelayAddrStrings = []string{
