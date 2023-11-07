@@ -1,12 +1,12 @@
 package network
 
 import (
+	"sync"
+
 	lp2pconnmgr "github.com/libp2p/go-libp2p/core/connmgr"
 	lp2pcontrol "github.com/libp2p/go-libp2p/core/control"
-	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
-	lp2pconngater "github.com/libp2p/go-libp2p/p2p/net/conngater"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/logger"
 )
@@ -14,97 +14,95 @@ import (
 var _ lp2pconnmgr.ConnectionGater = &ConnectionGater{}
 
 type ConnectionGater struct {
-	*lp2pconngater.BasicConnectionGater
+	lk sync.RWMutex
 
-	host    lp2phost.Host
+	filters *multiaddr.Filters
+	peerMgr *peerMgr
 	maxConn int
 	logger  *logger.SubLogger
 }
 
 func NewConnectionGater(conf *Config, log *logger.SubLogger) (*ConnectionGater, error) {
-	connGater, err := lp2pconngater.NewBasicConnectionGater(nil)
-	if err != nil {
-		return nil, err
-	}
-
+	filters := multiaddr.NewFilters()
 	if !conf.ForcePrivateNetwork {
 		privateSubnets := PrivateSubnets()
-		for _, sn := range privateSubnets {
-			err := connGater.BlockSubnet(sn)
-			if err != nil {
-				return nil, LibP2PError{Err: err}
-			}
-		}
+		filters = SubnetsToFilters(privateSubnets, multiaddr.ActionDeny)
 	}
 
 	return &ConnectionGater{
-		BasicConnectionGater: connGater,
-		maxConn:              conf.MaxConns,
-		logger:               log,
+		filters: filters,
+		maxConn: conf.MaxConns,
+		logger:  log,
 	}, nil
 }
 
-func (g *ConnectionGater) SetHost(host lp2phost.Host) {
-	g.host = host
+func (g *ConnectionGater) SetPeerManager(peerMgr *peerMgr) {
+	g.lk.Lock()
+	defer g.lk.Unlock()
+
+	g.peerMgr = peerMgr
 }
 
 func (g *ConnectionGater) hasMaxConnections() bool {
-	return len(g.host.Network().Peers()) > g.maxConn
-}
-
-func (g *ConnectionGater) InterceptPeerDial(p lp2ppeer.ID) bool {
-	if g.hasMaxConnections() {
-		g.logger.Debug("InterceptPeerDial rejected: many connections")
+	if g.peerMgr == nil {
 		return false
 	}
 
-	allow := g.BasicConnectionGater.InterceptPeerDial(p)
-	if !allow {
-		g.logger.Debug("InterceptPeerDial rejected", "p")
-	}
-
-	return allow
+	return g.peerMgr.NumOfConnected() > g.maxConn
 }
 
-func (g *ConnectionGater) InterceptAddrDial(p lp2ppeer.ID, ma multiaddr.Multiaddr) bool {
+func (g *ConnectionGater) InterceptPeerDial(pid lp2ppeer.ID) bool {
+	g.lk.RLock()
+	defer g.lk.RUnlock()
+
 	if g.hasMaxConnections() {
-		g.logger.Debug("InterceptAddrDial rejected: many connections")
+		g.logger.Debug("InterceptPeerDial rejected: many connections", "pid", pid)
 		return false
 	}
 
-	allow := g.BasicConnectionGater.InterceptAddrDial(p, ma)
-	if !allow {
-		g.logger.Debug("InterceptAddrDial rejected", "p", p, "ma", ma.String())
+	return true
+}
+
+func (g *ConnectionGater) InterceptAddrDial(pid lp2ppeer.ID, ma multiaddr.Multiaddr) bool {
+	g.lk.RLock()
+	defer g.lk.RUnlock()
+
+	if g.hasMaxConnections() {
+		g.logger.Debug("InterceptAddrDial rejected: many connections", "pid", pid, "ma", ma.String())
+		return false
 	}
 
-	return allow
+	deny := g.filters.AddrBlocked(ma)
+	if deny {
+		g.logger.Debug("InterceptAddrDial rejected", "pid", pid, "ma", ma.String())
+		return false
+	}
+
+	return true
 }
 
 func (g *ConnectionGater) InterceptAccept(cma lp2pnetwork.ConnMultiaddrs) bool {
+	g.lk.RLock()
+	defer g.lk.RUnlock()
+
 	if g.hasMaxConnections() {
 		g.logger.Debug("InterceptAccept rejected: many connections")
 		return false
 	}
 
-	allow := g.BasicConnectionGater.InterceptAccept(cma)
-	if !allow {
+	deny := g.filters.AddrBlocked(cma.RemoteMultiaddr())
+	if deny {
 		g.logger.Debug("InterceptAccept rejected")
+		return false
 	}
 
-	return allow
+	return true
 }
 
-func (g *ConnectionGater) InterceptSecured(dir lp2pnetwork.Direction, p lp2ppeer.ID,
-	cma lp2pnetwork.ConnMultiaddrs,
-) bool {
-	allow := g.BasicConnectionGater.InterceptSecured(dir, p, cma)
-	if !allow {
-		g.logger.Debug("InterceptSecured rejected", "p", p)
-	}
-
-	return allow
+func (g *ConnectionGater) InterceptSecured(_ lp2pnetwork.Direction, _ lp2ppeer.ID, _ lp2pnetwork.ConnMultiaddrs) bool {
+	return true
 }
 
-func (g *ConnectionGater) InterceptUpgraded(con lp2pnetwork.Conn) (bool, lp2pcontrol.DisconnectReason) {
-	return g.BasicConnectionGater.InterceptUpgraded(con)
+func (g *ConnectionGater) InterceptUpgraded(_ lp2pnetwork.Conn) (bool, lp2pcontrol.DisconnectReason) {
+	return true, 0
 }

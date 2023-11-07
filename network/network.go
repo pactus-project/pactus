@@ -192,7 +192,6 @@ func newNetwork(networkName string, conf *Config, log *logger.SubLogger, opts []
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
-	connGater.SetHost(host)
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -222,6 +221,7 @@ func newNetwork(networkName string, conf *Config, log *logger.SubLogger, opts []
 	n.notifee = newNotifeeService(n.host, n.eventChannel, n.peerMgr, streamProtocolID, conf.Bootstrapper, n.logger)
 
 	n.host.Network().Notify(n.notifee)
+	n.connGater.SetPeerManager(n.peerMgr)
 
 	n.logger.Info("network setup", "id", n.host.ID(),
 		"address", conf.ListenAddrStrings,

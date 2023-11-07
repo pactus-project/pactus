@@ -81,6 +81,13 @@ func (mgr *peerMgr) Stop() {
 	// TODO: complete me
 }
 
+func (mgr *peerMgr) NumOfConnected() int {
+	mgr.lk.RLock()
+	defer mgr.lk.RUnlock()
+
+	return len(mgr.peers) // TODO: try to keep record of all peers + connected peers
+}
+
 func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
 	direction lp2pnet.Direction, protocols []lp2pcore.ProtocolID,
 ) {
@@ -111,25 +118,6 @@ func (mgr *peerMgr) CheckConnectivity() {
 
 	net := mgr.host.Network()
 
-	// Make sure we have connected to at least one peer that supports the stream protocol.
-	hasStreamConn := 0
-	for _, pi := range mgr.peers {
-		if slices.Contains(pi.Protocols, mgr.streamProtocolID) {
-			hasStreamConn++
-		}
-	}
-
-	if hasStreamConn == 0 {
-		// TODO: is it possible?
-		mgr.logger.Warn("no stream connection")
-
-		for pid := range mgr.peers {
-			_ = net.ClosePeer(pid)
-		}
-
-		time.Sleep(1 * time.Second)
-	}
-
 	// Let's check if some peers are disconnected
 	var connectedPeers []lp2ppeer.ID
 	for pid := range mgr.peers {
@@ -143,6 +131,24 @@ func (mgr *peerMgr) CheckConnectivity() {
 	}
 
 	if len(connectedPeers) > mgr.maxConns {
+		// Make sure we have connected to at least one peer that supports the stream protocol.
+		hasStreamConn := false
+		for _, pi := range mgr.peers {
+			if slices.Contains(pi.Protocols, mgr.streamProtocolID) {
+				hasStreamConn = true
+				break
+			}
+		}
+
+		if !hasStreamConn {
+			// TODO: is it possible?
+			mgr.logger.Warn("no stream connection")
+
+			for pid := range mgr.peers {
+				_ = net.ClosePeer(pid)
+			}
+		}
+
 		mgr.logger.Debug("peer count is about maximum threshold",
 			"count", len(connectedPeers),
 			"max", mgr.maxConns)
