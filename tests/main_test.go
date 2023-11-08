@@ -68,7 +68,7 @@ func TestMain(m *testing.M) {
 		tValKeys[i][0] = bls.NewValidatorKey(key0)
 		tValKeys[i][1] = bls.NewValidatorKey(key1)
 		tValKeys[i][2] = bls.NewValidatorKey(key2)
-		tConfigs[i] = config.DefaultConfig()
+		tConfigs[i] = config.DefaultConfigMainnet()
 
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
@@ -83,17 +83,20 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Sync.Firewall.Enabled = false
 		tConfigs[i].Network.EnableMdns = true
 		tConfigs[i].Network.ForcePrivateNetwork = true
-		tConfigs[i].Network.Bootstrapper = true
+		tConfigs[i].Network.Bootstrapper = false
 		tConfigs[i].Network.NetworkKey = util.TempFilePath()
+		tConfigs[i].Network.NetworkName = "test"
 		tConfigs[i].Network.ListenAddrStrings = []string{"/ip4/127.0.0.1/tcp/0", "/ip4/127.0.0.1/udp/0/quic-v1"}
 		tConfigs[i].Network.BootstrapAddrStrings = []string{}
-		tConfigs[i].Network.MinConns = 3
+		tConfigs[i].Network.MinConns = 4
+		tConfigs[i].Network.MaxConns = 8
 		tConfigs[i].HTTP.Enable = false
 		tConfigs[i].GRPC.Enable = false
 
 		sync.LatestBlockInterval = 10
 
 		if i == 0 {
+			tConfigs[i].Network.Bootstrapper = true
 			tConfigs[i].Sync.NodeNetwork = true
 			tConfigs[i].GRPC.Enable = true
 			tConfigs[i].GRPC.Listen = tGRPCAddress

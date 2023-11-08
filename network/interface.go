@@ -76,7 +76,9 @@ func (*StreamMessage) Type() EventType {
 
 // ConnectEvent represents a peer connection event.
 type ConnectEvent struct {
-	PeerID lp2pcore.PeerID
+	PeerID        lp2pcore.PeerID
+	RemoteAddress string
+	SupportStream bool
 }
 
 func (*ConnectEvent) Type() EventType {

@@ -1094,6 +1094,9 @@
             "type": "string",
             "format": "int64"
           }
+        },
+        "address": {
+          "type": "string"
         }
       }
     },

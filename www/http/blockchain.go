@@ -62,6 +62,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 		}
 		tm.addRowString("Agent", p.Agent)
 		tm.addRowString("Moniker", p.Moniker)
+		tm.addRowString("Remote Address", p.Address)
 		tm.addRowString("LastSent", time.Unix(p.LastSent, 0).String())
 		tm.addRowString("LastReceived", time.Unix(p.LastReceived, 0).String())
 		tm.addRowBlockHash("Last block Hash", p.LastBlockHash)

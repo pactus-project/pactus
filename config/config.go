@@ -74,7 +74,7 @@ func (conf *NodeConfig) BasicCheck() error {
 	return nil
 }
 
-func DefaultConfig() *Config {
+func defaultConfig() *Config {
 	conf := &Config{
 		Node:      DefaultNodeConfig(),
 		Store:     store.DefaultConfig(),
@@ -91,18 +91,15 @@ func DefaultConfig() *Config {
 	return conf
 }
 
-func SaveMainnetConfig(path string, numValidators int) error {
-	conf := string(exampleConfigBytes)
-	conf = strings.Replace(conf, "%num_validators%",
-		fmt.Sprintf("%v", numValidators), 1)
-
-	return util.WriteFile(path, []byte(conf))
+func DefaultConfigMainnet() *Config {
+	conf := defaultConfig()
+	// TO BE DEFINED
+	return conf
 }
 
 //nolint:lll // long multi-address
-func SaveTestnetConfig(path string, numValidators int) error {
-	conf := DefaultConfig()
-	conf.Node.NumValidators = numValidators
+func DefaultConfigTestnet() *Config {
+	conf := defaultConfig()
 	conf.Network.ListenAddrStrings = []string{
 		"/ip4/0.0.0.0/tcp/21777", "/ip4/0.0.0.0/udp/21777/quic-v1",
 		"/ip6/::/tcp/21777", "/ip6/::/udp/21777/quic-v1",
@@ -119,14 +116,16 @@ func SaveTestnetConfig(path string, numValidators int) error {
 		"/dns/pactus.nodesync.top/tcp/21777/p2p/12D3KooWP25ejVsd7cL5DvWAPwEu4JTUwnPniHBf4w93tgSezVt8", // NodeSync.Top (lthuan2011@gmail.com)
 		"/ip4/95.217.89.202/tcp/21777/p2p/12D3KooWMsi5oYkbbpyyXctmPXzF8UZu2pCvKPRZGyvymhN9BzTD",       // CodeBlockLabs (emailbuatcariduit@gmail.com)
 	}
-	conf.Network.MinConns = 16
-	conf.Network.MaxConns = 32
-	conf.Network.EnableNAT = false
-	conf.Network.EnableRelay = false
 	conf.Network.RelayAddrStrings = []string{
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/188.121.102.178/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
+	conf.Network.MinConns = 16
+	conf.Network.MaxConns = 32
+	conf.Network.EnableNAT = false
+	conf.Network.EnableRelay = true
+	conf.Network.NetworkName = "pactus-testnet"
+	conf.Network.DefaultPort = 21777
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "[::]:50052"
 	conf.GRPC.Gateway.Enable = true
@@ -136,18 +135,19 @@ func SaveTestnetConfig(path string, numValidators int) error {
 	conf.Nanomsg.Enable = false
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:40799"
 
-	return util.WriteFile(path, conf.toTOML())
+	return conf
 }
 
-func SaveLocalnetConfig(path string, numValidators int) error {
-	conf := DefaultConfig()
-	conf.Node.NumValidators = numValidators
+func DefaultConfigLocalnet() *Config {
+	conf := defaultConfig()
 	conf.Network.ListenAddrStrings = []string{}
 	conf.Network.EnableRelay = false
 	conf.Network.EnableNAT = false
 	conf.Network.BootstrapAddrStrings = []string{}
 	conf.Network.MinConns = 0
 	conf.Network.MaxConns = 0
+	conf.Network.NetworkName = "pactus-localnet"
+	conf.Network.DefaultPort = 21666
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "[::]:0"
 	conf.GRPC.Gateway.Enable = true
@@ -157,6 +157,26 @@ func SaveLocalnetConfig(path string, numValidators int) error {
 	conf.Nanomsg.Enable = true
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:0"
 
+	return conf
+}
+
+func SaveMainnetConfig(path string, numValidators int) error {
+	conf := string(exampleConfigBytes)
+	conf = strings.Replace(conf, "%num_validators%",
+		fmt.Sprintf("%v", numValidators), 1)
+
+	return util.WriteFile(path, []byte(conf))
+}
+
+func SaveTestnetConfig(path string, numValidators int) error {
+	conf := DefaultConfigTestnet()
+	conf.Node.NumValidators = numValidators
+	return util.WriteFile(path, conf.toTOML())
+}
+
+func SaveLocalnetConfig(path string, numValidators int) error {
+	conf := DefaultConfigLocalnet()
+	conf.Node.NumValidators = numValidators
 	return util.WriteFile(path, conf.toTOML())
 }
 
@@ -172,13 +192,13 @@ func (conf *Config) toTOML() []byte {
 	return buf.Bytes()
 }
 
-func LoadFromFile(file string, strict bool) (*Config, error) {
+func LoadFromFile(file string, strict bool, defaultConfig *Config) (*Config, error) {
 	data, err := os.ReadFile(file)
 	if err != nil {
 		return nil, err
 	}
 
-	conf := DefaultConfig()
+	conf := defaultConfig
 	buf := bytes.NewBuffer(data)
 	decoder := toml.NewDecoder(buf)
 	decoder.Strict(strict)

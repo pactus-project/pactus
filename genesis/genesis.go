@@ -187,29 +187,3 @@ func (gen *Genesis) ChainType() ChainType {
 
 	return Localnet
 }
-
-func (gen *Genesis) NetworkName() string {
-	switch gen.ChainType() {
-	case Mainnet:
-		return "pactus"
-	case Testnet:
-		return "pactus-testnet"
-	case Localnet:
-		return "pactus-localnet"
-	default:
-		return "unknown"
-	}
-}
-
-func (gen *Genesis) DefaultPort() int {
-	switch gen.ChainType() {
-	case Mainnet:
-		return 21888
-	case Testnet:
-		return 21777
-	case Localnet:
-		return 21666
-	default:
-		return 0
-	}
-}

@@ -48,7 +48,7 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 	t.Helper()
 
 	log := logger.NewSubLogger("_network", nil)
-	net, err := newNetwork("test", conf, log, opts)
+	net, err := newNetwork(conf, log, opts)
 	require.NoError(t, err)
 
 	log.SetObj(testsuite.NewOverrideStringer(
@@ -71,6 +71,8 @@ func testConfig() *Config {
 		EnableRelay:          false,
 		EnableMdns:           false,
 		ForcePrivateNetwork:  true,
+		NetworkName:          "test",
+		DefaultPort:          12345,
 	}
 }
 
@@ -122,7 +124,7 @@ func readData(t *testing.T, r io.ReadCloser, length int) []byte {
 }
 
 func TestStoppingNetwork(t *testing.T) {
-	net, err := NewNetwork("test", testConfig())
+	net, err := NewNetwork(testConfig())
 	assert.NoError(t, err)
 
 	assert.NoError(t, net.Start())

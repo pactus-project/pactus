@@ -3342,6 +3342,18 @@ public final class NetworkOuterClass {
 
     long getReceivedBytesOrThrow(
         int key);
+
+    /**
+     * <code>string address = 15 [json_name = "address"];</code>
+     * @return The address.
+     */
+    java.lang.String getAddress();
+    /**
+     * <code>string address = 15 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    com.google.protobuf.ByteString
+        getAddressBytes();
   }
   /**
    * Protobuf type {@code pactus.PeerInfo}
@@ -3361,6 +3373,7 @@ public final class NetworkOuterClass {
       peerId_ = com.google.protobuf.ByteString.EMPTY;
       consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       lastBlockHash_ = com.google.protobuf.ByteString.EMPTY;
+      address_ = "";
     }
 
     @java.lang.Override
@@ -3774,6 +3787,44 @@ public final class NetworkOuterClass {
       return map.get(key);
     }
 
+    public static final int ADDRESS_FIELD_NUMBER = 15;
+    private volatile java.lang.Object address_;
+    /**
+     * <code>string address = 15 [json_name = "address"];</code>
+     * @return The address.
+     */
+    @java.lang.Override
+    public java.lang.String getAddress() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        address_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string address = 15 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getAddressBytes() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        address_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -3836,6 +3887,9 @@ public final class NetworkOuterClass {
           internalGetReceivedBytes(),
           ReceivedBytesDefaultEntryHolder.defaultEntry,
           14);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 15, address_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -3915,6 +3969,9 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
             .computeMessageSize(14, receivedBytes__);
       }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, address_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -3958,6 +4015,8 @@ public final class NetworkOuterClass {
           other.internalGetSentBytes())) return false;
       if (!internalGetReceivedBytes().equals(
           other.internalGetReceivedBytes())) return false;
+      if (!getAddress()
+          .equals(other.getAddress())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -4005,6 +4064,8 @@ public final class NetworkOuterClass {
         hash = (37 * hash) + RECEIVED_BYTES_FIELD_NUMBER;
         hash = (53 * hash) + internalGetReceivedBytes().hashCode();
       }
+      hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getAddress().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4185,6 +4246,8 @@ public final class NetworkOuterClass {
 
         internalGetMutableSentBytes().clear();
         internalGetMutableReceivedBytes().clear();
+        address_ = "";
+
         return this;
       }
 
@@ -4232,6 +4295,7 @@ public final class NetworkOuterClass {
         result.sentBytes_.makeImmutable();
         result.receivedBytes_ = internalGetReceivedBytes();
         result.receivedBytes_.makeImmutable();
+        result.address_ = address_;
         onBuilt();
         return result;
       }
@@ -4329,6 +4393,10 @@ public final class NetworkOuterClass {
             other.internalGetSentBytes());
         internalGetMutableReceivedBytes().mergeFrom(
             other.internalGetReceivedBytes());
+        if (!other.getAddress().isEmpty()) {
+          address_ = other.address_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -4432,6 +4500,11 @@ public final class NetworkOuterClass {
                     receivedBytes__.getKey(), receivedBytes__.getValue());
                 break;
               } // case 114
+              case 122: {
+                address_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 122
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -5251,6 +5324,82 @@ public final class NetworkOuterClass {
             .putAll(values);
         return this;
       }
+
+      private java.lang.Object address_ = "";
+      /**
+       * <code>string address = 15 [json_name = "address"];</code>
+       * @return The address.
+       */
+      public java.lang.String getAddress() {
+        java.lang.Object ref = address_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          address_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string address = 15 [json_name = "address"];</code>
+       * @return The bytes for address.
+       */
+      public com.google.protobuf.ByteString
+          getAddressBytes() {
+        java.lang.Object ref = address_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          address_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string address = 15 [json_name = "address"];</code>
+       * @param value The address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddress(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        address_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string address = 15 [json_name = "address"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAddress() {
+        
+        address_ = getDefaultInstance().getAddress();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string address = 15 [json_name = "address"];</code>
+       * @param value The bytes for address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddressBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        address_ = value;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -5385,7 +5534,7 @@ public final class NetworkOuterClass {
       "\001(\003R\005value:\0028\001\"\024\n\022GetNodeInfoRequest\"^\n\023" +
       "GetNodeInfoResponse\022\030\n\007moniker\030\001 \001(\tR\007mo" +
       "niker\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003" +
-      " \001(\014R\006peerId\"\224\005\n\010PeerInfo\022\026\n\006status\030\001 \001(" +
+      " \001(\014R\006peerId\"\256\005\n\010PeerInfo\022\026\n\006status\030\001 \001(" +
       "\005R\006status\022\030\n\007moniker\030\002 \001(\tR\007moniker\022\024\n\005a" +
       "gent\030\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\014R\006peer" +
       "Id\022%\n\016consensus_keys\030\005 \003(\tR\rconsensusKey" +
@@ -5398,16 +5547,17 @@ public final class NetworkOuterClass {
       "eceived\022>\n\nsent_bytes\030\r \003(\0132\037.pactus.Pee" +
       "rInfo.SentBytesEntryR\tsentBytes\022J\n\016recei" +
       "ved_bytes\030\016 \003(\0132#.pactus.PeerInfo.Receiv" +
-      "edBytesEntryR\rreceivedBytes\032<\n\016SentBytes" +
-      "Entry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005" +
-      "value:\0028\001\032@\n\022ReceivedBytesEntry\022\020\n\003key\030\001" +
-      " \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028\0012\242\001\n\007" +
-      "Network\022O\n\016GetNetworkInfo\022\035.pactus.GetNe" +
-      "tworkInfoRequest\032\036.pactus.GetNetworkInfo" +
-      "Response\022F\n\013GetNodeInfo\022\032.pactus.GetNode" +
-      "InfoRequest\032\033.pactus.GetNodeInfoResponse" +
-      "BB\n\016pactus.networkZ0github.com/pactus-pr" +
-      "oject/pactus/www/grpc/pactusb\006proto3"
+      "edBytesEntryR\rreceivedBytes\022\030\n\007address\030\017" +
+      " \001(\tR\007address\032<\n\016SentBytesEntry\022\020\n\003key\030\001" +
+      " \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@\n\022R" +
+      "eceivedBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005v" +
+      "alue\030\002 \001(\003R\005value:\0028\0012\242\001\n\007Network\022O\n\016Get" +
+      "NetworkInfo\022\035.pactus.GetNetworkInfoReque" +
+      "st\032\036.pactus.GetNetworkInfoResponse\022F\n\013Ge" +
+      "tNodeInfo\022\032.pactus.GetNodeInfoRequest\032\033." +
+      "pactus.GetNodeInfoResponseBB\n\016pactus.net" +
+      "workZ0github.com/pactus-project/pactus/w" +
+      "ww/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -5454,7 +5604,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
-        new java.lang.String[] { "Status", "Moniker", "Agent", "PeerId", "ConsensusKeys", "Services", "LastBlockHash", "Height", "ReceivedMessages", "InvalidMessages", "LastSent", "LastReceived", "SentBytes", "ReceivedBytes", });
+        new java.lang.String[] { "Status", "Moniker", "Agent", "PeerId", "ConsensusKeys", "Services", "LastBlockHash", "Height", "ReceivedMessages", "InvalidMessages", "LastSent", "LastReceived", "SentBytes", "ReceivedBytes", "Address", });
     internal_static_pactus_PeerInfo_SentBytesEntry_descriptor =
       internal_static_pactus_PeerInfo_descriptor.getNestedTypes().get(0);
     internal_static_pactus_PeerInfo_SentBytesEntry_fieldAccessorTable = new

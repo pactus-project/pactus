@@ -28,7 +28,7 @@
  ## public_addr = ""
 
   # `listen_addrs` specifies the addresses and ports where the node will listen for incoming connections from other nodes.
- ## listen_addrs = ["/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888", "/ip4/0.0.0.0/udp/21888/quic-v1", "/ip6/::/udp/21888/quic-v1"]
+ ## listen_addrs = []
 
   # `relay_addrs` provides the necessary relay addresses. These should be specified if 'enable_relay' is 'true'.
   # Note: this parameter will be ignored if 'enable_relay' is 'false'.
@@ -36,7 +36,7 @@
 
   # `bootstrap_addrs` is a list of peer addresses needed for peer discovery.
   # These addresses are used by the Pactus node to discover and connect to other peers on the network.
- ## bootstrap_addrs = ["/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq"]
+ ## bootstrap_addrs = []
 
   # `min_connections` is the minimum number of connections that the Pactus node should maintain.
   # Default is 16

@@ -14,6 +14,7 @@ type Peer struct {
 	Status          StatusCode
 	Moniker         string
 	Agent           string
+	Address         string
 	PeerID          peer.ID
 	ConsensusKeys   []*bls.PublicKey
 	Services        service.Services

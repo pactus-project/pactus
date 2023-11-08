@@ -48,8 +48,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		"version", version.Version(),
 		"network", genDoc.ChainType())
 
-	networkName := genDoc.NetworkName()
-	net, err := network.NewNetwork(networkName, conf.Network)
+	net, err := network.NewNetwork(conf.Network)
 	if err != nil {
 		return nil, err
 	}

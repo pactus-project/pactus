@@ -223,12 +223,33 @@ func TestStop(t *testing.T) {
 func TestConnectEvents(t *testing.T) {
 	td := setup(t, nil)
 
-	pid := td.RandPeerID()
-	td.network.EventCh <- &network.ConnectEvent{
-		PeerID: pid,
-	}
-	td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
-	assert.Equal(t, td.sync.peerSet.GetPeer(pid).Status, peerset.StatusCodeConnected)
+	t.Run("Should say hello when there is stream connection", func(t *testing.T) {
+		pid := td.RandPeerID()
+		td.network.EventCh <- &network.ConnectEvent{
+			PeerID:        pid,
+			RemoteAddress: "address_1",
+			SupportStream: true,
+		}
+		td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
+		p := td.sync.peerSet.GetPeer(pid)
+		require.NotNil(t, p)
+		assert.Equal(t, p.Status, peerset.StatusCodeConnected)
+		assert.Equal(t, p.Address, "address_1")
+	})
+
+	t.Run("Should NOT say hello when there is no stream connection", func(t *testing.T) {
+		pid := td.RandPeerID()
+		td.network.EventCh <- &network.ConnectEvent{
+			PeerID:        pid,
+			RemoteAddress: "address_1",
+			SupportStream: false,
+		}
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
+		p := td.sync.peerSet.GetPeer(pid)
+		require.NotNil(t, p)
+		assert.Equal(t, p.Status, peerset.StatusCodeConnected)
+		assert.Equal(t, p.Address, "address_1")
+	})
 }
 
 func TestTestNetFlags(t *testing.T) {
