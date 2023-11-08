@@ -61,8 +61,6 @@ func TestGenesisTestNet(t *testing.T) {
 	assert.Equal(t, gen.Params().BondInterval, uint32(120))
 	assert.Equal(t, gen.ChainType(), genesis.Testnet)
 	assert.Equal(t, gen.TotalSupply(), int64(42*1e15))
-	assert.Equal(t, gen.NetworkName(), "pactus-testnet")
-	assert.Equal(t, gen.DefaultPort(), 21777)
 }
 
 func TestCheckGenesisAccountAndValidator(t *testing.T) {
@@ -87,7 +85,4 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 	for i, val := range gen.Validators() {
 		assert.Equal(t, val.Hash(), vals[i].Hash())
 	}
-
-	assert.Equal(t, gen.NetworkName(), "pactus-localnet")
-	assert.Equal(t, gen.DefaultPort(), 21666)
 }

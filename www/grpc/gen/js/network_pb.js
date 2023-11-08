@@ -917,7 +917,8 @@ proto.pactus.PeerInfo.toObject = function(includeInstance, msg) {
     lastSent: jspb.Message.getFieldWithDefault(msg, 11, 0),
     lastReceived: jspb.Message.getFieldWithDefault(msg, 12, 0),
     sentBytesMap: (f = msg.getSentBytesMap()) ? f.toObject(includeInstance, undefined) : [],
-    receivedBytesMap: (f = msg.getReceivedBytesMap()) ? f.toObject(includeInstance, undefined) : []
+    receivedBytesMap: (f = msg.getReceivedBytesMap()) ? f.toObject(includeInstance, undefined) : [],
+    address: jspb.Message.getFieldWithDefault(msg, 15, "")
   };
 
   if (includeInstance) {
@@ -1013,6 +1014,10 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       reader.readMessage(value, function(message, reader) {
         jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readInt64, null, 0, 0);
          });
+      break;
+    case 15:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setAddress(value);
       break;
     default:
       reader.skipField();
@@ -1134,6 +1139,13 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
   f = message.getReceivedBytesMap(true);
   if (f && f.getLength() > 0) {
     f.serializeBinary(14, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeInt64);
+  }
+  f = message.getAddress();
+  if (f.length > 0) {
+    writer.writeString(
+      15,
+      f
+    );
   }
 };
 
@@ -1464,6 +1476,24 @@ proto.pactus.PeerInfo.prototype.getReceivedBytesMap = function(opt_noLazyCreate)
 proto.pactus.PeerInfo.prototype.clearReceivedBytesMap = function() {
   this.getReceivedBytesMap().clear();
   return this;
+};
+
+
+/**
+ * optional string address = 15;
+ * @return {string}
+ */
+proto.pactus.PeerInfo.prototype.getAddress = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 15, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setAddress = function(value) {
+  return jspb.Message.setProto3StringField(this, 15, value);
 };
 
 

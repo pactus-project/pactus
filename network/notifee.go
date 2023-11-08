@@ -13,24 +13,24 @@ import (
 )
 
 type NotifeeService struct {
-	host         lp2phost.Host
-	eventChannel chan<- Event
-	logger       *logger.SubLogger
-	protocolID   protocol.ID
-	peerMgr      *peerMgr
-	bootstrapper bool
+	host             lp2phost.Host
+	eventChannel     chan<- Event
+	logger           *logger.SubLogger
+	streamProtocolID protocol.ID
+	peerMgr          *peerMgr
+	bootstrapper     bool
 }
 
 func newNotifeeService(host lp2phost.Host, eventChannel chan<- Event, peerMgr *peerMgr,
 	protocolID protocol.ID, bootstrapper bool, log *logger.SubLogger,
 ) *NotifeeService {
 	notifee := &NotifeeService{
-		host:         host,
-		eventChannel: eventChannel,
-		protocolID:   protocolID,
-		bootstrapper: bootstrapper,
-		peerMgr:      peerMgr,
-		logger:       log,
+		host:             host,
+		eventChannel:     eventChannel,
+		streamProtocolID: protocolID,
+		bootstrapper:     bootstrapper,
+		peerMgr:          peerMgr,
+		logger:           log,
 	}
 	host.Network().Notify(notifee)
 	return notifee
@@ -43,35 +43,30 @@ func (n *NotifeeService) Connected(lp2pn lp2pnetwork.Network, conn lp2pnetwork.C
 	var protocols []lp2pcore.ProtocolID
 	go func() {
 		for i := 0; i < 10; i++ {
+			protocols, _ = lp2pn.Peerstore().GetProtocols(pid)
+			if len(protocols) > 0 {
+				break
+			}
+
 			// TODO: better way?
 			// Wait to complete libp2p identify
 			time.Sleep(1 * time.Second)
-
-			peerStore := lp2pn.Peerstore()
-			protocols, _ = peerStore.GetProtocols(pid)
-			if len(protocols) > 0 {
-				if slices.Contains(protocols, n.protocolID) {
-					n.logger.Debug("peer supports the stream protocol",
-						"pid", pid, "protocols", protocols)
-
-					n.eventChannel <- &ConnectEvent{PeerID: pid}
-				} else {
-					n.logger.Debug("peer doesn't support the stream protocol",
-						"pid", pid, "protocols", protocols)
-				}
-				break
-			}
 		}
 
 		if len(protocols) == 0 {
 			n.logger.Info("unable to get supported protocols", "pid", pid)
-			if !n.bootstrapper {
-				// Close this connection since we can't send a direct message to this peer.
-				_ = n.host.Network().ClosePeer(pid)
-			}
+		} else {
+			n.logger.Debug("get supported protocols", "pid", pid, "protocols", protocols)
 		}
 
 		n.peerMgr.AddPeer(pid, conn.RemoteMultiaddr(), conn.Stat().Direction, protocols)
+
+		supportStream := slices.Contains(protocols, n.streamProtocolID)
+		n.eventChannel <- &ConnectEvent{
+			PeerID:        pid,
+			RemoteAddress: conn.RemoteMultiaddr().String(),
+			SupportStream: supportStream,
+		}
 	}()
 }
 

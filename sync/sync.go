@@ -138,8 +138,6 @@ func (sync *synchronizer) sayHello(to peer.ID) error {
 	)
 	msg.Sign(sync.valKeys)
 
-	sync.peerSet.UpdateStatus(to, peerset.StatusCodeConnected)
-
 	sync.logger.Info("sending Hello message", "to", to)
 	return sync.sendTo(msg, to)
 }
@@ -189,16 +187,30 @@ func (sync *synchronizer) receiveLoop() {
 				}
 			case network.EventTypeConnect:
 				ce := e.(*network.ConnectEvent)
-				if err := sync.sayHello(ce.PeerID); err != nil {
-					sync.logger.Warn("sending Hello message failed",
-						"to", ce.PeerID, "error", err)
-				}
+				sync.processConnectEvent(ce)
+
 			case network.EventTypeDisconnect:
 				de := e.(*network.DisconnectEvent)
-				sync.peerSet.UpdateStatus(de.PeerID, peerset.StatusCodeDisconnected)
+				sync.processDisconnectEvent(de)
 			}
 		}
 	}
+}
+
+func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
+	if ce.SupportStream {
+		if err := sync.sayHello(ce.PeerID); err != nil {
+			sync.logger.Warn("sending Hello message failed",
+				"to", ce.PeerID, "error", err)
+		}
+	}
+
+	sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeConnected)
+	sync.peerSet.UpdateAddress(ce.PeerID, ce.RemoteAddress)
+}
+
+func (sync *synchronizer) processDisconnectEvent(de *network.DisconnectEvent) {
+	sync.peerSet.UpdateStatus(de.PeerID, peerset.StatusCodeDisconnected)
 }
 
 func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle) error {

@@ -259,6 +259,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..aInt64(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastReceived')
     ..m<$core.int, $fixnum.Int64>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sentBytes', entryClassName: 'PeerInfo.SentBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
     ..m<$core.int, $fixnum.Int64>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', entryClassName: 'PeerInfo.ReceivedBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
+    ..aOS(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
     ..hasRequiredFields = false
   ;
 
@@ -278,6 +279,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     $fixnum.Int64? lastReceived,
     $core.Map<$core.int, $fixnum.Int64>? sentBytes,
     $core.Map<$core.int, $fixnum.Int64>? receivedBytes,
+    $core.String? address,
   }) {
     final _result = create();
     if (status != null) {
@@ -321,6 +323,9 @@ class PeerInfo extends $pb.GeneratedMessage {
     }
     if (receivedBytes != null) {
       _result.receivedBytes.addAll(receivedBytes);
+    }
+    if (address != null) {
+      _result.address = address;
     }
     return _result;
   }
@@ -452,6 +457,15 @@ class PeerInfo extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(14)
   $core.Map<$core.int, $fixnum.Int64> get receivedBytes => $_getMap(13);
+
+  @$pb.TagNumber(15)
+  $core.String get address => $_getSZ(14);
+  @$pb.TagNumber(15)
+  set address($core.String v) { $_setString(14, v); }
+  @$pb.TagNumber(15)
+  $core.bool hasAddress() => $_has(14);
+  @$pb.TagNumber(15)
+  void clearAddress() => clearField(15);
 }
 
 class NetworkApi {

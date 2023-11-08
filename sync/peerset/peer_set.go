@@ -193,6 +193,14 @@ func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32, lastBlockHash hash.H
 	p.LastBlockHash = lastBlockHash
 }
 
+func (ps *PeerSet) UpdateAddress(pid peer.ID, addr string) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.mustGetPeer(pid)
+	p.Address = addr
+}
+
 func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()

@@ -37,6 +37,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		p.PeerId = []byte(peer.PeerID)
 		p.Moniker = peer.Moniker
 		p.Agent = peer.Agent
+		p.Address = peer.Address
 		p.Services = uint32(peer.Services)
 		p.Height = peer.Height
 		p.ReceivedMessages = int32(peer.ReceivedBundles)

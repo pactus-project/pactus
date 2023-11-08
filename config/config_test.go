@@ -13,7 +13,8 @@ func TestSaveMainnetConfig(t *testing.T) {
 	path := util.TempFilePath()
 	assert.NoError(t, SaveMainnetConfig(path, 7))
 
-	conf, err := LoadFromFile(path, true)
+	defConf := DefaultConfigMainnet()
+	conf, err := LoadFromFile(path, true, defConf)
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
@@ -23,10 +24,12 @@ func TestSaveTestnetConfig(t *testing.T) {
 	path := util.TempFilePath()
 	assert.NoError(t, SaveTestnetConfig(path, 7))
 
-	conf, err := LoadFromFile(path, true)
+	defConf := DefaultConfigTestnet()
+	conf, err := LoadFromFile(path, true, defConf)
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
+	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet")
 	assert.Equal(t, conf.Network.DefaultPort, 21777)
 }
 
@@ -34,26 +37,31 @@ func TestSaveLocalnetConfig(t *testing.T) {
 	path := util.TempFilePath()
 	assert.NoError(t, SaveLocalnetConfig(path, 4))
 
-	conf, err := LoadFromFile(path, true)
+	defConf := DefaultConfigLocalnet()
+	conf, err := LoadFromFile(path, true, defConf)
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
 	assert.Empty(t, conf.Network.RelayAddrStrings)
-	assert.Equal(t, conf.Network.DefaultPort, 21777)
+	assert.Equal(t, conf.Network.NetworkName, "pactus-localnet")
+	assert.Equal(t, conf.Network.DefaultPort, 21666)
 }
 
 func TestLoadFromFile(t *testing.T) {
 	path := util.TempFilePath()
-	_, err := LoadFromFile(path, true)
+	defConf := DefaultConfigTestnet()
+
+	_, err := LoadFromFile(path, true, defConf)
 	assert.Error(t, err, "not exists")
 
 	assert.NoError(t, util.WriteFile(path, []byte(`foo = "bar"`)))
-	_, err = LoadFromFile(path, true)
+	_, err = LoadFromFile(path, true, defConf)
 	assert.Error(t, err, "unknown field")
 
-	_, err = LoadFromFile(path, false)
+	conf, err := LoadFromFile(path, false, defConf)
 	assert.NoError(t, err)
+	assert.Equal(t, conf, defConf)
 }
 
 func TestExampleConfig(t *testing.T) {
@@ -69,7 +77,7 @@ func TestExampleConfig(t *testing.T) {
 		}
 	}
 
-	defaultConf := DefaultConfig()
+	defaultConf := DefaultConfigMainnet()
 	defaultToml := string(defaultConf.toTOML())
 
 	exampleToml = strings.ReplaceAll(exampleToml, "%num_validators%", "7")

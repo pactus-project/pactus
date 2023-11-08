@@ -340,14 +340,24 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		crypto.XPrivateKeyHRP = "txsecret"
 	}
 
+	var defConf *config.Config
+	switch gen.ChainType() {
+	case genesis.Mainnet:
+		panic("not yet implemented!")
+	case genesis.Testnet:
+		defConf = config.DefaultConfigTestnet()
+	case genesis.Localnet:
+		defConf = config.DefaultConfigLocalnet()
+	}
+
 	confPath := PactusConfigPath(workingDir)
-	conf, err := config.LoadFromFile(confPath, true)
+	conf, err := config.LoadFromFile(confPath, true, defConf)
 	if err != nil {
 		PrintWarnMsgf("Unable to load the config: %s", err)
 		PrintInfoMsgf("Attempting to restore the config to the default values...")
 
 		// First, try to open the old config file in non-strict mode
-		confBack, err := config.LoadFromFile(confPath, false)
+		confBack, err := config.LoadFromFile(confPath, false, defConf)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -381,7 +391,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		}
 
 		PrintSuccessMsgf("Config restored to the default values")
-		conf, _ = config.LoadFromFile(confPath, true) // This time it should be OK
+		conf, _ = config.LoadFromFile(confPath, true, defConf) // This time it should be OK
 	}
 
 	err = conf.BasicCheck()

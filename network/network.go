@@ -78,12 +78,12 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 	return key, nil
 }
 
-func NewNetwork(networkName string, conf *Config) (Network, error) {
+func NewNetwork(conf *Config) (Network, error) {
 	log := logger.NewSubLogger("_network", nil)
-	return newNetwork(networkName, conf, log, []lp2p.Option{})
+	return newNetwork(conf, log, []lp2p.Option{})
 }
 
-func newNetwork(networkName string, conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*network, error) {
+func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*network, error) {
 	networkKey, err := loadOrCreateKey(conf.NetworkKey)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
@@ -198,7 +198,7 @@ func newNetwork(networkName string, conf *Config, log *logger.SubLogger, opts []
 	n := &network{
 		ctx:          ctx,
 		cancel:       cancel,
-		name:         networkName,
+		name:         conf.NetworkName,
 		config:       conf,
 		logger:       log,
 		host:         host,
@@ -224,6 +224,7 @@ func newNetwork(networkName string, conf *Config, log *logger.SubLogger, opts []
 	n.connGater.SetPeerManager(n.peerMgr)
 
 	n.logger.Info("network setup", "id", n.host.ID(),
+		"name", conf.NetworkName,
 		"address", conf.ListenAddrStrings,
 		"bootstrapper", conf.Bootstrapper)
 

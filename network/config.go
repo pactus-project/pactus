@@ -1,8 +1,6 @@
 package network
 
 import (
-	"fmt"
-
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/errors"
@@ -22,37 +20,19 @@ type Config struct {
 	EnableMetrics        bool     `toml:"enable_metrics"`
 	ForcePrivateNetwork  bool     `toml:"force_private_network"`
 	Bootstrapper         bool     `toml:"bootstrapper"` // TODO: detect it automatically
-	DefaultPort          int      `toml:"-"`
+
+	// Private configs
+	NetworkName string `toml:"-"`
+	DefaultPort int    `toml:"-"`
 }
 
 func DefaultConfig() *Config {
-	nodes := []struct {
-		ip   string
-		port string
-		id   string
-	}{
-		{
-			ip:   "172.104.46.145",
-			port: "21777",
-			id:   "12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
-		},
-	}
-
-	bootstrapAddrs := []string{}
-	for _, n := range nodes {
-		bootstrapAddrs = append(bootstrapAddrs,
-			fmt.Sprintf("/ip4/%s/tcp/%s/p2p/%s", n.ip, n.port, n.id))
-	}
-
 	return &Config{
-		NetworkKey:       "network_key",
-		PublicAddrString: "",
-		ListenAddrStrings: []string{
-			"/ip4/0.0.0.0/tcp/21888", "/ip6/::/tcp/21888",
-			"/ip4/0.0.0.0/udp/21888/quic-v1", "/ip6/::/udp/21888/quic-v1",
-		},
+		NetworkKey:           "network_key",
+		PublicAddrString:     "",
+		ListenAddrStrings:    []string{},
 		RelayAddrStrings:     []string{},
-		BootstrapAddrStrings: bootstrapAddrs,
+		BootstrapAddrStrings: []string{},
 		MinConns:             16,
 		MaxConns:             32,
 		EnableNAT:            false,
@@ -61,7 +41,7 @@ func DefaultConfig() *Config {
 		EnableMetrics:        false,
 		ForcePrivateNetwork:  false,
 		Bootstrapper:         false,
-		DefaultPort:          21777,
+		DefaultPort:          21888,
 	}
 }
 

@@ -68,7 +68,7 @@ func TestMain(m *testing.M) {
 		tValKeys[i][0] = bls.NewValidatorKey(key0)
 		tValKeys[i][1] = bls.NewValidatorKey(key1)
 		tValKeys[i][2] = bls.NewValidatorKey(key2)
-		tConfigs[i] = config.DefaultConfig()
+		tConfigs[i] = config.DefaultConfigLocalnet()
 
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
