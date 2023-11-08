@@ -30,7 +30,6 @@ type network struct {
 	// Adding these linter later:  contextcheck and containedctx
 	ctx            context.Context
 	cancel         func()
-	name           string
 	config         *Config
 	host           lp2phost.Host
 	mdns           *mdnsService
@@ -198,7 +197,6 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	n := &network{
 		ctx:          ctx,
 		cancel:       cancel,
-		name:         conf.NetworkName,
 		config:       conf,
 		logger:       log,
 		host:         host,
@@ -208,8 +206,8 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 
 	log.SetObj(n)
 
-	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/gossip/v1", n.name)) // TODO: better name?
-	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", n.name))
+	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/gossip/v1", conf.NetworkName)) // TODO: better name?
+	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", conf.NetworkName))
 
 	if conf.EnableMdns {
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
@@ -333,7 +331,7 @@ func (n *network) consensusTopicName() string {
 }
 
 func (n *network) TopicName(topic string) string {
-	return fmt.Sprintf("/%s/topic/%s/v1", n.name, topic)
+	return fmt.Sprintf("/%s/topic/%s/v1", n.config.NetworkName, topic)
 }
 
 func (n *network) CloseConnection(pid lp2ppeer.ID) {
