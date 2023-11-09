@@ -97,3 +97,22 @@ func TestUnbondJoiningCommittee(t *testing.T) {
 	assert.Error(t, exe1.Execute(trx, td.sandbox))
 	assert.NoError(t, exe2.Execute(trx, td.sandbox))
 }
+
+func TestPwerDeltaUnbond(t *testing.T) {
+	td := setup(t)
+	exe := NewUnbondExecutor(true)
+
+	pub, _ := td.RandBLSKeyPair()
+	valAddr := pub.ValidatorAddress()
+	val := td.sandbox.MakeNewValidator(pub)
+	amt := td.RandInt64(1e9)
+	val.AddToStake(amt)
+	td.sandbox.UpdateValidator(val)
+	lockTime := td.sandbox.CurrentHeight()
+	trx := tx.NewUnbondTx(lockTime, valAddr, "Ok")
+
+	err := exe.Execute(trx, td.sandbox)
+	assert.NoError(t, err)
+
+	assert.Equal(t, -1*amt, td.sandbox.PowerDelta())
+}
