@@ -38,18 +38,15 @@ type testData struct {
 	broadcastCh chan message.Message
 }
 
-func init() {
-	LatestBlockInterval = 23
-}
-
 func testConfig() *Config {
 	return &Config{
-		Moniker:         "test",
-		SessionTimeout:  time.Second * 1,
-		NodeNetwork:     true,
-		BlockPerMessage: 11,
-		CacheSize:       1000,
-		Firewall:        firewall.DefaultConfig(),
+		Moniker:             "test",
+		SessionTimeout:      time.Second * 1,
+		NodeNetwork:         true,
+		BlockPerMessage:     11,
+		MaxOpenSessions:     8,
+		LatestBlockInterval: 23,
+		Firewall:            firewall.DefaultConfig(),
 	}
 }
 
@@ -250,6 +247,19 @@ func TestConnectEvents(t *testing.T) {
 	})
 }
 
+func TestDisonnectEvents(t *testing.T) {
+	td := setup(t, nil)
+	pid := td.RandPeerID()
+	td.network.EventCh <- &network.DisconnectEvent{
+		PeerID: pid,
+	}
+
+	assert.Eventually(t, func() bool {
+		p := td.sync.peerSet.GetPeer(pid)
+		return p.Status == peerset.StatusCodeDisconnected
+	}, time.Second, 100*time.Millisecond)
+}
+
 func TestTestNetFlags(t *testing.T) {
 	td := setup(t, nil)
 
@@ -262,14 +272,11 @@ func TestTestNetFlags(t *testing.T) {
 func TestDownload(t *testing.T) {
 	td := setup(t, nil)
 
-	// LastBlockTime is the genesis time (Testnet)
-	// It should request blocks to get synced.
-
 	blk, cert := td.GenerateTestBlock(td.RandHeight())
-	pid := td.RandPeerID()
 	msg := message.NewBlockAnnounceMessage(blk, cert)
 
 	t.Run("try to download blocks, but the peer is not known", func(t *testing.T) {
+		pid := td.RandPeerID()
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
@@ -277,6 +284,7 @@ func TestDownload(t *testing.T) {
 
 	t.Run("try to download blocks, but the peer is not a network node", func(t *testing.T) {
 		pub, _ := td.RandBLSKeyPair()
+		pid := td.RandPeerID()
 		td.addPeer(t, pub, pid, service.New(service.None))
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
@@ -286,28 +294,43 @@ func TestDownload(t *testing.T) {
 
 	t.Run("try to download blocks and the peer is a network node", func(t *testing.T) {
 		pub, _ := td.RandBLSKeyPair()
+		pid := td.RandPeerID()
 		td.addPeer(t, pub, pid, service.New(service.Network))
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 
-		// Let's close the opened session
-		td.sync.peerSet.CloseSession(bdl.Message.(*message.BlocksRequestMessage).SessionID)
+		// Let's remove the session
+		td.sync.peerSet.RemoveSession(bdl.Message.(*message.BlocksRequestMessage).SessionID)
 	})
 
 	t.Run("download request is rejected", func(t *testing.T) {
-		session := td.sync.peerSet.OpenSession(pid)
-		msg2 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, t.Name(),
-			session.SessionID(), 1, nil, nil)
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg2, pid))
+		pub, _ := td.RandBLSKeyPair()
+		pid := td.RandPeerID()
+		td.addPeer(t, pub, pid, service.New(service.Network))
+
+		from := td.sync.state.LastBlockHeight() + 1
+		count := uint32(123)
+		session1 := td.sync.peerSet.OpenSession(pid, from, count)
+		msg1 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, t.Name(),
+			session1.SessionID(), 1, nil, nil)
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg1, pid))
 		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 
-		// Let's close the opened session
-		td.sync.peerSet.CloseSession(bdl.Message.(*message.BlocksRequestMessage).SessionID)
+		msg2 := bdl.Message.(*message.BlocksRequestMessage)
+		session2 := td.sync.peerSet.FindSession(msg2.SessionID)
+
+		assert.True(t, td.sync.peerSet.HasAnyOpenSession())
+		assert.True(t, session1.IsUncompleted())
+		assert.Equal(t, from, msg2.From)
+		assert.Equal(t, count, msg2.Count)
+		assert.Equal(t, session1.SessionID()+1, session2.SessionID())
+		assert.NotEqual(t, pid, session2.PeerID(), "should re-dwonload from other peers")
 	})
 
 	t.Run("testing send failure", func(t *testing.T) {
+		pid := td.RandPeerID()
 		td.network.SendError = fmt.Errorf("send error")
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))

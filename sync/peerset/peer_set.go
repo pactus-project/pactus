@@ -41,11 +41,11 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	}
 }
 
-func (ps *PeerSet) OpenSession(pid peer.ID) *Session {
+func (ps *PeerSet) OpenSession(pid peer.ID, from, to uint32) *Session {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	s := newSession(ps.nextSessionID, pid)
+	s := newSession(ps.nextSessionID, pid, from, to)
 	ps.sessions[s.SessionID()] = s
 	ps.nextSessionID++
 
@@ -68,8 +68,6 @@ func (ps *PeerSet) NumberOfOpenSessions() int {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	ps.removeExpiredSessions()
-
 	return len(ps.sessions)
 }
 
@@ -87,28 +85,35 @@ func (ps *PeerSet) HasOpenSession(pid peer.ID) bool {
 }
 
 func (ps *PeerSet) HasAnyOpenSession() bool {
-	ps.lk.Lock()
-	defer ps.lk.Unlock()
-
-	ps.removeExpiredSessions()
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
 
 	return len(ps.sessions) != 0
 }
 
-func (ps *PeerSet) removeExpiredSessions() {
-	// First remove old sessions
-	for id, s := range ps.sessions {
-		if ps.sessionTimeout < util.Now().Sub(s.LastActivityAt()) {
-			delete(ps.sessions, id)
+func (ps *PeerSet) SetExpiredSessionsAsUncompleted() {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	for _, s := range ps.sessions {
+		if ps.sessionTimeout < util.Now().Sub(s.StartedAt()) {
+			s.SetUncompleted()
 		}
 	}
 }
 
-func (ps *PeerSet) CloseSession(id int) {
+func (ps *PeerSet) RemoveSession(id int) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	delete(ps.sessions, id)
+}
+
+func (ps *PeerSet) RemoveAllSessions() {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	ps.sessions = make(map[int]*Session)
 }
 
 func (ps *PeerSet) Len() int {
@@ -312,4 +317,58 @@ func (ps *PeerSet) IteratePeers(consumer func(peer *Peer)) {
 	for _, p := range ps.peers {
 		consumer(p)
 	}
+}
+
+func (ps *PeerSet) IterateSessions(consumer func(s *Session)) {
+	for _, s := range ps.sessions {
+		consumer(s)
+	}
+}
+
+// GetRandomPeer selects a random peer from the peer set based on their weights.
+// The weight of each peer is determined by the number of failed and total bundles.
+// Peers with higher weights are more likely to be selected.
+func (ps *PeerSet) GetRandomPeer() Peer {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	type weightedPeer struct {
+		peer   *Peer
+		weight int
+	}
+
+	//
+	totalWeight := 0
+	peers := make([]weightedPeer, 0, len(ps.peers))
+	for _, p := range ps.peers {
+		if !p.IsKnownOrTrusty() {
+			continue
+		}
+
+		weight := (p.ReceivedBundles - p.InvalidBundles) * 100 / (p.ReceivedBundles + 1)
+		if weight <= 0 {
+			weight = 1 // Setting weight to 0 won't choose the peer at all
+		}
+		totalWeight += weight
+		peers = append(peers, weightedPeer{
+			peer:   p,
+			weight: weight,
+		})
+	}
+
+	if len(peers) == 0 {
+		return Peer{}
+	}
+
+	rnd := int(util.RandUint32(uint32(totalWeight)))
+
+	// Find the index where the random number falls
+	for _, p := range peers {
+		totalWeight -= p.weight
+
+		if rnd >= totalWeight {
+			return *p.peer
+		}
+	}
+	panic("unreachable code")
 }

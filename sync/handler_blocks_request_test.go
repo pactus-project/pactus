@@ -44,7 +44,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 		})
 
 		t.Run("Request blocks more than `LatestBlockInterval`", func(t *testing.T) {
-			msg := message.NewBlocksRequestMessage(sid, 10, LatestBlockInterval+1)
+			msg := message.NewBlocksRequestMessage(sid, 10, config.LatestBlockInterval+1)
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)

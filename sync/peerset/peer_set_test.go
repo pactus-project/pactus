@@ -1,6 +1,7 @@
 package peerset
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -142,9 +143,15 @@ func TestOpenSession(t *testing.T) {
 	ps := NewPeerSet(time.Minute)
 
 	pid := peer.ID("peer1")
-	session := ps.OpenSession(pid)
+	session := ps.OpenSession(pid, 100, 101)
 
 	assert.NotNil(t, session)
+	from, to := session.Range()
+	assert.Equal(t, uint32(100), from)
+	assert.Equal(t, uint32(101), to)
+	assert.Equal(t, pid, session.PeerID())
+	assert.False(t, session.IsUncompleted())
+	assert.LessOrEqual(t, session.StartedAt(), time.Now())
 	assert.True(t, ps.HasOpenSession(pid))
 	assert.False(t, ps.HasOpenSession("peer2"))
 	assert.Equal(t, 1, ps.NumberOfOpenSessions())
@@ -152,7 +159,7 @@ func TestOpenSession(t *testing.T) {
 
 func TestFindSession(t *testing.T) {
 	ps := NewPeerSet(time.Minute)
-	session := ps.OpenSession("peer1")
+	session := ps.OpenSession("peer1", 100, 101)
 
 	// Test finding an existing session
 	foundSession := ps.FindSession(session.SessionID())
@@ -172,9 +179,9 @@ func TestNumberOfOpenSessions(t *testing.T) {
 	assert.Equal(t, 0, ps.NumberOfOpenSessions())
 
 	// Test when there are multiple open sessions
-	ps.OpenSession("peer1")
-	ps.OpenSession("peer2")
-	ps.OpenSession("peer3")
+	ps.OpenSession("peer1", 100, 101)
+	ps.OpenSession("peer2", 200, 201)
+	ps.OpenSession("peer3", 300, 301)
 
 	assert.Equal(t, 3, ps.NumberOfOpenSessions())
 }
@@ -186,36 +193,114 @@ func TestHasAnyOpenSession(t *testing.T) {
 	assert.False(t, ps.HasAnyOpenSession())
 
 	// Test when there are open sessions
-	ps.OpenSession("peer1")
-
+	s := ps.OpenSession("peer1", 100, 101)
 	assert.True(t, ps.HasAnyOpenSession())
+
+	ps.RemoveSession(s.SessionID())
+	assert.False(t, ps.HasAnyOpenSession())
 }
 
-func TestCloseSession(t *testing.T) {
-	ps := NewPeerSet(time.Minute)
-	session := ps.OpenSession("peer1")
+// func TestRemoveSession(t *testing.T) {
+// 	ps := NewPeerSet(time.Minute)
+// 	session := ps.OpenSession("peer1", 100)
 
-	// Test closing an existing session
-	ps.CloseSession(session.SessionID())
+// 	// Test closing an existing session
+// 	ps.CloseSession(session.SessionID())
 
-	assert.Equal(t, 0, ps.NumberOfOpenSessions())
+// 	assert.Equal(t, 0, ps.NumberOfOpenSessions())
 
-	// Test closing a non-existing session
-	ps.CloseSession(999)
+// 	// Test closing a non-existing session
+// 	ps.CloseSession(999)
 
-	assert.Equal(t, 0, ps.NumberOfOpenSessions())
-}
+// 	assert.Equal(t, 0, ps.NumberOfOpenSessions())
+// }
 
-func TestRemoveExpiredSessions(t *testing.T) {
+func TestUncompletedSession(t *testing.T) {
 	ps := NewPeerSet(time.Second)
 
 	pid := peer.ID("peer1")
-	session := ps.OpenSession(pid)
-	session.SetLastResponseCode(message.ResponseCodeOK)
+	session := ps.OpenSession(pid, 100, 101)
+	assert.False(t, session.IsUncompleted())
 
-	assert.NotNil(t, session)
-	assert.True(t, ps.HasAnyOpenSession())
+	session.SetUncompleted()
+	assert.True(t, session.IsUncompleted())
+}
 
-	time.Sleep(time.Second)
-	assert.False(t, ps.HasAnyOpenSession())
+func TestGetRandomWeightedPeer(t *testing.T) {
+	// We create 6 peers with varying success and failure counts:
+	// peer_1 has 4 successful bundles and 0 failed bundles
+	// peer_2 has 4 successful bundles and 1 failed attempt
+	// ...
+	// peer_6 has 4 successful bundles and 4 failed bundles
+	// peer_7 has 4 successful bundles and 5 failed bundles
+	peerSet := NewPeerSet(time.Second)
+	for i := 0; i < 6; i++ {
+		pid := peer.ID(fmt.Sprintf("peer_%v", i+1))
+		peerSet.UpdateInfo(pid, fmt.Sprintf("Moniker_%v", i+1), "Agent1", nil, service.New())
+		peerSet.UpdateStatus(pid, StatusCodeKnown)
+
+		for s := 0; s < 4; s++ {
+			peerSet.IncreaseReceivedBundlesCounter(pid)
+		}
+		for f := 0; f < i; f++ {
+			peerSet.IncreaseInvalidBundlesCounter(pid)
+		}
+	}
+
+	// Now let's run TestGetRandomPeer for 1000 times
+
+	hits := make(map[peer.ID]int)
+	for i := 0; i < 1000; i++ {
+		p := peerSet.GetRandomPeer()
+		hits[p.PeerID]++
+	}
+
+	assert.Greater(t, hits[peer.ID("peer_1")], hits[peer.ID("peer_3")])
+	assert.Greater(t, hits[peer.ID("peer_3")], hits[peer.ID("peer_5")])
+	assert.Greater(t, hits[peer.ID("peer_5")], 0)
+	assert.Greater(t, hits[peer.ID("peer_6")], 0)
+}
+
+func TestGetRandomPeerConnected(t *testing.T) {
+	peerSet := NewPeerSet(time.Second)
+
+	pidBanned := peer.ID("known")
+	pidConnected := peer.ID("connected")
+	pidKnown := peer.ID("banned")
+	peerSet.UpdateInfo(pidBanned, "moniker", "agent", nil, service.New())
+	peerSet.UpdateInfo(pidConnected, "moniker", "agent", nil, service.New())
+	peerSet.UpdateInfo(pidKnown, "moniker", "agent", nil, service.New())
+
+	peerSet.UpdateStatus(pidBanned, StatusCodeBanned)
+	peerSet.UpdateStatus(pidConnected, StatusCodeConnected)
+	peerSet.UpdateStatus(pidKnown, StatusCodeKnown)
+
+	p := peerSet.GetRandomPeer()
+
+	assert.NotEqual(t, p.PeerID, pidBanned)
+	assert.NotEqual(t, p.PeerID, pidConnected)
+	assert.Equal(t, p.PeerID, pidKnown)
+}
+
+func TestGetRandomPeerOnePeer(t *testing.T) {
+	peerSet := NewPeerSet(time.Second)
+
+	pidLonely := peer.ID("banned")
+	peerSet.UpdateInfo(pidLonely, "moniker", "agent", nil, service.New())
+	peerSet.UpdateStatus(pidLonely, StatusCodeKnown)
+
+	p := peerSet.GetRandomPeer()
+
+	assert.Equal(t, p.PeerID, pidLonely)
+}
+
+func TestUpdateAddress(t *testing.T) {
+	ps := NewPeerSet(time.Second)
+
+	pid := peer.ID("peer1")
+	addr := "pid-1-address"
+	ps.UpdateAddress(pid, addr)
+
+	p := ps.GetPeer(pid)
+	assert.Equal(t, addr, p.Address)
 }

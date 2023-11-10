@@ -26,14 +26,18 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 	p := handler.peerSet.GetPeer(initiator)
 	if !p.IsKnownOrTrusty() {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
-			fmt.Sprintf("peer status is %v", p.Status), msg.SessionID, 0, nil, nil)
+			fmt.Sprintf("not handshaed (%v)", p.Status), msg.SessionID, 0, nil, nil)
+
+		// There is no point in keeping this stream connection open.
+		// Close this connection to initiate a new handshake.
+		handler.network.CloseConnection(initiator)
 
 		return handler.respond(response, initiator)
 	}
 
 	if !handler.config.NodeNetwork {
 		ourHeight := handler.state.LastBlockHeight()
-		if msg.From < ourHeight-LatestBlockInterval {
+		if msg.From < ourHeight-handler.config.LatestBlockInterval {
 			response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 				fmt.Sprintf("the request height is not acceptable: %v", msg.From), msg.SessionID, 0, nil, nil)
 
@@ -43,7 +47,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 	height := msg.From
 	count := msg.Count
 
-	if count > LatestBlockInterval {
+	if count > handler.config.LatestBlockInterval {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("too many blocks requested: %v-%v", msg.From, msg.Count), msg.SessionID, 0, nil, nil)
 

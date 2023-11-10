@@ -52,7 +52,7 @@ func TestInvalidBlockData(t *testing.T) {
 
 	for _, test := range tests {
 		pid := td.RandPeerID()
-		sid := td.sync.peerSet.OpenSession(pid).SessionID()
+		sid := td.RandInt(1000)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
 			lastHeight+1, [][]byte{test.data}, cert)
 
@@ -72,12 +72,11 @@ func TestOneBlockShorter(t *testing.T) {
 	pub, _ := td.RandBLSKeyPair()
 	td.addPeer(t, pub, pid, service.New(service.None))
 
-	sid := td.sync.peerSet.OpenSession(pid).SessionID()
+	sid := td.RandInt(1000)
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, t.Name(), sid,
 		lastHeight+1, [][]byte{d1}, cert1)
 	assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-	assert.Nil(t, td.sync.peerSet.FindSession(sid))
 	assert.Equal(t, td.state.LastBlockHeight(), lastHeight+1)
 }
 
@@ -137,7 +136,7 @@ func TestStrippedPublicKey(t *testing.T) {
 
 	for _, test := range tests {
 		blkData, _ := test.blk.Bytes()
-		sid := td.sync.peerSet.OpenSession(pid).SessionID()
+		sid := td.RandInt(1000)
 		cert := td.GenerateTestCertificate(lastHeight + 1)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeRejected.String(), sid,
 			lastHeight+1, [][]byte{blkData}, cert)
@@ -225,11 +224,12 @@ func TestSyncing(t *testing.T) {
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeHelloAck)
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHelloAck)
 
-	time.Sleep(1 * time.Second)
-
 	// Ensure peers are connected and block heights are correct
-	assert.Equal(t, 1, syncAlice.PeerSet().Len())
-	assert.Equal(t, 1, syncBob.PeerSet().Len())
+	require.Eventually(t, func() bool {
+		return syncAlice.PeerSet().Len() == 1 &&
+			syncBob.PeerSet().Len() == 1
+	}, time.Second, 100*time.Millisecond)
+
 	require.Equal(t, peerset.StatusCodeKnown, syncAlice.PeerSet().GetPeer(syncBob.SelfID()).Status)
 	require.Equal(t, peerset.StatusCodeKnown, syncBob.PeerSet().GetPeer(syncAlice.SelfID()).Status)
 	assert.Equal(t, uint32(0), syncAlice.state.LastBlockHeight())

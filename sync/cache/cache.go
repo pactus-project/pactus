@@ -67,6 +67,12 @@ func (c *Cache) AddCertificate(cert *certificate.Certificate) {
 	}
 }
 
+// RemoveBlock removes the block and certificates at the specified height from the cache.
+func (c *Cache) RemoveBlock(height uint32) {
+	c.blocks.Remove(height)
+	c.certs.Remove(height)
+}
+
 // Len returns the maximum number of items in the blocks and certificates cache.
 func (c *Cache) Len() int {
 	return util.Max(c.blocks.Len(), c.certs.Len())

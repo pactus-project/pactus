@@ -28,15 +28,12 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, initiator 
 		// It is good to check the latest height before adding blocks to the cache.
 		// If they have already been committed, this message can be ignored.
 		// Need to test!
-		height := msg.From
 		for _, data := range msg.CommittedBlocksData {
 			blk, err := block.FromBytes(data)
 			if err != nil {
 				return err
 			}
 			handler.cache.AddBlock(blk)
-
-			height++
 		}
 		handler.cache.AddCertificate(msg.LastCertificate)
 		err := handler.tryCommitBlocks()
@@ -45,7 +42,7 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, initiator 
 		}
 	}
 
-	handler.updateSession(msg.SessionID, initiator, msg.ResponseCode)
+	handler.updateSession(msg.SessionID, msg.ResponseCode)
 
 	return nil
 }
@@ -57,39 +54,32 @@ func (handler *blocksResponseHandler) PrepareBundle(m message.Message) *bundle.B
 	return bdl
 }
 
-func (handler *blocksResponseHandler) updateSession(sessionID int, pid peer.ID, code message.ResponseCode) {
+func (handler *blocksResponseHandler) updateSession(sessionID int, code message.ResponseCode) {
 	s := handler.peerSet.FindSession(sessionID)
 	if s == nil {
 		// TODO: test me
-		handler.logger.Debug("session not found or closed", "session-id", sessionID)
+		// Probably session was expired before.
+		handler.logger.Debug("session not found or closed", "sid", sessionID)
 		return
 	}
-
-	if s.PeerID() != pid {
-		// TODO: test me
-		handler.logger.Warn("unknown peer", "session-id", sessionID, "pid", pid)
-		return
-	}
-
-	s.SetLastResponseCode(code)
 
 	switch code {
 	case message.ResponseCodeRejected:
-		handler.logger.Debug("session rejected, close session", "session-id", sessionID)
-		handler.peerSet.CloseSession(sessionID)
+		handler.logger.Debug("session rejected, expire the session", "sid", sessionID, "peer", s.PeerID())
+		s.SetUncompleted() // TODO: test me
 		handler.updateBlockchain()
 
 	case message.ResponseCodeMoreBlocks:
-		handler.logger.Debug("peer responding us. keep session open", "session-id", sessionID)
+		handler.logger.Debug("peer responding us. keep session open", "sid", sessionID, "peer", s.PeerID())
 
 	case message.ResponseCodeNoMoreBlocks:
-		handler.logger.Debug("peer has no more block. close session", "session-id", sessionID)
-		handler.peerSet.CloseSession(sessionID)
+		handler.logger.Debug("peer has no more block. close session", "sid", sessionID, "peer", s.PeerID())
+		handler.peerSet.RemoveSession(sessionID) // TODO: test me
 		handler.updateBlockchain()
 
 	case message.ResponseCodeSynced:
-		handler.logger.Debug("peer informed us we are synced. close session", "session-id", sessionID)
-		handler.peerSet.CloseSession(sessionID)
+		handler.logger.Debug("peer informed us we are synced. close session", "sid", sessionID, "peer", s.PeerID())
+		handler.peerSet.RemoveSession(sessionID) // TODO: test me
 		handler.moveConsensusToNewHeight()
 	}
 }

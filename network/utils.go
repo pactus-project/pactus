@@ -3,7 +3,6 @@ package network
 import (
 	"context"
 	"fmt"
-	"math/bits"
 	"net"
 	"time"
 
@@ -12,6 +11,7 @@ import (
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	"github.com/multiformats/go-multiaddr"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -86,13 +86,6 @@ func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrIn
 	}()
 }
 
-// LogScale computes 2^⌈log₂(val)⌉, where ⌈x⌉ represents the ceiling of x.
-// For more information, refer to: https://en.wikipedia.org/wiki/Logarithmic_scale
-func LogScale(val int) int {
-	bitlen := bits.Len(uint(val - 1))
-	return 1 << bitlen
-}
-
 func PrivateSubnets() []*net.IPNet {
 	privateCIDRs := []string{
 		// -- Ipv4 --
@@ -139,31 +132,31 @@ func SubnetsToFilters(subnets []*net.IPNet, action multiaddr.Action) *multiaddr.
 func MakeScalingLimitConfig(minConns, maxConns int) lp2prcmgr.ScalingLimitConfig {
 	limit := lp2prcmgr.DefaultLimits
 
-	limit.SystemBaseLimit.ConnsOutbound = LogScale(maxConns / 2)
-	limit.SystemBaseLimit.ConnsInbound = LogScale(maxConns / 2)
-	limit.SystemBaseLimit.Conns = LogScale(maxConns)
-	limit.SystemBaseLimit.StreamsOutbound = LogScale(maxConns / 2)
-	limit.SystemBaseLimit.StreamsInbound = LogScale(maxConns / 2)
-	limit.SystemBaseLimit.Streams = LogScale(maxConns)
+	limit.SystemBaseLimit.ConnsOutbound = util.LogScale(maxConns / 2)
+	limit.SystemBaseLimit.ConnsInbound = util.LogScale(maxConns / 2)
+	limit.SystemBaseLimit.Conns = util.LogScale(maxConns)
+	limit.SystemBaseLimit.StreamsOutbound = util.LogScale(maxConns / 2)
+	limit.SystemBaseLimit.StreamsInbound = util.LogScale(maxConns / 2)
+	limit.SystemBaseLimit.Streams = util.LogScale(maxConns)
 
-	limit.ServiceLimitIncrease.ConnsOutbound = LogScale(minConns / 2)
-	limit.ServiceLimitIncrease.ConnsInbound = LogScale(minConns / 2)
-	limit.ServiceLimitIncrease.Conns = LogScale(minConns)
-	limit.ServiceLimitIncrease.StreamsOutbound = LogScale(minConns / 2)
-	limit.ServiceLimitIncrease.StreamsInbound = LogScale(minConns / 2)
-	limit.ServiceLimitIncrease.Streams = LogScale(minConns)
+	limit.ServiceLimitIncrease.ConnsOutbound = util.LogScale(minConns / 2)
+	limit.ServiceLimitIncrease.ConnsInbound = util.LogScale(minConns / 2)
+	limit.ServiceLimitIncrease.Conns = util.LogScale(minConns)
+	limit.ServiceLimitIncrease.StreamsOutbound = util.LogScale(minConns / 2)
+	limit.ServiceLimitIncrease.StreamsInbound = util.LogScale(minConns / 2)
+	limit.ServiceLimitIncrease.Streams = util.LogScale(minConns)
 
-	limit.TransientBaseLimit.ConnsOutbound = LogScale(maxConns / 2)
-	limit.TransientBaseLimit.ConnsInbound = LogScale(maxConns / 2)
-	limit.TransientBaseLimit.Conns = LogScale(maxConns)
-	limit.TransientBaseLimit.StreamsOutbound = LogScale(maxConns / 2)
-	limit.TransientBaseLimit.StreamsInbound = LogScale(maxConns / 2)
-	limit.TransientBaseLimit.Streams = LogScale(maxConns)
+	limit.TransientBaseLimit.ConnsOutbound = util.LogScale(maxConns / 2)
+	limit.TransientBaseLimit.ConnsInbound = util.LogScale(maxConns / 2)
+	limit.TransientBaseLimit.Conns = util.LogScale(maxConns)
+	limit.TransientBaseLimit.StreamsOutbound = util.LogScale(maxConns / 2)
+	limit.TransientBaseLimit.StreamsInbound = util.LogScale(maxConns / 2)
+	limit.TransientBaseLimit.Streams = util.LogScale(maxConns)
 
-	limit.TransientLimitIncrease.ConnsInbound = LogScale(minConns / 2)
-	limit.TransientLimitIncrease.Conns = LogScale(minConns)
-	limit.TransientLimitIncrease.StreamsInbound = LogScale(minConns / 2)
-	limit.TransientLimitIncrease.Streams = LogScale(minConns)
+	limit.TransientLimitIncrease.ConnsInbound = util.LogScale(minConns / 2)
+	limit.TransientLimitIncrease.Conns = util.LogScale(minConns)
+	limit.TransientLimitIncrease.StreamsInbound = util.LogScale(minConns / 2)
+	limit.TransientLimitIncrease.Streams = util.LogScale(minConns)
 
 	return limit
 }

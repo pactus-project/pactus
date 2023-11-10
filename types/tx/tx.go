@@ -358,8 +358,9 @@ func (tx *Tx) Decode(r io.Reader) error {
 }
 
 func (tx *Tx) String() string {
-	return fmt.Sprintf("{⌘ %v 🏵 %v}",
+	return fmt.Sprintf("{⌘ %v - %v 🏵 %v}",
 		tx.ID().ShortString(),
+		tx.LockTime(),
 		tx.data.Payload.String())
 }
 
