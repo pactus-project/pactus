@@ -40,7 +40,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 	if msg.PeerID != initiator {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("peer ID is not matched, expected: %v, got: %v",
-				msg.PeerID, initiator))
+				msg.PeerID, initiator), 0)
 
 		return handler.acknowledge(response, initiator)
 	}
@@ -48,14 +48,14 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 	if msg.GenesisHash != handler.state.Genesis().Hash() {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("invalid genesis hash, expected: %v, got: %v",
-				handler.state.Genesis().Hash(), msg.GenesisHash))
+				handler.state.Genesis().Hash(), msg.GenesisHash), 0)
 
 		return handler.acknowledge(response, initiator)
 	}
 
 	if math.Abs(time.Since(msg.MyTime()).Seconds()) > 10 {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
-			"time discrepancy exceeds 10 seconds")
+			"time discrepancy exceeds 10 seconds", 0)
 
 		return handler.acknowledge(response, initiator)
 	}
@@ -63,7 +63,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 	handler.peerSet.UpdateHeight(initiator, msg.Height, msg.BlockHash)
 	handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeKnown)
 
-	response := message.NewHelloAckMessage(message.ResponseCodeOK, "Ok")
+	response := message.NewHelloAckMessage(message.ResponseCodeOK, "Ok", handler.state.LastBlockHeight())
 	return handler.acknowledge(response, initiator)
 }
 

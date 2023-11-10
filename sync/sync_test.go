@@ -151,7 +151,7 @@ func (td *testData) shouldPublishMessageWithThisType(t *testing.T, net *network.
 	return shouldPublishMessageWithThisType(t, net, msgType)
 }
 
-func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
+func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
 	t.Helper()
 
 	timeout := time.NewTimer(3 * time.Millisecond)
@@ -169,6 +169,12 @@ func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, net *netwo
 				"not expected %s", msgType)
 		}
 	}
+}
+
+func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
+	t.Helper()
+
+	shouldNotPublishMessageWithThisType(t, net, msgType)
 }
 
 func (td *testData) receivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {

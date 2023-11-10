@@ -29,11 +29,13 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, initiator peer.I
 		handler.network.CloseConnection(initiator)
 		return nil
 	}
-	handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeKnown)
-	handler.logger.Debug("hello message acknowledged",
-		"from", initiator)
 
-	handler.updateBlockchain()
+	handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeKnown)
+	handler.logger.Debug("hello message acknowledged", "from", initiator)
+
+	if msg.Height > handler.state.LastBlockHeight() {
+		handler.updateBlockchain()
+	}
 
 	return nil
 }

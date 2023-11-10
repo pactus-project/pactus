@@ -12,6 +12,6 @@ func TestHelloAckType(t *testing.T) {
 }
 
 func TestHelloAckMessage(t *testing.T) {
-	m := NewHelloAckMessage(ResponseCodeRejected, "rejected")
+	m := NewHelloAckMessage(ResponseCodeRejected, "rejected", 0)
 	assert.NoError(t, m.BasicCheck())
 }
