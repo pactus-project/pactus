@@ -239,7 +239,7 @@ func (sync *synchronizer) String() string {
 // Otherwise, the node can request the latest blocks from the network.
 func (sync *synchronizer) updateBlockchain() {
 	// Maybe we have some blocks inside the cache?
-	sync.tryCommitBlocks()
+	_ = sync.tryCommitBlocks()
 
 	// If we have the last block inside the cache but no certificate,
 	// we need to download the next block.
@@ -256,7 +256,7 @@ func (sync *synchronizer) updateBlockchain() {
 			sync.logger.Debug("uncompleted block request, re-download",
 				"sid", s.SessionID(), "pid", s.PeerID())
 
-			// Try to re-downlaod the blocks from this closed session
+			// Try to re-download the blocks from this closed session
 			from, to := s.Range()
 			from = util.Max(from, downloadHeight)
 			if to > from {
