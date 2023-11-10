@@ -21,7 +21,7 @@ func newBlocksRequestHandler(sync *synchronizer) messageHandler {
 
 func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.BlocksRequestMessage)
-	handler.logger.Trace("parsing BlocksRequest message", "message", msg)
+	handler.logger.Trace("parsing BlocksRequest message", "msg", msg)
 
 	p := handler.peerSet.GetPeer(initiator)
 	if !p.IsKnownOrTrusty() {
@@ -37,7 +37,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 
 	if !handler.config.NodeNetwork {
 		ourHeight := handler.state.LastBlockHeight()
-		if msg.From < ourHeight-handler.config.LatestBlockInterval {
+		if ourHeight > handler.config.LatestBlockInterval && msg.From < ourHeight-handler.config.LatestBlockInterval {
 			response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 				fmt.Sprintf("the request height is not acceptable: %v", msg.From), msg.SessionID, 0, nil, nil)
 
@@ -99,10 +99,10 @@ func (handler *blocksRequestHandler) PrepareBundle(m message.Message) *bundle.Bu
 
 func (handler *blocksRequestHandler) respond(msg *message.BlocksResponseMessage, to peer.ID) error {
 	if msg.ResponseCode == message.ResponseCodeRejected {
-		handler.logger.Debug("rejecting block request message", "message", msg,
+		handler.logger.Debug("rejecting block request message", "msg", msg,
 			"to", to, "reason", msg.Reason)
 	} else {
-		handler.logger.Info("responding block request message", "message", msg,
+		handler.logger.Info("responding block request message", "msg", msg,
 			"to", to)
 	}
 

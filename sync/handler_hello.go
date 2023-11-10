@@ -24,7 +24,7 @@ func newHelloHandler(sync *synchronizer) messageHandler {
 
 func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.HelloMessage)
-	handler.logger.Trace("parsing Hello message", "message", msg)
+	handler.logger.Trace("parsing Hello message", "msg", msg)
 
 	handler.logger.Debug("updating peer info",
 		"pid", msg.PeerID,
@@ -77,11 +77,11 @@ func (handler *helloHandler) acknowledge(msg *message.HelloAckMessage, to peer.I
 	if msg.ResponseCode == message.ResponseCodeRejected {
 		handler.peerSet.UpdateStatus(to, peerset.StatusCodeBanned)
 
-		handler.logger.Debug("rejecting hello message", "message", msg,
+		handler.logger.Debug("rejecting hello message", "msg", msg,
 			"to", to, "reason", msg.Reason)
 		handler.network.CloseConnection(to)
 	} else {
-		handler.logger.Info("acknowledging hello message", "message", msg,
+		handler.logger.Info("acknowledging hello message", "msg", msg,
 			"to", to)
 	}
 

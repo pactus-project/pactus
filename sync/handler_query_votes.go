@@ -18,7 +18,7 @@ func newQueryVotesHandler(sync *synchronizer) messageHandler {
 
 func (handler *queryVotesHandler) ParseMessage(m message.Message, _ peer.ID) error {
 	msg := m.(*message.QueryVotesMessage)
-	handler.logger.Trace("parsing QueryVotes message", "message", msg)
+	handler.logger.Trace("parsing QueryVotes message", "msg", msg)
 
 	height, _ := handler.consMgr.HeightRound()
 	if msg.Height == height {

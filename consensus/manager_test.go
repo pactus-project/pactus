@@ -179,7 +179,7 @@ func TestMediator(t *testing.T) {
 
 	for {
 		msg := <-broadcastCh
-		logger.Info("shouldPublishProposal", "message", msg)
+		logger.Info("shouldPublishProposal", "msg", msg)
 
 		m, ok := msg.(*message.BlockAnnounceMessage)
 		if ok {

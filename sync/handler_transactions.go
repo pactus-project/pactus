@@ -18,7 +18,7 @@ func newTransactionsHandler(sync *synchronizer) messageHandler {
 
 func (handler *transactionsHandler) ParseMessage(m message.Message, _ peer.ID) error {
 	msg := m.(*message.TransactionsMessage)
-	handler.logger.Trace("parsing Transactions message", "message", msg)
+	handler.logger.Trace("parsing Transactions message", "msg", msg)
 
 	for _, trx := range msg.Transactions {
 		if err := handler.state.AddPendingTx(trx); err != nil {

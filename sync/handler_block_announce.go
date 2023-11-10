@@ -18,7 +18,7 @@ func newBlockAnnounceHandler(sync *synchronizer) messageHandler {
 
 func (handler *blockAnnounceHandler) ParseMessage(m message.Message, initiator peer.ID) error {
 	msg := m.(*message.BlockAnnounceMessage)
-	handler.logger.Trace("parsing BlockAnnounce message", "message", msg)
+	handler.logger.Trace("parsing BlockAnnounce message", "msg", msg)
 
 	handler.cache.AddCertificate(msg.Certificate)
 	handler.cache.AddBlock(msg.Block)

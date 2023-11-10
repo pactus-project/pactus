@@ -18,7 +18,7 @@ func newProposalHandler(sync *synchronizer) messageHandler {
 
 func (handler *proposalHandler) ParseMessage(m message.Message, _ peer.ID) error {
 	msg := m.(*message.ProposalMessage)
-	handler.logger.Trace("parsing Proposal message", "message", msg)
+	handler.logger.Trace("parsing Proposal message", "msg", msg)
 
 	handler.consMgr.SetProposal(msg.Proposal)
 
