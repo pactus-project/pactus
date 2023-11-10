@@ -246,7 +246,7 @@ func (sync *synchronizer) updateBlockchain() {
 	downloadHeight := sync.state.LastBlockHeight()
 	downloadHeight++
 
-	for sync.cache.HasBlockInCache(downloadHeight) {
+	if sync.cache.HasBlockInCache(downloadHeight) {
 		downloadHeight++
 	}
 
@@ -400,6 +400,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		}
 
 		// We haven't completed the handshake with this peer.
+		// Maybe it is a gossip peer.
 		if !p.IsKnownOrTrusty() {
 			continue
 		}
@@ -425,6 +426,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		}
 	}
 
+	sync.logger.Warn("not enough peers to download blocks")
 	return false
 }
 

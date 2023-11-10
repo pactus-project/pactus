@@ -306,16 +306,19 @@ func TestDownload(t *testing.T) {
 	})
 
 	t.Run("download request is rejected", func(t *testing.T) {
-		pub, _ := td.RandBLSKeyPair()
-		pid := td.RandPeerID()
-		td.addPeer(t, pub, pid, service.New(service.Network))
+		pub1, _ := td.RandBLSKeyPair()
+		pub2, _ := td.RandBLSKeyPair()
+		pid1 := td.RandPeerID()
+		pid2 := td.RandPeerID()
+		td.addPeer(t, pub1, pid1, service.New(service.Network))
+		td.addPeer(t, pub2, pid2, service.New(service.Network))
 
 		from := td.sync.state.LastBlockHeight() + 1
 		count := uint32(123)
-		session1 := td.sync.peerSet.OpenSession(pid, from, count)
+		session1 := td.sync.peerSet.OpenSession(pid1, from, count)
 		msg1 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, t.Name(),
 			session1.SessionID(), 1, nil, nil)
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg1, pid))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg1, pid1))
 		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 
 		msg2 := bdl.Message.(*message.BlocksRequestMessage)
@@ -326,7 +329,7 @@ func TestDownload(t *testing.T) {
 		assert.Equal(t, from, msg2.From)
 		assert.Equal(t, count, msg2.Count)
 		assert.Equal(t, session1.SessionID()+1, session2.SessionID())
-		assert.NotEqual(t, pid, session2.PeerID(), "should re-dwonload from other peers")
+		assert.NotEqual(t, pid1, session2.PeerID(), "should re-dwonload from other peers")
 	})
 
 	t.Run("testing send failure", func(t *testing.T) {

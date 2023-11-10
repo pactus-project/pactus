@@ -65,7 +65,7 @@ func (handler *blocksResponseHandler) updateSession(sessionID int, code message.
 
 	switch code {
 	case message.ResponseCodeRejected:
-		handler.logger.Debug("session rejected, expire the session", "sid", sessionID, "peer", s.PeerID())
+		handler.logger.Debug("session rejected, uncompleted session", "sid", sessionID, "peer", s.PeerID())
 		s.SetUncompleted() // TODO: test me
 		handler.updateBlockchain()
 
