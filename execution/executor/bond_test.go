@@ -170,3 +170,22 @@ func TestStakeExceeded(t *testing.T) {
 	err := exe.Execute(trx, td.sandbox)
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidAmount)
 }
+
+func TestPwerDeltaBond(t *testing.T) {
+	td := setup(t)
+	exe := NewBondExecutor(true)
+
+	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
+	senderBalance := senderAcc.Balance()
+	pub, _ := td.RandBLSKeyPair()
+	receiverAddr := pub.ValidatorAddress()
+	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, senderBalance)
+	lockTime := td.sandbox.CurrentHeight()
+	trx := tx.NewBondTx(lockTime, senderAddr,
+		receiverAddr, pub, amt, fee, "ok")
+
+	err := exe.Execute(trx, td.sandbox)
+	assert.NoError(t, err, "Ok")
+
+	assert.Equal(t, amt, td.sandbox.PowerDelta())
+}

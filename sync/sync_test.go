@@ -232,7 +232,6 @@ func TestConnectEvents(t *testing.T) {
 		}
 		td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
 		p := td.sync.peerSet.GetPeer(pid)
-		require.NotNil(t, p)
 		assert.Equal(t, p.Status, peerset.StatusCodeConnected)
 		assert.Equal(t, p.Address, "address_1")
 	})
@@ -246,7 +245,6 @@ func TestConnectEvents(t *testing.T) {
 		}
 		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
 		p := td.sync.peerSet.GetPeer(pid)
-		require.NotNil(t, p)
 		assert.Equal(t, p.Status, peerset.StatusCodeConnected)
 		assert.Equal(t, p.Address, "address_1")
 	})

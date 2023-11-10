@@ -12,9 +12,16 @@ func TestExecuteUnbondTx(t *testing.T) {
 	td := setup(t)
 	exe := NewUnbondExecutor(true)
 
+	bonderAddr, bonderAcc := td.sandbox.TestStore.RandomTestAcc()
+	bonderBalance := bonderAcc.Balance()
+	stake, _ := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, bonderBalance)
+	bonderAcc.SubtractFromBalance(stake)
+	td.sandbox.UpdateAccount(bonderAddr, bonderAcc)
+
 	pub, _ := td.RandBLSKeyPair()
 	valAddr := pub.ValidatorAddress()
 	val := td.sandbox.MakeNewValidator(pub)
+	val.AddToStake(stake)
 	td.sandbox.UpdateValidator(val)
 	lockTime := td.sandbox.CurrentHeight()
 
@@ -53,7 +60,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	assert.Zero(t, td.sandbox.Validator(valAddr).Stake())
+	assert.Equal(t, stake, td.sandbox.Validator(valAddr).Stake())
 	assert.Zero(t, td.sandbox.Validator(valAddr).Power())
 	assert.Equal(t, td.sandbox.Validator(valAddr).UnbondingHeight(), td.sandbox.CurrentHeight())
 	assert.Equal(t, td.sandbox.PowerDelta(), -1*val.Stake())
@@ -96,4 +103,23 @@ func TestUnbondJoiningCommittee(t *testing.T) {
 	trx := tx.NewUnbondTx(lockTime, pub.ValidatorAddress(), "Ok")
 	assert.Error(t, exe1.Execute(trx, td.sandbox))
 	assert.NoError(t, exe2.Execute(trx, td.sandbox))
+}
+
+func TestPwerDeltaUnbond(t *testing.T) {
+	td := setup(t)
+	exe := NewUnbondExecutor(true)
+
+	pub, _ := td.RandBLSKeyPair()
+	valAddr := pub.ValidatorAddress()
+	val := td.sandbox.MakeNewValidator(pub)
+	amt := td.RandInt64(1e9)
+	val.AddToStake(amt)
+	td.sandbox.UpdateValidator(val)
+	lockTime := td.sandbox.CurrentHeight()
+	trx := tx.NewUnbondTx(lockTime, valAddr, "Ok")
+
+	err := exe.Execute(trx, td.sandbox)
+	assert.NoError(t, err)
+
+	assert.Equal(t, -1*amt, td.sandbox.PowerDelta())
 }

@@ -281,6 +281,8 @@ func (sb *sandbox) VerifyProof(blockHeight uint32, proof sortition.Proof, val *v
 	if err != nil {
 		return false
 	}
+	// TODO: improvement:
+	// We can get the sortition seed without parsing the block
 	blk, err := committedBlock.ToBlock()
 	if err != nil {
 		return false
