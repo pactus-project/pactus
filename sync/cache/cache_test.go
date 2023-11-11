@@ -90,3 +90,19 @@ func TestAddAgain(t *testing.T) {
 	cache.AddBlock(secondBlk)
 	assert.Equal(t, secondBlk, cache.GetBlock(height))
 }
+
+func TestRemoveBlock(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	cache, _ := NewCache(10)
+
+	height := ts.RandHeight()
+	blk1, _ := ts.GenerateTestBlock(height)
+	blk2, _ := ts.GenerateTestBlock(height + 1)
+	cache.AddBlock(blk1)
+	cache.AddBlock(blk2)
+
+	cache.RemoveBlock(height)
+	assert.Nil(t, cache.GetBlock(height))
+	assert.Nil(t, cache.GetCertificate(height))
+}

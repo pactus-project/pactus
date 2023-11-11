@@ -64,18 +64,17 @@ func NewSynchronizer(
 		networkCh:   net.EventChannel(),
 	}
 
-	peerSet := peerset.NewPeerSet(conf.SessionTimeout)
-	subLogger := logger.NewSubLogger("_sync", sync)
-	fw := firewall.NewFirewall(conf.Firewall, net, peerSet, st, subLogger)
-	ca, err := cache.NewCache(conf.CacheSize)
+	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout)
+	sync.logger = logger.NewSubLogger("_sync", sync)
+	sync.firewall = firewall.NewFirewall(conf.Firewall, net, sync.peerSet, st, sync.logger)
+
+	cacheSize := conf.CacheSize()
+	ca, err := cache.NewCache(conf.CacheSize())
 	if err != nil {
 		return nil, err
 	}
-
-	sync.logger = subLogger
 	sync.cache = ca
-	sync.peerSet = peerSet
-	sync.firewall = fw
+	sync.logger.Info("cache setup", "size", cacheSize)
 
 	handlers := make(map[message.Type]messageHandler)
 
@@ -120,6 +119,77 @@ func (sync *synchronizer) moveConsensusToNewHeight() {
 	if stateHeight >= consHeight {
 		sync.consMgr.MoveToNewHeight()
 	}
+}
+
+func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
+	h := sync.handlers[msg.Type()]
+	if h == nil {
+		sync.logger.Warn("invalid message type: %v", msg.Type())
+		return nil
+	}
+	bdl := h.PrepareBundle(msg)
+	if bdl != nil {
+		// Bundles will be carried through LibP2P.
+		// In future we might support other libraries.
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P)
+
+		switch sync.state.Genesis().ChainType() {
+		case genesis.Mainnet:
+			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
+		case genesis.Testnet:
+			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
+		default:
+			// It's localnet and for testing purpose only
+		}
+
+		return bdl
+	}
+	return nil
+}
+
+func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
+	bdl := sync.prepareBundle(msg)
+	if bdl != nil {
+		data, _ := bdl.Encode()
+		sync.peerSet.UpdateLastSent(to)
+		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
+
+		err := sync.network.SendTo(data, to)
+		if err != nil {
+			return err
+		}
+		sync.logger.Info("sending bundle to a peer",
+			"bundle", bdl, "to", to)
+	}
+	return nil
+}
+
+func (sync *synchronizer) broadcast(msg message.Message) {
+	bdl := sync.prepareBundle(msg)
+	if bdl != nil {
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
+
+		data, _ := bdl.Encode()
+		err := sync.network.Broadcast(data, msg.Type().TopicID())
+		if err != nil {
+			sync.logger.Error("error on broadcasting bundle", "bundle", bdl, "error", err)
+		} else {
+			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
+		}
+		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), nil)
+	}
+}
+
+func (sync *synchronizer) SelfID() peer.ID {
+	return sync.network.SelfID()
+}
+
+func (sync *synchronizer) Moniker() string {
+	return sync.config.Moniker
+}
+
+func (sync *synchronizer) PeerSet() *peerset.PeerSet {
+	return sync.peerSet
 }
 
 func (sync *synchronizer) sayHello(to peer.ID) error {
@@ -239,6 +309,35 @@ func (sync *synchronizer) String() string {
 // it should start downloading blocks from the network's nodes.
 // Otherwise, the node can request the latest blocks from the network.
 func (sync *synchronizer) updateBlockchain() {
+	// Maybe we have some blocks inside the cache?
+	_ = sync.tryCommitBlocks()
+
+	// If we have the last block inside the cache but no certificate,
+	// we need to download the next block.
+	downloadHeight := sync.state.LastBlockHeight()
+	downloadHeight++
+
+	if sync.cache.HasBlockInCache(downloadHeight) {
+		downloadHeight++
+	}
+
+	sync.peerSet.SetExpiredSessionsAsUncompleted()
+	sync.peerSet.IterateSessions(func(s *peerset.Session) {
+		if s.IsUncompleted() {
+			sync.logger.Debug("uncompleted block request, re-download",
+				"sid", s.SessionID(), "pid", s.PeerID())
+
+			// Try to re-download the blocks from this closed session
+			from, to := s.Range()
+			from = util.Max(from, downloadHeight)
+			if to > from {
+				count := to - from + 1
+				sync.sendBlockRequestToRandomPeer(from, count, true)
+			}
+			sync.peerSet.RemoveSession(s.SessionID())
+		}
+	})
+
 	// First, let's check if we have any open sessions.
 	// If there are any open sessions, we should wait for them to be closed.
 	// Otherwise, we can request the same blocks from different peers.
@@ -247,6 +346,8 @@ func (sync *synchronizer) updateBlockchain() {
 		sync.logger.Debug("we have open session")
 		return
 	}
+
+	sync.peerSet.RemoveAllSessions()
 
 	blockInterval := sync.state.Params().BlockInterval()
 	curTime := util.RoundNow(int(blockInterval.Seconds()))
@@ -259,125 +360,74 @@ func (sync *synchronizer) updateBlockchain() {
 		return
 	}
 
-	// Make sure we have committed the latest blocks inside the cache
-	LastBlockHeight := sync.state.LastBlockHeight()
-	for sync.cache.HasBlockInCache(LastBlockHeight + 1) {
-		LastBlockHeight++
-	}
-
-	sync.logger.Info("start syncing with the network", "numOfBlocks", numOfBlocks)
-	if numOfBlocks > LatestBlockInterval {
-		sync.downloadBlocks(LastBlockHeight, true)
+	sync.logger.Info("start syncing with the network",
+		"numOfBlocks", numOfBlocks, "height", downloadHeight)
+	if numOfBlocks > sync.config.LatestBlockInterval {
+		sync.downloadBlocks(downloadHeight, true)
 	} else {
-		sync.downloadBlocks(LastBlockHeight, false)
+		sync.downloadBlocks(downloadHeight, false)
 	}
-}
-
-func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
-	h := sync.handlers[msg.Type()]
-	if h == nil {
-		sync.logger.Warn("invalid message type: %v", msg.Type())
-		return nil
-	}
-	bdl := h.PrepareBundle(msg)
-	if bdl != nil {
-		// Bundles will be carried through LibP2P.
-		// In future we might support other libraries.
-		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P)
-
-		switch sync.state.Genesis().ChainType() {
-		case genesis.Mainnet:
-			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
-		case genesis.Testnet:
-			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-		default:
-			// It's localnet and for testing purpose only
-		}
-
-		return bdl
-	}
-	return nil
-}
-
-func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
-	bdl := sync.prepareBundle(msg)
-	if bdl != nil {
-		data, _ := bdl.Encode()
-		sync.peerSet.UpdateLastSent(to)
-		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
-
-		err := sync.network.SendTo(data, to)
-		if err != nil {
-			return err
-		}
-		sync.logger.Info("sending bundle to a peer",
-			"bundle", bdl, "to", to)
-	}
-	return nil
-}
-
-func (sync *synchronizer) broadcast(msg message.Message) {
-	bdl := sync.prepareBundle(msg)
-	if bdl != nil {
-		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
-
-		data, _ := bdl.Encode()
-		err := sync.network.Broadcast(data, msg.Type().TopicID())
-		if err != nil {
-			sync.logger.Error("error on broadcasting bundle", "bundle", bdl, "error", err)
-		} else {
-			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
-		}
-		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), nil)
-	}
-}
-
-func (sync *synchronizer) SelfID() peer.ID {
-	return sync.network.SelfID()
-}
-
-func (sync *synchronizer) Moniker() string {
-	return sync.config.Moniker
-}
-
-func (sync *synchronizer) PeerSet() *peerset.PeerSet {
-	return sync.peerSet
 }
 
 // downloadBlocks starts downloading blocks from the network.
 func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 	sync.logger.Debug("downloading blocks", "from", from)
 
-	sync.peerSet.IteratePeers(func(p *peerset.Peer) {
+	for i := 0; i < sync.config.MaxOpenSessions; i++ {
+		if sync.peerSet.NumberOfOpenSessions() >= sync.config.MaxOpenSessions {
+			return
+		}
+
+		count := sync.config.LatestBlockInterval
+		sent := sync.sendBlockRequestToRandomPeer(from, count, onlyNodeNetwork)
+		if !sent {
+			return
+		}
+
+		from += count
+	}
+}
+
+func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyNodeNetwork bool) bool {
+	for i := 0; i < sync.config.MaxOpenSessions; i++ {
+		p := sync.peerSet.GetRandomPeer()
+
 		// Don't open a new session if we already have an open session with the same peer.
 		// This helps us to get blocks from different peers.
 		// TODO: write test for me
 		if sync.peerSet.HasOpenSession(p.PeerID) {
-			return
+			continue
 		}
 
+		// We haven't completed the handshake with this peer.
+		// Maybe it is a gossip peer.
 		if !p.IsKnownOrTrusty() {
-			return
+			continue
 		}
 
 		if onlyNodeNetwork && !p.HasNetworkService() {
 			if onlyNodeNetwork {
 				sync.network.CloseConnection(p.PeerID)
 			}
-			return
+			continue
 		}
 
-		count := LatestBlockInterval
 		sync.logger.Debug("sending download request", "from", from+1, "count", count, "pid", p.PeerID)
-		session := sync.peerSet.OpenSession(p.PeerID)
-		msg := message.NewBlocksRequestMessage(session.SessionID(), from+1, count)
+		session := sync.peerSet.OpenSession(p.PeerID, from, from+count-1)
+		msg := message.NewBlocksRequestMessage(session.SessionID(), from, count)
 		err := sync.sendTo(msg, p.PeerID)
 		if err != nil {
-			sync.peerSet.CloseSession(session.SessionID())
+			sync.logger.Debug("sending download request failed",
+				"from", from, "count", count, "pid", p.PeerID, "error", err)
+
+			session.SetUncompleted()
 		} else {
-			from += count
+			return true
 		}
-	})
+	}
+
+	sync.logger.Debug("not enough peers to download blocks", "sessions", sync.peerSet.NumberOfOpenSessions())
+	return false
 }
 
 func (sync *synchronizer) tryCommitBlocks() error {
@@ -412,6 +462,10 @@ func (sync *synchronizer) tryCommitBlocks() error {
 
 		sync.logger.Trace("committing block", "height", height, "block", blk)
 		if err := sync.state.CommitBlock(blk, cert); err != nil {
+			sync.logger.Warn("committing block failed, removing block from the cache",
+				"height", height, "block", blk, "error", err)
+
+			sync.cache.RemoveBlock(height) // TODO: test me
 			return err
 		}
 		height++

@@ -137,3 +137,21 @@ func TestCoinToChangeConversion(t *testing.T) {
 		}
 	}
 }
+
+func TestLogScale(t *testing.T) {
+	testCases := []struct {
+		input    int
+		expected int
+	}{
+		{1, 1},
+		{2, 2},
+		{3, 4},
+		{7, 8},
+		{8, 8},
+	}
+
+	for _, testCase := range testCases {
+		result := LogScale(testCase.input)
+		assert.Equal(t, testCase.expected, result, "LogScale(%d) failed", testCase.input)
+	}
+}

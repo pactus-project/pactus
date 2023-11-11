@@ -85,14 +85,6 @@
   # Default is 10 seconds
  ## session_timeout = "10s"
 
-  # `block_per_message` is the number of blocks per message.
-  # Default is 60.
- ## block_per_message = 60
-
-  # `cache_size` is the total capacity of the cache pool.
-  # Default is 50000
- ## cache_size = 50000
-
   # `node_network` indicates whether the node is capable of serving the complete blockchain.
   # Default is true
  ## node_network = true

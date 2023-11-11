@@ -14,7 +14,6 @@ import (
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/store"
-	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
@@ -78,9 +77,9 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_consensus"] = "warn"
 		tConfigs[i].Logger.Levels["_network"] = "debug"
 		tConfigs[i].Logger.Levels["_pool"] = "warn"
-		tConfigs[i].Sync.CacheSize = 1000
 		tConfigs[i].Sync.NodeNetwork = false
 		tConfigs[i].Sync.Firewall.Enabled = false
+		tConfigs[i].Sync.LatestBlockInterval = 10
 		tConfigs[i].Network.EnableMdns = true
 		tConfigs[i].Network.ForcePrivateNetwork = true
 		tConfigs[i].Network.Bootstrapper = false
@@ -92,8 +91,6 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Network.MaxConns = 8
 		tConfigs[i].HTTP.Enable = false
 		tConfigs[i].GRPC.Enable = false
-
-		sync.LatestBlockInterval = 10
 
 		if i == 0 {
 			tConfigs[i].Network.Bootstrapper = true

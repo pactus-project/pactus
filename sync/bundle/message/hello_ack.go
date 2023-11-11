@@ -7,12 +7,14 @@ import (
 type HelloAckMessage struct {
 	ResponseCode ResponseCode `cbor:"1,keyasint"`
 	Reason       string       `cbor:"2,keyasint"`
+	Height       uint32       `cbor:"3,keyasint"`
 }
 
-func NewHelloAckMessage(code ResponseCode, reason string) *HelloAckMessage {
+func NewHelloAckMessage(code ResponseCode, reason string, height uint32) *HelloAckMessage {
 	return &HelloAckMessage{
 		ResponseCode: code,
 		Reason:       reason,
+		Height:       height,
 	}
 }
 

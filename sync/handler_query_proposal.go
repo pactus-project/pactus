@@ -18,7 +18,7 @@ func newQueryProposalHandler(sync *synchronizer) messageHandler {
 
 func (handler *queryProposalHandler) ParseMessage(m message.Message, _ peer.ID) error {
 	msg := m.(*message.QueryProposalMessage)
-	handler.logger.Trace("parsing QueryProposal message", "message", msg)
+	handler.logger.Trace("parsing QueryProposal message", "msg", msg)
 
 	height, _ := handler.consMgr.HeightRound()
 	if msg.Height == height {

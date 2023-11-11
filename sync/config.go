@@ -4,30 +4,38 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/sync/firewall"
+	"github.com/pactus-project/pactus/util"
 )
 
-var LatestBlockInterval = uint32(720) // 720 blocks is about two hours
-
 type Config struct {
-	Moniker         string           `toml:"moniker"`
-	SessionTimeout  time.Duration    `toml:"session_timeout"`
-	BlockPerMessage uint32           `toml:"block_per_message"` // TODO: Does the user need to change it?
-	CacheSize       int              `toml:"cache_size"`        // TODO: Does the user need to change it?
-	NodeNetwork     bool             `toml:"node_network"`
-	Firewall        *firewall.Config `toml:"firewall"`
+	Moniker        string           `toml:"moniker"`
+	SessionTimeout time.Duration    `toml:"session_timeout"`
+	NodeNetwork    bool             `toml:"node_network"`
+	Firewall       *firewall.Config `toml:"firewall"`
+
+	// Private configs
+	MaxOpenSessions     int    `toml:"-"`
+	LatestBlockInterval uint32 `toml:"-"`
+	BlockPerMessage     uint32 `toml:"-"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		SessionTimeout:  time.Second * 10,
-		NodeNetwork:     true,
-		BlockPerMessage: 60,
-		CacheSize:       50000,
-		Firewall:        firewall.DefaultConfig(),
+		SessionTimeout:      time.Second * 10,
+		NodeNetwork:         true,
+		BlockPerMessage:     60,
+		MaxOpenSessions:     8,
+		LatestBlockInterval: 720,
+		Firewall:            firewall.DefaultConfig(),
 	}
 }
 
 // BasicCheck performs basic checks on the configuration.
 func (conf *Config) BasicCheck() error {
 	return nil
+}
+
+func (conf *Config) CacheSize() int {
+	return util.LogScale(
+		int(conf.BlockPerMessage * conf.LatestBlockInterval))
 }

@@ -3,6 +3,7 @@ package util
 import (
 	crand "crypto/rand"
 	"math/big"
+	"math/bits"
 	"strconv"
 
 	"golang.org/x/exp/constraints"
@@ -157,4 +158,11 @@ func ChangeToStringWithTrailingZeros(change int64) string {
 func ChangeToString(change int64) string {
 	coin := ChangeToCoin(change)
 	return strconv.FormatFloat(coin, 'f', -1, 64)
+}
+
+// LogScale computes 2^⌈log₂(val)⌉, where ⌈x⌉ represents the ceiling of x.
+// For more information, refer to: https://en.wikipedia.org/wiki/Logarithmic_scale
+func LogScale(val int) int {
+	bitlen := bits.Len(uint(val - 1))
+	return 1 << bitlen
 }
