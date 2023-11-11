@@ -121,6 +121,77 @@ func (sync *synchronizer) moveConsensusToNewHeight() {
 	}
 }
 
+func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
+	h := sync.handlers[msg.Type()]
+	if h == nil {
+		sync.logger.Warn("invalid message type: %v", msg.Type())
+		return nil
+	}
+	bdl := h.PrepareBundle(msg)
+	if bdl != nil {
+		// Bundles will be carried through LibP2P.
+		// In future we might support other libraries.
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P)
+
+		switch sync.state.Genesis().ChainType() {
+		case genesis.Mainnet:
+			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
+		case genesis.Testnet:
+			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
+		default:
+			// It's localnet and for testing purpose only
+		}
+
+		return bdl
+	}
+	return nil
+}
+
+func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
+	bdl := sync.prepareBundle(msg)
+	if bdl != nil {
+		data, _ := bdl.Encode()
+		sync.peerSet.UpdateLastSent(to)
+		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
+
+		err := sync.network.SendTo(data, to)
+		if err != nil {
+			return err
+		}
+		sync.logger.Info("sending bundle to a peer",
+			"bundle", bdl, "to", to)
+	}
+	return nil
+}
+
+func (sync *synchronizer) broadcast(msg message.Message) {
+	bdl := sync.prepareBundle(msg)
+	if bdl != nil {
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
+
+		data, _ := bdl.Encode()
+		err := sync.network.Broadcast(data, msg.Type().TopicID())
+		if err != nil {
+			sync.logger.Error("error on broadcasting bundle", "bundle", bdl, "error", err)
+		} else {
+			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
+		}
+		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), nil)
+	}
+}
+
+func (sync *synchronizer) SelfID() peer.ID {
+	return sync.network.SelfID()
+}
+
+func (sync *synchronizer) Moniker() string {
+	return sync.config.Moniker
+}
+
+func (sync *synchronizer) PeerSet() *peerset.PeerSet {
+	return sync.peerSet
+}
+
 func (sync *synchronizer) sayHello(to peer.ID) error {
 	services := []int{}
 	if sync.config.NodeNetwork {
@@ -298,77 +369,6 @@ func (sync *synchronizer) updateBlockchain() {
 	}
 }
 
-func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
-	h := sync.handlers[msg.Type()]
-	if h == nil {
-		sync.logger.Warn("invalid message type: %v", msg.Type())
-		return nil
-	}
-	bdl := h.PrepareBundle(msg)
-	if bdl != nil {
-		// Bundles will be carried through LibP2P.
-		// In future we might support other libraries.
-		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P)
-
-		switch sync.state.Genesis().ChainType() {
-		case genesis.Mainnet:
-			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
-		case genesis.Testnet:
-			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-		default:
-			// It's localnet and for testing purpose only
-		}
-
-		return bdl
-	}
-	return nil
-}
-
-func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
-	bdl := sync.prepareBundle(msg)
-	if bdl != nil {
-		data, _ := bdl.Encode()
-		sync.peerSet.UpdateLastSent(to)
-		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
-
-		err := sync.network.SendTo(data, to)
-		if err != nil {
-			return err
-		}
-		sync.logger.Info("sending bundle to a peer",
-			"bundle", bdl, "to", to)
-	}
-	return nil
-}
-
-func (sync *synchronizer) broadcast(msg message.Message) {
-	bdl := sync.prepareBundle(msg)
-	if bdl != nil {
-		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
-
-		data, _ := bdl.Encode()
-		err := sync.network.Broadcast(data, msg.Type().TopicID())
-		if err != nil {
-			sync.logger.Error("error on broadcasting bundle", "bundle", bdl, "error", err)
-		} else {
-			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
-		}
-		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), nil)
-	}
-}
-
-func (sync *synchronizer) SelfID() peer.ID {
-	return sync.network.SelfID()
-}
-
-func (sync *synchronizer) Moniker() string {
-	return sync.config.Moniker
-}
-
-func (sync *synchronizer) PeerSet() *peerset.PeerSet {
-	return sync.peerSet
-}
-
 // downloadBlocks starts downloading blocks from the network.
 func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 	sync.logger.Debug("downloading blocks", "from", from)
@@ -426,7 +426,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		}
 	}
 
-	sync.logger.Warn("not enough peers to download blocks")
+	sync.logger.Debug("not enough peers to download blocks", "sessions", sync.peerSet.NumberOfOpenSessions())
 	return false
 }
 

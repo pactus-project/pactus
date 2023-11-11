@@ -72,8 +72,8 @@ func (ps *PeerSet) NumberOfOpenSessions() int {
 }
 
 func (ps *PeerSet) HasOpenSession(pid peer.ID) bool {
-	ps.lk.Lock()
-	defer ps.lk.Unlock()
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
 
 	for _, s := range ps.sessions {
 		if s.PeerID() == pid {

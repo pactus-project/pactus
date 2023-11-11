@@ -24,7 +24,7 @@ func DefaultConfig() *Config {
 		SessionTimeout:      time.Second * 10,
 		NodeNetwork:         true,
 		BlockPerMessage:     60,
-		MaxOpenSessions:     16,
+		MaxOpenSessions:     8,
 		LatestBlockInterval: 720,
 		Firewall:            firewall.DefaultConfig(),
 	}
