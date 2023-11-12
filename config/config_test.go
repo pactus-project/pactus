@@ -29,7 +29,7 @@ func TestSaveTestnetConfig(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
-	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet")
+	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet-v2")
 	assert.Equal(t, conf.Network.DefaultPort, 21777)
 }
 
