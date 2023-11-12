@@ -6,6 +6,7 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -19,18 +20,17 @@ type networkServer struct {
 func (s *networkServer) GetNetworkInfo(_ context.Context,
 	_ *pactus.GetNetworkInfoRequest,
 ) (*pactus.GetNetworkInfoResponse, error) {
-	peerset := s.sync.PeerSet()
-	peerInfos := make([]*pactus.PeerInfo, peerset.Len())
-	peers := peerset.GetPeerList()
+	ps := s.sync.PeerSet()
+	peerInfos := make([]*pactus.PeerInfo, 0, ps.Len())
 
-	for i, peer := range peers {
-		peerInfos[i] = new(pactus.PeerInfo)
-		p := peerInfos[i]
+	ps.IteratePeers(func(peer *peerset.Peer) {
+		p := new(pactus.PeerInfo)
+		peerInfos = append(peerInfos, p)
 
 		bs, err := cbor.Marshal(peer.Agent)
 		if err != nil {
 			s.logger.Error("couldn't marshal agent", "error", err)
-			continue
+			return
 		}
 		p.Agent = string(bs)
 
@@ -51,17 +51,17 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		for _, key := range peer.ConsensusKeys {
 			p.ConsensusKeys = append(p.ConsensusKeys, key.String())
 		}
-	}
+	})
 
-	sentBytes := peerset.SentBytes()
-	receivedBytes := peerset.ReceivedBytes()
+	sentBytes := ps.SentBytes()
+	receivedBytes := ps.ReceivedBytes()
 
 	return &pactus.GetNetworkInfoResponse{
-		TotalSentBytes:     int32(peerset.TotalSentBytes()),
-		TotalReceivedBytes: int32(peerset.TotalReceivedBytes()),
+		TotalSentBytes:     int32(ps.TotalSentBytes()),
+		TotalReceivedBytes: int32(ps.TotalReceivedBytes()),
 		SentBytes:          *(*map[int32]int64)(unsafe.Pointer(&sentBytes)),
 		ReceivedBytes:      *(*map[int32]int64)(unsafe.Pointer(&receivedBytes)),
-		StartedAt:          peerset.StartedAt().Unix(),
+		StartedAt:          ps.StartedAt().Unix(),
 		Peers:              peerInfos,
 	}, nil
 }

@@ -271,6 +271,10 @@ func (n *network) SelfID() lp2ppeer.ID {
 	return n.host.ID()
 }
 
+func (n *network) Protect(pid lp2pcore.PeerID, tag string) {
+	n.host.ConnManager().Protect(pid, tag)
+}
+
 func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) error {
 	n.logger.Trace("Sending new message", "to", pid)
 	return n.stream.SendRequest(msg, pid)
@@ -296,12 +300,12 @@ func (n *network) Broadcast(msg []byte, topicID TopicID) error {
 	}
 }
 
-func (n *network) JoinGeneralTopic() error {
+func (n *network) JoinGeneralTopic(sp ShouldPropagate) error {
 	if n.generalTopic != nil {
 		n.logger.Debug("already subscribed to general topic")
 		return nil
 	}
-	topic, err := n.gossip.JoinTopic(n.generalTopicName())
+	topic, err := n.gossip.JoinTopic(n.generalTopicName(), sp)
 	if err != nil {
 		return err
 	}
@@ -309,12 +313,12 @@ func (n *network) JoinGeneralTopic() error {
 	return nil
 }
 
-func (n *network) JoinConsensusTopic() error {
+func (n *network) JoinConsensusTopic(sp ShouldPropagate) error {
 	if n.consensusTopic != nil {
 		n.logger.Debug("already subscribed to consensus topic")
 		return nil
 	}
-	topic, err := n.gossip.JoinTopic(n.consensusTopicName())
+	topic, err := n.gossip.JoinTopic(n.consensusTopicName(), sp)
 	if err != nil {
 		return err
 	}

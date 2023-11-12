@@ -16,7 +16,8 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/service"
+	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -305,10 +306,7 @@ func TestDownload(t *testing.T) {
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
-
-		// Let's remove the session
-		td.sync.peerSet.RemoveSession(bdl.Message.(*message.BlocksRequestMessage).SessionID)
+		td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 	})
 
 	t.Run("download request is rejected", func(t *testing.T) {
@@ -321,21 +319,21 @@ func TestDownload(t *testing.T) {
 
 		from := td.sync.state.LastBlockHeight() + 1
 		count := uint32(123)
-		session1 := td.sync.peerSet.OpenSession(pid1, from, count)
+		ssn1 := td.sync.peerSet.OpenSession(pid1, from, count)
 		msg1 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, t.Name(),
-			session1.SessionID(), 1, nil, nil)
+			ssn1.SessionID, 1, nil, nil)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg1, pid1))
 		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 
 		msg2 := bdl.Message.(*message.BlocksRequestMessage)
-		session2 := td.sync.peerSet.FindSession(msg2.SessionID)
+		ssn2 := td.sync.peerSet.FindSession(msg2.SessionID)
 
 		assert.True(t, td.sync.peerSet.HasAnyOpenSession())
-		assert.True(t, session1.IsUncompleted())
+		assert.Equal(t, session.Uncompleted, ssn1.Status)
 		assert.Equal(t, from, msg2.From)
 		assert.Equal(t, count, msg2.Count)
-		assert.Equal(t, session1.SessionID()+1, session2.SessionID())
-		assert.NotEqual(t, pid1, session2.PeerID(), "should re-dwonload from other peers")
+		assert.Equal(t, ssn1.SessionID+1, ssn2.SessionID)
+		assert.NotEqual(t, pid1, ssn2.PeerID, "should re-download from other peers")
 	})
 
 	t.Run("testing send failure", func(t *testing.T) {

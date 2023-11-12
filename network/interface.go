@@ -51,22 +51,20 @@ type Event interface {
 }
 
 // GossipMessage represents message from PubSub module.
-// `Source` is the ID of the peer that initiate the message and
 // `From` is the ID of the peer that we received a message from.
-// They are not necessarily the same, especially in a decentralized network.
 type GossipMessage struct {
-	Source lp2pcore.PeerID
-	From   lp2pcore.PeerID
-	Data   []byte
+	From lp2pcore.PeerID
+	Data []byte
 }
 
 func (*GossipMessage) Type() EventType {
 	return EventTypeGossip
 }
 
-// StreamMessage represents message from stream module.
+// StreamMessage represents message from Stream module.
+// `From` is the ID of the peer that we received a message from.
 type StreamMessage struct {
-	Source lp2pcore.PeerID
+	From   lp2pcore.PeerID
 	Reader io.ReadCloser
 }
 
@@ -94,14 +92,19 @@ func (*DisconnectEvent) Type() EventType {
 	return EventTypeDisconnect
 }
 
+// ShouldPropagate determines whether a message should be disregarded:
+// it will be neither delivered to the application nor forwarded to the network.
+type ShouldPropagate func(*GossipMessage) bool
+
 type Network interface {
 	Start() error
 	Stop()
+	Protect(lp2pcore.PeerID, string)
 	EventChannel() <-chan Event
 	Broadcast([]byte, TopicID) error
 	SendTo([]byte, lp2pcore.PeerID) error
-	JoinGeneralTopic() error
-	JoinConsensusTopic() error
+	JoinGeneralTopic(shouldPropagate ShouldPropagate) error
+	JoinConsensusTopic(shouldPropagate ShouldPropagate) error
 	CloseConnection(pid lp2pcore.PeerID)
 	SelfID() lp2pcore.PeerID
 	NumConnectedPeers() int

@@ -18,20 +18,20 @@ func newHelloAckHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *helloAckHandler) ParseMessage(m message.Message, initiator peer.ID) error {
+func (handler *helloAckHandler) ParseMessage(m message.Message, pid peer.ID) error {
 	msg := m.(*message.HelloAckMessage)
 	handler.logger.Trace("parsing HelloAck message", "msg", msg)
 
 	if msg.ResponseCode != message.ResponseCodeOK {
 		handler.logger.Warn("hello message rejected",
-			"from", initiator, "reason", msg.Reason)
+			"from", pid, "reason", msg.Reason)
 
-		handler.network.CloseConnection(initiator)
+		handler.network.CloseConnection(pid)
 		return nil
 	}
 
-	handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeKnown)
-	handler.logger.Debug("hello message acknowledged", "from", initiator)
+	handler.peerSet.UpdateStatus(pid, peerset.StatusCodeKnown)
+	handler.logger.Debug("hello message acknowledged", "from", pid)
 
 	if msg.Height > handler.state.LastBlockHeight() {
 		handler.updateBlockchain()

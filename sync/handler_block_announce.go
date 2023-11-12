@@ -16,7 +16,7 @@ func newBlockAnnounceHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *blockAnnounceHandler) ParseMessage(m message.Message, initiator peer.ID) error {
+func (handler *blockAnnounceHandler) ParseMessage(m message.Message, pid peer.ID) error {
 	msg := m.(*message.BlockAnnounceMessage)
 	handler.logger.Trace("parsing BlockAnnounce message", "msg", msg)
 
@@ -29,7 +29,7 @@ func (handler *blockAnnounceHandler) ParseMessage(m message.Message, initiator p
 	}
 	handler.moveConsensusToNewHeight()
 
-	handler.peerSet.UpdateHeight(initiator, msg.Height(), msg.Block.Hash())
+	handler.peerSet.UpdateHeight(pid, msg.Height(), msg.Block.Hash())
 	handler.updateBlockchain()
 
 	return nil
