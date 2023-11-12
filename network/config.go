@@ -1,9 +1,10 @@
 package network
 
 import (
+	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
-	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util"
 )
 
 type Config struct {
@@ -19,11 +20,12 @@ type Config struct {
 	EnableMdns           bool     `toml:"enable_mdns"`
 	EnableMetrics        bool     `toml:"enable_metrics"`
 	ForcePrivateNetwork  bool     `toml:"force_private_network"`
-	Bootstrapper         bool     `toml:"bootstrapper"` // TODO: detect it automatically
 
 	// Private configs
-	NetworkName string `toml:"-"`
-	DefaultPort int    `toml:"-"`
+	NetworkName                 string   `toml:"-"`
+	DefaultPort                 int      `toml:"-"`
+	DefaultRelayAddrStrings     []string `toml:"-"`
+	DefaultBootstrapAddrStrings []string `toml:"-"`
 }
 
 func DefaultConfig() *Config {
@@ -40,7 +42,6 @@ func DefaultConfig() *Config {
 		EnableMdns:           false,
 		EnableMetrics:        false,
 		ForcePrivateNetwork:  false,
-		Bootstrapper:         false,
 		DefaultPort:          21888,
 	}
 }
@@ -57,17 +58,18 @@ func validateAddrInfo(addrs ...string) error {
 
 // BasicCheck performs basic checks on the configuration.
 func (conf *Config) BasicCheck() error {
-	if conf.EnableRelay {
-		if len(conf.RelayAddrStrings) == 0 {
-			return errors.Errorf(errors.ErrInvalidConfig, "at least one relay address should be defined")
-		}
-	}
 	if conf.PublicAddrString != "" {
 		if err := validateMultiAddr(conf.PublicAddrString); err != nil {
 			return err
 		}
 	}
 	if err := validateMultiAddr(conf.ListenAddrStrings...); err != nil {
+		return err
+	}
+	if err := validateAddrInfo(conf.DefaultBootstrapAddrStrings...); err != nil {
+		return err
+	}
+	if err := validateAddrInfo(conf.DefaultRelayAddrStrings...); err != nil {
 		return err
 	}
 	if err := validateAddrInfo(conf.RelayAddrStrings...); err != nil {
@@ -90,11 +92,24 @@ func (conf *Config) ListenAddrs() []multiaddr.Multiaddr {
 }
 
 func (conf *Config) RelayAddrInfos() []lp2ppeer.AddrInfo {
-	addrInfos, _ := MakeAddrInfos(conf.RelayAddrStrings)
+	addrs := util.Merge(conf.DefaultRelayAddrStrings, conf.RelayAddrStrings)
+	addrInfos, _ := MakeAddrInfos(addrs)
 	return addrInfos
 }
 
 func (conf *Config) BootstrapAddrInfos() []lp2ppeer.AddrInfo {
-	addrInfos, _ := MakeAddrInfos(conf.BootstrapAddrStrings)
+	addrs := util.Merge(conf.DefaultBootstrapAddrStrings, conf.BootstrapAddrStrings)
+	addrInfos, _ := MakeAddrInfos(addrs)
 	return addrInfos
+}
+
+func (conf *Config) IsBootstrapper(pid lp2pcore.PeerID) bool {
+	addrInfos := conf.BootstrapAddrInfos()
+	for _, ai := range addrInfos {
+		if ai.ID == pid {
+			return true
+		}
+	}
+
+	return false
 }

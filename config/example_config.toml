@@ -71,10 +71,6 @@
   # Default is false.
  ## force_private_network = false
 
-  # `bootstrapper` runs the node in bootstrap mode.
-  # Default is false.
- ## bootstrapper = false
-
 # `sync` contains configuration of sync module.
 [sync]
 

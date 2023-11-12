@@ -168,7 +168,6 @@ func TestNetwork(t *testing.T) {
 
 	// Bootstrap node
 	confB := testConfig()
-	confB.Bootstrapper = true
 	confB.ListenAddrStrings = []string{
 		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", bootstrapPort),
 	}
