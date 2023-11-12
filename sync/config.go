@@ -16,7 +16,7 @@ type Config struct {
 	Firewall       *firewall.Config `toml:"firewall"`
 
 	// Private configs
-	MaxOpenSessions     int    `toml:"-"`
+	MaxSessions         int    `toml:"-"`
 	LatestBlockInterval uint32 `toml:"-"`
 	BlockPerMessage     uint32 `toml:"-"`
 }
@@ -27,7 +27,7 @@ func DefaultConfig() *Config {
 		NodeNetwork:         true,
 		NodeGossip:          false,
 		BlockPerMessage:     60,
-		MaxOpenSessions:     8,
+		MaxSessions:         8,
 		LatestBlockInterval: 720,
 		Firewall:            firewall.DefaultConfig(),
 	}

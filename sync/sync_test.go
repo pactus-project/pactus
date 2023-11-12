@@ -45,7 +45,7 @@ func testConfig() *Config {
 		SessionTimeout:      time.Second * 1,
 		NodeNetwork:         true,
 		BlockPerMessage:     11,
-		MaxOpenSessions:     8,
+		MaxSessions:         8,
 		LatestBlockInterval: 23,
 		Firewall:            firewall.DefaultConfig(),
 	}

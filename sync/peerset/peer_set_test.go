@@ -162,7 +162,7 @@ func TestOpenSession(t *testing.T) {
 	assert.LessOrEqual(t, ssn.StartedAt, time.Now())
 	assert.True(t, ps.HasOpenSession(pid))
 	assert.False(t, ps.HasOpenSession("peer2"))
-	assert.Equal(t, 1, ps.NumberOfOpenSessions())
+	assert.Equal(t, 1, ps.NumberOfSessions())
 }
 
 func TestFindSession(t *testing.T) {
@@ -180,18 +180,18 @@ func TestFindSession(t *testing.T) {
 	assert.Nil(t, nonExistingSsn)
 }
 
-func TestNumberOfOpenSessions(t *testing.T) {
+func TestNumberOfSessions(t *testing.T) {
 	ps := NewPeerSet(time.Minute)
 
 	// Test when there are no open sessions
-	assert.Equal(t, 0, ps.NumberOfOpenSessions())
+	assert.Equal(t, 0, ps.NumberOfSessions())
 
 	// Test when there are multiple open sessions
 	ps.OpenSession("peer1", 100, 101)
 	ps.OpenSession("peer2", 200, 201)
 	ps.OpenSession("peer3", 300, 301)
 
-	assert.Equal(t, 3, ps.NumberOfOpenSessions())
+	assert.Equal(t, 3, ps.NumberOfSessions())
 }
 
 func TestHasAnyOpenSession(t *testing.T) {
@@ -215,7 +215,7 @@ func TestRemoveAllSessions(t *testing.T) {
 	_ = ps.OpenSession("peer3", 100, 101)
 
 	ps.RemoveAllSessions()
-	assert.Zero(t, ps.NumberOfOpenSessions())
+	assert.Zero(t, ps.NumberOfSessions())
 	assert.False(t, ps.HasAnyOpenSession())
 }
 
@@ -226,7 +226,7 @@ func TestCompletedSession(t *testing.T) {
 	assert.Equal(t, session.Open, ssn.Status)
 
 	ps.SetSessionCompleted(ssn.SessionID)
-	assert.Zero(t, ps.NumberOfOpenSessions())
+	assert.Equal(t, 1, ps.NumberOfSessions())
 	assert.False(t, ps.HasAnyOpenSession())
 	assert.Equal(t, session.Completed, ssn.Status)
 }
@@ -238,7 +238,7 @@ func TestUncompletedSession(t *testing.T) {
 	assert.Equal(t, session.Open, ssn.Status)
 
 	ps.SetSessionUncompleted(ssn.SessionID)
-	assert.Zero(t, ps.NumberOfOpenSessions())
+	assert.Equal(t, 1, ps.NumberOfSessions())
 	assert.False(t, ps.HasAnyOpenSession())
 	assert.Equal(t, session.Uncompleted, ssn.Status)
 }
@@ -251,7 +251,7 @@ func TestExpireSessions(t *testing.T) {
 	time.Sleep(timeout)
 
 	ps.SetExpiredSessionsAsUncompleted()
-	assert.Zero(t, ps.NumberOfOpenSessions())
+	assert.Equal(t, 1, ps.NumberOfSessions())
 	assert.False(t, ps.HasAnyOpenSession())
 	assert.Equal(t, session.Uncompleted, ssn.Status)
 }
