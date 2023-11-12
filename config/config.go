@@ -104,7 +104,7 @@ func DefaultConfigTestnet() *Config {
 		"/ip4/0.0.0.0/tcp/21777", "/ip4/0.0.0.0/udp/21777/quic-v1",
 		"/ip6/::/tcp/21777", "/ip6/::/udp/21777/quic-v1",
 	}
-	conf.Network.BootstrapAddrStrings = []string{
+	conf.Network.DefaultBootstrapAddrStrings = []string{
 		"/ip4/94.101.184.118/tcp/21777/p2p/12D3KooWCwQZt8UriVXobQHPXPR8m83eceXVoeT6brPNiBHomebc",
 		"/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
 		"/ip4/13.115.190.71/tcp/21777/p2p/12D3KooWBGNEH8NqdK1UddSnPV1yRHGLYpaQUcnujC24s7YNWPiq",
@@ -116,13 +116,14 @@ func DefaultConfigTestnet() *Config {
 		"/dns/pactus.nodesync.top/tcp/21777/p2p/12D3KooWP25ejVsd7cL5DvWAPwEu4JTUwnPniHBf4w93tgSezVt8", // NodeSync.Top (lthuan2011@gmail.com)
 		"/ip4/95.217.89.202/tcp/21777/p2p/12D3KooWMsi5oYkbbpyyXctmPXzF8UZu2pCvKPRZGyvymhN9BzTD",       // CodeBlockLabs (emailbuatcariduit@gmail.com)
 	}
-	conf.Network.RelayAddrStrings = []string{
+	conf.Network.DefaultRelayAddrStrings = []string{
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/188.121.102.178/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
 	conf.Network.MinConns = 16
 	conf.Network.MaxConns = 32
-	conf.Network.EnableNAT = false
+	conf.Network.EnableNATService = false
+	conf.Network.EnableUPnP = false
 	conf.Network.EnableRelay = true
 	conf.Network.NetworkName = "pactus-testnet"
 	conf.Network.DefaultPort = 21777
@@ -142,7 +143,8 @@ func DefaultConfigLocalnet() *Config {
 	conf := defaultConfig()
 	conf.Network.ListenAddrStrings = []string{}
 	conf.Network.EnableRelay = false
-	conf.Network.EnableNAT = false
+	conf.Network.EnableNATService = false
+	conf.Network.EnableUPnP = false
 	conf.Network.BootstrapAddrStrings = []string{}
 	conf.Network.MinConns = 0
 	conf.Network.MaxConns = 0

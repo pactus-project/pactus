@@ -22,11 +22,11 @@ type gossipService struct {
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	config *Config, log *logger.SubLogger,
+	isBootstrapper bool, log *logger.SubLogger,
 ) *gossipService {
 	opts := []lp2pps.Option{}
 
-	if config.Bootstrapper {
+	if isBootstrapper {
 		// enable Peer eXchange on bootstrappers
 		opts = append(opts, lp2pps.WithPeerExchange(true))
 	}
