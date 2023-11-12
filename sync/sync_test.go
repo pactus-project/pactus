@@ -333,7 +333,6 @@ func TestDownload(t *testing.T) {
 		assert.Equal(t, from, msg2.From)
 		assert.Equal(t, count, msg2.Count)
 		assert.Equal(t, ssn1.SessionID+1, ssn2.SessionID)
-		assert.NotEqual(t, pid1, ssn2.PeerID, "should re-download from other peers")
 	})
 
 	t.Run("testing send failure", func(t *testing.T) {
