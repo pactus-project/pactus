@@ -26,5 +26,5 @@ func (handler *voteHandler) ParseMessage(m message.Message, _ peer.ID) error {
 }
 
 func (handler *voteHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	return bundle.NewBundle(handler.SelfID(), m)
+	return bundle.NewBundle(m)
 }

@@ -13,8 +13,9 @@ func TestParsingVoteMessages(t *testing.T) {
 	t.Run("Parsing vote message", func(t *testing.T) {
 		v, _ := td.GenerateTestPrecommitVote(1, 0)
 		msg := message.NewVoteMessage(v)
+		pid := td.RandPeerID()
 
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, td.RandPeerID()))
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 		assert.Equal(t, td.consMgr.PickRandomVote(0).Hash(), v.Hash())
 	})
 }

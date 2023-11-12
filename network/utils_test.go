@@ -3,6 +3,7 @@ package network
 import (
 	"testing"
 
+	lp2pspb "github.com/libp2p/go-libp2p-pubsub/pb"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/stretchr/testify/assert"
@@ -152,4 +153,11 @@ func TestSubnetsToFilters(t *testing.T) {
 	assert.False(t, f.AddrBlocked(ma1))
 	assert.True(t, f.AddrBlocked(ma2))
 	assert.False(t, f.AddrBlocked(ma3))
+}
+
+func TestMessageIdFunc(t *testing.T) {
+	m := &lp2pspb.Message{Data: []byte("zarb")}
+	id := MessageIDFunc(m)
+
+	assert.Equal(t, "\x12\xb3\x89\x77\xf2\xd6\x7f\x06\xf0\xc0\xcd\x54\xaa\xf7\x32\x4c\xf4\xfe\xe1\x84", id)
 }

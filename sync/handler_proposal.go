@@ -26,5 +26,5 @@ func (handler *proposalHandler) ParseMessage(m message.Message, _ peer.ID) error
 }
 
 func (handler *proposalHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	return bundle.NewBundle(handler.SelfID(), m)
+	return bundle.NewBundle(m)
 }

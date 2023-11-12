@@ -99,7 +99,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 }
 
 func (handler *blocksRequestHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	return bundle.NewBundle(handler.SelfID(), m)
+	return bundle.NewBundle(m)
 }
 
 func (handler *blocksRequestHandler) respond(msg *message.BlocksResponseMessage, to peer.ID) error {

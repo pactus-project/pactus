@@ -249,11 +249,11 @@ func (sync *synchronizer) receiveLoop() {
 
 func (sync *synchronizer) processGossipMessage(msg *network.GossipMessage) {
 	bdl := sync.firewall.OpenGossipBundle(msg.Data, msg.From)
-	err := sync.processIncomingBundle(bdl)
+	err := sync.processIncomingBundle(bdl, msg.From)
 	if err != nil {
 		sync.logger.Warn("error on parsing a Gossip bundle",
 			"from", msg.From, "bundle", bdl, "error", err)
-		sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
+		sync.peerSet.IncreaseInvalidBundlesCounter(msg.From)
 	}
 }
 
@@ -263,11 +263,11 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 		// TODO: write test for me
 		sync.logger.Warn("error on closing stream", "error", err, "source", msg.From)
 	}
-	err := sync.processIncomingBundle(bdl)
+	err := sync.processIncomingBundle(bdl, msg.From)
 	if err != nil {
 		sync.logger.Warn("error on parsing a Stream bundle",
 			"source", msg.From, "bundle", bdl, "error", err)
-		sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
+		sync.peerSet.IncreaseInvalidBundlesCounter(msg.From)
 	}
 }
 
@@ -287,19 +287,18 @@ func (sync *synchronizer) processDisconnectEvent(de *network.DisconnectEvent) {
 	sync.peerSet.UpdateStatus(de.PeerID, peerset.StatusCodeDisconnected)
 }
 
-func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle) error {
+func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle, from peer.ID) error {
 	if bdl == nil {
 		return nil
 	}
 
-	sync.logger.Info("received a bundle",
-		"initiator", bdl.Initiator, "bundle", bdl)
+	sync.logger.Info("received a bundle", "from", from, "bundle", bdl)
 	h := sync.handlers[bdl.Message.Type()]
 	if h == nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid message type: %v", bdl.Message.Type())
 	}
 
-	return h.ParseMessage(bdl.Message, bdl.Initiator)
+	return h.ParseMessage(bdl.Message, from)
 }
 
 func (sync *synchronizer) String() string {

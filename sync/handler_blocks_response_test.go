@@ -1,24 +1,16 @@
 package sync
 
 import (
-	"fmt"
 	"io"
 	"testing"
 	"time"
 
-	"github.com/pactus-project/pactus/consensus"
-	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/network"
-	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/sync/peerset/service"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -53,8 +45,9 @@ func TestInvalidBlockData(t *testing.T) {
 	for _, test := range tests {
 		pid := td.RandPeerID()
 		sid := td.RandInt(1000)
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
-			lastHeight+1, [][]byte{test.data}, cert)
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks,
+			message.ResponseCodeMoreBlocks.String(),
+			sid, lastHeight+1, [][]byte{test.data}, cert)
 
 		err := td.receivingNewMessage(td.sync, msg, pid)
 		assert.ErrorIs(t, err, test.err)
@@ -150,90 +143,26 @@ func TestStrippedPublicKey(t *testing.T) {
 // test nodes, Alice and Bob. In real-world scenarios, multiple nodes are typically
 // involved, but the procedure remains similar.
 func TestSyncing(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	configAlice := testConfig()
-	configBob := testConfig()
-
-	valKeyAlice := []*bls.ValidatorKey{ts.RandValKey()}
-	valKeyBob := []*bls.ValidatorKey{ts.RandValKey()}
-	stateAlice := state.MockingState(ts)
-	stateBob := state.MockingState(ts)
-	consMgrAlice, _ := consensus.MockingManager(ts, valKeyAlice)
-	consMgrBob, _ := consensus.MockingManager(ts, valKeyBob)
-	broadcastChAlice := make(chan message.Message, 1000)
-	broadcastChBob := make(chan message.Message, 1000)
-	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
-	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
-
-	configBob.NodeNetwork = true
-	networkAlice.AddAnotherNetwork(networkBob)
-	networkBob.AddAnotherNetwork(networkAlice)
+	ts, syncAlice, networkAlice, syncBob, networkBob := makeAliceAndBobNetworks(t)
 
 	// Adding 100 blocks for Bob
-	blockInterval := stateBob.Genesis().Params().BlockInterval()
+	blockInterval := syncBob.state.Genesis().Params().BlockInterval()
 	blockTime := util.RoundNow(int(blockInterval.Seconds()))
 	for i := uint32(0); i < 100; i++ {
 		blk, cert := ts.GenerateTestBlockWithTime(i+1, blockTime)
-		assert.NoError(t, stateBob.CommitBlock(blk, cert))
+		assert.NoError(t, syncBob.state.CommitBlock(blk, cert))
 
 		blockTime = blockTime.Add(blockInterval)
 	}
 
-	sync1, err := NewSynchronizer(configAlice,
-		valKeyAlice,
-		stateAlice,
-		consMgrAlice,
-		networkAlice,
-		broadcastChAlice,
-	)
-	assert.NoError(t, err)
-	syncAlice := sync1.(*synchronizer)
-
-	sync2, err := NewSynchronizer(configBob,
-		valKeyBob,
-		stateBob,
-		consMgrBob,
-		networkBob,
-		broadcastChBob,
-	)
-	assert.NoError(t, err)
-	syncBob := sync2.(*synchronizer)
-
-	// -------------------------------
-	// Better logging during testing
-	overrideLogger := func(sync *synchronizer, name string) {
-		sync.logger = logger.NewSubLogger("_sync",
-			testsuite.NewOverrideStringer(fmt.Sprintf("%s - %s: ", name, t.Name()), sync))
-	}
-
-	overrideLogger(syncAlice, "Alice")
-	overrideLogger(syncBob, "Bob")
-	// -------------------------------
-
-	assert.NoError(t, syncAlice.Start())
-	assert.NoError(t, syncBob.Start())
-
-	// Verify that Hello messages are exchanged between Alice and Bob
-	assert.NoError(t, syncAlice.sayHello(syncBob.SelfID()))
-	assert.NoError(t, syncBob.sayHello(syncAlice.SelfID()))
-
-	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
-	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
-
-	shouldPublishMessageWithThisType(t, networkBob, message.TypeHelloAck)
-	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHelloAck)
-
-	// Ensure peers are connected and block heights are correct
-	require.Eventually(t, func() bool {
-		return syncAlice.PeerSet().Len() == 1 &&
-			syncBob.PeerSet().Len() == 1
-	}, time.Second, 100*time.Millisecond)
-
-	require.Equal(t, peerset.StatusCodeKnown, syncAlice.PeerSet().GetPeer(syncBob.SelfID()).Status)
-	require.Equal(t, peerset.StatusCodeKnown, syncBob.PeerSet().GetPeer(syncAlice.SelfID()).Status)
 	assert.Equal(t, uint32(0), syncAlice.state.LastBlockHeight())
 	assert.Equal(t, uint32(100), syncBob.state.LastBlockHeight())
+
+	// Announcing a block
+	blk, cert := ts.GenerateTestBlock(ts.RandHeight())
+	msg := message.NewBlockAnnounceMessage(blk, cert)
+	syncBob.broadcast(msg)
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeBlockAnnounce)
 
 	// Perform block syncing
 	shouldNotPublishMessageWithThisType(t, networkBob, message.TypeBlocksRequest)
