@@ -18,6 +18,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func alwaysPropagate(_ *GossipMessage) bool {
+	return true
+}
+
 // Original code from:
 // https://github.com/libp2p/go-libp2p/blob/master/p2p/host/autorelay/autorelay_test.go
 func makeTestRelay(t *testing.T) lp2phost.Host {
@@ -55,7 +59,7 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 		fmt.Sprintf("%s - %s: ", net.SelfID().ShortString(), t.Name()), net))
 
 	assert.NoError(t, net.Start())
-	assert.NoError(t, net.JoinGeneralTopic())
+	assert.NoError(t, net.JoinGeneralTopic(alwaysPropagate))
 
 	return net
 }
@@ -128,7 +132,7 @@ func TestStoppingNetwork(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, net.Start())
-	assert.NoError(t, net.JoinGeneralTopic())
+	assert.NoError(t, net.JoinGeneralTopic(alwaysPropagate))
 
 	// Should stop peacefully
 	net.Stop()
@@ -228,10 +232,10 @@ func TestNetwork(t *testing.T) {
 		lp2p.ForceReachabilityPrivate(),
 	})
 
-	assert.NoError(t, networkB.JoinConsensusTopic())
-	assert.NoError(t, networkP.JoinConsensusTopic())
-	assert.NoError(t, networkM.JoinConsensusTopic())
-	assert.NoError(t, networkN.JoinConsensusTopic())
+	assert.NoError(t, networkB.JoinConsensusTopic(alwaysPropagate))
+	assert.NoError(t, networkP.JoinConsensusTopic(alwaysPropagate))
+	assert.NoError(t, networkM.JoinConsensusTopic(alwaysPropagate))
+	assert.NoError(t, networkN.JoinConsensusTopic(alwaysPropagate))
 	// Network X doesn't join the consensus topic
 
 	time.Sleep(2 * time.Second)
@@ -254,11 +258,6 @@ func TestNetwork(t *testing.T) {
 		eN := shouldReceiveEvent(t, networkN, EventTypeGossip).(*GossipMessage)
 		eX := shouldReceiveEvent(t, networkX, EventTypeGossip).(*GossipMessage)
 
-		assert.Equal(t, eB.Source, networkP.SelfID())
-		assert.Equal(t, eM.Source, networkP.SelfID())
-		assert.Equal(t, eN.Source, networkP.SelfID())
-		assert.Equal(t, eX.Source, networkP.SelfID())
-
 		assert.Equal(t, eB.Data, msg)
 		assert.Equal(t, eM.Data, msg)
 		assert.Equal(t, eN.Data, msg)
@@ -275,10 +274,6 @@ func TestNetwork(t *testing.T) {
 		eN := shouldReceiveEvent(t, networkN, EventTypeGossip).(*GossipMessage)
 		shouldNotReceiveEvent(t, networkX) // Not joined the consensus topic
 
-		assert.Equal(t, eB.Source, networkP.SelfID())
-		assert.Equal(t, eM.Source, networkP.SelfID())
-		assert.Equal(t, eN.Source, networkP.SelfID())
-
 		assert.Equal(t, eB.Data, msg)
 		assert.Equal(t, eM.Data, msg)
 		assert.Equal(t, eN.Data, msg)
@@ -290,7 +285,7 @@ func TestNetwork(t *testing.T) {
 		msgM := []byte("test-stream-from-m")
 		require.NoError(t, networkM.SendTo(msgM, networkP.SelfID()))
 		eP := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
-		assert.Equal(t, eP.Source, networkM.SelfID())
+		assert.Equal(t, eP.From, networkM.SelfID())
 		assert.Equal(t, readData(t, eP.Reader, len(msgM)), msgM)
 	})
 
@@ -300,7 +295,7 @@ func TestNetwork(t *testing.T) {
 		msgX := []byte("test-stream-from-x")
 		require.NoError(t, networkX.SendTo(msgX, networkP.SelfID()))
 		eP := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
-		assert.Equal(t, eP.Source, networkX.SelfID())
+		assert.Equal(t, eP.From, networkX.SelfID())
 		assert.Equal(t, readData(t, eP.Reader, len(msgX)), msgX)
 	})
 
@@ -309,7 +304,7 @@ func TestNetwork(t *testing.T) {
 
 		require.NoError(t, networkB.SendTo(msgB, networkP.SelfID()))
 		eB := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
-		assert.Equal(t, eB.Source, networkB.SelfID())
+		assert.Equal(t, eB.From, networkB.SelfID())
 		assert.Equal(t, readData(t, eB.Reader, len(msgB)), msgB)
 	})
 
@@ -410,7 +405,7 @@ func testConnection(t *testing.T, networkP, networkB *network) {
 
 	require.NoError(t, networkP.SendTo(msg, networkB.SelfID()))
 	e := shouldReceiveEvent(t, networkB, EventTypeStream).(*StreamMessage)
-	assert.Equal(t, e.Source, networkP.SelfID())
+	assert.Equal(t, e.From, networkP.SelfID())
 	assert.Equal(t, readData(t, e.Reader, len(msg)), msg)
 
 	networkB.Stop()

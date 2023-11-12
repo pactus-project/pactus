@@ -40,18 +40,19 @@ func (mock *MockNetwork) Start() error {
 	return nil
 }
 
-func (mock *MockNetwork) Stop() {
-}
+func (mock *MockNetwork) Stop() {}
+
+func (mock *MockNetwork) Protect(_ lp2pcore.PeerID, _ string) {}
 
 func (mock *MockNetwork) EventChannel() <-chan Event {
 	return mock.EventCh
 }
 
-func (mock *MockNetwork) JoinGeneralTopic() error {
+func (mock *MockNetwork) JoinGeneralTopic(_ ShouldPropagate) error {
 	return nil
 }
 
-func (mock *MockNetwork) JoinConsensusTopic() error {
+func (mock *MockNetwork) JoinConsensusTopic(_ ShouldPropagate) error {
 	return nil
 }
 
@@ -83,15 +84,14 @@ func (mock *MockNetwork) SendToOthers(data []byte, target *lp2ppeer.ID) {
 		if target == nil {
 			// Broadcast message
 			event := &GossipMessage{
-				Source: mock.ID,
-				From:   mock.ID,
-				Data:   data,
+				From: mock.ID,
+				Data: data,
 			}
 			net.EventCh <- event
 		} else if net.ID == *target {
 			// direct message
 			event := &StreamMessage{
-				Source: mock.ID,
+				From:   mock.ID,
 				Reader: io.NopCloser(bytes.NewReader(data)),
 			}
 			net.EventCh <- event

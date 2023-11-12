@@ -8,7 +8,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/service"
+	"github.com/pactus-project/pactus/sync/peerset/service"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"

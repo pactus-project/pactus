@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/service"
+	"github.com/pactus-project/pactus/sync/peerset/service"
 	"github.com/stretchr/testify/assert"
 )
 

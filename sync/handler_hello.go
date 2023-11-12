@@ -22,7 +22,7 @@ func newHelloHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) error {
+func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error {
 	msg := m.(*message.HelloMessage)
 	handler.logger.Trace("parsing Hello message", "msg", msg)
 
@@ -31,18 +31,18 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 		"moniker", msg.Moniker,
 		"services", msg.Services)
 
-	handler.peerSet.UpdateInfo(initiator,
+	handler.peerSet.UpdateInfo(pid,
 		msg.Moniker,
 		msg.Agent,
 		msg.PublicKeys,
 		msg.Services)
 
-	if msg.PeerID != initiator {
+	if msg.PeerID != pid {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("peer ID is not matched, expected: %v, got: %v",
-				msg.PeerID, initiator), 0)
+				msg.PeerID, pid), 0)
 
-		return handler.acknowledge(response, initiator)
+		return handler.acknowledge(response, pid)
 	}
 
 	if msg.GenesisHash != handler.state.Genesis().Hash() {
@@ -50,21 +50,25 @@ func (handler *helloHandler) ParseMessage(m message.Message, initiator peer.ID) 
 			fmt.Sprintf("invalid genesis hash, expected: %v, got: %v",
 				handler.state.Genesis().Hash(), msg.GenesisHash), 0)
 
-		return handler.acknowledge(response, initiator)
+		return handler.acknowledge(response, pid)
 	}
 
 	if math.Abs(time.Since(msg.MyTime()).Seconds()) > 10 {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
 			"time discrepancy exceeds 10 seconds", 0)
 
-		return handler.acknowledge(response, initiator)
+		return handler.acknowledge(response, pid)
 	}
 
-	handler.peerSet.UpdateHeight(initiator, msg.Height, msg.BlockHash)
-	handler.peerSet.UpdateStatus(initiator, peerset.StatusCodeKnown)
+	handler.peerSet.UpdateHeight(pid, msg.Height, msg.BlockHash)
+	handler.peerSet.UpdateStatus(pid, peerset.StatusCodeKnown)
+
+	if msg.Services.IsGossip() {
+		handler.network.Protect(msg.PeerID, "GOSSIP")
+	}
 
 	response := message.NewHelloAckMessage(message.ResponseCodeOK, "Ok", handler.state.LastBlockHeight())
-	return handler.acknowledge(response, initiator)
+	return handler.acknowledge(response, pid)
 }
 
 func (handler *helloHandler) PrepareBundle(m message.Message) *bundle.Bundle {

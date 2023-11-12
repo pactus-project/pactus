@@ -12,8 +12,6 @@ const (
 	meta  string = "beta"
 )
 
-var build string
-
 func Agent() string {
 	return fmt.Sprintf("pactus/%s", Version())
 }
@@ -23,10 +21,6 @@ func Version() string {
 
 	if meta != "" {
 		version = fmt.Sprintf("%s-%s", version, meta)
-	}
-
-	if build != "" {
-		version = fmt.Sprintf("%s+%s", version, build)
 	}
 
 	return version
