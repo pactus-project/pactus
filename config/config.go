@@ -125,7 +125,7 @@ func DefaultConfigTestnet() *Config {
 	conf.Network.EnableNATService = false
 	conf.Network.EnableUPnP = false
 	conf.Network.EnableRelay = true
-	conf.Network.NetworkName = "pactus-testnet"
+	conf.Network.NetworkName = "pactus-testnet-v2"
 	conf.Network.DefaultPort = 21777
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "[::]:50052"
