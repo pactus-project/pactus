@@ -20,6 +20,7 @@ Please follow these guidelines when contributing code to the project:
 
 The following commands are available in the Makefile:
 
+- `make build` compiles the code into executable binaries.
 - `make devtools` installs required development tools.
 - `make fmt` formats the code according to the Go standards.
 - `make check` runs various checks on the code, including formatting and linting.

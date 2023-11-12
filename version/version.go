@@ -9,7 +9,7 @@ const (
 	major uint   = 0
 	minor uint   = 17
 	patch uint   = 0
-	meta  string = "beta"
+	meta  string = ""
 )
 
 func Agent() string {

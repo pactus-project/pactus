@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.17.0](https://github.com/pactus-project/pactus/compare/v0.16.0...v0.17.0)(2023-11-12)
+
+### Feat
+
+- **network**: default configs for bootstrap and relay peers ([#812](https://github.com/pactus-project/pactus/pull/812))
+- introducing node gossip type ([#811](https://github.com/pactus-project/pactus/pull/811))
+- **sync**: adding remote address to the peer info ([#804](https://github.com/pactus-project/pactus/pull/804))
+- **network**: adding public address to factory ([#795](https://github.com/pactus-project/pactus/pull/795))
+- **network**: filter private ips ([#793](https://github.com/pactus-project/pactus/pull/793))
+
+### Fix
+
+- upgrading Testnet ([#814](https://github.com/pactus-project/pactus/pull/814))
+- **sync**: prevent opening sessions indefinitely ([#813](https://github.com/pactus-project/pactus/pull/813))
+- **execution**: fixing mistake on calculating unbonded power ([#806](https://github.com/pactus-project/pactus/pull/806))
+- **network**: check connection threshold on gater ([#803](https://github.com/pactus-project/pactus/pull/803))
+- **network**: no transient connection ([#799](https://github.com/pactus-project/pactus/pull/799))
+- not close connection for bootstrap nodes ([#792](https://github.com/pactus-project/pactus/pull/792))
+
+### Refactor
+
+- **sync**: refactoring sync process ([#807](https://github.com/pactus-project/pactus/pull/807))
+
 ## [0.16.0](https://github.com/pactus-project/pactus/compare/v0.15.0...v0.16.0)(2023-10-29)
 
 ### Feat
