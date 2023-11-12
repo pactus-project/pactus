@@ -384,11 +384,7 @@ func (sync *synchronizer) updateBlockchain() {
 func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 	sync.logger.Debug("downloading blocks", "from", from)
 
-	for i := 0; i < sync.config.MaxOpenSessions; i++ {
-		if sync.peerSet.NumberOfOpenSessions() >= sync.config.MaxOpenSessions {
-			return
-		}
-
+	for i := sync.peerSet.NumberOfSessions(); i < sync.config.MaxSessions; i++ {
 		count := sync.config.LatestBlockInterval
 		sent := sync.sendBlockRequestToRandomPeer(from, count, onlyNodeNetwork)
 		if !sent {
@@ -400,7 +396,7 @@ func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 }
 
 func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyNodeNetwork bool) bool {
-	for i := 0; i < sync.config.MaxOpenSessions; i++ {
+	for i := sync.peerSet.NumberOfSessions(); i < sync.config.MaxSessions; i++ {
 		p := sync.peerSet.GetRandomPeer()
 		if p == nil {
 			break
@@ -440,7 +436,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		}
 	}
 
-	sync.logger.Debug("not enough peers to download blocks",
+	sync.logger.Debug("unable to open a new session",
 		"stats", sync.peerSet.SessionStats())
 	return false
 }

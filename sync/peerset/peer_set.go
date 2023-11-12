@@ -66,22 +66,11 @@ func (ps *PeerSet) FindSession(sid int) *session.Session {
 	return nil
 }
 
-func (ps *PeerSet) NumberOfOpenSessions() int {
+func (ps *PeerSet) NumberOfSessions() int {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	return ps.numberOfOpenSessions()
-}
-
-func (ps *PeerSet) numberOfOpenSessions() int {
-	count := 0
-	for _, ssn := range ps.sessions {
-		if ssn.Status == session.Open {
-			count++
-		}
-	}
-
-	return count
+	return len(ps.sessions)
 }
 
 func (ps *PeerSet) HasOpenSession(pid peer.ID) bool {
@@ -142,7 +131,13 @@ func (ps *PeerSet) HasAnyOpenSession() bool {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	return ps.numberOfOpenSessions() != 0
+	for _, ssn := range ps.sessions {
+		if ssn.Status == session.Open {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (ps *PeerSet) SetExpiredSessionsAsUncompleted() {
