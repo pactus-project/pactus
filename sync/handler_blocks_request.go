@@ -116,8 +116,7 @@ func (handler *blocksRequestHandler) respond(msg *message.BlocksResponseMessage,
 		return nil
 	}
 
-	handler.logger.Info("responding block request message", "msg", msg,
-		"to", to)
+	handler.logger.Info("responding block request message", "msg", msg, "to", to)
 
 	return handler.sendTo(msg, to)
 }
