@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.17.0](https://github.com/pactus-project/pactus/compare/v0.16.0...v0.17.0)(2023-11-12)
+## [0.17.0](https://github.com/pactus-project/pactus/compare/v0.16.0...v0.17.0) (2023-11-12)
 
 ### Feat
 
@@ -23,7 +23,7 @@
 
 - **sync**: refactoring sync process ([#807](https://github.com/pactus-project/pactus/pull/807))
 
-## [0.16.0](https://github.com/pactus-project/pactus/compare/v0.15.0...v0.16.0)(2023-10-29)
+## [0.16.0](https://github.com/pactus-project/pactus/compare/v0.15.0...v0.16.0) (2023-10-29)
 
 ### Feat
 
@@ -48,7 +48,7 @@
 
 - **network**: refactoring peer manager ([#787](https://github.com/pactus-project/pactus/pull/787))
 
-## [0.15.0](https://github.com/pactus-project/pactus/compare/v0.13.0...v0.15.0)(2023-10-15)
+## [0.15.0](https://github.com/pactus-project/pactus/compare/v0.13.0...v0.15.0) (2023-10-15)
 
 ### Feat
 
@@ -130,7 +130,7 @@
 - Using Generics for calculating Min and Max for numeric type #604 ([#609](https://github.com/pactus-project/pactus/pull/609))
 - Updating LRU cache to version 2 #514 ([#602](https://github.com/pactus-project/pactus/pull/602))
 
-## [0.13.0](https://github.com/pactus-project/pactus/compare/v0.12.0...v0.13.0)(2023-06-30)
+## [0.13.0](https://github.com/pactus-project/pactus/compare/v0.12.0...v0.13.0) (2023-06-30)
 
 ### Fix
 
@@ -144,7 +144,7 @@
 
 - implementing TestSuite ([#535](https://github.com/pactus-project/pactus/pull/535))
 
-## [0.12.0](https://github.com/pactus-project/pactus/compare/v0.11.0...v0.12.0)(2023-06-19)
+## [0.12.0](https://github.com/pactus-project/pactus/compare/v0.11.0...v0.12.0) (2023-06-19)
 
 ### Feat
 
