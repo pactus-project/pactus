@@ -15,13 +15,14 @@
 [store]
 
   # `path` specifies the directory where blockchain data will be stored.
-  # Default is data
+  # Default is `"data"`.
  ## path = "data"
 
 # `network` contains configuration options for the network module, which manages communication between nodes.
 [network]
 
   # `network_key` specifies the private key filename to use for node authentication and encryption in the p2p protocol.
+  # Default is `"network_key"`.
  ## network_key = "network_key"
 
   # `public_addr` is the the address that is public and accessible to other nodes.
@@ -39,36 +40,39 @@
  ## bootstrap_addrs = []
 
   # `min_connections` is the minimum number of connections that the Pactus node should maintain.
-  # Default is 16
+  # Default is `16`.
  ## min_connections = 16
 
   # `max_connections` is the maximum number of connections that the Pactus node should maintain.
-  # Default is 32
+  # Default is `32`.
  ## max_connections = 32
 
-  # `enable_nat` indicates whether NAT service should be enabled or not.
-  # NAT service allows many machines to share a single public address.
-  # Default is false.
- ## enable_nat = false
+  # `enable_nat_service` provides a service to other peer for determining their reachability status.
+  # Default is `false`.
+ ## enable_nat_service = false
+
+  # `enable_upnp` will attempt to open a port in your network's firewall using UPnP.
+  # Default is `false`.
+ ## enable_upnp = false
 
   # `enable_relay` indicates whether relay service  should be enabled or not.
   # Relay service is a transport protocol that routes traffic between two peers over a third-party “relay” peer.
-  # Default is false.
+  # Default is `false`.
  ## enable_relay = false
 
   # `enable_mdns` indicates whether MDNS should be enabled or not.
   # MDNS is a protocol to discover local peers quickly and efficiently.
-  # Default is false.
+  # Default is `false`.
  ## enable_mdns = false
 
   # `enable_metrics` provides the network metrics for the Prometheus software.
-  # Default is false.
+  # Default is `false`.
  ## enable_metrics = false
 
   # `force_private_network` forces the connection to nodes within a private network.
   # A private network is a computer network that uses private addresses.
   # Read more about private networks here: https://en.wikipedia.org/wiki/Private_network
-  # Default is false.
+  # Default is `false`.
  ## force_private_network = false
 
 # `sync` contains configuration of sync module.
@@ -78,28 +82,28 @@
  ## moniker = ""
 
   # `session_timeout` is a timeout for a session to be opened.
-  # Default is 10 seconds
+  # Default is `10s`.
  ## session_timeout = "10s"
 
   # `node_network` indicates whether the node is capable of serving the complete blockchain.
-  # Default is true
+  # Default is `true`.
  ## node_network = true
 
   # `node_gossip_experimental` indicates whether the node participates in the gossiping protocol.
-  # Default is false
+  # Default is `false`.
  ## node_gossip_experimental = false
 
   # `sync.firewall` contains configuration options for the sync firewall.
   [sync.firewall]
     # `enable` indicates whether the firewall should be enabled or not.
-    # Default is false
+    # Default is `false`.
    ## enable = false
 
 # `tx_pool` contains configuration options for the transaction pool module.
 [tx_pool]
 
   # `max_size` indicates the maximum number of unconfirmed transactions inside the pool.
-  # Default is 2000
+  # Default is `2000`.
  ## max_size = 2000
 
 # `consensus` contains configuration options for the consensus module.
@@ -107,17 +111,17 @@
 
   # `change_proposer_timeout` describes how long to wait for a proposal in
   # each round before requesting a change of proposer.
-  # Default is 6 seconds.
+  # Default is `6s`.
  ## change_proposer_timeout = "6s"
 
   # `change_proposer_delta` increases `change_proposer_timeout` with each round.
-  # Default is 2 seconds.
+  # Default is `2s`.
  ## change_proposer_delta = "2s"
 
 # `logger` contains configuration options for the logger.
 [logger]
   # `colorful` indicates whether log can be colorful or not.
-  # Default is true.
+  # Default is `true`.
  ## colorful = true
 
   # `logger.levels` contains the level of logger per module.
@@ -138,7 +142,7 @@
 [grpc]
 
   # `enable` indicates whether gRPC service should be enabled or not.
-  # Default is false
+  # Default is `false`.
  ## enable = false
 
   # `listen` is the address to listen for incoming connections for gRPC server.
@@ -149,7 +153,7 @@
   [grpc.gateway]
 
     # `enable` indicates whether gRPCGateway service should be enabled or not.
-    # Default is false
+    # Default is `false`.
    ## enable = false
 
     # `listen` is the address to listen for incoming connections for gRPCGateway server.
@@ -157,14 +161,14 @@
 
     # `enable_cors` indicates whether Cross-Origin Request Sharing (CORS)
     # protection should be enabled or not.
-    # Default is false
+    # Default is `false`.
    ## enable_cors = false
 
 # `http` configuration.
 [http]
 
   # `enable` indicates whether HTTP service should be enabled or not.
-  # Default is false
+  # Default is `false`.
  ## enable = false
 
   # `listen` is the address address to listen for incoming connections for HTTP server.
@@ -174,7 +178,7 @@
 [nanomsg]
 
   # `enable` indicates whether nanomsg service should be enabled or not.
-  # Default is false
+  # Default is `false`.
  ## enable = false
 
   # `listen` is the address to listen for incoming connections for nanomsg server.

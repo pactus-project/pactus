@@ -129,10 +129,16 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		lp2p.ConnectionManager(connMgr),
 	)
 
-	if conf.EnableNAT {
-		log.Info("nat enabled")
+	if conf.EnableNATService {
+		log.Info("Nat service enabled")
 		opts = append(opts,
 			lp2p.EnableNATService(),
+		)
+	}
+
+	if conf.EnableUPnP {
+		log.Info("UPnP enabled")
+		opts = append(opts,
 			lp2p.NATPortMap(),
 		)
 	}

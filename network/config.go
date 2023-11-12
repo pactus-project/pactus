@@ -15,7 +15,8 @@ type Config struct {
 	BootstrapAddrStrings []string `toml:"bootstrap_addrs"`
 	MinConns             int      `toml:"min_connections"`
 	MaxConns             int      `toml:"max_connections"`
-	EnableNAT            bool     `toml:"enable_nat"`
+	EnableNATService     bool     `toml:"enable_nat_service"`
+	EnableUPnP           bool     `toml:"enable_upnp"`
 	EnableRelay          bool     `toml:"enable_relay"`
 	EnableMdns           bool     `toml:"enable_mdns"`
 	EnableMetrics        bool     `toml:"enable_metrics"`
@@ -37,7 +38,8 @@ func DefaultConfig() *Config {
 		BootstrapAddrStrings: []string{},
 		MinConns:             16,
 		MaxConns:             32,
-		EnableNAT:            false,
+		EnableNATService:     false,
+		EnableUPnP:           false,
 		EnableRelay:          false,
 		EnableMdns:           false,
 		EnableMetrics:        false,

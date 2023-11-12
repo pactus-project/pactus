@@ -71,7 +71,8 @@ func testConfig() *Config {
 		BootstrapAddrStrings: []string{},
 		MinConns:             4,
 		MaxConns:             8,
-		EnableNAT:            false,
+		EnableNATService:     false,
+		EnableUPnP:           false,
 		EnableRelay:          false,
 		EnableMdns:           false,
 		ForcePrivateNetwork:  true,
@@ -181,7 +182,6 @@ func TestNetwork(t *testing.T) {
 
 	// Public node
 	confP := testConfig()
-	confP.EnableNAT = true
 	confP.BootstrapAddrStrings = bootstrapAddresses
 	confP.ListenAddrStrings = []string{
 		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", publicPort),
