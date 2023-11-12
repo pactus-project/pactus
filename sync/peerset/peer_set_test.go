@@ -160,8 +160,8 @@ func TestOpenSession(t *testing.T) {
 	assert.Equal(t, pid, ssn.PeerID)
 	assert.Equal(t, session.Open, ssn.Status)
 	assert.LessOrEqual(t, ssn.StartedAt, time.Now())
-	assert.True(t, ps.HasSession(pid))
-	assert.False(t, ps.HasSession("peer2"))
+	assert.True(t, ps.HasOpenSession(pid))
+	assert.False(t, ps.HasOpenSession("peer2"))
 	assert.Equal(t, 1, ps.NumberOfOpenSessions())
 }
 

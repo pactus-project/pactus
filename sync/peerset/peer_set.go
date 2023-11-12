@@ -1,6 +1,7 @@
 package peerset
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -83,12 +84,12 @@ func (ps *PeerSet) numberOfOpenSessions() int {
 	return count
 }
 
-func (ps *PeerSet) HasSession(pid peer.ID) bool {
+func (ps *PeerSet) HasOpenSession(pid peer.ID) bool {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
 	for _, ssn := range ps.sessions {
-		if ssn.PeerID == pid {
+		if ssn.PeerID == pid && ssn.Status == session.Open {
 			return true
 		}
 	}
@@ -101,6 +102,11 @@ type SessionStats struct {
 	Open        int
 	Completed   int
 	Uncompleted int
+}
+
+func (ss *SessionStats) String() string {
+	return fmt.Sprintf("total: %v, open: %v, completed: %v, uncompleted: %v",
+		ss.Total, ss.Open, ss.Completed, ss.Uncompleted)
 }
 
 func (ps *PeerSet) SessionStats() SessionStats {

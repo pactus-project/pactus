@@ -331,7 +331,8 @@ func (sync *synchronizer) updateBlockchain() {
 	sync.peerSet.IterateSessions(func(ssn *session.Session) {
 		if ssn.Status == session.Uncompleted {
 			sync.logger.Debug("uncompleted block request, re-download",
-				"sid", ssn.SessionID, "pid", ssn.PeerID)
+				"sid", ssn.SessionID, "pid", ssn.PeerID,
+				"stats", sync.peerSet.SessionStats())
 
 			// Try to re-download the blocks from this closed session
 			from, to := ssn.Range()
@@ -351,10 +352,8 @@ func (sync *synchronizer) updateBlockchain() {
 	// Otherwise, we can request the same blocks from different peers.
 	// TODO: write test for me
 	if sync.peerSet.HasAnyOpenSession() {
-		ss := sync.peerSet.SessionStats()
 		sync.logger.Debug("we have open session",
-			"total", ss.Total, "open", ss.Open,
-			"completed", ss.Completed, "uncompleted", ss.Uncompleted)
+			"stats", sync.peerSet.SessionStats())
 
 		return
 	}
@@ -410,7 +409,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		// Don't open a new session if we already have an open session with the same peer.
 		// This helps us to get blocks from different peers.
 		// TODO: write test for me
-		if sync.peerSet.HasSession(p.PeerID) {
+		if sync.peerSet.HasOpenSession(p.PeerID) {
 			continue
 		}
 
@@ -441,7 +440,8 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		}
 	}
 
-	sync.logger.Debug("not enough peers to download blocks", "sessions", sync.peerSet.NumberOfOpenSessions())
+	sync.logger.Debug("not enough peers to download blocks",
+		"stats", sync.peerSet.SessionStats())
 	return false
 }
 
