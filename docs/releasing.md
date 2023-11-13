@@ -31,9 +31,9 @@ Let's create environment variables for the release version.
 For the rest of this document, we will use these environment variables in the commands.
 
 ```bash
-PRV_VER="0.16.0"
-CUR_VER="0.17.0"
-NEXT_VER="0.18.0"
+PRV_VER="0.17.0"
+CUR_VER="0.18.0"
+NEXT_VER="0.19.0"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 BASE_BRANCH="main"
