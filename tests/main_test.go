@@ -82,7 +82,6 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Sync.LatestBlockInterval = 10
 		tConfigs[i].Network.EnableMdns = true
 		tConfigs[i].Network.ForcePrivateNetwork = true
-		tConfigs[i].Network.Bootstrapper = false
 		tConfigs[i].Network.NetworkKey = util.TempFilePath()
 		tConfigs[i].Network.NetworkName = "test"
 		tConfigs[i].Network.ListenAddrStrings = []string{"/ip4/127.0.0.1/tcp/0", "/ip4/127.0.0.1/udp/0/quic-v1"}
@@ -93,7 +92,6 @@ func TestMain(m *testing.M) {
 		tConfigs[i].GRPC.Enable = false
 
 		if i == 0 {
-			tConfigs[i].Network.Bootstrapper = true
 			tConfigs[i].Sync.NodeNetwork = true
 			tConfigs[i].GRPC.Enable = true
 			tConfigs[i].GRPC.Listen = tGRPCAddress

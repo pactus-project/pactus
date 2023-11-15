@@ -32,5 +32,5 @@ func (handler *transactionsHandler) ParseMessage(m message.Message, _ peer.ID) e
 }
 
 func (handler *transactionsHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	return bundle.NewBundle(handler.SelfID(), m)
+	return bundle.NewBundle(m)
 }

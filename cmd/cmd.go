@@ -340,58 +340,10 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		crypto.XPrivateKeyHRP = "txsecret"
 	}
 
-	var defConf *config.Config
-	switch gen.ChainType() {
-	case genesis.Mainnet:
-		panic("not yet implemented!")
-	case genesis.Testnet:
-		defConf = config.DefaultConfigTestnet()
-	case genesis.Localnet:
-		defConf = config.DefaultConfigLocalnet()
-	}
-
 	confPath := PactusConfigPath(workingDir)
-	conf, err := config.LoadFromFile(confPath, true, defConf)
+	conf, err := tryLoadConfig(gen.ChainType(), confPath)
 	if err != nil {
-		PrintWarnMsgf("Unable to load the config: %s", err)
-		PrintInfoMsgf("Attempting to restore the config to the default values...")
-
-		// First, try to open the old config file in non-strict mode
-		confBack, err := config.LoadFromFile(confPath, false, defConf)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		// Let's create a backup of the config
-		confBackupPath := fmt.Sprintf("%v_bak_%s", confPath, time.Now().Format("2006_01_02"))
-		err = os.Rename(confPath, confBackupPath)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		// Now, attempt to restore the config file with the number of validators from the old config.
-		switch gen.ChainType() {
-		case genesis.Mainnet:
-			panic("not yet implemented!")
-
-		case genesis.Testnet:
-			err = config.SaveTestnetConfig(confPath, confBack.Node.NumValidators)
-			if err != nil {
-				return nil, nil, err
-			}
-
-		case genesis.Localnet:
-			err = config.SaveLocalnetConfig(confPath, confBack.Node.NumValidators)
-			if err != nil {
-				return nil, nil, err
-			}
-
-		default:
-			return nil, nil, fmt.Errorf("invalid chain type")
-		}
-
-		PrintSuccessMsgf("Config restored to the default values")
-		conf, _ = config.LoadFromFile(confPath, true, defConf) // This time it should be OK
+		return nil, nil, err
 	}
 
 	err = conf.BasicCheck()
@@ -486,4 +438,58 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	params.BlockVersion = 0
 	gen := genesis.MakeGenesis(util.RoundNow(60), accs, vals, params)
 	return gen
+}
+
+func tryLoadConfig(chainType genesis.ChainType, confPath string) (*config.Config, error) {
+	var defConf *config.Config
+	switch chainType {
+	case genesis.Mainnet:
+		panic("not yet implemented!")
+	case genesis.Testnet:
+		defConf = config.DefaultConfigTestnet()
+	case genesis.Localnet:
+		defConf = config.DefaultConfigLocalnet()
+	}
+
+	conf, err := config.LoadFromFile(confPath, true, defConf)
+	if err != nil {
+		PrintWarnMsgf("Unable to load the config: %s", err)
+		PrintInfoMsgf("Attempting to restore the config to the default values...")
+
+		// First, try to open the old config file in non-strict mode
+		confBack, err := config.LoadFromFile(confPath, false, defConf)
+		if err != nil {
+			return nil, err
+		}
+
+		// Let's create a backup of the config
+		confBackupPath := fmt.Sprintf("%v_bak_%s", confPath, time.Now().Format("2006_01_02"))
+		err = os.Rename(confPath, confBackupPath)
+		if err != nil {
+			return nil, err
+		}
+
+		// Now, attempt to restore the config file with the number of validators from the old config.
+		switch chainType {
+		case genesis.Mainnet:
+			panic("not yet implemented!")
+
+		case genesis.Testnet:
+			err = config.SaveTestnetConfig(confPath, confBack.Node.NumValidators)
+			if err != nil {
+				return nil, err
+			}
+
+		case genesis.Localnet:
+			err = config.SaveLocalnetConfig(confPath, confBack.Node.NumValidators)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		PrintSuccessMsgf("Config restored to the default values")
+		conf, _ = config.LoadFromFile(confPath, true, defConf) // This time it should be OK
+	}
+
+	return conf, nil
 }

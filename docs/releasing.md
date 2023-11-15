@@ -31,9 +31,9 @@ Let's create environment variables for the release version.
 For the rest of this document, we will use these environment variables in the commands.
 
 ```bash
-PRV_VER="0.16.0"
-CUR_VER="0.17.0"
-NEXT_VER="0.18.0"
+PRV_VER="0.17.0"
+CUR_VER="0.18.0"
+NEXT_VER="0.19.0"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 BASE_BRANCH="main"
@@ -60,7 +60,7 @@ Sometimes you may need to amend the changelog manually.
 Then, add links to the CHANGELOG:
 
 ```bash
-sed -E -i "s/## v${CUR_VER} /## [${CUR_VER}](https:\/\/github.com\/pactus-project\/pactus\/compare\/v${PRV_VER}...v${CUR_VER})/g" CHANGELOG.md
+sed -E -i "s/## v${CUR_VER} /## [${CUR_VER}](https:\/\/github.com\/pactus-project\/pactus\/compare\/v${PRV_VER}...v${CUR_VER}) /g" CHANGELOG.md
 sed -E -i 's/\(#([0-9]+)\)/([#\1](https:\/\/github.com\/pactus-project\/pactus\/pull\/\1))/g' CHANGELOG.md
 ```
 

@@ -36,20 +36,11 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 	}
 }
 
-func (f *Firewall) OpenGossipBundle(data []byte, source, from peer.ID) *bundle.Bundle {
-	if from != source {
-		f.peerSet.UpdateLastReceived(from)
-		if f.isPeerBanned(from) {
-			f.logger.Warn("firewall: from peer banned", "from", from)
-			f.closeConnection(from)
-			return nil
-		}
-	}
-
-	bdl, err := f.openBundle(bytes.NewReader(data), source)
+func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
+	bdl, err := f.openBundle(bytes.NewReader(data), from)
 	if err != nil {
 		f.logger.Warn("firewall: unable to open a gossip bundle",
-			"error", err, "bundle", bdl, "source", source)
+			"error", err, "bundle", bdl, "from", from)
 		return nil
 	}
 
@@ -59,11 +50,11 @@ func (f *Firewall) OpenGossipBundle(data []byte, source, from peer.ID) *bundle.B
 	return bdl
 }
 
-func (f *Firewall) OpenStreamBundle(r io.Reader, source peer.ID) *bundle.Bundle {
-	bdl, err := f.openBundle(r, source)
+func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
+	bdl, err := f.openBundle(r, from)
 	if err != nil {
 		f.logger.Warn("firewall: unable to open a stream bundle",
-			"error", err, "bundle", bdl, "source", source)
+			"error", err, "bundle", bdl, "from", from)
 		return nil
 	}
 
@@ -73,24 +64,23 @@ func (f *Firewall) OpenStreamBundle(r io.Reader, source peer.ID) *bundle.Bundle 
 	return bdl
 }
 
-func (f *Firewall) openBundle(r io.Reader, source peer.ID) (*bundle.Bundle, error) {
-	f.peerSet.UpdateLastReceived(source)
-	f.peerSet.IncreaseReceivedBundlesCounter(source)
+func (f *Firewall) openBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error) {
+	f.peerSet.UpdateLastReceived(from)
+	f.peerSet.IncreaseReceivedBundlesCounter(from)
 
-	if f.isPeerBanned(source) {
-		// If there is any connection to the source peer, close it
-		f.closeConnection(source)
-		return nil, errors.Errorf(errors.ErrInvalidMessage, "source peer is banned: %s", source)
+	if f.isPeerBanned(from) {
+		f.closeConnection(from)
+		return nil, errors.Errorf(errors.ErrInvalidMessage, "peer is banned: %s", from)
 	}
 
-	bdl, err := f.decodeBundle(r, source)
+	bdl, err := f.decodeBundle(r, from)
 	if err != nil {
-		f.peerSet.IncreaseInvalidBundlesCounter(source)
+		f.peerSet.IncreaseInvalidBundlesCounter(from)
 		return nil, err
 	}
 
-	if err := f.checkBundle(bdl, source); err != nil {
-		f.peerSet.IncreaseInvalidBundlesCounter(source)
+	if err := f.checkBundle(bdl); err != nil {
+		f.peerSet.IncreaseInvalidBundlesCounter(from)
 		return bdl, err
 	}
 
@@ -109,14 +99,9 @@ func (f *Firewall) decodeBundle(r io.Reader, pid peer.ID) (*bundle.Bundle, error
 	return bdl, nil
 }
 
-func (f *Firewall) checkBundle(bdl *bundle.Bundle, pid peer.ID) error {
+func (f *Firewall) checkBundle(bdl *bundle.Bundle) error {
 	if err := bdl.BasicCheck(); err != nil {
 		return errors.Errorf(errors.ErrInvalidMessage, err.Error())
-	}
-
-	if bdl.Initiator != pid {
-		return errors.Errorf(errors.ErrInvalidMessage,
-			"source is not same as initiator. source: %v, initiator: %v", pid, bdl.Initiator)
 	}
 
 	switch f.state.Genesis().ChainType() {

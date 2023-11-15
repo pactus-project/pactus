@@ -19,20 +19,25 @@ func newBlocksRequestHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator peer.ID) error {
+func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID) error {
 	msg := m.(*message.BlocksRequestMessage)
 	handler.logger.Trace("parsing BlocksRequest message", "msg", msg)
 
-	p := handler.peerSet.GetPeer(initiator)
+	p := handler.peerSet.GetPeer(pid)
+	if p == nil {
+		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
+			fmt.Sprintf("unknown peer (%s)", pid.String()), msg.SessionID, 0, nil, nil)
+
+		handler.network.CloseConnection(pid)
+
+		return handler.respond(response, pid)
+	}
+
 	if !p.IsKnownOrTrusty() {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
-			fmt.Sprintf("not handshaed (%v)", p.Status), msg.SessionID, 0, nil, nil)
+			fmt.Sprintf("not handshaked (%s)", p.Status.String()), msg.SessionID, 0, nil, nil)
 
-		// There is no point in keeping this stream connection open.
-		// Close this connection to initiate a new handshake.
-		handler.network.CloseConnection(initiator)
-
-		return handler.respond(response, initiator)
+		return handler.respond(response, pid)
 	}
 
 	if !handler.config.NodeNetwork {
@@ -41,7 +46,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 			response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 				fmt.Sprintf("the request height is not acceptable: %v", msg.From), msg.SessionID, 0, nil, nil)
 
-			return handler.respond(response, initiator)
+			return handler.respond(response, pid)
 		}
 	}
 	height := msg.From
@@ -51,7 +56,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("too many blocks requested: %v-%v", msg.From, msg.Count), msg.SessionID, 0, nil, nil)
 
-		return handler.respond(response, initiator)
+		return handler.respond(response, pid)
 	}
 
 	// Help this peer to sync up
@@ -64,7 +69,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 
 		response := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks,
 			message.ResponseCodeMoreBlocks.String(), msg.SessionID, height, blocksData, nil)
-		err := handler.respond(response, initiator)
+		err := handler.respond(response, pid)
 		if err != nil {
 			return err
 		}
@@ -84,27 +89,34 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, initiator p
 		response := message.NewBlocksResponseMessage(message.ResponseCodeSynced,
 			message.ResponseCodeSynced.String(), msg.SessionID, peerHeight, nil, lastCert)
 
-		return handler.respond(response, initiator)
+		return handler.respond(response, pid)
 	}
 
 	response := message.NewBlocksResponseMessage(message.ResponseCodeNoMoreBlocks,
 		message.ResponseCodeNoMoreBlocks.String(), msg.SessionID, 0, nil, nil)
 
-	return handler.respond(response, initiator)
+	return handler.respond(response, pid)
 }
 
 func (handler *blocksRequestHandler) PrepareBundle(m message.Message) *bundle.Bundle {
-	return bundle.NewBundle(handler.SelfID(), m)
+	return bundle.NewBundle(m)
 }
 
 func (handler *blocksRequestHandler) respond(msg *message.BlocksResponseMessage, to peer.ID) error {
 	if msg.ResponseCode == message.ResponseCodeRejected {
 		handler.logger.Debug("rejecting block request message", "msg", msg,
 			"to", to, "reason", msg.Reason)
-	} else {
-		handler.logger.Info("responding block request message", "msg", msg,
-			"to", to)
+
+		_ = handler.sendTo(msg, to)
+
+		// There is no point in keeping this stream connection open.
+		// Close this connection to initiate a new handshake.
+		handler.network.CloseConnection(to)
+
+		return nil
 	}
+
+	handler.logger.Info("responding block request message", "msg", msg, "to", to)
 
 	return handler.sendTo(msg, to)
 }

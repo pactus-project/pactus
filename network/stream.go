@@ -46,7 +46,7 @@ func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 
 	s.logger.Trace("receiving stream", "from", from)
 	event := &StreamMessage{
-		Source: from,
+		From:   from,
 		Reader: stream,
 	}
 

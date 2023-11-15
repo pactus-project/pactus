@@ -1,6 +1,7 @@
 package peerset
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -8,7 +9,8 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/service"
+	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -20,7 +22,7 @@ type PeerSet struct {
 	lk sync.RWMutex
 
 	peers              map[peer.ID]*Peer
-	sessions           map[int]*Session
+	sessions           map[int]*session.Session
 	nextSessionID      int
 	sessionTimeout     time.Duration
 	totalSentBytes     int64
@@ -33,7 +35,7 @@ type PeerSet struct {
 func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	return &PeerSet{
 		peers:          make(map[peer.ID]*Peer),
-		sessions:       make(map[int]*Session),
+		sessions:       make(map[int]*session.Session),
 		sessionTimeout: sessionTimeout,
 		sentBytes:      make(map[message.Type]int64),
 		receivedBytes:  make(map[message.Type]int64),
@@ -41,30 +43,30 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	}
 }
 
-func (ps *PeerSet) OpenSession(pid peer.ID, from, to uint32) *Session {
+func (ps *PeerSet) OpenSession(pid peer.ID, from, to uint32) *session.Session {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	s := newSession(ps.nextSessionID, pid, from, to)
-	ps.sessions[s.SessionID()] = s
+	ssn := session.NewSession(ps.nextSessionID, pid, from, to)
+	ps.sessions[ssn.SessionID] = ssn
 	ps.nextSessionID++
 
-	return s
+	return ssn
 }
 
-func (ps *PeerSet) FindSession(id int) *Session {
+func (ps *PeerSet) FindSession(sid int) *session.Session {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	s, ok := ps.sessions[id]
+	ssn, ok := ps.sessions[sid]
 	if ok {
-		return s
+		return ssn
 	}
 
 	return nil
 }
 
-func (ps *PeerSet) NumberOfOpenSessions() int {
+func (ps *PeerSet) NumberOfSessions() int {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
@@ -75,8 +77,8 @@ func (ps *PeerSet) HasOpenSession(pid peer.ID) bool {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	for _, s := range ps.sessions {
-		if s.PeerID() == pid {
+	for _, ssn := range ps.sessions {
+		if ssn.PeerID == pid && ssn.Status == session.Open {
 			return true
 		}
 	}
@@ -84,36 +86,96 @@ func (ps *PeerSet) HasOpenSession(pid peer.ID) bool {
 	return false
 }
 
+type SessionStats struct {
+	Total       int
+	Open        int
+	Completed   int
+	Uncompleted int
+}
+
+func (ss *SessionStats) String() string {
+	return fmt.Sprintf("total: %v, open: %v, completed: %v, uncompleted: %v",
+		ss.Total, ss.Open, ss.Completed, ss.Uncompleted)
+}
+
+func (ps *PeerSet) SessionStats() SessionStats {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	total := len(ps.sessions)
+	open := 0
+	completed := 0
+	unCompleted := 0
+	for _, ssn := range ps.sessions {
+		switch ssn.Status {
+		case session.Open:
+			open++
+
+		case session.Completed:
+			completed++
+
+		case session.Uncompleted:
+			unCompleted++
+		}
+	}
+
+	return SessionStats{
+		Total:       total,
+		Open:        open,
+		Completed:   completed,
+		Uncompleted: unCompleted,
+	}
+}
+
 func (ps *PeerSet) HasAnyOpenSession() bool {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	return len(ps.sessions) != 0
+	for _, ssn := range ps.sessions {
+		if ssn.Status == session.Open {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (ps *PeerSet) SetExpiredSessionsAsUncompleted() {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
 
-	for _, s := range ps.sessions {
-		if ps.sessionTimeout < util.Now().Sub(s.StartedAt()) {
-			s.SetUncompleted()
+	for _, ssn := range ps.sessions {
+		if ps.sessionTimeout < util.Now().Sub(ssn.StartedAt) {
+			ssn.Status = session.Uncompleted
 		}
 	}
 }
 
-func (ps *PeerSet) RemoveSession(id int) {
+func (ps *PeerSet) SetSessionUncompleted(sid int) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	delete(ps.sessions, id)
+	ssn := ps.sessions[sid]
+	if ssn != nil {
+		ssn.Status = session.Uncompleted
+	}
+}
+
+func (ps *PeerSet) SetSessionCompleted(sid int) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	ssn := ps.sessions[sid]
+	if ssn != nil {
+		ssn.Status = session.Completed
+	}
 }
 
 func (ps *PeerSet) RemoveAllSessions() {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	ps.sessions = make(map[int]*Session)
+	ps.sessions = make(map[int]*session.Session)
 }
 
 func (ps *PeerSet) Len() int {
@@ -130,30 +192,12 @@ func (ps *PeerSet) RemovePeer(pid peer.ID) {
 	delete(ps.peers, pid)
 }
 
-func (ps *PeerSet) GetPeerList() []*Peer {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
-
-	l := make([]*Peer, len(ps.peers))
-	i := 0
-	for _, p := range ps.peers {
-		l[i] = p
-		i++
-	}
-	return l
-}
-
 // GetPeer finds a peer by id and returns a copy of the peer object.
-func (ps *PeerSet) GetPeer(pid peer.ID) Peer {
+func (ps *PeerSet) GetPeer(pid peer.ID) *Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	p := ps.getPeer(pid)
-	if p != nil {
-		return *p
-	}
-
-	return Peer{}
+	return ps.getPeer(pid)
 }
 
 func (ps *PeerSet) getPeer(pid peer.ID) *Peer {
@@ -319,16 +363,16 @@ func (ps *PeerSet) IteratePeers(consumer func(peer *Peer)) {
 	}
 }
 
-func (ps *PeerSet) IterateSessions(consumer func(s *Session)) {
-	for _, s := range ps.sessions {
-		consumer(s)
+func (ps *PeerSet) IterateSessions(consumer func(s *session.Session)) {
+	for _, ssn := range ps.sessions {
+		consumer(ssn)
 	}
 }
 
 // GetRandomPeer selects a random peer from the peer set based on their weights.
 // The weight of each peer is determined by the number of failed and total bundles.
 // Peers with higher weights are more likely to be selected.
-func (ps *PeerSet) GetRandomPeer() Peer {
+func (ps *PeerSet) GetRandomPeer() *Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
@@ -357,7 +401,7 @@ func (ps *PeerSet) GetRandomPeer() Peer {
 	}
 
 	if len(peers) == 0 {
-		return Peer{}
+		return nil
 	}
 
 	rnd := int(util.RandUint32(uint32(totalWeight)))
@@ -367,7 +411,7 @@ func (ps *PeerSet) GetRandomPeer() Peer {
 		totalWeight -= p.weight
 
 		if rnd >= totalWeight {
-			return *p.peer
+			return p.peer
 		}
 	}
 	panic("unreachable code")

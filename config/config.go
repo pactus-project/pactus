@@ -104,7 +104,7 @@ func DefaultConfigTestnet() *Config {
 		"/ip4/0.0.0.0/tcp/21777", "/ip4/0.0.0.0/udp/21777/quic-v1",
 		"/ip6/::/tcp/21777", "/ip6/::/udp/21777/quic-v1",
 	}
-	conf.Network.BootstrapAddrStrings = []string{
+	conf.Network.DefaultBootstrapAddrStrings = []string{
 		"/ip4/94.101.184.118/tcp/21777/p2p/12D3KooWCwQZt8UriVXobQHPXPR8m83eceXVoeT6brPNiBHomebc",
 		"/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
 		"/ip4/13.115.190.71/tcp/21777/p2p/12D3KooWBGNEH8NqdK1UddSnPV1yRHGLYpaQUcnujC24s7YNWPiq",
@@ -112,19 +112,20 @@ func DefaultConfigTestnet() *Config {
 		"/ip4/159.148.146.149/tcp/21777/p2p/12D3KooWPQAGVMdxbUCeNETPiMkeascvMRorZAwtMUs2UVxftKgZ",     // SGTstake (adorid@sgtstake.com)
 		"/ip4/109.123.246.47/tcp/21777/p2p/12D3KooWERCpnEzD7QgTa7uLhqQjj3L4YmQtAGbW6w76Ckjaop7s",      // Stakes.Works (info@stake.works)
 		"/ip4/173.249.27.146/tcp/21777/p2p/12D3KooWSJREEzTZRzc9wpkU3EW2m9ZGfzrC9jjuwS6wR5uaAZme",      // Karma Nodes (karma.nodes@proton.me)
-		"/ip4/13.53.97.58/tcp/21777/p2p/12D3KooWGfwqJVbQAQ7e1WHicMhAjsuvB5ZAYjz8mGVoUG8uoSqC",         // Mr HoDL (1llusiv387@gmail.com)
+		"/ip4/209.250.235.91/tcp/21777/p2p/12D3KooWETQgcTCFv2kejUsGMVVmnkNoTW8wh33MevAzyeYYzQkr",      // Mr HoDL (1llusiv387@gmail.com)
 		"/dns/pactus.nodesync.top/tcp/21777/p2p/12D3KooWP25ejVsd7cL5DvWAPwEu4JTUwnPniHBf4w93tgSezVt8", // NodeSync.Top (lthuan2011@gmail.com)
 		"/ip4/95.217.89.202/tcp/21777/p2p/12D3KooWMsi5oYkbbpyyXctmPXzF8UZu2pCvKPRZGyvymhN9BzTD",       // CodeBlockLabs (emailbuatcariduit@gmail.com)
 	}
-	conf.Network.RelayAddrStrings = []string{
+	conf.Network.DefaultRelayAddrStrings = []string{
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/188.121.102.178/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
 	conf.Network.MinConns = 16
 	conf.Network.MaxConns = 32
-	conf.Network.EnableNAT = false
+	conf.Network.EnableNATService = false
+	conf.Network.EnableUPnP = false
 	conf.Network.EnableRelay = true
-	conf.Network.NetworkName = "pactus-testnet"
+	conf.Network.NetworkName = "pactus-testnet-v2"
 	conf.Network.DefaultPort = 21777
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "[::]:50052"
@@ -142,7 +143,8 @@ func DefaultConfigLocalnet() *Config {
 	conf := defaultConfig()
 	conf.Network.ListenAddrStrings = []string{}
 	conf.Network.EnableRelay = false
-	conf.Network.EnableNAT = false
+	conf.Network.EnableNATService = false
+	conf.Network.EnableUPnP = false
 	conf.Network.BootstrapAddrStrings = []string{}
 	conf.Network.MinConns = 0
 	conf.Network.MaxConns = 0

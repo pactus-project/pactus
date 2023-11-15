@@ -6,11 +6,13 @@ import (
 	"net"
 	"time"
 
+	lp2pspb "github.com/libp2p/go-libp2p-pubsub/pb"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	"github.com/multiformats/go-multiaddr"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 )
@@ -159,4 +161,9 @@ func MakeScalingLimitConfig(minConns, maxConns int) lp2prcmgr.ScalingLimitConfig
 	limit.TransientLimitIncrease.Streams = util.LogScale(minConns)
 
 	return limit
+}
+
+func MessageIDFunc(m *lp2pspb.Message) string {
+	h := hash.CalcHash(m.Data)
+	return string(h[:20])
 }

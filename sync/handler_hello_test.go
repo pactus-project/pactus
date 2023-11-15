@@ -8,7 +8,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/service"
+	"github.com/pactus-project/pactus/sync/peerset/service"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
@@ -19,17 +19,16 @@ func TestParsingHelloMessages(t *testing.T) {
 
 	td.state.CommitTestBlocks(21)
 
-	t.Run("Receiving Hello message from a peer. Peer ID is not same as initiator.",
+	t.Run("Receiving Hello message from an unknown peer.",
 		func(t *testing.T) {
 			valKey := td.RandValKey()
 			pid := td.RandPeerID()
-			initiator := td.RandPeerID()
-			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
+			msg := message.NewHelloMessage(pid, "unknown-peer", 0, 0,
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, initiator))
-			assert.Equal(t, td.sync.peerSet.GetPeer(initiator).Status, peerset.StatusCodeBanned)
+			from := td.RandPeerID()
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, from))
 			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
@@ -49,7 +48,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
-	t.Run("Receiving Hello message from a peer. Difference is greater or equal than -10 seconds.",
+	t.Run("Receiving a Hello message from a peer. The time difference is greater than or equal to -10",
 		func(t *testing.T) {
 			valKey := td.RandValKey()
 			height := td.RandUint32NonZero(td.state.LastBlockHeight())

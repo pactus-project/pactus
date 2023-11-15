@@ -5,7 +5,6 @@ import (
 	"io"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
@@ -21,27 +20,19 @@ const (
 )
 
 type Bundle struct {
-	Flags     int
-	Initiator peer.ID
-	Message   message.Message
+	Flags   int
+	Message message.Message
 }
 
-func NewBundle(initiator peer.ID, msg message.Message) *Bundle {
+func NewBundle(msg message.Message) *Bundle {
 	return &Bundle{
-		Flags:     0,
-		Initiator: initiator,
-		Message:   msg,
+		Flags:   0,
+		Message: msg,
 	}
 }
 
 func (b *Bundle) BasicCheck() error {
-	if err := b.Message.BasicCheck(); err != nil {
-		return err
-	}
-	if err := b.Initiator.Validate(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid initiator peer id: %v", err)
-	}
-	return nil
+	return b.Message.BasicCheck()
 }
 
 func (b *Bundle) String() string {
@@ -54,9 +45,8 @@ func (b *Bundle) CompressIt() {
 
 type _Bundle struct {
 	Flags       int          `cbor:"1,keyasint"`
-	Initiator   peer.ID      `cbor:"2,keyasint"`
-	MessageType message.Type `cbor:"3,keyasint"`
-	MessageData []byte       `cbor:"4,keyasint"`
+	MessageType message.Type `cbor:"2,keyasint"`
+	MessageData []byte       `cbor:"3,keyasint"`
 }
 
 func (b *Bundle) Encode() ([]byte, error) {
@@ -74,7 +64,6 @@ func (b *Bundle) Encode() ([]byte, error) {
 
 	msg := &_Bundle{
 		Flags:       b.Flags,
-		Initiator:   b.Initiator,
 		MessageType: b.Message.Type(),
 		MessageData: data,
 	}
@@ -106,7 +95,6 @@ func (b *Bundle) Decode(r io.Reader) (int, error) {
 	}
 
 	b.Flags = bdl.Flags
-	b.Initiator = bdl.Initiator
 	b.Message = msg
 	return bytesRead, cbor.Unmarshal(data, msg)
 }

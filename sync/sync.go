@@ -15,7 +15,7 @@ import (
 	"github.com/pactus-project/pactus/sync/cache"
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/service"
+	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
@@ -95,11 +95,11 @@ func NewSynchronizer(
 }
 
 func (sync *synchronizer) Start() error {
-	if err := sync.network.JoinGeneralTopic(); err != nil {
+	if err := sync.network.JoinGeneralTopic(sync.shouldPropagateGeneralMessage); err != nil {
 		return err
 	}
 	// TODO: Not joining consensus topic when we are syncing
-	if err := sync.network.JoinConsensusTopic(); err != nil {
+	if err := sync.network.JoinConsensusTopic(sync.shouldPropagateConsensusMessage); err != nil {
 		return err
 	}
 
@@ -193,16 +193,11 @@ func (sync *synchronizer) PeerSet() *peerset.PeerSet {
 }
 
 func (sync *synchronizer) sayHello(to peer.ID) error {
-	services := []int{}
-	if sync.config.NodeNetwork {
-		services = append(services, service.Network)
-	}
-
 	msg := message.NewHelloMessage(
 		sync.SelfID(),
 		sync.config.Moniker,
 		sync.state.LastBlockHeight(),
-		service.New(services...),
+		sync.config.Services(),
 		sync.state.LastBlockHash(),
 		sync.state.Genesis().Hash(),
 	)
@@ -234,27 +229,12 @@ func (sync *synchronizer) receiveLoop() {
 			switch e.Type() {
 			case network.EventTypeGossip:
 				ge := e.(*network.GossipMessage)
-				bdl := sync.firewall.OpenGossipBundle(ge.Data, ge.Source, ge.From)
-				err := sync.processIncomingBundle(bdl)
-				if err != nil {
-					sync.logger.Warn("error on parsing a Gossip bundle",
-						"from", ge.From, "source", ge.Source, "bundle", bdl, "error", err)
-					sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
-				}
+				sync.processGossipMessage(ge)
 
 			case network.EventTypeStream:
 				se := e.(*network.StreamMessage)
-				bdl := sync.firewall.OpenStreamBundle(se.Reader, se.Source)
-				if err := se.Reader.Close(); err != nil {
-					// TODO: write test for me
-					sync.logger.Warn("error on closing stream", "error", err, "source", se.Source)
-				}
-				err := sync.processIncomingBundle(bdl)
-				if err != nil {
-					sync.logger.Warn("error on parsing a Stream bundle",
-						"source", se.Source, "bundle", bdl, "error", err)
-					sync.peerSet.IncreaseInvalidBundlesCounter(bdl.Initiator)
-				}
+				sync.processStreamMessage(se)
+
 			case network.EventTypeConnect:
 				ce := e.(*network.ConnectEvent)
 				sync.processConnectEvent(ce)
@@ -264,6 +244,30 @@ func (sync *synchronizer) receiveLoop() {
 				sync.processDisconnectEvent(de)
 			}
 		}
+	}
+}
+
+func (sync *synchronizer) processGossipMessage(msg *network.GossipMessage) {
+	bdl := sync.firewall.OpenGossipBundle(msg.Data, msg.From)
+	err := sync.processIncomingBundle(bdl, msg.From)
+	if err != nil {
+		sync.logger.Warn("error on parsing a Gossip bundle",
+			"from", msg.From, "bundle", bdl, "error", err)
+		sync.peerSet.IncreaseInvalidBundlesCounter(msg.From)
+	}
+}
+
+func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
+	bdl := sync.firewall.OpenStreamBundle(msg.Reader, msg.From)
+	if err := msg.Reader.Close(); err != nil {
+		// TODO: write test for me
+		sync.logger.Warn("error on closing stream", "error", err, "source", msg.From)
+	}
+	err := sync.processIncomingBundle(bdl, msg.From)
+	if err != nil {
+		sync.logger.Warn("error on parsing a Stream bundle",
+			"source", msg.From, "bundle", bdl, "error", err)
+		sync.peerSet.IncreaseInvalidBundlesCounter(msg.From)
 	}
 }
 
@@ -283,19 +287,18 @@ func (sync *synchronizer) processDisconnectEvent(de *network.DisconnectEvent) {
 	sync.peerSet.UpdateStatus(de.PeerID, peerset.StatusCodeDisconnected)
 }
 
-func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle) error {
+func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle, from peer.ID) error {
 	if bdl == nil {
 		return nil
 	}
 
-	sync.logger.Info("received a bundle",
-		"initiator", bdl.Initiator, "bundle", bdl)
+	sync.logger.Info("received a bundle", "from", from, "bundle", bdl)
 	h := sync.handlers[bdl.Message.Type()]
 	if h == nil {
 		return errors.Errorf(errors.ErrInvalidMessage, "invalid message type: %v", bdl.Message.Type())
 	}
 
-	return h.ParseMessage(bdl.Message, bdl.Initiator)
+	return h.ParseMessage(bdl.Message, from)
 }
 
 func (sync *synchronizer) String() string {
@@ -321,20 +324,25 @@ func (sync *synchronizer) updateBlockchain() {
 		downloadHeight++
 	}
 
+	// Check if we have any expired sessions
 	sync.peerSet.SetExpiredSessionsAsUncompleted()
-	sync.peerSet.IterateSessions(func(s *peerset.Session) {
-		if s.IsUncompleted() {
+
+	sync.peerSet.IterateSessions(func(ssn *session.Session) {
+		if ssn.Status == session.Uncompleted {
 			sync.logger.Debug("uncompleted block request, re-download",
-				"sid", s.SessionID(), "pid", s.PeerID())
+				"sid", ssn.SessionID, "pid", ssn.PeerID,
+				"stats", sync.peerSet.SessionStats())
 
 			// Try to re-download the blocks from this closed session
-			from, to := s.Range()
+			from, to := ssn.Range()
 			from = util.Max(from, downloadHeight)
+			for sync.cache.HasBlockInCache(from) {
+				from++
+			}
 			if to > from {
 				count := to - from + 1
 				sync.sendBlockRequestToRandomPeer(from, count, true)
 			}
-			sync.peerSet.RemoveSession(s.SessionID())
 		}
 	})
 
@@ -343,7 +351,9 @@ func (sync *synchronizer) updateBlockchain() {
 	// Otherwise, we can request the same blocks from different peers.
 	// TODO: write test for me
 	if sync.peerSet.HasAnyOpenSession() {
-		sync.logger.Debug("we have open session")
+		sync.logger.Debug("we have open session",
+			"stats", sync.peerSet.SessionStats())
+
 		return
 	}
 
@@ -373,11 +383,7 @@ func (sync *synchronizer) updateBlockchain() {
 func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 	sync.logger.Debug("downloading blocks", "from", from)
 
-	for i := 0; i < sync.config.MaxOpenSessions; i++ {
-		if sync.peerSet.NumberOfOpenSessions() >= sync.config.MaxOpenSessions {
-			return
-		}
-
+	for i := sync.peerSet.NumberOfSessions(); i < sync.config.MaxSessions; i++ {
 		count := sync.config.LatestBlockInterval
 		sent := sync.sendBlockRequestToRandomPeer(from, count, onlyNodeNetwork)
 		if !sent {
@@ -389,8 +395,11 @@ func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 }
 
 func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyNodeNetwork bool) bool {
-	for i := 0; i < sync.config.MaxOpenSessions; i++ {
+	for i := sync.peerSet.NumberOfSessions(); i < sync.config.MaxSessions; i++ {
 		p := sync.peerSet.GetRandomPeer()
+		if p == nil {
+			break
+		}
 
 		// Don't open a new session if we already have an open session with the same peer.
 		// This helps us to get blocks from different peers.
@@ -413,20 +422,21 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		}
 
 		sync.logger.Debug("sending download request", "from", from+1, "count", count, "pid", p.PeerID)
-		session := sync.peerSet.OpenSession(p.PeerID, from, from+count-1)
-		msg := message.NewBlocksRequestMessage(session.SessionID(), from, count)
+		ssn := sync.peerSet.OpenSession(p.PeerID, from, from+count-1)
+		msg := message.NewBlocksRequestMessage(ssn.SessionID, from, count)
 		err := sync.sendTo(msg, p.PeerID)
 		if err != nil {
 			sync.logger.Debug("sending download request failed",
 				"from", from, "count", count, "pid", p.PeerID, "error", err)
 
-			session.SetUncompleted()
+			sync.peerSet.SetSessionUncompleted(ssn.SessionID)
 		} else {
 			return true
 		}
 	}
 
-	sync.logger.Debug("not enough peers to download blocks", "sessions", sync.peerSet.NumberOfOpenSessions())
+	sync.logger.Debug("unable to open a new session",
+		"stats", sync.peerSet.SessionStats())
 	return false
 }
 
@@ -499,4 +509,31 @@ func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 	}
 
 	return blocks
+}
+
+// weAreInTheCommittee checks if one of the validators is a member of the committee
+// at the current height.
+func (sync *synchronizer) weAreInTheCommittee() bool {
+	return sync.consMgr.HasActiveInstance()
+}
+
+func (sync *synchronizer) shouldPropagateMessage(msg *network.GossipMessage) bool {
+	// Propagate our messages
+	if msg.From == sync.SelfID() {
+		return true
+	}
+
+	if sync.config.NodeGossip {
+		return true
+	}
+
+	return sync.weAreInTheCommittee()
+}
+
+func (sync *synchronizer) shouldPropagateGeneralMessage(msg *network.GossipMessage) bool {
+	return sync.shouldPropagateMessage(msg)
+}
+
+func (sync *synchronizer) shouldPropagateConsensusMessage(msg *network.GossipMessage) bool {
+	return sync.shouldPropagateMessage(msg)
 }

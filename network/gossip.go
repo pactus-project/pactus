@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
+	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	"github.com/pactus-project/pactus/util/logger"
 )
@@ -21,11 +22,15 @@ type gossipService struct {
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	config *Config, log *logger.SubLogger,
+	isBootstrapper bool, log *logger.SubLogger,
 ) *gossipService {
-	opts := []lp2pps.Option{}
+	opts := []lp2pps.Option{
+		lp2pps.WithMessageSignaturePolicy(lp2pps.StrictNoSign),
+		lp2pps.WithNoAuthor(),
+		lp2pps.WithMessageIdFn(MessageIDFunc),
+	}
 
-	if config.Bootstrapper {
+	if isBootstrapper {
 		// enable Peer eXchange on bootstrappers
 		opts = append(opts, lp2pps.WithPeerExchange(true))
 	}
@@ -53,12 +58,32 @@ func (g *gossipService) BroadcastMessage(msg []byte, topic *lp2pps.Topic) error 
 
 // JoinTopic joins a topic with the given name.
 // It creates a subscription to the topic and returns the joined topic.
-func (g *gossipService) JoinTopic(name string) (*lp2pps.Topic, error) {
+func (g *gossipService) JoinTopic(name string, sp ShouldPropagate) (*lp2pps.Topic, error) {
 	topic, err := g.pubsub.Join(name)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
+
 	sub, err := topic.Subscribe()
+	if err != nil {
+		return nil, LibP2PError{Err: err}
+	}
+
+	err = g.pubsub.RegisterTopicValidator(name,
+		func(ctx context.Context, peerId lp2pcore.PeerID, m *lp2pps.Message) lp2pps.ValidationResult {
+			msg := &GossipMessage{
+				From: peerId,
+				Data: m.Data,
+			}
+			if !sp(msg) {
+				// Consume the message first
+				g.onReceiveMessage(m)
+
+				return lp2pps.ValidationIgnore
+			}
+
+			return lp2pps.ValidationAccept
+		})
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
@@ -110,9 +135,8 @@ func (g *gossipService) onReceiveMessage(m *lp2pps.Message) {
 	g.logger.Trace("receiving new gossip message",
 		"source", m.GetFrom(), "from", m.ReceivedFrom)
 	event := &GossipMessage{
-		Source: m.GetFrom(),
-		From:   m.ReceivedFrom,
-		Data:   m.Data,
+		From: m.ReceivedFrom,
+		Data: m.Data,
 	}
 
 	g.eventCh <- event

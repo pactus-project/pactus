@@ -129,10 +129,16 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		lp2p.ConnectionManager(connMgr),
 	)
 
-	if conf.EnableNAT {
-		log.Info("nat enabled")
+	if conf.EnableNATService {
+		log.Info("Nat service enabled")
 		opts = append(opts,
 			lp2p.EnableNATService(),
+		)
+	}
+
+	if conf.EnableUPnP {
+		log.Info("UPnP enabled")
+		opts = append(opts,
 			lp2p.NATPortMap(),
 		)
 	}
@@ -206,17 +212,18 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 
 	log.SetObj(n)
 
+	isBootstrapper := conf.IsBootstrapper(host.ID())
 	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/gossip/v1", conf.NetworkName)) // TODO: better name?
 	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", conf.NetworkName))
 
 	if conf.EnableMdns {
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
 	}
-	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf, n.logger)
+	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, isBootstrapper, conf, n.logger)
 	n.peerMgr = newPeerMgr(ctx, host, n.dht.kademlia, streamProtocolID, conf, n.logger)
 	n.stream = newStreamService(ctx, n.host, streamProtocolID, n.eventChannel, n.logger)
-	n.gossip = newGossipService(ctx, n.host, n.eventChannel, conf, n.logger)
-	n.notifee = newNotifeeService(n.host, n.eventChannel, n.peerMgr, streamProtocolID, conf.Bootstrapper, n.logger)
+	n.gossip = newGossipService(ctx, n.host, n.eventChannel, isBootstrapper, n.logger)
+	n.notifee = newNotifeeService(n.host, n.eventChannel, n.peerMgr, streamProtocolID, isBootstrapper, n.logger)
 
 	n.host.Network().Notify(n.notifee)
 	n.connGater.SetPeerManager(n.peerMgr)
@@ -224,7 +231,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	n.logger.Info("network setup", "id", n.host.ID(),
 		"name", conf.NetworkName,
 		"address", conf.ListenAddrStrings,
-		"bootstrapper", conf.Bootstrapper)
+		"bootstrapper", isBootstrapper)
 
 	return n, nil
 }
@@ -271,6 +278,10 @@ func (n *network) SelfID() lp2ppeer.ID {
 	return n.host.ID()
 }
 
+func (n *network) Protect(pid lp2pcore.PeerID, tag string) {
+	n.host.ConnManager().Protect(pid, tag)
+}
+
 func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) error {
 	n.logger.Trace("Sending new message", "to", pid)
 	return n.stream.SendRequest(msg, pid)
@@ -296,12 +307,12 @@ func (n *network) Broadcast(msg []byte, topicID TopicID) error {
 	}
 }
 
-func (n *network) JoinGeneralTopic() error {
+func (n *network) JoinGeneralTopic(sp ShouldPropagate) error {
 	if n.generalTopic != nil {
 		n.logger.Debug("already subscribed to general topic")
 		return nil
 	}
-	topic, err := n.gossip.JoinTopic(n.generalTopicName())
+	topic, err := n.gossip.JoinTopic(n.generalTopicName(), sp)
 	if err != nil {
 		return err
 	}
@@ -309,12 +320,12 @@ func (n *network) JoinGeneralTopic() error {
 	return nil
 }
 
-func (n *network) JoinConsensusTopic() error {
+func (n *network) JoinConsensusTopic(sp ShouldPropagate) error {
 	if n.consensusTopic != nil {
 		n.logger.Debug("already subscribed to consensus topic")
 		return nil
 	}
-	topic, err := n.gossip.JoinTopic(n.consensusTopicName())
+	topic, err := n.gossip.JoinTopic(n.consensusTopicName(), sp)
 	if err != nil {
 		return err
 	}

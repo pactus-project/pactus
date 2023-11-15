@@ -31,7 +31,7 @@ func TestMDNS(t *testing.T) {
 	assert.NoError(t, net1.SendTo(msg, net2.SelfID()))
 
 	se := shouldReceiveEvent(t, net2, EventTypeStream).(*StreamMessage)
-	assert.Equal(t, se.Source, net1.SelfID())
+	assert.Equal(t, se.From, net1.SelfID())
 	assert.Equal(t, readData(t, se.Reader, len(msg)), msg)
 
 	net1.Stop()

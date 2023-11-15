@@ -16,7 +16,8 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/service"
+	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -44,7 +45,7 @@ func testConfig() *Config {
 		SessionTimeout:      time.Second * 1,
 		NodeNetwork:         true,
 		BlockPerMessage:     11,
-		MaxOpenSessions:     8,
+		MaxSessions:         8,
 		LatestBlockInterval: 23,
 		Firewall:            firewall.DefaultConfig(),
 	}
@@ -113,7 +114,6 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 			bdl := new(bundle.Bundle)
 			_, err := bdl.Decode(bytes.NewReader(b.Data))
 			require.NoError(t, err)
-			assert.Equal(t, bdl.Initiator, net.ID)
 
 			// -----------
 			// Check flags
@@ -178,9 +178,9 @@ func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, net *netwo
 }
 
 func (td *testData) receivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
-	bdl := bundle.NewBundle(from, msg)
+	bdl := bundle.NewBundle(msg)
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P|bundle.BundleFlagNetworkMainnet)
-	return sync.processIncomingBundle(bdl)
+	return sync.processIncomingBundle(bdl, from)
 }
 
 func (td *testData) addPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID, services service.Services) {
@@ -214,6 +214,102 @@ func (td *testData) checkPeerStatus(t *testing.T, pid peer.ID, code peerset.Stat
 	t.Helper()
 
 	require.Equal(t, td.sync.peerSet.GetPeer(pid).Status, code)
+}
+
+func makeAliceAndBobNetworks(t *testing.T) (
+	*testsuite.TestSuite,
+	*synchronizer, *network.MockNetwork,
+	*synchronizer, *network.MockNetwork,
+) {
+	t.Helper()
+
+	ts := testsuite.NewTestSuite(t)
+
+	configAlice := testConfig()
+	configBob := testConfig()
+
+	valKeyAlice := []*bls.ValidatorKey{ts.RandValKey()}
+	valKeyBob := []*bls.ValidatorKey{ts.RandValKey()}
+	stateAlice := state.MockingState(ts)
+	stateBob := state.MockingState(ts)
+	consMgrAlice, _ := consensus.MockingManager(ts, valKeyAlice)
+	consMgrBob, _ := consensus.MockingManager(ts, valKeyBob)
+	broadcastChAlice := make(chan message.Message, 1000)
+	broadcastChBob := make(chan message.Message, 1000)
+	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
+	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
+
+	configBob.NodeNetwork = true
+	networkAlice.AddAnotherNetwork(networkBob)
+	networkBob.AddAnotherNetwork(networkAlice)
+
+	sync1, err := NewSynchronizer(configAlice,
+		valKeyAlice,
+		stateAlice,
+		consMgrAlice,
+		networkAlice,
+		broadcastChAlice,
+	)
+	assert.NoError(t, err)
+	syncAlice := sync1.(*synchronizer)
+
+	sync2, err := NewSynchronizer(configBob,
+		valKeyBob,
+		stateBob,
+		consMgrBob,
+		networkBob,
+		broadcastChBob,
+	)
+	assert.NoError(t, err)
+	syncBob := sync2.(*synchronizer)
+
+	// -------------------------------
+	// Better logging during testing
+	overrideLogger := func(sync *synchronizer, name string) {
+		sync.logger = logger.NewSubLogger("_sync",
+			testsuite.NewOverrideStringer(fmt.Sprintf("%s - %s: ", name, t.Name()), sync))
+	}
+
+	overrideLogger(syncAlice, "Alice")
+	overrideLogger(syncBob, "Bob")
+	// -------------------------------
+
+	assert.NoError(t, syncAlice.Start())
+	assert.NoError(t, syncBob.Start())
+
+	// Verify that Hello messages are exchanged between Alice and Bob
+	assert.NoError(t, syncAlice.sayHello(syncBob.SelfID()))
+	assert.NoError(t, syncBob.sayHello(syncAlice.SelfID()))
+
+	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
+
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeHelloAck)
+	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHelloAck)
+
+	// Ensure peers are connected and block heights are correct
+	require.Eventually(t, func() bool {
+		return syncAlice.PeerSet().Len() == 1 &&
+			syncBob.PeerSet().Len() == 1
+	}, time.Second, 100*time.Millisecond)
+
+	require.Equal(t, peerset.StatusCodeKnown, syncAlice.PeerSet().GetPeer(syncBob.SelfID()).Status)
+	require.Equal(t, peerset.StatusCodeKnown, syncBob.PeerSet().GetPeer(syncAlice.SelfID()).Status)
+
+	return ts, syncAlice, networkAlice, syncBob, networkBob
+}
+
+// TestIdenticalBundles tests if two different peers publish the same message,
+// whether the bundle data is also the same.
+func TestIdenticalBundles(t *testing.T) {
+	ts, syncAlice, _, syncBob, _ := makeAliceAndBobNetworks(t)
+
+	blk, cert := ts.GenerateTestBlock(ts.RandHeight())
+	msg := message.NewBlockAnnounceMessage(blk, cert)
+	bdl1 := syncAlice.prepareBundle(msg)
+	bdl2 := syncBob.prepareBundle(msg)
+
+	assert.Equal(t, bdl1, bdl2)
 }
 
 func TestStop(t *testing.T) {
@@ -305,10 +401,7 @@ func TestDownload(t *testing.T) {
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
-
-		// Let's remove the session
-		td.sync.peerSet.RemoveSession(bdl.Message.(*message.BlocksRequestMessage).SessionID)
+		td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 	})
 
 	t.Run("download request is rejected", func(t *testing.T) {
@@ -321,21 +414,20 @@ func TestDownload(t *testing.T) {
 
 		from := td.sync.state.LastBlockHeight() + 1
 		count := uint32(123)
-		session1 := td.sync.peerSet.OpenSession(pid1, from, count)
+		ssn1 := td.sync.peerSet.OpenSession(pid1, from, count)
 		msg1 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, t.Name(),
-			session1.SessionID(), 1, nil, nil)
+			ssn1.SessionID, 1, nil, nil)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg1, pid1))
 		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 
 		msg2 := bdl.Message.(*message.BlocksRequestMessage)
-		session2 := td.sync.peerSet.FindSession(msg2.SessionID)
+		ssn2 := td.sync.peerSet.FindSession(msg2.SessionID)
 
 		assert.True(t, td.sync.peerSet.HasAnyOpenSession())
-		assert.True(t, session1.IsUncompleted())
+		assert.Equal(t, session.Uncompleted, ssn1.Status)
 		assert.Equal(t, from, msg2.From)
 		assert.Equal(t, count, msg2.Count)
-		assert.Equal(t, session1.SessionID()+1, session2.SessionID())
-		assert.NotEqual(t, pid1, session2.PeerID(), "should re-dwonload from other peers")
+		assert.Equal(t, ssn1.SessionID+1, ssn2.SessionID)
 	})
 
 	t.Run("testing send failure", func(t *testing.T) {

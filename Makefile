@@ -1,5 +1,4 @@
 PACKAGES=$(shell go list ./... | grep -v 'tests' | grep -v 'grpc/gen')
-BUILD_LDFLAGS= -ldflags "-X github.com/pactus-project/pactus/version.build=`git rev-parse --short=8 HEAD`"
 
 ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe
@@ -27,11 +26,15 @@ devtools:
 ########################################
 ### Building
 build:
-	go build $(BUILD_LDFLAGS) -o ./build/pactus-daemon$(EXE) ./cmd/daemon
-	go build $(BUILD_LDFLAGS) -o ./build/pactus-wallet$(EXE) ./cmd/wallet
+	go build -o ./build/pactus-daemon$(EXE) ./cmd/daemon
+	go build -o ./build/pactus-wallet$(EXE) ./cmd/wallet
+
+build_race:
+	go build -race -o ./build/pactus-daemon$(EXE) ./cmd/daemon
+	go build -race -o ./build/pactus-wallet$(EXE) ./cmd/wallet
 
 build_gui:
-	go build $(BUILD_LDFLAGS) -tags gtk -o ./build/pactus-gui$(EXE) ./cmd/gtk
+	go build -tags gtk -o ./build/pactus-gui$(EXE) ./cmd/gtk
 
 ########################################
 ### Testing
