@@ -151,12 +151,11 @@ func TestOpenSession(t *testing.T) {
 	ps := NewPeerSet(time.Minute)
 
 	pid := peer.ID("peer1")
-	ssn := ps.OpenSession(pid, 100, 101)
+	ssn := ps.OpenSession(pid, 100, 1)
 
 	assert.NotNil(t, ssn)
-	from, to := ssn.Range()
-	assert.Equal(t, uint32(100), from)
-	assert.Equal(t, uint32(101), to)
+	assert.Equal(t, uint32(100), ssn.From)
+	assert.Equal(t, uint32(1), ssn.Count)
 	assert.Equal(t, pid, ssn.PeerID)
 	assert.Equal(t, session.Open, ssn.Status)
 	assert.LessOrEqual(t, ssn.StartedAt, time.Now())
