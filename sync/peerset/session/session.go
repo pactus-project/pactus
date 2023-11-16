@@ -20,21 +20,17 @@ type Session struct {
 	Status    Status
 	PeerID    peer.ID
 	From      uint32
-	To        uint32
+	Count     uint32
 	StartedAt time.Time
 }
 
-func NewSession(id int, peerID peer.ID, from, to uint32) *Session {
+func NewSession(id int, peerID peer.ID, from, count uint32) *Session {
 	return &Session{
 		SessionID: id,
 		Status:    Open,
 		PeerID:    peerID,
 		From:      from,
-		To:        to,
+		Count:     count,
 		StartedAt: util.Now(),
 	}
-}
-
-func (s *Session) Range() (uint32, uint32) {
-	return s.From, s.To
 }

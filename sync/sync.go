@@ -113,8 +113,13 @@ func (sync *synchronizer) Stop() {
 	sync.ctx.Done()
 }
 
-func (sync *synchronizer) moveConsensusToNewHeight() {
+func (sync *synchronizer) stateHeight() uint32 {
 	stateHeight := sync.state.LastBlockHeight()
+	return stateHeight
+}
+
+func (sync *synchronizer) moveConsensusToNewHeight() {
+	stateHeight := sync.stateHeight()
 	consHeight, _ := sync.consMgr.HeightRound()
 	if stateHeight >= consHeight {
 		sync.consMgr.MoveToNewHeight()
@@ -196,7 +201,7 @@ func (sync *synchronizer) sayHello(to peer.ID) error {
 	msg := message.NewHelloMessage(
 		sync.SelfID(),
 		sync.config.Moniker,
-		sync.state.LastBlockHeight(),
+		sync.stateHeight(),
 		sync.config.Services(),
 		sync.state.LastBlockHash(),
 		sync.state.Genesis().Hash(),
@@ -334,15 +339,7 @@ func (sync *synchronizer) updateBlockchain() {
 				"stats", sync.peerSet.SessionStats())
 
 			// Try to re-download the blocks from this closed session
-			from, to := ssn.Range()
-			from = util.Max(from, downloadHeight)
-			for sync.cache.HasBlockInCache(from) {
-				from++
-			}
-			if to > from {
-				count := to - from + 1
-				sync.sendBlockRequestToRandomPeer(from, count, true)
-			}
+			sync.sendBlockRequestToRandomPeer(ssn.From, ssn.Count, true)
 		}
 	})
 
@@ -421,6 +418,17 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 			continue
 		}
 
+		for sync.cache.HasBlockInCache(from) {
+			from++
+			count--
+
+			if count == 0 {
+				// we have blocks inside the cache
+				sync.logger.Debug("sending download request ignored", "from", from+1)
+				return true
+			}
+		}
+
 		sync.logger.Debug("sending download request", "from", from+1, "count", count, "pid", p.PeerID)
 		ssn := sync.peerSet.OpenSession(p.PeerID, from, from+count-1)
 		msg := message.NewBlocksRequestMessage(ssn.SessionID, from, count)
@@ -441,7 +449,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 }
 
 func (sync *synchronizer) tryCommitBlocks() error {
-	height := sync.state.LastBlockHeight() + 1
+	height := sync.stateHeight() + 1
 	for {
 		blk := sync.cache.GetBlock(height)
 		if blk == nil {
@@ -485,7 +493,7 @@ func (sync *synchronizer) tryCommitBlocks() error {
 }
 
 func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
-	ourHeight := sync.state.LastBlockHeight()
+	ourHeight := sync.stateHeight()
 
 	if from > ourHeight {
 		sync.logger.Debug("we don't have block at this height", "height", from)
