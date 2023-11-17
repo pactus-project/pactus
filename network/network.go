@@ -11,6 +11,7 @@ import (
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2pcrypto "github.com/libp2p/go-libp2p/core/crypto"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
+	lp2pmetrics "github.com/libp2p/go-libp2p/core/metrics"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	lp2pconnmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
@@ -96,8 +97,13 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 			return nil, LibP2PError{Err: err}
 		}
 
+		// metrics for rcMgr
 		lp2prcmgr.MustRegisterWith(prometheus.DefaultRegisterer)
 		rcMgrOpt = append(rcMgrOpt, lp2prcmgr.WithTraceReporter(str))
+
+		// metrics for lp2p
+		bandwidthCounter := lp2pmetrics.NewBandwidthCounter()
+		opts = append(opts, lp2p.BandwidthReporter(bandwidthCounter))
 	} else {
 		rcMgrOpt = append(rcMgrOpt, lp2prcmgr.WithMetricsDisabled())
 		opts = append(opts, lp2p.DisableMetrics())
