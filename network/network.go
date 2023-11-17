@@ -97,8 +97,13 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 			return nil, LibP2PError{Err: err}
 		}
 
+		// metrics for rcMgr
 		lp2prcmgr.MustRegisterWith(prometheus.DefaultRegisterer)
 		rcMgrOpt = append(rcMgrOpt, lp2prcmgr.WithTraceReporter(str))
+
+		// metrics for lp2p
+		bandwidthCounter := metrics.NewBandwidthCounter()
+		opts = append(opts, lp2p.BandwidthReporter(bandwidthCounter))
 	} else {
 		rcMgrOpt = append(rcMgrOpt, lp2prcmgr.WithMetricsDisabled())
 		opts = append(opts, lp2p.DisableMetrics())
@@ -122,14 +127,12 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		return nil, LibP2PError{Err: err}
 	}
 
-	bandwidthCounter := metrics.NewBandwidthCounter()
 	opts = append(opts,
 		lp2p.Identity(networkKey),
 		lp2p.ListenAddrs(conf.ListenAddrs()...),
 		lp2p.UserAgent(version.Agent()),
 		lp2p.ResourceManager(resMgr),
 		lp2p.ConnectionManager(connMgr),
-		lp2p.BandwidthReporter(bandwidthCounter),
 	)
 
 	if conf.EnableNATService {
