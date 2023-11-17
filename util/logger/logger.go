@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"reflect"
+	"time"
 
 	"github.com/pactus-project/pactus/util"
 	"github.com/rs/zerolog"
@@ -115,7 +116,7 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 
 func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 	inst := getLoggersInst()
-
+	
 	sl := &SubLogger{
 		logger: zerolog.New(inst.writers()).With().Timestamp().Logger(),
 		name:   name,
@@ -141,7 +142,7 @@ func (l *logger) writers() io.Writer {
 	writers := []io.Writer{}
 	// console writer
 	if l.config.Colorful {
-		writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr})
+		writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
 	} else {
 		writers = append(writers, os.Stderr)
 	}
