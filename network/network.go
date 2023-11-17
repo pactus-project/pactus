@@ -11,6 +11,7 @@ import (
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2pcrypto "github.com/libp2p/go-libp2p/core/crypto"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
+	"github.com/libp2p/go-libp2p/core/metrics"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	lp2pconnmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
@@ -121,12 +122,14 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		return nil, LibP2PError{Err: err}
 	}
 
+	bandwidthCounter := metrics.NewBandwidthCounter()
 	opts = append(opts,
 		lp2p.Identity(networkKey),
 		lp2p.ListenAddrs(conf.ListenAddrs()...),
 		lp2p.UserAgent(version.Agent()),
 		lp2p.ResourceManager(resMgr),
 		lp2p.ConnectionManager(connMgr),
+		lp2p.BandwidthReporter(bandwidthCounter),
 	)
 
 	if conf.EnableNATService {
