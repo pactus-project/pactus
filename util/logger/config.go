@@ -1,14 +1,20 @@
 package logger
 
 type Config struct {
-	Colorful bool              `toml:"colorful"`
-	Levels   map[string]string `toml:"levels"`
+	Colorful           bool              `toml:"colorful"`
+	MaxBackups         int               `toml:"max_backups"`
+	RotateLogAfterDays int               `toml:"rotate_log_after_days"`
+	Compress           bool              `toml:"compress"`
+	Levels             map[string]string `toml:"levels"`
 }
 
 func DefaultConfig() *Config {
 	conf := &Config{
-		Levels:   make(map[string]string),
-		Colorful: true,
+		Levels:             make(map[string]string),
+		Colorful:           true,
+		MaxBackups:         0,
+		RotateLogAfterDays: 1,
+		Compress:           false,
 	}
 
 	conf.Levels["default"] = "info"
