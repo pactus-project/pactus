@@ -2,6 +2,7 @@ package version
 
 import (
 	"fmt"
+	"runtime"
 )
 
 // These constants follow the semantic versioning 2.0.0 spec (http://semver.org/)
@@ -12,8 +13,11 @@ const (
 	meta  string = "beta"
 )
 
+//	func Agent() string {
+//		return fmt.Sprintf("pactus/%s", Version())
+//	}
 func Agent() string {
-	return fmt.Sprintf("pactus/%s", Version())
+	return fmt.Sprintf("node=pactus/version=%s/os=%s/architecture=%s", Version(), runtime.GOOS, runtime.GOARCH)
 }
 
 func Version() string {
