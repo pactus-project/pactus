@@ -13,7 +13,7 @@ const (
 )
 
 func Agent() string {
-	return fmt.Sprintf("pactus/%s", Version())
+	return fmt.Sprintf("node=pactus/version=%s/os=%s/architecture=%s", Version(), runtime.GOOS, runtime.GOARCH)
 }
 
 func Version() string {
