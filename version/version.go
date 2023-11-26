@@ -2,6 +2,7 @@ package version
 
 import (
 	"fmt"
+	"runtime"
 )
 
 // These constants follow the semantic versioning 2.0.0 spec (http://semver.org/)
