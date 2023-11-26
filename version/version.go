@@ -13,9 +13,6 @@ const (
 	meta  string = "beta"
 )
 
-//	func Agent() string {
-//		return fmt.Sprintf("pactus/%s", Version())
-//	}
 func Agent() string {
 	return fmt.Sprintf("node=pactus/version=%s/os=%s/architecture=%s", Version(), runtime.GOOS, runtime.GOARCH)
 }
