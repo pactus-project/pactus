@@ -53,7 +53,11 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 
 // BroadcastMessage broadcasts a message to the specified topic.
 func (g *gossipService) BroadcastMessage(msg []byte, topic *lp2pps.Topic) error {
-	return topic.Publish(g.ctx, msg)
+	err := topic.Publish(g.ctx, msg)
+	if err != nil {
+		return LibP2PError{Err: err}
+	}
+	return nil
 }
 
 // JoinTopic joins a topic with the given name.

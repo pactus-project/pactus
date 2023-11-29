@@ -58,6 +58,11 @@ func (s *NotifeeService) Start() {
 
 				case lp2pevent.EvtPeerConnectednessChanged:
 					s.logger.Debug("connectedness changed", "pid", e.Peer, "connectedness", e.Connectedness)
+					if e.Connectedness == lp2pnetwork.Connected {
+						s.sendConnectEvent(e.Peer)
+					} else if e.Connectedness == lp2pnetwork.NotConnected {
+						s.sendDisconnectEvent(e.Peer)
+					}
 
 				case lp2pevent.EvtPeerIdentificationCompleted:
 					s.logger.Debug("identification completed", "pid", e.Peer)
@@ -84,15 +89,17 @@ func (s *NotifeeService) Stop() {
 func (s *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
 	pid := conn.RemotePeer()
 	s.logger.Info("connected to peer", "pid", pid, "direction", conn.Stat().Direction)
+
 	s.peerMgr.AddPeer(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
+	s.sendConnectEvent(pid)
 }
 
 func (s *NotifeeService) Disconnected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
 	pid := conn.RemotePeer()
 	s.logger.Info("disconnected from peer", "pid", pid)
-	s.eventChannel <- &DisconnectEvent{PeerID: pid}
 
 	s.peerMgr.RemovePeer(pid)
+	s.sendDisconnectEvent(pid)
 }
 
 func (s *NotifeeService) Listen(_ lp2pnetwork.Network, ma multiaddr.Multiaddr) {
@@ -121,4 +128,8 @@ func (s *NotifeeService) sendConnectEvent(pid lp2pcore.PeerID) {
 			}
 		}
 	}
+}
+
+func (s *NotifeeService) sendDisconnectEvent(pid lp2pcore.PeerID) {
+	s.eventChannel <- &DisconnectEvent{PeerID: pid}
 }

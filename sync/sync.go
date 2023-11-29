@@ -170,6 +170,16 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
 }
 
 func (sync *synchronizer) broadcast(msg message.Message) {
+	if msg.Type() == message.TypeBlockAnnounce {
+		m := msg.(*message.BlockAnnounceMessage)
+		if sync.cache.HasBlockInCache(m.Height()) {
+			// We have received the block announcement from other peers before,
+			// so we can simply ignore broadcasting it again.
+			// This helps to reduce the network bandwidth.
+			return
+		}
+	}
+
 	bdl := sync.prepareBundle(msg)
 	if bdl != nil {
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
@@ -277,6 +287,10 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 }
 
 func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
+	p := sync.peerSet.GetPeer(ce.PeerID)
+	if p != nil && p.IsKnownOrTrusty() {
+		return
+	}
 	sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeConnected)
 	sync.peerSet.UpdateAddress(ce.PeerID, ce.RemoteAddress)
 
@@ -428,7 +442,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		}
 
 		sync.logger.Debug("sending download request", "from", from+1, "count", count, "pid", p.PeerID)
-		ssn := sync.peerSet.OpenSession(p.PeerID, from, from+count-1)
+		ssn := sync.peerSet.OpenSession(p.PeerID, from, count)
 		msg := message.NewBlocksRequestMessage(ssn.SessionID, from, count)
 		err := sync.sendTo(msg, p.PeerID)
 		if err != nil {
