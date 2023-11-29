@@ -61,7 +61,7 @@ func (s *NotifeeService) Start() {
 
 				case lp2pevent.EvtPeerIdentificationCompleted:
 					s.logger.Debug("identification completed", "pid", e.Peer)
-					s.sendConnectEven(e.Peer)
+					s.sendConnectEvent(e.Peer)
 
 				case lp2pevent.EvtPeerProtocolsUpdated:
 					s.logger.Debug("protocols updated", "pid", e.Peer, "protocols", e.Added)
