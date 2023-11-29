@@ -280,11 +280,9 @@ func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
 	sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeConnected)
 	sync.peerSet.UpdateAddress(ce.PeerID, ce.RemoteAddress)
 
-	if ce.SupportStream {
-		if err := sync.sayHello(ce.PeerID); err != nil {
-			sync.logger.Warn("sending Hello message failed",
-				"to", ce.PeerID, "error", err)
-		}
+	if err := sync.sayHello(ce.PeerID); err != nil {
+		sync.logger.Warn("sending Hello message failed",
+			"to", ce.PeerID, "error", err)
 	}
 }
 
