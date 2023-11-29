@@ -106,7 +106,7 @@ func (s *NotifeeService) ListenClose(_ lp2pnetwork.Network, ma multiaddr.Multiad
 	s.logger.Debug("notifee ListenClose event emitted", "addr", ma.String())
 }
 
-func (s *NotifeeService) sendConnectEven(pid lp2pcore.PeerID) {
+func (s *NotifeeService) sendConnectEvent(pid lp2pcore.PeerID) {
 	protocols, err := s.host.Peerstore().GetProtocols(pid)
 	if err != nil {
 		s.logger.Error("unable to get supported protocols", "pid", pid)
