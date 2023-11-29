@@ -337,10 +337,10 @@ func TestNetwork(t *testing.T) {
 		require.Error(t, networkM.SendTo(msgM, networkX.SelfID()))
 	})
 
+	// TODO: How to test this?
 	// t.Run("nodes M and N (private, connected via relay) can communicate using the relay node R", func(t *testing.T) {
 	// 	require.NoError(t, networkM.host.Connect(networkM.ctx, *circuitAddrInfoN))
 
-	// 	// TODO: How to test this?
 	// 	msgM :=  ts.RandBytes(64)
 	// 	require.NoError(t, networkM.SendTo(msgM, networkN.SelfID()))
 	// 	eM := shouldReceiveEvent(t, networkN, EventTypeStream).(*StreamMessage)
