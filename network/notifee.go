@@ -65,7 +65,7 @@ func (s *NotifeeService) Start() {
 
 				case lp2pevent.EvtPeerProtocolsUpdated:
 					s.logger.Debug("protocols updated", "pid", e.Peer, "protocols", e.Added)
-					s.sendConnectEven(e.Peer)
+					s.sendConnectEvent(e.Peer)
 
 				default:
 					s.logger.Debug("unhandled libp2p event", "event", evt)
