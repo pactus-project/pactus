@@ -287,8 +287,8 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 }
 
 func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
-	peer := sync.peerSet.GetPeer(ce.PeerID)
-	if peer != nil && peer.IsKnownOrTrusty() {
+	p := sync.peerSet.GetPeer(ce.PeerID)
+	if p != nil && p.IsKnownOrTrusty() {
 		return
 	}
 	sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeConnected)
