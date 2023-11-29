@@ -226,31 +226,20 @@ func TestStop(t *testing.T) {
 func TestConnectEvents(t *testing.T) {
 	td := setup(t, nil)
 
-	t.Run("Should say hello when there is stream connection", func(t *testing.T) {
-		pid := td.RandPeerID()
-		td.network.EventCh <- &network.ConnectEvent{
-			PeerID:        pid,
-			RemoteAddress: "address_1",
-			SupportStream: true,
-		}
-		td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
+	pid := td.RandPeerID()
+	td.network.EventCh <- &network.ConnectEvent{
+		PeerID:        pid,
+		RemoteAddress: "address_1",
+	}
+	assert.Eventually(t, func() bool {
 		p := td.sync.peerSet.GetPeer(pid)
-		assert.Equal(t, p.Status, peerset.StatusCodeConnected)
-		assert.Equal(t, p.Address, "address_1")
-	})
-
-	t.Run("Should NOT say hello when there is no stream connection", func(t *testing.T) {
-		pid := td.RandPeerID()
-		td.network.EventCh <- &network.ConnectEvent{
-			PeerID:        pid,
-			RemoteAddress: "address_1",
-			SupportStream: false,
+		if p == nil {
+			return false
 		}
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
-		p := td.sync.peerSet.GetPeer(pid)
-		assert.Equal(t, p.Status, peerset.StatusCodeConnected)
 		assert.Equal(t, p.Address, "address_1")
-	})
+		return p.Status == peerset.StatusCodeConnected
+	}, time.Second, 100*time.Millisecond)
+	td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
 }
 
 func TestDisconnectEvents(t *testing.T) {

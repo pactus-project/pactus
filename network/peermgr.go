@@ -6,7 +6,6 @@ import (
 	"time"
 
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
-	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnet "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
@@ -18,7 +17,6 @@ import (
 type peerInfo struct {
 	MultiAddress multiaddr.Multiaddr
 	Direction    lp2pnet.Direction
-	Protocols    []lp2pcore.ProtocolID
 }
 
 // Peer Manager attempts to establish connections with other nodes when the
@@ -26,31 +24,29 @@ type peerInfo struct {
 type peerMgr struct {
 	lk sync.RWMutex
 
-	ctx              context.Context
-	bootstrapAddrs   []lp2ppeer.AddrInfo
-	minConns         int
-	maxConns         int
-	host             lp2phost.Host
-	dht              *lp2pdht.IpfsDHT
-	peers            map[lp2ppeer.ID]*peerInfo
-	streamProtocolID lp2pcore.ProtocolID
-	logger           *logger.SubLogger
+	ctx            context.Context
+	bootstrapAddrs []lp2ppeer.AddrInfo
+	minConns       int
+	maxConns       int
+	host           lp2phost.Host
+	dht            *lp2pdht.IpfsDHT
+	peers          map[lp2ppeer.ID]*peerInfo
+	logger         *logger.SubLogger
 }
 
 // newPeerMgr creates a new Peer Manager instance.
 func newPeerMgr(ctx context.Context, h lp2phost.Host, dht *lp2pdht.IpfsDHT,
-	streamProtocolID lp2pcore.ProtocolID, conf *Config, log *logger.SubLogger,
+	conf *Config, log *logger.SubLogger,
 ) *peerMgr {
 	b := &peerMgr{
-		ctx:              ctx,
-		bootstrapAddrs:   conf.BootstrapAddrInfos(),
-		minConns:         conf.MinConns,
-		maxConns:         conf.MaxConns,
-		streamProtocolID: streamProtocolID,
-		peers:            make(map[lp2ppeer.ID]*peerInfo),
-		host:             h,
-		dht:              dht,
-		logger:           log,
+		ctx:            ctx,
+		bootstrapAddrs: conf.BootstrapAddrInfos(),
+		minConns:       conf.MinConns,
+		maxConns:       conf.MaxConns,
+		peers:          make(map[lp2ppeer.ID]*peerInfo),
+		host:           h,
+		dht:            dht,
+		logger:         log,
 	}
 
 	return b
@@ -87,8 +83,7 @@ func (mgr *peerMgr) NumOfConnected() int {
 	return len(mgr.peers) // TODO: try to keep record of all peers + connected peers
 }
 
-func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
-	direction lp2pnet.Direction, protocols []lp2pcore.ProtocolID,
+func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr, direction lp2pnet.Direction,
 ) {
 	mgr.lk.Lock()
 	defer mgr.lk.Unlock()
@@ -96,7 +91,6 @@ func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
 	mgr.peers[pid] = &peerInfo{
 		MultiAddress: ma,
 		Direction:    direction,
-		Protocols:    protocols,
 	}
 }
 
@@ -105,6 +99,17 @@ func (mgr *peerMgr) RemovePeer(pid lp2ppeer.ID) {
 	defer mgr.lk.Unlock()
 
 	delete(mgr.peers, pid)
+}
+
+func (mgr *peerMgr) GetMultiAddr(pid lp2ppeer.ID) multiaddr.Multiaddr {
+	mgr.lk.RLock()
+	defer mgr.lk.RUnlock()
+
+	peer := mgr.peers[pid]
+	if peer == nil {
+		return nil
+	}
+	return peer.MultiAddress
 }
 
 // checkConnectivity performs the actual work of maintaining connections.
