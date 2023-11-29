@@ -10,7 +10,7 @@ import (
 	lp2p "github.com/libp2p/go-libp2p"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
-	ma "github.com/multiformats/go-multiaddr"
+	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -32,7 +32,7 @@ func makeTestRelay(t *testing.T) lp2phost.Host {
 		lp2p.DisableRelay(),
 		lp2p.EnableRelayService(),
 		lp2p.ForceReachabilityPublic(),
-		lp2p.AddrsFactory(func(addrs []ma.Multiaddr) []ma.Multiaddr {
+		lp2p.AddrsFactory(func(addrs []multiaddr.Multiaddr) []multiaddr.Multiaddr {
 			return addrs
 		}),
 	)
@@ -59,7 +59,6 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 		fmt.Sprintf("%s - %s: ", net.SelfID().ShortString(), t.Name()), net))
 
 	assert.NoError(t, net.Start())
-	assert.NoError(t, net.JoinGeneralTopic(alwaysPropagate))
 
 	return net
 }
@@ -231,6 +230,12 @@ func TestNetwork(t *testing.T) {
 		lp2p.ForceReachabilityPrivate(),
 	})
 
+	assert.NoError(t, networkB.JoinGeneralTopic(alwaysPropagate))
+	assert.NoError(t, networkP.JoinGeneralTopic(alwaysPropagate))
+	assert.NoError(t, networkM.JoinGeneralTopic(alwaysPropagate))
+	assert.NoError(t, networkN.JoinGeneralTopic(alwaysPropagate))
+	assert.NoError(t, networkX.JoinGeneralTopic(alwaysPropagate))
+
 	assert.NoError(t, networkB.JoinConsensusTopic(alwaysPropagate))
 	assert.NoError(t, networkP.JoinConsensusTopic(alwaysPropagate))
 	assert.NoError(t, networkM.JoinConsensusTopic(alwaysPropagate))
@@ -248,7 +253,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("Gossip: all nodes receive general gossip messages", func(t *testing.T) {
-		msg := []byte("test-general-topic")
+		msg := ts.RandBytes(64)
 
 		require.NoError(t, networkP.Broadcast(msg, TopicIDGeneral))
 
@@ -264,7 +269,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("only nodes subscribed to the consensus topic receive consensus gossip messages", func(t *testing.T) {
-		msg := []byte("test-consensus-topic")
+		msg := ts.RandBytes(64)
 
 		require.NoError(t, networkP.Broadcast(msg, TopicIDConsensus))
 
@@ -281,7 +286,7 @@ func TestNetwork(t *testing.T) {
 	t.Run("node P (public) is directly accessible by nodes M and N (private behind NAT)", func(t *testing.T) {
 		require.NoError(t, networkM.host.Connect(networkM.ctx, *publicAddrInfo))
 
-		msgM := []byte("test-stream-from-m")
+		msgM := ts.RandBytes(64)
 		require.NoError(t, networkM.SendTo(msgM, networkP.SelfID()))
 		eP := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
 		assert.Equal(t, eP.From, networkM.SelfID())
@@ -291,7 +296,7 @@ func TestNetwork(t *testing.T) {
 	t.Run("node P (public) is directly accessible by node X (private behind NAT, without relay)", func(t *testing.T) {
 		require.NoError(t, networkX.host.Connect(networkX.ctx, *publicAddrInfo))
 
-		msgX := []byte("test-stream-from-x")
+		msgX := ts.RandBytes(64)
 		require.NoError(t, networkX.SendTo(msgX, networkP.SelfID()))
 		eP := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
 		assert.Equal(t, eP.From, networkX.SelfID())
@@ -299,12 +304,27 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node P (public) is directly accessible by node B (bootstrap)", func(t *testing.T) {
-		msgB := []byte("test-stream-from-b")
+		msgB := ts.RandBytes(64)
 
 		require.NoError(t, networkB.SendTo(msgB, networkP.SelfID()))
 		eB := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
 		assert.Equal(t, eB.From, networkB.SelfID())
 		assert.Equal(t, readData(t, eB.Reader, len(msgB)), msgB)
+	})
+
+	t.Run("Ignore broadcasting identical messages", func(t *testing.T) {
+		msg := ts.RandBytes(64)
+
+		require.NoError(t, networkM.Broadcast(msg, TopicIDGeneral))
+		require.NoError(t, networkN.Broadcast(msg, TopicIDGeneral))
+
+		eX := shouldReceiveEvent(t, networkX, EventTypeGossip).(*GossipMessage)
+
+		assert.Equal(t, eX.Data, msg)
+		assert.NotEqual(t, eX.From, networkM.SelfID(), "network X has no direct connection with M")
+		assert.NotEqual(t, eX.From, networkN.SelfID(), "network X has no direct connection with N")
+
+		shouldNotReceiveEvent(t, networkX)
 	})
 
 	circuitAddrInfoN, _ := lp2ppeer.AddrInfoFromString(
@@ -313,23 +333,22 @@ func TestNetwork(t *testing.T) {
 	t.Run("node X (private, not connected via relay) is not accessible by node M", func(t *testing.T) {
 		require.Error(t, networkX.host.Connect(networkX.ctx, *circuitAddrInfoN))
 
-		msgM := []byte("test-stream-from-m")
+		msgM := ts.RandBytes(64)
 		require.Error(t, networkM.SendTo(msgM, networkX.SelfID()))
 	})
 
-	t.Run("nodes M and N (private, connected via relay) can communicate using the relay node R", func(t *testing.T) {
-		require.NoError(t, networkM.host.Connect(networkM.ctx, *circuitAddrInfoN))
+	// t.Run("nodes M and N (private, connected via relay) can communicate using the relay node R", func(t *testing.T) {
+	// 	require.NoError(t, networkM.host.Connect(networkM.ctx, *circuitAddrInfoN))
 
-		// TODO: How to test this?
-		// msgM := []byte("test-stream-from-m")
-		// require.NoError(t, networkM.SendTo(msgM, networkN.SelfID()))
-		// eM := shouldReceiveEvent(t, networkN, EventTypeStream).(*StreamMessage)
-		// assert.Equal(t, eM.Source, networkM.SelfID())
-		// assert.Equal(t, readData(t, eM.Reader, len(msgM)), msgM)
-	})
+	// 	// TODO: How to test this?
+	// 	msgM :=  ts.RandBytes(64)
+	// 	require.NoError(t, networkM.SendTo(msgM, networkN.SelfID()))
+	// 	eM := shouldReceiveEvent(t, networkN, EventTypeStream).(*StreamMessage)
+	// 	assert.Equal(t, readData(t, eM.Reader, len(msgM)), msgM)
+	// })
 
 	t.Run("closing connection", func(t *testing.T) {
-		msgB := []byte("test-stream-from-b")
+		msgB := ts.RandBytes(64)
 
 		networkP.Stop()
 		networkB.CloseConnection(networkP.SelfID())

@@ -335,3 +335,26 @@ func TestDownload(t *testing.T) {
 		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
 	})
 }
+
+func TestBroadcastBlockAnnounce(t *testing.T) {
+	td := setup(t, nil)
+
+	t.Run("Should announce the block", func(t *testing.T) {
+		blk, cert := td.GenerateTestBlock(td.RandHeight())
+		msg := message.BlockAnnounceMessage{Block: blk, Certificate: cert}
+
+		td.broadcastCh <- &msg
+
+		td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlockAnnounce)
+	})
+
+	t.Run("Should NOT announce the block", func(t *testing.T) {
+		blk, cert := td.GenerateTestBlock(td.RandHeight())
+		msg := message.BlockAnnounceMessage{Block: blk, Certificate: cert}
+
+		td.sync.cache.AddBlock(blk)
+		td.broadcastCh <- &msg
+
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlockAnnounce)
+	})
+}
