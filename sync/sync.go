@@ -294,6 +294,10 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 }
 
 func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
+	peer := sync.peerSet.GetPeer(ce.PeerID)
+	if peer != nil && peer.IsKnownOrTrusty() {
+		return
+	}
 	sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeConnected)
 	sync.peerSet.UpdateAddress(ce.PeerID, ce.RemoteAddress)
 
@@ -445,7 +449,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		}
 
 		sync.logger.Debug("sending download request", "from", from+1, "count", count, "pid", p.PeerID)
-		ssn := sync.peerSet.OpenSession(p.PeerID, from, from+count-1)
+		ssn := sync.peerSet.OpenSession(p.PeerID, from, count)
 		msg := message.NewBlocksRequestMessage(ssn.SessionID, from, count)
 		err := sync.sendTo(msg, p.PeerID)
 		if err != nil {

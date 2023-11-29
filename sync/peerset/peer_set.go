@@ -43,11 +43,11 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	}
 }
 
-func (ps *PeerSet) OpenSession(pid peer.ID, from, to uint32) *session.Session {
+func (ps *PeerSet) OpenSession(pid peer.ID, from, count uint32) *session.Session {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	ssn := session.NewSession(ps.nextSessionID, pid, from, to)
+	ssn := session.NewSession(ps.nextSessionID, pid, from, count)
 	ps.sessions[ssn.SessionID] = ssn
 	ps.nextSessionID++
 

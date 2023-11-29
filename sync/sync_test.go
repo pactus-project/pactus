@@ -227,10 +227,12 @@ func TestConnectEvents(t *testing.T) {
 	td := setup(t, nil)
 
 	pid := td.RandPeerID()
-	td.network.EventCh <- &network.ConnectEvent{
+	ce := &network.ConnectEvent{
 		PeerID:        pid,
 		RemoteAddress: "address_1",
 	}
+	td.network.EventCh <- ce
+
 	assert.Eventually(t, func() bool {
 		p := td.sync.peerSet.GetPeer(pid)
 		if p == nil {
@@ -240,6 +242,11 @@ func TestConnectEvents(t *testing.T) {
 		return p.Status == peerset.StatusCodeConnected
 	}, time.Second, 100*time.Millisecond)
 	td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
+
+	// Receiving connect event for the second time
+	td.sync.peerSet.UpdateStatus(pid, peerset.StatusCodeKnown)
+	td.network.EventCh <- ce
+	td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
 }
 
 func TestDisconnectEvents(t *testing.T) {
