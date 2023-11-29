@@ -68,7 +68,7 @@ func (s *NotifeeService) Start() {
 					s.sendConnectEven(e.Peer)
 
 				default:
-					s.logger.Info("unhandled libp2p event", "event", evt)
+					s.logger.Debug("unhandled libp2p event", "event", evt)
 				}
 
 			case <-s.ctx.Done():
