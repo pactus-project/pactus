@@ -169,24 +169,17 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
 	return nil
 }
 
-func (sync *synchronizer) shouldBroadcast(msg message.Message) bool {
+func (sync *synchronizer) broadcast(msg message.Message) {
 	if msg.Type() == message.TypeBlockAnnounce {
 		m := msg.(*message.BlockAnnounceMessage)
 		if sync.cache.HasBlockInCache(m.Height()) {
 			// We have received the block announcement from other peers before,
 			// so we can simply ignore broadcasting it again.
 			// This helps to reduce the network bandwidth.
-			return false
+			return
 		}
 	}
 
-	return true
-}
-
-func (sync *synchronizer) broadcast(msg message.Message) {
-	if !sync.shouldBroadcast(msg) {
-		return
-	}
 	bdl := sync.prepareBundle(msg)
 	if bdl != nil {
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
