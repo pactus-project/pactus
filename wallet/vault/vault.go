@@ -232,7 +232,7 @@ func (v *Vault) AddressInfos() []AddressInfo {
 			pathA, _ := addresspath.NewPathFromString(a.Path)
 			pathB, _ := addresspath.NewPathFromString(b.Path)
 
-			if pathA.LastIndex() < pathB.LastIndex() {
+			if pathA.AddressIndex() < pathB.AddressIndex() {
 				return -1
 			}
 			return 1
@@ -443,7 +443,7 @@ func (v *Vault) AddressInfo(addr string) *AddressInfo {
 			return nil
 		}
 
-		extendedKey, err := ext.Derive(p.LastIndex())
+		extendedKey, err := ext.Derive(p.AddressIndex())
 		if err != nil {
 			return nil
 		}
