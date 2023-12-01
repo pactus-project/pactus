@@ -345,3 +345,14 @@ func TestUpdateSessionLastActivity(t *testing.T) {
 	ps.UpdateSessionLastActivity(ssn.SessionID)
 	assert.Greater(t, ssn.LastActivity, activity1)
 }
+
+func TestUpdateProtocols(t *testing.T) {
+	ps := NewPeerSet(time.Minute)
+
+	pid := peer.ID("peer-1")
+	protocols := []string{"protocol-1"}
+	ps.UpdateProtocols(pid, protocols)
+
+	p := ps.GetPeer(pid)
+	assert.Equal(t, p.Protocols, protocols)
+}
