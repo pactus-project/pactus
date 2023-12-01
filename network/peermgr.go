@@ -5,7 +5,6 @@ import (
 	"sync"
 	"time"
 
-	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnet "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
@@ -29,13 +28,12 @@ type peerMgr struct {
 	minConns       int
 	maxConns       int
 	host           lp2phost.Host
-	dht            *lp2pdht.IpfsDHT
 	peers          map[lp2ppeer.ID]*peerInfo
 	logger         *logger.SubLogger
 }
 
 // newPeerMgr creates a new Peer Manager instance.
-func newPeerMgr(ctx context.Context, h lp2phost.Host, dht *lp2pdht.IpfsDHT,
+func newPeerMgr(ctx context.Context, h lp2phost.Host,
 	conf *Config, log *logger.SubLogger,
 ) *peerMgr {
 	b := &peerMgr{
@@ -45,7 +43,6 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host, dht *lp2pdht.IpfsDHT,
 		maxConns:       conf.MaxConns,
 		peers:          make(map[lp2ppeer.ID]*peerInfo),
 		host:           h,
-		dht:            dht,
 		logger:         log,
 	}
 
@@ -128,9 +125,6 @@ func (mgr *peerMgr) CheckConnectivity() {
 		connectedness := net.Connectedness(pid)
 		if connectedness == lp2pnet.Connected {
 			connectedPeers = append(connectedPeers, pid)
-		} else {
-			mgr.logger.Debug("peer is not connected to us", "peer", pid)
-			delete(mgr.peers, pid)
 		}
 	}
 
@@ -146,20 +140,20 @@ func (mgr *peerMgr) CheckConnectivity() {
 			"count", len(connectedPeers),
 			"min", mgr.minConns)
 
-		for _, pi := range mgr.bootstrapAddrs {
-			mgr.logger.Debug("try connecting to a bootstrap peer", "peer", pi.String())
+		for _, ai := range mgr.bootstrapAddrs {
+			mgr.logger.Debug("try connecting to a bootstrap peer", "peer", ai.String())
 
 			// Don't try to connect to an already connected peer.
-			if HasPID(connectedPeers, pi.ID) {
-				mgr.logger.Trace("already connected", "peer", pi.String())
+			if HasPID(connectedPeers, ai.ID) {
+				mgr.logger.Trace("already connected", "peer", ai.String())
 				continue
 			}
 
 			if swarm, ok := mgr.host.Network().(*lp2pswarm.Swarm); ok {
-				swarm.Backoff().Clear(pi.ID)
+				swarm.Backoff().Clear(ai.ID)
 			}
 
-			ConnectAsync(mgr.ctx, mgr.host, pi, mgr.logger)
+			ConnectAsync(mgr.ctx, mgr.host, ai, mgr.logger)
 		}
 	}
 }

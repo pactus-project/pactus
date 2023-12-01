@@ -871,7 +871,7 @@ proto.pactus.GetNodeInfoResponse.prototype.setPeerId = function(value) {
  * @private {!Array<number>}
  * @const
  */
-proto.pactus.PeerInfo.repeatedFields_ = [5];
+proto.pactus.PeerInfo.repeatedFields_ = [5,17];
 
 
 
@@ -918,7 +918,11 @@ proto.pactus.PeerInfo.toObject = function(includeInstance, msg) {
     lastReceived: jspb.Message.getFieldWithDefault(msg, 12, 0),
     sentBytesMap: (f = msg.getSentBytesMap()) ? f.toObject(includeInstance, undefined) : [],
     receivedBytesMap: (f = msg.getReceivedBytesMap()) ? f.toObject(includeInstance, undefined) : [],
-    address: jspb.Message.getFieldWithDefault(msg, 15, "")
+    address: jspb.Message.getFieldWithDefault(msg, 15, ""),
+    direction: jspb.Message.getFieldWithDefault(msg, 16, ""),
+    protocolsList: (f = jspb.Message.getRepeatedField(msg, 17)) == null ? undefined : f,
+    totalSessions: jspb.Message.getFieldWithDefault(msg, 18, 0),
+    completedSessions: jspb.Message.getFieldWithDefault(msg, 19, 0)
   };
 
   if (includeInstance) {
@@ -1018,6 +1022,22 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
     case 15:
       var value = /** @type {string} */ (reader.readString());
       msg.setAddress(value);
+      break;
+    case 16:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setDirection(value);
+      break;
+    case 17:
+      var value = /** @type {string} */ (reader.readString());
+      msg.addProtocols(value);
+      break;
+    case 18:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setTotalSessions(value);
+      break;
+    case 19:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setCompletedSessions(value);
       break;
     default:
       reader.skipField();
@@ -1144,6 +1164,34 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       15,
+      f
+    );
+  }
+  f = message.getDirection();
+  if (f.length > 0) {
+    writer.writeString(
+      16,
+      f
+    );
+  }
+  f = message.getProtocolsList();
+  if (f.length > 0) {
+    writer.writeRepeatedString(
+      17,
+      f
+    );
+  }
+  f = message.getTotalSessions();
+  if (f !== 0) {
+    writer.writeInt32(
+      18,
+      f
+    );
+  }
+  f = message.getCompletedSessions();
+  if (f !== 0) {
+    writer.writeInt32(
+      19,
       f
     );
   }
@@ -1494,6 +1542,97 @@ proto.pactus.PeerInfo.prototype.getAddress = function() {
  */
 proto.pactus.PeerInfo.prototype.setAddress = function(value) {
   return jspb.Message.setProto3StringField(this, 15, value);
+};
+
+
+/**
+ * optional string direction = 16;
+ * @return {string}
+ */
+proto.pactus.PeerInfo.prototype.getDirection = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 16, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setDirection = function(value) {
+  return jspb.Message.setProto3StringField(this, 16, value);
+};
+
+
+/**
+ * repeated string protocols = 17;
+ * @return {!Array<string>}
+ */
+proto.pactus.PeerInfo.prototype.getProtocolsList = function() {
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 17));
+};
+
+
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setProtocolsList = function(value) {
+  return jspb.Message.setField(this, 17, value || []);
+};
+
+
+/**
+ * @param {string} value
+ * @param {number=} opt_index
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.addProtocols = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 17, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.clearProtocolsList = function() {
+  return this.setProtocolsList([]);
+};
+
+
+/**
+ * optional int32 total_sessions = 18;
+ * @return {number}
+ */
+proto.pactus.PeerInfo.prototype.getTotalSessions = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 18, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setTotalSessions = function(value) {
+  return jspb.Message.setProto3IntField(this, 18, value);
+};
+
+
+/**
+ * optional int32 completed_sessions = 19;
+ * @return {number}
+ */
+proto.pactus.PeerInfo.prototype.getCompletedSessions = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 19, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setCompletedSessions = function(value) {
+  return jspb.Message.setProto3IntField(this, 19, value);
 };
 
 

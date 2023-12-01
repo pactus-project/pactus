@@ -28,8 +28,9 @@ type EventType int
 const (
 	EventTypeConnect    EventType = 1
 	EventTypeDisconnect EventType = 2
-	EventTypeGossip     EventType = 3
-	EventTypeStream     EventType = 4
+	EventTypeProtocols  EventType = 3
+	EventTypeGossip     EventType = 4
+	EventTypeStream     EventType = 5
 )
 
 func (t EventType) String() string {
@@ -38,6 +39,8 @@ func (t EventType) String() string {
 		return "connect"
 	case EventTypeDisconnect:
 		return "disconnect"
+	case EventTypeProtocols:
+		return "protocols"
 	case EventTypeGossip:
 		return "gossip-msg"
 	case EventTypeStream:
@@ -76,6 +79,7 @@ func (*StreamMessage) Type() EventType {
 type ConnectEvent struct {
 	PeerID        lp2pcore.PeerID
 	RemoteAddress string
+	Direction     string
 }
 
 func (*ConnectEvent) Type() EventType {
@@ -89,6 +93,17 @@ type DisconnectEvent struct {
 
 func (*DisconnectEvent) Type() EventType {
 	return EventTypeDisconnect
+}
+
+// ProtocolsEvents represents updating protocols event.
+type ProtocolsEvents struct {
+	PeerID        lp2pcore.PeerID
+	Protocols     []string
+	SupportStream bool
+}
+
+func (*ProtocolsEvents) Type() EventType {
+	return EventTypeProtocols
 }
 
 // ShouldPropagate determines whether a message should be disregarded:

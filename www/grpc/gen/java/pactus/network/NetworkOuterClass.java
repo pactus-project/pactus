@@ -3354,6 +3354,55 @@ public final class NetworkOuterClass {
      */
     com.google.protobuf.ByteString
         getAddressBytes();
+
+    /**
+     * <code>string direction = 16 [json_name = "direction"];</code>
+     * @return The direction.
+     */
+    java.lang.String getDirection();
+    /**
+     * <code>string direction = 16 [json_name = "direction"];</code>
+     * @return The bytes for direction.
+     */
+    com.google.protobuf.ByteString
+        getDirectionBytes();
+
+    /**
+     * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+     * @return A list containing the protocols.
+     */
+    java.util.List<java.lang.String>
+        getProtocolsList();
+    /**
+     * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+     * @return The count of protocols.
+     */
+    int getProtocolsCount();
+    /**
+     * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+     * @param index The index of the element to return.
+     * @return The protocols at the given index.
+     */
+    java.lang.String getProtocols(int index);
+    /**
+     * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the protocols at the given index.
+     */
+    com.google.protobuf.ByteString
+        getProtocolsBytes(int index);
+
+    /**
+     * <code>int32 total_sessions = 18 [json_name = "totalSessions"];</code>
+     * @return The totalSessions.
+     */
+    int getTotalSessions();
+
+    /**
+     * <code>int32 completed_sessions = 19 [json_name = "completedSessions"];</code>
+     * @return The completedSessions.
+     */
+    int getCompletedSessions();
   }
   /**
    * Protobuf type {@code pactus.PeerInfo}
@@ -3374,6 +3423,8 @@ public final class NetworkOuterClass {
       consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       lastBlockHash_ = com.google.protobuf.ByteString.EMPTY;
       address_ = "";
+      direction_ = "";
+      protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
 
     @java.lang.Override
@@ -3825,6 +3876,101 @@ public final class NetworkOuterClass {
       }
     }
 
+    public static final int DIRECTION_FIELD_NUMBER = 16;
+    private volatile java.lang.Object direction_;
+    /**
+     * <code>string direction = 16 [json_name = "direction"];</code>
+     * @return The direction.
+     */
+    @java.lang.Override
+    public java.lang.String getDirection() {
+      java.lang.Object ref = direction_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        direction_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string direction = 16 [json_name = "direction"];</code>
+     * @return The bytes for direction.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getDirectionBytes() {
+      java.lang.Object ref = direction_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        direction_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PROTOCOLS_FIELD_NUMBER = 17;
+    private com.google.protobuf.LazyStringList protocols_;
+    /**
+     * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+     * @return A list containing the protocols.
+     */
+    public com.google.protobuf.ProtocolStringList
+        getProtocolsList() {
+      return protocols_;
+    }
+    /**
+     * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+     * @return The count of protocols.
+     */
+    public int getProtocolsCount() {
+      return protocols_.size();
+    }
+    /**
+     * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+     * @param index The index of the element to return.
+     * @return The protocols at the given index.
+     */
+    public java.lang.String getProtocols(int index) {
+      return protocols_.get(index);
+    }
+    /**
+     * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the protocols at the given index.
+     */
+    public com.google.protobuf.ByteString
+        getProtocolsBytes(int index) {
+      return protocols_.getByteString(index);
+    }
+
+    public static final int TOTAL_SESSIONS_FIELD_NUMBER = 18;
+    private int totalSessions_;
+    /**
+     * <code>int32 total_sessions = 18 [json_name = "totalSessions"];</code>
+     * @return The totalSessions.
+     */
+    @java.lang.Override
+    public int getTotalSessions() {
+      return totalSessions_;
+    }
+
+    public static final int COMPLETED_SESSIONS_FIELD_NUMBER = 19;
+    private int completedSessions_;
+    /**
+     * <code>int32 completed_sessions = 19 [json_name = "completedSessions"];</code>
+     * @return The completedSessions.
+     */
+    @java.lang.Override
+    public int getCompletedSessions() {
+      return completedSessions_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -3889,6 +4035,18 @@ public final class NetworkOuterClass {
           14);
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 15, address_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(direction_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 16, direction_);
+      }
+      for (int i = 0; i < protocols_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 17, protocols_.getRaw(i));
+      }
+      if (totalSessions_ != 0) {
+        output.writeInt32(18, totalSessions_);
+      }
+      if (completedSessions_ != 0) {
+        output.writeInt32(19, completedSessions_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -3972,6 +4130,25 @@ public final class NetworkOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, address_);
       }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(direction_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(16, direction_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < protocols_.size(); i++) {
+          dataSize += computeStringSizeNoTag(protocols_.getRaw(i));
+        }
+        size += dataSize;
+        size += 2 * getProtocolsList().size();
+      }
+      if (totalSessions_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(18, totalSessions_);
+      }
+      if (completedSessions_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(19, completedSessions_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -4017,6 +4194,14 @@ public final class NetworkOuterClass {
           other.internalGetReceivedBytes())) return false;
       if (!getAddress()
           .equals(other.getAddress())) return false;
+      if (!getDirection()
+          .equals(other.getDirection())) return false;
+      if (!getProtocolsList()
+          .equals(other.getProtocolsList())) return false;
+      if (getTotalSessions()
+          != other.getTotalSessions()) return false;
+      if (getCompletedSessions()
+          != other.getCompletedSessions()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -4066,6 +4251,16 @@ public final class NetworkOuterClass {
       }
       hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
       hash = (53 * hash) + getAddress().hashCode();
+      hash = (37 * hash) + DIRECTION_FIELD_NUMBER;
+      hash = (53 * hash) + getDirection().hashCode();
+      if (getProtocolsCount() > 0) {
+        hash = (37 * hash) + PROTOCOLS_FIELD_NUMBER;
+        hash = (53 * hash) + getProtocolsList().hashCode();
+      }
+      hash = (37 * hash) + TOTAL_SESSIONS_FIELD_NUMBER;
+      hash = (53 * hash) + getTotalSessions();
+      hash = (37 * hash) + COMPLETED_SESSIONS_FIELD_NUMBER;
+      hash = (53 * hash) + getCompletedSessions();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4248,6 +4443,14 @@ public final class NetworkOuterClass {
         internalGetMutableReceivedBytes().clear();
         address_ = "";
 
+        direction_ = "";
+
+        protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        totalSessions_ = 0;
+
+        completedSessions_ = 0;
+
         return this;
       }
 
@@ -4296,6 +4499,14 @@ public final class NetworkOuterClass {
         result.receivedBytes_ = internalGetReceivedBytes();
         result.receivedBytes_.makeImmutable();
         result.address_ = address_;
+        result.direction_ = direction_;
+        if (((bitField0_ & 0x00000008) != 0)) {
+          protocols_ = protocols_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000008);
+        }
+        result.protocols_ = protocols_;
+        result.totalSessions_ = totalSessions_;
+        result.completedSessions_ = completedSessions_;
         onBuilt();
         return result;
       }
@@ -4396,6 +4607,26 @@ public final class NetworkOuterClass {
         if (!other.getAddress().isEmpty()) {
           address_ = other.address_;
           onChanged();
+        }
+        if (!other.getDirection().isEmpty()) {
+          direction_ = other.direction_;
+          onChanged();
+        }
+        if (!other.protocols_.isEmpty()) {
+          if (protocols_.isEmpty()) {
+            protocols_ = other.protocols_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+          } else {
+            ensureProtocolsIsMutable();
+            protocols_.addAll(other.protocols_);
+          }
+          onChanged();
+        }
+        if (other.getTotalSessions() != 0) {
+          setTotalSessions(other.getTotalSessions());
+        }
+        if (other.getCompletedSessions() != 0) {
+          setCompletedSessions(other.getCompletedSessions());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -4505,6 +4736,27 @@ public final class NetworkOuterClass {
 
                 break;
               } // case 122
+              case 130: {
+                direction_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 130
+              case 138: {
+                java.lang.String s = input.readStringRequireUtf8();
+                ensureProtocolsIsMutable();
+                protocols_.add(s);
+                break;
+              } // case 138
+              case 144: {
+                totalSessions_ = input.readInt32();
+
+                break;
+              } // case 144
+              case 152: {
+                completedSessions_ = input.readInt32();
+
+                break;
+              } // case 152
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -5400,6 +5652,254 @@ public final class NetworkOuterClass {
         onChanged();
         return this;
       }
+
+      private java.lang.Object direction_ = "";
+      /**
+       * <code>string direction = 16 [json_name = "direction"];</code>
+       * @return The direction.
+       */
+      public java.lang.String getDirection() {
+        java.lang.Object ref = direction_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          direction_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string direction = 16 [json_name = "direction"];</code>
+       * @return The bytes for direction.
+       */
+      public com.google.protobuf.ByteString
+          getDirectionBytes() {
+        java.lang.Object ref = direction_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          direction_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string direction = 16 [json_name = "direction"];</code>
+       * @param value The direction to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDirection(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        direction_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string direction = 16 [json_name = "direction"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDirection() {
+        
+        direction_ = getDefaultInstance().getDirection();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string direction = 16 [json_name = "direction"];</code>
+       * @param value The bytes for direction to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDirectionBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        direction_ = value;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.LazyStringList protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureProtocolsIsMutable() {
+        if (!((bitField0_ & 0x00000008) != 0)) {
+          protocols_ = new com.google.protobuf.LazyStringArrayList(protocols_);
+          bitField0_ |= 0x00000008;
+         }
+      }
+      /**
+       * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+       * @return A list containing the protocols.
+       */
+      public com.google.protobuf.ProtocolStringList
+          getProtocolsList() {
+        return protocols_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+       * @return The count of protocols.
+       */
+      public int getProtocolsCount() {
+        return protocols_.size();
+      }
+      /**
+       * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+       * @param index The index of the element to return.
+       * @return The protocols at the given index.
+       */
+      public java.lang.String getProtocols(int index) {
+        return protocols_.get(index);
+      }
+      /**
+       * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the protocols at the given index.
+       */
+      public com.google.protobuf.ByteString
+          getProtocolsBytes(int index) {
+        return protocols_.getByteString(index);
+      }
+      /**
+       * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+       * @param index The index to set the value at.
+       * @param value The protocols to set.
+       * @return This builder for chaining.
+       */
+      public Builder setProtocols(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureProtocolsIsMutable();
+        protocols_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+       * @param value The protocols to add.
+       * @return This builder for chaining.
+       */
+      public Builder addProtocols(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureProtocolsIsMutable();
+        protocols_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+       * @param values The protocols to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllProtocols(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureProtocolsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, protocols_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearProtocols() {
+        protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string protocols = 17 [json_name = "protocols"];</code>
+       * @param value The bytes of the protocols to add.
+       * @return This builder for chaining.
+       */
+      public Builder addProtocolsBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        ensureProtocolsIsMutable();
+        protocols_.add(value);
+        onChanged();
+        return this;
+      }
+
+      private int totalSessions_ ;
+      /**
+       * <code>int32 total_sessions = 18 [json_name = "totalSessions"];</code>
+       * @return The totalSessions.
+       */
+      @java.lang.Override
+      public int getTotalSessions() {
+        return totalSessions_;
+      }
+      /**
+       * <code>int32 total_sessions = 18 [json_name = "totalSessions"];</code>
+       * @param value The totalSessions to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTotalSessions(int value) {
+        
+        totalSessions_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 total_sessions = 18 [json_name = "totalSessions"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTotalSessions() {
+        
+        totalSessions_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int completedSessions_ ;
+      /**
+       * <code>int32 completed_sessions = 19 [json_name = "completedSessions"];</code>
+       * @return The completedSessions.
+       */
+      @java.lang.Override
+      public int getCompletedSessions() {
+        return completedSessions_;
+      }
+      /**
+       * <code>int32 completed_sessions = 19 [json_name = "completedSessions"];</code>
+       * @param value The completedSessions to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCompletedSessions(int value) {
+        
+        completedSessions_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 completed_sessions = 19 [json_name = "completedSessions"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCompletedSessions() {
+        
+        completedSessions_ = 0;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -5534,7 +6034,7 @@ public final class NetworkOuterClass {
       "\001(\003R\005value:\0028\001\"\024\n\022GetNodeInfoRequest\"^\n\023" +
       "GetNodeInfoResponse\022\030\n\007moniker\030\001 \001(\tR\007mo" +
       "niker\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003" +
-      " \001(\014R\006peerId\"\256\005\n\010PeerInfo\022\026\n\006status\030\001 \001(" +
+      " \001(\014R\006peerId\"\300\006\n\010PeerInfo\022\026\n\006status\030\001 \001(" +
       "\005R\006status\022\030\n\007moniker\030\002 \001(\tR\007moniker\022\024\n\005a" +
       "gent\030\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\014R\006peer" +
       "Id\022%\n\016consensus_keys\030\005 \003(\tR\rconsensusKey" +
@@ -5548,16 +6048,20 @@ public final class NetworkOuterClass {
       "rInfo.SentBytesEntryR\tsentBytes\022J\n\016recei" +
       "ved_bytes\030\016 \003(\0132#.pactus.PeerInfo.Receiv" +
       "edBytesEntryR\rreceivedBytes\022\030\n\007address\030\017" +
-      " \001(\tR\007address\032<\n\016SentBytesEntry\022\020\n\003key\030\001" +
-      " \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@\n\022R" +
-      "eceivedBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005v" +
-      "alue\030\002 \001(\003R\005value:\0028\0012\242\001\n\007Network\022O\n\016Get" +
-      "NetworkInfo\022\035.pactus.GetNetworkInfoReque" +
-      "st\032\036.pactus.GetNetworkInfoResponse\022F\n\013Ge" +
-      "tNodeInfo\022\032.pactus.GetNodeInfoRequest\032\033." +
-      "pactus.GetNodeInfoResponseBB\n\016pactus.net" +
-      "workZ0github.com/pactus-project/pactus/w" +
-      "ww/grpc/pactusb\006proto3"
+      " \001(\tR\007address\022\034\n\tdirection\030\020 \001(\tR\tdirect" +
+      "ion\022\034\n\tprotocols\030\021 \003(\tR\tprotocols\022%\n\016tot" +
+      "al_sessions\030\022 \001(\005R\rtotalSessions\022-\n\022comp" +
+      "leted_sessions\030\023 \001(\005R\021completedSessions\032" +
+      "<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005v" +
+      "alue\030\002 \001(\003R\005value:\0028\001\032@\n\022ReceivedBytesEn" +
+      "try\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005va" +
+      "lue:\0028\0012\242\001\n\007Network\022O\n\016GetNetworkInfo\022\035." +
+      "pactus.GetNetworkInfoRequest\032\036.pactus.Ge" +
+      "tNetworkInfoResponse\022F\n\013GetNodeInfo\022\032.pa" +
+      "ctus.GetNodeInfoRequest\032\033.pactus.GetNode" +
+      "InfoResponseBB\n\016pactus.networkZ0github.c" +
+      "om/pactus-project/pactus/www/grpc/pactus" +
+      "b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -5604,7 +6108,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
-        new java.lang.String[] { "Status", "Moniker", "Agent", "PeerId", "ConsensusKeys", "Services", "LastBlockHash", "Height", "ReceivedMessages", "InvalidMessages", "LastSent", "LastReceived", "SentBytes", "ReceivedBytes", "Address", });
+        new java.lang.String[] { "Status", "Moniker", "Agent", "PeerId", "ConsensusKeys", "Services", "LastBlockHash", "Height", "ReceivedMessages", "InvalidMessages", "LastSent", "LastReceived", "SentBytes", "ReceivedBytes", "Address", "Direction", "Protocols", "TotalSessions", "CompletedSessions", });
     internal_static_pactus_PeerInfo_SentBytesEntry_descriptor =
       internal_static_pactus_PeerInfo_descriptor.getNestedTypes().get(0);
     internal_static_pactus_PeerInfo_SentBytesEntry_fieldAccessorTable = new

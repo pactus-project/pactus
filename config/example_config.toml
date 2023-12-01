@@ -133,8 +133,8 @@
  ## rotate_log_after_days = 1
 
   # `compress` determines if the rotated log files should be compressed.
-  # Default is `false`.
- ## compress = false
+  # Default is `true`.
+ ## compress = true
 
   # `logger.levels` contains the level of logger per module.
   # Available log levels are:

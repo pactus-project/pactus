@@ -1097,6 +1097,23 @@
         },
         "address": {
           "type": "string"
+        },
+        "direction": {
+          "type": "string"
+        },
+        "protocols": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "totalSessions": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "completedSessions": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

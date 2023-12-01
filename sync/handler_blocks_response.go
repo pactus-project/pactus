@@ -63,6 +63,7 @@ func (handler *blocksResponseHandler) updateSession(sid int, code message.Respon
 
 	case message.ResponseCodeMoreBlocks:
 		handler.logger.Debug("peer responding us. keep session open", "sid", sid)
+		handler.peerSet.UpdateSessionLastActivity(sid)
 
 	case message.ResponseCodeNoMoreBlocks:
 		handler.logger.Debug("peer has no more block. close session", "sid", sid)

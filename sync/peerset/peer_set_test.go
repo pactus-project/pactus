@@ -41,7 +41,7 @@ func TestPeerSet(t *testing.T) {
 	t.Run("Testing Iterate peers", func(t *testing.T) {
 		// Verify that the peer list contains the expected peers
 		expectedPeerIDs := []peer.ID{pid1, pid2, pid3}
-		peerSet.IteratePeers(func(p *Peer) {
+		peerSet.IteratePeers(func(p *Peer) bool {
 			found := false
 			for _, expectedID := range expectedPeerIDs {
 				if p.PeerID == expectedID {
@@ -50,6 +50,7 @@ func TestPeerSet(t *testing.T) {
 				}
 			}
 			assert.True(t, found, "Peer with ID %s not found in the peer list", p.PeerID)
+			return false
 		})
 	})
 
@@ -158,7 +159,7 @@ func TestOpenSession(t *testing.T) {
 	assert.Equal(t, uint32(1), ssn.Count)
 	assert.Equal(t, pid, ssn.PeerID)
 	assert.Equal(t, session.Open, ssn.Status)
-	assert.LessOrEqual(t, ssn.StartedAt, time.Now())
+	assert.LessOrEqual(t, ssn.LastActivity, time.Now())
 	assert.True(t, ps.HasOpenSession(pid))
 	assert.False(t, ps.HasOpenSession("peer2"))
 	assert.Equal(t, 1, ps.NumberOfSessions())
@@ -257,27 +258,26 @@ func TestExpireSessions(t *testing.T) {
 
 func TestGetRandomWeightedPeer(t *testing.T) {
 	// We create 6 peers with varying success and failure counts:
-	// peer_1 has 4 successful bundles and 0 failed bundles
-	// peer_2 has 4 successful bundles and 1 failed attempt
+	// peer_1 has score 6/6 (completed sessions / total sessions)
+	// peer_2 has score 5/6
 	// ...
-	// peer_6 has 4 successful bundles and 4 failed bundles
-	// peer_7 has 4 successful bundles and 5 failed bundles
+	// peer_6 has score 1/5
 	peerSet := NewPeerSet(time.Minute)
 	for i := 0; i < 6; i++ {
 		pid := peer.ID(fmt.Sprintf("peer_%v", i+1))
 		peerSet.UpdateInfo(pid, fmt.Sprintf("Moniker_%v", i+1), "Agent1", nil, service.New())
 		peerSet.UpdateStatus(pid, StatusCodeKnown)
 
-		for r := 0; r < 4; r++ {
-			peerSet.IncreaseReceivedBundlesCounter(pid)
-		}
-		for f := 0; f < i; f++ {
-			peerSet.IncreaseInvalidBundlesCounter(pid)
+		for r := 0; r < 6; r++ {
+			ssn := peerSet.OpenSession(pid, 0, 0)
+
+			if r < 6-i {
+				peerSet.SetSessionCompleted(ssn.SessionID)
+			}
 		}
 	}
 
 	// Now let's run TestGetRandomPeer for 1000 times
-
 	hits := make(map[peer.ID]int)
 	for i := 0; i < 1000; i++ {
 		p := peerSet.GetRandomPeer()
@@ -328,8 +328,31 @@ func TestUpdateAddress(t *testing.T) {
 
 	pid := peer.ID("peer1")
 	addr := "pid-1-address"
-	ps.UpdateAddress(pid, addr)
+	dir := "Inbound"
+	ps.UpdateAddress(pid, addr, dir)
 
 	p := ps.GetPeer(pid)
 	assert.Equal(t, addr, p.Address)
+	assert.Equal(t, dir, p.Direction)
+}
+
+func TestUpdateSessionLastActivity(t *testing.T) {
+	ps := NewPeerSet(time.Minute)
+
+	ssn := ps.OpenSession("peer1", 100, 101)
+	activity1 := ssn.LastActivity
+	time.Sleep(10 * time.Millisecond)
+	ps.UpdateSessionLastActivity(ssn.SessionID)
+	assert.Greater(t, ssn.LastActivity, activity1)
+}
+
+func TestUpdateProtocols(t *testing.T) {
+	ps := NewPeerSet(time.Minute)
+
+	pid := peer.ID("peer-1")
+	protocols := []string{"protocol-1"}
+	ps.UpdateProtocols(pid, protocols)
+
+	p := ps.GetPeer(pid)
+	assert.Equal(t, p.Protocols, protocols)
 }

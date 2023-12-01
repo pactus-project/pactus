@@ -138,7 +138,7 @@ func TestStrippedPublicKey(t *testing.T) {
 		blkData, _ := test.blk.Bytes()
 		sid := td.RandInt(1000)
 		cert := td.GenerateTestCertificate(lastHeight + 1)
-		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeRejected.String(), sid,
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
 			lastHeight+1, [][]byte{blkData}, cert)
 		err := td.receivingNewMessage(td.sync, msg, pid)
 
@@ -234,8 +234,8 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	assert.NoError(t, syncBob.Start())
 
 	// Verify that Hello messages are exchanged between Alice and Bob
-	assert.NoError(t, syncAlice.sayHello(syncBob.SelfID()))
-	assert.NoError(t, syncBob.sayHello(syncAlice.SelfID()))
+	syncAlice.sayHello(syncBob.SelfID())
+	syncBob.sayHello(syncAlice.SelfID())
 
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)

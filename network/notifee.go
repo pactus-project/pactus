@@ -26,7 +26,12 @@ type NotifeeService struct {
 func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel chan<- Event, peerMgr *peerMgr,
 	protocolID lp2pcore.ProtocolID, bootstrapper bool, log *logger.SubLogger,
 ) *NotifeeService {
-	eventSub, err := host.EventBus().Subscribe(lp2pevent.WildcardSubscription)
+	events := []interface{}{
+		new(lp2pevent.EvtLocalReachabilityChanged),
+		new(lp2pevent.EvtPeerIdentificationCompleted),
+		new(lp2pevent.EvtPeerProtocolsUpdated),
+	}
+	eventSub, err := host.EventBus().Subscribe(events)
 	if err != nil {
 		logger.Error("failed to register for libp2p events")
 	}
@@ -47,8 +52,6 @@ func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel cha
 
 func (s *NotifeeService) Start() {
 	go func() {
-		defer s.lp2pEventSub.Close()
-
 		for {
 			select {
 			case evt := <-s.lp2pEventSub.Out():
@@ -56,21 +59,13 @@ func (s *NotifeeService) Start() {
 				case lp2pevent.EvtLocalReachabilityChanged:
 					s.logger.Info("reachability changed", "reachability", e.Reachability)
 
-				case lp2pevent.EvtPeerConnectednessChanged:
-					s.logger.Debug("connectedness changed", "pid", e.Peer, "connectedness", e.Connectedness)
-					if e.Connectedness == lp2pnetwork.Connected {
-						s.sendConnectEvent(e.Peer)
-					} else if e.Connectedness == lp2pnetwork.NotConnected {
-						s.sendDisconnectEvent(e.Peer)
-					}
-
 				case lp2pevent.EvtPeerIdentificationCompleted:
 					s.logger.Debug("identification completed", "pid", e.Peer)
-					s.sendConnectEvent(e.Peer)
+					s.sendProtocolsEvent(e.Peer)
 
 				case lp2pevent.EvtPeerProtocolsUpdated:
 					s.logger.Debug("protocols updated", "pid", e.Peer, "protocols", e.Added)
-					s.sendConnectEvent(e.Peer)
+					s.sendProtocolsEvent(e.Peer)
 
 				default:
 					s.logger.Debug("unhandled libp2p event", "event", evt)
@@ -84,6 +79,7 @@ func (s *NotifeeService) Start() {
 }
 
 func (s *NotifeeService) Stop() {
+	s.lp2pEventSub.Close()
 }
 
 func (s *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
@@ -91,7 +87,7 @@ func (s *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn)
 	s.logger.Info("connected to peer", "pid", pid, "direction", conn.Stat().Direction)
 
 	s.peerMgr.AddPeer(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
-	s.sendConnectEvent(pid)
+	s.sendConnectEvent(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
 }
 
 func (s *NotifeeService) Disconnected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
@@ -113,20 +109,29 @@ func (s *NotifeeService) ListenClose(_ lp2pnetwork.Network, ma multiaddr.Multiad
 	s.logger.Debug("notifee ListenClose event emitted", "addr", ma.String())
 }
 
-func (s *NotifeeService) sendConnectEvent(pid lp2pcore.PeerID) {
-	protocols, err := s.host.Peerstore().GetProtocols(pid)
-	if err != nil {
-		s.logger.Error("unable to get supported protocols", "pid", pid)
+func (s *NotifeeService) sendProtocolsEvent(pid lp2pcore.PeerID) {
+	protocols, _ := s.host.Peerstore().GetProtocols(pid)
+	protocolsStr := []string{}
+	for _, p := range protocols {
+		protocolsStr = append(protocolsStr, string(p))
 	}
+
+	slices.Sort(protocolsStr)
 	supportStream := slices.Contains(protocols, s.streamProtocolID)
-	if supportStream {
-		addr := s.peerMgr.GetMultiAddr(pid)
-		if supportStream && addr != nil {
-			s.eventChannel <- &ConnectEvent{
-				PeerID:        pid,
-				RemoteAddress: addr.String(),
-			}
-		}
+	s.eventChannel <- &ProtocolsEvents{
+		PeerID:        pid,
+		Protocols:     protocolsStr,
+		SupportStream: supportStream,
+	}
+}
+
+func (s *NotifeeService) sendConnectEvent(pid lp2pcore.PeerID,
+	remoteAddress multiaddr.Multiaddr, direction lp2pnetwork.Direction,
+) {
+	s.eventChannel <- &ConnectEvent{
+		PeerID:        pid,
+		RemoteAddress: remoteAddress.String(),
+		Direction:     direction.String(),
 	}
 }
 

@@ -44,4 +44,8 @@ message PeerInfo {
   map<int32, int64> sent_bytes = 13;
   map<int32, int64> received_bytes = 14;
   string address = 15;
+  string direction = 16;
+  repeated string protocols = 17;
+  int32 total_sessions = 18;
+  int32 completed_sessions = 19;
 }

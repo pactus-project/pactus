@@ -16,21 +16,21 @@ const (
 )
 
 type Session struct {
-	SessionID int
-	Status    Status
-	PeerID    peer.ID
-	From      uint32
-	Count     uint32
-	StartedAt time.Time
+	SessionID    int
+	Status       Status
+	PeerID       peer.ID
+	From         uint32
+	Count        uint32
+	LastActivity time.Time
 }
 
 func NewSession(id int, peerID peer.ID, from, count uint32) *Session {
 	return &Session{
-		SessionID: id,
-		Status:    Open,
-		PeerID:    peerID,
-		From:      from,
-		Count:     count,
-		StartedAt: util.Now(),
+		SessionID:    id,
+		Status:       Open,
+		PeerID:       peerID,
+		From:         from,
+		Count:        count,
+		LastActivity: util.Now(),
 	}
 }
