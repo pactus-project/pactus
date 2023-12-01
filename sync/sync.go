@@ -273,7 +273,11 @@ func (sync *synchronizer) processGossipMessage(msg *network.GossipMessage) {
 	logger.Debug("processing gossip message", "pid", msg.From)
 
 	bdl := sync.firewall.OpenGossipBundle(msg.Data, msg.From)
-	_ = sync.processIncomingBundle(bdl, msg.From)
+	err := sync.processIncomingBundle(bdl, msg.From)
+	if err != nil {
+		sync.logger.Warn("error on parsing a Gossip bundle",
+			"from", msg.From, "bundle", bdl, "error", err)
+	}
 }
 
 func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
@@ -285,7 +289,11 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 		sync.logger.Warn("error on closing stream", "error", err, "source", msg.From)
 		return
 	}
-	_ = sync.processIncomingBundle(bdl, msg.From)
+	err := sync.processIncomingBundle(bdl, msg.From)
+	if err != nil {
+		sync.logger.Warn("error on parsing a Stream bundle",
+			"source", msg.From, "bundle", bdl, "error", err)
+	}
 }
 
 func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
