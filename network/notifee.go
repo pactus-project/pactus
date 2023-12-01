@@ -52,8 +52,6 @@ func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel cha
 
 func (s *NotifeeService) Start() {
 	go func() {
-		defer s.lp2pEventSub.Close()
-
 		for {
 			select {
 			case evt := <-s.lp2pEventSub.Out():
@@ -81,6 +79,7 @@ func (s *NotifeeService) Start() {
 }
 
 func (s *NotifeeService) Stop() {
+	s.lp2pEventSub.Close()
 }
 
 func (s *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
