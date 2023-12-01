@@ -105,3 +105,70 @@ func TestSendRawTransaction(t *testing.T) {
 	})
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }
+
+func TestGetRawTransaction(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	conn, client := testTransactionClient(t)
+
+	t.Run("Transfer", func(t *testing.T) {
+		tx, privateKey := ts.GenerateTestTransferTx()
+
+		res, err := client.GetRawTransferTransaction(tCtx, &pactus.GetRawTransferTransactionRequest{
+			LockTime: tx.LockTime(),
+			Sender:   privateKey.PublicKeyNative().AccountAddress().String(),
+			Receiver: tx.Payload().Receiver().String(),
+			Amount:   tx.Payload().Value(),
+			Fee:      tx.Fee(),
+			Memo:     tx.Memo(),
+		})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("Bond", func(t *testing.T) {
+		tx, privateKey := ts.GenerateTestBondTx()
+
+		res, err := client.GetRawBondTransaction(tCtx, &pactus.GetRawBondTransactionRequest{
+			LockTime:  tx.LockTime(),
+			Sender:    privateKey.PublicKeyNative().AccountAddress().String(),
+			Receiver:  tx.Payload().Receiver().String(),
+			Stake:     tx.Payload().Value(),
+			PublicKey: "",
+			Fee:       tx.Fee(),
+			Memo:      tx.Memo(),
+		})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("UnBond", func(t *testing.T) {
+		valAddr := ts.RandValAddress()
+		lockTime := ts.RandUint32(5000)
+
+		res, err := client.GetRawUnBondTransaction(tCtx, &pactus.GetRawUnBondTransactionRequest{
+			LockTime:         lockTime,
+			ValidatorAddress: valAddr.String(),
+			Memo:             "",
+		})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("UnBond", func(t *testing.T) {
+		valAddr := ts.RandValAddress()
+		tx, privateKey := ts.GenerateTestWithdrawTx()
+
+		res, err := client.GetRawWithdrawTransaction(tCtx, &pactus.GetRawWithdrawTransactionRequest{
+			LockTime:         tx.LockTime(),
+			ValidatorAddress: valAddr.String(),
+			AccountAddress:   privateKey.PublicKeyNative().String(),
+			Fee:              tx.Fee(),
+			Amount:           tx.Payload().Value(),
+			Memo:             "",
+		})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+	assert.Nil(t, conn.Close(), "Error closing connection")
+}

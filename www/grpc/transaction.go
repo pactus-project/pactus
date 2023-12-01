@@ -3,6 +3,8 @@ package grpc
 import (
 	"context"
 
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types/tx"
@@ -83,6 +85,107 @@ func (s *transactionServer) CalculateFee(_ context.Context,
 
 	return &pactus.CalculateFeeResponse{
 		Fee: fee,
+	}, nil
+}
+
+func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
+	req *pactus.GetRawTransferTransactionRequest,
+) (*pactus.GetRawTransactionResponse, error) {
+	sender, err := crypto.AddressFromString(req.Sender)
+	if err != nil {
+		return &pactus.GetRawTransactionResponse{}, err
+	}
+
+	receiver, err := crypto.AddressFromString(req.Receiver)
+	if err != nil {
+		return &pactus.GetRawTransactionResponse{}, err
+	}
+
+	transferTx := tx.NewTransferTx(req.LockTime, sender, receiver, req.Amount, req.Fee, req.Memo)
+	rawTx, err := transferTx.Bytes()
+	if err != nil {
+		return &pactus.GetRawTransactionResponse{}, err
+	}
+
+	return &pactus.GetRawTransactionResponse{
+		RawTransaction: rawTx,
+	}, nil
+}
+
+func (s *transactionServer) GetRawBondTransaction(_ context.Context,
+	req *pactus.GetRawBondTransactionRequest,
+) (*pactus.GetRawTransactionResponse, error) {
+	sender, err := crypto.AddressFromString(req.Sender)
+	if err != nil {
+		return &pactus.GetRawTransactionResponse{}, err
+	}
+
+	receiver, err := crypto.AddressFromString(req.Receiver)
+	if err != nil {
+		return &pactus.GetRawTransactionResponse{}, err
+	}
+
+	var publicKey *bls.PublicKey
+	if req.PublicKey != "" {
+		publicKey, err = bls.PublicKeyFromString(req.PublicKey)
+		if err != nil {
+			return &pactus.GetRawTransactionResponse{}, err
+		}
+	} else {
+		publicKey = nil
+	}
+
+	bondTx := tx.NewBondTx(req.LockTime, sender, receiver, publicKey, req.Stake, req.Fee, req.Memo)
+	rawTx, err := bondTx.Bytes()
+	if err != nil {
+		return &pactus.GetRawTransactionResponse{}, err
+	}
+
+	return &pactus.GetRawTransactionResponse{
+		RawTransaction: rawTx,
+	}, nil
+}
+
+func (s *transactionServer) GetRawUnBondTransaction(_ context.Context,
+	req *pactus.GetRawUnBondTransactionRequest,
+) (*pactus.GetRawTransactionResponse, error) {
+	validatorAddr, err := crypto.AddressFromString(req.ValidatorAddress)
+	if err != nil {
+		return &pactus.GetRawTransactionResponse{}, err
+	}
+
+	unBondTx := tx.NewUnbondTx(req.LockTime, validatorAddr, req.Memo)
+	rawTx, err := unBondTx.Bytes()
+	if err != nil {
+		return &pactus.GetRawTransactionResponse{}, err
+	}
+
+	return &pactus.GetRawTransactionResponse{
+		RawTransaction: rawTx,
+	}, nil
+}
+
+func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
+	req *pactus.GetRawWithdrawTransactionRequest,
+) (*pactus.GetRawTransactionResponse, error) {
+	validatorAddr, err := crypto.AddressFromString(req.ValidatorAddress)
+	if err != nil {
+		return &pactus.GetRawTransactionResponse{}, err
+	}
+
+	accountAddr, err := crypto.AddressFromString(req.AccountAddress)
+	if err != nil {
+		return &pactus.GetRawTransactionResponse{}, err
+	}
+
+	withdrawTx := tx.NewWithdrawTx(req.LockTime, validatorAddr, accountAddr, req.Amount, req.Fee, req.Memo)
+	rawTx, err := withdrawTx.Bytes()
+	if err != nil {
+		return &pactus.GetRawTransactionResponse{}, err
+	}
+
+	return &pactus.GetRawTransactionResponse{
+		RawTransaction: rawTx,
 	}, nil
 }
 

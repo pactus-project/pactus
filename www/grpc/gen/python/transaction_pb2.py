@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11transaction.proto\x12\x06pactus\"c\n\x15GetTransactionRequest\x12\x0e\n\x02id\x18\x01 \x01(\x0cR\x02id\x12:\n\tverbosity\x18\x02 \x01(\x0e\x32\x1c.pactus.TransactionVerbosityR\tverbosity\"\x95\x01\n\x16GetTransactionResponse\x12!\n\x0c\x62lock_height\x18\x0c \x01(\rR\x0b\x62lockHeight\x12\x1d\n\nblock_time\x18\r \x01(\rR\tblockTime\x12\x39\n\x0btransaction\x18\x03 \x01(\x0b\x32\x17.pactus.TransactionInfoR\x0btransaction\"d\n\x13\x43\x61lculateFeeRequest\x12\x16\n\x06\x61mount\x18\x01 \x01(\x03R\x06\x61mount\x12\x35\n\x0bpayloadType\x18\x02 \x01(\x0e\x32\x13.pactus.PayloadTypeR\x0bpayloadType\"(\n\x14\x43\x61lculateFeeResponse\x12\x10\n\x03\x66\x65\x65\x18\x01 \x01(\x03R\x03\x66\x65\x65\"/\n\x19SendRawTransactionRequest\x12\x12\n\x04\x64\x61ta\x18\x01 \x01(\x0cR\x04\x64\x61ta\",\n\x1aSendRawTransactionResponse\x12\x0e\n\x02id\x18\x02 \x01(\x0cR\x02id\"]\n\x0fPayloadTransfer\x12\x16\n\x06sender\x18\x01 \x01(\tR\x06sender\x12\x1a\n\x08receiver\x18\x02 \x01(\tR\x08receiver\x12\x16\n\x06\x61mount\x18\x03 \x01(\x03R\x06\x61mount\"W\n\x0bPayloadBond\x12\x16\n\x06sender\x18\x01 \x01(\tR\x06sender\x12\x1a\n\x08receiver\x18\x02 \x01(\tR\x08receiver\x12\x14\n\x05stake\x18\x03 \x01(\x03R\x05stake\"B\n\x10PayloadSortition\x12\x18\n\x07\x61\x64\x64ress\x18\x01 \x01(\tR\x07\x61\x64\x64ress\x12\x14\n\x05proof\x18\x02 \x01(\x0cR\x05proof\"-\n\rPayloadUnbond\x12\x1c\n\tvalidator\x18\x01 \x01(\tR\tvalidator\"M\n\x0fPayloadWithdraw\x12\x12\n\x04\x66rom\x18\x01 \x01(\tR\x04\x66rom\x12\x0e\n\x02to\x18\x02 \x01(\tR\x02to\x12\x16\n\x06\x61mount\x18\x03 \x01(\x03R\x06\x61mount\"\xab\x04\n\x0fTransactionInfo\x12\x0e\n\x02id\x18\x01 \x01(\x0cR\x02id\x12\x12\n\x04\x64\x61ta\x18\x02 \x01(\x0cR\x04\x64\x61ta\x12\x18\n\x07version\x18\x03 \x01(\x05R\x07version\x12\x1b\n\tlock_time\x18\x04 \x01(\rR\x08lockTime\x12\x14\n\x05value\x18\x05 \x01(\x03R\x05value\x12\x10\n\x03\x66\x65\x65\x18\x06 \x01(\x03R\x03\x66\x65\x65\x12\x35\n\x0bpayloadType\x18\x07 \x01(\x0e\x32\x13.pactus.PayloadTypeR\x0bpayloadType\x12\x35\n\x08transfer\x18\x1e \x01(\x0b\x32\x17.pactus.PayloadTransferH\x00R\x08transfer\x12)\n\x04\x62ond\x18\x1f \x01(\x0b\x32\x13.pactus.PayloadBondH\x00R\x04\x62ond\x12\x38\n\tsortition\x18  \x01(\x0b\x32\x18.pactus.PayloadSortitionH\x00R\tsortition\x12/\n\x06unbond\x18! \x01(\x0b\x32\x15.pactus.PayloadUnbondH\x00R\x06unbond\x12\x35\n\x08withdraw\x18\" \x01(\x0b\x32\x17.pactus.PayloadWithdrawH\x00R\x08withdraw\x12\x12\n\x04memo\x18\x08 \x01(\tR\x04memo\x12\x1d\n\npublic_key\x18\t \x01(\tR\tpublicKey\x12\x1c\n\tsignature\x18\n \x01(\x0cR\tsignatureB\t\n\x07payload*\x83\x01\n\x0bPayloadType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x14\n\x10TRANSFER_PAYLOAD\x10\x01\x12\x10\n\x0c\x42OND_PAYLOAD\x10\x02\x12\x15\n\x11SORTITION_PAYLOAD\x10\x03\x12\x12\n\x0eUNBOND_PAYLOAD\x10\x04\x12\x14\n\x10WITHDRAW_PAYLOAD\x10\x05*B\n\x14TransactionVerbosity\x12\x14\n\x10TRANSACTION_DATA\x10\x00\x12\x14\n\x10TRANSACTION_INFO\x10\x01\x32\x86\x02\n\x0bTransaction\x12O\n\x0eGetTransaction\x12\x1d.pactus.GetTransactionRequest\x1a\x1e.pactus.GetTransactionResponse\x12I\n\x0c\x43\x61lculateFee\x12\x1b.pactus.CalculateFeeRequest\x1a\x1c.pactus.CalculateFeeResponse\x12[\n\x12SendRawTransaction\x12!.pactus.SendRawTransactionRequest\x1a\".pactus.SendRawTransactionResponseBF\n\x12pactus.transactionZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11transaction.proto\x12\x06pactus\"c\n\x15GetTransactionRequest\x12\x0e\n\x02id\x18\x01 \x01(\x0cR\x02id\x12:\n\tverbosity\x18\x02 \x01(\x0e\x32\x1c.pactus.TransactionVerbosityR\tverbosity\"\x95\x01\n\x16GetTransactionResponse\x12!\n\x0c\x62lock_height\x18\x0c \x01(\rR\x0b\x62lockHeight\x12\x1d\n\nblock_time\x18\r \x01(\rR\tblockTime\x12\x39\n\x0btransaction\x18\x03 \x01(\x0b\x32\x17.pactus.TransactionInfoR\x0btransaction\"d\n\x13\x43\x61lculateFeeRequest\x12\x16\n\x06\x61mount\x18\x01 \x01(\x03R\x06\x61mount\x12\x35\n\x0bpayloadType\x18\x02 \x01(\x0e\x32\x13.pactus.PayloadTypeR\x0bpayloadType\"(\n\x14\x43\x61lculateFeeResponse\x12\x10\n\x03\x66\x65\x65\x18\x01 \x01(\x03R\x03\x66\x65\x65\"/\n\x19SendRawTransactionRequest\x12\x12\n\x04\x64\x61ta\x18\x01 \x01(\x0cR\x04\x64\x61ta\",\n\x1aSendRawTransactionResponse\x12\x0e\n\x02id\x18\x02 \x01(\x0cR\x02id\"\xb1\x01\n GetRawTransferTransactionRequest\x12\x1b\n\tlock_time\x18\x01 \x01(\rR\x08lockTime\x12\x16\n\x06sender\x18\x02 \x01(\tR\x06sender\x12\x1a\n\x08receiver\x18\x03 \x01(\tR\x08receiver\x12\x16\n\x06\x61mount\x18\x04 \x01(\x03R\x06\x61mount\x12\x10\n\x03\x66\x65\x65\x18\x05 \x01(\x03R\x03\x66\x65\x65\x12\x12\n\x04memo\x18\x06 \x01(\tR\x04memo\"\xca\x01\n\x1cGetRawBondTransactionRequest\x12\x1b\n\tlock_time\x18\x01 \x01(\rR\x08lockTime\x12\x16\n\x06sender\x18\x02 \x01(\tR\x06sender\x12\x1a\n\x08receiver\x18\x03 \x01(\tR\x08receiver\x12\x14\n\x05stake\x18\x04 \x01(\x03R\x05stake\x12\x1d\n\npublic_key\x18\x05 \x01(\tR\tpublicKey\x12\x10\n\x03\x66\x65\x65\x18\x06 \x01(\x03R\x03\x66\x65\x65\x12\x12\n\x04memo\x18\x07 \x01(\tR\x04memo\"~\n\x1eGetRawUnBondTransactionRequest\x12\x1b\n\tlock_time\x18\x01 \x01(\rR\x08lockTime\x12+\n\x11validator_address\x18\x03 \x01(\tR\x10validatorAddress\x12\x12\n\x04memo\x18\x04 \x01(\tR\x04memo\"\xd3\x01\n GetRawWithdrawTransactionRequest\x12\x1b\n\tlock_time\x18\x01 \x01(\rR\x08lockTime\x12+\n\x11validator_address\x18\x03 \x01(\tR\x10validatorAddress\x12\'\n\x0f\x61\x63\x63ount_address\x18\x04 \x01(\tR\x0e\x61\x63\x63ountAddress\x12\x10\n\x03\x66\x65\x65\x18\x05 \x01(\x03R\x03\x66\x65\x65\x12\x16\n\x06\x61mount\x18\x06 \x01(\x03R\x06\x61mount\x12\x12\n\x04memo\x18\x07 \x01(\tR\x04memo\"D\n\x19GetRawTransactionResponse\x12\'\n\x0fraw_transaction\x18\x01 \x01(\x0cR\x0erawTransaction\"]\n\x0fPayloadTransfer\x12\x16\n\x06sender\x18\x01 \x01(\tR\x06sender\x12\x1a\n\x08receiver\x18\x02 \x01(\tR\x08receiver\x12\x16\n\x06\x61mount\x18\x03 \x01(\x03R\x06\x61mount\"W\n\x0bPayloadBond\x12\x16\n\x06sender\x18\x01 \x01(\tR\x06sender\x12\x1a\n\x08receiver\x18\x02 \x01(\tR\x08receiver\x12\x14\n\x05stake\x18\x03 \x01(\x03R\x05stake\"B\n\x10PayloadSortition\x12\x18\n\x07\x61\x64\x64ress\x18\x01 \x01(\tR\x07\x61\x64\x64ress\x12\x14\n\x05proof\x18\x02 \x01(\x0cR\x05proof\"-\n\rPayloadUnbond\x12\x1c\n\tvalidator\x18\x01 \x01(\tR\tvalidator\"M\n\x0fPayloadWithdraw\x12\x12\n\x04\x66rom\x18\x01 \x01(\tR\x04\x66rom\x12\x0e\n\x02to\x18\x02 \x01(\tR\x02to\x12\x16\n\x06\x61mount\x18\x03 \x01(\x03R\x06\x61mount\"\xab\x04\n\x0fTransactionInfo\x12\x0e\n\x02id\x18\x01 \x01(\x0cR\x02id\x12\x12\n\x04\x64\x61ta\x18\x02 \x01(\x0cR\x04\x64\x61ta\x12\x18\n\x07version\x18\x03 \x01(\x05R\x07version\x12\x1b\n\tlock_time\x18\x04 \x01(\rR\x08lockTime\x12\x14\n\x05value\x18\x05 \x01(\x03R\x05value\x12\x10\n\x03\x66\x65\x65\x18\x06 \x01(\x03R\x03\x66\x65\x65\x12\x35\n\x0bpayloadType\x18\x07 \x01(\x0e\x32\x13.pactus.PayloadTypeR\x0bpayloadType\x12\x35\n\x08transfer\x18\x1e \x01(\x0b\x32\x17.pactus.PayloadTransferH\x00R\x08transfer\x12)\n\x04\x62ond\x18\x1f \x01(\x0b\x32\x13.pactus.PayloadBondH\x00R\x04\x62ond\x12\x38\n\tsortition\x18  \x01(\x0b\x32\x18.pactus.PayloadSortitionH\x00R\tsortition\x12/\n\x06unbond\x18! \x01(\x0b\x32\x15.pactus.PayloadUnbondH\x00R\x06unbond\x12\x35\n\x08withdraw\x18\" \x01(\x0b\x32\x17.pactus.PayloadWithdrawH\x00R\x08withdraw\x12\x12\n\x04memo\x18\x08 \x01(\tR\x04memo\x12\x1d\n\npublic_key\x18\t \x01(\tR\tpublicKey\x12\x1c\n\tsignature\x18\n \x01(\x0cR\tsignatureB\t\n\x07payload*\x83\x01\n\x0bPayloadType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x14\n\x10TRANSFER_PAYLOAD\x10\x01\x12\x10\n\x0c\x42OND_PAYLOAD\x10\x02\x12\x15\n\x11SORTITION_PAYLOAD\x10\x03\x12\x12\n\x0eUNBOND_PAYLOAD\x10\x04\x12\x14\n\x10WITHDRAW_PAYLOAD\x10\x05*B\n\x14TransactionVerbosity\x12\x14\n\x10TRANSACTION_DATA\x10\x00\x12\x14\n\x10TRANSACTION_INFO\x10\x01\x32\xa2\x05\n\x0bTransaction\x12O\n\x0eGetTransaction\x12\x1d.pactus.GetTransactionRequest\x1a\x1e.pactus.GetTransactionResponse\x12I\n\x0c\x43\x61lculateFee\x12\x1b.pactus.CalculateFeeRequest\x1a\x1c.pactus.CalculateFeeResponse\x12[\n\x12SendRawTransaction\x12!.pactus.SendRawTransactionRequest\x1a\".pactus.SendRawTransactionResponse\x12h\n\x19GetRawTransferTransaction\x12(.pactus.GetRawTransferTransactionRequest\x1a!.pactus.GetRawTransactionResponse\x12`\n\x15GetRawBondTransaction\x12$.pactus.GetRawBondTransactionRequest\x1a!.pactus.GetRawTransactionResponse\x12\x64\n\x17GetRawUnBondTransaction\x12&.pactus.GetRawUnBondTransactionRequest\x1a!.pactus.GetRawTransactionResponse\x12h\n\x19GetRawWithdrawTransaction\x12(.pactus.GetRawWithdrawTransactionRequest\x1a!.pactus.GetRawTransactionResponseBF\n\x12pactus.transactionZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'transaction_pb2', globals())
@@ -21,10 +21,10 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'\n\022pactus.transactionZ0github.com/pactus-project/pactus/www/grpc/pactus'
-  _PAYLOADTYPE._serialized_start=1458
-  _PAYLOADTYPE._serialized_end=1589
-  _TRANSACTIONVERBOSITY._serialized_start=1591
-  _TRANSACTIONVERBOSITY._serialized_end=1657
+  _PAYLOADTYPE._serialized_start=2255
+  _PAYLOADTYPE._serialized_end=2386
+  _TRANSACTIONVERBOSITY._serialized_start=2388
+  _TRANSACTIONVERBOSITY._serialized_end=2454
   _GETTRANSACTIONREQUEST._serialized_start=29
   _GETTRANSACTIONREQUEST._serialized_end=128
   _GETTRANSACTIONRESPONSE._serialized_start=131
@@ -37,18 +37,28 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _SENDRAWTRANSACTIONREQUEST._serialized_end=473
   _SENDRAWTRANSACTIONRESPONSE._serialized_start=475
   _SENDRAWTRANSACTIONRESPONSE._serialized_end=519
-  _PAYLOADTRANSFER._serialized_start=521
-  _PAYLOADTRANSFER._serialized_end=614
-  _PAYLOADBOND._serialized_start=616
-  _PAYLOADBOND._serialized_end=703
-  _PAYLOADSORTITION._serialized_start=705
-  _PAYLOADSORTITION._serialized_end=771
-  _PAYLOADUNBOND._serialized_start=773
-  _PAYLOADUNBOND._serialized_end=818
-  _PAYLOADWITHDRAW._serialized_start=820
-  _PAYLOADWITHDRAW._serialized_end=897
-  _TRANSACTIONINFO._serialized_start=900
-  _TRANSACTIONINFO._serialized_end=1455
-  _TRANSACTION._serialized_start=1660
-  _TRANSACTION._serialized_end=1922
+  _GETRAWTRANSFERTRANSACTIONREQUEST._serialized_start=522
+  _GETRAWTRANSFERTRANSACTIONREQUEST._serialized_end=699
+  _GETRAWBONDTRANSACTIONREQUEST._serialized_start=702
+  _GETRAWBONDTRANSACTIONREQUEST._serialized_end=904
+  _GETRAWUNBONDTRANSACTIONREQUEST._serialized_start=906
+  _GETRAWUNBONDTRANSACTIONREQUEST._serialized_end=1032
+  _GETRAWWITHDRAWTRANSACTIONREQUEST._serialized_start=1035
+  _GETRAWWITHDRAWTRANSACTIONREQUEST._serialized_end=1246
+  _GETRAWTRANSACTIONRESPONSE._serialized_start=1248
+  _GETRAWTRANSACTIONRESPONSE._serialized_end=1316
+  _PAYLOADTRANSFER._serialized_start=1318
+  _PAYLOADTRANSFER._serialized_end=1411
+  _PAYLOADBOND._serialized_start=1413
+  _PAYLOADBOND._serialized_end=1500
+  _PAYLOADSORTITION._serialized_start=1502
+  _PAYLOADSORTITION._serialized_end=1568
+  _PAYLOADUNBOND._serialized_start=1570
+  _PAYLOADUNBOND._serialized_end=1615
+  _PAYLOADWITHDRAW._serialized_start=1617
+  _PAYLOADWITHDRAW._serialized_end=1694
+  _TRANSACTIONINFO._serialized_start=1697
+  _TRANSACTIONINFO._serialized_end=2252
+  _TRANSACTION._serialized_start=2457
+  _TRANSACTION._serialized_end=3131
 # @@protoc_insertion_point(module_scope)
