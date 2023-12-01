@@ -140,20 +140,20 @@ func (mgr *peerMgr) CheckConnectivity() {
 			"count", len(connectedPeers),
 			"min", mgr.minConns)
 
-		for _, pi := range mgr.bootstrapAddrs {
-			mgr.logger.Debug("try connecting to a bootstrap peer", "peer", pi.String())
+		for _, ai := range mgr.bootstrapAddrs {
+			mgr.logger.Debug("try connecting to a bootstrap peer", "peer", ai.String())
 
 			// Don't try to connect to an already connected peer.
-			if HasPID(connectedPeers, pi.ID) {
-				mgr.logger.Trace("already connected", "peer", pi.String())
+			if HasPID(connectedPeers, ai.ID) {
+				mgr.logger.Trace("already connected", "peer", ai.String())
 				continue
 			}
 
 			if swarm, ok := mgr.host.Network().(*lp2pswarm.Swarm); ok {
-				swarm.Backoff().Clear(pi.ID)
+				swarm.Backoff().Clear(ai.ID)
 			}
 
-			ConnectAsync(mgr.ctx, mgr.host, pi, mgr.logger)
+			ConnectAsync(mgr.ctx, mgr.host, ai, mgr.logger)
 		}
 	}
 }
