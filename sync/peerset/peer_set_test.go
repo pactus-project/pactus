@@ -335,3 +335,13 @@ func TestUpdateAddress(t *testing.T) {
 	assert.Equal(t, addr, p.Address)
 	assert.Equal(t, dir, p.Direction)
 }
+
+func TestUpdateSessionLastActivity(t *testing.T) {
+	ps := NewPeerSet(time.Minute)
+
+	ssn := ps.OpenSession("peer1", 100, 101)
+	activity1 := ssn.LastActivity
+	time.Sleep(10 * time.Millisecond)
+	ps.UpdateSessionLastActivity(ssn.SessionID)
+	assert.Greater(t, ssn.LastActivity, activity1)
+}
