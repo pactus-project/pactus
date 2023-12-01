@@ -149,8 +149,9 @@ func (l *logger) writers() io.Writer {
 	fw := &lumberjack.Logger{
 		Filename:   LogFilename,
 		MaxSize:    MaxLogSize,
-		MaxBackups: 0,
-		Compress:   true,
+		MaxBackups: l.config.MaxBackups,
+		Compress:   l.config.Compress,
+		MaxAge:     l.config.RotateLogAfterDays,
 	}
 	writers = append(writers, fw)
 

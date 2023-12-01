@@ -52,10 +52,18 @@ func (p Path) String() string {
 	return builder.String()
 }
 
-func (p Path) LastIndex() uint32 {
-	return p[len(p)-1]
+func (p Path) Purpose() uint32 {
+	return p[0]
+}
+
+func (p Path) CoinType() uint32 {
+	return p[len(p)-3]
 }
 
 func (p Path) AddressType() uint32 {
-	return p[len(p)-2] - HardenedKeyStart
+	return p[len(p)-2]
+}
+
+func (p Path) AddressIndex() uint32 {
+	return p[len(p)-1]
 }

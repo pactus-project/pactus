@@ -226,10 +226,10 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
 	}
 	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, isBootstrapper, conf, n.logger)
-	n.peerMgr = newPeerMgr(ctx, host, n.dht.kademlia, streamProtocolID, conf, n.logger)
+	n.peerMgr = newPeerMgr(ctx, host, n.dht.kademlia, conf, n.logger)
 	n.stream = newStreamService(ctx, n.host, streamProtocolID, n.eventChannel, n.logger)
 	n.gossip = newGossipService(ctx, n.host, n.eventChannel, isBootstrapper, n.logger)
-	n.notifee = newNotifeeService(n.host, n.eventChannel, n.peerMgr, streamProtocolID, isBootstrapper, n.logger)
+	n.notifee = newNotifeeService(ctx, n.host, n.eventChannel, n.peerMgr, streamProtocolID, isBootstrapper, n.logger)
 
 	n.host.Network().Notify(n.notifee)
 	n.connGater.SetPeerManager(n.peerMgr)
@@ -258,6 +258,7 @@ func (n *network) Start() error {
 	n.gossip.Start()
 	n.stream.Start()
 	n.peerMgr.Start()
+	n.notifee.Start()
 
 	n.logger.Info("network started", "addr", n.host.Addrs(), "id", n.host.ID())
 	return nil
@@ -274,6 +275,7 @@ func (n *network) Stop() {
 	n.gossip.Stop()
 	n.stream.Stop()
 	n.peerMgr.Stop()
+	n.notifee.Stop()
 
 	if err := n.host.Close(); err != nil {
 		n.logger.Error("unable to close the network", "error", err)

@@ -50,3 +50,13 @@ func TestStringToPath(t *testing.T) {
 		assert.ErrorIsf(t, err, test.wantErr, "case %d failed", i)
 	}
 }
+
+func TestPathHelpers(t *testing.T) {
+	purpose, coinType, addressType, addressIndex := 12381, 21888, 2, 0
+	path := Path{12381, 21888, 2, 0}
+
+	assert.Equal(t, uint32(purpose), path.Purpose())
+	assert.Equal(t, uint32(coinType), path.CoinType())
+	assert.Equal(t, uint32(addressType), path.AddressType())
+	assert.Equal(t, uint32(addressIndex), path.AddressIndex())
+}

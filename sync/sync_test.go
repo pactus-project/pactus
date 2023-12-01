@@ -226,31 +226,27 @@ func TestStop(t *testing.T) {
 func TestConnectEvents(t *testing.T) {
 	td := setup(t, nil)
 
-	t.Run("Should say hello when there is stream connection", func(t *testing.T) {
-		pid := td.RandPeerID()
-		td.network.EventCh <- &network.ConnectEvent{
-			PeerID:        pid,
-			RemoteAddress: "address_1",
-			SupportStream: true,
-		}
-		td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
-		p := td.sync.peerSet.GetPeer(pid)
-		assert.Equal(t, p.Status, peerset.StatusCodeConnected)
-		assert.Equal(t, p.Address, "address_1")
-	})
+	pid := td.RandPeerID()
+	ce := &network.ConnectEvent{
+		PeerID:        pid,
+		RemoteAddress: "address_1",
+	}
+	td.network.EventCh <- ce
 
-	t.Run("Should NOT say hello when there is no stream connection", func(t *testing.T) {
-		pid := td.RandPeerID()
-		td.network.EventCh <- &network.ConnectEvent{
-			PeerID:        pid,
-			RemoteAddress: "address_1",
-			SupportStream: false,
-		}
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
+	assert.Eventually(t, func() bool {
 		p := td.sync.peerSet.GetPeer(pid)
-		assert.Equal(t, p.Status, peerset.StatusCodeConnected)
+		if p == nil {
+			return false
+		}
 		assert.Equal(t, p.Address, "address_1")
-	})
+		return p.Status == peerset.StatusCodeConnected
+	}, time.Second, 100*time.Millisecond)
+	td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
+
+	// Receiving connect event for the second time
+	td.sync.peerSet.UpdateStatus(pid, peerset.StatusCodeKnown)
+	td.network.EventCh <- ce
+	td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
 }
 
 func TestDisconnectEvents(t *testing.T) {
@@ -344,5 +340,28 @@ func TestDownload(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
+	})
+}
+
+func TestBroadcastBlockAnnounce(t *testing.T) {
+	td := setup(t, nil)
+
+	t.Run("Should announce the block", func(t *testing.T) {
+		blk, cert := td.GenerateTestBlock(td.RandHeight())
+		msg := message.BlockAnnounceMessage{Block: blk, Certificate: cert}
+
+		td.broadcastCh <- &msg
+
+		td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlockAnnounce)
+	})
+
+	t.Run("Should NOT announce the block", func(t *testing.T) {
+		blk, cert := td.GenerateTestBlock(td.RandHeight())
+		msg := message.BlockAnnounceMessage{Block: blk, Certificate: cert}
+
+		td.sync.cache.AddBlock(blk)
+		td.broadcastCh <- &msg
+
+		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlockAnnounce)
 	})
 }

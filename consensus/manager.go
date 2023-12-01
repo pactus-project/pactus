@@ -1,8 +1,6 @@
 package consensus
 
 import (
-	"sync"
-
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/state"
@@ -14,8 +12,6 @@ import (
 )
 
 type manager struct {
-	lk sync.RWMutex
-
 	instances []Consensus
 
 	// Caching future votes and proposals due to potential server time misalignments.
@@ -107,9 +103,6 @@ func (mgr *manager) HasActiveInstance() bool {
 
 // MoveToNewHeight moves all consensus instances to a new height.
 func (mgr *manager) MoveToNewHeight() {
-	mgr.lk.Lock()
-	defer mgr.lk.Unlock()
-
 	for _, cons := range mgr.instances {
 		cons.MoveToNewHeight()
 	}
@@ -159,9 +152,6 @@ func (mgr *manager) MoveToNewHeight() {
 
 // AddVote adds a vote to all consensus instances.
 func (mgr *manager) AddVote(v *vote.Vote) {
-	mgr.lk.Lock()
-	defer mgr.lk.Unlock()
-
 	inst := mgr.getBestInstance()
 	curHeight, _ := inst.HeightRound()
 	switch {
@@ -180,9 +170,6 @@ func (mgr *manager) AddVote(v *vote.Vote) {
 
 // SetProposal sets the proposal for all consensus instances.
 func (mgr *manager) SetProposal(p *proposal.Proposal) {
-	mgr.lk.Lock()
-	defer mgr.lk.Unlock()
-
 	inst := mgr.getBestInstance()
 	curHeight, _ := inst.HeightRound()
 	switch {

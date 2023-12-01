@@ -124,6 +124,18 @@
   # Default is `true`.
  ## colorful = true
 
+  # `max_backups` is the maximum number of old log files to retain.
+  # Default is `0`.
+ ## max_backups = 0
+
+  # `rotate_log_after_days` is the maximum number of days to retain old log files.
+  # Default is `1`.
+ ## rotate_log_after_days = 1
+
+  # `compress` determines if the rotated log files should be compressed.
+  # Default is `false`.
+ ## compress = false
+
   # `logger.levels` contains the level of logger per module.
   # Available log levels are:
   #   "trace", "debug", "info", "warn", and "error".

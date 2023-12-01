@@ -28,8 +28,6 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("unknown peer (%s)", pid.String()), msg.SessionID, 0, nil, nil)
 
-		handler.network.CloseConnection(pid)
-
 		return handler.respond(response, pid)
 	}
 

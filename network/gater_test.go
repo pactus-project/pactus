@@ -71,9 +71,9 @@ func TestMaxConnection(t *testing.T) {
 	pid := ts.RandPeerID()
 
 	net.peerMgr.AddPeer(ts.RandPeerID(),
-		multiaddr.StringCast("/ip4/2.2.2.2/tcp/1234"), lp2pnet.DirInbound, nil)
+		multiaddr.StringCast("/ip4/2.2.2.2/tcp/1234"), lp2pnet.DirInbound)
 	net.peerMgr.AddPeer(ts.RandPeerID(),
-		multiaddr.StringCast("/ip4/3.3.3.3/tcp/1234"), lp2pnet.DirInbound, nil)
+		multiaddr.StringCast("/ip4/3.3.3.3/tcp/1234"), lp2pnet.DirInbound)
 
 	assert.False(t, net.connGater.InterceptPeerDial(pid))
 	assert.False(t, net.connGater.InterceptAddrDial(pid, maPrivate))
