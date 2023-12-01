@@ -26,12 +26,12 @@ type NotifeeService struct {
 func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel chan<- Event, peerMgr *peerMgr,
 	protocolID lp2pcore.ProtocolID, bootstrapper bool, log *logger.SubLogger,
 ) *NotifeeService {
-	evts := []interface{}{
+	events := []interface{}{
 		new(lp2pevent.EvtLocalReachabilityChanged),
 		new(lp2pevent.EvtPeerIdentificationCompleted),
 		new(lp2pevent.EvtPeerProtocolsUpdated),
 	}
-	eventSub, err := host.EventBus().Subscribe(evts)
+	eventSub, err := host.EventBus().Subscribe(events)
 	if err != nil {
 		logger.Error("failed to register for libp2p events")
 	}
