@@ -260,6 +260,10 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..m<$core.int, $fixnum.Int64>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sentBytes', entryClassName: 'PeerInfo.SentBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
     ..m<$core.int, $fixnum.Int64>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', entryClassName: 'PeerInfo.ReceivedBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
     ..aOS(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
+    ..aOS(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'direction')
+    ..pPS(17, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'protocols')
+    ..a<$core.int>(18, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalSessions', $pb.PbFieldType.O3)
+    ..a<$core.int>(19, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'completedSessions', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -280,6 +284,10 @@ class PeerInfo extends $pb.GeneratedMessage {
     $core.Map<$core.int, $fixnum.Int64>? sentBytes,
     $core.Map<$core.int, $fixnum.Int64>? receivedBytes,
     $core.String? address,
+    $core.String? direction,
+    $core.Iterable<$core.String>? protocols,
+    $core.int? totalSessions,
+    $core.int? completedSessions,
   }) {
     final _result = create();
     if (status != null) {
@@ -326,6 +334,18 @@ class PeerInfo extends $pb.GeneratedMessage {
     }
     if (address != null) {
       _result.address = address;
+    }
+    if (direction != null) {
+      _result.direction = direction;
+    }
+    if (protocols != null) {
+      _result.protocols.addAll(protocols);
+    }
+    if (totalSessions != null) {
+      _result.totalSessions = totalSessions;
+    }
+    if (completedSessions != null) {
+      _result.completedSessions = completedSessions;
     }
     return _result;
   }
@@ -466,6 +486,36 @@ class PeerInfo extends $pb.GeneratedMessage {
   $core.bool hasAddress() => $_has(14);
   @$pb.TagNumber(15)
   void clearAddress() => clearField(15);
+
+  @$pb.TagNumber(16)
+  $core.String get direction => $_getSZ(15);
+  @$pb.TagNumber(16)
+  set direction($core.String v) { $_setString(15, v); }
+  @$pb.TagNumber(16)
+  $core.bool hasDirection() => $_has(15);
+  @$pb.TagNumber(16)
+  void clearDirection() => clearField(16);
+
+  @$pb.TagNumber(17)
+  $core.List<$core.String> get protocols => $_getList(16);
+
+  @$pb.TagNumber(18)
+  $core.int get totalSessions => $_getIZ(17);
+  @$pb.TagNumber(18)
+  set totalSessions($core.int v) { $_setSignedInt32(17, v); }
+  @$pb.TagNumber(18)
+  $core.bool hasTotalSessions() => $_has(17);
+  @$pb.TagNumber(18)
+  void clearTotalSessions() => clearField(18);
+
+  @$pb.TagNumber(19)
+  $core.int get completedSessions => $_getIZ(18);
+  @$pb.TagNumber(19)
+  set completedSessions($core.int v) { $_setSignedInt32(18, v); }
+  @$pb.TagNumber(19)
+  $core.bool hasCompletedSessions() => $_has(18);
+  @$pb.TagNumber(19)
+  void clearCompletedSessions() => clearField(19);
 }
 
 class NetworkApi {

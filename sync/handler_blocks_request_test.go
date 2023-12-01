@@ -1,7 +1,6 @@
 package sync
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
@@ -26,7 +25,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, uint32(0))
 		})
@@ -38,7 +37,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).From, uint32(0))
 		})
@@ -47,7 +46,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 10, config.LatestBlockInterval+1)
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
@@ -56,13 +55,13 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 				msg := message.NewBlocksRequestMessage(sid, curHeight-config.BlockPerMessage, config.BlockPerMessage)
 				assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-				bdl1 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
+				bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeMoreBlocks)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).From, curHeight-config.BlockPerMessage)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).To(), curHeight-1)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).Count(), config.BlockPerMessage)
 
-				bdl2 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
+				bdl2 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeNoMoreBlocks)
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).From)
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).To())
@@ -73,13 +72,13 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 				msg := message.NewBlocksRequestMessage(sid, curHeight-config.BlockPerMessage+1, config.BlockPerMessage)
 				assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-				bdl1 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
+				bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeMoreBlocks)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).From, curHeight-config.BlockPerMessage+1)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).To(), curHeight)
 				assert.Equal(t, bdl1.Message.(*message.BlocksResponseMessage).Count(), config.BlockPerMessage)
 
-				bdl2 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
+				bdl2 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
 				assert.Equal(t, bdl2.Message.(*message.BlocksResponseMessage).From, curHeight)
 				assert.Zero(t, bdl2.Message.(*message.BlocksResponseMessage).To())
@@ -91,7 +90,7 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight+100, 1)
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			assert.Equal(t, bdl.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeSynced)
 		})
 	})
@@ -103,19 +102,11 @@ func TestLatestBlocksRequestMessages(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			msg1 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
+			msg1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			assert.Equal(t, msg1.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeMoreBlocks)
 
-			msg2 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksResponse)
+			msg2 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			assert.Equal(t, msg2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeNoMoreBlocks)
 		})
-	})
-
-	t.Run("Send error", func(t *testing.T) {
-		td.network.SendError = fmt.Errorf("send error")
-
-		msg := message.NewBlocksRequestMessage(sid, 1, 2)
-		err := td.receivingNewMessage(td.sync, msg, pid)
-		assert.ErrorIs(t, err, td.network.SendError)
 	})
 }

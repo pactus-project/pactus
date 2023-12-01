@@ -14,7 +14,7 @@ func DefaultConfig() *Config {
 		Colorful:           true,
 		MaxBackups:         0,
 		RotateLogAfterDays: 1,
-		Compress:           false,
+		Compress:           true,
 	}
 
 	conf.Levels["default"] = "info"

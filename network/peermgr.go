@@ -5,7 +5,6 @@ import (
 	"sync"
 	"time"
 
-	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnet "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
@@ -29,13 +28,12 @@ type peerMgr struct {
 	minConns       int
 	maxConns       int
 	host           lp2phost.Host
-	dht            *lp2pdht.IpfsDHT
 	peers          map[lp2ppeer.ID]*peerInfo
 	logger         *logger.SubLogger
 }
 
 // newPeerMgr creates a new Peer Manager instance.
-func newPeerMgr(ctx context.Context, h lp2phost.Host, dht *lp2pdht.IpfsDHT,
+func newPeerMgr(ctx context.Context, h lp2phost.Host,
 	conf *Config, log *logger.SubLogger,
 ) *peerMgr {
 	b := &peerMgr{
@@ -45,7 +43,6 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host, dht *lp2pdht.IpfsDHT,
 		maxConns:       conf.MaxConns,
 		peers:          make(map[lp2ppeer.ID]*peerInfo),
 		host:           h,
-		dht:            dht,
 		logger:         log,
 	}
 
@@ -128,9 +125,6 @@ func (mgr *peerMgr) CheckConnectivity() {
 		connectedness := net.Connectedness(pid)
 		if connectedness == lp2pnet.Connected {
 			connectedPeers = append(connectedPeers, pid)
-		} else {
-			mgr.logger.Debug("peer is not connected to us", "peer", pid)
-			delete(mgr.peers, pid)
 		}
 	}
 

@@ -23,14 +23,14 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 	ps := s.sync.PeerSet()
 	peerInfos := make([]*pactus.PeerInfo, 0, ps.Len())
 
-	ps.IteratePeers(func(peer *peerset.Peer) {
+	ps.IteratePeers(func(peer *peerset.Peer) bool {
 		p := new(pactus.PeerInfo)
 		peerInfos = append(peerInfos, p)
 
 		bs, err := cbor.Marshal(peer.Agent)
 		if err != nil {
 			s.logger.Error("couldn't marshal agent", "error", err)
-			return
+			return false
 		}
 		p.Agent = string(bs)
 
@@ -38,19 +38,26 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		p.Moniker = peer.Moniker
 		p.Agent = peer.Agent
 		p.Address = peer.Address
+		p.Direction = peer.Direction
 		p.Services = uint32(peer.Services)
 		p.Height = peer.Height
+		p.Protocols = peer.Protocols
 		p.ReceivedMessages = int32(peer.ReceivedBundles)
 		p.InvalidMessages = int32(peer.InvalidBundles)
 		p.ReceivedBytes = *(*map[int32]int64)(unsafe.Pointer(&peer.ReceivedBytes))
 		p.SentBytes = *(*map[int32]int64)(unsafe.Pointer(&peer.SentBytes))
 		p.Status = int32(peer.Status)
+		p.LastSent = peer.LastSent.Unix()
 		p.LastReceived = peer.LastReceived.Unix()
 		p.LastBlockHash = peer.LastBlockHash.Bytes()
+		p.TotalSessions = int32(peer.TotalSessions)
+		p.CompletedSessions = int32(peer.CompletedSessions)
 
 		for _, key := range peer.ConsensusKeys {
 			p.ConsensusKeys = append(p.ConsensusKeys, key.String())
 		}
+
+		return false
 	})
 
 	sentBytes := ps.SentBytes()

@@ -29,7 +29,7 @@ func TestParsingHelloMessages(t *testing.T) {
 
 			from := td.RandPeerID()
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, from))
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
@@ -44,7 +44,7 @@ func TestParsingHelloMessages(t *testing.T) {
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
@@ -60,7 +60,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			msg.MyTimeUnixMilli = msg.MyTime().Add(-10 * time.Second).UnixMilli()
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
@@ -76,7 +76,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			msg.MyTimeUnixMilli = msg.MyTime().Add(20 * time.Second).UnixMilli()
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
@@ -91,7 +91,7 @@ func TestParsingHelloMessages(t *testing.T) {
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeOK)
 
 			// Check if the peer info is updated
@@ -112,9 +112,9 @@ func TestSendingHelloMessage(t *testing.T) {
 	td := setup(t, nil)
 
 	to := td.RandPeerID()
-	assert.NoError(t, td.sync.sayHello(to))
+	td.sync.sayHello(to)
 
-	bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
+	bdl := td.shouldPublishMessageWithThisType(t, message.TypeHello)
 	assert.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHandshaking))
 	assert.True(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Services, service.New(service.Network)))
 }

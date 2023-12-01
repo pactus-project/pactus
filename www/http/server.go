@@ -182,6 +182,10 @@ func (t *tableMaker) addRowString(key, val string) {
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, val)
 }
 
+func (t *tableMaker) addRowStrings(key string, val []string) {
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%v</td></tr>", key, strings.Join(val, ","))
+}
+
 func (t *tableMaker) addRowTime(key string, sec int64) {
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, time.Unix(sec, 0).String())
 }

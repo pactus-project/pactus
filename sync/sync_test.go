@@ -143,12 +143,11 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 	}
 }
 
-func (td *testData) shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
-	msgType message.Type,
+func (td *testData) shouldPublishMessageWithThisType(t *testing.T, msgType message.Type,
 ) *bundle.Bundle {
 	t.Helper()
 
-	return shouldPublishMessageWithThisType(t, net, msgType)
+	return shouldPublishMessageWithThisType(t, td.network, msgType)
 }
 
 func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
@@ -171,10 +170,10 @@ func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
 	}
 }
 
-func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
+func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, msgType message.Type) {
 	t.Helper()
 
-	shouldNotPublishMessageWithThisType(t, net, msgType)
+	shouldNotPublishMessageWithThisType(t, td.network, msgType)
 }
 
 func (td *testData) receivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
@@ -223,7 +222,7 @@ func TestStop(t *testing.T) {
 	td.sync.Stop()
 }
 
-func TestConnectEvents(t *testing.T) {
+func TestConnectEvent(t *testing.T) {
 	td := setup(t, nil)
 
 	pid := td.RandPeerID()
@@ -241,15 +240,15 @@ func TestConnectEvents(t *testing.T) {
 		assert.Equal(t, p.Address, "address_1")
 		return p.Status == peerset.StatusCodeConnected
 	}, time.Second, 100*time.Millisecond)
-	td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
 
 	// Receiving connect event for the second time
 	td.sync.peerSet.UpdateStatus(pid, peerset.StatusCodeKnown)
 	td.network.EventCh <- ce
-	td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
+	p := td.sync.peerSet.GetPeer(pid)
+	assert.Equal(t, peerset.StatusCodeKnown, p.Status)
 }
 
-func TestDisconnectEvents(t *testing.T) {
+func TestDisconnectEvent(t *testing.T) {
 	td := setup(t, nil)
 	pid := td.RandPeerID()
 	td.network.EventCh <- &network.DisconnectEvent{
@@ -260,6 +259,32 @@ func TestDisconnectEvents(t *testing.T) {
 		p := td.sync.peerSet.GetPeer(pid)
 		return p.Status == peerset.StatusCodeDisconnected
 	}, time.Second, 100*time.Millisecond)
+}
+
+func TestProtocolsEvent(t *testing.T) {
+	td := setup(t, nil)
+
+	t.Run("Support stream", func(t *testing.T) {
+		pid := td.RandPeerID()
+		td.network.EventCh <- &network.ProtocolsEvents{
+			PeerID:        pid,
+			Protocols:     []string{"protocol-1"},
+			SupportStream: true,
+		}
+
+		td.shouldPublishMessageWithThisType(t, message.TypeHello)
+	})
+
+	t.Run("Doesn't support stream", func(t *testing.T) {
+		pid := td.RandPeerID()
+		td.network.EventCh <- &network.ProtocolsEvents{
+			PeerID:        pid,
+			Protocols:     []string{"protocol-1"},
+			SupportStream: false,
+		}
+
+		td.shouldNotPublishMessageWithThisType(t, message.TypeHello)
+	})
 }
 
 func TestTestNetFlags(t *testing.T) {
@@ -284,7 +309,7 @@ func TestDownload(t *testing.T) {
 		pid := td.RandPeerID()
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
+		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
 	})
 
 	t.Run("try to download blocks, but the peer is not a network node", func(t *testing.T) {
@@ -294,7 +319,7 @@ func TestDownload(t *testing.T) {
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
+		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
 	})
 
 	t.Run("try to download blocks and the peer is a network node", func(t *testing.T) {
@@ -304,7 +329,7 @@ func TestDownload(t *testing.T) {
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
+		td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
 	})
 
 	t.Run("download request is rejected", func(t *testing.T) {
@@ -321,7 +346,7 @@ func TestDownload(t *testing.T) {
 		msg1 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, t.Name(),
 			ssn1.SessionID, 1, nil, nil)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg1, pid1))
-		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
+		bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
 
 		msg2 := bdl.Message.(*message.BlocksRequestMessage)
 		ssn2 := td.sync.peerSet.FindSession(msg2.SessionID)
@@ -339,7 +364,7 @@ func TestDownload(t *testing.T) {
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
+		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
 	})
 }
 
@@ -352,7 +377,7 @@ func TestBroadcastBlockAnnounce(t *testing.T) {
 
 		td.broadcastCh <- &msg
 
-		td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlockAnnounce)
+		td.shouldPublishMessageWithThisType(t, message.TypeBlockAnnounce)
 	})
 
 	t.Run("Should NOT announce the block", func(t *testing.T) {
@@ -362,6 +387,6 @@ func TestBroadcastBlockAnnounce(t *testing.T) {
 		td.sync.cache.AddBlock(blk)
 		td.broadcastCh <- &msg
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlockAnnounce)
+		td.shouldNotPublishMessageWithThisType(t, message.TypeBlockAnnounce)
 	})
 }

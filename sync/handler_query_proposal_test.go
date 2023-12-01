@@ -19,13 +19,13 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight + 1)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeProposal)
+		td.shouldNotPublishMessageWithThisType(t, message.TypeProposal)
 	})
 	t.Run("should respond to the query proposal message", func(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeProposal)
+		bdl := td.shouldPublishMessageWithThisType(t, message.TypeProposal)
 		assert.Equal(t, bdl.Message.(*message.ProposalMessage).Proposal.Hash(), prop.Hash())
 	})
 
@@ -34,7 +34,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeProposal)
+		td.shouldNotPublishMessageWithThisType(t, message.TypeProposal)
 	})
 }
 
@@ -45,5 +45,5 @@ func TestBroadcastingQueryProposalMessages(t *testing.T) {
 	msg := message.NewQueryProposalMessage(consensusHeight)
 	td.sync.broadcast(msg)
 
-	td.shouldPublishMessageWithThisType(t, td.network, message.TypeQueryProposal)
+	td.shouldPublishMessageWithThisType(t, message.TypeQueryProposal)
 }

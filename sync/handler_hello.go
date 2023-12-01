@@ -42,7 +42,8 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 			fmt.Sprintf("peer ID is not matched, expected: %v, got: %v",
 				msg.PeerID, pid), 0)
 
-		return handler.acknowledge(response, pid)
+		handler.acknowledge(response, pid)
+		return nil
 	}
 
 	if msg.GenesisHash != handler.state.Genesis().Hash() {
@@ -50,14 +51,16 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 			fmt.Sprintf("invalid genesis hash, expected: %v, got: %v",
 				handler.state.Genesis().Hash(), msg.GenesisHash), 0)
 
-		return handler.acknowledge(response, pid)
+		handler.acknowledge(response, pid)
+		return nil
 	}
 
 	if math.Abs(time.Since(msg.MyTime()).Seconds()) > 10 {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
 			"time discrepancy exceeds 10 seconds", 0)
 
-		return handler.acknowledge(response, pid)
+		handler.acknowledge(response, pid)
+		return nil
 	}
 
 	handler.peerSet.UpdateHeight(pid, msg.Height, msg.BlockHash)
@@ -68,7 +71,9 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 	}
 
 	response := message.NewHelloAckMessage(message.ResponseCodeOK, "Ok", handler.state.LastBlockHeight())
-	return handler.acknowledge(response, pid)
+	handler.acknowledge(response, pid)
+
+	return nil
 }
 
 func (handler *helloHandler) PrepareBundle(m message.Message) *bundle.Bundle {
@@ -77,17 +82,18 @@ func (handler *helloHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	return bdl
 }
 
-func (handler *helloHandler) acknowledge(msg *message.HelloAckMessage, to peer.ID) error {
+func (handler *helloHandler) acknowledge(msg *message.HelloAckMessage, to peer.ID) {
 	if msg.ResponseCode == message.ResponseCodeRejected {
-		handler.peerSet.UpdateStatus(to, peerset.StatusCodeBanned)
-
 		handler.logger.Debug("rejecting hello message", "msg", msg,
 			"to", to, "reason", msg.Reason)
+
+		handler.sendTo(msg, to)
+		handler.peerSet.UpdateStatus(to, peerset.StatusCodeBanned)
 		handler.network.CloseConnection(to)
 	} else {
 		handler.logger.Info("acknowledging hello message", "msg", msg,
 			"to", to)
-	}
 
-	return handler.sendTo(msg, to)
+		handler.sendTo(msg, to)
+	}
 }

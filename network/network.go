@@ -226,7 +226,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
 	}
 	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, isBootstrapper, conf, n.logger)
-	n.peerMgr = newPeerMgr(ctx, host, n.dht.kademlia, conf, n.logger)
+	n.peerMgr = newPeerMgr(ctx, host, conf, n.logger)
 	n.stream = newStreamService(ctx, n.host, streamProtocolID, n.eventChannel, n.logger)
 	n.gossip = newGossipService(ctx, n.host, n.eventChannel, isBootstrapper, n.logger)
 	n.notifee = newNotifeeService(ctx, n.host, n.eventChannel, n.peerMgr, streamProtocolID, isBootstrapper, n.logger)
@@ -354,9 +354,13 @@ func (n *network) TopicName(topic string) string {
 }
 
 func (n *network) CloseConnection(pid lp2ppeer.ID) {
+	n.logger.Debug("closing connection", "pid", pid)
+
 	if err := n.host.Network().ClosePeer(pid); err != nil {
 		n.logger.Warn("unable to close connection", "peer", pid)
 	}
+
+	n.logger.Debug("connection closed", "pid", pid)
 }
 
 func (n *network) String() string {

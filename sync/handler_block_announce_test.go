@@ -38,6 +38,6 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 	msg := message.NewBlockAnnounceMessage(blk, cert)
 	td.sync.broadcast(msg)
 
-	msg1 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlockAnnounce)
+	msg1 := td.shouldPublishMessageWithThisType(t, message.TypeBlockAnnounce)
 	assert.Equal(t, msg1.Message.(*message.BlockAnnounceMessage).Certificate.Height(), msg.Certificate.Height())
 }

@@ -19,7 +19,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	t.Run("should respond to the query votes message", func(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeVote)
+		bdl := td.shouldPublishMessageWithThisType(t, message.TypeVote)
 		assert.Equal(t, bdl.Message.(*message.VoteMessage).Vote.Hash(), v1.Hash())
 	})
 
@@ -27,7 +27,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 		msg := message.NewQueryVotesMessage(consensusHeight+1, 1)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeVote)
+		td.shouldNotPublishMessageWithThisType(t, message.TypeVote)
 	})
 }
 
@@ -38,5 +38,5 @@ func TestBroadcastingQueryVotesMessages(t *testing.T) {
 	msg := message.NewQueryVotesMessage(consensusHeight, 1)
 	td.sync.broadcast(msg)
 
-	td.shouldPublishMessageWithThisType(t, td.network, message.TypeQueryVotes)
+	td.shouldPublishMessageWithThisType(t, message.TypeQueryVotes)
 }
