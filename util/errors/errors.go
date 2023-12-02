@@ -25,31 +25,35 @@ const (
 	ErrInvalidMessage
 	ErrInvalidConfig
 	ErrDuplicateVote
+	ErrInvalidCoinType
+	ErrUnsupportedPurpose
 
 	ErrCount
 )
 
 var messages = map[int]string{
-	ErrNone:              "no error",
-	ErrGeneric:           "generic error",
-	ErrNetwork:           "network error",
-	ErrInvalidBlock:      "invalid block",
-	ErrInvalidAmount:     "invalid amount",
-	ErrInvalidFee:        "invalid fee",
-	ErrInvalidAddress:    "invalid address",
-	ErrInvalidPublicKey:  "invalid public key",
-	ErrInvalidPrivateKey: "invalid private key",
-	ErrInvalidSignature:  "invalid signature",
-	ErrInvalidTx:         "invalid transaction",
-	ErrInvalidMemo:       "invalid memo",
-	ErrInvalidProof:      "invalid proof",
-	ErrInvalidHeight:     "invalid height",
-	ErrInvalidRound:      "invalid round",
-	ErrInvalidProposal:   "invalid proposal",
-	ErrInvalidVote:       "invalid vote",
-	ErrInvalidMessage:    "invalid message",
-	ErrInvalidConfig:     "invalid config",
-	ErrDuplicateVote:     "duplicate vote",
+	ErrNone:               "no error",
+	ErrGeneric:            "generic error",
+	ErrNetwork:            "network error",
+	ErrInvalidBlock:       "invalid block",
+	ErrInvalidAmount:      "invalid amount",
+	ErrInvalidFee:         "invalid fee",
+	ErrInvalidAddress:     "invalid address",
+	ErrInvalidPublicKey:   "invalid public key",
+	ErrInvalidPrivateKey:  "invalid private key",
+	ErrInvalidSignature:   "invalid signature",
+	ErrInvalidTx:          "invalid transaction",
+	ErrInvalidMemo:        "invalid memo",
+	ErrInvalidProof:       "invalid proof",
+	ErrInvalidHeight:      "invalid height",
+	ErrInvalidRound:       "invalid round",
+	ErrInvalidProposal:    "invalid proposal",
+	ErrInvalidVote:        "invalid vote",
+	ErrInvalidMessage:     "invalid message",
+	ErrInvalidConfig:      "invalid config",
+	ErrDuplicateVote:      "duplicate vote",
+	ErrInvalidCoinType:    "invalid coin type",
+	ErrUnsupportedPurpose: "unsupported purpose",
 }
 
 type withCodeError struct {

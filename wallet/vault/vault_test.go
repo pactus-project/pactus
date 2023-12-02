@@ -5,12 +5,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pactus-project/pactus/wallet/addresspath"
-
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/util/testsuite"
+	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -87,37 +86,27 @@ func TestAddressInfo(t *testing.T) {
 		path, _ := addresspath.NewPathFromString(info.Path)
 
 		switch path.Purpose() {
-		case 12381 + hdkeychain.HardenedKeyStart:
+		case HardenedPurposeBLS12381:
 			if addr.IsValidatorAddress() {
-				assert.Equal(t, info.Path, fmt.Sprintf("m/12381'/%d'/1'/%d", td.vault.CoinType, path.AddressIndex()))
-				// validatorIndex++
+				assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/1'/%d",
+					PurposeBLS12381, td.vault.CoinType, path.AddressIndex()))
 			}
 
 			if addr.IsAccountAddress() {
-				assert.Equal(t, info.Path, fmt.Sprintf("m/12381'/%d'/2'/%d", td.vault.CoinType, path.AddressIndex()))
-				// accountIndex++
+				assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/2'/%d",
+					PurposeBLS12381, td.vault.CoinType, path.AddressIndex()))
 			}
-		case 65535 + hdkeychain.HardenedKeyStart:
+		case HardenedPurposeImportPrivateKey:
 			if addr.IsValidatorAddress() {
-				assert.Equal(t, info.Path, fmt.Sprintf("m/65535'/%d'/1'/%d'", td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart))
-				// validatorIndex++
+				assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/1'/%d'",
+					PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart))
 			}
 
 			if addr.IsAccountAddress() {
-				assert.Equal(t, info.Path, fmt.Sprintf("m/65535'/%d'/2'/%d'", td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart))
-				// accountIndex++
+				assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/2'/%d'",
+					PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart))
 			}
 		}
-
-		//if addr.IsValidatorAddress() {
-		//	assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/1'/%d", path.Purpose(), td.vault.CoinType, validatorIndex))
-		//	validatorIndex++
-		//}
-		//
-		//if addr.IsAccountAddress() {
-		//	assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/2'/%d", path.Purpose(), td.vault.CoinType, accountIndex))
-		//	accountIndex++
-		//}
 	}
 
 	// Neutered
