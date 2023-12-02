@@ -7,7 +7,6 @@ import (
 
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc/codes"
@@ -19,9 +18,9 @@ type loadedWallet struct {
 }
 
 type walletServer struct {
-	wallets map[string]*loadedWallet
-	chain   genesis.ChainType
-	logger  *logger.SubLogger
+	*Server
+	wallets   map[string]*loadedWallet
+	chainType genesis.ChainType
 }
 
 func walletPath(name string) string {
@@ -36,7 +35,7 @@ func (s *walletServer) CreateWallet(_ context.Context,
 	}
 
 	path := walletPath(req.Name)
-	w, err := wallet.Create(path, req.Mnemonic, req.Language, s.chain)
+	w, err := wallet.Create(path, req.Mnemonic, req.Language, s.chainType)
 	if err != nil {
 		return nil, err
 	}

@@ -65,11 +65,13 @@ const GetNodeInfoResponse$json = const {
     const {'1': 'moniker', '3': 1, '4': 1, '5': 9, '10': 'moniker'},
     const {'1': 'agent', '3': 2, '4': 1, '5': 9, '10': 'agent'},
     const {'1': 'peer_id', '3': 3, '4': 1, '5': 12, '10': 'peerId'},
+    const {'1': 'reachability', '3': 4, '4': 1, '5': 9, '10': 'reachability'},
+    const {'1': 'addrs', '3': 5, '4': 3, '5': 9, '10': 'addrs'},
   ],
 };
 
 /// Descriptor for `GetNodeInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAxSBnBlZXJJZA==');
+final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAxSBnBlZXJJZBIiCgxyZWFjaGFiaWxpdHkYBCABKAlSDHJlYWNoYWJpbGl0eRIUCgVhZGRycxgFIAMoCVIFYWRkcnM=');
 @$core.Deprecated('Use peerInfoDescriptor instead')
 const PeerInfo$json = const {
   '1': 'PeerInfo',

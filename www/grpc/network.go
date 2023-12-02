@@ -5,16 +5,13 @@ import (
 	"unsafe"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type networkServer struct {
-	sync   sync.Synchronizer
-	logger *logger.SubLogger
+	*Server
 }
 
 func (s *networkServer) GetNetworkInfo(_ context.Context,
@@ -77,8 +74,10 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 	_ *pactus.GetNodeInfoRequest,
 ) (*pactus.GetNodeInfoResponse, error) {
 	return &pactus.GetNodeInfoResponse{
-		Moniker: s.sync.Moniker(),
-		Agent:   version.Agent(),
-		PeerId:  []byte(s.sync.SelfID()),
+		Moniker:      s.sync.Moniker(),
+		Agent:        version.Agent(),
+		PeerId:       []byte(s.sync.SelfID()),
+		Reachability: s.net.ReachabilityStatus(),
+		Addrs:        s.net.HostAddrs(),
 	}, nil
 }
