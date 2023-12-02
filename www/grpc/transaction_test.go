@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -122,8 +123,8 @@ func TestGetRawTransaction(t *testing.T) {
 			Fee:      tx.Fee(),
 			Memo:     tx.Memo(),
 		})
-		assert.Error(t, err)
-		assert.Nil(t, res)
+		assert.Nil(t, err)
+		fmt.Println(res.RawTransaction)
 	})
 
 	t.Run("Bond", func(t *testing.T) {
@@ -138,8 +139,8 @@ func TestGetRawTransaction(t *testing.T) {
 			Fee:       tx.Fee(),
 			Memo:      tx.Memo(),
 		})
-		assert.Error(t, err)
-		assert.Nil(t, res)
+		assert.Nil(t, err)
+		fmt.Println(res.RawTransaction)
 	})
 
 	t.Run("UnBond", func(t *testing.T) {
@@ -151,24 +152,24 @@ func TestGetRawTransaction(t *testing.T) {
 			ValidatorAddress: valAddr.String(),
 			Memo:             "",
 		})
-		assert.Error(t, err)
-		assert.Nil(t, res)
+		assert.Nil(t, err)
+		fmt.Println(res.RawTransaction)
 	})
 
-	t.Run("UnBond", func(t *testing.T) {
-		valAddr := ts.RandValAddress()
+	t.Run("Withdraw", func(t *testing.T) {
 		tx, privateKey := ts.GenerateTestWithdrawTx()
 
 		res, err := client.GetRawWithdrawTransaction(tCtx, &pactus.GetRawWithdrawTransactionRequest{
 			LockTime:         tx.LockTime(),
-			ValidatorAddress: valAddr.String(),
-			AccountAddress:   privateKey.PublicKeyNative().String(),
+			ValidatorAddress: privateKey.PublicKeyNative().ValidatorAddress().String(),
+			AccountAddress:   privateKey.PublicKeyNative().AccountAddress().String(),
 			Fee:              tx.Fee(),
 			Amount:           tx.Payload().Value(),
 			Memo:             "",
 		})
-		assert.Error(t, err)
-		assert.Nil(t, res)
+		fmt.Println(err)
+		assert.Nil(t, err)
+		fmt.Println(res.RawTransaction)
 	})
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }
