@@ -8,7 +8,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/tyler-smith/go-bip39"
@@ -336,7 +335,7 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 		}
 
 		if path.CoinType()-hdkeychain.HardenedKeyStart != v.CoinType {
-			return nil, errors.Error(errors.ErrInvalidCoinType)
+			return nil, ErrInvalidCoinType
 		}
 
 		switch path.Purpose() {
@@ -373,7 +372,7 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 			}
 			keys[i] = prv
 		default:
-			return nil, errors.Error(errors.ErrUnsupportedPurpose)
+			return nil, ErrUnsupportedPurpose
 		}
 	}
 
