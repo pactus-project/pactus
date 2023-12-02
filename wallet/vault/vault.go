@@ -216,7 +216,11 @@ func (v *Vault) AddressInfos() []AddressInfo {
 		}
 
 		path, _ := addresspath.NewPathFromString(info.Path)
-		addressType := path.AddressType()
+		addressType, err := path.AddressType()
+		if err != nil {
+			continue
+		}
+
 		addrsMap[int(addressType)] = append(addrsMap[int(addressType)], info)
 	}
 
@@ -232,7 +236,10 @@ func (v *Vault) AddressInfos() []AddressInfo {
 			pathA, _ := addresspath.NewPathFromString(a.Path)
 			pathB, _ := addresspath.NewPathFromString(b.Path)
 
-			if pathA.AddressIndex() < pathB.AddressIndex() {
+			pathAAddressIndex, _ := pathA.AddressIndex()
+			pathBAddressIndex, _ := pathB.AddressIndex()
+
+			if pathAAddressIndex < pathBAddressIndex {
 				return -1
 			}
 			return 1
@@ -443,7 +450,12 @@ func (v *Vault) AddressInfo(addr string) *AddressInfo {
 			return nil
 		}
 
-		extendedKey, err := ext.Derive(p.AddressIndex())
+		addressIndex, err := p.AddressIndex()
+		if err != nil {
+			return nil
+		}
+
+		extendedKey, err := ext.Derive(addressIndex)
 		if err != nil {
 			return nil
 		}

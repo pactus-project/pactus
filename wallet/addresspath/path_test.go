@@ -55,8 +55,23 @@ func TestPathHelpers(t *testing.T) {
 	purpose, coinType, addressType, addressIndex := 12381, 21888, 2, 0
 	path := Path{12381, 21888, 2, 0}
 
-	assert.Equal(t, uint32(purpose), path.Purpose())
-	assert.Equal(t, uint32(coinType), path.CoinType())
-	assert.Equal(t, uint32(addressType), path.AddressType())
-	assert.Equal(t, uint32(addressIndex), path.AddressIndex())
+	pathPurpose, _ := path.Purpose()
+	pathCoinType, _ := path.CoinType()
+	pathAddressType, _ := path.AddressType()
+	pathAddressIndex, _ := path.AddressIndex()
+
+	assert.Equal(t, uint32(purpose), pathPurpose)
+	assert.Equal(t, uint32(coinType), pathCoinType)
+	assert.Equal(t, uint32(addressType), pathAddressType)
+	assert.Equal(t, uint32(addressIndex), pathAddressIndex)
+
+	path = Path{}
+	_, err := path.Purpose()
+	assert.EqualError(t, ErrInvalidPath, err.Error())
+	_, err = path.CoinType()
+	assert.EqualError(t, ErrInvalidPath, err.Error())
+	_, err = path.AddressType()
+	assert.EqualError(t, ErrInvalidPath, err.Error())
+	_, err = path.AddressIndex()
+	assert.EqualError(t, ErrInvalidPath, err.Error())
 }

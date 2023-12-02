@@ -52,18 +52,30 @@ func (p Path) String() string {
 	return builder.String()
 }
 
-func (p Path) Purpose() uint32 {
-	return p[0]
+func (p Path) Purpose() (uint32, error) {
+	if len(p) < 1 {
+		return 0, ErrInvalidPath
+	}
+	return p[0], nil
 }
 
-func (p Path) CoinType() uint32 {
-	return p[len(p)-3]
+func (p Path) CoinType() (uint32, error) {
+	if len(p) < 2 {
+		return 0, ErrInvalidPath
+	}
+	return p[1], nil
 }
 
-func (p Path) AddressType() uint32 {
-	return p[len(p)-2]
+func (p Path) AddressType() (uint32, error) {
+	if len(p) < 3 {
+		return 0, ErrInvalidPath
+	}
+	return p[2], nil
 }
 
-func (p Path) AddressIndex() uint32 {
-	return p[len(p)-1]
+func (p Path) AddressIndex() (uint32, error) {
+	if len(p) < 4 {
+		return 0, ErrInvalidPath
+	}
+	return p[3], nil
 }
