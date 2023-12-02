@@ -2,6 +2,7 @@ package vault
 
 import (
 	"encoding/json"
+	"errors"
 	"sort"
 	"strings"
 
@@ -59,16 +60,12 @@ type Vault struct {
 }
 
 type keyStore struct {
-	MasterNode   masterNode          `json:"master_node"`   // HD Root Tree (Master node)
-	ImportedKeys map[string]imported `json:"imported_keys"` // Imported private keys
+	MasterNode   masterNode `json:"master_node"`   // HD Root Tree (Master node)
+	ImportedKeys []string   `json:"imported_keys"` // Imported private keys
 }
 
 type masterNode struct {
 	Mnemonic string `json:"seed,omitempty"` // Seed phrase or mnemonic (encrypted)
-}
-
-type imported struct {
-	Prv string `json:"prv"` // Private key
 }
 
 type purposes struct {
@@ -115,7 +112,7 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 		MasterNode: masterNode{
 			Mnemonic: mnemonic,
 		},
-		ImportedKeys: make(map[string]imported),
+		ImportedKeys: make([]string, 0),
 	}
 
 	keyStoreDate, err := json.Marshal(ks)
@@ -149,9 +146,7 @@ func (v *Vault) Neuter() *Vault {
 	}
 
 	for addr, info := range v.Addresses {
-		if strings.HasPrefix(info.Path, "m/") {
-			neutered.Addresses[addr] = info
-		}
+		neutered.Addresses[addr] = info
 	}
 
 	return neutered
@@ -263,35 +258,39 @@ func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 		return err
 	}
 
-	accAddr := prv.PublicKeyNative().AccountAddress()
+	addressIndex := len(keyStore.ImportedKeys)
+
+	pub := prv.PublicKeyNative()
+
+	accAddr := pub.AccountAddress()
 	if v.Contains(accAddr.String()) {
 		return ErrAddressExists
 	}
 
-	keyStore.ImportedKeys[accAddr.String()] = imported{
-		Prv: prv.String(),
-	}
-
-	valAddr := prv.PublicKeyNative().ValidatorAddress()
-	keyStore.ImportedKeys[valAddr.String()] = imported{
-		Prv: prv.String(),
-	}
-
-	err = v.encryptKeyStore(keyStore, password)
-	if err != nil {
-		return err
+	valAddr := pub.ValidatorAddress()
+	if v.Contains(valAddr.String()) {
+		return ErrAddressExists
 	}
 
 	v.Addresses[accAddr.String()] = AddressInfo{
 		Address:   accAddr.String(),
-		PublicKey: prv.PublicKeyNative().String(),
-		Path:      "",
+		PublicKey: pub.String(),
+		Path: addresspath.NewPath(65535+addresspath.HardenedKeyStart, v.CoinType+addresspath.HardenedKeyStart,
+			uint32(crypto.AddressTypeBLSAccount)+hdkeychain.HardenedKeyStart, uint32(addressIndex)+hdkeychain.HardenedKeyStart).String(),
 	}
 
 	v.Addresses[valAddr.String()] = AddressInfo{
 		Address:   valAddr.String(),
-		PublicKey: prv.PublicKeyNative().String(),
-		Path:      "",
+		PublicKey: pub.String(),
+		Path: addresspath.NewPath(65535+addresspath.HardenedKeyStart, v.CoinType+addresspath.HardenedKeyStart,
+			uint32(crypto.AddressTypeValidator)+hdkeychain.HardenedKeyStart, uint32(addressIndex)+hdkeychain.HardenedKeyStart).String(),
+	}
+
+	keyStore.ImportedKeys = append(keyStore.ImportedKeys, prv.String())
+
+	err = v.encryptKeyStore(keyStore, password)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -314,45 +313,70 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 			return nil, NewErrAddressNotFound(addr)
 		}
 
-		if info.Path == "" {
-			importedKey, ok := keyStore.ImportedKeys[info.Address]
-			if !ok {
-				return nil, NewErrAddressNotFound(addr)
-			}
-			prvKey, err := bls.PrivateKeyFromString(importedKey.Prv)
-			if err != nil {
-				return nil, err
-			}
-			keys[i] = prvKey
-			continue
-		}
-		seed, err := bip39.NewSeedWithErrorChecking(keyStore.MasterNode.Mnemonic, "")
-		if err != nil {
-			return nil, err
-		}
-		masterKey, err := hdkeychain.NewMaster(seed, false)
-		if err != nil {
-			return nil, err
-		}
 		path, err := addresspath.NewPathFromString(info.Path)
 		if err != nil {
 			return nil, err
 		}
-		ext, err := masterKey.DerivePath(path)
-		if err != nil {
-			return nil, err
-		}
-		prvBytes, err := ext.RawPrivateKey()
-		if err != nil {
-			return nil, err
+
+		if path.CoinType()-hdkeychain.HardenedKeyStart != v.CoinType {
+			return nil, errors.New("invalid coin type")
 		}
 
-		prvKey, err := bls.PrivateKeyFromBytes(prvBytes)
-		if err != nil {
-			return nil, err
+		switch path.Purpose() {
+		case 12381 + hdkeychain.HardenedKeyStart:
+			seed, err := bip39.NewSeedWithErrorChecking(keyStore.MasterNode.Mnemonic, "")
+			if err != nil {
+				return nil, err
+			}
+			masterKey, err := hdkeychain.NewMaster(seed, false)
+			if err != nil {
+				return nil, err
+			}
+			ext, err := masterKey.DerivePath(path)
+			if err != nil {
+				return nil, err
+			}
+			prvBytes, err := ext.RawPrivateKey()
+			if err != nil {
+				return nil, err
+			}
+
+			prvKey, err := bls.PrivateKeyFromBytes(prvBytes)
+			if err != nil {
+				return nil, err
+			}
+
+			keys[i] = prvKey
+		case 65535 + hdkeychain.HardenedKeyStart:
+			index := path.AddressIndex() - hdkeychain.HardenedKeyStart
+			str := keyStore.ImportedKeys[index]
+			prv, err := bls.PrivateKeyFromString(str)
+			if err != nil {
+				return nil, err
+			}
+			keys[i] = prv
+		default:
+			return nil, errors.New("unsupported purpose")
 		}
 
-		keys[i] = prvKey
+		//if info.Path == "" {
+		//	importedKey, ok := keyStore.ImportedKeys[info.Address]
+		//	if !ok {
+		//		return nil, NewErrAddressNotFound(addr)
+		//	}
+		//	prvKey, err := bls.PrivateKeyFromString(importedKey.Prv)
+		//	if err != nil {
+		//		return nil, err
+		//	}
+		//	keys[i] = prvKey
+		//	continue
+		//}
+
+		//path, err := addresspath.NewPathFromString(info.Path)
+		//if err != nil {
+		//	return nil, err
+		//}
+
 	}
 
 	return keys, nil
@@ -420,7 +444,18 @@ func (v *Vault) AddressInfo(addr string) *AddressInfo {
 	if !ok {
 		return nil
 	}
-	if info.Path != "" {
+
+	path, err := addresspath.NewPathFromString(info.Path)
+	if err != nil {
+		return nil
+	}
+
+	if path.CoinType()-hdkeychain.HardenedKeyStart != v.CoinType {
+		return nil
+	}
+
+	switch path.Purpose() {
+	case 12381 + hdkeychain.HardenedKeyStart:
 		addr, err := crypto.AddressFromString(info.Address)
 		if err != nil {
 			return nil
@@ -454,6 +489,9 @@ func (v *Vault) AddressInfo(addr string) *AddressInfo {
 		}
 
 		info.PublicKey = blsPubKey.String()
+	case 65535 + hdkeychain.HardenedKeyStart:
+	default:
+		return nil
 	}
 
 	return &info
@@ -483,7 +521,15 @@ func (v *Vault) decryptKeyStore(password string) (*keyStore, error) {
 	keyStore := new(keyStore)
 	err = json.Unmarshal([]byte(keyStoreData), keyStore)
 	if err != nil {
-		return nil, err
+		type _oldKeyStore struct {
+			MasterNode   masterNode        `json:"master_node"`   // HD Root Tree (Master node)
+			ImportedKeys map[string]string `json:"imported_keys"` // Imported private keys
+		}
+		oldKeyStore := new(_oldKeyStore)
+		if err = json.Unmarshal([]byte(keyStoreData), oldKeyStore); err != nil {
+			return nil, err
+		}
+		keyStore.MasterNode = oldKeyStore.MasterNode
 	}
 
 	return keyStore, nil
