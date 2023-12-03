@@ -193,7 +193,7 @@ func TestInvalidAddress(t *testing.T) {
 // 	assert.True(t, td.wallet.Contains(addr))
 // }
 
-func TestTestKeyInfo(t *testing.T) {
+func TestKeyInfo(t *testing.T) {
 	td := setup(t)
 
 	mnemonic, _ := GenerateMnemonic(128)
