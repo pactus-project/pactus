@@ -248,7 +248,7 @@ func (v *Vault) AllBLSAccountAddresses() []AddressInfo {
 	return addrs
 }
 
-func (v *Vault) AllImportedPrivateKeys() []AddressInfo {
+func (v *Vault) AllImportedPrivateKeysAddresses() []AddressInfo {
 	addrs := make([]AddressInfo, 0, v.AddressCount()/2)
 	for _, addrInfo := range v.Addresses {
 		addrPath, _ := addresspath.NewPathFromString(addrInfo.Path)
@@ -334,7 +334,7 @@ func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 		uint32(addressIndex)+hdkeychain.HardenedKeyStart).
 		String()
 
-	importedPrvLabelCounter := (len(v.AllImportedPrivateKeys()) / 2) + 1
+	importedPrvLabelCounter := (len(v.AllImportedPrivateKeysAddresses()) / 2) + 1
 	v.Addresses[accAddr.String()] = AddressInfo{
 		Address:   accAddr.String(),
 		PublicKey: pub.String(),

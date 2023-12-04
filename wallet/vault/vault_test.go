@@ -81,10 +81,6 @@ func TestAddressInfo(t *testing.T) {
 		// assert.Equal(t, i.Address, info.PublicKey)
 
 		addr, _ := crypto.AddressFromString(info.Address)
-		if info.Path == "" {
-			continue
-		}
-
 		path, _ := addresspath.NewPathFromString(info.Path)
 
 		switch path.Purpose() {
@@ -156,6 +152,31 @@ func TestAllBLSAccountAddresses(t *testing.T) {
 			assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/2'/%d",
 				PurposeBLS12381, td.vault.CoinType, path.AddressIndex()))
 		case HardenedPurposeImportPrivateKey:
+			assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/2'/%d'",
+				PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart))
+		}
+	}
+}
+
+func TestAllImportedPrivateKeysAddresses(t *testing.T) {
+	td := setup(t)
+
+	assert.Equal(t, td.vault.AddressCount(), 6)
+
+	importedPrvAddrs := td.vault.AllImportedPrivateKeysAddresses()
+	for _, i := range importedPrvAddrs {
+		info := td.vault.AddressInfo(i.Address)
+		assert.Equal(t, i.Address, info.Address)
+
+		addr, _ := crypto.AddressFromString(info.Address)
+		path, _ := addresspath.NewPathFromString(info.Path)
+
+		if addr.IsValidatorAddress() {
+			assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/1'/%d'",
+				PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart))
+		}
+
+		if addr.IsAccountAddress() {
 			assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/2'/%d'",
 				PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart))
 		}
