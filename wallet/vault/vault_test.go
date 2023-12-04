@@ -114,6 +114,29 @@ func TestAddressInfo(t *testing.T) {
 	assert.Equal(t, neutered.AddressCount(), 5)
 }
 
+func TestAllValidatorAddresses(t *testing.T) {
+	td := setup(t)
+
+	assert.Equal(t, td.vault.AddressCount(), 5)
+
+	validatorAddrs := td.vault.AllValidatorAddresses()
+	for _, i := range validatorAddrs {
+		info := td.vault.AddressInfo(i.Address)
+		assert.Equal(t, i.Address, info.Address)
+
+		path, _ := addresspath.NewPathFromString(info.Path)
+
+		switch path.Purpose() {
+		case HardenedPurposeBLS12381:
+			assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/1'/%d",
+				PurposeBLS12381, td.vault.CoinType, path.AddressIndex()))
+		case HardenedPurposeImportPrivateKey:
+			assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/1'/%d'",
+				PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart))
+		}
+	}
+}
+
 func TestNewBLSAccountAddress(t *testing.T) {
 	td := setup(t)
 

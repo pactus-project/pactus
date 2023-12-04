@@ -205,18 +205,30 @@ func (v *Vault) SetLabel(addr, label string) error {
 }
 
 func (v *Vault) AddressInfos() []AddressInfo {
-	addrs := make([]AddressInfo, 0, v.AddressCount())
+	addrs := make([]AddressInfo, 0, 1)
 	for _, addrInfo := range v.Addresses {
 		addrs = append(addrs, addrInfo)
 	}
 
-	v.SortAddressesByType(addrs...)
+	v.SortAddressesByAddressType(addrs...)
 	v.SortAddressesByPurpose(addrs...)
 
 	return addrs
 }
 
-func (v *Vault) SortAddressesByType(addrs ...AddressInfo) {
+func (v *Vault) AllValidatorAddresses() []AddressInfo {
+	addrs := make([]AddressInfo, 0, v.AddressCount()/2)
+	for _, addrInfo := range v.Addresses {
+		addrPath, _ := addresspath.NewPathFromString(addrInfo.Path)
+		if addrPath.AddressType()-hdkeychain.HardenedKeyStart == uint32(crypto.AddressTypeValidator) {
+			addrs = append(addrs, addrInfo)
+		}
+	}
+
+	return addrs
+}
+
+func (v *Vault) SortAddressesByAddressType(addrs ...AddressInfo) {
 	slices.SortFunc(addrs, func(a, b AddressInfo) int {
 		pathA, _ := addresspath.NewPathFromString(a.Path)
 		pathB, _ := addresspath.NewPathFromString(b.Path)
