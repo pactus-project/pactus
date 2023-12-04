@@ -3,6 +3,7 @@ package vault
 import (
 	"cmp"
 	"encoding/json"
+	"fmt"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -247,8 +248,23 @@ func (v *Vault) AllBLSAccountAddresses() []AddressInfo {
 	return addrs
 }
 
+func (v *Vault) AllImportedPrivateKeys() []AddressInfo {
+	addrs := make([]AddressInfo, 0, v.AddressCount()/2)
+	for _, addrInfo := range v.Addresses {
+		addrPath, _ := addresspath.NewPathFromString(addrInfo.Path)
+		if addrPath.Purpose() == HardenedPurposeImportPrivateKey {
+			addrs = append(addrs, addrInfo)
+		}
+	}
+
+	v.SortAddressesByAddressIndex(addrs...)
+	v.SortAddressesByAddressType(addrs...)
+
+	return addrs
+}
+
 func (v *Vault) SortAddressesByPurpose(addrs ...AddressInfo) {
-	slices.SortFunc(addrs, func(a, b AddressInfo) int {
+	slices.SortStableFunc(addrs, func(a, b AddressInfo) int {
 		pathA, _ := addresspath.NewPathFromString(a.Path)
 		pathB, _ := addresspath.NewPathFromString(b.Path)
 
@@ -257,7 +273,7 @@ func (v *Vault) SortAddressesByPurpose(addrs ...AddressInfo) {
 }
 
 func (v *Vault) SortAddressesByAddressType(addrs ...AddressInfo) {
-	slices.SortFunc(addrs, func(a, b AddressInfo) int {
+	slices.SortStableFunc(addrs, func(a, b AddressInfo) int {
 		pathA, _ := addresspath.NewPathFromString(a.Path)
 		pathB, _ := addresspath.NewPathFromString(b.Path)
 
@@ -266,7 +282,7 @@ func (v *Vault) SortAddressesByAddressType(addrs ...AddressInfo) {
 }
 
 func (v *Vault) SortAddressesByAddressIndex(addrs ...AddressInfo) {
-	slices.SortFunc(addrs, func(a, b AddressInfo) int {
+	slices.SortStableFunc(addrs, func(a, b AddressInfo) int {
 		pathA, _ := addresspath.NewPathFromString(a.Path)
 		pathB, _ := addresspath.NewPathFromString(b.Path)
 
@@ -318,15 +334,18 @@ func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 		uint32(addressIndex)+hdkeychain.HardenedKeyStart).
 		String()
 
+	importedPrvLabelCounter := (len(v.AllImportedPrivateKeys()) / 2) + 1
 	v.Addresses[accAddr.String()] = AddressInfo{
 		Address:   accAddr.String(),
 		PublicKey: pub.String(),
+		Label:     fmt.Sprintf("Imported Reward Address %d", importedPrvLabelCounter),
 		Path:      blsAccPathStr,
 	}
 
 	v.Addresses[valAddr.String()] = AddressInfo{
 		Address:   valAddr.String(),
 		PublicKey: pub.String(),
+		Label:     fmt.Sprintf("Imported Validator Address %d", importedPrvLabelCounter),
 		Path:      blsValidatorPathStr,
 	}
 

@@ -60,10 +60,6 @@ func buildAllAddressesCmd(parentCmd *cobra.Command) {
 			}
 
 			line += info.Label
-			if info.Path == "" {
-				line += " (Imported)"
-			}
-
 			cmd.PrintInfoMsgf(line)
 		}
 	}
