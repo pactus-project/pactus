@@ -210,6 +210,7 @@ func (v *Vault) AddressInfos() []AddressInfo {
 		addrs = append(addrs, addrInfo)
 	}
 
+	v.SortAddressesByAddressIndex(addrs...)
 	v.SortAddressesByAddressType(addrs...)
 	v.SortAddressesByPurpose(addrs...)
 
@@ -225,7 +226,7 @@ func (v *Vault) AllValidatorAddresses() []AddressInfo {
 		}
 	}
 
-	v.SortAddressesByAddressType(addrs...)
+	v.SortAddressesByAddressIndex(addrs...)
 	v.SortAddressesByPurpose(addrs...)
 
 	return addrs
@@ -240,10 +241,19 @@ func (v *Vault) AllBLSAccountAddresses() []AddressInfo {
 		}
 	}
 
-	v.SortAddressesByAddressType(addrs...)
+	v.SortAddressesByAddressIndex(addrs...)
 	v.SortAddressesByPurpose(addrs...)
 
 	return addrs
+}
+
+func (v *Vault) SortAddressesByPurpose(addrs ...AddressInfo) {
+	slices.SortFunc(addrs, func(a, b AddressInfo) int {
+		pathA, _ := addresspath.NewPathFromString(a.Path)
+		pathB, _ := addresspath.NewPathFromString(b.Path)
+
+		return cmp.Compare(pathA.Purpose(), pathB.Purpose())
+	})
 }
 
 func (v *Vault) SortAddressesByAddressType(addrs ...AddressInfo) {
@@ -255,12 +265,12 @@ func (v *Vault) SortAddressesByAddressType(addrs ...AddressInfo) {
 	})
 }
 
-func (v *Vault) SortAddressesByPurpose(addrs ...AddressInfo) {
+func (v *Vault) SortAddressesByAddressIndex(addrs ...AddressInfo) {
 	slices.SortFunc(addrs, func(a, b AddressInfo) int {
 		pathA, _ := addresspath.NewPathFromString(a.Path)
 		pathB, _ := addresspath.NewPathFromString(b.Path)
 
-		return cmp.Compare(pathA.Purpose(), pathB.Purpose())
+		return cmp.Compare(pathA.AddressIndex(), pathB.AddressIndex())
 	})
 }
 

@@ -46,6 +46,8 @@ func setup(t *testing.T) *testData {
 	assert.NoError(t, err)
 	_, err = vault.NewValidatorAddress("addr-3")
 	assert.NoError(t, err)
+	_, err = vault.NewValidatorAddress("addr-4")
+	assert.NoError(t, err)
 
 	assert.NoError(t, vault.ImportPrivateKey("", importedPrv))
 	assert.False(t, vault.IsEncrypted())
@@ -70,7 +72,7 @@ func setup(t *testing.T) *testData {
 func TestAddressInfo(t *testing.T) {
 	td := setup(t)
 
-	assert.Equal(t, td.vault.AddressCount(), 5)
+	assert.Equal(t, td.vault.AddressCount(), 6)
 	infos := td.vault.AddressInfos()
 	for _, i := range infos {
 		info := td.vault.AddressInfo(i.Address)
@@ -111,13 +113,13 @@ func TestAddressInfo(t *testing.T) {
 
 	// Neutered
 	neutered := td.vault.Neuter()
-	assert.Equal(t, neutered.AddressCount(), 5)
+	assert.Equal(t, neutered.AddressCount(), 6)
 }
 
 func TestAllValidatorAddresses(t *testing.T) {
 	td := setup(t)
 
-	assert.Equal(t, td.vault.AddressCount(), 5)
+	assert.Equal(t, td.vault.AddressCount(), 6)
 
 	validatorAddrs := td.vault.AllValidatorAddresses()
 	for _, i := range validatorAddrs {
@@ -140,7 +142,7 @@ func TestAllValidatorAddresses(t *testing.T) {
 func TestAllBLSAccountAddresses(t *testing.T) {
 	td := setup(t)
 
-	assert.Equal(t, td.vault.AddressCount(), 5)
+	assert.Equal(t, td.vault.AddressCount(), 6)
 
 	blsAccountAddrs := td.vault.AllBLSAccountAddresses()
 	for _, i := range blsAccountAddrs {
@@ -189,6 +191,8 @@ func TestRecover(t *testing.T) {
 		_, err = recovered.NewBLSAccountAddress("addr-2")
 		assert.NoError(t, err)
 		_, err = recovered.NewValidatorAddress("addr-3")
+		assert.NoError(t, err)
+		_, err = recovered.NewValidatorAddress("addr-4")
 		assert.NoError(t, err)
 
 		assert.Equal(t, recovered.Purposes, td.vault.Purposes)
