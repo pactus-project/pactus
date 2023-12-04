@@ -1,9 +1,8 @@
 package vault
 
 import (
+	"cmp"
 	"encoding/json"
-	"sort"
-	"strings"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -206,44 +205,33 @@ func (v *Vault) SetLabel(addr, label string) error {
 }
 
 func (v *Vault) AddressInfos() []AddressInfo {
-	importedAddrs := make([]AddressInfo, 0)
 	addrs := make([]AddressInfo, 0, v.AddressCount())
-	addrsMap := make(map[int][]AddressInfo)
-
-	for _, info := range v.Addresses {
-		if strings.TrimSpace(info.Path) == "" {
-			importedAddrs = append(importedAddrs, info)
-			continue
-		}
-
-		path, _ := addresspath.NewPathFromString(info.Path)
-		addressType := path.AddressType()
-		addrsMap[int(addressType)] = append(addrsMap[int(addressType)], info)
+	for _, addrInfo := range v.Addresses {
+		addrs = append(addrs, addrInfo)
 	}
 
-	keys := make([]int, 0)
-	for key := range addrsMap {
-		keys = append(keys, key)
-	}
+	v.SortAddressesByType(addrs...)
+	v.SortAddressesByPurpose(addrs...)
 
-	sort.Ints(keys)
-	for _, key := range keys {
-		addrsValue := addrsMap[key]
-		slices.SortFunc(addrsValue, func(a, b AddressInfo) int {
-			pathA, _ := addresspath.NewPathFromString(a.Path)
-			pathB, _ := addresspath.NewPathFromString(b.Path)
-
-			if pathA.AddressIndex() < pathB.AddressIndex() {
-				return -1
-			}
-			return 1
-		})
-
-		addrs = append(addrs, addrsValue...)
-	}
-
-	addrs = append(addrs, importedAddrs...)
 	return addrs
+}
+
+func (v *Vault) SortAddressesByType(addrs ...AddressInfo) {
+	slices.SortFunc(addrs, func(a, b AddressInfo) int {
+		pathA, _ := addresspath.NewPathFromString(a.Path)
+		pathB, _ := addresspath.NewPathFromString(b.Path)
+
+		return cmp.Compare(pathA.AddressType(), pathB.AddressType())
+	})
+}
+
+func (v *Vault) SortAddressesByPurpose(addrs ...AddressInfo) {
+	slices.SortFunc(addrs, func(a, b AddressInfo) int {
+		pathA, _ := addresspath.NewPathFromString(a.Path)
+		pathB, _ := addresspath.NewPathFromString(b.Path)
+
+		return cmp.Compare(pathA.Purpose(), pathB.Purpose())
+	})
 }
 
 func (v *Vault) IsEncrypted() bool {
