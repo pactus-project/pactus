@@ -391,6 +391,14 @@ func (w *Wallet) AddressCount() int {
 	return w.store.Vault.AddressCount()
 }
 
+func (w *Wallet) AllValidatorAddresses() []vault.AddressInfo {
+	return w.store.Vault.AllValidatorAddresses()
+}
+
+func (w *Wallet) AddressFromPath(p string) *vault.AddressInfo {
+	return w.store.Vault.AddressFromPath(p)
+}
+
 func (w *Wallet) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 	return w.store.Vault.ImportPrivateKey(password, prv)
 }

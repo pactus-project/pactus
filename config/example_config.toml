@@ -3,9 +3,6 @@
 # `node` contains configuration options for the Pactus node.
 [node]
 
-  # `num_validators` specifies the number of validators (consensus instances) to run on this node.
-  num_validators = %num_validators%
-
   # `reward_addresses` specifies the addresses for collecting rewards.
   # If it is empty, reward addresses will be obtained from the wallet.
   # The number of reward addresses should be the same as the number of validators.

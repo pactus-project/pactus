@@ -298,6 +298,15 @@ func (v *Vault) AddressCount() int {
 	return len(v.Addresses)
 }
 
+func (v *Vault) AddressFromPath(p string) *AddressInfo {
+	for _, addressInfo := range v.Addresses {
+		if addressInfo.Path == p {
+			return &addressInfo
+		}
+	}
+	return nil
+}
+
 func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 	if v.IsNeutered() {
 		return ErrNeutered

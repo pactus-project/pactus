@@ -22,7 +22,7 @@ func TestSaveMainnetConfig(t *testing.T) {
 
 func TestSaveTestnetConfig(t *testing.T) {
 	path := util.TempFilePath()
-	assert.NoError(t, SaveTestnetConfig(path, 7))
+	assert.NoError(t, SaveTestnetConfig(path))
 
 	defConf := DefaultConfigTestnet()
 	conf, err := LoadFromFile(path, true, defConf)
@@ -35,7 +35,7 @@ func TestSaveTestnetConfig(t *testing.T) {
 
 func TestSaveLocalnetConfig(t *testing.T) {
 	path := util.TempFilePath()
-	assert.NoError(t, SaveLocalnetConfig(path, 4))
+	assert.NoError(t, SaveLocalnetConfig(path))
 
 	defConf := DefaultConfigLocalnet()
 	conf, err := LoadFromFile(path, true, defConf)
@@ -80,7 +80,6 @@ func TestExampleConfig(t *testing.T) {
 	defaultConf := DefaultConfigMainnet()
 	defaultToml := string(defaultConf.toTOML())
 
-	exampleToml = strings.ReplaceAll(exampleToml, "%num_validators%", "7")
 	exampleToml = strings.ReplaceAll(exampleToml, "##", "")
 	exampleToml = strings.ReplaceAll(exampleToml, "\r\n", "\n") // For Windows
 	exampleToml = strings.ReplaceAll(exampleToml, "\n\n", "\n")
@@ -92,25 +91,8 @@ func TestExampleConfig(t *testing.T) {
 func TestNodeConfigBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	t.Run("invalid number of validators", func(t *testing.T) {
-		conf := DefaultNodeConfig()
-		conf.NumValidators = 0
-
-		assert.Error(t, conf.BasicCheck())
-	})
-
-	t.Run("invalid number of reward addresses", func(t *testing.T) {
-		conf := DefaultNodeConfig()
-		conf.RewardAddresses = []string{
-			ts.RandAccAddress().String(),
-		}
-
-		assert.Error(t, conf.BasicCheck())
-	})
-
 	t.Run("invalid reward addresses", func(t *testing.T) {
 		conf := DefaultNodeConfig()
-		conf.NumValidators = 2
 		conf.RewardAddresses = []string{
 			ts.RandAccAddress().String(),
 			"abcd",
@@ -121,7 +103,6 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 
 	t.Run("validator address as reward address", func(t *testing.T) {
 		conf := DefaultNodeConfig()
-		conf.NumValidators = 1
 		conf.RewardAddresses = []string{
 			ts.RandValAddress().String(),
 		}
@@ -131,7 +112,6 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 
 	t.Run("ok", func(t *testing.T) {
 		conf := DefaultNodeConfig()
-		conf.NumValidators = 2
 		conf.RewardAddresses = []string{
 			ts.RandAccAddress().String(),
 			ts.RandAccAddress().String(),
@@ -142,7 +122,6 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 
 	t.Run("no reward addresses inside config, Ok", func(t *testing.T) {
 		conf := DefaultNodeConfig()
-		conf.NumValidators = 2
 		conf.RewardAddresses = []string{}
 
 		assert.NoError(t, conf.BasicCheck())
