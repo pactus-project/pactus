@@ -2,17 +2,16 @@ package grpc
 
 import (
 	"context"
-	"log"
 	"net"
 	"os"
 	"testing"
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
@@ -24,6 +23,7 @@ var (
 	tMockState *state.MockState
 	tConsMocks []*consensus.MockConsensus
 	tMockSync  *sync.MockSync
+	tMockNet   *network.MockNetwork
 	tListener  *bufconn.Listener
 	tCtx       context.Context
 )
@@ -46,40 +46,15 @@ func init() {
 	tListener = bufconn.Listen(bufSize)
 	tConsMocks = consMocks
 	tMockState = state.MockingState(ts)
+	tMockNet = network.MockingNetwork(ts, ts.RandPeerID())
 	tMockSync = sync.MockingSync(ts)
 	tCtx = context.Background()
 
 	tMockState.CommitTestBlocks(10)
-	subLogger := logger.NewSubLogger("_grpc", nil)
+	conf := DefaultConfig()
 
-	s := grpc.NewServer()
-	blockchainServer := &blockchainServer{
-		state:   tMockState,
-		consMgr: consMgr,
-		logger:  subLogger,
-	}
-	networkServer := &networkServer{
-		sync:   tMockSync,
-		logger: subLogger,
-	}
-	transactionServer := &transactionServer{
-		state:  tMockState,
-		logger: subLogger,
-	}
-	walletServer := &walletServer{
-		logger: subLogger,
-	}
-
-	pactus.RegisterBlockchainServer(s, blockchainServer)
-	pactus.RegisterNetworkServer(s, networkServer)
-	pactus.RegisterTransactionServer(s, transactionServer)
-	pactus.RegisterWalletServer(s, walletServer)
-
-	go func() {
-		if err := s.Serve(tListener); err != nil {
-			log.Fatalf("Server exited with error: %v", err)
-		}
-	}()
+	s := NewServer(conf, tMockState, tMockSync, tMockNet, consMgr)
+	_ = s.startListening(tListener)
 }
 
 func bufDialer(context.Context, string) (net.Conn, error) {

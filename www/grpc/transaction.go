@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util/logger"
@@ -14,8 +13,7 @@ import (
 )
 
 type transactionServer struct {
-	state  state.Facade
-	logger *logger.SubLogger
+	*Server
 }
 
 func (s *transactionServer) GetTransaction(_ context.Context,

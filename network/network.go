@@ -12,7 +12,10 @@ import (
 	lp2pcrypto "github.com/libp2p/go-libp2p/core/crypto"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pmetrics "github.com/libp2p/go-libp2p/core/metrics"
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
+	"github.com/libp2p/go-libp2p/p2p/host/autorelay"
+	basichost "github.com/libp2p/go-libp2p/p2p/host/basic"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	lp2pconnmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	"github.com/multiformats/go-multiaddr"
@@ -369,4 +372,27 @@ func (n *network) String() string {
 
 func (n *network) NumConnectedPeers() int {
 	return len(n.host.Network().Peers())
+}
+
+func (n *network) ReachabilityStatus() string {
+	bh, ok := n.host.(*basichost.BasicHost)
+	if ok {
+		return bh.GetAutoNat().Status().String()
+	}
+
+	arh, ok := n.host.(*autorelay.AutoRelayHost)
+	if ok {
+		return arh.Host.(*basichost.BasicHost).GetAutoNat().Status().String()
+	}
+
+	return lp2pnetwork.ReachabilityUnknown.String()
+}
+
+func (n *network) HostAddrs() []string {
+	addrs := make([]string, 0, len(n.host.Addrs()))
+	for _, addr := range n.host.Addrs() {
+		addrs = append(addrs, addr.String())
+	}
+
+	return addrs
 }
