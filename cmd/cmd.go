@@ -292,34 +292,29 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	case genesis.Mainnet:
 		panic("not yet!")
 	case genesis.Testnet:
-		err = genesis.TestnetGenesis().SaveToFile(genPath)
-		if err != nil {
+		if err := genesis.TestnetGenesis().SaveToFile(genPath); err != nil {
 			return nil, nil, err
 		}
 
-		err = config.SaveTestnetConfig(confPath)
-		if err != nil {
+		if err := config.SaveTestnetConfig(confPath); err != nil {
 			return nil, nil, err
 		}
+
 	case genesis.Localnet:
-		err = makeLocalGenesis(*walletInstance).SaveToFile(genPath)
-		if err != nil {
+		if err := makeLocalGenesis(*walletInstance).SaveToFile(genPath); err != nil {
 			return nil, nil, err
 		}
 
-		err := config.SaveLocalnetConfig(confPath)
-		if err != nil {
+		if err := config.SaveLocalnetConfig(confPath); err != nil {
 			return nil, nil, err
 		}
 	}
 
-	err = walletInstance.UpdatePassword("", walletPassword)
-	if err != nil {
+	if err := walletInstance.UpdatePassword("", walletPassword); err != nil {
 		return nil, nil, err
 	}
 
-	err = walletInstance.Save()
-	if err != nil {
+	if err := walletInstance.Save(); err != nil {
 		return nil, nil, err
 	}
 
