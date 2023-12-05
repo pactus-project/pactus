@@ -26,6 +26,8 @@ message GetNodeInfoResponse {
   string moniker = 1;
   string agent = 2;
   bytes peer_id = 3;
+  string reachability = 4;
+  repeated string addrs = 5;
 }
 
 message PeerInfo {

@@ -171,7 +171,7 @@ func TestStakeExceeded(t *testing.T) {
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidAmount)
 }
 
-func TestPwerDeltaBond(t *testing.T) {
+func TestPowerDeltaBond(t *testing.T) {
 	td := setup(t)
 	exe := NewBondExecutor(true)
 

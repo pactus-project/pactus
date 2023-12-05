@@ -896,6 +896,15 @@
         "peerId": {
           "type": "string",
           "format": "byte"
+        },
+        "reachability": {
+          "type": "string"
+        },
+        "addrs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

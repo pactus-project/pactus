@@ -100,7 +100,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.pactus.GetNodeInfoResponse = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.pactus.GetNodeInfoResponse.repeatedFields_, null);
 };
 goog.inherits(proto.pactus.GetNodeInfoResponse, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -652,6 +652,13 @@ proto.pactus.GetNodeInfoRequest.serializeBinaryToWriter = function(message, writ
 
 
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.pactus.GetNodeInfoResponse.repeatedFields_ = [5];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -685,7 +692,9 @@ proto.pactus.GetNodeInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     moniker: jspb.Message.getFieldWithDefault(msg, 1, ""),
     agent: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    peerId: msg.getPeerId_asB64()
+    peerId: msg.getPeerId_asB64(),
+    reachability: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    addrsList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -734,6 +743,14 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setPeerId(value);
       break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setReachability(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.addAddrs(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -781,6 +798,20 @@ proto.pactus.GetNodeInfoResponse.serializeBinaryToWriter = function(message, wri
   if (f.length > 0) {
     writer.writeBytes(
       3,
+      f
+    );
+  }
+  f = message.getReachability();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
+      f
+    );
+  }
+  f = message.getAddrsList();
+  if (f.length > 0) {
+    writer.writeRepeatedString(
+      5,
       f
     );
   }
@@ -862,6 +893,61 @@ proto.pactus.GetNodeInfoResponse.prototype.getPeerId_asU8 = function() {
  */
 proto.pactus.GetNodeInfoResponse.prototype.setPeerId = function(value) {
   return jspb.Message.setProto3BytesField(this, 3, value);
+};
+
+
+/**
+ * optional string reachability = 4;
+ * @return {string}
+ */
+proto.pactus.GetNodeInfoResponse.prototype.getReachability = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.setReachability = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * repeated string addrs = 5;
+ * @return {!Array<string>}
+ */
+proto.pactus.GetNodeInfoResponse.prototype.getAddrsList = function() {
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 5));
+};
+
+
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.setAddrsList = function(value) {
+  return jspb.Message.setField(this, 5, value || []);
+};
+
+
+/**
+ * @param {string} value
+ * @param {number=} opt_index
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.addAddrs = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 5, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.clearAddrsList = function() {
+  return this.setAddrsList([]);
 };
 
 

@@ -15,6 +15,12 @@ var (
 
 	// ErrNeutered describes an error in which the wallet is neutered.
 	ErrNeutered = errors.New("wallet is neutered")
+
+	// ErrInvalidCoinType describes an error in which the coin type is not valid.
+	ErrInvalidCoinType = errors.New("invalid coin type")
+
+	// ErrUnsupportedPurpose describes an error in which the purpose is not supported.
+	ErrUnsupportedPurpose = errors.New("unsupported purpose")
 )
 
 // AddressNotFoundError describes an error in which the address doesn't exist

@@ -244,6 +244,14 @@ func TestNetwork(t *testing.T) {
 
 	time.Sleep(2 * time.Second)
 
+	t.Run("Reachability Status", func(t *testing.T) {
+		assert.Equal(t, networkP.ReachabilityStatus(), "Public")
+		assert.Equal(t, networkB.ReachabilityStatus(), "Public")
+		assert.Equal(t, networkM.ReachabilityStatus(), "Private")
+		assert.Equal(t, networkN.ReachabilityStatus(), "Private")
+		assert.Equal(t, networkX.ReachabilityStatus(), "Private")
+	})
+
 	t.Run("all nodes have at least one connection to the bootstrap node B", func(t *testing.T) {
 		assert.GreaterOrEqual(t, networkP.NumConnectedPeers(), 1)
 		assert.GreaterOrEqual(t, networkB.NumConnectedPeers(), 1)

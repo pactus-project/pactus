@@ -79,7 +79,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	}
 
 	httpServer := http.NewServer(conf.HTTP)
-	grpcServer := grpc.NewServer(conf.GRPC, st, syn, consMgr)
+	grpcServer := grpc.NewServer(conf.GRPC, st, syn, net, consMgr)
 	nanomsgServer := nanomsg.NewServer(conf.Nanomsg, eventCh)
 
 	node := &Node{
