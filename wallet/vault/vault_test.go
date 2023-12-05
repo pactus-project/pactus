@@ -112,6 +112,16 @@ func TestAddressInfo(t *testing.T) {
 	assert.Equal(t, neutered.AddressCount(), 6)
 }
 
+func TestSortAddressInfo(t *testing.T) {
+	td := setup(t)
+
+	assert.Equal(t, td.vault.AddressCount(), 6)
+	infos := td.vault.AddressInfos()
+
+	assert.Equal(t, "m/12381'/21888'/1'/0", infos[0].Path)
+	assert.Equal(t, "m/65535'/21888'/2'/0'", infos[len(infos)-1].Path)
+}
+
 func TestAllValidatorAddresses(t *testing.T) {
 	td := setup(t)
 
@@ -135,6 +145,16 @@ func TestAllValidatorAddresses(t *testing.T) {
 	}
 }
 
+func TestSortAllValidatorAddresses(t *testing.T) {
+	td := setup(t)
+
+	assert.Equal(t, td.vault.AddressCount(), 6)
+	validatorAddrs := td.vault.AllValidatorAddresses()
+
+	assert.Equal(t, "m/12381'/21888'/1'/0", validatorAddrs[0].Path)
+	assert.Equal(t, "m/65535'/21888'/1'/0'", validatorAddrs[len(validatorAddrs)-1].Path)
+}
+
 func TestAllBLSAccountAddresses(t *testing.T) {
 	td := setup(t)
 
@@ -156,6 +176,40 @@ func TestAllBLSAccountAddresses(t *testing.T) {
 				PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart))
 		}
 	}
+}
+
+func TestSortAllBLSAccountAddresses(t *testing.T) {
+	td := setup(t)
+
+	assert.Equal(t, td.vault.AddressCount(), 6)
+
+	blsAccountAddrs := td.vault.AllBLSAccountAddresses()
+
+	assert.Equal(t, "m/12381'/21888'/2'/0", blsAccountAddrs[0].Path)
+	assert.Equal(t, "m/65535'/21888'/2'/0'", blsAccountAddrs[len(blsAccountAddrs)-1].Path)
+}
+
+func TestAddressFromPath(t *testing.T) {
+	td := setup(t)
+	assert.Equal(t, td.vault.AddressCount(), 6)
+
+	t.Run("Could not find address from path", func(t *testing.T) {
+		path := "m/12381'/26888'/983'/0"
+		assert.Nil(t, td.vault.AddressFromPath(path))
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		var address string
+		var addrInfo AddressInfo
+
+		for addr, ai := range td.vault.Addresses {
+			address = addr
+			addrInfo = ai
+			break
+		}
+
+		assert.Equal(t, address, td.vault.AddressFromPath(addrInfo.Path).Address)
+	})
 }
 
 func TestAllImportedPrivateKeysAddresses(t *testing.T) {
