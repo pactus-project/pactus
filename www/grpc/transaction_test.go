@@ -113,59 +113,58 @@ func TestGetRawTransaction(t *testing.T) {
 	conn, client := testTransactionClient(t)
 
 	t.Run("Transfer", func(t *testing.T) {
-		tx, privateKey := ts.GenerateTestTransferTx()
+		trx, _ := ts.GenerateTestTransferTx()
 
 		res, err := client.GetRawTransferTransaction(tCtx, &pactus.GetRawTransferTransactionRequest{
-			LockTime: tx.LockTime(),
-			Sender:   privateKey.PublicKeyNative().AccountAddress().String(),
-			Receiver: tx.Payload().Receiver().String(),
-			Amount:   tx.Payload().Value(),
-			Fee:      tx.Fee(),
-			Memo:     tx.Memo(),
+			LockTime: trx.LockTime(),
+			Sender:   trx.Payload().Signer().String(),
+			Receiver: trx.Payload().Receiver().String(),
+			Amount:   trx.Payload().Value(),
+			Fee:      trx.Fee(),
+			Memo:     trx.Memo(),
 		})
 		assert.Nil(t, err)
 		fmt.Println(res.RawTransaction)
 	})
 
 	t.Run("Bond", func(t *testing.T) {
-		tx, privateKey := ts.GenerateTestBondTx()
+		trx, _ := ts.GenerateTestBondTx()
 
 		res, err := client.GetRawBondTransaction(tCtx, &pactus.GetRawBondTransactionRequest{
-			LockTime:  tx.LockTime(),
-			Sender:    privateKey.PublicKeyNative().AccountAddress().String(),
-			Receiver:  tx.Payload().Receiver().String(),
-			Stake:     tx.Payload().Value(),
+			LockTime:  trx.LockTime(),
+			Sender:    trx.Payload().Signer().String(),
+			Receiver:  trx.Payload().Receiver().String(),
+			Stake:     trx.Payload().Value(),
 			PublicKey: "",
-			Fee:       tx.Fee(),
-			Memo:      tx.Memo(),
+			Fee:       trx.Fee(),
+			Memo:      trx.Memo(),
 		})
 		assert.Nil(t, err)
 		fmt.Println(res.RawTransaction)
 	})
 
 	t.Run("UnBond", func(t *testing.T) {
-		valAddr := ts.RandValAddress()
-		lockTime := ts.RandUint32(5000)
+		trx, _ := ts.GenerateTestUnbondTx()
 
 		res, err := client.GetRawUnBondTransaction(tCtx, &pactus.GetRawUnBondTransactionRequest{
-			LockTime:         lockTime,
-			ValidatorAddress: valAddr.String(),
-			Memo:             "",
+			LockTime:         trx.LockTime(),
+			ValidatorAddress: trx.Payload().Signer().String(),
+			Memo:             trx.Memo(),
 		})
 		assert.Nil(t, err)
 		fmt.Println(res.RawTransaction)
 	})
 
 	t.Run("Withdraw", func(t *testing.T) {
-		tx, privateKey := ts.GenerateTestWithdrawTx()
+		trx, privateKey := ts.GenerateTestWithdrawTx()
 
 		res, err := client.GetRawWithdrawTransaction(tCtx, &pactus.GetRawWithdrawTransactionRequest{
-			LockTime:         tx.LockTime(),
+			LockTime:         trx.LockTime(),
 			ValidatorAddress: privateKey.PublicKeyNative().ValidatorAddress().String(),
 			AccountAddress:   privateKey.PublicKeyNative().AccountAddress().String(),
-			Fee:              tx.Fee(),
-			Amount:           tx.Payload().Value(),
-			Memo:             "",
+			Fee:              trx.Fee(),
+			Amount:           trx.Payload().Value(),
+			Memo:             trx.Memo(),
 		})
 		fmt.Println(err)
 		assert.Nil(t, err)

@@ -93,18 +93,18 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 ) (*pactus.GetRawTransactionResponse, error) {
 	sender, err := crypto.AddressFromString(req.Sender)
 	if err != nil {
-		return &pactus.GetRawTransactionResponse{}, err
+		return nil, err
 	}
 
 	receiver, err := crypto.AddressFromString(req.Receiver)
 	if err != nil {
-		return &pactus.GetRawTransactionResponse{}, err
+		return nil, err
 	}
 
 	transferTx := tx.NewTransferTx(req.LockTime, sender, receiver, req.Amount, req.Fee, req.Memo)
 	rawTx, err := transferTx.Bytes()
 	if err != nil {
-		return &pactus.GetRawTransactionResponse{}, err
+		return nil, err
 	}
 
 	return &pactus.GetRawTransactionResponse{
@@ -117,19 +117,19 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 ) (*pactus.GetRawTransactionResponse, error) {
 	sender, err := crypto.AddressFromString(req.Sender)
 	if err != nil {
-		return &pactus.GetRawTransactionResponse{}, err
+		return nil, err
 	}
 
 	receiver, err := crypto.AddressFromString(req.Receiver)
 	if err != nil {
-		return &pactus.GetRawTransactionResponse{}, err
+		return nil, err
 	}
 
 	var publicKey *bls.PublicKey
 	if req.PublicKey != "" {
 		publicKey, err = bls.PublicKeyFromString(req.PublicKey)
 		if err != nil {
-			return &pactus.GetRawTransactionResponse{}, err
+			return nil, err
 		}
 	} else {
 		publicKey = nil
@@ -138,7 +138,7 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	bondTx := tx.NewBondTx(req.LockTime, sender, receiver, publicKey, req.Stake, req.Fee, req.Memo)
 	rawTx, err := bondTx.Bytes()
 	if err != nil {
-		return &pactus.GetRawTransactionResponse{}, err
+		return nil, err
 	}
 
 	return &pactus.GetRawTransactionResponse{
@@ -151,13 +151,13 @@ func (s *transactionServer) GetRawUnBondTransaction(_ context.Context,
 ) (*pactus.GetRawTransactionResponse, error) {
 	validatorAddr, err := crypto.AddressFromString(req.ValidatorAddress)
 	if err != nil {
-		return &pactus.GetRawTransactionResponse{}, err
+		return nil, err
 	}
 
 	unBondTx := tx.NewUnbondTx(req.LockTime, validatorAddr, req.Memo)
 	rawTx, err := unBondTx.Bytes()
 	if err != nil {
-		return &pactus.GetRawTransactionResponse{}, err
+		return nil, err
 	}
 
 	return &pactus.GetRawTransactionResponse{
@@ -170,18 +170,18 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 ) (*pactus.GetRawTransactionResponse, error) {
 	validatorAddr, err := crypto.AddressFromString(req.ValidatorAddress)
 	if err != nil {
-		return &pactus.GetRawTransactionResponse{}, err
+		return nil, err
 	}
 
 	accountAddr, err := crypto.AddressFromString(req.AccountAddress)
 	if err != nil {
-		return &pactus.GetRawTransactionResponse{}, err
+		return nil, err
 	}
 
 	withdrawTx := tx.NewWithdrawTx(req.LockTime, validatorAddr, accountAddr, req.Amount, req.Fee, req.Memo)
 	rawTx, err := withdrawTx.Bytes()
 	if err != nil {
-		return &pactus.GetRawTransactionResponse{}, err
+		return nil, err
 	}
 
 	return &pactus.GetRawTransactionResponse{
