@@ -39,28 +39,16 @@ type Config struct {
 }
 
 type NodeConfig struct {
-	NumValidators   int      `toml:"num_validators"` // TODO: we can remove this now
 	RewardAddresses []string `toml:"reward_addresses"`
 }
 
 func DefaultNodeConfig() *NodeConfig {
 	// TODO: We should have default config per network: Testnet, Mainnet.
-	return &NodeConfig{
-		NumValidators: 7,
-	}
+	return &NodeConfig{}
 }
 
 // BasicCheck performs basic checks on the configuration.
 func (conf *NodeConfig) BasicCheck() error {
-	if conf.NumValidators < 1 || conf.NumValidators > 32 {
-		return errors.Errorf(errors.ErrInvalidConfig, "number of validators must be between 1 and 32")
-	}
-
-	if len(conf.RewardAddresses) > 0 &&
-		len(conf.RewardAddresses) != conf.NumValidators {
-		return errors.Errorf(errors.ErrInvalidConfig, "reward addresses should be %v", conf.NumValidators)
-	}
-
 	for _, addrStr := range conf.RewardAddresses {
 		addr, err := crypto.AddressFromString(addrStr)
 		if err != nil {
@@ -171,15 +159,13 @@ func SaveMainnetConfig(path string, numValidators int) error {
 	return util.WriteFile(path, []byte(conf))
 }
 
-func SaveTestnetConfig(path string, numValidators int) error {
+func SaveTestnetConfig(path string) error {
 	conf := DefaultConfigTestnet()
-	conf.Node.NumValidators = numValidators
 	return util.WriteFile(path, conf.toTOML())
 }
 
-func SaveLocalnetConfig(path string, numValidators int) error {
+func SaveLocalnetConfig(path string) error {
 	conf := DefaultConfigLocalnet()
-	conf.Node.NumValidators = numValidators
 	return util.WriteFile(path, conf.toTOML())
 }
 
