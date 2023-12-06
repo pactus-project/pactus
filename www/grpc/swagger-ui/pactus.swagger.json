@@ -916,6 +916,15 @@
         }
       }
     },
+    "pactusGetRawTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "rawTransaction": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
     "pactusGetTransactionResponse": {
       "type": "object",
       "properties": {

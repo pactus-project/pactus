@@ -19,12 +19,20 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
   $async.Future<$0.GetTransactionResponse> getTransaction($pb.ServerContext ctx, $0.GetTransactionRequest request);
   $async.Future<$0.CalculateFeeResponse> calculateFee($pb.ServerContext ctx, $0.CalculateFeeRequest request);
   $async.Future<$0.SendRawTransactionResponse> sendRawTransaction($pb.ServerContext ctx, $0.SendRawTransactionRequest request);
+  $async.Future<$0.GetRawTransactionResponse> getRawTransferTransaction($pb.ServerContext ctx, $0.GetRawTransferTransactionRequest request);
+  $async.Future<$0.GetRawTransactionResponse> getRawBondTransaction($pb.ServerContext ctx, $0.GetRawBondTransactionRequest request);
+  $async.Future<$0.GetRawTransactionResponse> getRawUnBondTransaction($pb.ServerContext ctx, $0.GetRawUnBondTransactionRequest request);
+  $async.Future<$0.GetRawTransactionResponse> getRawWithdrawTransaction($pb.ServerContext ctx, $0.GetRawWithdrawTransactionRequest request);
 
   $pb.GeneratedMessage createRequest($core.String method) {
     switch (method) {
       case 'GetTransaction': return $0.GetTransactionRequest();
       case 'CalculateFee': return $0.CalculateFeeRequest();
       case 'SendRawTransaction': return $0.SendRawTransactionRequest();
+      case 'GetRawTransferTransaction': return $0.GetRawTransferTransactionRequest();
+      case 'GetRawBondTransaction': return $0.GetRawBondTransactionRequest();
+      case 'GetRawUnBondTransaction': return $0.GetRawUnBondTransactionRequest();
+      case 'GetRawWithdrawTransaction': return $0.GetRawWithdrawTransactionRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
@@ -34,6 +42,10 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
       case 'GetTransaction': return this.getTransaction(ctx, request as $0.GetTransactionRequest);
       case 'CalculateFee': return this.calculateFee(ctx, request as $0.CalculateFeeRequest);
       case 'SendRawTransaction': return this.sendRawTransaction(ctx, request as $0.SendRawTransactionRequest);
+      case 'GetRawTransferTransaction': return this.getRawTransferTransaction(ctx, request as $0.GetRawTransferTransactionRequest);
+      case 'GetRawBondTransaction': return this.getRawBondTransaction(ctx, request as $0.GetRawBondTransactionRequest);
+      case 'GetRawUnBondTransaction': return this.getRawUnBondTransaction(ctx, request as $0.GetRawUnBondTransactionRequest);
+      case 'GetRawWithdrawTransaction': return this.getRawWithdrawTransaction(ctx, request as $0.GetRawWithdrawTransactionRequest);
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
