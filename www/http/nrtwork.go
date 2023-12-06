@@ -75,6 +75,8 @@ func (s *Server) NodeHandler(w http.ResponseWriter, _ *http.Request) {
 	tm.addRowString("Peer ID", sid.String())
 	tm.addRowString("Agent", res.Agent)
 	tm.addRowString("Moniker", res.Moniker)
+	tm.addRowString("Reachability", res.Reachability)
+	tm.addRowStrings("Addrs", res.Addrs)
 
 	s.writeHTML(w, tm.html())
 }

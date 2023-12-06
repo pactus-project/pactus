@@ -3,23 +3,18 @@ package grpc
 import (
 	"context"
 
-	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type blockchainServer struct {
-	state   state.Facade
-	consMgr consensus.ManagerReader
-	logger  *logger.SubLogger
+	*Server
 }
 
 func (s *blockchainServer) GetBlockchainInfo(_ context.Context,

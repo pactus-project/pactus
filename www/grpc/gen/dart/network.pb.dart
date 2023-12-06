@@ -173,6 +173,8 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'moniker')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'agent')
     ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peerId', $pb.PbFieldType.OY)
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'reachability')
+    ..pPS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'addrs')
     ..hasRequiredFields = false
   ;
 
@@ -181,6 +183,8 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     $core.String? moniker,
     $core.String? agent,
     $core.List<$core.int>? peerId,
+    $core.String? reachability,
+    $core.Iterable<$core.String>? addrs,
   }) {
     final _result = create();
     if (moniker != null) {
@@ -191,6 +195,12 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     }
     if (peerId != null) {
       _result.peerId = peerId;
+    }
+    if (reachability != null) {
+      _result.reachability = reachability;
+    }
+    if (addrs != null) {
+      _result.addrs.addAll(addrs);
     }
     return _result;
   }
@@ -241,6 +251,18 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   $core.bool hasPeerId() => $_has(2);
   @$pb.TagNumber(3)
   void clearPeerId() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get reachability => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set reachability($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasReachability() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearReachability() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.List<$core.String> get addrs => $_getList(4);
 }
 
 class PeerInfo extends $pb.GeneratedMessage {

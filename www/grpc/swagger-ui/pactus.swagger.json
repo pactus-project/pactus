@@ -896,6 +896,15 @@
         "peerId": {
           "type": "string",
           "format": "byte"
+        },
+        "reachability": {
+          "type": "string"
+        },
+        "addrs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -904,6 +913,15 @@
       "properties": {
         "publicKey": {
           "type": "string"
+        }
+      }
+    },
+    "pactusGetRawTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "rawTransaction": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },

@@ -5,6 +5,7 @@ import (
 	"net"
 
 	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util/logger"
@@ -19,19 +20,21 @@ type Server struct {
 	address  string
 	grpc     *grpc.Server
 	state    state.Facade
+	net      network.Network
 	sync     sync.Synchronizer
 	consMgr  consensus.ManagerReader
 	logger   *logger.SubLogger
 }
 
 func NewServer(conf *Config, st state.Facade, syn sync.Synchronizer,
-	consMgr consensus.ManagerReader,
+	n network.Network, consMgr consensus.ManagerReader,
 ) *Server {
 	return &Server{
 		ctx:     context.Background(),
 		config:  conf,
 		state:   st,
 		sync:    syn,
+		net:     n,
 		consMgr: consMgr,
 		logger:  logger.NewSubLogger("_grpc", nil),
 	}
@@ -46,35 +49,28 @@ func (s *Server) StartServer() error {
 		return nil
 	}
 
+	listener, err := net.Listen("tcp", s.config.Listen)
+	if err != nil {
+		return err
+	}
+
+	return s.startListening(listener)
+}
+
+func (s *Server) startListening(listener net.Listener) error {
 	grpcServer := grpc.NewServer()
-	blockchainServer := &blockchainServer{
-		state:   s.state,
-		consMgr: s.consMgr,
-		logger:  s.logger,
-	}
-	transactionServer := &transactionServer{
-		state:  s.state,
-		logger: s.logger,
-	}
-	networkServer := &networkServer{
-		sync:   s.sync,
-		logger: s.logger,
-	}
-	network := s.state.Genesis().ChainType()
+	blockchainServer := &blockchainServer{s}
+	transactionServer := &transactionServer{s}
+	networkServer := &networkServer{s}
 	walletServer := &walletServer{
-		wallets: make(map[string]*loadedWallet),
-		chain:   network,
-		logger:  s.logger,
+		Server:    s,
+		wallets:   make(map[string]*loadedWallet),
+		chainType: s.state.Genesis().ChainType(),
 	}
 	pactus.RegisterBlockchainServer(grpcServer, blockchainServer)
 	pactus.RegisterTransactionServer(grpcServer, transactionServer)
 	pactus.RegisterNetworkServer(grpcServer, networkServer)
 	pactus.RegisterWalletServer(grpcServer, walletServer)
-
-	listener, err := net.Listen("tcp", s.config.Listen)
-	if err != nil {
-		return err
-	}
 
 	s.listener = listener
 	s.address = listener.Addr().String()

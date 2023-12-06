@@ -8,6 +8,7 @@ import (
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -38,6 +39,7 @@ func setup(t *testing.T) *testData {
 
 	mockState := state.MockingState(ts)
 	mockSync := sync.MockingSync(ts)
+	mockNet := network.MockingNetwork(ts, ts.RandPeerID())
 	mockConsMgr, _ := consensus.MockingManager(ts, []*bls.ValidatorKey{
 		ts.RandValKey(), ts.RandValKey(),
 	})
@@ -53,7 +55,7 @@ func setup(t *testing.T) *testData {
 		Listen: "[::]:0",
 	}
 
-	gRPCServer := grpc.NewServer(grpcConf, mockState, mockSync, mockConsMgr)
+	gRPCServer := grpc.NewServer(grpcConf, mockState, mockSync, mockNet, mockConsMgr)
 	assert.NoError(t, gRPCServer.StartServer())
 
 	httpServer := NewServer(httpConf)

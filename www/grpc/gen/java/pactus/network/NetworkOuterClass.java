@@ -2429,6 +2429,43 @@ public final class NetworkOuterClass {
      * @return The peerId.
      */
     com.google.protobuf.ByteString getPeerId();
+
+    /**
+     * <code>string reachability = 4 [json_name = "reachability"];</code>
+     * @return The reachability.
+     */
+    java.lang.String getReachability();
+    /**
+     * <code>string reachability = 4 [json_name = "reachability"];</code>
+     * @return The bytes for reachability.
+     */
+    com.google.protobuf.ByteString
+        getReachabilityBytes();
+
+    /**
+     * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+     * @return A list containing the addrs.
+     */
+    java.util.List<java.lang.String>
+        getAddrsList();
+    /**
+     * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+     * @return The count of addrs.
+     */
+    int getAddrsCount();
+    /**
+     * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+     * @param index The index of the element to return.
+     * @return The addrs at the given index.
+     */
+    java.lang.String getAddrs(int index);
+    /**
+     * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the addrs at the given index.
+     */
+    com.google.protobuf.ByteString
+        getAddrsBytes(int index);
   }
   /**
    * Protobuf type {@code pactus.GetNodeInfoResponse}
@@ -2446,6 +2483,8 @@ public final class NetworkOuterClass {
       moniker_ = "";
       agent_ = "";
       peerId_ = com.google.protobuf.ByteString.EMPTY;
+      reachability_ = "";
+      addrs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
 
     @java.lang.Override
@@ -2560,6 +2599,79 @@ public final class NetworkOuterClass {
       return peerId_;
     }
 
+    public static final int REACHABILITY_FIELD_NUMBER = 4;
+    private volatile java.lang.Object reachability_;
+    /**
+     * <code>string reachability = 4 [json_name = "reachability"];</code>
+     * @return The reachability.
+     */
+    @java.lang.Override
+    public java.lang.String getReachability() {
+      java.lang.Object ref = reachability_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        reachability_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string reachability = 4 [json_name = "reachability"];</code>
+     * @return The bytes for reachability.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getReachabilityBytes() {
+      java.lang.Object ref = reachability_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        reachability_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ADDRS_FIELD_NUMBER = 5;
+    private com.google.protobuf.LazyStringList addrs_;
+    /**
+     * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+     * @return A list containing the addrs.
+     */
+    public com.google.protobuf.ProtocolStringList
+        getAddrsList() {
+      return addrs_;
+    }
+    /**
+     * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+     * @return The count of addrs.
+     */
+    public int getAddrsCount() {
+      return addrs_.size();
+    }
+    /**
+     * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+     * @param index The index of the element to return.
+     * @return The addrs at the given index.
+     */
+    public java.lang.String getAddrs(int index) {
+      return addrs_.get(index);
+    }
+    /**
+     * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the addrs at the given index.
+     */
+    public com.google.protobuf.ByteString
+        getAddrsBytes(int index) {
+      return addrs_.getByteString(index);
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2583,6 +2695,12 @@ public final class NetworkOuterClass {
       if (!peerId_.isEmpty()) {
         output.writeBytes(3, peerId_);
       }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(reachability_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, reachability_);
+      }
+      for (int i = 0; i < addrs_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, addrs_.getRaw(i));
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -2601,6 +2719,17 @@ public final class NetworkOuterClass {
       if (!peerId_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(3, peerId_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(reachability_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, reachability_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < addrs_.size(); i++) {
+          dataSize += computeStringSizeNoTag(addrs_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getAddrsList().size();
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -2623,6 +2752,10 @@ public final class NetworkOuterClass {
           .equals(other.getAgent())) return false;
       if (!getPeerId()
           .equals(other.getPeerId())) return false;
+      if (!getReachability()
+          .equals(other.getReachability())) return false;
+      if (!getAddrsList()
+          .equals(other.getAddrsList())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -2640,6 +2773,12 @@ public final class NetworkOuterClass {
       hash = (53 * hash) + getAgent().hashCode();
       hash = (37 * hash) + PEER_ID_FIELD_NUMBER;
       hash = (53 * hash) + getPeerId().hashCode();
+      hash = (37 * hash) + REACHABILITY_FIELD_NUMBER;
+      hash = (53 * hash) + getReachability().hashCode();
+      if (getAddrsCount() > 0) {
+        hash = (37 * hash) + ADDRS_FIELD_NUMBER;
+        hash = (53 * hash) + getAddrsList().hashCode();
+      }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2774,6 +2913,10 @@ public final class NetworkOuterClass {
 
         peerId_ = com.google.protobuf.ByteString.EMPTY;
 
+        reachability_ = "";
+
+        addrs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -2800,9 +2943,16 @@ public final class NetworkOuterClass {
       @java.lang.Override
       public pactus.network.NetworkOuterClass.GetNodeInfoResponse buildPartial() {
         pactus.network.NetworkOuterClass.GetNodeInfoResponse result = new pactus.network.NetworkOuterClass.GetNodeInfoResponse(this);
+        int from_bitField0_ = bitField0_;
         result.moniker_ = moniker_;
         result.agent_ = agent_;
         result.peerId_ = peerId_;
+        result.reachability_ = reachability_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          addrs_ = addrs_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.addrs_ = addrs_;
         onBuilt();
         return result;
       }
@@ -2862,6 +3012,20 @@ public final class NetworkOuterClass {
         if (other.getPeerId() != com.google.protobuf.ByteString.EMPTY) {
           setPeerId(other.getPeerId());
         }
+        if (!other.getReachability().isEmpty()) {
+          reachability_ = other.reachability_;
+          onChanged();
+        }
+        if (!other.addrs_.isEmpty()) {
+          if (addrs_.isEmpty()) {
+            addrs_ = other.addrs_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureAddrsIsMutable();
+            addrs_.addAll(other.addrs_);
+          }
+          onChanged();
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -2903,6 +3067,17 @@ public final class NetworkOuterClass {
 
                 break;
               } // case 26
+              case 34: {
+                reachability_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 34
+              case 42: {
+                java.lang.String s = input.readStringRequireUtf8();
+                ensureAddrsIsMutable();
+                addrs_.add(s);
+                break;
+              } // case 42
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -2918,6 +3093,7 @@ public final class NetworkOuterClass {
         } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object moniker_ = "";
       /**
@@ -3101,6 +3277,192 @@ public final class NetworkOuterClass {
       public Builder clearPeerId() {
         
         peerId_ = getDefaultInstance().getPeerId();
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object reachability_ = "";
+      /**
+       * <code>string reachability = 4 [json_name = "reachability"];</code>
+       * @return The reachability.
+       */
+      public java.lang.String getReachability() {
+        java.lang.Object ref = reachability_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          reachability_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string reachability = 4 [json_name = "reachability"];</code>
+       * @return The bytes for reachability.
+       */
+      public com.google.protobuf.ByteString
+          getReachabilityBytes() {
+        java.lang.Object ref = reachability_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          reachability_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string reachability = 4 [json_name = "reachability"];</code>
+       * @param value The reachability to set.
+       * @return This builder for chaining.
+       */
+      public Builder setReachability(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        reachability_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string reachability = 4 [json_name = "reachability"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearReachability() {
+        
+        reachability_ = getDefaultInstance().getReachability();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string reachability = 4 [json_name = "reachability"];</code>
+       * @param value The bytes for reachability to set.
+       * @return This builder for chaining.
+       */
+      public Builder setReachabilityBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        reachability_ = value;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.LazyStringList addrs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureAddrsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          addrs_ = new com.google.protobuf.LazyStringArrayList(addrs_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+       * @return A list containing the addrs.
+       */
+      public com.google.protobuf.ProtocolStringList
+          getAddrsList() {
+        return addrs_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+       * @return The count of addrs.
+       */
+      public int getAddrsCount() {
+        return addrs_.size();
+      }
+      /**
+       * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+       * @param index The index of the element to return.
+       * @return The addrs at the given index.
+       */
+      public java.lang.String getAddrs(int index) {
+        return addrs_.get(index);
+      }
+      /**
+       * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the addrs at the given index.
+       */
+      public com.google.protobuf.ByteString
+          getAddrsBytes(int index) {
+        return addrs_.getByteString(index);
+      }
+      /**
+       * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+       * @param index The index to set the value at.
+       * @param value The addrs to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddrs(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureAddrsIsMutable();
+        addrs_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+       * @param value The addrs to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAddrs(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureAddrsIsMutable();
+        addrs_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+       * @param values The addrs to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllAddrs(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureAddrsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, addrs_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAddrs() {
+        addrs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string addrs = 5 [json_name = "addrs"];</code>
+       * @param value The bytes of the addrs to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAddrsBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        ensureAddrsIsMutable();
+        addrs_.add(value);
         onChanged();
         return this;
       }
@@ -6031,37 +6393,38 @@ public final class NetworkOuterClass {
       "dBytes\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005R\003k" +
       "ey\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@\n\022Received" +
       "BytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 " +
-      "\001(\003R\005value:\0028\001\"\024\n\022GetNodeInfoRequest\"^\n\023" +
-      "GetNodeInfoResponse\022\030\n\007moniker\030\001 \001(\tR\007mo" +
-      "niker\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003" +
-      " \001(\014R\006peerId\"\300\006\n\010PeerInfo\022\026\n\006status\030\001 \001(" +
-      "\005R\006status\022\030\n\007moniker\030\002 \001(\tR\007moniker\022\024\n\005a" +
-      "gent\030\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\014R\006peer" +
-      "Id\022%\n\016consensus_keys\030\005 \003(\tR\rconsensusKey" +
-      "s\022\032\n\010services\030\006 \001(\rR\010services\022&\n\017last_bl" +
-      "ock_hash\030\007 \001(\014R\rlastBlockHash\022\026\n\006height\030" +
-      "\010 \001(\rR\006height\022+\n\021received_messages\030\t \001(\005" +
-      "R\020receivedMessages\022)\n\020invalid_messages\030\n" +
-      " \001(\005R\017invalidMessages\022\033\n\tlast_sent\030\013 \001(\003" +
-      "R\010lastSent\022#\n\rlast_received\030\014 \001(\003R\014lastR" +
-      "eceived\022>\n\nsent_bytes\030\r \003(\0132\037.pactus.Pee" +
-      "rInfo.SentBytesEntryR\tsentBytes\022J\n\016recei" +
-      "ved_bytes\030\016 \003(\0132#.pactus.PeerInfo.Receiv" +
-      "edBytesEntryR\rreceivedBytes\022\030\n\007address\030\017" +
-      " \001(\tR\007address\022\034\n\tdirection\030\020 \001(\tR\tdirect" +
-      "ion\022\034\n\tprotocols\030\021 \003(\tR\tprotocols\022%\n\016tot" +
-      "al_sessions\030\022 \001(\005R\rtotalSessions\022-\n\022comp" +
-      "leted_sessions\030\023 \001(\005R\021completedSessions\032" +
-      "<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005v" +
-      "alue\030\002 \001(\003R\005value:\0028\001\032@\n\022ReceivedBytesEn" +
-      "try\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005va" +
-      "lue:\0028\0012\242\001\n\007Network\022O\n\016GetNetworkInfo\022\035." +
-      "pactus.GetNetworkInfoRequest\032\036.pactus.Ge" +
-      "tNetworkInfoResponse\022F\n\013GetNodeInfo\022\032.pa" +
-      "ctus.GetNodeInfoRequest\032\033.pactus.GetNode" +
-      "InfoResponseBB\n\016pactus.networkZ0github.c" +
-      "om/pactus-project/pactus/www/grpc/pactus" +
-      "b\006proto3"
+      "\001(\003R\005value:\0028\001\"\024\n\022GetNodeInfoRequest\"\230\001\n" +
+      "\023GetNodeInfoResponse\022\030\n\007moniker\030\001 \001(\tR\007m" +
+      "oniker\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030" +
+      "\003 \001(\014R\006peerId\022\"\n\014reachability\030\004 \001(\tR\014rea" +
+      "chability\022\024\n\005addrs\030\005 \003(\tR\005addrs\"\300\006\n\010Peer" +
+      "Info\022\026\n\006status\030\001 \001(\005R\006status\022\030\n\007moniker\030" +
+      "\002 \001(\tR\007moniker\022\024\n\005agent\030\003 \001(\tR\005agent\022\027\n\007" +
+      "peer_id\030\004 \001(\014R\006peerId\022%\n\016consensus_keys\030" +
+      "\005 \003(\tR\rconsensusKeys\022\032\n\010services\030\006 \001(\rR\010" +
+      "services\022&\n\017last_block_hash\030\007 \001(\014R\rlastB" +
+      "lockHash\022\026\n\006height\030\010 \001(\rR\006height\022+\n\021rece" +
+      "ived_messages\030\t \001(\005R\020receivedMessages\022)\n" +
+      "\020invalid_messages\030\n \001(\005R\017invalidMessages" +
+      "\022\033\n\tlast_sent\030\013 \001(\003R\010lastSent\022#\n\rlast_re" +
+      "ceived\030\014 \001(\003R\014lastReceived\022>\n\nsent_bytes" +
+      "\030\r \003(\0132\037.pactus.PeerInfo.SentBytesEntryR" +
+      "\tsentBytes\022J\n\016received_bytes\030\016 \003(\0132#.pac" +
+      "tus.PeerInfo.ReceivedBytesEntryR\rreceive" +
+      "dBytes\022\030\n\007address\030\017 \001(\tR\007address\022\034\n\tdire" +
+      "ction\030\020 \001(\tR\tdirection\022\034\n\tprotocols\030\021 \003(" +
+      "\tR\tprotocols\022%\n\016total_sessions\030\022 \001(\005R\rto" +
+      "talSessions\022-\n\022completed_sessions\030\023 \001(\005R" +
+      "\021completedSessions\032<\n\016SentBytesEntry\022\020\n\003" +
+      "key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028\001" +
+      "\032@\n\022ReceivedBytesEntry\022\020\n\003key\030\001 \001(\005R\003key" +
+      "\022\024\n\005value\030\002 \001(\003R\005value:\0028\0012\242\001\n\007Network\022O" +
+      "\n\016GetNetworkInfo\022\035.pactus.GetNetworkInfo" +
+      "Request\032\036.pactus.GetNetworkInfoResponse\022" +
+      "F\n\013GetNodeInfo\022\032.pactus.GetNodeInfoReque" +
+      "st\032\033.pactus.GetNodeInfoResponseBB\n\016pactu" +
+      "s.networkZ0github.com/pactus-project/pac" +
+      "tus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -6102,7 +6465,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNodeInfoResponse_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "Reachability", "Addrs", });
     internal_static_pactus_PeerInfo_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_pactus_PeerInfo_fieldAccessorTable = new

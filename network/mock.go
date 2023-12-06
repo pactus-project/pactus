@@ -123,3 +123,11 @@ func (mock *MockNetwork) NumConnectedPeers() int {
 func (mock *MockNetwork) AddAnotherNetwork(net *MockNetwork) {
 	mock.OtherNets = append(mock.OtherNets, net)
 }
+
+func (mock *MockNetwork) ReachabilityStatus() string {
+	return "Unknown"
+}
+
+func (mock *MockNetwork) HostAddrs() []string {
+	return []string{"localhost"}
+}
