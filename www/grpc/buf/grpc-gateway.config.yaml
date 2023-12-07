@@ -1,0 +1,63 @@
+type: google.api.Service
+config_version: 3
+
+http:
+  rules:
+    # Blockchain APIs
+    - selector: pactus.Blockchain.GetBlock
+      get: "/v1/blockchain/blocks/height/{height}/verbosity/{verbosity}"
+
+    - selector: pactus.Blockchain.GetBlockHash
+      get: "/v1/blockchain/block_hashes/height/{height}"
+
+    - selector: pactus.Blockchain.GetBlockHeight
+      get: "/v1/blockchain/block_heights/hash/{hash}"
+
+    - selector: pactus.Blockchain.GetAccount
+      get: "/v1/blockchain/accounts/address/{address}"
+
+    - selector: pactus.Blockchain.GetValidator
+      get: "/v1/blockchain/validators/address/{address}"
+
+    - selector: pactus.Blockchain.GetValidatorByNumber
+      get: "/v1/blockchain/validators/{number}"
+
+    - selector: pactus.Blockchain.GetBlockchainInfo
+      get: "/v1/blockchain/info"
+
+    - selector: pactus.Blockchain.GetPublicKey
+      get: "/v1/blockchain/public_keys/address/{address}"
+
+    # Transaction APIs
+    - selector: pactus.Transaction.GetTransaction
+      get: "/v1/transactions/id/{id}/verbosity/{verbosity}"
+
+    - selector: pactus.Transaction.SendRawTransaction
+      put: "/v1/transactions/send/{data}"
+
+    - selector: pactus.Transaction.CalculateFee
+      get: "/v1/transactions/amount/{amount}/payloadType/{payloadType}"
+
+    # Network APIs
+    - selector: pactus.Network.GetNetworkInfo
+      get: "/v1/network/info"
+
+    - selector: pactus.Network.GetNodeInfo
+      get: "/v1/network/node"
+
+    # Wallet APIs
+    - selector: pactus.Wallet.CreateWallet
+      get: "/v1/wallets/create/name/{name}/mnemonic/{mnemonic}/language/{language}"
+
+    - selector: pactus.Wallet.LoadWallet
+      get: "/v1/wallets/load/name/{name}"
+
+    - selector: pactus.Wallet.UnloadWallet
+      get: "/v1/wallets/unload/name/{name}"
+
+    - selector: pactus.Wallet.LockWallet
+      get: "/v1/wallets/lock"
+
+    - selector: pactus.Wallet.UnlockWallet
+      get: "/v1/wallets/unlock/password/{password}/timeout/{timeout}"
+

@@ -1,5 +1,0 @@
-version: v1
-name: pactus_apis
-lint:
-  use:
-    - DEFAULT
