@@ -1,8 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "transaction.proto",
-    "version": "version not set"
+    "title": "Pactus APIs",
+    "version": "1.0"
   },
   "tags": [
     {
@@ -25,7 +25,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/blockchain/account/address/{address}": {
+    "/v1/blockchain/accounts/address/{address}": {
       "get": {
         "operationId": "Blockchain_GetAccount",
         "responses": {
@@ -55,7 +55,69 @@
         ]
       }
     },
-    "/v1/blockchain/block/height/{height}/verbosity/{verbosity}": {
+    "/v1/blockchain/block_hashes/height/{height}": {
+      "get": {
+        "operationId": "Blockchain_GetBlockHash",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetBlockHashResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "height",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/v1/blockchain/block_heights/hash/{hash}": {
+      "get": {
+        "operationId": "Blockchain_GetBlockHeight",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetBlockHeightResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "hash",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "byte"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/v1/blockchain/blocks/height/{height}/verbosity/{verbosity}": {
       "get": {
         "operationId": "Blockchain_GetBlock",
         "responses": {
@@ -90,68 +152,6 @@
               "BLOCK_INFO",
               "BLOCK_TRANSACTIONS"
             ]
-          }
-        ],
-        "tags": [
-          "Blockchain"
-        ]
-      }
-    },
-    "/v1/blockchain/block_hash/{height}": {
-      "get": {
-        "operationId": "Blockchain_GetBlockHash",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusGetBlockHashResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "height",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "Blockchain"
-        ]
-      }
-    },
-    "/v1/blockchain/block_height/{hash}": {
-      "get": {
-        "operationId": "Blockchain_GetBlockHeight",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusGetBlockHeightResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "hash",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "byte"
           }
         ],
         "tags": [
@@ -211,7 +211,7 @@
         ]
       }
     },
-    "/v1/blockchain/validator/address/{address}": {
+    "/v1/blockchain/validators/address/{address}": {
       "get": {
         "operationId": "Blockchain_GetValidator",
         "responses": {
@@ -241,7 +241,7 @@
         ]
       }
     },
-    "/v1/blockchain/validator/{number}": {
+    "/v1/blockchain/validators/{number}": {
       "get": {
         "operationId": "Blockchain_GetValidatorByNumber",
         "responses": {
@@ -316,7 +316,7 @@
         ]
       }
     },
-    "/v1/transaction/amount/{amount}/payloadType/{payloadType}": {
+    "/v1/transactions/amount/{amount}/payloadType/{payloadType}": {
       "get": {
         "operationId": "Transaction_CalculateFee",
         "responses": {
@@ -361,7 +361,7 @@
         ]
       }
     },
-    "/v1/transaction/id/{id}/verbosity/{verbosity}": {
+    "/v1/transactions/id/{id}/verbosity/{verbosity}": {
       "get": {
         "operationId": "Transaction_GetTransaction",
         "responses": {
@@ -402,7 +402,7 @@
         ]
       }
     },
-    "/v1/transaction/send_raw_transaction/{data}": {
+    "/v1/transactions/send/{data}": {
       "put": {
         "operationId": "Transaction_SendRawTransaction",
         "responses": {
@@ -433,7 +433,7 @@
         ]
       }
     },
-    "/v1/wallet/create/name/{name}/mnemonic/{mnemonic}/language/{language}": {
+    "/v1/wallets/create/name/{name}/mnemonic/{mnemonic}/language/{language}": {
       "get": {
         "operationId": "Wallet_CreateWallet",
         "responses": {
@@ -481,7 +481,7 @@
         ]
       }
     },
-    "/v1/wallet/load/name/{name}": {
+    "/v1/wallets/load/name/{name}": {
       "get": {
         "operationId": "Wallet_LoadWallet",
         "responses": {
@@ -511,7 +511,7 @@
         ]
       }
     },
-    "/v1/wallet/lock": {
+    "/v1/wallets/lock": {
       "get": {
         "operationId": "Wallet_LockWallet",
         "responses": {
@@ -548,7 +548,7 @@
         ]
       }
     },
-    "/v1/wallet/unload/name/{name}": {
+    "/v1/wallets/unload/name/{name}": {
       "get": {
         "operationId": "Wallet_UnloadWallet",
         "responses": {
@@ -578,7 +578,7 @@
         ]
       }
     },
-    "/v1/wallet/unlock/password/{password}/timeout/{timeout}": {
+    "/v1/wallets/unlock/password/{password}/timeout/{timeout}": {
       "get": {
         "operationId": "Wallet_UnlockWallet",
         "responses": {

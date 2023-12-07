@@ -1,0 +1,37 @@
+version: v1
+plugins:
+  - name: go
+    out: ../gen/go
+    opt: paths=source_relative
+  - name: go-grpc
+    out: ../gen/go
+    opt: paths=source_relative,require_unimplemented_servers=false
+  - name: grpc-gateway
+    out: ../gen/go
+    opt:
+      - paths=source_relative
+      - grpc_api_configuration=grpc-gateway.config.yaml
+  - name: openapiv2
+    out: ../swagger-ui
+    opt:
+      - grpc_api_configuration=grpc-gateway.config.yaml,allow_merge=true,merge_file_name=pactus
+      - openapi_configuration=openapi.config.yaml
+  - plugin: buf.build/protocolbuffers/js:v3.21.2
+    out: ../gen/js
+    opt:
+      - import_style=commonjs
+      - binary
+  - plugin: buf.build/grpc/node:v1.11.3
+    out: ../gen/js
+    opt:
+      - import_style=commonjs
+  - plugin: buf.build/protocolbuffers/dart:v20.0.1
+    out: ../gen/dart
+  - plugin: buf.build/protocolbuffers/java:v21.8
+    out: ../gen/java
+  - plugin: buf.build/grpc/java:v1.50.2
+    out: ../gen/java
+  - plugin: buf.build/protocolbuffers/python:v21.8
+    out: ../gen/python
+  - plugin: buf.build/grpc/python:v1.50.0
+    out: ../gen/python

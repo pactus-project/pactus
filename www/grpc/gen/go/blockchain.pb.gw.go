@@ -453,7 +453,7 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetBlock", runtime.WithHTTPPathPattern("/v1/blockchain/block/height/{height}/verbosity/{verbosity}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetBlock", runtime.WithHTTPPathPattern("/v1/blockchain/blocks/height/{height}/verbosity/{verbosity}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -478,7 +478,7 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetBlockHash", runtime.WithHTTPPathPattern("/v1/blockchain/block_hash/{height}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetBlockHash", runtime.WithHTTPPathPattern("/v1/blockchain/block_hashes/height/{height}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -503,7 +503,7 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetBlockHeight", runtime.WithHTTPPathPattern("/v1/blockchain/block_height/{hash}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetBlockHeight", runtime.WithHTTPPathPattern("/v1/blockchain/block_heights/hash/{hash}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -553,7 +553,7 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetAccount", runtime.WithHTTPPathPattern("/v1/blockchain/account/address/{address}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetAccount", runtime.WithHTTPPathPattern("/v1/blockchain/accounts/address/{address}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -578,7 +578,7 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetValidator", runtime.WithHTTPPathPattern("/v1/blockchain/validator/address/{address}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetValidator", runtime.WithHTTPPathPattern("/v1/blockchain/validators/address/{address}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -603,7 +603,7 @@ func RegisterBlockchainHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetValidatorByNumber", runtime.WithHTTPPathPattern("/v1/blockchain/validator/{number}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Blockchain/GetValidatorByNumber", runtime.WithHTTPPathPattern("/v1/blockchain/validators/{number}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -692,7 +692,7 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetBlock", runtime.WithHTTPPathPattern("/v1/blockchain/block/height/{height}/verbosity/{verbosity}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetBlock", runtime.WithHTTPPathPattern("/v1/blockchain/blocks/height/{height}/verbosity/{verbosity}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -714,7 +714,7 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetBlockHash", runtime.WithHTTPPathPattern("/v1/blockchain/block_hash/{height}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetBlockHash", runtime.WithHTTPPathPattern("/v1/blockchain/block_hashes/height/{height}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -736,7 +736,7 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetBlockHeight", runtime.WithHTTPPathPattern("/v1/blockchain/block_height/{hash}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetBlockHeight", runtime.WithHTTPPathPattern("/v1/blockchain/block_heights/hash/{hash}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -780,7 +780,7 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetAccount", runtime.WithHTTPPathPattern("/v1/blockchain/account/address/{address}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetAccount", runtime.WithHTTPPathPattern("/v1/blockchain/accounts/address/{address}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -802,7 +802,7 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetValidator", runtime.WithHTTPPathPattern("/v1/blockchain/validator/address/{address}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetValidator", runtime.WithHTTPPathPattern("/v1/blockchain/validators/address/{address}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -824,7 +824,7 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetValidatorByNumber", runtime.WithHTTPPathPattern("/v1/blockchain/validator/{number}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Blockchain/GetValidatorByNumber", runtime.WithHTTPPathPattern("/v1/blockchain/validators/{number}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -866,19 +866,19 @@ func RegisterBlockchainHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 }
 
 var (
-	pattern_Blockchain_GetBlock_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4}, []string{"v1", "blockchain", "block", "height", "verbosity"}, ""))
+	pattern_Blockchain_GetBlock_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4}, []string{"v1", "blockchain", "blocks", "height", "verbosity"}, ""))
 
-	pattern_Blockchain_GetBlockHash_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "blockchain", "block_hash", "height"}, ""))
+	pattern_Blockchain_GetBlockHash_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "blockchain", "block_hashes", "height"}, ""))
 
-	pattern_Blockchain_GetBlockHeight_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "blockchain", "block_height", "hash"}, ""))
+	pattern_Blockchain_GetBlockHeight_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "blockchain", "block_heights", "hash"}, ""))
 
 	pattern_Blockchain_GetBlockchainInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "blockchain", "info"}, ""))
 
-	pattern_Blockchain_GetAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "blockchain", "account", "address"}, ""))
+	pattern_Blockchain_GetAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "blockchain", "accounts", "address"}, ""))
 
-	pattern_Blockchain_GetValidator_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "blockchain", "validator", "address"}, ""))
+	pattern_Blockchain_GetValidator_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "blockchain", "validators", "address"}, ""))
 
-	pattern_Blockchain_GetValidatorByNumber_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "blockchain", "validator", "number"}, ""))
+	pattern_Blockchain_GetValidatorByNumber_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "blockchain", "validators", "number"}, ""))
 
 	pattern_Blockchain_GetPublicKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "blockchain", "public_keys", "address"}, ""))
 )
