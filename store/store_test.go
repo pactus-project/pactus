@@ -111,8 +111,11 @@ func TestIndexingPublicKeys(t *testing.T) {
 	for _, trx := range blk.Transactions() {
 		addr := trx.Payload().Signer()
 		pub, found := td.store.PublicKey(addr)
+		pubKeyLruCache, ok := td.store.pubKeyLruCache.Get(addr)
 
 		assert.NoError(t, found)
+		assert.True(t, ok)
+		assert.Equal(t, pub, pubKeyLruCache)
 
 		if addr.IsAccountAddress() {
 			assert.Equal(t, pub.AccountAddress(), addr)
@@ -121,9 +124,14 @@ func TestIndexingPublicKeys(t *testing.T) {
 		}
 	}
 
-	pub, found := td.store.PublicKey(td.RandValAddress())
+	randValAddress := td.RandValAddress()
+	pub, found := td.store.PublicKey(randValAddress)
+	pubKeyLruCache, ok := td.store.pubKeyLruCache.Get(randValAddress)
+
 	assert.Error(t, found)
 	assert.Nil(t, pub)
+	assert.False(t, ok)
+	assert.Nil(t, pubKeyLruCache)
 }
 
 func TestStrippedPublicKey(t *testing.T) {

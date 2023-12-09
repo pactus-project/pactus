@@ -5,6 +5,7 @@ import (
 	"errors"
 	"sync"
 
+	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -25,9 +26,10 @@ var (
 	ErrBadOffset = errors.New("offset is out of range")
 )
 
-const lastStoreVersion = int32(1)
-
-// TODO: add cache for me
+const (
+	lastStoreVersion   = int32(1)
+	pubKeyLruCacheSize = 1024
+)
 
 var (
 	lastInfoKey       = []byte{0x00}
@@ -53,6 +55,7 @@ type store struct {
 	lk sync.RWMutex
 
 	config         *Config
+	pubKeyLruCache *lru.Cache[crypto.Address, *bls.PublicKey]
 	db             *leveldb.DB
 	batch          *leveldb.Batch
 	blockStore     *blockStore
@@ -66,6 +69,12 @@ func NewStore(conf *Config) (Store, error) {
 		Strict:      opt.DefaultStrict,
 		Compression: opt.NoCompression,
 	}
+
+	pubKeyLruCache, err := lru.New[crypto.Address, *bls.PublicKey](pubKeyLruCacheSize)
+	if err != nil {
+		return nil, err
+	}
+
 	db, err := leveldb.OpenFile(conf.StorePath(), options)
 	if err != nil {
 		return nil, err
@@ -73,6 +82,7 @@ func NewStore(conf *Config) (Store, error) {
 	s := &store{
 		config:         conf,
 		db:             db,
+		pubKeyLruCache: pubKeyLruCache,
 		batch:          new(leveldb.Batch),
 		blockStore:     newBlockStore(db),
 		txStore:        newTxStore(db),
@@ -156,6 +166,10 @@ func (s *store) BlockHash(height uint32) hash.Hash {
 }
 
 func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
+	if pubKey, ok := s.pubKeyLruCache.Get(addr); ok {
+		return pubKey, nil
+	}
+
 	bs, err := tryGet(s.db, publicKeyKey(addr))
 	if err != nil {
 		return nil, err
@@ -165,6 +179,7 @@ func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
 		return nil, err
 	}
 
+	s.pubKeyLruCache.Add(addr, pubKey)
 	return pubKey, err
 }
 

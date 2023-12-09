@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	lruCacheSize = 1024
+	accLruCacheSize = 1024
 )
 
 type accountStore struct {
@@ -23,7 +23,7 @@ func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.
 
 func newAccountStore(db *leveldb.DB) *accountStore {
 	total := int32(0)
-	addrLruCache, err := lru.New[crypto.Address, *account.Account](lruCacheSize)
+	addrLruCache, err := lru.New[crypto.Address, *account.Account](accLruCacheSize)
 	if err != nil {
 		logger.Panic("unable to create new instance of lru cache", "error", err)
 	}
