@@ -37,6 +37,10 @@ func (ts *txStore) saveTx(batch *leveldb.Batch, id tx.ID, reg *blockRegion) {
 	batch.Put(txKey, w.Bytes())
 }
 
+func (ts *txStore) hasTX(id tx.ID) bool {
+	return tryHas(ts.db, txKey(id))
+}
+
 func (ts *txStore) tx(id tx.ID) (*blockRegion, error) {
 	data, err := tryGet(ts.db, txKey(id))
 	if err != nil {

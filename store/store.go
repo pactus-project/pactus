@@ -5,6 +5,7 @@ import (
 	"errors"
 	"sync"
 
+	"github.com/edwingeng/deque/v2"
 	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -45,16 +46,26 @@ func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 	data, err := db.Get(key, nil)
 	if err != nil {
 		// Probably key doesn't exist in database
-		logger.Trace("database error", "error", err, "key", key)
+		logger.Trace("database get error", "error", err, "key", key)
 		return nil, err
 	}
 	return data, nil
+}
+
+func tryHas(db *leveldb.DB, key []byte) bool {
+	ok, err := db.Has(key, nil)
+	if err != nil {
+		logger.Error("database has error", "error", err, "key", key)
+		return false
+	}
+	return ok
 }
 
 type store struct {
 	lk sync.RWMutex
 
 	config         *Config
+	txQueue        *deque.Deque[tx.Tx]
 	pubKeyLruCache *lru.Cache[crypto.Address, *bls.PublicKey]
 	db             *leveldb.DB
 	batch          *leveldb.Batch
@@ -82,6 +93,7 @@ func NewStore(conf *Config) (Store, error) {
 	s := &store{
 		config:         conf,
 		db:             db,
+		txQueue:        deque.NewDeque[tx.Tx](),
 		pubKeyLruCache: pubKeyLruCache,
 		batch:          new(leveldb.Batch),
 		blockStore:     newBlockStore(db),
@@ -211,14 +223,11 @@ func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {
 	}, nil
 }
 
-// TODO implement Dequeue for this function, for the better performance.
 func (s *store) AnyRecentTransaction(id tx.ID) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	pos, _ := s.txStore.tx(id)
-
-	return pos != nil
+	return s.txStore.hasTX(id)
 }
 
 func (s *store) HasAccount(addr crypto.Address) bool {

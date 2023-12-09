@@ -114,17 +114,9 @@ func (bs *blockStore) blockHeight(h hash.Hash) uint32 {
 }
 
 func (bs *blockStore) hasBlock(height uint32) bool {
-	has, err := bs.db.Has(blockKey(height), nil)
-	if err != nil {
-		return false
-	}
-	return has
+	return tryHas(bs.db, blockKey(height))
 }
 
 func (bs *blockStore) hasPublicKey(addr crypto.Address) bool {
-	has, err := bs.db.Has(publicKeyKey(addr), nil)
-	if err != nil {
-		return false
-	}
-	return has
+	return tryHas(bs.db, publicKeyKey(addr))
 }

@@ -31,18 +31,6 @@ func newAccountStore(db *leveldb.DB) *accountStore {
 	r := util.BytesPrefix(accountPrefix)
 	iter := db.NewIterator(r, nil)
 	for iter.Next() {
-		key := iter.Key()
-		value := iter.Value()
-
-		acc, err := account.FromBytes(value)
-		if err != nil {
-			logger.Panic("unable to decode account", "error", err)
-		}
-
-		var addr crypto.Address
-		copy(addr[:], key[1:])
-
-		addrLruCache.Add(addr, acc)
 		total++
 	}
 	iter.Release()
@@ -55,7 +43,10 @@ func newAccountStore(db *leveldb.DB) *accountStore {
 }
 
 func (as *accountStore) hasAccount(addr crypto.Address) bool {
-	_, ok := as.addrLruCache.Get(addr)
+	ok := as.addrLruCache.Contains(addr)
+	if !ok {
+		ok = tryHas(as.db, accountKey(addr))
+	}
 	return ok
 }
 
@@ -65,17 +56,34 @@ func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
 		return acc.Clone(), nil
 	}
 
-	return nil, ErrNotFound
+	rawData, err := tryGet(as.db, accountKey(addr))
+	if err != nil {
+		return nil, err
+	}
+	return account.FromBytes(rawData)
 }
 
 func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool)) {
-	for _, addr := range as.addrLruCache.Keys() {
-		acc, _ := as.addrLruCache.Get(addr)
+	r := util.BytesPrefix(accountPrefix)
+	iter := as.db.NewIterator(r, nil)
+	for iter.Next() {
+		key := iter.Key()
+		value := iter.Value()
+
+		acc, err := account.FromBytes(value)
+		if err != nil {
+			logger.Panic("unable to decode account", "error", err)
+		}
+
+		var addr crypto.Address
+		copy(addr[:], key[1:])
+
 		stopped := consumer(addr, acc.Clone())
 		if stopped {
 			return
 		}
 	}
+	iter.Release()
 }
 
 // This function takes ownership of the account pointer.

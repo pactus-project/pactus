@@ -287,6 +287,9 @@ func (sb *sandbox) VerifyProof(blockHeight uint32, proof sortition.Proof, val *v
 	if err != nil {
 		return false
 	}
+	// block height reach to block
+	// parse block
+	// find sortition
 	seed := blk.Header().SortitionSeed()
 	return sortition.VerifyProof(seed, proof, val.PublicKey(), sb.totalPower, val.Power())
 }

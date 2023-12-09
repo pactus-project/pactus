@@ -3,6 +3,7 @@ module github.com/pactus-project/pactus
 go 1.21
 
 require (
+	github.com/edwingeng/deque/v2 v2.1.1
 	github.com/fxamacker/cbor/v2 v2.5.0
 	github.com/google/uuid v1.4.0
 	github.com/gorilla/handlers v1.5.1
