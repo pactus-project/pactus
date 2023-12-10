@@ -73,11 +73,3 @@ func (h Hash) ShortString() string {
 func (h Hash) IsUndef() bool {
 	return h == UndefHash
 }
-
-func (h Hash) BasicCheck() error {
-	if h.IsUndef() {
-		return fmt.Errorf("hash is zero")
-	}
-
-	return nil
-}
