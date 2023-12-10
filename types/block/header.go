@@ -75,11 +75,6 @@ func NewHeader(version uint8, tme time.Time, stateRoot, prevBlockHash hash.Hash,
 }
 
 func (h *Header) BasicCheck() error {
-	if err := h.data.StateRoot.BasicCheck(); err != nil {
-		return BasicCheckError{
-			Reason: fmt.Sprintf("invalid state root: %s", err.Error()),
-		}
-	}
 	if !h.data.ProposerAddress.IsValidatorAddress() {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("invalid proposer address: %s",
