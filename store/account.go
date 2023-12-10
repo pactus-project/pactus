@@ -14,9 +14,9 @@ const (
 )
 
 type accountStore struct {
-	db           *leveldb.DB
-	addrLruCache *lru.Cache[crypto.Address, *account.Account]
-	total        int32
+	db        *leveldb.DB
+	addrCache *lru.Cache[crypto.Address, *account.Account]
+	total     int32
 }
 
 func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.Bytes()...) }
@@ -36,14 +36,14 @@ func newAccountStore(db *leveldb.DB) *accountStore {
 	iter.Release()
 
 	return &accountStore{
-		db:           db,
-		total:        total,
-		addrLruCache: addrLruCache,
+		db:        db,
+		total:     total,
+		addrCache: addrLruCache,
 	}
 }
 
 func (as *accountStore) hasAccount(addr crypto.Address) bool {
-	ok := as.addrLruCache.Contains(addr)
+	ok := as.addrCache.Contains(addr)
 	if !ok {
 		ok = tryHas(as.db, accountKey(addr))
 	}
@@ -51,7 +51,7 @@ func (as *accountStore) hasAccount(addr crypto.Address) bool {
 }
 
 func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
-	acc, ok := as.addrLruCache.Get(addr)
+	acc, ok := as.addrCache.Get(addr)
 	if ok {
 		return acc.Clone(), nil
 	}
@@ -97,7 +97,7 @@ func (as *accountStore) updateAccount(batch *leveldb.Batch, addr crypto.Address,
 	if !as.hasAccount(addr) {
 		as.total++
 	}
-	as.addrLruCache.Add(addr, acc)
+	as.addrCache.Add(addr, acc)
 
 	batch.Put(accountKey(addr), data)
 }

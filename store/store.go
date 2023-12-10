@@ -46,7 +46,7 @@ func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 	data, err := db.Get(key, nil)
 	if err != nil {
 		// Probably key doesn't exist in database
-		logger.Trace("database get error", "error", err, "key", key)
+		logger.Trace("database `get` error", "error", err, "key", key)
 		return nil, err
 	}
 	return data, nil
@@ -55,7 +55,7 @@ func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 func tryHas(db *leveldb.DB, key []byte) bool {
 	ok, err := db.Has(key, nil)
 	if err != nil {
-		logger.Error("database has error", "error", err, "key", key)
+		logger.Error("database `has` error", "error", err, "key", key)
 		return false
 	}
 	return ok
