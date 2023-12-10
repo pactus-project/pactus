@@ -136,6 +136,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		lp2p.UserAgent(version.Agent()),
 		lp2p.ResourceManager(resMgr),
 		lp2p.ConnectionManager(connMgr),
+		lp2p.Ping(false),
 	)
 
 	if conf.EnableNATService {
