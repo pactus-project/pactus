@@ -350,33 +350,37 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	if err != nil {
 		return nil, nil, err
 	}
-	allValAddrs := walletInstance.AllValidatorAddresses()
 
-	if len(allValAddrs) < 1 || len(allValAddrs) > 32 {
-		return nil, nil, fmt.Errorf("number of validators must be between 1 and 32, but it's %d",
-			len(allValAddrs))
+	valAddrsInfo := walletInstance.AllValidatorAddresses()
+	if len(valAddrsInfo) == 0 {
+		return nil, nil, fmt.Errorf("no validator addresses found in the wallet")
+	}
+
+	if len(valAddrsInfo) > 32 {
+		PrintWarnMsgf("wallet has more than 32 validator addresses, only the first 32 will be used")
+		valAddrsInfo = valAddrsInfo[:32]
 	}
 
 	if len(conf.Node.RewardAddresses) > 0 &&
-		len(conf.Node.RewardAddresses) != len(allValAddrs) {
-		return nil, nil, fmt.Errorf("reward addresses should be %v", len(allValAddrs))
+		len(conf.Node.RewardAddresses) != len(valAddrsInfo) {
+		return nil, nil, fmt.Errorf("reward addresses should be %v", len(valAddrsInfo))
 	}
 
-	validatorAddrs := make([]string, len(allValAddrs))
-	for i := 0; i < len(validatorAddrs); i++ {
-		valAddr, _ := crypto.AddressFromString(allValAddrs[i].Address)
+	valAddrs := make([]string, len(valAddrsInfo))
+	for i := 0; i < len(valAddrs); i++ {
+		valAddr, _ := crypto.AddressFromString(valAddrsInfo[i].Address)
 		if !valAddr.IsValidatorAddress() {
-			return nil, nil, fmt.Errorf("invalid validator address: %s", allValAddrs[i].Address)
+			return nil, nil, fmt.Errorf("invalid validator address: %s", valAddrsInfo[i].Address)
 		}
-		validatorAddrs[i] = valAddr.String()
+		valAddrs[i] = valAddr.String()
 	}
 
-	valKeys := make([]*bls.ValidatorKey, len(allValAddrs))
+	valKeys := make([]*bls.ValidatorKey, len(valAddrsInfo))
 	password, ok := passwordFetcher(walletInstance)
 	if !ok {
 		return nil, nil, fmt.Errorf("aborted")
 	}
-	prvKeys, err := walletInstance.PrivateKeys(password, validatorAddrs)
+	prvKeys, err := walletInstance.PrivateKeys(password, valAddrs)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -385,25 +389,36 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 
 	// Create reward addresses
-	rewardAddrs := make([]crypto.Address, 0, len(allValAddrs))
+	rewardAddrs := make([]crypto.Address, 0, len(valAddrsInfo))
 	if len(conf.Node.RewardAddresses) != 0 {
 		for _, addrStr := range conf.Node.RewardAddresses {
 			addr, _ := crypto.AddressFromString(addrStr)
 			rewardAddrs = append(rewardAddrs, addr)
 		}
 	} else {
-		for i := 0; i < len(allValAddrs); i++ {
-			valAddrPath, _ := addresspath.NewPathFromString(allValAddrs[i].Path)
-			accAddrPath := addresspath.NewPath(valAddrPath.Purpose(), valAddrPath.CoinType(),
-				uint32(crypto.AddressTypeValidator)+hdkeychain.HardenedKeyStart, valAddrPath.AddressIndex())
+		for i := 0; i < len(valAddrsInfo); i++ {
+			valAddrPath, _ := addresspath.NewPathFromString(valAddrsInfo[i].Path)
+			accAddrPath := addresspath.NewPath(
+				valAddrPath.Purpose(),
+				valAddrPath.CoinType(),
+				uint32(crypto.AddressTypeBLSAccount)+hdkeychain.HardenedKeyStart,
+				valAddrPath.AddressIndex())
 
 			addrInfo := walletInstance.AddressFromPath(accAddrPath.String())
 			if addrInfo == nil {
-				return nil, nil, fmt.Errorf("unable to find reward address for: %s", allValAddrs[i].Address)
+				return nil, nil, fmt.Errorf("unable to find reward address for: %s [%s]",
+					valAddrsInfo[i].Address, accAddrPath)
 			}
 
 			addr, _ := crypto.AddressFromString(addrInfo.Address)
 			rewardAddrs = append(rewardAddrs, addr)
+		}
+	}
+
+	// Check if reward addresses are account address
+	for _, addr := range rewardAddrs {
+		if !addr.IsAccountAddress() {
+			return nil, nil, fmt.Errorf("reward address is not an account address: %s", addr)
 		}
 	}
 

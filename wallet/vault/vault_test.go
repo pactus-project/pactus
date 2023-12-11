@@ -84,7 +84,7 @@ func TestAddressInfo(t *testing.T) {
 		path, _ := addresspath.NewPathFromString(info.Path)
 
 		switch path.Purpose() {
-		case HardenedPurposeBLS12381:
+		case H(PurposeBLS12381):
 			if addr.IsValidatorAddress() {
 				assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/1'/%d",
 					PurposeBLS12381, td.vault.CoinType, path.AddressIndex()))
@@ -94,7 +94,7 @@ func TestAddressInfo(t *testing.T) {
 				assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/2'/%d",
 					PurposeBLS12381, td.vault.CoinType, path.AddressIndex()))
 			}
-		case HardenedPurposeImportPrivateKey:
+		case H(PurposeImportPrivateKey):
 			if addr.IsValidatorAddress() {
 				assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/1'/%d'",
 					PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart))
@@ -135,10 +135,10 @@ func TestAllValidatorAddresses(t *testing.T) {
 		path, _ := addresspath.NewPathFromString(info.Path)
 
 		switch path.Purpose() {
-		case HardenedPurposeBLS12381:
+		case H(PurposeBLS12381):
 			assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/1'/%d",
 				PurposeBLS12381, td.vault.CoinType, path.AddressIndex()))
-		case HardenedPurposeImportPrivateKey:
+		case H(PurposeImportPrivateKey):
 			assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/1'/%d'",
 				PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart))
 		}
@@ -153,40 +153,6 @@ func TestSortAllValidatorAddresses(t *testing.T) {
 
 	assert.Equal(t, "m/12381'/21888'/1'/0", validatorAddrs[0].Path)
 	assert.Equal(t, "m/65535'/21888'/1'/0'", validatorAddrs[len(validatorAddrs)-1].Path)
-}
-
-func TestAllBLSAccountAddresses(t *testing.T) {
-	td := setup(t)
-
-	assert.Equal(t, td.vault.AddressCount(), 6)
-
-	blsAccountAddrs := td.vault.AllBLSAccountAddresses()
-	for _, i := range blsAccountAddrs {
-		info := td.vault.AddressInfo(i.Address)
-		assert.Equal(t, i.Address, info.Address)
-
-		path, _ := addresspath.NewPathFromString(info.Path)
-
-		switch path.Purpose() {
-		case HardenedPurposeBLS12381:
-			assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/2'/%d",
-				PurposeBLS12381, td.vault.CoinType, path.AddressIndex()))
-		case HardenedPurposeImportPrivateKey:
-			assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/2'/%d'",
-				PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart))
-		}
-	}
-}
-
-func TestSortAllBLSAccountAddresses(t *testing.T) {
-	td := setup(t)
-
-	assert.Equal(t, td.vault.AddressCount(), 6)
-
-	blsAccountAddrs := td.vault.AllBLSAccountAddresses()
-
-	assert.Equal(t, "m/12381'/21888'/2'/0", blsAccountAddrs[0].Path)
-	assert.Equal(t, "m/65535'/21888'/2'/0'", blsAccountAddrs[len(blsAccountAddrs)-1].Path)
 }
 
 func TestAddressFromPath(t *testing.T) {
