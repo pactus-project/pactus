@@ -18,7 +18,7 @@ type ConnectionGater struct {
 
 	filters    *multiaddr.Filters
 	peerMgr    *peerMgr
-	ConnsLimit int
+	connsLimit int
 	logger     *logger.SubLogger
 }
 
@@ -29,9 +29,12 @@ func NewConnectionGater(conf *Config, log *logger.SubLogger) (*ConnectionGater, 
 		filters = SubnetsToFilters(privateSubnets, multiaddr.ActionDeny)
 	}
 
+	connsLimit := conf.ScaledMaxConns()
+	connsLimit += (conf.ScaledMaxConns() - conf.ScaledMinConns()) / 2
+	log.Info("connection gater created", "connsLimit", connsLimit)
 	return &ConnectionGater{
 		filters:    filters,
-		ConnsLimit: conf.ScaledMaxConns() * 2,
+		connsLimit: connsLimit,
 		logger:     log,
 	}, nil
 }
@@ -48,7 +51,7 @@ func (g *ConnectionGater) onConnectionLimit() bool {
 		return false
 	}
 
-	return g.peerMgr.NumOfConnected() > g.ConnsLimit
+	return g.peerMgr.NumOfConnected() > g.connsLimit
 }
 
 func (g *ConnectionGater) InterceptPeerDial(pid lp2ppeer.ID) bool {

@@ -112,7 +112,6 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		opts = append(opts, lp2p.DisableMetrics())
 	}
 
-	defLimit := lp2prcmgr.DefaultLimits.AutoScale()
 	limit := BuildConcreteLimitConfig(conf.MaxConns)
 	resMgr, err := lp2prcmgr.NewResourceManager(
 		lp2prcmgr.NewFixedLimiter(limit),
@@ -121,7 +120,6 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
-	log.Info("resource manager created", "limit", defLimit)
 
 	// https://github.com/libp2p/go-libp2p/issues/2616
 	// The connection manager doesn't reject any connections.
