@@ -32,9 +32,9 @@ Let's create environment variables for the release version.
 For the rest of this document, we will use these environment variables in the commands.
 
 ```bash
-PRV_VER="0.17.0"
-CUR_VER="0.18.0"
-NEXT_VER="0.19.0"
+PRV_VER="0.18.0"
+CUR_VER="0.19.0"
+NEXT_VER="0.20.0"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 BASE_BRANCH="main"
@@ -82,7 +82,7 @@ Wait for the PR to be approved and merged into the base branch.
 
 7. **Tagging**
 
-Create a git tag:
+Create a Git tag and sign it using your [GPG key](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification) with the following commands:
 
 ```bash
 git checkout ${BASE_BRANCH}
@@ -109,8 +109,8 @@ Pushing the tag will automatically create a release tag and build the binaries.
 9. **Bumping version**
 
 Update the version inside the [version.go](../version/version.go) and add `beta` to the `meta` field.
-Update [patching](./patching.md) docuemnt.
-If this is a majore release, update the version inside this document in step 3.
+Update [patching](./patching.md) document.
+If this is a major release, update the version inside this document in step 3.
 
 Create a new PR against base branch:
 
