@@ -16,10 +16,10 @@ var _ lp2pconnmgr.ConnectionGater = &ConnectionGater{}
 type ConnectionGater struct {
 	lk sync.RWMutex
 
-	filters *multiaddr.Filters
-	peerMgr *peerMgr
-	maxConn int
-	logger  *logger.SubLogger
+	filters    *multiaddr.Filters
+	peerMgr    *peerMgr
+	ConnsLimit int
+	logger     *logger.SubLogger
 }
 
 func NewConnectionGater(conf *Config, log *logger.SubLogger) (*ConnectionGater, error) {
@@ -30,9 +30,9 @@ func NewConnectionGater(conf *Config, log *logger.SubLogger) (*ConnectionGater, 
 	}
 
 	return &ConnectionGater{
-		filters: filters,
-		maxConn: conf.MaxConns,
-		logger:  log,
+		filters:    filters,
+		ConnsLimit: conf.ScaledMaxConns() * 2,
+		logger:     log,
 	}, nil
 }
 
@@ -43,19 +43,19 @@ func (g *ConnectionGater) SetPeerManager(peerMgr *peerMgr) {
 	g.peerMgr = peerMgr
 }
 
-func (g *ConnectionGater) hasMaxConnections() bool {
+func (g *ConnectionGater) onConnectionLimit() bool {
 	if g.peerMgr == nil {
 		return false
 	}
 
-	return g.peerMgr.NumOfConnected() > g.maxConn
+	return g.peerMgr.NumOfConnected() > g.ConnsLimit
 }
 
 func (g *ConnectionGater) InterceptPeerDial(pid lp2ppeer.ID) bool {
 	g.lk.RLock()
 	defer g.lk.RUnlock()
 
-	if g.hasMaxConnections() {
+	if g.onConnectionLimit() {
 		g.logger.Debug("InterceptPeerDial rejected: many connections", "pid", pid)
 		return false
 	}
@@ -67,7 +67,7 @@ func (g *ConnectionGater) InterceptAddrDial(pid lp2ppeer.ID, ma multiaddr.Multia
 	g.lk.RLock()
 	defer g.lk.RUnlock()
 
-	if g.hasMaxConnections() {
+	if g.onConnectionLimit() {
 		g.logger.Debug("InterceptAddrDial rejected: many connections", "pid", pid, "ma", ma.String())
 		return false
 	}
@@ -85,7 +85,7 @@ func (g *ConnectionGater) InterceptAccept(cma lp2pnetwork.ConnMultiaddrs) bool {
 	g.lk.RLock()
 	defer g.lk.RUnlock()
 
-	if g.hasMaxConnections() {
+	if g.onConnectionLimit() {
 		g.logger.Debug("InterceptAccept rejected: many connections")
 		return false
 	}

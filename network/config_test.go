@@ -125,3 +125,25 @@ func TestIsBootstrapper(t *testing.T) {
 	assert.True(t, conf.IsBootstrapper(pid2))
 	assert.True(t, conf.IsBootstrapper(pid3))
 }
+
+func TestScaledConns(t *testing.T) {
+	tests := []struct {
+		config      Config
+		expectedMax int
+		expectedMin int
+	}{
+		{Config{MaxConns: 1}, 1, 0},
+		{Config{MaxConns: 8}, 8, 2},
+		{Config{MaxConns: 30}, 32, 8},
+		{Config{MaxConns: 1000}, 1024, 256},
+	}
+
+	for _, test := range tests {
+		resultMax := test.config.ScaledMaxConns()
+		resultMin := test.config.ScaledMinConns()
+		if resultMax != test.expectedMax || resultMin != test.expectedMin {
+			t.Errorf("For MaxConns %d, NormedMaxConns() returned %d (expected %d), NormedMinConns() returned %d (expected %d)",
+				test.config.MaxConns, resultMax, test.expectedMax, resultMin, test.expectedMin)
+		}
+	}
+}

@@ -68,7 +68,6 @@ func testConfig() *Config {
 		ListenAddrStrings:    []string{},
 		NetworkKey:           util.TempFilePath(),
 		BootstrapAddrStrings: []string{},
-		MinConns:             4,
 		MaxConns:             8,
 		EnableNATService:     false,
 		EnableUPnP:           false,

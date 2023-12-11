@@ -112,23 +112,32 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		opts = append(opts, lp2p.DisableMetrics())
 	}
 
-	limit := MakeScalingLimitConfig(conf.MinConns, conf.MaxConns)
+	defLimit := lp2prcmgr.DefaultLimits.AutoScale()
+	limit := BuildConcreteLimitConfig(conf.MaxConns)
 	resMgr, err := lp2prcmgr.NewResourceManager(
-		lp2prcmgr.NewFixedLimiter(limit.AutoScale()),
+		lp2prcmgr.NewFixedLimiter(limit),
 		rcMgrOpt...,
 	)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
+	log.Info("resource manager created", "limit", defLimit)
 
+	// https://github.com/libp2p/go-libp2p/issues/2616
+	// The connection manager doesn't reject any connections.
+	// It just triggers a pruning run once the high watermark is reached (or surpassed).
+
+	lowWM := conf.ScaledMinConns()  // Low Watermark
+	highWM := conf.ScaledMaxConns() // High Watermark
+	highWM -= (highWM - lowWM) / 2
 	connMgr, err := lp2pconnmgr.NewConnManager(
-		conf.MinConns, // Low Watermark
-		conf.MaxConns, // High Watermark
+		lowWM, highWM,
 		lp2pconnmgr.WithGracePeriod(time.Minute),
 	)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
+	log.Info("connection manager created", "lowWM", lowWM, "highWM", highWM)
 
 	opts = append(opts,
 		lp2p.Identity(networkKey),

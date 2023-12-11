@@ -13,7 +13,6 @@ type Config struct {
 	ListenAddrStrings    []string `toml:"listen_addrs"`
 	RelayAddrStrings     []string `toml:"relay_addrs"`
 	BootstrapAddrStrings []string `toml:"bootstrap_addrs"`
-	MinConns             int      `toml:"min_connections"`
 	MaxConns             int      `toml:"max_connections"`
 	EnableNATService     bool     `toml:"enable_nat_service"`
 	EnableUPnP           bool     `toml:"enable_upnp"`
@@ -36,8 +35,7 @@ func DefaultConfig() *Config {
 		ListenAddrStrings:    []string{},
 		RelayAddrStrings:     []string{},
 		BootstrapAddrStrings: []string{},
-		MinConns:             16,
-		MaxConns:             32,
+		MaxConns:             64,
 		EnableNATService:     false,
 		EnableUPnP:           false,
 		EnableRelay:          false,
@@ -114,4 +112,12 @@ func (conf *Config) IsBootstrapper(pid lp2pcore.PeerID) bool {
 	}
 
 	return false
+}
+
+func (conf *Config) ScaledMaxConns() int {
+	return util.LogScale(conf.MaxConns)
+}
+
+func (conf *Config) ScaledMinConns() int {
+	return conf.ScaledMaxConns() / 4
 }

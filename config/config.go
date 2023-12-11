@@ -107,8 +107,7 @@ func DefaultConfigTestnet() *Config {
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/188.121.102.178/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
-	conf.Network.MinConns = 16
-	conf.Network.MaxConns = 32
+	conf.Network.MaxConns = 64
 	conf.Network.EnableNATService = false
 	conf.Network.EnableUPnP = false
 	conf.Network.EnableRelay = true
@@ -133,7 +132,6 @@ func DefaultConfigLocalnet() *Config {
 	conf.Network.EnableNATService = false
 	conf.Network.EnableUPnP = false
 	conf.Network.BootstrapAddrStrings = []string{}
-	conf.Network.MinConns = 0
 	conf.Network.MaxConns = 0
 	conf.Network.NetworkName = "pactus-localnet"
 	conf.Network.DefaultPort = 21666
