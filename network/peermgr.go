@@ -39,7 +39,7 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host,
 	b := &peerMgr{
 		ctx:            ctx,
 		bootstrapAddrs: conf.BootstrapAddrInfos(),
-		minConns:       conf.ScaledMaxConns(),
+		minConns:       conf.ScaledMinConns(),
 		maxConns:       conf.ScaledMinConns(),
 		peers:          make(map[lp2ppeer.ID]*peerInfo),
 		host:           h,
