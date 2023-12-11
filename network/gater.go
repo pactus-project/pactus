@@ -29,8 +29,7 @@ func NewConnectionGater(conf *Config, log *logger.SubLogger) (*ConnectionGater, 
 		filters = SubnetsToFilters(privateSubnets, multiaddr.ActionDeny)
 	}
 
-	connsLimit := conf.ScaledMaxConns()
-	connsLimit += (conf.ScaledMaxConns() - conf.ScaledMinConns()) / 2
+	connsLimit := conf.ScaledMaxConns() + conf.ConnsThreshold()
 	log.Info("connection gater created", "connsLimit", connsLimit)
 	return &ConnectionGater{
 		filters:    filters,

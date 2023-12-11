@@ -136,12 +136,12 @@ func BuildConcreteLimitConfig(maxConns int) lp2prcmgr.ConcreteLimitConfig {
 	updateResourceLimits := func(limit *lp2prcmgr.ResourceLimits, maxConns, coefficient int) {
 		maxConnVal := lp2prcmgr.LimitVal(maxConns * coefficient)
 
-		limit.ConnsOutbound = maxConnVal
-		limit.ConnsInbound = maxConnVal
-		limit.Conns = maxConnVal * 2
-		limit.StreamsOutbound = maxConnVal * 8
-		limit.StreamsInbound = maxConnVal * 8
-		limit.Streams = maxConnVal * 16
+		limit.ConnsOutbound = maxConnVal / 2
+		limit.ConnsInbound = maxConnVal / 2
+		limit.Conns = maxConnVal
+		limit.StreamsOutbound = maxConnVal * 4
+		limit.StreamsInbound = maxConnVal * 4
+		limit.Streams = maxConnVal * 8
 	}
 
 	updateResourceLimits(&changes.System, maxConns, 1)

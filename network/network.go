@@ -125,9 +125,8 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	// The connection manager doesn't reject any connections.
 	// It just triggers a pruning run once the high watermark is reached (or surpassed).
 
-	lowWM := conf.ScaledMinConns()  // Low Watermark
-	highWM := conf.ScaledMaxConns() // High Watermark
-	highWM -= (highWM - lowWM) / 2
+	lowWM := conf.ScaledMinConns()                          // Low Watermark
+	highWM := conf.ScaledMaxConns() - conf.ConnsThreshold() // High Watermark
 	connMgr, err := lp2pconnmgr.NewConnManager(
 		lowWM, highWM,
 		lp2pconnmgr.WithGracePeriod(time.Minute),

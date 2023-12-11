@@ -61,9 +61,10 @@ func TestDenyPrivate(t *testing.T) {
 func TestMaxConnection(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 	conf := testConfig()
-	conf.MaxConns = 4
-	assert.Equal(t, conf.ScaledMinConns(), 1)
-	assert.Equal(t, conf.ScaledMaxConns(), 4)
+	conf.MaxConns = 8
+	assert.Equal(t, conf.ScaledMinConns(), 2)
+	assert.Equal(t, conf.ScaledMaxConns(), 8)
+	assert.Equal(t, conf.ConnsThreshold(), 1)
 	net := makeTestNetwork(t, conf, nil)
 
 	maPrivate := multiaddr.StringCast("/ip4/127.0.0.1/tcp/1234")
@@ -72,16 +73,10 @@ func TestMaxConnection(t *testing.T) {
 	cmaPublic := &mockConnMultiaddrs{remote: maPublic}
 	pid := ts.RandPeerID()
 
-	net.peerMgr.AddPeer(ts.RandPeerID(),
-		multiaddr.StringCast("/ip4/1.1.1.1/tcp/1234"), lp2pnetwork.DirInbound)
-	net.peerMgr.AddPeer(ts.RandPeerID(),
-		multiaddr.StringCast("/ip4/2.2.2.2/tcp/1234"), lp2pnetwork.DirOutbound)
-	net.peerMgr.AddPeer(ts.RandPeerID(),
-		multiaddr.StringCast("/ip4/3.3.3.3/tcp/1234"), lp2pnetwork.DirInbound)
-	net.peerMgr.AddPeer(ts.RandPeerID(),
-		multiaddr.StringCast("/ip4/4.4.4.4/tcp/1234"), lp2pnetwork.DirInbound)
-	net.peerMgr.AddPeer(ts.RandPeerID(),
-		multiaddr.StringCast("/ip4/5.5.5.5/tcp/1234"), lp2pnetwork.DirInbound)
+	for i := 0; i < 9; i++ {
+		net.peerMgr.AddPeer(ts.RandPeerID(),
+			multiaddr.StringCast("/ip4/1.1.1.1/tcp/1234"), lp2pnetwork.DirInbound)
+	}
 
 	assert.True(t, net.connGater.InterceptPeerDial(pid))
 	assert.True(t, net.connGater.InterceptAddrDial(pid, maPrivate))
@@ -90,7 +85,7 @@ func TestMaxConnection(t *testing.T) {
 	assert.True(t, net.connGater.InterceptAccept(cmaPublic))
 
 	net.peerMgr.AddPeer(ts.RandPeerID(),
-		multiaddr.StringCast("/ip4/6.6.6.6/tcp/1234"), lp2pnetwork.DirInbound)
+		multiaddr.StringCast("/ip4/1.1.1.1/tcp/1234"), lp2pnetwork.DirInbound)
 
 	assert.False(t, net.connGater.InterceptPeerDial(pid))
 	assert.False(t, net.connGater.InterceptAddrDial(pid, maPrivate))
