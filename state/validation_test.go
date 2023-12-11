@@ -128,14 +128,15 @@ func TestBlockValidation(t *testing.T) {
 	assert.False(t, td.state1.lastInfo.BlockHash().IsUndef())
 
 	//
-	// Version   			(OK)
-	// UnixTime				(TestValidateBlockTime)
-	// PrevBlockHash		(OK)
-	// StateRoot			(OK)
-	// TxsRoot			    (BasicCheck)
-	// PrevCertificate   	(OK)
-	// SortitionSeed		(OK)
-	// ProposerAddress		(OK)
+	// Test Coverage
+	//
+	// Version   			: TestBlockValidation
+	// UnixTime				: TestValidateBlockTime
+	// PrevBlockHash		: TestBlockValidation
+	// StateRoot			: TestBlockValidation
+	// PrevCertificate   	: TestBlockValidation
+	// SortitionSeed		: TestBlockValidation
+	// ProposerAddress		: TestBlockValidation
 	//
 	prevCert := td.state1.lastInfo.Certificate()
 	proposerAddr := td.state2.valKeys[0].Address()

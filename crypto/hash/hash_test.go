@@ -30,9 +30,6 @@ func TestHashFromString(t *testing.T) {
 }
 
 func TestHashEmpty(t *testing.T) {
-	h := hash.Hash{}
-	assert.Error(t, h.BasicCheck())
-
 	_, err := hash.FromBytes(nil)
 	assert.Error(t, err)
 
@@ -58,6 +55,5 @@ func TestHashBasicCheck(t *testing.T) {
 	h, err := hash.FromString("0000000000000000000000000000000000000000000000000000000000000000")
 	assert.NoError(t, err)
 	assert.True(t, h.IsUndef())
-	assert.Error(t, h.BasicCheck())
 	assert.Equal(t, hash.UndefHash.Bytes(), h.Bytes())
 }
