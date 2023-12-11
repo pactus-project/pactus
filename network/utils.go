@@ -77,7 +77,7 @@ func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrIn
 		err := h.Connect(lp2pnetwork.WithDialPeerTimeout(ctx, 30*time.Second), addrInfo)
 		if err != nil {
 			if log != nil {
-				log.Warn("connection failed", "addr", addrInfo.Addrs, "err", err)
+				log.Debug("connection failed", "addr", addrInfo.Addrs, "err", err)
 			}
 		} else {
 			if log != nil {

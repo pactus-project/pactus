@@ -159,7 +159,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
 
 		err := sync.network.SendTo(data, to)
 		if err != nil {
-			sync.logger.Warn("error on sending the bundle, closing the connection",
+			sync.logger.Debug("error on sending the bundle, closing the connection",
 				"bundle", bdl, "to", to, "error", err)
 
 			sync.network.CloseConnection(to)
@@ -275,7 +275,7 @@ func (sync *synchronizer) processGossipMessage(msg *network.GossipMessage) {
 	bdl := sync.firewall.OpenGossipBundle(msg.Data, msg.From)
 	err := sync.processIncomingBundle(bdl, msg.From)
 	if err != nil {
-		sync.logger.Warn("error on parsing a Gossip bundle",
+		sync.logger.Debug("error on parsing a Gossip bundle",
 			"from", msg.From, "bundle", bdl, "error", err)
 	}
 }
@@ -286,12 +286,12 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 	bdl := sync.firewall.OpenStreamBundle(msg.Reader, msg.From)
 	if err := msg.Reader.Close(); err != nil {
 		// TODO: write test for me
-		sync.logger.Warn("error on closing stream", "error", err, "source", msg.From)
+		sync.logger.Debug("error on closing stream", "error", err, "source", msg.From)
 		return
 	}
 	err := sync.processIncomingBundle(bdl, msg.From)
 	if err != nil {
-		sync.logger.Warn("error on parsing a Stream bundle",
+		sync.logger.Debug("error on parsing a Stream bundle",
 			"source", msg.From, "bundle", bdl, "error", err)
 	}
 }
