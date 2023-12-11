@@ -69,7 +69,7 @@ perl -i -pe "s/\(#([0-9]+)\)/([#\1](https:\/\/github.com\/pactus-project\/pactus
 6. **Create release PR**
 
 Create a new PR against the base branch.
-We use [GiyhUb CLI](https://github.com/cli/cli/) to create the PR, but you can create it manually.
+We use [GitHub CLI](https://github.com/cli/cli/) to create the PR, but you can create it manually.
 
 ```bash
 git checkout -b releasing_${CUR_VER}
