@@ -13,7 +13,6 @@ import (
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -131,36 +130,30 @@ func SubnetsToFilters(subnets []*net.IPNet, action multiaddr.Action) *multiaddr.
 	return filters
 }
 
-func MakeScalingLimitConfig(minConns, maxConns int) lp2prcmgr.ScalingLimitConfig {
-	limit := lp2prcmgr.DefaultLimits
+func BuildConcreteLimitConfig(maxConns int) lp2prcmgr.ConcreteLimitConfig {
+	changes := lp2prcmgr.PartialLimitConfig{}
 
-	limit.SystemBaseLimit.ConnsOutbound = util.LogScale(maxConns / 2)
-	limit.SystemBaseLimit.ConnsInbound = util.LogScale(maxConns / 2)
-	limit.SystemBaseLimit.Conns = util.LogScale(maxConns)
-	limit.SystemBaseLimit.StreamsOutbound = util.LogScale(maxConns / 2)
-	limit.SystemBaseLimit.StreamsInbound = util.LogScale(maxConns / 2)
-	limit.SystemBaseLimit.Streams = util.LogScale(maxConns)
+	updateResourceLimits := func(limit *lp2prcmgr.ResourceLimits, maxConns, coefficient int) {
+		maxConnVal := lp2prcmgr.LimitVal(maxConns * coefficient)
 
-	limit.ServiceLimitIncrease.ConnsOutbound = util.LogScale(minConns / 2)
-	limit.ServiceLimitIncrease.ConnsInbound = util.LogScale(minConns / 2)
-	limit.ServiceLimitIncrease.Conns = util.LogScale(minConns)
-	limit.ServiceLimitIncrease.StreamsOutbound = util.LogScale(minConns / 2)
-	limit.ServiceLimitIncrease.StreamsInbound = util.LogScale(minConns / 2)
-	limit.ServiceLimitIncrease.Streams = util.LogScale(minConns)
+		limit.ConnsOutbound = maxConnVal / 2
+		limit.ConnsInbound = maxConnVal / 2
+		limit.Conns = maxConnVal
+		limit.StreamsOutbound = maxConnVal * 4
+		limit.StreamsInbound = maxConnVal * 4
+		limit.Streams = maxConnVal * 8
+	}
 
-	limit.TransientBaseLimit.ConnsOutbound = util.LogScale(maxConns / 2)
-	limit.TransientBaseLimit.ConnsInbound = util.LogScale(maxConns / 2)
-	limit.TransientBaseLimit.Conns = util.LogScale(maxConns)
-	limit.TransientBaseLimit.StreamsOutbound = util.LogScale(maxConns / 2)
-	limit.TransientBaseLimit.StreamsInbound = util.LogScale(maxConns / 2)
-	limit.TransientBaseLimit.Streams = util.LogScale(maxConns)
+	updateResourceLimits(&changes.System, maxConns, 1)
+	updateResourceLimits(&changes.ServiceDefault, maxConns, 1)
+	updateResourceLimits(&changes.ProtocolDefault, maxConns, 1)
+	updateResourceLimits(&changes.ProtocolPeerDefault, maxConns, 1)
+	updateResourceLimits(&changes.Transient, maxConns, 1)
 
-	limit.TransientLimitIncrease.ConnsInbound = util.LogScale(minConns / 2)
-	limit.TransientLimitIncrease.Conns = util.LogScale(minConns)
-	limit.TransientLimitIncrease.StreamsInbound = util.LogScale(minConns / 2)
-	limit.TransientLimitIncrease.Streams = util.LogScale(minConns)
+	defaultLimitConfig := lp2prcmgr.DefaultLimits.AutoScale()
+	changedLimitConfig := changes.Build(defaultLimitConfig)
 
-	return limit
+	return changedLimitConfig
 }
 
 func MessageIDFunc(m *lp2pspb.Message) string {
