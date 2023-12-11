@@ -87,6 +87,13 @@ func (lm *LinkedMap[K, V]) TailNode() *ll.Element[Pair[K, V]] {
 	return ln
 }
 
+func (lm *LinkedMap[K, V]) RemoveTail() {
+	tail := lm.list.Tail
+	key := tail.Data.Key
+	lm.list.Delete(tail)
+	delete(lm.hashmap, key)
+}
+
 // HeadNode returns the LinkNode at the beginning (head) of the LinkedMap.
 func (lm *LinkedMap[K, V]) HeadNode() *ll.Element[Pair[K, V]] {
 	ln := lm.list.Head
@@ -94,6 +101,13 @@ func (lm *LinkedMap[K, V]) HeadNode() *ll.Element[Pair[K, V]] {
 		return nil
 	}
 	return ln
+}
+
+func (lm *LinkedMap[K, V]) RemoveHead() {
+	head := lm.list.Head
+	key := head.Data.Key
+	lm.list.Delete(head)
+	delete(lm.hashmap, key)
 }
 
 // Remove removes the key-value pair with the specified key from the LinkedMap.
@@ -135,10 +149,14 @@ func (lm *LinkedMap[K, V]) Clear() {
 
 // prune removes excess elements from the LinkedMap if its size exceeds the capacity.
 func (lm *LinkedMap[K, V]) prune() {
+	if lm.capacity == 0 {
+		return
+	}
+
 	for lm.list.Length() > lm.capacity {
-		front := lm.list.Head
-		key := front.Data.Key
-		lm.list.Delete(front)
+		head := lm.list.Head
+		key := head.Data.Key
+		lm.list.Delete(head)
 		delete(lm.hashmap, key)
 	}
 }

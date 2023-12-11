@@ -27,7 +27,7 @@ func setup(t *testing.T) *testData {
 	conf := &Config{
 		Path: util.TempDirPath(),
 	}
-	s, err := NewStore(conf)
+	s, err := NewStore(conf, 8640, 17)
 	require.NoError(t, err)
 
 	td := &testData{
@@ -111,7 +111,7 @@ func TestIndexingPublicKeys(t *testing.T) {
 	for _, trx := range blk.Transactions() {
 		addr := trx.Payload().Signer()
 		pub, found := td.store.PublicKey(addr)
-		pubKeyLruCache, ok := td.store.pubKeyLruCache.Get(addr)
+		pubKeyLruCache, ok := td.store.pubKeyCache.Get(addr)
 
 		assert.NoError(t, found)
 		assert.True(t, ok)
@@ -126,7 +126,7 @@ func TestIndexingPublicKeys(t *testing.T) {
 
 	randValAddress := td.RandValAddress()
 	pub, found := td.store.PublicKey(randValAddress)
-	pubKeyLruCache, ok := td.store.pubKeyLruCache.Get(randValAddress)
+	pubKeyLruCache, ok := td.store.pubKeyCache.Get(randValAddress)
 
 	assert.Error(t, found)
 	assert.Nil(t, pub)

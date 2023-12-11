@@ -5,11 +5,11 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/edwingeng/deque/v2"
 	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
@@ -65,8 +65,7 @@ type store struct {
 	lk sync.RWMutex
 
 	config         *Config
-	txQueue        *deque.Deque[tx.Tx]
-	pubKeyLruCache *lru.Cache[crypto.Address, *bls.PublicKey]
+	pubKeyCache    *lru.Cache[crypto.Address, *bls.PublicKey]
 	db             *leveldb.DB
 	batch          *leveldb.Batch
 	blockStore     *blockStore
@@ -75,13 +74,13 @@ type store struct {
 	validatorStore *validatorStore
 }
 
-func NewStore(conf *Config) (Store, error) {
+func NewStore(conf *Config, transactionToLiveInterval, sortitionInterval uint32) (Store, error) {
 	options := &opt.Options{
 		Strict:      opt.DefaultStrict,
 		Compression: opt.NoCompression,
 	}
 
-	pubKeyLruCache, err := lru.New[crypto.Address, *bls.PublicKey](pubKeyLruCacheSize)
+	pubKeyCache, err := lru.New[crypto.Address, *bls.PublicKey](pubKeyLruCacheSize)
 	if err != nil {
 		return nil, err
 	}
@@ -93,11 +92,10 @@ func NewStore(conf *Config) (Store, error) {
 	s := &store{
 		config:         conf,
 		db:             db,
-		txQueue:        deque.NewDeque[tx.Tx](),
-		pubKeyLruCache: pubKeyLruCache,
+		pubKeyCache:    pubKeyCache,
 		batch:          new(leveldb.Batch),
-		blockStore:     newBlockStore(db),
-		txStore:        newTxStore(db),
+		blockStore:     newBlockStore(db, sortitionInterval),
+		txStore:        newTxStore(db, transactionToLiveInterval),
 		accountStore:   newAccountStore(db),
 		validatorStore: newValidatorStore(db),
 	}
@@ -116,10 +114,9 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 	defer s.lk.Unlock()
 
 	height := cert.Height()
-	reg := s.blockStore.saveBlock(s.batch, height, blk)
-	for i, trx := range blk.Transactions() {
-		s.txStore.saveTx(s.batch, trx.ID(), &reg[i])
-	}
+	regs := s.blockStore.saveBlock(s.batch, height, blk)
+	s.txStore.saveTxs(s.batch, blk.Transactions(), regs)
+	s.txStore.pruneCache(height)
 
 	// Save last certificate: [version: 4 bytes]+[certificate: variant]
 	w := bytes.NewBuffer(make([]byte, 0, 4+cert.SerializeSize()))
@@ -177,8 +174,15 @@ func (s *store) BlockHash(height uint32) hash.Hash {
 	return hash.UndefHash
 }
 
+func (s *store) SortitionSeed(currentHeight, height uint32) *sortition.VerifiableSeed {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
+	return s.blockStore.sortitionSeed(currentHeight, height)
+}
+
 func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
-	if pubKey, ok := s.pubKeyLruCache.Get(addr); ok {
+	if pubKey, ok := s.pubKeyCache.Get(addr); ok {
 		return pubKey, nil
 	}
 
@@ -191,7 +195,7 @@ func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
 		return nil, err
 	}
 
-	s.pubKeyLruCache.Add(addr, pubKey)
+	s.pubKeyCache.Add(addr, pubKey)
 	return pubKey, err
 }
 

@@ -61,7 +61,8 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	txPool := txpool.NewTxPool(conf.TxPool, messageCh)
 
 	// TODO implement dequeue for recent transaction
-	str, err := store.NewStore(conf.Store)
+	str, err := store.NewStore(conf.Store,
+		genDoc.Params().TransactionToLiveInterval, genDoc.Params().SortitionInterval)
 	if err != nil {
 		return nil, err
 	}

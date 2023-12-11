@@ -3,8 +3,10 @@ package store
 import (
 	"bytes"
 
+	"github.com/eapache/queue/v2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
@@ -22,12 +24,16 @@ func blockHashKey(h hash.Hash) []byte {
 }
 
 type blockStore struct {
-	db *leveldb.DB
+	db                 *leveldb.DB
+	sortitionSeedQueue *queue.Queue[*sortition.VerifiableSeed]
+	sortitionInterval  uint32
 }
 
-func newBlockStore(db *leveldb.DB) *blockStore {
+func newBlockStore(db *leveldb.DB, sortitionInterval uint32) *blockStore {
 	return &blockStore{
-		db: db,
+		db:                 db,
+		sortitionSeedQueue: queue.New[*sortition.VerifiableSeed](),
+		sortitionInterval:  sortitionInterval,
 	}
 }
 
@@ -93,6 +99,13 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.
 	batch.Put(blockKey, w.Bytes())
 	batch.Put(blockHashKey, util.Uint32ToSlice(height))
 
+	sortitionSeed := blk.Header().SortitionSeed()
+
+	bs.sortitionSeedQueue.Add(&sortitionSeed)
+	if bs.sortitionSeedQueue.Length() > int(bs.sortitionInterval) {
+		bs.sortitionSeedQueue.Remove()
+	}
+
 	return regs
 }
 
@@ -111,6 +124,15 @@ func (bs *blockStore) blockHeight(h hash.Hash) uint32 {
 		return 0
 	}
 	return util.SliceToUint32(data)
+}
+
+func (bs *blockStore) sortitionSeed(currentHeight, height uint32) *sortition.VerifiableSeed {
+	index := currentHeight - height
+	if index > bs.sortitionInterval {
+		return nil
+	}
+
+	return bs.sortitionSeedQueue.Get(int(index))
 }
 
 func (bs *blockStore) hasBlock(height uint32) bool {

@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
@@ -63,6 +64,11 @@ func (m *MockStore) BlockHeight(h hash.Hash) uint32 {
 		}
 	}
 	return 0
+}
+
+func (m *MockStore) SortitionSeed(_, _ uint32) *sortition.VerifiableSeed {
+	// TODO implement me
+	panic("implement me")
 }
 
 func (m *MockStore) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {

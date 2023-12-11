@@ -57,7 +57,7 @@ func TestAccountBatchSaving(t *testing.T) {
 
 	t.Run("Close and load db", func(t *testing.T) {
 		td.store.Close()
-		store, _ := NewStore(td.store.config)
+		store, _ := NewStore(td.store.config, 8640, 17)
 		assert.Equal(t, store.TotalAccounts(), total)
 	})
 }
@@ -93,7 +93,7 @@ func TestAccountByAddress(t *testing.T) {
 
 	t.Run("Reopen the store", func(t *testing.T) {
 		td.store.Close()
-		store, _ := NewStore(td.store.config)
+		store, _ := NewStore(td.store.config, 8640, 17)
 
 		acc, err := store.Account(lastAddr)
 		assert.NoError(t, err)

@@ -60,7 +60,14 @@ func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
 	if err != nil {
 		return nil, err
 	}
-	return account.FromBytes(rawData)
+
+	acc, err = account.FromBytes(rawData)
+	if err != nil {
+		return nil, err
+	}
+
+	as.addrCache.Add(addr, acc)
+	return acc, nil
 }
 
 func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool)) {
