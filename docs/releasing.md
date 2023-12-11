@@ -12,9 +12,9 @@ git pull
 
 2. **Updating Windows DLLS**
 
-To ensure that the GUI can find the required dependency DLLs in Windows, we may need to update them.
-You need access to a Windows OS,then Follow these commands in the project's root directory.
-using[MSYS2](https://www.msys2.org/):
+To ensure that the GUI can find the required dependency DLLs in Windows, you may need to update them for the [Windows installer](../.github/releasers/releaser_gui_windows.sh).
+To do this, you'll require access to a Windows OS.
+Follow the steps below within the project's root directory using [MSYS2](https://www.msys2.org/):
 
 ```bash
 git pull
