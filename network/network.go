@@ -161,7 +161,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	}
 
 	if conf.EnableRelay {
-		log.Info("relay enabled", "relay addrs", conf.RelayAddrStrings)
+		log.Info("relay enabled", "addrInfos", conf.RelayAddrInfos())
 		opts = append(opts,
 			lp2p.EnableRelay(),
 			lp2p.EnableAutoRelayWithStaticRelays(conf.RelayAddrInfos()),
