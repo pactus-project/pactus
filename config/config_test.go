@@ -11,7 +11,7 @@ import (
 
 func TestSaveMainnetConfig(t *testing.T) {
 	path := util.TempFilePath()
-	assert.NoError(t, SaveMainnetConfig(path, 7))
+	assert.NoError(t, SaveMainnetConfig(path))
 
 	defConf := DefaultConfigMainnet()
 	conf, err := LoadFromFile(path, true, defConf)
@@ -20,9 +20,10 @@ func TestSaveMainnetConfig(t *testing.T) {
 	assert.NoError(t, conf.BasicCheck())
 }
 
-func TestSaveTestnetConfig(t *testing.T) {
+func TestSaveConfig(t *testing.T) {
 	path := util.TempFilePath()
-	assert.NoError(t, SaveTestnetConfig(path))
+	conf := defaultConfig()
+	assert.NoError(t, conf.Save(path))
 
 	defConf := DefaultConfigTestnet()
 	conf, err := LoadFromFile(path, true, defConf)
@@ -33,13 +34,8 @@ func TestSaveTestnetConfig(t *testing.T) {
 	assert.Equal(t, conf.Network.DefaultPort, 21777)
 }
 
-func TestSaveLocalnetConfig(t *testing.T) {
-	path := util.TempFilePath()
-	assert.NoError(t, SaveLocalnetConfig(path))
-
-	defConf := DefaultConfigLocalnet()
-	conf, err := LoadFromFile(path, true, defConf)
-	assert.NoError(t, err)
+func TestLocalnetConfig(t *testing.T) {
+	conf := DefaultConfigLocalnet()
 
 	assert.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)

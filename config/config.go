@@ -3,9 +3,7 @@ package config
 import (
 	"bytes"
 	_ "embed"
-	"fmt"
 	"os"
-	"strings"
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
@@ -151,21 +149,12 @@ func DefaultConfigLocalnet() *Config {
 	return conf
 }
 
-func SaveMainnetConfig(path string, numValidators int) error {
+func SaveMainnetConfig(path string) error {
 	conf := string(exampleConfigBytes)
-	conf = strings.Replace(conf, "%num_validators%",
-		fmt.Sprintf("%v", numValidators), 1)
-
 	return util.WriteFile(path, []byte(conf))
 }
 
-func SaveTestnetConfig(path string) error {
-	conf := DefaultConfigTestnet()
-	return util.WriteFile(path, conf.toTOML())
-}
-
-func SaveLocalnetConfig(path string) error {
-	conf := DefaultConfigLocalnet()
+func (conf *Config) Save(path string) error {
 	return util.WriteFile(path, conf.toTOML())
 }
 
