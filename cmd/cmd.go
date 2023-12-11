@@ -214,13 +214,10 @@ func PrintJSONObject(obj interface{}) {
 func PactusHomeDir() string {
 	home := ""
 	usr, err := user.Current()
-	if err == nil {
-		// Running as root, probably inside docker
-		if usr.HomeDir == "/root" {
-			home = "/pactus/"
-		} else {
-			home = filepath.Join(usr.HomeDir, "pactus")
-		}
+	if err != nil {
+		PrintWarnMsgf("unable to get current user: %v", err)
+	} else {
+		home = filepath.Join(usr.HomeDir, "pactus")
 	}
 	return home
 }
