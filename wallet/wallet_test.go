@@ -182,16 +182,25 @@ func TestInvalidAddress(t *testing.T) {
 	assert.Error(t, err)
 }
 
-// TODO: Fix later.
-// func TestImportPrivateKey(t *testing.T) {
-// 	td := setup(t)
+func TestImportPrivateKey(t *testing.T) {
+	td := setup(t)
 
-// 	_, prv := td.RandBLSKeyPair()
-// 	assert.NoError(t, td.wallet.ImportPrivateKey(td.password, prv))
+	_, prv := td.RandBLSKeyPair()
+	assert.NoError(t, td.wallet.ImportPrivateKey(td.password, prv))
 
-// 	addr := prv.PublicKeyNative().AccountAddress().String()
-// 	assert.True(t, td.wallet.Contains(addr))
-// }
+	pub := prv.PublicKeyNative()
+	accAddr := pub.AccountAddress().String()
+	valAddr := pub.AccountAddress().String()
+
+	assert.True(t, td.wallet.Contains(accAddr))
+	assert.True(t, td.wallet.Contains(valAddr))
+
+	accAddrInfo := td.wallet.AddressInfo(accAddr)
+	valAddrInfo := td.wallet.AddressInfo(accAddr)
+
+	assert.Equal(t, pub.String(), accAddrInfo.PublicKey)
+	assert.Equal(t, pub.String(), valAddrInfo.PublicKey)
+}
 
 func TestKeyInfo(t *testing.T) {
 	td := setup(t)
