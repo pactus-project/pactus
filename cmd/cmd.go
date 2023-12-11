@@ -289,20 +289,23 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	case genesis.Mainnet:
 		panic("not yet!")
 	case genesis.Testnet:
-		if err := genesis.TestnetGenesis().SaveToFile(genPath); err != nil {
+		genDoc := genesis.TestnetGenesis()
+		if err := genDoc.SaveToFile(genPath); err != nil {
 			return nil, nil, err
 		}
-
-		if err := config.SaveTestnetConfig(confPath); err != nil {
+		conf := config.DefaultConfigTestnet()
+		if err := conf.Save(confPath); err != nil {
 			return nil, nil, err
 		}
 
 	case genesis.Localnet:
-		if err := makeLocalGenesis(*walletInstance).SaveToFile(genPath); err != nil {
+		genDoc := makeLocalGenesis(*walletInstance)
+		if err := genDoc.SaveToFile(genPath); err != nil {
 			return nil, nil, err
 		}
 
-		if err := config.SaveLocalnetConfig(confPath); err != nil {
+		conf := config.DefaultConfigLocalnet()
+		if err := conf.Save(confPath); err != nil {
 			return nil, nil, err
 		}
 	}
@@ -457,37 +460,45 @@ func tryLoadConfig(chainType genesis.ChainType, confPath string) (*config.Config
 	conf, err := config.LoadFromFile(confPath, true, defConf)
 	if err != nil {
 		PrintWarnMsgf("Unable to load the config: %s", err)
-		PrintInfoMsgf("Attempting to restore the config to the default values...")
+		PrintInfoMsgf("Attempting to update or restore the config file...")
 
+		// Try to attempt to load config in non-strict mode
+		conf, err = config.LoadFromFile(confPath, false, defConf)
+
+		// Create a backup of the config
 		if util.PathExists(confPath) {
-			// Let's create a backup of the config
 			confBackupPath := fmt.Sprintf("%v_bak_%s", confPath, time.Now().Format("2006-01-02T15:04:05"))
-			err = os.Rename(confPath, confBackupPath)
-			if err != nil {
-				return nil, err
+			renameErr := os.Rename(confPath, confBackupPath)
+			if renameErr != nil {
+				return nil, renameErr
 			}
 		}
 
-		// Now, attempt to restore the config file with the number of validators from the old config.
-		switch chainType {
-		case genesis.Mainnet:
-			panic("not yet implemented!")
-
-		case genesis.Testnet:
-			err = config.SaveTestnetConfig(confPath)
+		if err == nil {
+			err := conf.Save(confPath)
 			if err != nil {
 				return nil, err
 			}
+			PrintSuccessMsgf("Config updated.")
+		} else {
+			switch chainType {
+			case genesis.Mainnet:
+				err = config.SaveMainnetConfig(confPath)
+				if err != nil {
+					return nil, err
+				}
 
-		case genesis.Localnet:
-			err = config.SaveLocalnetConfig(confPath)
-			if err != nil {
-				return nil, err
+			case genesis.Testnet,
+				genesis.Localnet:
+				err = defConf.Save(confPath)
+				if err != nil {
+					return nil, err
+				}
 			}
+
+			PrintSuccessMsgf("Config restored to the default values")
+			conf, _ = config.LoadFromFile(confPath, true, defConf) // This time it should be OK
 		}
-
-		PrintSuccessMsgf("Config restored to the default values")
-		conf, _ = config.LoadFromFile(confPath, true, defConf) // This time it should be OK
 	}
 
 	return conf, nil
