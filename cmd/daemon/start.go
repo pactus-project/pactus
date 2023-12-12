@@ -105,7 +105,7 @@ func isAlreadyRunning(pidFile string) bool {
 
 // pidExists checks if a given PID is currently active.
 func pidExists(pid int) bool {
-	if pid < 0 {
+	if pid <= 0 {
 		return false
 	}
 
