@@ -482,7 +482,7 @@ func tryLoadConfig(chainType genesis.ChainType, confPath string) (*config.Config
 
 		// Create a backup of the config
 		if util.PathExists(confPath) {
-			confBackupPath := fmt.Sprintf("%v_bak_%s", confPath, time.Now().Format("2006-01-02T15:04:05"))
+			confBackupPath := fmt.Sprintf("%v_bak_%s", confPath, time.Now().Format("2006-01-02T15-04-05"))
 			renameErr := os.Rename(confPath, confBackupPath)
 			if renameErr != nil {
 				return nil, renameErr

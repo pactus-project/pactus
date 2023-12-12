@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.18.0](https://github.com/pactus-project/pactus/compare/v0.17.0...v0.18.0) (2023-12-11)
+
+### Feat
+
+- implement pip-14 ([#841](https://github.com/pactus-project/pactus/pull/841))
+- sort wallet addresses ([#836](https://github.com/pactus-project/pactus/pull/836))
+- **grpc**: endpoints for creating raw transaction ([#838](https://github.com/pactus-project/pactus/pull/838))
+- network reachability API ([#834](https://github.com/pactus-project/pactus/pull/834))
+- implement pip-13 ([#835](https://github.com/pactus-project/pactus/pull/835))
+- subscribing to libp2p eventbus ([#831](https://github.com/pactus-project/pactus/pull/831))
+- implement helper methods for wallet address path ([#830](https://github.com/pactus-project/pactus/pull/830))
+- **logger**: adding rotate log file after days, compress and max backups for logger config ([#822](https://github.com/pactus-project/pactus/pull/822))
+- enable bandwidth router metric ([#819](https://github.com/pactus-project/pactus/pull/819))
+
+### Fix
+
+- **network**: refining the connection limit ([#849](https://github.com/pactus-project/pactus/pull/849))
+- corrected mistake when retrieving the reward address ([#848](https://github.com/pactus-project/pactus/pull/848))
+- **config**: restore default config when it is deleted ([#847](https://github.com/pactus-project/pactus/pull/847))
+- **cmd**: changing home directory for root users ([#846](https://github.com/pactus-project/pactus/pull/846))
+- removing BasicCheck for hash ([#845](https://github.com/pactus-project/pactus/pull/845))
+- disabling libp2p ping protocol ([#844](https://github.com/pactus-project/pactus/pull/844))
+- build docker file ([#839](https://github.com/pactus-project/pactus/pull/839))
+- **sync**: ignore publishing a block if it is received before ([#829](https://github.com/pactus-project/pactus/pull/829))
+- **network**: subscribing to the Libp2p event bus ([#828](https://github.com/pactus-project/pactus/pull/828))
+- **sync**: ignore block request if blocks are already inside the cache ([#817](https://github.com/pactus-project/pactus/pull/817))
+
 ## [0.17.0](https://github.com/pactus-project/pactus/compare/v0.16.0...v0.17.0) (2023-11-12)
 
 ### Feat

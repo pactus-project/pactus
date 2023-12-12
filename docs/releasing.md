@@ -12,8 +12,9 @@ git pull
 
 2. **Updating Windows DLLS**
 
-To ensure that the GUI can find the required dependency DLLs in Windows, we may need to update them.
-Follow these commands in the project's root directory, using[MSYS2](https://www.msys2.org/):
+To ensure that the GUI can find the required dependency DLLs in Windows, you may need to update them for the [Windows installer](../.github/releasers/releaser_gui_windows.sh).
+To do this, you'll require access to a Windows OS.
+Follow the steps below within the project's root directory using [MSYS2](https://www.msys2.org/):
 
 ```bash
 git pull
@@ -45,7 +46,7 @@ Keep your terminal open.
 4. **Update the version**
 
 Remove `beta` from the `meta` field in [version.go](../version/version.go).
-Also, double-check the config files to ensure they are up to date.
+Also, double-check the [config.go](../config/config.go) files to ensure they are up-to-date.
 
 5. **Update Changelog**
 
@@ -56,18 +57,19 @@ Run the following command:
 cz changelog --incremental --unreleased-version ${TAG_NAME}
 ```
 
-Sometimes you may need to amend the changelog manually.
-Then, add links to the CHANGELOG:
+Sometimes you may need to amend the [CHANGELOG](../CHANGELOG.md) manually.
+
+Now, add links to the CHANGELOG:
 
 ```bash
-sed -E -i "s/## v${CUR_VER} /## [${CUR_VER}](https:\/\/github.com\/pactus-project\/pactus\/compare\/v${PRV_VER}...v${CUR_VER}) /g" CHANGELOG.md
-sed -E -i 's/\(#([0-9]+)\)/([#\1](https:\/\/github.com\/pactus-project\/pactus\/pull\/\1))/g' CHANGELOG.md
+perl -i -pe "s/## v${CUR_VER} /## [${CUR_VER}](https:\/\/github.com\/pactus-project\/pactus\/compare\/v${PRV_VER}...v${CUR_VER}) /g" CHANGELOG.md
+perl -i -pe "s/\(#([0-9]+)\)/([#\1](https:\/\/github.com\/pactus-project\/pactus\/pull\/\1))/g" CHANGELOG.md
 ```
 
 6. **Create release PR**
 
 Create a new PR against the base branch.
-We use [GiyhUb CLI](https://github.com/cli/cli/) to create the PR, but you can create it manually.
+We use [GitHub CLI](https://github.com/cli/cli/) to create the PR, but you can create it manually.
 
 ```bash
 git checkout -b releasing_${CUR_VER}
