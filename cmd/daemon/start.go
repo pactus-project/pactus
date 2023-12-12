@@ -4,6 +4,7 @@ import (
 	"net/http"
 	_ "net/http/pprof" // #nosec
 	"os"
+	"os/exec"
 	"path/filepath"
 	"time"
 
@@ -34,6 +35,13 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		err := os.Chdir(workingDir)
 		cmd.FatalErrorCheck(err)
 
+		pidFile := filepath.Join(workingDir, ".pactus.pid")
+		// Check for already running instance
+		if isAlreadyRunning(pidFile) {
+			fmt.Println("An instance of Pactus is already running. Please stop it before starting a new one.")
+			return
+		}
+
 		if *pprofOpt != "" {
 			cmd.PrintWarnMsgf("Starting Debug pprof server on: http://%s/debug/pprof/", *pprofOpt)
 			server := &http.Server{
@@ -63,7 +71,12 @@ func buildStartCmd(parentCmd *cobra.Command) {
 			workingDir, passwordFetcher)
 		cmd.FatalErrorCheck(err)
 
+		// Write current PID to the file
+		err := ioutil.WriteFile(pidFile, []byte(fmt.Sprintf("%d", os.Getpid())), 0666)
+		cmd.FatalErrorCheck(err)
+
 		cmd.TrapSignal(func() {
+			os.Remove(pidFilePath)
 			node.Stop()
 			cmd.PrintInfoMsgf("Exiting ...")
 		})
@@ -71,4 +84,36 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		// run forever (the node will not be returned)
 		select {}
 	}
+}
+
+// isAlreadyRunning checks if an instance of the application is already running
+func isAlreadyRunning(pidFile string) bool {
+    if data, err := ioutil.ReadFile(pidFile); err == nil {
+        pid, err := strconv.Atoi(string(data))
+        if err == nil && pidExists(pid) {
+            return true // PID found and process is running
+        }
+    }
+    return false
+}
+
+// pidExists checks if a given PID is currently active.
+func pidExists(pid int) bool {
+	if runtime.GOOS == "windows" {
+        cmd := exec.Command("tasklist", "/FI", "PID eq "+strconv.Itoa(pid))
+		var out bytes.Buffer
+		cmd.Stdout = &out
+		err := cmd.Run()
+		if err != nil {
+			return false
+		}
+		return strings.Contains(out.String(), strconv.Itoa(pid))
+    }
+
+    process, err := os.FindProcess(pid)
+    if err != nil {
+        return false
+    }
+    // On Unix systems, FindProcess always succeeds and the call to Signal does not kill the process
+    return process.Signal(syscall.Signal(0)) == nil
 }
