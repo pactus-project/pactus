@@ -78,7 +78,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		// Write current PID to the file
-		err = os.WriteFile(pidFile, []byte(fmt.Sprintf("%d", os.Getpid())), 0o666)
+		err = os.WriteFile(pidFile, []byte(fmt.Sprintf("%d", os.Getpid())), 0o600)
 		cmd.FatalErrorCheck(err)
 
 		cmd.TrapSignal(func() {
@@ -105,8 +105,13 @@ func isAlreadyRunning(pidFile string) bool {
 
 // pidExists checks if a given PID is currently active.
 func pidExists(pid int) bool {
+	if pid < 0 {
+		return false
+	}
+
 	if runtime.GOOS == "windows" {
-		windowsCmd := exec.Command("tasklist", "/FI", "PID eq "+strconv.Itoa(pid))
+		pidStr := strconv.Itoa(pid)
+		windowsCmd := exec.Command("tasklist", "/FI", "PID eq "+pidStr)
 		var out bytes.Buffer
 		windowsCmd.Stdout = &out
 		err := windowsCmd.Run()
