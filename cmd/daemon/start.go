@@ -1,11 +1,17 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
 	"net/http"
 	_ "net/http/pprof" // #nosec
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
+	"strconv"
+	"strings"
+	"syscall"
 	"time"
 
 	"github.com/pactus-project/pactus/cmd"
@@ -72,11 +78,11 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		// Write current PID to the file
-		err := ioutil.WriteFile(pidFile, []byte(fmt.Sprintf("%d", os.Getpid())), 0666)
+		err = os.WriteFile(pidFile, []byte(fmt.Sprintf("%d", os.Getpid())), 0666)
 		cmd.FatalErrorCheck(err)
 
 		cmd.TrapSignal(func() {
-			os.Remove(pidFilePath)
+			os.Remove(pidFile)
 			node.Stop()
 			cmd.PrintInfoMsgf("Exiting ...")
 		})
@@ -88,19 +94,19 @@ func buildStartCmd(parentCmd *cobra.Command) {
 
 // isAlreadyRunning checks if an instance of the application is already running
 func isAlreadyRunning(pidFile string) bool {
-    if data, err := ioutil.ReadFile(pidFile); err == nil {
-        pid, err := strconv.Atoi(string(data))
-        if err == nil && pidExists(pid) {
-            return true // PID found and process is running
-        }
-    }
-    return false
+	if data, err := os.ReadFile(pidFile); err == nil {
+		pid, err := strconv.Atoi(string(data))
+		if err == nil && pidExists(pid) {
+			return true // PID found and process is running
+		}
+	}
+	return false
 }
 
 // pidExists checks if a given PID is currently active.
 func pidExists(pid int) bool {
 	if runtime.GOOS == "windows" {
-        cmd := exec.Command("tasklist", "/FI", "PID eq "+strconv.Itoa(pid))
+		cmd := exec.Command("tasklist", "/FI", "PID eq "+strconv.Itoa(pid))
 		var out bytes.Buffer
 		cmd.Stdout = &out
 		err := cmd.Run()
@@ -108,12 +114,12 @@ func pidExists(pid int) bool {
 			return false
 		}
 		return strings.Contains(out.String(), strconv.Itoa(pid))
-    }
+	}
 
-    process, err := os.FindProcess(pid)
-    if err != nil {
-        return false
-    }
-    // On Unix systems, FindProcess always succeeds and the call to Signal does not kill the process
-    return process.Signal(syscall.Signal(0)) == nil
+	process, err := os.FindProcess(pid)
+	if err != nil {
+		return false
+	}
+	// On Unix systems, FindProcess always succeeds and the call to Signal does not kill the process
+	return process.Signal(syscall.Signal(0)) == nil
 }
