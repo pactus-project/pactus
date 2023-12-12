@@ -78,7 +78,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		// Write current PID to the file
-		err = os.WriteFile(pidFile, []byte(fmt.Sprintf("%d", os.Getpid())), 0666)
+		err = os.WriteFile(pidFile, []byte(fmt.Sprintf("%d", os.Getpid())), 0o666)
 		cmd.FatalErrorCheck(err)
 
 		cmd.TrapSignal(func() {
@@ -92,7 +92,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 	}
 }
 
-// isAlreadyRunning checks if an instance of the application is already running
+// isAlreadyRunning checks if an instance of the application is already running.
 func isAlreadyRunning(pidFile string) bool {
 	if data, err := os.ReadFile(pidFile); err == nil {
 		pid, err := strconv.Atoi(string(data))
@@ -106,10 +106,10 @@ func isAlreadyRunning(pidFile string) bool {
 // pidExists checks if a given PID is currently active.
 func pidExists(pid int) bool {
 	if runtime.GOOS == "windows" {
-		cmd := exec.Command("tasklist", "/FI", "PID eq "+strconv.Itoa(pid))
+		windowsCmd := exec.Command("tasklist", "/FI", "PID eq "+strconv.Itoa(pid))
 		var out bytes.Buffer
-		cmd.Stdout = &out
-		err := cmd.Run()
+		windowsCmd.Stdout = &out
+		err := windowsCmd.Run()
 		if err != nil {
 			return false
 		}
