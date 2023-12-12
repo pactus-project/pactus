@@ -111,7 +111,7 @@ func pidExists(pid int) bool {
 
 	if runtime.GOOS == "windows" {
 		pidStr := strconv.Itoa(pid)
-		windowsCmd := exec.Command("tasklist", "/FI", "PID eq", pidStr)
+		windowsCmd := exec.Command("tasklist", "/FI", "PID eq "+pidStr) // #nosec G204
 		var out bytes.Buffer
 		windowsCmd.Stdout = &out
 		err := windowsCmd.Run()
