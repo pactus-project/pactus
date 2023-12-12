@@ -19,7 +19,7 @@ type ShortStringer interface {
 
 var (
 	LogFilename = "pactus.log"
-	MaxLogSize  = 1 // 10MB to rotate a log file
+	MaxLogSize  = 10 // 10MB to rotate a log file
 )
 
 var globalInst *logger
