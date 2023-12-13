@@ -109,8 +109,8 @@ Pushing the tag will automatically create a release tag and build the binaries.
 9. **Bumping version**
 
 Update the version inside the [version.go](../version/version.go) and add `beta` to the `meta` field.
-Update [patching](./patching.md) docuemnt.
-If this is a majore release, update the version inside this document in step 3.
+Update [patching](./patching.md) document.
+If this is a major release, update the version inside this document in step 3.
 
 Create a new PR against base branch:
 
