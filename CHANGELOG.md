@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.18.1](https://github.com/pactus-project/pactus/compare/v0.18.0...v0.18.1) (2023-12-13)
+
+### Fix
+
+- fixing logger issue on rotating log file ([#859](https://github.com/pactus-project/pactus/pull/859))
+
 ## [0.18.0](https://github.com/pactus-project/pactus/compare/v0.17.0...v0.18.0) (2023-12-11)
 
 ### Feat
