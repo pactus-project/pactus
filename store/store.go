@@ -206,8 +206,8 @@ func (s *store) BlockHash(height uint32) hash.Hash {
 }
 
 func (s *store) SortitionSeed(currentHeight, height uint32) *sortition.VerifiableSeed {
-	s.lk.RLock()
-	defer s.lk.RUnlock()
+	s.lk.Lock()
+	defer s.lk.Unlock()
 
 	return s.blockStore.sortitionSeed(currentHeight, height)
 }

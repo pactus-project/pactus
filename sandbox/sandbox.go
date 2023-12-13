@@ -281,6 +281,9 @@ func (sb *sandbox) VerifyProof(blockHeight uint32, proof sortition.Proof, val *v
 	defer sb.lk.RUnlock()
 
 	seed := sb.store.SortitionSeed(blockHeight, sb.height+1)
+	if seed == nil {
+		return false
+	}
 	return sortition.VerifyProof(*seed, proof, val.PublicKey(), sb.totalPower, val.Power())
 }
 
