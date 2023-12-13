@@ -45,7 +45,7 @@ func (ts *txStore) saveTxs(batch *leveldb.Batch, txs block.Txs, regs []blockRegi
 		id := trx.ID()
 		txKey := txKey(id)
 		batch.Put(txKey, w.Bytes())
-		ts.txCache.PushBack(id, reg.height)
+		ts.saveToCache(id, reg.height)
 	}
 }
 
@@ -77,4 +77,8 @@ func (ts *txStore) tx(id tx.ID) (*blockRegion, error) {
 		return nil, err
 	}
 	return reg, nil
+}
+
+func (ts *txStore) saveToCache(id tx.ID, height uint32) {
+	ts.txCache.PushBack(id, height)
 }

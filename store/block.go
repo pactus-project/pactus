@@ -100,11 +100,7 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.
 	batch.Put(blockHashKey, util.Uint32ToSlice(height))
 
 	sortitionSeed := blk.Header().SortitionSeed()
-
-	bs.sortitionSeedQueue.Add(&sortitionSeed)
-	if bs.sortitionSeedQueue.Length() > int(bs.sortitionInterval) {
-		bs.sortitionSeedQueue.Remove()
-	}
+	bs.saveToCache(sortitionSeed)
 
 	return regs
 }
@@ -141,4 +137,11 @@ func (bs *blockStore) hasBlock(height uint32) bool {
 
 func (bs *blockStore) hasPublicKey(addr crypto.Address) bool {
 	return tryHas(bs.db, publicKeyKey(addr))
+}
+
+func (bs *blockStore) saveToCache(sortitionSeed sortition.VerifiableSeed) {
+	bs.sortitionSeedQueue.Add(&sortitionSeed)
+	if bs.sortitionSeedQueue.Length() > int(bs.sortitionInterval) {
+		bs.sortitionSeedQueue.Remove()
+	}
 }

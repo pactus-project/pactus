@@ -99,6 +99,37 @@ func NewStore(conf *Config, transactionToLiveInterval, sortitionInterval uint32)
 		accountStore:   newAccountStore(db),
 		validatorStore: newValidatorStore(db),
 	}
+
+	lc := s.LastCertificate()
+	if lc == nil {
+		return s, nil
+	}
+
+	currentHeight := lc.Height()
+	startHeight := uint32(1)
+	if currentHeight > transactionToLiveInterval {
+		startHeight = currentHeight - transactionToLiveInterval
+	}
+
+	for i := startHeight; i < currentHeight; i++ {
+		committedBlock, err := s.Block(i)
+		if err != nil {
+			return nil, err
+		}
+		blk, err := committedBlock.ToBlock()
+		if err != nil {
+			return nil, err
+		}
+
+		txs := blk.Transactions()
+		for _, transaction := range txs {
+			s.txStore.saveToCache(transaction.ID(), i)
+		}
+
+		sortitionSeed := blk.Header().SortitionSeed()
+		s.blockStore.saveToCache(sortitionSeed)
+	}
+
 	return s, nil
 }
 
