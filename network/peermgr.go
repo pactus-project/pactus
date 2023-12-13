@@ -70,7 +70,10 @@ func (mgr *peerMgr) Start() {
 
 // Stop stops the Bootstrap.
 func (mgr *peerMgr) Stop() {
-	// TODO: complete me
+	mgr.logger.Info("stopping peer manager")
+	if err := mgr.host.Close(); err != nil {
+		mgr.logger.Error("unable to close the host", "error", err)
+	}
 }
 
 func (mgr *peerMgr) NumOfConnected() int {
