@@ -5,8 +5,10 @@ Please follow the instructions below:
 
 1. **Get the latest code**
 
+Make sure the origin remote is referring to the Pactus repository, not your fork.
+
 ```bash
-git checkout main
+git checkout origin/main
 git pull
 ```
 
@@ -93,7 +95,7 @@ git tag -s -a $TAG_NAME -m $TAG_MSG
 check the tag info:
 
 ```bash
-git show $TAG_NAME
+git show ${TAG_NAME}
 ```
 
 8. **Push the tag**
@@ -101,7 +103,7 @@ git show $TAG_NAME
 Now you can push the tag to the repository:
 
 ```bash
-git push origin $TAG_NAME
+git push origin ${TAG_NAME}
 ```
 
 Pushing the tag will automatically create a release tag and build the binaries.
