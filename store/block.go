@@ -3,13 +3,13 @@ package store
 import (
 	"bytes"
 
-	"github.com/eapache/queue/v2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
+	"github.com/pactus-project/pactus/util/linkedlist"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/syndtr/goleveldb/leveldb"
 )
@@ -25,14 +25,14 @@ func blockHashKey(h hash.Hash) []byte {
 
 type blockStore struct {
 	db                 *leveldb.DB
-	sortitionSeedQueue *queue.Queue[*sortition.VerifiableSeed]
+	sortitionSeedCache *linkedlist.LinkedList[*sortition.VerifiableSeed]
 	sortitionInterval  uint32
 }
 
 func newBlockStore(db *leveldb.DB, sortitionInterval uint32) *blockStore {
 	return &blockStore{
 		db:                 db,
-		sortitionSeedQueue: queue.New[*sortition.VerifiableSeed](),
+		sortitionSeedCache: linkedlist.New[*sortition.VerifiableSeed](),
 		sortitionInterval:  sortitionInterval,
 	}
 }
@@ -122,13 +122,14 @@ func (bs *blockStore) blockHeight(h hash.Hash) uint32 {
 	return util.SliceToUint32(data)
 }
 
-func (bs *blockStore) sortitionSeed(currentHeight, height uint32) *sortition.VerifiableSeed {
-	index := currentHeight - height
+func (bs *blockStore) sortitionSeed(blockHeight, currentHeight uint32) *sortition.VerifiableSeed {
+	index := currentHeight - blockHeight
 	if index > bs.sortitionInterval {
 		return nil
 	}
 
-	return bs.sortitionSeedQueue.Get(int(index))
+	index = uint32(bs.sortitionSeedCache.Length()) - index
+	return bs.sortitionSeedCache.Get(int(index))
 }
 
 func (bs *blockStore) hasBlock(height uint32) bool {
@@ -140,8 +141,8 @@ func (bs *blockStore) hasPublicKey(addr crypto.Address) bool {
 }
 
 func (bs *blockStore) saveToCache(sortitionSeed sortition.VerifiableSeed) {
-	bs.sortitionSeedQueue.Add(&sortitionSeed)
-	if bs.sortitionSeedQueue.Length() > int(bs.sortitionInterval) {
-		bs.sortitionSeedQueue.Remove()
+	bs.sortitionSeedCache.InsertAtTail(&sortitionSeed)
+	if bs.sortitionSeedCache.Length() > int(bs.sortitionInterval) {
+		bs.sortitionSeedCache.DeleteAtHead()
 	}
 }

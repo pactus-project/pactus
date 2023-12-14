@@ -111,7 +111,7 @@ func NewStore(conf *Config, transactionToLiveInterval, sortitionInterval uint32)
 		startHeight = currentHeight - transactionToLiveInterval
 	}
 
-	for i := startHeight; i < currentHeight; i++ {
+	for i := startHeight; i < currentHeight+1; i++ {
 		committedBlock, err := s.Block(i)
 		if err != nil {
 			return nil, err
@@ -205,11 +205,11 @@ func (s *store) BlockHash(height uint32) hash.Hash {
 	return hash.UndefHash
 }
 
-func (s *store) SortitionSeed(currentHeight, height uint32) *sortition.VerifiableSeed {
+func (s *store) SortitionSeed(blockHeight, currentHeight uint32) *sortition.VerifiableSeed {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.blockStore.sortitionSeed(currentHeight, height)
+	return s.blockStore.sortitionSeed(blockHeight, currentHeight)
 }
 
 func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
