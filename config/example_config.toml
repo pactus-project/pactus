@@ -36,13 +36,9 @@
   # These addresses are used by the Pactus node to discover and connect to other peers on the network.
  ## bootstrap_addrs = []
 
-  # `min_connections` is the minimum number of connections that the Pactus node should maintain.
-  # Default is `16`.
- ## min_connections = 16
-
-  # `max_connections` is the maximum number of connections that the Pactus node should maintain.
-  # Default is `32`.
- ## max_connections = 32
+  # `max_connections` is the maximum number of connections that the Pactus node maintains.
+  # Default is `64`.
+ ## max_connections = 64
 
   # `enable_nat_service` provides a service to other peer for determining their reachability status.
   # Default is `false`.
@@ -137,14 +133,14 @@
   # Available log levels are:
   #   "trace", "debug", "info", "warn", and "error".
   [logger.levels]
-   ## _consensus = "info"
+   ## _consensus = "warn"
    ## _grpc = "error"
    ## _http = "error"
-   ## _network = "info"
+   ## _network = "error"
    ## _nonomsg = "error"
    ## _pool = "error"
    ## _state = "info"
-   ## _sync = "warn"
+   ## _sync = "error"
    ## default = "info"
 
 # `grpc` contains configuration of the gRRC module.

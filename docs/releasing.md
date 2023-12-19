@@ -5,15 +5,18 @@ Please follow the instructions below:
 
 1. **Get the latest code**
 
+Make sure the origin remote is referring to the Pactus repository, not your fork.
+
 ```bash
-git checkout main
+git checkout origin/main
 git pull
 ```
 
 2. **Updating Windows DLLS**
 
-To ensure that the GUI can find the required dependency DLLs in Windows, we may need to update them.
-Follow these commands in the project's root directory, using[MSYS2](https://www.msys2.org/):
+To ensure that the GUI can find the required dependency DLLs in Windows, you may need to update them for the [Windows installer](../.github/releasers/releaser_gui_windows.sh).
+To do this, you'll require access to a Windows OS.
+Follow the steps below within the project's root directory using [MSYS2](https://www.msys2.org/):
 
 ```bash
 git pull
@@ -31,9 +34,9 @@ Let's create environment variables for the release version.
 For the rest of this document, we will use these environment variables in the commands.
 
 ```bash
-PRV_VER="0.17.0"
-CUR_VER="0.18.0"
-NEXT_VER="0.19.0"
+PRV_VER="0.18.0"
+CUR_VER="0.19.0"
+NEXT_VER="0.20.0"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 BASE_BRANCH="main"
@@ -45,7 +48,7 @@ Keep your terminal open.
 4. **Update the version**
 
 Remove `beta` from the `meta` field in [version.go](../version/version.go).
-Also, double-check the config files to ensure they are up to date.
+Also, double-check the [config.go](../config/config.go) files to ensure they are up-to-date.
 
 5. **Update Changelog**
 
@@ -56,18 +59,19 @@ Run the following command:
 cz changelog --incremental --unreleased-version ${TAG_NAME}
 ```
 
-Sometimes you may need to amend the changelog manually.
-Then, add links to the CHANGELOG:
+Sometimes you may need to amend the [CHANGELOG](../CHANGELOG.md) manually.
+
+Now, add links to the CHANGELOG:
 
 ```bash
-sed -E -i "s/## v${CUR_VER} /## [${CUR_VER}](https:\/\/github.com\/pactus-project\/pactus\/compare\/v${PRV_VER}...v${CUR_VER}) /g" CHANGELOG.md
-sed -E -i 's/\(#([0-9]+)\)/([#\1](https:\/\/github.com\/pactus-project\/pactus\/pull\/\1))/g' CHANGELOG.md
+perl -i -pe "s/## v${CUR_VER} /## [${CUR_VER}](https:\/\/github.com\/pactus-project\/pactus\/compare\/v${PRV_VER}...v${CUR_VER}) /g" CHANGELOG.md
+perl -i -pe "s/\(#([0-9]+)\)/([#\1](https:\/\/github.com\/pactus-project\/pactus\/pull\/\1))/g" CHANGELOG.md
 ```
 
 6. **Create release PR**
 
 Create a new PR against the base branch.
-We use [GiyhUb CLI](https://github.com/cli/cli/) to create the PR, but you can create it manually.
+We use [GitHub CLI](https://github.com/cli/cli/) to create the PR, but you can create it manually.
 
 ```bash
 git checkout -b releasing_${CUR_VER}
@@ -80,7 +84,7 @@ Wait for the PR to be approved and merged into the base branch.
 
 7. **Tagging**
 
-Create a git tag:
+Create a Git tag and sign it using your [GPG key](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification) with the following commands:
 
 ```bash
 git checkout ${BASE_BRANCH}
@@ -91,7 +95,7 @@ git tag -s -a $TAG_NAME -m $TAG_MSG
 check the tag info:
 
 ```bash
-git show $TAG_NAME
+git show ${TAG_NAME}
 ```
 
 8. **Push the tag**
@@ -99,7 +103,7 @@ git show $TAG_NAME
 Now you can push the tag to the repository:
 
 ```bash
-git push origin $TAG_NAME
+git push origin ${TAG_NAME}
 ```
 
 Pushing the tag will automatically create a release tag and build the binaries.
@@ -107,8 +111,8 @@ Pushing the tag will automatically create a release tag and build the binaries.
 9. **Bumping version**
 
 Update the version inside the [version.go](../version/version.go) and add `beta` to the `meta` field.
-Update [patching](./patching.md) docuemnt.
-If this is a majore release, update the version inside this document in step 3.
+Update [patching](./patching.md) document.
+If this is a major release, update the version inside this document in step 3.
 
 Create a new PR against base branch:
 

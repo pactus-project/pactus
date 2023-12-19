@@ -3,9 +3,7 @@ package config
 import (
 	"bytes"
 	_ "embed"
-	"fmt"
 	"os"
-	"strings"
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
@@ -109,8 +107,7 @@ func DefaultConfigTestnet() *Config {
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/188.121.102.178/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
-	conf.Network.MinConns = 16
-	conf.Network.MaxConns = 32
+	conf.Network.MaxConns = 64
 	conf.Network.EnableNATService = false
 	conf.Network.EnableUPnP = false
 	conf.Network.EnableRelay = true
@@ -135,7 +132,6 @@ func DefaultConfigLocalnet() *Config {
 	conf.Network.EnableNATService = false
 	conf.Network.EnableUPnP = false
 	conf.Network.BootstrapAddrStrings = []string{}
-	conf.Network.MinConns = 0
 	conf.Network.MaxConns = 0
 	conf.Network.NetworkName = "pactus-localnet"
 	conf.Network.DefaultPort = 21666
@@ -151,21 +147,12 @@ func DefaultConfigLocalnet() *Config {
 	return conf
 }
 
-func SaveMainnetConfig(path string, numValidators int) error {
+func SaveMainnetConfig(path string) error {
 	conf := string(exampleConfigBytes)
-	conf = strings.Replace(conf, "%num_validators%",
-		fmt.Sprintf("%v", numValidators), 1)
-
 	return util.WriteFile(path, []byte(conf))
 }
 
-func SaveTestnetConfig(path string) error {
-	conf := DefaultConfigTestnet()
-	return util.WriteFile(path, conf.toTOML())
-}
-
-func SaveLocalnetConfig(path string) error {
-	conf := DefaultConfigLocalnet()
+func (conf *Config) Save(path string) error {
 	return util.WriteFile(path, conf.toTOML())
 }
 

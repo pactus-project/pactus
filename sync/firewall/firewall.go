@@ -39,7 +39,7 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
 	bdl, err := f.openBundle(bytes.NewReader(data), from)
 	if err != nil {
-		f.logger.Warn("firewall: unable to open a gossip bundle",
+		f.logger.Debug("firewall: unable to open a gossip bundle",
 			"error", err, "bundle", bdl, "from", from)
 		return nil
 	}
@@ -53,7 +53,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
 func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
 	bdl, err := f.openBundle(r, from)
 	if err != nil {
-		f.logger.Warn("firewall: unable to open a stream bundle",
+		f.logger.Debug("firewall: unable to open a stream bundle",
 			"error", err, "bundle", bdl, "from", from)
 		return nil
 	}

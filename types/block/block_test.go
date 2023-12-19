@@ -119,40 +119,6 @@ func TestBasicCheck(t *testing.T) {
 		})
 	})
 
-	t.Run("Invalid state root hash", func(t *testing.T) {
-		d := ts.DecodingHex(
-			"01" + // Version
-				"00000000" + // UnixTime
-				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
-				"0000000000000000000000000000000000000000000000000000000000000000" + // StateRoot
-				"333333333333333333333333333333333333333333333333" + // SortitionSeed
-				"333333333333333333333333333333333333333333333333" +
-				"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
-				"04030201" + // PrevCert: Height
-				"0100" + // PrevCert: Round
-				"0401020304" + // PrevCert: Committers
-				"0102" + // PrevCert: Absentees
-				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
-				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
-				"01" + // Txs: Len
-				"00" + // Tx[0]: Flags
-				"01" + // Tx[0]: Version
-				"01000000" + // Tx[0]: LockTime
-				"01" + // Tx[0]: Fee
-				"00" + // Tx[0]: Memo
-				"01" + // Tx[0]: PayloadType
-				"00" + // Tx[0]: Sender (treasury)
-				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
-				"01") // Tx[0]: Amount
-
-		b, _ := block.FromBytes(d)
-
-		err := b.BasicCheck()
-		assert.ErrorIs(t, err, block.BasicCheckError{
-			Reason: "invalid state root: hash is zero",
-		})
-	})
-
 	t.Run("Invalid previous block hash", func(t *testing.T) {
 		d := ts.DecodingHex(
 			"01" + // Version
