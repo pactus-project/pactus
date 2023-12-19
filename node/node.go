@@ -155,6 +155,7 @@ func (n *Node) Stop() {
 }
 
 // these methods are using by GUI.
+
 func (n *Node) ConsManager() consensus.ManagerReader {
 	return n.consMgr
 }
