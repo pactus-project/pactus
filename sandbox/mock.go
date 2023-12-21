@@ -26,6 +26,8 @@ type MockSandbox struct {
 	TestJoinedValidators map[crypto.Address]bool
 	TestCommittedTrxs    map[tx.ID]*tx.Tx
 	TestPowerDelta       int64
+	TestSandboxVals      map[crypto.Address]*validator.Validator
+	TestSandboxAccs      map[crypto.Address]*account.Account
 }
 
 func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
@@ -38,6 +40,8 @@ func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 		TestCommittee:        cmt,
 		TestJoinedValidators: make(map[crypto.Address]bool),
 		TestCommittedTrxs:    make(map[tx.ID]*tx.Tx),
+		TestSandboxVals:      make(map[crypto.Address]*validator.Validator),
+		TestSandboxAccs:      make(map[crypto.Address]*account.Account),
 	}
 
 	treasuryAmt := int64(21000000 * 1e9)
@@ -60,11 +64,16 @@ func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
 	acc, _ := m.TestStore.Account(addr)
+	if acc == nil {
+		return m.TestSandboxAccs[addr]
+	}
 	return acc
 }
 
-func (m *MockSandbox) MakeNewAccount(_ crypto.Address) *account.Account {
-	return account.NewAccount(m.TestStore.TotalAccounts())
+func (m *MockSandbox) MakeNewAccount(addr crypto.Address) *account.Account {
+	acc := account.NewAccount(m.TestStore.TotalAccounts())
+	m.TestSandboxAccs[addr] = acc
+	return acc
 }
 
 func (m *MockSandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
@@ -80,6 +89,9 @@ func (m *MockSandbox) AnyRecentTransaction(txID tx.ID) bool {
 
 func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
 	val, _ := m.TestStore.Validator(addr)
+	if val == nil {
+		return m.TestSandboxVals[addr]
+	}
 	return val
 }
 
@@ -92,7 +104,9 @@ func (m *MockSandbox) IsJoinedCommittee(addr crypto.Address) bool {
 }
 
 func (m *MockSandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
-	return validator.NewValidator(pub, m.TestStore.TotalValidators())
+	val := validator.NewValidator(pub, m.TestStore.TotalValidators())
+	m.TestSandboxVals[val.Address()] = val
+	return val
 }
 
 func (m *MockSandbox) UpdateValidator(val *validator.Validator) {
