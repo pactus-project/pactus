@@ -9,10 +9,6 @@ import (
 	"github.com/syndtr/goleveldb/leveldb/util"
 )
 
-const (
-	accLruCacheSize = 1024
-)
-
 type accountStore struct {
 	db        *leveldb.DB
 	addrCache *lru.Cache[crypto.Address, *account.Account]
@@ -21,9 +17,9 @@ type accountStore struct {
 
 func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.Bytes()...) }
 
-func newAccountStore(db *leveldb.DB) *accountStore {
+func newAccountStore(db *leveldb.DB, cacheSize int) *accountStore {
 	total := int32(0)
-	addrLruCache, err := lru.New[crypto.Address, *account.Account](accLruCacheSize)
+	addrLruCache, err := lru.New[crypto.Address, *account.Account](cacheSize)
 	if err != nil {
 		logger.Panic("unable to create new instance of lru cache", "error", err)
 	}

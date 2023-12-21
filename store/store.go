@@ -28,8 +28,7 @@ var (
 )
 
 const (
-	lastStoreVersion   = int32(1)
-	pubKeyLruCacheSize = 1024
+	lastStoreVersion = int32(1)
 )
 
 var (
@@ -74,13 +73,13 @@ type store struct {
 	validatorStore *validatorStore
 }
 
-func NewStore(conf *Config, transactionToLiveInterval, sortitionInterval uint32) (Store, error) {
+func NewStore(conf *Config) (Store, error) {
 	options := &opt.Options{
 		Strict:      opt.DefaultStrict,
 		Compression: opt.NoCompression,
 	}
 
-	pubKeyCache, err := lru.New[crypto.Address, *bls.PublicKey](pubKeyLruCacheSize)
+	pubKeyCache, err := lru.New[crypto.Address, *bls.PublicKey](conf.PublicKeyCacheSize)
 	if err != nil {
 		return nil, err
 	}
@@ -94,9 +93,9 @@ func NewStore(conf *Config, transactionToLiveInterval, sortitionInterval uint32)
 		db:             db,
 		pubKeyCache:    pubKeyCache,
 		batch:          new(leveldb.Batch),
-		blockStore:     newBlockStore(db, sortitionInterval),
-		txStore:        newTxStore(db, transactionToLiveInterval),
-		accountStore:   newAccountStore(db),
+		blockStore:     newBlockStore(db, conf.SortitionInterval),
+		txStore:        newTxStore(db, conf.TransactionToLiveInterval),
+		accountStore:   newAccountStore(db, conf.AccountCacheSize),
 		validatorStore: newValidatorStore(db),
 	}
 
@@ -107,8 +106,8 @@ func NewStore(conf *Config, transactionToLiveInterval, sortitionInterval uint32)
 
 	currentHeight := lc.Height()
 	startHeight := uint32(1)
-	if currentHeight > transactionToLiveInterval {
-		startHeight = currentHeight - transactionToLiveInterval
+	if currentHeight > conf.TransactionToLiveInterval {
+		startHeight = currentHeight - conf.TransactionToLiveInterval
 	}
 
 	for i := startHeight; i < currentHeight+1; i++ {

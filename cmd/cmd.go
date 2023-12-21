@@ -293,7 +293,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		if err := genDoc.SaveToFile(genPath); err != nil {
 			return nil, nil, err
 		}
-		conf := config.DefaultConfigTestnet()
+		conf := config.DefaultConfigTestnet(genDoc.Params())
 		if err := conf.Save(confPath); err != nil {
 			return nil, nil, err
 		}
@@ -304,7 +304,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 			return nil, nil, err
 		}
 
-		conf := config.DefaultConfigLocalnet()
+		conf := config.DefaultConfigLocalnet(genDoc.Params())
 		if err := conf.Save(confPath); err != nil {
 			return nil, nil, err
 		}
@@ -338,7 +338,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 
 	confPath := PactusConfigPath(workingDir)
-	conf, err := tryLoadConfig(gen.ChainType(), confPath)
+	conf, err := tryLoadConfig(gen, confPath)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -461,15 +461,15 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	return gen
 }
 
-func tryLoadConfig(chainType genesis.ChainType, confPath string) (*config.Config, error) {
+func tryLoadConfig(genDoc *genesis.Genesis, confPath string) (*config.Config, error) {
 	var defConf *config.Config
-	switch chainType {
+	switch genDoc.ChainType() {
 	case genesis.Mainnet:
 		panic("not yet implemented!")
 	case genesis.Testnet:
-		defConf = config.DefaultConfigTestnet()
+		defConf = config.DefaultConfigTestnet(genDoc.Params())
 	case genesis.Localnet:
-		defConf = config.DefaultConfigLocalnet()
+		defConf = config.DefaultConfigLocalnet(genDoc.Params())
 	}
 
 	conf, err := config.LoadFromFile(confPath, true, defConf)
@@ -496,7 +496,7 @@ func tryLoadConfig(chainType genesis.ChainType, confPath string) (*config.Config
 			}
 			PrintSuccessMsgf("Config updated.")
 		} else {
-			switch chainType {
+			switch genDoc.ChainType() {
 			case genesis.Mainnet:
 				err = config.SaveMainnetConfig(confPath)
 				if err != nil {

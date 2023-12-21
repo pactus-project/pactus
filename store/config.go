@@ -10,11 +10,21 @@ import (
 
 type Config struct {
 	Path string `toml:"path"`
+
+	// Private configs
+	TransactionToLiveInterval uint32 `toml:"-"`
+	SortitionInterval         uint32 `toml:"-"`
+	AccountCacheSize          int    `toml:"-"`
+	PublicKeyCacheSize        int    `toml:"-"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		Path: "data",
+		Path:                      "data",
+		TransactionToLiveInterval: 8640,
+		SortitionInterval:         17,
+		AccountCacheSize:          1024,
+		PublicKeyCacheSize:        1024,
 	}
 }
 
