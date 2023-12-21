@@ -37,6 +37,7 @@ type consensus struct {
 	valKey          *bls.ValidatorKey
 	rewardAddr      crypto.Address
 	bcState         state.Facade // Blockchain state
+	blockCert       *certificate.Certificate
 	changeProposer  *changeProposer
 	newHeightState  consState
 	proposeState    consState
@@ -118,6 +119,8 @@ func (cs *consensus) Start() {
 	defer cs.lk.Unlock()
 
 	cs.moveToNewHeight()
+	// We have just started the consensus (possibly restarting the node).
+	// Therefore, let's query the votes and proposals in case we missed any.
 	if cs.active {
 		cs.queryProposal()
 		cs.queryVotes()
@@ -229,10 +232,10 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 	}
 
 	if p.Height() == cs.bcState.LastBlockHeight() {
-		// A slow node might receive a proposal after committing the proposed block.
-		// In this case, we accept the proposal and allow nodes to continue.
-		// By doing so, we enable the validator to broadcast its votes and
-		// prevent it from being marked as absent in the block certificate.
+		// A slow validator might receive a proposal after committing the proposed block.
+		// In this case, the proposal is accepted and the slow validator continues.
+		// By doing so, the validator can broadcast its votes and
+		// prevent itself from being marked as absent in the block certificate.
 		cs.logger.Trace("block is committed for this height", "proposal", p)
 		if p.Block().Hash() != cs.bcState.LastBlockHash() {
 			cs.logger.Warn("proposal is not for the committed block", "proposal", p)
@@ -393,7 +396,7 @@ func (cs *consensus) announceNewBlock(blk *block.Block, cert *certificate.Certif
 		message.NewBlockAnnounceMessage(blk, cert))
 }
 
-func (cs *consensus) makeCertificate(votes map[crypto.Address]*vote.Vote) *certificate.Certificate {
+func (cs *consensus) makeCertificate(votes map[crypto.Address]*vote.Vote, fastPath bool) *certificate.Certificate {
 	vals := cs.validators
 	committers := make([]int32, len(vals))
 	absentees := make([]int32, 0)
@@ -411,6 +414,10 @@ func (cs *consensus) makeCertificate(votes map[crypto.Address]*vote.Vote) *certi
 	}
 
 	aggSig := bls.SignatureAggregate(sigs...)
+
+	if fastPath {
+		return certificate.NewCertificateFastPath(cs.height, cs.round, committers, absentees, aggSig)
+	}
 
 	return certificate.NewCertificate(cs.height, cs.round, committers, absentees, aggSig)
 }
@@ -449,5 +456,29 @@ func (cs *consensus) startChangingProposer() {
 	if cs.cpDecided == -1 {
 		cs.logger.Info("changing proposer started", "cpRound", cs.cpRound)
 		cs.enterNewState(cs.cpPreVoteState)
+	}
+}
+
+func (cs *consensus) strongCommit() {
+	prepares := cs.log.PrepareVoteSet(cs.round)
+	prepareQH := prepares.QuorumHash()
+	if prepareQH != nil {
+		if prepares.HasAbsoluteQuorum(*prepareQH) {
+			cs.logger.Debug("prepare has absolute quorum", "hash", prepareQH.ShortString())
+
+			roundProposal := cs.log.RoundProposal(cs.round)
+			if roundProposal == nil {
+				// There is a consensus about a proposal that we don't have yet.
+				// Ask peers for this proposal.
+				cs.logger.Info("query for a decided proposal", "prepareQH", prepareQH)
+				cs.queryProposal()
+				return
+			}
+
+			votes := prepares.BlockVotes(*prepareQH)
+			cs.blockCert = cs.makeCertificate(votes, true)
+
+			cs.enterNewState(cs.commitState)
+		}
 	}
 }

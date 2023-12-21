@@ -16,12 +16,14 @@ func (s *newHeightState) enter() {
 
 func (s *newHeightState) decide() {
 	sateHeight := s.bcState.LastBlockHeight()
+
 	validators := s.bcState.CommitteeValidators()
 	s.log.MoveToNewHeight(validators)
 
 	s.validators = validators
 	s.height = sateHeight + 1
 	s.round = 0
+	s.blockCert = nil
 	s.active = s.bcState.IsInCommittee(s.valKey.Address())
 	s.logger.Info("entering new height", "height", s.height, "active", s.active)
 

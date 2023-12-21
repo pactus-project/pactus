@@ -19,8 +19,7 @@ const (
 )
 
 const (
-	SignatureTypeTreasury byte = 0
-	SignatureTypeBLS      byte = 1
+	SignatureTypeBLS byte = 1
 )
 
 const (

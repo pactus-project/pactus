@@ -38,34 +38,49 @@ func TestCertificateValidation(t *testing.T) {
 
 	t.Run("Invalid signature, should return error", func(t *testing.T) {
 		committers := td.state2.committee.Committers()
-		signBytes := certificate.BlockCertificateSignBytes(nextBlockHash, height, round)
+		signBytes := certificate.BlockCertificateSignBytesFastPath(nextBlockHash, height, round)
 		aggSig := valKey5.Sign(signBytes)
-		cert := certificate.NewCertificate(height, 0, committers, []int32{2}, aggSig)
+		cert := certificate.NewCertificateFastPath(height, 0, committers, []int32{2}, aggSig)
 
 		assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
 	})
 
 	t.Run("Invalid round, should return error", func(t *testing.T) {
 		committers := td.state2.committee.Committers()
-		signBytes := certificate.BlockCertificateSignBytes(nextBlockHash, height, round+1)
+		signBytes := certificate.BlockCertificateSignBytesFastPath(nextBlockHash, height, round+1)
 		sig1 := td.valKey1.Sign(signBytes)
 		sig2 := td.valKey2.Sign(signBytes)
+		sig3 := td.valKey3.Sign(signBytes)
 		sig4 := td.valKey4.Sign(signBytes)
-		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
-		cert := certificate.NewCertificate(height, 0, committers, []int32{2}, aggSig)
+		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
+		cert := certificate.NewCertificateFastPath(height, 0, committers, []int32{}, aggSig)
 
 		assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
 	})
 
+	// t.Run("Invalid height, should return error", func(t *testing.T) {
+	// 	committers := td.state2.committee.Committers()
+	// 	signBytes := certificate.BlockCertificateSignBytes(nextBlockHash, height+1, round, true)
+	// 	sig1 := td.valKey1.Sign(signBytes)
+	// 	sig2 := td.valKey2.Sign(signBytes)
+	// 	sig3 := td.valKey3.Sign(signBytes)
+	// 	sig4 := td.valKey4.Sign(signBytes)
+	// 	aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
+	// 	cert := certificate.NewCertificate(height+1, 0, true, committers, []int32{}, aggSig)
+
+	// 	assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
+	// })
+
 	t.Run("Invalid block hash, should return error", func(t *testing.T) {
 		committers := td.state2.committee.Committers()
 		invBlockHash := td.RandHash()
-		signBytes := certificate.BlockCertificateSignBytes(invBlockHash, height, 0)
+		signBytes := certificate.BlockCertificateSignBytesFastPath(invBlockHash, height, 0)
 		sig1 := td.valKey1.Sign(signBytes)
 		sig2 := td.valKey2.Sign(signBytes)
+		sig3 := td.valKey3.Sign(signBytes)
 		sig4 := td.valKey4.Sign(signBytes)
-		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
-		cert := certificate.NewCertificate(height, 0, committers, []int32{2}, aggSig)
+		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
+		cert := certificate.NewCertificateFastPath(height, 0, committers, []int32{}, aggSig)
 
 		assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
 	})
@@ -73,12 +88,13 @@ func TestCertificateValidation(t *testing.T) {
 	t.Run("Invalid committer, should return error", func(t *testing.T) {
 		committers := td.state2.committee.Committers()
 		committers = append(committers, 666)
-		signBytes := certificate.BlockCertificateSignBytes(nextBlockHash, height, 0)
+		signBytes := certificate.BlockCertificateSignBytesFastPath(nextBlockHash, height, 0)
 		sig1 := td.valKey1.Sign(signBytes)
 		sig2 := td.valKey2.Sign(signBytes)
+		sig3 := td.valKey3.Sign(signBytes)
 		sig4 := td.valKey4.Sign(signBytes)
-		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
-		cert := certificate.NewCertificate(height, 0, committers, []int32{2}, aggSig)
+		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
+		cert := certificate.NewCertificateFastPath(height, 0, committers, []int32{}, aggSig)
 
 		assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
 	})
@@ -96,13 +112,25 @@ func TestCertificateValidation(t *testing.T) {
 		assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
 	})
 
-	t.Run("Doesn't have 2/3 majority", func(t *testing.T) {
+	t.Run("Doesn't have 2f+1 majority", func(t *testing.T) {
 		committers := td.state2.committee.Committers()
 		signBytes := certificate.BlockCertificateSignBytes(nextBlockHash, height, 0)
 		sig1 := td.valKey1.Sign(signBytes)
 		sig2 := td.valKey2.Sign(signBytes)
 		aggSig := aggregate([]crypto.Signature{sig1, sig2})
-		cert := certificate.NewCertificate(height, 0, committers, []int32{2, 3}, aggSig)
+		cert := certificate.NewCertificateFastPath(height, 0, committers, []int32{2, 3}, aggSig)
+
+		assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
+	})
+
+	t.Run("Doesn't have 3f+1 majority (fast path)", func(t *testing.T) {
+		committers := td.state2.committee.Committers()
+		signBytes := certificate.BlockCertificateSignBytesFastPath(nextBlockHash, height, 0)
+		sig1 := td.valKey1.Sign(signBytes)
+		sig2 := td.valKey2.Sign(signBytes)
+		sig3 := td.valKey2.Sign(signBytes)
+		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3})
+		cert := certificate.NewCertificateFastPath(height, 0, committers, []int32{3}, aggSig)
 
 		assert.Error(t, td.state1.CommitBlock(nextBlock, cert))
 	})
@@ -115,6 +143,19 @@ func TestCertificateValidation(t *testing.T) {
 		sig4 := td.valKey4.Sign(signBytes)
 		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig4})
 		cert := certificate.NewCertificate(height, 0, committers, []int32{2}, aggSig)
+
+		assert.NoError(t, td.state1.CommitBlock(nextBlock, cert))
+	})
+
+	t.Run("Ok, should return no error (fast path)", func(t *testing.T) {
+		committers := td.state2.committee.Committers()
+		signBytes := certificate.BlockCertificateSignBytesFastPath(nextBlockHash, height, 0)
+		sig1 := td.valKey1.Sign(signBytes)
+		sig2 := td.valKey2.Sign(signBytes)
+		sig3 := td.valKey3.Sign(signBytes)
+		sig4 := td.valKey4.Sign(signBytes)
+		aggSig := aggregate([]crypto.Signature{sig1, sig2, sig3, sig4})
+		cert := certificate.NewCertificateFastPath(height, 0, committers, []int32{2}, aggSig)
 
 		assert.NoError(t, td.state1.CommitBlock(nextBlock, cert))
 	})

@@ -23,22 +23,16 @@ func (s *prepareState) enter() {
 
 func (s *prepareState) decide() {
 	s.vote()
+	s.strongCommit()
 
-	prepares := s.log.PrepareVoteSet(s.round)
-	prepareQH := prepares.QuorumHash()
-	if prepareQH != nil {
-		s.logger.Debug("prepare has quorum", "hash", prepareQH)
-		s.enterNewState(s.precommitState)
-	} else {
-		//
-		// If a validator receives a set of f+1 valid cp:PRE-VOTE votes for this round,
-		// it starts changing the proposer phase, even if its timer has not expired;
-		// This prevents it from starting the change-proposer phase too late.
-		//
-		cpPreVotes := s.log.CPPreVoteVoteSet(s.round)
-		if cpPreVotes.HasOneThirdOfTotalPower(0) {
-			s.startChangingProposer()
-		}
+	//
+	// If a validator receives a set of f+1 valid cp:PRE-VOTE votes for this round,
+	// it starts changing the proposer phase, even if its timer has not expired;
+	// This prevents it from starting the change-proposer phase too late.
+	//
+	cpPreVotes := s.log.CPPreVoteVoteSet(s.round)
+	if cpPreVotes.HasFPlusOneVotesFor(0, vote.CPValueYes) {
+		s.startChangingProposer()
 	}
 }
 

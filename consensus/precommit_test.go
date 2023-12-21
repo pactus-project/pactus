@@ -3,9 +3,10 @@ package consensus
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,76 +18,34 @@ func TestPrecommitQueryProposal(t *testing.T) {
 	r := int16(0)
 
 	td.enterNewHeight(td.consP)
+	td.changeProposerTimeout(td.consP)
 
-	p := td.makeProposal(t, h, r)
+	prop := td.makeProposal(t, h, r)
+	propBlockHash := prop.Block().Hash()
 
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexX)
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexY)
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexB)
+	extraSignBytes := vote.VoteTypeCPMainVote.Bytes()
+	extraSignBytes = append(extraSignBytes, util.Int16ToSlice(0)...)
+	extraSignBytes = append(extraSignBytes, byte(vote.CPValueNo))
+	signBytes := certificate.BlockCertificateSignBytes(propBlockHash, h, r)
+	signBytes = append(signBytes, extraSignBytes...)
+	sigX := td.consX.valKey.Sign(signBytes)
+	sigY := td.consY.valKey.Sign(signBytes)
+	sigM := td.consM.valKey.Sign(signBytes)
+	sig := bls.SignatureAggregate(sigX, sigY, sigM)
+	cert := certificate.NewCertificate(h, r, []int32{0, 1, 2, 3, 4, 5}, []int32{2, 3, 5}, sig)
+	just := &vote.JustDecided{
+		QCert: cert,
+	}
+	decideVote := vote.NewCPDecidedVote(propBlockHash, h, r, 0, vote.CPValueNo, just, td.consX.valKey.Address())
+	td.HelperSignVote(td.consX.valKey, decideVote)
 
-	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexX)
-	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexY)
-	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexB)
+	td.consP.AddVote(decideVote)
+	assert.Equal(t, "precommit", td.consP.currentState.name())
+
+	td.addPrecommitVote(td.consP, propBlockHash, h, r, tIndexX)
+	td.addPrecommitVote(td.consP, propBlockHash, h, r, tIndexY)
+	td.addPrecommitVote(td.consP, propBlockHash, h, r, tIndexM)
+	td.addPrecommitVote(td.consP, propBlockHash, h, r, tIndexN)
 
 	td.shouldPublishQueryProposal(t, td.consP, h)
-}
-
-func TestPrecommitDuplicatedProposal(t *testing.T) {
-	td := setup(t)
-
-	td.commitBlockForAllStates(t)
-	h := uint32(2)
-	r := int16(0)
-
-	p1 := td.makeProposal(t, h, r)
-	trx := tx.NewTransferTx(h, td.consX.rewardAddr,
-		td.RandAccAddress(), 1000, 1000, "invalid proposal")
-	td.HelperSignTransaction(td.consX.valKey.PrivateKey(), trx)
-
-	assert.NoError(t, td.txPool.AppendTx(trx))
-	p2 := td.makeProposal(t, h, r)
-	assert.NotEqual(t, p1.Hash(), p2.Hash())
-
-	td.enterNewHeight(td.consP)
-
-	// Byzantine node sends second proposal to Partitioned node
-	// in prepare step
-	td.consP.SetProposal(p2)
-	assert.NotNil(t, td.consP.Proposal())
-
-	td.addPrepareVote(td.consP, p1.Block().Hash(), h, r, tIndexX)
-	td.addPrepareVote(td.consP, p1.Block().Hash(), h, r, tIndexY)
-	td.addPrepareVote(td.consP, p1.Block().Hash(), h, r, tIndexB)
-
-	assert.Nil(t, td.consP.Proposal())
-	td.shouldPublishQueryProposal(t, td.consP, h)
-
-	// Byzantine node sends second proposal to Partitioned node,
-	// in precommit step
-	td.consP.SetProposal(p2)
-	assert.Nil(t, td.consP.Proposal())
-	td.shouldPublishQueryProposal(t, td.consP, h)
-
-	td.consP.SetProposal(p1)
-	assert.NotNil(t, td.consP.Proposal())
-}
-
-func TestGoToChangeProposerFromPrecommit(t *testing.T) {
-	td := setup(t)
-
-	td.commitBlockForAllStates(t)
-	h := uint32(2)
-	r := int16(0)
-
-	td.enterNewHeight(td.consP)
-	blockHash := td.RandHash()
-
-	td.addPrepareVote(td.consP, blockHash, h, r, tIndexX)
-	td.addPrepareVote(td.consP, blockHash, h, r, tIndexY)
-	td.addPrepareVote(td.consP, blockHash, h, r, tIndexB)
-
-	td.addCPPreVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueOne, &vote.JustInitOne{}, tIndexX)
-	td.addCPPreVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueOne, &vote.JustInitOne{}, tIndexY)
-
-	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, blockHash)
 }

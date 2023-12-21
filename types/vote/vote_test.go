@@ -257,7 +257,7 @@ func TestCPPreVote(t *testing.T) {
 
 	t.Run("Invalid round", func(t *testing.T) {
 		v := vote.NewCPPreVote(hash.UndefHash, h, r,
-			-1, vote.CPValueOne, just, ts.RandAccAddress())
+			-1, vote.CPValueYes, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
@@ -273,13 +273,13 @@ func TestCPPreVote(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		v := vote.NewCPPreVote(hash.UndefHash, h, r,
-			1, vote.CPValueZero, just, ts.RandAccAddress())
+			1, vote.CPValueNo, just, ts.RandAccAddress())
 		v.SetSignature(ts.RandBLSSignature())
 
 		err := v.BasicCheck()
 		assert.NoError(t, err)
 		assert.Equal(t, v.CPRound(), int16(1))
-		assert.Equal(t, v.CPValue(), vote.CPValueZero)
+		assert.Equal(t, v.CPValue(), vote.CPValueNo)
 		assert.NotNil(t, v.CPJust())
 	})
 }
@@ -293,7 +293,7 @@ func TestCPMainVote(t *testing.T) {
 
 	t.Run("Invalid round", func(t *testing.T) {
 		v := vote.NewCPMainVote(hash.UndefHash, h, r,
-			-1, vote.CPValueZero, just, ts.RandAccAddress())
+			-1, vote.CPValueNo, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
@@ -340,7 +340,7 @@ func TestCPDecided(t *testing.T) {
 
 	t.Run("Invalid round", func(t *testing.T) {
 		v := vote.NewCPDecidedVote(hash.UndefHash, h, r,
-			-1, vote.CPValueZero, just, ts.RandAccAddress())
+			-1, vote.CPValueNo, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
@@ -443,7 +443,7 @@ func TestSignBytes(t *testing.T) {
 
 	v1 := vote.NewPrepareVote(blockHash, height, round, signer)
 	v2 := vote.NewPrecommitVote(blockHash, height, round, signer)
-	v3 := vote.NewCPPreVote(blockHash, height, round, 1, vote.CPValueZero, just, signer)
+	v3 := vote.NewCPPreVote(blockHash, height, round, 1, vote.CPValueNo, just, signer)
 	v4 := vote.NewCPMainVote(blockHash, height, round, 1, vote.CPValueAbstain, just, signer)
 
 	sb1 := v1.SignBytes()
@@ -479,7 +479,7 @@ func TestLog(t *testing.T) {
 
 	v1 := vote.NewPrepareVote(blockHash, height, round, signer)
 	v2 := vote.NewPrecommitVote(blockHash, height, round, signer)
-	v3 := vote.NewCPPreVote(blockHash, height, round, 1, vote.CPValueZero, just, signer)
+	v3 := vote.NewCPPreVote(blockHash, height, round, 1, vote.CPValueNo, just, signer)
 	v4 := vote.NewCPMainVote(blockHash, height, round, 1, vote.CPValueAbstain, just, signer)
 
 	assert.Contains(t, v1.String(), "100/2/PREPARE")
@@ -489,8 +489,8 @@ func TestLog(t *testing.T) {
 }
 
 func TestCPValueToString(t *testing.T) {
-	assert.Equal(t, vote.CPValueZero.String(), "zero")
-	assert.Equal(t, vote.CPValueOne.String(), "one")
+	assert.Equal(t, vote.CPValueNo.String(), "zero")
+	assert.Equal(t, vote.CPValueYes.String(), "one")
 	assert.Equal(t, vote.CPValueAbstain.String(), "abstain")
 	assert.Equal(t, vote.CPValue(-1).String(), "unknown: -1")
 }

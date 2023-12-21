@@ -13,22 +13,49 @@ import (
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
+// TODO: proofread this comment later
+// A certificate is a multipurpose object.
+// It can be used either as a block certificate or as a quorum vote certificate within consensus.
+// As a block certificate, it verifies if a block is signed by a majority of validators.
+// As a quorum vote certificate, it checks whether a majority of validators have voted in the consensus step.
 type Certificate struct {
 	data certificateData
 }
+
 type certificateData struct {
 	Height     uint32
 	Round      int16
+	FastPath   bool
 	Committers []int32
 	Absentees  []int32
 	Signature  *bls.Signature
 }
 
-func NewCertificate(height uint32, round int16, committers, absentees []int32, signature *bls.Signature) *Certificate {
+func NewCertificate(height uint32, round int16,
+	committers, absentees []int32, signature *bls.Signature,
+) *Certificate {
 	cert := &Certificate{
 		data: certificateData{
 			Height:     height,
 			Round:      round,
+			FastPath:   false,
+			Committers: committers,
+			Absentees:  absentees,
+			Signature:  signature,
+		},
+	}
+
+	return cert
+}
+
+func NewCertificateFastPath(height uint32, round int16,
+	committers, absentees []int32, signature *bls.Signature,
+) *Certificate {
+	cert := &Certificate{
+		data: certificateData{
+			Height:     height,
+			Round:      round,
+			FastPath:   true,
 			Committers: committers,
 			Absentees:  absentees,
 			Signature:  signature,
@@ -44,6 +71,10 @@ func (cert *Certificate) Height() uint32 {
 
 func (cert *Certificate) Round() int16 {
 	return cert.data.Round
+}
+
+func (cert *Certificate) FastPath() bool {
+	return cert.data.FastPath
 }
 
 func (cert *Certificate) Committers() []int32 {
@@ -157,7 +188,12 @@ func (cert *Certificate) UnmarshalCBOR(bs []byte) error {
 }
 
 func (cert *Certificate) Encode(w io.Writer) error {
-	if err := encoding.WriteElements(w, cert.data.Height, cert.data.Round); err != nil {
+	roundAndPath := uint16(cert.data.Round)
+	if cert.FastPath() {
+		roundAndPath |= 0x8000
+	}
+
+	if err := encoding.WriteElements(w, cert.data.Height, roundAndPath); err != nil {
 		return err
 	}
 	if err := encoding.WriteVarInt(w, uint64(len(cert.data.Committers))); err != nil {
@@ -181,9 +217,15 @@ func (cert *Certificate) Encode(w io.Writer) error {
 }
 
 func (cert *Certificate) Decode(r io.Reader) error {
-	err := encoding.ReadElements(r, &cert.data.Height, &cert.data.Round)
+	roundAndPath := uint16(0)
+	err := encoding.ReadElements(r, &cert.data.Height, &roundAndPath)
 	if err != nil {
 		return err
+	}
+
+	cert.data.Round = int16(roundAndPath & 0x7FFF)
+	if roundAndPath&0x8000 == 0x8000 {
+		cert.data.FastPath = true
 	}
 
 	lenCommitters, err := encoding.ReadVarInt(r)
@@ -224,8 +266,8 @@ func (cert *Certificate) Decode(r io.Reader) error {
 	return nil
 }
 
-func (cert *Certificate) Validate(height uint32,
-	validators []*validator.Validator, signBytes []byte,
+func (cert *Certificate) Validate(blockHash hash.Hash, height uint32,
+	validators []*validator.Validator, extraSignBytes []byte,
 ) error {
 	if cert.Height() != height {
 		return UnexpectedHeightError{
@@ -259,21 +301,31 @@ func (cert *Certificate) Validate(height uint32,
 		committeePower += val.Power()
 	}
 
-	// Check if signers have 2/3+ of total power
-	if signedPower <= committeePower*2/3 {
+	t := (committeePower - 1) / 3 // TODO => t := (committeePower - 1) / 5
+	p := int64(0)
+	if cert.data.FastPath {
+		p = 3*t + 1 // TODO ???? => 4t+1
+	} else {
+		p = 2*t + 1 // TODO ???? => 3t+1
+	}
+
+	// Check if signers have enough power
+	if signedPower < p {
 		return InsufficientPowerError{
 			SignedPower:   signedPower,
-			RequiredPower: committeePower*2/3 + 1,
+			RequiredPower: p,
 		}
 	}
 
 	// Check signature
-	err := bls.VerifyAggregated(cert.Signature(), pubs, signBytes)
-	if err != nil {
-		return err
+	var signBytes []byte
+	if cert.FastPath() {
+		signBytes = BlockCertificateSignBytesFastPath(blockHash, cert.Height(), cert.Round())
+	} else {
+		signBytes = BlockCertificateSignBytes(blockHash, cert.Height(), cert.Round())
 	}
-
-	return nil
+	signBytes = append(signBytes, extraSignBytes...)
+	return bls.VerifyAggregated(cert.Signature(), pubs, signBytes)
 }
 
 // AddSignature adds a new signature to the certificate.
@@ -291,6 +343,13 @@ func BlockCertificateSignBytes(blockHash hash.Hash, height uint32, round int16) 
 	sb := blockHash.Bytes()
 	sb = append(sb, util.Uint32ToSlice(height)...)
 	sb = append(sb, util.Int16ToSlice(round)...)
+
+	return sb
+}
+
+func BlockCertificateSignBytesFastPath(blockHash hash.Hash, height uint32, round int16) []byte {
+	sb := BlockCertificateSignBytes(blockHash, height, round)
+	sb = append(sb, util.StringToBytes("PREPARE")...)
 
 	return sb
 }

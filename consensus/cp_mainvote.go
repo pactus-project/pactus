@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
 
@@ -14,36 +15,38 @@ func (s *cpMainVoteState) enter() {
 }
 
 func (s *cpMainVoteState) decide() {
+	s.strongCommit()
+	s.strongTermination()
 	s.checkForWeakValidity()
 	s.detectByzantineProposal()
 
 	cpPreVotes := s.log.CPPreVoteVoteSet(s.round)
-	if cpPreVotes.HasTwoThirdOfTotalPower(s.cpRound) {
-		if cpPreVotes.HasQuorumVotesFor(s.cpRound, vote.CPValueOne) {
+	if cpPreVotes.HasTwoFPlusOneVotes(s.cpRound) {
+		if cpPreVotes.HasTwoFPlusOneVotesFor(s.cpRound, vote.CPValueYes) {
 			s.logger.Debug("cp: quorum for pre-votes", "v", "1")
 
-			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueOne)
-			cert := s.makeCertificate(votes)
+			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueYes)
+			cert := s.makeCertificate(votes, false)
 			just := &vote.JustMainVoteNoConflict{
 				QCert: cert,
 			}
-			s.signAddCPMainVote(hash.UndefHash, s.cpRound, vote.CPValueOne, just)
+			s.signAddCPMainVote(hash.UndefHash, s.cpRound, vote.CPValueYes, just)
 			s.enterNewState(s.cpDecideState)
-		} else if cpPreVotes.HasQuorumVotesFor(s.cpRound, vote.CPValueZero) {
+		} else if cpPreVotes.HasTwoFPlusOneVotesFor(s.cpRound, vote.CPValueNo) {
 			s.logger.Debug("cp: quorum for pre-votes", "v", "0")
 
-			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueZero)
-			cert := s.makeCertificate(votes)
+			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueNo)
+			cert := s.makeCertificate(votes, false)
 			just := &vote.JustMainVoteNoConflict{
 				QCert: cert,
 			}
-			s.signAddCPMainVote(*s.cpWeakValidity, s.cpRound, vote.CPValueZero, just)
+			s.signAddCPMainVote(*s.cpWeakValidity, s.cpRound, vote.CPValueNo, just)
 			s.enterNewState(s.cpDecideState)
 		} else {
 			s.logger.Debug("cp: no-quorum for pre-votes", "v", "abstain")
 
-			vote0 := cpPreVotes.GetRandomVote(s.cpRound, vote.CPValueZero)
-			vote1 := cpPreVotes.GetRandomVote(s.cpRound, vote.CPValueOne)
+			vote0 := cpPreVotes.GetRandomVote(s.cpRound, vote.CPValueNo)
+			vote1 := cpPreVotes.GetRandomVote(s.cpRound, vote.CPValueYes)
 
 			just := &vote.JustMainVoteConflict{
 				Just0: vote0.CPJust(),
@@ -59,12 +62,10 @@ func (s *cpMainVoteState) decide() {
 func (s *cpMainVoteState) checkForWeakValidity() {
 	if s.cpWeakValidity == nil {
 		preVotes := s.log.CPPreVoteVoteSet(s.round)
-		preVotesZero := preVotes.BinaryVotes(s.cpRound, vote.CPValueZero)
-
-		for _, v := range preVotesZero {
-			bh := v.BlockHash()
+		randVote := preVotes.GetRandomVote(s.cpRound, vote.CPValueNo)
+		if randVote != nil {
+			bh := randVote.BlockHash()
 			s.cpWeakValidity = &bh
-			break
 		}
 	}
 }
@@ -85,12 +86,16 @@ func (s *cpMainVoteState) detectByzantineProposal() {
 	}
 }
 
-func (s *cpMainVoteState) onAddVote(v *vote.Vote) {
-	if v.Type() == vote.VoteTypeCPPreVote {
-		s.decide()
-	}
+func (s *cpMainVoteState) onAddVote(_ *vote.Vote) {
+	s.decide()
+}
 
-	s.checkForTermination(v)
+func (s *cpMainVoteState) onSetProposal(_ *proposal.Proposal) {
+	// Ignore proposal
+}
+
+func (s *cpMainVoteState) onTimeout(_ *ticker) {
+	// Ignore timeouts
 }
 
 func (s *cpMainVoteState) name() string {

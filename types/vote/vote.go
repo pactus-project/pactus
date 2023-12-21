@@ -102,10 +102,10 @@ func (v *Vote) SignBytes() []byte {
 		// Nothing
 
 	case VoteTypePrepare:
-		sb = append(sb, util.StringToBytes(t.String())...)
+		sb = append(sb, t.Bytes()...)
 
 	case VoteTypeCPPreVote, VoteTypeCPMainVote, VoteTypeCPDecided:
-		sb = append(sb, util.StringToBytes(t.String())...)
+		sb = append(sb, t.Bytes()...)
 		sb = append(sb, util.Int16ToSlice(v.data.CPVote.Round)...)
 		sb = append(sb, byte(v.data.CPVote.Value))
 	}

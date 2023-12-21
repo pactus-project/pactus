@@ -121,7 +121,7 @@ func (j *JustDecided) Type() JustType {
 }
 
 func (j *JustInitZero) BasicCheck() error {
-	return j.QCert.BasicCheck()
+	return nil
 }
 
 func (j *JustInitOne) BasicCheck() error {

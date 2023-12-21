@@ -1,5 +1,7 @@
 package vote
 
+import "github.com/pactus-project/pactus/util"
+
 type Type int
 
 const (
@@ -35,4 +37,8 @@ func (t Type) String() string {
 	default:
 		return ("invalid vote type")
 	}
+}
+
+func (t Type) Bytes() []byte {
+	return util.StringToBytes(t.String())
 }

@@ -85,21 +85,49 @@ func (vs *BlockVoteSet) AddVote(v *vote.Vote) (bool, error) {
 
 	blockVotes := vs.mustGetBlockVotes(v.BlockHash())
 	blockVotes.addVote(v, power)
-	if vs.isTwoThirdOfTotalPower(blockVotes.votedPower) {
-		h := v.BlockHash()
-		vs.quorumHash = &h
+	if vs.hasThreeTPlusOnePower(blockVotes.votedPower) {
+		hash := v.BlockHash()
+		vs.quorumHash = &hash
 	}
 
 	return true, err
 }
 
-// HasQuorumHash checks if there is a block that has received quorum votes (2/3+ of total power).
+func (vs *BlockVoteSet) HasVoted(addr crypto.Address) bool {
+	return vs.allVotes[addr] != nil
+}
+
+// HasAbsoluteQuorum checks if there is a block that has received an absolute quorum of votes (4t+1 of total power).
+func (vs *BlockVoteSet) HasAbsoluteQuorum(hash hash.Hash) bool {
+	blockVotes := vs.mustGetBlockVotes(hash)
+	return vs.hasFourTPlusOnePower(blockVotes.votedPower)
+}
+
+// HasQuorumHash checks if there is a block that has received a quorum of votes (3t+1 of total power).
 func (vs *BlockVoteSet) HasQuorumHash() bool {
 	return vs.quorumHash != nil
 }
 
-// QuorumHash returns the hash of the block that has received quorum votes (2/3+ of total power).
-// If no block has received the quorum threshold (2/3+ of total voting power), it returns nil.
+// QuorumHash returns the hash of the block that has received a quorum of votes (3t+1 of total power).
+// If no block has received the quorum threshold, it returns nil.
 func (vs *BlockVoteSet) QuorumHash() *hash.Hash {
 	return vs.quorumHash
+}
+
+// thresholdPower calculates the threshold power based on the total power.
+// The formula used is: t = (n - 1) / 5, where n is the total power.
+func (vs *BlockVoteSet) thresholdPower(power int64) int64 {
+	return (vs.totalPower - 1) / 5
+}
+
+// hasFourTPlusOnePower checks whether the given power is greater than or equal to 4t+1,
+// where t is the threshold power.
+func (vs *BlockVoteSet) hasFourTPlusOnePower(power int64) bool {
+	return power >= (4*vs.thresholdPower(power) + 1)
+}
+
+// hasThreeTPlusOnePower checks whether the given power is greater than or equal to 3t+1,
+// where t is the threshold power.
+func (vs *BlockVoteSet) hasThreeTPlusOnePower(power int64) bool {
+	return power >= (3*vs.thresholdPower(power) + 1)
 }

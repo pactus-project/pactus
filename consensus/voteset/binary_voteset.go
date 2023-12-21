@@ -16,8 +16,8 @@ type roundVotes struct {
 
 func newRoundVotes() *roundVotes {
 	voteBoxes := [3]*voteBox{}
-	voteBoxes[vote.CPValueZero] = newVoteBox()
-	voteBoxes[vote.CPValueOne] = newVoteBox()
+	voteBoxes[vote.CPValueNo] = newVoteBox()
+	voteBoxes[vote.CPValueYes] = newVoteBox()
 	voteBoxes[vote.CPValueAbstain] = newVoteBox()
 
 	return &roundVotes{
@@ -111,14 +111,9 @@ func (vs *BinaryVoteSet) AddVote(v *vote.Vote) (bool, error) {
 	return true, err
 }
 
-func (vs *BinaryVoteSet) HasOneThirdOfTotalPower(cpRound int16) bool {
+func (vs *BinaryVoteSet) HasTwoFPlusOneVotes(cpRound int16) bool {
 	roundVotes := vs.mustGetRoundVotes(cpRound)
-	return vs.isOneThirdOfTotalPower(roundVotes.votedPower)
-}
-
-func (vs *BinaryVoteSet) HasTwoThirdOfTotalPower(cpRound int16) bool {
-	roundVotes := vs.mustGetRoundVotes(cpRound)
-	return vs.isTwoThirdOfTotalPower(roundVotes.votedPower)
+	return vs.hasTwoFPlusOnePower(roundVotes.votedPower)
 }
 
 func (vs *BinaryVoteSet) HasAnyVoteFor(cpRound int16, cpValue vote.CPValue) bool {
@@ -131,9 +126,14 @@ func (vs *BinaryVoteSet) HasAllVotesFor(cpRound int16, cpValue vote.CPValue) boo
 	return roundVotes.voteBoxes[cpValue].votedPower == roundVotes.votedPower
 }
 
-func (vs *BinaryVoteSet) HasQuorumVotesFor(cpRound int16, cpValue vote.CPValue) bool {
+func (vs *BinaryVoteSet) HasFPlusOneVotesFor(cpRound int16, cpValue vote.CPValue) bool {
 	roundVotes := vs.mustGetRoundVotes(cpRound)
-	return vs.isTwoThirdOfTotalPower(roundVotes.voteBoxes[cpValue].votedPower)
+	return vs.hasFPlusOnePower(roundVotes.voteBoxes[cpValue].votedPower)
+}
+
+func (vs *BinaryVoteSet) HasTwoFPlusOneVotesFor(cpRound int16, cpValue vote.CPValue) bool {
+	roundVotes := vs.mustGetRoundVotes(cpRound)
+	return vs.hasTwoFPlusOnePower(roundVotes.voteBoxes[cpValue].votedPower)
 }
 
 func (vs *BinaryVoteSet) BinaryVotes(cpRound int16, cpValue vote.CPValue) map[crypto.Address]*vote.Vote {
@@ -153,4 +153,22 @@ func (vs *BinaryVoteSet) GetRandomVote(cpRound int16, cpValue vote.CPValue) *vot
 	}
 
 	return nil
+}
+
+// faultyPower calculates the faulty power based on the total power.
+// The formula used is: f = (n - 1) / 5, where n is the total power.
+func (vs *BinaryVoteSet) faultyPower(power int64) int64 {
+	return (vs.totalPower - 1) / 3
+}
+
+// hasTwoFPlusOnePower checks whether the given power is greater than or equal to 2f+1,
+// where f is the faulty power.
+func (vs *BinaryVoteSet) hasTwoFPlusOnePower(power int64) bool {
+	return power >= (2*vs.faultyPower(power) + 1)
+}
+
+// hasFPlusOnePower checks whether the given power is greater than or equal to f+1,
+// where f is the faulty power.
+func (vs *BinaryVoteSet) hasFPlusOnePower(power int64) bool {
+	return power >= (vs.faultyPower(power) + 1)
 }

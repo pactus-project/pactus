@@ -39,17 +39,8 @@ func (vs *voteSet) verifyVote(v *vote.Vote) (int64, error) {
 	}
 
 	if err := v.Verify(val.PublicKey()); err != nil {
-		return 0, errors.Errorf(errors.ErrInvalidSignature,
-			"failed to verify vote")
+		return 0, err
 	}
 
 	return val.Power(), nil
-}
-
-func (vs *voteSet) isTwoThirdOfTotalPower(power int64) bool {
-	return power > (vs.totalPower * 2 / 3)
-}
-
-func (vs *voteSet) isOneThirdOfTotalPower(power int64) bool {
-	return power > (vs.totalPower * 1 / 3)
 }
