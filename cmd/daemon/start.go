@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
+	flock "github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
@@ -33,6 +34,21 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		// change working directory
 		err := os.Chdir(workingDir)
 		cmd.FatalErrorCheck(err)
+
+		// Define the lock file path
+		lockFilePath := filepath.Join(workingDir, ".pactus.lock")
+		fileLock := flock.New(lockFilePath)
+
+		locked, err := fileLock.TryLock()
+		if err != nil {
+			// handle unable to attempt to acquire lock
+			cmd.FatalErrorCheck(err)
+		}
+
+		if !locked {
+			cmd.PrintWarnMsgf("Another instance is already running or lock file '%s' cannot be created.", lockFilePath)
+			return
+		}
 
 		if *pprofOpt != "" {
 			cmd.PrintWarnMsgf("Starting Debug pprof server on: http://%s/debug/pprof/", *pprofOpt)
@@ -64,6 +80,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.TrapSignal(func() {
+			fileLock.Unlock()
 			node.Stop()
 			cmd.PrintInfoMsgf("Exiting ...")
 		})
