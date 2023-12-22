@@ -76,13 +76,14 @@ func (s *Server) startListening(listener net.Listener) error {
 	s.address = listener.Addr().String()
 	s.grpc = grpcServer
 	go func() {
+		s.logger.Info("grpc server started", "addr", listener.Addr())
 		if err := s.grpc.Serve(listener); err != nil {
 			s.logger.Error("error on grpc serve", "error", err)
 		}
 	}()
 
 	go func() {
-		if err := s.startGateway(); err != nil {
+		if err := s.startGateway(listener.Addr().String()); err != nil {
 			s.logger.Error("error on grpc-gateway serve", "error", err)
 		}
 	}()

@@ -340,12 +340,12 @@ func TestAllBinaryVotes(t *testing.T) {
 func TestOneThirdPower(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	// N = 3000
-	// f = 999
-	// f+1 = 1000
-	// 2f+1 = 1999
-	// 3f+1 = 2998
-	valsMap, valKeys, totalPower := setupCommittee(ts, 999, 3, 999, 999)
+	// N = 3001
+	// f = 1000
+	// f+1 = 1001
+	// 2f+1 = 2001
+	// 3f+1 = 3001
+	valsMap, valKeys, totalPower := setupCommittee(ts, 1000, 1, 1000, 1000)
 
 	h := ts.RandHash()
 	height := ts.RandHeight()
@@ -372,7 +372,7 @@ func TestOneThirdPower(t *testing.T) {
 
 	_, err = vs.AddVote(v2)
 	assert.NoError(t, err)
-	assert.True(t, vs.HasFPlusOneVotesFor(0, vote.CPValueNo))
+	assert.True(t, vs.HasFPlusOneVotesFor(0, vote.CPValueYes))
 	assert.False(t, vs.HasTwoFPlusOneVotes(0))
 
 	_, err = vs.AddVote(v3)

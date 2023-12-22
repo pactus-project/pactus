@@ -42,8 +42,10 @@ const (
 	tNodeIdx2      = 1
 	tNodeIdx3      = 2
 	tNodeIdx4      = 3
-	tTotalNodes    = 4 // each node has 3 validators
-	tCommitteeSize = 7
+	tNodeIdx5      = 4
+	tNodeIdx6      = 5
+	tTotalNodes    = 6 // each node has 3 validators
+	tCommitteeSize = 11
 )
 
 func TestMain(m *testing.M) {
@@ -109,11 +111,13 @@ func TestMain(m *testing.M) {
 		key.PublicKeyNative().AccountAddress(): acc2,
 	}
 
-	vals := make([]*validator.Validator, 4)
+	vals := make([]*validator.Validator, 6)
 	vals[0] = validator.NewValidator(tValKeys[tNodeIdx1][0].PublicKey(), 0)
 	vals[1] = validator.NewValidator(tValKeys[tNodeIdx2][0].PublicKey(), 1)
 	vals[2] = validator.NewValidator(tValKeys[tNodeIdx3][0].PublicKey(), 2)
 	vals[3] = validator.NewValidator(tValKeys[tNodeIdx4][0].PublicKey(), 3)
+	vals[4] = validator.NewValidator(tValKeys[tNodeIdx5][0].PublicKey(), 4)
+	vals[5] = validator.NewValidator(tValKeys[tNodeIdx6][0].PublicKey(), 5)
 	params := param.DefaultParams()
 	params.MinimumStake = 1000
 	params.BlockIntervalInSecond = 2
@@ -169,7 +173,7 @@ func TestMain(m *testing.M) {
 	if block.Height == 1 {
 		panic("block height should be greater than 1")
 	}
-	if len(cert.Committers) == 4 {
+	if len(cert.Committers) == 7 {
 		panic("Sortition didn't work")
 	}
 

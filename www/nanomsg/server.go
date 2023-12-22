@@ -47,6 +47,8 @@ func (s *Server) StartServer() error {
 			s.logger.Error("error on nanomsg publisher binding", "error", err)
 		}
 		s.publisher = publisher
+
+		s.logger.Info("nanmsg server started", "addr", s.config.Listen)
 		go s.eventLoop()
 	}()
 	return nil

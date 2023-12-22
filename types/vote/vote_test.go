@@ -489,8 +489,8 @@ func TestLog(t *testing.T) {
 }
 
 func TestCPValueToString(t *testing.T) {
-	assert.Equal(t, vote.CPValueNo.String(), "zero")
-	assert.Equal(t, vote.CPValueYes.String(), "one")
+	assert.Equal(t, vote.CPValueNo.String(), "no")
+	assert.Equal(t, vote.CPValueYes.String(), "yes")
 	assert.Equal(t, vote.CPValueAbstain.String(), "abstain")
 	assert.Equal(t, vote.CPValue(-1).String(), "unknown: -1")
 }

@@ -37,14 +37,14 @@ func (s *Server) getOpenAPIHandler() (http.Handler, error) {
 	return http.FileServer(statikFS), nil
 }
 
-func (s *Server) startGateway() error {
+func (s *Server) startGateway(addr string) error {
 	if !s.config.Gateway.Enable {
 		return nil
 	}
 
 	conn, err := grpc.DialContext(
 		s.ctx,
-		s.config.Listen,
+		addr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithBlock(),
 	)
@@ -85,6 +85,7 @@ func (s *Server) startGateway() error {
 	if s.config.Gateway.EnableCORS {
 		gwServer.Handler = allowCORS(gwServer.Handler)
 	}
+	s.logger.Info("grpc-gateway server started", "addr", gwServer.Addr)
 	return gwServer.ListenAndServe()
 }
 

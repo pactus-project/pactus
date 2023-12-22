@@ -75,25 +75,26 @@ func (s *Server) StartServer(grpcServer string) error {
 	http.Handle("/metrics/prometheus", promhttp.Handler())
 	http.Handle("/", handlers.RecoveryHandler()(s.router))
 
-	l, err := net.Listen("tcp", s.config.Listen)
+	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}
 
-	s.logger.Info("http started listening", "address", l.Addr().String())
-	s.listener = l
+	s.logger.Info("http started listening", "address", listener.Addr().String())
+	s.listener = listener
 
 	server := &http.Server{
-		Addr:              l.Addr().String(),
+		Addr:              listener.Addr().String(),
 		ReadHeaderTimeout: 3 * time.Second,
 	}
 
 	go func() {
 		for {
-			err := server.Serve(l)
+			err := server.Serve(listener)
 			if err != nil {
 				s.logger.Error("error on a connection", "error", err)
 			}
+			s.logger.Info("http server started", "addr", listener.Addr())
 		}
 	}()
 
