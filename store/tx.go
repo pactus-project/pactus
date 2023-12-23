@@ -33,9 +33,9 @@ func newTxStore(db *leveldb.DB, ttl uint32) *txStore {
 }
 
 func (ts *txStore) saveTxs(batch *leveldb.Batch, txs block.Txs, regs []blockRegion) {
-	w := bytes.NewBuffer(make([]byte, 0, 32+4))
-
 	for i, trx := range txs {
+		w := bytes.NewBuffer(make([]byte, 0, 32+4))
+
 		reg := regs[i]
 		err := encoding.WriteElements(w, &reg.height, &reg.offset, &reg.length)
 		if err != nil {
