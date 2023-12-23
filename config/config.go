@@ -3,7 +3,6 @@ package config
 import (
 	"bytes"
 	_ "embed"
-	"github.com/pactus-project/pactus/types/param"
 	"os"
 
 	"github.com/pactus-project/pactus/consensus"
@@ -12,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/txpool"
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"

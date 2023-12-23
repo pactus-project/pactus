@@ -43,8 +43,8 @@ func (ts *txStore) saveTxs(batch *leveldb.Batch, txs block.Txs, regs []blockRegi
 		}
 
 		id := trx.ID()
-		txKey := txKey(id)
-		batch.Put(txKey, w.Bytes())
+		key := txKey(id)
+		batch.Put(key, w.Bytes())
 		ts.saveToCache(id, reg.height)
 	}
 }
@@ -72,8 +72,7 @@ func (ts *txStore) tx(id tx.ID) (*blockRegion, error) {
 	}
 	r := bytes.NewReader(data)
 	reg := new(blockRegion)
-	err = encoding.ReadElements(r, &reg.height, &reg.offset, &reg.length)
-	if err != nil {
+	if err := encoding.ReadElements(r, &reg.height, &reg.offset, &reg.length); err != nil {
 		return nil, err
 	}
 	return reg, nil

@@ -67,7 +67,7 @@ func TestMain(m *testing.M) {
 		tValKeys[i][0] = bls.NewValidatorKey(key0)
 		tValKeys[i][1] = bls.NewValidatorKey(key1)
 		tValKeys[i][2] = bls.NewValidatorKey(key2)
-		tConfigs[i] = config.DefaultConfigMainnet()
+		tConfigs[i] = config.DefaultConfigMainnet(param.DefaultParams())
 
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
@@ -179,7 +179,7 @@ func TestMain(m *testing.M) {
 		tNodes[i].Stop()
 	}
 
-	s, _ := store.NewStore(tConfigs[tNodeIdx1].Store, 8640, 17)
+	s, _ := store.NewStore(tConfigs[tNodeIdx1].Store)
 	total := int64(0)
 	s.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
 		total += acc.Balance()

@@ -60,7 +60,7 @@ func TestValidatorBatchSaving(t *testing.T) {
 
 	t.Run("Close and load db", func(t *testing.T) {
 		td.store.Close()
-		store, _ := NewStore(td.store.config, 8640, 17)
+		store, _ := NewStore(td.store.config)
 		assert.Equal(t, store.TotalValidators(), total)
 	})
 }
@@ -116,7 +116,7 @@ func TestValidatorByNumber(t *testing.T) {
 
 	t.Run("Reopen the store", func(t *testing.T) {
 		td.store.Close()
-		store, _ := NewStore(td.store.config, 8640, 17)
+		store, _ := NewStore(td.store.config)
 
 		num := td.RandInt32(total)
 		val, err := store.ValidatorByNumber(num)
@@ -160,7 +160,7 @@ func TestValidatorByAddress(t *testing.T) {
 
 	t.Run("Reopen the store", func(t *testing.T) {
 		td.store.Close()
-		store, _ := NewStore(td.store.config, 8640, 17)
+		store, _ := NewStore(td.store.config)
 
 		num := td.RandInt32(total)
 		val0, _ := store.ValidatorByNumber(num)

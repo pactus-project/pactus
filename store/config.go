@@ -41,5 +41,12 @@ func (conf *Config) BasicCheck() error {
 	if !util.IsValidDirPath(conf.Path) {
 		return errors.Errorf(errors.ErrInvalidConfig, "path is not valid")
 	}
+
+	if conf.AccountCacheSize == 0 ||
+		conf.PublicKeyCacheSize == 0 ||
+		conf.SortitionInterval == 0 ||
+		conf.TransactionToLiveInterval == 0 {
+		return errors.Errorf(errors.ErrInvalidConfig, "private configs is not valid")
+	}
 	return nil
 }

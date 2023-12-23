@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -13,7 +14,7 @@ func TestSaveMainnetConfig(t *testing.T) {
 	path := util.TempFilePath()
 	assert.NoError(t, SaveMainnetConfig(path))
 
-	defConf := DefaultConfigMainnet()
+	defConf := DefaultConfigMainnet(param.DefaultParams())
 	conf, err := LoadFromFile(path, true, defConf)
 	assert.NoError(t, err)
 
@@ -25,7 +26,7 @@ func TestSaveConfig(t *testing.T) {
 	conf := defaultConfig()
 	assert.NoError(t, conf.Save(path))
 
-	defConf := DefaultConfigTestnet()
+	defConf := DefaultConfigTestnet(param.DefaultParams())
 	conf, err := LoadFromFile(path, true, defConf)
 	assert.NoError(t, err)
 
@@ -35,7 +36,7 @@ func TestSaveConfig(t *testing.T) {
 }
 
 func TestLocalnetConfig(t *testing.T) {
-	conf := DefaultConfigLocalnet()
+	conf := DefaultConfigLocalnet(param.DefaultParams())
 
 	assert.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
@@ -46,7 +47,7 @@ func TestLocalnetConfig(t *testing.T) {
 
 func TestLoadFromFile(t *testing.T) {
 	path := util.TempFilePath()
-	defConf := DefaultConfigTestnet()
+	defConf := DefaultConfigTestnet(param.DefaultParams())
 
 	_, err := LoadFromFile(path, true, defConf)
 	assert.Error(t, err, "not exists")
@@ -73,7 +74,7 @@ func TestExampleConfig(t *testing.T) {
 		}
 	}
 
-	defaultConf := DefaultConfigMainnet()
+	defaultConf := DefaultConfigMainnet(param.DefaultParams())
 	defaultToml := string(defaultConf.toTOML())
 
 	exampleToml = strings.ReplaceAll(exampleToml, "##", "")
