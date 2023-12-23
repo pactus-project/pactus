@@ -1,7 +1,6 @@
 package store
 
 import (
-	"log"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -45,13 +44,6 @@ func setup(t *testing.T) *testData {
 	// Save 10 blocks
 	for height := uint32(0); height < 10; height++ {
 		blk, cert := td.GenerateTestBlock(height + 1)
-
-		if height == 9 {
-			for _, trx := range blk.Transactions() {
-				log.Println(trx.ID())
-			}
-		}
-
 		td.store.SaveBlock(blk, cert)
 		assert.NoError(t, td.store.WriteBatch())
 	}
@@ -105,19 +97,14 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	blk, _ := committedBlock.ToBlock()
 	assert.Equal(t, blk.PrevCertificate().Height(), lastHeight-1)
 
-	for i, trx := range blk.Transactions() {
-		if i == 0 {
-			continue
-		}
-		log.Printf("test number: %d", i)
+	for _, trx := range blk.Transactions() {
 		committedTx, err := td.store.Transaction(trx.ID())
-		require.NoError(t, err)
-		require.Equal(t, blk.Header().UnixTime(), committedTx.BlockTime)
-		require.Equal(t, trx.ID(), committedTx.TxID)
-		require.Equal(t, lastHeight, committedTx.Height)
+		assert.NoError(t, err)
+		assert.Equal(t, blk.Header().UnixTime(), committedTx.BlockTime)
+		assert.Equal(t, trx.ID(), committedTx.TxID)
+		assert.Equal(t, lastHeight, committedTx.Height)
 		trx2, _ := committedTx.ToTx()
-		log.Printf("got: %v", trx2.ID())
-		require.Equal(t, trx.ID(), trx2.ID())
+		assert.Equal(t, trx.ID(), trx2.ID())
 	}
 }
 
