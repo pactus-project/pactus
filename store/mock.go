@@ -66,9 +66,12 @@ func (m *MockStore) BlockHeight(h hash.Hash) uint32 {
 	return 0
 }
 
-func (m *MockStore) SortitionSeed(_, _ uint32) *sortition.VerifiableSeed {
-	// TODO implement me
-	panic("implement me")
+func (m *MockStore) SortitionSeed(blockHeight, _ uint32) *sortition.VerifiableSeed {
+	if blk, ok := m.Blocks[blockHeight]; ok {
+		sortitionSeed := blk.Header().SortitionSeed()
+		return &sortitionSeed
+	}
+	return nil
 }
 
 func (m *MockStore) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {

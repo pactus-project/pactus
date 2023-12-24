@@ -173,7 +173,7 @@ func TestMain(m *testing.M) {
 		panic("Sortition didn't work")
 	}
 
-	// Let's shutdown the nodes
+	// Lets shutdown the nodes
 	tCtx.Done()
 	for i := 0; i < tTotalNodes; i++ {
 		tNodes[i].Stop()

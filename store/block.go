@@ -128,7 +128,12 @@ func (bs *blockStore) sortitionSeed(blockHeight, currentHeight uint32) *sortitio
 		return nil
 	}
 
-	index = uint32(bs.sortitionSeedCache.Length()) - index
+	if index != 0 {
+		index = uint32(bs.sortitionSeedCache.Length()) - index
+	} else {
+		index = uint32(bs.sortitionSeedCache.Length()) - 1
+	}
+
 	return bs.sortitionSeedCache.Get(int(index))
 }
 
