@@ -46,7 +46,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		}
 
 		if !locked {
-			cmd.PrintWarnMsgf("Another instance is already running. lock file '%s'.", lockFilePath)
+			cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
 			return
 		}
 
