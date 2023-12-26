@@ -9,7 +9,6 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/linkedlist"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/syndtr/goleveldb/leveldb"
 )
@@ -25,14 +24,14 @@ func blockHashKey(h hash.Hash) []byte {
 
 type blockStore struct {
 	db                 *leveldb.DB
-	sortitionSeedCache *linkedlist.LinkedList[*sortition.VerifiableSeed]
+	sortitionSeedCache []*sortition.VerifiableSeed
 	sortitionInterval  uint32
 }
 
 func newBlockStore(db *leveldb.DB, sortitionInterval uint32) *blockStore {
 	return &blockStore{
 		db:                 db,
-		sortitionSeedCache: linkedlist.New[*sortition.VerifiableSeed](),
+		sortitionSeedCache: make([]*sortition.VerifiableSeed, 0, sortitionInterval),
 		sortitionInterval:  sortitionInterval,
 	}
 }
@@ -129,12 +128,12 @@ func (bs *blockStore) sortitionSeed(blockHeight, currentHeight uint32) *sortitio
 	}
 
 	if index != 0 {
-		index = uint32(bs.sortitionSeedCache.Length()) - index
+		index = uint32(len(bs.sortitionSeedCache)) - index
 	} else {
-		index = uint32(bs.sortitionSeedCache.Length()) - 1
+		index = uint32(len(bs.sortitionSeedCache)) - 1
 	}
 
-	return bs.sortitionSeedCache.Get(int(index))
+	return bs.sortitionSeedCache[index]
 }
 
 func (bs *blockStore) hasBlock(height uint32) bool {
@@ -146,8 +145,8 @@ func (bs *blockStore) hasPublicKey(addr crypto.Address) bool {
 }
 
 func (bs *blockStore) saveToCache(sortitionSeed sortition.VerifiableSeed) {
-	bs.sortitionSeedCache.InsertAtTail(&sortitionSeed)
-	if bs.sortitionSeedCache.Length() > int(bs.sortitionInterval) {
-		bs.sortitionSeedCache.DeleteAtHead()
+	bs.sortitionSeedCache = append(bs.sortitionSeedCache, &sortitionSeed)
+	if len(bs.sortitionSeedCache) > int(bs.sortitionInterval) {
+		bs.sortitionSeedCache = bs.sortitionSeedCache[1:]
 	}
 }

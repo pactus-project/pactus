@@ -19,16 +19,16 @@ type blockRegion struct {
 func txKey(id tx.ID) []byte { return append(txPrefix, id.Bytes()...) }
 
 type txStore struct {
-	db      *leveldb.DB
-	txCache *linkedmap.LinkedMap[tx.ID, uint32]
-	ttl     uint32
+	db          *leveldb.DB
+	txCache     *linkedmap.LinkedMap[tx.ID, uint32]
+	txCacheSize uint32
 }
 
-func newTxStore(db *leveldb.DB, ttl uint32) *txStore {
+func newTxStore(db *leveldb.DB, txCacheSize uint32) *txStore {
 	return &txStore{
-		db:      db,
-		txCache: linkedmap.NewLinkedMap[tx.ID, uint32](0),
-		ttl:     ttl,
+		db:          db,
+		txCache:     linkedmap.NewLinkedMap[tx.ID, uint32](0),
+		txCacheSize: txCacheSize,
 	}
 }
 
@@ -54,7 +54,7 @@ func (ts *txStore) pruneCache(currentHeight uint32) {
 		head := ts.txCache.HeadNode()
 		txHeight := head.Data.Value
 
-		if currentHeight-txHeight <= ts.ttl {
+		if currentHeight-txHeight <= ts.txCacheSize {
 			break
 		}
 		ts.txCache.RemoveHead()

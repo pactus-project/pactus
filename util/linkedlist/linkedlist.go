@@ -29,11 +29,6 @@ func New[T any]() *LinkedList[T] {
 	}
 }
 
-func (l *LinkedList[T]) Get(index int) T {
-	values := l.Values()
-	return values[index]
-}
-
 // InsertAtHead inserts a new node at the head of the list.
 func (l *LinkedList[T]) InsertAtHead(data T) *Element[T] {
 	newNode := NewElement(data)
