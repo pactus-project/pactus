@@ -27,7 +27,7 @@ var (
 )
 
 func init() {
-	workingDirOpt = flag.String("working-dir", cmd.PactusHomeDir(), "working directory path")
+	workingDirOpt = flag.String("working-dir", cmd.PactusDefaultHomeDir(), "working directory path")
 	passwordOpt = flag.String("password", "", "wallet password")
 	testnetOpt = flag.Bool("testnet", true, "initializing for the testnet") // TODO: make it false after mainnet launch
 

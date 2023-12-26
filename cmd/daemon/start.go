@@ -22,7 +22,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(startCmd)
 
 	workingDirOpt := startCmd.Flags().StringP("working-dir", "w",
-		cmd.PactusHomeDir(), "A path to the working directory to read the wallet and node files")
+		cmd.PactusDefaultHomeDir(), "A path to the working directory to read the wallet and node files")
 
 	passwordOpt := startCmd.Flags().StringP("password", "p", "", "The wallet password")
 
