@@ -45,6 +45,6 @@ BASE_BRANCH="0.18.x"
 For the rest of this document, we will use these environment variables in commands.
 Keep your terminal open.
 
-4. **Follow the [Releasing](./releasing.md) Document**
+4. **Follow the Releasing Document**
 
 Please refer to the [Releasing](./releasing.md) document and follow the steps outlined from Step 4 until the end to complete the patching process.
