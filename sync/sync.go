@@ -270,7 +270,7 @@ func (sync *synchronizer) receiveLoop() {
 }
 
 func (sync *synchronizer) processGossipMessage(msg *network.GossipMessage) {
-	logger.Debug("processing gossip message", "pid", msg.From)
+	sync.logger.Debug("processing gossip message", "pid", msg.From)
 
 	bdl := sync.firewall.OpenGossipBundle(msg.Data, msg.From)
 	err := sync.processIncomingBundle(bdl, msg.From)

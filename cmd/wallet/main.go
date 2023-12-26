@@ -50,7 +50,8 @@ func main() {
 	// Hide the "help" sub-command
 	rootCmd.SetHelpCommand(&cobra.Command{Hidden: true})
 
-	pathOpt = rootCmd.PersistentFlags().String("path", "default_wallet", "the path to the wallet file")
+	pathOpt = rootCmd.PersistentFlags().String("path",
+		cmd.PactusDefaultWalletPath(cmd.PactusDefaultHomeDir()), "the path to the wallet file")
 	offlineOpt = rootCmd.PersistentFlags().Bool("offline", false, "offline mode")
 	serverAddrOpt = rootCmd.PersistentFlags().String("server", "", "server gRPC address")
 
