@@ -132,10 +132,17 @@ CHECKSUM_FILE="SHA256SUMS"
 FILE_NAME="pactus-cli_${VERSION}_${OS}_${ARCH}${EXT}"
 
 # Destination directory that is the current directory
-DEST_DIR=$(pwd)
+DEST_DIR="$(pwd)"
+EXTRACTED_DIR="${DEST_DIR}/pactus-cli_${VERSION}"
 
 # Create a temporary directory for downloads
-DOWN_DIR=$(mktemp -d)
+DOWN_DIR="$(mktemp -d)"
+
+# Check if extractopn folder exists and print an error if it does
+if [ -e "${EXTRACTED_DIR}" ]; then
+    echo "Destination directory '${EXTRACTED_DIR}' already exists."
+    exit 1
+fi
 
 cd ${DOWN_DIR}
 
@@ -153,12 +160,6 @@ fi
 
 # Extracting
 echo "== Extracting ${FILE_NAME}..."
-# Check if destination folder exists and print an error if it does
-if [ -e "${DEST_DIR}/pactus-cli_${VERSION}" ]; then
-    echo "Destination directory '${DEST_DIR}/pactus-cli_${VERSION}' already exists."
-    exit 1
-fi
-
 if [ "${OS}" = "windows" ]; then
     unzip -n "${FILE_NAME}" -d "${DEST_DIR}" || {
         echo "Error: Extraction failed."
@@ -170,7 +171,7 @@ else
         exit 1
     }
 fi
-echo "Extracted at ${DEST_DIR}/pactus-cli_${VERSION}"
+echo "Extracted at ${EXTRACTED_DIR}"
 
 
 echo ""
