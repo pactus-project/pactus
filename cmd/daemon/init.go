@@ -18,7 +18,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(initCmd)
 	workingDirOpt := initCmd.Flags().StringP("working-dir", "w",
-		cmd.PactusHomeDir(), "A path to the working directory to save the wallet and node files")
+		cmd.PactusDefaultHomeDir(), "A path to the working directory to save the wallet and node files")
 
 	testnetOpt := initCmd.Flags().Bool("testnet", true,
 		"Initialize working directory for joining the testnet") // TODO: make it false after mainnet launch
