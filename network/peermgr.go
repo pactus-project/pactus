@@ -101,7 +101,7 @@ func (mgr *peerMgr) NumOfConnected() int {
 	mgr.lk.RLock()
 	defer mgr.lk.RUnlock()
 
-	return len(mgr.peers) // TODO: try to keep record of all peers + connected peers
+	return len(mgr.peers)
 }
 
 func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr, direction lp2pnet.Direction,
