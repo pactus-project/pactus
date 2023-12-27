@@ -22,6 +22,10 @@
   # Default is `"network_key"`.
  ## network_key = "network_key"
 
+  # `peer_store_path` specifies the peer store filename to use for node to have more peers to connect when start again.
+  # Default is `"peers.json"`.
+ ## peer_store_path = "peers.json"
+
   # `public_addr` is the the address that is public and accessible to other nodes.
  ## public_addr = ""
 

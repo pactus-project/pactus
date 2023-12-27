@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	NetworkKey           string   `toml:"network_key"`
+	PeerStorePath        string   `toml:"peer_store_path"`
 	PublicAddrString     string   `toml:"public_addr"`
 	ListenAddrStrings    []string `toml:"listen_addrs"`
 	RelayAddrStrings     []string `toml:"relay_addrs"`
@@ -31,6 +32,7 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		NetworkKey:           "network_key",
+		PeerStorePath:        "peers.json",
 		PublicAddrString:     "",
 		ListenAddrStrings:    []string{},
 		RelayAddrStrings:     []string{},
