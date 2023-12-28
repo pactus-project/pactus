@@ -55,6 +55,28 @@ func TestLinkedMap(t *testing.T) {
 		assert.False(t, lm.Remove(2))
 	})
 
+	t.Run("Test RemoveTail", func(t *testing.T) {
+		lm := NewLinkedMap[int, string](4)
+		lm.PushBack(0, "-")
+		lm.PushBack(1, "a")
+		lm.PushBack(2, "b")
+
+		lm.RemoveTail()
+		assert.Equal(t, lm.TailNode().Data.Value, "a")
+		assert.NotEqual(t, lm.TailNode().Data.Value, "b")
+	})
+
+	t.Run("Test RemoveHead", func(t *testing.T) {
+		lm := NewLinkedMap[int, string](4)
+		lm.PushBack(0, "-")
+		lm.PushBack(1, "a")
+		lm.PushBack(2, "b")
+
+		lm.RemoveHead()
+		assert.Equal(t, lm.HeadNode().Data.Value, "a")
+		assert.NotEqual(t, lm.HeadNode().Data.Value, "-")
+	})
+
 	t.Run("Should updates v", func(t *testing.T) {
 		lm := NewLinkedMap[int, string](4)
 		lm.PushBack(1, "a")
@@ -180,7 +202,16 @@ func TestLinkedMap(t *testing.T) {
 }
 
 func TestCapacity(t *testing.T) {
-	capacity := 100
-	lm := NewLinkedMap[int, string](capacity)
-	assert.Equal(t, lm.Capacity(), capacity)
+	t.Run("Check Capacity", func(t *testing.T) {
+		capacity := 100
+		lm := NewLinkedMap[int, string](capacity)
+		assert.Equal(t, lm.Capacity(), capacity)
+	})
+
+	t.Run("No Capacity", func(t *testing.T) {
+		capacity := 0
+		lm := NewLinkedMap[int, string](capacity)
+		lm.prune()
+		assert.Equal(t, lm.Capacity(), capacity)
+	})
 }
