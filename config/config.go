@@ -83,8 +83,8 @@ func DefaultConfigMainnet(genParams *param.Params) *Config {
 	// TO BE DEFINED
 
 	// Store private configs
-	conf.Store.TransactionToLiveInterval = genParams.TransactionToLiveInterval
-	conf.Store.SortitionInterval = genParams.SortitionInterval
+	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
+	conf.Store.SortitionCacheSize = genParams.SortitionInterval
 	conf.Store.AccountCacheSize = 1024
 	conf.Store.PublicKeyCacheSize = 1024
 
@@ -131,8 +131,8 @@ func DefaultConfigTestnet(genParams *param.Params) *Config {
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:40799"
 
 	// Store private configs
-	conf.Store.TransactionToLiveInterval = genParams.TransactionToLiveInterval
-	conf.Store.SortitionInterval = genParams.SortitionInterval
+	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
+	conf.Store.SortitionCacheSize = genParams.SortitionInterval
 	conf.Store.AccountCacheSize = 1024
 	conf.Store.PublicKeyCacheSize = 1024
 
@@ -159,8 +159,8 @@ func DefaultConfigLocalnet(genParams *param.Params) *Config {
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:0"
 
 	// Store private configs
-	conf.Store.TransactionToLiveInterval = genParams.TransactionToLiveInterval
-	conf.Store.SortitionInterval = genParams.SortitionInterval
+	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
+	conf.Store.SortitionCacheSize = genParams.SortitionInterval
 	conf.Store.AccountCacheSize = 1024
 	conf.Store.PublicKeyCacheSize = 1024
 

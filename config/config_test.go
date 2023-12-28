@@ -19,6 +19,10 @@ func TestSaveMainnetConfig(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
+	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
+	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
+	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
+	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
 }
 
 func TestSaveConfig(t *testing.T) {
@@ -33,6 +37,10 @@ func TestSaveConfig(t *testing.T) {
 	assert.NoError(t, conf.BasicCheck())
 	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet-v2")
 	assert.Equal(t, conf.Network.DefaultPort, 21777)
+	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
+	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
+	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
+	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
 }
 
 func TestLocalnetConfig(t *testing.T) {
@@ -43,6 +51,25 @@ func TestLocalnetConfig(t *testing.T) {
 	assert.Empty(t, conf.Network.RelayAddrStrings)
 	assert.Equal(t, conf.Network.NetworkName, "pactus-localnet")
 	assert.Equal(t, conf.Network.DefaultPort, 21666)
+	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
+	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
+	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
+	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
+}
+
+func TestTestnetConfig(t *testing.T) {
+	conf := DefaultConfigTestnet(param.DefaultParams())
+
+	assert.NoError(t, conf.BasicCheck())
+	assert.NotEmpty(t, conf.Network.ListenAddrStrings)
+	assert.NotEmpty(t, conf.Network.DefaultRelayAddrStrings)
+	assert.Empty(t, conf.Network.RelayAddrStrings)
+	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet-v2")
+	assert.Equal(t, conf.Network.DefaultPort, 21777)
+	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
+	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
+	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
+	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
 }
 
 func TestLoadFromFile(t *testing.T) {
@@ -59,6 +86,10 @@ func TestLoadFromFile(t *testing.T) {
 	conf, err := LoadFromFile(path, false, defConf)
 	assert.NoError(t, err)
 	assert.Equal(t, conf, defConf)
+	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
+	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
+	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
+	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
 }
 
 func TestExampleConfig(t *testing.T) {
@@ -83,6 +114,10 @@ func TestExampleConfig(t *testing.T) {
 	defaultToml = strings.ReplaceAll(defaultToml, "\n\n", "\n")
 
 	assert.Equal(t, defaultToml, exampleToml)
+	assert.Equal(t, defaultConf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
+	assert.Equal(t, defaultConf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
+	assert.Equal(t, defaultConf.Store.AccountCacheSize, 1024)
+	assert.Equal(t, defaultConf.Store.PublicKeyCacheSize, 1024)
 }
 
 func TestNodeConfigBasicCheck(t *testing.T) {

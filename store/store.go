@@ -93,8 +93,8 @@ func NewStore(conf *Config) (Store, error) {
 		db:             db,
 		pubKeyCache:    pubKeyCache,
 		batch:          new(leveldb.Batch),
-		blockStore:     newBlockStore(db, conf.SortitionInterval),
-		txStore:        newTxStore(db, conf.TransactionToLiveInterval),
+		blockStore:     newBlockStore(db, conf.SortitionCacheSize),
+		txStore:        newTxStore(db, conf.TxCacheSize),
 		accountStore:   newAccountStore(db, conf.AccountCacheSize),
 		validatorStore: newValidatorStore(db),
 	}
@@ -106,8 +106,8 @@ func NewStore(conf *Config) (Store, error) {
 
 	currentHeight := lc.Height()
 	startHeight := uint32(1)
-	if currentHeight > conf.TransactionToLiveInterval {
-		startHeight = currentHeight - conf.TransactionToLiveInterval
+	if currentHeight > conf.TxCacheSize {
+		startHeight = currentHeight - conf.TxCacheSize
 	}
 
 	for i := startHeight; i < currentHeight+1; i++ {

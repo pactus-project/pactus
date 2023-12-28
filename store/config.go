@@ -12,19 +12,19 @@ type Config struct {
 	Path string `toml:"path"`
 
 	// Private configs
-	TransactionToLiveInterval uint32 `toml:"-"`
-	SortitionInterval         uint32 `toml:"-"`
-	AccountCacheSize          int    `toml:"-"`
-	PublicKeyCacheSize        int    `toml:"-"`
+	TxCacheSize        uint32 `toml:"-"`
+	SortitionCacheSize uint32 `toml:"-"`
+	AccountCacheSize   int    `toml:"-"`
+	PublicKeyCacheSize int    `toml:"-"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		Path:                      "data",
-		TransactionToLiveInterval: 8640,
-		SortitionInterval:         17,
-		AccountCacheSize:          1024,
-		PublicKeyCacheSize:        1024,
+		Path:               "data",
+		TxCacheSize:        8640,
+		SortitionCacheSize: 17,
+		AccountCacheSize:   1024,
+		PublicKeyCacheSize: 1024,
 	}
 }
 
@@ -44,8 +44,8 @@ func (conf *Config) BasicCheck() error {
 
 	if conf.AccountCacheSize == 0 ||
 		conf.PublicKeyCacheSize == 0 ||
-		conf.SortitionInterval == 0 ||
-		conf.TransactionToLiveInterval == 0 {
+		conf.SortitionCacheSize == 0 ||
+		conf.TxCacheSize == 0 {
 		return errors.Errorf(errors.ErrInvalidConfig, "private configs is not valid")
 	}
 	return nil

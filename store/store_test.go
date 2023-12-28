@@ -27,11 +27,11 @@ func setup(t *testing.T) *testData {
 	params := param.DefaultParams()
 
 	conf := &Config{
-		Path:                      util.TempDirPath(),
-		TransactionToLiveInterval: params.TransactionToLiveInterval,
-		SortitionInterval:         params.SortitionInterval,
-		AccountCacheSize:          1024,
-		PublicKeyCacheSize:        1024,
+		Path:               util.TempDirPath(),
+		TxCacheSize:        params.TransactionToLiveInterval,
+		SortitionCacheSize: params.SortitionInterval,
+		AccountCacheSize:   1024,
+		PublicKeyCacheSize: 1024,
 	}
 	s, err := NewStore(conf)
 	require.NoError(t, err)

@@ -28,11 +28,11 @@ type blockStore struct {
 	sortitionInterval  uint32
 }
 
-func newBlockStore(db *leveldb.DB, sortitionInterval uint32) *blockStore {
+func newBlockStore(db *leveldb.DB, sortitionCacheSize uint32) *blockStore {
 	return &blockStore{
 		db:                 db,
-		sortitionSeedCache: make([]*sortition.VerifiableSeed, 0, sortitionInterval),
-		sortitionInterval:  sortitionInterval,
+		sortitionSeedCache: make([]*sortition.VerifiableSeed, 0, sortitionCacheSize),
+		sortitionInterval:  sortitionCacheSize,
 	}
 }
 
