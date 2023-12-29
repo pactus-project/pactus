@@ -20,11 +20,10 @@ type NotifeeService struct {
 	logger           *logger.SubLogger
 	streamProtocolID lp2pcore.ProtocolID
 	peerMgr          *peerMgr
-	bootstrapper     bool
 }
 
 func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel chan<- Event, peerMgr *peerMgr,
-	protocolID lp2pcore.ProtocolID, bootstrapper bool, log *logger.SubLogger,
+	protocolID lp2pcore.ProtocolID, log *logger.SubLogger,
 ) *NotifeeService {
 	events := []interface{}{
 		new(lp2pevent.EvtLocalReachabilityChanged),
@@ -41,7 +40,6 @@ func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel cha
 		lp2pEventSub:     eventSub,
 		eventChannel:     eventChannel,
 		streamProtocolID: protocolID,
-		bootstrapper:     bootstrapper,
 		peerMgr:          peerMgr,
 		logger:           log,
 	}
