@@ -22,7 +22,7 @@ type gossipService struct {
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	isBootstrapper bool, log *logger.SubLogger,
+	conf *Config, log *logger.SubLogger,
 ) *gossipService {
 	opts := []lp2pps.Option{
 		lp2pps.WithMessageSignaturePolicy(lp2pps.StrictNoSign),
@@ -30,9 +30,19 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 		lp2pps.WithMessageIdFn(MessageIDFunc),
 	}
 
-	if isBootstrapper {
+	if conf.IsBootstrapper || conf.IsGossiper {
 		// enable Peer eXchange on bootstrappers
 		opts = append(opts, lp2pps.WithPeerExchange(true))
+	}
+
+	if conf.IsGossiper {
+		// turn off the mesh in gossiper mode
+		lp2pps.GossipSubD = 0
+		lp2pps.GossipSubDscore = 0
+		lp2pps.GossipSubDlo = 0
+		lp2pps.GossipSubDhi = 0
+		lp2pps.GossipSubDout = 0
+		lp2pps.GossipSubDlazy = conf.ScaledMinConns()
 	}
 
 	pubsub, err := lp2pps.NewGossipSub(ctx, host, opts...)
