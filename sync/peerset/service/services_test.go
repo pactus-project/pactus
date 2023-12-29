@@ -27,9 +27,13 @@ func TestAppend(t *testing.T) {
 func TestIsNetwork(t *testing.T) {
 	assert.False(t, New(None).IsNetwork())
 	assert.True(t, New(Network).IsNetwork())
+	assert.False(t, New(Gossip).IsNetwork())
+	assert.True(t, New(Gossip, Network).IsNetwork())
 }
 
 func TestIsGossip(t *testing.T) {
 	assert.False(t, New(None).IsGossip())
 	assert.False(t, New(Network).IsGossip())
+	assert.True(t, New(Gossip).IsGossip())
+	assert.True(t, New(Gossip, Network).IsNetwork())
 }
