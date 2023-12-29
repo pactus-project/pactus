@@ -3,18 +3,21 @@ package message
 import (
 	"fmt"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util/errors"
 )
 
 type QueryVotesMessage struct {
-	Height uint32 `cbor:"1,keyasint"`
-	Round  int16  `cbor:"2,keyasint"`
+	Height  uint32         `cbor:"1,keyasint"`
+	Round   int16          `cbor:"2,keyasint"`
+	Querier crypto.Address `cbor:"3,keyasint"`
 }
 
-func NewQueryVotesMessage(h uint32, r int16) *QueryVotesMessage {
+func NewQueryVotesMessage(height uint32, round int16, querier crypto.Address) *QueryVotesMessage {
 	return &QueryVotesMessage{
-		Height: h,
-		Round:  r,
+		Height:  height,
+		Round:   round,
+		Querier: querier,
 	}
 }
 
@@ -30,5 +33,5 @@ func (m *QueryVotesMessage) Type() Type {
 }
 
 func (m *QueryVotesMessage) String() string {
-	return fmt.Sprintf("{%d/%d}", m.Height, m.Round)
+	return fmt.Sprintf("{%d/%d %s}", m.Height, m.Round, m.Querier.ShortString())
 }
