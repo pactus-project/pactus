@@ -121,9 +121,14 @@ func TestIsBootstrapper(t *testing.T) {
 	pid2, _ := lp2ppeer.Decode("12D3KooWQBpPV6NtZy1dvN2oF7dJdLoooRZfEmwtHiDUf42ArDjT")
 	pid3, _ := lp2ppeer.Decode("12D3KooWBqutgDboACf1i1c9uN9BQg9xdREoeXYb2rvFHQU1QcAp")
 
-	assert.False(t, conf.IsBootstrapper(pid1))
-	assert.True(t, conf.IsBootstrapper(pid2))
-	assert.True(t, conf.IsBootstrapper(pid3))
+	conf.CheckIsBootstrapper(pid1)
+	assert.False(t, conf.IsBootstrapper)
+
+	conf.CheckIsBootstrapper(pid2)
+	assert.True(t, conf.IsBootstrapper)
+
+	conf.CheckIsBootstrapper(pid3)
+	assert.True(t, conf.IsBootstrapper)
 }
 
 func TestScaledConns(t *testing.T) {

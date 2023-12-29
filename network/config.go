@@ -26,6 +26,8 @@ type Config struct {
 	DefaultPort                 int      `toml:"-"`
 	DefaultRelayAddrStrings     []string `toml:"-"`
 	DefaultBootstrapAddrStrings []string `toml:"-"`
+	IsBootstrapper              bool     `toml:"-"`
+	IsGossiper                  bool     `toml:"-"`
 }
 
 func DefaultConfig() *Config {
@@ -43,6 +45,8 @@ func DefaultConfig() *Config {
 		EnableMetrics:        false,
 		ForcePrivateNetwork:  false,
 		DefaultPort:          21888,
+		IsBootstrapper:       false,
+		IsGossiper:           false,
 	}
 }
 
@@ -103,15 +107,14 @@ func (conf *Config) BootstrapAddrInfos() []lp2ppeer.AddrInfo {
 	return addrInfos
 }
 
-func (conf *Config) IsBootstrapper(pid lp2pcore.PeerID) bool {
+func (conf *Config) CheckIsBootstrapper(pid lp2pcore.PeerID) {
 	addrInfos := conf.BootstrapAddrInfos()
 	for _, ai := range addrInfos {
 		if ai.ID == pid {
-			return true
+			conf.IsBootstrapper = true
+			break
 		}
 	}
-
-	return false
 }
 
 func (conf *Config) ScaledMaxConns() int {
