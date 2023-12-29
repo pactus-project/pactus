@@ -194,12 +194,15 @@ func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, he
 	t.Helper()
 
 	for _, consMsg := range td.consMessages {
-		if consMsg.sender == cons.valKey.Address() &&
-			consMsg.message.Type() == message.TypeQueryProposal {
-			m := consMsg.message.(*message.QueryProposalMessage)
-			assert.Equal(t, m.Height, height)
-			return
+		if consMsg.sender != cons.valKey.Address() ||
+			consMsg.message.Type() != message.TypeQueryProposal {
+			continue
 		}
+
+		m := consMsg.message.(*message.QueryProposalMessage)
+		assert.Equal(t, m.Height, height)
+		assert.Equal(t, m.Querier, cons.valKey.Address())
+		return
 	}
 	require.NoError(t, fmt.Errorf("Not found"))
 }
@@ -208,13 +211,16 @@ func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height
 	t.Helper()
 
 	for _, consMsg := range td.consMessages {
-		if consMsg.sender == cons.valKey.Address() &&
-			consMsg.message.Type() == message.TypeQueryVotes {
-			m := consMsg.message.(*message.QueryVotesMessage)
-			assert.Equal(t, m.Height, height)
-			assert.Equal(t, m.Round, round)
-			return
+		if consMsg.sender != cons.valKey.Address() ||
+			consMsg.message.Type() != message.TypeQueryVotes {
+			continue
 		}
+
+		m := consMsg.message.(*message.QueryVotesMessage)
+		assert.Equal(t, m.Height, height)
+		assert.Equal(t, m.Round, round)
+		assert.Equal(t, m.Querier, cons.valKey.Address())
+		return
 	}
 	require.NoError(t, fmt.Errorf("Not found"))
 }

@@ -14,7 +14,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	v1, _ := td.GenerateTestPrecommitVote(consensusHeight, 0)
 	td.consMgr.AddVote(v1)
 	pid := td.RandPeerID()
-	msg := message.NewQueryVotesMessage(consensusHeight, 1)
+	msg := message.NewQueryVotesMessage(consensusHeight, 1, td.RandValAddress())
 
 	t.Run("should respond to the query votes message", func(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
@@ -24,7 +24,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	})
 
 	t.Run("doesn't have any votes", func(t *testing.T) {
-		msg := message.NewQueryVotesMessage(consensusHeight+1, 1)
+		msg := message.NewQueryVotesMessage(consensusHeight+1, 1, td.RandValAddress())
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeVote)
@@ -35,7 +35,7 @@ func TestBroadcastingQueryVotesMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	consensusHeight := td.state.LastBlockHeight() + 1
-	msg := message.NewQueryVotesMessage(consensusHeight, 1)
+	msg := message.NewQueryVotesMessage(consensusHeight, 1, td.RandValAddress())
 	td.sync.broadcast(msg)
 
 	td.shouldPublishMessageWithThisType(t, message.TypeQueryVotes)

@@ -291,7 +291,7 @@ func TestTestNetFlags(t *testing.T) {
 	td := setup(t, nil)
 
 	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.valKeys[0].PublicKey())
-	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(td.RandHeight()))
+	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(td.RandHeight(), td.RandValAddress()))
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
 }
