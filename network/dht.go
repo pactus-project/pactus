@@ -17,10 +17,10 @@ type dhtService struct {
 }
 
 func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.ProtocolID,
-	isBootstrapper bool, conf *Config, log *logger.SubLogger,
+	conf *Config, log *logger.SubLogger,
 ) *dhtService {
 	mode := lp2pdht.ModeAuto
-	if isBootstrapper {
+	if conf.IsBootstrapper || conf.IsGossiper {
 		mode = lp2pdht.ModeServer
 	}
 	opts := []lp2pdht.Option{
