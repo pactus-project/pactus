@@ -15,6 +15,8 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 )
 
+const peerStorePath = "peers.json"
+
 type peerInfo struct {
 	MultiAddress multiaddr.Multiaddr `json:"multi_address"`
 	Direction    lp2pnet.Direction   `json:"direction"`
@@ -32,7 +34,6 @@ type peerMgr struct {
 	host           lp2phost.Host
 	peers          map[lp2ppeer.ID]*peerInfo
 	logger         *logger.SubLogger
-	peerStorePath  string
 }
 
 // newPeerMgr creates a new Peer Manager instance.
@@ -40,8 +41,8 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host,
 	conf *Config, log *logger.SubLogger,
 ) *peerMgr {
 	peers := make(map[lp2ppeer.ID]*peerInfo)
-	if util.PathExists(conf.PeerStorePath) {
-		data, err := util.ReadFile(conf.PeerStorePath)
+	if util.PathExists(peerStorePath) {
+		data, err := util.ReadFile(peerStorePath)
 		if err != nil {
 			log.Error("can't read peer list", "error", err)
 		}
@@ -59,7 +60,6 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host,
 		peers:          peers,
 		host:           h,
 		logger:         log,
-		peerStorePath:  conf.PeerStorePath,
 	}
 
 	return b
@@ -91,7 +91,7 @@ func (mgr *peerMgr) Stop() {
 		mgr.logger.Error("can't marshal peer list", "error", err)
 	}
 
-	err = util.WriteFile(mgr.peerStorePath, data)
+	err = util.WriteFile(peerStorePath, data)
 	if err != nil {
 		mgr.logger.Error("can't save peer list", "error", err)
 	}
