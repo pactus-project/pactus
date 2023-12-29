@@ -373,20 +373,35 @@ func TestBroadcastBlockAnnounce(t *testing.T) {
 
 	t.Run("Should announce the block", func(t *testing.T) {
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
-		msg := message.BlockAnnounceMessage{Block: blk, Certificate: cert}
+		msg := message.NewBlockAnnounceMessage(blk, cert)
 
-		td.broadcastCh <- &msg
+		td.sync.broadcast(msg)
 
 		td.shouldPublishMessageWithThisType(t, message.TypeBlockAnnounce)
 	})
 
 	t.Run("Should NOT announce the block", func(t *testing.T) {
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
-		msg := message.BlockAnnounceMessage{Block: blk, Certificate: cert}
+		msg := message.NewBlockAnnounceMessage(blk, cert)
 
 		td.sync.cache.AddBlock(blk)
-		td.broadcastCh <- &msg
+		td.sync.broadcast(msg)
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeBlockAnnounce)
 	})
+}
+
+func TestBundleSequenceNo(t *testing.T) {
+	td := setup(t, nil)
+
+	msg := message.NewQueryProposalMessage(td.RandHeight(), td.RandValAddress())
+
+	td.sync.broadcast(msg)
+	bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeQueryProposal)
+	assert.Equal(t, 0, bdl1.SequenceNo)
+
+	// Sending the same message again
+	td.sync.broadcast(msg)
+	bdl2 := td.shouldPublishMessageWithThisType(t, message.TypeQueryProposal)
+	assert.Equal(t, 1, bdl2.SequenceNo)
 }

@@ -42,7 +42,6 @@ type synchronizer struct {
 	broadcastCh <-chan message.Message
 	networkCh   <-chan network.Event
 	network     network.Network
-	lastSeqNo   int
 	logger      *logger.SubLogger
 }
 
@@ -148,8 +147,7 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 			// It's localnet and for testing purpose only
 		}
 
-		bdl.SetSequenceNo(sync.lastSeqNo)
-		sync.lastSeqNo++
+		bdl.SetSequenceNo(sync.peerSet.TotalSentBundles())
 
 		return bdl
 	}
@@ -171,7 +169,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
 		}
 
 		sync.peerSet.UpdateLastSent(to)
-		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
+		sync.peerSet.IncreaseSentCounters(msg.Type(), int64(len(data)), &to)
 		sync.logger.Info("bundle sent", "bundle", bdl, "to", to)
 	}
 }
@@ -198,7 +196,7 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 		} else {
 			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
 		}
-		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), nil)
+		sync.peerSet.IncreaseSentCounters(msg.Type(), int64(len(data)), nil)
 	}
 }
 

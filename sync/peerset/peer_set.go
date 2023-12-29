@@ -25,6 +25,7 @@ type PeerSet struct {
 	sessions           map[int]*session.Session
 	nextSessionID      int
 	sessionTimeout     time.Duration
+	totalSentBundles   int
 	totalSentBytes     int64
 	totalReceivedBytes int64
 	sentBytes          map[message.Type]int64
@@ -326,10 +327,11 @@ func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, msgType message.Typ
 	ps.receivedBytes[msgType] += c
 }
 
-func (ps *PeerSet) IncreaseSentBytesCounter(msgType message.Type, c int64, pid *peer.ID) {
+func (ps *PeerSet) IncreaseSentCounters(msgType message.Type, c int64, pid *peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
+	ps.totalSentBundles++
 	ps.totalSentBytes += c
 	ps.sentBytes[msgType] += c
 
@@ -337,6 +339,13 @@ func (ps *PeerSet) IncreaseSentBytesCounter(msgType message.Type, c int64, pid *
 		p := ps.mustGetPeer(*pid)
 		p.SentBytes[msgType] += c
 	}
+}
+
+func (ps *PeerSet) TotalSentBundles() int {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.totalSentBundles
 }
 
 func (ps *PeerSet) TotalSentBytes() int64 {

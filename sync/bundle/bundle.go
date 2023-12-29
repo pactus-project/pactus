@@ -102,6 +102,7 @@ func (b *Bundle) Decode(r io.Reader) (int, error) {
 	}
 
 	b.Flags = bdl.Flags
+	b.SequenceNo = bdl.SequenceNo
 	b.Message = msg
 	return bytesRead, cbor.Unmarshal(data, msg)
 }
