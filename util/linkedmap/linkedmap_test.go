@@ -8,7 +8,7 @@ import (
 
 func TestLinkedMap(t *testing.T) {
 	t.Run("Test FirstNode", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](4)
+		lm := New[int, string](4)
 		assert.Nil(t, lm.HeadNode())
 
 		lm.PushFront(3, "c")
@@ -20,7 +20,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Test LastNode", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](4)
+		lm := New[int, string](4)
 		assert.Nil(t, lm.TailNode())
 
 		lm.PushBack(1, "a")
@@ -32,7 +32,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Test Get", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](4)
+		lm := New[int, string](4)
 
 		lm.PushBack(2, "b")
 		lm.PushBack(1, "a")
@@ -46,7 +46,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Test Remove", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](4)
+		lm := New[int, string](4)
 
 		lm.PushBack(0, "-")
 		lm.PushBack(2, "b")
@@ -56,7 +56,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Test RemoveTail", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](4)
+		lm := New[int, string](4)
 		lm.PushBack(0, "-")
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -67,7 +67,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Test RemoveHead", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](4)
+		lm := New[int, string](4)
 		lm.PushBack(0, "-")
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -78,7 +78,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Should updates v", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](4)
+		lm := New[int, string](4)
 		lm.PushBack(1, "a")
 
 		lm.PushBack(1, "b")
@@ -93,7 +93,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Should prunes oldest item", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](4)
+		lm := New[int, string](4)
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -111,7 +111,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Should prunes by changing capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](4)
+		lm := New[int, string](4)
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -132,7 +132,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Test PushBack and prune", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](3)
+		lm := New[int, string](3)
 
 		lm.PushBack(1, "a") // This item should be pruned
 		lm.PushBack(2, "b")
@@ -145,7 +145,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Test PushFront and prune", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](3)
+		lm := New[int, string](3)
 
 		lm.PushFront(1, "a")
 		lm.PushFront(2, "b")
@@ -158,7 +158,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Delete first ", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](3)
+		lm := New[int, string](3)
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -171,7 +171,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Delete last", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](3)
+		lm := New[int, string](3)
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -184,7 +184,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Test Has function", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](2)
+		lm := New[int, string](2)
 
 		lm.PushBack(1, "a")
 
@@ -193,7 +193,7 @@ func TestLinkedMap(t *testing.T) {
 	})
 
 	t.Run("Test Clear", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](2)
+		lm := New[int, string](2)
 
 		lm.PushBack(1, "a")
 		lm.Clear()
@@ -204,12 +204,12 @@ func TestLinkedMap(t *testing.T) {
 func TestCapacity(t *testing.T) {
 	t.Run("Check Capacity", func(t *testing.T) {
 		capacity := 100
-		lm := NewLinkedMap[int, string](capacity)
+		lm := New[int, string](capacity)
 		assert.Equal(t, lm.Capacity(), capacity)
 	})
 
 	t.Run("Test FirstNode with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 		assert.Nil(t, lm.HeadNode())
 
 		lm.PushFront(3, "c")
@@ -221,7 +221,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Test LastNode with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 		assert.Nil(t, lm.TailNode())
 
 		lm.PushBack(1, "a")
@@ -233,7 +233,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Test Get with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 
 		lm.PushBack(2, "b")
 		lm.PushBack(1, "a")
@@ -247,7 +247,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Test Remove with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 
 		lm.PushBack(0, "-")
 		lm.PushBack(2, "b")
@@ -257,7 +257,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Test RemoveTail with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 		lm.PushBack(0, "-")
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -268,7 +268,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Test RemoveHead with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 		lm.PushBack(0, "-")
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -279,7 +279,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Should updates v with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 		lm.PushBack(1, "a")
 
 		lm.PushBack(1, "b")
@@ -294,7 +294,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Should not prunes oldest item with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -312,7 +312,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Should prunes by changing capacity with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -333,7 +333,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Test PushBack and should not prune with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 
 		lm.PushBack(1, "a") // This item should be pruned
 		lm.PushBack(2, "b")
@@ -346,7 +346,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Test PushFront and prune with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 
 		lm.PushFront(1, "a")
 		lm.PushFront(2, "b")
@@ -359,7 +359,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Delete first with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -372,7 +372,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Delete last with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 
 		lm.PushBack(1, "a")
 		lm.PushBack(2, "b")
@@ -385,7 +385,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Test Has function with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 
 		lm.PushBack(1, "a")
 
@@ -394,7 +394,7 @@ func TestCapacity(t *testing.T) {
 	})
 
 	t.Run("Test Clear with Zero Capacity", func(t *testing.T) {
-		lm := NewLinkedMap[int, string](0)
+		lm := New[int, string](0)
 
 		lm.PushBack(1, "a")
 		lm.Clear()

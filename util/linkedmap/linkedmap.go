@@ -15,8 +15,8 @@ type LinkedMap[K comparable, V any] struct {
 	capacity int
 }
 
-// NewLinkedMap creates a new LinkedMap with the specified capacity.
-func NewLinkedMap[K comparable, V any](capacity int) *LinkedMap[K, V] {
+// New creates a new LinkedMap with the specified capacity.
+func New[K comparable, V any](capacity int) *LinkedMap[K, V] {
 	return &LinkedMap[K, V]{
 		list:     ll.New[Pair[K, V]](),
 		hashmap:  make(map[K]*ll.Element[Pair[K, V]]),

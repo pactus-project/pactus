@@ -27,7 +27,7 @@ type txStore struct {
 func newTxStore(db *leveldb.DB, txCacheSize uint32) *txStore {
 	return &txStore{
 		db:          db,
-		txCache:     linkedmap.NewLinkedMap[tx.ID, uint32](0),
+		txCache:     linkedmap.New[tx.ID, uint32](0),
 		txCacheSize: txCacheSize,
 	}
 }
