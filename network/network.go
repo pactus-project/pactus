@@ -228,18 +228,19 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 
 	log.SetObj(n)
 
-	isBootstrapper := conf.IsBootstrapper(host.ID())
+	conf.CheckIsBootstrapper(host.ID())
+
 	kadProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/gossip/v1", conf.NetworkName)) // TODO: better name?
 	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", conf.NetworkName))
 
 	if conf.EnableMdns {
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
 	}
-	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, isBootstrapper, conf, n.logger)
+	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf, n.logger)
 	n.peerMgr = newPeerMgr(ctx, host, conf, n.logger)
 	n.stream = newStreamService(ctx, n.host, streamProtocolID, n.eventChannel, n.logger)
-	n.gossip = newGossipService(ctx, n.host, n.eventChannel, isBootstrapper, n.logger)
-	n.notifee = newNotifeeService(ctx, n.host, n.eventChannel, n.peerMgr, streamProtocolID, isBootstrapper, n.logger)
+	n.gossip = newGossipService(ctx, n.host, n.eventChannel, conf, n.logger)
+	n.notifee = newNotifeeService(ctx, n.host, n.eventChannel, n.peerMgr, streamProtocolID, n.logger)
 
 	n.host.Network().Notify(n.notifee)
 	n.connGater.SetPeerManager(n.peerMgr)
@@ -247,7 +248,8 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	n.logger.Info("network setup", "id", n.host.ID(),
 		"name", conf.NetworkName,
 		"address", conf.ListenAddrStrings,
-		"bootstrapper", isBootstrapper)
+		"bootstrapper", conf.IsBootstrapper,
+		"gossiper", conf.IsGossiper)
 
 	return n, nil
 }
