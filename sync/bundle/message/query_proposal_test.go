@@ -3,6 +3,7 @@ package message
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,6 +13,8 @@ func TestQueryProposalType(t *testing.T) {
 }
 
 func TestQueryProposalMessage(t *testing.T) {
-	m := NewQueryProposalMessage(0)
+	ts := testsuite.NewTestSuite(t)
+
+	m := NewQueryProposalMessage(0, ts.RandValAddress())
 	assert.NoError(t, m.BasicCheck())
 }
