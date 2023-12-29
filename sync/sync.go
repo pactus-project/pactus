@@ -42,6 +42,7 @@ type synchronizer struct {
 	broadcastCh <-chan message.Message
 	networkCh   <-chan network.Event
 	network     network.Network
+	lastSeqNo   int
 	logger      *logger.SubLogger
 }
 
@@ -146,6 +147,9 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 		default:
 			// It's localnet and for testing purpose only
 		}
+
+		bdl.SetSequenceNo(sync.lastSeqNo)
+		sync.lastSeqNo++
 
 		return bdl
 	}
