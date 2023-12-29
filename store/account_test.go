@@ -140,6 +140,8 @@ func TestAccountDeepCopy(t *testing.T) {
 
 	acc2, _ := td.store.Account(addr)
 	acc2.AddToBalance(1)
+	accCache, _ := td.store.accountStore.addrCache.Get(addr)
+	assert.NotEqual(t, accCache.Hash(), acc2.Hash())
 
 	expectedAcc, _ := td.store.accountStore.addrCache.Get(addr)
 	assert.NotEqual(t, expectedAcc.Hash(), acc2.Hash())
