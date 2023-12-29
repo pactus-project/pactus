@@ -25,6 +25,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 	conf *Config, log *logger.SubLogger,
 ) *gossipService {
 	opts := []lp2pps.Option{
+		lp2pps.WithFloodPublish(true),
 		lp2pps.WithMessageSignaturePolicy(lp2pps.StrictNoSign),
 		lp2pps.WithNoAuthor(),
 		lp2pps.WithMessageIdFn(MessageIDFunc),
@@ -35,15 +36,17 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 		opts = append(opts, lp2pps.WithPeerExchange(true))
 	}
 
+	gsParams := lp2pps.DefaultGossipSubParams()
 	if conf.IsGossiper {
 		// turn off the mesh in gossiper mode
-		lp2pps.GossipSubD = 0
-		lp2pps.GossipSubDscore = 0
-		lp2pps.GossipSubDlo = 0
-		lp2pps.GossipSubDhi = 0
-		lp2pps.GossipSubDout = 0
-		lp2pps.GossipSubDlazy = conf.ScaledMinConns()
+		gsParams.D = 0
+		gsParams.Dscore = 0
+		gsParams.Dlo = 0
+		gsParams.Dhi = 0
+		gsParams.Dout = 0
+		gsParams.Dlazy = conf.ScaledMinConns()
 	}
+	opts = append(opts, lp2pps.WithGossipSubParams(gsParams))
 
 	pubsub, err := lp2pps.NewGossipSub(ctx, host, opts...)
 	if err != nil {

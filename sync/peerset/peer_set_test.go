@@ -75,8 +75,8 @@ func TestPeerSet(t *testing.T) {
 		peerSet.IncreaseReceivedBundlesCounter(pid1)
 		peerSet.IncreaseReceivedBytesCounter(pid1, message.TypeBlocksResponse, 100)
 		peerSet.IncreaseReceivedBytesCounter(pid1, message.TypeTransactions, 150)
-		peerSet.IncreaseSentBytesCounter(message.TypeBlocksRequest, 200, nil)
-		peerSet.IncreaseSentBytesCounter(message.TypeBlocksRequest, 250, &pid1)
+		peerSet.IncreaseSentCounters(message.TypeBlocksRequest, 200, nil)
+		peerSet.IncreaseSentCounters(message.TypeBlocksRequest, 250, &pid1)
 
 		peer1 := peerSet.getPeer(pid1)
 
@@ -100,6 +100,7 @@ func TestPeerSet(t *testing.T) {
 		assert.Equal(t, peerSet.TotalSentBytes(), int64(450))
 		assert.Equal(t, peerSet.SentBytesMessageType(message.TypeBlocksRequest), int64(450))
 		assert.Equal(t, peerSet.SentBytes(), sentBytes)
+		assert.Equal(t, peerSet.TotalSentBundles(), 2)
 	})
 
 	t.Run("Testing UpdateHeight", func(t *testing.T) {
