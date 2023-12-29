@@ -81,12 +81,11 @@ func TestBlockStore(t *testing.T) {
 			}
 
 			// check old sortition seed doesn't exist in cache
-			for _, seed := range td.store.blockStore.sortitionSeedCache {
+			for _, seed := range td.store.blockStore.sortitionSeedCache.All() {
 				assert.NotEqual(t, &oldSortitionSeed, seed)
 			}
 
 			// last sortition seed should exist at last index of cache
-			assert.Equal(t, &lastSortitionSeed, td.store.blockStore.
-				sortitionSeedCache[len(td.store.blockStore.sortitionSeedCache)-1])
+			assert.Equal(t, &lastSortitionSeed, td.store.blockStore.sortitionSeedCache.Last().SecondElement)
 		})
 }

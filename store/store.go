@@ -126,7 +126,7 @@ func NewStore(conf *Config) (Store, error) {
 		}
 
 		sortitionSeed := blk.Header().SortitionSeed()
-		s.blockStore.saveToCache(sortitionSeed)
+		s.blockStore.saveToCache(i, sortitionSeed)
 	}
 
 	return s, nil

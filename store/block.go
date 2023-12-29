@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/tripleslice"
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
@@ -24,15 +25,15 @@ func blockHashKey(h hash.Hash) []byte {
 
 type blockStore struct {
 	db                 *leveldb.DB
-	sortitionSeedCache []*sortition.VerifiableSeed
-	sortitionInterval  uint32
+	sortitionSeedCache *tripleslice.TripleSlice[uint32, *sortition.VerifiableSeed]
+	sortitionCacheSize uint32
 }
 
 func newBlockStore(db *leveldb.DB, sortitionCacheSize uint32) *blockStore {
 	return &blockStore{
 		db:                 db,
-		sortitionSeedCache: make([]*sortition.VerifiableSeed, 0, sortitionCacheSize),
-		sortitionInterval:  sortitionCacheSize,
+		sortitionSeedCache: tripleslice.New[uint32, *sortition.VerifiableSeed](int(sortitionCacheSize)),
+		sortitionCacheSize: sortitionCacheSize,
 	}
 }
 
@@ -99,7 +100,7 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.
 	batch.Put(blockHashKey, util.Uint32ToSlice(height))
 
 	sortitionSeed := blk.Header().SortitionSeed()
-	bs.saveToCache(sortitionSeed)
+	bs.saveToCache(height, sortitionSeed)
 
 	return regs
 }
@@ -121,19 +122,15 @@ func (bs *blockStore) blockHeight(h hash.Hash) uint32 {
 	return util.SliceToUint32(data)
 }
 
-func (bs *blockStore) sortitionSeed(blockHeight, currentHeight uint32) *sortition.VerifiableSeed {
+func (bs *blockStore) sortitionSeed(_, currentHeight uint32) *sortition.VerifiableSeed {
+	triple := bs.sortitionSeedCache.Last()
+	blockHeight := triple.FirstElement
 	index := currentHeight - blockHeight
-	if index > bs.sortitionInterval {
-		return nil
-	}
 
-	if index != 0 {
-		index = uint32(len(bs.sortitionSeedCache)) - index
-	} else {
-		index = uint32(len(bs.sortitionSeedCache)) - 1
+	if index == 0 {
+		return bs.sortitionSeedCache.Last().SecondElement
 	}
-
-	return bs.sortitionSeedCache[index]
+	return bs.sortitionSeedCache.Get(triple.ThirdElement).SecondElement
 }
 
 func (bs *blockStore) hasBlock(height uint32) bool {
@@ -144,9 +141,6 @@ func (bs *blockStore) hasPublicKey(addr crypto.Address) bool {
 	return tryHas(bs.db, publicKeyKey(addr))
 }
 
-func (bs *blockStore) saveToCache(sortitionSeed sortition.VerifiableSeed) {
-	bs.sortitionSeedCache = append(bs.sortitionSeedCache, &sortitionSeed)
-	if len(bs.sortitionSeedCache) > int(bs.sortitionInterval) {
-		bs.sortitionSeedCache = bs.sortitionSeedCache[1:]
-	}
+func (bs *blockStore) saveToCache(blockHeight uint32, sortitionSeed sortition.VerifiableSeed) {
+	bs.sortitionSeedCache.Append(blockHeight, &sortitionSeed)
 }
