@@ -9,8 +9,8 @@ command_exists() {
 download_file() {
     file_name=$1
     url=$2
-    echo "Downloading ${file_name}..."
-    if ! curl --fail --proto '=https' --tlsv1.2 -sSL -o "${file_name}" "${url}"; then
+    echo "== Downloading ${file_name}..."
+    if ! curl --fail --proto '=https' --tlsv1.2 -# -L -o "${file_name}" "${url}" ; then
         echo "Failed to download ${file_name}. Check the URL or your internet connection."
         exit 1
     fi
@@ -132,10 +132,17 @@ CHECKSUM_FILE="SHA256SUMS"
 FILE_NAME="pactus-cli_${VERSION}_${OS}_${ARCH}${EXT}"
 
 # Destination directory that is the current directory
-DEST_DIR=$(pwd)
+DEST_DIR="$(pwd)"
+EXTRACTED_DIR="${DEST_DIR}/pactus-cli_${VERSION}"
 
 # Create a temporary directory for downloads
-DOWN_DIR=$(mktemp -d)
+DOWN_DIR="$(mktemp -d)"
+
+# Check if extractopn folder exists and print an error if it does
+if [ -e "${EXTRACTED_DIR}" ]; then
+    echo "Destination directory '${EXTRACTED_DIR}' already exists."
+    exit 1
+fi
 
 cd ${DOWN_DIR}
 
@@ -144,6 +151,7 @@ download_file "${FILE_NAME}" "${SERVER_URL}/${FILE_NAME}"
 download_file "${CHECKSUM_FILE}" "${SERVER_URL}/${CHECKSUM_FILE}"
 
 # Verify the checksum
+echo "== Verify the checksum..."
 sha256sum --ignore-missing -c "${CHECKSUM_FILE}"
 if [ $? -ne 0 ]; then
     echo "Checksum verification failed for ${FILE_NAME}!"
@@ -151,10 +159,20 @@ if [ $? -ne 0 ]; then
 fi
 
 # Extracting
+echo "== Extracting ${FILE_NAME}..."
 if [ "${OS}" = "windows" ]; then
-    unzip -n "${FILE_NAME}" -d "${DEST_DIR}"
+    unzip -n "${FILE_NAME}" -d "${DEST_DIR}" || {
+        echo "Error: Extraction failed."
+        exit 1
+    }
 else
-    tar -xzf "${FILE_NAME}" -C "${DEST_DIR}"
+    tar -xzf "${FILE_NAME}" -C "${DEST_DIR}" || {
+        echo "Error: Extraction failed."
+        exit 1
+    }
 fi
+echo "Extracted at ${EXTRACTED_DIR}"
 
+
+echo ""
 echo "Installation completed."

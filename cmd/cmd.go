@@ -211,7 +211,7 @@ func PrintJSONObject(obj interface{}) {
 	PrintJSONData(data)
 }
 
-func PactusHomeDir() string {
+func PactusDefaultHomeDir() string {
 	home := ""
 	usr, err := user.Current()
 	if err != nil {
