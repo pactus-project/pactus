@@ -81,7 +81,8 @@ func TestDecodeVoteCBOR(t *testing.T) {
 			"035879a101a70101" +
 			"02186403010458200264572d4d6bfcd2140d4f885fd5a32fe42fdbf40551e4ff89f3d235e32b4b92055501c0067d277f2dff" +
 			"99943016d6a0f379cf09846c6f06f60758308ab7aecbe03c4ed5b688bcb7e848baffa62bcbf1a4021522c56693f0a7bbcc1f" +
-			"e865277556ee59c1f63ba592acfe1b43")
+			"e865277556ee59c1f63ba592acfe1b43" +
+			"0401") // SequenceNo
 	d2, _ := hex.DecodeString(
 		"a3" +
 			"01190100" + // flags: 0x0100 (compressed)
@@ -89,7 +90,8 @@ func TestDecodeVoteCBOR(t *testing.T) {
 			"0358951f8b08" +
 			"000000000000ff00790086ffa101a7010102186403010458200264572d4d6bfcd2140d4f885fd5a32fe42fdbf40551e4ff89" +
 			"f3d235e32b4b92055501c0067d277f2dff99943016d6a0f379cf09846c6f06f60758308ab7aecbe03c4ed5b688bcb7e848ba" +
-			"ffa62bcbf1a4021522c56693f0a7bbcc1fe865277556ee59c1f63ba592acfe1b43010000ffff798ce7ec79000000")
+			"ffa62bcbf1a4021522c56693f0a7bbcc1fe865277556ee59c1f63ba592acfe1b43010000ffff798ce7ec79000000" +
+			"0401") // SequenceNo
 
 	bdl1 := new(Bundle)
 	bdl2 := new(Bundle)
@@ -101,4 +103,11 @@ func TestDecodeVoteCBOR(t *testing.T) {
 
 	assert.Equal(t, bdl1.Message, bdl2.Message)
 	assert.Contains(t, bdl1.String(), "vote")
+}
+
+func TestSetSequenceNo(t *testing.T) {
+	bdl := new(Bundle)
+	bdl.SetSequenceNo(1001)
+
+	assert.Equal(t, 1001, bdl.SequenceNo)
 }

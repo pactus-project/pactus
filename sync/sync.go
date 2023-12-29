@@ -147,6 +147,8 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 			// It's localnet and for testing purpose only
 		}
 
+		bdl.SetSequenceNo(sync.peerSet.TotalSentBundles())
+
 		return bdl
 	}
 	return nil
@@ -167,7 +169,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
 		}
 
 		sync.peerSet.UpdateLastSent(to)
-		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
+		sync.peerSet.IncreaseSentCounters(msg.Type(), int64(len(data)), &to)
 		sync.logger.Info("bundle sent", "bundle", bdl, "to", to)
 	}
 }
@@ -194,7 +196,7 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 		} else {
 			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
 		}
-		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), nil)
+		sync.peerSet.IncreaseSentCounters(msg.Type(), int64(len(data)), nil)
 	}
 }
 
