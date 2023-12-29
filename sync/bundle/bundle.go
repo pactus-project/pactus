@@ -20,8 +20,9 @@ const (
 )
 
 type Bundle struct {
-	Flags   int
-	Message message.Message
+	Flags      int
+	SequenceNo int
+	Message    message.Message
 }
 
 func NewBundle(msg message.Message) *Bundle {
@@ -43,10 +44,15 @@ func (b *Bundle) CompressIt() {
 	b.Flags = util.SetFlag(b.Flags, BundleFlagCompressed)
 }
 
+func (b *Bundle) SetSequenceNo(seqNo int) {
+	b.SequenceNo = seqNo
+}
+
 type _Bundle struct {
 	Flags       int          `cbor:"1,keyasint"`
 	MessageType message.Type `cbor:"2,keyasint"`
 	MessageData []byte       `cbor:"3,keyasint"`
+	SequenceNo  int          `cbor:"4,keyasint"`
 }
 
 func (b *Bundle) Encode() ([]byte, error) {
@@ -66,6 +72,7 @@ func (b *Bundle) Encode() ([]byte, error) {
 		Flags:       b.Flags,
 		MessageType: b.Message.Type(),
 		MessageData: data,
+		SequenceNo:  b.SequenceNo,
 	}
 
 	return cbor.Marshal(msg)
@@ -95,6 +102,7 @@ func (b *Bundle) Decode(r io.Reader) (int, error) {
 	}
 
 	b.Flags = bdl.Flags
+	b.SequenceNo = bdl.SequenceNo
 	b.Message = msg
 	return bytesRead, cbor.Unmarshal(data, msg)
 }
