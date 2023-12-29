@@ -21,10 +21,10 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Path:               "data",
-		TxCacheSize:        8640,
-		SortitionCacheSize: 17,
-		AccountCacheSize:   1024,
-		PublicKeyCacheSize: 1024,
+		TxCacheSize:        0,
+		SortitionCacheSize: 0,
+		AccountCacheSize:   0,
+		PublicKeyCacheSize: 0,
 	}
 }
 
@@ -40,13 +40,6 @@ func (conf *Config) StorePath() string {
 func (conf *Config) BasicCheck() error {
 	if !util.IsValidDirPath(conf.Path) {
 		return errors.Errorf(errors.ErrInvalidConfig, "path is not valid")
-	}
-
-	if conf.AccountCacheSize == 0 ||
-		conf.PublicKeyCacheSize == 0 ||
-		conf.SortitionCacheSize == 0 ||
-		conf.TxCacheSize == 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "private configs is not valid")
 	}
 	return nil
 }

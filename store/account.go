@@ -81,7 +81,7 @@ func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.A
 		var addr crypto.Address
 		copy(addr[:], key[1:])
 
-		stopped := consumer(addr, acc.Clone())
+		stopped := consumer(addr, acc)
 		if stopped {
 			return
 		}
