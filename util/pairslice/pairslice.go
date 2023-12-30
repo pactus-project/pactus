@@ -4,11 +4,13 @@ import (
 	"golang.org/x/exp/slices"
 )
 
+// Pair represents a key-value pair.
 type Pair[K comparable, V any] struct {
 	First  K
 	Second V
 }
 
+// PairSlice represents a slice of key-value pairs.
 type PairSlice[K comparable, V any] struct {
 	pairs []*Pair[K, V]
 }
@@ -20,8 +22,7 @@ func New[K comparable, V any](capacity int) *PairSlice[K, V] {
 	}
 }
 
-// Append adds the Pair to the end of the slice. If the capacity is full,
-// it automatically removes the first element and appends the new Pair to the end of the PairSlice.
+// Append adds the first and second to the end of the slice.
 func (ps *PairSlice[K, V]) Append(first K, second V) {
 	ps.pairs = append(ps.pairs, &Pair[K, V]{first, second})
 }
@@ -31,22 +32,24 @@ func (ps *PairSlice[K, V]) RemoveFirst() {
 	ps.remove(0)
 }
 
-// RemoveLast removes the first element from PairSlice.
+// RemoveLast removes the last element from PairSlice.
 func (ps *PairSlice[K, V]) RemoveLast() {
 	ps.remove(ps.Len() - 1)
 }
 
+// Len returns the number of elements in the PairSlice.
 func (ps *PairSlice[K, V]) Len() int {
 	return len(ps.pairs)
 }
 
+// remove removes the element at the specified index from PairSlice.
 func (ps *PairSlice[K, V]) remove(index int) {
 	ps.pairs = slices.Delete(ps.pairs, index, index+1)
 }
 
-// Get returns the Pair at the specified index. If the index doesn't exist, it returns nil.
+// Get returns the properties at the specified index. If the index is out of bounds, it returns false.
 func (ps *PairSlice[K, V]) Get(index int) (K, V, bool) {
-	if index >= len(ps.pairs) || index < 0 {
+	if index < 0 || index >= len(ps.pairs) {
 		var first K
 		var second V
 		return first, second, false
@@ -55,12 +58,12 @@ func (ps *PairSlice[K, V]) Get(index int) (K, V, bool) {
 	return pair.First, pair.Second, true
 }
 
-// First returns the first Pair in the PairSlice.
+// First returns the first properties in the PairSlice. If the PairSlice is empty, it returns false.
 func (ps *PairSlice[K, V]) First() (K, V, bool) {
 	return ps.Get(0)
 }
 
-// Last returns the last Pair in the PairSlice.
+// Last returns the last properties in the PairSlice. If the PairSlice is empty, it returns false.
 func (ps *PairSlice[K, V]) Last() (K, V, bool) {
 	return ps.Get(ps.Len() - 1)
 }
