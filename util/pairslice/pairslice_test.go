@@ -15,7 +15,6 @@ func TestNew(t *testing.T) {
 }
 
 func TestPairSlice(t *testing.T) {
-
 	t.Run("Test Append", func(t *testing.T) {
 		ps := New[int, string](4)
 
