@@ -356,10 +356,12 @@ func (cp *changeProposer) checkJust(v *vote.Vote) error {
 	}
 }
 
-func (cp *changeProposer) checkForTermination(v *vote.Vote) {
-	if v.Type() == vote.VoteTypeCPDecided &&
-		v.Round() == cp.round {
-		cp.cpDecide(v.CPValue())
+func (cp *changeProposer) strongTermination() {
+	cpDecided := cp.log.CPDecidedVoteVoteSet(cp.round)
+	if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueZero) {
+		cp.cpDecide(vote.CPValueZero)
+	} else if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueOne) {
+		cp.cpDecide(vote.CPValueOne)
 	}
 }
 
