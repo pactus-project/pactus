@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.18.3](https://github.com/pactus-project/pactus/compare/v0.18.2...v0.18.3) (2023-12-30)
+
+### Fix
+
+- **network**: refining GossipSubParams for Gossiper node ([#882](https://github.com/pactus-project/pactus/pull/882))
+- **sync**: adding sequence number to the bundle ([#881](https://github.com/pactus-project/pactus/pull/881))
+- **network**: turn off mesh for Gossiper node ([#880](https://github.com/pactus-project/pactus/pull/880))
+- **consensus**: check vote-set for CP strong termination ([#879](https://github.com/pactus-project/pactus/pull/879))
+- adding querier to query messages ([#878](https://github.com/pactus-project/pactus/pull/878))
+
 ## [0.18.2](https://github.com/pactus-project/pactus/compare/v0.18.1...v0.18.2) (2023-12-26)
 
 - Supporting Wallet in Dockerfile
