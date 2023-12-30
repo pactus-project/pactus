@@ -6,7 +6,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/block"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -20,20 +19,26 @@ type testData struct {
 	store *store
 }
 
-func setup(t *testing.T) *testData {
-	t.Helper()
-
-	ts := testsuite.NewTestSuite(t)
-	params := param.DefaultParams()
-
-	conf := &Config{
+func testConfig() *Config {
+	return &Config{
 		Path:               util.TempDirPath(),
-		TxCacheSize:        params.TransactionToLiveInterval,
-		SortitionCacheSize: params.SortitionInterval,
+		TxCacheSize:        1024,
+		SortitionCacheSize: 1024,
 		AccountCacheSize:   1024,
 		PublicKeyCacheSize: 1024,
 	}
-	s, err := NewStore(conf)
+}
+
+func setup(t *testing.T, config *Config) *testData {
+	t.Helper()
+
+	ts := testsuite.NewTestSuite(t)
+
+	if config == nil {
+		config = testConfig()
+	}
+
+	s, err := NewStore(config)
 	require.NoError(t, err)
 
 	td := &testData{
@@ -51,7 +56,7 @@ func setup(t *testing.T) *testData {
 }
 
 func TestBlockHash(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	sb, _ := td.store.Block(1)
 
@@ -61,7 +66,7 @@ func TestBlockHash(t *testing.T) {
 }
 
 func TestBlockHeight(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	sb, _ := td.store.Block(1)
 
@@ -71,7 +76,7 @@ func TestBlockHeight(t *testing.T) {
 }
 
 func TestUnknownTransactionID(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	trx, err := td.store.Transaction(td.RandHash())
 	assert.Error(t, err)
@@ -79,7 +84,7 @@ func TestUnknownTransactionID(t *testing.T) {
 }
 
 func TestWriteAndClosePeacefully(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	// After closing db, we should not crash
 	assert.NoError(t, td.store.Close())
@@ -87,7 +92,7 @@ func TestWriteAndClosePeacefully(t *testing.T) {
 }
 
 func TestRetrieveBlockAndTransactions(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	lastCert := td.store.LastCertificate()
 	lastHeight := lastCert.Height()
@@ -109,7 +114,7 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 }
 
 func TestIndexingPublicKeys(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	committedBlock, _ := td.store.Block(1)
 	blk, _ := committedBlock.ToBlock()
@@ -140,7 +145,7 @@ func TestIndexingPublicKeys(t *testing.T) {
 }
 
 func TestStrippedPublicKey(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	// Find a public key that we have already indexed in the database.
 	committedBlock1, _ := td.store.Block(1)

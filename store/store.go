@@ -204,11 +204,11 @@ func (s *store) BlockHash(height uint32) hash.Hash {
 	return hash.UndefHash
 }
 
-func (s *store) SortitionSeed(blockHeight, currentHeight uint32) *sortition.VerifiableSeed {
+func (s *store) SortitionSeed(blockHeight uint32) *sortition.VerifiableSeed {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.blockStore.sortitionSeed(blockHeight, currentHeight)
+	return s.blockStore.sortitionSeed(blockHeight)
 }
 
 func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {

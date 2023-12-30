@@ -10,7 +10,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/util/tripleslice"
+	"github.com/pactus-project/pactus/util/pairslice"
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
@@ -25,14 +25,14 @@ func blockHashKey(h hash.Hash) []byte {
 
 type blockStore struct {
 	db                 *leveldb.DB
-	sortitionSeedCache *tripleslice.TripleSlice[uint32, *sortition.VerifiableSeed]
+	sortitionSeedCache *pairslice.PairSlice[uint32, *sortition.VerifiableSeed]
 	sortitionCacheSize uint32
 }
 
 func newBlockStore(db *leveldb.DB, sortitionCacheSize uint32) *blockStore {
 	return &blockStore{
 		db:                 db,
-		sortitionSeedCache: tripleslice.New[uint32, *sortition.VerifiableSeed](int(sortitionCacheSize)),
+		sortitionSeedCache: pairslice.New[uint32, *sortition.VerifiableSeed](int(sortitionCacheSize)),
 		sortitionCacheSize: sortitionCacheSize,
 	}
 }
@@ -122,15 +122,20 @@ func (bs *blockStore) blockHeight(h hash.Hash) uint32 {
 	return util.SliceToUint32(data)
 }
 
-func (bs *blockStore) sortitionSeed(_, currentHeight uint32) *sortition.VerifiableSeed {
-	triple := bs.sortitionSeedCache.Last()
-	blockHeight := triple.FirstElement
-	index := currentHeight - blockHeight
+func (bs *blockStore) sortitionSeed(blockHeight uint32) *sortition.VerifiableSeed {
+	startHeight, _, _ := bs.sortitionSeedCache.First()
 
-	if index == 0 {
-		return bs.sortitionSeedCache.Last().SecondElement
+	if blockHeight < startHeight {
+		return nil
 	}
-	return bs.sortitionSeedCache.Get(triple.ThirdElement).SecondElement
+
+	index := blockHeight - startHeight
+	_, sortitionSeed, ok := bs.sortitionSeedCache.Get(int(index))
+	if !ok {
+		return nil
+	}
+
+	return sortitionSeed
 }
 
 func (bs *blockStore) hasBlock(height uint32) bool {
@@ -143,4 +148,7 @@ func (bs *blockStore) hasPublicKey(addr crypto.Address) bool {
 
 func (bs *blockStore) saveToCache(blockHeight uint32, sortitionSeed sortition.VerifiableSeed) {
 	bs.sortitionSeedCache.Append(blockHeight, &sortitionSeed)
+	if bs.sortitionSeedCache.Len() > int(bs.sortitionCacheSize) {
+		bs.sortitionSeedCache.RemoveFirst()
+	}
 }

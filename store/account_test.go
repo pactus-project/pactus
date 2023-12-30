@@ -11,7 +11,7 @@ import (
 )
 
 func TestAccountCounter(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	num := td.RandInt32(1000)
 	acc, addr := td.GenerateTestAccount(num)
@@ -43,7 +43,7 @@ func TestAccountCounter(t *testing.T) {
 }
 
 func TestAccountBatchSaving(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	total := td.RandInt32NonZero(100)
 	t.Run("Add some accounts", func(t *testing.T) {
@@ -63,7 +63,7 @@ func TestAccountBatchSaving(t *testing.T) {
 }
 
 func TestAccountByAddress(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	total := td.RandInt32NonZero(100)
 	var lastAddr crypto.Address
@@ -103,7 +103,7 @@ func TestAccountByAddress(t *testing.T) {
 }
 
 func TestIterateAccounts(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	total := td.RandInt32NonZero(100)
 	hashes1 := []hash.Hash{}
@@ -132,7 +132,7 @@ func TestIterateAccounts(t *testing.T) {
 }
 
 func TestAccountDeepCopy(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	num := td.RandInt32(1000)
 	acc1, addr := td.GenerateTestAccount(num)

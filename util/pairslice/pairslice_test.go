@@ -1,4 +1,4 @@
-package tripleslice
+package pairslice
 
 import (
 	"testing"
@@ -23,20 +23,20 @@ func TestPairSlice(t *testing.T) {
 		ps.Append(1, "b")
 		ps.Append(2, "c")
 
-		assert.Equal(t, &Triple[int, string]{2, "c", 2}, ps.pairs[2])
+		assert.Equal(t, &Pair[int, string]{2, "c", 2}, ps.pairs[2])
 	})
 
-	t.Run("Test Pop", func(t *testing.T) {
+	t.Run("Test RemoveFirst", func(t *testing.T) {
 		ps := New[int, string](4)
 
 		ps.Append(0, "a")
 		ps.Append(1, "b")
 		ps.Append(2, "c")
 
-		ps.Pop()
+		ps.RemoveFirst()
 
-		assert.Equal(t, &Triple[int, string]{1, "b", 1}, ps.pairs[0])
-		assert.Equal(t, &Triple[int, string]{2, "c", 2}, ps.pairs[1])
+		assert.Equal(t, &Pair[int, string]{1, "b", 1}, ps.pairs[0])
+		assert.Equal(t, &Pair[int, string]{2, "c", 2}, ps.pairs[1])
 		assert.Nil(t, ps.pairs[2])
 	})
 
@@ -59,8 +59,8 @@ func TestPairSlice(t *testing.T) {
 		ps.Append(1, "b")
 		ps.Append(2, "c")
 
-		assert.Equal(t, &Triple[int, string]{0, "a", 0}, ps.Get(0))
-		assert.Equal(t, &Triple[int, string]{2, "c", 2}, ps.Get(2))
+		assert.Equal(t, &Pair[int, string]{0, "a", 0}, ps.Get(0))
+		assert.Equal(t, &Pair[int, string]{2, "c", 2}, ps.Get(2))
 		assert.Nil(t, ps.Get(10))
 	})
 
@@ -71,7 +71,7 @@ func TestPairSlice(t *testing.T) {
 		ps.Append(1, "b")
 		ps.Append(2, "c")
 
-		assert.Equal(t, &Triple[int, string]{0, "a", 0}, ps.First())
+		assert.Equal(t, &Pair[int, string]{0, "a", 0}, ps.First())
 	})
 
 	t.Run("Test Last", func(t *testing.T) {
@@ -81,10 +81,10 @@ func TestPairSlice(t *testing.T) {
 		ps.Append(1, "b")
 		ps.Append(2, "c")
 
-		assert.Equal(t, &Triple[int, string]{2, "c", 2}, ps.Last())
+		assert.Equal(t, &Pair[int, string]{2, "c", 2}, ps.Last())
 	})
 
-	t.Run("Test Last with Pop", func(t *testing.T) {
+	t.Run("Test Last with RemoveFirst", func(t *testing.T) {
 		ps := New[int, string](4)
 
 		ps.Append(0, "a")
@@ -92,9 +92,9 @@ func TestPairSlice(t *testing.T) {
 		ps.Append(2, "c")
 		ps.Append(3, "d")
 
-		ps.Pop()
+		ps.RemoveFirst()
 
-		assert.Equal(t, &Triple[int, string]{3, "d", 3}, ps.Last())
+		assert.Equal(t, &Pair[int, string]{3, "d", 3}, ps.Last())
 	})
 
 	t.Run("Test All", func(t *testing.T) {
@@ -106,11 +106,11 @@ func TestPairSlice(t *testing.T) {
 
 		all := ps.All()
 
-		assert.Equal(t, all[0].FirstElement, 0)
-		assert.Equal(t, all[1].FirstElement, 1)
-		assert.Equal(t, all[2].FirstElement, 2)
-		assert.Equal(t, all[0].SecondElement, "a")
-		assert.Equal(t, all[1].SecondElement, "b")
-		assert.Equal(t, all[2].SecondElement, "c")
+		assert.Equal(t, all[0].First, 0)
+		assert.Equal(t, all[1].First, 1)
+		assert.Equal(t, all[2].First, 2)
+		assert.Equal(t, all[0].Second, "a")
+		assert.Equal(t, all[1].Second, "b")
+		assert.Equal(t, all[2].Second, "c")
 	})
 }

@@ -280,7 +280,7 @@ func (sb *sandbox) VerifyProof(blockHeight uint32, proof sortition.Proof, val *v
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	seed := sb.store.SortitionSeed(blockHeight, sb.height+1)
+	seed := sb.store.SortitionSeed(blockHeight)
 	if seed == nil {
 		return false
 	}

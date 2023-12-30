@@ -4,12 +4,11 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/pactus-project/pactus/sortition"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBlockStore(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	lastCert := td.store.LastCertificate()
 	lastHeight := lastCert.Height()
@@ -56,36 +55,34 @@ func TestBlockStore(t *testing.T) {
 		}()
 		td.store.SaveBlock(nextBlk, nextCert)
 	})
+}
 
-	t.Run("Should not be old sortition seed in cache plus check last sortition seed be in cache",
-		func(t *testing.T) {
-			var oldSortitionSeed sortition.VerifiableSeed
-			var lastSortitionSeed sortition.VerifiableSeed
-			lastHeight = td.store.LastCertificate().Height()
-			generateBlkCount := 100
+func TestSortitionSeed(t *testing.T) {
+	conf := testConfig()
+	conf.SortitionCacheSize = 7
 
-			for i := 0; i <= generateBlkCount; i++ {
-				lastHeight++
-				nNextBlk, nNextCert := td.GenerateTestBlock(lastHeight)
+	td := setup(t, conf)
+	lastHeight := td.store.LastCertificate().Height()
 
-				td.store.SaveBlock(nNextBlk, nNextCert)
-				assert.NoError(t, td.store.WriteBatch())
+	t.Run("Test height zero", func(t *testing.T) {
+		assert.Nil(t, td.store.SortitionSeed(0))
+	})
 
-				if i == 0 {
-					oldSortitionSeed = nNextBlk.Header().SortitionSeed()
-				}
+	t.Run("Test non existing height", func(t *testing.T) {
+		assert.Nil(t, td.store.SortitionSeed(lastHeight+1))
+	})
 
-				if i == generateBlkCount {
-					lastSortitionSeed = nNextBlk.Header().SortitionSeed()
-				}
-			}
+	t.Run("Test not cached height", func(t *testing.T) {
+		assert.Nil(t, td.store.SortitionSeed(3))
+	})
 
-			// check old sortition seed doesn't exist in cache
-			for _, seed := range td.store.blockStore.sortitionSeedCache.All() {
-				assert.NotEqual(t, &oldSortitionSeed, seed)
-			}
+	t.Run("OK", func(t *testing.T) {
+		rndInt := td.RandUint32(conf.SortitionCacheSize)
+		rndInt += lastHeight - conf.SortitionCacheSize
 
-			// last sortition seed should exist at last index of cache
-			assert.Equal(t, &lastSortitionSeed, td.store.blockStore.sortitionSeedCache.Last().SecondElement)
-		})
+		committedBlk, _ := td.store.Block(rndInt)
+		blk, _ := committedBlk.ToBlock()
+		expectedSortition := blk.Header().SortitionSeed()
+		assert.Equal(t, &expectedSortition, td.store.SortitionSeed(rndInt))
+	})
 }

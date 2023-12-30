@@ -82,7 +82,7 @@ type Reader interface {
 	Block(height uint32) (*CommittedBlock, error)
 	BlockHeight(h hash.Hash) uint32
 	BlockHash(height uint32) hash.Hash
-	SortitionSeed(currentHeight, height uint32) *sortition.VerifiableSeed
+	SortitionSeed(blockHeight uint32) *sortition.VerifiableSeed
 	Transaction(id tx.ID) (*CommittedTx, error)
 	AnyRecentTransaction(id tx.ID) bool
 	PublicKey(addr crypto.Address) (*bls.PublicKey, error)
