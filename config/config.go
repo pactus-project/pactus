@@ -109,7 +109,6 @@ func DefaultConfigTestnet(genParams *param.Params) *Config {
 		"/ip4/209.250.235.91/tcp/21777/p2p/12D3KooWETQgcTCFv2kejUsGMVVmnkNoTW8wh33MevAzyeYYzQkr",      // Mr HoDL (1llusiv387@gmail.com)
 		"/dns/pactus.nodesync.top/tcp/21777/p2p/12D3KooWP25ejVsd7cL5DvWAPwEu4JTUwnPniHBf4w93tgSezVt8", // NodeSync.Top (lthuan2011@gmail.com)
 		"/ip4/95.217.89.202/tcp/21777/p2p/12D3KooWMsi5oYkbbpyyXctmPXzF8UZu2pCvKPRZGyvymhN9BzTD",       // CodeBlockLabs (emailbuatcariduit@gmail.com)
-		"/ip4/65.109.11.208/tcp/21777/p2p/12D3KooWQ2cfLX1kcXhAzcb23sHWHaK5DBkk2xtYTZu8JbwG97K4",
 	}
 	conf.Network.DefaultRelayAddrStrings = []string{
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
