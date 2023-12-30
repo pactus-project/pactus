@@ -11,7 +11,6 @@ type Pair[K comparable, V any] struct {
 
 type PairSlice[K comparable, V any] struct {
 	pairs []*Pair[K, V]
-	index int
 }
 
 // New creates a new instance of PairSlice with a specified capacity.
@@ -34,7 +33,7 @@ func (ps *PairSlice[K, V]) RemoveFirst() {
 
 // RemoveLast removes the first element from PairSlice.
 func (ps *PairSlice[K, V]) RemoveLast() {
-	ps.remove(ps.Len() - 2)
+	ps.remove(ps.Len() - 1)
 }
 
 func (ps *PairSlice[K, V]) Len() int {
@@ -63,5 +62,5 @@ func (ps *PairSlice[K, V]) First() (K, V, bool) {
 
 // Last returns the last Pair in the PairSlice.
 func (ps *PairSlice[K, V]) Last() (K, V, bool) {
-	return ps.Get(ps.index - 1)
+	return ps.Get(ps.Len() - 1)
 }
