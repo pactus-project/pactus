@@ -34,9 +34,9 @@ git push
 Let's create environment variables for the patch version. For the rest of this document, we will use these environment variables in the commands.
 
 ```bash
-PRV_VER="0.18.2"
-CUR_VER="0.18.3"
-NEXT_VER="0.18.4"
+PRV_VER="0.18.3"
+CUR_VER="0.18.4"
+NEXT_VER="0.18.5"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 BASE_BRANCH="0.18.x"

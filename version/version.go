@@ -11,7 +11,7 @@ import (
 const (
 	major           uint   = 0
 	minor           uint   = 18
-	patch           uint   = 3
+	patch           uint   = 4
 	meta            string = "beta"
 	protocolVersion uint   = 1
 )
