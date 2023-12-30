@@ -38,13 +38,9 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 
 	gsParams := lp2pps.DefaultGossipSubParams()
 	if conf.IsGossiper {
-		// turn off the mesh in gossiper mode
-		gsParams.D = 0
-		gsParams.Dscore = 0
-		gsParams.Dlo = 0
-		gsParams.Dhi = 0
-		gsParams.Dout = 0
-		gsParams.Dlazy = conf.ScaledMinConns()
+		gsParams.Dhi = 12
+		gsParams.D = 8
+		gsParams.Dlo = 6
 	}
 	opts = append(opts, lp2pps.WithGossipSubParams(gsParams))
 
