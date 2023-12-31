@@ -30,7 +30,7 @@ func TestRunningNode(t *testing.T) {
 	gen := genesis.MakeGenesis(util.Now(),
 		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
 		[]*validator.Validator{val}, param.DefaultParams())
-	conf := config.DefaultConfigMainnet()
+	conf := config.DefaultConfigMainnet(param.DefaultParams())
 	conf.GRPC.Enable = false
 	conf.HTTP.Enable = false
 	conf.Store.Path = util.TempDirPath()

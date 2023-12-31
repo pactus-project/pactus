@@ -67,7 +67,7 @@ func TestMain(m *testing.M) {
 		tValKeys[i][0] = bls.NewValidatorKey(key0)
 		tValKeys[i][1] = bls.NewValidatorKey(key1)
 		tValKeys[i][2] = bls.NewValidatorKey(key2)
-		tConfigs[i] = config.DefaultConfigMainnet()
+		tConfigs[i] = config.DefaultConfigMainnet(param.DefaultParams())
 
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
@@ -173,7 +173,7 @@ func TestMain(m *testing.M) {
 		panic("Sortition didn't work")
 	}
 
-	// Let's shutdown the nodes
+	// Lets shutdown the nodes
 	tCtx.Done()
 	for i := 0; i < tTotalNodes; i++ {
 		tNodes[i].Stop()

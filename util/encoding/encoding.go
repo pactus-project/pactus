@@ -12,7 +12,7 @@ import (
 const (
 	// MaxPayloadSize is the maximum bytes a message can be regardless of other
 	// individual limits imposed by messages themselves.
-	MaxPayloadSize = (1024 * 1024 * 32) // 32MB
+	MaxPayloadSize = 1024 * 1024 * 32 // 32MB
 	// binaryFreeListMaxItems is the number of buffers to keep in the free
 	// list to use for binary serialization and deserialization.
 	binaryFreeListMaxItems = 1024
@@ -157,7 +157,7 @@ func (l binaryFreeList) PutUint64(w io.Writer, val uint64) error {
 // deserializing primitive integer values to and from io.Readers and io.Writers.
 var binarySerializer binaryFreeList = make(chan []byte, binaryFreeListMaxItems)
 
-// readElement reads the next sequence of bytes from r using little endian
+// ReadElement reads the next sequence of bytes from r using little endian
 // depending on the concrete type of element pointed to.
 func ReadElement(r io.Reader, element interface{}) error {
 	// Attempt to read the element based on the concrete type via fast
@@ -207,7 +207,7 @@ func ReadElement(r io.Reader, element interface{}) error {
 	return err
 }
 
-// readElements reads multiple items from r.  It is equivalent to multiple
+// ReadElements reads multiple items from r.  It is equivalent to multiple
 // calls to readElement.
 func ReadElements(r io.Reader, elements ...interface{}) error {
 	for _, element := range elements {
@@ -219,7 +219,7 @@ func ReadElements(r io.Reader, elements ...interface{}) error {
 	return nil
 }
 
-// writeElement writes the little endian representation of element to w.
+// WriteElement writes the little endian representation of element to w.
 func WriteElement(w io.Writer, element interface{}) error {
 	// Attempt to write the element based on the concrete type via fast
 	// type assertions first.
@@ -258,7 +258,7 @@ func WriteElement(w io.Writer, element interface{}) error {
 	return err
 }
 
-// writeElements writes multiple items to w.  It is equivalent to multiple
+// WriteElements writes multiple items to w.  It is equivalent to multiple
 // calls to writeElement.
 func WriteElements(w io.Writer, elements ...interface{}) error {
 	for _, element := range elements {
