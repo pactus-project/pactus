@@ -119,7 +119,7 @@ func (m *MockState) ProposeBlock(valKey *bls.ValidatorKey, _ crypto.Address) (*b
 	return blk, nil
 }
 
-func (m *MockState) ValidateBlock(_ *block.Block) error {
+func (m *MockState) ValidateBlock(_ *block.Block, _ int16) error {
 	return nil
 }
 

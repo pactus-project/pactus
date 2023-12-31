@@ -7,7 +7,7 @@ import (
 	"github.com/pactus-project/pactus/util/errors"
 )
 
-func (st *state) validateBlock(blk *block.Block) error {
+func (st *state) validateBlock(blk *block.Block, round int16) error {
 	if blk.Header().Version() != st.params.BlockVersion {
 		return errors.Errorf(errors.ErrInvalidBlock,
 			"invalid version")
@@ -16,6 +16,18 @@ func (st *state) validateBlock(blk *block.Block) error {
 	if blk.Header().StateRoot() != st.stateRoot() {
 		return errors.Errorf(errors.ErrInvalidBlock,
 			"state root is not same as we expected, expected %v, got %v", st.stateRoot(), blk.Header().StateRoot())
+	}
+
+	// Verify proposer
+	proposer := st.committee.Proposer(round)
+	if proposer.Address() != blk.Header().ProposerAddress() {
+		return errors.Errorf(errors.ErrInvalidBlock,
+			"invalid proposer, expected %s, got %s", proposer.Address(), blk.Header().ProposerAddress())
+	}
+	// Validate sortition seed
+	seed := blk.Header().SortitionSeed()
+	if !seed.Verify(proposer.PublicKey(), st.lastInfo.SortitionSeed()) {
+		return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed")
 	}
 
 	return st.validatePrevCertificate(blk.PrevCertificate(), blk.Header().PrevBlockHash())
