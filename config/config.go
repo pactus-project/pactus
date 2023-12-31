@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/txpool"
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
@@ -77,14 +78,21 @@ func defaultConfig() *Config {
 	return conf
 }
 
-func DefaultConfigMainnet() *Config {
+func DefaultConfigMainnet(genParams *param.Params) *Config {
 	conf := defaultConfig()
 	// TO BE DEFINED
+
+	// Store private configs
+	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
+	conf.Store.SortitionCacheSize = genParams.SortitionInterval
+	conf.Store.AccountCacheSize = 1024
+	conf.Store.PublicKeyCacheSize = 1024
+
 	return conf
 }
 
 //nolint:lll // long multi-address
-func DefaultConfigTestnet() *Config {
+func DefaultConfigTestnet(genParams *param.Params) *Config {
 	conf := defaultConfig()
 	conf.Network.ListenAddrStrings = []string{
 		"/ip4/0.0.0.0/tcp/21777", "/ip4/0.0.0.0/udp/21777/quic-v1",
@@ -121,10 +129,16 @@ func DefaultConfigTestnet() *Config {
 	conf.Nanomsg.Enable = false
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:40799"
 
+	// Store private configs
+	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
+	conf.Store.SortitionCacheSize = genParams.SortitionInterval
+	conf.Store.AccountCacheSize = 1024
+	conf.Store.PublicKeyCacheSize = 1024
+
 	return conf
 }
 
-func DefaultConfigLocalnet() *Config {
+func DefaultConfigLocalnet(genParams *param.Params) *Config {
 	conf := defaultConfig()
 	conf.Network.ListenAddrStrings = []string{}
 	conf.Network.EnableRelay = false
@@ -142,6 +156,12 @@ func DefaultConfigLocalnet() *Config {
 	conf.HTTP.Listen = "[::]:0"
 	conf.Nanomsg.Enable = true
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:0"
+
+	// Store private configs
+	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
+	conf.Store.SortitionCacheSize = genParams.SortitionInterval
+	conf.Store.AccountCacheSize = 1024
+	conf.Store.PublicKeyCacheSize = 1024
 
 	return conf
 }

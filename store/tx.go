@@ -3,8 +3,10 @@ package store
 import (
 	"bytes"
 
+	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/encoding"
+	"github.com/pactus-project/pactus/util/linkedmap"
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
@@ -17,24 +19,50 @@ type blockRegion struct {
 func txKey(id tx.ID) []byte { return append(txPrefix, id.Bytes()...) }
 
 type txStore struct {
-	db *leveldb.DB
+	db          *leveldb.DB
+	txIDCache   *linkedmap.LinkedMap[tx.ID, uint32]
+	txCacheSize uint32
 }
 
-func newTxStore(db *leveldb.DB) *txStore {
+func newTxStore(db *leveldb.DB, txCacheSize uint32) *txStore {
 	return &txStore{
-		db: db,
+		db:          db,
+		txIDCache:   linkedmap.New[tx.ID, uint32](0),
+		txCacheSize: txCacheSize,
 	}
 }
 
-func (ts *txStore) saveTx(batch *leveldb.Batch, id tx.ID, reg *blockRegion) {
-	w := bytes.NewBuffer(make([]byte, 0, 32+4))
-	err := encoding.WriteElements(w, &reg.height, &reg.offset, &reg.length)
-	if err != nil {
-		panic(err)
-	}
+func (ts *txStore) saveTxs(batch *leveldb.Batch, txs block.Txs, regs []blockRegion) {
+	for i, trx := range txs {
+		w := bytes.NewBuffer(make([]byte, 0, 32+4))
 
-	txKey := txKey(id)
-	batch.Put(txKey, w.Bytes())
+		reg := regs[i]
+		err := encoding.WriteElements(w, &reg.height, &reg.offset, &reg.length)
+		if err != nil {
+			panic(err)
+		}
+
+		id := trx.ID()
+		key := txKey(id)
+		batch.Put(key, w.Bytes())
+		ts.saveToCache(id, reg.height)
+	}
+}
+
+func (ts *txStore) pruneCache(currentHeight uint32) {
+	for {
+		head := ts.txIDCache.HeadNode()
+		txHeight := head.Data.Value
+
+		if currentHeight-txHeight <= ts.txCacheSize {
+			break
+		}
+		ts.txIDCache.RemoveHead()
+	}
+}
+
+func (ts *txStore) hasTX(id tx.ID) bool {
+	return ts.txIDCache.Has(id)
 }
 
 func (ts *txStore) tx(id tx.ID) (*blockRegion, error) {
@@ -44,9 +72,12 @@ func (ts *txStore) tx(id tx.ID) (*blockRegion, error) {
 	}
 	r := bytes.NewReader(data)
 	reg := new(blockRegion)
-	err = encoding.ReadElements(r, &reg.height, &reg.offset, &reg.length)
-	if err != nil {
+	if err := encoding.ReadElements(r, &reg.height, &reg.offset, &reg.length); err != nil {
 		return nil, err
 	}
 	return reg, nil
+}
+
+func (ts *txStore) saveToCache(id tx.ID, height uint32) {
+	ts.txIDCache.PushBack(id, height)
 }
