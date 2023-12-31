@@ -78,7 +78,7 @@ func TestSortitionSeed(t *testing.T) {
 
 	t.Run("OK", func(t *testing.T) {
 		rndInt := td.RandUint32(conf.SortitionCacheSize)
-		rndInt += lastHeight - conf.SortitionCacheSize
+		rndInt += lastHeight - conf.SortitionCacheSize + 1
 
 		committedBlk, _ := td.store.Block(rndInt)
 		blk, _ := committedBlk.ToBlock()
