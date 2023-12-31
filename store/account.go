@@ -62,7 +62,7 @@ func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
 		return nil, err
 	}
 
-	as.accInCache.Add(addr, acc)
+	as.accInCache.Add(addr, acc.Clone())
 	return acc, nil
 }
 
