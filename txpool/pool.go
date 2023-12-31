@@ -29,11 +29,11 @@ type txPool struct {
 func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 	pending := make(map[payload.Type]*linkedmap.LinkedMap[tx.ID, *tx.Tx])
 
-	pending[payload.TypeTransfer] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sendPoolSize())
-	pending[payload.TypeBond] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.bondPoolSize())
-	pending[payload.TypeUnbond] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.unbondPoolSize())
-	pending[payload.TypeWithdraw] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.withdrawPoolSize())
-	pending[payload.TypeSortition] = linkedmap.NewLinkedMap[tx.ID, *tx.Tx](conf.sortitionPoolSize())
+	pending[payload.TypeTransfer] = linkedmap.New[tx.ID, *tx.Tx](conf.sendPoolSize())
+	pending[payload.TypeBond] = linkedmap.New[tx.ID, *tx.Tx](conf.bondPoolSize())
+	pending[payload.TypeUnbond] = linkedmap.New[tx.ID, *tx.Tx](conf.unbondPoolSize())
+	pending[payload.TypeWithdraw] = linkedmap.New[tx.ID, *tx.Tx](conf.withdrawPoolSize())
+	pending[payload.TypeSortition] = linkedmap.New[tx.ID, *tx.Tx](conf.sortitionPoolSize())
 
 	pool := &txPool{
 		config:      conf,

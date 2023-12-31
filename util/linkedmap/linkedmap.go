@@ -15,8 +15,8 @@ type LinkedMap[K comparable, V any] struct {
 	capacity int
 }
 
-// NewLinkedMap creates a new LinkedMap with the specified capacity.
-func NewLinkedMap[K comparable, V any](capacity int) *LinkedMap[K, V] {
+// New creates a new LinkedMap with the specified capacity.
+func New[K comparable, V any](capacity int) *LinkedMap[K, V] {
 	return &LinkedMap[K, V]{
 		list:     ll.New[Pair[K, V]](),
 		hashmap:  make(map[K]*ll.Element[Pair[K, V]]),
@@ -87,6 +87,10 @@ func (lm *LinkedMap[K, V]) TailNode() *ll.Element[Pair[K, V]] {
 	return ln
 }
 
+func (lm *LinkedMap[K, V]) RemoveTail() {
+	lm.remove(lm.list.Tail, lm.list.Tail.Data.Key)
+}
+
 // HeadNode returns the LinkNode at the beginning (head) of the LinkedMap.
 func (lm *LinkedMap[K, V]) HeadNode() *ll.Element[Pair[K, V]] {
 	ln := lm.list.Head
@@ -94,6 +98,10 @@ func (lm *LinkedMap[K, V]) HeadNode() *ll.Element[Pair[K, V]] {
 		return nil
 	}
 	return ln
+}
+
+func (lm *LinkedMap[K, V]) RemoveHead() {
+	lm.remove(lm.list.Head, lm.list.Head.Data.Key)
 }
 
 // Remove removes the key-value pair with the specified key from the LinkedMap.
@@ -105,6 +113,12 @@ func (lm *LinkedMap[K, V]) Remove(key K) bool {
 		delete(lm.hashmap, ln.Data.Key)
 	}
 	return found
+}
+
+// remove removes the key-value pair with the specified key from the LinkedMap and linkedlist.LinkedList.
+func (lm *LinkedMap[K, V]) remove(element *ll.Element[Pair[K, V]], key K) {
+	lm.list.Delete(element)
+	delete(lm.hashmap, key)
 }
 
 // Empty checks if the LinkedMap is empty (contains no key-value pairs).
@@ -135,10 +149,14 @@ func (lm *LinkedMap[K, V]) Clear() {
 
 // prune removes excess elements from the LinkedMap if its size exceeds the capacity.
 func (lm *LinkedMap[K, V]) prune() {
+	if lm.capacity == 0 {
+		return
+	}
+
 	for lm.list.Length() > lm.capacity {
-		front := lm.list.Head
-		key := front.Data.Key
-		lm.list.Delete(front)
+		head := lm.list.Head
+		key := head.Data.Key
+		lm.list.Delete(head)
 		delete(lm.hashmap, key)
 	}
 }

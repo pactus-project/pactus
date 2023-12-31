@@ -5,10 +5,12 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pairslice"
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
@@ -22,12 +24,16 @@ func blockHashKey(h hash.Hash) []byte {
 }
 
 type blockStore struct {
-	db *leveldb.DB
+	db                 *leveldb.DB
+	sortitionSeedCache *pairslice.PairSlice[uint32, *sortition.VerifiableSeed]
+	sortitionCacheSize uint32
 }
 
-func newBlockStore(db *leveldb.DB) *blockStore {
+func newBlockStore(db *leveldb.DB, sortitionCacheSize uint32) *blockStore {
 	return &blockStore{
-		db: db,
+		db:                 db,
+		sortitionSeedCache: pairslice.New[uint32, *sortition.VerifiableSeed](int(sortitionCacheSize)),
+		sortitionCacheSize: sortitionCacheSize,
 	}
 }
 
@@ -93,6 +99,9 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.
 	batch.Put(blockKey, w.Bytes())
 	batch.Put(blockHashKey, util.Uint32ToSlice(height))
 
+	sortitionSeed := blk.Header().SortitionSeed()
+	bs.saveToCache(height, sortitionSeed)
+
 	return regs
 }
 
@@ -113,18 +122,33 @@ func (bs *blockStore) blockHeight(h hash.Hash) uint32 {
 	return util.SliceToUint32(data)
 }
 
-func (bs *blockStore) hasBlock(height uint32) bool {
-	has, err := bs.db.Has(blockKey(height), nil)
-	if err != nil {
-		return false
+func (bs *blockStore) sortitionSeed(blockHeight uint32) *sortition.VerifiableSeed {
+	startHeight, _, _ := bs.sortitionSeedCache.First()
+
+	if blockHeight < startHeight {
+		return nil
 	}
-	return has
+
+	index := blockHeight - startHeight
+	_, sortitionSeed, ok := bs.sortitionSeedCache.Get(int(index))
+	if !ok {
+		return nil
+	}
+
+	return sortitionSeed
+}
+
+func (bs *blockStore) hasBlock(height uint32) bool {
+	return tryHas(bs.db, blockKey(height))
 }
 
 func (bs *blockStore) hasPublicKey(addr crypto.Address) bool {
-	has, err := bs.db.Has(publicKeyKey(addr), nil)
-	if err != nil {
-		return false
+	return tryHas(bs.db, publicKeyKey(addr))
+}
+
+func (bs *blockStore) saveToCache(blockHeight uint32, sortitionSeed sortition.VerifiableSeed) {
+	bs.sortitionSeedCache.Append(blockHeight, &sortitionSeed)
+	if bs.sortitionSeedCache.Len() > int(bs.sortitionCacheSize) {
+		bs.sortitionSeedCache.RemoveFirst()
 	}
-	return has
 }
