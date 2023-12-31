@@ -245,7 +245,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 			return
 		}
 
-		if err := cs.bcState.ValidateBlock(p.Block()); err != nil {
+		if err := cs.bcState.ValidateBlock(p.Block(), p.Round()); err != nil {
 			cs.logger.Warn("invalid block", "proposal", p, "error", err)
 			return
 		}

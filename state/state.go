@@ -108,12 +108,12 @@ func (st *state) tryLoadLastInfo() error {
 	// This check is not strictly necessary, since the genesis state is already committed.
 	// However, it is good to perform this check to ensure that the genesis document has not been modified.
 	genStateRoot := st.calculateGenesisStateRootFromGenesisDoc()
-	blockOneInfo, err := st.store.Block(1)
+	committedBlockOne, err := st.store.Block(1)
 	if err != nil {
 		return err
 	}
 
-	blockOne, err := blockOneInfo.ToBlock()
+	blockOne, err := committedBlockOne.ToBlock()
 	if err != nil {
 		return err
 	}
@@ -153,11 +153,11 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		return err
 	}
 
-	committeeInstance, err := committee.NewCommittee(vals, st.params.CommitteeSize, vals[0].Address())
+	cmt, err := committee.NewCommittee(vals, st.params.CommitteeSize, vals[0].Address())
 	if err != nil {
 		return err
 	}
-	st.committee = committeeInstance
+	st.committee = cmt
 	st.lastInfo.UpdateBlockTime(genDoc.GenesisTime())
 
 	return nil
@@ -346,7 +346,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		return nil, errors.Errorf(errors.ErrInvalidBlock, "no subsidy transaction")
 	}
 	txs.Prepend(subsidyTx)
-	preSeed := st.lastInfo.SortitionSeed()
+	prevSeed := st.lastInfo.SortitionSeed()
 
 	blk := block.MakeBlock(
 		st.params.BlockVersion,
@@ -355,17 +355,17 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		st.lastInfo.BlockHash(),
 		st.stateRoot(),
 		st.lastInfo.Certificate(),
-		preSeed.GenerateNext(valKey.PrivateKey()),
+		prevSeed.GenerateNext(valKey.PrivateKey()),
 		valKey.Address())
 
 	return blk, nil
 }
 
-func (st *state) ValidateBlock(blk *block.Block) error {
+func (st *state) ValidateBlock(blk *block.Block, round int16) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if err := st.validateBlock(blk); err != nil {
+	if err := st.validateBlock(blk, round); err != nil {
 		return err
 	}
 
@@ -407,21 +407,9 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 		return errors.Error(errors.ErrInvalidBlock)
 	}
 
-	err = st.validateBlock(blk)
+	err = st.validateBlock(blk, cert.Round())
 	if err != nil {
 		return err
-	}
-
-	// Verify proposer
-	proposer := st.committee.Proposer(cert.Round())
-	if proposer.Address() != blk.Header().ProposerAddress() {
-		return errors.Errorf(errors.ErrInvalidBlock,
-			"invalid proposer, expected %s, got %s", proposer.Address(), blk.Header().ProposerAddress())
-	}
-	// Validate sortition seed
-	seed := blk.Header().SortitionSeed()
-	if !seed.Verify(proposer.PublicKey(), st.lastInfo.SortitionSeed()) {
-		return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed")
 	}
 
 	// -----------------------------------
@@ -587,6 +575,7 @@ func (st *state) proposeNextBlockTime() time.Time {
 		st.logger.Debug("it looks the last block had delay", "delay", now.Sub(timestamp))
 		timestamp = util.RoundNow(st.params.BlockIntervalInSecond)
 	}
+
 	return timestamp
 }
 

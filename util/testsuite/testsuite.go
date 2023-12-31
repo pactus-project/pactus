@@ -143,6 +143,11 @@ func (ts *TestSuite) RandRound() int16 {
 	return ts.RandInt16(10)
 }
 
+// RandAmount returns a random amount between [0, 100^e9).
+func (ts *TestSuite) RandAmount() int64 {
+	return ts.RandInt64(100e9)
+}
+
 // RandBytes returns a slice of random bytes of the given length.
 func (ts *TestSuite) RandBytes(length int) []byte {
 	buf := make([]byte, length)
