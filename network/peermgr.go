@@ -15,7 +15,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 )
 
-const PEER_STORE_PATH = "peers.json"
+const peerStorePath = "peers.json"
 
 type peerInfo struct {
 	MultiAddress multiaddr.Multiaddr `json:"multi_address"`
@@ -41,8 +41,8 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host,
 	conf *Config, log *logger.SubLogger,
 ) *peerMgr {
 	peers := make(map[lp2ppeer.ID]*peerInfo)
-	if util.PathExists(PEER_STORE_PATH) {
-		data, err := util.ReadFile(PEER_STORE_PATH)
+	if util.PathExists(peerStorePath) {
+		data, err := util.ReadFile(peerStorePath)
 		if err != nil {
 			log.Error("can't read peer list", "error", err)
 		}
@@ -91,7 +91,7 @@ func (mgr *peerMgr) Stop() {
 		mgr.logger.Error("can't marshal peer list", "error", err)
 	}
 
-	err = util.WriteFile(PEER_STORE_PATH, data)
+	err = util.WriteFile(peerStorePath, data)
 	if err != nil {
 		mgr.logger.Error("can't save peer list", "error", err)
 	}
