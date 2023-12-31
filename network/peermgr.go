@@ -86,6 +86,9 @@ func (mgr *peerMgr) Start() {
 
 // Stop stops the Bootstrap.
 func (mgr *peerMgr) Stop() {
+	mgr.lk.RLock()
+	defer mgr.lk.RUnlock()
+
 	data, err := json.Marshal(mgr.getPeerStore())
 	if err != nil {
 		mgr.logger.Error("can't marshal peer list", "error", err)
