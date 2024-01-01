@@ -28,6 +28,8 @@ func (s *Server) ConsensusHandler(w http.ResponseWriter, _ *http.Request) {
 			tm.addRowString("Type", vote.Type(v.Type).String())
 			tm.addRowString("Voter", v.Voter)
 			tm.addRowInt("Round", int(v.Round))
+			tm.addRowInt("CPRound", int(v.CpRound))
+			tm.addRowInt("CPValue", int(v.CpValue))
 			tm.addRowBlockHash("BlockHash", v.BlockHash)
 		}
 	}
