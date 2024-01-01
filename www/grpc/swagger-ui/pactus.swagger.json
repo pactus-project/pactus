@@ -159,6 +159,28 @@
         ]
       }
     },
+    "/v1/blockchain/consensusInfo": {
+      "get": {
+        "operationId": "Blockchain_GetConsensusInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetConsensusInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
     "/v1/blockchain/info": {
       "get": {
         "operationId": "Blockchain_GetBlockchainInfo",
@@ -1273,6 +1295,14 @@
           "format": "byte"
         },
         "round": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "cpRound": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "cpValue": {
           "type": "integer",
           "format": "int32"
         }

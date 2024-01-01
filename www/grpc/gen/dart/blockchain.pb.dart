@@ -1484,6 +1484,8 @@ class VoteInfo extends $pb.GeneratedMessage {
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'voter')
     ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'blockHash', $pb.PbFieldType.OY)
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'round', $pb.PbFieldType.O3)
+    ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'cpRound', $pb.PbFieldType.O3)
+    ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'cpValue', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -1493,6 +1495,8 @@ class VoteInfo extends $pb.GeneratedMessage {
     $core.String? voter,
     $core.List<$core.int>? blockHash,
     $core.int? round,
+    $core.int? cpRound,
+    $core.int? cpValue,
   }) {
     final _result = create();
     if (type != null) {
@@ -1506,6 +1510,12 @@ class VoteInfo extends $pb.GeneratedMessage {
     }
     if (round != null) {
       _result.round = round;
+    }
+    if (cpRound != null) {
+      _result.cpRound = cpRound;
+    }
+    if (cpValue != null) {
+      _result.cpValue = cpValue;
     }
     return _result;
   }
@@ -1565,6 +1575,24 @@ class VoteInfo extends $pb.GeneratedMessage {
   $core.bool hasRound() => $_has(3);
   @$pb.TagNumber(4)
   void clearRound() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.int get cpRound => $_getIZ(4);
+  @$pb.TagNumber(5)
+  set cpRound($core.int v) { $_setSignedInt32(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasCpRound() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearCpRound() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.int get cpValue => $_getIZ(5);
+  @$pb.TagNumber(6)
+  set cpValue($core.int v) { $_setSignedInt32(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasCpValue() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearCpValue() => clearField(6);
 }
 
 class ConsensusInfo extends $pb.GeneratedMessage {
