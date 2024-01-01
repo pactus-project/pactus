@@ -30,10 +30,10 @@ func newRelayService(ctx context.Context, host lp2phost.Host, conf *Config, log 
 	}
 }
 
-func (rs *relayService) Start() error {
+func (rs *relayService) Start() {
 	if rs.conf.EnableRelay {
 		go func() {
-			ticker := time.NewTicker(10 * time.Second)
+			ticker := time.NewTicker(60 * time.Second)
 			defer ticker.Stop()
 
 			for {
@@ -46,8 +46,6 @@ func (rs *relayService) Start() error {
 			}
 		}()
 	}
-
-	return nil
 }
 
 func (rs *relayService) Stop() {
