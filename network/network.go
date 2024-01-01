@@ -12,10 +12,7 @@ import (
 	lp2pcrypto "github.com/libp2p/go-libp2p/core/crypto"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pmetrics "github.com/libp2p/go-libp2p/core/metrics"
-	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
-	"github.com/libp2p/go-libp2p/p2p/host/autorelay"
-	basichost "github.com/libp2p/go-libp2p/p2p/host/basic"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	lp2pconnmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	"github.com/multiformats/go-multiaddr"
@@ -43,6 +40,7 @@ type network struct {
 	stream         *streamService
 	gossip         *gossipService
 	notifee        *NotifeeService
+	relay          *relayService
 	generalTopic   *lp2pps.Topic
 	consensusTopic *lp2pps.Topic
 	eventChannel   chan Event
@@ -173,7 +171,6 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		)
 	}
 
-	// TODO: should include relay addresses
 	privateSubnets := PrivateSubnets()
 	privateFilters := SubnetsToFilters(privateSubnets, multiaddr.ActionDeny)
 	publicAddrs := conf.PublicAddr()
@@ -188,17 +185,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		if publicAddrs != nil {
 			addrs = append(addrs, publicAddrs)
 		}
-		// if len(addrs) == 0 {
-		// for _, addr := range conf.RelayAddrStrings {
-		// 	// To connect a peer over relay, we need a relay address.
-		// 	// The format for the relay address is defined here:
-		// 	// https://docs.libp2p.io/concepts/nat/circuit-relay/#relay-addresses
-		// 	pid, _ := peer.IDFromPrivateKey(networkKey)
-		// 	circuitAddr, _ := multiaddr.NewMultiaddr(fmt.Sprintf("%s/p2p-circuit/p2p/%s", addr, pid))
-		// 	addrs = append(addrs, circuitAddr)
-		// }
 
-		// }
 		return addrs
 	})
 	opts = append(opts, addrFactory)
@@ -236,11 +223,13 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	if conf.EnableMdns {
 		n.mdns = newMdnsService(ctx, n.host, n.logger)
 	}
+
 	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf, n.logger)
 	n.peerMgr = newPeerMgr(ctx, host, conf, n.logger)
 	n.stream = newStreamService(ctx, n.host, streamProtocolID, n.eventChannel, n.logger)
 	n.gossip = newGossipService(ctx, n.host, n.eventChannel, conf, n.logger)
-	n.notifee = newNotifeeService(ctx, n.host, n.eventChannel, n.peerMgr, streamProtocolID, n.logger)
+	n.relay = newRelayService(ctx, n.host, conf, log)
+	n.notifee = newNotifeeService(ctx, n.host, n.eventChannel, n.peerMgr, n.relay, streamProtocolID, n.logger)
 
 	n.host.Network().Notify(n.notifee)
 	n.connGater.SetPeerManager(n.peerMgr)
@@ -271,6 +260,7 @@ func (n *network) Start() error {
 	n.stream.Start()
 	n.peerMgr.Start()
 	n.notifee.Start()
+	n.relay.Start()
 
 	n.logger.Info("network started", "addr", n.host.Addrs(), "id", n.host.ID())
 	return nil
@@ -288,6 +278,7 @@ func (n *network) Stop() {
 	n.stream.Stop()
 	n.peerMgr.Stop()
 	n.notifee.Stop()
+	n.relay.Stop()
 
 	if err := n.host.Close(); err != nil {
 		n.logger.Error("unable to close the network", "error", err)
@@ -384,17 +375,7 @@ func (n *network) NumConnectedPeers() int {
 }
 
 func (n *network) ReachabilityStatus() string {
-	bh, ok := n.host.(*basichost.BasicHost)
-	if ok {
-		return bh.GetAutoNat().Status().String()
-	}
-
-	arh, ok := n.host.(*autorelay.AutoRelayHost)
-	if ok {
-		return arh.Host.(*basichost.BasicHost).GetAutoNat().Status().String()
-	}
-
-	return lp2pnetwork.ReachabilityUnknown.String()
+	return n.relay.Reachability().String()
 }
 
 func (n *network) HostAddrs() []string {
