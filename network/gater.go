@@ -58,7 +58,7 @@ func (g *ConnectionGater) InterceptPeerDial(pid lp2ppeer.ID) bool {
 	defer g.lk.RUnlock()
 
 	if g.onConnectionLimit() {
-		g.logger.Debug("InterceptPeerDial rejected: many connections", "pid", pid)
+		g.logger.Info("InterceptPeerDial rejected: many connections", "pid", pid)
 		return false
 	}
 
@@ -70,13 +70,13 @@ func (g *ConnectionGater) InterceptAddrDial(pid lp2ppeer.ID, ma multiaddr.Multia
 	defer g.lk.RUnlock()
 
 	if g.onConnectionLimit() {
-		g.logger.Debug("InterceptAddrDial rejected: many connections", "pid", pid, "ma", ma.String())
+		g.logger.Info("InterceptAddrDial rejected: many connections", "pid", pid, "ma", ma.String())
 		return false
 	}
 
 	deny := g.filters.AddrBlocked(ma)
 	if deny {
-		g.logger.Debug("InterceptAddrDial rejected", "pid", pid, "ma", ma.String())
+		g.logger.Info("InterceptAddrDial rejected", "pid", pid, "ma", ma.String())
 		return false
 	}
 
@@ -88,13 +88,13 @@ func (g *ConnectionGater) InterceptAccept(cma lp2pnetwork.ConnMultiaddrs) bool {
 	defer g.lk.RUnlock()
 
 	if g.onConnectionLimit() {
-		g.logger.Debug("InterceptAccept rejected: many connections")
+		g.logger.Info("InterceptAccept rejected: many connections")
 		return false
 	}
 
 	deny := g.filters.AddrBlocked(cma.RemoteMultiaddr())
 	if deny {
-		g.logger.Debug("InterceptAccept rejected")
+		g.logger.Info("InterceptAccept rejected")
 		return false
 	}
 
