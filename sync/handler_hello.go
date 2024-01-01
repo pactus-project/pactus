@@ -67,7 +67,6 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 	handler.peerSet.UpdateStatus(pid, peerset.StatusCodeKnown)
 
 	if msg.Services.IsGossip() {
-		// WARN: Check network::peerMgr if you rename it.
 		handler.network.Protect(msg.PeerID, "GOSSIP")
 	}
 
