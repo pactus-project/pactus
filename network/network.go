@@ -13,6 +13,7 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pmetrics "github.com/libp2p/go-libp2p/core/metrics"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
+	lp2pautorelay "github.com/libp2p/go-libp2p/p2p/host/autorelay"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	lp2pconnmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	"github.com/multiformats/go-multiaddr"
@@ -159,9 +160,14 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 
 	if conf.EnableRelay {
 		log.Info("relay enabled", "addrInfos", conf.RelayAddrInfos())
+		autoRelayOpt := []lp2pautorelay.Option{
+			lp2pautorelay.WithMinCandidates(2),
+			lp2pautorelay.WithMinInterval(1 * time.Minute),
+		}
+
 		opts = append(opts,
 			lp2p.EnableRelay(),
-			lp2p.EnableAutoRelayWithStaticRelays(conf.RelayAddrInfos()),
+			lp2p.EnableAutoRelayWithStaticRelays(conf.RelayAddrInfos(), autoRelayOpt...),
 			lp2p.EnableHolePunching(),
 		)
 	} else {
