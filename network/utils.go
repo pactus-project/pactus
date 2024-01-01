@@ -11,6 +11,7 @@ import (
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
+	lp2pswarm "github.com/libp2p/go-libp2p/p2p/net/swarm"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/logger"
@@ -74,17 +75,23 @@ func HasPID(pids []lp2ppeer.ID, pid lp2ppeer.ID) bool {
 
 func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrInfo, log *logger.SubLogger) {
 	go func() {
-		err := h.Connect(lp2pnetwork.WithDialPeerTimeout(ctx, 30*time.Second), addrInfo)
-		if err != nil {
-			if log != nil {
+		err := ConnectSync(ctx, h, addrInfo)
+		if log != nil {
+			if err != nil {
 				log.Warn("connection failed", "addr", addrInfo.Addrs, "err", err)
-			}
-		} else {
-			if log != nil {
+			} else {
 				log.Debug("connection successful", "addr", addrInfo.Addrs)
 			}
 		}
 	}()
+}
+
+func ConnectSync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrInfo) error {
+	if swarm, ok := h.Network().(*lp2pswarm.Swarm); ok {
+		swarm.Backoff().Clear(addrInfo.ID)
+	}
+
+	return h.Connect(lp2pnetwork.WithDialPeerTimeout(ctx, 30*time.Second), addrInfo)
 }
 
 func PrivateSubnets() []*net.IPNet {

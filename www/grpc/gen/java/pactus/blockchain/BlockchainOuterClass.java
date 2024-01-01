@@ -15732,6 +15732,18 @@ public final class BlockchainOuterClass {
      * @return The round.
      */
     int getRound();
+
+    /**
+     * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
+     * @return The cpRound.
+     */
+    int getCpRound();
+
+    /**
+     * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
+     * @return The cpValue.
+     */
+    int getCpValue();
   }
   /**
    * Protobuf type {@code pactus.VoteInfo}
@@ -15855,6 +15867,28 @@ public final class BlockchainOuterClass {
       return round_;
     }
 
+    public static final int CP_ROUND_FIELD_NUMBER = 5;
+    private int cpRound_;
+    /**
+     * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
+     * @return The cpRound.
+     */
+    @java.lang.Override
+    public int getCpRound() {
+      return cpRound_;
+    }
+
+    public static final int CP_VALUE_FIELD_NUMBER = 6;
+    private int cpValue_;
+    /**
+     * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
+     * @return The cpValue.
+     */
+    @java.lang.Override
+    public int getCpValue() {
+      return cpValue_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -15881,6 +15915,12 @@ public final class BlockchainOuterClass {
       if (round_ != 0) {
         output.writeInt32(4, round_);
       }
+      if (cpRound_ != 0) {
+        output.writeInt32(5, cpRound_);
+      }
+      if (cpValue_ != 0) {
+        output.writeInt32(6, cpValue_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -15905,6 +15945,14 @@ public final class BlockchainOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, round_);
       }
+      if (cpRound_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(5, cpRound_);
+      }
+      if (cpValue_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, cpValue_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -15927,6 +15975,10 @@ public final class BlockchainOuterClass {
           .equals(other.getBlockHash())) return false;
       if (getRound()
           != other.getRound()) return false;
+      if (getCpRound()
+          != other.getCpRound()) return false;
+      if (getCpValue()
+          != other.getCpValue()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -15946,6 +15998,10 @@ public final class BlockchainOuterClass {
       hash = (53 * hash) + getBlockHash().hashCode();
       hash = (37 * hash) + ROUND_FIELD_NUMBER;
       hash = (53 * hash) + getRound();
+      hash = (37 * hash) + CP_ROUND_FIELD_NUMBER;
+      hash = (53 * hash) + getCpRound();
+      hash = (37 * hash) + CP_VALUE_FIELD_NUMBER;
+      hash = (53 * hash) + getCpValue();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -16082,6 +16138,10 @@ public final class BlockchainOuterClass {
 
         round_ = 0;
 
+        cpRound_ = 0;
+
+        cpValue_ = 0;
+
         return this;
       }
 
@@ -16112,6 +16172,8 @@ public final class BlockchainOuterClass {
         result.voter_ = voter_;
         result.blockHash_ = blockHash_;
         result.round_ = round_;
+        result.cpRound_ = cpRound_;
+        result.cpValue_ = cpValue_;
         onBuilt();
         return result;
       }
@@ -16173,6 +16235,12 @@ public final class BlockchainOuterClass {
         if (other.getRound() != 0) {
           setRound(other.getRound());
         }
+        if (other.getCpRound() != 0) {
+          setCpRound(other.getCpRound());
+        }
+        if (other.getCpValue() != 0) {
+          setCpValue(other.getCpValue());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -16219,6 +16287,16 @@ public final class BlockchainOuterClass {
 
                 break;
               } // case 32
+              case 40: {
+                cpRound_ = input.readInt32();
+
+                break;
+              } // case 40
+              case 48: {
+                cpValue_ = input.readInt32();
+
+                break;
+              } // case 48
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -16426,6 +16504,68 @@ public final class BlockchainOuterClass {
       public Builder clearRound() {
         
         round_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int cpRound_ ;
+      /**
+       * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
+       * @return The cpRound.
+       */
+      @java.lang.Override
+      public int getCpRound() {
+        return cpRound_;
+      }
+      /**
+       * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
+       * @param value The cpRound to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCpRound(int value) {
+        
+        cpRound_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCpRound() {
+        
+        cpRound_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int cpValue_ ;
+      /**
+       * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
+       * @return The cpValue.
+       */
+      @java.lang.Override
+      public int getCpValue() {
+        return cpValue_;
+      }
+      /**
+       * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
+       * @param value The cpValue to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCpValue(int value) {
+        
+        cpValue_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCpValue() {
+        
+        cpValue_ = 0;
         onChanged();
         return this;
       }
@@ -17820,41 +17960,42 @@ public final class BlockchainOuterClass {
       "s\"\227\001\n\017CertificateInfo\022\022\n\004hash\030\001 \001(\014R\004has" +
       "h\022\024\n\005round\030\002 \001(\005R\005round\022\036\n\ncommitters\030\003 " +
       "\003(\005R\ncommitters\022\034\n\tabsentees\030\004 \003(\005R\tabse" +
-      "ntees\022\034\n\tsignature\030\005 \001(\014R\tsignature\"{\n\010V" +
-      "oteInfo\022$\n\004type\030\001 \001(\0162\020.pactus.VoteTypeR" +
-      "\004type\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nblock_has" +
-      "h\030\003 \001(\014R\tblockHash\022\024\n\005round\030\004 \001(\005R\005round" +
-      "\"\227\001\n\rConsensusInfo\022\030\n\007address\030\001 \001(\tR\007add" +
-      "ress\022\026\n\006Active\030\002 \001(\010R\006Active\022\026\n\006height\030\003" +
-      " \001(\rR\006height\022\024\n\005round\030\004 \001(\005R\005round\022&\n\005vo" +
-      "tes\030\005 \003(\0132\020.pactus.VoteInfoR\005votes*H\n\016Bl" +
-      "ockVerbosity\022\016\n\nBLOCK_DATA\020\000\022\016\n\nBLOCK_IN" +
-      "FO\020\001\022\026\n\022BLOCK_TRANSACTIONS\020\002*\\\n\010VoteType" +
-      "\022\020\n\014VOTE_UNKNOWN\020\000\022\020\n\014VOTE_PREPARE\020\001\022\022\n\016" +
-      "VOTE_PRECOMMIT\020\002\022\030\n\024VOTE_CHANGE_PROPOSER" +
-      "\020\0032\264\006\n\nBlockchain\022=\n\010GetBlock\022\027.pactus.G" +
-      "etBlockRequest\032\030.pactus.GetBlockResponse" +
-      "\022I\n\014GetBlockHash\022\033.pactus.GetBlockHashRe" +
-      "quest\032\034.pactus.GetBlockHashResponse\022O\n\016G" +
-      "etBlockHeight\022\035.pactus.GetBlockHeightReq" +
-      "uest\032\036.pactus.GetBlockHeightResponse\022X\n\021" +
-      "GetBlockchainInfo\022 .pactus.GetBlockchain" +
-      "InfoRequest\032!.pactus.GetBlockchainInfoRe" +
-      "sponse\022U\n\020GetConsensusInfo\022\037.pactus.GetC" +
-      "onsensusInfoRequest\032 .pactus.GetConsensu" +
-      "sInfoResponse\022C\n\nGetAccount\022\031.pactus.Get" +
-      "AccountRequest\032\032.pactus.GetAccountRespon" +
-      "se\022I\n\014GetValidator\022\033.pactus.GetValidator" +
-      "Request\032\034.pactus.GetValidatorResponse\022Y\n" +
-      "\024GetValidatorByNumber\022#.pactus.GetValida" +
-      "torByNumberRequest\032\034.pactus.GetValidator" +
-      "Response\022d\n\025GetValidatorAddresses\022$.pact" +
-      "us.GetValidatorAddressesRequest\032%.pactus" +
-      ".GetValidatorAddressesResponse\022I\n\014GetPub" +
-      "licKey\022\033.pactus.GetPublicKeyRequest\032\034.pa" +
-      "ctus.GetPublicKeyResponseBE\n\021pactus.bloc" +
-      "kchainZ0github.com/pactus-project/pactus" +
-      "/www/grpc/pactusb\006proto3"
+      "ntees\022\034\n\tsignature\030\005 \001(\014R\tsignature\"\261\001\n\010" +
+      "VoteInfo\022$\n\004type\030\001 \001(\0162\020.pactus.VoteType" +
+      "R\004type\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nblock_ha" +
+      "sh\030\003 \001(\014R\tblockHash\022\024\n\005round\030\004 \001(\005R\005roun" +
+      "d\022\031\n\010cp_round\030\005 \001(\005R\007cpRound\022\031\n\010cp_value" +
+      "\030\006 \001(\005R\007cpValue\"\227\001\n\rConsensusInfo\022\030\n\007add" +
+      "ress\030\001 \001(\tR\007address\022\026\n\006Active\030\002 \001(\010R\006Act" +
+      "ive\022\026\n\006height\030\003 \001(\rR\006height\022\024\n\005round\030\004 \001" +
+      "(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.pactus.VoteIn" +
+      "foR\005votes*H\n\016BlockVerbosity\022\016\n\nBLOCK_DAT" +
+      "A\020\000\022\016\n\nBLOCK_INFO\020\001\022\026\n\022BLOCK_TRANSACTION" +
+      "S\020\002*\\\n\010VoteType\022\020\n\014VOTE_UNKNOWN\020\000\022\020\n\014VOT" +
+      "E_PREPARE\020\001\022\022\n\016VOTE_PRECOMMIT\020\002\022\030\n\024VOTE_" +
+      "CHANGE_PROPOSER\020\0032\264\006\n\nBlockchain\022=\n\010GetB" +
+      "lock\022\027.pactus.GetBlockRequest\032\030.pactus.G" +
+      "etBlockResponse\022I\n\014GetBlockHash\022\033.pactus" +
+      ".GetBlockHashRequest\032\034.pactus.GetBlockHa" +
+      "shResponse\022O\n\016GetBlockHeight\022\035.pactus.Ge" +
+      "tBlockHeightRequest\032\036.pactus.GetBlockHei" +
+      "ghtResponse\022X\n\021GetBlockchainInfo\022 .pactu" +
+      "s.GetBlockchainInfoRequest\032!.pactus.GetB" +
+      "lockchainInfoResponse\022U\n\020GetConsensusInf" +
+      "o\022\037.pactus.GetConsensusInfoRequest\032 .pac" +
+      "tus.GetConsensusInfoResponse\022C\n\nGetAccou" +
+      "nt\022\031.pactus.GetAccountRequest\032\032.pactus.G" +
+      "etAccountResponse\022I\n\014GetValidator\022\033.pact" +
+      "us.GetValidatorRequest\032\034.pactus.GetValid" +
+      "atorResponse\022Y\n\024GetValidatorByNumber\022#.p" +
+      "actus.GetValidatorByNumberRequest\032\034.pact" +
+      "us.GetValidatorResponse\022d\n\025GetValidatorA" +
+      "ddresses\022$.pactus.GetValidatorAddressesR" +
+      "equest\032%.pactus.GetValidatorAddressesRes" +
+      "ponse\022I\n\014GetPublicKey\022\033.pactus.GetPublic" +
+      "KeyRequest\032\034.pactus.GetPublicKeyResponse" +
+      "BE\n\021pactus.blockchainZ0github.com/pactus" +
+      "-project/pactus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -18004,7 +18145,7 @@ public final class BlockchainOuterClass {
     internal_static_pactus_VoteInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_VoteInfo_descriptor,
-        new java.lang.String[] { "Type", "Voter", "BlockHash", "Round", });
+        new java.lang.String[] { "Type", "Voter", "BlockHash", "Round", "CpRound", "CpValue", });
     internal_static_pactus_ConsensusInfo_descriptor =
       getDescriptor().getMessageTypes().get(24);
     internal_static_pactus_ConsensusInfo_fieldAccessorTable = new

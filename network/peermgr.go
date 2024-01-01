@@ -9,7 +9,6 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnet "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
-	lp2pswarm "github.com/libp2p/go-libp2p/p2p/net/swarm"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -84,7 +83,6 @@ func (mgr *peerMgr) Start() {
 	}()
 }
 
-// Stop stops the Bootstrap.
 func (mgr *peerMgr) Stop() {
 	mgr.lk.RLock()
 	defer mgr.lk.RUnlock()
@@ -174,10 +172,6 @@ func (mgr *peerMgr) CheckConnectivity() {
 			if HasPID(connectedPeers, ai.ID) {
 				mgr.logger.Trace("already connected", "peer", ai.String())
 				continue
-			}
-
-			if swarm, ok := mgr.host.Network().(*lp2pswarm.Swarm); ok {
-				swarm.Backoff().Clear(ai.ID)
 			}
 
 			ConnectAsync(mgr.ctx, mgr.host, ai, mgr.logger)

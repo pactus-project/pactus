@@ -297,11 +297,13 @@ const VoteInfo$json = const {
     const {'1': 'voter', '3': 2, '4': 1, '5': 9, '10': 'voter'},
     const {'1': 'block_hash', '3': 3, '4': 1, '5': 12, '10': 'blockHash'},
     const {'1': 'round', '3': 4, '4': 1, '5': 5, '10': 'round'},
+    const {'1': 'cp_round', '3': 5, '4': 1, '5': 5, '10': 'cpRound'},
+    const {'1': 'cp_value', '3': 6, '4': 1, '5': 5, '10': 'cpValue'},
   ],
 };
 
 /// Descriptor for `VoteInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List voteInfoDescriptor = $convert.base64Decode('CghWb3RlSW5mbxIkCgR0eXBlGAEgASgOMhAucGFjdHVzLlZvdGVUeXBlUgR0eXBlEhQKBXZvdGVyGAIgASgJUgV2b3RlchIdCgpibG9ja19oYXNoGAMgASgMUglibG9ja0hhc2gSFAoFcm91bmQYBCABKAVSBXJvdW5k');
+final $typed_data.Uint8List voteInfoDescriptor = $convert.base64Decode('CghWb3RlSW5mbxIkCgR0eXBlGAEgASgOMhAucGFjdHVzLlZvdGVUeXBlUgR0eXBlEhQKBXZvdGVyGAIgASgJUgV2b3RlchIdCgpibG9ja19oYXNoGAMgASgMUglibG9ja0hhc2gSFAoFcm91bmQYBCABKAVSBXJvdW5kEhkKCGNwX3JvdW5kGAUgASgFUgdjcFJvdW5kEhkKCGNwX3ZhbHVlGAYgASgFUgdjcFZhbHVl');
 @$core.Deprecated('Use consensusInfoDescriptor instead')
 const ConsensusInfo$json = const {
   '1': 'ConsensusInfo',

@@ -20,9 +20,11 @@ type NotifeeService struct {
 	logger           *logger.SubLogger
 	streamProtocolID lp2pcore.ProtocolID
 	peerMgr          *peerMgr
+	relay            *relayService
 }
 
-func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel chan<- Event, peerMgr *peerMgr,
+func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel chan<- Event,
+	peerMgr *peerMgr, relay *relayService,
 	protocolID lp2pcore.ProtocolID, log *logger.SubLogger,
 ) *NotifeeService {
 	events := []interface{}{
@@ -41,6 +43,7 @@ func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel cha
 		eventChannel:     eventChannel,
 		streamProtocolID: protocolID,
 		peerMgr:          peerMgr,
+		relay:            relay,
 		logger:           log,
 	}
 	host.Network().Notify(notifee)
@@ -56,6 +59,7 @@ func (s *NotifeeService) Start() {
 				switch e := evt.(type) {
 				case lp2pevent.EvtLocalReachabilityChanged:
 					s.logger.Info("reachability changed", "reachability", e.Reachability)
+					s.relay.SetReachability(e.Reachability)
 
 				case lp2pevent.EvtPeerIdentificationCompleted:
 					s.logger.Debug("identification completed", "pid", e.Peer)

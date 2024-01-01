@@ -260,10 +260,19 @@ func accountToProto(addr crypto.Address, acc *account.Account) *pactus.AccountIn
 }
 
 func voteToProto(v *vote.Vote) *pactus.VoteInfo {
+	cpRound := int32(0)
+	cpValue := int32(0)
+	if v.IsCPVote() {
+		cpRound = int32(v.CPRound())
+		cpValue = int32(v.CPValue())
+	}
+
 	return &pactus.VoteInfo{
 		Type:      pactus.VoteType(v.Type()),
 		Voter:     v.Signer().String(),
 		BlockHash: v.BlockHash().Bytes(),
 		Round:     int32(v.Round()),
+		CpRound:   cpRound,
+		CpValue:   cpValue,
 	}
 }

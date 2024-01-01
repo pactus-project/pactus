@@ -157,9 +157,9 @@ func TestNetwork(t *testing.T) {
 
 	relayAddrs := []string{}
 	for _, addr := range nodeR.Addrs() {
-		addr2 := fmt.Sprintf("%s/p2p/%s", addr, nodeR.ID().String())
-		fmt.Printf("relay address: %s\n", addr2)
-		relayAddrs = append(relayAddrs, addr2)
+		addr := fmt.Sprintf("%s/p2p/%s", addr, nodeR.ID().String())
+		fmt.Printf("relay address: %s\n", addr)
+		relayAddrs = append(relayAddrs, addr)
 	}
 
 	bootstrapPort := ts.RandInt32(9999) + 10000
