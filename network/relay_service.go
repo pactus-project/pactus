@@ -51,10 +51,6 @@ func (rs *relayService) Start() {
 func (rs *relayService) Stop() {
 }
 
-func (rs *relayService) SetHost(host lp2phost.Host) {
-	rs.host = host
-}
-
 func (rs *relayService) SetReachability(reachability lp2pnetwork.Reachability) {
 	rs.lk.Lock()
 	rs.reachability = reachability
