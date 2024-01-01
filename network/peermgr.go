@@ -116,14 +116,30 @@ func (mgr *peerMgr) CheckConnectivity() {
 	mgr.logger.Debug("check connectivity", "peers", len(mgr.peers))
 
 	net := mgr.host.Network()
+	connMgr := mgr.host.ConnManager()
 
 	// Let's check if some peers are disconnected
 	var connectedPeers []lp2ppeer.ID
+	numProtected := 0
 	for pid := range mgr.peers {
 		connectedness := net.Connectedness(pid)
 		if connectedness == lp2pnet.Connected {
 			connectedPeers = append(connectedPeers, pid)
+
+			if connMgr.IsProtected(pid, "GOSSIP") {
+				numProtected++
+			}
 		}
+	}
+
+	if numProtected < 2 {
+		// If a peer doesn't have any connection to any Gossip node, it can be isolated.
+		mgr.logger.Warn("low connections to gossip nodes", "count", numProtected)
+		for _, pid := range connectedPeers {
+			_ = net.ClosePeer(pid)
+		}
+
+		connectedPeers = []lp2ppeer.ID{}
 	}
 
 	if len(connectedPeers) > mgr.maxConns {
