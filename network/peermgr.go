@@ -68,9 +68,7 @@ func (mgr *peerMgr) Start() {
 	}()
 }
 
-// Stop stops the Bootstrap.
 func (mgr *peerMgr) Stop() {
-	// TODO: complete me
 }
 
 func (mgr *peerMgr) NumOfConnected() int {
