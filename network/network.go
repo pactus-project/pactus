@@ -16,6 +16,9 @@ import (
 	lp2pautorelay "github.com/libp2p/go-libp2p/p2p/host/autorelay"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	lp2pconnmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
+	lp2pnoise "github.com/libp2p/go-libp2p/p2p/security/noise"
+	lp2quic "github.com/libp2p/go-libp2p/p2p/transport/quic"
+	lp2ptcp "github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -142,6 +145,9 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		lp2p.ResourceManager(resMgr),
 		lp2p.ConnectionManager(connMgr),
 		lp2p.Ping(false),
+		lp2p.Transport(lp2ptcp.NewTCPTransport),
+		lp2p.Transport(lp2quic.NewTransport),
+		lp2p.Security(lp2pnoise.ID, lp2pnoise.New),
 	)
 
 	if conf.EnableNATService {
