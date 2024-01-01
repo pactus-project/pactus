@@ -11,6 +11,7 @@ import (
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
+	lp2pswarm "github.com/libp2p/go-libp2p/p2p/net/swarm"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/logger"
@@ -86,6 +87,10 @@ func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrIn
 }
 
 func ConnectSync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrInfo) error {
+	if swarm, ok := h.Network().(*lp2pswarm.Swarm); ok {
+		swarm.Backoff().Clear(addrInfo.ID)
+	}
+
 	return h.Connect(lp2pnetwork.WithDialPeerTimeout(ctx, 30*time.Second), addrInfo)
 }
 
