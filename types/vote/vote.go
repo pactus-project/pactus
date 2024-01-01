@@ -194,6 +194,15 @@ func (v *Vote) Verify(pubKey *bls.PublicKey) error {
 	return pubKey.Verify(v.SignBytes(), v.Signature())
 }
 
+func (v *Vote) IsCPVote() bool {
+	if v.data.Type == VoteTypeCPPreVote ||
+		v.data.Type == VoteTypeCPMainVote ||
+		v.data.Type == VoteTypeCPDecided {
+		return true
+	}
+	return false
+}
+
 // BasicCheck performs a basic check on the vote.
 func (v *Vote) BasicCheck() error {
 	if !v.data.Type.IsValid() {
@@ -209,9 +218,7 @@ func (v *Vote) BasicCheck() error {
 			Reason: "invalid round",
 		}
 	}
-	if v.data.Type == VoteTypeCPPreVote ||
-		v.data.Type == VoteTypeCPMainVote ||
-		v.data.Type == VoteTypeCPDecided {
+	if v.IsCPVote() {
 		if v.data.CPVote == nil {
 			return errors.Errorf(errors.ErrInvalidVote, "should have cp data")
 		}
