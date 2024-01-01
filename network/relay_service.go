@@ -31,21 +31,19 @@ func newRelayService(ctx context.Context, host lp2phost.Host, conf *Config, log 
 }
 
 func (rs *relayService) Start() {
-	if rs.conf.EnableRelay {
-		go func() {
-			ticker := time.NewTicker(60 * time.Second)
-			defer ticker.Stop()
+	go func() {
+		ticker := time.NewTicker(60 * time.Second)
+		defer ticker.Stop()
 
-			for {
-				select {
-				case <-rs.ctx.Done():
-					return
-				case <-ticker.C:
-					rs.checkConnectivity()
-				}
+		for {
+			select {
+			case <-rs.ctx.Done():
+				return
+			case <-ticker.C:
+				rs.checkConnectivity()
 			}
-		}()
-	}
+		}
+	}()
 }
 
 func (rs *relayService) Stop() {
@@ -56,9 +54,7 @@ func (rs *relayService) SetReachability(reachability lp2pnetwork.Reachability) {
 	rs.reachability = reachability
 	rs.lk.Unlock()
 
-	if rs.conf.EnableRelay {
-		rs.checkConnectivity()
-	}
+	rs.checkConnectivity()
 }
 
 func (rs *relayService) Reachability() lp2pnetwork.Reachability {
@@ -72,19 +68,24 @@ func (rs *relayService) checkConnectivity() {
 	rs.lk.Lock()
 	defer rs.lk.Unlock()
 
-	if rs.reachability != lp2pnetwork.ReachabilityPrivate {
-		return
-	}
 	net := rs.host.Network()
-	for _, ai := range rs.conf.RelayAddrInfos() {
-		if net.Connectedness(ai.ID) != lp2pnetwork.Connected {
-			rs.logger.Info("try connecting relay node", "addr", ai.Addrs)
-			err := ConnectSync(rs.ctx, rs.host, ai)
-			if err != nil {
-				rs.logger.Warn("unable to connect to relay node", "error", err, "addr", ai.Addrs)
-			} else {
-				rs.logger.Info("connect to relay node", "addr", ai.Addrs)
+	if rs.conf.EnableRelay &&
+		rs.reachability == lp2pnetwork.ReachabilityPrivate {
+		for _, ai := range rs.conf.RelayAddrInfos() {
+			if net.Connectedness(ai.ID) != lp2pnetwork.Connected {
+				rs.logger.Info("try connecting relay node", "addr", ai.Addrs)
+				err := ConnectSync(rs.ctx, rs.host, ai)
+				if err != nil {
+					rs.logger.Warn("unable to connect to relay node", "error", err, "addr", ai.Addrs)
+				} else {
+					rs.logger.Info("connect to relay node", "addr", ai.Addrs)
+				}
 			}
+		}
+	} else {
+		// It is public node or relay is disabled.
+		for _, ai := range rs.conf.RelayAddrInfos() {
+			_ = net.ClosePeer(ai.ID)
 		}
 	}
 }
