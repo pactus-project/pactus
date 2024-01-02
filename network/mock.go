@@ -136,10 +136,6 @@ func (mock *MockNetwork) Name() string {
 	return "pactus"
 }
 
-func (mock *MockNetwork) DHTSize() int32 {
-	return 0
-}
-
 func (mock *MockNetwork) Protocols() []string {
 	return []string{"gossip"}
 }

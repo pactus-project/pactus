@@ -403,14 +403,10 @@ func (n *network) Name() string {
 	return n.config.NetworkName
 }
 
-func (n *network) DHTSize() int32 {
-	size, err := n.dht.kademlia.NetworkSize()
-	if err != nil {
-		return 0
-	}
-	return size
-}
-
 func (n *network) Protocols() []string {
-	return []string{string(n.stream.protocolID), string(n.notifee.streamProtocolID)}
+	protocols := []string{}
+	for _, p := range n.host.Mux().Protocols() {
+		protocols = append(protocols, string(p))
+	}
+	return protocols
 }

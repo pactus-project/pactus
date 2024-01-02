@@ -66,4 +66,3 @@ http:
 
     - selector: pactus.Wallet.UnlockWallet
       get: "/v1/wallets/unlock/password/{password}/timeout/{timeout}"
-

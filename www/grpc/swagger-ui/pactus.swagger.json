@@ -338,6 +338,28 @@
         ]
       }
     },
+    "/v1/network/peers": {
+      "get": {
+        "operationId": "Network_GetPeersInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetPeersInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Network"
+        ]
+      }
+    },
     "/v1/transactions/amount/{amount}/payloadType/{payloadType}": {
       "get": {
         "operationId": "Transaction_CalculateFee",
@@ -882,10 +904,6 @@
         },
         "networkName": {
           "type": "string"
-        },
-        "networkDhtSize": {
-          "type": "integer",
-          "format": "int32"
         },
         "protocols": {
           "type": "array",

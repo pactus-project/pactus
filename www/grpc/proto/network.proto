@@ -16,9 +16,8 @@ message GetNetworkInfoResponse {
   int32 protocol_version = 1;
   int32 connected_peers = 2;
   string network_name = 3;
-  int32 network_dht_size = 4;
-  repeated string protocols = 5;
-  repeated string local_address = 6;
+  repeated string protocols = 4;
+  repeated string local_address = 5;
   
 }
 

@@ -92,8 +92,8 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 
 	tm := newTableMaker()
 	tm.addRowInt("Version", int(res.ProtocolVersion))
+	tm.addRowString("Network Name", res.NetworkName)
 	tm.addRowInt("Number of connected peers", int(res.ConnectedPeers))
-	tm.addRowInt("Network DHT size", int(res.NetworkDhtSize))
 
 	tm.addRowString("Protocols", "---")
 	for i, p := range res.Protocols {

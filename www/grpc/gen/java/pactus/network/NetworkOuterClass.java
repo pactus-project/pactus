@@ -443,30 +443,24 @@ public final class NetworkOuterClass {
         getNetworkNameBytes();
 
     /**
-     * <code>int32 network_dht_size = 4 [json_name = "networkDhtSize"];</code>
-     * @return The networkDhtSize.
-     */
-    int getNetworkDhtSize();
-
-    /**
-     * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+     * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
      * @return A list containing the protocols.
      */
     java.util.List<java.lang.String>
         getProtocolsList();
     /**
-     * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+     * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
      * @return The count of protocols.
      */
     int getProtocolsCount();
     /**
-     * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+     * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
      * @param index The index of the element to return.
      * @return The protocols at the given index.
      */
     java.lang.String getProtocols(int index);
     /**
-     * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+     * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
      * @param index The index of the value to return.
      * @return The bytes of the protocols at the given index.
      */
@@ -474,24 +468,24 @@ public final class NetworkOuterClass {
         getProtocolsBytes(int index);
 
     /**
-     * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+     * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
      * @return A list containing the localAddress.
      */
     java.util.List<java.lang.String>
         getLocalAddressList();
     /**
-     * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+     * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
      * @return The count of localAddress.
      */
     int getLocalAddressCount();
     /**
-     * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+     * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
      * @param index The index of the element to return.
      * @return The localAddress at the given index.
      */
     java.lang.String getLocalAddress(int index);
     /**
-     * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+     * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
      * @param index The index of the value to return.
      * @return The bytes of the localAddress at the given index.
      */
@@ -601,21 +595,10 @@ public final class NetworkOuterClass {
       }
     }
 
-    public static final int NETWORK_DHT_SIZE_FIELD_NUMBER = 4;
-    private int networkDhtSize_;
-    /**
-     * <code>int32 network_dht_size = 4 [json_name = "networkDhtSize"];</code>
-     * @return The networkDhtSize.
-     */
-    @java.lang.Override
-    public int getNetworkDhtSize() {
-      return networkDhtSize_;
-    }
-
-    public static final int PROTOCOLS_FIELD_NUMBER = 5;
+    public static final int PROTOCOLS_FIELD_NUMBER = 4;
     private com.google.protobuf.LazyStringList protocols_;
     /**
-     * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+     * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
      * @return A list containing the protocols.
      */
     public com.google.protobuf.ProtocolStringList
@@ -623,14 +606,14 @@ public final class NetworkOuterClass {
       return protocols_;
     }
     /**
-     * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+     * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
      * @return The count of protocols.
      */
     public int getProtocolsCount() {
       return protocols_.size();
     }
     /**
-     * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+     * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
      * @param index The index of the element to return.
      * @return The protocols at the given index.
      */
@@ -638,7 +621,7 @@ public final class NetworkOuterClass {
       return protocols_.get(index);
     }
     /**
-     * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+     * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
      * @param index The index of the value to return.
      * @return The bytes of the protocols at the given index.
      */
@@ -647,10 +630,10 @@ public final class NetworkOuterClass {
       return protocols_.getByteString(index);
     }
 
-    public static final int LOCAL_ADDRESS_FIELD_NUMBER = 6;
+    public static final int LOCAL_ADDRESS_FIELD_NUMBER = 5;
     private com.google.protobuf.LazyStringList localAddress_;
     /**
-     * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+     * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
      * @return A list containing the localAddress.
      */
     public com.google.protobuf.ProtocolStringList
@@ -658,14 +641,14 @@ public final class NetworkOuterClass {
       return localAddress_;
     }
     /**
-     * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+     * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
      * @return The count of localAddress.
      */
     public int getLocalAddressCount() {
       return localAddress_.size();
     }
     /**
-     * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+     * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
      * @param index The index of the element to return.
      * @return The localAddress at the given index.
      */
@@ -673,7 +656,7 @@ public final class NetworkOuterClass {
       return localAddress_.get(index);
     }
     /**
-     * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+     * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
      * @param index The index of the value to return.
      * @return The bytes of the localAddress at the given index.
      */
@@ -705,14 +688,11 @@ public final class NetworkOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(networkName_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, networkName_);
       }
-      if (networkDhtSize_ != 0) {
-        output.writeInt32(4, networkDhtSize_);
-      }
       for (int i = 0; i < protocols_.size(); i++) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, protocols_.getRaw(i));
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, protocols_.getRaw(i));
       }
       for (int i = 0; i < localAddress_.size(); i++) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, localAddress_.getRaw(i));
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, localAddress_.getRaw(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -733,10 +713,6 @@ public final class NetworkOuterClass {
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(networkName_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, networkName_);
-      }
-      if (networkDhtSize_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, networkDhtSize_);
       }
       {
         int dataSize = 0;
@@ -775,8 +751,6 @@ public final class NetworkOuterClass {
           != other.getConnectedPeers()) return false;
       if (!getNetworkName()
           .equals(other.getNetworkName())) return false;
-      if (getNetworkDhtSize()
-          != other.getNetworkDhtSize()) return false;
       if (!getProtocolsList()
           .equals(other.getProtocolsList())) return false;
       if (!getLocalAddressList()
@@ -798,8 +772,6 @@ public final class NetworkOuterClass {
       hash = (53 * hash) + getConnectedPeers();
       hash = (37 * hash) + NETWORK_NAME_FIELD_NUMBER;
       hash = (53 * hash) + getNetworkName().hashCode();
-      hash = (37 * hash) + NETWORK_DHT_SIZE_FIELD_NUMBER;
-      hash = (53 * hash) + getNetworkDhtSize();
       if (getProtocolsCount() > 0) {
         hash = (37 * hash) + PROTOCOLS_FIELD_NUMBER;
         hash = (53 * hash) + getProtocolsList().hashCode();
@@ -942,8 +914,6 @@ public final class NetworkOuterClass {
 
         networkName_ = "";
 
-        networkDhtSize_ = 0;
-
         protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
         localAddress_ = com.google.protobuf.LazyStringArrayList.EMPTY;
@@ -978,7 +948,6 @@ public final class NetworkOuterClass {
         result.protocolVersion_ = protocolVersion_;
         result.connectedPeers_ = connectedPeers_;
         result.networkName_ = networkName_;
-        result.networkDhtSize_ = networkDhtSize_;
         if (((bitField0_ & 0x00000001) != 0)) {
           protocols_ = protocols_.getUnmodifiableView();
           bitField0_ = (bitField0_ & ~0x00000001);
@@ -1047,9 +1016,6 @@ public final class NetworkOuterClass {
           networkName_ = other.networkName_;
           onChanged();
         }
-        if (other.getNetworkDhtSize() != 0) {
-          setNetworkDhtSize(other.getNetworkDhtSize());
-        }
         if (!other.protocols_.isEmpty()) {
           if (protocols_.isEmpty()) {
             protocols_ = other.protocols_;
@@ -1111,23 +1077,18 @@ public final class NetworkOuterClass {
 
                 break;
               } // case 26
-              case 32: {
-                networkDhtSize_ = input.readInt32();
-
-                break;
-              } // case 32
-              case 42: {
+              case 34: {
                 java.lang.String s = input.readStringRequireUtf8();
                 ensureProtocolsIsMutable();
                 protocols_.add(s);
                 break;
-              } // case 42
-              case 50: {
+              } // case 34
+              case 42: {
                 java.lang.String s = input.readStringRequireUtf8();
                 ensureLocalAddressIsMutable();
                 localAddress_.add(s);
                 break;
-              } // case 50
+              } // case 42
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -1283,37 +1244,6 @@ public final class NetworkOuterClass {
         return this;
       }
 
-      private int networkDhtSize_ ;
-      /**
-       * <code>int32 network_dht_size = 4 [json_name = "networkDhtSize"];</code>
-       * @return The networkDhtSize.
-       */
-      @java.lang.Override
-      public int getNetworkDhtSize() {
-        return networkDhtSize_;
-      }
-      /**
-       * <code>int32 network_dht_size = 4 [json_name = "networkDhtSize"];</code>
-       * @param value The networkDhtSize to set.
-       * @return This builder for chaining.
-       */
-      public Builder setNetworkDhtSize(int value) {
-        
-        networkDhtSize_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 network_dht_size = 4 [json_name = "networkDhtSize"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearNetworkDhtSize() {
-        
-        networkDhtSize_ = 0;
-        onChanged();
-        return this;
-      }
-
       private com.google.protobuf.LazyStringList protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       private void ensureProtocolsIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
@@ -1322,7 +1252,7 @@ public final class NetworkOuterClass {
          }
       }
       /**
-       * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+       * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
        * @return A list containing the protocols.
        */
       public com.google.protobuf.ProtocolStringList
@@ -1330,14 +1260,14 @@ public final class NetworkOuterClass {
         return protocols_.getUnmodifiableView();
       }
       /**
-       * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+       * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
        * @return The count of protocols.
        */
       public int getProtocolsCount() {
         return protocols_.size();
       }
       /**
-       * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+       * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
        * @param index The index of the element to return.
        * @return The protocols at the given index.
        */
@@ -1345,7 +1275,7 @@ public final class NetworkOuterClass {
         return protocols_.get(index);
       }
       /**
-       * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+       * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
        * @param index The index of the value to return.
        * @return The bytes of the protocols at the given index.
        */
@@ -1354,7 +1284,7 @@ public final class NetworkOuterClass {
         return protocols_.getByteString(index);
       }
       /**
-       * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+       * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
        * @param index The index to set the value at.
        * @param value The protocols to set.
        * @return This builder for chaining.
@@ -1370,7 +1300,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+       * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
        * @param value The protocols to add.
        * @return This builder for chaining.
        */
@@ -1385,7 +1315,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+       * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
        * @param values The protocols to add.
        * @return This builder for chaining.
        */
@@ -1398,7 +1328,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+       * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
        * @return This builder for chaining.
        */
       public Builder clearProtocols() {
@@ -1408,7 +1338,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated string protocols = 5 [json_name = "protocols"];</code>
+       * <code>repeated string protocols = 4 [json_name = "protocols"];</code>
        * @param value The bytes of the protocols to add.
        * @return This builder for chaining.
        */
@@ -1432,7 +1362,7 @@ public final class NetworkOuterClass {
          }
       }
       /**
-       * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+       * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
        * @return A list containing the localAddress.
        */
       public com.google.protobuf.ProtocolStringList
@@ -1440,14 +1370,14 @@ public final class NetworkOuterClass {
         return localAddress_.getUnmodifiableView();
       }
       /**
-       * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+       * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
        * @return The count of localAddress.
        */
       public int getLocalAddressCount() {
         return localAddress_.size();
       }
       /**
-       * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+       * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
        * @param index The index of the element to return.
        * @return The localAddress at the given index.
        */
@@ -1455,7 +1385,7 @@ public final class NetworkOuterClass {
         return localAddress_.get(index);
       }
       /**
-       * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+       * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
        * @param index The index of the value to return.
        * @return The bytes of the localAddress at the given index.
        */
@@ -1464,7 +1394,7 @@ public final class NetworkOuterClass {
         return localAddress_.getByteString(index);
       }
       /**
-       * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+       * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
        * @param index The index to set the value at.
        * @param value The localAddress to set.
        * @return This builder for chaining.
@@ -1480,7 +1410,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+       * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
        * @param value The localAddress to add.
        * @return This builder for chaining.
        */
@@ -1495,7 +1425,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+       * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
        * @param values The localAddress to add.
        * @return This builder for chaining.
        */
@@ -1508,7 +1438,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+       * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
        * @return This builder for chaining.
        */
       public Builder clearLocalAddress() {
@@ -1518,7 +1448,7 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
-       * <code>repeated string local_address = 6 [json_name = "localAddress"];</code>
+       * <code>repeated string local_address = 5 [json_name = "localAddress"];</code>
        * @param value The bytes of the localAddress to add.
        * @return This builder for chaining.
        */
@@ -7974,59 +7904,58 @@ public final class NetworkOuterClass {
   static {
     java.lang.String[] descriptorData = {
       "\n\rnetwork.proto\022\006pactus\"\027\n\025GetNetworkInf" +
-      "oRequest\"\374\001\n\026GetNetworkInfoResponse\022)\n\020p" +
+      "oRequest\"\322\001\n\026GetNetworkInfoResponse\022)\n\020p" +
       "rotocol_version\030\001 \001(\005R\017protocolVersion\022\'" +
       "\n\017connected_peers\030\002 \001(\005R\016connectedPeers\022" +
-      "!\n\014network_name\030\003 \001(\tR\013networkName\022(\n\020ne" +
-      "twork_dht_size\030\004 \001(\005R\016networkDhtSize\022\034\n\t" +
-      "protocols\030\005 \003(\tR\tprotocols\022#\n\rlocal_addr" +
-      "ess\030\006 \003(\tR\014localAddress\"\024\n\022GetNodeInfoRe" +
-      "quest\"\230\001\n\023GetNodeInfoResponse\022\030\n\007moniker" +
-      "\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n" +
-      "\007peer_id\030\003 \001(\014R\006peerId\022\"\n\014reachability\030\004" +
-      " \001(\tR\014reachability\022\024\n\005addrs\030\005 \003(\tR\005addrs" +
-      "\"\025\n\023GetPeersInfoRequest\"\335\003\n\024GetPeersInfo" +
-      "Response\022(\n\020total_sent_bytes\030\001 \001(\005R\016tota" +
-      "lSentBytes\0220\n\024total_received_bytes\030\002 \001(\005" +
-      "R\022totalReceivedBytes\022\035\n\nstarted_at\030\003 \001(\003" +
-      "R\tstartedAt\022&\n\005peers\030\004 \003(\0132\020.pactus.Peer" +
-      "InfoR\005peers\022J\n\nsent_bytes\030\005 \003(\0132+.pactus" +
-      ".GetPeersInfoResponse.SentBytesEntryR\tse" +
-      "ntBytes\022V\n\016received_bytes\030\006 \003(\0132/.pactus" +
-      ".GetPeersInfoResponse.ReceivedBytesEntry" +
-      "R\rreceivedBytes\032<\n\016SentBytesEntry\022\020\n\003key" +
-      "\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@\n" +
-      "\022ReceivedBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n" +
-      "\005value\030\002 \001(\003R\005value:\0028\001\"\300\006\n\010PeerInfo\022\026\n\006" +
-      "status\030\001 \001(\005R\006status\022\030\n\007moniker\030\002 \001(\tR\007m" +
-      "oniker\022\024\n\005agent\030\003 \001(\tR\005agent\022\027\n\007peer_id\030" +
-      "\004 \001(\014R\006peerId\022%\n\016consensus_keys\030\005 \003(\tR\rc" +
-      "onsensusKeys\022\032\n\010services\030\006 \001(\rR\010services" +
-      "\022&\n\017last_block_hash\030\007 \001(\014R\rlastBlockHash" +
-      "\022\026\n\006height\030\010 \001(\rR\006height\022+\n\021received_mes" +
-      "sages\030\t \001(\005R\020receivedMessages\022)\n\020invalid" +
-      "_messages\030\n \001(\005R\017invalidMessages\022\033\n\tlast" +
-      "_sent\030\013 \001(\003R\010lastSent\022#\n\rlast_received\030\014" +
-      " \001(\003R\014lastReceived\022>\n\nsent_bytes\030\r \003(\0132\037" +
-      ".pactus.PeerInfo.SentBytesEntryR\tsentByt" +
-      "es\022J\n\016received_bytes\030\016 \003(\0132#.pactus.Peer" +
-      "Info.ReceivedBytesEntryR\rreceivedBytes\022\030" +
-      "\n\007address\030\017 \001(\tR\007address\022\034\n\tdirection\030\020 " +
-      "\001(\tR\tdirection\022\034\n\tprotocols\030\021 \003(\tR\tproto" +
-      "cols\022%\n\016total_sessions\030\022 \001(\005R\rtotalSessi" +
-      "ons\022-\n\022completed_sessions\030\023 \001(\005R\021complet" +
-      "edSessions\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(" +
-      "\005R\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@\n\022Rece" +
-      "ivedBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005valu" +
-      "e\030\002 \001(\003R\005value:\0028\0012\355\001\n\007Network\022O\n\016GetNet" +
-      "workInfo\022\035.pactus.GetNetworkInfoRequest\032" +
-      "\036.pactus.GetNetworkInfoResponse\022F\n\013GetNo" +
-      "deInfo\022\032.pactus.GetNodeInfoRequest\032\033.pac" +
-      "tus.GetNodeInfoResponse\022I\n\014GetPeersInfo\022" +
-      "\033.pactus.GetPeersInfoRequest\032\034.pactus.Ge" +
-      "tPeersInfoResponseBB\n\016pactus.networkZ0gi" +
-      "thub.com/pactus-project/pactus/www/grpc/" +
-      "pactusb\006proto3"
+      "!\n\014network_name\030\003 \001(\tR\013networkName\022\034\n\tpr" +
+      "otocols\030\004 \003(\tR\tprotocols\022#\n\rlocal_addres" +
+      "s\030\005 \003(\tR\014localAddress\"\024\n\022GetNodeInfoRequ" +
+      "est\"\230\001\n\023GetNodeInfoResponse\022\030\n\007moniker\030\001" +
+      " \001(\tR\007moniker\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007p" +
+      "eer_id\030\003 \001(\014R\006peerId\022\"\n\014reachability\030\004 \001" +
+      "(\tR\014reachability\022\024\n\005addrs\030\005 \003(\tR\005addrs\"\025" +
+      "\n\023GetPeersInfoRequest\"\335\003\n\024GetPeersInfoRe" +
+      "sponse\022(\n\020total_sent_bytes\030\001 \001(\005R\016totalS" +
+      "entBytes\0220\n\024total_received_bytes\030\002 \001(\005R\022" +
+      "totalReceivedBytes\022\035\n\nstarted_at\030\003 \001(\003R\t" +
+      "startedAt\022&\n\005peers\030\004 \003(\0132\020.pactus.PeerIn" +
+      "foR\005peers\022J\n\nsent_bytes\030\005 \003(\0132+.pactus.G" +
+      "etPeersInfoResponse.SentBytesEntryR\tsent" +
+      "Bytes\022V\n\016received_bytes\030\006 \003(\0132/.pactus.G" +
+      "etPeersInfoResponse.ReceivedBytesEntryR\r" +
+      "receivedBytes\032<\n\016SentBytesEntry\022\020\n\003key\030\001" +
+      " \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@\n\022R" +
+      "eceivedBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005v" +
+      "alue\030\002 \001(\003R\005value:\0028\001\"\300\006\n\010PeerInfo\022\026\n\006st" +
+      "atus\030\001 \001(\005R\006status\022\030\n\007moniker\030\002 \001(\tR\007mon" +
+      "iker\022\024\n\005agent\030\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 " +
+      "\001(\014R\006peerId\022%\n\016consensus_keys\030\005 \003(\tR\rcon" +
+      "sensusKeys\022\032\n\010services\030\006 \001(\rR\010services\022&" +
+      "\n\017last_block_hash\030\007 \001(\014R\rlastBlockHash\022\026" +
+      "\n\006height\030\010 \001(\rR\006height\022+\n\021received_messa" +
+      "ges\030\t \001(\005R\020receivedMessages\022)\n\020invalid_m" +
+      "essages\030\n \001(\005R\017invalidMessages\022\033\n\tlast_s" +
+      "ent\030\013 \001(\003R\010lastSent\022#\n\rlast_received\030\014 \001" +
+      "(\003R\014lastReceived\022>\n\nsent_bytes\030\r \003(\0132\037.p" +
+      "actus.PeerInfo.SentBytesEntryR\tsentBytes" +
+      "\022J\n\016received_bytes\030\016 \003(\0132#.pactus.PeerIn" +
+      "fo.ReceivedBytesEntryR\rreceivedBytes\022\030\n\007" +
+      "address\030\017 \001(\tR\007address\022\034\n\tdirection\030\020 \001(" +
+      "\tR\tdirection\022\034\n\tprotocols\030\021 \003(\tR\tprotoco" +
+      "ls\022%\n\016total_sessions\030\022 \001(\005R\rtotalSession" +
+      "s\022-\n\022completed_sessions\030\023 \001(\005R\021completed" +
+      "Sessions\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005R" +
+      "\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@\n\022Receiv" +
+      "edBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030" +
+      "\002 \001(\003R\005value:\0028\0012\355\001\n\007Network\022O\n\016GetNetwo" +
+      "rkInfo\022\035.pactus.GetNetworkInfoRequest\032\036." +
+      "pactus.GetNetworkInfoResponse\022F\n\013GetNode" +
+      "Info\022\032.pactus.GetNodeInfoRequest\032\033.pactu" +
+      "s.GetNodeInfoResponse\022I\n\014GetPeersInfo\022\033." +
+      "pactus.GetPeersInfoRequest\032\034.pactus.GetP" +
+      "eersInfoResponseBB\n\016pactus.networkZ0gith" +
+      "ub.com/pactus-project/pactus/www/grpc/pa" +
+      "ctusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -8043,7 +7972,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_GetNetworkInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNetworkInfoResponse_descriptor,
-        new java.lang.String[] { "ProtocolVersion", "ConnectedPeers", "NetworkName", "NetworkDhtSize", "Protocols", "LocalAddress", });
+        new java.lang.String[] { "ProtocolVersion", "ConnectedPeers", "NetworkName", "Protocols", "LocalAddress", });
     internal_static_pactus_GetNodeInfoRequest_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_pactus_GetNodeInfoRequest_fieldAccessorTable = new

@@ -282,7 +282,7 @@ proto.pactus.GetNetworkInfoRequest.serializeBinaryToWriter = function(message, w
  * @private {!Array<number>}
  * @const
  */
-proto.pactus.GetNetworkInfoResponse.repeatedFields_ = [5,6];
+proto.pactus.GetNetworkInfoResponse.repeatedFields_ = [4,5];
 
 
 
@@ -318,9 +318,8 @@ proto.pactus.GetNetworkInfoResponse.toObject = function(includeInstance, msg) {
     protocolVersion: jspb.Message.getFieldWithDefault(msg, 1, 0),
     connectedPeers: jspb.Message.getFieldWithDefault(msg, 2, 0),
     networkName: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    networkDhtSize: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    protocolsList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f,
-    localAddressList: (f = jspb.Message.getRepeatedField(msg, 6)) == null ? undefined : f
+    protocolsList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f,
+    localAddressList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -370,14 +369,10 @@ proto.pactus.GetNetworkInfoResponse.deserializeBinaryFromReader = function(msg, 
       msg.setNetworkName(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setNetworkDhtSize(value);
-      break;
-    case 5:
       var value = /** @type {string} */ (reader.readString());
       msg.addProtocols(value);
       break;
-    case 6:
+    case 5:
       var value = /** @type {string} */ (reader.readString());
       msg.addLocalAddress(value);
       break;
@@ -431,24 +426,17 @@ proto.pactus.GetNetworkInfoResponse.serializeBinaryToWriter = function(message, 
       f
     );
   }
-  f = message.getNetworkDhtSize();
-  if (f !== 0) {
-    writer.writeInt32(
-      4,
-      f
-    );
-  }
   f = message.getProtocolsList();
   if (f.length > 0) {
     writer.writeRepeatedString(
-      5,
+      4,
       f
     );
   }
   f = message.getLocalAddressList();
   if (f.length > 0) {
     writer.writeRepeatedString(
-      6,
+      5,
       f
     );
   }
@@ -510,29 +498,11 @@ proto.pactus.GetNetworkInfoResponse.prototype.setNetworkName = function(value) {
 
 
 /**
- * optional int32 network_dht_size = 4;
- * @return {number}
- */
-proto.pactus.GetNetworkInfoResponse.prototype.getNetworkDhtSize = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetNetworkInfoResponse} returns this
- */
-proto.pactus.GetNetworkInfoResponse.prototype.setNetworkDhtSize = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
-};
-
-
-/**
- * repeated string protocols = 5;
+ * repeated string protocols = 4;
  * @return {!Array<string>}
  */
 proto.pactus.GetNetworkInfoResponse.prototype.getProtocolsList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 5));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 4));
 };
 
 
@@ -541,7 +511,7 @@ proto.pactus.GetNetworkInfoResponse.prototype.getProtocolsList = function() {
  * @return {!proto.pactus.GetNetworkInfoResponse} returns this
  */
 proto.pactus.GetNetworkInfoResponse.prototype.setProtocolsList = function(value) {
-  return jspb.Message.setField(this, 5, value || []);
+  return jspb.Message.setField(this, 4, value || []);
 };
 
 
@@ -551,7 +521,7 @@ proto.pactus.GetNetworkInfoResponse.prototype.setProtocolsList = function(value)
  * @return {!proto.pactus.GetNetworkInfoResponse} returns this
  */
 proto.pactus.GetNetworkInfoResponse.prototype.addProtocols = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 5, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 4, value, opt_index);
 };
 
 
@@ -565,11 +535,11 @@ proto.pactus.GetNetworkInfoResponse.prototype.clearProtocolsList = function() {
 
 
 /**
- * repeated string local_address = 6;
+ * repeated string local_address = 5;
  * @return {!Array<string>}
  */
 proto.pactus.GetNetworkInfoResponse.prototype.getLocalAddressList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 6));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 5));
 };
 
 
@@ -578,7 +548,7 @@ proto.pactus.GetNetworkInfoResponse.prototype.getLocalAddressList = function() {
  * @return {!proto.pactus.GetNetworkInfoResponse} returns this
  */
 proto.pactus.GetNetworkInfoResponse.prototype.setLocalAddressList = function(value) {
-  return jspb.Message.setField(this, 6, value || []);
+  return jspb.Message.setField(this, 5, value || []);
 };
 
 
@@ -588,7 +558,7 @@ proto.pactus.GetNetworkInfoResponse.prototype.setLocalAddressList = function(val
  * @return {!proto.pactus.GetNetworkInfoResponse} returns this
  */
 proto.pactus.GetNetworkInfoResponse.prototype.addLocalAddress = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 6, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 5, value, opt_index);
 };
 
 

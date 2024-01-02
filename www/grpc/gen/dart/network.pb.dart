@@ -45,9 +45,8 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'protocolVersion', $pb.PbFieldType.O3)
     ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectedPeers', $pb.PbFieldType.O3)
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'networkName')
-    ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'networkDhtSize', $pb.PbFieldType.O3)
-    ..pPS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'protocols')
-    ..pPS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'localAddress')
+    ..pPS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'protocols')
+    ..pPS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'localAddress')
     ..hasRequiredFields = false
   ;
 
@@ -56,7 +55,6 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
     $core.int? protocolVersion,
     $core.int? connectedPeers,
     $core.String? networkName,
-    $core.int? networkDhtSize,
     $core.Iterable<$core.String>? protocols,
     $core.Iterable<$core.String>? localAddress,
   }) {
@@ -69,9 +67,6 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
     }
     if (networkName != null) {
       _result.networkName = networkName;
-    }
-    if (networkDhtSize != null) {
-      _result.networkDhtSize = networkDhtSize;
     }
     if (protocols != null) {
       _result.protocols.addAll(protocols);
@@ -130,19 +125,10 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   void clearNetworkName() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.int get networkDhtSize => $_getIZ(3);
-  @$pb.TagNumber(4)
-  set networkDhtSize($core.int v) { $_setSignedInt32(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasNetworkDhtSize() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearNetworkDhtSize() => clearField(4);
+  $core.List<$core.String> get protocols => $_getList(3);
 
   @$pb.TagNumber(5)
-  $core.List<$core.String> get protocols => $_getList(4);
-
-  @$pb.TagNumber(6)
-  $core.List<$core.String> get localAddress => $_getList(5);
+  $core.List<$core.String> get localAddress => $_getList(4);
 }
 
 class GetNodeInfoRequest extends $pb.GeneratedMessage {

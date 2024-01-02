@@ -89,7 +89,6 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		ProtocolVersion: int32(version.ProtocolVersion),
 		ConnectedPeers:  int32(s.net.NumConnectedPeers()),
 		NetworkName:     s.net.Name(),
-		NetworkDhtSize:  s.net.DHTSize(),
 		Protocols:       s.net.Protocols(),
 		LocalAddress:    s.net.HostAddrs(),
 	}, nil

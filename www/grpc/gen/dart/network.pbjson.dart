@@ -22,14 +22,13 @@ const GetNetworkInfoResponse$json = const {
     const {'1': 'protocol_version', '3': 1, '4': 1, '5': 5, '10': 'protocolVersion'},
     const {'1': 'connected_peers', '3': 2, '4': 1, '5': 5, '10': 'connectedPeers'},
     const {'1': 'network_name', '3': 3, '4': 1, '5': 9, '10': 'networkName'},
-    const {'1': 'network_dht_size', '3': 4, '4': 1, '5': 5, '10': 'networkDhtSize'},
-    const {'1': 'protocols', '3': 5, '4': 3, '5': 9, '10': 'protocols'},
-    const {'1': 'local_address', '3': 6, '4': 3, '5': 9, '10': 'localAddress'},
+    const {'1': 'protocols', '3': 4, '4': 3, '5': 9, '10': 'protocols'},
+    const {'1': 'local_address', '3': 5, '4': 3, '5': 9, '10': 'localAddress'},
   ],
 };
 
 /// Descriptor for `GetNetworkInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNetworkInfoResponseDescriptor = $convert.base64Decode('ChZHZXROZXR3b3JrSW5mb1Jlc3BvbnNlEikKEHByb3RvY29sX3ZlcnNpb24YASABKAVSD3Byb3RvY29sVmVyc2lvbhInCg9jb25uZWN0ZWRfcGVlcnMYAiABKAVSDmNvbm5lY3RlZFBlZXJzEiEKDG5ldHdvcmtfbmFtZRgDIAEoCVILbmV0d29ya05hbWUSKAoQbmV0d29ya19kaHRfc2l6ZRgEIAEoBVIObmV0d29ya0RodFNpemUSHAoJcHJvdG9jb2xzGAUgAygJUglwcm90b2NvbHMSIwoNbG9jYWxfYWRkcmVzcxgGIAMoCVIMbG9jYWxBZGRyZXNz');
+final $typed_data.Uint8List getNetworkInfoResponseDescriptor = $convert.base64Decode('ChZHZXROZXR3b3JrSW5mb1Jlc3BvbnNlEikKEHByb3RvY29sX3ZlcnNpb24YASABKAVSD3Byb3RvY29sVmVyc2lvbhInCg9jb25uZWN0ZWRfcGVlcnMYAiABKAVSDmNvbm5lY3RlZFBlZXJzEiEKDG5ldHdvcmtfbmFtZRgDIAEoCVILbmV0d29ya05hbWUSHAoJcHJvdG9jb2xzGAQgAygJUglwcm90b2NvbHMSIwoNbG9jYWxfYWRkcmVzcxgFIAMoCVIMbG9jYWxBZGRyZXNz');
 @$core.Deprecated('Use getNodeInfoRequestDescriptor instead')
 const GetNodeInfoRequest$json = const {
   '1': 'GetNodeInfoRequest',
