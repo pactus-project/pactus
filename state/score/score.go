@@ -3,8 +3,8 @@ package score
 import "github.com/pactus-project/pactus/types/certificate"
 
 type scoreData struct {
-	ShouldVote int
-	NotVote    int
+	inCommittee int // Number of times a validator was in the committee
+	absent      int // Number of times a validator was absent from the committee (not voted)
 }
 
 type Manager struct {
@@ -32,14 +32,14 @@ func (sm *Manager) SetCertificate(cert *certificate.Certificate) {
 			sm.vals[num] = data
 		}
 
-		data.ShouldVote++
+		data.inCommittee++
 	}
 
 	for _, num := range cert.Absentees() {
 		data := sm.vals[num]
 		sm.vals[num] = data
 
-		data.NotVote++
+		data.absent++
 	}
 
 	oldHeight := lastHeight - sm.maxCert
@@ -47,12 +47,12 @@ func (sm *Manager) SetCertificate(cert *certificate.Certificate) {
 	if ok {
 		for _, num := range oldCert.Committers() {
 			data := sm.vals[num]
-			data.ShouldVote--
+			data.inCommittee--
 		}
 
 		for _, num := range oldCert.Absentees() {
 			data := sm.vals[num]
-			data.NotVote--
+			data.absent--
 		}
 
 		delete(sm.certs, oldHeight)
@@ -62,11 +62,11 @@ func (sm *Manager) SetCertificate(cert *certificate.Certificate) {
 func (sm *Manager) AvailabilityScore(valNum int32) float64 {
 	data, ok := sm.vals[valNum]
 	if ok {
-		if data.ShouldVote == 0 {
+		if data.inCommittee == 0 {
 			return 1.0
 		}
 
-		return 1 - (float64(data.NotVote) / float64(data.ShouldVote))
+		return 1 - (float64(data.absent) / float64(data.inCommittee))
 	}
 
 	return 1.0
