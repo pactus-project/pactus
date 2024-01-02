@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.18.4](https://github.com/pactus-project/pactus/compare/v0.18.3...v0.18.4) (2024-01-02)
+
+### Feat
+
+- **network**: disabling GosipSub, only FloodSub
+
 ## [0.18.3](https://github.com/pactus-project/pactus/compare/v0.18.2...v0.18.3) (2023-12-30)
 
 ### Fix
