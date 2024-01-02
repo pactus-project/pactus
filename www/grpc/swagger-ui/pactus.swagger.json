@@ -872,6 +872,62 @@
     "pactusGetNetworkInfoResponse": {
       "type": "object",
       "properties": {
+        "protocolVersion": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "connectedPeers": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "networkName": {
+          "type": "string"
+        },
+        "networkDhtSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "protocols": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "localAddress": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pactusGetNodeInfoResponse": {
+      "type": "object",
+      "properties": {
+        "moniker": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "peerId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "reachability": {
+          "type": "string"
+        },
+        "addrs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pactusGetPeersInfoResponse": {
+      "type": "object",
+      "properties": {
         "totalSentBytes": {
           "type": "integer",
           "format": "int32"
@@ -902,30 +958,6 @@
           "additionalProperties": {
             "type": "string",
             "format": "int64"
-          }
-        }
-      }
-    },
-    "pactusGetNodeInfoResponse": {
-      "type": "object",
-      "properties": {
-        "moniker": {
-          "type": "string"
-        },
-        "agent": {
-          "type": "string"
-        },
-        "peerId": {
-          "type": "string",
-          "format": "byte"
-        },
-        "reachability": {
-          "type": "string"
-        },
-        "addrs": {
-          "type": "array",
-          "items": {
-            "type": "string"
           }
         }
       }

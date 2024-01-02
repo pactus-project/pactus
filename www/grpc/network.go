@@ -14,9 +14,9 @@ type networkServer struct {
 	*Server
 }
 
-func (s *networkServer) GetNetworkInfo(_ context.Context,
-	_ *pactus.GetNetworkInfoRequest,
-) (*pactus.GetNetworkInfoResponse, error) {
+func (s *networkServer) GetPeersInfo(_ context.Context,
+	_ *pactus.GetPeersInfoRequest,
+) (*pactus.GetPeersInfoResponse, error) {
 	ps := s.sync.PeerSet()
 	peerInfos := make([]*pactus.PeerInfo, 0, ps.Len())
 
@@ -60,7 +60,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 	sentBytes := ps.SentBytes()
 	receivedBytes := ps.ReceivedBytes()
 
-	return &pactus.GetNetworkInfoResponse{
+	return &pactus.GetPeersInfoResponse{
 		TotalSentBytes:     int32(ps.TotalSentBytes()),
 		TotalReceivedBytes: int32(ps.TotalReceivedBytes()),
 		SentBytes:          *(*map[int32]int64)(unsafe.Pointer(&sentBytes)),
@@ -79,5 +79,18 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 		PeerId:       []byte(s.sync.SelfID()),
 		Reachability: s.net.ReachabilityStatus(),
 		Addrs:        s.net.HostAddrs(),
+	}, nil
+}
+
+func (s *networkServer) GetNetworkInfo(_ context.Context,
+	_ *pactus.GetNetworkInfoRequest,
+) (*pactus.GetNetworkInfoResponse, error) {
+	return &pactus.GetNetworkInfoResponse{
+		ProtocolVersion: int32(version.ProtocolVersion),
+		ConnectedPeers:  int32(s.net.NumConnectedPeers()),
+		NetworkName:     s.net.Name(),
+		NetworkDhtSize:  s.net.DHTSize(),
+		Protocols:       s.net.Protocols(),
+		LocalAddress:    s.net.HostAddrs(),
 	}, nil
 }

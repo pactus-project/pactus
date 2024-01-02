@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -12,9 +13,9 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
-	res, err := s.network.GetNetworkInfo(s.ctx,
-		&pactus.GetNetworkInfoRequest{})
+func (s *Server) PeersHandler(w http.ResponseWriter, _ *http.Request) {
+	res, err := s.network.GetPeersInfo(s.ctx,
+		&pactus.GetPeersInfoRequest{})
 	if err != nil {
 		s.writeError(w, err)
 		return
@@ -77,6 +78,32 @@ func (s *Server) NodeHandler(w http.ResponseWriter, _ *http.Request) {
 	tm.addRowString("Moniker", res.Moniker)
 	tm.addRowString("Reachability", res.Reachability)
 	tm.addRowStrings("Addrs", res.Addrs)
+
+	s.writeHTML(w, tm.html())
+}
+
+func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
+	res, err := s.network.GetNetworkInfo(s.ctx,
+		&pactus.GetNetworkInfoRequest{})
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+
+	tm := newTableMaker()
+	tm.addRowInt("Version", int(res.ProtocolVersion))
+	tm.addRowInt("Number of connected peers", int(res.ConnectedPeers))
+	tm.addRowInt("Network DHT size", int(res.NetworkDhtSize))
+
+	tm.addRowString("Protocols", "---")
+	for i, p := range res.Protocols {
+		tm.addRowString(fmt.Sprint(i), p)
+	}
+
+	tm.addRowString("LocalAddress", "---")
+	for i, la := range res.LocalAddress {
+		tm.addRowString(fmt.Sprint(i), la)
+	}
 
 	s.writeHTML(w, tm.html())
 }

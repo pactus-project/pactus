@@ -9,18 +9,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetNetworkInfo(t *testing.T) {
+func TestGetPeersInfo(t *testing.T) {
 	conn, client := testNetworkClient(t)
 
 	t.Run("Should return node PeerID", func(t *testing.T) {
-		res, err := client.GetNetworkInfo(tCtx, &pactus.GetNetworkInfoRequest{})
+		res, err := client.GetPeersInfo(tCtx, &pactus.GetPeersInfoRequest{})
 		assert.NoError(t, err)
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(res.Peers))
 	})
 
 	t.Run("Should return peer info", func(t *testing.T) {
-		res, err := client.GetNetworkInfo(tCtx, &pactus.GetNetworkInfoRequest{})
+		res, err := client.GetPeersInfo(tCtx, &pactus.GetPeersInfoRequest{})
 		assert.NoError(t, err)
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(res.Peers))
@@ -50,6 +50,17 @@ func TestGetNodeInfo(t *testing.T) {
 	assert.Equal(t, version.Agent(), res.Agent)
 	assert.Equal(t, []byte(tMockSync.SelfID()), res.PeerId)
 	assert.Equal(t, "test-moniker", res.Moniker)
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+}
+
+func TestGetNetworkInfo(t *testing.T) {
+	conn, client := testNetworkClient(t)
+
+	res, err := client.GetNetworkInfo(tCtx, &pactus.GetNetworkInfoRequest{})
+	assert.NoError(t, err)
+	assert.Nil(t, err)
+	assert.Equal(t, version.ProtocolVersion, uint(res.ProtocolVersion))
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }

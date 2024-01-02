@@ -124,4 +124,7 @@ type Network interface {
 	NumConnectedPeers() int
 	ReachabilityStatus() string
 	HostAddrs() []string
+	Name() string
+	DHTSize() int32
+	Protocols() []string
 }

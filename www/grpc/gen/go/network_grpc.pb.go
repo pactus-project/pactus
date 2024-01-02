@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type NetworkClient interface {
 	GetNetworkInfo(ctx context.Context, in *GetNetworkInfoRequest, opts ...grpc.CallOption) (*GetNetworkInfoResponse, error)
 	GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest, opts ...grpc.CallOption) (*GetNodeInfoResponse, error)
+	GetPeersInfo(ctx context.Context, in *GetPeersInfoRequest, opts ...grpc.CallOption) (*GetPeersInfoResponse, error)
 }
 
 type networkClient struct {
@@ -52,12 +53,22 @@ func (c *networkClient) GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest,
 	return out, nil
 }
 
+func (c *networkClient) GetPeersInfo(ctx context.Context, in *GetPeersInfoRequest, opts ...grpc.CallOption) (*GetPeersInfoResponse, error) {
+	out := new(GetPeersInfoResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Network/GetPeersInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NetworkServer is the server API for Network service.
 // All implementations should embed UnimplementedNetworkServer
 // for forward compatibility
 type NetworkServer interface {
 	GetNetworkInfo(context.Context, *GetNetworkInfoRequest) (*GetNetworkInfoResponse, error)
 	GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error)
+	GetPeersInfo(context.Context, *GetPeersInfoRequest) (*GetPeersInfoResponse, error)
 }
 
 // UnimplementedNetworkServer should be embedded to have forward compatible implementations.
@@ -69,6 +80,9 @@ func (UnimplementedNetworkServer) GetNetworkInfo(context.Context, *GetNetworkInf
 }
 func (UnimplementedNetworkServer) GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNodeInfo not implemented")
+}
+func (UnimplementedNetworkServer) GetPeersInfo(context.Context, *GetPeersInfoRequest) (*GetPeersInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPeersInfo not implemented")
 }
 
 // UnsafeNetworkServer may be embedded to opt out of forward compatibility for this service.
@@ -118,6 +132,24 @@ func _Network_GetNodeInfo_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Network_GetPeersInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPeersInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NetworkServer).GetPeersInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pactus.Network/GetPeersInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NetworkServer).GetPeersInfo(ctx, req.(*GetPeersInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Network_ServiceDesc is the grpc.ServiceDesc for Network service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -132,6 +164,10 @@ var Network_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetNodeInfo",
 			Handler:    _Network_GetNodeInfo_Handler,
+		},
+		{
+			MethodName: "GetPeersInfo",
+			Handler:    _Network_GetPeersInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

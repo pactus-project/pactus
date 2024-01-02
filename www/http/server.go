@@ -64,6 +64,7 @@ func (s *Server) StartServer(grpcServer string) error {
 	s.router.HandleFunc("/", s.RootHandler)
 	s.router.HandleFunc("/blockchain/", s.BlockchainHandler)
 	s.router.HandleFunc("/consensus", s.ConsensusHandler)
+	s.router.HandleFunc("/peers", s.PeersHandler)
 	s.router.HandleFunc("/network", s.NetworkHandler)
 	s.router.HandleFunc("/node", s.NodeHandler)
 	s.router.HandleFunc("/block/hash/{hash}", s.GetBlockByHashHandler)

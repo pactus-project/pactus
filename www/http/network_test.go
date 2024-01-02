@@ -9,13 +9,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNetworkInfo(t *testing.T) {
+func TestPeersInfo(t *testing.T) {
 	td := setup(t)
 
 	w := httptest.NewRecorder()
 	r := new(http.Request)
 
-	td.httpServer.NetworkHandler(w, r)
+	td.httpServer.PeersHandler(w, r)
 
 	assert.Equal(t, w.Code, 200)
 	assert.Contains(t, w.Body.String(), "Peers")
@@ -32,4 +32,17 @@ func TestNodeInfo(t *testing.T) {
 
 	assert.Equal(t, w.Code, 200)
 	assert.Contains(t, w.Body.String(), version.Agent())
+}
+
+func TestNetworkInfo(t *testing.T) {
+	td := setup(t)
+
+	w := httptest.NewRecorder()
+	r := new(http.Request)
+
+	td.httpServer.NetworkHandler(w, r)
+
+	assert.Equal(t, w.Code, 200)
+	assert.Contains(t, w.Body.String(), "Version")
+	assert.Contains(t, w.Body.String(), "Number of connected peers")
 }
