@@ -48,7 +48,7 @@ type state struct {
 	lastInfo        *lastinfo.LastInfo
 	accountMerkle   *persistentmerkle.Tree
 	validatorMerkle *persistentmerkle.Tree
-	scoreMgr        *score.ScoreManager
+	scoreMgr        *score.Manager
 	logger          *logger.SubLogger
 	eventCh         chan event.Event
 }

@@ -260,6 +260,6 @@ func (m *MockState) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
 	return m.TestStore.PublicKey(addr)
 }
 
-func (m *MockState) AvailabilityScore(valNum int32) float64 {
+func (m *MockState) AvailabilityScore(_ int32) float64 {
 	return 1.0
 }
