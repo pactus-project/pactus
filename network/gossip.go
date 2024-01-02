@@ -22,7 +22,7 @@ type gossipService struct {
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	conf *Config, log *logger.SubLogger,
+	_ *Config, log *logger.SubLogger,
 ) *gossipService {
 	opts := []lp2pps.Option{
 		lp2pps.WithMessageSignaturePolicy(lp2pps.StrictNoSign),
