@@ -52,4 +52,5 @@ type Facade interface {
 	Close() error
 	CalculateFee(amount int64, payloadType payload.Type) (int64, error)
 	PublicKey(addr crypto.Address) (crypto.PublicKey, error)
+	AvailabilityScore(valNum int32) float64
 }

@@ -259,3 +259,7 @@ func (m *MockState) CalculateFee(_ int64, payloadType payload.Type) (int64, erro
 func (m *MockState) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
 	return m.TestStore.PublicKey(addr)
 }
+
+func (m *MockState) AvailabilityScore(valNum int32) float64 {
+	return 1.0
+}
