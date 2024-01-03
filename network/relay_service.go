@@ -76,7 +76,8 @@ func (rs *relayService) checkConnectivity() {
 				rs.logger.Info("try connecting relay node", "addr", ai.Addrs)
 				err := ConnectSync(rs.ctx, rs.host, ai)
 				if err != nil {
-					rs.logger.Warn("unable to connect to relay node", "error", err, "addr", ai.Addrs)
+					// TODO: Make me Warn?
+					rs.logger.Debug("unable to connect to relay node", "error", err, "addr", ai.Addrs)
 				} else {
 					rs.logger.Info("connect to relay node", "addr", ai.Addrs)
 				}

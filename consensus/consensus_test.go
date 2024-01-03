@@ -349,11 +349,12 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	sb := certificate.BlockCertificateSignBytes(p.Block().Hash(), height+1, 0)
 	sig1 := td.consX.valKey.Sign(sb)
 	sig2 := td.consY.valKey.Sign(sb)
+	sig3 := td.consB.valKey.Sign(sb)
 	sig4 := td.consP.valKey.Sign(sb)
 
-	sig := bls.SignatureAggregate(sig1, sig2, sig4)
+	sig := bls.SignatureAggregate(sig1, sig2, sig3, sig4)
 	cert := certificate.NewCertificate(height+1, 0,
-		[]int32{tIndexX, tIndexY, tIndexB, tIndexP}, []int32{tIndexB}, sig)
+		[]int32{tIndexX, tIndexY, tIndexB, tIndexP}, []int32{}, sig)
 	blk := p.Block()
 
 	err = td.consX.bcState.CommitBlock(blk, cert)
