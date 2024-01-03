@@ -29,7 +29,7 @@ func (s *proposeState) decide() {
 	score := s.bcState.AvailabilityScore(proposer.Number())
 	// Based on PIP-19, if the Availability Score is less than 0.9,
 	// we initiate the Change-Proposer phase.
-	if score < 0.9 {
+	if score < 0.80 { // TODO: add it to the config
 		s.startChangingProposer()
 	} else {
 		s.enterNewState(s.prepareState)
