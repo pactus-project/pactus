@@ -118,7 +118,7 @@ git push origin HEAD
 gh pr create --title "chore: bumping version to ${NEXT_VER}" --body "Bumping version to ${NEXT_VER}" --base ${BASE_BRANCH}
 ```
 
-Await approval and merging of the PR into the base branch.
+Wait for the PR to be approved and merged into the main branch.
 
 ## 11. Update the Website
 
