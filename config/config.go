@@ -80,7 +80,6 @@ func defaultConfig() *Config {
 
 func DefaultConfigMainnet(genParams *param.Params) *Config {
 	conf := defaultConfig()
-	// TO BE DEFINED
 
 	// Store private configs
 	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
