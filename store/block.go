@@ -3,7 +3,9 @@ package store
 import (
 	"bytes"
 
+	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/block"
@@ -25,14 +27,21 @@ func blockHashKey(h hash.Hash) []byte {
 
 type blockStore struct {
 	db                 *leveldb.DB
+	pubKeyCache        *lru.Cache[crypto.Address, *bls.PublicKey]
 	sortitionSeedCache *pairslice.PairSlice[uint32, *sortition.VerifiableSeed]
 	sortitionCacheSize uint32
 }
 
-func newBlockStore(db *leveldb.DB, sortitionCacheSize uint32) *blockStore {
+func newBlockStore(db *leveldb.DB, sortitionCacheSize uint32, publicKeyCacheSize int) *blockStore {
+	pubKeyCache, err := lru.New[crypto.Address, *bls.PublicKey](publicKeyCacheSize)
+	if err != nil {
+		return nil
+	}
+
 	return &blockStore{
 		db:                 db,
 		sortitionSeedCache: pairslice.New[uint32, *sortition.VerifiableSeed](int(sortitionCacheSize)),
+		pubKeyCache:        pubKeyCache,
 		sortitionCacheSize: sortitionCacheSize,
 	}
 }
@@ -75,7 +84,6 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.
 
 		pubKey := trx.PublicKey()
 		if pubKey != nil {
-			// TODO: improve my performance by caching public keys
 			if !bs.hasPublicKey(trx.Payload().Signer()) {
 				publicKeyKey := publicKeyKey(trx.Payload().Signer())
 				batch.Put(publicKeyKey, pubKey.Bytes())
@@ -142,8 +150,30 @@ func (bs *blockStore) hasBlock(height uint32) bool {
 	return tryHas(bs.db, blockKey(height))
 }
 
+func (bs *blockStore) publicKey(addr crypto.Address) (*bls.PublicKey, error) {
+	if pubKey, ok := bs.pubKeyCache.Get(addr); ok {
+		return pubKey, nil
+	}
+
+	data, err := tryGet(bs.db, publicKeyKey(addr))
+	if err != nil {
+		return nil, err
+	}
+	pubKey, err := bls.PublicKeyFromBytes(data)
+	if err != nil {
+		return nil, err
+	}
+
+	bs.pubKeyCache.Add(addr, pubKey)
+	return pubKey, err
+}
+
 func (bs *blockStore) hasPublicKey(addr crypto.Address) bool {
-	return tryHas(bs.db, publicKeyKey(addr))
+	ok := bs.pubKeyCache.Contains(addr)
+	if !ok {
+		ok = tryHas(bs.db, publicKeyKey(addr))
+	}
+	return ok
 }
 
 func (bs *blockStore) saveToCache(blockHeight uint32, sortitionSeed sortition.VerifiableSeed) {
