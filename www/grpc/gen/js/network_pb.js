@@ -238,7 +238,7 @@ proto.pactus.GetNetworkInfoRequest.serializeBinaryToWriter = function(message, w
  * @private {!Array<number>}
  * @const
  */
-proto.pactus.GetNetworkInfoResponse.repeatedFields_ = [4];
+proto.pactus.GetNetworkInfoResponse.repeatedFields_ = [5];
 
 
 
@@ -273,8 +273,9 @@ proto.pactus.GetNetworkInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     totalSentBytes: jspb.Message.getFieldWithDefault(msg, 1, 0),
     totalReceivedBytes: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    startedAt: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    peersList: jspb.Message.toObjectList(msg.getPeersList(),
+    networkName: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    connectedPeersCount: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    connectedPeersList: jspb.Message.toObjectList(msg.getConnectedPeersList(),
     proto.pactus.PeerInfo.toObject, includeInstance),
     sentBytesMap: (f = msg.getSentBytesMap()) ? f.toObject(includeInstance, undefined) : [],
     receivedBytesMap: (f = msg.getReceivedBytesMap()) ? f.toObject(includeInstance, undefined) : []
@@ -315,32 +316,36 @@ proto.pactus.GetNetworkInfoResponse.deserializeBinaryFromReader = function(msg, 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt32());
+      var value = /** @type {number} */ (reader.readUint32());
       msg.setTotalSentBytes(value);
       break;
     case 2:
-      var value = /** @type {number} */ (reader.readInt32());
+      var value = /** @type {number} */ (reader.readUint32());
       msg.setTotalReceivedBytes(value);
       break;
     case 3:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setStartedAt(value);
+      var value = /** @type {string} */ (reader.readString());
+      msg.setNetworkName(value);
       break;
     case 4:
-      var value = new proto.pactus.PeerInfo;
-      reader.readMessage(value,proto.pactus.PeerInfo.deserializeBinaryFromReader);
-      msg.addPeers(value);
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setConnectedPeersCount(value);
       break;
     case 5:
-      var value = msg.getSentBytesMap();
-      reader.readMessage(value, function(message, reader) {
-        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readInt64, null, 0, 0);
-         });
+      var value = new proto.pactus.PeerInfo;
+      reader.readMessage(value,proto.pactus.PeerInfo.deserializeBinaryFromReader);
+      msg.addConnectedPeers(value);
       break;
     case 6:
+      var value = msg.getSentBytesMap();
+      reader.readMessage(value, function(message, reader) {
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readUint32, jspb.BinaryReader.prototype.readUint64, null, 0, 0);
+         });
+      break;
+    case 7:
       var value = msg.getReceivedBytesMap();
       reader.readMessage(value, function(message, reader) {
-        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readInt64, null, 0, 0);
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readUint32, jspb.BinaryReader.prototype.readUint64, null, 0, 0);
          });
       break;
     default:
@@ -374,46 +379,53 @@ proto.pactus.GetNetworkInfoResponse.serializeBinaryToWriter = function(message, 
   var f = undefined;
   f = message.getTotalSentBytes();
   if (f !== 0) {
-    writer.writeInt32(
+    writer.writeUint32(
       1,
       f
     );
   }
   f = message.getTotalReceivedBytes();
   if (f !== 0) {
-    writer.writeInt32(
+    writer.writeUint32(
       2,
       f
     );
   }
-  f = message.getStartedAt();
-  if (f !== 0) {
-    writer.writeInt64(
+  f = message.getNetworkName();
+  if (f.length > 0) {
+    writer.writeString(
       3,
       f
     );
   }
-  f = message.getPeersList();
+  f = message.getConnectedPeersCount();
+  if (f !== 0) {
+    writer.writeUint32(
+      4,
+      f
+    );
+  }
+  f = message.getConnectedPeersList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      4,
+      5,
       f,
       proto.pactus.PeerInfo.serializeBinaryToWriter
     );
   }
   f = message.getSentBytesMap(true);
   if (f && f.getLength() > 0) {
-    f.serializeBinary(5, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeInt64);
+    f.serializeBinary(6, writer, jspb.BinaryWriter.prototype.writeUint32, jspb.BinaryWriter.prototype.writeUint64);
   }
   f = message.getReceivedBytesMap(true);
   if (f && f.getLength() > 0) {
-    f.serializeBinary(6, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeInt64);
+    f.serializeBinary(7, writer, jspb.BinaryWriter.prototype.writeUint32, jspb.BinaryWriter.prototype.writeUint64);
   }
 };
 
 
 /**
- * optional int32 total_sent_bytes = 1;
+ * optional uint32 total_sent_bytes = 1;
  * @return {number}
  */
 proto.pactus.GetNetworkInfoResponse.prototype.getTotalSentBytes = function() {
@@ -431,7 +443,7 @@ proto.pactus.GetNetworkInfoResponse.prototype.setTotalSentBytes = function(value
 
 
 /**
- * optional int32 total_received_bytes = 2;
+ * optional uint32 total_received_bytes = 2;
  * @return {number}
  */
 proto.pactus.GetNetworkInfoResponse.prototype.getTotalReceivedBytes = function() {
@@ -449,11 +461,29 @@ proto.pactus.GetNetworkInfoResponse.prototype.setTotalReceivedBytes = function(v
 
 
 /**
- * optional int64 started_at = 3;
+ * optional string network_name = 3;
+ * @return {string}
+ */
+proto.pactus.GetNetworkInfoResponse.prototype.getNetworkName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.GetNetworkInfoResponse} returns this
+ */
+proto.pactus.GetNetworkInfoResponse.prototype.setNetworkName = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional uint32 connected_peers_count = 4;
  * @return {number}
  */
-proto.pactus.GetNetworkInfoResponse.prototype.getStartedAt = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+proto.pactus.GetNetworkInfoResponse.prototype.getConnectedPeersCount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
 
@@ -461,18 +491,18 @@ proto.pactus.GetNetworkInfoResponse.prototype.getStartedAt = function() {
  * @param {number} value
  * @return {!proto.pactus.GetNetworkInfoResponse} returns this
  */
-proto.pactus.GetNetworkInfoResponse.prototype.setStartedAt = function(value) {
-  return jspb.Message.setProto3IntField(this, 3, value);
+proto.pactus.GetNetworkInfoResponse.prototype.setConnectedPeersCount = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
 /**
- * repeated PeerInfo peers = 4;
+ * repeated PeerInfo connected_peers = 5;
  * @return {!Array<!proto.pactus.PeerInfo>}
  */
-proto.pactus.GetNetworkInfoResponse.prototype.getPeersList = function() {
+proto.pactus.GetNetworkInfoResponse.prototype.getConnectedPeersList = function() {
   return /** @type{!Array<!proto.pactus.PeerInfo>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.pactus.PeerInfo, 4));
+    jspb.Message.getRepeatedWrapperField(this, proto.pactus.PeerInfo, 5));
 };
 
 
@@ -480,8 +510,8 @@ proto.pactus.GetNetworkInfoResponse.prototype.getPeersList = function() {
  * @param {!Array<!proto.pactus.PeerInfo>} value
  * @return {!proto.pactus.GetNetworkInfoResponse} returns this
 */
-proto.pactus.GetNetworkInfoResponse.prototype.setPeersList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 4, value);
+proto.pactus.GetNetworkInfoResponse.prototype.setConnectedPeersList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 5, value);
 };
 
 
@@ -490,8 +520,8 @@ proto.pactus.GetNetworkInfoResponse.prototype.setPeersList = function(value) {
  * @param {number=} opt_index
  * @return {!proto.pactus.PeerInfo}
  */
-proto.pactus.GetNetworkInfoResponse.prototype.addPeers = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 4, opt_value, proto.pactus.PeerInfo, opt_index);
+proto.pactus.GetNetworkInfoResponse.prototype.addConnectedPeers = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 5, opt_value, proto.pactus.PeerInfo, opt_index);
 };
 
 
@@ -499,20 +529,20 @@ proto.pactus.GetNetworkInfoResponse.prototype.addPeers = function(opt_value, opt
  * Clears the list making it empty but non-null.
  * @return {!proto.pactus.GetNetworkInfoResponse} returns this
  */
-proto.pactus.GetNetworkInfoResponse.prototype.clearPeersList = function() {
-  return this.setPeersList([]);
+proto.pactus.GetNetworkInfoResponse.prototype.clearConnectedPeersList = function() {
+  return this.setConnectedPeersList([]);
 };
 
 
 /**
- * map<int32, int64> sent_bytes = 5;
+ * map<uint32, uint64> sent_bytes = 6;
  * @param {boolean=} opt_noLazyCreate Do not create the map if
  * empty, instead returning `undefined`
  * @return {!jspb.Map<number,number>}
  */
 proto.pactus.GetNetworkInfoResponse.prototype.getSentBytesMap = function(opt_noLazyCreate) {
   return /** @type {!jspb.Map<number,number>} */ (
-      jspb.Message.getMapField(this, 5, opt_noLazyCreate,
+      jspb.Message.getMapField(this, 6, opt_noLazyCreate,
       null));
 };
 
@@ -528,14 +558,14 @@ proto.pactus.GetNetworkInfoResponse.prototype.clearSentBytesMap = function() {
 
 
 /**
- * map<int32, int64> received_bytes = 6;
+ * map<uint32, uint64> received_bytes = 7;
  * @param {boolean=} opt_noLazyCreate Do not create the map if
  * empty, instead returning `undefined`
  * @return {!jspb.Map<number,number>}
  */
 proto.pactus.GetNetworkInfoResponse.prototype.getReceivedBytesMap = function(opt_noLazyCreate) {
   return /** @type {!jspb.Map<number,number>} */ (
-      jspb.Message.getMapField(this, 6, opt_noLazyCreate,
+      jspb.Message.getMapField(this, 7, opt_noLazyCreate,
       null));
 };
 
@@ -657,7 +687,7 @@ proto.pactus.GetNodeInfoRequest.serializeBinaryToWriter = function(message, writ
  * @private {!Array<number>}
  * @const
  */
-proto.pactus.GetNodeInfoResponse.repeatedFields_ = [5];
+proto.pactus.GetNodeInfoResponse.repeatedFields_ = [6,7,8,9];
 
 
 
@@ -693,8 +723,12 @@ proto.pactus.GetNodeInfoResponse.toObject = function(includeInstance, msg) {
     moniker: jspb.Message.getFieldWithDefault(msg, 1, ""),
     agent: jspb.Message.getFieldWithDefault(msg, 2, ""),
     peerId: msg.getPeerId_asB64(),
-    reachability: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    addrsList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f
+    startedAt: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    reachability: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    servicesList: (f = jspb.Message.getRepeatedField(msg, 6)) == null ? undefined : f,
+    servicesNamesList: (f = jspb.Message.getRepeatedField(msg, 7)) == null ? undefined : f,
+    addrsList: (f = jspb.Message.getRepeatedField(msg, 8)) == null ? undefined : f,
+    protocolsList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -744,12 +778,30 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
       msg.setPeerId(value);
       break;
     case 4:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setReachability(value);
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setStartedAt(value);
       break;
     case 5:
       var value = /** @type {string} */ (reader.readString());
+      msg.setReachability(value);
+      break;
+    case 6:
+      var values = /** @type {!Array<number>} */ (reader.isDelimited() ? reader.readPackedInt32() : [reader.readInt32()]);
+      for (var i = 0; i < values.length; i++) {
+        msg.addServices(values[i]);
+      }
+      break;
+    case 7:
+      var value = /** @type {string} */ (reader.readString());
+      msg.addServicesNames(value);
+      break;
+    case 8:
+      var value = /** @type {string} */ (reader.readString());
       msg.addAddrs(value);
+      break;
+    case 9:
+      var value = /** @type {string} */ (reader.readString());
+      msg.addProtocols(value);
       break;
     default:
       reader.skipField();
@@ -801,17 +853,45 @@ proto.pactus.GetNodeInfoResponse.serializeBinaryToWriter = function(message, wri
       f
     );
   }
+  f = message.getStartedAt();
+  if (f !== 0) {
+    writer.writeUint64(
+      4,
+      f
+    );
+  }
   f = message.getReachability();
   if (f.length > 0) {
     writer.writeString(
-      4,
+      5,
+      f
+    );
+  }
+  f = message.getServicesList();
+  if (f.length > 0) {
+    writer.writePackedInt32(
+      6,
+      f
+    );
+  }
+  f = message.getServicesNamesList();
+  if (f.length > 0) {
+    writer.writeRepeatedString(
+      7,
       f
     );
   }
   f = message.getAddrsList();
   if (f.length > 0) {
     writer.writeRepeatedString(
-      5,
+      8,
+      f
+    );
+  }
+  f = message.getProtocolsList();
+  if (f.length > 0) {
+    writer.writeRepeatedString(
+      9,
       f
     );
   }
@@ -897,11 +977,29 @@ proto.pactus.GetNodeInfoResponse.prototype.setPeerId = function(value) {
 
 
 /**
- * optional string reachability = 4;
+ * optional uint64 started_at = 4;
+ * @return {number}
+ */
+proto.pactus.GetNodeInfoResponse.prototype.getStartedAt = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.setStartedAt = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional string reachability = 5;
  * @return {string}
  */
 proto.pactus.GetNodeInfoResponse.prototype.getReachability = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
 
@@ -910,16 +1008,90 @@ proto.pactus.GetNodeInfoResponse.prototype.getReachability = function() {
  * @return {!proto.pactus.GetNodeInfoResponse} returns this
  */
 proto.pactus.GetNodeInfoResponse.prototype.setReachability = function(value) {
-  return jspb.Message.setProto3StringField(this, 4, value);
+  return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
 /**
- * repeated string addrs = 5;
+ * repeated int32 services = 6;
+ * @return {!Array<number>}
+ */
+proto.pactus.GetNodeInfoResponse.prototype.getServicesList = function() {
+  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 6));
+};
+
+
+/**
+ * @param {!Array<number>} value
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.setServicesList = function(value) {
+  return jspb.Message.setField(this, 6, value || []);
+};
+
+
+/**
+ * @param {number} value
+ * @param {number=} opt_index
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.addServices = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 6, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.clearServicesList = function() {
+  return this.setServicesList([]);
+};
+
+
+/**
+ * repeated string services_names = 7;
+ * @return {!Array<string>}
+ */
+proto.pactus.GetNodeInfoResponse.prototype.getServicesNamesList = function() {
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 7));
+};
+
+
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.setServicesNamesList = function(value) {
+  return jspb.Message.setField(this, 7, value || []);
+};
+
+
+/**
+ * @param {string} value
+ * @param {number=} opt_index
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.addServicesNames = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 7, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.clearServicesNamesList = function() {
+  return this.setServicesNamesList([]);
+};
+
+
+/**
+ * repeated string addrs = 8;
  * @return {!Array<string>}
  */
 proto.pactus.GetNodeInfoResponse.prototype.getAddrsList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 5));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 8));
 };
 
 
@@ -928,7 +1100,7 @@ proto.pactus.GetNodeInfoResponse.prototype.getAddrsList = function() {
  * @return {!proto.pactus.GetNodeInfoResponse} returns this
  */
 proto.pactus.GetNodeInfoResponse.prototype.setAddrsList = function(value) {
-  return jspb.Message.setField(this, 5, value || []);
+  return jspb.Message.setField(this, 8, value || []);
 };
 
 
@@ -938,7 +1110,7 @@ proto.pactus.GetNodeInfoResponse.prototype.setAddrsList = function(value) {
  * @return {!proto.pactus.GetNodeInfoResponse} returns this
  */
 proto.pactus.GetNodeInfoResponse.prototype.addAddrs = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 5, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 8, value, opt_index);
 };
 
 
@@ -948,6 +1120,43 @@ proto.pactus.GetNodeInfoResponse.prototype.addAddrs = function(value, opt_index)
  */
 proto.pactus.GetNodeInfoResponse.prototype.clearAddrsList = function() {
   return this.setAddrsList([]);
+};
+
+
+/**
+ * repeated string protocols = 9;
+ * @return {!Array<string>}
+ */
+proto.pactus.GetNodeInfoResponse.prototype.getProtocolsList = function() {
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 9));
+};
+
+
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.setProtocolsList = function(value) {
+  return jspb.Message.setField(this, 9, value || []);
+};
+
+
+/**
+ * @param {string} value
+ * @param {number=} opt_index
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.addProtocols = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 9, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.clearProtocolsList = function() {
+  return this.setProtocolsList([]);
 };
 
 

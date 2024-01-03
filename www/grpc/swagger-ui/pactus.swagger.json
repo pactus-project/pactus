@@ -874,17 +874,20 @@
       "properties": {
         "totalSentBytes": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "totalReceivedBytes": {
           "type": "integer",
-          "format": "int32"
-        },
-        "startedAt": {
-          "type": "string",
           "format": "int64"
         },
-        "peers": {
+        "networkName": {
+          "type": "string"
+        },
+        "connectedPeersCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "connectedPeers": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/pactusPeerInfo"
@@ -894,14 +897,14 @@
           "type": "object",
           "additionalProperties": {
             "type": "string",
-            "format": "int64"
+            "format": "uint64"
           }
         },
         "receivedBytes": {
           "type": "object",
           "additionalProperties": {
             "type": "string",
-            "format": "int64"
+            "format": "uint64"
           }
         }
       }
@@ -919,10 +922,33 @@
           "type": "string",
           "format": "byte"
         },
+        "startedAt": {
+          "type": "string",
+          "format": "uint64"
+        },
         "reachability": {
           "type": "string"
         },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "servicesNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "addrs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "protocols": {
           "type": "array",
           "items": {
             "type": "string"

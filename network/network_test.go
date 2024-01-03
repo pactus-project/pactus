@@ -251,6 +251,13 @@ func TestNetwork(t *testing.T) {
 		assert.Equal(t, networkX.ReachabilityStatus(), "Private")
 	})
 
+	t.Run("Supported Protocols", func(t *testing.T) {
+		protosNetB := networkB.Protocols()
+		for i, p := range networkB.host.Mux().Protocols() {
+			assert.Equal(t, protosNetB[i], string(p))
+		}
+	})
+
 	t.Run("all nodes have at least one connection to the bootstrap node B", func(t *testing.T) {
 		assert.GreaterOrEqual(t, networkP.NumConnectedPeers(), 1)
 		assert.GreaterOrEqual(t, networkB.NumConnectedPeers(), 1)

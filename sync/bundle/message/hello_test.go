@@ -21,7 +21,7 @@ func TestHelloMessage(t *testing.T) {
 
 	t.Run("Invalid signature", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash())
+		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash(), "public")
 		m.Sign([]*bls.ValidatorKey{valKey})
 		m.Signature = ts.RandBLSSignature()
 
@@ -30,7 +30,7 @@ func TestHelloMessage(t *testing.T) {
 
 	t.Run("Signature is nil", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash())
+		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash(), "public")
 		m.Sign([]*bls.ValidatorKey{valKey})
 		m.Signature = nil
 
@@ -39,7 +39,7 @@ func TestHelloMessage(t *testing.T) {
 
 	t.Run("PublicKeys are empty", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash())
+		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash(), "public")
 		m.Sign([]*bls.ValidatorKey{valKey})
 		m.PublicKeys = make([]*bls.PublicKey, 0)
 
@@ -50,7 +50,7 @@ func TestHelloMessage(t *testing.T) {
 		time1 := time.Now()
 		myTimeUnixMilli := time1.UnixMilli()
 
-		m := NewHelloMessage(ts.RandPeerID(), "Alice", 100, 0, ts.RandHash(), ts.RandHash())
+		m := NewHelloMessage(ts.RandPeerID(), "Alice", 100, 0, ts.RandHash(), ts.RandHash(), "public")
 
 		assert.LessOrEqual(t, m.MyTimeUnixMilli, time.Now().UnixMilli())
 		assert.GreaterOrEqual(t, m.MyTimeUnixMilli, myTimeUnixMilli)
@@ -58,7 +58,7 @@ func TestHelloMessage(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		m := NewHelloMessage(ts.RandPeerID(), "Alice", 100, 0, ts.RandHash(), ts.RandHash())
+		m := NewHelloMessage(ts.RandPeerID(), "Alice", 100, 0, ts.RandHash(), ts.RandHash(), "public")
 		m.Sign([]*bls.ValidatorKey{valKey})
 
 		assert.NoError(t, m.BasicCheck())

@@ -16,6 +16,7 @@ import (
 	"github.com/pactus-project/pactus/sync/cache"
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/sync/peerset/service"
 	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -212,6 +213,10 @@ func (sync *synchronizer) PeerSet() *peerset.PeerSet {
 	return sync.peerSet
 }
 
+func (sync *synchronizer) Services() service.Services {
+	return sync.config.Services()
+}
+
 func (sync *synchronizer) sayHello(to peer.ID) {
 	msg := message.NewHelloMessage(
 		sync.SelfID(),
@@ -220,6 +225,7 @@ func (sync *synchronizer) sayHello(to peer.ID) {
 		sync.config.Services(),
 		sync.state.LastBlockHash(),
 		sync.state.Genesis().Hash(),
+		sync.network.Name(),
 	)
 	msg.Sign(sync.valKeys)
 

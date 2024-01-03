@@ -131,3 +131,11 @@ func (mock *MockNetwork) ReachabilityStatus() string {
 func (mock *MockNetwork) HostAddrs() []string {
 	return []string{"localhost"}
 }
+
+func (mock *MockNetwork) Name() string {
+	return "pactus"
+}
+
+func (mock *MockNetwork) Protocols() []string {
+	return []string{"gossip"}
+}
