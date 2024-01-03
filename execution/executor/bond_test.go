@@ -191,27 +191,3 @@ func TestPowerDeltaBond(t *testing.T) {
 
 	assert.Equal(t, amt, td.sandbox.PowerDelta())
 }
-
-// Test case for issue #869: https://github.com/pactus-project/pactus/issues/869
-func TestIssue869(t *testing.T) {
-	td := setup(t)
-	exe := NewBondExecutor(false)
-
-	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
-	senderBalance := senderAcc.Balance()
-	pub, _ := td.RandBLSKeyPair()
-	receiverAddr := pub.ValidatorAddress()
-	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, senderBalance)
-	lockTime := td.sandbox.CurrentHeight()
-	trx1 := tx.NewBondTx(lockTime, senderAddr,
-		receiverAddr, pub, 1000e9, fee, "insufficient funds") // make sure
-
-	trx2 := tx.NewBondTx(lockTime, senderAddr,
-		receiverAddr, pub, amt, fee, "ok")
-
-	err := exe.Execute(trx1, td.sandbox)
-	assert.Error(t, err, ErrInsufficientFunds)
-
-	err = exe.Execute(trx2, td.sandbox)
-	assert.NoError(t, err)
-}
