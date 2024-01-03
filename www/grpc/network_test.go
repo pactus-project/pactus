@@ -60,7 +60,7 @@ func TestGetNetworkInfo(t *testing.T) {
 	res, err := client.GetNetworkInfo(tCtx, &pactus.GetNetworkInfoRequest{})
 	assert.NoError(t, err)
 	assert.Nil(t, err)
-	assert.Equal(t, version.ProtocolVersion, uint(res.ProtocolVersion))
+	assert.Equal(t, version.ProtocolVersion(), uint(res.ProtocolVersion))
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }

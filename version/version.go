@@ -13,12 +13,12 @@ const (
 	minor           uint   = 19
 	patch           uint   = 0
 	meta            string = "beta"
-	ProtocolVersion uint   = 1
+	protocolVersion uint   = 1
 )
 
 func Agent() string {
 	return fmt.Sprintf("node=%s/node-version=v%s/protocol-version=%d/os=%s/arch=%s",
-		ExecutorName(), Version(), ProtocolVersion, runtime.GOOS, runtime.GOARCH)
+		ExecutorName(), Version(), protocolVersion, runtime.GOOS, runtime.GOARCH)
 }
 
 func Version() string {
@@ -28,6 +28,10 @@ func Version() string {
 	}
 
 	return version
+}
+
+func ProtocolVersion() uint {
+	return protocolVersion
 }
 
 func ExecutorName() string {

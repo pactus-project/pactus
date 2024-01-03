@@ -86,7 +86,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 	_ *pactus.GetNetworkInfoRequest,
 ) (*pactus.GetNetworkInfoResponse, error) {
 	return &pactus.GetNetworkInfoResponse{
-		ProtocolVersion: int32(version.ProtocolVersion),
+		ProtocolVersion: int32(version.ProtocolVersion()),
 		ConnectedPeers:  int32(s.net.NumConnectedPeers()),
 		NetworkName:     s.net.Name(),
 		Protocols:       s.net.Protocols(),

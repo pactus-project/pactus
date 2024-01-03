@@ -13,9 +13,9 @@ service Network {
 message GetNetworkInfoRequest {}
 
 message GetNetworkInfoResponse {
-  int32 protocol_version = 1;
-  int32 connected_peers = 2;
-  string network_name = 3;
+  string network_name = 1;
+  int32 protocol_version = 2;
+  int32 connected_peers = 3;
   repeated string protocols = 4;
   repeated string local_address = 5;
   
