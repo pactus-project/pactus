@@ -42,14 +42,11 @@ http:
       get: "/v1/transactions/amount/{amount}/payloadType/{payloadType}"
 
     # Network APIs
-    - selector: pactus.Network.GetPeersInfo
-      get: "/v1/network/peers"
+    - selector: pactus.Network.GetNetworkInfo
+      get: "/v1/network/info"
 
     - selector: pactus.Network.GetNodeInfo
       get: "/v1/network/node"
-
-    - selector: pactus.Network.GetNetworkInfo
-      get: "/v1/network/info"
 
     # Wallet APIs
     - selector: pactus.Wallet.CreateWallet

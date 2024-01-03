@@ -13,21 +13,22 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-func (s *Server) PeersHandler(w http.ResponseWriter, _ *http.Request) {
-	res, err := s.network.GetPeersInfo(s.ctx,
-		&pactus.GetPeersInfoRequest{})
+func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
+	res, err := s.network.GetNetworkInfo(s.ctx,
+		&pactus.GetNetworkInfoRequest{})
 	if err != nil {
 		s.writeError(w, err)
 		return
 	}
 
 	tm := newTableMaker()
-	tm.addRowTime("Started at", res.StartedAt)
+	tm.addRowString("Network Name", res.NetworkName)
 	tm.addRowInt("Total Sent Bytes", int(res.TotalSentBytes))
 	tm.addRowInt("Total Received Bytes", int(res.TotalReceivedBytes))
+	tm.addRowInt("Connected Peers Count", int(res.ConnectedPeersCount))
 	tm.addRowString("Peers", "---")
 
-	for i, p := range res.Peers {
+	for i, p := range res.ConnectedPeers {
 		pid, _ := peer.IDFromBytes(p.PeerId)
 		tm.addRowInt("-- Peer #", i+1)
 		tm.addRowString("Status", peerset.StatusCode(p.Status).String())
@@ -76,24 +77,11 @@ func (s *Server) NodeHandler(w http.ResponseWriter, _ *http.Request) {
 	tm.addRowString("Peer ID", sid.String())
 	tm.addRowString("Agent", res.Agent)
 	tm.addRowString("Moniker", res.Moniker)
+	tm.addRowTime("Started at", int64(res.StartedAt))
 	tm.addRowString("Reachability", res.Reachability)
 	tm.addRowStrings("Addrs", res.Addrs)
-
-	s.writeHTML(w, tm.html())
-}
-
-func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
-	res, err := s.network.GetNetworkInfo(s.ctx,
-		&pactus.GetNetworkInfoRequest{})
-	if err != nil {
-		s.writeError(w, err)
-		return
-	}
-
-	tm := newTableMaker()
-	tm.addRowInt("Version", int(res.ProtocolVersion))
-	tm.addRowString("Network Name", res.NetworkName)
-	tm.addRowInt("Number of connected peers", int(res.ConnectedPeers))
+	tm.addRowInts("Services", res.Services)
+	tm.addRowStrings("Services Names", res.ServicesNames)
 
 	tm.addRowString("Protocols", "---")
 	for i, p := range res.Protocols {
@@ -101,7 +89,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 
 	tm.addRowString("LocalAddress", "---")
-	for i, la := range res.LocalAddress {
+	for i, la := range res.Addrs {
 		tm.addRowString(fmt.Sprint(i), la)
 	}
 

@@ -7,18 +7,18 @@ option java_package = "pactus.network";
 service Network {
   rpc GetNetworkInfo(GetNetworkInfoRequest) returns (GetNetworkInfoResponse);
   rpc GetNodeInfo(GetNodeInfoRequest) returns (GetNodeInfoResponse);
-  rpc GetPeersInfo(GetPeersInfoRequest) returns (GetPeersInfoResponse);
 }
 
 message GetNetworkInfoRequest {}
 
 message GetNetworkInfoResponse {
-  string network_name = 1;
-  int32 protocol_version = 2;
-  int32 connected_peers = 3;
-  repeated string protocols = 4;
-  repeated string local_address = 5;
-  
+  uint32 total_sent_bytes = 1;
+  uint32 total_received_bytes = 2;
+  string network_name = 3;
+  uint32 connected_peers_count = 4;
+  repeated PeerInfo connected_peers = 5;
+  map<uint32, uint64> sent_bytes = 6;
+  map<uint32, uint64> received_bytes = 7;
 }
 
 message GetNodeInfoRequest {}
@@ -27,19 +27,12 @@ message GetNodeInfoResponse {
   string moniker = 1;
   string agent = 2;
   bytes peer_id = 3;
-  string reachability = 4;
-  repeated string addrs = 5;
-}
-
-message GetPeersInfoRequest {}
-
-message GetPeersInfoResponse {
-  int32 total_sent_bytes = 1;
-  int32 total_received_bytes = 2;
-  int64 started_at = 3;
-  repeated PeerInfo peers = 4;
-  map<int32, int64> sent_bytes = 5;
-  map<int32, int64> received_bytes = 6;
+  uint64 started_at = 4;
+  string reachability = 5;
+  repeated int32 services = 6;
+  repeated string services_names = 7;
+  repeated string addrs = 8;
+  repeated string protocols = 9;
 }
 
 message PeerInfo {

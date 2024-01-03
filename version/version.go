@@ -30,10 +30,6 @@ func Version() string {
 	return version
 }
 
-func ProtocolVersion() uint {
-	return protocolVersion
-}
-
 func ExecutorName() string {
 	executorName, _ := os.Executable()
 	return filepath.Base(executorName)

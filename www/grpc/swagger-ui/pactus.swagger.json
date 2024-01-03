@@ -338,28 +338,6 @@
         ]
       }
     },
-    "/v1/network/peers": {
-      "get": {
-        "operationId": "Network_GetPeersInfo",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusGetPeersInfoResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "Network"
-        ]
-      }
-    },
     "/v1/transactions/amount/{amount}/payloadType/{payloadType}": {
       "get": {
         "operationId": "Transaction_CalculateFee",
@@ -894,27 +872,39 @@
     "pactusGetNetworkInfoResponse": {
       "type": "object",
       "properties": {
-        "protocolVersion": {
+        "totalSentBytes": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
-        "connectedPeers": {
+        "totalReceivedBytes": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "networkName": {
           "type": "string"
         },
-        "protocols": {
+        "connectedPeersCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "connectedPeers": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/pactusPeerInfo"
           }
         },
-        "localAddress": {
-          "type": "array",
-          "items": {
-            "type": "string"
+        "sentBytes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "uint64"
+          }
+        },
+        "receivedBytes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "uint64"
           }
         }
       }
@@ -932,50 +922,36 @@
           "type": "string",
           "format": "byte"
         },
+        "startedAt": {
+          "type": "string",
+          "format": "uint64"
+        },
         "reachability": {
           "type": "string"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "servicesNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "addrs": {
           "type": "array",
           "items": {
             "type": "string"
           }
-        }
-      }
-    },
-    "pactusGetPeersInfoResponse": {
-      "type": "object",
-      "properties": {
-        "totalSentBytes": {
-          "type": "integer",
-          "format": "int32"
         },
-        "totalReceivedBytes": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "startedAt": {
-          "type": "string",
-          "format": "int64"
-        },
-        "peers": {
+        "protocols": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/pactusPeerInfo"
-          }
-        },
-        "sentBytes": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "format": "int64"
-          }
-        },
-        "receivedBytes": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "format": "int64"
+            "type": "string"
           }
         }
       }

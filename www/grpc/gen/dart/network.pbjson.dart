@@ -19,16 +19,39 @@ final $typed_data.Uint8List getNetworkInfoRequestDescriptor = $convert.base64Dec
 const GetNetworkInfoResponse$json = const {
   '1': 'GetNetworkInfoResponse',
   '2': const [
-    const {'1': 'protocol_version', '3': 1, '4': 1, '5': 5, '10': 'protocolVersion'},
-    const {'1': 'connected_peers', '3': 2, '4': 1, '5': 5, '10': 'connectedPeers'},
+    const {'1': 'total_sent_bytes', '3': 1, '4': 1, '5': 13, '10': 'totalSentBytes'},
+    const {'1': 'total_received_bytes', '3': 2, '4': 1, '5': 13, '10': 'totalReceivedBytes'},
     const {'1': 'network_name', '3': 3, '4': 1, '5': 9, '10': 'networkName'},
-    const {'1': 'protocols', '3': 4, '4': 3, '5': 9, '10': 'protocols'},
-    const {'1': 'local_address', '3': 5, '4': 3, '5': 9, '10': 'localAddress'},
+    const {'1': 'connected_peers_count', '3': 4, '4': 1, '5': 13, '10': 'connectedPeersCount'},
+    const {'1': 'connected_peers', '3': 5, '4': 3, '5': 11, '6': '.pactus.PeerInfo', '10': 'connectedPeers'},
+    const {'1': 'sent_bytes', '3': 6, '4': 3, '5': 11, '6': '.pactus.GetNetworkInfoResponse.SentBytesEntry', '10': 'sentBytes'},
+    const {'1': 'received_bytes', '3': 7, '4': 3, '5': 11, '6': '.pactus.GetNetworkInfoResponse.ReceivedBytesEntry', '10': 'receivedBytes'},
   ],
+  '3': const [GetNetworkInfoResponse_SentBytesEntry$json, GetNetworkInfoResponse_ReceivedBytesEntry$json],
+};
+
+@$core.Deprecated('Use getNetworkInfoResponseDescriptor instead')
+const GetNetworkInfoResponse_SentBytesEntry$json = const {
+  '1': 'SentBytesEntry',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 13, '10': 'key'},
+    const {'1': 'value', '3': 2, '4': 1, '5': 4, '10': 'value'},
+  ],
+  '7': const {'7': true},
+};
+
+@$core.Deprecated('Use getNetworkInfoResponseDescriptor instead')
+const GetNetworkInfoResponse_ReceivedBytesEntry$json = const {
+  '1': 'ReceivedBytesEntry',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 13, '10': 'key'},
+    const {'1': 'value', '3': 2, '4': 1, '5': 4, '10': 'value'},
+  ],
+  '7': const {'7': true},
 };
 
 /// Descriptor for `GetNetworkInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNetworkInfoResponseDescriptor = $convert.base64Decode('ChZHZXROZXR3b3JrSW5mb1Jlc3BvbnNlEikKEHByb3RvY29sX3ZlcnNpb24YASABKAVSD3Byb3RvY29sVmVyc2lvbhInCg9jb25uZWN0ZWRfcGVlcnMYAiABKAVSDmNvbm5lY3RlZFBlZXJzEiEKDG5ldHdvcmtfbmFtZRgDIAEoCVILbmV0d29ya05hbWUSHAoJcHJvdG9jb2xzGAQgAygJUglwcm90b2NvbHMSIwoNbG9jYWxfYWRkcmVzcxgFIAMoCVIMbG9jYWxBZGRyZXNz');
+final $typed_data.Uint8List getNetworkInfoResponseDescriptor = $convert.base64Decode('ChZHZXROZXR3b3JrSW5mb1Jlc3BvbnNlEigKEHRvdGFsX3NlbnRfYnl0ZXMYASABKA1SDnRvdGFsU2VudEJ5dGVzEjAKFHRvdGFsX3JlY2VpdmVkX2J5dGVzGAIgASgNUhJ0b3RhbFJlY2VpdmVkQnl0ZXMSIQoMbmV0d29ya19uYW1lGAMgASgJUgtuZXR3b3JrTmFtZRIyChVjb25uZWN0ZWRfcGVlcnNfY291bnQYBCABKA1SE2Nvbm5lY3RlZFBlZXJzQ291bnQSOQoPY29ubmVjdGVkX3BlZXJzGAUgAygLMhAucGFjdHVzLlBlZXJJbmZvUg5jb25uZWN0ZWRQZWVycxJMCgpzZW50X2J5dGVzGAYgAygLMi0ucGFjdHVzLkdldE5ldHdvcmtJbmZvUmVzcG9uc2UuU2VudEJ5dGVzRW50cnlSCXNlbnRCeXRlcxJYCg5yZWNlaXZlZF9ieXRlcxgHIAMoCzIxLnBhY3R1cy5HZXROZXR3b3JrSW5mb1Jlc3BvbnNlLlJlY2VpdmVkQnl0ZXNFbnRyeVINcmVjZWl2ZWRCeXRlcxo8Cg5TZW50Qnl0ZXNFbnRyeRIQCgNrZXkYASABKA1SA2tleRIUCgV2YWx1ZRgCIAEoBFIFdmFsdWU6AjgBGkAKElJlY2VpdmVkQnl0ZXNFbnRyeRIQCgNrZXkYASABKA1SA2tleRIUCgV2YWx1ZRgCIAEoBFIFdmFsdWU6AjgB');
 @$core.Deprecated('Use getNodeInfoRequestDescriptor instead')
 const GetNodeInfoRequest$json = const {
   '1': 'GetNodeInfoRequest',
@@ -43,56 +66,17 @@ const GetNodeInfoResponse$json = const {
     const {'1': 'moniker', '3': 1, '4': 1, '5': 9, '10': 'moniker'},
     const {'1': 'agent', '3': 2, '4': 1, '5': 9, '10': 'agent'},
     const {'1': 'peer_id', '3': 3, '4': 1, '5': 12, '10': 'peerId'},
-    const {'1': 'reachability', '3': 4, '4': 1, '5': 9, '10': 'reachability'},
-    const {'1': 'addrs', '3': 5, '4': 3, '5': 9, '10': 'addrs'},
+    const {'1': 'started_at', '3': 4, '4': 1, '5': 4, '10': 'startedAt'},
+    const {'1': 'reachability', '3': 5, '4': 1, '5': 9, '10': 'reachability'},
+    const {'1': 'services', '3': 6, '4': 3, '5': 5, '10': 'services'},
+    const {'1': 'services_names', '3': 7, '4': 3, '5': 9, '10': 'servicesNames'},
+    const {'1': 'addrs', '3': 8, '4': 3, '5': 9, '10': 'addrs'},
+    const {'1': 'protocols', '3': 9, '4': 3, '5': 9, '10': 'protocols'},
   ],
 };
 
 /// Descriptor for `GetNodeInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAxSBnBlZXJJZBIiCgxyZWFjaGFiaWxpdHkYBCABKAlSDHJlYWNoYWJpbGl0eRIUCgVhZGRycxgFIAMoCVIFYWRkcnM=');
-@$core.Deprecated('Use getPeersInfoRequestDescriptor instead')
-const GetPeersInfoRequest$json = const {
-  '1': 'GetPeersInfoRequest',
-};
-
-/// Descriptor for `GetPeersInfoRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getPeersInfoRequestDescriptor = $convert.base64Decode('ChNHZXRQZWVyc0luZm9SZXF1ZXN0');
-@$core.Deprecated('Use getPeersInfoResponseDescriptor instead')
-const GetPeersInfoResponse$json = const {
-  '1': 'GetPeersInfoResponse',
-  '2': const [
-    const {'1': 'total_sent_bytes', '3': 1, '4': 1, '5': 5, '10': 'totalSentBytes'},
-    const {'1': 'total_received_bytes', '3': 2, '4': 1, '5': 5, '10': 'totalReceivedBytes'},
-    const {'1': 'started_at', '3': 3, '4': 1, '5': 3, '10': 'startedAt'},
-    const {'1': 'peers', '3': 4, '4': 3, '5': 11, '6': '.pactus.PeerInfo', '10': 'peers'},
-    const {'1': 'sent_bytes', '3': 5, '4': 3, '5': 11, '6': '.pactus.GetPeersInfoResponse.SentBytesEntry', '10': 'sentBytes'},
-    const {'1': 'received_bytes', '3': 6, '4': 3, '5': 11, '6': '.pactus.GetPeersInfoResponse.ReceivedBytesEntry', '10': 'receivedBytes'},
-  ],
-  '3': const [GetPeersInfoResponse_SentBytesEntry$json, GetPeersInfoResponse_ReceivedBytesEntry$json],
-};
-
-@$core.Deprecated('Use getPeersInfoResponseDescriptor instead')
-const GetPeersInfoResponse_SentBytesEntry$json = const {
-  '1': 'SentBytesEntry',
-  '2': const [
-    const {'1': 'key', '3': 1, '4': 1, '5': 5, '10': 'key'},
-    const {'1': 'value', '3': 2, '4': 1, '5': 3, '10': 'value'},
-  ],
-  '7': const {'7': true},
-};
-
-@$core.Deprecated('Use getPeersInfoResponseDescriptor instead')
-const GetPeersInfoResponse_ReceivedBytesEntry$json = const {
-  '1': 'ReceivedBytesEntry',
-  '2': const [
-    const {'1': 'key', '3': 1, '4': 1, '5': 5, '10': 'key'},
-    const {'1': 'value', '3': 2, '4': 1, '5': 3, '10': 'value'},
-  ],
-  '7': const {'7': true},
-};
-
-/// Descriptor for `GetPeersInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getPeersInfoResponseDescriptor = $convert.base64Decode('ChRHZXRQZWVyc0luZm9SZXNwb25zZRIoChB0b3RhbF9zZW50X2J5dGVzGAEgASgFUg50b3RhbFNlbnRCeXRlcxIwChR0b3RhbF9yZWNlaXZlZF9ieXRlcxgCIAEoBVISdG90YWxSZWNlaXZlZEJ5dGVzEh0KCnN0YXJ0ZWRfYXQYAyABKANSCXN0YXJ0ZWRBdBImCgVwZWVycxgEIAMoCzIQLnBhY3R1cy5QZWVySW5mb1IFcGVlcnMSSgoKc2VudF9ieXRlcxgFIAMoCzIrLnBhY3R1cy5HZXRQZWVyc0luZm9SZXNwb25zZS5TZW50Qnl0ZXNFbnRyeVIJc2VudEJ5dGVzElYKDnJlY2VpdmVkX2J5dGVzGAYgAygLMi8ucGFjdHVzLkdldFBlZXJzSW5mb1Jlc3BvbnNlLlJlY2VpdmVkQnl0ZXNFbnRyeVINcmVjZWl2ZWRCeXRlcxo8Cg5TZW50Qnl0ZXNFbnRyeRIQCgNrZXkYASABKAVSA2tleRIUCgV2YWx1ZRgCIAEoA1IFdmFsdWU6AjgBGkAKElJlY2VpdmVkQnl0ZXNFbnRyeRIQCgNrZXkYASABKAVSA2tleRIUCgV2YWx1ZRgCIAEoA1IFdmFsdWU6AjgB');
+final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAxSBnBlZXJJZBIdCgpzdGFydGVkX2F0GAQgASgEUglzdGFydGVkQXQSIgoMcmVhY2hhYmlsaXR5GAUgASgJUgxyZWFjaGFiaWxpdHkSGgoIc2VydmljZXMYBiADKAVSCHNlcnZpY2VzEiUKDnNlcnZpY2VzX25hbWVzGAcgAygJUg1zZXJ2aWNlc05hbWVzEhQKBWFkZHJzGAggAygJUgVhZGRycxIcCglwcm90b2NvbHMYCSADKAlSCXByb3RvY29scw==');
 @$core.Deprecated('Use peerInfoDescriptor instead')
 const PeerInfo$json = const {
   '1': 'PeerInfo',
@@ -147,7 +131,6 @@ const $core.Map<$core.String, $core.dynamic> NetworkServiceBase$json = const {
   '2': const [
     const {'1': 'GetNetworkInfo', '2': '.pactus.GetNetworkInfoRequest', '3': '.pactus.GetNetworkInfoResponse'},
     const {'1': 'GetNodeInfo', '2': '.pactus.GetNodeInfoRequest', '3': '.pactus.GetNodeInfoResponse'},
-    const {'1': 'GetPeersInfo', '2': '.pactus.GetPeersInfoRequest', '3': '.pactus.GetPeersInfoResponse'},
   ],
 };
 
@@ -155,16 +138,14 @@ const $core.Map<$core.String, $core.dynamic> NetworkServiceBase$json = const {
 const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> NetworkServiceBase$messageJson = const {
   '.pactus.GetNetworkInfoRequest': GetNetworkInfoRequest$json,
   '.pactus.GetNetworkInfoResponse': GetNetworkInfoResponse$json,
-  '.pactus.GetNodeInfoRequest': GetNodeInfoRequest$json,
-  '.pactus.GetNodeInfoResponse': GetNodeInfoResponse$json,
-  '.pactus.GetPeersInfoRequest': GetPeersInfoRequest$json,
-  '.pactus.GetPeersInfoResponse': GetPeersInfoResponse$json,
   '.pactus.PeerInfo': PeerInfo$json,
   '.pactus.PeerInfo.SentBytesEntry': PeerInfo_SentBytesEntry$json,
   '.pactus.PeerInfo.ReceivedBytesEntry': PeerInfo_ReceivedBytesEntry$json,
-  '.pactus.GetPeersInfoResponse.SentBytesEntry': GetPeersInfoResponse_SentBytesEntry$json,
-  '.pactus.GetPeersInfoResponse.ReceivedBytesEntry': GetPeersInfoResponse_ReceivedBytesEntry$json,
+  '.pactus.GetNetworkInfoResponse.SentBytesEntry': GetNetworkInfoResponse_SentBytesEntry$json,
+  '.pactus.GetNetworkInfoResponse.ReceivedBytesEntry': GetNetworkInfoResponse_ReceivedBytesEntry$json,
+  '.pactus.GetNodeInfoRequest': GetNodeInfoRequest$json,
+  '.pactus.GetNodeInfoResponse': GetNodeInfoResponse$json,
 };
 
 /// Descriptor for `Network`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List networkServiceDescriptor = $convert.base64Decode('CgdOZXR3b3JrEk8KDkdldE5ldHdvcmtJbmZvEh0ucGFjdHVzLkdldE5ldHdvcmtJbmZvUmVxdWVzdBoeLnBhY3R1cy5HZXROZXR3b3JrSW5mb1Jlc3BvbnNlEkYKC0dldE5vZGVJbmZvEhoucGFjdHVzLkdldE5vZGVJbmZvUmVxdWVzdBobLnBhY3R1cy5HZXROb2RlSW5mb1Jlc3BvbnNlEkkKDEdldFBlZXJzSW5mbxIbLnBhY3R1cy5HZXRQZWVyc0luZm9SZXF1ZXN0GhwucGFjdHVzLkdldFBlZXJzSW5mb1Jlc3BvbnNl');
+final $typed_data.Uint8List networkServiceDescriptor = $convert.base64Decode('CgdOZXR3b3JrEk8KDkdldE5ldHdvcmtJbmZvEh0ucGFjdHVzLkdldE5ldHdvcmtJbmZvUmVxdWVzdBoeLnBhY3R1cy5HZXROZXR3b3JrSW5mb1Jlc3BvbnNlEkYKC0dldE5vZGVJbmZvEhoucGFjdHVzLkdldE5vZGVJbmZvUmVxdWVzdBobLnBhY3R1cy5HZXROb2RlSW5mb1Jlc3BvbnNl');
