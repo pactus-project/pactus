@@ -122,7 +122,12 @@ Wait for the PR to be approved and merged into the main branch.
 
 ## 11. Update the Website
 
-Create a new announcement post on the [blog](https://pactus.org/blog/) and update the [Road Map](https://pactus.org/about/roadmap/) and [Download](https://pactus.org/download/) pages. Additionally, draft a new release on the [GitHub Releases](https://github.com/pactus-project/pactus/releases) page.
+Create a new announcement post on the
+[blog](https://pactus.org/blog/) and update the
+[Road Map](https://pactus.org/about/roadmap/) and
+[Download](https://pactus.org/download/) pages.
+Additionally, draft a new release on the
+[GitHub Releases](https://github.com/pactus-project/pactus/releases) page.
 
 ## 12. Celebrate 🎉
 
