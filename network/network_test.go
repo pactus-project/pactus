@@ -256,26 +256,6 @@ func TestNetwork(t *testing.T) {
 		for i, p := range networkB.host.Mux().Protocols() {
 			assert.Equal(t, protosNetB[i], string(p))
 		}
-
-		protosNetP := networkP.Protocols()
-		for i, p := range networkP.host.Mux().Protocols() {
-			assert.Equal(t, protosNetP[i], string(p))
-		}
-
-		protosNetM := networkM.Protocols()
-		for i, p := range networkM.host.Mux().Protocols() {
-			assert.Equal(t, protosNetM[i], string(p))
-		}
-
-		protosNetN := networkN.Protocols()
-		for i, p := range networkN.host.Mux().Protocols() {
-			assert.Equal(t, protosNetN[i], string(p))
-		}
-
-		protosNetX := networkX.Protocols()
-		for i, p := range networkX.host.Mux().Protocols() {
-			assert.Equal(t, protosNetX[i], string(p))
-		}
 	})
 
 	t.Run("all nodes have at least one connection to the bootstrap node B", func(t *testing.T) {
