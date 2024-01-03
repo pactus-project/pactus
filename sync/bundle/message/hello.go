@@ -30,7 +30,7 @@ func NewHelloMessage(pid peer.ID, moniker string,
 ) *HelloMessage {
 	return &HelloMessage{
 		PeerID:          pid,
-		Agent:           fmt.Sprintf("%v/%v", version.Agent(), reachability),
+		Agent:           fmt.Sprintf("%v/reachability=%v", version.Agent(), reachability),
 		Moniker:         moniker,
 		GenesisHash:     genesisHash,
 		BlockHash:       blockHash,
