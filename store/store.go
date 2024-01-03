@@ -5,7 +5,6 @@ import (
 	"errors"
 	"sync"
 
-	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -38,7 +37,7 @@ var (
 	accountPrefix     = []byte{0x05}
 	validatorPrefix   = []byte{0x07}
 	blockHeightPrefix = []byte{0x09}
-	publicKeyPrefix   = []byte{0x0a}
+	publicKeyPrefix   = []byte{0x0a} // TODO: make me 0xb on Mainnet
 )
 
 func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
@@ -64,7 +63,6 @@ type store struct {
 	lk sync.RWMutex
 
 	config         *Config
-	pubKeyCache    *lru.Cache[crypto.Address, *bls.PublicKey]
 	db             *leveldb.DB
 	batch          *leveldb.Batch
 	blockStore     *blockStore
@@ -79,11 +77,6 @@ func NewStore(conf *Config) (Store, error) {
 		Compression: opt.NoCompression,
 	}
 
-	pubKeyCache, err := lru.New[crypto.Address, *bls.PublicKey](conf.PublicKeyCacheSize)
-	if err != nil {
-		return nil, err
-	}
-
 	db, err := leveldb.OpenFile(conf.StorePath(), options)
 	if err != nil {
 		return nil, err
@@ -91,9 +84,8 @@ func NewStore(conf *Config) (Store, error) {
 	s := &store{
 		config:         conf,
 		db:             db,
-		pubKeyCache:    pubKeyCache,
 		batch:          new(leveldb.Batch),
-		blockStore:     newBlockStore(db, conf.SortitionCacheSize),
+		blockStore:     newBlockStore(db, conf.SortitionCacheSize, conf.PublicKeyCacheSize),
 		txStore:        newTxStore(db, conf.TxCacheSize),
 		accountStore:   newAccountStore(db, conf.AccountCacheSize),
 		validatorStore: newValidatorStore(db),
@@ -212,21 +204,10 @@ func (s *store) SortitionSeed(blockHeight uint32) *sortition.VerifiableSeed {
 }
 
 func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
-	if pubKey, ok := s.pubKeyCache.Get(addr); ok {
-		return pubKey, nil
-	}
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
-	bs, err := tryGet(s.db, publicKeyKey(addr))
-	if err != nil {
-		return nil, err
-	}
-	pubKey, err := bls.PublicKeyFromBytes(bs)
-	if err != nil {
-		return nil, err
-	}
-
-	s.pubKeyCache.Add(addr, pubKey)
-	return pubKey, err
+	return s.blockStore.publicKey(addr)
 }
 
 func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {
