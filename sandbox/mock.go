@@ -63,7 +63,7 @@ func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
 	return acc
 }
 
-func (m *MockSandbox) MakeNewAccount(addr crypto.Address) *account.Account {
+func (m *MockSandbox) MakeNewAccount(_ crypto.Address) *account.Account {
 	acc := account.NewAccount(m.TestStore.TotalAccounts())
 	return acc
 }
