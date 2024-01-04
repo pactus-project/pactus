@@ -180,7 +180,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Amount:</property>
+                <property name="label" translatable="yes">Stake:</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -189,14 +189,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="id_entry_amount">
+              <object class="GtkEntry" id="id_entry_stake">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="hexpand">True</property>
                 <property name="width-chars">32</property>
                 <property name="caps-lock-warning">False</property>
                 <property name="input-purpose">number</property>
-                <signal name="changed" handler="on_amount_changed" swapped="no"/>
+                <signal name="changed" handler="on_stake_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -205,7 +205,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="id_hint_amount">
+              <object class="GtkLabel" id="id_hint_stake">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>

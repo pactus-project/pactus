@@ -15,7 +15,7 @@ import (
 //go:embed assets/ui/dialog_transaction_transfer.ui
 var uiTransactionTransferDialog []byte
 
-func broadcastTransactionSend(wlt *wallet.Wallet) {
+func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 	builder, err := gtk.BuilderNewFromString(string(uiTransactionTransferDialog))
 	fatalErrorCheck(err)
 

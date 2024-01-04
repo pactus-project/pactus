@@ -64,6 +64,8 @@ func buildMainWindow(nodeModel *nodeModel, walletModel *walletModel) *mainWindow
 		"on_quit":                 mw.onQuit,
 		"on_transaction_transfer": mw.OnTransactionTransfer,
 		"on_transaction_bond":     mw.OnTransactionBond,
+		"on_transaction_unbond":   mw.OnTransactionUnBond,
+		"on_transaction_withdraw": mw.OnTransactionWithdraw,
 	}
 	builder.ConnectSignals(signals)
 
@@ -96,7 +98,20 @@ func (mw *mainWindow) onAbout() {
 }
 
 func (mw *mainWindow) OnTransactionTransfer() {
-	broadcastTransactionSend(mw.widgetWallet.model.wallet)
+	broadcastTransactionTransfer(mw.widgetWallet.model.wallet)
+}
+
+func (mw *mainWindow) OnTransactionWithdraw() {
+	broadcastTransactionWithdraw(mw.widgetWallet.model.wallet)
+}
+
+func (mw *mainWindow) OnTransactionUnBond() {
+	valAddrs := []crypto.Address{}
+	consMgr := mw.widgetNode.model.node.ConsManager()
+	for _, inst := range consMgr.Instances() {
+		valAddrs = append(valAddrs, inst.ConsensusKey().ValidatorAddress())
+	}
+	broadcastTransactionUnBond(mw.widgetWallet.model.wallet, valAddrs)
 }
 
 func (mw *mainWindow) onMenuItemActivateWebsite(_ *gtk.MenuItem) {
