@@ -10,9 +10,9 @@ import (
 )
 
 type accountStore struct {
-	db         *leveldb.DB
-	accInCache *lru.Cache[crypto.Address, *account.Account]
-	total      int32
+	db       *leveldb.DB
+	accCache *lru.Cache[crypto.Address, *account.Account]
+	total    int32
 }
 
 func accountKey(addr crypto.Address) []byte { return append(accountPrefix, addr.Bytes()...) }
@@ -32,14 +32,14 @@ func newAccountStore(db *leveldb.DB, cacheSize int) *accountStore {
 	iter.Release()
 
 	return &accountStore{
-		db:         db,
-		total:      total,
-		accInCache: addrLruCache,
+		db:       db,
+		total:    total,
+		accCache: addrLruCache,
 	}
 }
 
 func (as *accountStore) hasAccount(addr crypto.Address) bool {
-	ok := as.accInCache.Contains(addr)
+	ok := as.accCache.Contains(addr)
 	if !ok {
 		ok = tryHas(as.db, accountKey(addr))
 	}
@@ -47,7 +47,7 @@ func (as *accountStore) hasAccount(addr crypto.Address) bool {
 }
 
 func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
-	acc, ok := as.accInCache.Get(addr)
+	acc, ok := as.accCache.Get(addr)
 	if ok {
 		return acc.Clone(), nil
 	}
@@ -62,8 +62,8 @@ func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
 		return nil, err
 	}
 
-	as.accInCache.Add(addr, acc.Clone())
-	return acc, nil
+	as.accCache.Add(addr, acc)
+	return acc.Clone(), nil
 }
 
 func (as *accountStore) iterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool)) {
@@ -100,7 +100,7 @@ func (as *accountStore) updateAccount(batch *leveldb.Batch, addr crypto.Address,
 	if !as.hasAccount(addr) {
 		as.total++
 	}
-	as.accInCache.Add(addr, acc)
+	as.accCache.Add(addr, acc)
 
 	batch.Put(accountKey(addr), data)
 }

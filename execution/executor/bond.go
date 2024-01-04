@@ -25,7 +25,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	}
 
 	receiverVal := sb.Validator(pld.To)
-	if receiverVal == nil || receiverVal.LastBondingHeight() == 0 {
+	if receiverVal == nil {
 		if pld.PublicKey == nil {
 			return errors.Errorf(errors.ErrInvalidPublicKey,
 				"public key is not set")

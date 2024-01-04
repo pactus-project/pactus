@@ -16,15 +16,15 @@ func TestGetNetworkInfo(t *testing.T) {
 		res, err := client.GetNetworkInfo(tCtx, &pactus.GetNetworkInfoRequest{})
 		assert.NoError(t, err)
 		assert.Nil(t, err)
-		assert.Equal(t, 2, len(res.Peers))
+		assert.Equal(t, 2, len(res.ConnectedPeers))
 	})
 
 	t.Run("Should return peer info", func(t *testing.T) {
 		res, err := client.GetNetworkInfo(tCtx, &pactus.GetNetworkInfoRequest{})
 		assert.NoError(t, err)
 		assert.Nil(t, err)
-		assert.Equal(t, 2, len(res.Peers))
-		for _, p := range res.Peers {
+		assert.Equal(t, 2, len(res.ConnectedPeers))
+		for _, p := range res.ConnectedPeers {
 			assert.NotEmpty(t, p.PeerId)
 			pid, _ := peer.IDFromBytes(p.PeerId)
 			pp := tMockSync.PeerSet().GetPeer(pid)

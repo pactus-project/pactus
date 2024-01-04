@@ -398,3 +398,15 @@ func (n *network) HostAddrs() []string {
 
 	return addrs
 }
+
+func (n *network) Name() string {
+	return n.config.NetworkName
+}
+
+func (n *network) Protocols() []string {
+	protocols := []string{}
+	for _, p := range n.host.Mux().Protocols() {
+		protocols = append(protocols, string(p))
+	}
+	return protocols
+}
