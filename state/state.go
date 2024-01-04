@@ -14,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/state/lastinfo"
+	"github.com/pactus-project/pactus/state/score"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
@@ -47,6 +48,7 @@ type state struct {
 	lastInfo        *lastinfo.LastInfo
 	accountMerkle   *persistentmerkle.Tree
 	validatorMerkle *persistentmerkle.Tree
+	scoreMgr        *score.Manager
 	logger          *logger.SubLogger
 	eventCh         chan event.Event
 }
@@ -91,6 +93,33 @@ func LoadOrNewState(
 	st.loadMerkels()
 
 	txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
+
+	// Restoring score manager
+	st.logger.Info("calculating the availability scores...")
+	scoreWindow := uint32(60000)
+	startHeight := uint32(2)
+	endHeight := st.lastInfo.BlockHeight()
+	if endHeight > scoreWindow {
+		startHeight = endHeight - scoreWindow
+	}
+
+	scoreMgr := score.NewScoreManager(scoreWindow)
+	for h := startHeight; h <= endHeight; h++ {
+		cb, err := st.store.Block(h)
+		if err != nil {
+			return nil, err
+		}
+		blk, err := cb.ToBlock()
+		if err != nil {
+			return nil, err
+		}
+		scoreMgr.SetCertificate(blk.PrevCertificate())
+	}
+	st.scoreMgr = scoreMgr
+
+	for _, num := range st.committee.Committers() {
+		st.logger.Debug("availability score", "val", num, "score", st.scoreMgr.AvailabilityScore(num))
+	}
 
 	st.logger.Debug("last info", "committers", st.committee.Committers(), "state_root", st.stateRoot())
 
@@ -450,6 +479,20 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 	st.txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 
 	// -----------------------------------
+	// Updating score manager
+	if blk.Header().Time().After(time.Now().AddDate(0, -1, -1)) {
+		prevCert := blk.PrevCertificate()
+		if prevCert != nil {
+			st.scoreMgr.SetCertificate(prevCert)
+
+			// TODO: Remove me after gRPC done
+			for _, num := range st.committee.Committers() {
+				st.logger.Debug("availability score", "val", num, "score", st.scoreMgr.AvailabilityScore(num))
+			}
+		}
+	}
+
+	// -----------------------------------
 	// Publishing the events to the zmq
 	st.publishEvents(height, blk)
 
@@ -730,5 +773,15 @@ func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, er
 }
 
 func (st *state) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
 	return st.store.PublicKey(addr)
+}
+
+func (st *state) AvailabilityScore(valNum int32) float64 {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return st.scoreMgr.AvailabilityScore(valNum)
 }

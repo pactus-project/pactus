@@ -14,8 +14,9 @@ import (
 var _ Synchronizer = &MockSync{}
 
 type MockSync struct {
-	TestID      peer.ID
-	TestPeerSet *peerset.PeerSet
+	TestID       peer.ID
+	TestPeerSet  *peerset.PeerSet
+	TestServices service.Services
 }
 
 func MockingSync(ts *testsuite.TestSuite) *MockSync {
@@ -40,9 +41,11 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 		service.New(service.None))
 	ps.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
 
+	services := service.New()
 	return &MockSync{
-		TestID:      ts.RandPeerID(),
-		TestPeerSet: ps,
+		TestID:       ts.RandPeerID(),
+		TestPeerSet:  ps,
+		TestServices: services,
 	}
 }
 
@@ -63,4 +66,8 @@ func (m *MockSync) Moniker() string {
 
 func (m *MockSync) PeerSet() *peerset.PeerSet {
 	return m.TestPeerSet
+}
+
+func (m *MockSync) Services() service.Services {
+	return m.TestServices
 }

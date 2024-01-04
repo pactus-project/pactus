@@ -121,7 +121,7 @@ func TestIndexingPublicKeys(t *testing.T) {
 	for _, trx := range blk.Transactions() {
 		addr := trx.Payload().Signer()
 		pub, found := td.store.PublicKey(addr)
-		pubKeyLruCache, ok := td.store.pubKeyCache.Get(addr)
+		pubKeyLruCache, ok := td.store.blockStore.pubKeyCache.Get(addr)
 
 		assert.NoError(t, found)
 		assert.True(t, ok)
@@ -136,7 +136,7 @@ func TestIndexingPublicKeys(t *testing.T) {
 
 	randValAddress := td.RandValAddress()
 	pub, found := td.store.PublicKey(randValAddress)
-	pubKeyLruCache, ok := td.store.pubKeyCache.Get(randValAddress)
+	pubKeyLruCache, ok := td.store.blockStore.pubKeyCache.Get(randValAddress)
 
 	assert.Error(t, found)
 	assert.Nil(t, pub)

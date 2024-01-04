@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.19.0](https://github.com/pactus-project/pactus/compare/v0.18.0...v0.19.0) (2024-01-04)
+
+### Feat
+
+- **gRPC**: defining network and peers info response's properly ([#898](https://github.com/pactus-project/pactus/pull/898))
+- implementing pip-19 ([#899](https://github.com/pactus-project/pactus/pull/899))
+- **network**: disabling GosipSub, only FloodSub ([#895](https://github.com/pactus-project/pactus/pull/895))
+- **www**: adding change proposer round and value to consensus info votes ([#892](https://github.com/pactus-project/pactus/pull/892))
+- **network**: adding relay service to dial relay nodes ([#887](https://github.com/pactus-project/pactus/pull/887))
+- implementing pip-15 ([#843](https://github.com/pactus-project/pactus/pull/843))
+- check already running by lock file ([#871](https://github.com/pactus-project/pactus/pull/871))
+
+### Fix
+
+- **store**: use cache to check if public key exists ([#902](https://github.com/pactus-project/pactus/pull/902))
+- **executor**: not rejecting bond transaction for bootstrap validator ([#901](https://github.com/pactus-project/pactus/pull/901))
+- **GUI**: removing unnecessary tags in transaction confirm dialog ([#893](https://github.com/pactus-project/pactus/pull/893))
+- **network**: close relay connection for public node ([#891](https://github.com/pactus-project/pactus/pull/891))
+- **network**: refining GossipSubParams for Gossiper node ([#882](https://github.com/pactus-project/pactus/pull/882))
+- **sync**: adding sequence number to the bundle ([#881](https://github.com/pactus-project/pactus/pull/881))
+- **network**: turn off mesh for gossiper node ([#880](https://github.com/pactus-project/pactus/pull/880))
+- **consensus**: check voteset for CP strong termination ([#879](https://github.com/pactus-project/pactus/pull/879))
+- adding querier to query messages ([#878](https://github.com/pactus-project/pactus/pull/878))
+- **execution**: fixing issue #869 ([#870](https://github.com/pactus-project/pactus/pull/870))
+- fixing logger issue on rotating log file ([#859](https://github.com/pactus-project/pactus/pull/859))
+
 ## [0.18.0](https://github.com/pactus-project/pactus/compare/v0.17.0...v0.18.0) (2023-12-11)
 
 ### Feat
