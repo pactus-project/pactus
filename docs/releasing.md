@@ -38,9 +38,9 @@ Create environment variables for the release version, which will be used in subs
 Keep your terminal open for further steps.
 
 ```bash
-PRV_VER="0.18.0"
-CUR_VER="0.19.0"
-NEXT_VER="0.20.0"
+PRV_VER="0.19.0"
+CUR_VER="0.20.0"
+NEXT_VER="0.21.0"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 BASE_BRANCH="main"
@@ -75,7 +75,7 @@ git push origin HEAD
 gh pr create --title "chore: releasing version ${CUR_VER}" --body "Releasing version ${CUR_VER}" --base ${BASE_BRANCH}
 ```
 
-Await approval and merging of the PR into the base branch.
+Wait for the PR to be approved and merged into the main branch.
 
 ## 8. Tagging the Release
 
@@ -106,7 +106,8 @@ Pushing the tag will automatically create a release tag and build the binaries.
 ## 10. Bump the Version
 
 Update the version inside [version.go](../version/version.go) and add `beta` to the `meta` field.
-Additionally, update the [patching](./patching.md) document. If this is a major release, update the version inside this document in step 3.
+Additionally, update version in the [patching](./patching.md) document.
+If this is a major release, update the version inside this document in step 3.
 
 Create a new PR against the base branch:
 
@@ -117,11 +118,16 @@ git push origin HEAD
 gh pr create --title "chore: bumping version to ${NEXT_VER}" --body "Bumping version to ${NEXT_VER}" --base ${BASE_BRANCH}
 ```
 
-Await approval and merging of the PR into the base branch.
+Wait for the PR to be approved and merged into the main branch.
 
 ## 11. Update the Website
 
-Create a new announcement post on the [blog](https://pactus.org/blog/) and update the [Road Map](https://pactus.org/about/roadmap/) and [Download](https://pactus.org/download/) pages. Additionally, draft a new release on the [GitHub Releases](https://github.com/pactus-project/pactus/releases) page.
+Create a new announcement post on the
+[blog](https://pactus.org/blog/) and update the
+[Road Map](https://pactus.org/about/roadmap/) and
+[Download](https://pactus.org/download/) pages.
+Additionally, draft a new release on the
+[GitHub Releases](https://github.com/pactus-project/pactus/releases) page.
 
 ## 12. Celebrate 🎉
 
