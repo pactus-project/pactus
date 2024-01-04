@@ -69,10 +69,10 @@ func broadcastTransactionSend(wlt *wallet.Wallet) {
 		msg := fmt.Sprintf(`
 You are going to sign and broadcast this transaction:
 
-From: %v
-To: %v
+From:   %v
+To:     %v
 Amount: %v
-Fee: %v
+Fee:    %v
 
 THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`, sender, receiver,
 			util.ChangeToString(amount), util.ChangeToString(trx.Fee()))

@@ -7,63 +7,53 @@ import (
 	"fmt"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
 
-//go:embed assets/ui/dialog_transaction_bond.ui
-var uiTransactionBondDialog []byte
+//go:embed assets/ui/dialog_transaction_transfer.ui
+var uiTransactionTransferDialog []byte
 
-func broadcastTransactionBond(wlt *wallet.Wallet, valAddrs []crypto.Address) {
-	builder, err := gtk.BuilderNewFromString(string(uiTransactionBondDialog))
+func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
+	builder, err := gtk.BuilderNewFromString(string(uiTransactionTransferDialog))
 	fatalErrorCheck(err)
 
-	dlg := getDialogObj(builder, "id_dialog_transaction_bond")
+	dlg := getDialogObj(builder, "id_dialog_transaction_withdraw")
 
-	senderEntry := getComboBoxTextObj(builder, "id_combo_sender")
-	senderHint := getLabelObj(builder, "id_hint_sender")
-	receiverCombo := getComboBoxTextObj(builder, "id_combo_receiver")
+	validatorEntry := getComboBoxTextObj(builder, "id_combo_validator")
+	validatorHint := getLabelObj(builder, "id_hint_validator")
+	receiverEntry := getEntryObj(builder, "id_entry_receiver")
 	receiverHint := getLabelObj(builder, "id_hint_receiver")
-	publicKeyEntry := getEntryObj(builder, "id_entry_public_key")
-	amountEntry := getEntryObj(builder, "id_entry_amount")
-	amountHint := getLabelObj(builder, "id_hint_amount")
+	stakeEntry := getEntryObj(builder, "id_entry_stake")
+	stakeHint := getLabelObj(builder, "id_hint_stake")
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
 	for _, i := range wlt.AddressInfos() {
-		senderEntry.Append(i.Address, i.Address)
+		validatorEntry.Append(i.Address, i.Address)
 	}
-
-	for _, addr := range valAddrs {
-		receiverCombo.Append(addr.String(), addr.String())
-	}
-
-	senderEntry.SetActive(0)
+	validatorEntry.SetActive(0)
 
 	onSenderChanged := func() {
-		senderStr := senderEntry.GetActiveID()
-		updateAccountHint(senderHint, senderStr, wlt)
+		senderStr := validatorEntry.GetActiveID()
+		updateAccountHint(validatorHint, senderStr, wlt)
 	}
 
 	onReceiverChanged := func() {
-		receiverEntry, _ := receiverCombo.GetEntry()
 		receiverStr, _ := receiverEntry.GetText()
-		updateValidatorHint(receiverHint, receiverStr, wlt)
+		updateAccountHint(receiverHint, receiverStr, wlt)
 	}
 
 	onAmountChanged := func() {
-		amtStr, _ := amountEntry.GetText()
-		updateFeeHint(amountHint, amtStr, wlt, payload.TypeBond)
+		amtStr, _ := stakeEntry.GetText()
+		updateFeeHint(stakeHint, amtStr, wlt, payload.TypeTransfer)
 	}
 
 	onSend := func() {
-		sender := senderEntry.GetActiveID()
-		receiverEntry, _ := receiverCombo.GetEntry()
+		sender := validatorEntry.GetActiveID()
 		receiver, _ := receiverEntry.GetText()
-		publicKey, _ := publicKeyEntry.GetText()
-		amountStr, _ := amountEntry.GetText()
+		amountStr, _ := stakeEntry.GetText()
 
 		amount, err := util.StringToChange(amountStr)
 		if err != nil {
@@ -71,7 +61,7 @@ func broadcastTransactionBond(wlt *wallet.Wallet, valAddrs []crypto.Address) {
 			return
 		}
 
-		trx, err := wlt.MakeBondTx(sender, receiver, publicKey, amount)
+		trx, err := wlt.MakeWithdrawTx(sender, receiver, amount)
 		if err != nil {
 			errorCheck(err)
 			return
