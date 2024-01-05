@@ -9,12 +9,18 @@ import (
 
 func TestMDNS(t *testing.T) {
 	conf1 := testConfig()
-	conf1.ListenAddrStrings = []string{"/ip4/127.0.0.1/tcp/0"}
+	conf1.ListenAddrStrings = []string{
+		"/ip6/::1/tcp/0", "/ip6/::1/udp/0/quic-v1",
+		"/ip4/127.0.0.1/tcp/0", "/ip4/127.0.0.1/udp/0/quic-v1",
+	}
 	conf1.EnableMdns = true
 	net1 := makeTestNetwork(t, conf1, nil)
 
 	conf2 := testConfig()
-	conf2.ListenAddrStrings = []string{"/ip4/127.0.0.1/tcp/0"}
+	conf2.ListenAddrStrings = []string{
+		"/ip6/::1/tcp/0", "/ip6/::1/udp/0/quic-v1",
+		"/ip4/127.0.0.1/tcp/0", "/ip4/127.0.0.1/udp/0/quic-v1",
+	}
 	conf2.EnableMdns = true
 	net2 := makeTestNetwork(t, conf2, nil)
 

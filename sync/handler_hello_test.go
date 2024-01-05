@@ -24,12 +24,12 @@ func TestParsingHelloMessages(t *testing.T) {
 			valKey := td.RandValKey()
 			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "unknown-peer", 0, 0,
-				td.state.LastBlockHash(), td.state.Genesis().Hash())
+				td.state.LastBlockHash(), td.state.Genesis().Hash(), "public")
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			from := td.RandPeerID()
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, from))
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
@@ -39,12 +39,12 @@ func TestParsingHelloMessages(t *testing.T) {
 			valKey := td.RandValKey()
 			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
-				td.state.LastBlockHash(), invGenHash)
+				td.state.LastBlockHash(), invGenHash, "public")
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
@@ -54,13 +54,13 @@ func TestParsingHelloMessages(t *testing.T) {
 			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
-				td.state.LastBlockHash(), td.state.Genesis().Hash())
+				td.state.LastBlockHash(), td.state.Genesis().Hash(), "public")
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			msg.MyTimeUnixMilli = msg.MyTime().Add(-10 * time.Second).UnixMilli()
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
@@ -70,13 +70,13 @@ func TestParsingHelloMessages(t *testing.T) {
 			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
-				td.state.LastBlockHash(), td.state.Genesis().Hash())
+				td.state.LastBlockHash(), td.state.Genesis().Hash(), "public")
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			msg.MyTimeUnixMilli = msg.MyTime().Add(20 * time.Second).UnixMilli()
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
@@ -86,12 +86,12 @@ func TestParsingHelloMessages(t *testing.T) {
 			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
-				td.state.LastBlockHash(), td.state.Genesis().Hash())
+				td.state.LastBlockHash(), td.state.Genesis().Hash(), "public")
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-			bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHelloAck)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeOK)
 
 			// Check if the peer info is updated
@@ -99,7 +99,7 @@ func TestParsingHelloMessages(t *testing.T) {
 
 			pub := valKey.PublicKey()
 			assert.Equal(t, p.Status, peerset.StatusCodeKnown)
-			assert.Equal(t, p.Agent, version.Agent())
+			assert.Equal(t, p.Agent, version.Agent()+"/reachability=public")
 			assert.Equal(t, p.Moniker, "kitty")
 			assert.Contains(t, p.ConsensusKeys, pub)
 			assert.Equal(t, p.PeerID, pid)
@@ -112,9 +112,9 @@ func TestSendingHelloMessage(t *testing.T) {
 	td := setup(t, nil)
 
 	to := td.RandPeerID()
-	assert.NoError(t, td.sync.sayHello(to))
+	td.sync.sayHello(to)
 
-	bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
+	bdl := td.shouldPublishMessageWithThisType(t, message.TypeHello)
 	assert.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHandshaking))
 	assert.True(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Services, service.New(service.Network)))
 }

@@ -1,5 +1,58 @@
 # Changelog
 
+## [0.19.0](https://github.com/pactus-project/pactus/compare/v0.18.0...v0.19.0) (2024-01-04)
+
+### Feat
+
+- **gRPC**: defining network and peers info response's properly ([#898](https://github.com/pactus-project/pactus/pull/898))
+- implementing pip-19 ([#899](https://github.com/pactus-project/pactus/pull/899))
+- **network**: disabling GosipSub, only FloodSub ([#895](https://github.com/pactus-project/pactus/pull/895))
+- **www**: adding change proposer round and value to consensus info votes ([#892](https://github.com/pactus-project/pactus/pull/892))
+- **network**: adding relay service to dial relay nodes ([#887](https://github.com/pactus-project/pactus/pull/887))
+- implementing pip-15 ([#843](https://github.com/pactus-project/pactus/pull/843))
+- check already running by lock file ([#871](https://github.com/pactus-project/pactus/pull/871))
+
+### Fix
+
+- **store**: use cache to check if public key exists ([#902](https://github.com/pactus-project/pactus/pull/902))
+- **executor**: not rejecting bond transaction for bootstrap validator ([#901](https://github.com/pactus-project/pactus/pull/901))
+- **GUI**: removing unnecessary tags in transaction confirm dialog ([#893](https://github.com/pactus-project/pactus/pull/893))
+- **network**: close relay connection for public node ([#891](https://github.com/pactus-project/pactus/pull/891))
+- **network**: refining GossipSubParams for Gossiper node ([#882](https://github.com/pactus-project/pactus/pull/882))
+- **sync**: adding sequence number to the bundle ([#881](https://github.com/pactus-project/pactus/pull/881))
+- **network**: turn off mesh for gossiper node ([#880](https://github.com/pactus-project/pactus/pull/880))
+- **consensus**: check voteset for CP strong termination ([#879](https://github.com/pactus-project/pactus/pull/879))
+- adding querier to query messages ([#878](https://github.com/pactus-project/pactus/pull/878))
+- **execution**: fixing issue #869 ([#870](https://github.com/pactus-project/pactus/pull/870))
+- fixing logger issue on rotating log file ([#859](https://github.com/pactus-project/pactus/pull/859))
+
+## [0.18.0](https://github.com/pactus-project/pactus/compare/v0.17.0...v0.18.0) (2023-12-11)
+
+### Feat
+
+- implement pip-14 ([#841](https://github.com/pactus-project/pactus/pull/841))
+- sort wallet addresses ([#836](https://github.com/pactus-project/pactus/pull/836))
+- **grpc**: endpoints for creating raw transaction ([#838](https://github.com/pactus-project/pactus/pull/838))
+- network reachability API ([#834](https://github.com/pactus-project/pactus/pull/834))
+- implement pip-13 ([#835](https://github.com/pactus-project/pactus/pull/835))
+- subscribing to libp2p eventbus ([#831](https://github.com/pactus-project/pactus/pull/831))
+- implement helper methods for wallet address path ([#830](https://github.com/pactus-project/pactus/pull/830))
+- **logger**: adding rotate log file after days, compress and max backups for logger config ([#822](https://github.com/pactus-project/pactus/pull/822))
+- enable bandwidth router metric ([#819](https://github.com/pactus-project/pactus/pull/819))
+
+### Fix
+
+- **network**: refining the connection limit ([#849](https://github.com/pactus-project/pactus/pull/849))
+- corrected mistake when retrieving the reward address ([#848](https://github.com/pactus-project/pactus/pull/848))
+- **config**: restore default config when it is deleted ([#847](https://github.com/pactus-project/pactus/pull/847))
+- **cmd**: changing home directory for root users ([#846](https://github.com/pactus-project/pactus/pull/846))
+- removing BasicCheck for hash ([#845](https://github.com/pactus-project/pactus/pull/845))
+- disabling libp2p ping protocol ([#844](https://github.com/pactus-project/pactus/pull/844))
+- build docker file ([#839](https://github.com/pactus-project/pactus/pull/839))
+- **sync**: ignore publishing a block if it is received before ([#829](https://github.com/pactus-project/pactus/pull/829))
+- **network**: subscribing to the Libp2p event bus ([#828](https://github.com/pactus-project/pactus/pull/828))
+- **sync**: ignore block request if blocks are already inside the cache ([#817](https://github.com/pactus-project/pactus/pull/817))
+
 ## [0.17.0](https://github.com/pactus-project/pactus/compare/v0.16.0...v0.17.0) (2023-11-12)
 
 ### Feat

@@ -121,7 +121,44 @@ func TestIsBootstrapper(t *testing.T) {
 	pid2, _ := lp2ppeer.Decode("12D3KooWQBpPV6NtZy1dvN2oF7dJdLoooRZfEmwtHiDUf42ArDjT")
 	pid3, _ := lp2ppeer.Decode("12D3KooWBqutgDboACf1i1c9uN9BQg9xdREoeXYb2rvFHQU1QcAp")
 
-	assert.False(t, conf.IsBootstrapper(pid1))
-	assert.True(t, conf.IsBootstrapper(pid2))
-	assert.True(t, conf.IsBootstrapper(pid3))
+	conf.CheckIsBootstrapper(pid1)
+	assert.False(t, conf.IsBootstrapper)
+
+	conf.CheckIsBootstrapper(pid2)
+	assert.True(t, conf.IsBootstrapper)
+
+	conf.CheckIsBootstrapper(pid3)
+	assert.True(t, conf.IsBootstrapper)
+}
+
+func TestScaledConns(t *testing.T) {
+	tests := []struct {
+		config            Config
+		expectedMax       int
+		expectedMin       int
+		expectedThreshold int
+	}{
+		{Config{MaxConns: 1}, 1, 0, 0},
+		{Config{MaxConns: 8}, 8, 2, 1},
+		{Config{MaxConns: 30}, 32, 8, 4},
+		{Config{MaxConns: 1000}, 1024, 256, 128},
+	}
+
+	for _, test := range tests {
+		resultMax := test.config.ScaledMaxConns()
+		resultMin := test.config.ScaledMinConns()
+		resultThreshold := test.config.ConnsThreshold()
+		if resultMax != test.expectedMax ||
+			resultMin != test.expectedMin ||
+			resultThreshold != test.expectedThreshold {
+			t.Errorf("For MaxConns %d, "+
+				"NormedMaxConns() returned %d (expected %d), "+
+				"NormedMinConns() returned %d (expected %d), "+
+				"ConnsThreshold() returned %d (expected %d)",
+				test.config.MaxConns,
+				resultMax, test.expectedMax,
+				resultMin, test.expectedMin,
+				resultThreshold, test.expectedThreshold)
+		}
+	}
 }

@@ -22,7 +22,7 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, pid peer.I
 	handler.logger.Trace("parsing BlocksResponse message", "msg", msg)
 
 	if msg.IsRequestRejected() {
-		handler.logger.Warn("blocks request is rejected", "pid", pid, "reason", msg.Reason)
+		handler.logger.Warn("blocks request is rejected", "pid", pid, "reason", msg.Reason, "sid", msg.SessionID)
 	} else {
 		// TODO:
 		// It is good to check the latest height before adding blocks to the cache.
@@ -63,6 +63,7 @@ func (handler *blocksResponseHandler) updateSession(sid int, code message.Respon
 
 	case message.ResponseCodeMoreBlocks:
 		handler.logger.Debug("peer responding us. keep session open", "sid", sid)
+		handler.peerSet.UpdateSessionLastActivity(sid)
 
 	case message.ResponseCodeNoMoreBlocks:
 		handler.logger.Debug("peer has no more block. close session", "sid", sid)

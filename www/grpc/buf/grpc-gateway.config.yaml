@@ -5,35 +5,41 @@ http:
   rules:
     # Blockchain APIs
     - selector: pactus.Blockchain.GetBlock
-      get: "/v1/blockchain/block/height/{height}/verbosity/{verbosity}"
+      get: "/v1/blockchain/blocks/height/{height}/verbosity/{verbosity}"
 
     - selector: pactus.Blockchain.GetBlockHash
-      get: "/v1/blockchain/block_hash/{height}"
+      get: "/v1/blockchain/block_hashes/height/{height}"
 
     - selector: pactus.Blockchain.GetBlockHeight
-      get: "/v1/blockchain/block_height/{hash}"
+      get: "/v1/blockchain/block_heights/hash/{hash}"
 
     - selector: pactus.Blockchain.GetAccount
-      get: "/v1/blockchain/account/address/{address}"
+      get: "/v1/blockchain/accounts/address/{address}"
 
     - selector: pactus.Blockchain.GetValidator
-      get: "/v1/blockchain/validator/address/{address}"
+      get: "/v1/blockchain/validators/address/{address}"
 
     - selector: pactus.Blockchain.GetValidatorByNumber
-      get: "/v1/blockchain/validator/{number}"
+      get: "/v1/blockchain/validators/{number}"
 
     - selector: pactus.Blockchain.GetBlockchainInfo
       get: "/v1/blockchain/info"
+
+    - selector: pactus.Blockchain.GetConsensusInfo
+      get: "/v1/blockchain/consensusInfo"
 
     - selector: pactus.Blockchain.GetPublicKey
       get: "/v1/blockchain/public_keys/address/{address}"
 
     # Transaction APIs
     - selector: pactus.Transaction.GetTransaction
-      get: "/v1/transaction/id/{id}/verbosity/{verbosity}"
+      get: "/v1/transactions/id/{id}/verbosity/{verbosity}"
 
     - selector: pactus.Transaction.SendRawTransaction
-      put: "/v1/transaction/send_raw_transaction/{data}"
+      put: "/v1/transactions/send/{data}"
+
+    - selector: pactus.Transaction.CalculateFee
+      get: "/v1/transactions/amount/{amount}/payloadType/{payloadType}"
 
     # Network APIs
     - selector: pactus.Network.GetNetworkInfo
@@ -42,22 +48,18 @@ http:
     - selector: pactus.Network.GetNodeInfo
       get: "/v1/network/node"
 
-    - selector: pactus.Transaction.CalculateFee
-      get: "/v1/transaction/amount/{amount}/payloadType/{payloadType}"
-
     # Wallet APIs
     - selector: pactus.Wallet.CreateWallet
-      get: "/v1/wallet/create/name/{name}/mnemonic/{mnemonic}/language/{language}"
+      get: "/v1/wallets/create/name/{name}/mnemonic/{mnemonic}/language/{language}"
 
     - selector: pactus.Wallet.LoadWallet
-      get: "/v1/wallet/load/name/{name}"
+      get: "/v1/wallets/load/name/{name}"
 
     - selector: pactus.Wallet.UnloadWallet
-      get: "/v1/wallet/unload/name/{name}"
+      get: "/v1/wallets/unload/name/{name}"
 
     - selector: pactus.Wallet.LockWallet
-      get: "/v1/wallet/lock"
+      get: "/v1/wallets/lock"
 
     - selector: pactus.Wallet.UnlockWallet
-      get: "/v1/wallet/unlock/password/{password}/timeout/{timeout}"
-
+      get: "/v1/wallets/unlock/password/{password}/timeout/{timeout}"

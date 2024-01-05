@@ -48,6 +48,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		"version", version.Version(),
 		"network", genDoc.ChainType())
 
+	conf.Network.IsGossiper = conf.Sync.NodeGossip
 	net, err := network.NewNetwork(conf.Network)
 	if err != nil {
 		return nil, err
@@ -79,7 +80,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	}
 
 	httpServer := http.NewServer(conf.HTTP)
-	grpcServer := grpc.NewServer(conf.GRPC, st, syn, consMgr)
+	grpcServer := grpc.NewServer(conf.GRPC, st, syn, net, consMgr)
 	nanomsgServer := nanomsg.NewServer(conf.Nanomsg, eventCh)
 
 	node := &Node{
@@ -154,6 +155,7 @@ func (n *Node) Stop() {
 }
 
 // these methods are using by GUI.
+
 func (n *Node) ConsManager() consensus.ManagerReader {
 	return n.consMgr
 }

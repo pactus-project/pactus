@@ -27,6 +27,7 @@ var globalInst *logger
 type logger struct {
 	config *Config
 	subs   map[string]*SubLogger
+	writer io.Writer
 }
 
 type SubLogger struct {
@@ -38,7 +39,6 @@ type SubLogger struct {
 func getLoggersInst() *logger {
 	if globalInst == nil {
 		// Only during tests the globalInst is nil
-
 		LogFilename = util.TempFilePath()
 
 		conf := &Config{
@@ -56,7 +56,9 @@ func getLoggersInst() *logger {
 		globalInst = &logger{
 			config: conf,
 			subs:   make(map[string]*SubLogger),
+			writer: zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04:05"},
 		}
+		log.Logger = zerolog.New(globalInst.writer).With().Timestamp().Logger()
 	}
 
 	return globalInst
@@ -64,11 +66,30 @@ func getLoggersInst() *logger {
 
 func InitGlobalLogger(conf *Config) {
 	if globalInst == nil {
+		writers := []io.Writer{}
+		// console writer
+		if conf.Colorful {
+			writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04:05"})
+		} else {
+			writers = append(writers, os.Stderr)
+		}
+
+		// file writer
+		fw := &lumberjack.Logger{
+			Filename:   LogFilename,
+			MaxSize:    MaxLogSize,
+			MaxBackups: conf.MaxBackups,
+			Compress:   conf.Compress,
+			MaxAge:     conf.RotateLogAfterDays,
+		}
+		writers = append(writers, fw)
+
 		globalInst = &logger{
 			config: conf,
 			subs:   make(map[string]*SubLogger),
+			writer: io.MultiWriter(writers...),
 		}
-		log.Logger = zerolog.New(globalInst.writers()).With().Timestamp().Logger()
+		log.Logger = zerolog.New(globalInst.writer).With().Timestamp().Logger()
 
 		lvl, err := zerolog.ParseLevel(conf.Levels["default"])
 		if err != nil {
@@ -116,7 +137,7 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 	inst := getLoggersInst()
 	sl := &SubLogger{
-		logger: zerolog.New(inst.writers()).With().Timestamp().Logger(),
+		logger: zerolog.New(inst.writer).With().Timestamp().Logger(),
 		name:   name,
 		obj:    obj,
 	}
@@ -134,27 +155,6 @@ func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 
 	inst.subs[name] = sl
 	return sl
-}
-
-func (l *logger) writers() io.Writer {
-	writers := []io.Writer{}
-	// console writer
-	if l.config.Colorful {
-		writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04:05"})
-	} else {
-		writers = append(writers, os.Stderr)
-	}
-
-	// file writer
-	fw := &lumberjack.Logger{
-		Filename:   LogFilename,
-		MaxSize:    MaxLogSize,
-		MaxBackups: 0,
-		Compress:   true,
-	}
-	writers = append(writers, fw)
-
-	return io.MultiWriter(writers...)
 }
 
 func (sl *SubLogger) logObj(event *zerolog.Event, msg string, keyvals ...interface{}) {

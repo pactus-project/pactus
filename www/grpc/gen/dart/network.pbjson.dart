@@ -19,12 +19,13 @@ final $typed_data.Uint8List getNetworkInfoRequestDescriptor = $convert.base64Dec
 const GetNetworkInfoResponse$json = const {
   '1': 'GetNetworkInfoResponse',
   '2': const [
-    const {'1': 'total_sent_bytes', '3': 1, '4': 1, '5': 5, '10': 'totalSentBytes'},
-    const {'1': 'total_received_bytes', '3': 2, '4': 1, '5': 5, '10': 'totalReceivedBytes'},
-    const {'1': 'started_at', '3': 3, '4': 1, '5': 3, '10': 'startedAt'},
-    const {'1': 'peers', '3': 4, '4': 3, '5': 11, '6': '.pactus.PeerInfo', '10': 'peers'},
-    const {'1': 'sent_bytes', '3': 5, '4': 3, '5': 11, '6': '.pactus.GetNetworkInfoResponse.SentBytesEntry', '10': 'sentBytes'},
-    const {'1': 'received_bytes', '3': 6, '4': 3, '5': 11, '6': '.pactus.GetNetworkInfoResponse.ReceivedBytesEntry', '10': 'receivedBytes'},
+    const {'1': 'total_sent_bytes', '3': 1, '4': 1, '5': 13, '10': 'totalSentBytes'},
+    const {'1': 'total_received_bytes', '3': 2, '4': 1, '5': 13, '10': 'totalReceivedBytes'},
+    const {'1': 'network_name', '3': 3, '4': 1, '5': 9, '10': 'networkName'},
+    const {'1': 'connected_peers_count', '3': 4, '4': 1, '5': 13, '10': 'connectedPeersCount'},
+    const {'1': 'connected_peers', '3': 5, '4': 3, '5': 11, '6': '.pactus.PeerInfo', '10': 'connectedPeers'},
+    const {'1': 'sent_bytes', '3': 6, '4': 3, '5': 11, '6': '.pactus.GetNetworkInfoResponse.SentBytesEntry', '10': 'sentBytes'},
+    const {'1': 'received_bytes', '3': 7, '4': 3, '5': 11, '6': '.pactus.GetNetworkInfoResponse.ReceivedBytesEntry', '10': 'receivedBytes'},
   ],
   '3': const [GetNetworkInfoResponse_SentBytesEntry$json, GetNetworkInfoResponse_ReceivedBytesEntry$json],
 };
@@ -33,8 +34,8 @@ const GetNetworkInfoResponse$json = const {
 const GetNetworkInfoResponse_SentBytesEntry$json = const {
   '1': 'SentBytesEntry',
   '2': const [
-    const {'1': 'key', '3': 1, '4': 1, '5': 5, '10': 'key'},
-    const {'1': 'value', '3': 2, '4': 1, '5': 3, '10': 'value'},
+    const {'1': 'key', '3': 1, '4': 1, '5': 13, '10': 'key'},
+    const {'1': 'value', '3': 2, '4': 1, '5': 4, '10': 'value'},
   ],
   '7': const {'7': true},
 };
@@ -43,14 +44,14 @@ const GetNetworkInfoResponse_SentBytesEntry$json = const {
 const GetNetworkInfoResponse_ReceivedBytesEntry$json = const {
   '1': 'ReceivedBytesEntry',
   '2': const [
-    const {'1': 'key', '3': 1, '4': 1, '5': 5, '10': 'key'},
-    const {'1': 'value', '3': 2, '4': 1, '5': 3, '10': 'value'},
+    const {'1': 'key', '3': 1, '4': 1, '5': 13, '10': 'key'},
+    const {'1': 'value', '3': 2, '4': 1, '5': 4, '10': 'value'},
   ],
   '7': const {'7': true},
 };
 
 /// Descriptor for `GetNetworkInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNetworkInfoResponseDescriptor = $convert.base64Decode('ChZHZXROZXR3b3JrSW5mb1Jlc3BvbnNlEigKEHRvdGFsX3NlbnRfYnl0ZXMYASABKAVSDnRvdGFsU2VudEJ5dGVzEjAKFHRvdGFsX3JlY2VpdmVkX2J5dGVzGAIgASgFUhJ0b3RhbFJlY2VpdmVkQnl0ZXMSHQoKc3RhcnRlZF9hdBgDIAEoA1IJc3RhcnRlZEF0EiYKBXBlZXJzGAQgAygLMhAucGFjdHVzLlBlZXJJbmZvUgVwZWVycxJMCgpzZW50X2J5dGVzGAUgAygLMi0ucGFjdHVzLkdldE5ldHdvcmtJbmZvUmVzcG9uc2UuU2VudEJ5dGVzRW50cnlSCXNlbnRCeXRlcxJYCg5yZWNlaXZlZF9ieXRlcxgGIAMoCzIxLnBhY3R1cy5HZXROZXR3b3JrSW5mb1Jlc3BvbnNlLlJlY2VpdmVkQnl0ZXNFbnRyeVINcmVjZWl2ZWRCeXRlcxo8Cg5TZW50Qnl0ZXNFbnRyeRIQCgNrZXkYASABKAVSA2tleRIUCgV2YWx1ZRgCIAEoA1IFdmFsdWU6AjgBGkAKElJlY2VpdmVkQnl0ZXNFbnRyeRIQCgNrZXkYASABKAVSA2tleRIUCgV2YWx1ZRgCIAEoA1IFdmFsdWU6AjgB');
+final $typed_data.Uint8List getNetworkInfoResponseDescriptor = $convert.base64Decode('ChZHZXROZXR3b3JrSW5mb1Jlc3BvbnNlEigKEHRvdGFsX3NlbnRfYnl0ZXMYASABKA1SDnRvdGFsU2VudEJ5dGVzEjAKFHRvdGFsX3JlY2VpdmVkX2J5dGVzGAIgASgNUhJ0b3RhbFJlY2VpdmVkQnl0ZXMSIQoMbmV0d29ya19uYW1lGAMgASgJUgtuZXR3b3JrTmFtZRIyChVjb25uZWN0ZWRfcGVlcnNfY291bnQYBCABKA1SE2Nvbm5lY3RlZFBlZXJzQ291bnQSOQoPY29ubmVjdGVkX3BlZXJzGAUgAygLMhAucGFjdHVzLlBlZXJJbmZvUg5jb25uZWN0ZWRQZWVycxJMCgpzZW50X2J5dGVzGAYgAygLMi0ucGFjdHVzLkdldE5ldHdvcmtJbmZvUmVzcG9uc2UuU2VudEJ5dGVzRW50cnlSCXNlbnRCeXRlcxJYCg5yZWNlaXZlZF9ieXRlcxgHIAMoCzIxLnBhY3R1cy5HZXROZXR3b3JrSW5mb1Jlc3BvbnNlLlJlY2VpdmVkQnl0ZXNFbnRyeVINcmVjZWl2ZWRCeXRlcxo8Cg5TZW50Qnl0ZXNFbnRyeRIQCgNrZXkYASABKA1SA2tleRIUCgV2YWx1ZRgCIAEoBFIFdmFsdWU6AjgBGkAKElJlY2VpdmVkQnl0ZXNFbnRyeRIQCgNrZXkYASABKA1SA2tleRIUCgV2YWx1ZRgCIAEoBFIFdmFsdWU6AjgB');
 @$core.Deprecated('Use getNodeInfoRequestDescriptor instead')
 const GetNodeInfoRequest$json = const {
   '1': 'GetNodeInfoRequest',
@@ -65,11 +66,17 @@ const GetNodeInfoResponse$json = const {
     const {'1': 'moniker', '3': 1, '4': 1, '5': 9, '10': 'moniker'},
     const {'1': 'agent', '3': 2, '4': 1, '5': 9, '10': 'agent'},
     const {'1': 'peer_id', '3': 3, '4': 1, '5': 12, '10': 'peerId'},
+    const {'1': 'started_at', '3': 4, '4': 1, '5': 4, '10': 'startedAt'},
+    const {'1': 'reachability', '3': 5, '4': 1, '5': 9, '10': 'reachability'},
+    const {'1': 'services', '3': 6, '4': 3, '5': 5, '10': 'services'},
+    const {'1': 'services_names', '3': 7, '4': 3, '5': 9, '10': 'servicesNames'},
+    const {'1': 'addrs', '3': 8, '4': 3, '5': 9, '10': 'addrs'},
+    const {'1': 'protocols', '3': 9, '4': 3, '5': 9, '10': 'protocols'},
   ],
 };
 
 /// Descriptor for `GetNodeInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAxSBnBlZXJJZA==');
+final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAxSBnBlZXJJZBIdCgpzdGFydGVkX2F0GAQgASgEUglzdGFydGVkQXQSIgoMcmVhY2hhYmlsaXR5GAUgASgJUgxyZWFjaGFiaWxpdHkSGgoIc2VydmljZXMYBiADKAVSCHNlcnZpY2VzEiUKDnNlcnZpY2VzX25hbWVzGAcgAygJUg1zZXJ2aWNlc05hbWVzEhQKBWFkZHJzGAggAygJUgVhZGRycxIcCglwcm90b2NvbHMYCSADKAlSCXByb3RvY29scw==');
 @$core.Deprecated('Use peerInfoDescriptor instead')
 const PeerInfo$json = const {
   '1': 'PeerInfo',
@@ -89,6 +96,10 @@ const PeerInfo$json = const {
     const {'1': 'sent_bytes', '3': 13, '4': 3, '5': 11, '6': '.pactus.PeerInfo.SentBytesEntry', '10': 'sentBytes'},
     const {'1': 'received_bytes', '3': 14, '4': 3, '5': 11, '6': '.pactus.PeerInfo.ReceivedBytesEntry', '10': 'receivedBytes'},
     const {'1': 'address', '3': 15, '4': 1, '5': 9, '10': 'address'},
+    const {'1': 'direction', '3': 16, '4': 1, '5': 9, '10': 'direction'},
+    const {'1': 'protocols', '3': 17, '4': 3, '5': 9, '10': 'protocols'},
+    const {'1': 'total_sessions', '3': 18, '4': 1, '5': 5, '10': 'totalSessions'},
+    const {'1': 'completed_sessions', '3': 19, '4': 1, '5': 5, '10': 'completedSessions'},
   ],
   '3': const [PeerInfo_SentBytesEntry$json, PeerInfo_ReceivedBytesEntry$json],
 };
@@ -114,7 +125,7 @@ const PeerInfo_ReceivedBytesEntry$json = const {
 };
 
 /// Descriptor for `PeerInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode('CghQZWVySW5mbxIWCgZzdGF0dXMYASABKAVSBnN0YXR1cxIYCgdtb25pa2VyGAIgASgJUgdtb25pa2VyEhQKBWFnZW50GAMgASgJUgVhZ2VudBIXCgdwZWVyX2lkGAQgASgMUgZwZWVySWQSJQoOY29uc2Vuc3VzX2tleXMYBSADKAlSDWNvbnNlbnN1c0tleXMSGgoIc2VydmljZXMYBiABKA1SCHNlcnZpY2VzEiYKD2xhc3RfYmxvY2tfaGFzaBgHIAEoDFINbGFzdEJsb2NrSGFzaBIWCgZoZWlnaHQYCCABKA1SBmhlaWdodBIrChFyZWNlaXZlZF9tZXNzYWdlcxgJIAEoBVIQcmVjZWl2ZWRNZXNzYWdlcxIpChBpbnZhbGlkX21lc3NhZ2VzGAogASgFUg9pbnZhbGlkTWVzc2FnZXMSGwoJbGFzdF9zZW50GAsgASgDUghsYXN0U2VudBIjCg1sYXN0X3JlY2VpdmVkGAwgASgDUgxsYXN0UmVjZWl2ZWQSPgoKc2VudF9ieXRlcxgNIAMoCzIfLnBhY3R1cy5QZWVySW5mby5TZW50Qnl0ZXNFbnRyeVIJc2VudEJ5dGVzEkoKDnJlY2VpdmVkX2J5dGVzGA4gAygLMiMucGFjdHVzLlBlZXJJbmZvLlJlY2VpdmVkQnl0ZXNFbnRyeVINcmVjZWl2ZWRCeXRlcxIYCgdhZGRyZXNzGA8gASgJUgdhZGRyZXNzGjwKDlNlbnRCeXRlc0VudHJ5EhAKA2tleRgBIAEoBVIDa2V5EhQKBXZhbHVlGAIgASgDUgV2YWx1ZToCOAEaQAoSUmVjZWl2ZWRCeXRlc0VudHJ5EhAKA2tleRgBIAEoBVIDa2V5EhQKBXZhbHVlGAIgASgDUgV2YWx1ZToCOAE=');
+final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode('CghQZWVySW5mbxIWCgZzdGF0dXMYASABKAVSBnN0YXR1cxIYCgdtb25pa2VyGAIgASgJUgdtb25pa2VyEhQKBWFnZW50GAMgASgJUgVhZ2VudBIXCgdwZWVyX2lkGAQgASgMUgZwZWVySWQSJQoOY29uc2Vuc3VzX2tleXMYBSADKAlSDWNvbnNlbnN1c0tleXMSGgoIc2VydmljZXMYBiABKA1SCHNlcnZpY2VzEiYKD2xhc3RfYmxvY2tfaGFzaBgHIAEoDFINbGFzdEJsb2NrSGFzaBIWCgZoZWlnaHQYCCABKA1SBmhlaWdodBIrChFyZWNlaXZlZF9tZXNzYWdlcxgJIAEoBVIQcmVjZWl2ZWRNZXNzYWdlcxIpChBpbnZhbGlkX21lc3NhZ2VzGAogASgFUg9pbnZhbGlkTWVzc2FnZXMSGwoJbGFzdF9zZW50GAsgASgDUghsYXN0U2VudBIjCg1sYXN0X3JlY2VpdmVkGAwgASgDUgxsYXN0UmVjZWl2ZWQSPgoKc2VudF9ieXRlcxgNIAMoCzIfLnBhY3R1cy5QZWVySW5mby5TZW50Qnl0ZXNFbnRyeVIJc2VudEJ5dGVzEkoKDnJlY2VpdmVkX2J5dGVzGA4gAygLMiMucGFjdHVzLlBlZXJJbmZvLlJlY2VpdmVkQnl0ZXNFbnRyeVINcmVjZWl2ZWRCeXRlcxIYCgdhZGRyZXNzGA8gASgJUgdhZGRyZXNzEhwKCWRpcmVjdGlvbhgQIAEoCVIJZGlyZWN0aW9uEhwKCXByb3RvY29scxgRIAMoCVIJcHJvdG9jb2xzEiUKDnRvdGFsX3Nlc3Npb25zGBIgASgFUg10b3RhbFNlc3Npb25zEi0KEmNvbXBsZXRlZF9zZXNzaW9ucxgTIAEoBVIRY29tcGxldGVkU2Vzc2lvbnMaPAoOU2VudEJ5dGVzRW50cnkSEAoDa2V5GAEgASgFUgNrZXkSFAoFdmFsdWUYAiABKANSBXZhbHVlOgI4ARpAChJSZWNlaXZlZEJ5dGVzRW50cnkSEAoDa2V5GAEgASgFUgNrZXkSFAoFdmFsdWUYAiABKANSBXZhbHVlOgI4AQ==');
 const $core.Map<$core.String, $core.dynamic> NetworkServiceBase$json = const {
   '1': 'Network',
   '2': const [

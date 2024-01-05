@@ -25,6 +25,7 @@ type PeerSet struct {
 	sessions           map[int]*session.Session
 	nextSessionID      int
 	sessionTimeout     time.Duration
+	totalSentBundles   int
 	totalSentBytes     int64
 	totalReceivedBytes int64
 	sentBytes          map[message.Type]int64
@@ -43,13 +44,16 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	}
 }
 
-func (ps *PeerSet) OpenSession(pid peer.ID, from, to uint32) *session.Session {
+func (ps *PeerSet) OpenSession(pid peer.ID, from, count uint32) *session.Session {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	ssn := session.NewSession(ps.nextSessionID, pid, from, to)
+	ssn := session.NewSession(ps.nextSessionID, pid, from, count)
 	ps.sessions[ssn.SessionID] = ssn
 	ps.nextSessionID++
+
+	p := ps.mustGetPeer(pid)
+	p.TotalSessions++
 
 	return ssn
 }
@@ -140,12 +144,22 @@ func (ps *PeerSet) HasAnyOpenSession() bool {
 	return false
 }
 
+func (ps *PeerSet) UpdateSessionLastActivity(sid int) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	ssn := ps.sessions[sid]
+	if ssn != nil {
+		ssn.LastActivity = time.Now()
+	}
+}
+
 func (ps *PeerSet) SetExpiredSessionsAsUncompleted() {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	for _, ssn := range ps.sessions {
-		if ps.sessionTimeout < util.Now().Sub(ssn.StartedAt) {
+		if ps.sessionTimeout < util.Now().Sub(ssn.LastActivity) {
 			ssn.Status = session.Uncompleted
 		}
 	}
@@ -168,6 +182,9 @@ func (ps *PeerSet) SetSessionCompleted(sid int) {
 	ssn := ps.sessions[sid]
 	if ssn != nil {
 		ssn.Status = session.Completed
+
+		p := ps.mustGetPeer(ssn.PeerID)
+		p.CompletedSessions++
 	}
 }
 
@@ -242,12 +259,13 @@ func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32, lastBlockHash hash.H
 	p.LastBlockHash = lastBlockHash
 }
 
-func (ps *PeerSet) UpdateAddress(pid peer.ID, addr string) {
+func (ps *PeerSet) UpdateAddress(pid peer.ID, addr, direction string) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
 	p.Address = addr
+	p.Direction = direction
 }
 
 func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {
@@ -256,6 +274,14 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {
 
 	p := ps.mustGetPeer(pid)
 	p.Status = status
+}
+
+func (ps *PeerSet) UpdateProtocols(pid peer.ID, protocols []string) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.mustGetPeer(pid)
+	p.Protocols = protocols
 }
 
 func (ps *PeerSet) UpdateLastSent(pid peer.ID) {
@@ -301,10 +327,11 @@ func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, msgType message.Typ
 	ps.receivedBytes[msgType] += c
 }
 
-func (ps *PeerSet) IncreaseSentBytesCounter(msgType message.Type, c int64, pid *peer.ID) {
+func (ps *PeerSet) IncreaseSentCounters(msgType message.Type, c int64, pid *peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
+	ps.totalSentBundles++
 	ps.totalSentBytes += c
 	ps.sentBytes[msgType] += c
 
@@ -312,6 +339,13 @@ func (ps *PeerSet) IncreaseSentBytesCounter(msgType message.Type, c int64, pid *
 		p := ps.mustGetPeer(*pid)
 		p.SentBytes[msgType] += c
 	}
+}
+
+func (ps *PeerSet) TotalSentBundles() int {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.totalSentBundles
 }
 
 func (ps *PeerSet) TotalSentBytes() int64 {
@@ -357,15 +391,21 @@ func (ps *PeerSet) StartedAt() time.Time {
 	return ps.startedAt
 }
 
-func (ps *PeerSet) IteratePeers(consumer func(peer *Peer)) {
+func (ps *PeerSet) IteratePeers(consumer func(peer *Peer) (stop bool)) {
 	for _, p := range ps.peers {
-		consumer(p)
+		stopped := consumer(p)
+		if stopped {
+			return
+		}
 	}
 }
 
-func (ps *PeerSet) IterateSessions(consumer func(s *session.Session)) {
+func (ps *PeerSet) IterateSessions(consumer func(s *session.Session) (stop bool)) {
 	for _, ssn := range ps.sessions {
-		consumer(ssn)
+		stopped := consumer(ssn)
+		if stopped {
+			return
+		}
 	}
 }
 
@@ -389,10 +429,7 @@ func (ps *PeerSet) GetRandomPeer() *Peer {
 			continue
 		}
 
-		weight := (p.ReceivedBundles - p.InvalidBundles) * 100 / (p.ReceivedBundles + 1)
-		if weight <= 0 {
-			weight = 1 // Setting weight to 0 won't choose the peer at all
-		}
+		weight := (p.CompletedSessions + 1) * 100 / (p.TotalSessions + 1)
 		totalWeight += weight
 		peers = append(peers, weightedPeer{
 			peer:   p,

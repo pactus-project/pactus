@@ -18,6 +18,7 @@ import (
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/types/account"
@@ -25,6 +26,7 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/addresspath"
 )
 
 // terminalSupported returns true if the current terminal supports
@@ -209,16 +211,13 @@ func PrintJSONObject(obj interface{}) {
 	PrintJSONData(data)
 }
 
-func PactusHomeDir() string {
+func PactusDefaultHomeDir() string {
 	home := ""
 	usr, err := user.Current()
-	if err == nil {
-		// Running as root, probably inside docker
-		if usr.HomeDir == "/root" {
-			home = "/pactus/"
-		} else {
-			home = filepath.Join(usr.HomeDir, "pactus")
-		}
+	if err != nil {
+		PrintWarnMsgf("unable to get current user: %v", err)
+	} else {
+		home = filepath.Join(usr.HomeDir, "pactus")
 	}
 	return home
 }
@@ -290,34 +289,32 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	case genesis.Mainnet:
 		panic("not yet!")
 	case genesis.Testnet:
-		err = genesis.TestnetGenesis().SaveToFile(genPath)
-		if err != nil {
+		genDoc := genesis.TestnetGenesis()
+		if err := genDoc.SaveToFile(genPath); err != nil {
+			return nil, nil, err
+		}
+		conf := config.DefaultConfigTestnet(genDoc.Params())
+		if err := conf.Save(confPath); err != nil {
 			return nil, nil, err
 		}
 
-		err = config.SaveTestnetConfig(confPath, numValidators)
-		if err != nil {
-			return nil, nil, err
-		}
 	case genesis.Localnet:
-		err = makeLocalGenesis(*walletInstance).SaveToFile(genPath)
-		if err != nil {
+		genDoc := makeLocalGenesis(*walletInstance)
+		if err := genDoc.SaveToFile(genPath); err != nil {
 			return nil, nil, err
 		}
 
-		err := config.SaveLocalnetConfig(confPath, numValidators)
-		if err != nil {
+		conf := config.DefaultConfigLocalnet(genDoc.Params())
+		if err := conf.Save(confPath); err != nil {
 			return nil, nil, err
 		}
 	}
 
-	err = walletInstance.UpdatePassword("", walletPassword)
-	if err != nil {
+	if err := walletInstance.UpdatePassword("", walletPassword); err != nil {
 		return nil, nil, err
 	}
 
-	err = walletInstance.Save()
-	if err != nil {
+	if err := walletInstance.Save(); err != nil {
 		return nil, nil, err
 	}
 
@@ -341,7 +338,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 
 	confPath := PactusConfigPath(workingDir)
-	conf, err := tryLoadConfig(gen.ChainType(), confPath)
+	conf, err := tryLoadConfig(gen, confPath)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -356,25 +353,37 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	if err != nil {
 		return nil, nil, err
 	}
-	addrLabels := walletInstance.AddressInfos()
 
-	if len(addrLabels) < conf.Node.NumValidators {
-		return nil, nil, fmt.Errorf("not enough addresses in wallet")
+	valAddrsInfo := walletInstance.AllValidatorAddresses()
+	if len(valAddrsInfo) == 0 {
+		return nil, nil, fmt.Errorf("no validator addresses found in the wallet")
 	}
-	validatorAddrs := make([]string, conf.Node.NumValidators)
-	for i := 0; i < conf.Node.NumValidators; i++ {
-		valAddr, _ := crypto.AddressFromString(addrLabels[i].Address)
+
+	if len(valAddrsInfo) > 32 {
+		PrintWarnMsgf("wallet has more than 32 validator addresses, only the first 32 will be used")
+		valAddrsInfo = valAddrsInfo[:32]
+	}
+
+	if len(conf.Node.RewardAddresses) > 0 &&
+		len(conf.Node.RewardAddresses) != len(valAddrsInfo) {
+		return nil, nil, fmt.Errorf("reward addresses should be %v", len(valAddrsInfo))
+	}
+
+	valAddrs := make([]string, len(valAddrsInfo))
+	for i := 0; i < len(valAddrs); i++ {
+		valAddr, _ := crypto.AddressFromString(valAddrsInfo[i].Address)
 		if !valAddr.IsValidatorAddress() {
-			return nil, nil, fmt.Errorf("invalid validator address: %s", addrLabels[i].Address)
+			return nil, nil, fmt.Errorf("invalid validator address: %s", valAddrsInfo[i].Address)
 		}
-		validatorAddrs[i] = valAddr.String()
+		valAddrs[i] = valAddr.String()
 	}
-	valKeys := make([]*bls.ValidatorKey, conf.Node.NumValidators)
+
+	valKeys := make([]*bls.ValidatorKey, len(valAddrsInfo))
 	password, ok := passwordFetcher(walletInstance)
 	if !ok {
 		return nil, nil, fmt.Errorf("aborted")
 	}
-	prvKeys, err := walletInstance.PrivateKeys(password, validatorAddrs)
+	prvKeys, err := walletInstance.PrivateKeys(password, valAddrs)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -383,25 +392,37 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 
 	// Create reward addresses
-	rewardAddrs := make([]crypto.Address, 0, conf.Node.NumValidators)
+	rewardAddrs := make([]crypto.Address, 0, len(valAddrsInfo))
 	if len(conf.Node.RewardAddresses) != 0 {
 		for _, addrStr := range conf.Node.RewardAddresses {
 			addr, _ := crypto.AddressFromString(addrStr)
 			rewardAddrs = append(rewardAddrs, addr)
 		}
 	} else {
-		for i := conf.Node.NumValidators; i < len(addrLabels); i++ {
-			addr, _ := crypto.AddressFromString(addrLabels[i].Address)
-			if addr.IsAccountAddress() {
-				rewardAddrs = append(rewardAddrs, addr)
-				if len(rewardAddrs) == conf.Node.NumValidators {
-					break
-				}
+		for i := 0; i < len(valAddrsInfo); i++ {
+			valAddrPath, _ := addresspath.NewPathFromString(valAddrsInfo[i].Path)
+			accAddrPath := addresspath.NewPath(
+				valAddrPath.Purpose(),
+				valAddrPath.CoinType(),
+				uint32(crypto.AddressTypeBLSAccount)+hdkeychain.HardenedKeyStart,
+				valAddrPath.AddressIndex())
+
+			addrInfo := walletInstance.AddressFromPath(accAddrPath.String())
+			if addrInfo == nil {
+				return nil, nil, fmt.Errorf("unable to find reward address for: %s [%s]",
+					valAddrsInfo[i].Address, accAddrPath)
 			}
+
+			addr, _ := crypto.AddressFromString(addrInfo.Address)
+			rewardAddrs = append(rewardAddrs, addr)
 		}
 	}
-	if len(rewardAddrs) != conf.Node.NumValidators {
-		return nil, nil, fmt.Errorf("not enough addresses in wallet")
+
+	// Check if reward addresses are account address
+	for _, addr := range rewardAddrs {
+		if !addr.IsAccountAddress() {
+			return nil, nil, fmt.Errorf("reward address is not an account address: %s", addr)
+		}
 	}
 
 	nodeInstance, err := node.NewNode(gen, conf, valKeys, rewardAddrs)
@@ -440,55 +461,59 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	return gen
 }
 
-func tryLoadConfig(chainType genesis.ChainType, confPath string) (*config.Config, error) {
+func tryLoadConfig(genDoc *genesis.Genesis, confPath string) (*config.Config, error) {
 	var defConf *config.Config
-	switch chainType {
+	switch genDoc.ChainType() {
 	case genesis.Mainnet:
 		panic("not yet implemented!")
 	case genesis.Testnet:
-		defConf = config.DefaultConfigTestnet()
+		defConf = config.DefaultConfigTestnet(genDoc.Params())
 	case genesis.Localnet:
-		defConf = config.DefaultConfigLocalnet()
+		defConf = config.DefaultConfigLocalnet(genDoc.Params())
 	}
 
 	conf, err := config.LoadFromFile(confPath, true, defConf)
 	if err != nil {
 		PrintWarnMsgf("Unable to load the config: %s", err)
-		PrintInfoMsgf("Attempting to restore the config to the default values...")
+		PrintInfoMsgf("Attempting to update or restore the config file...")
 
-		// First, try to open the old config file in non-strict mode
-		confBack, err := config.LoadFromFile(confPath, false, defConf)
-		if err != nil {
-			return nil, err
-		}
+		// Try to attempt to load config in non-strict mode
+		conf, err = config.LoadFromFile(confPath, false, defConf)
 
-		// Let's create a backup of the config
-		confBackupPath := fmt.Sprintf("%v_bak_%s", confPath, time.Now().Format("2006_01_02"))
-		err = os.Rename(confPath, confBackupPath)
-		if err != nil {
-			return nil, err
-		}
-
-		// Now, attempt to restore the config file with the number of validators from the old config.
-		switch chainType {
-		case genesis.Mainnet:
-			panic("not yet implemented!")
-
-		case genesis.Testnet:
-			err = config.SaveTestnetConfig(confPath, confBack.Node.NumValidators)
-			if err != nil {
-				return nil, err
-			}
-
-		case genesis.Localnet:
-			err = config.SaveLocalnetConfig(confPath, confBack.Node.NumValidators)
-			if err != nil {
-				return nil, err
+		// Create a backup of the config
+		if util.PathExists(confPath) {
+			confBackupPath := fmt.Sprintf("%v_bak_%s", confPath, time.Now().Format("2006-01-02T15-04-05"))
+			renameErr := os.Rename(confPath, confBackupPath)
+			if renameErr != nil {
+				return nil, renameErr
 			}
 		}
 
-		PrintSuccessMsgf("Config restored to the default values")
-		conf, _ = config.LoadFromFile(confPath, true, defConf) // This time it should be OK
+		if err == nil {
+			err := conf.Save(confPath)
+			if err != nil {
+				return nil, err
+			}
+			PrintSuccessMsgf("Config updated.")
+		} else {
+			switch genDoc.ChainType() {
+			case genesis.Mainnet:
+				err = config.SaveMainnetConfig(confPath)
+				if err != nil {
+					return nil, err
+				}
+
+			case genesis.Testnet,
+				genesis.Localnet:
+				err = defConf.Save(confPath)
+				if err != nil {
+					return nil, err
+				}
+			}
+
+			PrintSuccessMsgf("Config restored to the default values")
+			conf, _ = config.LoadFromFile(confPath, true, defConf) // This time it should be OK
+		}
 	}
 
 	return conf, nil

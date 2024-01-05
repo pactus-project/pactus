@@ -121,6 +121,8 @@ message VoteInfo {
   string voter = 2;
   bytes block_hash = 3;
   int32 round = 4;
+  int32 cp_round = 5;
+  int32 cp_value = 6;
 }
 
 message ConsensusInfo {

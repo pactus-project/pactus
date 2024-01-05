@@ -143,12 +143,11 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 	}
 }
 
-func (td *testData) shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
-	msgType message.Type,
+func (td *testData) shouldPublishMessageWithThisType(t *testing.T, msgType message.Type,
 ) *bundle.Bundle {
 	t.Helper()
 
-	return shouldPublishMessageWithThisType(t, net, msgType)
+	return shouldPublishMessageWithThisType(t, td.network, msgType)
 }
 
 func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
@@ -171,10 +170,10 @@ func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
 	}
 }
 
-func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
+func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, msgType message.Type) {
 	t.Helper()
 
-	shouldNotPublishMessageWithThisType(t, net, msgType)
+	shouldNotPublishMessageWithThisType(t, td.network, msgType)
 }
 
 func (td *testData) receivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
@@ -223,37 +222,33 @@ func TestStop(t *testing.T) {
 	td.sync.Stop()
 }
 
-func TestConnectEvents(t *testing.T) {
+func TestConnectEvent(t *testing.T) {
 	td := setup(t, nil)
 
-	t.Run("Should say hello when there is stream connection", func(t *testing.T) {
-		pid := td.RandPeerID()
-		td.network.EventCh <- &network.ConnectEvent{
-			PeerID:        pid,
-			RemoteAddress: "address_1",
-			SupportStream: true,
-		}
-		td.shouldPublishMessageWithThisType(t, td.network, message.TypeHello)
-		p := td.sync.peerSet.GetPeer(pid)
-		assert.Equal(t, p.Status, peerset.StatusCodeConnected)
-		assert.Equal(t, p.Address, "address_1")
-	})
+	pid := td.RandPeerID()
+	ce := &network.ConnectEvent{
+		PeerID:        pid,
+		RemoteAddress: "address_1",
+	}
+	td.network.EventCh <- ce
 
-	t.Run("Should NOT say hello when there is no stream connection", func(t *testing.T) {
-		pid := td.RandPeerID()
-		td.network.EventCh <- &network.ConnectEvent{
-			PeerID:        pid,
-			RemoteAddress: "address_1",
-			SupportStream: false,
-		}
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeHello)
+	assert.Eventually(t, func() bool {
 		p := td.sync.peerSet.GetPeer(pid)
-		assert.Equal(t, p.Status, peerset.StatusCodeConnected)
+		if p == nil {
+			return false
+		}
 		assert.Equal(t, p.Address, "address_1")
-	})
+		return p.Status == peerset.StatusCodeConnected
+	}, time.Second, 100*time.Millisecond)
+
+	// Receiving connect event for the second time
+	td.sync.peerSet.UpdateStatus(pid, peerset.StatusCodeKnown)
+	td.network.EventCh <- ce
+	p := td.sync.peerSet.GetPeer(pid)
+	assert.Equal(t, peerset.StatusCodeKnown, p.Status)
 }
 
-func TestDisconnectEvents(t *testing.T) {
+func TestDisconnectEvent(t *testing.T) {
 	td := setup(t, nil)
 	pid := td.RandPeerID()
 	td.network.EventCh <- &network.DisconnectEvent{
@@ -266,11 +261,37 @@ func TestDisconnectEvents(t *testing.T) {
 	}, time.Second, 100*time.Millisecond)
 }
 
+func TestProtocolsEvent(t *testing.T) {
+	td := setup(t, nil)
+
+	t.Run("Support stream", func(t *testing.T) {
+		pid := td.RandPeerID()
+		td.network.EventCh <- &network.ProtocolsEvents{
+			PeerID:        pid,
+			Protocols:     []string{"protocol-1"},
+			SupportStream: true,
+		}
+
+		td.shouldPublishMessageWithThisType(t, message.TypeHello)
+	})
+
+	t.Run("Doesn't support stream", func(t *testing.T) {
+		pid := td.RandPeerID()
+		td.network.EventCh <- &network.ProtocolsEvents{
+			PeerID:        pid,
+			Protocols:     []string{"protocol-1"},
+			SupportStream: false,
+		}
+
+		td.shouldNotPublishMessageWithThisType(t, message.TypeHello)
+	})
+}
+
 func TestTestNetFlags(t *testing.T) {
 	td := setup(t, nil)
 
 	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.valKeys[0].PublicKey())
-	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(td.RandHeight()))
+	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(td.RandHeight(), td.RandValAddress()))
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
 }
@@ -288,7 +309,7 @@ func TestDownload(t *testing.T) {
 		pid := td.RandPeerID()
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
+		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
 	})
 
 	t.Run("try to download blocks, but the peer is not a network node", func(t *testing.T) {
@@ -298,7 +319,7 @@ func TestDownload(t *testing.T) {
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
+		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
 	})
 
 	t.Run("try to download blocks and the peer is a network node", func(t *testing.T) {
@@ -308,7 +329,7 @@ func TestDownload(t *testing.T) {
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
+		td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
 	})
 
 	t.Run("download request is rejected", func(t *testing.T) {
@@ -325,7 +346,7 @@ func TestDownload(t *testing.T) {
 		msg1 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, t.Name(),
 			ssn1.SessionID, 1, nil, nil)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg1, pid1))
-		bdl := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
+		bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
 
 		msg2 := bdl.Message.(*message.BlocksRequestMessage)
 		ssn2 := td.sync.peerSet.FindSession(msg2.SessionID)
@@ -343,6 +364,44 @@ func TestDownload(t *testing.T) {
 
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, td.network, message.TypeBlocksRequest)
+		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
 	})
+}
+
+func TestBroadcastBlockAnnounce(t *testing.T) {
+	td := setup(t, nil)
+
+	t.Run("Should announce the block", func(t *testing.T) {
+		blk, cert := td.GenerateTestBlock(td.RandHeight())
+		msg := message.NewBlockAnnounceMessage(blk, cert)
+
+		td.sync.broadcast(msg)
+
+		td.shouldPublishMessageWithThisType(t, message.TypeBlockAnnounce)
+	})
+
+	t.Run("Should NOT announce the block", func(t *testing.T) {
+		blk, cert := td.GenerateTestBlock(td.RandHeight())
+		msg := message.NewBlockAnnounceMessage(blk, cert)
+
+		td.sync.cache.AddBlock(blk)
+		td.sync.broadcast(msg)
+
+		td.shouldNotPublishMessageWithThisType(t, message.TypeBlockAnnounce)
+	})
+}
+
+func TestBundleSequenceNo(t *testing.T) {
+	td := setup(t, nil)
+
+	msg := message.NewQueryProposalMessage(td.RandHeight(), td.RandValAddress())
+
+	td.sync.broadcast(msg)
+	bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeQueryProposal)
+	assert.Equal(t, 0, bdl1.SequenceNo)
+
+	// Sending the same message again
+	td.sync.broadcast(msg)
+	bdl2 := td.shouldPublishMessageWithThisType(t, message.TypeQueryProposal)
+	assert.Equal(t, 1, bdl2.SequenceNo)
 }

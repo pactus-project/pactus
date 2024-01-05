@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -11,46 +12,69 @@ import (
 
 func TestSaveMainnetConfig(t *testing.T) {
 	path := util.TempFilePath()
-	assert.NoError(t, SaveMainnetConfig(path, 7))
+	assert.NoError(t, SaveMainnetConfig(path))
 
-	defConf := DefaultConfigMainnet()
+	defConf := DefaultConfigMainnet(param.DefaultParams())
 	conf, err := LoadFromFile(path, true, defConf)
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
+	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
+	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
+	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
+	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
 }
 
-func TestSaveTestnetConfig(t *testing.T) {
+func TestSaveConfig(t *testing.T) {
 	path := util.TempFilePath()
-	assert.NoError(t, SaveTestnetConfig(path, 7))
+	conf := defaultConfig()
+	assert.NoError(t, conf.Save(path))
 
-	defConf := DefaultConfigTestnet()
+	defConf := DefaultConfigTestnet(param.DefaultParams())
 	conf, err := LoadFromFile(path, true, defConf)
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
 	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet-v2")
 	assert.Equal(t, conf.Network.DefaultPort, 21777)
+	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
+	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
+	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
+	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
 }
 
-func TestSaveLocalnetConfig(t *testing.T) {
-	path := util.TempFilePath()
-	assert.NoError(t, SaveLocalnetConfig(path, 4))
-
-	defConf := DefaultConfigLocalnet()
-	conf, err := LoadFromFile(path, true, defConf)
-	assert.NoError(t, err)
+func TestLocalnetConfig(t *testing.T) {
+	conf := DefaultConfigLocalnet(param.DefaultParams())
 
 	assert.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
 	assert.Empty(t, conf.Network.RelayAddrStrings)
 	assert.Equal(t, conf.Network.NetworkName, "pactus-localnet")
 	assert.Equal(t, conf.Network.DefaultPort, 21666)
+	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
+	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
+	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
+	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
+}
+
+func TestTestnetConfig(t *testing.T) {
+	conf := DefaultConfigTestnet(param.DefaultParams())
+
+	assert.NoError(t, conf.BasicCheck())
+	assert.NotEmpty(t, conf.Network.ListenAddrStrings)
+	assert.NotEmpty(t, conf.Network.DefaultRelayAddrStrings)
+	assert.Empty(t, conf.Network.RelayAddrStrings)
+	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet-v2")
+	assert.Equal(t, conf.Network.DefaultPort, 21777)
+	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
+	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
+	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
+	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
 }
 
 func TestLoadFromFile(t *testing.T) {
 	path := util.TempFilePath()
-	defConf := DefaultConfigTestnet()
+	defConf := DefaultConfigTestnet(param.DefaultParams())
 
 	_, err := LoadFromFile(path, true, defConf)
 	assert.Error(t, err, "not exists")
@@ -62,6 +86,10 @@ func TestLoadFromFile(t *testing.T) {
 	conf, err := LoadFromFile(path, false, defConf)
 	assert.NoError(t, err)
 	assert.Equal(t, conf, defConf)
+	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
+	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
+	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
+	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
 }
 
 func TestExampleConfig(t *testing.T) {
@@ -77,40 +105,26 @@ func TestExampleConfig(t *testing.T) {
 		}
 	}
 
-	defaultConf := DefaultConfigMainnet()
+	defaultConf := DefaultConfigMainnet(param.DefaultParams())
 	defaultToml := string(defaultConf.toTOML())
 
-	exampleToml = strings.ReplaceAll(exampleToml, "%num_validators%", "7")
 	exampleToml = strings.ReplaceAll(exampleToml, "##", "")
 	exampleToml = strings.ReplaceAll(exampleToml, "\r\n", "\n") // For Windows
 	exampleToml = strings.ReplaceAll(exampleToml, "\n\n", "\n")
 	defaultToml = strings.ReplaceAll(defaultToml, "\n\n", "\n")
 
 	assert.Equal(t, defaultToml, exampleToml)
+	assert.Equal(t, defaultConf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
+	assert.Equal(t, defaultConf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
+	assert.Equal(t, defaultConf.Store.AccountCacheSize, 1024)
+	assert.Equal(t, defaultConf.Store.PublicKeyCacheSize, 1024)
 }
 
 func TestNodeConfigBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	t.Run("invalid number of validators", func(t *testing.T) {
-		conf := DefaultNodeConfig()
-		conf.NumValidators = 0
-
-		assert.Error(t, conf.BasicCheck())
-	})
-
-	t.Run("invalid number of reward addresses", func(t *testing.T) {
-		conf := DefaultNodeConfig()
-		conf.RewardAddresses = []string{
-			ts.RandAccAddress().String(),
-		}
-
-		assert.Error(t, conf.BasicCheck())
-	})
-
 	t.Run("invalid reward addresses", func(t *testing.T) {
 		conf := DefaultNodeConfig()
-		conf.NumValidators = 2
 		conf.RewardAddresses = []string{
 			ts.RandAccAddress().String(),
 			"abcd",
@@ -121,7 +135,6 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 
 	t.Run("validator address as reward address", func(t *testing.T) {
 		conf := DefaultNodeConfig()
-		conf.NumValidators = 1
 		conf.RewardAddresses = []string{
 			ts.RandValAddress().String(),
 		}
@@ -131,7 +144,6 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 
 	t.Run("ok", func(t *testing.T) {
 		conf := DefaultNodeConfig()
-		conf.NumValidators = 2
 		conf.RewardAddresses = []string{
 			ts.RandAccAddress().String(),
 			ts.RandAccAddress().String(),
@@ -142,7 +154,6 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 
 	t.Run("no reward addresses inside config, Ok", func(t *testing.T) {
 		conf := DefaultNodeConfig()
-		conf.NumValidators = 2
 		conf.RewardAddresses = []string{}
 
 		assert.NoError(t, conf.BasicCheck())

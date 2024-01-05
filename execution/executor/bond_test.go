@@ -56,6 +56,7 @@ func TestExecuteBondTx(t *testing.T) {
 	t.Run("Should fail, unbonded before", func(t *testing.T) {
 		unbondedPub, _ := td.RandBLSKeyPair()
 		val := td.sandbox.MakeNewValidator(unbondedPub)
+		val.UpdateLastBondingHeight(1)
 		val.UpdateUnbondingHeight(td.sandbox.CurrentHeight())
 		td.sandbox.UpdateValidator(val)
 		trx := tx.NewBondTx(lockTime, senderAddr,
@@ -140,6 +141,7 @@ func TestBondJoiningCommittee(t *testing.T) {
 	lockTime := td.sandbox.CurrentHeight()
 
 	val := td.sandbox.MakeNewValidator(pub)
+	val.UpdateLastBondingHeight(1)
 	val.UpdateLastSortitionHeight(td.sandbox.CurrentHeight())
 	td.sandbox.UpdateValidator(val)
 	td.sandbox.JoinedToCommittee(val.Address())
@@ -171,7 +173,7 @@ func TestStakeExceeded(t *testing.T) {
 	assert.Equal(t, errors.Code(err), errors.ErrInvalidAmount)
 }
 
-func TestPwerDeltaBond(t *testing.T) {
+func TestPowerDeltaBond(t *testing.T) {
 	td := setup(t)
 	exe := NewBondExecutor(true)
 

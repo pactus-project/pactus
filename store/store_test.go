@@ -19,15 +19,26 @@ type testData struct {
 	store *store
 }
 
-func setup(t *testing.T) *testData {
+func testConfig() *Config {
+	return &Config{
+		Path:               util.TempDirPath(),
+		TxCacheSize:        1024,
+		SortitionCacheSize: 1024,
+		AccountCacheSize:   1024,
+		PublicKeyCacheSize: 1024,
+	}
+}
+
+func setup(t *testing.T, config *Config) *testData {
 	t.Helper()
 
 	ts := testsuite.NewTestSuite(t)
 
-	conf := &Config{
-		Path: util.TempDirPath(),
+	if config == nil {
+		config = testConfig()
 	}
-	s, err := NewStore(conf)
+
+	s, err := NewStore(config)
 	require.NoError(t, err)
 
 	td := &testData{
@@ -38,7 +49,6 @@ func setup(t *testing.T) *testData {
 	// Save 10 blocks
 	for height := uint32(0); height < 10; height++ {
 		blk, cert := td.GenerateTestBlock(height + 1)
-
 		td.store.SaveBlock(blk, cert)
 		assert.NoError(t, td.store.WriteBatch())
 	}
@@ -46,7 +56,7 @@ func setup(t *testing.T) *testData {
 }
 
 func TestBlockHash(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	sb, _ := td.store.Block(1)
 
@@ -56,7 +66,7 @@ func TestBlockHash(t *testing.T) {
 }
 
 func TestBlockHeight(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	sb, _ := td.store.Block(1)
 
@@ -66,7 +76,7 @@ func TestBlockHeight(t *testing.T) {
 }
 
 func TestUnknownTransactionID(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	trx, err := td.store.Transaction(td.RandHash())
 	assert.Error(t, err)
@@ -74,7 +84,7 @@ func TestUnknownTransactionID(t *testing.T) {
 }
 
 func TestWriteAndClosePeacefully(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	// After closing db, we should not crash
 	assert.NoError(t, td.store.Close())
@@ -82,7 +92,7 @@ func TestWriteAndClosePeacefully(t *testing.T) {
 }
 
 func TestRetrieveBlockAndTransactions(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	lastCert := td.store.LastCertificate()
 	lastHeight := lastCert.Height()
@@ -99,20 +109,23 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 		assert.Equal(t, trx.ID(), committedTx.TxID)
 		assert.Equal(t, lastHeight, committedTx.Height)
 		trx2, _ := committedTx.ToTx()
-		assert.Equal(t, trx2.ID(), trx.ID())
+		assert.Equal(t, trx.ID(), trx2.ID())
 	}
 }
 
 func TestIndexingPublicKeys(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	committedBlock, _ := td.store.Block(1)
 	blk, _ := committedBlock.ToBlock()
 	for _, trx := range blk.Transactions() {
 		addr := trx.Payload().Signer()
 		pub, found := td.store.PublicKey(addr)
+		pubKeyLruCache, ok := td.store.blockStore.pubKeyCache.Get(addr)
 
 		assert.NoError(t, found)
+		assert.True(t, ok)
+		assert.Equal(t, pub, pubKeyLruCache)
 
 		if addr.IsAccountAddress() {
 			assert.Equal(t, pub.AccountAddress(), addr)
@@ -121,13 +134,18 @@ func TestIndexingPublicKeys(t *testing.T) {
 		}
 	}
 
-	pub, found := td.store.PublicKey(td.RandValAddress())
+	randValAddress := td.RandValAddress()
+	pub, found := td.store.PublicKey(randValAddress)
+	pubKeyLruCache, ok := td.store.blockStore.pubKeyCache.Get(randValAddress)
+
 	assert.Error(t, found)
 	assert.Nil(t, pub)
+	assert.False(t, ok)
+	assert.Nil(t, pubKeyLruCache)
 }
 
 func TestStrippedPublicKey(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	// Find a public key that we have already indexed in the database.
 	committedBlock1, _ := td.store.Block(1)

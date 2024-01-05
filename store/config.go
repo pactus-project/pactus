@@ -5,16 +5,25 @@ import (
 	"os"
 
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type Config struct {
 	Path string `toml:"path"`
+
+	// Private configs
+	TxCacheSize        uint32 `toml:"-"`
+	SortitionCacheSize uint32 `toml:"-"`
+	AccountCacheSize   int    `toml:"-"`
+	PublicKeyCacheSize int    `toml:"-"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		Path: "data",
+		Path:               "data",
+		TxCacheSize:        0,
+		SortitionCacheSize: 0,
+		AccountCacheSize:   1024,
+		PublicKeyCacheSize: 1024,
 	}
 }
 
@@ -29,7 +38,19 @@ func (conf *Config) StorePath() string {
 // BasicCheck performs basic checks on the configuration.
 func (conf *Config) BasicCheck() error {
 	if !util.IsValidDirPath(conf.Path) {
-		return errors.Errorf(errors.ErrInvalidConfig, "path is not valid")
+		return InvalidConfigError{
+			Reason: "path is not valid",
+		}
 	}
+
+	if conf.TxCacheSize == 0 ||
+		conf.SortitionCacheSize == 0 ||
+		conf.AccountCacheSize == 0 ||
+		conf.PublicKeyCacheSize == 0 {
+		return InvalidConfigError{
+			Reason: "cache size set to zero",
+		}
+	}
+
 	return nil
 }

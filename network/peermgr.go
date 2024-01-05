@@ -5,12 +5,9 @@ import (
 	"sync"
 	"time"
 
-	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
-	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnet "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
-	lp2pswarm "github.com/libp2p/go-libp2p/p2p/net/swarm"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/logger"
 )
@@ -18,7 +15,6 @@ import (
 type peerInfo struct {
 	MultiAddress multiaddr.Multiaddr
 	Direction    lp2pnet.Direction
-	Protocols    []lp2pcore.ProtocolID
 }
 
 // Peer Manager attempts to establish connections with other nodes when the
@@ -26,31 +22,27 @@ type peerInfo struct {
 type peerMgr struct {
 	lk sync.RWMutex
 
-	ctx              context.Context
-	bootstrapAddrs   []lp2ppeer.AddrInfo
-	minConns         int
-	maxConns         int
-	host             lp2phost.Host
-	dht              *lp2pdht.IpfsDHT
-	peers            map[lp2ppeer.ID]*peerInfo
-	streamProtocolID lp2pcore.ProtocolID
-	logger           *logger.SubLogger
+	ctx            context.Context
+	bootstrapAddrs []lp2ppeer.AddrInfo
+	minConns       int
+	maxConns       int
+	host           lp2phost.Host
+	peers          map[lp2ppeer.ID]*peerInfo
+	logger         *logger.SubLogger
 }
 
 // newPeerMgr creates a new Peer Manager instance.
-func newPeerMgr(ctx context.Context, h lp2phost.Host, dht *lp2pdht.IpfsDHT,
-	streamProtocolID lp2pcore.ProtocolID, conf *Config, log *logger.SubLogger,
+func newPeerMgr(ctx context.Context, h lp2phost.Host,
+	conf *Config, log *logger.SubLogger,
 ) *peerMgr {
 	b := &peerMgr{
-		ctx:              ctx,
-		bootstrapAddrs:   conf.BootstrapAddrInfos(),
-		minConns:         conf.MinConns,
-		maxConns:         conf.MaxConns,
-		streamProtocolID: streamProtocolID,
-		peers:            make(map[lp2ppeer.ID]*peerInfo),
-		host:             h,
-		dht:              dht,
-		logger:           log,
+		ctx:            ctx,
+		bootstrapAddrs: conf.BootstrapAddrInfos(),
+		minConns:       conf.ScaledMinConns(),
+		maxConns:       conf.ScaledMaxConns(),
+		peers:          make(map[lp2ppeer.ID]*peerInfo),
+		host:           h,
+		logger:         log,
 	}
 
 	return b
@@ -75,9 +67,7 @@ func (mgr *peerMgr) Start() {
 	}()
 }
 
-// Stop stops the Bootstrap.
 func (mgr *peerMgr) Stop() {
-	// TODO: complete me
 }
 
 func (mgr *peerMgr) NumOfConnected() int {
@@ -87,8 +77,7 @@ func (mgr *peerMgr) NumOfConnected() int {
 	return len(mgr.peers) // TODO: try to keep record of all peers + connected peers
 }
 
-func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
-	direction lp2pnet.Direction, protocols []lp2pcore.ProtocolID,
+func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr, direction lp2pnet.Direction,
 ) {
 	mgr.lk.Lock()
 	defer mgr.lk.Unlock()
@@ -96,7 +85,6 @@ func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
 	mgr.peers[pid] = &peerInfo{
 		MultiAddress: ma,
 		Direction:    direction,
-		Protocols:    protocols,
 	}
 }
 
@@ -105,6 +93,17 @@ func (mgr *peerMgr) RemovePeer(pid lp2ppeer.ID) {
 	defer mgr.lk.Unlock()
 
 	delete(mgr.peers, pid)
+}
+
+func (mgr *peerMgr) GetMultiAddr(pid lp2ppeer.ID) multiaddr.Multiaddr {
+	mgr.lk.RLock()
+	defer mgr.lk.RUnlock()
+
+	peer := mgr.peers[pid]
+	if peer == nil {
+		return nil
+	}
+	return peer.MultiAddress
 }
 
 // checkConnectivity performs the actual work of maintaining connections.
@@ -123,9 +122,6 @@ func (mgr *peerMgr) CheckConnectivity() {
 		connectedness := net.Connectedness(pid)
 		if connectedness == lp2pnet.Connected {
 			connectedPeers = append(connectedPeers, pid)
-		} else {
-			mgr.logger.Debug("peer is not connected to us", "peer", pid)
-			delete(mgr.peers, pid)
 		}
 	}
 
@@ -141,20 +137,16 @@ func (mgr *peerMgr) CheckConnectivity() {
 			"count", len(connectedPeers),
 			"min", mgr.minConns)
 
-		for _, pi := range mgr.bootstrapAddrs {
-			mgr.logger.Debug("try connecting to a bootstrap peer", "peer", pi.String())
+		for _, ai := range mgr.bootstrapAddrs {
+			mgr.logger.Debug("try connecting to a bootstrap peer", "peer", ai.String())
 
 			// Don't try to connect to an already connected peer.
-			if HasPID(connectedPeers, pi.ID) {
-				mgr.logger.Trace("already connected", "peer", pi.String())
+			if HasPID(connectedPeers, ai.ID) {
+				mgr.logger.Trace("already connected", "peer", ai.String())
 				continue
 			}
 
-			if swarm, ok := mgr.host.Network().(*lp2pswarm.Swarm); ok {
-				swarm.Backoff().Clear(pi.ID)
-			}
-
-			ConnectAsync(mgr.ctx, mgr.host, pi, mgr.logger)
+			ConnectAsync(mgr.ctx, mgr.host, ai, mgr.logger)
 		}
 	}
 }

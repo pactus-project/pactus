@@ -245,7 +245,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 			return
 		}
 
-		if err := cs.bcState.ValidateBlock(p.Block()); err != nil {
+		if err := cs.bcState.ValidateBlock(p.Block(), p.Round()); err != nil {
 			cs.logger.Warn("invalid block", "proposal", p, "error", err)
 			return
 		}
@@ -364,7 +364,7 @@ func (cs *consensus) signAddVote(v *vote.Vote) {
 
 func (cs *consensus) queryProposal() {
 	cs.broadcaster(cs.valKey.Address(),
-		message.NewQueryProposalMessage(cs.height))
+		message.NewQueryProposalMessage(cs.height, cs.valKey.Address()))
 }
 
 // queryVotes is an anti-entropy mechanism to retrieve missed votes
@@ -372,7 +372,7 @@ func (cs *consensus) queryProposal() {
 // However, invoking this method might result in unnecessary bandwidth usage.
 func (cs *consensus) queryVotes() {
 	cs.broadcaster(cs.valKey.Address(),
-		message.NewQueryVotesMessage(cs.height, cs.round))
+		message.NewQueryVotesMessage(cs.height, cs.round, cs.valKey.Address()))
 }
 
 func (cs *consensus) broadcastProposal(p *proposal.Proposal) {

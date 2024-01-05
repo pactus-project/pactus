@@ -64,7 +64,8 @@ func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
 }
 
 func (m *MockSandbox) MakeNewAccount(_ crypto.Address) *account.Account {
-	return account.NewAccount(m.TestStore.TotalAccounts())
+	acc := account.NewAccount(m.TestStore.TotalAccounts())
+	return acc
 }
 
 func (m *MockSandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
@@ -92,7 +93,8 @@ func (m *MockSandbox) IsJoinedCommittee(addr crypto.Address) bool {
 }
 
 func (m *MockSandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
-	return validator.NewValidator(pub, m.TestStore.TotalValidators())
+	val := validator.NewValidator(pub, m.TestStore.TotalValidators())
+	return val
 }
 
 func (m *MockSandbox) UpdateValidator(val *validator.Validator) {

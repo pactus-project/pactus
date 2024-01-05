@@ -5088,7 +5088,9 @@ proto.pactus.VoteInfo.toObject = function(includeInstance, msg) {
     type: jspb.Message.getFieldWithDefault(msg, 1, 0),
     voter: jspb.Message.getFieldWithDefault(msg, 2, ""),
     blockHash: msg.getBlockHash_asB64(),
-    round: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    round: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    cpRound: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    cpValue: jspb.Message.getFieldWithDefault(msg, 6, 0)
   };
 
   if (includeInstance) {
@@ -5140,6 +5142,14 @@ proto.pactus.VoteInfo.deserializeBinaryFromReader = function(msg, reader) {
     case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setRound(value);
+      break;
+    case 5:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setCpRound(value);
+      break;
+    case 6:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setCpValue(value);
       break;
     default:
       reader.skipField();
@@ -5195,6 +5205,20 @@ proto.pactus.VoteInfo.serializeBinaryToWriter = function(message, writer) {
   if (f !== 0) {
     writer.writeInt32(
       4,
+      f
+    );
+  }
+  f = message.getCpRound();
+  if (f !== 0) {
+    writer.writeInt32(
+      5,
+      f
+    );
+  }
+  f = message.getCpValue();
+  if (f !== 0) {
+    writer.writeInt32(
+      6,
       f
     );
   }
@@ -5294,6 +5318,42 @@ proto.pactus.VoteInfo.prototype.getRound = function() {
  */
 proto.pactus.VoteInfo.prototype.setRound = function(value) {
   return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional int32 cp_round = 5;
+ * @return {number}
+ */
+proto.pactus.VoteInfo.prototype.getCpRound = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.VoteInfo} returns this
+ */
+proto.pactus.VoteInfo.prototype.setCpRound = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional int32 cp_value = 6;
+ * @return {number}
+ */
+proto.pactus.VoteInfo.prototype.getCpValue = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.VoteInfo} returns this
+ */
+proto.pactus.VoteInfo.prototype.setCpValue = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 

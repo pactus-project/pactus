@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
@@ -25,9 +26,9 @@ var (
 	ErrBadOffset = errors.New("offset is out of range")
 )
 
-const lastStoreVersion = int32(1)
-
-// TODO: add cache for me
+const (
+	lastStoreVersion = int32(1)
+)
 
 var (
 	lastInfoKey       = []byte{0x00}
@@ -36,17 +37,26 @@ var (
 	accountPrefix     = []byte{0x05}
 	validatorPrefix   = []byte{0x07}
 	blockHeightPrefix = []byte{0x09}
-	publicKeyPrefix   = []byte{0x0a}
+	publicKeyPrefix   = []byte{0x0a} // TODO: make me 0xb on Mainnet
 )
 
 func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 	data, err := db.Get(key, nil)
 	if err != nil {
 		// Probably key doesn't exist in database
-		logger.Trace("database error", "error", err, "key", key)
+		logger.Trace("database `get` error", "error", err, "key", key)
 		return nil, err
 	}
 	return data, nil
+}
+
+func tryHas(db *leveldb.DB, key []byte) bool {
+	ok, err := db.Has(key, nil)
+	if err != nil {
+		logger.Error("database `has` error", "error", err, "key", key)
+		return false
+	}
+	return ok
 }
 
 type store struct {
@@ -66,6 +76,7 @@ func NewStore(conf *Config) (Store, error) {
 		Strict:      opt.DefaultStrict,
 		Compression: opt.NoCompression,
 	}
+
 	db, err := leveldb.OpenFile(conf.StorePath(), options)
 	if err != nil {
 		return nil, err
@@ -74,11 +85,42 @@ func NewStore(conf *Config) (Store, error) {
 		config:         conf,
 		db:             db,
 		batch:          new(leveldb.Batch),
-		blockStore:     newBlockStore(db),
-		txStore:        newTxStore(db),
-		accountStore:   newAccountStore(db),
+		blockStore:     newBlockStore(db, conf.SortitionCacheSize, conf.PublicKeyCacheSize),
+		txStore:        newTxStore(db, conf.TxCacheSize),
+		accountStore:   newAccountStore(db, conf.AccountCacheSize),
 		validatorStore: newValidatorStore(db),
 	}
+
+	lc := s.LastCertificate()
+	if lc == nil {
+		return s, nil
+	}
+
+	currentHeight := lc.Height()
+	startHeight := uint32(1)
+	if currentHeight > conf.TxCacheSize {
+		startHeight = currentHeight - conf.TxCacheSize
+	}
+
+	for i := startHeight; i < currentHeight+1; i++ {
+		committedBlock, err := s.Block(i)
+		if err != nil {
+			return nil, err
+		}
+		blk, err := committedBlock.ToBlock()
+		if err != nil {
+			return nil, err
+		}
+
+		txs := blk.Transactions()
+		for _, transaction := range txs {
+			s.txStore.saveToCache(transaction.ID(), i)
+		}
+
+		sortitionSeed := blk.Header().SortitionSeed()
+		s.blockStore.saveToCache(i, sortitionSeed)
+	}
+
 	return s, nil
 }
 
@@ -94,10 +136,9 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 	defer s.lk.Unlock()
 
 	height := cert.Height()
-	reg := s.blockStore.saveBlock(s.batch, height, blk)
-	for i, trx := range blk.Transactions() {
-		s.txStore.saveTx(s.batch, trx.ID(), &reg[i])
-	}
+	regs := s.blockStore.saveBlock(s.batch, height, blk)
+	s.txStore.saveTxs(s.batch, blk.Transactions(), regs)
+	s.txStore.pruneCache(height)
 
 	// Save last certificate: [version: 4 bytes]+[certificate: variant]
 	w := bytes.NewBuffer(make([]byte, 0, 4+cert.SerializeSize()))
@@ -155,17 +196,18 @@ func (s *store) BlockHash(height uint32) hash.Hash {
 	return hash.UndefHash
 }
 
-func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
-	bs, err := tryGet(s.db, publicKeyKey(addr))
-	if err != nil {
-		return nil, err
-	}
-	pubKey, err := bls.PublicKeyFromBytes(bs)
-	if err != nil {
-		return nil, err
-	}
+func (s *store) SortitionSeed(blockHeight uint32) *sortition.VerifiableSeed {
+	s.lk.Lock()
+	defer s.lk.Unlock()
 
-	return pubKey, err
+	return s.blockStore.sortitionSeed(blockHeight)
+}
+
+func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
+	return s.blockStore.publicKey(addr)
 }
 
 func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {
@@ -196,14 +238,11 @@ func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {
 	}, nil
 }
 
-// TODO implement Dequeue for this function, for the better performance.
 func (s *store) AnyRecentTransaction(id tx.ID) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	pos, _ := s.txStore.tx(id)
-
-	return pos != nil
+	return s.txStore.hasTX(id)
 }
 
 func (s *store) HasAccount(addr crypto.Address) bool {

@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -102,6 +103,72 @@ func TestSendRawTransaction(t *testing.T) {
 		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: data})
 		assert.Error(t, err)
 		assert.Nil(t, res)
+	})
+	assert.Nil(t, conn.Close(), "Error closing connection")
+}
+
+func TestGetRawTransaction(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	conn, client := testTransactionClient(t)
+
+	t.Run("Transfer", func(t *testing.T) {
+		trx, _ := ts.GenerateTestTransferTx()
+
+		res, err := client.GetRawTransferTransaction(tCtx, &pactus.GetRawTransferTransactionRequest{
+			LockTime: trx.LockTime(),
+			Sender:   trx.Payload().Signer().String(),
+			Receiver: trx.Payload().Receiver().String(),
+			Amount:   trx.Payload().Value(),
+			Fee:      trx.Fee(),
+			Memo:     trx.Memo(),
+		})
+		assert.Nil(t, err)
+		fmt.Println(res.RawTransaction)
+	})
+
+	t.Run("Bond", func(t *testing.T) {
+		trx, _ := ts.GenerateTestBondTx()
+
+		res, err := client.GetRawBondTransaction(tCtx, &pactus.GetRawBondTransactionRequest{
+			LockTime:  trx.LockTime(),
+			Sender:    trx.Payload().Signer().String(),
+			Receiver:  trx.Payload().Receiver().String(),
+			Stake:     trx.Payload().Value(),
+			PublicKey: "",
+			Fee:       trx.Fee(),
+			Memo:      trx.Memo(),
+		})
+		assert.Nil(t, err)
+		fmt.Println(res.RawTransaction)
+	})
+
+	t.Run("UnBond", func(t *testing.T) {
+		trx, _ := ts.GenerateTestUnbondTx()
+
+		res, err := client.GetRawUnBondTransaction(tCtx, &pactus.GetRawUnBondTransactionRequest{
+			LockTime:         trx.LockTime(),
+			ValidatorAddress: trx.Payload().Signer().String(),
+			Memo:             trx.Memo(),
+		})
+		assert.Nil(t, err)
+		fmt.Println(res.RawTransaction)
+	})
+
+	t.Run("Withdraw", func(t *testing.T) {
+		trx, privateKey := ts.GenerateTestWithdrawTx()
+
+		res, err := client.GetRawWithdrawTransaction(tCtx, &pactus.GetRawWithdrawTransactionRequest{
+			LockTime:         trx.LockTime(),
+			ValidatorAddress: privateKey.PublicKeyNative().ValidatorAddress().String(),
+			AccountAddress:   privateKey.PublicKeyNative().AccountAddress().String(),
+			Fee:              trx.Fee(),
+			Amount:           trx.Payload().Value(),
+			Memo:             trx.Memo(),
+		})
+		fmt.Println(err)
+		assert.Nil(t, err)
+		fmt.Println(res.RawTransaction)
 	})
 	assert.Nil(t, conn.Close(), "Error closing connection")
 }

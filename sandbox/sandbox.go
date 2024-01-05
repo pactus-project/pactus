@@ -277,18 +277,14 @@ func (sb *sandbox) PowerDelta() int64 {
 
 // VerifyProof verifies proof of a sortition transaction.
 func (sb *sandbox) VerifyProof(blockHeight uint32, proof sortition.Proof, val *validator.Validator) bool {
-	committedBlock, err := sb.store.Block(blockHeight)
-	if err != nil {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	seed := sb.store.SortitionSeed(blockHeight)
+	if seed == nil {
 		return false
 	}
-	// TODO: improvement:
-	// We can get the sortition seed without parsing the block
-	blk, err := committedBlock.ToBlock()
-	if err != nil {
-		return false
-	}
-	seed := blk.Header().SortitionSeed()
-	return sortition.VerifyProof(seed, proof, val.PublicKey(), sb.totalPower, val.Power())
+	return sortition.VerifyProof(*seed, proof, val.PublicKey(), sb.totalPower, val.Power())
 }
 
 func (sb *sandbox) CommitTransaction(trx *tx.Tx) {

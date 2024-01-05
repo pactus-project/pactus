@@ -3,23 +3,18 @@ package grpc
 import (
 	"context"
 
-	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type blockchainServer struct {
-	state   state.Facade
-	consMgr consensus.ManagerReader
-	logger  *logger.SubLogger
+	*Server
 }
 
 func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
@@ -265,10 +260,19 @@ func accountToProto(addr crypto.Address, acc *account.Account) *pactus.AccountIn
 }
 
 func voteToProto(v *vote.Vote) *pactus.VoteInfo {
+	cpRound := int32(0)
+	cpValue := int32(0)
+	if v.IsCPVote() {
+		cpRound = int32(v.CPRound())
+		cpValue = int32(v.CPValue())
+	}
+
 	return &pactus.VoteInfo{
 		Type:      pactus.VoteType(v.Type()),
 		Voter:     v.Signer().String(),
 		BlockHash: v.BlockHash().Bytes(),
 		Round:     int32(v.Round()),
+		CpRound:   cpRound,
+		CpValue:   cpValue,
 	}
 }

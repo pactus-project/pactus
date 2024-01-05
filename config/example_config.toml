@@ -3,9 +3,6 @@
 # `node` contains configuration options for the Pactus node.
 [node]
 
-  # `num_validators` specifies the number of validators (consensus instances) to run on this node.
-  num_validators = %num_validators%
-
   # `reward_addresses` specifies the addresses for collecting rewards.
   # If it is empty, reward addresses will be obtained from the wallet.
   # The number of reward addresses should be the same as the number of validators.
@@ -39,13 +36,9 @@
   # These addresses are used by the Pactus node to discover and connect to other peers on the network.
  ## bootstrap_addrs = []
 
-  # `min_connections` is the minimum number of connections that the Pactus node should maintain.
-  # Default is `16`.
- ## min_connections = 16
-
-  # `max_connections` is the maximum number of connections that the Pactus node should maintain.
-  # Default is `32`.
- ## max_connections = 32
+  # `max_connections` is the maximum number of connections that the Pactus node maintains.
+  # Default is `64`.
+ ## max_connections = 64
 
   # `enable_nat_service` provides a service to other peer for determining their reachability status.
   # Default is `false`.
@@ -124,18 +117,30 @@
   # Default is `true`.
  ## colorful = true
 
+  # `max_backups` is the maximum number of old log files to retain.
+  # Default is `0`.
+ ## max_backups = 0
+
+  # `rotate_log_after_days` is the maximum number of days to retain old log files.
+  # Default is `1`.
+ ## rotate_log_after_days = 1
+
+  # `compress` determines if the rotated log files should be compressed.
+  # Default is `true`.
+ ## compress = true
+
   # `logger.levels` contains the level of logger per module.
   # Available log levels are:
   #   "trace", "debug", "info", "warn", and "error".
   [logger.levels]
-   ## _consensus = "info"
+   ## _consensus = "warn"
    ## _grpc = "error"
    ## _http = "error"
-   ## _network = "info"
+   ## _network = "error"
    ## _nonomsg = "error"
    ## _pool = "error"
    ## _state = "info"
-   ## _sync = "warn"
+   ## _sync = "error"
    ## default = "info"
 
 # `grpc` contains configuration of the gRRC module.

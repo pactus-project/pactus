@@ -11,21 +11,25 @@ import (
 )
 
 type Peer struct {
-	Status          StatusCode
-	Moniker         string
-	Agent           string
-	Address         string
-	PeerID          peer.ID
-	ConsensusKeys   []*bls.PublicKey
-	Services        service.Services
-	LastSent        time.Time
-	LastReceived    time.Time
-	LastBlockHash   hash.Hash
-	Height          uint32
-	ReceivedBundles int
-	InvalidBundles  int
-	ReceivedBytes   map[message.Type]int64
-	SentBytes       map[message.Type]int64
+	Status            StatusCode
+	Moniker           string
+	Agent             string
+	Address           string
+	Direction         string
+	Protocols         []string
+	PeerID            peer.ID
+	ConsensusKeys     []*bls.PublicKey
+	Services          service.Services
+	LastSent          time.Time
+	LastReceived      time.Time
+	LastBlockHash     hash.Hash
+	Height            uint32
+	ReceivedBundles   int
+	InvalidBundles    int
+	TotalSessions     int
+	CompletedSessions int
+	ReceivedBytes     map[message.Type]int64
+	SentBytes         map[message.Type]int64
 }
 
 func NewPeer(peerID peer.ID) *Peer {
@@ -35,6 +39,7 @@ func NewPeer(peerID peer.ID) *Peer {
 		PeerID:        peerID,
 		ReceivedBytes: make(map[message.Type]int64),
 		SentBytes:     make(map[message.Type]int64),
+		Protocols:     make([]string, 0),
 	}
 }
 

@@ -52,7 +52,7 @@ func (s *cpDecideState) onAddVote(v *vote.Vote) {
 		s.decide()
 	}
 
-	s.checkForTermination(v)
+	s.strongTermination()
 }
 
 func (s *cpDecideState) name() string {

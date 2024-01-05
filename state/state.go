@@ -14,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/state/lastinfo"
+	"github.com/pactus-project/pactus/state/score"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
@@ -47,6 +48,7 @@ type state struct {
 	lastInfo        *lastinfo.LastInfo
 	accountMerkle   *persistentmerkle.Tree
 	validatorMerkle *persistentmerkle.Tree
+	scoreMgr        *score.Manager
 	logger          *logger.SubLogger
 	eventCh         chan event.Event
 }
@@ -92,6 +94,33 @@ func LoadOrNewState(
 
 	txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 
+	// Restoring score manager
+	st.logger.Info("calculating the availability scores...")
+	scoreWindow := uint32(60000)
+	startHeight := uint32(2)
+	endHeight := st.lastInfo.BlockHeight()
+	if endHeight > scoreWindow {
+		startHeight = endHeight - scoreWindow
+	}
+
+	scoreMgr := score.NewScoreManager(scoreWindow)
+	for h := startHeight; h <= endHeight; h++ {
+		cb, err := st.store.Block(h)
+		if err != nil {
+			return nil, err
+		}
+		blk, err := cb.ToBlock()
+		if err != nil {
+			return nil, err
+		}
+		scoreMgr.SetCertificate(blk.PrevCertificate())
+	}
+	st.scoreMgr = scoreMgr
+
+	for _, num := range st.committee.Committers() {
+		st.logger.Debug("availability score", "val", num, "score", st.scoreMgr.AvailabilityScore(num))
+	}
+
 	st.logger.Debug("last info", "committers", st.committee.Committers(), "state_root", st.stateRoot())
 
 	return st, nil
@@ -108,12 +137,12 @@ func (st *state) tryLoadLastInfo() error {
 	// This check is not strictly necessary, since the genesis state is already committed.
 	// However, it is good to perform this check to ensure that the genesis document has not been modified.
 	genStateRoot := st.calculateGenesisStateRootFromGenesisDoc()
-	blockOneInfo, err := st.store.Block(1)
+	committedBlockOne, err := st.store.Block(1)
 	if err != nil {
 		return err
 	}
 
-	blockOne, err := blockOneInfo.ToBlock()
+	blockOne, err := committedBlockOne.ToBlock()
 	if err != nil {
 		return err
 	}
@@ -153,11 +182,11 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 		return err
 	}
 
-	committeeInstance, err := committee.NewCommittee(vals, st.params.CommitteeSize, vals[0].Address())
+	cmt, err := committee.NewCommittee(vals, st.params.CommitteeSize, vals[0].Address())
 	if err != nil {
 		return err
 	}
-	st.committee = committeeInstance
+	st.committee = cmt
 	st.lastInfo.UpdateBlockTime(genDoc.GenesisTime())
 
 	return nil
@@ -346,7 +375,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		return nil, errors.Errorf(errors.ErrInvalidBlock, "no subsidy transaction")
 	}
 	txs.Prepend(subsidyTx)
-	preSeed := st.lastInfo.SortitionSeed()
+	prevSeed := st.lastInfo.SortitionSeed()
 
 	blk := block.MakeBlock(
 		st.params.BlockVersion,
@@ -355,17 +384,17 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		st.lastInfo.BlockHash(),
 		st.stateRoot(),
 		st.lastInfo.Certificate(),
-		preSeed.GenerateNext(valKey.PrivateKey()),
+		prevSeed.GenerateNext(valKey.PrivateKey()),
 		valKey.Address())
 
 	return blk, nil
 }
 
-func (st *state) ValidateBlock(blk *block.Block) error {
+func (st *state) ValidateBlock(blk *block.Block, round int16) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if err := st.validateBlock(blk); err != nil {
+	if err := st.validateBlock(blk, round); err != nil {
 		return err
 	}
 
@@ -407,21 +436,9 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 		return errors.Error(errors.ErrInvalidBlock)
 	}
 
-	err = st.validateBlock(blk)
+	err = st.validateBlock(blk, cert.Round())
 	if err != nil {
 		return err
-	}
-
-	// Verify proposer
-	proposer := st.committee.Proposer(cert.Round())
-	if proposer.Address() != blk.Header().ProposerAddress() {
-		return errors.Errorf(errors.ErrInvalidBlock,
-			"invalid proposer, expected %s, got %s", proposer.Address(), blk.Header().ProposerAddress())
-	}
-	// Validate sortition seed
-	seed := blk.Header().SortitionSeed()
-	if !seed.Verify(proposer.PublicKey(), st.lastInfo.SortitionSeed()) {
-		return errors.Errorf(errors.ErrInvalidBlock, "invalid sortition seed")
 	}
 
 	// -----------------------------------
@@ -460,6 +477,20 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 	// -----------------------------------
 	// At this point we can assign a new sandbox to tx pool
 	st.txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
+
+	// -----------------------------------
+	// Updating score manager
+	if blk.Header().Time().After(time.Now().AddDate(0, -1, -1)) {
+		prevCert := blk.PrevCertificate()
+		if prevCert != nil {
+			st.scoreMgr.SetCertificate(prevCert)
+
+			// TODO: Remove me after gRPC done
+			for _, num := range st.committee.Committers() {
+				st.logger.Debug("availability score", "val", num, "score", st.scoreMgr.AvailabilityScore(num))
+			}
+		}
+	}
 
 	// -----------------------------------
 	// Publishing the events to the zmq
@@ -587,6 +618,7 @@ func (st *state) proposeNextBlockTime() time.Time {
 		st.logger.Debug("it looks the last block had delay", "delay", now.Sub(timestamp))
 		timestamp = util.RoundNow(st.params.BlockIntervalInSecond)
 	}
+
 	return timestamp
 }
 
@@ -741,5 +773,15 @@ func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, er
 }
 
 func (st *state) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
 	return st.store.PublicKey(addr)
+}
+
+func (st *state) AvailabilityScore(valNum int32) float64 {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return st.scoreMgr.AvailabilityScore(valNum)
 }

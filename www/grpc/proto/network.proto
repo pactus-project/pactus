@@ -12,12 +12,13 @@ service Network {
 message GetNetworkInfoRequest {}
 
 message GetNetworkInfoResponse {
-  int32 total_sent_bytes = 1;
-  int32 total_received_bytes = 2;
-  int64 started_at = 3;
-  repeated PeerInfo peers = 4;
-  map<int32, int64> sent_bytes = 5;
-  map<int32, int64> received_bytes = 6;
+  uint32 total_sent_bytes = 1;
+  uint32 total_received_bytes = 2;
+  string network_name = 3;
+  uint32 connected_peers_count = 4;
+  repeated PeerInfo connected_peers = 5;
+  map<uint32, uint64> sent_bytes = 6;
+  map<uint32, uint64> received_bytes = 7;
 }
 
 message GetNodeInfoRequest {}
@@ -26,6 +27,12 @@ message GetNodeInfoResponse {
   string moniker = 1;
   string agent = 2;
   bytes peer_id = 3;
+  uint64 started_at = 4;
+  string reachability = 5;
+  repeated int32 services = 6;
+  repeated string services_names = 7;
+  repeated string addrs = 8;
+  repeated string protocols = 9;
 }
 
 message PeerInfo {
@@ -44,4 +51,8 @@ message PeerInfo {
   map<int32, int64> sent_bytes = 13;
   map<int32, int64> received_bytes = 14;
   string address = 15;
+  string direction = 16;
+  repeated string protocols = 17;
+  int32 total_sessions = 18;
+  int32 completed_sessions = 19;
 }

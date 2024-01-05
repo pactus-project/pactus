@@ -104,3 +104,35 @@ func (s *transactionServer) SendRawTransaction(_ context.Context,
 		Id: trx.ID().Bytes(),
 	}, nil
 }
+
+func (s *transactionServer) GetRawBondTransaction(_ context.Context,
+	_ *pactus.GetRawBondTransactionRequest,
+) (*pactus.GetRawTransactionResponse, error) {
+	return &pactus.GetRawTransactionResponse{
+		RawTransaction: make([]byte, 0),
+	}, nil
+}
+
+func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
+	_ *pactus.GetRawTransferTransactionRequest,
+) (*pactus.GetRawTransactionResponse, error) {
+	return &pactus.GetRawTransactionResponse{
+		RawTransaction: make([]byte, 0),
+	}, nil
+}
+
+func (s *transactionServer) GetRawUnBondTransaction(_ context.Context,
+	_ *pactus.GetRawUnBondTransactionRequest,
+) (*pactus.GetRawTransactionResponse, error) {
+	return &pactus.GetRawTransactionResponse{
+		RawTransaction: make([]byte, 0),
+	}, nil
+}
+
+func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
+	_ *pactus.GetRawWithdrawTransactionRequest,
+) (*pactus.GetRawTransactionResponse, error) {
+	return &pactus.GetRawTransactionResponse{
+		RawTransaction: make([]byte, 0),
+	}, nil
+}

@@ -2,13 +2,11 @@ package http
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
-	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/gorilla/mux"
+	"github.com/pactus-project/pactus/crypto/hash"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
@@ -35,65 +33,143 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, _ *http.Request) {
 	s.writeHTML(w, tm.html())
 }
 
-func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
-	res, err := s.network.GetNetworkInfo(s.ctx,
-		&pactus.GetNetworkInfoRequest{})
+func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	height, err := strconv.ParseInt(vars["height"], 10, 32)
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+	s.blockByHeight(w, uint32(height))
+}
+
+func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	blockHash, err := hash.FromString(vars["hash"])
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+
+	res, err := s.blockchain.GetBlockHeight(s.ctx,
+		&pactus.GetBlockHeightRequest{Hash: blockHash.Bytes()})
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+
+	s.blockByHeight(w, res.Height)
+}
+
+func (s *Server) blockByHeight(w http.ResponseWriter, blockHeight uint32) {
+	res, err := s.blockchain.GetBlock(s.ctx,
+		&pactus.GetBlockRequest{
+			Height:    blockHeight,
+			Verbosity: pactus.BlockVerbosity_BLOCK_TRANSACTIONS,
+		},
+	)
 	if err != nil {
 		s.writeError(w, err)
 		return
 	}
 
 	tm := newTableMaker()
-	tm.addRowTime("Started at", res.StartedAt)
-	tm.addRowInt("Total Sent Bytes", int(res.TotalSentBytes))
-	tm.addRowInt("Total Received Bytes", int(res.TotalReceivedBytes))
-	tm.addRowString("Peers", "---")
-
-	for i, p := range res.Peers {
-		pid, _ := peer.IDFromBytes(p.PeerId)
-		tm.addRowInt("-- Peer #", i+1)
-		tm.addRowString("Status", peerset.StatusCode(p.Status).String())
-		tm.addRowString("PeerID", pid.String())
-		tm.addRowString("Services", service.Services(p.Services).String())
-		for _, key := range p.ConsensusKeys {
-			pub, _ := bls.PublicKeyFromString(key)
-			tm.addRowString("  PublicKey", pub.String())
-			tm.addRowValAddress("  Address", pub.ValidatorAddress().String())
-		}
-		tm.addRowString("Agent", p.Agent)
-		tm.addRowString("Moniker", p.Moniker)
-		tm.addRowString("Remote Address", p.Address)
-		tm.addRowString("LastSent", time.Unix(p.LastSent, 0).String())
-		tm.addRowString("LastReceived", time.Unix(p.LastReceived, 0).String())
-		tm.addRowBlockHash("Last block Hash", p.LastBlockHash)
-		tm.addRowInt("Height", int(p.Height))
-		tm.addRowInt("InvalidBundles", int(p.InvalidMessages))
-		tm.addRowInt("ReceivedBundles", int(p.ReceivedMessages))
-		tm.addRowString("ReceivedBytes", "---")
-		for key, value := range p.ReceivedBytes {
-			tm.addRowInt(message.Type(key).String(), int(value))
-		}
-		tm.addRowString("SentBytes", "---")
-		for key, value := range p.SentBytes {
-			tm.addRowInt(message.Type(key).String(), int(value))
-		}
+	tm.addRowString("Time", time.Unix(int64(res.BlockTime), 0).String())
+	tm.addRowInt("Height", int(res.Height))
+	tm.addRowBytes("Hash", res.Hash)
+	tm.addRowBytes("Data", res.Data)
+	if res.Header != nil {
+		tm.addRowString("--- Header", "---")
+		tm.addRowInt("Version", int(res.Header.Version))
+		tm.addRowInt("UnixTime", int(res.BlockTime))
+		tm.addRowBlockHash("PrevBlockHash", res.Header.PrevBlockHash)
+		tm.addRowBytes("StateRoot", res.Header.StateRoot)
+		tm.addRowBytes("SortitionSeed", res.Header.SortitionSeed)
+		tm.addRowValAddress("ProposerAddress", res.Header.ProposerAddress)
 	}
+	if res.PrevCert != nil {
+		tm.addRowString("--- PrevCertificate", "---")
+		tm.addRowBytes("Hash", res.PrevCert.Hash)
+		tm.addRowInt("Round", int(res.PrevCert.Round))
+		tm.addRowInts("Committers", res.PrevCert.Committers)
+		tm.addRowInts("Absentees", res.PrevCert.Absentees)
+		tm.addRowBytes("Signature", res.PrevCert.Signature)
+	}
+	tm.addRowString("--- Transactions", "---")
+	for i, trx := range res.Txs {
+		tm.addRowInt("Transaction #", i+1)
+		txToTable(trx, tm)
+	}
+
 	s.writeHTML(w, tm.html())
 }
 
-func (s *Server) NodeHandler(w http.ResponseWriter, _ *http.Request) {
-	res, err := s.network.GetNodeInfo(s.ctx,
-		&pactus.GetNodeInfoRequest{})
+// GetAccountHandler returns a handler to get account by address.
+func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	res, err := s.blockchain.GetAccount(s.ctx,
+		&pactus.GetAccountRequest{Address: vars["address"]})
 	if err != nil {
 		s.writeError(w, err)
 		return
 	}
 
-	sid, _ := peer.IDFromBytes(res.PeerId)
+	acc := res.Account
 	tm := newTableMaker()
-	tm.addRowString("Peer ID", sid.String())
-	tm.addRowString("Agent", res.Agent)
-	tm.addRowString("Moniker", res.Moniker)
+	tm.addRowAccAddress("Address", acc.Address)
+	tm.addRowInt("Number", int(acc.Number))
+	tm.addRowAmount("Balance", acc.Balance)
+	tm.addRowBytes("Hash", acc.Hash)
 
 	s.writeHTML(w, tm.html())
+}
+
+// GetValidatorHandler returns a handler to get validator by address.
+func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	res, err := s.blockchain.GetValidator(s.ctx,
+		&pactus.GetValidatorRequest{Address: vars["address"]})
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+
+	tm := s.writeValidatorTable(res.Validator)
+	s.writeHTML(w, tm.html())
+}
+
+// GetValidatorByNumberHandler returns a handler to get validator by number.
+func (s *Server) GetValidatorByNumberHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	num, err := strconv.ParseInt(vars["number"], 10, 32)
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+
+	res, err := s.blockchain.GetValidatorByNumber(s.ctx, &pactus.GetValidatorByNumberRequest{
+		Number: int32(num),
+	})
+	if err != nil {
+		s.writeError(w, err)
+		return
+	}
+
+	tm := s.writeValidatorTable(res.Validator)
+	s.writeHTML(w, tm.html())
+}
+
+func (s *Server) writeValidatorTable(val *pactus.ValidatorInfo) *tableMaker {
+	tm := newTableMaker()
+	tm.addRowString("Public Key", val.PublicKey)
+	tm.addRowValAddress("Address", val.Address)
+	tm.addRowInt("Number", int(val.Number))
+	tm.addRowAmount("Stake", val.Stake)
+	tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight))
+	tm.addRowInt("LastSortitionHeight", int(val.LastSortitionHeight))
+	tm.addRowInt("UnbondingHeight", int(val.UnbondingHeight))
+	tm.addRowBytes("Hash", val.Hash)
+
+	return tm
 }

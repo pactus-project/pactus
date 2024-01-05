@@ -17,6 +17,7 @@ func NewPath(indexes ...uint32) Path {
 	return p
 }
 
+// TODO: check the path should exactly 4 levels.
 func NewPathFromString(str string) (Path, error) {
 	sub := strings.Split(str, "/")
 	if sub[0] != "m" {
@@ -52,10 +53,20 @@ func (p Path) String() string {
 	return builder.String()
 }
 
-func (p Path) LastIndex() uint32 {
-	return p[len(p)-1]
+// TODO: we can add IsBLSPurpose or IsImportedPurpose functions
+
+func (p Path) Purpose() uint32 {
+	return p[0]
+}
+
+func (p Path) CoinType() uint32 {
+	return p[len(p)-3]
 }
 
 func (p Path) AddressType() uint32 {
-	return p[len(p)-2] - HardenedKeyStart
+	return p[len(p)-2]
+}
+
+func (p Path) AddressIndex() uint32 {
+	return p[len(p)-1]
 }

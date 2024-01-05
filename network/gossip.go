@@ -22,7 +22,7 @@ type gossipService struct {
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	isBootstrapper bool, log *logger.SubLogger,
+	_ *Config, log *logger.SubLogger,
 ) *gossipService {
 	opts := []lp2pps.Option{
 		lp2pps.WithMessageSignaturePolicy(lp2pps.StrictNoSign),
@@ -30,12 +30,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 		lp2pps.WithMessageIdFn(MessageIDFunc),
 	}
 
-	if isBootstrapper {
-		// enable Peer eXchange on bootstrappers
-		opts = append(opts, lp2pps.WithPeerExchange(true))
-	}
-
-	pubsub, err := lp2pps.NewGossipSub(ctx, host, opts...)
+	pubsub, err := lp2pps.NewFloodSub(ctx, host, opts...)
 	if err != nil {
 		log.Panic("unable to start Gossip service", "error", err)
 		return nil
@@ -53,7 +48,11 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 
 // BroadcastMessage broadcasts a message to the specified topic.
 func (g *gossipService) BroadcastMessage(msg []byte, topic *lp2pps.Topic) error {
-	return topic.Publish(g.ctx, msg)
+	err := topic.Publish(g.ctx, msg)
+	if err != nil {
+		return LibP2PError{Err: err}
+	}
+	return nil
 }
 
 // JoinTopic joins a topic with the given name.

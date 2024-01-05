@@ -3,9 +3,7 @@ package config
 import (
 	"bytes"
 	_ "embed"
-	"fmt"
 	"os"
-	"strings"
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
@@ -13,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/txpool"
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
@@ -39,28 +38,16 @@ type Config struct {
 }
 
 type NodeConfig struct {
-	NumValidators   int      `toml:"num_validators"` // TODO: we can remove this now
 	RewardAddresses []string `toml:"reward_addresses"`
 }
 
 func DefaultNodeConfig() *NodeConfig {
 	// TODO: We should have default config per network: Testnet, Mainnet.
-	return &NodeConfig{
-		NumValidators: 7,
-	}
+	return &NodeConfig{}
 }
 
 // BasicCheck performs basic checks on the configuration.
 func (conf *NodeConfig) BasicCheck() error {
-	if conf.NumValidators < 1 || conf.NumValidators > 32 {
-		return errors.Errorf(errors.ErrInvalidConfig, "number of validators must be between 1 and 32")
-	}
-
-	if len(conf.RewardAddresses) > 0 &&
-		len(conf.RewardAddresses) != conf.NumValidators {
-		return errors.Errorf(errors.ErrInvalidConfig, "reward addresses should be %v", conf.NumValidators)
-	}
-
 	for _, addrStr := range conf.RewardAddresses {
 		addr, err := crypto.AddressFromString(addrStr)
 		if err != nil {
@@ -91,14 +78,20 @@ func defaultConfig() *Config {
 	return conf
 }
 
-func DefaultConfigMainnet() *Config {
+func DefaultConfigMainnet(genParams *param.Params) *Config {
 	conf := defaultConfig()
-	// TO BE DEFINED
+
+	// Store private configs
+	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
+	conf.Store.SortitionCacheSize = genParams.SortitionInterval
+	conf.Store.AccountCacheSize = 1024
+	conf.Store.PublicKeyCacheSize = 1024
+
 	return conf
 }
 
 //nolint:lll // long multi-address
-func DefaultConfigTestnet() *Config {
+func DefaultConfigTestnet(genParams *param.Params) *Config {
 	conf := defaultConfig()
 	conf.Network.ListenAddrStrings = []string{
 		"/ip4/0.0.0.0/tcp/21777", "/ip4/0.0.0.0/udp/21777/quic-v1",
@@ -115,14 +108,12 @@ func DefaultConfigTestnet() *Config {
 		"/ip4/209.250.235.91/tcp/21777/p2p/12D3KooWETQgcTCFv2kejUsGMVVmnkNoTW8wh33MevAzyeYYzQkr",      // Mr HoDL (1llusiv387@gmail.com)
 		"/dns/pactus.nodesync.top/tcp/21777/p2p/12D3KooWP25ejVsd7cL5DvWAPwEu4JTUwnPniHBf4w93tgSezVt8", // NodeSync.Top (lthuan2011@gmail.com)
 		"/ip4/95.217.89.202/tcp/21777/p2p/12D3KooWMsi5oYkbbpyyXctmPXzF8UZu2pCvKPRZGyvymhN9BzTD",       // CodeBlockLabs (emailbuatcariduit@gmail.com)
-		"/ip4/65.109.11.208/tcp/21777/p2p/12D3KooWQ2cfLX1kcXhAzcb23sHWHaK5DBkk2xtYTZu8JbwG97K4",
 	}
 	conf.Network.DefaultRelayAddrStrings = []string{
 		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
 		"/ip4/188.121.102.178/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
 	}
-	conf.Network.MinConns = 16
-	conf.Network.MaxConns = 32
+	conf.Network.MaxConns = 64
 	conf.Network.EnableNATService = false
 	conf.Network.EnableUPnP = false
 	conf.Network.EnableRelay = true
@@ -137,17 +128,22 @@ func DefaultConfigTestnet() *Config {
 	conf.Nanomsg.Enable = false
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:40799"
 
+	// Store private configs
+	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
+	conf.Store.SortitionCacheSize = genParams.SortitionInterval
+	conf.Store.AccountCacheSize = 1024
+	conf.Store.PublicKeyCacheSize = 1024
+
 	return conf
 }
 
-func DefaultConfigLocalnet() *Config {
+func DefaultConfigLocalnet(genParams *param.Params) *Config {
 	conf := defaultConfig()
 	conf.Network.ListenAddrStrings = []string{}
 	conf.Network.EnableRelay = false
 	conf.Network.EnableNATService = false
 	conf.Network.EnableUPnP = false
 	conf.Network.BootstrapAddrStrings = []string{}
-	conf.Network.MinConns = 0
 	conf.Network.MaxConns = 0
 	conf.Network.NetworkName = "pactus-localnet"
 	conf.Network.DefaultPort = 21666
@@ -160,26 +156,21 @@ func DefaultConfigLocalnet() *Config {
 	conf.Nanomsg.Enable = true
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:0"
 
+	// Store private configs
+	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
+	conf.Store.SortitionCacheSize = genParams.SortitionInterval
+	conf.Store.AccountCacheSize = 1024
+	conf.Store.PublicKeyCacheSize = 1024
+
 	return conf
 }
 
-func SaveMainnetConfig(path string, numValidators int) error {
+func SaveMainnetConfig(path string) error {
 	conf := string(exampleConfigBytes)
-	conf = strings.Replace(conf, "%num_validators%",
-		fmt.Sprintf("%v", numValidators), 1)
-
 	return util.WriteFile(path, []byte(conf))
 }
 
-func SaveTestnetConfig(path string, numValidators int) error {
-	conf := DefaultConfigTestnet()
-	conf.Node.NumValidators = numValidators
-	return util.WriteFile(path, conf.toTOML())
-}
-
-func SaveLocalnetConfig(path string, numValidators int) error {
-	conf := DefaultConfigLocalnet()
-	conf.Node.NumValidators = numValidators
+func (conf *Config) Save(path string) error {
 	return util.WriteFile(path, conf.toTOML())
 }
 

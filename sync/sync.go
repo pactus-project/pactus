@@ -3,6 +3,7 @@ package sync
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/consensus"
@@ -15,9 +16,9 @@ import (
 	"github.com/pactus-project/pactus/sync/cache"
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/sync/peerset/service"
 	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -147,29 +148,44 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 			// It's localnet and for testing purpose only
 		}
 
+		bdl.SetSequenceNo(sync.peerSet.TotalSentBundles())
+
 		return bdl
 	}
 	return nil
 }
 
-func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) error {
+func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
 	bdl := sync.prepareBundle(msg)
 	if bdl != nil {
 		data, _ := bdl.Encode()
-		sync.peerSet.UpdateLastSent(to)
-		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), &to)
 
 		err := sync.network.SendTo(data, to)
 		if err != nil {
-			return err
+			sync.logger.Debug("error on sending the bundle, closing the connection",
+				"bundle", bdl, "to", to, "error", err)
+
+			sync.network.CloseConnection(to)
+			return
 		}
-		sync.logger.Info("sending bundle to a peer",
-			"bundle", bdl, "to", to)
+
+		sync.peerSet.UpdateLastSent(to)
+		sync.peerSet.IncreaseSentCounters(msg.Type(), int64(len(data)), &to)
+		sync.logger.Info("bundle sent", "bundle", bdl, "to", to)
 	}
-	return nil
 }
 
 func (sync *synchronizer) broadcast(msg message.Message) {
+	if msg.Type() == message.TypeBlockAnnounce {
+		m := msg.(*message.BlockAnnounceMessage)
+		if sync.cache.HasBlockInCache(m.Height()) {
+			// We have received the block announcement from other peers before,
+			// so we can simply ignore broadcasting it again.
+			// This helps to reduce the network bandwidth.
+			return
+		}
+	}
+
 	bdl := sync.prepareBundle(msg)
 	if bdl != nil {
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
@@ -181,7 +197,7 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 		} else {
 			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
 		}
-		sync.peerSet.IncreaseSentBytesCounter(msg.Type(), int64(len(data)), nil)
+		sync.peerSet.IncreaseSentCounters(msg.Type(), int64(len(data)), nil)
 	}
 }
 
@@ -197,7 +213,11 @@ func (sync *synchronizer) PeerSet() *peerset.PeerSet {
 	return sync.peerSet
 }
 
-func (sync *synchronizer) sayHello(to peer.ID) error {
+func (sync *synchronizer) Services() service.Services {
+	return sync.config.Services()
+}
+
+func (sync *synchronizer) sayHello(to peer.ID) {
 	msg := message.NewHelloMessage(
 		sync.SelfID(),
 		sync.config.Moniker,
@@ -205,11 +225,12 @@ func (sync *synchronizer) sayHello(to peer.ID) error {
 		sync.config.Services(),
 		sync.state.LastBlockHash(),
 		sync.state.Genesis().Hash(),
+		sync.network.Name(),
 	)
 	msg.Sign(sync.valKeys)
 
 	sync.logger.Info("sending Hello message", "to", to)
-	return sync.sendTo(msg, to)
+	sync.sendTo(msg, to)
 }
 
 func (sync *synchronizer) broadcastLoop() {
@@ -247,44 +268,59 @@ func (sync *synchronizer) receiveLoop() {
 			case network.EventTypeDisconnect:
 				de := e.(*network.DisconnectEvent)
 				sync.processDisconnectEvent(de)
+
+			case network.EventTypeProtocols:
+				pe := e.(*network.ProtocolsEvents)
+				sync.processProtocolsEvent(pe)
 			}
 		}
 	}
 }
 
 func (sync *synchronizer) processGossipMessage(msg *network.GossipMessage) {
+	sync.logger.Debug("processing gossip message", "pid", msg.From)
+
 	bdl := sync.firewall.OpenGossipBundle(msg.Data, msg.From)
 	err := sync.processIncomingBundle(bdl, msg.From)
 	if err != nil {
-		sync.logger.Warn("error on parsing a Gossip bundle",
+		sync.logger.Debug("error on parsing a Gossip bundle",
 			"from", msg.From, "bundle", bdl, "error", err)
-		sync.peerSet.IncreaseInvalidBundlesCounter(msg.From)
 	}
 }
 
 func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
+	sync.logger.Debug("processing stream message", "pid", msg.From)
+
 	bdl := sync.firewall.OpenStreamBundle(msg.Reader, msg.From)
 	if err := msg.Reader.Close(); err != nil {
 		// TODO: write test for me
-		sync.logger.Warn("error on closing stream", "error", err, "source", msg.From)
+		sync.logger.Debug("error on closing stream", "error", err, "source", msg.From)
+		return
 	}
 	err := sync.processIncomingBundle(bdl, msg.From)
 	if err != nil {
-		sync.logger.Warn("error on parsing a Stream bundle",
+		sync.logger.Debug("error on parsing a Stream bundle",
 			"source", msg.From, "bundle", bdl, "error", err)
-		sync.peerSet.IncreaseInvalidBundlesCounter(msg.From)
 	}
 }
 
 func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
-	sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeConnected)
-	sync.peerSet.UpdateAddress(ce.PeerID, ce.RemoteAddress)
+	sync.logger.Debug("processing connect event", "pid", ce.PeerID)
 
-	if ce.SupportStream {
-		if err := sync.sayHello(ce.PeerID); err != nil {
-			sync.logger.Warn("sending Hello message failed",
-				"to", ce.PeerID, "error", err)
-		}
+	p := sync.peerSet.GetPeer(ce.PeerID)
+	if p != nil && p.IsKnownOrTrusty() {
+		return
+	}
+	sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeConnected)
+	sync.peerSet.UpdateAddress(ce.PeerID, ce.RemoteAddress, ce.Direction)
+}
+
+func (sync *synchronizer) processProtocolsEvent(pe *network.ProtocolsEvents) {
+	sync.logger.Debug("processing protocols event", "pid", pe.PeerID, "protocols", pe.Protocols)
+
+	sync.peerSet.UpdateProtocols(pe.PeerID, pe.Protocols)
+	if pe.SupportStream {
+		sync.sayHello(pe.PeerID)
 	}
 }
 
@@ -300,7 +336,7 @@ func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle, from peer.ID
 	sync.logger.Info("received a bundle", "from", from, "bundle", bdl)
 	h := sync.handlers[bdl.Message.Type()]
 	if h == nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "invalid message type: %v", bdl.Message.Type())
+		return fmt.Errorf("invalid message type: %v", bdl.Message.Type())
 	}
 
 	return h.ParseMessage(bdl.Message, from)
@@ -332,7 +368,7 @@ func (sync *synchronizer) updateBlockchain() {
 	// Check if we have any expired sessions
 	sync.peerSet.SetExpiredSessionsAsUncompleted()
 
-	sync.peerSet.IterateSessions(func(ssn *session.Session) {
+	sync.peerSet.IterateSessions(func(ssn *session.Session) bool {
 		if ssn.Status == session.Uncompleted {
 			sync.logger.Debug("uncompleted block request, re-download",
 				"sid", ssn.SessionID, "pid", ssn.PeerID,
@@ -341,6 +377,8 @@ func (sync *synchronizer) updateBlockchain() {
 			// Try to re-download the blocks from this closed session
 			sync.sendBlockRequestToRandomPeer(ssn.From, ssn.Count, true)
 		}
+
+		return false
 	})
 
 	// First, let's check if we have any open sessions.
@@ -430,25 +468,38 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		}
 
 		sync.logger.Debug("sending download request", "from", from+1, "count", count, "pid", p.PeerID)
-		ssn := sync.peerSet.OpenSession(p.PeerID, from, from+count-1)
+		ssn := sync.peerSet.OpenSession(p.PeerID, from, count)
 		msg := message.NewBlocksRequestMessage(ssn.SessionID, from, count)
-		err := sync.sendTo(msg, p.PeerID)
-		if err != nil {
-			sync.logger.Debug("sending download request failed",
-				"from", from, "count", count, "pid", p.PeerID, "error", err)
-
-			sync.peerSet.SetSessionUncompleted(ssn.SessionID)
-		} else {
-			return true
-		}
+		sync.sendTo(msg, p.PeerID)
+		return true
 	}
 
 	sync.logger.Debug("unable to open a new session",
 		"stats", sync.peerSet.SessionStats())
+
+	// Closing one connection randomly
+	sync.peerSet.IteratePeers(func(p *peerset.Peer) bool {
+		if !p.IsKnownOrTrusty() {
+			if p.LastSent.Before(time.Now().Add(-time.Minute)) {
+				sync.network.CloseConnection(p.PeerID)
+				return true
+			}
+		}
+
+		return false
+	})
+
 	return false
 }
 
 func (sync *synchronizer) tryCommitBlocks() error {
+	onError := func(height uint32, err error) {
+		sync.logger.Warn("committing block failed, removing block from the cache",
+			"height", height, "error", err)
+
+		sync.cache.RemoveBlock(height)
+	}
+
 	height := sync.stateHeight() + 1
 	for {
 		blk := sync.cache.GetBlock(height)
@@ -465,6 +516,7 @@ func (sync *synchronizer) tryCommitBlocks() error {
 			if trx.IsPublicKeyStriped() {
 				pub, err := sync.state.PublicKey(trx.Payload().Signer())
 				if err != nil {
+					onError(height, err)
 					return err
 				}
 				trx.SetPublicKey(pub)
@@ -472,18 +524,17 @@ func (sync *synchronizer) tryCommitBlocks() error {
 		}
 
 		if err := blk.BasicCheck(); err != nil {
+			onError(height, err)
 			return err
 		}
 		if err := cert.BasicCheck(); err != nil {
+			onError(height, err)
 			return err
 		}
 
 		sync.logger.Trace("committing block", "height", height, "block", blk)
 		if err := sync.state.CommitBlock(blk, cert); err != nil {
-			sync.logger.Warn("committing block failed, removing block from the cache",
-				"height", height, "block", blk, "error", err)
-
-			sync.cache.RemoveBlock(height) // TODO: test me
+			onError(height, err)
 			return err
 		}
 		height++

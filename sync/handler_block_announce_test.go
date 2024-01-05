@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -31,6 +32,19 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	})
 }
 
+func TestInvalidBlockAnnounce(t *testing.T) {
+	td := setup(t, nil)
+
+	pid := td.RandPeerID()
+	height := td.state.LastBlockHeight() + 1
+	blk, _ := td.GenerateTestBlock(height)
+	invCert := certificate.NewCertificate(height, 0, nil, nil, nil)
+	msg := message.NewBlockAnnounceMessage(blk, invCert)
+
+	err := td.receivingNewMessage(td.sync, msg, pid)
+	assert.Error(t, err)
+}
+
 func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 	td := setup(t, nil)
 
@@ -38,6 +52,6 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 	msg := message.NewBlockAnnounceMessage(blk, cert)
 	td.sync.broadcast(msg)
 
-	msg1 := td.shouldPublishMessageWithThisType(t, td.network, message.TypeBlockAnnounce)
+	msg1 := td.shouldPublishMessageWithThisType(t, message.TypeBlockAnnounce)
 	assert.Equal(t, msg1.Message.(*message.BlockAnnounceMessage).Certificate.Height(), msg.Certificate.Height())
 }
