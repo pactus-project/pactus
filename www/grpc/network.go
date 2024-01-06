@@ -36,7 +36,7 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 
 	return &pactus.GetNodeInfoResponse{
 		Moniker:       s.sync.Moniker(),
-		Agent:         fmt.Sprintf("%v/reachability=%v", version.Agent(), s.net.ReachabilityStatus()),
+		Agent:         fmt.Sprintf("%s/reachability=%s", version.Agent(), s.net.ReachabilityStatus()),
 		PeerId:        []byte(s.sync.SelfID()),
 		Reachability:  s.net.ReachabilityStatus(),
 		Addrs:         s.net.HostAddrs(),
