@@ -249,7 +249,7 @@ func (bs *blockchainServer) validatorToProto(val *validator.Validator) *pactus.V
 	}
 }
 
-func (bs *blockchainServer) accountToProto(addr crypto.Address, acc *account.Account) *pactus.AccountInfo {
+func (s *blockchainServer) accountToProto(addr crypto.Address, acc *account.Account) *pactus.AccountInfo {
 	data, _ := acc.Bytes()
 	return &pactus.AccountInfo{
 		Hash:    acc.Hash().Bytes(),
