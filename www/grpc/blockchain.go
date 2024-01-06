@@ -246,7 +246,7 @@ func validatorToProto(val *validator.Validator, sf state.Facade) *pactus.Validat
 		LastBondingHeight:   val.LastBondingHeight(),
 		LastSortitionHeight: val.LastSortitionHeight(),
 		UnbondingHeight:     val.UnbondingHeight(),
-		AvailabilityScore:   float32(state.AvailabilityScore(val.Number())),
+		AvailabilityScore:   float32(sf.AvailabilityScore(val.Number())),
 	}
 }
 
