@@ -12,32 +12,32 @@ import (
 	"github.com/pactus-project/pactus/wallet"
 )
 
-//go:embed assets/ui/dialog_transaction_transfer.ui
-var uiTransactionTransferDialog []byte
+//go:embed assets/ui/dialog_transaction_withdraw.ui
+var uiTransactionWithdrawDialog []byte
 
-func broadcastTransactionTransfer(wlt *wallet.Wallet) {
-	builder, err := gtk.BuilderNewFromString(string(uiTransactionTransferDialog))
+func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
+	builder, err := gtk.BuilderNewFromString(string(uiTransactionWithdrawDialog))
 	fatalErrorCheck(err)
 
-	dlg := getDialogObj(builder, "id_dialog_transaction_transfer")
+	dlg := getDialogObj(builder, "id_dialog_transaction_withdraw")
 
-	senderEntry := getComboBoxTextObj(builder, "id_combo_sender")
-	senderHint := getLabelObj(builder, "id_hint_sender")
+	validatorEntry := getComboBoxTextObj(builder, "id_combo_validator")
+	validatorHint := getLabelObj(builder, "id_hint_validator")
 	receiverEntry := getEntryObj(builder, "id_entry_receiver")
 	receiverHint := getLabelObj(builder, "id_hint_receiver")
-	amountEntry := getEntryObj(builder, "id_entry_amount")
-	amountHint := getLabelObj(builder, "id_hint_amount")
+	stakeEntry := getEntryObj(builder, "id_entry_stake")
+	stakeHint := getLabelObj(builder, "id_hint_stake")
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
 	for _, i := range wlt.AddressInfos() {
-		senderEntry.Append(i.Address, i.Address)
+		validatorEntry.Append(i.Address, i.Address)
 	}
-	senderEntry.SetActive(0)
+	validatorEntry.SetActive(0)
 
 	onSenderChanged := func() {
-		senderStr := senderEntry.GetActiveID()
-		updateAccountHint(senderHint, senderStr, wlt)
+		senderStr := validatorEntry.GetActiveID()
+		updateAccountHint(validatorHint, senderStr, wlt)
 	}
 
 	onReceiverChanged := func() {
@@ -46,14 +46,14 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 	}
 
 	onAmountChanged := func() {
-		amtStr, _ := amountEntry.GetText()
-		updateFeeHint(amountHint, amtStr, wlt, payload.TypeTransfer)
+		amtStr, _ := stakeEntry.GetText()
+		updateFeeHint(stakeHint, amtStr, wlt, payload.TypeTransfer)
 	}
 
 	onSend := func() {
-		sender := senderEntry.GetActiveID()
+		sender := validatorEntry.GetActiveID()
 		receiver, _ := receiverEntry.GetText()
-		amountStr, _ := amountEntry.GetText()
+		amountStr, _ := stakeEntry.GetText()
 
 		amount, err := util.StringToChange(amountStr)
 		if err != nil {
@@ -61,7 +61,7 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 			return
 		}
 
-		trx, err := wlt.MakeTransferTx(sender, receiver, amount)
+		trx, err := wlt.MakeWithdrawTx(sender, receiver, amount)
 		if err != nil {
 			errorCheck(err)
 			return
