@@ -245,7 +245,7 @@ func (s *blockchainServer) validatorToProto(val *validator.Validator) *pactus.Va
 		LastBondingHeight:   val.LastBondingHeight(),
 		LastSortitionHeight: val.LastSortitionHeight(),
 		UnbondingHeight:     val.UnbondingHeight(),
-		AvailabilityScore:   float32(s.state.AvailabilityScore(val.Number())),
+		AvailabilityScore:   bs.state.AvailabilityScore(val.Number()),
 	}
 }
 
