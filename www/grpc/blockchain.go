@@ -260,7 +260,7 @@ func (bs *blockchainServer) accountToProto(addr crypto.Address, acc *account.Acc
 	}
 }
 
-func (bs *blockchainServer) voteToProto(v *vote.Vote) *pactus.VoteInfo {
+func (s *blockchainServer) voteToProto(v *vote.Vote) *pactus.VoteInfo {
 	cpRound := int32(0)
 	cpValue := int32(0)
 	if v.IsCPVote() {
