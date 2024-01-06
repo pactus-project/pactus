@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
 // These constants follow the semantic versioning 2.0.0 spec (http://semver.org/)
@@ -16,7 +17,8 @@ const (
 )
 
 func Agent() string {
-	return fmt.Sprintf("pactus/%s", Version())
+	return fmt.Sprintf("node=%s/node-version=v%s/protocol-version=%d/os=%s/arch=%s",
+		ExecutorName(), Version(), protocolVersion, runtime.GOOS, runtime.GOARCH)
 }
 
 func Version() string {
