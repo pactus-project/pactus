@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
@@ -23,7 +24,7 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 	vals := s.state.CommitteeValidators()
 	cv := make([]*pactus.ValidatorInfo, 0, len(vals))
 	for _, v := range vals {
-		cv = append(cv, validatorToProto(v))
+		cv = append(cv, validatorToProto(v, s.state))
 	}
 
 	return &pactus.GetBlockchainInfoResponse{
@@ -185,7 +186,7 @@ func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
 	}
 
 	return &pactus.GetValidatorResponse{
-		Validator: validatorToProto(val),
+		Validator: validatorToProto(val, s.state),
 	}, nil
 }
 
@@ -202,7 +203,7 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 	}
 
 	return &pactus.GetValidatorResponse{
-		Validator: validatorToProto(val),
+		Validator: validatorToProto(val, s.state),
 	}, nil
 }
 
@@ -233,7 +234,7 @@ func (s *blockchainServer) GetPublicKey(_ context.Context,
 	return &pactus.GetPublicKeyResponse{PublicKey: publicKey.String()}, nil
 }
 
-func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
+func validatorToProto(val *validator.Validator, state state.Facade) *pactus.ValidatorInfo {
 	data, _ := val.Bytes()
 	return &pactus.ValidatorInfo{
 		Hash:                val.Hash().Bytes(),
@@ -245,6 +246,7 @@ func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 		LastBondingHeight:   val.LastBondingHeight(),
 		LastSortitionHeight: val.LastSortitionHeight(),
 		UnbondingHeight:     val.UnbondingHeight(),
+		AvailabilityScore:   float32(state.AvailabilityScore(val.Number())),
 	}
 }
 

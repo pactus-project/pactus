@@ -42,3 +42,4 @@ message UnlockWalletRequest {
 }
 
 message UnlockWalletResponse {}
+

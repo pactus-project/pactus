@@ -3708,7 +3708,8 @@ proto.pactus.ValidatorInfo.toObject = function(includeInstance, msg) {
     lastBondingHeight: jspb.Message.getFieldWithDefault(msg, 6, 0),
     lastSortitionHeight: jspb.Message.getFieldWithDefault(msg, 7, 0),
     unbondingHeight: jspb.Message.getFieldWithDefault(msg, 8, 0),
-    address: jspb.Message.getFieldWithDefault(msg, 9, "")
+    address: jspb.Message.getFieldWithDefault(msg, 9, ""),
+    availabilityScore: jspb.Message.getFloatingPointFieldWithDefault(msg, 10, 0.0)
   };
 
   if (includeInstance) {
@@ -3780,6 +3781,10 @@ proto.pactus.ValidatorInfo.deserializeBinaryFromReader = function(msg, reader) {
     case 9:
       var value = /** @type {string} */ (reader.readString());
       msg.setAddress(value);
+      break;
+    case 10:
+      var value = /** @type {number} */ (reader.readFloat());
+      msg.setAvailabilityScore(value);
       break;
     default:
       reader.skipField();
@@ -3870,6 +3875,13 @@ proto.pactus.ValidatorInfo.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       9,
+      f
+    );
+  }
+  f = message.getAvailabilityScore();
+  if (f !== 0.0) {
+    writer.writeFloat(
+      10,
       f
     );
   }
@@ -4083,6 +4095,24 @@ proto.pactus.ValidatorInfo.prototype.getAddress = function() {
  */
 proto.pactus.ValidatorInfo.prototype.setAddress = function(value) {
   return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * optional float availability_score = 10;
+ * @return {number}
+ */
+proto.pactus.ValidatorInfo.prototype.getAvailabilityScore = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 10, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.ValidatorInfo} returns this
+ */
+proto.pactus.ValidatorInfo.prototype.setAvailabilityScore = function(value) {
+  return jspb.Message.setProto3FloatField(this, 10, value);
 };
 
 
