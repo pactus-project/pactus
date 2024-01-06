@@ -79,6 +79,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes">_Unbond</property>
                         <property name="use-underline">True</property>
+                        <signal name="activate" handler="on_transaction_unbond" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -87,6 +88,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes">_Withdraw</property>
                         <property name="use-underline">True</property>
+                        <signal name="activate" handler="on_transaction_withdraw" swapped="no"/>
                       </object>
                     </child>
                   </object>

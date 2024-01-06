@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -47,7 +48,7 @@ func TestGetNodeInfo(t *testing.T) {
 	res, err := client.GetNodeInfo(tCtx, &pactus.GetNodeInfoRequest{})
 	assert.NoError(t, err)
 	assert.Nil(t, err)
-	assert.Equal(t, version.Agent(), res.Agent)
+	assert.Equal(t, fmt.Sprintf("%v/reachability=%v", version.Agent(), "Unknown"), res.Agent)
 	assert.Equal(t, []byte(tMockSync.SelfID()), res.PeerId)
 	assert.Equal(t, "test-moniker", res.Moniker)
 
