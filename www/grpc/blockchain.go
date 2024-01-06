@@ -234,7 +234,7 @@ func (s *blockchainServer) GetPublicKey(_ context.Context,
 	return &pactus.GetPublicKeyResponse{PublicKey: publicKey.String()}, nil
 }
 
-func validatorToProto(val *validator.Validator, state state.Facade) *pactus.ValidatorInfo {
+func validatorToProto(val *validator.Validator, sf state.Facade) *pactus.ValidatorInfo {
 	data, _ := val.Bytes()
 	return &pactus.ValidatorInfo{
 		Hash:                val.Hash().Bytes(),
