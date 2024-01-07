@@ -71,9 +71,10 @@ message GetBlockchainInfoResponse {
   bytes last_block_hash = 2;
   int32 total_accounts = 3;
   int32 total_validators = 4;
-  int64 total_power = 5;
-  int64 committee_power = 6;
-  repeated ValidatorInfo committee_validators = 7;
+  int32 blockchain_size = 5;
+  int64 total_power = 6;
+  int64 committee_power = 7;
+  repeated ValidatorInfo committee_validators = 8;
 }
 
 message GetConsensusInfoRequest {}

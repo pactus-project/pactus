@@ -97,6 +97,7 @@ type Reader interface {
 	IterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool))
 	TotalValidators() int32
 	LastCertificate() *certificate.Certificate
+	BlockchainSize() int64
 }
 
 type Store interface {

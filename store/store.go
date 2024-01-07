@@ -19,6 +19,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
+	ldbutil "github.com/syndtr/goleveldb/leveldb/util"
 )
 
 var (
@@ -363,4 +364,17 @@ func (s *store) WriteBatch() error {
 	}
 	s.batch.Reset()
 	return nil
+}
+
+func (s *store) BlockchainSize() int64 {
+	s.lk.Lock()
+	defer s.lk.Unlock()
+
+	blkRange := ldbutil.BytesPrefix(blockPrefix)
+	sizes, err := s.db.SizeOf([]ldbutil.Range{*blkRange})
+	if err != nil {
+		return 0
+	}
+
+	return sizes.Sum()
 }

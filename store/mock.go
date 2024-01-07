@@ -265,3 +265,7 @@ func (m *MockStore) RandomTestVal() *validator.Validator {
 	}
 	panic("no validator in sandbox")
 }
+
+func (m *MockStore) BlockchainSize() int64 {
+	return 0
+}

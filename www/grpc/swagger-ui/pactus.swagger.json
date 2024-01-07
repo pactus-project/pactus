@@ -842,6 +842,10 @@
           "type": "integer",
           "format": "int32"
         },
+        "blockchainSize": {
+          "type": "integer",
+          "format": "int32"
+        },
         "totalPower": {
           "type": "string",
           "format": "int64"

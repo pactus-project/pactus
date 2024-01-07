@@ -9480,37 +9480,43 @@ public final class BlockchainOuterClass {
     int getTotalValidators();
 
     /**
-     * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
+     * <code>int32 blockchain_size = 5 [json_name = "blockchainSize"];</code>
+     * @return The blockchainSize.
+     */
+    int getBlockchainSize();
+
+    /**
+     * <code>int64 total_power = 6 [json_name = "totalPower"];</code>
      * @return The totalPower.
      */
     long getTotalPower();
 
     /**
-     * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
+     * <code>int64 committee_power = 7 [json_name = "committeePower"];</code>
      * @return The committeePower.
      */
     long getCommitteePower();
 
     /**
-     * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+     * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
      */
     java.util.List<pactus.blockchain.BlockchainOuterClass.ValidatorInfo> 
         getCommitteeValidatorsList();
     /**
-     * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+     * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
      */
     pactus.blockchain.BlockchainOuterClass.ValidatorInfo getCommitteeValidators(int index);
     /**
-     * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+     * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
      */
     int getCommitteeValidatorsCount();
     /**
-     * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+     * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
      */
     java.util.List<? extends pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder> 
         getCommitteeValidatorsOrBuilderList();
     /**
-     * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+     * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
      */
     pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder getCommitteeValidatorsOrBuilder(
         int index);
@@ -9601,10 +9607,21 @@ public final class BlockchainOuterClass {
       return totalValidators_;
     }
 
-    public static final int TOTAL_POWER_FIELD_NUMBER = 5;
+    public static final int BLOCKCHAIN_SIZE_FIELD_NUMBER = 5;
+    private int blockchainSize_;
+    /**
+     * <code>int32 blockchain_size = 5 [json_name = "blockchainSize"];</code>
+     * @return The blockchainSize.
+     */
+    @java.lang.Override
+    public int getBlockchainSize() {
+      return blockchainSize_;
+    }
+
+    public static final int TOTAL_POWER_FIELD_NUMBER = 6;
     private long totalPower_;
     /**
-     * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
+     * <code>int64 total_power = 6 [json_name = "totalPower"];</code>
      * @return The totalPower.
      */
     @java.lang.Override
@@ -9612,10 +9629,10 @@ public final class BlockchainOuterClass {
       return totalPower_;
     }
 
-    public static final int COMMITTEE_POWER_FIELD_NUMBER = 6;
+    public static final int COMMITTEE_POWER_FIELD_NUMBER = 7;
     private long committeePower_;
     /**
-     * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
+     * <code>int64 committee_power = 7 [json_name = "committeePower"];</code>
      * @return The committeePower.
      */
     @java.lang.Override
@@ -9623,17 +9640,17 @@ public final class BlockchainOuterClass {
       return committeePower_;
     }
 
-    public static final int COMMITTEE_VALIDATORS_FIELD_NUMBER = 7;
+    public static final int COMMITTEE_VALIDATORS_FIELD_NUMBER = 8;
     private java.util.List<pactus.blockchain.BlockchainOuterClass.ValidatorInfo> committeeValidators_;
     /**
-     * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+     * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
     public java.util.List<pactus.blockchain.BlockchainOuterClass.ValidatorInfo> getCommitteeValidatorsList() {
       return committeeValidators_;
     }
     /**
-     * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+     * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
     public java.util.List<? extends pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder> 
@@ -9641,21 +9658,21 @@ public final class BlockchainOuterClass {
       return committeeValidators_;
     }
     /**
-     * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+     * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
     public int getCommitteeValidatorsCount() {
       return committeeValidators_.size();
     }
     /**
-     * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+     * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
     public pactus.blockchain.BlockchainOuterClass.ValidatorInfo getCommitteeValidators(int index) {
       return committeeValidators_.get(index);
     }
     /**
-     * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+     * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
     public pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder getCommitteeValidatorsOrBuilder(
@@ -9689,14 +9706,17 @@ public final class BlockchainOuterClass {
       if (totalValidators_ != 0) {
         output.writeInt32(4, totalValidators_);
       }
+      if (blockchainSize_ != 0) {
+        output.writeInt32(5, blockchainSize_);
+      }
       if (totalPower_ != 0L) {
-        output.writeInt64(5, totalPower_);
+        output.writeInt64(6, totalPower_);
       }
       if (committeePower_ != 0L) {
-        output.writeInt64(6, committeePower_);
+        output.writeInt64(7, committeePower_);
       }
       for (int i = 0; i < committeeValidators_.size(); i++) {
-        output.writeMessage(7, committeeValidators_.get(i));
+        output.writeMessage(8, committeeValidators_.get(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -9723,17 +9743,21 @@ public final class BlockchainOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, totalValidators_);
       }
+      if (blockchainSize_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(5, blockchainSize_);
+      }
       if (totalPower_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(5, totalPower_);
+          .computeInt64Size(6, totalPower_);
       }
       if (committeePower_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(6, committeePower_);
+          .computeInt64Size(7, committeePower_);
       }
       for (int i = 0; i < committeeValidators_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, committeeValidators_.get(i));
+          .computeMessageSize(8, committeeValidators_.get(i));
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -9758,6 +9782,8 @@ public final class BlockchainOuterClass {
           != other.getTotalAccounts()) return false;
       if (getTotalValidators()
           != other.getTotalValidators()) return false;
+      if (getBlockchainSize()
+          != other.getBlockchainSize()) return false;
       if (getTotalPower()
           != other.getTotalPower()) return false;
       if (getCommitteePower()
@@ -9783,6 +9809,8 @@ public final class BlockchainOuterClass {
       hash = (53 * hash) + getTotalAccounts();
       hash = (37 * hash) + TOTAL_VALIDATORS_FIELD_NUMBER;
       hash = (53 * hash) + getTotalValidators();
+      hash = (37 * hash) + BLOCKCHAIN_SIZE_FIELD_NUMBER;
+      hash = (53 * hash) + getBlockchainSize();
       hash = (37 * hash) + TOTAL_POWER_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getTotalPower());
@@ -9929,6 +9957,8 @@ public final class BlockchainOuterClass {
 
         totalValidators_ = 0;
 
+        blockchainSize_ = 0;
+
         totalPower_ = 0L;
 
         committeePower_ = 0L;
@@ -9971,6 +10001,7 @@ public final class BlockchainOuterClass {
         result.lastBlockHash_ = lastBlockHash_;
         result.totalAccounts_ = totalAccounts_;
         result.totalValidators_ = totalValidators_;
+        result.blockchainSize_ = blockchainSize_;
         result.totalPower_ = totalPower_;
         result.committeePower_ = committeePower_;
         if (committeeValidatorsBuilder_ == null) {
@@ -10041,6 +10072,9 @@ public final class BlockchainOuterClass {
         }
         if (other.getTotalValidators() != 0) {
           setTotalValidators(other.getTotalValidators());
+        }
+        if (other.getBlockchainSize() != 0) {
+          setBlockchainSize(other.getBlockchainSize());
         }
         if (other.getTotalPower() != 0L) {
           setTotalPower(other.getTotalPower());
@@ -10121,16 +10155,21 @@ public final class BlockchainOuterClass {
                 break;
               } // case 32
               case 40: {
-                totalPower_ = input.readInt64();
+                blockchainSize_ = input.readInt32();
 
                 break;
               } // case 40
               case 48: {
-                committeePower_ = input.readInt64();
+                totalPower_ = input.readInt64();
 
                 break;
               } // case 48
-              case 58: {
+              case 56: {
+                committeePower_ = input.readInt64();
+
+                break;
+              } // case 56
+              case 66: {
                 pactus.blockchain.BlockchainOuterClass.ValidatorInfo m =
                     input.readMessage(
                         pactus.blockchain.BlockchainOuterClass.ValidatorInfo.parser(),
@@ -10142,7 +10181,7 @@ public final class BlockchainOuterClass {
                   committeeValidatorsBuilder_.addMessage(m);
                 }
                 break;
-              } // case 58
+              } // case 66
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -10287,9 +10326,40 @@ public final class BlockchainOuterClass {
         return this;
       }
 
+      private int blockchainSize_ ;
+      /**
+       * <code>int32 blockchain_size = 5 [json_name = "blockchainSize"];</code>
+       * @return The blockchainSize.
+       */
+      @java.lang.Override
+      public int getBlockchainSize() {
+        return blockchainSize_;
+      }
+      /**
+       * <code>int32 blockchain_size = 5 [json_name = "blockchainSize"];</code>
+       * @param value The blockchainSize to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBlockchainSize(int value) {
+        
+        blockchainSize_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 blockchain_size = 5 [json_name = "blockchainSize"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBlockchainSize() {
+        
+        blockchainSize_ = 0;
+        onChanged();
+        return this;
+      }
+
       private long totalPower_ ;
       /**
-       * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
+       * <code>int64 total_power = 6 [json_name = "totalPower"];</code>
        * @return The totalPower.
        */
       @java.lang.Override
@@ -10297,7 +10367,7 @@ public final class BlockchainOuterClass {
         return totalPower_;
       }
       /**
-       * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
+       * <code>int64 total_power = 6 [json_name = "totalPower"];</code>
        * @param value The totalPower to set.
        * @return This builder for chaining.
        */
@@ -10308,7 +10378,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
+       * <code>int64 total_power = 6 [json_name = "totalPower"];</code>
        * @return This builder for chaining.
        */
       public Builder clearTotalPower() {
@@ -10320,7 +10390,7 @@ public final class BlockchainOuterClass {
 
       private long committeePower_ ;
       /**
-       * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
+       * <code>int64 committee_power = 7 [json_name = "committeePower"];</code>
        * @return The committeePower.
        */
       @java.lang.Override
@@ -10328,7 +10398,7 @@ public final class BlockchainOuterClass {
         return committeePower_;
       }
       /**
-       * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
+       * <code>int64 committee_power = 7 [json_name = "committeePower"];</code>
        * @param value The committeePower to set.
        * @return This builder for chaining.
        */
@@ -10339,7 +10409,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
+       * <code>int64 committee_power = 7 [json_name = "committeePower"];</code>
        * @return This builder for chaining.
        */
       public Builder clearCommitteePower() {
@@ -10362,7 +10432,7 @@ public final class BlockchainOuterClass {
           pactus.blockchain.BlockchainOuterClass.ValidatorInfo, pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder, pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder> committeeValidatorsBuilder_;
 
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public java.util.List<pactus.blockchain.BlockchainOuterClass.ValidatorInfo> getCommitteeValidatorsList() {
         if (committeeValidatorsBuilder_ == null) {
@@ -10372,7 +10442,7 @@ public final class BlockchainOuterClass {
         }
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public int getCommitteeValidatorsCount() {
         if (committeeValidatorsBuilder_ == null) {
@@ -10382,7 +10452,7 @@ public final class BlockchainOuterClass {
         }
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ValidatorInfo getCommitteeValidators(int index) {
         if (committeeValidatorsBuilder_ == null) {
@@ -10392,7 +10462,7 @@ public final class BlockchainOuterClass {
         }
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public Builder setCommitteeValidators(
           int index, pactus.blockchain.BlockchainOuterClass.ValidatorInfo value) {
@@ -10409,7 +10479,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public Builder setCommitteeValidators(
           int index, pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder builderForValue) {
@@ -10423,7 +10493,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public Builder addCommitteeValidators(pactus.blockchain.BlockchainOuterClass.ValidatorInfo value) {
         if (committeeValidatorsBuilder_ == null) {
@@ -10439,7 +10509,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public Builder addCommitteeValidators(
           int index, pactus.blockchain.BlockchainOuterClass.ValidatorInfo value) {
@@ -10456,7 +10526,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public Builder addCommitteeValidators(
           pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder builderForValue) {
@@ -10470,7 +10540,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public Builder addCommitteeValidators(
           int index, pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder builderForValue) {
@@ -10484,7 +10554,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public Builder addAllCommitteeValidators(
           java.lang.Iterable<? extends pactus.blockchain.BlockchainOuterClass.ValidatorInfo> values) {
@@ -10499,7 +10569,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public Builder clearCommitteeValidators() {
         if (committeeValidatorsBuilder_ == null) {
@@ -10512,7 +10582,7 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public Builder removeCommitteeValidators(int index) {
         if (committeeValidatorsBuilder_ == null) {
@@ -10525,14 +10595,14 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder getCommitteeValidatorsBuilder(
           int index) {
         return getCommitteeValidatorsFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder getCommitteeValidatorsOrBuilder(
           int index) {
@@ -10542,7 +10612,7 @@ public final class BlockchainOuterClass {
         }
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public java.util.List<? extends pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder> 
            getCommitteeValidatorsOrBuilderList() {
@@ -10553,14 +10623,14 @@ public final class BlockchainOuterClass {
         }
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder addCommitteeValidatorsBuilder() {
         return getCommitteeValidatorsFieldBuilder().addBuilder(
             pactus.blockchain.BlockchainOuterClass.ValidatorInfo.getDefaultInstance());
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder addCommitteeValidatorsBuilder(
           int index) {
@@ -10568,7 +10638,7 @@ public final class BlockchainOuterClass {
             index, pactus.blockchain.BlockchainOuterClass.ValidatorInfo.getDefaultInstance());
       }
       /**
-       * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
+       * <code>repeated .pactus.ValidatorInfo committee_validators = 8 [json_name = "committeeValidators"];</code>
        */
       public java.util.List<pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder> 
            getCommitteeValidatorsBuilderList() {
@@ -18001,75 +18071,76 @@ public final class BlockchainOuterClass {
       "ashResponse\022\022\n\004hash\030\001 \001(\014R\004hash\"+\n\025GetBl" +
       "ockHeightRequest\022\022\n\004hash\030\001 \001(\014R\004hash\"0\n\026" +
       "GetBlockHeightResponse\022\026\n\006height\030\001 \001(\rR\006" +
-      "height\"\032\n\030GetBlockchainInfoRequest\"\325\002\n\031G" +
+      "height\"\032\n\030GetBlockchainInfoRequest\"\376\002\n\031G" +
       "etBlockchainInfoResponse\022*\n\021last_block_h" +
       "eight\030\001 \001(\rR\017lastBlockHeight\022&\n\017last_blo" +
       "ck_hash\030\002 \001(\014R\rlastBlockHash\022%\n\016total_ac" +
       "counts\030\003 \001(\005R\rtotalAccounts\022)\n\020total_val" +
-      "idators\030\004 \001(\005R\017totalValidators\022\037\n\013total_" +
-      "power\030\005 \001(\003R\ntotalPower\022\'\n\017committee_pow" +
-      "er\030\006 \001(\003R\016committeePower\022H\n\024committee_va" +
-      "lidators\030\007 \003(\0132\025.pactus.ValidatorInfoR\023c" +
-      "ommitteeValidators\"\031\n\027GetConsensusInfoRe" +
-      "quest\"O\n\030GetConsensusInfoResponse\0223\n\tins" +
-      "tances\030\001 \003(\0132\025.pactus.ConsensusInfoR\tins" +
-      "tances\"\334\002\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\014R\004" +
-      "hash\022\022\n\004data\030\002 \001(\014R\004data\022\035\n\npublic_key\030\003" +
-      " \001(\tR\tpublicKey\022\026\n\006number\030\004 \001(\005R\006number\022" +
-      "\024\n\005stake\030\005 \001(\003R\005stake\022.\n\023last_bonding_he" +
-      "ight\030\006 \001(\rR\021lastBondingHeight\0222\n\025last_so" +
-      "rtition_height\030\007 \001(\rR\023lastSortitionHeigh" +
-      "t\022)\n\020unbonding_height\030\010 \001(\rR\017unbondingHe" +
-      "ight\022\030\n\007address\030\t \001(\tR\007address\022-\n\022availa" +
-      "bility_score\030\n \001(\001R\021availabilityScore\"\201\001" +
-      "\n\013AccountInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n\004dat" +
-      "a\030\002 \001(\014R\004data\022\026\n\006number\030\003 \001(\005R\006number\022\030\n" +
-      "\007balance\030\004 \001(\003R\007balance\022\030\n\007address\030\005 \001(\t" +
-      "R\007address\"\304\001\n\017BlockHeaderInfo\022\030\n\007version" +
-      "\030\001 \001(\005R\007version\022&\n\017prev_block_hash\030\002 \001(\014" +
-      "R\rprevBlockHash\022\035\n\nstate_root\030\003 \001(\014R\tsta" +
-      "teRoot\022%\n\016sortition_seed\030\004 \001(\014R\rsortitio" +
-      "nSeed\022)\n\020proposer_address\030\005 \001(\tR\017propose" +
-      "rAddress\"\227\001\n\017CertificateInfo\022\022\n\004hash\030\001 \001" +
-      "(\014R\004hash\022\024\n\005round\030\002 \001(\005R\005round\022\036\n\ncommit" +
-      "ters\030\003 \003(\005R\ncommitters\022\034\n\tabsentees\030\004 \003(" +
-      "\005R\tabsentees\022\034\n\tsignature\030\005 \001(\014R\tsignatu" +
-      "re\"\261\001\n\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.pactus.V" +
-      "oteTypeR\004type\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nb" +
-      "lock_hash\030\003 \001(\014R\tblockHash\022\024\n\005round\030\004 \001(" +
-      "\005R\005round\022\031\n\010cp_round\030\005 \001(\005R\007cpRound\022\031\n\010c" +
-      "p_value\030\006 \001(\005R\007cpValue\"\227\001\n\rConsensusInfo" +
-      "\022\030\n\007address\030\001 \001(\tR\007address\022\026\n\006Active\030\002 \001" +
-      "(\010R\006Active\022\026\n\006height\030\003 \001(\rR\006height\022\024\n\005ro" +
-      "und\030\004 \001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.pactus" +
-      ".VoteInfoR\005votes*H\n\016BlockVerbosity\022\016\n\nBL" +
-      "OCK_DATA\020\000\022\016\n\nBLOCK_INFO\020\001\022\026\n\022BLOCK_TRAN" +
-      "SACTIONS\020\002*\\\n\010VoteType\022\020\n\014VOTE_UNKNOWN\020\000" +
-      "\022\020\n\014VOTE_PREPARE\020\001\022\022\n\016VOTE_PRECOMMIT\020\002\022\030" +
-      "\n\024VOTE_CHANGE_PROPOSER\020\0032\264\006\n\nBlockchain\022" +
-      "=\n\010GetBlock\022\027.pactus.GetBlockRequest\032\030.p" +
-      "actus.GetBlockResponse\022I\n\014GetBlockHash\022\033" +
-      ".pactus.GetBlockHashRequest\032\034.pactus.Get" +
-      "BlockHashResponse\022O\n\016GetBlockHeight\022\035.pa" +
-      "ctus.GetBlockHeightRequest\032\036.pactus.GetB" +
-      "lockHeightResponse\022X\n\021GetBlockchainInfo\022" +
-      " .pactus.GetBlockchainInfoRequest\032!.pact" +
-      "us.GetBlockchainInfoResponse\022U\n\020GetConse" +
-      "nsusInfo\022\037.pactus.GetConsensusInfoReques" +
-      "t\032 .pactus.GetConsensusInfoResponse\022C\n\nG" +
-      "etAccount\022\031.pactus.GetAccountRequest\032\032.p" +
-      "actus.GetAccountResponse\022I\n\014GetValidator" +
-      "\022\033.pactus.GetValidatorRequest\032\034.pactus.G" +
-      "etValidatorResponse\022Y\n\024GetValidatorByNum" +
-      "ber\022#.pactus.GetValidatorByNumberRequest" +
-      "\032\034.pactus.GetValidatorResponse\022d\n\025GetVal" +
-      "idatorAddresses\022$.pactus.GetValidatorAdd" +
-      "ressesRequest\032%.pactus.GetValidatorAddre" +
-      "ssesResponse\022I\n\014GetPublicKey\022\033.pactus.Ge" +
-      "tPublicKeyRequest\032\034.pactus.GetPublicKeyR" +
-      "esponseBE\n\021pactus.blockchainZ0github.com" +
-      "/pactus-project/pactus/www/grpc/pactusb\006" +
-      "proto3"
+      "idators\030\004 \001(\005R\017totalValidators\022\'\n\017blockc" +
+      "hain_size\030\005 \001(\005R\016blockchainSize\022\037\n\013total" +
+      "_power\030\006 \001(\003R\ntotalPower\022\'\n\017committee_po" +
+      "wer\030\007 \001(\003R\016committeePower\022H\n\024committee_v" +
+      "alidators\030\010 \003(\0132\025.pactus.ValidatorInfoR\023" +
+      "committeeValidators\"\031\n\027GetConsensusInfoR" +
+      "equest\"O\n\030GetConsensusInfoResponse\0223\n\tin" +
+      "stances\030\001 \003(\0132\025.pactus.ConsensusInfoR\tin" +
+      "stances\"\334\002\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\014R" +
+      "\004hash\022\022\n\004data\030\002 \001(\014R\004data\022\035\n\npublic_key\030" +
+      "\003 \001(\tR\tpublicKey\022\026\n\006number\030\004 \001(\005R\006number" +
+      "\022\024\n\005stake\030\005 \001(\003R\005stake\022.\n\023last_bonding_h" +
+      "eight\030\006 \001(\rR\021lastBondingHeight\0222\n\025last_s" +
+      "ortition_height\030\007 \001(\rR\023lastSortitionHeig" +
+      "ht\022)\n\020unbonding_height\030\010 \001(\rR\017unbondingH" +
+      "eight\022\030\n\007address\030\t \001(\tR\007address\022-\n\022avail" +
+      "ability_score\030\n \001(\001R\021availabilityScore\"\201" +
+      "\001\n\013AccountInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n\004da" +
+      "ta\030\002 \001(\014R\004data\022\026\n\006number\030\003 \001(\005R\006number\022\030" +
+      "\n\007balance\030\004 \001(\003R\007balance\022\030\n\007address\030\005 \001(" +
+      "\tR\007address\"\304\001\n\017BlockHeaderInfo\022\030\n\007versio" +
+      "n\030\001 \001(\005R\007version\022&\n\017prev_block_hash\030\002 \001(" +
+      "\014R\rprevBlockHash\022\035\n\nstate_root\030\003 \001(\014R\tst" +
+      "ateRoot\022%\n\016sortition_seed\030\004 \001(\014R\rsortiti" +
+      "onSeed\022)\n\020proposer_address\030\005 \001(\tR\017propos" +
+      "erAddress\"\227\001\n\017CertificateInfo\022\022\n\004hash\030\001 " +
+      "\001(\014R\004hash\022\024\n\005round\030\002 \001(\005R\005round\022\036\n\ncommi" +
+      "tters\030\003 \003(\005R\ncommitters\022\034\n\tabsentees\030\004 \003" +
+      "(\005R\tabsentees\022\034\n\tsignature\030\005 \001(\014R\tsignat" +
+      "ure\"\261\001\n\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.pactus." +
+      "VoteTypeR\004type\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\n" +
+      "block_hash\030\003 \001(\014R\tblockHash\022\024\n\005round\030\004 \001" +
+      "(\005R\005round\022\031\n\010cp_round\030\005 \001(\005R\007cpRound\022\031\n\010" +
+      "cp_value\030\006 \001(\005R\007cpValue\"\227\001\n\rConsensusInf" +
+      "o\022\030\n\007address\030\001 \001(\tR\007address\022\026\n\006Active\030\002 " +
+      "\001(\010R\006Active\022\026\n\006height\030\003 \001(\rR\006height\022\024\n\005r" +
+      "ound\030\004 \001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.pactu" +
+      "s.VoteInfoR\005votes*H\n\016BlockVerbosity\022\016\n\nB" +
+      "LOCK_DATA\020\000\022\016\n\nBLOCK_INFO\020\001\022\026\n\022BLOCK_TRA" +
+      "NSACTIONS\020\002*\\\n\010VoteType\022\020\n\014VOTE_UNKNOWN\020" +
+      "\000\022\020\n\014VOTE_PREPARE\020\001\022\022\n\016VOTE_PRECOMMIT\020\002\022" +
+      "\030\n\024VOTE_CHANGE_PROPOSER\020\0032\264\006\n\nBlockchain" +
+      "\022=\n\010GetBlock\022\027.pactus.GetBlockRequest\032\030." +
+      "pactus.GetBlockResponse\022I\n\014GetBlockHash\022" +
+      "\033.pactus.GetBlockHashRequest\032\034.pactus.Ge" +
+      "tBlockHashResponse\022O\n\016GetBlockHeight\022\035.p" +
+      "actus.GetBlockHeightRequest\032\036.pactus.Get" +
+      "BlockHeightResponse\022X\n\021GetBlockchainInfo" +
+      "\022 .pactus.GetBlockchainInfoRequest\032!.pac" +
+      "tus.GetBlockchainInfoResponse\022U\n\020GetCons" +
+      "ensusInfo\022\037.pactus.GetConsensusInfoReque" +
+      "st\032 .pactus.GetConsensusInfoResponse\022C\n\n" +
+      "GetAccount\022\031.pactus.GetAccountRequest\032\032." +
+      "pactus.GetAccountResponse\022I\n\014GetValidato" +
+      "r\022\033.pactus.GetValidatorRequest\032\034.pactus." +
+      "GetValidatorResponse\022Y\n\024GetValidatorByNu" +
+      "mber\022#.pactus.GetValidatorByNumberReques" +
+      "t\032\034.pactus.GetValidatorResponse\022d\n\025GetVa" +
+      "lidatorAddresses\022$.pactus.GetValidatorAd" +
+      "dressesRequest\032%.pactus.GetValidatorAddr" +
+      "essesResponse\022I\n\014GetPublicKey\022\033.pactus.G" +
+      "etPublicKeyRequest\032\034.pactus.GetPublicKey" +
+      "ResponseBE\n\021pactus.blockchainZ0github.co" +
+      "m/pactus-project/pactus/www/grpc/pactusb" +
+      "\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -18177,7 +18248,7 @@ public final class BlockchainOuterClass {
     internal_static_pactus_GetBlockchainInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockchainInfoResponse_descriptor,
-        new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "TotalAccounts", "TotalValidators", "TotalPower", "CommitteePower", "CommitteeValidators", });
+        new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "TotalAccounts", "TotalValidators", "BlockchainSize", "TotalPower", "CommitteePower", "CommitteeValidators", });
     internal_static_pactus_GetConsensusInfoRequest_descriptor =
       getDescriptor().getMessageTypes().get(17);
     internal_static_pactus_GetConsensusInfoRequest_fieldAccessorTable = new

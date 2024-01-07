@@ -263,3 +263,7 @@ func (m *MockState) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
 func (m *MockState) AvailabilityScore(_ int32) float64 {
 	return 1.0
 }
+
+func (m *MockState) BlockchainSize() int64 {
+	return m.TestStore.BlockchainSize()
+}
