@@ -7,14 +7,13 @@ import (
 	"fmt"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/wallet"
 )
 
 //go:embed assets/ui/dialog_transaction_unbond.ui
 var uiTransactionUnBondDialog []byte
 
-func broadcastTransactionUnBond(wlt *wallet.Wallet, valAddrs []crypto.Address) {
+func broadcastTransactionUnbond(wlt *wallet.Wallet) {
 	builder, err := gtk.BuilderNewFromString(string(uiTransactionUnBondDialog))
 	fatalErrorCheck(err)
 
@@ -25,8 +24,8 @@ func broadcastTransactionUnBond(wlt *wallet.Wallet, valAddrs []crypto.Address) {
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
-	for _, addr := range valAddrs {
-		validatorCombo.Append(addr.String(), addr.String())
+	for _, ai := range wlt.AllValidatorAddresses() {
+		validatorCombo.Append(ai.Address, ai.Address)
 	}
 
 	onValidatorChanged := func() {
