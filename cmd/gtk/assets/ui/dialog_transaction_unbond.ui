@@ -7,7 +7,7 @@
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">Broadcasting Unbond transaction</property>
     <property name="modal">True</property>
-    <property name="default-width">420</property>
+    <property name="default-width">480</property>
     <property name="type-hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox">
