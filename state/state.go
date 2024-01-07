@@ -786,6 +786,6 @@ func (st *state) AvailabilityScore(valNum int32) float64 {
 	return st.scoreMgr.AvailabilityScore(valNum)
 }
 
-func (s *state) BlockchainSize() int64 {
-	return s.store.BlockchainSize()
+func (st *state) BlockchainSize() int64 {
+	return st.store.BlockchainSize()
 }
