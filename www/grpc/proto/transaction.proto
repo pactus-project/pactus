@@ -132,3 +132,4 @@ enum TransactionVerbosity {
   TRANSACTION_DATA = 0;
   TRANSACTION_INFO = 1;
 }
+

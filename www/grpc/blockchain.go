@@ -23,7 +23,7 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 	vals := s.state.CommitteeValidators()
 	cv := make([]*pactus.ValidatorInfo, 0, len(vals))
 	for _, v := range vals {
-		cv = append(cv, validatorToProto(v))
+		cv = append(cv, s.validatorToProto(v))
 	}
 
 	return &pactus.GetBlockchainInfoResponse{
@@ -46,7 +46,7 @@ func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 		votes := cons.AllVotes()
 		voteInfos := make([]*pactus.VoteInfo, 0, len(votes))
 		for _, v := range votes {
-			voteInfos = append(voteInfos, voteToProto(v))
+			voteInfos = append(voteInfos, s.voteToProto(v))
 		}
 
 		instances = append(instances,
@@ -170,7 +170,7 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 		return nil, status.Errorf(codes.NotFound, "account not found")
 	}
 	res := &pactus.GetAccountResponse{
-		Account: accountToProto(addr, acc),
+		Account: s.accountToProto(addr, acc),
 	}
 
 	return res, nil
@@ -185,7 +185,7 @@ func (s *blockchainServer) GetValidatorByNumber(_ context.Context,
 	}
 
 	return &pactus.GetValidatorResponse{
-		Validator: validatorToProto(val),
+		Validator: s.validatorToProto(val),
 	}, nil
 }
 
@@ -202,7 +202,7 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 	}
 
 	return &pactus.GetValidatorResponse{
-		Validator: validatorToProto(val),
+		Validator: s.validatorToProto(val),
 	}, nil
 }
 
@@ -233,7 +233,7 @@ func (s *blockchainServer) GetPublicKey(_ context.Context,
 	return &pactus.GetPublicKeyResponse{PublicKey: publicKey.String()}, nil
 }
 
-func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
+func (s *blockchainServer) validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 	data, _ := val.Bytes()
 	return &pactus.ValidatorInfo{
 		Hash:                val.Hash().Bytes(),
@@ -245,10 +245,11 @@ func validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 		LastBondingHeight:   val.LastBondingHeight(),
 		LastSortitionHeight: val.LastSortitionHeight(),
 		UnbondingHeight:     val.UnbondingHeight(),
+		AvailabilityScore:   s.state.AvailabilityScore(val.Number()),
 	}
 }
 
-func accountToProto(addr crypto.Address, acc *account.Account) *pactus.AccountInfo {
+func (s *blockchainServer) accountToProto(addr crypto.Address, acc *account.Account) *pactus.AccountInfo {
 	data, _ := acc.Bytes()
 	return &pactus.AccountInfo{
 		Hash:    acc.Hash().Bytes(),
@@ -259,7 +260,7 @@ func accountToProto(addr crypto.Address, acc *account.Account) *pactus.AccountIn
 	}
 }
 
-func voteToProto(v *vote.Vote) *pactus.VoteInfo {
+func (s *blockchainServer) voteToProto(v *vote.Vote) *pactus.VoteInfo {
 	cpRound := int32(0)
 	cpValue := int32(0)
 	if v.IsCPVote() {

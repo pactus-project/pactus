@@ -1304,6 +1304,10 @@
         },
         "address": {
           "type": "string"
+        },
+        "availabilityScore": {
+          "type": "number",
+          "format": "double"
         }
       }
     },

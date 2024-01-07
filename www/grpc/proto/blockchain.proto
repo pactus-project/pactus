@@ -90,6 +90,7 @@ message ValidatorInfo {
   uint32 last_sortition_height = 7;
   uint32 unbonding_height = 8;
   string address = 9;
+  double availability_score = 10;
 }
 
 message AccountInfo {

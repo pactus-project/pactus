@@ -1033,6 +1033,7 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSortitionHeight', $pb.PbFieldType.OU3)
     ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unbondingHeight', $pb.PbFieldType.OU3)
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
+    ..a<$core.double>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'availabilityScore', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -1047,6 +1048,7 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     $core.int? lastSortitionHeight,
     $core.int? unbondingHeight,
     $core.String? address,
+    $core.double? availabilityScore,
   }) {
     final _result = create();
     if (hash != null) {
@@ -1075,6 +1077,9 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     }
     if (address != null) {
       _result.address = address;
+    }
+    if (availabilityScore != null) {
+      _result.availabilityScore = availabilityScore;
     }
     return _result;
   }
@@ -1179,6 +1184,15 @@ class ValidatorInfo extends $pb.GeneratedMessage {
   $core.bool hasAddress() => $_has(8);
   @$pb.TagNumber(9)
   void clearAddress() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.double get availabilityScore => $_getN(9);
+  @$pb.TagNumber(10)
+  set availabilityScore($core.double v) { $_setDouble(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasAvailabilityScore() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearAvailabilityScore() => clearField(10);
 }
 
 class AccountInfo extends $pb.GeneratedMessage {
