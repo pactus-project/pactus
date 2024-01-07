@@ -3783,7 +3783,7 @@ proto.pactus.ValidatorInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setAddress(value);
       break;
     case 10:
-      var value = /** @type {number} */ (reader.readFloat());
+      var value = /** @type {number} */ (reader.readDouble());
       msg.setAvailabilityScore(value);
       break;
     default:
@@ -3880,7 +3880,7 @@ proto.pactus.ValidatorInfo.serializeBinaryToWriter = function(message, writer) {
   }
   f = message.getAvailabilityScore();
   if (f !== 0.0) {
-    writer.writeFloat(
+    writer.writeDouble(
       10,
       f
     );
@@ -4099,7 +4099,7 @@ proto.pactus.ValidatorInfo.prototype.setAddress = function(value) {
 
 
 /**
- * optional float availability_score = 10;
+ * optional double availability_score = 10;
  * @return {number}
  */
 proto.pactus.ValidatorInfo.prototype.getAvailabilityScore = function() {

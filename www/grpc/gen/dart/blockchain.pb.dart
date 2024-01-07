@@ -1033,7 +1033,7 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSortitionHeight', $pb.PbFieldType.OU3)
     ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unbondingHeight', $pb.PbFieldType.OU3)
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
-    ..a<$core.double>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'availabilityScore', $pb.PbFieldType.OF)
+    ..a<$core.double>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'availabilityScore', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -1188,7 +1188,7 @@ class ValidatorInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(10)
   $core.double get availabilityScore => $_getN(9);
   @$pb.TagNumber(10)
-  set availabilityScore($core.double v) { $_setFloat(9, v); }
+  set availabilityScore($core.double v) { $_setDouble(9, v); }
   @$pb.TagNumber(10)
   $core.bool hasAvailabilityScore() => $_has(9);
   @$pb.TagNumber(10)

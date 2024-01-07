@@ -1307,7 +1307,7 @@
         },
         "availabilityScore": {
           "type": "number",
-          "format": "float"
+          "format": "double"
         }
       }
     },

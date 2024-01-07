@@ -11898,10 +11898,10 @@ public final class BlockchainOuterClass {
         getAddressBytes();
 
     /**
-     * <code>float availability_score = 10 [json_name = "availabilityScore"];</code>
+     * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
      * @return The availabilityScore.
      */
-    float getAvailabilityScore();
+    double getAvailabilityScore();
   }
   /**
    * Protobuf type {@code pactus.ValidatorInfo}
@@ -12101,13 +12101,13 @@ public final class BlockchainOuterClass {
     }
 
     public static final int AVAILABILITY_SCORE_FIELD_NUMBER = 10;
-    private float availabilityScore_;
+    private double availabilityScore_;
     /**
-     * <code>float availability_score = 10 [json_name = "availabilityScore"];</code>
+     * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
      * @return The availabilityScore.
      */
     @java.lang.Override
-    public float getAvailabilityScore() {
+    public double getAvailabilityScore() {
       return availabilityScore_;
     }
 
@@ -12152,8 +12152,8 @@ public final class BlockchainOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 9, address_);
       }
-      if (java.lang.Float.floatToRawIntBits(availabilityScore_) != 0) {
-        output.writeFloat(10, availabilityScore_);
+      if (java.lang.Double.doubleToRawLongBits(availabilityScore_) != 0) {
+        output.writeDouble(10, availabilityScore_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -12198,9 +12198,9 @@ public final class BlockchainOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, address_);
       }
-      if (java.lang.Float.floatToRawIntBits(availabilityScore_) != 0) {
+      if (java.lang.Double.doubleToRawLongBits(availabilityScore_) != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeFloatSize(10, availabilityScore_);
+          .computeDoubleSize(10, availabilityScore_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -12235,8 +12235,8 @@ public final class BlockchainOuterClass {
           != other.getUnbondingHeight()) return false;
       if (!getAddress()
           .equals(other.getAddress())) return false;
-      if (java.lang.Float.floatToIntBits(getAvailabilityScore())
-          != java.lang.Float.floatToIntBits(
+      if (java.lang.Double.doubleToLongBits(getAvailabilityScore())
+          != java.lang.Double.doubleToLongBits(
               other.getAvailabilityScore())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
@@ -12269,8 +12269,8 @@ public final class BlockchainOuterClass {
       hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
       hash = (53 * hash) + getAddress().hashCode();
       hash = (37 * hash) + AVAILABILITY_SCORE_FIELD_NUMBER;
-      hash = (53 * hash) + java.lang.Float.floatToIntBits(
-          getAvailabilityScore());
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          java.lang.Double.doubleToLongBits(getAvailabilityScore()));
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -12417,7 +12417,7 @@ public final class BlockchainOuterClass {
 
         address_ = "";
 
-        availabilityScore_ = 0F;
+        availabilityScore_ = 0D;
 
         return this;
       }
@@ -12532,7 +12532,7 @@ public final class BlockchainOuterClass {
           address_ = other.address_;
           onChanged();
         }
-        if (other.getAvailabilityScore() != 0F) {
+        if (other.getAvailabilityScore() != 0D) {
           setAvailabilityScore(other.getAvailabilityScore());
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -12606,11 +12606,11 @@ public final class BlockchainOuterClass {
 
                 break;
               } // case 74
-              case 85: {
-                availabilityScore_ = input.readFloat();
+              case 81: {
+                availabilityScore_ = input.readDouble();
 
                 break;
-              } // case 85
+              } // case 81
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -13002,33 +13002,33 @@ public final class BlockchainOuterClass {
         return this;
       }
 
-      private float availabilityScore_ ;
+      private double availabilityScore_ ;
       /**
-       * <code>float availability_score = 10 [json_name = "availabilityScore"];</code>
+       * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
        * @return The availabilityScore.
        */
       @java.lang.Override
-      public float getAvailabilityScore() {
+      public double getAvailabilityScore() {
         return availabilityScore_;
       }
       /**
-       * <code>float availability_score = 10 [json_name = "availabilityScore"];</code>
+       * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
        * @param value The availabilityScore to set.
        * @return This builder for chaining.
        */
-      public Builder setAvailabilityScore(float value) {
+      public Builder setAvailabilityScore(double value) {
         
         availabilityScore_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>float availability_score = 10 [json_name = "availabilityScore"];</code>
+       * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAvailabilityScore() {
         
-        availabilityScore_ = 0F;
+        availabilityScore_ = 0D;
         onChanged();
         return this;
       }
@@ -18021,7 +18021,7 @@ public final class BlockchainOuterClass {
       "rtition_height\030\007 \001(\rR\023lastSortitionHeigh" +
       "t\022)\n\020unbonding_height\030\010 \001(\rR\017unbondingHe" +
       "ight\022\030\n\007address\030\t \001(\tR\007address\022-\n\022availa" +
-      "bility_score\030\n \001(\002R\021availabilityScore\"\201\001" +
+      "bility_score\030\n \001(\001R\021availabilityScore\"\201\001" +
       "\n\013AccountInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n\004dat" +
       "a\030\002 \001(\014R\004data\022\026\n\006number\030\003 \001(\005R\006number\022\030\n" +
       "\007balance\030\004 \001(\003R\007balance\022\030\n\007address\030\005 \001(\t" +
