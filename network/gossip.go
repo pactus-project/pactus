@@ -3,6 +3,7 @@ package network
 import (
 	"context"
 	"sync"
+	"time"
 
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
 	lp2pcore "github.com/libp2p/go-libp2p/core"
@@ -22,20 +23,35 @@ type gossipService struct {
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	_ *Config, log *logger.SubLogger,
+	conf *Config, log *logger.SubLogger,
 ) *gossipService {
 	opts := []lp2pps.Option{
+		lp2pps.WithFloodPublish(true),
 		lp2pps.WithMessageSignaturePolicy(lp2pps.StrictNoSign),
 		lp2pps.WithNoAuthor(),
 		lp2pps.WithMessageIdFn(MessageIDFunc),
+		lp2pps.WithPeerOutboundQueueSize(600),
 	}
 
-	pubsub, err := lp2pps.NewFloodSub(ctx, host, opts...)
+	if conf.IsBootstrapper {
+		// enable Peer eXchange on bootstrappers
+		opts = append(opts, lp2pps.WithPeerExchange(true))
+	}
+
+	gsParams := lp2pps.DefaultGossipSubParams()
+	if conf.IsBootstrapper {
+		gsParams.Dhi = 12
+		gsParams.D = 8
+		gsParams.Dlo = 6
+		gsParams.HeartbeatInterval = 700 * time.Millisecond
+	}
+	opts = append(opts, lp2pps.WithGossipSubParams(gsParams))
+
+	pubsub, err := lp2pps.NewGossipSub(ctx, host, opts...)
 	if err != nil {
 		log.Panic("unable to start Gossip service", "error", err)
 		return nil
 	}
-
 	return &gossipService{
 		ctx:     ctx,
 		host:    host,

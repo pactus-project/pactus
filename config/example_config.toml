@@ -82,10 +82,6 @@
   # Default is `true`.
  ## node_network = true
 
-  # `node_gossip_experimental` indicates whether the node participates in the gossiping protocol.
-  # Default is `false`.
- ## node_gossip_experimental = false
-
   # `sync.firewall` contains configuration options for the sync firewall.
   [sync.firewall]
     # `enable` indicates whether the firewall should be enabled or not.

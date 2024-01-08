@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
@@ -16,7 +15,7 @@ import (
 //go:embed assets/ui/dialog_transaction_bond.ui
 var uiTransactionBondDialog []byte
 
-func broadcastTransactionBond(wlt *wallet.Wallet, valAddrs []crypto.Address) {
+func broadcastTransactionBond(wlt *wallet.Wallet) {
 	builder, err := gtk.BuilderNewFromString(string(uiTransactionBondDialog))
 	fatalErrorCheck(err)
 
@@ -32,12 +31,13 @@ func broadcastTransactionBond(wlt *wallet.Wallet, valAddrs []crypto.Address) {
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
-	for _, i := range wlt.AddressInfos() {
-		senderEntry.Append(i.Address, i.Address)
+	// TODO: we need something like: wlt.AllAccountAddresses()
+	for _, ai := range wlt.AddressInfos() {
+		senderEntry.Append(ai.Address, ai.Address)
 	}
 
-	for _, addr := range valAddrs {
-		receiverCombo.Append(addr.String(), addr.String())
+	for _, ai := range wlt.AllValidatorAddresses() {
+		receiverCombo.Append(ai.Address, ai.Address)
 	}
 
 	senderEntry.SetActive(0)

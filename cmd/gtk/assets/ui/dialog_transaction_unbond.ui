@@ -5,7 +5,7 @@
   <object class="GtkDialog" id="id_dialog_transaction_unbond">
     <property name="width-request">600</property>
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Broadcasting UnBond transaction</property>
+    <property name="title" translatable="yes">Broadcasting Unbond transaction</property>
     <property name="modal">True</property>
     <property name="default-width">480</property>
     <property name="type-hint">dialog</property>
@@ -80,7 +80,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Account address:</property>
+                <property name="label" translatable="yes">Validator address:</property>
               </object>
               <packing>
                 <property name="expand">False</property>

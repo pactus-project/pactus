@@ -27,7 +27,6 @@ type Config struct {
 	DefaultRelayAddrStrings     []string `toml:"-"`
 	DefaultBootstrapAddrStrings []string `toml:"-"`
 	IsBootstrapper              bool     `toml:"-"`
-	IsGossiper                  bool     `toml:"-"`
 }
 
 func DefaultConfig() *Config {
@@ -46,7 +45,6 @@ func DefaultConfig() *Config {
 		ForcePrivateNetwork:  false,
 		DefaultPort:          21888,
 		IsBootstrapper:       false,
-		IsGossiper:           false,
 	}
 }
 

@@ -23,24 +23,30 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 
 	validatorEntry := getComboBoxTextObj(builder, "id_combo_validator")
 	validatorHint := getLabelObj(builder, "id_hint_validator")
-	receiverEntry := getEntryObj(builder, "id_entry_receiver")
+	receiverCombo := getComboBoxTextObj(builder, "id_combo_receiver")
 	receiverHint := getLabelObj(builder, "id_hint_receiver")
 	stakeEntry := getEntryObj(builder, "id_entry_stake")
 	stakeHint := getLabelObj(builder, "id_hint_stake")
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
-	for _, i := range wlt.AddressInfos() {
-		validatorEntry.Append(i.Address, i.Address)
+	for _, ai := range wlt.AllValidatorAddresses() {
+		validatorEntry.Append(ai.Address, ai.Address)
 	}
 	validatorEntry.SetActive(0)
 
+	// TODO: we need something like: wlt.AllAccountAddresses()
+	for _, ai := range wlt.AddressInfos() {
+		receiverCombo.Append(ai.Address, ai.Address)
+	}
+
 	onSenderChanged := func() {
 		senderStr := validatorEntry.GetActiveID()
-		updateAccountHint(validatorHint, senderStr, wlt)
+		updateValidatorHint(validatorHint, senderStr, wlt)
 	}
 
 	onReceiverChanged := func() {
+		receiverEntry, _ := receiverCombo.GetEntry()
 		receiverStr, _ := receiverEntry.GetText()
 		updateAccountHint(receiverHint, receiverStr, wlt)
 	}
@@ -52,6 +58,7 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 
 	onSend := func() {
 		sender := validatorEntry.GetActiveID()
+		receiverEntry, _ := receiverCombo.GetEntry()
 		receiver, _ := receiverEntry.GetText()
 		amountStr, _ := stakeEntry.GetText()
 
