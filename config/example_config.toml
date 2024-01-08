@@ -40,8 +40,8 @@
   # Default is `64`.
  ## max_connections = 64
 
- # `enable_udp` indicates whether the UDP transport protocol should be enabled or not.
- # Enabling UDP can improve the network connectivity of the node, but it might also lead to many packet losses.
+  # `enable_udp` indicates whether the UDP transport protocol should be enabled or not.
+  # Enabling UDP can improve the network connectivity of the node, but it might also lead to many packet losses.
   # Default is `false`.
  ## enable_udp = false
 
