@@ -61,8 +61,8 @@ func TestTestnetConfig(t *testing.T) {
 	conf := DefaultConfigTestnet(param.DefaultParams())
 
 	assert.NoError(t, conf.BasicCheck())
-	assert.NotEmpty(t, conf.Network.ListenAddrStrings)
 	assert.NotEmpty(t, conf.Network.DefaultRelayAddrStrings)
+	assert.Empty(t, conf.Network.ListenAddrStrings)
 	assert.Empty(t, conf.Network.RelayAddrStrings)
 	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet-v2")
 	assert.Equal(t, conf.Network.DefaultPort, 21777)

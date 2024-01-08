@@ -1,6 +1,8 @@
 package network
 
 import (
+	"fmt"
+
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
@@ -91,7 +93,16 @@ func (conf *Config) PublicAddr() multiaddr.Multiaddr {
 }
 
 func (conf *Config) ListenAddrs() []multiaddr.Multiaddr {
-	addrs, _ := MakeMultiAddrs(conf.ListenAddrStrings)
+	listenAddrs := conf.ListenAddrStrings
+	if len(listenAddrs) == 0 {
+		listenAddrs = []string{
+			fmt.Sprintf("/ip4/0.0.0.0/tcp/%d", conf.DefaultPort),
+			fmt.Sprintf("/ip4/0.0.0.0/udp/%d/quic-v1", conf.DefaultPort),
+			fmt.Sprintf("/ip6/::/tcp/%d", conf.DefaultPort),
+			fmt.Sprintf("/ip6/::/udp/%d/quic-v1", conf.DefaultPort),
+		}
+	}
+	addrs, _ := MakeMultiAddrs(listenAddrs)
 	return addrs
 }
 
