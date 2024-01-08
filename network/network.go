@@ -249,8 +249,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	n.logger.Info("network setup", "id", n.host.ID(),
 		"name", conf.NetworkName,
 		"address", conf.ListenAddrStrings,
-		"bootstrapper", conf.IsBootstrapper,
-		"gossiper", conf.IsGossiper)
+		"bootstrapper", conf.IsBootstrapper)
 
 	return n, nil
 }
