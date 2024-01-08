@@ -93,10 +93,6 @@ func DefaultConfigMainnet(genParams *param.Params) *Config {
 //nolint:lll // long multi-address
 func DefaultConfigTestnet(genParams *param.Params) *Config {
 	conf := defaultConfig()
-	conf.Network.ListenAddrStrings = []string{
-		"/ip4/0.0.0.0/tcp/21777", "/ip4/0.0.0.0/udp/21777/quic-v1",
-		"/ip6/::/tcp/21777", "/ip6/::/udp/21777/quic-v1",
-	}
 	conf.Network.DefaultBootstrapAddrStrings = []string{
 		"/ip4/94.101.184.118/tcp/21777/p2p/12D3KooWCwQZt8UriVXobQHPXPR8m83eceXVoeT6brPNiBHomebc",
 		"/ip4/172.104.46.145/tcp/21777/p2p/12D3KooWNYD4bB82YZRXv6oNyYPwc5ozabx2epv75ATV3D8VD3Mq",
@@ -139,7 +135,6 @@ func DefaultConfigTestnet(genParams *param.Params) *Config {
 
 func DefaultConfigLocalnet(genParams *param.Params) *Config {
 	conf := defaultConfig()
-	conf.Network.ListenAddrStrings = []string{}
 	conf.Network.EnableRelay = false
 	conf.Network.EnableNATService = false
 	conf.Network.EnableUPnP = false
