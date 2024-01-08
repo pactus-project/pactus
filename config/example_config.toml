@@ -40,6 +40,11 @@
   # Default is `64`.
  ## max_connections = 64
 
+  # `enable_udp` indicates whether the UDP transport protocol should be enabled or not.
+  # Enabling UDP can improve the network connectivity of the node, but it might also lead to many packet losses.
+  # Default is `false`.
+ ## enable_udp = false
+
   # `enable_nat_service` provides a service to other peer for determining their reachability status.
   # Default is `false`.
  ## enable_nat_service = false
@@ -48,7 +53,7 @@
   # Default is `false`.
  ## enable_upnp = false
 
-  # `enable_relay` indicates whether relay service  should be enabled or not.
+  # `enable_relay` indicates whether relay service should be enabled or not.
   # Relay service is a transport protocol that routes traffic between two peers over a third-party “relay” peer.
   # Default is `false`.
  ## enable_relay = false

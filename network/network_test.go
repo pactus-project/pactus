@@ -390,6 +390,7 @@ func TestConnections(t *testing.T) {
 	for i, test := range tests {
 		// Bootstrap node
 		confB := testConfig()
+		confB.EnableUDP = true
 		bootstrapPort := ts.RandInt32(9999) + 10000
 		bootstrapAddr := fmt.Sprintf(test.bootstrapAddr, bootstrapPort)
 		confB.ListenAddrStrings = []string{bootstrapAddr}
@@ -400,6 +401,7 @@ func TestConnections(t *testing.T) {
 
 		// Public node
 		confP := testConfig()
+		confP.EnableUDP = true
 		confP.BootstrapAddrStrings = []string{
 			fmt.Sprintf("%s/p2p/%v", bootstrapAddr, networkB.SelfID().String()),
 		}
