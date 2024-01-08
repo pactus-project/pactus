@@ -48,10 +48,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		"version", version.Version(),
 		"network", genDoc.ChainType())
 
-	net, err := network.NewNetwork(conf.Network)
-	if err != nil {
-		return nil, err
-	}
 	messageCh := make(chan message.Message, 500)
 	eventCh := make(chan event.Event, 500)
 	if !conf.Nanomsg.Enable {
@@ -60,13 +56,17 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	txPool := txpool.NewTxPool(conf.TxPool, messageCh)
 
-	// TODO implement dequeue for recent transaction
 	str, err := store.NewStore(conf.Store)
 	if err != nil {
 		return nil, err
 	}
 
 	st, err := state.LoadOrNewState(genDoc, valKeys, str, txPool, eventCh)
+	if err != nil {
+		return nil, err
+	}
+
+	net, err := network.NewNetwork(conf.Network)
 	if err != nil {
 		return nil, err
 	}
