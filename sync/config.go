@@ -12,7 +12,6 @@ type Config struct {
 	Moniker        string           `toml:"moniker"`
 	SessionTimeout time.Duration    `toml:"session_timeout"`
 	NodeNetwork    bool             `toml:"node_network"`
-	NodeGossip     bool             `toml:"node_gossip_experimental"`
 	Firewall       *firewall.Config `toml:"firewall"`
 
 	// Private configs
@@ -25,7 +24,6 @@ func DefaultConfig() *Config {
 	return &Config{
 		SessionTimeout:      time.Second * 10,
 		NodeNetwork:         true,
-		NodeGossip:          false,
 		BlockPerMessage:     60,
 		MaxSessions:         8,
 		LatestBlockInterval: 720,
@@ -47,9 +45,6 @@ func (conf *Config) Services() service.Services {
 	s := service.New()
 	if conf.NodeNetwork {
 		s.Append(service.Network)
-	}
-	if conf.NodeGossip {
-		s.Append(service.Gossip)
 	}
 	return s
 }

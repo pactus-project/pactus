@@ -48,7 +48,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		"version", version.Version(),
 		"network", genDoc.ChainType())
 
-	conf.Network.IsGossiper = conf.Sync.NodeGossip
 	net, err := network.NewNetwork(conf.Network)
 	if err != nil {
 		return nil, err

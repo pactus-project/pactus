@@ -572,27 +572,10 @@ func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 
 // weAreInTheCommittee checks if one of the validators is a member of the committee
 // at the current height.
-func (sync *synchronizer) weAreInTheCommittee() bool {
-	return sync.consMgr.HasActiveInstance()
+func (sync *synchronizer) shouldPropagateGeneralMessage(_ *network.GossipMessage) bool {
+	return true
 }
 
-func (sync *synchronizer) shouldPropagateMessage(msg *network.GossipMessage) bool {
-	// Propagate our messages
-	if msg.From == sync.SelfID() {
-		return true
-	}
-
-	if sync.config.NodeGossip {
-		return true
-	}
-
-	return sync.weAreInTheCommittee()
-}
-
-func (sync *synchronizer) shouldPropagateGeneralMessage(msg *network.GossipMessage) bool {
-	return sync.shouldPropagateMessage(msg)
-}
-
-func (sync *synchronizer) shouldPropagateConsensusMessage(msg *network.GossipMessage) bool {
-	return sync.shouldPropagateMessage(msg)
+func (sync *synchronizer) shouldPropagateConsensusMessage(_ *network.GossipMessage) bool {
+	return true
 }
