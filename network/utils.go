@@ -2,7 +2,6 @@ package network
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net"
 	"time"
@@ -90,10 +89,6 @@ func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrIn
 func ConnectSync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrInfo) error {
 	if swarm, ok := h.Network().(*lp2pswarm.Swarm); ok {
 		swarm.Backoff().Clear(addrInfo.ID)
-	}
-
-	if h.ID() == addrInfo.ID {
-		return SelfDialError{Err: errors.New("self dial try")}
 	}
 
 	return h.Connect(lp2pnetwork.WithDialPeerTimeout(ctx, 30*time.Second), addrInfo)
