@@ -31,3 +31,13 @@ func (e LibP2PError) Error() string {
 	return fmt.Sprintf("libp2p error: %s",
 		e.Err.Error())
 }
+
+// SelfDialError is returned when an underlying libp2p operation encounters an error.
+type SelfDialError struct {
+	Err error
+}
+
+func (e SelfDialError) Error() string {
+	return fmt.Sprintf("self dial error: %s",
+		e.Err.Error())
+}
