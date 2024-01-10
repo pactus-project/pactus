@@ -215,6 +215,10 @@ func (t *tableMaker) addRowBytes(key string, val []byte) {
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%x</td></tr>", key, val)
 }
 
+func (t *tableMaker) addRowDouble(key string, val float64) {
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%f</td></tr>", key, val)
+}
+
 func (t *tableMaker) html() string {
 	t.w.WriteString("</table>")
 	return t.w.String()

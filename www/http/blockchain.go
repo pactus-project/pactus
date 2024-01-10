@@ -170,7 +170,7 @@ func (s *Server) writeValidatorTable(val *pactus.ValidatorInfo) *tableMaker {
 	tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight))
 	tm.addRowInt("LastSortitionHeight", int(val.LastSortitionHeight))
 	tm.addRowInt("UnbondingHeight", int(val.UnbondingHeight))
-	tm.addRowInt("AvailabilityScore", int(val.AvailabilityScore))
+	tm.addRowDouble("AvailabilityScore", val.AvailabilityScore)
 	tm.addRowBytes("Hash", val.Hash)
 
 	return tm
