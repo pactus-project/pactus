@@ -7,7 +7,6 @@ import (
 const (
 	ErrNone = iota
 	ErrGeneric
-	ErrNetwork
 	ErrInvalidBlock
 	ErrInvalidAmount
 	ErrInvalidFee
@@ -32,7 +31,6 @@ const (
 var messages = map[int]string{
 	ErrNone:              "no error",
 	ErrGeneric:           "generic error",
-	ErrNetwork:           "network error",
 	ErrInvalidBlock:      "invalid block",
 	ErrInvalidAmount:     "invalid amount",
 	ErrInvalidFee:        "invalid fee",

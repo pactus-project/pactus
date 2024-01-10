@@ -138,6 +138,11 @@ func (mgr *peerMgr) CheckConnectivity() {
 			"min", mgr.minConns)
 
 		for _, ai := range mgr.bootstrapAddrs {
+			// preventing self dialing.
+			if ai.ID == mgr.host.ID() {
+				continue
+			}
+
 			mgr.logger.Debug("try connecting to a bootstrap peer", "peer", ai.String())
 
 			// Don't try to connect to an already connected peer.

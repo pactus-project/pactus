@@ -253,7 +253,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 
 	n.logger.Info("network setup", "id", n.host.ID(),
 		"name", conf.NetworkName,
-		"address", conf.ListenAddrStrings,
+		"address", conf.ListenAddrs(),
 		"bootstrapper", conf.IsBootstrapper)
 
 	return n, nil
@@ -289,12 +289,12 @@ func (n *network) Stop() {
 		n.mdns.Stop()
 	}
 
-	n.dht.Stop()
 	n.gossip.Stop()
 	n.stream.Stop()
 	n.peerMgr.Stop()
 	n.notifee.Stop()
 	n.relay.Stop()
+	n.dht.Stop()
 
 	if err := n.host.Close(); err != nil {
 		n.logger.Error("unable to close the network", "error", err)
