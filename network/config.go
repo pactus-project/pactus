@@ -1,6 +1,7 @@
 package network
 
 import (
+	"errors"
 	"fmt"
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
@@ -13,13 +14,13 @@ type Config struct {
 	NetworkKey           string   `toml:"network_key"`
 	PublicAddrString     string   `toml:"public_addr"`
 	ListenAddrStrings    []string `toml:"listen_addrs"`
-	RelayAddrStrings     []string `toml:"relay_addrs"`
 	BootstrapAddrStrings []string `toml:"bootstrap_addrs"`
 	MaxConns             int      `toml:"max_connections"`
 	EnableUDP            bool     `toml:"enable_udp"`
 	EnableNATService     bool     `toml:"enable_nat_service"`
 	EnableUPnP           bool     `toml:"enable_upnp"`
 	EnableRelay          bool     `toml:"enable_relay"`
+	EnableRelayService   bool     `toml:"enable_relay_service"`
 	EnableMdns           bool     `toml:"enable_mdns"`
 	EnableMetrics        bool     `toml:"enable_metrics"`
 	ForcePrivateNetwork  bool     `toml:"force_private_network"`
@@ -37,13 +38,13 @@ func DefaultConfig() *Config {
 		NetworkKey:           "network_key",
 		PublicAddrString:     "",
 		ListenAddrStrings:    []string{},
-		RelayAddrStrings:     []string{},
 		BootstrapAddrStrings: []string{},
 		MaxConns:             64,
 		EnableUDP:            false,
 		EnableNATService:     false,
 		EnableUPnP:           false,
 		EnableRelay:          false,
+		EnableRelayService:   false,
 		EnableMdns:           false,
 		EnableMetrics:        false,
 		ForcePrivateNetwork:  false,
@@ -78,8 +79,8 @@ func (conf *Config) BasicCheck() error {
 	if err := validateAddrInfo(conf.DefaultRelayAddrStrings...); err != nil {
 		return err
 	}
-	if err := validateAddrInfo(conf.RelayAddrStrings...); err != nil {
-		return err
+	if conf.EnableRelay && conf.EnableRelayService {
+		return errors.New("not possible for both the relay and relay service be active")
 	}
 	return validateAddrInfo(conf.BootstrapAddrStrings...)
 }
@@ -104,12 +105,6 @@ func (conf *Config) ListenAddrs() []multiaddr.Multiaddr {
 	}
 	addrs, _ := MakeMultiAddrs(listenAddrs)
 	return addrs
-}
-
-func (conf *Config) RelayAddrInfos() []lp2ppeer.AddrInfo {
-	addrs := util.Merge(conf.DefaultRelayAddrStrings, conf.RelayAddrStrings)
-	addrInfos, _ := MakeAddrInfos(addrs)
-	return addrInfos
 }
 
 func (conf *Config) BootstrapAddrInfos() []lp2ppeer.AddrInfo {

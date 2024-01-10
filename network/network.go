@@ -16,6 +16,7 @@ import (
 	lp2pautorelay "github.com/libp2p/go-libp2p/p2p/host/autorelay"
 	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	lp2pconnmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
+	lp2pproto "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/proto"
 	lp2pnoise "github.com/libp2p/go-libp2p/p2p/security/noise"
 	lp2quic "github.com/libp2p/go-libp2p/p2p/transport/quic"
 	lp2ptcp "github.com/libp2p/go-libp2p/p2p/transport/tcp"
@@ -24,6 +25,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
 	"github.com/prometheus/client_golang/prometheus"
+	"golang.org/x/exp/slices"
 )
 
 var _ Network = &network{}
@@ -44,7 +46,6 @@ type network struct {
 	stream         *streamService
 	gossip         *gossipService
 	notifee        *NotifeeService
-	relay          *relayService
 	generalTopic   *lp2pps.Topic
 	consensusTopic *lp2pps.Topic
 	eventChannel   chan Event
@@ -169,16 +170,20 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		)
 	}
 
+	var host lp2phost.Host
 	if conf.EnableRelay {
-		log.Info("relay enabled", "addrInfos", conf.RelayAddrInfos())
+		log.Info("relay enabled")
+
 		autoRelayOpt := []lp2pautorelay.Option{
-			lp2pautorelay.WithMinCandidates(2),
+			lp2pautorelay.WithMaxCandidates(4),
 			lp2pautorelay.WithMinInterval(1 * time.Minute),
 		}
 
 		opts = append(opts,
 			lp2p.EnableRelay(),
-			lp2p.EnableAutoRelayWithStaticRelays(conf.RelayAddrInfos(), autoRelayOpt...),
+			lp2p.EnableAutoRelayWithPeerSource(findRelayPeers(func() lp2phost.Host {
+				return host
+			}, log), autoRelayOpt...),
 			lp2p.EnableHolePunching(),
 		)
 	} else {
@@ -186,6 +191,11 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		opts = append(opts,
 			lp2p.DisableRelay(),
 		)
+	}
+
+	if conf.EnableRelayService {
+		log.Info("relay service enabled")
+		opts = append(opts, lp2p.EnableRelayService())
 	}
 
 	privateSubnets := PrivateSubnets()
@@ -213,7 +223,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	}
 	opts = append(opts, lp2p.ConnectionGater(connGater))
 
-	host, err := lp2p.New(opts...)
+	host, err = lp2p.New(opts...)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
@@ -245,8 +255,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	n.peerMgr = newPeerMgr(ctx, host, conf, n.logger)
 	n.stream = newStreamService(ctx, n.host, streamProtocolID, n.eventChannel, n.logger)
 	n.gossip = newGossipService(ctx, n.host, n.eventChannel, conf, n.logger)
-	n.relay = newRelayService(ctx, n.host, conf, log)
-	n.notifee = newNotifeeService(ctx, n.host, n.eventChannel, n.peerMgr, n.relay, streamProtocolID, n.logger)
+	n.notifee = newNotifeeService(ctx, n.host, n.eventChannel, n.peerMgr, streamProtocolID, n.logger)
 
 	n.host.Network().Notify(n.notifee)
 	n.connGater.SetPeerManager(n.peerMgr)
@@ -257,6 +266,44 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		"bootstrapper", conf.IsBootstrapper)
 
 	return n, nil
+}
+
+func findRelayPeers(h func() lp2phost.Host, log *logger.SubLogger) func(ctx context.Context,
+	num int) <-chan lp2ppeer.AddrInfo {
+	return func(ctx context.Context, num int) <-chan lp2ppeer.AddrInfo {
+		log.Debug("try to find relay peers", "num", num)
+
+		// make a channel to return, and put items from numPeers on
+		// that channel up to numPeers. Then close it.
+		r := make(chan lp2ppeer.AddrInfo, num)
+		defer close(r)
+
+		for _, id := range h().Peerstore().PeersWithAddrs() {
+			protos, err := h().Peerstore().GetProtocols(id)
+			if err != nil {
+				continue
+			}
+
+			if !slices.Contains(protos, lp2pproto.ProtoIDv2Hop) {
+				continue
+			}
+
+			addr := h().Peerstore().Addrs(id)
+			log.Debug("found relay peer", "addr", addr)
+			dhtPeer := lp2ppeer.AddrInfo{ID: id, Addrs: addr}
+			// Attempt to put peers on r if we have space,
+			// otherwise return (we reached numPeers)
+			select {
+			case r <- dhtPeer:
+			case <-ctx.Done():
+				return r
+			default:
+				return r
+			}
+		}
+
+		return r
+	}
 }
 
 func (n *network) EventChannel() <-chan Event {
@@ -276,7 +323,6 @@ func (n *network) Start() error {
 	n.stream.Start()
 	n.peerMgr.Start()
 	n.notifee.Start()
-	n.relay.Start()
 
 	n.logger.Info("network started", "addr", n.host.Addrs(), "id", n.host.ID())
 	return nil
@@ -293,7 +339,6 @@ func (n *network) Stop() {
 	n.stream.Stop()
 	n.peerMgr.Stop()
 	n.notifee.Stop()
-	n.relay.Stop()
 	n.dht.Stop()
 
 	if err := n.host.Close(); err != nil {
@@ -391,7 +436,7 @@ func (n *network) NumConnectedPeers() int {
 }
 
 func (n *network) ReachabilityStatus() string {
-	return n.relay.Reachability().String()
+	return n.notifee.Reachability().String()
 }
 
 func (n *network) HostAddrs() []string {

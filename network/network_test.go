@@ -195,7 +195,6 @@ func TestNetwork(t *testing.T) {
 	// Private node M
 	confM := testConfig()
 	confM.EnableRelay = true
-	confM.RelayAddrStrings = relayAddrs
 	confM.BootstrapAddrStrings = bootstrapAddresses
 	confM.ListenAddrStrings = []string{
 		"/ip4/127.0.0.1/tcp/9987",
@@ -208,7 +207,6 @@ func TestNetwork(t *testing.T) {
 	// Private node N
 	confN := testConfig()
 	confN.EnableRelay = true
-	confN.RelayAddrStrings = relayAddrs
 	confN.BootstrapAddrStrings = bootstrapAddresses
 	confN.ListenAddrStrings = []string{
 		"/ip4/127.0.0.1/tcp/5678",

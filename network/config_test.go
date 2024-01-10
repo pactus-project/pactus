@@ -21,6 +21,14 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
+			name:        "Both Relay and Relay Service be true - Expect Error",
+			expectError: true,
+			updateFn: func(c *Config) {
+				c.EnableRelay = true
+				c.EnableRelayService = true
+			},
+		},
+		{
 			name:        "Invalid ListenAddrStrings - Expect Error",
 			expectError: true,
 			updateFn: func(c *Config) {
@@ -49,13 +57,6 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
-			name:        "Invalid RelayAddrStrings - Expect Error",
-			expectError: true,
-			updateFn: func(c *Config) {
-				c.RelayAddrStrings = []string{"/ip4/127.0.0.1/"}
-			},
-		},
-		{
 			name:        "Invalid DefaultBootstrapAddrStrings - Expect Error",
 			expectError: true,
 			updateFn: func(c *Config) {
@@ -74,13 +75,6 @@ func TestConfigBasicCheck(t *testing.T) {
 			expectError: false,
 			updateFn: func(c *Config) {
 				c.PublicAddrString = "/ip4/127.0.0.1/"
-			},
-		},
-		{
-			name:        "Valid RelayAddrStrings - No Error",
-			expectError: false,
-			updateFn: func(c *Config) {
-				c.RelayAddrStrings = []string{"/ip4/127.0.0.1/p2p/12D3KooWQBpPV6NtZy1dvN2oF7dJdLoooRZfEmwtHiDUf42ArDjT"}
 			},
 		},
 		{
