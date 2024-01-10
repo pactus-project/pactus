@@ -69,6 +69,7 @@ func testConfig() *Config {
 		NetworkKey:           util.TempFilePath(),
 		BootstrapAddrStrings: []string{},
 		MaxConns:             8,
+		EnableUDP:            true,
 		EnableNATService:     false,
 		EnableUPnP:           false,
 		EnableRelay:          false,

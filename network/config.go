@@ -14,6 +14,7 @@ type Config struct {
 	RelayAddrStrings     []string `toml:"relay_addrs"`
 	BootstrapAddrStrings []string `toml:"bootstrap_addrs"`
 	MaxConns             int      `toml:"max_connections"`
+	EnableUDP            bool     `toml:"enable_udp"`
 	EnableNATService     bool     `toml:"enable_nat_service"`
 	EnableUPnP           bool     `toml:"enable_upnp"`
 	EnableRelay          bool     `toml:"enable_relay"`
@@ -37,6 +38,7 @@ func DefaultConfig() *Config {
 		RelayAddrStrings:     []string{},
 		BootstrapAddrStrings: []string{},
 		MaxConns:             64,
+		EnableUDP:            false,
 		EnableNATService:     false,
 		EnableUPnP:           false,
 		EnableRelay:          false,
