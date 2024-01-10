@@ -158,20 +158,6 @@ func TestValidator(t *testing.T) {
 
 	val := td.mockState.TestStore.AddTestValidator()
 
-	// t.Run("Shall return a validator", func(t *testing.T) {
-	// 	w := httptest.NewRecorder()
-	// 	r := new(http.Request)
-	// 	r = mux.SetURLVars(r, map[string]string{"address": val.Address().String()})
-	// 	td.httpServer.GetValidatorHandler(w, r)
-
-	// 	assert.Equal(t, w.Code, 200)
-	// 	td.httpServer.GetValidatorHandler(w, r)
-
-	// 	assert.Equal(t, w.Code, 200)
-	// 	assert.Contains(t, w.Body.String(), "0.987")
-	// 	fmt.Println(w.Body)
-	// })
-
 	t.Run("Shall return an error, non exist", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
@@ -280,7 +266,6 @@ func TestValidatorByNumber(t *testing.T) {
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
 	})
-
 }
 
 func TestConsensusInfo(t *testing.T) {
