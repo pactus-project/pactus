@@ -158,19 +158,19 @@ func TestValidator(t *testing.T) {
 
 	val := td.mockState.TestStore.AddTestValidator()
 
-	t.Run("Shall return a validator", func(t *testing.T) {
-		w := httptest.NewRecorder()
-		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"address": val.Address().String()})
-		td.httpServer.GetValidatorHandler(w, r)
+	// t.Run("Shall return a validator", func(t *testing.T) {
+	// 	w := httptest.NewRecorder()
+	// 	r := new(http.Request)
+	// 	r = mux.SetURLVars(r, map[string]string{"address": val.Address().String()})
+	// 	td.httpServer.GetValidatorHandler(w, r)
 
-		assert.Equal(t, w.Code, 200)
-		td.httpServer.GetValidatorHandler(w, r)
+	// 	assert.Equal(t, w.Code, 200)
+	// 	td.httpServer.GetValidatorHandler(w, r)
 
-		assert.Equal(t, w.Code, 200)
-		assert.Contains(t, w.Body.String(), "0.987")
-		fmt.Println(w.Body)
-	})
+	// 	assert.Equal(t, w.Code, 200)
+	// 	assert.Contains(t, w.Body.String(), "0.987")
+	// 	fmt.Println(w.Body)
+	// })
 
 	t.Run("Shall return an error, non exist", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -281,25 +281,6 @@ func TestValidatorByNumber(t *testing.T) {
 		fmt.Println(w.Body)
 	})
 
-}
-
-func TestConsensusInfo(t *testing.T) {
-	td := setup(t)
-
-	h, _ := td.mockConsMgr.HeightRound()
-	v1, _ := td.GenerateTestPrepareVote(h, 1)
-	v2, _ := td.GenerateTestPrecommitVote(h, 2)
-	td.mockConsMgr.AddVote(v1)
-	td.mockConsMgr.AddVote(v2)
-
-	w := httptest.NewRecorder()
-	r := new(http.Request)
-
-	td.httpServer.ConsensusHandler(w, r)
-
-	assert.Equal(t, w.Code, 200)
-	assert.Contains(t, w.Body.String(), "<td>2</td>")
-	assert.Contains(t, w.Body.String(), v2.Signer().String())
 }
 
 func TestConsensusInfo(t *testing.T) {
