@@ -41,6 +41,18 @@ http:
     - selector: pactus.Transaction.CalculateFee
       get: "/v1/transactions/amount/{amount}/payloadType/{payloadType}"
 
+    - selector: pactus.Transaction.GetRawTransferTransaction
+      get: "/v1/transactions/sender/{sender}/receiver/{receiver}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"
+
+    - selector: pactus.Transaction.GetRawBondTransaction
+      get: "/v1/transactions/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lock_time}/public_key/{public_key}/fee/{fee}/memo/{memo}"
+
+    - selector: pactus.Transaction.GetRawUnBondTransaction
+      get: "/v1/transactions/validator_address/{validator_address}/lock_time/{lock_time}/memo/{memo}"
+
+    - selector: pactus.Transaction.GetRawWithdrawTransaction
+      get: "/v1/transactions/validator_address/{validator_address}/account_address/{account_address}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"
+
     # Network APIs
     - selector: pactus.Network.GetNetworkInfo
       get: "/v1/network/info"
