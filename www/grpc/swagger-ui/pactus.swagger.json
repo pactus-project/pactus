@@ -455,6 +455,244 @@
         ]
       }
     },
+    "/v1/transactions/sender/{sender}/receiver/{receiver}/amount/{amount}/lock_time/{lockTime}/fee/{fee}/memo/{memo}": {
+      "get": {
+        "operationId": "Transaction_GetRawTransferTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "sender",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "receiver",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "lockTime",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "fee",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "memo",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/v1/transactions/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lockTime}/public_key/{publicKey}/fee/{fee}/memo/{memo}": {
+      "get": {
+        "operationId": "Transaction_GetRawBondTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "sender",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "receiver",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "stake",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "lockTime",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "publicKey",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fee",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "memo",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/v1/transactions/validator_address/{validatorAddress}/account_address/{accountAddress}/amount/{amount}/lock_time/{lockTime}/fee/{fee}/memo/{memo}": {
+      "get": {
+        "operationId": "Transaction_GetRawWithdrawTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "validatorAddress",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "accountAddress",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "lockTime",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "fee",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "memo",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/v1/transactions/validator_address/{validatorAddress}/lock_time/{lockTime}/memo/{memo}": {
+      "get": {
+        "operationId": "Transaction_GetRawUnBondTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "validatorAddress",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "lockTime",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "memo",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
     "/v1/wallets/create/name/{name}/mnemonic/{mnemonic}/language/{language}": {
       "get": {
         "operationId": "Wallet_CreateWallet",
