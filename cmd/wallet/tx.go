@@ -232,5 +232,6 @@ func getPassword(wlt *wallet.Wallet, passOpt string) string {
 	if wlt.IsEncrypted() && password == "" {
 		password = cmd.PromptPassword("Wallet password", false)
 	}
+
 	return password
 }

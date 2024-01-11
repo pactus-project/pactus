@@ -131,6 +131,7 @@ func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
 			event.Any(key, v)
 		}
 	}
+
 	return event
 }
 
@@ -154,6 +155,7 @@ func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 	sl.logger = sl.logger.Level(lvl)
 
 	inst.subs[name] = sl
+
 	return sl
 }
 
@@ -228,6 +230,7 @@ func isNil(i interface{}) bool {
 	if reflect.TypeOf(i).Kind() == reflect.Ptr {
 		return reflect.ValueOf(i).IsNil()
 	}
+
 	return false
 }
 

@@ -24,6 +24,7 @@ func showQuestionDialog(parent gtk.IWindow, msg string) bool {
 		gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, msg)
 	res := dlg.Run()
 	dlg.Destroy()
+
 	return res == gtk.RESPONSE_YES
 }
 
@@ -65,6 +66,7 @@ func fatalErrorCheck(err error) {
 func getObj(builder *gtk.Builder, name string) glib.IObject {
 	obj, err := builder.GetObject(name)
 	fatalErrorCheck(err)
+
 	return obj
 }
 
@@ -136,6 +138,7 @@ func getTextViewContent(tv *gtk.TextView) string {
 		// TODO: Log error
 		return ""
 	}
+
 	return content
 }
 
@@ -186,6 +189,7 @@ func updateFeeHint(lbl *gtk.Label, amtStr string, w *wallet.Wallet, payloadType 
 		fee, err := w.CalculateFee(amount, payloadType)
 		if err != nil {
 			errorCheck(err)
+
 			return
 		}
 		hint := fmt.Sprintf("payable: %v, fee: %v",
@@ -208,17 +212,20 @@ func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, w *wallet.Walle
 		err := w.SignTransaction(password, trx)
 		if err != nil {
 			errorCheck(err)
+
 			return
 		}
 		_, err = w.BroadcastTransaction(trx)
 		if err != nil {
 			errorCheck(err)
+
 			return
 		}
 
 		err = w.Save()
 		if err != nil {
 			errorCheck(err)
+
 			return
 		}
 	}
@@ -250,6 +257,7 @@ func openURLInBrowser(address string) error {
 		cmd = "xdg-open"
 	}
 	args = append(args, address)
+
 	return exec.Command(cmd, args...).Start()
 }
 

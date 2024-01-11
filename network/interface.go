@@ -17,9 +17,11 @@ func (t TopicID) String() string {
 	switch t {
 	case TopicIDGeneral:
 		return "general"
+
 	case TopicIDConsensus:
 		return "consensus"
 	}
+
 	return "invalid"
 }
 
@@ -37,15 +39,20 @@ func (t EventType) String() string {
 	switch t {
 	case EventTypeConnect:
 		return "connect"
+
 	case EventTypeDisconnect:
 		return "disconnect"
+
 	case EventTypeProtocols:
 		return "protocols"
+
 	case EventTypeGossip:
 		return "gossip-msg"
+
 	case EventTypeStream:
 		return "stream-msg"
 	}
+
 	return "invalid"
 }
 

@@ -45,6 +45,7 @@ type history struct {
 
 func (h *history) hasTransaction(id string) bool {
 	_, ok := h.Transactions[id]
+
 	return ok
 }
 

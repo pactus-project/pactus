@@ -77,6 +77,7 @@ func (k *ExtendedKey) pubKeyBytes() []byte {
 	if k.pubOnG1 {
 		pub := new(bls12381.PointG1)
 		g1.MulScalar(pub, g1.One(), privKey)
+
 		return g1.ToCompressed(pub)
 	}
 
@@ -84,6 +85,7 @@ func (k *ExtendedKey) pubKeyBytes() []byte {
 
 	pub := new(bls12381.PointG2)
 	g2.MulScalar(pub, g2.One(), privKey)
+
 	return g2.ToCompressed(pub)
 }
 
@@ -107,6 +109,7 @@ func (k *ExtendedKey) DerivePath(path []uint32) (*ExtendedKey, error) {
 			return nil, err
 		}
 	}
+
 	return ext, nil
 }
 
@@ -286,6 +289,7 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	newPath := make([]uint32, 0, len(k.path)+1)
 	newPath = append(newPath, k.path...)
 	newPath = append(newPath, index)
+
 	return newExtendedKey(childKey, childChainCode,
 		newPath, k.isPrivate, k.pubOnG1), nil
 }

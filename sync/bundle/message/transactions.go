@@ -42,5 +42,6 @@ func (m *TransactionsMessage) String() string {
 		builder.WriteString(fmt.Sprintf("%v ", tx.ID().ShortString()))
 	}
 	builder.WriteString(fmt.Sprintf("{%v: ⌘ [%v]}", len(m.Transactions), builder.String()))
+
 	return builder.String()
 }

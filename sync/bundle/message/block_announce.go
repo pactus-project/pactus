@@ -23,6 +23,7 @@ func (m *BlockAnnounceMessage) BasicCheck() error {
 	if err := m.Block.BasicCheck(); err != nil {
 		return err
 	}
+
 	return m.Certificate.BasicCheck()
 }
 

@@ -186,6 +186,7 @@ func TestIterateValidators(t *testing.T) {
 	hashes2 := []hash.Hash{}
 	td.store.IterateValidators(func(val *validator.Validator) bool {
 		hashes2 = append(hashes2, val.Hash())
+
 		return false
 	})
 	assert.ElementsMatch(t, hashes1, hashes2)
@@ -195,6 +196,7 @@ func TestIterateValidators(t *testing.T) {
 		if val.Hash() == hashes1[0] {
 			stopped = true
 		}
+
 		return stopped
 	})
 	assert.True(t, stopped)

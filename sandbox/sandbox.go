@@ -119,6 +119,7 @@ func (sb *sandbox) MakeNewAccount(addr crypto.Address) *account.Account {
 		updated: true,
 	}
 	sb.totalAccounts++
+
 	return acc.Clone()
 }
 
@@ -161,6 +162,7 @@ func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {
 	sb.validators[addr] = &sandboxValidator{
 		validator: val,
 	}
+
 	return val.Clone()
 }
 
@@ -184,6 +186,7 @@ func (sb *sandbox) IsJoinedCommittee(addr crypto.Address) bool {
 	if ok {
 		return s.joined
 	}
+
 	return false
 }
 
@@ -202,6 +205,7 @@ func (sb *sandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 		updated:   true,
 	}
 	sb.totalValidators++
+
 	return val.Clone()
 }
 
@@ -284,6 +288,7 @@ func (sb *sandbox) VerifyProof(blockHeight uint32, proof sortition.Proof, val *v
 	if seed == nil {
 		return false
 	}
+
 	return sortition.VerifyProof(*seed, proof, val.PublicKey(), sb.totalPower, val.Power())
 }
 

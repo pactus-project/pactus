@@ -220,8 +220,10 @@ func (st *state) retrieveTotalPower() int64 {
 	totalPower := int64(0)
 	st.store.IterateValidators(func(val *validator.Validator) bool {
 		totalPower += val.Power()
+
 		return false
 	})
+
 	return totalPower
 }
 
@@ -230,6 +232,7 @@ func (st *state) stateRoot() hash.Hash {
 	valRoot := st.validatorMerkle.Root()
 
 	stateRoot := simplemerkle.HashMerkleBranches(&accRoot, &valRoot)
+
 	return *stateRoot
 }
 
@@ -337,6 +340,7 @@ func (st *state) UpdateLastCertificate(v *vote.Vote) error {
 func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee int64) *tx.Tx {
 	lockTime := st.lastInfo.BlockHeight() + 1
 	transaction := tx.NewSubsidyTx(lockTime, rewardAddr, st.params.BlockReward+fee, "")
+
 	return transaction
 }
 
@@ -358,6 +362,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 			st.txPool.RemoveTx(txs[i].ID())
 			txs.Remove(i)
 			i--
+
 			continue
 		}
 
@@ -372,6 +377,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 	if subsidyTx == nil {
 		// probably the node is shutting down.
 		st.logger.Error("no subsidy transaction")
+
 		return nil, errors.Errorf(errors.ErrInvalidBlock, "no subsidy transaction")
 	}
 	txs.Prepend(subsidyTx)
@@ -404,6 +410,7 @@ func (st *state) ValidateBlock(blk *block.Block, round int16) error {
 	}
 
 	sb := st.concreteSandbox()
+
 	return st.executeBlock(blk, sb)
 }
 
@@ -414,6 +421,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 	height := cert.Height()
 	if height != st.lastInfo.BlockHeight()+1 {
 		st.logger.Debug("block is committed before", "height", height)
+
 		return nil
 	}
 
@@ -433,6 +441,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 		st.logger.Panic("a possible fork is detected",
 			"our hash", st.lastInfo.BlockHash(),
 			"block hash", blk.Header().PrevBlockHash())
+
 		return errors.Error(errors.ErrInvalidBlock)
 	}
 
@@ -666,8 +675,10 @@ func (st *state) CommittedBlock(height uint32) *store.CommittedBlock {
 	b, err := st.store.Block(height)
 	if err != nil {
 		st.logger.Trace("error on retrieving block", "error", err)
+
 		return nil
 	}
+
 	return b
 }
 
@@ -676,6 +687,7 @@ func (st *state) CommittedTx(id tx.ID) *store.CommittedTx {
 	if err != nil {
 		st.logger.Trace("searching transaction in local store failed", "id", id, "error", err)
 	}
+
 	return transaction
 }
 
@@ -692,6 +704,7 @@ func (st *state) AccountByAddress(addr crypto.Address) *account.Account {
 	if err != nil {
 		st.logger.Trace("error on retrieving account", "error", err)
 	}
+
 	return acc
 }
 
@@ -704,6 +717,7 @@ func (st *state) ValidatorByAddress(addr crypto.Address) *validator.Validator {
 	if err != nil {
 		st.logger.Trace("error on retrieving validator", "error", err)
 	}
+
 	return val
 }
 
@@ -713,6 +727,7 @@ func (st *state) ValidatorByNumber(n int32) *validator.Validator {
 	if err != nil {
 		st.logger.Trace("error on retrieving validator", "error", err)
 	}
+
 	return val
 }
 
@@ -761,10 +776,12 @@ func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, er
 	case payload.TypeTransfer,
 		payload.TypeBond,
 		payload.TypeWithdraw:
+
 		return execution.CalculateFee(amount, st.params), nil
 
 	case payload.TypeUnbond,
 		payload.TypeSortition:
+
 		return 0, nil
 
 	default:

@@ -60,11 +60,13 @@ func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {
 	acc, _ := m.TestStore.Account(addr)
+
 	return acc
 }
 
 func (m *MockSandbox) MakeNewAccount(_ crypto.Address) *account.Account {
 	acc := account.NewAccount(m.TestStore.TotalAccounts())
+
 	return acc
 }
 
@@ -76,11 +78,13 @@ func (m *MockSandbox) AnyRecentTransaction(txID tx.ID) bool {
 	if m.TestCommittedTrxs[txID] != nil {
 		return true
 	}
+
 	return m.TestStore.AnyRecentTransaction(txID)
 }
 
 func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {
 	val, _ := m.TestStore.Validator(addr)
+
 	return val
 }
 
@@ -94,6 +98,7 @@ func (m *MockSandbox) IsJoinedCommittee(addr crypto.Address) bool {
 
 func (m *MockSandbox) MakeNewValidator(pub *bls.PublicKey) *validator.Validator {
 	val := validator.NewValidator(pub, m.TestStore.TotalValidators())
+
 	return val
 }
 
@@ -112,6 +117,7 @@ func (m *MockSandbox) Params() *param.Params {
 func (m *MockSandbox) IterateAccounts(consumer func(crypto.Address, *account.Account, bool)) {
 	m.TestStore.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
 		consumer(addr, acc, true)
+
 		return false
 	})
 }
@@ -119,6 +125,7 @@ func (m *MockSandbox) IterateAccounts(consumer func(crypto.Address, *account.Acc
 func (m *MockSandbox) IterateValidators(consumer func(*validator.Validator, bool, bool)) {
 	m.TestStore.IterateValidators(func(val *validator.Validator) bool {
 		consumer(val, true, m.TestJoinedValidators[val.Address()])
+
 		return false
 	})
 }

@@ -41,6 +41,7 @@ func main() {
 	workingDir, err := filepath.Abs(*workingDirOpt)
 	if err != nil {
 		cmd.PrintErrorMsgf("Aborted! %v", err)
+
 		return
 	}
 
@@ -110,6 +111,7 @@ func start(workingDir string, app *gtk.Application) {
 	// change working directory
 	if err := os.Chdir(workingDir); err != nil {
 		log.Println("Aborted! Unable to changes working directory. " + err.Error())
+
 		return
 	}
 
@@ -117,6 +119,7 @@ func start(workingDir string, app *gtk.Application) {
 		if *passwordOpt != "" {
 			return *passwordOpt, true
 		}
+
 		return getWalletPassword(wlt)
 	}
 	node, wlt, err := cmd.StartNode(workingDir, passwordFetcher)

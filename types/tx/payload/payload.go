@@ -30,6 +30,7 @@ func (t Type) String() string {
 	case TypeSortition:
 		return "sortition"
 	}
+
 	return fmt.Sprintf("%d", t)
 }
 

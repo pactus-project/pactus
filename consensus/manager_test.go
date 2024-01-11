@@ -184,6 +184,7 @@ func TestMediator(t *testing.T) {
 		m, ok := msg.(*message.BlockAnnounceMessage)
 		if ok {
 			require.Equal(t, m.Height(), stateHeight+1)
+
 			return
 		}
 	}

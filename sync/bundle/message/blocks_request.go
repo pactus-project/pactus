@@ -31,6 +31,7 @@ func (m *BlocksRequestMessage) BasicCheck() error {
 	if m.Count == 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "count is zero")
 	}
+
 	return nil
 }
 

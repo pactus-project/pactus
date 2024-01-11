@@ -43,6 +43,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 				msg.PeerID, pid), 0)
 
 		handler.acknowledge(response, pid)
+
 		return nil
 	}
 
@@ -52,6 +53,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 				handler.state.Genesis().Hash(), msg.GenesisHash), 0)
 
 		handler.acknowledge(response, pid)
+
 		return nil
 	}
 
@@ -60,6 +62,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 			"time discrepancy exceeds 10 seconds", 0)
 
 		handler.acknowledge(response, pid)
+
 		return nil
 	}
 
@@ -79,6 +82,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 func (handler *helloHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	bdl := bundle.NewBundle(m)
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagHandshaking)
+
 	return bdl
 }
 

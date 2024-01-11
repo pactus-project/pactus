@@ -22,6 +22,7 @@ type store struct {
 
 func (s *store) Load() ([]byte, error) {
 	s.VaultCRC = s.calcVaultCRC()
+
 	return json.MarshalIndent(s, "  ", "  ")
 }
 
@@ -47,5 +48,6 @@ func (s *store) calcVaultCRC() uint32 {
 	if err != nil {
 		return 0
 	}
+
 	return crc32.ChecksumIEEE(d)
 }

@@ -37,6 +37,7 @@ func NewPathFromString(str string) (Path, error) {
 		}
 		path = append(path, uint32(val)+added)
 	}
+
 	return path, nil
 }
 
@@ -50,6 +51,7 @@ func (p Path) String() string {
 			builder.WriteString(fmt.Sprintf("/%d", i))
 		}
 	}
+
 	return builder.String()
 }
 

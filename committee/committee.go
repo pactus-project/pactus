@@ -21,6 +21,7 @@ type committee struct {
 func cloneValidator(val *validator.Validator) *validator.Validator {
 	cloned := new(validator.Validator)
 	*cloned = *val
+
 	return cloned
 }
 
@@ -52,8 +53,10 @@ func (c *committee) TotalPower() int64 {
 	p := int64(0)
 	c.iterate(func(v *validator.Validator) bool {
 		p += v.Power()
+
 		return false
 	})
+
 	return p
 }
 
@@ -120,6 +123,7 @@ func (c *committee) Validators() []*validator.Validator {
 	c.iterate(func(v *validator.Validator) bool {
 		vals[i] = cloneValidator(v)
 		i++
+
 		return false
 	})
 
@@ -135,16 +139,20 @@ func (c *committee) find(addr crypto.Address) *validator.Validator {
 	c.iterate(func(v *validator.Validator) bool {
 		if v.Address() == addr {
 			found = v
+
 			return true
 		}
+
 		return false
 	})
+
 	return found
 }
 
 // IsProposer checks if the given address is the proposer for the specified round.
 func (c *committee) IsProposer(addr crypto.Address, round int16) bool {
 	p := c.proposer(round)
+
 	return p.Address() == addr
 }
 
@@ -172,6 +180,7 @@ func (c *committee) Committers() []int32 {
 	c.iterate(func(v *validator.Validator) bool {
 		committers[i] = v.Number()
 		i++
+
 		return false
 	})
 

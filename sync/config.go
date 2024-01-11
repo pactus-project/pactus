@@ -46,5 +46,6 @@ func (conf *Config) Services() service.Services {
 	if conf.NodeNetwork {
 		s.Append(service.Network)
 	}
+
 	return s
 }

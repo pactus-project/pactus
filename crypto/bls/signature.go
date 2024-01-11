@@ -88,6 +88,7 @@ func (sig *Signature) Decode(r io.Reader) error {
 		return err
 	}
 	*sig = *p
+
 	return nil
 }
 

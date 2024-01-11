@@ -17,6 +17,7 @@ func getValidator(t *testing.T, addr crypto.Address) *pactus.ValidatorInfo {
 	if err != nil {
 		return nil
 	}
+
 	return res.Validator
 }
 

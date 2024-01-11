@@ -140,6 +140,7 @@ func (j *JustMainVoteConflict) BasicCheck() error {
 	if err := j.Just0.BasicCheck(); err != nil {
 		return err
 	}
+
 	return j.Just1.BasicCheck()
 }
 

@@ -80,6 +80,7 @@ func (l *LinkedList[T]) InsertBefore(data T, at *Element[T]) *Element[T] {
 		e.Prev.Next = e
 	}
 	l.length++
+
 	return e
 }
 
@@ -96,6 +97,7 @@ func (l *LinkedList[T]) InsertAfter(data T, at *Element[T]) *Element[T] {
 		e.Next.Prev = e
 	}
 	l.length++
+
 	return e
 }
 
@@ -163,6 +165,7 @@ func (l *LinkedList[T]) Values() []T {
 		values = append(values, cur.Data)
 		cur = cur.Next
 	}
+
 	return values
 }
 

@@ -45,6 +45,7 @@ func (l binaryFreeList) Borrow() []byte {
 	default:
 		buf = make([]byte, 8)
 	}
+
 	return buf[:8]
 }
 
@@ -64,10 +65,12 @@ func (l binaryFreeList) Uint8(r io.Reader, val *uint8) error {
 	buf := l.Borrow()[:1]
 	if _, err := io.ReadFull(r, buf); err != nil {
 		l.Return(buf)
+
 		return err
 	}
 	*val = buf[0]
 	l.Return(buf)
+
 	return nil
 }
 
@@ -77,10 +80,12 @@ func (l binaryFreeList) Uint16(r io.Reader, val *uint16) error {
 	buf := l.Borrow()[:2]
 	if _, err := io.ReadFull(r, buf); err != nil {
 		l.Return(buf)
+
 		return err
 	}
 	*val = binary.LittleEndian.Uint16(buf)
 	l.Return(buf)
+
 	return nil
 }
 
@@ -90,10 +95,12 @@ func (l binaryFreeList) Uint32(r io.Reader, val *uint32) error {
 	buf := l.Borrow()[:4]
 	if _, err := io.ReadFull(r, buf); err != nil {
 		l.Return(buf)
+
 		return err
 	}
 	*val = binary.LittleEndian.Uint32(buf)
 	l.Return(buf)
+
 	return nil
 }
 
@@ -103,10 +110,12 @@ func (l binaryFreeList) Uint64(r io.Reader, val *uint64) error {
 	buf := l.Borrow()[:8]
 	if _, err := io.ReadFull(r, buf); err != nil {
 		l.Return(buf)
+
 		return err
 	}
 	*val = binary.LittleEndian.Uint64(buf)
 	l.Return(buf)
+
 	return nil
 }
 
@@ -117,6 +126,7 @@ func (l binaryFreeList) PutUint8(w io.Writer, val uint8) error {
 	buf[0] = val
 	_, err := w.Write(buf)
 	l.Return(buf)
+
 	return err
 }
 
@@ -128,6 +138,7 @@ func (l binaryFreeList) PutUint16(w io.Writer, val uint16) error {
 	binary.LittleEndian.PutUint16(buf, val)
 	_, err := w.Write(buf)
 	l.Return(buf)
+
 	return err
 }
 
@@ -139,6 +150,7 @@ func (l binaryFreeList) PutUint32(w io.Writer, val uint32) error {
 	binary.LittleEndian.PutUint32(buf, val)
 	_, err := w.Write(buf)
 	l.Return(buf)
+
 	return err
 }
 
@@ -150,6 +162,7 @@ func (l binaryFreeList) PutUint64(w io.Writer, val uint64) error {
 	binary.LittleEndian.PutUint64(buf, val)
 	_, err := w.Write(buf)
 	l.Return(buf)
+
 	return err
 }
 
@@ -216,6 +229,7 @@ func ReadElements(r io.Reader, elements ...interface{}) error {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -267,6 +281,7 @@ func WriteElements(w io.Writer, elements ...interface{}) error {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -294,6 +309,7 @@ func ReadVarInt(r io.Reader) (uint64, error) {
 			break
 		}
 	}
+
 	return write, nil
 }
 
@@ -309,6 +325,7 @@ func WriteVarInt(w io.Writer, val uint64) error {
 		}
 		val >>= 7 // It should be in multiples of 7, this should just get the next part
 	}
+
 	return binarySerializer.PutUint8(w, uint8(val))
 }
 
@@ -334,6 +351,7 @@ func VarIntSerializeSize(val uint64) int {
 	} else if val >= 0x80 {
 		return 2
 	}
+
 	return 1
 }
 
@@ -374,6 +392,7 @@ func ReadVarString(r io.Reader) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return string(buf), nil
 }
 
@@ -386,6 +405,7 @@ func WriteVarString(w io.Writer, str string) error {
 		return err
 	}
 	_, err = w.Write([]byte(str))
+
 	return err
 }
 
@@ -413,6 +433,7 @@ func ReadVarBytes(r io.Reader) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return b, nil
 }
 
@@ -426,5 +447,6 @@ func WriteVarBytes(w io.Writer, bytes []byte) error {
 	}
 
 	_, err = w.Write(bytes)
+
 	return err
 }

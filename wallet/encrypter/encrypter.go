@@ -115,6 +115,7 @@ func (e *Encrypter) Encrypt(message, password string) (string, error) {
 		if password != "" {
 			return "", ErrInvalidPassword
 		}
+
 		return message, nil
 	}
 
@@ -191,6 +192,7 @@ func (e *Encrypter) Decrypt(cipherText, password string) (string, error) {
 		if password != "" {
 			return "", ErrInvalidPassword
 		}
+
 		return cipherText, nil
 	}
 

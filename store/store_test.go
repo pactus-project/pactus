@@ -52,6 +52,7 @@ func setup(t *testing.T, config *Config) *testData {
 		td.store.SaveBlock(blk, cert)
 		assert.NoError(t, td.store.WriteBatch())
 	}
+
 	return td
 }
 

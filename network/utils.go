@@ -27,6 +27,7 @@ func MakeMultiAddrs(addrs []string) ([]multiaddr.Multiaddr, error) {
 		}
 		mas = append(mas, ma)
 	}
+
 	return mas, nil
 }
 
@@ -40,6 +41,7 @@ func MakeAddrInfos(addrs []string) ([]lp2ppeer.AddrInfo, error) {
 		}
 		pis = append(pis, *pinfo)
 	}
+
 	return pis, nil
 }
 
@@ -70,6 +72,7 @@ func HasPID(pids []lp2ppeer.ID, pid lp2ppeer.ID) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -165,5 +168,6 @@ func BuildConcreteLimitConfig(maxConns int) lp2prcmgr.ConcreteLimitConfig {
 
 func MessageIDFunc(m *lp2pspb.Message) string {
 	h := hash.CalcHash(m.Data)
+
 	return string(h[:20])
 }

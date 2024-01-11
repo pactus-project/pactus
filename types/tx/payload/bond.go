@@ -54,6 +54,7 @@ func (p *BondPayload) SerializeSize() int {
 	if p.PublicKey != nil {
 		return 139 + encoding.VarIntSerializeSize(uint64(p.Stake))
 	}
+
 	return 43 + encoding.VarIntSerializeSize(uint64(p.Stake))
 }
 
@@ -117,6 +118,7 @@ func (p *BondPayload) Decode(r io.Reader) error {
 		return err
 	}
 	p.Stake = int64(stake)
+
 	return nil
 }
 

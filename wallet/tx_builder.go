@@ -12,6 +12,7 @@ type TxOption func(builder *txBuilder) error
 func OptionLockTime(lockTime uint32) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
 		builder.lockTime = lockTime
+
 		return nil
 	}
 }
@@ -19,6 +20,7 @@ func OptionLockTime(lockTime uint32) func(builder *txBuilder) error {
 func OptionFee(fee int64) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
 		builder.fee = fee
+
 		return nil
 	}
 }
@@ -26,6 +28,7 @@ func OptionFee(fee int64) func(builder *txBuilder) error {
 func OptionMemo(memo string) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
 		builder.memo = memo
+
 		return nil
 	}
 }
@@ -52,6 +55,7 @@ func newTxBuilder(client *grpcClient, options ...TxOption) (*txBuilder, error) {
 			return nil, err
 		}
 	}
+
 	return builder, nil
 }
 
@@ -61,6 +65,7 @@ func (m *txBuilder) setFromAddr(addr string) error {
 		return err
 	}
 	m.from = &from
+
 	return nil
 }
 
@@ -70,6 +75,7 @@ func (m *txBuilder) setToAddress(addr string) error {
 		return err
 	}
 	m.to = &to
+
 	return nil
 }
 
@@ -117,6 +123,7 @@ func (m *txBuilder) setLockTime() error {
 		}
 		m.lockTime = info.LastBlockHeight + 1
 	}
+
 	return nil
 }
 
@@ -131,5 +138,6 @@ func (m *txBuilder) setFee() error {
 		}
 		m.fee = fee
 	}
+
 	return nil
 }

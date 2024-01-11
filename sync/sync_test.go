@@ -107,6 +107,7 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 		select {
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("shouldPublishMessageWithThisType %v: Timeout, test: %v", msgType, t.Name()))
+
 			return nil
 		case b := <-net.PublishCh:
 			net.SendToOthers(b.Data, b.Target)
@@ -137,6 +138,7 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 			if bdl.Message.Type() == msgType {
 				logger.Info("shouldPublishMessageWithThisType",
 					"bundle", bdl, "type", msgType.String())
+
 				return bdl
 			}
 		}
@@ -159,6 +161,7 @@ func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
 		select {
 		case <-timeout.C:
 			return
+
 		case b := <-net.PublishCh:
 			// Decode message again to check the message type
 			bdl := new(bundle.Bundle)
@@ -179,6 +182,7 @@ func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, msgType me
 func (td *testData) receivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
 	bdl := bundle.NewBundle(msg)
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P|bundle.BundleFlagNetworkMainnet)
+
 	return sync.processIncomingBundle(bdl, from)
 }
 
@@ -238,6 +242,7 @@ func TestConnectEvent(t *testing.T) {
 			return false
 		}
 		assert.Equal(t, p.Address, "address_1")
+
 		return p.Status == peerset.StatusCodeConnected
 	}, time.Second, 100*time.Millisecond)
 
@@ -257,6 +262,7 @@ func TestDisconnectEvent(t *testing.T) {
 
 	assert.Eventually(t, func() bool {
 		p := td.sync.peerSet.GetPeer(pid)
+
 		return p.Status == peerset.StatusCodeDisconnected
 	}, time.Second, 100*time.Millisecond)
 }

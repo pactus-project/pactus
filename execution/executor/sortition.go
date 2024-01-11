@@ -116,5 +116,6 @@ func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 		return errors.Errorf(errors.ErrInvalidTx,
 			"oldest validator still didn't propose any block")
 	}
+
 	return nil
 }

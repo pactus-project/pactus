@@ -32,6 +32,7 @@ func newStreamService(ctx context.Context, host lp2phost.Host,
 	}
 
 	s.host.SetStreamHandler(protocolID, s.handleStream)
+
 	return s
 }
 

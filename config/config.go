@@ -58,6 +58,7 @@ func (conf *NodeConfig) BasicCheck() error {
 			return errors.Errorf(errors.ErrInvalidConfig, "reward address is not an account address: %s", addrStr)
 		}
 	}
+
 	return nil
 }
 
@@ -162,6 +163,7 @@ func DefaultConfigLocalnet(genParams *param.Params) *Config {
 
 func SaveMainnetConfig(path string) error {
 	conf := string(exampleConfigBytes)
+
 	return util.WriteFile(path, []byte(conf))
 }
 
@@ -194,6 +196,7 @@ func LoadFromFile(file string, strict bool, defaultConfig *Config) (*Config, err
 	if err := decoder.Decode(conf); err != nil {
 		return nil, err
 	}
+
 	return conf, nil
 }
 
@@ -223,5 +226,6 @@ func (conf *Config) BasicCheck() error {
 	if err := conf.Nanomsg.BasicCheck(); err != nil {
 		return err
 	}
+
 	return conf.HTTP.BasicCheck()
 }

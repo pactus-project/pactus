@@ -18,6 +18,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 		&pactus.GetNetworkInfoRequest{})
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 
@@ -69,6 +70,7 @@ func (s *Server) NodeHandler(w http.ResponseWriter, _ *http.Request) {
 		&pactus.GetNodeInfoRequest{})
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 

@@ -58,6 +58,7 @@ func (td *testData) randomAmountAndFee(min, max int64) (int64, int64) {
 		// To make sure amt+fee is less than max
 		return td.randomAmountAndFee(min, max)
 	}
+
 	return amt, fee
 }
 

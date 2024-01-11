@@ -18,5 +18,6 @@ func VerifyProof(seed VerifiableSeed, proof Proof, pub *bls.PublicKey, total, th
 	if !result {
 		return false
 	}
+
 	return int64(index) < threshold
 }

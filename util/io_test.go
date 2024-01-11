@@ -78,6 +78,7 @@ func isRoot() bool {
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	return i == 0
 }
 

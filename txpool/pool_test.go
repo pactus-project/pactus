@@ -54,13 +54,16 @@ func (td *testData) shouldPublishTransaction(t *testing.T, id tx.ID) {
 		select {
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("Timeout"))
+
 			return
+
 		case msg := <-td.ch:
 			logger.Info("shouldPublishTransaction", "msg", msg)
 
 			if msg.Type() == message.TypeTransactions {
 				m := msg.(*message.TransactionsMessage)
 				assert.Equal(t, m.Transactions[0].ID(), id)
+
 				return
 			}
 		}

@@ -19,6 +19,7 @@ func NewPrepareVoteSet(round int16, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BlockVoteSet {
 	voteSet := newVoteSet(round, totalPower, validators)
+
 	return newBlockVoteSet(voteSet)
 }
 
@@ -26,6 +27,7 @@ func NewPrecommitVoteSet(round int16, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BlockVoteSet {
 	voteSet := newVoteSet(round, totalPower, validators)
+
 	return newBlockVoteSet(voteSet)
 }
 
@@ -43,6 +45,7 @@ func (vs *BlockVoteSet) BlockVotes(blockHash hash.Hash) map[crypto.Address]*vote
 	for a, v := range blockVotes.votes {
 		votes[a] = v
 	}
+
 	return votes
 }
 
@@ -52,6 +55,7 @@ func (vs *BlockVoteSet) mustGetBlockVotes(blockHash hash.Hash) *voteBox {
 		bv = newVoteBox()
 		vs.blockVotes[blockHash] = bv
 	}
+
 	return bv
 }
 
@@ -61,6 +65,7 @@ func (vs *BlockVoteSet) AllVotes() []*vote.Vote {
 	for _, v := range vs.allVotes {
 		votes = append(votes, v)
 	}
+
 	return votes
 }
 

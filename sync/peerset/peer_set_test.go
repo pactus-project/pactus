@@ -46,10 +46,12 @@ func TestPeerSet(t *testing.T) {
 			for _, expectedID := range expectedPeerIDs {
 				if p.PeerID == expectedID {
 					found = true
+
 					break
 				}
 			}
 			assert.True(t, found, "Peer with ID %s not found in the peer list", p.PeerID)
+
 			return false
 		})
 	})

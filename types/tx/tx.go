@@ -63,6 +63,7 @@ func FromBytes(bs []byte) (*Tx, error) {
 	if err := tx.Decode(r); err != nil {
 		return nil, err
 	}
+
 	return tx, nil
 }
 
@@ -193,6 +194,7 @@ func (tx *Tx) checkSignature() error {
 			}
 		}
 	}
+
 	return nil
 }
 
@@ -212,6 +214,7 @@ func (tx *Tx) MarshalCBOR() ([]byte, error) {
 	if err := tx.Encode(buf); err != nil {
 		return nil, err
 	}
+
 	return cbor.Marshal(buf.Bytes())
 }
 
@@ -222,6 +225,7 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 	buf := bytes.NewBuffer(data)
+
 	return tx.Decode(buf)
 }
 
@@ -287,6 +291,7 @@ func (tx *Tx) encodeWithNoSignatory(w io.Writer) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -370,6 +375,7 @@ func (tx *Tx) SignBytes() []byte {
 	if err != nil {
 		return nil
 	}
+
 	return buf.Bytes()[1:] // Exclude flags
 }
 
@@ -379,6 +385,7 @@ func (tx *Tx) ID() ID {
 	}
 	id := hash.CalcHash(tx.SignBytes())
 	tx.memorizedID = &id
+
 	return id
 }
 

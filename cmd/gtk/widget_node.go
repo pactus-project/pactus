@@ -76,6 +76,7 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 	// Update widget for the first time
 	w.timeout1()
 	w.timeout10()
+
 	return w, nil
 }
 

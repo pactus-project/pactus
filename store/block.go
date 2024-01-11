@@ -127,6 +127,7 @@ func (bs *blockStore) blockHeight(h hash.Hash) uint32 {
 	if err != nil {
 		return 0
 	}
+
 	return util.SliceToUint32(data)
 }
 
@@ -165,6 +166,7 @@ func (bs *blockStore) publicKey(addr crypto.Address) (*bls.PublicKey, error) {
 	}
 
 	bs.pubKeyCache.Add(addr, pubKey)
+
 	return pubKey, err
 }
 
@@ -173,6 +175,7 @@ func (bs *blockStore) hasPublicKey(addr crypto.Address) bool {
 	if !ok {
 		ok = tryHas(bs.db, publicKeyKey(addr))
 	}
+
 	return ok
 }
 

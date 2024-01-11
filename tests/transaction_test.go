@@ -18,6 +18,7 @@ func sendRawTx(t *testing.T, raw []byte) error {
 
 	_, err := tTransaction.BroadcastTransaction(tCtx,
 		&pactus.BroadcastTransactionRequest{SignedTx: raw})
+
 	return err
 }
 
@@ -32,6 +33,7 @@ func broadcastSendTransaction(t *testing.T, sender *bls.ValidatorKey, receiver c
 	trx.SetSignature(sig)
 
 	d, _ := trx.Bytes()
+
 	return sendRawTx(t, d)
 }
 
@@ -46,6 +48,7 @@ func broadcastBondTransaction(t *testing.T, sender *bls.ValidatorKey, pub *bls.P
 	trx.SetSignature(sig)
 
 	d, _ := trx.Bytes()
+
 	return sendRawTx(t, d)
 }
 

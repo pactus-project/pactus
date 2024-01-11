@@ -49,6 +49,7 @@ func (s *Server) StartServer() error {
 		s.publisher = publisher
 		go s.eventLoop()
 	}()
+
 	return nil
 }
 
@@ -70,11 +71,13 @@ func (s *Server) eventLoop() {
 			err := encoding.WriteElement(w, s.seqNum)
 			if err != nil {
 				s.logger.Error("error on encoding event", "error", err)
+
 				return
 			}
 			err = s.publisher.Send(w.Bytes())
 			if err != nil {
 				s.logger.Error("error on emitting event", "error", err)
+
 				return
 			}
 			s.seqNum++

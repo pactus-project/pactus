@@ -12,6 +12,7 @@ import (
 
 func strToHash(str string) hash.Hash {
 	h := hash.CalcHash([]byte(str))
+
 	return h
 }
 
@@ -58,6 +59,7 @@ func TestMerkleTree_Bitcoin_Block100000(t *testing.T) {
 		first := sha256.Sum256(data)
 		second := sha256.Sum256(first[:])
 		h, _ := hash.FromBytes(second[:])
+
 		return h
 	}
 
@@ -91,6 +93,7 @@ func TestMerkleTree_Bitcoin_Block153342(t *testing.T) {
 		first := sha256.Sum256(data)
 		second := sha256.Sum256(first[:])
 		h, _ := hash.FromBytes(second[:])
+
 		return h
 	}
 

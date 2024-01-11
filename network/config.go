@@ -59,6 +59,7 @@ func validateMultiAddr(addrs ...string) error {
 			Reason: fmt.Sprintf("address is not valid: %s", err.Error()),
 		}
 	}
+
 	return err
 }
 
@@ -69,6 +70,7 @@ func validateAddrInfo(addrs ...string) error {
 			Reason: fmt.Sprintf("address is not valid: %s", err.Error()),
 		}
 	}
+
 	return nil
 }
 
@@ -93,14 +95,17 @@ func (conf *Config) BasicCheck() error {
 			Reason: "both the relay and relay service cannot be active at the same time",
 		}
 	}
+
 	return validateAddrInfo(conf.BootstrapAddrStrings...)
 }
 
 func (conf *Config) PublicAddr() multiaddr.Multiaddr {
 	if conf.PublicAddrString != "" {
 		addr, _ := multiaddr.NewMultiaddr(conf.PublicAddrString)
+
 		return addr
 	}
+
 	return nil
 }
 
@@ -115,12 +120,14 @@ func (conf *Config) ListenAddrs() []multiaddr.Multiaddr {
 		}
 	}
 	addrs, _ := MakeMultiAddrs(listenAddrs)
+
 	return addrs
 }
 
 func (conf *Config) BootstrapAddrInfos() []lp2ppeer.AddrInfo {
 	addrs := util.Merge(conf.DefaultBootstrapAddrStrings, conf.BootstrapAddrStrings)
 	addrInfos, _ := MakeAddrInfos(addrs)
+
 	return addrInfos
 }
 
@@ -129,6 +136,7 @@ func (conf *Config) CheckIsBootstrapper(pid lp2pcore.PeerID) {
 	for _, ai := range addrInfos {
 		if ai.ID == pid {
 			conf.IsBootstrapper = true
+
 			break
 		}
 	}

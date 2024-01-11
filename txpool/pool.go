@@ -43,6 +43,7 @@ func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 	}
 
 	pool.logger = logger.NewSubLogger("_pool", pool)
+
 	return pool
 }
 
@@ -97,6 +98,7 @@ func (p *txPool) appendTx(trx *tx.Tx) error {
 	pool := p.pools[trx.Payload().Type()]
 	if pool.Has(trx.ID()) {
 		p.logger.Trace("transaction is already in pool", "id", trx.ID())
+
 		return nil
 	}
 
@@ -113,8 +115,10 @@ func (p *txPool) appendTx(trx *tx.Tx) error {
 func (p *txPool) checkTx(trx *tx.Tx) error {
 	if err := p.checker.Execute(trx, p.sandbox); err != nil {
 		p.logger.Debug("invalid transaction", "tx", trx, "error", err)
+
 		return err
 	}
+
 	return nil
 }
 
@@ -205,6 +209,7 @@ func (p *txPool) Size() int {
 	for _, pool := range p.pools {
 		size += pool.Size()
 	}
+
 	return size
 }
 

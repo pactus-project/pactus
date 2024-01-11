@@ -32,6 +32,7 @@ func toBytes(chars string) ([]byte, error) {
 		}
 		decoded = append(decoded, byte(index))
 	}
+
 	return decoded, nil
 }
 
@@ -150,6 +151,7 @@ func bech32VerifyChecksum(hrp string, data []byte) bool {
 	checksum := data[len(data)-6:]
 	values := data[:len(data)-6]
 	polymod := bech32Polymod(hrp, values, checksum)
+
 	return polymod == ChecksumConst
 }
 
@@ -227,6 +229,7 @@ func DecodeNoLimit(bech string) (string, []byte, error) {
 			Expected: expected,
 			Actual:   actual,
 		}
+
 		return "", nil, err
 	}
 
@@ -360,6 +363,7 @@ func EncodeFromBase256(hrp string, data []byte) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return Encode(hrp, converted)
 }
 
@@ -375,6 +379,7 @@ func DecodeToBase256(bech string) (string, []byte, error) {
 	if err != nil {
 		return "", nil, err
 	}
+
 	return hrp, converted, nil
 }
 

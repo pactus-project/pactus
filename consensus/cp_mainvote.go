@@ -64,6 +64,7 @@ func (s *cpMainVoteState) checkForWeakValidity() {
 		for _, v := range preVotesZero {
 			bh := v.BlockHash()
 			s.cpWeakValidity = &bh
+
 			break
 		}
 	}

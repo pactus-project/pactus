@@ -60,6 +60,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		bs, err := cbor.Marshal(peer.Agent)
 		if err != nil {
 			s.logger.Error("couldn't marshal agent", "error", err)
+
 			return false
 		}
 		p.Agent = string(bs)

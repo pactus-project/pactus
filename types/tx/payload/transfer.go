@@ -37,6 +37,7 @@ func (p *TransferPayload) BasicCheck() error {
 			Reason: "receiver is not an account address: " + p.To.String(),
 		}
 	}
+
 	return nil
 }
 
@@ -76,6 +77,7 @@ func (p *TransferPayload) Decode(r io.Reader) error {
 		return err
 	}
 	p.Amount = int64(amount)
+
 	return nil
 }
 

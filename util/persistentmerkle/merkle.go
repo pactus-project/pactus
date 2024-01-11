@@ -43,6 +43,7 @@ func (t *Tree) createNode(width, height int) *node {
 
 func (t *Tree) getNode(width, height int) *node {
 	id := nodeID(width, height)
+
 	return t.nodes[id]
 }
 
@@ -53,6 +54,7 @@ func (t *Tree) getOrCreateNode(width, height int) *node {
 		node = t.createNode(width, height)
 		t.nodes[id] = node
 	}
+
 	return node
 }
 
@@ -116,5 +118,6 @@ func (t *Tree) nodeHash(width, height int) hash.Hash {
 
 	h := hash.CalcHash(data)
 	n.hash = &h
+
 	return h
 }

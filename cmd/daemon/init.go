@@ -32,6 +32,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
 		if !util.IsDirNotExistsOrEmpty(workingDir) {
 			cmd.PrintErrorMsgf("The working directory is not empty: %s", workingDir)
+
 			return
 		}
 		var mnemonic string

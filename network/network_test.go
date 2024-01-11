@@ -62,7 +62,9 @@ func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
 		select {
 		case <-timeout.C:
 			require.NoError(t, fmt.Errorf("shouldReceiveEvent Timeout, test: %v id:%s", t.Name(), net.SelfID().String()))
+
 			return nil
+
 		case e := <-net.EventChannel():
 			if e.Type() == eventType {
 				return e
@@ -80,8 +82,10 @@ func shouldNotReceiveEvent(t *testing.T, net *network) {
 		select {
 		case <-timeout.C:
 			return
+
 		case <-net.EventChannel():
 			require.NoError(t, fmt.Errorf("shouldNotReceiveEvent, test: %v id:%s", t.Name(), net.SelfID().String()))
+
 			return
 		}
 	}

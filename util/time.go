@@ -19,5 +19,6 @@ func RoundNow(sec int) time.Time {
 func roundDownTime(t time.Time, sec int) time.Time {
 	t = t.Truncate(time.Duration(sec) * time.Second)
 	t = t.UTC()
+
 	return t
 }

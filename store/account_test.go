@@ -117,6 +117,7 @@ func TestIterateAccounts(t *testing.T) {
 	hashes2 := []hash.Hash{}
 	td.store.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
 		hashes2 = append(hashes2, acc.Hash())
+
 		return false
 	})
 	assert.ElementsMatch(t, hashes1, hashes2)
@@ -126,6 +127,7 @@ func TestIterateAccounts(t *testing.T) {
 		if acc.Hash() == hashes1[0] {
 			stopped = true
 		}
+
 		return stopped
 	})
 	assert.True(t, stopped)

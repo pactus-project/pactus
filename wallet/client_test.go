@@ -54,6 +54,7 @@ func (s *blockchainServer) GetAccount(_ context.Context,
 	if tAccountResponse != nil {
 		return tAccountResponse, nil
 	}
+
 	return nil, fmt.Errorf("unknown request")
 }
 
@@ -75,6 +76,7 @@ func (s *blockchainServer) GetValidator(_ context.Context,
 	if tValidatorResponse != nil {
 		return tValidatorResponse, nil
 	}
+
 	return nil, fmt.Errorf("unknown request")
 }
 
@@ -100,6 +102,7 @@ func (s *transactionServer) BroadcastTransaction(_ context.Context,
 	req *pactus.BroadcastTransactionRequest,
 ) (*pactus.BroadcastTransactionResponse, error) {
 	trx, _ := tx.FromBytes(req.SignedTx)
+
 	return &pactus.BroadcastTransactionResponse{
 		Id: trx.ID().Bytes(),
 	}, nil

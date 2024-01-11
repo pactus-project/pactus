@@ -63,6 +63,7 @@ func NewConsensus(
 	broadcaster := func(_ crypto.Address, msg message.Message) {
 		broadcastCh <- msg
 	}
+
 	return newConsensus(conf, bcState,
 		valKey, rewardAddr, broadcaster, mediator)
 }
@@ -170,6 +171,7 @@ func (cs *consensus) AllVotes() []*vote.Vote {
 		m := cs.log.RoundMessages(r)
 		votes = append(votes, m.AllVotes()...)
 	}
+
 	return votes
 }
 
@@ -209,22 +211,26 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 
 	if !cs.active {
 		cs.logger.Trace("we are not in the committee")
+
 		return
 	}
 
 	if p.Height() != cs.height {
 		cs.logger.Trace("invalid height", "proposal", p)
+
 		return
 	}
 
 	if p.Round() < cs.round {
 		cs.logger.Trace("expired round", "proposal", p)
+
 		return
 	}
 
 	roundProposal := cs.log.RoundProposal(p.Round())
 	if roundProposal != nil {
 		cs.logger.Trace("this round has proposal", "proposal", p)
+
 		return
 	}
 
@@ -236,17 +242,20 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		cs.logger.Trace("block is committed for this height", "proposal", p)
 		if p.Block().Hash() != cs.bcState.LastBlockHash() {
 			cs.logger.Warn("proposal is not for the committed block", "proposal", p)
+
 			return
 		}
 	} else {
 		proposer := cs.proposer(p.Round())
 		if err := p.Verify(proposer.PublicKey()); err != nil {
 			cs.logger.Warn("proposal is invalid", "proposal", p, "error", err)
+
 			return
 		}
 
 		if err := cs.bcState.ValidateBlock(p.Block(), p.Round()); err != nil {
 			cs.logger.Warn("invalid block", "proposal", p, "error", err)
+
 			return
 		}
 	}
@@ -266,6 +275,7 @@ func (cs *consensus) handleTimeout(t *ticker) {
 	// Old tickers might be triggered now. Ignore them.
 	if cs.height != t.Height || cs.round != t.Round {
 		cs.logger.Trace("stale ticker", "ticker", t)
+
 		return
 	}
 
@@ -279,11 +289,13 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 
 	if !cs.active {
 		cs.logger.Trace("we are not in the committee")
+
 		return
 	}
 
 	if v.Height() != cs.height {
 		cs.logger.Trace("vote has invalid height", "vote", v)
+
 		return
 	}
 
@@ -293,6 +305,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		err := cs.changeProposer.checkJust(v)
 		if err != nil {
 			cs.logger.Error("error on adding a cp vote", "vote", v, "error", err)
+
 			return
 		}
 	}
@@ -440,6 +453,7 @@ func (cs *consensus) PickRandomVote(round int16) *vote.Vote {
 	if len(votes) == 0 {
 		return nil
 	}
+
 	return votes[util.RandInt32(int32(len(votes)))]
 }
 

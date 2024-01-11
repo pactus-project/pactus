@@ -34,6 +34,7 @@ func (lm *LinkedMap[K, V]) SetCapacity(capacity int) {
 // Has checks if the specified key exists in the LinkedMap.
 func (lm *LinkedMap[K, V]) Has(key K) bool {
 	_, found := lm.hashmap[key]
+
 	return found
 }
 
@@ -43,6 +44,7 @@ func (lm *LinkedMap[K, V]) PushBack(key K, value V) {
 	if found {
 		// Update the value if the key already exists
 		ln.Data.Value = value
+
 		return
 	}
 
@@ -59,6 +61,7 @@ func (lm *LinkedMap[K, V]) PushFront(key K, value V) {
 	if found {
 		// Update the value if the key already exists
 		ln.Data.Value = value
+
 		return
 	}
 
@@ -75,6 +78,7 @@ func (lm *LinkedMap[K, V]) GetNode(key K) *ll.Element[Pair[K, V]] {
 	if found {
 		return ln
 	}
+
 	return nil
 }
 
@@ -84,6 +88,7 @@ func (lm *LinkedMap[K, V]) TailNode() *ll.Element[Pair[K, V]] {
 	if ln == nil {
 		return nil
 	}
+
 	return ln
 }
 
@@ -97,6 +102,7 @@ func (lm *LinkedMap[K, V]) HeadNode() *ll.Element[Pair[K, V]] {
 	if ln == nil {
 		return nil
 	}
+
 	return ln
 }
 
@@ -112,6 +118,7 @@ func (lm *LinkedMap[K, V]) Remove(key K) bool {
 		lm.list.Delete(ln)
 		delete(lm.hashmap, ln.Data.Key)
 	}
+
 	return found
 }
 

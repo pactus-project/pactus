@@ -148,6 +148,7 @@ func (w *Wallet) tryToConnect(addr string) error {
 	}
 
 	w.client = client
+
 	return nil
 }
 
@@ -347,6 +348,7 @@ func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
 	sig := prv.Sign(trx.SignBytes())
 	trx.SetSignature(sig)
 	trx.SetPublicKey(prv.PublicKey())
+
 	return nil
 }
 
@@ -408,6 +410,7 @@ func (w *Wallet) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return keys[0], nil
 }
 
