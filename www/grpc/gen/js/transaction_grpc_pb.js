@@ -4,6 +4,28 @@
 var grpc = require('grpc');
 var transaction_pb = require('./transaction_pb.js');
 
+function serialize_pactus_BroadcastTransactionRequest(arg) {
+  if (!(arg instanceof transaction_pb.BroadcastTransactionRequest)) {
+    throw new Error('Expected argument of type pactus.BroadcastTransactionRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_BroadcastTransactionRequest(buffer_arg) {
+  return transaction_pb.BroadcastTransactionRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_BroadcastTransactionResponse(arg) {
+  if (!(arg instanceof transaction_pb.BroadcastTransactionResponse)) {
+    throw new Error('Expected argument of type pactus.BroadcastTransactionResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_BroadcastTransactionResponse(buffer_arg) {
+  return transaction_pb.BroadcastTransactionResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_CalculateFeeRequest(arg) {
   if (!(arg instanceof transaction_pb.CalculateFeeRequest)) {
     throw new Error('Expected argument of type pactus.CalculateFeeRequest');
@@ -103,28 +125,6 @@ function deserialize_pactus_GetTransactionResponse(buffer_arg) {
   return transaction_pb.GetTransactionResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_SendRawTransactionRequest(arg) {
-  if (!(arg instanceof transaction_pb.SendRawTransactionRequest)) {
-    throw new Error('Expected argument of type pactus.SendRawTransactionRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_SendRawTransactionRequest(buffer_arg) {
-  return transaction_pb.SendRawTransactionRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_pactus_SendRawTransactionResponse(arg) {
-  if (!(arg instanceof transaction_pb.SendRawTransactionResponse)) {
-    throw new Error('Expected argument of type pactus.SendRawTransactionResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_SendRawTransactionResponse(buffer_arg) {
-  return transaction_pb.SendRawTransactionResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 
 var TransactionService = exports.TransactionService = {
   getTransaction: {
@@ -149,16 +149,16 @@ var TransactionService = exports.TransactionService = {
     responseSerialize: serialize_pactus_CalculateFeeResponse,
     responseDeserialize: deserialize_pactus_CalculateFeeResponse,
   },
-  sendRawTransaction: {
-    path: '/pactus.Transaction/SendRawTransaction',
+  broadcastTransaction: {
+    path: '/pactus.Transaction/BroadcastTransaction',
     requestStream: false,
     responseStream: false,
-    requestType: transaction_pb.SendRawTransactionRequest,
-    responseType: transaction_pb.SendRawTransactionResponse,
-    requestSerialize: serialize_pactus_SendRawTransactionRequest,
-    requestDeserialize: deserialize_pactus_SendRawTransactionRequest,
-    responseSerialize: serialize_pactus_SendRawTransactionResponse,
-    responseDeserialize: deserialize_pactus_SendRawTransactionResponse,
+    requestType: transaction_pb.BroadcastTransactionRequest,
+    responseType: transaction_pb.BroadcastTransactionResponse,
+    requestSerialize: serialize_pactus_BroadcastTransactionRequest,
+    requestDeserialize: deserialize_pactus_BroadcastTransactionRequest,
+    responseSerialize: serialize_pactus_BroadcastTransactionResponse,
+    responseDeserialize: deserialize_pactus_BroadcastTransactionResponse,
   },
   getRawTransferTransaction: {
     path: '/pactus.Transaction/GetRawTransferTransaction',

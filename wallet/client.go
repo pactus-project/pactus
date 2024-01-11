@@ -67,8 +67,8 @@ func (c *grpcClient) sendTx(trx *tx.Tx) (tx.ID, error) {
 	if err != nil {
 		return hash.UndefHash, err
 	}
-	res, err := c.transactionClient.SendRawTransaction(context.Background(), &pactus.SendRawTransactionRequest{
-		Data: data,
+	res, err := c.transactionClient.BroadcastTransaction(context.Background(), &pactus.BroadcastTransactionRequest{
+		SignedTx: data,
 	})
 	if err != nil {
 		return hash.UndefHash, err

@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type TransactionClient interface {
 	GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error)
 	CalculateFee(ctx context.Context, in *CalculateFeeRequest, opts ...grpc.CallOption) (*CalculateFeeResponse, error)
-	SendRawTransaction(ctx context.Context, in *SendRawTransactionRequest, opts ...grpc.CallOption) (*SendRawTransactionResponse, error)
+	BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error)
 	GetRawTransferTransaction(ctx context.Context, in *GetRawTransferTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	GetRawBondTransaction(ctx context.Context, in *GetRawBondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	GetRawUnBondTransaction(ctx context.Context, in *GetRawUnBondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
@@ -57,9 +57,9 @@ func (c *transactionClient) CalculateFee(ctx context.Context, in *CalculateFeeRe
 	return out, nil
 }
 
-func (c *transactionClient) SendRawTransaction(ctx context.Context, in *SendRawTransactionRequest, opts ...grpc.CallOption) (*SendRawTransactionResponse, error) {
-	out := new(SendRawTransactionResponse)
-	err := c.cc.Invoke(ctx, "/pactus.Transaction/SendRawTransaction", in, out, opts...)
+func (c *transactionClient) BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error) {
+	out := new(BroadcastTransactionResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Transaction/BroadcastTransaction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func (c *transactionClient) GetRawWithdrawTransaction(ctx context.Context, in *G
 type TransactionServer interface {
 	GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error)
 	CalculateFee(context.Context, *CalculateFeeRequest) (*CalculateFeeResponse, error)
-	SendRawTransaction(context.Context, *SendRawTransactionRequest) (*SendRawTransactionResponse, error)
+	BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error)
 	GetRawTransferTransaction(context.Context, *GetRawTransferTransactionRequest) (*GetRawTransactionResponse, error)
 	GetRawBondTransaction(context.Context, *GetRawBondTransactionRequest) (*GetRawTransactionResponse, error)
 	GetRawUnBondTransaction(context.Context, *GetRawUnBondTransactionRequest) (*GetRawTransactionResponse, error)
@@ -125,8 +125,8 @@ func (UnimplementedTransactionServer) GetTransaction(context.Context, *GetTransa
 func (UnimplementedTransactionServer) CalculateFee(context.Context, *CalculateFeeRequest) (*CalculateFeeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CalculateFee not implemented")
 }
-func (UnimplementedTransactionServer) SendRawTransaction(context.Context, *SendRawTransactionRequest) (*SendRawTransactionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendRawTransaction not implemented")
+func (UnimplementedTransactionServer) BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BroadcastTransaction not implemented")
 }
 func (UnimplementedTransactionServer) GetRawTransferTransaction(context.Context, *GetRawTransferTransactionRequest) (*GetRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRawTransferTransaction not implemented")
@@ -188,20 +188,20 @@ func _Transaction_CalculateFee_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Transaction_SendRawTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SendRawTransactionRequest)
+func _Transaction_BroadcastTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BroadcastTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServer).SendRawTransaction(ctx, in)
+		return srv.(TransactionServer).BroadcastTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pactus.Transaction/SendRawTransaction",
+		FullMethod: "/pactus.Transaction/BroadcastTransaction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServer).SendRawTransaction(ctx, req.(*SendRawTransactionRequest))
+		return srv.(TransactionServer).BroadcastTransaction(ctx, req.(*BroadcastTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -294,8 +294,8 @@ var Transaction_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Transaction_CalculateFee_Handler,
 		},
 		{
-			MethodName: "SendRawTransaction",
-			Handler:    _Transaction_SendRawTransaction_Handler,
+			MethodName: "BroadcastTransaction",
+			Handler:    _Transaction_BroadcastTransaction_Handler,
 		},
 		{
 			MethodName: "GetRawTransferTransaction",

@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.20.0](https://github.com/pactus-project/pactus/compare/v0.19.0...v0.20.0) (2024-01-11)
+
+### Feat
+
+- implement relay service ([#931](https://github.com/pactus-project/pactus/pull/931))
+- **HTTP**: Integrate AddRowDouble and update tests ([#926](https://github.com/pactus-project/pactus/pull/926))
+- **network**: making listen address private in config ([#921](https://github.com/pactus-project/pactus/pull/921))
+- **http**: adding AvailabilityScore to http module ([#917](https://github.com/pactus-project/pactus/pull/917))
+- **network**: adding 'enable_udp' config ([#918](https://github.com/pactus-project/pactus/pull/918))
+- **network**: removing gossip node service ([#916](https://github.com/pactus-project/pactus/pull/916))
+- **gRPC**: adding AvailabilityScore to gRPC ([#910](https://github.com/pactus-project/pactus/pull/910))
+- **GUI**: unbond and withdraw transaction dialogs ([#908](https://github.com/pactus-project/pactus/pull/908))
+
+### Fix
+
+- **gRPC**: adding missing get raw transaction APIs to gRPC gateway ([#925](https://github.com/pactus-project/pactus/pull/925))
+- **network**: preventing self dial ([#924](https://github.com/pactus-project/pactus/pull/924))
+- fixing time lag on starting node ([#923](https://github.com/pactus-project/pactus/pull/923))
+- **network**: fixing network deadlock on linux arm64 ([#922](https://github.com/pactus-project/pactus/pull/922))
+- **GUI**: updating unbond and withdraw dialogs ([#911](https://github.com/pactus-project/pactus/pull/911))
+- fixing gRPC node info issue ([#906](https://github.com/pactus-project/pactus/pull/906))
+
 ## [0.19.0](https://github.com/pactus-project/pactus/compare/v0.18.0...v0.19.0) (2024-01-04)
 
 ### Feat

@@ -52,10 +52,10 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 	return res, nil
 }
 
-func (s *transactionServer) SendRawTransaction(_ context.Context,
-	req *pactus.SendRawTransactionRequest,
-) (*pactus.SendRawTransactionResponse, error) {
-	trx, err := tx.FromBytes(req.Data)
+func (s *transactionServer) BroadcastTransaction(_ context.Context,
+	req *pactus.BroadcastTransactionRequest,
+) (*pactus.BroadcastTransactionResponse, error) {
+	trx, err := tx.FromBytes(req.SignedTx)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}
@@ -68,7 +68,7 @@ func (s *transactionServer) SendRawTransaction(_ context.Context,
 		return nil, status.Errorf(codes.Canceled, "couldn't add to transaction pool: %v", err.Error())
 	}
 
-	return &pactus.SendRawTransactionResponse{
+	return &pactus.BroadcastTransactionResponse{
 		Id: trx.ID().Bytes(),
 	}, nil
 }
