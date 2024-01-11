@@ -90,6 +90,8 @@ func NewNetwork(conf *Config) (Network, error) {
 }
 
 func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*network, error) {
+	self := new(network)
+
 	networkKey, err := loadOrCreateKey(conf.NetworkKey)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
@@ -169,8 +171,17 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 			lp2p.NATPortMap(),
 		)
 	}
+	// networkReady is a channel used to wait until the network is ready.
+	// This is primarily to avoid reading while writing.
+	networkReady := make(chan struct{})
+	defer close(networkReady)
 
-	var host lp2phost.Host
+	networkGetter := func() *network {
+		<-networkReady              // Closed when newNetwork is finished
+		time.Sleep(1 * time.Second) // Adding a safety delay
+		return self
+	}
+
 	if conf.EnableRelay {
 		log.Info("relay enabled")
 
@@ -181,9 +192,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 
 		opts = append(opts,
 			lp2p.EnableRelay(),
-			lp2p.EnableAutoRelayWithPeerSource(findRelayPeers(func() lp2phost.Host {
-				return host
-			}, log), autoRelayOpt...),
+			lp2p.EnableAutoRelayWithPeerSource(findRelayPeers(networkGetter), autoRelayOpt...),
 			lp2p.EnableHolePunching(),
 		)
 	} else {
@@ -223,24 +232,22 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	}
 	opts = append(opts, lp2p.ConnectionGater(connGater))
 
-	host, err = lp2p.New(opts...)
+	host, err := lp2p.New(opts...)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	n := &network{
-		ctx:          ctx,
-		cancel:       cancel,
-		config:       conf,
-		logger:       log,
-		host:         host,
-		connGater:    connGater,
-		eventChannel: make(chan Event, 100),
-	}
+	self.ctx = ctx
+	self.cancel = cancel
+	self.config = conf
+	self.logger = log
+	self.host = host
+	self.connGater = connGater
+	self.eventChannel = make(chan Event, 100)
 
-	log.SetObj(n)
+	log.SetObj(self)
 
 	conf.CheckIsBootstrapper(host.ID())
 
@@ -248,38 +255,46 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	streamProtocolID := lp2pcore.ProtocolID(fmt.Sprintf("/%s/stream/v1", conf.NetworkName))
 
 	if conf.EnableMdns {
-		n.mdns = newMdnsService(ctx, n.host, n.logger)
+		self.mdns = newMdnsService(ctx, self.host, self.logger)
 	}
 
-	n.dht = newDHTService(n.ctx, n.host, kadProtocolID, conf, n.logger)
-	n.peerMgr = newPeerMgr(ctx, host, conf, n.logger)
-	n.stream = newStreamService(ctx, n.host, streamProtocolID, n.eventChannel, n.logger)
-	n.gossip = newGossipService(ctx, n.host, n.eventChannel, conf, n.logger)
-	n.notifee = newNotifeeService(ctx, n.host, n.eventChannel, n.peerMgr, streamProtocolID, n.logger)
+	self.dht = newDHTService(self.ctx, self.host, kadProtocolID, conf, self.logger)
+	self.peerMgr = newPeerMgr(ctx, host, conf, self.logger)
+	self.stream = newStreamService(ctx, self.host, streamProtocolID, self.eventChannel, self.logger)
+	self.gossip = newGossipService(ctx, self.host, self.eventChannel, conf, self.logger)
+	self.notifee = newNotifeeService(ctx, self.host, self.eventChannel, self.peerMgr, streamProtocolID, self.logger)
 
-	n.host.Network().Notify(n.notifee)
-	n.connGater.SetPeerManager(n.peerMgr)
+	self.host.Network().Notify(self.notifee)
+	self.connGater.SetPeerManager(self.peerMgr)
 
-	n.logger.Info("network setup", "id", n.host.ID(),
+	self.logger.Info("network setup", "id", self.host.ID(),
 		"name", conf.NetworkName,
 		"address", conf.ListenAddrs(),
 		"bootstrapper", conf.IsBootstrapper)
 
-	return n, nil
+	return self, nil
 }
 
-func findRelayPeers(h func() lp2phost.Host, log *logger.SubLogger) func(ctx context.Context,
+func findRelayPeers(networkGetter func() *network) func(ctx context.Context,
 	num int) <-chan lp2ppeer.AddrInfo {
 	return func(ctx context.Context, num int) <-chan lp2ppeer.AddrInfo {
-		log.Debug("try to find relay peers", "num", num)
-
 		// make a channel to return, and put items from numPeers on
 		// that channel up to numPeers. Then close it.
 		r := make(chan lp2ppeer.AddrInfo, num)
 		defer close(r)
 
-		for _, id := range h().Peerstore().PeersWithAddrs() {
-			protos, err := h().Peerstore().GetProtocols(id)
+		// Because the network is initialized after relay, we need to
+		// obtain them indirectly this way.
+		n := networkGetter()
+		if n == nil { // context canceled etc.
+			return r
+		}
+
+		n.logger.Debug("try to find relay peers", "num", num)
+
+		peerStore := n.host.Peerstore()
+		for _, id := range peerStore.Peers() {
+			protos, err := peerStore.GetProtocols(id)
 			if err != nil {
 				continue
 			}
@@ -288,8 +303,8 @@ func findRelayPeers(h func() lp2phost.Host, log *logger.SubLogger) func(ctx cont
 				continue
 			}
 
-			addr := h().Peerstore().Addrs(id)
-			log.Debug("found relay peer", "addr", addr)
+			addr := peerStore.Addrs(id)
+			n.logger.Debug("found relay peer", "addr", addr)
 			dhtPeer := lp2ppeer.AddrInfo{ID: id, Addrs: addr}
 			// Attempt to put peers on r if we have space,
 			// otherwise return (we reached numPeers)

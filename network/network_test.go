@@ -8,9 +8,8 @@ import (
 	"time"
 
 	lp2p "github.com/libp2p/go-libp2p"
-	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
-	"github.com/multiformats/go-multiaddr"
+	lp2pproto "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/proto"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -20,32 +19,6 @@ import (
 
 func alwaysPropagate(_ *GossipMessage) bool {
 	return true
-}
-
-// Original code from:
-// https://github.com/libp2p/go-libp2p/blob/master/p2p/host/autorelay/autorelay_test.go
-func makeTestRelay(t *testing.T) lp2phost.Host {
-	t.Helper()
-
-	h, err := lp2p.New(
-		lp2p.ListenAddrStrings("/ip4/127.0.0.1/tcp/0"),
-		lp2p.DisableRelay(),
-		lp2p.EnableRelayService(),
-		lp2p.ForceReachabilityPublic(),
-		lp2p.AddrsFactory(func(addrs []multiaddr.Multiaddr) []multiaddr.Multiaddr {
-			return addrs
-		}),
-	)
-	require.NoError(t, err)
-	require.Eventually(t, func() bool {
-		for _, p := range h.Mux().Protocols() {
-			if p == "/libp2p/circuit/relay/0.2.0/hop" {
-				return true
-			}
-		}
-		return false
-	}, time.Second, 10*time.Millisecond)
-	return h
 }
 
 func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
@@ -153,16 +126,6 @@ func TestStoppingNetwork(t *testing.T) {
 func TestNetwork(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	// Relay
-	nodeR := makeTestRelay(t)
-
-	relayAddrs := []string{}
-	for _, addr := range nodeR.Addrs() {
-		addr := fmt.Sprintf("%s/p2p/%s", addr, nodeR.ID().String())
-		fmt.Printf("relay address: %s\n", addr)
-		relayAddrs = append(relayAddrs, addr)
-	}
-
 	bootstrapPort := ts.RandInt32(9999) + 10000
 	publicPort := ts.RandInt32(9999) + 10000
 
@@ -179,9 +142,11 @@ func TestNetwork(t *testing.T) {
 		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%v", bootstrapPort, networkB.SelfID().String()),
 	}
 
-	// Public node
+	// Public and relay node
 	confP := testConfig()
 	confP.BootstrapAddrStrings = bootstrapAddresses
+	confP.EnableRelay = false
+	confP.EnableRelayService = true
 	confP.ListenAddrStrings = []string{
 		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", publicPort),
 	}
@@ -242,27 +207,46 @@ func TestNetwork(t *testing.T) {
 
 	time.Sleep(2 * time.Second)
 
-	t.Run("Reachability Status", func(t *testing.T) {
-		assert.Equal(t, networkP.ReachabilityStatus(), "Public")
-		assert.Equal(t, networkB.ReachabilityStatus(), "Public")
-		assert.Equal(t, networkM.ReachabilityStatus(), "Private")
-		assert.Equal(t, networkN.ReachabilityStatus(), "Private")
-		assert.Equal(t, networkX.ReachabilityStatus(), "Private")
-	})
-
 	t.Run("Supported Protocols", func(t *testing.T) {
-		protosNetB := networkB.Protocols()
-		for i, p := range networkB.host.Mux().Protocols() {
-			assert.Equal(t, protosNetB[i], string(p))
-		}
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
+			protos := networkM.Protocols()
+			assert.Contains(t, protos, lp2pproto.ProtoIDv2Stop)
+			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Hop)
+		}, time.Second, 100*time.Millisecond)
+
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
+			protos := networkN.Protocols()
+			assert.Contains(t, protos, lp2pproto.ProtoIDv2Stop)
+			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Hop)
+		}, time.Second, 100*time.Millisecond)
+
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
+			protos := networkP.Protocols()
+			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Stop)
+			assert.Contains(t, protos, lp2pproto.ProtoIDv2Hop)
+		}, time.Second, 100*time.Millisecond)
 	})
 
 	t.Run("all nodes have at least one connection to the bootstrap node B", func(t *testing.T) {
-		assert.GreaterOrEqual(t, networkP.NumConnectedPeers(), 1)
-		assert.GreaterOrEqual(t, networkB.NumConnectedPeers(), 1)
-		assert.GreaterOrEqual(t, networkM.NumConnectedPeers(), 1)
-		assert.GreaterOrEqual(t, networkN.NumConnectedPeers(), 1)
-		assert.GreaterOrEqual(t, networkX.NumConnectedPeers(), 1)
+		assert.EventuallyWithT(t, func(c *assert.CollectT) {
+			assert.GreaterOrEqual(c, networkP.NumConnectedPeers(), 4) // Connected to B, M, N, X
+		}, 2*time.Second, 100*time.Millisecond)
+
+		assert.EventuallyWithT(t, func(c *assert.CollectT) {
+			assert.GreaterOrEqual(c, networkB.NumConnectedPeers(), 4) // Connected to P, M, N, X
+		}, 2*time.Second, 100*time.Millisecond)
+
+		assert.EventuallyWithT(t, func(c *assert.CollectT) {
+			assert.GreaterOrEqual(c, networkM.NumConnectedPeers(), 2) // Connected to B, P, N?
+		}, 2*time.Second, 100*time.Millisecond)
+
+		assert.EventuallyWithT(t, func(c *assert.CollectT) {
+			assert.GreaterOrEqual(c, networkN.NumConnectedPeers(), 2) // Connected to B, P, M?
+		}, 2*time.Second, 100*time.Millisecond)
+
+		assert.EventuallyWithT(t, func(c *assert.CollectT) {
+			assert.GreaterOrEqual(c, networkX.NumConnectedPeers(), 2) // Connected to B, P
+		}, 2*time.Second, 100*time.Millisecond)
 	})
 
 	t.Run("Gossip: all nodes receive general gossip messages", func(t *testing.T) {
@@ -340,21 +324,14 @@ func TestNetwork(t *testing.T) {
 		shouldNotReceiveEvent(t, networkX)
 	})
 
-	circuitAddrInfoN, _ := lp2ppeer.AddrInfoFromString(
-		fmt.Sprintf("%s/p2p-circuit/p2p/%s", relayAddrs[0], networkN.SelfID()))
-
 	t.Run("node X (private, not connected via relay) is not accessible by node M", func(t *testing.T) {
-		require.Error(t, networkX.host.Connect(networkX.ctx, *circuitAddrInfoN))
-
 		msgM := ts.RandBytes(64)
 		require.Error(t, networkM.SendTo(msgM, networkX.SelfID()))
 	})
 
 	// TODO: How to test this?
 	// t.Run("nodes M and N (private, connected via relay) can communicate using the relay node R", func(t *testing.T) {
-	// 	require.NoError(t, networkM.host.Connect(networkM.ctx, *circuitAddrInfoN))
-
-	// 	msgM :=  ts.RandBytes(64)
+	// 	msgM := ts.RandBytes(64)
 	// 	require.NoError(t, networkM.SendTo(msgM, networkN.SelfID()))
 	// 	eM := shouldReceiveEvent(t, networkN, EventTypeStream).(*StreamMessage)
 	// 	assert.Equal(t, readData(t, eM.Reader, len(msgM)), msgM)
@@ -368,6 +345,14 @@ func TestNetwork(t *testing.T) {
 		e := shouldReceiveEvent(t, networkB, EventTypeDisconnect).(*DisconnectEvent)
 		assert.Equal(t, e.PeerID, networkP.SelfID())
 		require.Error(t, networkB.SendTo(msgB, networkP.SelfID()))
+	})
+
+	t.Run("Reachability Status", func(t *testing.T) {
+		assert.Equal(t, networkP.ReachabilityStatus(), "Public")
+		assert.Equal(t, networkB.ReachabilityStatus(), "Public")
+		assert.Equal(t, networkM.ReachabilityStatus(), "Private")
+		assert.Equal(t, networkN.ReachabilityStatus(), "Private")
+		assert.Equal(t, networkX.ReachabilityStatus(), "Private")
 	})
 }
 

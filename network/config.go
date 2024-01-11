@@ -1,7 +1,6 @@
 package network
 
 import (
-	"errors"
 	"fmt"
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
@@ -55,12 +54,22 @@ func DefaultConfig() *Config {
 
 func validateMultiAddr(addrs ...string) error {
 	_, err := MakeMultiAddrs(addrs)
+	if err != nil {
+		return ConfigError{
+			Reason: fmt.Sprintf("address is not valid: %s", err.Error()),
+		}
+	}
 	return err
 }
 
 func validateAddrInfo(addrs ...string) error {
 	_, err := MakeAddrInfos(addrs)
-	return err
+	if err != nil {
+		return ConfigError{
+			Reason: fmt.Sprintf("address is not valid: %s", err.Error()),
+		}
+	}
+	return nil
 }
 
 // BasicCheck performs basic checks on the configuration.
@@ -80,7 +89,9 @@ func (conf *Config) BasicCheck() error {
 		return err
 	}
 	if conf.EnableRelay && conf.EnableRelayService {
-		return errors.New("not possible for both the relay and relay service be active")
+		return ConfigError{
+			Reason: "both the relay and relay service cannot be active at the same time",
+		}
 	}
 	return validateAddrInfo(conf.BootstrapAddrStrings...)
 }
