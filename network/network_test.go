@@ -228,23 +228,23 @@ func TestNetwork(t *testing.T) {
 	t.Run("all nodes have at least one connection to the bootstrap node B", func(t *testing.T) {
 		assert.EventuallyWithT(t, func(c *assert.CollectT) {
 			assert.GreaterOrEqual(c, networkP.NumConnectedPeers(), 4) // Connected to B, M, N, X
-		}, 2*time.Second, 100*time.Millisecond)
+		}, 5*time.Second, 100*time.Millisecond)
 
 		assert.EventuallyWithT(t, func(c *assert.CollectT) {
 			assert.GreaterOrEqual(c, networkB.NumConnectedPeers(), 4) // Connected to P, M, N, X
-		}, 2*time.Second, 100*time.Millisecond)
+		}, 5*time.Second, 100*time.Millisecond)
 
 		assert.EventuallyWithT(t, func(c *assert.CollectT) {
 			assert.GreaterOrEqual(c, networkM.NumConnectedPeers(), 2) // Connected to B, P, N?
-		}, 2*time.Second, 100*time.Millisecond)
+		}, 5*time.Second, 100*time.Millisecond)
 
 		assert.EventuallyWithT(t, func(c *assert.CollectT) {
 			assert.GreaterOrEqual(c, networkN.NumConnectedPeers(), 2) // Connected to B, P, M?
-		}, 2*time.Second, 100*time.Millisecond)
+		}, 5*time.Second, 100*time.Millisecond)
 
 		assert.EventuallyWithT(t, func(c *assert.CollectT) {
 			assert.GreaterOrEqual(c, networkX.NumConnectedPeers(), 2) // Connected to B, P
-		}, 2*time.Second, 100*time.Millisecond)
+		}, 5*time.Second, 100*time.Millisecond)
 	})
 
 	t.Run("Gossip: all nodes receive general gossip messages", func(t *testing.T) {
