@@ -20,3 +20,4 @@ Please read the [CONTRIBUTING](./CONTRIBUTING.md) guidelines before submitting a
 ## License
 
 The Pactus blockchain is under MIT [license](./LICENSE).
+

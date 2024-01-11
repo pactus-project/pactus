@@ -61,7 +61,7 @@ linters:
     # - nestif
     - nilerr
     - nilnil
-    - nlreturn #fix this
+    - nlreturn 
     - noctx
     - nolintlint
     - nosprintfhostport
