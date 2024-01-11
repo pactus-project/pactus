@@ -79,7 +79,7 @@ func TestSendRawTransaction(t *testing.T) {
 	conn, client := testTransactionClient(t)
 
 	t.Run("Should fail, invalid cbor", func(t *testing.T) {
-		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: []byte("00000000")})
+		res, err := client.BroadcastTransaction(tCtx, &pactus.BroadcastTransactionRequest{SignedTx: []byte("00000000")})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -88,19 +88,19 @@ func TestSendRawTransaction(t *testing.T) {
 		_, pValKey := ts.GenerateTestTransferTx()
 		trx.SetSignature(pValKey.Sign(trx.SignBytes()))
 		data, _ := trx.Bytes()
-		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: data})
+		res, err := client.BroadcastTransaction(tCtx, &pactus.BroadcastTransactionRequest{SignedTx: data})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 	trx, _ := ts.GenerateTestTransferTx()
 	data, _ := trx.Bytes()
 	t.Run("Should pass", func(t *testing.T) {
-		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: data})
+		res, err := client.BroadcastTransaction(tCtx, &pactus.BroadcastTransactionRequest{SignedTx: data})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 	})
 	t.Run("Should fail, Not Broadcasted", func(t *testing.T) {
-		res, err := client.SendRawTransaction(tCtx, &pactus.SendRawTransactionRequest{Data: data})
+		res, err := client.BroadcastTransaction(tCtx, &pactus.BroadcastTransactionRequest{SignedTx: data})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})

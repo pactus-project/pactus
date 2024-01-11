@@ -96,11 +96,11 @@ func (s *transactionServer) CalculateFee(_ context.Context,
 	return &pactus.CalculateFeeResponse{Fee: 0}, nil
 }
 
-func (s *transactionServer) SendRawTransaction(_ context.Context,
-	req *pactus.SendRawTransactionRequest,
-) (*pactus.SendRawTransactionResponse, error) {
-	trx, _ := tx.FromBytes(req.Data)
-	return &pactus.SendRawTransactionResponse{
+func (s *transactionServer) BroadcastTransaction(_ context.Context,
+	req *pactus.BroadcastTransactionRequest,
+) (*pactus.BroadcastTransactionResponse, error) {
+	trx, _ := tx.FromBytes(req.SignedTx)
+	return &pactus.BroadcastTransactionResponse{
 		Id: trx.ID().Bytes(),
 	}, nil
 }

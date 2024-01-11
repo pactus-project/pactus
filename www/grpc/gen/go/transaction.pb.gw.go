@@ -187,8 +187,8 @@ func local_request_Transaction_CalculateFee_0(ctx context.Context, marshaler run
 
 }
 
-func request_Transaction_SendRawTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq SendRawTransactionRequest
+func request_Transaction_BroadcastTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq BroadcastTransactionRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -198,23 +198,23 @@ func request_Transaction_SendRawTransaction_0(ctx context.Context, marshaler run
 		_   = err
 	)
 
-	val, ok = pathParams["data"]
+	val, ok = pathParams["signed_tx"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "data")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "signed_tx")
 	}
 
-	protoReq.Data, err = runtime.Bytes(val)
+	protoReq.SignedTx, err = runtime.Bytes(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "data", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "signed_tx", err)
 	}
 
-	msg, err := client.SendRawTransaction(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.BroadcastTransaction(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Transaction_SendRawTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq SendRawTransactionRequest
+func local_request_Transaction_BroadcastTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq BroadcastTransactionRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -224,17 +224,17 @@ func local_request_Transaction_SendRawTransaction_0(ctx context.Context, marshal
 		_   = err
 	)
 
-	val, ok = pathParams["data"]
+	val, ok = pathParams["signed_tx"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "data")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "signed_tx")
 	}
 
-	protoReq.Data, err = runtime.Bytes(val)
+	protoReq.SignedTx, err = runtime.Bytes(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "data", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "signed_tx", err)
 	}
 
-	msg, err := server.SendRawTransaction(ctx, &protoReq)
+	msg, err := server.BroadcastTransaction(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -846,7 +846,7 @@ func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/CalculateFee", runtime.WithHTTPPathPattern("/v1/transactions/amount/{amount}/payloadType/{payloadType}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/CalculateFee", runtime.WithHTTPPathPattern("/v1/transactions/fee/amount/{amount}/payloadType/{payloadType}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -863,7 +863,7 @@ func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux
 
 	})
 
-	mux.Handle("PUT", pattern_Transaction_SendRawTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_Transaction_BroadcastTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -871,12 +871,12 @@ func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/SendRawTransaction", runtime.WithHTTPPathPattern("/v1/transactions/send/{data}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/BroadcastTransaction", runtime.WithHTTPPathPattern("/v1/transactions/broadcast/{signed_tx}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Transaction_SendRawTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Transaction_BroadcastTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -884,7 +884,7 @@ func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux
 			return
 		}
 
-		forward_Transaction_SendRawTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_BroadcastTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -896,7 +896,7 @@ func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawTransferTransaction", runtime.WithHTTPPathPattern("/v1/transactions/sender/{sender}/receiver/{receiver}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawTransferTransaction", runtime.WithHTTPPathPattern("/v1/transactions/transfer/sender/{sender}/receiver/{receiver}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -921,7 +921,7 @@ func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawBondTransaction", runtime.WithHTTPPathPattern("/v1/transactions/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lock_time}/public_key/{public_key}/fee/{fee}/memo/{memo}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawBondTransaction", runtime.WithHTTPPathPattern("/v1/transactions/bond/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lock_time}/public_key/{public_key}/fee/{fee}/memo/{memo}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -946,7 +946,7 @@ func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawUnBondTransaction", runtime.WithHTTPPathPattern("/v1/transactions/validator_address/{validator_address}/lock_time/{lock_time}/memo/{memo}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawUnBondTransaction", runtime.WithHTTPPathPattern("/v1/transactions/unbond/validator_address/{validator_address}/lock_time/{lock_time}/memo/{memo}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -971,7 +971,7 @@ func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawWithdrawTransaction", runtime.WithHTTPPathPattern("/v1/transactions/validator_address/{validator_address}/account_address/{account_address}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawWithdrawTransaction", runtime.WithHTTPPathPattern("/v1/transactions/withdraw/validator_address/{validator_address}/account_address/{account_address}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1057,7 +1057,7 @@ func RegisterTransactionHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/CalculateFee", runtime.WithHTTPPathPattern("/v1/transactions/amount/{amount}/payloadType/{payloadType}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/CalculateFee", runtime.WithHTTPPathPattern("/v1/transactions/fee/amount/{amount}/payloadType/{payloadType}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1073,25 +1073,25 @@ func RegisterTransactionHandlerClient(ctx context.Context, mux *runtime.ServeMux
 
 	})
 
-	mux.Handle("PUT", pattern_Transaction_SendRawTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_Transaction_BroadcastTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/SendRawTransaction", runtime.WithHTTPPathPattern("/v1/transactions/send/{data}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/BroadcastTransaction", runtime.WithHTTPPathPattern("/v1/transactions/broadcast/{signed_tx}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Transaction_SendRawTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Transaction_BroadcastTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Transaction_SendRawTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_BroadcastTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -1101,7 +1101,7 @@ func RegisterTransactionHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawTransferTransaction", runtime.WithHTTPPathPattern("/v1/transactions/sender/{sender}/receiver/{receiver}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawTransferTransaction", runtime.WithHTTPPathPattern("/v1/transactions/transfer/sender/{sender}/receiver/{receiver}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1123,7 +1123,7 @@ func RegisterTransactionHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawBondTransaction", runtime.WithHTTPPathPattern("/v1/transactions/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lock_time}/public_key/{public_key}/fee/{fee}/memo/{memo}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawBondTransaction", runtime.WithHTTPPathPattern("/v1/transactions/bond/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lock_time}/public_key/{public_key}/fee/{fee}/memo/{memo}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1145,7 +1145,7 @@ func RegisterTransactionHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawUnBondTransaction", runtime.WithHTTPPathPattern("/v1/transactions/validator_address/{validator_address}/lock_time/{lock_time}/memo/{memo}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawUnBondTransaction", runtime.WithHTTPPathPattern("/v1/transactions/unbond/validator_address/{validator_address}/lock_time/{lock_time}/memo/{memo}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1167,7 +1167,7 @@ func RegisterTransactionHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawWithdrawTransaction", runtime.WithHTTPPathPattern("/v1/transactions/validator_address/{validator_address}/account_address/{account_address}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawWithdrawTransaction", runtime.WithHTTPPathPattern("/v1/transactions/withdraw/validator_address/{validator_address}/account_address/{account_address}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1189,17 +1189,17 @@ func RegisterTransactionHandlerClient(ctx context.Context, mux *runtime.ServeMux
 var (
 	pattern_Transaction_GetTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "transactions", "id", "verbosity"}, ""))
 
-	pattern_Transaction_CalculateFee_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "transactions", "amount", "payloadType"}, ""))
+	pattern_Transaction_CalculateFee_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4}, []string{"v1", "transactions", "fee", "amount", "payloadType"}, ""))
 
-	pattern_Transaction_SendRawTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "transactions", "send", "data"}, ""))
+	pattern_Transaction_BroadcastTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "transactions", "broadcast", "signed_tx"}, ""))
 
-	pattern_Transaction_GetRawTransferTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5, 2, 6, 1, 0, 4, 1, 5, 6, 2, 7, 1, 0, 4, 1, 5, 7}, []string{"v1", "transactions", "sender", "receiver", "amount", "lock_time", "fee", "memo"}, ""))
+	pattern_Transaction_GetRawTransferTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5, 2, 6, 1, 0, 4, 1, 5, 6, 2, 7, 1, 0, 4, 1, 5, 7, 2, 8, 1, 0, 4, 1, 5, 8}, []string{"v1", "transactions", "transfer", "sender", "receiver", "amount", "lock_time", "fee", "memo"}, ""))
 
-	pattern_Transaction_GetRawBondTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5, 2, 6, 1, 0, 4, 1, 5, 6, 2, 7, 1, 0, 4, 1, 5, 7, 2, 8, 1, 0, 4, 1, 5, 8}, []string{"v1", "transactions", "sender", "receiver", "stake", "lock_time", "public_key", "fee", "memo"}, ""))
+	pattern_Transaction_GetRawBondTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5, 2, 6, 1, 0, 4, 1, 5, 6, 2, 7, 1, 0, 4, 1, 5, 7, 2, 8, 1, 0, 4, 1, 5, 8, 2, 9, 1, 0, 4, 1, 5, 9}, []string{"v1", "transactions", "bond", "sender", "receiver", "stake", "lock_time", "public_key", "fee", "memo"}, ""))
 
-	pattern_Transaction_GetRawUnBondTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4}, []string{"v1", "transactions", "validator_address", "lock_time", "memo"}, ""))
+	pattern_Transaction_GetRawUnBondTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5}, []string{"v1", "transactions", "unbond", "validator_address", "lock_time", "memo"}, ""))
 
-	pattern_Transaction_GetRawWithdrawTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5, 2, 6, 1, 0, 4, 1, 5, 6, 2, 7, 1, 0, 4, 1, 5, 7}, []string{"v1", "transactions", "validator_address", "account_address", "amount", "lock_time", "fee", "memo"}, ""))
+	pattern_Transaction_GetRawWithdrawTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5, 2, 6, 1, 0, 4, 1, 5, 6, 2, 7, 1, 0, 4, 1, 5, 7, 2, 8, 1, 0, 4, 1, 5, 8}, []string{"v1", "transactions", "withdraw", "validator_address", "account_address", "amount", "lock_time", "fee", "memo"}, ""))
 )
 
 var (
@@ -1207,7 +1207,7 @@ var (
 
 	forward_Transaction_CalculateFee_0 = runtime.ForwardResponseMessage
 
-	forward_Transaction_SendRawTransaction_0 = runtime.ForwardResponseMessage
+	forward_Transaction_BroadcastTransaction_0 = runtime.ForwardResponseMessage
 
 	forward_Transaction_GetRawTransferTransaction_0 = runtime.ForwardResponseMessage
 

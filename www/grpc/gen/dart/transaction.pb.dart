@@ -261,61 +261,61 @@ class CalculateFeeResponse extends $pb.GeneratedMessage {
   void clearFee() => clearField(1);
 }
 
-class SendRawTransactionRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SendRawTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
+class BroadcastTransactionRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'BroadcastTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signedTx', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
-  SendRawTransactionRequest._() : super();
-  factory SendRawTransactionRequest({
-    $core.List<$core.int>? data,
+  BroadcastTransactionRequest._() : super();
+  factory BroadcastTransactionRequest({
+    $core.List<$core.int>? signedTx,
   }) {
     final _result = create();
-    if (data != null) {
-      _result.data = data;
+    if (signedTx != null) {
+      _result.signedTx = signedTx;
     }
     return _result;
   }
-  factory SendRawTransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory SendRawTransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory BroadcastTransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory BroadcastTransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  SendRawTransactionRequest clone() => SendRawTransactionRequest()..mergeFromMessage(this);
+  BroadcastTransactionRequest clone() => BroadcastTransactionRequest()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  SendRawTransactionRequest copyWith(void Function(SendRawTransactionRequest) updates) => super.copyWith((message) => updates(message as SendRawTransactionRequest)) as SendRawTransactionRequest; // ignore: deprecated_member_use
+  BroadcastTransactionRequest copyWith(void Function(BroadcastTransactionRequest) updates) => super.copyWith((message) => updates(message as BroadcastTransactionRequest)) as BroadcastTransactionRequest; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static SendRawTransactionRequest create() => SendRawTransactionRequest._();
-  SendRawTransactionRequest createEmptyInstance() => create();
-  static $pb.PbList<SendRawTransactionRequest> createRepeated() => $pb.PbList<SendRawTransactionRequest>();
+  static BroadcastTransactionRequest create() => BroadcastTransactionRequest._();
+  BroadcastTransactionRequest createEmptyInstance() => create();
+  static $pb.PbList<BroadcastTransactionRequest> createRepeated() => $pb.PbList<BroadcastTransactionRequest>();
   @$core.pragma('dart2js:noInline')
-  static SendRawTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SendRawTransactionRequest>(create);
-  static SendRawTransactionRequest? _defaultInstance;
+  static BroadcastTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BroadcastTransactionRequest>(create);
+  static BroadcastTransactionRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get data => $_getN(0);
+  $core.List<$core.int> get signedTx => $_getN(0);
   @$pb.TagNumber(1)
-  set data($core.List<$core.int> v) { $_setBytes(0, v); }
+  set signedTx($core.List<$core.int> v) { $_setBytes(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasData() => $_has(0);
+  $core.bool hasSignedTx() => $_has(0);
   @$pb.TagNumber(1)
-  void clearData() => clearField(1);
+  void clearSignedTx() => clearField(1);
 }
 
-class SendRawTransactionResponse extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SendRawTransactionResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+class BroadcastTransactionResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'BroadcastTransactionResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
-  SendRawTransactionResponse._() : super();
-  factory SendRawTransactionResponse({
+  BroadcastTransactionResponse._() : super();
+  factory BroadcastTransactionResponse({
     $core.List<$core.int>? id,
   }) {
     final _result = create();
@@ -324,26 +324,26 @@ class SendRawTransactionResponse extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory SendRawTransactionResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory SendRawTransactionResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory BroadcastTransactionResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory BroadcastTransactionResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  SendRawTransactionResponse clone() => SendRawTransactionResponse()..mergeFromMessage(this);
+  BroadcastTransactionResponse clone() => BroadcastTransactionResponse()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  SendRawTransactionResponse copyWith(void Function(SendRawTransactionResponse) updates) => super.copyWith((message) => updates(message as SendRawTransactionResponse)) as SendRawTransactionResponse; // ignore: deprecated_member_use
+  BroadcastTransactionResponse copyWith(void Function(BroadcastTransactionResponse) updates) => super.copyWith((message) => updates(message as BroadcastTransactionResponse)) as BroadcastTransactionResponse; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static SendRawTransactionResponse create() => SendRawTransactionResponse._();
-  SendRawTransactionResponse createEmptyInstance() => create();
-  static $pb.PbList<SendRawTransactionResponse> createRepeated() => $pb.PbList<SendRawTransactionResponse>();
+  static BroadcastTransactionResponse create() => BroadcastTransactionResponse._();
+  BroadcastTransactionResponse createEmptyInstance() => create();
+  static $pb.PbList<BroadcastTransactionResponse> createRepeated() => $pb.PbList<BroadcastTransactionResponse>();
   @$core.pragma('dart2js:noInline')
-  static SendRawTransactionResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SendRawTransactionResponse>(create);
-  static SendRawTransactionResponse? _defaultInstance;
+  static BroadcastTransactionResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BroadcastTransactionResponse>(create);
+  static BroadcastTransactionResponse? _defaultInstance;
 
   @$pb.TagNumber(2)
   $core.List<$core.int> get id => $_getN(0);
@@ -1461,9 +1461,9 @@ class TransactionApi {
     var emptyResponse = CalculateFeeResponse();
     return _client.invoke<CalculateFeeResponse>(ctx, 'Transaction', 'CalculateFee', request, emptyResponse);
   }
-  $async.Future<SendRawTransactionResponse> sendRawTransaction($pb.ClientContext? ctx, SendRawTransactionRequest request) {
-    var emptyResponse = SendRawTransactionResponse();
-    return _client.invoke<SendRawTransactionResponse>(ctx, 'Transaction', 'SendRawTransaction', request, emptyResponse);
+  $async.Future<BroadcastTransactionResponse> broadcastTransaction($pb.ClientContext? ctx, BroadcastTransactionRequest request) {
+    var emptyResponse = BroadcastTransactionResponse();
+    return _client.invoke<BroadcastTransactionResponse>(ctx, 'Transaction', 'BroadcastTransaction', request, emptyResponse);
   }
   $async.Future<GetRawTransactionResponse> getRawTransferTransaction($pb.ClientContext? ctx, GetRawTransferTransactionRequest request) {
     var emptyResponse = GetRawTransactionResponse();
