@@ -186,6 +186,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		log.Info("relay enabled")
 
 		autoRelayOpt := []lp2pautorelay.Option{
+			lp2pautorelay.WithMinCandidates(1),
 			lp2pautorelay.WithMaxCandidates(4),
 			lp2pautorelay.WithMinInterval(1 * time.Minute),
 		}

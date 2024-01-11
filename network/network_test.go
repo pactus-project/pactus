@@ -111,13 +111,11 @@ func TestStoppingNetwork(t *testing.T) {
 	net.Stop()
 }
 
-// In this test, we are setting up a simulated network environment that consists of six nodes:
-//   - R is a Relay node
+// In this test, we are setting up a simulated network environment that consists of these nodes:
 //   - B is a Bootstrap node
-//   - P is a Public node
+//   - P is a Public and relay node
 //   - M, N, and X are Private Nodes behind a Network Address Translation (NAT)
-//   - Both M and N are connected to the relay node R
-//   - X is not connected to the relay node and does not join the consensus topic
+//   - M and N have relay enabled, while X does not.
 //
 // The test will evaluate the following scenarios:
 //   - Connection establishment to the bootstrap node
