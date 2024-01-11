@@ -68,12 +68,14 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 		amount, err := util.StringToChange(amountStr)
 		if err != nil {
 			errorCheck(err)
+
 			return
 		}
 
 		trx, err := wlt.MakeBondTx(sender, receiver, publicKey, amount)
 		if err != nil {
 			errorCheck(err)
+
 			return
 		}
 		msg := fmt.Sprintf(`

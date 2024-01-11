@@ -204,6 +204,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 	assistant.ShowAll()
 
 	gtk.Main()
+
 	return successful
 }
 
@@ -272,6 +273,7 @@ func pageMode(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, 
 		pageModeTitle,
 		pageModeSubject,
 		pageModeDesc)
+
 	return mode, restoreWalletRadio, pageModeName
 }
 
@@ -303,6 +305,7 @@ This seed will allow you to recover your wallet in case of computer failure.
 		pageSeedTitle,
 		pageSeedSubject,
 		pageSeedDesc)
+
 	return pageWidget, textViewSeed, pageSeedName
 }
 
@@ -329,6 +332,7 @@ func pageSeedRestore(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.W
 		pageSeedTitle,
 		pageSeedSubject,
 		pageSeedDesc)
+
 	return pageWidget, textViewRestoreSeed, pageSeedName
 }
 
@@ -379,6 +383,7 @@ To make sure that you have properly saved your seed, please retype it here.`
 		pageSeedConfirmTitle,
 		pageSeedConfirmSubject,
 		pageSeedConfirmDesc)
+
 	return pageWidget, pageSeedConfirmName
 }
 
@@ -447,6 +452,7 @@ func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widg
 		pagePasswordTitle,
 		pagePasswordSubject,
 		pagePsswrdDesc)
+
 	return pageWidget, entryPassword, pagePasswordName
 }
 
@@ -501,6 +507,7 @@ For more information, look <a href="https://pactus.org/user-guides/run-pactus-gu
 		pageNumValidatorsTitle,
 		pageNumValidatorsSubject,
 		pageNumValidatorsDesc)
+
 	return pageWidget, lsNumValidators, comboNumValidators, pageNumValidatorsName
 }
 
@@ -533,6 +540,7 @@ Now you are ready to start the node!`
 		pageFinalTitle,
 		pageFinalSubject,
 		pageFinalDesc)
+
 	return pageWidget, textViewNodeInfo, pageFinalName
 }
 

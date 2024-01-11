@@ -44,35 +44,42 @@ func pixbufToIcon16(pixbuf *gdk.Pixbuf) *gtk.Image {
 
 func AddIcon() *gtk.Image {
 	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconAdd)
+
 	return pixbufToIcon16(pixbuf)
 }
 
 func OkIcon() *gtk.Image {
 	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconOK)
+
 	return pixbufToIcon16(pixbuf)
 }
 
 func CancelIcon() *gtk.Image {
 	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconCancel)
+
 	return pixbufToIcon16(pixbuf)
 }
 
 func CloseIcon() *gtk.Image {
 	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconClose)
+
 	return pixbufToIcon16(pixbuf)
 }
 
 func PasswordIcon() *gtk.Image {
 	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconPassword)
+
 	return pixbufToIcon16(pixbuf)
 }
 
 func SeedIcon() *gtk.Image {
 	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconSeed)
+
 	return pixbufToIcon16(pixbuf)
 }
 
 func SendIcon() *gtk.Image {
 	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconSend)
+
 	return pixbufToIcon16(pixbuf)
 }

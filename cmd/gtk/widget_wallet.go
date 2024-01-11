@@ -96,6 +96,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	item.Show()
 	item.Connect("activate", func(item *gtk.MenuItem) bool {
 		w.onUpdateLabel()
+
 		return false
 	})
 	menu.Append(item)
@@ -108,6 +109,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	item.Show()
 	item.Connect("activate", func(item *gtk.MenuItem) bool {
 		w.onShowDetails()
+
 		return false
 	})
 	menu.Append(item)
@@ -120,6 +122,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	item.Show()
 	item.Connect("activate", func(item *gtk.MenuItem) bool {
 		w.onShowPrivateKey()
+
 		return false
 	})
 	menu.Append(item)
@@ -220,5 +223,6 @@ func (ww *widgetWallet) getSelectedAddress() string {
 			return addr
 		}
 	}
+
 	return ""
 }

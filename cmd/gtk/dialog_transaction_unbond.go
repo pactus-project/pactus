@@ -41,6 +41,7 @@ func broadcastTransactionUnbond(wlt *wallet.Wallet) {
 		trx, err := wlt.MakeUnbondTx(validator)
 		if err != nil {
 			errorCheck(err)
+
 			return
 		}
 		msg := fmt.Sprintf(`

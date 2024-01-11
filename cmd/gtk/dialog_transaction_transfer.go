@@ -59,12 +59,14 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 		amount, err := util.StringToChange(amountStr)
 		if err != nil {
 			errorCheck(err)
+
 			return
 		}
 
 		trx, err := wlt.MakeTransferTx(sender, receiver, amount)
 		if err != nil {
 			errorCheck(err)
+
 			return
 		}
 		msg := fmt.Sprintf(`

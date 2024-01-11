@@ -42,6 +42,7 @@ func changePassword(wlt *wallet.Wallet) {
 
 		if newPassword != repeatPassword {
 			showWarningDialog(dlg, "Passwords do not match")
+
 			return
 		}
 

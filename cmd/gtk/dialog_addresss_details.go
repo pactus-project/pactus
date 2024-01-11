@@ -19,6 +19,7 @@ func showAddressDetails(wlt *wallet.Wallet, addr string) {
 	info := wlt.AddressInfo(addr)
 	if info == nil {
 		showErrorDialog(nil, "address not found")
+
 		return
 	}
 
