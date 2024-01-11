@@ -2,6 +2,15 @@ package network
 
 import "fmt"
 
+// ConfigError is returned when the config is not valid with a descriptive Reason message.
+type ConfigError struct {
+	Reason string
+}
+
+func (e ConfigError) Error() string {
+	return e.Reason
+}
+
 // NotSubscribedError is returned when the peer is not subscribed to a
 // specific topic.
 type NotSubscribedError struct {
@@ -18,8 +27,7 @@ type InvalidTopicError struct {
 }
 
 func (e InvalidTopicError) Error() string {
-	return fmt.Sprintf("invalid topic: '%s'",
-		e.TopicID.String())
+	return fmt.Sprintf("invalid topic: '%s'", e.TopicID.String())
 }
 
 // LibP2PError is returned when an underlying libp2p operation encounters an error.
@@ -28,6 +36,5 @@ type LibP2PError struct {
 }
 
 func (e LibP2PError) Error() string {
-	return fmt.Sprintf("libp2p error: %s",
-		e.Err.Error())
+	return fmt.Sprintf("libp2p error: %s", e.Err.Error())
 }

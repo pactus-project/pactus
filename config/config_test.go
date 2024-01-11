@@ -48,7 +48,6 @@ func TestLocalnetConfig(t *testing.T) {
 
 	assert.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
-	assert.Empty(t, conf.Network.RelayAddrStrings)
 	assert.Equal(t, conf.Network.NetworkName, "pactus-localnet")
 	assert.Equal(t, conf.Network.DefaultPort, 21666)
 	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
@@ -63,7 +62,6 @@ func TestTestnetConfig(t *testing.T) {
 	assert.NoError(t, conf.BasicCheck())
 	assert.NotEmpty(t, conf.Network.DefaultRelayAddrStrings)
 	assert.Empty(t, conf.Network.ListenAddrStrings)
-	assert.Empty(t, conf.Network.RelayAddrStrings)
 	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet-v2")
 	assert.Equal(t, conf.Network.DefaultPort, 21777)
 	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
