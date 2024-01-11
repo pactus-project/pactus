@@ -90,7 +90,7 @@ func (s *NotifeeService) Reachability() lp2pnetwork.Reachability {
 
 func (s *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn) {
 	pid := conn.RemotePeer()
-	s.logger.Info("connected to peer", "pid", pid, "direction", conn.Stat().Direction)
+	s.logger.Info("connected to peer", "pid", pid, "direction", conn.Stat().Direction, "addr", conn.RemoteMultiaddr())
 
 	s.peerMgr.AddPeer(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
 	s.sendConnectEvent(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
