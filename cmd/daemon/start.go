@@ -47,6 +47,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 
 		if !locked {
 			cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
+
 			return
 		}
 
@@ -73,6 +74,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 			} else {
 				password = cmd.PromptPassword("Wallet password", false)
 			}
+
 			return password, true
 		}
 		node, _, err := cmd.StartNode(

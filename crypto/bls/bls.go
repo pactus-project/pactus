@@ -41,6 +41,7 @@ func PublicKeyAggregate(pubs ...*PublicKey) *PublicKey {
 			&aggPointG2,
 			&pubs[i].pointG2)
 	}
+
 	return &PublicKey{
 		pointG2: aggPointG2,
 	}
@@ -48,5 +49,6 @@ func PublicKeyAggregate(pubs ...*PublicKey) *PublicKey {
 
 func VerifyAggregated(sig *Signature, pubs []*PublicKey, msg []byte) error {
 	aggPub := PublicKeyAggregate(pubs...)
+
 	return aggPub.Verify(msg, sig)
 }

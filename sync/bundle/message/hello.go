@@ -48,6 +48,7 @@ func (m *HelloMessage) BasicCheck() error {
 		return errors.Error(errors.ErrInvalidPublicKey)
 	}
 	aggPublicKey := bls.PublicKeyAggregate(m.PublicKeys...)
+
 	return aggPublicKey.Verify(m.SignBytes(), m.Signature)
 }
 

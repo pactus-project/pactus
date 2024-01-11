@@ -67,6 +67,7 @@ func (gen *Genesis) Hash() hash.Hash {
 	if err != nil {
 		panic(fmt.Errorf("could not create hash of Genesis: %w", err))
 	}
+
 	return hash.CalcHash(bs)
 }
 
@@ -157,6 +158,7 @@ func LoadFromFile(file string) (*Genesis, error) {
 	if err := json.Unmarshal(dat, &gen); err != nil {
 		return nil, err
 	}
+
 	return &gen, nil
 }
 
@@ -176,6 +178,7 @@ func (gen *Genesis) TotalSupply() int64 {
 	for _, acc := range gen.data.Accounts {
 		totalSuppyly += acc.Balance
 	}
+
 	return totalSuppyly
 }
 

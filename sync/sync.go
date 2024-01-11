@@ -116,6 +116,7 @@ func (sync *synchronizer) Stop() {
 
 func (sync *synchronizer) stateHeight() uint32 {
 	stateHeight := sync.state.LastBlockHeight()
+
 	return stateHeight
 }
 
@@ -131,6 +132,7 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 	h := sync.handlers[msg.Type()]
 	if h == nil {
 		sync.logger.Warn("invalid message type: %v", msg.Type())
+
 		return nil
 	}
 	bdl := h.PrepareBundle(msg)
@@ -152,6 +154,7 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 
 		return bdl
 	}
+
 	return nil
 }
 
@@ -166,6 +169,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
 				"bundle", bdl, "to", to, "error", err)
 
 			sync.network.CloseConnection(to)
+
 			return
 		}
 
@@ -295,6 +299,7 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 	if err := msg.Reader.Close(); err != nil {
 		// TODO: write test for me
 		sync.logger.Debug("error on closing stream", "error", err, "source", msg.From)
+
 		return
 	}
 	err := sync.processIncomingBundle(bdl, msg.From)
@@ -453,6 +458,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 			if onlyNodeNetwork {
 				sync.network.CloseConnection(p.PeerID)
 			}
+
 			continue
 		}
 
@@ -463,6 +469,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 			if count == 0 {
 				// we have blocks inside the cache
 				sync.logger.Debug("sending download request ignored", "from", from+1)
+
 				return true
 			}
 		}
@@ -471,6 +478,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		ssn := sync.peerSet.OpenSession(p.PeerID, from, count)
 		msg := message.NewBlocksRequestMessage(ssn.SessionID, from, count)
 		sync.sendTo(msg, p.PeerID)
+
 		return true
 	}
 
@@ -482,6 +490,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		if !p.IsKnownOrTrusty() {
 			if p.LastSent.Before(time.Now().Add(-time.Minute)) {
 				sync.network.CloseConnection(p.PeerID)
+
 				return true
 			}
 		}
@@ -517,6 +526,7 @@ func (sync *synchronizer) tryCommitBlocks() error {
 				pub, err := sync.state.PublicKey(trx.Payload().Signer())
 				if err != nil {
 					onError(height, err)
+
 					return err
 				}
 				trx.SetPublicKey(pub)
@@ -525,16 +535,19 @@ func (sync *synchronizer) tryCommitBlocks() error {
 
 		if err := blk.BasicCheck(); err != nil {
 			onError(height, err)
+
 			return err
 		}
 		if err := cert.BasicCheck(); err != nil {
 			onError(height, err)
+
 			return err
 		}
 
 		sync.logger.Trace("committing block", "height", height, "block", blk)
 		if err := sync.state.CommitBlock(blk, cert); err != nil {
 			onError(height, err)
+
 			return err
 		}
 		height++
@@ -548,6 +561,7 @@ func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 
 	if from > ourHeight {
 		sync.logger.Debug("we don't have block at this height", "height", from)
+
 		return nil
 	}
 
@@ -561,6 +575,7 @@ func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 		b := sync.state.CommittedBlock(h)
 		if b == nil {
 			sync.logger.Warn("unable to find a block", "height", h)
+
 			return nil
 		}
 

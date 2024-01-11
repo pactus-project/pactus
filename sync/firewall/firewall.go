@@ -41,6 +41,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
 	if err != nil {
 		f.logger.Debug("firewall: unable to open a gossip bundle",
 			"error", err, "bundle", bdl, "from", from)
+
 		return nil
 	}
 
@@ -55,6 +56,7 @@ func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
 	if err != nil {
 		f.logger.Debug("firewall: unable to open a stream bundle",
 			"error", err, "bundle", bdl, "from", from)
+
 		return nil
 	}
 
@@ -70,17 +72,20 @@ func (f *Firewall) openBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error)
 
 	if f.isPeerBanned(from) {
 		f.closeConnection(from)
+
 		return nil, errors.Errorf(errors.ErrInvalidMessage, "peer is banned: %s", from)
 	}
 
 	bdl, err := f.decodeBundle(r, from)
 	if err != nil {
 		f.peerSet.IncreaseInvalidBundlesCounter(from)
+
 		return nil, err
 	}
 
 	if err := f.checkBundle(bdl); err != nil {
 		f.peerSet.IncreaseInvalidBundlesCounter(from)
+
 		return bdl, err
 	}
 
@@ -92,6 +97,7 @@ func (f *Firewall) decodeBundle(r io.Reader, pid peer.ID) (*bundle.Bundle, error
 	bytesRead, err := bdl.Decode(r)
 	if err != nil {
 		f.peerSet.IncreaseReceivedBytesCounter(pid, message.TypeUnspecified, int64(bytesRead))
+
 		return nil, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 	f.peerSet.IncreaseReceivedBytesCounter(pid, bdl.Message.Type(), int64(bytesRead))
@@ -133,6 +139,7 @@ func (f *Firewall) isPeerBanned(pid peer.ID) bool {
 	}
 
 	p := f.peerSet.GetPeer(pid)
+
 	return p.IsBanned()
 }
 

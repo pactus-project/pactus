@@ -259,6 +259,7 @@ func TestGenerateSeed(t *testing.T) {
 			t.Errorf("GenerateSeed #%d (%s): length mismatch -- "+
 				"got %d, want %d", i, test.name, len(seed),
 				test.length)
+
 			continue
 		}
 	}

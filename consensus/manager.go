@@ -55,6 +55,7 @@ func (mgr *manager) Start() error {
 	for _, cons := range mgr.instances {
 		cons.Start()
 	}
+
 	return nil
 }
 
@@ -69,24 +70,28 @@ func (mgr *manager) Instances() []Reader {
 	for i, cons := range mgr.instances {
 		readers[i] = cons
 	}
+
 	return readers
 }
 
 // PickRandomVote returns a random vote from a random consensus instance.
 func (mgr *manager) PickRandomVote(round int16) *vote.Vote {
 	cons := mgr.getBestInstance()
+
 	return cons.PickRandomVote(round)
 }
 
 // Proposal returns the proposal for a specific round from a random consensus instance.
 func (mgr *manager) Proposal() *proposal.Proposal {
 	cons := mgr.getBestInstance()
+
 	return cons.Proposal()
 }
 
 // HeightRound retrieves the current height and round from a random consensus instance.
 func (mgr *manager) HeightRound() (uint32, int16) {
 	cons := mgr.getBestInstance()
+
 	return cons.HeightRound()
 }
 

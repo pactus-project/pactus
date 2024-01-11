@@ -26,5 +26,6 @@ func (code StatusCode) String() string {
 	case StatusCodeTrusty:
 		return "trusty"
 	}
+
 	return "invalid"
 }

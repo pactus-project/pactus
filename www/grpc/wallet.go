@@ -47,6 +47,7 @@ func (s *walletServer) CreateWallet(_ context.Context,
 	if err != nil {
 		return nil, err
 	}
+
 	return &pactus.CreateWalletResponse{}, nil
 }
 

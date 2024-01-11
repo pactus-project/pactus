@@ -42,6 +42,7 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 	ps.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
 
 	services := service.New()
+
 	return &MockSync{
 		TestID:       ts.RandPeerID(),
 		TestPeerSet:  ps,

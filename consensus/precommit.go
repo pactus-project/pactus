@@ -56,6 +56,7 @@ func (s *precommitState) vote() {
 	if roundProposal == nil {
 		s.queryProposal()
 		s.logger.Debug("no proposal yet")
+
 		return
 	}
 
@@ -65,6 +66,7 @@ func (s *precommitState) vote() {
 		s.log.SetRoundProposal(s.round, nil)
 		s.queryProposal()
 		s.logger.Warn("double proposal detected", "roundProposal", roundProposal, "prepared", *prepareQH)
+
 		return
 	}
 

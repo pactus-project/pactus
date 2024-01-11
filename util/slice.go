@@ -11,6 +11,7 @@ import (
 func Uint16ToSlice(n uint16) []byte {
 	bs := make([]byte, 2)
 	binary.LittleEndian.PutUint16(bs, n)
+
 	return bs
 }
 
@@ -29,6 +30,7 @@ func SliceToInt16(bs []byte) int16 {
 func Uint32ToSlice(n uint32) []byte {
 	bs := make([]byte, 4)
 	binary.LittleEndian.PutUint32(bs, n)
+
 	return bs
 }
 
@@ -47,6 +49,7 @@ func SliceToInt32(bs []byte) int32 {
 func Uint64ToSlice(n uint64) []byte {
 	bs := make([]byte, 8)
 	binary.LittleEndian.PutUint64(bs, n)
+
 	return bs
 }
 
@@ -56,6 +59,7 @@ func Int64ToSlice(n int64) []byte {
 
 func SliceToUint64(bs []byte) uint64 {
 	n := binary.LittleEndian.Uint64(bs)
+
 	return n
 }
 
@@ -77,6 +81,7 @@ func CompressBuffer(s []byte) ([]byte, error) {
 	if err := gz.Close(); err != nil {
 		return nil, err
 	}
+
 	return b.Bytes(), nil
 }
 
@@ -116,6 +121,7 @@ func Subtracts(slice1, slice2 []int32) []int32 {
 		for _, s2 := range slice2 {
 			if s1 == s2 {
 				found = true
+
 				break
 			}
 		}
@@ -134,6 +140,7 @@ func Contains[T comparable](slice []T, item T) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -148,6 +155,7 @@ func Equal[T comparable](a, b []T) bool {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -202,6 +210,7 @@ func IsSubset[T comparable](parentSet, subSet []T) bool {
 		for j := 0; j < len(parentSet); j++ {
 			if subSet[i] == parentSet[j] {
 				matchFound = true
+
 				break
 			}
 		}
@@ -209,6 +218,7 @@ func IsSubset[T comparable](parentSet, subSet []T) bool {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -220,6 +230,7 @@ func RemoveFirstOccurrenceOf[T comparable](s []T, e T) ([]T, bool) {
 			return append(s[:i], s[i+1:]...), true
 		}
 	}
+
 	return s, false
 }
 
@@ -227,5 +238,6 @@ func Trim[T any](s []T, newLength int) []T {
 	if newLength <= len(s) {
 		return s[:newLength]
 	}
+
 	return s
 }

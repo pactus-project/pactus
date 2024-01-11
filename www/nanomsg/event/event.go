@@ -28,6 +28,7 @@ func CreateBlockEvent(blockHash hash.Hash, height uint32) Event {
 	if err != nil {
 		logger.Error("error on encoding event in new block", "error", err)
 	}
+
 	return w.Bytes()
 }
 
@@ -41,6 +42,7 @@ func CreateTransactionEvent(txHash tx.ID, height uint32) Event {
 	if err != nil {
 		logger.Error("error on encoding event in new transaction", "error", err)
 	}
+
 	return w.Bytes()
 }
 
@@ -54,5 +56,6 @@ func CreateAccountChangeEvent(accountAddr crypto.Address, height uint32) Event {
 	if err != nil {
 		logger.Error("error on encoding event in new account", "error", err)
 	}
+
 	return w.Bytes()
 }

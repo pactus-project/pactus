@@ -76,6 +76,7 @@ func (p *WithdrawPayload) Decode(r io.Reader) error {
 		return err
 	}
 	p.Amount = int64(amount)
+
 	return nil
 }
 

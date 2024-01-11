@@ -148,6 +148,7 @@ func (b *Block) MarshalCBOR() ([]byte, error) {
 	if err := b.Encode(buf); err != nil {
 		return nil, err
 	}
+
 	return cbor.Marshal(buf.Bytes())
 }
 
@@ -158,6 +159,7 @@ func (b *Block) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 	buf := bytes.NewBuffer(data)
+
 	return b.Decode(buf)
 }
 
@@ -178,6 +180,7 @@ func (b *Block) Encode(w io.Writer) error {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -204,6 +207,7 @@ func (b *Block) Decode(r io.Reader) error {
 		}
 		b.data.Txs[i] = trx
 	}
+
 	return nil
 }
 
@@ -219,6 +223,7 @@ func (b *Block) SerializeSize() int {
 	for _, tx := range b.Transactions() {
 		n += tx.SerializeSize()
 	}
+
 	return n
 }
 
@@ -238,5 +243,6 @@ func (b *Block) Bytes() ([]byte, error) {
 
 	// Cache the serialized bytes and return them.
 	b.memorizedData = w.Bytes()
+
 	return b.memorizedData, nil
 }

@@ -172,6 +172,7 @@ func buildPublicKeyCmd(parentCmd *cobra.Command) {
 		info := wlt.AddressInfo(addr)
 		if info == nil {
 			cmd.PrintErrorMsgf("Address not found")
+
 			return
 		}
 

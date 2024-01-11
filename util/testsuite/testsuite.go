@@ -51,6 +51,7 @@ func NewTestSuite(t *testing.T) *TestSuite {
 
 	seed := GenerateSeed()
 	t.Logf("%v seed is %v", t.Name(), seed)
+
 	return &TestSuite{
 		Seed: seed,
 		//nolint:gosec // to reproduce the failed tests
@@ -155,6 +156,7 @@ func (ts *TestSuite) RandBytes(length int) []byte {
 	if err != nil {
 		panic(err)
 	}
+
 	return buf
 }
 
@@ -166,6 +168,7 @@ func (ts *TestSuite) RandString(length int) string {
 	for i := range b {
 		b[i] = letterBytes[ts.RandInt(52)]
 	}
+
 	return string(b)
 }
 
@@ -175,6 +178,7 @@ func (ts *TestSuite) DecodingHex(in string) []byte {
 	if err != nil {
 		panic(err)
 	}
+
 	return d
 }
 
@@ -187,12 +191,14 @@ func (ts *TestSuite) RandBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 	}
 	prv, _ := bls.PrivateKeyFromBytes(buf)
 	pub := prv.PublicKeyNative()
+
 	return pub, prv
 }
 
 // RandValKey generates a random validator key for testing purposes.
 func (ts *TestSuite) RandValKey() *bls.ValidatorKey {
 	_, prv := ts.RandBLSKeyPair()
+
 	return bls.NewValidatorKey(prv)
 }
 
@@ -200,6 +206,7 @@ func (ts *TestSuite) RandValKey() *bls.ValidatorKey {
 func (ts *TestSuite) RandBLSSignature() *bls.Signature {
 	_, prv := ts.RandBLSKeyPair()
 	sig := prv.Sign(ts.RandBytes(8))
+
 	return sig.(*bls.Signature)
 }
 
@@ -211,12 +218,14 @@ func (ts *TestSuite) RandHash() hash.Hash {
 // RandAccAddress generates a random account address for testing purposes.
 func (ts *TestSuite) RandAccAddress() crypto.Address {
 	addr := crypto.NewAddress(crypto.AddressTypeBLSAccount, ts.RandBytes(20))
+
 	return addr
 }
 
 // RandValAddress generates a random validator address for testing purposes.
 func (ts *TestSuite) RandValAddress() crypto.Address {
 	addr := crypto.NewAddress(crypto.AddressTypeValidator, ts.RandBytes(20))
+
 	return addr
 }
 
@@ -224,6 +233,7 @@ func (ts *TestSuite) RandValAddress() crypto.Address {
 func (ts *TestSuite) RandSeed() sortition.VerifiableSeed {
 	sig := ts.RandBLSSignature()
 	seed, _ := sortition.VerifiableSeedFromBytes(sig.Bytes())
+
 	return seed
 }
 
@@ -232,6 +242,7 @@ func (ts *TestSuite) RandProof() sortition.Proof {
 	_, prv := ts.RandBLSKeyPair()
 	sig := prv.Sign(ts.RandHash().Bytes())
 	proof, _ := sortition.ProofFromBytes(sig.Bytes())
+
 	return proof
 }
 
@@ -240,6 +251,7 @@ func (ts *TestSuite) RandPeerID() peer.ID {
 	s := ts.RandBytes(32)
 	id := [34]byte{0x12, 32}
 	copy(id[2:], s)
+
 	return peer.ID(id[:])
 }
 
@@ -248,6 +260,7 @@ func (ts *TestSuite) GenerateTestAccount(number int32) (*account.Account, crypto
 	_, prv := ts.RandBLSKeyPair()
 	acc := account.NewAccount(number)
 	acc.AddToBalance(ts.RandInt64(100 * 1e14))
+
 	return acc, prv.PublicKeyNative().AccountAddress()
 }
 
@@ -256,6 +269,7 @@ func (ts *TestSuite) GenerateTestValidator(number int32) (*validator.Validator, 
 	pub, prv := ts.RandBLSKeyPair()
 	val := validator.NewValidator(pub, number)
 	val.AddToStake(ts.RandInt64(100 * 1e9))
+
 	return val, bls.NewValidatorKey(prv)
 }
 
@@ -312,6 +326,7 @@ func (ts *TestSuite) generateTestBlock(height uint32, proposer crypto.Address, t
 	if err != nil {
 		panic(err)
 	}
+
 	return blk, blockCert
 }
 
@@ -334,6 +349,7 @@ func (ts *TestSuite) GenerateTestCertificate(height uint32) *certificate.Certifi
 	if err != nil {
 		panic(err)
 	}
+
 	return cert
 }
 
@@ -437,6 +453,7 @@ func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls
 	}
 
 	cmt, _ := committee.NewCommittee(vals, num, vals[0].Address())
+
 	return cmt, valKeys
 }
 

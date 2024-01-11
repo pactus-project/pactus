@@ -22,6 +22,7 @@ func MakeAbs(p string) string {
 	if err != nil {
 		panic(err)
 	}
+
 	return filepath.Clean(filepath.Join(wd, p))
 }
 
@@ -37,6 +38,7 @@ func WriteFile(filename string, data []byte) error {
 	if err := os.WriteFile(filename, data, 0o600); err != nil {
 		return fmt.Errorf("failed to write to %s: %w", filename, err)
 	}
+
 	return nil
 }
 
@@ -45,6 +47,7 @@ func Mkdir(dir string) error {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return fmt.Errorf("could not create directory %s", dir)
 	}
+
 	return nil
 }
 
@@ -53,6 +56,7 @@ func PathExists(p string) bool {
 	if os.IsNotExist(err) {
 		return false
 	}
+
 	return err == nil
 }
 
@@ -61,6 +65,7 @@ func TempDirPath() string {
 	if err != nil {
 		panic(err)
 	}
+
 	return p
 }
 
@@ -98,8 +103,10 @@ func IsValidDirPath(fp string) bool {
 				return false
 			}
 			os.Remove(fp + "/test")
+
 			return true
 		}
+
 		return false
 	}
 
@@ -107,6 +114,7 @@ func IsValidDirPath(fp string) bool {
 		return false
 	}
 	os.Remove(fp)
+
 	return true
 }
 
@@ -132,6 +140,7 @@ func (w *FixedWriter) Write(p []byte) (int, error) {
 	}
 
 	w.pos += copy(w.b[w.pos:], p)
+
 	return lenp, nil
 }
 
@@ -145,6 +154,7 @@ func (w *FixedWriter) Bytes() []byte {
 func NewFixedWriter(max int) *FixedWriter {
 	b := make([]byte, max)
 	fw := FixedWriter{b, 0}
+
 	return &fw
 }
 
@@ -168,6 +178,7 @@ func (fr *FixedReader) Read(p []byte) (int, error) {
 	}
 
 	fr.pos += n
+
 	return n, nil
 }
 
@@ -181,5 +192,6 @@ func NewFixedReader(max int, buf []byte) *FixedReader {
 
 	iobuf := bytes.NewBuffer(b)
 	fr := FixedReader{b, 0, iobuf}
+
 	return &fr
 }

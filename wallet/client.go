@@ -41,6 +41,7 @@ func (c *grpcClient) getBlockchainInfo() (*pactus.GetBlockchainInfoResponse, err
 	if err != nil {
 		return nil, err
 	}
+
 	return info, nil
 }
 
@@ -50,6 +51,7 @@ func (c *grpcClient) getAccount(addr crypto.Address) (*pactus.AccountInfo, error
 	if err != nil {
 		return nil, err
 	}
+
 	return res.Account, nil
 }
 
@@ -59,6 +61,7 @@ func (c *grpcClient) getValidator(addr crypto.Address) (*pactus.ValidatorInfo, e
 	if err != nil {
 		return nil, err
 	}
+
 	return res.Validator, nil
 }
 
@@ -97,5 +100,6 @@ func (c *grpcClient) getFee(amount int64, payloadType payload.Type) (int64, erro
 	if err != nil {
 		return 0, err
 	}
+
 	return res.Fee, nil
 }

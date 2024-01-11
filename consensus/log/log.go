@@ -31,6 +31,7 @@ func (log *Log) HasVote(h hash.Hash) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -52,31 +53,37 @@ func (log *Log) mustGetRoundMessages(round int16) *Messages {
 
 func (log *Log) AddVote(v *vote.Vote) (bool, error) {
 	m := log.mustGetRoundMessages(v.Round())
+
 	return m.addVote(v)
 }
 
 func (log *Log) PrepareVoteSet(round int16) *voteset.BlockVoteSet {
 	m := log.mustGetRoundMessages(round)
+
 	return m.prepareVotes
 }
 
 func (log *Log) PrecommitVoteSet(round int16) *voteset.BlockVoteSet {
 	m := log.mustGetRoundMessages(round)
+
 	return m.precommitVotes
 }
 
 func (log *Log) CPPreVoteVoteSet(round int16) *voteset.BinaryVoteSet {
 	m := log.mustGetRoundMessages(round)
+
 	return m.cpPreVotes
 }
 
 func (log *Log) CPMainVoteVoteSet(round int16) *voteset.BinaryVoteSet {
 	m := log.mustGetRoundMessages(round)
+
 	return m.cpMainVotes
 }
 
 func (log *Log) CPDecidedVoteVoteSet(round int16) *voteset.BinaryVoteSet {
 	m := log.mustGetRoundMessages(round)
+
 	return m.cpDecidedVotes
 }
 
@@ -89,6 +96,7 @@ func (log *Log) RoundProposal(round int16) *proposal.Proposal {
 	if m == nil {
 		return nil
 	}
+
 	return m.proposal
 }
 
@@ -113,5 +121,6 @@ func (log *Log) CanVote(addr crypto.Address) bool {
 			return true
 		}
 	}
+
 	return false
 }

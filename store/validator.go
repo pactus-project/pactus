@@ -47,6 +47,7 @@ func newValidatorStore(db *leveldb.DB) *validatorStore {
 
 func (vs *validatorStore) hasValidator(addr crypto.Address) bool {
 	_, ok := vs.addressMap[addr]
+
 	return ok
 }
 
@@ -55,6 +56,7 @@ func (vs *validatorStore) ValidatorAddresses() []crypto.Address {
 	for addr := range vs.addressMap {
 		addrs = append(addrs, addr)
 	}
+
 	return addrs
 }
 

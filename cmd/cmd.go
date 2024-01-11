@@ -33,6 +33,7 @@ import (
 // line editing features.
 func terminalSupported() bool {
 	bad := map[string]bool{"": true, "dumb": true, "cons25": true}
+
 	return !bad[strings.ToLower(os.Getenv("TERM"))]
 }
 
@@ -52,6 +53,7 @@ func PromptPassword(label string, confirmation bool) string {
 			if input != password {
 				return errors.New("passwords do not match")
 			}
+
 			return nil
 		}
 
@@ -89,6 +91,7 @@ func PromptConfirm(label string) bool {
 	if len(result) > 0 && strings.ToUpper(result[:1]) == "Y" {
 		return true
 	}
+
 	return false
 }
 
@@ -219,6 +222,7 @@ func PactusDefaultHomeDir() string {
 	} else {
 		home = filepath.Join(usr.HomeDir, "pactus")
 	}
+
 	return home
 }
 
@@ -458,6 +462,7 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	params := param.DefaultParams()
 	params.BlockVersion = 0
 	gen := genesis.MakeGenesis(util.RoundNow(60), accs, vals, params)
+
 	return gen
 }
 

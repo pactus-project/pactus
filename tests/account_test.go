@@ -17,6 +17,7 @@ func getAccount(t *testing.T, addr crypto.Address) *pactus.AccountInfo {
 	if err != nil {
 		return nil
 	}
+
 	return res.Account
 }
 

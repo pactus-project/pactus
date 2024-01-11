@@ -17,6 +17,7 @@ var UndefHash = Hash{0}
 
 func Hash256(data []byte) []byte {
 	h := blake2b.Sum256(data)
+
 	return h[:]
 }
 
@@ -29,6 +30,7 @@ func Hash160(data []byte) []byte {
 	if n != len(data) {
 		return nil
 	}
+
 	return h.Sum(nil)
 }
 
@@ -48,13 +50,16 @@ func FromBytes(data []byte) (Hash, error) {
 	if len(data) != HashSize {
 		return Hash{}, fmt.Errorf("Hash should be %d bytes, but it is %v bytes", HashSize, len(data))
 	}
+
 	var h Hash
 	copy(h[:], data[:HashSize])
+
 	return h, nil
 }
 
 func CalcHash(data []byte) Hash {
 	h, _ := FromBytes(Hash256(data))
+
 	return h
 }
 

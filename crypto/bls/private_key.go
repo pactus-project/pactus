@@ -87,6 +87,7 @@ func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 
 	sk := make([]byte, 32)
 	x.FillBytes(sk)
+
 	return PrivateKeyFromBytes(sk)
 }
 
@@ -136,6 +137,7 @@ func (prv *PrivateKey) SignNative(msg []byte) *Signature {
 		panic(err)
 	}
 	s := g1.MulScalar(g1.New(), q, &prv.fr)
+
 	return &Signature{pointG1: *s}
 }
 
@@ -143,6 +145,7 @@ func (prv *PrivateKey) PublicKeyNative() *PublicKey {
 	g2 := bls12381.NewG2()
 
 	pointG2 := g2.MulScalar(g2.New(), g2.One(), &prv.fr)
+
 	return &PublicKey{
 		pointG2: *pointG2,
 	}

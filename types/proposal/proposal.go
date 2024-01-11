@@ -64,6 +64,7 @@ func (p *Proposal) BasicCheck() error {
 	if p.data.Round < 0 {
 		return errors.Error(errors.ErrInvalidRound)
 	}
+
 	return nil
 }
 
@@ -94,6 +95,7 @@ func (p *Proposal) Verify(pubKey crypto.PublicKey) error {
 	if err := pubKey.VerifyAddress(p.data.Block.Header().ProposerAddress()); err != nil {
 		return err
 	}
+
 	return pubKey.Verify(p.SignBytes(), p.data.Signature)
 }
 
@@ -107,5 +109,6 @@ func (p *Proposal) IsForBlock(h hash.Hash) bool {
 
 func (p Proposal) String() string {
 	b := p.Block()
+
 	return fmt.Sprintf("{%v/%v 🗃 %v}", p.data.Height, p.data.Round, b.String())
 }

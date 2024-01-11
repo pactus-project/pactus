@@ -183,11 +183,13 @@ func TestMain(m *testing.M) {
 	total := int64(0)
 	s.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
 		total += acc.Balance()
+
 		return false
 	})
 
 	s.IterateValidators(func(v *validator.Validator) bool {
 		total += v.Stake()
+
 		return false
 	})
 	if total != tGenDoc.TotalSupply() {

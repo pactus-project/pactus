@@ -176,6 +176,7 @@ func (v *Vote) UnmarshalCBOR(bs []byte) error {
 // Hash calculates the hash of the vote.
 func (v *Vote) Hash() hash.Hash {
 	bz, _ := cbor.Marshal(v.data)
+
 	return hash.CalcHash(bz)
 }
 
@@ -191,6 +192,7 @@ func (v *Vote) Verify(pubKey *bls.PublicKey) error {
 			Got:      v.Signer(),
 		}
 	}
+
 	return pubKey.Verify(v.SignBytes(), v.Signature())
 }
 
@@ -200,6 +202,7 @@ func (v *Vote) IsCPVote() bool {
 		v.data.Type == VoteTypeCPDecided {
 		return true
 	}
+
 	return false
 }
 
@@ -231,6 +234,7 @@ func (v *Vote) BasicCheck() error {
 	if v.Signature() == nil {
 		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
 	}
+
 	return nil
 }
 

@@ -107,6 +107,7 @@ func (pub *PublicKey) Decode(r io.Reader) error {
 		return err
 	}
 	*pub = *p
+
 	return nil
 }
 
@@ -136,6 +137,7 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	if !eng.Check() {
 		return crypto.ErrInvalidSignature
 	}
+
 	return nil
 }
 
@@ -148,12 +150,14 @@ func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
 func (pub *PublicKey) AccountAddress() crypto.Address {
 	data := hash.Hash160(hash.Hash256(pub.Bytes()))
 	addr := crypto.NewAddress(crypto.AddressTypeBLSAccount, data)
+
 	return addr
 }
 
 func (pub *PublicKey) ValidatorAddress() crypto.Address {
 	data := hash.Hash160(hash.Hash256(pub.Bytes()))
 	addr := crypto.NewAddress(crypto.AddressTypeValidator, data)
+
 	return addr
 }
 

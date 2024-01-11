@@ -70,6 +70,7 @@ func (s *blockchainServer) GetBlockHash(_ context.Context,
 	if h.IsUndef() {
 		return nil, status.Errorf(codes.NotFound, "block not found with this height")
 	}
+
 	return &pactus.GetBlockHashResponse{
 		Hash: h.Bytes(),
 	}, nil
@@ -86,6 +87,7 @@ func (s *blockchainServer) GetBlockHeight(_ context.Context,
 	if height == 0 {
 		return nil, status.Errorf(codes.NotFound, "block not found with this hash")
 	}
+
 	return &pactus.GetBlockHeightResponse{
 		Height: height,
 	}, nil
@@ -214,6 +216,7 @@ func (s *blockchainServer) GetValidatorAddresses(_ context.Context,
 	for _, address := range addresses {
 		addressesPB = append(addressesPB, address.String())
 	}
+
 	return &pactus.GetValidatorAddressesResponse{Addresses: addressesPB}, nil
 }
 
@@ -235,6 +238,7 @@ func (s *blockchainServer) GetPublicKey(_ context.Context,
 
 func (s *blockchainServer) validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 	data, _ := val.Bytes()
+
 	return &pactus.ValidatorInfo{
 		Hash:                val.Hash().Bytes(),
 		Data:                data,
@@ -251,6 +255,7 @@ func (s *blockchainServer) validatorToProto(val *validator.Validator) *pactus.Va
 
 func (s *blockchainServer) accountToProto(addr crypto.Address, acc *account.Account) *pactus.AccountInfo {
 	data, _ := acc.Bytes()
+
 	return &pactus.AccountInfo{
 		Hash:    acc.Hash().Bytes(),
 		Data:    data,

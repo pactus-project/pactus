@@ -45,8 +45,10 @@ func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 	if err != nil {
 		// Probably key doesn't exist in database
 		logger.Trace("database `get` error", "error", err, "key", key)
+
 		return nil, err
 	}
+
 	return data, nil
 }
 
@@ -54,8 +56,10 @@ func tryHas(db *leveldb.DB, key []byte) bool {
 	ok, err := db.Has(key, nil)
 	if err != nil {
 		logger.Error("database `has` error", "error", err, "key", key)
+
 		return false
 	}
+
 	return ok
 }
 
@@ -190,6 +194,7 @@ func (s *store) BlockHash(height uint32) hash.Hash {
 	data, err := s.blockStore.block(height)
 	if err == nil {
 		blockHash, _ := hash.FromBytes(data[0:hash.HashSize])
+
 		return blockHash
 	}
 
@@ -349,6 +354,7 @@ func (s *store) LastCertificate() *certificate.Certificate {
 	if err != nil {
 		return nil
 	}
+
 	return cert
 }
 
@@ -362,5 +368,6 @@ func (s *store) WriteBatch() error {
 		return err
 	}
 	s.batch.Reset()
+
 	return nil
 }

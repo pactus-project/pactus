@@ -68,6 +68,7 @@ func (acc *Account) Hash() hash.Hash {
 	if err != nil {
 		panic(err)
 	}
+
 	return hash.CalcHash(bs)
 }
 

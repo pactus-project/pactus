@@ -43,6 +43,7 @@ func (v *cpVote) BasicCheck() error {
 		// Invalid values
 		return errors.Errorf(errors.ErrInvalidVote, "cp value should be 0, 1 or abstain")
 	}
+
 	return v.Just.BasicCheck()
 }
 

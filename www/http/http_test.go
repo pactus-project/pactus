@@ -69,6 +69,7 @@ func setup(t *testing.T) *testData {
 		gRPCServer:  gRPCServer,
 		httpServer:  httpServer,
 	}
+
 	return tTestData
 }
 

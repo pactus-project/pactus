@@ -69,6 +69,7 @@ func testBlockchainClient(t *testing.T) (*grpc.ClientConn, pactus.BlockchainClie
 	if err != nil {
 		t.Fatalf("Failed to dial blockchain server: %v", err)
 	}
+
 	return conn, pactus.NewBlockchainClient(conn)
 }
 
@@ -80,6 +81,7 @@ func testNetworkClient(t *testing.T) (*grpc.ClientConn, pactus.NetworkClient) {
 	if err != nil {
 		t.Fatalf("Failed to dial network server: %v", err)
 	}
+
 	return conn, pactus.NewNetworkClient(conn)
 }
 
@@ -91,6 +93,7 @@ func testTransactionClient(t *testing.T) (*grpc.ClientConn, pactus.TransactionCl
 	if err != nil {
 		t.Fatalf("Failed to dial transaction server: %v", err)
 	}
+
 	return conn, pactus.NewTransactionClient(conn)
 }
 
@@ -102,5 +105,6 @@ func testWalletClient(t *testing.T) (*grpc.ClientConn, pactus.WalletClient) {
 	if err != nil {
 		t.Fatalf("Failed to dial wallet server: %v", err)
 	}
+
 	return conn, pactus.NewWalletClient(conn)
 }

@@ -61,6 +61,7 @@ func setup(t *testing.T) *testData {
 	err = vault.UpdatePassword("", tPassword, opts...)
 	assert.NoError(t, err)
 	assert.True(t, vault.IsEncrypted())
+
 	return &testData{
 		TestSuite:   ts,
 		vault:       vault,
@@ -171,6 +172,7 @@ func TestAddressFromPath(t *testing.T) {
 		for addr, ai := range td.vault.Addresses {
 			address = addr
 			addrInfo = ai
+
 			break
 		}
 

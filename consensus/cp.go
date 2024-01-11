@@ -59,6 +59,7 @@ func (cp *changeProposer) checkJustInitZero(just vote.Just, blockHash hash.Hash)
 			Reason:   err.Error(),
 		}
 	}
+
 	return nil
 }
 
@@ -99,6 +100,7 @@ func (cp *changeProposer) checkJustPreVoteHard(just vote.Just,
 			Reason:   err.Error(),
 		}
 	}
+
 	return nil
 }
 
@@ -127,6 +129,7 @@ func (cp *changeProposer) checkJustPreVoteSoft(just vote.Just,
 			Reason:   err.Error(),
 		}
 	}
+
 	return nil
 }
 
@@ -155,6 +158,7 @@ func (cp *changeProposer) checkJustMainVoteNoConflict(just vote.Just,
 			Reason:   err.Error(),
 		}
 	}
+
 	return nil
 }
 
@@ -243,6 +247,7 @@ func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 			if err != nil {
 				return err
 			}
+
 			return cp.checkJustInitZero(just, v.BlockHash())
 
 		case vote.JustTypeInitOne:
@@ -256,6 +261,7 @@ func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 					Reason:   "invalid block hash",
 				}
 			}
+
 			return cp.checkJustInitOne(just)
 		default:
 			return invalidJustificationError{
@@ -270,6 +276,7 @@ func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 			if err != nil {
 				return err
 			}
+
 			return cp.checkJustPreVoteSoft(just, v.BlockHash(), v.CPRound())
 
 		case vote.JustTypePreVoteHard:
@@ -277,6 +284,7 @@ func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 			if err != nil {
 				return err
 			}
+
 			return cp.checkJustPreVoteHard(just, v.BlockHash(), v.CPRound(), v.CPValue())
 
 		default:
@@ -296,6 +304,7 @@ func (cp *changeProposer) checkJustMainVote(v *vote.Vote) error {
 		if err != nil {
 			return err
 		}
+
 		return cp.checkJustMainVoteNoConflict(just, v.BlockHash(), v.CPRound(), v.CPValue())
 
 	case vote.JustTypeMainVoteConflict:
@@ -303,6 +312,7 @@ func (cp *changeProposer) checkJustMainVote(v *vote.Vote) error {
 		if err != nil {
 			return err
 		}
+
 		return cp.checkJustMainVoteConflict(just, v.BlockHash(), v.CPRound())
 
 	default:
@@ -340,6 +350,7 @@ func (cp *changeProposer) checkJustDecide(v *vote.Vote) error {
 			Reason:   err.Error(),
 		}
 	}
+
 	return nil
 }
 

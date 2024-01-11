@@ -91,6 +91,7 @@ func (m *MockConsensus) HasVote(h hash.Hash) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -120,6 +121,7 @@ func (m *MockConsensus) PickRandomVote(_ int16) *vote.Vote {
 		return nil
 	}
 	r := m.ts.RandInt32(int32(len(m.Votes)))
+
 	return m.Votes[r]
 }
 

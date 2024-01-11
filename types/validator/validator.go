@@ -33,6 +33,7 @@ func NewValidator(publicKey *bls.PublicKey, number int32) *Validator {
 			Number:    number,
 		},
 	}
+
 	return val
 }
 
@@ -104,6 +105,7 @@ func (val Validator) Power() int64 {
 		// Only bootstrap validators at the genesis block have no stake.
 		return 1
 	}
+
 	return val.data.Stake
 }
 
@@ -138,6 +140,7 @@ func (val *Validator) Hash() hash.Hash {
 	if err != nil {
 		panic(err)
 	}
+
 	return hash.CalcHash(bs)
 }
 

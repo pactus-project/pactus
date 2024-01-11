@@ -13,6 +13,7 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := hex.DecodeString(vars["id"])
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 
@@ -24,6 +25,7 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 

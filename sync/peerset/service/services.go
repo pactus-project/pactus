@@ -22,6 +22,7 @@ func New(flags ...Service) Services {
 	for _, f := range flags {
 		s = util.SetFlag(s, f)
 	}
+
 	return Services(s)
 }
 

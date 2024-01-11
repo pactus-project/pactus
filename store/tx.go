@@ -75,6 +75,7 @@ func (ts *txStore) tx(id tx.ID) (*blockRegion, error) {
 	if err := encoding.ReadElements(r, &reg.height, &reg.offset, &reg.length); err != nil {
 		return nil, err
 	}
+
 	return reg, nil
 }
 

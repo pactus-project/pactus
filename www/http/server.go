@@ -127,6 +127,7 @@ func (s *Server) RootHandler(w http.ResponseWriter, _ *http.Request) {
 	})
 	if err != nil {
 		s.logger.Error("unable to walk through methods", "error", err)
+
 		return
 	}
 
@@ -141,6 +142,7 @@ func (s *Server) writeError(w http.ResponseWriter, err error) int {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusBadRequest)
 	n, _ := io.WriteString(w, err.Error())
+
 	return n
 }
 
@@ -148,6 +150,7 @@ func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusOK)
 	n, _ := io.WriteString(w, html)
+
 	return n
 }
 
@@ -159,6 +162,7 @@ func newTableMaker() *tableMaker {
 	t := &tableMaker{
 		w: bytes.NewBufferString("<table>"),
 	}
+
 	return t
 }
 
@@ -221,5 +225,6 @@ func (t *tableMaker) addRowDouble(key string, val float64) {
 
 func (t *tableMaker) html() string {
 	t.w.WriteString("</table>")
+
 	return t.w.String()
 }

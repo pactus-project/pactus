@@ -13,5 +13,6 @@ func TestnetGenesis() *Genesis {
 	if err := json.Unmarshal(testnetJSON, &gen); err != nil {
 		panic(err)
 	}
+
 	return &gen
 }

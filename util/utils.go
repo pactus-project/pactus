@@ -35,6 +35,7 @@ func Max[T constraints.Integer](a, b T) T {
 	if a > b {
 		return a
 	}
+
 	return b
 }
 
@@ -43,6 +44,7 @@ func Min[T constraints.Integer](a, b T) T {
 	if a < b {
 		return a
 	}
+
 	return b
 }
 
@@ -86,6 +88,7 @@ func RandUint64(max uint64) uint64 {
 	bigMax := &big.Int{}
 	bigMax.SetUint64(max)
 	bigRnd, _ := crand.Int(crand.Reader, bigMax)
+
 	return bigRnd.Uint64()
 }
 
@@ -117,6 +120,7 @@ func IS2OP(x *big.Int, xLen int) []byte {
 		return nil
 	}
 	buf := make([]byte, xLen)
+
 	return x.FillBytes(buf)
 }
 
@@ -142,6 +146,7 @@ func StringToChange(amount string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	return CoinToChange(coin), nil
 }
 
@@ -150,6 +155,7 @@ func StringToChange(amount string) (int64, error) {
 // Example: ChangeToStringWithTrailingZeros(2750000000) returns "2.750000000".
 func ChangeToStringWithTrailingZeros(change int64) string {
 	coin := ChangeToCoin(change)
+
 	return strconv.FormatFloat(coin, 'f', 9, 64)
 }
 
@@ -157,6 +163,7 @@ func ChangeToStringWithTrailingZeros(change int64) string {
 // Example: ChangeToString(2750000000) returns "2.75".
 func ChangeToString(change int64) string {
 	coin := ChangeToCoin(change)
+
 	return strconv.FormatFloat(coin, 'f', -1, 64)
 }
 
@@ -164,5 +171,6 @@ func ChangeToString(change int64) string {
 // For more information, refer to: https://en.wikipedia.org/wiki/Logarithmic_scale
 func LogScale(val int) int {
 	bitlen := bits.Len(uint(val - 1))
+
 	return 1 << bitlen
 }

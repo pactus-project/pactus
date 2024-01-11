@@ -179,6 +179,7 @@ func (v *Vault) UpdatePassword(oldPassword, newPassword string, opts ...encrypte
 	}
 
 	v.Encrypter = newEncrypter
+
 	return nil
 }
 
@@ -187,6 +188,7 @@ func (v *Vault) Label(addr string) string {
 	if !ok {
 		return ""
 	}
+
 	return info.Label
 }
 
@@ -198,6 +200,7 @@ func (v *Vault) SetLabel(addr, label string) error {
 
 	info.Label = label
 	v.Addresses[addr] = info
+
 	return nil
 }
 
@@ -285,6 +288,7 @@ func (v *Vault) AddressFromPath(p string) *AddressInfo {
 			return &addressInfo
 		}
 	}
+
 	return nil
 }
 
@@ -545,6 +549,7 @@ func (v *Vault) Mnemonic(password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return keyStore.MasterNode.Mnemonic, nil
 }
 

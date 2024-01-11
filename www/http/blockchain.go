@@ -16,6 +16,7 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, _ *http.Request) {
 		&pactus.GetBlockchainInfoRequest{})
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 
@@ -39,6 +40,7 @@ func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request)
 	height, err := strconv.ParseInt(vars["height"], 10, 32)
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 	s.blockByHeight(w, uint32(height))
@@ -49,6 +51,7 @@ func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
 	blockHash, err := hash.FromString(vars["hash"])
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 
@@ -56,6 +59,7 @@ func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
 		&pactus.GetBlockHeightRequest{Hash: blockHash.Bytes()})
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 
@@ -71,6 +75,7 @@ func (s *Server) blockByHeight(w http.ResponseWriter, blockHeight uint32) {
 	)
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 
@@ -112,6 +117,7 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 		&pactus.GetAccountRequest{Address: vars["address"]})
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 
@@ -132,6 +138,7 @@ func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
 		&pactus.GetValidatorRequest{Address: vars["address"]})
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 
@@ -146,6 +153,7 @@ func (s *Server) GetValidatorByNumberHandler(w http.ResponseWriter, r *http.Requ
 	num, err := strconv.ParseInt(vars["number"], 10, 32)
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 
@@ -154,6 +162,7 @@ func (s *Server) GetValidatorByNumberHandler(w http.ResponseWriter, r *http.Requ
 	})
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 
@@ -181,6 +190,7 @@ func (s *Server) ConsensusHandler(w http.ResponseWriter, _ *http.Request) {
 		&pactus.GetConsensusInfoRequest{})
 	if err != nil {
 		s.writeError(w, err)
+
 		return
 	}
 

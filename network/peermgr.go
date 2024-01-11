@@ -103,6 +103,7 @@ func (mgr *peerMgr) GetMultiAddr(pid lp2ppeer.ID) multiaddr.Multiaddr {
 	if peer == nil {
 		return nil
 	}
+
 	return peer.MultiAddress
 }
 
@@ -129,6 +130,7 @@ func (mgr *peerMgr) CheckConnectivity() {
 		mgr.logger.Debug("peer count is about maximum threshold",
 			"count", len(connectedPeers),
 			"max", mgr.maxConns)
+
 		return
 	}
 
@@ -148,6 +150,7 @@ func (mgr *peerMgr) CheckConnectivity() {
 			// Don't try to connect to an already connected peer.
 			if HasPID(connectedPeers, ai.ID) {
 				mgr.logger.Trace("already connected", "peer", ai.String())
+
 				continue
 			}
 

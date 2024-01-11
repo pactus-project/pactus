@@ -155,6 +155,7 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, h 
 			consMsg.message.Type() == message.TypeBlockAnnounce {
 			m := consMsg.message.(*message.BlockAnnounceMessage)
 			assert.Equal(t, m.Block.Hash(), h)
+
 			return
 		}
 	}
@@ -172,10 +173,12 @@ func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
 			m := consMsg.message.(*message.ProposalMessage)
 			require.Equal(t, m.Proposal.Height(), height)
 			require.Equal(t, m.Proposal.Round(), round)
+
 			return m.Proposal
 		}
 	}
 	require.NoError(t, fmt.Errorf("Not found"))
+
 	return nil
 }
 
@@ -202,6 +205,7 @@ func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, he
 		m := consMsg.message.(*message.QueryProposalMessage)
 		assert.Equal(t, m.Height, height)
 		assert.Equal(t, m.Querier, cons.valKey.Address())
+
 		return
 	}
 	require.NoError(t, fmt.Errorf("Not found"))
@@ -220,6 +224,7 @@ func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height
 		assert.Equal(t, m.Height, height)
 		assert.Equal(t, m.Round, round)
 		assert.Equal(t, m.Querier, cons.valKey.Address())
+
 		return
 	}
 	require.NoError(t, fmt.Errorf("Not found"))
@@ -240,6 +245,7 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vo
 		}
 	}
 	require.NoError(t, fmt.Errorf("Not found"))
+
 	return nil
 }
 
@@ -261,6 +267,7 @@ func (td *testData) addPrepareVote(cons *consensus, blockHash hash.Hash, height 
 	valID int,
 ) *vote.Vote {
 	v := vote.NewPrepareVote(blockHash, height, round, td.valKeys[valID].Address())
+
 	return td.addVote(cons, v, valID)
 }
 
@@ -268,6 +275,7 @@ func (td *testData) addPrecommitVote(cons *consensus, blockHash hash.Hash, heigh
 	valID int,
 ) *vote.Vote {
 	v := vote.NewPrecommitVote(blockHash, height, round, td.valKeys[valID].Address())
+
 	return td.addVote(cons, v, valID)
 }
 

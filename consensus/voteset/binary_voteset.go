@@ -41,6 +41,7 @@ func NewCPPreVoteVoteSet(round int16, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BinaryVoteSet {
 	voteSet := newVoteSet(round, totalPower, validators)
+
 	return newBinaryVoteSet(voteSet)
 }
 
@@ -48,6 +49,7 @@ func NewCPMainVoteVoteSet(round int16, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BinaryVoteSet {
 	voteSet := newVoteSet(round, totalPower, validators)
+
 	return newBinaryVoteSet(voteSet)
 }
 
@@ -55,6 +57,7 @@ func NewCPDecidedVoteVoteSet(round int16, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BinaryVoteSet {
 	voteSet := newVoteSet(round, totalPower, validators)
+
 	return newBinaryVoteSet(voteSet)
 }
 
@@ -82,6 +85,7 @@ func (vs *BinaryVoteSet) AllVotes() []*vote.Vote {
 			votes = append(votes, v)
 		}
 	}
+
 	return votes
 }
 
@@ -113,26 +117,31 @@ func (vs *BinaryVoteSet) AddVote(v *vote.Vote) (bool, error) {
 
 func (vs *BinaryVoteSet) HasOneThirdOfTotalPower(cpRound int16) bool {
 	roundVotes := vs.mustGetRoundVotes(cpRound)
+
 	return vs.isOneThirdOfTotalPower(roundVotes.votedPower)
 }
 
 func (vs *BinaryVoteSet) HasTwoThirdOfTotalPower(cpRound int16) bool {
 	roundVotes := vs.mustGetRoundVotes(cpRound)
+
 	return vs.isTwoThirdOfTotalPower(roundVotes.votedPower)
 }
 
 func (vs *BinaryVoteSet) HasAnyVoteFor(cpRound int16, cpValue vote.CPValue) bool {
 	roundVotes := vs.mustGetRoundVotes(cpRound)
+
 	return roundVotes.voteBoxes[cpValue].votedPower > 0
 }
 
 func (vs *BinaryVoteSet) HasAllVotesFor(cpRound int16, cpValue vote.CPValue) bool {
 	roundVotes := vs.mustGetRoundVotes(cpRound)
+
 	return roundVotes.voteBoxes[cpValue].votedPower == roundVotes.votedPower
 }
 
 func (vs *BinaryVoteSet) HasQuorumVotesFor(cpRound int16, cpValue vote.CPValue) bool {
 	roundVotes := vs.mustGetRoundVotes(cpRound)
+
 	return vs.isTwoThirdOfTotalPower(roundVotes.voteBoxes[cpValue].votedPower)
 }
 
@@ -143,6 +152,7 @@ func (vs *BinaryVoteSet) BinaryVotes(cpRound int16, cpValue vote.CPValue) map[cr
 	for a, v := range voteBox.votes {
 		votes[a] = v
 	}
+
 	return votes
 }
 

@@ -29,6 +29,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 			fmt.Sprintf("unknown peer (%s)", pid.String()), msg.SessionID, 0, nil, nil)
 
 		handler.respond(response, pid)
+
 		return nil
 	}
 
@@ -37,6 +38,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 			fmt.Sprintf("not handshaked (%s)", p.Status.String()), msg.SessionID, 0, nil, nil)
 
 		handler.respond(response, pid)
+
 		return nil
 	}
 
@@ -47,6 +49,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 				fmt.Sprintf("the request height is not acceptable: %v", msg.From), msg.SessionID, 0, nil, nil)
 
 			handler.respond(response, pid)
+
 			return nil
 		}
 	}
@@ -58,6 +61,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 			fmt.Sprintf("too many blocks requested: %v-%v", msg.From, msg.Count), msg.SessionID, 0, nil, nil)
 
 		handler.respond(response, pid)
+
 		return nil
 	}
 
@@ -86,6 +90,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 			message.ResponseCodeSynced.String(), msg.SessionID, lastCert.Height(), nil, lastCert)
 
 		handler.respond(response, pid)
+
 		return nil
 	}
 
@@ -93,6 +98,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 		message.ResponseCodeNoMoreBlocks.String(), msg.SessionID, 0, nil, nil)
 
 	handler.respond(response, pid)
+
 	return nil
 }
 

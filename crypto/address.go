@@ -73,6 +73,7 @@ func NewAddress(typ AddressType, data []byte) Address {
 	var addr Address
 	addr[0] = byte(typ)
 	copy(addr[1:], data)
+
 	return addr
 }
 

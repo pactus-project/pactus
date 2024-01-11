@@ -52,9 +52,11 @@ func (ps *PairSlice[K, V]) Get(index int) (K, V, bool) {
 	if index < 0 || index >= len(ps.pairs) {
 		var first K
 		var second V
+
 		return first, second, false
 	}
 	pair := ps.pairs[index]
+
 	return pair.First, pair.Second, true
 }
 

@@ -31,6 +31,7 @@ func NewConnectionGater(conf *Config, log *logger.SubLogger) (*ConnectionGater, 
 
 	connsLimit := conf.ScaledMaxConns() + conf.ConnsThreshold()
 	log.Info("connection gater created", "connsLimit", connsLimit)
+
 	return &ConnectionGater{
 		filters:    filters,
 		connsLimit: connsLimit,
@@ -59,6 +60,7 @@ func (g *ConnectionGater) InterceptPeerDial(pid lp2ppeer.ID) bool {
 
 	if g.onConnectionLimit() {
 		g.logger.Info("InterceptPeerDial rejected: many connections", "pid", pid)
+
 		return false
 	}
 
@@ -71,12 +73,14 @@ func (g *ConnectionGater) InterceptAddrDial(pid lp2ppeer.ID, ma multiaddr.Multia
 
 	if g.onConnectionLimit() {
 		g.logger.Info("InterceptAddrDial rejected: many connections", "pid", pid, "ma", ma.String())
+
 		return false
 	}
 
 	deny := g.filters.AddrBlocked(ma)
 	if deny {
 		g.logger.Info("InterceptAddrDial rejected", "pid", pid, "ma", ma.String())
+
 		return false
 	}
 
@@ -89,12 +93,14 @@ func (g *ConnectionGater) InterceptAccept(cma lp2pnetwork.ConnMultiaddrs) bool {
 
 	if g.onConnectionLimit() {
 		g.logger.Info("InterceptAccept rejected: many connections")
+
 		return false
 	}
 
 	deny := g.filters.AddrBlocked(cma.RemoteMultiaddr())
 	if deny {
 		g.logger.Info("InterceptAccept rejected")
+
 		return false
 	}
 

@@ -77,6 +77,7 @@ func (s *Server) startGateway() error {
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if strings.HasPrefix(r.URL.Path, "/v1") {
 				gwMux.ServeHTTP(w, r)
+
 				return
 			}
 			oa.ServeHTTP(w, r)
@@ -85,6 +86,7 @@ func (s *Server) startGateway() error {
 	if s.config.Gateway.EnableCORS {
 		gwServer.Handler = allowCORS(gwServer.Handler)
 	}
+
 	return gwServer.ListenAndServe()
 }
 
@@ -106,6 +108,7 @@ func allowCORS(h http.Handler) http.Handler {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 			if r.Method == "OPTIONS" && r.Header.Get("Access-Control-Request-Method") != "" {
 				preflightHandler(w)
+
 				return
 			}
 		}

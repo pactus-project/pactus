@@ -29,14 +29,17 @@ func openWallet() (*wallet.Wallet, error) {
 		err = wlt.Connect(*serverAddrOpt)
 		if err != nil {
 			fmt.Println(err.Error())
+
 			return nil, err
 		}
+
 		return wlt, err
 	}
 	wlt, err := wallet.Open(*pathOpt, *offlineOpt)
 	if err != nil {
 		return nil, err
 	}
+
 	return wlt, nil
 }
 

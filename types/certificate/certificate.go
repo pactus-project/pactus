@@ -135,6 +135,7 @@ func (cert *Certificate) SerializeSize() int {
 	for _, n := range cert.Absentees() {
 		sz += encoding.VarIntSerializeSize(uint64(n))
 	}
+
 	return sz
 }
 
@@ -143,6 +144,7 @@ func (cert *Certificate) MarshalCBOR() ([]byte, error) {
 	if err := cert.Encode(buf); err != nil {
 		return nil, err
 	}
+
 	return cbor.Marshal(buf.Bytes())
 }
 
@@ -153,6 +155,7 @@ func (cert *Certificate) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 	buf := bytes.NewBuffer(data)
+
 	return cert.Decode(buf)
 }
 

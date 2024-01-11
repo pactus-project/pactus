@@ -13,6 +13,7 @@ type ValidatorKey struct {
 
 func NewValidatorKey(prv *PrivateKey) *ValidatorKey {
 	pub := prv.PublicKeyNative()
+
 	return &ValidatorKey{
 		privateKey: prv,
 		publicKey:  pub,

@@ -50,8 +50,10 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 	pubsub, err := lp2pps.NewGossipSub(ctx, host, opts...)
 	if err != nil {
 		log.Panic("unable to start Gossip service", "error", err)
+
 		return nil
 	}
+
 	return &gossipService{
 		ctx:     ctx,
 		host:    host,
@@ -68,6 +70,7 @@ func (g *gossipService) BroadcastMessage(msg []byte, topic *lp2pps.Topic) error 
 	if err != nil {
 		return LibP2PError{Err: err}
 	}
+
 	return nil
 }
 
@@ -114,6 +117,7 @@ func (g *gossipService) JoinTopic(name string, sp ShouldPropagate) (*lp2pps.Topi
 			m, err := sub.Next(g.ctx)
 			if err != nil {
 				g.logger.Debug("readLoop error", "error", err)
+
 				return
 			}
 

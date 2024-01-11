@@ -32,5 +32,6 @@ func Version() string {
 
 func ExecutorName() string {
 	executorName, _ := os.Executable()
+
 	return filepath.Base(executorName)
 }

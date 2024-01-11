@@ -43,6 +43,7 @@ func (as *accountStore) hasAccount(addr crypto.Address) bool {
 	if !ok {
 		ok = tryHas(as.db, accountKey(addr))
 	}
+
 	return ok
 }
 
@@ -63,6 +64,7 @@ func (as *accountStore) account(addr crypto.Address) (*account.Account, error) {
 	}
 
 	as.accCache.Add(addr, acc)
+
 	return acc.Clone(), nil
 }
 
