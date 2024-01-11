@@ -35,23 +35,23 @@ http:
     - selector: pactus.Transaction.GetTransaction
       get: "/v1/transactions/id/{id}/verbosity/{verbosity}"
 
-    - selector: pactus.Transaction.SendRawTransaction
-      put: "/v1/transactions/send/{data}"
+    - selector: pactus.Transaction.BroadcastTransaction
+      put: "/v1/transactions/broadcast/{signed_tx}"
 
     - selector: pactus.Transaction.CalculateFee
-      get: "/v1/transactions/amount/{amount}/payloadType/{payloadType}"
+      get: "/v1/transactions/fee/amount/{amount}/payloadType/{payloadType}"
 
     - selector: pactus.Transaction.GetRawTransferTransaction
-      get: "/v1/transactions/sender/{sender}/receiver/{receiver}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"
+      get: "/v1/transactions/transfer/sender/{sender}/receiver/{receiver}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"
 
     - selector: pactus.Transaction.GetRawBondTransaction
-      get: "/v1/transactions/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lock_time}/public_key/{public_key}/fee/{fee}/memo/{memo}"
+      get: "/v1/transactions/bond/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lock_time}/public_key/{public_key}/fee/{fee}/memo/{memo}"
 
     - selector: pactus.Transaction.GetRawUnBondTransaction
-      get: "/v1/transactions/validator_address/{validator_address}/lock_time/{lock_time}/memo/{memo}"
+      get: "/v1/transactions/unbond/validator_address/{validator_address}/lock_time/{lock_time}/memo/{memo}"
 
     - selector: pactus.Transaction.GetRawWithdrawTransaction
-      get: "/v1/transactions/validator_address/{validator_address}/account_address/{account_address}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"
+      get: "/v1/transactions/withdraw/validator_address/{validator_address}/account_address/{account_address}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"
 
     # Network APIs
     - selector: pactus.Network.GetNetworkInfo

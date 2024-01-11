@@ -16,8 +16,8 @@ import (
 func sendRawTx(t *testing.T, raw []byte) error {
 	t.Helper()
 
-	_, err := tTransaction.SendRawTransaction(tCtx,
-		&pactus.SendRawTransactionRequest{Data: raw})
+	_, err := tTransaction.BroadcastTransaction(tCtx,
+		&pactus.BroadcastTransactionRequest{SignedTx: raw})
 	return err
 }
 

@@ -338,7 +338,107 @@
         ]
       }
     },
-    "/v1/transactions/amount/{amount}/payloadType/{payloadType}": {
+    "/v1/transactions/bond/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lockTime}/public_key/{publicKey}/fee/{fee}/memo/{memo}": {
+      "get": {
+        "operationId": "Transaction_GetRawBondTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "sender",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "receiver",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "stake",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "lockTime",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "publicKey",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fee",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "memo",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/v1/transactions/broadcast/{signedTx}": {
+      "put": {
+        "operationId": "Transaction_BroadcastTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusBroadcastTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "signedTx",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "byte"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/v1/transactions/fee/amount/{amount}/payloadType/{payloadType}": {
       "get": {
         "operationId": "Transaction_CalculateFee",
         "responses": {
@@ -424,38 +524,7 @@
         ]
       }
     },
-    "/v1/transactions/send/{data}": {
-      "put": {
-        "operationId": "Transaction_SendRawTransaction",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusSendRawTransactionResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "data",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "byte"
-          }
-        ],
-        "tags": [
-          "Transaction"
-        ]
-      }
-    },
-    "/v1/transactions/sender/{sender}/receiver/{receiver}/amount/{amount}/lock_time/{lockTime}/fee/{fee}/memo/{memo}": {
+    "/v1/transactions/transfer/sender/{sender}/receiver/{receiver}/amount/{amount}/lock_time/{lockTime}/fee/{fee}/memo/{memo}": {
       "get": {
         "operationId": "Transaction_GetRawTransferTransaction",
         "responses": {
@@ -518,9 +587,9 @@
         ]
       }
     },
-    "/v1/transactions/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lockTime}/public_key/{publicKey}/fee/{fee}/memo/{memo}": {
+    "/v1/transactions/unbond/validator_address/{validatorAddress}/lock_time/{lockTime}/memo/{memo}": {
       "get": {
-        "operationId": "Transaction_GetRawBondTransaction",
+        "operationId": "Transaction_GetRawUnBondTransaction",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -537,42 +606,16 @@
         },
         "parameters": [
           {
-            "name": "sender",
+            "name": "validatorAddress",
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "receiver",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "stake",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
           },
           {
             "name": "lockTime",
             "in": "path",
             "required": true,
             "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "publicKey",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "fee",
-            "in": "path",
-            "required": true,
-            "type": "string",
             "format": "int64"
           },
           {
@@ -587,7 +630,7 @@
         ]
       }
     },
-    "/v1/transactions/validator_address/{validatorAddress}/account_address/{accountAddress}/amount/{amount}/lock_time/{lockTime}/fee/{fee}/memo/{memo}": {
+    "/v1/transactions/withdraw/validator_address/{validatorAddress}/account_address/{accountAddress}/amount/{amount}/lock_time/{lockTime}/fee/{fee}/memo/{memo}": {
       "get": {
         "operationId": "Transaction_GetRawWithdrawTransaction",
         "responses": {
@@ -636,49 +679,6 @@
             "in": "path",
             "required": true,
             "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "memo",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Transaction"
-        ]
-      }
-    },
-    "/v1/transactions/validator_address/{validatorAddress}/lock_time/{lockTime}/memo/{memo}": {
-      "get": {
-        "operationId": "Transaction_GetRawUnBondTransaction",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusGetRawTransactionResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "validatorAddress",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "lockTime",
-            "in": "path",
-            "required": true,
-            "type": "integer",
             "format": "int64"
           },
           {
@@ -933,6 +933,15 @@
         "BLOCK_TRANSACTIONS"
       ],
       "default": "BLOCK_DATA"
+    },
+    "pactusBroadcastTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
     },
     "pactusCalculateFeeResponse": {
       "type": "object",
@@ -1418,15 +1427,6 @@
         "completedSessions": {
           "type": "integer",
           "format": "int32"
-        }
-      }
-    },
-    "pactusSendRawTransactionResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "byte"
         }
       }
     },

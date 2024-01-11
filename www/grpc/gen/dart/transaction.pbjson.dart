@@ -78,26 +78,26 @@ const CalculateFeeResponse$json = const {
 
 /// Descriptor for `CalculateFeeResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List calculateFeeResponseDescriptor = $convert.base64Decode('ChRDYWxjdWxhdGVGZWVSZXNwb25zZRIQCgNmZWUYASABKANSA2ZlZQ==');
-@$core.Deprecated('Use sendRawTransactionRequestDescriptor instead')
-const SendRawTransactionRequest$json = const {
-  '1': 'SendRawTransactionRequest',
+@$core.Deprecated('Use broadcastTransactionRequestDescriptor instead')
+const BroadcastTransactionRequest$json = const {
+  '1': 'BroadcastTransactionRequest',
   '2': const [
-    const {'1': 'data', '3': 1, '4': 1, '5': 12, '10': 'data'},
+    const {'1': 'signed_tx', '3': 1, '4': 1, '5': 12, '10': 'signedTx'},
   ],
 };
 
-/// Descriptor for `SendRawTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List sendRawTransactionRequestDescriptor = $convert.base64Decode('ChlTZW5kUmF3VHJhbnNhY3Rpb25SZXF1ZXN0EhIKBGRhdGEYASABKAxSBGRhdGE=');
-@$core.Deprecated('Use sendRawTransactionResponseDescriptor instead')
-const SendRawTransactionResponse$json = const {
-  '1': 'SendRawTransactionResponse',
+/// Descriptor for `BroadcastTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List broadcastTransactionRequestDescriptor = $convert.base64Decode('ChtCcm9hZGNhc3RUcmFuc2FjdGlvblJlcXVlc3QSGwoJc2lnbmVkX3R4GAEgASgMUghzaWduZWRUeA==');
+@$core.Deprecated('Use broadcastTransactionResponseDescriptor instead')
+const BroadcastTransactionResponse$json = const {
+  '1': 'BroadcastTransactionResponse',
   '2': const [
     const {'1': 'id', '3': 2, '4': 1, '5': 12, '10': 'id'},
   ],
 };
 
-/// Descriptor for `SendRawTransactionResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List sendRawTransactionResponseDescriptor = $convert.base64Decode('ChpTZW5kUmF3VHJhbnNhY3Rpb25SZXNwb25zZRIOCgJpZBgCIAEoDFICaWQ=');
+/// Descriptor for `BroadcastTransactionResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List broadcastTransactionResponseDescriptor = $convert.base64Decode('ChxCcm9hZGNhc3RUcmFuc2FjdGlvblJlc3BvbnNlEg4KAmlkGAIgASgMUgJpZA==');
 @$core.Deprecated('Use getRawTransferTransactionRequestDescriptor instead')
 const GetRawTransferTransactionRequest$json = const {
   '1': 'GetRawTransferTransactionRequest',
@@ -255,7 +255,7 @@ const $core.Map<$core.String, $core.dynamic> TransactionServiceBase$json = const
   '2': const [
     const {'1': 'GetTransaction', '2': '.pactus.GetTransactionRequest', '3': '.pactus.GetTransactionResponse'},
     const {'1': 'CalculateFee', '2': '.pactus.CalculateFeeRequest', '3': '.pactus.CalculateFeeResponse'},
-    const {'1': 'SendRawTransaction', '2': '.pactus.SendRawTransactionRequest', '3': '.pactus.SendRawTransactionResponse'},
+    const {'1': 'BroadcastTransaction', '2': '.pactus.BroadcastTransactionRequest', '3': '.pactus.BroadcastTransactionResponse'},
     const {'1': 'GetRawTransferTransaction', '2': '.pactus.GetRawTransferTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
     const {'1': 'GetRawBondTransaction', '2': '.pactus.GetRawBondTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
     const {'1': 'GetRawUnBondTransaction', '2': '.pactus.GetRawUnBondTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
@@ -275,8 +275,8 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Transactio
   '.pactus.PayloadWithdraw': PayloadWithdraw$json,
   '.pactus.CalculateFeeRequest': CalculateFeeRequest$json,
   '.pactus.CalculateFeeResponse': CalculateFeeResponse$json,
-  '.pactus.SendRawTransactionRequest': SendRawTransactionRequest$json,
-  '.pactus.SendRawTransactionResponse': SendRawTransactionResponse$json,
+  '.pactus.BroadcastTransactionRequest': BroadcastTransactionRequest$json,
+  '.pactus.BroadcastTransactionResponse': BroadcastTransactionResponse$json,
   '.pactus.GetRawTransferTransactionRequest': GetRawTransferTransactionRequest$json,
   '.pactus.GetRawTransactionResponse': GetRawTransactionResponse$json,
   '.pactus.GetRawBondTransactionRequest': GetRawBondTransactionRequest$json,
@@ -285,4 +285,4 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Transactio
 };
 
 /// Descriptor for `Transaction`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode('CgtUcmFuc2FjdGlvbhJPCg5HZXRUcmFuc2FjdGlvbhIdLnBhY3R1cy5HZXRUcmFuc2FjdGlvblJlcXVlc3QaHi5wYWN0dXMuR2V0VHJhbnNhY3Rpb25SZXNwb25zZRJJCgxDYWxjdWxhdGVGZWUSGy5wYWN0dXMuQ2FsY3VsYXRlRmVlUmVxdWVzdBocLnBhY3R1cy5DYWxjdWxhdGVGZWVSZXNwb25zZRJbChJTZW5kUmF3VHJhbnNhY3Rpb24SIS5wYWN0dXMuU2VuZFJhd1RyYW5zYWN0aW9uUmVxdWVzdBoiLnBhY3R1cy5TZW5kUmF3VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdUcmFuc2ZlclRyYW5zYWN0aW9uEigucGFjdHVzLkdldFJhd1RyYW5zZmVyVHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2USYAoVR2V0UmF3Qm9uZFRyYW5zYWN0aW9uEiQucGFjdHVzLkdldFJhd0JvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3VHJhbnNhY3Rpb25SZXNwb25zZRJkChdHZXRSYXdVbkJvbmRUcmFuc2FjdGlvbhImLnBhY3R1cy5HZXRSYXdVbkJvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uEigucGFjdHVzLkdldFJhd1dpdGhkcmF3VHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2U=');
+final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode('CgtUcmFuc2FjdGlvbhJPCg5HZXRUcmFuc2FjdGlvbhIdLnBhY3R1cy5HZXRUcmFuc2FjdGlvblJlcXVlc3QaHi5wYWN0dXMuR2V0VHJhbnNhY3Rpb25SZXNwb25zZRJJCgxDYWxjdWxhdGVGZWUSGy5wYWN0dXMuQ2FsY3VsYXRlRmVlUmVxdWVzdBocLnBhY3R1cy5DYWxjdWxhdGVGZWVSZXNwb25zZRJhChRCcm9hZGNhc3RUcmFuc2FjdGlvbhIjLnBhY3R1cy5Ccm9hZGNhc3RUcmFuc2FjdGlvblJlcXVlc3QaJC5wYWN0dXMuQnJvYWRjYXN0VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdUcmFuc2ZlclRyYW5zYWN0aW9uEigucGFjdHVzLkdldFJhd1RyYW5zZmVyVHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2USYAoVR2V0UmF3Qm9uZFRyYW5zYWN0aW9uEiQucGFjdHVzLkdldFJhd0JvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3VHJhbnNhY3Rpb25SZXNwb25zZRJkChdHZXRSYXdVbkJvbmRUcmFuc2FjdGlvbhImLnBhY3R1cy5HZXRSYXdVbkJvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uEigucGFjdHVzLkdldFJhd1dpdGhkcmF3VHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2U=');

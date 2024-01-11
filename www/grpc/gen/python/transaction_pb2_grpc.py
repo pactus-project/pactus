@@ -24,10 +24,10 @@ class TransactionStub(object):
                 request_serializer=transaction__pb2.CalculateFeeRequest.SerializeToString,
                 response_deserializer=transaction__pb2.CalculateFeeResponse.FromString,
                 )
-        self.SendRawTransaction = channel.unary_unary(
-                '/pactus.Transaction/SendRawTransaction',
-                request_serializer=transaction__pb2.SendRawTransactionRequest.SerializeToString,
-                response_deserializer=transaction__pb2.SendRawTransactionResponse.FromString,
+        self.BroadcastTransaction = channel.unary_unary(
+                '/pactus.Transaction/BroadcastTransaction',
+                request_serializer=transaction__pb2.BroadcastTransactionRequest.SerializeToString,
+                response_deserializer=transaction__pb2.BroadcastTransactionResponse.FromString,
                 )
         self.GetRawTransferTransaction = channel.unary_unary(
                 '/pactus.Transaction/GetRawTransferTransaction',
@@ -66,7 +66,7 @@ class TransactionServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def SendRawTransaction(self, request, context):
+    def BroadcastTransaction(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -109,10 +109,10 @@ def add_TransactionServicer_to_server(servicer, server):
                     request_deserializer=transaction__pb2.CalculateFeeRequest.FromString,
                     response_serializer=transaction__pb2.CalculateFeeResponse.SerializeToString,
             ),
-            'SendRawTransaction': grpc.unary_unary_rpc_method_handler(
-                    servicer.SendRawTransaction,
-                    request_deserializer=transaction__pb2.SendRawTransactionRequest.FromString,
-                    response_serializer=transaction__pb2.SendRawTransactionResponse.SerializeToString,
+            'BroadcastTransaction': grpc.unary_unary_rpc_method_handler(
+                    servicer.BroadcastTransaction,
+                    request_deserializer=transaction__pb2.BroadcastTransactionRequest.FromString,
+                    response_serializer=transaction__pb2.BroadcastTransactionResponse.SerializeToString,
             ),
             'GetRawTransferTransaction': grpc.unary_unary_rpc_method_handler(
                     servicer.GetRawTransferTransaction,
@@ -179,7 +179,7 @@ class Transaction(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def SendRawTransaction(request,
+    def BroadcastTransaction(request,
             target,
             options=(),
             channel_credentials=None,
@@ -189,9 +189,9 @@ class Transaction(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/SendRawTransaction',
-            transaction__pb2.SendRawTransactionRequest.SerializeToString,
-            transaction__pb2.SendRawTransactionResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/BroadcastTransaction',
+            transaction__pb2.BroadcastTransactionRequest.SerializeToString,
+            transaction__pb2.BroadcastTransactionResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
