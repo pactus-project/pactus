@@ -101,18 +101,6 @@
   # Default is `2000`.
  ## max_size = 2000
 
-# `consensus` contains configuration options for the consensus module.
-[consensus]
-
-  # `change_proposer_timeout` describes how long to wait for a proposal in
-  # each round before requesting a change of proposer.
-  # Default is `6s`.
- ## change_proposer_timeout = "6s"
-
-  # `change_proposer_delta` increases `change_proposer_timeout` with each round.
-  # Default is `2s`.
- ## change_proposer_delta = "2s"
-
 # `logger` contains configuration options for the logger.
 [logger]
   # `colorful` indicates whether log can be colorful or not.
