@@ -25,10 +25,8 @@ func (s *newHeightState) decide() {
 	s.active = s.bcState.IsInCommittee(s.valKey.Address())
 	s.logger.Info("entering new height", "height", s.height, "active", s.active)
 
-	if s.active {
-		sleep := s.bcState.LastBlockTime().Add(s.bcState.Params().BlockInterval()).Sub(util.Now())
-		s.scheduleTimeout(sleep, s.height, s.round, tickerTargetNewHeight)
-	}
+	sleep := s.bcState.LastBlockTime().Add(s.bcState.Params().BlockInterval()).Sub(util.Now())
+	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetNewHeight)
 }
 
 func (s *newHeightState) onAddVote(_ *vote.Vote) {
@@ -49,7 +47,9 @@ func (s *newHeightState) onSetProposal(_ *proposal.Proposal) {
 
 func (s *newHeightState) onTimeout(t *ticker) {
 	if t.Target == tickerTargetNewHeight {
-		s.enterNewState(s.proposeState)
+		if s.active {
+			s.enterNewState(s.proposeState)
+		}
 	}
 }
 
