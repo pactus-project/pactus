@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.20.1](https://github.com/pactus-project/pactus/compare/v0.20.0...v0.20.1) (2024-01-16)
+
+### Fix
+
+- **consensus**: detect if the system time is behind the network ([#939](https://github.com/pactus-project/pactus/pull/939))
+
 ## [0.20.0](https://github.com/pactus-project/pactus/compare/v0.19.0...v0.20.0) (2024-01-11)
 
 ### Feat
