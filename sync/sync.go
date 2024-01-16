@@ -225,7 +225,7 @@ func (sync *synchronizer) sayHello(to peer.ID) {
 		sync.config.Services(),
 		sync.state.LastBlockHash(),
 		sync.state.Genesis().Hash(),
-		sync.network.Name(),
+		sync.network.ReachabilityStatus(),
 	)
 	msg.Sign(sync.valKeys)
 
