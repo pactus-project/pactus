@@ -25,12 +25,22 @@ func (s *newHeightState) decide() {
 	s.active = s.bcState.IsInCommittee(s.valKey.Address())
 	s.logger.Info("entering new height", "height", s.height, "active", s.active)
 
-	sleep := s.bcState.LastBlockTime().Add(s.bcState.Params().BlockInterval()).Sub(util.Now())
-	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetNewHeight)
+	if s.active {
+		sleep := s.bcState.LastBlockTime().Add(s.bcState.Params().BlockInterval()).Sub(util.Now())
+		s.scheduleTimeout(sleep, s.height, s.round, tickerTargetNewHeight)
+	}
 }
 
 func (s *newHeightState) onAddVote(_ *vote.Vote) {
-	// Ignore votes
+	prepares := s.log.PrepareVoteSet(s.round)
+	if prepares.HasQuorumHash() {
+		// Added logic to detect when the network majority has voted for a block,
+		// but the new height timer has not yet started. This situation can occur if the system
+		// time is lagging behind the network time.
+		s.logger.Warn("detected network majority voting for a block, but the new height timer has not started yet. " +
+			"System time may be behind the network.")
+		s.enterNewState(s.proposeState)
+	}
 }
 
 func (s *newHeightState) onSetProposal(_ *proposal.Proposal) {
@@ -39,9 +49,7 @@ func (s *newHeightState) onSetProposal(_ *proposal.Proposal) {
 
 func (s *newHeightState) onTimeout(t *ticker) {
 	if t.Target == tickerTargetNewHeight {
-		if s.active {
-			s.enterNewState(s.proposeState)
-		}
+		s.enterNewState(s.proposeState)
 	}
 }
 
