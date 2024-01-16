@@ -12,6 +12,7 @@ func TestDefaultConfigCheck(t *testing.T) {
 	c2 := DefaultConfig()
 	c3 := DefaultConfig()
 	c4 := DefaultConfig()
+	c5 := DefaultConfig()
 	assert.NoError(t, c1.BasicCheck())
 
 	c2.ChangeProposerDelta = 0 * time.Second
@@ -22,6 +23,12 @@ func TestDefaultConfigCheck(t *testing.T) {
 
 	c4.ChangeProposerTimeout = -1 * time.Second
 	assert.Error(t, c4.BasicCheck())
+
+	c5.MinimumAvailabilityScore = 1.5
+	assert.Error(t, c5.BasicCheck())
+
+	c5.MinimumAvailabilityScore = -0.8
+	assert.Error(t, c5.BasicCheck())
 }
 
 func TestCalculateChangeProposerTimeout(t *testing.T) {
