@@ -28,6 +28,13 @@ func buildInitCmd(parentCmd *cobra.Command) {
 
 	restoreOpt := initCmd.Flags().String("restore", "", "Restore the default_wallet using a mnemonic (seed phrase)")
 
+	passwordOpt := initCmd.Flags().StringP("password", "p", "", "wallet password")
+
+	entropyOpt := initCmd.Flags().IntP("entropy", "e", 128, "entropy for seed generation, 128 (12 pass phrase) is default")
+
+	valNumOpt := initCmd.Flags().IntP("val-num", "", 7, "number of validator(s) to be created,"+
+		"default 7, minimum 1, maximum 32")
+
 	initCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
 		if !util.IsDirNotExistsOrEmpty(workingDir) {
@@ -37,7 +44,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		}
 		var mnemonic string
 		if *restoreOpt == "" {
-			mnemonic, _ = wallet.GenerateMnemonic(128)
+			mnemonic, _ = wallet.GenerateMnemonic(*entropyOpt)
 			cmd.PrintLine()
 			cmd.PrintInfoMsgf("Your wallet seed is:")
 			cmd.PrintInfoMsgBoldf("   " + mnemonic)
@@ -53,15 +60,12 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			err := wallet.CheckMnemonic(*restoreOpt)
 			cmd.FatalErrorCheck(err)
 		}
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("Enter a password for wallet")
-		password := cmd.PromptPassword("Password", true)
 
-		cmd.PrintLine()
-		cmd.PrintInfoMsgBoldf("How many validators do you want to create?")
-		cmd.PrintInfoMsgf("Each node can run up to 32 validators, and each validator can hold up to 1000 staked coins.")
-		cmd.PrintInfoMsgf("You can define validators based on the amount of coins you want to stake.")
-		numValidators := cmd.PromptInputWithRange("Number of Validators", 7, 1, 32)
+		if *valNumOpt < 1 || *valNumOpt > 32 {
+			cmd.PrintErrorMsgf("%v is not in valid range of validator number, it should be between 1 and 32", *valNumOpt)
+
+			return
+		}
 
 		chain := genesis.Mainnet
 		// The order of checking the network (chain type) matters here.
@@ -71,7 +75,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		if *localnetOpt {
 			chain = genesis.Localnet
 		}
-		validatorAddrs, rewardAddrs, err := cmd.CreateNode(numValidators, chain, workingDir, mnemonic, password)
+		validatorAddrs, rewardAddrs, err := cmd.CreateNode(*valNumOpt, chain, workingDir, mnemonic, *passwordOpt)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
