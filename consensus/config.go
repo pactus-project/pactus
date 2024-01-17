@@ -12,7 +12,7 @@ func DefaultConfig() *Config {
 	return &Config{
 		ChangeProposerTimeout:    8 * time.Second,
 		ChangeProposerDelta:      4 * time.Second,
-		MinimumAvailabilityScore: 0.8,
+		MinimumAvailabilityScore: 0.9,
 	}
 }
 

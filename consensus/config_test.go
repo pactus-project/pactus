@@ -16,19 +16,19 @@ func TestDefaultConfigCheck(t *testing.T) {
 	assert.NoError(t, c1.BasicCheck())
 
 	c2.ChangeProposerDelta = 0 * time.Second
-	assert.Error(t, c2.BasicCheck())
+	assert.ErrorIs(t, c2.BasicCheck(), ConfigError{Reason: "change proposer delta can't be negative"})
 
 	c3.ChangeProposerTimeout = 0 * time.Second
-	assert.Error(t, c3.BasicCheck())
+	assert.ErrorIs(t, c3.BasicCheck(), ConfigError{Reason: "timeout for change proposer can't be negative"})
 
 	c4.ChangeProposerTimeout = -1 * time.Second
-	assert.Error(t, c4.BasicCheck())
+	assert.ErrorIs(t, c4.BasicCheck(), ConfigError{Reason: "timeout for change proposer can't be negative"})
 
 	c5.MinimumAvailabilityScore = 1.5
-	assert.Error(t, c5.BasicCheck())
+	assert.ErrorIs(t, c5.BasicCheck(), ConfigError{Reason: "minimum availability score can't be negative or more than 1"})
 
 	c5.MinimumAvailabilityScore = -0.8
-	assert.Error(t, c5.BasicCheck())
+	assert.ErrorIs(t, c5.BasicCheck(), ConfigError{Reason: "minimum availability score can't be negative or more than 1"})
 }
 
 func TestCalculateChangeProposerTimeout(t *testing.T) {
