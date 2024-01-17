@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// buildInitCmd builds a sub-command to initialized the Pactus blockchain node.
+// buildInitCmd builds a sub-command to initialize the Pactus blockchain node.
 func buildInitCmd(parentCmd *cobra.Command) {
 	initCmd := &cobra.Command{
 		Use:   "init",
@@ -18,22 +18,21 @@ func buildInitCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(initCmd)
 	workingDirOpt := initCmd.Flags().StringP("working-dir", "w",
-		cmd.PactusDefaultHomeDir(), "A path to the working directory to save the wallet and node files")
+		cmd.PactusDefaultHomeDir(), "the path to the working directory to save the wallet and node files")
 
 	testnetOpt := initCmd.Flags().Bool("testnet", true,
-		"Initialize working directory for joining the testnet") // TODO: make it false after mainnet launch
+		"initialize working directory for joining the testnet") // TODO: make it false after mainnet launch
 
 	localnetOpt := initCmd.Flags().Bool("localnet", false,
-		"Initialize working directory for localnet (for developers)")
+		"initialize working directory for localnet for developers")
 
-	restoreOpt := initCmd.Flags().String("restore", "", "Restore the default_wallet using a mnemonic (seed phrase)")
+	restoreOpt := initCmd.Flags().String("restore", "", "restore the 'default_wallet' using a mnemonic or seed phrase")
 
-	passwordOpt := initCmd.Flags().StringP("password", "p", "", "wallet password")
+	passwordOpt := initCmd.Flags().StringP("password", "p", "", "the wallet password")
 
-	entropyOpt := initCmd.Flags().IntP("entropy", "e", 128, "entropy for seed generation, 128 (12 pass phrase) is default")
+	entropyOpt := initCmd.Flags().IntP("entropy", "e", 128, "entropy bits for seed generation. range: 128 to 256")
 
-	valNumOpt := initCmd.Flags().IntP("val-num", "", 7, "number of validator(s) to be created,"+
-		"default 7, minimum 1, maximum 32")
+	valNumOpt := initCmd.Flags().IntP("val-num", "", 0, "number of validators to be created. range: 1 to 32")
 
 	initCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
@@ -49,7 +48,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			cmd.PrintInfoMsgf("Your wallet seed is:")
 			cmd.PrintInfoMsgBoldf("   " + mnemonic)
 			cmd.PrintLine()
-			cmd.PrintWarnMsgf("Write down this seed on a piece of paper to recover your validator key in future.")
+			cmd.PrintWarnMsgf("Write down this seed on a piece of paper to recover your validator key in the future.")
 			cmd.PrintLine()
 			confirmed := cmd.PromptConfirm("Do you want to continue")
 			if !confirmed {
