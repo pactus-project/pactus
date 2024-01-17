@@ -26,24 +26,18 @@ func (s *proposeState) decide() {
 	s.cpDecided = -1
 	s.cpWeakValidity = nil
 
-	s.enterNewState(s.prepareState)
-	/*
-		Disabling availibility score on Testnet
-		// TODO: enable be on the Mainnet
-		// TODO: write test for me
+	// TODO: write test for me
+	score := s.bcState.AvailabilityScore(proposer.Number())
 
-		score := s.bcState.AvailabilityScore(proposer.Number())
-
-		// Based on PIP-19, if the Availability Score is less than 0.9,
-		// we initiate the Change-Proposer phase.
-		if score < 0.80 { // TODO: add it to the config
-			s.logger.Info("availability score of proposer is low",
-				"score", score, "proposer", proposer.Address())
-			s.startChangingProposer()
-		} else {
-			s.enterNewState(s.prepareState)
-		}
-	*/
+	// Based on PIP-19, if the Availability Score is less than 0.9,
+	// we initiate the Change-Proposer phase.
+	if score < s.config.MinimumAvailabilityScore {
+		s.logger.Info("availability score of proposer is low",
+			"score", score, "proposer", proposer.Address())
+		s.startChangingProposer()
+	} else {
+		s.enterNewState(s.prepareState)
+	}
 }
 
 func (s *proposeState) createProposal(height uint32, round int16) {

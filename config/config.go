@@ -30,7 +30,7 @@ type Config struct {
 	Network   *network.Config   `toml:"network"`
 	Sync      *sync.Config      `toml:"sync"`
 	TxPool    *txpool.Config    `toml:"tx_pool"`
-	Consensus *consensus.Config `toml:"consensus"`
+	Consensus *consensus.Config `toml:"-"`
 	Logger    *logger.Config    `toml:"logger"`
 	GRPC      *grpc.Config      `toml:"grpc"`
 	HTTP      *http.Config      `toml:"http"`
