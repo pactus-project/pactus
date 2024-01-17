@@ -60,12 +60,16 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			cmd.FatalErrorCheck(err)
 		}
 
-		if *valNumOpt == 0 || *valNumOpt < 1 || *valNumOpt > 32 {
+		if *valNumOpt == 0 {
 			cmd.PrintLine()
 			cmd.PrintInfoMsgBoldf("How many validators do you want to create?")
 			cmd.PrintInfoMsgf("Each node can run up to 32 validators, and each validator can hold up to 1000 staked coins.")
 			cmd.PrintInfoMsgf("You can define validators based on the amount of coins you want to stake.")
 			*valNumOpt = cmd.PromptInputWithRange("Number of Validators", 7, 1, 32)
+		} else if *valNumOpt < 1 || *valNumOpt > 32 {
+			cmd.PrintErrorMsgf("%v is not in valid range of validator number, it should be between 1 and 32", *valNumOpt)
+
+			return
 		}
 
 		chain := genesis.Mainnet
