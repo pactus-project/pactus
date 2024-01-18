@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 	"fmt"
-	"path"
+	"path/filepath"
 
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/tx"
@@ -37,7 +37,7 @@ func newWalletServer(server *Server, chainType genesis.ChainType) *walletServer 
 }
 
 func (s *walletServer) walletPath(name string) string {
-	return util.MakeAbs(path.Join(s.config.WalletsDir, name))
+	return util.MakeAbs(filepath.Join(s.config.WalletsDir, name))
 }
 
 func (s *walletServer) CreateWallet(_ context.Context,
