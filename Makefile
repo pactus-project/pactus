@@ -1,4 +1,6 @@
 PACKAGES=$(shell go list ./... | grep -v 'tests' | grep -v 'grpc/gen')
+PROTO_SOURCES = $(wildcard *.proto)
+COBRA_SOURCES = $(patsubst %.proto,%.cobra.pb.go,$(PROTO_SOURCES))
 
 ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe
@@ -19,6 +21,7 @@ devtools:
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.12
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+	go install go.amplifyedge.org/protoc-gen-cobra
 	go install github.com/bufbuild/buf/cmd/buf@v1.25.0
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/rakyll/statik@v0.1
@@ -28,6 +31,7 @@ devtools:
 build:
 	go build -o ./build/pactus-daemon$(EXE) ./cmd/daemon
 	go build -o ./build/pactus-wallet$(EXE) ./cmd/wallet
+	go build -o ./build/pactus-ctl$(EXE) 	./cmd/ctl
 
 build_race:
 	go build -race -o ./build/pactus-daemon$(EXE) ./cmd/daemon
@@ -58,6 +62,7 @@ proto:
 	$(RM) www/grpc/gen
 	cd www/grpc/buf && buf generate --template buf.gen.yaml ../proto
 	cd www/grpc/ && statik -m -f -src swagger-ui/
+	cd www/grpc/proto &&
 
 # Generate static assets for Swagger-UI
 	cd www/grpc/ && statik -m -f -src swagger-ui/
