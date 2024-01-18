@@ -275,7 +275,7 @@ func TrapSignal(cleanupFunc func()) {
 	}()
 }
 
-// TODO: write test for me
+// TODO: write test for me.
 func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	mnemonic string, walletPassword string,
 ) ([]string, []string, error) {
@@ -343,7 +343,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	return validatorAddrs, rewardAddrs, nil
 }
 
-// TODO: write test for me
+// TODO: write test for me.
 func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool)) (
 	*node.Node, *wallet.Wallet, error,
 ) {
@@ -487,7 +487,7 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	return gen
 }
 
-// TODO: write test for me
+// TODO: write test for me.
 func MakeConfig(genDoc *genesis.Genesis, confPath, walletsDir string) (*config.Config, error) {
 	var defConf *config.Config
 	switch genDoc.ChainType() {
@@ -544,12 +544,12 @@ func MakeConfig(genDoc *genesis.Genesis, confPath, walletsDir string) (*config.C
 	}
 
 	// Now we can update the private filed, if any
-	// genParams := genDoc.Params()
+	genParams := genDoc.Params()
 
-	// conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
-	// conf.Store.SortitionCacheSize = genParams.SortitionInterval
-	// conf.Store.AccountCacheSize = 1024
-	// conf.Store.PublicKeyCacheSize = 1024
+	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
+	conf.Store.SortitionCacheSize = genParams.SortitionInterval
+	conf.Store.AccountCacheSize = 1024
+	conf.Store.PublicKeyCacheSize = 1024
 
 	conf.GRPC.DefaluWalletName = DefaultWalletName
 	conf.GRPC.WalletsDir = walletsDir

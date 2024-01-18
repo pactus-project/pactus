@@ -1,7 +1,7 @@
 package store
 
 import (
-	"path"
+	"path/filepath"
 
 	"github.com/pactus-project/pactus/util"
 )
@@ -31,7 +31,7 @@ func (conf *Config) DataPath() string {
 }
 
 func (conf *Config) StorePath() string {
-	return path.Join(conf.DataPath(), "store.db")
+	return filepath.Join(conf.DataPath(), "store.db")
 }
 
 // BasicCheck performs basic checks on the configuration.

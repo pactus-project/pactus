@@ -7,26 +7,10 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/manifoldco/promptui"
 	"github.com/stretchr/testify/assert"
 )
 
-// Mock promptui.Prompt implementation for testing
-type MockPrompt struct {
-	Label     string
-	Mask      rune
-	Validate  func(string) error
-	Default   string
-	IsConfirm bool
-	IsVimMode bool
-	Pointer   promptui.Pointer
-}
-
-func (m *MockPrompt) Run() (string, error) {
-	return m.Default, m.Validate(m.Default)
-}
-
-// captureOutput is a helper function to capture the printed output of a function
+// captureOutput is a helper function to capture the printed output of a function.
 func captureOutput(f func()) string {
 	// Redirect stdout to a buffer
 	oldStdout := os.Stdout
@@ -37,7 +21,7 @@ func captureOutput(f func()) string {
 	outC := make(chan string)
 	go func() {
 		var buf bytes.Buffer
-		io.Copy(&buf, r)
+		_, _ = io.Copy(&buf, r)
 		outC <- buf.String()
 	}()
 
@@ -48,6 +32,7 @@ func captureOutput(f func()) string {
 	w.Close()
 	os.Stdout = oldStdout
 	out := <-outC
+
 	return out
 }
 

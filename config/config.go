@@ -210,4 +210,3 @@ func (conf *Config) BasicCheck() error {
 
 	return conf.HTTP.BasicCheck()
 }
-
