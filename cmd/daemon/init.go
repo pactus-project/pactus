@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// buildInitCmd builds a sub-command to initialized the Pactus blockchain node.
+// buildInitCmd builds a sub-command to initialize the Pactus blockchain node.
 func buildInitCmd(parentCmd *cobra.Command) {
 	initCmd := &cobra.Command{
 		Use:   "init",
@@ -18,15 +18,21 @@ func buildInitCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(initCmd)
 	workingDirOpt := initCmd.Flags().StringP("working-dir", "w",
-		cmd.PactusDefaultHomeDir(), "A path to the working directory to save the wallet and node files")
+		cmd.PactusDefaultHomeDir(), "the path to the working directory to save the wallet and node files")
 
 	testnetOpt := initCmd.Flags().Bool("testnet", true,
-		"Initialize working directory for joining the testnet") // TODO: make it false after mainnet launch
+		"initialize working directory for joining the testnet") // TODO: make it false after mainnet launch
 
 	localnetOpt := initCmd.Flags().Bool("localnet", false,
-		"Initialize working directory for localnet (for developers)")
+		"initialize working directory for localnet for developers")
 
-	restoreOpt := initCmd.Flags().String("restore", "", "Restore the default_wallet using a mnemonic (seed phrase)")
+	restoreOpt := initCmd.Flags().String("restore", "", "restore the 'default_wallet' using a mnemonic or seed phrase")
+
+	passwordOpt := initCmd.Flags().StringP("password", "p", "", "the wallet password")
+
+	entropyOpt := initCmd.Flags().IntP("entropy", "e", 128, "entropy bits for seed generation. range: 128 to 256")
+
+	valNumOpt := initCmd.Flags().IntP("val-num", "", 0, "number of validators to be created. range: 1 to 32")
 
 	initCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
@@ -37,12 +43,12 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		}
 		var mnemonic string
 		if *restoreOpt == "" {
-			mnemonic, _ = wallet.GenerateMnemonic(128)
+			mnemonic, _ = wallet.GenerateMnemonic(*entropyOpt)
 			cmd.PrintLine()
 			cmd.PrintInfoMsgf("Your wallet seed is:")
 			cmd.PrintInfoMsgBoldf("   " + mnemonic)
 			cmd.PrintLine()
-			cmd.PrintWarnMsgf("Write down this seed on a piece of paper to recover your validator key in future.")
+			cmd.PrintWarnMsgf("Write down this seed on a piece of paper to recover your validator key in the future.")
 			cmd.PrintLine()
 			confirmed := cmd.PromptConfirm("Do you want to continue")
 			if !confirmed {
@@ -53,15 +59,18 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			err := wallet.CheckMnemonic(*restoreOpt)
 			cmd.FatalErrorCheck(err)
 		}
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("Enter a password for wallet")
-		password := cmd.PromptPassword("Password", true)
 
-		cmd.PrintLine()
-		cmd.PrintInfoMsgBoldf("How many validators do you want to create?")
-		cmd.PrintInfoMsgf("Each node can run up to 32 validators, and each validator can hold up to 1000 staked coins.")
-		cmd.PrintInfoMsgf("You can define validators based on the amount of coins you want to stake.")
-		numValidators := cmd.PromptInputWithRange("Number of Validators", 7, 1, 32)
+		if *valNumOpt == 0 {
+			cmd.PrintLine()
+			cmd.PrintInfoMsgBoldf("How many validators do you want to create?")
+			cmd.PrintInfoMsgf("Each node can run up to 32 validators, and each validator can hold up to 1000 staked coins.")
+			cmd.PrintInfoMsgf("You can define validators based on the amount of coins you want to stake.")
+			*valNumOpt = cmd.PromptInputWithRange("Number of Validators", 7, 1, 32)
+		} else if *valNumOpt < 1 || *valNumOpt > 32 {
+			cmd.PrintErrorMsgf("%v is not in valid range of validator number, it should be between 1 and 32", *valNumOpt)
+
+			return
+		}
 
 		chain := genesis.Mainnet
 		// The order of checking the network (chain type) matters here.
@@ -71,7 +80,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		if *localnetOpt {
 			chain = genesis.Localnet
 		}
-		validatorAddrs, rewardAddrs, err := cmd.CreateNode(numValidators, chain, workingDir, mnemonic, password)
+		validatorAddrs, rewardAddrs, err := cmd.CreateNode(*valNumOpt, chain, workingDir, mnemonic, *passwordOpt)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
