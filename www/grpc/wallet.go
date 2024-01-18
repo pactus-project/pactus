@@ -70,7 +70,7 @@ func (s *walletServer) LoadWallet(_ context.Context,
 	req *pactus.LoadWalletRequest,
 ) (*pactus.LoadWalletResponse, error) {
 	_, ok := s.wallets[req.WalletName]
-	if !ok {
+	if ok {
 		// TODO: define special codes for errors
 		return nil, status.Errorf(codes.AlreadyExists, "wallet already loaded")
 	}

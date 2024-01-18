@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -133,8 +132,8 @@ func TestGetRawTransaction(t *testing.T) {
 				Fee:      trx.Fee(),
 				Memo:     trx.Memo(),
 			})
-		assert.Nil(t, err)
-		fmt.Println(res.RawTransaction)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, res.RawTransaction)
 	})
 
 	t.Run("Bond", func(t *testing.T) {
@@ -150,8 +149,8 @@ func TestGetRawTransaction(t *testing.T) {
 				Fee:       trx.Fee(),
 				Memo:      trx.Memo(),
 			})
-		assert.Nil(t, err)
-		fmt.Println(res.RawTransaction)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, res.RawTransaction)
 	})
 
 	t.Run("UnBond", func(t *testing.T) {
@@ -163,8 +162,8 @@ func TestGetRawTransaction(t *testing.T) {
 				ValidatorAddress: trx.Payload().Signer().String(),
 				Memo:             trx.Memo(),
 			})
-		assert.Nil(t, err)
-		fmt.Println(res.RawTransaction)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, res.RawTransaction)
 	})
 
 	t.Run("Withdraw", func(t *testing.T) {
@@ -179,9 +178,9 @@ func TestGetRawTransaction(t *testing.T) {
 				Amount:           trx.Payload().Value(),
 				Memo:             trx.Memo(),
 			})
-		fmt.Println(err)
-		assert.Nil(t, err)
-		fmt.Println(res.RawTransaction)
+
+		assert.NoError(t, err)
+		assert.NotEmpty(t, res.RawTransaction)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
