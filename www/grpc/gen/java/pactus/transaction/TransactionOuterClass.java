@@ -2636,10 +2636,10 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>bytes signed_tx = 1 [json_name = "signedTx"];</code>
-     * @return The signedTx.
+     * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
+     * @return The signedRawTransaction.
      */
-    com.google.protobuf.ByteString getSignedTx();
+    com.google.protobuf.ByteString getSignedRawTransaction();
   }
   /**
    * Protobuf type {@code pactus.BroadcastTransactionRequest}
@@ -2654,7 +2654,7 @@ public final class TransactionOuterClass {
       super(builder);
     }
     private BroadcastTransactionRequest() {
-      signedTx_ = com.google.protobuf.ByteString.EMPTY;
+      signedRawTransaction_ = com.google.protobuf.ByteString.EMPTY;
     }
 
     @java.lang.Override
@@ -2682,15 +2682,15 @@ public final class TransactionOuterClass {
               pactus.transaction.TransactionOuterClass.BroadcastTransactionRequest.class, pactus.transaction.TransactionOuterClass.BroadcastTransactionRequest.Builder.class);
     }
 
-    public static final int SIGNED_TX_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString signedTx_;
+    public static final int SIGNED_RAW_TRANSACTION_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString signedRawTransaction_;
     /**
-     * <code>bytes signed_tx = 1 [json_name = "signedTx"];</code>
-     * @return The signedTx.
+     * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
+     * @return The signedRawTransaction.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getSignedTx() {
-      return signedTx_;
+    public com.google.protobuf.ByteString getSignedRawTransaction() {
+      return signedRawTransaction_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -2707,8 +2707,8 @@ public final class TransactionOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!signedTx_.isEmpty()) {
-        output.writeBytes(1, signedTx_);
+      if (!signedRawTransaction_.isEmpty()) {
+        output.writeBytes(1, signedRawTransaction_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -2719,9 +2719,9 @@ public final class TransactionOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!signedTx_.isEmpty()) {
+      if (!signedRawTransaction_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, signedTx_);
+          .computeBytesSize(1, signedRawTransaction_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -2738,8 +2738,8 @@ public final class TransactionOuterClass {
       }
       pactus.transaction.TransactionOuterClass.BroadcastTransactionRequest other = (pactus.transaction.TransactionOuterClass.BroadcastTransactionRequest) obj;
 
-      if (!getSignedTx()
-          .equals(other.getSignedTx())) return false;
+      if (!getSignedRawTransaction()
+          .equals(other.getSignedRawTransaction())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -2751,8 +2751,8 @@ public final class TransactionOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + SIGNED_TX_FIELD_NUMBER;
-      hash = (53 * hash) + getSignedTx().hashCode();
+      hash = (37 * hash) + SIGNED_RAW_TRANSACTION_FIELD_NUMBER;
+      hash = (53 * hash) + getSignedRawTransaction().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2881,7 +2881,7 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        signedTx_ = com.google.protobuf.ByteString.EMPTY;
+        signedRawTransaction_ = com.google.protobuf.ByteString.EMPTY;
 
         return this;
       }
@@ -2909,7 +2909,7 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public pactus.transaction.TransactionOuterClass.BroadcastTransactionRequest buildPartial() {
         pactus.transaction.TransactionOuterClass.BroadcastTransactionRequest result = new pactus.transaction.TransactionOuterClass.BroadcastTransactionRequest(this);
-        result.signedTx_ = signedTx_;
+        result.signedRawTransaction_ = signedRawTransaction_;
         onBuilt();
         return result;
       }
@@ -2958,8 +2958,8 @@ public final class TransactionOuterClass {
 
       public Builder mergeFrom(pactus.transaction.TransactionOuterClass.BroadcastTransactionRequest other) {
         if (other == pactus.transaction.TransactionOuterClass.BroadcastTransactionRequest.getDefaultInstance()) return this;
-        if (other.getSignedTx() != com.google.protobuf.ByteString.EMPTY) {
-          setSignedTx(other.getSignedTx());
+        if (other.getSignedRawTransaction() != com.google.protobuf.ByteString.EMPTY) {
+          setSignedRawTransaction(other.getSignedRawTransaction());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -2988,7 +2988,7 @@ public final class TransactionOuterClass {
                 done = true;
                 break;
               case 10: {
-                signedTx_ = input.readBytes();
+                signedRawTransaction_ = input.readBytes();
 
                 break;
               } // case 10
@@ -3008,36 +3008,36 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString signedTx_ = com.google.protobuf.ByteString.EMPTY;
+      private com.google.protobuf.ByteString signedRawTransaction_ = com.google.protobuf.ByteString.EMPTY;
       /**
-       * <code>bytes signed_tx = 1 [json_name = "signedTx"];</code>
-       * @return The signedTx.
+       * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
+       * @return The signedRawTransaction.
        */
       @java.lang.Override
-      public com.google.protobuf.ByteString getSignedTx() {
-        return signedTx_;
+      public com.google.protobuf.ByteString getSignedRawTransaction() {
+        return signedRawTransaction_;
       }
       /**
-       * <code>bytes signed_tx = 1 [json_name = "signedTx"];</code>
-       * @param value The signedTx to set.
+       * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
+       * @param value The signedRawTransaction to set.
        * @return This builder for chaining.
        */
-      public Builder setSignedTx(com.google.protobuf.ByteString value) {
+      public Builder setSignedRawTransaction(com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   
-        signedTx_ = value;
+        signedRawTransaction_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>bytes signed_tx = 1 [json_name = "signedTx"];</code>
+       * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
        * @return This builder for chaining.
        */
-      public Builder clearSignedTx() {
+      public Builder clearSignedRawTransaction() {
         
-        signedTx_ = getDefaultInstance().getSignedTx();
+        signedRawTransaction_ = getDefaultInstance().getSignedRawTransaction();
         onChanged();
         return this;
       }
@@ -6625,48 +6625,48 @@ public final class TransactionOuterClass {
     int getLockTime();
 
     /**
-     * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
+     * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
      * @return The validatorAddress.
      */
     java.lang.String getValidatorAddress();
     /**
-     * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
+     * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
      * @return The bytes for validatorAddress.
      */
     com.google.protobuf.ByteString
         getValidatorAddressBytes();
 
     /**
-     * <code>string account_address = 4 [json_name = "accountAddress"];</code>
+     * <code>string account_address = 3 [json_name = "accountAddress"];</code>
      * @return The accountAddress.
      */
     java.lang.String getAccountAddress();
     /**
-     * <code>string account_address = 4 [json_name = "accountAddress"];</code>
+     * <code>string account_address = 3 [json_name = "accountAddress"];</code>
      * @return The bytes for accountAddress.
      */
     com.google.protobuf.ByteString
         getAccountAddressBytes();
 
     /**
-     * <code>int64 fee = 5 [json_name = "fee"];</code>
+     * <code>int64 fee = 4 [json_name = "fee"];</code>
      * @return The fee.
      */
     long getFee();
 
     /**
-     * <code>int64 amount = 6 [json_name = "amount"];</code>
+     * <code>int64 amount = 5 [json_name = "amount"];</code>
      * @return The amount.
      */
     long getAmount();
 
     /**
-     * <code>string memo = 7 [json_name = "memo"];</code>
+     * <code>string memo = 6 [json_name = "memo"];</code>
      * @return The memo.
      */
     java.lang.String getMemo();
     /**
-     * <code>string memo = 7 [json_name = "memo"];</code>
+     * <code>string memo = 6 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
     com.google.protobuf.ByteString
@@ -6726,10 +6726,10 @@ public final class TransactionOuterClass {
       return lockTime_;
     }
 
-    public static final int VALIDATOR_ADDRESS_FIELD_NUMBER = 3;
+    public static final int VALIDATOR_ADDRESS_FIELD_NUMBER = 2;
     private volatile java.lang.Object validatorAddress_;
     /**
-     * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
+     * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
      * @return The validatorAddress.
      */
     @java.lang.Override
@@ -6746,7 +6746,7 @@ public final class TransactionOuterClass {
       }
     }
     /**
-     * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
+     * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
      * @return The bytes for validatorAddress.
      */
     @java.lang.Override
@@ -6764,10 +6764,10 @@ public final class TransactionOuterClass {
       }
     }
 
-    public static final int ACCOUNT_ADDRESS_FIELD_NUMBER = 4;
+    public static final int ACCOUNT_ADDRESS_FIELD_NUMBER = 3;
     private volatile java.lang.Object accountAddress_;
     /**
-     * <code>string account_address = 4 [json_name = "accountAddress"];</code>
+     * <code>string account_address = 3 [json_name = "accountAddress"];</code>
      * @return The accountAddress.
      */
     @java.lang.Override
@@ -6784,7 +6784,7 @@ public final class TransactionOuterClass {
       }
     }
     /**
-     * <code>string account_address = 4 [json_name = "accountAddress"];</code>
+     * <code>string account_address = 3 [json_name = "accountAddress"];</code>
      * @return The bytes for accountAddress.
      */
     @java.lang.Override
@@ -6802,10 +6802,10 @@ public final class TransactionOuterClass {
       }
     }
 
-    public static final int FEE_FIELD_NUMBER = 5;
+    public static final int FEE_FIELD_NUMBER = 4;
     private long fee_;
     /**
-     * <code>int64 fee = 5 [json_name = "fee"];</code>
+     * <code>int64 fee = 4 [json_name = "fee"];</code>
      * @return The fee.
      */
     @java.lang.Override
@@ -6813,10 +6813,10 @@ public final class TransactionOuterClass {
       return fee_;
     }
 
-    public static final int AMOUNT_FIELD_NUMBER = 6;
+    public static final int AMOUNT_FIELD_NUMBER = 5;
     private long amount_;
     /**
-     * <code>int64 amount = 6 [json_name = "amount"];</code>
+     * <code>int64 amount = 5 [json_name = "amount"];</code>
      * @return The amount.
      */
     @java.lang.Override
@@ -6824,10 +6824,10 @@ public final class TransactionOuterClass {
       return amount_;
     }
 
-    public static final int MEMO_FIELD_NUMBER = 7;
+    public static final int MEMO_FIELD_NUMBER = 6;
     private volatile java.lang.Object memo_;
     /**
-     * <code>string memo = 7 [json_name = "memo"];</code>
+     * <code>string memo = 6 [json_name = "memo"];</code>
      * @return The memo.
      */
     @java.lang.Override
@@ -6844,7 +6844,7 @@ public final class TransactionOuterClass {
       }
     }
     /**
-     * <code>string memo = 7 [json_name = "memo"];</code>
+     * <code>string memo = 6 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
     @java.lang.Override
@@ -6880,19 +6880,19 @@ public final class TransactionOuterClass {
         output.writeUInt32(1, lockTime_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(validatorAddress_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, validatorAddress_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, validatorAddress_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(accountAddress_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, accountAddress_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, accountAddress_);
       }
       if (fee_ != 0L) {
-        output.writeInt64(5, fee_);
+        output.writeInt64(4, fee_);
       }
       if (amount_ != 0L) {
-        output.writeInt64(6, amount_);
+        output.writeInt64(5, amount_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, memo_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, memo_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -6908,21 +6908,21 @@ public final class TransactionOuterClass {
           .computeUInt32Size(1, lockTime_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(validatorAddress_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, validatorAddress_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, validatorAddress_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(accountAddress_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, accountAddress_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, accountAddress_);
       }
       if (fee_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(5, fee_);
+          .computeInt64Size(4, fee_);
       }
       if (amount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(6, amount_);
+          .computeInt64Size(5, amount_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, memo_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, memo_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -7248,31 +7248,31 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 8
-              case 26: {
+              case 18: {
                 validatorAddress_ = input.readStringRequireUtf8();
 
                 break;
-              } // case 26
-              case 34: {
+              } // case 18
+              case 26: {
                 accountAddress_ = input.readStringRequireUtf8();
 
                 break;
-              } // case 34
-              case 40: {
+              } // case 26
+              case 32: {
                 fee_ = input.readInt64();
 
                 break;
-              } // case 40
-              case 48: {
+              } // case 32
+              case 40: {
                 amount_ = input.readInt64();
 
                 break;
-              } // case 48
-              case 58: {
+              } // case 40
+              case 50: {
                 memo_ = input.readStringRequireUtf8();
 
                 break;
-              } // case 58
+              } // case 50
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -7322,7 +7322,7 @@ public final class TransactionOuterClass {
 
       private java.lang.Object validatorAddress_ = "";
       /**
-       * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
+       * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
        * @return The validatorAddress.
        */
       public java.lang.String getValidatorAddress() {
@@ -7338,7 +7338,7 @@ public final class TransactionOuterClass {
         }
       }
       /**
-       * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
+       * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
        * @return The bytes for validatorAddress.
        */
       public com.google.protobuf.ByteString
@@ -7355,7 +7355,7 @@ public final class TransactionOuterClass {
         }
       }
       /**
-       * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
+       * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
        * @param value The validatorAddress to set.
        * @return This builder for chaining.
        */
@@ -7370,7 +7370,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
+       * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
        * @return This builder for chaining.
        */
       public Builder clearValidatorAddress() {
@@ -7380,7 +7380,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
+       * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
        * @param value The bytes for validatorAddress to set.
        * @return This builder for chaining.
        */
@@ -7398,7 +7398,7 @@ public final class TransactionOuterClass {
 
       private java.lang.Object accountAddress_ = "";
       /**
-       * <code>string account_address = 4 [json_name = "accountAddress"];</code>
+       * <code>string account_address = 3 [json_name = "accountAddress"];</code>
        * @return The accountAddress.
        */
       public java.lang.String getAccountAddress() {
@@ -7414,7 +7414,7 @@ public final class TransactionOuterClass {
         }
       }
       /**
-       * <code>string account_address = 4 [json_name = "accountAddress"];</code>
+       * <code>string account_address = 3 [json_name = "accountAddress"];</code>
        * @return The bytes for accountAddress.
        */
       public com.google.protobuf.ByteString
@@ -7431,7 +7431,7 @@ public final class TransactionOuterClass {
         }
       }
       /**
-       * <code>string account_address = 4 [json_name = "accountAddress"];</code>
+       * <code>string account_address = 3 [json_name = "accountAddress"];</code>
        * @param value The accountAddress to set.
        * @return This builder for chaining.
        */
@@ -7446,7 +7446,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>string account_address = 4 [json_name = "accountAddress"];</code>
+       * <code>string account_address = 3 [json_name = "accountAddress"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAccountAddress() {
@@ -7456,7 +7456,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>string account_address = 4 [json_name = "accountAddress"];</code>
+       * <code>string account_address = 3 [json_name = "accountAddress"];</code>
        * @param value The bytes for accountAddress to set.
        * @return This builder for chaining.
        */
@@ -7474,7 +7474,7 @@ public final class TransactionOuterClass {
 
       private long fee_ ;
       /**
-       * <code>int64 fee = 5 [json_name = "fee"];</code>
+       * <code>int64 fee = 4 [json_name = "fee"];</code>
        * @return The fee.
        */
       @java.lang.Override
@@ -7482,7 +7482,7 @@ public final class TransactionOuterClass {
         return fee_;
       }
       /**
-       * <code>int64 fee = 5 [json_name = "fee"];</code>
+       * <code>int64 fee = 4 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
        */
@@ -7493,7 +7493,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>int64 fee = 5 [json_name = "fee"];</code>
+       * <code>int64 fee = 4 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
       public Builder clearFee() {
@@ -7505,7 +7505,7 @@ public final class TransactionOuterClass {
 
       private long amount_ ;
       /**
-       * <code>int64 amount = 6 [json_name = "amount"];</code>
+       * <code>int64 amount = 5 [json_name = "amount"];</code>
        * @return The amount.
        */
       @java.lang.Override
@@ -7513,7 +7513,7 @@ public final class TransactionOuterClass {
         return amount_;
       }
       /**
-       * <code>int64 amount = 6 [json_name = "amount"];</code>
+       * <code>int64 amount = 5 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
        */
@@ -7524,7 +7524,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>int64 amount = 6 [json_name = "amount"];</code>
+       * <code>int64 amount = 5 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAmount() {
@@ -7536,7 +7536,7 @@ public final class TransactionOuterClass {
 
       private java.lang.Object memo_ = "";
       /**
-       * <code>string memo = 7 [json_name = "memo"];</code>
+       * <code>string memo = 6 [json_name = "memo"];</code>
        * @return The memo.
        */
       public java.lang.String getMemo() {
@@ -7552,7 +7552,7 @@ public final class TransactionOuterClass {
         }
       }
       /**
-       * <code>string memo = 7 [json_name = "memo"];</code>
+       * <code>string memo = 6 [json_name = "memo"];</code>
        * @return The bytes for memo.
        */
       public com.google.protobuf.ByteString
@@ -7569,7 +7569,7 @@ public final class TransactionOuterClass {
         }
       }
       /**
-       * <code>string memo = 7 [json_name = "memo"];</code>
+       * <code>string memo = 6 [json_name = "memo"];</code>
        * @param value The memo to set.
        * @return This builder for chaining.
        */
@@ -7584,7 +7584,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>string memo = 7 [json_name = "memo"];</code>
+       * <code>string memo = 6 [json_name = "memo"];</code>
        * @return This builder for chaining.
        */
       public Builder clearMemo() {
@@ -7594,7 +7594,7 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>string memo = 7 [json_name = "memo"];</code>
+       * <code>string memo = 6 [json_name = "memo"];</code>
        * @param value The bytes for memo to set.
        * @return This builder for chaining.
        */
@@ -14239,77 +14239,78 @@ public final class TransactionOuterClass {
       "\"d\n\023CalculateFeeRequest\022\026\n\006amount\030\001 \001(\003R" +
       "\006amount\0225\n\013payloadType\030\002 \001(\0162\023.pactus.Pa" +
       "yloadTypeR\013payloadType\"(\n\024CalculateFeeRe" +
-      "sponse\022\020\n\003fee\030\001 \001(\003R\003fee\":\n\033BroadcastTra" +
-      "nsactionRequest\022\033\n\tsigned_tx\030\001 \001(\014R\010sign" +
-      "edTx\".\n\034BroadcastTransactionResponse\022\016\n\002" +
-      "id\030\002 \001(\014R\002id\"\261\001\n GetRawTransferTransacti" +
-      "onRequest\022\033\n\tlock_time\030\001 \001(\rR\010lockTime\022\026" +
-      "\n\006sender\030\002 \001(\tR\006sender\022\032\n\010receiver\030\003 \001(\t" +
-      "R\010receiver\022\026\n\006amount\030\004 \001(\003R\006amount\022\020\n\003fe" +
-      "e\030\005 \001(\003R\003fee\022\022\n\004memo\030\006 \001(\tR\004memo\"\312\001\n\034Get" +
-      "RawBondTransactionRequest\022\033\n\tlock_time\030\001" +
-      " \001(\rR\010lockTime\022\026\n\006sender\030\002 \001(\tR\006sender\022\032" +
-      "\n\010receiver\030\003 \001(\tR\010receiver\022\024\n\005stake\030\004 \001(" +
-      "\003R\005stake\022\035\n\npublic_key\030\005 \001(\tR\tpublicKey\022" +
-      "\020\n\003fee\030\006 \001(\003R\003fee\022\022\n\004memo\030\007 \001(\tR\004memo\"~\n" +
-      "\036GetRawUnBondTransactionRequest\022\033\n\tlock_" +
-      "time\030\001 \001(\rR\010lockTime\022+\n\021validator_addres" +
-      "s\030\003 \001(\tR\020validatorAddress\022\022\n\004memo\030\004 \001(\tR" +
-      "\004memo\"\323\001\n GetRawWithdrawTransactionReque" +
-      "st\022\033\n\tlock_time\030\001 \001(\rR\010lockTime\022+\n\021valid" +
-      "ator_address\030\003 \001(\tR\020validatorAddress\022\'\n\017" +
-      "account_address\030\004 \001(\tR\016accountAddress\022\020\n" +
-      "\003fee\030\005 \001(\003R\003fee\022\026\n\006amount\030\006 \001(\003R\006amount\022" +
-      "\022\n\004memo\030\007 \001(\tR\004memo\"D\n\031GetRawTransaction" +
-      "Response\022\'\n\017raw_transaction\030\001 \001(\014R\016rawTr" +
-      "ansaction\"]\n\017PayloadTransfer\022\026\n\006sender\030\001" +
-      " \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010receiver" +
-      "\022\026\n\006amount\030\003 \001(\003R\006amount\"W\n\013PayloadBond\022" +
-      "\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(" +
-      "\tR\010receiver\022\024\n\005stake\030\003 \001(\003R\005stake\"B\n\020Pay" +
-      "loadSortition\022\030\n\007address\030\001 \001(\tR\007address\022" +
-      "\024\n\005proof\030\002 \001(\014R\005proof\"-\n\rPayloadUnbond\022\034" +
-      "\n\tvalidator\030\001 \001(\tR\tvalidator\"M\n\017PayloadW" +
-      "ithdraw\022\022\n\004from\030\001 \001(\tR\004from\022\016\n\002to\030\002 \001(\tR" +
-      "\002to\022\026\n\006amount\030\003 \001(\003R\006amount\"\253\004\n\017Transact" +
-      "ionInfo\022\016\n\002id\030\001 \001(\014R\002id\022\022\n\004data\030\002 \001(\014R\004d" +
-      "ata\022\030\n\007version\030\003 \001(\005R\007version\022\033\n\tlock_ti" +
-      "me\030\004 \001(\rR\010lockTime\022\024\n\005value\030\005 \001(\003R\005value" +
-      "\022\020\n\003fee\030\006 \001(\003R\003fee\0225\n\013payloadType\030\007 \001(\0162" +
-      "\023.pactus.PayloadTypeR\013payloadType\0225\n\010tra" +
-      "nsfer\030\036 \001(\0132\027.pactus.PayloadTransferH\000R\010" +
-      "transfer\022)\n\004bond\030\037 \001(\0132\023.pactus.PayloadB" +
-      "ondH\000R\004bond\0228\n\tsortition\030  \001(\0132\030.pactus." +
-      "PayloadSortitionH\000R\tsortition\022/\n\006unbond\030" +
-      "! \001(\0132\025.pactus.PayloadUnbondH\000R\006unbond\0225" +
-      "\n\010withdraw\030\" \001(\0132\027.pactus.PayloadWithdra" +
-      "wH\000R\010withdraw\022\022\n\004memo\030\010 \001(\tR\004memo\022\035\n\npub" +
-      "lic_key\030\t \001(\tR\tpublicKey\022\034\n\tsignature\030\n " +
-      "\001(\014R\tsignatureB\t\n\007payload*\203\001\n\013PayloadTyp" +
-      "e\022\013\n\007UNKNOWN\020\000\022\024\n\020TRANSFER_PAYLOAD\020\001\022\020\n\014" +
-      "BOND_PAYLOAD\020\002\022\025\n\021SORTITION_PAYLOAD\020\003\022\022\n" +
-      "\016UNBOND_PAYLOAD\020\004\022\024\n\020WITHDRAW_PAYLOAD\020\005*" +
-      "B\n\024TransactionVerbosity\022\024\n\020TRANSACTION_D" +
-      "ATA\020\000\022\024\n\020TRANSACTION_INFO\020\0012\250\005\n\013Transact" +
-      "ion\022O\n\016GetTransaction\022\035.pactus.GetTransa" +
-      "ctionRequest\032\036.pactus.GetTransactionResp" +
-      "onse\022I\n\014CalculateFee\022\033.pactus.CalculateF" +
-      "eeRequest\032\034.pactus.CalculateFeeResponse\022" +
-      "a\n\024BroadcastTransaction\022#.pactus.Broadca" +
-      "stTransactionRequest\032$.pactus.BroadcastT" +
-      "ransactionResponse\022h\n\031GetRawTransferTran" +
-      "saction\022(.pactus.GetRawTransferTransacti" +
-      "onRequest\032!.pactus.GetRawTransactionResp" +
-      "onse\022`\n\025GetRawBondTransaction\022$.pactus.G" +
-      "etRawBondTransactionRequest\032!.pactus.Get" +
-      "RawTransactionResponse\022d\n\027GetRawUnBondTr" +
-      "ansaction\022&.pactus.GetRawUnBondTransacti" +
-      "onRequest\032!.pactus.GetRawTransactionResp" +
-      "onse\022h\n\031GetRawWithdrawTransaction\022(.pact" +
-      "us.GetRawWithdrawTransactionRequest\032!.pa" +
-      "ctus.GetRawTransactionResponseBF\n\022pactus" +
-      ".transactionZ0github.com/pactus-project/" +
-      "pactus/www/grpc/pactusb\006proto3"
+      "sponse\022\020\n\003fee\030\001 \001(\003R\003fee\"S\n\033BroadcastTra" +
+      "nsactionRequest\0224\n\026signed_raw_transactio" +
+      "n\030\001 \001(\014R\024signedRawTransaction\".\n\034Broadca" +
+      "stTransactionResponse\022\016\n\002id\030\002 \001(\014R\002id\"\261\001" +
+      "\n GetRawTransferTransactionRequest\022\033\n\tlo" +
+      "ck_time\030\001 \001(\rR\010lockTime\022\026\n\006sender\030\002 \001(\tR" +
+      "\006sender\022\032\n\010receiver\030\003 \001(\tR\010receiver\022\026\n\006a" +
+      "mount\030\004 \001(\003R\006amount\022\020\n\003fee\030\005 \001(\003R\003fee\022\022\n" +
+      "\004memo\030\006 \001(\tR\004memo\"\312\001\n\034GetRawBondTransact" +
+      "ionRequest\022\033\n\tlock_time\030\001 \001(\rR\010lockTime\022" +
+      "\026\n\006sender\030\002 \001(\tR\006sender\022\032\n\010receiver\030\003 \001(" +
+      "\tR\010receiver\022\024\n\005stake\030\004 \001(\003R\005stake\022\035\n\npub" +
+      "lic_key\030\005 \001(\tR\tpublicKey\022\020\n\003fee\030\006 \001(\003R\003f" +
+      "ee\022\022\n\004memo\030\007 \001(\tR\004memo\"~\n\036GetRawUnBondTr" +
+      "ansactionRequest\022\033\n\tlock_time\030\001 \001(\rR\010loc" +
+      "kTime\022+\n\021validator_address\030\003 \001(\tR\020valida" +
+      "torAddress\022\022\n\004memo\030\004 \001(\tR\004memo\"\323\001\n GetRa" +
+      "wWithdrawTransactionRequest\022\033\n\tlock_time" +
+      "\030\001 \001(\rR\010lockTime\022+\n\021validator_address\030\002 " +
+      "\001(\tR\020validatorAddress\022\'\n\017account_address" +
+      "\030\003 \001(\tR\016accountAddress\022\020\n\003fee\030\004 \001(\003R\003fee" +
+      "\022\026\n\006amount\030\005 \001(\003R\006amount\022\022\n\004memo\030\006 \001(\tR\004" +
+      "memo\"D\n\031GetRawTransactionResponse\022\'\n\017raw" +
+      "_transaction\030\001 \001(\014R\016rawTransaction\"]\n\017Pa" +
+      "yloadTransfer\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n" +
+      "\010receiver\030\002 \001(\tR\010receiver\022\026\n\006amount\030\003 \001(" +
+      "\003R\006amount\"W\n\013PayloadBond\022\026\n\006sender\030\001 \001(\t" +
+      "R\006sender\022\032\n\010receiver\030\002 \001(\tR\010receiver\022\024\n\005" +
+      "stake\030\003 \001(\003R\005stake\"B\n\020PayloadSortition\022\030" +
+      "\n\007address\030\001 \001(\tR\007address\022\024\n\005proof\030\002 \001(\014R" +
+      "\005proof\"-\n\rPayloadUnbond\022\034\n\tvalidator\030\001 \001" +
+      "(\tR\tvalidator\"M\n\017PayloadWithdraw\022\022\n\004from" +
+      "\030\001 \001(\tR\004from\022\016\n\002to\030\002 \001(\tR\002to\022\026\n\006amount\030\003" +
+      " \001(\003R\006amount\"\253\004\n\017TransactionInfo\022\016\n\002id\030\001" +
+      " \001(\014R\002id\022\022\n\004data\030\002 \001(\014R\004data\022\030\n\007version\030" +
+      "\003 \001(\005R\007version\022\033\n\tlock_time\030\004 \001(\rR\010lockT" +
+      "ime\022\024\n\005value\030\005 \001(\003R\005value\022\020\n\003fee\030\006 \001(\003R\003" +
+      "fee\0225\n\013payloadType\030\007 \001(\0162\023.pactus.Payloa" +
+      "dTypeR\013payloadType\0225\n\010transfer\030\036 \001(\0132\027.p" +
+      "actus.PayloadTransferH\000R\010transfer\022)\n\004bon" +
+      "d\030\037 \001(\0132\023.pactus.PayloadBondH\000R\004bond\0228\n\t" +
+      "sortition\030  \001(\0132\030.pactus.PayloadSortitio" +
+      "nH\000R\tsortition\022/\n\006unbond\030! \001(\0132\025.pactus." +
+      "PayloadUnbondH\000R\006unbond\0225\n\010withdraw\030\" \001(" +
+      "\0132\027.pactus.PayloadWithdrawH\000R\010withdraw\022\022" +
+      "\n\004memo\030\010 \001(\tR\004memo\022\035\n\npublic_key\030\t \001(\tR\t" +
+      "publicKey\022\034\n\tsignature\030\n \001(\014R\tsignatureB" +
+      "\t\n\007payload*\203\001\n\013PayloadType\022\013\n\007UNKNOWN\020\000\022" +
+      "\024\n\020TRANSFER_PAYLOAD\020\001\022\020\n\014BOND_PAYLOAD\020\002\022" +
+      "\025\n\021SORTITION_PAYLOAD\020\003\022\022\n\016UNBOND_PAYLOAD" +
+      "\020\004\022\024\n\020WITHDRAW_PAYLOAD\020\005*B\n\024TransactionV" +
+      "erbosity\022\024\n\020TRANSACTION_DATA\020\000\022\024\n\020TRANSA" +
+      "CTION_INFO\020\0012\250\005\n\013Transaction\022O\n\016GetTrans" +
+      "action\022\035.pactus.GetTransactionRequest\032\036." +
+      "pactus.GetTransactionResponse\022I\n\014Calcula" +
+      "teFee\022\033.pactus.CalculateFeeRequest\032\034.pac" +
+      "tus.CalculateFeeResponse\022a\n\024BroadcastTra" +
+      "nsaction\022#.pactus.BroadcastTransactionRe" +
+      "quest\032$.pactus.BroadcastTransactionRespo" +
+      "nse\022h\n\031GetRawTransferTransaction\022(.pactu" +
+      "s.GetRawTransferTransactionRequest\032!.pac" +
+      "tus.GetRawTransactionResponse\022`\n\025GetRawB" +
+      "ondTransaction\022$.pactus.GetRawBondTransa" +
+      "ctionRequest\032!.pactus.GetRawTransactionR" +
+      "esponse\022d\n\027GetRawUnBondTransaction\022&.pac" +
+      "tus.GetRawUnBondTransactionRequest\032!.pac" +
+      "tus.GetRawTransactionResponse\022h\n\031GetRawW" +
+      "ithdrawTransaction\022(.pactus.GetRawWithdr" +
+      "awTransactionRequest\032!.pactus.GetRawTran" +
+      "sactionResponseBF\n\022pactus.transactionZ0g" +
+      "ithub.com/pactus-project/pactus/www/grpc" +
+      "/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -14344,7 +14345,7 @@ public final class TransactionOuterClass {
     internal_static_pactus_BroadcastTransactionRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_BroadcastTransactionRequest_descriptor,
-        new java.lang.String[] { "SignedTx", });
+        new java.lang.String[] { "SignedRawTransaction", });
     internal_static_pactus_BroadcastTransactionResponse_descriptor =
       getDescriptor().getMessageTypes().get(5);
     internal_static_pactus_BroadcastTransactionResponse_fieldAccessorTable = new

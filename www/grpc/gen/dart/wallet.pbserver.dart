@@ -21,6 +21,7 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
   $async.Future<$3.UnloadWalletResponse> unloadWallet($pb.ServerContext ctx, $3.UnloadWalletRequest request);
   $async.Future<$3.LockWalletResponse> lockWallet($pb.ServerContext ctx, $3.LockWalletRequest request);
   $async.Future<$3.UnlockWalletResponse> unlockWallet($pb.ServerContext ctx, $3.UnlockWalletRequest request);
+  $async.Future<$3.SignRawTransactionResponse> signRawTransaction($pb.ServerContext ctx, $3.SignRawTransactionRequest request);
 
   $pb.GeneratedMessage createRequest($core.String method) {
     switch (method) {
@@ -29,6 +30,7 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       case 'UnloadWallet': return $3.UnloadWalletRequest();
       case 'LockWallet': return $3.LockWalletRequest();
       case 'UnlockWallet': return $3.UnlockWalletRequest();
+      case 'SignRawTransaction': return $3.SignRawTransactionRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
@@ -40,6 +42,7 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       case 'UnloadWallet': return this.unloadWallet(ctx, request as $3.UnloadWalletRequest);
       case 'LockWallet': return this.lockWallet(ctx, request as $3.LockWalletRequest);
       case 'UnlockWallet': return this.unlockWallet(ctx, request as $3.UnlockWalletRequest);
+      case 'SignRawTransaction': return this.signRawTransaction(ctx, request as $3.SignRawTransactionRequest);
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }

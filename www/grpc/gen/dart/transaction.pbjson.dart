@@ -82,12 +82,12 @@ final $typed_data.Uint8List calculateFeeResponseDescriptor = $convert.base64Deco
 const BroadcastTransactionRequest$json = const {
   '1': 'BroadcastTransactionRequest',
   '2': const [
-    const {'1': 'signed_tx', '3': 1, '4': 1, '5': 12, '10': 'signedTx'},
+    const {'1': 'signed_raw_transaction', '3': 1, '4': 1, '5': 12, '10': 'signedRawTransaction'},
   ],
 };
 
 /// Descriptor for `BroadcastTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List broadcastTransactionRequestDescriptor = $convert.base64Decode('ChtCcm9hZGNhc3RUcmFuc2FjdGlvblJlcXVlc3QSGwoJc2lnbmVkX3R4GAEgASgMUghzaWduZWRUeA==');
+final $typed_data.Uint8List broadcastTransactionRequestDescriptor = $convert.base64Decode('ChtCcm9hZGNhc3RUcmFuc2FjdGlvblJlcXVlc3QSNAoWc2lnbmVkX3Jhd190cmFuc2FjdGlvbhgBIAEoDFIUc2lnbmVkUmF3VHJhbnNhY3Rpb24=');
 @$core.Deprecated('Use broadcastTransactionResponseDescriptor instead')
 const BroadcastTransactionResponse$json = const {
   '1': 'BroadcastTransactionResponse',
@@ -146,16 +146,16 @@ const GetRawWithdrawTransactionRequest$json = const {
   '1': 'GetRawWithdrawTransactionRequest',
   '2': const [
     const {'1': 'lock_time', '3': 1, '4': 1, '5': 13, '10': 'lockTime'},
-    const {'1': 'validator_address', '3': 3, '4': 1, '5': 9, '10': 'validatorAddress'},
-    const {'1': 'account_address', '3': 4, '4': 1, '5': 9, '10': 'accountAddress'},
-    const {'1': 'fee', '3': 5, '4': 1, '5': 3, '10': 'fee'},
-    const {'1': 'amount', '3': 6, '4': 1, '5': 3, '10': 'amount'},
-    const {'1': 'memo', '3': 7, '4': 1, '5': 9, '10': 'memo'},
+    const {'1': 'validator_address', '3': 2, '4': 1, '5': 9, '10': 'validatorAddress'},
+    const {'1': 'account_address', '3': 3, '4': 1, '5': 9, '10': 'accountAddress'},
+    const {'1': 'fee', '3': 4, '4': 1, '5': 3, '10': 'fee'},
+    const {'1': 'amount', '3': 5, '4': 1, '5': 3, '10': 'amount'},
+    const {'1': 'memo', '3': 6, '4': 1, '5': 9, '10': 'memo'},
   ],
 };
 
 /// Descriptor for `GetRawWithdrawTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getRawWithdrawTransactionRequestDescriptor = $convert.base64Decode('CiBHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uUmVxdWVzdBIbCglsb2NrX3RpbWUYASABKA1SCGxvY2tUaW1lEisKEXZhbGlkYXRvcl9hZGRyZXNzGAMgASgJUhB2YWxpZGF0b3JBZGRyZXNzEicKD2FjY291bnRfYWRkcmVzcxgEIAEoCVIOYWNjb3VudEFkZHJlc3MSEAoDZmVlGAUgASgDUgNmZWUSFgoGYW1vdW50GAYgASgDUgZhbW91bnQSEgoEbWVtbxgHIAEoCVIEbWVtbw==');
+final $typed_data.Uint8List getRawWithdrawTransactionRequestDescriptor = $convert.base64Decode('CiBHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uUmVxdWVzdBIbCglsb2NrX3RpbWUYASABKA1SCGxvY2tUaW1lEisKEXZhbGlkYXRvcl9hZGRyZXNzGAIgASgJUhB2YWxpZGF0b3JBZGRyZXNzEicKD2FjY291bnRfYWRkcmVzcxgDIAEoCVIOYWNjb3VudEFkZHJlc3MSEAoDZmVlGAQgASgDUgNmZWUSFgoGYW1vdW50GAUgASgDUgZhbW91bnQSEgoEbWVtbxgGIAEoCVIEbWVtbw==');
 @$core.Deprecated('Use getRawTransactionResponseDescriptor instead')
 const GetRawTransactionResponse$json = const {
   '1': 'GetRawTransactionResponse',

@@ -11,7 +11,6 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/txpool"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
@@ -79,20 +78,14 @@ func defaultConfig() *Config {
 	return conf
 }
 
-func DefaultConfigMainnet(genParams *param.Params) *Config {
+func DefaultConfigMainnet() *Config {
 	conf := defaultConfig()
-
-	// Store private configs
-	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
-	conf.Store.SortitionCacheSize = genParams.SortitionInterval
-	conf.Store.AccountCacheSize = 1024
-	conf.Store.PublicKeyCacheSize = 1024
 
 	return conf
 }
 
 //nolint:lll // long multi-address
-func DefaultConfigTestnet(genParams *param.Params) *Config {
+func DefaultConfigTestnet() *Config {
 	conf := defaultConfig()
 	conf.Network.DefaultBootstrapAddrStrings = []string{
 		"/ip4/94.101.184.118/tcp/21777/p2p/12D3KooWCwQZt8UriVXobQHPXPR8m83eceXVoeT6brPNiBHomebc",
@@ -125,16 +118,10 @@ func DefaultConfigTestnet(genParams *param.Params) *Config {
 	conf.Nanomsg.Enable = false
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:40799"
 
-	// Store private configs
-	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
-	conf.Store.SortitionCacheSize = genParams.SortitionInterval
-	conf.Store.AccountCacheSize = 1024
-	conf.Store.PublicKeyCacheSize = 1024
-
 	return conf
 }
 
-func DefaultConfigLocalnet(genParams *param.Params) *Config {
+func DefaultConfigLocalnet() *Config {
 	conf := defaultConfig()
 	conf.Network.EnableRelay = false
 	conf.Network.EnableNATService = false
@@ -151,12 +138,6 @@ func DefaultConfigLocalnet(genParams *param.Params) *Config {
 	conf.HTTP.Listen = "[::]:0"
 	conf.Nanomsg.Enable = true
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:0"
-
-	// Store private configs
-	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
-	conf.Store.SortitionCacheSize = genParams.SortitionInterval
-	conf.Store.AccountCacheSize = 1024
-	conf.Store.PublicKeyCacheSize = 1024
 
 	return conf
 }
@@ -229,3 +210,4 @@ func (conf *Config) BasicCheck() error {
 
 	return conf.HTTP.BasicCheck()
 }
+

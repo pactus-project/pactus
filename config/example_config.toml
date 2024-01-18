@@ -140,6 +140,10 @@
   # Default is `false`.
  ## enable = false
 
+  # `enable_wallet` indicates whether Wallet service should be enabled or not.
+  # Default is `false`.
+ ## enable_wallet = false
+
   # `listen` is the address to listen for incoming connections for gRPC server.
  ## listen = "50051"
 

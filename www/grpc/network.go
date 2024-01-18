@@ -16,6 +16,12 @@ type networkServer struct {
 	*Server
 }
 
+func newNetworkServer(server *Server) *networkServer {
+	return &networkServer{
+		Server: server,
+	}
+}
+
 func (s *networkServer) GetNodeInfo(_ context.Context,
 	_ *pactus.GetNodeInfoRequest,
 ) (*pactus.GetNodeInfoResponse, error) {

@@ -101,7 +101,7 @@ func (s *transactionServer) CalculateFee(_ context.Context,
 func (s *transactionServer) BroadcastTransaction(_ context.Context,
 	req *pactus.BroadcastTransactionRequest,
 ) (*pactus.BroadcastTransactionResponse, error) {
-	trx, _ := tx.FromBytes(req.SignedTx)
+	trx, _ := tx.FromBytes(req.SignedRawTransaction)
 
 	return &pactus.BroadcastTransactionResponse{
 		Id: trx.ID().Bytes(),

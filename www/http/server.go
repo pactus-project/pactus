@@ -22,9 +22,11 @@ import (
 
 type Server struct {
 	ctx         context.Context
+	cancel      func()
 	config      *Config
 	router      *mux.Router
-	grpc        *grpc.ClientConn
+	grpcClient  *grpc.ClientConn
+	httpServer  *http.Server
 	blockchain  pactus.BlockchainClient
 	transaction pactus.TransactionClient
 	network     pactus.NetworkClient
@@ -33,8 +35,11 @@ type Server struct {
 }
 
 func NewServer(conf *Config) *Server {
+	ctx, cancel := context.WithCancel(context.Background())
+
 	return &Server{
-		ctx:    context.Background(),
+		ctx:    ctx,
+		cancel: cancel,
 		config: conf,
 		logger: logger.NewSubLogger("_http", nil),
 	}
@@ -55,7 +60,7 @@ func (s *Server) StartServer(grpcServer string) error {
 		return fmt.Errorf("failed to dial server: %w", err)
 	}
 
-	s.grpc = conn
+	s.grpcClient = conn
 	s.blockchain = pactus.NewBlockchainClient(conn)
 	s.transaction = pactus.NewTransactionClient(conn)
 	s.network = pactus.NewNetworkClient(conn)
@@ -72,7 +77,7 @@ func (s *Server) StartServer(grpcServer string) error {
 	s.router.HandleFunc("/account/address/{address}", s.GetAccountHandler)
 	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)
 	s.router.HandleFunc("/validator/number/{number}", s.GetValidatorByNumberHandler)
-	http.Handle("/metrics/prometheus", promhttp.Handler())
+	s.router.HandleFunc("/metrics/prometheus", promhttp.Handler().ServeHTTP)
 	http.Handle("/", handlers.RecoveryHandler()(s.router))
 
 	l, err := net.Listen("tcp", s.config.Listen)
@@ -83,16 +88,22 @@ func (s *Server) StartServer(grpcServer string) error {
 	s.logger.Info("http started listening", "address", l.Addr().String())
 	s.listener = l
 
-	server := &http.Server{
+	s.httpServer = &http.Server{
 		Addr:              l.Addr().String(),
 		ReadHeaderTimeout: 3 * time.Second,
 	}
 
 	go func() {
 		for {
-			err := server.Serve(l)
-			if err != nil {
-				s.logger.Error("error on a connection", "error", err)
+			select {
+			case <-s.ctx.Done():
+				return
+
+			default:
+				err := s.httpServer.Serve(l)
+				if err != nil {
+					s.logger.Error("error on a connection", "error", err)
+				}
 			}
 		}
 	}()
@@ -101,10 +112,16 @@ func (s *Server) StartServer(grpcServer string) error {
 }
 
 func (s *Server) StopServer() {
-	s.ctx.Done()
+	s.cancel()
 
-	if s.grpc != nil {
-		s.grpc.Close()
+	if s.httpServer != nil {
+		_ = s.httpServer.Shutdown(s.ctx)
+		s.httpServer.Close()
+		s.listener.Close()
+	}
+
+	if s.grpcClient != nil {
+		s.grpcClient.Close()
 	}
 }
 
@@ -131,7 +148,6 @@ func (s *Server) RootHandler(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
-	buf.WriteString("<a href=\"/metrics/prometheus\">/metrics/prometheus</a></br>")
 	buf.WriteString("</body></html>")
 	s.writeHTML(w, buf.String())
 }

@@ -14,22 +14,38 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
 )
 
-var (
-	tMockState *state.MockState
-	tConsMocks []*consensus.MockConsensus
-	tMockSync  *sync.MockSync
-	tMockNet   *network.MockNetwork
-	tListener  *bufconn.Listener
-	tCtx       context.Context
-)
+type testData struct {
+	*testsuite.TestSuite
 
-func init() {
-	ts := testsuite.NewTestSuiteForSeed(0x1234)
+	mockState   *state.MockState
+	mockSync    *sync.MockSync
+	consMocks   []*consensus.MockConsensus
+	mockConsMgr consensus.Manager
+	listener    *bufconn.Listener
+	server      *Server
+}
+
+func testConfig() *Config {
+	conf := DefaultConfig()
+	conf.WalletsDir = util.TempDirPath()
+
+	return conf
+}
+
+func setup(t *testing.T, conf *Config) *testData {
+	t.Helper()
+
+	if conf == nil {
+		conf = testConfig()
+	}
+
+	ts := testsuite.NewTestSuite(t)
 
 	// for saving test wallets in temp directory
 	err := os.Chdir(util.TempDirPath())
@@ -39,32 +55,46 @@ func init() {
 
 	const bufSize = 1024 * 1024
 
-	consMgr, consMocks := consensus.MockingManager(ts, []*bls.ValidatorKey{
+	mockConsMgr, consMocks := consensus.MockingManager(ts, []*bls.ValidatorKey{
 		ts.RandValKey(), ts.RandValKey(),
 	})
 
-	tListener = bufconn.Listen(bufSize)
-	tConsMocks = consMocks
-	tMockState = state.MockingState(ts)
-	tMockNet = network.MockingNetwork(ts, ts.RandPeerID())
-	tMockSync = sync.MockingSync(ts)
-	tCtx = context.Background()
+	listener := bufconn.Listen(bufSize)
+	mockState := state.MockingState(ts)
+	mockNet := network.MockingNetwork(ts, ts.RandPeerID())
+	mockSync := sync.MockingSync(ts)
 
-	tMockState.CommitTestBlocks(10)
-	conf := DefaultConfig()
+	mockState.CommitTestBlocks(10)
 
-	s := NewServer(conf, tMockState, tMockSync, tMockNet, consMgr)
-	_ = s.startListening(tListener)
+	server := NewServer(conf, mockState, mockSync, mockNet, mockConsMgr)
+	err = server.startListening(listener)
+	assert.NoError(t, err)
+
+	return &testData{
+		TestSuite:   ts,
+		mockState:   mockState,
+		mockSync:    mockSync,
+		consMocks:   consMocks,
+		mockConsMgr: mockConsMgr,
+		server:      server,
+		listener:    listener,
+	}
 }
 
-func bufDialer(context.Context, string) (net.Conn, error) {
-	return tListener.Dial()
+func (td *testData) StopServer() {
+	td.server.StopServer()
+	td.listener.Close()
 }
 
-func testBlockchainClient(t *testing.T) (*grpc.ClientConn, pactus.BlockchainClient) {
+func (td *testData) bufDialer(context.Context, string) (net.Conn, error) {
+	return td.listener.Dial()
+}
+
+func (td *testData) blockchainClient(t *testing.T) (*grpc.ClientConn, pactus.BlockchainClient) {
 	t.Helper()
 
-	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer),
+	ctx := context.Background()
+	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial blockchain server: %v", err)
@@ -73,10 +103,11 @@ func testBlockchainClient(t *testing.T) (*grpc.ClientConn, pactus.BlockchainClie
 	return conn, pactus.NewBlockchainClient(conn)
 }
 
-func testNetworkClient(t *testing.T) (*grpc.ClientConn, pactus.NetworkClient) {
+func (td *testData) networkClient(t *testing.T) (*grpc.ClientConn, pactus.NetworkClient) {
 	t.Helper()
 
-	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer),
+	ctx := context.Background()
+	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial network server: %v", err)
@@ -85,10 +116,11 @@ func testNetworkClient(t *testing.T) (*grpc.ClientConn, pactus.NetworkClient) {
 	return conn, pactus.NewNetworkClient(conn)
 }
 
-func testTransactionClient(t *testing.T) (*grpc.ClientConn, pactus.TransactionClient) {
+func (td *testData) transactionClient(t *testing.T) (*grpc.ClientConn, pactus.TransactionClient) {
 	t.Helper()
 
-	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer),
+	ctx := context.Background()
+	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial transaction server: %v", err)
@@ -97,10 +129,11 @@ func testTransactionClient(t *testing.T) (*grpc.ClientConn, pactus.TransactionCl
 	return conn, pactus.NewTransactionClient(conn)
 }
 
-func testWalletClient(t *testing.T) (*grpc.ClientConn, pactus.WalletClient) {
+func (td *testData) walletClient(t *testing.T) (*grpc.ClientConn, pactus.WalletClient) {
 	t.Helper()
 
-	conn, err := grpc.DialContext(tCtx, "bufnet", grpc.WithContextDialer(bufDialer),
+	ctx := context.Background()
+	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial wallet server: %v", err)
