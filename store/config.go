@@ -21,8 +21,8 @@ func DefaultConfig() *Config {
 		Path:               "data",
 		TxCacheSize:        1024,
 		SortitionCacheSize: 1024,
-		AccountCacheSize:   526,
-		PublicKeyCacheSize: 526,
+		AccountCacheSize:   1024,
+		PublicKeyCacheSize: 1024,
 	}
 }
 
