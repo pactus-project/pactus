@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
+	flock "github.com/gofrs/flock"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -56,6 +57,22 @@ func main() {
 		}
 	}
 
+	// Define the lock file path
+	lockFilePath := filepath.Join(workingDir, ".pactus.lock")
+	fileLock := flock.New(lockFilePath)
+
+	locked, err := fileLock.TryLock()
+	if err != nil {
+		// handle unable to attempt to acquire lock
+		fatalErrorCheck(err)
+	}
+
+	if !locked {
+		fmt.Printf("Could not lock '%s', another instance is running?", lockFilePath)
+
+		return
+	}
+
 	// Create a new app.
 	// When using GtkApplication, it is not necessary to call gtk_init() manually.
 	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_NON_UNIQUE)
@@ -100,6 +117,7 @@ func main() {
 
 	// Connect function to application shutdown event, this is not required.
 	app.Connect("shutdown", func() {
+		_ = fileLock.Unlock()
 		log.Println("application shutdown")
 	})
 
