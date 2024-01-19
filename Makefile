@@ -60,7 +60,6 @@ proto:
 	$(RM) www/grpc/gen
 	cd www/grpc/buf && buf generate --template buf.gen.yaml ../proto
 	cd www/grpc/ && statik -m -f -src swagger-ui/
-	$(info PROTO_SOURCES: $(PROTO_SOURCES))
 
 	 cd www/grpc/proto && protoc -I. --go_out=paths=source_relative:../cobra \
   	--go-grpc_out=paths=source_relative:../cobra --cobra_out=paths=source_relative:../cobra *.proto
