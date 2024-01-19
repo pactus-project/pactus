@@ -349,6 +349,7 @@ func (tx *Tx) Decode(r io.Reader) error {
 		return err
 	}
 
+	// TODO: for the mainnet we can remove the first condition
 	if !tx.IsSubsidyTx() && !util.IsFlagSet(tx.data.Flags, flagNotSigned) {
 		sig := new(bls.Signature)
 		err = sig.Decode(r)
