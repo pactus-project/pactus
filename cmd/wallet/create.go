@@ -11,14 +11,14 @@ import (
 func buildCreateCmd(parentCmd *cobra.Command) {
 	generateCmd := &cobra.Command{
 		Use:   "create",
-		Short: "Create a new wallet",
+		Short: "creating a new wallet",
 	}
 	parentCmd.AddCommand(generateCmd)
 
 	testnetOpt := generateCmd.Flags().Bool("testnet", false,
-		"Create a wallet for the testnet environment")
+		"create a wallet for the testnet environment")
 	entropyOpt := generateCmd.Flags().Int("entropy", 128,
-		"Specify the entropy bit length")
+		"specify the entropy bit length")
 
 	generateCmd.Run = func(_ *cobra.Command, _ []string) {
 		password := cmd.PromptPassword("Password", true)
@@ -47,7 +47,7 @@ func buildCreateCmd(parentCmd *cobra.Command) {
 func buildChangePasswordCmd(parentCmd *cobra.Command) {
 	changePasswordCmd := &cobra.Command{
 		Use:   "password",
-		Short: "Change the wallet's password",
+		Short: "changes the wallet's password",
 	}
 	parentCmd.AddCommand(changePasswordCmd)
 	passOpt := addPasswordOption(changePasswordCmd)

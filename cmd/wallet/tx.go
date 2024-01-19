@@ -12,7 +12,7 @@ import (
 func buildAllTransactionCmd(parentCmd *cobra.Command) {
 	txCmd := &cobra.Command{
 		Use:   "tx",
-		Short: "Create, sign and publish a transaction",
+		Short: "creating, signing and publishing a transaction",
 	}
 
 	parentCmd.AddCommand(txCmd)
@@ -26,7 +26,7 @@ func buildAllTransactionCmd(parentCmd *cobra.Command) {
 func buildTransferTxCmd(parentCmd *cobra.Command) {
 	transferCmd := &cobra.Command{
 		Use:   "transfer [flags] <FROM> <TO> <AMOUNT>",
-		Short: "Create, sign and publish a `Transfer` transaction",
+		Short: "create, sign and publish a `Transfer` transaction",
 		Args:  cobra.ExactArgs(3),
 	}
 	parentCmd.AddCommand(transferCmd)
@@ -67,12 +67,12 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 func buildBondTxCmd(parentCmd *cobra.Command) {
 	bondCmd := &cobra.Command{
 		Use:   "bond [flags] <ACCOUNT> <VALIDATOR> <STAKE>",
-		Short: "Create, sign and publish a `Bond` transaction",
+		Short: "create, sign and publish a `Bond` transaction",
 		Args:  cobra.ExactArgs(3),
 	}
 	parentCmd.AddCommand(bondCmd)
 
-	pubKeyOpt := bondCmd.Flags().String("pub", "", "Validator's public key")
+	pubKeyOpt := bondCmd.Flags().String("pub", "", "validator's public key")
 	lockTime, feeOpt, memoOpt, noConfirmOpt := addCommonTxOptions(bondCmd)
 	passOpt := addPasswordOption(bondCmd)
 
@@ -109,7 +109,7 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 func buildUnbondTxCmd(parentCmd *cobra.Command) {
 	unbondCmd := &cobra.Command{
 		Use:   "unbond [flags] <ADDRESS>",
-		Short: "Create, sign and publish an `Unbond` transaction",
+		Short: "create, sign and publish an `Unbond` transaction",
 		Args:  cobra.ExactArgs(1),
 	}
 	parentCmd.AddCommand(unbondCmd)
@@ -145,7 +145,7 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 	withdrawCmd := &cobra.Command{
 		Use:   "withdraw [flags] <VALIDATOR> <ACCOUNT> <STAKE>",
-		Short: "Create, sign and publish a `Withdraw` transaction",
+		Short: "create, sign and publish a `Withdraw` transaction",
 		Args:  cobra.ExactArgs(3),
 	}
 	parentCmd.AddCommand(withdrawCmd)

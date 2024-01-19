@@ -27,6 +27,13 @@ The following commands are available in the Makefile:
 - `make test` runs the tests to ensure that all functionality is working as intended.
 - `make proto` regenerates the corresponding code if you have made any changes to the proto buffer files.
 
+Help and description messages (example: CLI subcommands descriptions) MUST follow this style:
+
+- All messages start with lowercase
+- No default in the help string (Cobra adds default)
+- Add range for flags that accepts range
+- No parentheses "()" in help message
+
 ## Commit guidelines
 
 Please follow these guidelines when committing changes to Pactus blockchain:
