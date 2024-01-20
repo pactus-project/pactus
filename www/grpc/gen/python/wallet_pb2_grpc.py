@@ -39,6 +39,11 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.UnlockWalletRequest.SerializeToString,
                 response_deserializer=wallet__pb2.UnlockWalletResponse.FromString,
                 )
+        self.SignRawTransaction = channel.unary_unary(
+                '/pactus.Wallet/SignRawTransaction',
+                request_serializer=wallet__pb2.SignRawTransactionRequest.SerializeToString,
+                response_deserializer=wallet__pb2.SignRawTransactionResponse.FromString,
+                )
 
 
 class WalletServicer(object):
@@ -74,6 +79,12 @@ class WalletServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SignRawTransaction(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_WalletServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -101,6 +112,11 @@ def add_WalletServicer_to_server(servicer, server):
                     servicer.UnlockWallet,
                     request_deserializer=wallet__pb2.UnlockWalletRequest.FromString,
                     response_serializer=wallet__pb2.UnlockWalletResponse.SerializeToString,
+            ),
+            'SignRawTransaction': grpc.unary_unary_rpc_method_handler(
+                    servicer.SignRawTransaction,
+                    request_deserializer=wallet__pb2.SignRawTransactionRequest.FromString,
+                    response_serializer=wallet__pb2.SignRawTransactionResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -194,5 +210,22 @@ class Wallet(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/UnlockWallet',
             wallet__pb2.UnlockWalletRequest.SerializeToString,
             wallet__pb2.UnlockWalletResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SignRawTransaction(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/SignRawTransaction',
+            wallet__pb2.SignRawTransactionRequest.SerializeToString,
+            wallet__pb2.SignRawTransactionResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -44,6 +44,12 @@ func TestEncodingTx(t *testing.T) {
 	assert.True(t, trx4.IsWithdrawTx())
 	assert.True(t, trx5.IsSortitionTx())
 
+	assert.False(t, trx1.IsFreeTx())
+	assert.False(t, trx2.IsFreeTx())
+	assert.True(t, trx3.IsFreeTx())
+	assert.False(t, trx4.IsFreeTx())
+	assert.True(t, trx5.IsFreeTx())
+
 	tests := []*tx.Tx{trx1, trx2, trx3, trx4, trx5}
 	for _, trx := range tests {
 		assert.NoError(t, trx.BasicCheck())
@@ -180,7 +186,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("Invalid version", func(t *testing.T) {
 		d := ts.DecodingHex(
-			"00" + // Flags
+			"02" + // Flags
 				"02" + // Version
 				"01020304" + // LockTime
 				"01" + // Fee
@@ -392,4 +398,18 @@ func TestStripPublicKey(t *testing.T) {
 	assert.Equal(t, bs1, bs2)
 	assert.Equal(t, trx1.ID(), trx2.ID())
 	assert.Nil(t, trx2.PublicKey())
+}
+
+func TestFlagNotSigned(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(),
+		ts.RandAmount(), ts.RandAmount(), "")
+	assert.False(t, trx.IsSigned(), "FlagNotSigned should not be set for new transactions")
+
+	trx.SetSignature(ts.RandBLSSignature())
+	assert.True(t, trx.IsSigned(), "FlagNotSigned should be set for a signed transaction")
+
+	trx.SetSignature(nil)
+	assert.False(t, trx.IsSigned(), "FlagNotSigned should not be set when the signature is set to nil")
 }

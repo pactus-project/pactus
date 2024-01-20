@@ -11,17 +11,20 @@ import (
 func TestDefaultConfigCheck(t *testing.T) {
 	conf := DefaultConfig()
 
+	conf.TxCacheSize = 0
 	err := conf.BasicCheck()
 	assert.ErrorIs(t, InvalidConfigError{"cache size set to zero"}, err)
 
 	conf.TxCacheSize = 1
-	conf.SortitionCacheSize = 1
 	err = conf.BasicCheck()
 	assert.NoError(t, err)
 
+	conf.Path = util.TempDirPath()
+	assert.NoError(t, conf.BasicCheck())
+
 	if runtime.GOOS != "windows" {
-		conf.Path = util.TempDirPath()
-		assert.NoError(t, conf.BasicCheck())
 		assert.Equal(t, conf.StorePath(), conf.Path+"/store.db")
+	} else {
+		assert.Equal(t, conf.StorePath(), conf.Path+"\\store.db")
 	}
 }

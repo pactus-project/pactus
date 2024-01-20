@@ -407,7 +407,7 @@
         ]
       }
     },
-    "/v1/transactions/broadcast/{signedTx}": {
+    "/v1/transactions/broadcast/{signedRawTransaction}": {
       "put": {
         "operationId": "Transaction_BroadcastTransaction",
         "responses": {
@@ -426,7 +426,7 @@
         },
         "parameters": [
           {
-            "name": "signedTx",
+            "name": "signedRawTransaction",
             "in": "path",
             "required": true,
             "type": "string",
@@ -693,7 +693,7 @@
         ]
       }
     },
-    "/v1/wallets/create/name/{name}/mnemonic/{mnemonic}/language/{language}": {
+    "/v1/wallets/create/wallet_name/{walletName}/mnemonic/{mnemonic}/language/{language}": {
       "get": {
         "operationId": "Wallet_CreateWallet",
         "responses": {
@@ -712,7 +712,7 @@
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "walletName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -741,7 +741,7 @@
         ]
       }
     },
-    "/v1/wallets/load/name/{name}": {
+    "/v1/wallets/load/wallet_name/{walletName}": {
       "get": {
         "operationId": "Wallet_LoadWallet",
         "responses": {
@@ -760,7 +760,7 @@
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "walletName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -771,7 +771,7 @@
         ]
       }
     },
-    "/v1/wallets/lock": {
+    "/v1/wallets/lock/wallet_name/{walletName}": {
       "get": {
         "operationId": "Wallet_LockWallet",
         "responses": {
@@ -790,17 +790,10 @@
         },
         "parameters": [
           {
-            "name": "password",
-            "in": "query",
-            "required": false,
+            "name": "walletName",
+            "in": "path",
+            "required": true,
             "type": "string"
-          },
-          {
-            "name": "timeout",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
           }
         ],
         "tags": [
@@ -808,7 +801,7 @@
         ]
       }
     },
-    "/v1/wallets/unload/name/{name}": {
+    "/v1/wallets/unload/wallet_name/{walletName}": {
       "get": {
         "operationId": "Wallet_UnloadWallet",
         "responses": {
@@ -827,7 +820,7 @@
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "walletName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -838,7 +831,7 @@
         ]
       }
     },
-    "/v1/wallets/unlock/password/{password}/timeout/{timeout}": {
+    "/v1/wallets/unlock/wallet_name/{walletName}/password/{password}/timeout/{timeout}": {
       "get": {
         "operationId": "Wallet_UnlockWallet",
         "responses": {
@@ -856,6 +849,12 @@
           }
         },
         "parameters": [
+          {
+            "name": "walletName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "password",
             "in": "path",
@@ -1009,7 +1008,12 @@
       }
     },
     "pactusCreateWalletResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string"
+        }
+      }
     },
     "pactusGetAccountResponse": {
       "type": "object",
@@ -1258,13 +1262,18 @@
     "pactusLoadWalletResponse": {
       "type": "object",
       "properties": {
-        "name": {
+        "walletName": {
           "type": "string"
         }
       }
     },
     "pactusLockWalletResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string"
+        }
+      }
     },
     "pactusPayloadBond": {
       "type": "object",
@@ -1430,6 +1439,19 @@
         }
       }
     },
+    "pactusSignRawTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "transactionId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "signedRawTransaction": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
     "pactusTransactionInfo": {
       "type": "object",
       "properties": {
@@ -1498,13 +1520,18 @@
     "pactusUnloadWalletResponse": {
       "type": "object",
       "properties": {
-        "name": {
+        "walletName": {
           "type": "string"
         }
       }
     },
     "pactusUnlockWalletResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string"
+        }
+      }
     },
     "pactusValidatorInfo": {
       "type": "object",

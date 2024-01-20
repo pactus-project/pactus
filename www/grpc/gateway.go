@@ -3,6 +3,7 @@ package grpc
 import (
 	"fmt"
 	"mime"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -37,14 +38,14 @@ func (s *Server) getOpenAPIHandler() (http.Handler, error) {
 	return http.FileServer(statikFS), nil
 }
 
-func (s *Server) startGateway() error {
+func (s *Server) startGateway(grpcAddr string) error {
 	if !s.config.Gateway.Enable {
 		return nil
 	}
 
 	conn, err := grpc.DialContext(
 		s.ctx,
-		s.config.Listen,
+		grpcAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithBlock(),
 	)
@@ -83,11 +84,19 @@ func (s *Server) startGateway() error {
 			oa.ServeHTTP(w, r)
 		}),
 	}
+
 	if s.config.Gateway.EnableCORS {
 		gwServer.Handler = allowCORS(gwServer.Handler)
 	}
 
-	return gwServer.ListenAndServe()
+	listener, err := net.Listen("tcp", s.config.Listen)
+	if err != nil {
+		return err
+	}
+
+	s.logger.Info("grpc-gateway started listening", "address", listener.Addr().String())
+
+	return gwServer.Serve(listener)
 }
 
 // preflightHandler adds the necessary headers in order to serve

@@ -12,7 +12,7 @@ import 'package:protobuf/protobuf.dart' as $pb;
 
 class CreateWalletRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateWalletRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'mnemonic')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'language')
     ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'password')
@@ -21,14 +21,14 @@ class CreateWalletRequest extends $pb.GeneratedMessage {
 
   CreateWalletRequest._() : super();
   factory CreateWalletRequest({
-    $core.String? name,
+    $core.String? walletName,
     $core.String? mnemonic,
     $core.String? language,
     $core.String? password,
   }) {
     final _result = create();
-    if (name != null) {
-      _result.name = name;
+    if (walletName != null) {
+      _result.walletName = walletName;
     }
     if (mnemonic != null) {
       _result.mnemonic = mnemonic;
@@ -63,13 +63,13 @@ class CreateWalletRequest extends $pb.GeneratedMessage {
   static CreateWalletRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get name => $_getSZ(0);
+  $core.String get walletName => $_getSZ(0);
   @$pb.TagNumber(1)
-  set name($core.String v) { $_setString(0, v); }
+  set walletName($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasName() => $_has(0);
+  $core.bool hasWalletName() => $_has(0);
   @$pb.TagNumber(1)
-  void clearName() => clearField(1);
+  void clearWalletName() => clearField(1);
 
   @$pb.TagNumber(2)
   $core.String get mnemonic => $_getSZ(1);
@@ -101,11 +101,20 @@ class CreateWalletRequest extends $pb.GeneratedMessage {
 
 class CreateWalletResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CreateWalletResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
     ..hasRequiredFields = false
   ;
 
   CreateWalletResponse._() : super();
-  factory CreateWalletResponse() => create();
+  factory CreateWalletResponse({
+    $core.String? walletName,
+  }) {
+    final _result = create();
+    if (walletName != null) {
+      _result.walletName = walletName;
+    }
+    return _result;
+  }
   factory CreateWalletResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory CreateWalletResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
@@ -126,21 +135,30 @@ class CreateWalletResponse extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static CreateWalletResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CreateWalletResponse>(create);
   static CreateWalletResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => clearField(1);
 }
 
 class LoadWalletRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'LoadWalletRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
     ..hasRequiredFields = false
   ;
 
   LoadWalletRequest._() : super();
   factory LoadWalletRequest({
-    $core.String? name,
+    $core.String? walletName,
   }) {
     final _result = create();
-    if (name != null) {
-      _result.name = name;
+    if (walletName != null) {
+      _result.walletName = walletName;
     }
     return _result;
   }
@@ -166,28 +184,28 @@ class LoadWalletRequest extends $pb.GeneratedMessage {
   static LoadWalletRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get name => $_getSZ(0);
+  $core.String get walletName => $_getSZ(0);
   @$pb.TagNumber(1)
-  set name($core.String v) { $_setString(0, v); }
+  set walletName($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasName() => $_has(0);
+  $core.bool hasWalletName() => $_has(0);
   @$pb.TagNumber(1)
-  void clearName() => clearField(1);
+  void clearWalletName() => clearField(1);
 }
 
 class LoadWalletResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'LoadWalletResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
     ..hasRequiredFields = false
   ;
 
   LoadWalletResponse._() : super();
   factory LoadWalletResponse({
-    $core.String? name,
+    $core.String? walletName,
   }) {
     final _result = create();
-    if (name != null) {
-      _result.name = name;
+    if (walletName != null) {
+      _result.walletName = walletName;
     }
     return _result;
   }
@@ -213,28 +231,28 @@ class LoadWalletResponse extends $pb.GeneratedMessage {
   static LoadWalletResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get name => $_getSZ(0);
+  $core.String get walletName => $_getSZ(0);
   @$pb.TagNumber(1)
-  set name($core.String v) { $_setString(0, v); }
+  set walletName($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasName() => $_has(0);
+  $core.bool hasWalletName() => $_has(0);
   @$pb.TagNumber(1)
-  void clearName() => clearField(1);
+  void clearWalletName() => clearField(1);
 }
 
 class UnloadWalletRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UnloadWalletRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
     ..hasRequiredFields = false
   ;
 
   UnloadWalletRequest._() : super();
   factory UnloadWalletRequest({
-    $core.String? name,
+    $core.String? walletName,
   }) {
     final _result = create();
-    if (name != null) {
-      _result.name = name;
+    if (walletName != null) {
+      _result.walletName = walletName;
     }
     return _result;
   }
@@ -260,28 +278,28 @@ class UnloadWalletRequest extends $pb.GeneratedMessage {
   static UnloadWalletRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get name => $_getSZ(0);
+  $core.String get walletName => $_getSZ(0);
   @$pb.TagNumber(1)
-  set name($core.String v) { $_setString(0, v); }
+  set walletName($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasName() => $_has(0);
+  $core.bool hasWalletName() => $_has(0);
   @$pb.TagNumber(1)
-  void clearName() => clearField(1);
+  void clearWalletName() => clearField(1);
 }
 
 class UnloadWalletResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UnloadWalletResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
     ..hasRequiredFields = false
   ;
 
   UnloadWalletResponse._() : super();
   factory UnloadWalletResponse({
-    $core.String? name,
+    $core.String? walletName,
   }) {
     final _result = create();
-    if (name != null) {
-      _result.name = name;
+    if (walletName != null) {
+      _result.walletName = walletName;
     }
     return _result;
   }
@@ -307,33 +325,28 @@ class UnloadWalletResponse extends $pb.GeneratedMessage {
   static UnloadWalletResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get name => $_getSZ(0);
+  $core.String get walletName => $_getSZ(0);
   @$pb.TagNumber(1)
-  set name($core.String v) { $_setString(0, v); }
+  set walletName($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasName() => $_has(0);
+  $core.bool hasWalletName() => $_has(0);
   @$pb.TagNumber(1)
-  void clearName() => clearField(1);
+  void clearWalletName() => clearField(1);
 }
 
 class LockWalletRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'LockWalletRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'password')
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'timeout', $pb.PbFieldType.O3)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
     ..hasRequiredFields = false
   ;
 
   LockWalletRequest._() : super();
   factory LockWalletRequest({
-    $core.String? password,
-    $core.int? timeout,
+    $core.String? walletName,
   }) {
     final _result = create();
-    if (password != null) {
-      _result.password = password;
-    }
-    if (timeout != null) {
-      _result.timeout = timeout;
+    if (walletName != null) {
+      _result.walletName = walletName;
     }
     return _result;
   }
@@ -359,31 +372,31 @@ class LockWalletRequest extends $pb.GeneratedMessage {
   static LockWalletRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get password => $_getSZ(0);
+  $core.String get walletName => $_getSZ(0);
   @$pb.TagNumber(1)
-  set password($core.String v) { $_setString(0, v); }
+  set walletName($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasPassword() => $_has(0);
+  $core.bool hasWalletName() => $_has(0);
   @$pb.TagNumber(1)
-  void clearPassword() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.int get timeout => $_getIZ(1);
-  @$pb.TagNumber(2)
-  set timeout($core.int v) { $_setSignedInt32(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasTimeout() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearTimeout() => clearField(2);
+  void clearWalletName() => clearField(1);
 }
 
 class LockWalletResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'LockWalletResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
     ..hasRequiredFields = false
   ;
 
   LockWalletResponse._() : super();
-  factory LockWalletResponse() => create();
+  factory LockWalletResponse({
+    $core.String? walletName,
+  }) {
+    final _result = create();
+    if (walletName != null) {
+      _result.walletName = walletName;
+    }
+    return _result;
+  }
   factory LockWalletResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory LockWalletResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
@@ -404,21 +417,35 @@ class LockWalletResponse extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static LockWalletResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LockWalletResponse>(create);
   static LockWalletResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => clearField(1);
 }
 
 class UnlockWalletRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UnlockWalletRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'password')
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'timeout', $pb.PbFieldType.O3)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'password')
+    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'timeout', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
   UnlockWalletRequest._() : super();
   factory UnlockWalletRequest({
+    $core.String? walletName,
     $core.String? password,
     $core.int? timeout,
   }) {
     final _result = create();
+    if (walletName != null) {
+      _result.walletName = walletName;
+    }
     if (password != null) {
       _result.password = password;
     }
@@ -449,31 +476,49 @@ class UnlockWalletRequest extends $pb.GeneratedMessage {
   static UnlockWalletRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get password => $_getSZ(0);
+  $core.String get walletName => $_getSZ(0);
   @$pb.TagNumber(1)
-  set password($core.String v) { $_setString(0, v); }
+  set walletName($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasPassword() => $_has(0);
+  $core.bool hasWalletName() => $_has(0);
   @$pb.TagNumber(1)
-  void clearPassword() => clearField(1);
+  void clearWalletName() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.int get timeout => $_getIZ(1);
+  $core.String get password => $_getSZ(1);
   @$pb.TagNumber(2)
-  set timeout($core.int v) { $_setSignedInt32(1, v); }
+  set password($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasTimeout() => $_has(1);
+  $core.bool hasPassword() => $_has(1);
   @$pb.TagNumber(2)
-  void clearTimeout() => clearField(2);
+  void clearPassword() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get timeout => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set timeout($core.int v) { $_setSignedInt32(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasTimeout() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearTimeout() => clearField(3);
 }
 
 class UnlockWalletResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UnlockWalletResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
     ..hasRequiredFields = false
   ;
 
   UnlockWalletResponse._() : super();
-  factory UnlockWalletResponse() => create();
+  factory UnlockWalletResponse({
+    $core.String? walletName,
+  }) {
+    final _result = create();
+    if (walletName != null) {
+      _result.walletName = walletName;
+    }
+    return _result;
+  }
   factory UnlockWalletResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory UnlockWalletResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
@@ -494,6 +539,151 @@ class UnlockWalletResponse extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static UnlockWalletResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UnlockWalletResponse>(create);
   static UnlockWalletResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => clearField(1);
+}
+
+class SignRawTransactionRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SignRawTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
+    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'rawTransaction', $pb.PbFieldType.OY)
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'password')
+    ..hasRequiredFields = false
+  ;
+
+  SignRawTransactionRequest._() : super();
+  factory SignRawTransactionRequest({
+    $core.String? walletName,
+    $core.List<$core.int>? rawTransaction,
+    $core.String? password,
+  }) {
+    final _result = create();
+    if (walletName != null) {
+      _result.walletName = walletName;
+    }
+    if (rawTransaction != null) {
+      _result.rawTransaction = rawTransaction;
+    }
+    if (password != null) {
+      _result.password = password;
+    }
+    return _result;
+  }
+  factory SignRawTransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SignRawTransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SignRawTransactionRequest clone() => SignRawTransactionRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SignRawTransactionRequest copyWith(void Function(SignRawTransactionRequest) updates) => super.copyWith((message) => updates(message as SignRawTransactionRequest)) as SignRawTransactionRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SignRawTransactionRequest create() => SignRawTransactionRequest._();
+  SignRawTransactionRequest createEmptyInstance() => create();
+  static $pb.PbList<SignRawTransactionRequest> createRepeated() => $pb.PbList<SignRawTransactionRequest>();
+  @$core.pragma('dart2js:noInline')
+  static SignRawTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SignRawTransactionRequest>(create);
+  static SignRawTransactionRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<$core.int> get rawTransaction => $_getN(1);
+  @$pb.TagNumber(2)
+  set rawTransaction($core.List<$core.int> v) { $_setBytes(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasRawTransaction() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearRawTransaction() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get password => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set password($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasPassword() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearPassword() => clearField(3);
+}
+
+class SignRawTransactionResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SignRawTransactionResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transactionId', $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signedRawTransaction', $pb.PbFieldType.OY)
+    ..hasRequiredFields = false
+  ;
+
+  SignRawTransactionResponse._() : super();
+  factory SignRawTransactionResponse({
+    $core.List<$core.int>? transactionId,
+    $core.List<$core.int>? signedRawTransaction,
+  }) {
+    final _result = create();
+    if (transactionId != null) {
+      _result.transactionId = transactionId;
+    }
+    if (signedRawTransaction != null) {
+      _result.signedRawTransaction = signedRawTransaction;
+    }
+    return _result;
+  }
+  factory SignRawTransactionResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SignRawTransactionResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SignRawTransactionResponse clone() => SignRawTransactionResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SignRawTransactionResponse copyWith(void Function(SignRawTransactionResponse) updates) => super.copyWith((message) => updates(message as SignRawTransactionResponse)) as SignRawTransactionResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SignRawTransactionResponse create() => SignRawTransactionResponse._();
+  SignRawTransactionResponse createEmptyInstance() => create();
+  static $pb.PbList<SignRawTransactionResponse> createRepeated() => $pb.PbList<SignRawTransactionResponse>();
+  @$core.pragma('dart2js:noInline')
+  static SignRawTransactionResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SignRawTransactionResponse>(create);
+  static SignRawTransactionResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$core.int> get transactionId => $_getN(0);
+  @$pb.TagNumber(1)
+  set transactionId($core.List<$core.int> v) { $_setBytes(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasTransactionId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearTransactionId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<$core.int> get signedRawTransaction => $_getN(1);
+  @$pb.TagNumber(2)
+  set signedRawTransaction($core.List<$core.int> v) { $_setBytes(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasSignedRawTransaction() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearSignedRawTransaction() => clearField(2);
 }
 
 class WalletApi {
@@ -519,6 +709,10 @@ class WalletApi {
   $async.Future<UnlockWalletResponse> unlockWallet($pb.ClientContext? ctx, UnlockWalletRequest request) {
     var emptyResponse = UnlockWalletResponse();
     return _client.invoke<UnlockWalletResponse>(ctx, 'Wallet', 'UnlockWallet', request, emptyResponse);
+  }
+  $async.Future<SignRawTransactionResponse> signRawTransaction($pb.ClientContext? ctx, SignRawTransactionRequest request) {
+    var emptyResponse = SignRawTransactionResponse();
+    return _client.invoke<SignRawTransactionResponse>(ctx, 'Wallet', 'SignRawTransaction', request, emptyResponse);
   }
 }
 

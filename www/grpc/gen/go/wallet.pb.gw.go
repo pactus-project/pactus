@@ -32,7 +32,7 @@ var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
 var (
-	filter_Wallet_CreateWallet_0 = &utilities.DoubleArray{Encoding: map[string]int{"name": 0, "mnemonic": 1, "language": 2}, Base: []int{1, 1, 2, 3, 0, 0, 0}, Check: []int{0, 1, 1, 1, 2, 3, 4}}
+	filter_Wallet_CreateWallet_0 = &utilities.DoubleArray{Encoding: map[string]int{"wallet_name": 0, "mnemonic": 1, "language": 2}, Base: []int{1, 1, 2, 3, 0, 0, 0}, Check: []int{0, 1, 1, 1, 2, 3, 4}}
 )
 
 func request_Wallet_CreateWallet_0(ctx context.Context, marshaler runtime.Marshaler, client WalletClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -46,14 +46,14 @@ func request_Wallet_CreateWallet_0(ctx context.Context, marshaler runtime.Marsha
 		_   = err
 	)
 
-	val, ok = pathParams["name"]
+	val, ok = pathParams["wallet_name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "wallet_name")
 	}
 
-	protoReq.Name, err = runtime.String(val)
+	protoReq.WalletName, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "wallet_name", err)
 	}
 
 	val, ok = pathParams["mnemonic"]
@@ -99,14 +99,14 @@ func local_request_Wallet_CreateWallet_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["name"]
+	val, ok = pathParams["wallet_name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "wallet_name")
 	}
 
-	protoReq.Name, err = runtime.String(val)
+	protoReq.WalletName, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "wallet_name", err)
 	}
 
 	val, ok = pathParams["mnemonic"]
@@ -152,14 +152,14 @@ func request_Wallet_LoadWallet_0(ctx context.Context, marshaler runtime.Marshale
 		_   = err
 	)
 
-	val, ok = pathParams["name"]
+	val, ok = pathParams["wallet_name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "wallet_name")
 	}
 
-	protoReq.Name, err = runtime.String(val)
+	protoReq.WalletName, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "wallet_name", err)
 	}
 
 	msg, err := client.LoadWallet(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -178,14 +178,14 @@ func local_request_Wallet_LoadWallet_0(ctx context.Context, marshaler runtime.Ma
 		_   = err
 	)
 
-	val, ok = pathParams["name"]
+	val, ok = pathParams["wallet_name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "wallet_name")
 	}
 
-	protoReq.Name, err = runtime.String(val)
+	protoReq.WalletName, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "wallet_name", err)
 	}
 
 	msg, err := server.LoadWallet(ctx, &protoReq)
@@ -204,14 +204,14 @@ func request_Wallet_UnloadWallet_0(ctx context.Context, marshaler runtime.Marsha
 		_   = err
 	)
 
-	val, ok = pathParams["name"]
+	val, ok = pathParams["wallet_name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "wallet_name")
 	}
 
-	protoReq.Name, err = runtime.String(val)
+	protoReq.WalletName, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "wallet_name", err)
 	}
 
 	msg, err := client.UnloadWallet(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -230,14 +230,14 @@ func local_request_Wallet_UnloadWallet_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["name"]
+	val, ok = pathParams["wallet_name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "wallet_name")
 	}
 
-	protoReq.Name, err = runtime.String(val)
+	protoReq.WalletName, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "wallet_name", err)
 	}
 
 	msg, err := server.UnloadWallet(ctx, &protoReq)
@@ -245,19 +245,25 @@ func local_request_Wallet_UnloadWallet_0(ctx context.Context, marshaler runtime.
 
 }
 
-var (
-	filter_Wallet_LockWallet_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
-)
-
 func request_Wallet_LockWallet_0(ctx context.Context, marshaler runtime.Marshaler, client WalletClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq LockWalletRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["wallet_name"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "wallet_name")
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Wallet_LockWallet_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+
+	protoReq.WalletName, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "wallet_name", err)
 	}
 
 	msg, err := client.LockWallet(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -269,11 +275,21 @@ func local_request_Wallet_LockWallet_0(ctx context.Context, marshaler runtime.Ma
 	var protoReq LockWalletRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["wallet_name"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "wallet_name")
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Wallet_LockWallet_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+
+	protoReq.WalletName, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "wallet_name", err)
 	}
 
 	msg, err := server.LockWallet(ctx, &protoReq)
@@ -291,6 +307,16 @@ func request_Wallet_UnlockWallet_0(ctx context.Context, marshaler runtime.Marsha
 		err error
 		_   = err
 	)
+
+	val, ok = pathParams["wallet_name"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "wallet_name")
+	}
+
+	protoReq.WalletName, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "wallet_name", err)
+	}
 
 	val, ok = pathParams["password"]
 	if !ok {
@@ -327,6 +353,16 @@ func local_request_Wallet_UnlockWallet_0(ctx context.Context, marshaler runtime.
 		err error
 		_   = err
 	)
+
+	val, ok = pathParams["wallet_name"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "wallet_name")
+	}
+
+	protoReq.WalletName, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "wallet_name", err)
+	}
 
 	val, ok = pathParams["password"]
 	if !ok {
@@ -367,7 +403,7 @@ func RegisterWalletHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/CreateWallet", runtime.WithHTTPPathPattern("/v1/wallets/create/name/{name}/mnemonic/{mnemonic}/language/{language}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/CreateWallet", runtime.WithHTTPPathPattern("/v1/wallets/create/wallet_name/{wallet_name}/mnemonic/{mnemonic}/language/{language}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -392,7 +428,7 @@ func RegisterWalletHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/LoadWallet", runtime.WithHTTPPathPattern("/v1/wallets/load/name/{name}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/LoadWallet", runtime.WithHTTPPathPattern("/v1/wallets/load/wallet_name/{wallet_name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -417,7 +453,7 @@ func RegisterWalletHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/UnloadWallet", runtime.WithHTTPPathPattern("/v1/wallets/unload/name/{name}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/UnloadWallet", runtime.WithHTTPPathPattern("/v1/wallets/unload/wallet_name/{wallet_name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -442,7 +478,7 @@ func RegisterWalletHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/LockWallet", runtime.WithHTTPPathPattern("/v1/wallets/lock"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/LockWallet", runtime.WithHTTPPathPattern("/v1/wallets/lock/wallet_name/{wallet_name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -467,7 +503,7 @@ func RegisterWalletHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/UnlockWallet", runtime.WithHTTPPathPattern("/v1/wallets/unlock/password/{password}/timeout/{timeout}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/UnlockWallet", runtime.WithHTTPPathPattern("/v1/wallets/unlock/wallet_name/{wallet_name}/password/{password}/timeout/{timeout}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -531,7 +567,7 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/CreateWallet", runtime.WithHTTPPathPattern("/v1/wallets/create/name/{name}/mnemonic/{mnemonic}/language/{language}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/CreateWallet", runtime.WithHTTPPathPattern("/v1/wallets/create/wallet_name/{wallet_name}/mnemonic/{mnemonic}/language/{language}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -553,7 +589,7 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/LoadWallet", runtime.WithHTTPPathPattern("/v1/wallets/load/name/{name}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/LoadWallet", runtime.WithHTTPPathPattern("/v1/wallets/load/wallet_name/{wallet_name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -575,7 +611,7 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/UnloadWallet", runtime.WithHTTPPathPattern("/v1/wallets/unload/name/{name}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/UnloadWallet", runtime.WithHTTPPathPattern("/v1/wallets/unload/wallet_name/{wallet_name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -597,7 +633,7 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/LockWallet", runtime.WithHTTPPathPattern("/v1/wallets/lock"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/LockWallet", runtime.WithHTTPPathPattern("/v1/wallets/lock/wallet_name/{wallet_name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -619,7 +655,7 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/UnlockWallet", runtime.WithHTTPPathPattern("/v1/wallets/unlock/password/{password}/timeout/{timeout}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/UnlockWallet", runtime.WithHTTPPathPattern("/v1/wallets/unlock/wallet_name/{wallet_name}/password/{password}/timeout/{timeout}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -639,15 +675,15 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 }
 
 var (
-	pattern_Wallet_CreateWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5}, []string{"v1", "wallets", "create", "name", "mnemonic", "language"}, ""))
+	pattern_Wallet_CreateWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5}, []string{"v1", "wallets", "create", "wallet_name", "mnemonic", "language"}, ""))
 
-	pattern_Wallet_LoadWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "wallets", "load", "name"}, ""))
+	pattern_Wallet_LoadWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "wallets", "load", "wallet_name"}, ""))
 
-	pattern_Wallet_UnloadWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "wallets", "unload", "name"}, ""))
+	pattern_Wallet_UnloadWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "wallets", "unload", "wallet_name"}, ""))
 
-	pattern_Wallet_LockWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "wallets", "lock"}, ""))
+	pattern_Wallet_LockWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "wallets", "lock", "wallet_name"}, ""))
 
-	pattern_Wallet_UnlockWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4}, []string{"v1", "wallets", "unlock", "password", "timeout"}, ""))
+	pattern_Wallet_UnlockWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5}, []string{"v1", "wallets", "unlock", "wallet_name", "password", "timeout"}, ""))
 )
 
 var (

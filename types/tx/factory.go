@@ -29,7 +29,7 @@ func NewTransferTx(lockTime uint32,
 		Amount: amount,
 	}
 
-	return NewTx(lockTime, pld, fee, memo)
+	return newTx(lockTime, pld, fee, memo)
 }
 
 func NewBondTx(lockTime uint32,
@@ -44,7 +44,7 @@ func NewBondTx(lockTime uint32,
 		Stake:     stake,
 	}
 
-	return NewTx(lockTime, pld, fee, memo)
+	return newTx(lockTime, pld, fee, memo)
 }
 
 func NewUnbondTx(lockTime uint32,
@@ -55,7 +55,7 @@ func NewUnbondTx(lockTime uint32,
 		Validator: val,
 	}
 
-	return NewTx(lockTime, pld, 0, memo)
+	return newTx(lockTime, pld, 0, memo)
 }
 
 func NewWithdrawTx(lockTime uint32,
@@ -70,7 +70,7 @@ func NewWithdrawTx(lockTime uint32,
 		Amount: amount,
 	}
 
-	return NewTx(lockTime, pld, fee, memo)
+	return newTx(lockTime, pld, fee, memo)
 }
 
 func NewSortitionTx(lockTime uint32,
@@ -82,5 +82,5 @@ func NewSortitionTx(lockTime uint32,
 		Proof:     proof,
 	}
 
-	return NewTx(lockTime, pld, 0, "")
+	return newTx(lockTime, pld, 0, "")
 }

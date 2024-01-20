@@ -8,10 +8,14 @@ service Transaction {
   rpc CalculateFee(CalculateFeeRequest) returns (CalculateFeeResponse);
   rpc BroadcastTransaction(BroadcastTransactionRequest)
       returns (BroadcastTransactionResponse);
-  rpc GetRawTransferTransaction(GetRawTransferTransactionRequest) returns (GetRawTransactionResponse);
-  rpc GetRawBondTransaction(GetRawBondTransactionRequest) returns (GetRawTransactionResponse);
-  rpc GetRawUnBondTransaction(GetRawUnBondTransactionRequest) returns (GetRawTransactionResponse);
-  rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest) returns (GetRawTransactionResponse);
+  rpc GetRawTransferTransaction(GetRawTransferTransactionRequest)
+      returns (GetRawTransactionResponse);
+  rpc GetRawBondTransaction(GetRawBondTransactionRequest)
+      returns (GetRawTransactionResponse);
+  rpc GetRawUnBondTransaction(GetRawUnBondTransactionRequest)
+      returns (GetRawTransactionResponse);
+  rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest)
+      returns (GetRawTransactionResponse);
 }
 
 message GetTransactionRequest {
@@ -32,9 +36,9 @@ message CalculateFeeRequest {
 
 message CalculateFeeResponse { int64 fee = 1; }
 
-message BroadcastTransactionRequest {bytes signed_tx = 1;}
+message BroadcastTransactionRequest { bytes signed_raw_transaction = 1; }
 
-message BroadcastTransactionResponse {bytes id = 2;}
+message BroadcastTransactionResponse { bytes id = 2; }
 
 message GetRawTransferTransactionRequest {
   uint32 lock_time = 1;
@@ -63,16 +67,14 @@ message GetRawUnBondTransactionRequest {
 
 message GetRawWithdrawTransactionRequest {
   uint32 lock_time = 1;
-  string validator_address = 3;
-  string account_address = 4;
-  int64 fee = 5;
-  int64 amount = 6;
-  string memo = 7;
+  string validator_address = 2;
+  string account_address = 3;
+  int64 fee = 4;
+  int64 amount = 5;
+  string memo = 6;
 }
 
-message GetRawTransactionResponse {
-  bytes raw_transaction = 1;
-}
+message GetRawTransactionResponse { bytes raw_transaction = 1; }
 
 message PayloadTransfer {
   string sender = 1;
@@ -132,4 +134,3 @@ enum TransactionVerbosity {
   TRANSACTION_DATA = 0;
   TRANSACTION_INFO = 1;
 }
-

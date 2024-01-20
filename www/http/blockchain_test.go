@@ -24,6 +24,8 @@ func TestBlockchainInfo(t *testing.T) {
 
 	assert.Equal(t, w.Code, 200)
 	assert.Contains(t, w.Body.String(), "10")
+
+	td.StopServers()
 }
 
 func TestBlock(t *testing.T) {
@@ -96,6 +98,8 @@ func TestBlock(t *testing.T) {
 
 		assert.Equal(t, w.Code, 400)
 	})
+
+	td.StopServers()
 }
 
 func TestAccount(t *testing.T) {
@@ -151,6 +155,8 @@ func TestAccount(t *testing.T) {
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
 	})
+
+	td.StopServers()
 }
 
 func TestValidator(t *testing.T) {
@@ -207,6 +213,8 @@ func TestValidator(t *testing.T) {
 		assert.Contains(t, w.Body.String(), "0.987")
 		fmt.Println(w.Body)
 	})
+
+	td.StopServers()
 }
 
 func TestValidatorByNumber(t *testing.T) {
@@ -266,6 +274,8 @@ func TestValidatorByNumber(t *testing.T) {
 		assert.Equal(t, w.Code, 400)
 		fmt.Println(w.Body)
 	})
+
+	td.StopServers()
 }
 
 func TestConsensusInfo(t *testing.T) {
@@ -285,4 +295,6 @@ func TestConsensusInfo(t *testing.T) {
 	assert.Equal(t, w.Code, 200)
 	assert.Contains(t, w.Body.String(), "<td>2</td>")
 	assert.Contains(t, w.Body.String(), v2.Signer().String())
+
+	td.StopServers()
 }

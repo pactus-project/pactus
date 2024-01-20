@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path"
 	"path/filepath"
 )
 
@@ -70,7 +69,7 @@ func TempDirPath() string {
 }
 
 func TempFilePath() string {
-	return path.Join(TempDirPath(), "file")
+	return filepath.Join(TempDirPath(), "file")
 }
 
 func IsDirEmpty(name string) bool {

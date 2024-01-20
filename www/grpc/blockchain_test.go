@@ -1,31 +1,33 @@
 package grpc
 
 import (
+	"context"
 	"testing"
 
-	"github.com/pactus-project/pactus/util/testsuite"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetBlock(t *testing.T) {
-	conn, client := testBlockchainClient(t)
+	td := setup(t, nil)
+	conn, client := td.blockchainClient(t)
 
 	height := uint32(100)
-	b := tMockState.TestStore.AddTestBlock(height)
+	b := td.mockState.TestStore.AddTestBlock(height)
 	data, _ := b.Bytes()
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx, &pactus.GetBlockRequest{
-			Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_DATA,
-		})
+		res, err := client.GetBlock(context.Background(),
+			&pactus.GetBlockRequest{
+				Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_DATA,
+			})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return an existing block data (verbosity: 0)", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx,
+		res, err := client.GetBlock(context.Background(),
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
 
 		assert.NoError(t, err)
@@ -38,7 +40,7 @@ func TestGetBlock(t *testing.T) {
 	})
 
 	t.Run("Should return object with  (verbosity: 1)", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx,
+		res, err := client.GetBlock(context.Background(),
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_INFO})
 
 		assert.NoError(t, err)
@@ -53,7 +55,7 @@ func TestGetBlock(t *testing.T) {
 	})
 
 	t.Run("Should return object with  (verbosity: 2)", func(t *testing.T) {
-		res, err := client.GetBlock(tCtx,
+		res, err := client.GetBlock(context.Background(),
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_TRANSACTIONS})
 
 		assert.NoError(t, err)
@@ -72,15 +74,17 @@ func TestGetBlock(t *testing.T) {
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
 }
 
 func TestGetBlockHash(t *testing.T) {
-	conn, client := testBlockchainClient(t)
+	td := setup(t, nil)
+	conn, client := td.blockchainClient(t)
 
-	b := tMockState.TestStore.AddTestBlock(100)
+	b := td.mockState.TestStore.AddTestBlock(100)
 
 	t.Run("Should return error for non existing block", func(t *testing.T) {
-		res, err := client.GetBlockHash(tCtx,
+		res, err := client.GetBlockHash(context.Background(),
 			&pactus.GetBlockHashRequest{Height: 0})
 
 		assert.Error(t, err)
@@ -88,7 +92,7 @@ func TestGetBlockHash(t *testing.T) {
 	})
 
 	t.Run("Should return height of existing block", func(t *testing.T) {
-		res, err := client.GetBlockHash(tCtx,
+		res, err := client.GetBlockHash(context.Background(),
 			&pactus.GetBlockHashRequest{Height: 100})
 
 		assert.NoError(t, err)
@@ -96,17 +100,17 @@ func TestGetBlockHash(t *testing.T) {
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
 }
 
 func TestGetBlockHeight(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
+	td := setup(t, nil)
+	conn, client := td.blockchainClient(t)
 
-	conn, client := testBlockchainClient(t)
-
-	b := tMockState.TestStore.AddTestBlock(100)
+	b := td.mockState.TestStore.AddTestBlock(100)
 
 	t.Run("Should return error for invalid hash", func(t *testing.T) {
-		res, err := client.GetBlockHeight(tCtx,
+		res, err := client.GetBlockHeight(context.Background(),
 			&pactus.GetBlockHeightRequest{Hash: nil})
 
 		assert.Error(t, err)
@@ -114,15 +118,15 @@ func TestGetBlockHeight(t *testing.T) {
 	})
 
 	t.Run("Should return error for non existing block", func(t *testing.T) {
-		res, err := client.GetBlockHeight(tCtx,
-			&pactus.GetBlockHeightRequest{Hash: ts.RandHash().Bytes()})
+		res, err := client.GetBlockHeight(context.Background(),
+			&pactus.GetBlockHeightRequest{Hash: td.RandHash().Bytes()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return height of existing block", func(t *testing.T) {
-		res, err := client.GetBlockHeight(tCtx,
+		res, err := client.GetBlockHeight(context.Background(),
 			&pactus.GetBlockHeightRequest{Hash: b.Hash().Bytes()})
 
 		assert.NoError(t, err)
@@ -130,31 +134,34 @@ func TestGetBlockHeight(t *testing.T) {
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
 }
 
 func TestGetBlockchainInfo(t *testing.T) {
-	conn, client := testBlockchainClient(t)
+	td := setup(t, nil)
+	conn, client := td.blockchainClient(t)
 
 	t.Run("Should return the last block height", func(t *testing.T) {
-		res, err := client.GetBlockchainInfo(tCtx,
+		res, err := client.GetBlockchainInfo(context.Background(),
 			&pactus.GetBlockchainInfoRequest{})
 
 		assert.NoError(t, err)
-		assert.Equal(t, tMockState.TestStore.LastHeight, res.LastBlockHeight)
+		assert.Equal(t, td.mockState.TestStore.LastHeight, res.LastBlockHeight)
 		assert.NotEmpty(t, res.LastBlockHash)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
 }
 
 func TestGetAccount(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
+	td := setup(t, nil)
+	conn, client := td.blockchainClient(t)
 
-	conn, client := testBlockchainClient(t)
-	acc, addr := tMockState.TestStore.AddTestAccount()
+	acc, addr := td.mockState.TestStore.AddTestAccount()
 
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
-		res, err := client.GetAccount(tCtx,
+		res, err := client.GetAccount(context.Background(),
 			&pactus.GetAccountRequest{Address: ""})
 
 		assert.Error(t, err)
@@ -162,15 +169,15 @@ func TestGetAccount(t *testing.T) {
 	})
 
 	t.Run("Should return nil for non existing account ", func(t *testing.T) {
-		res, err := client.GetAccount(tCtx,
-			&pactus.GetAccountRequest{Address: ts.RandAccAddress().String()})
+		res, err := client.GetAccount(context.Background(),
+			&pactus.GetAccountRequest{Address: td.RandAccAddress().String()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return account details", func(t *testing.T) {
-		res, err := client.GetAccount(tCtx,
+		res, err := client.GetAccount(context.Background(),
 			&pactus.GetAccountRequest{Address: addr.String()})
 
 		assert.Nil(t, err)
@@ -178,17 +185,19 @@ func TestGetAccount(t *testing.T) {
 		assert.Equal(t, res.Account.Balance, acc.Balance())
 		assert.Equal(t, res.Account.Number, acc.Number())
 	})
+
 	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
 }
 
 func TestGetValidator(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
+	td := setup(t, nil)
+	conn, client := td.blockchainClient(t)
 
-	conn, client := testBlockchainClient(t)
-	val1 := tMockState.TestStore.AddTestValidator()
+	val1 := td.mockState.TestStore.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid address", func(t *testing.T) {
-		res, err := client.GetValidator(tCtx,
+		res, err := client.GetValidator(context.Background(),
 			&pactus.GetValidatorRequest{Address: ""})
 
 		assert.Error(t, err, "Error should be returned")
@@ -196,15 +205,15 @@ func TestGetValidator(t *testing.T) {
 	})
 
 	t.Run("should return Not Found", func(t *testing.T) {
-		res, err := client.GetValidator(tCtx,
-			&pactus.GetValidatorRequest{Address: ts.RandAccAddress().String()})
+		res, err := client.GetValidator(context.Background(),
+			&pactus.GetValidatorRequest{Address: td.RandAccAddress().String()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return validator, and the public keys should match", func(t *testing.T) {
-		res, err := client.GetValidator(tCtx,
+		res, err := client.GetValidator(context.Background(),
 			&pactus.GetValidatorRequest{Address: val1.Address().String()})
 
 		assert.NoError(t, err)
@@ -213,15 +222,17 @@ func TestGetValidator(t *testing.T) {
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
 }
 
 func TestGetValidatorByNumber(t *testing.T) {
-	conn, client := testBlockchainClient(t)
+	td := setup(t, nil)
+	conn, client := td.blockchainClient(t)
 
-	val1 := tMockState.TestStore.AddTestValidator()
+	val1 := td.mockState.TestStore.AddTestValidator()
 
 	t.Run("Should return nil value due to invalid number", func(t *testing.T) {
-		res, err := client.GetValidatorByNumber(tCtx,
+		res, err := client.GetValidatorByNumber(context.Background(),
 			&pactus.GetValidatorByNumberRequest{Number: -1})
 
 		assert.Error(t, err)
@@ -229,7 +240,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 	})
 
 	t.Run("should return Not Found", func(t *testing.T) {
-		res, err := client.GetValidatorByNumber(tCtx,
+		res, err := client.GetValidatorByNumber(context.Background(),
 			&pactus.GetValidatorByNumberRequest{Number: val1.Number() + 1})
 
 		assert.Error(t, err)
@@ -237,7 +248,7 @@ func TestGetValidatorByNumber(t *testing.T) {
 	})
 
 	t.Run("Should return validator matching with public key and number", func(t *testing.T) {
-		res, err := client.GetValidatorByNumber(tCtx,
+		res, err := client.GetValidatorByNumber(context.Background(),
 			&pactus.GetValidatorByNumberRequest{Number: val1.Number()})
 
 		assert.NoError(t, err)
@@ -247,13 +258,18 @@ func TestGetValidatorByNumber(t *testing.T) {
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
 }
 
 func TestGetValidatorAddresses(t *testing.T) {
-	conn, client := testBlockchainClient(t)
+	td := setup(t, nil)
+	conn, client := td.blockchainClient(t)
 
 	t.Run("should return list of validator addresses", func(t *testing.T) {
-		res, err := client.GetValidatorAddresses(tCtx,
+		td.mockState.TestStore.AddTestValidator()
+		td.mockState.TestStore.AddTestValidator()
+
+		res, err := client.GetValidatorAddresses(context.Background(),
 			&pactus.GetValidatorAddressesRequest{})
 
 		assert.NoError(t, err)
@@ -262,16 +278,17 @@ func TestGetValidatorAddresses(t *testing.T) {
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
 }
 
 func TestGetPublicKey(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
+	td := setup(t, nil)
+	conn, client := td.blockchainClient(t)
 
-	conn, client := testBlockchainClient(t)
-	val := tMockState.TestStore.AddTestValidator()
+	val := td.mockState.TestStore.AddTestValidator()
 
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
-		res, err := client.GetPublicKey(tCtx,
+		res, err := client.GetPublicKey(context.Background(),
 			&pactus.GetPublicKeyRequest{Address: ""})
 
 		assert.Error(t, err)
@@ -279,38 +296,39 @@ func TestGetPublicKey(t *testing.T) {
 	})
 
 	t.Run("Should return nil for non existing public key ", func(t *testing.T) {
-		res, err := client.GetPublicKey(tCtx,
-			&pactus.GetPublicKeyRequest{Address: ts.RandAccAddress().String()})
+		res, err := client.GetPublicKey(context.Background(),
+			&pactus.GetPublicKeyRequest{Address: td.RandAccAddress().String()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("Should return the public key", func(t *testing.T) {
-		res, err := client.GetPublicKey(tCtx,
+		res, err := client.GetPublicKey(context.Background(),
 			&pactus.GetPublicKeyRequest{Address: val.Address().String()})
 
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, res.PublicKey, val.PublicKey().String())
 	})
+
 	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
 }
 
 func TestConsensusInfo(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
+	td := setup(t, nil)
+	conn, client := td.blockchainClient(t)
 
-	conn, client := testBlockchainClient(t)
-
-	v1, _ := ts.GenerateTestPrepareVote(100, 2)
-	v2, _ := ts.GenerateTestPrepareVote(100, 2)
-	tConsMocks[1].Active = true
-	tConsMocks[1].Height = 100
-	tConsMocks[0].AddVote(v1)
-	tConsMocks[1].AddVote(v2)
+	v1, _ := td.GenerateTestPrepareVote(100, 2)
+	v2, _ := td.GenerateTestPrepareVote(100, 2)
+	td.consMocks[1].Active = true
+	td.consMocks[1].Height = 100
+	td.consMocks[0].AddVote(v1)
+	td.consMocks[1].AddVote(v2)
 
 	t.Run("Should return the consensus info", func(t *testing.T) {
-		res, err := client.GetConsensusInfo(tCtx, &pactus.GetConsensusInfoRequest{})
+		res, err := client.GetConsensusInfo(context.Background(), &pactus.GetConsensusInfoRequest{})
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
@@ -321,4 +339,5 @@ func TestConsensusInfo(t *testing.T) {
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
 }

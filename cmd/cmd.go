@@ -29,9 +29,21 @@ import (
 	"github.com/pactus-project/pactus/wallet/addresspath"
 )
 
-// terminalSupported returns true if the current terminal supports
+const (
+	DefaultHomeDirName    = "pactus"
+	DefaultWalletsDirName = "wallets"
+	DefaultWalletName     = "default_wallet"
+)
+
+var terminalSupported = false
+
+func init() {
+	terminalSupported = CheckTerminalSupported()
+}
+
+// CheckTerminalSupported returns true if the current terminal supports
 // line editing features.
-func terminalSupported() bool {
+func CheckTerminalSupported() bool {
 	bad := map[string]bool{"": true, "dumb": true, "cons25": true}
 
 	return !bad[strings.ToLower(os.Getenv("TERM"))]
@@ -150,7 +162,7 @@ func PromptInputWithRange(label string, def, min, max int) int {
 
 func FatalErrorCheck(err error) {
 	if err != nil {
-		if terminalSupported() {
+		if terminalSupported {
 			fmt.Printf("\033[31m%s\033[0m\n", err.Error())
 		} else {
 			fmt.Printf("%s\n", err.Error())
@@ -161,15 +173,16 @@ func FatalErrorCheck(err error) {
 }
 
 func PrintErrorMsgf(format string, a ...interface{}) {
-	if terminalSupported() {
+	format = "[ERROR] " + format
+	if terminalSupported {
 		// Print error msg with red color
-		format = fmt.Sprintf("\033[31m[ERROR] %s\033[0m", format)
+		format = fmt.Sprintf("\033[31m%s\033[0m", format)
 	}
 	fmt.Printf(format+"\n", a...)
 }
 
 func PrintSuccessMsgf(format string, a ...interface{}) {
-	if terminalSupported() {
+	if terminalSupported {
 		// Print successful msg with green color
 		format = fmt.Sprintf("\033[32m%s\033[0m", format)
 	}
@@ -177,7 +190,7 @@ func PrintSuccessMsgf(format string, a ...interface{}) {
 }
 
 func PrintWarnMsgf(format string, a ...interface{}) {
-	if terminalSupported() {
+	if terminalSupported {
 		// Print warning msg with yellow color
 		format = fmt.Sprintf("\033[33m%s\033[0m", format)
 	}
@@ -189,7 +202,7 @@ func PrintInfoMsgf(format string, a ...interface{}) {
 }
 
 func PrintInfoMsgBoldf(format string, a ...interface{}) {
-	if terminalSupported() {
+	if terminalSupported {
 		format = fmt.Sprintf("\033[1m%s\033[0m", format)
 	}
 	fmt.Printf(format+"\n", a...)
@@ -220,14 +233,14 @@ func PactusDefaultHomeDir() string {
 	if err != nil {
 		PrintWarnMsgf("unable to get current user: %v", err)
 	} else {
-		home = filepath.Join(usr.HomeDir, "pactus")
+		home = filepath.Join(usr.HomeDir, home, DefaultHomeDirName)
 	}
 
 	return home
 }
 
-func PactusDefaultWalletPath(home string) string {
-	return filepath.Join(home, "wallets", "default_wallet")
+func PactusWalletDir(home string) string {
+	return filepath.Join(home, "wallets")
 }
 
 func PactusGenesisPath(home string) string {
@@ -236,6 +249,10 @@ func PactusGenesisPath(home string) string {
 
 func PactusConfigPath(home string) string {
 	return filepath.Join(home, "config.toml")
+}
+
+func PactusDefaultWalletPath(home string) string {
+	return filepath.Join(PactusWalletDir(home), DefaultWalletName)
 }
 
 // TrapSignal traps SIGINT and SIGTERM and terminates the server correctly.
@@ -258,6 +275,7 @@ func TrapSignal(cleanupFunc func()) {
 	}()
 }
 
+// TODO: write test for me.
 func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	mnemonic string, walletPassword string,
 ) ([]string, []string, error) {
@@ -297,7 +315,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		if err := genDoc.SaveToFile(genPath); err != nil {
 			return nil, nil, err
 		}
-		conf := config.DefaultConfigTestnet(genDoc.Params())
+		conf := config.DefaultConfigTestnet()
 		if err := conf.Save(confPath); err != nil {
 			return nil, nil, err
 		}
@@ -308,7 +326,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 			return nil, nil, err
 		}
 
-		conf := config.DefaultConfigLocalnet(genDoc.Params())
+		conf := config.DefaultConfigLocalnet()
 		if err := conf.Save(confPath); err != nil {
 			return nil, nil, err
 		}
@@ -325,6 +343,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	return validatorAddrs, rewardAddrs, nil
 }
 
+// TODO: write test for me.
 func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool)) (
 	*node.Node, *wallet.Wallet, error,
 ) {
@@ -341,8 +360,10 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		crypto.XPrivateKeyHRP = "txsecret"
 	}
 
+	walletsDir := PactusWalletDir(workingDir)
 	confPath := PactusConfigPath(workingDir)
-	conf, err := tryLoadConfig(gen, confPath)
+
+	conf, err := MakeConfig(gen, confPath, walletsDir)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -352,8 +373,8 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		return nil, nil, err
 	}
 
-	walletPath := PactusDefaultWalletPath(workingDir)
-	walletInstance, err := wallet.Open(walletPath, true)
+	defaultWalletPath := PactusDefaultWalletPath(workingDir)
+	walletInstance, err := wallet.Open(defaultWalletPath, true)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -466,15 +487,16 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	return gen
 }
 
-func tryLoadConfig(genDoc *genesis.Genesis, confPath string) (*config.Config, error) {
+// TODO: write test for me.
+func MakeConfig(genDoc *genesis.Genesis, confPath, walletsDir string) (*config.Config, error) {
 	var defConf *config.Config
 	switch genDoc.ChainType() {
 	case genesis.Mainnet:
 		panic("not yet implemented!")
 	case genesis.Testnet:
-		defConf = config.DefaultConfigTestnet(genDoc.Params())
+		defConf = config.DefaultConfigTestnet()
 	case genesis.Localnet:
-		defConf = config.DefaultConfigLocalnet(genDoc.Params())
+		defConf = config.DefaultConfigLocalnet()
 	}
 
 	conf, err := config.LoadFromFile(confPath, true, defConf)
@@ -520,6 +542,17 @@ func tryLoadConfig(genDoc *genesis.Genesis, confPath string) (*config.Config, er
 			conf, _ = config.LoadFromFile(confPath, true, defConf) // This time it should be OK
 		}
 	}
+
+	// Now we can update the private filed, if any
+	genParams := genDoc.Params()
+
+	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
+	conf.Store.SortitionCacheSize = genParams.SortitionInterval
+	conf.Store.AccountCacheSize = 1024
+	conf.Store.PublicKeyCacheSize = 1024
+
+	conf.GRPC.DefaluWalletName = DefaultWalletName
+	conf.GRPC.WalletsDir = walletsDir
 
 	return conf, nil
 }

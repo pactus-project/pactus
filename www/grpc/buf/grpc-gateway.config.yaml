@@ -36,7 +36,7 @@ http:
       get: "/v1/transactions/id/{id}/verbosity/{verbosity}"
 
     - selector: pactus.Transaction.BroadcastTransaction
-      put: "/v1/transactions/broadcast/{signed_tx}"
+      put: "/v1/transactions/broadcast/{signed_raw_transaction}"
 
     - selector: pactus.Transaction.CalculateFee
       get: "/v1/transactions/fee/amount/{amount}/payloadType/{payloadType}"
@@ -62,16 +62,16 @@ http:
 
     # Wallet APIs
     - selector: pactus.Wallet.CreateWallet
-      get: "/v1/wallets/create/name/{name}/mnemonic/{mnemonic}/language/{language}"
+      get: "/v1/wallets/create/wallet_name/{wallet_name}/mnemonic/{mnemonic}/language/{language}"
 
     - selector: pactus.Wallet.LoadWallet
-      get: "/v1/wallets/load/name/{name}"
+      get: "/v1/wallets/load/wallet_name/{wallet_name}"
 
     - selector: pactus.Wallet.UnloadWallet
-      get: "/v1/wallets/unload/name/{name}"
+      get: "/v1/wallets/unload/wallet_name/{wallet_name}"
 
     - selector: pactus.Wallet.LockWallet
-      get: "/v1/wallets/lock"
+      get: "/v1/wallets/lock/wallet_name/{wallet_name}"
 
     - selector: pactus.Wallet.UnlockWallet
-      get: "/v1/wallets/unlock/password/{password}/timeout/{timeout}"
+      get: "/v1/wallets/unlock/wallet_name/{wallet_name}/password/{password}/timeout/{timeout}"

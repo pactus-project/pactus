@@ -198,14 +198,14 @@ func request_Transaction_BroadcastTransaction_0(ctx context.Context, marshaler r
 		_   = err
 	)
 
-	val, ok = pathParams["signed_tx"]
+	val, ok = pathParams["signed_raw_transaction"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "signed_tx")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "signed_raw_transaction")
 	}
 
-	protoReq.SignedTx, err = runtime.Bytes(val)
+	protoReq.SignedRawTransaction, err = runtime.Bytes(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "signed_tx", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "signed_raw_transaction", err)
 	}
 
 	msg, err := client.BroadcastTransaction(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -224,14 +224,14 @@ func local_request_Transaction_BroadcastTransaction_0(ctx context.Context, marsh
 		_   = err
 	)
 
-	val, ok = pathParams["signed_tx"]
+	val, ok = pathParams["signed_raw_transaction"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "signed_tx")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "signed_raw_transaction")
 	}
 
-	protoReq.SignedTx, err = runtime.Bytes(val)
+	protoReq.SignedRawTransaction, err = runtime.Bytes(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "signed_tx", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "signed_raw_transaction", err)
 	}
 
 	msg, err := server.BroadcastTransaction(ctx, &protoReq)
@@ -871,7 +871,7 @@ func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/BroadcastTransaction", runtime.WithHTTPPathPattern("/v1/transactions/broadcast/{signed_tx}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/BroadcastTransaction", runtime.WithHTTPPathPattern("/v1/transactions/broadcast/{signed_raw_transaction}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1079,7 +1079,7 @@ func RegisterTransactionHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/BroadcastTransaction", runtime.WithHTTPPathPattern("/v1/transactions/broadcast/{signed_tx}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/BroadcastTransaction", runtime.WithHTTPPathPattern("/v1/transactions/broadcast/{signed_raw_transaction}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1191,7 +1191,7 @@ var (
 
 	pattern_Transaction_CalculateFee_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4}, []string{"v1", "transactions", "fee", "amount", "payloadType"}, ""))
 
-	pattern_Transaction_BroadcastTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "transactions", "broadcast", "signed_tx"}, ""))
+	pattern_Transaction_BroadcastTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "transactions", "broadcast", "signed_raw_transaction"}, ""))
 
 	pattern_Transaction_GetRawTransferTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5, 2, 6, 1, 0, 4, 1, 5, 6, 2, 7, 1, 0, 4, 1, 5, 7, 2, 8, 1, 0, 4, 1, 5, 8}, []string{"v1", "transactions", "transfer", "sender", "receiver", "amount", "lock_time", "fee", "memo"}, ""))
 

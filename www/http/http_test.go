@@ -16,8 +16,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var tTestData *testData
-
 type testData struct {
 	*testsuite.TestSuite
 
@@ -28,14 +26,20 @@ type testData struct {
 	httpServer  *Server
 }
 
+func (td *testData) StopServers() {
+	td.httpServer.StopServer()
+	td.gRPCServer.StopServer()
+}
+
 func setup(t *testing.T) *testData {
 	t.Helper()
 
-	if tTestData != nil {
-		return tTestData
-	}
-
 	ts := testsuite.NewTestSuite(t)
+
+	// Resetting http handlers in golang for unit testing:
+	// https://stackoverflow.com/questions/40786526/resetting-http-handlers-in-golang-for-unit-testing
+	//
+	http.DefaultServeMux = new(http.ServeMux)
 
 	mockState := state.MockingState(ts)
 	mockSync := sync.MockingSync(ts)
@@ -61,7 +65,7 @@ func setup(t *testing.T) *testData {
 	httpServer := NewServer(httpConf)
 	assert.NoError(t, httpServer.StartServer(gRPCServer.Address()))
 
-	tTestData = &testData{
+	return &testData{
 		TestSuite:   ts,
 		mockState:   mockState,
 		mockSync:    mockSync,
@@ -69,8 +73,6 @@ func setup(t *testing.T) *testData {
 		gRPCServer:  gRPCServer,
 		httpServer:  httpServer,
 	}
-
-	return tTestData
 }
 
 func TestRootHandler(t *testing.T) {
@@ -81,4 +83,6 @@ func TestRootHandler(t *testing.T) {
 	td.httpServer.RootHandler(w, r)
 	assert.Equal(t, w.Code, 200)
 	fmt.Println(w.Body)
+
+	td.StopServers()
 }
