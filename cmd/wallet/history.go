@@ -12,7 +12,7 @@ import (
 func buildAllHistoryCmd(parentCmd *cobra.Command) {
 	historyCmd := &cobra.Command{
 		Use:   "history",
-		Short: "Retrieve the transaction history of the wallet.",
+		Short: "retrieving the transaction history of the wallet.",
 	}
 
 	parentCmd.AddCommand(historyCmd)
@@ -24,7 +24,7 @@ func buildAllHistoryCmd(parentCmd *cobra.Command) {
 func buildAddToHistoryCmd(parentCmd *cobra.Command) {
 	addToHistoryCmd := &cobra.Command{
 		Use:   "add [flags] <ID>",
-		Short: "Add a transaction to the wallet's history.",
+		Short: "adds a transaction to the wallet's history.",
 	}
 	parentCmd.AddCommand(addToHistoryCmd)
 
@@ -51,7 +51,7 @@ func buildAddToHistoryCmd(parentCmd *cobra.Command) {
 func buildShowHistoryCmd(parentCmd *cobra.Command) {
 	showHistoryCmd := &cobra.Command{
 		Use:   "get [flags] <ADDRESS>",
-		Short: "Display the transaction history for a given address.",
+		Short: "displays the transaction history for a given address.",
 		Args:  cobra.ExactArgs(1),
 	}
 	parentCmd.AddCommand(showHistoryCmd)

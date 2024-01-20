@@ -9,7 +9,7 @@ import (
 func buildVersionCmd(parentCmd *cobra.Command) {
 	versionCmd := &cobra.Command{
 		Use:   "version",
-		Short: "Print the Pactus version",
+		Short: "prints the Pactus version",
 	}
 	parentCmd.AddCommand(versionCmd)
 	versionCmd.Run = func(c *cobra.Command, args []string) {
