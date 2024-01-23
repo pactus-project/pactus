@@ -16,7 +16,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(recoverCmd)
 
 	passOpt := addPasswordOption(recoverCmd)
-	testnetOpt := recoverCmd.Flags().Bool("testnet", true,
+	testnetOpt := recoverCmd.Flags().Bool("testnet", false,
 		"recover the wallet for the testnet environment")
 	seedOpt := recoverCmd.Flags().StringP("seed", "s", "", "mnemonic or seed phrase used for wallet recovery")
 

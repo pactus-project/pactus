@@ -37,18 +37,24 @@ func (s *Server) StartServer() error {
 	if !s.config.Enable {
 		return nil
 	}
-	go func() {
-		var publisher mangos.Socket
-		var err error
-		if publisher, err = pub.NewSocket(); err != nil {
-			s.logger.Error("error on nanomsg creating new socket", "error", err)
-		}
-		if err = publisher.Listen(s.config.Listen); err != nil {
-			s.logger.Error("error on nanomsg publisher binding", "error", err)
-		}
-		s.publisher = publisher
-		go s.eventLoop()
-	}()
+	publisher, err := pub.NewSocket()
+	if err != nil {
+		return err
+	}
+	listener, err := publisher.NewListener(s.config.Listen, nil)
+	if err != nil {
+		return err
+	}
+	err = listener.Listen()
+	if err != nil {
+		return err
+	}
+
+	s.publisher = publisher
+
+	s.logger.Info("nanomsg started listening", "address", listener.Address())
+
+	go s.eventLoop()
 
 	return nil
 }

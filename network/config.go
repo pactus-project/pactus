@@ -27,7 +27,6 @@ type Config struct {
 	// Private configs
 	NetworkName                 string   `toml:"-"`
 	DefaultPort                 int      `toml:"-"`
-	DefaultRelayAddrStrings     []string `toml:"-"`
 	DefaultBootstrapAddrStrings []string `toml:"-"`
 	IsBootstrapper              bool     `toml:"-"`
 }
@@ -42,12 +41,12 @@ func DefaultConfig() *Config {
 		EnableUDP:            false,
 		EnableNATService:     false,
 		EnableUPnP:           false,
-		EnableRelay:          false,
+		EnableRelay:          true,
 		EnableRelayService:   false,
 		EnableMdns:           false,
 		EnableMetrics:        false,
 		ForcePrivateNetwork:  false,
-		DefaultPort:          21888,
+		DefaultPort:          0,
 		IsBootstrapper:       false,
 	}
 }
@@ -85,9 +84,6 @@ func (conf *Config) BasicCheck() error {
 		return err
 	}
 	if err := validateAddrInfo(conf.DefaultBootstrapAddrStrings...); err != nil {
-		return err
-	}
-	if err := validateAddrInfo(conf.DefaultRelayAddrStrings...); err != nil {
 		return err
 	}
 	if conf.EnableRelay && conf.EnableRelayService {

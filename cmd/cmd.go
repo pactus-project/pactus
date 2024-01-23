@@ -309,7 +309,14 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 
 	switch chain {
 	case genesis.Mainnet:
-		panic("not yet!")
+		genDoc := genesis.MainnetGenesis()
+		if err := genDoc.SaveToFile(genPath); err != nil {
+			return nil, nil, err
+		}
+		conf := config.DefaultConfigMainnet()
+		if err := conf.Save(confPath); err != nil {
+			return nil, nil, err
+		}
 	case genesis.Testnet:
 		genDoc := genesis.TestnetGenesis()
 		if err := genDoc.SaveToFile(genPath); err != nil {
@@ -492,7 +499,7 @@ func MakeConfig(genDoc *genesis.Genesis, confPath, walletsDir string) (*config.C
 	var defConf *config.Config
 	switch genDoc.ChainType() {
 	case genesis.Mainnet:
-		panic("not yet implemented!")
+		defConf = config.DefaultConfigMainnet()
 	case genesis.Testnet:
 		defConf = config.DefaultConfigTestnet()
 	case genesis.Localnet:

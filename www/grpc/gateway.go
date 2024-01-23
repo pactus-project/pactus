@@ -89,14 +89,20 @@ func (s *Server) startGateway(grpcAddr string) error {
 		gwServer.Handler = allowCORS(gwServer.Handler)
 	}
 
-	listener, err := net.Listen("tcp", s.config.Listen)
+	listener, err := net.Listen("tcp", s.config.Gateway.Listen)
 	if err != nil {
 		return err
 	}
 
 	s.logger.Info("grpc-gateway started listening", "address", listener.Addr().String())
 
-	return gwServer.Serve(listener)
+	go func() {
+		if err := gwServer.Serve(listener); err != nil {
+			s.logger.Error("error on grpc-gateway serve", "error", err)
+		}
+	}()
+
+	return nil
 }
 
 // preflightHandler adds the necessary headers in order to serve

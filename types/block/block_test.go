@@ -67,7 +67,7 @@ func TestBasicCheck(t *testing.T) {
 				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
 				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
 				"01" + // Txs: Len
-				"00" + // Tx[0]: Flags
+				"02" + // Tx[0]: Flags
 				"01" + // Tx[0]: Version
 				"01000000" + // Tx[0]: LockTime
 				"01" + // Tx[0]: Fee
@@ -101,7 +101,7 @@ func TestBasicCheck(t *testing.T) {
 				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
 				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
 				"01" + // Txs: Len
-				"00" + // Tx[0]: Flags
+				"02" + // Tx[0]: Flags
 				"00" + // Tx[0]: Version
 				"00000000" + // Tx[0]: LockTime
 				"00" + // Tx[0]: Fee
@@ -165,7 +165,7 @@ func TestBasicCheck(t *testing.T) {
 				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
 				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
 				"01" + // Txs: Len
-				"00" + // Tx[0]: Flags
+				"02" + // Tx[0]: Flags
 				"01" + // Tx[0]: Version
 				"01000000" + // Tx[0]: LockTime
 				"01" + // Tx[0]: Fee
@@ -198,7 +198,7 @@ func TestBasicCheck(t *testing.T) {
 				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
 				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
 				"01" + // Txs: Len
-				"00" + // Tx[0]: Flags
+				"02" + // Tx[0]: Flags
 				"01" + // Tx[0]: Version
 				"01000000" + // Tx[0]: LockTime
 				"01" + // Tx[0]: Fee
@@ -289,7 +289,7 @@ func TestBlockHash(t *testing.T) {
 			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
 			"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
 			"01" + // Txs: Len
-			"00" + // Tx[0]: Flags
+			"02" + // Tx[0]: Flags
 			"01" + // Tx[0]: Version
 			"01000000" + // Tx[0]: LockTime
 			"01" + // Tx[0]: Fee

@@ -47,12 +47,12 @@ func TestMarshaling(t *testing.T) {
 	assert.Error(t, err, "file not found")
 }
 
-func TestGenesisTestNet(t *testing.T) {
+func TestGenesisTestnet(t *testing.T) {
+	crypto.AddressHRP = "tpc"
+
 	gen := genesis.TestnetGenesis()
 	assert.Equal(t, len(gen.Validators()), 4)
-	assert.Equal(t, len(gen.Accounts()), 1)
-
-	assert.Equal(t, gen.Accounts()[crypto.TreasuryAddress].Balance(), int64(21e15))
+	assert.Equal(t, len(gen.Accounts()), 2)
 
 	genTime, _ := time.Parse("2006-01-02", "2023-10-15")
 	expected, _ := hash.FromString("da602b28f75902c35e3bafeb5733a686c94d5508c92aae68cbd9b37d81cfccf4")
@@ -60,6 +60,23 @@ func TestGenesisTestNet(t *testing.T) {
 	assert.Equal(t, gen.GenesisTime(), genTime)
 	assert.Equal(t, gen.Params().BondInterval, uint32(120))
 	assert.Equal(t, gen.ChainType(), genesis.Testnet)
+	assert.Equal(t, gen.TotalSupply(), int64(42*1e15))
+
+	crypto.AddressHRP = "pc"
+}
+
+func TestGenesisMainnet(t *testing.T) {
+	gen := genesis.MainnetGenesis()
+	assert.Equal(t, len(gen.Validators()), 4)
+	assert.Equal(t, len(gen.Accounts()), 5)
+
+	genTime, _ := time.Parse("02 Jan 2006, 15:04 MST", "24 Jan 2024, 20:24 UTC")
+	expected, _ := hash.FromString("e4d59e3145c9d718caf178edb33bc2ca7fe43e5b30990c9d57d53a60c4741432")
+	assert.Equal(t, gen.Hash(), expected)
+	assert.Equal(t, gen.GenesisTime(), genTime)
+	assert.Equal(t, gen.Params().BondInterval, uint32(8640/24))
+	assert.Equal(t, gen.Params().UnbondInterval, uint32(8640*21))
+	assert.Equal(t, gen.ChainType(), genesis.Mainnet)
 	assert.Equal(t, gen.TotalSupply(), int64(42*1e15))
 }
 
