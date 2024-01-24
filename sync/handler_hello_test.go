@@ -24,7 +24,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			valKey := td.RandValKey()
 			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "unknown-peer", 0, 0,
-				td.state.LastBlockHash(), td.state.Genesis().Hash(), "public")
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			from := td.RandPeerID()
@@ -39,7 +39,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			valKey := td.RandValKey()
 			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
-				td.state.LastBlockHash(), invGenHash, "public")
+				td.state.LastBlockHash(), invGenHash)
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
@@ -54,7 +54,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
-				td.state.LastBlockHash(), td.state.Genesis().Hash(), "public")
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			msg.MyTimeUnixMilli = msg.MyTime().Add(-10 * time.Second).UnixMilli()
@@ -70,7 +70,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
-				td.state.LastBlockHash(), td.state.Genesis().Hash(), "public")
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			msg.MyTimeUnixMilli = msg.MyTime().Add(20 * time.Second).UnixMilli()
@@ -86,7 +86,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
 			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
-				td.state.LastBlockHash(), td.state.Genesis().Hash(), "public")
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
