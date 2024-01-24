@@ -64,7 +64,7 @@ func TestMainnetConfig(t *testing.T) {
 	assert.Equal(t, conf.Network.NetworkName, "pactus")
 	assert.Equal(t, conf.Network.DefaultPort, 21888)
 
-	assert.False(t, conf.GRPC.Enable)
+	assert.True(t, conf.GRPC.Enable)
 	assert.False(t, conf.GRPC.Gateway.Enable)
 	assert.False(t, conf.HTTP.Enable)
 	assert.False(t, conf.Nanomsg.Enable)
