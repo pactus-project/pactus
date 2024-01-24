@@ -103,7 +103,6 @@ func DefaultConfigMainnet() *Config {
 	return conf
 }
 
-//nolint:lll // long multi-address
 func DefaultConfigTestnet() *Config {
 	conf := defaultConfig()
 	conf.Network.DefaultBootstrapAddrStrings = []string{}
