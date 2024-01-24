@@ -99,7 +99,7 @@ func TestParsingHelloMessages(t *testing.T) {
 
 			pub := valKey.PublicKey()
 			assert.Equal(t, p.Status, peerset.StatusCodeKnown)
-			assert.Equal(t, p.Agent, version.Agent()+"/reachability=public")
+			assert.Equal(t, p.Agent, version.Agent())
 			assert.Equal(t, p.Moniker, "kitty")
 			assert.Contains(t, p.ConsensusKeys, pub)
 			assert.Equal(t, p.PeerID, pid)
