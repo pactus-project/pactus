@@ -17,22 +17,26 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		Short: "initialize the Pactus Blockchain node",
 	}
 	parentCmd.AddCommand(initCmd)
-	workingDirOpt := initCmd.Flags().StringP("working-dir", "w",
-		cmd.PactusDefaultHomeDir(), "the path to the working directory to save the wallet and node files")
+	workingDirOpt := initCmd.Flags().StringP("working-dir", "w", cmd.PactusDefaultHomeDir(),
+		"a path to the working directory to save the wallet and node files")
 
-	testnetOpt := initCmd.Flags().Bool("testnet", true,
-		"initialize working directory for joining the testnet") // TODO: make it false after mainnet launch
+	testnetOpt := initCmd.Flags().Bool("testnet", false,
+		"initialize working directory for joining the testnet")
 
 	localnetOpt := initCmd.Flags().Bool("localnet", false,
-		"initialize working directory for localnet for developers")
+		"initialize working directory for localnet (for development)")
 
-	restoreOpt := initCmd.Flags().String("restore", "", "restore the 'default_wallet' using a mnemonic or seed phrase")
+	restoreOpt := initCmd.Flags().String("restore", "",
+		"restore the 'default_wallet' using a mnemonic or seed phrase")
 
-	passwordOpt := initCmd.Flags().StringP("password", "p", "", "the wallet password")
+	passwordOpt := initCmd.Flags().StringP("password", "p", "",
+		"the wallet password")
 
-	entropyOpt := initCmd.Flags().IntP("entropy", "e", 128, "entropy bits for seed generation. range: 128 to 256")
+	entropyOpt := initCmd.Flags().IntP("entropy", "e", 128,
+		"entropy bits for seed generation. range: 128 to 256")
 
-	valNumOpt := initCmd.Flags().IntP("val-num", "", 0, "number of validators to be created. range: 1 to 32")
+	valNumOpt := initCmd.Flags().IntP("val-num", "", 0,
+		"number of validators to be created. range: 1 to 32")
 
 	initCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)

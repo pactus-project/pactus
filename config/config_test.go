@@ -18,20 +18,80 @@ func TestSaveMainnetConfig(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
+	assert.Equal(t, defConf, conf)
+
+	confData, _ := util.ReadFile(path)
+	exampleData, _ := util.ReadFile("example_config.toml")
+	assert.Equal(t, confData, exampleData)
 }
 
-func TestSaveConfig(t *testing.T) {
+func TestSaveTestnetConfig(t *testing.T) {
 	path := util.TempFilePath()
-	conf := defaultConfig()
-	assert.NoError(t, conf.Save(path))
-
 	defConf := DefaultConfigTestnet()
+	assert.NoError(t, defConf.Save(path))
+
 	conf, err := LoadFromFile(path, true, defConf)
 	assert.NoError(t, err)
+	assert.Equal(t, defConf, conf)
 
 	assert.NoError(t, conf.BasicCheck())
-	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet-v2")
+}
+
+func TestDefaultConfig(t *testing.T) {
+	conf := defaultConfig()
+
+	assert.NoError(t, conf.BasicCheck())
+	assert.Empty(t, conf.Network.ListenAddrStrings)
+	assert.Equal(t, conf.Network.NetworkName, "")
+	assert.Equal(t, conf.Network.DefaultPort, 0)
+
+	assert.False(t, conf.GRPC.Enable)
+	assert.False(t, conf.GRPC.Gateway.Enable)
+	assert.False(t, conf.HTTP.Enable)
+	assert.False(t, conf.Nanomsg.Enable)
+
+	assert.Equal(t, conf.GRPC.Listen, "")
+	assert.Equal(t, conf.GRPC.Gateway.Listen, "")
+	assert.Equal(t, conf.HTTP.Listen, "")
+	assert.Equal(t, conf.Nanomsg.Listen, "")
+}
+
+func TestMainnetConfig(t *testing.T) {
+	conf := DefaultConfigMainnet()
+
+	assert.NoError(t, conf.BasicCheck())
+	assert.Empty(t, conf.Network.ListenAddrStrings)
+	assert.Equal(t, conf.Network.NetworkName, "pactus")
+	assert.Equal(t, conf.Network.DefaultPort, 21888)
+
+	assert.False(t, conf.GRPC.Enable)
+	assert.False(t, conf.GRPC.Gateway.Enable)
+	assert.False(t, conf.HTTP.Enable)
+	assert.False(t, conf.Nanomsg.Enable)
+
+	assert.Equal(t, conf.GRPC.Listen, "127.0.0.1:50051")
+	assert.Equal(t, conf.GRPC.Gateway.Listen, "127.0.0.1:8080")
+	assert.Equal(t, conf.HTTP.Listen, "127.0.0.1:80")
+	assert.Equal(t, conf.Nanomsg.Listen, "tcp://127.0.0.1:40899")
+}
+
+func TestTestnetConfig(t *testing.T) {
+	conf := DefaultConfigTestnet()
+
+	assert.NoError(t, conf.BasicCheck())
+	assert.Empty(t, conf.Network.ListenAddrStrings)
+	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet")
 	assert.Equal(t, conf.Network.DefaultPort, 21777)
+
+	assert.True(t, conf.GRPC.Enable)
+	assert.True(t, conf.GRPC.Gateway.Enable)
+	assert.False(t, conf.HTTP.Enable)
+	assert.False(t, conf.Nanomsg.Enable)
+
+	assert.Equal(t, conf.GRPC.Listen, "[::]:50052")
+	assert.Equal(t, conf.GRPC.Gateway.Listen, "[::]:8080")
+	assert.Equal(t, conf.HTTP.Listen, "[::]:80")
+	assert.Equal(t, conf.Nanomsg.Listen, "tcp://[::]:40799")
 }
 
 func TestLocalnetConfig(t *testing.T) {
@@ -41,16 +101,16 @@ func TestLocalnetConfig(t *testing.T) {
 	assert.Empty(t, conf.Network.ListenAddrStrings)
 	assert.Equal(t, conf.Network.NetworkName, "pactus-localnet")
 	assert.Equal(t, conf.Network.DefaultPort, 21666)
-}
 
-func TestTestnetConfig(t *testing.T) {
-	conf := DefaultConfigTestnet()
+	assert.True(t, conf.GRPC.Enable)
+	assert.True(t, conf.GRPC.Gateway.Enable)
+	assert.True(t, conf.HTTP.Enable)
+	assert.True(t, conf.Nanomsg.Enable)
 
-	assert.NoError(t, conf.BasicCheck())
-	assert.NotEmpty(t, conf.Network.DefaultRelayAddrStrings)
-	assert.Empty(t, conf.Network.ListenAddrStrings)
-	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet-v2")
-	assert.Equal(t, conf.Network.DefaultPort, 21777)
+	assert.Equal(t, conf.GRPC.Listen, "[::]:0")
+	assert.Equal(t, conf.GRPC.Gateway.Listen, "[::]:0")
+	assert.Equal(t, conf.HTTP.Listen, "[::]:0")
+	assert.Equal(t, conf.Nanomsg.Listen, "tcp://[::]:0")
 }
 
 func TestLoadFromFile(t *testing.T) {

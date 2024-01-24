@@ -60,15 +60,6 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
-			name: "Invalid DefaultRelayAddrStrings - Expect Error",
-			expectError: ConfigError{
-				Reason: "address is not valid: invalid p2p multiaddr",
-			},
-			updateFn: func(c *Config) {
-				c.DefaultRelayAddrStrings = []string{"/ip4/127.0.0.1/"}
-			},
-		},
-		{
 			name: "Invalid DefaultBootstrapAddrStrings - Expect Error",
 			expectError: ConfigError{
 				Reason: "address is not valid: invalid p2p multiaddr",

@@ -41,7 +41,6 @@ type NodeConfig struct {
 }
 
 func DefaultNodeConfig() *NodeConfig {
-	// TODO: We should have default config per network: Testnet, Mainnet.
 	return &NodeConfig{}
 }
 
@@ -80,6 +79,21 @@ func defaultConfig() *Config {
 
 func DefaultConfigMainnet() *Config {
 	conf := defaultConfig()
+	conf.Network.DefaultBootstrapAddrStrings = []string{}
+	conf.Network.MaxConns = 64
+	conf.Network.EnableNATService = false
+	conf.Network.EnableUPnP = false
+	conf.Network.EnableRelay = true
+	conf.Network.NetworkName = "pactus"
+	conf.Network.DefaultPort = 21888
+	conf.GRPC.Enable = false
+	conf.GRPC.Listen = "127.0.0.1:50051"
+	conf.GRPC.Gateway.Enable = false
+	conf.GRPC.Gateway.Listen = "127.0.0.1:8080"
+	conf.HTTP.Enable = false
+	conf.HTTP.Listen = "127.0.0.1:80"
+	conf.Nanomsg.Enable = false
+	conf.Nanomsg.Listen = "tcp://127.0.0.1:40899"
 
 	return conf
 }
@@ -99,15 +113,11 @@ func DefaultConfigTestnet() *Config {
 		"/ip4/135.181.42.222/tcp/21777/p2p/12D3KooWC4fe6mQnA9RkSoDdQnNPoSiMUWoqgBsmG8DpkP7yPEMK",  // NodeSync.Top (lthuan2011@gmail.com)
 		"/ip4/95.217.89.202/tcp/21777/p2p/12D3KooWMsi5oYkbbpyyXctmPXzF8UZu2pCvKPRZGyvymhN9BzTD",   // CodeBlockLabs (emailbuatcariduit@gmail.com)
 	}
-	conf.Network.DefaultRelayAddrStrings = []string{
-		"/ip4/139.162.153.10/tcp/4002/p2p/12D3KooWNR79jqHVVNhNVrqnDbxbJJze4VjbEsBjZhz6mkvinHAN",
-		"/ip4/188.121.102.178/tcp/4002/p2p/12D3KooWCRHn8vjrKNBEQcut8uVCYX5q77RKidPaE6iMK31qEVHb",
-	}
 	conf.Network.MaxConns = 64
 	conf.Network.EnableNATService = false
 	conf.Network.EnableUPnP = false
 	conf.Network.EnableRelay = true
-	conf.Network.NetworkName = "pactus-testnet-v2"
+	conf.Network.NetworkName = "pactus-testnet"
 	conf.Network.DefaultPort = 21777
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "[::]:50052"
@@ -116,7 +126,7 @@ func DefaultConfigTestnet() *Config {
 	conf.HTTP.Enable = false
 	conf.HTTP.Listen = "[::]:80"
 	conf.Nanomsg.Enable = false
-	conf.Nanomsg.Listen = "tcp://127.0.0.1:40799"
+	conf.Nanomsg.Listen = "tcp://[::]:40799"
 
 	return conf
 }
@@ -134,10 +144,10 @@ func DefaultConfigLocalnet() *Config {
 	conf.GRPC.Listen = "[::]:0"
 	conf.GRPC.Gateway.Enable = true
 	conf.GRPC.Gateway.Listen = "[::]:0"
-	conf.HTTP.Enable = false
+	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "[::]:0"
 	conf.Nanomsg.Enable = true
-	conf.Nanomsg.Listen = "tcp://127.0.0.1:0"
+	conf.Nanomsg.Listen = "tcp://[::]:0"
 
 	return conf
 }

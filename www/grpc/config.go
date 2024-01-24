@@ -14,10 +14,10 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Enable: false,
-		Listen: "50051",
+		Listen: "",
 		Gateway: GatewayConfig{
 			Enable:     false,
-			Listen:     "8080",
+			Listen:     "",
 			EnableCORS: false,
 		},
 	}

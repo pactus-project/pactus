@@ -90,13 +90,7 @@ func (s *Server) startListening(listener net.Listener) error {
 		}
 	}()
 
-	go func() {
-		if err := s.startGateway(s.address); err != nil {
-			s.logger.Error("error on grpc-gateway serve", "error", err)
-		}
-	}()
-
-	return nil
+	return s.startGateway(s.address)
 }
 
 func (s *Server) StopServer() {
