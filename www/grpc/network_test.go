@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/libp2p/go-libp2p/core/peer"
