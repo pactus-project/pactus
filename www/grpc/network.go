@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 	"unsafe"
 
 	"github.com/fxamacker/cbor/v2"
@@ -42,7 +41,7 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 
 	return &pactus.GetNodeInfoResponse{
 		Moniker:       s.sync.Moniker(),
-		Agent:         fmt.Sprintf("%s/reachability=%s", version.Agent(), s.net.ReachabilityStatus()),
+		Agent:         version.Agent(),
 		PeerId:        []byte(s.sync.SelfID()),
 		Reachability:  s.net.ReachabilityStatus(),
 		Addrs:         s.net.HostAddrs(),
