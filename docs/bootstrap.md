@@ -23,10 +23,10 @@ transferred to third parties.
 
 ### Security
 
-Bootstrap node operators are expected to follow good host security practices and
-maintain control over the relevant infrastructure.
-Specialy the bootstrap node should make sure the securoty of the network key.
-The nework key is an encryption key that is used to encrypt the messages in P2P netowrk.
+Bootstrap Node Operators are expected to adhere to best practices in host security and
+maintain control over the relevant infrastructure. Specifically, the Bootstrap Node
+should ensure the security of the network key. The network key serves as the encryption
+key used to secure messages in the P2P network.
 
 ### Security
 
