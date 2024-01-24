@@ -1123,6 +1123,9 @@
     "pactusGetNetworkInfoResponse": {
       "type": "object",
       "properties": {
+        "networkName": {
+          "type": "string"
+        },
         "totalSentBytes": {
           "type": "integer",
           "format": "int64"
@@ -1130,9 +1133,6 @@
         "totalReceivedBytes": {
           "type": "integer",
           "format": "int64"
-        },
-        "networkName": {
-          "type": "string"
         },
         "connectedPeersCount": {
           "type": "integer",
@@ -1370,6 +1370,12 @@
           "format": "byte"
         },
         "consensusKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "consensusAddress": {
           "type": "array",
           "items": {
             "type": "string"
