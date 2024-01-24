@@ -23,14 +23,14 @@ transferred to third parties.
 
 ### Security
 
-Bootstrap Node Operators are expected to adhere to best practices in host security and
+Bootstrap node operators are expected to adhere to best practices in host security and
 maintain control over the relevant infrastructure. Specifically, the Bootstrap Node
 should ensure the security of the network key. The network key serves as the encryption
 key used to secure messages in the P2P network.
 
 ### Security
 
-Bootstrap Node Operators are expected to adhere to best practices in host security and
+Bootstrap node operators are expected to adhere to best practices in host security and
 maintain control over the relevant infrastructure.
 Specifically, they should ensure the security of their "network key".
 A network key is a private key used to encrypt messages in the P2P network.
