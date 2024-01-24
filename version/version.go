@@ -9,10 +9,10 @@ import (
 
 // These constants follow the semantic versioning 2.0.0 spec (http://semver.org/)
 const (
-	major           uint   = 0
-	minor           uint   = 21
+	major           uint   = 1
+	minor           uint   = 0
 	patch           uint   = 0
-	meta            string = "beta"
+	meta            string = "rc-0"
 	protocolVersion uint   = 1
 )
 
