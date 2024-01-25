@@ -7,8 +7,8 @@ type Config struct {
 	Gateway      GatewayConfig `toml:"gateway"`
 
 	// Private config
-	WalletsDir       string `toml:"-"`
-	DefaluWalletName string `toml:"-"`
+	WalletsDir        string `toml:"-"`
+	DefaultWalletName string `toml:"-"`
 }
 
 func DefaultConfig() *Config {
