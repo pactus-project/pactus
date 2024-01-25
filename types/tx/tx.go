@@ -169,7 +169,7 @@ func (tx *Tx) checkSignature() error {
 		// Ensure no signatory is set for subsidy transactions.
 		if tx.PublicKey() != nil || tx.Signature() != nil {
 			return BasicCheckError{
-				Reason: "signatory set for subsidy transaction",
+				Reason: "subsidy transaction with signatory",
 			}
 		}
 
