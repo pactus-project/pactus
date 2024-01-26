@@ -3,6 +3,7 @@ package config
 import (
 	"bytes"
 	_ "embed"
+	"encoding/json"
 	"os"
 
 	"github.com/pactus-project/pactus/consensus"
@@ -20,8 +21,13 @@ import (
 	"github.com/pelletier/go-toml"
 )
 
-//go:embed example_config.toml
-var exampleConfigBytes []byte
+var (
+	//go:embed example_config.toml
+	exampleConfigBytes []byte
+
+	//go:embed bootstrap.json
+	bootstrapInfosBytes []byte
+)
 
 type Config struct {
 	Node      *NodeConfig       `toml:"node"`
@@ -34,6 +40,13 @@ type Config struct {
 	GRPC      *grpc.Config      `toml:"grpc"`
 	HTTP      *http.Config      `toml:"http"`
 	Nanomsg   *nanomsg.Config   `toml:"nanomsg"`
+}
+
+type BootstrapInfo struct {
+	Name    string `json:"name"`
+	Email   string `json:"email"`
+	Website string `json:"website"`
+	Address string `json:"address"`
 }
 
 type NodeConfig struct {
@@ -79,12 +92,16 @@ func defaultConfig() *Config {
 
 func DefaultConfigMainnet() *Config {
 	conf := defaultConfig()
-	conf.Network.DefaultBootstrapAddrStrings = []string{
-		"/dns/bootstrap1.pactus.org/tcp/21888/p2p/12D3KooWMnDsu8TDTk2VV8uD8zsNSB6eUkqtQs6ttg4bHq9zNaBe",
-		"/dns/bootstrap2.pactus.org/tcp/21888/p2p/12D3KooWM39ag7ghta49qybf7McADgT8FLakTYkCsiBvwdnjuG5q",
-		"/dns/bootstrap3.pactus.org/tcp/21888/p2p/12D3KooWBCPSZWheet6tMoHbVBCDfBwQm4yzCwcQ8hJ6NMCN97sj",
-		"/dns/bootstrap4.pactus.org/tcp/21888/p2p/12D3KooWKg6aLa77yAaqMCb45aH5iQuTr5GzRUWUCJ1sZYB5vnoL",
+
+	bootstrapNodes := make([]BootstrapInfo, 0)
+	if err := json.Unmarshal(bootstrapInfosBytes, &bootstrapNodes); err != nil {
+		panic(err)
 	}
+
+	for _, node := range bootstrapNodes {
+		conf.Network.DefaultBootstrapAddrStrings = append(conf.Network.DefaultBootstrapAddrStrings, node.Address)
+	}
+
 	conf.Network.MaxConns = 64
 	conf.Network.EnableNATService = false
 	conf.Network.EnableUPnP = false
