@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Pactus",
+    "email": "info@pactus.org",
+    "website": "https://pactus.org",
+    "address": "/dns/bootstrap1.pactus.org/tcp/21888/p2p/12D3KooWMnDsu8TDTk2VV8uD8zsNSB6eUkqtQs6ttg4bHq9zNaBe"
+  },
+  {
+    "name": "Pactus",
+    "email": "info@pactus.org",
+    "website": "https://pactus.org",
+    "address": "/dns/bootstrap2.pactus.org/tcp/21888/p2p/12D3KooWM39ag7ghta49qybf7McADgT8FLakTYkCsiBvwdnjuG5q"
+  },
+  {
+    "name": "Pactus",
+    "email": "info@pactus.org",
+    "website": "https://pactus.org",
+    "address": "/dns/bootstrap3.pactus.org/tcp/21888/p2p/12D3KooWBCPSZWheet6tMoHbVBCDfBwQm4yzCwcQ8hJ6NMCN97sj"
+  },
+  {
+    "name": "Pactus",
+    "email": "info@pactus.org",
+    "website": "https://pactus.org",
+    "address": "/dns/bootstrap4.pactus.org/tcp/21888/p2p/12D3KooWKg6aLa77yAaqMCb45aH5iQuTr5GzRUWUCJ1sZYB5vnoL"
+  },
+  {
+    "name": "Sensifia",
+    "email": "info@sensifia.com",
+    "website": "https://sensifia.com",
+    "address": "/dns/pactus-bootstrap1.sensifia.com/tcp/21888/p2p/12D3KooWLpgBQt7A1W8FhTLVYwQMEnTBEX7uudLvd1YMZsDHqqWh"
+  },
+  {
+    "name": "Sensifia",
+    "email": "info@sensifia.com",
+    "website": "https://sensifia.com",
+    "address": "/dns/pactus-bootstrap2.sensifia.com/tcp/21888/p2p/12D3KooWJCR2LHS5T6ocoSGJHh2pAzMeYKpFRwK8WCDnzZuCZjyC"
+  },
+  {
+    "name": "Sensifia",
+    "email": "info@sensifia.com",
+    "website": "https://sensifia.com",
+    "address": "/dns/pactus-bootstrap3.sensifia.com/tcp/21888/p2p/12D3KooWENoDf6zFEYsrgMCiczbnHpwPy65pgivxbVCb5qobPVGn"
+  },
+  {
+    "name": "Sensifia",
+    "email": "info@sensifia.com",
+    "website": "https://sensifia.com",
+    "address": "/dns/pactus-bootstrap4.sensifia.com/tcp/21888/p2p/12D3KooWKmZ2ghGZishUJFgfLnFCHVvxAQXbLYGiGh14DdC4APwt"
+  }
+]
