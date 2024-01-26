@@ -99,7 +99,7 @@ func DefaultConfigMainnet() *Config {
 	}
 
 	for _, node := range bootstrapNodes {
-		conf.Network.DefaultBootstrapAddrStrings = append(conf.Network.BootstrapAddrStrings, node.Address)
+		conf.Network.DefaultBootstrapAddrStrings = append(conf.Network.DefaultBootstrapAddrStrings, node.Address)
 	}
 
 	conf.Network.MaxConns = 64
