@@ -96,7 +96,7 @@ func DefaultConfigMainnet() *Config {
 	bootstrapNodes := make([]BootstrapInfo, 0)
 	if err := json.Unmarshal(bootstrapInfosBytes, &bootstrapNodes); err == nil {
 		for _, node := range bootstrapNodes {
-			conf.Network.BootstrapAddrStrings = append(conf.Network.BootstrapAddrStrings, node.Address)
+			conf.Network.DefaultBootstrapAddrStrings = append(conf.Network.BootstrapAddrStrings, node.Address)
 		}
 	}
 
