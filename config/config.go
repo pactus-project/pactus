@@ -94,10 +94,12 @@ func DefaultConfigMainnet() *Config {
 	conf := defaultConfig()
 
 	bootstrapNodes := make([]BootstrapInfo, 0)
-	if err := json.Unmarshal(bootstrapInfosBytes, &bootstrapNodes); err == nil {
-		for _, node := range bootstrapNodes {
-			conf.Network.DefaultBootstrapAddrStrings = append(conf.Network.BootstrapAddrStrings, node.Address)
-		}
+	if err := json.Unmarshal(bootstrapInfosBytes, &bootstrapNodes); err != nil {
+		panic(err)
+	}
+
+	for _, node := range bootstrapNodes {
+		conf.Network.DefaultBootstrapAddrStrings = append(conf.Network.BootstrapAddrStrings, node.Address)
 	}
 
 	conf.Network.MaxConns = 64
