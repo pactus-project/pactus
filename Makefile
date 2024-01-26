@@ -61,8 +61,8 @@ proto:
 	cd www/grpc/buf && buf generate --template buf.gen.yaml ../proto
 	cd www/grpc/ && statik -m -f -src swagger-ui/
 
-	 cd www/grpc/proto && protoc -I. --go_out=paths=source_relative:../cobra \
-  	--go-grpc_out=paths=source_relative:../cobra --cobra_out=paths=source_relative:../cobra *.proto
+	 cd www/grpc/proto && protoc -I. --go_out=paths=source_relative:../gen/cobra \
+  	--go-grpc_out=paths=source_relative:../gen/cobra --cobra_out=paths=source_relative:../gen/cobra *.proto
 
 # Generate static assets for Swagger-UI
 	cd www/grpc/ && statik -m -f -src swagger-ui/
