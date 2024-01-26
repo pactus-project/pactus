@@ -70,6 +70,28 @@ function deserialize_pactus_LockWalletResponse(buffer_arg) {
   return wallet_pb.LockWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_SignRawTransactionRequest(arg) {
+  if (!(arg instanceof wallet_pb.SignRawTransactionRequest)) {
+    throw new Error('Expected argument of type pactus.SignRawTransactionRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_SignRawTransactionRequest(buffer_arg) {
+  return wallet_pb.SignRawTransactionRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_SignRawTransactionResponse(arg) {
+  if (!(arg instanceof wallet_pb.SignRawTransactionResponse)) {
+    throw new Error('Expected argument of type pactus.SignRawTransactionResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_SignRawTransactionResponse(buffer_arg) {
+  return wallet_pb.SignRawTransactionResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_UnloadWalletRequest(arg) {
   if (!(arg instanceof wallet_pb.UnloadWalletRequest)) {
     throw new Error('Expected argument of type pactus.UnloadWalletRequest');
@@ -176,6 +198,18 @@ unlockWallet: {
     requestDeserialize: deserialize_pactus_UnlockWalletRequest,
     responseSerialize: serialize_pactus_UnlockWalletResponse,
     responseDeserialize: deserialize_pactus_UnlockWalletResponse,
+  },
+  // SignRawTransaction Signs a raw transaction for a specified wallet.
+signRawTransaction: {
+    path: '/pactus.Wallet/SignRawTransaction',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.SignRawTransactionRequest,
+    responseType: wallet_pb.SignRawTransactionResponse,
+    requestSerialize: serialize_pactus_SignRawTransactionRequest,
+    requestDeserialize: deserialize_pactus_SignRawTransactionRequest,
+    responseSerialize: serialize_pactus_SignRawTransactionResponse,
+    responseDeserialize: deserialize_pactus_SignRawTransactionResponse,
   },
 };
 

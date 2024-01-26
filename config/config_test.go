@@ -4,7 +4,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -14,65 +13,109 @@ func TestSaveMainnetConfig(t *testing.T) {
 	path := util.TempFilePath()
 	assert.NoError(t, SaveMainnetConfig(path))
 
-	defConf := DefaultConfigMainnet(param.DefaultParams())
+	defConf := DefaultConfigMainnet()
 	conf, err := LoadFromFile(path, true, defConf)
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
-	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
-	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
-	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
-	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
+	assert.Equal(t, defConf, conf)
+
+	confData, _ := util.ReadFile(path)
+	exampleData, _ := util.ReadFile("example_config.toml")
+	assert.Equal(t, confData, exampleData)
 }
 
-func TestSaveConfig(t *testing.T) {
+func TestSaveTestnetConfig(t *testing.T) {
 	path := util.TempFilePath()
-	conf := defaultConfig()
-	assert.NoError(t, conf.Save(path))
+	defConf := DefaultConfigTestnet()
+	assert.NoError(t, defConf.Save(path))
 
-	defConf := DefaultConfigTestnet(param.DefaultParams())
 	conf, err := LoadFromFile(path, true, defConf)
 	assert.NoError(t, err)
+	assert.Equal(t, defConf, conf)
 
 	assert.NoError(t, conf.BasicCheck())
-	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet-v2")
+}
+
+func TestDefaultConfig(t *testing.T) {
+	conf := defaultConfig()
+
+	assert.NoError(t, conf.BasicCheck())
+	assert.Empty(t, conf.Network.ListenAddrStrings)
+	assert.Equal(t, conf.Network.NetworkName, "")
+	assert.Equal(t, conf.Network.DefaultPort, 0)
+
+	assert.False(t, conf.GRPC.Enable)
+	assert.False(t, conf.GRPC.Gateway.Enable)
+	assert.False(t, conf.HTTP.Enable)
+	assert.False(t, conf.Nanomsg.Enable)
+
+	assert.Equal(t, conf.GRPC.Listen, "")
+	assert.Equal(t, conf.GRPC.Gateway.Listen, "")
+	assert.Equal(t, conf.HTTP.Listen, "")
+	assert.Equal(t, conf.Nanomsg.Listen, "")
+}
+
+func TestMainnetConfig(t *testing.T) {
+	conf := DefaultConfigMainnet()
+
+	assert.NoError(t, conf.BasicCheck())
+	assert.Empty(t, conf.Network.ListenAddrStrings)
+	assert.Equal(t, conf.Network.NetworkName, "pactus")
+	assert.Equal(t, conf.Network.DefaultPort, 21888)
+
+	assert.True(t, conf.GRPC.Enable)
+	assert.False(t, conf.GRPC.Gateway.Enable)
+	assert.False(t, conf.HTTP.Enable)
+	assert.False(t, conf.Nanomsg.Enable)
+
+	assert.Equal(t, conf.GRPC.Listen, "127.0.0.1:50051")
+	assert.Equal(t, conf.GRPC.Gateway.Listen, "127.0.0.1:8080")
+	assert.Equal(t, conf.HTTP.Listen, "127.0.0.1:80")
+	assert.Equal(t, conf.Nanomsg.Listen, "tcp://127.0.0.1:40899")
+}
+
+func TestTestnetConfig(t *testing.T) {
+	conf := DefaultConfigTestnet()
+
+	assert.NoError(t, conf.BasicCheck())
+	assert.Empty(t, conf.Network.ListenAddrStrings)
+	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet")
 	assert.Equal(t, conf.Network.DefaultPort, 21777)
-	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
-	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
-	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
-	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
+
+	assert.True(t, conf.GRPC.Enable)
+	assert.True(t, conf.GRPC.Gateway.Enable)
+	assert.False(t, conf.HTTP.Enable)
+	assert.False(t, conf.Nanomsg.Enable)
+
+	assert.Equal(t, conf.GRPC.Listen, "[::]:50052")
+	assert.Equal(t, conf.GRPC.Gateway.Listen, "[::]:8080")
+	assert.Equal(t, conf.HTTP.Listen, "[::]:80")
+	assert.Equal(t, conf.Nanomsg.Listen, "tcp://[::]:40799")
 }
 
 func TestLocalnetConfig(t *testing.T) {
-	conf := DefaultConfigLocalnet(param.DefaultParams())
+	conf := DefaultConfigLocalnet()
 
 	assert.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
 	assert.Equal(t, conf.Network.NetworkName, "pactus-localnet")
 	assert.Equal(t, conf.Network.DefaultPort, 21666)
-	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
-	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
-	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
-	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
-}
 
-func TestTestnetConfig(t *testing.T) {
-	conf := DefaultConfigTestnet(param.DefaultParams())
+	assert.True(t, conf.GRPC.Enable)
+	assert.True(t, conf.GRPC.Gateway.Enable)
+	assert.True(t, conf.HTTP.Enable)
+	assert.True(t, conf.Nanomsg.Enable)
 
-	assert.NoError(t, conf.BasicCheck())
-	assert.NotEmpty(t, conf.Network.DefaultRelayAddrStrings)
-	assert.Empty(t, conf.Network.ListenAddrStrings)
-	assert.Equal(t, conf.Network.NetworkName, "pactus-testnet-v2")
-	assert.Equal(t, conf.Network.DefaultPort, 21777)
-	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
-	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
-	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
-	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
+	assert.Equal(t, conf.GRPC.Listen, "[::]:0")
+	assert.Equal(t, conf.GRPC.Gateway.Listen, "[::]:0")
+	assert.Equal(t, conf.HTTP.Listen, "[::]:0")
+	assert.Equal(t, conf.Nanomsg.Listen, "tcp://[::]:0")
 }
 
 func TestLoadFromFile(t *testing.T) {
 	path := util.TempFilePath()
-	defConf := DefaultConfigTestnet(param.DefaultParams())
+	defConf := DefaultConfigTestnet()
 
 	_, err := LoadFromFile(path, true, defConf)
 	assert.Error(t, err, "not exists")
@@ -84,10 +127,6 @@ func TestLoadFromFile(t *testing.T) {
 	conf, err := LoadFromFile(path, false, defConf)
 	assert.NoError(t, err)
 	assert.Equal(t, conf, defConf)
-	assert.Equal(t, conf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
-	assert.Equal(t, conf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
-	assert.Equal(t, conf.Store.AccountCacheSize, 1024)
-	assert.Equal(t, conf.Store.PublicKeyCacheSize, 1024)
 }
 
 func TestExampleConfig(t *testing.T) {
@@ -103,7 +142,7 @@ func TestExampleConfig(t *testing.T) {
 		}
 	}
 
-	defaultConf := DefaultConfigMainnet(param.DefaultParams())
+	defaultConf := DefaultConfigMainnet()
 	defaultToml := string(defaultConf.toTOML())
 
 	exampleToml = strings.ReplaceAll(exampleToml, "##", "")
@@ -112,10 +151,6 @@ func TestExampleConfig(t *testing.T) {
 	defaultToml = strings.ReplaceAll(defaultToml, "\n\n", "\n")
 
 	assert.Equal(t, defaultToml, exampleToml)
-	assert.Equal(t, defaultConf.Store.TxCacheSize, param.DefaultParams().TransactionToLiveInterval)
-	assert.Equal(t, defaultConf.Store.SortitionCacheSize, param.DefaultParams().SortitionInterval)
-	assert.Equal(t, defaultConf.Store.AccountCacheSize, 1024)
-	assert.Equal(t, defaultConf.Store.PublicKeyCacheSize, 1024)
 }
 
 func TestNodeConfigBasicCheck(t *testing.T) {

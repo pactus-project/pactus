@@ -154,7 +154,7 @@ func _TransactionBroadcastTransactionCommand(cfg *client.Config) *cobra.Command 
 		},
 	}
 
-	flag.BytesBase64Var(cmd.PersistentFlags(), &req.SignedTx, cfg.FlagNamer("SignedTx"), "")
+	flag.BytesBase64Var(cmd.PersistentFlags(), &req.SignedRawTransaction, cfg.FlagNamer("SignedRawTransaction"), "")
 
 	return cmd
 }

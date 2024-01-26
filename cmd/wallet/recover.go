@@ -11,14 +11,14 @@ import (
 func buildRecoverCmd(parentCmd *cobra.Command) {
 	recoverCmd := &cobra.Command{
 		Use:   "recover",
-		Short: "Recover waller from the seed phrase (mnemonic)",
+		Short: "recovering waller from the seed phrase or mnemonic",
 	}
 	parentCmd.AddCommand(recoverCmd)
 
 	passOpt := addPasswordOption(recoverCmd)
-	testnetOpt := recoverCmd.Flags().Bool("testnet", true,
-		"Recover the wallet for the testnet environment")
-	seedOpt := recoverCmd.Flags().StringP("seed", "s", "", "Mnemonic (seed phrase) used for wallet recovery")
+	testnetOpt := recoverCmd.Flags().Bool("testnet", false,
+		"recover the wallet for the testnet environment")
+	seedOpt := recoverCmd.Flags().StringP("seed", "s", "", "mnemonic or seed phrase used for wallet recovery")
 
 	recoverCmd.Run = func(_ *cobra.Command, _ []string) {
 		mnemonic := *seedOpt
@@ -44,7 +44,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 func buildGetSeedCmd(parentCmd *cobra.Command) {
 	getSeedCmd := &cobra.Command{
 		Use:   "seed",
-		Short: "Display the mnemonic (seed phrase) that can be used to recover this wallet",
+		Short: "displays the mnemonic or seed phrase that can be used to recover this wallet",
 	}
 	parentCmd.AddCommand(getSeedCmd)
 

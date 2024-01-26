@@ -14,7 +14,7 @@ import (
 func buildAllAddrCmd(parentCmd *cobra.Command) {
 	addrCmd := &cobra.Command{
 		Use:   "address",
-		Short: "Manage the address book",
+		Short: "manage the address book",
 	}
 
 	parentCmd.AddCommand(addrCmd)
@@ -31,15 +31,15 @@ func buildAllAddrCmd(parentCmd *cobra.Command) {
 func buildAllAddressesCmd(parentCmd *cobra.Command) {
 	allAddressCmd := &cobra.Command{
 		Use:   "all",
-		Short: "Display all stored addresses",
+		Short: "displays all stored addresses",
 	}
 	parentCmd.AddCommand(allAddressCmd)
 
 	balanceOpt := allAddressCmd.Flags().Bool("balance",
-		false, "Display the account balance for each address")
+		false, "displays the account balance for each address")
 
 	stakeOpt := allAddressCmd.Flags().Bool("stake",
-		false, "Display the validator stake for each address")
+		false, "displays the validator stake for each address")
 
 	allAddressCmd.Run = func(_ *cobra.Command, _ []string) {
 		wlt, err := openWallet()
@@ -69,7 +69,7 @@ func buildAllAddressesCmd(parentCmd *cobra.Command) {
 func buildNewAddressCmd(parentCmd *cobra.Command) {
 	newAddressCmd := &cobra.Command{
 		Use:   "new",
-		Short: "Create a new address",
+		Short: "creating a new address",
 	}
 	parentCmd.AddCommand(newAddressCmd)
 
@@ -105,7 +105,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 func buildBalanceCmd(parentCmd *cobra.Command) {
 	balanceCmd := &cobra.Command{
 		Use:   "balance [flags] <ADDRESS>",
-		Short: "Display the balance of an address",
+		Short: "displays the balance of an address",
 		Args:  cobra.ExactArgs(1),
 	}
 	parentCmd.AddCommand(balanceCmd)
@@ -132,7 +132,7 @@ func buildBalanceCmd(parentCmd *cobra.Command) {
 func buildPrivateKeyCmd(parentCmd *cobra.Command) {
 	privateKeyCmd := &cobra.Command{
 		Use:   "priv [flags] <ADDRESS>",
-		Short: "Display the private key for a specified address",
+		Short: "displays the private key for a specified address",
 		Args:  cobra.ExactArgs(1),
 	}
 	parentCmd.AddCommand(privateKeyCmd)
@@ -158,7 +158,7 @@ func buildPrivateKeyCmd(parentCmd *cobra.Command) {
 func buildPublicKeyCmd(parentCmd *cobra.Command) {
 	publicKeyCmd := &cobra.Command{
 		Use:   "pub [flags] <ADDRESS>",
-		Short: "Display the public key for a specified address",
+		Short: "displays the public key for a specified address",
 		Args:  cobra.ExactArgs(1),
 	}
 	parentCmd.AddCommand(publicKeyCmd)
@@ -188,7 +188,7 @@ func buildPublicKeyCmd(parentCmd *cobra.Command) {
 func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 	importPrivateKeyCmd := &cobra.Command{
 		Use:   "import",
-		Short: "Import a private key into wallet",
+		Short: "imports a private key into wallet",
 	}
 	parentCmd.AddCommand(importPrivateKeyCmd)
 
@@ -211,7 +211,8 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintSuccessMsgf("Private Key imported.") // TODO: display imported addresses
+		cmd.PrintInfoMsgBoldf("Imported Address: %v", prv.PublicKeyNative().AccountAddress())
+		cmd.PrintSuccessMsgf("Private Key imported successfully.")
 	}
 }
 
@@ -219,7 +220,7 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 func buildSetLabelCmd(parentCmd *cobra.Command) {
 	setLabelCmd := &cobra.Command{
 		Use:   "label [flags] <ADDRESS>",
-		Short: "Assign or update a label for a specific address",
+		Short: "assigns or update a label for a specific address",
 		Args:  cobra.ExactArgs(1),
 	}
 	parentCmd.AddCommand(setLabelCmd)

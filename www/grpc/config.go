@@ -1,18 +1,23 @@
 package grpc
 
 type Config struct {
-	Enable  bool          `toml:"enable"`
-	Listen  string        `toml:"listen"`
-	Gateway GatewayConfig `toml:"gateway"`
+	Enable       bool          `toml:"enable"`
+	EnableWallet bool          `toml:"enable_wallet"`
+	Listen       string        `toml:"listen"`
+	Gateway      GatewayConfig `toml:"gateway"`
+
+	// Private config
+	WalletsDir       string `toml:"-"`
+	DefaluWalletName string `toml:"-"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
 		Enable: false,
-		Listen: "50051",
+		Listen: "",
 		Gateway: GatewayConfig{
 			Enable:     false,
-			Listen:     "8080",
+			Listen:     "",
 			EnableCORS: false,
 		},
 	}

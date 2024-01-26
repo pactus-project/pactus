@@ -71,7 +71,7 @@ func (c *grpcClient) sendTx(trx *tx.Tx) (tx.ID, error) {
 		return hash.UndefHash, err
 	}
 	res, err := c.transactionClient.BroadcastTransaction(context.Background(), &pactus.BroadcastTransactionRequest{
-		SignedTx: data,
+		SignedRawTransaction: data,
 	})
 	if err != nil {
 		return hash.UndefHash, err

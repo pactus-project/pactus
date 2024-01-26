@@ -19,6 +19,8 @@ func TestNodeInfo(t *testing.T) {
 
 	assert.Equal(t, w.Code, 200)
 	assert.Contains(t, w.Body.String(), version.Agent())
+
+	td.StopServers()
 }
 
 func TestNetworkInfo(t *testing.T) {
@@ -32,4 +34,6 @@ func TestNetworkInfo(t *testing.T) {
 	assert.Equal(t, w.Code, 200)
 	assert.Contains(t, w.Body.String(), "Network Name")
 	assert.Contains(t, w.Body.String(), "Connected Peers Count")
+
+	td.StopServers()
 }

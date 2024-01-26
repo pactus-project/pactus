@@ -15,6 +15,7 @@ import (
 
 type Server struct {
 	ctx      context.Context
+	cancel   func()
 	config   *Config
 	listener net.Listener
 	address  string
@@ -29,8 +30,11 @@ type Server struct {
 func NewServer(conf *Config, st state.Facade, syn sync.Synchronizer,
 	n network.Network, consMgr consensus.ManagerReader,
 ) *Server {
+	ctx, cancel := context.WithCancel(context.Background())
+
 	return &Server{
-		ctx:     context.Background(),
+		ctx:     ctx,
+		cancel:  cancel,
 		config:  conf,
 		state:   st,
 		sync:    syn,
@@ -59,45 +63,41 @@ func (s *Server) StartServer() error {
 
 func (s *Server) startListening(listener net.Listener) error {
 	grpcServer := grpc.NewServer()
-	blockchainServer := &blockchainServer{s}
-	transactionServer := &transactionServer{s}
-	networkServer := &networkServer{s}
-	walletServer := &walletServer{
-		Server:    s,
-		wallets:   make(map[string]*loadedWallet),
-		chainType: s.state.Genesis().ChainType(),
-	}
+
+	blockchainServer := newBlockchainServer(s)
+	transactionServer := newTransactionServer(s)
+	networkServer := newNetworkServer(s)
+
 	pactus.RegisterBlockchainServer(grpcServer, blockchainServer)
 	pactus.RegisterTransactionServer(grpcServer, transactionServer)
 	pactus.RegisterNetworkServer(grpcServer, networkServer)
-	pactus.RegisterWalletServer(grpcServer, walletServer)
+
+	if s.config.EnableWallet {
+		chainType := s.state.Genesis().ChainType()
+		walletServer := newWalletServer(s, chainType)
+
+		pactus.RegisterWalletServer(grpcServer, walletServer)
+	}
 
 	s.listener = listener
 	s.address = listener.Addr().String()
 	s.grpc = grpcServer
+
+	s.logger.Info("grpc started listening", "address", listener.Addr().String())
 	go func() {
 		if err := s.grpc.Serve(listener); err != nil {
 			s.logger.Error("error on grpc serve", "error", err)
 		}
 	}()
 
-	go func() {
-		if err := s.startGateway(); err != nil {
-			s.logger.Error("error on grpc-gateway serve", "error", err)
-		}
-	}()
-
-	return nil
+	return s.startGateway(s.address)
 }
 
 func (s *Server) StopServer() {
-	s.ctx.Done()
+	s.cancel()
 
 	if s.grpc != nil {
 		s.grpc.Stop()
-	}
-
-	if s.listener != nil {
 		s.listener.Close()
 	}
 }

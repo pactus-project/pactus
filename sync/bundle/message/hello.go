@@ -26,11 +26,11 @@ type HelloMessage struct {
 }
 
 func NewHelloMessage(pid peer.ID, moniker string,
-	height uint32, services service.Services, blockHash, genesisHash hash.Hash, reachability string,
+	height uint32, services service.Services, blockHash, genesisHash hash.Hash,
 ) *HelloMessage {
 	return &HelloMessage{
 		PeerID:          pid,
-		Agent:           fmt.Sprintf("%v/reachability=%v", version.Agent(), reachability),
+		Agent:           version.Agent(),
 		Moniker:         moniker,
 		GenesisHash:     genesisHash,
 		BlockHash:       blockHash,

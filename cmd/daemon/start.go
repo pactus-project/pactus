@@ -17,17 +17,19 @@ import (
 func buildStartCmd(parentCmd *cobra.Command) {
 	startCmd := &cobra.Command{
 		Use:   "start",
-		Short: "Start the Pactus blockchain node",
+		Short: "start the Pactus Blockchain node",
 	}
 
 	parentCmd.AddCommand(startCmd)
 
-	workingDirOpt := startCmd.Flags().StringP("working-dir", "w",
-		cmd.PactusDefaultHomeDir(), "A path to the working directory to read the wallet and node files")
+	workingDirOpt := startCmd.Flags().StringP("working-dir", "w", cmd.PactusDefaultHomeDir(),
+		"the path to the working directory to load the wallet and node files")
 
-	passwordOpt := startCmd.Flags().StringP("password", "p", "", "The wallet password")
+	passwordOpt := startCmd.Flags().StringP("password", "p", "",
+		"the wallet password")
 
-	pprofOpt := startCmd.Flags().String("pprof", "", "debug pprof server address(not recommended to expose to internet)")
+	pprofOpt := startCmd.Flags().String("pprof", "",
+		"pprof server address (for debugging)")
 
 	startCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)

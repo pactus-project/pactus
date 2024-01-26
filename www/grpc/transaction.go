@@ -18,6 +18,12 @@ type transactionServer struct {
 	*Server
 }
 
+func newTransactionServer(server *Server) *transactionServer {
+	return &transactionServer{
+		Server: server,
+	}
+}
+
 func (s *transactionServer) GetTransaction(_ context.Context,
 	req *pactus.GetTransactionRequest,
 ) (*pactus.GetTransactionResponse, error) {
@@ -55,7 +61,7 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 func (s *transactionServer) BroadcastTransaction(_ context.Context,
 	req *pactus.BroadcastTransactionRequest,
 ) (*pactus.BroadcastTransactionResponse, error) {
-	trx, err := tx.FromBytes(req.SignedTx)
+	trx, err := tx.FromBytes(req.SignedRawTransaction)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}

@@ -17,7 +17,7 @@ func sendRawTx(t *testing.T, raw []byte) error {
 	t.Helper()
 
 	_, err := tTransaction.BroadcastTransaction(tCtx,
-		&pactus.BroadcastTransactionRequest{SignedTx: raw})
+		&pactus.BroadcastTransactionRequest{SignedRawTransaction: raw})
 
 	return err
 }

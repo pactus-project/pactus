@@ -25,6 +25,7 @@ func WalletClientCommand(options ...client.Option) *cobra.Command {
 		_WalletUnloadWalletCommand(cfg),
 		_WalletLockWalletCommand(cfg),
 		_WalletUnlockWalletCommand(cfg),
+		_WalletSignRawTransactionCommand(cfg),
 	)
 	return cmd
 }
@@ -66,7 +67,7 @@ func _WalletCreateWalletCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Name, cfg.FlagNamer("Name"), "", "")
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "")
 	cmd.PersistentFlags().StringVar(&req.Mnemonic, cfg.FlagNamer("Mnemonic"), "", "")
 	cmd.PersistentFlags().StringVar(&req.Language, cfg.FlagNamer("Language"), "", "")
 	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "")
@@ -111,7 +112,7 @@ func _WalletLoadWalletCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Name, cfg.FlagNamer("Name"), "", "")
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "")
 
 	return cmd
 }
@@ -153,7 +154,7 @@ func _WalletUnloadWalletCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Name, cfg.FlagNamer("Name"), "", "")
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "")
 
 	return cmd
 }
@@ -195,8 +196,7 @@ func _WalletLockWalletCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "")
-	cmd.PersistentFlags().Int32Var(&req.Timeout, cfg.FlagNamer("Timeout"), 0, "")
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "")
 
 	return cmd
 }
@@ -238,8 +238,53 @@ func _WalletUnlockWalletCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "")
 	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "")
 	cmd.PersistentFlags().Int32Var(&req.Timeout, cfg.FlagNamer("Timeout"), 0, "")
+
+	return cmd
+}
+
+func _WalletSignRawTransactionCommand(cfg *client.Config) *cobra.Command {
+	req := &SignRawTransactionRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("SignRawTransaction"),
+		Short: "SignRawTransaction RPC client",
+		Long:  "SignRawTransaction Signs a raw transaction for a specified wallet.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "SignRawTransaction"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewWalletClient(cc)
+				v := &SignRawTransactionRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.SignRawTransaction(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "")
+	flag.BytesBase64Var(cmd.PersistentFlags(), &req.RawTransaction, cfg.FlagNamer("RawTransaction"), "")
+	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "")
 
 	return cmd
 }

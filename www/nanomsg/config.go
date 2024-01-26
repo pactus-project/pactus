@@ -8,7 +8,7 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Enable: false,
-		Listen: "40899",
+		Listen: "",
 	}
 }
 

@@ -32,6 +32,8 @@ type WalletClient interface {
 	LockWallet(ctx context.Context, in *LockWalletRequest, opts ...grpc.CallOption) (*LockWalletResponse, error)
 	// UnlockWallet unlocks a locked wallet with the provided password and timeout.
 	UnlockWallet(ctx context.Context, in *UnlockWalletRequest, opts ...grpc.CallOption) (*UnlockWalletResponse, error)
+	// SignRawTransaction Signs a raw transaction for a specified wallet.
+	SignRawTransaction(ctx context.Context, in *SignRawTransactionRequest, opts ...grpc.CallOption) (*SignRawTransactionResponse, error)
 }
 
 type walletClient struct {
@@ -87,6 +89,15 @@ func (c *walletClient) UnlockWallet(ctx context.Context, in *UnlockWalletRequest
 	return out, nil
 }
 
+func (c *walletClient) SignRawTransaction(ctx context.Context, in *SignRawTransactionRequest, opts ...grpc.CallOption) (*SignRawTransactionResponse, error) {
+	out := new(SignRawTransactionResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Wallet/SignRawTransaction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WalletServer is the server API for Wallet service.
 // All implementations should embed UnimplementedWalletServer
 // for forward compatibility
@@ -101,6 +112,8 @@ type WalletServer interface {
 	LockWallet(context.Context, *LockWalletRequest) (*LockWalletResponse, error)
 	// UnlockWallet unlocks a locked wallet with the provided password and timeout.
 	UnlockWallet(context.Context, *UnlockWalletRequest) (*UnlockWalletResponse, error)
+	// SignRawTransaction Signs a raw transaction for a specified wallet.
+	SignRawTransaction(context.Context, *SignRawTransactionRequest) (*SignRawTransactionResponse, error)
 }
 
 // UnimplementedWalletServer should be embedded to have forward compatible implementations.
@@ -121,6 +134,9 @@ func (UnimplementedWalletServer) LockWallet(context.Context, *LockWalletRequest)
 }
 func (UnimplementedWalletServer) UnlockWallet(context.Context, *UnlockWalletRequest) (*UnlockWalletResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnlockWallet not implemented")
+}
+func (UnimplementedWalletServer) SignRawTransaction(context.Context, *SignRawTransactionRequest) (*SignRawTransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignRawTransaction not implemented")
 }
 
 // UnsafeWalletServer may be embedded to opt out of forward compatibility for this service.
@@ -224,6 +240,24 @@ func _Wallet_UnlockWallet_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Wallet_SignRawTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignRawTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).SignRawTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pactus.Wallet/SignRawTransaction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).SignRawTransaction(ctx, req.(*SignRawTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Wallet_ServiceDesc is the grpc.ServiceDesc for Wallet service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -250,6 +284,10 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UnlockWallet",
 			Handler:    _Wallet_UnlockWallet_Handler,
+		},
+		{
+			MethodName: "SignRawTransaction",
+			Handler:    _Wallet_SignRawTransaction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

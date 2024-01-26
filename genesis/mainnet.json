@@ -1,0 +1,54 @@
+{
+    "genesis_time": "2024-01-24T20:24:00Z",
+    "params": {
+        "block_version": 1,
+        "block_interval_in_second": 10,
+        "committee_size": 51,
+        "block_reward": 1000000000,
+        "transaction_to_live_interval": 8640,
+        "bond_interval": 360,
+        "unbond_interval": 181440,
+        "sortition_interval": 17,
+        "fee_fraction": 0.0001,
+        "minimum_fee": 1000,
+        "maximum_fee": 1000000,
+        "minimum_stake": 1000000000,
+        "maximum_stake": 1000000000000
+    },
+    "accounts": [
+        {
+            "address": "000000000000000000000000000000000000000000",
+            "balance": 21000000000000000
+        },
+        {
+            "address": "pc1z2r0fmu8sg2ffa0tgrr08gnefcxl2kq7wvquf8z",
+            "balance": 8400000000000000
+        },
+        {
+            "address": "pc1zprhnvcsy3pthekdcu28cw8muw4f432hkwgfasv",
+            "balance": 6300000000000000
+        },
+        {
+            "address": "pc1znn2qxsugfrt7j4608zvtnxf8dnz8skrxguyf45",
+            "balance": 4200000000000000
+        },
+        {
+            "address": "pc1zs64vdggjcshumjwzaskhfn0j9gfpkvche3kxd3",
+            "balance": 2100000000000000
+        }
+    ],
+    "validators": [
+        {
+            "public_key": "public1pslqgpw7c97fxaww6t7lcq88mqgnw43gegttwy7ame6jl83m72nyamek94nlyph75jx4maeq7yf3fwqqy4lw08ykjxduna6cx5tgy089umefcd60tnpe4netln29l5rs9uk9dm8lhefm7q09hytuxg2fzkuj8c7w5"
+        },
+        {
+            "public_key": "public1p5ww955ah5u35yx5g0v06nmlp4dxmd6achpd7w8t854qlw4vnxmmezpu86qwk07elk9msjfhdexkg6qj46jhgcc6fv22xclrpvxz2d6zjtldm9n3nzmnryszs4tfuufak2a7lea9jqu4asfmharsr86m7jvlekwt9"
+        },
+        {
+            "public_key": "public1p47uaggm5ya64ftcw28k34u7newp59jlj9g7trxzsgt7deqya6tcqxkmdq0lg2009t55s0z9jf2vu290qxp507s05rteagt2twhg967sec9nnvnrqdew4xkmleym3x9qwwe68hkdh6elhhncpyc472lqzsvvmatqs"
+        },
+        {
+            "public_key": "public1psxmnqxvu0d3xf66uyah02cj6wqyzlxz8275ha4m4e640txvndgqjydlzcxvc57dfmh0mx5guj2x2uxpw373r4wfgjzmxcxaf5zdd407k9uzjfekkkdjsvep56t5x7z6l7v8d3ppsv799ah2n2e9jmljnssrjj9ru"
+        }
+    ]
+}

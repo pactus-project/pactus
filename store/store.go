@@ -37,7 +37,7 @@ var (
 	accountPrefix     = []byte{0x05}
 	validatorPrefix   = []byte{0x07}
 	blockHeightPrefix = []byte{0x09}
-	publicKeyPrefix   = []byte{0x0a} // TODO: make me 0xb on Mainnet
+	publicKeyPrefix   = []byte{0x0b}
 )
 
 func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {

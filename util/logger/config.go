@@ -23,9 +23,9 @@ func DefaultConfig() *Config {
 	conf.Levels["_state"] = "info"
 	conf.Levels["_sync"] = "error"
 	conf.Levels["_pool"] = "error"
-	conf.Levels["_http"] = "error"
-	conf.Levels["_grpc"] = "error"
-	conf.Levels["_nonomsg"] = "error"
+	conf.Levels["_http"] = "info"
+	conf.Levels["_grpc"] = "info"
+	conf.Levels["_nonomsg"] = "info"
 
 	return conf
 }

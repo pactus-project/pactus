@@ -17,6 +17,12 @@ type blockchainServer struct {
 	*Server
 }
 
+func newBlockchainServer(server *Server) *blockchainServer {
+	return &blockchainServer{
+		Server: server,
+	}
+}
+
 func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 	_ *pactus.GetBlockchainInfoRequest,
 ) (*pactus.GetBlockchainInfoResponse, error) {

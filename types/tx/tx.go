@@ -17,6 +17,7 @@ import (
 const (
 	versionLatest        = 0x01
 	flagStripedPublicKey = 0x01
+	flagNotSigned        = 0x02
 	maxMemoLength        = 64
 )
 
@@ -40,11 +41,12 @@ type txData struct {
 	PublicKey crypto.PublicKey
 }
 
-func NewTx(lockTime uint32, pld payload.Payload, fee int64,
+func newTx(lockTime uint32, pld payload.Payload, fee int64,
 	memo string,
 ) *Tx {
 	trx := &Tx{
 		data: txData{
+			Flags:    flagNotSigned,
 			LockTime: lockTime,
 			Version:  versionLatest,
 			Payload:  pld,
@@ -98,6 +100,12 @@ func (tx *Tx) Signature() crypto.Signature {
 func (tx *Tx) SetSignature(sig crypto.Signature) {
 	tx.basicChecked = false
 	tx.data.Signature = sig
+
+	if sig == nil {
+		tx.data.Flags = util.SetFlag(tx.data.Flags, flagNotSigned)
+	} else {
+		tx.data.Flags = util.UnsetFlag(tx.data.Flags, flagNotSigned)
+	}
 }
 
 func (tx *Tx) SetPublicKey(pub crypto.PublicKey) {
@@ -341,7 +349,7 @@ func (tx *Tx) Decode(r io.Reader) error {
 		return err
 	}
 
-	if !tx.IsSubsidyTx() {
+	if !util.IsFlagSet(tx.data.Flags, flagNotSigned) {
 		sig := new(bls.Signature)
 		err = sig.Decode(r)
 		if err != nil {
@@ -431,7 +439,7 @@ func (tx *Tx) IsPublicKeyStriped() bool {
 	return util.IsFlagSet(tx.data.Flags, flagStripedPublicKey)
 }
 
-// Flags returns flags of transaction.
-func (tx *Tx) Flags() uint8 {
-	return tx.data.Flags
+// IsSigned returns true if the transaction has been signed and includes the signature.
+func (tx *Tx) IsSigned() bool {
+	return !util.IsFlagSet(tx.data.Flags, flagNotSigned)
 }

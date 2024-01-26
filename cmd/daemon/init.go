@@ -14,25 +14,29 @@ import (
 func buildInitCmd(parentCmd *cobra.Command) {
 	initCmd := &cobra.Command{
 		Use:   "init",
-		Short: "Initialize the Pactus blockchain node",
+		Short: "initialize the Pactus Blockchain node",
 	}
 	parentCmd.AddCommand(initCmd)
-	workingDirOpt := initCmd.Flags().StringP("working-dir", "w",
-		cmd.PactusDefaultHomeDir(), "the path to the working directory to save the wallet and node files")
+	workingDirOpt := initCmd.Flags().StringP("working-dir", "w", cmd.PactusDefaultHomeDir(),
+		"a path to the working directory to save the wallet and node files")
 
-	testnetOpt := initCmd.Flags().Bool("testnet", true,
-		"initialize working directory for joining the testnet") // TODO: make it false after mainnet launch
+	testnetOpt := initCmd.Flags().Bool("testnet", false,
+		"initialize working directory for joining the testnet")
 
 	localnetOpt := initCmd.Flags().Bool("localnet", false,
-		"initialize working directory for localnet for developers")
+		"initialize working directory for localnet (for development)")
 
-	restoreOpt := initCmd.Flags().String("restore", "", "restore the 'default_wallet' using a mnemonic or seed phrase")
+	restoreOpt := initCmd.Flags().String("restore", "",
+		"restore the 'default_wallet' using a mnemonic or seed phrase")
 
-	passwordOpt := initCmd.Flags().StringP("password", "p", "", "the wallet password")
+	passwordOpt := initCmd.Flags().StringP("password", "p", "",
+		"the wallet password")
 
-	entropyOpt := initCmd.Flags().IntP("entropy", "e", 128, "entropy bits for seed generation. range: 128 to 256")
+	entropyOpt := initCmd.Flags().IntP("entropy", "e", 128,
+		"entropy bits for seed generation. range: 128 to 256")
 
-	valNumOpt := initCmd.Flags().IntP("val-num", "", 0, "number of validators to be created. range: 1 to 32")
+	valNumOpt := initCmd.Flags().IntP("val-num", "", 0,
+		"number of validators to be created. range: 1 to 32")
 
 	initCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
@@ -60,16 +64,29 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			cmd.FatalErrorCheck(err)
 		}
 
+		var password string
+		if *passwordOpt == "" {
+			cmd.PrintLine()
+			cmd.PrintInfoMsgf("Enter a password for wallet")
+			password = cmd.PromptPassword("Password", true)
+		} else {
+			password = *passwordOpt
+		}
+
+		var valNum int
 		if *valNumOpt == 0 {
 			cmd.PrintLine()
 			cmd.PrintInfoMsgBoldf("How many validators do you want to create?")
 			cmd.PrintInfoMsgf("Each node can run up to 32 validators, and each validator can hold up to 1000 staked coins.")
 			cmd.PrintInfoMsgf("You can define validators based on the amount of coins you want to stake.")
-			*valNumOpt = cmd.PromptInputWithRange("Number of Validators", 7, 1, 32)
-		} else if *valNumOpt < 1 || *valNumOpt > 32 {
-			cmd.PrintErrorMsgf("%v is not in valid range of validator number, it should be between 1 and 32", *valNumOpt)
+			valNum = cmd.PromptInputWithRange("Number of Validators", 7, 1, 32)
+		} else {
+			if *valNumOpt < 1 || *valNumOpt > 32 {
+				cmd.PrintErrorMsgf("%v is not in valid range of validator number, it should be between 1 and 32", *valNumOpt)
 
-			return
+				return
+			}
+			valNum = *valNumOpt
 		}
 
 		chain := genesis.Mainnet
@@ -80,7 +97,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		if *localnetOpt {
 			chain = genesis.Localnet
 		}
-		validatorAddrs, rewardAddrs, err := cmd.CreateNode(*valNumOpt, chain, workingDir, mnemonic, *passwordOpt)
+		validatorAddrs, rewardAddrs, err := cmd.CreateNode(valNum, chain, workingDir, mnemonic, password)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()

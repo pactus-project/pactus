@@ -80,9 +80,12 @@ func (gen *Genesis) Params() *param.Params {
 }
 
 func (gen *Genesis) Accounts() map[crypto.Address]*account.Account {
-	accs := make(map[crypto.Address]*account.Account, 0)
+	accs := make(map[crypto.Address]*account.Account)
 	for i, genAcc := range gen.data.Accounts {
-		addr, _ := crypto.AddressFromString(genAcc.Address)
+		addr, err := crypto.AddressFromString(genAcc.Address)
+		if err != nil {
+			panic(err)
+		}
 		acc := account.NewAccount(int32(i))
 		acc.AddToBalance(genAcc.Balance)
 		accs[addr] = acc
@@ -183,10 +186,12 @@ func (gen *Genesis) TotalSupply() int64 {
 }
 
 func (gen *Genesis) ChainType() ChainType {
-	if gen.Hash() == TestnetGenesis().Hash() {
+	switch gen.Hash() {
+	case MainnetGenesis().Hash():
+		return Mainnet
+	case TestnetGenesis().Hash():
 		return Testnet
+	default:
+		return Localnet
 	}
-	// TODO: add mainnet here
-
-	return Localnet
 }

@@ -173,6 +173,37 @@ public final class WalletGrpc {
     return getUnlockWalletMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.SignRawTransactionRequest,
+      pactus.wallet.WalletOuterClass.SignRawTransactionResponse> getSignRawTransactionMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SignRawTransaction",
+      requestType = pactus.wallet.WalletOuterClass.SignRawTransactionRequest.class,
+      responseType = pactus.wallet.WalletOuterClass.SignRawTransactionResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.SignRawTransactionRequest,
+      pactus.wallet.WalletOuterClass.SignRawTransactionResponse> getSignRawTransactionMethod() {
+    io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.SignRawTransactionRequest, pactus.wallet.WalletOuterClass.SignRawTransactionResponse> getSignRawTransactionMethod;
+    if ((getSignRawTransactionMethod = WalletGrpc.getSignRawTransactionMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getSignRawTransactionMethod = WalletGrpc.getSignRawTransactionMethod) == null) {
+          WalletGrpc.getSignRawTransactionMethod = getSignRawTransactionMethod =
+              io.grpc.MethodDescriptor.<pactus.wallet.WalletOuterClass.SignRawTransactionRequest, pactus.wallet.WalletOuterClass.SignRawTransactionResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SignRawTransaction"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.SignRawTransactionRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.SignRawTransactionResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("SignRawTransaction"))
+              .build();
+        }
+      }
+    }
+    return getSignRawTransactionMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -274,6 +305,16 @@ public final class WalletGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getUnlockWalletMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * SignRawTransaction Signs a raw transaction for a specified wallet.
+     * </pre>
+     */
+    public void signRawTransaction(pactus.wallet.WalletOuterClass.SignRawTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.SignRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSignRawTransactionMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -311,6 +352,13 @@ public final class WalletGrpc {
                 pactus.wallet.WalletOuterClass.UnlockWalletRequest,
                 pactus.wallet.WalletOuterClass.UnlockWalletResponse>(
                   this, METHODID_UNLOCK_WALLET)))
+          .addMethod(
+            getSignRawTransactionMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.wallet.WalletOuterClass.SignRawTransactionRequest,
+                pactus.wallet.WalletOuterClass.SignRawTransactionResponse>(
+                  this, METHODID_SIGN_RAW_TRANSACTION)))
           .build();
     }
   }
@@ -386,6 +434,17 @@ public final class WalletGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getUnlockWalletMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * SignRawTransaction Signs a raw transaction for a specified wallet.
+     * </pre>
+     */
+    public void signRawTransaction(pactus.wallet.WalletOuterClass.SignRawTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.SignRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSignRawTransactionMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -453,6 +512,16 @@ public final class WalletGrpc {
     public pactus.wallet.WalletOuterClass.UnlockWalletResponse unlockWallet(pactus.wallet.WalletOuterClass.UnlockWalletRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUnlockWalletMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * SignRawTransaction Signs a raw transaction for a specified wallet.
+     * </pre>
+     */
+    public pactus.wallet.WalletOuterClass.SignRawTransactionResponse signRawTransaction(pactus.wallet.WalletOuterClass.SignRawTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSignRawTransactionMethod(), getCallOptions(), request);
     }
   }
 
@@ -527,6 +596,17 @@ public final class WalletGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getUnlockWalletMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * SignRawTransaction Signs a raw transaction for a specified wallet.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.SignRawTransactionResponse> signRawTransaction(
+        pactus.wallet.WalletOuterClass.SignRawTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSignRawTransactionMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CREATE_WALLET = 0;
@@ -534,6 +614,7 @@ public final class WalletGrpc {
   private static final int METHODID_UNLOAD_WALLET = 2;
   private static final int METHODID_LOCK_WALLET = 3;
   private static final int METHODID_UNLOCK_WALLET = 4;
+  private static final int METHODID_SIGN_RAW_TRANSACTION = 5;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -571,6 +652,10 @@ public final class WalletGrpc {
         case METHODID_UNLOCK_WALLET:
           serviceImpl.unlockWallet((pactus.wallet.WalletOuterClass.UnlockWalletRequest) request,
               (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.UnlockWalletResponse>) responseObserver);
+          break;
+        case METHODID_SIGN_RAW_TRANSACTION:
+          serviceImpl.signRawTransaction((pactus.wallet.WalletOuterClass.SignRawTransactionRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.SignRawTransactionResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -638,6 +723,7 @@ public final class WalletGrpc {
               .addMethod(getUnloadWalletMethod())
               .addMethod(getLockWalletMethod())
               .addMethod(getUnlockWalletMethod())
+              .addMethod(getSignRawTransactionMethod())
               .build();
         }
       }

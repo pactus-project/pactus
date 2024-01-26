@@ -1,8 +1,7 @@
 package store
 
 import (
-	"fmt"
-	"os"
+	"path/filepath"
 
 	"github.com/pactus-project/pactus/util"
 )
@@ -20,8 +19,8 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Path:               "data",
-		TxCacheSize:        0,
-		SortitionCacheSize: 0,
+		TxCacheSize:        1024,
+		SortitionCacheSize: 1024,
 		AccountCacheSize:   1024,
 		PublicKeyCacheSize: 1024,
 	}
@@ -32,7 +31,7 @@ func (conf *Config) DataPath() string {
 }
 
 func (conf *Config) StorePath() string {
-	return fmt.Sprintf("%s%c%s", conf.DataPath(), os.PathSeparator, "store.db")
+	return filepath.Join(conf.DataPath(), "store.db")
 }
 
 // BasicCheck performs basic checks on the configuration.
