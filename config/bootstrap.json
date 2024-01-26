@@ -22,5 +22,11 @@
     "email": "info@pactus.org",
     "website": "https://pactus.org",
     "address": "/dns/bootstrap4.pactus.org/tcp/21888/p2p/12D3KooWKg6aLa77yAaqMCb45aH5iQuTr5GzRUWUCJ1sZYB5vnoL"
+  },
+  {
+    "name": "Sensifia",
+    "email": "info@sensifia.com",
+    "website": "https://sensifia.com",
+    "address": "/dns/pactus-bootstrap1.sensifia.com/tcp/21888/p2p/12D3KooWLpgBQt7A1W8FhTLVYwQMEnTBEX7uudLvd1YMZsDHqqWh"
   }
 ]
