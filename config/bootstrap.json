@@ -28,5 +28,11 @@
     "email": "info@sensifia.com",
     "website": "https://sensifia.com",
     "address": "/dns/pactus-bootstrap.sensifia.com/tcp/21888/p2p/12D3KooWLpgBQt7A1W8FhTLVYwQMEnTBEX7uudLvd1YMZsDHqqWh"
+  },
+  {
+    "name": "MrHodl",
+    "email": "hodl@pactus.org",
+    "website": "n/a",
+    "address": "/ipv4/65.108.211.187/tcp/21888/p2p/12D3KooWGLrSiE5KWoc9GpXfryvKqheHj6j78ryMDDC17SY4YoCi"
   }
 ]
