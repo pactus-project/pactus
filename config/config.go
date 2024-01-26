@@ -26,7 +26,7 @@ var (
 	exampleConfigBytes []byte
 
 	//go:embed bootstrap.json
-	bootstrapNodesBytes []byte
+	bootstrapInfosBytes []byte
 )
 
 type Config struct {
@@ -42,7 +42,7 @@ type Config struct {
 	Nanomsg   *nanomsg.Config   `toml:"nanomsg"`
 }
 
-type Bootstrap struct {
+type BootstrapInfo struct {
 	Name    string `json:"name"`
 	Email   string `json:"email"`
 	Website string `json:"website"`
@@ -93,8 +93,8 @@ func defaultConfig() *Config {
 func DefaultConfigMainnet() *Config {
 	conf := defaultConfig()
 
-	bootstrapNodes := make([]Bootstrap, 0)
-	if err := json.Unmarshal(bootstrapNodesBytes, &bootstrapNodes); err == nil {
+	bootstrapNodes := make([]BootstrapInfo, 0)
+	if err := json.Unmarshal(bootstrapInfosBytes, &bootstrapNodes); err == nil {
 		for _, node := range bootstrapNodes {
 			conf.Network.BootstrapAddrStrings = append(conf.Network.BootstrapAddrStrings, node.Address)
 		}
