@@ -1,6 +1,6 @@
 package cmd
 
-import pb "github.com/pactus-project/pactus/www/grpc/gen/cobra"
+import pb "github.com/pactus-project/pactus/www/grpc/gen/go"
 
 func init() {
 	rootCmd.AddCommand(pb.BlockchainClientCommand())

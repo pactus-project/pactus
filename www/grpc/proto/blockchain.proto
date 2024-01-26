@@ -6,22 +6,39 @@ option java_package = "pactus.blockchain";
 
 import "transaction.proto";
 
+// Blockchain service defines RPC methods for interacting with the blockchain.
 service Blockchain {
+  // GetBlock retrieves information about a block based on the provided request parameters.
   rpc GetBlock(GetBlockRequest) returns (GetBlockResponse);
+
+  // GetBlockHash retrieves the hash of a block at the specified height.
   rpc GetBlockHash(GetBlockHashRequest) returns (GetBlockHashResponse);
+
+  // GetBlockHeight retrieves the height of a block with the specified hash.
   rpc GetBlockHeight(GetBlockHeightRequest) returns (GetBlockHeightResponse);
-  rpc GetBlockchainInfo(GetBlockchainInfoRequest)
-      returns (GetBlockchainInfoResponse);
-  rpc GetConsensusInfo(GetConsensusInfoRequest)
-      returns (GetConsensusInfoResponse);
+
+  // GetBlockchainInfo retrieves general information about the blockchain.
+  rpc GetBlockchainInfo(GetBlockchainInfoRequest) returns (GetBlockchainInfoResponse);
+
+  // GetConsensusInfo retrieves information about the consensus instances.
+  rpc GetConsensusInfo(GetConsensusInfoRequest) returns (GetConsensusInfoResponse);
+
+  // GetAccount retrieves information about an account based on the provided address.
   rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
+
+  // GetValidator retrieves information about a validator based on the provided address.
   rpc GetValidator(GetValidatorRequest) returns (GetValidatorResponse);
-  rpc GetValidatorByNumber(GetValidatorByNumberRequest)
-      returns (GetValidatorResponse);
-  rpc GetValidatorAddresses(GetValidatorAddressesRequest)
-      returns (GetValidatorAddressesResponse);
+
+  // GetValidatorByNumber retrieves information about a validator based on the provided number.
+  rpc GetValidatorByNumber(GetValidatorByNumberRequest) returns (GetValidatorResponse);
+
+  // GetValidatorAddresses retrieves a list of all validator addresses.
+  rpc GetValidatorAddresses(GetValidatorAddressesRequest) returns (GetValidatorAddressesResponse);
+
+  // GetPublicKey retrieves the public key of an account based on the provided address.
   rpc GetPublicKey(GetPublicKeyRequest) returns (GetPublicKeyResponse);
 }
+
 
 message GetAccountRequest { string address = 1; }
 

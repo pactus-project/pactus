@@ -22,10 +22,15 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WalletClient interface {
+	// CreateWallet creates a new wallet with the specified parameters.
 	CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*CreateWalletResponse, error)
+	// LoadWallet loads an existing wallet with the given name.
 	LoadWallet(ctx context.Context, in *LoadWalletRequest, opts ...grpc.CallOption) (*LoadWalletResponse, error)
+	// UnloadWallet unloads a currently loaded wallet with the specified name.
 	UnloadWallet(ctx context.Context, in *UnloadWalletRequest, opts ...grpc.CallOption) (*UnloadWalletResponse, error)
+	// LockWallet locks a currently loaded wallet with the provided password and timeout.
 	LockWallet(ctx context.Context, in *LockWalletRequest, opts ...grpc.CallOption) (*LockWalletResponse, error)
+	// UnlockWallet unlocks a locked wallet with the provided password and timeout.
 	UnlockWallet(ctx context.Context, in *UnlockWalletRequest, opts ...grpc.CallOption) (*UnlockWalletResponse, error)
 }
 
@@ -86,10 +91,15 @@ func (c *walletClient) UnlockWallet(ctx context.Context, in *UnlockWalletRequest
 // All implementations should embed UnimplementedWalletServer
 // for forward compatibility
 type WalletServer interface {
+	// CreateWallet creates a new wallet with the specified parameters.
 	CreateWallet(context.Context, *CreateWalletRequest) (*CreateWalletResponse, error)
+	// LoadWallet loads an existing wallet with the given name.
 	LoadWallet(context.Context, *LoadWalletRequest) (*LoadWalletResponse, error)
+	// UnloadWallet unloads a currently loaded wallet with the specified name.
 	UnloadWallet(context.Context, *UnloadWalletRequest) (*UnloadWalletResponse, error)
+	// LockWallet locks a currently loaded wallet with the provided password and timeout.
 	LockWallet(context.Context, *LockWalletRequest) (*LockWalletResponse, error)
+	// UnlockWallet unlocks a locked wallet with the provided password and timeout.
 	UnlockWallet(context.Context, *UnlockWalletRequest) (*UnlockWalletResponse, error)
 }
 

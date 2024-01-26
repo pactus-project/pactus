@@ -3,14 +3,27 @@ package pactus;
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus.transaction";
 
+// Transaction service defines various RPC methods for interacting with transactions.
 service Transaction {
+  // GetTransaction retrieves transaction details based on the provided request parameters.
   rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
+
+  // CalculateFee calculates the transaction fee based on the specified amount and payload type.
   rpc CalculateFee(CalculateFeeRequest) returns (CalculateFeeResponse);
-  rpc BroadcastTransaction(BroadcastTransactionRequest)
-      returns (BroadcastTransactionResponse);
+
+  // BroadcastTransaction broadcasts a signed transaction to the network.
+  rpc BroadcastTransaction(BroadcastTransactionRequest) returns (BroadcastTransactionResponse);
+
+  // GetRawTransferTransaction retrieves raw details of a transfer transaction.
   rpc GetRawTransferTransaction(GetRawTransferTransactionRequest) returns (GetRawTransactionResponse);
+
+  // GetRawBondTransaction retrieves raw details of a bond transaction.
   rpc GetRawBondTransaction(GetRawBondTransactionRequest) returns (GetRawTransactionResponse);
+
+  // GetRawUnBondTransaction retrieves raw details of an unbond transaction.
   rpc GetRawUnBondTransaction(GetRawUnBondTransactionRequest) returns (GetRawTransactionResponse);
+
+  // GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
   rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest) returns (GetRawTransactionResponse);
 }
 

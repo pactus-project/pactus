@@ -16,7 +16,7 @@ func TransactionClientCommand(options ...client.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("Transaction"),
 		Short: "Transaction service client",
-		Long:  "",
+		Long:  "Transaction service defines various RPC methods for interacting with transactions.",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
@@ -37,7 +37,7 @@ func _TransactionGetTransactionCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetTransaction"),
 		Short: "GetTransaction RPC client",
-		Long:  "",
+		Long:  "GetTransaction retrieves transaction details based on the provided request parameters.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -80,7 +80,7 @@ func _TransactionCalculateFeeCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("CalculateFee"),
 		Short: "CalculateFee RPC client",
-		Long:  "",
+		Long:  "CalculateFee calculates the transaction fee based on the specified amount and payload type.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -123,7 +123,7 @@ func _TransactionBroadcastTransactionCommand(cfg *client.Config) *cobra.Command 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("BroadcastTransaction"),
 		Short: "BroadcastTransaction RPC client",
-		Long:  "",
+		Long:  "BroadcastTransaction broadcasts a signed transaction to the network.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -165,7 +165,7 @@ func _TransactionGetRawTransferTransactionCommand(cfg *client.Config) *cobra.Com
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetRawTransferTransaction"),
 		Short: "GetRawTransferTransaction RPC client",
-		Long:  "",
+		Long:  "GetRawTransferTransaction retrieves raw details of a transfer transaction.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -212,7 +212,7 @@ func _TransactionGetRawBondTransactionCommand(cfg *client.Config) *cobra.Command
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetRawBondTransaction"),
 		Short: "GetRawBondTransaction RPC client",
-		Long:  "",
+		Long:  "GetRawBondTransaction retrieves raw details of a bond transaction.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -260,7 +260,7 @@ func _TransactionGetRawUnBondTransactionCommand(cfg *client.Config) *cobra.Comma
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetRawUnBondTransaction"),
 		Short: "GetRawUnBondTransaction RPC client",
-		Long:  "",
+		Long:  "GetRawUnBondTransaction retrieves raw details of an unbond transaction.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -304,7 +304,7 @@ func _TransactionGetRawWithdrawTransactionCommand(cfg *client.Config) *cobra.Com
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetRawWithdrawTransaction"),
 		Short: "GetRawWithdrawTransaction RPC client",
-		Long:  "",
+		Long:  "GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {

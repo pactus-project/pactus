@@ -16,7 +16,7 @@ func WalletClientCommand(options ...client.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("Wallet"),
 		Short: "Wallet service client",
-		Long:  "",
+		Long:  "Wallet service defines RPC methods for managing wallet operations.",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
@@ -35,7 +35,7 @@ func _WalletCreateWalletCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("CreateWallet"),
 		Short: "CreateWallet RPC client",
-		Long:  "",
+		Long:  "CreateWallet creates a new wallet with the specified parameters.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
@@ -80,7 +80,7 @@ func _WalletLoadWalletCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("LoadWallet"),
 		Short: "LoadWallet RPC client",
-		Long:  "",
+		Long:  "LoadWallet loads an existing wallet with the given name.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
@@ -122,7 +122,7 @@ func _WalletUnloadWalletCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("UnloadWallet"),
 		Short: "UnloadWallet RPC client",
-		Long:  "",
+		Long:  "UnloadWallet unloads a currently loaded wallet with the specified name.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
@@ -164,7 +164,7 @@ func _WalletLockWalletCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("LockWallet"),
 		Short: "LockWallet RPC client",
-		Long:  "",
+		Long:  "LockWallet locks a currently loaded wallet with the provided password and timeout.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
@@ -207,7 +207,7 @@ func _WalletUnlockWalletCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("UnlockWallet"),
 		Short: "UnlockWallet RPC client",
-		Long:  "",
+		Long:  "UnlockWallet unlocks a locked wallet with the provided password and timeout.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {

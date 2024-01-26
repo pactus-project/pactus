@@ -16,7 +16,7 @@ func NetworkClientCommand(options ...client.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("Network"),
 		Short: "Network service client",
-		Long:  "",
+		Long:  "Network service provides RPCs for retrieving information about the network.",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
@@ -32,7 +32,7 @@ func _NetworkGetNetworkInfoCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetNetworkInfo"),
 		Short: "GetNetworkInfo RPC client",
-		Long:  "",
+		Long:  "GetNetworkInfo retrieves information about the overall network.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Network"); err != nil {
@@ -72,7 +72,7 @@ func _NetworkGetNodeInfoCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetNodeInfo"),
 		Short: "GetNodeInfo RPC client",
-		Long:  "",
+		Long:  "GetNodeInfo retrieves information about a specific node in the network.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Network"); err != nil {

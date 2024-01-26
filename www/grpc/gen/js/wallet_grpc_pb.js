@@ -115,8 +115,10 @@ function deserialize_pactus_UnlockWalletResponse(buffer_arg) {
 }
 
 
+// Wallet service defines RPC methods for managing wallet operations.
 var WalletService = exports.WalletService = {
-  createWallet: {
+  // CreateWallet creates a new wallet with the specified parameters.
+createWallet: {
     path: '/pactus.Wallet/CreateWallet',
     requestStream: false,
     responseStream: false,
@@ -127,7 +129,8 @@ var WalletService = exports.WalletService = {
     responseSerialize: serialize_pactus_CreateWalletResponse,
     responseDeserialize: deserialize_pactus_CreateWalletResponse,
   },
-  loadWallet: {
+  // LoadWallet loads an existing wallet with the given name.
+loadWallet: {
     path: '/pactus.Wallet/LoadWallet',
     requestStream: false,
     responseStream: false,
@@ -138,7 +141,8 @@ var WalletService = exports.WalletService = {
     responseSerialize: serialize_pactus_LoadWalletResponse,
     responseDeserialize: deserialize_pactus_LoadWalletResponse,
   },
-  unloadWallet: {
+  // UnloadWallet unloads a currently loaded wallet with the specified name.
+unloadWallet: {
     path: '/pactus.Wallet/UnloadWallet',
     requestStream: false,
     responseStream: false,
@@ -149,7 +153,8 @@ var WalletService = exports.WalletService = {
     responseSerialize: serialize_pactus_UnloadWalletResponse,
     responseDeserialize: deserialize_pactus_UnloadWalletResponse,
   },
-  lockWallet: {
+  // LockWallet locks a currently loaded wallet with the provided password and timeout.
+lockWallet: {
     path: '/pactus.Wallet/LockWallet',
     requestStream: false,
     responseStream: false,
@@ -160,7 +165,8 @@ var WalletService = exports.WalletService = {
     responseSerialize: serialize_pactus_LockWalletResponse,
     responseDeserialize: deserialize_pactus_LockWalletResponse,
   },
-  unlockWallet: {
+  // UnlockWallet unlocks a locked wallet with the provided password and timeout.
+unlockWallet: {
     path: '/pactus.Wallet/UnlockWallet',
     requestStream: false,
     responseStream: false,
