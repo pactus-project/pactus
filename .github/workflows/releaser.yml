@@ -136,7 +136,7 @@ jobs:
   ##
   ## 1- Login to server using VNC (Read the related issue: https://stackoverflow.com/a/9706088)
   ## 2- Login to the server using SSH
-  ## 3- Install Homebrew: https://brew.sh/
+  ## 3- Install Homebrew: https://brew.sh/ and add `brew` to PATH
   ## 4- Add self-runner: https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners
   ## 5- Run the action
   ##
