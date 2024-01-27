@@ -10,6 +10,18 @@ BUILD_DIR="${ROOT_DIR}/build"
 PACKAGE_NAME="pactus-gui_${VERSION}"
 PACKAGE_DIR="${ROOT_DIR}/${PACKAGE_NAME}"
 
+# Check if the architecture is amd64 and update FILE_NAME accordingly
+ARCHITECTURE="$(uname -m)" # Get the machine architecture
+
+if [ "${ARCHITECTURE}" = "x86_64" ]; then
+    FILE_NAME="${PACKAGE_NAME}_darwin_amd64"
+elif [ "${ARCHITECTURE}" = "arm64" ]; then
+    FILE_NAME="${PACKAGE_NAME}_darwin_arm64"
+else
+    echo "Unsupported architecture: ${ARCHITECTURE}"
+    exit 1
+fi
+
 mkdir ${PACKAGE_DIR}
 
 echo "Building the binaries"
@@ -56,7 +68,7 @@ echo "Creating dmg"
 # https://github.com/create-dmg/create-dmg
 create-dmg \
   --volname "Pactus GUI" \
-  "${PACKAGE_NAME}_darwin_amd64.dmg" \
+  "${FILE_NAME}.dmg" \
   "${ROOT_DIR}/pactus-gui.app"
 
 echo "Creating archive"
@@ -64,4 +76,4 @@ cp ${BUILD_DIR}/pactus-daemon     ${PACKAGE_DIR}
 cp ${BUILD_DIR}/pactus-wallet     ${PACKAGE_DIR}
 cp -R ${ROOT_DIR}/pactus-gui.app  ${PACKAGE_DIR}
 
-tar -czvf ${ROOT_DIR}/${PACKAGE_NAME}_darwin_amd64.tar.gz -p ${PACKAGE_NAME}
+tar -czvf ${ROOT_DIR}/${FILE_NAME}.tar.gz -p ${PACKAGE_NAME}

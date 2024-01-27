@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no"?>
 <app-bundle>
   <meta>
-    <prefix name="default">/usr/local</prefix>
+    <prefix name="default">${env:PREFIX}</prefix>
     <prefix name="bundle">${env:GUI_BUNDLE}</prefix>
     <destination overwrite="yes">${env:ROOT_DIR}</destination>
     <gtk>gtk+-3.0</gtk>

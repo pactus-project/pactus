@@ -93,6 +93,8 @@ jobs:
   ########################################
   build-gui-macos:
     runs-on: macos-latest
+    env:
+      PREFIX: /usr/local
 
     outputs:
       checksums: ${{ steps.calc_checksums.outputs.checksums }}
@@ -101,7 +103,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Install Dependencies
-      run: brew install gtk+3 librsvg create-dmg coreutils
+      run: brew install gtk+3 librsvg create-dmg coreutils pkg-config gdk-pixbuf
 
     - name: Install Go
       uses: actions/setup-go@v3
@@ -128,6 +130,59 @@ jobs:
           pactus-*.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ########################################
+  ## Follow these steps to release macOS ARM:
+  ##
+  ## 1- Login to server using VNC (Read the related issue: https://stackoverflow.com/a/9706088)
+  ## 2- Login to the server using SSH
+  ## 3- Install Homebrew: https://brew.sh/
+  ## 4- Add self-runner: https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners
+  ## 5- Run the action
+  ##
+  build-gui-macos-arm:
+    runs-on: self-hosted
+    env:
+      # In M1 Macs `/usr/local` moved to `/opt/homebrew`.
+      #  More info: https://earthly.dev/blog/homebrew-on-m1/
+      #
+      PREFIX: /opt/homebrew
+
+    outputs:
+      checksums: ${{ steps.calc_checksums.outputs.checksums }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: brew install gtk+3 librsvg create-dmg coreutils pkg-config gdk-pixbuf
+
+    - name: Install Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.21
+
+    - name: Create release files
+      run: bash ./.github/releasers/releaser_gui_macos.sh
+
+    - name: Calculate sha256sum
+      id: calc_checksums
+      run: |
+        set -e
+        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+        echo "checksums<<$EOF"                          >> "$GITHUB_OUTPUT"
+        echo "$(sha256sum pactus-*.dmg pactus-*tar.gz)" >> "$GITHUB_OUTPUT"
+        echo "$EOF"                                     >> "$GITHUB_OUTPUT"
+
+    - name: Publish
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          pactus-*.dmg
+          pactus-*.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
   ########################################
   build-gui-windows:
