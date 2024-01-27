@@ -7,6 +7,8 @@ plugins:
     out: ../gen/go
     opt:
       - paths=source_relative
+  - name: doc
+    out: ../gen/docs
   - name: go-grpc
     out: ../gen/go
     opt: paths=source_relative,require_unimplemented_servers=false
