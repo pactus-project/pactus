@@ -10,15 +10,15 @@ BUILD_DIR="${ROOT_DIR}/build"
 PACKAGE_NAME="pactus-gui_${VERSION}"
 PACKAGE_DIR="${ROOT_DIR}/${PACKAGE_NAME}"
 
-# Check if the architecture is amd64 and update FILE_NAME accordingly
-ARCHITECTURE="$(uname -m)" # Get the machine architecture
+# Check the architecture
+ARC="$(uname -m)"
 
-if [ "${ARCHITECTURE}" = "x86_64" ]; then
+if [ "${ARC}" = "x86_64" ]; then
     FILE_NAME="${PACKAGE_NAME}_darwin_amd64"
-elif [ "${ARCHITECTURE}" = "arm64" ]; then
+elif [ "${ARC}" = "arm64" ]; then
     FILE_NAME="${PACKAGE_NAME}_darwin_arm64"
 else
-    echo "Unsupported architecture: ${ARCHITECTURE}"
+    echo "Unsupported architecture: ${ARC}"
     exit 1
 fi
 
