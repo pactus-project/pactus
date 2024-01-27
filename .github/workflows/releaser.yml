@@ -143,7 +143,7 @@ jobs:
   build-gui-macos-arm:
     runs-on: self-hosted
     env:
-      # In M1 Macs `/usr/local` moved to `/opt/homebrew`.
+      # In M1 `/usr/local` moved to `/opt/homebrew`.
       #  More info: https://earthly.dev/blog/homebrew-on-m1/
       #
       PREFIX: /opt/homebrew
