@@ -27,120 +27,148 @@ service Transaction {
   rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest) returns (GetRawTransactionResponse);
 }
 
+// Request message for retrieving transaction details.
 message GetTransactionRequest {
-  bytes id = 1;
-  TransactionVerbosity verbosity = 2;
+  bytes id = 1;                          // Transaction ID.
+  TransactionVerbosity verbosity = 2;   // Verbosity level for transaction details.
 }
 
+// Response message containing details of a transaction.
 message GetTransactionResponse {
-  uint32 block_height = 12;
-  uint32 block_time = 13;
-  TransactionInfo transaction = 3;
+  uint32 block_height = 12;              // Height of the block containing the transaction.
+  uint32 block_time = 13;                // Time of the block containing the transaction.
+  TransactionInfo transaction = 3;      // Information about the transaction.
 }
 
+// Request message for calculating transaction fee.
 message CalculateFeeRequest {
-  int64 amount = 1;
-  PayloadType payloadType = 2;
+  int64 amount = 1;                      // Transaction amount.
+  PayloadType payloadType = 2;           // Type of transaction payload.
 }
 
-message CalculateFeeResponse { int64 fee = 1; }
+// Response message containing the calculated transaction fee.
+message CalculateFeeResponse {
+  int64 fee = 1;                         // Calculated transaction fee.
+}
 
-message BroadcastTransactionRequest { bytes signed_raw_transaction = 1; }
+// Request message for broadcasting a signed transaction.
+message BroadcastTransactionRequest {
+  bytes signed_raw_transaction = 1;     // Signed raw transaction data.
+}
 
-message BroadcastTransactionResponse { bytes id = 2; }
+// Response message containing the ID of the broadcasted transaction.
+message BroadcastTransactionResponse {
+  bytes id = 2;                          // Transaction ID.
+}
 
+// Request message for retrieving raw details of a transfer transaction.
 message GetRawTransferTransactionRequest {
-  uint32 lock_time = 1;
-  string sender = 2;
-  string receiver = 3;
-  int64 amount = 4;
-  int64 fee = 5;
-  string memo = 6;
+  uint32 lock_time = 1;                  // Lock time for the transaction.
+  string sender = 2;                     // Sender's address.
+  string receiver = 3;                   // Receiver's address.
+  int64 amount = 4;                      // Transaction amount.
+  int64 fee = 5;                         // Transaction fee.
+  string memo = 6;                       // Transaction memo.
 }
 
+// Request message for retrieving raw details of a bond transaction.
 message GetRawBondTransactionRequest {
-  uint32 lock_time = 1;
-  string sender = 2;
-  string receiver = 3;
-  int64 stake = 4;
-  string public_key = 5;
-  int64 fee = 6;
-  string memo = 7;
+  uint32 lock_time = 1;                  // Lock time for the transaction.
+  string sender = 2;                     // Sender's address.
+  string receiver = 3;                   // Receiver's address.
+  int64 stake = 4;                       // Stake amount.
+  string public_key = 5;                 // Public key of the validator.
+  int64 fee = 6;                         // Transaction fee.
+  string memo = 7;                       // Transaction memo.
 }
 
+// Request message for retrieving raw details of an unbond transaction.
 message GetRawUnBondTransactionRequest {
-  uint32 lock_time = 1;
-  string validator_address = 3;
-  string memo = 4;
+  uint32 lock_time = 1;                  // Lock time for the transaction.
+  string validator_address = 3;          // Address of the validator to unbond from.
+  string memo = 4;                       // Transaction memo.
 }
 
+// Request message for retrieving raw details of a withdraw transaction.
 message GetRawWithdrawTransactionRequest {
-  uint32 lock_time = 1;
-  string validator_address = 2;
-  string account_address = 3;
-  int64 fee = 4;
-  int64 amount = 5;
-  string memo = 6;
+  uint32 lock_time = 1;                  // Lock time for the transaction.
+  string validator_address = 2;          // Address of the validator to withdraw from.
+  string account_address = 3;            // Address of the account to withdraw to.
+  int64 fee = 4;                         // Transaction fee.
+  int64 amount = 5;                      // Withdrawal amount.
+  string memo = 6;                       // Transaction memo.
 }
 
-message GetRawTransactionResponse { bytes raw_transaction = 1; }
+// Response message containing raw transaction data.
+message GetRawTransactionResponse {
+  bytes raw_transaction = 1;             // Raw transaction data.
+}
 
+// Payload for a transfer transaction.
 message PayloadTransfer {
-  string sender = 1;
-  string receiver = 2;
-  int64 amount = 3;
+  string sender = 1;                     // Sender's address.
+  string receiver = 2;                   // Receiver's address.
+  int64 amount = 3;                      // Transaction amount.
 }
 
+// Payload for a bond transaction.
 message PayloadBond {
-  string sender = 1;
-  string receiver = 2;
-  int64 stake = 3;
+  string sender = 1;                     // Sender's address.
+  string receiver = 2;                   // Receiver's address.
+  int64 stake = 3;                       // Stake amount.
 }
 
+// Payload for a sortition transaction.
 message PayloadSortition {
-  string address = 1;
-  bytes proof = 2;
+  string address = 1;                    // Address associated with the sortition.
+  bytes proof = 2;                       // Proof for the sortition.
 }
 
-message PayloadUnbond { string validator = 1; }
+// Payload for an unbond transaction.
+message PayloadUnbond {
+  string validator = 1;                  // Address of the validator to unbond from.
+}
 
+// Payload for a withdraw transaction.
 message PayloadWithdraw {
-  string from = 1;
-  string to = 2;
-  int64 amount = 3;
+  string from = 1;                       // Address to withdraw from.
+  string to = 2;                         // Address to withdraw to.
+  int64 amount = 3;                      // Withdrawal amount.
 }
 
+// Information about a transaction.
 message TransactionInfo {
-  bytes id = 1;
-  bytes data = 2;
-  int32 version = 3;
-  uint32 lock_time = 4;
-  int64 value = 5;
-  int64 fee = 6;
-  PayloadType payloadType = 7;
+  bytes id = 1;                          // Transaction ID.
+  bytes data = 2;                        // Transaction data.
+  int32 version = 3;                     // Transaction version.
+  uint32 lock_time = 4;                  // Lock time for the transaction.
+  int64 value = 5;                       // Transaction value.
+  int64 fee = 6;                         // Transaction fee.
+  PayloadType payloadType = 7;           // Type of transaction payload.
   oneof payload {
-    PayloadTransfer transfer = 30;
-    PayloadBond bond = 31;
-    PayloadSortition sortition = 32;
-    PayloadUnbond unbond = 33;
-    PayloadWithdraw withdraw = 34;
+    PayloadTransfer transfer = 30;      // Transfer payload.
+    PayloadBond bond = 31;              // Bond payload.
+    PayloadSortition sortition = 32;    // Sortition payload.
+    PayloadUnbond unbond = 33;          // Unbond payload.
+    PayloadWithdraw withdraw = 34;      // Withdraw payload.
   };
-  string memo = 8;
-  string public_key = 9;
-  bytes signature = 10;
+  string memo = 8;                       // Transaction memo.
+  string public_key = 9;                 // Public key associated with the transaction.
+  bytes signature = 10;                  // Transaction signature.
 }
 
+// Enumeration for different types of transaction payloads.
 enum PayloadType {
-  UNKNOWN = 0;
-  TRANSFER_PAYLOAD = 1;
-  BOND_PAYLOAD = 2;
-  SORTITION_PAYLOAD = 3;
-  UNBOND_PAYLOAD = 4;
-  WITHDRAW_PAYLOAD = 5;
+  UNKNOWN = 0;                          // Unknown payload type.
+  TRANSFER_PAYLOAD = 1;                 // Transfer payload type.
+  BOND_PAYLOAD = 2;                     // Bond payload type.
+  SORTITION_PAYLOAD = 3;                // Sortition payload type.
+  UNBOND_PAYLOAD = 4;                   // Unbond payload type.
+  WITHDRAW_PAYLOAD = 5;                 // Withdraw payload type.
 }
 
+// Enumeration for verbosity level when requesting transaction details.
 enum TransactionVerbosity {
-  TRANSACTION_DATA = 0;
-  TRANSACTION_INFO = 1;
+  TRANSACTION_DATA = 0;                 // Request only transaction data.
+  TRANSACTION_INFO = 1;                 // Request detailed transaction information.
 }
-

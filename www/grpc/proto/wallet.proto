@@ -1,6 +1,5 @@
 syntax = 'proto3';
 package pactus;
-
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus.wallet";
 
@@ -25,42 +24,70 @@ service Wallet {
   rpc SignRawTransaction(SignRawTransactionRequest) returns (SignRawTransactionResponse);
 }
 
+// Request message for creating a new wallet.
 message CreateWalletRequest {
-  string wallet_name = 1;
-  string mnemonic = 2;
-  string language = 3;
-  string password = 4;
+  string wallet_name = 1;     // Name of the new wallet.
+  string mnemonic = 2;        // Mnemonic for wallet recovery.
+  string language = 3;        // Language for the mnemonic.
+  string password = 4;        // Password for securing the wallet.
 }
 
-message CreateWalletResponse { string wallet_name = 1; }
+// Response message containing the name of the created wallet.
+message CreateWalletResponse {
+  string wallet_name = 1;     // Name of the created wallet.
+}
 
-message LoadWalletRequest { string wallet_name = 1; }
+// Request message for loading an existing wallet.
+message LoadWalletRequest {
+  string wallet_name = 1;     // Name of the wallet to load.
+}
 
-message LoadWalletResponse { string wallet_name = 1; }
+// Response message containing the name of the loaded wallet.
+message LoadWalletResponse {
+  string wallet_name = 1;     // Name of the loaded wallet.
+}
 
-message UnloadWalletRequest { string wallet_name = 1; }
+// Request message for unloading a currently loaded wallet.
+message UnloadWalletRequest {
+  string wallet_name = 1;     // Name of the wallet to unload.
+}
 
-message UnloadWalletResponse { string wallet_name = 1; }
+// Response message containing the name of the unloaded wallet.
+message UnloadWalletResponse {
+  string wallet_name = 1;     // Name of the unloaded wallet.
+}
 
-message LockWalletRequest { string wallet_name = 1; }
+// Request message for locking a currently loaded wallet.
+message LockWalletRequest {
+  string wallet_name = 1;     // Name of the wallet to lock.
+}
 
-message LockWalletResponse { string wallet_name = 1; }
+// Response message containing the name of the locked wallet.
+message LockWalletResponse {
+  string wallet_name = 1;     // Name of the locked wallet.
+}
 
+// Request message for unlocking a locked wallet.
 message UnlockWalletRequest {
-  string wallet_name = 1;
-  string password = 2;
-  int32 timeout = 3;
+  string wallet_name = 1;     // Name of the wallet to unlock.
+  string password = 2;        // Password for unlocking the wallet.
+  int32 timeout = 3;          // Timeout duration for the unlocked state.
 }
 
-message UnlockWalletResponse { string wallet_name = 1; }
+// Response message containing the name of the unlocked wallet.
+message UnlockWalletResponse {
+  string wallet_name = 1;     // Name of the unlocked wallet.
+}
 
+// Request message for signing a raw transaction.
 message SignRawTransactionRequest {
-  string wallet_name = 1;
-  bytes raw_transaction = 2;
-  string password = 3;
+  string wallet_name = 1;        // Name of the wallet used for signing.
+  bytes raw_transaction = 2;     // Raw transaction data to be signed.
+  string password = 3;           // Password for unlocking the wallet for signing.
 }
 
+// Response message containing the transaction ID and signed raw transaction.
 message SignRawTransactionResponse {
-  bytes transaction_id = 1;
-  bytes signed_raw_transaction = 2;
+  bytes transaction_id = 1;      // ID of the signed transaction.
+  bytes signed_raw_transaction = 2; // Signed raw transaction data.
 }

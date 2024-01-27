@@ -39,127 +39,179 @@ service Blockchain {
   rpc GetPublicKey(GetPublicKeyRequest) returns (GetPublicKeyResponse);
 }
 
+// Message to request account information based on an address.
+message GetAccountRequest {
+  string address = 1; // Address of the account.
+}
 
-message GetAccountRequest { string address = 1; }
+// Message containing the response with account information.
+message GetAccountResponse {
+  AccountInfo account = 1; // Account information.
+}
 
-message GetAccountResponse { AccountInfo account = 1; }
-
+// Message to request validator addresses.
 message GetValidatorAddressesRequest {}
 
-message GetValidatorAddressesResponse { repeated string addresses = 1; }
+// Message containing the response with a list of validator addresses.
+message GetValidatorAddressesResponse {
+  repeated string addresses = 1; // List of validator addresses.
+}
 
-message GetValidatorRequest { string address = 1; }
+// Message to request validator information based on an address.
+message GetValidatorRequest {
+  string address = 1; // Address of the validator.
+}
 
-message GetValidatorByNumberRequest { int32 number = 1; }
+// Message to request validator information based on a validator number.
+message GetValidatorByNumberRequest {
+  int32 number = 1; // Validator number.
+}
 
-message GetValidatorResponse { ValidatorInfo validator = 1; }
+// Message containing the response with validator information.
+message GetValidatorResponse {
+  ValidatorInfo validator = 1; // Validator information.
+}
 
-message GetPublicKeyRequest { string address = 1; }
+// Message to request public key based on an address.
+message GetPublicKeyRequest {
+  string address = 1; // Address for which public key is requested.
+}
 
-message GetPublicKeyResponse { string public_key = 1; }
+// Message containing the response with the public key.
+message GetPublicKeyResponse {
+  string public_key = 1; // Public key of the account.
+}
 
+// Message to request block information based on height and verbosity.
 message GetBlockRequest {
-  uint32 height = 1;
-  BlockVerbosity verbosity = 2;
+  uint32 height = 1; // Height of the block.
+  BlockVerbosity verbosity = 2; // Verbosity level for block information.
 }
 
+// Message containing the response with block information.
 message GetBlockResponse {
-  uint32 height = 1;
-  bytes hash = 2;
-  bytes data = 3;
-  uint32 block_time = 4;
-  BlockHeaderInfo header = 5;
-  CertificateInfo prev_cert = 6;
-  repeated TransactionInfo txs = 7;
+  uint32 height = 1; // Height of the block.
+  bytes hash = 2; // Hash of the block.
+  bytes data = 3; // Block data.
+  uint32 block_time = 4; // Block timestamp.
+  BlockHeaderInfo header = 5; // Block header information.
+  CertificateInfo prev_cert = 6; // Certificate information of the previous block.
+  repeated TransactionInfo txs = 7; // List of transactions in the block.
 }
 
-message GetBlockHashRequest { uint32 height = 1; }
+// Message to request block hash based on height.
+message GetBlockHashRequest {
+  uint32 height = 1; // Height of the block.
+}
 
-message GetBlockHashResponse { bytes hash = 1; }
+// Message containing the response with the block hash.
+message GetBlockHashResponse {
+  bytes hash = 1; // Hash of the block.
+}
 
-message GetBlockHeightRequest { bytes hash = 1; }
+// Message to request block height based on hash.
+message GetBlockHeightRequest {
+  bytes hash = 1; // Hash of the block.
+}
 
-message GetBlockHeightResponse { uint32 height = 1; }
+// Message containing the response with the block height.
+message GetBlockHeightResponse {
+  uint32 height = 1; // Height of the block.
+}
 
+// Message to request general information about the blockchain.
 message GetBlockchainInfoRequest {}
 
+// Message containing the response with general blockchain information.
 message GetBlockchainInfoResponse {
-  uint32 last_block_height = 1;
-  bytes last_block_hash = 2;
-  int32 total_accounts = 3;
-  int32 total_validators = 4;
-  int64 total_power = 5;
-  int64 committee_power = 6;
-  repeated ValidatorInfo committee_validators = 7;
+  uint32 last_block_height = 1; // Height of the last block.
+  bytes last_block_hash = 2; // Hash of the last block.
+  int32 total_accounts = 3; // Total number of accounts.
+  int32 total_validators = 4; // Total number of validators.
+  int64 total_power = 5; // Total power in the blockchain.
+  int64 committee_power = 6; // Power of the committee.
+  repeated ValidatorInfo committee_validators = 7; // List of committee validators.
 }
 
+// Message to request consensus information.
 message GetConsensusInfoRequest {}
 
-message GetConsensusInfoResponse { repeated ConsensusInfo instances = 1; }
+// Message containing the response with consensus information.
+message GetConsensusInfoResponse {
+  repeated ConsensusInfo instances = 1; // List of consensus instances.
+}
 
+// Message containing information about a validator.
 message ValidatorInfo {
-  bytes hash = 1;
-  bytes data = 2;
-  string public_key = 3;
-  int32 number = 4;
-  int64 stake = 5;
-  uint32 last_bonding_height = 6;
-  uint32 last_sortition_height = 7;
-  uint32 unbonding_height = 8;
-  string address = 9;
-  double availability_score = 10;
+  bytes hash = 1; // Hash of the validator.
+  bytes data = 2; // Validator data.
+  string public_key = 3; // Public key of the validator.
+  int32 number = 4; // Validator number.
+  int64 stake = 5; // Validator stake.
+  uint32 last_bonding_height = 6; // Last bonding height.
+  uint32 last_sortition_height = 7; // Last sortition height.
+  uint32 unbonding_height = 8; // Unbonding height.
+  string address = 9; // Address of the validator.
+  double availability_score = 10; // Availability score of the validator.
 }
 
+// Message containing information about an account.
 message AccountInfo {
-  bytes hash = 1;
-  bytes data = 2;
-  int32 number = 3;
-  int64 balance = 4;
-  string address = 5;
+  bytes hash = 1; // Hash of the account.
+  bytes data = 2; // Account data.
+  int32 number = 3; // Account number.
+  int64 balance = 4; // Account balance.
+  string address = 5; // Address of the account.
 }
 
+// Message containing information about the header of a block.
 message BlockHeaderInfo {
-  int32 version = 1;
-  bytes prev_block_hash = 2;
-  bytes state_root = 3;
-  bytes sortition_seed = 4;
-  string proposer_address = 5;
+  int32 version = 1; // Block version.
+  bytes prev_block_hash = 2; // Hash of the previous block.
+  bytes state_root = 3; // State root of the block.
+  bytes sortition_seed = 4; // Sortition seed of the block.
+  string proposer_address = 5; // Address of the proposer of the block.
 }
 
+// Message containing information about a certificate.
 message CertificateInfo {
-  bytes hash = 1;
-  int32 round = 2;
-  repeated int32 committers = 3;
-  repeated int32 absentees = 4;
-  bytes signature = 5;
+  bytes hash = 1; // Hash of the certificate.
+  int32 round = 2; // Round of the certificate.
+  repeated int32 committers = 3; // List of committers in the certificate.
+  repeated int32 absentees = 4; // List of absentees in the certificate.
+  bytes signature = 5; // Certificate signature.
 }
 
+// Message containing information about a vote.
 message VoteInfo {
-  VoteType type = 1;
-  string voter = 2;
-  bytes block_hash = 3;
-  int32 round = 4;
-  int32 cp_round = 5;
-  int32 cp_value = 6;
+  VoteType type = 1; // Type of the vote.
+  string voter = 2; // Voter's address.
+  bytes block_hash = 3; // Hash of the block being voted on.
+  int32 round = 4; // Round of the vote.
+  int32 cp_round = 5; // Consensus round of the vote.
+  int32 cp_value = 6; // Consensus value of the vote.
 }
 
+// Message containing information about consensus.
 message ConsensusInfo {
-  string address = 1;
-  bool Active = 2;
-  uint32 height = 3;
-  int32 round = 4;
-  repeated VoteInfo votes = 5;
+  string address = 1; // Address of the consensus instance.
+  bool Active = 2; // Whether the consensus instance is active.
+  uint32 height = 3; // Height of the consensus instance.
+  int32 round = 4; // Round of the consensus instance.
+  repeated VoteInfo votes = 5; // List of votes in the consensus instance.
 }
 
+// Enumeration for verbosity level when requesting block information.
 enum BlockVerbosity {
-  BLOCK_DATA = 0;
-  BLOCK_INFO = 1;
-  BLOCK_TRANSACTIONS = 2;
+  BLOCK_DATA = 0; // Request block data only.
+  BLOCK_INFO = 1; // Request block information only.
+  BLOCK_TRANSACTIONS = 2; // Request block transactions only.
 }
 
+// Enumeration for types of votes.
 enum VoteType {
-  VOTE_UNKNOWN = 0;
-  VOTE_PREPARE = 1;
-  VOTE_PRECOMMIT = 2;
-  VOTE_CHANGE_PROPOSER = 3;
+  VOTE_UNKNOWN = 0; // Unknown vote type.
+  VOTE_PREPARE = 1; // Prepare vote type.
+  VOTE_PRECOMMIT = 2; // Precommit vote type.
+  VOTE_CHANGE_PROPOSER = 3; // Change proposer vote type.
 }

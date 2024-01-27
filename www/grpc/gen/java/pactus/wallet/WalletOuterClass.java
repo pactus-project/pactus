@@ -19,11 +19,19 @@ public final class WalletOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Name of the new wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
     java.lang.String getWalletName();
     /**
+     * <pre>
+     * Name of the new wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -31,11 +39,19 @@ public final class WalletOuterClass {
         getWalletNameBytes();
 
     /**
+     * <pre>
+     * Mnemonic for wallet recovery.
+     * </pre>
+     *
      * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
      * @return The mnemonic.
      */
     java.lang.String getMnemonic();
     /**
+     * <pre>
+     * Mnemonic for wallet recovery.
+     * </pre>
+     *
      * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
      * @return The bytes for mnemonic.
      */
@@ -43,11 +59,19 @@ public final class WalletOuterClass {
         getMnemonicBytes();
 
     /**
+     * <pre>
+     * Language for the mnemonic.
+     * </pre>
+     *
      * <code>string language = 3 [json_name = "language"];</code>
      * @return The language.
      */
     java.lang.String getLanguage();
     /**
+     * <pre>
+     * Language for the mnemonic.
+     * </pre>
+     *
      * <code>string language = 3 [json_name = "language"];</code>
      * @return The bytes for language.
      */
@@ -55,11 +79,19 @@ public final class WalletOuterClass {
         getLanguageBytes();
 
     /**
+     * <pre>
+     * Password for securing the wallet.
+     * </pre>
+     *
      * <code>string password = 4 [json_name = "password"];</code>
      * @return The password.
      */
     java.lang.String getPassword();
     /**
+     * <pre>
+     * Password for securing the wallet.
+     * </pre>
+     *
      * <code>string password = 4 [json_name = "password"];</code>
      * @return The bytes for password.
      */
@@ -67,6 +99,10 @@ public final class WalletOuterClass {
         getPasswordBytes();
   }
   /**
+   * <pre>
+   * Request message for creating a new wallet.
+   * </pre>
+   *
    * Protobuf type {@code pactus.CreateWalletRequest}
    */
   public static final class CreateWalletRequest extends
@@ -113,6 +149,10 @@ public final class WalletOuterClass {
     public static final int WALLET_NAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object walletName_;
     /**
+     * <pre>
+     * Name of the new wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
@@ -130,6 +170,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Name of the new wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -151,6 +195,10 @@ public final class WalletOuterClass {
     public static final int MNEMONIC_FIELD_NUMBER = 2;
     private volatile java.lang.Object mnemonic_;
     /**
+     * <pre>
+     * Mnemonic for wallet recovery.
+     * </pre>
+     *
      * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
      * @return The mnemonic.
      */
@@ -168,6 +216,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Mnemonic for wallet recovery.
+     * </pre>
+     *
      * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
      * @return The bytes for mnemonic.
      */
@@ -189,6 +241,10 @@ public final class WalletOuterClass {
     public static final int LANGUAGE_FIELD_NUMBER = 3;
     private volatile java.lang.Object language_;
     /**
+     * <pre>
+     * Language for the mnemonic.
+     * </pre>
+     *
      * <code>string language = 3 [json_name = "language"];</code>
      * @return The language.
      */
@@ -206,6 +262,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Language for the mnemonic.
+     * </pre>
+     *
      * <code>string language = 3 [json_name = "language"];</code>
      * @return The bytes for language.
      */
@@ -227,6 +287,10 @@ public final class WalletOuterClass {
     public static final int PASSWORD_FIELD_NUMBER = 4;
     private volatile java.lang.Object password_;
     /**
+     * <pre>
+     * Password for securing the wallet.
+     * </pre>
+     *
      * <code>string password = 4 [json_name = "password"];</code>
      * @return The password.
      */
@@ -244,6 +308,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Password for securing the wallet.
+     * </pre>
+     *
      * <code>string password = 4 [json_name = "password"];</code>
      * @return The bytes for password.
      */
@@ -447,6 +515,10 @@ public final class WalletOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Request message for creating a new wallet.
+     * </pre>
+     *
      * Protobuf type {@code pactus.CreateWalletRequest}
      */
     public static final class Builder extends
@@ -645,6 +717,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object walletName_ = "";
       /**
+       * <pre>
+       * Name of the new wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The walletName.
        */
@@ -661,6 +737,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the new wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The bytes for walletName.
        */
@@ -678,6 +758,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the new wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The walletName to set.
        * @return This builder for chaining.
@@ -693,6 +777,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the new wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return This builder for chaining.
        */
@@ -703,6 +791,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the new wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The bytes for walletName to set.
        * @return This builder for chaining.
@@ -721,6 +813,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object mnemonic_ = "";
       /**
+       * <pre>
+       * Mnemonic for wallet recovery.
+       * </pre>
+       *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
        * @return The mnemonic.
        */
@@ -737,6 +833,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Mnemonic for wallet recovery.
+       * </pre>
+       *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
        * @return The bytes for mnemonic.
        */
@@ -754,6 +854,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Mnemonic for wallet recovery.
+       * </pre>
+       *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
        * @param value The mnemonic to set.
        * @return This builder for chaining.
@@ -769,6 +873,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Mnemonic for wallet recovery.
+       * </pre>
+       *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
        * @return This builder for chaining.
        */
@@ -779,6 +887,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Mnemonic for wallet recovery.
+       * </pre>
+       *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
        * @param value The bytes for mnemonic to set.
        * @return This builder for chaining.
@@ -797,6 +909,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object language_ = "";
       /**
+       * <pre>
+       * Language for the mnemonic.
+       * </pre>
+       *
        * <code>string language = 3 [json_name = "language"];</code>
        * @return The language.
        */
@@ -813,6 +929,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Language for the mnemonic.
+       * </pre>
+       *
        * <code>string language = 3 [json_name = "language"];</code>
        * @return The bytes for language.
        */
@@ -830,6 +950,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Language for the mnemonic.
+       * </pre>
+       *
        * <code>string language = 3 [json_name = "language"];</code>
        * @param value The language to set.
        * @return This builder for chaining.
@@ -845,6 +969,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Language for the mnemonic.
+       * </pre>
+       *
        * <code>string language = 3 [json_name = "language"];</code>
        * @return This builder for chaining.
        */
@@ -855,6 +983,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Language for the mnemonic.
+       * </pre>
+       *
        * <code>string language = 3 [json_name = "language"];</code>
        * @param value The bytes for language to set.
        * @return This builder for chaining.
@@ -873,6 +1005,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object password_ = "";
       /**
+       * <pre>
+       * Password for securing the wallet.
+       * </pre>
+       *
        * <code>string password = 4 [json_name = "password"];</code>
        * @return The password.
        */
@@ -889,6 +1025,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Password for securing the wallet.
+       * </pre>
+       *
        * <code>string password = 4 [json_name = "password"];</code>
        * @return The bytes for password.
        */
@@ -906,6 +1046,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Password for securing the wallet.
+       * </pre>
+       *
        * <code>string password = 4 [json_name = "password"];</code>
        * @param value The password to set.
        * @return This builder for chaining.
@@ -921,6 +1065,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Password for securing the wallet.
+       * </pre>
+       *
        * <code>string password = 4 [json_name = "password"];</code>
        * @return This builder for chaining.
        */
@@ -931,6 +1079,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Password for securing the wallet.
+       * </pre>
+       *
        * <code>string password = 4 [json_name = "password"];</code>
        * @param value The bytes for password to set.
        * @return This builder for chaining.
@@ -1015,11 +1167,19 @@ public final class WalletOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Name of the created wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
     java.lang.String getWalletName();
     /**
+     * <pre>
+     * Name of the created wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -1027,6 +1187,10 @@ public final class WalletOuterClass {
         getWalletNameBytes();
   }
   /**
+   * <pre>
+   * Response message containing the name of the created wallet.
+   * </pre>
+   *
    * Protobuf type {@code pactus.CreateWalletResponse}
    */
   public static final class CreateWalletResponse extends
@@ -1070,6 +1234,10 @@ public final class WalletOuterClass {
     public static final int WALLET_NAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object walletName_;
     /**
+     * <pre>
+     * Name of the created wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
@@ -1087,6 +1255,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Name of the created wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -1260,6 +1432,10 @@ public final class WalletOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Response message containing the name of the created wallet.
+     * </pre>
+     *
      * Protobuf type {@code pactus.CreateWalletResponse}
      */
     public static final class Builder extends
@@ -1422,6 +1598,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object walletName_ = "";
       /**
+       * <pre>
+       * Name of the created wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The walletName.
        */
@@ -1438,6 +1618,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the created wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The bytes for walletName.
        */
@@ -1455,6 +1639,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the created wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The walletName to set.
        * @return This builder for chaining.
@@ -1470,6 +1658,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the created wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return This builder for chaining.
        */
@@ -1480,6 +1672,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the created wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The bytes for walletName to set.
        * @return This builder for chaining.
@@ -1564,11 +1760,19 @@ public final class WalletOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Name of the wallet to load.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
     java.lang.String getWalletName();
     /**
+     * <pre>
+     * Name of the wallet to load.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -1576,6 +1780,10 @@ public final class WalletOuterClass {
         getWalletNameBytes();
   }
   /**
+   * <pre>
+   * Request message for loading an existing wallet.
+   * </pre>
+   *
    * Protobuf type {@code pactus.LoadWalletRequest}
    */
   public static final class LoadWalletRequest extends
@@ -1619,6 +1827,10 @@ public final class WalletOuterClass {
     public static final int WALLET_NAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object walletName_;
     /**
+     * <pre>
+     * Name of the wallet to load.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
@@ -1636,6 +1848,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Name of the wallet to load.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -1809,6 +2025,10 @@ public final class WalletOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Request message for loading an existing wallet.
+     * </pre>
+     *
      * Protobuf type {@code pactus.LoadWalletRequest}
      */
     public static final class Builder extends
@@ -1971,6 +2191,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object walletName_ = "";
       /**
+       * <pre>
+       * Name of the wallet to load.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The walletName.
        */
@@ -1987,6 +2211,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the wallet to load.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The bytes for walletName.
        */
@@ -2004,6 +2232,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the wallet to load.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The walletName to set.
        * @return This builder for chaining.
@@ -2019,6 +2251,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the wallet to load.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return This builder for chaining.
        */
@@ -2029,6 +2265,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the wallet to load.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The bytes for walletName to set.
        * @return This builder for chaining.
@@ -2113,11 +2353,19 @@ public final class WalletOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Name of the loaded wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
     java.lang.String getWalletName();
     /**
+     * <pre>
+     * Name of the loaded wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -2125,6 +2373,10 @@ public final class WalletOuterClass {
         getWalletNameBytes();
   }
   /**
+   * <pre>
+   * Response message containing the name of the loaded wallet.
+   * </pre>
+   *
    * Protobuf type {@code pactus.LoadWalletResponse}
    */
   public static final class LoadWalletResponse extends
@@ -2168,6 +2420,10 @@ public final class WalletOuterClass {
     public static final int WALLET_NAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object walletName_;
     /**
+     * <pre>
+     * Name of the loaded wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
@@ -2185,6 +2441,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Name of the loaded wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -2358,6 +2618,10 @@ public final class WalletOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Response message containing the name of the loaded wallet.
+     * </pre>
+     *
      * Protobuf type {@code pactus.LoadWalletResponse}
      */
     public static final class Builder extends
@@ -2520,6 +2784,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object walletName_ = "";
       /**
+       * <pre>
+       * Name of the loaded wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The walletName.
        */
@@ -2536,6 +2804,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the loaded wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The bytes for walletName.
        */
@@ -2553,6 +2825,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the loaded wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The walletName to set.
        * @return This builder for chaining.
@@ -2568,6 +2844,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the loaded wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return This builder for chaining.
        */
@@ -2578,6 +2858,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the loaded wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The bytes for walletName to set.
        * @return This builder for chaining.
@@ -2662,11 +2946,19 @@ public final class WalletOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Name of the wallet to unload.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
     java.lang.String getWalletName();
     /**
+     * <pre>
+     * Name of the wallet to unload.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -2674,6 +2966,10 @@ public final class WalletOuterClass {
         getWalletNameBytes();
   }
   /**
+   * <pre>
+   * Request message for unloading a currently loaded wallet.
+   * </pre>
+   *
    * Protobuf type {@code pactus.UnloadWalletRequest}
    */
   public static final class UnloadWalletRequest extends
@@ -2717,6 +3013,10 @@ public final class WalletOuterClass {
     public static final int WALLET_NAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object walletName_;
     /**
+     * <pre>
+     * Name of the wallet to unload.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
@@ -2734,6 +3034,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Name of the wallet to unload.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -2907,6 +3211,10 @@ public final class WalletOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Request message for unloading a currently loaded wallet.
+     * </pre>
+     *
      * Protobuf type {@code pactus.UnloadWalletRequest}
      */
     public static final class Builder extends
@@ -3069,6 +3377,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object walletName_ = "";
       /**
+       * <pre>
+       * Name of the wallet to unload.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The walletName.
        */
@@ -3085,6 +3397,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the wallet to unload.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The bytes for walletName.
        */
@@ -3102,6 +3418,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the wallet to unload.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The walletName to set.
        * @return This builder for chaining.
@@ -3117,6 +3437,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the wallet to unload.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return This builder for chaining.
        */
@@ -3127,6 +3451,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the wallet to unload.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The bytes for walletName to set.
        * @return This builder for chaining.
@@ -3211,11 +3539,19 @@ public final class WalletOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Name of the unloaded wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
     java.lang.String getWalletName();
     /**
+     * <pre>
+     * Name of the unloaded wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -3223,6 +3559,10 @@ public final class WalletOuterClass {
         getWalletNameBytes();
   }
   /**
+   * <pre>
+   * Response message containing the name of the unloaded wallet.
+   * </pre>
+   *
    * Protobuf type {@code pactus.UnloadWalletResponse}
    */
   public static final class UnloadWalletResponse extends
@@ -3266,6 +3606,10 @@ public final class WalletOuterClass {
     public static final int WALLET_NAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object walletName_;
     /**
+     * <pre>
+     * Name of the unloaded wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
@@ -3283,6 +3627,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Name of the unloaded wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -3456,6 +3804,10 @@ public final class WalletOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Response message containing the name of the unloaded wallet.
+     * </pre>
+     *
      * Protobuf type {@code pactus.UnloadWalletResponse}
      */
     public static final class Builder extends
@@ -3618,6 +3970,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object walletName_ = "";
       /**
+       * <pre>
+       * Name of the unloaded wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The walletName.
        */
@@ -3634,6 +3990,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the unloaded wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The bytes for walletName.
        */
@@ -3651,6 +4011,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the unloaded wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The walletName to set.
        * @return This builder for chaining.
@@ -3666,6 +4030,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the unloaded wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return This builder for chaining.
        */
@@ -3676,6 +4044,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the unloaded wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The bytes for walletName to set.
        * @return This builder for chaining.
@@ -3760,11 +4132,19 @@ public final class WalletOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Name of the wallet to lock.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
     java.lang.String getWalletName();
     /**
+     * <pre>
+     * Name of the wallet to lock.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -3772,6 +4152,10 @@ public final class WalletOuterClass {
         getWalletNameBytes();
   }
   /**
+   * <pre>
+   * Request message for locking a currently loaded wallet.
+   * </pre>
+   *
    * Protobuf type {@code pactus.LockWalletRequest}
    */
   public static final class LockWalletRequest extends
@@ -3815,6 +4199,10 @@ public final class WalletOuterClass {
     public static final int WALLET_NAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object walletName_;
     /**
+     * <pre>
+     * Name of the wallet to lock.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
@@ -3832,6 +4220,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Name of the wallet to lock.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -4005,6 +4397,10 @@ public final class WalletOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Request message for locking a currently loaded wallet.
+     * </pre>
+     *
      * Protobuf type {@code pactus.LockWalletRequest}
      */
     public static final class Builder extends
@@ -4167,6 +4563,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object walletName_ = "";
       /**
+       * <pre>
+       * Name of the wallet to lock.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The walletName.
        */
@@ -4183,6 +4583,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the wallet to lock.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The bytes for walletName.
        */
@@ -4200,6 +4604,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the wallet to lock.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The walletName to set.
        * @return This builder for chaining.
@@ -4215,6 +4623,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the wallet to lock.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return This builder for chaining.
        */
@@ -4225,6 +4637,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the wallet to lock.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The bytes for walletName to set.
        * @return This builder for chaining.
@@ -4309,11 +4725,19 @@ public final class WalletOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Name of the locked wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
     java.lang.String getWalletName();
     /**
+     * <pre>
+     * Name of the locked wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -4321,6 +4745,10 @@ public final class WalletOuterClass {
         getWalletNameBytes();
   }
   /**
+   * <pre>
+   * Response message containing the name of the locked wallet.
+   * </pre>
+   *
    * Protobuf type {@code pactus.LockWalletResponse}
    */
   public static final class LockWalletResponse extends
@@ -4364,6 +4792,10 @@ public final class WalletOuterClass {
     public static final int WALLET_NAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object walletName_;
     /**
+     * <pre>
+     * Name of the locked wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
@@ -4381,6 +4813,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Name of the locked wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -4554,6 +4990,10 @@ public final class WalletOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Response message containing the name of the locked wallet.
+     * </pre>
+     *
      * Protobuf type {@code pactus.LockWalletResponse}
      */
     public static final class Builder extends
@@ -4716,6 +5156,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object walletName_ = "";
       /**
+       * <pre>
+       * Name of the locked wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The walletName.
        */
@@ -4732,6 +5176,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the locked wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The bytes for walletName.
        */
@@ -4749,6 +5197,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the locked wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The walletName to set.
        * @return This builder for chaining.
@@ -4764,6 +5216,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the locked wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return This builder for chaining.
        */
@@ -4774,6 +5230,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the locked wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The bytes for walletName to set.
        * @return This builder for chaining.
@@ -4858,11 +5318,19 @@ public final class WalletOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Name of the wallet to unlock.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
     java.lang.String getWalletName();
     /**
+     * <pre>
+     * Name of the wallet to unlock.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -4870,11 +5338,19 @@ public final class WalletOuterClass {
         getWalletNameBytes();
 
     /**
+     * <pre>
+     * Password for unlocking the wallet.
+     * </pre>
+     *
      * <code>string password = 2 [json_name = "password"];</code>
      * @return The password.
      */
     java.lang.String getPassword();
     /**
+     * <pre>
+     * Password for unlocking the wallet.
+     * </pre>
+     *
      * <code>string password = 2 [json_name = "password"];</code>
      * @return The bytes for password.
      */
@@ -4882,12 +5358,20 @@ public final class WalletOuterClass {
         getPasswordBytes();
 
     /**
+     * <pre>
+     * Timeout duration for the unlocked state.
+     * </pre>
+     *
      * <code>int32 timeout = 3 [json_name = "timeout"];</code>
      * @return The timeout.
      */
     int getTimeout();
   }
   /**
+   * <pre>
+   * Request message for unlocking a locked wallet.
+   * </pre>
+   *
    * Protobuf type {@code pactus.UnlockWalletRequest}
    */
   public static final class UnlockWalletRequest extends
@@ -4932,6 +5416,10 @@ public final class WalletOuterClass {
     public static final int WALLET_NAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object walletName_;
     /**
+     * <pre>
+     * Name of the wallet to unlock.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
@@ -4949,6 +5437,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Name of the wallet to unlock.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -4970,6 +5462,10 @@ public final class WalletOuterClass {
     public static final int PASSWORD_FIELD_NUMBER = 2;
     private volatile java.lang.Object password_;
     /**
+     * <pre>
+     * Password for unlocking the wallet.
+     * </pre>
+     *
      * <code>string password = 2 [json_name = "password"];</code>
      * @return The password.
      */
@@ -4987,6 +5483,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Password for unlocking the wallet.
+     * </pre>
+     *
      * <code>string password = 2 [json_name = "password"];</code>
      * @return The bytes for password.
      */
@@ -5008,6 +5508,10 @@ public final class WalletOuterClass {
     public static final int TIMEOUT_FIELD_NUMBER = 3;
     private int timeout_;
     /**
+     * <pre>
+     * Timeout duration for the unlocked state.
+     * </pre>
+     *
      * <code>int32 timeout = 3 [json_name = "timeout"];</code>
      * @return The timeout.
      */
@@ -5192,6 +5696,10 @@ public final class WalletOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Request message for unlocking a locked wallet.
+     * </pre>
+     *
      * Protobuf type {@code pactus.UnlockWalletRequest}
      */
     public static final class Builder extends
@@ -5377,6 +5885,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object walletName_ = "";
       /**
+       * <pre>
+       * Name of the wallet to unlock.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The walletName.
        */
@@ -5393,6 +5905,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the wallet to unlock.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The bytes for walletName.
        */
@@ -5410,6 +5926,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the wallet to unlock.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The walletName to set.
        * @return This builder for chaining.
@@ -5425,6 +5945,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the wallet to unlock.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return This builder for chaining.
        */
@@ -5435,6 +5959,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the wallet to unlock.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The bytes for walletName to set.
        * @return This builder for chaining.
@@ -5453,6 +5981,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object password_ = "";
       /**
+       * <pre>
+       * Password for unlocking the wallet.
+       * </pre>
+       *
        * <code>string password = 2 [json_name = "password"];</code>
        * @return The password.
        */
@@ -5469,6 +6001,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Password for unlocking the wallet.
+       * </pre>
+       *
        * <code>string password = 2 [json_name = "password"];</code>
        * @return The bytes for password.
        */
@@ -5486,6 +6022,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Password for unlocking the wallet.
+       * </pre>
+       *
        * <code>string password = 2 [json_name = "password"];</code>
        * @param value The password to set.
        * @return This builder for chaining.
@@ -5501,6 +6041,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Password for unlocking the wallet.
+       * </pre>
+       *
        * <code>string password = 2 [json_name = "password"];</code>
        * @return This builder for chaining.
        */
@@ -5511,6 +6055,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Password for unlocking the wallet.
+       * </pre>
+       *
        * <code>string password = 2 [json_name = "password"];</code>
        * @param value The bytes for password to set.
        * @return This builder for chaining.
@@ -5529,6 +6077,10 @@ public final class WalletOuterClass {
 
       private int timeout_ ;
       /**
+       * <pre>
+       * Timeout duration for the unlocked state.
+       * </pre>
+       *
        * <code>int32 timeout = 3 [json_name = "timeout"];</code>
        * @return The timeout.
        */
@@ -5537,6 +6089,10 @@ public final class WalletOuterClass {
         return timeout_;
       }
       /**
+       * <pre>
+       * Timeout duration for the unlocked state.
+       * </pre>
+       *
        * <code>int32 timeout = 3 [json_name = "timeout"];</code>
        * @param value The timeout to set.
        * @return This builder for chaining.
@@ -5548,6 +6104,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Timeout duration for the unlocked state.
+       * </pre>
+       *
        * <code>int32 timeout = 3 [json_name = "timeout"];</code>
        * @return This builder for chaining.
        */
@@ -5626,11 +6186,19 @@ public final class WalletOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Name of the unlocked wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
     java.lang.String getWalletName();
     /**
+     * <pre>
+     * Name of the unlocked wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -5638,6 +6206,10 @@ public final class WalletOuterClass {
         getWalletNameBytes();
   }
   /**
+   * <pre>
+   * Response message containing the name of the unlocked wallet.
+   * </pre>
+   *
    * Protobuf type {@code pactus.UnlockWalletResponse}
    */
   public static final class UnlockWalletResponse extends
@@ -5681,6 +6253,10 @@ public final class WalletOuterClass {
     public static final int WALLET_NAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object walletName_;
     /**
+     * <pre>
+     * Name of the unlocked wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
@@ -5698,6 +6274,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Name of the unlocked wallet.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -5871,6 +6451,10 @@ public final class WalletOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Response message containing the name of the unlocked wallet.
+     * </pre>
+     *
      * Protobuf type {@code pactus.UnlockWalletResponse}
      */
     public static final class Builder extends
@@ -6033,6 +6617,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object walletName_ = "";
       /**
+       * <pre>
+       * Name of the unlocked wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The walletName.
        */
@@ -6049,6 +6637,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the unlocked wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The bytes for walletName.
        */
@@ -6066,6 +6658,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the unlocked wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The walletName to set.
        * @return This builder for chaining.
@@ -6081,6 +6677,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the unlocked wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return This builder for chaining.
        */
@@ -6091,6 +6691,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the unlocked wallet.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The bytes for walletName to set.
        * @return This builder for chaining.
@@ -6175,11 +6779,19 @@ public final class WalletOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Name of the wallet used for signing.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
     java.lang.String getWalletName();
     /**
+     * <pre>
+     * Name of the wallet used for signing.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -6187,17 +6799,29 @@ public final class WalletOuterClass {
         getWalletNameBytes();
 
     /**
+     * <pre>
+     * Raw transaction data to be signed.
+     * </pre>
+     *
      * <code>bytes raw_transaction = 2 [json_name = "rawTransaction"];</code>
      * @return The rawTransaction.
      */
     com.google.protobuf.ByteString getRawTransaction();
 
     /**
+     * <pre>
+     * Password for unlocking the wallet for signing.
+     * </pre>
+     *
      * <code>string password = 3 [json_name = "password"];</code>
      * @return The password.
      */
     java.lang.String getPassword();
     /**
+     * <pre>
+     * Password for unlocking the wallet for signing.
+     * </pre>
+     *
      * <code>string password = 3 [json_name = "password"];</code>
      * @return The bytes for password.
      */
@@ -6205,6 +6829,10 @@ public final class WalletOuterClass {
         getPasswordBytes();
   }
   /**
+   * <pre>
+   * Request message for signing a raw transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.SignRawTransactionRequest}
    */
   public static final class SignRawTransactionRequest extends
@@ -6250,6 +6878,10 @@ public final class WalletOuterClass {
     public static final int WALLET_NAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object walletName_;
     /**
+     * <pre>
+     * Name of the wallet used for signing.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The walletName.
      */
@@ -6267,6 +6899,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Name of the wallet used for signing.
+     * </pre>
+     *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
      * @return The bytes for walletName.
      */
@@ -6288,6 +6924,10 @@ public final class WalletOuterClass {
     public static final int RAW_TRANSACTION_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString rawTransaction_;
     /**
+     * <pre>
+     * Raw transaction data to be signed.
+     * </pre>
+     *
      * <code>bytes raw_transaction = 2 [json_name = "rawTransaction"];</code>
      * @return The rawTransaction.
      */
@@ -6299,6 +6939,10 @@ public final class WalletOuterClass {
     public static final int PASSWORD_FIELD_NUMBER = 3;
     private volatile java.lang.Object password_;
     /**
+     * <pre>
+     * Password for unlocking the wallet for signing.
+     * </pre>
+     *
      * <code>string password = 3 [json_name = "password"];</code>
      * @return The password.
      */
@@ -6316,6 +6960,10 @@ public final class WalletOuterClass {
       }
     }
     /**
+     * <pre>
+     * Password for unlocking the wallet for signing.
+     * </pre>
+     *
      * <code>string password = 3 [json_name = "password"];</code>
      * @return The bytes for password.
      */
@@ -6510,6 +7158,10 @@ public final class WalletOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Request message for signing a raw transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.SignRawTransactionRequest}
      */
     public static final class Builder extends
@@ -6695,6 +7347,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object walletName_ = "";
       /**
+       * <pre>
+       * Name of the wallet used for signing.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The walletName.
        */
@@ -6711,6 +7367,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the wallet used for signing.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return The bytes for walletName.
        */
@@ -6728,6 +7388,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Name of the wallet used for signing.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The walletName to set.
        * @return This builder for chaining.
@@ -6743,6 +7407,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the wallet used for signing.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @return This builder for chaining.
        */
@@ -6753,6 +7421,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Name of the wallet used for signing.
+       * </pre>
+       *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
        * @param value The bytes for walletName to set.
        * @return This builder for chaining.
@@ -6771,6 +7443,10 @@ public final class WalletOuterClass {
 
       private com.google.protobuf.ByteString rawTransaction_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Raw transaction data to be signed.
+       * </pre>
+       *
        * <code>bytes raw_transaction = 2 [json_name = "rawTransaction"];</code>
        * @return The rawTransaction.
        */
@@ -6779,6 +7455,10 @@ public final class WalletOuterClass {
         return rawTransaction_;
       }
       /**
+       * <pre>
+       * Raw transaction data to be signed.
+       * </pre>
+       *
        * <code>bytes raw_transaction = 2 [json_name = "rawTransaction"];</code>
        * @param value The rawTransaction to set.
        * @return This builder for chaining.
@@ -6793,6 +7473,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Raw transaction data to be signed.
+       * </pre>
+       *
        * <code>bytes raw_transaction = 2 [json_name = "rawTransaction"];</code>
        * @return This builder for chaining.
        */
@@ -6805,6 +7489,10 @@ public final class WalletOuterClass {
 
       private java.lang.Object password_ = "";
       /**
+       * <pre>
+       * Password for unlocking the wallet for signing.
+       * </pre>
+       *
        * <code>string password = 3 [json_name = "password"];</code>
        * @return The password.
        */
@@ -6821,6 +7509,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Password for unlocking the wallet for signing.
+       * </pre>
+       *
        * <code>string password = 3 [json_name = "password"];</code>
        * @return The bytes for password.
        */
@@ -6838,6 +7530,10 @@ public final class WalletOuterClass {
         }
       }
       /**
+       * <pre>
+       * Password for unlocking the wallet for signing.
+       * </pre>
+       *
        * <code>string password = 3 [json_name = "password"];</code>
        * @param value The password to set.
        * @return This builder for chaining.
@@ -6853,6 +7549,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Password for unlocking the wallet for signing.
+       * </pre>
+       *
        * <code>string password = 3 [json_name = "password"];</code>
        * @return This builder for chaining.
        */
@@ -6863,6 +7563,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Password for unlocking the wallet for signing.
+       * </pre>
+       *
        * <code>string password = 3 [json_name = "password"];</code>
        * @param value The bytes for password to set.
        * @return This builder for chaining.
@@ -6947,18 +7651,30 @@ public final class WalletOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * ID of the signed transaction.
+     * </pre>
+     *
      * <code>bytes transaction_id = 1 [json_name = "transactionId"];</code>
      * @return The transactionId.
      */
     com.google.protobuf.ByteString getTransactionId();
 
     /**
+     * <pre>
+     * Signed raw transaction data.
+     * </pre>
+     *
      * <code>bytes signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
      * @return The signedRawTransaction.
      */
     com.google.protobuf.ByteString getSignedRawTransaction();
   }
   /**
+   * <pre>
+   * Response message containing the transaction ID and signed raw transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.SignRawTransactionResponse}
    */
   public static final class SignRawTransactionResponse extends
@@ -7003,6 +7719,10 @@ public final class WalletOuterClass {
     public static final int TRANSACTION_ID_FIELD_NUMBER = 1;
     private com.google.protobuf.ByteString transactionId_;
     /**
+     * <pre>
+     * ID of the signed transaction.
+     * </pre>
+     *
      * <code>bytes transaction_id = 1 [json_name = "transactionId"];</code>
      * @return The transactionId.
      */
@@ -7014,6 +7734,10 @@ public final class WalletOuterClass {
     public static final int SIGNED_RAW_TRANSACTION_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString signedRawTransaction_;
     /**
+     * <pre>
+     * Signed raw transaction data.
+     * </pre>
+     *
      * <code>bytes signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
      * @return The signedRawTransaction.
      */
@@ -7189,6 +7913,10 @@ public final class WalletOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Response message containing the transaction ID and signed raw transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.SignRawTransactionResponse}
      */
     public static final class Builder extends
@@ -7361,6 +8089,10 @@ public final class WalletOuterClass {
 
       private com.google.protobuf.ByteString transactionId_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * ID of the signed transaction.
+       * </pre>
+       *
        * <code>bytes transaction_id = 1 [json_name = "transactionId"];</code>
        * @return The transactionId.
        */
@@ -7369,6 +8101,10 @@ public final class WalletOuterClass {
         return transactionId_;
       }
       /**
+       * <pre>
+       * ID of the signed transaction.
+       * </pre>
+       *
        * <code>bytes transaction_id = 1 [json_name = "transactionId"];</code>
        * @param value The transactionId to set.
        * @return This builder for chaining.
@@ -7383,6 +8119,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * ID of the signed transaction.
+       * </pre>
+       *
        * <code>bytes transaction_id = 1 [json_name = "transactionId"];</code>
        * @return This builder for chaining.
        */
@@ -7395,6 +8135,10 @@ public final class WalletOuterClass {
 
       private com.google.protobuf.ByteString signedRawTransaction_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Signed raw transaction data.
+       * </pre>
+       *
        * <code>bytes signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
        * @return The signedRawTransaction.
        */
@@ -7403,6 +8147,10 @@ public final class WalletOuterClass {
         return signedRawTransaction_;
       }
       /**
+       * <pre>
+       * Signed raw transaction data.
+       * </pre>
+       *
        * <code>bytes signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
        * @param value The signedRawTransaction to set.
        * @return This builder for chaining.
@@ -7417,6 +8165,10 @@ public final class WalletOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Signed raw transaction data.
+       * </pre>
+       *
        * <code>bytes signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
        * @return This builder for chaining.
        */
