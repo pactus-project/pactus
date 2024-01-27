@@ -60,8 +60,6 @@ An example of this pull request can be found [here](https://github.com/pactus-pr
 
 ## Bootstrap Node Configuration
 
-## Bootstrap Node Configuration
-
 It is recommended to adjust the Bootstrap node configuration as follows:
 
 ### Add Moniker
