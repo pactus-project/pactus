@@ -54,5 +54,36 @@ track the performance and health of their nodes.
 
 Upon meeting the expectations outlined above, Bootstrap node operators can add their node as a Bootstrap node to the list of bootstrap addresses.
 Each Bootstrap address includes the IP or DNS address and the network ID.
+The network ID can be obtained from the network log.
 Once you have provided this information, you can open a pull request to add your node as a bootstrap node in the Pactus blockchain.
-An example of this pull request can be found [here](link).
+An example of this pull request can be found [here](https://github.com/pactus-project/pactus/pull/965/files).
+
+## Bootstrap Node Configuration
+
+## Bootstrap Node Configuration
+
+It is recommended to adjust the Bootstrap node configuration as follows:
+
+### Add Moniker
+
+A Moniker is a name by which a node can be recognized on the network.
+
+### Increase the Maximum Number of Connections
+
+Depending on the server bandwidth, it is recommended to increase the maximum number of connections for the node.
+
+### Enable NAT Service
+
+By enabling NAT service, you allow other nodes to examine their connection and determine whether they are behind NAT.
+
+### Enable Relay Service
+
+Enabling relay service allows nodes behind NAT to establish connections with each other.
+
+### Disable Relay
+
+Since a Bootstrap node has a public IP, it is important to disable the relay on the Bootstrap Node.
+
+### Enable UDP
+
+If the Bootstrap node has a reliable UDP connection, you can enable UDP for communication.
