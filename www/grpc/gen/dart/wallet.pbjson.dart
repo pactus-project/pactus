@@ -91,6 +91,26 @@ const LockWalletResponse$json = const {
 
 /// Descriptor for `LockWalletResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List lockWalletResponseDescriptor = $convert.base64Decode('ChJMb2NrV2FsbGV0UmVzcG9uc2USHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbWU=');
+@$core.Deprecated('Use getValidatorAddressRequestDescriptor instead')
+const GetValidatorAddressRequest$json = const {
+  '1': 'GetValidatorAddressRequest',
+  '2': const [
+    const {'1': 'public_key', '3': 1, '4': 1, '5': 9, '10': 'publicKey'},
+  ],
+};
+
+/// Descriptor for `GetValidatorAddressRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getValidatorAddressRequestDescriptor = $convert.base64Decode('ChpHZXRWYWxpZGF0b3JBZGRyZXNzUmVxdWVzdBIdCgpwdWJsaWNfa2V5GAEgASgJUglwdWJsaWNLZXk=');
+@$core.Deprecated('Use getValidatorAddressResponseDescriptor instead')
+const GetValidatorAddressResponse$json = const {
+  '1': 'GetValidatorAddressResponse',
+  '2': const [
+    const {'1': 'address', '3': 1, '4': 1, '5': 9, '10': 'address'},
+  ],
+};
+
+/// Descriptor for `GetValidatorAddressResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getValidatorAddressResponseDescriptor = $convert.base64Decode('ChtHZXRWYWxpZGF0b3JBZGRyZXNzUmVzcG9uc2USGAoHYWRkcmVzcxgBIAEoCVIHYWRkcmVzcw==');
 @$core.Deprecated('Use unlockWalletRequestDescriptor instead')
 const UnlockWalletRequest$json = const {
   '1': 'UnlockWalletRequest',
@@ -145,6 +165,7 @@ const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = const {
     const {'1': 'LockWallet', '2': '.pactus.LockWalletRequest', '3': '.pactus.LockWalletResponse'},
     const {'1': 'UnlockWallet', '2': '.pactus.UnlockWalletRequest', '3': '.pactus.UnlockWalletResponse'},
     const {'1': 'SignRawTransaction', '2': '.pactus.SignRawTransactionRequest', '3': '.pactus.SignRawTransactionResponse'},
+    const {'1': 'GetValidatorAddress', '2': '.pactus.GetValidatorAddressRequest', '3': '.pactus.GetValidatorAddressResponse'},
   ],
 };
 
@@ -162,7 +183,9 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> WalletServ
   '.pactus.UnlockWalletResponse': UnlockWalletResponse$json,
   '.pactus.SignRawTransactionRequest': SignRawTransactionRequest$json,
   '.pactus.SignRawTransactionResponse': SignRawTransactionResponse$json,
+  '.pactus.GetValidatorAddressRequest': GetValidatorAddressRequest$json,
+  '.pactus.GetValidatorAddressResponse': GetValidatorAddressResponse$json,
 };
 
 /// Descriptor for `Wallet`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode('CgZXYWxsZXQSSQoMQ3JlYXRlV2FsbGV0EhsucGFjdHVzLkNyZWF0ZVdhbGxldFJlcXVlc3QaHC5wYWN0dXMuQ3JlYXRlV2FsbGV0UmVzcG9uc2USQwoKTG9hZFdhbGxldBIZLnBhY3R1cy5Mb2FkV2FsbGV0UmVxdWVzdBoaLnBhY3R1cy5Mb2FkV2FsbGV0UmVzcG9uc2USSQoMVW5sb2FkV2FsbGV0EhsucGFjdHVzLlVubG9hZFdhbGxldFJlcXVlc3QaHC5wYWN0dXMuVW5sb2FkV2FsbGV0UmVzcG9uc2USQwoKTG9ja1dhbGxldBIZLnBhY3R1cy5Mb2NrV2FsbGV0UmVxdWVzdBoaLnBhY3R1cy5Mb2NrV2FsbGV0UmVzcG9uc2USSQoMVW5sb2NrV2FsbGV0EhsucGFjdHVzLlVubG9ja1dhbGxldFJlcXVlc3QaHC5wYWN0dXMuVW5sb2NrV2FsbGV0UmVzcG9uc2USWwoSU2lnblJhd1RyYW5zYWN0aW9uEiEucGFjdHVzLlNpZ25SYXdUcmFuc2FjdGlvblJlcXVlc3QaIi5wYWN0dXMuU2lnblJhd1RyYW5zYWN0aW9uUmVzcG9uc2U=');
+final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode('CgZXYWxsZXQSSQoMQ3JlYXRlV2FsbGV0EhsucGFjdHVzLkNyZWF0ZVdhbGxldFJlcXVlc3QaHC5wYWN0dXMuQ3JlYXRlV2FsbGV0UmVzcG9uc2USQwoKTG9hZFdhbGxldBIZLnBhY3R1cy5Mb2FkV2FsbGV0UmVxdWVzdBoaLnBhY3R1cy5Mb2FkV2FsbGV0UmVzcG9uc2USSQoMVW5sb2FkV2FsbGV0EhsucGFjdHVzLlVubG9hZFdhbGxldFJlcXVlc3QaHC5wYWN0dXMuVW5sb2FkV2FsbGV0UmVzcG9uc2USQwoKTG9ja1dhbGxldBIZLnBhY3R1cy5Mb2NrV2FsbGV0UmVxdWVzdBoaLnBhY3R1cy5Mb2NrV2FsbGV0UmVzcG9uc2USSQoMVW5sb2NrV2FsbGV0EhsucGFjdHVzLlVubG9ja1dhbGxldFJlcXVlc3QaHC5wYWN0dXMuVW5sb2NrV2FsbGV0UmVzcG9uc2USWwoSU2lnblJhd1RyYW5zYWN0aW9uEiEucGFjdHVzLlNpZ25SYXdUcmFuc2FjdGlvblJlcXVlc3QaIi5wYWN0dXMuU2lnblJhd1RyYW5zYWN0aW9uUmVzcG9uc2USXgoTR2V0VmFsaWRhdG9yQWRkcmVzcxIiLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzUmVxdWVzdBojLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzUmVzcG9uc2U=');
