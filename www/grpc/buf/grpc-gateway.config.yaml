@@ -62,7 +62,7 @@ http:
 
     # Wallet APIs
     - selector: pactus.Wallet.GetValidatorAddress
-      get: "/v1/wallets/validator/address/public_key/{public_key}"
+      get: "/v1/wallets/validator_address/{public_key}"
 
     - selector: pactus.Wallet.CreateWallet
       get: "/v1/wallets/create/wallet_name/{wallet_name}/mnemonic/{mnemonic}/language/{language}"

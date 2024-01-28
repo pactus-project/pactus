@@ -874,7 +874,7 @@
         ]
       }
     },
-    "/v1/wallets/validator/address/public_key/{publicKey}": {
+    "/v1/wallets/validator_address/{publicKey}": {
       "get": {
         "operationId": "Wallet_GetValidatorAddress",
         "responses": {
