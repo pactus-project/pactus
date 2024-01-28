@@ -873,6 +873,36 @@
           "Wallet"
         ]
       }
+    },
+    "/v1/wallets/validator_address/{publicKey}": {
+      "get": {
+        "operationId": "Wallet_GetValidatorAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetValidatorAddressResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "publicKey",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
     }
   },
   "definitions": {
@@ -1237,6 +1267,14 @@
         },
         "transaction": {
           "$ref": "#/definitions/pactusTransactionInfo"
+        }
+      }
+    },
+    "pactusGetValidatorAddressResponse": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
         }
       }
     },
