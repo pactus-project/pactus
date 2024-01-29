@@ -52,5 +52,11 @@
         "email": "lthuan2011@gmail.com",
         "website": "https://nodesync.top/",
         "address": "/ip4/135.181.42.222/tcp/21888/p2p/12D3KooWN46UYQNoZvzd9GiJPQC7LByj6RAg8rRxdUTiQ24vHsN1"
+    },
+    {
+        "name": "Stakers",
+        "email": "danile_z@outlook.com",
+        "website": "",
+        "address": "/dns/pactus-bootstrap.stakers.world/tcp/21888/p2p/12D3KooWK1DAcxf8RJA2PVkwr9ehk1zgXcnjLyPCsYCpvw1NSfhc"
     }
 ]
