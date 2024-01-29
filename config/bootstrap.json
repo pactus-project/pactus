@@ -52,5 +52,12 @@
         "email": "lthuan2011@gmail.com",
         "website": "https://nodesync.top/",
         "address": "/ip4/135.181.42.222/tcp/21888/p2p/12D3KooWN46UYQNoZvzd9GiJPQC7LByj6RAg8rRxdUTiQ24vHsN1"
+    },
+    ,
+    {
+        "name": "CryptoLemonade",
+        "email": "cryptosnodes333@gmail.com",
+        "website": "pactus.cryptolemonade.top",
+        "address": "/ip4/157.254.221.111/tcp/21888/p2p/12D3KooWCLxmKphvxynvufaLzhf8Fjf552Xg3kBSJahiq7qztLN9"
     }
 ]
