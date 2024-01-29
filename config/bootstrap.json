@@ -65,4 +65,10 @@
         "website": "https://IONode.Online",
         "address": "/dns/pactus-bootstrap.ionode.online/tcp/21888/p2p/12D3KooWG5tvvfS8PRd2Bgyxxqrok7QfohkHSprFPxmT3HTh8dVD"
     }
+    {
+        "name": "SGTstake",
+        "email": "adorid@sgtstake.com",
+        "website": "https://sgtstake.com",
+        "address": "/dns/159.148.146.149/tcp/21888/p2p/12D3KooWKCokWtpdudxgsLRoFcnrW35vhn6w632iGWCga7E5e68Q"
+    }
 ]
