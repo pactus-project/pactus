@@ -60,6 +60,12 @@
         "address": "/dns/pactus-bootstrap.stakers.world/tcp/21888/p2p/12D3KooWK1DAcxf8RJA2PVkwr9ehk1zgXcnjLyPCsYCpvw1NSfhc"
     },
     {
+        "name": "Karma Nodes",
+        "email": "karma.nodes@proton.me",
+        "website": "http://karmanodes.xyz",
+        "address": "/ip4/158.220.91.129/tcp/21888/p2p/12D3KooWGfehwyZJBu6WUMLyzJ8sDJachvhxhqw5Wh4uU3H99GLq"
+    },
+    {
         "name": "IONode",
         "email": "orochi@ionode.online",
         "website": "https://IONode.Online",
