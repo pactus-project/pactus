@@ -151,13 +151,13 @@ func DefaultConfigLocalnet() *Config {
 	conf.Network.NetworkName = "pactus-localnet"
 	conf.Network.DefaultPort = 21666
 	conf.GRPC.Enable = true
-	conf.GRPC.Listen = "[::]:0"
+	conf.GRPC.Listen = "[::]:50052"
 	conf.GRPC.Gateway.Enable = true
 	conf.GRPC.Gateway.Listen = "[::]:0"
 	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "[::]:0"
 	conf.Nanomsg.Enable = true
-	conf.Nanomsg.Listen = "tcp://[::]:0"
+	conf.Nanomsg.Listen = "tcp://[::]:40799"
 
 	return conf
 }

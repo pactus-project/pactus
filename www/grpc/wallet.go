@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
@@ -38,6 +39,19 @@ func newWalletServer(server *Server, chainType genesis.ChainType) *walletServer 
 
 func (s *walletServer) walletPath(name string) string {
 	return util.MakeAbs(filepath.Join(s.config.WalletsDir, name))
+}
+
+func (s *walletServer) GetValidatorAddress(_ context.Context,
+	req *pactus.GetValidatorAddressRequest,
+) (*pactus.GetValidatorAddressResponse, error) {
+	pubKey, err := bls.PublicKeyFromString(req.PublicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.GetValidatorAddressResponse{
+		Address: pubKey.ValidatorAddress().String(),
+	}, nil
 }
 
 func (s *walletServer) CreateWallet(_ context.Context,
