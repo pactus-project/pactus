@@ -64,5 +64,11 @@
         "email": "orochi@ionode.online",
         "website": "https://IONode.Online",
         "address": "/dns/pactus-bootstrap.ionode.online/tcp/21888/p2p/12D3KooWG5tvvfS8PRd2Bgyxxqrok7QfohkHSprFPxmT3HTh8dVD"
+    },
+    {
+        "name": "MoneyLow-VNBnode",
+        "email": "phuc.scizor@gmail.com",
+        "website": "https://VNBnode.com",
+        "address": "/dns/pactus-bootstrap.mflow.tech/tcp/21888/p2p/12D3KooWJD2PBAur6kXjX31dyrPzjSV947ppZ885QDKCXEvLm9Vb"
     }
 ]
