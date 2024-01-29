@@ -58,5 +58,11 @@
         "email": "danile_z@outlook.com",
         "website": "",
         "address": "/dns/pactus-bootstrap.stakers.world/tcp/21888/p2p/12D3KooWK1DAcxf8RJA2PVkwr9ehk1zgXcnjLyPCsYCpvw1NSfhc"
+    },
+    {
+        "name": "IONode",
+        "email": "orochi@ionode.online",
+        "website": "https://IONode.Online",
+        "address": "/dns/pactus-bootstrap.ionode.online/tcp/21888/p2p/12D3KooWG5tvvfS8PRd2Bgyxxqrok7QfohkHSprFPxmT3HTh8dVD"
     }
 ]
