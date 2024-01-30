@@ -64,5 +64,11 @@
         "email": "orochi@ionode.online",
         "website": "https://IONode.Online",
         "address": "/dns/pactus-bootstrap.ionode.online/tcp/21888/p2p/12D3KooWG5tvvfS8PRd2Bgyxxqrok7QfohkHSprFPxmT3HTh8dVD"
+    },
+    {
+        "name": "vinhhathacha",
+        "email": "vinhhathacha@gmail.com",
+        "website": "https://github.com/vinhhathacha",
+        "address": "/ip4/your_ip/tcp/21888/p2p/12D3KooWDQGDBUtYF2fagCAGVphrQNB2fpg1LidaJ9GFXhoKcrGS"
     }
 ]
