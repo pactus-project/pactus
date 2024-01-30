@@ -24,6 +24,12 @@
         "address": "/dns/bootstrap4.pactus.org/tcp/21888/p2p/12D3KooWKg6aLa77yAaqMCb45aH5iQuTr5GzRUWUCJ1sZYB5vnoL"
     },
     {
+        "name": "Validatorvn",
+        "email": "validatorvn@gmail.com",
+        "website": "https://validatorvn.com",
+        "address": "/ip4/159.69.190.8/tcp/21888/p2p/12D3KooWHrkKctgsYsXS4fW5sWeDab3dT4k8cXHqfbWzcGiHg672"
+    },
+    {
         "name": "Sensifia",
         "email": "info@sensifia.com",
         "website": "https://sensifia.com",
