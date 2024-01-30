@@ -64,5 +64,11 @@
         "email": "orochi@ionode.online",
         "website": "https://IONode.Online",
         "address": "/dns/pactus-bootstrap.ionode.online/tcp/21888/p2p/12D3KooWG5tvvfS8PRd2Bgyxxqrok7QfohkHSprFPxmT3HTh8dVD"
+    },
+    {
+        "name": "DRAGON",
+        "email": "kiritovn14788@gmail.com",
+        "website": "",
+        "address": "/ip4/65.21.69.53/tcp/21888/p2p/12D3KooWQ1izUE5jcmMyjmxRdb2CmASe8Nfn81UL2G5rYjptC2RV"
     }
 ]
