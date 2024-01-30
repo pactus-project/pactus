@@ -64,5 +64,10 @@
         "email": "orochi@ionode.online",
         "website": "https://IONode.Online",
         "address": "/dns/pactus-bootstrap.ionode.online/tcp/21888/p2p/12D3KooWG5tvvfS8PRd2Bgyxxqrok7QfohkHSprFPxmT3HTh8dVD"
+    },
+    {
+        "name": “haloperidol”,
+        "email": "aygleltr@gmail.com”,
+        "website": "n/a",
+        "address": "/ip4/84.247.172.176/tcp/21888/p2p/84.247.172.176"
     }
-]
