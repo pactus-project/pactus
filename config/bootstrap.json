@@ -118,5 +118,11 @@
         "email": "mommeus@gmail.com",
         "website": "https://cherryvalidator.us",
         "address": "/ip4/65.21.155.128/tcp/21888/p2p/12D3KooWHrEWfv52wHhN9tK11RLGeMDyWCerw3Z7eMAr4KPXFAu5"
+    },
+    {
+        "name": "CryptoLemonade",
+        "email": "cryptosnodes333@gmail.com",
+        "website": "",
+        "address": "/dns/pactus.cryptolemonade.top/tcp/21888/p2p/12D3KooWCLxmKphvxynvufaLzhf8Fjf552Xg3kBSJahiq7qztLN9"
     }
 ]
