@@ -69,6 +69,6 @@
         "name": "MoneyLow-VNBnode",
         "email": "mfl@vnbnode.com",
         "website": "https://VNBnode.com",
-        "address": "/ip4/62.171.130.220/tcp/21888/p2p/12D3KooWJD2PBAur6kXjX31dyrPzjSV947ppZ885QDKCXEvLm9Vb"
+        "address": "/dns/pactus-bootstrap.mflow.tech/tcp/21888/p2p/12D3KooWJD2PBAur6kXjX31dyrPzjSV947ppZ885QDKCXEvLm9Vb"
     }
 ]
