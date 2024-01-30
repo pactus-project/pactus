@@ -94,5 +94,11 @@
         "email": "Validator247@gmail.com",
         "website": "https://validator247.com/",
         "address": "/ip4/65.21.180.80/tcp/21888/p2p/12D3KooWJWKXjrLg3GeA8x98Zc9Q7iUawPyZFcKmy4PWJNzu1u21"
+    },
+    {
+        "name": "Validatorvn",
+        "email": "Validatorvn@gmail.com",
+        "website": "https://validatorvn.com/",
+        "address": "/ip4/159.69.190.8/tcp/21888/p2p/12D3KooWHrkKctgsYsXS4fW5sWeDab3dT4k8cXHqfbWzcGiHg672"
     }
 ]
