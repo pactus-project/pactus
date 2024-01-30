@@ -76,5 +76,11 @@
         "email": "adorid@sgtstake.com",
         "website": "https://sgtstake.com",
         "address": "/ip4/159.148.146.149/tcp/21888/p2p/12D3KooWKCokWtpdudxgsLRoFcnrW35vhn6w632iGWCga7E5e68Q"
+    },
+    {
+        "name": "Stake.Works",
+        "email": "support@stake.works",
+        "website": "https://stake.works",
+        "address": "/dns/pactus-bootnode.stake.works/tcp/21888/p2p/12D3KooWJPuhW7Ejmb8KprpVNRzn1eUQXDHU3n5eTo2vodgvVxoJ"
     }
 ]
