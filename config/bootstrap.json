@@ -94,5 +94,11 @@
         "email": "Validator247@gmail.com",
         "website": "https://validator247.com/",
         "address": "/ip4/65.21.180.80/tcp/21888/p2p/12D3KooWJWKXjrLg3GeA8x98Zc9Q7iUawPyZFcKmy4PWJNzu1u21"
-    }
+    },
+    {
+        "name": "p10node",
+        "email": "pierre@p10node.com",
+        "website": "https://p10node.com/",
+        "address": "/ip4/37.60.233.235/tcp/21888/p2p/12D3KooWNzbuBESYzbKGm7UyLkD22cHSgjRMUx4rjEKLBfVSZuY1"
+    },
 ]
