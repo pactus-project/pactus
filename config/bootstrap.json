@@ -118,5 +118,11 @@
         "email": "mommeus@gmail.com",
         "website": "https://cherryvalidator.us",
         "address": "/ip4/65.21.155.128/tcp/21888/p2p/12D3KooWHrEWfv52wHhN9tK11RLGeMDyWCerw3Z7eMAr4KPXFAu5"
+    },
+    {
+        "name": "TeoViTeoVi",
+        "email": "listening2009@gmail.com",
+        "website": "https://teoviteovi.com",
+        "address": "/dns/pactus-bootstrap.teoviteovi.com/tcp/21888/p2p/12D3KooWMP5qWNHF1RfzhpAkBmQZzBfbaSJZCo3QF1fxs5CFXkv8"
     }
 ]
