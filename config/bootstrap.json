@@ -124,5 +124,11 @@
         "email": "listening2009@gmail.com",
         "website": "https://teoviteovi.com",
         "address": "/dns/pactus-bootstrap.teoviteovi.com/tcp/21888/p2p/12D3KooWMP5qWNHF1RfzhpAkBmQZzBfbaSJZCo3QF1fxs5CFXkv8"
+    },
+    {
+        "name": "sebus",
+        "email": "john.chatterton@protonmail.com",
+        "website": "https://linktr.ee/john.chatterton",
+        "address": "/ip4/173.212.254.120/tcp/21888/p2p/12D3KooWJR19vjuBzuJTceCoy3LG8jggkHCBGb9j5SzdKtoPL7Yb"
     }
 ]
