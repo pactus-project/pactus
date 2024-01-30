@@ -82,5 +82,11 @@
         "email": "support@stake.works",
         "website": "https://stake.works",
         "address": "/dns/pactus-bootnode.stake.works/tcp/21888/p2p/12D3KooWJPuhW7Ejmb8KprpVNRzn1eUQXDHU3n5eTo2vodgvVxoJ"
+    },
+    {
+        "name": "KenZ",
+        "email": "quangtuyen88@hotmail.com",
+        "website": "https://www.pr1sm.com/",
+        "address": "/ip4/65.108.68.214/tcp/21888/p2p/12D3KooWD7X8BDqV9r6zGmoo2dpMYo4Z6YoyDQp6j4UnB2Bj3Fq2"
     }
 ]
