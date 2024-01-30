@@ -64,5 +64,11 @@
         "email": "orochi@ionode.online",
         "website": "https://IONode.Online",
         "address": "/dns/pactus-bootstrap.ionode.online/tcp/21888/p2p/12D3KooWG5tvvfS8PRd2Bgyxxqrok7QfohkHSprFPxmT3HTh8dVD"
+    },
+    {
+        "name": "KenZ",
+        "email": "quangtuyen88@hotmail.com",
+        "website": "https://www.pr1sm.com/",
+        "address": "/ip4/65.108.68.214/tcp/21888/p2p/12D3KooWD7X8BDqV9r6zGmoo2dpMYo4Z6YoyDQp6j4UnB2Bj3Fq2"
     }
 ]
