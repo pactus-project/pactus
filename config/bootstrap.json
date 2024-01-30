@@ -60,10 +60,28 @@
         "address": "/dns/pactus-bootstrap.stakers.world/tcp/21888/p2p/12D3KooWK1DAcxf8RJA2PVkwr9ehk1zgXcnjLyPCsYCpvw1NSfhc"
     },
     {
+        "name": "Karma Nodes",
+        "email": "karma.nodes@proton.me",
+        "website": "http://karmanodes.xyz",
+        "address": "/ip4/158.220.91.129/tcp/21888/p2p/12D3KooWGfehwyZJBu6WUMLyzJ8sDJachvhxhqw5Wh4uU3H99GLq"
+    },
+    {
         "name": "IONode",
         "email": "orochi@ionode.online",
         "website": "https://IONode.Online",
         "address": "/dns/pactus-bootstrap.ionode.online/tcp/21888/p2p/12D3KooWG5tvvfS8PRd2Bgyxxqrok7QfohkHSprFPxmT3HTh8dVD"
+    },
+    {
+        "name": "SGTstake",
+        "email": "adorid@sgtstake.com",
+        "website": "https://sgtstake.com",
+        "address": "/ip4/159.148.146.149/tcp/21888/p2p/12D3KooWKCokWtpdudxgsLRoFcnrW35vhn6w632iGWCga7E5e68Q"
+    },
+    {
+        "name": "Stake.Works",
+        "email": "support@stake.works",
+        "website": "https://stake.works",
+        "address": "/dns/pactus-bootnode.stake.works/tcp/21888/p2p/12D3KooWJPuhW7Ejmb8KprpVNRzn1eUQXDHU3n5eTo2vodgvVxoJ"
     },
     {
         "name": "KenZ",
