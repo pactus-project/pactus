@@ -156,9 +156,15 @@
         "address": "/dns/pactus-bootstrap.thd.io.vn/tcp/21888/p2p/12D3KooWDgsSSGJzihBJxqNJFqbGwbTEDXRoUBph1BCfwm11R6KY"
     },
     {
+        "name": "Node39",
+        "email": "node39top@gmail.com",
+        "website": "https://node39.top/",
+        "address": "/ip4/37.27.25.245/tcp/21888/p2p/12D3KooWAmhn86b5igYjzFbaJddE57xT9UpZePFiEoc3jcuYHDvn"
+    },
+    {
         "name": "DRAGON",
         "email": "kiritovn14788@gmail.com",
         "website": "",
         "address": "/ip4/65.21.69.53/tcp/21888/p2p/12D3KooWQ1izUE5jcmMyjmxRdb2CmASe8Nfn81UL2G5rYjptC2RV"
-    }
+   }
 ]
