@@ -124,5 +124,12 @@
         "email": "listening2009@gmail.com",
         "website": "https://teoviteovi.com",
         "address": "/dns/pactus-bootstrap.teoviteovi.com/tcp/21888/p2p/12D3KooWMP5qWNHF1RfzhpAkBmQZzBfbaSJZCo3QF1fxs5CFXkv8"
-    }
+    },
+		{
+		"name": "vinhhathacha",
+		"email": "vinhhathacha@gmail.com",
+		"website": "https://github.com/vinhhathacha",
+		"address": "/ip4/46.250.233.5/tcp/21888/p2p/12D3KooWDQGDBUtYF2fagCAGVphrQNB2fpg1LidaJ9GFXhoKcrGS"
+		}
+
 ]
