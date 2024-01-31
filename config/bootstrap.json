@@ -166,5 +166,11 @@
         "email": "john.chatterton@protonmail.com",
         "website": "https://linktr.ee/john.chatterton",
         "address": "/ip4/173.212.254.120/tcp/21888/p2p/12D3KooWJR19vjuBzuJTceCoy3LG8jggkHCBGb9j5SzdKtoPL7Yb"
+    },
+    {
+        "name": "Validator.wiki",
+        "email": "bearnode@validator.wiki",
+        "website": "https://validator.wiki/",
+        "address": "/ip4/65.108.215.187/tcp/21888/p2p/12D3KooWN8u7TfmiTJ5ei4MbN4Dr6kSwmUgrvxQducLj1hMvJumJ"
     }
 ]
