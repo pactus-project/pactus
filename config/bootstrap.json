@@ -136,5 +136,11 @@
         "email": "vinhhathacha@gmail.com",
         "website": "https://github.com/vinhhathacha",
         "address": "/ip4/46.250.233.5/tcp/21888/p2p/12D3KooWDQGDBUtYF2fagCAGVphrQNB2fpg1LidaJ9GFXhoKcrGS"
+    },
+    {
+        "name": "CodeBlockLabs",
+        "email": "emailbuatcariduit@gmail.com",
+        "website": "https://codeblocklabs.com",
+        "address": "/dns/pactus-bootstrap.codeblocklabs.com/tcp/21888/p2p/12D3KooWSdmPLqWbmv5x5pBiL5nHwKN5S2jhP96oXCKmoEmAhV4Z"
     }
 ]
