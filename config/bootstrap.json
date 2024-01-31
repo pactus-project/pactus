@@ -174,9 +174,21 @@
         "address": "/ip4/5.180.151.35/tcp/21888/p2p/12D3KooWLCPgwGcEJemetBu7mCWyPaRMBKCaUu2iRdmw4ydT3ryo"
     },
     {
+        "name": "Toncatuyvu",
+        "email": "Toncatuyvu@gmail.com",
+        "website": "n/a",
+        "address": "/ip4/109.123.240.5/tcp/21888/p2p/12D3KooWJM6tRpWbVxuoDiLg1bDPoCZMX17gqRNDjPEEA7Vj2Ddz"
+    },
+    {
+        "name": "TPES",
+        "email": "duongbo8648@gmail.com",
+        "website": "https://tpes.com.vn",
+        "address": "/ip4/75.119.159.113/tcp/21888/p2p/12D3KooWL7nUsmd7JNrhrfbBjg6JxPFiZA5LXbdCDPnw5Xpdp4a9"
+    },
+    {
         "name": "DRAGON",
         "email": "kiritovn14788@gmail.com",
         "website": "",
         "address": "/ip4/65.21.69.53/tcp/21888/p2p/12D3KooWQ1izUE5jcmMyjmxRdb2CmASe8Nfn81UL2G5rYjptC2RV"
-   }
+    }
 ]
