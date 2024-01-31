@@ -214,5 +214,11 @@
         "email": "kiritovn14788@gmail.com",
         "website": "",
         "address": "/ip4/65.21.69.53/tcp/21888/p2p/12D3KooWQ1izUE5jcmMyjmxRdb2CmASe8Nfn81UL2G5rYjptC2RV"
+    },
+    {
+        "name": "Wiki_Validator",
+        "email": "bear@validator.wiki",
+        "website": "https://validator.wiki/",
+        "address": "/ip4/65.108.215.187/tcp/21888/p2p/12D3KooWN8u7TfmiTJ5ei4MbN4Dr6kSwmUgrvxQducLj1hMvJumJ"
     }
 ]
