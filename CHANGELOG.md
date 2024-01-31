@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.0.0](https://github.com/pactus-project/pactus/compare/v0.20.0...v1.0.0) (2024-01-31)
+
+### Feat
+
+- implement get validator address for grpc ([#975](https://github.com/pactus-project/pactus/pull/975))
+- add bootstrap.json and load in config on build ([#964](https://github.com/pactus-project/pactus/pull/964))
+- add mainnet config and genesis files ([#951](https://github.com/pactus-project/pactus/pull/951))
+- add Consensus-address to network info ([#952](https://github.com/pactus-project/pactus/pull/952))
+- **grpc**: sign transaction using wallet client ([#945](https://github.com/pactus-project/pactus/pull/945))
+- pactus gui lock support ([#947](https://github.com/pactus-project/pactus/pull/947))
+- **consensus**: turning consensus to a zero-config module ([#942](https://github.com/pactus-project/pactus/pull/942))
+
+### Fix
+
+- localnet wallet issue ([#970](https://github.com/pactus-project/pactus/pull/970))
+- **sync**: remove ReachabilityStatus from agent info ([#956](https://github.com/pactus-project/pactus/pull/956))
+- **daemon**: keeping previous behavior for password flag, linting CLI messages ([#950](https://github.com/pactus-project/pactus/pull/950))
+- **consensus**: detect if the system time is behind the network ([#939](https://github.com/pactus-project/pactus/pull/939))
+
 ## [0.20.0](https://github.com/pactus-project/pactus/compare/v0.19.0...v0.20.0) (2024-01-11)
 
 ### Feat
