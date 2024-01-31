@@ -96,10 +96,10 @@
         "address": "/ip4/65.21.180.80/tcp/21888/p2p/12D3KooWJWKXjrLg3GeA8x98Zc9Q7iUawPyZFcKmy4PWJNzu1u21"
     },
     {
-        "name": "JackieLuong",
-        "email": "tuanlga@gmail.com",
-        "website": "https://codeforkids.edu.vn/",
-        "address": "/ip4/167.235.69.247/tcp/21888/p2p/12D3KooWSdHaUBhGKGGGckz5ejVaxJcaNWL51Ehb4UDiazWMP4k4"
+        "name": "BearValidator",
+        "email": "validator.wiki@gmail.com",
+        "website": "https://validator.wiki/",
+        "address": "/ip4/37.27.26.40/tcp/21888/p2p/12D3KooWGtBFHXraHUTBPYfPhC8LKRYN2YcUafgVaLhPR53h41jg"
     },
     {
         "name": "MoneyLow-VNBnode",
@@ -124,6 +124,48 @@
         "email": "listening2009@gmail.com",
         "website": "https://teoviteovi.com",
         "address": "/dns/pactus-bootstrap.teoviteovi.com/tcp/21888/p2p/12D3KooWMP5qWNHF1RfzhpAkBmQZzBfbaSJZCo3QF1fxs5CFXkv8"
+    },
+    {
+        "name": "tiantsi",
+        "email": "xuhaizhu@gmail.com",
+        "website": "n/a",
+        "address": "/ip4/43.135.166.197/tcp/21888/p2p/12D3KooWQkDzRDb7MNrAKStt2NTbHxY1hui2fnu1ABKJGWjz4JQa"
+    },
+    {
+        "name": "vinhhathacha",
+        "email": "vinhhathacha@gmail.com",
+        "website": "https://github.com/vinhhathacha",
+        "address": "/ip4/46.250.233.5/tcp/21888/p2p/12D3KooWDQGDBUtYF2fagCAGVphrQNB2fpg1LidaJ9GFXhoKcrGS"
+    },
+    {
+        "name": "CodeBlockLabs",
+        "email": "emailbuatcariduit@gmail.com",
+        "website": "https://codeblocklabs.com",
+        "address": "/dns/pactus-bootstrap.codeblocklabs.com/tcp/21888/p2p/12D3KooWSdmPLqWbmv5x5pBiL5nHwKN5S2jhP96oXCKmoEmAhV4Z"
+    },
+    {
+        "name": "0xSown",
+        "email": "vtson2707@@gmail.com",
+        "website": "n/a",
+        "address": "/ip4/84.247.184.95/tcp/21888/p2p/12D3KooWSjp5GFmCCsYkKcqicrghyHqfjdDCfLfgfqWmG5JTQSDu"
+    },
+    {
+        "name": "Adora",
+        "email": "adoratran21@gmail.com",
+        "website": "",
+        "address": "/dns/pactus-bootstrap.thd.io.vn/tcp/21888/p2p/12D3KooWDgsSSGJzihBJxqNJFqbGwbTEDXRoUBph1BCfwm11R6KY"
+    },
+    {
+        "name": "Node39",
+        "email": "node39top@gmail.com",
+        "website": "https://node39.top/",
+        "address": "/ip4/37.27.25.245/tcp/21888/p2p/12D3KooWAmhn86b5igYjzFbaJddE57xT9UpZePFiEoc3jcuYHDvn"
+    },
+    {
+        "name": "sebus",
+        "email": "john.chatterton@protonmail.com",
+        "website": "https://linktr.ee/john.chatterton",
+        "address": "/ip4/173.212.254.120/tcp/21888/p2p/12D3KooWJR19vjuBzuJTceCoy3LG8jggkHCBGb9j5SzdKtoPL7Yb"
     },
     {
         "name": "Stilucky",
