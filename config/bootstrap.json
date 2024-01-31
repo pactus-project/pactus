@@ -142,5 +142,11 @@
         "email": "emailbuatcariduit@gmail.com",
         "website": "https://codeblocklabs.com",
         "address": "/dns/pactus-bootstrap.codeblocklabs.com/tcp/21888/p2p/12D3KooWSdmPLqWbmv5x5pBiL5nHwKN5S2jhP96oXCKmoEmAhV4Z"
+    },
+    {
+        "name": "0xSown",
+        "email": "vtson2707@@gmail.com",
+        "website": "n/a",
+        "address": "/ip4/84.247.184.95/tcp/21888/p2p/12D3KooWSjp5GFmCCsYkKcqicrghyHqfjdDCfLfgfqWmG5JTQSDu"
     }
 ]
