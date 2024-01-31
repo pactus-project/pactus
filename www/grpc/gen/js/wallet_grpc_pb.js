@@ -3,6 +3,7 @@
 'use strict';
 var grpc = require('grpc');
 var wallet_pb = require('./wallet_pb.js');
+var transaction_pb = require('./transaction_pb.js');
 
 function serialize_pactus_CreateWalletRequest(arg) {
   if (!(arg instanceof wallet_pb.CreateWalletRequest)) {
@@ -24,6 +25,28 @@ function serialize_pactus_CreateWalletResponse(arg) {
 
 function deserialize_pactus_CreateWalletResponse(buffer_arg) {
   return wallet_pb.CreateWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetValidatorAddressRequest(arg) {
+  if (!(arg instanceof wallet_pb.GetValidatorAddressRequest)) {
+    throw new Error('Expected argument of type pactus.GetValidatorAddressRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetValidatorAddressRequest(buffer_arg) {
+  return wallet_pb.GetValidatorAddressRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetValidatorAddressResponse(arg) {
+  if (!(arg instanceof wallet_pb.GetValidatorAddressResponse)) {
+    throw new Error('Expected argument of type pactus.GetValidatorAddressResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetValidatorAddressResponse(buffer_arg) {
+  return wallet_pb.GetValidatorAddressResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_pactus_LoadWalletRequest(arg) {
@@ -137,7 +160,7 @@ function deserialize_pactus_UnlockWalletResponse(buffer_arg) {
 }
 
 
-// Wallet service defines RPC methods for managing wallet operations.
+// Define the Wallet service with various RPC methods for wallet management.
 var WalletService = exports.WalletService = {
   // CreateWallet creates a new wallet with the specified parameters.
 createWallet: {
@@ -199,7 +222,7 @@ unlockWallet: {
     responseSerialize: serialize_pactus_UnlockWalletResponse,
     responseDeserialize: deserialize_pactus_UnlockWalletResponse,
   },
-  // SignRawTransaction Signs a raw transaction for a specified wallet.
+  // SignRawTransaction signs a raw transaction for a specified wallet.
 signRawTransaction: {
     path: '/pactus.Wallet/SignRawTransaction',
     requestStream: false,
@@ -210,6 +233,18 @@ signRawTransaction: {
     requestDeserialize: deserialize_pactus_SignRawTransactionRequest,
     responseSerialize: serialize_pactus_SignRawTransactionResponse,
     responseDeserialize: deserialize_pactus_SignRawTransactionResponse,
+  },
+  // GetValidatorAddress retrieves the validator address associated with a public key.
+getValidatorAddress: {
+    path: '/pactus.Wallet/GetValidatorAddress',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.GetValidatorAddressRequest,
+    responseType: wallet_pb.GetValidatorAddressResponse,
+    requestSerialize: serialize_pactus_GetValidatorAddressRequest,
+    requestDeserialize: deserialize_pactus_GetValidatorAddressRequest,
+    responseSerialize: serialize_pactus_GetValidatorAddressResponse,
+    responseDeserialize: deserialize_pactus_GetValidatorAddressResponse,
   },
 };
 

@@ -1,9 +1,15 @@
 syntax = 'proto3';
+
+// Define the package and Go package path for the generated code.
 package pactus;
+
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus.wallet";
 
-// Wallet service defines RPC methods for managing wallet operations.
+// Import the "transaction.proto" file, which is assumed to contain additional message definitions.
+import "transaction.proto";
+
+// Define the Wallet service with various RPC methods for wallet management.
 service Wallet {
   // CreateWallet creates a new wallet with the specified parameters.
   rpc CreateWallet(CreateWalletRequest) returns (CreateWalletResponse);
@@ -20,8 +26,11 @@ service Wallet {
   // UnlockWallet unlocks a locked wallet with the provided password and timeout.
   rpc UnlockWallet(UnlockWalletRequest) returns (UnlockWalletResponse);
 
-  // SignRawTransaction Signs a raw transaction for a specified wallet.
+  // SignRawTransaction signs a raw transaction for a specified wallet.
   rpc SignRawTransaction(SignRawTransactionRequest) returns (SignRawTransactionResponse);
+
+  // GetValidatorAddress retrieves the validator address associated with a public key.
+  rpc GetValidatorAddress(GetValidatorAddressRequest) returns (GetValidatorAddressResponse);
 }
 
 // Request message for creating a new wallet.
@@ -67,7 +76,17 @@ message LockWalletResponse {
   string wallet_name = 1;     // Name of the locked wallet.
 }
 
-// Request message for unlocking a locked wallet.
+// Request message for obtaining the validator address associated with a public key.
+message GetValidatorAddressRequest {
+  string public_key = 1; // Public key for which the validator address is requested.
+}
+
+// Response message containing the validator address corresponding to a public key.
+message GetValidatorAddressResponse {
+  string address = 1; // Validator address associated with the public key.
+}
+
+// Request message for unlocking a wallet.
 message UnlockWalletRequest {
   string wallet_name = 1;     // Name of the wallet to unlock.
   string password = 2;        // Password for unlocking the wallet.

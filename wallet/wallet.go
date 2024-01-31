@@ -177,6 +177,10 @@ func (w *Wallet) connectToRandomServer() error {
 		// testnet
 		netServers = serversInfo["testnet"]
 
+	case genesis.Localnet:
+		// localnet
+		netServers = []serverInfo{{IP: "localhost:50052"}}
+
 	default:
 		return ErrInvalidNetwork
 	}

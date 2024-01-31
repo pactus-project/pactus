@@ -896,6 +896,37 @@
           "Wallet"
         ]
       }
+    },
+    "/v1/wallets/validator_address/{publicKey}": {
+      "get": {
+        "summary": "GetValidatorAddress retrieves the validator address associated with a public key.",
+        "operationId": "Wallet_GetValidatorAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetValidatorAddressResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "publicKey",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
     }
   },
   "definitions": {
@@ -1281,6 +1312,15 @@
         }
       },
       "description": "Response message containing details of a transaction."
+    },
+    "pactusGetValidatorAddressResponse": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        }
+      },
+      "description": "Response message containing the validator address corresponding to a public key."
     },
     "pactusGetValidatorAddressesResponse": {
       "type": "object",

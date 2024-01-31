@@ -6,7 +6,7 @@ import wallet_pb2 as wallet__pb2
 
 
 class WalletStub(object):
-    """Wallet service defines RPC methods for managing wallet operations.
+    """Define the Wallet service with various RPC methods for wallet management.
     """
 
     def __init__(self, channel):
@@ -45,10 +45,15 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.SignRawTransactionRequest.SerializeToString,
                 response_deserializer=wallet__pb2.SignRawTransactionResponse.FromString,
                 )
+        self.GetValidatorAddress = channel.unary_unary(
+                '/pactus.Wallet/GetValidatorAddress',
+                request_serializer=wallet__pb2.GetValidatorAddressRequest.SerializeToString,
+                response_deserializer=wallet__pb2.GetValidatorAddressResponse.FromString,
+                )
 
 
 class WalletServicer(object):
-    """Wallet service defines RPC methods for managing wallet operations.
+    """Define the Wallet service with various RPC methods for wallet management.
     """
 
     def CreateWallet(self, request, context):
@@ -87,7 +92,14 @@ class WalletServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def SignRawTransaction(self, request, context):
-        """SignRawTransaction Signs a raw transaction for a specified wallet.
+        """SignRawTransaction signs a raw transaction for a specified wallet.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetValidatorAddress(self, request, context):
+        """GetValidatorAddress retrieves the validator address associated with a public key.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -126,6 +138,11 @@ def add_WalletServicer_to_server(servicer, server):
                     request_deserializer=wallet__pb2.SignRawTransactionRequest.FromString,
                     response_serializer=wallet__pb2.SignRawTransactionResponse.SerializeToString,
             ),
+            'GetValidatorAddress': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetValidatorAddress,
+                    request_deserializer=wallet__pb2.GetValidatorAddressRequest.FromString,
+                    response_serializer=wallet__pb2.GetValidatorAddressResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
             'pactus.Wallet', rpc_method_handlers)
@@ -134,7 +151,7 @@ def add_WalletServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Wallet(object):
-    """Wallet service defines RPC methods for managing wallet operations.
+    """Define the Wallet service with various RPC methods for wallet management.
     """
 
     @staticmethod
@@ -236,5 +253,22 @@ class Wallet(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/SignRawTransaction',
             wallet__pb2.SignRawTransactionRequest.SerializeToString,
             wallet__pb2.SignRawTransactionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetValidatorAddress(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/GetValidatorAddress',
+            wallet__pb2.GetValidatorAddressRequest.SerializeToString,
+            wallet__pb2.GetValidatorAddressResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

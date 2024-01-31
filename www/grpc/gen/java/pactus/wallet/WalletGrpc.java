@@ -4,7 +4,7 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  * <pre>
- * Wallet service defines RPC methods for managing wallet operations.
+ * Define the Wallet service with various RPC methods for wallet management.
  * </pre>
  */
 @javax.annotation.Generated(
@@ -204,6 +204,37 @@ public final class WalletGrpc {
     return getSignRawTransactionMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetValidatorAddressRequest,
+      pactus.wallet.WalletOuterClass.GetValidatorAddressResponse> getGetValidatorAddressMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetValidatorAddress",
+      requestType = pactus.wallet.WalletOuterClass.GetValidatorAddressRequest.class,
+      responseType = pactus.wallet.WalletOuterClass.GetValidatorAddressResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetValidatorAddressRequest,
+      pactus.wallet.WalletOuterClass.GetValidatorAddressResponse> getGetValidatorAddressMethod() {
+    io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetValidatorAddressRequest, pactus.wallet.WalletOuterClass.GetValidatorAddressResponse> getGetValidatorAddressMethod;
+    if ((getGetValidatorAddressMethod = WalletGrpc.getGetValidatorAddressMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getGetValidatorAddressMethod = WalletGrpc.getGetValidatorAddressMethod) == null) {
+          WalletGrpc.getGetValidatorAddressMethod = getGetValidatorAddressMethod =
+              io.grpc.MethodDescriptor.<pactus.wallet.WalletOuterClass.GetValidatorAddressRequest, pactus.wallet.WalletOuterClass.GetValidatorAddressResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetValidatorAddress"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.GetValidatorAddressRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.GetValidatorAddressResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("GetValidatorAddress"))
+              .build();
+        }
+      }
+    }
+    return getGetValidatorAddressMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -250,7 +281,7 @@ public final class WalletGrpc {
 
   /**
    * <pre>
-   * Wallet service defines RPC methods for managing wallet operations.
+   * Define the Wallet service with various RPC methods for wallet management.
    * </pre>
    */
   public static abstract class WalletImplBase implements io.grpc.BindableService {
@@ -307,12 +338,22 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * SignRawTransaction Signs a raw transaction for a specified wallet.
+     * SignRawTransaction signs a raw transaction for a specified wallet.
      * </pre>
      */
     public void signRawTransaction(pactus.wallet.WalletOuterClass.SignRawTransactionRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.SignRawTransactionResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSignRawTransactionMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * GetValidatorAddress retrieves the validator address associated with a public key.
+     * </pre>
+     */
+    public void getValidatorAddress(pactus.wallet.WalletOuterClass.GetValidatorAddressRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetValidatorAddressResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetValidatorAddressMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
@@ -359,13 +400,20 @@ public final class WalletGrpc {
                 pactus.wallet.WalletOuterClass.SignRawTransactionRequest,
                 pactus.wallet.WalletOuterClass.SignRawTransactionResponse>(
                   this, METHODID_SIGN_RAW_TRANSACTION)))
+          .addMethod(
+            getGetValidatorAddressMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.wallet.WalletOuterClass.GetValidatorAddressRequest,
+                pactus.wallet.WalletOuterClass.GetValidatorAddressResponse>(
+                  this, METHODID_GET_VALIDATOR_ADDRESS)))
           .build();
     }
   }
 
   /**
    * <pre>
-   * Wallet service defines RPC methods for managing wallet operations.
+   * Define the Wallet service with various RPC methods for wallet management.
    * </pre>
    */
   public static final class WalletStub extends io.grpc.stub.AbstractAsyncStub<WalletStub> {
@@ -437,7 +485,7 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * SignRawTransaction Signs a raw transaction for a specified wallet.
+     * SignRawTransaction signs a raw transaction for a specified wallet.
      * </pre>
      */
     public void signRawTransaction(pactus.wallet.WalletOuterClass.SignRawTransactionRequest request,
@@ -445,11 +493,22 @@ public final class WalletGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSignRawTransactionMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * GetValidatorAddress retrieves the validator address associated with a public key.
+     * </pre>
+     */
+    public void getValidatorAddress(pactus.wallet.WalletOuterClass.GetValidatorAddressRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetValidatorAddressResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetValidatorAddressMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
    * <pre>
-   * Wallet service defines RPC methods for managing wallet operations.
+   * Define the Wallet service with various RPC methods for wallet management.
    * </pre>
    */
   public static final class WalletBlockingStub extends io.grpc.stub.AbstractBlockingStub<WalletBlockingStub> {
@@ -516,18 +575,28 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * SignRawTransaction Signs a raw transaction for a specified wallet.
+     * SignRawTransaction signs a raw transaction for a specified wallet.
      * </pre>
      */
     public pactus.wallet.WalletOuterClass.SignRawTransactionResponse signRawTransaction(pactus.wallet.WalletOuterClass.SignRawTransactionRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSignRawTransactionMethod(), getCallOptions(), request);
     }
+
+    /**
+     * <pre>
+     * GetValidatorAddress retrieves the validator address associated with a public key.
+     * </pre>
+     */
+    public pactus.wallet.WalletOuterClass.GetValidatorAddressResponse getValidatorAddress(pactus.wallet.WalletOuterClass.GetValidatorAddressRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetValidatorAddressMethod(), getCallOptions(), request);
+    }
   }
 
   /**
    * <pre>
-   * Wallet service defines RPC methods for managing wallet operations.
+   * Define the Wallet service with various RPC methods for wallet management.
    * </pre>
    */
   public static final class WalletFutureStub extends io.grpc.stub.AbstractFutureStub<WalletFutureStub> {
@@ -599,13 +668,24 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * SignRawTransaction Signs a raw transaction for a specified wallet.
+     * SignRawTransaction signs a raw transaction for a specified wallet.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.SignRawTransactionResponse> signRawTransaction(
         pactus.wallet.WalletOuterClass.SignRawTransactionRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSignRawTransactionMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * GetValidatorAddress retrieves the validator address associated with a public key.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.GetValidatorAddressResponse> getValidatorAddress(
+        pactus.wallet.WalletOuterClass.GetValidatorAddressRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetValidatorAddressMethod(), getCallOptions()), request);
     }
   }
 
@@ -615,6 +695,7 @@ public final class WalletGrpc {
   private static final int METHODID_LOCK_WALLET = 3;
   private static final int METHODID_UNLOCK_WALLET = 4;
   private static final int METHODID_SIGN_RAW_TRANSACTION = 5;
+  private static final int METHODID_GET_VALIDATOR_ADDRESS = 6;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -656,6 +737,10 @@ public final class WalletGrpc {
         case METHODID_SIGN_RAW_TRANSACTION:
           serviceImpl.signRawTransaction((pactus.wallet.WalletOuterClass.SignRawTransactionRequest) request,
               (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.SignRawTransactionResponse>) responseObserver);
+          break;
+        case METHODID_GET_VALIDATOR_ADDRESS:
+          serviceImpl.getValidatorAddress((pactus.wallet.WalletOuterClass.GetValidatorAddressRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetValidatorAddressResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -724,6 +809,7 @@ public final class WalletGrpc {
               .addMethod(getLockWalletMethod())
               .addMethod(getUnlockWalletMethod())
               .addMethod(getSignRawTransactionMethod())
+              .addMethod(getGetValidatorAddressMethod())
               .build();
         }
       }
