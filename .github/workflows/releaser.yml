@@ -236,7 +236,7 @@ jobs:
 
   ########################################
   checksums:
-    needs: [build-cli, build-gui-linux, build-gui-macos, build-gui-windows]
+    needs: [build-cli, build-gui-linux, build-gui-macos, build-gui-macos-arm, build-gui-windows]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -245,6 +245,7 @@ jobs:
         echo "${{ needs.build-cli.outputs.checksums }}" >> SHA256SUMS
         echo "${{ needs.build-gui-linux.outputs.checksums }}" >> SHA256SUMS
         echo "${{ needs.build-gui-macos.outputs.checksums }}" >> SHA256SUMS
+        echo "${{ needs.build-gui-macos-arm.outputs.checksums }}" >> SHA256SUMS
         echo "${{ needs.build-gui-windows.outputs.checksums }}" >> SHA256SUMS
     - name: Publish
       uses: softprops/action-gh-release@v1
