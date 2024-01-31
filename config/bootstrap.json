@@ -172,5 +172,11 @@
         "email": "Stiluckyy@gmail.com",
         "website": "n/a",
         "address": "/ip4/5.180.151.35/tcp/21888/p2p/12D3KooWLCPgwGcEJemetBu7mCWyPaRMBKCaUu2iRdmw4ydT3ryo"
+    },
+    {
+        "name": "duatdtvt10",
+        "email": "tienduat1.pham@gmail.com",
+        "website": "n/a",
+        "address": "/ip4/14.241.197.57/tcp/21888,/ip6/2001:ee0:5492:a5b0:20c:29ff:fe41:ee33/tcp/21888/p2p/12D3KooWHUFAJsCQfdSvzdvdPa7mJ2EGAYM5VMTfuQE7ENLmMjwB"
     }
 ]
