@@ -126,6 +126,12 @@
         "address": "/dns/pactus-bootstrap.teoviteovi.com/tcp/21888/p2p/12D3KooWMP5qWNHF1RfzhpAkBmQZzBfbaSJZCo3QF1fxs5CFXkv8"
     },
     {
+        "name": "p10node",
+        "email": "pierre@p10node.com",
+        "website": "https://p10node.com/",
+        "address": "/ip4/37.60.233.235/tcp/21888/p2p/12D3KooWNzbuBESYzbKGm7UyLkD22cHSgjRMUx4rjEKLBfVSZuY1"
+    },
+    {
         "name": "tiantsi",
         "email": "xuhaizhu@gmail.com",
         "website": "n/a",
