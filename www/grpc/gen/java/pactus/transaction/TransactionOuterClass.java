@@ -15,31 +15,59 @@ public final class TransactionOuterClass {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   /**
+   * <pre>
+   * Enumeration for different types of transaction payloads.
+   * </pre>
+   *
    * Protobuf enum {@code pactus.PayloadType}
    */
   public enum PayloadType
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
+     * <pre>
+     * Unknown payload type.
+     * </pre>
+     *
      * <code>UNKNOWN = 0;</code>
      */
     UNKNOWN(0),
     /**
+     * <pre>
+     * Transfer payload type.
+     * </pre>
+     *
      * <code>TRANSFER_PAYLOAD = 1;</code>
      */
     TRANSFER_PAYLOAD(1),
     /**
+     * <pre>
+     * Bond payload type.
+     * </pre>
+     *
      * <code>BOND_PAYLOAD = 2;</code>
      */
     BOND_PAYLOAD(2),
     /**
+     * <pre>
+     * Sortition payload type.
+     * </pre>
+     *
      * <code>SORTITION_PAYLOAD = 3;</code>
      */
     SORTITION_PAYLOAD(3),
     /**
+     * <pre>
+     * Unbond payload type.
+     * </pre>
+     *
      * <code>UNBOND_PAYLOAD = 4;</code>
      */
     UNBOND_PAYLOAD(4),
     /**
+     * <pre>
+     * Withdraw payload type.
+     * </pre>
+     *
      * <code>WITHDRAW_PAYLOAD = 5;</code>
      */
     WITHDRAW_PAYLOAD(5),
@@ -47,26 +75,50 @@ public final class TransactionOuterClass {
     ;
 
     /**
+     * <pre>
+     * Unknown payload type.
+     * </pre>
+     *
      * <code>UNKNOWN = 0;</code>
      */
     public static final int UNKNOWN_VALUE = 0;
     /**
+     * <pre>
+     * Transfer payload type.
+     * </pre>
+     *
      * <code>TRANSFER_PAYLOAD = 1;</code>
      */
     public static final int TRANSFER_PAYLOAD_VALUE = 1;
     /**
+     * <pre>
+     * Bond payload type.
+     * </pre>
+     *
      * <code>BOND_PAYLOAD = 2;</code>
      */
     public static final int BOND_PAYLOAD_VALUE = 2;
     /**
+     * <pre>
+     * Sortition payload type.
+     * </pre>
+     *
      * <code>SORTITION_PAYLOAD = 3;</code>
      */
     public static final int SORTITION_PAYLOAD_VALUE = 3;
     /**
+     * <pre>
+     * Unbond payload type.
+     * </pre>
+     *
      * <code>UNBOND_PAYLOAD = 4;</code>
      */
     public static final int UNBOND_PAYLOAD_VALUE = 4;
     /**
+     * <pre>
+     * Withdraw payload type.
+     * </pre>
+     *
      * <code>WITHDRAW_PAYLOAD = 5;</code>
      */
     public static final int WITHDRAW_PAYLOAD_VALUE = 5;
@@ -159,15 +211,27 @@ public final class TransactionOuterClass {
   }
 
   /**
+   * <pre>
+   * Enumeration for verbosity level when requesting transaction details.
+   * </pre>
+   *
    * Protobuf enum {@code pactus.TransactionVerbosity}
    */
   public enum TransactionVerbosity
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
+     * <pre>
+     * Request only transaction data.
+     * </pre>
+     *
      * <code>TRANSACTION_DATA = 0;</code>
      */
     TRANSACTION_DATA(0),
     /**
+     * <pre>
+     * Request detailed transaction information.
+     * </pre>
+     *
      * <code>TRANSACTION_INFO = 1;</code>
      */
     TRANSACTION_INFO(1),
@@ -175,10 +239,18 @@ public final class TransactionOuterClass {
     ;
 
     /**
+     * <pre>
+     * Request only transaction data.
+     * </pre>
+     *
      * <code>TRANSACTION_DATA = 0;</code>
      */
     public static final int TRANSACTION_DATA_VALUE = 0;
     /**
+     * <pre>
+     * Request detailed transaction information.
+     * </pre>
+     *
      * <code>TRANSACTION_INFO = 1;</code>
      */
     public static final int TRANSACTION_INFO_VALUE = 1;
@@ -271,23 +343,39 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Transaction ID.
+     * </pre>
+     *
      * <code>bytes id = 1 [json_name = "id"];</code>
      * @return The id.
      */
     com.google.protobuf.ByteString getId();
 
     /**
+     * <pre>
+     * Verbosity level for transaction details.
+     * </pre>
+     *
      * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
      * @return The enum numeric value on the wire for verbosity.
      */
     int getVerbosityValue();
     /**
+     * <pre>
+     * Verbosity level for transaction details.
+     * </pre>
+     *
      * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
      * @return The verbosity.
      */
     pactus.transaction.TransactionOuterClass.TransactionVerbosity getVerbosity();
   }
   /**
+   * <pre>
+   * Request message for retrieving transaction details.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetTransactionRequest}
    */
   public static final class GetTransactionRequest extends
@@ -332,6 +420,10 @@ public final class TransactionOuterClass {
     public static final int ID_FIELD_NUMBER = 1;
     private com.google.protobuf.ByteString id_;
     /**
+     * <pre>
+     * Transaction ID.
+     * </pre>
+     *
      * <code>bytes id = 1 [json_name = "id"];</code>
      * @return The id.
      */
@@ -343,6 +435,10 @@ public final class TransactionOuterClass {
     public static final int VERBOSITY_FIELD_NUMBER = 2;
     private int verbosity_;
     /**
+     * <pre>
+     * Verbosity level for transaction details.
+     * </pre>
+     *
      * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
      * @return The enum numeric value on the wire for verbosity.
      */
@@ -350,6 +446,10 @@ public final class TransactionOuterClass {
       return verbosity_;
     }
     /**
+     * <pre>
+     * Verbosity level for transaction details.
+     * </pre>
+     *
      * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
      * @return The verbosity.
      */
@@ -525,6 +625,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Request message for retrieving transaction details.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetTransactionRequest}
      */
     public static final class Builder extends
@@ -697,6 +801,10 @@ public final class TransactionOuterClass {
 
       private com.google.protobuf.ByteString id_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
        * <code>bytes id = 1 [json_name = "id"];</code>
        * @return The id.
        */
@@ -705,6 +813,10 @@ public final class TransactionOuterClass {
         return id_;
       }
       /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
        * <code>bytes id = 1 [json_name = "id"];</code>
        * @param value The id to set.
        * @return This builder for chaining.
@@ -719,6 +831,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
        * <code>bytes id = 1 [json_name = "id"];</code>
        * @return This builder for chaining.
        */
@@ -731,6 +847,10 @@ public final class TransactionOuterClass {
 
       private int verbosity_ = 0;
       /**
+       * <pre>
+       * Verbosity level for transaction details.
+       * </pre>
+       *
        * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
        * @return The enum numeric value on the wire for verbosity.
        */
@@ -738,6 +858,10 @@ public final class TransactionOuterClass {
         return verbosity_;
       }
       /**
+       * <pre>
+       * Verbosity level for transaction details.
+       * </pre>
+       *
        * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
        * @param value The enum numeric value on the wire for verbosity to set.
        * @return This builder for chaining.
@@ -749,6 +873,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Verbosity level for transaction details.
+       * </pre>
+       *
        * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
        * @return The verbosity.
        */
@@ -759,6 +887,10 @@ public final class TransactionOuterClass {
         return result == null ? pactus.transaction.TransactionOuterClass.TransactionVerbosity.UNRECOGNIZED : result;
       }
       /**
+       * <pre>
+       * Verbosity level for transaction details.
+       * </pre>
+       *
        * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
        * @param value The verbosity to set.
        * @return This builder for chaining.
@@ -773,6 +905,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Verbosity level for transaction details.
+       * </pre>
+       *
        * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
        * @return This builder for chaining.
        */
@@ -851,33 +987,57 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Height of the block containing the transaction.
+     * </pre>
+     *
      * <code>uint32 block_height = 12 [json_name = "blockHeight"];</code>
      * @return The blockHeight.
      */
     int getBlockHeight();
 
     /**
+     * <pre>
+     * Time of the block containing the transaction.
+     * </pre>
+     *
      * <code>uint32 block_time = 13 [json_name = "blockTime"];</code>
      * @return The blockTime.
      */
     int getBlockTime();
 
     /**
+     * <pre>
+     * Information about the transaction.
+     * </pre>
+     *
      * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
      * @return Whether the transaction field is set.
      */
     boolean hasTransaction();
     /**
+     * <pre>
+     * Information about the transaction.
+     * </pre>
+     *
      * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
      * @return The transaction.
      */
     pactus.transaction.TransactionOuterClass.TransactionInfo getTransaction();
     /**
+     * <pre>
+     * Information about the transaction.
+     * </pre>
+     *
      * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
      */
     pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder getTransactionOrBuilder();
   }
   /**
+   * <pre>
+   * Response message containing details of a transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetTransactionResponse}
    */
   public static final class GetTransactionResponse extends
@@ -920,6 +1080,10 @@ public final class TransactionOuterClass {
     public static final int BLOCK_HEIGHT_FIELD_NUMBER = 12;
     private int blockHeight_;
     /**
+     * <pre>
+     * Height of the block containing the transaction.
+     * </pre>
+     *
      * <code>uint32 block_height = 12 [json_name = "blockHeight"];</code>
      * @return The blockHeight.
      */
@@ -931,6 +1095,10 @@ public final class TransactionOuterClass {
     public static final int BLOCK_TIME_FIELD_NUMBER = 13;
     private int blockTime_;
     /**
+     * <pre>
+     * Time of the block containing the transaction.
+     * </pre>
+     *
      * <code>uint32 block_time = 13 [json_name = "blockTime"];</code>
      * @return The blockTime.
      */
@@ -942,6 +1110,10 @@ public final class TransactionOuterClass {
     public static final int TRANSACTION_FIELD_NUMBER = 3;
     private pactus.transaction.TransactionOuterClass.TransactionInfo transaction_;
     /**
+     * <pre>
+     * Information about the transaction.
+     * </pre>
+     *
      * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
      * @return Whether the transaction field is set.
      */
@@ -950,6 +1122,10 @@ public final class TransactionOuterClass {
       return transaction_ != null;
     }
     /**
+     * <pre>
+     * Information about the transaction.
+     * </pre>
+     *
      * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
      * @return The transaction.
      */
@@ -958,6 +1134,10 @@ public final class TransactionOuterClass {
       return transaction_ == null ? pactus.transaction.TransactionOuterClass.TransactionInfo.getDefaultInstance() : transaction_;
     }
     /**
+     * <pre>
+     * Information about the transaction.
+     * </pre>
+     *
      * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
      */
     @java.lang.Override
@@ -1148,6 +1328,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Response message containing details of a transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetTransactionResponse}
      */
     public static final class Builder extends
@@ -1341,6 +1525,10 @@ public final class TransactionOuterClass {
 
       private int blockHeight_ ;
       /**
+       * <pre>
+       * Height of the block containing the transaction.
+       * </pre>
+       *
        * <code>uint32 block_height = 12 [json_name = "blockHeight"];</code>
        * @return The blockHeight.
        */
@@ -1349,6 +1537,10 @@ public final class TransactionOuterClass {
         return blockHeight_;
       }
       /**
+       * <pre>
+       * Height of the block containing the transaction.
+       * </pre>
+       *
        * <code>uint32 block_height = 12 [json_name = "blockHeight"];</code>
        * @param value The blockHeight to set.
        * @return This builder for chaining.
@@ -1360,6 +1552,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Height of the block containing the transaction.
+       * </pre>
+       *
        * <code>uint32 block_height = 12 [json_name = "blockHeight"];</code>
        * @return This builder for chaining.
        */
@@ -1372,6 +1568,10 @@ public final class TransactionOuterClass {
 
       private int blockTime_ ;
       /**
+       * <pre>
+       * Time of the block containing the transaction.
+       * </pre>
+       *
        * <code>uint32 block_time = 13 [json_name = "blockTime"];</code>
        * @return The blockTime.
        */
@@ -1380,6 +1580,10 @@ public final class TransactionOuterClass {
         return blockTime_;
       }
       /**
+       * <pre>
+       * Time of the block containing the transaction.
+       * </pre>
+       *
        * <code>uint32 block_time = 13 [json_name = "blockTime"];</code>
        * @param value The blockTime to set.
        * @return This builder for chaining.
@@ -1391,6 +1595,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Time of the block containing the transaction.
+       * </pre>
+       *
        * <code>uint32 block_time = 13 [json_name = "blockTime"];</code>
        * @return This builder for chaining.
        */
@@ -1405,6 +1613,10 @@ public final class TransactionOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.TransactionInfo, pactus.transaction.TransactionOuterClass.TransactionInfo.Builder, pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder> transactionBuilder_;
       /**
+       * <pre>
+       * Information about the transaction.
+       * </pre>
+       *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
        * @return Whether the transaction field is set.
        */
@@ -1412,6 +1624,10 @@ public final class TransactionOuterClass {
         return transactionBuilder_ != null || transaction_ != null;
       }
       /**
+       * <pre>
+       * Information about the transaction.
+       * </pre>
+       *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
        * @return The transaction.
        */
@@ -1423,6 +1639,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Information about the transaction.
+       * </pre>
+       *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
        */
       public Builder setTransaction(pactus.transaction.TransactionOuterClass.TransactionInfo value) {
@@ -1439,6 +1659,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Information about the transaction.
+       * </pre>
+       *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
        */
       public Builder setTransaction(
@@ -1453,6 +1677,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Information about the transaction.
+       * </pre>
+       *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
        */
       public Builder mergeTransaction(pactus.transaction.TransactionOuterClass.TransactionInfo value) {
@@ -1471,6 +1699,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Information about the transaction.
+       * </pre>
+       *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
        */
       public Builder clearTransaction() {
@@ -1485,6 +1717,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Information about the transaction.
+       * </pre>
+       *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
        */
       public pactus.transaction.TransactionOuterClass.TransactionInfo.Builder getTransactionBuilder() {
@@ -1493,6 +1729,10 @@ public final class TransactionOuterClass {
         return getTransactionFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * Information about the transaction.
+       * </pre>
+       *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
        */
       public pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder getTransactionOrBuilder() {
@@ -1504,6 +1744,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Information about the transaction.
+       * </pre>
+       *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -1588,23 +1832,39 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Transaction amount.
+     * </pre>
+     *
      * <code>int64 amount = 1 [json_name = "amount"];</code>
      * @return The amount.
      */
     long getAmount();
 
     /**
+     * <pre>
+     * Type of transaction payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
      * @return The enum numeric value on the wire for payloadType.
      */
     int getPayloadTypeValue();
     /**
+     * <pre>
+     * Type of transaction payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
      * @return The payloadType.
      */
     pactus.transaction.TransactionOuterClass.PayloadType getPayloadType();
   }
   /**
+   * <pre>
+   * Request message for calculating transaction fee.
+   * </pre>
+   *
    * Protobuf type {@code pactus.CalculateFeeRequest}
    */
   public static final class CalculateFeeRequest extends
@@ -1648,6 +1908,10 @@ public final class TransactionOuterClass {
     public static final int AMOUNT_FIELD_NUMBER = 1;
     private long amount_;
     /**
+     * <pre>
+     * Transaction amount.
+     * </pre>
+     *
      * <code>int64 amount = 1 [json_name = "amount"];</code>
      * @return The amount.
      */
@@ -1659,6 +1923,10 @@ public final class TransactionOuterClass {
     public static final int PAYLOADTYPE_FIELD_NUMBER = 2;
     private int payloadType_;
     /**
+     * <pre>
+     * Type of transaction payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
      * @return The enum numeric value on the wire for payloadType.
      */
@@ -1666,6 +1934,10 @@ public final class TransactionOuterClass {
       return payloadType_;
     }
     /**
+     * <pre>
+     * Type of transaction payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
      * @return The payloadType.
      */
@@ -1842,6 +2114,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Request message for calculating transaction fee.
+     * </pre>
+     *
      * Protobuf type {@code pactus.CalculateFeeRequest}
      */
     public static final class Builder extends
@@ -2014,6 +2290,10 @@ public final class TransactionOuterClass {
 
       private long amount_ ;
       /**
+       * <pre>
+       * Transaction amount.
+       * </pre>
+       *
        * <code>int64 amount = 1 [json_name = "amount"];</code>
        * @return The amount.
        */
@@ -2022,6 +2302,10 @@ public final class TransactionOuterClass {
         return amount_;
       }
       /**
+       * <pre>
+       * Transaction amount.
+       * </pre>
+       *
        * <code>int64 amount = 1 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
@@ -2033,6 +2317,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction amount.
+       * </pre>
+       *
        * <code>int64 amount = 1 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
@@ -2045,6 +2333,10 @@ public final class TransactionOuterClass {
 
       private int payloadType_ = 0;
       /**
+       * <pre>
+       * Type of transaction payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
        * @return The enum numeric value on the wire for payloadType.
        */
@@ -2052,6 +2344,10 @@ public final class TransactionOuterClass {
         return payloadType_;
       }
       /**
+       * <pre>
+       * Type of transaction payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
        * @param value The enum numeric value on the wire for payloadType to set.
        * @return This builder for chaining.
@@ -2063,6 +2359,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Type of transaction payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
        * @return The payloadType.
        */
@@ -2073,6 +2373,10 @@ public final class TransactionOuterClass {
         return result == null ? pactus.transaction.TransactionOuterClass.PayloadType.UNRECOGNIZED : result;
       }
       /**
+       * <pre>
+       * Type of transaction payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
        * @param value The payloadType to set.
        * @return This builder for chaining.
@@ -2087,6 +2391,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Type of transaction payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
        * @return This builder for chaining.
        */
@@ -2165,12 +2473,20 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Calculated transaction fee.
+     * </pre>
+     *
      * <code>int64 fee = 1 [json_name = "fee"];</code>
      * @return The fee.
      */
     long getFee();
   }
   /**
+   * <pre>
+   * Response message containing the calculated transaction fee.
+   * </pre>
+   *
    * Protobuf type {@code pactus.CalculateFeeResponse}
    */
   public static final class CalculateFeeResponse extends
@@ -2213,6 +2529,10 @@ public final class TransactionOuterClass {
     public static final int FEE_FIELD_NUMBER = 1;
     private long fee_;
     /**
+     * <pre>
+     * Calculated transaction fee.
+     * </pre>
+     *
      * <code>int64 fee = 1 [json_name = "fee"];</code>
      * @return The fee.
      */
@@ -2378,6 +2698,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Response message containing the calculated transaction fee.
+     * </pre>
+     *
      * Protobuf type {@code pactus.CalculateFeeResponse}
      */
     public static final class Builder extends
@@ -2539,6 +2863,10 @@ public final class TransactionOuterClass {
 
       private long fee_ ;
       /**
+       * <pre>
+       * Calculated transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 1 [json_name = "fee"];</code>
        * @return The fee.
        */
@@ -2547,6 +2875,10 @@ public final class TransactionOuterClass {
         return fee_;
       }
       /**
+       * <pre>
+       * Calculated transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 1 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
@@ -2558,6 +2890,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Calculated transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 1 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
@@ -2636,12 +2972,20 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Signed raw transaction data.
+     * </pre>
+     *
      * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
      * @return The signedRawTransaction.
      */
     com.google.protobuf.ByteString getSignedRawTransaction();
   }
   /**
+   * <pre>
+   * Request message for broadcasting a signed transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.BroadcastTransactionRequest}
    */
   public static final class BroadcastTransactionRequest extends
@@ -2685,6 +3029,10 @@ public final class TransactionOuterClass {
     public static final int SIGNED_RAW_TRANSACTION_FIELD_NUMBER = 1;
     private com.google.protobuf.ByteString signedRawTransaction_;
     /**
+     * <pre>
+     * Signed raw transaction data.
+     * </pre>
+     *
      * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
      * @return The signedRawTransaction.
      */
@@ -2849,6 +3197,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Request message for broadcasting a signed transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.BroadcastTransactionRequest}
      */
     public static final class Builder extends
@@ -3010,6 +3362,10 @@ public final class TransactionOuterClass {
 
       private com.google.protobuf.ByteString signedRawTransaction_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Signed raw transaction data.
+       * </pre>
+       *
        * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
        * @return The signedRawTransaction.
        */
@@ -3018,6 +3374,10 @@ public final class TransactionOuterClass {
         return signedRawTransaction_;
       }
       /**
+       * <pre>
+       * Signed raw transaction data.
+       * </pre>
+       *
        * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
        * @param value The signedRawTransaction to set.
        * @return This builder for chaining.
@@ -3032,6 +3392,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Signed raw transaction data.
+       * </pre>
+       *
        * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
        * @return This builder for chaining.
        */
@@ -3110,12 +3474,20 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Transaction ID.
+     * </pre>
+     *
      * <code>bytes id = 2 [json_name = "id"];</code>
      * @return The id.
      */
     com.google.protobuf.ByteString getId();
   }
   /**
+   * <pre>
+   * Response message containing the ID of the broadcasted transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.BroadcastTransactionResponse}
    */
   public static final class BroadcastTransactionResponse extends
@@ -3159,6 +3531,10 @@ public final class TransactionOuterClass {
     public static final int ID_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString id_;
     /**
+     * <pre>
+     * Transaction ID.
+     * </pre>
+     *
      * <code>bytes id = 2 [json_name = "id"];</code>
      * @return The id.
      */
@@ -3323,6 +3699,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Response message containing the ID of the broadcasted transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.BroadcastTransactionResponse}
      */
     public static final class Builder extends
@@ -3484,6 +3864,10 @@ public final class TransactionOuterClass {
 
       private com.google.protobuf.ByteString id_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
        * <code>bytes id = 2 [json_name = "id"];</code>
        * @return The id.
        */
@@ -3492,6 +3876,10 @@ public final class TransactionOuterClass {
         return id_;
       }
       /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
        * <code>bytes id = 2 [json_name = "id"];</code>
        * @param value The id to set.
        * @return This builder for chaining.
@@ -3506,6 +3894,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
        * <code>bytes id = 2 [json_name = "id"];</code>
        * @return This builder for chaining.
        */
@@ -3584,17 +3976,29 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Lock time for the transaction.
+     * </pre>
+     *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
      * @return The lockTime.
      */
     int getLockTime();
 
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 2 [json_name = "sender"];</code>
      * @return The sender.
      */
     java.lang.String getSender();
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 2 [json_name = "sender"];</code>
      * @return The bytes for sender.
      */
@@ -3602,11 +4006,19 @@ public final class TransactionOuterClass {
         getSenderBytes();
 
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
      * @return The receiver.
      */
     java.lang.String getReceiver();
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
      * @return The bytes for receiver.
      */
@@ -3614,23 +4026,39 @@ public final class TransactionOuterClass {
         getReceiverBytes();
 
     /**
+     * <pre>
+     * Transaction amount.
+     * </pre>
+     *
      * <code>int64 amount = 4 [json_name = "amount"];</code>
      * @return The amount.
      */
     long getAmount();
 
     /**
+     * <pre>
+     * Transaction fee.
+     * </pre>
+     *
      * <code>int64 fee = 5 [json_name = "fee"];</code>
      * @return The fee.
      */
     long getFee();
 
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 6 [json_name = "memo"];</code>
      * @return The memo.
      */
     java.lang.String getMemo();
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 6 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
@@ -3638,6 +4066,10 @@ public final class TransactionOuterClass {
         getMemoBytes();
   }
   /**
+   * <pre>
+   * Request message for retrieving raw details of a transfer transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetRawTransferTransactionRequest}
    */
   public static final class GetRawTransferTransactionRequest extends
@@ -3683,6 +4115,10 @@ public final class TransactionOuterClass {
     public static final int LOCK_TIME_FIELD_NUMBER = 1;
     private int lockTime_;
     /**
+     * <pre>
+     * Lock time for the transaction.
+     * </pre>
+     *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
      * @return The lockTime.
      */
@@ -3694,6 +4130,10 @@ public final class TransactionOuterClass {
     public static final int SENDER_FIELD_NUMBER = 2;
     private volatile java.lang.Object sender_;
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 2 [json_name = "sender"];</code>
      * @return The sender.
      */
@@ -3711,6 +4151,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 2 [json_name = "sender"];</code>
      * @return The bytes for sender.
      */
@@ -3732,6 +4176,10 @@ public final class TransactionOuterClass {
     public static final int RECEIVER_FIELD_NUMBER = 3;
     private volatile java.lang.Object receiver_;
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
      * @return The receiver.
      */
@@ -3749,6 +4197,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
      * @return The bytes for receiver.
      */
@@ -3770,6 +4222,10 @@ public final class TransactionOuterClass {
     public static final int AMOUNT_FIELD_NUMBER = 4;
     private long amount_;
     /**
+     * <pre>
+     * Transaction amount.
+     * </pre>
+     *
      * <code>int64 amount = 4 [json_name = "amount"];</code>
      * @return The amount.
      */
@@ -3781,6 +4237,10 @@ public final class TransactionOuterClass {
     public static final int FEE_FIELD_NUMBER = 5;
     private long fee_;
     /**
+     * <pre>
+     * Transaction fee.
+     * </pre>
+     *
      * <code>int64 fee = 5 [json_name = "fee"];</code>
      * @return The fee.
      */
@@ -3792,6 +4252,10 @@ public final class TransactionOuterClass {
     public static final int MEMO_FIELD_NUMBER = 6;
     private volatile java.lang.Object memo_;
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 6 [json_name = "memo"];</code>
      * @return The memo.
      */
@@ -3809,6 +4273,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 6 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
@@ -4037,6 +4505,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Request message for retrieving raw details of a transfer transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetRawTransferTransactionRequest}
      */
     public static final class Builder extends
@@ -4256,6 +4728,10 @@ public final class TransactionOuterClass {
 
       private int lockTime_ ;
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
        * @return The lockTime.
        */
@@ -4264,6 +4740,10 @@ public final class TransactionOuterClass {
         return lockTime_;
       }
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
        * @param value The lockTime to set.
        * @return This builder for chaining.
@@ -4275,6 +4755,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
        * @return This builder for chaining.
        */
@@ -4287,6 +4771,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object sender_ = "";
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 2 [json_name = "sender"];</code>
        * @return The sender.
        */
@@ -4303,6 +4791,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 2 [json_name = "sender"];</code>
        * @return The bytes for sender.
        */
@@ -4320,6 +4812,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 2 [json_name = "sender"];</code>
        * @param value The sender to set.
        * @return This builder for chaining.
@@ -4335,6 +4831,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 2 [json_name = "sender"];</code>
        * @return This builder for chaining.
        */
@@ -4345,6 +4845,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 2 [json_name = "sender"];</code>
        * @param value The bytes for sender to set.
        * @return This builder for chaining.
@@ -4363,6 +4867,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object receiver_ = "";
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
        * @return The receiver.
        */
@@ -4379,6 +4887,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
        * @return The bytes for receiver.
        */
@@ -4396,6 +4908,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
        * @param value The receiver to set.
        * @return This builder for chaining.
@@ -4411,6 +4927,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
        * @return This builder for chaining.
        */
@@ -4421,6 +4941,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
        * @param value The bytes for receiver to set.
        * @return This builder for chaining.
@@ -4439,6 +4963,10 @@ public final class TransactionOuterClass {
 
       private long amount_ ;
       /**
+       * <pre>
+       * Transaction amount.
+       * </pre>
+       *
        * <code>int64 amount = 4 [json_name = "amount"];</code>
        * @return The amount.
        */
@@ -4447,6 +4975,10 @@ public final class TransactionOuterClass {
         return amount_;
       }
       /**
+       * <pre>
+       * Transaction amount.
+       * </pre>
+       *
        * <code>int64 amount = 4 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
@@ -4458,6 +4990,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction amount.
+       * </pre>
+       *
        * <code>int64 amount = 4 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
@@ -4470,6 +5006,10 @@ public final class TransactionOuterClass {
 
       private long fee_ ;
       /**
+       * <pre>
+       * Transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 5 [json_name = "fee"];</code>
        * @return The fee.
        */
@@ -4478,6 +5018,10 @@ public final class TransactionOuterClass {
         return fee_;
       }
       /**
+       * <pre>
+       * Transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 5 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
@@ -4489,6 +5033,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 5 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
@@ -4501,6 +5049,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object memo_ = "";
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 6 [json_name = "memo"];</code>
        * @return The memo.
        */
@@ -4517,6 +5069,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 6 [json_name = "memo"];</code>
        * @return The bytes for memo.
        */
@@ -4534,6 +5090,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 6 [json_name = "memo"];</code>
        * @param value The memo to set.
        * @return This builder for chaining.
@@ -4549,6 +5109,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 6 [json_name = "memo"];</code>
        * @return This builder for chaining.
        */
@@ -4559,6 +5123,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 6 [json_name = "memo"];</code>
        * @param value The bytes for memo to set.
        * @return This builder for chaining.
@@ -4643,17 +5211,29 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Lock time for the transaction.
+     * </pre>
+     *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
      * @return The lockTime.
      */
     int getLockTime();
 
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 2 [json_name = "sender"];</code>
      * @return The sender.
      */
     java.lang.String getSender();
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 2 [json_name = "sender"];</code>
      * @return The bytes for sender.
      */
@@ -4661,11 +5241,19 @@ public final class TransactionOuterClass {
         getSenderBytes();
 
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
      * @return The receiver.
      */
     java.lang.String getReceiver();
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
      * @return The bytes for receiver.
      */
@@ -4673,17 +5261,29 @@ public final class TransactionOuterClass {
         getReceiverBytes();
 
     /**
+     * <pre>
+     * Stake amount.
+     * </pre>
+     *
      * <code>int64 stake = 4 [json_name = "stake"];</code>
      * @return The stake.
      */
     long getStake();
 
     /**
+     * <pre>
+     * Public key of the validator.
+     * </pre>
+     *
      * <code>string public_key = 5 [json_name = "publicKey"];</code>
      * @return The publicKey.
      */
     java.lang.String getPublicKey();
     /**
+     * <pre>
+     * Public key of the validator.
+     * </pre>
+     *
      * <code>string public_key = 5 [json_name = "publicKey"];</code>
      * @return The bytes for publicKey.
      */
@@ -4691,17 +5291,29 @@ public final class TransactionOuterClass {
         getPublicKeyBytes();
 
     /**
+     * <pre>
+     * Transaction fee.
+     * </pre>
+     *
      * <code>int64 fee = 6 [json_name = "fee"];</code>
      * @return The fee.
      */
     long getFee();
 
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 7 [json_name = "memo"];</code>
      * @return The memo.
      */
     java.lang.String getMemo();
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 7 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
@@ -4709,6 +5321,10 @@ public final class TransactionOuterClass {
         getMemoBytes();
   }
   /**
+   * <pre>
+   * Request message for retrieving raw details of a bond transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetRawBondTransactionRequest}
    */
   public static final class GetRawBondTransactionRequest extends
@@ -4755,6 +5371,10 @@ public final class TransactionOuterClass {
     public static final int LOCK_TIME_FIELD_NUMBER = 1;
     private int lockTime_;
     /**
+     * <pre>
+     * Lock time for the transaction.
+     * </pre>
+     *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
      * @return The lockTime.
      */
@@ -4766,6 +5386,10 @@ public final class TransactionOuterClass {
     public static final int SENDER_FIELD_NUMBER = 2;
     private volatile java.lang.Object sender_;
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 2 [json_name = "sender"];</code>
      * @return The sender.
      */
@@ -4783,6 +5407,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 2 [json_name = "sender"];</code>
      * @return The bytes for sender.
      */
@@ -4804,6 +5432,10 @@ public final class TransactionOuterClass {
     public static final int RECEIVER_FIELD_NUMBER = 3;
     private volatile java.lang.Object receiver_;
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
      * @return The receiver.
      */
@@ -4821,6 +5453,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
      * @return The bytes for receiver.
      */
@@ -4842,6 +5478,10 @@ public final class TransactionOuterClass {
     public static final int STAKE_FIELD_NUMBER = 4;
     private long stake_;
     /**
+     * <pre>
+     * Stake amount.
+     * </pre>
+     *
      * <code>int64 stake = 4 [json_name = "stake"];</code>
      * @return The stake.
      */
@@ -4853,6 +5493,10 @@ public final class TransactionOuterClass {
     public static final int PUBLIC_KEY_FIELD_NUMBER = 5;
     private volatile java.lang.Object publicKey_;
     /**
+     * <pre>
+     * Public key of the validator.
+     * </pre>
+     *
      * <code>string public_key = 5 [json_name = "publicKey"];</code>
      * @return The publicKey.
      */
@@ -4870,6 +5514,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Public key of the validator.
+     * </pre>
+     *
      * <code>string public_key = 5 [json_name = "publicKey"];</code>
      * @return The bytes for publicKey.
      */
@@ -4891,6 +5539,10 @@ public final class TransactionOuterClass {
     public static final int FEE_FIELD_NUMBER = 6;
     private long fee_;
     /**
+     * <pre>
+     * Transaction fee.
+     * </pre>
+     *
      * <code>int64 fee = 6 [json_name = "fee"];</code>
      * @return The fee.
      */
@@ -4902,6 +5554,10 @@ public final class TransactionOuterClass {
     public static final int MEMO_FIELD_NUMBER = 7;
     private volatile java.lang.Object memo_;
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 7 [json_name = "memo"];</code>
      * @return The memo.
      */
@@ -4919,6 +5575,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 7 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
@@ -5157,6 +5817,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Request message for retrieving raw details of a bond transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetRawBondTransactionRequest}
      */
     public static final class Builder extends
@@ -5388,6 +6052,10 @@ public final class TransactionOuterClass {
 
       private int lockTime_ ;
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
        * @return The lockTime.
        */
@@ -5396,6 +6064,10 @@ public final class TransactionOuterClass {
         return lockTime_;
       }
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
        * @param value The lockTime to set.
        * @return This builder for chaining.
@@ -5407,6 +6079,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
        * @return This builder for chaining.
        */
@@ -5419,6 +6095,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object sender_ = "";
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 2 [json_name = "sender"];</code>
        * @return The sender.
        */
@@ -5435,6 +6115,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 2 [json_name = "sender"];</code>
        * @return The bytes for sender.
        */
@@ -5452,6 +6136,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 2 [json_name = "sender"];</code>
        * @param value The sender to set.
        * @return This builder for chaining.
@@ -5467,6 +6155,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 2 [json_name = "sender"];</code>
        * @return This builder for chaining.
        */
@@ -5477,6 +6169,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 2 [json_name = "sender"];</code>
        * @param value The bytes for sender to set.
        * @return This builder for chaining.
@@ -5495,6 +6191,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object receiver_ = "";
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
        * @return The receiver.
        */
@@ -5511,6 +6211,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
        * @return The bytes for receiver.
        */
@@ -5528,6 +6232,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
        * @param value The receiver to set.
        * @return This builder for chaining.
@@ -5543,6 +6251,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
        * @return This builder for chaining.
        */
@@ -5553,6 +6265,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
        * @param value The bytes for receiver to set.
        * @return This builder for chaining.
@@ -5571,6 +6287,10 @@ public final class TransactionOuterClass {
 
       private long stake_ ;
       /**
+       * <pre>
+       * Stake amount.
+       * </pre>
+       *
        * <code>int64 stake = 4 [json_name = "stake"];</code>
        * @return The stake.
        */
@@ -5579,6 +6299,10 @@ public final class TransactionOuterClass {
         return stake_;
       }
       /**
+       * <pre>
+       * Stake amount.
+       * </pre>
+       *
        * <code>int64 stake = 4 [json_name = "stake"];</code>
        * @param value The stake to set.
        * @return This builder for chaining.
@@ -5590,6 +6314,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Stake amount.
+       * </pre>
+       *
        * <code>int64 stake = 4 [json_name = "stake"];</code>
        * @return This builder for chaining.
        */
@@ -5602,6 +6330,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object publicKey_ = "";
       /**
+       * <pre>
+       * Public key of the validator.
+       * </pre>
+       *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
        * @return The publicKey.
        */
@@ -5618,6 +6350,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Public key of the validator.
+       * </pre>
+       *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
        * @return The bytes for publicKey.
        */
@@ -5635,6 +6371,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Public key of the validator.
+       * </pre>
+       *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
        * @param value The publicKey to set.
        * @return This builder for chaining.
@@ -5650,6 +6390,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Public key of the validator.
+       * </pre>
+       *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
        * @return This builder for chaining.
        */
@@ -5660,6 +6404,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Public key of the validator.
+       * </pre>
+       *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
        * @param value The bytes for publicKey to set.
        * @return This builder for chaining.
@@ -5678,6 +6426,10 @@ public final class TransactionOuterClass {
 
       private long fee_ ;
       /**
+       * <pre>
+       * Transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
        * @return The fee.
        */
@@ -5686,6 +6438,10 @@ public final class TransactionOuterClass {
         return fee_;
       }
       /**
+       * <pre>
+       * Transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
@@ -5697,6 +6453,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
@@ -5709,6 +6469,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object memo_ = "";
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 7 [json_name = "memo"];</code>
        * @return The memo.
        */
@@ -5725,6 +6489,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 7 [json_name = "memo"];</code>
        * @return The bytes for memo.
        */
@@ -5742,6 +6510,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 7 [json_name = "memo"];</code>
        * @param value The memo to set.
        * @return This builder for chaining.
@@ -5757,6 +6529,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 7 [json_name = "memo"];</code>
        * @return This builder for chaining.
        */
@@ -5767,6 +6543,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 7 [json_name = "memo"];</code>
        * @param value The bytes for memo to set.
        * @return This builder for chaining.
@@ -5851,17 +6631,29 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Lock time for the transaction.
+     * </pre>
+     *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
      * @return The lockTime.
      */
     int getLockTime();
 
     /**
+     * <pre>
+     * Address of the validator to unbond from.
+     * </pre>
+     *
      * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
      * @return The validatorAddress.
      */
     java.lang.String getValidatorAddress();
     /**
+     * <pre>
+     * Address of the validator to unbond from.
+     * </pre>
+     *
      * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
      * @return The bytes for validatorAddress.
      */
@@ -5869,11 +6661,19 @@ public final class TransactionOuterClass {
         getValidatorAddressBytes();
 
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 4 [json_name = "memo"];</code>
      * @return The memo.
      */
     java.lang.String getMemo();
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 4 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
@@ -5881,6 +6681,10 @@ public final class TransactionOuterClass {
         getMemoBytes();
   }
   /**
+   * <pre>
+   * Request message for retrieving raw details of an unbond transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetRawUnBondTransactionRequest}
    */
   public static final class GetRawUnBondTransactionRequest extends
@@ -5925,6 +6729,10 @@ public final class TransactionOuterClass {
     public static final int LOCK_TIME_FIELD_NUMBER = 1;
     private int lockTime_;
     /**
+     * <pre>
+     * Lock time for the transaction.
+     * </pre>
+     *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
      * @return The lockTime.
      */
@@ -5936,6 +6744,10 @@ public final class TransactionOuterClass {
     public static final int VALIDATOR_ADDRESS_FIELD_NUMBER = 3;
     private volatile java.lang.Object validatorAddress_;
     /**
+     * <pre>
+     * Address of the validator to unbond from.
+     * </pre>
+     *
      * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
      * @return The validatorAddress.
      */
@@ -5953,6 +6765,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address of the validator to unbond from.
+     * </pre>
+     *
      * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
      * @return The bytes for validatorAddress.
      */
@@ -5974,6 +6790,10 @@ public final class TransactionOuterClass {
     public static final int MEMO_FIELD_NUMBER = 4;
     private volatile java.lang.Object memo_;
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 4 [json_name = "memo"];</code>
      * @return The memo.
      */
@@ -5991,6 +6811,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 4 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
@@ -6185,6 +7009,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Request message for retrieving raw details of an unbond transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetRawUnBondTransactionRequest}
      */
     public static final class Builder extends
@@ -6370,6 +7198,10 @@ public final class TransactionOuterClass {
 
       private int lockTime_ ;
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
        * @return The lockTime.
        */
@@ -6378,6 +7210,10 @@ public final class TransactionOuterClass {
         return lockTime_;
       }
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
        * @param value The lockTime to set.
        * @return This builder for chaining.
@@ -6389,6 +7225,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
        * @return This builder for chaining.
        */
@@ -6401,6 +7241,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object validatorAddress_ = "";
       /**
+       * <pre>
+       * Address of the validator to unbond from.
+       * </pre>
+       *
        * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
        * @return The validatorAddress.
        */
@@ -6417,6 +7261,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the validator to unbond from.
+       * </pre>
+       *
        * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
        * @return The bytes for validatorAddress.
        */
@@ -6434,6 +7282,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the validator to unbond from.
+       * </pre>
+       *
        * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
        * @param value The validatorAddress to set.
        * @return This builder for chaining.
@@ -6449,6 +7301,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the validator to unbond from.
+       * </pre>
+       *
        * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
        * @return This builder for chaining.
        */
@@ -6459,6 +7315,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the validator to unbond from.
+       * </pre>
+       *
        * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
        * @param value The bytes for validatorAddress to set.
        * @return This builder for chaining.
@@ -6477,6 +7337,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object memo_ = "";
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 4 [json_name = "memo"];</code>
        * @return The memo.
        */
@@ -6493,6 +7357,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 4 [json_name = "memo"];</code>
        * @return The bytes for memo.
        */
@@ -6510,6 +7378,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 4 [json_name = "memo"];</code>
        * @param value The memo to set.
        * @return This builder for chaining.
@@ -6525,6 +7397,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 4 [json_name = "memo"];</code>
        * @return This builder for chaining.
        */
@@ -6535,6 +7411,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 4 [json_name = "memo"];</code>
        * @param value The bytes for memo to set.
        * @return This builder for chaining.
@@ -6619,17 +7499,29 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Lock time for the transaction.
+     * </pre>
+     *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
      * @return The lockTime.
      */
     int getLockTime();
 
     /**
+     * <pre>
+     * Address of the validator to withdraw from.
+     * </pre>
+     *
      * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
      * @return The validatorAddress.
      */
     java.lang.String getValidatorAddress();
     /**
+     * <pre>
+     * Address of the validator to withdraw from.
+     * </pre>
+     *
      * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
      * @return The bytes for validatorAddress.
      */
@@ -6637,11 +7529,19 @@ public final class TransactionOuterClass {
         getValidatorAddressBytes();
 
     /**
+     * <pre>
+     * Address of the account to withdraw to.
+     * </pre>
+     *
      * <code>string account_address = 3 [json_name = "accountAddress"];</code>
      * @return The accountAddress.
      */
     java.lang.String getAccountAddress();
     /**
+     * <pre>
+     * Address of the account to withdraw to.
+     * </pre>
+     *
      * <code>string account_address = 3 [json_name = "accountAddress"];</code>
      * @return The bytes for accountAddress.
      */
@@ -6649,23 +7549,39 @@ public final class TransactionOuterClass {
         getAccountAddressBytes();
 
     /**
+     * <pre>
+     * Transaction fee.
+     * </pre>
+     *
      * <code>int64 fee = 4 [json_name = "fee"];</code>
      * @return The fee.
      */
     long getFee();
 
     /**
+     * <pre>
+     * Withdrawal amount.
+     * </pre>
+     *
      * <code>int64 amount = 5 [json_name = "amount"];</code>
      * @return The amount.
      */
     long getAmount();
 
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 6 [json_name = "memo"];</code>
      * @return The memo.
      */
     java.lang.String getMemo();
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 6 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
@@ -6673,6 +7589,10 @@ public final class TransactionOuterClass {
         getMemoBytes();
   }
   /**
+   * <pre>
+   * Request message for retrieving raw details of a withdraw transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetRawWithdrawTransactionRequest}
    */
   public static final class GetRawWithdrawTransactionRequest extends
@@ -6718,6 +7638,10 @@ public final class TransactionOuterClass {
     public static final int LOCK_TIME_FIELD_NUMBER = 1;
     private int lockTime_;
     /**
+     * <pre>
+     * Lock time for the transaction.
+     * </pre>
+     *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
      * @return The lockTime.
      */
@@ -6729,6 +7653,10 @@ public final class TransactionOuterClass {
     public static final int VALIDATOR_ADDRESS_FIELD_NUMBER = 2;
     private volatile java.lang.Object validatorAddress_;
     /**
+     * <pre>
+     * Address of the validator to withdraw from.
+     * </pre>
+     *
      * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
      * @return The validatorAddress.
      */
@@ -6746,6 +7674,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address of the validator to withdraw from.
+     * </pre>
+     *
      * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
      * @return The bytes for validatorAddress.
      */
@@ -6767,6 +7699,10 @@ public final class TransactionOuterClass {
     public static final int ACCOUNT_ADDRESS_FIELD_NUMBER = 3;
     private volatile java.lang.Object accountAddress_;
     /**
+     * <pre>
+     * Address of the account to withdraw to.
+     * </pre>
+     *
      * <code>string account_address = 3 [json_name = "accountAddress"];</code>
      * @return The accountAddress.
      */
@@ -6784,6 +7720,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address of the account to withdraw to.
+     * </pre>
+     *
      * <code>string account_address = 3 [json_name = "accountAddress"];</code>
      * @return The bytes for accountAddress.
      */
@@ -6805,6 +7745,10 @@ public final class TransactionOuterClass {
     public static final int FEE_FIELD_NUMBER = 4;
     private long fee_;
     /**
+     * <pre>
+     * Transaction fee.
+     * </pre>
+     *
      * <code>int64 fee = 4 [json_name = "fee"];</code>
      * @return The fee.
      */
@@ -6816,6 +7760,10 @@ public final class TransactionOuterClass {
     public static final int AMOUNT_FIELD_NUMBER = 5;
     private long amount_;
     /**
+     * <pre>
+     * Withdrawal amount.
+     * </pre>
+     *
      * <code>int64 amount = 5 [json_name = "amount"];</code>
      * @return The amount.
      */
@@ -6827,6 +7775,10 @@ public final class TransactionOuterClass {
     public static final int MEMO_FIELD_NUMBER = 6;
     private volatile java.lang.Object memo_;
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 6 [json_name = "memo"];</code>
      * @return The memo.
      */
@@ -6844,6 +7796,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 6 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
@@ -7072,6 +8028,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Request message for retrieving raw details of a withdraw transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetRawWithdrawTransactionRequest}
      */
     public static final class Builder extends
@@ -7291,6 +8251,10 @@ public final class TransactionOuterClass {
 
       private int lockTime_ ;
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
        * @return The lockTime.
        */
@@ -7299,6 +8263,10 @@ public final class TransactionOuterClass {
         return lockTime_;
       }
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
        * @param value The lockTime to set.
        * @return This builder for chaining.
@@ -7310,6 +8278,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
        * @return This builder for chaining.
        */
@@ -7322,6 +8294,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object validatorAddress_ = "";
       /**
+       * <pre>
+       * Address of the validator to withdraw from.
+       * </pre>
+       *
        * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
        * @return The validatorAddress.
        */
@@ -7338,6 +8314,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the validator to withdraw from.
+       * </pre>
+       *
        * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
        * @return The bytes for validatorAddress.
        */
@@ -7355,6 +8335,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the validator to withdraw from.
+       * </pre>
+       *
        * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
        * @param value The validatorAddress to set.
        * @return This builder for chaining.
@@ -7370,6 +8354,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the validator to withdraw from.
+       * </pre>
+       *
        * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
        * @return This builder for chaining.
        */
@@ -7380,6 +8368,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the validator to withdraw from.
+       * </pre>
+       *
        * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
        * @param value The bytes for validatorAddress to set.
        * @return This builder for chaining.
@@ -7398,6 +8390,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object accountAddress_ = "";
       /**
+       * <pre>
+       * Address of the account to withdraw to.
+       * </pre>
+       *
        * <code>string account_address = 3 [json_name = "accountAddress"];</code>
        * @return The accountAddress.
        */
@@ -7414,6 +8410,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the account to withdraw to.
+       * </pre>
+       *
        * <code>string account_address = 3 [json_name = "accountAddress"];</code>
        * @return The bytes for accountAddress.
        */
@@ -7431,6 +8431,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the account to withdraw to.
+       * </pre>
+       *
        * <code>string account_address = 3 [json_name = "accountAddress"];</code>
        * @param value The accountAddress to set.
        * @return This builder for chaining.
@@ -7446,6 +8450,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the account to withdraw to.
+       * </pre>
+       *
        * <code>string account_address = 3 [json_name = "accountAddress"];</code>
        * @return This builder for chaining.
        */
@@ -7456,6 +8464,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the account to withdraw to.
+       * </pre>
+       *
        * <code>string account_address = 3 [json_name = "accountAddress"];</code>
        * @param value The bytes for accountAddress to set.
        * @return This builder for chaining.
@@ -7474,6 +8486,10 @@ public final class TransactionOuterClass {
 
       private long fee_ ;
       /**
+       * <pre>
+       * Transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 4 [json_name = "fee"];</code>
        * @return The fee.
        */
@@ -7482,6 +8498,10 @@ public final class TransactionOuterClass {
         return fee_;
       }
       /**
+       * <pre>
+       * Transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 4 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
@@ -7493,6 +8513,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 4 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
@@ -7505,6 +8529,10 @@ public final class TransactionOuterClass {
 
       private long amount_ ;
       /**
+       * <pre>
+       * Withdrawal amount.
+       * </pre>
+       *
        * <code>int64 amount = 5 [json_name = "amount"];</code>
        * @return The amount.
        */
@@ -7513,6 +8541,10 @@ public final class TransactionOuterClass {
         return amount_;
       }
       /**
+       * <pre>
+       * Withdrawal amount.
+       * </pre>
+       *
        * <code>int64 amount = 5 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
@@ -7524,6 +8556,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Withdrawal amount.
+       * </pre>
+       *
        * <code>int64 amount = 5 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
@@ -7536,6 +8572,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object memo_ = "";
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 6 [json_name = "memo"];</code>
        * @return The memo.
        */
@@ -7552,6 +8592,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 6 [json_name = "memo"];</code>
        * @return The bytes for memo.
        */
@@ -7569,6 +8613,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 6 [json_name = "memo"];</code>
        * @param value The memo to set.
        * @return This builder for chaining.
@@ -7584,6 +8632,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 6 [json_name = "memo"];</code>
        * @return This builder for chaining.
        */
@@ -7594,6 +8646,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 6 [json_name = "memo"];</code>
        * @param value The bytes for memo to set.
        * @return This builder for chaining.
@@ -7678,12 +8734,20 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Raw transaction data.
+     * </pre>
+     *
      * <code>bytes raw_transaction = 1 [json_name = "rawTransaction"];</code>
      * @return The rawTransaction.
      */
     com.google.protobuf.ByteString getRawTransaction();
   }
   /**
+   * <pre>
+   * Response message containing raw transaction data.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetRawTransactionResponse}
    */
   public static final class GetRawTransactionResponse extends
@@ -7727,6 +8791,10 @@ public final class TransactionOuterClass {
     public static final int RAW_TRANSACTION_FIELD_NUMBER = 1;
     private com.google.protobuf.ByteString rawTransaction_;
     /**
+     * <pre>
+     * Raw transaction data.
+     * </pre>
+     *
      * <code>bytes raw_transaction = 1 [json_name = "rawTransaction"];</code>
      * @return The rawTransaction.
      */
@@ -7891,6 +8959,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Response message containing raw transaction data.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetRawTransactionResponse}
      */
     public static final class Builder extends
@@ -8052,6 +9124,10 @@ public final class TransactionOuterClass {
 
       private com.google.protobuf.ByteString rawTransaction_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Raw transaction data.
+       * </pre>
+       *
        * <code>bytes raw_transaction = 1 [json_name = "rawTransaction"];</code>
        * @return The rawTransaction.
        */
@@ -8060,6 +9136,10 @@ public final class TransactionOuterClass {
         return rawTransaction_;
       }
       /**
+       * <pre>
+       * Raw transaction data.
+       * </pre>
+       *
        * <code>bytes raw_transaction = 1 [json_name = "rawTransaction"];</code>
        * @param value The rawTransaction to set.
        * @return This builder for chaining.
@@ -8074,6 +9154,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Raw transaction data.
+       * </pre>
+       *
        * <code>bytes raw_transaction = 1 [json_name = "rawTransaction"];</code>
        * @return This builder for chaining.
        */
@@ -8152,11 +9236,19 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 1 [json_name = "sender"];</code>
      * @return The sender.
      */
     java.lang.String getSender();
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 1 [json_name = "sender"];</code>
      * @return The bytes for sender.
      */
@@ -8164,11 +9256,19 @@ public final class TransactionOuterClass {
         getSenderBytes();
 
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
      * @return The receiver.
      */
     java.lang.String getReceiver();
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
      * @return The bytes for receiver.
      */
@@ -8176,12 +9276,20 @@ public final class TransactionOuterClass {
         getReceiverBytes();
 
     /**
+     * <pre>
+     * Transaction amount.
+     * </pre>
+     *
      * <code>int64 amount = 3 [json_name = "amount"];</code>
      * @return The amount.
      */
     long getAmount();
   }
   /**
+   * <pre>
+   * Payload for a transfer transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.PayloadTransfer}
    */
   public static final class PayloadTransfer extends
@@ -8226,6 +9334,10 @@ public final class TransactionOuterClass {
     public static final int SENDER_FIELD_NUMBER = 1;
     private volatile java.lang.Object sender_;
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 1 [json_name = "sender"];</code>
      * @return The sender.
      */
@@ -8243,6 +9355,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 1 [json_name = "sender"];</code>
      * @return The bytes for sender.
      */
@@ -8264,6 +9380,10 @@ public final class TransactionOuterClass {
     public static final int RECEIVER_FIELD_NUMBER = 2;
     private volatile java.lang.Object receiver_;
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
      * @return The receiver.
      */
@@ -8281,6 +9401,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
      * @return The bytes for receiver.
      */
@@ -8302,6 +9426,10 @@ public final class TransactionOuterClass {
     public static final int AMOUNT_FIELD_NUMBER = 3;
     private long amount_;
     /**
+     * <pre>
+     * Transaction amount.
+     * </pre>
+     *
      * <code>int64 amount = 3 [json_name = "amount"];</code>
      * @return The amount.
      */
@@ -8487,6 +9615,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Payload for a transfer transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.PayloadTransfer}
      */
     public static final class Builder extends
@@ -8672,6 +9804,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object sender_ = "";
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 1 [json_name = "sender"];</code>
        * @return The sender.
        */
@@ -8688,6 +9824,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 1 [json_name = "sender"];</code>
        * @return The bytes for sender.
        */
@@ -8705,6 +9845,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 1 [json_name = "sender"];</code>
        * @param value The sender to set.
        * @return This builder for chaining.
@@ -8720,6 +9864,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 1 [json_name = "sender"];</code>
        * @return This builder for chaining.
        */
@@ -8730,6 +9878,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 1 [json_name = "sender"];</code>
        * @param value The bytes for sender to set.
        * @return This builder for chaining.
@@ -8748,6 +9900,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object receiver_ = "";
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
        * @return The receiver.
        */
@@ -8764,6 +9920,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
        * @return The bytes for receiver.
        */
@@ -8781,6 +9941,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
        * @param value The receiver to set.
        * @return This builder for chaining.
@@ -8796,6 +9960,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
        * @return This builder for chaining.
        */
@@ -8806,6 +9974,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
        * @param value The bytes for receiver to set.
        * @return This builder for chaining.
@@ -8824,6 +9996,10 @@ public final class TransactionOuterClass {
 
       private long amount_ ;
       /**
+       * <pre>
+       * Transaction amount.
+       * </pre>
+       *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
        * @return The amount.
        */
@@ -8832,6 +10008,10 @@ public final class TransactionOuterClass {
         return amount_;
       }
       /**
+       * <pre>
+       * Transaction amount.
+       * </pre>
+       *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
@@ -8843,6 +10023,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction amount.
+       * </pre>
+       *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
@@ -8921,11 +10105,19 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 1 [json_name = "sender"];</code>
      * @return The sender.
      */
     java.lang.String getSender();
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 1 [json_name = "sender"];</code>
      * @return The bytes for sender.
      */
@@ -8933,11 +10125,19 @@ public final class TransactionOuterClass {
         getSenderBytes();
 
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
      * @return The receiver.
      */
     java.lang.String getReceiver();
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
      * @return The bytes for receiver.
      */
@@ -8945,12 +10145,20 @@ public final class TransactionOuterClass {
         getReceiverBytes();
 
     /**
+     * <pre>
+     * Stake amount.
+     * </pre>
+     *
      * <code>int64 stake = 3 [json_name = "stake"];</code>
      * @return The stake.
      */
     long getStake();
   }
   /**
+   * <pre>
+   * Payload for a bond transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.PayloadBond}
    */
   public static final class PayloadBond extends
@@ -8995,6 +10203,10 @@ public final class TransactionOuterClass {
     public static final int SENDER_FIELD_NUMBER = 1;
     private volatile java.lang.Object sender_;
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 1 [json_name = "sender"];</code>
      * @return The sender.
      */
@@ -9012,6 +10224,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Sender's address.
+     * </pre>
+     *
      * <code>string sender = 1 [json_name = "sender"];</code>
      * @return The bytes for sender.
      */
@@ -9033,6 +10249,10 @@ public final class TransactionOuterClass {
     public static final int RECEIVER_FIELD_NUMBER = 2;
     private volatile java.lang.Object receiver_;
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
      * @return The receiver.
      */
@@ -9050,6 +10270,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Receiver's address.
+     * </pre>
+     *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
      * @return The bytes for receiver.
      */
@@ -9071,6 +10295,10 @@ public final class TransactionOuterClass {
     public static final int STAKE_FIELD_NUMBER = 3;
     private long stake_;
     /**
+     * <pre>
+     * Stake amount.
+     * </pre>
+     *
      * <code>int64 stake = 3 [json_name = "stake"];</code>
      * @return The stake.
      */
@@ -9256,6 +10484,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Payload for a bond transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.PayloadBond}
      */
     public static final class Builder extends
@@ -9441,6 +10673,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object sender_ = "";
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 1 [json_name = "sender"];</code>
        * @return The sender.
        */
@@ -9457,6 +10693,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 1 [json_name = "sender"];</code>
        * @return The bytes for sender.
        */
@@ -9474,6 +10714,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 1 [json_name = "sender"];</code>
        * @param value The sender to set.
        * @return This builder for chaining.
@@ -9489,6 +10733,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 1 [json_name = "sender"];</code>
        * @return This builder for chaining.
        */
@@ -9499,6 +10747,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Sender's address.
+       * </pre>
+       *
        * <code>string sender = 1 [json_name = "sender"];</code>
        * @param value The bytes for sender to set.
        * @return This builder for chaining.
@@ -9517,6 +10769,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object receiver_ = "";
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
        * @return The receiver.
        */
@@ -9533,6 +10789,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
        * @return The bytes for receiver.
        */
@@ -9550,6 +10810,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
        * @param value The receiver to set.
        * @return This builder for chaining.
@@ -9565,6 +10829,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
        * @return This builder for chaining.
        */
@@ -9575,6 +10843,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Receiver's address.
+       * </pre>
+       *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
        * @param value The bytes for receiver to set.
        * @return This builder for chaining.
@@ -9593,6 +10865,10 @@ public final class TransactionOuterClass {
 
       private long stake_ ;
       /**
+       * <pre>
+       * Stake amount.
+       * </pre>
+       *
        * <code>int64 stake = 3 [json_name = "stake"];</code>
        * @return The stake.
        */
@@ -9601,6 +10877,10 @@ public final class TransactionOuterClass {
         return stake_;
       }
       /**
+       * <pre>
+       * Stake amount.
+       * </pre>
+       *
        * <code>int64 stake = 3 [json_name = "stake"];</code>
        * @param value The stake to set.
        * @return This builder for chaining.
@@ -9612,6 +10892,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Stake amount.
+       * </pre>
+       *
        * <code>int64 stake = 3 [json_name = "stake"];</code>
        * @return This builder for chaining.
        */
@@ -9690,11 +10974,19 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Address associated with the sortition.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The address.
      */
     java.lang.String getAddress();
     /**
+     * <pre>
+     * Address associated with the sortition.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -9702,12 +10994,20 @@ public final class TransactionOuterClass {
         getAddressBytes();
 
     /**
+     * <pre>
+     * Proof for the sortition.
+     * </pre>
+     *
      * <code>bytes proof = 2 [json_name = "proof"];</code>
      * @return The proof.
      */
     com.google.protobuf.ByteString getProof();
   }
   /**
+   * <pre>
+   * Payload for a sortition transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.PayloadSortition}
    */
   public static final class PayloadSortition extends
@@ -9752,6 +11052,10 @@ public final class TransactionOuterClass {
     public static final int ADDRESS_FIELD_NUMBER = 1;
     private volatile java.lang.Object address_;
     /**
+     * <pre>
+     * Address associated with the sortition.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The address.
      */
@@ -9769,6 +11073,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address associated with the sortition.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -9790,6 +11098,10 @@ public final class TransactionOuterClass {
     public static final int PROOF_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString proof_;
     /**
+     * <pre>
+     * Proof for the sortition.
+     * </pre>
+     *
      * <code>bytes proof = 2 [json_name = "proof"];</code>
      * @return The proof.
      */
@@ -9964,6 +11276,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Payload for a sortition transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.PayloadSortition}
      */
     public static final class Builder extends
@@ -10137,6 +11453,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object address_ = "";
       /**
+       * <pre>
+       * Address associated with the sortition.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return The address.
        */
@@ -10153,6 +11473,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address associated with the sortition.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return The bytes for address.
        */
@@ -10170,6 +11494,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address associated with the sortition.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @param value The address to set.
        * @return This builder for chaining.
@@ -10185,6 +11513,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address associated with the sortition.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return This builder for chaining.
        */
@@ -10195,6 +11527,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address associated with the sortition.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @param value The bytes for address to set.
        * @return This builder for chaining.
@@ -10213,6 +11549,10 @@ public final class TransactionOuterClass {
 
       private com.google.protobuf.ByteString proof_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Proof for the sortition.
+       * </pre>
+       *
        * <code>bytes proof = 2 [json_name = "proof"];</code>
        * @return The proof.
        */
@@ -10221,6 +11561,10 @@ public final class TransactionOuterClass {
         return proof_;
       }
       /**
+       * <pre>
+       * Proof for the sortition.
+       * </pre>
+       *
        * <code>bytes proof = 2 [json_name = "proof"];</code>
        * @param value The proof to set.
        * @return This builder for chaining.
@@ -10235,6 +11579,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Proof for the sortition.
+       * </pre>
+       *
        * <code>bytes proof = 2 [json_name = "proof"];</code>
        * @return This builder for chaining.
        */
@@ -10313,11 +11661,19 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Address of the validator to unbond from.
+     * </pre>
+     *
      * <code>string validator = 1 [json_name = "validator"];</code>
      * @return The validator.
      */
     java.lang.String getValidator();
     /**
+     * <pre>
+     * Address of the validator to unbond from.
+     * </pre>
+     *
      * <code>string validator = 1 [json_name = "validator"];</code>
      * @return The bytes for validator.
      */
@@ -10325,6 +11681,10 @@ public final class TransactionOuterClass {
         getValidatorBytes();
   }
   /**
+   * <pre>
+   * Payload for an unbond transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.PayloadUnbond}
    */
   public static final class PayloadUnbond extends
@@ -10368,6 +11728,10 @@ public final class TransactionOuterClass {
     public static final int VALIDATOR_FIELD_NUMBER = 1;
     private volatile java.lang.Object validator_;
     /**
+     * <pre>
+     * Address of the validator to unbond from.
+     * </pre>
+     *
      * <code>string validator = 1 [json_name = "validator"];</code>
      * @return The validator.
      */
@@ -10385,6 +11749,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address of the validator to unbond from.
+     * </pre>
+     *
      * <code>string validator = 1 [json_name = "validator"];</code>
      * @return The bytes for validator.
      */
@@ -10558,6 +11926,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Payload for an unbond transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.PayloadUnbond}
      */
     public static final class Builder extends
@@ -10720,6 +12092,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object validator_ = "";
       /**
+       * <pre>
+       * Address of the validator to unbond from.
+       * </pre>
+       *
        * <code>string validator = 1 [json_name = "validator"];</code>
        * @return The validator.
        */
@@ -10736,6 +12112,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the validator to unbond from.
+       * </pre>
+       *
        * <code>string validator = 1 [json_name = "validator"];</code>
        * @return The bytes for validator.
        */
@@ -10753,6 +12133,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the validator to unbond from.
+       * </pre>
+       *
        * <code>string validator = 1 [json_name = "validator"];</code>
        * @param value The validator to set.
        * @return This builder for chaining.
@@ -10768,6 +12152,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the validator to unbond from.
+       * </pre>
+       *
        * <code>string validator = 1 [json_name = "validator"];</code>
        * @return This builder for chaining.
        */
@@ -10778,6 +12166,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the validator to unbond from.
+       * </pre>
+       *
        * <code>string validator = 1 [json_name = "validator"];</code>
        * @param value The bytes for validator to set.
        * @return This builder for chaining.
@@ -10862,11 +12254,19 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Address to withdraw from.
+     * </pre>
+     *
      * <code>string from = 1 [json_name = "from"];</code>
      * @return The from.
      */
     java.lang.String getFrom();
     /**
+     * <pre>
+     * Address to withdraw from.
+     * </pre>
+     *
      * <code>string from = 1 [json_name = "from"];</code>
      * @return The bytes for from.
      */
@@ -10874,11 +12274,19 @@ public final class TransactionOuterClass {
         getFromBytes();
 
     /**
+     * <pre>
+     * Address to withdraw to.
+     * </pre>
+     *
      * <code>string to = 2 [json_name = "to"];</code>
      * @return The to.
      */
     java.lang.String getTo();
     /**
+     * <pre>
+     * Address to withdraw to.
+     * </pre>
+     *
      * <code>string to = 2 [json_name = "to"];</code>
      * @return The bytes for to.
      */
@@ -10886,12 +12294,20 @@ public final class TransactionOuterClass {
         getToBytes();
 
     /**
+     * <pre>
+     * Withdrawal amount.
+     * </pre>
+     *
      * <code>int64 amount = 3 [json_name = "amount"];</code>
      * @return The amount.
      */
     long getAmount();
   }
   /**
+   * <pre>
+   * Payload for a withdraw transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.PayloadWithdraw}
    */
   public static final class PayloadWithdraw extends
@@ -10936,6 +12352,10 @@ public final class TransactionOuterClass {
     public static final int FROM_FIELD_NUMBER = 1;
     private volatile java.lang.Object from_;
     /**
+     * <pre>
+     * Address to withdraw from.
+     * </pre>
+     *
      * <code>string from = 1 [json_name = "from"];</code>
      * @return The from.
      */
@@ -10953,6 +12373,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address to withdraw from.
+     * </pre>
+     *
      * <code>string from = 1 [json_name = "from"];</code>
      * @return The bytes for from.
      */
@@ -10974,6 +12398,10 @@ public final class TransactionOuterClass {
     public static final int TO_FIELD_NUMBER = 2;
     private volatile java.lang.Object to_;
     /**
+     * <pre>
+     * Address to withdraw to.
+     * </pre>
+     *
      * <code>string to = 2 [json_name = "to"];</code>
      * @return The to.
      */
@@ -10991,6 +12419,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address to withdraw to.
+     * </pre>
+     *
      * <code>string to = 2 [json_name = "to"];</code>
      * @return The bytes for to.
      */
@@ -11012,6 +12444,10 @@ public final class TransactionOuterClass {
     public static final int AMOUNT_FIELD_NUMBER = 3;
     private long amount_;
     /**
+     * <pre>
+     * Withdrawal amount.
+     * </pre>
+     *
      * <code>int64 amount = 3 [json_name = "amount"];</code>
      * @return The amount.
      */
@@ -11197,6 +12633,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Payload for a withdraw transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.PayloadWithdraw}
      */
     public static final class Builder extends
@@ -11382,6 +12822,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object from_ = "";
       /**
+       * <pre>
+       * Address to withdraw from.
+       * </pre>
+       *
        * <code>string from = 1 [json_name = "from"];</code>
        * @return The from.
        */
@@ -11398,6 +12842,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address to withdraw from.
+       * </pre>
+       *
        * <code>string from = 1 [json_name = "from"];</code>
        * @return The bytes for from.
        */
@@ -11415,6 +12863,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address to withdraw from.
+       * </pre>
+       *
        * <code>string from = 1 [json_name = "from"];</code>
        * @param value The from to set.
        * @return This builder for chaining.
@@ -11430,6 +12882,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address to withdraw from.
+       * </pre>
+       *
        * <code>string from = 1 [json_name = "from"];</code>
        * @return This builder for chaining.
        */
@@ -11440,6 +12896,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address to withdraw from.
+       * </pre>
+       *
        * <code>string from = 1 [json_name = "from"];</code>
        * @param value The bytes for from to set.
        * @return This builder for chaining.
@@ -11458,6 +12918,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object to_ = "";
       /**
+       * <pre>
+       * Address to withdraw to.
+       * </pre>
+       *
        * <code>string to = 2 [json_name = "to"];</code>
        * @return The to.
        */
@@ -11474,6 +12938,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address to withdraw to.
+       * </pre>
+       *
        * <code>string to = 2 [json_name = "to"];</code>
        * @return The bytes for to.
        */
@@ -11491,6 +12959,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address to withdraw to.
+       * </pre>
+       *
        * <code>string to = 2 [json_name = "to"];</code>
        * @param value The to to set.
        * @return This builder for chaining.
@@ -11506,6 +12978,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address to withdraw to.
+       * </pre>
+       *
        * <code>string to = 2 [json_name = "to"];</code>
        * @return This builder for chaining.
        */
@@ -11516,6 +12992,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address to withdraw to.
+       * </pre>
+       *
        * <code>string to = 2 [json_name = "to"];</code>
        * @param value The bytes for to to set.
        * @return This builder for chaining.
@@ -11534,6 +13014,10 @@ public final class TransactionOuterClass {
 
       private long amount_ ;
       /**
+       * <pre>
+       * Withdrawal amount.
+       * </pre>
+       *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
        * @return The amount.
        */
@@ -11542,6 +13026,10 @@ public final class TransactionOuterClass {
         return amount_;
       }
       /**
+       * <pre>
+       * Withdrawal amount.
+       * </pre>
+       *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
@@ -11553,6 +13041,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Withdrawal amount.
+       * </pre>
+       *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
@@ -11631,133 +13123,233 @@ public final class TransactionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Transaction ID.
+     * </pre>
+     *
      * <code>bytes id = 1 [json_name = "id"];</code>
      * @return The id.
      */
     com.google.protobuf.ByteString getId();
 
     /**
+     * <pre>
+     * Transaction data.
+     * </pre>
+     *
      * <code>bytes data = 2 [json_name = "data"];</code>
      * @return The data.
      */
     com.google.protobuf.ByteString getData();
 
     /**
+     * <pre>
+     * Transaction version.
+     * </pre>
+     *
      * <code>int32 version = 3 [json_name = "version"];</code>
      * @return The version.
      */
     int getVersion();
 
     /**
+     * <pre>
+     * Lock time for the transaction.
+     * </pre>
+     *
      * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
      * @return The lockTime.
      */
     int getLockTime();
 
     /**
+     * <pre>
+     * Transaction value.
+     * </pre>
+     *
      * <code>int64 value = 5 [json_name = "value"];</code>
      * @return The value.
      */
     long getValue();
 
     /**
+     * <pre>
+     * Transaction fee.
+     * </pre>
+     *
      * <code>int64 fee = 6 [json_name = "fee"];</code>
      * @return The fee.
      */
     long getFee();
 
     /**
+     * <pre>
+     * Type of transaction payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
      * @return The enum numeric value on the wire for payloadType.
      */
     int getPayloadTypeValue();
     /**
+     * <pre>
+     * Type of transaction payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
      * @return The payloadType.
      */
     pactus.transaction.TransactionOuterClass.PayloadType getPayloadType();
 
     /**
+     * <pre>
+     * Transfer payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
      * @return Whether the transfer field is set.
      */
     boolean hasTransfer();
     /**
+     * <pre>
+     * Transfer payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
      * @return The transfer.
      */
     pactus.transaction.TransactionOuterClass.PayloadTransfer getTransfer();
     /**
+     * <pre>
+     * Transfer payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
      */
     pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder getTransferOrBuilder();
 
     /**
+     * <pre>
+     * Bond payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
      * @return Whether the bond field is set.
      */
     boolean hasBond();
     /**
+     * <pre>
+     * Bond payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
      * @return The bond.
      */
     pactus.transaction.TransactionOuterClass.PayloadBond getBond();
     /**
+     * <pre>
+     * Bond payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
      */
     pactus.transaction.TransactionOuterClass.PayloadBondOrBuilder getBondOrBuilder();
 
     /**
+     * <pre>
+     * Sortition payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
      * @return Whether the sortition field is set.
      */
     boolean hasSortition();
     /**
+     * <pre>
+     * Sortition payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
      * @return The sortition.
      */
     pactus.transaction.TransactionOuterClass.PayloadSortition getSortition();
     /**
+     * <pre>
+     * Sortition payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
      */
     pactus.transaction.TransactionOuterClass.PayloadSortitionOrBuilder getSortitionOrBuilder();
 
     /**
+     * <pre>
+     * Unbond payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
      * @return Whether the unbond field is set.
      */
     boolean hasUnbond();
     /**
+     * <pre>
+     * Unbond payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
      * @return The unbond.
      */
     pactus.transaction.TransactionOuterClass.PayloadUnbond getUnbond();
     /**
+     * <pre>
+     * Unbond payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
      */
     pactus.transaction.TransactionOuterClass.PayloadUnbondOrBuilder getUnbondOrBuilder();
 
     /**
+     * <pre>
+     * Withdraw payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
      * @return Whether the withdraw field is set.
      */
     boolean hasWithdraw();
     /**
+     * <pre>
+     * Withdraw payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
      * @return The withdraw.
      */
     pactus.transaction.TransactionOuterClass.PayloadWithdraw getWithdraw();
     /**
+     * <pre>
+     * Withdraw payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
      */
     pactus.transaction.TransactionOuterClass.PayloadWithdrawOrBuilder getWithdrawOrBuilder();
 
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 8 [json_name = "memo"];</code>
      * @return The memo.
      */
     java.lang.String getMemo();
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 8 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
@@ -11765,11 +13357,19 @@ public final class TransactionOuterClass {
         getMemoBytes();
 
     /**
+     * <pre>
+     * Public key associated with the transaction.
+     * </pre>
+     *
      * <code>string public_key = 9 [json_name = "publicKey"];</code>
      * @return The publicKey.
      */
     java.lang.String getPublicKey();
     /**
+     * <pre>
+     * Public key associated with the transaction.
+     * </pre>
+     *
      * <code>string public_key = 9 [json_name = "publicKey"];</code>
      * @return The bytes for publicKey.
      */
@@ -11777,6 +13377,10 @@ public final class TransactionOuterClass {
         getPublicKeyBytes();
 
     /**
+     * <pre>
+     * Transaction signature.
+     * </pre>
+     *
      * <code>bytes signature = 10 [json_name = "signature"];</code>
      * @return The signature.
      */
@@ -11785,6 +13389,10 @@ public final class TransactionOuterClass {
     public pactus.transaction.TransactionOuterClass.TransactionInfo.PayloadCase getPayloadCase();
   }
   /**
+   * <pre>
+   * Information about a transaction.
+   * </pre>
+   *
    * Protobuf type {@code pactus.TransactionInfo}
    */
   public static final class TransactionInfo extends
@@ -11880,6 +13488,10 @@ public final class TransactionOuterClass {
     public static final int ID_FIELD_NUMBER = 1;
     private com.google.protobuf.ByteString id_;
     /**
+     * <pre>
+     * Transaction ID.
+     * </pre>
+     *
      * <code>bytes id = 1 [json_name = "id"];</code>
      * @return The id.
      */
@@ -11891,6 +13503,10 @@ public final class TransactionOuterClass {
     public static final int DATA_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString data_;
     /**
+     * <pre>
+     * Transaction data.
+     * </pre>
+     *
      * <code>bytes data = 2 [json_name = "data"];</code>
      * @return The data.
      */
@@ -11902,6 +13518,10 @@ public final class TransactionOuterClass {
     public static final int VERSION_FIELD_NUMBER = 3;
     private int version_;
     /**
+     * <pre>
+     * Transaction version.
+     * </pre>
+     *
      * <code>int32 version = 3 [json_name = "version"];</code>
      * @return The version.
      */
@@ -11913,6 +13533,10 @@ public final class TransactionOuterClass {
     public static final int LOCK_TIME_FIELD_NUMBER = 4;
     private int lockTime_;
     /**
+     * <pre>
+     * Lock time for the transaction.
+     * </pre>
+     *
      * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
      * @return The lockTime.
      */
@@ -11924,6 +13548,10 @@ public final class TransactionOuterClass {
     public static final int VALUE_FIELD_NUMBER = 5;
     private long value_;
     /**
+     * <pre>
+     * Transaction value.
+     * </pre>
+     *
      * <code>int64 value = 5 [json_name = "value"];</code>
      * @return The value.
      */
@@ -11935,6 +13563,10 @@ public final class TransactionOuterClass {
     public static final int FEE_FIELD_NUMBER = 6;
     private long fee_;
     /**
+     * <pre>
+     * Transaction fee.
+     * </pre>
+     *
      * <code>int64 fee = 6 [json_name = "fee"];</code>
      * @return The fee.
      */
@@ -11946,6 +13578,10 @@ public final class TransactionOuterClass {
     public static final int PAYLOADTYPE_FIELD_NUMBER = 7;
     private int payloadType_;
     /**
+     * <pre>
+     * Type of transaction payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
      * @return The enum numeric value on the wire for payloadType.
      */
@@ -11953,6 +13589,10 @@ public final class TransactionOuterClass {
       return payloadType_;
     }
     /**
+     * <pre>
+     * Type of transaction payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
      * @return The payloadType.
      */
@@ -11964,6 +13604,10 @@ public final class TransactionOuterClass {
 
     public static final int TRANSFER_FIELD_NUMBER = 30;
     /**
+     * <pre>
+     * Transfer payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
      * @return Whether the transfer field is set.
      */
@@ -11972,6 +13616,10 @@ public final class TransactionOuterClass {
       return payloadCase_ == 30;
     }
     /**
+     * <pre>
+     * Transfer payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
      * @return The transfer.
      */
@@ -11983,6 +13631,10 @@ public final class TransactionOuterClass {
       return pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
     }
     /**
+     * <pre>
+     * Transfer payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
      */
     @java.lang.Override
@@ -11995,6 +13647,10 @@ public final class TransactionOuterClass {
 
     public static final int BOND_FIELD_NUMBER = 31;
     /**
+     * <pre>
+     * Bond payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
      * @return Whether the bond field is set.
      */
@@ -12003,6 +13659,10 @@ public final class TransactionOuterClass {
       return payloadCase_ == 31;
     }
     /**
+     * <pre>
+     * Bond payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
      * @return The bond.
      */
@@ -12014,6 +13674,10 @@ public final class TransactionOuterClass {
       return pactus.transaction.TransactionOuterClass.PayloadBond.getDefaultInstance();
     }
     /**
+     * <pre>
+     * Bond payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
      */
     @java.lang.Override
@@ -12026,6 +13690,10 @@ public final class TransactionOuterClass {
 
     public static final int SORTITION_FIELD_NUMBER = 32;
     /**
+     * <pre>
+     * Sortition payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
      * @return Whether the sortition field is set.
      */
@@ -12034,6 +13702,10 @@ public final class TransactionOuterClass {
       return payloadCase_ == 32;
     }
     /**
+     * <pre>
+     * Sortition payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
      * @return The sortition.
      */
@@ -12045,6 +13717,10 @@ public final class TransactionOuterClass {
       return pactus.transaction.TransactionOuterClass.PayloadSortition.getDefaultInstance();
     }
     /**
+     * <pre>
+     * Sortition payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
      */
     @java.lang.Override
@@ -12057,6 +13733,10 @@ public final class TransactionOuterClass {
 
     public static final int UNBOND_FIELD_NUMBER = 33;
     /**
+     * <pre>
+     * Unbond payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
      * @return Whether the unbond field is set.
      */
@@ -12065,6 +13745,10 @@ public final class TransactionOuterClass {
       return payloadCase_ == 33;
     }
     /**
+     * <pre>
+     * Unbond payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
      * @return The unbond.
      */
@@ -12076,6 +13760,10 @@ public final class TransactionOuterClass {
       return pactus.transaction.TransactionOuterClass.PayloadUnbond.getDefaultInstance();
     }
     /**
+     * <pre>
+     * Unbond payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
      */
     @java.lang.Override
@@ -12088,6 +13776,10 @@ public final class TransactionOuterClass {
 
     public static final int WITHDRAW_FIELD_NUMBER = 34;
     /**
+     * <pre>
+     * Withdraw payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
      * @return Whether the withdraw field is set.
      */
@@ -12096,6 +13788,10 @@ public final class TransactionOuterClass {
       return payloadCase_ == 34;
     }
     /**
+     * <pre>
+     * Withdraw payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
      * @return The withdraw.
      */
@@ -12107,6 +13803,10 @@ public final class TransactionOuterClass {
       return pactus.transaction.TransactionOuterClass.PayloadWithdraw.getDefaultInstance();
     }
     /**
+     * <pre>
+     * Withdraw payload.
+     * </pre>
+     *
      * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
      */
     @java.lang.Override
@@ -12120,6 +13820,10 @@ public final class TransactionOuterClass {
     public static final int MEMO_FIELD_NUMBER = 8;
     private volatile java.lang.Object memo_;
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 8 [json_name = "memo"];</code>
      * @return The memo.
      */
@@ -12137,6 +13841,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Transaction memo.
+     * </pre>
+     *
      * <code>string memo = 8 [json_name = "memo"];</code>
      * @return The bytes for memo.
      */
@@ -12158,6 +13866,10 @@ public final class TransactionOuterClass {
     public static final int PUBLIC_KEY_FIELD_NUMBER = 9;
     private volatile java.lang.Object publicKey_;
     /**
+     * <pre>
+     * Public key associated with the transaction.
+     * </pre>
+     *
      * <code>string public_key = 9 [json_name = "publicKey"];</code>
      * @return The publicKey.
      */
@@ -12175,6 +13887,10 @@ public final class TransactionOuterClass {
       }
     }
     /**
+     * <pre>
+     * Public key associated with the transaction.
+     * </pre>
+     *
      * <code>string public_key = 9 [json_name = "publicKey"];</code>
      * @return The bytes for publicKey.
      */
@@ -12196,6 +13912,10 @@ public final class TransactionOuterClass {
     public static final int SIGNATURE_FIELD_NUMBER = 10;
     private com.google.protobuf.ByteString signature_;
     /**
+     * <pre>
+     * Transaction signature.
+     * </pre>
+     *
      * <code>bytes signature = 10 [json_name = "signature"];</code>
      * @return The signature.
      */
@@ -12542,6 +14262,10 @@ public final class TransactionOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Information about a transaction.
+     * </pre>
+     *
      * Protobuf type {@code pactus.TransactionInfo}
      */
     public static final class Builder extends
@@ -12932,6 +14656,10 @@ public final class TransactionOuterClass {
 
       private com.google.protobuf.ByteString id_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
        * <code>bytes id = 1 [json_name = "id"];</code>
        * @return The id.
        */
@@ -12940,6 +14668,10 @@ public final class TransactionOuterClass {
         return id_;
       }
       /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
        * <code>bytes id = 1 [json_name = "id"];</code>
        * @param value The id to set.
        * @return This builder for chaining.
@@ -12954,6 +14686,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
        * <code>bytes id = 1 [json_name = "id"];</code>
        * @return This builder for chaining.
        */
@@ -12966,6 +14702,10 @@ public final class TransactionOuterClass {
 
       private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Transaction data.
+       * </pre>
+       *
        * <code>bytes data = 2 [json_name = "data"];</code>
        * @return The data.
        */
@@ -12974,6 +14714,10 @@ public final class TransactionOuterClass {
         return data_;
       }
       /**
+       * <pre>
+       * Transaction data.
+       * </pre>
+       *
        * <code>bytes data = 2 [json_name = "data"];</code>
        * @param value The data to set.
        * @return This builder for chaining.
@@ -12988,6 +14732,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction data.
+       * </pre>
+       *
        * <code>bytes data = 2 [json_name = "data"];</code>
        * @return This builder for chaining.
        */
@@ -13000,6 +14748,10 @@ public final class TransactionOuterClass {
 
       private int version_ ;
       /**
+       * <pre>
+       * Transaction version.
+       * </pre>
+       *
        * <code>int32 version = 3 [json_name = "version"];</code>
        * @return The version.
        */
@@ -13008,6 +14760,10 @@ public final class TransactionOuterClass {
         return version_;
       }
       /**
+       * <pre>
+       * Transaction version.
+       * </pre>
+       *
        * <code>int32 version = 3 [json_name = "version"];</code>
        * @param value The version to set.
        * @return This builder for chaining.
@@ -13019,6 +14775,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction version.
+       * </pre>
+       *
        * <code>int32 version = 3 [json_name = "version"];</code>
        * @return This builder for chaining.
        */
@@ -13031,6 +14791,10 @@ public final class TransactionOuterClass {
 
       private int lockTime_ ;
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
        * @return The lockTime.
        */
@@ -13039,6 +14803,10 @@ public final class TransactionOuterClass {
         return lockTime_;
       }
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
        * @param value The lockTime to set.
        * @return This builder for chaining.
@@ -13050,6 +14818,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Lock time for the transaction.
+       * </pre>
+       *
        * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
        * @return This builder for chaining.
        */
@@ -13062,6 +14834,10 @@ public final class TransactionOuterClass {
 
       private long value_ ;
       /**
+       * <pre>
+       * Transaction value.
+       * </pre>
+       *
        * <code>int64 value = 5 [json_name = "value"];</code>
        * @return The value.
        */
@@ -13070,6 +14846,10 @@ public final class TransactionOuterClass {
         return value_;
       }
       /**
+       * <pre>
+       * Transaction value.
+       * </pre>
+       *
        * <code>int64 value = 5 [json_name = "value"];</code>
        * @param value The value to set.
        * @return This builder for chaining.
@@ -13081,6 +14861,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction value.
+       * </pre>
+       *
        * <code>int64 value = 5 [json_name = "value"];</code>
        * @return This builder for chaining.
        */
@@ -13093,6 +14877,10 @@ public final class TransactionOuterClass {
 
       private long fee_ ;
       /**
+       * <pre>
+       * Transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
        * @return The fee.
        */
@@ -13101,6 +14889,10 @@ public final class TransactionOuterClass {
         return fee_;
       }
       /**
+       * <pre>
+       * Transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
@@ -13112,6 +14904,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction fee.
+       * </pre>
+       *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
@@ -13124,6 +14920,10 @@ public final class TransactionOuterClass {
 
       private int payloadType_ = 0;
       /**
+       * <pre>
+       * Type of transaction payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
        * @return The enum numeric value on the wire for payloadType.
        */
@@ -13131,6 +14931,10 @@ public final class TransactionOuterClass {
         return payloadType_;
       }
       /**
+       * <pre>
+       * Type of transaction payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
        * @param value The enum numeric value on the wire for payloadType to set.
        * @return This builder for chaining.
@@ -13142,6 +14946,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Type of transaction payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
        * @return The payloadType.
        */
@@ -13152,6 +14960,10 @@ public final class TransactionOuterClass {
         return result == null ? pactus.transaction.TransactionOuterClass.PayloadType.UNRECOGNIZED : result;
       }
       /**
+       * <pre>
+       * Type of transaction payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
        * @param value The payloadType to set.
        * @return This builder for chaining.
@@ -13166,6 +14978,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Type of transaction payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
        * @return This builder for chaining.
        */
@@ -13179,6 +14995,10 @@ public final class TransactionOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.PayloadTransfer, pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder, pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder> transferBuilder_;
       /**
+       * <pre>
+       * Transfer payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        * @return Whether the transfer field is set.
        */
@@ -13187,6 +15007,10 @@ public final class TransactionOuterClass {
         return payloadCase_ == 30;
       }
       /**
+       * <pre>
+       * Transfer payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        * @return The transfer.
        */
@@ -13205,6 +15029,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Transfer payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
       public Builder setTransfer(pactus.transaction.TransactionOuterClass.PayloadTransfer value) {
@@ -13221,6 +15049,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transfer payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
       public Builder setTransfer(
@@ -13235,6 +15067,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transfer payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
       public Builder mergeTransfer(pactus.transaction.TransactionOuterClass.PayloadTransfer value) {
@@ -13258,6 +15094,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transfer payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
       public Builder clearTransfer() {
@@ -13277,12 +15117,20 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transfer payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
       public pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder getTransferBuilder() {
         return getTransferFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * Transfer payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
       @java.lang.Override
@@ -13297,6 +15145,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Transfer payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -13321,6 +15173,10 @@ public final class TransactionOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.PayloadBond, pactus.transaction.TransactionOuterClass.PayloadBond.Builder, pactus.transaction.TransactionOuterClass.PayloadBondOrBuilder> bondBuilder_;
       /**
+       * <pre>
+       * Bond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
        * @return Whether the bond field is set.
        */
@@ -13329,6 +15185,10 @@ public final class TransactionOuterClass {
         return payloadCase_ == 31;
       }
       /**
+       * <pre>
+       * Bond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
        * @return The bond.
        */
@@ -13347,6 +15207,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Bond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
        */
       public Builder setBond(pactus.transaction.TransactionOuterClass.PayloadBond value) {
@@ -13363,6 +15227,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Bond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
        */
       public Builder setBond(
@@ -13377,6 +15245,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Bond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
        */
       public Builder mergeBond(pactus.transaction.TransactionOuterClass.PayloadBond value) {
@@ -13400,6 +15272,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Bond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
        */
       public Builder clearBond() {
@@ -13419,12 +15295,20 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Bond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
        */
       public pactus.transaction.TransactionOuterClass.PayloadBond.Builder getBondBuilder() {
         return getBondFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * Bond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
        */
       @java.lang.Override
@@ -13439,6 +15323,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Bond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -13463,6 +15351,10 @@ public final class TransactionOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.PayloadSortition, pactus.transaction.TransactionOuterClass.PayloadSortition.Builder, pactus.transaction.TransactionOuterClass.PayloadSortitionOrBuilder> sortitionBuilder_;
       /**
+       * <pre>
+       * Sortition payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
        * @return Whether the sortition field is set.
        */
@@ -13471,6 +15363,10 @@ public final class TransactionOuterClass {
         return payloadCase_ == 32;
       }
       /**
+       * <pre>
+       * Sortition payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
        * @return The sortition.
        */
@@ -13489,6 +15385,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Sortition payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
        */
       public Builder setSortition(pactus.transaction.TransactionOuterClass.PayloadSortition value) {
@@ -13505,6 +15405,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Sortition payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
        */
       public Builder setSortition(
@@ -13519,6 +15423,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Sortition payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
        */
       public Builder mergeSortition(pactus.transaction.TransactionOuterClass.PayloadSortition value) {
@@ -13542,6 +15450,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Sortition payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
        */
       public Builder clearSortition() {
@@ -13561,12 +15473,20 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Sortition payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
        */
       public pactus.transaction.TransactionOuterClass.PayloadSortition.Builder getSortitionBuilder() {
         return getSortitionFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * Sortition payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
        */
       @java.lang.Override
@@ -13581,6 +15501,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Sortition payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -13605,6 +15529,10 @@ public final class TransactionOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.PayloadUnbond, pactus.transaction.TransactionOuterClass.PayloadUnbond.Builder, pactus.transaction.TransactionOuterClass.PayloadUnbondOrBuilder> unbondBuilder_;
       /**
+       * <pre>
+       * Unbond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
        * @return Whether the unbond field is set.
        */
@@ -13613,6 +15541,10 @@ public final class TransactionOuterClass {
         return payloadCase_ == 33;
       }
       /**
+       * <pre>
+       * Unbond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
        * @return The unbond.
        */
@@ -13631,6 +15563,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Unbond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
        */
       public Builder setUnbond(pactus.transaction.TransactionOuterClass.PayloadUnbond value) {
@@ -13647,6 +15583,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Unbond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
        */
       public Builder setUnbond(
@@ -13661,6 +15601,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Unbond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
        */
       public Builder mergeUnbond(pactus.transaction.TransactionOuterClass.PayloadUnbond value) {
@@ -13684,6 +15628,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Unbond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
        */
       public Builder clearUnbond() {
@@ -13703,12 +15651,20 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Unbond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
        */
       public pactus.transaction.TransactionOuterClass.PayloadUnbond.Builder getUnbondBuilder() {
         return getUnbondFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * Unbond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
        */
       @java.lang.Override
@@ -13723,6 +15679,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Unbond payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -13747,6 +15707,10 @@ public final class TransactionOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.PayloadWithdraw, pactus.transaction.TransactionOuterClass.PayloadWithdraw.Builder, pactus.transaction.TransactionOuterClass.PayloadWithdrawOrBuilder> withdrawBuilder_;
       /**
+       * <pre>
+       * Withdraw payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
        * @return Whether the withdraw field is set.
        */
@@ -13755,6 +15719,10 @@ public final class TransactionOuterClass {
         return payloadCase_ == 34;
       }
       /**
+       * <pre>
+       * Withdraw payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
        * @return The withdraw.
        */
@@ -13773,6 +15741,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Withdraw payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
        */
       public Builder setWithdraw(pactus.transaction.TransactionOuterClass.PayloadWithdraw value) {
@@ -13789,6 +15761,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Withdraw payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
        */
       public Builder setWithdraw(
@@ -13803,6 +15779,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Withdraw payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
        */
       public Builder mergeWithdraw(pactus.transaction.TransactionOuterClass.PayloadWithdraw value) {
@@ -13826,6 +15806,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Withdraw payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
        */
       public Builder clearWithdraw() {
@@ -13845,12 +15829,20 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Withdraw payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
        */
       public pactus.transaction.TransactionOuterClass.PayloadWithdraw.Builder getWithdrawBuilder() {
         return getWithdrawFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * Withdraw payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
        */
       @java.lang.Override
@@ -13865,6 +15857,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Withdraw payload.
+       * </pre>
+       *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -13888,6 +15884,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object memo_ = "";
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 8 [json_name = "memo"];</code>
        * @return The memo.
        */
@@ -13904,6 +15904,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 8 [json_name = "memo"];</code>
        * @return The bytes for memo.
        */
@@ -13921,6 +15925,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 8 [json_name = "memo"];</code>
        * @param value The memo to set.
        * @return This builder for chaining.
@@ -13936,6 +15944,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 8 [json_name = "memo"];</code>
        * @return This builder for chaining.
        */
@@ -13946,6 +15958,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction memo.
+       * </pre>
+       *
        * <code>string memo = 8 [json_name = "memo"];</code>
        * @param value The bytes for memo to set.
        * @return This builder for chaining.
@@ -13964,6 +15980,10 @@ public final class TransactionOuterClass {
 
       private java.lang.Object publicKey_ = "";
       /**
+       * <pre>
+       * Public key associated with the transaction.
+       * </pre>
+       *
        * <code>string public_key = 9 [json_name = "publicKey"];</code>
        * @return The publicKey.
        */
@@ -13980,6 +16000,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Public key associated with the transaction.
+       * </pre>
+       *
        * <code>string public_key = 9 [json_name = "publicKey"];</code>
        * @return The bytes for publicKey.
        */
@@ -13997,6 +16021,10 @@ public final class TransactionOuterClass {
         }
       }
       /**
+       * <pre>
+       * Public key associated with the transaction.
+       * </pre>
+       *
        * <code>string public_key = 9 [json_name = "publicKey"];</code>
        * @param value The publicKey to set.
        * @return This builder for chaining.
@@ -14012,6 +16040,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Public key associated with the transaction.
+       * </pre>
+       *
        * <code>string public_key = 9 [json_name = "publicKey"];</code>
        * @return This builder for chaining.
        */
@@ -14022,6 +16054,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Public key associated with the transaction.
+       * </pre>
+       *
        * <code>string public_key = 9 [json_name = "publicKey"];</code>
        * @param value The bytes for publicKey to set.
        * @return This builder for chaining.
@@ -14040,6 +16076,10 @@ public final class TransactionOuterClass {
 
       private com.google.protobuf.ByteString signature_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Transaction signature.
+       * </pre>
+       *
        * <code>bytes signature = 10 [json_name = "signature"];</code>
        * @return The signature.
        */
@@ -14048,6 +16088,10 @@ public final class TransactionOuterClass {
         return signature_;
       }
       /**
+       * <pre>
+       * Transaction signature.
+       * </pre>
+       *
        * <code>bytes signature = 10 [json_name = "signature"];</code>
        * @param value The signature to set.
        * @return This builder for chaining.
@@ -14062,6 +16106,10 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Transaction signature.
+       * </pre>
+       *
        * <code>bytes signature = 10 [json_name = "signature"];</code>
        * @return This builder for chaining.
        */
