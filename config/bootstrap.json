@@ -214,5 +214,11 @@
         "email": "kiritovn14788@gmail.com",
         "website": "",
         "address": "/ip4/65.21.69.53/tcp/21888/p2p/12D3KooWQ1izUE5jcmMyjmxRdb2CmASe8Nfn81UL2G5rYjptC2RV"
+    },
+    {
+        "name": "NodeOps",
+        "email": "admin@nodeops.dev",
+        "website": "https://nodeops.dev/",
+        "address": "/ip4/154.38.187.40/tcp/21888/p2p/12D3KooWQyt7JCyhhnZ8jyT1vso4GGYVbpJhoXJy5KRpnqa8DmPg"
     }
 ]
