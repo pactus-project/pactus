@@ -20,6 +20,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Request message for retrieving overall network information.
 type GetNetworkInfoRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -58,18 +59,19 @@ func (*GetNetworkInfoRequest) Descriptor() ([]byte, []int) {
 	return file_network_proto_rawDescGZIP(), []int{0}
 }
 
+// Response message containing information about the overall network.
 type GetNetworkInfoResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	NetworkName         string            `protobuf:"bytes,1,opt,name=network_name,json=networkName,proto3" json:"network_name,omitempty"`
-	TotalSentBytes      uint32            `protobuf:"varint,2,opt,name=total_sent_bytes,json=totalSentBytes,proto3" json:"total_sent_bytes,omitempty"`
-	TotalReceivedBytes  uint32            `protobuf:"varint,3,opt,name=total_received_bytes,json=totalReceivedBytes,proto3" json:"total_received_bytes,omitempty"`
-	ConnectedPeersCount uint32            `protobuf:"varint,4,opt,name=connected_peers_count,json=connectedPeersCount,proto3" json:"connected_peers_count,omitempty"`
-	ConnectedPeers      []*PeerInfo       `protobuf:"bytes,5,rep,name=connected_peers,json=connectedPeers,proto3" json:"connected_peers,omitempty"`
-	SentBytes           map[uint32]uint64 `protobuf:"bytes,6,rep,name=sent_bytes,json=sentBytes,proto3" json:"sent_bytes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	ReceivedBytes       map[uint32]uint64 `protobuf:"bytes,7,rep,name=received_bytes,json=receivedBytes,proto3" json:"received_bytes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	NetworkName         string            `protobuf:"bytes,1,opt,name=network_name,json=networkName,proto3" json:"network_name,omitempty"`                                                                                                 // Name of the network.
+	TotalSentBytes      uint32            `protobuf:"varint,2,opt,name=total_sent_bytes,json=totalSentBytes,proto3" json:"total_sent_bytes,omitempty"`                                                                                     // Total bytes sent across the network.
+	TotalReceivedBytes  uint32            `protobuf:"varint,3,opt,name=total_received_bytes,json=totalReceivedBytes,proto3" json:"total_received_bytes,omitempty"`                                                                         // Total bytes received across the network.
+	ConnectedPeersCount uint32            `protobuf:"varint,4,opt,name=connected_peers_count,json=connectedPeersCount,proto3" json:"connected_peers_count,omitempty"`                                                                      // Number of connected peers.
+	ConnectedPeers      []*PeerInfo       `protobuf:"bytes,5,rep,name=connected_peers,json=connectedPeers,proto3" json:"connected_peers,omitempty"`                                                                                        // List of connected peers.
+	SentBytes           map[uint32]uint64 `protobuf:"bytes,6,rep,name=sent_bytes,json=sentBytes,proto3" json:"sent_bytes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`             // Bytes sent per peer ID.
+	ReceivedBytes       map[uint32]uint64 `protobuf:"bytes,7,rep,name=received_bytes,json=receivedBytes,proto3" json:"received_bytes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"` // Bytes received per peer ID.
 }
 
 func (x *GetNetworkInfoResponse) Reset() {
@@ -153,6 +155,7 @@ func (x *GetNetworkInfoResponse) GetReceivedBytes() map[uint32]uint64 {
 	return nil
 }
 
+// Request message for retrieving information about a specific node in the network.
 type GetNodeInfoRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -191,20 +194,21 @@ func (*GetNodeInfoRequest) Descriptor() ([]byte, []int) {
 	return file_network_proto_rawDescGZIP(), []int{2}
 }
 
+// Response message containing information about a specific node in the network.
 type GetNodeInfoResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Moniker       string   `protobuf:"bytes,1,opt,name=moniker,proto3" json:"moniker,omitempty"`
-	Agent         string   `protobuf:"bytes,2,opt,name=agent,proto3" json:"agent,omitempty"`
-	PeerId        []byte   `protobuf:"bytes,3,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`
-	StartedAt     uint64   `protobuf:"varint,4,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
-	Reachability  string   `protobuf:"bytes,5,opt,name=reachability,proto3" json:"reachability,omitempty"`
-	Services      []int32  `protobuf:"varint,6,rep,packed,name=services,proto3" json:"services,omitempty"`
-	ServicesNames []string `protobuf:"bytes,7,rep,name=services_names,json=servicesNames,proto3" json:"services_names,omitempty"`
-	Addrs         []string `protobuf:"bytes,8,rep,name=addrs,proto3" json:"addrs,omitempty"`
-	Protocols     []string `protobuf:"bytes,9,rep,name=protocols,proto3" json:"protocols,omitempty"`
+	Moniker       string   `protobuf:"bytes,1,opt,name=moniker,proto3" json:"moniker,omitempty"`                                  // Moniker of the node.
+	Agent         string   `protobuf:"bytes,2,opt,name=agent,proto3" json:"agent,omitempty"`                                      // Agent information of the node.
+	PeerId        []byte   `protobuf:"bytes,3,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`                      // Peer ID of the node.
+	StartedAt     uint64   `protobuf:"varint,4,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`            // Timestamp when the node started.
+	Reachability  string   `protobuf:"bytes,5,opt,name=reachability,proto3" json:"reachability,omitempty"`                        // Reachability status of the node.
+	Services      []int32  `protobuf:"varint,6,rep,packed,name=services,proto3" json:"services,omitempty"`                        // List of services provided by the node.
+	ServicesNames []string `protobuf:"bytes,7,rep,name=services_names,json=servicesNames,proto3" json:"services_names,omitempty"` // Names of services provided by the node.
+	Addrs         []string `protobuf:"bytes,8,rep,name=addrs,proto3" json:"addrs,omitempty"`                                      // List of addresses associated with the node.
+	Protocols     []string `protobuf:"bytes,9,rep,name=protocols,proto3" json:"protocols,omitempty"`                              // List of protocols supported by the node.
 }
 
 func (x *GetNodeInfoResponse) Reset() {
@@ -302,31 +306,32 @@ func (x *GetNodeInfoResponse) GetProtocols() []string {
 	return nil
 }
 
+// Information about a peer in the network.
 type PeerInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Status            int32           `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
-	Moniker           string          `protobuf:"bytes,2,opt,name=moniker,proto3" json:"moniker,omitempty"`
-	Agent             string          `protobuf:"bytes,3,opt,name=agent,proto3" json:"agent,omitempty"`
-	PeerId            []byte          `protobuf:"bytes,4,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`
-	ConsensusKeys     []string        `protobuf:"bytes,5,rep,name=consensus_keys,json=consensusKeys,proto3" json:"consensus_keys,omitempty"`
-	ConsensusAddress  []string        `protobuf:"bytes,6,rep,name=consensus_address,json=consensusAddress,proto3" json:"consensus_address,omitempty"`
-	Services          uint32          `protobuf:"varint,7,opt,name=services,proto3" json:"services,omitempty"`
-	LastBlockHash     []byte          `protobuf:"bytes,8,opt,name=last_block_hash,json=lastBlockHash,proto3" json:"last_block_hash,omitempty"`
-	Height            uint32          `protobuf:"varint,9,opt,name=height,proto3" json:"height,omitempty"`
-	ReceivedMessages  int32           `protobuf:"varint,10,opt,name=received_messages,json=receivedMessages,proto3" json:"received_messages,omitempty"`
-	InvalidMessages   int32           `protobuf:"varint,11,opt,name=invalid_messages,json=invalidMessages,proto3" json:"invalid_messages,omitempty"`
-	LastSent          int64           `protobuf:"varint,12,opt,name=last_sent,json=lastSent,proto3" json:"last_sent,omitempty"`
-	LastReceived      int64           `protobuf:"varint,13,opt,name=last_received,json=lastReceived,proto3" json:"last_received,omitempty"`
-	SentBytes         map[int32]int64 `protobuf:"bytes,14,rep,name=sent_bytes,json=sentBytes,proto3" json:"sent_bytes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	ReceivedBytes     map[int32]int64 `protobuf:"bytes,15,rep,name=received_bytes,json=receivedBytes,proto3" json:"received_bytes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	Address           string          `protobuf:"bytes,16,opt,name=address,proto3" json:"address,omitempty"`
-	Direction         string          `protobuf:"bytes,17,opt,name=direction,proto3" json:"direction,omitempty"`
-	Protocols         []string        `protobuf:"bytes,18,rep,name=protocols,proto3" json:"protocols,omitempty"`
-	TotalSessions     int32           `protobuf:"varint,19,opt,name=total_sessions,json=totalSessions,proto3" json:"total_sessions,omitempty"`
-	CompletedSessions int32           `protobuf:"varint,20,opt,name=completed_sessions,json=completedSessions,proto3" json:"completed_sessions,omitempty"`
+	Status            int32           `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`                                                                                                                              // Status of the peer.
+	Moniker           string          `protobuf:"bytes,2,opt,name=moniker,proto3" json:"moniker,omitempty"`                                                                                                                             // Moniker of the peer.
+	Agent             string          `protobuf:"bytes,3,opt,name=agent,proto3" json:"agent,omitempty"`                                                                                                                                 // Agent information of the peer.
+	PeerId            []byte          `protobuf:"bytes,4,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`                                                                                                                 // Peer ID of the peer.
+	ConsensusKeys     []string        `protobuf:"bytes,5,rep,name=consensus_keys,json=consensusKeys,proto3" json:"consensus_keys,omitempty"`                                                                                            // Consensus keys used by the peer.
+	ConsensusAddress  []string        `protobuf:"bytes,6,rep,name=consensus_address,json=consensusAddress,proto3" json:"consensus_address,omitempty"`                                                                                   // Consensus address of the peer.
+	Services          uint32          `protobuf:"varint,7,opt,name=services,proto3" json:"services,omitempty"`                                                                                                                          // Services provided by the peer.
+	LastBlockHash     []byte          `protobuf:"bytes,8,opt,name=last_block_hash,json=lastBlockHash,proto3" json:"last_block_hash,omitempty"`                                                                                          // Hash of the last block the peer knows.
+	Height            uint32          `protobuf:"varint,9,opt,name=height,proto3" json:"height,omitempty"`                                                                                                                              // Height of the peer in the blockchain.
+	ReceivedMessages  int32           `protobuf:"varint,10,opt,name=received_messages,json=receivedMessages,proto3" json:"received_messages,omitempty"`                                                                                 // Count of received messages.
+	InvalidMessages   int32           `protobuf:"varint,11,opt,name=invalid_messages,json=invalidMessages,proto3" json:"invalid_messages,omitempty"`                                                                                    // Count of invalid messages received.
+	LastSent          int64           `protobuf:"varint,12,opt,name=last_sent,json=lastSent,proto3" json:"last_sent,omitempty"`                                                                                                         // Timestamp of the last sent message.
+	LastReceived      int64           `protobuf:"varint,13,opt,name=last_received,json=lastReceived,proto3" json:"last_received,omitempty"`                                                                                             // Timestamp of the last received message.
+	SentBytes         map[int32]int64 `protobuf:"bytes,14,rep,name=sent_bytes,json=sentBytes,proto3" json:"sent_bytes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`             // Bytes sent per message type.
+	ReceivedBytes     map[int32]int64 `protobuf:"bytes,15,rep,name=received_bytes,json=receivedBytes,proto3" json:"received_bytes,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"` // Bytes received per message type.
+	Address           string          `protobuf:"bytes,16,opt,name=address,proto3" json:"address,omitempty"`                                                                                                                            // Network address of the peer.
+	Direction         string          `protobuf:"bytes,17,opt,name=direction,proto3" json:"direction,omitempty"`                                                                                                                        // Direction of connection with the peer.
+	Protocols         []string        `protobuf:"bytes,18,rep,name=protocols,proto3" json:"protocols,omitempty"`                                                                                                                        // List of protocols supported by the peer.
+	TotalSessions     int32           `protobuf:"varint,19,opt,name=total_sessions,json=totalSessions,proto3" json:"total_sessions,omitempty"`                                                                                          // Total sessions with the peer.
+	CompletedSessions int32           `protobuf:"varint,20,opt,name=completed_sessions,json=completedSessions,proto3" json:"completed_sessions,omitempty"`                                                                              // Completed sessions with the peer.
 }
 
 func (x *PeerInfo) Reset() {

@@ -49,8 +49,10 @@ function deserialize_pactus_GetNodeInfoResponse(buffer_arg) {
 }
 
 
+// Network service provides RPCs for retrieving information about the network.
 var NetworkService = exports.NetworkService = {
-  getNetworkInfo: {
+  // GetNetworkInfo retrieves information about the overall network.
+getNetworkInfo: {
     path: '/pactus.Network/GetNetworkInfo',
     requestStream: false,
     responseStream: false,
@@ -61,7 +63,8 @@ var NetworkService = exports.NetworkService = {
     responseSerialize: serialize_pactus_GetNetworkInfoResponse,
     responseDeserialize: deserialize_pactus_GetNetworkInfoResponse,
   },
-  getNodeInfo: {
+  // GetNodeInfo retrieves information about a specific node in the network.
+getNodeInfo: {
     path: '/pactus.Network/GetNodeInfo',
     requestStream: false,
     responseStream: false,
