@@ -6,7 +6,8 @@ import blockchain_pb2 as blockchain__pb2
 
 
 class BlockchainStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """Blockchain service defines RPC methods for interacting with the blockchain.
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -67,64 +68,75 @@ class BlockchainStub(object):
 
 
 class BlockchainServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """Blockchain service defines RPC methods for interacting with the blockchain.
+    """
 
     def GetBlock(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetBlock retrieves information about a block based on the provided request parameters.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetBlockHash(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetBlockHash retrieves the hash of a block at the specified height.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetBlockHeight(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetBlockHeight retrieves the height of a block with the specified hash.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetBlockchainInfo(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetBlockchainInfo retrieves general information about the blockchain.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetConsensusInfo(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetConsensusInfo retrieves information about the consensus instances.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetAccount(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetAccount retrieves information about an account based on the provided address.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetValidator(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetValidator retrieves information about a validator based on the provided address.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetValidatorByNumber(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetValidatorByNumber retrieves information about a validator based on the provided number.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetValidatorAddresses(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetValidatorAddresses retrieves a list of all validator addresses.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetPublicKey(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetPublicKey retrieves the public key of an account based on the provided address.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -190,7 +202,8 @@ def add_BlockchainServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Blockchain(object):
-    """Missing associated documentation comment in .proto file."""
+    """Blockchain service defines RPC methods for interacting with the blockchain.
+    """
 
     @staticmethod
     def GetBlock(request,

@@ -138,7 +138,7 @@
 
   # `enable` indicates whether gRPC service should be enabled or not.
   # Default is `false`.
- ## enable = false
+ ## enable = true
 
   # `enable_wallet` indicates whether Wallet service should be enabled or not.
   # Default is `false`.

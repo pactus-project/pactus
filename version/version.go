@@ -10,9 +10,9 @@ var AppType string
 // These constants follow the semantic versioning 2.0.0 spec (http://semver.org/)
 const (
 	major           uint   = 1
-	minor           uint   = 0
+	minor           uint   = 1
 	patch           uint   = 0
-	meta            string = "rc-0"
+	meta            string = "beta"
 	protocolVersion uint   = 1
 )
 

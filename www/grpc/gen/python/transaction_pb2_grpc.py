@@ -6,7 +6,8 @@ import transaction_pb2 as transaction__pb2
 
 
 class TransactionStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """Transaction service defines various RPC methods for interacting with transactions.
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -52,46 +53,54 @@ class TransactionStub(object):
 
 
 class TransactionServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """Transaction service defines various RPC methods for interacting with transactions.
+    """
 
     def GetTransaction(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetTransaction retrieves transaction details based on the provided request parameters.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def CalculateFee(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """CalculateFee calculates the transaction fee based on the specified amount and payload type.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def BroadcastTransaction(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """BroadcastTransaction broadcasts a signed transaction to the network.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetRawTransferTransaction(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetRawTransferTransaction retrieves raw details of a transfer transaction.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetRawBondTransaction(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetRawBondTransaction retrieves raw details of a bond transaction.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetRawUnBondTransaction(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetRawUnBondTransaction retrieves raw details of an unbond transaction.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetRawWithdrawTransaction(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -142,7 +151,8 @@ def add_TransactionServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Transaction(object):
-    """Missing associated documentation comment in .proto file."""
+    """Transaction service defines various RPC methods for interacting with transactions.
+    """
 
     @staticmethod
     def GetTransaction(request,

@@ -64,7 +64,7 @@ func TestMainnetConfig(t *testing.T) {
 	assert.Equal(t, conf.Network.NetworkName, "pactus")
 	assert.Equal(t, conf.Network.DefaultPort, 21888)
 
-	assert.False(t, conf.GRPC.Enable)
+	assert.True(t, conf.GRPC.Enable)
 	assert.False(t, conf.GRPC.Gateway.Enable)
 	assert.False(t, conf.HTTP.Enable)
 	assert.False(t, conf.Nanomsg.Enable)
@@ -107,10 +107,10 @@ func TestLocalnetConfig(t *testing.T) {
 	assert.True(t, conf.HTTP.Enable)
 	assert.True(t, conf.Nanomsg.Enable)
 
-	assert.Equal(t, conf.GRPC.Listen, "[::]:0")
+	assert.Equal(t, conf.GRPC.Listen, "[::]:50052")
 	assert.Equal(t, conf.GRPC.Gateway.Listen, "[::]:0")
 	assert.Equal(t, conf.HTTP.Listen, "[::]:0")
-	assert.Equal(t, conf.Nanomsg.Listen, "tcp://[::]:0")
+	assert.Equal(t, conf.Nanomsg.Listen, "tcp://[::]:40799")
 }
 
 func TestLoadFromFile(t *testing.T) {

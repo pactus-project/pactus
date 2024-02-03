@@ -200,3 +200,32 @@ func TestLoadWallet(t *testing.T) {
 	assert.Nil(t, conn.Close(), "Error closing connection")
 	td.StopServer()
 }
+
+func TestGetValidatorAddress(t *testing.T) {
+	conf := testConfig()
+	conf.EnableWallet = true
+
+	td := setup(t, conf)
+	conn, client := td.walletClient(t)
+
+	t.Run("Invalid public key", func(t *testing.T) {
+		res, err := client.GetValidatorAddress(context.Background(),
+			&pactus.GetValidatorAddressRequest{PublicKey: "something"})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("OK", func(t *testing.T) {
+		valKey := td.RandValKey()
+		pubKey := valKey.PublicKey()
+
+		res, err := client.GetValidatorAddress(context.Background(),
+			&pactus.GetValidatorAddressRequest{PublicKey: pubKey.String()})
+
+		assert.Nil(t, err)
+		assert.Equal(t, pubKey.ValidatorAddress().String(), res.Address)
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}

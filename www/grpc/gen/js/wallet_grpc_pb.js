@@ -27,6 +27,28 @@ function deserialize_pactus_CreateWalletResponse(buffer_arg) {
   return wallet_pb.CreateWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_GetValidatorAddressRequest(arg) {
+  if (!(arg instanceof wallet_pb.GetValidatorAddressRequest)) {
+    throw new Error('Expected argument of type pactus.GetValidatorAddressRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetValidatorAddressRequest(buffer_arg) {
+  return wallet_pb.GetValidatorAddressRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetValidatorAddressResponse(arg) {
+  if (!(arg instanceof wallet_pb.GetValidatorAddressResponse)) {
+    throw new Error('Expected argument of type pactus.GetValidatorAddressResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetValidatorAddressResponse(buffer_arg) {
+  return wallet_pb.GetValidatorAddressResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_LoadWalletRequest(arg) {
   if (!(arg instanceof wallet_pb.LoadWalletRequest)) {
     throw new Error('Expected argument of type pactus.LoadWalletRequest');
@@ -138,8 +160,10 @@ function deserialize_pactus_UnlockWalletResponse(buffer_arg) {
 }
 
 
+// Define the Wallet service with various RPC methods for wallet management.
 var WalletService = exports.WalletService = {
-  createWallet: {
+  // CreateWallet creates a new wallet with the specified parameters.
+createWallet: {
     path: '/pactus.Wallet/CreateWallet',
     requestStream: false,
     responseStream: false,
@@ -150,7 +174,8 @@ var WalletService = exports.WalletService = {
     responseSerialize: serialize_pactus_CreateWalletResponse,
     responseDeserialize: deserialize_pactus_CreateWalletResponse,
   },
-  loadWallet: {
+  // LoadWallet loads an existing wallet with the given name.
+loadWallet: {
     path: '/pactus.Wallet/LoadWallet',
     requestStream: false,
     responseStream: false,
@@ -161,7 +186,8 @@ var WalletService = exports.WalletService = {
     responseSerialize: serialize_pactus_LoadWalletResponse,
     responseDeserialize: deserialize_pactus_LoadWalletResponse,
   },
-  unloadWallet: {
+  // UnloadWallet unloads a currently loaded wallet with the specified name.
+unloadWallet: {
     path: '/pactus.Wallet/UnloadWallet',
     requestStream: false,
     responseStream: false,
@@ -172,7 +198,8 @@ var WalletService = exports.WalletService = {
     responseSerialize: serialize_pactus_UnloadWalletResponse,
     responseDeserialize: deserialize_pactus_UnloadWalletResponse,
   },
-  lockWallet: {
+  // LockWallet locks a currently loaded wallet with the provided password and timeout.
+lockWallet: {
     path: '/pactus.Wallet/LockWallet',
     requestStream: false,
     responseStream: false,
@@ -183,7 +210,8 @@ var WalletService = exports.WalletService = {
     responseSerialize: serialize_pactus_LockWalletResponse,
     responseDeserialize: deserialize_pactus_LockWalletResponse,
   },
-  unlockWallet: {
+  // UnlockWallet unlocks a locked wallet with the provided password and timeout.
+unlockWallet: {
     path: '/pactus.Wallet/UnlockWallet',
     requestStream: false,
     responseStream: false,
@@ -194,7 +222,8 @@ var WalletService = exports.WalletService = {
     responseSerialize: serialize_pactus_UnlockWalletResponse,
     responseDeserialize: deserialize_pactus_UnlockWalletResponse,
   },
-  signRawTransaction: {
+  // SignRawTransaction signs a raw transaction for a specified wallet.
+signRawTransaction: {
     path: '/pactus.Wallet/SignRawTransaction',
     requestStream: false,
     responseStream: false,
@@ -204,6 +233,18 @@ var WalletService = exports.WalletService = {
     requestDeserialize: deserialize_pactus_SignRawTransactionRequest,
     responseSerialize: serialize_pactus_SignRawTransactionResponse,
     responseDeserialize: deserialize_pactus_SignRawTransactionResponse,
+  },
+  // GetValidatorAddress retrieves the validator address associated with a public key.
+getValidatorAddress: {
+    path: '/pactus.Wallet/GetValidatorAddress',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.GetValidatorAddressRequest,
+    responseType: wallet_pb.GetValidatorAddressResponse,
+    requestSerialize: serialize_pactus_GetValidatorAddressRequest,
+    requestDeserialize: deserialize_pactus_GetValidatorAddressRequest,
+    responseSerialize: serialize_pactus_GetValidatorAddressResponse,
+    responseDeserialize: deserialize_pactus_GetValidatorAddressResponse,
   },
 };
 

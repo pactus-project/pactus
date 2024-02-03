@@ -81,6 +81,8 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Sync.Firewall.Enabled = false
 		tConfigs[i].Sync.LatestBlockInterval = 10
 		tConfigs[i].Network.EnableMdns = true
+		tConfigs[i].Network.EnableRelay = false
+		tConfigs[i].Network.DefaultBootstrapAddrStrings = []string{}
 		tConfigs[i].Network.ForcePrivateNetwork = true
 		tConfigs[i].Network.NetworkKey = util.TempFilePath()
 		tConfigs[i].Network.NetworkName = "test"

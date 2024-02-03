@@ -6,7 +6,8 @@ import wallet_pb2 as wallet__pb2
 
 
 class WalletStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """Define the Wallet service with various RPC methods for wallet management.
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -44,43 +45,62 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.SignRawTransactionRequest.SerializeToString,
                 response_deserializer=wallet__pb2.SignRawTransactionResponse.FromString,
                 )
+        self.GetValidatorAddress = channel.unary_unary(
+                '/pactus.Wallet/GetValidatorAddress',
+                request_serializer=wallet__pb2.GetValidatorAddressRequest.SerializeToString,
+                response_deserializer=wallet__pb2.GetValidatorAddressResponse.FromString,
+                )
 
 
 class WalletServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """Define the Wallet service with various RPC methods for wallet management.
+    """
 
     def CreateWallet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """CreateWallet creates a new wallet with the specified parameters.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def LoadWallet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """LoadWallet loads an existing wallet with the given name.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UnloadWallet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """UnloadWallet unloads a currently loaded wallet with the specified name.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def LockWallet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """LockWallet locks a currently loaded wallet with the provided password and timeout.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UnlockWallet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """UnlockWallet unlocks a locked wallet with the provided password and timeout.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SignRawTransaction(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """SignRawTransaction signs a raw transaction for a specified wallet.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetValidatorAddress(self, request, context):
+        """GetValidatorAddress retrieves the validator address associated with a public key.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -118,6 +138,11 @@ def add_WalletServicer_to_server(servicer, server):
                     request_deserializer=wallet__pb2.SignRawTransactionRequest.FromString,
                     response_serializer=wallet__pb2.SignRawTransactionResponse.SerializeToString,
             ),
+            'GetValidatorAddress': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetValidatorAddress,
+                    request_deserializer=wallet__pb2.GetValidatorAddressRequest.FromString,
+                    response_serializer=wallet__pb2.GetValidatorAddressResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
             'pactus.Wallet', rpc_method_handlers)
@@ -126,7 +151,8 @@ def add_WalletServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Wallet(object):
-    """Missing associated documentation comment in .proto file."""
+    """Define the Wallet service with various RPC methods for wallet management.
+    """
 
     @staticmethod
     def CreateWallet(request,
@@ -227,5 +253,22 @@ class Wallet(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/SignRawTransaction',
             wallet__pb2.SignRawTransactionRequest.SerializeToString,
             wallet__pb2.SignRawTransactionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetValidatorAddress(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/GetValidatorAddress',
+            wallet__pb2.GetValidatorAddressRequest.SerializeToString,
+            wallet__pb2.GetValidatorAddressResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
