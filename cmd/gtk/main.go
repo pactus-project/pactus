@@ -16,6 +16,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -31,7 +32,7 @@ func init() {
 	workingDirOpt = flag.String("working-dir", cmd.PactusDefaultHomeDir(), "working directory path")
 	passwordOpt = flag.String("password", "", "wallet password")
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
-
+	version.AppType = "gui"
 	gtk.Init(nil)
 }
 
