@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	version.AppType = "pdaemon"
+	version.AppType = "daemon"
 }
 
 func main() {
