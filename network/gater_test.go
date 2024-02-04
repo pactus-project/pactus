@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
+	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -74,8 +75,10 @@ func TestMaxConnection(t *testing.T) {
 	pid := ts.RandPeerID()
 
 	for i := 0; i < 9; i++ {
+		addrInfo, err := lp2ppeer.AddrInfoFromString("/ip4/1.1.1.1/tcp/1234")
+		assert.NoError(t, err)
 		net.peerMgr.AddPeer(ts.RandPeerID(),
-			multiaddr.StringCast("/ip4/1.1.1.1/tcp/1234"), lp2pnetwork.DirInbound)
+			*addrInfo, lp2pnetwork.DirInbound)
 	}
 
 	assert.True(t, net.connGater.InterceptPeerDial(pid))
@@ -84,8 +87,11 @@ func TestMaxConnection(t *testing.T) {
 	assert.True(t, net.connGater.InterceptAccept(cmaPrivate))
 	assert.True(t, net.connGater.InterceptAccept(cmaPublic))
 
+	addrInfo, err := lp2ppeer.AddrInfoFromString("/ip4/1.1.1.1/tcp/1234")
+	assert.NoError(t, err)
+
 	net.peerMgr.AddPeer(ts.RandPeerID(),
-		multiaddr.StringCast("/ip4/1.1.1.1/tcp/1234"), lp2pnetwork.DirInbound)
+		*addrInfo, lp2pnetwork.DirInbound)
 
 	assert.False(t, net.connGater.InterceptPeerDial(pid))
 	assert.False(t, net.connGater.InterceptAddrDial(pid, maPrivate))

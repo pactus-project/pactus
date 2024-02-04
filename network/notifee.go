@@ -7,6 +7,7 @@ import (
 	lp2pevent "github.com/libp2p/go-libp2p/core/event"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
+	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/logger"
 	"golang.org/x/exp/slices"
@@ -92,7 +93,8 @@ func (s *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn)
 	pid := conn.RemotePeer()
 	s.logger.Info("connected to peer", "pid", pid, "direction", conn.Stat().Direction, "addr", conn.RemoteMultiaddr())
 
-	s.peerMgr.AddPeer(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
+	ai, _ := lp2ppeer.AddrInfoFromP2pAddr(conn.RemoteMultiaddr())
+	s.peerMgr.AddPeer(pid, *ai, conn.Stat().Direction)
 	s.sendConnectEvent(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
 }
 

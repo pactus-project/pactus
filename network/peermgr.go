@@ -17,8 +17,8 @@ import (
 const PeerStorePath = "peers.json"
 
 type peerInfo struct {
-	MultiAddress multiaddr.Multiaddr
-	Direction    lp2pnet.Direction
+	AddrInfo  lp2ppeer.AddrInfo
+	Direction lp2pnet.Direction
 }
 
 // Peer Manager attempts to establish connections with other nodes when the
@@ -93,14 +93,14 @@ func (mgr *peerMgr) NumOfConnected() int {
 	return len(mgr.peers) // TODO: try to keep record of all peers + connected peers
 }
 
-func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr, direction lp2pnet.Direction,
+func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma lp2ppeer.AddrInfo, direction lp2pnet.Direction,
 ) {
 	mgr.lk.Lock()
 	defer mgr.lk.Unlock()
 
 	mgr.peers[pid] = &peerInfo{
-		MultiAddress: ma,
-		Direction:    direction,
+		AddrInfo:  ma,
+		Direction: direction,
 	}
 }
 
@@ -120,7 +120,7 @@ func (mgr *peerMgr) GetMultiAddr(pid lp2ppeer.ID) multiaddr.Multiaddr {
 		return nil
 	}
 
-	return peer.MultiAddress
+	return peer.AddrInfo.Addrs[0]
 }
 
 // checkConnectivity performs the actual work of maintaining connections.
@@ -172,6 +172,22 @@ func (mgr *peerMgr) CheckConnectivity() {
 
 			ConnectAsync(mgr.ctx, mgr.host, ai, mgr.logger)
 		}
+
+		for id, pi := range mgr.peers {
+			// preventing self dialing.
+			if id == mgr.host.ID() {
+				continue
+			}
+
+			// Don't try to connect to an already connected peer.
+			if HasPID(connectedPeers, id) {
+				mgr.logger.Trace("already connected", "peer", pi)
+
+				continue
+			}
+
+			ConnectAsync(mgr.ctx, mgr.host, pi.AddrInfo, mgr.logger)
+		}
 	}
 }
 
@@ -187,7 +203,7 @@ func (mgr *peerMgr) SavePeerStore() error {
 	ps := make(map[string]*PeerStore)
 	for id, info := range mgr.peers {
 		ps[id.String()] = &PeerStore{
-			MultiAddr: info.MultiAddress.String(),
+			MultiAddr: info.AddrInfo.String(),
 			Direction: int(info.Direction),
 		}
 	}
@@ -226,7 +242,12 @@ func (mgr *peerMgr) LoadPeerStore() error {
 			continue
 		}
 
-		mgr.AddPeer(id, addr, lp2pnet.Direction(info.Direction))
+		ai, err := lp2ppeer.AddrInfoFromP2pAddr(addr)
+		if err != nil {
+			continue
+		}
+
+		mgr.AddPeer(id, *ai, lp2pnet.Direction(info.Direction))
 	}
 
 	return nil
