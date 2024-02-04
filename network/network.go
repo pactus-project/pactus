@@ -269,9 +269,6 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	self.gossip = newGossipService(ctx, self.host, self.eventChannel, conf, self.logger)
 	self.notifee = newNotifeeService(ctx, self.host, self.eventChannel, self.peerMgr, streamProtocolID, self.logger)
 
-	self.host.Network().Notify(self.notifee)
-	self.connGater.SetPeerManager(self.peerMgr)
-
 	self.logger.Info("network setup", "id", self.host.ID(),
 		"name", conf.NetworkName,
 		"address", conf.ListenAddrs(),
@@ -343,6 +340,9 @@ func (n *network) Start() error {
 	n.stream.Start()
 	n.peerMgr.Start()
 	n.notifee.Start()
+
+	n.host.Network().Notify(n.notifee)
+	n.connGater.SetPeerManager(n.peerMgr)
 
 	n.logger.Info("network started", "addr", n.host.Addrs(), "id", n.host.ID())
 
