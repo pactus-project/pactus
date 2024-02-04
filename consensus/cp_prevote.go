@@ -36,7 +36,8 @@ func (s *cpPreVoteState) decide() {
 		s.scheduleTimeout(queryVoteInitialTimeout, s.height, s.round, tickerTargetQueryVotes)
 	} else {
 		cpMainVotes := s.log.CPMainVoteVoteSet(s.round)
-		if cpMainVotes.HasAnyVoteFor(s.cpRound-1, vote.CPValueOne) {
+		switch {
+		case cpMainVotes.HasAnyVoteFor(s.cpRound-1, vote.CPValueOne):
 			s.logger.Debug("cp: one main-vote for one", "b", "1")
 
 			vote1 := cpMainVotes.GetRandomVote(s.cpRound-1, vote.CPValueOne)
@@ -44,7 +45,8 @@ func (s *cpPreVoteState) decide() {
 				QCert: vote1.CPJust().(*vote.JustMainVoteNoConflict).QCert,
 			}
 			s.signAddCPPreVote(hash.UndefHash, s.cpRound, vote.CPValueOne, just1)
-		} else if cpMainVotes.HasAnyVoteFor(s.cpRound-1, vote.CPValueZero) {
+
+		case cpMainVotes.HasAnyVoteFor(s.cpRound-1, vote.CPValueZero):
 			s.logger.Debug("cp: one main-vote for zero", "b", "0")
 
 			vote0 := cpMainVotes.GetRandomVote(s.cpRound-1, vote.CPValueZero)
@@ -52,7 +54,8 @@ func (s *cpPreVoteState) decide() {
 				QCert: vote0.CPJust().(*vote.JustMainVoteNoConflict).QCert,
 			}
 			s.signAddCPPreVote(*s.cpWeakValidity, s.cpRound, vote.CPValueZero, just0)
-		} else if cpMainVotes.HasAllVotesFor(s.cpRound-1, vote.CPValueAbstain) {
+
+		case cpMainVotes.HasAllVotesFor(s.cpRound-1, vote.CPValueAbstain):
 			s.logger.Debug("cp: all main-votes are abstain", "b", "0 (biased)")
 
 			votes := cpMainVotes.BinaryVotes(s.cpRound-1, vote.CPValueAbstain)
@@ -61,7 +64,8 @@ func (s *cpPreVoteState) decide() {
 				QCert: cert,
 			}
 			s.signAddCPPreVote(*s.cpWeakValidity, s.cpRound, vote.CPValueZero, just)
-		} else {
+
+		default:
 			s.logger.Panic("protocol violated. We have combination of votes for one and zero")
 		}
 	}

@@ -332,27 +332,28 @@ func WriteVarInt(w io.Writer, val uint64) error {
 // VarIntSerializeSize returns the number of bytes it would take to serialize
 // val as a variable length integer.
 func VarIntSerializeSize(val uint64) int {
-	if val >= 0x8000000000000000 {
+	switch {
+	case val >= 0x8000000000000000:
 		return 10
-	} else if val >= 0x100000000000000 {
+	case val >= 0x100000000000000:
 		return 9
-	} else if val >= 0x2000000000000 {
+	case val >= 0x2000000000000:
 		return 8
-	} else if val >= 0x40000000000 {
+	case val >= 0x40000000000:
 		return 7
-	} else if val >= 0x800000000 {
+	case val >= 0x800000000:
 		return 6
-	} else if val >= 0x10000000 {
+	case val >= 0x10000000:
 		return 5
-	} else if val >= 0x200000 {
+	case val >= 0x200000:
 		return 4
-	} else if val >= 0x4000 {
+	case val >= 0x4000:
 		return 3
-	} else if val >= 0x80 {
+	case val >= 0x80:
 		return 2
+	default:
+		return 1
 	}
-
-	return 1
 }
 
 // VarStringSerializeSize returns the number of bytes it would take to serialize
