@@ -2,7 +2,6 @@ package vote
 
 import (
 	"github.com/pactus-project/pactus/types/certificate"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type JustType uint8
@@ -44,25 +43,24 @@ type Just interface {
 	BasicCheck() error
 }
 
-func makeJust(t JustType) (Just, error) {
+func makeJust(t JustType) Just {
 	switch t {
 	case JustTypeInitZero:
-		return &JustInitZero{}, nil
+		return &JustInitZero{}
 	case JustTypeInitOne:
-		return &JustInitOne{}, nil
+		return &JustInitOne{}
 	case JustTypePreVoteSoft:
-		return &JustPreVoteSoft{}, nil
+		return &JustPreVoteSoft{}
 	case JustTypePreVoteHard:
-		return &JustPreVoteHard{}, nil
+		return &JustPreVoteHard{}
 	case JustTypeMainVoteConflict:
-		return &JustMainVoteConflict{}, nil
+		return &JustMainVoteConflict{}
 	case JustTypeMainVoteNoConflict:
-		return &JustMainVoteNoConflict{}, nil
+		return &JustMainVoteNoConflict{}
 	case JustTypeDecided:
-		return &JustDecided{}, nil
-
+		return &JustDecided{}
 	default:
-		return nil, errors.Errorf(errors.ErrInvalidVote, "invalid justification")
+		return nil
 	}
 }
 
