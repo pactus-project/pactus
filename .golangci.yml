@@ -31,7 +31,7 @@ linters:
     - ginkgolinter
     - gocheckcompilerdirectives
     # - gochecknoinits
-    # - gocognit
+    - gocognit
     # - goconst
     - gocritic
     - gocyclo
@@ -58,10 +58,10 @@ linters:
     - misspell
     - musttag
     - nakedret
-    # - nestif
+    - nestif
     - nilerr
     - nilnil
-    - nlreturn 
+    - nlreturn
     - noctx
     - nolintlint
     - nosprintfhostport
@@ -131,6 +131,11 @@ linters-settings:
       - style
       - performance
 
+  nestif:
+    # Minimal complexity of if statements to report.
+    # Default: 5
+    min-complexity: 6
+
 issues:
   exclude-rules:
     # disable funlen for all _test.go files
@@ -138,6 +143,8 @@ issues:
       linters:
         - funlen
         - maintidx
+        - nestif
+        - gocognit
 
     - linters:
         - govet

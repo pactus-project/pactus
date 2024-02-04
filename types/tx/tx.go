@@ -166,40 +166,39 @@ func (tx *Tx) BasicCheck() error {
 
 func (tx *Tx) checkSignature() error {
 	if tx.IsSubsidyTx() {
-		if tx.PublicKey() != nil {
+		// Ensure no signatory is set for subsidy transactions.
+		if tx.PublicKey() != nil || tx.Signature() != nil {
 			return BasicCheckError{
-				Reason: "public key set for subsidy transaction",
-			}
-		}
-		if tx.Signature() != nil {
-			return BasicCheckError{
-				Reason: "signature set for subsidy transaction",
-			}
-		}
-	} else {
-		if tx.PublicKey() == nil {
-			return BasicCheckError{
-				Reason: "no public key",
+				Reason: "subsidy transaction with signatory",
 			}
 		}
 
-		if tx.Signature() == nil {
-			return BasicCheckError{
-				Reason: "no signature",
-			}
-		}
+		return nil
+	}
 
-		if err := tx.PublicKey().VerifyAddress(tx.Payload().Signer()); err != nil {
-			return BasicCheckError{
-				Reason: err.Error(),
-			}
+	// Non-subsidy transactions should have a valid signatory.
+	if tx.PublicKey() == nil {
+		return BasicCheckError{
+			Reason: "no public key",
 		}
+	}
 
-		bs := tx.SignBytes()
-		if err := tx.PublicKey().Verify(bs, tx.Signature()); err != nil {
-			return BasicCheckError{
-				Reason: "invalid signature",
-			}
+	if tx.Signature() == nil {
+		return BasicCheckError{
+			Reason: "no signature",
+		}
+	}
+
+	if err := tx.PublicKey().VerifyAddress(tx.Payload().Signer()); err != nil {
+		return BasicCheckError{
+			Reason: err.Error(),
+		}
+	}
+
+	bs := tx.SignBytes()
+	if err := tx.PublicKey().Verify(bs, tx.Signature()); err != nil {
+		return BasicCheckError{
+			Reason: "invalid signature",
 		}
 	}
 
