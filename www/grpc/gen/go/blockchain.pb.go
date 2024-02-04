@@ -20,12 +20,13 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Enumeration for verbosity level when requesting block information.
 type BlockVerbosity int32
 
 const (
-	BlockVerbosity_BLOCK_DATA         BlockVerbosity = 0
-	BlockVerbosity_BLOCK_INFO         BlockVerbosity = 1
-	BlockVerbosity_BLOCK_TRANSACTIONS BlockVerbosity = 2
+	BlockVerbosity_BLOCK_DATA         BlockVerbosity = 0 // Request block data only.
+	BlockVerbosity_BLOCK_INFO         BlockVerbosity = 1 // Request block information only.
+	BlockVerbosity_BLOCK_TRANSACTIONS BlockVerbosity = 2 // Request block transactions only.
 )
 
 // Enum value maps for BlockVerbosity.
@@ -69,13 +70,14 @@ func (BlockVerbosity) EnumDescriptor() ([]byte, []int) {
 	return file_blockchain_proto_rawDescGZIP(), []int{0}
 }
 
+// Enumeration for types of votes.
 type VoteType int32
 
 const (
-	VoteType_VOTE_UNKNOWN         VoteType = 0
-	VoteType_VOTE_PREPARE         VoteType = 1
-	VoteType_VOTE_PRECOMMIT       VoteType = 2
-	VoteType_VOTE_CHANGE_PROPOSER VoteType = 3
+	VoteType_VOTE_UNKNOWN         VoteType = 0 // Unknown vote type.
+	VoteType_VOTE_PREPARE         VoteType = 1 // Prepare vote type.
+	VoteType_VOTE_PRECOMMIT       VoteType = 2 // Precommit vote type.
+	VoteType_VOTE_CHANGE_PROPOSER VoteType = 3 // Change proposer vote type.
 )
 
 // Enum value maps for VoteType.
@@ -121,12 +123,13 @@ func (VoteType) EnumDescriptor() ([]byte, []int) {
 	return file_blockchain_proto_rawDescGZIP(), []int{1}
 }
 
+// Message to request account information based on an address.
 type GetAccountRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"` // Address of the account.
 }
 
 func (x *GetAccountRequest) Reset() {
@@ -168,12 +171,13 @@ func (x *GetAccountRequest) GetAddress() string {
 	return ""
 }
 
+// Message containing the response with account information.
 type GetAccountResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Account *AccountInfo `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
+	Account *AccountInfo `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"` // Account information.
 }
 
 func (x *GetAccountResponse) Reset() {
@@ -215,6 +219,7 @@ func (x *GetAccountResponse) GetAccount() *AccountInfo {
 	return nil
 }
 
+// Message to request validator addresses.
 type GetValidatorAddressesRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -253,12 +258,13 @@ func (*GetValidatorAddressesRequest) Descriptor() ([]byte, []int) {
 	return file_blockchain_proto_rawDescGZIP(), []int{2}
 }
 
+// Message containing the response with a list of validator addresses.
 type GetValidatorAddressesResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Addresses []string `protobuf:"bytes,1,rep,name=addresses,proto3" json:"addresses,omitempty"`
+	Addresses []string `protobuf:"bytes,1,rep,name=addresses,proto3" json:"addresses,omitempty"` // List of validator addresses.
 }
 
 func (x *GetValidatorAddressesResponse) Reset() {
@@ -300,12 +306,13 @@ func (x *GetValidatorAddressesResponse) GetAddresses() []string {
 	return nil
 }
 
+// Message to request validator information based on an address.
 type GetValidatorRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"` // Address of the validator.
 }
 
 func (x *GetValidatorRequest) Reset() {
@@ -347,12 +354,13 @@ func (x *GetValidatorRequest) GetAddress() string {
 	return ""
 }
 
+// Message to request validator information based on a validator number.
 type GetValidatorByNumberRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Number int32 `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
+	Number int32 `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"` // Validator number.
 }
 
 func (x *GetValidatorByNumberRequest) Reset() {
@@ -394,12 +402,13 @@ func (x *GetValidatorByNumberRequest) GetNumber() int32 {
 	return 0
 }
 
+// Message containing the response with validator information.
 type GetValidatorResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Validator *ValidatorInfo `protobuf:"bytes,1,opt,name=validator,proto3" json:"validator,omitempty"`
+	Validator *ValidatorInfo `protobuf:"bytes,1,opt,name=validator,proto3" json:"validator,omitempty"` // Validator information.
 }
 
 func (x *GetValidatorResponse) Reset() {
@@ -441,12 +450,13 @@ func (x *GetValidatorResponse) GetValidator() *ValidatorInfo {
 	return nil
 }
 
+// Message to request public key based on an address.
 type GetPublicKeyRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"` // Address for which public key is requested.
 }
 
 func (x *GetPublicKeyRequest) Reset() {
@@ -488,12 +498,13 @@ func (x *GetPublicKeyRequest) GetAddress() string {
 	return ""
 }
 
+// Message containing the response with the public key.
 type GetPublicKeyResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	PublicKey string `protobuf:"bytes,1,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
+	PublicKey string `protobuf:"bytes,1,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"` // Public key of the account.
 }
 
 func (x *GetPublicKeyResponse) Reset() {
@@ -535,13 +546,14 @@ func (x *GetPublicKeyResponse) GetPublicKey() string {
 	return ""
 }
 
+// Message to request block information based on height and verbosity.
 type GetBlockRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Height    uint32         `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"`
-	Verbosity BlockVerbosity `protobuf:"varint,2,opt,name=verbosity,proto3,enum=pactus.BlockVerbosity" json:"verbosity,omitempty"`
+	Height    uint32         `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"`                                  // Height of the block.
+	Verbosity BlockVerbosity `protobuf:"varint,2,opt,name=verbosity,proto3,enum=pactus.BlockVerbosity" json:"verbosity,omitempty"` // Verbosity level for block information.
 }
 
 func (x *GetBlockRequest) Reset() {
@@ -590,18 +602,19 @@ func (x *GetBlockRequest) GetVerbosity() BlockVerbosity {
 	return BlockVerbosity_BLOCK_DATA
 }
 
+// Message containing the response with block information.
 type GetBlockResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Height    uint32             `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"`
-	Hash      []byte             `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`
-	Data      []byte             `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
-	BlockTime uint32             `protobuf:"varint,4,opt,name=block_time,json=blockTime,proto3" json:"block_time,omitempty"`
-	Header    *BlockHeaderInfo   `protobuf:"bytes,5,opt,name=header,proto3" json:"header,omitempty"`
-	PrevCert  *CertificateInfo   `protobuf:"bytes,6,opt,name=prev_cert,json=prevCert,proto3" json:"prev_cert,omitempty"`
-	Txs       []*TransactionInfo `protobuf:"bytes,7,rep,name=txs,proto3" json:"txs,omitempty"`
+	Height    uint32             `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"`                        // Height of the block.
+	Hash      []byte             `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`                             // Hash of the block.
+	Data      []byte             `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`                             // Block data.
+	BlockTime uint32             `protobuf:"varint,4,opt,name=block_time,json=blockTime,proto3" json:"block_time,omitempty"` // Block timestamp.
+	Header    *BlockHeaderInfo   `protobuf:"bytes,5,opt,name=header,proto3" json:"header,omitempty"`                         // Block header information.
+	PrevCert  *CertificateInfo   `protobuf:"bytes,6,opt,name=prev_cert,json=prevCert,proto3" json:"prev_cert,omitempty"`     // Certificate information of the previous block.
+	Txs       []*TransactionInfo `protobuf:"bytes,7,rep,name=txs,proto3" json:"txs,omitempty"`                               // List of transactions in the block.
 }
 
 func (x *GetBlockResponse) Reset() {
@@ -685,12 +698,13 @@ func (x *GetBlockResponse) GetTxs() []*TransactionInfo {
 	return nil
 }
 
+// Message to request block hash based on height.
 type GetBlockHashRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Height uint32 `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"`
+	Height uint32 `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"` // Height of the block.
 }
 
 func (x *GetBlockHashRequest) Reset() {
@@ -732,12 +746,13 @@ func (x *GetBlockHashRequest) GetHeight() uint32 {
 	return 0
 }
 
+// Message containing the response with the block hash.
 type GetBlockHashResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Hash []byte `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
+	Hash []byte `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"` // Hash of the block.
 }
 
 func (x *GetBlockHashResponse) Reset() {
@@ -779,12 +794,13 @@ func (x *GetBlockHashResponse) GetHash() []byte {
 	return nil
 }
 
+// Message to request block height based on hash.
 type GetBlockHeightRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Hash []byte `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
+	Hash []byte `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"` // Hash of the block.
 }
 
 func (x *GetBlockHeightRequest) Reset() {
@@ -826,12 +842,13 @@ func (x *GetBlockHeightRequest) GetHash() []byte {
 	return nil
 }
 
+// Message containing the response with the block height.
 type GetBlockHeightResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Height uint32 `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"`
+	Height uint32 `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"` // Height of the block.
 }
 
 func (x *GetBlockHeightResponse) Reset() {
@@ -873,6 +890,7 @@ func (x *GetBlockHeightResponse) GetHeight() uint32 {
 	return 0
 }
 
+// Message to request general information about the blockchain.
 type GetBlockchainInfoRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -911,18 +929,19 @@ func (*GetBlockchainInfoRequest) Descriptor() ([]byte, []int) {
 	return file_blockchain_proto_rawDescGZIP(), []int{15}
 }
 
+// Message containing the response with general blockchain information.
 type GetBlockchainInfoResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	LastBlockHeight     uint32           `protobuf:"varint,1,opt,name=last_block_height,json=lastBlockHeight,proto3" json:"last_block_height,omitempty"`
-	LastBlockHash       []byte           `protobuf:"bytes,2,opt,name=last_block_hash,json=lastBlockHash,proto3" json:"last_block_hash,omitempty"`
-	TotalAccounts       int32            `protobuf:"varint,3,opt,name=total_accounts,json=totalAccounts,proto3" json:"total_accounts,omitempty"`
-	TotalValidators     int32            `protobuf:"varint,4,opt,name=total_validators,json=totalValidators,proto3" json:"total_validators,omitempty"`
-	TotalPower          int64            `protobuf:"varint,5,opt,name=total_power,json=totalPower,proto3" json:"total_power,omitempty"`
-	CommitteePower      int64            `protobuf:"varint,6,opt,name=committee_power,json=committeePower,proto3" json:"committee_power,omitempty"`
-	CommitteeValidators []*ValidatorInfo `protobuf:"bytes,7,rep,name=committee_validators,json=committeeValidators,proto3" json:"committee_validators,omitempty"`
+	LastBlockHeight     uint32           `protobuf:"varint,1,opt,name=last_block_height,json=lastBlockHeight,proto3" json:"last_block_height,omitempty"`          // Height of the last block.
+	LastBlockHash       []byte           `protobuf:"bytes,2,opt,name=last_block_hash,json=lastBlockHash,proto3" json:"last_block_hash,omitempty"`                 // Hash of the last block.
+	TotalAccounts       int32            `protobuf:"varint,3,opt,name=total_accounts,json=totalAccounts,proto3" json:"total_accounts,omitempty"`                  // Total number of accounts.
+	TotalValidators     int32            `protobuf:"varint,4,opt,name=total_validators,json=totalValidators,proto3" json:"total_validators,omitempty"`            // Total number of validators.
+	TotalPower          int64            `protobuf:"varint,5,opt,name=total_power,json=totalPower,proto3" json:"total_power,omitempty"`                           // Total power in the blockchain.
+	CommitteePower      int64            `protobuf:"varint,6,opt,name=committee_power,json=committeePower,proto3" json:"committee_power,omitempty"`               // Power of the committee.
+	CommitteeValidators []*ValidatorInfo `protobuf:"bytes,7,rep,name=committee_validators,json=committeeValidators,proto3" json:"committee_validators,omitempty"` // List of committee validators.
 }
 
 func (x *GetBlockchainInfoResponse) Reset() {
@@ -1006,6 +1025,7 @@ func (x *GetBlockchainInfoResponse) GetCommitteeValidators() []*ValidatorInfo {
 	return nil
 }
 
+// Message to request consensus information.
 type GetConsensusInfoRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1044,12 +1064,13 @@ func (*GetConsensusInfoRequest) Descriptor() ([]byte, []int) {
 	return file_blockchain_proto_rawDescGZIP(), []int{17}
 }
 
+// Message containing the response with consensus information.
 type GetConsensusInfoResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Instances []*ConsensusInfo `protobuf:"bytes,1,rep,name=instances,proto3" json:"instances,omitempty"`
+	Instances []*ConsensusInfo `protobuf:"bytes,1,rep,name=instances,proto3" json:"instances,omitempty"` // List of consensus instances.
 }
 
 func (x *GetConsensusInfoResponse) Reset() {
@@ -1091,21 +1112,22 @@ func (x *GetConsensusInfoResponse) GetInstances() []*ConsensusInfo {
 	return nil
 }
 
+// Message containing information about a validator.
 type ValidatorInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Hash                []byte  `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
-	Data                []byte  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	PublicKey           string  `protobuf:"bytes,3,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
-	Number              int32   `protobuf:"varint,4,opt,name=number,proto3" json:"number,omitempty"`
-	Stake               int64   `protobuf:"varint,5,opt,name=stake,proto3" json:"stake,omitempty"`
-	LastBondingHeight   uint32  `protobuf:"varint,6,opt,name=last_bonding_height,json=lastBondingHeight,proto3" json:"last_bonding_height,omitempty"`
-	LastSortitionHeight uint32  `protobuf:"varint,7,opt,name=last_sortition_height,json=lastSortitionHeight,proto3" json:"last_sortition_height,omitempty"`
-	UnbondingHeight     uint32  `protobuf:"varint,8,opt,name=unbonding_height,json=unbondingHeight,proto3" json:"unbonding_height,omitempty"`
-	Address             string  `protobuf:"bytes,9,opt,name=address,proto3" json:"address,omitempty"`
-	AvailabilityScore   float64 `protobuf:"fixed64,10,opt,name=availability_score,json=availabilityScore,proto3" json:"availability_score,omitempty"`
+	Hash                []byte  `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`                                                             // Hash of the validator.
+	Data                []byte  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                                                             // Validator data.
+	PublicKey           string  `protobuf:"bytes,3,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`                                  // Public key of the validator.
+	Number              int32   `protobuf:"varint,4,opt,name=number,proto3" json:"number,omitempty"`                                                        // Validator number.
+	Stake               int64   `protobuf:"varint,5,opt,name=stake,proto3" json:"stake,omitempty"`                                                          // Validator stake.
+	LastBondingHeight   uint32  `protobuf:"varint,6,opt,name=last_bonding_height,json=lastBondingHeight,proto3" json:"last_bonding_height,omitempty"`       // Last bonding height.
+	LastSortitionHeight uint32  `protobuf:"varint,7,opt,name=last_sortition_height,json=lastSortitionHeight,proto3" json:"last_sortition_height,omitempty"` // Last sortition height.
+	UnbondingHeight     uint32  `protobuf:"varint,8,opt,name=unbonding_height,json=unbondingHeight,proto3" json:"unbonding_height,omitempty"`               // Unbonding height.
+	Address             string  `protobuf:"bytes,9,opt,name=address,proto3" json:"address,omitempty"`                                                       // Address of the validator.
+	AvailabilityScore   float64 `protobuf:"fixed64,10,opt,name=availability_score,json=availabilityScore,proto3" json:"availability_score,omitempty"`       // Availability score of the validator.
 }
 
 func (x *ValidatorInfo) Reset() {
@@ -1210,16 +1232,17 @@ func (x *ValidatorInfo) GetAvailabilityScore() float64 {
 	return 0
 }
 
+// Message containing information about an account.
 type AccountInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Hash    []byte `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
-	Data    []byte `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	Number  int32  `protobuf:"varint,3,opt,name=number,proto3" json:"number,omitempty"`
-	Balance int64  `protobuf:"varint,4,opt,name=balance,proto3" json:"balance,omitempty"`
-	Address string `protobuf:"bytes,5,opt,name=address,proto3" json:"address,omitempty"`
+	Hash    []byte `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`        // Hash of the account.
+	Data    []byte `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`        // Account data.
+	Number  int32  `protobuf:"varint,3,opt,name=number,proto3" json:"number,omitempty"`   // Account number.
+	Balance int64  `protobuf:"varint,4,opt,name=balance,proto3" json:"balance,omitempty"` // Account balance.
+	Address string `protobuf:"bytes,5,opt,name=address,proto3" json:"address,omitempty"`  // Address of the account.
 }
 
 func (x *AccountInfo) Reset() {
@@ -1289,16 +1312,17 @@ func (x *AccountInfo) GetAddress() string {
 	return ""
 }
 
+// Message containing information about the header of a block.
 type BlockHeaderInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Version         int32  `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"`
-	PrevBlockHash   []byte `protobuf:"bytes,2,opt,name=prev_block_hash,json=prevBlockHash,proto3" json:"prev_block_hash,omitempty"`
-	StateRoot       []byte `protobuf:"bytes,3,opt,name=state_root,json=stateRoot,proto3" json:"state_root,omitempty"`
-	SortitionSeed   []byte `protobuf:"bytes,4,opt,name=sortition_seed,json=sortitionSeed,proto3" json:"sortition_seed,omitempty"`
-	ProposerAddress string `protobuf:"bytes,5,opt,name=proposer_address,json=proposerAddress,proto3" json:"proposer_address,omitempty"`
+	Version         int32  `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"`                                       // Block version.
+	PrevBlockHash   []byte `protobuf:"bytes,2,opt,name=prev_block_hash,json=prevBlockHash,proto3" json:"prev_block_hash,omitempty"`     // Hash of the previous block.
+	StateRoot       []byte `protobuf:"bytes,3,opt,name=state_root,json=stateRoot,proto3" json:"state_root,omitempty"`                   // State root of the block.
+	SortitionSeed   []byte `protobuf:"bytes,4,opt,name=sortition_seed,json=sortitionSeed,proto3" json:"sortition_seed,omitempty"`       // Sortition seed of the block.
+	ProposerAddress string `protobuf:"bytes,5,opt,name=proposer_address,json=proposerAddress,proto3" json:"proposer_address,omitempty"` // Address of the proposer of the block.
 }
 
 func (x *BlockHeaderInfo) Reset() {
@@ -1368,16 +1392,17 @@ func (x *BlockHeaderInfo) GetProposerAddress() string {
 	return ""
 }
 
+// Message containing information about a certificate.
 type CertificateInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Hash       []byte  `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
-	Round      int32   `protobuf:"varint,2,opt,name=round,proto3" json:"round,omitempty"`
-	Committers []int32 `protobuf:"varint,3,rep,packed,name=committers,proto3" json:"committers,omitempty"`
-	Absentees  []int32 `protobuf:"varint,4,rep,packed,name=absentees,proto3" json:"absentees,omitempty"`
-	Signature  []byte  `protobuf:"bytes,5,opt,name=signature,proto3" json:"signature,omitempty"`
+	Hash       []byte  `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`                     // Hash of the certificate.
+	Round      int32   `protobuf:"varint,2,opt,name=round,proto3" json:"round,omitempty"`                  // Round of the certificate.
+	Committers []int32 `protobuf:"varint,3,rep,packed,name=committers,proto3" json:"committers,omitempty"` // List of committers in the certificate.
+	Absentees  []int32 `protobuf:"varint,4,rep,packed,name=absentees,proto3" json:"absentees,omitempty"`   // List of absentees in the certificate.
+	Signature  []byte  `protobuf:"bytes,5,opt,name=signature,proto3" json:"signature,omitempty"`           // Certificate signature.
 }
 
 func (x *CertificateInfo) Reset() {
@@ -1447,17 +1472,18 @@ func (x *CertificateInfo) GetSignature() []byte {
 	return nil
 }
 
+// Message containing information about a vote.
 type VoteInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Type      VoteType `protobuf:"varint,1,opt,name=type,proto3,enum=pactus.VoteType" json:"type,omitempty"`
-	Voter     string   `protobuf:"bytes,2,opt,name=voter,proto3" json:"voter,omitempty"`
-	BlockHash []byte   `protobuf:"bytes,3,opt,name=block_hash,json=blockHash,proto3" json:"block_hash,omitempty"`
-	Round     int32    `protobuf:"varint,4,opt,name=round,proto3" json:"round,omitempty"`
-	CpRound   int32    `protobuf:"varint,5,opt,name=cp_round,json=cpRound,proto3" json:"cp_round,omitempty"`
-	CpValue   int32    `protobuf:"varint,6,opt,name=cp_value,json=cpValue,proto3" json:"cp_value,omitempty"`
+	Type      VoteType `protobuf:"varint,1,opt,name=type,proto3,enum=pactus.VoteType" json:"type,omitempty"`      // Type of the vote.
+	Voter     string   `protobuf:"bytes,2,opt,name=voter,proto3" json:"voter,omitempty"`                          // Voter's address.
+	BlockHash []byte   `protobuf:"bytes,3,opt,name=block_hash,json=blockHash,proto3" json:"block_hash,omitempty"` // Hash of the block being voted on.
+	Round     int32    `protobuf:"varint,4,opt,name=round,proto3" json:"round,omitempty"`                         // Round of the vote.
+	CpRound   int32    `protobuf:"varint,5,opt,name=cp_round,json=cpRound,proto3" json:"cp_round,omitempty"`      // Consensus round of the vote.
+	CpValue   int32    `protobuf:"varint,6,opt,name=cp_value,json=cpValue,proto3" json:"cp_value,omitempty"`      // Consensus value of the vote.
 }
 
 func (x *VoteInfo) Reset() {
@@ -1534,16 +1560,17 @@ func (x *VoteInfo) GetCpValue() int32 {
 	return 0
 }
 
+// Message containing information about consensus.
 type ConsensusInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Address string      `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
-	Active  bool        `protobuf:"varint,2,opt,name=Active,proto3" json:"Active,omitempty"`
-	Height  uint32      `protobuf:"varint,3,opt,name=height,proto3" json:"height,omitempty"`
-	Round   int32       `protobuf:"varint,4,opt,name=round,proto3" json:"round,omitempty"`
-	Votes   []*VoteInfo `protobuf:"bytes,5,rep,name=votes,proto3" json:"votes,omitempty"`
+	Address string      `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"` // Address of the consensus instance.
+	Active  bool        `protobuf:"varint,2,opt,name=Active,proto3" json:"Active,omitempty"`  // Whether the consensus instance is active.
+	Height  uint32      `protobuf:"varint,3,opt,name=height,proto3" json:"height,omitempty"`  // Height of the consensus instance.
+	Round   int32       `protobuf:"varint,4,opt,name=round,proto3" json:"round,omitempty"`    // Round of the consensus instance.
+	Votes   []*VoteInfo `protobuf:"bytes,5,rep,name=votes,proto3" json:"votes,omitempty"`     // List of votes in the consensus instance.
 }
 
 func (x *ConsensusInfo) Reset() {

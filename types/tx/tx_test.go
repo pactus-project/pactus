@@ -238,7 +238,7 @@ func TestSubsidyTx(t *testing.T) {
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "signature set for subsidy transaction",
+			Reason: "subsidy transaction with signatory",
 		})
 	})
 
@@ -248,7 +248,7 @@ func TestSubsidyTx(t *testing.T) {
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "public key set for subsidy transaction",
+			Reason: "subsidy transaction with signatory",
 		})
 	})
 

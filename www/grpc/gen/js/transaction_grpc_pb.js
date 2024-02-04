@@ -126,8 +126,10 @@ function deserialize_pactus_GetTransactionResponse(buffer_arg) {
 }
 
 
+// Transaction service defines various RPC methods for interacting with transactions.
 var TransactionService = exports.TransactionService = {
-  getTransaction: {
+  // GetTransaction retrieves transaction details based on the provided request parameters.
+getTransaction: {
     path: '/pactus.Transaction/GetTransaction',
     requestStream: false,
     responseStream: false,
@@ -138,7 +140,8 @@ var TransactionService = exports.TransactionService = {
     responseSerialize: serialize_pactus_GetTransactionResponse,
     responseDeserialize: deserialize_pactus_GetTransactionResponse,
   },
-  calculateFee: {
+  // CalculateFee calculates the transaction fee based on the specified amount and payload type.
+calculateFee: {
     path: '/pactus.Transaction/CalculateFee',
     requestStream: false,
     responseStream: false,
@@ -149,7 +152,8 @@ var TransactionService = exports.TransactionService = {
     responseSerialize: serialize_pactus_CalculateFeeResponse,
     responseDeserialize: deserialize_pactus_CalculateFeeResponse,
   },
-  broadcastTransaction: {
+  // BroadcastTransaction broadcasts a signed transaction to the network.
+broadcastTransaction: {
     path: '/pactus.Transaction/BroadcastTransaction',
     requestStream: false,
     responseStream: false,
@@ -160,7 +164,8 @@ var TransactionService = exports.TransactionService = {
     responseSerialize: serialize_pactus_BroadcastTransactionResponse,
     responseDeserialize: deserialize_pactus_BroadcastTransactionResponse,
   },
-  getRawTransferTransaction: {
+  // GetRawTransferTransaction retrieves raw details of a transfer transaction.
+getRawTransferTransaction: {
     path: '/pactus.Transaction/GetRawTransferTransaction',
     requestStream: false,
     responseStream: false,
@@ -171,7 +176,8 @@ var TransactionService = exports.TransactionService = {
     responseSerialize: serialize_pactus_GetRawTransactionResponse,
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
-  getRawBondTransaction: {
+  // GetRawBondTransaction retrieves raw details of a bond transaction.
+getRawBondTransaction: {
     path: '/pactus.Transaction/GetRawBondTransaction',
     requestStream: false,
     responseStream: false,
@@ -182,7 +188,8 @@ var TransactionService = exports.TransactionService = {
     responseSerialize: serialize_pactus_GetRawTransactionResponse,
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
-  getRawUnBondTransaction: {
+  // GetRawUnBondTransaction retrieves raw details of an unbond transaction.
+getRawUnBondTransaction: {
     path: '/pactus.Transaction/GetRawUnBondTransaction',
     requestStream: false,
     responseStream: false,
@@ -193,7 +200,8 @@ var TransactionService = exports.TransactionService = {
     responseSerialize: serialize_pactus_GetRawTransactionResponse,
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
-  getRawWithdrawTransaction: {
+  // GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+getRawWithdrawTransaction: {
     path: '/pactus.Transaction/GetRawWithdrawTransaction',
     requestStream: false,
     responseStream: false,

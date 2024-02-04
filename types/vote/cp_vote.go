@@ -112,11 +112,7 @@ func (v *cpVote) UnmarshalCBOR(bs []byte) error {
 		return err
 	}
 
-	just, err := makeJust(_cp.JustType)
-	if err != nil {
-		return err
-	}
-
+	var just Just
 	if _cp.JustType == JustTypeMainVoteConflict {
 		_conflictingJust := &_JustMainVoteConflict{}
 		err := cbor.Unmarshal(_cp.JustData, _conflictingJust)
@@ -124,19 +120,13 @@ func (v *cpVote) UnmarshalCBOR(bs []byte) error {
 			return err
 		}
 
-		just0, err := makeJust(_conflictingJust.Just0Type)
-		if err != nil {
-			return err
-		}
+		just0 := makeJust(_conflictingJust.Just0Type)
 		err = cbor.Unmarshal(_conflictingJust.Just0Data, just0)
 		if err != nil {
 			return err
 		}
 
-		just1, err := makeJust(_conflictingJust.Just1Type)
-		if err != nil {
-			return err
-		}
+		just1 := makeJust(_conflictingJust.Just1Type)
 		err = cbor.Unmarshal(_conflictingJust.Just1Data, just1)
 		if err != nil {
 			return err
@@ -147,6 +137,7 @@ func (v *cpVote) UnmarshalCBOR(bs []byte) error {
 			Just1: just1,
 		}
 	} else {
+		just = makeJust(_cp.JustType)
 		err := cbor.Unmarshal(_cp.JustData, just)
 		if err != nil {
 			return err
