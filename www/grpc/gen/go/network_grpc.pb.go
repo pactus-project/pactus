@@ -22,7 +22,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NetworkClient interface {
+	// GetNetworkInfo retrieves information about the overall network.
 	GetNetworkInfo(ctx context.Context, in *GetNetworkInfoRequest, opts ...grpc.CallOption) (*GetNetworkInfoResponse, error)
+	// GetNodeInfo retrieves information about a specific node in the network.
 	GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest, opts ...grpc.CallOption) (*GetNodeInfoResponse, error)
 }
 
@@ -56,7 +58,9 @@ func (c *networkClient) GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest,
 // All implementations should embed UnimplementedNetworkServer
 // for forward compatibility
 type NetworkServer interface {
+	// GetNetworkInfo retrieves information about the overall network.
 	GetNetworkInfo(context.Context, *GetNetworkInfoRequest) (*GetNetworkInfoResponse, error)
+	// GetNodeInfo retrieves information about a specific node in the network.
 	GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error)
 }
 

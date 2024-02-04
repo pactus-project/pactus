@@ -25,6 +25,7 @@ func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
 	widget.ToWidget().SetMarginEnd(end)
 }
 
+//nolint:gocognit // complexity can't be reduced more.
 func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 	successful := false
 	assistant, err := gtk.AssistantNew()

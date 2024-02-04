@@ -43,6 +43,8 @@ func toBytes(chars string) ([]byte, error) {
 // 32), otherwise the results are undefined.
 //
 // For more details on the polymod calculation, please refer to BIP 173.
+//
+//nolint:gocognit // complexity can't be reduced more.
 func bech32Polymod(hrp string, values, checksum []byte) int {
 	chk := 1
 

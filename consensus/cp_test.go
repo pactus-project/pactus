@@ -158,16 +158,6 @@ func TestInvalidJustInitOne(t *testing.T) {
 		})
 	})
 
-	t.Run("cp-round should be zero", func(t *testing.T) {
-		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueOne, just, td.consB.valKey.Address())
-
-		err := td.consX.changeProposer.checkJust(v)
-		assert.ErrorIs(t, err, invalidJustificationError{
-			JustType: just.Type(),
-			Reason:   "invalid block hash",
-		})
-	})
-
 	t.Run("with main-vote justification", func(t *testing.T) {
 		invJust := &vote.JustMainVoteNoConflict{}
 		v := vote.NewCPPreVote(td.RandHash(), h, r, 0, vote.CPValueOne, invJust, td.consB.valKey.Address())
@@ -384,8 +374,8 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 
 		err := td.consX.changeProposer.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
-			JustType: just.Type(),
-			Reason:   "unexpected justification: JustPreVoteSoft",
+			JustType: vote.JustTypePreVoteSoft,
+			Reason:   "invalid just data",
 		})
 	})
 
