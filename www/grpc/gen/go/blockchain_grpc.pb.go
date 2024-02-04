@@ -22,15 +22,25 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BlockchainClient interface {
+	// GetBlock retrieves information about a block based on the provided request parameters.
 	GetBlock(ctx context.Context, in *GetBlockRequest, opts ...grpc.CallOption) (*GetBlockResponse, error)
+	// GetBlockHash retrieves the hash of a block at the specified height.
 	GetBlockHash(ctx context.Context, in *GetBlockHashRequest, opts ...grpc.CallOption) (*GetBlockHashResponse, error)
+	// GetBlockHeight retrieves the height of a block with the specified hash.
 	GetBlockHeight(ctx context.Context, in *GetBlockHeightRequest, opts ...grpc.CallOption) (*GetBlockHeightResponse, error)
+	// GetBlockchainInfo retrieves general information about the blockchain.
 	GetBlockchainInfo(ctx context.Context, in *GetBlockchainInfoRequest, opts ...grpc.CallOption) (*GetBlockchainInfoResponse, error)
+	// GetConsensusInfo retrieves information about the consensus instances.
 	GetConsensusInfo(ctx context.Context, in *GetConsensusInfoRequest, opts ...grpc.CallOption) (*GetConsensusInfoResponse, error)
+	// GetAccount retrieves information about an account based on the provided address.
 	GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error)
+	// GetValidator retrieves information about a validator based on the provided address.
 	GetValidator(ctx context.Context, in *GetValidatorRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error)
+	// GetValidatorByNumber retrieves information about a validator based on the provided number.
 	GetValidatorByNumber(ctx context.Context, in *GetValidatorByNumberRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error)
+	// GetValidatorAddresses retrieves a list of all validator addresses.
 	GetValidatorAddresses(ctx context.Context, in *GetValidatorAddressesRequest, opts ...grpc.CallOption) (*GetValidatorAddressesResponse, error)
+	// GetPublicKey retrieves the public key of an account based on the provided address.
 	GetPublicKey(ctx context.Context, in *GetPublicKeyRequest, opts ...grpc.CallOption) (*GetPublicKeyResponse, error)
 }
 
@@ -136,15 +146,25 @@ func (c *blockchainClient) GetPublicKey(ctx context.Context, in *GetPublicKeyReq
 // All implementations should embed UnimplementedBlockchainServer
 // for forward compatibility
 type BlockchainServer interface {
+	// GetBlock retrieves information about a block based on the provided request parameters.
 	GetBlock(context.Context, *GetBlockRequest) (*GetBlockResponse, error)
+	// GetBlockHash retrieves the hash of a block at the specified height.
 	GetBlockHash(context.Context, *GetBlockHashRequest) (*GetBlockHashResponse, error)
+	// GetBlockHeight retrieves the height of a block with the specified hash.
 	GetBlockHeight(context.Context, *GetBlockHeightRequest) (*GetBlockHeightResponse, error)
+	// GetBlockchainInfo retrieves general information about the blockchain.
 	GetBlockchainInfo(context.Context, *GetBlockchainInfoRequest) (*GetBlockchainInfoResponse, error)
+	// GetConsensusInfo retrieves information about the consensus instances.
 	GetConsensusInfo(context.Context, *GetConsensusInfoRequest) (*GetConsensusInfoResponse, error)
+	// GetAccount retrieves information about an account based on the provided address.
 	GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error)
+	// GetValidator retrieves information about a validator based on the provided address.
 	GetValidator(context.Context, *GetValidatorRequest) (*GetValidatorResponse, error)
+	// GetValidatorByNumber retrieves information about a validator based on the provided number.
 	GetValidatorByNumber(context.Context, *GetValidatorByNumberRequest) (*GetValidatorResponse, error)
+	// GetValidatorAddresses retrieves a list of all validator addresses.
 	GetValidatorAddresses(context.Context, *GetValidatorAddressesRequest) (*GetValidatorAddressesResponse, error)
+	// GetPublicKey retrieves the public key of an account based on the provided address.
 	GetPublicKey(context.Context, *GetPublicKeyRequest) (*GetPublicKeyResponse, error)
 }
 

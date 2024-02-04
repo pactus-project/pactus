@@ -6,7 +6,8 @@ import network_pb2 as network__pb2
 
 
 class NetworkStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """Network service provides RPCs for retrieving information about the network.
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -27,16 +28,19 @@ class NetworkStub(object):
 
 
 class NetworkServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """Network service provides RPCs for retrieving information about the network.
+    """
 
     def GetNetworkInfo(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetNetworkInfo retrieves information about the overall network.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetNodeInfo(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetNodeInfo retrieves information about a specific node in the network.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -62,7 +66,8 @@ def add_NetworkServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Network(object):
-    """Missing associated documentation comment in .proto file."""
+    """Network service provides RPCs for retrieving information about the network.
+    """
 
     @staticmethod
     def GetNetworkInfo(request,

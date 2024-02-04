@@ -3,6 +3,9 @@ package pactus.network;
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
+ * <pre>
+ * Network service provides RPCs for retrieving information about the network.
+ * </pre>
  */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.50.2)",
@@ -122,10 +125,16 @@ public final class NetworkGrpc {
   }
 
   /**
+   * <pre>
+   * Network service provides RPCs for retrieving information about the network.
+   * </pre>
    */
   public static abstract class NetworkImplBase implements io.grpc.BindableService {
 
     /**
+     * <pre>
+     * GetNetworkInfo retrieves information about the overall network.
+     * </pre>
      */
     public void getNetworkInfo(pactus.network.NetworkOuterClass.GetNetworkInfoRequest request,
         io.grpc.stub.StreamObserver<pactus.network.NetworkOuterClass.GetNetworkInfoResponse> responseObserver) {
@@ -133,6 +142,9 @@ public final class NetworkGrpc {
     }
 
     /**
+     * <pre>
+     * GetNodeInfo retrieves information about a specific node in the network.
+     * </pre>
      */
     public void getNodeInfo(pactus.network.NetworkOuterClass.GetNodeInfoRequest request,
         io.grpc.stub.StreamObserver<pactus.network.NetworkOuterClass.GetNodeInfoResponse> responseObserver) {
@@ -160,6 +172,9 @@ public final class NetworkGrpc {
   }
 
   /**
+   * <pre>
+   * Network service provides RPCs for retrieving information about the network.
+   * </pre>
    */
   public static final class NetworkStub extends io.grpc.stub.AbstractAsyncStub<NetworkStub> {
     private NetworkStub(
@@ -174,6 +189,9 @@ public final class NetworkGrpc {
     }
 
     /**
+     * <pre>
+     * GetNetworkInfo retrieves information about the overall network.
+     * </pre>
      */
     public void getNetworkInfo(pactus.network.NetworkOuterClass.GetNetworkInfoRequest request,
         io.grpc.stub.StreamObserver<pactus.network.NetworkOuterClass.GetNetworkInfoResponse> responseObserver) {
@@ -182,6 +200,9 @@ public final class NetworkGrpc {
     }
 
     /**
+     * <pre>
+     * GetNodeInfo retrieves information about a specific node in the network.
+     * </pre>
      */
     public void getNodeInfo(pactus.network.NetworkOuterClass.GetNodeInfoRequest request,
         io.grpc.stub.StreamObserver<pactus.network.NetworkOuterClass.GetNodeInfoResponse> responseObserver) {
@@ -191,6 +212,9 @@ public final class NetworkGrpc {
   }
 
   /**
+   * <pre>
+   * Network service provides RPCs for retrieving information about the network.
+   * </pre>
    */
   public static final class NetworkBlockingStub extends io.grpc.stub.AbstractBlockingStub<NetworkBlockingStub> {
     private NetworkBlockingStub(
@@ -205,6 +229,9 @@ public final class NetworkGrpc {
     }
 
     /**
+     * <pre>
+     * GetNetworkInfo retrieves information about the overall network.
+     * </pre>
      */
     public pactus.network.NetworkOuterClass.GetNetworkInfoResponse getNetworkInfo(pactus.network.NetworkOuterClass.GetNetworkInfoRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -212,6 +239,9 @@ public final class NetworkGrpc {
     }
 
     /**
+     * <pre>
+     * GetNodeInfo retrieves information about a specific node in the network.
+     * </pre>
      */
     public pactus.network.NetworkOuterClass.GetNodeInfoResponse getNodeInfo(pactus.network.NetworkOuterClass.GetNodeInfoRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -220,6 +250,9 @@ public final class NetworkGrpc {
   }
 
   /**
+   * <pre>
+   * Network service provides RPCs for retrieving information about the network.
+   * </pre>
    */
   public static final class NetworkFutureStub extends io.grpc.stub.AbstractFutureStub<NetworkFutureStub> {
     private NetworkFutureStub(
@@ -234,6 +267,9 @@ public final class NetworkGrpc {
     }
 
     /**
+     * <pre>
+     * GetNetworkInfo retrieves information about the overall network.
+     * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.network.NetworkOuterClass.GetNetworkInfoResponse> getNetworkInfo(
         pactus.network.NetworkOuterClass.GetNetworkInfoRequest request) {
@@ -242,6 +278,9 @@ public final class NetworkGrpc {
     }
 
     /**
+     * <pre>
+     * GetNodeInfo retrieves information about a specific node in the network.
+     * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.network.NetworkOuterClass.GetNodeInfoResponse> getNodeInfo(
         pactus.network.NetworkOuterClass.GetNodeInfoRequest request) {

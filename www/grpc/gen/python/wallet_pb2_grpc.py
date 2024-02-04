@@ -6,7 +6,8 @@ import wallet_pb2 as wallet__pb2
 
 
 class WalletStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """Define the Wallet service with various RPC methods for wallet management.
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -52,46 +53,54 @@ class WalletStub(object):
 
 
 class WalletServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """Define the Wallet service with various RPC methods for wallet management.
+    """
 
     def CreateWallet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """CreateWallet creates a new wallet with the specified parameters.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def LoadWallet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """LoadWallet loads an existing wallet with the given name.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UnloadWallet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """UnloadWallet unloads a currently loaded wallet with the specified name.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def LockWallet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """LockWallet locks a currently loaded wallet with the provided password and timeout.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UnlockWallet(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """UnlockWallet unlocks a locked wallet with the provided password and timeout.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SignRawTransaction(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """SignRawTransaction signs a raw transaction for a specified wallet.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetValidatorAddress(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """GetValidatorAddress retrieves the validator address associated with a public key.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -142,7 +151,8 @@ def add_WalletServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Wallet(object):
-    """Missing associated documentation comment in .proto file."""
+    """Define the Wallet service with various RPC methods for wallet management.
+    """
 
     @staticmethod
     def CreateWallet(request,
