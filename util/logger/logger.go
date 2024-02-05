@@ -161,10 +161,10 @@ func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 
 func (sl *SubLogger) logObj(event *zerolog.Event, msg string, keyvals ...interface{}) {
 	if sl.obj != nil {
-		addFields(event.Str(sl.name, sl.obj.String()), keyvals...).Msg(msg)
-	} else {
-		addFields(event, keyvals...).Msg(msg)
+		event = event.Str(sl.name, sl.obj.String())
 	}
+
+	addFields(event, keyvals...).Msg(msg)
 }
 
 func (sl *SubLogger) Trace(msg string, keyvals ...interface{}) {

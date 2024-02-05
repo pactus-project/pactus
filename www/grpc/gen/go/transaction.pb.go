@@ -20,15 +20,16 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Enumeration for different types of transaction payloads.
 type PayloadType int32
 
 const (
-	PayloadType_UNKNOWN           PayloadType = 0
-	PayloadType_TRANSFER_PAYLOAD  PayloadType = 1
-	PayloadType_BOND_PAYLOAD      PayloadType = 2
-	PayloadType_SORTITION_PAYLOAD PayloadType = 3
-	PayloadType_UNBOND_PAYLOAD    PayloadType = 4
-	PayloadType_WITHDRAW_PAYLOAD  PayloadType = 5
+	PayloadType_UNKNOWN           PayloadType = 0 // Unknown payload type.
+	PayloadType_TRANSFER_PAYLOAD  PayloadType = 1 // Transfer payload type.
+	PayloadType_BOND_PAYLOAD      PayloadType = 2 // Bond payload type.
+	PayloadType_SORTITION_PAYLOAD PayloadType = 3 // Sortition payload type.
+	PayloadType_UNBOND_PAYLOAD    PayloadType = 4 // Unbond payload type.
+	PayloadType_WITHDRAW_PAYLOAD  PayloadType = 5 // Withdraw payload type.
 )
 
 // Enum value maps for PayloadType.
@@ -78,11 +79,12 @@ func (PayloadType) EnumDescriptor() ([]byte, []int) {
 	return file_transaction_proto_rawDescGZIP(), []int{0}
 }
 
+// Enumeration for verbosity level when requesting transaction details.
 type TransactionVerbosity int32
 
 const (
-	TransactionVerbosity_TRANSACTION_DATA TransactionVerbosity = 0
-	TransactionVerbosity_TRANSACTION_INFO TransactionVerbosity = 1
+	TransactionVerbosity_TRANSACTION_DATA TransactionVerbosity = 0 // Request only transaction data.
+	TransactionVerbosity_TRANSACTION_INFO TransactionVerbosity = 1 // Request detailed transaction information.
 )
 
 // Enum value maps for TransactionVerbosity.
@@ -124,13 +126,14 @@ func (TransactionVerbosity) EnumDescriptor() ([]byte, []int) {
 	return file_transaction_proto_rawDescGZIP(), []int{1}
 }
 
+// Request message for retrieving transaction details.
 type GetTransactionRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id        []byte               `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Verbosity TransactionVerbosity `protobuf:"varint,2,opt,name=verbosity,proto3,enum=pactus.TransactionVerbosity" json:"verbosity,omitempty"`
+	Id        []byte               `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`                                                 // Transaction ID.
+	Verbosity TransactionVerbosity `protobuf:"varint,2,opt,name=verbosity,proto3,enum=pactus.TransactionVerbosity" json:"verbosity,omitempty"` // Verbosity level for transaction details.
 }
 
 func (x *GetTransactionRequest) Reset() {
@@ -179,14 +182,15 @@ func (x *GetTransactionRequest) GetVerbosity() TransactionVerbosity {
 	return TransactionVerbosity_TRANSACTION_DATA
 }
 
+// Response message containing details of a transaction.
 type GetTransactionResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	BlockHeight uint32           `protobuf:"varint,12,opt,name=block_height,json=blockHeight,proto3" json:"block_height,omitempty"`
-	BlockTime   uint32           `protobuf:"varint,13,opt,name=block_time,json=blockTime,proto3" json:"block_time,omitempty"`
-	Transaction *TransactionInfo `protobuf:"bytes,3,opt,name=transaction,proto3" json:"transaction,omitempty"`
+	BlockHeight uint32           `protobuf:"varint,12,opt,name=block_height,json=blockHeight,proto3" json:"block_height,omitempty"` // Height of the block containing the transaction.
+	BlockTime   uint32           `protobuf:"varint,13,opt,name=block_time,json=blockTime,proto3" json:"block_time,omitempty"`       // Time of the block containing the transaction.
+	Transaction *TransactionInfo `protobuf:"bytes,3,opt,name=transaction,proto3" json:"transaction,omitempty"`                      // Information about the transaction.
 }
 
 func (x *GetTransactionResponse) Reset() {
@@ -242,13 +246,14 @@ func (x *GetTransactionResponse) GetTransaction() *TransactionInfo {
 	return nil
 }
 
+// Request message for calculating transaction fee.
 type CalculateFeeRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Amount      int64       `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`
-	PayloadType PayloadType `protobuf:"varint,2,opt,name=payloadType,proto3,enum=pactus.PayloadType" json:"payloadType,omitempty"`
+	Amount      int64       `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`                                   // Transaction amount.
+	PayloadType PayloadType `protobuf:"varint,2,opt,name=payloadType,proto3,enum=pactus.PayloadType" json:"payloadType,omitempty"` // Type of transaction payload.
 }
 
 func (x *CalculateFeeRequest) Reset() {
@@ -297,12 +302,13 @@ func (x *CalculateFeeRequest) GetPayloadType() PayloadType {
 	return PayloadType_UNKNOWN
 }
 
+// Response message containing the calculated transaction fee.
 type CalculateFeeResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Fee int64 `protobuf:"varint,1,opt,name=fee,proto3" json:"fee,omitempty"`
+	Fee int64 `protobuf:"varint,1,opt,name=fee,proto3" json:"fee,omitempty"` // Calculated transaction fee.
 }
 
 func (x *CalculateFeeResponse) Reset() {
@@ -344,12 +350,13 @@ func (x *CalculateFeeResponse) GetFee() int64 {
 	return 0
 }
 
+// Request message for broadcasting a signed transaction.
 type BroadcastTransactionRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	SignedRawTransaction []byte `protobuf:"bytes,1,opt,name=signed_raw_transaction,json=signedRawTransaction,proto3" json:"signed_raw_transaction,omitempty"`
+	SignedRawTransaction []byte `protobuf:"bytes,1,opt,name=signed_raw_transaction,json=signedRawTransaction,proto3" json:"signed_raw_transaction,omitempty"` // Signed raw transaction data.
 }
 
 func (x *BroadcastTransactionRequest) Reset() {
@@ -391,12 +398,13 @@ func (x *BroadcastTransactionRequest) GetSignedRawTransaction() []byte {
 	return nil
 }
 
+// Response message containing the ID of the broadcasted transaction.
 type BroadcastTransactionResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id []byte `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Id []byte `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"` // Transaction ID.
 }
 
 func (x *BroadcastTransactionResponse) Reset() {
@@ -438,17 +446,18 @@ func (x *BroadcastTransactionResponse) GetId() []byte {
 	return nil
 }
 
+// Request message for retrieving raw details of a transfer transaction.
 type GetRawTransferTransactionRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	LockTime uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	Sender   string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty"`
-	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	Amount   int64  `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`
-	Fee      int64  `protobuf:"varint,5,opt,name=fee,proto3" json:"fee,omitempty"`
-	Memo     string `protobuf:"bytes,6,opt,name=memo,proto3" json:"memo,omitempty"`
+	LockTime uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"` // Lock time for the transaction.
+	Sender   string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty"`                      // Sender's address.
+	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty"`                  // Receiver's address.
+	Amount   int64  `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`                     // Transaction amount.
+	Fee      int64  `protobuf:"varint,5,opt,name=fee,proto3" json:"fee,omitempty"`                           // Transaction fee.
+	Memo     string `protobuf:"bytes,6,opt,name=memo,proto3" json:"memo,omitempty"`                          // Transaction memo.
 }
 
 func (x *GetRawTransferTransactionRequest) Reset() {
@@ -525,18 +534,19 @@ func (x *GetRawTransferTransactionRequest) GetMemo() string {
 	return ""
 }
 
+// Request message for retrieving raw details of a bond transaction.
 type GetRawBondTransactionRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	LockTime  uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	Sender    string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty"`
-	Receiver  string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	Stake     int64  `protobuf:"varint,4,opt,name=stake,proto3" json:"stake,omitempty"`
-	PublicKey string `protobuf:"bytes,5,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
-	Fee       int64  `protobuf:"varint,6,opt,name=fee,proto3" json:"fee,omitempty"`
-	Memo      string `protobuf:"bytes,7,opt,name=memo,proto3" json:"memo,omitempty"`
+	LockTime  uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`   // Lock time for the transaction.
+	Sender    string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty"`                        // Sender's address.
+	Receiver  string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty"`                    // Receiver's address.
+	Stake     int64  `protobuf:"varint,4,opt,name=stake,proto3" json:"stake,omitempty"`                         // Stake amount.
+	PublicKey string `protobuf:"bytes,5,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"` // Public key of the validator.
+	Fee       int64  `protobuf:"varint,6,opt,name=fee,proto3" json:"fee,omitempty"`                             // Transaction fee.
+	Memo      string `protobuf:"bytes,7,opt,name=memo,proto3" json:"memo,omitempty"`                            // Transaction memo.
 }
 
 func (x *GetRawBondTransactionRequest) Reset() {
@@ -620,14 +630,15 @@ func (x *GetRawBondTransactionRequest) GetMemo() string {
 	return ""
 }
 
+// Request message for retrieving raw details of an unbond transaction.
 type GetRawUnBondTransactionRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	LockTime         uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	ValidatorAddress string `protobuf:"bytes,3,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
-	Memo             string `protobuf:"bytes,4,opt,name=memo,proto3" json:"memo,omitempty"`
+	LockTime         uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`                        // Lock time for the transaction.
+	ValidatorAddress string `protobuf:"bytes,3,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"` // Address of the validator to unbond from.
+	Memo             string `protobuf:"bytes,4,opt,name=memo,proto3" json:"memo,omitempty"`                                                 // Transaction memo.
 }
 
 func (x *GetRawUnBondTransactionRequest) Reset() {
@@ -683,17 +694,18 @@ func (x *GetRawUnBondTransactionRequest) GetMemo() string {
 	return ""
 }
 
+// Request message for retrieving raw details of a withdraw transaction.
 type GetRawWithdrawTransactionRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	LockTime         uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	ValidatorAddress string `protobuf:"bytes,2,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
-	AccountAddress   string `protobuf:"bytes,3,opt,name=account_address,json=accountAddress,proto3" json:"account_address,omitempty"`
-	Fee              int64  `protobuf:"varint,4,opt,name=fee,proto3" json:"fee,omitempty"`
-	Amount           int64  `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`
-	Memo             string `protobuf:"bytes,6,opt,name=memo,proto3" json:"memo,omitempty"`
+	LockTime         uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`                        // Lock time for the transaction.
+	ValidatorAddress string `protobuf:"bytes,2,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"` // Address of the validator to withdraw from.
+	AccountAddress   string `protobuf:"bytes,3,opt,name=account_address,json=accountAddress,proto3" json:"account_address,omitempty"`       // Address of the account to withdraw to.
+	Fee              int64  `protobuf:"varint,4,opt,name=fee,proto3" json:"fee,omitempty"`                                                  // Transaction fee.
+	Amount           int64  `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`                                            // Withdrawal amount.
+	Memo             string `protobuf:"bytes,6,opt,name=memo,proto3" json:"memo,omitempty"`                                                 // Transaction memo.
 }
 
 func (x *GetRawWithdrawTransactionRequest) Reset() {
@@ -770,12 +782,13 @@ func (x *GetRawWithdrawTransactionRequest) GetMemo() string {
 	return ""
 }
 
+// Response message containing raw transaction data.
 type GetRawTransactionResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	RawTransaction []byte `protobuf:"bytes,1,opt,name=raw_transaction,json=rawTransaction,proto3" json:"raw_transaction,omitempty"`
+	RawTransaction []byte `protobuf:"bytes,1,opt,name=raw_transaction,json=rawTransaction,proto3" json:"raw_transaction,omitempty"` // Raw transaction data.
 }
 
 func (x *GetRawTransactionResponse) Reset() {
@@ -817,14 +830,15 @@ func (x *GetRawTransactionResponse) GetRawTransaction() []byte {
 	return nil
 }
 
+// Payload for a transfer transaction.
 type PayloadTransfer struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Sender   string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
-	Receiver string `protobuf:"bytes,2,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	Amount   int64  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
+	Sender   string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`     // Sender's address.
+	Receiver string `protobuf:"bytes,2,opt,name=receiver,proto3" json:"receiver,omitempty"` // Receiver's address.
+	Amount   int64  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`    // Transaction amount.
 }
 
 func (x *PayloadTransfer) Reset() {
@@ -880,14 +894,15 @@ func (x *PayloadTransfer) GetAmount() int64 {
 	return 0
 }
 
+// Payload for a bond transaction.
 type PayloadBond struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Sender   string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
-	Receiver string `protobuf:"bytes,2,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	Stake    int64  `protobuf:"varint,3,opt,name=stake,proto3" json:"stake,omitempty"`
+	Sender   string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`     // Sender's address.
+	Receiver string `protobuf:"bytes,2,opt,name=receiver,proto3" json:"receiver,omitempty"` // Receiver's address.
+	Stake    int64  `protobuf:"varint,3,opt,name=stake,proto3" json:"stake,omitempty"`      // Stake amount.
 }
 
 func (x *PayloadBond) Reset() {
@@ -943,13 +958,14 @@ func (x *PayloadBond) GetStake() int64 {
 	return 0
 }
 
+// Payload for a sortition transaction.
 type PayloadSortition struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
-	Proof   []byte `protobuf:"bytes,2,opt,name=proof,proto3" json:"proof,omitempty"`
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"` // Address associated with the sortition.
+	Proof   []byte `protobuf:"bytes,2,opt,name=proof,proto3" json:"proof,omitempty"`     // Proof for the sortition.
 }
 
 func (x *PayloadSortition) Reset() {
@@ -998,12 +1014,13 @@ func (x *PayloadSortition) GetProof() []byte {
 	return nil
 }
 
+// Payload for an unbond transaction.
 type PayloadUnbond struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Validator string `protobuf:"bytes,1,opt,name=validator,proto3" json:"validator,omitempty"`
+	Validator string `protobuf:"bytes,1,opt,name=validator,proto3" json:"validator,omitempty"` // Address of the validator to unbond from.
 }
 
 func (x *PayloadUnbond) Reset() {
@@ -1045,14 +1062,15 @@ func (x *PayloadUnbond) GetValidator() string {
 	return ""
 }
 
+// Payload for a withdraw transaction.
 type PayloadWithdraw struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	From   string `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
-	To     string `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
-	Amount int64  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
+	From   string `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`      // Address to withdraw from.
+	To     string `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`          // Address to withdraw to.
+	Amount int64  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"` // Withdrawal amount.
 }
 
 func (x *PayloadWithdraw) Reset() {
@@ -1108,18 +1126,19 @@ func (x *PayloadWithdraw) GetAmount() int64 {
 	return 0
 }
 
+// Information about a transaction.
 type TransactionInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          []byte      `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Data        []byte      `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	Version     int32       `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
-	LockTime    uint32      `protobuf:"varint,4,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	Value       int64       `protobuf:"varint,5,opt,name=value,proto3" json:"value,omitempty"`
-	Fee         int64       `protobuf:"varint,6,opt,name=fee,proto3" json:"fee,omitempty"`
-	PayloadType PayloadType `protobuf:"varint,7,opt,name=payloadType,proto3,enum=pactus.PayloadType" json:"payloadType,omitempty"`
+	Id          []byte      `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`                                            // Transaction ID.
+	Data        []byte      `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                                        // Transaction data.
+	Version     int32       `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`                                 // Transaction version.
+	LockTime    uint32      `protobuf:"varint,4,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`               // Lock time for the transaction.
+	Value       int64       `protobuf:"varint,5,opt,name=value,proto3" json:"value,omitempty"`                                     // Transaction value.
+	Fee         int64       `protobuf:"varint,6,opt,name=fee,proto3" json:"fee,omitempty"`                                         // Transaction fee.
+	PayloadType PayloadType `protobuf:"varint,7,opt,name=payloadType,proto3,enum=pactus.PayloadType" json:"payloadType,omitempty"` // Type of transaction payload.
 	// Types that are assignable to Payload:
 	//
 	//	*TransactionInfo_Transfer
@@ -1128,9 +1147,9 @@ type TransactionInfo struct {
 	//	*TransactionInfo_Unbond
 	//	*TransactionInfo_Withdraw
 	Payload   isTransactionInfo_Payload `protobuf_oneof:"payload"`
-	Memo      string                    `protobuf:"bytes,8,opt,name=memo,proto3" json:"memo,omitempty"`
-	PublicKey string                    `protobuf:"bytes,9,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
-	Signature []byte                    `protobuf:"bytes,10,opt,name=signature,proto3" json:"signature,omitempty"`
+	Memo      string                    `protobuf:"bytes,8,opt,name=memo,proto3" json:"memo,omitempty"`                            // Transaction memo.
+	PublicKey string                    `protobuf:"bytes,9,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"` // Public key associated with the transaction.
+	Signature []byte                    `protobuf:"bytes,10,opt,name=signature,proto3" json:"signature,omitempty"`                 // Transaction signature.
 }
 
 func (x *TransactionInfo) Reset() {
@@ -1282,23 +1301,23 @@ type isTransactionInfo_Payload interface {
 }
 
 type TransactionInfo_Transfer struct {
-	Transfer *PayloadTransfer `protobuf:"bytes,30,opt,name=transfer,proto3,oneof"`
+	Transfer *PayloadTransfer `protobuf:"bytes,30,opt,name=transfer,proto3,oneof"` // Transfer payload.
 }
 
 type TransactionInfo_Bond struct {
-	Bond *PayloadBond `protobuf:"bytes,31,opt,name=bond,proto3,oneof"`
+	Bond *PayloadBond `protobuf:"bytes,31,opt,name=bond,proto3,oneof"` // Bond payload.
 }
 
 type TransactionInfo_Sortition struct {
-	Sortition *PayloadSortition `protobuf:"bytes,32,opt,name=sortition,proto3,oneof"`
+	Sortition *PayloadSortition `protobuf:"bytes,32,opt,name=sortition,proto3,oneof"` // Sortition payload.
 }
 
 type TransactionInfo_Unbond struct {
-	Unbond *PayloadUnbond `protobuf:"bytes,33,opt,name=unbond,proto3,oneof"`
+	Unbond *PayloadUnbond `protobuf:"bytes,33,opt,name=unbond,proto3,oneof"` // Unbond payload.
 }
 
 type TransactionInfo_Withdraw struct {
-	Withdraw *PayloadWithdraw `protobuf:"bytes,34,opt,name=withdraw,proto3,oneof"`
+	Withdraw *PayloadWithdraw `protobuf:"bytes,34,opt,name=withdraw,proto3,oneof"` // Withdraw payload.
 }
 
 func (*TransactionInfo_Transfer) isTransactionInfo_Payload() {}

@@ -15,19 +15,35 @@ public final class BlockchainOuterClass {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   /**
+   * <pre>
+   * Enumeration for verbosity level when requesting block information.
+   * </pre>
+   *
    * Protobuf enum {@code pactus.BlockVerbosity}
    */
   public enum BlockVerbosity
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
+     * <pre>
+     * Request block data only.
+     * </pre>
+     *
      * <code>BLOCK_DATA = 0;</code>
      */
     BLOCK_DATA(0),
     /**
+     * <pre>
+     * Request block information only.
+     * </pre>
+     *
      * <code>BLOCK_INFO = 1;</code>
      */
     BLOCK_INFO(1),
     /**
+     * <pre>
+     * Request block transactions only.
+     * </pre>
+     *
      * <code>BLOCK_TRANSACTIONS = 2;</code>
      */
     BLOCK_TRANSACTIONS(2),
@@ -35,14 +51,26 @@ public final class BlockchainOuterClass {
     ;
 
     /**
+     * <pre>
+     * Request block data only.
+     * </pre>
+     *
      * <code>BLOCK_DATA = 0;</code>
      */
     public static final int BLOCK_DATA_VALUE = 0;
     /**
+     * <pre>
+     * Request block information only.
+     * </pre>
+     *
      * <code>BLOCK_INFO = 1;</code>
      */
     public static final int BLOCK_INFO_VALUE = 1;
     /**
+     * <pre>
+     * Request block transactions only.
+     * </pre>
+     *
      * <code>BLOCK_TRANSACTIONS = 2;</code>
      */
     public static final int BLOCK_TRANSACTIONS_VALUE = 2;
@@ -132,23 +160,43 @@ public final class BlockchainOuterClass {
   }
 
   /**
+   * <pre>
+   * Enumeration for types of votes.
+   * </pre>
+   *
    * Protobuf enum {@code pactus.VoteType}
    */
   public enum VoteType
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
+     * <pre>
+     * Unknown vote type.
+     * </pre>
+     *
      * <code>VOTE_UNKNOWN = 0;</code>
      */
     VOTE_UNKNOWN(0),
     /**
+     * <pre>
+     * Prepare vote type.
+     * </pre>
+     *
      * <code>VOTE_PREPARE = 1;</code>
      */
     VOTE_PREPARE(1),
     /**
+     * <pre>
+     * Precommit vote type.
+     * </pre>
+     *
      * <code>VOTE_PRECOMMIT = 2;</code>
      */
     VOTE_PRECOMMIT(2),
     /**
+     * <pre>
+     * Change proposer vote type.
+     * </pre>
+     *
      * <code>VOTE_CHANGE_PROPOSER = 3;</code>
      */
     VOTE_CHANGE_PROPOSER(3),
@@ -156,18 +204,34 @@ public final class BlockchainOuterClass {
     ;
 
     /**
+     * <pre>
+     * Unknown vote type.
+     * </pre>
+     *
      * <code>VOTE_UNKNOWN = 0;</code>
      */
     public static final int VOTE_UNKNOWN_VALUE = 0;
     /**
+     * <pre>
+     * Prepare vote type.
+     * </pre>
+     *
      * <code>VOTE_PREPARE = 1;</code>
      */
     public static final int VOTE_PREPARE_VALUE = 1;
     /**
+     * <pre>
+     * Precommit vote type.
+     * </pre>
+     *
      * <code>VOTE_PRECOMMIT = 2;</code>
      */
     public static final int VOTE_PRECOMMIT_VALUE = 2;
     /**
+     * <pre>
+     * Change proposer vote type.
+     * </pre>
+     *
      * <code>VOTE_CHANGE_PROPOSER = 3;</code>
      */
     public static final int VOTE_CHANGE_PROPOSER_VALUE = 3;
@@ -262,11 +326,19 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Address of the account.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The address.
      */
     java.lang.String getAddress();
     /**
+     * <pre>
+     * Address of the account.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -274,6 +346,10 @@ public final class BlockchainOuterClass {
         getAddressBytes();
   }
   /**
+   * <pre>
+   * Message to request account information based on an address.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetAccountRequest}
    */
   public static final class GetAccountRequest extends
@@ -317,6 +393,10 @@ public final class BlockchainOuterClass {
     public static final int ADDRESS_FIELD_NUMBER = 1;
     private volatile java.lang.Object address_;
     /**
+     * <pre>
+     * Address of the account.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The address.
      */
@@ -334,6 +414,10 @@ public final class BlockchainOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address of the account.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -507,6 +591,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message to request account information based on an address.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetAccountRequest}
      */
     public static final class Builder extends
@@ -669,6 +757,10 @@ public final class BlockchainOuterClass {
 
       private java.lang.Object address_ = "";
       /**
+       * <pre>
+       * Address of the account.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return The address.
        */
@@ -685,6 +777,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the account.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return The bytes for address.
        */
@@ -702,6 +798,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the account.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @param value The address to set.
        * @return This builder for chaining.
@@ -717,6 +817,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the account.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return This builder for chaining.
        */
@@ -727,6 +831,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the account.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @param value The bytes for address to set.
        * @return This builder for chaining.
@@ -811,21 +919,37 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Account information.
+     * </pre>
+     *
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
      * @return Whether the account field is set.
      */
     boolean hasAccount();
     /**
+     * <pre>
+     * Account information.
+     * </pre>
+     *
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
      * @return The account.
      */
     pactus.blockchain.BlockchainOuterClass.AccountInfo getAccount();
     /**
+     * <pre>
+     * Account information.
+     * </pre>
+     *
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
      */
     pactus.blockchain.BlockchainOuterClass.AccountInfoOrBuilder getAccountOrBuilder();
   }
   /**
+   * <pre>
+   * Message containing the response with account information.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetAccountResponse}
    */
   public static final class GetAccountResponse extends
@@ -868,6 +992,10 @@ public final class BlockchainOuterClass {
     public static final int ACCOUNT_FIELD_NUMBER = 1;
     private pactus.blockchain.BlockchainOuterClass.AccountInfo account_;
     /**
+     * <pre>
+     * Account information.
+     * </pre>
+     *
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
      * @return Whether the account field is set.
      */
@@ -876,6 +1004,10 @@ public final class BlockchainOuterClass {
       return account_ != null;
     }
     /**
+     * <pre>
+     * Account information.
+     * </pre>
+     *
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
      * @return The account.
      */
@@ -884,6 +1016,10 @@ public final class BlockchainOuterClass {
       return account_ == null ? pactus.blockchain.BlockchainOuterClass.AccountInfo.getDefaultInstance() : account_;
     }
     /**
+     * <pre>
+     * Account information.
+     * </pre>
+     *
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
      */
     @java.lang.Override
@@ -1052,6 +1188,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing the response with account information.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetAccountResponse}
      */
     public static final class Builder extends
@@ -1225,6 +1365,10 @@ public final class BlockchainOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.blockchain.BlockchainOuterClass.AccountInfo, pactus.blockchain.BlockchainOuterClass.AccountInfo.Builder, pactus.blockchain.BlockchainOuterClass.AccountInfoOrBuilder> accountBuilder_;
       /**
+       * <pre>
+       * Account information.
+       * </pre>
+       *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        * @return Whether the account field is set.
        */
@@ -1232,6 +1376,10 @@ public final class BlockchainOuterClass {
         return accountBuilder_ != null || account_ != null;
       }
       /**
+       * <pre>
+       * Account information.
+       * </pre>
+       *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        * @return The account.
        */
@@ -1243,6 +1391,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Account information.
+       * </pre>
+       *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        */
       public Builder setAccount(pactus.blockchain.BlockchainOuterClass.AccountInfo value) {
@@ -1259,6 +1411,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Account information.
+       * </pre>
+       *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        */
       public Builder setAccount(
@@ -1273,6 +1429,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Account information.
+       * </pre>
+       *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        */
       public Builder mergeAccount(pactus.blockchain.BlockchainOuterClass.AccountInfo value) {
@@ -1291,6 +1451,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Account information.
+       * </pre>
+       *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        */
       public Builder clearAccount() {
@@ -1305,6 +1469,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Account information.
+       * </pre>
+       *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.AccountInfo.Builder getAccountBuilder() {
@@ -1313,6 +1481,10 @@ public final class BlockchainOuterClass {
         return getAccountFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * Account information.
+       * </pre>
+       *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.AccountInfoOrBuilder getAccountOrBuilder() {
@@ -1324,6 +1496,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Account information.
+       * </pre>
+       *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -1408,6 +1584,10 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
   }
   /**
+   * <pre>
+   * Message to request validator addresses.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetValidatorAddressesRequest}
    */
   public static final class GetValidatorAddressesRequest extends
@@ -1592,6 +1772,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message to request validator addresses.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetValidatorAddressesRequest}
      */
     public static final class Builder extends
@@ -1808,23 +1992,39 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * List of validator addresses.
+     * </pre>
+     *
      * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
      * @return A list containing the addresses.
      */
     java.util.List<java.lang.String>
         getAddressesList();
     /**
+     * <pre>
+     * List of validator addresses.
+     * </pre>
+     *
      * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
      * @return The count of addresses.
      */
     int getAddressesCount();
     /**
+     * <pre>
+     * List of validator addresses.
+     * </pre>
+     *
      * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
      * @param index The index of the element to return.
      * @return The addresses at the given index.
      */
     java.lang.String getAddresses(int index);
     /**
+     * <pre>
+     * List of validator addresses.
+     * </pre>
+     *
      * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
      * @param index The index of the value to return.
      * @return The bytes of the addresses at the given index.
@@ -1833,6 +2033,10 @@ public final class BlockchainOuterClass {
         getAddressesBytes(int index);
   }
   /**
+   * <pre>
+   * Message containing the response with a list of validator addresses.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetValidatorAddressesResponse}
    */
   public static final class GetValidatorAddressesResponse extends
@@ -1876,6 +2080,10 @@ public final class BlockchainOuterClass {
     public static final int ADDRESSES_FIELD_NUMBER = 1;
     private com.google.protobuf.LazyStringList addresses_;
     /**
+     * <pre>
+     * List of validator addresses.
+     * </pre>
+     *
      * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
      * @return A list containing the addresses.
      */
@@ -1884,6 +2092,10 @@ public final class BlockchainOuterClass {
       return addresses_;
     }
     /**
+     * <pre>
+     * List of validator addresses.
+     * </pre>
+     *
      * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
      * @return The count of addresses.
      */
@@ -1891,6 +2103,10 @@ public final class BlockchainOuterClass {
       return addresses_.size();
     }
     /**
+     * <pre>
+     * List of validator addresses.
+     * </pre>
+     *
      * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
      * @param index The index of the element to return.
      * @return The addresses at the given index.
@@ -1899,6 +2115,10 @@ public final class BlockchainOuterClass {
       return addresses_.get(index);
     }
     /**
+     * <pre>
+     * List of validator addresses.
+     * </pre>
+     *
      * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
      * @param index The index of the value to return.
      * @return The bytes of the addresses at the given index.
@@ -2070,6 +2290,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing the response with a list of validator addresses.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetValidatorAddressesResponse}
      */
     public static final class Builder extends
@@ -2251,6 +2475,10 @@ public final class BlockchainOuterClass {
          }
       }
       /**
+       * <pre>
+       * List of validator addresses.
+       * </pre>
+       *
        * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
        * @return A list containing the addresses.
        */
@@ -2259,6 +2487,10 @@ public final class BlockchainOuterClass {
         return addresses_.getUnmodifiableView();
       }
       /**
+       * <pre>
+       * List of validator addresses.
+       * </pre>
+       *
        * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
        * @return The count of addresses.
        */
@@ -2266,6 +2498,10 @@ public final class BlockchainOuterClass {
         return addresses_.size();
       }
       /**
+       * <pre>
+       * List of validator addresses.
+       * </pre>
+       *
        * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
        * @param index The index of the element to return.
        * @return The addresses at the given index.
@@ -2274,6 +2510,10 @@ public final class BlockchainOuterClass {
         return addresses_.get(index);
       }
       /**
+       * <pre>
+       * List of validator addresses.
+       * </pre>
+       *
        * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
        * @param index The index of the value to return.
        * @return The bytes of the addresses at the given index.
@@ -2283,6 +2523,10 @@ public final class BlockchainOuterClass {
         return addresses_.getByteString(index);
       }
       /**
+       * <pre>
+       * List of validator addresses.
+       * </pre>
+       *
        * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
        * @param index The index to set the value at.
        * @param value The addresses to set.
@@ -2299,6 +2543,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of validator addresses.
+       * </pre>
+       *
        * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
        * @param value The addresses to add.
        * @return This builder for chaining.
@@ -2314,6 +2562,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of validator addresses.
+       * </pre>
+       *
        * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
        * @param values The addresses to add.
        * @return This builder for chaining.
@@ -2327,6 +2579,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of validator addresses.
+       * </pre>
+       *
        * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
        * @return This builder for chaining.
        */
@@ -2337,6 +2593,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of validator addresses.
+       * </pre>
+       *
        * <code>repeated string addresses = 1 [json_name = "addresses"];</code>
        * @param value The bytes of the addresses to add.
        * @return This builder for chaining.
@@ -2421,11 +2681,19 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Address of the validator.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The address.
      */
     java.lang.String getAddress();
     /**
+     * <pre>
+     * Address of the validator.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -2433,6 +2701,10 @@ public final class BlockchainOuterClass {
         getAddressBytes();
   }
   /**
+   * <pre>
+   * Message to request validator information based on an address.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetValidatorRequest}
    */
   public static final class GetValidatorRequest extends
@@ -2476,6 +2748,10 @@ public final class BlockchainOuterClass {
     public static final int ADDRESS_FIELD_NUMBER = 1;
     private volatile java.lang.Object address_;
     /**
+     * <pre>
+     * Address of the validator.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The address.
      */
@@ -2493,6 +2769,10 @@ public final class BlockchainOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address of the validator.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -2666,6 +2946,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message to request validator information based on an address.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetValidatorRequest}
      */
     public static final class Builder extends
@@ -2828,6 +3112,10 @@ public final class BlockchainOuterClass {
 
       private java.lang.Object address_ = "";
       /**
+       * <pre>
+       * Address of the validator.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return The address.
        */
@@ -2844,6 +3132,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the validator.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return The bytes for address.
        */
@@ -2861,6 +3153,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the validator.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @param value The address to set.
        * @return This builder for chaining.
@@ -2876,6 +3172,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the validator.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return This builder for chaining.
        */
@@ -2886,6 +3186,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the validator.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @param value The bytes for address to set.
        * @return This builder for chaining.
@@ -2970,12 +3274,20 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Validator number.
+     * </pre>
+     *
      * <code>int32 number = 1 [json_name = "number"];</code>
      * @return The number.
      */
     int getNumber();
   }
   /**
+   * <pre>
+   * Message to request validator information based on a validator number.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetValidatorByNumberRequest}
    */
   public static final class GetValidatorByNumberRequest extends
@@ -3018,6 +3330,10 @@ public final class BlockchainOuterClass {
     public static final int NUMBER_FIELD_NUMBER = 1;
     private int number_;
     /**
+     * <pre>
+     * Validator number.
+     * </pre>
+     *
      * <code>int32 number = 1 [json_name = "number"];</code>
      * @return The number.
      */
@@ -3182,6 +3498,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message to request validator information based on a validator number.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetValidatorByNumberRequest}
      */
     public static final class Builder extends
@@ -3343,6 +3663,10 @@ public final class BlockchainOuterClass {
 
       private int number_ ;
       /**
+       * <pre>
+       * Validator number.
+       * </pre>
+       *
        * <code>int32 number = 1 [json_name = "number"];</code>
        * @return The number.
        */
@@ -3351,6 +3675,10 @@ public final class BlockchainOuterClass {
         return number_;
       }
       /**
+       * <pre>
+       * Validator number.
+       * </pre>
+       *
        * <code>int32 number = 1 [json_name = "number"];</code>
        * @param value The number to set.
        * @return This builder for chaining.
@@ -3362,6 +3690,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Validator number.
+       * </pre>
+       *
        * <code>int32 number = 1 [json_name = "number"];</code>
        * @return This builder for chaining.
        */
@@ -3440,21 +3772,37 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Validator information.
+     * </pre>
+     *
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
      * @return Whether the validator field is set.
      */
     boolean hasValidator();
     /**
+     * <pre>
+     * Validator information.
+     * </pre>
+     *
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
      * @return The validator.
      */
     pactus.blockchain.BlockchainOuterClass.ValidatorInfo getValidator();
     /**
+     * <pre>
+     * Validator information.
+     * </pre>
+     *
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
      */
     pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder getValidatorOrBuilder();
   }
   /**
+   * <pre>
+   * Message containing the response with validator information.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetValidatorResponse}
    */
   public static final class GetValidatorResponse extends
@@ -3497,6 +3845,10 @@ public final class BlockchainOuterClass {
     public static final int VALIDATOR_FIELD_NUMBER = 1;
     private pactus.blockchain.BlockchainOuterClass.ValidatorInfo validator_;
     /**
+     * <pre>
+     * Validator information.
+     * </pre>
+     *
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
      * @return Whether the validator field is set.
      */
@@ -3505,6 +3857,10 @@ public final class BlockchainOuterClass {
       return validator_ != null;
     }
     /**
+     * <pre>
+     * Validator information.
+     * </pre>
+     *
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
      * @return The validator.
      */
@@ -3513,6 +3869,10 @@ public final class BlockchainOuterClass {
       return validator_ == null ? pactus.blockchain.BlockchainOuterClass.ValidatorInfo.getDefaultInstance() : validator_;
     }
     /**
+     * <pre>
+     * Validator information.
+     * </pre>
+     *
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
      */
     @java.lang.Override
@@ -3681,6 +4041,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing the response with validator information.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetValidatorResponse}
      */
     public static final class Builder extends
@@ -3854,6 +4218,10 @@ public final class BlockchainOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.blockchain.BlockchainOuterClass.ValidatorInfo, pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder, pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder> validatorBuilder_;
       /**
+       * <pre>
+       * Validator information.
+       * </pre>
+       *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        * @return Whether the validator field is set.
        */
@@ -3861,6 +4229,10 @@ public final class BlockchainOuterClass {
         return validatorBuilder_ != null || validator_ != null;
       }
       /**
+       * <pre>
+       * Validator information.
+       * </pre>
+       *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        * @return The validator.
        */
@@ -3872,6 +4244,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Validator information.
+       * </pre>
+       *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        */
       public Builder setValidator(pactus.blockchain.BlockchainOuterClass.ValidatorInfo value) {
@@ -3888,6 +4264,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Validator information.
+       * </pre>
+       *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        */
       public Builder setValidator(
@@ -3902,6 +4282,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Validator information.
+       * </pre>
+       *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        */
       public Builder mergeValidator(pactus.blockchain.BlockchainOuterClass.ValidatorInfo value) {
@@ -3920,6 +4304,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Validator information.
+       * </pre>
+       *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        */
       public Builder clearValidator() {
@@ -3934,6 +4322,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Validator information.
+       * </pre>
+       *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder getValidatorBuilder() {
@@ -3942,6 +4334,10 @@ public final class BlockchainOuterClass {
         return getValidatorFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * Validator information.
+       * </pre>
+       *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder getValidatorOrBuilder() {
@@ -3953,6 +4349,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Validator information.
+       * </pre>
+       *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -4037,11 +4437,19 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Address for which public key is requested.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The address.
      */
     java.lang.String getAddress();
     /**
+     * <pre>
+     * Address for which public key is requested.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -4049,6 +4457,10 @@ public final class BlockchainOuterClass {
         getAddressBytes();
   }
   /**
+   * <pre>
+   * Message to request public key based on an address.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetPublicKeyRequest}
    */
   public static final class GetPublicKeyRequest extends
@@ -4092,6 +4504,10 @@ public final class BlockchainOuterClass {
     public static final int ADDRESS_FIELD_NUMBER = 1;
     private volatile java.lang.Object address_;
     /**
+     * <pre>
+     * Address for which public key is requested.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The address.
      */
@@ -4109,6 +4525,10 @@ public final class BlockchainOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address for which public key is requested.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -4282,6 +4702,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message to request public key based on an address.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetPublicKeyRequest}
      */
     public static final class Builder extends
@@ -4444,6 +4868,10 @@ public final class BlockchainOuterClass {
 
       private java.lang.Object address_ = "";
       /**
+       * <pre>
+       * Address for which public key is requested.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return The address.
        */
@@ -4460,6 +4888,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address for which public key is requested.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return The bytes for address.
        */
@@ -4477,6 +4909,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address for which public key is requested.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @param value The address to set.
        * @return This builder for chaining.
@@ -4492,6 +4928,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address for which public key is requested.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return This builder for chaining.
        */
@@ -4502,6 +4942,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address for which public key is requested.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @param value The bytes for address to set.
        * @return This builder for chaining.
@@ -4586,11 +5030,19 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Public key of the account.
+     * </pre>
+     *
      * <code>string public_key = 1 [json_name = "publicKey"];</code>
      * @return The publicKey.
      */
     java.lang.String getPublicKey();
     /**
+     * <pre>
+     * Public key of the account.
+     * </pre>
+     *
      * <code>string public_key = 1 [json_name = "publicKey"];</code>
      * @return The bytes for publicKey.
      */
@@ -4598,6 +5050,10 @@ public final class BlockchainOuterClass {
         getPublicKeyBytes();
   }
   /**
+   * <pre>
+   * Message containing the response with the public key.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetPublicKeyResponse}
    */
   public static final class GetPublicKeyResponse extends
@@ -4641,6 +5097,10 @@ public final class BlockchainOuterClass {
     public static final int PUBLIC_KEY_FIELD_NUMBER = 1;
     private volatile java.lang.Object publicKey_;
     /**
+     * <pre>
+     * Public key of the account.
+     * </pre>
+     *
      * <code>string public_key = 1 [json_name = "publicKey"];</code>
      * @return The publicKey.
      */
@@ -4658,6 +5118,10 @@ public final class BlockchainOuterClass {
       }
     }
     /**
+     * <pre>
+     * Public key of the account.
+     * </pre>
+     *
      * <code>string public_key = 1 [json_name = "publicKey"];</code>
      * @return The bytes for publicKey.
      */
@@ -4831,6 +5295,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing the response with the public key.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetPublicKeyResponse}
      */
     public static final class Builder extends
@@ -4993,6 +5461,10 @@ public final class BlockchainOuterClass {
 
       private java.lang.Object publicKey_ = "";
       /**
+       * <pre>
+       * Public key of the account.
+       * </pre>
+       *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
        * @return The publicKey.
        */
@@ -5009,6 +5481,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Public key of the account.
+       * </pre>
+       *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
        * @return The bytes for publicKey.
        */
@@ -5026,6 +5502,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Public key of the account.
+       * </pre>
+       *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
        * @param value The publicKey to set.
        * @return This builder for chaining.
@@ -5041,6 +5521,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Public key of the account.
+       * </pre>
+       *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
        * @return This builder for chaining.
        */
@@ -5051,6 +5535,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Public key of the account.
+       * </pre>
+       *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
        * @param value The bytes for publicKey to set.
        * @return This builder for chaining.
@@ -5135,23 +5623,39 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Height of the block.
+     * </pre>
+     *
      * <code>uint32 height = 1 [json_name = "height"];</code>
      * @return The height.
      */
     int getHeight();
 
     /**
+     * <pre>
+     * Verbosity level for block information.
+     * </pre>
+     *
      * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
      * @return The enum numeric value on the wire for verbosity.
      */
     int getVerbosityValue();
     /**
+     * <pre>
+     * Verbosity level for block information.
+     * </pre>
+     *
      * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
      * @return The verbosity.
      */
     pactus.blockchain.BlockchainOuterClass.BlockVerbosity getVerbosity();
   }
   /**
+   * <pre>
+   * Message to request block information based on height and verbosity.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetBlockRequest}
    */
   public static final class GetBlockRequest extends
@@ -5195,6 +5699,10 @@ public final class BlockchainOuterClass {
     public static final int HEIGHT_FIELD_NUMBER = 1;
     private int height_;
     /**
+     * <pre>
+     * Height of the block.
+     * </pre>
+     *
      * <code>uint32 height = 1 [json_name = "height"];</code>
      * @return The height.
      */
@@ -5206,6 +5714,10 @@ public final class BlockchainOuterClass {
     public static final int VERBOSITY_FIELD_NUMBER = 2;
     private int verbosity_;
     /**
+     * <pre>
+     * Verbosity level for block information.
+     * </pre>
+     *
      * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
      * @return The enum numeric value on the wire for verbosity.
      */
@@ -5213,6 +5725,10 @@ public final class BlockchainOuterClass {
       return verbosity_;
     }
     /**
+     * <pre>
+     * Verbosity level for block information.
+     * </pre>
+     *
      * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
      * @return The verbosity.
      */
@@ -5388,6 +5904,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message to request block information based on height and verbosity.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetBlockRequest}
      */
     public static final class Builder extends
@@ -5560,6 +6080,10 @@ public final class BlockchainOuterClass {
 
       private int height_ ;
       /**
+       * <pre>
+       * Height of the block.
+       * </pre>
+       *
        * <code>uint32 height = 1 [json_name = "height"];</code>
        * @return The height.
        */
@@ -5568,6 +6092,10 @@ public final class BlockchainOuterClass {
         return height_;
       }
       /**
+       * <pre>
+       * Height of the block.
+       * </pre>
+       *
        * <code>uint32 height = 1 [json_name = "height"];</code>
        * @param value The height to set.
        * @return This builder for chaining.
@@ -5579,6 +6107,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Height of the block.
+       * </pre>
+       *
        * <code>uint32 height = 1 [json_name = "height"];</code>
        * @return This builder for chaining.
        */
@@ -5591,6 +6123,10 @@ public final class BlockchainOuterClass {
 
       private int verbosity_ = 0;
       /**
+       * <pre>
+       * Verbosity level for block information.
+       * </pre>
+       *
        * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
        * @return The enum numeric value on the wire for verbosity.
        */
@@ -5598,6 +6134,10 @@ public final class BlockchainOuterClass {
         return verbosity_;
       }
       /**
+       * <pre>
+       * Verbosity level for block information.
+       * </pre>
+       *
        * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
        * @param value The enum numeric value on the wire for verbosity to set.
        * @return This builder for chaining.
@@ -5609,6 +6149,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Verbosity level for block information.
+       * </pre>
+       *
        * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
        * @return The verbosity.
        */
@@ -5619,6 +6163,10 @@ public final class BlockchainOuterClass {
         return result == null ? pactus.blockchain.BlockchainOuterClass.BlockVerbosity.UNRECOGNIZED : result;
       }
       /**
+       * <pre>
+       * Verbosity level for block information.
+       * </pre>
+       *
        * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
        * @param value The verbosity to set.
        * @return This builder for chaining.
@@ -5633,6 +6181,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Verbosity level for block information.
+       * </pre>
+       *
        * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
        * @return This builder for chaining.
        */
@@ -5711,84 +6263,148 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Height of the block.
+     * </pre>
+     *
      * <code>uint32 height = 1 [json_name = "height"];</code>
      * @return The height.
      */
     int getHeight();
 
     /**
+     * <pre>
+     * Hash of the block.
+     * </pre>
+     *
      * <code>bytes hash = 2 [json_name = "hash"];</code>
      * @return The hash.
      */
     com.google.protobuf.ByteString getHash();
 
     /**
+     * <pre>
+     * Block data.
+     * </pre>
+     *
      * <code>bytes data = 3 [json_name = "data"];</code>
      * @return The data.
      */
     com.google.protobuf.ByteString getData();
 
     /**
+     * <pre>
+     * Block timestamp.
+     * </pre>
+     *
      * <code>uint32 block_time = 4 [json_name = "blockTime"];</code>
      * @return The blockTime.
      */
     int getBlockTime();
 
     /**
+     * <pre>
+     * Block header information.
+     * </pre>
+     *
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
      * @return Whether the header field is set.
      */
     boolean hasHeader();
     /**
+     * <pre>
+     * Block header information.
+     * </pre>
+     *
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
      * @return The header.
      */
     pactus.blockchain.BlockchainOuterClass.BlockHeaderInfo getHeader();
     /**
+     * <pre>
+     * Block header information.
+     * </pre>
+     *
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
      */
     pactus.blockchain.BlockchainOuterClass.BlockHeaderInfoOrBuilder getHeaderOrBuilder();
 
     /**
+     * <pre>
+     * Certificate information of the previous block.
+     * </pre>
+     *
      * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
      * @return Whether the prevCert field is set.
      */
     boolean hasPrevCert();
     /**
+     * <pre>
+     * Certificate information of the previous block.
+     * </pre>
+     *
      * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
      * @return The prevCert.
      */
     pactus.blockchain.BlockchainOuterClass.CertificateInfo getPrevCert();
     /**
+     * <pre>
+     * Certificate information of the previous block.
+     * </pre>
+     *
      * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
      */
     pactus.blockchain.BlockchainOuterClass.CertificateInfoOrBuilder getPrevCertOrBuilder();
 
     /**
+     * <pre>
+     * List of transactions in the block.
+     * </pre>
+     *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     java.util.List<pactus.transaction.TransactionOuterClass.TransactionInfo> 
         getTxsList();
     /**
+     * <pre>
+     * List of transactions in the block.
+     * </pre>
+     *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     pactus.transaction.TransactionOuterClass.TransactionInfo getTxs(int index);
     /**
+     * <pre>
+     * List of transactions in the block.
+     * </pre>
+     *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     int getTxsCount();
     /**
+     * <pre>
+     * List of transactions in the block.
+     * </pre>
+     *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     java.util.List<? extends pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder> 
         getTxsOrBuilderList();
     /**
+     * <pre>
+     * List of transactions in the block.
+     * </pre>
+     *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder getTxsOrBuilder(
         int index);
   }
   /**
+   * <pre>
+   * Message containing the response with block information.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetBlockResponse}
    */
   public static final class GetBlockResponse extends
@@ -5834,6 +6450,10 @@ public final class BlockchainOuterClass {
     public static final int HEIGHT_FIELD_NUMBER = 1;
     private int height_;
     /**
+     * <pre>
+     * Height of the block.
+     * </pre>
+     *
      * <code>uint32 height = 1 [json_name = "height"];</code>
      * @return The height.
      */
@@ -5845,6 +6465,10 @@ public final class BlockchainOuterClass {
     public static final int HASH_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString hash_;
     /**
+     * <pre>
+     * Hash of the block.
+     * </pre>
+     *
      * <code>bytes hash = 2 [json_name = "hash"];</code>
      * @return The hash.
      */
@@ -5856,6 +6480,10 @@ public final class BlockchainOuterClass {
     public static final int DATA_FIELD_NUMBER = 3;
     private com.google.protobuf.ByteString data_;
     /**
+     * <pre>
+     * Block data.
+     * </pre>
+     *
      * <code>bytes data = 3 [json_name = "data"];</code>
      * @return The data.
      */
@@ -5867,6 +6495,10 @@ public final class BlockchainOuterClass {
     public static final int BLOCK_TIME_FIELD_NUMBER = 4;
     private int blockTime_;
     /**
+     * <pre>
+     * Block timestamp.
+     * </pre>
+     *
      * <code>uint32 block_time = 4 [json_name = "blockTime"];</code>
      * @return The blockTime.
      */
@@ -5878,6 +6510,10 @@ public final class BlockchainOuterClass {
     public static final int HEADER_FIELD_NUMBER = 5;
     private pactus.blockchain.BlockchainOuterClass.BlockHeaderInfo header_;
     /**
+     * <pre>
+     * Block header information.
+     * </pre>
+     *
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
      * @return Whether the header field is set.
      */
@@ -5886,6 +6522,10 @@ public final class BlockchainOuterClass {
       return header_ != null;
     }
     /**
+     * <pre>
+     * Block header information.
+     * </pre>
+     *
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
      * @return The header.
      */
@@ -5894,6 +6534,10 @@ public final class BlockchainOuterClass {
       return header_ == null ? pactus.blockchain.BlockchainOuterClass.BlockHeaderInfo.getDefaultInstance() : header_;
     }
     /**
+     * <pre>
+     * Block header information.
+     * </pre>
+     *
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
      */
     @java.lang.Override
@@ -5904,6 +6548,10 @@ public final class BlockchainOuterClass {
     public static final int PREV_CERT_FIELD_NUMBER = 6;
     private pactus.blockchain.BlockchainOuterClass.CertificateInfo prevCert_;
     /**
+     * <pre>
+     * Certificate information of the previous block.
+     * </pre>
+     *
      * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
      * @return Whether the prevCert field is set.
      */
@@ -5912,6 +6560,10 @@ public final class BlockchainOuterClass {
       return prevCert_ != null;
     }
     /**
+     * <pre>
+     * Certificate information of the previous block.
+     * </pre>
+     *
      * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
      * @return The prevCert.
      */
@@ -5920,6 +6572,10 @@ public final class BlockchainOuterClass {
       return prevCert_ == null ? pactus.blockchain.BlockchainOuterClass.CertificateInfo.getDefaultInstance() : prevCert_;
     }
     /**
+     * <pre>
+     * Certificate information of the previous block.
+     * </pre>
+     *
      * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
      */
     @java.lang.Override
@@ -5930,6 +6586,10 @@ public final class BlockchainOuterClass {
     public static final int TXS_FIELD_NUMBER = 7;
     private java.util.List<pactus.transaction.TransactionOuterClass.TransactionInfo> txs_;
     /**
+     * <pre>
+     * List of transactions in the block.
+     * </pre>
+     *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     @java.lang.Override
@@ -5937,6 +6597,10 @@ public final class BlockchainOuterClass {
       return txs_;
     }
     /**
+     * <pre>
+     * List of transactions in the block.
+     * </pre>
+     *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     @java.lang.Override
@@ -5945,6 +6609,10 @@ public final class BlockchainOuterClass {
       return txs_;
     }
     /**
+     * <pre>
+     * List of transactions in the block.
+     * </pre>
+     *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     @java.lang.Override
@@ -5952,6 +6620,10 @@ public final class BlockchainOuterClass {
       return txs_.size();
     }
     /**
+     * <pre>
+     * List of transactions in the block.
+     * </pre>
+     *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     @java.lang.Override
@@ -5959,6 +6631,10 @@ public final class BlockchainOuterClass {
       return txs_.get(index);
     }
     /**
+     * <pre>
+     * List of transactions in the block.
+     * </pre>
+     *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     @java.lang.Override
@@ -6201,6 +6877,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing the response with block information.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetBlockResponse}
      */
     public static final class Builder extends
@@ -6494,6 +7174,10 @@ public final class BlockchainOuterClass {
 
       private int height_ ;
       /**
+       * <pre>
+       * Height of the block.
+       * </pre>
+       *
        * <code>uint32 height = 1 [json_name = "height"];</code>
        * @return The height.
        */
@@ -6502,6 +7186,10 @@ public final class BlockchainOuterClass {
         return height_;
       }
       /**
+       * <pre>
+       * Height of the block.
+       * </pre>
+       *
        * <code>uint32 height = 1 [json_name = "height"];</code>
        * @param value The height to set.
        * @return This builder for chaining.
@@ -6513,6 +7201,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Height of the block.
+       * </pre>
+       *
        * <code>uint32 height = 1 [json_name = "height"];</code>
        * @return This builder for chaining.
        */
@@ -6525,6 +7217,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
        * <code>bytes hash = 2 [json_name = "hash"];</code>
        * @return The hash.
        */
@@ -6533,6 +7229,10 @@ public final class BlockchainOuterClass {
         return hash_;
       }
       /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
        * <code>bytes hash = 2 [json_name = "hash"];</code>
        * @param value The hash to set.
        * @return This builder for chaining.
@@ -6547,6 +7247,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
        * <code>bytes hash = 2 [json_name = "hash"];</code>
        * @return This builder for chaining.
        */
@@ -6559,6 +7263,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Block data.
+       * </pre>
+       *
        * <code>bytes data = 3 [json_name = "data"];</code>
        * @return The data.
        */
@@ -6567,6 +7275,10 @@ public final class BlockchainOuterClass {
         return data_;
       }
       /**
+       * <pre>
+       * Block data.
+       * </pre>
+       *
        * <code>bytes data = 3 [json_name = "data"];</code>
        * @param value The data to set.
        * @return This builder for chaining.
@@ -6581,6 +7293,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Block data.
+       * </pre>
+       *
        * <code>bytes data = 3 [json_name = "data"];</code>
        * @return This builder for chaining.
        */
@@ -6593,6 +7309,10 @@ public final class BlockchainOuterClass {
 
       private int blockTime_ ;
       /**
+       * <pre>
+       * Block timestamp.
+       * </pre>
+       *
        * <code>uint32 block_time = 4 [json_name = "blockTime"];</code>
        * @return The blockTime.
        */
@@ -6601,6 +7321,10 @@ public final class BlockchainOuterClass {
         return blockTime_;
       }
       /**
+       * <pre>
+       * Block timestamp.
+       * </pre>
+       *
        * <code>uint32 block_time = 4 [json_name = "blockTime"];</code>
        * @param value The blockTime to set.
        * @return This builder for chaining.
@@ -6612,6 +7336,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Block timestamp.
+       * </pre>
+       *
        * <code>uint32 block_time = 4 [json_name = "blockTime"];</code>
        * @return This builder for chaining.
        */
@@ -6626,6 +7354,10 @@ public final class BlockchainOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.blockchain.BlockchainOuterClass.BlockHeaderInfo, pactus.blockchain.BlockchainOuterClass.BlockHeaderInfo.Builder, pactus.blockchain.BlockchainOuterClass.BlockHeaderInfoOrBuilder> headerBuilder_;
       /**
+       * <pre>
+       * Block header information.
+       * </pre>
+       *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        * @return Whether the header field is set.
        */
@@ -6633,6 +7365,10 @@ public final class BlockchainOuterClass {
         return headerBuilder_ != null || header_ != null;
       }
       /**
+       * <pre>
+       * Block header information.
+       * </pre>
+       *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        * @return The header.
        */
@@ -6644,6 +7380,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Block header information.
+       * </pre>
+       *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        */
       public Builder setHeader(pactus.blockchain.BlockchainOuterClass.BlockHeaderInfo value) {
@@ -6660,6 +7400,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Block header information.
+       * </pre>
+       *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        */
       public Builder setHeader(
@@ -6674,6 +7418,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Block header information.
+       * </pre>
+       *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        */
       public Builder mergeHeader(pactus.blockchain.BlockchainOuterClass.BlockHeaderInfo value) {
@@ -6692,6 +7440,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Block header information.
+       * </pre>
+       *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        */
       public Builder clearHeader() {
@@ -6706,6 +7458,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Block header information.
+       * </pre>
+       *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.BlockHeaderInfo.Builder getHeaderBuilder() {
@@ -6714,6 +7470,10 @@ public final class BlockchainOuterClass {
         return getHeaderFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * Block header information.
+       * </pre>
+       *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.BlockHeaderInfoOrBuilder getHeaderOrBuilder() {
@@ -6725,6 +7485,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Block header information.
+       * </pre>
+       *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -6745,6 +7509,10 @@ public final class BlockchainOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.blockchain.BlockchainOuterClass.CertificateInfo, pactus.blockchain.BlockchainOuterClass.CertificateInfo.Builder, pactus.blockchain.BlockchainOuterClass.CertificateInfoOrBuilder> prevCertBuilder_;
       /**
+       * <pre>
+       * Certificate information of the previous block.
+       * </pre>
+       *
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        * @return Whether the prevCert field is set.
        */
@@ -6752,6 +7520,10 @@ public final class BlockchainOuterClass {
         return prevCertBuilder_ != null || prevCert_ != null;
       }
       /**
+       * <pre>
+       * Certificate information of the previous block.
+       * </pre>
+       *
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        * @return The prevCert.
        */
@@ -6763,6 +7535,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Certificate information of the previous block.
+       * </pre>
+       *
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        */
       public Builder setPrevCert(pactus.blockchain.BlockchainOuterClass.CertificateInfo value) {
@@ -6779,6 +7555,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Certificate information of the previous block.
+       * </pre>
+       *
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        */
       public Builder setPrevCert(
@@ -6793,6 +7573,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Certificate information of the previous block.
+       * </pre>
+       *
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        */
       public Builder mergePrevCert(pactus.blockchain.BlockchainOuterClass.CertificateInfo value) {
@@ -6811,6 +7595,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Certificate information of the previous block.
+       * </pre>
+       *
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        */
       public Builder clearPrevCert() {
@@ -6825,6 +7613,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Certificate information of the previous block.
+       * </pre>
+       *
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.CertificateInfo.Builder getPrevCertBuilder() {
@@ -6833,6 +7625,10 @@ public final class BlockchainOuterClass {
         return getPrevCertFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * Certificate information of the previous block.
+       * </pre>
+       *
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.CertificateInfoOrBuilder getPrevCertOrBuilder() {
@@ -6844,6 +7640,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Certificate information of the previous block.
+       * </pre>
+       *
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -6873,6 +7673,10 @@ public final class BlockchainOuterClass {
           pactus.transaction.TransactionOuterClass.TransactionInfo, pactus.transaction.TransactionOuterClass.TransactionInfo.Builder, pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder> txsBuilder_;
 
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public java.util.List<pactus.transaction.TransactionOuterClass.TransactionInfo> getTxsList() {
@@ -6883,6 +7687,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public int getTxsCount() {
@@ -6893,6 +7701,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public pactus.transaction.TransactionOuterClass.TransactionInfo getTxs(int index) {
@@ -6903,6 +7715,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder setTxs(
@@ -6920,6 +7736,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder setTxs(
@@ -6934,6 +7754,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder addTxs(pactus.transaction.TransactionOuterClass.TransactionInfo value) {
@@ -6950,6 +7774,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder addTxs(
@@ -6967,6 +7795,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder addTxs(
@@ -6981,6 +7813,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder addTxs(
@@ -6995,6 +7831,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder addAllTxs(
@@ -7010,6 +7850,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder clearTxs() {
@@ -7023,6 +7867,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder removeTxs(int index) {
@@ -7036,6 +7884,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public pactus.transaction.TransactionOuterClass.TransactionInfo.Builder getTxsBuilder(
@@ -7043,6 +7895,10 @@ public final class BlockchainOuterClass {
         return getTxsFieldBuilder().getBuilder(index);
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder getTxsOrBuilder(
@@ -7053,6 +7909,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public java.util.List<? extends pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder> 
@@ -7064,6 +7924,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public pactus.transaction.TransactionOuterClass.TransactionInfo.Builder addTxsBuilder() {
@@ -7071,6 +7935,10 @@ public final class BlockchainOuterClass {
             pactus.transaction.TransactionOuterClass.TransactionInfo.getDefaultInstance());
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public pactus.transaction.TransactionOuterClass.TransactionInfo.Builder addTxsBuilder(
@@ -7079,6 +7947,10 @@ public final class BlockchainOuterClass {
             index, pactus.transaction.TransactionOuterClass.TransactionInfo.getDefaultInstance());
       }
       /**
+       * <pre>
+       * List of transactions in the block.
+       * </pre>
+       *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public java.util.List<pactus.transaction.TransactionOuterClass.TransactionInfo.Builder> 
@@ -7168,12 +8040,20 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Height of the block.
+     * </pre>
+     *
      * <code>uint32 height = 1 [json_name = "height"];</code>
      * @return The height.
      */
     int getHeight();
   }
   /**
+   * <pre>
+   * Message to request block hash based on height.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetBlockHashRequest}
    */
   public static final class GetBlockHashRequest extends
@@ -7216,6 +8096,10 @@ public final class BlockchainOuterClass {
     public static final int HEIGHT_FIELD_NUMBER = 1;
     private int height_;
     /**
+     * <pre>
+     * Height of the block.
+     * </pre>
+     *
      * <code>uint32 height = 1 [json_name = "height"];</code>
      * @return The height.
      */
@@ -7380,6 +8264,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message to request block hash based on height.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetBlockHashRequest}
      */
     public static final class Builder extends
@@ -7541,6 +8429,10 @@ public final class BlockchainOuterClass {
 
       private int height_ ;
       /**
+       * <pre>
+       * Height of the block.
+       * </pre>
+       *
        * <code>uint32 height = 1 [json_name = "height"];</code>
        * @return The height.
        */
@@ -7549,6 +8441,10 @@ public final class BlockchainOuterClass {
         return height_;
       }
       /**
+       * <pre>
+       * Height of the block.
+       * </pre>
+       *
        * <code>uint32 height = 1 [json_name = "height"];</code>
        * @param value The height to set.
        * @return This builder for chaining.
@@ -7560,6 +8456,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Height of the block.
+       * </pre>
+       *
        * <code>uint32 height = 1 [json_name = "height"];</code>
        * @return This builder for chaining.
        */
@@ -7638,12 +8538,20 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Hash of the block.
+     * </pre>
+     *
      * <code>bytes hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
     com.google.protobuf.ByteString getHash();
   }
   /**
+   * <pre>
+   * Message containing the response with the block hash.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetBlockHashResponse}
    */
   public static final class GetBlockHashResponse extends
@@ -7687,6 +8595,10 @@ public final class BlockchainOuterClass {
     public static final int HASH_FIELD_NUMBER = 1;
     private com.google.protobuf.ByteString hash_;
     /**
+     * <pre>
+     * Hash of the block.
+     * </pre>
+     *
      * <code>bytes hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
@@ -7851,6 +8763,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing the response with the block hash.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetBlockHashResponse}
      */
     public static final class Builder extends
@@ -8012,6 +8928,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @return The hash.
        */
@@ -8020,6 +8940,10 @@ public final class BlockchainOuterClass {
         return hash_;
       }
       /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @param value The hash to set.
        * @return This builder for chaining.
@@ -8034,6 +8958,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @return This builder for chaining.
        */
@@ -8112,12 +9040,20 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Hash of the block.
+     * </pre>
+     *
      * <code>bytes hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
     com.google.protobuf.ByteString getHash();
   }
   /**
+   * <pre>
+   * Message to request block height based on hash.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetBlockHeightRequest}
    */
   public static final class GetBlockHeightRequest extends
@@ -8161,6 +9097,10 @@ public final class BlockchainOuterClass {
     public static final int HASH_FIELD_NUMBER = 1;
     private com.google.protobuf.ByteString hash_;
     /**
+     * <pre>
+     * Hash of the block.
+     * </pre>
+     *
      * <code>bytes hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
@@ -8325,6 +9265,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message to request block height based on hash.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetBlockHeightRequest}
      */
     public static final class Builder extends
@@ -8486,6 +9430,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @return The hash.
        */
@@ -8494,6 +9442,10 @@ public final class BlockchainOuterClass {
         return hash_;
       }
       /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @param value The hash to set.
        * @return This builder for chaining.
@@ -8508,6 +9460,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @return This builder for chaining.
        */
@@ -8586,12 +9542,20 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Height of the block.
+     * </pre>
+     *
      * <code>uint32 height = 1 [json_name = "height"];</code>
      * @return The height.
      */
     int getHeight();
   }
   /**
+   * <pre>
+   * Message containing the response with the block height.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetBlockHeightResponse}
    */
   public static final class GetBlockHeightResponse extends
@@ -8634,6 +9598,10 @@ public final class BlockchainOuterClass {
     public static final int HEIGHT_FIELD_NUMBER = 1;
     private int height_;
     /**
+     * <pre>
+     * Height of the block.
+     * </pre>
+     *
      * <code>uint32 height = 1 [json_name = "height"];</code>
      * @return The height.
      */
@@ -8798,6 +9766,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing the response with the block height.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetBlockHeightResponse}
      */
     public static final class Builder extends
@@ -8959,6 +9931,10 @@ public final class BlockchainOuterClass {
 
       private int height_ ;
       /**
+       * <pre>
+       * Height of the block.
+       * </pre>
+       *
        * <code>uint32 height = 1 [json_name = "height"];</code>
        * @return The height.
        */
@@ -8967,6 +9943,10 @@ public final class BlockchainOuterClass {
         return height_;
       }
       /**
+       * <pre>
+       * Height of the block.
+       * </pre>
+       *
        * <code>uint32 height = 1 [json_name = "height"];</code>
        * @param value The height to set.
        * @return This builder for chaining.
@@ -8978,6 +9958,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Height of the block.
+       * </pre>
+       *
        * <code>uint32 height = 1 [json_name = "height"];</code>
        * @return This builder for chaining.
        */
@@ -9056,6 +10040,10 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
   }
   /**
+   * <pre>
+   * Message to request general information about the blockchain.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetBlockchainInfoRequest}
    */
   public static final class GetBlockchainInfoRequest extends
@@ -9240,6 +10228,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message to request general information about the blockchain.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetBlockchainInfoRequest}
      */
     public static final class Builder extends
@@ -9456,66 +10448,114 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Height of the last block.
+     * </pre>
+     *
      * <code>uint32 last_block_height = 1 [json_name = "lastBlockHeight"];</code>
      * @return The lastBlockHeight.
      */
     int getLastBlockHeight();
 
     /**
+     * <pre>
+     * Hash of the last block.
+     * </pre>
+     *
      * <code>bytes last_block_hash = 2 [json_name = "lastBlockHash"];</code>
      * @return The lastBlockHash.
      */
     com.google.protobuf.ByteString getLastBlockHash();
 
     /**
+     * <pre>
+     * Total number of accounts.
+     * </pre>
+     *
      * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
      * @return The totalAccounts.
      */
     int getTotalAccounts();
 
     /**
+     * <pre>
+     * Total number of validators.
+     * </pre>
+     *
      * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
      * @return The totalValidators.
      */
     int getTotalValidators();
 
     /**
+     * <pre>
+     * Total power in the blockchain.
+     * </pre>
+     *
      * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
      * @return The totalPower.
      */
     long getTotalPower();
 
     /**
+     * <pre>
+     * Power of the committee.
+     * </pre>
+     *
      * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
      * @return The committeePower.
      */
     long getCommitteePower();
 
     /**
+     * <pre>
+     * List of committee validators.
+     * </pre>
+     *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     java.util.List<pactus.blockchain.BlockchainOuterClass.ValidatorInfo> 
         getCommitteeValidatorsList();
     /**
+     * <pre>
+     * List of committee validators.
+     * </pre>
+     *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     pactus.blockchain.BlockchainOuterClass.ValidatorInfo getCommitteeValidators(int index);
     /**
+     * <pre>
+     * List of committee validators.
+     * </pre>
+     *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     int getCommitteeValidatorsCount();
     /**
+     * <pre>
+     * List of committee validators.
+     * </pre>
+     *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     java.util.List<? extends pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder> 
         getCommitteeValidatorsOrBuilderList();
     /**
+     * <pre>
+     * List of committee validators.
+     * </pre>
+     *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder getCommitteeValidatorsOrBuilder(
         int index);
   }
   /**
+   * <pre>
+   * Message containing the response with general blockchain information.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetBlockchainInfoResponse}
    */
   public static final class GetBlockchainInfoResponse extends
@@ -9560,6 +10600,10 @@ public final class BlockchainOuterClass {
     public static final int LAST_BLOCK_HEIGHT_FIELD_NUMBER = 1;
     private int lastBlockHeight_;
     /**
+     * <pre>
+     * Height of the last block.
+     * </pre>
+     *
      * <code>uint32 last_block_height = 1 [json_name = "lastBlockHeight"];</code>
      * @return The lastBlockHeight.
      */
@@ -9571,6 +10615,10 @@ public final class BlockchainOuterClass {
     public static final int LAST_BLOCK_HASH_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString lastBlockHash_;
     /**
+     * <pre>
+     * Hash of the last block.
+     * </pre>
+     *
      * <code>bytes last_block_hash = 2 [json_name = "lastBlockHash"];</code>
      * @return The lastBlockHash.
      */
@@ -9582,6 +10630,10 @@ public final class BlockchainOuterClass {
     public static final int TOTAL_ACCOUNTS_FIELD_NUMBER = 3;
     private int totalAccounts_;
     /**
+     * <pre>
+     * Total number of accounts.
+     * </pre>
+     *
      * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
      * @return The totalAccounts.
      */
@@ -9593,6 +10645,10 @@ public final class BlockchainOuterClass {
     public static final int TOTAL_VALIDATORS_FIELD_NUMBER = 4;
     private int totalValidators_;
     /**
+     * <pre>
+     * Total number of validators.
+     * </pre>
+     *
      * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
      * @return The totalValidators.
      */
@@ -9604,6 +10660,10 @@ public final class BlockchainOuterClass {
     public static final int TOTAL_POWER_FIELD_NUMBER = 5;
     private long totalPower_;
     /**
+     * <pre>
+     * Total power in the blockchain.
+     * </pre>
+     *
      * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
      * @return The totalPower.
      */
@@ -9615,6 +10675,10 @@ public final class BlockchainOuterClass {
     public static final int COMMITTEE_POWER_FIELD_NUMBER = 6;
     private long committeePower_;
     /**
+     * <pre>
+     * Power of the committee.
+     * </pre>
+     *
      * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
      * @return The committeePower.
      */
@@ -9626,6 +10690,10 @@ public final class BlockchainOuterClass {
     public static final int COMMITTEE_VALIDATORS_FIELD_NUMBER = 7;
     private java.util.List<pactus.blockchain.BlockchainOuterClass.ValidatorInfo> committeeValidators_;
     /**
+     * <pre>
+     * List of committee validators.
+     * </pre>
+     *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
@@ -9633,6 +10701,10 @@ public final class BlockchainOuterClass {
       return committeeValidators_;
     }
     /**
+     * <pre>
+     * List of committee validators.
+     * </pre>
+     *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
@@ -9641,6 +10713,10 @@ public final class BlockchainOuterClass {
       return committeeValidators_;
     }
     /**
+     * <pre>
+     * List of committee validators.
+     * </pre>
+     *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
@@ -9648,6 +10724,10 @@ public final class BlockchainOuterClass {
       return committeeValidators_.size();
     }
     /**
+     * <pre>
+     * List of committee validators.
+     * </pre>
+     *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
@@ -9655,6 +10735,10 @@ public final class BlockchainOuterClass {
       return committeeValidators_.get(index);
     }
     /**
+     * <pre>
+     * List of committee validators.
+     * </pre>
+     *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
@@ -9889,6 +10973,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing the response with general blockchain information.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetBlockchainInfoResponse}
      */
     public static final class Builder extends
@@ -10162,6 +11250,10 @@ public final class BlockchainOuterClass {
 
       private int lastBlockHeight_ ;
       /**
+       * <pre>
+       * Height of the last block.
+       * </pre>
+       *
        * <code>uint32 last_block_height = 1 [json_name = "lastBlockHeight"];</code>
        * @return The lastBlockHeight.
        */
@@ -10170,6 +11262,10 @@ public final class BlockchainOuterClass {
         return lastBlockHeight_;
       }
       /**
+       * <pre>
+       * Height of the last block.
+       * </pre>
+       *
        * <code>uint32 last_block_height = 1 [json_name = "lastBlockHeight"];</code>
        * @param value The lastBlockHeight to set.
        * @return This builder for chaining.
@@ -10181,6 +11277,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Height of the last block.
+       * </pre>
+       *
        * <code>uint32 last_block_height = 1 [json_name = "lastBlockHeight"];</code>
        * @return This builder for chaining.
        */
@@ -10193,6 +11293,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString lastBlockHash_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Hash of the last block.
+       * </pre>
+       *
        * <code>bytes last_block_hash = 2 [json_name = "lastBlockHash"];</code>
        * @return The lastBlockHash.
        */
@@ -10201,6 +11305,10 @@ public final class BlockchainOuterClass {
         return lastBlockHash_;
       }
       /**
+       * <pre>
+       * Hash of the last block.
+       * </pre>
+       *
        * <code>bytes last_block_hash = 2 [json_name = "lastBlockHash"];</code>
        * @param value The lastBlockHash to set.
        * @return This builder for chaining.
@@ -10215,6 +11323,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Hash of the last block.
+       * </pre>
+       *
        * <code>bytes last_block_hash = 2 [json_name = "lastBlockHash"];</code>
        * @return This builder for chaining.
        */
@@ -10227,6 +11339,10 @@ public final class BlockchainOuterClass {
 
       private int totalAccounts_ ;
       /**
+       * <pre>
+       * Total number of accounts.
+       * </pre>
+       *
        * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
        * @return The totalAccounts.
        */
@@ -10235,6 +11351,10 @@ public final class BlockchainOuterClass {
         return totalAccounts_;
       }
       /**
+       * <pre>
+       * Total number of accounts.
+       * </pre>
+       *
        * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
        * @param value The totalAccounts to set.
        * @return This builder for chaining.
@@ -10246,6 +11366,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Total number of accounts.
+       * </pre>
+       *
        * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
        * @return This builder for chaining.
        */
@@ -10258,6 +11382,10 @@ public final class BlockchainOuterClass {
 
       private int totalValidators_ ;
       /**
+       * <pre>
+       * Total number of validators.
+       * </pre>
+       *
        * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
        * @return The totalValidators.
        */
@@ -10266,6 +11394,10 @@ public final class BlockchainOuterClass {
         return totalValidators_;
       }
       /**
+       * <pre>
+       * Total number of validators.
+       * </pre>
+       *
        * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
        * @param value The totalValidators to set.
        * @return This builder for chaining.
@@ -10277,6 +11409,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Total number of validators.
+       * </pre>
+       *
        * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
        * @return This builder for chaining.
        */
@@ -10289,6 +11425,10 @@ public final class BlockchainOuterClass {
 
       private long totalPower_ ;
       /**
+       * <pre>
+       * Total power in the blockchain.
+       * </pre>
+       *
        * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
        * @return The totalPower.
        */
@@ -10297,6 +11437,10 @@ public final class BlockchainOuterClass {
         return totalPower_;
       }
       /**
+       * <pre>
+       * Total power in the blockchain.
+       * </pre>
+       *
        * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
        * @param value The totalPower to set.
        * @return This builder for chaining.
@@ -10308,6 +11452,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Total power in the blockchain.
+       * </pre>
+       *
        * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
        * @return This builder for chaining.
        */
@@ -10320,6 +11468,10 @@ public final class BlockchainOuterClass {
 
       private long committeePower_ ;
       /**
+       * <pre>
+       * Power of the committee.
+       * </pre>
+       *
        * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
        * @return The committeePower.
        */
@@ -10328,6 +11480,10 @@ public final class BlockchainOuterClass {
         return committeePower_;
       }
       /**
+       * <pre>
+       * Power of the committee.
+       * </pre>
+       *
        * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
        * @param value The committeePower to set.
        * @return This builder for chaining.
@@ -10339,6 +11495,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Power of the committee.
+       * </pre>
+       *
        * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
        * @return This builder for chaining.
        */
@@ -10362,6 +11522,10 @@ public final class BlockchainOuterClass {
           pactus.blockchain.BlockchainOuterClass.ValidatorInfo, pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder, pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder> committeeValidatorsBuilder_;
 
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public java.util.List<pactus.blockchain.BlockchainOuterClass.ValidatorInfo> getCommitteeValidatorsList() {
@@ -10372,6 +11536,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public int getCommitteeValidatorsCount() {
@@ -10382,6 +11550,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ValidatorInfo getCommitteeValidators(int index) {
@@ -10392,6 +11564,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder setCommitteeValidators(
@@ -10409,6 +11585,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder setCommitteeValidators(
@@ -10423,6 +11603,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder addCommitteeValidators(pactus.blockchain.BlockchainOuterClass.ValidatorInfo value) {
@@ -10439,6 +11623,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder addCommitteeValidators(
@@ -10456,6 +11644,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder addCommitteeValidators(
@@ -10470,6 +11662,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder addCommitteeValidators(
@@ -10484,6 +11680,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder addAllCommitteeValidators(
@@ -10499,6 +11699,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder clearCommitteeValidators() {
@@ -10512,6 +11716,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder removeCommitteeValidators(int index) {
@@ -10525,6 +11733,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder getCommitteeValidatorsBuilder(
@@ -10532,6 +11744,10 @@ public final class BlockchainOuterClass {
         return getCommitteeValidatorsFieldBuilder().getBuilder(index);
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder getCommitteeValidatorsOrBuilder(
@@ -10542,6 +11758,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public java.util.List<? extends pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder> 
@@ -10553,6 +11773,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder addCommitteeValidatorsBuilder() {
@@ -10560,6 +11784,10 @@ public final class BlockchainOuterClass {
             pactus.blockchain.BlockchainOuterClass.ValidatorInfo.getDefaultInstance());
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder addCommitteeValidatorsBuilder(
@@ -10568,6 +11796,10 @@ public final class BlockchainOuterClass {
             index, pactus.blockchain.BlockchainOuterClass.ValidatorInfo.getDefaultInstance());
       }
       /**
+       * <pre>
+       * List of committee validators.
+       * </pre>
+       *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public java.util.List<pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder> 
@@ -10657,6 +11889,10 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
   }
   /**
+   * <pre>
+   * Message to request consensus information.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetConsensusInfoRequest}
    */
   public static final class GetConsensusInfoRequest extends
@@ -10841,6 +12077,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message to request consensus information.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetConsensusInfoRequest}
      */
     public static final class Builder extends
@@ -11057,30 +12297,54 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
      * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
      */
     java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo> 
         getInstancesList();
     /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
      * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
      */
     pactus.blockchain.BlockchainOuterClass.ConsensusInfo getInstances(int index);
     /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
      * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
      */
     int getInstancesCount();
     /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
      * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
      */
     java.util.List<? extends pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder> 
         getInstancesOrBuilderList();
     /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
      * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
      */
     pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder getInstancesOrBuilder(
         int index);
   }
   /**
+   * <pre>
+   * Message containing the response with consensus information.
+   * </pre>
+   *
    * Protobuf type {@code pactus.GetConsensusInfoResponse}
    */
   public static final class GetConsensusInfoResponse extends
@@ -11124,6 +12388,10 @@ public final class BlockchainOuterClass {
     public static final int INSTANCES_FIELD_NUMBER = 1;
     private java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo> instances_;
     /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
      * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
      */
     @java.lang.Override
@@ -11131,6 +12399,10 @@ public final class BlockchainOuterClass {
       return instances_;
     }
     /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
      * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
      */
     @java.lang.Override
@@ -11139,6 +12411,10 @@ public final class BlockchainOuterClass {
       return instances_;
     }
     /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
      * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
      */
     @java.lang.Override
@@ -11146,6 +12422,10 @@ public final class BlockchainOuterClass {
       return instances_.size();
     }
     /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
      * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
      */
     @java.lang.Override
@@ -11153,6 +12433,10 @@ public final class BlockchainOuterClass {
       return instances_.get(index);
     }
     /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
      * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
      */
     @java.lang.Override
@@ -11319,6 +12603,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing the response with consensus information.
+     * </pre>
+     *
      * Protobuf type {@code pactus.GetConsensusInfoResponse}
      */
     public static final class Builder extends
@@ -11537,6 +12825,10 @@ public final class BlockchainOuterClass {
           pactus.blockchain.BlockchainOuterClass.ConsensusInfo, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder, pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder> instancesBuilder_;
 
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo> getInstancesList() {
@@ -11547,6 +12839,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public int getInstancesCount() {
@@ -11557,6 +12853,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ConsensusInfo getInstances(int index) {
@@ -11567,6 +12867,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public Builder setInstances(
@@ -11584,6 +12888,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public Builder setInstances(
@@ -11598,6 +12906,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public Builder addInstances(pactus.blockchain.BlockchainOuterClass.ConsensusInfo value) {
@@ -11614,6 +12926,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public Builder addInstances(
@@ -11631,6 +12947,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public Builder addInstances(
@@ -11645,6 +12965,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public Builder addInstances(
@@ -11659,6 +12983,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public Builder addAllInstances(
@@ -11674,6 +13002,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public Builder clearInstances() {
@@ -11687,6 +13019,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public Builder removeInstances(int index) {
@@ -11700,6 +13036,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder getInstancesBuilder(
@@ -11707,6 +13047,10 @@ public final class BlockchainOuterClass {
         return getInstancesFieldBuilder().getBuilder(index);
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder getInstancesOrBuilder(
@@ -11717,6 +13061,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public java.util.List<? extends pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder> 
@@ -11728,6 +13076,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder addInstancesBuilder() {
@@ -11735,6 +13087,10 @@ public final class BlockchainOuterClass {
             pactus.blockchain.BlockchainOuterClass.ConsensusInfo.getDefaultInstance());
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder addInstancesBuilder(
@@ -11743,6 +13099,10 @@ public final class BlockchainOuterClass {
             index, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.getDefaultInstance());
       }
       /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
        * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
        */
       public java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder> 
@@ -11832,23 +13192,39 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Hash of the validator.
+     * </pre>
+     *
      * <code>bytes hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
     com.google.protobuf.ByteString getHash();
 
     /**
+     * <pre>
+     * Validator data.
+     * </pre>
+     *
      * <code>bytes data = 2 [json_name = "data"];</code>
      * @return The data.
      */
     com.google.protobuf.ByteString getData();
 
     /**
+     * <pre>
+     * Public key of the validator.
+     * </pre>
+     *
      * <code>string public_key = 3 [json_name = "publicKey"];</code>
      * @return The publicKey.
      */
     java.lang.String getPublicKey();
     /**
+     * <pre>
+     * Public key of the validator.
+     * </pre>
+     *
      * <code>string public_key = 3 [json_name = "publicKey"];</code>
      * @return The bytes for publicKey.
      */
@@ -11856,41 +13232,69 @@ public final class BlockchainOuterClass {
         getPublicKeyBytes();
 
     /**
+     * <pre>
+     * Validator number.
+     * </pre>
+     *
      * <code>int32 number = 4 [json_name = "number"];</code>
      * @return The number.
      */
     int getNumber();
 
     /**
+     * <pre>
+     * Validator stake.
+     * </pre>
+     *
      * <code>int64 stake = 5 [json_name = "stake"];</code>
      * @return The stake.
      */
     long getStake();
 
     /**
+     * <pre>
+     * Last bonding height.
+     * </pre>
+     *
      * <code>uint32 last_bonding_height = 6 [json_name = "lastBondingHeight"];</code>
      * @return The lastBondingHeight.
      */
     int getLastBondingHeight();
 
     /**
+     * <pre>
+     * Last sortition height.
+     * </pre>
+     *
      * <code>uint32 last_sortition_height = 7 [json_name = "lastSortitionHeight"];</code>
      * @return The lastSortitionHeight.
      */
     int getLastSortitionHeight();
 
     /**
+     * <pre>
+     * Unbonding height.
+     * </pre>
+     *
      * <code>uint32 unbonding_height = 8 [json_name = "unbondingHeight"];</code>
      * @return The unbondingHeight.
      */
     int getUnbondingHeight();
 
     /**
+     * <pre>
+     * Address of the validator.
+     * </pre>
+     *
      * <code>string address = 9 [json_name = "address"];</code>
      * @return The address.
      */
     java.lang.String getAddress();
     /**
+     * <pre>
+     * Address of the validator.
+     * </pre>
+     *
      * <code>string address = 9 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -11898,12 +13302,20 @@ public final class BlockchainOuterClass {
         getAddressBytes();
 
     /**
+     * <pre>
+     * Availability score of the validator.
+     * </pre>
+     *
      * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
      * @return The availabilityScore.
      */
     double getAvailabilityScore();
   }
   /**
+   * <pre>
+   * Message containing information about a validator.
+   * </pre>
+   *
    * Protobuf type {@code pactus.ValidatorInfo}
    */
   public static final class ValidatorInfo extends
@@ -11950,6 +13362,10 @@ public final class BlockchainOuterClass {
     public static final int HASH_FIELD_NUMBER = 1;
     private com.google.protobuf.ByteString hash_;
     /**
+     * <pre>
+     * Hash of the validator.
+     * </pre>
+     *
      * <code>bytes hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
@@ -11961,6 +13377,10 @@ public final class BlockchainOuterClass {
     public static final int DATA_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString data_;
     /**
+     * <pre>
+     * Validator data.
+     * </pre>
+     *
      * <code>bytes data = 2 [json_name = "data"];</code>
      * @return The data.
      */
@@ -11972,6 +13392,10 @@ public final class BlockchainOuterClass {
     public static final int PUBLIC_KEY_FIELD_NUMBER = 3;
     private volatile java.lang.Object publicKey_;
     /**
+     * <pre>
+     * Public key of the validator.
+     * </pre>
+     *
      * <code>string public_key = 3 [json_name = "publicKey"];</code>
      * @return The publicKey.
      */
@@ -11989,6 +13413,10 @@ public final class BlockchainOuterClass {
       }
     }
     /**
+     * <pre>
+     * Public key of the validator.
+     * </pre>
+     *
      * <code>string public_key = 3 [json_name = "publicKey"];</code>
      * @return The bytes for publicKey.
      */
@@ -12010,6 +13438,10 @@ public final class BlockchainOuterClass {
     public static final int NUMBER_FIELD_NUMBER = 4;
     private int number_;
     /**
+     * <pre>
+     * Validator number.
+     * </pre>
+     *
      * <code>int32 number = 4 [json_name = "number"];</code>
      * @return The number.
      */
@@ -12021,6 +13453,10 @@ public final class BlockchainOuterClass {
     public static final int STAKE_FIELD_NUMBER = 5;
     private long stake_;
     /**
+     * <pre>
+     * Validator stake.
+     * </pre>
+     *
      * <code>int64 stake = 5 [json_name = "stake"];</code>
      * @return The stake.
      */
@@ -12032,6 +13468,10 @@ public final class BlockchainOuterClass {
     public static final int LAST_BONDING_HEIGHT_FIELD_NUMBER = 6;
     private int lastBondingHeight_;
     /**
+     * <pre>
+     * Last bonding height.
+     * </pre>
+     *
      * <code>uint32 last_bonding_height = 6 [json_name = "lastBondingHeight"];</code>
      * @return The lastBondingHeight.
      */
@@ -12043,6 +13483,10 @@ public final class BlockchainOuterClass {
     public static final int LAST_SORTITION_HEIGHT_FIELD_NUMBER = 7;
     private int lastSortitionHeight_;
     /**
+     * <pre>
+     * Last sortition height.
+     * </pre>
+     *
      * <code>uint32 last_sortition_height = 7 [json_name = "lastSortitionHeight"];</code>
      * @return The lastSortitionHeight.
      */
@@ -12054,6 +13498,10 @@ public final class BlockchainOuterClass {
     public static final int UNBONDING_HEIGHT_FIELD_NUMBER = 8;
     private int unbondingHeight_;
     /**
+     * <pre>
+     * Unbonding height.
+     * </pre>
+     *
      * <code>uint32 unbonding_height = 8 [json_name = "unbondingHeight"];</code>
      * @return The unbondingHeight.
      */
@@ -12065,6 +13513,10 @@ public final class BlockchainOuterClass {
     public static final int ADDRESS_FIELD_NUMBER = 9;
     private volatile java.lang.Object address_;
     /**
+     * <pre>
+     * Address of the validator.
+     * </pre>
+     *
      * <code>string address = 9 [json_name = "address"];</code>
      * @return The address.
      */
@@ -12082,6 +13534,10 @@ public final class BlockchainOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address of the validator.
+     * </pre>
+     *
      * <code>string address = 9 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -12103,6 +13559,10 @@ public final class BlockchainOuterClass {
     public static final int AVAILABILITY_SCORE_FIELD_NUMBER = 10;
     private double availabilityScore_;
     /**
+     * <pre>
+     * Availability score of the validator.
+     * </pre>
+     *
      * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
      * @return The availabilityScore.
      */
@@ -12367,6 +13827,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing information about a validator.
+     * </pre>
+     *
      * Protobuf type {@code pactus.ValidatorInfo}
      */
     public static final class Builder extends
@@ -12629,6 +14093,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Hash of the validator.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @return The hash.
        */
@@ -12637,6 +14105,10 @@ public final class BlockchainOuterClass {
         return hash_;
       }
       /**
+       * <pre>
+       * Hash of the validator.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @param value The hash to set.
        * @return This builder for chaining.
@@ -12651,6 +14123,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Hash of the validator.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @return This builder for chaining.
        */
@@ -12663,6 +14139,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Validator data.
+       * </pre>
+       *
        * <code>bytes data = 2 [json_name = "data"];</code>
        * @return The data.
        */
@@ -12671,6 +14151,10 @@ public final class BlockchainOuterClass {
         return data_;
       }
       /**
+       * <pre>
+       * Validator data.
+       * </pre>
+       *
        * <code>bytes data = 2 [json_name = "data"];</code>
        * @param value The data to set.
        * @return This builder for chaining.
@@ -12685,6 +14169,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Validator data.
+       * </pre>
+       *
        * <code>bytes data = 2 [json_name = "data"];</code>
        * @return This builder for chaining.
        */
@@ -12697,6 +14185,10 @@ public final class BlockchainOuterClass {
 
       private java.lang.Object publicKey_ = "";
       /**
+       * <pre>
+       * Public key of the validator.
+       * </pre>
+       *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
        * @return The publicKey.
        */
@@ -12713,6 +14205,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Public key of the validator.
+       * </pre>
+       *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
        * @return The bytes for publicKey.
        */
@@ -12730,6 +14226,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Public key of the validator.
+       * </pre>
+       *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
        * @param value The publicKey to set.
        * @return This builder for chaining.
@@ -12745,6 +14245,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Public key of the validator.
+       * </pre>
+       *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
        * @return This builder for chaining.
        */
@@ -12755,6 +14259,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Public key of the validator.
+       * </pre>
+       *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
        * @param value The bytes for publicKey to set.
        * @return This builder for chaining.
@@ -12773,6 +14281,10 @@ public final class BlockchainOuterClass {
 
       private int number_ ;
       /**
+       * <pre>
+       * Validator number.
+       * </pre>
+       *
        * <code>int32 number = 4 [json_name = "number"];</code>
        * @return The number.
        */
@@ -12781,6 +14293,10 @@ public final class BlockchainOuterClass {
         return number_;
       }
       /**
+       * <pre>
+       * Validator number.
+       * </pre>
+       *
        * <code>int32 number = 4 [json_name = "number"];</code>
        * @param value The number to set.
        * @return This builder for chaining.
@@ -12792,6 +14308,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Validator number.
+       * </pre>
+       *
        * <code>int32 number = 4 [json_name = "number"];</code>
        * @return This builder for chaining.
        */
@@ -12804,6 +14324,10 @@ public final class BlockchainOuterClass {
 
       private long stake_ ;
       /**
+       * <pre>
+       * Validator stake.
+       * </pre>
+       *
        * <code>int64 stake = 5 [json_name = "stake"];</code>
        * @return The stake.
        */
@@ -12812,6 +14336,10 @@ public final class BlockchainOuterClass {
         return stake_;
       }
       /**
+       * <pre>
+       * Validator stake.
+       * </pre>
+       *
        * <code>int64 stake = 5 [json_name = "stake"];</code>
        * @param value The stake to set.
        * @return This builder for chaining.
@@ -12823,6 +14351,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Validator stake.
+       * </pre>
+       *
        * <code>int64 stake = 5 [json_name = "stake"];</code>
        * @return This builder for chaining.
        */
@@ -12835,6 +14367,10 @@ public final class BlockchainOuterClass {
 
       private int lastBondingHeight_ ;
       /**
+       * <pre>
+       * Last bonding height.
+       * </pre>
+       *
        * <code>uint32 last_bonding_height = 6 [json_name = "lastBondingHeight"];</code>
        * @return The lastBondingHeight.
        */
@@ -12843,6 +14379,10 @@ public final class BlockchainOuterClass {
         return lastBondingHeight_;
       }
       /**
+       * <pre>
+       * Last bonding height.
+       * </pre>
+       *
        * <code>uint32 last_bonding_height = 6 [json_name = "lastBondingHeight"];</code>
        * @param value The lastBondingHeight to set.
        * @return This builder for chaining.
@@ -12854,6 +14394,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Last bonding height.
+       * </pre>
+       *
        * <code>uint32 last_bonding_height = 6 [json_name = "lastBondingHeight"];</code>
        * @return This builder for chaining.
        */
@@ -12866,6 +14410,10 @@ public final class BlockchainOuterClass {
 
       private int lastSortitionHeight_ ;
       /**
+       * <pre>
+       * Last sortition height.
+       * </pre>
+       *
        * <code>uint32 last_sortition_height = 7 [json_name = "lastSortitionHeight"];</code>
        * @return The lastSortitionHeight.
        */
@@ -12874,6 +14422,10 @@ public final class BlockchainOuterClass {
         return lastSortitionHeight_;
       }
       /**
+       * <pre>
+       * Last sortition height.
+       * </pre>
+       *
        * <code>uint32 last_sortition_height = 7 [json_name = "lastSortitionHeight"];</code>
        * @param value The lastSortitionHeight to set.
        * @return This builder for chaining.
@@ -12885,6 +14437,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Last sortition height.
+       * </pre>
+       *
        * <code>uint32 last_sortition_height = 7 [json_name = "lastSortitionHeight"];</code>
        * @return This builder for chaining.
        */
@@ -12897,6 +14453,10 @@ public final class BlockchainOuterClass {
 
       private int unbondingHeight_ ;
       /**
+       * <pre>
+       * Unbonding height.
+       * </pre>
+       *
        * <code>uint32 unbonding_height = 8 [json_name = "unbondingHeight"];</code>
        * @return The unbondingHeight.
        */
@@ -12905,6 +14465,10 @@ public final class BlockchainOuterClass {
         return unbondingHeight_;
       }
       /**
+       * <pre>
+       * Unbonding height.
+       * </pre>
+       *
        * <code>uint32 unbonding_height = 8 [json_name = "unbondingHeight"];</code>
        * @param value The unbondingHeight to set.
        * @return This builder for chaining.
@@ -12916,6 +14480,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Unbonding height.
+       * </pre>
+       *
        * <code>uint32 unbonding_height = 8 [json_name = "unbondingHeight"];</code>
        * @return This builder for chaining.
        */
@@ -12928,6 +14496,10 @@ public final class BlockchainOuterClass {
 
       private java.lang.Object address_ = "";
       /**
+       * <pre>
+       * Address of the validator.
+       * </pre>
+       *
        * <code>string address = 9 [json_name = "address"];</code>
        * @return The address.
        */
@@ -12944,6 +14516,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the validator.
+       * </pre>
+       *
        * <code>string address = 9 [json_name = "address"];</code>
        * @return The bytes for address.
        */
@@ -12961,6 +14537,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the validator.
+       * </pre>
+       *
        * <code>string address = 9 [json_name = "address"];</code>
        * @param value The address to set.
        * @return This builder for chaining.
@@ -12976,6 +14556,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the validator.
+       * </pre>
+       *
        * <code>string address = 9 [json_name = "address"];</code>
        * @return This builder for chaining.
        */
@@ -12986,6 +14570,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the validator.
+       * </pre>
+       *
        * <code>string address = 9 [json_name = "address"];</code>
        * @param value The bytes for address to set.
        * @return This builder for chaining.
@@ -13004,6 +14592,10 @@ public final class BlockchainOuterClass {
 
       private double availabilityScore_ ;
       /**
+       * <pre>
+       * Availability score of the validator.
+       * </pre>
+       *
        * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
        * @return The availabilityScore.
        */
@@ -13012,6 +14604,10 @@ public final class BlockchainOuterClass {
         return availabilityScore_;
       }
       /**
+       * <pre>
+       * Availability score of the validator.
+       * </pre>
+       *
        * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
        * @param value The availabilityScore to set.
        * @return This builder for chaining.
@@ -13023,6 +14619,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Availability score of the validator.
+       * </pre>
+       *
        * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
        * @return This builder for chaining.
        */
@@ -13101,35 +14701,59 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Hash of the account.
+     * </pre>
+     *
      * <code>bytes hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
     com.google.protobuf.ByteString getHash();
 
     /**
+     * <pre>
+     * Account data.
+     * </pre>
+     *
      * <code>bytes data = 2 [json_name = "data"];</code>
      * @return The data.
      */
     com.google.protobuf.ByteString getData();
 
     /**
+     * <pre>
+     * Account number.
+     * </pre>
+     *
      * <code>int32 number = 3 [json_name = "number"];</code>
      * @return The number.
      */
     int getNumber();
 
     /**
+     * <pre>
+     * Account balance.
+     * </pre>
+     *
      * <code>int64 balance = 4 [json_name = "balance"];</code>
      * @return The balance.
      */
     long getBalance();
 
     /**
+     * <pre>
+     * Address of the account.
+     * </pre>
+     *
      * <code>string address = 5 [json_name = "address"];</code>
      * @return The address.
      */
     java.lang.String getAddress();
     /**
+     * <pre>
+     * Address of the account.
+     * </pre>
+     *
      * <code>string address = 5 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -13137,6 +14761,10 @@ public final class BlockchainOuterClass {
         getAddressBytes();
   }
   /**
+   * <pre>
+   * Message containing information about an account.
+   * </pre>
+   *
    * Protobuf type {@code pactus.AccountInfo}
    */
   public static final class AccountInfo extends
@@ -13182,6 +14810,10 @@ public final class BlockchainOuterClass {
     public static final int HASH_FIELD_NUMBER = 1;
     private com.google.protobuf.ByteString hash_;
     /**
+     * <pre>
+     * Hash of the account.
+     * </pre>
+     *
      * <code>bytes hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
@@ -13193,6 +14825,10 @@ public final class BlockchainOuterClass {
     public static final int DATA_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString data_;
     /**
+     * <pre>
+     * Account data.
+     * </pre>
+     *
      * <code>bytes data = 2 [json_name = "data"];</code>
      * @return The data.
      */
@@ -13204,6 +14840,10 @@ public final class BlockchainOuterClass {
     public static final int NUMBER_FIELD_NUMBER = 3;
     private int number_;
     /**
+     * <pre>
+     * Account number.
+     * </pre>
+     *
      * <code>int32 number = 3 [json_name = "number"];</code>
      * @return The number.
      */
@@ -13215,6 +14855,10 @@ public final class BlockchainOuterClass {
     public static final int BALANCE_FIELD_NUMBER = 4;
     private long balance_;
     /**
+     * <pre>
+     * Account balance.
+     * </pre>
+     *
      * <code>int64 balance = 4 [json_name = "balance"];</code>
      * @return The balance.
      */
@@ -13226,6 +14870,10 @@ public final class BlockchainOuterClass {
     public static final int ADDRESS_FIELD_NUMBER = 5;
     private volatile java.lang.Object address_;
     /**
+     * <pre>
+     * Address of the account.
+     * </pre>
+     *
      * <code>string address = 5 [json_name = "address"];</code>
      * @return The address.
      */
@@ -13243,6 +14891,10 @@ public final class BlockchainOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address of the account.
+     * </pre>
+     *
      * <code>string address = 5 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -13461,6 +15113,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing information about an account.
+     * </pre>
+     *
      * Protobuf type {@code pactus.AccountInfo}
      */
     public static final class Builder extends
@@ -13667,6 +15323,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Hash of the account.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @return The hash.
        */
@@ -13675,6 +15335,10 @@ public final class BlockchainOuterClass {
         return hash_;
       }
       /**
+       * <pre>
+       * Hash of the account.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @param value The hash to set.
        * @return This builder for chaining.
@@ -13689,6 +15353,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Hash of the account.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @return This builder for chaining.
        */
@@ -13701,6 +15369,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Account data.
+       * </pre>
+       *
        * <code>bytes data = 2 [json_name = "data"];</code>
        * @return The data.
        */
@@ -13709,6 +15381,10 @@ public final class BlockchainOuterClass {
         return data_;
       }
       /**
+       * <pre>
+       * Account data.
+       * </pre>
+       *
        * <code>bytes data = 2 [json_name = "data"];</code>
        * @param value The data to set.
        * @return This builder for chaining.
@@ -13723,6 +15399,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Account data.
+       * </pre>
+       *
        * <code>bytes data = 2 [json_name = "data"];</code>
        * @return This builder for chaining.
        */
@@ -13735,6 +15415,10 @@ public final class BlockchainOuterClass {
 
       private int number_ ;
       /**
+       * <pre>
+       * Account number.
+       * </pre>
+       *
        * <code>int32 number = 3 [json_name = "number"];</code>
        * @return The number.
        */
@@ -13743,6 +15427,10 @@ public final class BlockchainOuterClass {
         return number_;
       }
       /**
+       * <pre>
+       * Account number.
+       * </pre>
+       *
        * <code>int32 number = 3 [json_name = "number"];</code>
        * @param value The number to set.
        * @return This builder for chaining.
@@ -13754,6 +15442,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Account number.
+       * </pre>
+       *
        * <code>int32 number = 3 [json_name = "number"];</code>
        * @return This builder for chaining.
        */
@@ -13766,6 +15458,10 @@ public final class BlockchainOuterClass {
 
       private long balance_ ;
       /**
+       * <pre>
+       * Account balance.
+       * </pre>
+       *
        * <code>int64 balance = 4 [json_name = "balance"];</code>
        * @return The balance.
        */
@@ -13774,6 +15470,10 @@ public final class BlockchainOuterClass {
         return balance_;
       }
       /**
+       * <pre>
+       * Account balance.
+       * </pre>
+       *
        * <code>int64 balance = 4 [json_name = "balance"];</code>
        * @param value The balance to set.
        * @return This builder for chaining.
@@ -13785,6 +15485,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Account balance.
+       * </pre>
+       *
        * <code>int64 balance = 4 [json_name = "balance"];</code>
        * @return This builder for chaining.
        */
@@ -13797,6 +15501,10 @@ public final class BlockchainOuterClass {
 
       private java.lang.Object address_ = "";
       /**
+       * <pre>
+       * Address of the account.
+       * </pre>
+       *
        * <code>string address = 5 [json_name = "address"];</code>
        * @return The address.
        */
@@ -13813,6 +15521,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the account.
+       * </pre>
+       *
        * <code>string address = 5 [json_name = "address"];</code>
        * @return The bytes for address.
        */
@@ -13830,6 +15542,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the account.
+       * </pre>
+       *
        * <code>string address = 5 [json_name = "address"];</code>
        * @param value The address to set.
        * @return This builder for chaining.
@@ -13845,6 +15561,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the account.
+       * </pre>
+       *
        * <code>string address = 5 [json_name = "address"];</code>
        * @return This builder for chaining.
        */
@@ -13855,6 +15575,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the account.
+       * </pre>
+       *
        * <code>string address = 5 [json_name = "address"];</code>
        * @param value The bytes for address to set.
        * @return This builder for chaining.
@@ -13939,35 +15663,59 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Block version.
+     * </pre>
+     *
      * <code>int32 version = 1 [json_name = "version"];</code>
      * @return The version.
      */
     int getVersion();
 
     /**
+     * <pre>
+     * Hash of the previous block.
+     * </pre>
+     *
      * <code>bytes prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
      * @return The prevBlockHash.
      */
     com.google.protobuf.ByteString getPrevBlockHash();
 
     /**
+     * <pre>
+     * State root of the block.
+     * </pre>
+     *
      * <code>bytes state_root = 3 [json_name = "stateRoot"];</code>
      * @return The stateRoot.
      */
     com.google.protobuf.ByteString getStateRoot();
 
     /**
+     * <pre>
+     * Sortition seed of the block.
+     * </pre>
+     *
      * <code>bytes sortition_seed = 4 [json_name = "sortitionSeed"];</code>
      * @return The sortitionSeed.
      */
     com.google.protobuf.ByteString getSortitionSeed();
 
     /**
+     * <pre>
+     * Address of the proposer of the block.
+     * </pre>
+     *
      * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
      * @return The proposerAddress.
      */
     java.lang.String getProposerAddress();
     /**
+     * <pre>
+     * Address of the proposer of the block.
+     * </pre>
+     *
      * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
      * @return The bytes for proposerAddress.
      */
@@ -13975,6 +15723,10 @@ public final class BlockchainOuterClass {
         getProposerAddressBytes();
   }
   /**
+   * <pre>
+   * Message containing information about the header of a block.
+   * </pre>
+   *
    * Protobuf type {@code pactus.BlockHeaderInfo}
    */
   public static final class BlockHeaderInfo extends
@@ -14021,6 +15773,10 @@ public final class BlockchainOuterClass {
     public static final int VERSION_FIELD_NUMBER = 1;
     private int version_;
     /**
+     * <pre>
+     * Block version.
+     * </pre>
+     *
      * <code>int32 version = 1 [json_name = "version"];</code>
      * @return The version.
      */
@@ -14032,6 +15788,10 @@ public final class BlockchainOuterClass {
     public static final int PREV_BLOCK_HASH_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString prevBlockHash_;
     /**
+     * <pre>
+     * Hash of the previous block.
+     * </pre>
+     *
      * <code>bytes prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
      * @return The prevBlockHash.
      */
@@ -14043,6 +15803,10 @@ public final class BlockchainOuterClass {
     public static final int STATE_ROOT_FIELD_NUMBER = 3;
     private com.google.protobuf.ByteString stateRoot_;
     /**
+     * <pre>
+     * State root of the block.
+     * </pre>
+     *
      * <code>bytes state_root = 3 [json_name = "stateRoot"];</code>
      * @return The stateRoot.
      */
@@ -14054,6 +15818,10 @@ public final class BlockchainOuterClass {
     public static final int SORTITION_SEED_FIELD_NUMBER = 4;
     private com.google.protobuf.ByteString sortitionSeed_;
     /**
+     * <pre>
+     * Sortition seed of the block.
+     * </pre>
+     *
      * <code>bytes sortition_seed = 4 [json_name = "sortitionSeed"];</code>
      * @return The sortitionSeed.
      */
@@ -14065,6 +15833,10 @@ public final class BlockchainOuterClass {
     public static final int PROPOSER_ADDRESS_FIELD_NUMBER = 5;
     private volatile java.lang.Object proposerAddress_;
     /**
+     * <pre>
+     * Address of the proposer of the block.
+     * </pre>
+     *
      * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
      * @return The proposerAddress.
      */
@@ -14082,6 +15854,10 @@ public final class BlockchainOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address of the proposer of the block.
+     * </pre>
+     *
      * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
      * @return The bytes for proposerAddress.
      */
@@ -14299,6 +16075,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing information about the header of a block.
+     * </pre>
+     *
      * Protobuf type {@code pactus.BlockHeaderInfo}
      */
     public static final class Builder extends
@@ -14505,6 +16285,10 @@ public final class BlockchainOuterClass {
 
       private int version_ ;
       /**
+       * <pre>
+       * Block version.
+       * </pre>
+       *
        * <code>int32 version = 1 [json_name = "version"];</code>
        * @return The version.
        */
@@ -14513,6 +16297,10 @@ public final class BlockchainOuterClass {
         return version_;
       }
       /**
+       * <pre>
+       * Block version.
+       * </pre>
+       *
        * <code>int32 version = 1 [json_name = "version"];</code>
        * @param value The version to set.
        * @return This builder for chaining.
@@ -14524,6 +16312,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Block version.
+       * </pre>
+       *
        * <code>int32 version = 1 [json_name = "version"];</code>
        * @return This builder for chaining.
        */
@@ -14536,6 +16328,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString prevBlockHash_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Hash of the previous block.
+       * </pre>
+       *
        * <code>bytes prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
        * @return The prevBlockHash.
        */
@@ -14544,6 +16340,10 @@ public final class BlockchainOuterClass {
         return prevBlockHash_;
       }
       /**
+       * <pre>
+       * Hash of the previous block.
+       * </pre>
+       *
        * <code>bytes prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
        * @param value The prevBlockHash to set.
        * @return This builder for chaining.
@@ -14558,6 +16358,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Hash of the previous block.
+       * </pre>
+       *
        * <code>bytes prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
        * @return This builder for chaining.
        */
@@ -14570,6 +16374,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString stateRoot_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * State root of the block.
+       * </pre>
+       *
        * <code>bytes state_root = 3 [json_name = "stateRoot"];</code>
        * @return The stateRoot.
        */
@@ -14578,6 +16386,10 @@ public final class BlockchainOuterClass {
         return stateRoot_;
       }
       /**
+       * <pre>
+       * State root of the block.
+       * </pre>
+       *
        * <code>bytes state_root = 3 [json_name = "stateRoot"];</code>
        * @param value The stateRoot to set.
        * @return This builder for chaining.
@@ -14592,6 +16404,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * State root of the block.
+       * </pre>
+       *
        * <code>bytes state_root = 3 [json_name = "stateRoot"];</code>
        * @return This builder for chaining.
        */
@@ -14604,6 +16420,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString sortitionSeed_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Sortition seed of the block.
+       * </pre>
+       *
        * <code>bytes sortition_seed = 4 [json_name = "sortitionSeed"];</code>
        * @return The sortitionSeed.
        */
@@ -14612,6 +16432,10 @@ public final class BlockchainOuterClass {
         return sortitionSeed_;
       }
       /**
+       * <pre>
+       * Sortition seed of the block.
+       * </pre>
+       *
        * <code>bytes sortition_seed = 4 [json_name = "sortitionSeed"];</code>
        * @param value The sortitionSeed to set.
        * @return This builder for chaining.
@@ -14626,6 +16450,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Sortition seed of the block.
+       * </pre>
+       *
        * <code>bytes sortition_seed = 4 [json_name = "sortitionSeed"];</code>
        * @return This builder for chaining.
        */
@@ -14638,6 +16466,10 @@ public final class BlockchainOuterClass {
 
       private java.lang.Object proposerAddress_ = "";
       /**
+       * <pre>
+       * Address of the proposer of the block.
+       * </pre>
+       *
        * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
        * @return The proposerAddress.
        */
@@ -14654,6 +16486,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the proposer of the block.
+       * </pre>
+       *
        * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
        * @return The bytes for proposerAddress.
        */
@@ -14671,6 +16507,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the proposer of the block.
+       * </pre>
+       *
        * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
        * @param value The proposerAddress to set.
        * @return This builder for chaining.
@@ -14686,6 +16526,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the proposer of the block.
+       * </pre>
+       *
        * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
        * @return This builder for chaining.
        */
@@ -14696,6 +16540,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the proposer of the block.
+       * </pre>
+       *
        * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
        * @param value The bytes for proposerAddress to set.
        * @return This builder for chaining.
@@ -14780,28 +16628,48 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Hash of the certificate.
+     * </pre>
+     *
      * <code>bytes hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
     com.google.protobuf.ByteString getHash();
 
     /**
+     * <pre>
+     * Round of the certificate.
+     * </pre>
+     *
      * <code>int32 round = 2 [json_name = "round"];</code>
      * @return The round.
      */
     int getRound();
 
     /**
+     * <pre>
+     * List of committers in the certificate.
+     * </pre>
+     *
      * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
      * @return A list containing the committers.
      */
     java.util.List<java.lang.Integer> getCommittersList();
     /**
+     * <pre>
+     * List of committers in the certificate.
+     * </pre>
+     *
      * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
      * @return The count of committers.
      */
     int getCommittersCount();
     /**
+     * <pre>
+     * List of committers in the certificate.
+     * </pre>
+     *
      * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
      * @param index The index of the element to return.
      * @return The committers at the given index.
@@ -14809,16 +16677,28 @@ public final class BlockchainOuterClass {
     int getCommitters(int index);
 
     /**
+     * <pre>
+     * List of absentees in the certificate.
+     * </pre>
+     *
      * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
      * @return A list containing the absentees.
      */
     java.util.List<java.lang.Integer> getAbsenteesList();
     /**
+     * <pre>
+     * List of absentees in the certificate.
+     * </pre>
+     *
      * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
      * @return The count of absentees.
      */
     int getAbsenteesCount();
     /**
+     * <pre>
+     * List of absentees in the certificate.
+     * </pre>
+     *
      * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
      * @param index The index of the element to return.
      * @return The absentees at the given index.
@@ -14826,12 +16706,20 @@ public final class BlockchainOuterClass {
     int getAbsentees(int index);
 
     /**
+     * <pre>
+     * Certificate signature.
+     * </pre>
+     *
      * <code>bytes signature = 5 [json_name = "signature"];</code>
      * @return The signature.
      */
     com.google.protobuf.ByteString getSignature();
   }
   /**
+   * <pre>
+   * Message containing information about a certificate.
+   * </pre>
+   *
    * Protobuf type {@code pactus.CertificateInfo}
    */
   public static final class CertificateInfo extends
@@ -14878,6 +16766,10 @@ public final class BlockchainOuterClass {
     public static final int HASH_FIELD_NUMBER = 1;
     private com.google.protobuf.ByteString hash_;
     /**
+     * <pre>
+     * Hash of the certificate.
+     * </pre>
+     *
      * <code>bytes hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
@@ -14889,6 +16781,10 @@ public final class BlockchainOuterClass {
     public static final int ROUND_FIELD_NUMBER = 2;
     private int round_;
     /**
+     * <pre>
+     * Round of the certificate.
+     * </pre>
+     *
      * <code>int32 round = 2 [json_name = "round"];</code>
      * @return The round.
      */
@@ -14900,6 +16796,10 @@ public final class BlockchainOuterClass {
     public static final int COMMITTERS_FIELD_NUMBER = 3;
     private com.google.protobuf.Internal.IntList committers_;
     /**
+     * <pre>
+     * List of committers in the certificate.
+     * </pre>
+     *
      * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
      * @return A list containing the committers.
      */
@@ -14909,6 +16809,10 @@ public final class BlockchainOuterClass {
       return committers_;
     }
     /**
+     * <pre>
+     * List of committers in the certificate.
+     * </pre>
+     *
      * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
      * @return The count of committers.
      */
@@ -14916,6 +16820,10 @@ public final class BlockchainOuterClass {
       return committers_.size();
     }
     /**
+     * <pre>
+     * List of committers in the certificate.
+     * </pre>
+     *
      * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
      * @param index The index of the element to return.
      * @return The committers at the given index.
@@ -14928,6 +16836,10 @@ public final class BlockchainOuterClass {
     public static final int ABSENTEES_FIELD_NUMBER = 4;
     private com.google.protobuf.Internal.IntList absentees_;
     /**
+     * <pre>
+     * List of absentees in the certificate.
+     * </pre>
+     *
      * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
      * @return A list containing the absentees.
      */
@@ -14937,6 +16849,10 @@ public final class BlockchainOuterClass {
       return absentees_;
     }
     /**
+     * <pre>
+     * List of absentees in the certificate.
+     * </pre>
+     *
      * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
      * @return The count of absentees.
      */
@@ -14944,6 +16860,10 @@ public final class BlockchainOuterClass {
       return absentees_.size();
     }
     /**
+     * <pre>
+     * List of absentees in the certificate.
+     * </pre>
+     *
      * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
      * @param index The index of the element to return.
      * @return The absentees at the given index.
@@ -14956,6 +16876,10 @@ public final class BlockchainOuterClass {
     public static final int SIGNATURE_FIELD_NUMBER = 5;
     private com.google.protobuf.ByteString signature_;
     /**
+     * <pre>
+     * Certificate signature.
+     * </pre>
+     *
      * <code>bytes signature = 5 [json_name = "signature"];</code>
      * @return The signature.
      */
@@ -15197,6 +17121,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing information about a certificate.
+     * </pre>
+     *
      * Protobuf type {@code pactus.CertificateInfo}
      */
     public static final class Builder extends
@@ -15448,6 +17376,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Hash of the certificate.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @return The hash.
        */
@@ -15456,6 +17388,10 @@ public final class BlockchainOuterClass {
         return hash_;
       }
       /**
+       * <pre>
+       * Hash of the certificate.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @param value The hash to set.
        * @return This builder for chaining.
@@ -15470,6 +17406,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Hash of the certificate.
+       * </pre>
+       *
        * <code>bytes hash = 1 [json_name = "hash"];</code>
        * @return This builder for chaining.
        */
@@ -15482,6 +17422,10 @@ public final class BlockchainOuterClass {
 
       private int round_ ;
       /**
+       * <pre>
+       * Round of the certificate.
+       * </pre>
+       *
        * <code>int32 round = 2 [json_name = "round"];</code>
        * @return The round.
        */
@@ -15490,6 +17434,10 @@ public final class BlockchainOuterClass {
         return round_;
       }
       /**
+       * <pre>
+       * Round of the certificate.
+       * </pre>
+       *
        * <code>int32 round = 2 [json_name = "round"];</code>
        * @param value The round to set.
        * @return This builder for chaining.
@@ -15501,6 +17449,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Round of the certificate.
+       * </pre>
+       *
        * <code>int32 round = 2 [json_name = "round"];</code>
        * @return This builder for chaining.
        */
@@ -15519,6 +17471,10 @@ public final class BlockchainOuterClass {
          }
       }
       /**
+       * <pre>
+       * List of committers in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @return A list containing the committers.
        */
@@ -15528,6 +17484,10 @@ public final class BlockchainOuterClass {
                  java.util.Collections.unmodifiableList(committers_) : committers_;
       }
       /**
+       * <pre>
+       * List of committers in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @return The count of committers.
        */
@@ -15535,6 +17495,10 @@ public final class BlockchainOuterClass {
         return committers_.size();
       }
       /**
+       * <pre>
+       * List of committers in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @param index The index of the element to return.
        * @return The committers at the given index.
@@ -15543,6 +17507,10 @@ public final class BlockchainOuterClass {
         return committers_.getInt(index);
       }
       /**
+       * <pre>
+       * List of committers in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @param index The index to set the value at.
        * @param value The committers to set.
@@ -15556,6 +17524,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of committers in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @param value The committers to add.
        * @return This builder for chaining.
@@ -15567,6 +17539,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of committers in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @param values The committers to add.
        * @return This builder for chaining.
@@ -15580,6 +17556,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of committers in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 committers = 3 [json_name = "committers"];</code>
        * @return This builder for chaining.
        */
@@ -15598,6 +17578,10 @@ public final class BlockchainOuterClass {
          }
       }
       /**
+       * <pre>
+       * List of absentees in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @return A list containing the absentees.
        */
@@ -15607,6 +17591,10 @@ public final class BlockchainOuterClass {
                  java.util.Collections.unmodifiableList(absentees_) : absentees_;
       }
       /**
+       * <pre>
+       * List of absentees in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @return The count of absentees.
        */
@@ -15614,6 +17602,10 @@ public final class BlockchainOuterClass {
         return absentees_.size();
       }
       /**
+       * <pre>
+       * List of absentees in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @param index The index of the element to return.
        * @return The absentees at the given index.
@@ -15622,6 +17614,10 @@ public final class BlockchainOuterClass {
         return absentees_.getInt(index);
       }
       /**
+       * <pre>
+       * List of absentees in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @param index The index to set the value at.
        * @param value The absentees to set.
@@ -15635,6 +17631,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of absentees in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @param value The absentees to add.
        * @return This builder for chaining.
@@ -15646,6 +17646,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of absentees in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @param values The absentees to add.
        * @return This builder for chaining.
@@ -15659,6 +17663,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of absentees in the certificate.
+       * </pre>
+       *
        * <code>repeated int32 absentees = 4 [json_name = "absentees"];</code>
        * @return This builder for chaining.
        */
@@ -15671,6 +17679,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString signature_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Certificate signature.
+       * </pre>
+       *
        * <code>bytes signature = 5 [json_name = "signature"];</code>
        * @return The signature.
        */
@@ -15679,6 +17691,10 @@ public final class BlockchainOuterClass {
         return signature_;
       }
       /**
+       * <pre>
+       * Certificate signature.
+       * </pre>
+       *
        * <code>bytes signature = 5 [json_name = "signature"];</code>
        * @param value The signature to set.
        * @return This builder for chaining.
@@ -15693,6 +17709,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Certificate signature.
+       * </pre>
+       *
        * <code>bytes signature = 5 [json_name = "signature"];</code>
        * @return This builder for chaining.
        */
@@ -15771,22 +17791,38 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Type of the vote.
+     * </pre>
+     *
      * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
      * @return The enum numeric value on the wire for type.
      */
     int getTypeValue();
     /**
+     * <pre>
+     * Type of the vote.
+     * </pre>
+     *
      * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
      * @return The type.
      */
     pactus.blockchain.BlockchainOuterClass.VoteType getType();
 
     /**
+     * <pre>
+     * Voter's address.
+     * </pre>
+     *
      * <code>string voter = 2 [json_name = "voter"];</code>
      * @return The voter.
      */
     java.lang.String getVoter();
     /**
+     * <pre>
+     * Voter's address.
+     * </pre>
+     *
      * <code>string voter = 2 [json_name = "voter"];</code>
      * @return The bytes for voter.
      */
@@ -15794,30 +17830,50 @@ public final class BlockchainOuterClass {
         getVoterBytes();
 
     /**
+     * <pre>
+     * Hash of the block being voted on.
+     * </pre>
+     *
      * <code>bytes block_hash = 3 [json_name = "blockHash"];</code>
      * @return The blockHash.
      */
     com.google.protobuf.ByteString getBlockHash();
 
     /**
+     * <pre>
+     * Round of the vote.
+     * </pre>
+     *
      * <code>int32 round = 4 [json_name = "round"];</code>
      * @return The round.
      */
     int getRound();
 
     /**
+     * <pre>
+     * Consensus round of the vote.
+     * </pre>
+     *
      * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
      * @return The cpRound.
      */
     int getCpRound();
 
     /**
+     * <pre>
+     * Consensus value of the vote.
+     * </pre>
+     *
      * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
      * @return The cpValue.
      */
     int getCpValue();
   }
   /**
+   * <pre>
+   * Message containing information about a vote.
+   * </pre>
+   *
    * Protobuf type {@code pactus.VoteInfo}
    */
   public static final class VoteInfo extends
@@ -15863,6 +17919,10 @@ public final class BlockchainOuterClass {
     public static final int TYPE_FIELD_NUMBER = 1;
     private int type_;
     /**
+     * <pre>
+     * Type of the vote.
+     * </pre>
+     *
      * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
      * @return The enum numeric value on the wire for type.
      */
@@ -15870,6 +17930,10 @@ public final class BlockchainOuterClass {
       return type_;
     }
     /**
+     * <pre>
+     * Type of the vote.
+     * </pre>
+     *
      * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
      * @return The type.
      */
@@ -15882,6 +17946,10 @@ public final class BlockchainOuterClass {
     public static final int VOTER_FIELD_NUMBER = 2;
     private volatile java.lang.Object voter_;
     /**
+     * <pre>
+     * Voter's address.
+     * </pre>
+     *
      * <code>string voter = 2 [json_name = "voter"];</code>
      * @return The voter.
      */
@@ -15899,6 +17967,10 @@ public final class BlockchainOuterClass {
       }
     }
     /**
+     * <pre>
+     * Voter's address.
+     * </pre>
+     *
      * <code>string voter = 2 [json_name = "voter"];</code>
      * @return The bytes for voter.
      */
@@ -15920,6 +17992,10 @@ public final class BlockchainOuterClass {
     public static final int BLOCK_HASH_FIELD_NUMBER = 3;
     private com.google.protobuf.ByteString blockHash_;
     /**
+     * <pre>
+     * Hash of the block being voted on.
+     * </pre>
+     *
      * <code>bytes block_hash = 3 [json_name = "blockHash"];</code>
      * @return The blockHash.
      */
@@ -15931,6 +18007,10 @@ public final class BlockchainOuterClass {
     public static final int ROUND_FIELD_NUMBER = 4;
     private int round_;
     /**
+     * <pre>
+     * Round of the vote.
+     * </pre>
+     *
      * <code>int32 round = 4 [json_name = "round"];</code>
      * @return The round.
      */
@@ -15942,6 +18022,10 @@ public final class BlockchainOuterClass {
     public static final int CP_ROUND_FIELD_NUMBER = 5;
     private int cpRound_;
     /**
+     * <pre>
+     * Consensus round of the vote.
+     * </pre>
+     *
      * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
      * @return The cpRound.
      */
@@ -15953,6 +18037,10 @@ public final class BlockchainOuterClass {
     public static final int CP_VALUE_FIELD_NUMBER = 6;
     private int cpValue_;
     /**
+     * <pre>
+     * Consensus value of the vote.
+     * </pre>
+     *
      * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
      * @return The cpValue.
      */
@@ -16170,6 +18258,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing information about a vote.
+     * </pre>
+     *
      * Protobuf type {@code pactus.VoteInfo}
      */
     public static final class Builder extends
@@ -16387,6 +18479,10 @@ public final class BlockchainOuterClass {
 
       private int type_ = 0;
       /**
+       * <pre>
+       * Type of the vote.
+       * </pre>
+       *
        * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
        * @return The enum numeric value on the wire for type.
        */
@@ -16394,6 +18490,10 @@ public final class BlockchainOuterClass {
         return type_;
       }
       /**
+       * <pre>
+       * Type of the vote.
+       * </pre>
+       *
        * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
        * @param value The enum numeric value on the wire for type to set.
        * @return This builder for chaining.
@@ -16405,6 +18505,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Type of the vote.
+       * </pre>
+       *
        * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
        * @return The type.
        */
@@ -16415,6 +18519,10 @@ public final class BlockchainOuterClass {
         return result == null ? pactus.blockchain.BlockchainOuterClass.VoteType.UNRECOGNIZED : result;
       }
       /**
+       * <pre>
+       * Type of the vote.
+       * </pre>
+       *
        * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
        * @param value The type to set.
        * @return This builder for chaining.
@@ -16429,6 +18537,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Type of the vote.
+       * </pre>
+       *
        * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
        * @return This builder for chaining.
        */
@@ -16441,6 +18553,10 @@ public final class BlockchainOuterClass {
 
       private java.lang.Object voter_ = "";
       /**
+       * <pre>
+       * Voter's address.
+       * </pre>
+       *
        * <code>string voter = 2 [json_name = "voter"];</code>
        * @return The voter.
        */
@@ -16457,6 +18573,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Voter's address.
+       * </pre>
+       *
        * <code>string voter = 2 [json_name = "voter"];</code>
        * @return The bytes for voter.
        */
@@ -16474,6 +18594,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Voter's address.
+       * </pre>
+       *
        * <code>string voter = 2 [json_name = "voter"];</code>
        * @param value The voter to set.
        * @return This builder for chaining.
@@ -16489,6 +18613,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Voter's address.
+       * </pre>
+       *
        * <code>string voter = 2 [json_name = "voter"];</code>
        * @return This builder for chaining.
        */
@@ -16499,6 +18627,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Voter's address.
+       * </pre>
+       *
        * <code>string voter = 2 [json_name = "voter"];</code>
        * @param value The bytes for voter to set.
        * @return This builder for chaining.
@@ -16517,6 +18649,10 @@ public final class BlockchainOuterClass {
 
       private com.google.protobuf.ByteString blockHash_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * Hash of the block being voted on.
+       * </pre>
+       *
        * <code>bytes block_hash = 3 [json_name = "blockHash"];</code>
        * @return The blockHash.
        */
@@ -16525,6 +18661,10 @@ public final class BlockchainOuterClass {
         return blockHash_;
       }
       /**
+       * <pre>
+       * Hash of the block being voted on.
+       * </pre>
+       *
        * <code>bytes block_hash = 3 [json_name = "blockHash"];</code>
        * @param value The blockHash to set.
        * @return This builder for chaining.
@@ -16539,6 +18679,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Hash of the block being voted on.
+       * </pre>
+       *
        * <code>bytes block_hash = 3 [json_name = "blockHash"];</code>
        * @return This builder for chaining.
        */
@@ -16551,6 +18695,10 @@ public final class BlockchainOuterClass {
 
       private int round_ ;
       /**
+       * <pre>
+       * Round of the vote.
+       * </pre>
+       *
        * <code>int32 round = 4 [json_name = "round"];</code>
        * @return The round.
        */
@@ -16559,6 +18707,10 @@ public final class BlockchainOuterClass {
         return round_;
       }
       /**
+       * <pre>
+       * Round of the vote.
+       * </pre>
+       *
        * <code>int32 round = 4 [json_name = "round"];</code>
        * @param value The round to set.
        * @return This builder for chaining.
@@ -16570,6 +18722,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Round of the vote.
+       * </pre>
+       *
        * <code>int32 round = 4 [json_name = "round"];</code>
        * @return This builder for chaining.
        */
@@ -16582,6 +18738,10 @@ public final class BlockchainOuterClass {
 
       private int cpRound_ ;
       /**
+       * <pre>
+       * Consensus round of the vote.
+       * </pre>
+       *
        * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
        * @return The cpRound.
        */
@@ -16590,6 +18750,10 @@ public final class BlockchainOuterClass {
         return cpRound_;
       }
       /**
+       * <pre>
+       * Consensus round of the vote.
+       * </pre>
+       *
        * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
        * @param value The cpRound to set.
        * @return This builder for chaining.
@@ -16601,6 +18765,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Consensus round of the vote.
+       * </pre>
+       *
        * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
        * @return This builder for chaining.
        */
@@ -16613,6 +18781,10 @@ public final class BlockchainOuterClass {
 
       private int cpValue_ ;
       /**
+       * <pre>
+       * Consensus value of the vote.
+       * </pre>
+       *
        * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
        * @return The cpValue.
        */
@@ -16621,6 +18793,10 @@ public final class BlockchainOuterClass {
         return cpValue_;
       }
       /**
+       * <pre>
+       * Consensus value of the vote.
+       * </pre>
+       *
        * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
        * @param value The cpValue to set.
        * @return This builder for chaining.
@@ -16632,6 +18808,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Consensus value of the vote.
+       * </pre>
+       *
        * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
        * @return This builder for chaining.
        */
@@ -16710,11 +18890,19 @@ public final class BlockchainOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Address of the consensus instance.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The address.
      */
     java.lang.String getAddress();
     /**
+     * <pre>
+     * Address of the consensus instance.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -16722,48 +18910,84 @@ public final class BlockchainOuterClass {
         getAddressBytes();
 
     /**
+     * <pre>
+     * Whether the consensus instance is active.
+     * </pre>
+     *
      * <code>bool Active = 2 [json_name = "Active"];</code>
      * @return The active.
      */
     boolean getActive();
 
     /**
+     * <pre>
+     * Height of the consensus instance.
+     * </pre>
+     *
      * <code>uint32 height = 3 [json_name = "height"];</code>
      * @return The height.
      */
     int getHeight();
 
     /**
+     * <pre>
+     * Round of the consensus instance.
+     * </pre>
+     *
      * <code>int32 round = 4 [json_name = "round"];</code>
      * @return The round.
      */
     int getRound();
 
     /**
+     * <pre>
+     * List of votes in the consensus instance.
+     * </pre>
+     *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     java.util.List<pactus.blockchain.BlockchainOuterClass.VoteInfo> 
         getVotesList();
     /**
+     * <pre>
+     * List of votes in the consensus instance.
+     * </pre>
+     *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     pactus.blockchain.BlockchainOuterClass.VoteInfo getVotes(int index);
     /**
+     * <pre>
+     * List of votes in the consensus instance.
+     * </pre>
+     *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     int getVotesCount();
     /**
+     * <pre>
+     * List of votes in the consensus instance.
+     * </pre>
+     *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     java.util.List<? extends pactus.blockchain.BlockchainOuterClass.VoteInfoOrBuilder> 
         getVotesOrBuilderList();
     /**
+     * <pre>
+     * List of votes in the consensus instance.
+     * </pre>
+     *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     pactus.blockchain.BlockchainOuterClass.VoteInfoOrBuilder getVotesOrBuilder(
         int index);
   }
   /**
+   * <pre>
+   * Message containing information about consensus.
+   * </pre>
+   *
    * Protobuf type {@code pactus.ConsensusInfo}
    */
   public static final class ConsensusInfo extends
@@ -16808,6 +19032,10 @@ public final class BlockchainOuterClass {
     public static final int ADDRESS_FIELD_NUMBER = 1;
     private volatile java.lang.Object address_;
     /**
+     * <pre>
+     * Address of the consensus instance.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The address.
      */
@@ -16825,6 +19053,10 @@ public final class BlockchainOuterClass {
       }
     }
     /**
+     * <pre>
+     * Address of the consensus instance.
+     * </pre>
+     *
      * <code>string address = 1 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -16846,6 +19078,10 @@ public final class BlockchainOuterClass {
     public static final int ACTIVE_FIELD_NUMBER = 2;
     private boolean active_;
     /**
+     * <pre>
+     * Whether the consensus instance is active.
+     * </pre>
+     *
      * <code>bool Active = 2 [json_name = "Active"];</code>
      * @return The active.
      */
@@ -16857,6 +19093,10 @@ public final class BlockchainOuterClass {
     public static final int HEIGHT_FIELD_NUMBER = 3;
     private int height_;
     /**
+     * <pre>
+     * Height of the consensus instance.
+     * </pre>
+     *
      * <code>uint32 height = 3 [json_name = "height"];</code>
      * @return The height.
      */
@@ -16868,6 +19108,10 @@ public final class BlockchainOuterClass {
     public static final int ROUND_FIELD_NUMBER = 4;
     private int round_;
     /**
+     * <pre>
+     * Round of the consensus instance.
+     * </pre>
+     *
      * <code>int32 round = 4 [json_name = "round"];</code>
      * @return The round.
      */
@@ -16879,6 +19123,10 @@ public final class BlockchainOuterClass {
     public static final int VOTES_FIELD_NUMBER = 5;
     private java.util.List<pactus.blockchain.BlockchainOuterClass.VoteInfo> votes_;
     /**
+     * <pre>
+     * List of votes in the consensus instance.
+     * </pre>
+     *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     @java.lang.Override
@@ -16886,6 +19134,10 @@ public final class BlockchainOuterClass {
       return votes_;
     }
     /**
+     * <pre>
+     * List of votes in the consensus instance.
+     * </pre>
+     *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     @java.lang.Override
@@ -16894,6 +19146,10 @@ public final class BlockchainOuterClass {
       return votes_;
     }
     /**
+     * <pre>
+     * List of votes in the consensus instance.
+     * </pre>
+     *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     @java.lang.Override
@@ -16901,6 +19157,10 @@ public final class BlockchainOuterClass {
       return votes_.size();
     }
     /**
+     * <pre>
+     * List of votes in the consensus instance.
+     * </pre>
+     *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     @java.lang.Override
@@ -16908,6 +19168,10 @@ public final class BlockchainOuterClass {
       return votes_.get(index);
     }
     /**
+     * <pre>
+     * List of votes in the consensus instance.
+     * </pre>
+     *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     @java.lang.Override
@@ -17118,6 +19382,10 @@ public final class BlockchainOuterClass {
       return builder;
     }
     /**
+     * <pre>
+     * Message containing information about consensus.
+     * </pre>
+     *
      * Protobuf type {@code pactus.ConsensusInfo}
      */
     public static final class Builder extends
@@ -17370,6 +19638,10 @@ public final class BlockchainOuterClass {
 
       private java.lang.Object address_ = "";
       /**
+       * <pre>
+       * Address of the consensus instance.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return The address.
        */
@@ -17386,6 +19658,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the consensus instance.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return The bytes for address.
        */
@@ -17403,6 +19679,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * Address of the consensus instance.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @param value The address to set.
        * @return This builder for chaining.
@@ -17418,6 +19698,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the consensus instance.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @return This builder for chaining.
        */
@@ -17428,6 +19712,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Address of the consensus instance.
+       * </pre>
+       *
        * <code>string address = 1 [json_name = "address"];</code>
        * @param value The bytes for address to set.
        * @return This builder for chaining.
@@ -17446,6 +19734,10 @@ public final class BlockchainOuterClass {
 
       private boolean active_ ;
       /**
+       * <pre>
+       * Whether the consensus instance is active.
+       * </pre>
+       *
        * <code>bool Active = 2 [json_name = "Active"];</code>
        * @return The active.
        */
@@ -17454,6 +19746,10 @@ public final class BlockchainOuterClass {
         return active_;
       }
       /**
+       * <pre>
+       * Whether the consensus instance is active.
+       * </pre>
+       *
        * <code>bool Active = 2 [json_name = "Active"];</code>
        * @param value The active to set.
        * @return This builder for chaining.
@@ -17465,6 +19761,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Whether the consensus instance is active.
+       * </pre>
+       *
        * <code>bool Active = 2 [json_name = "Active"];</code>
        * @return This builder for chaining.
        */
@@ -17477,6 +19777,10 @@ public final class BlockchainOuterClass {
 
       private int height_ ;
       /**
+       * <pre>
+       * Height of the consensus instance.
+       * </pre>
+       *
        * <code>uint32 height = 3 [json_name = "height"];</code>
        * @return The height.
        */
@@ -17485,6 +19789,10 @@ public final class BlockchainOuterClass {
         return height_;
       }
       /**
+       * <pre>
+       * Height of the consensus instance.
+       * </pre>
+       *
        * <code>uint32 height = 3 [json_name = "height"];</code>
        * @param value The height to set.
        * @return This builder for chaining.
@@ -17496,6 +19804,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Height of the consensus instance.
+       * </pre>
+       *
        * <code>uint32 height = 3 [json_name = "height"];</code>
        * @return This builder for chaining.
        */
@@ -17508,6 +19820,10 @@ public final class BlockchainOuterClass {
 
       private int round_ ;
       /**
+       * <pre>
+       * Round of the consensus instance.
+       * </pre>
+       *
        * <code>int32 round = 4 [json_name = "round"];</code>
        * @return The round.
        */
@@ -17516,6 +19832,10 @@ public final class BlockchainOuterClass {
         return round_;
       }
       /**
+       * <pre>
+       * Round of the consensus instance.
+       * </pre>
+       *
        * <code>int32 round = 4 [json_name = "round"];</code>
        * @param value The round to set.
        * @return This builder for chaining.
@@ -17527,6 +19847,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Round of the consensus instance.
+       * </pre>
+       *
        * <code>int32 round = 4 [json_name = "round"];</code>
        * @return This builder for chaining.
        */
@@ -17550,6 +19874,10 @@ public final class BlockchainOuterClass {
           pactus.blockchain.BlockchainOuterClass.VoteInfo, pactus.blockchain.BlockchainOuterClass.VoteInfo.Builder, pactus.blockchain.BlockchainOuterClass.VoteInfoOrBuilder> votesBuilder_;
 
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public java.util.List<pactus.blockchain.BlockchainOuterClass.VoteInfo> getVotesList() {
@@ -17560,6 +19888,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public int getVotesCount() {
@@ -17570,6 +19902,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.VoteInfo getVotes(int index) {
@@ -17580,6 +19916,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder setVotes(
@@ -17597,6 +19937,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder setVotes(
@@ -17611,6 +19955,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder addVotes(pactus.blockchain.BlockchainOuterClass.VoteInfo value) {
@@ -17627,6 +19975,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder addVotes(
@@ -17644,6 +19996,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder addVotes(
@@ -17658,6 +20014,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder addVotes(
@@ -17672,6 +20032,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder addAllVotes(
@@ -17687,6 +20051,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder clearVotes() {
@@ -17700,6 +20068,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder removeVotes(int index) {
@@ -17713,6 +20085,10 @@ public final class BlockchainOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.VoteInfo.Builder getVotesBuilder(
@@ -17720,6 +20096,10 @@ public final class BlockchainOuterClass {
         return getVotesFieldBuilder().getBuilder(index);
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.VoteInfoOrBuilder getVotesOrBuilder(
@@ -17730,6 +20110,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public java.util.List<? extends pactus.blockchain.BlockchainOuterClass.VoteInfoOrBuilder> 
@@ -17741,6 +20125,10 @@ public final class BlockchainOuterClass {
         }
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.VoteInfo.Builder addVotesBuilder() {
@@ -17748,6 +20136,10 @@ public final class BlockchainOuterClass {
             pactus.blockchain.BlockchainOuterClass.VoteInfo.getDefaultInstance());
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.VoteInfo.Builder addVotesBuilder(
@@ -17756,6 +20148,10 @@ public final class BlockchainOuterClass {
             index, pactus.blockchain.BlockchainOuterClass.VoteInfo.getDefaultInstance());
       }
       /**
+       * <pre>
+       * List of votes in the consensus instance.
+       * </pre>
+       *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public java.util.List<pactus.blockchain.BlockchainOuterClass.VoteInfo.Builder> 

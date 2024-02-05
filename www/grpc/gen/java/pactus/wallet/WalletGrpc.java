@@ -3,6 +3,9 @@ package pactus.wallet;
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
+ * <pre>
+ * Define the Wallet service with various RPC methods for wallet management.
+ * </pre>
  */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.50.2)",
@@ -277,10 +280,16 @@ public final class WalletGrpc {
   }
 
   /**
+   * <pre>
+   * Define the Wallet service with various RPC methods for wallet management.
+   * </pre>
    */
   public static abstract class WalletImplBase implements io.grpc.BindableService {
 
     /**
+     * <pre>
+     * CreateWallet creates a new wallet with the specified parameters.
+     * </pre>
      */
     public void createWallet(pactus.wallet.WalletOuterClass.CreateWalletRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.CreateWalletResponse> responseObserver) {
@@ -288,6 +297,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * LoadWallet loads an existing wallet with the given name.
+     * </pre>
      */
     public void loadWallet(pactus.wallet.WalletOuterClass.LoadWalletRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.LoadWalletResponse> responseObserver) {
@@ -295,6 +307,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * UnloadWallet unloads a currently loaded wallet with the specified name.
+     * </pre>
      */
     public void unloadWallet(pactus.wallet.WalletOuterClass.UnloadWalletRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.UnloadWalletResponse> responseObserver) {
@@ -302,6 +317,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * LockWallet locks a currently loaded wallet with the provided password and timeout.
+     * </pre>
      */
     public void lockWallet(pactus.wallet.WalletOuterClass.LockWalletRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.LockWalletResponse> responseObserver) {
@@ -309,6 +327,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * UnlockWallet unlocks a locked wallet with the provided password and timeout.
+     * </pre>
      */
     public void unlockWallet(pactus.wallet.WalletOuterClass.UnlockWalletRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.UnlockWalletResponse> responseObserver) {
@@ -316,6 +337,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * SignRawTransaction signs a raw transaction for a specified wallet.
+     * </pre>
      */
     public void signRawTransaction(pactus.wallet.WalletOuterClass.SignRawTransactionRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.SignRawTransactionResponse> responseObserver) {
@@ -323,6 +347,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * GetValidatorAddress retrieves the validator address associated with a public key.
+     * </pre>
      */
     public void getValidatorAddress(pactus.wallet.WalletOuterClass.GetValidatorAddressRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetValidatorAddressResponse> responseObserver) {
@@ -385,6 +412,9 @@ public final class WalletGrpc {
   }
 
   /**
+   * <pre>
+   * Define the Wallet service with various RPC methods for wallet management.
+   * </pre>
    */
   public static final class WalletStub extends io.grpc.stub.AbstractAsyncStub<WalletStub> {
     private WalletStub(
@@ -399,6 +429,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * CreateWallet creates a new wallet with the specified parameters.
+     * </pre>
      */
     public void createWallet(pactus.wallet.WalletOuterClass.CreateWalletRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.CreateWalletResponse> responseObserver) {
@@ -407,6 +440,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * LoadWallet loads an existing wallet with the given name.
+     * </pre>
      */
     public void loadWallet(pactus.wallet.WalletOuterClass.LoadWalletRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.LoadWalletResponse> responseObserver) {
@@ -415,6 +451,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * UnloadWallet unloads a currently loaded wallet with the specified name.
+     * </pre>
      */
     public void unloadWallet(pactus.wallet.WalletOuterClass.UnloadWalletRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.UnloadWalletResponse> responseObserver) {
@@ -423,6 +462,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * LockWallet locks a currently loaded wallet with the provided password and timeout.
+     * </pre>
      */
     public void lockWallet(pactus.wallet.WalletOuterClass.LockWalletRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.LockWalletResponse> responseObserver) {
@@ -431,6 +473,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * UnlockWallet unlocks a locked wallet with the provided password and timeout.
+     * </pre>
      */
     public void unlockWallet(pactus.wallet.WalletOuterClass.UnlockWalletRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.UnlockWalletResponse> responseObserver) {
@@ -439,6 +484,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * SignRawTransaction signs a raw transaction for a specified wallet.
+     * </pre>
      */
     public void signRawTransaction(pactus.wallet.WalletOuterClass.SignRawTransactionRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.SignRawTransactionResponse> responseObserver) {
@@ -447,6 +495,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * GetValidatorAddress retrieves the validator address associated with a public key.
+     * </pre>
      */
     public void getValidatorAddress(pactus.wallet.WalletOuterClass.GetValidatorAddressRequest request,
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetValidatorAddressResponse> responseObserver) {
@@ -456,6 +507,9 @@ public final class WalletGrpc {
   }
 
   /**
+   * <pre>
+   * Define the Wallet service with various RPC methods for wallet management.
+   * </pre>
    */
   public static final class WalletBlockingStub extends io.grpc.stub.AbstractBlockingStub<WalletBlockingStub> {
     private WalletBlockingStub(
@@ -470,6 +524,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * CreateWallet creates a new wallet with the specified parameters.
+     * </pre>
      */
     public pactus.wallet.WalletOuterClass.CreateWalletResponse createWallet(pactus.wallet.WalletOuterClass.CreateWalletRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -477,6 +534,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * LoadWallet loads an existing wallet with the given name.
+     * </pre>
      */
     public pactus.wallet.WalletOuterClass.LoadWalletResponse loadWallet(pactus.wallet.WalletOuterClass.LoadWalletRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -484,6 +544,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * UnloadWallet unloads a currently loaded wallet with the specified name.
+     * </pre>
      */
     public pactus.wallet.WalletOuterClass.UnloadWalletResponse unloadWallet(pactus.wallet.WalletOuterClass.UnloadWalletRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -491,6 +554,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * LockWallet locks a currently loaded wallet with the provided password and timeout.
+     * </pre>
      */
     public pactus.wallet.WalletOuterClass.LockWalletResponse lockWallet(pactus.wallet.WalletOuterClass.LockWalletRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -498,6 +564,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * UnlockWallet unlocks a locked wallet with the provided password and timeout.
+     * </pre>
      */
     public pactus.wallet.WalletOuterClass.UnlockWalletResponse unlockWallet(pactus.wallet.WalletOuterClass.UnlockWalletRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -505,6 +574,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * SignRawTransaction signs a raw transaction for a specified wallet.
+     * </pre>
      */
     public pactus.wallet.WalletOuterClass.SignRawTransactionResponse signRawTransaction(pactus.wallet.WalletOuterClass.SignRawTransactionRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -512,6 +584,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * GetValidatorAddress retrieves the validator address associated with a public key.
+     * </pre>
      */
     public pactus.wallet.WalletOuterClass.GetValidatorAddressResponse getValidatorAddress(pactus.wallet.WalletOuterClass.GetValidatorAddressRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -520,6 +595,9 @@ public final class WalletGrpc {
   }
 
   /**
+   * <pre>
+   * Define the Wallet service with various RPC methods for wallet management.
+   * </pre>
    */
   public static final class WalletFutureStub extends io.grpc.stub.AbstractFutureStub<WalletFutureStub> {
     private WalletFutureStub(
@@ -534,6 +612,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * CreateWallet creates a new wallet with the specified parameters.
+     * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.CreateWalletResponse> createWallet(
         pactus.wallet.WalletOuterClass.CreateWalletRequest request) {
@@ -542,6 +623,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * LoadWallet loads an existing wallet with the given name.
+     * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.LoadWalletResponse> loadWallet(
         pactus.wallet.WalletOuterClass.LoadWalletRequest request) {
@@ -550,6 +634,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * UnloadWallet unloads a currently loaded wallet with the specified name.
+     * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.UnloadWalletResponse> unloadWallet(
         pactus.wallet.WalletOuterClass.UnloadWalletRequest request) {
@@ -558,6 +645,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * LockWallet locks a currently loaded wallet with the provided password and timeout.
+     * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.LockWalletResponse> lockWallet(
         pactus.wallet.WalletOuterClass.LockWalletRequest request) {
@@ -566,6 +656,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * UnlockWallet unlocks a locked wallet with the provided password and timeout.
+     * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.UnlockWalletResponse> unlockWallet(
         pactus.wallet.WalletOuterClass.UnlockWalletRequest request) {
@@ -574,6 +667,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * SignRawTransaction signs a raw transaction for a specified wallet.
+     * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.SignRawTransactionResponse> signRawTransaction(
         pactus.wallet.WalletOuterClass.SignRawTransactionRequest request) {
@@ -582,6 +678,9 @@ public final class WalletGrpc {
     }
 
     /**
+     * <pre>
+     * GetValidatorAddress retrieves the validator address associated with a public key.
+     * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.GetValidatorAddressResponse> getValidatorAddress(
         pactus.wallet.WalletOuterClass.GetValidatorAddressRequest request) {
