@@ -130,6 +130,8 @@ func (k *ExtendedKey) DerivePath(path []uint32) (*ExtendedKey, error) {
 // extended public keys can be derived from a parent public extended key (no
 // knowledge of the parent private key) whereas hardened extended keys may not
 // be.
+//
+//nolint:nestif // complexity can't be reduced more.
 func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	// There are four scenarios that could happen here:
 	// 1) Private extended key -> Hardened child private extended key
