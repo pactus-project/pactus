@@ -1,0 +1,111 @@
+{{/* This template generates gRPC document for https://pactus.org/ */}}---
+layout: learn
+title: gRPC API Reference
+sidebar: gRPC API Reference
+---
+
+<h1 id="title">gRPC API Reference</h1>
+
+Each node in the Pactus network can be configured to use the [gRPC](https://grpc.io/) protocol for communication.
+Here you can find the list of all gRPC methods and messages.
+
+<h2>Table of Contents</h2>
+
+<div id="toc-container">
+  <ul class=""> {{range .Files}} {{range .Services}}
+    <li> {{.Name}} Service
+      <ul> {{$service_name := .FullName}} {{range .Methods}}
+        <li>
+          <a href="#{{$service_name}}.{{.Name}}">
+          <span class="badge text-bg-primary">rpc</span> {{.Name}}</a>
+        </li> {{end}}
+      </ul>
+    </li>  {{end}} {{end}}
+
+    <li>Messages and Enums
+      <ul> {{range .Files}} {{range .Messages}}
+        <li>
+          <a href="#{{.FullName}}">
+            <span class="badge text-bg-secondary">msg</span> {{.LongName}}
+          </a>
+        </li> {{end}} {{end}}
+        {{range .Files}} {{range .Enums}}
+        <li>
+          <a href="#{{.FullName}}">
+            <span class="badge text-bg-info">enum</span> {{.LongName}}
+          </a>
+        </li> {{end}} {{end}}
+
+        <li>
+          <a href="#scalar-value-types">Scalar Value Types</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+{{range .Files}} {{$file_name := .Name}} {{range .Services}}
+<h2>{{.Name}} Service <span class="badge text-bg-warning fs-6 align-top">{{ $file_name }}</span></h2>
+{{p .Description}} {{$service_name := .FullName}} {{range .Methods}}
+<h3 id="{{$service_name}}.{{.Name}}">{{.Name}} <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
+<div class="request pt-3">Request message: <a href="#{{.RequestFullType}}">{{.RequestLongType}}</a></div>
+<div class="response pb-3">Response message: <a href="#{{.ResponseFullType}}">{{.ResponseLongType}}</a></div>
+{{p .Description}} {{end}} {{end}} {{end}}
+<h2>Messages and Enums</h2>{{range .Files}} {{range .Messages}}
+<h3 id="{{.FullName}}">
+{{.LongName}}
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  {{p .Description}}
+{{if .HasFields}}
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> {{range .Fields}}
+    <tr>
+      <td class="fw-bold">{{.Name}}</td>
+      <td>{{.Label}}
+        <a href="#{{.FullType}}">{{.LongType}}</a>
+      </td>
+      <td>{{if (index .Options "deprecated"|default false)}}<strong>Deprecated.</strong> {{end}}{{.Description}} {{if .DefaultValue}}Default: {{.DefaultValue}}{{end}}</td>
+    </tr>{{end}}
+  </tbody>
+</table> {{else}} Message has no fields. {{end}} {{end}} {{end}}
+{{range .Files}} {{range .Enums}}
+<h3 id="{{.FullName}}">
+{{.LongName}}
+<span class="badge text-bg-info fs-6 align-top">enum</span>
+</h3>
+{{p .Description}}
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+    {{range .Values}}
+      <tr>
+        <td class="fw-bold">{{.Name}}</td>
+        <td>{{.Number}}</td>
+        <td>{{.Description}}</td>
+      </tr>
+    {{end}}
+  </tbody>
+</table> {{end}} {{end}}
+
+<h3 id="scalar-value-types">Scalar Value Types</h3>
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>.proto Type</td><td>C++</td><td>Java</td><td>Python</td><td>Go</td><td>C#</td><td>PHP</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> {{range .Scalars}}
+      <tr id="{{.ProtoType}}">
+        <td class="fw-bold">{{.ProtoType}}</td>
+        <td>{{.CppType}}</td>
+        <td>{{.JavaType}}</td>
+        <td>{{.PythonType}}</td>
+        <td>{{.GoType}}</td>
+        <td>{{.CSharp}}</td>
+        <td>{{.PhpType}}</td>
+      </tr> {{end}}
+  </tbody>
+</table>
