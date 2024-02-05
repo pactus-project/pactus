@@ -244,5 +244,11 @@
         "email": "toanbm.test02@gmail.com",
         "website": "n/a",
         "address": "/ip4/45.134.226.48/tcp/21888/p2p/12D3KooWP9dFS5QdSCZaPYVrcpXf5YbNyon5RchLohMVYUxZJZgZ"
+    },
+    {
+        "name": "NodeOps",
+        "email": "admin@nodeops.dev",
+        "website": "https://nodeops.dev/",
+        "address": "/ip4/154.38.187.40/tcp/21888/p2p/12D3KooWQyt7JCyhhnZ8jyT1vso4GGYVbpJhoXJy5KRpnqa8DmPg"
     }
 ]
