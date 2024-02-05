@@ -494,3 +494,25 @@ func TestCPValueToString(t *testing.T) {
 	assert.Equal(t, vote.CPValueAbstain.String(), "abstain")
 	assert.Equal(t, vote.CPValue(-1).String(), "unknown: -1")
 }
+
+func TestCPInvalidJustType(t *testing.T) {
+	voteData, _ := hex.DecodeString(
+		"A7" + // map(7)
+			"0103" + // Type: 3 (cp:pre-vote)
+			"021832" + // Height: 50
+			"0301" + // Round: 1
+			"0458200000000000000000000000000000000000000000000000000000000000000000" + // Block Hash
+			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // Signer
+			"06" + // CP_vote
+			"A4" + // map(4)
+			"0100" + // CP_Round: 0
+			"0201" + // CP_Value: 1
+			"0308" + // Just type: 8 <<<(Unknown Just Type)>>>
+			"0441" + // Just: JustTypeInitOne
+			"A0" + // Empty Array
+			"07f6") // Signature -> Null
+
+	v := new(vote.Vote)
+	err := v.UnmarshalCBOR(voteData)
+	assert.Error(t, err)
+}
