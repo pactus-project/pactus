@@ -31,11 +31,13 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		return errors.Errorf(errors.ErrInvalidHeight,
 			"validator has bonded at height %v", val.LastBondingHeight())
 	}
-	ok := sb.VerifyProof(trx.LockTime(), pld.Proof, val)
+
+	sortitionHeight := trx.LockTime()
+	ok := sb.VerifyProof(sortitionHeight, pld.Proof, val)
 	if !ok {
 		return errors.Error(errors.ErrInvalidProof)
 	}
-	sortitionHeight := trx.LockTime()
+
 	// Check for the duplicated or expired sortition transactions
 	if sortitionHeight <= val.LastSortitionHeight() {
 		return errors.Errorf(errors.ErrInvalidTx,
@@ -43,18 +45,8 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	}
 
 	if e.strict {
-		if sb.Committee().Size() >= sb.Params().CommitteeSize {
-			if err := e.joinCommittee(sb, val); err != nil {
-				return err
-			}
-		} else {
-			// There are available seats in the committee.
-			// We will add new members while ignoring any sortition transactions
-			// for existing committee members.
-			if sb.Committee().Contains(val.Address()) {
-				return errors.Errorf(errors.ErrInvalidTx,
-					"validator is in committee")
-			}
+		if err := e.joinCommittee(sb, val); err != nil {
+			return err
 		}
 	}
 
@@ -69,6 +61,17 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 	val *validator.Validator,
 ) error {
+	if sb.Committee().Size() < sb.Params().CommitteeSize {
+		// There are available seats in the committee.
+		if sb.Committee().Contains(val.Address()) {
+			return errors.Errorf(errors.ErrInvalidTx,
+				"validator is in committee")
+		}
+
+		return nil
+	}
+
+	// The committee is full, check if the validator can enter the committee.
 	joiningNum := 0
 	joiningPower := int64(0)
 	committee := sb.Committee()

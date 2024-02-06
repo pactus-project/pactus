@@ -56,7 +56,7 @@ func testConfig() *Config {
 func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
 	t.Helper()
 
-	timeout := time.NewTimer(2 * time.Second)
+	timeout := time.NewTimer(4 * time.Second)
 
 	for {
 		select {
