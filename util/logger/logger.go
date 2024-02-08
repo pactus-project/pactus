@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"bytes"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -65,38 +66,48 @@ func getLoggersInst() *logger {
 }
 
 func InitGlobalLogger(conf *Config) {
-	if globalInst == nil {
-		writers := []io.Writer{}
-		// console writer
+	if globalInst != nil {
+		return
+	}
+
+	writers := []io.Writer{}
+	// console writer
+	_, err := os.Stderr.Write([]byte{0})
+	if err != nil {
+		buff := make([]byte, 1024)
+		buffWriter := bytes.NewBuffer(buff)
+
+		writers = append(writers, buffWriter)
+	} else {
 		if conf.Colorful {
 			writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04:05"})
 		} else {
 			writers = append(writers, os.Stderr)
 		}
-
-		// file writer
-		fw := &lumberjack.Logger{
-			Filename:   LogFilename,
-			MaxSize:    MaxLogSize,
-			MaxBackups: conf.MaxBackups,
-			Compress:   conf.Compress,
-			MaxAge:     conf.RotateLogAfterDays,
-		}
-		writers = append(writers, fw)
-
-		globalInst = &logger{
-			config: conf,
-			subs:   make(map[string]*SubLogger),
-			writer: io.MultiWriter(writers...),
-		}
-		log.Logger = zerolog.New(globalInst.writer).With().Timestamp().Logger()
-
-		lvl, err := zerolog.ParseLevel(conf.Levels["default"])
-		if err != nil {
-			Warn("invalid default log level", "error", err)
-		}
-		log.Logger = log.Logger.Level(lvl)
 	}
+
+	// file writer
+	fw := &lumberjack.Logger{
+		Filename:   LogFilename,
+		MaxSize:    MaxLogSize,
+		MaxBackups: conf.MaxBackups,
+		Compress:   conf.Compress,
+		MaxAge:     conf.RotateLogAfterDays,
+	}
+	writers = append(writers, fw)
+
+	globalInst = &logger{
+		config: conf,
+		subs:   make(map[string]*SubLogger),
+		writer: io.MultiWriter(writers...),
+	}
+	log.Logger = zerolog.New(globalInst.writer).With().Timestamp().Logger()
+
+	lvl, err := zerolog.ParseLevel(conf.Levels["default"])
+	if err != nil {
+		Warn("invalid default log level", "error", err)
+	}
+	log.Logger = log.Logger.Level(lvl)
 }
 
 func addFields(event *zerolog.Event, keyvals ...interface{}) *zerolog.Event {
