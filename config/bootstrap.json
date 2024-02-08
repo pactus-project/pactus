@@ -216,6 +216,12 @@
         "address": "/ip4/65.21.69.53/tcp/21888/p2p/12D3KooWQ1izUE5jcmMyjmxRdb2CmASe8Nfn81UL2G5rYjptC2RV"
     },
     {
+        "name": "VALIDATOR.WIKI",
+        "email": "admin@validator.wiki",
+        "website": "https://www.validator.wiki/",
+        "address": "/dns/pactus-bootstrap.validator.wiki/tcp/21888/p2p/12D3KooWBC5YQJdRAvupSXUPNYHiSctzZeTPNzen1JsRwj9aEyYZ"
+    },
+    {
         "name": "SumNode",
         "email": "thanhsum@gmail.com",
         "website": "",
