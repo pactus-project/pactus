@@ -276,6 +276,14 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {
 
 	p := ps.mustGetPeer(pid)
 	p.Status = status
+
+	if status == StatusCodeDisconnected {
+		for _, ssn := range ps.sessions {
+			if ssn.PeerID == pid {
+				ssn.Status = session.Uncompleted
+			}
+		}
+	}
 }
 
 func (ps *PeerSet) UpdateProtocols(pid peer.ID, protocols []string) {

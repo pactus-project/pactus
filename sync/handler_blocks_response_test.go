@@ -336,10 +336,9 @@ func TestSyncing(t *testing.T) {
 	shouldPublishBlockResponse(t, td.networkBob, 93, 8, message.ResponseCodeMoreBlocks) // 93-100
 	shouldPublishBlockResponse(t, td.networkBob, 100, 0, message.ResponseCodeSynced)    // Synced
 
-	// Alice needs more time to process all the bundles,
-	// but the block height should be greater than zero
-	assert.Greater(t, td.syncAlice.state.LastBlockHeight(), uint32(20))
-	assert.Equal(t, td.syncBob.state.LastBlockHeight(), uint32(100))
+	assert.Eventually(t, func() bool {
+		return td.syncAlice.state.LastBlockHeight() == uint32(100)
+	}, 10*time.Second, 1*time.Second)
 }
 
 func TestSyncingHasBlockInCache(t *testing.T) {
