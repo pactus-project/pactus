@@ -73,7 +73,8 @@ func (mgr *peerMgr) Stop() {
 }
 
 func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
-	direction lp2pnet.Direction) {
+	direction lp2pnet.Direction,
+) {
 	mgr.lk.Lock()
 	defer mgr.lk.Unlock()
 
@@ -98,6 +99,7 @@ func (mgr *peerMgr) RemovePeer(pid lp2ppeer.ID) {
 	peer, ok := mgr.peers[pid]
 	if !ok {
 		mgr.logger.Warn("unable to find a peer", "pid", pid)
+
 		return
 	}
 
