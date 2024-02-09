@@ -143,14 +143,14 @@ func SubnetsToFilters(subnets []*net.IPNet, action multiaddr.Action) *multiaddr.
 func BuildConcreteLimitConfig(maxConns int) lp2prcmgr.ConcreteLimitConfig {
 	changes := lp2prcmgr.PartialLimitConfig{}
 
-	updateResourceLimits := func(limit *lp2prcmgr.ResourceLimits, maxConns, coefficient int) {
-		maxConnVal := lp2prcmgr.LimitVal(maxConns * coefficient)
+	updateResourceLimits := func(limit *lp2prcmgr.ResourceLimits, maxConns int, coefficient float32) {
+		maxConnVal := lp2prcmgr.LimitVal(int(float32(maxConns) * coefficient))
 
-		limit.ConnsOutbound = maxConnVal / 2
-		limit.ConnsInbound = maxConnVal / 2
+		limit.ConnsInbound = maxConnVal
+		limit.ConnsOutbound = maxConnVal
 		limit.Conns = maxConnVal
-		limit.StreamsOutbound = maxConnVal * 4
-		limit.StreamsInbound = maxConnVal * 4
+		limit.StreamsInbound = maxConnVal * 8
+		limit.StreamsOutbound = maxConnVal * 8
 		limit.Streams = maxConnVal * 8
 	}
 
