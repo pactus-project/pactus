@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"bytes"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -71,21 +70,6 @@ func InitGlobalLogger(conf *Config) {
 	}
 
 	writers := []io.Writer{}
-	// console writer
-	_, err := os.Stderr.Write([]byte{0})
-	if err != nil {
-		buff := make([]byte, 1024)
-		buffWriter := bytes.NewBuffer(buff)
-
-		writers = append(writers, buffWriter)
-	} else {
-		if conf.Colorful {
-			writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04:05"})
-		} else {
-			writers = append(writers, os.Stderr)
-		}
-	}
-
 	// file writer
 	fw := &lumberjack.Logger{
 		Filename:   LogFilename,
@@ -95,6 +79,13 @@ func InitGlobalLogger(conf *Config) {
 		MaxAge:     conf.RotateLogAfterDays,
 	}
 	writers = append(writers, fw)
+
+	// console writer
+	if conf.Colorful {
+		writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04:05"})
+	} else {
+		writers = append(writers, os.Stderr)
+	}
 
 	globalInst = &logger{
 		config: conf,
