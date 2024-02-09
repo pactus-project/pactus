@@ -158,7 +158,7 @@ func BuildConcreteLimitConfig(maxConns int) lp2prcmgr.ConcreteLimitConfig {
 	updateResourceLimits(&changes.ServiceDefault, maxConns, 1)
 	updateResourceLimits(&changes.ProtocolDefault, maxConns, 1)
 	updateResourceLimits(&changes.ProtocolPeerDefault, maxConns, 1)
-	updateResourceLimits(&changes.Transient, maxConns, 0.5)
+	updateResourceLimits(&changes.Transient, maxConns, 1)
 
 	defaultLimitConfig := lp2prcmgr.DefaultLimits.AutoScale()
 	changedLimitConfig := changes.Build(defaultLimitConfig)
