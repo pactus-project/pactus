@@ -145,7 +145,3 @@ func (conf *Config) ScaledMaxConns() int {
 func (conf *Config) ScaledMinConns() int {
 	return conf.ScaledMaxConns() / 4
 }
-
-func (conf *Config) ConnsThreshold() int {
-	return conf.ScaledMaxConns() / 8
-}
