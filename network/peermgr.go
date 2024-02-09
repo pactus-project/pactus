@@ -29,6 +29,11 @@ type peerMgr struct {
 	host           lp2phost.Host
 	peers          map[lp2ppeer.ID]*peerInfo
 	logger         *logger.SubLogger
+
+	// Note: These variables were added as a workaround for unreachable bootstraps.
+	// The issue is discussed here: https://github.com/libp2p/go-libp2p/issues/2616
+	pruneLimit     int
+	isBootstrapper bool
 }
 
 // newPeerMgr creates a new Peer Manager instance.
@@ -40,6 +45,8 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host,
 		bootstrapAddrs: conf.BootstrapAddrInfos(),
 		minConns:       conf.ScaledMinConns(),
 		maxConns:       conf.ScaledMaxConns(),
+		pruneLimit:     conf.ScaledMaxConns() - conf.ConnsThreshold(),
+		isBootstrapper: conf.IsBootstrapper,
 		peers:          make(map[lp2ppeer.ID]*peerInfo),
 		host:           h,
 		logger:         log,
@@ -126,15 +133,32 @@ func (mgr *peerMgr) CheckConnectivity() {
 		}
 	}
 
-	if len(connectedPeers) > mgr.maxConns {
-		mgr.logger.Debug("peer count is about maximum threshold",
+	switch num := len(connectedPeers); {
+	case num > mgr.maxConns:
+		mgr.logger.Info("peer count is about maximum threshold",
 			"count", len(connectedPeers),
 			"max", mgr.maxConns)
 
-		return
-	}
+	case num > mgr.pruneLimit:
+		if mgr.isBootstrapper {
+			// To allow the bootstrap node to have some free connections, let's disconnect from some peers.
+			mgr.logger.Info("peer count is about prune limit, close some connections",
+				"count", len(connectedPeers),
+				"max", mgr.maxConns,
+				"prune", mgr.pruneLimit)
 
-	if len(connectedPeers) < mgr.minConns {
+			network := mgr.host.Network()
+			for peerId := range mgr.peers {
+				_ = network.ClosePeer(peerId)
+				num--
+
+				if num < mgr.pruneLimit {
+					break
+				}
+			}
+		}
+
+	case num < mgr.minConns:
 		mgr.logger.Info("peer count is less than minimum threshold",
 			"count", len(connectedPeers),
 			"min", mgr.minConns)
