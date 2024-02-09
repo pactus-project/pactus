@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"slices"
 	"time"
 
 	lp2pspb "github.com/libp2p/go-libp2p-pubsub/pb"
@@ -67,13 +68,7 @@ func IPToMultiAddr(ip string, port int) (multiaddr.Multiaddr, error) {
 
 // HasPID checks if a peer ID exists in a list of peer IDs.
 func HasPID(pids []lp2ppeer.ID, pid lp2ppeer.ID) bool {
-	for _, p := range pids {
-		if p == pid {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(pids, pid)
 }
 
 func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrInfo, log *logger.SubLogger) {
@@ -147,10 +142,10 @@ func BuildConcreteLimitConfig(maxConns int) lp2prcmgr.ConcreteLimitConfig {
 		maxConnVal := lp2prcmgr.LimitVal(int(float32(maxConns) * coefficient))
 
 		limit.ConnsInbound = maxConnVal
-		limit.ConnsOutbound = maxConnVal / 4
+		limit.ConnsOutbound = maxConnVal
 		limit.Conns = maxConnVal
 		limit.StreamsInbound = maxConnVal * 8
-		limit.StreamsOutbound = maxConnVal * 2
+		limit.StreamsOutbound = maxConnVal * 8
 		limit.Streams = maxConnVal * 8
 	}
 
