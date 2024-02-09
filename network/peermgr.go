@@ -53,7 +53,7 @@ func (mgr *peerMgr) Start() {
 	mgr.CheckConnectivity()
 
 	go func() {
-		ticker := time.NewTicker(1 * time.Minute)
+		ticker := time.NewTicker(20 * time.Second)
 		defer ticker.Stop()
 
 		for {
@@ -113,30 +113,21 @@ func (mgr *peerMgr) CheckConnectivity() {
 	mgr.lk.Lock()
 	defer mgr.lk.Unlock()
 
-	mgr.logger.Debug("check connectivity", "peers", len(mgr.peers))
-
 	net := mgr.host.Network()
+	connectedPeers := len(net.Peers())
+	mgr.logger.Debug("check connectivity", "peers", len(mgr.peers), "connected", connectedPeers)
 
-	// Let's check if some peers are disconnected
-	var connectedPeers []lp2ppeer.ID
-	for pid := range mgr.peers {
-		connectedness := net.Connectedness(pid)
-		if connectedness == lp2pnet.Connected {
-			connectedPeers = append(connectedPeers, pid)
-		}
-	}
-
-	if len(connectedPeers) > mgr.maxConns {
+	switch {
+	case connectedPeers > mgr.maxConns:
 		mgr.logger.Debug("peer count is about maximum threshold",
-			"count", len(connectedPeers),
+			"count", connectedPeers,
 			"max", mgr.maxConns)
 
 		return
-	}
 
-	if len(connectedPeers) < mgr.minConns {
+	case connectedPeers < mgr.minConns:
 		mgr.logger.Info("peer count is less than minimum threshold",
-			"count", len(connectedPeers),
+			"count", connectedPeers,
 			"min", mgr.minConns)
 
 		for _, ai := range mgr.bootstrapAddrs {
@@ -148,7 +139,7 @@ func (mgr *peerMgr) CheckConnectivity() {
 			mgr.logger.Debug("try connecting to a bootstrap peer", "peer", ai.String())
 
 			// Don't try to connect to an already connected peer.
-			if HasPID(connectedPeers, ai.ID) {
+			if net.Connectedness(ai.ID) == lp2pnet.Connected {
 				mgr.logger.Trace("already connected", "peer", ai.String())
 
 				continue
