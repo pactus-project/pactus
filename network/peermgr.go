@@ -148,8 +148,8 @@ func (mgr *peerMgr) CheckConnectivity() {
 				"prune", mgr.pruneLimit)
 
 			network := mgr.host.Network()
-			for peerId := range mgr.peers {
-				_ = network.ClosePeer(peerId)
+			for peerID := range mgr.peers {
+				_ = network.ClosePeer(peerID)
 				num--
 
 				if num < mgr.pruneLimit {
