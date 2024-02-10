@@ -124,7 +124,10 @@ func (wn *widgetNode) timeout10() bool {
 		committeePower := wn.model.node.State().CommitteePower()
 		totalPower := wn.model.node.State().TotalPower()
 		validatorNum := wn.model.node.State().TotalValidators()
-		numConnections := wn.model.node.Network().NumConnectedPeers()
+		numConnections := fmt.Sprintf("%v (Inbound: %v, Outbound %v)",
+			wn.model.node.Network().NumConnectedPeers(),
+			wn.model.node.Network().NumInbound(),
+			wn.model.node.Network().NumOutbound())
 		reachability := wn.model.node.Network().ReachabilityStatus()
 		isInCommittee := "No"
 		if wn.model.node.ConsManager().HasActiveInstance() {
