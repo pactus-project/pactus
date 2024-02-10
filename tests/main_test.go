@@ -81,12 +81,14 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Sync.Firewall.Enabled = false
 		tConfigs[i].Sync.LatestBlockInterval = 10
 		tConfigs[i].Network.EnableMdns = true
+		tConfigs[i].Network.EnableRelay = false
+		tConfigs[i].Network.DefaultBootstrapAddrStrings = []string{}
 		tConfigs[i].Network.ForcePrivateNetwork = true
 		tConfigs[i].Network.NetworkKey = util.TempFilePath()
 		tConfigs[i].Network.NetworkName = "test"
 		tConfigs[i].Network.ListenAddrStrings = []string{"/ip4/127.0.0.1/tcp/0", "/ip4/127.0.0.1/udp/0/quic-v1"}
 		tConfigs[i].Network.BootstrapAddrStrings = []string{}
-		tConfigs[i].Network.MaxConns = 8
+		tConfigs[i].Network.MaxConns = 32
 		tConfigs[i].HTTP.Enable = false
 		tConfigs[i].GRPC.Enable = false
 

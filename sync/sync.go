@@ -3,7 +3,6 @@ package sync
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/consensus"
@@ -329,6 +328,8 @@ func (sync *synchronizer) processProtocolsEvent(pe *network.ProtocolsEvents) {
 }
 
 func (sync *synchronizer) processDisconnectEvent(de *network.DisconnectEvent) {
+	sync.logger.Debug("processing disconnect event", "pid", de.PeerID)
+
 	sync.peerSet.UpdateStatus(de.PeerID, peerset.StatusCodeDisconnected)
 }
 
@@ -374,12 +375,15 @@ func (sync *synchronizer) updateBlockchain() {
 
 	sync.peerSet.IterateSessions(func(ssn *session.Session) bool {
 		if ssn.Status == session.Uncompleted {
-			sync.logger.Debug("uncompleted block request, re-download",
+			sync.logger.Info("uncompleted block request, re-download",
 				"sid", ssn.SessionID, "pid", ssn.PeerID,
 				"stats", sync.peerSet.SessionStats())
 
 			// Try to re-download the blocks from this closed session
-			sync.sendBlockRequestToRandomPeer(ssn.From, ssn.Count, true)
+			sent := sync.sendBlockRequestToRandomPeer(ssn.From, ssn.Count, true)
+			if !sent {
+				return true
+			}
 		}
 
 		return false
@@ -481,21 +485,8 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		return true
 	}
 
-	sync.logger.Debug("unable to open a new session",
+	sync.logger.Warn("unable to open a new session, perhaps not enough connections",
 		"stats", sync.peerSet.SessionStats())
-
-	// Closing one connection randomly
-	sync.peerSet.IteratePeers(func(p *peerset.Peer) bool {
-		if !p.IsKnownOrTrusty() {
-			if p.LastSent.Before(time.Now().Add(-time.Minute)) {
-				sync.network.CloseConnection(p.PeerID)
-
-				return true
-			}
-		}
-
-		return false
-	})
 
 	return false
 }

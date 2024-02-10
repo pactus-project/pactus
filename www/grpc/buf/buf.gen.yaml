@@ -3,6 +3,22 @@ plugins:
   - name: go
     out: ../gen/go
     opt: paths=source_relative
+  - name: cobra
+    out: ../gen/go
+    opt:
+      - paths=source_relative
+  - name: doc
+    out: ../gen/docs
+    opt:
+      - ./website.tmpl,website.md
+  - name: doc
+    out: ../gen/docs
+    opt:
+      - markdown,index.md
+  - name: doc
+    out: ../gen/docs
+    opt:
+      - html,index.html
   - name: go-grpc
     out: ../gen/go
     opt: paths=source_relative,require_unimplemented_servers=false

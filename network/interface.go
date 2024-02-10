@@ -129,6 +129,8 @@ type Network interface {
 	CloseConnection(pid lp2pcore.PeerID)
 	SelfID() lp2pcore.PeerID
 	NumConnectedPeers() int
+	NumInbound() int
+	NumOutbound() int
 	ReachabilityStatus() string
 	HostAddrs() []string
 	Name() string

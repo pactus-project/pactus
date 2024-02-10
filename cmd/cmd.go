@@ -497,7 +497,9 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 // TODO: write test for me.
 func MakeConfig(genDoc *genesis.Genesis, confPath, walletsDir string) (*config.Config, error) {
 	var defConf *config.Config
-	switch genDoc.ChainType() {
+	chainType := genDoc.ChainType()
+
+	switch chainType {
 	case genesis.Mainnet:
 		defConf = config.DefaultConfigMainnet()
 	case genesis.Testnet:
@@ -511,42 +513,9 @@ func MakeConfig(genDoc *genesis.Genesis, confPath, walletsDir string) (*config.C
 		PrintWarnMsgf("Unable to load the config: %s", err)
 		PrintInfoMsgf("Attempting to update or restore the config file...")
 
-		// Try to attempt to load config in non-strict mode
-		conf, err = config.LoadFromFile(confPath, false, defConf)
-
-		// Create a backup of the config
-		if util.PathExists(confPath) {
-			confBackupPath := fmt.Sprintf("%v_bak_%s", confPath, time.Now().Format("2006-01-02T15-04-05"))
-			renameErr := os.Rename(confPath, confBackupPath)
-			if renameErr != nil {
-				return nil, renameErr
-			}
-		}
-
-		if err == nil {
-			err := conf.Save(confPath)
-			if err != nil {
-				return nil, err
-			}
-			PrintSuccessMsgf("Config updated.")
-		} else {
-			switch genDoc.ChainType() {
-			case genesis.Mainnet:
-				err = config.SaveMainnetConfig(confPath)
-				if err != nil {
-					return nil, err
-				}
-
-			case genesis.Testnet,
-				genesis.Localnet:
-				err = defConf.Save(confPath)
-				if err != nil {
-					return nil, err
-				}
-			}
-
-			PrintSuccessMsgf("Config restored to the default values")
-			conf, _ = config.LoadFromFile(confPath, true, defConf) // This time it should be OK
+		conf, err = RecoverConfig(confPath, defConf, chainType)
+		if err != nil {
+			return nil, err
 		}
 	}
 
@@ -558,8 +527,50 @@ func MakeConfig(genDoc *genesis.Genesis, confPath, walletsDir string) (*config.C
 	conf.Store.AccountCacheSize = 1024
 	conf.Store.PublicKeyCacheSize = 1024
 
-	conf.GRPC.DefaluWalletName = DefaultWalletName
+	conf.GRPC.DefaultWalletName = DefaultWalletName
 	conf.GRPC.WalletsDir = walletsDir
 
 	return conf, nil
+}
+
+func RecoverConfig(confPath string, defConf *config.Config, chainType genesis.ChainType) (*config.Config, error) {
+	// Try to attempt to load config in non-strict mode
+	conf, err := config.LoadFromFile(confPath, false, defConf)
+
+	// Create a backup of the config
+	if util.PathExists(confPath) {
+		confBackupPath := fmt.Sprintf("%v_bak_%s", confPath, time.Now().Format("2006-01-02T15-04-05"))
+		renameErr := os.Rename(confPath, confBackupPath)
+		if renameErr != nil {
+			return nil, renameErr
+		}
+	}
+
+	if err == nil {
+		err := conf.Save(confPath)
+		if err != nil {
+			return nil, err
+		}
+		PrintSuccessMsgf("Config updated.")
+	} else {
+		switch chainType {
+		case genesis.Mainnet:
+			err = config.SaveMainnetConfig(confPath)
+			if err != nil {
+				return nil, err
+			}
+
+		case genesis.Testnet,
+			genesis.Localnet:
+			err = defConf.Save(confPath)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		PrintSuccessMsgf("Config restored to the default values")
+		conf, _ = config.LoadFromFile(confPath, true, defConf) // This time it should be OK
+	}
+
+	return conf, err
 }

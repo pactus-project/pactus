@@ -46,7 +46,6 @@ func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel cha
 		logger:           log,
 		reachability:     lp2pnetwork.ReachabilityUnknown,
 	}
-	host.Network().Notify(notifee)
 
 	return notifee
 }
