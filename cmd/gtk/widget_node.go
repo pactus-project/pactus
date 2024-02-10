@@ -31,6 +31,7 @@ type widgetNode struct {
 	labelCommitteeStake  *gtk.Label
 	labelTotalStake      *gtk.Label
 	labelNumConnections  *gtk.Label
+	labelReachability    *gtk.Label
 	progressBarSynced    *gtk.ProgressBar
 }
 
@@ -69,6 +70,7 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 		labelCommitteeStake:  getLabelObj(builder, "id_label_committee_power"),
 		labelTotalStake:      getLabelObj(builder, "id_label_total_power"),
 		labelNumConnections:  getLabelObj(builder, "id_label_num_connections"),
+		labelReachability:    getLabelObj(builder, "id_label_reachability"),
 	}
 
 	signals := map[string]interface{}{}
@@ -123,6 +125,7 @@ func (wn *widgetNode) timeout10() bool {
 		totalPower := wn.model.node.State().TotalPower()
 		validatorNum := wn.model.node.State().TotalValidators()
 		numConnections := wn.model.node.Network().NumConnectedPeers()
+		reachability := wn.model.node.Network().ReachabilityStatus()
 		isInCommittee := "No"
 		if wn.model.node.ConsManager().HasActiveInstance() {
 			isInCommittee = "Yes"
@@ -135,6 +138,7 @@ func (wn *widgetNode) timeout10() bool {
 			wn.labelTotalStake.SetText(util.ChangeToString(totalPower))
 			wn.labelInCommittee.SetText(isInCommittee)
 			wn.labelNumConnections.SetText(fmt.Sprintf("%v", numConnections))
+			wn.labelReachability.SetText(reachability)
 
 			return false
 		})
