@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.1](https://github.com/pactus-project/pactus/compare/v1.0.0...v1.0.1) (2024-02-10)
+
+### Feat
+
+- **gui**: add connections and moniker fields to main windows ([#1090](https://github.com/pactus-project/pactus/pull/1090))
+
+### Fix
+
+- **network**: set dial and accept limit in connection gater ([#1089](https://github.com/pactus-project/pactus/pull/1089))
+- **gui** stderr logger in windows os ([#1081](https://github.com/pactus-project/pactus/pull/1081))
+- **sync**: improve syncing process ([#1087](https://github.com/pactus-project/pactus/pull/1087))
+- **network**: redefine resource limits ([#1086](https://github.com/pactus-project/pactus/pull/1086))
+
 ## [1.0.0](https://github.com/pactus-project/pactus/compare/v0.20.0...v1.0.0) (2024-01-31)
 
 ### Feat
