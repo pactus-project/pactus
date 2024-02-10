@@ -142,3 +142,11 @@ func (mock *MockNetwork) Name() string {
 func (mock *MockNetwork) Protocols() []string {
 	return []string{"gossip"}
 }
+
+func (mock *MockNetwork) NumInbound() int {
+	return 0
+}
+
+func (mock *MockNetwork) NumOutbound() int {
+	return 0
+}

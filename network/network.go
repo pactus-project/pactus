@@ -490,3 +490,11 @@ func (n *network) Protocols() []string {
 
 	return protocols
 }
+
+func (n *network) NumInbound() int {
+	return n.peerMgr.NumInbound()
+}
+
+func (n *network) NumOutbound() int {
+	return n.peerMgr.NumOutbound()
+}

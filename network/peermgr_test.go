@@ -50,4 +50,7 @@ func TestNumInboundOutbound(t *testing.T) {
 
 	assert.Equal(t, 0, net.peerMgr.NumInbound())
 	assert.Equal(t, 1, net.peerMgr.NumOutbound())
+
+	assert.Equal(t, net.NumInbound(), net.peerMgr.NumInbound())
+	assert.Equal(t, net.NumOutbound(), net.peerMgr.NumOutbound())
 }
