@@ -140,7 +140,7 @@ func (wn *widgetNode) timeout10() bool {
 			wn.labelCommitteeStake.SetText(util.ChangeToString(committeePower))
 			wn.labelTotalStake.SetText(util.ChangeToString(totalPower))
 			wn.labelInCommittee.SetText(isInCommittee)
-			wn.labelNumConnections.SetText(fmt.Sprintf("%v", numConnections))
+			wn.labelNumConnections.SetText(numConnections)
 			wn.labelReachability.SetText(reachability)
 
 			return false
