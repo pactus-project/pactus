@@ -353,6 +353,7 @@ func (n *network) Start() error {
 
 func (n *network) Stop() {
 	n.cancel()
+	n.logger.Debug("context closed", "reason", n.ctx.Err())
 
 	if n.mdns != nil {
 		n.mdns.Stop()

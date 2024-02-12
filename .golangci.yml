@@ -11,7 +11,7 @@ linters:
     - bidichk
     - bodyclose
     # - containedctx
-    # - contextcheck
+    - contextcheck
     - decorder
     - dogsled
     # - dupl
