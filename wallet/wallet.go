@@ -1,7 +1,6 @@
 package wallet
 
 import (
-	"context"
 	_ "embed"
 	"encoding/json"
 	"errors"
@@ -20,8 +19,6 @@ import (
 )
 
 type Wallet struct {
-	ctx    context.Context
-	cancel func() // TODO: call me!
 	store  *store
 	path   string
 	client *grpcClient
@@ -119,12 +116,9 @@ func newWallet(walletPath string, store *store, offline bool) (*Wallet, error) {
 		crypto.XPrivateKeyHRP = "txsecret"
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
 	w := &Wallet{
-		ctx:    ctx,
-		cancel: cancel,
-		store:  store,
-		path:   walletPath,
+		store: store,
+		path:  walletPath,
 	}
 
 	if !offline {
@@ -142,7 +136,7 @@ func (w *Wallet) Connect(addr string) error {
 }
 
 func (w *Wallet) tryToConnect(addr string) error {
-	client, err := newGRPCClient(w.ctx, addr)
+	client, err := newGRPCClient(addr)
 	if err != nil {
 		return err
 	}

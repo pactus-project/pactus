@@ -18,21 +18,25 @@ const (
 )
 
 type grpcClient struct {
-	ctx context.Context
+	ctx    context.Context
+	cancel func() // TODO: call me!
 
 	blockchainClient  pactus.BlockchainClient
 	transactionClient pactus.TransactionClient
 }
 
-func newGRPCClient(ctx context.Context, rpcEndpoint string) (*grpcClient, error) {
+func newGRPCClient(rpcEndpoint string) (*grpcClient, error) {
 	conn, err := grpc.Dial(rpcEndpoint,
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+
 	return &grpcClient{
 		ctx:               ctx,
+		cancel:            cancel,
 		blockchainClient:  pactus.NewBlockchainClient(conn),
 		transactionClient: pactus.NewTransactionClient(conn),
 	}, nil
