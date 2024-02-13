@@ -15,7 +15,13 @@ func TestNewDB(t *testing.T) {
 	assert.NotNil(t, someDB)
 
 	someDB.CreateTables()
-	err = someDB.InsertIntoAddress("test", "test", "test", "test")
+	addr := &Address{
+		Address:   "asd",
+		PublicKey: "asd",
+		Label:     "asd",
+		Path:      "sfdsf",
+	}
+	err = someDB.InsertIntoAddress(addr)
 	log.Println(err)
 	tran := &Transaction{
 		TxID:        "ssf",

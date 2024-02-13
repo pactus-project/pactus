@@ -18,7 +18,7 @@ var (
 
 type DB interface {
 	CreateTables() error
-	InsertIntoAddress(addr, pubKey, label, path string) error
+	InsertIntoAddress(addr *Address) error
 	InsertIntoTransaction(t *Transaction) error
 }
 
@@ -27,11 +27,12 @@ type db struct {
 }
 
 type Address struct {
-	ID        string `json:"id"`         // id of wallet
-	Address   string `json:"address"`    // Address in the wallet
-	PublicKey string `json:"public_key"` // Public key associated with the address
-	Label     string `json:"label"`      // Label for the address
-	Path      string `json:"path"`       // Path for the address
+	ID        string    `json:"id"`         // id of wallet
+	Address   string    `json:"address"`    // Address in the wallet
+	PublicKey string    `json:"public_key"` // Public key associated with the address
+	Label     string    `json:"label"`      // Label for the address
+	Path      string    `json:"path"`       // Path for the address
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Transaction struct {
@@ -72,7 +73,7 @@ func (d *db) CreateTables() error {
 
 func (d *db) createAddressTable() error {
 	addressQuery := "CREATE TABLE addresses (id INTEGER PRIMARY KEY AUTOINCREMENT," +
-		" address VARCHAR, public_key VARCHAR, label VARCHAR, path VARCHAR)"
+		" address VARCHAR, public_key VARCHAR, label VARCHAR, path VARCHAR, created_at TIMESTAMP)"
 	_, err := d.ExecContext(context.Background(), addressQuery)
 	if err != nil && !strings.Contains(err.Error(), "already exists") {
 		return ErrCouldNotCreateTable
@@ -103,9 +104,11 @@ func (d *db) createPairTable() error {
 	return nil
 }
 
-func (d *db) InsertIntoAddress(addr, pubKey, label, path string) error {
-	insertQuery := "INSERT INTO addresses (address, public_key, label, path) VALUES (?,?,?,?)"
-	_, err := d.ExecContext(context.Background(), insertQuery, addr, pubKey, label, path)
+func (d *db) InsertIntoAddress(addr *Address) error {
+	insertQuery := "INSERT INTO addresses (address, public_key, label, path, created_at) VALUES (?,?,?,?,?)"
+
+	addr.CreatedAt = time.Now().UTC()
+	_, err := d.ExecContext(context.Background(), insertQuery, addr.Address, addr.PublicKey, addr.Label, addr.Path, addr.CreatedAt)
 
 	return err
 }
