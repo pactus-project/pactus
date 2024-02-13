@@ -91,6 +91,12 @@ func (s *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn)
 	pid := conn.RemotePeer()
 	s.logger.Info("connected to peer", "pid", pid, "direction", conn.Stat().Direction, "addr", conn.RemoteMultiaddr())
 
+	if conn.Stat().Direction == lp2pnetwork.DirUnknown {
+		_ = conn.Close()
+
+		return
+	}
+
 	s.peerMgr.AddPeer(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
 	s.sendConnectEvent(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
 }

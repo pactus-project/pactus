@@ -84,9 +84,6 @@ func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
 
 	case lp2pnet.DirOutbound:
 		mgr.numOutbound++
-
-	case lp2pnet.DirUnknown:
-		return
 	}
 
 	mgr.peers[pid] = &peerInfo{
