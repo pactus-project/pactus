@@ -1,41 +1,66 @@
 package wallet2
 
 import (
-	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewDB(t *testing.T) {
-	someDB, err := newDB("wallet.db")
-	// someDB, err := newDB(":memory:")
+	someDB, err := newDB(":memory:")
 
 	assert.Nil(t, err)
 	assert.NotNil(t, someDB)
+}
 
-	someDB.CreateTables()
-	addr := &Address{
-		Address:   "asd",
-		PublicKey: "asd",
-		Label:     "asd",
-		Path:      "sfdsf",
-	}
-	err = someDB.InsertIntoAddress(addr)
-	log.Println(err)
-	tran := &Transaction{
-		TxID:        "ssf",
-		BlockHeight: 2,
-		BlockTime:   3,
-		PayloadType: "sf",
-		Data:        "sf",
-		Description: "sfd",
-		Amount:      3,
-		Status:      1,
-	}
-	err = someDB.InsertIntoTransaction(tran)
-	log.Println(err)
+func TestInsert(t *testing.T) {
+	t.Run("insert into address table", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
 
-	err = someDB.InsertIntoPair("key", "val")
-	log.Println(err)
+		addr := &Address{
+			Address:   "some-address",
+			PublicKey: "some-public-key",
+			Label:     "some-label",
+			Path:      "some-path",
+		}
+		actual, err := someDB.InsertIntoAddress(addr)
+
+		assert.Nil(t, err)
+		assert.Equal(t, 1, actual.ID)
+		assert.Equal(t, addr.Address, actual.Address)
+	})
+
+	t.Run("insert into tranasction table", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		tr := &Transaction{
+			TxID:        "some-txid",
+			BlockHeight: 4,
+			BlockTime:   5,
+			PayloadType: "something",
+			Data:        "some-data",
+			Description: "some-description",
+			Amount:      50,
+			Status:      1,
+		}
+		actual, err := someDB.InsertIntoTransaction(tr)
+
+		assert.Nil(t, err)
+		assert.Equal(t, 1, actual.ID)
+		assert.Equal(t, tr.BlockHeight, actual.BlockHeight)
+	})
+
+	t.Run("insert into pair table", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		key, value := "key", "value"
+		actual, err := someDB.InsertIntoPair(key, value)
+
+		assert.Nil(t, err)
+		assert.Equal(t, key, actual.Key)
+		assert.Equal(t, value, actual.Value)
+	})
 }
