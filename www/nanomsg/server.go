@@ -15,6 +15,7 @@ import (
 
 type Server struct {
 	ctx       context.Context
+	cancel    func()
 	config    *Config
 	publisher mangos.Socket
 	listener  net.Listener
@@ -24,8 +25,11 @@ type Server struct {
 }
 
 func NewServer(conf *Config, eventCh <-chan event.Event) *Server {
+	ctx, cancel := context.WithCancel(context.Background())
+
 	return &Server{
-		ctx:     context.Background(),
+		ctx:     ctx,
+		cancel:  cancel,
 		config:  conf,
 		logger:  logger.NewSubLogger("_nonomsg", nil),
 		eventCh: eventCh,
@@ -60,7 +64,9 @@ func (s *Server) StartServer() error {
 }
 
 func (s *Server) StopServer() {
-	s.ctx.Done()
+	s.cancel()
+	s.logger.Debug("context closed", "reason", s.ctx.Err())
+
 	if s.listener != nil {
 		s.listener.Close()
 	}

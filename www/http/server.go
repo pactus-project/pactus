@@ -113,6 +113,7 @@ func (s *Server) StartServer(grpcServer string) error {
 
 func (s *Server) StopServer() {
 	s.cancel()
+	s.logger.Debug("context closed", "reason", s.ctx.Err())
 
 	if s.httpServer != nil {
 		_ = s.httpServer.Shutdown(s.ctx)
