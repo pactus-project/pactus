@@ -35,4 +35,7 @@ func TestNewDB(t *testing.T) {
 	}
 	err = someDB.InsertIntoTransaction(tran)
 	log.Println(err)
+
+	err = someDB.InsertIntoPair("key", "val")
+	log.Println(err)
 }

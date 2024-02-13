@@ -20,6 +20,7 @@ type DB interface {
 	CreateTables() error
 	InsertIntoAddress(addr *Address) error
 	InsertIntoTransaction(t *Transaction) error
+	InsertIntoPair(key string, value string) error
 }
 
 type db struct {
@@ -46,6 +47,12 @@ type Transaction struct {
 	Amount      int64     `json:"amount"`
 	Status      int       `json:"status"`
 	CreatedAt   time.Time `json:"created_at"`
+}
+
+type Pair struct {
+	Key       string
+	Value     string
+	CreatedAt string
 }
 
 func newDB(path string) (DB, error) {
@@ -95,7 +102,7 @@ func (d *db) createTransactionTable() error {
 }
 
 func (d *db) createPairTable() error {
-	pairQuery := "CREATE TABLE pairs (id VARCHAR PRIMARY KEY, value VARCHAR)"
+	pairQuery := "CREATE TABLE pairs (id VARCHAR PRIMARY KEY, value VARCHAR, created_at TIMESTAMP)"
 	_, err := d.ExecContext(context.Background(), pairQuery)
 	if err != nil && !strings.Contains(err.Error(), "already exists") {
 		return ErrCouldNotCreateTable
@@ -121,6 +128,14 @@ func (d *db) InsertIntoTransaction(t *Transaction) error {
 	t.CreatedAt = time.Now().UTC()
 	_, err := d.ExecContext(context.Background(), insertQuery, t.TxID, t.BlockHeight, t.BlockTime,
 		t.PayloadType, t.Data, t.Description, t.Amount, t.Status, t.CreatedAt)
+
+	return err
+}
+
+func (d *db) InsertIntoPair(key string, value string) error {
+	createdAt := time.Now().UTC()
+	insertQuery := "INSERT INTO pairs (id, value, created_at) VALUES (?,?,?)"
+	_, err := d.ExecContext(context.Background(), insertQuery, key, value, createdAt)
 
 	return err
 }
