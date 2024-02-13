@@ -31,6 +31,7 @@ import (
 
 type synchronizer struct {
 	ctx         context.Context
+	cancel      func()
 	config      *Config
 	valKeys     []*bls.ValidatorKey
 	state       state.Facade
@@ -53,8 +54,10 @@ func NewSynchronizer(
 	net network.Network,
 	broadcastCh <-chan message.Message,
 ) (Synchronizer, error) {
+	ctx, cancel := context.WithCancel(context.Background())
 	sync := &synchronizer{
-		ctx:         context.Background(), // TODO, set proper context
+		ctx:         ctx,
+		cancel:      cancel,
 		config:      conf,
 		valKeys:     valKeys,
 		state:       st,
@@ -110,7 +113,8 @@ func (sync *synchronizer) Start() error {
 }
 
 func (sync *synchronizer) Stop() {
-	sync.ctx.Done()
+	sync.cancel()
+	sync.logger.Debug("context closed", "reason", sync.ctx.Err())
 }
 
 func (sync *synchronizer) stateHeight() uint32 {

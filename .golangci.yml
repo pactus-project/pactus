@@ -10,8 +10,7 @@ linters:
     - asciicheck
     - bidichk
     - bodyclose
-    # - containedctx
-    # - contextcheck
+    - contextcheck
     - decorder
     - dogsled
     # - dupl
