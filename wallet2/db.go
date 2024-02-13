@@ -12,8 +12,9 @@ import (
 )
 
 var (
-	ErrCouldNotOpenDatabase = errors.New("could not open database")
-	ErrCouldNotCreateTable  = errors.New("could not create table")
+	ErrCouldNotOpenDatabase    = errors.New("could not open database")
+	ErrCouldNotCreateTable     = errors.New("could not create table")
+	ErrCouldNotInsertIntoTable = errors.New("could not insert record into table")
 )
 
 type DB interface {
@@ -118,12 +119,12 @@ func (d *db) InsertIntoAddress(addr *Address) (*Address, error) {
 	r, err := d.ExecContext(context.Background(), insertQuery, addr.Address,
 		addr.PublicKey, addr.Label, addr.Path, addr.CreatedAt)
 	if err != nil {
-		return nil, err
+		return nil, ErrCouldNotInsertIntoTable
 	}
 
 	rowID, err := r.LastInsertId()
 	if err != nil {
-		return nil, err
+		return nil, ErrCouldNotInsertIntoTable
 	}
 
 	return &Address{
@@ -145,12 +146,12 @@ func (d *db) InsertIntoTransaction(t *Transaction) (*Transaction, error) {
 	r, err := d.ExecContext(context.Background(), insertQuery, t.TxID, t.BlockHeight, t.BlockTime,
 		t.PayloadType, t.Data, t.Description, t.Amount, t.Status, t.CreatedAt)
 	if err != nil {
-		return nil, err
+		return nil, ErrCouldNotInsertIntoTable
 	}
 
 	rowID, err := r.LastInsertId()
 	if err != nil {
-		return nil, err
+		return nil, ErrCouldNotInsertIntoTable
 	}
 
 	return &Transaction{
@@ -171,10 +172,13 @@ func (d *db) InsertIntoPair(key, value string) (*Pair, error) {
 	createdAt := time.Now().UTC()
 	insertQuery := "INSERT INTO pairs (id, value, created_at) VALUES (?,?,?)"
 	_, err := d.ExecContext(context.Background(), insertQuery, key, value, createdAt)
+	if err != nil {
+		return nil, ErrCouldNotInsertIntoTable
+	}
 
 	return &Pair{
 		Key:       key,
 		Value:     value,
 		CreatedAt: createdAt,
-	}, err
+	}, nil
 }
