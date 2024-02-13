@@ -15,11 +15,15 @@ var (
 	ErrCouldNotCreateTable  = errors.New("could not create table")
 )
 
+type DB interface {
+	CreateTables() error
+}
+
 type db struct {
 	*sql.DB
 }
 
-func newDB(path string) (*db, error) {
+func newDB(path string) (DB, error) {
 	dbInstance, err := sql.Open("sqlite", path)
 	if err != nil {
 		return nil, ErrCouldNotOpenDatabase
