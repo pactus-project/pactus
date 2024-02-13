@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"slices"
 	"time"
 
 	lp2pspb "github.com/libp2p/go-libp2p-pubsub/pb"
@@ -67,13 +68,7 @@ func IPToMultiAddr(ip string, port int) (multiaddr.Multiaddr, error) {
 
 // HasPID checks if a peer ID exists in a list of peer IDs.
 func HasPID(pids []lp2ppeer.ID, pid lp2ppeer.ID) bool {
-	for _, p := range pids {
-		if p == pid {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(pids, pid)
 }
 
 func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrInfo, log *logger.SubLogger) {
@@ -143,14 +138,14 @@ func SubnetsToFilters(subnets []*net.IPNet, action multiaddr.Action) *multiaddr.
 func BuildConcreteLimitConfig(maxConns int) lp2prcmgr.ConcreteLimitConfig {
 	changes := lp2prcmgr.PartialLimitConfig{}
 
-	updateResourceLimits := func(limit *lp2prcmgr.ResourceLimits, maxConns, coefficient int) {
-		maxConnVal := lp2prcmgr.LimitVal(maxConns * coefficient)
+	updateResourceLimits := func(limit *lp2prcmgr.ResourceLimits, maxConns int, coefficient float32) {
+		maxConnVal := lp2prcmgr.LimitVal(int(float32(maxConns) * coefficient))
 
-		limit.ConnsOutbound = maxConnVal / 2
-		limit.ConnsInbound = maxConnVal / 2
+		limit.ConnsInbound = maxConnVal
+		limit.ConnsOutbound = maxConnVal
 		limit.Conns = maxConnVal
-		limit.StreamsOutbound = maxConnVal * 4
-		limit.StreamsInbound = maxConnVal * 4
+		limit.StreamsInbound = maxConnVal * 8
+		limit.StreamsOutbound = maxConnVal * 8
 		limit.Streams = maxConnVal * 8
 	}
 

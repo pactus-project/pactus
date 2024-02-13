@@ -30,6 +30,8 @@ type widgetNode struct {
 	labelInCommittee     *gtk.Label
 	labelCommitteeStake  *gtk.Label
 	labelTotalStake      *gtk.Label
+	labelNumConnections  *gtk.Label
+	labelReachability    *gtk.Label
 	progressBarSynced    *gtk.ProgressBar
 }
 
@@ -43,6 +45,7 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 	labelLocation := getLabelObj(builder, "id_label_working_directory")
 	labelNetwork := getLabelObj(builder, "id_label_network")
 	labelNetworkID := getLabelObj(builder, "id_label_network_id")
+	labelMoniker := getLabelObj(builder, "id_label_moniker")
 
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -51,6 +54,7 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 	labelLocation.SetText(cwd)
 	labelNetwork.SetText(model.node.State().Genesis().ChainType().String())
 	labelNetworkID.SetText(model.node.Network().SelfID().String())
+	labelMoniker.SetText(model.node.Sync().Moniker())
 
 	w := &widgetNode{
 		Box:                  box,
@@ -65,6 +69,8 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 		labelInCommittee:     getLabelObj(builder, "id_label_in_committee"),
 		labelCommitteeStake:  getLabelObj(builder, "id_label_committee_power"),
 		labelTotalStake:      getLabelObj(builder, "id_label_total_power"),
+		labelNumConnections:  getLabelObj(builder, "id_label_num_connections"),
+		labelReachability:    getLabelObj(builder, "id_label_reachability"),
 	}
 
 	signals := map[string]interface{}{}
@@ -118,6 +124,11 @@ func (wn *widgetNode) timeout10() bool {
 		committeePower := wn.model.node.State().CommitteePower()
 		totalPower := wn.model.node.State().TotalPower()
 		validatorNum := wn.model.node.State().TotalValidators()
+		numConnections := fmt.Sprintf("%v (Inbound: %v, Outbound %v)",
+			wn.model.node.Network().NumConnectedPeers(),
+			wn.model.node.Network().NumInbound(),
+			wn.model.node.Network().NumOutbound())
+		reachability := wn.model.node.Network().ReachabilityStatus()
 		isInCommittee := "No"
 		if wn.model.node.ConsManager().HasActiveInstance() {
 			isInCommittee = "Yes"
@@ -129,6 +140,8 @@ func (wn *widgetNode) timeout10() bool {
 			wn.labelCommitteeStake.SetText(util.ChangeToString(committeePower))
 			wn.labelTotalStake.SetText(util.ChangeToString(totalPower))
 			wn.labelInCommittee.SetText(isInCommittee)
+			wn.labelNumConnections.SetText(numConnections)
+			wn.labelReachability.SetText(reachability)
 
 			return false
 		})

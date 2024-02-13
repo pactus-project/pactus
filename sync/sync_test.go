@@ -17,7 +17,6 @@ import (
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/sync/peerset/service"
-	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -306,69 +305,73 @@ func TestDownload(t *testing.T) {
 	conf := testConfig()
 	// Let's not allow `GetRandomPeer` to disappoint us!
 	conf.MaxSessions = 32
-	td := setup(t, conf)
-
-	blk, cert := td.GenerateTestBlock(td.RandHeight())
-	msg := message.NewBlockAnnounceMessage(blk, cert)
 
 	t.Run("try to download blocks, but the peer is not known", func(t *testing.T) {
+		td := setup(t, conf)
+
 		pid := td.RandPeerID()
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+
+		blk, cert := td.GenerateTestBlock(td.RandHeight())
+		baMsg := message.NewBlockAnnounceMessage(blk, cert)
+		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
 	})
 
 	t.Run("try to download blocks, but the peer is not a network node", func(t *testing.T) {
+		td := setup(t, conf)
+
 		pub, _ := td.RandBLSKeyPair()
 		pid := td.RandPeerID()
 		td.addPeer(t, pub, pid, service.New(service.None))
 
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+		blk, cert := td.GenerateTestBlock(td.RandHeight())
+		baMsg := message.NewBlockAnnounceMessage(blk, cert)
+		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
 	})
 
 	t.Run("try to download blocks and the peer is a network node", func(t *testing.T) {
+		td := setup(t, conf)
+
 		pub, _ := td.RandBLSKeyPair()
 		pid := td.RandPeerID()
 		td.addPeer(t, pub, pid, service.New(service.Network))
 
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+		blk, cert := td.GenerateTestBlock(td.RandHeight())
+		baMsg := message.NewBlockAnnounceMessage(blk, cert)
+		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
 
 		td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
 	})
 
 	t.Run("download request is rejected", func(t *testing.T) {
-		pub1, _ := td.RandBLSKeyPair()
-		pub2, _ := td.RandBLSKeyPair()
-		pid1 := td.RandPeerID()
-		pid2 := td.RandPeerID()
-		td.addPeer(t, pub1, pid1, service.New(service.Network))
-		td.addPeer(t, pub2, pid2, service.New(service.Network))
+		td := setup(t, conf)
+
+		pub, _ := td.RandBLSKeyPair()
+		pid := td.RandPeerID()
+		td.addPeer(t, pub, pid, service.New(service.Network))
 
 		from := td.sync.stateHeight() + 1
 		count := uint32(123)
-		ssn1 := td.sync.peerSet.OpenSession(pid1, from, count)
-		msg1 := message.NewBlocksResponseMessage(message.ResponseCodeRejected, t.Name(),
-			ssn1.SessionID, 1, nil, nil)
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg1, pid1))
-		bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
+		ssn := td.sync.peerSet.OpenSession(pid, from, count)
+		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, t.Name(),
+			ssn.SessionID, 1, nil, nil)
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		msg2 := bdl.Message.(*message.BlocksRequestMessage)
-		ssn2 := td.sync.peerSet.FindSession(msg2.SessionID)
-
-		assert.True(t, td.sync.peerSet.HasAnyOpenSession())
-		assert.Equal(t, session.Uncompleted, ssn1.Status)
-		assert.Equal(t, from, msg2.From)
-		assert.Equal(t, count, msg2.Count)
-		assert.Equal(t, ssn1.SessionID+1, ssn2.SessionID)
+		assert.False(t, td.sync.peerSet.HasOpenSession(pid))
 	})
 
 	t.Run("testing send failure", func(t *testing.T) {
+		td := setup(t, conf)
+
 		pid := td.RandPeerID()
 		td.network.SendError = fmt.Errorf("send error")
 
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+		blk, cert := td.GenerateTestBlock(td.RandHeight())
+		baMsg := message.NewBlockAnnounceMessage(blk, cert)
+		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
 	})

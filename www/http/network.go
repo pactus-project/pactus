@@ -13,8 +13,8 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
-	res, err := s.network.GetNetworkInfo(s.ctx,
+func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
+	res, err := s.network.GetNetworkInfo(r.Context(),
 		&pactus.GetNetworkInfoRequest{})
 	if err != nil {
 		s.writeError(w, err)
@@ -65,8 +65,8 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, _ *http.Request) {
 	s.writeHTML(w, tm.html())
 }
 
-func (s *Server) NodeHandler(w http.ResponseWriter, _ *http.Request) {
-	res, err := s.network.GetNodeInfo(s.ctx,
+func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
+	res, err := s.network.GetNodeInfo(r.Context(),
 		&pactus.GetNodeInfoRequest{})
 	if err != nil {
 		s.writeError(w, err)

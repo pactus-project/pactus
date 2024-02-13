@@ -45,7 +45,7 @@
         "name": "JohnVNBnode",
         "email": "quynhgiangtranle@gmail.com",
         "website": "docs.vnbnode.com",
-        "address": "/ip4/62.171.130.196/tcp/21888/p2p/12D3KooWNSiLJejwiG5Hk726TGyXPATFsYeKvarKgNpyjMiKupDH"
+        "address": "/ip4/62.171.130.196/tcp/21888/p2p/12D3KooWHvTVCcGqqYRnAexgE1VGqXiGAZd9vuLGs4YgGtHmRucN"
     },
     {
         "name": "NodeSync_Top",
@@ -216,6 +216,18 @@
         "address": "/ip4/65.21.69.53/tcp/21888/p2p/12D3KooWQ1izUE5jcmMyjmxRdb2CmASe8Nfn81UL2G5rYjptC2RV"
     },
     {
+        "name": "VALIDATOR.WIKI",
+        "email": "admin@validator.wiki",
+        "website": "https://www.validator.wiki/",
+        "address": "/dns/pactus-bootstrap.validator.wiki/tcp/21888/p2p/12D3KooWBC5YQJdRAvupSXUPNYHiSctzZeTPNzen1JsRwj9aEyYZ"
+    },
+    {
+        "name": "SumNode",
+        "email": "thanhsum@gmail.com",
+        "website": "",
+        "address": "/ip4/157.90.22.45/tcp/21888/p2p/12D3KooWLUYJ55DyJjSZvwPJDQNVYSBYqiMxJ9bFzRcVBgvSkN9L"
+    },
+    {
         "name": "bettevinup",
         "email": "neitheryounorme1@gmail.com",
         "website": "n/a",
@@ -262,5 +274,29 @@
         "email": "nth1686@gmail.com",
         "website": "n/a",
         "address": "/ip4/167.86.116.61/tcp/21888/p2p/12D3KooWAijtinK9cepHGQF7vYGHQ9jLrYhfoTMdJzK9xeKuxChK"
+    },
+    {
+        "name": "00PactucValidator32",
+        "email": "evpc77@gmail.com",
+        "website": "n/a",
+        "address": "/ip4/46.196.214.35/tcp/21888/p2p/12D3KooWJ3H7YAyemqxtToG6yRRzTfLdZD3eJk2xsQRaKxfdNhKf"
+    },
+    {
+        "name": "anpjwq",
+        "email": "hain64341@gmail.com",
+        "website": "n/a",
+        "address": "/ip4/42.117.247.180/tcp/21888/p2p/12D3KooWLVZSkgkFgrRNMfkCtULqtErYcNgjqgueeH944vDpDCPv"
+    },
+    {
+        "name": "Vozer",
+        "email": "airdropdata7@gmail.com",
+        "website": "voz.vn",
+        "address": "/ip4/38.242.225.172/tcp/21888/p2p/12D3KooWDTP7CKGvbcg5WiuKB2Bt4acf2LWMdbUjMqU63dKKCVMB"
+    },
+    {
+        "name": "Khacbao",
+        "email": "khacbao114@gmail.com",
+        "website": "n/a",
+        "address": "/ip4/167.86.121.11/tcp/21888/p2p/12D3KooWMpVXMQkr26ff3y8gC5z1h9RZNxTvW4WzZBML8GHHUoL5"
     }
 ]

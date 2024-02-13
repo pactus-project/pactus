@@ -20,6 +20,12 @@ func (handler *blockAnnounceHandler) ParseMessage(m message.Message, pid peer.ID
 	msg := m.(*message.BlockAnnounceMessage)
 	handler.logger.Trace("parsing BlockAnnounce message", "msg", msg)
 
+	if handler.cache.HasBlockInCache(msg.Height()) {
+		// We have processed this block before.
+
+		return nil
+	}
+
 	handler.cache.AddCertificate(msg.Certificate)
 	handler.cache.AddBlock(msg.Block)
 
