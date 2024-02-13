@@ -6,7 +6,8 @@ package pactus;
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus.wallet";
 
-// Import the "transaction.proto" file, which is assumed to contain additional message definitions.
+// Import the "transaction.proto" file, which is assumed to contain additional
+// message definitions.
 import "transaction.proto";
 
 // Define the Wallet service with various RPC methods for wallet management.
@@ -20,93 +21,122 @@ service Wallet {
   // UnloadWallet unloads a currently loaded wallet with the specified name.
   rpc UnloadWallet(UnloadWalletRequest) returns (UnloadWalletResponse);
 
-  // LockWallet locks a currently loaded wallet with the provided password and timeout.
+  // LockWallet locks a currently loaded wallet with the provided password and
+  // timeout.
   rpc LockWallet(LockWalletRequest) returns (LockWalletResponse);
 
-  // UnlockWallet unlocks a locked wallet with the provided password and timeout.
+  // UnlockWallet unlocks a locked wallet with the provided password and
+  // timeout.
   rpc UnlockWallet(UnlockWalletRequest) returns (UnlockWalletResponse);
 
   // SignRawTransaction signs a raw transaction for a specified wallet.
-  rpc SignRawTransaction(SignRawTransactionRequest) returns (SignRawTransactionResponse);
+  rpc SignRawTransaction(SignRawTransactionRequest)
+      returns (SignRawTransactionResponse);
 
-  // GetValidatorAddress retrieves the validator address associated with a public key.
-  rpc GetValidatorAddress(GetValidatorAddressRequest) returns (GetValidatorAddressResponse);
+  // GetValidatorAddress retrieves the validator address associated with a
+  // public key.
+  rpc GetValidatorAddress(GetValidatorAddressRequest)
+      returns (GetValidatorAddressResponse);
 }
 
 // Request message for creating a new wallet.
 message CreateWalletRequest {
-  string wallet_name = 1;     // Name of the new wallet.
-  string mnemonic = 2;        // Mnemonic for wallet recovery.
-  string language = 3;        // Language for the mnemonic.
-  string password = 4;        // Password for securing the wallet.
+  // Name of the new wallet.
+  string wallet_name = 1;
+  // Mnemonic for wallet recovery.
+  string mnemonic = 2;
+  // Language for the mnemonic.
+  string language = 3;
+  // Password for securing the wallet.
+  string password = 4;
 }
 
 // Response message containing the name of the created wallet.
 message CreateWalletResponse {
-  string wallet_name = 1;     // Name of the created wallet.
+  // Name of the created wallet.
+  string wallet_name = 1;
 }
 
 // Request message for loading an existing wallet.
 message LoadWalletRequest {
-  string wallet_name = 1;     // Name of the wallet to load.
+  // Name of the wallet to load.
+  string wallet_name = 1;
 }
 
 // Response message containing the name of the loaded wallet.
 message LoadWalletResponse {
-  string wallet_name = 1;     // Name of the loaded wallet.
+  // Name of the loaded wallet.
+  string wallet_name = 1;
 }
 
 // Request message for unloading a currently loaded wallet.
 message UnloadWalletRequest {
-  string wallet_name = 1;     // Name of the wallet to unload.
+  // Name of the wallet to unload.
+  string wallet_name = 1;
 }
 
 // Response message containing the name of the unloaded wallet.
 message UnloadWalletResponse {
-  string wallet_name = 1;     // Name of the unloaded wallet.
+  // Name of the unloaded wallet.
+  string wallet_name = 1;
 }
 
 // Request message for locking a currently loaded wallet.
 message LockWalletRequest {
-  string wallet_name = 1;     // Name of the wallet to lock.
+  // Name of the wallet to lock.
+  string wallet_name = 1;
 }
 
 // Response message containing the name of the locked wallet.
 message LockWalletResponse {
-  string wallet_name = 1;     // Name of the locked wallet.
+  // Name of the locked wallet.
+  string wallet_name = 1;
 }
 
-// Request message for obtaining the validator address associated with a public key.
+// Request message for obtaining the validator address associated with a public
+// key.
 message GetValidatorAddressRequest {
-  string public_key = 1; // Public key for which the validator address is requested.
+  // Public key for which the validator address is requested.
+  string public_key = 1;
 }
 
-// Response message containing the validator address corresponding to a public key.
+// Response message containing the validator address corresponding to a public
+// key.
 message GetValidatorAddressResponse {
-  string address = 1; // Validator address associated with the public key.
+  // Validator address associated with the public key.
+  string address = 1;
 }
 
 // Request message for unlocking a wallet.
 message UnlockWalletRequest {
-  string wallet_name = 1;     // Name of the wallet to unlock.
-  string password = 2;        // Password for unlocking the wallet.
-  int32 timeout = 3;          // Timeout duration for the unlocked state.
+  // Name of the wallet to unlock.
+  string wallet_name = 1;
+  // Password for unlocking the wallet.
+  string password = 2;
+  // Timeout duration for the unlocked state.
+  int32 timeout = 3;
 }
 
 // Response message containing the name of the unlocked wallet.
 message UnlockWalletResponse {
-  string wallet_name = 1;     // Name of the unlocked wallet.
+  // Name of the unlocked wallet.
+  string wallet_name = 1;
 }
 
 // Request message for signing a raw transaction.
 message SignRawTransactionRequest {
-  string wallet_name = 1;        // Name of the wallet used for signing.
-  bytes raw_transaction = 2;     // Raw transaction data to be signed.
-  string password = 3;           // Password for unlocking the wallet for signing.
+  // Name of the wallet used for signing.
+  string wallet_name = 1;
+  // Raw transaction data to be signed.
+  bytes raw_transaction = 2;
+  // Password for unlocking the wallet for signing.
+  string password = 3;
 }
 
 // Response message containing the transaction ID and signed raw transaction.
 message SignRawTransactionResponse {
-  bytes transaction_id = 1;      // ID of the signed transaction.
-  bytes signed_raw_transaction = 2; // Signed raw transaction data.
+  // ID of the signed transaction.
+  bytes transaction_id = 1;
+  // Signed raw transaction data.
+  bytes signed_raw_transaction = 2;
 }

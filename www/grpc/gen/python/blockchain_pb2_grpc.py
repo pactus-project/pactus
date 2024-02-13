@@ -72,7 +72,8 @@ class BlockchainServicer(object):
     """
 
     def GetBlock(self, request, context):
-        """GetBlock retrieves information about a block based on the provided request parameters.
+        """GetBlock retrieves information about a block based on the provided request
+        parameters.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -107,21 +108,24 @@ class BlockchainServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetAccount(self, request, context):
-        """GetAccount retrieves information about an account based on the provided address.
+        """GetAccount retrieves information about an account based on the provided
+        address.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetValidator(self, request, context):
-        """GetValidator retrieves information about a validator based on the provided address.
+        """GetValidator retrieves information about a validator based on the provided
+        address.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetValidatorByNumber(self, request, context):
-        """GetValidatorByNumber retrieves information about a validator based on the provided number.
+        """GetValidatorByNumber retrieves information about a validator based on the
+        provided number.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -135,7 +139,8 @@ class BlockchainServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetPublicKey(self, request, context):
-        """GetPublicKey retrieves the public key of an account based on the provided address.
+        """GetPublicKey retrieves the public key of an account based on the provided
+        address.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')

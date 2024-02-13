@@ -410,16 +410,6 @@ func request_Wallet_SignRawTransaction_0(ctx context.Context, marshaler runtime.
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "wallet_name", err)
 	}
 
-	val, ok = pathParams["raw_transaction"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "raw_transaction")
-	}
-
-	protoReq.RawTransaction, err = runtime.Bytes(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "raw_transaction", err)
-	}
-
 	val, ok = pathParams["password"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "password")
@@ -428,6 +418,16 @@ func request_Wallet_SignRawTransaction_0(ctx context.Context, marshaler runtime.
 	protoReq.Password, err = runtime.String(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "password", err)
+	}
+
+	val, ok = pathParams["raw_transaction"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "raw_transaction")
+	}
+
+	protoReq.RawTransaction, err = runtime.Bytes(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "raw_transaction", err)
 	}
 
 	msg, err := client.SignRawTransaction(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -456,16 +456,6 @@ func local_request_Wallet_SignRawTransaction_0(ctx context.Context, marshaler ru
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "wallet_name", err)
 	}
 
-	val, ok = pathParams["raw_transaction"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "raw_transaction")
-	}
-
-	protoReq.RawTransaction, err = runtime.Bytes(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "raw_transaction", err)
-	}
-
 	val, ok = pathParams["password"]
 	if !ok {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "password")
@@ -474,6 +464,16 @@ func local_request_Wallet_SignRawTransaction_0(ctx context.Context, marshaler ru
 	protoReq.Password, err = runtime.String(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "password", err)
+	}
+
+	val, ok = pathParams["raw_transaction"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "raw_transaction")
+	}
+
+	protoReq.RawTransaction, err = runtime.Bytes(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "raw_transaction", err)
 	}
 
 	msg, err := server.SignRawTransaction(ctx, &protoReq)
@@ -547,7 +547,7 @@ func RegisterWalletHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/CreateWallet", runtime.WithHTTPPathPattern("/v1/wallets/create/wallet_name/{wallet_name}/mnemonic/{mnemonic}/language/{language}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/CreateWallet", runtime.WithHTTPPathPattern("/pactus/wallet/create_wallet/wallet_name/{wallet_name}/mnemonic/{mnemonic}/language/{language}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -572,7 +572,7 @@ func RegisterWalletHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/LoadWallet", runtime.WithHTTPPathPattern("/v1/wallets/load/wallet_name/{wallet_name}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/LoadWallet", runtime.WithHTTPPathPattern("/pactus/wallet/load_wallet/wallet_name/{wallet_name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -597,7 +597,7 @@ func RegisterWalletHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/UnloadWallet", runtime.WithHTTPPathPattern("/v1/wallets/unload/wallet_name/{wallet_name}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/UnloadWallet", runtime.WithHTTPPathPattern("/pactus/wallet/unload_wallet/wallet_name/{wallet_name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -622,7 +622,7 @@ func RegisterWalletHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/LockWallet", runtime.WithHTTPPathPattern("/v1/wallets/lock/wallet_name/{wallet_name}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/LockWallet", runtime.WithHTTPPathPattern("/pactus/wallet/lock_wallet/wallet_name/{wallet_name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -647,7 +647,7 @@ func RegisterWalletHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/UnlockWallet", runtime.WithHTTPPathPattern("/v1/wallets/unlock/wallet_name/{wallet_name}/password/{password}/timeout/{timeout}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/UnlockWallet", runtime.WithHTTPPathPattern("/pactus/wallet/unlock_wallet/wallet_name/{wallet_name}/password/{password}/timeout/{timeout}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -672,7 +672,7 @@ func RegisterWalletHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/SignRawTransaction", runtime.WithHTTPPathPattern("/v1/wallets/sign_raw_transaction/wallet_name/{wallet_name}/raw_transaction/{raw_transaction}/password/{password}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/SignRawTransaction", runtime.WithHTTPPathPattern("/pactus/wallet/sign_raw_transaction/wallet_name/{wallet_name}/password/{password}/raw_transaction/{raw_transaction}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -697,7 +697,7 @@ func RegisterWalletHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/GetValidatorAddress", runtime.WithHTTPPathPattern("/v1/wallets/validator_address/{public_key}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Wallet/GetValidatorAddress", runtime.WithHTTPPathPattern("/pactus/wallet/get_validator_address/public_key/{public_key}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -761,7 +761,7 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/CreateWallet", runtime.WithHTTPPathPattern("/v1/wallets/create/wallet_name/{wallet_name}/mnemonic/{mnemonic}/language/{language}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/CreateWallet", runtime.WithHTTPPathPattern("/pactus/wallet/create_wallet/wallet_name/{wallet_name}/mnemonic/{mnemonic}/language/{language}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -783,7 +783,7 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/LoadWallet", runtime.WithHTTPPathPattern("/v1/wallets/load/wallet_name/{wallet_name}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/LoadWallet", runtime.WithHTTPPathPattern("/pactus/wallet/load_wallet/wallet_name/{wallet_name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -805,7 +805,7 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/UnloadWallet", runtime.WithHTTPPathPattern("/v1/wallets/unload/wallet_name/{wallet_name}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/UnloadWallet", runtime.WithHTTPPathPattern("/pactus/wallet/unload_wallet/wallet_name/{wallet_name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -827,7 +827,7 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/LockWallet", runtime.WithHTTPPathPattern("/v1/wallets/lock/wallet_name/{wallet_name}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/LockWallet", runtime.WithHTTPPathPattern("/pactus/wallet/lock_wallet/wallet_name/{wallet_name}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -849,7 +849,7 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/UnlockWallet", runtime.WithHTTPPathPattern("/v1/wallets/unlock/wallet_name/{wallet_name}/password/{password}/timeout/{timeout}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/UnlockWallet", runtime.WithHTTPPathPattern("/pactus/wallet/unlock_wallet/wallet_name/{wallet_name}/password/{password}/timeout/{timeout}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -871,7 +871,7 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/SignRawTransaction", runtime.WithHTTPPathPattern("/v1/wallets/sign_raw_transaction/wallet_name/{wallet_name}/raw_transaction/{raw_transaction}/password/{password}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/SignRawTransaction", runtime.WithHTTPPathPattern("/pactus/wallet/sign_raw_transaction/wallet_name/{wallet_name}/password/{password}/raw_transaction/{raw_transaction}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -893,7 +893,7 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/GetValidatorAddress", runtime.WithHTTPPathPattern("/v1/wallets/validator_address/{public_key}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Wallet/GetValidatorAddress", runtime.WithHTTPPathPattern("/pactus/wallet/get_validator_address/public_key/{public_key}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -913,19 +913,19 @@ func RegisterWalletHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 }
 
 var (
-	pattern_Wallet_CreateWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5}, []string{"v1", "wallets", "create", "wallet_name", "mnemonic", "language"}, ""))
+	pattern_Wallet_CreateWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5}, []string{"pactus", "wallet", "create_wallet", "wallet_name", "mnemonic", "language"}, ""))
 
-	pattern_Wallet_LoadWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "wallets", "load", "wallet_name"}, ""))
+	pattern_Wallet_LoadWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"pactus", "wallet", "load_wallet", "wallet_name"}, ""))
 
-	pattern_Wallet_UnloadWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "wallets", "unload", "wallet_name"}, ""))
+	pattern_Wallet_UnloadWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"pactus", "wallet", "unload_wallet", "wallet_name"}, ""))
 
-	pattern_Wallet_LockWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"v1", "wallets", "lock", "wallet_name"}, ""))
+	pattern_Wallet_LockWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"pactus", "wallet", "lock_wallet", "wallet_name"}, ""))
 
-	pattern_Wallet_UnlockWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5}, []string{"v1", "wallets", "unlock", "wallet_name", "password", "timeout"}, ""))
+	pattern_Wallet_UnlockWallet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5}, []string{"pactus", "wallet", "unlock_wallet", "wallet_name", "password", "timeout"}, ""))
 
-	pattern_Wallet_SignRawTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5}, []string{"v1", "wallets", "sign_raw_transaction", "wallet_name", "raw_transaction", "password"}, ""))
+	pattern_Wallet_SignRawTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5}, []string{"pactus", "wallet", "sign_raw_transaction", "wallet_name", "password", "raw_transaction"}, ""))
 
-	pattern_Wallet_GetValidatorAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "wallets", "validator_address", "public_key"}, ""))
+	pattern_Wallet_GetValidatorAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3}, []string{"pactus", "wallet", "get_validator_address", "public_key"}, ""))
 )
 
 var (

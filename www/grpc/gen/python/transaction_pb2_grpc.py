@@ -6,7 +6,8 @@ import transaction_pb2 as transaction__pb2
 
 
 class TransactionStub(object):
-    """Transaction service defines various RPC methods for interacting with transactions.
+    """Transaction service defines various RPC methods for interacting with
+    transactions.
     """
 
     def __init__(self, channel):
@@ -53,18 +54,21 @@ class TransactionStub(object):
 
 
 class TransactionServicer(object):
-    """Transaction service defines various RPC methods for interacting with transactions.
+    """Transaction service defines various RPC methods for interacting with
+    transactions.
     """
 
     def GetTransaction(self, request, context):
-        """GetTransaction retrieves transaction details based on the provided request parameters.
+        """GetTransaction retrieves transaction details based on the provided request
+        parameters.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def CalculateFee(self, request, context):
-        """CalculateFee calculates the transaction fee based on the specified amount and payload type.
+        """CalculateFee calculates the transaction fee based on the specified amount
+        and payload type.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -151,7 +155,8 @@ def add_TransactionServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Transaction(object):
-    """Transaction service defines various RPC methods for interacting with transactions.
+    """Transaction service defines various RPC methods for interacting with
+    transactions.
     """
 
     @staticmethod

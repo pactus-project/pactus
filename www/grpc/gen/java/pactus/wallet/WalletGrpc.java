@@ -318,7 +318,8 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * LockWallet locks a currently loaded wallet with the provided password and timeout.
+     * LockWallet locks a currently loaded wallet with the provided password and
+     * timeout.
      * </pre>
      */
     public void lockWallet(pactus.wallet.WalletOuterClass.LockWalletRequest request,
@@ -328,7 +329,8 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * UnlockWallet unlocks a locked wallet with the provided password and timeout.
+     * UnlockWallet unlocks a locked wallet with the provided password and
+     * timeout.
      * </pre>
      */
     public void unlockWallet(pactus.wallet.WalletOuterClass.UnlockWalletRequest request,
@@ -348,7 +350,8 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * GetValidatorAddress retrieves the validator address associated with a public key.
+     * GetValidatorAddress retrieves the validator address associated with a
+     * public key.
      * </pre>
      */
     public void getValidatorAddress(pactus.wallet.WalletOuterClass.GetValidatorAddressRequest request,
@@ -463,7 +466,8 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * LockWallet locks a currently loaded wallet with the provided password and timeout.
+     * LockWallet locks a currently loaded wallet with the provided password and
+     * timeout.
      * </pre>
      */
     public void lockWallet(pactus.wallet.WalletOuterClass.LockWalletRequest request,
@@ -474,7 +478,8 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * UnlockWallet unlocks a locked wallet with the provided password and timeout.
+     * UnlockWallet unlocks a locked wallet with the provided password and
+     * timeout.
      * </pre>
      */
     public void unlockWallet(pactus.wallet.WalletOuterClass.UnlockWalletRequest request,
@@ -496,7 +501,8 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * GetValidatorAddress retrieves the validator address associated with a public key.
+     * GetValidatorAddress retrieves the validator address associated with a
+     * public key.
      * </pre>
      */
     public void getValidatorAddress(pactus.wallet.WalletOuterClass.GetValidatorAddressRequest request,
@@ -555,7 +561,8 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * LockWallet locks a currently loaded wallet with the provided password and timeout.
+     * LockWallet locks a currently loaded wallet with the provided password and
+     * timeout.
      * </pre>
      */
     public pactus.wallet.WalletOuterClass.LockWalletResponse lockWallet(pactus.wallet.WalletOuterClass.LockWalletRequest request) {
@@ -565,7 +572,8 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * UnlockWallet unlocks a locked wallet with the provided password and timeout.
+     * UnlockWallet unlocks a locked wallet with the provided password and
+     * timeout.
      * </pre>
      */
     public pactus.wallet.WalletOuterClass.UnlockWalletResponse unlockWallet(pactus.wallet.WalletOuterClass.UnlockWalletRequest request) {
@@ -585,7 +593,8 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * GetValidatorAddress retrieves the validator address associated with a public key.
+     * GetValidatorAddress retrieves the validator address associated with a
+     * public key.
      * </pre>
      */
     public pactus.wallet.WalletOuterClass.GetValidatorAddressResponse getValidatorAddress(pactus.wallet.WalletOuterClass.GetValidatorAddressRequest request) {
@@ -646,7 +655,8 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * LockWallet locks a currently loaded wallet with the provided password and timeout.
+     * LockWallet locks a currently loaded wallet with the provided password and
+     * timeout.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.LockWalletResponse> lockWallet(
@@ -657,7 +667,8 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * UnlockWallet unlocks a locked wallet with the provided password and timeout.
+     * UnlockWallet unlocks a locked wallet with the provided password and
+     * timeout.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.UnlockWalletResponse> unlockWallet(
@@ -679,7 +690,8 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * GetValidatorAddress retrieves the validator address associated with a public key.
+     * GetValidatorAddress retrieves the validator address associated with a
+     * public key.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.GetValidatorAddressResponse> getValidatorAddress(

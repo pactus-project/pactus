@@ -40,7 +40,7 @@ func _BlockchainGetBlockCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetBlock"),
 		Short: "GetBlock RPC client",
-		Long:  "GetBlock retrieves information about a block based on the provided request parameters.",
+		Long:  "GetBlock retrieves information about a block based on the provided request\n parameters.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
@@ -71,8 +71,8 @@ func _BlockchainGetBlockCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().Uint32Var(&req.Height, cfg.FlagNamer("Height"), 0, "")
-	flag.EnumVar(cmd.PersistentFlags(), &req.Verbosity, cfg.FlagNamer("Verbosity"), "")
+	cmd.PersistentFlags().Uint32Var(&req.Height, cfg.FlagNamer("Height"), 0, "Height of the block.")
+	flag.EnumVar(cmd.PersistentFlags(), &req.Verbosity, cfg.FlagNamer("Verbosity"), "Verbosity level for block information.")
 
 	return cmd
 }
@@ -114,7 +114,7 @@ func _BlockchainGetBlockHashCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().Uint32Var(&req.Height, cfg.FlagNamer("Height"), 0, "")
+	cmd.PersistentFlags().Uint32Var(&req.Height, cfg.FlagNamer("Height"), 0, "Height of the block.")
 
 	return cmd
 }
@@ -156,7 +156,7 @@ func _BlockchainGetBlockHeightCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	flag.BytesBase64Var(cmd.PersistentFlags(), &req.Hash, cfg.FlagNamer("Hash"), "")
+	flag.BytesBase64Var(cmd.PersistentFlags(), &req.Hash, cfg.FlagNamer("Hash"), "Hash of the block.")
 
 	return cmd
 }
@@ -247,7 +247,7 @@ func _BlockchainGetAccountCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetAccount"),
 		Short: "GetAccount RPC client",
-		Long:  "GetAccount retrieves information about an account based on the provided address.",
+		Long:  "GetAccount retrieves information about an account based on the provided\n address.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
@@ -278,7 +278,7 @@ func _BlockchainGetAccountCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "")
+	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "Address of the account.")
 
 	return cmd
 }
@@ -289,7 +289,7 @@ func _BlockchainGetValidatorCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetValidator"),
 		Short: "GetValidator RPC client",
-		Long:  "GetValidator retrieves information about a validator based on the provided address.",
+		Long:  "GetValidator retrieves information about a validator based on the provided\n address.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
@@ -320,7 +320,7 @@ func _BlockchainGetValidatorCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "")
+	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "Address of the validator.")
 
 	return cmd
 }
@@ -331,7 +331,7 @@ func _BlockchainGetValidatorByNumberCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetValidatorByNumber"),
 		Short: "GetValidatorByNumber RPC client",
-		Long:  "GetValidatorByNumber retrieves information about a validator based on the provided number.",
+		Long:  "GetValidatorByNumber retrieves information about a validator based on the\n provided number.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
@@ -362,7 +362,7 @@ func _BlockchainGetValidatorByNumberCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().Int32Var(&req.Number, cfg.FlagNamer("Number"), 0, "")
+	cmd.PersistentFlags().Int32Var(&req.Number, cfg.FlagNamer("Number"), 0, "Validator number.")
 
 	return cmd
 }
@@ -413,7 +413,7 @@ func _BlockchainGetPublicKeyCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetPublicKey"),
 		Short: "GetPublicKey RPC client",
-		Long:  "GetPublicKey retrieves the public key of an account based on the provided address.",
+		Long:  "GetPublicKey retrieves the public key of an account based on the provided\n address.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
@@ -444,7 +444,7 @@ func _BlockchainGetPublicKeyCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "")
+	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "Address for which public key is requested.")
 
 	return cmd
 }

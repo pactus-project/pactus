@@ -126,9 +126,11 @@ function deserialize_pactus_GetTransactionResponse(buffer_arg) {
 }
 
 
-// Transaction service defines various RPC methods for interacting with transactions.
+// Transaction service defines various RPC methods for interacting with
+// transactions.
 var TransactionService = exports.TransactionService = {
-  // GetTransaction retrieves transaction details based on the provided request parameters.
+  // GetTransaction retrieves transaction details based on the provided request
+// parameters.
 getTransaction: {
     path: '/pactus.Transaction/GetTransaction',
     requestStream: false,
@@ -140,7 +142,8 @@ getTransaction: {
     responseSerialize: serialize_pactus_GetTransactionResponse,
     responseDeserialize: deserialize_pactus_GetTransactionResponse,
   },
-  // CalculateFee calculates the transaction fee based on the specified amount and payload type.
+  // CalculateFee calculates the transaction fee based on the specified amount
+// and payload type.
 calculateFee: {
     path: '/pactus.Transaction/CalculateFee',
     requestStream: false,
