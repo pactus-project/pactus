@@ -160,7 +160,10 @@ func (mgr *peerMgr) CheckConnectivity() {
 		}
 	}
 
-	mgr.logger.Debug("check connectivity", "peers", connectedPeers)
+	mgr.logger.Debug("check connectivity",
+		"peers", len(connectedPeers),
+		"inbound", mgr.numInbound,
+		"outbound", mgr.numOutbound)
 
 	switch {
 	case len(connectedPeers) > mgr.maxConns:

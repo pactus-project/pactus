@@ -44,6 +44,7 @@ func TestPeerSet(t *testing.T) {
 		peerSet.IteratePeers(func(p *Peer) bool {
 			if p.PeerID == pid2 {
 				found = true
+
 				return true
 			}
 
