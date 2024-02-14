@@ -14,10 +14,6 @@ import (
 	"github.com/pactus-project/pactus/util"
 )
 
-// TODO:
-// - Add tests for peerset
-// - Is it thread safe (GetPeer and IteratePeers) ??
-
 type PeerSet struct {
 	lk sync.RWMutex
 
