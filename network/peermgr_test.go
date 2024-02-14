@@ -40,6 +40,8 @@ func TestNumInboundOutbound(t *testing.T) {
 	net.peerMgr.AddPeer(pid1, addr, lp2pnet.DirInbound)
 	net.peerMgr.AddPeer(pid2, addr, lp2pnet.DirOutbound)
 	net.peerMgr.AddPeer(pid3, addr, lp2pnet.DirOutbound)
+	// Adding pid1 again
+	net.peerMgr.AddPeer(pid1, addr, lp2pnet.DirInbound)
 
 	assert.Equal(t, 1, net.peerMgr.NumInbound())
 	assert.Equal(t, 2, net.peerMgr.NumOutbound())
