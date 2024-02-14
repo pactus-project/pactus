@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -22,7 +23,8 @@ func newWalletModel(wlt *wallet.Wallet) *walletModel {
 		glib.TYPE_STRING, // Address
 		glib.TYPE_STRING, // Label
 		glib.TYPE_STRING, // balance
-		glib.TYPE_STRING) // Stake
+		glib.TYPE_STRING, // Stake
+		glib.TYPE_STRING) // Availability Score
 
 	return &walletModel{
 		wallet:    wlt,
@@ -47,6 +49,7 @@ func (model *walletModel) rebuildModel() {
 			stake, _ := model.wallet.Stake(info.Address)
 			balanceStr := util.ChangeToString(balance)
 			stakeStr := util.ChangeToString(stake)
+			score := strconv.FormatFloat(model.wallet.GetAvailabilityScore(info.Address), 'f', -1, 64)
 
 			data = append(data, []string{
 				fmt.Sprintf("%v", no+1),
@@ -54,6 +57,7 @@ func (model *walletModel) rebuildModel() {
 				label,
 				balanceStr,
 				stakeStr,
+				score,
 			})
 		}
 
@@ -68,6 +72,7 @@ func (model *walletModel) rebuildModel() {
 						IDAddressesColumnLabel,
 						IDAddressesColumnBalance,
 						IDAddressesColumnStake,
+						IDAddressesColumnAvailabilityScore,
 					},
 					[]interface{}{
 						d[0],
@@ -75,6 +80,7 @@ func (model *walletModel) rebuildModel() {
 						d[2],
 						d[3],
 						d[4],
+						d[5],
 					})
 
 				errorCheck(err)

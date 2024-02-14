@@ -109,3 +109,13 @@ func (c *grpcClient) getFee(amount int64, payloadType payload.Type) (int64, erro
 
 	return res.Fee, nil
 }
+
+func (c *grpcClient) getAvailabilityScore(addr string) float64 {
+	res, err := c.blockchainClient.GetValidator(c.ctx,
+		&pactus.GetValidatorRequest{Address: addr})
+	if err != nil {
+		return 0
+	}
+
+	return res.Validator.AvailabilityScore
+}

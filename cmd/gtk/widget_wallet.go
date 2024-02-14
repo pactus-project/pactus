@@ -17,6 +17,7 @@ const (
 	IDAddressesColumnLabel
 	IDAddressesColumnBalance
 	IDAddressesColumnStake
+	IDAddressesColumnAvailabilityScore
 )
 
 //go:embed assets/ui/widget_wallet.ui
@@ -71,12 +72,14 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	colLabel := createColumn("Label", IDAddressesColumnLabel)
 	colBalance := createColumn("Balance", IDAddressesColumnBalance)
 	colStake := createColumn("Stake", IDAddressesColumnStake)
+	colScore := createColumn("Availability Score", IDAddressesColumnAvailabilityScore)
 
 	treeView.AppendColumn(colNo)
 	treeView.AppendColumn(colAddress)
 	treeView.AppendColumn(colLabel)
 	treeView.AppendColumn(colBalance)
 	treeView.AppendColumn(colStake)
+	treeView.AppendColumn(colScore)
 	treeView.SetModel(model.ToTreeModel())
 
 	w := &widgetWallet{
