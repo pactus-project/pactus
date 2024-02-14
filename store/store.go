@@ -272,8 +272,8 @@ func (s *store) TotalAccounts() int32 {
 }
 
 func (s *store) IterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool)) {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	s.accountStore.iterateAccounts(consumer)
 }
@@ -321,8 +321,8 @@ func (s *store) TotalValidators() int32 {
 }
 
 func (s *store) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	s.validatorStore.iterateValidators(consumer)
 }
