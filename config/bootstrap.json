@@ -151,7 +151,7 @@
     },
     {
         "name": "0xSown",
-        "email": "vtson2707@@gmail.com",
+        "email": "vtson2707@gmail.com",
         "website": "n/a",
         "address": "/ip4/84.247.184.95/tcp/21888/p2p/12D3KooWSjp5GFmCCsYkKcqicrghyHqfjdDCfLfgfqWmG5JTQSDu"
     },
@@ -299,7 +299,13 @@
         "website": "n/a",
         "address": "/ip4/167.86.121.11/tcp/21888/p2p/12D3KooWMpVXMQkr26ff3y8gC5z1h9RZNxTvW4WzZBML8GHHUoL5"
     },
-        {
+    {
+        "name": "Thomas Jr",
+        "email": "catsmile91@gmail.com",
+        "website": "catsmile.tech",
+        "address": "/ip4/194.163.189.255/tcp/21888/p2p/12D3KooWF54PkAE34dRkC3WaiAgpL7HMnRFi1nW8iPnSH8nKLtZ9"
+    },
+    {
         "name": "Winnode",
         "email": "maladarsih@gmail.comm",
         "website": "winnode.site",
