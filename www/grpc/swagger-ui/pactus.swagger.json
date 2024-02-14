@@ -822,6 +822,50 @@
         ]
       }
     },
+    "/v1/wallets/sign_raw_transaction/wallet_name/{walletName}/raw_transaction/{rawTransaction}/password/{password}": {
+      "get": {
+        "summary": "SignRawTransaction signs a raw transaction for a specified wallet.",
+        "operationId": "Wallet_SignRawTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusSignRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rawTransaction",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "byte"
+          },
+          {
+            "name": "password",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
     "/v1/wallets/unload/wallet_name/{walletName}": {
       "get": {
         "summary": "UnloadWallet unloads a currently loaded wallet with the specified name.",

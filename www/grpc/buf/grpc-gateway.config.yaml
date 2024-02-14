@@ -78,3 +78,6 @@ http:
 
     - selector: pactus.Wallet.UnlockWallet
       get: "/v1/wallets/unlock/wallet_name/{wallet_name}/password/{password}/timeout/{timeout}"
+
+    - selector: pactus.Wallet.SignRawTransaction
+      get: "/v1/wallets/sign_raw_transaction/wallet_name/{wallet_name}/raw_transaction/{raw_transaction}/password/{password}"
