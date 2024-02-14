@@ -316,5 +316,11 @@
         "email": "lochua3989@gmail.com",
         "website": "n/a",
         "address": "/ip4/84.247.172.23/tcp/21888/p2p/12D3KooWFJYk55mUD6FR9Gx2YGQ34PYziwTQhY1kZ3TMS6fGUz6g"
+    },
+    {
+        "name": "SumNode",
+        "email": "thanhsum@gmail.com",
+        "website": "",
+        "address": "/ip4/95.216.222.135/tcp/21888/p2p/12D3KooWHicbZ3dBnR7JaVKr4U7WNUWyhDnUn2TwMVmPqW8Ftqop"
     }
 ]
