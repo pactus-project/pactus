@@ -61,9 +61,10 @@ func (model *walletModel) rebuildModel() {
 			valAddr, err := crypto.AddressFromString(info.Address)
 			if err == nil {
 				val = model.node.State().ValidatorByAddress(valAddr)
+				if val != nil {
+					score = strconv.FormatFloat(model.node.State().AvailabilityScore(val.Number()), 'f', -1, 64)
+				}
 			}
-
-			score = strconv.FormatFloat(model.node.State().AvailabilityScore(val.Number()), 'f', -1, 64)
 
 			data = append(data, []string{
 				fmt.Sprintf("%v", no+1),
