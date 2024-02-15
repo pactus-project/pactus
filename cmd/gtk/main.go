@@ -151,7 +151,7 @@ func start(workingDir string, app *gtk.Application) {
 	fatalErrorCheck(err)
 
 	nodeModel := newNodeModel(node)
-	walletModel := newWalletModel(wlt)
+	walletModel := newWalletModel(wlt, node)
 
 	// building main window
 	win := buildMainWindow(nodeModel, walletModel)

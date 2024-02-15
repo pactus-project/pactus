@@ -502,7 +502,3 @@ func (w *Wallet) AddTransaction(id tx.ID) error {
 func (w *Wallet) GetHistory(addr string) []HistoryInfo {
 	return w.store.History.getAddrHistory(addr)
 }
-
-func (w *Wallet) GetAvailabilityScore(addr string) float64 {
-	return w.client.getAvailabilityScore(addr)
-}

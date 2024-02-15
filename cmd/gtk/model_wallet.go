@@ -8,6 +8,9 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/node"
+	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
@@ -15,19 +18,21 @@ import (
 type walletModel struct {
 	wallet    *wallet.Wallet
 	listStore *gtk.ListStore
+	node      *node.Node
 }
 
-func newWalletModel(wlt *wallet.Wallet) *walletModel {
+func newWalletModel(wlt *wallet.Wallet, node *node.Node) *walletModel {
 	listStore, _ := gtk.ListStoreNew(
 		glib.TYPE_STRING, // Column no
 		glib.TYPE_STRING, // Address
 		glib.TYPE_STRING, // Label
-		glib.TYPE_STRING, // balance
+		glib.TYPE_STRING, // Balance
 		glib.TYPE_STRING, // Stake
 		glib.TYPE_STRING) // Availability Score
 
 	return &walletModel{
 		wallet:    wlt,
+		node:      node,
 		listStore: listStore,
 	}
 }
@@ -49,7 +54,16 @@ func (model *walletModel) rebuildModel() {
 			stake, _ := model.wallet.Stake(info.Address)
 			balanceStr := util.ChangeToString(balance)
 			stakeStr := util.ChangeToString(stake)
-			score := strconv.FormatFloat(model.wallet.GetAvailabilityScore(info.Address), 'f', -1, 64)
+
+			var score string
+			var val *validator.Validator
+
+			valAddr, err := crypto.AddressFromString(info.Address)
+			if err == nil {
+				val = model.node.State().ValidatorByAddress(valAddr)
+			}
+
+			score = strconv.FormatFloat(model.node.State().AvailabilityScore(val.Number()), 'f', -1, 64)
 
 			data = append(data, []string{
 				fmt.Sprintf("%v", no+1),
