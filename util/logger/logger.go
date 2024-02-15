@@ -80,11 +80,13 @@ func InitGlobalLogger(conf *Config) {
 	}
 	writers = append(writers, fw)
 
-	// console writer
-	if conf.Colorful {
-		writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04:05"})
-	} else {
-		writers = append(writers, os.Stderr)
+	if !conf.FileOnly {
+		// console writer
+		if conf.Colorful {
+			writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04:05"})
+		} else {
+			writers = append(writers, os.Stderr)
+		}
 	}
 
 	globalInst = &logger{
