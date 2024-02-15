@@ -45,6 +45,7 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 	tm.addRowInt("Fee", int(trx.Fee))
 	tm.addRowString("Memo", trx.Memo)
 	tm.addRowString("Payload type", trx.PayloadType.String())
+
 	switch trx.PayloadType {
 	case pactus.PayloadType_TRANSFER_PAYLOAD:
 		pld := trx.Payload.(*pactus.TransactionInfo_Transfer).Transfer
@@ -72,6 +73,9 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 		tm.addRowValAddress("Sender", pld.From)
 		tm.addRowAccAddress("Receiver", pld.To)
 		tm.addRowAmount("Amount", pld.Amount)
+
+	case pactus.PayloadType_UNKNOWN:
+		tm.addRowValAddress("error", "unknown payload type")
 	}
 	if trx.PublicKey != "" {
 		tm.addRowString("PublicKey", trx.PublicKey)

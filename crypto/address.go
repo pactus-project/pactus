@@ -50,15 +50,8 @@ func AddressFromString(text string) (Address, error) {
 		return Address{}, InvalidHRPError(hrp)
 	}
 
-	switch AddressType(typ) {
-	case AddressTypeValidator,
-		AddressTypeBLSAccount:
-		// The regrouped data must be 20 bytes.
-		if len(data) != 20 {
-			return Address{}, InvalidLengthError(len(data) + 1)
-		}
-	default:
-		return Address{}, InvalidAddressTypeError(typ)
+	if len(data) != 20 {
+		return Address{}, InvalidLengthError(len(data) + 1)
 	}
 
 	var addr Address

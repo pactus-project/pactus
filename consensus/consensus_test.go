@@ -944,6 +944,15 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 		case message.TypeBlockAnnounce:
 			m := rndMsg.message.(*message.BlockAnnounceMessage)
 			blockAnnounces[rndMsg.sender] = m
+
+		case
+			message.TypeHello,
+			message.TypeHelloAck,
+			message.TypeTransactions,
+			message.TypeQueryVotes,
+			message.TypeBlocksRequest,
+			message.TypeBlocksResponse:
+			//
 		}
 
 		for _, cons := range instances {
