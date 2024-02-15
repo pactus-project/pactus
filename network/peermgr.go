@@ -78,6 +78,17 @@ func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
 	mgr.lk.Lock()
 	defer mgr.lk.Unlock()
 
+	mgr.addPeer(pid, ma, direction)
+}
+
+func (mgr *peerMgr) addPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
+	direction lp2pnet.Direction,
+) {
+	_, exists := mgr.peers[pid]
+	if exists {
+		return
+	}
+
 	switch direction {
 	case lp2pnet.DirInbound:
 		mgr.numInbound++
@@ -96,14 +107,18 @@ func (mgr *peerMgr) RemovePeer(pid lp2ppeer.ID) {
 	mgr.lk.Lock()
 	defer mgr.lk.Unlock()
 
-	peer, ok := mgr.peers[pid]
-	if !ok {
+	mgr.removePeer(pid)
+}
+
+func (mgr *peerMgr) removePeer(pid lp2ppeer.ID) {
+	peerInfo, exists := mgr.peers[pid]
+	if !exists {
 		mgr.logger.Warn("unable to find a peer", "pid", pid)
 
 		return
 	}
 
-	switch peer.Direction {
+	switch peerInfo.Direction {
 	case lp2pnet.DirInbound:
 		mgr.numInbound--
 
@@ -132,18 +147,33 @@ func (mgr *peerMgr) CheckConnectivity() {
 	mgr.lk.Lock()
 	defer mgr.lk.Unlock()
 
-	connectedPeers := len(mgr.peers)
-	mgr.logger.Debug("check connectivity", "peers", connectedPeers)
+	net := mgr.host.Network()
+
+	// Let's check if some peers are disconnected
+	var connectedPeers []lp2ppeer.ID
+	for pid := range mgr.peers {
+		connectedness := net.Connectedness(pid)
+		if connectedness == lp2pnet.Connected {
+			connectedPeers = append(connectedPeers, pid)
+		} else {
+			mgr.removePeer(pid)
+		}
+	}
+
+	mgr.logger.Debug("check connectivity",
+		"peers", len(connectedPeers),
+		"inbound", mgr.numInbound,
+		"outbound", mgr.numOutbound)
 
 	switch {
-	case connectedPeers > mgr.maxConns:
+	case len(connectedPeers) > mgr.maxConns:
 		mgr.logger.Debug("peer count is about maximum threshold",
 			"count", connectedPeers,
 			"max", mgr.maxConns)
 
 		return
 
-	case connectedPeers < mgr.minConns:
+	case len(connectedPeers) < mgr.minConns:
 		mgr.logger.Info("peer count is less than minimum threshold",
 			"count", connectedPeers,
 			"min", mgr.minConns)
@@ -157,7 +187,7 @@ func (mgr *peerMgr) CheckConnectivity() {
 			mgr.logger.Debug("try connecting to a bootstrap peer", "peer", ai.String())
 
 			// Don't try to connect to an already connected peer.
-			if mgr.host.Network().Connectedness(ai.ID) == lp2pnet.Connected {
+			if HasPID(connectedPeers, ai.ID) {
 				mgr.logger.Trace("already connected", "peer", ai.String())
 
 				continue

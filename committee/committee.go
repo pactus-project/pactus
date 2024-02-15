@@ -18,13 +18,6 @@ type committee struct {
 	proposerPos   *linkedlist.Element[*validator.Validator]
 }
 
-func cloneValidator(val *validator.Validator) *validator.Validator {
-	cloned := new(validator.Validator)
-	*cloned = *val
-
-	return cloned
-}
-
 func NewCommittee(validators []*validator.Validator, committeeSize int,
 	proposerAddress crypto.Address,
 ) (Committee, error) {
@@ -32,7 +25,7 @@ func NewCommittee(validators []*validator.Validator, committeeSize int,
 	var proposerPos *linkedlist.Element[*validator.Validator]
 
 	for _, val := range validators {
-		el := validatorList.InsertAtTail(cloneValidator(val))
+		el := validatorList.InsertAtTail(val.Clone())
 		if val.Address() == proposerAddress {
 			proposerPos = el
 		}
@@ -69,7 +62,7 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	for _, val := range joined {
 		committeeVal := c.find(val.Address())
 		if committeeVal == nil {
-			c.validatorList.InsertBefore(cloneValidator(val), c.proposerPos)
+			c.validatorList.InsertBefore(val.Clone(), c.proposerPos)
 		} else {
 			committeeVal.UpdateLastSortitionHeight(val.LastSortitionHeight())
 
@@ -121,7 +114,7 @@ func (c *committee) Validators() []*validator.Validator {
 	vals := make([]*validator.Validator, c.validatorList.Length())
 	i := 0
 	c.iterate(func(v *validator.Validator) bool {
-		vals[i] = cloneValidator(v)
+		vals[i] = v.Clone()
 		i++
 
 		return false
@@ -159,7 +152,7 @@ func (c *committee) IsProposer(addr crypto.Address, round int16) bool {
 // Proposer returns an instance of the proposer validator for the specified round.
 // A cloned instance of the proposer is returned to avoid modification of the original object.
 func (c *committee) Proposer(round int16) *validator.Validator {
-	return cloneValidator(c.proposer(round))
+	return c.proposer(round).Clone()
 }
 
 func (c *committee) proposer(round int16) *validator.Validator {

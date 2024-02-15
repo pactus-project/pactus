@@ -31,6 +31,7 @@ import (
 
 type synchronizer struct {
 	ctx         context.Context
+	cancel      func()
 	config      *Config
 	valKeys     []*bls.ValidatorKey
 	state       state.Facade
@@ -53,8 +54,10 @@ func NewSynchronizer(
 	net network.Network,
 	broadcastCh <-chan message.Message,
 ) (Synchronizer, error) {
+	ctx, cancel := context.WithCancel(context.Background())
 	sync := &synchronizer{
-		ctx:         context.Background(), // TODO, set proper context
+		ctx:         ctx,
+		cancel:      cancel,
 		config:      conf,
 		valKeys:     valKeys,
 		state:       st,
@@ -110,7 +113,8 @@ func (sync *synchronizer) Start() error {
 }
 
 func (sync *synchronizer) Stop() {
-	sync.ctx.Done()
+	sync.cancel()
+	sync.logger.Debug("context closed", "reason", sync.ctx.Err())
 }
 
 func (sync *synchronizer) stateHeight() uint32 {
@@ -373,21 +377,20 @@ func (sync *synchronizer) updateBlockchain() {
 	// Check if we have any expired sessions
 	sync.peerSet.SetExpiredSessionsAsUncompleted()
 
-	sync.peerSet.IterateSessions(func(ssn *session.Session) bool {
+	// Try to re-download the blocks for uncompleted sessions
+	sessions := sync.peerSet.Sessions()
+	for _, ssn := range sessions {
 		if ssn.Status == session.Uncompleted {
 			sync.logger.Info("uncompleted block request, re-download",
 				"sid", ssn.SessionID, "pid", ssn.PeerID,
 				"stats", sync.peerSet.SessionStats())
 
-			// Try to re-download the blocks from this closed session
 			sent := sync.sendBlockRequestToRandomPeer(ssn.From, ssn.Count, true)
 			if !sent {
-				return true
+				break
 			}
 		}
-
-		return false
-	})
+	}
 
 	// First, let's check if we have any open sessions.
 	// If there are any open sessions, we should wait for them to be closed.

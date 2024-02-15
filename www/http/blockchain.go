@@ -11,8 +11,8 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-func (s *Server) BlockchainHandler(w http.ResponseWriter, _ *http.Request) {
-	res, err := s.blockchain.GetBlockchainInfo(s.ctx,
+func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
+	res, err := s.blockchain.GetBlockchainInfo(r.Context(),
 		&pactus.GetBlockchainInfoRequest{})
 	if err != nil {
 		s.writeError(w, err)
@@ -43,7 +43,7 @@ func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request)
 
 		return
 	}
-	s.blockByHeight(w, uint32(height))
+	s.blockByHeight(w, r, uint32(height))
 }
 
 func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +55,7 @@ func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.blockchain.GetBlockHeight(s.ctx,
+	res, err := s.blockchain.GetBlockHeight(r.Context(),
 		&pactus.GetBlockHeightRequest{Hash: blockHash.Bytes()})
 	if err != nil {
 		s.writeError(w, err)
@@ -63,11 +63,11 @@ func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.blockByHeight(w, res.Height)
+	s.blockByHeight(w, r, res.Height)
 }
 
-func (s *Server) blockByHeight(w http.ResponseWriter, blockHeight uint32) {
-	res, err := s.blockchain.GetBlock(s.ctx,
+func (s *Server) blockByHeight(w http.ResponseWriter, r *http.Request, blockHeight uint32) {
+	res, err := s.blockchain.GetBlock(r.Context(),
 		&pactus.GetBlockRequest{
 			Height:    blockHeight,
 			Verbosity: pactus.BlockVerbosity_BLOCK_TRANSACTIONS,
@@ -113,7 +113,7 @@ func (s *Server) blockByHeight(w http.ResponseWriter, blockHeight uint32) {
 // GetAccountHandler returns a handler to get account by address.
 func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	res, err := s.blockchain.GetAccount(s.ctx,
+	res, err := s.blockchain.GetAccount(r.Context(),
 		&pactus.GetAccountRequest{Address: vars["address"]})
 	if err != nil {
 		s.writeError(w, err)
@@ -134,7 +134,7 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 // GetValidatorHandler returns a handler to get validator by address.
 func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	res, err := s.blockchain.GetValidator(s.ctx,
+	res, err := s.blockchain.GetValidator(r.Context(),
 		&pactus.GetValidatorRequest{Address: vars["address"]})
 	if err != nil {
 		s.writeError(w, err)
@@ -157,9 +157,10 @@ func (s *Server) GetValidatorByNumberHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	res, err := s.blockchain.GetValidatorByNumber(s.ctx, &pactus.GetValidatorByNumberRequest{
-		Number: int32(num),
-	})
+	res, err := s.blockchain.GetValidatorByNumber(r.Context(),
+		&pactus.GetValidatorByNumberRequest{
+			Number: int32(num),
+		})
 	if err != nil {
 		s.writeError(w, err)
 
@@ -185,8 +186,8 @@ func (s *Server) writeValidatorTable(val *pactus.ValidatorInfo) *tableMaker {
 	return tm
 }
 
-func (s *Server) ConsensusHandler(w http.ResponseWriter, _ *http.Request) {
-	res, err := s.blockchain.GetConsensusInfo(s.ctx,
+func (s *Server) ConsensusHandler(w http.ResponseWriter, r *http.Request) {
+	res, err := s.blockchain.GetConsensusInfo(r.Context(),
 		&pactus.GetConsensusInfoRequest{})
 	if err != nil {
 		s.writeError(w, err)
