@@ -115,7 +115,7 @@ func TestGetById(t *testing.T) {
 			Label:     "some-label",
 			Path:      "some-path",
 		}
-		someDB.InsertIntoAddress(addr)
+		_, _ = someDB.InsertIntoAddress(addr)
 
 		actual, err := someDB.GetAddressByID(5)
 		assert.Nil(t, actual)
@@ -153,7 +153,7 @@ func TestGetById(t *testing.T) {
 			Amount:      50,
 			Status:      1,
 		}
-		someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertIntoTransaction(tr)
 
 		actual, err := someDB.GetTransactionByID(10)
 
@@ -188,7 +188,7 @@ func TestGetById(t *testing.T) {
 		_ = someDB.CreateTables()
 
 		key, value := "key", "value"
-		someDB.InsertIntoPair(key, value)
+		_, _ = someDB.InsertIntoPair(key, value)
 
 		actual, err := someDB.GetPairByKey("some-thing-wrong")
 
@@ -207,5 +207,57 @@ func TestGetById(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, expected, actual)
+	})
+}
+
+func TestGetAll(t *testing.T) {
+	t.Run("get all addresses", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		addr := &Address{
+			Address:   "some-address",
+			PublicKey: "some-public-key",
+			Label:     "some-label",
+			Path:      "some-path",
+		}
+		someInsertOne, _ := someDB.InsertIntoAddress(addr)
+		someInsertTwo, _ := someDB.InsertIntoAddress(addr)
+		someInsertThree, _ := someDB.InsertIntoAddress(addr)
+
+		expected := make([]*Address, 0, 3)
+		expected = append(expected, someInsertThree, someInsertTwo, someInsertOne)
+
+		acutal, err := someDB.GetAllAddresses(1, 3)
+
+		assert.Nil(t, err)
+		assert.Equal(t, expected, acutal)
+	})
+
+	t.Run("get all transactions", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		tr := &Transaction{
+			TxID:        "some-txid",
+			BlockHeight: 4,
+			BlockTime:   5,
+			PayloadType: "something",
+			Data:        "some-data",
+			Description: "some-description",
+			Amount:      50,
+			Status:      1,
+		}
+		someInsertOne, _ := someDB.InsertIntoTransaction(tr)
+		someInsertTwo, _ := someDB.InsertIntoTransaction(tr)
+		someInsertThree, _ := someDB.InsertIntoTransaction(tr)
+
+		expected := make([]*Transaction, 0, 3)
+		expected = append(expected, someInsertThree, someInsertTwo, someInsertOne)
+
+		acutal, err := someDB.GetAllTransactions(1, 3)
+
+		assert.Nil(t, err)
+		assert.Equal(t, expected, acutal)
 	})
 }

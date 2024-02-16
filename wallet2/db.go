@@ -28,6 +28,9 @@ type DB interface {
 	GetAddressByID(id int) (*Address, error)
 	GetTransactionByID(id int) (*Transaction, error)
 	GetPairByKey(key string) (*Pair, error)
+
+	GetAllAddresses(pageIndex, pageSize int) ([]*Address, error)
+	GetAllTransactions(pageIndex, pageSize int) ([]*Transaction, error)
 }
 
 type db struct {
@@ -236,4 +239,61 @@ func (d *db) GetPairByKey(key string) (*Pair, error) {
 	}
 
 	return p, nil
+}
+
+func (d *db) GetAllAddresses(pageIndex, pageSize int) ([]*Address, error) {
+	getAllQuery := "SELECT * FROM addresses ORDER BY id DESC LIMIT ? OFFSET ?"
+	rows, err := d.QueryContext(context.Background(), getAllQuery, pageSize, calcOffset(pageIndex, pageSize))
+	if err != nil || rows.Err() != nil {
+		return nil, ErrCouldNotFindRecord
+	}
+	defer rows.Close()
+
+	addrs := make([]*Address, 0, pageSize)
+	for {
+		if !rows.Next() {
+			break
+		}
+
+		addr := &Address{}
+		err := rows.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label, &addr.Path, &addr.CreatedAt)
+		if err != nil {
+			return nil, ErrCouldNotFindRecord
+		}
+
+		addrs = append(addrs, addr)
+	}
+
+	return addrs, nil
+}
+
+func (d *db) GetAllTransactions(pageIndex, pageSize int) ([]*Transaction, error) {
+	getAllQuery := "SELECT * FROM transactions ORDER BY id DESC LIMIT ? OFFSET ?"
+	rows, err := d.QueryContext(context.Background(), getAllQuery, pageSize, calcOffset(pageIndex, pageSize))
+	if err != nil || rows.Err() != nil {
+		return nil, ErrCouldNotFindRecord
+	}
+	defer rows.Close()
+
+	transactions := make([]*Transaction, 0, pageSize)
+	for {
+		if !rows.Next() {
+			break
+		}
+
+		t := &Transaction{}
+		err := rows.Scan(&t.ID, &t.TxID, &t.BlockHeight, &t.BlockTime, &t.PayloadType,
+			&t.Data, &t.Description, &t.Amount, &t.Status, &t.CreatedAt)
+		if err != nil {
+			return nil, ErrCouldNotFindRecord
+		}
+
+		transactions = append(transactions, t)
+	}
+
+	return transactions, nil
+}
+
+func calcOffset(pageIndex, pageSize int) int {
+	return (pageIndex - 1) * pageSize
 }
