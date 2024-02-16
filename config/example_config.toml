@@ -119,9 +119,9 @@
   # Default is `true`.
  ## compress = true
 
-  # `file_only` determines if the logs only get written on file.
-  # Default is `false`.
- ## file_only = false
+  # `targets` determines where the logs will be shown, saved, or sent.
+  # Default is `["console", "file"]`.
+ ## targets = ["console", "file"]
 
   # `logger.levels` contains the level of logger per module.
   # Available log levels are:
