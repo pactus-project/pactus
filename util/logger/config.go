@@ -5,7 +5,7 @@ type Config struct {
 	MaxBackups         int               `toml:"max_backups"`
 	RotateLogAfterDays int               `toml:"rotate_log_after_days"`
 	Compress           bool              `toml:"compress"`
-	FileOnly           bool              `toml:"file_only"`
+	Targets            []string          `toml:"targets"`
 	Levels             map[string]string `toml:"levels"`
 }
 
@@ -16,7 +16,7 @@ func DefaultConfig() *Config {
 		MaxBackups:         0,
 		RotateLogAfterDays: 1,
 		Compress:           true,
-		FileOnly:           false,
+		Targets:            []string{"console", "file"},
 	}
 
 	conf.Levels["default"] = "info"
