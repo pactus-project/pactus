@@ -15,13 +15,19 @@ var (
 	ErrCouldNotOpenDatabase    = errors.New("could not open database")
 	ErrCouldNotCreateTable     = errors.New("could not create table")
 	ErrCouldNotInsertIntoTable = errors.New("could not insert record into table")
+	ErrCouldNotFindRecord      = errors.New("could not find record")
 )
 
 type DB interface {
 	CreateTables() error
+
 	InsertIntoAddress(addr *Address) (*Address, error)
 	InsertIntoTransaction(t *Transaction) (*Transaction, error)
 	InsertIntoPair(key string, value string) (*Pair, error)
+
+	GetAddressByID(id int) (*Address, error)
+	GetTransactionByID(id int) (*Transaction, error)
+	GetPairByKey(key string) (*Pair, error)
 }
 
 type db struct {
@@ -103,7 +109,7 @@ func (d *db) createTransactionTable() error {
 }
 
 func (d *db) createPairTable() error {
-	pairQuery := "CREATE TABLE pairs (id VARCHAR PRIMARY KEY, value VARCHAR, created_at TIMESTAMP)"
+	pairQuery := "CREATE TABLE pairs (key VARCHAR PRIMARY KEY, value VARCHAR, created_at TIMESTAMP)"
 	_, err := d.ExecContext(context.Background(), pairQuery)
 	if err != nil && !strings.Contains(err.Error(), "already exists") {
 		return ErrCouldNotCreateTable
@@ -170,7 +176,7 @@ func (d *db) InsertIntoTransaction(t *Transaction) (*Transaction, error) {
 
 func (d *db) InsertIntoPair(key, value string) (*Pair, error) {
 	createdAt := time.Now().UTC()
-	insertQuery := "INSERT INTO pairs (id, value, created_at) VALUES (?,?,?)"
+	insertQuery := "INSERT INTO pairs (key, value, created_at) VALUES (?,?,?)"
 	_, err := d.ExecContext(context.Background(), insertQuery, key, value, createdAt)
 	if err != nil {
 		return nil, ErrCouldNotInsertIntoTable
@@ -181,4 +187,53 @@ func (d *db) InsertIntoPair(key, value string) (*Pair, error) {
 		Value:     value,
 		CreatedAt: createdAt,
 	}, nil
+}
+
+func (d *db) GetAddressByID(id int) (*Address, error) {
+	getQuery := "SELECT * FROM addresses WHERE id = ?"
+	row := d.QueryRowContext(context.Background(), getQuery, id)
+	if row.Err() != nil {
+		return nil, ErrCouldNotFindRecord
+	}
+
+	addr := &Address{}
+	err := row.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label, &addr.Path, &addr.CreatedAt)
+	if err != nil {
+		return nil, ErrCouldNotFindRecord
+	}
+
+	return addr, nil
+}
+
+func (d *db) GetTransactionByID(id int) (*Transaction, error) {
+	getQuery := "SELECT * FROM transactions WHERE id = ?"
+	row := d.QueryRowContext(context.Background(), getQuery, id)
+	if row.Err() != nil {
+		return nil, ErrCouldNotFindRecord
+	}
+
+	t := &Transaction{}
+	err := row.Scan(&t.ID, &t.TxID, &t.BlockHeight, &t.BlockTime, &t.PayloadType,
+		&t.Data, &t.Description, &t.Amount, &t.Status, &t.CreatedAt)
+	if err != nil {
+		return nil, ErrCouldNotFindRecord
+	}
+
+	return t, nil
+}
+
+func (d *db) GetPairByKey(key string) (*Pair, error) {
+	getQuery := "SELECT * FROM pairs WHERE key = ?"
+	row := d.QueryRowContext(context.Background(), getQuery, key)
+	if row.Err() != nil {
+		return nil, ErrCouldNotFindRecord
+	}
+
+	p := &Pair{}
+	err := row.Scan(&p.Key, &p.Value, &p.CreatedAt)
+	if err != nil {
+		return nil, ErrCouldNotFindRecord
+	}
+
+	return p, nil
 }

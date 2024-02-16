@@ -103,3 +103,109 @@ func TestInsert(t *testing.T) {
 		assert.Equal(t, value, actual.Value)
 	})
 }
+
+func TestGetById(t *testing.T) {
+	t.Run("could not get address by id", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		addr := &Address{
+			Address:   "some-address",
+			PublicKey: "some-public-key",
+			Label:     "some-label",
+			Path:      "some-path",
+		}
+		someDB.InsertIntoAddress(addr)
+
+		actual, err := someDB.GetAddressByID(5)
+		assert.Nil(t, actual)
+		assert.EqualError(t, ErrCouldNotFindRecord, err.Error())
+	})
+
+	t.Run("get address by id", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		addr := &Address{
+			Address:   "some-address",
+			PublicKey: "some-public-key",
+			Label:     "some-label",
+			Path:      "some-path",
+		}
+		expected, _ := someDB.InsertIntoAddress(addr)
+
+		actual, err := someDB.GetAddressByID(expected.ID)
+		assert.Nil(t, err)
+		assert.Equal(t, expected, actual)
+	})
+
+	t.Run("could not get transaction by id", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		tr := &Transaction{
+			TxID:        "some-txid",
+			BlockHeight: 4,
+			BlockTime:   5,
+			PayloadType: "something",
+			Data:        "some-data",
+			Description: "some-description",
+			Amount:      50,
+			Status:      1,
+		}
+		someDB.InsertIntoTransaction(tr)
+
+		actual, err := someDB.GetTransactionByID(10)
+
+		assert.Nil(t, actual)
+		assert.EqualError(t, ErrCouldNotFindRecord, err.Error())
+	})
+
+	t.Run("get transaction by id", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		tr := &Transaction{
+			TxID:        "some-txid",
+			BlockHeight: 4,
+			BlockTime:   5,
+			PayloadType: "something",
+			Data:        "some-data",
+			Description: "some-description",
+			Amount:      50,
+			Status:      1,
+		}
+		expected, _ := someDB.InsertIntoTransaction(tr)
+
+		actual, err := someDB.GetTransactionByID(expected.ID)
+
+		assert.Nil(t, err)
+		assert.Equal(t, expected, actual)
+	})
+
+	t.Run("could not get pair by key", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		key, value := "key", "value"
+		someDB.InsertIntoPair(key, value)
+
+		actual, err := someDB.GetPairByKey("some-thing-wrong")
+
+		assert.Nil(t, actual)
+		assert.EqualError(t, ErrCouldNotFindRecord, err.Error())
+	})
+
+	t.Run("get pair by key", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		key, value := "key", "value"
+		expected, _ := someDB.InsertIntoPair(key, value)
+
+		actual, err := someDB.GetPairByKey(expected.Key)
+
+		assert.Nil(t, err)
+		assert.Equal(t, expected, actual)
+	})
+}
