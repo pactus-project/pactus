@@ -16,7 +16,7 @@ func TransactionClientCommand(options ...client.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("Transaction"),
 		Short: "Transaction service client",
-		Long:  "Transaction service defines various RPC methods for interacting with transactions.",
+		Long:  "Transaction service defines various RPC methods for interacting with\n transactions.",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
@@ -37,7 +37,7 @@ func _TransactionGetTransactionCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetTransaction"),
 		Short: "GetTransaction RPC client",
-		Long:  "GetTransaction retrieves transaction details based on the provided request parameters.",
+		Long:  "GetTransaction retrieves transaction details based on the provided request\n parameters.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -68,8 +68,8 @@ func _TransactionGetTransactionCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	flag.BytesBase64Var(cmd.PersistentFlags(), &req.Id, cfg.FlagNamer("Id"), "")
-	flag.EnumVar(cmd.PersistentFlags(), &req.Verbosity, cfg.FlagNamer("Verbosity"), "")
+	flag.BytesBase64Var(cmd.PersistentFlags(), &req.Id, cfg.FlagNamer("Id"), "Transaction ID.")
+	flag.EnumVar(cmd.PersistentFlags(), &req.Verbosity, cfg.FlagNamer("Verbosity"), "Verbosity level for transaction details.")
 
 	return cmd
 }
@@ -80,7 +80,7 @@ func _TransactionCalculateFeeCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("CalculateFee"),
 		Short: "CalculateFee RPC client",
-		Long:  "CalculateFee calculates the transaction fee based on the specified amount and payload type.",
+		Long:  "CalculateFee calculates the transaction fee based on the specified amount\n and payload type.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -111,8 +111,8 @@ func _TransactionCalculateFeeCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "")
-	flag.EnumVar(cmd.PersistentFlags(), &req.PayloadType, cfg.FlagNamer("PayloadType"), "")
+	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "Transaction amount.")
+	flag.EnumVar(cmd.PersistentFlags(), &req.PayloadType, cfg.FlagNamer("PayloadType"), "Type of transaction payload.")
 
 	return cmd
 }
@@ -154,7 +154,7 @@ func _TransactionBroadcastTransactionCommand(cfg *client.Config) *cobra.Command 
 		},
 	}
 
-	flag.BytesBase64Var(cmd.PersistentFlags(), &req.SignedRawTransaction, cfg.FlagNamer("SignedRawTransaction"), "")
+	flag.BytesBase64Var(cmd.PersistentFlags(), &req.SignedRawTransaction, cfg.FlagNamer("SignedRawTransaction"), "Signed raw transaction data.")
 
 	return cmd
 }
@@ -196,12 +196,12 @@ func _TransactionGetRawTransferTransactionCommand(cfg *client.Config) *cobra.Com
 		},
 	}
 
-	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "")
-	cmd.PersistentFlags().StringVar(&req.Sender, cfg.FlagNamer("Sender"), "", "")
-	cmd.PersistentFlags().StringVar(&req.Receiver, cfg.FlagNamer("Receiver"), "", "")
-	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "")
-	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "")
-	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "")
+	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "Lock time for the transaction.")
+	cmd.PersistentFlags().StringVar(&req.Sender, cfg.FlagNamer("Sender"), "", "Sender's address.")
+	cmd.PersistentFlags().StringVar(&req.Receiver, cfg.FlagNamer("Receiver"), "", "Receiver's address.")
+	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "Transaction amount.")
+	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "Transaction fee.")
+	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "Transaction memo.")
 
 	return cmd
 }
@@ -243,13 +243,13 @@ func _TransactionGetRawBondTransactionCommand(cfg *client.Config) *cobra.Command
 		},
 	}
 
-	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "")
-	cmd.PersistentFlags().StringVar(&req.Sender, cfg.FlagNamer("Sender"), "", "")
-	cmd.PersistentFlags().StringVar(&req.Receiver, cfg.FlagNamer("Receiver"), "", "")
-	cmd.PersistentFlags().Int64Var(&req.Stake, cfg.FlagNamer("Stake"), 0, "")
-	cmd.PersistentFlags().StringVar(&req.PublicKey, cfg.FlagNamer("PublicKey"), "", "")
-	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "")
-	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "")
+	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "Lock time for the transaction.")
+	cmd.PersistentFlags().StringVar(&req.Sender, cfg.FlagNamer("Sender"), "", "Sender's address.")
+	cmd.PersistentFlags().StringVar(&req.Receiver, cfg.FlagNamer("Receiver"), "", "Receiver's address.")
+	cmd.PersistentFlags().Int64Var(&req.Stake, cfg.FlagNamer("Stake"), 0, "Stake amount.")
+	cmd.PersistentFlags().StringVar(&req.PublicKey, cfg.FlagNamer("PublicKey"), "", "Public key of the validator.")
+	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "Transaction fee.")
+	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "Transaction memo.")
 
 	return cmd
 }
@@ -291,9 +291,9 @@ func _TransactionGetRawUnBondTransactionCommand(cfg *client.Config) *cobra.Comma
 		},
 	}
 
-	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "")
-	cmd.PersistentFlags().StringVar(&req.ValidatorAddress, cfg.FlagNamer("ValidatorAddress"), "", "")
-	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "")
+	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "Lock time for the transaction.")
+	cmd.PersistentFlags().StringVar(&req.ValidatorAddress, cfg.FlagNamer("ValidatorAddress"), "", "Address of the validator to unbond from.")
+	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "Transaction memo.")
 
 	return cmd
 }
@@ -335,12 +335,12 @@ func _TransactionGetRawWithdrawTransactionCommand(cfg *client.Config) *cobra.Com
 		},
 	}
 
-	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "")
-	cmd.PersistentFlags().StringVar(&req.ValidatorAddress, cfg.FlagNamer("ValidatorAddress"), "", "")
-	cmd.PersistentFlags().StringVar(&req.AccountAddress, cfg.FlagNamer("AccountAddress"), "", "")
-	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "")
-	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "")
-	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "")
+	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "Lock time for the transaction.")
+	cmd.PersistentFlags().StringVar(&req.ValidatorAddress, cfg.FlagNamer("ValidatorAddress"), "", "Address of the validator to withdraw from.")
+	cmd.PersistentFlags().StringVar(&req.AccountAddress, cfg.FlagNamer("AccountAddress"), "", "Address of the account to withdraw to.")
+	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "Transaction fee.")
+	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "Withdrawal amount.")
+	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "Transaction memo.")
 
 	return cmd
 }

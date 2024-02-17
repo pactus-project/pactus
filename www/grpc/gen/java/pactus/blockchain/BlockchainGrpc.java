@@ -381,7 +381,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetBlock retrieves information about a block based on the provided request parameters.
+     * GetBlock retrieves information about a block based on the provided request
+     * parameters.
      * </pre>
      */
     public void getBlock(pactus.blockchain.BlockchainOuterClass.GetBlockRequest request,
@@ -431,7 +432,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetAccount retrieves information about an account based on the provided address.
+     * GetAccount retrieves information about an account based on the provided
+     * address.
      * </pre>
      */
     public void getAccount(pactus.blockchain.BlockchainOuterClass.GetAccountRequest request,
@@ -441,7 +443,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetValidator retrieves information about a validator based on the provided address.
+     * GetValidator retrieves information about a validator based on the provided
+     * address.
      * </pre>
      */
     public void getValidator(pactus.blockchain.BlockchainOuterClass.GetValidatorRequest request,
@@ -451,7 +454,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetValidatorByNumber retrieves information about a validator based on the provided number.
+     * GetValidatorByNumber retrieves information about a validator based on the
+     * provided number.
      * </pre>
      */
     public void getValidatorByNumber(pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest request,
@@ -471,7 +475,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetPublicKey retrieves the public key of an account based on the provided address.
+     * GetPublicKey retrieves the public key of an account based on the provided
+     * address.
      * </pre>
      */
     public void getPublicKey(pactus.blockchain.BlockchainOuterClass.GetPublicKeyRequest request,
@@ -574,7 +579,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetBlock retrieves information about a block based on the provided request parameters.
+     * GetBlock retrieves information about a block based on the provided request
+     * parameters.
      * </pre>
      */
     public void getBlock(pactus.blockchain.BlockchainOuterClass.GetBlockRequest request,
@@ -629,7 +635,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetAccount retrieves information about an account based on the provided address.
+     * GetAccount retrieves information about an account based on the provided
+     * address.
      * </pre>
      */
     public void getAccount(pactus.blockchain.BlockchainOuterClass.GetAccountRequest request,
@@ -640,7 +647,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetValidator retrieves information about a validator based on the provided address.
+     * GetValidator retrieves information about a validator based on the provided
+     * address.
      * </pre>
      */
     public void getValidator(pactus.blockchain.BlockchainOuterClass.GetValidatorRequest request,
@@ -651,7 +659,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetValidatorByNumber retrieves information about a validator based on the provided number.
+     * GetValidatorByNumber retrieves information about a validator based on the
+     * provided number.
      * </pre>
      */
     public void getValidatorByNumber(pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest request,
@@ -673,7 +682,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetPublicKey retrieves the public key of an account based on the provided address.
+     * GetPublicKey retrieves the public key of an account based on the provided
+     * address.
      * </pre>
      */
     public void getPublicKey(pactus.blockchain.BlockchainOuterClass.GetPublicKeyRequest request,
@@ -702,7 +712,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetBlock retrieves information about a block based on the provided request parameters.
+     * GetBlock retrieves information about a block based on the provided request
+     * parameters.
      * </pre>
      */
     public pactus.blockchain.BlockchainOuterClass.GetBlockResponse getBlock(pactus.blockchain.BlockchainOuterClass.GetBlockRequest request) {
@@ -752,7 +763,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetAccount retrieves information about an account based on the provided address.
+     * GetAccount retrieves information about an account based on the provided
+     * address.
      * </pre>
      */
     public pactus.blockchain.BlockchainOuterClass.GetAccountResponse getAccount(pactus.blockchain.BlockchainOuterClass.GetAccountRequest request) {
@@ -762,7 +774,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetValidator retrieves information about a validator based on the provided address.
+     * GetValidator retrieves information about a validator based on the provided
+     * address.
      * </pre>
      */
     public pactus.blockchain.BlockchainOuterClass.GetValidatorResponse getValidator(pactus.blockchain.BlockchainOuterClass.GetValidatorRequest request) {
@@ -772,7 +785,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetValidatorByNumber retrieves information about a validator based on the provided number.
+     * GetValidatorByNumber retrieves information about a validator based on the
+     * provided number.
      * </pre>
      */
     public pactus.blockchain.BlockchainOuterClass.GetValidatorResponse getValidatorByNumber(pactus.blockchain.BlockchainOuterClass.GetValidatorByNumberRequest request) {
@@ -792,7 +806,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetPublicKey retrieves the public key of an account based on the provided address.
+     * GetPublicKey retrieves the public key of an account based on the provided
+     * address.
      * </pre>
      */
     public pactus.blockchain.BlockchainOuterClass.GetPublicKeyResponse getPublicKey(pactus.blockchain.BlockchainOuterClass.GetPublicKeyRequest request) {
@@ -820,7 +835,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetBlock retrieves information about a block based on the provided request parameters.
+     * GetBlock retrieves information about a block based on the provided request
+     * parameters.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetBlockResponse> getBlock(
@@ -875,7 +891,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetAccount retrieves information about an account based on the provided address.
+     * GetAccount retrieves information about an account based on the provided
+     * address.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetAccountResponse> getAccount(
@@ -886,7 +903,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetValidator retrieves information about a validator based on the provided address.
+     * GetValidator retrieves information about a validator based on the provided
+     * address.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> getValidator(
@@ -897,7 +915,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetValidatorByNumber retrieves information about a validator based on the provided number.
+     * GetValidatorByNumber retrieves information about a validator based on the
+     * provided number.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetValidatorResponse> getValidatorByNumber(
@@ -919,7 +938,8 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetPublicKey retrieves the public key of an account based on the provided address.
+     * GetPublicKey retrieves the public key of an account based on the provided
+     * address.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetPublicKeyResponse> getPublicKey(

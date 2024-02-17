@@ -78,14 +78,16 @@ class WalletServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def LockWallet(self, request, context):
-        """LockWallet locks a currently loaded wallet with the provided password and timeout.
+        """LockWallet locks a currently loaded wallet with the provided password and
+        timeout.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def UnlockWallet(self, request, context):
-        """UnlockWallet unlocks a locked wallet with the provided password and timeout.
+        """UnlockWallet unlocks a locked wallet with the provided password and
+        timeout.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -99,7 +101,8 @@ class WalletServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetValidatorAddress(self, request, context):
-        """GetValidatorAddress retrieves the validator address associated with a public key.
+        """GetValidatorAddress retrieves the validator address associated with a
+        public key.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')

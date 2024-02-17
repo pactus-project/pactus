@@ -2506,7 +2506,8 @@ public final class NetworkOuterClass {
   }
   /**
    * <pre>
-   * Request message for retrieving information about a specific node in the network.
+   * Request message for retrieving information about a specific node in the
+   * network.
    * </pre>
    *
    * Protobuf type {@code pactus.GetNodeInfoRequest}
@@ -2694,7 +2695,8 @@ public final class NetworkOuterClass {
     }
     /**
      * <pre>
-     * Request message for retrieving information about a specific node in the network.
+     * Request message for retrieving information about a specific node in the
+     * network.
      * </pre>
      *
      * Protobuf type {@code pactus.GetNodeInfoRequest}

@@ -4,7 +4,8 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  * <pre>
- * Transaction service defines various RPC methods for interacting with transactions.
+ * Transaction service defines various RPC methods for interacting with
+ * transactions.
  * </pre>
  */
 @javax.annotation.Generated(
@@ -281,14 +282,16 @@ public final class TransactionGrpc {
 
   /**
    * <pre>
-   * Transaction service defines various RPC methods for interacting with transactions.
+   * Transaction service defines various RPC methods for interacting with
+   * transactions.
    * </pre>
    */
   public static abstract class TransactionImplBase implements io.grpc.BindableService {
 
     /**
      * <pre>
-     * GetTransaction retrieves transaction details based on the provided request parameters.
+     * GetTransaction retrieves transaction details based on the provided request
+     * parameters.
      * </pre>
      */
     public void getTransaction(pactus.transaction.TransactionOuterClass.GetTransactionRequest request,
@@ -298,7 +301,8 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * CalculateFee calculates the transaction fee based on the specified amount and payload type.
+     * CalculateFee calculates the transaction fee based on the specified amount
+     * and payload type.
      * </pre>
      */
     public void calculateFee(pactus.transaction.TransactionOuterClass.CalculateFeeRequest request,
@@ -413,7 +417,8 @@ public final class TransactionGrpc {
 
   /**
    * <pre>
-   * Transaction service defines various RPC methods for interacting with transactions.
+   * Transaction service defines various RPC methods for interacting with
+   * transactions.
    * </pre>
    */
   public static final class TransactionStub extends io.grpc.stub.AbstractAsyncStub<TransactionStub> {
@@ -430,7 +435,8 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * GetTransaction retrieves transaction details based on the provided request parameters.
+     * GetTransaction retrieves transaction details based on the provided request
+     * parameters.
      * </pre>
      */
     public void getTransaction(pactus.transaction.TransactionOuterClass.GetTransactionRequest request,
@@ -441,7 +447,8 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * CalculateFee calculates the transaction fee based on the specified amount and payload type.
+     * CalculateFee calculates the transaction fee based on the specified amount
+     * and payload type.
      * </pre>
      */
     public void calculateFee(pactus.transaction.TransactionOuterClass.CalculateFeeRequest request,
@@ -508,7 +515,8 @@ public final class TransactionGrpc {
 
   /**
    * <pre>
-   * Transaction service defines various RPC methods for interacting with transactions.
+   * Transaction service defines various RPC methods for interacting with
+   * transactions.
    * </pre>
    */
   public static final class TransactionBlockingStub extends io.grpc.stub.AbstractBlockingStub<TransactionBlockingStub> {
@@ -525,7 +533,8 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * GetTransaction retrieves transaction details based on the provided request parameters.
+     * GetTransaction retrieves transaction details based on the provided request
+     * parameters.
      * </pre>
      */
     public pactus.transaction.TransactionOuterClass.GetTransactionResponse getTransaction(pactus.transaction.TransactionOuterClass.GetTransactionRequest request) {
@@ -535,7 +544,8 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * CalculateFee calculates the transaction fee based on the specified amount and payload type.
+     * CalculateFee calculates the transaction fee based on the specified amount
+     * and payload type.
      * </pre>
      */
     public pactus.transaction.TransactionOuterClass.CalculateFeeResponse calculateFee(pactus.transaction.TransactionOuterClass.CalculateFeeRequest request) {
@@ -596,7 +606,8 @@ public final class TransactionGrpc {
 
   /**
    * <pre>
-   * Transaction service defines various RPC methods for interacting with transactions.
+   * Transaction service defines various RPC methods for interacting with
+   * transactions.
    * </pre>
    */
   public static final class TransactionFutureStub extends io.grpc.stub.AbstractFutureStub<TransactionFutureStub> {
@@ -613,7 +624,8 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * GetTransaction retrieves transaction details based on the provided request parameters.
+     * GetTransaction retrieves transaction details based on the provided request
+     * parameters.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.GetTransactionResponse> getTransaction(
@@ -624,7 +636,8 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * CalculateFee calculates the transaction fee based on the specified amount and payload type.
+     * CalculateFee calculates the transaction fee based on the specified amount
+     * and payload type.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.CalculateFeeResponse> calculateFee(

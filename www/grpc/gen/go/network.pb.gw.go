@@ -81,7 +81,7 @@ func RegisterNetworkHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Network/GetNetworkInfo", runtime.WithHTTPPathPattern("/v1/network/info"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Network/GetNetworkInfo", runtime.WithHTTPPathPattern("/pactus/network/get_network_info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -106,7 +106,7 @@ func RegisterNetworkHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Network/GetNodeInfo", runtime.WithHTTPPathPattern("/v1/network/node"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Network/GetNodeInfo", runtime.WithHTTPPathPattern("/pactus/network/get_node_info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -170,7 +170,7 @@ func RegisterNetworkHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Network/GetNetworkInfo", runtime.WithHTTPPathPattern("/v1/network/info"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Network/GetNetworkInfo", runtime.WithHTTPPathPattern("/pactus/network/get_network_info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -192,7 +192,7 @@ func RegisterNetworkHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Network/GetNodeInfo", runtime.WithHTTPPathPattern("/v1/network/node"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Network/GetNodeInfo", runtime.WithHTTPPathPattern("/pactus/network/get_node_info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -212,9 +212,9 @@ func RegisterNetworkHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 }
 
 var (
-	pattern_Network_GetNetworkInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "network", "info"}, ""))
+	pattern_Network_GetNetworkInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "network", "get_network_info"}, ""))
 
-	pattern_Network_GetNodeInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "network", "node"}, ""))
+	pattern_Network_GetNodeInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "network", "get_node_info"}, ""))
 )
 
 var (

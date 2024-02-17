@@ -28,10 +28,14 @@ type CreateWalletRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"` // Name of the new wallet.
-	Mnemonic   string `protobuf:"bytes,2,opt,name=mnemonic,proto3" json:"mnemonic,omitempty"`                       // Mnemonic for wallet recovery.
-	Language   string `protobuf:"bytes,3,opt,name=language,proto3" json:"language,omitempty"`                       // Language for the mnemonic.
-	Password   string `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`                       // Password for securing the wallet.
+	// Name of the new wallet.
+	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
+	// Mnemonic for wallet recovery.
+	Mnemonic string `protobuf:"bytes,2,opt,name=mnemonic,proto3" json:"mnemonic,omitempty"`
+	// Language for the mnemonic.
+	Language string `protobuf:"bytes,3,opt,name=language,proto3" json:"language,omitempty"`
+	// Password for securing the wallet.
+	Password string `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`
 }
 
 func (x *CreateWalletRequest) Reset() {
@@ -100,7 +104,8 @@ type CreateWalletResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"` // Name of the created wallet.
+	// Name of the created wallet.
+	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 }
 
 func (x *CreateWalletResponse) Reset() {
@@ -148,7 +153,8 @@ type LoadWalletRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"` // Name of the wallet to load.
+	// Name of the wallet to load.
+	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 }
 
 func (x *LoadWalletRequest) Reset() {
@@ -196,7 +202,8 @@ type LoadWalletResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"` // Name of the loaded wallet.
+	// Name of the loaded wallet.
+	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 }
 
 func (x *LoadWalletResponse) Reset() {
@@ -244,7 +251,8 @@ type UnloadWalletRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"` // Name of the wallet to unload.
+	// Name of the wallet to unload.
+	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 }
 
 func (x *UnloadWalletRequest) Reset() {
@@ -292,7 +300,8 @@ type UnloadWalletResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"` // Name of the unloaded wallet.
+	// Name of the unloaded wallet.
+	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 }
 
 func (x *UnloadWalletResponse) Reset() {
@@ -340,7 +349,8 @@ type LockWalletRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"` // Name of the wallet to lock.
+	// Name of the wallet to lock.
+	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 }
 
 func (x *LockWalletRequest) Reset() {
@@ -388,7 +398,8 @@ type LockWalletResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"` // Name of the locked wallet.
+	// Name of the locked wallet.
+	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 }
 
 func (x *LockWalletResponse) Reset() {
@@ -430,13 +441,15 @@ func (x *LockWalletResponse) GetWalletName() string {
 	return ""
 }
 
-// Request message for obtaining the validator address associated with a public key.
+// Request message for obtaining the validator address associated with a public
+// key.
 type GetValidatorAddressRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	PublicKey string `protobuf:"bytes,1,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"` // Public key for which the validator address is requested.
+	// Public key for which the validator address is requested.
+	PublicKey string `protobuf:"bytes,1,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
 }
 
 func (x *GetValidatorAddressRequest) Reset() {
@@ -478,13 +491,15 @@ func (x *GetValidatorAddressRequest) GetPublicKey() string {
 	return ""
 }
 
-// Response message containing the validator address corresponding to a public key.
+// Response message containing the validator address corresponding to a public
+// key.
 type GetValidatorAddressResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"` // Validator address associated with the public key.
+	// Validator address associated with the public key.
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
 }
 
 func (x *GetValidatorAddressResponse) Reset() {
@@ -532,9 +547,12 @@ type UnlockWalletRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"` // Name of the wallet to unlock.
-	Password   string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`                       // Password for unlocking the wallet.
-	Timeout    int32  `protobuf:"varint,3,opt,name=timeout,proto3" json:"timeout,omitempty"`                        // Timeout duration for the unlocked state.
+	// Name of the wallet to unlock.
+	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
+	// Password for unlocking the wallet.
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	// Timeout duration for the unlocked state.
+	Timeout int32 `protobuf:"varint,3,opt,name=timeout,proto3" json:"timeout,omitempty"`
 }
 
 func (x *UnlockWalletRequest) Reset() {
@@ -596,7 +614,8 @@ type UnlockWalletResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"` // Name of the unlocked wallet.
+	// Name of the unlocked wallet.
+	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 }
 
 func (x *UnlockWalletResponse) Reset() {
@@ -644,9 +663,12 @@ type SignRawTransactionRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	WalletName     string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`             // Name of the wallet used for signing.
-	RawTransaction []byte `protobuf:"bytes,2,opt,name=raw_transaction,json=rawTransaction,proto3" json:"raw_transaction,omitempty"` // Raw transaction data to be signed.
-	Password       string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`                                   // Password for unlocking the wallet for signing.
+	// Name of the wallet used for signing.
+	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
+	// Raw transaction data to be signed.
+	RawTransaction []byte `protobuf:"bytes,2,opt,name=raw_transaction,json=rawTransaction,proto3" json:"raw_transaction,omitempty"`
+	// Password for unlocking the wallet for signing.
+	Password string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
 }
 
 func (x *SignRawTransactionRequest) Reset() {
@@ -708,8 +730,10 @@ type SignRawTransactionResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	TransactionId        []byte `protobuf:"bytes,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`                        // ID of the signed transaction.
-	SignedRawTransaction []byte `protobuf:"bytes,2,opt,name=signed_raw_transaction,json=signedRawTransaction,proto3" json:"signed_raw_transaction,omitempty"` // Signed raw transaction data.
+	// ID of the signed transaction.
+	TransactionId []byte `protobuf:"bytes,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	// Signed raw transaction data.
+	SignedRawTransaction []byte `protobuf:"bytes,2,opt,name=signed_raw_transaction,json=signedRawTransaction,proto3" json:"signed_raw_transaction,omitempty"`
 }
 
 func (x *SignRawTransactionResponse) Reset() {

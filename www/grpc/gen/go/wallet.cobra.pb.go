@@ -68,10 +68,10 @@ func _WalletCreateWalletCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "")
-	cmd.PersistentFlags().StringVar(&req.Mnemonic, cfg.FlagNamer("Mnemonic"), "", "")
-	cmd.PersistentFlags().StringVar(&req.Language, cfg.FlagNamer("Language"), "", "")
-	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "")
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the new wallet.")
+	cmd.PersistentFlags().StringVar(&req.Mnemonic, cfg.FlagNamer("Mnemonic"), "", "Mnemonic for wallet recovery.")
+	cmd.PersistentFlags().StringVar(&req.Language, cfg.FlagNamer("Language"), "", "Language for the mnemonic.")
+	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "Password for securing the wallet.")
 
 	return cmd
 }
@@ -113,7 +113,7 @@ func _WalletLoadWalletCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "")
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet to load.")
 
 	return cmd
 }
@@ -155,7 +155,7 @@ func _WalletUnloadWalletCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "")
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet to unload.")
 
 	return cmd
 }
@@ -166,7 +166,7 @@ func _WalletLockWalletCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("LockWallet"),
 		Short: "LockWallet RPC client",
-		Long:  "LockWallet locks a currently loaded wallet with the provided password and timeout.",
+		Long:  "LockWallet locks a currently loaded wallet with the provided password and\n timeout.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
@@ -197,7 +197,7 @@ func _WalletLockWalletCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "")
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet to lock.")
 
 	return cmd
 }
@@ -208,7 +208,7 @@ func _WalletUnlockWalletCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("UnlockWallet"),
 		Short: "UnlockWallet RPC client",
-		Long:  "UnlockWallet unlocks a locked wallet with the provided password and timeout.",
+		Long:  "UnlockWallet unlocks a locked wallet with the provided password and\n timeout.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
@@ -239,9 +239,9 @@ func _WalletUnlockWalletCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "")
-	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "")
-	cmd.PersistentFlags().Int32Var(&req.Timeout, cfg.FlagNamer("Timeout"), 0, "")
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet to unlock.")
+	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "Password for unlocking the wallet.")
+	cmd.PersistentFlags().Int32Var(&req.Timeout, cfg.FlagNamer("Timeout"), 0, "Timeout duration for the unlocked state.")
 
 	return cmd
 }
@@ -283,9 +283,9 @@ func _WalletSignRawTransactionCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "")
-	flag.BytesBase64Var(cmd.PersistentFlags(), &req.RawTransaction, cfg.FlagNamer("RawTransaction"), "")
-	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "")
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet used for signing.")
+	flag.BytesBase64Var(cmd.PersistentFlags(), &req.RawTransaction, cfg.FlagNamer("RawTransaction"), "Raw transaction data to be signed.")
+	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "Password for unlocking the wallet for signing.")
 
 	return cmd
 }
@@ -296,7 +296,7 @@ func _WalletGetValidatorAddressCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetValidatorAddress"),
 		Short: "GetValidatorAddress RPC client",
-		Long:  "GetValidatorAddress retrieves the validator address associated with a public key.",
+		Long:  "GetValidatorAddress retrieves the validator address associated with a\n public key.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
@@ -327,7 +327,7 @@ func _WalletGetValidatorAddressCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.PublicKey, cfg.FlagNamer("PublicKey"), "", "")
+	cmd.PersistentFlags().StringVar(&req.PublicKey, cfg.FlagNamer("PublicKey"), "", "Public key for which the validator address is requested.")
 
 	return cmd
 }

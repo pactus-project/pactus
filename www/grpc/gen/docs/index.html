@@ -587,7 +587,7 @@
                 </tr>
               
                 <tr>
-                  <td>payloadType</td>
+                  <td>payload_type</td>
                   <td><a href="#pactus.PayloadType">PayloadType</a></td>
                   <td></td>
                   <td><p>Type of transaction payload. </p></td>
@@ -1161,7 +1161,7 @@
                 </tr>
               
                 <tr>
-                  <td>payloadType</td>
+                  <td>payload_type</td>
                   <td><a href="#pactus.PayloadType">PayloadType</a></td>
                   <td></td>
                   <td><p>Type of transaction payload. </p></td>
@@ -1307,7 +1307,7 @@
 
       
         <h3 id="pactus.Transaction">Transaction</h3>
-        <p>Transaction service defines various RPC methods for interacting with transactions.</p>
+        <p>Transaction service defines various RPC methods for interacting with</p><p>transactions.</p>
         <table class="enum-table">
           <thead>
             <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
@@ -1318,14 +1318,16 @@
                 <td>GetTransaction</td>
                 <td><a href="#pactus.GetTransactionRequest">GetTransactionRequest</a></td>
                 <td><a href="#pactus.GetTransactionResponse">GetTransactionResponse</a></td>
-                <td><p>GetTransaction retrieves transaction details based on the provided request parameters.</p></td>
+                <td><p>GetTransaction retrieves transaction details based on the provided request
+parameters.</p></td>
               </tr>
             
               <tr>
                 <td>CalculateFee</td>
                 <td><a href="#pactus.CalculateFeeRequest">CalculateFeeRequest</a></td>
                 <td><a href="#pactus.CalculateFeeResponse">CalculateFeeResponse</a></td>
-                <td><p>CalculateFee calculates the transaction fee based on the specified amount and payload type.</p></td>
+                <td><p>CalculateFee calculates the transaction fee based on the specified amount
+and payload type.</p></td>
               </tr>
             
               <tr>
@@ -2307,7 +2309,8 @@
                 <td>GetBlock</td>
                 <td><a href="#pactus.GetBlockRequest">GetBlockRequest</a></td>
                 <td><a href="#pactus.GetBlockResponse">GetBlockResponse</a></td>
-                <td><p>GetBlock retrieves information about a block based on the provided request parameters.</p></td>
+                <td><p>GetBlock retrieves information about a block based on the provided request
+parameters.</p></td>
               </tr>
             
               <tr>
@@ -2342,21 +2345,24 @@
                 <td>GetAccount</td>
                 <td><a href="#pactus.GetAccountRequest">GetAccountRequest</a></td>
                 <td><a href="#pactus.GetAccountResponse">GetAccountResponse</a></td>
-                <td><p>GetAccount retrieves information about an account based on the provided address.</p></td>
+                <td><p>GetAccount retrieves information about an account based on the provided
+address.</p></td>
               </tr>
             
               <tr>
                 <td>GetValidator</td>
                 <td><a href="#pactus.GetValidatorRequest">GetValidatorRequest</a></td>
                 <td><a href="#pactus.GetValidatorResponse">GetValidatorResponse</a></td>
-                <td><p>GetValidator retrieves information about a validator based on the provided address.</p></td>
+                <td><p>GetValidator retrieves information about a validator based on the provided
+address.</p></td>
               </tr>
             
               <tr>
                 <td>GetValidatorByNumber</td>
                 <td><a href="#pactus.GetValidatorByNumberRequest">GetValidatorByNumberRequest</a></td>
                 <td><a href="#pactus.GetValidatorResponse">GetValidatorResponse</a></td>
-                <td><p>GetValidatorByNumber retrieves information about a validator based on the provided number.</p></td>
+                <td><p>GetValidatorByNumber retrieves information about a validator based on the
+provided number.</p></td>
               </tr>
             
               <tr>
@@ -2370,7 +2376,8 @@
                 <td>GetPublicKey</td>
                 <td><a href="#pactus.GetPublicKeyRequest">GetPublicKeyRequest</a></td>
                 <td><a href="#pactus.GetPublicKeyResponse">GetPublicKeyResponse</a></td>
-                <td><p>GetPublicKey retrieves the public key of an account based on the provided address.</p></td>
+                <td><p>GetPublicKey retrieves the public key of an account based on the provided
+address.</p></td>
               </tr>
             
           </tbody>
@@ -2521,7 +2528,7 @@
         
       
         <h3 id="pactus.GetNodeInfoRequest">GetNodeInfoRequest</h3>
-        <p>Request message for retrieving information about a specific node in the network.</p>
+        <p>Request message for retrieving information about a specific node in the</p><p>network.</p>
 
         
 
@@ -2936,7 +2943,7 @@
         
       
         <h3 id="pactus.GetValidatorAddressRequest">GetValidatorAddressRequest</h3>
-        <p>Request message for obtaining the validator address associated with a public key.</p>
+        <p>Request message for obtaining the validator address associated with a public</p><p>key.</p>
 
         
           <table class="field-table">
@@ -2960,7 +2967,7 @@
         
       
         <h3 id="pactus.GetValidatorAddressResponse">GetValidatorAddressResponse</h3>
-        <p>Response message containing the validator address corresponding to a public key.</p>
+        <p>Response message containing the validator address corresponding to a public</p><p>key.</p>
 
         
           <table class="field-table">
@@ -3297,14 +3304,16 @@
                 <td>LockWallet</td>
                 <td><a href="#pactus.LockWalletRequest">LockWalletRequest</a></td>
                 <td><a href="#pactus.LockWalletResponse">LockWalletResponse</a></td>
-                <td><p>LockWallet locks a currently loaded wallet with the provided password and timeout.</p></td>
+                <td><p>LockWallet locks a currently loaded wallet with the provided password and
+timeout.</p></td>
               </tr>
             
               <tr>
                 <td>UnlockWallet</td>
                 <td><a href="#pactus.UnlockWalletRequest">UnlockWalletRequest</a></td>
                 <td><a href="#pactus.UnlockWalletResponse">UnlockWalletResponse</a></td>
-                <td><p>UnlockWallet unlocks a locked wallet with the provided password and timeout.</p></td>
+                <td><p>UnlockWallet unlocks a locked wallet with the provided password and
+timeout.</p></td>
               </tr>
             
               <tr>
@@ -3318,7 +3327,8 @@
                 <td>GetValidatorAddress</td>
                 <td><a href="#pactus.GetValidatorAddressRequest">GetValidatorAddressRequest</a></td>
                 <td><a href="#pactus.GetValidatorAddressResponse">GetValidatorAddressResponse</a></td>
-                <td><p>GetValidatorAddress retrieves the validator address associated with a public key.</p></td>
+                <td><p>GetValidatorAddress retrieves the validator address associated with a
+public key.</p></td>
               </tr>
             
           </tbody>

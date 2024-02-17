@@ -1846,7 +1846,7 @@ public final class TransactionOuterClass {
      * Type of transaction payload.
      * </pre>
      *
-     * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
+     * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
      * @return The enum numeric value on the wire for payloadType.
      */
     int getPayloadTypeValue();
@@ -1855,7 +1855,7 @@ public final class TransactionOuterClass {
      * Type of transaction payload.
      * </pre>
      *
-     * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
+     * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
      * @return The payloadType.
      */
     pactus.transaction.TransactionOuterClass.PayloadType getPayloadType();
@@ -1920,14 +1920,14 @@ public final class TransactionOuterClass {
       return amount_;
     }
 
-    public static final int PAYLOADTYPE_FIELD_NUMBER = 2;
+    public static final int PAYLOAD_TYPE_FIELD_NUMBER = 2;
     private int payloadType_;
     /**
      * <pre>
      * Type of transaction payload.
      * </pre>
      *
-     * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
+     * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
      * @return The enum numeric value on the wire for payloadType.
      */
     @java.lang.Override public int getPayloadTypeValue() {
@@ -1938,7 +1938,7 @@ public final class TransactionOuterClass {
      * Type of transaction payload.
      * </pre>
      *
-     * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
+     * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
      * @return The payloadType.
      */
     @java.lang.Override public pactus.transaction.TransactionOuterClass.PayloadType getPayloadType() {
@@ -2016,7 +2016,7 @@ public final class TransactionOuterClass {
       hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getAmount());
-      hash = (37 * hash) + PAYLOADTYPE_FIELD_NUMBER;
+      hash = (37 * hash) + PAYLOAD_TYPE_FIELD_NUMBER;
       hash = (53 * hash) + payloadType_;
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
@@ -2337,7 +2337,7 @@ public final class TransactionOuterClass {
        * Type of transaction payload.
        * </pre>
        *
-       * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
        * @return The enum numeric value on the wire for payloadType.
        */
       @java.lang.Override public int getPayloadTypeValue() {
@@ -2348,7 +2348,7 @@ public final class TransactionOuterClass {
        * Type of transaction payload.
        * </pre>
        *
-       * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
        * @param value The enum numeric value on the wire for payloadType to set.
        * @return This builder for chaining.
        */
@@ -2363,7 +2363,7 @@ public final class TransactionOuterClass {
        * Type of transaction payload.
        * </pre>
        *
-       * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
        * @return The payloadType.
        */
       @java.lang.Override
@@ -2377,7 +2377,7 @@ public final class TransactionOuterClass {
        * Type of transaction payload.
        * </pre>
        *
-       * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
        * @param value The payloadType to set.
        * @return This builder for chaining.
        */
@@ -2395,7 +2395,7 @@ public final class TransactionOuterClass {
        * Type of transaction payload.
        * </pre>
        *
-       * <code>.pactus.PayloadType payloadType = 2 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
        * @return This builder for chaining.
        */
       public Builder clearPayloadType() {
@@ -13187,7 +13187,7 @@ public final class TransactionOuterClass {
      * Type of transaction payload.
      * </pre>
      *
-     * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
+     * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
      * @return The enum numeric value on the wire for payloadType.
      */
     int getPayloadTypeValue();
@@ -13196,7 +13196,7 @@ public final class TransactionOuterClass {
      * Type of transaction payload.
      * </pre>
      *
-     * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
+     * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
      * @return The payloadType.
      */
     pactus.transaction.TransactionOuterClass.PayloadType getPayloadType();
@@ -13575,14 +13575,14 @@ public final class TransactionOuterClass {
       return fee_;
     }
 
-    public static final int PAYLOADTYPE_FIELD_NUMBER = 7;
+    public static final int PAYLOAD_TYPE_FIELD_NUMBER = 7;
     private int payloadType_;
     /**
      * <pre>
      * Type of transaction payload.
      * </pre>
      *
-     * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
+     * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
      * @return The enum numeric value on the wire for payloadType.
      */
     @java.lang.Override public int getPayloadTypeValue() {
@@ -13593,7 +13593,7 @@ public final class TransactionOuterClass {
      * Type of transaction payload.
      * </pre>
      *
-     * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
+     * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
      * @return The payloadType.
      */
     @java.lang.Override public pactus.transaction.TransactionOuterClass.PayloadType getPayloadType() {
@@ -14134,7 +14134,7 @@ public final class TransactionOuterClass {
       hash = (37 * hash) + FEE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getFee());
-      hash = (37 * hash) + PAYLOADTYPE_FIELD_NUMBER;
+      hash = (37 * hash) + PAYLOAD_TYPE_FIELD_NUMBER;
       hash = (53 * hash) + payloadType_;
       hash = (37 * hash) + MEMO_FIELD_NUMBER;
       hash = (53 * hash) + getMemo().hashCode();
@@ -14924,7 +14924,7 @@ public final class TransactionOuterClass {
        * Type of transaction payload.
        * </pre>
        *
-       * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
        * @return The enum numeric value on the wire for payloadType.
        */
       @java.lang.Override public int getPayloadTypeValue() {
@@ -14935,7 +14935,7 @@ public final class TransactionOuterClass {
        * Type of transaction payload.
        * </pre>
        *
-       * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
        * @param value The enum numeric value on the wire for payloadType to set.
        * @return This builder for chaining.
        */
@@ -14950,7 +14950,7 @@ public final class TransactionOuterClass {
        * Type of transaction payload.
        * </pre>
        *
-       * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
        * @return The payloadType.
        */
       @java.lang.Override
@@ -14964,7 +14964,7 @@ public final class TransactionOuterClass {
        * Type of transaction payload.
        * </pre>
        *
-       * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
        * @param value The payloadType to set.
        * @return This builder for chaining.
        */
@@ -14982,7 +14982,7 @@ public final class TransactionOuterClass {
        * Type of transaction payload.
        * </pre>
        *
-       * <code>.pactus.PayloadType payloadType = 7 [json_name = "payloadType"];</code>
+       * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
        * @return This builder for chaining.
        */
       public Builder clearPayloadType() {
@@ -16284,81 +16284,81 @@ public final class TransactionOuterClass {
       "lock_height\030\014 \001(\rR\013blockHeight\022\035\n\nblock_" +
       "time\030\r \001(\rR\tblockTime\0229\n\013transaction\030\003 \001" +
       "(\0132\027.pactus.TransactionInfoR\013transaction" +
-      "\"d\n\023CalculateFeeRequest\022\026\n\006amount\030\001 \001(\003R" +
-      "\006amount\0225\n\013payloadType\030\002 \001(\0162\023.pactus.Pa" +
-      "yloadTypeR\013payloadType\"(\n\024CalculateFeeRe" +
-      "sponse\022\020\n\003fee\030\001 \001(\003R\003fee\"S\n\033BroadcastTra" +
-      "nsactionRequest\0224\n\026signed_raw_transactio" +
-      "n\030\001 \001(\014R\024signedRawTransaction\".\n\034Broadca" +
-      "stTransactionResponse\022\016\n\002id\030\002 \001(\014R\002id\"\261\001" +
-      "\n GetRawTransferTransactionRequest\022\033\n\tlo" +
-      "ck_time\030\001 \001(\rR\010lockTime\022\026\n\006sender\030\002 \001(\tR" +
-      "\006sender\022\032\n\010receiver\030\003 \001(\tR\010receiver\022\026\n\006a" +
-      "mount\030\004 \001(\003R\006amount\022\020\n\003fee\030\005 \001(\003R\003fee\022\022\n" +
-      "\004memo\030\006 \001(\tR\004memo\"\312\001\n\034GetRawBondTransact" +
-      "ionRequest\022\033\n\tlock_time\030\001 \001(\rR\010lockTime\022" +
-      "\026\n\006sender\030\002 \001(\tR\006sender\022\032\n\010receiver\030\003 \001(" +
-      "\tR\010receiver\022\024\n\005stake\030\004 \001(\003R\005stake\022\035\n\npub" +
-      "lic_key\030\005 \001(\tR\tpublicKey\022\020\n\003fee\030\006 \001(\003R\003f" +
-      "ee\022\022\n\004memo\030\007 \001(\tR\004memo\"~\n\036GetRawUnBondTr" +
-      "ansactionRequest\022\033\n\tlock_time\030\001 \001(\rR\010loc" +
-      "kTime\022+\n\021validator_address\030\003 \001(\tR\020valida" +
-      "torAddress\022\022\n\004memo\030\004 \001(\tR\004memo\"\323\001\n GetRa" +
-      "wWithdrawTransactionRequest\022\033\n\tlock_time" +
-      "\030\001 \001(\rR\010lockTime\022+\n\021validator_address\030\002 " +
-      "\001(\tR\020validatorAddress\022\'\n\017account_address" +
-      "\030\003 \001(\tR\016accountAddress\022\020\n\003fee\030\004 \001(\003R\003fee" +
-      "\022\026\n\006amount\030\005 \001(\003R\006amount\022\022\n\004memo\030\006 \001(\tR\004" +
-      "memo\"D\n\031GetRawTransactionResponse\022\'\n\017raw" +
-      "_transaction\030\001 \001(\014R\016rawTransaction\"]\n\017Pa" +
-      "yloadTransfer\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n" +
-      "\010receiver\030\002 \001(\tR\010receiver\022\026\n\006amount\030\003 \001(" +
-      "\003R\006amount\"W\n\013PayloadBond\022\026\n\006sender\030\001 \001(\t" +
-      "R\006sender\022\032\n\010receiver\030\002 \001(\tR\010receiver\022\024\n\005" +
-      "stake\030\003 \001(\003R\005stake\"B\n\020PayloadSortition\022\030" +
-      "\n\007address\030\001 \001(\tR\007address\022\024\n\005proof\030\002 \001(\014R" +
-      "\005proof\"-\n\rPayloadUnbond\022\034\n\tvalidator\030\001 \001" +
-      "(\tR\tvalidator\"M\n\017PayloadWithdraw\022\022\n\004from" +
-      "\030\001 \001(\tR\004from\022\016\n\002to\030\002 \001(\tR\002to\022\026\n\006amount\030\003" +
-      " \001(\003R\006amount\"\253\004\n\017TransactionInfo\022\016\n\002id\030\001" +
-      " \001(\014R\002id\022\022\n\004data\030\002 \001(\014R\004data\022\030\n\007version\030" +
-      "\003 \001(\005R\007version\022\033\n\tlock_time\030\004 \001(\rR\010lockT" +
-      "ime\022\024\n\005value\030\005 \001(\003R\005value\022\020\n\003fee\030\006 \001(\003R\003" +
-      "fee\0225\n\013payloadType\030\007 \001(\0162\023.pactus.Payloa" +
-      "dTypeR\013payloadType\0225\n\010transfer\030\036 \001(\0132\027.p" +
-      "actus.PayloadTransferH\000R\010transfer\022)\n\004bon" +
-      "d\030\037 \001(\0132\023.pactus.PayloadBondH\000R\004bond\0228\n\t" +
-      "sortition\030  \001(\0132\030.pactus.PayloadSortitio" +
-      "nH\000R\tsortition\022/\n\006unbond\030! \001(\0132\025.pactus." +
-      "PayloadUnbondH\000R\006unbond\0225\n\010withdraw\030\" \001(" +
-      "\0132\027.pactus.PayloadWithdrawH\000R\010withdraw\022\022" +
-      "\n\004memo\030\010 \001(\tR\004memo\022\035\n\npublic_key\030\t \001(\tR\t" +
-      "publicKey\022\034\n\tsignature\030\n \001(\014R\tsignatureB" +
-      "\t\n\007payload*\203\001\n\013PayloadType\022\013\n\007UNKNOWN\020\000\022" +
-      "\024\n\020TRANSFER_PAYLOAD\020\001\022\020\n\014BOND_PAYLOAD\020\002\022" +
-      "\025\n\021SORTITION_PAYLOAD\020\003\022\022\n\016UNBOND_PAYLOAD" +
-      "\020\004\022\024\n\020WITHDRAW_PAYLOAD\020\005*B\n\024TransactionV" +
-      "erbosity\022\024\n\020TRANSACTION_DATA\020\000\022\024\n\020TRANSA" +
-      "CTION_INFO\020\0012\250\005\n\013Transaction\022O\n\016GetTrans" +
-      "action\022\035.pactus.GetTransactionRequest\032\036." +
-      "pactus.GetTransactionResponse\022I\n\014Calcula" +
-      "teFee\022\033.pactus.CalculateFeeRequest\032\034.pac" +
-      "tus.CalculateFeeResponse\022a\n\024BroadcastTra" +
-      "nsaction\022#.pactus.BroadcastTransactionRe" +
-      "quest\032$.pactus.BroadcastTransactionRespo" +
-      "nse\022h\n\031GetRawTransferTransaction\022(.pactu" +
-      "s.GetRawTransferTransactionRequest\032!.pac" +
-      "tus.GetRawTransactionResponse\022`\n\025GetRawB" +
-      "ondTransaction\022$.pactus.GetRawBondTransa" +
-      "ctionRequest\032!.pactus.GetRawTransactionR" +
-      "esponse\022d\n\027GetRawUnBondTransaction\022&.pac" +
-      "tus.GetRawUnBondTransactionRequest\032!.pac" +
-      "tus.GetRawTransactionResponse\022h\n\031GetRawW" +
-      "ithdrawTransaction\022(.pactus.GetRawWithdr" +
-      "awTransactionRequest\032!.pactus.GetRawTran" +
-      "sactionResponseBF\n\022pactus.transactionZ0g" +
-      "ithub.com/pactus-project/pactus/www/grpc" +
-      "/pactusb\006proto3"
+      "\"e\n\023CalculateFeeRequest\022\026\n\006amount\030\001 \001(\003R" +
+      "\006amount\0226\n\014payload_type\030\002 \001(\0162\023.pactus.P" +
+      "ayloadTypeR\013payloadType\"(\n\024CalculateFeeR" +
+      "esponse\022\020\n\003fee\030\001 \001(\003R\003fee\"S\n\033BroadcastTr" +
+      "ansactionRequest\0224\n\026signed_raw_transacti" +
+      "on\030\001 \001(\014R\024signedRawTransaction\".\n\034Broadc" +
+      "astTransactionResponse\022\016\n\002id\030\002 \001(\014R\002id\"\261" +
+      "\001\n GetRawTransferTransactionRequest\022\033\n\tl" +
+      "ock_time\030\001 \001(\rR\010lockTime\022\026\n\006sender\030\002 \001(\t" +
+      "R\006sender\022\032\n\010receiver\030\003 \001(\tR\010receiver\022\026\n\006" +
+      "amount\030\004 \001(\003R\006amount\022\020\n\003fee\030\005 \001(\003R\003fee\022\022" +
+      "\n\004memo\030\006 \001(\tR\004memo\"\312\001\n\034GetRawBondTransac" +
+      "tionRequest\022\033\n\tlock_time\030\001 \001(\rR\010lockTime" +
+      "\022\026\n\006sender\030\002 \001(\tR\006sender\022\032\n\010receiver\030\003 \001" +
+      "(\tR\010receiver\022\024\n\005stake\030\004 \001(\003R\005stake\022\035\n\npu" +
+      "blic_key\030\005 \001(\tR\tpublicKey\022\020\n\003fee\030\006 \001(\003R\003" +
+      "fee\022\022\n\004memo\030\007 \001(\tR\004memo\"~\n\036GetRawUnBondT" +
+      "ransactionRequest\022\033\n\tlock_time\030\001 \001(\rR\010lo" +
+      "ckTime\022+\n\021validator_address\030\003 \001(\tR\020valid" +
+      "atorAddress\022\022\n\004memo\030\004 \001(\tR\004memo\"\323\001\n GetR" +
+      "awWithdrawTransactionRequest\022\033\n\tlock_tim" +
+      "e\030\001 \001(\rR\010lockTime\022+\n\021validator_address\030\002" +
+      " \001(\tR\020validatorAddress\022\'\n\017account_addres" +
+      "s\030\003 \001(\tR\016accountAddress\022\020\n\003fee\030\004 \001(\003R\003fe" +
+      "e\022\026\n\006amount\030\005 \001(\003R\006amount\022\022\n\004memo\030\006 \001(\tR" +
+      "\004memo\"D\n\031GetRawTransactionResponse\022\'\n\017ra" +
+      "w_transaction\030\001 \001(\014R\016rawTransaction\"]\n\017P" +
+      "ayloadTransfer\022\026\n\006sender\030\001 \001(\tR\006sender\022\032" +
+      "\n\010receiver\030\002 \001(\tR\010receiver\022\026\n\006amount\030\003 \001" +
+      "(\003R\006amount\"W\n\013PayloadBond\022\026\n\006sender\030\001 \001(" +
+      "\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010receiver\022\024\n" +
+      "\005stake\030\003 \001(\003R\005stake\"B\n\020PayloadSortition\022" +
+      "\030\n\007address\030\001 \001(\tR\007address\022\024\n\005proof\030\002 \001(\014" +
+      "R\005proof\"-\n\rPayloadUnbond\022\034\n\tvalidator\030\001 " +
+      "\001(\tR\tvalidator\"M\n\017PayloadWithdraw\022\022\n\004fro" +
+      "m\030\001 \001(\tR\004from\022\016\n\002to\030\002 \001(\tR\002to\022\026\n\006amount\030" +
+      "\003 \001(\003R\006amount\"\254\004\n\017TransactionInfo\022\016\n\002id\030" +
+      "\001 \001(\014R\002id\022\022\n\004data\030\002 \001(\014R\004data\022\030\n\007version" +
+      "\030\003 \001(\005R\007version\022\033\n\tlock_time\030\004 \001(\rR\010lock" +
+      "Time\022\024\n\005value\030\005 \001(\003R\005value\022\020\n\003fee\030\006 \001(\003R" +
+      "\003fee\0226\n\014payload_type\030\007 \001(\0162\023.pactus.Payl" +
+      "oadTypeR\013payloadType\0225\n\010transfer\030\036 \001(\0132\027" +
+      ".pactus.PayloadTransferH\000R\010transfer\022)\n\004b" +
+      "ond\030\037 \001(\0132\023.pactus.PayloadBondH\000R\004bond\0228" +
+      "\n\tsortition\030  \001(\0132\030.pactus.PayloadSortit" +
+      "ionH\000R\tsortition\022/\n\006unbond\030! \001(\0132\025.pactu" +
+      "s.PayloadUnbondH\000R\006unbond\0225\n\010withdraw\030\" " +
+      "\001(\0132\027.pactus.PayloadWithdrawH\000R\010withdraw" +
+      "\022\022\n\004memo\030\010 \001(\tR\004memo\022\035\n\npublic_key\030\t \001(\t" +
+      "R\tpublicKey\022\034\n\tsignature\030\n \001(\014R\tsignatur" +
+      "eB\t\n\007payload*\203\001\n\013PayloadType\022\013\n\007UNKNOWN\020" +
+      "\000\022\024\n\020TRANSFER_PAYLOAD\020\001\022\020\n\014BOND_PAYLOAD\020" +
+      "\002\022\025\n\021SORTITION_PAYLOAD\020\003\022\022\n\016UNBOND_PAYLO" +
+      "AD\020\004\022\024\n\020WITHDRAW_PAYLOAD\020\005*B\n\024Transactio" +
+      "nVerbosity\022\024\n\020TRANSACTION_DATA\020\000\022\024\n\020TRAN" +
+      "SACTION_INFO\020\0012\250\005\n\013Transaction\022O\n\016GetTra" +
+      "nsaction\022\035.pactus.GetTransactionRequest\032" +
+      "\036.pactus.GetTransactionResponse\022I\n\014Calcu" +
+      "lateFee\022\033.pactus.CalculateFeeRequest\032\034.p" +
+      "actus.CalculateFeeResponse\022a\n\024BroadcastT" +
+      "ransaction\022#.pactus.BroadcastTransaction" +
+      "Request\032$.pactus.BroadcastTransactionRes" +
+      "ponse\022h\n\031GetRawTransferTransaction\022(.pac" +
+      "tus.GetRawTransferTransactionRequest\032!.p" +
+      "actus.GetRawTransactionResponse\022`\n\025GetRa" +
+      "wBondTransaction\022$.pactus.GetRawBondTran" +
+      "sactionRequest\032!.pactus.GetRawTransactio" +
+      "nResponse\022d\n\027GetRawUnBondTransaction\022&.p" +
+      "actus.GetRawUnBondTransactionRequest\032!.p" +
+      "actus.GetRawTransactionResponse\022h\n\031GetRa" +
+      "wWithdrawTransaction\022(.pactus.GetRawWith" +
+      "drawTransactionRequest\032!.pactus.GetRawTr" +
+      "ansactionResponseBF\n\022pactus.transactionZ" +
+      "0github.com/pactus-project/pactus/www/gr" +
+      "pc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

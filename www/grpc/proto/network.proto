@@ -18,51 +18,88 @@ message GetNetworkInfoRequest {}
 
 // Response message containing information about the overall network.
 message GetNetworkInfoResponse {
-  string network_name = 1;                 // Name of the network.
-  uint32 total_sent_bytes = 2;             // Total bytes sent across the network.
-  uint32 total_received_bytes = 3;         // Total bytes received across the network.
-  uint32 connected_peers_count = 4;       // Number of connected peers.
-  repeated PeerInfo connected_peers = 5;   // List of connected peers.
-  map<uint32, uint64> sent_bytes = 6;      // Bytes sent per peer ID.
-  map<uint32, uint64> received_bytes = 7;  // Bytes received per peer ID.
+  // Name of the network.
+  string network_name = 1;
+  // Total bytes sent across the network.
+  uint32 total_sent_bytes = 2;
+  // Total bytes received across the network.
+  uint32 total_received_bytes = 3;
+  // Number of connected peers.
+  uint32 connected_peers_count = 4;
+  // List of connected peers.
+  repeated PeerInfo connected_peers = 5;
+  // Bytes sent per peer ID.
+  map<uint32, uint64> sent_bytes = 6;
+  // Bytes received per peer ID.
+  map<uint32, uint64> received_bytes = 7;
 }
 
-// Request message for retrieving information about a specific node in the network.
+// Request message for retrieving information about a specific node in the
+// network.
 message GetNodeInfoRequest {}
 
 // Response message containing information about a specific node in the network.
 message GetNodeInfoResponse {
-  string moniker = 1;                // Moniker of the node.
-  string agent = 2;                  // Agent information of the node.
-  bytes peer_id = 3;                 // Peer ID of the node.
-  uint64 started_at = 4;             // Timestamp when the node started.
-  string reachability = 5;           // Reachability status of the node.
-  repeated int32 services = 6;       // List of services provided by the node.
-  repeated string services_names = 7; // Names of services provided by the node.
-  repeated string addrs = 8;         // List of addresses associated with the node.
-  repeated string protocols = 9;     // List of protocols supported by the node.
+  // Moniker of the node.
+  string moniker = 1;
+  // Agent information of the node.
+  string agent = 2;
+  // Peer ID of the node.
+  bytes peer_id = 3;
+  // Timestamp when the node started.
+  uint64 started_at = 4;
+  // Reachability status of the node.
+  string reachability = 5;
+  // List of services provided by the node.
+  repeated int32 services = 6;
+  // Names of services provided by the node.
+  repeated string services_names = 7;
+  // List of addresses associated with the node.
+  repeated string addrs = 8;
+  // List of protocols supported by the node.
+  repeated string protocols = 9;
 }
 
 // Information about a peer in the network.
 message PeerInfo {
-  int32 status = 1;                    // Status of the peer.
-  string moniker = 2;                  // Moniker of the peer.
-  string agent = 3;                    // Agent information of the peer.
-  bytes peer_id = 4;                   // Peer ID of the peer.
-  repeated string consensus_keys = 5;  // Consensus keys used by the peer.
-  repeated string consensus_address = 6; // Consensus address of the peer.
-  uint32 services = 7;                 // Services provided by the peer.
-  bytes last_block_hash = 8;           // Hash of the last block the peer knows.
-  uint32 height = 9;                   // Height of the peer in the blockchain.
-  int32 received_messages = 10;        // Count of received messages.
-  int32 invalid_messages = 11;         // Count of invalid messages received.
-  int64 last_sent = 12;                // Timestamp of the last sent message.
-  int64 last_received = 13;            // Timestamp of the last received message.
-  map<int32, int64> sent_bytes = 14;   // Bytes sent per message type.
-  map<int32, int64> received_bytes = 15; // Bytes received per message type.
-  string address = 16;                 // Network address of the peer.
-  string direction = 17;               // Direction of connection with the peer.
-  repeated string protocols = 18;      // List of protocols supported by the peer.
-  int32 total_sessions = 19;           // Total sessions with the peer.
-  int32 completed_sessions = 20;       // Completed sessions with the peer.
+  // Status of the peer.
+  int32 status = 1;
+  // Moniker of the peer.
+  string moniker = 2;
+  // Agent information of the peer.
+  string agent = 3;
+  // Peer ID of the peer.
+  bytes peer_id = 4;
+  // Consensus keys used by the peer.
+  repeated string consensus_keys = 5;
+  // Consensus address of the peer.
+  repeated string consensus_address = 6;
+  // Services provided by the peer.
+  uint32 services = 7;
+  // Hash of the last block the peer knows.
+  bytes last_block_hash = 8;
+  // Height of the peer in the blockchain.
+  uint32 height = 9;
+  // Count of received messages.
+  int32 received_messages = 10;
+  // Count of invalid messages received.
+  int32 invalid_messages = 11;
+  // Timestamp of the last sent message.
+  int64 last_sent = 12;
+  // Timestamp of the last received message.
+  int64 last_received = 13;
+  // Bytes sent per message type.
+  map<int32, int64> sent_bytes = 14;
+  // Bytes received per message type.
+  map<int32, int64> received_bytes = 15;
+  // Network address of the peer.
+  string address = 16;
+  // Direction of connection with the peer.
+  string direction = 17;
+  // List of protocols supported by the peer.
+  repeated string protocols = 18;
+  // Total sessions with the peer.
+  int32 total_sessions = 19;
+  // Completed sessions with the peer.
+  int32 completed_sessions = 20;
 }

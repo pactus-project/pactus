@@ -140,7 +140,7 @@ Request message for calculating transaction fee.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | amount | [int64](#int64) |  | Transaction amount. |
-| payloadType | [PayloadType](#pactus-PayloadType) |  | Type of transaction payload. |
+| payload_type | [PayloadType](#pactus-PayloadType) |  | Type of transaction payload. |
 
 
 
@@ -384,7 +384,7 @@ Information about a transaction.
 | lock_time | [uint32](#uint32) |  | Lock time for the transaction. |
 | value | [int64](#int64) |  | Transaction value. |
 | fee | [int64](#int64) |  | Transaction fee. |
-| payloadType | [PayloadType](#pactus-PayloadType) |  | Type of transaction payload. |
+| payload_type | [PayloadType](#pactus-PayloadType) |  | Type of transaction payload. |
 | transfer | [PayloadTransfer](#pactus-PayloadTransfer) |  | Transfer payload. |
 | bond | [PayloadBond](#pactus-PayloadBond) |  | Bond payload. |
 | sortition | [PayloadSortition](#pactus-PayloadSortition) |  | Sortition payload. |
@@ -436,7 +436,8 @@ Enumeration for verbosity level when requesting transaction details.
 <a name="pactus-Transaction"></a>
 
 ### Transaction
-Transaction service defines various RPC methods for interacting with transactions.
+Transaction service defines various RPC methods for interacting with
+transactions.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
@@ -990,7 +991,8 @@ Response message containing information about the overall network.
 <a name="pactus-GetNodeInfoRequest"></a>
 
 ### GetNodeInfoRequest
-Request message for retrieving information about a specific node in the network.
+Request message for retrieving information about a specific node in the
+network.
 
 
 
@@ -1149,7 +1151,8 @@ Response message containing the name of the created wallet.
 <a name="pactus-GetValidatorAddressRequest"></a>
 
 ### GetValidatorAddressRequest
-Request message for obtaining the validator address associated with a public key.
+Request message for obtaining the validator address associated with a public
+key.
 
 
 | Field | Type | Label | Description |
@@ -1164,7 +1167,8 @@ Request message for obtaining the validator address associated with a public key
 <a name="pactus-GetValidatorAddressResponse"></a>
 
 ### GetValidatorAddressResponse
-Response message containing the validator address corresponding to a public key.
+Response message containing the validator address corresponding to a public
+key.
 
 
 | Field | Type | Label | Description |

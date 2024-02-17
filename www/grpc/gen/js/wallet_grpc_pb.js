@@ -198,7 +198,8 @@ unloadWallet: {
     responseSerialize: serialize_pactus_UnloadWalletResponse,
     responseDeserialize: deserialize_pactus_UnloadWalletResponse,
   },
-  // LockWallet locks a currently loaded wallet with the provided password and timeout.
+  // LockWallet locks a currently loaded wallet with the provided password and
+// timeout.
 lockWallet: {
     path: '/pactus.Wallet/LockWallet',
     requestStream: false,
@@ -210,7 +211,8 @@ lockWallet: {
     responseSerialize: serialize_pactus_LockWalletResponse,
     responseDeserialize: deserialize_pactus_LockWalletResponse,
   },
-  // UnlockWallet unlocks a locked wallet with the provided password and timeout.
+  // UnlockWallet unlocks a locked wallet with the provided password and
+// timeout.
 unlockWallet: {
     path: '/pactus.Wallet/UnlockWallet',
     requestStream: false,
@@ -234,7 +236,8 @@ signRawTransaction: {
     responseSerialize: serialize_pactus_SignRawTransactionResponse,
     responseDeserialize: deserialize_pactus_SignRawTransactionResponse,
   },
-  // GetValidatorAddress retrieves the validator address associated with a public key.
+  // GetValidatorAddress retrieves the validator address associated with a
+// public key.
 getValidatorAddress: {
     path: '/pactus.Wallet/GetValidatorAddress',
     requestStream: false,

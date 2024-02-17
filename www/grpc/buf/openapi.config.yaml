@@ -6,4 +6,4 @@ openapiOptions:
       option:
         info:
           title: Pactus APIs
-          version: "1.0"
+          version: "1.1"

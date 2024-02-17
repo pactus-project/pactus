@@ -492,15 +492,15 @@ Here you can find the list of all gRPC methods and messages.
 </div>
   
 <h2>Transaction Service <span class="badge text-bg-warning fs-6 align-top">transaction.proto</span></h2>
-<p>Transaction service defines various RPC methods for interacting with transactions.</p>  
+<p>Transaction service defines various RPC methods for interacting with</p><p>transactions.</p>  
 <h3 id="pactus.Transaction.GetTransaction">GetTransaction <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.GetTransactionRequest">GetTransactionRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetTransactionResponse">GetTransactionResponse</a></div>
-<p>GetTransaction retrieves transaction details based on the provided request parameters.</p> 
+<p>GetTransaction retrieves transaction details based on the provided request</p><p>parameters.</p> 
 <h3 id="pactus.Transaction.CalculateFee">CalculateFee <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.CalculateFeeRequest">CalculateFeeRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.CalculateFeeResponse">CalculateFeeResponse</a></div>
-<p>CalculateFee calculates the transaction fee based on the specified amount and payload type.</p> 
+<p>CalculateFee calculates the transaction fee based on the specified amount</p><p>and payload type.</p> 
 <h3 id="pactus.Transaction.BroadcastTransaction">BroadcastTransaction <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.BroadcastTransactionRequest">BroadcastTransactionRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.BroadcastTransactionResponse">BroadcastTransactionResponse</a></div>
@@ -526,7 +526,7 @@ Here you can find the list of all gRPC methods and messages.
 <h3 id="pactus.Blockchain.GetBlock">GetBlock <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.GetBlockRequest">GetBlockRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetBlockResponse">GetBlockResponse</a></div>
-<p>GetBlock retrieves information about a block based on the provided request parameters.</p> 
+<p>GetBlock retrieves information about a block based on the provided request</p><p>parameters.</p> 
 <h3 id="pactus.Blockchain.GetBlockHash">GetBlockHash <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.GetBlockHashRequest">GetBlockHashRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetBlockHashResponse">GetBlockHashResponse</a></div>
@@ -546,15 +546,15 @@ Here you can find the list of all gRPC methods and messages.
 <h3 id="pactus.Blockchain.GetAccount">GetAccount <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.GetAccountRequest">GetAccountRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetAccountResponse">GetAccountResponse</a></div>
-<p>GetAccount retrieves information about an account based on the provided address.</p> 
+<p>GetAccount retrieves information about an account based on the provided</p><p>address.</p> 
 <h3 id="pactus.Blockchain.GetValidator">GetValidator <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.GetValidatorRequest">GetValidatorRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetValidatorResponse">GetValidatorResponse</a></div>
-<p>GetValidator retrieves information about a validator based on the provided address.</p> 
+<p>GetValidator retrieves information about a validator based on the provided</p><p>address.</p> 
 <h3 id="pactus.Blockchain.GetValidatorByNumber">GetValidatorByNumber <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.GetValidatorByNumberRequest">GetValidatorByNumberRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetValidatorResponse">GetValidatorResponse</a></div>
-<p>GetValidatorByNumber retrieves information about a validator based on the provided number.</p> 
+<p>GetValidatorByNumber retrieves information about a validator based on the</p><p>provided number.</p> 
 <h3 id="pactus.Blockchain.GetValidatorAddresses">GetValidatorAddresses <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.GetValidatorAddressesRequest">GetValidatorAddressesRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetValidatorAddressesResponse">GetValidatorAddressesResponse</a></div>
@@ -562,7 +562,7 @@ Here you can find the list of all gRPC methods and messages.
 <h3 id="pactus.Blockchain.GetPublicKey">GetPublicKey <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.GetPublicKeyRequest">GetPublicKeyRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetPublicKeyResponse">GetPublicKeyResponse</a></div>
-<p>GetPublicKey retrieves the public key of an account based on the provided address.</p>     
+<p>GetPublicKey retrieves the public key of an account based on the provided</p><p>address.</p>     
 <h2>Network Service <span class="badge text-bg-warning fs-6 align-top">network.proto</span></h2>
 <p>Network service provides RPCs for retrieving information about the network.</p>  
 <h3 id="pactus.Network.GetNetworkInfo">GetNetworkInfo <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
@@ -590,11 +590,11 @@ Here you can find the list of all gRPC methods and messages.
 <h3 id="pactus.Wallet.LockWallet">LockWallet <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.LockWalletRequest">LockWalletRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.LockWalletResponse">LockWalletResponse</a></div>
-<p>LockWallet locks a currently loaded wallet with the provided password and timeout.</p> 
+<p>LockWallet locks a currently loaded wallet with the provided password and</p><p>timeout.</p> 
 <h3 id="pactus.Wallet.UnlockWallet">UnlockWallet <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.UnlockWalletRequest">UnlockWalletRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.UnlockWalletResponse">UnlockWalletResponse</a></div>
-<p>UnlockWallet unlocks a locked wallet with the provided password and timeout.</p> 
+<p>UnlockWallet unlocks a locked wallet with the provided password and</p><p>timeout.</p> 
 <h3 id="pactus.Wallet.SignRawTransaction">SignRawTransaction <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.SignRawTransactionRequest">SignRawTransactionRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.SignRawTransactionResponse">SignRawTransactionResponse</a></div>
@@ -602,7 +602,7 @@ Here you can find the list of all gRPC methods and messages.
 <h3 id="pactus.Wallet.GetValidatorAddress">GetValidatorAddress <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.GetValidatorAddressRequest">GetValidatorAddressRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetValidatorAddressResponse">GetValidatorAddressResponse</a></div>
-<p>GetValidatorAddress retrieves the validator address associated with a public key.</p>   
+<p>GetValidatorAddress retrieves the validator address associated with a</p><p>public key.</p>   
 <h2>Messages and Enums</h2> 
 <h3 id="pactus.BroadcastTransactionRequest">
 BroadcastTransactionRequest
@@ -663,7 +663,7 @@ CalculateFeeRequest
       <td>Transaction amount. </td>
     </tr>
     <tr>
-      <td class="fw-bold">payloadType</td>
+      <td class="fw-bold">payload_type</td>
       <td>
         <a href="#pactus.PayloadType">PayloadType</a>
       </td>
@@ -1181,7 +1181,7 @@ TransactionInfo
       <td>Transaction fee. </td>
     </tr>
     <tr>
-      <td class="fw-bold">payloadType</td>
+      <td class="fw-bold">payload_type</td>
       <td>
         <a href="#pactus.PayloadType">PayloadType</a>
       </td>
@@ -2130,7 +2130,7 @@ GetNetworkInfoResponse.SentBytesEntry
 GetNodeInfoRequest
 <span class="badge text-bg-secondary fs-6 align-top">msg</span>
 </h3>
-  <p>Request message for retrieving information about a specific node in the network.</p>
+  <p>Request message for retrieving information about a specific node in the</p><p>network.</p>
  Message has no fields.  
 <h3 id="pactus.GetNodeInfoResponse">
 GetNodeInfoResponse
@@ -2480,7 +2480,7 @@ CreateWalletResponse
 GetValidatorAddressRequest
 <span class="badge text-bg-secondary fs-6 align-top">msg</span>
 </h3>
-  <p>Request message for obtaining the validator address associated with a public key.</p>
+  <p>Request message for obtaining the validator address associated with a public</p><p>key.</p>
 
 <table class="table table-bordered table-sm">
   <thead>
@@ -2500,7 +2500,7 @@ GetValidatorAddressRequest
 GetValidatorAddressResponse
 <span class="badge text-bg-secondary fs-6 align-top">msg</span>
 </h3>
-  <p>Response message containing the validator address corresponding to a public key.</p>
+  <p>Response message containing the validator address corresponding to a public</p><p>key.</p>
 
 <table class="table table-bordered table-sm">
   <thead>
