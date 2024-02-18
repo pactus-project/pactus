@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/pactus-project/pactus/compare/v1.0.1...v1.0.2) (2024-02-18)
+
+### Fix
+
+- **sync**: fix concurrent map read-write crash ([#1112](https://github.com/pactus-project/pactus/pull/1112))
+- **network**: remove disconnected peers from peerMgr ([#1110](https://github.com/pactus-project/pactus/pull/1110))
+
 ## [1.0.1](https://github.com/pactus-project/pactus/compare/v1.0.0...v1.0.1) (2024-02-10)
 
 ### Feat

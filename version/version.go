@@ -12,7 +12,7 @@ const (
 	major           uint   = 1
 	minor           uint   = 0
 	patch           uint   = 2
-	meta            string = "beta"
+	meta            string = ""
 	protocolVersion uint   = 1
 )
 
