@@ -30,8 +30,7 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
-	// TODO: we need something like: wlt.AllAccountAddresses()
-	for _, i := range wlt.AddressInfos() {
+	for _, i := range wlt.AllAccountAddresses() {
 		senderEntry.Append(i.Address, i.Address)
 	}
 	senderEntry.SetActive(0)
