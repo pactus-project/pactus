@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
@@ -28,8 +26,6 @@ func openWallet() (*wallet.Wallet, error) {
 
 		err = wlt.Connect(*serverAddrOpt)
 		if err != nil {
-			fmt.Println(err.Error())
-
 			return nil, err
 		}
 

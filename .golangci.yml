@@ -13,7 +13,6 @@ linters:
     - contextcheck
     - decorder
     - dogsled
-    # - dupl
     - dupword
     - durationcheck
     - errchkjson
@@ -21,9 +20,8 @@ linters:
     - errorlint
     - execinquery
     # - exhaustive
-    # - exhaustruct
     - exportloopref
-    # - forbidigo
+    - forbidigo
     # - forcetypeassert
     # - funlen
     - gci
@@ -144,6 +142,7 @@ issues:
         - maintidx
         - nestif
         - gocognit
+        - forbidigo
 
     - linters:
         - govet
