@@ -1,3 +1,4 @@
+//nolint:forbidigo // enable printing function for cmd package
 package cmd
 
 import (

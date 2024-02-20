@@ -173,9 +173,6 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 			fatalErrorCheck(err)
 
 			numValidators := valueInterface.(int)
-
-			fmt.Println("number of validators:", numValidators)
-
 			walletPassword, err := entryPassword.GetText()
 			fatalErrorCheck(err)
 
