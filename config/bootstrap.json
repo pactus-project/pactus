@@ -307,7 +307,7 @@
     },
     {
         "name": "Winnode",
-        "email": "maladarsih@gmail.comm",
+        "email": "maladarsih@gmail.com",
         "website": "winnode.site",
         "address": "/ip4/37.60.245.47/tcp/21888/p2p/12D3KooWBH27VEPdGBYzq1vYciRgnDn3ozStRaUYd2vJWGgaKEUZ"
     },
@@ -322,5 +322,23 @@
         "email": "thanhsum@gmail.com",
         "website": "",
         "address": "/ip4/95.216.222.135/tcp/21888/p2p/12D3KooWHicbZ3dBnR7JaVKr4U7WNUWyhDnUn2TwMVmPqW8Ftqop"
+    },
+    {
+        "name": "Sipannachi",
+        "email": "sipannachi@gmail.com",
+        "website": "",
+        "address": "/ip4/65.109.143.78/tcp/21888/p2p/12D3KooWPnWgEFV32cvpfuv98oioZQJJKvRM46BEsFaoXYijvgvc"
+    },
+    {
+        "name": "JackieLuong135",
+        "email": "jackieluong135@gmail.com",
+        "website": "",
+        "address": "/ip4/116.203.238.65/tcp/21888/p2p/12D3KooWKf32k9dLE4fA5tkh4KvvEAQDmHxHLWiahjpt2Hfx3d88"
+    },
+    {
+        "name": "Lisachoake",
+        "email": "mohamed.solamina@gmail.com",
+        "website": "",
+        "address": "/ip4/49.13.27.37/tcp/21888/p2p/12D3KooWPSh9KMa6tRfSewK3sUC4BDSPnXseVDGJxWqNZxKcXnGM"
     }
 ]
