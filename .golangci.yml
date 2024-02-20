@@ -13,6 +13,7 @@ linters:
     - contextcheck
     - decorder
     - dogsled
+    # - dupl
     - dupword
     - durationcheck
     - errchkjson
@@ -22,19 +23,13 @@ linters:
     # - exhaustive
     - exportloopref
     - forbidigo
-    # - forcetypeassert
-    # - funlen
     - gci
     - ginkgolinter
     - gocheckcompilerdirectives
-    # - gochecknoinits
     - gocognit
-    # - goconst
     - gocritic
     - gocyclo
     - godot
-    # - godox
-    # - goerr113
     - gofmt
     - gofumpt
     - goheader
@@ -46,7 +41,6 @@ linters:
     - gosmopolitan
     - grouper
     - importas
-    # - ireturn
     - lll
     - loggercheck
     - maintidx
@@ -82,7 +76,6 @@ linters:
     - wastedassign
     - whitespace
     # - wrapcheck
-    # - wsl
     - zerologlint
 
 linters-settings:
