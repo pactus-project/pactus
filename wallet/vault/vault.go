@@ -236,7 +236,7 @@ func (v *Vault) AllAccountAddresses() []AddressInfo {
 	addrs := make([]AddressInfo, 0, v.AddressCount()/2)
 	for _, addrInfo := range v.Addresses {
 		addrPath, _ := addresspath.NewPathFromString(addrInfo.Path)
-		if addrPath.AddressType() == H(crypto.AddressTypeBLSAccount) {
+		if addrPath.AddressType() != H(crypto.AddressTypeValidator) {
 			addrs = append(addrs, addrInfo)
 		}
 	}

@@ -123,6 +123,23 @@ func TestSortAddressInfo(t *testing.T) {
 	assert.Equal(t, "m/65535'/21888'/2'/0'", infos[len(infos)-1].Path)
 }
 
+func TestAllAccountAddresses(t *testing.T) {
+	td := setup(t)
+
+	assert.Equal(t, td.vault.AddressCount(), 6)
+
+	accountAddrs := td.vault.AllAccountAddresses()
+	for _, i := range accountAddrs {
+		info := td.vault.AddressInfo(i.Address)
+		assert.Equal(t, i.Address, info.Address)
+
+		addr, err := crypto.AddressFromString(info.Address)
+		assert.NoError(t, err)
+
+		assert.True(t, addr.Type() == crypto.AddressTypeBLSAccount)
+	}
+}
+
 func TestAllValidatorAddresses(t *testing.T) {
 	td := setup(t)
 

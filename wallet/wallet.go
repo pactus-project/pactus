@@ -506,24 +506,3 @@ func (w *Wallet) AddTransaction(id tx.ID) error {
 func (w *Wallet) GetHistory(addr string) []HistoryInfo {
 	return w.store.History.getAddrHistory(addr)
 }
-
-func (w *Wallet) AllAmount(addr string, pt payload.Type) int64 {
-	address, err := crypto.AddressFromString(addr)
-	if err != nil {
-		return 0
-	}
-
-	account, err := w.client.getAccount(address)
-	if err != nil {
-		return 0
-	}
-
-	fee, err := w.client.getFee(account.Balance, pt)
-	if err != nil {
-		return 0
-	}
-
-	all := account.Balance - fee
-
-	return all
-}
