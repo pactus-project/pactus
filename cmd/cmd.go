@@ -432,7 +432,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		}
 	} else {
 		for i := 0; i < len(valAddrsInfo); i++ {
-			valAddrPath, _ := addresspath.NewPathFromString(valAddrsInfo[i].Path)
+			valAddrPath, _ := addresspath.FromString(valAddrsInfo[i].Path)
 			accAddrPath := addresspath.NewPath(
 				valAddrPath.Purpose(),
 				valAddrPath.CoinType(),

@@ -45,7 +45,7 @@ func TestStringToPath(t *testing.T) {
 		{"m/abc'", nil, strconv.ErrSyntax},
 	}
 	for i, test := range tests {
-		path, err := NewPathFromString(test.str)
+		path, err := FromString(test.str)
 		assert.Equal(t, path, test.wantPath, "case %d failed", i)
 		assert.ErrorIsf(t, err, test.wantErr, "case %d failed", i)
 	}
