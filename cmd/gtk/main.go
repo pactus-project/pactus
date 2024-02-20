@@ -4,7 +4,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -69,7 +68,7 @@ func main() {
 	}
 
 	if !locked {
-		fmt.Printf("Could not lock '%s', another instance is running?", lockFilePath)
+		cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
 
 		return
 	}
@@ -145,7 +144,7 @@ func start(workingDir string, app *gtk.Application) {
 	fatalErrorCheck(err)
 
 	grpcAddr := node.GRPC().Address()
-	fmt.Printf("connect wallet to grpc server: %s\n", grpcAddr)
+	cmd.PrintInfoMsgf("connect wallet to grpc server: %s\n", grpcAddr)
 
 	err = wlt.Connect(grpcAddr)
 	fatalErrorCheck(err)
