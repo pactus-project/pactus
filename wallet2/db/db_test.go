@@ -1,4 +1,4 @@
-package wallet2
+package db
 
 import (
 	"testing"
@@ -24,7 +24,7 @@ func TestInsert(t *testing.T) {
 			Path:      "some-path",
 		}
 		_, err := someDB.InsertIntoAddress(addr)
-		assert.EqualError(t, ErrCouldNotInsertIntoTable, err.Error())
+		assert.EqualError(t, ErrCouldNotInsertRecordIntoTable, err.Error())
 	})
 
 	t.Run("insert into address table", func(t *testing.T) {
@@ -58,7 +58,7 @@ func TestInsert(t *testing.T) {
 			Status:      1,
 		}
 		_, err := someDB.InsertIntoTransaction(tr)
-		assert.EqualError(t, ErrCouldNotInsertIntoTable, err.Error())
+		assert.EqualError(t, ErrCouldNotInsertRecordIntoTable, err.Error())
 	})
 
 	t.Run("insert into tranasction table", func(t *testing.T) {
@@ -88,7 +88,7 @@ func TestInsert(t *testing.T) {
 		key, value := "key", "value"
 		_, err := someDB.InsertIntoPair(key, value)
 
-		assert.EqualError(t, ErrCouldNotInsertIntoTable, err.Error())
+		assert.EqualError(t, ErrCouldNotInsertRecordIntoTable, err.Error())
 	})
 
 	t.Run("insert into pair table", func(t *testing.T) {
@@ -210,27 +210,113 @@ func TestGetById(t *testing.T) {
 	})
 }
 
+func TestAddress(t *testing.T) {
+	t.Run("Could not get address by address", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		addr := &Address{
+			Address:   "some-pactus-addr",
+			PublicKey: "some-public-key",
+			Label:     "some-label",
+			Path:      "some-path",
+		}
+		expected, _ := someDB.InsertIntoAddress(addr)
+
+		expected.Address = "some-other-pactus-addr"
+		actual, err := someDB.GetAddressByAddress(expected.Address)
+
+		assert.Nil(t, actual)
+		assert.EqualError(t, ErrCouldNotFindRecord, err.Error())
+	})
+
+	t.Run("Get address by address", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		addr := &Address{
+			Address:   "some-pactus-addr",
+			PublicKey: "some-public-key",
+			Label:     "some-label",
+			Path:      "some-path",
+		}
+		expected, _ := someDB.InsertIntoAddress(addr)
+
+		actual, err := someDB.GetAddressByAddress(expected.Address)
+		assert.Nil(t, err)
+		assert.Equal(t, expected, actual)
+	})
+
+	t.Run("update label of address", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		addr := &Address{
+			Address:    "some-pactus-addr",
+			PublicKey:  "some-public-key",
+			Label:      "some-label",
+			Path:       "some-path",
+			IsImported: true,
+		}
+		addr, _ = someDB.InsertIntoAddress(addr)
+
+		addr.Label = "some-other-lable"
+		_, _ = someDB.UpdateAddressLabel(addr)
+
+		actual, err := someDB.GetAddressByAddress(addr.Address)
+
+		assert.Nil(t, err)
+		assert.Equal(t, addr.Label, actual.Label)
+	})
+}
+
 func TestGetAll(t *testing.T) {
 	t.Run("get all addresses", func(t *testing.T) {
 		someDB, _ := newDB(":memory:")
 		_ = someDB.CreateTables()
 
 		addr := &Address{
-			Address:   "some-address",
-			PublicKey: "some-public-key",
-			Label:     "some-label",
-			Path:      "some-path",
+			Address:    "some-address",
+			PublicKey:  "some-public-key",
+			Label:      "some-label",
+			Path:       "some-path",
+			IsImported: true,
 		}
 		someInsertOne, _ := someDB.InsertIntoAddress(addr)
 		someInsertTwo, _ := someDB.InsertIntoAddress(addr)
 		someInsertThree, _ := someDB.InsertIntoAddress(addr)
 
-		expected := make([]*Address, 0, 3)
-		expected = append(expected, someInsertThree, someInsertTwo, someInsertOne)
+		expected := make([]Address, 0, 3)
+		expected = append(expected, *someInsertThree, *someInsertTwo, *someInsertOne)
 
-		acutal, err := someDB.GetAllAddresses(1, 3)
+		acutal, err := someDB.GetAllAddresses()
 
 		assert.Nil(t, err)
+		assert.Equal(t, expected, acutal)
+	})
+
+	t.Run("get all addresses with total records", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		addr := &Address{
+			Address:    "some-address",
+			PublicKey:  "some-public-key",
+			Label:      "some-label",
+			Path:       "some-path",
+			IsImported: true,
+		}
+		someInsertOne, _ := someDB.InsertIntoAddress(addr)
+		someInsertTwo, _ := someDB.InsertIntoAddress(addr)
+		someInsertThree, _ := someDB.InsertIntoAddress(addr)
+
+		expected := make([]Address, 0, 3)
+		expected = append(expected, *someInsertThree, *someInsertTwo, *someInsertOne)
+
+		acutal, totalRecords, err := someDB.GetAllAddressesWithTotalRecords(1, 3)
+
+		assert.Nil(t, err)
+		assert.Equal(t, int64(3), totalRecords)
 		assert.Equal(t, expected, acutal)
 	})
 
@@ -252,12 +338,84 @@ func TestGetAll(t *testing.T) {
 		someInsertTwo, _ := someDB.InsertIntoTransaction(tr)
 		someInsertThree, _ := someDB.InsertIntoTransaction(tr)
 
-		expected := make([]*Transaction, 0, 3)
-		expected = append(expected, someInsertThree, someInsertTwo, someInsertOne)
+		expected := make([]Transaction, 0, 3)
+		expected = append(expected, *someInsertThree, *someInsertTwo, *someInsertOne)
 
-		acutal, err := someDB.GetAllTransactions(1, 3)
+		acutal, err := someDB.GetAllTransactions()
 
 		assert.Nil(t, err)
 		assert.Equal(t, expected, acutal)
+	})
+
+	t.Run("get all transactions with total records", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		tr := &Transaction{
+			TxID:        "some-txid",
+			BlockHeight: 4,
+			BlockTime:   5,
+			PayloadType: "something",
+			Data:        "some-data",
+			Description: "some-description",
+			Amount:      50,
+			Status:      1,
+		}
+		someInsertOne, _ := someDB.InsertIntoTransaction(tr)
+		someInsertTwo, _ := someDB.InsertIntoTransaction(tr)
+		someInsertThree, _ := someDB.InsertIntoTransaction(tr)
+
+		expected := make([]Transaction, 0, 3)
+		expected = append(expected, *someInsertThree, *someInsertTwo, *someInsertOne)
+
+		acutal, totalRecords, err := someDB.GetAllTransactionsWithTotalRecords(1, 3)
+
+		assert.Nil(t, err)
+		assert.Equal(t, int64(3), totalRecords)
+		assert.Equal(t, expected, acutal)
+	})
+}
+
+func TestTotalRecords(t *testing.T) {
+	t.Run("could not find total records", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		addr := &Address{
+			Address:    "some-address",
+			PublicKey:  "some-public-key",
+			Label:      "some-label",
+			Path:       "some-path",
+			IsImported: true,
+		}
+		_, _ = someDB.InsertIntoAddress(addr)
+		_, _ = someDB.InsertIntoAddress(addr)
+		_, _ = someDB.InsertIntoAddress(addr)
+
+		totalRecords, err := someDB.GetTotalRecords("some-table")
+
+		assert.Equal(t, int64(0), totalRecords)
+		assert.EqualError(t, ErrCouldNotFindTotalRecords, err.Error())
+	})
+
+	t.Run("ok", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		addr := &Address{
+			Address:    "some-address",
+			PublicKey:  "some-public-key",
+			Label:      "some-label",
+			Path:       "some-path",
+			IsImported: true,
+		}
+		_, _ = someDB.InsertIntoAddress(addr)
+		_, _ = someDB.InsertIntoAddress(addr)
+		_, _ = someDB.InsertIntoAddress(addr)
+
+		totalRecords, err := someDB.GetTotalRecords("addresses")
+
+		assert.Nil(t, err)
+		assert.Equal(t, int64(3), totalRecords)
 	})
 }
