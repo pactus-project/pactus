@@ -3,9 +3,11 @@ package vault
 import (
 	"cmp"
 	"encoding/json"
+	"fmt"
 	"slices"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet2/addresspath"
@@ -219,7 +221,6 @@ func (v *Vault) AllValidatorAddresses() []db.Address {
 		return nil
 	}
 
-	// TODO refactor me with account count method
 	result := make([]db.Address, 0, len(addrs)/2)
 	for i := range addrs {
 		addrPath, _ := addresspath.NewPathFromString(addrs[i].Path)
@@ -240,7 +241,6 @@ func (v *Vault) AllImportedPrivateKeyAddresses() []db.Address {
 		return nil
 	}
 
-	// TODO refactor me with account count method
 	result := make([]db.Address, 0, len(addrs)/2)
 	for i := range addrs {
 		addrPath, _ := addresspath.NewPathFromString(addrs[i].Path)
@@ -253,6 +253,295 @@ func (v *Vault) AllImportedPrivateKeyAddresses() []db.Address {
 	v.sortAddressesByAddressType(result...)
 
 	return result
+}
+
+func (v *Vault) IsEncrypted() bool {
+	return v.Encrypter.IsEncrypted()
+}
+
+func (v *Vault) AddressFromPath(p string) *db.Address {
+	addr, err := v.db.GetAddressByPath(p)
+	if err != nil {
+		return nil
+	}
+
+	return addr
+}
+
+func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
+	if v.IsNeutered() {
+		return ErrNeutered
+	}
+
+	keyStore, err := v.decryptKeyStore(password)
+	if err != nil {
+		return err
+	}
+
+	addressIndex := len(keyStore.ImportedKeys)
+
+	pub := prv.PublicKeyNative()
+
+	accAddr := pub.AccountAddress()
+	if v.Contains(accAddr.String()) {
+		return ErrAddressExists
+	}
+
+	valAddr := pub.ValidatorAddress()
+	if v.Contains(valAddr.String()) {
+		return ErrAddressExists
+	}
+
+	blsAccPathStr := addresspath.NewPath(
+		H(PurposeImportPrivateKey),
+		H(v.CoinType),
+		H(crypto.AddressTypeBLSAccount),
+		H(addressIndex)).String()
+
+	blsValidatorPathStr := addresspath.NewPath(
+		H(PurposeImportPrivateKey),
+		H(v.CoinType),
+		H(crypto.AddressTypeValidator),
+		H(addressIndex)).String()
+
+	importedPrvLabelCounter := (len(v.AllImportedPrivateKeyAddresses()) / 2) + 1
+	rewardAddr := &db.Address{
+		Address:   accAddr.String(),
+		PublicKey: pub.String(),
+		Label:     fmt.Sprintf("Imported Reward Address %d", importedPrvLabelCounter),
+		Path:      blsAccPathStr,
+	}
+
+	if _, err = v.db.InsertIntoAddress(rewardAddr); err != nil {
+		return err
+	}
+
+	validatorAddr := &db.Address{
+		Address:   valAddr.String(),
+		PublicKey: pub.String(),
+		Label:     fmt.Sprintf("Imported Validator Address %d", importedPrvLabelCounter),
+		Path:      blsValidatorPathStr,
+	}
+
+	if _, err = v.db.InsertIntoAddress(validatorAddr); err != nil {
+		return err
+	}
+
+	keyStore.ImportedKeys = append(keyStore.ImportedKeys, prv.String())
+
+	err = v.encryptKeyStore(keyStore, password)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+//nolint:gocognit // refactor me and reduce the code complexity
+func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKey, error) {
+	if v.IsNeutered() {
+		return nil, ErrNeutered
+	}
+
+	keyStore, err := v.decryptKeyStore(password)
+	if err != nil {
+		return nil, err
+	}
+
+	keys := make([]crypto.PrivateKey, len(addrs))
+	for i, addr := range addrs {
+		info := v.Address(addr)
+		if info == nil {
+			return nil, NewErrAddressNotFound(addr)
+		}
+
+		path, err := addresspath.NewPathFromString(info.Path)
+		if err != nil {
+			return nil, err
+		}
+
+		if path.CoinType() != H(v.CoinType) {
+			return nil, ErrInvalidCoinType
+		}
+
+		switch path.Purpose() {
+		case H(PurposeBLS12381):
+			seed, err := bip39.NewSeedWithErrorChecking(keyStore.MasterNode.Mnemonic, "")
+			if err != nil {
+				return nil, err
+			}
+			masterKey, err := hdkeychain.NewMaster(seed, false)
+			if err != nil {
+				return nil, err
+			}
+			ext, err := masterKey.DerivePath(path)
+			if err != nil {
+				return nil, err
+			}
+			prvBytes, err := ext.RawPrivateKey()
+			if err != nil {
+				return nil, err
+			}
+
+			prvKey, err := bls.PrivateKeyFromBytes(prvBytes)
+			if err != nil {
+				return nil, err
+			}
+
+			keys[i] = prvKey
+		case H(PurposeImportPrivateKey):
+			index := path.AddressIndex() - hdkeychain.HardenedKeyStart
+			if index > uint32(len(keyStore.ImportedKeys)-1) {
+				return nil, ErrIndexOutOfRange
+			}
+			str := keyStore.ImportedKeys[index]
+			prv, err := bls.PrivateKeyFromString(str)
+			if err != nil {
+				return nil, err
+			}
+			keys[i] = prv
+		default:
+			return nil, ErrUnsupportedPurpose
+		}
+	}
+
+	return keys, nil
+}
+
+func (v *Vault) NewBLSAccountAddress(label string) (string, error) {
+	ext, err := hdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
+	if err != nil {
+		return "", err
+	}
+	index := v.Purposes.PurposeBLS.NextAccountIndex
+	ext, err = ext.DerivePath([]uint32{index})
+	if err != nil {
+		return "", err
+	}
+
+	blsPubKey, err := bls.PublicKeyFromBytes(ext.RawPublicKey())
+	if err != nil {
+		return "", err
+	}
+
+	addr := blsPubKey.AccountAddress().String()
+	address := &db.Address{
+		Address: addr,
+		Label:   label,
+		Path:    addresspath.NewPath(ext.Path()...).String(),
+	}
+	if _, err := v.db.InsertIntoAddress(address); err != nil {
+		return "", err
+	}
+
+	v.Purposes.PurposeBLS.NextAccountIndex++
+
+	return addr, nil
+}
+
+func (v *Vault) NewValidatorAddress(label string) (string, error) {
+	ext, err := hdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubValidator)
+	if err != nil {
+		return "", err
+	}
+	index := v.Purposes.PurposeBLS.NextValidatorIndex
+	ext, err = ext.DerivePath([]uint32{index})
+	if err != nil {
+		return "", err
+	}
+
+	blsPubKey, err := bls.PublicKeyFromBytes(ext.RawPublicKey())
+	if err != nil {
+		return "", err
+	}
+
+	addr := blsPubKey.ValidatorAddress().String()
+	address := &db.Address{
+		Address: addr,
+		Label:   label,
+		Path:    addresspath.NewPath(ext.Path()...).String(),
+	}
+	if _, err := v.db.InsertIntoAddress(address); err != nil {
+		return "", err
+	}
+
+	v.Purposes.PurposeBLS.NextValidatorIndex++
+
+	return addr, nil
+}
+
+func (v *Vault) Address(address string) *db.Address {
+	info, err := v.db.GetAddressByAddress(address)
+	if err != nil {
+		return nil
+	}
+
+	path, err := addresspath.NewPathFromString(info.Path)
+	if err != nil {
+		return nil
+	}
+
+	if path.CoinType() != H(v.CoinType) {
+		return nil
+	}
+
+	switch path.Purpose() {
+	case H(PurposeBLS12381):
+		addr, err := crypto.AddressFromString(info.Address)
+		if err != nil {
+			return nil
+		}
+
+		var xPub string
+		if addr.IsAccountAddress() {
+			xPub = v.Purposes.PurposeBLS.XPubAccount
+		} else if addr.IsValidatorAddress() {
+			xPub = v.Purposes.PurposeBLS.XPubValidator
+		}
+
+		ext, err := hdkeychain.NewKeyFromString(xPub)
+		if err != nil {
+			return nil
+		}
+
+		p, err := addresspath.NewPathFromString(info.Path)
+		if err != nil {
+			return nil
+		}
+
+		extendedKey, err := ext.Derive(p.AddressIndex())
+		if err != nil {
+			return nil
+		}
+
+		blsPubKey, err := bls.PublicKeyFromBytes(extendedKey.RawPublicKey())
+		if err != nil {
+			return nil
+		}
+
+		info.PublicKey = blsPubKey.String()
+	case H(PurposeImportPrivateKey):
+	default:
+		return nil
+	}
+
+	return info
+}
+
+func (v *Vault) Contains(addr string) bool {
+	return v.Address(addr) != nil
+}
+
+func (v *Vault) Mnemonic(password string) (string, error) {
+	if v.IsNeutered() {
+		return "", ErrNeutered
+	}
+	keyStore, err := v.decryptKeyStore(password)
+	if err != nil {
+		return "", err
+	}
+
+	return keyStore.MasterNode.Mnemonic, nil
 }
 
 func (v *Vault) sortAddressesByAddressIndex(addrs ...db.Address) {

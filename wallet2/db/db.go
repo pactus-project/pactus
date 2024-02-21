@@ -38,6 +38,7 @@ type DB interface {
 
 	GetAddressByID(id int) (*Address, error)
 	GetAddressByAddress(address string) (*Address, error)
+	GetAddressByPath(p string) (*Address, error)
 	GetTransactionByID(id int) (*Transaction, error)
 	GetPairByKey(key string) (*Pair, error)
 	GetTotalRecords(tableName string) (int64, error)
@@ -256,6 +257,23 @@ func (d *db) GetAddressByID(id int) (*Address, error) {
 func (d *db) GetAddressByAddress(address string) (*Address, error) {
 	getQuery := fmt.Sprintf("SELECT * FROM %s WHERE address = ?", AddressTable)
 	row := d.QueryRowContext(context.Background(), getQuery, address)
+	if row.Err() != nil {
+		return nil, ErrCouldNotFindRecord
+	}
+
+	addr := &Address{}
+	err := row.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label,
+		&addr.Path, &addr.IsImported, &addr.CreatedAt)
+	if err != nil {
+		return nil, ErrCouldNotFindRecord
+	}
+
+	return addr, nil
+}
+
+func (d *db) GetAddressByPath(p string) (*Address, error) {
+	getQuery := fmt.Sprintf("SELECT * FROM %s WHERE path = ?", AddressTable)
+	row := d.QueryRowContext(context.Background(), getQuery, p)
 	if row.Err() != nil {
 		return nil, ErrCouldNotFindRecord
 	}

@@ -21,6 +21,9 @@ var (
 
 	// ErrUnsupportedPurpose describes an error in which the purpose is not supported.
 	ErrUnsupportedPurpose = errors.New("unsupported purpose")
+
+	// ErrIndexOutOfRange describes an error in slice which the index is out of the range.
+	ErrIndexOutOfRange = errors.New("index is out of the range")
 )
 
 // AddressNotFoundError describes an error in which the address doesn't exist

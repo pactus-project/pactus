@@ -247,6 +247,42 @@ func TestAddress(t *testing.T) {
 		assert.Equal(t, expected, actual)
 	})
 
+	t.Run("could not get address by path", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		addr := &Address{
+			Address:   "some-pactus-addr",
+			PublicKey: "some-public-key",
+			Label:     "some-label",
+			Path:      "some-path",
+		}
+		expected, _ := someDB.InsertIntoAddress(addr)
+
+		expected.Path = "some-other-path"
+		actual, err := someDB.GetAddressByPath(expected.Path)
+
+		assert.Nil(t, actual)
+		assert.EqualError(t, ErrCouldNotFindRecord, err.Error())
+	})
+
+	t.Run("Get address by path", func(t *testing.T) {
+		someDB, _ := newDB(":memory:")
+		_ = someDB.CreateTables()
+
+		addr := &Address{
+			Address:   "some-pactus-addr",
+			PublicKey: "some-public-key",
+			Label:     "some-label",
+			Path:      "some-path",
+		}
+		expected, _ := someDB.InsertIntoAddress(addr)
+
+		actual, err := someDB.GetAddressByPath(expected.Path)
+		assert.Nil(t, err)
+		assert.Equal(t, expected, actual)
+	})
+
 	t.Run("update label of address", func(t *testing.T) {
 		someDB, _ := newDB(":memory:")
 		_ = someDB.CreateTables()
