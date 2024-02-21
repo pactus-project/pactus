@@ -64,7 +64,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt update
-        sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev pkg-config dpkg dpkg-dev
+        sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev libfuse2 pkg-config dpkg dpkg-dev
 
     - name: Install Go
       uses: actions/setup-go@v3
