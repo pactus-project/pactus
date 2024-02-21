@@ -220,8 +220,23 @@ func (v *Vault) AddressInfos() []AddressInfo {
 func (v *Vault) AllValidatorAddresses() []AddressInfo {
 	addrs := make([]AddressInfo, 0, v.AddressCount()/2)
 	for _, addrInfo := range v.Addresses {
-		addrPath, _ := addresspath.NewPathFromString(addrInfo.Path)
+		addrPath, _ := addresspath.FromString(addrInfo.Path)
 		if addrPath.AddressType() == H(crypto.AddressTypeValidator) {
+			addrs = append(addrs, addrInfo)
+		}
+	}
+
+	v.SortAddressesByAddressIndex(addrs...)
+	v.SortAddressesByPurpose(addrs...)
+
+	return addrs
+}
+
+func (v *Vault) AllAccountAddresses() []AddressInfo {
+	addrs := make([]AddressInfo, 0, v.AddressCount()/2)
+	for _, addrInfo := range v.Addresses {
+		addrPath, _ := addresspath.FromString(addrInfo.Path)
+		if addrPath.AddressType() != H(crypto.AddressTypeValidator) {
 			addrs = append(addrs, addrInfo)
 		}
 	}
@@ -235,7 +250,7 @@ func (v *Vault) AllValidatorAddresses() []AddressInfo {
 func (v *Vault) AllImportedPrivateKeysAddresses() []AddressInfo {
 	addrs := make([]AddressInfo, 0, v.AddressCount()/2)
 	for _, addrInfo := range v.Addresses {
-		addrPath, _ := addresspath.NewPathFromString(addrInfo.Path)
+		addrPath, _ := addresspath.FromString(addrInfo.Path)
 		if addrPath.Purpose() == H(PurposeImportPrivateKey) {
 			addrs = append(addrs, addrInfo)
 		}
@@ -249,8 +264,8 @@ func (v *Vault) AllImportedPrivateKeysAddresses() []AddressInfo {
 
 func (v *Vault) SortAddressesByPurpose(addrs ...AddressInfo) {
 	slices.SortStableFunc(addrs, func(a, b AddressInfo) int {
-		pathA, _ := addresspath.NewPathFromString(a.Path)
-		pathB, _ := addresspath.NewPathFromString(b.Path)
+		pathA, _ := addresspath.FromString(a.Path)
+		pathB, _ := addresspath.FromString(b.Path)
 
 		return cmp.Compare(pathA.Purpose(), pathB.Purpose())
 	})
@@ -258,8 +273,8 @@ func (v *Vault) SortAddressesByPurpose(addrs ...AddressInfo) {
 
 func (v *Vault) SortAddressesByAddressType(addrs ...AddressInfo) {
 	slices.SortStableFunc(addrs, func(a, b AddressInfo) int {
-		pathA, _ := addresspath.NewPathFromString(a.Path)
-		pathB, _ := addresspath.NewPathFromString(b.Path)
+		pathA, _ := addresspath.FromString(a.Path)
+		pathB, _ := addresspath.FromString(b.Path)
 
 		return cmp.Compare(pathA.AddressType(), pathB.AddressType())
 	})
@@ -267,8 +282,8 @@ func (v *Vault) SortAddressesByAddressType(addrs ...AddressInfo) {
 
 func (v *Vault) SortAddressesByAddressIndex(addrs ...AddressInfo) {
 	slices.SortStableFunc(addrs, func(a, b AddressInfo) int {
-		pathA, _ := addresspath.NewPathFromString(a.Path)
-		pathB, _ := addresspath.NewPathFromString(b.Path)
+		pathA, _ := addresspath.FromString(a.Path)
+		pathB, _ := addresspath.FromString(b.Path)
 
 		return cmp.Compare(pathA.AddressIndex(), pathB.AddressIndex())
 	})
@@ -370,7 +385,7 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 			return nil, NewErrAddressNotFound(addr)
 		}
 
-		path, err := addresspath.NewPathFromString(info.Path)
+		path, err := addresspath.FromString(info.Path)
 		if err != nil {
 			return nil, err
 		}
@@ -484,7 +499,7 @@ func (v *Vault) AddressInfo(addr string) *AddressInfo {
 		return nil
 	}
 
-	path, err := addresspath.NewPathFromString(info.Path)
+	path, err := addresspath.FromString(info.Path)
 	if err != nil {
 		return nil
 	}
@@ -513,7 +528,7 @@ func (v *Vault) AddressInfo(addr string) *AddressInfo {
 			return nil
 		}
 
-		p, err := addresspath.NewPathFromString(info.Path)
+		p, err := addresspath.FromString(info.Path)
 		if err != nil {
 			return nil
 		}

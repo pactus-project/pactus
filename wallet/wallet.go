@@ -401,6 +401,10 @@ func (w *Wallet) AllValidatorAddresses() []vault.AddressInfo {
 	return w.store.Vault.AllValidatorAddresses()
 }
 
+func (w *Wallet) AllAccountAddresses() []vault.AddressInfo {
+	return w.store.Vault.AllAccountAddresses()
+}
+
 func (w *Wallet) AddressFromPath(p string) *vault.AddressInfo {
 	return w.store.Vault.AddressFromPath(p)
 }
