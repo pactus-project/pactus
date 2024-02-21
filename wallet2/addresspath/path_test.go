@@ -52,11 +52,25 @@ func TestStringToPath(t *testing.T) {
 }
 
 func TestPathHelpers(t *testing.T) {
-	purpose, coinType, addressType, addressIndex := 12381, 21888, 2, 0
-	path := Path{12381, 21888, 2, 0}
+	t.Run("bls purpose path", func(t *testing.T) {
+		purpose, coinType, addressType, addressIndex := 12381, 21888, 2, 0
+		path := Path{12381, 21888, 2, 0}
 
-	assert.Equal(t, uint32(purpose), path.Purpose())
-	assert.Equal(t, uint32(coinType), path.CoinType())
-	assert.Equal(t, uint32(addressType), path.AddressType())
-	assert.Equal(t, uint32(addressIndex), path.AddressIndex())
+		assert.Equal(t, uint32(purpose), path.Purpose())
+		assert.True(t, path.IsBLSPurpose())
+		assert.Equal(t, uint32(coinType), path.CoinType())
+		assert.Equal(t, uint32(addressType), path.AddressType())
+		assert.Equal(t, uint32(addressIndex), path.AddressIndex())
+	})
+
+	t.Run("imported purpose path", func(t *testing.T) {
+		purpose, coinType, addressType, addressIndex := 65535, 21888, 2, 0
+		path := Path{65535, 21888, 2, 0}
+
+		assert.Equal(t, uint32(purpose), path.Purpose())
+		assert.True(t, path.IsImportedPrivateKeyPurpose())
+		assert.Equal(t, uint32(coinType), path.CoinType())
+		assert.Equal(t, uint32(addressType), path.AddressType())
+		assert.Equal(t, uint32(addressIndex), path.AddressIndex())
+	})
 }

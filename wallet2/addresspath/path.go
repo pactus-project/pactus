@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/pactus-project/pactus/wallet/vault"
 )
 
 const HardenedKeyStart = uint32(0x80000000) // 2^31
@@ -55,10 +57,16 @@ func (p Path) String() string {
 	return builder.String()
 }
 
-// TODO: we can add IsBLSPurpose or IsImportedPurpose functions
-
 func (p Path) Purpose() uint32 {
 	return p[0]
+}
+
+func (p Path) IsBLSPurpose() bool {
+	return p[0] == vault.PurposeBLS12381
+}
+
+func (p Path) IsImportedPrivateKeyPurpose() bool {
+	return p[0] == vault.PurposeImportPrivateKey
 }
 
 func (p Path) CoinType() uint32 {
