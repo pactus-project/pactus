@@ -22,7 +22,7 @@ func NewPath(indexes ...uint32) Path {
 // TODO: check the path should exactly 4 levels.
 func NewPathFromString(str string) (Path, error) {
 	sub := strings.Split(str, "/")
-	if sub[0] != "m" {
+	if sub[0] != "m" || len(sub) < 5 {
 		return nil, ErrInvalidPath
 	}
 	var path []uint32

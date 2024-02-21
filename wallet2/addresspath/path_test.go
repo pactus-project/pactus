@@ -33,16 +33,17 @@ func TestStringToPath(t *testing.T) {
 		wantPath Path
 		wantErr  error
 	}{
-		{"m", nil, nil},
-		{"m/0", Path{0}, nil},
-		{"m/0/1", Path{0, 1}, nil},
-		{"m/0/1/1000000000", Path{0, 1, 1000000000}, nil},
-		{"m/0'", Path{h}, nil},
-		{"m/0'/1'", Path{h, h + 1}, nil},
-		{"m/0'/1'/1000000000'", Path{h, h + 1, h + 1000000000}, nil},
-		{"i", nil, ErrInvalidPath},
-		{"m/'", nil, strconv.ErrSyntax},
-		{"m/abc'", nil, strconv.ErrSyntax},
+		{"m", nil, ErrInvalidPath},
+		{"m/0", nil, ErrInvalidPath},
+		{"m/0/1", nil, ErrInvalidPath},
+		{"m/0/1/1000000000", nil, ErrInvalidPath},
+		{"m/0/1/1000000000/1", Path{0, 1, 1000000000, 1}, nil},
+		{"m/0'", nil, ErrInvalidPath},
+		{"m/0'/1'", nil, ErrInvalidPath},
+		{"m/0'/1'/1000000000'", nil, ErrInvalidPath},
+		{"m/0'/1'/1000000000'/1", Path{h, h + 1, h + 1000000000, 1}, nil},
+		{"m/0'/1'/1000000000'/abc", nil, strconv.ErrSyntax},
+		{"m/0'/abc'/1000000000'/1", nil, strconv.ErrSyntax},
 	}
 	for i, test := range tests {
 		path, err := NewPathFromString(test.str)
