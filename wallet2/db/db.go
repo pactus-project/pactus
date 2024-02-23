@@ -3,22 +3,12 @@ package db
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
 
 	//nolint:all
 	_ "github.com/glebarez/go-sqlite"
-)
-
-var (
-	ErrCouldNotOpenDatabase          = errors.New("could not open database")
-	ErrCouldNotCreateTable           = errors.New("could not create table")
-	ErrCouldNotInsertRecordIntoTable = errors.New("could not insert record into table")
-	ErrCouldNotUpdateRecordIntoTable = errors.New("could not update record into table")
-	ErrCouldNotFindRecord            = errors.New("could not find record")
-	ErrCouldNotFindTotalRecords      = errors.New("could not find total records")
 )
 
 const (
@@ -82,7 +72,7 @@ type Pair struct {
 	CreatedAt time.Time
 }
 
-func newDB(path string) (DB, error) {
+func NewDB(path string) (DB, error) {
 	dbInstance, err := sql.Open("sqlite", path)
 	if err != nil {
 		return nil, ErrCouldNotOpenDatabase

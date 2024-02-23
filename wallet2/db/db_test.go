@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewDB(t *testing.T) {
-	someDB, err := newDB(":memory:")
+	someDB, err := NewDB(":memory:")
 
 	assert.Nil(t, err)
 	assert.NotNil(t, someDB)
@@ -15,7 +15,7 @@ func TestNewDB(t *testing.T) {
 
 func TestInsert(t *testing.T) {
 	t.Run("could not insert into address table", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 
 		addr := &Address{
 			Address:   "some-address",
@@ -28,7 +28,7 @@ func TestInsert(t *testing.T) {
 	})
 
 	t.Run("insert into address table", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		addr := &Address{
@@ -45,7 +45,7 @@ func TestInsert(t *testing.T) {
 	})
 
 	t.Run("could not insert into tranasction table", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 
 		tr := &Transaction{
 			TxID:        "some-txid",
@@ -62,7 +62,7 @@ func TestInsert(t *testing.T) {
 	})
 
 	t.Run("insert into tranasction table", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		tr := &Transaction{
@@ -83,7 +83,7 @@ func TestInsert(t *testing.T) {
 	})
 
 	t.Run("could not insert into pair table", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 
 		key, value := "key", "value"
 		_, err := someDB.InsertIntoPair(key, value)
@@ -92,7 +92,7 @@ func TestInsert(t *testing.T) {
 	})
 
 	t.Run("insert into pair table", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		key, value := "key", "value"
@@ -106,7 +106,7 @@ func TestInsert(t *testing.T) {
 
 func TestGetById(t *testing.T) {
 	t.Run("could not get address by id", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		addr := &Address{
@@ -123,7 +123,7 @@ func TestGetById(t *testing.T) {
 	})
 
 	t.Run("get address by id", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		addr := &Address{
@@ -140,7 +140,7 @@ func TestGetById(t *testing.T) {
 	})
 
 	t.Run("could not get transaction by id", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		tr := &Transaction{
@@ -162,7 +162,7 @@ func TestGetById(t *testing.T) {
 	})
 
 	t.Run("get transaction by id", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		tr := &Transaction{
@@ -184,7 +184,7 @@ func TestGetById(t *testing.T) {
 	})
 
 	t.Run("could not get pair by key", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		key, value := "key", "value"
@@ -197,7 +197,7 @@ func TestGetById(t *testing.T) {
 	})
 
 	t.Run("get pair by key", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		key, value := "key", "value"
@@ -212,7 +212,7 @@ func TestGetById(t *testing.T) {
 
 func TestAddress(t *testing.T) {
 	t.Run("Could not get address by address", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		addr := &Address{
@@ -231,7 +231,7 @@ func TestAddress(t *testing.T) {
 	})
 
 	t.Run("Get address by address", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		addr := &Address{
@@ -248,7 +248,7 @@ func TestAddress(t *testing.T) {
 	})
 
 	t.Run("could not get address by path", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		addr := &Address{
@@ -267,7 +267,7 @@ func TestAddress(t *testing.T) {
 	})
 
 	t.Run("Get address by path", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		addr := &Address{
@@ -284,7 +284,7 @@ func TestAddress(t *testing.T) {
 	})
 
 	t.Run("update label of address", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		addr := &Address{
@@ -308,7 +308,7 @@ func TestAddress(t *testing.T) {
 
 func TestGetAll(t *testing.T) {
 	t.Run("get all addresses", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		addr := &Address{
@@ -332,7 +332,7 @@ func TestGetAll(t *testing.T) {
 	})
 
 	t.Run("get all addresses with total records", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		addr := &Address{
@@ -357,7 +357,7 @@ func TestGetAll(t *testing.T) {
 	})
 
 	t.Run("get all transactions", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		tr := &Transaction{
@@ -384,7 +384,7 @@ func TestGetAll(t *testing.T) {
 	})
 
 	t.Run("get all transactions with total records", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		tr := &Transaction{
@@ -414,7 +414,7 @@ func TestGetAll(t *testing.T) {
 
 func TestTotalRecords(t *testing.T) {
 	t.Run("could not find total records", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		addr := &Address{
@@ -435,7 +435,7 @@ func TestTotalRecords(t *testing.T) {
 	})
 
 	t.Run("ok", func(t *testing.T) {
-		someDB, _ := newDB(":memory:")
+		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
 		addr := &Address{

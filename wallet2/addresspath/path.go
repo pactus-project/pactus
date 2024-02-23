@@ -19,7 +19,6 @@ func NewPath(indexes ...uint32) Path {
 	return p
 }
 
-// TODO: check the path should exactly 4 levels.
 func NewPathFromString(str string) (Path, error) {
 	sub := strings.Split(str, "/")
 	if sub[0] != "m" || len(sub) < 5 {

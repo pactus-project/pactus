@@ -9,9 +9,9 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
-	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet2/addresspath"
 	"github.com/pactus-project/pactus/wallet2/db"
+	"github.com/pactus-project/pactus/wallet2/encrypter"
 	"github.com/tyler-smith/go-bip39"
 )
 
@@ -70,13 +70,13 @@ type purposes struct {
 }
 
 type purposeBLS struct {
-	XPubValidator      string `json:"xpub_account"`         // Extended public key for account: m/12381'/21888/1'/0
-	XPubAccount        string `json:"xpub_validator"`       // Extended public key for validator: m/12381'/218
+	XPubValidator      string `json:"xpub_account"`         // Extended public key for validator: m/12381'/218
+	XPubAccount        string `json:"xpub_validator"`       // Extended public key for account: m/12381'/21888/1'/0
 	NextAccountIndex   uint32 `json:"next_account_index"`   // Index of next derived account
 	NextValidatorIndex uint32 `json:"next_validator_index"` // Index of next derived validator
 }
 
-func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
+func CreateVaultFromMnemonic(mnemonic string, coinType uint32, database db.DB) (*Vault, error) {
 	seed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
 	if err != nil {
 		return nil, err
@@ -118,6 +118,7 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 	}
 
 	return &Vault{
+		db:        database,
 		Type:      TypeFull,
 		CoinType:  coinType,
 		Encrypter: enc,
@@ -134,17 +135,13 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 
 func (v *Vault) Neuter() *Vault {
 	neutered := &Vault{
+		db:        v.db,
 		Type:      TypeNeutered,
 		CoinType:  v.CoinType,
 		Encrypter: encrypter.NopeEncrypter(),
-		// Addresses: make(map[string]AddressInfo),
-		KeyStore: "",
-		Purposes: v.Purposes,
+		KeyStore:  "",
+		Purposes:  v.Purposes,
 	}
-
-	// for addr, info := range v.Addresses {
-	// 	neutered.Addresses[addr] = info
-	// }
 
 	return neutered
 }
@@ -542,6 +539,12 @@ func (v *Vault) Mnemonic(password string) (string, error) {
 	}
 
 	return keyStore.MasterNode.Mnemonic, nil
+}
+
+func (v *Vault) AddressCount() (int, error) {
+	totalRecords, err := v.db.GetTotalRecords(db.AddressTable)
+
+	return int(totalRecords), err
 }
 
 func (v *Vault) sortAddressesByAddressIndex(addrs ...db.Address) {
