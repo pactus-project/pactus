@@ -1,0 +1,30 @@
+{
+    "mainnet": [
+        {
+            "ip": "localhost:50051",
+            "name": "localhost"
+        },
+        {
+            "ip": "bootstrap1.pactus.org:50051",
+            "name": "bootstrap1"
+        },
+        {
+            "ip": "bootstrap2.pactus.org:50051",
+            "name": "bootstrap2"
+        },
+        {
+            "ip": "bootstrap3.pactus.org:50051",
+            "name": "bootstrap3"
+        },
+        {
+            "ip": "bootstrap4.pactus.org:50051",
+            "name": "bootstrap4"
+        }
+    ],
+    "testnet": [
+        {
+            "ip": "localhost:50052",
+            "name": "testnet-1"
+        }
+    ]
+}
