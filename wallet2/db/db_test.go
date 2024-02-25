@@ -49,6 +49,7 @@ func TestInsert(t *testing.T) {
 
 		tr := &Transaction{
 			TxID:        "some-txid",
+			Address:     "some-address",
 			BlockHeight: 4,
 			BlockTime:   5,
 			PayloadType: "something",
@@ -67,6 +68,7 @@ func TestInsert(t *testing.T) {
 
 		tr := &Transaction{
 			TxID:        "some-txid",
+			Address:     "some-address",
 			BlockHeight: 4,
 			BlockTime:   5,
 			PayloadType: "something",
@@ -145,6 +147,7 @@ func TestGetById(t *testing.T) {
 
 		tr := &Transaction{
 			TxID:        "some-txid",
+			Address:     "some-address",
 			BlockHeight: 4,
 			BlockTime:   5,
 			PayloadType: "something",
@@ -167,6 +170,7 @@ func TestGetById(t *testing.T) {
 
 		tr := &Transaction{
 			TxID:        "some-txid",
+			Address:     "some-address",
 			BlockHeight: 4,
 			BlockTime:   5,
 			PayloadType: "something",
@@ -306,6 +310,54 @@ func TestAddress(t *testing.T) {
 	})
 }
 
+func TestTransaction(t *testing.T) {
+	t.Run("could not get transaction by tx id", func(t *testing.T) {
+		someDB, _ := NewDB(":memory:")
+		_ = someDB.CreateTables()
+
+		tr := &Transaction{
+			TxID:        "some-txid",
+			Address:     "some-address",
+			BlockHeight: 4,
+			BlockTime:   5,
+			PayloadType: "something",
+			Data:        "some-data",
+			Description: "some-description",
+			Amount:      50,
+			Status:      1,
+		}
+		_, _ = someDB.InsertIntoTransaction(tr)
+
+		actual, err := someDB.GetTransactionByTxID("unknown-txid")
+
+		assert.Nil(t, actual)
+		assert.EqualError(t, ErrCouldNotFindRecord, err.Error())
+	})
+
+	t.Run("get transaction by tx id", func(t *testing.T) {
+		someDB, _ := NewDB(":memory:")
+		_ = someDB.CreateTables()
+
+		tr := &Transaction{
+			TxID:        "some-txid",
+			Address:     "some-address",
+			BlockHeight: 4,
+			BlockTime:   5,
+			PayloadType: "something",
+			Data:        "some-data",
+			Description: "some-description",
+			Amount:      50,
+			Status:      1,
+		}
+		expected, _ := someDB.InsertIntoTransaction(tr)
+
+		actual, err := someDB.GetTransactionByTxID(expected.TxID)
+
+		assert.Nil(t, err)
+		assert.Equal(t, expected, actual)
+	})
+}
+
 func TestGetAll(t *testing.T) {
 	t.Run("get all addresses", func(t *testing.T) {
 		someDB, _ := NewDB(":memory:")
@@ -362,6 +414,7 @@ func TestGetAll(t *testing.T) {
 
 		tr := &Transaction{
 			TxID:        "some-txid",
+			Address:     "some-address",
 			BlockHeight: 4,
 			BlockTime:   5,
 			PayloadType: "something",
@@ -378,6 +431,66 @@ func TestGetAll(t *testing.T) {
 		expected = append(expected, *someInsertThree, *someInsertTwo, *someInsertOne)
 
 		acutal, err := someDB.GetAllTransactions()
+
+		assert.Nil(t, err)
+		assert.Equal(t, expected, acutal)
+	})
+
+	t.Run("get all transactions with transaction status query option", func(t *testing.T) {
+		someDB, _ := NewDB(":memory:")
+		_ = someDB.CreateTables()
+
+		tr := &Transaction{
+			TxID:        "some-txid",
+			Address:     "some-address",
+			BlockHeight: 4,
+			BlockTime:   5,
+			PayloadType: "something",
+			Data:        "some-data",
+			Description: "some-description",
+			Amount:      50,
+			Status:      int(Confirmed),
+		}
+		someInsertOne, _ := someDB.InsertIntoTransaction(tr)
+		someInsertTwo, _ := someDB.InsertIntoTransaction(tr)
+
+		tr.Status = int(Pending)
+		_, _ = someDB.InsertIntoTransaction(tr)
+
+		expected := make([]Transaction, 0, 2)
+		expected = append(expected, *someInsertTwo, *someInsertOne)
+
+		acutal, err := someDB.GetAllTransactions(WithTransactionStatus(Confirmed))
+
+		assert.Nil(t, err)
+		assert.Equal(t, expected, acutal)
+	})
+
+	t.Run("get all transactions with transaction address query option", func(t *testing.T) {
+		someDB, _ := NewDB(":memory:")
+		_ = someDB.CreateTables()
+
+		tr := &Transaction{
+			TxID:        "some-txid",
+			Address:     "some-address",
+			BlockHeight: 4,
+			BlockTime:   5,
+			PayloadType: "something",
+			Data:        "some-data",
+			Description: "some-description",
+			Amount:      50,
+			Status:      int(Confirmed),
+		}
+		someInsertOne, _ := someDB.InsertIntoTransaction(tr)
+		someInsertTwo, _ := someDB.InsertIntoTransaction(tr)
+
+		tr.Address = "some-another-address"
+		_, _ = someDB.InsertIntoTransaction(tr)
+
+		expected := make([]Transaction, 0, 2)
+		expected = append(expected, *someInsertTwo, *someInsertOne)
+
+		acutal, err := someDB.GetAllTransactions(WithTransactionAddr("some-address"))
 
 		assert.Nil(t, err)
 		assert.Equal(t, expected, acutal)
@@ -410,6 +523,37 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, int64(3), totalRecords)
 		assert.Equal(t, expected, acutal)
 	})
+
+	t.Run("get all transactions with total records and transaction status query option", func(t *testing.T) {
+		someDB, _ := NewDB(":memory:")
+		_ = someDB.CreateTables()
+
+		tr := &Transaction{
+			TxID:        "some-txid",
+			BlockHeight: 4,
+			BlockTime:   5,
+			PayloadType: "something",
+			Data:        "some-data",
+			Description: "some-description",
+			Amount:      50,
+			Status:      int(Confirmed),
+		}
+		_, _ = someDB.InsertIntoTransaction(tr)
+		someInsertTwo, _ := someDB.InsertIntoTransaction(tr)
+
+		tr.Status = int(Pending)
+		_, _ = someDB.InsertIntoTransaction(tr)
+
+		expected := make([]Transaction, 0, 2)
+		expected = append(expected, *someInsertTwo)
+
+		acutal, totalRecords, err := someDB.GetAllTransactionsWithTotalRecords(1, 1,
+			WithTransactionStatus(Confirmed))
+
+		assert.Nil(t, err)
+		assert.Equal(t, int64(2), totalRecords)
+		assert.Equal(t, expected, acutal)
+	})
 }
 
 func TestTotalRecords(t *testing.T) {
@@ -434,7 +578,7 @@ func TestTotalRecords(t *testing.T) {
 		assert.EqualError(t, ErrCouldNotFindTotalRecords, err.Error())
 	})
 
-	t.Run("ok", func(t *testing.T) {
+	t.Run("ok without any query option", func(t *testing.T) {
 		someDB, _ := NewDB(":memory:")
 		_ = someDB.CreateTables()
 
@@ -449,9 +593,98 @@ func TestTotalRecords(t *testing.T) {
 		_, _ = someDB.InsertIntoAddress(addr)
 		_, _ = someDB.InsertIntoAddress(addr)
 
-		totalRecords, err := someDB.GetTotalRecords("addresses")
+		totalRecords, err := someDB.GetTotalRecords(AddressTable)
 
 		assert.Nil(t, err)
 		assert.Equal(t, int64(3), totalRecords)
+	})
+
+	t.Run("ok with transaction status query option", func(t *testing.T) {
+		someDB, _ := NewDB(":memory:")
+		_ = someDB.CreateTables()
+
+		tr := &Transaction{
+			TxID:        "some-txid",
+			Address:     "some-address",
+			BlockHeight: 4,
+			BlockTime:   5,
+			PayloadType: "something",
+			Data:        "some-data",
+			Description: "some-description",
+			Amount:      50,
+			Status:      int(Confirmed),
+		}
+		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertIntoTransaction(tr)
+
+		tr.Status = int(Pending)
+		_, _ = someDB.InsertIntoTransaction(tr)
+
+		totalRecords, err := someDB.GetTotalRecords(TransactionTable, WithTransactionStatus(Confirmed))
+
+		assert.Nil(t, err)
+		assert.Equal(t, int64(2), totalRecords)
+	})
+
+	t.Run("ok with transaction status and addr query option", func(t *testing.T) {
+		someDB, _ := NewDB(":memory:")
+		_ = someDB.CreateTables()
+
+		tr := &Transaction{
+			TxID:        "some-txid",
+			Address:     "some-address",
+			BlockHeight: 4,
+			BlockTime:   5,
+			PayloadType: "something",
+			Data:        "some-data",
+			Description: "some-description",
+			Amount:      50,
+			Status:      int(Confirmed),
+		}
+		_, _ = someDB.InsertIntoTransaction(tr)
+
+		tr.Address = "some-another-address"
+		_, _ = someDB.InsertIntoTransaction(tr)
+
+		tr.Status = int(Pending)
+		tr.Address = "some-address"
+		_, _ = someDB.InsertIntoTransaction(tr)
+
+		totalRecords, err := someDB.GetTotalRecords(TransactionTable,
+			WithTransactionStatusAndAddr(Confirmed, "some-address"))
+
+		assert.Nil(t, err)
+		assert.Equal(t, int64(1), totalRecords)
+	})
+
+	t.Run("ok with transaction address query option", func(t *testing.T) {
+		someDB, _ := NewDB(":memory:")
+		_ = someDB.CreateTables()
+
+		tr := &Transaction{
+			TxID:        "some-txid",
+			Address:     "some-address",
+			BlockHeight: 4,
+			BlockTime:   5,
+			PayloadType: "something",
+			Data:        "some-data",
+			Description: "some-description",
+			Amount:      50,
+			Status:      int(Confirmed),
+		}
+		_, _ = someDB.InsertIntoTransaction(tr)
+
+		tr.Address = "some-another-address"
+		_, _ = someDB.InsertIntoTransaction(tr)
+
+		tr.Status = int(Pending)
+		tr.Address = "some-address"
+		_, _ = someDB.InsertIntoTransaction(tr)
+
+		totalRecords, err := someDB.GetTotalRecords(TransactionTable,
+			WithTransactionAddr("some-address"))
+
+		assert.Nil(t, err)
+		assert.Equal(t, int64(2), totalRecords)
 	})
 }

@@ -29,14 +29,17 @@ type DB interface {
 	GetAddressByID(id int) (*Address, error)
 	GetAddressByAddress(address string) (*Address, error)
 	GetAddressByPath(p string) (*Address, error)
+
 	GetTransactionByID(id int) (*Transaction, error)
+	GetTransactionByTxID(id string) (*Transaction, error)
+
 	GetPairByKey(key string) (*Pair, error)
-	GetTotalRecords(tableName string) (int64, error)
+	GetTotalRecords(tableName string, queryOpts ...QueryOption) (int64, error)
 
 	GetAllAddresses() ([]Address, error)
-	GetAllTransactions() ([]Transaction, error)
+	GetAllTransactions(queryOpts ...QueryOption) ([]Transaction, error)
 	GetAllAddressesWithTotalRecords(pageIndex, pageSize int) ([]Address, int64, error)
-	GetAllTransactionsWithTotalRecords(pageIndex, pageSize int) ([]Transaction, int64, error)
+	GetAllTransactionsWithTotalRecords(pageIndex, pageSize int, queryOpts ...QueryOption) ([]Transaction, int64, error)
 }
 
 type db struct {
@@ -56,6 +59,7 @@ type Address struct {
 type Transaction struct {
 	ID          int       `json:"id"`
 	TxID        string    `json:"tx_id"`
+	Address     string    `json:"address"`
 	BlockHeight uint32    `json:"block_height"`
 	BlockTime   uint32    `json:"block_time"`
 	PayloadType string    `json:"payload_type"`
@@ -110,7 +114,7 @@ func (d *db) createAddressTable() error {
 
 func (d *db) createTransactionTable() error {
 	transactionQuery := fmt.Sprintf("CREATE TABLE %s (id INTEGER PRIMARY KEY AUTOINCREMENT,"+
-		" tx_id VARCHAR, block_height INTEGER, block_time INTEGER, payload_type VARCHAR,"+
+		" tx_id VARCHAR, address VARCHAR, block_height INTEGER, block_time INTEGER, payload_type VARCHAR,"+
 		" data VARCHAR, description VARCHAR, amount BIGINT,status INTEGER, created_at TIMESTAMP)", TransactionTable)
 	_, err := d.ExecContext(context.Background(), transactionQuery)
 	if err != nil && !strings.Contains(err.Error(), "already exists") {
@@ -158,12 +162,12 @@ func (d *db) InsertIntoAddress(addr *Address) (*Address, error) {
 }
 
 func (d *db) InsertIntoTransaction(t *Transaction) (*Transaction, error) {
-	insertQuery := fmt.Sprintf("INSERT INTO %s (tx_id, block_height, block_time,"+
+	insertQuery := fmt.Sprintf("INSERT INTO %s (tx_id, address, block_height, block_time,"+
 		" payload_type, data, description, amount, status, created_at) VALUES"+
-		" (?,?,?,?,?,?,?,?,?)", TransactionTable)
+		" (?,?,?,?,?,?,?,?,?,?)", TransactionTable)
 
 	t.CreatedAt = time.Now().UTC()
-	r, err := d.ExecContext(context.Background(), insertQuery, t.TxID, t.BlockHeight, t.BlockTime,
+	r, err := d.ExecContext(context.Background(), insertQuery, t.TxID, t.Address, t.BlockHeight, t.BlockTime,
 		t.PayloadType, t.Data, t.Description, t.Amount, t.Status, t.CreatedAt)
 	if err != nil {
 		return nil, ErrCouldNotInsertRecordIntoTable
@@ -177,6 +181,7 @@ func (d *db) InsertIntoTransaction(t *Transaction) (*Transaction, error) {
 	return &Transaction{
 		ID:          int(rowID),
 		TxID:        t.TxID,
+		Address:     t.Address,
 		BlockHeight: t.BlockHeight,
 		BlockTime:   t.BlockTime,
 		PayloadType: t.PayloadType,
@@ -286,7 +291,24 @@ func (d *db) GetTransactionByID(id int) (*Transaction, error) {
 	}
 
 	t := &Transaction{}
-	err := row.Scan(&t.ID, &t.TxID, &t.BlockHeight, &t.BlockTime, &t.PayloadType,
+	err := row.Scan(&t.ID, &t.TxID, &t.Address, &t.BlockHeight, &t.BlockTime, &t.PayloadType,
+		&t.Data, &t.Description, &t.Amount, &t.Status, &t.CreatedAt)
+	if err != nil {
+		return nil, ErrCouldNotFindRecord
+	}
+
+	return t, nil
+}
+
+func (d *db) GetTransactionByTxID(id string) (*Transaction, error) {
+	getQuery := fmt.Sprintf("SELECT * FROM %s WHERE tx_id = ?", TransactionTable)
+	row := d.QueryRowContext(context.Background(), getQuery, id)
+	if row.Err() != nil {
+		return nil, ErrCouldNotFindRecord
+	}
+
+	t := &Transaction{}
+	err := row.Scan(&t.ID, &t.TxID, &t.Address, &t.BlockHeight, &t.BlockTime, &t.PayloadType,
 		&t.Data, &t.Description, &t.Amount, &t.Status, &t.CreatedAt)
 	if err != nil {
 		return nil, ErrCouldNotFindRecord
@@ -333,8 +355,15 @@ func (d *db) GetAllAddresses() ([]Address, error) {
 	return addrs, nil
 }
 
-func (d *db) GetAllTransactions() ([]Transaction, error) {
-	getAllQuery := fmt.Sprintf("SELECT * FROM %s ORDER BY id DESC", TransactionTable)
+func (d *db) GetAllTransactions(queryOpts ...QueryOption) ([]Transaction, error) {
+	getAllQuery := fmt.Sprintf("SELECT * FROM %s", TransactionTable)
+
+	if len(queryOpts) > 0 {
+		getAllQuery = fmt.Sprintf("%s %s", getAllQuery, queryOpts[0])
+	}
+
+	getAllQuery = fmt.Sprintf("%s ORDER BY id DESC", getAllQuery)
+
 	rows, err := d.QueryContext(context.Background(), getAllQuery)
 	if err != nil || rows.Err() != nil {
 		return nil, ErrCouldNotFindRecord
@@ -344,7 +373,7 @@ func (d *db) GetAllTransactions() ([]Transaction, error) {
 	transactions := make([]Transaction, 0)
 	for rows.Next() {
 		t := &Transaction{}
-		err := rows.Scan(&t.ID, &t.TxID, &t.BlockHeight, &t.BlockTime, &t.PayloadType,
+		err := rows.Scan(&t.ID, &t.TxID, &t.Address, &t.BlockHeight, &t.BlockTime, &t.PayloadType,
 			&t.Data, &t.Description, &t.Amount, &t.Status, &t.CreatedAt)
 		if err != nil {
 			return nil, ErrCouldNotFindRecord
@@ -383,13 +412,22 @@ func (d *db) GetAllAddressesWithTotalRecords(pageIndex, pageSize int) ([]Address
 	return addrs, totalRecords, nil
 }
 
-func (d *db) GetAllTransactionsWithTotalRecords(pageIndex, pageSize int) ([]Transaction, int64, error) {
-	totalRecords, err := d.GetTotalRecords("transactions")
+func (d *db) GetAllTransactionsWithTotalRecords(pageIndex, pageSize int,
+	queryOpts ...QueryOption,
+) ([]Transaction, int64, error) {
+	totalRecords, err := d.GetTotalRecords("transactions", queryOpts...)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	getAllQuery := fmt.Sprintf("SELECT * FROM %s ORDER BY id DESC LIMIT ? OFFSET ?", TransactionTable)
+	getAllQuery := fmt.Sprintf("SELECT * FROM %s", TransactionTable)
+
+	if len(queryOpts) > 0 {
+		getAllQuery = fmt.Sprintf("%s %s", getAllQuery, queryOpts[0])
+	}
+
+	getAllQuery = fmt.Sprintf("%s ORDER BY id DESC LIMIT ? OFFSET ?", getAllQuery)
+
 	rows, err := d.QueryContext(context.Background(), getAllQuery, pageSize, calcOffset(pageIndex, pageSize))
 	if err != nil || rows.Err() != nil {
 		return nil, 0, ErrCouldNotFindRecord
@@ -399,7 +437,7 @@ func (d *db) GetAllTransactionsWithTotalRecords(pageIndex, pageSize int) ([]Tran
 	transactions := make([]Transaction, 0, pageSize)
 	for rows.Next() {
 		t := &Transaction{}
-		err := rows.Scan(&t.ID, &t.TxID, &t.BlockHeight, &t.BlockTime, &t.PayloadType,
+		err := rows.Scan(&t.ID, &t.TxID, &t.Address, &t.BlockHeight, &t.BlockTime, &t.PayloadType,
 			&t.Data, &t.Description, &t.Amount, &t.Status, &t.CreatedAt)
 		if err != nil {
 			return nil, 0, ErrCouldNotFindRecord
@@ -411,9 +449,13 @@ func (d *db) GetAllTransactionsWithTotalRecords(pageIndex, pageSize int) ([]Tran
 	return transactions, totalRecords, nil
 }
 
-func (d *db) GetTotalRecords(tableName string) (int64, error) {
+func (d *db) GetTotalRecords(tableName string, queryOpts ...QueryOption) (int64, error) {
 	var totalRecords int64
 	query := fmt.Sprintf("SELECT COUNT(*) FROM %s", tableName)
+
+	if len(queryOpts) > 0 {
+		query = fmt.Sprintf("%s %s", query, queryOpts[0])
+	}
 
 	r := d.QueryRowContext(context.Background(), query)
 	if r.Err() != nil {
