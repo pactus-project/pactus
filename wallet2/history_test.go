@@ -47,7 +47,7 @@ func TestHasTransaction(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	someDB, _ := db.NewDB(":memory:")
-	someDB.CreateTables()
+	_ = someDB.CreateTables()
 
 	h := newHistory(someDB)
 

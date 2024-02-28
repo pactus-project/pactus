@@ -64,12 +64,12 @@ func (s *store) Load() error {
 	return nil
 }
 
-func (s *store) Save(version int, uuid uuid.UUID, createdAt time.Time, network genesis.ChainType) error {
+func (s *store) Save(version int, id uuid.UUID, createdAt time.Time, network genesis.ChainType) error {
 	if _, err := s.db.InsertIntoPair(VersionKey, strconv.Itoa(version)); err != nil {
 		return err
 	}
 
-	if _, err := s.db.InsertIntoPair(UUIDKey, uuid.String()); err != nil {
+	if _, err := s.db.InsertIntoPair(UUIDKey, id.String()); err != nil {
 		return err
 	}
 
