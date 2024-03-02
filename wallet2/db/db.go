@@ -34,12 +34,13 @@ type DB interface {
 	GetTransactionByTxID(id string) (*Transaction, error)
 
 	GetPairByKey(key string) (*Pair, error)
-	GetTotalRecords(tableName string, queryOpts ...QueryOption) (int64, error)
+	GetTotalRecords(tableName string, query string, args ...any) (int64, error)
 
 	GetAllAddresses() ([]Address, error)
-	GetAllTransactions(queryOpts ...QueryOption) ([]Transaction, error)
 	GetAllAddressesWithTotalRecords(pageIndex, pageSize int) ([]Address, int64, error)
-	GetAllTransactionsWithTotalRecords(pageIndex, pageSize int, queryOpts ...QueryOption) ([]Transaction, int64, error)
+
+	GetAllTransactions(query string, args ...any) ([]Transaction, error)
+	GetAllTransactionsWithTotalRecords(pageIndex, pageSize int, query string, args ...any) ([]Transaction, int64, error)
 }
 
 type db struct {
@@ -421,38 +422,8 @@ func (d *db) GetAllAddresses() ([]Address, error) {
 	return addrs, nil
 }
 
-func (d *db) GetAllTransactions(queryOpts ...QueryOption) ([]Transaction, error) {
-	getAllQuery := fmt.Sprintf("SELECT * FROM %s", TransactionTable)
-
-	if len(queryOpts) > 0 {
-		getAllQuery = fmt.Sprintf("%s %s", getAllQuery, queryOpts[0])
-	}
-
-	getAllQuery = fmt.Sprintf("%s ORDER BY id DESC", getAllQuery)
-
-	rows, err := d.QueryContext(context.Background(), getAllQuery)
-	if err != nil || rows.Err() != nil {
-		return nil, ErrCouldNotFindRecord
-	}
-	defer rows.Close()
-
-	transactions := make([]Transaction, 0)
-	for rows.Next() {
-		t := &Transaction{}
-		err := rows.Scan(&t.ID, &t.TxID, &t.Address, &t.BlockHeight, &t.BlockTime, &t.PayloadType,
-			&t.Data, &t.Description, &t.Amount, &t.Status, &t.CreatedAt)
-		if err != nil {
-			return nil, ErrCouldNotFindRecord
-		}
-
-		transactions = append(transactions, *t)
-	}
-
-	return transactions, nil
-}
-
 func (d *db) GetAllAddressesWithTotalRecords(pageIndex, pageSize int) ([]Address, int64, error) {
-	totalRecords, err := d.GetTotalRecords("addresses")
+	totalRecords, err := d.GetTotalRecords("addresses", EmptyQuery)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -478,23 +449,57 @@ func (d *db) GetAllAddressesWithTotalRecords(pageIndex, pageSize int) ([]Address
 	return addrs, totalRecords, nil
 }
 
+func (d *db) GetAllTransactions(query string, args ...any) ([]Transaction, error) {
+	getAllQuery := fmt.Sprintf("SELECT * FROM %s %s ORDER BY id DESC", TransactionTable, query)
+
+	prepareQuery, err := d.PrepareContext(context.Background(), getAllQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer prepareQuery.Close()
+
+	rows, err := prepareQuery.QueryContext(context.Background(), args...)
+	if err != nil || rows.Err() != nil {
+		return nil, ErrCouldNotFindRecord
+	}
+	defer rows.Close()
+
+	transactions := make([]Transaction, 0)
+	for rows.Next() {
+		t := &Transaction{}
+		err := rows.Scan(&t.ID, &t.TxID, &t.Address, &t.BlockHeight, &t.BlockTime, &t.PayloadType,
+			&t.Data, &t.Description, &t.Amount, &t.Status, &t.CreatedAt)
+		if err != nil {
+			return nil, ErrCouldNotFindRecord
+		}
+
+		transactions = append(transactions, *t)
+	}
+
+	return transactions, nil
+}
+
 func (d *db) GetAllTransactionsWithTotalRecords(pageIndex, pageSize int,
-	queryOpts ...QueryOption,
+	query string, args ...any,
 ) ([]Transaction, int64, error) {
-	totalRecords, err := d.GetTotalRecords("transactions", queryOpts...)
+	totalRecords, err := d.GetTotalRecords("transactions", query, args...)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	getAllQuery := fmt.Sprintf("SELECT * FROM %s", TransactionTable)
+	getAllQuery := fmt.Sprintf("SELECT * FROM %s %s ORDER BY id DESC LIMIT ? OFFSET ?", TransactionTable, query)
 
-	if len(queryOpts) > 0 {
-		getAllQuery = fmt.Sprintf("%s %s", getAllQuery, queryOpts[0])
+	prepareQuery, err := d.PrepareContext(context.Background(), getAllQuery)
+	if err != nil {
+		return nil, 0, err
 	}
+	defer prepareQuery.Close()
 
-	getAllQuery = fmt.Sprintf("%s ORDER BY id DESC LIMIT ? OFFSET ?", getAllQuery)
+	tempArgs := make([]any, 0)
+	tempArgs = append(tempArgs, args...)
+	tempArgs = append(tempArgs, pageSize, calcOffset(pageIndex, pageSize))
 
-	rows, err := d.QueryContext(context.Background(), getAllQuery, pageSize, calcOffset(pageIndex, pageSize))
+	rows, err := prepareQuery.QueryContext(context.Background(), tempArgs...)
 	if err != nil || rows.Err() != nil {
 		return nil, 0, ErrCouldNotFindRecord
 	}
@@ -515,15 +520,17 @@ func (d *db) GetAllTransactionsWithTotalRecords(pageIndex, pageSize int,
 	return transactions, totalRecords, nil
 }
 
-func (d *db) GetTotalRecords(tableName string, queryOpts ...QueryOption) (int64, error) {
+func (d *db) GetTotalRecords(tableName string, query string, args ...any) (int64, error) {
 	var totalRecords int64
-	query := fmt.Sprintf("SELECT COUNT(*) FROM %s", tableName)
+	totalRecordsQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s %s", tableName, query)
 
-	if len(queryOpts) > 0 {
-		query = fmt.Sprintf("%s %s", query, queryOpts[0])
+	prepareQuery, err := d.PrepareContext(context.Background(), totalRecordsQuery)
+	if err != nil {
+		return 0, err
 	}
+	defer prepareQuery.Close()
 
-	r := d.QueryRowContext(context.Background(), query)
+	r := prepareQuery.QueryRowContext(context.Background(), args...)
 	if r.Err() != nil {
 		return totalRecords, ErrCouldNotFindTotalRecords
 	}

@@ -1,17 +1,19 @@
 package db
 
-import "fmt"
+const (
+	EmptyQuery = ""
+)
 
 type QueryOption string
 
-func WithTransactionStatus(status Status) QueryOption {
-	return QueryOption(fmt.Sprintf("WHERE status = %d", status))
+func WithTransactionStatus() string {
+	return "WHERE status = ?"
 }
 
-func WithTransactionAddr(addr string) QueryOption {
-	return QueryOption(fmt.Sprintf("WHERE address = '%s'", addr))
+func WithTransactionAddr() string {
+	return "WHERE address = ?"
 }
 
-func WithTransactionStatusAndAddr(status Status, addr string) QueryOption {
-	return QueryOption(fmt.Sprintf("WHERE status = %d AND address = '%s'", status, addr))
+func WithTransactionStatusAndAddr() string {
+	return "WHERE status = ? AND address = ?"
 }

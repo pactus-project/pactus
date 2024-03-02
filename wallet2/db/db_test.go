@@ -430,7 +430,7 @@ func TestGetAll(t *testing.T) {
 		expected := make([]Transaction, 0, 3)
 		expected = append(expected, *someInsertThree, *someInsertTwo, *someInsertOne)
 
-		acutal, err := someDB.GetAllTransactions()
+		acutal, err := someDB.GetAllTransactions(EmptyQuery)
 
 		assert.Nil(t, err)
 		assert.Equal(t, expected, acutal)
@@ -460,7 +460,7 @@ func TestGetAll(t *testing.T) {
 		expected := make([]Transaction, 0, 2)
 		expected = append(expected, *someInsertTwo, *someInsertOne)
 
-		acutal, err := someDB.GetAllTransactions(WithTransactionStatus(Confirmed))
+		acutal, err := someDB.GetAllTransactions(WithTransactionStatus(), Confirmed)
 
 		assert.Nil(t, err)
 		assert.Equal(t, expected, acutal)
@@ -490,7 +490,7 @@ func TestGetAll(t *testing.T) {
 		expected := make([]Transaction, 0, 2)
 		expected = append(expected, *someInsertTwo, *someInsertOne)
 
-		acutal, err := someDB.GetAllTransactions(WithTransactionAddr("some-address"))
+		acutal, err := someDB.GetAllTransactions(WithTransactionAddr(), "some-address")
 
 		assert.Nil(t, err)
 		assert.Equal(t, expected, acutal)
@@ -517,7 +517,7 @@ func TestGetAll(t *testing.T) {
 		expected := make([]Transaction, 0, 3)
 		expected = append(expected, *someInsertThree, *someInsertTwo, *someInsertOne)
 
-		acutal, totalRecords, err := someDB.GetAllTransactionsWithTotalRecords(1, 3)
+		acutal, totalRecords, err := someDB.GetAllTransactionsWithTotalRecords(1, 3, EmptyQuery)
 
 		assert.Nil(t, err)
 		assert.Equal(t, int64(3), totalRecords)
@@ -548,7 +548,7 @@ func TestGetAll(t *testing.T) {
 		expected = append(expected, *someInsertTwo)
 
 		acutal, totalRecords, err := someDB.GetAllTransactionsWithTotalRecords(1, 1,
-			WithTransactionStatus(Confirmed))
+			WithTransactionStatus(), Confirmed)
 
 		assert.Nil(t, err)
 		assert.Equal(t, int64(2), totalRecords)
@@ -572,7 +572,7 @@ func TestTotalRecords(t *testing.T) {
 		_, _ = someDB.InsertIntoAddress(addr)
 		_, _ = someDB.InsertIntoAddress(addr)
 
-		totalRecords, err := someDB.GetTotalRecords("some-table")
+		totalRecords, err := someDB.GetTotalRecords("some-table", EmptyQuery)
 
 		assert.Equal(t, int64(0), totalRecords)
 		assert.EqualError(t, ErrCouldNotFindTotalRecords, err.Error())
@@ -593,7 +593,7 @@ func TestTotalRecords(t *testing.T) {
 		_, _ = someDB.InsertIntoAddress(addr)
 		_, _ = someDB.InsertIntoAddress(addr)
 
-		totalRecords, err := someDB.GetTotalRecords(AddressTable)
+		totalRecords, err := someDB.GetTotalRecords(AddressTable, EmptyQuery)
 
 		assert.Nil(t, err)
 		assert.Equal(t, int64(3), totalRecords)
@@ -620,7 +620,7 @@ func TestTotalRecords(t *testing.T) {
 		tr.Status = int(Pending)
 		_, _ = someDB.InsertIntoTransaction(tr)
 
-		totalRecords, err := someDB.GetTotalRecords(TransactionTable, WithTransactionStatus(Confirmed))
+		totalRecords, err := someDB.GetTotalRecords(TransactionTable, WithTransactionStatus(), Confirmed)
 
 		assert.Nil(t, err)
 		assert.Equal(t, int64(2), totalRecords)
@@ -651,7 +651,7 @@ func TestTotalRecords(t *testing.T) {
 		_, _ = someDB.InsertIntoTransaction(tr)
 
 		totalRecords, err := someDB.GetTotalRecords(TransactionTable,
-			WithTransactionStatusAndAddr(Confirmed, "some-address"))
+			WithTransactionStatusAndAddr(), Confirmed, "some-address")
 
 		assert.Nil(t, err)
 		assert.Equal(t, int64(1), totalRecords)
@@ -682,7 +682,7 @@ func TestTotalRecords(t *testing.T) {
 		_, _ = someDB.InsertIntoTransaction(tr)
 
 		totalRecords, err := someDB.GetTotalRecords(TransactionTable,
-			WithTransactionAddr("some-address"))
+			WithTransactionAddr(), "some-address")
 
 		assert.Nil(t, err)
 		assert.Equal(t, int64(2), totalRecords)
