@@ -88,6 +88,10 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType) (*Wa
 		return nil, err
 	}
 
+	if err := database.CreateTables(); err != nil {
+		return nil, err
+	}
+
 	store := newStore(database)
 	err = store.Save(1, uuid.New(), time.Now().Round(time.Second).UTC(), chain)
 	if err != nil {
