@@ -80,7 +80,9 @@
   # `moniker` is a custom human-readable name for this node.
  ## moniker = ""
 
-  # `session_timeout` is a timeout for a session to be opened.
+  # `session_timeout` is a timeout for a download session to keep open.
+  # By sending a block download request, this timer starts and if there is no activity from the Node
+  # the session will get closed and try to get the block from another Node.
   # Default is `10s`.
  ## session_timeout = "10s"
 
@@ -141,7 +143,7 @@
 [grpc]
 
   # `enable` indicates whether gRPC service should be enabled or not.
-  # Default is `false`.
+  # Default is `true`.
  ## enable = true
 
   # `enable_wallet` indicates whether Wallet service should be enabled or not.
