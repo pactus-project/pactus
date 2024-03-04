@@ -40,7 +40,6 @@ func (c ResponseCode) String() string {
 type Type int32
 
 const (
-	TypeUnspecified    = Type(0)
 	TypeHello          = Type(1)
 	TypeHelloAck       = Type(2)
 	TypeTransactions   = Type(3)
@@ -66,8 +65,16 @@ func (t Type) TopicID() network.TopicID {
 
 		return network.TopicIDConsensus
 
+	case TypeHello,
+		TypeHelloAck,
+		TypeBlocksRequest,
+		TypeBlocksResponse:
+
+		return -1 // topic id for direct message
+
 	default:
-		panic("Invalid topic ID")
+
+		return -2 // topic id for unknown message
 	}
 }
 
@@ -102,9 +109,10 @@ func (t Type) String() string {
 
 	case TypeBlocksResponse:
 		return "blocks-res"
-	}
 
-	return fmt.Sprintf("%d", t)
+	default:
+		return fmt.Sprintf("%d", t)
+	}
 }
 
 func MakeMessage(t Type) Message {

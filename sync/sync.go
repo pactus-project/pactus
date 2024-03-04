@@ -149,7 +149,7 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 		case genesis.Testnet:
 			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-		default:
+		case genesis.Localnet:
 			// It's localnet and for testing purpose only
 		}
 
