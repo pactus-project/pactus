@@ -4,8 +4,9 @@
 [node]
 
   # `reward_addresses` specifies the addresses for collecting rewards.
-  # If it is empty, reward addresses will be obtained from the wallet.
-  # The number of reward addresses should be the same as the number of validators.
+  # If empty, reward addresses will be obtained from the wallet.
+  # If it has only one address, it is used for all validators.
+  # Otherwise, the number of reward addresses should be the same as the number of validators.
  ## reward_addresses = []
 
 # `store` contains configuration options for the store module, which manages storage and retrieval of blockchain data.
