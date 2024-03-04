@@ -2,6 +2,7 @@ package crypto
 
 import (
 	"io"
+	"slices"
 
 	"github.com/pactus-project/pactus/util/bech32m"
 	"github.com/pactus-project/pactus/util/encoding"
@@ -50,15 +51,15 @@ func AddressFromString(text string) (Address, error) {
 		return Address{}, InvalidHRPError(hrp)
 	}
 
-	switch AddressType(typ) {
-	case AddressTypeValidator,
-		AddressTypeBLSAccount:
-		// The regrouped data must be 20 bytes.
-		if len(data) != 20 {
-			return Address{}, InvalidLengthError(len(data) + 1)
-		}
-	default:
+	// check type is valid
+	validTypes := []AddressType{AddressTypeValidator, AddressTypeBLSAccount}
+	if !slices.Contains(validTypes, AddressType(typ)) {
 		return Address{}, InvalidAddressTypeError(typ)
+	}
+
+	// check length is valid
+	if len(data) != 20 {
+		return Address{}, InvalidLengthError(len(data) + 1)
 	}
 
 	var addr Address

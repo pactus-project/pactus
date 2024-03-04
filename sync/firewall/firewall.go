@@ -9,7 +9,6 @@ import (
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
-	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
@@ -96,8 +95,6 @@ func (f *Firewall) decodeBundle(r io.Reader, pid peer.ID) (*bundle.Bundle, error
 	bdl := new(bundle.Bundle)
 	bytesRead, err := bdl.Decode(r)
 	if err != nil {
-		f.peerSet.IncreaseReceivedBytesCounter(pid, message.TypeUnspecified, int64(bytesRead))
-
 		return nil, errors.Errorf(errors.ErrInvalidMessage, err.Error())
 	}
 	f.peerSet.IncreaseReceivedBytesCounter(pid, bdl.Message.Type(), int64(bytesRead))
@@ -123,7 +120,7 @@ func (f *Firewall) checkBundle(bdl *bundle.Bundle) error {
 				"bundle is not for the testnet")
 		}
 
-	default:
+	case genesis.Localnet:
 		if bdl.Flags&0x3 != 0 {
 			return errors.Errorf(errors.ErrInvalidMessage,
 				"bundle is not for the localnet")

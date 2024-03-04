@@ -1,6 +1,8 @@
 package wallet
 
 import (
+	"fmt"
+
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/types/tx"
@@ -102,10 +104,15 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 			pub = nil
 		}
 		trx = tx.NewBondTx(m.lockTime, *m.from, *m.to, pub, m.amount, m.fee, m.memo)
+
 	case payload.TypeUnbond:
 		trx = tx.NewUnbondTx(m.lockTime, *m.from, m.memo)
+
 	case payload.TypeWithdraw:
 		trx = tx.NewWithdrawTx(m.lockTime, *m.from, *m.to, m.amount, m.fee, m.memo)
+
+	case payload.TypeSortition:
+		return nil, fmt.Errorf("unable to build sortition transactions")
 	}
 
 	return trx, nil

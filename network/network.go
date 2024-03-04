@@ -32,7 +32,7 @@ var _ Network = &network{}
 
 type network struct {
 	ctx            context.Context
-	cancel         func()
+	cancel         context.CancelFunc
 	config         *Config
 	host           lp2phost.Host
 	mdns           *mdnsService
