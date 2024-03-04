@@ -162,6 +162,7 @@ func (cp *changeProposer) checkJustMainVoteNoConflict(just vote.Just,
 	return nil
 }
 
+//nolint:exhaustive // refactor me; check just by just_type, not vote_type
 func (cp *changeProposer) checkJustMainVoteConflict(just vote.Just,
 	blockHash hash.Hash, cpRound int16,
 ) error {
@@ -214,6 +215,7 @@ func (cp *changeProposer) checkJustMainVoteConflict(just vote.Just,
 	return nil
 }
 
+//nolint:exhaustive // refactor me; check just by just_type, not vote_type
 func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 	just := v.CPJust()
 	if v.CPRound() == 0 {
@@ -266,6 +268,7 @@ func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 	}
 }
 
+//nolint:exhaustive // refactor me; check just by just_type, not vote_type
 func (cp *changeProposer) checkJustMainVote(v *vote.Vote) error {
 	just := v.CPJust()
 	switch just.Type() {
@@ -324,6 +327,7 @@ func (cp *changeProposer) checkJustDecide(v *vote.Vote) error {
 	return nil
 }
 
+//nolint:exhaustive // refactor me; check just by just_type, not vote_type
 func (cp *changeProposer) checkJust(v *vote.Vote) error {
 	switch v.Type() {
 	case vote.VoteTypeCPPreVote:
