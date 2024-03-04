@@ -25,6 +25,7 @@ func buildAddToHistoryCmd(parentCmd *cobra.Command) {
 	addToHistoryCmd := &cobra.Command{
 		Use:   "add [flags] <ID>",
 		Short: "adds a transaction to the wallet's history.",
+		Args:  cobra.ExactArgs(1),
 	}
 	parentCmd.AddCommand(addToHistoryCmd)
 

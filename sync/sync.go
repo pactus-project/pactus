@@ -31,7 +31,7 @@ import (
 
 type synchronizer struct {
 	ctx         context.Context
-	cancel      func()
+	cancel      context.CancelFunc
 	config      *Config
 	valKeys     []*bls.ValidatorKey
 	state       state.Facade
@@ -149,7 +149,7 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 		case genesis.Testnet:
 			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-		default:
+		case genesis.Localnet:
 			// It's localnet and for testing purpose only
 		}
 

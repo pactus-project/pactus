@@ -95,6 +95,9 @@ func (mgr *peerMgr) addPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
 
 	case lp2pnet.DirOutbound:
 		mgr.numOutbound++
+
+	case lp2pnet.DirUnknown:
+		//
 	}
 
 	mgr.peers[pid] = &peerInfo{
@@ -124,6 +127,9 @@ func (mgr *peerMgr) removePeer(pid lp2ppeer.ID) {
 
 	case lp2pnet.DirOutbound:
 		mgr.numOutbound--
+
+	case lp2pnet.DirUnknown:
+		//
 	}
 
 	delete(mgr.peers, pid)

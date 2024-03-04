@@ -22,7 +22,7 @@ import (
 
 type Server struct {
 	ctx         context.Context
-	cancel      func()
+	cancel      context.CancelFunc
 	config      *Config
 	router      *mux.Router
 	grpcClient  *grpc.ClientConn
