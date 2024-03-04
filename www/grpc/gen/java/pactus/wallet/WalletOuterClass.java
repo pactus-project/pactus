@@ -5339,7 +5339,8 @@ public final class WalletOuterClass {
   }
   /**
    * <pre>
-   * Request message for obtaining the validator address associated with a public key.
+   * Request message for obtaining the validator address associated with a public
+   * key.
    * </pre>
    *
    * Protobuf type {@code pactus.GetValidatorAddressRequest}
@@ -5584,7 +5585,8 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Request message for obtaining the validator address associated with a public key.
+     * Request message for obtaining the validator address associated with a public
+     * key.
      * </pre>
      *
      * Protobuf type {@code pactus.GetValidatorAddressRequest}
@@ -5932,7 +5934,8 @@ public final class WalletOuterClass {
   }
   /**
    * <pre>
-   * Response message containing the validator address corresponding to a public key.
+   * Response message containing the validator address corresponding to a public
+   * key.
    * </pre>
    *
    * Protobuf type {@code pactus.GetValidatorAddressResponse}
@@ -6177,7 +6180,8 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Response message containing the validator address corresponding to a public key.
+     * Response message containing the validator address corresponding to a public
+     * key.
      * </pre>
      *
      * Protobuf type {@code pactus.GetValidatorAddressResponse}

@@ -279,7 +279,6 @@ func calcMACv1(data ...[]byte) []byte {
 // which may not be relevant to the error at all.
 func exitOnErr(e error) {
 	if e != nil {
-		fmt.Println(e.Error())
 		os.Exit(1)
 	}
 }

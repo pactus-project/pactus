@@ -826,7 +826,7 @@ proto.pactus.CalculateFeeRequest.prototype.toObject = function(opt_includeInstan
 proto.pactus.CalculateFeeRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     amount: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    payloadtype: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    payloadType: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -869,7 +869,7 @@ proto.pactus.CalculateFeeRequest.deserializeBinaryFromReader = function(msg, rea
       break;
     case 2:
       var value = /** @type {!proto.pactus.PayloadType} */ (reader.readEnum());
-      msg.setPayloadtype(value);
+      msg.setPayloadType(value);
       break;
     default:
       reader.skipField();
@@ -907,7 +907,7 @@ proto.pactus.CalculateFeeRequest.serializeBinaryToWriter = function(message, wri
       f
     );
   }
-  f = message.getPayloadtype();
+  f = message.getPayloadType();
   if (f !== 0.0) {
     writer.writeEnum(
       2,
@@ -936,10 +936,10 @@ proto.pactus.CalculateFeeRequest.prototype.setAmount = function(value) {
 
 
 /**
- * optional PayloadType payloadType = 2;
+ * optional PayloadType payload_type = 2;
  * @return {!proto.pactus.PayloadType}
  */
-proto.pactus.CalculateFeeRequest.prototype.getPayloadtype = function() {
+proto.pactus.CalculateFeeRequest.prototype.getPayloadType = function() {
   return /** @type {!proto.pactus.PayloadType} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
@@ -948,7 +948,7 @@ proto.pactus.CalculateFeeRequest.prototype.getPayloadtype = function() {
  * @param {!proto.pactus.PayloadType} value
  * @return {!proto.pactus.CalculateFeeRequest} returns this
  */
-proto.pactus.CalculateFeeRequest.prototype.setPayloadtype = function(value) {
+proto.pactus.CalculateFeeRequest.prototype.setPayloadType = function(value) {
   return jspb.Message.setProto3EnumField(this, 2, value);
 };
 
@@ -3556,7 +3556,7 @@ proto.pactus.TransactionInfo.toObject = function(includeInstance, msg) {
     lockTime: jspb.Message.getFieldWithDefault(msg, 4, 0),
     value: jspb.Message.getFieldWithDefault(msg, 5, 0),
     fee: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    payloadtype: jspb.Message.getFieldWithDefault(msg, 7, 0),
+    payloadType: jspb.Message.getFieldWithDefault(msg, 7, 0),
     transfer: (f = msg.getTransfer()) && proto.pactus.PayloadTransfer.toObject(includeInstance, f),
     bond: (f = msg.getBond()) && proto.pactus.PayloadBond.toObject(includeInstance, f),
     sortition: (f = msg.getSortition()) && proto.pactus.PayloadSortition.toObject(includeInstance, f),
@@ -3627,7 +3627,7 @@ proto.pactus.TransactionInfo.deserializeBinaryFromReader = function(msg, reader)
       break;
     case 7:
       var value = /** @type {!proto.pactus.PayloadType} */ (reader.readEnum());
-      msg.setPayloadtype(value);
+      msg.setPayloadType(value);
       break;
     case 30:
       var value = new proto.pactus.PayloadTransfer;
@@ -3737,7 +3737,7 @@ proto.pactus.TransactionInfo.serializeBinaryToWriter = function(message, writer)
       f
     );
   }
-  f = message.getPayloadtype();
+  f = message.getPayloadType();
   if (f !== 0.0) {
     writer.writeEnum(
       7,
@@ -3965,10 +3965,10 @@ proto.pactus.TransactionInfo.prototype.setFee = function(value) {
 
 
 /**
- * optional PayloadType payloadType = 7;
+ * optional PayloadType payload_type = 7;
  * @return {!proto.pactus.PayloadType}
  */
-proto.pactus.TransactionInfo.prototype.getPayloadtype = function() {
+proto.pactus.TransactionInfo.prototype.getPayloadType = function() {
   return /** @type {!proto.pactus.PayloadType} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
@@ -3977,7 +3977,7 @@ proto.pactus.TransactionInfo.prototype.getPayloadtype = function() {
  * @param {!proto.pactus.PayloadType} value
  * @return {!proto.pactus.TransactionInfo} returns this
  */
-proto.pactus.TransactionInfo.prototype.setPayloadtype = function(value) {
+proto.pactus.TransactionInfo.prototype.setPayloadType = function(value) {
   return jspb.Message.setProto3EnumField(this, 7, value);
 };
 

@@ -28,13 +28,16 @@ type WalletClient interface {
 	LoadWallet(ctx context.Context, in *LoadWalletRequest, opts ...grpc.CallOption) (*LoadWalletResponse, error)
 	// UnloadWallet unloads a currently loaded wallet with the specified name.
 	UnloadWallet(ctx context.Context, in *UnloadWalletRequest, opts ...grpc.CallOption) (*UnloadWalletResponse, error)
-	// LockWallet locks a currently loaded wallet with the provided password and timeout.
+	// LockWallet locks a currently loaded wallet with the provided password and
+	// timeout.
 	LockWallet(ctx context.Context, in *LockWalletRequest, opts ...grpc.CallOption) (*LockWalletResponse, error)
-	// UnlockWallet unlocks a locked wallet with the provided password and timeout.
+	// UnlockWallet unlocks a locked wallet with the provided password and
+	// timeout.
 	UnlockWallet(ctx context.Context, in *UnlockWalletRequest, opts ...grpc.CallOption) (*UnlockWalletResponse, error)
 	// SignRawTransaction signs a raw transaction for a specified wallet.
 	SignRawTransaction(ctx context.Context, in *SignRawTransactionRequest, opts ...grpc.CallOption) (*SignRawTransactionResponse, error)
-	// GetValidatorAddress retrieves the validator address associated with a public key.
+	// GetValidatorAddress retrieves the validator address associated with a
+	// public key.
 	GetValidatorAddress(ctx context.Context, in *GetValidatorAddressRequest, opts ...grpc.CallOption) (*GetValidatorAddressResponse, error)
 }
 
@@ -119,13 +122,16 @@ type WalletServer interface {
 	LoadWallet(context.Context, *LoadWalletRequest) (*LoadWalletResponse, error)
 	// UnloadWallet unloads a currently loaded wallet with the specified name.
 	UnloadWallet(context.Context, *UnloadWalletRequest) (*UnloadWalletResponse, error)
-	// LockWallet locks a currently loaded wallet with the provided password and timeout.
+	// LockWallet locks a currently loaded wallet with the provided password and
+	// timeout.
 	LockWallet(context.Context, *LockWalletRequest) (*LockWalletResponse, error)
-	// UnlockWallet unlocks a locked wallet with the provided password and timeout.
+	// UnlockWallet unlocks a locked wallet with the provided password and
+	// timeout.
 	UnlockWallet(context.Context, *UnlockWalletRequest) (*UnlockWalletResponse, error)
 	// SignRawTransaction signs a raw transaction for a specified wallet.
 	SignRawTransaction(context.Context, *SignRawTransactionRequest) (*SignRawTransactionResponse, error)
-	// GetValidatorAddress retrieves the validator address associated with a public key.
+	// GetValidatorAddress retrieves the validator address associated with a
+	// public key.
 	GetValidatorAddress(context.Context, *GetValidatorAddressRequest) (*GetValidatorAddressResponse, error)
 }
 

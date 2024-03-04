@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"reflect"
+	"slices"
 
 	"github.com/pactus-project/pactus/util"
 	"github.com/rs/zerolog"
@@ -70,21 +71,26 @@ func InitGlobalLogger(conf *Config) {
 	}
 
 	writers := []io.Writer{}
-	// file writer
-	fw := &lumberjack.Logger{
-		Filename:   LogFilename,
-		MaxSize:    MaxLogSize,
-		MaxBackups: conf.MaxBackups,
-		Compress:   conf.Compress,
-		MaxAge:     conf.RotateLogAfterDays,
-	}
-	writers = append(writers, fw)
 
-	// console writer
-	if conf.Colorful {
-		writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04:05"})
-	} else {
-		writers = append(writers, os.Stderr)
+	if slices.Contains(conf.Targets, "file") {
+		// file writer
+		fw := &lumberjack.Logger{
+			Filename:   LogFilename,
+			MaxSize:    MaxLogSize,
+			MaxBackups: conf.MaxBackups,
+			Compress:   conf.Compress,
+			MaxAge:     conf.RotateLogAfterDays,
+		}
+		writers = append(writers, fw)
+	}
+
+	if slices.Contains(conf.Targets, "console") {
+		// console writer
+		if conf.Colorful {
+			writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04:05"})
+		} else {
+			writers = append(writers, os.Stderr)
+		}
 	}
 
 	globalInst = &logger{

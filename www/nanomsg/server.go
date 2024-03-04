@@ -15,7 +15,7 @@ import (
 
 type Server struct {
 	ctx       context.Context
-	cancel    func()
+	cancel    context.CancelFunc
 	config    *Config
 	publisher mangos.Socket
 	listener  net.Listener

@@ -24,9 +24,9 @@ func TestPeerSet(t *testing.T) {
 	pk3, _ := ts.RandBLSKeyPair()
 	pk4, _ := ts.RandBLSKeyPair()
 	pk5, _ := ts.RandBLSKeyPair()
-	pid1 := peer.ID("peer1")
-	pid2 := peer.ID("peer2")
-	pid3 := peer.ID("peer3")
+	pid1 := ts.RandPeerID()
+	pid2 := ts.RandPeerID()
+	pid3 := ts.RandPeerID()
 	peerSet.UpdateInfo(pid1, "Moniker1", "Agent1",
 		[]*bls.PublicKey{pk1, pk2}, service.New(service.Network))
 	peerSet.UpdateInfo(pid2, "Moniker2", "Agent2",
@@ -40,20 +40,18 @@ func TestPeerSet(t *testing.T) {
 
 	t.Run("Testing Iterate peers", func(t *testing.T) {
 		// Verify that the peer list contains the expected peers
-		expectedPeerIDs := []peer.ID{pid1, pid2, pid3}
+		found := false
 		peerSet.IteratePeers(func(p *Peer) bool {
-			found := false
-			for _, expectedID := range expectedPeerIDs {
-				if p.PeerID == expectedID {
-					found = true
+			if p.PeerID == pid2 {
+				found = true
 
-					break
-				}
+				return true
 			}
-			assert.True(t, found, "Peer with ID %s not found in the peer list", p.PeerID)
 
 			return false
 		})
+
+		assert.True(t, found, "Peer with ID %s not found in the peer list", pid2)
 	})
 
 	t.Run("Testing GetPeer", func(t *testing.T) {
@@ -143,18 +141,20 @@ func TestPeerSet(t *testing.T) {
 	})
 
 	t.Run("Testing RemovePeer", func(t *testing.T) {
-		peerSet.RemovePeer(peer.ID("unknown"))
+		peerSet.RemovePeer(ts.RandPeerID())
 		assert.Equal(t, peerSet.Len(), 3)
 
-		peerSet.RemovePeer(peer.ID("peer2"))
+		peerSet.RemovePeer(pid2)
 		assert.Equal(t, peerSet.Len(), 2)
 	})
 }
 
 func TestOpenSession(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	ps := NewPeerSet(time.Minute)
 
-	pid := peer.ID("peer1")
+	pid := ts.RandPeerID()
 	ssn := ps.OpenSession(pid, 100, 1)
 
 	assert.NotNil(t, ssn)
@@ -164,8 +164,9 @@ func TestOpenSession(t *testing.T) {
 	assert.Equal(t, session.Open, ssn.Status)
 	assert.LessOrEqual(t, ssn.LastActivity, time.Now())
 	assert.True(t, ps.HasOpenSession(pid))
-	assert.False(t, ps.HasOpenSession("peer2"))
+	assert.False(t, ps.HasOpenSession(ts.RandPeerID()))
 	assert.Equal(t, 1, ps.NumberOfSessions())
+	assert.Contains(t, ps.Sessions(), ssn)
 }
 
 func TestFindSession(t *testing.T) {
@@ -298,19 +299,23 @@ func TestGetRandomPeerConnected(t *testing.T) {
 
 	pidBanned := peer.ID("known")
 	pidConnected := peer.ID("connected")
+	pidDisconnected := peer.ID("disconnected")
 	pidKnown := peer.ID("banned")
 	peerSet.UpdateInfo(pidBanned, "moniker", "agent", nil, service.New())
 	peerSet.UpdateInfo(pidConnected, "moniker", "agent", nil, service.New())
+	peerSet.UpdateInfo(pidDisconnected, "moniker", "agent", nil, service.New())
 	peerSet.UpdateInfo(pidKnown, "moniker", "agent", nil, service.New())
 
 	peerSet.UpdateStatus(pidBanned, StatusCodeBanned)
 	peerSet.UpdateStatus(pidConnected, StatusCodeConnected)
+	peerSet.UpdateStatus(pidDisconnected, StatusCodeDisconnected)
 	peerSet.UpdateStatus(pidKnown, StatusCodeKnown)
 
 	p := peerSet.GetRandomPeer()
 
 	assert.NotEqual(t, p.PeerID, pidBanned)
 	assert.NotEqual(t, p.PeerID, pidConnected)
+	assert.NotEqual(t, p.PeerID, pidDisconnected)
 	assert.Equal(t, p.PeerID, pidKnown)
 }
 

@@ -119,6 +119,10 @@
   # Default is `true`.
  ## compress = true
 
+  # `targets` determines where the logs will be shown, saved, or sent.
+  # Default is `["console", "file"]`.
+ ## targets = ["console", "file"]
+
   # `logger.levels` contains the level of logger per module.
   # Available log levels are:
   #   "trace", "debug", "info", "warn", and "error".

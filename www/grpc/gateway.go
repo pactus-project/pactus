@@ -80,7 +80,7 @@ func (s *Server) startGateway(grpcAddr string) error {
 		Addr:              s.config.Gateway.Listen,
 		ReadHeaderTimeout: 3 * time.Second,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if strings.HasPrefix(r.URL.Path, "/v1") {
+			if strings.HasPrefix(r.URL.Path, "/pactus") {
 				gwMux.ServeHTTP(w, r)
 
 				return

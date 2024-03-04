@@ -14,10 +14,6 @@ import (
 	"github.com/pactus-project/pactus/util"
 )
 
-// TODO:
-// - Add tests for peerset
-// - Is it thread safe (GetPeer and IteratePeers) ??
-
 type PeerSet struct {
 	lk sync.RWMutex
 
@@ -404,6 +400,9 @@ func (ps *PeerSet) StartedAt() time.Time {
 }
 
 func (ps *PeerSet) IteratePeers(consumer func(peer *Peer) (stop bool)) {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
 	for _, p := range ps.peers {
 		stopped := consumer(p)
 		if stopped {
@@ -412,13 +411,17 @@ func (ps *PeerSet) IteratePeers(consumer func(peer *Peer) (stop bool)) {
 	}
 }
 
-func (ps *PeerSet) IterateSessions(consumer func(s *session.Session) (stop bool)) {
+func (ps *PeerSet) Sessions() []*session.Session {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	sessions := make([]*session.Session, 0, len(ps.sessions))
+
 	for _, ssn := range ps.sessions {
-		stopped := consumer(ssn)
-		if stopped {
-			return
-		}
+		sessions = append(sessions, ssn)
 	}
+
+	return sessions
 }
 
 // GetRandomPeer selects a random peer from the peer set based on their weights.

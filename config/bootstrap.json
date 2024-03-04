@@ -151,7 +151,7 @@
     },
     {
         "name": "0xSown",
-        "email": "vtson2707@@gmail.com",
+        "email": "vtson2707@gmail.com",
         "website": "n/a",
         "address": "/ip4/84.247.184.95/tcp/21888/p2p/12D3KooWSjp5GFmCCsYkKcqicrghyHqfjdDCfLfgfqWmG5JTQSDu"
     },
@@ -298,5 +298,53 @@
         "email": "khacbao114@gmail.com",
         "website": "n/a",
         "address": "/ip4/167.86.121.11/tcp/21888/p2p/12D3KooWMpVXMQkr26ff3y8gC5z1h9RZNxTvW4WzZBML8GHHUoL5"
-    }
+    },
+    {
+        "name": "Thomas Jr",
+        "email": "catsmile91@gmail.com",
+        "website": "catsmile.tech",
+        "address": "/ip4/194.163.189.255/tcp/21888/p2p/12D3KooWF54PkAE34dRkC3WaiAgpL7HMnRFi1nW8iPnSH8nKLtZ9"
+    },
+    {
+        "name": "Winnode",
+        "email": "maladarsih@gmail.com",
+        "website": "winnode.site",
+        "address": "/ip4/37.60.245.47/tcp/21888/p2p/12D3KooWBH27VEPdGBYzq1vYciRgnDn3ozStRaUYd2vJWGgaKEUZ"
+    },
+    {
+        "name": "F2Node",
+        "email": "lochua3989@gmail.com",
+        "website": "n/a",
+        "address": "/ip4/84.247.172.23/tcp/21888/p2p/12D3KooWFJYk55mUD6FR9Gx2YGQ34PYziwTQhY1kZ3TMS6fGUz6g"
+    },
+    {
+        "name": "SumNode",
+        "email": "thanhsum@gmail.com",
+        "website": "",
+        "address": "/ip4/95.216.222.135/tcp/21888/p2p/12D3KooWHicbZ3dBnR7JaVKr4U7WNUWyhDnUn2TwMVmPqW8Ftqop"
+    },
+    {
+        "name": "Sipannachi",
+        "email": "sipannachi@gmail.com",
+        "website": "",
+        "address": "/ip4/65.109.143.78/tcp/21888/p2p/12D3KooWPnWgEFV32cvpfuv98oioZQJJKvRM46BEsFaoXYijvgvc"
+    },
+    {
+        "name": "JackieLuong135",
+        "email": "jackieluong135@gmail.com",
+        "website": "",
+        "address": "/ip4/116.203.238.65/tcp/21888/p2p/12D3KooWKf32k9dLE4fA5tkh4KvvEAQDmHxHLWiahjpt2Hfx3d88"
+    },
+    {
+        "name": "Lisachoake",
+        "email": "mohamed.solamina@gmail.com",
+        "website": "",
+        "address": "/ip4/49.13.27.37/tcp/21888/p2p/12D3KooWPSh9KMa6tRfSewK3sUC4BDSPnXseVDGJxWqNZxKcXnGM"
+    },
+     {
+        "name": "Sury",
+        "email": "lyminhhai102@gmail.com",
+        "website": "",
+        "address": "/ip4/37.60.241.89/tcp/21888/p2p/12D3KooWMZtkk5HS69ukYYdfxD3CgBgTtKZg7kv43mCz1HMrDnQw"
+    }    
 ]

@@ -22,9 +22,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TransactionClient interface {
-	// GetTransaction retrieves transaction details based on the provided request parameters.
+	// GetTransaction retrieves transaction details based on the provided request
+	// parameters.
 	GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error)
-	// CalculateFee calculates the transaction fee based on the specified amount and payload type.
+	// CalculateFee calculates the transaction fee based on the specified amount
+	// and payload type.
 	CalculateFee(ctx context.Context, in *CalculateFeeRequest, opts ...grpc.CallOption) (*CalculateFeeResponse, error)
 	// BroadcastTransaction broadcasts a signed transaction to the network.
 	BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error)
@@ -113,9 +115,11 @@ func (c *transactionClient) GetRawWithdrawTransaction(ctx context.Context, in *G
 // All implementations should embed UnimplementedTransactionServer
 // for forward compatibility
 type TransactionServer interface {
-	// GetTransaction retrieves transaction details based on the provided request parameters.
+	// GetTransaction retrieves transaction details based on the provided request
+	// parameters.
 	GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error)
-	// CalculateFee calculates the transaction fee based on the specified amount and payload type.
+	// CalculateFee calculates the transaction fee based on the specified amount
+	// and payload type.
 	CalculateFee(context.Context, *CalculateFeeRequest) (*CalculateFeeResponse, error)
 	// BroadcastTransaction broadcasts a signed transaction to the network.
 	BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error)

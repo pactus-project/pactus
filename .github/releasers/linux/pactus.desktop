@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=pactus-gui
+Comment=Pactus blockchain node
+Exec=pactus-gui
+Icon=pactus
+Type=Application
+Categories=Network;
