@@ -31,7 +31,7 @@ import (
 
 type synchronizer struct {
 	ctx         context.Context
-	cancel      func()
+	cancel      context.CancelFunc
 	config      *Config
 	valKeys     []*bls.ValidatorKey
 	state       state.Facade
