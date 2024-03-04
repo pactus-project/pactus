@@ -82,7 +82,7 @@ func TestAddressInfo(t *testing.T) {
 		// assert.Equal(t, i.Address, info.PublicKey)
 
 		addr, _ := crypto.AddressFromString(info.Address)
-		path, _ := addresspath.NewPathFromString(info.Path)
+		path, _ := addresspath.FromString(info.Path)
 
 		switch path.Purpose() {
 		case H(PurposeBLS12381):
@@ -123,6 +123,20 @@ func TestSortAddressInfo(t *testing.T) {
 	assert.Equal(t, "m/65535'/21888'/2'/0'", infos[len(infos)-1].Path)
 }
 
+func TestAllAccountAddresses(t *testing.T) {
+	td := setup(t)
+
+	assert.Equal(t, td.vault.AddressCount(), 6)
+
+	accountAddrs := td.vault.AllAccountAddresses()
+	for _, i := range accountAddrs {
+		path, err := addresspath.FromString(i.Path)
+		assert.NoError(t, err)
+
+		assert.NotEqual(t, H(crypto.AddressTypeValidator), path.AddressType())
+	}
+}
+
 func TestAllValidatorAddresses(t *testing.T) {
 	td := setup(t)
 
@@ -133,7 +147,7 @@ func TestAllValidatorAddresses(t *testing.T) {
 		info := td.vault.AddressInfo(i.Address)
 		assert.Equal(t, i.Address, info.Address)
 
-		path, _ := addresspath.NewPathFromString(info.Path)
+		path, _ := addresspath.FromString(info.Path)
 
 		switch path.Purpose() {
 		case H(PurposeBLS12381):
@@ -191,7 +205,7 @@ func TestAllImportedPrivateKeysAddresses(t *testing.T) {
 		assert.Equal(t, i.Address, info.Address)
 
 		addr, _ := crypto.AddressFromString(info.Address)
-		path, _ := addresspath.NewPathFromString(info.Path)
+		path, _ := addresspath.FromString(info.Path)
 
 		if addr.IsValidatorAddress() {
 			assert.Equal(t, info.Path, fmt.Sprintf("m/%d'/%d'/1'/%d'",
