@@ -59,12 +59,16 @@ message CalculateFeeRequest {
   int64 amount = 1;
   // Type of transaction payload.
   PayloadType payload_type = 2;
+  // Indicates that amount should be fixed and includes the fee.
+  bool fixed_amount = 3;
 }
 
 // Response message containing the calculated transaction fee.
 message CalculateFeeResponse {
+  // Calculated amount.
+  int64 amount = 1;
   // Calculated transaction fee.
-  int64 fee = 1;
+  int64 fee = 2;
 }
 
 // Request message for broadcasting a signed transaction.

@@ -826,7 +826,8 @@ proto.pactus.CalculateFeeRequest.prototype.toObject = function(opt_includeInstan
 proto.pactus.CalculateFeeRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     amount: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    payloadType: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    payloadType: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    fixedAmount: jspb.Message.getBooleanFieldWithDefault(msg, 3, false)
   };
 
   if (includeInstance) {
@@ -871,6 +872,10 @@ proto.pactus.CalculateFeeRequest.deserializeBinaryFromReader = function(msg, rea
       var value = /** @type {!proto.pactus.PayloadType} */ (reader.readEnum());
       msg.setPayloadType(value);
       break;
+    case 3:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setFixedAmount(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -914,6 +919,13 @@ proto.pactus.CalculateFeeRequest.serializeBinaryToWriter = function(message, wri
       f
     );
   }
+  f = message.getFixedAmount();
+  if (f) {
+    writer.writeBool(
+      3,
+      f
+    );
+  }
 };
 
 
@@ -953,6 +965,24 @@ proto.pactus.CalculateFeeRequest.prototype.setPayloadType = function(value) {
 };
 
 
+/**
+ * optional bool fixed_amount = 3;
+ * @return {boolean}
+ */
+proto.pactus.CalculateFeeRequest.prototype.getFixedAmount = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 3, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.pactus.CalculateFeeRequest} returns this
+ */
+proto.pactus.CalculateFeeRequest.prototype.setFixedAmount = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 3, value);
+};
+
+
 
 
 
@@ -985,7 +1015,8 @@ proto.pactus.CalculateFeeResponse.prototype.toObject = function(opt_includeInsta
  */
 proto.pactus.CalculateFeeResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    fee: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    amount: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    fee: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -1024,6 +1055,10 @@ proto.pactus.CalculateFeeResponse.deserializeBinaryFromReader = function(msg, re
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt64());
+      msg.setAmount(value);
+      break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
       msg.setFee(value);
       break;
     default:
@@ -1055,10 +1090,17 @@ proto.pactus.CalculateFeeResponse.prototype.serializeBinary = function() {
  */
 proto.pactus.CalculateFeeResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getFee();
+  f = message.getAmount();
   if (f !== 0) {
     writer.writeInt64(
       1,
+      f
+    );
+  }
+  f = message.getFee();
+  if (f !== 0) {
+    writer.writeInt64(
+      2,
       f
     );
   }
@@ -1066,10 +1108,10 @@ proto.pactus.CalculateFeeResponse.serializeBinaryToWriter = function(message, wr
 
 
 /**
- * optional int64 fee = 1;
+ * optional int64 amount = 1;
  * @return {number}
  */
-proto.pactus.CalculateFeeResponse.prototype.getFee = function() {
+proto.pactus.CalculateFeeResponse.prototype.getAmount = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -1078,8 +1120,26 @@ proto.pactus.CalculateFeeResponse.prototype.getFee = function() {
  * @param {number} value
  * @return {!proto.pactus.CalculateFeeResponse} returns this
  */
-proto.pactus.CalculateFeeResponse.prototype.setFee = function(value) {
+proto.pactus.CalculateFeeResponse.prototype.setAmount = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional int64 fee = 2;
+ * @return {number}
+ */
+proto.pactus.CalculateFeeResponse.prototype.getFee = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.CalculateFeeResponse} returns this
+ */
+proto.pactus.CalculateFeeResponse.prototype.setFee = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 

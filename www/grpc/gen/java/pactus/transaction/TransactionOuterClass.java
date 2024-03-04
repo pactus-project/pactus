@@ -1859,6 +1859,16 @@ public final class TransactionOuterClass {
      * @return The payloadType.
      */
     pactus.transaction.TransactionOuterClass.PayloadType getPayloadType();
+
+    /**
+     * <pre>
+     * Indicates that amount should be fixed and includes the fee.
+     * </pre>
+     *
+     * <code>bool fixed_amount = 3 [json_name = "fixedAmount"];</code>
+     * @return The fixedAmount.
+     */
+    boolean getFixedAmount();
   }
   /**
    * <pre>
@@ -1947,6 +1957,21 @@ public final class TransactionOuterClass {
       return result == null ? pactus.transaction.TransactionOuterClass.PayloadType.UNRECOGNIZED : result;
     }
 
+    public static final int FIXED_AMOUNT_FIELD_NUMBER = 3;
+    private boolean fixedAmount_;
+    /**
+     * <pre>
+     * Indicates that amount should be fixed and includes the fee.
+     * </pre>
+     *
+     * <code>bool fixed_amount = 3 [json_name = "fixedAmount"];</code>
+     * @return The fixedAmount.
+     */
+    @java.lang.Override
+    public boolean getFixedAmount() {
+      return fixedAmount_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -1967,6 +1992,9 @@ public final class TransactionOuterClass {
       if (payloadType_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
         output.writeEnum(2, payloadType_);
       }
+      if (fixedAmount_ != false) {
+        output.writeBool(3, fixedAmount_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -1983,6 +2011,10 @@ public final class TransactionOuterClass {
       if (payloadType_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(2, payloadType_);
+      }
+      if (fixedAmount_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(3, fixedAmount_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -2002,6 +2034,8 @@ public final class TransactionOuterClass {
       if (getAmount()
           != other.getAmount()) return false;
       if (payloadType_ != other.payloadType_) return false;
+      if (getFixedAmount()
+          != other.getFixedAmount()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -2018,6 +2052,9 @@ public final class TransactionOuterClass {
           getAmount());
       hash = (37 * hash) + PAYLOAD_TYPE_FIELD_NUMBER;
       hash = (53 * hash) + payloadType_;
+      hash = (37 * hash) + FIXED_AMOUNT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getFixedAmount());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2154,6 +2191,8 @@ public final class TransactionOuterClass {
 
         payloadType_ = 0;
 
+        fixedAmount_ = false;
+
         return this;
       }
 
@@ -2182,6 +2221,7 @@ public final class TransactionOuterClass {
         pactus.transaction.TransactionOuterClass.CalculateFeeRequest result = new pactus.transaction.TransactionOuterClass.CalculateFeeRequest(this);
         result.amount_ = amount_;
         result.payloadType_ = payloadType_;
+        result.fixedAmount_ = fixedAmount_;
         onBuilt();
         return result;
       }
@@ -2236,6 +2276,9 @@ public final class TransactionOuterClass {
         if (other.payloadType_ != 0) {
           setPayloadTypeValue(other.getPayloadTypeValue());
         }
+        if (other.getFixedAmount() != false) {
+          setFixedAmount(other.getFixedAmount());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -2272,6 +2315,11 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 16
+              case 24: {
+                fixedAmount_ = input.readBool();
+
+                break;
+              } // case 24
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -2404,6 +2452,49 @@ public final class TransactionOuterClass {
         onChanged();
         return this;
       }
+
+      private boolean fixedAmount_ ;
+      /**
+       * <pre>
+       * Indicates that amount should be fixed and includes the fee.
+       * </pre>
+       *
+       * <code>bool fixed_amount = 3 [json_name = "fixedAmount"];</code>
+       * @return The fixedAmount.
+       */
+      @java.lang.Override
+      public boolean getFixedAmount() {
+        return fixedAmount_;
+      }
+      /**
+       * <pre>
+       * Indicates that amount should be fixed and includes the fee.
+       * </pre>
+       *
+       * <code>bool fixed_amount = 3 [json_name = "fixedAmount"];</code>
+       * @param value The fixedAmount to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFixedAmount(boolean value) {
+        
+        fixedAmount_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Indicates that amount should be fixed and includes the fee.
+       * </pre>
+       *
+       * <code>bool fixed_amount = 3 [json_name = "fixedAmount"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFixedAmount() {
+        
+        fixedAmount_ = false;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -2474,10 +2565,20 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
+     * Calculated amount.
+     * </pre>
+     *
+     * <code>int64 amount = 1 [json_name = "amount"];</code>
+     * @return The amount.
+     */
+    long getAmount();
+
+    /**
+     * <pre>
      * Calculated transaction fee.
      * </pre>
      *
-     * <code>int64 fee = 1 [json_name = "fee"];</code>
+     * <code>int64 fee = 2 [json_name = "fee"];</code>
      * @return The fee.
      */
     long getFee();
@@ -2526,14 +2627,29 @@ public final class TransactionOuterClass {
               pactus.transaction.TransactionOuterClass.CalculateFeeResponse.class, pactus.transaction.TransactionOuterClass.CalculateFeeResponse.Builder.class);
     }
 
-    public static final int FEE_FIELD_NUMBER = 1;
+    public static final int AMOUNT_FIELD_NUMBER = 1;
+    private long amount_;
+    /**
+     * <pre>
+     * Calculated amount.
+     * </pre>
+     *
+     * <code>int64 amount = 1 [json_name = "amount"];</code>
+     * @return The amount.
+     */
+    @java.lang.Override
+    public long getAmount() {
+      return amount_;
+    }
+
+    public static final int FEE_FIELD_NUMBER = 2;
     private long fee_;
     /**
      * <pre>
      * Calculated transaction fee.
      * </pre>
      *
-     * <code>int64 fee = 1 [json_name = "fee"];</code>
+     * <code>int64 fee = 2 [json_name = "fee"];</code>
      * @return The fee.
      */
     @java.lang.Override
@@ -2555,8 +2671,11 @@ public final class TransactionOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (amount_ != 0L) {
+        output.writeInt64(1, amount_);
+      }
       if (fee_ != 0L) {
-        output.writeInt64(1, fee_);
+        output.writeInt64(2, fee_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -2567,9 +2686,13 @@ public final class TransactionOuterClass {
       if (size != -1) return size;
 
       size = 0;
+      if (amount_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, amount_);
+      }
       if (fee_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(1, fee_);
+          .computeInt64Size(2, fee_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -2586,6 +2709,8 @@ public final class TransactionOuterClass {
       }
       pactus.transaction.TransactionOuterClass.CalculateFeeResponse other = (pactus.transaction.TransactionOuterClass.CalculateFeeResponse) obj;
 
+      if (getAmount()
+          != other.getAmount()) return false;
       if (getFee()
           != other.getFee()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -2599,6 +2724,9 @@ public final class TransactionOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getAmount());
       hash = (37 * hash) + FEE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getFee());
@@ -2734,6 +2862,8 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        amount_ = 0L;
+
         fee_ = 0L;
 
         return this;
@@ -2762,6 +2892,7 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public pactus.transaction.TransactionOuterClass.CalculateFeeResponse buildPartial() {
         pactus.transaction.TransactionOuterClass.CalculateFeeResponse result = new pactus.transaction.TransactionOuterClass.CalculateFeeResponse(this);
+        result.amount_ = amount_;
         result.fee_ = fee_;
         onBuilt();
         return result;
@@ -2811,6 +2942,9 @@ public final class TransactionOuterClass {
 
       public Builder mergeFrom(pactus.transaction.TransactionOuterClass.CalculateFeeResponse other) {
         if (other == pactus.transaction.TransactionOuterClass.CalculateFeeResponse.getDefaultInstance()) return this;
+        if (other.getAmount() != 0L) {
+          setAmount(other.getAmount());
+        }
         if (other.getFee() != 0L) {
           setFee(other.getFee());
         }
@@ -2841,10 +2975,15 @@ public final class TransactionOuterClass {
                 done = true;
                 break;
               case 8: {
-                fee_ = input.readInt64();
+                amount_ = input.readInt64();
 
                 break;
               } // case 8
+              case 16: {
+                fee_ = input.readInt64();
+
+                break;
+              } // case 16
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -2861,13 +3000,56 @@ public final class TransactionOuterClass {
         return this;
       }
 
+      private long amount_ ;
+      /**
+       * <pre>
+       * Calculated amount.
+       * </pre>
+       *
+       * <code>int64 amount = 1 [json_name = "amount"];</code>
+       * @return The amount.
+       */
+      @java.lang.Override
+      public long getAmount() {
+        return amount_;
+      }
+      /**
+       * <pre>
+       * Calculated amount.
+       * </pre>
+       *
+       * <code>int64 amount = 1 [json_name = "amount"];</code>
+       * @param value The amount to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAmount(long value) {
+        
+        amount_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Calculated amount.
+       * </pre>
+       *
+       * <code>int64 amount = 1 [json_name = "amount"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAmount() {
+        
+        amount_ = 0L;
+        onChanged();
+        return this;
+      }
+
       private long fee_ ;
       /**
        * <pre>
        * Calculated transaction fee.
        * </pre>
        *
-       * <code>int64 fee = 1 [json_name = "fee"];</code>
+       * <code>int64 fee = 2 [json_name = "fee"];</code>
        * @return The fee.
        */
       @java.lang.Override
@@ -2879,7 +3061,7 @@ public final class TransactionOuterClass {
        * Calculated transaction fee.
        * </pre>
        *
-       * <code>int64 fee = 1 [json_name = "fee"];</code>
+       * <code>int64 fee = 2 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
        */
@@ -2894,7 +3076,7 @@ public final class TransactionOuterClass {
        * Calculated transaction fee.
        * </pre>
        *
-       * <code>int64 fee = 1 [json_name = "fee"];</code>
+       * <code>int64 fee = 2 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
       public Builder clearFee() {
@@ -16284,81 +16466,82 @@ public final class TransactionOuterClass {
       "lock_height\030\014 \001(\rR\013blockHeight\022\035\n\nblock_" +
       "time\030\r \001(\rR\tblockTime\0229\n\013transaction\030\003 \001" +
       "(\0132\027.pactus.TransactionInfoR\013transaction" +
-      "\"e\n\023CalculateFeeRequest\022\026\n\006amount\030\001 \001(\003R" +
-      "\006amount\0226\n\014payload_type\030\002 \001(\0162\023.pactus.P" +
-      "ayloadTypeR\013payloadType\"(\n\024CalculateFeeR" +
-      "esponse\022\020\n\003fee\030\001 \001(\003R\003fee\"S\n\033BroadcastTr" +
-      "ansactionRequest\0224\n\026signed_raw_transacti" +
-      "on\030\001 \001(\014R\024signedRawTransaction\".\n\034Broadc" +
-      "astTransactionResponse\022\016\n\002id\030\002 \001(\014R\002id\"\261" +
-      "\001\n GetRawTransferTransactionRequest\022\033\n\tl" +
-      "ock_time\030\001 \001(\rR\010lockTime\022\026\n\006sender\030\002 \001(\t" +
-      "R\006sender\022\032\n\010receiver\030\003 \001(\tR\010receiver\022\026\n\006" +
-      "amount\030\004 \001(\003R\006amount\022\020\n\003fee\030\005 \001(\003R\003fee\022\022" +
-      "\n\004memo\030\006 \001(\tR\004memo\"\312\001\n\034GetRawBondTransac" +
-      "tionRequest\022\033\n\tlock_time\030\001 \001(\rR\010lockTime" +
-      "\022\026\n\006sender\030\002 \001(\tR\006sender\022\032\n\010receiver\030\003 \001" +
-      "(\tR\010receiver\022\024\n\005stake\030\004 \001(\003R\005stake\022\035\n\npu" +
-      "blic_key\030\005 \001(\tR\tpublicKey\022\020\n\003fee\030\006 \001(\003R\003" +
-      "fee\022\022\n\004memo\030\007 \001(\tR\004memo\"~\n\036GetRawUnBondT" +
-      "ransactionRequest\022\033\n\tlock_time\030\001 \001(\rR\010lo" +
-      "ckTime\022+\n\021validator_address\030\003 \001(\tR\020valid" +
-      "atorAddress\022\022\n\004memo\030\004 \001(\tR\004memo\"\323\001\n GetR" +
-      "awWithdrawTransactionRequest\022\033\n\tlock_tim" +
-      "e\030\001 \001(\rR\010lockTime\022+\n\021validator_address\030\002" +
-      " \001(\tR\020validatorAddress\022\'\n\017account_addres" +
-      "s\030\003 \001(\tR\016accountAddress\022\020\n\003fee\030\004 \001(\003R\003fe" +
-      "e\022\026\n\006amount\030\005 \001(\003R\006amount\022\022\n\004memo\030\006 \001(\tR" +
-      "\004memo\"D\n\031GetRawTransactionResponse\022\'\n\017ra" +
-      "w_transaction\030\001 \001(\014R\016rawTransaction\"]\n\017P" +
-      "ayloadTransfer\022\026\n\006sender\030\001 \001(\tR\006sender\022\032" +
-      "\n\010receiver\030\002 \001(\tR\010receiver\022\026\n\006amount\030\003 \001" +
-      "(\003R\006amount\"W\n\013PayloadBond\022\026\n\006sender\030\001 \001(" +
-      "\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010receiver\022\024\n" +
-      "\005stake\030\003 \001(\003R\005stake\"B\n\020PayloadSortition\022" +
-      "\030\n\007address\030\001 \001(\tR\007address\022\024\n\005proof\030\002 \001(\014" +
-      "R\005proof\"-\n\rPayloadUnbond\022\034\n\tvalidator\030\001 " +
-      "\001(\tR\tvalidator\"M\n\017PayloadWithdraw\022\022\n\004fro" +
-      "m\030\001 \001(\tR\004from\022\016\n\002to\030\002 \001(\tR\002to\022\026\n\006amount\030" +
-      "\003 \001(\003R\006amount\"\254\004\n\017TransactionInfo\022\016\n\002id\030" +
-      "\001 \001(\014R\002id\022\022\n\004data\030\002 \001(\014R\004data\022\030\n\007version" +
-      "\030\003 \001(\005R\007version\022\033\n\tlock_time\030\004 \001(\rR\010lock" +
-      "Time\022\024\n\005value\030\005 \001(\003R\005value\022\020\n\003fee\030\006 \001(\003R" +
-      "\003fee\0226\n\014payload_type\030\007 \001(\0162\023.pactus.Payl" +
-      "oadTypeR\013payloadType\0225\n\010transfer\030\036 \001(\0132\027" +
-      ".pactus.PayloadTransferH\000R\010transfer\022)\n\004b" +
-      "ond\030\037 \001(\0132\023.pactus.PayloadBondH\000R\004bond\0228" +
-      "\n\tsortition\030  \001(\0132\030.pactus.PayloadSortit" +
-      "ionH\000R\tsortition\022/\n\006unbond\030! \001(\0132\025.pactu" +
-      "s.PayloadUnbondH\000R\006unbond\0225\n\010withdraw\030\" " +
-      "\001(\0132\027.pactus.PayloadWithdrawH\000R\010withdraw" +
-      "\022\022\n\004memo\030\010 \001(\tR\004memo\022\035\n\npublic_key\030\t \001(\t" +
-      "R\tpublicKey\022\034\n\tsignature\030\n \001(\014R\tsignatur" +
-      "eB\t\n\007payload*\203\001\n\013PayloadType\022\013\n\007UNKNOWN\020" +
-      "\000\022\024\n\020TRANSFER_PAYLOAD\020\001\022\020\n\014BOND_PAYLOAD\020" +
-      "\002\022\025\n\021SORTITION_PAYLOAD\020\003\022\022\n\016UNBOND_PAYLO" +
-      "AD\020\004\022\024\n\020WITHDRAW_PAYLOAD\020\005*B\n\024Transactio" +
-      "nVerbosity\022\024\n\020TRANSACTION_DATA\020\000\022\024\n\020TRAN" +
-      "SACTION_INFO\020\0012\250\005\n\013Transaction\022O\n\016GetTra" +
-      "nsaction\022\035.pactus.GetTransactionRequest\032" +
-      "\036.pactus.GetTransactionResponse\022I\n\014Calcu" +
-      "lateFee\022\033.pactus.CalculateFeeRequest\032\034.p" +
-      "actus.CalculateFeeResponse\022a\n\024BroadcastT" +
-      "ransaction\022#.pactus.BroadcastTransaction" +
-      "Request\032$.pactus.BroadcastTransactionRes" +
-      "ponse\022h\n\031GetRawTransferTransaction\022(.pac" +
-      "tus.GetRawTransferTransactionRequest\032!.p" +
-      "actus.GetRawTransactionResponse\022`\n\025GetRa" +
-      "wBondTransaction\022$.pactus.GetRawBondTran" +
-      "sactionRequest\032!.pactus.GetRawTransactio" +
-      "nResponse\022d\n\027GetRawUnBondTransaction\022&.p" +
-      "actus.GetRawUnBondTransactionRequest\032!.p" +
-      "actus.GetRawTransactionResponse\022h\n\031GetRa" +
-      "wWithdrawTransaction\022(.pactus.GetRawWith" +
-      "drawTransactionRequest\032!.pactus.GetRawTr" +
-      "ansactionResponseBF\n\022pactus.transactionZ" +
-      "0github.com/pactus-project/pactus/www/gr" +
-      "pc/pactusb\006proto3"
+      "\"\210\001\n\023CalculateFeeRequest\022\026\n\006amount\030\001 \001(\003" +
+      "R\006amount\0226\n\014payload_type\030\002 \001(\0162\023.pactus." +
+      "PayloadTypeR\013payloadType\022!\n\014fixed_amount" +
+      "\030\003 \001(\010R\013fixedAmount\"@\n\024CalculateFeeRespo" +
+      "nse\022\026\n\006amount\030\001 \001(\003R\006amount\022\020\n\003fee\030\002 \001(\003" +
+      "R\003fee\"S\n\033BroadcastTransactionRequest\0224\n\026" +
+      "signed_raw_transaction\030\001 \001(\014R\024signedRawT" +
+      "ransaction\".\n\034BroadcastTransactionRespon" +
+      "se\022\016\n\002id\030\002 \001(\014R\002id\"\261\001\n GetRawTransferTra" +
+      "nsactionRequest\022\033\n\tlock_time\030\001 \001(\rR\010lock" +
+      "Time\022\026\n\006sender\030\002 \001(\tR\006sender\022\032\n\010receiver" +
+      "\030\003 \001(\tR\010receiver\022\026\n\006amount\030\004 \001(\003R\006amount" +
+      "\022\020\n\003fee\030\005 \001(\003R\003fee\022\022\n\004memo\030\006 \001(\tR\004memo\"\312" +
+      "\001\n\034GetRawBondTransactionRequest\022\033\n\tlock_" +
+      "time\030\001 \001(\rR\010lockTime\022\026\n\006sender\030\002 \001(\tR\006se" +
+      "nder\022\032\n\010receiver\030\003 \001(\tR\010receiver\022\024\n\005stak" +
+      "e\030\004 \001(\003R\005stake\022\035\n\npublic_key\030\005 \001(\tR\tpubl" +
+      "icKey\022\020\n\003fee\030\006 \001(\003R\003fee\022\022\n\004memo\030\007 \001(\tR\004m" +
+      "emo\"~\n\036GetRawUnBondTransactionRequest\022\033\n" +
+      "\tlock_time\030\001 \001(\rR\010lockTime\022+\n\021validator_" +
+      "address\030\003 \001(\tR\020validatorAddress\022\022\n\004memo\030" +
+      "\004 \001(\tR\004memo\"\323\001\n GetRawWithdrawTransactio" +
+      "nRequest\022\033\n\tlock_time\030\001 \001(\rR\010lockTime\022+\n" +
+      "\021validator_address\030\002 \001(\tR\020validatorAddre" +
+      "ss\022\'\n\017account_address\030\003 \001(\tR\016accountAddr" +
+      "ess\022\020\n\003fee\030\004 \001(\003R\003fee\022\026\n\006amount\030\005 \001(\003R\006a" +
+      "mount\022\022\n\004memo\030\006 \001(\tR\004memo\"D\n\031GetRawTrans" +
+      "actionResponse\022\'\n\017raw_transaction\030\001 \001(\014R" +
+      "\016rawTransaction\"]\n\017PayloadTransfer\022\026\n\006se" +
+      "nder\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010re" +
+      "ceiver\022\026\n\006amount\030\003 \001(\003R\006amount\"W\n\013Payloa" +
+      "dBond\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010receive" +
+      "r\030\002 \001(\tR\010receiver\022\024\n\005stake\030\003 \001(\003R\005stake\"" +
+      "B\n\020PayloadSortition\022\030\n\007address\030\001 \001(\tR\007ad" +
+      "dress\022\024\n\005proof\030\002 \001(\014R\005proof\"-\n\rPayloadUn" +
+      "bond\022\034\n\tvalidator\030\001 \001(\tR\tvalidator\"M\n\017Pa" +
+      "yloadWithdraw\022\022\n\004from\030\001 \001(\tR\004from\022\016\n\002to\030" +
+      "\002 \001(\tR\002to\022\026\n\006amount\030\003 \001(\003R\006amount\"\254\004\n\017Tr" +
+      "ansactionInfo\022\016\n\002id\030\001 \001(\014R\002id\022\022\n\004data\030\002 " +
+      "\001(\014R\004data\022\030\n\007version\030\003 \001(\005R\007version\022\033\n\tl" +
+      "ock_time\030\004 \001(\rR\010lockTime\022\024\n\005value\030\005 \001(\003R" +
+      "\005value\022\020\n\003fee\030\006 \001(\003R\003fee\0226\n\014payload_type" +
+      "\030\007 \001(\0162\023.pactus.PayloadTypeR\013payloadType" +
+      "\0225\n\010transfer\030\036 \001(\0132\027.pactus.PayloadTrans" +
+      "ferH\000R\010transfer\022)\n\004bond\030\037 \001(\0132\023.pactus.P" +
+      "ayloadBondH\000R\004bond\0228\n\tsortition\030  \001(\0132\030." +
+      "pactus.PayloadSortitionH\000R\tsortition\022/\n\006" +
+      "unbond\030! \001(\0132\025.pactus.PayloadUnbondH\000R\006u" +
+      "nbond\0225\n\010withdraw\030\" \001(\0132\027.pactus.Payload" +
+      "WithdrawH\000R\010withdraw\022\022\n\004memo\030\010 \001(\tR\004memo" +
+      "\022\035\n\npublic_key\030\t \001(\tR\tpublicKey\022\034\n\tsigna" +
+      "ture\030\n \001(\014R\tsignatureB\t\n\007payload*\203\001\n\013Pay" +
+      "loadType\022\013\n\007UNKNOWN\020\000\022\024\n\020TRANSFER_PAYLOA" +
+      "D\020\001\022\020\n\014BOND_PAYLOAD\020\002\022\025\n\021SORTITION_PAYLO" +
+      "AD\020\003\022\022\n\016UNBOND_PAYLOAD\020\004\022\024\n\020WITHDRAW_PAY" +
+      "LOAD\020\005*B\n\024TransactionVerbosity\022\024\n\020TRANSA" +
+      "CTION_DATA\020\000\022\024\n\020TRANSACTION_INFO\020\0012\250\005\n\013T" +
+      "ransaction\022O\n\016GetTransaction\022\035.pactus.Ge" +
+      "tTransactionRequest\032\036.pactus.GetTransact" +
+      "ionResponse\022I\n\014CalculateFee\022\033.pactus.Cal" +
+      "culateFeeRequest\032\034.pactus.CalculateFeeRe" +
+      "sponse\022a\n\024BroadcastTransaction\022#.pactus." +
+      "BroadcastTransactionRequest\032$.pactus.Bro" +
+      "adcastTransactionResponse\022h\n\031GetRawTrans" +
+      "ferTransaction\022(.pactus.GetRawTransferTr" +
+      "ansactionRequest\032!.pactus.GetRawTransact" +
+      "ionResponse\022`\n\025GetRawBondTransaction\022$.p" +
+      "actus.GetRawBondTransactionRequest\032!.pac" +
+      "tus.GetRawTransactionResponse\022d\n\027GetRawU" +
+      "nBondTransaction\022&.pactus.GetRawUnBondTr" +
+      "ansactionRequest\032!.pactus.GetRawTransact" +
+      "ionResponse\022h\n\031GetRawWithdrawTransaction" +
+      "\022(.pactus.GetRawWithdrawTransactionReque" +
+      "st\032!.pactus.GetRawTransactionResponseBF\n" +
+      "\022pactus.transactionZ0github.com/pactus-p" +
+      "roject/pactus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -16381,13 +16564,13 @@ public final class TransactionOuterClass {
     internal_static_pactus_CalculateFeeRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_CalculateFeeRequest_descriptor,
-        new java.lang.String[] { "Amount", "PayloadType", });
+        new java.lang.String[] { "Amount", "PayloadType", "FixedAmount", });
     internal_static_pactus_CalculateFeeResponse_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_pactus_CalculateFeeResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_CalculateFeeResponse_descriptor,
-        new java.lang.String[] { "Fee", });
+        new java.lang.String[] { "Amount", "Fee", });
     internal_static_pactus_BroadcastTransactionRequest_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_pactus_BroadcastTransactionRequest_fieldAccessorTable = new

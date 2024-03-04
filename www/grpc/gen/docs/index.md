@@ -141,6 +141,7 @@ Request message for calculating transaction fee.
 | ----- | ---- | ----- | ----------- |
 | amount | [int64](#int64) |  | Transaction amount. |
 | payload_type | [PayloadType](#pactus-PayloadType) |  | Type of transaction payload. |
+| fixed_amount | [bool](#bool) |  | Indicates that amount should be fixed and includes the fee. |
 
 
 
@@ -155,6 +156,7 @@ Response message containing the calculated transaction fee.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| amount | [int64](#int64) |  | Calculated amount. |
 | fee | [int64](#int64) |  | Calculated transaction fee. |
 
 
