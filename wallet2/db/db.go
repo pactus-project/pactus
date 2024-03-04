@@ -45,6 +45,7 @@ type DB interface {
 
 type db struct {
 	*sql.DB
+	context.Context
 }
 
 type Address struct {
@@ -77,7 +78,7 @@ type Pair struct {
 	CreatedAt time.Time
 }
 
-func NewDB(path string) (DB, error) {
+func NewDB(ctx context.Context, path string) (DB, error) {
 	dbInstance, err := sql.Open("sqlite", path)
 	if err != nil {
 		return nil, ErrCouldNotOpenDatabase
@@ -85,6 +86,7 @@ func NewDB(path string) (DB, error) {
 
 	return &db{
 		dbInstance,
+		ctx,
 	}, nil
 }
 
@@ -105,7 +107,7 @@ func (d *db) createAddressTable() error {
 		" address VARCHAR, public_key VARCHAR, label VARCHAR, path VARCHAR, is_imported BOOLEAN, created_at TIMESTAMP)",
 		AddressTable)
 
-	_, err := d.ExecContext(context.Background(), addressQuery)
+	_, err := d.ExecContext(d.Context, addressQuery)
 	if err != nil && !strings.Contains(err.Error(), "already exists") {
 		return ErrCouldNotCreateTable
 	}
@@ -117,7 +119,7 @@ func (d *db) createTransactionTable() error {
 	transactionQuery := fmt.Sprintf("CREATE TABLE %s (id INTEGER PRIMARY KEY AUTOINCREMENT,"+
 		" tx_id VARCHAR, address VARCHAR, block_height INTEGER, block_time INTEGER, payload_type VARCHAR,"+
 		" data VARCHAR, description VARCHAR, amount BIGINT,status INTEGER, created_at TIMESTAMP)", TransactionTable)
-	_, err := d.ExecContext(context.Background(), transactionQuery)
+	_, err := d.ExecContext(d.Context, transactionQuery)
 	if err != nil && !strings.Contains(err.Error(), "already exists") {
 		return ErrCouldNotCreateTable
 	}
@@ -127,7 +129,7 @@ func (d *db) createTransactionTable() error {
 
 func (d *db) createPairTable() error {
 	pairQuery := fmt.Sprintf("CREATE TABLE %s (key VARCHAR PRIMARY KEY, value VARCHAR, created_at TIMESTAMP)", PairTable)
-	_, err := d.ExecContext(context.Background(), pairQuery)
+	_, err := d.ExecContext(d.Context, pairQuery)
 	if err != nil && !strings.Contains(err.Error(), "already exists") {
 		return ErrCouldNotCreateTable
 	}
@@ -139,14 +141,14 @@ func (d *db) InsertIntoAddress(addr *Address) (*Address, error) {
 	insertQuery := fmt.Sprintf("INSERT INTO %s (address, public_key, label, path, is_imported, created_at)"+
 		" VALUES (?,?,?,?,?,?)", AddressTable)
 
-	prepareQuery, err := d.PrepareContext(context.Background(), insertQuery)
+	prepareQuery, err := d.PrepareContext(d.Context, insertQuery)
 	if err != nil {
 		return nil, err
 	}
 	defer prepareQuery.Close()
 
 	addr.CreatedAt = time.Now().UTC()
-	r, err := prepareQuery.ExecContext(context.Background(), addr.Address,
+	r, err := prepareQuery.ExecContext(d.Context, addr.Address,
 		addr.PublicKey, addr.Label, addr.Path, addr.IsImported, addr.CreatedAt)
 	if err != nil {
 		return nil, ErrCouldNotInsertRecordIntoTable
@@ -173,14 +175,14 @@ func (d *db) InsertIntoTransaction(t *Transaction) (*Transaction, error) {
 		" payload_type, data, description, amount, status, created_at) VALUES"+
 		" (?,?,?,?,?,?,?,?,?,?)", TransactionTable)
 
-	prepareQuery, err := d.PrepareContext(context.Background(), insertQuery)
+	prepareQuery, err := d.PrepareContext(d.Context, insertQuery)
 	if err != nil {
 		return nil, err
 	}
 	defer prepareQuery.Close()
 
 	t.CreatedAt = time.Now().UTC()
-	r, err := prepareQuery.ExecContext(context.Background(), t.TxID, t.Address, t.BlockHeight, t.BlockTime,
+	r, err := prepareQuery.ExecContext(d.Context, t.TxID, t.Address, t.BlockHeight, t.BlockTime,
 		t.PayloadType, t.Data, t.Description, t.Amount, t.Status, t.CreatedAt)
 	if err != nil {
 		return nil, ErrCouldNotInsertRecordIntoTable
@@ -209,14 +211,14 @@ func (d *db) InsertIntoTransaction(t *Transaction) (*Transaction, error) {
 func (d *db) InsertIntoPair(key, value string) (*Pair, error) {
 	insertQuery := fmt.Sprintf("INSERT INTO %s (key, value, created_at) VALUES (?,?,?)", PairTable)
 
-	prepareQuery, err := d.PrepareContext(context.Background(), insertQuery)
+	prepareQuery, err := d.PrepareContext(d.Context, insertQuery)
 	if err != nil {
 		return nil, err
 	}
 	defer prepareQuery.Close()
 
 	createdAt := time.Now().UTC()
-	if _, err := prepareQuery.ExecContext(context.Background(), key, value, createdAt); err != nil {
+	if _, err := prepareQuery.ExecContext(d.Context, key, value, createdAt); err != nil {
 		return nil, ErrCouldNotInsertRecordIntoTable
 	}
 
@@ -230,13 +232,13 @@ func (d *db) InsertIntoPair(key, value string) (*Pair, error) {
 func (d *db) UpdateAddressLabel(addr *Address) (*Address, error) {
 	updateQuery := fmt.Sprintf("UPDATE %s SET label = ? WHERE address = ?", AddressTable)
 
-	prepareQuery, err := d.PrepareContext(context.Background(), updateQuery)
+	prepareQuery, err := d.PrepareContext(d.Context, updateQuery)
 	if err != nil {
 		return nil, err
 	}
 	defer prepareQuery.Close()
 
-	r, err := prepareQuery.ExecContext(context.Background(), addr.Label, addr.Address)
+	r, err := prepareQuery.ExecContext(d.Context, addr.Label, addr.Address)
 	if err != nil {
 		return nil, ErrCouldNotUpdateRecordIntoTable
 	}
@@ -260,13 +262,13 @@ func (d *db) UpdateAddressLabel(addr *Address) (*Address, error) {
 func (d *db) GetAddressByID(id int) (*Address, error) {
 	getQuery := fmt.Sprintf("SELECT * FROM %s WHERE id = ?", AddressTable)
 
-	prepareQuery, err := d.PrepareContext(context.Background(), getQuery)
+	prepareQuery, err := d.PrepareContext(d.Context, getQuery)
 	if err != nil {
 		return nil, err
 	}
 	defer prepareQuery.Close()
 
-	row := prepareQuery.QueryRowContext(context.Background(), id)
+	row := prepareQuery.QueryRowContext(d.Context, id)
 	if row.Err() != nil {
 		return nil, ErrCouldNotFindRecord
 	}
@@ -284,13 +286,13 @@ func (d *db) GetAddressByID(id int) (*Address, error) {
 func (d *db) GetAddressByAddress(address string) (*Address, error) {
 	getQuery := fmt.Sprintf("SELECT * FROM %s WHERE address = ?", AddressTable)
 
-	prepareQuery, err := d.PrepareContext(context.Background(), getQuery)
+	prepareQuery, err := d.PrepareContext(d.Context, getQuery)
 	if err != nil {
 		return nil, err
 	}
 	defer prepareQuery.Close()
 
-	row := prepareQuery.QueryRowContext(context.Background(), address)
+	row := prepareQuery.QueryRowContext(d.Context, address)
 	if row.Err() != nil {
 		return nil, ErrCouldNotFindRecord
 	}
@@ -308,13 +310,13 @@ func (d *db) GetAddressByAddress(address string) (*Address, error) {
 func (d *db) GetAddressByPath(p string) (*Address, error) {
 	getQuery := fmt.Sprintf("SELECT * FROM %s WHERE path = ?", AddressTable)
 
-	prepareQuery, err := d.PrepareContext(context.Background(), getQuery)
+	prepareQuery, err := d.PrepareContext(d.Context, getQuery)
 	if err != nil {
 		return nil, err
 	}
 	defer prepareQuery.Close()
 
-	row := prepareQuery.QueryRowContext(context.Background(), p)
+	row := prepareQuery.QueryRowContext(d.Context, p)
 	if row.Err() != nil {
 		return nil, ErrCouldNotFindRecord
 	}
@@ -332,13 +334,13 @@ func (d *db) GetAddressByPath(p string) (*Address, error) {
 func (d *db) GetTransactionByID(id int) (*Transaction, error) {
 	getQuery := fmt.Sprintf("SELECT * FROM %s WHERE id = ?", TransactionTable)
 
-	prepareQuery, err := d.PrepareContext(context.Background(), getQuery)
+	prepareQuery, err := d.PrepareContext(d.Context, getQuery)
 	if err != nil {
 		return nil, err
 	}
 	defer prepareQuery.Close()
 
-	row := prepareQuery.QueryRowContext(context.Background(), id)
+	row := prepareQuery.QueryRowContext(d.Context, id)
 	if row.Err() != nil {
 		return nil, ErrCouldNotFindRecord
 	}
@@ -356,13 +358,13 @@ func (d *db) GetTransactionByID(id int) (*Transaction, error) {
 func (d *db) GetTransactionByTxID(id string) (*Transaction, error) {
 	getQuery := fmt.Sprintf("SELECT * FROM %s WHERE tx_id = ?", TransactionTable)
 
-	prepareQuery, err := d.PrepareContext(context.Background(), getQuery)
+	prepareQuery, err := d.PrepareContext(d.Context, getQuery)
 	if err != nil {
 		return nil, err
 	}
 	defer prepareQuery.Close()
 
-	row := prepareQuery.QueryRowContext(context.Background(), id)
+	row := prepareQuery.QueryRowContext(d.Context, id)
 	if row.Err() != nil {
 		return nil, ErrCouldNotFindRecord
 	}
@@ -380,13 +382,13 @@ func (d *db) GetTransactionByTxID(id string) (*Transaction, error) {
 func (d *db) GetPairByKey(key string) (*Pair, error) {
 	getQuery := fmt.Sprintf("SELECT * FROM %s WHERE key = ?", PairTable)
 
-	prepareQuery, err := d.PrepareContext(context.Background(), getQuery)
+	prepareQuery, err := d.PrepareContext(d.Context, getQuery)
 	if err != nil {
 		return nil, err
 	}
 	defer prepareQuery.Close()
 
-	row := prepareQuery.QueryRowContext(context.Background(), key)
+	row := prepareQuery.QueryRowContext(d.Context, key)
 	if row.Err() != nil {
 		return nil, ErrCouldNotFindRecord
 	}
@@ -402,7 +404,7 @@ func (d *db) GetPairByKey(key string) (*Pair, error) {
 
 func (d *db) GetAllAddresses() ([]Address, error) {
 	getAllQuery := fmt.Sprintf("SELECT * FROM %s ORDER BY id DESC", AddressTable)
-	rows, err := d.QueryContext(context.Background(), getAllQuery)
+	rows, err := d.QueryContext(d.Context, getAllQuery)
 	if err != nil || rows.Err() != nil {
 		return nil, ErrCouldNotFindRecord
 	}
@@ -429,7 +431,7 @@ func (d *db) GetAllAddressesWithTotalRecords(pageIndex, pageSize int) ([]Address
 	}
 
 	getAllQuery := fmt.Sprintf("SELECT * FROM %s ORDER BY id DESC LIMIT ? OFFSET ?", AddressTable)
-	rows, err := d.QueryContext(context.Background(), getAllQuery, pageSize, calcOffset(pageIndex, pageSize))
+	rows, err := d.QueryContext(d.Context, getAllQuery, pageSize, calcOffset(pageIndex, pageSize))
 	if err != nil || rows.Err() != nil {
 		return nil, 0, ErrCouldNotFindRecord
 	}
@@ -452,13 +454,13 @@ func (d *db) GetAllAddressesWithTotalRecords(pageIndex, pageSize int) ([]Address
 func (d *db) GetAllTransactions(query string, args ...any) ([]Transaction, error) {
 	getAllQuery := fmt.Sprintf("SELECT * FROM %s %s ORDER BY id DESC", TransactionTable, query)
 
-	prepareQuery, err := d.PrepareContext(context.Background(), getAllQuery)
+	prepareQuery, err := d.PrepareContext(d.Context, getAllQuery)
 	if err != nil {
 		return nil, err
 	}
 	defer prepareQuery.Close()
 
-	rows, err := prepareQuery.QueryContext(context.Background(), args...)
+	rows, err := prepareQuery.QueryContext(d.Context, args...)
 	if err != nil || rows.Err() != nil {
 		return nil, ErrCouldNotFindRecord
 	}
@@ -489,7 +491,7 @@ func (d *db) GetAllTransactionsWithTotalRecords(pageIndex, pageSize int,
 
 	getAllQuery := fmt.Sprintf("SELECT * FROM %s %s ORDER BY id DESC LIMIT ? OFFSET ?", TransactionTable, query)
 
-	prepareQuery, err := d.PrepareContext(context.Background(), getAllQuery)
+	prepareQuery, err := d.PrepareContext(d.Context, getAllQuery)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -499,7 +501,7 @@ func (d *db) GetAllTransactionsWithTotalRecords(pageIndex, pageSize int,
 	tempArgs = append(tempArgs, args...)
 	tempArgs = append(tempArgs, pageSize, calcOffset(pageIndex, pageSize))
 
-	rows, err := prepareQuery.QueryContext(context.Background(), tempArgs...)
+	rows, err := prepareQuery.QueryContext(d.Context, tempArgs...)
 	if err != nil || rows.Err() != nil {
 		return nil, 0, ErrCouldNotFindRecord
 	}
@@ -524,13 +526,13 @@ func (d *db) GetTotalRecords(tableName string, query string, args ...any) (int64
 	var totalRecords int64
 	totalRecordsQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s %s", tableName, query)
 
-	prepareQuery, err := d.PrepareContext(context.Background(), totalRecordsQuery)
+	prepareQuery, err := d.PrepareContext(d.Context, totalRecordsQuery)
 	if err != nil {
 		return 0, err
 	}
 	defer prepareQuery.Close()
 
-	r := prepareQuery.QueryRowContext(context.Background(), args...)
+	r := prepareQuery.QueryRowContext(d.Context, args...)
 	if r.Err() != nil {
 		return totalRecords, ErrCouldNotFindTotalRecords
 	}

@@ -1,6 +1,7 @@
 package wallet2
 
 import (
+	"context"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -10,7 +11,8 @@ import (
 )
 
 func TestNewHistory(t *testing.T) {
-	someDB, _ := db.NewDB(":memory:")
+	ctx := context.Background()
+	someDB, _ := db.NewDB(ctx, ":memory:")
 	h := newHistory(someDB)
 
 	assert.NotNil(t, h)
@@ -19,7 +21,8 @@ func TestNewHistory(t *testing.T) {
 func TestAddTransaction(t *testing.T) {
 	t.Run("could not add transaction", func(t *testing.T) {
 		ts := testsuite.NewTestSuite(t)
-		someDB, _ := db.NewDB(":memory:")
+		ctx := context.Background()
+		someDB, _ := db.NewDB(ctx, ":memory:")
 
 		h := newHistory(someDB)
 		someHash := ts.RandHash()
@@ -31,7 +34,8 @@ func TestAddTransaction(t *testing.T) {
 
 	t.Run("add transaction ok", func(t *testing.T) {
 		ts := testsuite.NewTestSuite(t)
-		someDB, _ := db.NewDB(":memory:")
+		ctx := context.Background()
+		someDB, _ := db.NewDB(ctx, ":memory:")
 		_ = someDB.CreateTables()
 
 		h := newHistory(someDB)
@@ -45,8 +49,8 @@ func TestAddTransaction(t *testing.T) {
 
 func TestHasTransaction(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
-
-	someDB, _ := db.NewDB(":memory:")
+	ctx := context.Background()
+	someDB, _ := db.NewDB(ctx, ":memory:")
 	_ = someDB.CreateTables()
 
 	h := newHistory(someDB)
@@ -61,7 +65,8 @@ func TestHasTransaction(t *testing.T) {
 
 func TestGetAddrHistory(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
-	someDB, _ := db.NewDB(":memory:")
+	ctx := context.Background()
+	someDB, _ := db.NewDB(ctx, ":memory:")
 	_ = someDB.CreateTables()
 
 	h := newHistory(someDB)

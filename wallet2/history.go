@@ -61,5 +61,5 @@ func (h *history) addTransaction(
 }
 
 func (h *history) getAddrHistory(addr string) ([]db.Transaction, error) {
-	return h.db.GetAllTransactions(db.WithTransactionAddr(addr))
+	return h.db.GetAllTransactions(db.WithTransactionAddr(), addr)
 }

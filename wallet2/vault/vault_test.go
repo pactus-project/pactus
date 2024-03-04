@@ -1,6 +1,7 @@
 package vault
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"testing"
@@ -35,7 +36,8 @@ func setup(t *testing.T) *testData {
 	mnemonic, _ := GenerateMnemonic(128)
 	_, importedPrv := ts.RandBLSKeyPair()
 
-	dbInstance, _ := db.NewDB(":memory:")
+	ctx := context.Background()
+	dbInstance, _ := db.NewDB(ctx, ":memory:")
 	err := dbInstance.CreateTables()
 	assert.NoError(t, err)
 
@@ -274,7 +276,8 @@ func TestRecover(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
-		dbInstance, err := db.NewDB(":memory:")
+		ctx := context.Background()
+		dbInstance, err := db.NewDB(ctx, ":memory:")
 		assert.NoError(t, err)
 		_ = dbInstance.CreateTables()
 
@@ -283,7 +286,8 @@ func TestRecover(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		dbInstance, err := db.NewDB(":memory:")
+		ctx := context.Background()
+		dbInstance, err := db.NewDB(ctx, ":memory:")
 		assert.NoError(t, err)
 		_ = dbInstance.CreateTables()
 

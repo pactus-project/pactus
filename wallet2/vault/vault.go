@@ -540,7 +540,7 @@ func (v *Vault) Mnemonic(password string) (string, error) {
 }
 
 func (v *Vault) AddressCount() (int, error) {
-	totalRecords, err := v.db.GetTotalRecords(db.AddressTable)
+	totalRecords, err := v.db.GetTotalRecords(db.AddressTable, db.EmptyQuery)
 
 	return int(totalRecords), err
 }

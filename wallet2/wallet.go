@@ -1,6 +1,7 @@
 package wallet2
 
 import (
+	"context"
 	_ "embed"
 	"encoding/json"
 	"errors"
@@ -24,6 +25,8 @@ type Wallet struct {
 	store  *store
 	path   string
 	client *grpcClient
+	ctx    context.Context
+	cancel context.CancelFunc
 }
 
 //go:embed servers.json
@@ -51,7 +54,8 @@ func CheckMnemonic(mnemonic string) error {
 // Offline wallet doesn’t have any connection to any node.
 // Online wallet has a connection to one of the pre-defined servers.
 func Open(walletPath string, offline bool) (*Wallet, error) {
-	database, err := db.NewDB(walletPath)
+	ctx, cancel := context.WithCancel(context.Background())
+	database, err := db.NewDB(ctx, walletPath)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +64,7 @@ func Open(walletPath string, offline bool) (*Wallet, error) {
 		return nil, err
 	}
 
-	return newWallet(walletPath, store, offline)
+	return newWallet(ctx, cancel, walletPath, store, offline)
 }
 
 // Create creates a wallet from mnemonic (seed phrase) and save it at the
@@ -83,7 +87,8 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType) (*Wa
 		return nil, ErrInvalidNetwork
 	}
 
-	database, err := db.NewDB(walletPath)
+	ctx, cancel := context.WithCancel(context.Background())
+	database, err := db.NewDB(ctx, walletPath)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +103,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType) (*Wa
 		return nil, err
 	}
 
-	wallet, err := newWallet(walletPath, store, true)
+	wallet, err := newWallet(ctx, cancel, walletPath, store, true)
 	if err != nil {
 		return nil, err
 	}
@@ -472,7 +477,8 @@ func (w *Wallet) GetHistory(addr string) ([]db.Transaction, error) {
 	return w.store.History.getAddrHistory(addr)
 }
 
-func newWallet(walletPath string, store *store, offline bool) (*Wallet, error) {
+func newWallet(ctx context.Context, cancel context.CancelFunc,
+	walletPath string, store *store, offline bool) (*Wallet, error) {
 	if !store.Network.IsMainnet() {
 		crypto.AddressHRP = "tpc"
 		crypto.PublicKeyHRP = "tpublic"
@@ -482,8 +488,10 @@ func newWallet(walletPath string, store *store, offline bool) (*Wallet, error) {
 	}
 
 	w := &Wallet{
-		store: store,
-		path:  walletPath,
+		store:  store,
+		path:   walletPath,
+		ctx:    ctx,
+		cancel: cancel,
 	}
 
 	if !offline {
