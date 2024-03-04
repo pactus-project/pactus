@@ -398,29 +398,12 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		valAddrsInfo = valAddrsInfo[:32]
 	}
 
-	valAddrs := make([]string, len(valAddrsInfo))
-	for i := 0; i < len(valAddrs); i++ {
-		valAddr, _ := crypto.AddressFromString(valAddrsInfo[i].Address)
-		if !valAddr.IsValidatorAddress() {
-			return nil, nil, fmt.Errorf("invalid validator address: %s", valAddrsInfo[i].Address)
-		}
-		valAddrs[i] = valAddr.String()
-	}
-
-	valKeys := make([]*bls.ValidatorKey, len(valAddrsInfo))
-	password, ok := passwordFetcher(walletInstance)
-	if !ok {
-		return nil, nil, fmt.Errorf("aborted")
-	}
-	prvKeys, err := walletInstance.PrivateKeys(password, valAddrs)
+	rewardAddrs, err := MakeRewardAddresses(walletInstance, valAddrsInfo, conf.Node.RewardAddresses)
 	if err != nil {
 		return nil, nil, err
 	}
-	for i, prv := range prvKeys {
-		valKeys[i] = bls.NewValidatorKey(prv.(*bls.PrivateKey))
-	}
 
-	rewardAddrs, err := MakeRewardAddresses(walletInstance, valAddrsInfo, conf.Node.RewardAddresses)
+	valKeys, err := MakeValidatorKey(walletInstance, valAddrsInfo, passwordFetcher)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -592,4 +575,32 @@ func MakeRewardAddresses(walletInstance *wallet.Wallet,
 	}
 
 	return rewardAddrs, nil
+}
+
+func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []vault.AddressInfo,
+	passwordFetcher func(*wallet.Wallet) (string, bool),
+) ([]*bls.ValidatorKey, error) {
+	valAddrs := make([]string, len(valAddrsInfo))
+	for i := 0; i < len(valAddrs); i++ {
+		valAddr, _ := crypto.AddressFromString(valAddrsInfo[i].Address)
+		if !valAddr.IsValidatorAddress() {
+			return nil, fmt.Errorf("invalid validator address: %s", valAddrsInfo[i].Address)
+		}
+		valAddrs[i] = valAddr.String()
+	}
+
+	valKeys := make([]*bls.ValidatorKey, len(valAddrsInfo))
+	password, ok := passwordFetcher(walletInstance)
+	if !ok {
+		return nil, fmt.Errorf("aborted")
+	}
+	prvKeys, err := walletInstance.PrivateKeys(password, valAddrs)
+	if err != nil {
+		return nil, err
+	}
+	for i, prv := range prvKeys {
+		valKeys[i] = bls.NewValidatorKey(prv.(*bls.PrivateKey))
+	}
+
+	return valKeys, nil
 }
