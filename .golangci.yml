@@ -13,14 +13,13 @@ linters:
     - contextcheck
     - decorder
     - dogsled
-    # - dupl
     - dupword
     - durationcheck
     - errchkjson
     - errname
     - errorlint
     - execinquery
-    # - exhaustive
+    - exhaustive
     - exportloopref
     - forbidigo
     - gci

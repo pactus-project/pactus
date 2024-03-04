@@ -17,11 +17,11 @@ const (
 
 func (v CPValue) String() string {
 	switch v {
-	case 0:
+	case CPValueZero:
 		return "zero"
-	case 1:
+	case CPValueOne:
 		return "one"
-	case 2:
+	case CPValueAbstain:
 		return "abstain"
 	default:
 		return fmt.Sprintf("unknown: %d", v)
