@@ -74,7 +74,6 @@ linters:
     - usestdlibvars
     - wastedassign
     - whitespace
-    # - forcetypeassert
     # - wrapcheck
     - zerologlint
 
