@@ -7,8 +7,7 @@ import (
 	"strings"
 	"time"
 
-	//nolint:all
-	_ "github.com/glebarez/go-sqlite"
+	_ "github.com/glebarez/go-sqlite" // sqlite driver
 )
 
 const (
@@ -522,7 +521,7 @@ func (d *db) GetAllTransactionsWithTotalRecords(pageIndex, pageSize int,
 	return transactions, totalRecords, nil
 }
 
-func (d *db) GetTotalRecords(tableName string, query string, args ...any) (int64, error) {
+func (d *db) GetTotalRecords(tableName, query string, args ...any) (int64, error) {
 	var totalRecords int64
 	totalRecordsQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s %s", tableName, query)
 

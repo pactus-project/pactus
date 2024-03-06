@@ -57,10 +57,14 @@ func Open(walletPath string, offline bool) (*Wallet, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	database, err := db.NewDB(ctx, walletPath)
 	if err != nil {
+		cancel()
+
 		return nil, err
 	}
 	store := newStore(database)
 	if err := store.Load(); err != nil {
+		cancel()
+
 		return nil, err
 	}
 
@@ -90,16 +94,22 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType) (*Wa
 	ctx, cancel := context.WithCancel(context.Background())
 	database, err := db.NewDB(ctx, walletPath)
 	if err != nil {
+		cancel()
+
 		return nil, err
 	}
 
 	if err := database.CreateTables(); err != nil {
+		cancel()
+
 		return nil, err
 	}
 
 	store := newStore(database)
 	err = store.Save(1, uuid.New(), time.Now().Round(time.Second).UTC(), chain)
 	if err != nil {
+		cancel()
+
 		return nil, err
 	}
 
@@ -478,7 +488,8 @@ func (w *Wallet) GetHistory(addr string) ([]db.Transaction, error) {
 }
 
 func newWallet(ctx context.Context, cancel context.CancelFunc,
-	walletPath string, store *store, offline bool) (*Wallet, error) {
+	walletPath string, store *store, offline bool,
+) (*Wallet, error) {
 	if !store.Network.IsMainnet() {
 		crypto.AddressHRP = "tpc"
 		crypto.PublicKeyHRP = "tpublic"
