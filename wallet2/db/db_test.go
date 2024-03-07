@@ -20,7 +20,7 @@ func TestInsert(t *testing.T) {
 	t.Run("could not insert into address table", func(t *testing.T) {
 		someDB, _ := NewDB(ctx, ":memory:")
 
-		addr := &Address{
+		addr := &AddressInfo{
 			Address:   "some-address",
 			PublicKey: "some-public-key",
 			Label:     "some-label",
@@ -34,7 +34,7 @@ func TestInsert(t *testing.T) {
 		someDB, _ := NewDB(ctx, ":memory:")
 		_ = someDB.CreateTables()
 
-		addr := &Address{
+		addr := &AddressInfo{
 			Address:   "some-address",
 			PublicKey: "some-public-key",
 			Label:     "some-label",
@@ -187,7 +187,7 @@ func TestAddress(t *testing.T) {
 		someDB, _ := NewDB(ctx, ":memory:")
 		_ = someDB.CreateTables()
 
-		addr := &Address{
+		addr := &AddressInfo{
 			Address:   "some-pactus-addr",
 			PublicKey: "some-public-key",
 			Label:     "some-label",
@@ -206,7 +206,7 @@ func TestAddress(t *testing.T) {
 		someDB, _ := NewDB(ctx, ":memory:")
 		_ = someDB.CreateTables()
 
-		addr := &Address{
+		addr := &AddressInfo{
 			Address:   "some-pactus-addr",
 			PublicKey: "some-public-key",
 			Label:     "some-label",
@@ -223,7 +223,7 @@ func TestAddress(t *testing.T) {
 		someDB, _ := NewDB(ctx, ":memory:")
 		_ = someDB.CreateTables()
 
-		addr := &Address{
+		addr := &AddressInfo{
 			Address:   "some-pactus-addr",
 			PublicKey: "some-public-key",
 			Label:     "some-label",
@@ -242,7 +242,7 @@ func TestAddress(t *testing.T) {
 		someDB, _ := NewDB(ctx, ":memory:")
 		_ = someDB.CreateTables()
 
-		addr := &Address{
+		addr := &AddressInfo{
 			Address:   "some-pactus-addr",
 			PublicKey: "some-public-key",
 			Label:     "some-label",
@@ -259,7 +259,7 @@ func TestAddress(t *testing.T) {
 		someDB, _ := NewDB(ctx, ":memory:")
 		_ = someDB.CreateTables()
 
-		addr := &Address{
+		addr := &AddressInfo{
 			Address:   "some-pactus-addr",
 			PublicKey: "some-public-key",
 			Label:     "some-label",
@@ -330,7 +330,7 @@ func TestGetAll(t *testing.T) {
 		someDB, _ := NewDB(ctx, ":memory:")
 		_ = someDB.CreateTables()
 
-		addr := &Address{
+		addr := &AddressInfo{
 			PublicKey: "some-public-key",
 			Label:     "some-label",
 			Path:      "some-path",
@@ -343,7 +343,7 @@ func TestGetAll(t *testing.T) {
 		addr.Address = "addr3"
 		someInsertThree, _ := someDB.InsertIntoAddress(addr)
 
-		expected := make([]Address, 0, 3)
+		expected := make([]AddressInfo, 0, 3)
 		expected = append(expected, *someInsertThree, *someInsertTwo, *someInsertOne)
 
 		acutal, err := someDB.GetAllAddresses()
@@ -356,7 +356,7 @@ func TestGetAll(t *testing.T) {
 		someDB, _ := NewDB(ctx, ":memory:")
 		_ = someDB.CreateTables()
 
-		addr := &Address{
+		addr := &AddressInfo{
 			PublicKey: "some-public-key",
 			Label:     "some-label",
 			Path:      "some-path",
@@ -369,7 +369,7 @@ func TestGetAll(t *testing.T) {
 		addr.Address = "addr3"
 		someInsertThree, _ := someDB.InsertIntoAddress(addr)
 
-		expected := make([]Address, 0, 3)
+		expected := make([]AddressInfo, 0, 3)
 		expected = append(expected, *someInsertThree, *someInsertTwo, *someInsertOne)
 
 		acutal, totalRecords, err := someDB.GetAllAddressesWithTotalRecords(1, 3)
@@ -532,7 +532,7 @@ func TestTotalRecords(t *testing.T) {
 		someDB, _ := NewDB(ctx, ":memory:")
 		_ = someDB.CreateTables()
 
-		addr := &Address{
+		addr := &AddressInfo{
 			Address:   "some-address",
 			PublicKey: "some-public-key",
 			Label:     "some-label",
@@ -552,7 +552,7 @@ func TestTotalRecords(t *testing.T) {
 		someDB, _ := NewDB(ctx, ":memory:")
 		_ = someDB.CreateTables()
 
-		addr := &Address{
+		addr := &AddressInfo{
 			PublicKey: "some-public-key",
 			Label:     "some-label",
 			Path:      "some-path",

@@ -332,11 +332,11 @@ func (w *Wallet) IsEncrypted() bool {
 	return w.store.Vault.IsEncrypted()
 }
 
-func (w *Wallet) AddressInfo(addr string) *db.Address {
+func (w *Wallet) AddressInfo(addr string) *db.AddressInfo {
 	return w.store.Vault.Address(addr)
 }
 
-func (w *Wallet) AddressInfos() []db.Address {
+func (w *Wallet) AddressInfos() []db.AddressInfo {
 	return w.store.Vault.Addresses()
 }
 
@@ -345,11 +345,11 @@ func (w *Wallet) AddressCount() (int, error) {
 	return w.store.Vault.AddressCount()
 }
 
-func (w *Wallet) AllValidatorAddresses() []db.Address {
+func (w *Wallet) AllValidatorAddresses() []db.AddressInfo {
 	return w.store.Vault.AllValidatorAddresses()
 }
 
-func (w *Wallet) AddressFromPath(p string) *db.Address {
+func (w *Wallet) AddressFromPath(p string) *db.AddressInfo {
 	return w.store.Vault.AddressFromPath(p)
 }
 

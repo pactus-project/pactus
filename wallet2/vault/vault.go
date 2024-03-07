@@ -197,7 +197,7 @@ func (v *Vault) SetLabel(address, label string) error {
 	return nil
 }
 
-func (v *Vault) Addresses() []db.Address {
+func (v *Vault) Addresses() []db.AddressInfo {
 	addrs, err := v.db.GetAllAddresses()
 	if err != nil {
 		return nil
@@ -210,13 +210,13 @@ func (v *Vault) Addresses() []db.Address {
 	return addrs
 }
 
-func (v *Vault) AllValidatorAddresses() []db.Address {
+func (v *Vault) AllValidatorAddresses() []db.AddressInfo {
 	addrs, err := v.db.GetAllAddresses()
 	if err != nil {
 		return nil
 	}
 
-	result := make([]db.Address, 0, len(addrs)/2)
+	result := make([]db.AddressInfo, 0, len(addrs)/2)
 	for i := range addrs {
 		addrPath, _ := addresspath.NewPathFromString(addrs[i].Path)
 		if addrPath.AddressType() == H(crypto.AddressTypeValidator) {
@@ -230,13 +230,13 @@ func (v *Vault) AllValidatorAddresses() []db.Address {
 	return result
 }
 
-func (v *Vault) AllImportedPrivateKeyAddresses() []db.Address {
+func (v *Vault) AllImportedPrivateKeyAddresses() []db.AddressInfo {
 	addrs, err := v.db.GetAllAddresses()
 	if err != nil {
 		return nil
 	}
 
-	result := make([]db.Address, 0, len(addrs)/2)
+	result := make([]db.AddressInfo, 0, len(addrs)/2)
 	for i := range addrs {
 		addrPath, _ := addresspath.NewPathFromString(addrs[i].Path)
 		if addrPath.Purpose() == H(PurposeImportPrivateKey) {
@@ -254,7 +254,7 @@ func (v *Vault) IsEncrypted() bool {
 	return v.Encrypter.IsEncrypted()
 }
 
-func (v *Vault) AddressFromPath(p string) *db.Address {
+func (v *Vault) AddressFromPath(p string) *db.AddressInfo {
 	addr, err := v.db.GetAddressByPath(p)
 	if err != nil {
 		return nil
@@ -300,7 +300,7 @@ func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 		H(addressIndex)).String()
 
 	importedPrvLabelCounter := (len(v.AllImportedPrivateKeyAddresses()) / 2) + 1
-	rewardAddr := &db.Address{
+	rewardAddr := &db.AddressInfo{
 		Address:   accAddr.String(),
 		PublicKey: pub.String(),
 		Label:     fmt.Sprintf("Imported Reward Address %d", importedPrvLabelCounter),
@@ -311,7 +311,7 @@ func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 		return err
 	}
 
-	validatorAddr := &db.Address{
+	validatorAddr := &db.AddressInfo{
 		Address:   valAddr.String(),
 		PublicKey: pub.String(),
 		Label:     fmt.Sprintf("Imported Validator Address %d", importedPrvLabelCounter),
@@ -420,7 +420,7 @@ func (v *Vault) NewBLSAccountAddress(label string) (string, error) {
 	}
 
 	addr := blsPubKey.AccountAddress().String()
-	address := &db.Address{
+	address := &db.AddressInfo{
 		Address: addr,
 		Label:   label,
 		Path:    addresspath.NewPath(ext.Path()...).String(),
@@ -451,7 +451,7 @@ func (v *Vault) NewValidatorAddress(label string) (string, error) {
 	}
 
 	addr := blsPubKey.ValidatorAddress().String()
-	address := &db.Address{
+	address := &db.AddressInfo{
 		Address: addr,
 		Label:   label,
 		Path:    addresspath.NewPath(ext.Path()...).String(),
@@ -465,7 +465,7 @@ func (v *Vault) NewValidatorAddress(label string) (string, error) {
 	return addr, nil
 }
 
-func (v *Vault) Address(address string) *db.Address {
+func (v *Vault) Address(address string) *db.AddressInfo {
 	info, err := v.db.GetAddressByAddress(address)
 	if err != nil {
 		return nil
@@ -545,8 +545,8 @@ func (v *Vault) AddressCount() (int, error) {
 	return int(totalRecords), err
 }
 
-func (v *Vault) sortAddressesByAddressIndex(addrs ...db.Address) {
-	slices.SortStableFunc(addrs, func(a, b db.Address) int {
+func (v *Vault) sortAddressesByAddressIndex(addrs ...db.AddressInfo) {
+	slices.SortStableFunc(addrs, func(a, b db.AddressInfo) int {
 		pathA, _ := addresspath.NewPathFromString(a.Path)
 		pathB, _ := addresspath.NewPathFromString(b.Path)
 
@@ -554,8 +554,8 @@ func (v *Vault) sortAddressesByAddressIndex(addrs ...db.Address) {
 	})
 }
 
-func (v *Vault) sortAddressesByAddressType(addrs ...db.Address) {
-	slices.SortStableFunc(addrs, func(a, b db.Address) int {
+func (v *Vault) sortAddressesByAddressType(addrs ...db.AddressInfo) {
+	slices.SortStableFunc(addrs, func(a, b db.AddressInfo) int {
 		pathA, _ := addresspath.NewPathFromString(a.Path)
 		pathB, _ := addresspath.NewPathFromString(b.Path)
 
@@ -563,8 +563,8 @@ func (v *Vault) sortAddressesByAddressType(addrs ...db.Address) {
 	})
 }
 
-func (v *Vault) sortAddressesByPurpose(addrs ...db.Address) {
-	slices.SortStableFunc(addrs, func(a, b db.Address) int {
+func (v *Vault) sortAddressesByPurpose(addrs ...db.AddressInfo) {
+	slices.SortStableFunc(addrs, func(a, b db.AddressInfo) int {
 		pathA, _ := addresspath.NewPathFromString(a.Path)
 		pathB, _ := addresspath.NewPathFromString(b.Path)
 

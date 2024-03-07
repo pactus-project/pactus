@@ -215,7 +215,7 @@ func TestAddressFromPath(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		var address string
-		var addrInfo db.Address
+		var addrInfo db.AddressInfo
 
 		for _, addr := range td.vault.Addresses() {
 			address = addr.Address
@@ -393,7 +393,7 @@ func TestUpdatePassword(t *testing.T) {
 	addressCount, err := td.vault.AddressCount()
 	assert.NoError(t, err)
 
-	infos := make([]*db.Address, 0, addressCount)
+	infos := make([]*db.AddressInfo, 0, addressCount)
 	for _, info := range td.vault.Addresses() {
 		info := td.vault.Address(info.Address)
 		infos = append(infos, info)

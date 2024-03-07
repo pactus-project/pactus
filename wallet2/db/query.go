@@ -4,8 +4,6 @@ const (
 	EmptyQuery = ""
 )
 
-type QueryOption string
-
 func WithTransactionStatus() string {
 	return "WHERE status = ?"
 }
