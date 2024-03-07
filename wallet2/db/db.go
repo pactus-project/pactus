@@ -19,13 +19,13 @@ const (
 type DB interface {
 	CreateTables() error
 
-	InsertIntoAddress(addr *AddressInfo) (*AddressInfo, error)
-	InsertIntoTransaction(transaction *Transaction) (*Transaction, error)
+	InsertAddressInfo(addr *AddressInfo) (*AddressInfo, error)
+	InsertTransaction(transaction *Transaction) (*Transaction, error)
 	InsertIntoPair(key string, value string) (*Pair, error)
 
 	UpdateAddressLabel(addr *AddressInfo) (*AddressInfo, error)
 
-	GetAddressByAddress(address string) (*AddressInfo, error)
+	GetAddressInfoByAddress(address string) (*AddressInfo, error)
 	GetAddressByPath(path string) (*AddressInfo, error)
 
 	GetTransactionByID(id int) (*Transaction, error)
@@ -34,8 +34,8 @@ type DB interface {
 	GetPairByKey(key string) (*Pair, error)
 	GetTotalRecords(tableName string, query string, args ...any) (int64, error)
 
-	GetAllAddresses() ([]AddressInfo, error)
-	GetAllAddressesWithTotalRecords(pageIndex, pageSize int) ([]AddressInfo, int64, error)
+	GetAllAddressInfos() ([]AddressInfo, error)
+	GetAllAddressInfosWithTotalRecords(pageIndex, pageSize int) ([]AddressInfo, int64, error)
 
 	GetAllTransactions(query string, args ...any) ([]Transaction, error)
 	GetAllTransactionsWithTotalRecords(pageIndex, pageSize int, query string, args ...any) ([]Transaction, int64, error)
@@ -133,7 +133,7 @@ func (d *db) createPairTable() error {
 	return nil
 }
 
-func (d *db) InsertIntoAddress(addr *AddressInfo) (*AddressInfo, error) {
+func (d *db) InsertAddressInfo(addr *AddressInfo) (*AddressInfo, error) {
 	insertQuery := fmt.Sprintf("INSERT INTO %s (address, public_key, label, path, created_at)"+
 		" VALUES (?,?,?,?,?)", AddressTable)
 
@@ -159,7 +159,7 @@ func (d *db) InsertIntoAddress(addr *AddressInfo) (*AddressInfo, error) {
 	}, nil
 }
 
-func (d *db) InsertIntoTransaction(transaction *Transaction) (*Transaction, error) {
+func (d *db) InsertTransaction(transaction *Transaction) (*Transaction, error) {
 	insertQuery := fmt.Sprintf("INSERT INTO %s (tx_id, address, block_height, block_time,"+
 		" payload_type, data, description, amount, status, created_at) VALUES"+
 		" (?,?,?,?,?,?,?,?,?,?)", TransactionTable)
@@ -241,7 +241,7 @@ func (d *db) UpdateAddressLabel(addr *AddressInfo) (*AddressInfo, error) {
 	}, nil
 }
 
-func (d *db) GetAddressByAddress(address string) (*AddressInfo, error) {
+func (d *db) GetAddressInfoByAddress(address string) (*AddressInfo, error) {
 	getQuery := fmt.Sprintf("SELECT * FROM %s WHERE address = ?", AddressTable)
 
 	prepareQuery, err := d.PrepareContext(d.ctx, getQuery)
@@ -360,7 +360,7 @@ func (d *db) GetPairByKey(key string) (*Pair, error) {
 	return p, nil
 }
 
-func (d *db) GetAllAddresses() ([]AddressInfo, error) {
+func (d *db) GetAllAddressInfos() ([]AddressInfo, error) {
 	getAllQuery := fmt.Sprintf("SELECT * FROM %s ORDER BY created_at DESC", AddressTable)
 	rows, err := d.QueryContext(d.ctx, getAllQuery)
 	if err != nil || rows.Err() != nil {
@@ -382,7 +382,7 @@ func (d *db) GetAllAddresses() ([]AddressInfo, error) {
 	return addrs, nil
 }
 
-func (d *db) GetAllAddressesWithTotalRecords(pageIndex, pageSize int) ([]AddressInfo, int64, error) {
+func (d *db) GetAllAddressInfosWithTotalRecords(pageIndex, pageSize int) ([]AddressInfo, int64, error) {
 	totalRecords, err := d.GetTotalRecords("addresses", EmptyQuery)
 	if err != nil {
 		return nil, 0, err

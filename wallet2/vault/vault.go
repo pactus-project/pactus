@@ -174,7 +174,7 @@ func (v *Vault) UpdatePassword(oldPassword, newPassword string, opts ...encrypte
 }
 
 func (v *Vault) Label(addr string) string {
-	info, err := v.db.GetAddressByAddress(addr)
+	info, err := v.db.GetAddressInfoByAddress(addr)
 	if err != nil {
 		return ""
 	}
@@ -183,7 +183,7 @@ func (v *Vault) Label(addr string) string {
 }
 
 func (v *Vault) SetLabel(address, label string) error {
-	addr, err := v.db.GetAddressByAddress(address)
+	addr, err := v.db.GetAddressInfoByAddress(address)
 	if err != nil {
 		return NewErrAddressNotFound(address)
 	}
@@ -198,7 +198,7 @@ func (v *Vault) SetLabel(address, label string) error {
 }
 
 func (v *Vault) Addresses() []db.AddressInfo {
-	addrs, err := v.db.GetAllAddresses()
+	addrs, err := v.db.GetAllAddressInfos()
 	if err != nil {
 		return nil
 	}
@@ -211,7 +211,7 @@ func (v *Vault) Addresses() []db.AddressInfo {
 }
 
 func (v *Vault) AllValidatorAddresses() []db.AddressInfo {
-	addrs, err := v.db.GetAllAddresses()
+	addrs, err := v.db.GetAllAddressInfos()
 	if err != nil {
 		return nil
 	}
@@ -231,7 +231,7 @@ func (v *Vault) AllValidatorAddresses() []db.AddressInfo {
 }
 
 func (v *Vault) AllImportedPrivateKeyAddresses() []db.AddressInfo {
-	addrs, err := v.db.GetAllAddresses()
+	addrs, err := v.db.GetAllAddressInfos()
 	if err != nil {
 		return nil
 	}
@@ -307,7 +307,7 @@ func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 		Path:      blsAccPathStr,
 	}
 
-	if _, err = v.db.InsertIntoAddress(rewardAddr); err != nil {
+	if _, err = v.db.InsertAddressInfo(rewardAddr); err != nil {
 		return err
 	}
 
@@ -318,7 +318,7 @@ func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 		Path:      blsValidatorPathStr,
 	}
 
-	if _, err = v.db.InsertIntoAddress(validatorAddr); err != nil {
+	if _, err = v.db.InsertAddressInfo(validatorAddr); err != nil {
 		return err
 	}
 
@@ -425,7 +425,7 @@ func (v *Vault) NewBLSAccountAddress(label string) (string, error) {
 		Label:   label,
 		Path:    addresspath.NewPath(ext.Path()...).String(),
 	}
-	if _, err := v.db.InsertIntoAddress(address); err != nil {
+	if _, err := v.db.InsertAddressInfo(address); err != nil {
 		return "", err
 	}
 
@@ -456,7 +456,7 @@ func (v *Vault) NewValidatorAddress(label string) (string, error) {
 		Label:   label,
 		Path:    addresspath.NewPath(ext.Path()...).String(),
 	}
-	if _, err := v.db.InsertIntoAddress(address); err != nil {
+	if _, err := v.db.InsertAddressInfo(address); err != nil {
 		return "", err
 	}
 
@@ -466,7 +466,7 @@ func (v *Vault) NewValidatorAddress(label string) (string, error) {
 }
 
 func (v *Vault) Address(address string) *db.AddressInfo {
-	info, err := v.db.GetAddressByAddress(address)
+	info, err := v.db.GetAddressInfoByAddress(address)
 	if err != nil {
 		return nil
 	}

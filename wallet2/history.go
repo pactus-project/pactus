@@ -55,7 +55,7 @@ func (h *history) addTransaction(
 		Status:      int(status),
 	}
 
-	_, err := h.db.InsertIntoTransaction(t)
+	_, err := h.db.InsertTransaction(t)
 
 	return err
 }

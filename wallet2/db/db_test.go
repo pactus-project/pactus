@@ -26,7 +26,7 @@ func TestInsert(t *testing.T) {
 			Label:     "some-label",
 			Path:      "some-path",
 		}
-		_, err := someDB.InsertIntoAddress(addr)
+		_, err := someDB.InsertAddressInfo(addr)
 		assert.EqualError(t, ErrCouldNotInsertRecordIntoTable, err.Error())
 	})
 
@@ -40,7 +40,7 @@ func TestInsert(t *testing.T) {
 			Label:     "some-label",
 			Path:      "some-path",
 		}
-		actual, err := someDB.InsertIntoAddress(addr)
+		actual, err := someDB.InsertAddressInfo(addr)
 
 		assert.Nil(t, err)
 		assert.Equal(t, addr.Address, actual.Address)
@@ -60,7 +60,7 @@ func TestInsert(t *testing.T) {
 			Amount:      50,
 			Status:      1,
 		}
-		_, err := someDB.InsertIntoTransaction(tr)
+		_, err := someDB.InsertTransaction(tr)
 		assert.EqualError(t, ErrCouldNotInsertRecordIntoTable, err.Error())
 	})
 
@@ -79,7 +79,7 @@ func TestInsert(t *testing.T) {
 			Amount:      50,
 			Status:      1,
 		}
-		actual, err := someDB.InsertIntoTransaction(tr)
+		actual, err := someDB.InsertTransaction(tr)
 
 		assert.Nil(t, err)
 		assert.Equal(t, 1, actual.ID)
@@ -124,7 +124,7 @@ func TestGetById(t *testing.T) {
 			Amount:      50,
 			Status:      1,
 		}
-		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
 
 		actual, err := someDB.GetTransactionByID(10)
 
@@ -147,7 +147,7 @@ func TestGetById(t *testing.T) {
 			Amount:      50,
 			Status:      1,
 		}
-		expected, _ := someDB.InsertIntoTransaction(tr)
+		expected, _ := someDB.InsertTransaction(tr)
 
 		actual, err := someDB.GetTransactionByID(expected.ID)
 
@@ -193,10 +193,10 @@ func TestAddress(t *testing.T) {
 			Label:     "some-label",
 			Path:      "some-path",
 		}
-		expected, _ := someDB.InsertIntoAddress(addr)
+		expected, _ := someDB.InsertAddressInfo(addr)
 
 		expected.Address = "some-other-pactus-addr"
-		actual, err := someDB.GetAddressByAddress(expected.Address)
+		actual, err := someDB.GetAddressInfoByAddress(expected.Address)
 
 		assert.Nil(t, actual)
 		assert.EqualError(t, ErrCouldNotFindRecord, err.Error())
@@ -212,9 +212,9 @@ func TestAddress(t *testing.T) {
 			Label:     "some-label",
 			Path:      "some-path",
 		}
-		expected, _ := someDB.InsertIntoAddress(addr)
+		expected, _ := someDB.InsertAddressInfo(addr)
 
-		actual, err := someDB.GetAddressByAddress(expected.Address)
+		actual, err := someDB.GetAddressInfoByAddress(expected.Address)
 		assert.Nil(t, err)
 		assert.Equal(t, expected, actual)
 	})
@@ -229,7 +229,7 @@ func TestAddress(t *testing.T) {
 			Label:     "some-label",
 			Path:      "some-path",
 		}
-		expected, _ := someDB.InsertIntoAddress(addr)
+		expected, _ := someDB.InsertAddressInfo(addr)
 
 		expected.Path = "some-other-path"
 		actual, err := someDB.GetAddressByPath(expected.Path)
@@ -248,7 +248,7 @@ func TestAddress(t *testing.T) {
 			Label:     "some-label",
 			Path:      "some-path",
 		}
-		expected, _ := someDB.InsertIntoAddress(addr)
+		expected, _ := someDB.InsertAddressInfo(addr)
 
 		actual, err := someDB.GetAddressByPath(expected.Path)
 		assert.Nil(t, err)
@@ -265,12 +265,12 @@ func TestAddress(t *testing.T) {
 			Label:     "some-label",
 			Path:      "some-path",
 		}
-		addr, _ = someDB.InsertIntoAddress(addr)
+		addr, _ = someDB.InsertAddressInfo(addr)
 
 		addr.Label = "some-other-lable"
 		_, _ = someDB.UpdateAddressLabel(addr)
 
-		actual, err := someDB.GetAddressByAddress(addr.Address)
+		actual, err := someDB.GetAddressInfoByAddress(addr.Address)
 
 		assert.Nil(t, err)
 		assert.Equal(t, addr.Label, actual.Label)
@@ -293,7 +293,7 @@ func TestTransaction(t *testing.T) {
 			Amount:      50,
 			Status:      1,
 		}
-		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
 
 		actual, err := someDB.GetTransactionByTxID("unknown-txid")
 
@@ -316,7 +316,7 @@ func TestTransaction(t *testing.T) {
 			Amount:      50,
 			Status:      1,
 		}
-		expected, _ := someDB.InsertIntoTransaction(tr)
+		expected, _ := someDB.InsertTransaction(tr)
 
 		actual, err := someDB.GetTransactionByTxID(expected.TxID)
 
@@ -337,16 +337,16 @@ func TestGetAll(t *testing.T) {
 		}
 
 		addr.Address = "addr1"
-		someInsertOne, _ := someDB.InsertIntoAddress(addr)
+		someInsertOne, _ := someDB.InsertAddressInfo(addr)
 		addr.Address = "addr2"
-		someInsertTwo, _ := someDB.InsertIntoAddress(addr)
+		someInsertTwo, _ := someDB.InsertAddressInfo(addr)
 		addr.Address = "addr3"
-		someInsertThree, _ := someDB.InsertIntoAddress(addr)
+		someInsertThree, _ := someDB.InsertAddressInfo(addr)
 
 		expected := make([]AddressInfo, 0, 3)
 		expected = append(expected, *someInsertThree, *someInsertTwo, *someInsertOne)
 
-		acutal, err := someDB.GetAllAddresses()
+		acutal, err := someDB.GetAllAddressInfos()
 
 		assert.Nil(t, err)
 		assert.Equal(t, expected, acutal)
@@ -363,16 +363,16 @@ func TestGetAll(t *testing.T) {
 		}
 
 		addr.Address = "addr1"
-		someInsertOne, _ := someDB.InsertIntoAddress(addr)
+		someInsertOne, _ := someDB.InsertAddressInfo(addr)
 		addr.Address = "addr2"
-		someInsertTwo, _ := someDB.InsertIntoAddress(addr)
+		someInsertTwo, _ := someDB.InsertAddressInfo(addr)
 		addr.Address = "addr3"
-		someInsertThree, _ := someDB.InsertIntoAddress(addr)
+		someInsertThree, _ := someDB.InsertAddressInfo(addr)
 
 		expected := make([]AddressInfo, 0, 3)
 		expected = append(expected, *someInsertThree, *someInsertTwo, *someInsertOne)
 
-		acutal, totalRecords, err := someDB.GetAllAddressesWithTotalRecords(1, 3)
+		acutal, totalRecords, err := someDB.GetAllAddressInfosWithTotalRecords(1, 3)
 
 		assert.Nil(t, err)
 		assert.Equal(t, int64(3), totalRecords)
@@ -394,9 +394,9 @@ func TestGetAll(t *testing.T) {
 			Amount:      50,
 			Status:      1,
 		}
-		someInsertOne, _ := someDB.InsertIntoTransaction(tr)
-		someInsertTwo, _ := someDB.InsertIntoTransaction(tr)
-		someInsertThree, _ := someDB.InsertIntoTransaction(tr)
+		someInsertOne, _ := someDB.InsertTransaction(tr)
+		someInsertTwo, _ := someDB.InsertTransaction(tr)
+		someInsertThree, _ := someDB.InsertTransaction(tr)
 
 		expected := make([]Transaction, 0, 3)
 		expected = append(expected, *someInsertThree, *someInsertTwo, *someInsertOne)
@@ -422,11 +422,11 @@ func TestGetAll(t *testing.T) {
 			Amount:      50,
 			Status:      int(Confirmed),
 		}
-		someInsertOne, _ := someDB.InsertIntoTransaction(tr)
-		someInsertTwo, _ := someDB.InsertIntoTransaction(tr)
+		someInsertOne, _ := someDB.InsertTransaction(tr)
+		someInsertTwo, _ := someDB.InsertTransaction(tr)
 
 		tr.Status = int(Pending)
-		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
 
 		expected := make([]Transaction, 0, 2)
 		expected = append(expected, *someInsertTwo, *someInsertOne)
@@ -452,11 +452,11 @@ func TestGetAll(t *testing.T) {
 			Amount:      50,
 			Status:      int(Confirmed),
 		}
-		someInsertOne, _ := someDB.InsertIntoTransaction(tr)
-		someInsertTwo, _ := someDB.InsertIntoTransaction(tr)
+		someInsertOne, _ := someDB.InsertTransaction(tr)
+		someInsertTwo, _ := someDB.InsertTransaction(tr)
 
 		tr.Address = "some-another-address"
-		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
 
 		expected := make([]Transaction, 0, 2)
 		expected = append(expected, *someInsertTwo, *someInsertOne)
@@ -481,9 +481,9 @@ func TestGetAll(t *testing.T) {
 			Amount:      50,
 			Status:      1,
 		}
-		someInsertOne, _ := someDB.InsertIntoTransaction(tr)
-		someInsertTwo, _ := someDB.InsertIntoTransaction(tr)
-		someInsertThree, _ := someDB.InsertIntoTransaction(tr)
+		someInsertOne, _ := someDB.InsertTransaction(tr)
+		someInsertTwo, _ := someDB.InsertTransaction(tr)
+		someInsertThree, _ := someDB.InsertTransaction(tr)
 
 		expected := make([]Transaction, 0, 3)
 		expected = append(expected, *someInsertThree, *someInsertTwo, *someInsertOne)
@@ -509,11 +509,11 @@ func TestGetAll(t *testing.T) {
 			Amount:      50,
 			Status:      int(Confirmed),
 		}
-		_, _ = someDB.InsertIntoTransaction(tr)
-		someInsertTwo, _ := someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
+		someInsertTwo, _ := someDB.InsertTransaction(tr)
 
 		tr.Status = int(Pending)
-		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
 
 		expected := make([]Transaction, 0, 2)
 		expected = append(expected, *someInsertTwo)
@@ -538,9 +538,9 @@ func TestTotalRecords(t *testing.T) {
 			Label:     "some-label",
 			Path:      "some-path",
 		}
-		_, _ = someDB.InsertIntoAddress(addr)
-		_, _ = someDB.InsertIntoAddress(addr)
-		_, _ = someDB.InsertIntoAddress(addr)
+		_, _ = someDB.InsertAddressInfo(addr)
+		_, _ = someDB.InsertAddressInfo(addr)
+		_, _ = someDB.InsertAddressInfo(addr)
 
 		totalRecords, err := someDB.GetTotalRecords("some-table", EmptyQuery)
 
@@ -559,11 +559,11 @@ func TestTotalRecords(t *testing.T) {
 		}
 
 		addr.Address = "addr1"
-		_, _ = someDB.InsertIntoAddress(addr)
+		_, _ = someDB.InsertAddressInfo(addr)
 		addr.Address = "addr2"
-		_, _ = someDB.InsertIntoAddress(addr)
+		_, _ = someDB.InsertAddressInfo(addr)
 		addr.Address = "addr3"
-		_, _ = someDB.InsertIntoAddress(addr)
+		_, _ = someDB.InsertAddressInfo(addr)
 
 		totalRecords, err := someDB.GetTotalRecords(AddressTable, EmptyQuery)
 
@@ -586,11 +586,11 @@ func TestTotalRecords(t *testing.T) {
 			Amount:      50,
 			Status:      int(Confirmed),
 		}
-		_, _ = someDB.InsertIntoTransaction(tr)
-		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
 
 		tr.Status = int(Pending)
-		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
 
 		totalRecords, err := someDB.GetTotalRecords(TransactionTable, WithTransactionStatus(), Confirmed)
 
@@ -613,14 +613,14 @@ func TestTotalRecords(t *testing.T) {
 			Amount:      50,
 			Status:      int(Confirmed),
 		}
-		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
 
 		tr.Address = "some-another-address"
-		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
 
 		tr.Status = int(Pending)
 		tr.Address = "some-address"
-		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
 
 		totalRecords, err := someDB.GetTotalRecords(TransactionTable,
 			WithTransactionStatusAndAddr(), Confirmed, "some-address")
@@ -644,14 +644,14 @@ func TestTotalRecords(t *testing.T) {
 			Amount:      50,
 			Status:      int(Confirmed),
 		}
-		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
 
 		tr.Address = "some-another-address"
-		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
 
 		tr.Status = int(Pending)
 		tr.Address = "some-address"
-		_, _ = someDB.InsertIntoTransaction(tr)
+		_, _ = someDB.InsertTransaction(tr)
 
 		totalRecords, err := someDB.GetTotalRecords(TransactionTable,
 			WithTransactionAddr(), "some-address")
