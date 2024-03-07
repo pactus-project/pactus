@@ -191,3 +191,19 @@ func TestPowerDeltaBond(t *testing.T) {
 
 	assert.Equal(t, amt, td.sandbox.PowerDelta())
 }
+
+func TestSmallBond(t *testing.T) {
+	td := setup(t)
+	exe := NewBondExecutor(false)
+
+	senderAddr, _ := td.sandbox.TestStore.RandomTestAcc()
+	receiverVal := td.sandbox.TestStore.RandomTestVal()
+	receiverAddr := receiverVal.Address()
+	fee := td.sandbox.Params().MaximumFee
+	lockTime := td.sandbox.CurrentHeight()
+	trx := tx.NewBondTx(lockTime, senderAddr,
+		receiverAddr, nil, 1, fee, "ok")
+
+	err := exe.Execute(trx, td.sandbox)
+	assert.NoError(t, err, "Ok")
+}
