@@ -36,50 +36,59 @@ func newStore(database db.DB) *store {
 }
 
 func (s *store) Load() error {
-	versionPair, err := s.db.GetPairByKey(VersionKey)
+	versionValue, err := s.db.GetValue(VersionKey)
 	if err != nil {
 		return err
 	}
-	s.Version, _ = strconv.Atoi(versionPair.Value)
+	s.Version, _ = strconv.Atoi(versionValue)
 
-	uuidPair, err := s.db.GetPairByKey(UUIDKey)
+	uuidValue, err := s.db.GetValue(UUIDKey)
 	if err != nil {
 		return err
 	}
-	s.UUID = uuid.MustParse(uuidPair.Value)
+	s.UUID = uuid.MustParse(uuidValue)
 
-	createdAtPair, err := s.db.GetPairByKey(CreatedAtKey)
+	createdAtValue, err := s.db.GetValue(CreatedAtKey)
 	if err != nil {
 		return err
 	}
-	s.CreatedAt = createdAtPair.CreatedAt
 
-	networkPair, err := s.db.GetPairByKey(NetworkKey)
+	timeFormat := "2006-01-02 15:04:05 -0700 MST"
+	s.CreatedAt, err = time.Parse(timeFormat, createdAtValue)
 	if err != nil {
 		return err
 	}
-	pNetwork, _ := strconv.Atoi(networkPair.Value)
+
+	networkValue, err := s.db.GetValue(NetworkKey)
+	if err != nil {
+		return err
+	}
+	pNetwork, _ := strconv.Atoi(networkValue)
 	s.Network = genesis.ChainType(pNetwork)
 
 	return nil
 }
 
 func (s *store) Save(version int, id uuid.UUID, createdAt time.Time, network genesis.ChainType) error {
-	if _, err := s.db.InsertIntoPair(VersionKey, strconv.Itoa(version)); err != nil {
+	if err := s.db.SetValue(VersionKey, strconv.Itoa(version)); err != nil {
 		return err
 	}
+	s.Version = version
 
-	if _, err := s.db.InsertIntoPair(UUIDKey, id.String()); err != nil {
+	if err := s.db.SetValue(UUIDKey, id.String()); err != nil {
 		return err
 	}
+	s.UUID = id
 
-	if _, err := s.db.InsertIntoPair(CreatedAtKey, createdAt.String()); err != nil {
+	if err := s.db.SetValue(CreatedAtKey, createdAt.String()); err != nil {
 		return err
 	}
+	s.CreatedAt = createdAt
 
-	if _, err := s.db.InsertIntoPair(NetworkKey, strconv.Itoa(int(network))); err != nil {
+	if err := s.db.SetValue(NetworkKey, strconv.Itoa(int(network))); err != nil {
 		return err
 	}
+	s.Network = network
 
 	return nil
 }

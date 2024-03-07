@@ -21,7 +21,7 @@ type DB interface {
 
 	InsertAddressInfo(addr *AddressInfo) (*AddressInfo, error)
 	InsertTransaction(transaction *Transaction) (*Transaction, error)
-	InsertIntoPair(key string, value string) (*Pair, error)
+	SetValue(key, value string) error
 
 	UpdateAddressLabel(label, addr string) error
 
@@ -31,7 +31,7 @@ type DB interface {
 	GetTransactionByID(id int) (*Transaction, error)
 	GetTransactionByTxID(id string) (*Transaction, error)
 
-	GetPairByKey(key string) (*Pair, error)
+	GetValue(key string) (string, error)
 	GetTotalRecords(tableName string, query string, args ...any) (int64, error)
 
 	GetAllAddressInfos() ([]AddressInfo, error)
@@ -197,25 +197,21 @@ func (d *db) InsertTransaction(transaction *Transaction) (*Transaction, error) {
 	}, nil
 }
 
-func (d *db) InsertIntoPair(key, value string) (*Pair, error) {
+func (d *db) SetValue(key, value string) error {
 	insertQuery := fmt.Sprintf("INSERT INTO %s (key, value, created_at) VALUES (?,?,?)", PairTable)
 
 	prepareQuery, err := d.PrepareContext(d.ctx, insertQuery)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer prepareQuery.Close()
 
 	createdAt := time.Now().UTC()
 	if _, err := prepareQuery.ExecContext(d.ctx, key, value, createdAt); err != nil {
-		return nil, ErrCouldNotInsertRecordIntoTable
+		return ErrCouldNotInsertRecordIntoTable
 	}
 
-	return &Pair{
-		Key:       key,
-		Value:     value,
-		CreatedAt: createdAt,
-	}, nil
+	return nil
 }
 
 func (d *db) UpdateAddressLabel(label, addr string) error {
@@ -331,27 +327,27 @@ func (d *db) GetTransactionByTxID(id string) (*Transaction, error) {
 	return t, nil
 }
 
-func (d *db) GetPairByKey(key string) (*Pair, error) {
+func (d *db) GetValue(key string) (string, error) {
 	getQuery := fmt.Sprintf("SELECT * FROM %s WHERE key = ?", PairTable)
 
 	prepareQuery, err := d.PrepareContext(d.ctx, getQuery)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	defer prepareQuery.Close()
 
 	row := prepareQuery.QueryRowContext(d.ctx, key)
 	if row.Err() != nil {
-		return nil, ErrCouldNotFindRecord
+		return "", ErrCouldNotFindRecord
 	}
 
 	p := &Pair{}
 	err = row.Scan(&p.Key, &p.Value, &p.CreatedAt)
 	if err != nil {
-		return nil, ErrCouldNotFindRecord
+		return "", ErrCouldNotFindRecord
 	}
 
-	return p, nil
+	return p.Value, nil
 }
 
 func (d *db) GetAllAddressInfos() ([]AddressInfo, error) {

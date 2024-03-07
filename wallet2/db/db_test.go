@@ -90,7 +90,7 @@ func TestInsert(t *testing.T) {
 		someDB, _ := NewDB(ctx, ":memory:")
 
 		key, value := "key", "value"
-		_, err := someDB.InsertIntoPair(key, value)
+		err := someDB.SetValue(key, value)
 
 		assert.EqualError(t, ErrCouldNotInsertRecordIntoTable, err.Error())
 	})
@@ -100,11 +100,9 @@ func TestInsert(t *testing.T) {
 		_ = someDB.CreateTables()
 
 		key, value := "key", "value"
-		actual, err := someDB.InsertIntoPair(key, value)
+		err := someDB.SetValue(key, value)
 
 		assert.Nil(t, err)
-		assert.Equal(t, key, actual.Key)
-		assert.Equal(t, value, actual.Value)
 	})
 }
 
@@ -160,11 +158,11 @@ func TestGetById(t *testing.T) {
 		_ = someDB.CreateTables()
 
 		key, value := "key", "value"
-		_, _ = someDB.InsertIntoPair(key, value)
+		_ = someDB.SetValue(key, value)
 
-		actual, err := someDB.GetPairByKey("some-thing-wrong")
+		actual, err := someDB.GetValue("some-thing-wrong")
 
-		assert.Nil(t, actual)
+		assert.Equal(t, "", actual)
 		assert.EqualError(t, ErrCouldNotFindRecord, err.Error())
 	})
 
@@ -173,12 +171,12 @@ func TestGetById(t *testing.T) {
 		_ = someDB.CreateTables()
 
 		key, value := "key", "value"
-		expected, _ := someDB.InsertIntoPair(key, value)
+		_ = someDB.SetValue(key, value)
 
-		actual, err := someDB.GetPairByKey(expected.Key)
+		actual, err := someDB.GetValue(key)
 
 		assert.Nil(t, err)
-		assert.Equal(t, expected, actual)
+		assert.Equal(t, value, actual)
 	})
 }
 
