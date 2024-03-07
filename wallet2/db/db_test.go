@@ -110,40 +110,6 @@ func TestInsert(t *testing.T) {
 }
 
 func TestGetById(t *testing.T) {
-	t.Run("could not get address by id", func(t *testing.T) {
-		someDB, _ := NewDB(ctx, ":memory:")
-		_ = someDB.CreateTables()
-
-		addr := &Address{
-			Address:   "some-address",
-			PublicKey: "some-public-key",
-			Label:     "some-label",
-			Path:      "some-path",
-		}
-		_, _ = someDB.InsertIntoAddress(addr)
-
-		actual, err := someDB.GetAddressByID(5)
-		assert.Nil(t, actual)
-		assert.EqualError(t, ErrCouldNotFindRecord, err.Error())
-	})
-
-	t.Run("get address by id", func(t *testing.T) {
-		someDB, _ := NewDB(ctx, ":memory:")
-		_ = someDB.CreateTables()
-
-		addr := &Address{
-			Address:   "some-address",
-			PublicKey: "some-public-key",
-			Label:     "some-label",
-			Path:      "some-path",
-		}
-		expected, _ := someDB.InsertIntoAddress(addr)
-
-		actual, err := someDB.GetAddressByID(expected.ID)
-		assert.Nil(t, err)
-		assert.Equal(t, expected, actual)
-	})
-
 	t.Run("could not get transaction by id", func(t *testing.T) {
 		someDB, _ := NewDB(ctx, ":memory:")
 		_ = someDB.CreateTables()
@@ -295,11 +261,10 @@ func TestAddress(t *testing.T) {
 		_ = someDB.CreateTables()
 
 		addr := &Address{
-			Address:    "some-pactus-addr",
-			PublicKey:  "some-public-key",
-			Label:      "some-label",
-			Path:       "some-path",
-			IsImported: true,
+			Address:   "some-pactus-addr",
+			PublicKey: "some-public-key",
+			Label:     "some-label",
+			Path:      "some-path",
 		}
 		addr, _ = someDB.InsertIntoAddress(addr)
 
@@ -367,11 +332,10 @@ func TestGetAll(t *testing.T) {
 		_ = someDB.CreateTables()
 
 		addr := &Address{
-			Address:    "some-address",
-			PublicKey:  "some-public-key",
-			Label:      "some-label",
-			Path:       "some-path",
-			IsImported: true,
+			Address:   "some-address",
+			PublicKey: "some-public-key",
+			Label:     "some-label",
+			Path:      "some-path",
 		}
 		someInsertOne, _ := someDB.InsertIntoAddress(addr)
 		someInsertTwo, _ := someDB.InsertIntoAddress(addr)
@@ -391,11 +355,10 @@ func TestGetAll(t *testing.T) {
 		_ = someDB.CreateTables()
 
 		addr := &Address{
-			Address:    "some-address",
-			PublicKey:  "some-public-key",
-			Label:      "some-label",
-			Path:       "some-path",
-			IsImported: true,
+			Address:   "some-address",
+			PublicKey: "some-public-key",
+			Label:     "some-label",
+			Path:      "some-path",
 		}
 		someInsertOne, _ := someDB.InsertIntoAddress(addr)
 		someInsertTwo, _ := someDB.InsertIntoAddress(addr)
@@ -565,11 +528,10 @@ func TestTotalRecords(t *testing.T) {
 		_ = someDB.CreateTables()
 
 		addr := &Address{
-			Address:    "some-address",
-			PublicKey:  "some-public-key",
-			Label:      "some-label",
-			Path:       "some-path",
-			IsImported: true,
+			Address:   "some-address",
+			PublicKey: "some-public-key",
+			Label:     "some-label",
+			Path:      "some-path",
 		}
 		_, _ = someDB.InsertIntoAddress(addr)
 		_, _ = someDB.InsertIntoAddress(addr)
@@ -586,11 +548,10 @@ func TestTotalRecords(t *testing.T) {
 		_ = someDB.CreateTables()
 
 		addr := &Address{
-			Address:    "some-address",
-			PublicKey:  "some-public-key",
-			Label:      "some-label",
-			Path:       "some-path",
-			IsImported: true,
+			Address:   "some-address",
+			PublicKey: "some-public-key",
+			Label:     "some-label",
+			Path:      "some-path",
 		}
 		_, _ = someDB.InsertIntoAddress(addr)
 		_, _ = someDB.InsertIntoAddress(addr)

@@ -20,14 +20,13 @@ type DB interface {
 	CreateTables() error
 
 	InsertIntoAddress(addr *Address) (*Address, error)
-	InsertIntoTransaction(t *Transaction) (*Transaction, error)
+	InsertIntoTransaction(transaction *Transaction) (*Transaction, error)
 	InsertIntoPair(key string, value string) (*Pair, error)
 
 	UpdateAddressLabel(addr *Address) (*Address, error)
 
-	GetAddressByID(id int) (*Address, error)
 	GetAddressByAddress(address string) (*Address, error)
-	GetAddressByPath(p string) (*Address, error)
+	GetAddressByPath(path string) (*Address, error)
 
 	GetTransactionByID(id int) (*Transaction, error)
 	GetTransactionByTxID(id string) (*Transaction, error)
@@ -48,13 +47,12 @@ type db struct {
 }
 
 type Address struct {
-	ID         int       `json:"id"`          // id of wallet
-	Address    string    `json:"address"`     // Address in the wallet
-	PublicKey  string    `json:"public_key"`  // Public key associated with the address
-	Label      string    `json:"label"`       // Label for the address
-	Path       string    `json:"path"`        // Path for the address
-	IsImported bool      `json:"is_imported"` // imported for purpose
-	CreatedAt  time.Time `json:"created_at"`
+	ID        int       `json:"id"`         // id of wallet
+	Address   string    `json:"address"`    // Address in the wallet
+	PublicKey string    `json:"public_key"` // Public key associated with the address
+	Label     string    `json:"label"`      // Label for the address
+	Path      string    `json:"path"`       // Path for the address
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Transaction struct {
@@ -103,7 +101,7 @@ func (d *db) CreateTables() error {
 
 func (d *db) createAddressTable() error {
 	addressQuery := fmt.Sprintf("CREATE TABLE %s (id INTEGER PRIMARY KEY AUTOINCREMENT,"+
-		" address VARCHAR, public_key VARCHAR, label VARCHAR, path VARCHAR, is_imported BOOLEAN, created_at TIMESTAMP)",
+		" address VARCHAR, public_key VARCHAR, label VARCHAR, path VARCHAR, created_at TIMESTAMP)",
 		AddressTable)
 
 	_, err := d.ExecContext(d.ctx, addressQuery)
@@ -137,8 +135,8 @@ func (d *db) createPairTable() error {
 }
 
 func (d *db) InsertIntoAddress(addr *Address) (*Address, error) {
-	insertQuery := fmt.Sprintf("INSERT INTO %s (address, public_key, label, path, is_imported, created_at)"+
-		" VALUES (?,?,?,?,?,?)", AddressTable)
+	insertQuery := fmt.Sprintf("INSERT INTO %s (address, public_key, label, path, created_at)"+
+		" VALUES (?,?,?,?,?)", AddressTable)
 
 	prepareQuery, err := d.PrepareContext(d.ctx, insertQuery)
 	if err != nil {
@@ -148,7 +146,7 @@ func (d *db) InsertIntoAddress(addr *Address) (*Address, error) {
 
 	addr.CreatedAt = time.Now().UTC()
 	r, err := prepareQuery.ExecContext(d.ctx, addr.Address,
-		addr.PublicKey, addr.Label, addr.Path, addr.IsImported, addr.CreatedAt)
+		addr.PublicKey, addr.Label, addr.Path, addr.CreatedAt)
 	if err != nil {
 		return nil, ErrCouldNotInsertRecordIntoTable
 	}
@@ -159,17 +157,16 @@ func (d *db) InsertIntoAddress(addr *Address) (*Address, error) {
 	}
 
 	return &Address{
-		ID:         int(rowID),
-		Address:    addr.Address,
-		PublicKey:  addr.PublicKey,
-		Label:      addr.Label,
-		Path:       addr.Path,
-		IsImported: addr.IsImported,
-		CreatedAt:  addr.CreatedAt,
+		ID:        int(rowID),
+		Address:   addr.Address,
+		PublicKey: addr.PublicKey,
+		Label:     addr.Label,
+		Path:      addr.Path,
+		CreatedAt: addr.CreatedAt,
 	}, nil
 }
 
-func (d *db) InsertIntoTransaction(t *Transaction) (*Transaction, error) {
+func (d *db) InsertIntoTransaction(transaction *Transaction) (*Transaction, error) {
 	insertQuery := fmt.Sprintf("INSERT INTO %s (tx_id, address, block_height, block_time,"+
 		" payload_type, data, description, amount, status, created_at) VALUES"+
 		" (?,?,?,?,?,?,?,?,?,?)", TransactionTable)
@@ -180,9 +177,9 @@ func (d *db) InsertIntoTransaction(t *Transaction) (*Transaction, error) {
 	}
 	defer prepareQuery.Close()
 
-	t.CreatedAt = time.Now().UTC()
-	r, err := prepareQuery.ExecContext(d.ctx, t.TxID, t.Address, t.BlockHeight, t.BlockTime,
-		t.PayloadType, t.Data, t.Description, t.Amount, t.Status, t.CreatedAt)
+	transaction.CreatedAt = time.Now().UTC()
+	r, err := prepareQuery.ExecContext(d.ctx, transaction.TxID, transaction.Address, transaction.BlockHeight, transaction.BlockTime,
+		transaction.PayloadType, transaction.Data, transaction.Description, transaction.Amount, transaction.Status, transaction.CreatedAt)
 	if err != nil {
 		return nil, ErrCouldNotInsertRecordIntoTable
 	}
@@ -194,16 +191,16 @@ func (d *db) InsertIntoTransaction(t *Transaction) (*Transaction, error) {
 
 	return &Transaction{
 		ID:          int(rowID),
-		TxID:        t.TxID,
-		Address:     t.Address,
-		BlockHeight: t.BlockHeight,
-		BlockTime:   t.BlockTime,
-		PayloadType: t.PayloadType,
-		Data:        t.Data,
-		Description: t.Description,
-		Amount:      t.Amount,
-		Status:      t.Status,
-		CreatedAt:   t.CreatedAt,
+		TxID:        transaction.TxID,
+		Address:     transaction.Address,
+		BlockHeight: transaction.BlockHeight,
+		BlockTime:   transaction.BlockTime,
+		PayloadType: transaction.PayloadType,
+		Data:        transaction.Data,
+		Description: transaction.Description,
+		Amount:      transaction.Amount,
+		Status:      transaction.Status,
+		CreatedAt:   transaction.CreatedAt,
 	}, nil
 }
 
@@ -248,38 +245,13 @@ func (d *db) UpdateAddressLabel(addr *Address) (*Address, error) {
 	}
 
 	return &Address{
-		ID:         int(rowID),
-		Address:    addr.Address,
-		PublicKey:  addr.PublicKey,
-		Label:      addr.Label,
-		Path:       addr.Path,
-		IsImported: addr.IsImported,
-		CreatedAt:  addr.CreatedAt,
+		ID:        int(rowID),
+		Address:   addr.Address,
+		PublicKey: addr.PublicKey,
+		Label:     addr.Label,
+		Path:      addr.Path,
+		CreatedAt: addr.CreatedAt,
 	}, nil
-}
-
-func (d *db) GetAddressByID(id int) (*Address, error) {
-	getQuery := fmt.Sprintf("SELECT * FROM %s WHERE id = ?", AddressTable)
-
-	prepareQuery, err := d.PrepareContext(d.ctx, getQuery)
-	if err != nil {
-		return nil, err
-	}
-	defer prepareQuery.Close()
-
-	row := prepareQuery.QueryRowContext(d.ctx, id)
-	if row.Err() != nil {
-		return nil, ErrCouldNotFindRecord
-	}
-
-	addr := &Address{}
-	err = row.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label,
-		&addr.Path, &addr.IsImported, &addr.CreatedAt)
-	if err != nil {
-		return nil, ErrCouldNotFindRecord
-	}
-
-	return addr, nil
 }
 
 func (d *db) GetAddressByAddress(address string) (*Address, error) {
@@ -298,7 +270,7 @@ func (d *db) GetAddressByAddress(address string) (*Address, error) {
 
 	addr := &Address{}
 	err = row.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label,
-		&addr.Path, &addr.IsImported, &addr.CreatedAt)
+		&addr.Path, &addr.CreatedAt)
 	if err != nil {
 		return nil, ErrCouldNotFindRecord
 	}
@@ -306,7 +278,7 @@ func (d *db) GetAddressByAddress(address string) (*Address, error) {
 	return addr, nil
 }
 
-func (d *db) GetAddressByPath(p string) (*Address, error) {
+func (d *db) GetAddressByPath(path string) (*Address, error) {
 	getQuery := fmt.Sprintf("SELECT * FROM %s WHERE path = ?", AddressTable)
 
 	prepareQuery, err := d.PrepareContext(d.ctx, getQuery)
@@ -315,14 +287,14 @@ func (d *db) GetAddressByPath(p string) (*Address, error) {
 	}
 	defer prepareQuery.Close()
 
-	row := prepareQuery.QueryRowContext(d.ctx, p)
+	row := prepareQuery.QueryRowContext(d.ctx, path)
 	if row.Err() != nil {
 		return nil, ErrCouldNotFindRecord
 	}
 
 	addr := &Address{}
 	err = row.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label,
-		&addr.Path, &addr.IsImported, &addr.CreatedAt)
+		&addr.Path, &addr.CreatedAt)
 	if err != nil {
 		return nil, ErrCouldNotFindRecord
 	}
@@ -412,7 +384,7 @@ func (d *db) GetAllAddresses() ([]Address, error) {
 	addrs := make([]Address, 0)
 	for rows.Next() {
 		addr := &Address{}
-		err := rows.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label, &addr.Path, &addr.IsImported, &addr.CreatedAt)
+		err := rows.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label, &addr.Path, &addr.CreatedAt)
 		if err != nil {
 			return nil, ErrCouldNotFindRecord
 		}
@@ -439,7 +411,7 @@ func (d *db) GetAllAddressesWithTotalRecords(pageIndex, pageSize int) ([]Address
 	addrs := make([]Address, 0, pageSize)
 	for rows.Next() {
 		addr := &Address{}
-		err := rows.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label, &addr.Path, &addr.IsImported, &addr.CreatedAt)
+		err := rows.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label, &addr.Path, &addr.CreatedAt)
 		if err != nil {
 			return nil, 0, ErrCouldNotFindRecord
 		}
