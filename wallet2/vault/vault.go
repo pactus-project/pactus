@@ -189,7 +189,7 @@ func (v *Vault) SetLabel(address, label string) error {
 	}
 
 	addr.Label = label
-	_, err = v.db.UpdateAddressLabel(addr)
+	err = v.db.UpdateAddressLabel(addr.Label, addr.Address)
 	if err != nil {
 		return err
 	}

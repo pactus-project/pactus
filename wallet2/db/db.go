@@ -23,7 +23,7 @@ type DB interface {
 	InsertTransaction(transaction *Transaction) (*Transaction, error)
 	InsertIntoPair(key string, value string) (*Pair, error)
 
-	UpdateAddressLabel(addr *AddressInfo) (*AddressInfo, error)
+	UpdateAddressLabel(label, addr string) error
 
 	GetAddressInfoByAddress(address string) (*AddressInfo, error)
 	GetAddressByPath(path string) (*AddressInfo, error)
@@ -218,27 +218,21 @@ func (d *db) InsertIntoPair(key, value string) (*Pair, error) {
 	}, nil
 }
 
-func (d *db) UpdateAddressLabel(addr *AddressInfo) (*AddressInfo, error) {
+func (d *db) UpdateAddressLabel(label, addr string) error {
 	updateQuery := fmt.Sprintf("UPDATE %s SET label = ? WHERE address = ?", AddressTable)
 
 	prepareQuery, err := d.PrepareContext(d.ctx, updateQuery)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer prepareQuery.Close()
 
-	_, err = prepareQuery.ExecContext(d.ctx, addr.Label, addr.Address)
+	_, err = prepareQuery.ExecContext(d.ctx, label, addr)
 	if err != nil {
-		return nil, ErrCouldNotUpdateRecordIntoTable
+		return ErrCouldNotUpdateRecordIntoTable
 	}
 
-	return &AddressInfo{
-		Address:   addr.Address,
-		PublicKey: addr.PublicKey,
-		Label:     addr.Label,
-		Path:      addr.Path,
-		CreatedAt: addr.CreatedAt,
-	}, nil
+	return nil
 }
 
 func (d *db) GetAddressInfoByAddress(address string) (*AddressInfo, error) {

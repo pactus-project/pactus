@@ -268,7 +268,7 @@ func TestAddress(t *testing.T) {
 		addr, _ = someDB.InsertAddressInfo(addr)
 
 		addr.Label = "some-other-lable"
-		_, _ = someDB.UpdateAddressLabel(addr)
+		_ = someDB.UpdateAddressLabel(addr.Label, addr.Address)
 
 		actual, err := someDB.GetAddressInfoByAddress(addr.Address)
 
