@@ -171,8 +171,17 @@ func (d *db) InsertTransaction(transaction *Transaction) (*Transaction, error) {
 	defer prepareQuery.Close()
 
 	transaction.CreatedAt = time.Now().UTC()
-	r, err := prepareQuery.ExecContext(d.ctx, transaction.TxID, transaction.Address, transaction.BlockHeight, transaction.BlockTime,
-		transaction.PayloadType, transaction.Data, transaction.Description, transaction.Amount, transaction.Status, transaction.CreatedAt)
+	r, err := prepareQuery.ExecContext(d.ctx,
+		transaction.TxID,
+		transaction.Address,
+		transaction.BlockHeight,
+		transaction.BlockTime,
+		transaction.PayloadType,
+		transaction.Data,
+		transaction.Description,
+		transaction.Amount,
+		transaction.Status,
+		transaction.CreatedAt)
 	if err != nil {
 		return nil, ErrCouldNotInsertRecordIntoTable
 	}
