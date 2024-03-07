@@ -47,7 +47,6 @@ type db struct {
 }
 
 type Address struct {
-	ID        int       `json:"id"`         // id of wallet
 	Address   string    `json:"address"`    // Address in the wallet
 	PublicKey string    `json:"public_key"` // Public key associated with the address
 	Label     string    `json:"label"`      // Label for the address
@@ -100,8 +99,8 @@ func (d *db) CreateTables() error {
 }
 
 func (d *db) createAddressTable() error {
-	addressQuery := fmt.Sprintf("CREATE TABLE %s (id INTEGER PRIMARY KEY AUTOINCREMENT,"+
-		" address VARCHAR, public_key VARCHAR, label VARCHAR, path VARCHAR, created_at TIMESTAMP)",
+	addressQuery := fmt.Sprintf("CREATE TABLE %s (address VARCHAR PRIMARY KEY,"+
+		" public_key VARCHAR, label VARCHAR, path VARCHAR, created_at TIMESTAMP)",
 		AddressTable)
 
 	_, err := d.ExecContext(d.ctx, addressQuery)
@@ -145,19 +144,13 @@ func (d *db) InsertIntoAddress(addr *Address) (*Address, error) {
 	defer prepareQuery.Close()
 
 	addr.CreatedAt = time.Now().UTC()
-	r, err := prepareQuery.ExecContext(d.ctx, addr.Address,
+	_, err = prepareQuery.ExecContext(d.ctx, addr.Address,
 		addr.PublicKey, addr.Label, addr.Path, addr.CreatedAt)
 	if err != nil {
 		return nil, ErrCouldNotInsertRecordIntoTable
 	}
 
-	rowID, err := r.LastInsertId()
-	if err != nil {
-		return nil, ErrCouldNotInsertRecordIntoTable
-	}
-
 	return &Address{
-		ID:        int(rowID),
 		Address:   addr.Address,
 		PublicKey: addr.PublicKey,
 		Label:     addr.Label,
@@ -234,18 +227,12 @@ func (d *db) UpdateAddressLabel(addr *Address) (*Address, error) {
 	}
 	defer prepareQuery.Close()
 
-	r, err := prepareQuery.ExecContext(d.ctx, addr.Label, addr.Address)
-	if err != nil {
-		return nil, ErrCouldNotUpdateRecordIntoTable
-	}
-
-	rowID, err := r.LastInsertId()
+	_, err = prepareQuery.ExecContext(d.ctx, addr.Label, addr.Address)
 	if err != nil {
 		return nil, ErrCouldNotUpdateRecordIntoTable
 	}
 
 	return &Address{
-		ID:        int(rowID),
 		Address:   addr.Address,
 		PublicKey: addr.PublicKey,
 		Label:     addr.Label,
@@ -269,7 +256,7 @@ func (d *db) GetAddressByAddress(address string) (*Address, error) {
 	}
 
 	addr := &Address{}
-	err = row.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label,
+	err = row.Scan(&addr.Address, &addr.PublicKey, &addr.Label,
 		&addr.Path, &addr.CreatedAt)
 	if err != nil {
 		return nil, ErrCouldNotFindRecord
@@ -293,7 +280,7 @@ func (d *db) GetAddressByPath(path string) (*Address, error) {
 	}
 
 	addr := &Address{}
-	err = row.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label,
+	err = row.Scan(&addr.Address, &addr.PublicKey, &addr.Label,
 		&addr.Path, &addr.CreatedAt)
 	if err != nil {
 		return nil, ErrCouldNotFindRecord
@@ -374,7 +361,7 @@ func (d *db) GetPairByKey(key string) (*Pair, error) {
 }
 
 func (d *db) GetAllAddresses() ([]Address, error) {
-	getAllQuery := fmt.Sprintf("SELECT * FROM %s ORDER BY id DESC", AddressTable)
+	getAllQuery := fmt.Sprintf("SELECT * FROM %s ORDER BY created_at DESC", AddressTable)
 	rows, err := d.QueryContext(d.ctx, getAllQuery)
 	if err != nil || rows.Err() != nil {
 		return nil, ErrCouldNotFindRecord
@@ -384,7 +371,7 @@ func (d *db) GetAllAddresses() ([]Address, error) {
 	addrs := make([]Address, 0)
 	for rows.Next() {
 		addr := &Address{}
-		err := rows.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label, &addr.Path, &addr.CreatedAt)
+		err := rows.Scan(&addr.Address, &addr.PublicKey, &addr.Label, &addr.Path, &addr.CreatedAt)
 		if err != nil {
 			return nil, ErrCouldNotFindRecord
 		}
@@ -401,7 +388,7 @@ func (d *db) GetAllAddressesWithTotalRecords(pageIndex, pageSize int) ([]Address
 		return nil, 0, err
 	}
 
-	getAllQuery := fmt.Sprintf("SELECT * FROM %s ORDER BY id DESC LIMIT ? OFFSET ?", AddressTable)
+	getAllQuery := fmt.Sprintf("SELECT * FROM %s ORDER BY created_at DESC LIMIT ? OFFSET ?", AddressTable)
 	rows, err := d.QueryContext(d.ctx, getAllQuery, pageSize, calcOffset(pageIndex, pageSize))
 	if err != nil || rows.Err() != nil {
 		return nil, 0, ErrCouldNotFindRecord
@@ -411,7 +398,7 @@ func (d *db) GetAllAddressesWithTotalRecords(pageIndex, pageSize int) ([]Address
 	addrs := make([]Address, 0, pageSize)
 	for rows.Next() {
 		addr := &Address{}
-		err := rows.Scan(&addr.ID, &addr.Address, &addr.PublicKey, &addr.Label, &addr.Path, &addr.CreatedAt)
+		err := rows.Scan(&addr.Address, &addr.PublicKey, &addr.Label, &addr.Path, &addr.CreatedAt)
 		if err != nil {
 			return nil, 0, ErrCouldNotFindRecord
 		}

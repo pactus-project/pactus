@@ -43,7 +43,6 @@ func TestInsert(t *testing.T) {
 		actual, err := someDB.InsertIntoAddress(addr)
 
 		assert.Nil(t, err)
-		assert.Equal(t, 1, actual.ID)
 		assert.Equal(t, addr.Address, actual.Address)
 	})
 
@@ -332,13 +331,16 @@ func TestGetAll(t *testing.T) {
 		_ = someDB.CreateTables()
 
 		addr := &Address{
-			Address:   "some-address",
 			PublicKey: "some-public-key",
 			Label:     "some-label",
 			Path:      "some-path",
 		}
+
+		addr.Address = "addr1"
 		someInsertOne, _ := someDB.InsertIntoAddress(addr)
+		addr.Address = "addr2"
 		someInsertTwo, _ := someDB.InsertIntoAddress(addr)
+		addr.Address = "addr3"
 		someInsertThree, _ := someDB.InsertIntoAddress(addr)
 
 		expected := make([]Address, 0, 3)
@@ -355,13 +357,16 @@ func TestGetAll(t *testing.T) {
 		_ = someDB.CreateTables()
 
 		addr := &Address{
-			Address:   "some-address",
 			PublicKey: "some-public-key",
 			Label:     "some-label",
 			Path:      "some-path",
 		}
+
+		addr.Address = "addr1"
 		someInsertOne, _ := someDB.InsertIntoAddress(addr)
+		addr.Address = "addr2"
 		someInsertTwo, _ := someDB.InsertIntoAddress(addr)
+		addr.Address = "addr3"
 		someInsertThree, _ := someDB.InsertIntoAddress(addr)
 
 		expected := make([]Address, 0, 3)
@@ -548,13 +553,16 @@ func TestTotalRecords(t *testing.T) {
 		_ = someDB.CreateTables()
 
 		addr := &Address{
-			Address:   "some-address",
 			PublicKey: "some-public-key",
 			Label:     "some-label",
 			Path:      "some-path",
 		}
+
+		addr.Address = "addr1"
 		_, _ = someDB.InsertIntoAddress(addr)
+		addr.Address = "addr2"
 		_, _ = someDB.InsertIntoAddress(addr)
+		addr.Address = "addr3"
 		_, _ = someDB.InsertIntoAddress(addr)
 
 		totalRecords, err := someDB.GetTotalRecords(AddressTable, EmptyQuery)
