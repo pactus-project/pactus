@@ -80,9 +80,9 @@
   # `moniker` is a custom human-readable name for this node.
  ## moniker = ""
 
-  # `session_timeout` is a timeout for a download session to keep open.
-  # By sending a block download request, this timer starts and if there is no activity from the Node
-  # the session will get closed and try to get the block from another Node.
+  # `session_timeout` is a timeout for a download session to remain open.
+  # When a block download request is sent, this timer starts. If there is no activity from the target Node,
+  # the session will be closed after the timeout and try to get the block from another Node.
   # Default is `10s`.
  ## session_timeout = "10s"
 
