@@ -11,7 +11,7 @@ import (
 func buildRecoverCmd(parentCmd *cobra.Command) {
 	recoverCmd := &cobra.Command{
 		Use:   "recover",
-		Short: "recovering waller from the seed phrase or mnemonic",
+		Short: "recovering wallet from the seed phrase or mnemonic",
 	}
 	parentCmd.AddCommand(recoverCmd)
 

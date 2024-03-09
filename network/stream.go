@@ -20,8 +20,7 @@ type streamService struct {
 }
 
 func newStreamService(ctx context.Context, host lp2phost.Host,
-	protocolID lp2pcore.ProtocolID,
-	eventCh chan Event, log *logger.SubLogger,
+	protocolID lp2pcore.ProtocolID, eventCh chan Event, log *logger.SubLogger,
 ) *streamService {
 	s := &streamService{
 		ctx:        ctx,
@@ -65,7 +64,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 	}
 
 	// To prevent a broken stream from being open forever.
-	ctxWithTimeout, cancel := context.WithTimeout(s.ctx, 2*time.Second)
+	ctxWithTimeout, cancel := context.WithTimeout(s.ctx, 1*time.Minute)
 	defer cancel()
 
 	// Attempt to open a new stream to the target peer assuming there's already direct a connection
@@ -75,10 +74,16 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 		return LibP2PError{Err: err}
 	}
 
+	deadline, _ := ctxWithTimeout.Deadline()
+	_ = stream.SetDeadline(deadline)
+
 	_, err = stream.Write(msg)
 	if err != nil {
+		_ = stream.Reset()
+
 		return LibP2PError{Err: err}
 	}
+
 	err = stream.CloseWrite()
 	if err != nil {
 		return LibP2PError{Err: err}

@@ -168,7 +168,7 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
 
 		err := sync.network.SendTo(data, to)
 		if err != nil {
-			sync.logger.Debug("error on sending the bundle, closing the connection",
+			sync.logger.Warn("error on sending the bundle, closing the connection",
 				"bundle", bdl, "to", to, "error", err)
 
 			sync.network.CloseConnection(to)
