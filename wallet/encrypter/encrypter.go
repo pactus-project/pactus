@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/logger"
 	"golang.org/x/crypto/argon2"
 )
 
@@ -190,6 +191,7 @@ func (e *Encrypter) Encrypt(message, password string) (string, error) {
 func (e *Encrypter) Decrypt(cipherText, password string) (string, error) {
 	if e.Method == nameFuncNope {
 		if password != "" {
+			logger.Info("Wtf is e.Method if not for Decrypt")
 			return "", ErrInvalidPassword
 		}
 

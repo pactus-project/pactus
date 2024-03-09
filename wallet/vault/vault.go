@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
+	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/tyler-smith/go-bip39"
@@ -369,6 +370,7 @@ func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 }
 
 func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKey, error) {
+	logger.Info("Vault PrivateKeys")
 	if v.IsNeutered() {
 		return nil, ErrNeutered
 	}
@@ -569,6 +571,7 @@ func (v *Vault) Mnemonic(password string) (string, error) {
 }
 
 func (v *Vault) decryptKeyStore(password string) (*keyStore, error) {
+	logger.Info("Vault decryptKeyStore")
 	keyStoreData, err := v.Encrypter.Decrypt(v.KeyStore, password)
 	if err != nil {
 		return nil, err
