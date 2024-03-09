@@ -98,10 +98,10 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType) (*Wa
 	if err != nil {
 		return nil, err
 	}
-	err = vlt.UpdatePassword("", password)
-	if err != nil {
-		return nil, err
-	}
+	// err = vlt.UpdatePassword("", password)
+	// if err != nil {
+	// 	return nil, err
+	// }
 	wallet.store.Vault = vlt
 
 	return wallet, nil
