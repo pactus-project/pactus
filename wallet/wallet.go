@@ -413,7 +413,7 @@ func (w *Wallet) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 	return w.store.Vault.ImportPrivateKey(password, prv)
 }
 
-func (w *Wallet) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
+func (w *Wallet) PrivateKey(password string, addr string) (crypto.PrivateKey, error) {
 	keys, err := w.store.Vault.PrivateKeys(password, []string{addr})
 	if err != nil {
 		return nil, err
