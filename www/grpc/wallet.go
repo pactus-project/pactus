@@ -62,7 +62,7 @@ func (s *walletServer) CreateWallet(_ context.Context,
 	}
 
 	walletPath := s.walletPath(req.WalletName)
-	w, err := wallet.Create(walletPath, req.Mnemonic, req.Language, s.chainType)
+	w, err := wallet.Create(walletPath, req.Mnemonic, req.Password, s.chainType)
 	if err != nil {
 		return nil, err
 	}
