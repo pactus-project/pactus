@@ -1,6 +1,6 @@
 package config
 
-// ConfigError is returned when the store configuration is invalid.
+// ConfigError is returned when the config configuration is invalid.
 type ConfigError struct {
 	Reason string
 }

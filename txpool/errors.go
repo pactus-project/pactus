@@ -1,6 +1,6 @@
 package txpool
 
-// ConfigError is returned when the store configuration is invalid.
+// ConfigError is returned when the txpool configuration is invalid.
 type ConfigError struct {
 	Reason string
 }
