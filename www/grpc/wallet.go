@@ -142,12 +142,6 @@ func (s *walletServer) SignRawTransaction(_ context.Context,
 		return nil, err
 	}
 
-	s.logger.Info("--------")
-	s.logger.Info(req.Password)
-	s.logger.Info("=======")
-	s.logger.Info(req.GetPassword())
-	s.logger.Info("_______")
-
 	err = wlt.SignTransaction(req.Password, trx)
 	if err != nil {
 		s.logger.Info(err.Error())
