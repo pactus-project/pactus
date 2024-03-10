@@ -189,7 +189,7 @@ func (e *Encrypter) Encrypt(message, password string) (string, error) {
 // Decrypt decrypts the `cipher` using give `password` and returns the original message.
 func (e *Encrypter) Decrypt(cipherText, password string) (string, error) {
 	if e.Method == nameFuncNope {
-		if password != "" {
+		if password == "" {
 			return "", ErrInvalidPassword
 		}
 
