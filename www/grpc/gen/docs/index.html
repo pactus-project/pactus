@@ -207,7 +207,7 @@
                 </li>
               
                 <li>
-                  <a href="#pactus.GetRawUnBondTransactionRequest"><span class="badge">M</span>GetRawUnBondTransactionRequest</a>
+                  <a href="#pactus.GetRawUnbondTransactionRequest"><span class="badge">M</span>GetRawUnbondTransactionRequest</a>
                 </li>
               
                 <li>
@@ -652,28 +652,30 @@
                   <td>lock_time</td>
                   <td><a href="#uint32">uint32</a></td>
                   <td></td>
-                  <td><p>Lock time for the transaction. </p></td>
+                  <td><p>Lock time for the transaction.
+If not explicitly set, it sets to the last block height. </p></td>
                 </tr>
               
                 <tr>
                   <td>sender</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>Sender&#39;s address. </p></td>
+                  <td><p>Sender&#39;s account address. </p></td>
                 </tr>
               
                 <tr>
                   <td>receiver</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>Receiver&#39;s address. </p></td>
+                  <td><p>Receiver&#39;s validator address. </p></td>
                 </tr>
               
                 <tr>
                   <td>stake</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Stake amount. </p></td>
+                  <td><p>Stake amount.
+It should be greater than 0. </p></td>
                 </tr>
               
                 <tr>
@@ -687,7 +689,8 @@
                   <td>fee</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Transaction fee. </p></td>
+                  <td><p>Transaction fee.
+If not explicitly set, it is calculated based on the stake. </p></td>
                 </tr>
               
                 <tr>
@@ -742,35 +745,38 @@
                   <td>lock_time</td>
                   <td><a href="#uint32">uint32</a></td>
                   <td></td>
-                  <td><p>Lock time for the transaction. </p></td>
+                  <td><p>Lock time for the transaction.
+If not explicitly set, it sets to the last block height. </p></td>
                 </tr>
               
                 <tr>
                   <td>sender</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>Sender&#39;s address. </p></td>
+                  <td><p>Sender&#39;s account address. </p></td>
                 </tr>
               
                 <tr>
                   <td>receiver</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>Receiver&#39;s address. </p></td>
+                  <td><p>Receiver&#39;s account address. </p></td>
                 </tr>
               
                 <tr>
                   <td>amount</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Transaction amount. </p></td>
+                  <td><p>Transfer amount.
+It should be greater than 0. </p></td>
                 </tr>
               
                 <tr>
                   <td>fee</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Transaction fee. </p></td>
+                  <td><p>Transaction fee.
+If not explicitly set, it is calculated based on the amount. </p></td>
                 </tr>
               
                 <tr>
@@ -787,7 +793,7 @@
 
         
       
-        <h3 id="pactus.GetRawUnBondTransactionRequest">GetRawUnBondTransactionRequest</h3>
+        <h3 id="pactus.GetRawUnbondTransactionRequest">GetRawUnbondTransactionRequest</h3>
         <p>Request message for retrieving raw details of an unbond transaction.</p>
 
         
@@ -801,7 +807,8 @@
                   <td>lock_time</td>
                   <td><a href="#uint32">uint32</a></td>
                   <td></td>
-                  <td><p>Lock time for the transaction. </p></td>
+                  <td><p>Lock time for the transaction.
+If not explicitly set, it sets to the last block height. </p></td>
                 </tr>
               
                 <tr>
@@ -839,7 +846,8 @@
                   <td>lock_time</td>
                   <td><a href="#uint32">uint32</a></td>
                   <td></td>
-                  <td><p>Lock time for the transaction. </p></td>
+                  <td><p>Lock time for the transaction.
+If not explicitly set, it sets to the last block height. </p></td>
                 </tr>
               
                 <tr>
@@ -857,17 +865,19 @@
                 </tr>
               
                 <tr>
-                  <td>fee</td>
-                  <td><a href="#int64">int64</a></td>
-                  <td></td>
-                  <td><p>Transaction fee. </p></td>
-                </tr>
-              
-                <tr>
                   <td>amount</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Withdrawal amount. </p></td>
+                  <td><p>Withdrawal amount.
+It should be greater than 0. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>fee</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Transaction fee.
+If not explicitly set, it is calculated based on the stake. </p></td>
                 </tr>
               
                 <tr>
@@ -1366,10 +1376,10 @@ and payload type.</p></td>
               </tr>
             
               <tr>
-                <td>GetRawUnBondTransaction</td>
-                <td><a href="#pactus.GetRawUnBondTransactionRequest">GetRawUnBondTransactionRequest</a></td>
+                <td>GetRawUnbondTransaction</td>
+                <td><a href="#pactus.GetRawUnbondTransactionRequest">GetRawUnbondTransactionRequest</a></td>
                 <td><a href="#pactus.GetRawTransactionResponse">GetRawTransactionResponse</a></td>
-                <td><p>GetRawUnBondTransaction retrieves raw details of an unbond transaction.</p></td>
+                <td><p>GetRawUnbondTransaction retrieves raw details of an unbond transaction.</p></td>
               </tr>
             
               <tr>

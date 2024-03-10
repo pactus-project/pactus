@@ -4160,6 +4160,7 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Lock time for the transaction.
+     * If not explicitly set, it sets to the last block height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -4169,7 +4170,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Sender's address.
+     * Sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -4178,7 +4179,7 @@ public final class TransactionOuterClass {
     java.lang.String getSender();
     /**
      * <pre>
-     * Sender's address.
+     * Sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -4189,7 +4190,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Receiver's address.
+     * Receiver's account address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -4198,7 +4199,7 @@ public final class TransactionOuterClass {
     java.lang.String getReceiver();
     /**
      * <pre>
-     * Receiver's address.
+     * Receiver's account address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -4209,7 +4210,8 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction amount.
+     * Transfer amount.
+     * It should be greater than 0.
      * </pre>
      *
      * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -4220,6 +4222,7 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Transaction fee.
+     * If not explicitly set, it is calculated based on the amount.
      * </pre>
      *
      * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -4299,6 +4302,7 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Lock time for the transaction.
+     * If not explicitly set, it sets to the last block height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -4313,7 +4317,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object sender_;
     /**
      * <pre>
-     * Sender's address.
+     * Sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -4334,7 +4338,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Sender's address.
+     * Sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -4359,7 +4363,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object receiver_;
     /**
      * <pre>
-     * Receiver's address.
+     * Receiver's account address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -4380,7 +4384,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Receiver's address.
+     * Receiver's account address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -4405,7 +4409,8 @@ public final class TransactionOuterClass {
     private long amount_;
     /**
      * <pre>
-     * Transaction amount.
+     * Transfer amount.
+     * It should be greater than 0.
      * </pre>
      *
      * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -4421,6 +4426,7 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Transaction fee.
+     * If not explicitly set, it is calculated based on the amount.
      * </pre>
      *
      * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -4912,6 +4918,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Lock time for the transaction.
+       * If not explicitly set, it sets to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -4924,6 +4931,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Lock time for the transaction.
+       * If not explicitly set, it sets to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -4939,6 +4947,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Lock time for the transaction.
+       * If not explicitly set, it sets to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -4954,7 +4963,7 @@ public final class TransactionOuterClass {
       private java.lang.Object sender_ = "";
       /**
        * <pre>
-       * Sender's address.
+       * Sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -4974,7 +4983,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * Sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -4995,7 +5004,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * Sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5014,7 +5023,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * Sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5028,7 +5037,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * Sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5050,7 +5059,7 @@ public final class TransactionOuterClass {
       private java.lang.Object receiver_ = "";
       /**
        * <pre>
-       * Receiver's address.
+       * Receiver's account address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5070,7 +5079,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * Receiver's account address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5091,7 +5100,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * Receiver's account address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5110,7 +5119,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * Receiver's account address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5124,7 +5133,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * Receiver's account address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5146,7 +5155,8 @@ public final class TransactionOuterClass {
       private long amount_ ;
       /**
        * <pre>
-       * Transaction amount.
+       * Transfer amount.
+       * It should be greater than 0.
        * </pre>
        *
        * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -5158,7 +5168,8 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount.
+       * Transfer amount.
+       * It should be greater than 0.
        * </pre>
        *
        * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -5173,7 +5184,8 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount.
+       * Transfer amount.
+       * It should be greater than 0.
        * </pre>
        *
        * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -5190,6 +5202,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Transaction fee.
+       * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
        * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -5202,6 +5215,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Transaction fee.
+       * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
        * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -5217,6 +5231,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Transaction fee.
+       * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
        * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -5395,6 +5410,7 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Lock time for the transaction.
+     * If not explicitly set, it sets to the last block height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -5404,7 +5420,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Sender's address.
+     * Sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5413,7 +5429,7 @@ public final class TransactionOuterClass {
     java.lang.String getSender();
     /**
      * <pre>
-     * Sender's address.
+     * Sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5424,7 +5440,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Receiver's address.
+     * Receiver's validator address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5433,7 +5449,7 @@ public final class TransactionOuterClass {
     java.lang.String getReceiver();
     /**
      * <pre>
-     * Receiver's address.
+     * Receiver's validator address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5445,6 +5461,7 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Stake amount.
+     * It should be greater than 0.
      * </pre>
      *
      * <code>int64 stake = 4 [json_name = "stake"];</code>
@@ -5475,6 +5492,7 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Transaction fee.
+     * If not explicitly set, it is calculated based on the stake.
      * </pre>
      *
      * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -5555,6 +5573,7 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Lock time for the transaction.
+     * If not explicitly set, it sets to the last block height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -5569,7 +5588,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object sender_;
     /**
      * <pre>
-     * Sender's address.
+     * Sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5590,7 +5609,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Sender's address.
+     * Sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5615,7 +5634,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object receiver_;
     /**
      * <pre>
-     * Receiver's address.
+     * Receiver's validator address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5636,7 +5655,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Receiver's address.
+     * Receiver's validator address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5662,6 +5681,7 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Stake amount.
+     * It should be greater than 0.
      * </pre>
      *
      * <code>int64 stake = 4 [json_name = "stake"];</code>
@@ -5723,6 +5743,7 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Transaction fee.
+     * If not explicitly set, it is calculated based on the stake.
      * </pre>
      *
      * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -6236,6 +6257,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Lock time for the transaction.
+       * If not explicitly set, it sets to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -6248,6 +6270,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Lock time for the transaction.
+       * If not explicitly set, it sets to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -6263,6 +6286,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Lock time for the transaction.
+       * If not explicitly set, it sets to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -6278,7 +6302,7 @@ public final class TransactionOuterClass {
       private java.lang.Object sender_ = "";
       /**
        * <pre>
-       * Sender's address.
+       * Sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -6298,7 +6322,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * Sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -6319,7 +6343,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * Sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -6338,7 +6362,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * Sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -6352,7 +6376,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * Sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -6374,7 +6398,7 @@ public final class TransactionOuterClass {
       private java.lang.Object receiver_ = "";
       /**
        * <pre>
-       * Receiver's address.
+       * Receiver's validator address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -6394,7 +6418,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * Receiver's validator address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -6415,7 +6439,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * Receiver's validator address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -6434,7 +6458,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * Receiver's validator address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -6448,7 +6472,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * Receiver's validator address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -6471,6 +6495,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Stake amount.
+       * It should be greater than 0.
        * </pre>
        *
        * <code>int64 stake = 4 [json_name = "stake"];</code>
@@ -6483,6 +6508,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Stake amount.
+       * It should be greater than 0.
        * </pre>
        *
        * <code>int64 stake = 4 [json_name = "stake"];</code>
@@ -6498,6 +6524,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Stake amount.
+       * It should be greater than 0.
        * </pre>
        *
        * <code>int64 stake = 4 [json_name = "stake"];</code>
@@ -6610,6 +6637,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Transaction fee.
+       * If not explicitly set, it is calculated based on the stake.
        * </pre>
        *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -6622,6 +6650,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Transaction fee.
+       * If not explicitly set, it is calculated based on the stake.
        * </pre>
        *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -6637,6 +6666,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Transaction fee.
+       * If not explicitly set, it is calculated based on the stake.
        * </pre>
        *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -6808,13 +6838,14 @@ public final class TransactionOuterClass {
 
   }
 
-  public interface GetRawUnBondTransactionRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:pactus.GetRawUnBondTransactionRequest)
+  public interface GetRawUnbondTransactionRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.GetRawUnbondTransactionRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
      * <pre>
      * Lock time for the transaction.
+     * If not explicitly set, it sets to the last block height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -6867,18 +6898,18 @@ public final class TransactionOuterClass {
    * Request message for retrieving raw details of an unbond transaction.
    * </pre>
    *
-   * Protobuf type {@code pactus.GetRawUnBondTransactionRequest}
+   * Protobuf type {@code pactus.GetRawUnbondTransactionRequest}
    */
-  public static final class GetRawUnBondTransactionRequest extends
+  public static final class GetRawUnbondTransactionRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:pactus.GetRawUnBondTransactionRequest)
-      GetRawUnBondTransactionRequestOrBuilder {
+      // @@protoc_insertion_point(message_implements:pactus.GetRawUnbondTransactionRequest)
+      GetRawUnbondTransactionRequestOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use GetRawUnBondTransactionRequest.newBuilder() to construct.
-    private GetRawUnBondTransactionRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use GetRawUnbondTransactionRequest.newBuilder() to construct.
+    private GetRawUnbondTransactionRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private GetRawUnBondTransactionRequest() {
+    private GetRawUnbondTransactionRequest() {
       validatorAddress_ = "";
       memo_ = "";
     }
@@ -6887,7 +6918,7 @@ public final class TransactionOuterClass {
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new GetRawUnBondTransactionRequest();
+      return new GetRawUnbondTransactionRequest();
     }
 
     @java.lang.Override
@@ -6897,15 +6928,15 @@ public final class TransactionOuterClass {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetRawUnBondTransactionRequest_descriptor;
+      return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetRawUnbondTransactionRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetRawUnBondTransactionRequest_fieldAccessorTable
+      return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetRawUnbondTransactionRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest.class, pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest.Builder.class);
+              pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest.class, pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest.Builder.class);
     }
 
     public static final int LOCK_TIME_FIELD_NUMBER = 1;
@@ -6913,6 +6944,7 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Lock time for the transaction.
+     * If not explicitly set, it sets to the last block height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -7067,10 +7099,10 @@ public final class TransactionOuterClass {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest)) {
+      if (!(obj instanceof pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest)) {
         return super.equals(obj);
       }
-      pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest other = (pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest) obj;
+      pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest other = (pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest) obj;
 
       if (getLockTime()
           != other.getLockTime()) return false;
@@ -7100,69 +7132,69 @@ public final class TransactionOuterClass {
       return hash;
     }
 
-    public static pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest parseFrom(byte[] data)
+    public static pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest parseFrom(java.io.InputStream input)
+    public static pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest parseDelimitedFrom(
+    public static pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest parseFrom(
+    public static pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -7175,7 +7207,7 @@ public final class TransactionOuterClass {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest prototype) {
+    public static Builder newBuilder(pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -7195,26 +7227,26 @@ public final class TransactionOuterClass {
      * Request message for retrieving raw details of an unbond transaction.
      * </pre>
      *
-     * Protobuf type {@code pactus.GetRawUnBondTransactionRequest}
+     * Protobuf type {@code pactus.GetRawUnbondTransactionRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:pactus.GetRawUnBondTransactionRequest)
-        pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequestOrBuilder {
+        // @@protoc_insertion_point(builder_implements:pactus.GetRawUnbondTransactionRequest)
+        pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetRawUnBondTransactionRequest_descriptor;
+        return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetRawUnbondTransactionRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetRawUnBondTransactionRequest_fieldAccessorTable
+        return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetRawUnbondTransactionRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest.class, pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest.Builder.class);
+                pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest.class, pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest.Builder.class);
       }
 
-      // Construct using pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest.newBuilder()
+      // Construct using pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest.newBuilder()
       private Builder() {
 
       }
@@ -7239,17 +7271,17 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetRawUnBondTransactionRequest_descriptor;
+        return pactus.transaction.TransactionOuterClass.internal_static_pactus_GetRawUnbondTransactionRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest getDefaultInstanceForType() {
-        return pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest.getDefaultInstance();
+      public pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest getDefaultInstanceForType() {
+        return pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest build() {
-        pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest result = buildPartial();
+      public pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest build() {
+        pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -7257,8 +7289,8 @@ public final class TransactionOuterClass {
       }
 
       @java.lang.Override
-      public pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest buildPartial() {
-        pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest result = new pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest(this);
+      public pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest buildPartial() {
+        pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest result = new pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest(this);
         result.lockTime_ = lockTime_;
         result.validatorAddress_ = validatorAddress_;
         result.memo_ = memo_;
@@ -7300,16 +7332,16 @@ public final class TransactionOuterClass {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest) {
-          return mergeFrom((pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest)other);
+        if (other instanceof pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest) {
+          return mergeFrom((pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest other) {
-        if (other == pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest other) {
+        if (other == pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest.getDefaultInstance()) return this;
         if (other.getLockTime() != 0) {
           setLockTime(other.getLockTime());
         }
@@ -7382,6 +7414,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Lock time for the transaction.
+       * If not explicitly set, it sets to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -7394,6 +7427,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Lock time for the transaction.
+       * If not explicitly set, it sets to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -7409,6 +7443,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Lock time for the transaction.
+       * If not explicitly set, it sets to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -7625,23 +7660,23 @@ public final class TransactionOuterClass {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:pactus.GetRawUnBondTransactionRequest)
+      // @@protoc_insertion_point(builder_scope:pactus.GetRawUnbondTransactionRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:pactus.GetRawUnBondTransactionRequest)
-    private static final pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:pactus.GetRawUnbondTransactionRequest)
+    private static final pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest();
+      DEFAULT_INSTANCE = new pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest();
     }
 
-    public static pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest getDefaultInstance() {
+    public static pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<GetRawUnBondTransactionRequest>
-        PARSER = new com.google.protobuf.AbstractParser<GetRawUnBondTransactionRequest>() {
+    private static final com.google.protobuf.Parser<GetRawUnbondTransactionRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetRawUnbondTransactionRequest>() {
       @java.lang.Override
-      public GetRawUnBondTransactionRequest parsePartialFrom(
+      public GetRawUnbondTransactionRequest parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
@@ -7660,17 +7695,17 @@ public final class TransactionOuterClass {
       }
     };
 
-    public static com.google.protobuf.Parser<GetRawUnBondTransactionRequest> parser() {
+    public static com.google.protobuf.Parser<GetRawUnbondTransactionRequest> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<GetRawUnBondTransactionRequest> getParserForType() {
+    public com.google.protobuf.Parser<GetRawUnbondTransactionRequest> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public pactus.transaction.TransactionOuterClass.GetRawUnBondTransactionRequest getDefaultInstanceForType() {
+    public pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -7683,6 +7718,7 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Lock time for the transaction.
+     * If not explicitly set, it sets to the last block height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -7732,23 +7768,25 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction fee.
-     * </pre>
-     *
-     * <code>int64 fee = 4 [json_name = "fee"];</code>
-     * @return The fee.
-     */
-    long getFee();
-
-    /**
-     * <pre>
      * Withdrawal amount.
+     * It should be greater than 0.
      * </pre>
      *
-     * <code>int64 amount = 5 [json_name = "amount"];</code>
+     * <code>int64 amount = 4 [json_name = "amount"];</code>
      * @return The amount.
      */
     long getAmount();
+
+    /**
+     * <pre>
+     * Transaction fee.
+     * If not explicitly set, it is calculated based on the stake.
+     * </pre>
+     *
+     * <code>int64 fee = 5 [json_name = "fee"];</code>
+     * @return The fee.
+     */
+    long getFee();
 
     /**
      * <pre>
@@ -7822,6 +7860,7 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Lock time for the transaction.
+     * If not explicitly set, it sets to the last block height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -7924,34 +7963,36 @@ public final class TransactionOuterClass {
       }
     }
 
-    public static final int FEE_FIELD_NUMBER = 4;
-    private long fee_;
-    /**
-     * <pre>
-     * Transaction fee.
-     * </pre>
-     *
-     * <code>int64 fee = 4 [json_name = "fee"];</code>
-     * @return The fee.
-     */
-    @java.lang.Override
-    public long getFee() {
-      return fee_;
-    }
-
-    public static final int AMOUNT_FIELD_NUMBER = 5;
+    public static final int AMOUNT_FIELD_NUMBER = 4;
     private long amount_;
     /**
      * <pre>
      * Withdrawal amount.
+     * It should be greater than 0.
      * </pre>
      *
-     * <code>int64 amount = 5 [json_name = "amount"];</code>
+     * <code>int64 amount = 4 [json_name = "amount"];</code>
      * @return The amount.
      */
     @java.lang.Override
     public long getAmount() {
       return amount_;
+    }
+
+    public static final int FEE_FIELD_NUMBER = 5;
+    private long fee_;
+    /**
+     * <pre>
+     * Transaction fee.
+     * If not explicitly set, it is calculated based on the stake.
+     * </pre>
+     *
+     * <code>int64 fee = 5 [json_name = "fee"];</code>
+     * @return The fee.
+     */
+    @java.lang.Override
+    public long getFee() {
+      return fee_;
     }
 
     public static final int MEMO_FIELD_NUMBER = 6;
@@ -8023,11 +8064,11 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(accountAddress_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, accountAddress_);
       }
-      if (fee_ != 0L) {
-        output.writeInt64(4, fee_);
-      }
       if (amount_ != 0L) {
-        output.writeInt64(5, amount_);
+        output.writeInt64(4, amount_);
+      }
+      if (fee_ != 0L) {
+        output.writeInt64(5, fee_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 6, memo_);
@@ -8051,13 +8092,13 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(accountAddress_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, accountAddress_);
       }
-      if (fee_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(4, fee_);
-      }
       if (amount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(5, amount_);
+          .computeInt64Size(4, amount_);
+      }
+      if (fee_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(5, fee_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, memo_);
@@ -8083,10 +8124,10 @@ public final class TransactionOuterClass {
           .equals(other.getValidatorAddress())) return false;
       if (!getAccountAddress()
           .equals(other.getAccountAddress())) return false;
-      if (getFee()
-          != other.getFee()) return false;
       if (getAmount()
           != other.getAmount()) return false;
+      if (getFee()
+          != other.getFee()) return false;
       if (!getMemo()
           .equals(other.getMemo())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -8106,12 +8147,12 @@ public final class TransactionOuterClass {
       hash = (53 * hash) + getValidatorAddress().hashCode();
       hash = (37 * hash) + ACCOUNT_ADDRESS_FIELD_NUMBER;
       hash = (53 * hash) + getAccountAddress().hashCode();
-      hash = (37 * hash) + FEE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getFee());
       hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getAmount());
+      hash = (37 * hash) + FEE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getFee());
       hash = (37 * hash) + MEMO_FIELD_NUMBER;
       hash = (53 * hash) + getMemo().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
@@ -8252,9 +8293,9 @@ public final class TransactionOuterClass {
 
         accountAddress_ = "";
 
-        fee_ = 0L;
-
         amount_ = 0L;
+
+        fee_ = 0L;
 
         memo_ = "";
 
@@ -8287,8 +8328,8 @@ public final class TransactionOuterClass {
         result.lockTime_ = lockTime_;
         result.validatorAddress_ = validatorAddress_;
         result.accountAddress_ = accountAddress_;
-        result.fee_ = fee_;
         result.amount_ = amount_;
+        result.fee_ = fee_;
         result.memo_ = memo_;
         onBuilt();
         return result;
@@ -8349,11 +8390,11 @@ public final class TransactionOuterClass {
           accountAddress_ = other.accountAddress_;
           onChanged();
         }
-        if (other.getFee() != 0L) {
-          setFee(other.getFee());
-        }
         if (other.getAmount() != 0L) {
           setAmount(other.getAmount());
+        }
+        if (other.getFee() != 0L) {
+          setFee(other.getFee());
         }
         if (!other.getMemo().isEmpty()) {
           memo_ = other.memo_;
@@ -8401,12 +8442,12 @@ public final class TransactionOuterClass {
                 break;
               } // case 26
               case 32: {
-                fee_ = input.readInt64();
+                amount_ = input.readInt64();
 
                 break;
               } // case 32
               case 40: {
-                amount_ = input.readInt64();
+                fee_ = input.readInt64();
 
                 break;
               } // case 40
@@ -8435,6 +8476,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Lock time for the transaction.
+       * If not explicitly set, it sets to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -8447,6 +8489,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Lock time for the transaction.
+       * If not explicitly set, it sets to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -8462,6 +8505,7 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Lock time for the transaction.
+       * If not explicitly set, it sets to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -8666,56 +8710,14 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private long fee_ ;
-      /**
-       * <pre>
-       * Transaction fee.
-       * </pre>
-       *
-       * <code>int64 fee = 4 [json_name = "fee"];</code>
-       * @return The fee.
-       */
-      @java.lang.Override
-      public long getFee() {
-        return fee_;
-      }
-      /**
-       * <pre>
-       * Transaction fee.
-       * </pre>
-       *
-       * <code>int64 fee = 4 [json_name = "fee"];</code>
-       * @param value The fee to set.
-       * @return This builder for chaining.
-       */
-      public Builder setFee(long value) {
-        
-        fee_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Transaction fee.
-       * </pre>
-       *
-       * <code>int64 fee = 4 [json_name = "fee"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearFee() {
-        
-        fee_ = 0L;
-        onChanged();
-        return this;
-      }
-
       private long amount_ ;
       /**
        * <pre>
        * Withdrawal amount.
+       * It should be greater than 0.
        * </pre>
        *
-       * <code>int64 amount = 5 [json_name = "amount"];</code>
+       * <code>int64 amount = 4 [json_name = "amount"];</code>
        * @return The amount.
        */
       @java.lang.Override
@@ -8725,9 +8727,10 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Withdrawal amount.
+       * It should be greater than 0.
        * </pre>
        *
-       * <code>int64 amount = 5 [json_name = "amount"];</code>
+       * <code>int64 amount = 4 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
        */
@@ -8740,14 +8743,61 @@ public final class TransactionOuterClass {
       /**
        * <pre>
        * Withdrawal amount.
+       * It should be greater than 0.
        * </pre>
        *
-       * <code>int64 amount = 5 [json_name = "amount"];</code>
+       * <code>int64 amount = 4 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAmount() {
         
         amount_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long fee_ ;
+      /**
+       * <pre>
+       * Transaction fee.
+       * If not explicitly set, it is calculated based on the stake.
+       * </pre>
+       *
+       * <code>int64 fee = 5 [json_name = "fee"];</code>
+       * @return The fee.
+       */
+      @java.lang.Override
+      public long getFee() {
+        return fee_;
+      }
+      /**
+       * <pre>
+       * Transaction fee.
+       * If not explicitly set, it is calculated based on the stake.
+       * </pre>
+       *
+       * <code>int64 fee = 5 [json_name = "fee"];</code>
+       * @param value The fee to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFee(long value) {
+        
+        fee_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Transaction fee.
+       * If not explicitly set, it is calculated based on the stake.
+       * </pre>
+       *
+       * <code>int64 fee = 5 [json_name = "fee"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFee() {
+        
+        fee_ = 0L;
         onChanged();
         return this;
       }
@@ -16406,10 +16456,10 @@ public final class TransactionOuterClass {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_GetRawBondTransactionRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_pactus_GetRawUnBondTransactionRequest_descriptor;
+    internal_static_pactus_GetRawUnbondTransactionRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_pactus_GetRawUnBondTransactionRequest_fieldAccessorTable;
+      internal_static_pactus_GetRawUnbondTransactionRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_GetRawWithdrawTransactionRequest_descriptor;
   private static final 
@@ -16484,15 +16534,15 @@ public final class TransactionOuterClass {
       "nder\022\032\n\010receiver\030\003 \001(\tR\010receiver\022\024\n\005stak" +
       "e\030\004 \001(\003R\005stake\022\035\n\npublic_key\030\005 \001(\tR\tpubl" +
       "icKey\022\020\n\003fee\030\006 \001(\003R\003fee\022\022\n\004memo\030\007 \001(\tR\004m" +
-      "emo\"~\n\036GetRawUnBondTransactionRequest\022\033\n" +
+      "emo\"~\n\036GetRawUnbondTransactionRequest\022\033\n" +
       "\tlock_time\030\001 \001(\rR\010lockTime\022+\n\021validator_" +
       "address\030\003 \001(\tR\020validatorAddress\022\022\n\004memo\030" +
       "\004 \001(\tR\004memo\"\323\001\n GetRawWithdrawTransactio" +
       "nRequest\022\033\n\tlock_time\030\001 \001(\rR\010lockTime\022+\n" +
       "\021validator_address\030\002 \001(\tR\020validatorAddre" +
       "ss\022\'\n\017account_address\030\003 \001(\tR\016accountAddr" +
-      "ess\022\020\n\003fee\030\004 \001(\003R\003fee\022\026\n\006amount\030\005 \001(\003R\006a" +
-      "mount\022\022\n\004memo\030\006 \001(\tR\004memo\"D\n\031GetRawTrans" +
+      "ess\022\026\n\006amount\030\004 \001(\003R\006amount\022\020\n\003fee\030\005 \001(\003" +
+      "R\003fee\022\022\n\004memo\030\006 \001(\tR\004memo\"D\n\031GetRawTrans" +
       "actionResponse\022\'\n\017raw_transaction\030\001 \001(\014R" +
       "\016rawTransaction\"]\n\017PayloadTransfer\022\026\n\006se" +
       "nder\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010re" +
@@ -16535,7 +16585,7 @@ public final class TransactionOuterClass {
       "ionResponse\022`\n\025GetRawBondTransaction\022$.p" +
       "actus.GetRawBondTransactionRequest\032!.pac" +
       "tus.GetRawTransactionResponse\022d\n\027GetRawU" +
-      "nBondTransaction\022&.pactus.GetRawUnBondTr" +
+      "nbondTransaction\022&.pactus.GetRawUnbondTr" +
       "ansactionRequest\032!.pactus.GetRawTransact" +
       "ionResponse\022h\n\031GetRawWithdrawTransaction" +
       "\022(.pactus.GetRawWithdrawTransactionReque" +
@@ -16595,18 +16645,18 @@ public final class TransactionOuterClass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetRawBondTransactionRequest_descriptor,
         new java.lang.String[] { "LockTime", "Sender", "Receiver", "Stake", "PublicKey", "Fee", "Memo", });
-    internal_static_pactus_GetRawUnBondTransactionRequest_descriptor =
+    internal_static_pactus_GetRawUnbondTransactionRequest_descriptor =
       getDescriptor().getMessageTypes().get(8);
-    internal_static_pactus_GetRawUnBondTransactionRequest_fieldAccessorTable = new
+    internal_static_pactus_GetRawUnbondTransactionRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_pactus_GetRawUnBondTransactionRequest_descriptor,
+        internal_static_pactus_GetRawUnbondTransactionRequest_descriptor,
         new java.lang.String[] { "LockTime", "ValidatorAddress", "Memo", });
     internal_static_pactus_GetRawWithdrawTransactionRequest_descriptor =
       getDescriptor().getMessageTypes().get(9);
     internal_static_pactus_GetRawWithdrawTransactionRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetRawWithdrawTransactionRequest_descriptor,
-        new java.lang.String[] { "LockTime", "ValidatorAddress", "AccountAddress", "Fee", "Amount", "Memo", });
+        new java.lang.String[] { "LockTime", "ValidatorAddress", "AccountAddress", "Amount", "Fee", "Memo", });
     internal_static_pactus_GetRawTransactionResponse_descriptor =
       getDescriptor().getMessageTypes().get(10);
     internal_static_pactus_GetRawTransactionResponse_fieldAccessorTable = new
