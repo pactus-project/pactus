@@ -1,10 +1,10 @@
 package config
 
-// ConfigError is returned when the config configuration is invalid.
-type ConfigError struct {
+// Error is returned when the config configuration is invalid.
+type Error struct {
 	Reason string
 }
 
-func (e ConfigError) Error() string {
+func (e Error) Error() string {
 	return e.Reason
 }

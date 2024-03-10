@@ -17,6 +17,7 @@ func (conf *Config) BasicCheck() error {
 			Reason: "maxSize can't be negative or zero",
 		}
 	}
+	
 	return nil
 }
 
