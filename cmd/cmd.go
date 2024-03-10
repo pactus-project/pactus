@@ -315,8 +315,8 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		if err := genDoc.SaveToFile(genPath); err != nil {
 			return nil, nil, err
 		}
-		conf := config.DefaultConfigMainnet()
-		if err := conf.Save(confPath); err != nil {
+		err := config.SaveMainnetConfig(confPath)
+		if err != nil {
 			return nil, nil, err
 		}
 	case genesis.Testnet:

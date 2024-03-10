@@ -127,10 +127,8 @@ linters-settings:
 
 issues:
   exclude-rules:
-    # disable funlen for all _test.go files
     - path: _test.go
       linters:
-        - funlen
         - maintidx
         - nestif
         - gocognit

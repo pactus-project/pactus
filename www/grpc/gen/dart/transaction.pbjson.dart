@@ -63,21 +63,23 @@ const CalculateFeeRequest$json = const {
   '2': const [
     const {'1': 'amount', '3': 1, '4': 1, '5': 3, '10': 'amount'},
     const {'1': 'payload_type', '3': 2, '4': 1, '5': 14, '6': '.pactus.PayloadType', '10': 'payloadType'},
+    const {'1': 'fixed_amount', '3': 3, '4': 1, '5': 8, '10': 'fixedAmount'},
   ],
 };
 
 /// Descriptor for `CalculateFeeRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List calculateFeeRequestDescriptor = $convert.base64Decode('ChNDYWxjdWxhdGVGZWVSZXF1ZXN0EhYKBmFtb3VudBgBIAEoA1IGYW1vdW50EjYKDHBheWxvYWRfdHlwZRgCIAEoDjITLnBhY3R1cy5QYXlsb2FkVHlwZVILcGF5bG9hZFR5cGU=');
+final $typed_data.Uint8List calculateFeeRequestDescriptor = $convert.base64Decode('ChNDYWxjdWxhdGVGZWVSZXF1ZXN0EhYKBmFtb3VudBgBIAEoA1IGYW1vdW50EjYKDHBheWxvYWRfdHlwZRgCIAEoDjITLnBhY3R1cy5QYXlsb2FkVHlwZVILcGF5bG9hZFR5cGUSIQoMZml4ZWRfYW1vdW50GAMgASgIUgtmaXhlZEFtb3VudA==');
 @$core.Deprecated('Use calculateFeeResponseDescriptor instead')
 const CalculateFeeResponse$json = const {
   '1': 'CalculateFeeResponse',
   '2': const [
-    const {'1': 'fee', '3': 1, '4': 1, '5': 3, '10': 'fee'},
+    const {'1': 'amount', '3': 1, '4': 1, '5': 3, '10': 'amount'},
+    const {'1': 'fee', '3': 2, '4': 1, '5': 3, '10': 'fee'},
   ],
 };
 
 /// Descriptor for `CalculateFeeResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List calculateFeeResponseDescriptor = $convert.base64Decode('ChRDYWxjdWxhdGVGZWVSZXNwb25zZRIQCgNmZWUYASABKANSA2ZlZQ==');
+final $typed_data.Uint8List calculateFeeResponseDescriptor = $convert.base64Decode('ChRDYWxjdWxhdGVGZWVSZXNwb25zZRIWCgZhbW91bnQYASABKANSBmFtb3VudBIQCgNmZWUYAiABKANSA2ZlZQ==');
 @$core.Deprecated('Use broadcastTransactionRequestDescriptor instead')
 const BroadcastTransactionRequest$json = const {
   '1': 'BroadcastTransactionRequest',

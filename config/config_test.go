@@ -100,7 +100,7 @@ func TestLocalnetConfig(t *testing.T) {
 	assert.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
 	assert.Equal(t, conf.Network.NetworkName, "pactus-localnet")
-	assert.Equal(t, conf.Network.DefaultPort, 21666)
+	assert.Equal(t, conf.Network.DefaultPort, 0)
 
 	assert.True(t, conf.GRPC.Enable)
 	assert.True(t, conf.GRPC.Gateway.Enable)
@@ -108,7 +108,7 @@ func TestLocalnetConfig(t *testing.T) {
 	assert.True(t, conf.Nanomsg.Enable)
 
 	assert.Equal(t, conf.GRPC.Listen, "[::]:50052")
-	assert.Equal(t, conf.GRPC.Gateway.Listen, "[::]:0")
+	assert.Equal(t, conf.GRPC.Gateway.Listen, "[::]:8080")
 	assert.Equal(t, conf.HTTP.Listen, "[::]:0")
 	assert.Equal(t, conf.Nanomsg.Listen, "tcp://[::]:40799")
 }

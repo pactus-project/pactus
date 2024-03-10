@@ -109,6 +109,10 @@ func local_request_Transaction_GetTransaction_0(ctx context.Context, marshaler r
 
 }
 
+var (
+	filter_Transaction_CalculateFee_0 = &utilities.DoubleArray{Encoding: map[string]int{"amount": 0, "payload_type": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
+)
+
 func request_Transaction_CalculateFee_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq CalculateFeeRequest
 	var metadata runtime.ServerMetadata
@@ -142,6 +146,13 @@ func request_Transaction_CalculateFee_0(ctx context.Context, marshaler runtime.M
 	}
 
 	protoReq.PayloadType = PayloadType(e)
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_CalculateFee_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := client.CalculateFee(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -181,6 +192,13 @@ func local_request_Transaction_CalculateFee_0(ctx context.Context, marshaler run
 	}
 
 	protoReq.PayloadType = PayloadType(e)
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_CalculateFee_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := server.CalculateFee(ctx, &protoReq)
 	return msg, metadata, err

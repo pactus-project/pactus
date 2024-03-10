@@ -431,6 +431,13 @@
               "UNBOND_PAYLOAD",
               "WITHDRAW_PAYLOAD"
             ]
+          },
+          {
+            "name": "fixedAmount",
+            "description": "Indicates that amount should be fixed and includes the fee.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -1107,6 +1114,11 @@
     "pactusCalculateFeeResponse": {
       "type": "object",
       "properties": {
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "Calculated amount."
+        },
         "fee": {
           "type": "string",
           "format": "int64",
