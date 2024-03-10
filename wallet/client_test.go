@@ -10,7 +10,10 @@ import (
 
 type blockchainServer struct{}
 
-type transactionServer struct{}
+type (
+	transactionServer struct{}
+	utilityServer     struct{}
+)
 
 var (
 	tBlockchainInfoResponse *pactus.GetBlockchainInfoResponse
@@ -92,7 +95,7 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 	return &pactus.GetTransactionResponse{}, nil
 }
 
-func (s *transactionServer) CalculateFee(_ context.Context,
+func (s *utilityServer) CalculateFee(_ context.Context,
 	_ *pactus.CalculateFeeRequest,
 ) (*pactus.CalculateFeeResponse, error) {
 	return &pactus.CalculateFeeResponse{Fee: 0}, nil
