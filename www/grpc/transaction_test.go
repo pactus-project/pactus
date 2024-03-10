@@ -184,8 +184,8 @@ func TestGetRawTransaction(t *testing.T) {
 	})
 
 	t.Run("Unbond", func(t *testing.T) {
-		res, err := client.GetRawUnBondTransaction(context.Background(),
-			&pactus.GetRawUnBondTransactionRequest{
+		res, err := client.GetRawUnbondTransaction(context.Background(),
+			&pactus.GetRawUnbondTransactionRequest{
 				ValidatorAddress: td.RandValAddress().String(),
 				Memo:             td.RandString(32),
 			})

@@ -185,8 +185,8 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	}, nil
 }
 
-func (s *transactionServer) GetRawUnBondTransaction(_ context.Context,
-	req *pactus.GetRawUnBondTransactionRequest,
+func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
+	req *pactus.GetRawUnbondTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
 	validatorAddr, err := crypto.AddressFromString(req.ValidatorAddress)
 	if err != nil {
@@ -198,8 +198,8 @@ func (s *transactionServer) GetRawUnBondTransaction(_ context.Context,
 		lockTime = s.state.LastBlockHeight()
 	}
 
-	unBondTx := tx.NewUnbondTx(lockTime, validatorAddr, req.Memo)
-	rawTx, err := unBondTx.Bytes()
+	unbondTx := tx.NewUnbondTx(lockTime, validatorAddr, req.Memo)
+	rawTx, err := unbondTx.Bytes()
 	if err != nil {
 		return nil, err
 	}
