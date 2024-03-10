@@ -11,7 +11,7 @@
     - [GetRawBondTransactionRequest](#pactus-GetRawBondTransactionRequest)
     - [GetRawTransactionResponse](#pactus-GetRawTransactionResponse)
     - [GetRawTransferTransactionRequest](#pactus-GetRawTransferTransactionRequest)
-    - [GetRawUnBondTransactionRequest](#pactus-GetRawUnBondTransactionRequest)
+    - [GetRawUnbondTransactionRequest](#pactus-GetRawUnbondTransactionRequest)
     - [GetRawWithdrawTransactionRequest](#pactus-GetRawWithdrawTransactionRequest)
     - [GetTransactionRequest](#pactus-GetTransactionRequest)
     - [GetTransactionResponse](#pactus-GetTransactionResponse)
@@ -141,6 +141,7 @@ Request message for calculating transaction fee.
 | ----- | ---- | ----- | ----------- |
 | amount | [int64](#int64) |  | Transaction amount. |
 | payload_type | [PayloadType](#pactus-PayloadType) |  | Type of transaction payload. |
+| fixed_amount | [bool](#bool) |  | Indicates that amount should be fixed and includes the fee. |
 
 
 
@@ -155,6 +156,7 @@ Response message containing the calculated transaction fee.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| amount | [int64](#int64) |  | Calculated amount. |
 | fee | [int64](#int64) |  | Calculated transaction fee. |
 
 
@@ -170,12 +172,12 @@ Request message for retrieving raw details of a bond transaction.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| lock_time | [uint32](#uint32) |  | Lock time for the transaction. |
-| sender | [string](#string) |  | Sender&#39;s address. |
-| receiver | [string](#string) |  | Receiver&#39;s address. |
-| stake | [int64](#int64) |  | Stake amount. |
+| lock_time | [uint32](#uint32) |  | Lock time for the transaction. If not explicitly set, it sets to the last block height. |
+| sender | [string](#string) |  | Sender&#39;s account address. |
+| receiver | [string](#string) |  | Receiver&#39;s validator address. |
+| stake | [int64](#int64) |  | Stake amount. It should be greater than 0. |
 | public_key | [string](#string) |  | Public key of the validator. |
-| fee | [int64](#int64) |  | Transaction fee. |
+| fee | [int64](#int64) |  | Transaction fee. If not explicitly set, it is calculated based on the stake. |
 | memo | [string](#string) |  | Transaction memo. |
 
 
@@ -206,11 +208,11 @@ Request message for retrieving raw details of a transfer transaction.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| lock_time | [uint32](#uint32) |  | Lock time for the transaction. |
-| sender | [string](#string) |  | Sender&#39;s address. |
-| receiver | [string](#string) |  | Receiver&#39;s address. |
-| amount | [int64](#int64) |  | Transaction amount. |
-| fee | [int64](#int64) |  | Transaction fee. |
+| lock_time | [uint32](#uint32) |  | Lock time for the transaction. If not explicitly set, it sets to the last block height. |
+| sender | [string](#string) |  | Sender&#39;s account address. |
+| receiver | [string](#string) |  | Receiver&#39;s account address. |
+| amount | [int64](#int64) |  | Transfer amount. It should be greater than 0. |
+| fee | [int64](#int64) |  | Transaction fee. If not explicitly set, it is calculated based on the amount. |
 | memo | [string](#string) |  | Transaction memo. |
 
 
@@ -218,15 +220,15 @@ Request message for retrieving raw details of a transfer transaction.
 
 
 
-<a name="pactus-GetRawUnBondTransactionRequest"></a>
+<a name="pactus-GetRawUnbondTransactionRequest"></a>
 
-### GetRawUnBondTransactionRequest
+### GetRawUnbondTransactionRequest
 Request message for retrieving raw details of an unbond transaction.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| lock_time | [uint32](#uint32) |  | Lock time for the transaction. |
+| lock_time | [uint32](#uint32) |  | Lock time for the transaction. If not explicitly set, it sets to the last block height. |
 | validator_address | [string](#string) |  | Address of the validator to unbond from. |
 | memo | [string](#string) |  | Transaction memo. |
 
@@ -243,11 +245,11 @@ Request message for retrieving raw details of a withdraw transaction.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| lock_time | [uint32](#uint32) |  | Lock time for the transaction. |
+| lock_time | [uint32](#uint32) |  | Lock time for the transaction. If not explicitly set, it sets to the last block height. |
 | validator_address | [string](#string) |  | Address of the validator to withdraw from. |
 | account_address | [string](#string) |  | Address of the account to withdraw to. |
-| fee | [int64](#int64) |  | Transaction fee. |
-| amount | [int64](#int64) |  | Withdrawal amount. |
+| amount | [int64](#int64) |  | Withdrawal amount. It should be greater than 0. |
+| fee | [int64](#int64) |  | Transaction fee. If not explicitly set, it is calculated based on the stake. |
 | memo | [string](#string) |  | Transaction memo. |
 
 
@@ -446,7 +448,7 @@ transactions.
 | BroadcastTransaction | [BroadcastTransactionRequest](#pactus-BroadcastTransactionRequest) | [BroadcastTransactionResponse](#pactus-BroadcastTransactionResponse) | BroadcastTransaction broadcasts a signed transaction to the network. |
 | GetRawTransferTransaction | [GetRawTransferTransactionRequest](#pactus-GetRawTransferTransactionRequest) | [GetRawTransactionResponse](#pactus-GetRawTransactionResponse) | GetRawTransferTransaction retrieves raw details of a transfer transaction. |
 | GetRawBondTransaction | [GetRawBondTransactionRequest](#pactus-GetRawBondTransactionRequest) | [GetRawTransactionResponse](#pactus-GetRawTransactionResponse) | GetRawBondTransaction retrieves raw details of a bond transaction. |
-| GetRawUnBondTransaction | [GetRawUnBondTransactionRequest](#pactus-GetRawUnBondTransactionRequest) | [GetRawTransactionResponse](#pactus-GetRawTransactionResponse) | GetRawUnBondTransaction retrieves raw details of an unbond transaction. |
+| GetRawUnbondTransaction | [GetRawUnbondTransactionRequest](#pactus-GetRawUnbondTransactionRequest) | [GetRawTransactionResponse](#pactus-GetRawTransactionResponse) | GetRawUnbondTransaction retrieves raw details of an unbond transaction. |
 | GetRawWithdrawTransaction | [GetRawWithdrawTransactionRequest](#pactus-GetRawWithdrawTransactionRequest) | [GetRawTransactionResponse](#pactus-GetRawTransactionResponse) | GetRawWithdrawTransaction retrieves raw details of a withdraw transaction. |
 
  

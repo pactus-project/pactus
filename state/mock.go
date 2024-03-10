@@ -253,22 +253,8 @@ func (m *MockState) Params() *param.Params {
 	return m.TestParams
 }
 
-func (m *MockState) CalculateFee(_ int64, payloadType payload.Type) (int64, error) {
-	switch payloadType {
-	case payload.TypeTransfer,
-		payload.TypeBond,
-		payload.TypeWithdraw:
-
-		return m.ts.RandInt64(1e9), nil
-
-	case payload.TypeUnbond,
-		payload.TypeSortition:
-
-		return 0, nil
-
-	default:
-		return 0, errors.Errorf(errors.ErrInvalidTx, "unexpected tx type: %v", payloadType)
-	}
+func (m *MockState) CalculateFee(amount int64, _ payload.Type) int64 {
+	return amount / 10000
 }
 
 func (m *MockState) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
