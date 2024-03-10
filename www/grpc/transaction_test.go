@@ -186,3 +186,35 @@ func TestGetRawTransaction(t *testing.T) {
 	assert.Nil(t, conn.Close(), "Error closing connection")
 	td.StopServer()
 }
+
+func TestCalculateFee(t *testing.T) {
+	td := setup(t, nil)
+	conn, client := td.transactionClient(t)
+
+	t.Run("Not fixed amount", func(t *testing.T) {
+		amount := td.RandAmount()
+		res, err := client.CalculateFee(context.Background(),
+			&pactus.CalculateFeeRequest{
+				Amount:      amount,
+				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
+				FixedAmount: false,
+			})
+		assert.NoError(t, err)
+		assert.Equal(t, res.Amount, amount)
+	})
+
+	t.Run("Fixed amount", func(t *testing.T) {
+		amount := td.RandAmount()
+		res, err := client.CalculateFee(context.Background(),
+			&pactus.CalculateFeeRequest{
+				Amount:      amount,
+				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
+				FixedAmount: true,
+			})
+		assert.NoError(t, err)
+		assert.LessOrEqual(t, res.Amount+res.Fee, amount)
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}

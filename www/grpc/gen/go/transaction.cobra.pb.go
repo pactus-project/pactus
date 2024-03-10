@@ -113,6 +113,7 @@ func _TransactionCalculateFeeCommand(cfg *client.Config) *cobra.Command {
 
 	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "Transaction amount.")
 	flag.EnumVar(cmd.PersistentFlags(), &req.PayloadType, cfg.FlagNamer("PayloadType"), "Type of transaction payload.")
+	cmd.PersistentFlags().BoolVar(&req.FixedAmount, cfg.FlagNamer("FixedAmount"), false, "Indicates that amount should be fixed and includes the fee.")
 
 	return cmd
 }

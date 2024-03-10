@@ -669,6 +669,13 @@ CalculateFeeRequest
       </td>
       <td>Type of transaction payload. </td>
     </tr>
+    <tr>
+      <td class="fw-bold">fixed_amount</td>
+      <td>
+        <a href="#bool">bool</a>
+      </td>
+      <td>Indicates that amount should be fixed and includes the fee. </td>
+    </tr>
   </tbody>
 </table>  
 <h3 id="pactus.CalculateFeeResponse">
@@ -682,6 +689,13 @@ CalculateFeeResponse
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
   </thead>
   <tbody class="table-group-divider"> 
+    <tr>
+      <td class="fw-bold">amount</td>
+      <td>
+        <a href="#int64">int64</a>
+      </td>
+      <td>Calculated amount. </td>
+    </tr>
     <tr>
       <td class="fw-bold">fee</td>
       <td>

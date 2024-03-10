@@ -82,13 +82,19 @@ func (s *transactionServer) BroadcastTransaction(_ context.Context,
 func (s *transactionServer) CalculateFee(_ context.Context,
 	req *pactus.CalculateFeeRequest,
 ) (*pactus.CalculateFeeResponse, error) {
-	fee, err := s.state.CalculateFee(req.Amount, payload.Type(req.PayloadType))
+	amount := req.Amount
+	fee, err := s.state.CalculateFee(amount, payload.Type(req.PayloadType))
 	if err != nil {
 		return nil, err
 	}
 
+	if req.FixedAmount {
+		amount -= fee
+	}
+
 	return &pactus.CalculateFeeResponse{
-		Fee: fee,
+		Amount: amount,
+		Fee:    fee,
 	}, nil
 }
 
