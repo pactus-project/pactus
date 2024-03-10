@@ -79,22 +79,6 @@ func (s *transactionServer) BroadcastTransaction(_ context.Context,
 	}, nil
 }
 
-func (s *transactionServer) CalculateFee(_ context.Context,
-	req *pactus.CalculateFeeRequest,
-) (*pactus.CalculateFeeResponse, error) {
-	amount := req.Amount
-	fee := s.state.CalculateFee(amount, payload.Type(req.PayloadType))
-
-	if req.FixedAmount {
-		amount -= fee
-	}
-
-	return &pactus.CalculateFeeResponse{
-		Amount: amount,
-		Fee:    fee,
-	}, nil
-}
-
 func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	req *pactus.GetRawTransferTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {

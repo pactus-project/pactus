@@ -187,14 +187,6 @@
                 </li>
               
                 <li>
-                  <a href="#pactus.CalculateFeeRequest"><span class="badge">M</span>CalculateFeeRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#pactus.CalculateFeeResponse"><span class="badge">M</span>CalculateFeeResponse</a>
-                </li>
-              
-                <li>
                   <a href="#pactus.GetRawBondTransactionRequest"><span class="badge">M</span>GetRawBondTransactionRequest</a>
                 </li>
               
@@ -440,6 +432,29 @@
         
           
           <li>
+            <a href="#utility.proto">utility.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#pactus.CalculateFeeRequest"><span class="badge">M</span>CalculateFeeRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#pactus.CalculateFeeResponse"><span class="badge">M</span>CalculateFeeResponse</a>
+                </li>
+              
+              
+              
+              
+                <li>
+                  <a href="#pactus.Utility"><span class="badge">S</span>Utility</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+          
+          <li>
             <a href="#wallet.proto">wallet.proto</a>
             <ul>
               
@@ -560,75 +575,6 @@
                   <td><a href="#bytes">bytes</a></td>
                   <td></td>
                   <td><p>Transaction ID. </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="pactus.CalculateFeeRequest">CalculateFeeRequest</h3>
-        <p>Request message for calculating transaction fee.</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>amount</td>
-                  <td><a href="#int64">int64</a></td>
-                  <td></td>
-                  <td><p>Transaction amount. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>payload_type</td>
-                  <td><a href="#pactus.PayloadType">PayloadType</a></td>
-                  <td></td>
-                  <td><p>Type of transaction payload. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>fixed_amount</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p>Indicates that amount should be fixed and includes the fee. </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="pactus.CalculateFeeResponse">CalculateFeeResponse</h3>
-        <p>Response message containing the calculated transaction fee.</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>amount</td>
-                  <td><a href="#int64">int64</a></td>
-                  <td></td>
-                  <td><p>Calculated amount. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>fee</td>
-                  <td><a href="#int64">int64</a></td>
-                  <td></td>
-                  <td><p>Calculated transaction fee. </p></td>
                 </tr>
               
             </tbody>
@@ -1344,14 +1290,6 @@ If not explicitly set, it is calculated based on the stake. </p></td>
                 <td><a href="#pactus.GetTransactionResponse">GetTransactionResponse</a></td>
                 <td><p>GetTransaction retrieves transaction details based on the provided request
 parameters.</p></td>
-              </tr>
-            
-              <tr>
-                <td>CalculateFee</td>
-                <td><a href="#pactus.CalculateFeeRequest">CalculateFeeRequest</a></td>
-                <td><a href="#pactus.CalculateFeeResponse">CalculateFeeResponse</a></td>
-                <td><p>CalculateFee calculates the transaction fee based on the specified amount
-and payload type.</p></td>
               </tr>
             
               <tr>
@@ -2883,6 +2821,109 @@ address.</p></td>
                 <td><a href="#pactus.GetNodeInfoRequest">GetNodeInfoRequest</a></td>
                 <td><a href="#pactus.GetNodeInfoResponse">GetNodeInfoResponse</a></td>
                 <td><p>GetNodeInfo retrieves information about a specific node in the network.</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+    
+      
+      <div class="file-heading">
+        <h2 id="utility.proto">utility.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="pactus.CalculateFeeRequest">CalculateFeeRequest</h3>
+        <p>Request message for calculating transaction fee.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>amount</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Transaction amount. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>payload_type</td>
+                  <td><a href="#pactus.PayloadType">PayloadType</a></td>
+                  <td></td>
+                  <td><p>Type of transaction payload. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>fixed_amount</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Indicates that amount should be fixed and includes the fee. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pactus.CalculateFeeResponse">CalculateFeeResponse</h3>
+        <p>Response message containing the calculated transaction fee.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>amount</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Calculated amount. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>fee</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Calculated transaction fee. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+        <h3 id="pactus.Utility">Utility</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>CalculateFee</td>
+                <td><a href="#pactus.CalculateFeeRequest">CalculateFeeRequest</a></td>
+                <td><a href="#pactus.CalculateFeeResponse">CalculateFeeResponse</a></td>
+                <td><p>CalculateFee calculates the transaction fee based on the specified amount
+and payload type.</p></td>
               </tr>
             
           </tbody>

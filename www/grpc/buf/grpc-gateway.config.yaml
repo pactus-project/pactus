@@ -38,9 +38,6 @@ http:
     - selector: pactus.Transaction.BroadcastTransaction
       put: "/pactus/transaction/broadcast_transaction/signed_raw_transaction/{signed_raw_transaction}"
 
-    - selector: pactus.Transaction.CalculateFee
-      get: "/pactus/transaction/calculate_fee/amount/{amount}/payload_type/{payload_type}"
-
     - selector: pactus.Transaction.GetRawTransferTransaction
       get: "/pactus/transaction/get_raw_transfer_transaction/sender/{sender}/receiver/{receiver}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"
 
@@ -81,3 +78,7 @@ http:
 
     - selector: pactus.Wallet.SignRawTransaction
       get: "/pactus/wallet/sign_raw_transaction/wallet_name/{wallet_name}/password/{password}/raw_transaction/{raw_transaction}"
+
+    # Utility APIs
+    - selector: pactus.Utility.CalculateFee
+      get: "/pactus/utility/calculate_fee/amount/{amount}/payload_type/{payload_type}"

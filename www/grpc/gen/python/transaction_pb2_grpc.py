@@ -21,11 +21,6 @@ class TransactionStub(object):
                 request_serializer=transaction__pb2.GetTransactionRequest.SerializeToString,
                 response_deserializer=transaction__pb2.GetTransactionResponse.FromString,
                 )
-        self.CalculateFee = channel.unary_unary(
-                '/pactus.Transaction/CalculateFee',
-                request_serializer=transaction__pb2.CalculateFeeRequest.SerializeToString,
-                response_deserializer=transaction__pb2.CalculateFeeResponse.FromString,
-                )
         self.BroadcastTransaction = channel.unary_unary(
                 '/pactus.Transaction/BroadcastTransaction',
                 request_serializer=transaction__pb2.BroadcastTransactionRequest.SerializeToString,
@@ -61,14 +56,6 @@ class TransactionServicer(object):
     def GetTransaction(self, request, context):
         """GetTransaction retrieves transaction details based on the provided request
         parameters.
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def CalculateFee(self, request, context):
-        """CalculateFee calculates the transaction fee based on the specified amount
-        and payload type.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -116,11 +103,6 @@ def add_TransactionServicer_to_server(servicer, server):
                     servicer.GetTransaction,
                     request_deserializer=transaction__pb2.GetTransactionRequest.FromString,
                     response_serializer=transaction__pb2.GetTransactionResponse.SerializeToString,
-            ),
-            'CalculateFee': grpc.unary_unary_rpc_method_handler(
-                    servicer.CalculateFee,
-                    request_deserializer=transaction__pb2.CalculateFeeRequest.FromString,
-                    response_serializer=transaction__pb2.CalculateFeeResponse.SerializeToString,
             ),
             'BroadcastTransaction': grpc.unary_unary_rpc_method_handler(
                     servicer.BroadcastTransaction,
@@ -173,23 +155,6 @@ class Transaction(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/GetTransaction',
             transaction__pb2.GetTransactionRequest.SerializeToString,
             transaction__pb2.GetTransactionResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def CalculateFee(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/CalculateFee',
-            transaction__pb2.CalculateFeeRequest.SerializeToString,
-            transaction__pb2.CalculateFeeResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

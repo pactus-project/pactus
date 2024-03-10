@@ -17,7 +17,6 @@ export 'transaction.pb.dart';
 
 abstract class TransactionServiceBase extends $pb.GeneratedService {
   $async.Future<$0.GetTransactionResponse> getTransaction($pb.ServerContext ctx, $0.GetTransactionRequest request);
-  $async.Future<$0.CalculateFeeResponse> calculateFee($pb.ServerContext ctx, $0.CalculateFeeRequest request);
   $async.Future<$0.BroadcastTransactionResponse> broadcastTransaction($pb.ServerContext ctx, $0.BroadcastTransactionRequest request);
   $async.Future<$0.GetRawTransactionResponse> getRawTransferTransaction($pb.ServerContext ctx, $0.GetRawTransferTransactionRequest request);
   $async.Future<$0.GetRawTransactionResponse> getRawBondTransaction($pb.ServerContext ctx, $0.GetRawBondTransactionRequest request);
@@ -27,7 +26,6 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
   $pb.GeneratedMessage createRequest($core.String method) {
     switch (method) {
       case 'GetTransaction': return $0.GetTransactionRequest();
-      case 'CalculateFee': return $0.CalculateFeeRequest();
       case 'BroadcastTransaction': return $0.BroadcastTransactionRequest();
       case 'GetRawTransferTransaction': return $0.GetRawTransferTransactionRequest();
       case 'GetRawBondTransaction': return $0.GetRawBondTransactionRequest();
@@ -40,7 +38,6 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
   $async.Future<$pb.GeneratedMessage> handleCall($pb.ServerContext ctx, $core.String method, $pb.GeneratedMessage request) {
     switch (method) {
       case 'GetTransaction': return this.getTransaction(ctx, request as $0.GetTransactionRequest);
-      case 'CalculateFee': return this.calculateFee(ctx, request as $0.CalculateFeeRequest);
       case 'BroadcastTransaction': return this.broadcastTransaction(ctx, request as $0.BroadcastTransactionRequest);
       case 'GetRawTransferTransaction': return this.getRawTransferTransaction(ctx, request as $0.GetRawTransferTransactionRequest);
       case 'GetRawBondTransaction': return this.getRawBondTransaction(ctx, request as $0.GetRawBondTransactionRequest);

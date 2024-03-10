@@ -25,9 +25,6 @@ type TransactionClient interface {
 	// GetTransaction retrieves transaction details based on the provided request
 	// parameters.
 	GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error)
-	// CalculateFee calculates the transaction fee based on the specified amount
-	// and payload type.
-	CalculateFee(ctx context.Context, in *CalculateFeeRequest, opts ...grpc.CallOption) (*CalculateFeeResponse, error)
 	// BroadcastTransaction broadcasts a signed transaction to the network.
 	BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error)
 	// GetRawTransferTransaction retrieves raw details of a transfer transaction.
@@ -51,15 +48,6 @@ func NewTransactionClient(cc grpc.ClientConnInterface) TransactionClient {
 func (c *transactionClient) GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error) {
 	out := new(GetTransactionResponse)
 	err := c.cc.Invoke(ctx, "/pactus.Transaction/GetTransaction", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *transactionClient) CalculateFee(ctx context.Context, in *CalculateFeeRequest, opts ...grpc.CallOption) (*CalculateFeeResponse, error) {
-	out := new(CalculateFeeResponse)
-	err := c.cc.Invoke(ctx, "/pactus.Transaction/CalculateFee", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,9 +106,6 @@ type TransactionServer interface {
 	// GetTransaction retrieves transaction details based on the provided request
 	// parameters.
 	GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error)
-	// CalculateFee calculates the transaction fee based on the specified amount
-	// and payload type.
-	CalculateFee(context.Context, *CalculateFeeRequest) (*CalculateFeeResponse, error)
 	// BroadcastTransaction broadcasts a signed transaction to the network.
 	BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error)
 	// GetRawTransferTransaction retrieves raw details of a transfer transaction.
@@ -139,9 +124,6 @@ type UnimplementedTransactionServer struct {
 
 func (UnimplementedTransactionServer) GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTransaction not implemented")
-}
-func (UnimplementedTransactionServer) CalculateFee(context.Context, *CalculateFeeRequest) (*CalculateFeeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CalculateFee not implemented")
 }
 func (UnimplementedTransactionServer) BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BroadcastTransaction not implemented")
@@ -184,24 +166,6 @@ func _Transaction_GetTransaction_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TransactionServer).GetTransaction(ctx, req.(*GetTransactionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Transaction_CalculateFee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CalculateFeeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TransactionServer).CalculateFee(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pactus.Transaction/CalculateFee",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServer).CalculateFee(ctx, req.(*CalculateFeeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -306,10 +270,6 @@ var Transaction_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTransaction",
 			Handler:    _Transaction_GetTransaction_Handler,
-		},
-		{
-			MethodName: "CalculateFee",
-			Handler:    _Transaction_CalculateFee_Handler,
 		},
 		{
 			MethodName: "BroadcastTransaction",

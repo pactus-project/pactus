@@ -21,7 +21,6 @@ func TransactionClientCommand(options ...client.Option) *cobra.Command {
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
 		_TransactionGetTransactionCommand(cfg),
-		_TransactionCalculateFeeCommand(cfg),
 		_TransactionBroadcastTransactionCommand(cfg),
 		_TransactionGetRawTransferTransactionCommand(cfg),
 		_TransactionGetRawBondTransactionCommand(cfg),
@@ -70,50 +69,6 @@ func _TransactionGetTransactionCommand(cfg *client.Config) *cobra.Command {
 
 	flag.BytesBase64Var(cmd.PersistentFlags(), &req.Id, cfg.FlagNamer("Id"), "Transaction ID.")
 	flag.EnumVar(cmd.PersistentFlags(), &req.Verbosity, cfg.FlagNamer("Verbosity"), "Verbosity level for transaction details.")
-
-	return cmd
-}
-
-func _TransactionCalculateFeeCommand(cfg *client.Config) *cobra.Command {
-	req := &CalculateFeeRequest{}
-
-	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("CalculateFee"),
-		Short: "CalculateFee RPC client",
-		Long:  "CalculateFee calculates the transaction fee based on the specified amount\n and payload type.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
-					return err
-				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "CalculateFee"); err != nil {
-					return err
-				}
-			}
-			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewTransactionClient(cc)
-				v := &CalculateFeeRequest{}
-
-				if err := in(v); err != nil {
-					return err
-				}
-				proto.Merge(v, req)
-
-				res, err := cli.CalculateFee(cmd.Context(), v)
-
-				if err != nil {
-					return err
-				}
-
-				return out(res)
-
-			})
-		},
-	}
-
-	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "Transaction amount.")
-	flag.EnumVar(cmd.PersistentFlags(), &req.PayloadType, cfg.FlagNamer("PayloadType"), "Type of transaction payload.")
-	cmd.PersistentFlags().BoolVar(&req.FixedAmount, cfg.FlagNamer("FixedAmount"), false, "Indicates that amount should be fixed and includes the fee.")
 
 	return cmd
 }

@@ -20,10 +20,6 @@ Here you can find the list of all gRPC methods and messages.
           <span class="badge text-bg-primary">rpc</span> GetTransaction</a>
         </li> 
         <li>
-          <a href="#pactus.Transaction.CalculateFee">
-          <span class="badge text-bg-primary">rpc</span> CalculateFee</a>
-        </li> 
-        <li>
           <a href="#pactus.Transaction.BroadcastTransaction">
           <span class="badge text-bg-primary">rpc</span> BroadcastTransaction</a>
         </li> 
@@ -101,6 +97,14 @@ Here you can find the list of all gRPC methods and messages.
         </li> 
       </ul>
     </li>    
+    <li> Utility Service
+      <ul>  
+        <li>
+          <a href="#pactus.Utility.CalculateFee">
+          <span class="badge text-bg-primary">rpc</span> CalculateFee</a>
+        </li> 
+      </ul>
+    </li>    
     <li> Wallet Service
       <ul>  
         <li>
@@ -144,16 +148,6 @@ Here you can find the list of all gRPC methods and messages.
         <li>
           <a href="#pactus.BroadcastTransactionResponse">
             <span class="badge text-bg-secondary">msg</span> BroadcastTransactionResponse
-          </a>
-        </li> 
-        <li>
-          <a href="#pactus.CalculateFeeRequest">
-            <span class="badge text-bg-secondary">msg</span> CalculateFeeRequest
-          </a>
-        </li> 
-        <li>
-          <a href="#pactus.CalculateFeeResponse">
-            <span class="badge text-bg-secondary">msg</span> CalculateFeeResponse
           </a>
         </li> 
         <li>
@@ -392,6 +386,16 @@ Here you can find the list of all gRPC methods and messages.
           </a>
         </li>   
         <li>
+          <a href="#pactus.CalculateFeeRequest">
+            <span class="badge text-bg-secondary">msg</span> CalculateFeeRequest
+          </a>
+        </li> 
+        <li>
+          <a href="#pactus.CalculateFeeResponse">
+            <span class="badge text-bg-secondary">msg</span> CalculateFeeResponse
+          </a>
+        </li>   
+        <li>
           <a href="#pactus.CreateWalletRequest">
             <span class="badge text-bg-secondary">msg</span> CreateWalletRequest
           </a>
@@ -481,7 +485,7 @@ Here you can find the list of all gRPC methods and messages.
           <a href="#pactus.VoteType">
             <span class="badge text-bg-info">enum</span> VoteType
           </a>
-        </li>      
+        </li>        
 
         <li>
           <a href="#scalar-value-types">Scalar Value Types</a>
@@ -497,10 +501,6 @@ Here you can find the list of all gRPC methods and messages.
 <div class="request pt-3">Request message: <a href="#pactus.GetTransactionRequest">GetTransactionRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetTransactionResponse">GetTransactionResponse</a></div>
 <p>GetTransaction retrieves transaction details based on the provided request</p><p>parameters.</p> 
-<h3 id="pactus.Transaction.CalculateFee">CalculateFee <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
-<div class="request pt-3">Request message: <a href="#pactus.CalculateFeeRequest">CalculateFeeRequest</a></div>
-<div class="response pb-3">Response message: <a href="#pactus.CalculateFeeResponse">CalculateFeeResponse</a></div>
-<p>CalculateFee calculates the transaction fee based on the specified amount</p><p>and payload type.</p> 
 <h3 id="pactus.Transaction.BroadcastTransaction">BroadcastTransaction <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.BroadcastTransactionRequest">BroadcastTransactionRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.BroadcastTransactionResponse">BroadcastTransactionResponse</a></div>
@@ -573,6 +573,12 @@ Here you can find the list of all gRPC methods and messages.
 <div class="request pt-3">Request message: <a href="#pactus.GetNodeInfoRequest">GetNodeInfoRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetNodeInfoResponse">GetNodeInfoResponse</a></div>
 <p>GetNodeInfo retrieves information about a specific node in the network.</p>     
+<h2>Utility Service <span class="badge text-bg-warning fs-6 align-top">utility.proto</span></h2>
+<p></p>  
+<h3 id="pactus.Utility.CalculateFee">CalculateFee <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
+<div class="request pt-3">Request message: <a href="#pactus.CalculateFeeRequest">CalculateFeeRequest</a></div>
+<div class="response pb-3">Response message: <a href="#pactus.CalculateFeeResponse">CalculateFeeResponse</a></div>
+<p>CalculateFee calculates the transaction fee based on the specified amount</p><p>and payload type.</p>     
 <h2>Wallet Service <span class="badge text-bg-warning fs-6 align-top">wallet.proto</span></h2>
 <p>Define the Wallet service with various RPC methods for wallet management.</p>  
 <h3 id="pactus.Wallet.CreateWallet">CreateWallet <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
@@ -641,67 +647,6 @@ BroadcastTransactionResponse
         <a href="#bytes">bytes</a>
       </td>
       <td>Transaction ID. </td>
-    </tr>
-  </tbody>
-</table>  
-<h3 id="pactus.CalculateFeeRequest">
-CalculateFeeRequest
-<span class="badge text-bg-secondary fs-6 align-top">msg</span>
-</h3>
-  <p>Request message for calculating transaction fee.</p>
-
-<table class="table table-bordered table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider"> 
-    <tr>
-      <td class="fw-bold">amount</td>
-      <td>
-        <a href="#int64">int64</a>
-      </td>
-      <td>Transaction amount. </td>
-    </tr>
-    <tr>
-      <td class="fw-bold">payload_type</td>
-      <td>
-        <a href="#pactus.PayloadType">PayloadType</a>
-      </td>
-      <td>Type of transaction payload. </td>
-    </tr>
-    <tr>
-      <td class="fw-bold">fixed_amount</td>
-      <td>
-        <a href="#bool">bool</a>
-      </td>
-      <td>Indicates that amount should be fixed and includes the fee. </td>
-    </tr>
-  </tbody>
-</table>  
-<h3 id="pactus.CalculateFeeResponse">
-CalculateFeeResponse
-<span class="badge text-bg-secondary fs-6 align-top">msg</span>
-</h3>
-  <p>Response message containing the calculated transaction fee.</p>
-
-<table class="table table-bordered table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider"> 
-    <tr>
-      <td class="fw-bold">amount</td>
-      <td>
-        <a href="#int64">int64</a>
-      </td>
-      <td>Calculated amount. </td>
-    </tr>
-    <tr>
-      <td class="fw-bold">fee</td>
-      <td>
-        <a href="#int64">int64</a>
-      </td>
-      <td>Calculated transaction fee. </td>
     </tr>
   </tbody>
 </table>  
@@ -2439,6 +2384,67 @@ PeerInfo.SentBytesEntry
     </tr>
   </tbody>
 </table>    
+<h3 id="pactus.CalculateFeeRequest">
+CalculateFeeRequest
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Request message for calculating transaction fee.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> 
+    <tr>
+      <td class="fw-bold">amount</td>
+      <td>
+        <a href="#int64">int64</a>
+      </td>
+      <td>Transaction amount. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">payload_type</td>
+      <td>
+        <a href="#pactus.PayloadType">PayloadType</a>
+      </td>
+      <td>Type of transaction payload. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">fixed_amount</td>
+      <td>
+        <a href="#bool">bool</a>
+      </td>
+      <td>Indicates that amount should be fixed and includes the fee. </td>
+    </tr>
+  </tbody>
+</table>  
+<h3 id="pactus.CalculateFeeResponse">
+CalculateFeeResponse
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Response message containing the calculated transaction fee.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> 
+    <tr>
+      <td class="fw-bold">amount</td>
+      <td>
+        <a href="#int64">int64</a>
+      </td>
+      <td>Calculated amount. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">fee</td>
+      <td>
+        <a href="#int64">int64</a>
+      </td>
+      <td>Calculated transaction fee. </td>
+    </tr>
+  </tbody>
+</table>    
 <h3 id="pactus.CreateWalletRequest">
 CreateWalletRequest
 <span class="badge text-bg-secondary fs-6 align-top">msg</span>
@@ -2917,7 +2923,7 @@ VoteType
       </tr>
     
   </tbody>
-</table>      
+</table>        
 
 <h3 id="scalar-value-types">Scalar Value Types</h3>
 <table class="table table-bordered table-sm">

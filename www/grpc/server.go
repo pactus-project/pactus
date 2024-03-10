@@ -67,10 +67,12 @@ func (s *Server) startListening(listener net.Listener) error {
 	blockchainServer := newBlockchainServer(s)
 	transactionServer := newTransactionServer(s)
 	networkServer := newNetworkServer(s)
+	utilityServer := newUtilityServer(s)
 
 	pactus.RegisterBlockchainServer(grpcServer, blockchainServer)
 	pactus.RegisterTransactionServer(grpcServer, transactionServer)
 	pactus.RegisterNetworkServer(grpcServer, networkServer)
+	pactus.RegisterUtilityServer(grpcServer, utilityServer)
 
 	if s.config.EnableWallet {
 		chainType := s.state.Genesis().ChainType()

@@ -10,10 +10,6 @@ service Transaction {
   // parameters.
   rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
 
-  // CalculateFee calculates the transaction fee based on the specified amount
-  // and payload type.
-  rpc CalculateFee(CalculateFeeRequest) returns (CalculateFeeResponse);
-
   // BroadcastTransaction broadcasts a signed transaction to the network.
   rpc BroadcastTransaction(BroadcastTransactionRequest)
       returns (BroadcastTransactionResponse);
@@ -51,24 +47,6 @@ message GetTransactionResponse {
   uint32 block_time = 13;
   // Information about the transaction.
   TransactionInfo transaction = 3;
-}
-
-// Request message for calculating transaction fee.
-message CalculateFeeRequest {
-  // Transaction amount.
-  int64 amount = 1;
-  // Type of transaction payload.
-  PayloadType payload_type = 2;
-  // Indicates that amount should be fixed and includes the fee.
-  bool fixed_amount = 3;
-}
-
-// Response message containing the calculated transaction fee.
-message CalculateFeeResponse {
-  // Calculated amount.
-  int64 amount = 1;
-  // Calculated transaction fee.
-  int64 fee = 2;
 }
 
 // Request message for broadcasting a signed transaction.

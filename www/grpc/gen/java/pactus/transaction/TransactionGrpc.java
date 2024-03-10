@@ -50,37 +50,6 @@ public final class TransactionGrpc {
     return getGetTransactionMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.CalculateFeeRequest,
-      pactus.transaction.TransactionOuterClass.CalculateFeeResponse> getCalculateFeeMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "CalculateFee",
-      requestType = pactus.transaction.TransactionOuterClass.CalculateFeeRequest.class,
-      responseType = pactus.transaction.TransactionOuterClass.CalculateFeeResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.CalculateFeeRequest,
-      pactus.transaction.TransactionOuterClass.CalculateFeeResponse> getCalculateFeeMethod() {
-    io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.CalculateFeeRequest, pactus.transaction.TransactionOuterClass.CalculateFeeResponse> getCalculateFeeMethod;
-    if ((getCalculateFeeMethod = TransactionGrpc.getCalculateFeeMethod) == null) {
-      synchronized (TransactionGrpc.class) {
-        if ((getCalculateFeeMethod = TransactionGrpc.getCalculateFeeMethod) == null) {
-          TransactionGrpc.getCalculateFeeMethod = getCalculateFeeMethod =
-              io.grpc.MethodDescriptor.<pactus.transaction.TransactionOuterClass.CalculateFeeRequest, pactus.transaction.TransactionOuterClass.CalculateFeeResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CalculateFee"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.transaction.TransactionOuterClass.CalculateFeeRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.transaction.TransactionOuterClass.CalculateFeeResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new TransactionMethodDescriptorSupplier("CalculateFee"))
-              .build();
-        }
-      }
-    }
-    return getCalculateFeeMethod;
-  }
-
   private static volatile io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.BroadcastTransactionRequest,
       pactus.transaction.TransactionOuterClass.BroadcastTransactionResponse> getBroadcastTransactionMethod;
 
@@ -301,17 +270,6 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * CalculateFee calculates the transaction fee based on the specified amount
-     * and payload type.
-     * </pre>
-     */
-    public void calculateFee(pactus.transaction.TransactionOuterClass.CalculateFeeRequest request,
-        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.CalculateFeeResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCalculateFeeMethod(), responseObserver);
-    }
-
-    /**
-     * <pre>
      * BroadcastTransaction broadcasts a signed transaction to the network.
      * </pre>
      */
@@ -369,13 +327,6 @@ public final class TransactionGrpc {
                 pactus.transaction.TransactionOuterClass.GetTransactionRequest,
                 pactus.transaction.TransactionOuterClass.GetTransactionResponse>(
                   this, METHODID_GET_TRANSACTION)))
-          .addMethod(
-            getCalculateFeeMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                pactus.transaction.TransactionOuterClass.CalculateFeeRequest,
-                pactus.transaction.TransactionOuterClass.CalculateFeeResponse>(
-                  this, METHODID_CALCULATE_FEE)))
           .addMethod(
             getBroadcastTransactionMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -443,18 +394,6 @@ public final class TransactionGrpc {
         io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetTransactionResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetTransactionMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     * <pre>
-     * CalculateFee calculates the transaction fee based on the specified amount
-     * and payload type.
-     * </pre>
-     */
-    public void calculateFee(pactus.transaction.TransactionOuterClass.CalculateFeeRequest request,
-        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.CalculateFeeResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getCalculateFeeMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -544,17 +483,6 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * CalculateFee calculates the transaction fee based on the specified amount
-     * and payload type.
-     * </pre>
-     */
-    public pactus.transaction.TransactionOuterClass.CalculateFeeResponse calculateFee(pactus.transaction.TransactionOuterClass.CalculateFeeRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getCalculateFeeMethod(), getCallOptions(), request);
-    }
-
-    /**
-     * <pre>
      * BroadcastTransaction broadcasts a signed transaction to the network.
      * </pre>
      */
@@ -636,18 +564,6 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * CalculateFee calculates the transaction fee based on the specified amount
-     * and payload type.
-     * </pre>
-     */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.CalculateFeeResponse> calculateFee(
-        pactus.transaction.TransactionOuterClass.CalculateFeeRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getCalculateFeeMethod(), getCallOptions()), request);
-    }
-
-    /**
-     * <pre>
      * BroadcastTransaction broadcasts a signed transaction to the network.
      * </pre>
      */
@@ -703,12 +619,11 @@ public final class TransactionGrpc {
   }
 
   private static final int METHODID_GET_TRANSACTION = 0;
-  private static final int METHODID_CALCULATE_FEE = 1;
-  private static final int METHODID_BROADCAST_TRANSACTION = 2;
-  private static final int METHODID_GET_RAW_TRANSFER_TRANSACTION = 3;
-  private static final int METHODID_GET_RAW_BOND_TRANSACTION = 4;
-  private static final int METHODID_GET_RAW_UNBOND_TRANSACTION = 5;
-  private static final int METHODID_GET_RAW_WITHDRAW_TRANSACTION = 6;
+  private static final int METHODID_BROADCAST_TRANSACTION = 1;
+  private static final int METHODID_GET_RAW_TRANSFER_TRANSACTION = 2;
+  private static final int METHODID_GET_RAW_BOND_TRANSACTION = 3;
+  private static final int METHODID_GET_RAW_UNBOND_TRANSACTION = 4;
+  private static final int METHODID_GET_RAW_WITHDRAW_TRANSACTION = 5;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -730,10 +645,6 @@ public final class TransactionGrpc {
         case METHODID_GET_TRANSACTION:
           serviceImpl.getTransaction((pactus.transaction.TransactionOuterClass.GetTransactionRequest) request,
               (io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetTransactionResponse>) responseObserver);
-          break;
-        case METHODID_CALCULATE_FEE:
-          serviceImpl.calculateFee((pactus.transaction.TransactionOuterClass.CalculateFeeRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.CalculateFeeResponse>) responseObserver);
           break;
         case METHODID_BROADCAST_TRANSACTION:
           serviceImpl.broadcastTransaction((pactus.transaction.TransactionOuterClass.BroadcastTransactionRequest) request,
@@ -817,7 +728,6 @@ public final class TransactionGrpc {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new TransactionFileDescriptorSupplier())
               .addMethod(getGetTransactionMethod())
-              .addMethod(getCalculateFeeMethod())
               .addMethod(getBroadcastTransactionMethod())
               .addMethod(getGetRawTransferTransactionMethod())
               .addMethod(getGetRawBondTransactionMethod())

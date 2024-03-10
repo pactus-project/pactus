@@ -15,6 +15,9 @@
       "name": "Network"
     },
     {
+      "name": "Utility"
+    },
+    {
       "name": "Wallet"
     }
   ],
@@ -390,61 +393,6 @@
         ]
       }
     },
-    "/pactus/transaction/calculate_fee/amount/{amount}/payload_type/{payloadType}": {
-      "get": {
-        "summary": "CalculateFee calculates the transaction fee based on the specified amount\nand payload type.",
-        "operationId": "Transaction_CalculateFee",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusCalculateFeeResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "amount",
-            "description": "Transaction amount.",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "payloadType",
-            "description": "Type of transaction payload.",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "enum": [
-              "UNKNOWN",
-              "TRANSFER_PAYLOAD",
-              "BOND_PAYLOAD",
-              "SORTITION_PAYLOAD",
-              "UNBOND_PAYLOAD",
-              "WITHDRAW_PAYLOAD"
-            ]
-          },
-          {
-            "name": "fixedAmount",
-            "description": "Indicates that amount should be fixed and includes the fee.",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
-          }
-        ],
-        "tags": [
-          "Transaction"
-        ]
-      }
-    },
     "/pactus/transaction/get_raw_bond_transaction/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lockTime}/public_key/{publicKey}/fee/{fee}/memo/{memo}": {
       "get": {
         "summary": "GetRawBondTransaction retrieves raw details of a bond transaction.",
@@ -750,6 +698,61 @@
         ],
         "tags": [
           "Transaction"
+        ]
+      }
+    },
+    "/pactus/utility/calculate_fee/amount/{amount}/payload_type/{payloadType}": {
+      "get": {
+        "summary": "CalculateFee calculates the transaction fee based on the specified amount\nand payload type.",
+        "operationId": "Utility_CalculateFee",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusCalculateFeeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "amount",
+            "description": "Transaction amount.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "payloadType",
+            "description": "Type of transaction payload.",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "TRANSFER_PAYLOAD",
+              "BOND_PAYLOAD",
+              "SORTITION_PAYLOAD",
+              "UNBOND_PAYLOAD",
+              "WITHDRAW_PAYLOAD"
+            ]
+          },
+          {
+            "name": "fixedAmount",
+            "description": "Indicates that amount should be fixed and includes the fee.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Utility"
         ]
       }
     },

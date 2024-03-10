@@ -6,8 +6,6 @@
 - [transaction.proto](#transaction-proto)
     - [BroadcastTransactionRequest](#pactus-BroadcastTransactionRequest)
     - [BroadcastTransactionResponse](#pactus-BroadcastTransactionResponse)
-    - [CalculateFeeRequest](#pactus-CalculateFeeRequest)
-    - [CalculateFeeResponse](#pactus-CalculateFeeResponse)
     - [GetRawBondTransactionRequest](#pactus-GetRawBondTransactionRequest)
     - [GetRawTransactionResponse](#pactus-GetRawTransactionResponse)
     - [GetRawTransferTransactionRequest](#pactus-GetRawTransferTransactionRequest)
@@ -72,6 +70,12 @@
   
     - [Network](#pactus-Network)
   
+- [utility.proto](#utility-proto)
+    - [CalculateFeeRequest](#pactus-CalculateFeeRequest)
+    - [CalculateFeeResponse](#pactus-CalculateFeeResponse)
+  
+    - [Utility](#pactus-Utility)
+  
 - [wallet.proto](#wallet-proto)
     - [CreateWalletRequest](#pactus-CreateWalletRequest)
     - [CreateWalletResponse](#pactus-CreateWalletResponse)
@@ -125,39 +129,6 @@ Response message containing the ID of the broadcasted transaction.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [bytes](#bytes) |  | Transaction ID. |
-
-
-
-
-
-
-<a name="pactus-CalculateFeeRequest"></a>
-
-### CalculateFeeRequest
-Request message for calculating transaction fee.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| amount | [int64](#int64) |  | Transaction amount. |
-| payload_type | [PayloadType](#pactus-PayloadType) |  | Type of transaction payload. |
-| fixed_amount | [bool](#bool) |  | Indicates that amount should be fixed and includes the fee. |
-
-
-
-
-
-
-<a name="pactus-CalculateFeeResponse"></a>
-
-### CalculateFeeResponse
-Response message containing the calculated transaction fee.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| amount | [int64](#int64) |  | Calculated amount. |
-| fee | [int64](#int64) |  | Calculated transaction fee. |
 
 
 
@@ -444,7 +415,6 @@ transactions.
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | GetTransaction | [GetTransactionRequest](#pactus-GetTransactionRequest) | [GetTransactionResponse](#pactus-GetTransactionResponse) | GetTransaction retrieves transaction details based on the provided request parameters. |
-| CalculateFee | [CalculateFeeRequest](#pactus-CalculateFeeRequest) | [CalculateFeeResponse](#pactus-CalculateFeeResponse) | CalculateFee calculates the transaction fee based on the specified amount and payload type. |
 | BroadcastTransaction | [BroadcastTransactionRequest](#pactus-BroadcastTransactionRequest) | [BroadcastTransactionResponse](#pactus-BroadcastTransactionResponse) | BroadcastTransaction broadcasts a signed transaction to the network. |
 | GetRawTransferTransaction | [GetRawTransferTransactionRequest](#pactus-GetRawTransferTransactionRequest) | [GetRawTransactionResponse](#pactus-GetRawTransactionResponse) | GetRawTransferTransaction retrieves raw details of a transfer transaction. |
 | GetRawBondTransaction | [GetRawBondTransactionRequest](#pactus-GetRawBondTransactionRequest) | [GetRawTransactionResponse](#pactus-GetRawTransactionResponse) | GetRawBondTransaction retrieves raw details of a bond transaction. |
@@ -1105,6 +1075,65 @@ Network service provides RPCs for retrieving information about the network.
 | ----------- | ------------ | ------------- | ------------|
 | GetNetworkInfo | [GetNetworkInfoRequest](#pactus-GetNetworkInfoRequest) | [GetNetworkInfoResponse](#pactus-GetNetworkInfoResponse) | GetNetworkInfo retrieves information about the overall network. |
 | GetNodeInfo | [GetNodeInfoRequest](#pactus-GetNodeInfoRequest) | [GetNodeInfoResponse](#pactus-GetNodeInfoResponse) | GetNodeInfo retrieves information about a specific node in the network. |
+
+ 
+
+
+
+<a name="utility-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## utility.proto
+
+
+
+<a name="pactus-CalculateFeeRequest"></a>
+
+### CalculateFeeRequest
+Request message for calculating transaction fee.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| amount | [int64](#int64) |  | Transaction amount. |
+| payload_type | [PayloadType](#pactus-PayloadType) |  | Type of transaction payload. |
+| fixed_amount | [bool](#bool) |  | Indicates that amount should be fixed and includes the fee. |
+
+
+
+
+
+
+<a name="pactus-CalculateFeeResponse"></a>
+
+### CalculateFeeResponse
+Response message containing the calculated transaction fee.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| amount | [int64](#int64) |  | Calculated amount. |
+| fee | [int64](#int64) |  | Calculated transaction fee. |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="pactus-Utility"></a>
+
+### Utility
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| CalculateFee | [CalculateFeeRequest](#pactus-CalculateFeeRequest) | [CalculateFeeResponse](#pactus-CalculateFeeResponse) | CalculateFee calculates the transaction fee based on the specified amount and payload type. |
 
  
 
