@@ -2,6 +2,7 @@ package network
 
 import (
 	"context"
+	"encoding/json"
 	"sync"
 	"time"
 
@@ -9,12 +10,15 @@ import (
 	lp2pnet "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
+const PeerStorePath = "peers.json"
+
 type peerInfo struct {
-	MultiAddress multiaddr.Multiaddr
-	Direction    lp2pnet.Direction
+	AddrInfo  lp2ppeer.AddrInfo
+	Direction lp2pnet.Direction
 }
 
 // Peer Manager attempts to establish connections with other nodes when the
@@ -54,6 +58,14 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host,
 func (mgr *peerMgr) Start() {
 	mgr.CheckConnectivity()
 
+	if util.PathExists(PeerStorePath) {
+		err := mgr.LoadPeerStore()
+		if err != nil {
+			mgr.logger.Error("failed to load peer store", "err", err)
+		}
+		mgr.logger.Info("peer store loaded successfully")
+	}
+
 	go func() {
 		ticker := time.NewTicker(20 * time.Second)
 		defer ticker.Stop()
@@ -70,6 +82,17 @@ func (mgr *peerMgr) Start() {
 }
 
 func (mgr *peerMgr) Stop() {
+	err := mgr.SavePeerStore()
+	if err != nil {
+		mgr.logger.Error("can't save peer store", "err", err)
+	}
+}
+
+func (mgr *peerMgr) NumOfConnected() int {
+	mgr.lk.RLock()
+	defer mgr.lk.RUnlock()
+
+	return len(mgr.peers) // TODO: try to keep record of all peers + connected peers
 }
 
 func (mgr *peerMgr) AddPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
@@ -101,8 +124,8 @@ func (mgr *peerMgr) addPeer(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
 	}
 
 	mgr.peers[pid] = &peerInfo{
-		MultiAddress: ma,
-		Direction:    direction,
+		AddrInfo:  ma,
+		Direction: direction,
 	}
 }
 
@@ -144,7 +167,7 @@ func (mgr *peerMgr) GetMultiAddr(pid lp2ppeer.ID) multiaddr.Multiaddr {
 		return nil
 	}
 
-	return peer.MultiAddress
+	return peer.AddrInfo.Addrs[0]
 }
 
 // checkConnectivity performs the actual work of maintaining connections.
@@ -201,9 +224,87 @@ func (mgr *peerMgr) CheckConnectivity() {
 
 			ConnectAsync(mgr.ctx, mgr.host, ai, mgr.logger)
 		}
+
+		for id, pi := range mgr.peers {
+			// preventing self dialing.
+			if id == mgr.host.ID() {
+				continue
+			}
+
+			// Don't try to connect to an already connected peer.
+			if HasPID(connectedPeers, id) {
+				mgr.logger.Trace("already connected", "peer", pi)
+
+				continue
+			}
+
+			ConnectAsync(mgr.ctx, mgr.host, pi.AddrInfo, mgr.logger)
+		}
 	}
 }
 
+type PeerStore struct {
+	MultiAddr string `json:"multi_address"`
+	Direction int    `json:"direction"`
+}
+
+func (mgr *peerMgr) SavePeerStore() error {
+	mgr.lk.RLock()
+	defer mgr.lk.RUnlock()
+
+	ps := make(map[string]*PeerStore)
+	for id, info := range mgr.peers {
+		ps[id.String()] = &PeerStore{
+			MultiAddr: info.AddrInfo.String(),
+			Direction: int(info.Direction),
+		}
+	}
+
+	data, err := json.Marshal(ps)
+	if err != nil {
+		return err
+	}
+
+	return util.WriteFile(PeerStorePath, data)
+}
+
+func (mgr *peerMgr) LoadPeerStore() error {
+	mgr.lk.Lock()
+	defer mgr.lk.Unlock()
+
+	data, err := util.ReadFile(PeerStorePath)
+	if err != nil {
+		return err
+	}
+
+	ps := make(map[string]*PeerStore)
+
+	err = json.Unmarshal(data, &ps)
+	if err != nil {
+		return err
+	}
+
+	for id, info := range ps {
+		id, err := lp2ppeer.Decode(id)
+		if err != nil {
+			continue
+		}
+		addr, err := multiaddr.NewMultiaddr(info.MultiAddr)
+		if err != nil {
+			continue
+		}
+
+		ai, err := lp2ppeer.AddrInfoFromP2pAddr(addr)
+		if err != nil {
+			continue
+		}
+
+		mgr.AddPeer(id, *ai, lp2pnet.Direction(info.Direction))
+	}
+
+	return nil
+}
+  
 func (mgr *peerMgr) NumInbound() int {
 	mgr.lk.RLock()
 	defer mgr.lk.RUnlock()

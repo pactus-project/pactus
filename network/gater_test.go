@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
+	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
