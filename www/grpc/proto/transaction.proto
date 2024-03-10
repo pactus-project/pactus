@@ -26,8 +26,8 @@ service Transaction {
   rpc GetRawBondTransaction(GetRawBondTransactionRequest)
       returns (GetRawTransactionResponse);
 
-  // GetRawUnBondTransaction retrieves raw details of an unbond transaction.
-  rpc GetRawUnBondTransaction(GetRawUnBondTransactionRequest)
+  // GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+  rpc GetRawUnbondTransaction(GetRawUnbondTransactionRequest)
       returns (GetRawTransactionResponse);
 
   // GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
@@ -86,14 +86,17 @@ message BroadcastTransactionResponse {
 // Request message for retrieving raw details of a transfer transaction.
 message GetRawTransferTransactionRequest {
   // Lock time for the transaction.
+  // If not explicitly set, it sets to the last block height.
   uint32 lock_time = 1;
-  // Sender's address.
+  // Sender's account address.
   string sender = 2;
-  // Receiver's address.
+  // Receiver's account address.
   string receiver = 3;
-  // Transaction amount.
+  // Transfer amount.
+  // It should be greater than 0.
   int64 amount = 4;
   // Transaction fee.
+  // If not explicitly set, it is calculated based on the amount.
   int64 fee = 5;
   // Transaction memo.
   string memo = 6;
@@ -102,24 +105,28 @@ message GetRawTransferTransactionRequest {
 // Request message for retrieving raw details of a bond transaction.
 message GetRawBondTransactionRequest {
   // Lock time for the transaction.
+  // If not explicitly set, it sets to the last block height.
   uint32 lock_time = 1;
-  // Sender's address.
+  // Sender's account address.
   string sender = 2;
-  // Receiver's address.
+  // Receiver's validator address.
   string receiver = 3;
   // Stake amount.
+  // It should be greater than 0.
   int64 stake = 4;
   // Public key of the validator.
   string public_key = 5;
   // Transaction fee.
+  // If not explicitly set, it is calculated based on the stake.
   int64 fee = 6;
   // Transaction memo.
   string memo = 7;
 }
 
 // Request message for retrieving raw details of an unbond transaction.
-message GetRawUnBondTransactionRequest {
+message GetRawUnbondTransactionRequest {
   // Lock time for the transaction.
+  // If not explicitly set, it sets to the last block height.
   uint32 lock_time = 1;
   // Address of the validator to unbond from.
   string validator_address = 3;
@@ -130,15 +137,18 @@ message GetRawUnBondTransactionRequest {
 // Request message for retrieving raw details of a withdraw transaction.
 message GetRawWithdrawTransactionRequest {
   // Lock time for the transaction.
+  // If not explicitly set, it sets to the last block height.
   uint32 lock_time = 1;
   // Address of the validator to withdraw from.
   string validator_address = 2;
   // Address of the account to withdraw to.
   string account_address = 3;
-  // Transaction fee.
-  int64 fee = 4;
   // Withdrawal amount.
-  int64 amount = 5;
+  // It should be greater than 0.
+  int64 amount = 4;
+  // Transaction fee.
+  // If not explicitly set, it is calculated based on the stake.
+  int64 fee = 5;
   // Transaction memo.
   string memo = 6;
 }
