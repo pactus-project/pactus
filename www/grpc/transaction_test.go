@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 )
@@ -124,7 +125,7 @@ func TestGetCalculateFee(t *testing.T) {
 	amount := td.RandAmount()
 	res, err := client.CalculateFee(context.Background(),
 		&pactus.CalculateFeeRequest{
-			Amount:      amount,
+			Amount:      util.ConvertCoinUnitToCoin(amount),
 			PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
 		})
 	assert.NoError(t, err)
@@ -145,7 +146,7 @@ func TestGetRawTransaction(t *testing.T) {
 			&pactus.GetRawTransferTransactionRequest{
 				Sender:   td.RandAccAddress().String(),
 				Receiver: td.RandAccAddress().String(),
-				Amount:   amount,
+				Amount:   util.ConvertCoinUnitToCoin(amount),
 				Memo:     td.RandString(32),
 			})
 		assert.NoError(t, err)
@@ -207,7 +208,7 @@ func TestGetRawTransaction(t *testing.T) {
 			&pactus.GetRawWithdrawTransactionRequest{
 				ValidatorAddress: td.RandValAddress().String(),
 				AccountAddress:   td.RandAccAddress().String(),
-				Amount:           amount,
+				Amount:           util.ConvertCoinUnitToCoin(amount),
 				Memo:             td.RandString(32),
 			})
 
@@ -235,7 +236,7 @@ func TestCalculateFee(t *testing.T) {
 		amount := td.RandAmount()
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
-				Amount:      amount,
+				Amount:      util.ConvertCoinUnitToCoin(amount),
 				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
 				FixedAmount: false,
 			})
@@ -247,7 +248,7 @@ func TestCalculateFee(t *testing.T) {
 		amount := td.RandAmount()
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
-				Amount:      amount,
+				Amount:      util.ConvertCoinUnitToCoin(amount),
 				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
 				FixedAmount: true,
 			})

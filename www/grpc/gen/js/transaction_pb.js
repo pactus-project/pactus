@@ -825,7 +825,7 @@ proto.pactus.CalculateFeeRequest.prototype.toObject = function(opt_includeInstan
  */
 proto.pactus.CalculateFeeRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    amount: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    amount: jspb.Message.getFloatingPointFieldWithDefault(msg, 1, 0.0),
     payloadType: jspb.Message.getFieldWithDefault(msg, 2, 0),
     fixedAmount: jspb.Message.getBooleanFieldWithDefault(msg, 3, false)
   };
@@ -865,7 +865,7 @@ proto.pactus.CalculateFeeRequest.deserializeBinaryFromReader = function(msg, rea
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readDouble());
       msg.setAmount(value);
       break;
     case 2:
@@ -906,8 +906,8 @@ proto.pactus.CalculateFeeRequest.prototype.serializeBinary = function() {
 proto.pactus.CalculateFeeRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getAmount();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (f !== 0.0) {
+    writer.writeDouble(
       1,
       f
     );
@@ -930,11 +930,11 @@ proto.pactus.CalculateFeeRequest.serializeBinaryToWriter = function(message, wri
 
 
 /**
- * optional int64 amount = 1;
+ * optional double amount = 1;
  * @return {number}
  */
 proto.pactus.CalculateFeeRequest.prototype.getAmount = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 1, 0.0));
 };
 
 
@@ -943,7 +943,7 @@ proto.pactus.CalculateFeeRequest.prototype.getAmount = function() {
  * @return {!proto.pactus.CalculateFeeRequest} returns this
  */
 proto.pactus.CalculateFeeRequest.prototype.setAmount = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
+  return jspb.Message.setProto3FloatField(this, 1, value);
 };
 
 
@@ -1366,7 +1366,7 @@ proto.pactus.BroadcastTransactionResponse.deserializeBinaryFromReader = function
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 2:
+    case 1:
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setId(value);
       break;
@@ -1402,7 +1402,7 @@ proto.pactus.BroadcastTransactionResponse.serializeBinaryToWriter = function(mes
   f = message.getId_asU8();
   if (f.length > 0) {
     writer.writeBytes(
-      2,
+      1,
       f
     );
   }
@@ -1410,16 +1410,16 @@ proto.pactus.BroadcastTransactionResponse.serializeBinaryToWriter = function(mes
 
 
 /**
- * optional bytes id = 2;
+ * optional bytes id = 1;
  * @return {!(string|Uint8Array)}
  */
 proto.pactus.BroadcastTransactionResponse.prototype.getId = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
- * optional bytes id = 2;
+ * optional bytes id = 1;
  * This is a type-conversion wrapper around `getId()`
  * @return {string}
  */
@@ -1430,7 +1430,7 @@ proto.pactus.BroadcastTransactionResponse.prototype.getId_asB64 = function() {
 
 
 /**
- * optional bytes id = 2;
+ * optional bytes id = 1;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
  * This is a type-conversion wrapper around `getId()`
@@ -1447,7 +1447,7 @@ proto.pactus.BroadcastTransactionResponse.prototype.getId_asU8 = function() {
  * @return {!proto.pactus.BroadcastTransactionResponse} returns this
  */
 proto.pactus.BroadcastTransactionResponse.prototype.setId = function(value) {
-  return jspb.Message.setProto3BytesField(this, 2, value);
+  return jspb.Message.setProto3BytesField(this, 1, value);
 };
 
 
@@ -1486,8 +1486,8 @@ proto.pactus.GetRawTransferTransactionRequest.toObject = function(includeInstanc
     lockTime: jspb.Message.getFieldWithDefault(msg, 1, 0),
     sender: jspb.Message.getFieldWithDefault(msg, 2, ""),
     receiver: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    amount: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    fee: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    amount: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0),
+    fee: jspb.Message.getFloatingPointFieldWithDefault(msg, 5, 0.0),
     memo: jspb.Message.getFieldWithDefault(msg, 6, "")
   };
 
@@ -1538,11 +1538,11 @@ proto.pactus.GetRawTransferTransactionRequest.deserializeBinaryFromReader = func
       msg.setReceiver(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readDouble());
       msg.setAmount(value);
       break;
     case 5:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readDouble());
       msg.setFee(value);
       break;
     case 6:
@@ -1600,15 +1600,15 @@ proto.pactus.GetRawTransferTransactionRequest.serializeBinaryToWriter = function
     );
   }
   f = message.getAmount();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (f !== 0.0) {
+    writer.writeDouble(
       4,
       f
     );
   }
   f = message.getFee();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (f !== 0.0) {
+    writer.writeDouble(
       5,
       f
     );
@@ -1678,11 +1678,11 @@ proto.pactus.GetRawTransferTransactionRequest.prototype.setReceiver = function(v
 
 
 /**
- * optional int64 amount = 4;
+ * optional double amount = 4;
  * @return {number}
  */
 proto.pactus.GetRawTransferTransactionRequest.prototype.getAmount = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 4, 0.0));
 };
 
 
@@ -1691,16 +1691,16 @@ proto.pactus.GetRawTransferTransactionRequest.prototype.getAmount = function() {
  * @return {!proto.pactus.GetRawTransferTransactionRequest} returns this
  */
 proto.pactus.GetRawTransferTransactionRequest.prototype.setAmount = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3FloatField(this, 4, value);
 };
 
 
 /**
- * optional int64 fee = 5;
+ * optional double fee = 5;
  * @return {number}
  */
 proto.pactus.GetRawTransferTransactionRequest.prototype.getFee = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 5, 0.0));
 };
 
 
@@ -1709,7 +1709,7 @@ proto.pactus.GetRawTransferTransactionRequest.prototype.getFee = function() {
  * @return {!proto.pactus.GetRawTransferTransactionRequest} returns this
  */
 proto.pactus.GetRawTransferTransactionRequest.prototype.setFee = function(value) {
-  return jspb.Message.setProto3IntField(this, 5, value);
+  return jspb.Message.setProto3FloatField(this, 5, value);
 };
 
 
@@ -1768,7 +1768,7 @@ proto.pactus.GetRawBondTransactionRequest.toObject = function(includeInstance, m
     receiver: jspb.Message.getFieldWithDefault(msg, 3, ""),
     stake: jspb.Message.getFieldWithDefault(msg, 4, 0),
     publicKey: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    fee: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    fee: jspb.Message.getFloatingPointFieldWithDefault(msg, 6, 0.0),
     memo: jspb.Message.getFieldWithDefault(msg, 7, "")
   };
 
@@ -1827,7 +1827,7 @@ proto.pactus.GetRawBondTransactionRequest.deserializeBinaryFromReader = function
       msg.setPublicKey(value);
       break;
     case 6:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readDouble());
       msg.setFee(value);
       break;
     case 7:
@@ -1899,8 +1899,8 @@ proto.pactus.GetRawBondTransactionRequest.serializeBinaryToWriter = function(mes
     );
   }
   f = message.getFee();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (f !== 0.0) {
+    writer.writeDouble(
       6,
       f
     );
@@ -2006,11 +2006,11 @@ proto.pactus.GetRawBondTransactionRequest.prototype.setPublicKey = function(valu
 
 
 /**
- * optional int64 fee = 6;
+ * optional double fee = 6;
  * @return {number}
  */
 proto.pactus.GetRawBondTransactionRequest.prototype.getFee = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 6, 0.0));
 };
 
 
@@ -2019,7 +2019,7 @@ proto.pactus.GetRawBondTransactionRequest.prototype.getFee = function() {
  * @return {!proto.pactus.GetRawBondTransactionRequest} returns this
  */
 proto.pactus.GetRawBondTransactionRequest.prototype.setFee = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
+  return jspb.Message.setProto3FloatField(this, 6, value);
 };
 
 
@@ -2266,8 +2266,8 @@ proto.pactus.GetRawWithdrawTransactionRequest.toObject = function(includeInstanc
     lockTime: jspb.Message.getFieldWithDefault(msg, 1, 0),
     validatorAddress: jspb.Message.getFieldWithDefault(msg, 2, ""),
     accountAddress: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    amount: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    fee: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    amount: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0),
+    fee: jspb.Message.getFloatingPointFieldWithDefault(msg, 5, 0.0),
     memo: jspb.Message.getFieldWithDefault(msg, 6, "")
   };
 
@@ -2318,11 +2318,11 @@ proto.pactus.GetRawWithdrawTransactionRequest.deserializeBinaryFromReader = func
       msg.setAccountAddress(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readDouble());
       msg.setAmount(value);
       break;
     case 5:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readDouble());
       msg.setFee(value);
       break;
     case 6:
@@ -2380,15 +2380,15 @@ proto.pactus.GetRawWithdrawTransactionRequest.serializeBinaryToWriter = function
     );
   }
   f = message.getAmount();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (f !== 0.0) {
+    writer.writeDouble(
       4,
       f
     );
   }
   f = message.getFee();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (f !== 0.0) {
+    writer.writeDouble(
       5,
       f
     );
@@ -2458,11 +2458,11 @@ proto.pactus.GetRawWithdrawTransactionRequest.prototype.setAccountAddress = func
 
 
 /**
- * optional int64 amount = 4;
+ * optional double amount = 4;
  * @return {number}
  */
 proto.pactus.GetRawWithdrawTransactionRequest.prototype.getAmount = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 4, 0.0));
 };
 
 
@@ -2471,16 +2471,16 @@ proto.pactus.GetRawWithdrawTransactionRequest.prototype.getAmount = function() {
  * @return {!proto.pactus.GetRawWithdrawTransactionRequest} returns this
  */
 proto.pactus.GetRawWithdrawTransactionRequest.prototype.setAmount = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3FloatField(this, 4, value);
 };
 
 
 /**
- * optional int64 fee = 5;
+ * optional double fee = 5;
  * @return {number}
  */
 proto.pactus.GetRawWithdrawTransactionRequest.prototype.getFee = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 5, 0.0));
 };
 
 
@@ -2489,7 +2489,7 @@ proto.pactus.GetRawWithdrawTransactionRequest.prototype.getFee = function() {
  * @return {!proto.pactus.GetRawWithdrawTransactionRequest} returns this
  */
 proto.pactus.GetRawWithdrawTransactionRequest.prototype.setFee = function(value) {
-  return jspb.Message.setProto3IntField(this, 5, value);
+  return jspb.Message.setProto3FloatField(this, 5, value);
 };
 
 

@@ -44,7 +44,7 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionFee(util.CoinToChange(*feeOpt)),
+			wallet.OptionFee(util.ConvertCoinToCoinUnit(*feeOpt)),
 			wallet.OptionLockTime(uint32(*lockTimeOpt)),
 			wallet.OptionMemo(*memoOpt),
 		}
@@ -56,8 +56,8 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 		cmd.PrintInfoMsgf("You are going to sign this \033[1mTransfer\033[0m transition:")
 		cmd.PrintInfoMsgf("From  : %s", from)
 		cmd.PrintInfoMsgf("To    : %s", to)
-		cmd.PrintInfoMsgf("Amount: %.9f", util.ChangeToCoin(amount))
-		cmd.PrintInfoMsgf("Fee   : %.9f", util.ChangeToCoin(trx.Fee()))
+		cmd.PrintInfoMsgf("Amount: %.9f", util.ConvertCoinUnitToCoin(amount))
+		cmd.PrintInfoMsgf("Fee   : %.9f", util.ConvertCoinUnitToCoin(trx.Fee()))
 
 		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 	}
@@ -86,7 +86,7 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionFee(util.CoinToChange(*feeOpt)),
+			wallet.OptionFee(util.ConvertCoinToCoinUnit(*feeOpt)),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
 		}
@@ -98,8 +98,8 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 		cmd.PrintInfoMsgf("You are going to sign this \033[1mBond\033[0m transition:")
 		cmd.PrintInfoMsgf("Account  : %s", from)
 		cmd.PrintInfoMsgf("Validator: %s", to)
-		cmd.PrintInfoMsgf("Stake    : %.9f", util.ChangeToCoin(amount))
-		cmd.PrintInfoMsgf("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
+		cmd.PrintInfoMsgf("Stake    : %.9f", util.ConvertCoinUnitToCoin(amount))
+		cmd.PrintInfoMsgf("Fee      : %.9f", util.ConvertCoinUnitToCoin(trx.Fee()))
 
 		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 	}
@@ -124,7 +124,7 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionFee(util.CoinToChange(*feeOpt)),
+			wallet.OptionFee(util.ConvertCoinToCoinUnit(*feeOpt)),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
 		}
@@ -135,7 +135,7 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 		cmd.PrintLine()
 		cmd.PrintInfoMsgf("You are going to sign this \033[1mUnbond\033[0m transition:")
 		cmd.PrintInfoMsgf("Validator: %s", from)
-		cmd.PrintInfoMsgf("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
+		cmd.PrintInfoMsgf("Fee      : %.9f", util.ConvertCoinUnitToCoin(trx.Fee()))
 
 		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 	}
@@ -163,7 +163,7 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionFee(util.CoinToChange(*feeOpt)),
+			wallet.OptionFee(util.ConvertCoinToCoinUnit(*feeOpt)),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
 		}
@@ -175,8 +175,8 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 		cmd.PrintInfoMsgf("You are going to sign this \033[1mWithdraw\033[0m transition:")
 		cmd.PrintInfoMsgf("Validator: %s", from)
 		cmd.PrintInfoMsgf("Account  : %s", to)
-		cmd.PrintInfoMsgf("Amount   : %.9f", util.ChangeToCoin(amount))
-		cmd.PrintInfoMsgf("Fee      : %.9f", util.ChangeToCoin(trx.Fee()))
+		cmd.PrintInfoMsgf("Amount   : %.9f", util.ConvertCoinUnitToCoin(amount))
+		cmd.PrintInfoMsgf("Fee      : %.9f", util.ConvertCoinUnitToCoin(trx.Fee()))
 
 		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
 	}

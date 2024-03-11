@@ -129,7 +129,7 @@ func TestCoinToChangeConversion(t *testing.T) {
 		if test.parsErr == nil {
 			assert.NoError(t, err)
 			assert.Equal(t, change, test.change)
-			assert.Equal(t, ChangeToCoin(change), test.coin)
+			assert.Equal(t, ConvertCoinUnitToCoin(change), test.coin)
 			assert.Equal(t, ChangeToStringWithTrailingZeros(change), test.str1)
 			assert.Equal(t, ChangeToString(change), test.str2)
 		} else {

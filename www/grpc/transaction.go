@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc/codes"
@@ -82,7 +83,7 @@ func (s *transactionServer) BroadcastTransaction(_ context.Context,
 func (s *transactionServer) CalculateFee(_ context.Context,
 	req *pactus.CalculateFeeRequest,
 ) (*pactus.CalculateFeeResponse, error) {
-	amount := req.Amount
+	amount := util.ConvertCoinToCoinUnit(req.Amount)
 	fee := s.state.CalculateFee(amount, payload.Type(req.PayloadType))
 
 	if req.FixedAmount {
@@ -112,9 +113,9 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "amount is zero")
 	}
 
-	fee := req.Fee
+	fee := util.ConvertCoinToCoinUnit(req.Fee)
 	if fee == 0 {
-		fee = s.state.CalculateFee(req.Amount, payload.TypeTransfer)
+		fee = s.state.CalculateFee(util.ConvertCoinToCoinUnit(req.Amount), payload.TypeTransfer)
 	}
 
 	lockTime := req.LockTime
@@ -122,7 +123,7 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 		lockTime = s.state.LastBlockHeight()
 	}
 
-	transferTx := tx.NewTransferTx(lockTime, sender, receiver, req.Amount, fee, req.Memo)
+	transferTx := tx.NewTransferTx(lockTime, sender, receiver, util.ConvertCoinToCoinUnit(req.Amount), fee, req.Memo)
 	rawTx, err := transferTx.Bytes()
 	if err != nil {
 		return nil, err
@@ -164,7 +165,7 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "amount is zero")
 	}
 
-	fee := req.Fee
+	fee := util.ConvertCoinToCoinUnit(req.Fee)
 	if fee == 0 {
 		fee = s.state.CalculateFee(req.Stake, payload.TypeTransfer)
 	}
@@ -226,9 +227,9 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "amount is zero")
 	}
 
-	fee := req.Fee
+	fee := util.ConvertCoinToCoinUnit(req.Fee)
 	if fee == 0 {
-		fee = s.state.CalculateFee(req.Amount, payload.TypeTransfer)
+		fee = s.state.CalculateFee(util.ConvertCoinToCoinUnit(req.Amount), payload.TypeTransfer)
 	}
 
 	lockTime := req.LockTime
@@ -236,7 +237,8 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 		lockTime = s.state.LastBlockHeight()
 	}
 
-	withdrawTx := tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr, req.Amount, fee, req.Memo)
+	withdrawTx := tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr,
+		util.ConvertCoinToCoinUnit(req.Amount), fee, req.Memo)
 	rawTx, err := withdrawTx.Bytes()
 	if err != nil {
 		return nil, err

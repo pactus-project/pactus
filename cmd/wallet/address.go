@@ -51,12 +51,12 @@ func buildAllAddressesCmd(parentCmd *cobra.Command) {
 
 			if *balanceOpt {
 				balance, _ := wlt.Balance(info.Address)
-				line += fmt.Sprintf("%v\t", util.ChangeToCoin(balance))
+				line += fmt.Sprintf("%v\t", util.ConvertCoinUnitToCoin(balance))
 			}
 
 			if *stakeOpt {
 				stake, _ := wlt.Stake(info.Address)
-				line += fmt.Sprintf("%v\t", util.ChangeToCoin(stake))
+				line += fmt.Sprintf("%v\t", util.ConvertCoinUnitToCoin(stake))
 			}
 
 			line += info.Label
@@ -124,7 +124,7 @@ func buildBalanceCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintInfoMsgf("balance: %v\tstake: %v",
-			util.ChangeToCoin(balance), util.ChangeToCoin(stake))
+			util.ConvertCoinUnitToCoin(balance), util.ConvertCoinUnitToCoin(stake))
 	}
 }
 

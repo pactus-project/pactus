@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -102,7 +103,10 @@ func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, e
 
 func (c *grpcClient) getFee(amount int64, payloadType payload.Type) (int64, error) {
 	res, err := c.transactionClient.CalculateFee(c.ctx,
-		&pactus.CalculateFeeRequest{Amount: amount, PayloadType: pactus.PayloadType(payloadType)})
+		&pactus.CalculateFeeRequest{
+			Amount:      util.ConvertCoinUnitToCoin(amount),
+			PayloadType: pactus.PayloadType(payloadType),
+		})
 	if err != nil {
 		return 0, err
 	}
