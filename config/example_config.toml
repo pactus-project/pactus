@@ -153,6 +153,13 @@
   # `listen` is the address to listen for incoming connections for gRPC server.
  ## listen = "127.0.0.1:50051"
 
+  # `basic_auth_credential` is basic auth for authentication layer for improve security of gRPC (https://pips.pactus.org/PIPs/pip-20),
+  # you can generate user and password (hashed) via htpasswd util apache
+  # you can check util via https://httpd.apache.org/docs/2.4/programs/htpasswd.html
+  # for generate use command htpasswd -bnBC 10 {user} {password} and
+  # example result is 'user:$2y$10$q6I6fxG2c79jBSXJ8L2jde15czipSRpu/uhW5Le.ooJLyfXiaPDZG'
+ ## basic_auth_credential = ""
+
   # `grpc.gateway` contains configuration for the gRPC Gateway server
   # which translates a RESTful HTTP API into gRPC.
   [grpc.gateway]

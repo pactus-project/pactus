@@ -62,7 +62,13 @@ func (s *Server) StartServer() error {
 }
 
 func (s *Server) startListening(listener net.Listener) error {
-	grpcServer := grpc.NewServer()
+	opts := make([]grpc.UnaryServerInterceptor, 0)
+
+	if len(s.config.BasicAuthCredential) != 0 {
+		opts = append(opts, BasicAuth(s.config.BasicAuthCredential))
+	}
+
+	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(opts...))
 
 	blockchainServer := newBlockchainServer(s)
 	transactionServer := newTransactionServer(s)

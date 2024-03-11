@@ -1962,5 +1962,10 @@
         }
       }
     }
+  },
+  "securityDefinitions": {
+    "BasicAuth": {
+      "type": "basic"
+    }
   }
 }
