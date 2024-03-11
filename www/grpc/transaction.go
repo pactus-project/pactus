@@ -83,7 +83,7 @@ func (s *transactionServer) BroadcastTransaction(_ context.Context,
 func (s *transactionServer) CalculateFee(_ context.Context,
 	req *pactus.CalculateFeeRequest,
 ) (*pactus.CalculateFeeResponse, error) {
-	amount := util.ConvertCoinToCoinUnit(req.Amount)
+	amount := util.CoinToChange(req.Amount)
 	fee := s.state.CalculateFee(amount, payload.Type(req.PayloadType))
 
 	if req.FixedAmount {
@@ -113,9 +113,9 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "amount is zero")
 	}
 
-	fee := util.ConvertCoinToCoinUnit(req.Fee)
+	fee := util.CoinToChange(req.Fee)
 	if fee == 0 {
-		fee = s.state.CalculateFee(util.ConvertCoinToCoinUnit(req.Amount), payload.TypeTransfer)
+		fee = s.state.CalculateFee(util.CoinToChange(req.Amount), payload.TypeTransfer)
 	}
 
 	lockTime := req.LockTime
@@ -123,7 +123,7 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 		lockTime = s.state.LastBlockHeight()
 	}
 
-	transferTx := tx.NewTransferTx(lockTime, sender, receiver, util.ConvertCoinToCoinUnit(req.Amount), fee, req.Memo)
+	transferTx := tx.NewTransferTx(lockTime, sender, receiver, util.CoinToChange(req.Amount), fee, req.Memo)
 	rawTx, err := transferTx.Bytes()
 	if err != nil {
 		return nil, err
@@ -165,7 +165,7 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "amount is zero")
 	}
 
-	fee := util.ConvertCoinToCoinUnit(req.Fee)
+	fee := util.CoinToChange(req.Fee)
 	if fee == 0 {
 		fee = s.state.CalculateFee(req.Stake, payload.TypeTransfer)
 	}
@@ -227,9 +227,9 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, "amount is zero")
 	}
 
-	fee := util.ConvertCoinToCoinUnit(req.Fee)
+	fee := util.CoinToChange(req.Fee)
 	if fee == 0 {
-		fee = s.state.CalculateFee(util.ConvertCoinToCoinUnit(req.Amount), payload.TypeTransfer)
+		fee = s.state.CalculateFee(util.CoinToChange(req.Amount), payload.TypeTransfer)
 	}
 
 	lockTime := req.LockTime
@@ -238,7 +238,7 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	}
 
 	withdrawTx := tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr,
-		util.ConvertCoinToCoinUnit(req.Amount), fee, req.Memo)
+		util.CoinToChange(req.Amount), fee, req.Memo)
 	rawTx, err := withdrawTx.Bytes()
 	if err != nil {
 		return nil, err

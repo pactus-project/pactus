@@ -252,7 +252,7 @@ func TestSigningTx(t *testing.T) {
 	lockTime := td.RandHeight()
 
 	opts := []TxOption{
-		OptionFee(util.ConvertCoinToCoinUnit(10)),
+		OptionFee(util.CoinToChange(10)),
 		OptionLockTime(lockTime),
 		OptionMemo("test"),
 	}
@@ -279,14 +279,14 @@ func TestMakeTransferTx(t *testing.T) {
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		opts := []TxOption{
-			OptionFee(util.ConvertCoinToCoinUnit(10)),
+			OptionFee(util.CoinToChange(10)),
 			OptionLockTime(lockTime),
 			OptionMemo("test"),
 		}
 
 		trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amount, opts...)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.Fee(), util.ConvertCoinToCoinUnit(10))
+		assert.Equal(t, trx.Fee(), util.CoinToChange(10))
 		assert.Equal(t, trx.LockTime(), lockTime)
 		assert.Equal(t, trx.Memo(), "test")
 	})
@@ -332,7 +332,7 @@ func TestMakeBondTx(t *testing.T) {
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
 		opts := []TxOption{
-			OptionFee(util.ConvertCoinToCoinUnit(10)),
+			OptionFee(util.CoinToChange(10)),
 			OptionLockTime(lockTime),
 			OptionMemo("test"),
 		}
@@ -340,7 +340,7 @@ func TestMakeBondTx(t *testing.T) {
 		trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(),
 			receiver.PublicKey().String(), amount, opts...)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.Fee(), util.ConvertCoinToCoinUnit(10))
+		assert.Equal(t, trx.Fee(), util.CoinToChange(10))
 		assert.Equal(t, trx.LockTime(), lockTime)
 		assert.Equal(t, trx.Memo(), "test")
 	})
@@ -454,7 +454,7 @@ func TestMakeUnbondTx(t *testing.T) {
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
 		opts := []TxOption{
-			OptionFee(util.ConvertCoinToCoinUnit(10)),
+			OptionFee(util.CoinToChange(10)),
 			OptionLockTime(lockTime),
 			OptionMemo("test"),
 		}
@@ -504,14 +504,14 @@ func TestMakeWithdrawTx(t *testing.T) {
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
 		opts := []TxOption{
-			OptionFee(util.ConvertCoinToCoinUnit(10)),
+			OptionFee(util.CoinToChange(10)),
 			OptionLockTime(lockTime),
 			OptionMemo("test"),
 		}
 
 		trx, err := td.wallet.MakeWithdrawTx(sender, receiver, amount, opts...)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.Fee(), util.ConvertCoinToCoinUnit(10)) // Fee for unbond transaction is zero
+		assert.Equal(t, trx.Fee(), util.CoinToChange(10)) // Fee for unbond transaction is zero
 		assert.Equal(t, trx.LockTime(), lockTime)
 		assert.Equal(t, trx.Memo(), "test")
 	})

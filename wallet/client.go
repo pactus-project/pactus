@@ -104,7 +104,7 @@ func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, e
 func (c *grpcClient) getFee(amount int64, payloadType payload.Type) (int64, error) {
 	res, err := c.transactionClient.CalculateFee(c.ctx,
 		&pactus.CalculateFeeRequest{
-			Amount:      util.ConvertCoinUnitToCoin(amount),
+			Amount:      util.ChangeToCoin(amount),
 			PayloadType: pactus.PayloadType(payloadType),
 		})
 	if err != nil {

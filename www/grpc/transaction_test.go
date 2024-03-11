@@ -125,7 +125,7 @@ func TestGetCalculateFee(t *testing.T) {
 	amount := td.RandAmount()
 	res, err := client.CalculateFee(context.Background(),
 		&pactus.CalculateFeeRequest{
-			Amount:      util.ConvertCoinUnitToCoin(amount),
+			Amount:      util.ChangeToCoin(amount),
 			PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
 		})
 	assert.NoError(t, err)
@@ -146,7 +146,7 @@ func TestGetRawTransaction(t *testing.T) {
 			&pactus.GetRawTransferTransactionRequest{
 				Sender:   td.RandAccAddress().String(),
 				Receiver: td.RandAccAddress().String(),
-				Amount:   util.ConvertCoinUnitToCoin(amount),
+				Amount:   util.ChangeToCoin(amount),
 				Memo:     td.RandString(32),
 			})
 		assert.NoError(t, err)
@@ -208,7 +208,7 @@ func TestGetRawTransaction(t *testing.T) {
 			&pactus.GetRawWithdrawTransactionRequest{
 				ValidatorAddress: td.RandValAddress().String(),
 				AccountAddress:   td.RandAccAddress().String(),
-				Amount:           util.ConvertCoinUnitToCoin(amount),
+				Amount:           util.ChangeToCoin(amount),
 				Memo:             td.RandString(32),
 			})
 
@@ -236,7 +236,7 @@ func TestCalculateFee(t *testing.T) {
 		amount := td.RandAmount()
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
-				Amount:      util.ConvertCoinUnitToCoin(amount),
+				Amount:      util.ChangeToCoin(amount),
 				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
 				FixedAmount: false,
 			})
@@ -248,7 +248,7 @@ func TestCalculateFee(t *testing.T) {
 		amount := td.RandAmount()
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
-				Amount:      util.ConvertCoinUnitToCoin(amount),
+				Amount:      util.ChangeToCoin(amount),
 				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
 				FixedAmount: true,
 			})
