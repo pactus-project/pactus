@@ -97,6 +97,7 @@ func TestCompareBasicAuth(t *testing.T) {
 		})
 	}
 }
+
 func BenchmarkParseHtpasswd(b *testing.B) {
 	auth := []string{
 		"user:$2y$10$q6I6fxG2c79jBSXJ8L2jde15czipSRpu/uhW5Le.ooJLyfXiaPDZG",
@@ -206,6 +207,7 @@ func TestExtractBasicAuthFromContext(t *testing.T) {
 			user, pass, err := ExtractBasicAuthFromContext(tt.ctx)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ExtractBasicAuthFromContext() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if user != tt.wantUser || pass != tt.wantPass {
