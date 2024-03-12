@@ -11,8 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"google.golang.org/grpc/metadata"
-
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/pactus-project/pactus/util"
@@ -21,6 +19,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 )
 
 type Server struct {
