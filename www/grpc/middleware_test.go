@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"encoding/base64"
 	"testing"
 
 	"google.golang.org/grpc"
@@ -16,8 +17,9 @@ func mockUnaryHandler(_ context.Context, _ interface{}) (interface{}, error) {
 }
 
 func TestBasicAuth(t *testing.T) {
-	auth := "Basic dXNlcjpwYXNzd29yZA=="        // This is base64 for "user:password"
-	invalidAuth := "Basic aW52YWxpZDppbnZhbGlk" // This is base64 for "invalid:invalid"
+	auth := "Basic " + base64.StdEncoding.EncodeToString([]byte("user:password"))
+	invalidAuth := "Basic " + base64.StdEncoding.EncodeToString([]byte("invalid:invalid"))
+	malformedAuth := "Malformed"
 
 	tests := []struct {
 		name          string
@@ -25,15 +27,26 @@ func TestBasicAuth(t *testing.T) {
 		expectedError codes.Code
 	}{
 		{
-			name:          "Valid credentials",
+			name:          "ValidCredentials",
 			authHeader:    auth,
 			expectedError: codes.OK,
 		},
 		{
-			name:          "Invalid credentials",
+			name:          "InvalidCredentials",
 			authHeader:    invalidAuth,
 			expectedError: codes.Unauthenticated,
 		},
+		{
+			name:          "NoMetadata",
+			authHeader:    "",
+			expectedError: codes.Unauthenticated,
+		},
+		{
+			name:          "MalformedAuthHeader",
+			authHeader:    malformedAuth,
+			expectedError: codes.Unauthenticated,
+		},
+		// More test cases if necessary...
 	}
 
 	for _, tt := range tests {

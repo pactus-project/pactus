@@ -51,39 +51,52 @@ func TestParseHtpasswdAuth(t *testing.T) {
 
 func TestCompareBasicAuth(t *testing.T) {
 	tests := []struct {
-		input    string
-		user     string
-		password string
+		name        string
+		input       string
+		user        string
+		password    string
+		expectError bool
 	}{
 		{
-			input:    "user:$2y$10$q6I6fxG2c79jBSXJ8L2jde15czipSRpu/uhW5Le.ooJLyfXiaPDZG",
-			user:     "user",
-			password: "foobar",
+			name:        "SuccessfulAuthentication",
+			input:       "user:$2y$10$q6I6fxG2c79jBSXJ8L2jde15czipSRpu/uhW5Le.ooJLyfXiaPDZG", // hashed 'foobar'
+			user:        "user",
+			password:    "foobar",
+			expectError: false,
 		},
 		{
-			input:    "user1:$2y$05$y9dWO1FBS34D7RSZSNZ6S.NjE3LMNBvSAwidgTrER/AHBNN9cBeR.",
-			user:     "user1",
-			password: "foobar1",
+			name:        "UserMismatch",
+			input:       "user:$2y$10$q6I6fxG2c79jBSXJ8L2jde15czipSRpu/uhW5Le.ooJLyfXiaPDZG",
+			user:        "wronguser",
+			password:    "foobar",
+			expectError: true,
 		},
 		{
-			input:    "user2:$2y$11$RuWzAY2N57m.iZuT9bUh2ufOj2nNd02BviZSVx2Hbid8PvonjPWRi",
-			user:     "user2",
-			password: "foobar2",
+			name:        "PasswordMismatch",
+			input:       "user:$2y$10$q6I6fxG2c79jBSXJ8L2jde15czipSRpu/uhW5Le.ooJLyfXiaPDZG",
+			user:        "user",
+			password:    "wrongpassword",
+			expectError: true,
 		},
 		{
-			input:    "user3:$2y$09$866UNklDooeXGSd6MI/XPu1Fg9.2nTX6dFnPsEdgtBY6HMF5.NhPq",
-			user:     "user3",
-			password: "foobar3",
+			name:        "MalformedCredential",
+			input:       "malformed",
+			user:        "user",
+			password:    "foobar",
+			expectError: true,
 		},
+		// Add more cases if needed
 	}
 
 	for _, tt := range tests {
-		if err := CompareBasicAuth(tt.input, tt.user, tt.password); err != nil {
-			t.Error(err)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			err := CompareBasicAuth(tt.input, tt.user, tt.password)
+			if (err != nil) != tt.expectError {
+				t.Errorf("CompareBasicAuth() for %v, error = %v, expectError %v", tt.name, err, tt.expectError)
+			}
+		})
 	}
 }
-
 func BenchmarkParseHtpasswd(b *testing.B) {
 	auth := []string{
 		"user:$2y$10$q6I6fxG2c79jBSXJ8L2jde15czipSRpu/uhW5Le.ooJLyfXiaPDZG",
@@ -152,28 +165,35 @@ func TestExtractBasicAuthFromContext(t *testing.T) {
 		wantErr  bool
 	}{
 		{
-			name:     "Valid credentials",
+			name:     "ValidCredentials",
 			ctx:      createTestContext("Basic " + base64.StdEncoding.EncodeToString([]byte("user:password"))),
 			wantUser: "user",
 			wantPass: "password",
 			wantErr:  false,
 		},
 		{
-			name:     "Invalid encoding",
+			name:     "InvalidEncoding",
 			ctx:      createTestContext("Basic user:password"),
 			wantUser: "",
 			wantPass: "",
 			wantErr:  true,
 		},
 		{
-			name:     "No authorization header",
+			name:     "NoMetadata",
+			ctx:      context.Background(),
+			wantUser: "",
+			wantPass: "",
+			wantErr:  true,
+		},
+		{
+			name:     "NoAuthorizationHeader",
 			ctx:      metadata.NewIncomingContext(context.Background(), metadata.MD{}),
 			wantUser: "",
 			wantPass: "",
 			wantErr:  true,
 		},
 		{
-			name:     "Incorrect format",
+			name:     "IncorrectFormat",
 			ctx:      createTestContext("Basic " + base64.StdEncoding.EncodeToString([]byte("userpassword"))),
 			wantUser: "",
 			wantPass: "",
@@ -186,7 +206,6 @@ func TestExtractBasicAuthFromContext(t *testing.T) {
 			user, pass, err := ExtractBasicAuthFromContext(tt.ctx)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ExtractBasicAuthFromContext() error = %v, wantErr %v", err, tt.wantErr)
-
 				return
 			}
 			if user != tt.wantUser || pass != tt.wantPass {
