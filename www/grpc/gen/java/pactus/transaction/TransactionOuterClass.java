@@ -2569,7 +2569,7 @@ public final class TransactionOuterClass {
      * Calculated amount.
      * </pre>
      *
-     * <code>int64 amount = 1 [json_name = "amount"];</code>
+     * <code>int64 amount = 2 [json_name = "amount"];</code>
      * @return The amount.
      */
     long getAmount();
@@ -2579,7 +2579,7 @@ public final class TransactionOuterClass {
      * Calculated transaction fee.
      * </pre>
      *
-     * <code>int64 fee = 2 [json_name = "fee"];</code>
+     * <code>int64 fee = 1 [json_name = "fee"];</code>
      * @return The fee.
      */
     long getFee();
@@ -2628,14 +2628,14 @@ public final class TransactionOuterClass {
               pactus.transaction.TransactionOuterClass.CalculateFeeResponse.class, pactus.transaction.TransactionOuterClass.CalculateFeeResponse.Builder.class);
     }
 
-    public static final int AMOUNT_FIELD_NUMBER = 1;
+    public static final int AMOUNT_FIELD_NUMBER = 2;
     private long amount_;
     /**
      * <pre>
      * Calculated amount.
      * </pre>
      *
-     * <code>int64 amount = 1 [json_name = "amount"];</code>
+     * <code>int64 amount = 2 [json_name = "amount"];</code>
      * @return The amount.
      */
     @java.lang.Override
@@ -2643,14 +2643,14 @@ public final class TransactionOuterClass {
       return amount_;
     }
 
-    public static final int FEE_FIELD_NUMBER = 2;
+    public static final int FEE_FIELD_NUMBER = 1;
     private long fee_;
     /**
      * <pre>
      * Calculated transaction fee.
      * </pre>
      *
-     * <code>int64 fee = 2 [json_name = "fee"];</code>
+     * <code>int64 fee = 1 [json_name = "fee"];</code>
      * @return The fee.
      */
     @java.lang.Override
@@ -2672,11 +2672,11 @@ public final class TransactionOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (amount_ != 0L) {
-        output.writeInt64(1, amount_);
-      }
       if (fee_ != 0L) {
-        output.writeInt64(2, fee_);
+        output.writeInt64(1, fee_);
+      }
+      if (amount_ != 0L) {
+        output.writeInt64(2, amount_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -2687,13 +2687,13 @@ public final class TransactionOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (amount_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(1, amount_);
-      }
       if (fee_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(2, fee_);
+          .computeInt64Size(1, fee_);
+      }
+      if (amount_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(2, amount_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -2976,12 +2976,12 @@ public final class TransactionOuterClass {
                 done = true;
                 break;
               case 8: {
-                amount_ = input.readInt64();
+                fee_ = input.readInt64();
 
                 break;
               } // case 8
               case 16: {
-                fee_ = input.readInt64();
+                amount_ = input.readInt64();
 
                 break;
               } // case 16
@@ -3007,7 +3007,7 @@ public final class TransactionOuterClass {
        * Calculated amount.
        * </pre>
        *
-       * <code>int64 amount = 1 [json_name = "amount"];</code>
+       * <code>int64 amount = 2 [json_name = "amount"];</code>
        * @return The amount.
        */
       @java.lang.Override
@@ -3019,7 +3019,7 @@ public final class TransactionOuterClass {
        * Calculated amount.
        * </pre>
        *
-       * <code>int64 amount = 1 [json_name = "amount"];</code>
+       * <code>int64 amount = 2 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
        */
@@ -3034,7 +3034,7 @@ public final class TransactionOuterClass {
        * Calculated amount.
        * </pre>
        *
-       * <code>int64 amount = 1 [json_name = "amount"];</code>
+       * <code>int64 amount = 2 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAmount() {
@@ -3050,7 +3050,7 @@ public final class TransactionOuterClass {
        * Calculated transaction fee.
        * </pre>
        *
-       * <code>int64 fee = 2 [json_name = "fee"];</code>
+       * <code>int64 fee = 1 [json_name = "fee"];</code>
        * @return The fee.
        */
       @java.lang.Override
@@ -3062,7 +3062,7 @@ public final class TransactionOuterClass {
        * Calculated transaction fee.
        * </pre>
        *
-       * <code>int64 fee = 2 [json_name = "fee"];</code>
+       * <code>int64 fee = 1 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
        */
@@ -3077,7 +3077,7 @@ public final class TransactionOuterClass {
        * Calculated transaction fee.
        * </pre>
        *
-       * <code>int64 fee = 2 [json_name = "fee"];</code>
+       * <code>int64 fee = 1 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
       public Builder clearFee() {
@@ -16526,7 +16526,7 @@ public final class TransactionOuterClass {
       "R\006amount\0226\n\014payload_type\030\002 \001(\0162\023.pactus." +
       "PayloadTypeR\013payloadType\022!\n\014fixed_amount" +
       "\030\003 \001(\010R\013fixedAmount\"@\n\024CalculateFeeRespo" +
-      "nse\022\026\n\006amount\030\001 \001(\003R\006amount\022\020\n\003fee\030\002 \001(\003" +
+      "nse\022\026\n\006amount\030\002 \001(\003R\006amount\022\020\n\003fee\030\001 \001(\003" +
       "R\003fee\"S\n\033BroadcastTransactionRequest\0224\n\026" +
       "signed_raw_transaction\030\001 \001(\014R\024signedRawT" +
       "ransaction\".\n\034BroadcastTransactionRespon" +
