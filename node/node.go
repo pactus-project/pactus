@@ -78,12 +78,12 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	enableHttpAuth := false
+	enableHTTPAuth := false
 	if conf.GRPC.BasicAuthCredential != "" {
-		enableHttpAuth = true
+		enableHTTPAuth = true
 	}
 
-	httpServer := http.NewServer(conf.HTTP, enableHttpAuth)
+	httpServer := http.NewServer(conf.HTTP, enableHTTPAuth)
 	grpcServer := grpc.NewServer(conf.GRPC, st, syn, net, consMgr)
 	nanomsgServer := nanomsg.NewServer(conf.Nanomsg, eventCh)
 

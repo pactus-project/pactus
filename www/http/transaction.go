@@ -12,7 +12,7 @@ import (
 func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	if s.enableAuth {
-		ctx = context.WithoutCancel(s.basicAuth(r))
+		ctx = s.basicAuth(r)
 	}
 
 	vars := mux.Vars(r)

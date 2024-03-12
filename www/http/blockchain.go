@@ -15,7 +15,7 @@ import (
 func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	if s.enableAuth {
-		ctx = context.WithoutCancel(s.basicAuth(r))
+		ctx = s.basicAuth(r)
 	}
 
 	res, err := s.blockchain.GetBlockchainInfo(ctx,
@@ -42,6 +42,11 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	if s.enableAuth {
+		ctx = s.basicAuth(r)
+	}
+
 	vars := mux.Vars(r)
 	height, err := strconv.ParseInt(vars["height"], 10, 32)
 	if err != nil {
@@ -49,13 +54,13 @@ func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request)
 
 		return
 	}
-	s.blockByHeight(w, r, uint32(height))
+	s.blockByHeight(ctx, w, r, uint32(height))
 }
 
 func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	if s.enableAuth {
-		ctx = context.WithoutCancel(s.basicAuth(r))
+		ctx = s.basicAuth(r)
 	}
 
 	vars := mux.Vars(r)
@@ -74,15 +79,10 @@ func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.blockByHeight(w, r, res.Height)
+	s.blockByHeight(ctx, w, r, res.Height)
 }
 
-func (s *Server) blockByHeight(w http.ResponseWriter, r *http.Request, blockHeight uint32) {
-	ctx := context.Background()
-	if s.enableAuth {
-		ctx = context.WithoutCancel(s.basicAuth(r))
-	}
-
+func (s *Server) blockByHeight(ctx context.Context, w http.ResponseWriter, r *http.Request, blockHeight uint32) {
 	res, err := s.blockchain.GetBlock(ctx,
 		&pactus.GetBlockRequest{
 			Height:    blockHeight,
@@ -130,7 +130,7 @@ func (s *Server) blockByHeight(w http.ResponseWriter, r *http.Request, blockHeig
 func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	if s.enableAuth {
-		ctx = context.WithoutCancel(s.basicAuth(r))
+		ctx = s.basicAuth(r)
 	}
 
 	vars := mux.Vars(r)
@@ -156,7 +156,7 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	if s.enableAuth {
-		ctx = context.WithoutCancel(s.basicAuth(r))
+		ctx = s.basicAuth(r)
 	}
 
 	vars := mux.Vars(r)
@@ -176,7 +176,7 @@ func (s *Server) GetValidatorHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) GetValidatorByNumberHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	if s.enableAuth {
-		ctx = context.WithoutCancel(s.basicAuth(r))
+		ctx = s.basicAuth(r)
 	}
 
 	vars := mux.Vars(r)
@@ -220,7 +220,7 @@ func (s *Server) writeValidatorTable(val *pactus.ValidatorInfo) *tableMaker {
 func (s *Server) ConsensusHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	if s.enableAuth {
-		ctx = context.WithoutCancel(s.basicAuth(r))
+		ctx = s.basicAuth(r)
 	}
 
 	res, err := s.blockchain.GetConsensusInfo(ctx,

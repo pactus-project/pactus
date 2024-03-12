@@ -17,7 +17,7 @@ import (
 func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	if s.enableAuth {
-		ctx = context.WithoutCancel(s.basicAuth(r))
+		ctx = s.basicAuth(r)
 	}
 
 	res, err := s.network.GetNetworkInfo(ctx,
@@ -74,7 +74,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	if s.enableAuth {
-		ctx = context.WithoutCancel(s.basicAuth(r))
+		ctx = s.basicAuth(r)
 	}
 
 	res, err := s.network.GetNodeInfo(ctx,
