@@ -771,21 +771,21 @@ func (st *state) publishEvents(height uint32, blk *block.Block) {
 	}
 }
 
-func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, error) {
+func (st *state) CalculateFee(amount int64, payloadType payload.Type) int64 {
 	switch payloadType {
 	case payload.TypeTransfer,
 		payload.TypeBond,
 		payload.TypeWithdraw:
 
-		return execution.CalculateFee(amount, st.params), nil
+		return execution.CalculateFee(amount, st.params)
 
 	case payload.TypeUnbond,
 		payload.TypeSortition:
 
-		return 0, nil
+		return 0
 
 	default:
-		return 0, errors.Errorf(errors.ErrInvalidTx, "unexpected tx type: %v", payloadType)
+		return 0
 	}
 }
 

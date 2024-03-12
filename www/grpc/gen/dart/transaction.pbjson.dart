@@ -63,21 +63,23 @@ const CalculateFeeRequest$json = const {
   '2': const [
     const {'1': 'amount', '3': 1, '4': 1, '5': 3, '10': 'amount'},
     const {'1': 'payload_type', '3': 2, '4': 1, '5': 14, '6': '.pactus.PayloadType', '10': 'payloadType'},
+    const {'1': 'fixed_amount', '3': 3, '4': 1, '5': 8, '10': 'fixedAmount'},
   ],
 };
 
 /// Descriptor for `CalculateFeeRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List calculateFeeRequestDescriptor = $convert.base64Decode('ChNDYWxjdWxhdGVGZWVSZXF1ZXN0EhYKBmFtb3VudBgBIAEoA1IGYW1vdW50EjYKDHBheWxvYWRfdHlwZRgCIAEoDjITLnBhY3R1cy5QYXlsb2FkVHlwZVILcGF5bG9hZFR5cGU=');
+final $typed_data.Uint8List calculateFeeRequestDescriptor = $convert.base64Decode('ChNDYWxjdWxhdGVGZWVSZXF1ZXN0EhYKBmFtb3VudBgBIAEoA1IGYW1vdW50EjYKDHBheWxvYWRfdHlwZRgCIAEoDjITLnBhY3R1cy5QYXlsb2FkVHlwZVILcGF5bG9hZFR5cGUSIQoMZml4ZWRfYW1vdW50GAMgASgIUgtmaXhlZEFtb3VudA==');
 @$core.Deprecated('Use calculateFeeResponseDescriptor instead')
 const CalculateFeeResponse$json = const {
   '1': 'CalculateFeeResponse',
   '2': const [
-    const {'1': 'fee', '3': 1, '4': 1, '5': 3, '10': 'fee'},
+    const {'1': 'amount', '3': 1, '4': 1, '5': 3, '10': 'amount'},
+    const {'1': 'fee', '3': 2, '4': 1, '5': 3, '10': 'fee'},
   ],
 };
 
 /// Descriptor for `CalculateFeeResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List calculateFeeResponseDescriptor = $convert.base64Decode('ChRDYWxjdWxhdGVGZWVSZXNwb25zZRIQCgNmZWUYASABKANSA2ZlZQ==');
+final $typed_data.Uint8List calculateFeeResponseDescriptor = $convert.base64Decode('ChRDYWxjdWxhdGVGZWVSZXNwb25zZRIWCgZhbW91bnQYASABKANSBmFtb3VudBIQCgNmZWUYAiABKANSA2ZlZQ==');
 @$core.Deprecated('Use broadcastTransactionRequestDescriptor instead')
 const BroadcastTransactionRequest$json = const {
   '1': 'BroadcastTransactionRequest',
@@ -129,9 +131,9 @@ const GetRawBondTransactionRequest$json = const {
 
 /// Descriptor for `GetRawBondTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getRawBondTransactionRequestDescriptor = $convert.base64Decode('ChxHZXRSYXdCb25kVHJhbnNhY3Rpb25SZXF1ZXN0EhsKCWxvY2tfdGltZRgBIAEoDVIIbG9ja1RpbWUSFgoGc2VuZGVyGAIgASgJUgZzZW5kZXISGgoIcmVjZWl2ZXIYAyABKAlSCHJlY2VpdmVyEhQKBXN0YWtlGAQgASgDUgVzdGFrZRIdCgpwdWJsaWNfa2V5GAUgASgJUglwdWJsaWNLZXkSEAoDZmVlGAYgASgDUgNmZWUSEgoEbWVtbxgHIAEoCVIEbWVtbw==');
-@$core.Deprecated('Use getRawUnBondTransactionRequestDescriptor instead')
-const GetRawUnBondTransactionRequest$json = const {
-  '1': 'GetRawUnBondTransactionRequest',
+@$core.Deprecated('Use getRawUnbondTransactionRequestDescriptor instead')
+const GetRawUnbondTransactionRequest$json = const {
+  '1': 'GetRawUnbondTransactionRequest',
   '2': const [
     const {'1': 'lock_time', '3': 1, '4': 1, '5': 13, '10': 'lockTime'},
     const {'1': 'validator_address', '3': 3, '4': 1, '5': 9, '10': 'validatorAddress'},
@@ -139,8 +141,8 @@ const GetRawUnBondTransactionRequest$json = const {
   ],
 };
 
-/// Descriptor for `GetRawUnBondTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getRawUnBondTransactionRequestDescriptor = $convert.base64Decode('Ch5HZXRSYXdVbkJvbmRUcmFuc2FjdGlvblJlcXVlc3QSGwoJbG9ja190aW1lGAEgASgNUghsb2NrVGltZRIrChF2YWxpZGF0b3JfYWRkcmVzcxgDIAEoCVIQdmFsaWRhdG9yQWRkcmVzcxISCgRtZW1vGAQgASgJUgRtZW1v');
+/// Descriptor for `GetRawUnbondTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getRawUnbondTransactionRequestDescriptor = $convert.base64Decode('Ch5HZXRSYXdVbmJvbmRUcmFuc2FjdGlvblJlcXVlc3QSGwoJbG9ja190aW1lGAEgASgNUghsb2NrVGltZRIrChF2YWxpZGF0b3JfYWRkcmVzcxgDIAEoCVIQdmFsaWRhdG9yQWRkcmVzcxISCgRtZW1vGAQgASgJUgRtZW1v');
 @$core.Deprecated('Use getRawWithdrawTransactionRequestDescriptor instead')
 const GetRawWithdrawTransactionRequest$json = const {
   '1': 'GetRawWithdrawTransactionRequest',
@@ -148,14 +150,14 @@ const GetRawWithdrawTransactionRequest$json = const {
     const {'1': 'lock_time', '3': 1, '4': 1, '5': 13, '10': 'lockTime'},
     const {'1': 'validator_address', '3': 2, '4': 1, '5': 9, '10': 'validatorAddress'},
     const {'1': 'account_address', '3': 3, '4': 1, '5': 9, '10': 'accountAddress'},
-    const {'1': 'fee', '3': 4, '4': 1, '5': 3, '10': 'fee'},
-    const {'1': 'amount', '3': 5, '4': 1, '5': 3, '10': 'amount'},
+    const {'1': 'amount', '3': 4, '4': 1, '5': 3, '10': 'amount'},
+    const {'1': 'fee', '3': 5, '4': 1, '5': 3, '10': 'fee'},
     const {'1': 'memo', '3': 6, '4': 1, '5': 9, '10': 'memo'},
   ],
 };
 
 /// Descriptor for `GetRawWithdrawTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getRawWithdrawTransactionRequestDescriptor = $convert.base64Decode('CiBHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uUmVxdWVzdBIbCglsb2NrX3RpbWUYASABKA1SCGxvY2tUaW1lEisKEXZhbGlkYXRvcl9hZGRyZXNzGAIgASgJUhB2YWxpZGF0b3JBZGRyZXNzEicKD2FjY291bnRfYWRkcmVzcxgDIAEoCVIOYWNjb3VudEFkZHJlc3MSEAoDZmVlGAQgASgDUgNmZWUSFgoGYW1vdW50GAUgASgDUgZhbW91bnQSEgoEbWVtbxgGIAEoCVIEbWVtbw==');
+final $typed_data.Uint8List getRawWithdrawTransactionRequestDescriptor = $convert.base64Decode('CiBHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uUmVxdWVzdBIbCglsb2NrX3RpbWUYASABKA1SCGxvY2tUaW1lEisKEXZhbGlkYXRvcl9hZGRyZXNzGAIgASgJUhB2YWxpZGF0b3JBZGRyZXNzEicKD2FjY291bnRfYWRkcmVzcxgDIAEoCVIOYWNjb3VudEFkZHJlc3MSFgoGYW1vdW50GAQgASgDUgZhbW91bnQSEAoDZmVlGAUgASgDUgNmZWUSEgoEbWVtbxgGIAEoCVIEbWVtbw==');
 @$core.Deprecated('Use getRawTransactionResponseDescriptor instead')
 const GetRawTransactionResponse$json = const {
   '1': 'GetRawTransactionResponse',
@@ -258,7 +260,7 @@ const $core.Map<$core.String, $core.dynamic> TransactionServiceBase$json = const
     const {'1': 'BroadcastTransaction', '2': '.pactus.BroadcastTransactionRequest', '3': '.pactus.BroadcastTransactionResponse'},
     const {'1': 'GetRawTransferTransaction', '2': '.pactus.GetRawTransferTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
     const {'1': 'GetRawBondTransaction', '2': '.pactus.GetRawBondTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
-    const {'1': 'GetRawUnBondTransaction', '2': '.pactus.GetRawUnBondTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
+    const {'1': 'GetRawUnbondTransaction', '2': '.pactus.GetRawUnbondTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
     const {'1': 'GetRawWithdrawTransaction', '2': '.pactus.GetRawWithdrawTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
   ],
 };
@@ -280,9 +282,9 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Transactio
   '.pactus.GetRawTransferTransactionRequest': GetRawTransferTransactionRequest$json,
   '.pactus.GetRawTransactionResponse': GetRawTransactionResponse$json,
   '.pactus.GetRawBondTransactionRequest': GetRawBondTransactionRequest$json,
-  '.pactus.GetRawUnBondTransactionRequest': GetRawUnBondTransactionRequest$json,
+  '.pactus.GetRawUnbondTransactionRequest': GetRawUnbondTransactionRequest$json,
   '.pactus.GetRawWithdrawTransactionRequest': GetRawWithdrawTransactionRequest$json,
 };
 
 /// Descriptor for `Transaction`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode('CgtUcmFuc2FjdGlvbhJPCg5HZXRUcmFuc2FjdGlvbhIdLnBhY3R1cy5HZXRUcmFuc2FjdGlvblJlcXVlc3QaHi5wYWN0dXMuR2V0VHJhbnNhY3Rpb25SZXNwb25zZRJJCgxDYWxjdWxhdGVGZWUSGy5wYWN0dXMuQ2FsY3VsYXRlRmVlUmVxdWVzdBocLnBhY3R1cy5DYWxjdWxhdGVGZWVSZXNwb25zZRJhChRCcm9hZGNhc3RUcmFuc2FjdGlvbhIjLnBhY3R1cy5Ccm9hZGNhc3RUcmFuc2FjdGlvblJlcXVlc3QaJC5wYWN0dXMuQnJvYWRjYXN0VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdUcmFuc2ZlclRyYW5zYWN0aW9uEigucGFjdHVzLkdldFJhd1RyYW5zZmVyVHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2USYAoVR2V0UmF3Qm9uZFRyYW5zYWN0aW9uEiQucGFjdHVzLkdldFJhd0JvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3VHJhbnNhY3Rpb25SZXNwb25zZRJkChdHZXRSYXdVbkJvbmRUcmFuc2FjdGlvbhImLnBhY3R1cy5HZXRSYXdVbkJvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uEigucGFjdHVzLkdldFJhd1dpdGhkcmF3VHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2U=');
+final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode('CgtUcmFuc2FjdGlvbhJPCg5HZXRUcmFuc2FjdGlvbhIdLnBhY3R1cy5HZXRUcmFuc2FjdGlvblJlcXVlc3QaHi5wYWN0dXMuR2V0VHJhbnNhY3Rpb25SZXNwb25zZRJJCgxDYWxjdWxhdGVGZWUSGy5wYWN0dXMuQ2FsY3VsYXRlRmVlUmVxdWVzdBocLnBhY3R1cy5DYWxjdWxhdGVGZWVSZXNwb25zZRJhChRCcm9hZGNhc3RUcmFuc2FjdGlvbhIjLnBhY3R1cy5Ccm9hZGNhc3RUcmFuc2FjdGlvblJlcXVlc3QaJC5wYWN0dXMuQnJvYWRjYXN0VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdUcmFuc2ZlclRyYW5zYWN0aW9uEigucGFjdHVzLkdldFJhd1RyYW5zZmVyVHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2USYAoVR2V0UmF3Qm9uZFRyYW5zYWN0aW9uEiQucGFjdHVzLkdldFJhd0JvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3VHJhbnNhY3Rpb25SZXNwb25zZRJkChdHZXRSYXdVbmJvbmRUcmFuc2FjdGlvbhImLnBhY3R1cy5HZXRSYXdVbmJvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uEigucGFjdHVzLkdldFJhd1dpdGhkcmF3VHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2U=');

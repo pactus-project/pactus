@@ -4,6 +4,7 @@ import (
 	"bytes"
 	_ "embed"
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/pactus-project/pactus/consensus"
@@ -13,7 +14,6 @@ import (
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
@@ -62,11 +62,15 @@ func (conf *NodeConfig) BasicCheck() error {
 	for _, addrStr := range conf.RewardAddresses {
 		addr, err := crypto.AddressFromString(addrStr)
 		if err != nil {
-			return errors.Errorf(errors.ErrInvalidConfig, "invalid reward address: %v", err.Error())
+			return Error{
+				Reason: fmt.Sprintf("invalid reward address: %v", err.Error()),
+			}
 		}
 
 		if !addr.IsAccountAddress() {
-			return errors.Errorf(errors.ErrInvalidConfig, "reward address is not an account address: %s", addrStr)
+			return Error{
+				Reason: fmt.Sprintf("reward address is not an account address: %s", addrStr),
+			}
 		}
 	}
 
@@ -149,11 +153,15 @@ func DefaultConfigLocalnet() *Config {
 	conf.Network.BootstrapAddrStrings = []string{}
 	conf.Network.MaxConns = 0
 	conf.Network.NetworkName = "pactus-localnet"
-	conf.Network.DefaultPort = 21666
+	conf.Network.DefaultPort = 0
+	conf.Network.ForcePrivateNetwork = true
+	conf.Network.EnableMdns = true
+	conf.Sync.Moniker = "localnet-1"
 	conf.GRPC.Enable = true
+	conf.GRPC.EnableWallet = true
 	conf.GRPC.Listen = "[::]:50052"
 	conf.GRPC.Gateway.Enable = true
-	conf.GRPC.Gateway.Listen = "[::]:0"
+	conf.GRPC.Gateway.Listen = "[::]:8080"
 	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "[::]:0"
 	conf.Nanomsg.Enable = true

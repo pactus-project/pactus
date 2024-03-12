@@ -109,6 +109,10 @@ func local_request_Transaction_GetTransaction_0(ctx context.Context, marshaler r
 
 }
 
+var (
+	filter_Transaction_CalculateFee_0 = &utilities.DoubleArray{Encoding: map[string]int{"amount": 0, "payload_type": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
+)
+
 func request_Transaction_CalculateFee_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq CalculateFeeRequest
 	var metadata runtime.ServerMetadata
@@ -142,6 +146,13 @@ func request_Transaction_CalculateFee_0(ctx context.Context, marshaler runtime.M
 	}
 
 	protoReq.PayloadType = PayloadType(e)
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_CalculateFee_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := client.CalculateFee(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -181,6 +192,13 @@ func local_request_Transaction_CalculateFee_0(ctx context.Context, marshaler run
 	}
 
 	protoReq.PayloadType = PayloadType(e)
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_CalculateFee_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := server.CalculateFee(ctx, &protoReq)
 	return msg, metadata, err
@@ -563,8 +581,8 @@ func local_request_Transaction_GetRawBondTransaction_0(ctx context.Context, mars
 
 }
 
-func request_Transaction_GetRawUnBondTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetRawUnBondTransactionRequest
+func request_Transaction_GetRawUnbondTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetRawUnbondTransactionRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -604,13 +622,13 @@ func request_Transaction_GetRawUnBondTransaction_0(ctx context.Context, marshale
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "memo", err)
 	}
 
-	msg, err := client.GetRawUnBondTransaction(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.GetRawUnbondTransaction(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Transaction_GetRawUnBondTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetRawUnBondTransactionRequest
+func local_request_Transaction_GetRawUnbondTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetRawUnbondTransactionRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -650,7 +668,7 @@ func local_request_Transaction_GetRawUnBondTransaction_0(ctx context.Context, ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "memo", err)
 	}
 
-	msg, err := server.GetRawUnBondTransaction(ctx, &protoReq)
+	msg, err := server.GetRawUnbondTransaction(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -938,7 +956,7 @@ func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux
 
 	})
 
-	mux.Handle("GET", pattern_Transaction_GetRawUnBondTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Transaction_GetRawUnbondTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -946,12 +964,12 @@ func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawUnBondTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_unbond_transaction/validator_address/{validator_address}/lock_time/{lock_time}/memo/{memo}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawUnbondTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_unbond_transaction/validator_address/{validator_address}/lock_time/{lock_time}/memo/{memo}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Transaction_GetRawUnBondTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Transaction_GetRawUnbondTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -959,7 +977,7 @@ func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux
 			return
 		}
 
-		forward_Transaction_GetRawUnBondTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_GetRawUnbondTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -1139,25 +1157,25 @@ func RegisterTransactionHandlerClient(ctx context.Context, mux *runtime.ServeMux
 
 	})
 
-	mux.Handle("GET", pattern_Transaction_GetRawUnBondTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Transaction_GetRawUnbondTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawUnBondTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_unbond_transaction/validator_address/{validator_address}/lock_time/{lock_time}/memo/{memo}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawUnbondTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_unbond_transaction/validator_address/{validator_address}/lock_time/{lock_time}/memo/{memo}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Transaction_GetRawUnBondTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Transaction_GetRawUnbondTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Transaction_GetRawUnBondTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_GetRawUnbondTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -1197,7 +1215,7 @@ var (
 
 	pattern_Transaction_GetRawBondTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5, 2, 6, 1, 0, 4, 1, 5, 6, 2, 7, 1, 0, 4, 1, 5, 7, 2, 8, 1, 0, 4, 1, 5, 8, 2, 9, 1, 0, 4, 1, 5, 9}, []string{"pactus", "transaction", "get_raw_bond_transaction", "sender", "receiver", "stake", "lock_time", "public_key", "fee", "memo"}, ""))
 
-	pattern_Transaction_GetRawUnBondTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5}, []string{"pactus", "transaction", "get_raw_unbond_transaction", "validator_address", "lock_time", "memo"}, ""))
+	pattern_Transaction_GetRawUnbondTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5}, []string{"pactus", "transaction", "get_raw_unbond_transaction", "validator_address", "lock_time", "memo"}, ""))
 
 	pattern_Transaction_GetRawWithdrawTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 5, 2, 6, 1, 0, 4, 1, 5, 6, 2, 7, 1, 0, 4, 1, 5, 7, 2, 8, 1, 0, 4, 1, 5, 8}, []string{"pactus", "transaction", "get_raw_withdraw_transaction", "validator_address", "account_address", "amount", "lock_time", "fee", "memo"}, ""))
 )
@@ -1213,7 +1231,7 @@ var (
 
 	forward_Transaction_GetRawBondTransaction_0 = runtime.ForwardResponseMessage
 
-	forward_Transaction_GetRawUnBondTransaction_0 = runtime.ForwardResponseMessage
+	forward_Transaction_GetRawUnbondTransaction_0 = runtime.ForwardResponseMessage
 
 	forward_Transaction_GetRawWithdrawTransaction_0 = runtime.ForwardResponseMessage
 )
