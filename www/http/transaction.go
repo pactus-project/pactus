@@ -1,7 +1,6 @@
 package http
 
 import (
-	"context"
 	"encoding/hex"
 	"net/http"
 
@@ -10,9 +9,17 @@ import (
 )
 
 func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
 	if s.enableAuth {
-		ctx = s.basicAuth(r)
+		user, password, ok := r.BasicAuth()
+		if !ok {
+			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+
+			return
+		}
+
+		ctx = s.basicAuth(ctx, user, password)
 	}
 
 	vars := mux.Vars(r)

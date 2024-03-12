@@ -185,13 +185,7 @@ func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
 	return n
 }
 
-func (s *Server) basicAuth(r *http.Request) context.Context {
-	ctx := r.Context()
-	user, password, ok := r.BasicAuth()
-	if !ok {
-		return ctx
-	}
-
+func (s *Server) basicAuth(ctx context.Context, user, password string) context.Context {
 	auth := user + ":" + password
 	enc := base64.StdEncoding.EncodeToString([]byte(auth))
 

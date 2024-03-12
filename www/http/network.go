@@ -1,7 +1,6 @@
 package http
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -15,9 +14,17 @@ import (
 )
 
 func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
 	if s.enableAuth {
-		ctx = s.basicAuth(r)
+		user, password, ok := r.BasicAuth()
+		if !ok {
+			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+
+			return
+		}
+
+		ctx = s.basicAuth(ctx, user, password)
 	}
 
 	res, err := s.network.GetNetworkInfo(ctx,
@@ -72,9 +79,17 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
 	if s.enableAuth {
-		ctx = s.basicAuth(r)
+		user, password, ok := r.BasicAuth()
+		if !ok {
+			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+
+			return
+		}
+
+		ctx = s.basicAuth(ctx, user, password)
 	}
 
 	res, err := s.network.GetNodeInfo(ctx,
