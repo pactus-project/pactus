@@ -46,7 +46,6 @@ func TestBasicAuth(t *testing.T) {
 			authHeader:    malformedAuth,
 			expectedError: codes.Unauthenticated,
 		},
-		// More test cases if necessary...
 	}
 
 	for _, tt := range tests {
