@@ -85,7 +85,6 @@ func TestCompareBasicAuth(t *testing.T) {
 			password:    "foobar",
 			expectError: true,
 		},
-		// Add more cases if needed
 	}
 
 	for _, tt := range tests {
