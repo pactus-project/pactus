@@ -56,7 +56,7 @@ func ParseHtpasswdAuth(basicAuthCredential string) (string, string, error) {
 }
 
 // ExtractBasicAuthFromContext extract basic auth from incoming context in grpc request.
-func ExtractBasicAuthFromContext(ctx context.Context) (user, password string, err error) {
+func ExtractBasicAuthFromContext(ctx context.Context) (string, string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return "", "", ErrMetadataNotFound
