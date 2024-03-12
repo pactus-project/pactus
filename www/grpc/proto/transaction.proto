@@ -66,9 +66,9 @@ message CalculateFeeRequest {
 // Response message containing the calculated transaction fee.
 message CalculateFeeResponse {
   // Calculated amount.
-  int64 amount = 1;
+  int64 amount = 2;
   // Calculated transaction fee.
-  int64 fee = 2;
+  int64 fee = 1;
 }
 
 // Request message for broadcasting a signed transaction.
