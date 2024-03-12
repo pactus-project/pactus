@@ -153,7 +153,7 @@
   # `listen` is the address to listen for incoming connections for gRPC server.
  ## listen = "127.0.0.1:50051"
 
-  # `basic_auth_credential` is basic auth for authentication layer for improve security of gRPC,
+  # `basic_auth_credential`  is the Basic Auth credential used to enhance gRPC security.
  ## basic_auth_credential = ""
 
   # `grpc.gateway` contains configuration for the gRPC Gateway server
