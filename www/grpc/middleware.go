@@ -10,7 +10,7 @@ import (
 )
 
 func BasicAuth(basicAuthCredential string) grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (
+	return func(ctx context.Context, req any, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (
 		resp any, err error,
 	) {
 		user, password, err := htpasswd.ExtractBasicAuthFromContext(ctx)

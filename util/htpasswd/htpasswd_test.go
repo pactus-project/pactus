@@ -186,6 +186,7 @@ func TestExtractBasicAuthFromContext(t *testing.T) {
 			user, pass, err := ExtractBasicAuthFromContext(tt.ctx)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ExtractBasicAuthFromContext() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if user != tt.wantUser || pass != tt.wantPass {
@@ -197,5 +198,6 @@ func TestExtractBasicAuthFromContext(t *testing.T) {
 
 func createTestContext(authValue string) context.Context {
 	md := metadata.New(map[string]string{"authorization": authValue})
+
 	return metadata.NewIncomingContext(context.Background(), md)
 }

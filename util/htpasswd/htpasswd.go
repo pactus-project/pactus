@@ -14,7 +14,7 @@ const (
 	passwordSeparator = ":"
 )
 
-// CompareBasicAuth compare basic auth with bcrypt algorithm
+// CompareBasicAuth compare basic auth with bcrypt algorithm.
 func CompareBasicAuth(basicAuthCredential, user, password string) error {
 	parsedUser, parsedHashedPass, err := ParseHtpasswdAuth(basicAuthCredential)
 	if err != nil {
@@ -28,7 +28,7 @@ func CompareBasicAuth(basicAuthCredential, user, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(parsedHashedPass), []byte(password))
 }
 
-// ParseHtpasswdAuth parse htpasswd auth
+// ParseHtpasswdAuth parse htpasswd auth.
 func ParseHtpasswdAuth(auth string) (user, encodedPassword string, err error) {
 	parts := strings.SplitN(auth, passwordSeparator, 2)
 	if len(parts) != 2 {
@@ -37,10 +37,11 @@ func ParseHtpasswdAuth(auth string) (user, encodedPassword string, err error) {
 
 	user = parts[0]
 	encodedPassword = parts[1]
+
 	return
 }
 
-// ExtractBasicAuthFromContext extract basic auth from incoming context in grpc request
+// ExtractBasicAuthFromContext extract basic auth from incoming context in grpc request.
 func ExtractBasicAuthFromContext(ctx context.Context) (user, password string, err error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {

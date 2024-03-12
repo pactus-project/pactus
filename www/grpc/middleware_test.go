@@ -10,8 +10,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// mockUnaryHandler simulates a gRPC method handler
-func mockUnaryHandler(ctx context.Context, req interface{}) (interface{}, error) {
+// mockUnaryHandler simulates a gRPC method handler.
+func mockUnaryHandler(_ context.Context, _ interface{}) (interface{}, error) {
 	return "response", nil
 }
 
