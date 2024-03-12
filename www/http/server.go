@@ -143,7 +143,7 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 	buf := new(bytes.Buffer)
 	buf.WriteString("<html><body><br>")
 
-	err := s.router.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
+	err := s.router.Walk(func(route *mux.Route, _ *mux.Router, _ []*mux.Route) error {
 		pathTemplate, err := route.GetPathTemplate()
 		if err == nil {
 			link := pathTemplate

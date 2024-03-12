@@ -210,19 +210,19 @@ func TestNetwork(t *testing.T) {
 	time.Sleep(2 * time.Second)
 
 	t.Run("Supported Protocols", func(t *testing.T) {
-		require.EventuallyWithT(t, func(c *assert.CollectT) {
+		require.EventuallyWithT(t, func(_ *assert.CollectT) {
 			protos := networkM.Protocols()
 			assert.Contains(t, protos, lp2pproto.ProtoIDv2Stop)
 			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Hop)
 		}, time.Second, 100*time.Millisecond)
 
-		require.EventuallyWithT(t, func(c *assert.CollectT) {
+		require.EventuallyWithT(t, func(_ *assert.CollectT) {
 			protos := networkN.Protocols()
 			assert.Contains(t, protos, lp2pproto.ProtoIDv2Stop)
 			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Hop)
 		}, time.Second, 100*time.Millisecond)
 
-		require.EventuallyWithT(t, func(c *assert.CollectT) {
+		require.EventuallyWithT(t, func(_ *assert.CollectT) {
 			protos := networkP.Protocols()
 			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Stop)
 			assert.Contains(t, protos, lp2pproto.ProtoIDv2Hop)
