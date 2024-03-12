@@ -91,8 +91,8 @@ func (s *transactionServer) CalculateFee(_ context.Context,
 	}
 
 	return &pactus.CalculateFeeResponse{
-		Amount: amount,
-		Fee:    fee,
+		Amount: util.ChangeToCoin(amount),
+		Fee:    util.ChangeToCoin(fee),
 	}, nil
 }
 

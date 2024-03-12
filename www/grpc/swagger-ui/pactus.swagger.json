@@ -1115,13 +1115,13 @@
       "type": "object",
       "properties": {
         "amount": {
-          "type": "string",
-          "format": "int64",
+          "type": "number",
+          "format": "double",
           "description": "Calculated amount."
         },
         "fee": {
-          "type": "string",
-          "format": "int64",
+          "type": "number",
+          "format": "double",
           "description": "Calculated transaction fee."
         }
       },

@@ -230,15 +230,15 @@ class CalculateFeeRequest extends $pb.GeneratedMessage {
 
 class CalculateFeeResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CalculateFeeResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
-    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount')
+    ..a<$core.double>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee', $pb.PbFieldType.OD)
+    ..a<$core.double>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
   CalculateFeeResponse._() : super();
   factory CalculateFeeResponse({
-    $fixnum.Int64? fee,
-    $fixnum.Int64? amount,
+    $core.double? fee,
+    $core.double? amount,
   }) {
     final _result = create();
     if (fee != null) {
@@ -271,18 +271,18 @@ class CalculateFeeResponse extends $pb.GeneratedMessage {
   static CalculateFeeResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $fixnum.Int64 get fee => $_getI64(0);
+  $core.double get fee => $_getN(0);
   @$pb.TagNumber(1)
-  set fee($fixnum.Int64 v) { $_setInt64(0, v); }
+  set fee($core.double v) { $_setDouble(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasFee() => $_has(0);
   @$pb.TagNumber(1)
   void clearFee() => clearField(1);
 
   @$pb.TagNumber(2)
-  $fixnum.Int64 get amount => $_getI64(1);
+  $core.double get amount => $_getN(1);
   @$pb.TagNumber(2)
-  set amount($fixnum.Int64 v) { $_setInt64(1, v); }
+  set amount($core.double v) { $_setDouble(1, v); }
   @$pb.TagNumber(2)
   $core.bool hasAmount() => $_has(1);
   @$pb.TagNumber(2)

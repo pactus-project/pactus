@@ -129,7 +129,7 @@ func TestGetCalculateFee(t *testing.T) {
 			PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
 		})
 	assert.NoError(t, err)
-	assert.Equal(t, amount/10000, res.Fee)
+	assert.Equal(t, util.ChangeToCoin(amount/10000), res.Fee)
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
 	td.StopServer()
@@ -241,7 +241,7 @@ func TestCalculateFee(t *testing.T) {
 				FixedAmount: false,
 			})
 		assert.NoError(t, err)
-		assert.Equal(t, res.Amount, amount)
+		assert.Equal(t, res.Amount, util.ChangeToCoin(amount))
 	})
 
 	t.Run("Fixed amount", func(t *testing.T) {
@@ -253,7 +253,7 @@ func TestCalculateFee(t *testing.T) {
 				FixedAmount: true,
 			})
 		assert.NoError(t, err)
-		assert.LessOrEqual(t, res.Amount+res.Fee, amount)
+		assert.LessOrEqual(t, util.CoinToChange(res.Amount+res.Fee), amount)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

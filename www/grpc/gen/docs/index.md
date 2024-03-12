@@ -156,8 +156,8 @@ Response message containing the calculated transaction fee.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| amount | [int64](#int64) |  | Calculated amount. |
-| fee | [int64](#int64) |  | Calculated transaction fee. |
+| amount | [double](#double) |  | Calculated amount. |
+| fee | [double](#double) |  | Calculated transaction fee. |
 
 
 

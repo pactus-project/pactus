@@ -692,14 +692,14 @@ CalculateFeeResponse
     <tr>
       <td class="fw-bold">amount</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
       <td>Calculated amount. </td>
     </tr>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
       <td>Calculated transaction fee. </td>
     </tr>
