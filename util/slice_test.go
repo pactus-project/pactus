@@ -235,8 +235,9 @@ func TestExtendSlice(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		Extend(&c.in, c.size)
-		assert.Equal(t, c.in, c.want, "ExtendSlice(%v, %v) == %v, want %v", c.in, c.size, c.in, c.want)
+		inCopy := c.in
+		Extend(&inCopy, c.size)
+		assert.Equal(t, inCopy, c.want, "ExtendSlice(%v, %v) == %v, want %v", c.in, c.size, c.in, c.want)
 	}
 }
 

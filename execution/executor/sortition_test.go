@@ -12,7 +12,7 @@ import (
 
 func updateCommittee(td *testData) {
 	joiningCommittee := make([]*validator.Validator, 0)
-	td.sandbox.IterateValidators(func(val *validator.Validator, updated bool, joined bool) {
+	td.sandbox.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
 		if joined {
 			joiningCommittee = append(joiningCommittee, val)
 		}

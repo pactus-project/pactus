@@ -194,7 +194,7 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 
 func (st *state) loadMerkels() {
 	totalAccount := st.store.TotalAccounts()
-	st.store.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
+	st.store.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
 		// Let's keep this check, even we have tested it
 		if acc.Number() >= totalAccount {
 			panic("Account number is out of range")

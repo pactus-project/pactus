@@ -225,7 +225,7 @@ func buildSetLabelCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(setLabelCmd)
 
-	setLabelCmd.Run = func(c *cobra.Command, args []string) {
+	setLabelCmd.Run = func(_ *cobra.Command, args []string) {
 		addr := args[0]
 
 		wlt, err := openWallet()
