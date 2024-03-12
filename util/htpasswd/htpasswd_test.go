@@ -6,8 +6,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-
-	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -46,7 +44,7 @@ func TestParseHtpasswdAuth(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			assert.Equal(t, user+":"+encodedPass, tt.input)
+			require.Equal(t, user+":"+encodedPass, tt.input)
 		})
 	}
 }
