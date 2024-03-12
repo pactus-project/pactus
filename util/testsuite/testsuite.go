@@ -149,6 +149,10 @@ func (ts *TestSuite) RandAmount() int64 {
 	return ts.RandInt64(100e9)
 }
 
+func (ts *TestSuite) RandAmountInPAC() float64 {
+	return util.ChangeToCoin(ts.RandAmount())
+}
+
 // RandBytes returns a slice of random bytes of the given length.
 func (ts *TestSuite) RandBytes(length int) []byte {
 	buf := make([]byte, length)
