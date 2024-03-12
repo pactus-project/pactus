@@ -9,6 +9,19 @@ import (
 )
 
 func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	if s.enableAuth {
+		user, password, ok := r.BasicAuth()
+		if !ok {
+			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+
+			return
+		}
+
+		ctx = s.basicAuth(ctx, user, password)
+	}
+
 	vars := mux.Vars(r)
 	id, err := hex.DecodeString(vars["id"])
 	if err != nil {
@@ -17,7 +30,7 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.transaction.GetTransaction(r.Context(),
+	res, err := s.transaction.GetTransaction(ctx,
 		&pactus.GetTransactionRequest{
 			Id:        id,
 			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
