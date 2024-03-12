@@ -3,12 +3,15 @@ package http
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net"
 	"net/http"
 	"strings"
 	"time"
+
+	"google.golang.org/grpc/metadata"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -26,6 +29,7 @@ type Server struct {
 	config      *Config
 	router      *mux.Router
 	grpcClient  *grpc.ClientConn
+	enableAuth  bool
 	httpServer  *http.Server
 	blockchain  pactus.BlockchainClient
 	transaction pactus.TransactionClient
@@ -34,14 +38,15 @@ type Server struct {
 	logger      *logger.SubLogger
 }
 
-func NewServer(conf *Config) *Server {
+func NewServer(conf *Config, enableAuth bool) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &Server{
-		ctx:    ctx,
-		cancel: cancel,
-		config: conf,
-		logger: logger.NewSubLogger("_http", nil),
+		ctx:        ctx,
+		cancel:     cancel,
+		config:     conf,
+		enableAuth: enableAuth,
+		logger:     logger.NewSubLogger("_http", nil),
 	}
 }
 
@@ -126,7 +131,16 @@ func (s *Server) StopServer() {
 	}
 }
 
-func (s *Server) RootHandler(w http.ResponseWriter, _ *http.Request) {
+func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
+	if s.enableAuth {
+		if _, _, ok := r.BasicAuth(); !ok {
+			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+
+			return
+		}
+	}
+
 	buf := new(bytes.Buffer)
 	buf.WriteString("<html><body><br>")
 
@@ -169,6 +183,23 @@ func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
 	n, _ := io.WriteString(w, html)
 
 	return n
+}
+
+func (s *Server) basicAuth(r *http.Request) context.Context {
+	ctx := r.Context()
+	user, password, ok := r.BasicAuth()
+	if !ok {
+		return ctx
+	}
+
+	auth := user + ":" + password
+	enc := base64.StdEncoding.EncodeToString([]byte(auth))
+
+	md := metadata.New(map[string]string{
+		"authorization": "Basic " + enc,
+	})
+
+	return metadata.NewOutgoingContext(ctx, md)
 }
 
 type tableMaker struct {

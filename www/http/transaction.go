@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"encoding/hex"
 	"net/http"
 
@@ -9,6 +10,11 @@ import (
 )
 
 func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	if s.enableAuth {
+		ctx = context.WithoutCancel(s.basicAuth(r))
+	}
+
 	vars := mux.Vars(r)
 	id, err := hex.DecodeString(vars["id"])
 	if err != nil {
@@ -17,7 +23,7 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.transaction.GetTransaction(r.Context(),
+	res, err := s.transaction.GetTransaction(ctx,
 		&pactus.GetTransactionRequest{
 			Id:        id,
 			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,

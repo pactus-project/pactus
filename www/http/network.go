@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -14,7 +15,12 @@ import (
 )
 
 func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
-	res, err := s.network.GetNetworkInfo(r.Context(),
+	ctx := context.Background()
+	if s.enableAuth {
+		ctx = context.WithoutCancel(s.basicAuth(r))
+	}
+
+	res, err := s.network.GetNetworkInfo(ctx,
 		&pactus.GetNetworkInfoRequest{})
 	if err != nil {
 		s.writeError(w, err)
@@ -66,7 +72,12 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
-	res, err := s.network.GetNodeInfo(r.Context(),
+	ctx := context.Background()
+	if s.enableAuth {
+		ctx = context.WithoutCancel(s.basicAuth(r))
+	}
+
+	res, err := s.network.GetNodeInfo(ctx,
 		&pactus.GetNodeInfoRequest{})
 	if err != nil {
 		s.writeError(w, err)
