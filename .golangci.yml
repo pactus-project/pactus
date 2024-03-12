@@ -76,6 +76,7 @@ linters:
     - whitespace
     # - wrapcheck
     - zerologlint
+    - nonamedreturns
 
 linters-settings:
   gosimple:
@@ -86,9 +87,6 @@ linters-settings:
     disable: fieldalignment
     shadow:
         strict: true
-
-  godox:
-    severity: warning
 
   predeclared:
     # Comma-separated list of predeclared identifiers to not report on.
