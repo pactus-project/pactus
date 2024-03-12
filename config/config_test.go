@@ -18,7 +18,7 @@ func TestSaveMainnetConfig(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
-	assert.Equal(t, defConf, conf)
+	assert.Equal(t, DefaultConfigMainnet(), conf)
 
 	confData, _ := util.ReadFile(path)
 	exampleData, _ := util.ReadFile("example_config.toml")
@@ -32,7 +32,7 @@ func TestSaveTestnetConfig(t *testing.T) {
 
 	conf, err := LoadFromFile(path, true, defConf)
 	assert.NoError(t, err)
-	assert.Equal(t, defConf, conf)
+	assert.Equal(t, DefaultConfigTestnet(), conf)
 
 	assert.NoError(t, conf.BasicCheck())
 }
