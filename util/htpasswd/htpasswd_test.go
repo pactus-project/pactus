@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/metadata"
 )
@@ -92,9 +94,9 @@ func TestCompareBasicAuth(t *testing.T) {
 			err := CompareBasicAuth(tt.input, tt.user, tt.password)
 
 			if tt.expectError == nil {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			} else {
-				assert.ErrorIs(t, err, tt.expectError)
+				require.ErrorIs(t, err, tt.expectError)
 			}
 		})
 	}
@@ -208,9 +210,9 @@ func TestExtractBasicAuthFromContext(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			user, pass, err := ExtractBasicAuthFromContext(tt.ctx)
 			if tt.expectError == nil {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			} else {
-				assert.ErrorIs(t, err, tt.expectError)
+				require.ErrorIs(t, err, tt.expectError)
 			}
 			if user != tt.wantUser || pass != tt.wantPass {
 				t.Errorf("ExtractBasicAuthFromContext() got = %v, %v, want %v, %v", user, pass, tt.wantUser, tt.wantPass)
