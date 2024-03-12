@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
@@ -116,71 +117,142 @@ func TestSendRawTransaction(t *testing.T) {
 	td.StopServer()
 }
 
+func TestGetCalculateFee(t *testing.T) {
+	td := setup(t, nil)
+	conn, client := td.transactionClient(t)
+
+	amount := td.RandAmount()
+	res, err := client.CalculateFee(context.Background(),
+		&pactus.CalculateFeeRequest{
+			Amount:      amount,
+			PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
+		})
+	assert.NoError(t, err)
+	assert.Equal(t, amount/10000, res.Fee)
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}
+
 func TestGetRawTransaction(t *testing.T) {
 	td := setup(t, nil)
 	conn, client := td.transactionClient(t)
 
 	t.Run("Transfer", func(t *testing.T) {
-		trx, _ := td.GenerateTestTransferTx()
+		amount := td.RandAmount()
 
 		res, err := client.GetRawTransferTransaction(context.Background(),
 			&pactus.GetRawTransferTransactionRequest{
-				LockTime: trx.LockTime(),
-				Sender:   trx.Payload().Signer().String(),
-				Receiver: trx.Payload().Receiver().String(),
-				Amount:   trx.Payload().Value(),
-				Fee:      trx.Fee(),
-				Memo:     trx.Memo(),
+				Sender:   td.RandAccAddress().String(),
+				Receiver: td.RandAccAddress().String(),
+				Amount:   amount,
+				Memo:     td.RandString(32),
 			})
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
+
+		decodedTrx, _ := tx.FromBytes(res.RawTransaction)
+		expectedLockTime := td.mockState.LastBlockHeight()
+		expectedFee := td.mockState.CalculateFee(amount, payload.TypeTransfer)
+
+		assert.Equal(t, amount, decodedTrx.Payload().Value())
+		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
+		assert.Equal(t, expectedFee, decodedTrx.Fee())
 	})
 
 	t.Run("Bond", func(t *testing.T) {
-		trx, _ := td.GenerateTestBondTx()
+		amount := td.RandAmount()
 
 		res, err := client.GetRawBondTransaction(context.Background(),
 			&pactus.GetRawBondTransactionRequest{
-				LockTime:  trx.LockTime(),
-				Sender:    trx.Payload().Signer().String(),
-				Receiver:  trx.Payload().Receiver().String(),
-				Stake:     trx.Payload().Value(),
+				Sender:    td.RandAccAddress().String(),
+				Receiver:  td.RandValAddress().String(),
+				Stake:     amount,
 				PublicKey: "",
-				Fee:       trx.Fee(),
-				Memo:      trx.Memo(),
+				Memo:      td.RandString(32),
 			})
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
+
+		decodedTrx, _ := tx.FromBytes(res.RawTransaction)
+		expectedLockTime := td.mockState.LastBlockHeight()
+		expectedFee := td.mockState.CalculateFee(amount, payload.TypeBond)
+
+		assert.Equal(t, amount, decodedTrx.Payload().Value())
+		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
+		assert.Equal(t, expectedFee, decodedTrx.Fee())
 	})
 
-	t.Run("UnBond", func(t *testing.T) {
-		trx, _ := td.GenerateTestUnbondTx()
-
-		res, err := client.GetRawUnBondTransaction(context.Background(),
-			&pactus.GetRawUnBondTransactionRequest{
-				LockTime:         trx.LockTime(),
-				ValidatorAddress: trx.Payload().Signer().String(),
-				Memo:             trx.Memo(),
+	t.Run("Unbond", func(t *testing.T) {
+		res, err := client.GetRawUnbondTransaction(context.Background(),
+			&pactus.GetRawUnbondTransactionRequest{
+				ValidatorAddress: td.RandValAddress().String(),
+				Memo:             td.RandString(32),
 			})
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
+
+		decodedTrx, _ := tx.FromBytes(res.RawTransaction)
+		expectedLockTime := td.mockState.LastBlockHeight()
+
+		assert.Equal(t, int64(0), decodedTrx.Payload().Value())
+		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
+		assert.Equal(t, int64(0), decodedTrx.Fee())
 	})
 
 	t.Run("Withdraw", func(t *testing.T) {
-		trx, privateKey := td.GenerateTestWithdrawTx()
+		amount := td.RandAmount()
 
 		res, err := client.GetRawWithdrawTransaction(context.Background(),
 			&pactus.GetRawWithdrawTransactionRequest{
-				LockTime:         trx.LockTime(),
-				ValidatorAddress: privateKey.PublicKeyNative().ValidatorAddress().String(),
-				AccountAddress:   privateKey.PublicKeyNative().AccountAddress().String(),
-				Fee:              trx.Fee(),
-				Amount:           trx.Payload().Value(),
-				Memo:             trx.Memo(),
+				ValidatorAddress: td.RandValAddress().String(),
+				AccountAddress:   td.RandAccAddress().String(),
+				Amount:           amount,
+				Memo:             td.RandString(32),
 			})
 
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
+
+		decodedTrx, _ := tx.FromBytes(res.RawTransaction)
+		expectedLockTime := td.mockState.LastBlockHeight()
+		expectedFee := td.mockState.CalculateFee(amount, payload.TypeWithdraw)
+
+		assert.Equal(t, amount, decodedTrx.Payload().Value())
+		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
+		assert.Equal(t, expectedFee, decodedTrx.Fee())
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}
+
+func TestCalculateFee(t *testing.T) {
+	td := setup(t, nil)
+	conn, client := td.transactionClient(t)
+
+	t.Run("Not fixed amount", func(t *testing.T) {
+		amount := td.RandAmount()
+		res, err := client.CalculateFee(context.Background(),
+			&pactus.CalculateFeeRequest{
+				Amount:      amount,
+				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
+				FixedAmount: false,
+			})
+		assert.NoError(t, err)
+		assert.Equal(t, res.Amount, amount)
+	})
+
+	t.Run("Fixed amount", func(t *testing.T) {
+		amount := td.RandAmount()
+		res, err := client.CalculateFee(context.Background(),
+			&pactus.CalculateFeeRequest{
+				Amount:      amount,
+				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
+				FixedAmount: true,
+			})
+		assert.NoError(t, err)
+		assert.LessOrEqual(t, res.Amount+res.Fee, amount)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

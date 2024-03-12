@@ -431,6 +431,13 @@
               "UNBOND_PAYLOAD",
               "WITHDRAW_PAYLOAD"
             ]
+          },
+          {
+            "name": "fixedAmount",
+            "description": "Indicates that amount should be fixed and includes the fee.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -459,21 +466,21 @@
         "parameters": [
           {
             "name": "sender",
-            "description": "Sender's address.",
+            "description": "Sender's account address.",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
             "name": "receiver",
-            "description": "Receiver's address.",
+            "description": "Receiver's validator address.",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
             "name": "stake",
-            "description": "Stake amount.",
+            "description": "Stake amount.\nIt should be greater than 0.",
             "in": "path",
             "required": true,
             "type": "string",
@@ -481,7 +488,7 @@
           },
           {
             "name": "lockTime",
-            "description": "Lock time for the transaction.",
+            "description": "Lock time for the transaction.\nIf not explicitly set, it sets to the last block height.",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -496,7 +503,7 @@
           },
           {
             "name": "fee",
-            "description": "Transaction fee.",
+            "description": "Transaction fee.\nIf not explicitly set, it is calculated based on the stake.",
             "in": "path",
             "required": true,
             "type": "string",
@@ -536,21 +543,21 @@
         "parameters": [
           {
             "name": "sender",
-            "description": "Sender's address.",
+            "description": "Sender's account address.",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
             "name": "receiver",
-            "description": "Receiver's address.",
+            "description": "Receiver's account address.",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
             "name": "amount",
-            "description": "Transaction amount.",
+            "description": "Transfer amount.\nIt should be greater than 0.",
             "in": "path",
             "required": true,
             "type": "string",
@@ -558,7 +565,7 @@
           },
           {
             "name": "lockTime",
-            "description": "Lock time for the transaction.",
+            "description": "Lock time for the transaction.\nIf not explicitly set, it sets to the last block height.",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -566,7 +573,7 @@
           },
           {
             "name": "fee",
-            "description": "Transaction fee.",
+            "description": "Transaction fee.\nIf not explicitly set, it is calculated based on the amount.",
             "in": "path",
             "required": true,
             "type": "string",
@@ -587,8 +594,8 @@
     },
     "/pactus/transaction/get_raw_unbond_transaction/validator_address/{validatorAddress}/lock_time/{lockTime}/memo/{memo}": {
       "get": {
-        "summary": "GetRawUnBondTransaction retrieves raw details of an unbond transaction.",
-        "operationId": "Transaction_GetRawUnBondTransaction",
+        "summary": "GetRawUnbondTransaction retrieves raw details of an unbond transaction.",
+        "operationId": "Transaction_GetRawUnbondTransaction",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -613,7 +620,7 @@
           },
           {
             "name": "lockTime",
-            "description": "Lock time for the transaction.",
+            "description": "Lock time for the transaction.\nIf not explicitly set, it sets to the last block height.",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -667,7 +674,7 @@
           },
           {
             "name": "amount",
-            "description": "Withdrawal amount.",
+            "description": "Withdrawal amount.\nIt should be greater than 0.",
             "in": "path",
             "required": true,
             "type": "string",
@@ -675,7 +682,7 @@
           },
           {
             "name": "lockTime",
-            "description": "Lock time for the transaction.",
+            "description": "Lock time for the transaction.\nIf not explicitly set, it sets to the last block height.",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -683,7 +690,7 @@
           },
           {
             "name": "fee",
-            "description": "Transaction fee.",
+            "description": "Transaction fee.\nIf not explicitly set, it is calculated based on the stake.",
             "in": "path",
             "required": true,
             "type": "string",
@@ -1107,6 +1114,11 @@
     "pactusCalculateFeeResponse": {
       "type": "object",
       "properties": {
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "Calculated amount."
+        },
         "fee": {
           "type": "string",
           "format": "int64",

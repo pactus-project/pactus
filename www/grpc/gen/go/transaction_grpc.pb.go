@@ -34,8 +34,8 @@ type TransactionClient interface {
 	GetRawTransferTransaction(ctx context.Context, in *GetRawTransferTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// GetRawBondTransaction retrieves raw details of a bond transaction.
 	GetRawBondTransaction(ctx context.Context, in *GetRawBondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
-	// GetRawUnBondTransaction retrieves raw details of an unbond transaction.
-	GetRawUnBondTransaction(ctx context.Context, in *GetRawUnBondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
+	// GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+	GetRawUnbondTransaction(ctx context.Context, in *GetRawUnbondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
 	GetRawWithdrawTransaction(ctx context.Context, in *GetRawWithdrawTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 }
@@ -93,9 +93,9 @@ func (c *transactionClient) GetRawBondTransaction(ctx context.Context, in *GetRa
 	return out, nil
 }
 
-func (c *transactionClient) GetRawUnBondTransaction(ctx context.Context, in *GetRawUnBondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
+func (c *transactionClient) GetRawUnbondTransaction(ctx context.Context, in *GetRawUnbondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
 	out := new(GetRawTransactionResponse)
-	err := c.cc.Invoke(ctx, "/pactus.Transaction/GetRawUnBondTransaction", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pactus.Transaction/GetRawUnbondTransaction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -127,8 +127,8 @@ type TransactionServer interface {
 	GetRawTransferTransaction(context.Context, *GetRawTransferTransactionRequest) (*GetRawTransactionResponse, error)
 	// GetRawBondTransaction retrieves raw details of a bond transaction.
 	GetRawBondTransaction(context.Context, *GetRawBondTransactionRequest) (*GetRawTransactionResponse, error)
-	// GetRawUnBondTransaction retrieves raw details of an unbond transaction.
-	GetRawUnBondTransaction(context.Context, *GetRawUnBondTransactionRequest) (*GetRawTransactionResponse, error)
+	// GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+	GetRawUnbondTransaction(context.Context, *GetRawUnbondTransactionRequest) (*GetRawTransactionResponse, error)
 	// GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
 	GetRawWithdrawTransaction(context.Context, *GetRawWithdrawTransactionRequest) (*GetRawTransactionResponse, error)
 }
@@ -152,8 +152,8 @@ func (UnimplementedTransactionServer) GetRawTransferTransaction(context.Context,
 func (UnimplementedTransactionServer) GetRawBondTransaction(context.Context, *GetRawBondTransactionRequest) (*GetRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRawBondTransaction not implemented")
 }
-func (UnimplementedTransactionServer) GetRawUnBondTransaction(context.Context, *GetRawUnBondTransactionRequest) (*GetRawTransactionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetRawUnBondTransaction not implemented")
+func (UnimplementedTransactionServer) GetRawUnbondTransaction(context.Context, *GetRawUnbondTransactionRequest) (*GetRawTransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRawUnbondTransaction not implemented")
 }
 func (UnimplementedTransactionServer) GetRawWithdrawTransaction(context.Context, *GetRawWithdrawTransactionRequest) (*GetRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRawWithdrawTransaction not implemented")
@@ -260,20 +260,20 @@ func _Transaction_GetRawBondTransaction_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Transaction_GetRawUnBondTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRawUnBondTransactionRequest)
+func _Transaction_GetRawUnbondTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRawUnbondTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServer).GetRawUnBondTransaction(ctx, in)
+		return srv.(TransactionServer).GetRawUnbondTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pactus.Transaction/GetRawUnBondTransaction",
+		FullMethod: "/pactus.Transaction/GetRawUnbondTransaction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServer).GetRawUnBondTransaction(ctx, req.(*GetRawUnBondTransactionRequest))
+		return srv.(TransactionServer).GetRawUnbondTransaction(ctx, req.(*GetRawUnbondTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -324,8 +324,8 @@ var Transaction_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Transaction_GetRawBondTransaction_Handler,
 		},
 		{
-			MethodName: "GetRawUnBondTransaction",
-			Handler:    _Transaction_GetRawUnBondTransaction_Handler,
+			MethodName: "GetRawUnbondTransaction",
+			Handler:    _Transaction_GetRawUnbondTransaction_Handler,
 		},
 		{
 			MethodName: "GetRawWithdrawTransaction",

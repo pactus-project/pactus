@@ -11,10 +11,10 @@ import (
 )
 
 //go:embed assets/ui/dialog_transaction_unbond.ui
-var uiTransactionUnBondDialog []byte
+var uiTransactionUnbondDialog []byte
 
 func broadcastTransactionUnbond(wlt *wallet.Wallet) {
-	builder, err := gtk.BuilderNewFromString(string(uiTransactionUnBondDialog))
+	builder, err := gtk.BuilderNewFromString(string(uiTransactionUnbondDialog))
 	fatalErrorCheck(err)
 
 	dlg := getDialogObj(builder, "id_dialog_transaction_unbond")

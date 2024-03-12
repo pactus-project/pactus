@@ -82,13 +82,16 @@ func (s *transactionServer) BroadcastTransaction(_ context.Context,
 func (s *transactionServer) CalculateFee(_ context.Context,
 	req *pactus.CalculateFeeRequest,
 ) (*pactus.CalculateFeeResponse, error) {
-	fee, err := s.state.CalculateFee(req.Amount, payload.Type(req.PayloadType))
-	if err != nil {
-		return nil, err
+	amount := req.Amount
+	fee := s.state.CalculateFee(amount, payload.Type(req.PayloadType))
+
+	if req.FixedAmount {
+		amount -= fee
 	}
 
 	return &pactus.CalculateFeeResponse{
-		Fee: fee,
+		Amount: amount,
+		Fee:    fee,
 	}, nil
 }
 
@@ -105,7 +108,21 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 		return nil, err
 	}
 
-	transferTx := tx.NewTransferTx(req.LockTime, sender, receiver, req.Amount, req.Fee, req.Memo)
+	if req.Amount == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "amount is zero")
+	}
+
+	fee := req.Fee
+	if fee == 0 {
+		fee = s.state.CalculateFee(req.Amount, payload.TypeTransfer)
+	}
+
+	lockTime := req.LockTime
+	if lockTime == 0 {
+		lockTime = s.state.LastBlockHeight()
+	}
+
+	transferTx := tx.NewTransferTx(lockTime, sender, receiver, req.Amount, fee, req.Memo)
 	rawTx, err := transferTx.Bytes()
 	if err != nil {
 		return nil, err
@@ -129,6 +146,10 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 		return nil, err
 	}
 
+	if req.Stake == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "stake is zero")
+	}
+
 	var publicKey *bls.PublicKey
 	if req.PublicKey != "" {
 		publicKey, err = bls.PublicKeyFromString(req.PublicKey)
@@ -139,7 +160,21 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 		publicKey = nil
 	}
 
-	bondTx := tx.NewBondTx(req.LockTime, sender, receiver, publicKey, req.Stake, req.Fee, req.Memo)
+	if req.Stake == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "amount is zero")
+	}
+
+	fee := req.Fee
+	if fee == 0 {
+		fee = s.state.CalculateFee(req.Stake, payload.TypeTransfer)
+	}
+
+	lockTime := req.LockTime
+	if lockTime == 0 {
+		lockTime = s.state.LastBlockHeight()
+	}
+
+	bondTx := tx.NewBondTx(lockTime, sender, receiver, publicKey, req.Stake, fee, req.Memo)
 	rawTx, err := bondTx.Bytes()
 	if err != nil {
 		return nil, err
@@ -150,16 +185,21 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	}, nil
 }
 
-func (s *transactionServer) GetRawUnBondTransaction(_ context.Context,
-	req *pactus.GetRawUnBondTransactionRequest,
+func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
+	req *pactus.GetRawUnbondTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
 	validatorAddr, err := crypto.AddressFromString(req.ValidatorAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	unBondTx := tx.NewUnbondTx(req.LockTime, validatorAddr, req.Memo)
-	rawTx, err := unBondTx.Bytes()
+	lockTime := req.LockTime
+	if lockTime == 0 {
+		lockTime = s.state.LastBlockHeight()
+	}
+
+	unbondTx := tx.NewUnbondTx(lockTime, validatorAddr, req.Memo)
+	rawTx, err := unbondTx.Bytes()
 	if err != nil {
 		return nil, err
 	}
@@ -182,7 +222,21 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 		return nil, err
 	}
 
-	withdrawTx := tx.NewWithdrawTx(req.LockTime, validatorAddr, accountAddr, req.Amount, req.Fee, req.Memo)
+	if req.Amount == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "amount is zero")
+	}
+
+	fee := req.Fee
+	if fee == 0 {
+		fee = s.state.CalculateFee(req.Amount, payload.TypeTransfer)
+	}
+
+	lockTime := req.LockTime
+	if lockTime == 0 {
+		lockTime = s.state.LastBlockHeight()
+	}
+
+	withdrawTx := tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr, req.Amount, fee, req.Memo)
 	rawTx, err := withdrawTx.Bytes()
 	if err != nil {
 		return nil, err
