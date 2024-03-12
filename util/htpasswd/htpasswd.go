@@ -14,6 +14,16 @@ const (
 	passwordSeparator = ":"
 )
 
+var (
+	ErrInvalidUser             = errors.New("user is invalid")
+	ErrFailedToParseBasicAuth  = errors.New("the provided basic authentication credentials are invalid")
+	ErrMetadataNotFound        = errors.New("metadata not found")
+	ErrAuthHeaderNotFound      = errors.New("authorization header not found")
+	ErrFailedToDecodeBasicAuth = errors.New("failed to decode authorization header")
+	ErrAuthHeaderInvalidFormat = errors.New("invalid authorization header format")
+	ErrInvalidPassword         = errors.New("password is invalid")
+)
+
 // CompareBasicAuth compare basic auth with bcrypt algorithm.
 func CompareBasicAuth(basicAuthCredential, user, password string) error {
 	parsedUser, parsedHashedPass, err := ParseHtpasswdAuth(basicAuthCredential)
@@ -22,46 +32,50 @@ func CompareBasicAuth(basicAuthCredential, user, password string) error {
 	}
 
 	if parsedUser != user {
-		return errors.New("user is invalid")
+		return ErrInvalidUser
 	}
 
-	return bcrypt.CompareHashAndPassword([]byte(parsedHashedPass), []byte(password))
+	if err := bcrypt.CompareHashAndPassword([]byte(parsedHashedPass), []byte(password)); err != nil {
+		return ErrInvalidPassword
+	}
+
+	return nil
 }
 
 // ParseHtpasswdAuth parse htpasswd auth.
-func ParseHtpasswdAuth(auth string) (user, encodedPassword string, err error) {
-	parts := strings.SplitN(auth, passwordSeparator, 2)
+func ParseHtpasswdAuth(basicAuthCredential string) (string, string, error) {
+	parts := strings.SplitN(basicAuthCredential, passwordSeparator, 2)
 	if len(parts) != 2 {
-		return "", "", errors.New("auth is invalid for parse")
+		return "", "", ErrFailedToParseBasicAuth
 	}
 
-	user = parts[0]
-	encodedPassword = parts[1]
+	user := parts[0]
+	encodedPassword := parts[1]
 
-	return
+	return user, encodedPassword, nil
 }
 
 // ExtractBasicAuthFromContext extract basic auth from incoming context in grpc request.
 func ExtractBasicAuthFromContext(ctx context.Context) (user, password string, err error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return "", "", errors.New("metadata not found")
+		return "", "", ErrMetadataNotFound
 	}
 
 	authHeader, ok := md["authorization"]
 	if !ok || len(authHeader) == 0 {
-		return "", "", errors.New("authorization header not found")
+		return "", "", ErrAuthHeaderNotFound
 	}
 
 	auth := strings.TrimPrefix(authHeader[0], "Basic ")
 	decoded, err := base64.StdEncoding.DecodeString(auth)
 	if err != nil {
-		return "", "", errors.New("failed to decode authorization header")
+		return "", "", ErrFailedToDecodeBasicAuth
 	}
 
 	parts := strings.SplitN(string(decoded), ":", 2)
 	if len(parts) != 2 {
-		return "", "", errors.New("invalid authorization header format")
+		return "", "", ErrAuthHeaderInvalidFormat
 	}
 
 	return parts[0], parts[1], nil

@@ -55,43 +55,46 @@ func TestCompareBasicAuth(t *testing.T) {
 		input       string
 		user        string
 		password    string
-		expectError bool
+		expectError error
 	}{
 		{
 			name:        "SuccessfulAuthentication",
 			input:       "user:$2y$10$q6I6fxG2c79jBSXJ8L2jde15czipSRpu/uhW5Le.ooJLyfXiaPDZG", // hashed 'foobar'
 			user:        "user",
 			password:    "foobar",
-			expectError: false,
+			expectError: nil,
 		},
 		{
 			name:        "UserMismatch",
 			input:       "user:$2y$10$q6I6fxG2c79jBSXJ8L2jde15czipSRpu/uhW5Le.ooJLyfXiaPDZG",
 			user:        "wronguser",
 			password:    "foobar",
-			expectError: true,
+			expectError: ErrInvalidUser,
 		},
 		{
 			name:        "PasswordMismatch",
 			input:       "user:$2y$10$q6I6fxG2c79jBSXJ8L2jde15czipSRpu/uhW5Le.ooJLyfXiaPDZG",
 			user:        "user",
 			password:    "wrongpassword",
-			expectError: true,
+			expectError: ErrInvalidPassword,
 		},
 		{
 			name:        "MalformedCredential",
 			input:       "malformed",
 			user:        "user",
 			password:    "foobar",
-			expectError: true,
+			expectError: ErrFailedToParseBasicAuth,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := CompareBasicAuth(tt.input, tt.user, tt.password)
-			if (err != nil) != tt.expectError {
-				t.Errorf("CompareBasicAuth() for %v, error = %v, expectError %v", tt.name, err, tt.expectError)
+
+			if tt.expectError == nil {
+				assert.NoError(t, err)
+			} else {
+				assert.ErrorIs(t, err, tt.expectError)
 			}
 		})
 	}
@@ -158,56 +161,56 @@ func BenchmarkCompareBasicAuth(b *testing.B) {
 
 func TestExtractBasicAuthFromContext(t *testing.T) {
 	tests := []struct {
-		name     string
-		ctx      context.Context
-		wantUser string
-		wantPass string
-		wantErr  bool
+		name        string
+		ctx         context.Context
+		wantUser    string
+		wantPass    string
+		expectError error
 	}{
 		{
-			name:     "ValidCredentials",
-			ctx:      createTestContext("Basic " + base64.StdEncoding.EncodeToString([]byte("user:password"))),
-			wantUser: "user",
-			wantPass: "password",
-			wantErr:  false,
+			name:        "ValidCredentials",
+			ctx:         createTestContext("Basic " + base64.StdEncoding.EncodeToString([]byte("user:password"))),
+			wantUser:    "user",
+			wantPass:    "password",
+			expectError: nil,
 		},
 		{
-			name:     "InvalidEncoding",
-			ctx:      createTestContext("Basic user:password"),
-			wantUser: "",
-			wantPass: "",
-			wantErr:  true,
+			name:        "InvalidEncoding",
+			ctx:         createTestContext("Basic user:password"),
+			wantUser:    "",
+			wantPass:    "",
+			expectError: ErrFailedToDecodeBasicAuth,
 		},
 		{
-			name:     "NoMetadata",
-			ctx:      context.Background(),
-			wantUser: "",
-			wantPass: "",
-			wantErr:  true,
+			name:        "NoMetadata",
+			ctx:         context.Background(),
+			wantUser:    "",
+			wantPass:    "",
+			expectError: ErrMetadataNotFound,
 		},
 		{
-			name:     "NoAuthorizationHeader",
-			ctx:      metadata.NewIncomingContext(context.Background(), metadata.MD{}),
-			wantUser: "",
-			wantPass: "",
-			wantErr:  true,
+			name:        "NoAuthorizationHeader",
+			ctx:         metadata.NewIncomingContext(context.Background(), metadata.MD{}),
+			wantUser:    "",
+			wantPass:    "",
+			expectError: ErrAuthHeaderNotFound,
 		},
 		{
-			name:     "IncorrectFormat",
-			ctx:      createTestContext("Basic " + base64.StdEncoding.EncodeToString([]byte("userpassword"))),
-			wantUser: "",
-			wantPass: "",
-			wantErr:  true,
+			name:        "IncorrectFormat",
+			ctx:         createTestContext("Basic " + base64.StdEncoding.EncodeToString([]byte("userpassword"))),
+			wantUser:    "",
+			wantPass:    "",
+			expectError: ErrAuthHeaderInvalidFormat,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			user, pass, err := ExtractBasicAuthFromContext(tt.ctx)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ExtractBasicAuthFromContext() error = %v, wantErr %v", err, tt.wantErr)
-
-				return
+			if tt.expectError == nil {
+				assert.NoError(t, err)
+			} else {
+				assert.ErrorIs(t, err, tt.expectError)
 			}
 			if user != tt.wantUser || pass != tt.wantPass {
 				t.Errorf("ExtractBasicAuthFromContext() got = %v, %v, want %v, %v", user, pass, tt.wantUser, tt.wantPass)
