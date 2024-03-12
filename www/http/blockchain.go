@@ -70,7 +70,7 @@ func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request)
 
 		return
 	}
-	s.blockByHeight(ctx, w, r, uint32(height))
+	s.blockByHeight(ctx, w, uint32(height))
 }
 
 func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
@@ -103,10 +103,10 @@ func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.blockByHeight(ctx, w, r, res.Height)
+	s.blockByHeight(ctx, w, res.Height)
 }
 
-func (s *Server) blockByHeight(ctx context.Context, w http.ResponseWriter, r *http.Request, blockHeight uint32) {
+func (s *Server) blockByHeight(ctx context.Context, w http.ResponseWriter, blockHeight uint32) {
 	res, err := s.blockchain.GetBlock(ctx,
 		&pactus.GetBlockRequest{
 			Height:    blockHeight,
