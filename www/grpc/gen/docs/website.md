@@ -658,7 +658,7 @@ CalculateFeeRequest
     <tr>
       <td class="fw-bold">amount</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
       <td>Transaction amount. </td>
     </tr>
@@ -692,14 +692,14 @@ CalculateFeeResponse
     <tr>
       <td class="fw-bold">amount</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
       <td>Calculated amount. </td>
     </tr>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
       <td>Calculated transaction fee. </td>
     </tr>
@@ -756,7 +756,7 @@ It should be greater than 0. </td>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
       <td>Transaction fee.
 If not explicitly set, it is calculated based on the stake. </td>
@@ -826,7 +826,7 @@ If not explicitly set, it sets to the last block height. </td>
     <tr>
       <td class="fw-bold">amount</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
       <td>Transfer amount.
 It should be greater than 0. </td>
@@ -834,7 +834,7 @@ It should be greater than 0. </td>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
       <td>Transaction fee.
 If not explicitly set, it is calculated based on the amount. </td>
@@ -919,7 +919,7 @@ If not explicitly set, it sets to the last block height. </td>
     <tr>
       <td class="fw-bold">amount</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
       <td>Withdrawal amount.
 It should be greater than 0. </td>
@@ -927,7 +927,7 @@ It should be greater than 0. </td>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
       <td>Transaction fee.
 If not explicitly set, it is calculated based on the stake. </td>

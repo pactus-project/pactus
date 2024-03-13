@@ -55,8 +55,8 @@ message GetTransactionResponse {
 
 // Request message for calculating transaction fee.
 message CalculateFeeRequest {
-  // Transaction amount.
-  int64 amount = 1;
+  // Transaction amount in PAC.
+  double amount = 1;
   // Type of transaction payload.
   PayloadType payload_type = 2;
   // Indicates that amount should be fixed and includes the fee.
@@ -65,10 +65,10 @@ message CalculateFeeRequest {
 
 // Response message containing the calculated transaction fee.
 message CalculateFeeResponse {
-  // Calculated amount.
-  int64 amount = 2;
-  // Calculated transaction fee.
-  int64 fee = 1;
+  // Calculated amount in PAC.
+  double amount = 1;
+  // Calculated transaction fee in PAC.
+  double fee = 2;
 }
 
 // Request message for broadcasting a signed transaction.
@@ -80,7 +80,7 @@ message BroadcastTransactionRequest {
 // Response message containing the ID of the broadcasted transaction.
 message BroadcastTransactionResponse {
   // Transaction ID.
-  bytes id = 2;
+  bytes id = 1;
 }
 
 // Request message for retrieving raw details of a transfer transaction.
@@ -92,12 +92,12 @@ message GetRawTransferTransactionRequest {
   string sender = 2;
   // Receiver's account address.
   string receiver = 3;
-  // Transfer amount.
+  // Transfer amount in PAC.
   // It should be greater than 0.
-  int64 amount = 4;
-  // Transaction fee.
+  double amount = 4;
+  // Transaction fee in PAC.
   // If not explicitly set, it is calculated based on the amount.
-  int64 fee = 5;
+  double fee = 5;
   // Transaction memo.
   string memo = 6;
 }
@@ -116,9 +116,9 @@ message GetRawBondTransactionRequest {
   int64 stake = 4;
   // Public key of the validator.
   string public_key = 5;
-  // Transaction fee.
+  // Transaction fee in PAC.
   // If not explicitly set, it is calculated based on the stake.
-  int64 fee = 6;
+  double fee = 6;
   // Transaction memo.
   string memo = 7;
 }
@@ -143,12 +143,12 @@ message GetRawWithdrawTransactionRequest {
   string validator_address = 2;
   // Address of the account to withdraw to.
   string account_address = 3;
-  // Withdrawal amount.
+  // Withdrawal amount in PAC.
   // It should be greater than 0.
-  int64 amount = 4;
+  double amount = 4;
   // Transaction fee.
   // If not explicitly set, it is calculated based on the stake.
-  int64 fee = 5;
+  double fee = 5;
   // Transaction memo.
   string memo = 6;
 }

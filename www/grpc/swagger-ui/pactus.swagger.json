@@ -414,8 +414,8 @@
             "description": "Transaction amount.",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "number",
+            "format": "double"
           },
           {
             "name": "payloadType",
@@ -506,8 +506,8 @@
             "description": "Transaction fee.\nIf not explicitly set, it is calculated based on the stake.",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "number",
+            "format": "double"
           },
           {
             "name": "memo",
@@ -560,8 +560,8 @@
             "description": "Transfer amount.\nIt should be greater than 0.",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "number",
+            "format": "double"
           },
           {
             "name": "lockTime",
@@ -576,8 +576,8 @@
             "description": "Transaction fee.\nIf not explicitly set, it is calculated based on the amount.",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "number",
+            "format": "double"
           },
           {
             "name": "memo",
@@ -677,8 +677,8 @@
             "description": "Withdrawal amount.\nIt should be greater than 0.",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "number",
+            "format": "double"
           },
           {
             "name": "lockTime",
@@ -693,8 +693,8 @@
             "description": "Transaction fee.\nIf not explicitly set, it is calculated based on the stake.",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "number",
+            "format": "double"
           },
           {
             "name": "memo",
@@ -1115,13 +1115,13 @@
       "type": "object",
       "properties": {
         "amount": {
-          "type": "string",
-          "format": "int64",
+          "type": "number",
+          "format": "double",
           "description": "Calculated amount."
         },
         "fee": {
-          "type": "string",
-          "format": "int64",
+          "type": "number",
+          "format": "double",
           "description": "Calculated transaction fee."
         }
       },

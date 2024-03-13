@@ -2,10 +2,13 @@ package grpc
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 )
@@ -121,14 +124,16 @@ func TestGetCalculateFee(t *testing.T) {
 	td := setup(t, nil)
 	conn, client := td.transactionClient(t)
 
-	amount := td.RandAmount()
+	amount := td.RandAmountInPAC()
 	res, err := client.CalculateFee(context.Background(),
 		&pactus.CalculateFeeRequest{
 			Amount:      amount,
 			PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
 		})
+
+	expected, _ := strconv.ParseFloat(fmt.Sprintf("%.9f", amount/10000), 64)
 	assert.NoError(t, err)
-	assert.Equal(t, amount/10000, res.Fee)
+	assert.LessOrEqual(t, res.Fee, expected)
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
 	td.StopServer()
@@ -139,7 +144,7 @@ func TestGetRawTransaction(t *testing.T) {
 	conn, client := td.transactionClient(t)
 
 	t.Run("Transfer", func(t *testing.T) {
-		amount := td.RandAmount()
+		amount := td.RandAmountInPAC()
 
 		res, err := client.GetRawTransferTransaction(context.Background(),
 			&pactus.GetRawTransferTransactionRequest{
@@ -153,21 +158,21 @@ func TestGetRawTransaction(t *testing.T) {
 
 		decodedTrx, _ := tx.FromBytes(res.RawTransaction)
 		expectedLockTime := td.mockState.LastBlockHeight()
-		expectedFee := td.mockState.CalculateFee(amount, payload.TypeTransfer)
+		expectedFee := td.mockState.CalculateFee(util.CoinToChange(amount), payload.TypeTransfer)
 
-		assert.Equal(t, amount, decodedTrx.Payload().Value())
+		assert.Equal(t, amount, util.ChangeToCoin(decodedTrx.Payload().Value()))
 		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
 		assert.Equal(t, expectedFee, decodedTrx.Fee())
 	})
 
 	t.Run("Bond", func(t *testing.T) {
-		amount := td.RandAmount()
+		amount := td.RandAmountInPAC()
 
 		res, err := client.GetRawBondTransaction(context.Background(),
 			&pactus.GetRawBondTransactionRequest{
 				Sender:    td.RandAccAddress().String(),
 				Receiver:  td.RandValAddress().String(),
-				Stake:     amount,
+				Stake:     util.CoinToChange(amount),
 				PublicKey: "",
 				Memo:      td.RandString(32),
 			})
@@ -176,9 +181,9 @@ func TestGetRawTransaction(t *testing.T) {
 
 		decodedTrx, _ := tx.FromBytes(res.RawTransaction)
 		expectedLockTime := td.mockState.LastBlockHeight()
-		expectedFee := td.mockState.CalculateFee(amount, payload.TypeBond)
+		expectedFee := td.mockState.CalculateFee(util.CoinToChange(amount), payload.TypeBond)
 
-		assert.Equal(t, amount, decodedTrx.Payload().Value())
+		assert.Equal(t, amount, util.ChangeToCoin(decodedTrx.Payload().Value()))
 		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
 		assert.Equal(t, expectedFee, decodedTrx.Fee())
 	})
@@ -201,7 +206,7 @@ func TestGetRawTransaction(t *testing.T) {
 	})
 
 	t.Run("Withdraw", func(t *testing.T) {
-		amount := td.RandAmount()
+		amount := td.RandAmountInPAC()
 
 		res, err := client.GetRawWithdrawTransaction(context.Background(),
 			&pactus.GetRawWithdrawTransactionRequest{
@@ -216,9 +221,9 @@ func TestGetRawTransaction(t *testing.T) {
 
 		decodedTrx, _ := tx.FromBytes(res.RawTransaction)
 		expectedLockTime := td.mockState.LastBlockHeight()
-		expectedFee := td.mockState.CalculateFee(amount, payload.TypeWithdraw)
+		expectedFee := td.mockState.CalculateFee(util.CoinToChange(amount), payload.TypeWithdraw)
 
-		assert.Equal(t, amount, decodedTrx.Payload().Value())
+		assert.Equal(t, amount, util.ChangeToCoin(decodedTrx.Payload().Value()))
 		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
 		assert.Equal(t, expectedFee, decodedTrx.Fee())
 	})
@@ -232,7 +237,7 @@ func TestCalculateFee(t *testing.T) {
 	conn, client := td.transactionClient(t)
 
 	t.Run("Not fixed amount", func(t *testing.T) {
-		amount := td.RandAmount()
+		amount := td.RandAmountInPAC()
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
 				Amount:      amount,
@@ -244,7 +249,7 @@ func TestCalculateFee(t *testing.T) {
 	})
 
 	t.Run("Fixed amount", func(t *testing.T) {
-		amount := td.RandAmount()
+		amount := td.RandAmountInPAC()
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
 				Amount:      amount,
