@@ -54,7 +54,9 @@ type NodeConfig struct {
 }
 
 func DefaultNodeConfig() *NodeConfig {
-	return &NodeConfig{}
+	return &NodeConfig{
+		RewardAddresses: []string{},
+	}
 }
 
 // BasicCheck performs basic checks on the configuration.
