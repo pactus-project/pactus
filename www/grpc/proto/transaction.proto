@@ -95,7 +95,7 @@ message GetRawTransferTransactionRequest {
   // Transfer amount in PAC.
   // It should be greater than 0.
   double amount = 4;
-  // Transaction fee.
+  // Transaction fee in PAC.
   // If not explicitly set, it is calculated based on the amount.
   double fee = 5;
   // Transaction memo.
