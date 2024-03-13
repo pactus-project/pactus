@@ -65,7 +65,7 @@ message CalculateFeeRequest {
 
 // Response message containing the calculated transaction fee.
 message CalculateFeeResponse {
-  // Calculated amount.
+  // Calculated amount in PAC.
   double amount = 2;
   // Calculated transaction fee.
   double fee = 1;
