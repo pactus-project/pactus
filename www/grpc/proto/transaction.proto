@@ -116,7 +116,7 @@ message GetRawBondTransactionRequest {
   int64 stake = 4;
   // Public key of the validator.
   string public_key = 5;
-  // Transaction fee.
+  // Transaction fee in PAC.
   // If not explicitly set, it is calculated based on the stake.
   double fee = 6;
   // Transaction memo.
