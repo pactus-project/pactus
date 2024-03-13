@@ -143,7 +143,7 @@ message GetRawWithdrawTransactionRequest {
   string validator_address = 2;
   // Address of the account to withdraw to.
   string account_address = 3;
-  // Withdrawal amount.
+  // Withdrawal amount in PAC.
   // It should be greater than 0.
   double amount = 4;
   // Transaction fee.
