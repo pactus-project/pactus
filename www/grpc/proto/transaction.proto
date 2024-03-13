@@ -68,7 +68,7 @@ message CalculateFeeResponse {
   // Calculated amount in PAC.
   double amount = 1;
   // Calculated transaction fee in PAC.
-  double fee = 1;
+  double fee = 2;
 }
 
 // Request message for broadcasting a signed transaction.
