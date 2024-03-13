@@ -55,7 +55,7 @@ message GetTransactionResponse {
 
 // Request message for calculating transaction fee.
 message CalculateFeeRequest {
-  // Transaction amount.
+  // Transaction amount in PAC.
   double amount = 1;
   // Type of transaction payload.
   PayloadType payload_type = 2;
