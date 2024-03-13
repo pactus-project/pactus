@@ -92,7 +92,7 @@ message GetRawTransferTransactionRequest {
   string sender = 2;
   // Receiver's account address.
   string receiver = 3;
-  // Transfer amount.
+  // Transfer amount in PAC.
   // It should be greater than 0.
   double amount = 4;
   // Transaction fee.
