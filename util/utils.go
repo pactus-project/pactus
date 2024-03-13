@@ -113,7 +113,7 @@ func OS2IP(os []byte) *big.Int {
 	return new(big.Int).SetBytes(os)
 }
 
-// I2OSP converts a nonnegative integer to an octet string of a specified length.
+// IS2OP converts a nonnegative integer to an octet string of a specified length.
 // https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
 func IS2OP(x *big.Int, xLen int) []byte {
 	if x.Sign() == -1 {
