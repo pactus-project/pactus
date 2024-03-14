@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/pactus-project/pactus/util"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
@@ -55,7 +56,7 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 	tm.addRowBytes("Data", trx.Data)
 	tm.addRowInt("Version", int(trx.Version))
 	tm.addRowInt("LockTime", int(trx.LockTime))
-	tm.addRowInt("Fee", int(trx.Fee))
+	tm.addRowInt("Fee", int(util.ChangeToCoin(trx.Fee)))
 	tm.addRowString("Memo", trx.Memo)
 	tm.addRowString("Payload type", trx.PayloadType.String())
 
