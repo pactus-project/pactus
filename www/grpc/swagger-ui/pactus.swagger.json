@@ -411,7 +411,7 @@
         "parameters": [
           {
             "name": "amount",
-            "description": "Transaction amount.",
+            "description": "Transaction amount in PAC.",
             "in": "path",
             "required": true,
             "type": "number",
@@ -503,7 +503,7 @@
           },
           {
             "name": "fee",
-            "description": "Transaction fee.\nIf not explicitly set, it is calculated based on the stake.",
+            "description": "Transaction fee in PAC.\nIf not explicitly set, it is calculated based on the stake.",
             "in": "path",
             "required": true,
             "type": "number",
@@ -557,7 +557,7 @@
           },
           {
             "name": "amount",
-            "description": "Transfer amount.\nIt should be greater than 0.",
+            "description": "Transfer amount in PAC.\nIt should be greater than 0.",
             "in": "path",
             "required": true,
             "type": "number",
@@ -573,7 +573,7 @@
           },
           {
             "name": "fee",
-            "description": "Transaction fee.\nIf not explicitly set, it is calculated based on the amount.",
+            "description": "Transaction fee in PAC.\nIf not explicitly set, it is calculated based on the amount.",
             "in": "path",
             "required": true,
             "type": "number",
@@ -674,7 +674,7 @@
           },
           {
             "name": "amount",
-            "description": "Withdrawal amount.\nIt should be greater than 0.",
+            "description": "Withdrawal amount in PAC.\nIt should be greater than 0.",
             "in": "path",
             "required": true,
             "type": "number",
@@ -1117,12 +1117,12 @@
         "amount": {
           "type": "number",
           "format": "double",
-          "description": "Calculated amount."
+          "description": "Calculated amount in PAC."
         },
         "fee": {
           "type": "number",
           "format": "double",
-          "description": "Calculated transaction fee."
+          "description": "Calculated transaction fee in PAC."
         }
       },
       "description": "Response message containing the calculated transaction fee."

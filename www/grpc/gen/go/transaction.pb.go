@@ -265,7 +265,7 @@ type CalculateFeeRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Transaction amount.
+	// Transaction amount in PAC.
 	Amount float64 `protobuf:"fixed64,1,opt,name=amount,proto3" json:"amount,omitempty"`
 	// Type of transaction payload.
 	PayloadType PayloadType `protobuf:"varint,2,opt,name=payload_type,json=payloadType,proto3,enum=pactus.PayloadType" json:"payload_type,omitempty"`
@@ -332,10 +332,10 @@ type CalculateFeeResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Calculated amount.
-	Amount float64 `protobuf:"fixed64,2,opt,name=amount,proto3" json:"amount,omitempty"`
-	// Calculated transaction fee.
-	Fee float64 `protobuf:"fixed64,1,opt,name=fee,proto3" json:"fee,omitempty"`
+	// Calculated amount in PAC.
+	Amount float64 `protobuf:"fixed64,1,opt,name=amount,proto3" json:"amount,omitempty"`
+	// Calculated transaction fee in PAC.
+	Fee float64 `protobuf:"fixed64,2,opt,name=fee,proto3" json:"fee,omitempty"`
 }
 
 func (x *CalculateFeeResponse) Reset() {
@@ -495,10 +495,10 @@ type GetRawTransferTransactionRequest struct {
 	Sender string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty"`
 	// Receiver's account address.
 	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	// Transfer amount.
+	// Transfer amount in PAC.
 	// It should be greater than 0.
 	Amount float64 `protobuf:"fixed64,4,opt,name=amount,proto3" json:"amount,omitempty"`
-	// Transaction fee.
+	// Transaction fee in PAC.
 	// If not explicitly set, it is calculated based on the amount.
 	Fee float64 `protobuf:"fixed64,5,opt,name=fee,proto3" json:"fee,omitempty"`
 	// Transaction memo.
@@ -597,7 +597,7 @@ type GetRawBondTransactionRequest struct {
 	Stake int64 `protobuf:"varint,4,opt,name=stake,proto3" json:"stake,omitempty"`
 	// Public key of the validator.
 	PublicKey string `protobuf:"bytes,5,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
-	// Transaction fee.
+	// Transaction fee in PAC.
 	// If not explicitly set, it is calculated based on the stake.
 	Fee float64 `protobuf:"fixed64,6,opt,name=fee,proto3" json:"fee,omitempty"`
 	// Transaction memo.
@@ -766,7 +766,7 @@ type GetRawWithdrawTransactionRequest struct {
 	ValidatorAddress string `protobuf:"bytes,2,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
 	// Address of the account to withdraw to.
 	AccountAddress string `protobuf:"bytes,3,opt,name=account_address,json=accountAddress,proto3" json:"account_address,omitempty"`
-	// Withdrawal amount.
+	// Withdrawal amount in PAC.
 	// It should be greater than 0.
 	Amount float64 `protobuf:"fixed64,4,opt,name=amount,proto3" json:"amount,omitempty"`
 	// Transaction fee.
@@ -1457,8 +1457,8 @@ var file_transaction_proto_rawDesc = []byte{
 	0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0b, 0x66, 0x69, 0x78, 0x65, 0x64, 0x41, 0x6d, 0x6f,
 	0x75, 0x6e, 0x74, 0x22, 0x40, 0x0a, 0x14, 0x43, 0x61, 0x6c, 0x63, 0x75, 0x6c, 0x61, 0x74, 0x65,
 	0x46, 0x65, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x61,
-	0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x01, 0x52, 0x06, 0x61, 0x6d, 0x6f,
-	0x75, 0x6e, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x66, 0x65, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x01,
+	0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x01, 0x52, 0x06, 0x61, 0x6d, 0x6f,
+	0x75, 0x6e, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x66, 0x65, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x01,
 	0x52, 0x03, 0x66, 0x65, 0x65, 0x22, 0x53, 0x0a, 0x1b, 0x42, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61,
 	0x73, 0x74, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71,
 	0x75, 0x65, 0x73, 0x74, 0x12, 0x34, 0x0a, 0x16, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x64, 0x5f, 0x72,

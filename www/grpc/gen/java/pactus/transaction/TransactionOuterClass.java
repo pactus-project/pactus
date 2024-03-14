@@ -1833,7 +1833,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction amount.
+     * Transaction amount in PAC.
      * </pre>
      *
      * <code>double amount = 1 [json_name = "amount"];</code>
@@ -1919,7 +1919,7 @@ public final class TransactionOuterClass {
     private double amount_;
     /**
      * <pre>
-     * Transaction amount.
+     * Transaction amount in PAC.
      * </pre>
      *
      * <code>double amount = 1 [json_name = "amount"];</code>
@@ -2340,7 +2340,7 @@ public final class TransactionOuterClass {
       private double amount_ ;
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in PAC.
        * </pre>
        *
        * <code>double amount = 1 [json_name = "amount"];</code>
@@ -2352,7 +2352,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in PAC.
        * </pre>
        *
        * <code>double amount = 1 [json_name = "amount"];</code>
@@ -2367,7 +2367,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in PAC.
        * </pre>
        *
        * <code>double amount = 1 [json_name = "amount"];</code>
@@ -2566,20 +2566,20 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Calculated amount.
+     * Calculated amount in PAC.
      * </pre>
      *
-     * <code>double amount = 2 [json_name = "amount"];</code>
+     * <code>double amount = 1 [json_name = "amount"];</code>
      * @return The amount.
      */
     double getAmount();
 
     /**
      * <pre>
-     * Calculated transaction fee.
+     * Calculated transaction fee in PAC.
      * </pre>
      *
-     * <code>double fee = 1 [json_name = "fee"];</code>
+     * <code>double fee = 2 [json_name = "fee"];</code>
      * @return The fee.
      */
     double getFee();
@@ -2628,14 +2628,14 @@ public final class TransactionOuterClass {
               pactus.transaction.TransactionOuterClass.CalculateFeeResponse.class, pactus.transaction.TransactionOuterClass.CalculateFeeResponse.Builder.class);
     }
 
-    public static final int AMOUNT_FIELD_NUMBER = 2;
+    public static final int AMOUNT_FIELD_NUMBER = 1;
     private double amount_;
     /**
      * <pre>
-     * Calculated amount.
+     * Calculated amount in PAC.
      * </pre>
      *
-     * <code>double amount = 2 [json_name = "amount"];</code>
+     * <code>double amount = 1 [json_name = "amount"];</code>
      * @return The amount.
      */
     @java.lang.Override
@@ -2643,14 +2643,14 @@ public final class TransactionOuterClass {
       return amount_;
     }
 
-    public static final int FEE_FIELD_NUMBER = 1;
+    public static final int FEE_FIELD_NUMBER = 2;
     private double fee_;
     /**
      * <pre>
-     * Calculated transaction fee.
+     * Calculated transaction fee in PAC.
      * </pre>
      *
-     * <code>double fee = 1 [json_name = "fee"];</code>
+     * <code>double fee = 2 [json_name = "fee"];</code>
      * @return The fee.
      */
     @java.lang.Override
@@ -2672,11 +2672,11 @@ public final class TransactionOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
-        output.writeDouble(1, fee_);
-      }
       if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
-        output.writeDouble(2, amount_);
+        output.writeDouble(1, amount_);
+      }
+      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
+        output.writeDouble(2, fee_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -2687,13 +2687,13 @@ public final class TransactionOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(1, fee_);
-      }
       if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(2, amount_);
+          .computeDoubleSize(1, amount_);
+      }
+      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(2, fee_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -2978,12 +2978,12 @@ public final class TransactionOuterClass {
                 done = true;
                 break;
               case 9: {
-                fee_ = input.readDouble();
+                amount_ = input.readDouble();
 
                 break;
               } // case 9
               case 17: {
-                amount_ = input.readDouble();
+                fee_ = input.readDouble();
 
                 break;
               } // case 17
@@ -3006,10 +3006,10 @@ public final class TransactionOuterClass {
       private double amount_ ;
       /**
        * <pre>
-       * Calculated amount.
+       * Calculated amount in PAC.
        * </pre>
        *
-       * <code>double amount = 2 [json_name = "amount"];</code>
+       * <code>double amount = 1 [json_name = "amount"];</code>
        * @return The amount.
        */
       @java.lang.Override
@@ -3018,10 +3018,10 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Calculated amount.
+       * Calculated amount in PAC.
        * </pre>
        *
-       * <code>double amount = 2 [json_name = "amount"];</code>
+       * <code>double amount = 1 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
        */
@@ -3033,10 +3033,10 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Calculated amount.
+       * Calculated amount in PAC.
        * </pre>
        *
-       * <code>double amount = 2 [json_name = "amount"];</code>
+       * <code>double amount = 1 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAmount() {
@@ -3049,10 +3049,10 @@ public final class TransactionOuterClass {
       private double fee_ ;
       /**
        * <pre>
-       * Calculated transaction fee.
+       * Calculated transaction fee in PAC.
        * </pre>
        *
-       * <code>double fee = 1 [json_name = "fee"];</code>
+       * <code>double fee = 2 [json_name = "fee"];</code>
        * @return The fee.
        */
       @java.lang.Override
@@ -3061,10 +3061,10 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Calculated transaction fee.
+       * Calculated transaction fee in PAC.
        * </pre>
        *
-       * <code>double fee = 1 [json_name = "fee"];</code>
+       * <code>double fee = 2 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
        */
@@ -3076,10 +3076,10 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Calculated transaction fee.
+       * Calculated transaction fee in PAC.
        * </pre>
        *
-       * <code>double fee = 1 [json_name = "fee"];</code>
+       * <code>double fee = 2 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
       public Builder clearFee() {
@@ -4213,7 +4213,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transfer amount.
+     * Transfer amount in PAC.
      * It should be greater than 0.
      * </pre>
      *
@@ -4224,7 +4224,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in PAC.
      * If not explicitly set, it is calculated based on the amount.
      * </pre>
      *
@@ -4412,7 +4412,7 @@ public final class TransactionOuterClass {
     private double amount_;
     /**
      * <pre>
-     * Transfer amount.
+     * Transfer amount in PAC.
      * It should be greater than 0.
      * </pre>
      *
@@ -4428,7 +4428,7 @@ public final class TransactionOuterClass {
     private double fee_;
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in PAC.
      * If not explicitly set, it is calculated based on the amount.
      * </pre>
      *
@@ -5160,7 +5160,7 @@ public final class TransactionOuterClass {
       private double amount_ ;
       /**
        * <pre>
-       * Transfer amount.
+       * Transfer amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -5173,7 +5173,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer amount.
+       * Transfer amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -5189,7 +5189,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer amount.
+       * Transfer amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -5206,7 +5206,7 @@ public final class TransactionOuterClass {
       private double fee_ ;
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in PAC.
        * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
@@ -5219,7 +5219,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in PAC.
        * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
@@ -5235,7 +5235,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in PAC.
        * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
@@ -5496,7 +5496,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in PAC.
      * If not explicitly set, it is calculated based on the stake.
      * </pre>
      *
@@ -5747,7 +5747,7 @@ public final class TransactionOuterClass {
     private double fee_;
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in PAC.
      * If not explicitly set, it is calculated based on the stake.
      * </pre>
      *
@@ -6642,7 +6642,7 @@ public final class TransactionOuterClass {
       private double fee_ ;
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in PAC.
        * If not explicitly set, it is calculated based on the stake.
        * </pre>
        *
@@ -6655,7 +6655,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in PAC.
        * If not explicitly set, it is calculated based on the stake.
        * </pre>
        *
@@ -6671,7 +6671,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in PAC.
        * If not explicitly set, it is calculated based on the stake.
        * </pre>
        *
@@ -7774,7 +7774,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Withdrawal amount.
+     * Withdrawal amount in PAC.
      * It should be greater than 0.
      * </pre>
      *
@@ -7973,7 +7973,7 @@ public final class TransactionOuterClass {
     private double amount_;
     /**
      * <pre>
-     * Withdrawal amount.
+     * Withdrawal amount in PAC.
      * It should be greater than 0.
      * </pre>
      *
@@ -8721,7 +8721,7 @@ public final class TransactionOuterClass {
       private double amount_ ;
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -8734,7 +8734,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -8750,7 +8750,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -16528,7 +16528,7 @@ public final class TransactionOuterClass {
       "R\006amount\0226\n\014payload_type\030\002 \001(\0162\023.pactus." +
       "PayloadTypeR\013payloadType\022!\n\014fixed_amount" +
       "\030\003 \001(\010R\013fixedAmount\"@\n\024CalculateFeeRespo" +
-      "nse\022\026\n\006amount\030\002 \001(\001R\006amount\022\020\n\003fee\030\001 \001(\001" +
+      "nse\022\026\n\006amount\030\001 \001(\001R\006amount\022\020\n\003fee\030\002 \001(\001" +
       "R\003fee\"S\n\033BroadcastTransactionRequest\0224\n\026" +
       "signed_raw_transaction\030\001 \001(\014R\024signedRawT" +
       "ransaction\".\n\034BroadcastTransactionRespon" +

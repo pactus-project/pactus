@@ -230,22 +230,22 @@ class CalculateFeeRequest extends $pb.GeneratedMessage {
 
 class CalculateFeeResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CalculateFeeResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.double>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee', $pb.PbFieldType.OD)
-    ..a<$core.double>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount', $pb.PbFieldType.OD)
+    ..a<$core.double>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount', $pb.PbFieldType.OD)
+    ..a<$core.double>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
   CalculateFeeResponse._() : super();
   factory CalculateFeeResponse({
-    $core.double? fee,
     $core.double? amount,
+    $core.double? fee,
   }) {
     final _result = create();
-    if (fee != null) {
-      _result.fee = fee;
-    }
     if (amount != null) {
       _result.amount = amount;
+    }
+    if (fee != null) {
+      _result.fee = fee;
     }
     return _result;
   }
@@ -271,22 +271,22 @@ class CalculateFeeResponse extends $pb.GeneratedMessage {
   static CalculateFeeResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.double get fee => $_getN(0);
+  $core.double get amount => $_getN(0);
   @$pb.TagNumber(1)
-  set fee($core.double v) { $_setDouble(0, v); }
+  set amount($core.double v) { $_setDouble(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasFee() => $_has(0);
+  $core.bool hasAmount() => $_has(0);
   @$pb.TagNumber(1)
-  void clearFee() => clearField(1);
+  void clearAmount() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.double get amount => $_getN(1);
+  $core.double get fee => $_getN(1);
   @$pb.TagNumber(2)
-  set amount($core.double v) { $_setDouble(1, v); }
+  set fee($core.double v) { $_setDouble(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasAmount() => $_has(1);
+  $core.bool hasFee() => $_has(1);
   @$pb.TagNumber(2)
-  void clearAmount() => clearField(2);
+  void clearFee() => clearField(2);
 }
 
 class BroadcastTransactionRequest extends $pb.GeneratedMessage {

@@ -660,7 +660,7 @@ CalculateFeeRequest
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Transaction amount. </td>
+      <td>Transaction amount in PAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">payload_type</td>
@@ -694,14 +694,14 @@ CalculateFeeResponse
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Calculated amount. </td>
+      <td>Calculated amount in PAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Calculated transaction fee. </td>
+      <td>Calculated transaction fee in PAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -758,7 +758,7 @@ It should be greater than 0. </td>
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Transaction fee.
+      <td>Transaction fee in PAC.
 If not explicitly set, it is calculated based on the stake. </td>
     </tr>
     <tr>
@@ -828,7 +828,7 @@ If not explicitly set, it sets to the last block height. </td>
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Transfer amount.
+      <td>Transfer amount in PAC.
 It should be greater than 0. </td>
     </tr>
     <tr>
@@ -836,7 +836,7 @@ It should be greater than 0. </td>
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Transaction fee.
+      <td>Transaction fee in PAC.
 If not explicitly set, it is calculated based on the amount. </td>
     </tr>
     <tr>
@@ -921,7 +921,7 @@ If not explicitly set, it sets to the last block height. </td>
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Withdrawal amount.
+      <td>Withdrawal amount in PAC.
 It should be greater than 0. </td>
     </tr>
     <tr>

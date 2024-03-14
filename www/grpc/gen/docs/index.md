@@ -139,7 +139,7 @@ Request message for calculating transaction fee.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| amount | [double](#double) |  | Transaction amount. |
+| amount | [double](#double) |  | Transaction amount in PAC. |
 | payload_type | [PayloadType](#pactus-PayloadType) |  | Type of transaction payload. |
 | fixed_amount | [bool](#bool) |  | Indicates that amount should be fixed and includes the fee. |
 
@@ -156,8 +156,8 @@ Response message containing the calculated transaction fee.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| amount | [double](#double) |  | Calculated amount. |
-| fee | [double](#double) |  | Calculated transaction fee. |
+| amount | [double](#double) |  | Calculated amount in PAC. |
+| fee | [double](#double) |  | Calculated transaction fee in PAC. |
 
 
 
@@ -177,7 +177,7 @@ Request message for retrieving raw details of a bond transaction.
 | receiver | [string](#string) |  | Receiver&#39;s validator address. |
 | stake | [int64](#int64) |  | Stake amount. It should be greater than 0. |
 | public_key | [string](#string) |  | Public key of the validator. |
-| fee | [double](#double) |  | Transaction fee. If not explicitly set, it is calculated based on the stake. |
+| fee | [double](#double) |  | Transaction fee in PAC. If not explicitly set, it is calculated based on the stake. |
 | memo | [string](#string) |  | Transaction memo. |
 
 
@@ -211,8 +211,8 @@ Request message for retrieving raw details of a transfer transaction.
 | lock_time | [uint32](#uint32) |  | Lock time for the transaction. If not explicitly set, it sets to the last block height. |
 | sender | [string](#string) |  | Sender&#39;s account address. |
 | receiver | [string](#string) |  | Receiver&#39;s account address. |
-| amount | [double](#double) |  | Transfer amount. It should be greater than 0. |
-| fee | [double](#double) |  | Transaction fee. If not explicitly set, it is calculated based on the amount. |
+| amount | [double](#double) |  | Transfer amount in PAC. It should be greater than 0. |
+| fee | [double](#double) |  | Transaction fee in PAC. If not explicitly set, it is calculated based on the amount. |
 | memo | [string](#string) |  | Transaction memo. |
 
 
@@ -248,7 +248,7 @@ Request message for retrieving raw details of a withdraw transaction.
 | lock_time | [uint32](#uint32) |  | Lock time for the transaction. If not explicitly set, it sets to the last block height. |
 | validator_address | [string](#string) |  | Address of the validator to withdraw from. |
 | account_address | [string](#string) |  | Address of the account to withdraw to. |
-| amount | [double](#double) |  | Withdrawal amount. It should be greater than 0. |
+| amount | [double](#double) |  | Withdrawal amount in PAC. It should be greater than 0. |
 | fee | [double](#double) |  | Transaction fee. If not explicitly set, it is calculated based on the stake. |
 | memo | [string](#string) |  | Transaction memo. |
 

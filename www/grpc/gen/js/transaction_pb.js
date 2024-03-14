@@ -1015,8 +1015,8 @@ proto.pactus.CalculateFeeResponse.prototype.toObject = function(opt_includeInsta
  */
 proto.pactus.CalculateFeeResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    amount: jspb.Message.getFloatingPointFieldWithDefault(msg, 2, 0.0),
-    fee: jspb.Message.getFloatingPointFieldWithDefault(msg, 1, 0.0)
+    amount: jspb.Message.getFloatingPointFieldWithDefault(msg, 1, 0.0),
+    fee: jspb.Message.getFloatingPointFieldWithDefault(msg, 2, 0.0)
   };
 
   if (includeInstance) {
@@ -1053,11 +1053,11 @@ proto.pactus.CalculateFeeResponse.deserializeBinaryFromReader = function(msg, re
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 2:
+    case 1:
       var value = /** @type {number} */ (reader.readDouble());
       msg.setAmount(value);
       break;
-    case 1:
+    case 2:
       var value = /** @type {number} */ (reader.readDouble());
       msg.setFee(value);
       break;
@@ -1093,14 +1093,14 @@ proto.pactus.CalculateFeeResponse.serializeBinaryToWriter = function(message, wr
   f = message.getAmount();
   if (f !== 0.0) {
     writer.writeDouble(
-      2,
+      1,
       f
     );
   }
   f = message.getFee();
   if (f !== 0.0) {
     writer.writeDouble(
-      1,
+      2,
       f
     );
   }
@@ -1108,28 +1108,10 @@ proto.pactus.CalculateFeeResponse.serializeBinaryToWriter = function(message, wr
 
 
 /**
- * optional double amount = 2;
+ * optional double amount = 1;
  * @return {number}
  */
 proto.pactus.CalculateFeeResponse.prototype.getAmount = function() {
-  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 2, 0.0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.CalculateFeeResponse} returns this
- */
-proto.pactus.CalculateFeeResponse.prototype.setAmount = function(value) {
-  return jspb.Message.setProto3FloatField(this, 2, value);
-};
-
-
-/**
- * optional double fee = 1;
- * @return {number}
- */
-proto.pactus.CalculateFeeResponse.prototype.getFee = function() {
   return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 1, 0.0));
 };
 
@@ -1138,8 +1120,26 @@ proto.pactus.CalculateFeeResponse.prototype.getFee = function() {
  * @param {number} value
  * @return {!proto.pactus.CalculateFeeResponse} returns this
  */
-proto.pactus.CalculateFeeResponse.prototype.setFee = function(value) {
+proto.pactus.CalculateFeeResponse.prototype.setAmount = function(value) {
   return jspb.Message.setProto3FloatField(this, 1, value);
+};
+
+
+/**
+ * optional double fee = 2;
+ * @return {number}
+ */
+proto.pactus.CalculateFeeResponse.prototype.getFee = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 2, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.CalculateFeeResponse} returns this
+ */
+proto.pactus.CalculateFeeResponse.prototype.setFee = function(value) {
+  return jspb.Message.setProto3FloatField(this, 2, value);
 };
 
 
