@@ -52,13 +52,13 @@ func TestGenesisTestnet(t *testing.T) {
 
 	gen := genesis.TestnetGenesis()
 	assert.Equal(t, len(gen.Validators()), 4)
-	assert.Equal(t, len(gen.Accounts()), 2)
+	assert.Equal(t, len(gen.Accounts()), 5)
 
-	genTime, _ := time.Parse("2006-01-02", "2023-10-15")
-	expected, _ := hash.FromString("da602b28f75902c35e3bafeb5733a686c94d5508c92aae68cbd9b37d81cfccf4")
+	genTime, _ := time.Parse("2006-01-02", "2024-03-15")
+	expected, _ := hash.FromString("2787177defd28559f3522878be0109dfe005dc82c292a28e471d89114bc8e8ad")
 	assert.Equal(t, gen.Hash(), expected)
 	assert.Equal(t, gen.GenesisTime(), genTime)
-	assert.Equal(t, gen.Params().BondInterval, uint32(120))
+	assert.Equal(t, gen.Params().BondInterval, uint32(360))
 	assert.Equal(t, gen.ChainType(), genesis.Testnet)
 	assert.Equal(t, gen.TotalSupply(), int64(42*1e15))
 
