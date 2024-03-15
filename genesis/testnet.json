@@ -1,5 +1,5 @@
 {
-    "genesis_time": "2024-03-15T00:00:00Z",
+    "genesis_time": "2024-03-16T00:00:00Z",
     "params": {
         "block_version": 1,
         "block_interval_in_second": 10,
