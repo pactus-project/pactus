@@ -135,17 +135,17 @@ func TestBasicCheck(t *testing.T) {
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid amount: -1",
+			Reason: "invalid amount: -0.000000001 PAC",
 		})
 	})
 
 	t.Run("Invalid amount", func(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), (42e15)+1, 1, "invalid amount")
+			ts.RandAccAddress(), ts.RandAccAddress(), (42e15)+7, 1, "invalid amount")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid amount: 42000000000000001",
+			Reason: "invalid amount: 42000000.000000007 PAC",
 		})
 	})
 
@@ -155,17 +155,17 @@ func TestBasicCheck(t *testing.T) {
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid fee: -1",
+			Reason: "invalid fee: -0.000000001 PAC",
 		})
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), 1, (42e15)+1, "invalid fee")
+			ts.RandAccAddress(), ts.RandAccAddress(), 1, (42e15)+7, "invalid fee")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid fee: 42000000000000001",
+			Reason: "invalid fee: 42000000.000000007 PAC",
 		})
 	})
 
