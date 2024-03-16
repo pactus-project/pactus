@@ -142,7 +142,7 @@ func TestExecution(t *testing.T) {
 	})
 
 	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
-		trx := tx.NewTransferTx(lockTime, rndAccAddr, ts.RandAccAddress(), 1000, 1001, "invalid fee")
+		trx := tx.NewTransferTx(lockTime, rndAccAddr, ts.RandAccAddress(), 1000, 1002, "invalid fee")
 		ts.HelperSignTransaction(rndPrvKey, trx)
 		err := exe.Execute(trx, sb)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidFee)
@@ -231,16 +231,27 @@ func TestFee(t *testing.T) {
 		expectedErrCode int
 	}{
 		{1, 1, sb.TestParams.MinimumFee, errors.ErrInvalidFee},
-		{1, 1001, sb.TestParams.MinimumFee, errors.ErrInvalidFee},
+		{1, 1002, sb.TestParams.MinimumFee, errors.ErrInvalidFee},
+		{1, 998, sb.TestParams.MinimumFee, errors.ErrInvalidFee},
+		{1, 1001, sb.TestParams.MinimumFee, errors.ErrNone},
 		{1, 1000, sb.TestParams.MinimumFee, errors.ErrNone},
+		{1, 999, sb.TestParams.MinimumFee, errors.ErrNone},
 
 		{1 * 1e9, 1, 100000, errors.ErrInvalidFee},
-		{1 * 1e9, 100001, 100000, errors.ErrInvalidFee},
+		{1 * 1e9, 100002, 100000, errors.ErrInvalidFee},
+		{1 * 1e9, 99998, 100000, errors.ErrInvalidFee},
+		{1 * 1e9, 100001, 100000, errors.ErrNone},
 		{1 * 1e9, 100000, 100000, errors.ErrNone},
+		{1 * 1e9, 99999, 100000, errors.ErrNone},
 
-		{1 * 1e12, 1, 1000000, errors.ErrInvalidFee},
-		{1 * 1e12, 1000001, 1000000, errors.ErrInvalidFee},
-		{1 * 1e12, 1000000, 1000000, errors.ErrNone},
+		{1 * 1e12, 1, sb.TestParams.MaximumFee, errors.ErrInvalidFee},
+		{1 * 1e12, 1000002, sb.TestParams.MaximumFee, errors.ErrInvalidFee},
+		{1 * 1e12, 999998, sb.TestParams.MaximumFee, errors.ErrInvalidFee},
+		{1 * 1e12, 1000001, sb.TestParams.MaximumFee, errors.ErrNone},
+		{1 * 1e12, 1000000, sb.TestParams.MaximumFee, errors.ErrNone},
+		{1 * 1e12, 999999, sb.TestParams.MaximumFee, errors.ErrNone},
+
+		{9_999_299_000, 999929, 999930, errors.ErrNone}, // Block 66679
 	}
 
 	sender := ts.RandAccAddress()

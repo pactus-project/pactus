@@ -1,6 +1,8 @@
 package execution
 
 import (
+	"math"
+
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/amount"
@@ -110,7 +112,9 @@ func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 		}
 	} else {
 		fee := CalculateFee(trx.Payload().Value(), sb.Params())
-		if trx.Fee() != fee {
+		// Check if the absolute difference between the calculated fee and the transaction fee
+		// is greater than 1 PAC, indicating an invalid fee.
+		if math.Abs(float64(fee-trx.Fee())) > 1 {
 			return errors.Errorf(errors.ErrInvalidFee, "fee is wrong, expected: %v, got: %v", fee, trx.Fee())
 		}
 	}

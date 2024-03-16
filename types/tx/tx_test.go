@@ -141,7 +141,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("Invalid amount", func(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), (42*1e15)+1, 1, "invalid amount")
+			ts.RandAccAddress(), ts.RandAccAddress(), (42e15)+1, 1, "invalid amount")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -161,7 +161,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("Invalid fee", func(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), 1, (42*1e15)+1, "invalid fee")
+			ts.RandAccAddress(), ts.RandAccAddress(), 1, (42e15)+1, "invalid fee")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{

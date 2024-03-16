@@ -217,51 +217,51 @@ func TestAmountMulF64(t *testing.T) {
 	}{
 		{
 			name: "Multiply 0.1 PAC by 2",
-			amt:  100e5, // 0.1 PAC
+			amt:  100e6, // 0.1 PAC
 			mul:  2,
-			res:  200e5, // 0.2 PAC
+			res:  200e6, // 0.2 PAC
 		},
 		{
 			name: "Multiply 0.2 PAC by 0.02",
-			amt:  200e5, // 0.2 PAC
+			amt:  200e6, // 0.2 PAC
 			mul:  1.02,
-			res:  204e5, // 0.204 PAC
+			res:  204e6, // 0.204 PAC
 		},
 		{
 			name: "Multiply 0.1 PAC by -2",
-			amt:  100e5, // 0.1 PAC
+			amt:  100e6, // 0.1 PAC
 			mul:  -2,
-			res:  -200e5, // -0.2 PAC
+			res:  -200e6, // -0.2 PAC
 		},
 		{
 			name: "Multiply 0.2 PAC by -0.02",
-			amt:  200e5, // 0.2 PAC
+			amt:  200e6, // 0.2 PAC
 			mul:  -1.02,
-			res:  -204e5, // -0.204 PAC
+			res:  -204e6, // -0.204 PAC
 		},
 		{
 			name: "Multiply -0.1 PAC by 2",
-			amt:  -100e5, // -0.1 PAC
+			amt:  -100e6, // -0.1 PAC
 			mul:  2,
-			res:  -200e5, // -0.2 PAC
+			res:  -200e6, // -0.2 PAC
 		},
 		{
 			name: "Multiply -0.2 PAC by 0.02",
-			amt:  -200e5, // -0.2 PAC
+			amt:  -200e6, // -0.2 PAC
 			mul:  1.02,
-			res:  -204e5, // -0.204 PAC
+			res:  -204e6, // -0.204 PAC
 		},
 		{
 			name: "Multiply -0.1 PAC by -2",
-			amt:  -100e5, // -0.1 PAC
+			amt:  -100e6, // -0.1 PAC
 			mul:  -2,
-			res:  200e5, // 0.2 PAC
+			res:  200e6, // 0.2 PAC
 		},
 		{
 			name: "Multiply -0.2 PAC by -0.02",
-			amt:  -200e5, // -0.2 PAC
+			amt:  -200e6, // -0.2 PAC
 			mul:  -1.02,
-			res:  204e5, // 0.204 PAC
+			res:  204e6, // 0.204 PAC
 		},
 		{
 			name: "Round down",
@@ -276,31 +276,31 @@ func TestAmountMulF64(t *testing.T) {
 			res:  1, // 1 NanoPAC
 		},
 		{
-			name: "Multiply by 0.",
+			name: "Multiply by 0",
 			amt:  1e9, // 1 PAC
 			mul:  0,
 			res:  0, // 0 PAC
 		},
 		{
-			name: "Multiply 1 by 0.5.",
+			name: "Multiply 1 by 0.5",
 			amt:  1, // 1 NanoPAC
 			mul:  0.5,
 			res:  1, // 1 NanoPAC
 		},
 		{
-			name: "Multiply 100 by 66%.",
+			name: "Multiply 100 by 66%",
 			amt:  100, // 100 NanoPACs
 			mul:  0.66,
 			res:  66, // 66 NanoPACs
 		},
 		{
-			name: "Multiply 100 by 66.6%.",
+			name: "Multiply 100 by 66.6%",
 			amt:  100, // 100 NanoPACs
 			mul:  0.666,
 			res:  67, // 67 NanoPACs
 		},
 		{
-			name: "Multiply 100 by 2/3.",
+			name: "Multiply 100 by 2/3",
 			amt:  100, // 100 NanoPACs
 			mul:  2.0 / 3,
 			res:  67, // 67 NanoPACs

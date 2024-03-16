@@ -61,7 +61,7 @@ func TestGenesisTestnet(t *testing.T) {
 	assert.Equal(t, gen.GenesisTime(), genTime)
 	assert.Equal(t, gen.Params().BondInterval, uint32(360))
 	assert.Equal(t, gen.ChainType(), genesis.Testnet)
-	assert.Equal(t, gen.TotalSupply(), amount.Amount(42*1e15))
+	assert.Equal(t, gen.TotalSupply(), amount.Amount(42e15))
 
 	crypto.AddressHRP = "pc"
 }
@@ -78,7 +78,7 @@ func TestGenesisMainnet(t *testing.T) {
 	assert.Equal(t, gen.Params().BondInterval, uint32(8640/24))
 	assert.Equal(t, gen.Params().UnbondInterval, uint32(8640*21))
 	assert.Equal(t, gen.ChainType(), genesis.Mainnet)
-	assert.Equal(t, gen.TotalSupply(), amount.Amount(42*1e15))
+	assert.Equal(t, gen.TotalSupply(), amount.Amount(42e15))
 }
 
 func TestCheckGenesisAccountAndValidator(t *testing.T) {

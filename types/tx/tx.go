@@ -135,15 +135,14 @@ func (tx *Tx) BasicCheck() error {
 			Reason: "lock time is not defined",
 		}
 	}
-	// TODO: Define it globally (  42*1e15 )?
-	if tx.Payload().Value() < 0 || tx.Payload().Value() > 42*1e15 {
+	if tx.Payload().Value() < 0 || tx.Payload().Value() > amount.MaxNanoPAC {
 		return BasicCheckError{
-			Reason: fmt.Sprintf("invalid amount: %d", tx.Payload().Value()),
+			Reason: fmt.Sprintf("invalid amount: %s", tx.Payload().Value()),
 		}
 	}
-	if tx.Fee() < 0 || tx.Fee() > 42*1e15 {
+	if tx.Fee() < 0 || tx.Fee() > amount.MaxNanoPAC {
 		return BasicCheckError{
-			Reason: fmt.Sprintf("invalid fee: %d", tx.Fee()),
+			Reason: fmt.Sprintf("invalid fee: %s", tx.Fee()),
 		}
 	}
 	if len(tx.Memo()) > maxMemoLength {
