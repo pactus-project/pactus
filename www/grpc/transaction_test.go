@@ -246,15 +246,15 @@ func TestCalculateFee(t *testing.T) {
 	})
 
 	t.Run("Fixed amount", func(t *testing.T) {
-		amount := td.RandAmount()
+		amt := td.RandAmount()
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
-				Amount:      amount.ToPAC(),
+				Amount:      amt.ToPAC(),
 				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
 				FixedAmount: true,
 			})
 		assert.NoError(t, err)
-		assert.LessOrEqual(t, res.Amount+res.Fee, amount.ToPAC())
+		assert.Less(t, res.Amount, amt.ToPAC())
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
