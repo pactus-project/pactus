@@ -255,7 +255,7 @@ func (m *MockState) Params() *param.Params {
 }
 
 func (m *MockState) CalculateFee(amt amount.Amount, _ payload.Type) amount.Amount {
-	return amt.MulF64(10000)
+	return amt.MulF64(m.TestParams.FeeFraction)
 }
 
 func (m *MockState) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {

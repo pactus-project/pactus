@@ -128,9 +128,9 @@ func TestGetCalculateFee(t *testing.T) {
 			PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
 		})
 
-	expected := amt.MulF64(10000).ToPAC()
 	assert.NoError(t, err)
-	assert.LessOrEqual(t, res.Fee, expected)
+	assert.Equal(t, res.Amount, amt.ToPAC())
+	assert.Equal(t, res.Fee, amt.MulF64(td.mockState.TestParams.FeeFraction).ToPAC())
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
 	td.StopServer()
