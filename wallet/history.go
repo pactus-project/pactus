@@ -50,7 +50,7 @@ func (h *history) hasTransaction(id string) bool {
 	return ok
 }
 
-func (h *history) addActivity(addr string, amount amount.Amount, trx *pactus.GetTransactionResponse) {
+func (h *history) addActivity(addr string, amt amount.Amount, trx *pactus.GetTransactionResponse) {
 	if h.Activities == nil {
 		h.Activities = map[string][]activity{}
 		h.Transactions = map[string]transaction{}
@@ -60,7 +60,7 @@ func (h *history) addActivity(addr string, amount amount.Amount, trx *pactus.Get
 	}
 	act := activity{
 		TxID:   hex.EncodeToString(trx.Transaction.Id),
-		Amount: amount,
+		Amount: amt,
 	}
 	h.Activities[addr] = append(h.Activities[addr], act)
 	sort.Slice(h.Activities[addr], func(i, j int) bool {
@@ -76,7 +76,7 @@ func (h *history) addActivity(addr string, amount amount.Amount, trx *pactus.Get
 	}
 }
 
-func (h *history) addPending(addr string, amount amount.Amount, txID hash.Hash, data []byte) {
+func (h *history) addPending(addr string, amt amount.Amount, txID hash.Hash, data []byte) {
 	if h.Pendings == nil {
 		h.Pendings = map[string][]pending{}
 	}
@@ -85,7 +85,7 @@ func (h *history) addPending(addr string, amount amount.Amount, txID hash.Hash, 
 	}
 	pnd := pending{
 		TxID:   txID.String(),
-		Amount: amount,
+		Amount: amt,
 		Data:   hex.EncodeToString(data),
 	}
 	h.Pendings[addr] = append(h.Pendings[addr], pnd)

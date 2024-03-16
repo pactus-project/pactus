@@ -333,7 +333,7 @@ func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
 
 // MakeWithdrawTx creates a new withdraw transaction based on the given
 // parameters.
-func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount amount.Amount,
+func (w *Wallet) MakeWithdrawTx(sender, receiver string, amt amount.Amount,
 	options ...TxOption,
 ) (*tx.Tx, error) {
 	maker, err := newTxBuilder(w.client, options...)
@@ -348,7 +348,7 @@ func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount amount.Amount,
 	if err != nil {
 		return nil, err
 	}
-	maker.amount = amount
+	maker.amount = amt
 	maker.typ = payload.TypeWithdraw
 
 	return maker.build()
@@ -383,8 +383,8 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	return id.String(), nil
 }
 
-func (w *Wallet) CalculateFee(amount amount.Amount, payloadType payload.Type) (amount.Amount, error) {
-	return w.client.getFee(amount, payloadType)
+func (w *Wallet) CalculateFee(amt amount.Amount, payloadType payload.Type) (amount.Amount, error) {
+	return w.client.getFee(amt, payloadType)
 }
 
 func (w *Wallet) UpdatePassword(oldPassword, newPassword string) error {
@@ -500,20 +500,20 @@ func (w *Wallet) AddTransaction(id tx.ID) error {
 	}
 
 	if w.store.Vault.Contains(sender) {
-		amount, err := amount.NewAmount(-(trxRes.Transaction.Fee + trxRes.Transaction.Value))
+		amt, err := amount.NewAmount(-(trxRes.Transaction.Fee + trxRes.Transaction.Value))
 		if err != nil {
 			return err
 		}
-		w.store.History.addActivity(sender, amount, trxRes)
+		w.store.History.addActivity(sender, amt, trxRes)
 	}
 
 	if receiver != nil {
 		if w.store.Vault.Contains(*receiver) {
-			amount, err := amount.NewAmount(trxRes.Transaction.Value)
+			amt, err := amount.NewAmount(trxRes.Transaction.Value)
 			if err != nil {
 				return err
 			}
-			w.store.History.addActivity(*receiver, amount, trxRes)
+			w.store.History.addActivity(*receiver, amt, trxRes)
 		}
 	}
 

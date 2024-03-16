@@ -109,77 +109,77 @@ func TestAmountUnitConversions(t *testing.T) {
 	tests := []struct {
 		name      string
 		amount    amount.Amount
-		unit      amount.AmountUnit
+		unit      amount.Unit
 		converted float64
 		str       string
 	}{
 		{
 			name:      "MPAC",
 			amount:    amount.MaxNanoPAC,
-			unit:      amount.AmountMegaPAC,
+			unit:      amount.UnitMegaPAC,
 			converted: 42,
 			str:       "42 MPAC",
 		},
 		{
 			name:      "kPAC",
 			amount:    444_333_222_111_000,
-			unit:      amount.AmountKiloPAC,
+			unit:      amount.UnitKiloPAC,
 			converted: 444.333_222_111_000,
 			str:       "444.333222111 kPAC",
 		},
 		{
 			name:      "PAC",
 			amount:    444_333_222_111_000,
-			unit:      amount.AmountPAC,
+			unit:      amount.UnitPAC,
 			converted: 444_333.222_111,
 			str:       "444333.222111000 PAC",
 		},
 		{
 			name:      "a thousand NanoPAC as PAC",
 			amount:    1_000,
-			unit:      amount.AmountPAC,
+			unit:      amount.UnitPAC,
 			converted: 0.000_001,
 			str:       "0.000001000 PAC",
 		},
 		{
 			name:      "a single NanoPAC as PAC",
 			amount:    1,
-			unit:      amount.AmountPAC,
+			unit:      amount.UnitPAC,
 			converted: 0.000_000_001,
 			str:       "0.000000001 PAC",
 		},
 		{
 			name:      "amount with trailing zero but no decimals",
 			amount:    10_000_000_000,
-			unit:      amount.AmountPAC,
+			unit:      amount.UnitPAC,
 			converted: 10,
 			str:       "10 PAC",
 		},
 		{
 			name:      "mPAC",
 			amount:    444_333_222_111_000,
-			unit:      amount.AmountMilliPAC,
+			unit:      amount.UnitMilliPAC,
 			converted: 444_333_222.111_000,
 			str:       "444333222.111 mPAC",
 		},
 		{
 			name:      "μPAC",
 			amount:    444_333_222_111_000,
-			unit:      amount.AmountMicroPAC,
+			unit:      amount.UnitMicroPAC,
 			converted: 444_333_222_111.000,
 			str:       "444333222111 μPAC",
 		},
 		{
 			name:      "NanoPAC",
 			amount:    444_333_222_111_000,
-			unit:      amount.AmountNanoPAC,
+			unit:      amount.UnitNanoPAC,
 			converted: 444_333_222_111_000,
 			str:       "444333222111000 NanoPAC",
 		},
 		{
 			name:      "non-standard unit",
 			amount:    444_333_222_111_000,
-			unit:      amount.AmountUnit(-1),
+			unit:      amount.Unit(-1),
 			converted: 4_443_332.221_110_00,
 			str:       "4443332.22111 1e-1 PAC",
 		},
@@ -195,13 +195,13 @@ func TestAmountUnitConversions(t *testing.T) {
 			"%v: format '%v' does not match expected '%v'", test.name, str, test.str)
 
 		// Verify that Amount.ToPAC works as advertised.
-		f1 := test.amount.ToUnit(amount.AmountPAC)
+		f1 := test.amount.ToUnit(amount.UnitPAC)
 		f2 := test.amount.ToPAC()
 		assert.Equal(t, f1, f2,
 			"%v: ToPAC does not match ToUnit(AmountPAC): %v != %v", test.name, f1, f2)
 
 		// Verify that Amount.String works as advertised.
-		s1 := test.amount.Format(amount.AmountPAC)
+		s1 := test.amount.Format(amount.UnitPAC)
 		s2 := test.amount.String()
 		assert.Equal(t, s1, s2,
 			"%v: String does not match Format(AmountPac): %v != %v", test.name, s1, s2)

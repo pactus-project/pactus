@@ -9,25 +9,25 @@ import (
 )
 
 func NewSubsidyTx(lockTime uint32,
-	receiver crypto.Address, amount amount.Amount, memo string,
+	receiver crypto.Address, amt amount.Amount, memo string,
 ) *Tx {
 	return NewTransferTx(
 		lockTime,
 		crypto.TreasuryAddress,
 		receiver,
-		amount,
+		amt,
 		0,
 		memo)
 }
 
 func NewTransferTx(lockTime uint32,
 	sender, receiver crypto.Address,
-	amount, fee amount.Amount, memo string,
+	amt, fee amount.Amount, memo string,
 ) *Tx {
 	pld := &payload.TransferPayload{
 		From:   sender,
 		To:     receiver,
-		Amount: amount,
+		Amount: amt,
 	}
 
 	return newTx(lockTime, pld, fee, memo)
@@ -60,15 +60,14 @@ func NewUnbondTx(lockTime uint32,
 }
 
 func NewWithdrawTx(lockTime uint32,
-	val crypto.Address,
-	acc crypto.Address,
-	amount, fee amount.Amount,
+	val, acc crypto.Address,
+	amt, fee amount.Amount,
 	memo string,
 ) *Tx {
 	pld := &payload.WithdrawPayload{
 		From:   val,
 		To:     acc,
-		Amount: amount,
+		Amount: amt,
 	}
 
 	return newTx(lockTime, pld, fee, memo)

@@ -22,39 +22,39 @@ const (
 	MaxNanoPAC = 42e6 * NanoPACPerPAC
 )
 
-// AmountUnit describes a method of converting an Amount to something
-// other than the base unit of a Pactus.  The value of the AmountUnit
+// Unit describes a method of converting an Amount to something
+// other than the base unit of a Pactus.  The value of the Unit
 // is the exponent component of the decadic multiple to convert from
 // an amount in Pactus to an amount counted in units.
-type AmountUnit int
+type Unit int
 
 // These constants define various units used when describing a Pactus
 // monetary amount.
 const (
-	AmountMegaPAC  AmountUnit = 6
-	AmountKiloPAC  AmountUnit = 3
-	AmountPAC      AmountUnit = 0
-	AmountMilliPAC AmountUnit = -3
-	AmountMicroPAC AmountUnit = -6
-	AmountNanoPAC  AmountUnit = -9
+	UnitMegaPAC  Unit = 6
+	UnitKiloPAC  Unit = 3
+	UnitPAC      Unit = 0
+	UnitMilliPAC Unit = -3
+	UnitMicroPAC Unit = -6
+	UnitNanoPAC  Unit = -9
 )
 
 // String returns the unit as a string.  For recognized units, the SI
 // prefix is used, or "NanoPAC" for the base unit.  For all unrecognized
 // units, "1eN PAC" is returned, where N is the AmountUnit.
-func (u AmountUnit) String() string {
+func (u Unit) String() string {
 	switch u {
-	case AmountMegaPAC:
+	case UnitMegaPAC:
 		return "MPAC"
-	case AmountKiloPAC:
+	case UnitKiloPAC:
 		return "kPAC"
-	case AmountPAC:
+	case UnitPAC:
 		return "PAC"
-	case AmountMilliPAC:
+	case UnitMilliPAC:
 		return "mPAC"
-	case AmountMicroPAC:
+	case UnitMicroPAC:
 		return "μPAC"
-	case AmountNanoPAC:
+	case UnitNanoPAC:
 		return "NanoPAC"
 	default:
 		return "1e" + strconv.FormatInt(int64(u), 10) + " PAC"
@@ -73,6 +73,7 @@ func round(f float64) Amount {
 	if f < 0 {
 		return Amount(f - 0.5)
 	}
+
 	return Amount(f + 0.5)
 }
 
@@ -88,12 +89,10 @@ func NewAmount(f float64) (Amount, error) {
 	// The amount is only considered invalid if it cannot be represented
 	// as an integer type.  This may happen if f is NaN or +-Infinity.
 	switch {
-	case math.IsNaN(f):
-		fallthrough
-	case math.IsInf(f, 1):
-		fallthrough
-	case math.IsInf(f, -1):
-		return 0, errors.New("invalid Pactus amount")
+	case math.IsNaN(f),
+		math.IsInf(f, 1),
+		math.IsInf(f, -1):
+		return 0, errors.New("invalid PAC amount")
 	}
 
 	return round(f * float64(NanoPACPerPAC)), nil
@@ -113,36 +112,37 @@ func FromString(str string) (Amount, error) {
 
 // ToUnit converts a monetary amount counted in Pactus base units to a
 // floating point value representing an amount of Pactus (PAC).
-func (a Amount) ToUnit(u AmountUnit) float64 {
+func (a Amount) ToUnit(u Unit) float64 {
 	return float64(a) / math.Pow10(int(u+9))
 }
 
 // ToPAC is the equivalent of calling ToUnit with AmountPAC.
 func (a Amount) ToPAC() float64 {
-	return a.ToUnit(AmountPAC)
+	return a.ToUnit(UnitPAC)
 }
 
 // Format formats a monetary amount counted in Pactus base units as a
 // string for a given unit.  The conversion will succeed for any unit,
 // however, known units will be formatted with an appended label describing
 // the units with SI notation, or "NanoPAC" for the base unit.
-func (a Amount) Format(u AmountUnit) string {
+func (a Amount) Format(u Unit) string {
 	units := " " + u.String()
 	formatted := strconv.FormatFloat(a.ToUnit(u), 'f', -int(u+9), 64)
 
 	// When formatting full PAC, add trailing zeroes for numbers
 	// with decimal point to ease reading of amount.
-	if u == AmountPAC {
+	if u == UnitPAC {
 		if strings.Contains(formatted, ".") {
 			return fmt.Sprintf("%.9f%s", a.ToUnit(u), units)
 		}
 	}
+
 	return formatted + units
 }
 
 // String is the equivalent of calling Format with AmountPAC.
 func (a Amount) String() string {
-	return a.Format(AmountPAC)
+	return a.Format(UnitPAC)
 }
 
 // MulF64 multiplies an Amount by a floating point value.
