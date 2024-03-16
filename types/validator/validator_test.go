@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -52,7 +53,7 @@ func TestDecoding(t *testing.T) {
 	val, err := validator.FromBytes(d)
 	require.NoError(t, err)
 	assert.Equal(t, val.Number(), int32(1))
-	assert.Equal(t, val.Stake(), int64(2))
+	assert.Equal(t, val.Stake(), amount.Amount(2))
 	assert.Equal(t, val.LastBondingHeight(), uint32(3))
 	assert.Equal(t, val.UnbondingHeight(), uint32(4))
 	assert.Equal(t, val.LastSortitionHeight(), uint32(5))
@@ -71,13 +72,13 @@ func TestPower(t *testing.T) {
 
 	val, _ := ts.GenerateTestValidator(ts.RandInt32(1000))
 	val.SubtractFromStake(val.Stake())
-	assert.Equal(t, val.Stake(), int64(0))
+	assert.Equal(t, val.Stake(), amount.Amount(0))
 	assert.Equal(t, val.Power(), int64(1))
 	val.AddToStake(1)
-	assert.Equal(t, val.Stake(), int64(1))
+	assert.Equal(t, val.Stake(), amount.Amount(1))
 	assert.Equal(t, val.Power(), int64(1))
 	val.UpdateUnbondingHeight(1)
-	assert.Equal(t, val.Stake(), int64(1))
+	assert.Equal(t, val.Stake(), amount.Amount(1))
 	assert.Equal(t, val.Power(), int64(0))
 }
 

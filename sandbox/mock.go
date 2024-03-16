@@ -41,7 +41,7 @@ func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 		TestCommittedTrxs:    make(map[tx.ID]*tx.Tx),
 	}
 
-	treasuryAmt := amount.Amount(21000000 * 1e9)
+	treasuryAmt := amount.Amount(21_000_000 * 1e9)
 
 	for i, val := range cmt.Validators() {
 		acc := account.NewAccount(int32(i + 1))
