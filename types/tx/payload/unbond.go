@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/amount"
 )
 
 type UnbondPayload struct {
@@ -19,7 +20,7 @@ func (p *UnbondPayload) Signer() crypto.Address {
 	return p.Validator
 }
 
-func (p *UnbondPayload) Value() int64 {
+func (p *UnbondPayload) Value() amount.Amount {
 	return 0
 }
 

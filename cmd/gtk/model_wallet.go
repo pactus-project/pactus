@@ -10,7 +10,6 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/node"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -51,8 +50,8 @@ func (model *walletModel) rebuildModel() {
 
 			balance, _ := model.wallet.Balance(info.Address)
 			stake, _ := model.wallet.Stake(info.Address)
-			balanceStr := util.ChangeToString(balance)
-			stakeStr := util.ChangeToString(stake)
+			balanceStr := balance.String()
+			stakeStr := stake.String()
 
 			var score string
 

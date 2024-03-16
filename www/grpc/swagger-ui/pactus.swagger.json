@@ -411,7 +411,7 @@
         "parameters": [
           {
             "name": "amount",
-            "description": "Transaction amount.",
+            "description": "Transaction amount in PAC.",
             "in": "path",
             "required": true,
             "type": "number",
@@ -480,11 +480,11 @@
           },
           {
             "name": "stake",
-            "description": "Stake amount.\nIt should be greater than 0.",
+            "description": "Stake amount in PAC.\nIt should be greater than 0.",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "int64"
+            "type": "number",
+            "format": "double"
           },
           {
             "name": "lockTime",
@@ -503,7 +503,7 @@
           },
           {
             "name": "fee",
-            "description": "Transaction fee.\nIf not explicitly set, it is calculated based on the stake.",
+            "description": "Transaction fee in PAC.\nIf not explicitly set, it is calculated based on the stake.",
             "in": "path",
             "required": true,
             "type": "number",
@@ -557,7 +557,7 @@
           },
           {
             "name": "amount",
-            "description": "Transfer amount.\nIt should be greater than 0.",
+            "description": "Transfer amount in PAC.\nIt should be greater than 0.",
             "in": "path",
             "required": true,
             "type": "number",
@@ -573,7 +573,7 @@
           },
           {
             "name": "fee",
-            "description": "Transaction fee.\nIf not explicitly set, it is calculated based on the amount.",
+            "description": "Transaction fee in PAC.\nIf not explicitly set, it is calculated based on the amount.",
             "in": "path",
             "required": true,
             "type": "number",
@@ -674,7 +674,7 @@
           },
           {
             "name": "amount",
-            "description": "Withdrawal amount.\nIt should be greater than 0.",
+            "description": "Withdrawal amount in PAC.\nIt should be greater than 0.",
             "in": "path",
             "required": true,
             "type": "number",
@@ -1049,9 +1049,9 @@
           "description": "Account number."
         },
         "balance": {
-          "type": "string",
-          "format": "int64",
-          "description": "Account balance."
+          "type": "number",
+          "format": "double",
+          "description": "Account balance in PAC."
         },
         "address": {
           "type": "string",
@@ -1117,12 +1117,12 @@
         "amount": {
           "type": "number",
           "format": "double",
-          "description": "Calculated amount."
+          "description": "Calculated amount in PAC."
         },
         "fee": {
           "type": "number",
           "format": "double",
-          "description": "Calculated transaction fee."
+          "description": "Calculated transaction fee in PAC."
         }
       },
       "description": "Response message containing the calculated transaction fee."
@@ -1540,9 +1540,9 @@
           "description": "Receiver's address."
         },
         "stake": {
-          "type": "string",
-          "format": "int64",
-          "description": "Stake amount."
+          "type": "number",
+          "format": "double",
+          "description": "Stake amount in PAC."
         }
       },
       "description": "Payload for a bond transaction."
@@ -1574,9 +1574,9 @@
           "description": "Receiver's address."
         },
         "amount": {
-          "type": "string",
-          "format": "int64",
-          "description": "Transaction amount."
+          "type": "number",
+          "format": "double",
+          "description": "Transaction amount in PAC."
         }
       },
       "description": "Payload for a transfer transaction."
@@ -1616,9 +1616,9 @@
           "description": "Address to withdraw to."
         },
         "amount": {
-          "type": "string",
-          "format": "int64",
-          "description": "Withdrawal amount."
+          "type": "number",
+          "format": "double",
+          "description": "Withdrawal amount in PAC."
         }
       },
       "description": "Payload for a withdraw transaction."
@@ -1777,13 +1777,13 @@
           "description": "Lock time for the transaction."
         },
         "value": {
-          "type": "string",
-          "format": "int64",
+          "type": "number",
+          "format": "double",
           "description": "Transaction value."
         },
         "fee": {
-          "type": "string",
-          "format": "int64",
+          "type": "number",
+          "format": "double",
           "description": "Transaction fee."
         },
         "payloadType": {
@@ -1872,9 +1872,9 @@
           "description": "Validator number."
         },
         "stake": {
-          "type": "string",
-          "format": "int64",
-          "description": "Validator stake."
+          "type": "number",
+          "format": "double",
+          "description": "Validator stake in PAC."
         },
         "lastBondingHeight": {
           "type": "integer",

@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -224,9 +225,9 @@ func TestFee(t *testing.T) {
 	sb := sandbox.MockingSandbox(ts)
 
 	tests := []struct {
-		amount          int64
-		fee             int64
-		expectedFee     int64
+		amount          amount.Amount
+		fee             amount.Amount
+		expectedFee     amount.Amount
 		expectedErrCode int
 	}{
 		{1, 1, sb.TestParams.MinimumFee, errors.ErrInvalidFee},

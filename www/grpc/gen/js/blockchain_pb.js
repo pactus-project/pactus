@@ -3704,7 +3704,7 @@ proto.pactus.ValidatorInfo.toObject = function(includeInstance, msg) {
     data: msg.getData_asB64(),
     publicKey: jspb.Message.getFieldWithDefault(msg, 3, ""),
     number: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    stake: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    stake: jspb.Message.getFloatingPointFieldWithDefault(msg, 5, 0.0),
     lastBondingHeight: jspb.Message.getFieldWithDefault(msg, 6, 0),
     lastSortitionHeight: jspb.Message.getFieldWithDefault(msg, 7, 0),
     unbondingHeight: jspb.Message.getFieldWithDefault(msg, 8, 0),
@@ -3763,7 +3763,7 @@ proto.pactus.ValidatorInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setNumber(value);
       break;
     case 5:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readDouble());
       msg.setStake(value);
       break;
     case 6:
@@ -3844,8 +3844,8 @@ proto.pactus.ValidatorInfo.serializeBinaryToWriter = function(message, writer) {
     );
   }
   f = message.getStake();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (f !== 0.0) {
+    writer.writeDouble(
       5,
       f
     );
@@ -4009,11 +4009,11 @@ proto.pactus.ValidatorInfo.prototype.setNumber = function(value) {
 
 
 /**
- * optional int64 stake = 5;
+ * optional double stake = 5;
  * @return {number}
  */
 proto.pactus.ValidatorInfo.prototype.getStake = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 5, 0.0));
 };
 
 
@@ -4022,7 +4022,7 @@ proto.pactus.ValidatorInfo.prototype.getStake = function() {
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
 proto.pactus.ValidatorInfo.prototype.setStake = function(value) {
-  return jspb.Message.setProto3IntField(this, 5, value);
+  return jspb.Message.setProto3FloatField(this, 5, value);
 };
 
 
@@ -4151,7 +4151,7 @@ proto.pactus.AccountInfo.toObject = function(includeInstance, msg) {
     hash: msg.getHash_asB64(),
     data: msg.getData_asB64(),
     number: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    balance: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    balance: jspb.Message.getFloatingPointFieldWithDefault(msg, 4, 0.0),
     address: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
 
@@ -4202,7 +4202,7 @@ proto.pactus.AccountInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setNumber(value);
       break;
     case 4:
-      var value = /** @type {number} */ (reader.readInt64());
+      var value = /** @type {number} */ (reader.readDouble());
       msg.setBalance(value);
       break;
     case 5:
@@ -4260,8 +4260,8 @@ proto.pactus.AccountInfo.serializeBinaryToWriter = function(message, writer) {
     );
   }
   f = message.getBalance();
-  if (f !== 0) {
-    writer.writeInt64(
+  if (f !== 0.0) {
+    writer.writeDouble(
       4,
       f
     );
@@ -4379,11 +4379,11 @@ proto.pactus.AccountInfo.prototype.setNumber = function(value) {
 
 
 /**
- * optional int64 balance = 4;
+ * optional double balance = 4;
  * @return {number}
  */
 proto.pactus.AccountInfo.prototype.getBalance = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 4, 0.0));
 };
 
 
@@ -4392,7 +4392,7 @@ proto.pactus.AccountInfo.prototype.getBalance = function() {
  * @return {!proto.pactus.AccountInfo} returns this
  */
 proto.pactus.AccountInfo.prototype.setBalance = function(value) {
-  return jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3FloatField(this, 4, value);
 };
 
 

@@ -61,12 +61,12 @@ func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 
 	secret := make([]byte, 0, len(ikm)+1)
 	secret = append(secret, ikm...)
-	secret = append(secret, util.IS2OP(big.NewInt(0), 1)...)
+	secret = append(secret, util.I2OSP(big.NewInt(0), 1)...)
 
 	L := int64(48)
 	pseudoRandomKey := make([]byte, 0, len(keyInfo)+2)
 	pseudoRandomKey = append(pseudoRandomKey, keyInfo...)
-	pseudoRandomKey = append(pseudoRandomKey, util.IS2OP(big.NewInt(L), 2)...)
+	pseudoRandomKey = append(pseudoRandomKey, util.I2OSP(big.NewInt(L), 2)...)
 
 	g1 := bls12381.NewG1()
 

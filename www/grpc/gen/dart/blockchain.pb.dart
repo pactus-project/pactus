@@ -1028,7 +1028,7 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
-    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stake')
+    ..a<$core.double>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stake', $pb.PbFieldType.OD)
     ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBondingHeight', $pb.PbFieldType.OU3)
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSortitionHeight', $pb.PbFieldType.OU3)
     ..a<$core.int>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unbondingHeight', $pb.PbFieldType.OU3)
@@ -1043,7 +1043,7 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     $core.List<$core.int>? data,
     $core.String? publicKey,
     $core.int? number,
-    $fixnum.Int64? stake,
+    $core.double? stake,
     $core.int? lastBondingHeight,
     $core.int? lastSortitionHeight,
     $core.int? unbondingHeight,
@@ -1141,9 +1141,9 @@ class ValidatorInfo extends $pb.GeneratedMessage {
   void clearNumber() => clearField(4);
 
   @$pb.TagNumber(5)
-  $fixnum.Int64 get stake => $_getI64(4);
+  $core.double get stake => $_getN(4);
   @$pb.TagNumber(5)
-  set stake($fixnum.Int64 v) { $_setInt64(4, v); }
+  set stake($core.double v) { $_setDouble(4, v); }
   @$pb.TagNumber(5)
   $core.bool hasStake() => $_has(4);
   @$pb.TagNumber(5)
@@ -1200,7 +1200,7 @@ class AccountInfo extends $pb.GeneratedMessage {
     ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash', $pb.PbFieldType.OY)
     ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
     ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
-    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'balance')
+    ..a<$core.double>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'balance', $pb.PbFieldType.OD)
     ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
     ..hasRequiredFields = false
   ;
@@ -1210,7 +1210,7 @@ class AccountInfo extends $pb.GeneratedMessage {
     $core.List<$core.int>? hash,
     $core.List<$core.int>? data,
     $core.int? number,
-    $fixnum.Int64? balance,
+    $core.double? balance,
     $core.String? address,
   }) {
     final _result = create();
@@ -1280,9 +1280,9 @@ class AccountInfo extends $pb.GeneratedMessage {
   void clearNumber() => clearField(3);
 
   @$pb.TagNumber(4)
-  $fixnum.Int64 get balance => $_getI64(3);
+  $core.double get balance => $_getN(3);
   @$pb.TagNumber(4)
-  set balance($fixnum.Int64 v) { $_setInt64(3, v); }
+  set balance($core.double v) { $_setDouble(3, v); }
   @$pb.TagNumber(4)
   $core.bool hasBalance() => $_has(3);
   @$pb.TagNumber(4)

@@ -189,8 +189,8 @@ message ValidatorInfo {
   string public_key = 3;
   // Validator number.
   int32 number = 4;
-  // Validator stake.
-  int64 stake = 5;
+  // Validator stake in PAC.
+  double stake = 5;
   // Last bonding height.
   uint32 last_bonding_height = 6;
   // Last sortition height.
@@ -211,8 +211,8 @@ message AccountInfo {
   bytes data = 2;
   // Account number.
   int32 number = 3;
-  // Account balance.
-  int64 balance = 4;
+  // Account balance in PAC.
+  double balance = 4;
   // Address of the account.
   string address = 5;
 }

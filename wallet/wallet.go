@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
@@ -211,45 +212,55 @@ func (w *Wallet) Save() error {
 }
 
 // Balance returns balance of the account associated with the address..
-func (w *Wallet) Balance(addrStr string) (int64, error) {
+func (w *Wallet) Balance(addrStr string) (amount.Amount, error) {
+	if w.client == nil {
+		return 0, ErrOffline
+	}
+
 	addr, err := crypto.AddressFromString(addrStr)
 	if err != nil {
 		return 0, err
 	}
 
-	if w.client == nil {
-		return 0, ErrOffline
+	acc, err := w.client.getAccount(addr)
+	if err != nil {
+		return 0, err
 	}
 
-	acc, _ := w.client.getAccount(addr)
-	if acc != nil {
-		return acc.Balance, nil
+	balance, err := amount.NewAmount(acc.Balance)
+	if err != nil {
+		return 0, err
 	}
 
-	return 0, nil
+	return balance, nil
 }
 
 // Stake returns stake of the validator associated with the address..
-func (w *Wallet) Stake(addrStr string) (int64, error) {
+func (w *Wallet) Stake(addrStr string) (amount.Amount, error) {
+	if w.client == nil {
+		return 0, ErrOffline
+	}
+
 	addr, err := crypto.AddressFromString(addrStr)
 	if err != nil {
 		return 0, err
 	}
 
-	if w.client == nil {
-		return 0, ErrOffline
+	val, err := w.client.getValidator(addr)
+	if err != nil {
+		return 0, err
 	}
 
-	val, _ := w.client.getValidator(addr)
-	if val != nil {
-		return val.Stake, nil
+	stake, err := amount.NewAmount(val.Stake)
+	if err != nil {
+		return 0, err
 	}
 
-	return 0, nil
+	return stake, nil
 }
 
 // MakeTransferTx creates a new transfer transaction based on the given parameters.
-func (w *Wallet) MakeTransferTx(sender, receiver string, amount int64,
+func (w *Wallet) MakeTransferTx(sender, receiver string, amt amount.Amount,
 	options ...TxOption,
 ) (*tx.Tx, error) {
 	maker, err := newTxBuilder(w.client, options...)
@@ -264,14 +275,14 @@ func (w *Wallet) MakeTransferTx(sender, receiver string, amount int64,
 	if err != nil {
 		return nil, err
 	}
-	maker.amount = amount
+	maker.amount = amt
 	maker.typ = payload.TypeTransfer
 
 	return maker.build()
 }
 
 // MakeBondTx creates a new bond transaction based on the given parameters.
-func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
+func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amt amount.Amount,
 	options ...TxOption,
 ) (*tx.Tx, error) {
 	maker, err := newTxBuilder(w.client, options...)
@@ -299,7 +310,7 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amount int64,
 			return nil, err
 		}
 	}
-	maker.amount = amount
+	maker.amount = amt
 	maker.typ = payload.TypeBond
 
 	return maker.build()
@@ -322,7 +333,7 @@ func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
 
 // MakeWithdrawTx creates a new withdraw transaction based on the given
 // parameters.
-func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount int64,
+func (w *Wallet) MakeWithdrawTx(sender, receiver string, amount amount.Amount,
 	options ...TxOption,
 ) (*tx.Tx, error) {
 	maker, err := newTxBuilder(w.client, options...)
@@ -372,7 +383,7 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	return id.String(), nil
 }
 
-func (w *Wallet) CalculateFee(amount int64, payloadType payload.Type) (int64, error) {
+func (w *Wallet) CalculateFee(amount amount.Amount, payloadType payload.Type) (amount.Amount, error) {
 	return w.client.getFee(amount, payloadType)
 }
 
@@ -489,13 +500,19 @@ func (w *Wallet) AddTransaction(id tx.ID) error {
 	}
 
 	if w.store.Vault.Contains(sender) {
-		amount := -(trxRes.Transaction.Fee + trxRes.Transaction.Value)
+		amount, err := amount.NewAmount(-(trxRes.Transaction.Fee + trxRes.Transaction.Value))
+		if err != nil {
+			return err
+		}
 		w.store.History.addActivity(sender, amount, trxRes)
 	}
 
 	if receiver != nil {
 		if w.store.Vault.Contains(*receiver) {
-			amount := trxRes.Transaction.Value
+			amount, err := amount.NewAmount(trxRes.Transaction.Value)
+			if err != nil {
+				return err
+			}
 			w.store.History.addActivity(*receiver, amount, trxRes)
 		}
 	}

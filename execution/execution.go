@@ -3,6 +3,7 @@ package execution
 import (
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -117,8 +118,8 @@ func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 	return nil
 }
 
-func CalculateFee(amt int64, params *param.Params) int64 {
-	fee := int64(float64(amt) * params.FeeFraction)
+func CalculateFee(amt amount.Amount, params *param.Params) amount.Amount {
+	fee := amt.MulF64(params.FeeFraction)
 	fee = util.Max(fee, params.MinimumFee)
 	fee = util.Min(fee, params.MaximumFee)
 

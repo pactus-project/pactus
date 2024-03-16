@@ -38,8 +38,8 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	tm.addRowBlockHash("Last Block Hash", res.LastBlockHash)
 	tm.addRowInt("Last Block Height", int(res.LastBlockHeight))
 	tm.addRowString("--- Committee", "---")
-	tm.addRowAmount("Total Power", res.TotalPower)
-	tm.addRowAmount("Committee Power", res.CommitteePower)
+	tm.addRowPower("Total Power", res.TotalPower)
+	tm.addRowPower("Committee Power", res.CommitteePower)
 	for i, val := range res.CommitteeValidators {
 		tm.addRowInt("--- Validator", i+1)
 		tmVal := s.writeValidatorTable(val)

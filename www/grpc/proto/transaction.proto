@@ -111,9 +111,9 @@ message GetRawBondTransactionRequest {
   string sender = 2;
   // Receiver's validator address.
   string receiver = 3;
-  // Stake amount.
+  // Stake amount in PAC.
   // It should be greater than 0.
-  int64 stake = 4;
+  double stake = 4;
   // Public key of the validator.
   string public_key = 5;
   // Transaction fee in PAC.
@@ -165,8 +165,8 @@ message PayloadTransfer {
   string sender = 1;
   // Receiver's address.
   string receiver = 2;
-  // Transaction amount.
-  int64 amount = 3;
+  // Transaction amount in PAC.
+  double amount = 3;
 }
 
 // Payload for a bond transaction.
@@ -175,8 +175,8 @@ message PayloadBond {
   string sender = 1;
   // Receiver's address.
   string receiver = 2;
-  // Stake amount.
-  int64 stake = 3;
+  // Stake amount in PAC.
+  double stake = 3;
 }
 
 // Payload for a sortition transaction.
@@ -199,8 +199,8 @@ message PayloadWithdraw {
   string from = 1;
   // Address to withdraw to.
   string to = 2;
-  // Withdrawal amount.
-  int64 amount = 3;
+  // Withdrawal amount in PAC.
+  double amount = 3;
 }
 
 // Information about a transaction.
@@ -214,9 +214,9 @@ message TransactionInfo {
   // Lock time for the transaction.
   uint32 lock_time = 4;
   // Transaction value.
-  int64 value = 5;
+  double value = 5;
   // Transaction fee.
-  int64 fee = 6;
+  double fee = 6;
   // Type of transaction payload.
   PayloadType payload_type = 7;
   oneof payload {

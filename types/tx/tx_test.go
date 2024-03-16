@@ -97,7 +97,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("LockTime is not defined", func(t *testing.T) {
 		trx := tx.NewTransferTx(0,
-			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandInt64(1e9), ts.RandInt64(1e6), "")
+			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandAmount(), "")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -109,7 +109,7 @@ func TestBasicCheck(t *testing.T) {
 		bigMemo := strings.Repeat("a", 65)
 
 		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandInt64(1e9), ts.RandInt64(1e6), bigMemo)
+			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandAmount(), bigMemo)
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -121,7 +121,7 @@ func TestBasicCheck(t *testing.T) {
 		invAddr := ts.RandAccAddress()
 		invAddr[0] = 3
 		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), invAddr, 1e9, ts.RandInt64(1e6), "invalid address")
+			ts.RandAccAddress(), invAddr, 1e9, ts.RandAmount(), "invalid address")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{

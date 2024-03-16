@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
@@ -227,20 +228,20 @@ func TestBalance(t *testing.T) {
 	td := setup(t)
 
 	addr := td.RandAccAddress()
-	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Balance: 1}}
+	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Balance: 1.2}}
 	amt, err := td.wallet.Balance(addr.String())
 	assert.NoError(t, err)
-	assert.Equal(t, amt, int64(1))
+	assert.Equal(t, amount.Amount(1.2e9), amt)
 }
 
 func TestStake(t *testing.T) {
 	td := setup(t)
 
 	addr := td.RandAccAddress()
-	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Stake: 1}}
+	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Stake: 1.2}}
 	amt, err := td.wallet.Stake(addr.String())
 	assert.NoError(t, err)
-	assert.Equal(t, amt, int64(1))
+	assert.Equal(t, 1.2, amt.ToPAC())
 }
 
 func TestSigningTx(t *testing.T) {
@@ -248,16 +249,17 @@ func TestSigningTx(t *testing.T) {
 
 	sender, _ := td.wallet.NewBLSAccountAddress("testing addr")
 	receiver := td.RandAccAddress()
-	amount := td.RandInt64(10000)
+	amt := td.RandAmount()
+	fee := td.RandAmount()
 	lockTime := td.RandHeight()
 
 	opts := []TxOption{
-		OptionFee(util.CoinToChange(10)),
+		OptionFee(fee),
 		OptionLockTime(lockTime),
 		OptionMemo("test"),
 	}
 
-	trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amount, opts...)
+	trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amt, opts...)
 	assert.NoError(t, err)
 	err = td.wallet.SignTransaction(td.password, trx)
 	assert.NoError(t, err)
@@ -267,6 +269,7 @@ func TestSigningTx(t *testing.T) {
 	id, err := td.wallet.BroadcastTransaction(trx)
 	assert.NoError(t, err)
 	assert.Equal(t, trx.ID().String(), id)
+	assert.Equal(t, fee, trx.Fee())
 }
 
 func TestMakeTransferTx(t *testing.T) {
@@ -274,50 +277,51 @@ func TestMakeTransferTx(t *testing.T) {
 
 	sender, _ := td.wallet.NewBLSAccountAddress("testing addr")
 	receiver := td.RandAccAddress()
-	amount := td.RandInt64(10000)
+	amt := td.RandAmount()
 	lockTime := td.RandHeight()
 
 	t.Run("set parameters manually", func(t *testing.T) {
+		fee := td.RandAmount()
 		opts := []TxOption{
-			OptionFee(util.CoinToChange(10)),
+			OptionFee(fee),
 			OptionLockTime(lockTime),
 			OptionMemo("test"),
 		}
 
-		trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amount, opts...)
+		trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amt, opts...)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.Fee(), util.CoinToChange(10))
-		assert.Equal(t, trx.LockTime(), lockTime)
-		assert.Equal(t, trx.Memo(), "test")
+		assert.Equal(t, fee, trx.Fee())
+		assert.Equal(t, lockTime, trx.LockTime())
+		assert.Equal(t, "test", trx.Memo())
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		lastBlockHash := td.RandHash()
 		tBlockchainInfoResponse = &pactus.GetBlockchainInfoResponse{LastBlockHash: lastBlockHash.Bytes()}
 
-		trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amount)
+		trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amt)
 		assert.NoError(t, err)
 		// assert.Equal(t, trx.LockTime(), lockTime+1) // TODO: fix ma later
-		assert.Equal(t, trx.Payload().Value(), amount)
-		fee, err := td.wallet.CalculateFee(amount, payload.TypeTransfer)
+		assert.Equal(t, amt, trx.Payload().Value())
+		fee, err := td.wallet.CalculateFee(amt, payload.TypeTransfer)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.Fee(), fee)
+		assert.Equal(t, fee, trx.Fee())
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
-		_, err := td.wallet.MakeTransferTx("invalid_addr_string", receiver.String(), amount)
+		_, err := td.wallet.MakeTransferTx("invalid_addr_string", receiver.String(), amt)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("invalid receiver address", func(t *testing.T) {
-		_, err := td.wallet.MakeTransferTx(sender, "invalid_addr_string", amount)
+		_, err := td.wallet.MakeTransferTx(sender, "invalid_addr_string", amt)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
 		tBlockchainInfoResponse = nil
 
-		_, err := td.wallet.MakeTransferTx(td.RandAccAddress().String(), receiver.String(), amount)
+		_, err := td.wallet.MakeTransferTx(td.RandAccAddress().String(), receiver.String(), amt)
 		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
 }
@@ -327,22 +331,23 @@ func TestMakeBondTx(t *testing.T) {
 
 	sender, _ := td.wallet.NewValidatorAddress("testing addr")
 	receiver := td.RandValKey()
-	amount := td.RandInt64(10000)
+	amt := td.RandAmount()
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
+		fee := td.RandAmount()
 		opts := []TxOption{
-			OptionFee(util.CoinToChange(10)),
+			OptionFee(fee),
 			OptionLockTime(lockTime),
 			OptionMemo("test"),
 		}
 
 		trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(),
-			receiver.PublicKey().String(), amount, opts...)
+			receiver.PublicKey().String(), amt, opts...)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.Fee(), util.CoinToChange(10))
-		assert.Equal(t, trx.LockTime(), lockTime)
-		assert.Equal(t, trx.Memo(), "test")
+		assert.Equal(t, fee, trx.Fee())
+		assert.Equal(t, lockTime, trx.LockTime())
+		assert.Equal(t, "test", trx.Memo())
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
@@ -353,38 +358,38 @@ func TestMakeBondTx(t *testing.T) {
 			LastBlockHeight: lastBlockHeight,
 		}
 
-		trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amount)
+		trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amt)
 		assert.NoError(t, err)
 		assert.Equal(t, trx.LockTime(), lastBlockHeight+1)
 		assert.True(t, trx.Payload().(*payload.BondPayload).PublicKey.EqualsTo(receiver.PublicKey()))
-		assert.Equal(t, trx.Payload().Value(), amount)
-		fee, err := td.wallet.CalculateFee(amount, payload.TypeBond)
+		assert.Equal(t, amt, trx.Payload().Value())
+		fee, err := td.wallet.CalculateFee(amt, payload.TypeBond)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.Fee(), fee)
+		assert.Equal(t, fee, trx.Fee())
 	})
 
 	t.Run("validator address is not stored in wallet", func(t *testing.T) {
 		t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
-			trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), "", amount)
+			trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), "", amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
 
 		t.Run("validator doesn't exist and public key set", func(t *testing.T) {
-			trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amount)
+			trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amt)
 			assert.NoError(t, err)
 			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiver.PublicKey().String())
 		})
 
 		t.Run("validator exists and public key not set", func(t *testing.T) {
 			tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{}}
-			trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), "", amount)
+			trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), "", amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
 
 		t.Run("validator exists and public key set", func(t *testing.T) {
-			trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amount)
+			trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
@@ -396,52 +401,52 @@ func TestMakeBondTx(t *testing.T) {
 
 		t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
 			tValidatorResponse = nil
-			trx, err := td.wallet.MakeBondTx(sender, receiver, "", amount)
+			trx, err := td.wallet.MakeBondTx(sender, receiver, "", amt)
 			assert.NoError(t, err)
 			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiverInfo.PublicKey)
 		})
 
 		t.Run("validator doesn't exist and public key set", func(t *testing.T) {
 			receiverInfo := td.wallet.AddressInfo(receiver)
-			trx, err := td.wallet.MakeBondTx(sender, receiver, receiverInfo.PublicKey, amount)
+			trx, err := td.wallet.MakeBondTx(sender, receiver, receiverInfo.PublicKey, amt)
 			assert.NoError(t, err)
 			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiverInfo.PublicKey)
 		})
 
 		t.Run("validator exists and public key not set", func(t *testing.T) {
 			tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{}}
-			trx, err := td.wallet.MakeBondTx(sender, receiver, "", amount)
+			trx, err := td.wallet.MakeBondTx(sender, receiver, "", amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
 
 		t.Run("validator exists and public key set", func(t *testing.T) {
 			receiverInfo := td.wallet.AddressInfo(receiver)
-			trx, err := td.wallet.MakeBondTx(sender, receiver, receiverInfo.PublicKey, amount)
+			trx, err := td.wallet.MakeBondTx(sender, receiver, receiverInfo.PublicKey, amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
-		_, err := td.wallet.MakeBondTx("invalid_addr_string", receiver.Address().String(), "", amount)
+		_, err := td.wallet.MakeBondTx("invalid_addr_string", receiver.Address().String(), "", amt)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("invalid receiver address", func(t *testing.T) {
-		_, err := td.wallet.MakeBondTx(sender, "invalid_addr_string", "", amount)
+		_, err := td.wallet.MakeBondTx(sender, "invalid_addr_string", "", amt)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("invalid public key", func(t *testing.T) {
-		_, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), "invalid-pub-key", amount)
+		_, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), "invalid-pub-key", amt)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
 		tBlockchainInfoResponse = nil
 
-		_, err := td.wallet.MakeBondTx(td.RandAccAddress().String(), receiver.Address().String(), "", amount)
+		_, err := td.wallet.MakeBondTx(td.RandAccAddress().String(), receiver.Address().String(), "", amt)
 		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
 }
@@ -454,7 +459,6 @@ func TestMakeUnbondTx(t *testing.T) {
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
 		opts := []TxOption{
-			OptionFee(util.CoinToChange(10)),
 			OptionLockTime(lockTime),
 			OptionMemo("test"),
 		}
@@ -462,8 +466,8 @@ func TestMakeUnbondTx(t *testing.T) {
 		trx, err := td.wallet.MakeUnbondTx(sender, opts...)
 		assert.NoError(t, err)
 		assert.Zero(t, trx.Fee()) // Fee for unbond transaction is zero
-		assert.Equal(t, trx.LockTime(), lockTime)
-		assert.Equal(t, trx.Memo(), "test")
+		assert.Equal(t, lockTime, trx.LockTime())
+		assert.Equal(t, "test", trx.Memo())
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
@@ -499,21 +503,22 @@ func TestMakeWithdrawTx(t *testing.T) {
 
 	sender, _ := td.wallet.NewBLSAccountAddress("testing addr")
 	receiver, _ := td.wallet.NewBLSAccountAddress("testing addr")
-	amount := td.RandInt64(10000)
+	amt := td.RandAmount()
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
+		fee := td.RandAmount()
 		opts := []TxOption{
-			OptionFee(util.CoinToChange(10)),
+			OptionFee(fee),
 			OptionLockTime(lockTime),
 			OptionMemo("test"),
 		}
 
-		trx, err := td.wallet.MakeWithdrawTx(sender, receiver, amount, opts...)
+		trx, err := td.wallet.MakeWithdrawTx(sender, receiver, amt, opts...)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.Fee(), util.CoinToChange(10)) // Fee for unbond transaction is zero
-		assert.Equal(t, trx.LockTime(), lockTime)
-		assert.Equal(t, trx.Memo(), "test")
+		assert.Equal(t, fee, trx.Fee())
+		assert.Equal(t, lockTime, trx.LockTime())
+		assert.Equal(t, "test", trx.Memo())
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
@@ -524,24 +529,24 @@ func TestMakeWithdrawTx(t *testing.T) {
 			LastBlockHeight: lastBlockHeight,
 		}
 
-		trx, err := td.wallet.MakeWithdrawTx(sender, receiver, amount)
+		trx, err := td.wallet.MakeWithdrawTx(sender, receiver, amt)
 		assert.NoError(t, err)
 		assert.Equal(t, trx.LockTime(), lastBlockHeight+1)
-		assert.Equal(t, trx.Payload().Value(), amount)
-		fee, err := td.wallet.CalculateFee(amount, payload.TypeWithdraw)
+		assert.Equal(t, amt, trx.Payload().Value())
+		fee, err := td.wallet.CalculateFee(amt, payload.TypeWithdraw)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.Fee(), fee)
+		assert.Equal(t, fee, trx.Fee())
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
-		_, err := td.wallet.MakeWithdrawTx("invalid_addr_string", receiver, amount)
+		_, err := td.wallet.MakeWithdrawTx("invalid_addr_string", receiver, amt)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
 		tBlockchainInfoResponse = nil
 
-		_, err := td.wallet.MakeWithdrawTx(td.RandAccAddress().String(), receiver, amount)
+		_, err := td.wallet.MakeWithdrawTx(td.RandAccAddress().String(), receiver, amt)
 		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
 }

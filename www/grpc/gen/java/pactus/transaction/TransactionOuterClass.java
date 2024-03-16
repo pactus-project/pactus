@@ -1833,7 +1833,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction amount.
+     * Transaction amount in PAC.
      * </pre>
      *
      * <code>double amount = 1 [json_name = "amount"];</code>
@@ -1919,7 +1919,7 @@ public final class TransactionOuterClass {
     private double amount_;
     /**
      * <pre>
-     * Transaction amount.
+     * Transaction amount in PAC.
      * </pre>
      *
      * <code>double amount = 1 [json_name = "amount"];</code>
@@ -2340,7 +2340,7 @@ public final class TransactionOuterClass {
       private double amount_ ;
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in PAC.
        * </pre>
        *
        * <code>double amount = 1 [json_name = "amount"];</code>
@@ -2352,7 +2352,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in PAC.
        * </pre>
        *
        * <code>double amount = 1 [json_name = "amount"];</code>
@@ -2367,7 +2367,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in PAC.
        * </pre>
        *
        * <code>double amount = 1 [json_name = "amount"];</code>
@@ -2566,20 +2566,20 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Calculated amount.
+     * Calculated amount in PAC.
      * </pre>
      *
-     * <code>double amount = 2 [json_name = "amount"];</code>
+     * <code>double amount = 1 [json_name = "amount"];</code>
      * @return The amount.
      */
     double getAmount();
 
     /**
      * <pre>
-     * Calculated transaction fee.
+     * Calculated transaction fee in PAC.
      * </pre>
      *
-     * <code>double fee = 1 [json_name = "fee"];</code>
+     * <code>double fee = 2 [json_name = "fee"];</code>
      * @return The fee.
      */
     double getFee();
@@ -2628,14 +2628,14 @@ public final class TransactionOuterClass {
               pactus.transaction.TransactionOuterClass.CalculateFeeResponse.class, pactus.transaction.TransactionOuterClass.CalculateFeeResponse.Builder.class);
     }
 
-    public static final int AMOUNT_FIELD_NUMBER = 2;
+    public static final int AMOUNT_FIELD_NUMBER = 1;
     private double amount_;
     /**
      * <pre>
-     * Calculated amount.
+     * Calculated amount in PAC.
      * </pre>
      *
-     * <code>double amount = 2 [json_name = "amount"];</code>
+     * <code>double amount = 1 [json_name = "amount"];</code>
      * @return The amount.
      */
     @java.lang.Override
@@ -2643,14 +2643,14 @@ public final class TransactionOuterClass {
       return amount_;
     }
 
-    public static final int FEE_FIELD_NUMBER = 1;
+    public static final int FEE_FIELD_NUMBER = 2;
     private double fee_;
     /**
      * <pre>
-     * Calculated transaction fee.
+     * Calculated transaction fee in PAC.
      * </pre>
      *
-     * <code>double fee = 1 [json_name = "fee"];</code>
+     * <code>double fee = 2 [json_name = "fee"];</code>
      * @return The fee.
      */
     @java.lang.Override
@@ -2672,11 +2672,11 @@ public final class TransactionOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
-        output.writeDouble(1, fee_);
-      }
       if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
-        output.writeDouble(2, amount_);
+        output.writeDouble(1, amount_);
+      }
+      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
+        output.writeDouble(2, fee_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -2687,13 +2687,13 @@ public final class TransactionOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(1, fee_);
-      }
       if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(2, amount_);
+          .computeDoubleSize(1, amount_);
+      }
+      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(2, fee_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -2978,12 +2978,12 @@ public final class TransactionOuterClass {
                 done = true;
                 break;
               case 9: {
-                fee_ = input.readDouble();
+                amount_ = input.readDouble();
 
                 break;
               } // case 9
               case 17: {
-                amount_ = input.readDouble();
+                fee_ = input.readDouble();
 
                 break;
               } // case 17
@@ -3006,10 +3006,10 @@ public final class TransactionOuterClass {
       private double amount_ ;
       /**
        * <pre>
-       * Calculated amount.
+       * Calculated amount in PAC.
        * </pre>
        *
-       * <code>double amount = 2 [json_name = "amount"];</code>
+       * <code>double amount = 1 [json_name = "amount"];</code>
        * @return The amount.
        */
       @java.lang.Override
@@ -3018,10 +3018,10 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Calculated amount.
+       * Calculated amount in PAC.
        * </pre>
        *
-       * <code>double amount = 2 [json_name = "amount"];</code>
+       * <code>double amount = 1 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
        */
@@ -3033,10 +3033,10 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Calculated amount.
+       * Calculated amount in PAC.
        * </pre>
        *
-       * <code>double amount = 2 [json_name = "amount"];</code>
+       * <code>double amount = 1 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAmount() {
@@ -3049,10 +3049,10 @@ public final class TransactionOuterClass {
       private double fee_ ;
       /**
        * <pre>
-       * Calculated transaction fee.
+       * Calculated transaction fee in PAC.
        * </pre>
        *
-       * <code>double fee = 1 [json_name = "fee"];</code>
+       * <code>double fee = 2 [json_name = "fee"];</code>
        * @return The fee.
        */
       @java.lang.Override
@@ -3061,10 +3061,10 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Calculated transaction fee.
+       * Calculated transaction fee in PAC.
        * </pre>
        *
-       * <code>double fee = 1 [json_name = "fee"];</code>
+       * <code>double fee = 2 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
        */
@@ -3076,10 +3076,10 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Calculated transaction fee.
+       * Calculated transaction fee in PAC.
        * </pre>
        *
-       * <code>double fee = 1 [json_name = "fee"];</code>
+       * <code>double fee = 2 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
       public Builder clearFee() {
@@ -4213,7 +4213,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transfer amount.
+     * Transfer amount in PAC.
      * It should be greater than 0.
      * </pre>
      *
@@ -4224,7 +4224,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in PAC.
      * If not explicitly set, it is calculated based on the amount.
      * </pre>
      *
@@ -4412,7 +4412,7 @@ public final class TransactionOuterClass {
     private double amount_;
     /**
      * <pre>
-     * Transfer amount.
+     * Transfer amount in PAC.
      * It should be greater than 0.
      * </pre>
      *
@@ -4428,7 +4428,7 @@ public final class TransactionOuterClass {
     private double fee_;
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in PAC.
      * If not explicitly set, it is calculated based on the amount.
      * </pre>
      *
@@ -5160,7 +5160,7 @@ public final class TransactionOuterClass {
       private double amount_ ;
       /**
        * <pre>
-       * Transfer amount.
+       * Transfer amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -5173,7 +5173,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer amount.
+       * Transfer amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -5189,7 +5189,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer amount.
+       * Transfer amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -5206,7 +5206,7 @@ public final class TransactionOuterClass {
       private double fee_ ;
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in PAC.
        * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
@@ -5219,7 +5219,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in PAC.
        * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
@@ -5235,7 +5235,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in PAC.
        * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
@@ -5465,14 +5465,14 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Stake amount.
+     * Stake amount in PAC.
      * It should be greater than 0.
      * </pre>
      *
-     * <code>int64 stake = 4 [json_name = "stake"];</code>
+     * <code>double stake = 4 [json_name = "stake"];</code>
      * @return The stake.
      */
-    long getStake();
+    double getStake();
 
     /**
      * <pre>
@@ -5496,7 +5496,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in PAC.
      * If not explicitly set, it is calculated based on the stake.
      * </pre>
      *
@@ -5682,18 +5682,18 @@ public final class TransactionOuterClass {
     }
 
     public static final int STAKE_FIELD_NUMBER = 4;
-    private long stake_;
+    private double stake_;
     /**
      * <pre>
-     * Stake amount.
+     * Stake amount in PAC.
      * It should be greater than 0.
      * </pre>
      *
-     * <code>int64 stake = 4 [json_name = "stake"];</code>
+     * <code>double stake = 4 [json_name = "stake"];</code>
      * @return The stake.
      */
     @java.lang.Override
-    public long getStake() {
+    public double getStake() {
       return stake_;
     }
 
@@ -5747,7 +5747,7 @@ public final class TransactionOuterClass {
     private double fee_;
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in PAC.
      * If not explicitly set, it is calculated based on the stake.
      * </pre>
      *
@@ -5828,8 +5828,8 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, receiver_);
       }
-      if (stake_ != 0L) {
-        output.writeInt64(4, stake_);
+      if (java.lang.Double.doubleToRawLongBits(stake_) != 0) {
+        output.writeDouble(4, stake_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, publicKey_);
@@ -5859,9 +5859,9 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, receiver_);
       }
-      if (stake_ != 0L) {
+      if (java.lang.Double.doubleToRawLongBits(stake_) != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(4, stake_);
+          .computeDoubleSize(4, stake_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, publicKey_);
@@ -5894,8 +5894,9 @@ public final class TransactionOuterClass {
           .equals(other.getSender())) return false;
       if (!getReceiver()
           .equals(other.getReceiver())) return false;
-      if (getStake()
-          != other.getStake()) return false;
+      if (java.lang.Double.doubleToLongBits(getStake())
+          != java.lang.Double.doubleToLongBits(
+              other.getStake())) return false;
       if (!getPublicKey()
           .equals(other.getPublicKey())) return false;
       if (java.lang.Double.doubleToLongBits(getFee())
@@ -5922,7 +5923,7 @@ public final class TransactionOuterClass {
       hash = (53 * hash) + getReceiver().hashCode();
       hash = (37 * hash) + STAKE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getStake());
+          java.lang.Double.doubleToLongBits(getStake()));
       hash = (37 * hash) + PUBLIC_KEY_FIELD_NUMBER;
       hash = (53 * hash) + getPublicKey().hashCode();
       hash = (37 * hash) + FEE_FIELD_NUMBER;
@@ -6068,7 +6069,7 @@ public final class TransactionOuterClass {
 
         receiver_ = "";
 
-        stake_ = 0L;
+        stake_ = 0D;
 
         publicKey_ = "";
 
@@ -6168,7 +6169,7 @@ public final class TransactionOuterClass {
           receiver_ = other.receiver_;
           onChanged();
         }
-        if (other.getStake() != 0L) {
+        if (other.getStake() != 0D) {
           setStake(other.getStake());
         }
         if (!other.getPublicKey().isEmpty()) {
@@ -6223,11 +6224,11 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 26
-              case 32: {
-                stake_ = input.readInt64();
+              case 33: {
+                stake_ = input.readDouble();
 
                 break;
-              } // case 32
+              } // case 33
               case 42: {
                 publicKey_ = input.readStringRequireUtf8();
 
@@ -6497,31 +6498,31 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private long stake_ ;
+      private double stake_ ;
       /**
        * <pre>
-       * Stake amount.
+       * Stake amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
-       * <code>int64 stake = 4 [json_name = "stake"];</code>
+       * <code>double stake = 4 [json_name = "stake"];</code>
        * @return The stake.
        */
       @java.lang.Override
-      public long getStake() {
+      public double getStake() {
         return stake_;
       }
       /**
        * <pre>
-       * Stake amount.
+       * Stake amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
-       * <code>int64 stake = 4 [json_name = "stake"];</code>
+       * <code>double stake = 4 [json_name = "stake"];</code>
        * @param value The stake to set.
        * @return This builder for chaining.
        */
-      public Builder setStake(long value) {
+      public Builder setStake(double value) {
         
         stake_ = value;
         onChanged();
@@ -6529,16 +6530,16 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Stake amount.
+       * Stake amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
-       * <code>int64 stake = 4 [json_name = "stake"];</code>
+       * <code>double stake = 4 [json_name = "stake"];</code>
        * @return This builder for chaining.
        */
       public Builder clearStake() {
         
-        stake_ = 0L;
+        stake_ = 0D;
         onChanged();
         return this;
       }
@@ -6642,7 +6643,7 @@ public final class TransactionOuterClass {
       private double fee_ ;
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in PAC.
        * If not explicitly set, it is calculated based on the stake.
        * </pre>
        *
@@ -6655,7 +6656,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in PAC.
        * If not explicitly set, it is calculated based on the stake.
        * </pre>
        *
@@ -6671,7 +6672,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in PAC.
        * If not explicitly set, it is calculated based on the stake.
        * </pre>
        *
@@ -7774,7 +7775,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Withdrawal amount.
+     * Withdrawal amount in PAC.
      * It should be greater than 0.
      * </pre>
      *
@@ -7973,7 +7974,7 @@ public final class TransactionOuterClass {
     private double amount_;
     /**
      * <pre>
-     * Withdrawal amount.
+     * Withdrawal amount in PAC.
      * It should be greater than 0.
      * </pre>
      *
@@ -8721,7 +8722,7 @@ public final class TransactionOuterClass {
       private double amount_ ;
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -8734,7 +8735,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -8750,7 +8751,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in PAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -9517,13 +9518,13 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction amount.
+     * Transaction amount in PAC.
      * </pre>
      *
-     * <code>int64 amount = 3 [json_name = "amount"];</code>
+     * <code>double amount = 3 [json_name = "amount"];</code>
      * @return The amount.
      */
-    long getAmount();
+    double getAmount();
   }
   /**
    * <pre>
@@ -9664,17 +9665,17 @@ public final class TransactionOuterClass {
     }
 
     public static final int AMOUNT_FIELD_NUMBER = 3;
-    private long amount_;
+    private double amount_;
     /**
      * <pre>
-     * Transaction amount.
+     * Transaction amount in PAC.
      * </pre>
      *
-     * <code>int64 amount = 3 [json_name = "amount"];</code>
+     * <code>double amount = 3 [json_name = "amount"];</code>
      * @return The amount.
      */
     @java.lang.Override
-    public long getAmount() {
+    public double getAmount() {
       return amount_;
     }
 
@@ -9698,8 +9699,8 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, receiver_);
       }
-      if (amount_ != 0L) {
-        output.writeInt64(3, amount_);
+      if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
+        output.writeDouble(3, amount_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -9716,9 +9717,9 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, receiver_);
       }
-      if (amount_ != 0L) {
+      if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(3, amount_);
+          .computeDoubleSize(3, amount_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -9739,8 +9740,9 @@ public final class TransactionOuterClass {
           .equals(other.getSender())) return false;
       if (!getReceiver()
           .equals(other.getReceiver())) return false;
-      if (getAmount()
-          != other.getAmount()) return false;
+      if (java.lang.Double.doubleToLongBits(getAmount())
+          != java.lang.Double.doubleToLongBits(
+              other.getAmount())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -9758,7 +9760,7 @@ public final class TransactionOuterClass {
       hash = (53 * hash) + getReceiver().hashCode();
       hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getAmount());
+          java.lang.Double.doubleToLongBits(getAmount()));
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -9895,7 +9897,7 @@ public final class TransactionOuterClass {
 
         receiver_ = "";
 
-        amount_ = 0L;
+        amount_ = 0D;
 
         return this;
       }
@@ -9982,7 +9984,7 @@ public final class TransactionOuterClass {
           receiver_ = other.receiver_;
           onChanged();
         }
-        if (other.getAmount() != 0L) {
+        if (other.getAmount() != 0D) {
           setAmount(other.getAmount());
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -10021,11 +10023,11 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 18
-              case 24: {
-                amount_ = input.readInt64();
+              case 25: {
+                amount_ = input.readDouble();
 
                 break;
-              } // case 24
+              } // case 25
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -10234,29 +10236,29 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private long amount_ ;
+      private double amount_ ;
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in PAC.
        * </pre>
        *
-       * <code>int64 amount = 3 [json_name = "amount"];</code>
+       * <code>double amount = 3 [json_name = "amount"];</code>
        * @return The amount.
        */
       @java.lang.Override
-      public long getAmount() {
+      public double getAmount() {
         return amount_;
       }
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in PAC.
        * </pre>
        *
-       * <code>int64 amount = 3 [json_name = "amount"];</code>
+       * <code>double amount = 3 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
        */
-      public Builder setAmount(long value) {
+      public Builder setAmount(double value) {
         
         amount_ = value;
         onChanged();
@@ -10264,15 +10266,15 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in PAC.
        * </pre>
        *
-       * <code>int64 amount = 3 [json_name = "amount"];</code>
+       * <code>double amount = 3 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAmount() {
         
-        amount_ = 0L;
+        amount_ = 0D;
         onChanged();
         return this;
       }
@@ -10386,13 +10388,13 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Stake amount.
+     * Stake amount in PAC.
      * </pre>
      *
-     * <code>int64 stake = 3 [json_name = "stake"];</code>
+     * <code>double stake = 3 [json_name = "stake"];</code>
      * @return The stake.
      */
-    long getStake();
+    double getStake();
   }
   /**
    * <pre>
@@ -10533,17 +10535,17 @@ public final class TransactionOuterClass {
     }
 
     public static final int STAKE_FIELD_NUMBER = 3;
-    private long stake_;
+    private double stake_;
     /**
      * <pre>
-     * Stake amount.
+     * Stake amount in PAC.
      * </pre>
      *
-     * <code>int64 stake = 3 [json_name = "stake"];</code>
+     * <code>double stake = 3 [json_name = "stake"];</code>
      * @return The stake.
      */
     @java.lang.Override
-    public long getStake() {
+    public double getStake() {
       return stake_;
     }
 
@@ -10567,8 +10569,8 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, receiver_);
       }
-      if (stake_ != 0L) {
-        output.writeInt64(3, stake_);
+      if (java.lang.Double.doubleToRawLongBits(stake_) != 0) {
+        output.writeDouble(3, stake_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -10585,9 +10587,9 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, receiver_);
       }
-      if (stake_ != 0L) {
+      if (java.lang.Double.doubleToRawLongBits(stake_) != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(3, stake_);
+          .computeDoubleSize(3, stake_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -10608,8 +10610,9 @@ public final class TransactionOuterClass {
           .equals(other.getSender())) return false;
       if (!getReceiver()
           .equals(other.getReceiver())) return false;
-      if (getStake()
-          != other.getStake()) return false;
+      if (java.lang.Double.doubleToLongBits(getStake())
+          != java.lang.Double.doubleToLongBits(
+              other.getStake())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -10627,7 +10630,7 @@ public final class TransactionOuterClass {
       hash = (53 * hash) + getReceiver().hashCode();
       hash = (37 * hash) + STAKE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getStake());
+          java.lang.Double.doubleToLongBits(getStake()));
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -10764,7 +10767,7 @@ public final class TransactionOuterClass {
 
         receiver_ = "";
 
-        stake_ = 0L;
+        stake_ = 0D;
 
         return this;
       }
@@ -10851,7 +10854,7 @@ public final class TransactionOuterClass {
           receiver_ = other.receiver_;
           onChanged();
         }
-        if (other.getStake() != 0L) {
+        if (other.getStake() != 0D) {
           setStake(other.getStake());
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -10890,11 +10893,11 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 18
-              case 24: {
-                stake_ = input.readInt64();
+              case 25: {
+                stake_ = input.readDouble();
 
                 break;
-              } // case 24
+              } // case 25
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -11103,29 +11106,29 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private long stake_ ;
+      private double stake_ ;
       /**
        * <pre>
-       * Stake amount.
+       * Stake amount in PAC.
        * </pre>
        *
-       * <code>int64 stake = 3 [json_name = "stake"];</code>
+       * <code>double stake = 3 [json_name = "stake"];</code>
        * @return The stake.
        */
       @java.lang.Override
-      public long getStake() {
+      public double getStake() {
         return stake_;
       }
       /**
        * <pre>
-       * Stake amount.
+       * Stake amount in PAC.
        * </pre>
        *
-       * <code>int64 stake = 3 [json_name = "stake"];</code>
+       * <code>double stake = 3 [json_name = "stake"];</code>
        * @param value The stake to set.
        * @return This builder for chaining.
        */
-      public Builder setStake(long value) {
+      public Builder setStake(double value) {
         
         stake_ = value;
         onChanged();
@@ -11133,15 +11136,15 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Stake amount.
+       * Stake amount in PAC.
        * </pre>
        *
-       * <code>int64 stake = 3 [json_name = "stake"];</code>
+       * <code>double stake = 3 [json_name = "stake"];</code>
        * @return This builder for chaining.
        */
       public Builder clearStake() {
         
-        stake_ = 0L;
+        stake_ = 0D;
         onChanged();
         return this;
       }
@@ -12535,13 +12538,13 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Withdrawal amount.
+     * Withdrawal amount in PAC.
      * </pre>
      *
-     * <code>int64 amount = 3 [json_name = "amount"];</code>
+     * <code>double amount = 3 [json_name = "amount"];</code>
      * @return The amount.
      */
-    long getAmount();
+    double getAmount();
   }
   /**
    * <pre>
@@ -12682,17 +12685,17 @@ public final class TransactionOuterClass {
     }
 
     public static final int AMOUNT_FIELD_NUMBER = 3;
-    private long amount_;
+    private double amount_;
     /**
      * <pre>
-     * Withdrawal amount.
+     * Withdrawal amount in PAC.
      * </pre>
      *
-     * <code>int64 amount = 3 [json_name = "amount"];</code>
+     * <code>double amount = 3 [json_name = "amount"];</code>
      * @return The amount.
      */
     @java.lang.Override
-    public long getAmount() {
+    public double getAmount() {
       return amount_;
     }
 
@@ -12716,8 +12719,8 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(to_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, to_);
       }
-      if (amount_ != 0L) {
-        output.writeInt64(3, amount_);
+      if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
+        output.writeDouble(3, amount_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -12734,9 +12737,9 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(to_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, to_);
       }
-      if (amount_ != 0L) {
+      if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(3, amount_);
+          .computeDoubleSize(3, amount_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -12757,8 +12760,9 @@ public final class TransactionOuterClass {
           .equals(other.getFrom())) return false;
       if (!getTo()
           .equals(other.getTo())) return false;
-      if (getAmount()
-          != other.getAmount()) return false;
+      if (java.lang.Double.doubleToLongBits(getAmount())
+          != java.lang.Double.doubleToLongBits(
+              other.getAmount())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -12776,7 +12780,7 @@ public final class TransactionOuterClass {
       hash = (53 * hash) + getTo().hashCode();
       hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getAmount());
+          java.lang.Double.doubleToLongBits(getAmount()));
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -12913,7 +12917,7 @@ public final class TransactionOuterClass {
 
         to_ = "";
 
-        amount_ = 0L;
+        amount_ = 0D;
 
         return this;
       }
@@ -13000,7 +13004,7 @@ public final class TransactionOuterClass {
           to_ = other.to_;
           onChanged();
         }
-        if (other.getAmount() != 0L) {
+        if (other.getAmount() != 0D) {
           setAmount(other.getAmount());
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -13039,11 +13043,11 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 18
-              case 24: {
-                amount_ = input.readInt64();
+              case 25: {
+                amount_ = input.readDouble();
 
                 break;
-              } // case 24
+              } // case 25
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -13252,29 +13256,29 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private long amount_ ;
+      private double amount_ ;
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in PAC.
        * </pre>
        *
-       * <code>int64 amount = 3 [json_name = "amount"];</code>
+       * <code>double amount = 3 [json_name = "amount"];</code>
        * @return The amount.
        */
       @java.lang.Override
-      public long getAmount() {
+      public double getAmount() {
         return amount_;
       }
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in PAC.
        * </pre>
        *
-       * <code>int64 amount = 3 [json_name = "amount"];</code>
+       * <code>double amount = 3 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
        */
-      public Builder setAmount(long value) {
+      public Builder setAmount(double value) {
         
         amount_ = value;
         onChanged();
@@ -13282,15 +13286,15 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in PAC.
        * </pre>
        *
-       * <code>int64 amount = 3 [json_name = "amount"];</code>
+       * <code>double amount = 3 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAmount() {
         
-        amount_ = 0L;
+        amount_ = 0D;
         onChanged();
         return this;
       }
@@ -13407,20 +13411,20 @@ public final class TransactionOuterClass {
      * Transaction value.
      * </pre>
      *
-     * <code>int64 value = 5 [json_name = "value"];</code>
+     * <code>double value = 5 [json_name = "value"];</code>
      * @return The value.
      */
-    long getValue();
+    double getValue();
 
     /**
      * <pre>
      * Transaction fee.
      * </pre>
      *
-     * <code>int64 fee = 6 [json_name = "fee"];</code>
+     * <code>double fee = 6 [json_name = "fee"];</code>
      * @return The fee.
      */
-    long getFee();
+    double getFee();
 
     /**
      * <pre>
@@ -13786,32 +13790,32 @@ public final class TransactionOuterClass {
     }
 
     public static final int VALUE_FIELD_NUMBER = 5;
-    private long value_;
+    private double value_;
     /**
      * <pre>
      * Transaction value.
      * </pre>
      *
-     * <code>int64 value = 5 [json_name = "value"];</code>
+     * <code>double value = 5 [json_name = "value"];</code>
      * @return The value.
      */
     @java.lang.Override
-    public long getValue() {
+    public double getValue() {
       return value_;
     }
 
     public static final int FEE_FIELD_NUMBER = 6;
-    private long fee_;
+    private double fee_;
     /**
      * <pre>
      * Transaction fee.
      * </pre>
      *
-     * <code>int64 fee = 6 [json_name = "fee"];</code>
+     * <code>double fee = 6 [json_name = "fee"];</code>
      * @return The fee.
      */
     @java.lang.Override
-    public long getFee() {
+    public double getFee() {
       return fee_;
     }
 
@@ -14190,11 +14194,11 @@ public final class TransactionOuterClass {
       if (lockTime_ != 0) {
         output.writeUInt32(4, lockTime_);
       }
-      if (value_ != 0L) {
-        output.writeInt64(5, value_);
+      if (java.lang.Double.doubleToRawLongBits(value_) != 0) {
+        output.writeDouble(5, value_);
       }
-      if (fee_ != 0L) {
-        output.writeInt64(6, fee_);
+      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
+        output.writeDouble(6, fee_);
       }
       if (payloadType_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
         output.writeEnum(7, payloadType_);
@@ -14248,13 +14252,13 @@ public final class TransactionOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt32Size(4, lockTime_);
       }
-      if (value_ != 0L) {
+      if (java.lang.Double.doubleToRawLongBits(value_) != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(5, value_);
+          .computeDoubleSize(5, value_);
       }
-      if (fee_ != 0L) {
+      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(6, fee_);
+          .computeDoubleSize(6, fee_);
       }
       if (payloadType_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
@@ -14313,10 +14317,12 @@ public final class TransactionOuterClass {
           != other.getVersion()) return false;
       if (getLockTime()
           != other.getLockTime()) return false;
-      if (getValue()
-          != other.getValue()) return false;
-      if (getFee()
-          != other.getFee()) return false;
+      if (java.lang.Double.doubleToLongBits(getValue())
+          != java.lang.Double.doubleToLongBits(
+              other.getValue())) return false;
+      if (java.lang.Double.doubleToLongBits(getFee())
+          != java.lang.Double.doubleToLongBits(
+              other.getFee())) return false;
       if (payloadType_ != other.payloadType_) return false;
       if (!getMemo()
           .equals(other.getMemo())) return false;
@@ -14370,10 +14376,10 @@ public final class TransactionOuterClass {
       hash = (53 * hash) + getLockTime();
       hash = (37 * hash) + VALUE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getValue());
+          java.lang.Double.doubleToLongBits(getValue()));
       hash = (37 * hash) + FEE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getFee());
+          java.lang.Double.doubleToLongBits(getFee()));
       hash = (37 * hash) + PAYLOAD_TYPE_FIELD_NUMBER;
       hash = (53 * hash) + payloadType_;
       hash = (37 * hash) + MEMO_FIELD_NUMBER;
@@ -14546,9 +14552,9 @@ public final class TransactionOuterClass {
 
         lockTime_ = 0;
 
-        value_ = 0L;
+        value_ = 0D;
 
-        fee_ = 0L;
+        fee_ = 0D;
 
         payloadType_ = 0;
 
@@ -14707,10 +14713,10 @@ public final class TransactionOuterClass {
         if (other.getLockTime() != 0) {
           setLockTime(other.getLockTime());
         }
-        if (other.getValue() != 0L) {
+        if (other.getValue() != 0D) {
           setValue(other.getValue());
         }
-        if (other.getFee() != 0L) {
+        if (other.getFee() != 0D) {
           setFee(other.getFee());
         }
         if (other.payloadType_ != 0) {
@@ -14798,16 +14804,16 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 32
-              case 40: {
-                value_ = input.readInt64();
+              case 41: {
+                value_ = input.readDouble();
 
                 break;
-              } // case 40
-              case 48: {
-                fee_ = input.readInt64();
+              } // case 41
+              case 49: {
+                fee_ = input.readDouble();
 
                 break;
-              } // case 48
+              } // case 49
               case 56: {
                 payloadType_ = input.readEnum();
 
@@ -15072,17 +15078,17 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private long value_ ;
+      private double value_ ;
       /**
        * <pre>
        * Transaction value.
        * </pre>
        *
-       * <code>int64 value = 5 [json_name = "value"];</code>
+       * <code>double value = 5 [json_name = "value"];</code>
        * @return The value.
        */
       @java.lang.Override
-      public long getValue() {
+      public double getValue() {
         return value_;
       }
       /**
@@ -15090,11 +15096,11 @@ public final class TransactionOuterClass {
        * Transaction value.
        * </pre>
        *
-       * <code>int64 value = 5 [json_name = "value"];</code>
+       * <code>double value = 5 [json_name = "value"];</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
-      public Builder setValue(long value) {
+      public Builder setValue(double value) {
         
         value_ = value;
         onChanged();
@@ -15105,27 +15111,27 @@ public final class TransactionOuterClass {
        * Transaction value.
        * </pre>
        *
-       * <code>int64 value = 5 [json_name = "value"];</code>
+       * <code>double value = 5 [json_name = "value"];</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
         
-        value_ = 0L;
+        value_ = 0D;
         onChanged();
         return this;
       }
 
-      private long fee_ ;
+      private double fee_ ;
       /**
        * <pre>
        * Transaction fee.
        * </pre>
        *
-       * <code>int64 fee = 6 [json_name = "fee"];</code>
+       * <code>double fee = 6 [json_name = "fee"];</code>
        * @return The fee.
        */
       @java.lang.Override
-      public long getFee() {
+      public double getFee() {
         return fee_;
       }
       /**
@@ -15133,11 +15139,11 @@ public final class TransactionOuterClass {
        * Transaction fee.
        * </pre>
        *
-       * <code>int64 fee = 6 [json_name = "fee"];</code>
+       * <code>double fee = 6 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
        */
-      public Builder setFee(long value) {
+      public Builder setFee(double value) {
         
         fee_ = value;
         onChanged();
@@ -15148,12 +15154,12 @@ public final class TransactionOuterClass {
        * Transaction fee.
        * </pre>
        *
-       * <code>int64 fee = 6 [json_name = "fee"];</code>
+       * <code>double fee = 6 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
       public Builder clearFee() {
         
-        fee_ = 0L;
+        fee_ = 0D;
         onChanged();
         return this;
       }
@@ -16528,7 +16534,7 @@ public final class TransactionOuterClass {
       "R\006amount\0226\n\014payload_type\030\002 \001(\0162\023.pactus." +
       "PayloadTypeR\013payloadType\022!\n\014fixed_amount" +
       "\030\003 \001(\010R\013fixedAmount\"@\n\024CalculateFeeRespo" +
-      "nse\022\026\n\006amount\030\002 \001(\001R\006amount\022\020\n\003fee\030\001 \001(\001" +
+      "nse\022\026\n\006amount\030\001 \001(\001R\006amount\022\020\n\003fee\030\002 \001(\001" +
       "R\003fee\"S\n\033BroadcastTransactionRequest\0224\n\026" +
       "signed_raw_transaction\030\001 \001(\014R\024signedRawT" +
       "ransaction\".\n\034BroadcastTransactionRespon" +
@@ -16540,7 +16546,7 @@ public final class TransactionOuterClass {
       "\001\n\034GetRawBondTransactionRequest\022\033\n\tlock_" +
       "time\030\001 \001(\rR\010lockTime\022\026\n\006sender\030\002 \001(\tR\006se" +
       "nder\022\032\n\010receiver\030\003 \001(\tR\010receiver\022\024\n\005stak" +
-      "e\030\004 \001(\003R\005stake\022\035\n\npublic_key\030\005 \001(\tR\tpubl" +
+      "e\030\004 \001(\001R\005stake\022\035\n\npublic_key\030\005 \001(\tR\tpubl" +
       "icKey\022\020\n\003fee\030\006 \001(\001R\003fee\022\022\n\004memo\030\007 \001(\tR\004m" +
       "emo\"~\n\036GetRawUnbondTransactionRequest\022\033\n" +
       "\tlock_time\030\001 \001(\rR\010lockTime\022+\n\021validator_" +
@@ -16554,18 +16560,18 @@ public final class TransactionOuterClass {
       "actionResponse\022\'\n\017raw_transaction\030\001 \001(\014R" +
       "\016rawTransaction\"]\n\017PayloadTransfer\022\026\n\006se" +
       "nder\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010re" +
-      "ceiver\022\026\n\006amount\030\003 \001(\003R\006amount\"W\n\013Payloa" +
+      "ceiver\022\026\n\006amount\030\003 \001(\001R\006amount\"W\n\013Payloa" +
       "dBond\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010receive" +
-      "r\030\002 \001(\tR\010receiver\022\024\n\005stake\030\003 \001(\003R\005stake\"" +
+      "r\030\002 \001(\tR\010receiver\022\024\n\005stake\030\003 \001(\001R\005stake\"" +
       "B\n\020PayloadSortition\022\030\n\007address\030\001 \001(\tR\007ad" +
       "dress\022\024\n\005proof\030\002 \001(\014R\005proof\"-\n\rPayloadUn" +
       "bond\022\034\n\tvalidator\030\001 \001(\tR\tvalidator\"M\n\017Pa" +
       "yloadWithdraw\022\022\n\004from\030\001 \001(\tR\004from\022\016\n\002to\030" +
-      "\002 \001(\tR\002to\022\026\n\006amount\030\003 \001(\003R\006amount\"\254\004\n\017Tr" +
+      "\002 \001(\tR\002to\022\026\n\006amount\030\003 \001(\001R\006amount\"\254\004\n\017Tr" +
       "ansactionInfo\022\016\n\002id\030\001 \001(\014R\002id\022\022\n\004data\030\002 " +
       "\001(\014R\004data\022\030\n\007version\030\003 \001(\005R\007version\022\033\n\tl" +
-      "ock_time\030\004 \001(\rR\010lockTime\022\024\n\005value\030\005 \001(\003R" +
-      "\005value\022\020\n\003fee\030\006 \001(\003R\003fee\0226\n\014payload_type" +
+      "ock_time\030\004 \001(\rR\010lockTime\022\024\n\005value\030\005 \001(\001R" +
+      "\005value\022\020\n\003fee\030\006 \001(\001R\003fee\0226\n\014payload_type" +
       "\030\007 \001(\0162\023.pactus.PayloadTypeR\013payloadType" +
       "\0225\n\010transfer\030\036 \001(\0132\027.pactus.PayloadTrans" +
       "ferH\000R\010transfer\022)\n\004bond\030\037 \001(\0132\023.pactus.P" +

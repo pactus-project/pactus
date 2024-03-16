@@ -445,7 +445,7 @@ func request_Transaction_GetRawBondTransaction_0(ctx context.Context, marshaler 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "stake")
 	}
 
-	protoReq.Stake, err = runtime.Int64(val)
+	protoReq.Stake, err = runtime.Float64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "stake", err)
 	}
@@ -531,7 +531,7 @@ func local_request_Transaction_GetRawBondTransaction_0(ctx context.Context, mars
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "stake")
 	}
 
-	protoReq.Stake, err = runtime.Int64(val)
+	protoReq.Stake, err = runtime.Float64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "stake", err)
 	}

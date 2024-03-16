@@ -4,11 +4,12 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
 func NewSubsidyTx(lockTime uint32,
-	receiver crypto.Address, amount int64, memo string,
+	receiver crypto.Address, amount amount.Amount, memo string,
 ) *Tx {
 	return NewTransferTx(
 		lockTime,
@@ -21,7 +22,7 @@ func NewSubsidyTx(lockTime uint32,
 
 func NewTransferTx(lockTime uint32,
 	sender, receiver crypto.Address,
-	amount, fee int64, memo string,
+	amount, fee amount.Amount, memo string,
 ) *Tx {
 	pld := &payload.TransferPayload{
 		From:   sender,
@@ -35,7 +36,7 @@ func NewTransferTx(lockTime uint32,
 func NewBondTx(lockTime uint32,
 	sender, receiver crypto.Address,
 	pubKey *bls.PublicKey,
-	stake, fee int64, memo string,
+	stake, fee amount.Amount, memo string,
 ) *Tx {
 	pld := &payload.BondPayload{
 		From:      sender,
@@ -61,7 +62,7 @@ func NewUnbondTx(lockTime uint32,
 func NewWithdrawTx(lockTime uint32,
 	val crypto.Address,
 	acc crypto.Address,
-	amount, fee int64,
+	amount, fee amount.Amount,
 	memo string,
 ) *Tx {
 	pld := &payload.WithdrawPayload{

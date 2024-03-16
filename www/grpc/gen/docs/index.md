@@ -139,7 +139,7 @@ Request message for calculating transaction fee.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| amount | [double](#double) |  | Transaction amount. |
+| amount | [double](#double) |  | Transaction amount in PAC. |
 | payload_type | [PayloadType](#pactus-PayloadType) |  | Type of transaction payload. |
 | fixed_amount | [bool](#bool) |  | Indicates that amount should be fixed and includes the fee. |
 
@@ -156,8 +156,8 @@ Response message containing the calculated transaction fee.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| amount | [double](#double) |  | Calculated amount. |
-| fee | [double](#double) |  | Calculated transaction fee. |
+| amount | [double](#double) |  | Calculated amount in PAC. |
+| fee | [double](#double) |  | Calculated transaction fee in PAC. |
 
 
 
@@ -175,9 +175,9 @@ Request message for retrieving raw details of a bond transaction.
 | lock_time | [uint32](#uint32) |  | Lock time for the transaction. If not explicitly set, it sets to the last block height. |
 | sender | [string](#string) |  | Sender&#39;s account address. |
 | receiver | [string](#string) |  | Receiver&#39;s validator address. |
-| stake | [int64](#int64) |  | Stake amount. It should be greater than 0. |
+| stake | [double](#double) |  | Stake amount in PAC. It should be greater than 0. |
 | public_key | [string](#string) |  | Public key of the validator. |
-| fee | [double](#double) |  | Transaction fee. If not explicitly set, it is calculated based on the stake. |
+| fee | [double](#double) |  | Transaction fee in PAC. If not explicitly set, it is calculated based on the stake. |
 | memo | [string](#string) |  | Transaction memo. |
 
 
@@ -211,8 +211,8 @@ Request message for retrieving raw details of a transfer transaction.
 | lock_time | [uint32](#uint32) |  | Lock time for the transaction. If not explicitly set, it sets to the last block height. |
 | sender | [string](#string) |  | Sender&#39;s account address. |
 | receiver | [string](#string) |  | Receiver&#39;s account address. |
-| amount | [double](#double) |  | Transfer amount. It should be greater than 0. |
-| fee | [double](#double) |  | Transaction fee. If not explicitly set, it is calculated based on the amount. |
+| amount | [double](#double) |  | Transfer amount in PAC. It should be greater than 0. |
+| fee | [double](#double) |  | Transaction fee in PAC. If not explicitly set, it is calculated based on the amount. |
 | memo | [string](#string) |  | Transaction memo. |
 
 
@@ -248,7 +248,7 @@ Request message for retrieving raw details of a withdraw transaction.
 | lock_time | [uint32](#uint32) |  | Lock time for the transaction. If not explicitly set, it sets to the last block height. |
 | validator_address | [string](#string) |  | Address of the validator to withdraw from. |
 | account_address | [string](#string) |  | Address of the account to withdraw to. |
-| amount | [double](#double) |  | Withdrawal amount. It should be greater than 0. |
+| amount | [double](#double) |  | Withdrawal amount in PAC. It should be greater than 0. |
 | fee | [double](#double) |  | Transaction fee. If not explicitly set, it is calculated based on the stake. |
 | memo | [string](#string) |  | Transaction memo. |
 
@@ -300,7 +300,7 @@ Payload for a bond transaction.
 | ----- | ---- | ----- | ----------- |
 | sender | [string](#string) |  | Sender&#39;s address. |
 | receiver | [string](#string) |  | Receiver&#39;s address. |
-| stake | [int64](#int64) |  | Stake amount. |
+| stake | [double](#double) |  | Stake amount in PAC. |
 
 
 
@@ -333,7 +333,7 @@ Payload for a transfer transaction.
 | ----- | ---- | ----- | ----------- |
 | sender | [string](#string) |  | Sender&#39;s address. |
 | receiver | [string](#string) |  | Receiver&#39;s address. |
-| amount | [int64](#int64) |  | Transaction amount. |
+| amount | [double](#double) |  | Transaction amount in PAC. |
 
 
 
@@ -365,7 +365,7 @@ Payload for a withdraw transaction.
 | ----- | ---- | ----- | ----------- |
 | from | [string](#string) |  | Address to withdraw from. |
 | to | [string](#string) |  | Address to withdraw to. |
-| amount | [int64](#int64) |  | Withdrawal amount. |
+| amount | [double](#double) |  | Withdrawal amount in PAC. |
 
 
 
@@ -384,8 +384,8 @@ Information about a transaction.
 | data | [bytes](#bytes) |  | Transaction data. |
 | version | [int32](#int32) |  | Transaction version. |
 | lock_time | [uint32](#uint32) |  | Lock time for the transaction. |
-| value | [int64](#int64) |  | Transaction value. |
-| fee | [int64](#int64) |  | Transaction fee. |
+| value | [double](#double) |  | Transaction value. |
+| fee | [double](#double) |  | Transaction fee. |
 | payload_type | [PayloadType](#pactus-PayloadType) |  | Type of transaction payload. |
 | transfer | [PayloadTransfer](#pactus-PayloadTransfer) |  | Transfer payload. |
 | bond | [PayloadBond](#pactus-PayloadBond) |  | Bond payload. |
@@ -473,7 +473,7 @@ Message containing information about an account.
 | hash | [bytes](#bytes) |  | Hash of the account. |
 | data | [bytes](#bytes) |  | Account data. |
 | number | [int32](#int32) |  | Account number. |
-| balance | [int64](#int64) |  | Account balance. |
+| balance | [double](#double) |  | Account balance in PAC. |
 | address | [string](#string) |  | Address of the account. |
 
 
@@ -833,7 +833,7 @@ Message containing information about a validator.
 | data | [bytes](#bytes) |  | Validator data. |
 | public_key | [string](#string) |  | Public key of the validator. |
 | number | [int32](#int32) |  | Validator number. |
-| stake | [int64](#int64) |  | Validator stake. |
+| stake | [double](#double) |  | Validator stake in PAC. |
 | last_bonding_height | [uint32](#uint32) |  | Last bonding height. |
 | last_sortition_height | [uint32](#uint32) |  | Last sortition height. |
 | unbonding_height | [uint32](#uint32) |  | Unbonding height. |

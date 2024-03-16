@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -127,7 +128,7 @@ func TestAccountChange(t *testing.T) {
 			td.sandbox.IterateAccounts(func(a crypto.Address, acc *account.Account, updated bool) {
 				if a == addr {
 					assert.True(t, updated)
-					assert.Equal(t, acc.Balance(), int64(1))
+					assert.Equal(t, amount.Amount(1), acc.Balance())
 				}
 			})
 		})
@@ -213,7 +214,7 @@ func TestValidatorChange(t *testing.T) {
 				if val.PublicKey() == pub {
 					assert.True(t, updated)
 					assert.False(t, joined)
-					assert.Equal(t, val.Stake(), int64(1))
+					assert.Equal(t, amount.Amount(1), val.Stake())
 				}
 			})
 		})
@@ -232,7 +233,7 @@ func TestTotalAccountCounter(t *testing.T) {
 		assert.Equal(t, acc.Number(), int32(td.sandbox.Committee().Size()+1))
 		acc2 := td.sandbox.MakeNewAccount(addr2)
 		assert.Equal(t, acc2.Number(), int32(td.sandbox.Committee().Size()+2))
-		assert.Equal(t, acc2.Balance(), int64(0))
+		assert.Zero(t, acc2.Balance())
 	})
 }
 
@@ -253,7 +254,7 @@ func TestTotalValidatorCounter(t *testing.T) {
 		val2.UpdateLastBondingHeight(td.sandbox.CurrentHeight() + 1)
 		assert.Equal(t, val2.Number(), int32(td.sandbox.Committee().Size()+1))
 		assert.Equal(t, val2.LastBondingHeight(), td.sandbox.CurrentHeight()+1)
-		assert.Equal(t, val2.Stake(), int64(0))
+		assert.Zero(t, val2.Stake())
 	})
 }
 

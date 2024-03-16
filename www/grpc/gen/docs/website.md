@@ -660,7 +660,7 @@ CalculateFeeRequest
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Transaction amount. </td>
+      <td>Transaction amount in PAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">payload_type</td>
@@ -694,14 +694,14 @@ CalculateFeeResponse
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Calculated amount. </td>
+      <td>Calculated amount in PAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Calculated transaction fee. </td>
+      <td>Calculated transaction fee in PAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -741,9 +741,9 @@ If not explicitly set, it sets to the last block height. </td>
     <tr>
       <td class="fw-bold">stake</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
-      <td>Stake amount.
+      <td>Stake amount in PAC.
 It should be greater than 0. </td>
     </tr>
     <tr>
@@ -758,7 +758,7 @@ It should be greater than 0. </td>
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Transaction fee.
+      <td>Transaction fee in PAC.
 If not explicitly set, it is calculated based on the stake. </td>
     </tr>
     <tr>
@@ -828,7 +828,7 @@ If not explicitly set, it sets to the last block height. </td>
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Transfer amount.
+      <td>Transfer amount in PAC.
 It should be greater than 0. </td>
     </tr>
     <tr>
@@ -836,7 +836,7 @@ It should be greater than 0. </td>
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Transaction fee.
+      <td>Transaction fee in PAC.
 If not explicitly set, it is calculated based on the amount. </td>
     </tr>
     <tr>
@@ -921,7 +921,7 @@ If not explicitly set, it sets to the last block height. </td>
       <td>
         <a href="#double">double</a>
       </td>
-      <td>Withdrawal amount.
+      <td>Withdrawal amount in PAC.
 It should be greater than 0. </td>
     </tr>
     <tr>
@@ -1030,9 +1030,9 @@ PayloadBond
     <tr>
       <td class="fw-bold">stake</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
-      <td>Stake amount. </td>
+      <td>Stake amount in PAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -1091,9 +1091,9 @@ PayloadTransfer
     <tr>
       <td class="fw-bold">amount</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
-      <td>Transaction amount. </td>
+      <td>Transaction amount in PAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -1145,9 +1145,9 @@ PayloadWithdraw
     <tr>
       <td class="fw-bold">amount</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
-      <td>Withdrawal amount. </td>
+      <td>Withdrawal amount in PAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -1193,14 +1193,14 @@ TransactionInfo
     <tr>
       <td class="fw-bold">value</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
       <td>Transaction value. </td>
     </tr>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
       <td>Transaction fee. </td>
     </tr>
@@ -1304,9 +1304,9 @@ AccountInfo
     <tr>
       <td class="fw-bold">balance</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
-      <td>Account balance. </td>
+      <td>Account balance in PAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">address</td>
@@ -1932,9 +1932,9 @@ ValidatorInfo
     <tr>
       <td class="fw-bold">stake</td>
       <td>
-        <a href="#int64">int64</a>
+        <a href="#double">double</a>
       </td>
-      <td>Validator stake. </td>
+      <td>Validator stake in PAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">last_bonding_height</td>

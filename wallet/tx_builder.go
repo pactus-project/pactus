@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
@@ -19,7 +20,7 @@ func OptionLockTime(lockTime uint32) func(builder *txBuilder) error {
 	}
 }
 
-func OptionFee(fee int64) func(builder *txBuilder) error {
+func OptionFee(fee amount.Amount) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
 		builder.fee = fee
 
@@ -42,8 +43,8 @@ type txBuilder struct {
 	pub      *bls.PublicKey
 	typ      payload.Type
 	lockTime uint32
-	amount   int64
-	fee      int64
+	amount   amount.Amount
+	fee      amount.Amount
 	memo     string
 }
 
