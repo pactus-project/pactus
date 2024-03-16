@@ -199,7 +199,7 @@ func addCommonTxOptions(c *cobra.Command) (*int, *float64, *string, *bool) {
 		"transaction lock-time, if not specified will be the current height")
 
 	feeOpt := c.Flags().Float64("fee", 0,
-		"transaction fee in PAC, if not specified will calculate automatically")
+		"transaction fee in PAC, if not specified will calculate from the amount")
 
 	memoOpt := c.Flags().String("memo", "",
 		"transaction memo, maximum should be 64 character")
