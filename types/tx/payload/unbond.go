@@ -48,7 +48,7 @@ func (p *UnbondPayload) Decode(r io.Reader) error {
 }
 
 func (p *UnbondPayload) String() string {
-	return fmt.Sprintf("{Unbond 🔓 %v",
+	return fmt.Sprintf("{Unbond 🔓 %s",
 		p.Validator.ShortString(),
 	)
 }

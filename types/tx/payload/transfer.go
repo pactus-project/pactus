@@ -83,7 +83,7 @@ func (p *TransferPayload) Decode(r io.Reader) error {
 }
 
 func (p *TransferPayload) String() string {
-	return fmt.Sprintf("{Send 💸 %v->%v %v",
+	return fmt.Sprintf("{Send 💸 %s->%s %s",
 		p.From.ShortString(),
 		p.To.ShortString(),
 		p.Amount)

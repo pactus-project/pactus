@@ -55,7 +55,7 @@ func (p *SortitionPayload) Decode(r io.Reader) error {
 }
 
 func (p *SortitionPayload) String() string {
-	return fmt.Sprintf("{Sortition 🎯 %v",
+	return fmt.Sprintf("{Sortition 🎯 %s",
 		p.Validator.ShortString())
 }
 

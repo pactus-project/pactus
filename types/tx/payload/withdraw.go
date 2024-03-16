@@ -82,7 +82,7 @@ func (p *WithdrawPayload) Decode(r io.Reader) error {
 }
 
 func (p *WithdrawPayload) String() string {
-	return fmt.Sprintf("{WithdrawPayload 🧾 %v->%v %v",
+	return fmt.Sprintf("{WithdrawPayload 🧾 %s->%s %s",
 		p.From.ShortString(),
 		p.To.ShortString(),
 		p.Amount)

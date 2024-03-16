@@ -124,7 +124,7 @@ func (p *BondPayload) Decode(r io.Reader) error {
 }
 
 func (p *BondPayload) String() string {
-	return fmt.Sprintf("{Bond 🔐 %v->%v %v",
+	return fmt.Sprintf("{Bond 🔐 %s->%s %s",
 		p.From.ShortString(),
 		p.To.ShortString(),
 		p.Stake)
