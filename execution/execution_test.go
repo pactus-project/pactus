@@ -29,7 +29,7 @@ func TestLockTime(t *testing.T) {
 	sb.UpdateValidator(rndVal)
 	_ = sb.TestStore.AddTestBlock(8642)
 
-	t.Run("Future LockTime, Should returns error (+1)", func(t *testing.T) {
+	t.Run("Future LockTime, Should return error (+1)", func(t *testing.T) {
 		lockTime := sb.CurrentHeight() + 1
 		trx := tx.NewTransferTx(lockTime, rndAccAddr, ts.RandAccAddress(), 1000, 1000, "future-lockTime")
 		ts.HelperSignTransaction(rndPrvKey, trx)
@@ -37,7 +37,7 @@ func TestLockTime(t *testing.T) {
 		assert.ErrorIs(t, err, FutureLockTimeError{LockTime: lockTime})
 	})
 
-	t.Run("Past LockTime, Should returns error (-8641)", func(t *testing.T) {
+	t.Run("Past LockTime, Should return error (-8641)", func(t *testing.T) {
 		lockTime := sb.CurrentHeight() - sb.TestParams.TransactionToLiveInterval - 1
 		trx := tx.NewTransferTx(lockTime, rndAccAddr, ts.RandAccAddress(), 1000, 1000, "past-lockTime")
 		ts.HelperSignTransaction(rndPrvKey, trx)
