@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
@@ -52,15 +53,15 @@ func TestGenesisTestnet(t *testing.T) {
 
 	gen := genesis.TestnetGenesis()
 	assert.Equal(t, len(gen.Validators()), 4)
-	assert.Equal(t, len(gen.Accounts()), 2)
+	assert.Equal(t, len(gen.Accounts()), 5)
 
-	genTime, _ := time.Parse("2006-01-02", "2023-10-15")
-	expected, _ := hash.FromString("da602b28f75902c35e3bafeb5733a686c94d5508c92aae68cbd9b37d81cfccf4")
+	genTime, _ := time.Parse("2006-01-02", "2024-03-16")
+	expected, _ := hash.FromString("13f96e6fbc9e0de0d53537ac5e894fc8e66be1600436db2df1511dc30696e822")
 	assert.Equal(t, gen.Hash(), expected)
 	assert.Equal(t, gen.GenesisTime(), genTime)
-	assert.Equal(t, gen.Params().BondInterval, uint32(120))
+	assert.Equal(t, gen.Params().BondInterval, uint32(360))
 	assert.Equal(t, gen.ChainType(), genesis.Testnet)
-	assert.Equal(t, gen.TotalSupply(), int64(42*1e15))
+	assert.Equal(t, gen.TotalSupply(), amount.Amount(42e15))
 
 	crypto.AddressHRP = "pc"
 }
@@ -77,7 +78,7 @@ func TestGenesisMainnet(t *testing.T) {
 	assert.Equal(t, gen.Params().BondInterval, uint32(8640/24))
 	assert.Equal(t, gen.Params().UnbondInterval, uint32(8640*21))
 	assert.Equal(t, gen.ChainType(), genesis.Mainnet)
-	assert.Equal(t, gen.TotalSupply(), int64(42*1e15))
+	assert.Equal(t, gen.TotalSupply(), amount.Amount(42e15))
 }
 
 func TestCheckGenesisAccountAndValidator(t *testing.T) {

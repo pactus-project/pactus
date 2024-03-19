@@ -47,7 +47,7 @@ func broadcastTransactionUnbond(wlt *wallet.Wallet) {
 		msg := fmt.Sprintf(`
 You are going to sign and broadcast this transaction:
 
-Validator: %v
+Validator: %s
 
 THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`, validator)
 

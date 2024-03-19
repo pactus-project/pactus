@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/param"
@@ -603,9 +604,9 @@ func TestCalcFee(t *testing.T) {
 	td := setup(t)
 
 	tests := []struct {
-		amount      int64
+		amt         amount.Amount
 		pldType     payload.Type
-		expectedFee int64
+		expectedFee amount.Amount
 	}{
 		{0, payload.TypeTransfer, td.state.params.MinimumFee},
 		{0, payload.TypeWithdraw, td.state.params.MinimumFee},
@@ -627,7 +628,7 @@ func TestCalcFee(t *testing.T) {
 		{1 * 1e12, payload.TypeUnbond, 0},
 	}
 	for _, test := range tests {
-		fee := td.state.CalculateFee(test.amount, test.pldType)
+		fee := td.state.CalculateFee(test.amt, test.pldType)
 		assert.Equal(t, test.expectedFee, fee)
 	}
 }
@@ -646,7 +647,7 @@ func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 	lockTime := td.state.LastBlockHeight()
 	senderAddr := td.genAccKey.PublicKeyNative().AccountAddress()
 	for i := 0; i < maxTransactionsPerBlock+2; i++ {
-		amt := td.RandInt64(1e6)
+		amt := td.RandAmount()
 		fee := td.state.CalculateFee(amt, payload.TypeTransfer)
 		trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddress(), amt, fee, "")
 		err := td.state.AddPendingTx(trx)

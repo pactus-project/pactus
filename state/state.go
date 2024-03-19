@@ -18,6 +18,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/param"
@@ -337,7 +338,7 @@ func (st *state) UpdateLastCertificate(v *vote.Vote) error {
 	return nil
 }
 
-func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee int64) *tx.Tx {
+func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee amount.Amount) *tx.Tx {
 	lockTime := st.lastInfo.BlockHeight() + 1
 	transaction := tx.NewSubsidyTx(lockTime, rewardAddr, st.params.BlockReward+fee, "")
 
@@ -771,13 +772,13 @@ func (st *state) publishEvents(height uint32, blk *block.Block) {
 	}
 }
 
-func (st *state) CalculateFee(amount int64, payloadType payload.Type) int64 {
+func (st *state) CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount {
 	switch payloadType {
 	case payload.TypeTransfer,
 		payload.TypeBond,
 		payload.TypeWithdraw:
 
-		return execution.CalculateFee(amount, st.params)
+		return execution.CalculateFee(amt, st.params)
 
 	case payload.TypeUnbond,
 		payload.TypeSortition:

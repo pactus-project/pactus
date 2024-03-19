@@ -97,7 +97,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("LockTime is not defined", func(t *testing.T) {
 		trx := tx.NewTransferTx(0,
-			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandInt64(1e9), ts.RandInt64(1e6), "")
+			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandAmount(), "")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -109,7 +109,7 @@ func TestBasicCheck(t *testing.T) {
 		bigMemo := strings.Repeat("a", 65)
 
 		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandInt64(1e9), ts.RandInt64(1e6), bigMemo)
+			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandAmount(), bigMemo)
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -121,7 +121,7 @@ func TestBasicCheck(t *testing.T) {
 		invAddr := ts.RandAccAddress()
 		invAddr[0] = 3
 		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), invAddr, 1e9, ts.RandInt64(1e6), "invalid address")
+			ts.RandAccAddress(), invAddr, 1e9, ts.RandAmount(), "invalid address")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -135,17 +135,17 @@ func TestBasicCheck(t *testing.T) {
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid amount: -1",
+			Reason: "invalid amount: -0.000000001 PAC",
 		})
 	})
 
 	t.Run("Invalid amount", func(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), (42*1e15)+1, 1, "invalid amount")
+			ts.RandAccAddress(), ts.RandAccAddress(), (42e15)+1, 1, "invalid amount")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid amount: 42000000000000001",
+			Reason: "invalid amount: 42000000 PAC",
 		})
 	})
 
@@ -155,17 +155,17 @@ func TestBasicCheck(t *testing.T) {
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid fee: -1",
+			Reason: "invalid fee: -0.000000001 PAC",
 		})
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
 		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), 1, (42*1e15)+1, "invalid fee")
+			ts.RandAccAddress(), ts.RandAccAddress(), 1, (42e15)+1, "invalid fee")
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid fee: 42000000000000001",
+			Reason: "invalid fee: 42000000 PAC",
 		})
 	})
 

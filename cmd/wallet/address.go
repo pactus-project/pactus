@@ -5,7 +5,6 @@ import (
 
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
@@ -51,12 +50,12 @@ func buildAllAddressesCmd(parentCmd *cobra.Command) {
 
 			if *balanceOpt {
 				balance, _ := wlt.Balance(info.Address)
-				line += fmt.Sprintf("%v\t", util.ChangeToCoin(balance))
+				line += fmt.Sprintf("%s\t", balance.String())
 			}
 
 			if *stakeOpt {
 				stake, _ := wlt.Stake(info.Address)
-				line += fmt.Sprintf("%v\t", util.ChangeToCoin(stake))
+				line += fmt.Sprintf("%s\t", stake.String())
 			}
 
 			line += info.Label
@@ -123,8 +122,8 @@ func buildBalanceCmd(parentCmd *cobra.Command) {
 		stake, err := wlt.Stake(addr)
 		cmd.FatalErrorCheck(err)
 
-		cmd.PrintInfoMsgf("balance: %v\tstake: %v",
-			util.ChangeToCoin(balance), util.ChangeToCoin(stake))
+		cmd.PrintInfoMsgf("balance: %s\tstake: %s",
+			balance.String(), stake.String())
 	}
 }
 

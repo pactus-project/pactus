@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
@@ -182,7 +183,7 @@ func TestMain(m *testing.M) {
 	}
 
 	s, _ := store.NewStore(tConfigs[tNodeIdx1].Store)
-	total := int64(0)
+	total := amount.Amount(0)
 	s.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
 		total += acc.Balance()
 

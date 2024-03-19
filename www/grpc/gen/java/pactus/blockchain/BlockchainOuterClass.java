@@ -13243,7 +13243,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Validator stake.
+     * Validator stake in NanoPAC.
      * </pre>
      *
      * <code>int64 stake = 5 [json_name = "stake"];</code>
@@ -13454,7 +13454,7 @@ public final class BlockchainOuterClass {
     private long stake_;
     /**
      * <pre>
-     * Validator stake.
+     * Validator stake in NanoPAC.
      * </pre>
      *
      * <code>int64 stake = 5 [json_name = "stake"];</code>
@@ -14325,7 +14325,7 @@ public final class BlockchainOuterClass {
       private long stake_ ;
       /**
        * <pre>
-       * Validator stake.
+       * Validator stake in NanoPAC.
        * </pre>
        *
        * <code>int64 stake = 5 [json_name = "stake"];</code>
@@ -14337,7 +14337,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator stake.
+       * Validator stake in NanoPAC.
        * </pre>
        *
        * <code>int64 stake = 5 [json_name = "stake"];</code>
@@ -14352,7 +14352,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator stake.
+       * Validator stake in NanoPAC.
        * </pre>
        *
        * <code>int64 stake = 5 [json_name = "stake"];</code>
@@ -14732,7 +14732,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Account balance.
+     * Account balance in NanoPAC.
      * </pre>
      *
      * <code>int64 balance = 4 [json_name = "balance"];</code>
@@ -14856,7 +14856,7 @@ public final class BlockchainOuterClass {
     private long balance_;
     /**
      * <pre>
-     * Account balance.
+     * Account balance in NanoPAC.
      * </pre>
      *
      * <code>int64 balance = 4 [json_name = "balance"];</code>
@@ -15459,7 +15459,7 @@ public final class BlockchainOuterClass {
       private long balance_ ;
       /**
        * <pre>
-       * Account balance.
+       * Account balance in NanoPAC.
        * </pre>
        *
        * <code>int64 balance = 4 [json_name = "balance"];</code>
@@ -15471,7 +15471,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account balance.
+       * Account balance in NanoPAC.
        * </pre>
        *
        * <code>int64 balance = 4 [json_name = "balance"];</code>
@@ -15486,7 +15486,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account balance.
+       * Account balance in NanoPAC.
        * </pre>
        *
        * <code>int64 balance = 4 [json_name = "balance"];</code>

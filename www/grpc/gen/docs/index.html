@@ -581,9 +581,9 @@
               
                 <tr>
                   <td>amount</td>
-                  <td><a href="#double">double</a></td>
+                  <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Transaction amount. </p></td>
+                  <td><p>Transaction amount in NanoPAC. </p></td>
                 </tr>
               
                 <tr>
@@ -618,17 +618,17 @@
             <tbody>
               
                 <tr>
-                  <td>amount</td>
-                  <td><a href="#double">double</a></td>
+                  <td>fee</td>
+                  <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Calculated amount. </p></td>
+                  <td><p>Calculated transaction fee in NanoPAC. </p></td>
                 </tr>
               
                 <tr>
-                  <td>fee</td>
-                  <td><a href="#double">double</a></td>
+                  <td>amount</td>
+                  <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Calculated transaction fee. </p></td>
+                  <td><p>Calculated amount in NanoPAC. </p></td>
                 </tr>
               
             </tbody>
@@ -674,7 +674,7 @@ If not explicitly set, it sets to the last block height. </p></td>
                   <td>stake</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Stake amount.
+                  <td><p>Stake amount in NanoPAC.
 It should be greater than 0. </p></td>
                 </tr>
               
@@ -687,9 +687,9 @@ It should be greater than 0. </p></td>
               
                 <tr>
                   <td>fee</td>
-                  <td><a href="#double">double</a></td>
+                  <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Transaction fee.
+                  <td><p>Transaction fee in NanoPAC.
 If not explicitly set, it is calculated based on the stake. </p></td>
                 </tr>
               
@@ -765,17 +765,17 @@ If not explicitly set, it sets to the last block height. </p></td>
               
                 <tr>
                   <td>amount</td>
-                  <td><a href="#double">double</a></td>
+                  <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Transfer amount.
+                  <td><p>Transfer amount in NanoPAC.
 It should be greater than 0. </p></td>
                 </tr>
               
                 <tr>
                   <td>fee</td>
-                  <td><a href="#double">double</a></td>
+                  <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Transaction fee.
+                  <td><p>Transaction fee in NanoPAC.
 If not explicitly set, it is calculated based on the amount. </p></td>
                 </tr>
               
@@ -866,18 +866,18 @@ If not explicitly set, it sets to the last block height. </p></td>
               
                 <tr>
                   <td>amount</td>
-                  <td><a href="#double">double</a></td>
+                  <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Withdrawal amount.
+                  <td><p>Withdrawal amount in NanoPAC.
 It should be greater than 0. </p></td>
                 </tr>
               
                 <tr>
                   <td>fee</td>
-                  <td><a href="#double">double</a></td>
+                  <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Transaction fee.
-If not explicitly set, it is calculated based on the stake. </p></td>
+                  <td><p>Transaction fee in NanoPAC.
+If not explicitly set, it is calculated based on the amount. </p></td>
                 </tr>
               
                 <tr>
@@ -991,7 +991,7 @@ If not explicitly set, it is calculated based on the stake. </p></td>
                   <td>stake</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Stake amount. </p></td>
+                  <td><p>Stake amount in NanoPAC. </p></td>
                 </tr>
               
             </tbody>
@@ -1060,7 +1060,7 @@ If not explicitly set, it is calculated based on the stake. </p></td>
                   <td>amount</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Transaction amount. </p></td>
+                  <td><p>Transaction amount in NanoPAC. </p></td>
                 </tr>
               
             </tbody>
@@ -1122,7 +1122,7 @@ If not explicitly set, it is calculated based on the stake. </p></td>
                   <td>amount</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Withdrawal amount. </p></td>
+                  <td><p>Withdrawal amount in NanoPAC. </p></td>
                 </tr>
               
             </tbody>
@@ -1174,14 +1174,14 @@ If not explicitly set, it is calculated based on the stake. </p></td>
                   <td>value</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Transaction value. </p></td>
+                  <td><p>Transaction value in NanoPAC. </p></td>
                 </tr>
               
                 <tr>
                   <td>fee</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Transaction fee. </p></td>
+                  <td><p>Transaction fee in NanoPAC. </p></td>
                 </tr>
               
                 <tr>
@@ -1436,7 +1436,7 @@ and payload type.</p></td>
                   <td>balance</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Account balance. </p></td>
+                  <td><p>Account balance in NanoPAC. </p></td>
                 </tr>
               
                 <tr>
@@ -2147,7 +2147,7 @@ and payload type.</p></td>
                   <td>stake</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
-                  <td><p>Validator stake. </p></td>
+                  <td><p>Validator stake in NanoPAC. </p></td>
                 </tr>
               
                 <tr>
