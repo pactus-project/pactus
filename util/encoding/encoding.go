@@ -1,4 +1,4 @@
-// This file contains code from the btcd project,
+// This file contains code modified from the btcd project,
 // which is licensed under the ISC License.
 //
 // Original license: https://github.com/btcsuite/btcd/blob/master/LICENSE
