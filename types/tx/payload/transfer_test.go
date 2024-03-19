@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,7 +18,7 @@ func TestTransferType(t *testing.T) {
 func TestTransferDecoding(t *testing.T) {
 	tests := []struct {
 		raw      []byte
-		value    int64
+		value    amount.Amount
 		readErr  error
 		basicErr error
 	}{

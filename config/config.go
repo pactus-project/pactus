@@ -129,7 +129,12 @@ func DefaultConfigMainnet() *Config {
 
 func DefaultConfigTestnet() *Config {
 	conf := defaultConfig()
-	conf.Network.DefaultBootstrapAddrStrings = []string{}
+	conf.Network.DefaultBootstrapAddrStrings = []string{
+		"/dns/testnet1.pactus.org/tcp/21777/p2p/12D3KooWR7ZB3nGih1Fz7Yg83Zap8Cpxr73T6PPihBsEpTG5BZyk",
+		"/dns/testnet2.pactus.org/tcp/21777/p2p/12D3KooWQcDuFDMGsw6gG7oNFw7C4x7ozoMu69J7WEAojKCaNzji",
+		"/dns/testnet3.pactus.org/tcp/21777/p2p/12D3KooWLsAPSJ4xowd9thGbPmbweBT6sg3nEiPjDJccaWZacsUR",
+		"/dns/testnet4.pactus.org/tcp/21777/p2p/12D3KooWJKYdHzWZGibnj74NSSgKRu4Ez6MijDWMfLfXxeL4un6v",
+	}
 	conf.Network.MaxConns = 64
 	conf.Network.EnableNATService = false
 	conf.Network.EnableUPnP = false

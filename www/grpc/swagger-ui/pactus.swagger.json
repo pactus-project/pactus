@@ -411,11 +411,11 @@
         "parameters": [
           {
             "name": "amount",
-            "description": "Transaction amount.",
+            "description": "Transaction amount in NanoPAC.",
             "in": "path",
             "required": true,
-            "type": "number",
-            "format": "double"
+            "type": "string",
+            "format": "int64"
           },
           {
             "name": "payloadType",
@@ -480,7 +480,7 @@
           },
           {
             "name": "stake",
-            "description": "Stake amount.\nIt should be greater than 0.",
+            "description": "Stake amount in NanoPAC.\nIt should be greater than 0.",
             "in": "path",
             "required": true,
             "type": "string",
@@ -503,11 +503,11 @@
           },
           {
             "name": "fee",
-            "description": "Transaction fee.\nIf not explicitly set, it is calculated based on the stake.",
+            "description": "Transaction fee in NanoPAC.\nIf not explicitly set, it is calculated based on the stake.",
             "in": "path",
             "required": true,
-            "type": "number",
-            "format": "double"
+            "type": "string",
+            "format": "int64"
           },
           {
             "name": "memo",
@@ -557,11 +557,11 @@
           },
           {
             "name": "amount",
-            "description": "Transfer amount.\nIt should be greater than 0.",
+            "description": "Transfer amount in NanoPAC.\nIt should be greater than 0.",
             "in": "path",
             "required": true,
-            "type": "number",
-            "format": "double"
+            "type": "string",
+            "format": "int64"
           },
           {
             "name": "lockTime",
@@ -573,11 +573,11 @@
           },
           {
             "name": "fee",
-            "description": "Transaction fee.\nIf not explicitly set, it is calculated based on the amount.",
+            "description": "Transaction fee in NanoPAC.\nIf not explicitly set, it is calculated based on the amount.",
             "in": "path",
             "required": true,
-            "type": "number",
-            "format": "double"
+            "type": "string",
+            "format": "int64"
           },
           {
             "name": "memo",
@@ -674,11 +674,11 @@
           },
           {
             "name": "amount",
-            "description": "Withdrawal amount.\nIt should be greater than 0.",
+            "description": "Withdrawal amount in NanoPAC.\nIt should be greater than 0.",
             "in": "path",
             "required": true,
-            "type": "number",
-            "format": "double"
+            "type": "string",
+            "format": "int64"
           },
           {
             "name": "lockTime",
@@ -690,11 +690,11 @@
           },
           {
             "name": "fee",
-            "description": "Transaction fee.\nIf not explicitly set, it is calculated based on the stake.",
+            "description": "Transaction fee in NanoPAC.\nIf not explicitly set, it is calculated based on the amount.",
             "in": "path",
             "required": true,
-            "type": "number",
-            "format": "double"
+            "type": "string",
+            "format": "int64"
           },
           {
             "name": "memo",
@@ -1051,7 +1051,7 @@
         "balance": {
           "type": "string",
           "format": "int64",
-          "description": "Account balance."
+          "description": "Account balance in NanoPAC."
         },
         "address": {
           "type": "string",
@@ -1114,15 +1114,15 @@
     "pactusCalculateFeeResponse": {
       "type": "object",
       "properties": {
-        "amount": {
-          "type": "number",
-          "format": "double",
-          "description": "Calculated amount."
-        },
         "fee": {
-          "type": "number",
-          "format": "double",
-          "description": "Calculated transaction fee."
+          "type": "string",
+          "format": "int64",
+          "description": "Calculated transaction fee in NanoPAC."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "Calculated amount in NanoPAC."
         }
       },
       "description": "Response message containing the calculated transaction fee."
@@ -1542,7 +1542,7 @@
         "stake": {
           "type": "string",
           "format": "int64",
-          "description": "Stake amount."
+          "description": "Stake amount in NanoPAC."
         }
       },
       "description": "Payload for a bond transaction."
@@ -1576,7 +1576,7 @@
         "amount": {
           "type": "string",
           "format": "int64",
-          "description": "Transaction amount."
+          "description": "Transaction amount in NanoPAC."
         }
       },
       "description": "Payload for a transfer transaction."
@@ -1618,7 +1618,7 @@
         "amount": {
           "type": "string",
           "format": "int64",
-          "description": "Withdrawal amount."
+          "description": "Withdrawal amount in NanoPAC."
         }
       },
       "description": "Payload for a withdraw transaction."
@@ -1779,12 +1779,12 @@
         "value": {
           "type": "string",
           "format": "int64",
-          "description": "Transaction value."
+          "description": "Transaction value in NanoPAC."
         },
         "fee": {
           "type": "string",
           "format": "int64",
-          "description": "Transaction fee."
+          "description": "Transaction fee in NanoPAC."
         },
         "payloadType": {
           "$ref": "#/definitions/pactusPayloadType"
@@ -1874,7 +1874,7 @@
         "stake": {
           "type": "string",
           "format": "int64",
-          "description": "Validator stake."
+          "description": "Validator stake in NanoPAC."
         },
         "lastBondingHeight": {
           "type": "integer",

@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
@@ -22,7 +23,7 @@ func (p *SortitionPayload) Signer() crypto.Address {
 	return p.Validator
 }
 
-func (p *SortitionPayload) Value() int64 {
+func (p *SortitionPayload) Value() amount.Amount {
 	return 0
 }
 
@@ -54,7 +55,7 @@ func (p *SortitionPayload) Decode(r io.Reader) error {
 }
 
 func (p *SortitionPayload) String() string {
-	return fmt.Sprintf("{Sortition 🎯 %v",
+	return fmt.Sprintf("{Sortition 🎯 %s",
 		p.Validator.ShortString())
 }
 

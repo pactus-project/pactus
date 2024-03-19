@@ -5,6 +5,7 @@ import (
 	"bytes"
 
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
@@ -16,7 +17,7 @@ type Account struct {
 // accountData contains the data associated with an account.
 type accountData struct {
 	Number  int32
-	Balance int64
+	Balance amount.Amount
 }
 
 // NewAccount constructs a new account from the given number.
@@ -48,17 +49,17 @@ func (acc Account) Number() int32 {
 }
 
 // Balance returns the balance of the account.
-func (acc Account) Balance() int64 {
+func (acc Account) Balance() amount.Amount {
 	return acc.data.Balance
 }
 
 // SubtractFromBalance subtracts the given amount from the account's balance.
-func (acc *Account) SubtractFromBalance(amt int64) {
+func (acc *Account) SubtractFromBalance(amt amount.Amount) {
 	acc.data.Balance -= amt
 }
 
 // AddToBalance adds the given amount to the account's balance.
-func (acc *Account) AddToBalance(amt int64) {
+func (acc *Account) AddToBalance(amt amount.Amount) {
 	acc.data.Balance += amt
 }
 

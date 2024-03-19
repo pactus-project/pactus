@@ -130,7 +130,7 @@ func request_Transaction_CalculateFee_0(ctx context.Context, marshaler runtime.M
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "amount")
 	}
 
-	protoReq.Amount, err = runtime.Float64(val)
+	protoReq.Amount, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "amount", err)
 	}
@@ -176,7 +176,7 @@ func local_request_Transaction_CalculateFee_0(ctx context.Context, marshaler run
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "amount")
 	}
 
-	protoReq.Amount, err = runtime.Float64(val)
+	protoReq.Amount, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "amount", err)
 	}
@@ -293,7 +293,7 @@ func request_Transaction_GetRawTransferTransaction_0(ctx context.Context, marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "amount")
 	}
 
-	protoReq.Amount, err = runtime.Float64(val)
+	protoReq.Amount, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "amount", err)
 	}
@@ -313,7 +313,7 @@ func request_Transaction_GetRawTransferTransaction_0(ctx context.Context, marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "fee")
 	}
 
-	protoReq.Fee, err = runtime.Float64(val)
+	protoReq.Fee, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "fee", err)
 	}
@@ -369,7 +369,7 @@ func local_request_Transaction_GetRawTransferTransaction_0(ctx context.Context, 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "amount")
 	}
 
-	protoReq.Amount, err = runtime.Float64(val)
+	protoReq.Amount, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "amount", err)
 	}
@@ -389,7 +389,7 @@ func local_request_Transaction_GetRawTransferTransaction_0(ctx context.Context, 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "fee")
 	}
 
-	protoReq.Fee, err = runtime.Float64(val)
+	protoReq.Fee, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "fee", err)
 	}
@@ -475,7 +475,7 @@ func request_Transaction_GetRawBondTransaction_0(ctx context.Context, marshaler 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "fee")
 	}
 
-	protoReq.Fee, err = runtime.Float64(val)
+	protoReq.Fee, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "fee", err)
 	}
@@ -561,7 +561,7 @@ func local_request_Transaction_GetRawBondTransaction_0(ctx context.Context, mars
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "fee")
 	}
 
-	protoReq.Fee, err = runtime.Float64(val)
+	protoReq.Fee, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "fee", err)
 	}
@@ -709,7 +709,7 @@ func request_Transaction_GetRawWithdrawTransaction_0(ctx context.Context, marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "amount")
 	}
 
-	protoReq.Amount, err = runtime.Float64(val)
+	protoReq.Amount, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "amount", err)
 	}
@@ -729,7 +729,7 @@ func request_Transaction_GetRawWithdrawTransaction_0(ctx context.Context, marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "fee")
 	}
 
-	protoReq.Fee, err = runtime.Float64(val)
+	protoReq.Fee, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "fee", err)
 	}
@@ -785,7 +785,7 @@ func local_request_Transaction_GetRawWithdrawTransaction_0(ctx context.Context, 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "amount")
 	}
 
-	protoReq.Amount, err = runtime.Float64(val)
+	protoReq.Amount, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "amount", err)
 	}
@@ -805,7 +805,7 @@ func local_request_Transaction_GetRawWithdrawTransaction_0(ctx context.Context, 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "fee")
 	}
 
-	protoReq.Fee, err = runtime.Float64(val)
+	protoReq.Fee, err = runtime.Int64(val)
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "fee", err)
 	}
