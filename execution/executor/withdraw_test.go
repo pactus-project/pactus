@@ -79,8 +79,8 @@ func TestExecuteWithdrawTx(t *testing.T) {
 
 	assert.Zero(t, td.sandbox.Validator(val.Address()).Stake())
 	assert.Equal(t, td.sandbox.Account(addr).Balance(), amt)
-	assert.Equal(t, td.sandbox.Validator(val.Address()).Stake(), int64(0))
-	assert.Equal(t, td.sandbox.Validator(val.Address()).Power(), int64(0))
+	assert.Zero(t, td.sandbox.Validator(val.Address()).Stake())
+	assert.Zero(t, td.sandbox.Validator(val.Address()).Power())
 	assert.Equal(t, td.sandbox.Account(addr).Balance(), amt)
 
 	td.checkTotalCoin(t, fee)

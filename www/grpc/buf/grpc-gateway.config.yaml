@@ -47,7 +47,7 @@ http:
     - selector: pactus.Transaction.GetRawBondTransaction
       get: "/pactus/transaction/get_raw_bond_transaction/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lock_time}/public_key/{public_key}/fee/{fee}/memo/{memo}"
 
-    - selector: pactus.Transaction.GetRawUnBondTransaction
+    - selector: pactus.Transaction.GetRawUnbondTransaction
       get: "/pactus/transaction/get_raw_unbond_transaction/validator_address/{validator_address}/lock_time/{lock_time}/memo/{memo}"
 
     - selector: pactus.Transaction.GetRawWithdrawTransaction

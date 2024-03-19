@@ -102,7 +102,7 @@ func PromptConfirm(label string) bool {
 		os.Exit(1)
 	}
 
-	if len(result) > 0 && strings.ToUpper(result[:1]) == "Y" {
+	if result != "" && strings.ToUpper(result[:1]) == "Y" {
 		return true
 	}
 

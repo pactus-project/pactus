@@ -265,7 +265,7 @@ type CalculateFeeRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Transaction amount.
+	// Transaction amount in NanoPAC.
 	Amount int64 `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`
 	// Type of transaction payload.
 	PayloadType PayloadType `protobuf:"varint,2,opt,name=payload_type,json=payloadType,proto3,enum=pactus.PayloadType" json:"payload_type,omitempty"`
@@ -332,10 +332,10 @@ type CalculateFeeResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Calculated amount.
-	Amount int64 `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`
-	// Calculated transaction fee.
-	Fee int64 `protobuf:"varint,2,opt,name=fee,proto3" json:"fee,omitempty"`
+	// Calculated transaction fee in NanoPAC.
+	Fee int64 `protobuf:"varint,1,opt,name=fee,proto3" json:"fee,omitempty"`
+	// Calculated amount in NanoPAC.
+	Amount int64 `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
 }
 
 func (x *CalculateFeeResponse) Reset() {
@@ -370,16 +370,16 @@ func (*CalculateFeeResponse) Descriptor() ([]byte, []int) {
 	return file_transaction_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *CalculateFeeResponse) GetAmount() int64 {
+func (x *CalculateFeeResponse) GetFee() int64 {
 	if x != nil {
-		return x.Amount
+		return x.Fee
 	}
 	return 0
 }
 
-func (x *CalculateFeeResponse) GetFee() int64 {
+func (x *CalculateFeeResponse) GetAmount() int64 {
 	if x != nil {
-		return x.Fee
+		return x.Amount
 	}
 	return 0
 }
@@ -440,7 +440,7 @@ type BroadcastTransactionResponse struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Transaction ID.
-	Id []byte `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	Id []byte `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (x *BroadcastTransactionResponse) Reset() {
@@ -489,14 +489,17 @@ type GetRawTransferTransactionRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Lock time for the transaction.
+	// If not explicitly set, it sets to the last block height.
 	LockTime uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	// Sender's address.
+	// Sender's account address.
 	Sender string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty"`
-	// Receiver's address.
+	// Receiver's account address.
 	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	// Transaction amount.
+	// Transfer amount in NanoPAC.
+	// It should be greater than 0.
 	Amount int64 `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`
-	// Transaction fee.
+	// Transaction fee in NanoPAC.
+	// If not explicitly set, it is calculated based on the amount.
 	Fee int64 `protobuf:"varint,5,opt,name=fee,proto3" json:"fee,omitempty"`
 	// Transaction memo.
 	Memo string `protobuf:"bytes,6,opt,name=memo,proto3" json:"memo,omitempty"`
@@ -583,16 +586,19 @@ type GetRawBondTransactionRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Lock time for the transaction.
+	// If not explicitly set, it sets to the last block height.
 	LockTime uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	// Sender's address.
+	// Sender's account address.
 	Sender string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty"`
-	// Receiver's address.
+	// Receiver's validator address.
 	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	// Stake amount.
+	// Stake amount in NanoPAC.
+	// It should be greater than 0.
 	Stake int64 `protobuf:"varint,4,opt,name=stake,proto3" json:"stake,omitempty"`
 	// Public key of the validator.
 	PublicKey string `protobuf:"bytes,5,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
-	// Transaction fee.
+	// Transaction fee in NanoPAC.
+	// If not explicitly set, it is calculated based on the stake.
 	Fee int64 `protobuf:"varint,6,opt,name=fee,proto3" json:"fee,omitempty"`
 	// Transaction memo.
 	Memo string `protobuf:"bytes,7,opt,name=memo,proto3" json:"memo,omitempty"`
@@ -680,12 +686,13 @@ func (x *GetRawBondTransactionRequest) GetMemo() string {
 }
 
 // Request message for retrieving raw details of an unbond transaction.
-type GetRawUnBondTransactionRequest struct {
+type GetRawUnbondTransactionRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	// Lock time for the transaction.
+	// If not explicitly set, it sets to the last block height.
 	LockTime uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
 	// Address of the validator to unbond from.
 	ValidatorAddress string `protobuf:"bytes,3,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
@@ -693,8 +700,8 @@ type GetRawUnBondTransactionRequest struct {
 	Memo string `protobuf:"bytes,4,opt,name=memo,proto3" json:"memo,omitempty"`
 }
 
-func (x *GetRawUnBondTransactionRequest) Reset() {
-	*x = GetRawUnBondTransactionRequest{}
+func (x *GetRawUnbondTransactionRequest) Reset() {
+	*x = GetRawUnbondTransactionRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_transaction_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -702,13 +709,13 @@ func (x *GetRawUnBondTransactionRequest) Reset() {
 	}
 }
 
-func (x *GetRawUnBondTransactionRequest) String() string {
+func (x *GetRawUnbondTransactionRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetRawUnBondTransactionRequest) ProtoMessage() {}
+func (*GetRawUnbondTransactionRequest) ProtoMessage() {}
 
-func (x *GetRawUnBondTransactionRequest) ProtoReflect() protoreflect.Message {
+func (x *GetRawUnbondTransactionRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_transaction_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -720,26 +727,26 @@ func (x *GetRawUnBondTransactionRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetRawUnBondTransactionRequest.ProtoReflect.Descriptor instead.
-func (*GetRawUnBondTransactionRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetRawUnbondTransactionRequest.ProtoReflect.Descriptor instead.
+func (*GetRawUnbondTransactionRequest) Descriptor() ([]byte, []int) {
 	return file_transaction_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *GetRawUnBondTransactionRequest) GetLockTime() uint32 {
+func (x *GetRawUnbondTransactionRequest) GetLockTime() uint32 {
 	if x != nil {
 		return x.LockTime
 	}
 	return 0
 }
 
-func (x *GetRawUnBondTransactionRequest) GetValidatorAddress() string {
+func (x *GetRawUnbondTransactionRequest) GetValidatorAddress() string {
 	if x != nil {
 		return x.ValidatorAddress
 	}
 	return ""
 }
 
-func (x *GetRawUnBondTransactionRequest) GetMemo() string {
+func (x *GetRawUnbondTransactionRequest) GetMemo() string {
 	if x != nil {
 		return x.Memo
 	}
@@ -753,15 +760,18 @@ type GetRawWithdrawTransactionRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Lock time for the transaction.
+	// If not explicitly set, it sets to the last block height.
 	LockTime uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
 	// Address of the validator to withdraw from.
 	ValidatorAddress string `protobuf:"bytes,2,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
 	// Address of the account to withdraw to.
 	AccountAddress string `protobuf:"bytes,3,opt,name=account_address,json=accountAddress,proto3" json:"account_address,omitempty"`
-	// Transaction fee.
-	Fee int64 `protobuf:"varint,4,opt,name=fee,proto3" json:"fee,omitempty"`
-	// Withdrawal amount.
-	Amount int64 `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`
+	// Withdrawal amount in NanoPAC.
+	// It should be greater than 0.
+	Amount int64 `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`
+	// Transaction fee in NanoPAC.
+	// If not explicitly set, it is calculated based on the amount.
+	Fee int64 `protobuf:"varint,5,opt,name=fee,proto3" json:"fee,omitempty"`
 	// Transaction memo.
 	Memo string `protobuf:"bytes,6,opt,name=memo,proto3" json:"memo,omitempty"`
 }
@@ -819,16 +829,16 @@ func (x *GetRawWithdrawTransactionRequest) GetAccountAddress() string {
 	return ""
 }
 
-func (x *GetRawWithdrawTransactionRequest) GetFee() int64 {
+func (x *GetRawWithdrawTransactionRequest) GetAmount() int64 {
 	if x != nil {
-		return x.Fee
+		return x.Amount
 	}
 	return 0
 }
 
-func (x *GetRawWithdrawTransactionRequest) GetAmount() int64 {
+func (x *GetRawWithdrawTransactionRequest) GetFee() int64 {
 	if x != nil {
-		return x.Amount
+		return x.Fee
 	}
 	return 0
 }
@@ -899,7 +909,7 @@ type PayloadTransfer struct {
 	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	// Receiver's address.
 	Receiver string `protobuf:"bytes,2,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	// Transaction amount.
+	// Transaction amount in NanoPAC.
 	Amount int64 `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
 }
 
@@ -966,7 +976,7 @@ type PayloadBond struct {
 	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	// Receiver's address.
 	Receiver string `protobuf:"bytes,2,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	// Stake amount.
+	// Stake amount in NanoPAC.
 	Stake int64 `protobuf:"varint,3,opt,name=stake,proto3" json:"stake,omitempty"`
 }
 
@@ -1140,7 +1150,7 @@ type PayloadWithdraw struct {
 	From string `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
 	// Address to withdraw to.
 	To string `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
-	// Withdrawal amount.
+	// Withdrawal amount in NanoPAC.
 	Amount int64 `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
 }
 
@@ -1211,9 +1221,9 @@ type TransactionInfo struct {
 	Version int32 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
 	// Lock time for the transaction.
 	LockTime uint32 `protobuf:"varint,4,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	// Transaction value.
+	// Transaction value in NanoPAC.
 	Value int64 `protobuf:"varint,5,opt,name=value,proto3" json:"value,omitempty"`
-	// Transaction fee.
+	// Transaction fee in NanoPAC.
 	Fee int64 `protobuf:"varint,6,opt,name=fee,proto3" json:"fee,omitempty"`
 	// Type of transaction payload.
 	PayloadType PayloadType `protobuf:"varint,7,opt,name=payload_type,json=payloadType,proto3,enum=pactus.PayloadType" json:"payload_type,omitempty"`
@@ -1446,10 +1456,10 @@ var file_transaction_proto_rawDesc = []byte{
 	0x12, 0x21, 0x0a, 0x0c, 0x66, 0x69, 0x78, 0x65, 0x64, 0x5f, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74,
 	0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0b, 0x66, 0x69, 0x78, 0x65, 0x64, 0x41, 0x6d, 0x6f,
 	0x75, 0x6e, 0x74, 0x22, 0x40, 0x0a, 0x14, 0x43, 0x61, 0x6c, 0x63, 0x75, 0x6c, 0x61, 0x74, 0x65,
-	0x46, 0x65, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x61,
-	0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x61, 0x6d, 0x6f,
-	0x75, 0x6e, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x66, 0x65, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03,
-	0x52, 0x03, 0x66, 0x65, 0x65, 0x22, 0x53, 0x0a, 0x1b, 0x42, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61,
+	0x46, 0x65, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x66,
+	0x65, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x03, 0x66, 0x65, 0x65, 0x12, 0x16, 0x0a,
+	0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x61,
+	0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x53, 0x0a, 0x1b, 0x42, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61,
 	0x73, 0x74, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71,
 	0x75, 0x65, 0x73, 0x74, 0x12, 0x34, 0x0a, 0x16, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x64, 0x5f, 0x72,
 	0x61, 0x77, 0x5f, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01,
@@ -1457,7 +1467,7 @@ var file_transaction_proto_rawDesc = []byte{
 	0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x2e, 0x0a, 0x1c, 0x42, 0x72,
 	0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69,
 	0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x02, 0x69, 0x64, 0x22, 0xb1, 0x01, 0x0a, 0x20, 0x47,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x02, 0x69, 0x64, 0x22, 0xb1, 0x01, 0x0a, 0x20, 0x47,
 	0x65, 0x74, 0x52, 0x61, 0x77, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x54, 0x72, 0x61,
 	0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
 	0x1b, 0x0a, 0x09, 0x6c, 0x6f, 0x63, 0x6b, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01,
@@ -1482,7 +1492,7 @@ var file_transaction_proto_rawDesc = []byte{
 	0x69, 0x63, 0x4b, 0x65, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x66, 0x65, 0x65, 0x18, 0x06, 0x20, 0x01,
 	0x28, 0x03, 0x52, 0x03, 0x66, 0x65, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6d, 0x65, 0x6d, 0x6f, 0x18,
 	0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6d, 0x65, 0x6d, 0x6f, 0x22, 0x7e, 0x0a, 0x1e, 0x47,
-	0x65, 0x74, 0x52, 0x61, 0x77, 0x55, 0x6e, 0x42, 0x6f, 0x6e, 0x64, 0x54, 0x72, 0x61, 0x6e, 0x73,
+	0x65, 0x74, 0x52, 0x61, 0x77, 0x55, 0x6e, 0x62, 0x6f, 0x6e, 0x64, 0x54, 0x72, 0x61, 0x6e, 0x73,
 	0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1b, 0x0a,
 	0x09, 0x6c, 0x6f, 0x63, 0x6b, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d,
 	0x52, 0x08, 0x6c, 0x6f, 0x63, 0x6b, 0x54, 0x69, 0x6d, 0x65, 0x12, 0x2b, 0x0a, 0x11, 0x76, 0x61,
@@ -1499,9 +1509,9 @@ var file_transaction_proto_rawDesc = []byte{
 	0x74, 0x6f, 0x72, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x27, 0x0a, 0x0f, 0x61, 0x63,
 	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x5f, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x03, 0x20,
 	0x01, 0x28, 0x09, 0x52, 0x0e, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x41, 0x64, 0x64, 0x72,
-	0x65, 0x73, 0x73, 0x12, 0x10, 0x0a, 0x03, 0x66, 0x65, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03,
-	0x52, 0x03, 0x66, 0x65, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18,
-	0x05, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x12, 0x0a,
+	0x65, 0x73, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x03, 0x52, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x66,
+	0x65, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x03, 0x52, 0x03, 0x66, 0x65, 0x65, 0x12, 0x12, 0x0a,
 	0x04, 0x6d, 0x65, 0x6d, 0x6f, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6d, 0x65, 0x6d,
 	0x6f, 0x22, 0x44, 0x0a, 0x19, 0x47, 0x65, 0x74, 0x52, 0x61, 0x77, 0x54, 0x72, 0x61, 0x6e, 0x73,
 	0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x27,
@@ -1609,9 +1619,9 @@ var file_transaction_proto_rawDesc = []byte{
 	0x73, 0x74, 0x1a, 0x21, 0x2e, 0x70, 0x61, 0x63, 0x74, 0x75, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x52,
 	0x61, 0x77, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73,
 	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x64, 0x0a, 0x17, 0x47, 0x65, 0x74, 0x52, 0x61, 0x77, 0x55,
-	0x6e, 0x42, 0x6f, 0x6e, 0x64, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x6e, 0x62, 0x6f, 0x6e, 0x64, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e,
 	0x12, 0x26, 0x2e, 0x70, 0x61, 0x63, 0x74, 0x75, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x52, 0x61, 0x77,
-	0x55, 0x6e, 0x42, 0x6f, 0x6e, 0x64, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f,
+	0x55, 0x6e, 0x62, 0x6f, 0x6e, 0x64, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f,
 	0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x21, 0x2e, 0x70, 0x61, 0x63, 0x74, 0x75,
 	0x73, 0x2e, 0x47, 0x65, 0x74, 0x52, 0x61, 0x77, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74,
 	0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x68, 0x0a, 0x19, 0x47,
@@ -1654,7 +1664,7 @@ var file_transaction_proto_goTypes = []interface{}{
 	(*BroadcastTransactionResponse)(nil),     // 7: pactus.BroadcastTransactionResponse
 	(*GetRawTransferTransactionRequest)(nil), // 8: pactus.GetRawTransferTransactionRequest
 	(*GetRawBondTransactionRequest)(nil),     // 9: pactus.GetRawBondTransactionRequest
-	(*GetRawUnBondTransactionRequest)(nil),   // 10: pactus.GetRawUnBondTransactionRequest
+	(*GetRawUnbondTransactionRequest)(nil),   // 10: pactus.GetRawUnbondTransactionRequest
 	(*GetRawWithdrawTransactionRequest)(nil), // 11: pactus.GetRawWithdrawTransactionRequest
 	(*GetRawTransactionResponse)(nil),        // 12: pactus.GetRawTransactionResponse
 	(*PayloadTransfer)(nil),                  // 13: pactus.PayloadTransfer
@@ -1679,14 +1689,14 @@ var file_transaction_proto_depIdxs = []int32{
 	6,  // 11: pactus.Transaction.BroadcastTransaction:input_type -> pactus.BroadcastTransactionRequest
 	8,  // 12: pactus.Transaction.GetRawTransferTransaction:input_type -> pactus.GetRawTransferTransactionRequest
 	9,  // 13: pactus.Transaction.GetRawBondTransaction:input_type -> pactus.GetRawBondTransactionRequest
-	10, // 14: pactus.Transaction.GetRawUnBondTransaction:input_type -> pactus.GetRawUnBondTransactionRequest
+	10, // 14: pactus.Transaction.GetRawUnbondTransaction:input_type -> pactus.GetRawUnbondTransactionRequest
 	11, // 15: pactus.Transaction.GetRawWithdrawTransaction:input_type -> pactus.GetRawWithdrawTransactionRequest
 	3,  // 16: pactus.Transaction.GetTransaction:output_type -> pactus.GetTransactionResponse
 	5,  // 17: pactus.Transaction.CalculateFee:output_type -> pactus.CalculateFeeResponse
 	7,  // 18: pactus.Transaction.BroadcastTransaction:output_type -> pactus.BroadcastTransactionResponse
 	12, // 19: pactus.Transaction.GetRawTransferTransaction:output_type -> pactus.GetRawTransactionResponse
 	12, // 20: pactus.Transaction.GetRawBondTransaction:output_type -> pactus.GetRawTransactionResponse
-	12, // 21: pactus.Transaction.GetRawUnBondTransaction:output_type -> pactus.GetRawTransactionResponse
+	12, // 21: pactus.Transaction.GetRawUnbondTransaction:output_type -> pactus.GetRawTransactionResponse
 	12, // 22: pactus.Transaction.GetRawWithdrawTransaction:output_type -> pactus.GetRawTransactionResponse
 	16, // [16:23] is the sub-list for method output_type
 	9,  // [9:16] is the sub-list for method input_type
@@ -1798,7 +1808,7 @@ func file_transaction_proto_init() {
 			}
 		}
 		file_transaction_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetRawUnBondTransactionRequest); i {
+			switch v := v.(*GetRawUnbondTransactionRequest); i {
 			case 0:
 				return &v.state
 			case 1:

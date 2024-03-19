@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
@@ -42,8 +43,8 @@ func (n ChainType) String() string {
 }
 
 type genAccount struct {
-	Address string `cbor:"1,keyasint" json:"address"`
-	Balance int64  `cbor:"2,keyasint" json:"balance"`
+	Address string        `cbor:"1,keyasint" json:"address"`
+	Balance amount.Amount `cbor:"2,keyasint" json:"balance"`
 }
 
 type genValidator struct {
@@ -176,8 +177,8 @@ func (gen *Genesis) SaveToFile(file string) error {
 	return util.WriteFile(file, j)
 }
 
-func (gen *Genesis) TotalSupply() int64 {
-	totalSuppyly := int64(0)
+func (gen *Genesis) TotalSupply() amount.Amount {
+	totalSuppyly := amount.Amount(0)
 	for _, acc := range gen.data.Accounts {
 		totalSuppyly += acc.Balance
 	}

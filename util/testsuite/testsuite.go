@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/proposal"
@@ -145,9 +146,13 @@ func (ts *TestSuite) RandRound() int16 {
 }
 
 // RandAmount returns a random amount between [0, 100^e9).
-func (ts *TestSuite) RandAmount() int64 {
-	return ts.RandInt64(100e9)
+func (ts *TestSuite) RandAmount() amount.Amount {
+	return amount.Amount(ts.RandInt64(1000e9))
 }
+
+// func (ts *TestSuite) RandAmountInPAC() float64 {
+// 	return util.ChangeToCoin(ts.RandAmount())
+// }
 
 // RandBytes returns a slice of random bytes of the given length.
 func (ts *TestSuite) RandBytes(length int) []byte {
@@ -259,7 +264,7 @@ func (ts *TestSuite) RandPeerID() peer.ID {
 func (ts *TestSuite) GenerateTestAccount(number int32) (*account.Account, crypto.Address) {
 	_, prv := ts.RandBLSKeyPair()
 	acc := account.NewAccount(number)
-	acc.AddToBalance(ts.RandInt64(100 * 1e14))
+	acc.AddToBalance(ts.RandAmount())
 
 	return acc, prv.PublicKeyNative().AccountAddress()
 }
@@ -268,7 +273,7 @@ func (ts *TestSuite) GenerateTestAccount(number int32) (*account.Account, crypto
 func (ts *TestSuite) GenerateTestValidator(number int32) (*validator.Validator, *bls.ValidatorKey) {
 	pub, prv := ts.RandBLSKeyPair()
 	val := validator.NewValidator(pub, number)
-	val.AddToStake(ts.RandInt64(100 * 1e9))
+	val.AddToStake(ts.RandAmount())
 
 	return val, bls.NewValidatorKey(prv)
 }
@@ -367,7 +372,7 @@ func (ts *TestSuite) GenerateTestProposal(height uint32, round int16) (*proposal
 func (ts *TestSuite) GenerateTestTransferTx() (*tx.Tx, *bls.PrivateKey) {
 	pub, prv := ts.RandBLSKeyPair()
 	trx := tx.NewTransferTx(ts.RandHeight(), pub.AccountAddress(), ts.RandAccAddress(),
-		ts.RandInt64(1000*1e10), ts.RandInt64(1*1e10), "test send-tx")
+		ts.RandAmount(), ts.RandAmount(), "test send-tx")
 	ts.HelperSignTransaction(prv, trx)
 
 	return trx, prv
@@ -377,7 +382,7 @@ func (ts *TestSuite) GenerateTestTransferTx() (*tx.Tx, *bls.PrivateKey) {
 func (ts *TestSuite) GenerateTestBondTx() (*tx.Tx, *bls.PrivateKey) {
 	pub, prv := ts.RandBLSKeyPair()
 	trx := tx.NewBondTx(ts.RandHeight(), pub.AccountAddress(), ts.RandValAddress(),
-		nil, ts.RandInt64(1000*1e10), ts.RandInt64(1*1e10), "test bond-tx")
+		nil, ts.RandAmount(), ts.RandAmount(), "test bond-tx")
 	ts.HelperSignTransaction(prv, trx)
 
 	return trx, prv
@@ -406,7 +411,7 @@ func (ts *TestSuite) GenerateTestUnbondTx() (*tx.Tx, *bls.PrivateKey) {
 func (ts *TestSuite) GenerateTestWithdrawTx() (*tx.Tx, *bls.PrivateKey) {
 	pub, prv := ts.RandBLSKeyPair()
 	trx := tx.NewWithdrawTx(ts.RandHeight(), pub.ValidatorAddress(), ts.RandAccAddress(),
-		ts.RandInt64(1000*1e10), ts.RandInt64(1*1e10), "test withdraw-tx")
+		ts.RandAmount(), ts.RandAmount(), "test withdraw-tx")
 	ts.HelperSignTransaction(prv, trx)
 
 	return trx, prv

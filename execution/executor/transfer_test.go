@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -33,10 +34,10 @@ func setup(t *testing.T) *testData {
 	}
 }
 
-func (td *testData) checkTotalCoin(t *testing.T, fee int64) {
+func (td *testData) checkTotalCoin(t *testing.T, fee amount.Amount) {
 	t.Helper()
 
-	total := int64(0)
+	total := amount.Amount(0)
 	for _, acc := range td.sandbox.TestStore.Accounts {
 		total += acc.Balance()
 	}
@@ -44,16 +45,16 @@ func (td *testData) checkTotalCoin(t *testing.T, fee int64) {
 	for _, val := range td.sandbox.TestStore.Validators {
 		total += val.Stake()
 	}
-	assert.Equal(t, total+fee, int64(21000000*1e9))
+	assert.Equal(t, total+fee, amount.Amount(21_000_000*1e9))
 }
 
-func (td *testData) randomAmountAndFee(min, max int64) (int64, int64) {
-	amt := td.RandInt64NonZero(max)
+func (td *testData) randomAmountAndFee(min, max amount.Amount) (amount.Amount, amount.Amount) {
+	amt := amount.Amount(td.RandInt64NonZero(int64(max)))
 	for amt < min {
-		amt = td.RandInt64NonZero(max)
+		amt = amount.Amount(td.RandInt64NonZero(int64(max)))
 	}
 
-	fee := int64(float64(amt) * td.sandbox.Params().FeeFraction)
+	fee := amt.MulF64(td.sandbox.Params().FeeFraction)
 	if amt+fee > max {
 		// To make sure amt+fee is less than max
 		return td.randomAmountAndFee(min, max)

@@ -88,7 +88,7 @@ func (g *gossipService) JoinTopic(name string, sp ShouldPropagate) (*lp2pps.Topi
 	}
 
 	err = g.pubsub.RegisterTopicValidator(name,
-		func(ctx context.Context, peerId lp2pcore.PeerID, m *lp2pps.Message) lp2pps.ValidationResult {
+		func(_ context.Context, peerId lp2pcore.PeerID, m *lp2pps.Message) lp2pps.ValidationResult {
 			msg := &GossipMessage{
 				From: peerId,
 				Data: m.Data,

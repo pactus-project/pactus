@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
@@ -34,14 +35,14 @@ type txData struct {
 	Flags     uint8
 	Version   uint8
 	LockTime  uint32
-	Fee       int64
+	Fee       amount.Amount
 	Memo      string
 	Payload   payload.Payload
 	Signature crypto.Signature
 	PublicKey crypto.PublicKey
 }
 
-func newTx(lockTime uint32, pld payload.Payload, fee int64,
+func newTx(lockTime uint32, pld payload.Payload, fee amount.Amount,
 	memo string,
 ) *Tx {
 	trx := &Tx{
@@ -81,7 +82,7 @@ func (tx *Tx) Payload() payload.Payload {
 	return tx.data.Payload
 }
 
-func (tx *Tx) Fee() int64 {
+func (tx *Tx) Fee() amount.Amount {
 	return tx.data.Fee
 }
 
@@ -134,15 +135,14 @@ func (tx *Tx) BasicCheck() error {
 			Reason: "lock time is not defined",
 		}
 	}
-	// TODO: Define it globally (  42*1e15 )?
-	if tx.Payload().Value() < 0 || tx.Payload().Value() > 42*1e15 {
+	if tx.Payload().Value() < 0 || tx.Payload().Value() > amount.MaxNanoPAC {
 		return BasicCheckError{
-			Reason: fmt.Sprintf("invalid amount: %d", tx.Payload().Value()),
+			Reason: fmt.Sprintf("invalid amount: %s", tx.Payload().Value()),
 		}
 	}
-	if tx.Fee() < 0 || tx.Fee() > 42*1e15 {
+	if tx.Fee() < 0 || tx.Fee() > amount.MaxNanoPAC {
 		return BasicCheckError{
-			Reason: fmt.Sprintf("invalid fee: %d", tx.Fee()),
+			Reason: fmt.Sprintf("invalid fee: %s", tx.Fee()),
 		}
 	}
 	if len(tx.Memo()) > maxMemoLength {
@@ -312,7 +312,7 @@ func (tx *Tx) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	tx.data.Fee = int64(fee)
+	tx.data.Fee = amount.Amount(fee)
 
 	tx.data.Memo, err = encoding.ReadVarString(r)
 	if err != nil {
