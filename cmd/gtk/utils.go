@@ -152,33 +152,25 @@ func setTextViewContent(tv *gtk.TextView, content string) {
 }
 
 func updateValidatorHint(lbl *gtk.Label, addr string, w *wallet.Wallet) {
-	stake, err := w.Stake(addr)
-	if err != nil {
-		updateHintLabel(lbl, "")
-	} else {
-		hint := fmt.Sprintf("stake: %s", stake)
+	stake, _ := w.Stake(addr)
+	hint := fmt.Sprintf("stake: %s", stake)
 
-		info := w.AddressInfo(addr)
-		if info != nil && info.Label != "" {
-			hint += ", label: " + info.Label
-		}
-		updateHintLabel(lbl, hint)
+	info := w.AddressInfo(addr)
+	if info != nil && info.Label != "" {
+		hint += ", label: " + info.Label
 	}
+	updateHintLabel(lbl, hint)
 }
 
 func updateAccountHint(lbl *gtk.Label, addr string, w *wallet.Wallet) {
-	balance, err := w.Balance(addr)
-	if err != nil {
-		updateHintLabel(lbl, "")
-	} else {
-		hint := fmt.Sprintf("balance: %s", balance)
+	balance, _ := w.Balance(addr)
+	hint := fmt.Sprintf("balance: %s", balance)
 
-		info := w.AddressInfo(addr)
-		if info != nil && info.Label != "" {
-			hint += ", label: " + info.Label
-		}
-		updateHintLabel(lbl, hint)
+	info := w.AddressInfo(addr)
+	if info != nil && info.Label != "" {
+		hint += ", label: " + info.Label
 	}
+	updateHintLabel(lbl, hint)
 }
 
 func updateFeeHint(lbl *gtk.Label, amtStr string, w *wallet.Wallet, payloadType payload.Type) {
