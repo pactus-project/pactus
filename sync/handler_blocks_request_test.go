@@ -116,7 +116,6 @@ func TestBlocksRequestMessages(t *testing.T) {
 				assert.Zero(t, res2.Count())
 			})
 		})
-
 	})
 
 	t.Run("NodeNetwork flag set", func(t *testing.T) {
