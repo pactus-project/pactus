@@ -48,13 +48,13 @@ func TestGetTransaction(t *testing.T) {
 		assert.Equal(t, uint32(0x1), res.BlockHeight)
 		assert.Equal(t, testBlock.Header().UnixTime(), res.BlockTime)
 		assert.Equal(t, trx1.ID().Bytes(), res.Transaction.Id)
-		assert.Equal(t, trx1.Fee().ToPAC(), res.Transaction.Fee)
+		assert.Equal(t, trx1.Fee().ToNanoPAC(), res.Transaction.Fee)
 		assert.Equal(t, trx1.Memo(), res.Transaction.Memo)
 		assert.Equal(t, trx1.Payload().Type(), payload.Type(res.Transaction.PayloadType))
 		assert.Equal(t, trx1.LockTime(), res.Transaction.LockTime)
 		assert.Equal(t, trx1.Signature().Bytes(), res.Transaction.Signature)
 		assert.Equal(t, trx1.PublicKey().String(), res.Transaction.PublicKey)
-		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).Amount.ToPAC(), pld.Transfer.Amount)
+		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).Amount.ToNanoPAC(), pld.Transfer.Amount)
 		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).From.String(), pld.Transfer.Sender)
 		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).To.String(), pld.Transfer.Receiver)
 	})
@@ -124,13 +124,13 @@ func TestGetCalculateFee(t *testing.T) {
 	amt := td.RandAmount()
 	res, err := client.CalculateFee(context.Background(),
 		&pactus.CalculateFeeRequest{
-			Amount:      amt.ToPAC(),
+			Amount:      amt.ToNanoPAC(),
 			PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
 		})
 
 	assert.NoError(t, err)
-	assert.Equal(t, res.Amount, amt.ToPAC())
-	assert.Equal(t, res.Fee, amt.MulF64(td.mockState.TestParams.FeeFraction).ToPAC())
+	assert.Equal(t, res.Amount, amt.ToNanoPAC())
+	assert.Equal(t, res.Fee, amt.MulF64(td.mockState.TestParams.FeeFraction).ToNanoPAC())
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
 	td.StopServer()
@@ -147,7 +147,7 @@ func TestGetRawTransaction(t *testing.T) {
 			&pactus.GetRawTransferTransactionRequest{
 				Sender:   td.RandAccAddress().String(),
 				Receiver: td.RandAccAddress().String(),
-				Amount:   amt.ToPAC(),
+				Amount:   amt.ToNanoPAC(),
 				Memo:     td.RandString(32),
 			})
 		assert.NoError(t, err)
@@ -169,7 +169,7 @@ func TestGetRawTransaction(t *testing.T) {
 			&pactus.GetRawBondTransactionRequest{
 				Sender:    td.RandAccAddress().String(),
 				Receiver:  td.RandValAddress().String(),
-				Stake:     amount.ToPAC(),
+				Stake:     amount.ToNanoPAC(),
 				PublicKey: "",
 				Memo:      td.RandString(32),
 			})
@@ -209,7 +209,7 @@ func TestGetRawTransaction(t *testing.T) {
 			&pactus.GetRawWithdrawTransactionRequest{
 				ValidatorAddress: td.RandValAddress().String(),
 				AccountAddress:   td.RandAccAddress().String(),
-				Amount:           amount.ToPAC(),
+				Amount:           amount.ToNanoPAC(),
 				Memo:             td.RandString(32),
 			})
 
@@ -237,24 +237,24 @@ func TestCalculateFee(t *testing.T) {
 		amt := td.RandAmount()
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
-				Amount:      amt.ToPAC(),
+				Amount:      amt.ToNanoPAC(),
 				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
 				FixedAmount: false,
 			})
 		assert.NoError(t, err)
-		assert.Equal(t, res.Amount, amt.ToPAC())
+		assert.Equal(t, res.Amount, amt.ToNanoPAC())
 	})
 
 	t.Run("Fixed amount", func(t *testing.T) {
 		amt := td.RandAmount()
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
-				Amount:      amt.ToPAC(),
+				Amount:      amt.ToNanoPAC(),
 				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
 				FixedAmount: true,
 			})
 		assert.NoError(t, err)
-		assert.Less(t, res.Amount, amt.ToPAC())
+		assert.Less(t, res.Amount, amt.ToNanoPAC())
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

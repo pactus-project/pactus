@@ -116,8 +116,8 @@ func TestTransactions(t *testing.T) {
 	require.NotNil(t, accCarol)
 	require.NotNil(t, accDave)
 
-	assert.Equal(t, accAlice.Balance, amount.Amount(80000000-50005000).ToPAC())
-	assert.Equal(t, accBob.Balance, amount.Amount(50000000-2011).ToPAC())
-	assert.Equal(t, accCarol.Balance, amount.Amount(10).ToPAC())
-	assert.Equal(t, accDave.Balance, amount.Amount(1).ToPAC())
+	assert.Equal(t, accAlice.Balance, int64(80000000-50005000))
+	assert.Equal(t, accBob.Balance, int64(50000000-2011))
+	assert.Equal(t, accCarol.Balance, int64(10))
+	assert.Equal(t, accDave.Balance, int64(1))
 }

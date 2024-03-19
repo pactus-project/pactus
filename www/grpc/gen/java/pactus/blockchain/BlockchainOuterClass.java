@@ -13243,13 +13243,13 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Validator stake in PAC.
+     * Validator stake in NanoPAC.
      * </pre>
      *
-     * <code>double stake = 5 [json_name = "stake"];</code>
+     * <code>int64 stake = 5 [json_name = "stake"];</code>
      * @return The stake.
      */
-    double getStake();
+    long getStake();
 
     /**
      * <pre>
@@ -13451,17 +13451,17 @@ public final class BlockchainOuterClass {
     }
 
     public static final int STAKE_FIELD_NUMBER = 5;
-    private double stake_;
+    private long stake_;
     /**
      * <pre>
-     * Validator stake in PAC.
+     * Validator stake in NanoPAC.
      * </pre>
      *
-     * <code>double stake = 5 [json_name = "stake"];</code>
+     * <code>int64 stake = 5 [json_name = "stake"];</code>
      * @return The stake.
      */
     @java.lang.Override
-    public double getStake() {
+    public long getStake() {
       return stake_;
     }
 
@@ -13597,8 +13597,8 @@ public final class BlockchainOuterClass {
       if (number_ != 0) {
         output.writeInt32(4, number_);
       }
-      if (java.lang.Double.doubleToRawLongBits(stake_) != 0) {
-        output.writeDouble(5, stake_);
+      if (stake_ != 0L) {
+        output.writeInt64(5, stake_);
       }
       if (lastBondingHeight_ != 0) {
         output.writeUInt32(6, lastBondingHeight_);
@@ -13639,9 +13639,9 @@ public final class BlockchainOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, number_);
       }
-      if (java.lang.Double.doubleToRawLongBits(stake_) != 0) {
+      if (stake_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(5, stake_);
+          .computeInt64Size(5, stake_);
       }
       if (lastBondingHeight_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -13685,9 +13685,8 @@ public final class BlockchainOuterClass {
           .equals(other.getPublicKey())) return false;
       if (getNumber()
           != other.getNumber()) return false;
-      if (java.lang.Double.doubleToLongBits(getStake())
-          != java.lang.Double.doubleToLongBits(
-              other.getStake())) return false;
+      if (getStake()
+          != other.getStake()) return false;
       if (getLastBondingHeight()
           != other.getLastBondingHeight()) return false;
       if (getLastSortitionHeight()
@@ -13720,7 +13719,7 @@ public final class BlockchainOuterClass {
       hash = (53 * hash) + getNumber();
       hash = (37 * hash) + STAKE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getStake()));
+          getStake());
       hash = (37 * hash) + LAST_BONDING_HEIGHT_FIELD_NUMBER;
       hash = (53 * hash) + getLastBondingHeight();
       hash = (37 * hash) + LAST_SORTITION_HEIGHT_FIELD_NUMBER;
@@ -13872,7 +13871,7 @@ public final class BlockchainOuterClass {
 
         number_ = 0;
 
-        stake_ = 0D;
+        stake_ = 0L;
 
         lastBondingHeight_ = 0;
 
@@ -13981,7 +13980,7 @@ public final class BlockchainOuterClass {
         if (other.getNumber() != 0) {
           setNumber(other.getNumber());
         }
-        if (other.getStake() != 0D) {
+        if (other.getStake() != 0L) {
           setStake(other.getStake());
         }
         if (other.getLastBondingHeight() != 0) {
@@ -14046,11 +14045,11 @@ public final class BlockchainOuterClass {
 
                 break;
               } // case 32
-              case 41: {
-                stake_ = input.readDouble();
+              case 40: {
+                stake_ = input.readInt64();
 
                 break;
-              } // case 41
+              } // case 40
               case 48: {
                 lastBondingHeight_ = input.readUInt32();
 
@@ -14323,29 +14322,29 @@ public final class BlockchainOuterClass {
         return this;
       }
 
-      private double stake_ ;
+      private long stake_ ;
       /**
        * <pre>
-       * Validator stake in PAC.
+       * Validator stake in NanoPAC.
        * </pre>
        *
-       * <code>double stake = 5 [json_name = "stake"];</code>
+       * <code>int64 stake = 5 [json_name = "stake"];</code>
        * @return The stake.
        */
       @java.lang.Override
-      public double getStake() {
+      public long getStake() {
         return stake_;
       }
       /**
        * <pre>
-       * Validator stake in PAC.
+       * Validator stake in NanoPAC.
        * </pre>
        *
-       * <code>double stake = 5 [json_name = "stake"];</code>
+       * <code>int64 stake = 5 [json_name = "stake"];</code>
        * @param value The stake to set.
        * @return This builder for chaining.
        */
-      public Builder setStake(double value) {
+      public Builder setStake(long value) {
         
         stake_ = value;
         onChanged();
@@ -14353,15 +14352,15 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator stake in PAC.
+       * Validator stake in NanoPAC.
        * </pre>
        *
-       * <code>double stake = 5 [json_name = "stake"];</code>
+       * <code>int64 stake = 5 [json_name = "stake"];</code>
        * @return This builder for chaining.
        */
       public Builder clearStake() {
         
-        stake_ = 0D;
+        stake_ = 0L;
         onChanged();
         return this;
       }
@@ -14733,13 +14732,13 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Account balance in PAC.
+     * Account balance in NanoPAC.
      * </pre>
      *
-     * <code>double balance = 4 [json_name = "balance"];</code>
+     * <code>int64 balance = 4 [json_name = "balance"];</code>
      * @return The balance.
      */
-    double getBalance();
+    long getBalance();
 
     /**
      * <pre>
@@ -14854,17 +14853,17 @@ public final class BlockchainOuterClass {
     }
 
     public static final int BALANCE_FIELD_NUMBER = 4;
-    private double balance_;
+    private long balance_;
     /**
      * <pre>
-     * Account balance in PAC.
+     * Account balance in NanoPAC.
      * </pre>
      *
-     * <code>double balance = 4 [json_name = "balance"];</code>
+     * <code>int64 balance = 4 [json_name = "balance"];</code>
      * @return The balance.
      */
     @java.lang.Override
-    public double getBalance() {
+    public long getBalance() {
       return balance_;
     }
 
@@ -14937,8 +14936,8 @@ public final class BlockchainOuterClass {
       if (number_ != 0) {
         output.writeInt32(3, number_);
       }
-      if (java.lang.Double.doubleToRawLongBits(balance_) != 0) {
-        output.writeDouble(4, balance_);
+      if (balance_ != 0L) {
+        output.writeInt64(4, balance_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, address_);
@@ -14964,9 +14963,9 @@ public final class BlockchainOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(3, number_);
       }
-      if (java.lang.Double.doubleToRawLongBits(balance_) != 0) {
+      if (balance_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(4, balance_);
+          .computeInt64Size(4, balance_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, address_);
@@ -14992,9 +14991,8 @@ public final class BlockchainOuterClass {
           .equals(other.getData())) return false;
       if (getNumber()
           != other.getNumber()) return false;
-      if (java.lang.Double.doubleToLongBits(getBalance())
-          != java.lang.Double.doubleToLongBits(
-              other.getBalance())) return false;
+      if (getBalance()
+          != other.getBalance()) return false;
       if (!getAddress()
           .equals(other.getAddress())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -15016,7 +15014,7 @@ public final class BlockchainOuterClass {
       hash = (53 * hash) + getNumber();
       hash = (37 * hash) + BALANCE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getBalance()));
+          getBalance());
       hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
       hash = (53 * hash) + getAddress().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
@@ -15157,7 +15155,7 @@ public final class BlockchainOuterClass {
 
         number_ = 0;
 
-        balance_ = 0D;
+        balance_ = 0L;
 
         address_ = "";
 
@@ -15249,7 +15247,7 @@ public final class BlockchainOuterClass {
         if (other.getNumber() != 0) {
           setNumber(other.getNumber());
         }
-        if (other.getBalance() != 0D) {
+        if (other.getBalance() != 0L) {
           setBalance(other.getBalance());
         }
         if (!other.getAddress().isEmpty()) {
@@ -15297,11 +15295,11 @@ public final class BlockchainOuterClass {
 
                 break;
               } // case 24
-              case 33: {
-                balance_ = input.readDouble();
+              case 32: {
+                balance_ = input.readInt64();
 
                 break;
-              } // case 33
+              } // case 32
               case 42: {
                 address_ = input.readStringRequireUtf8();
 
@@ -15458,29 +15456,29 @@ public final class BlockchainOuterClass {
         return this;
       }
 
-      private double balance_ ;
+      private long balance_ ;
       /**
        * <pre>
-       * Account balance in PAC.
+       * Account balance in NanoPAC.
        * </pre>
        *
-       * <code>double balance = 4 [json_name = "balance"];</code>
+       * <code>int64 balance = 4 [json_name = "balance"];</code>
        * @return The balance.
        */
       @java.lang.Override
-      public double getBalance() {
+      public long getBalance() {
         return balance_;
       }
       /**
        * <pre>
-       * Account balance in PAC.
+       * Account balance in NanoPAC.
        * </pre>
        *
-       * <code>double balance = 4 [json_name = "balance"];</code>
+       * <code>int64 balance = 4 [json_name = "balance"];</code>
        * @param value The balance to set.
        * @return This builder for chaining.
        */
-      public Builder setBalance(double value) {
+      public Builder setBalance(long value) {
         
         balance_ = value;
         onChanged();
@@ -15488,15 +15486,15 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account balance in PAC.
+       * Account balance in NanoPAC.
        * </pre>
        *
-       * <code>double balance = 4 [json_name = "balance"];</code>
+       * <code>int64 balance = 4 [json_name = "balance"];</code>
        * @return This builder for chaining.
        */
       public Builder clearBalance() {
         
-        balance_ = 0D;
+        balance_ = 0L;
         onChanged();
         return this;
       }
@@ -20414,7 +20412,7 @@ public final class BlockchainOuterClass {
       "tances\"\334\002\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\014R\004" +
       "hash\022\022\n\004data\030\002 \001(\014R\004data\022\035\n\npublic_key\030\003" +
       " \001(\tR\tpublicKey\022\026\n\006number\030\004 \001(\005R\006number\022" +
-      "\024\n\005stake\030\005 \001(\001R\005stake\022.\n\023last_bonding_he" +
+      "\024\n\005stake\030\005 \001(\003R\005stake\022.\n\023last_bonding_he" +
       "ight\030\006 \001(\rR\021lastBondingHeight\0222\n\025last_so" +
       "rtition_height\030\007 \001(\rR\023lastSortitionHeigh" +
       "t\022)\n\020unbonding_height\030\010 \001(\rR\017unbondingHe" +
@@ -20422,7 +20420,7 @@ public final class BlockchainOuterClass {
       "bility_score\030\n \001(\001R\021availabilityScore\"\201\001" +
       "\n\013AccountInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n\004dat" +
       "a\030\002 \001(\014R\004data\022\026\n\006number\030\003 \001(\005R\006number\022\030\n" +
-      "\007balance\030\004 \001(\001R\007balance\022\030\n\007address\030\005 \001(\t" +
+      "\007balance\030\004 \001(\003R\007balance\022\030\n\007address\030\005 \001(\t" +
       "R\007address\"\304\001\n\017BlockHeaderInfo\022\030\n\007version" +
       "\030\001 \001(\005R\007version\022&\n\017prev_block_hash\030\002 \001(\014" +
       "R\rprevBlockHash\022\035\n\nstate_root\030\003 \001(\014R\tsta" +

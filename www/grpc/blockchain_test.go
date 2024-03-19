@@ -182,7 +182,7 @@ func TestGetAccount(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, res.Account.Balance, acc.Balance().ToPAC())
+		assert.Equal(t, res.Account.Balance, acc.Balance().ToNanoPAC())
 		assert.Equal(t, res.Account.Number, acc.Number())
 	})
 

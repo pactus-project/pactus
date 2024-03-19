@@ -228,7 +228,7 @@ func TestBalance(t *testing.T) {
 	td := setup(t)
 
 	addr := td.RandAccAddress()
-	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Balance: 1.2}}
+	tAccountResponse = &pactus.GetAccountResponse{Account: &pactus.AccountInfo{Balance: 1.2e9}}
 	amt, err := td.wallet.Balance(addr.String())
 	assert.NoError(t, err)
 	assert.Equal(t, amount.Amount(1.2e9), amt)
@@ -238,7 +238,7 @@ func TestStake(t *testing.T) {
 	td := setup(t)
 
 	addr := td.RandAccAddress()
-	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Stake: 1.2}}
+	tValidatorResponse = &pactus.GetValidatorResponse{Validator: &pactus.ValidatorInfo{Stake: 1.2e9}}
 	amt, err := td.wallet.Stake(addr.String())
 	assert.NoError(t, err)
 	assert.Equal(t, 1.2, amt.ToPAC())

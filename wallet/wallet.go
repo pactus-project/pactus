@@ -227,12 +227,7 @@ func (w *Wallet) Balance(addrStr string) (amount.Amount, error) {
 		return 0, err
 	}
 
-	balance, err := amount.NewAmount(acc.Balance)
-	if err != nil {
-		return 0, err
-	}
-
-	return balance, nil
+	return amount.Amount(acc.Balance), nil
 }
 
 // Stake returns stake of the validator associated with the address..
@@ -251,12 +246,7 @@ func (w *Wallet) Stake(addrStr string) (amount.Amount, error) {
 		return 0, err
 	}
 
-	stake, err := amount.NewAmount(val.Stake)
-	if err != nil {
-		return 0, err
-	}
-
-	return stake, nil
+	return amount.Amount(val.Stake), nil
 }
 
 // MakeTransferTx creates a new transfer transaction based on the given parameters.
@@ -500,19 +490,13 @@ func (w *Wallet) AddTransaction(id tx.ID) error {
 	}
 
 	if w.store.Vault.Contains(sender) {
-		amt, err := amount.NewAmount(-(trxRes.Transaction.Fee + trxRes.Transaction.Value))
-		if err != nil {
-			return err
-		}
+		amt := amount.Amount(-(trxRes.Transaction.Fee + trxRes.Transaction.Value))
 		w.store.History.addActivity(sender, amt, trxRes)
 	}
 
 	if receiver != nil {
 		if w.store.Vault.Contains(*receiver) {
-			amt, err := amount.NewAmount(trxRes.Transaction.Value)
-			if err != nil {
-				return err
-			}
+			amt := amount.Amount(trxRes.Transaction.Value)
 			w.store.History.addActivity(*receiver, amt, trxRes)
 		}
 	}

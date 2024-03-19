@@ -83,9 +83,9 @@ func (s *transactionServer) BroadcastTransaction(_ context.Context,
 func (s *transactionServer) CalculateFee(_ context.Context,
 	req *pactus.CalculateFeeRequest,
 ) (*pactus.CalculateFeeResponse, error) {
-	amt, err := amount.NewAmount(req.Amount)
+	amt, err := s.getAmount(req.Amount)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid amount: %v", err.Error())
+		return nil, err
 	}
 
 	fee := s.state.CalculateFee(amt, payload.Type(req.PayloadType))
@@ -95,8 +95,8 @@ func (s *transactionServer) CalculateFee(_ context.Context,
 	}
 
 	return &pactus.CalculateFeeResponse{
-		Amount: amt.ToPAC(),
-		Fee:    fee.ToPAC(),
+		Amount: amt.ToNanoPAC(),
+		Fee:    fee.ToNanoPAC(),
 	}, nil
 }
 
@@ -118,11 +118,7 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 		return nil, err
 	}
 
-	fee, err := s.getFee(req.Fee, amt)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid fee: %v", err.Error())
-	}
-
+	fee := s.getFee(req.Fee, amt)
 	lockTime := req.LockTime
 	if lockTime == 0 {
 		lockTime = s.state.LastBlockHeight()
@@ -167,11 +163,7 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 		return nil, err
 	}
 
-	fee, err := s.getFee(req.Fee, amt)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid fee: %v", err.Error())
-	}
-
+	fee := s.getFee(req.Fee, amt)
 	lockTime := req.LockTime
 	if lockTime == 0 {
 		lockTime = s.state.LastBlockHeight()
@@ -230,11 +222,7 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 		return nil, err
 	}
 
-	fee, err := s.getFee(req.Fee, amt)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid fee: %v", err.Error())
-	}
-
+	fee := s.getFee(req.Fee, amt)
 	lockTime := req.LockTime
 	if lockTime == 0 {
 		lockTime = s.state.LastBlockHeight()
@@ -251,11 +239,8 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	}, nil
 }
 
-func (s *transactionServer) getAmount(a float64) (amount.Amount, error) {
-	amt, err := amount.NewAmount(a)
-	if err != nil {
-		return 0, status.Errorf(codes.InvalidArgument, "invalid amount: %v", err.Error())
-	}
+func (s *transactionServer) getAmount(a int64) (amount.Amount, error) {
+	amt := amount.Amount(a)
 	if amt == 0 {
 		return 0, status.Errorf(codes.InvalidArgument, "amount is zero")
 	}
@@ -263,17 +248,13 @@ func (s *transactionServer) getAmount(a float64) (amount.Amount, error) {
 	return amt, nil
 }
 
-func (s *transactionServer) getFee(f float64, amt amount.Amount) (amount.Amount, error) {
-	fee, err := amount.NewAmount(f)
-	if err != nil {
-		return 0, status.Errorf(codes.InvalidArgument, "invalid fee: %v", err.Error())
-	}
-
+func (s *transactionServer) getFee(f int64, amt amount.Amount) amount.Amount {
+	fee := amount.Amount(f)
 	if fee == 0 {
 		fee = s.state.CalculateFee(amt, payload.TypeTransfer)
 	}
 
-	return fee, nil
+	return fee
 }
 
 func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
@@ -283,8 +264,8 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 		Data:        data,
 		Version:     int32(trx.Version()),
 		LockTime:    trx.LockTime(),
-		Fee:         trx.Fee().ToPAC(),
-		Value:       trx.Payload().Value().ToPAC(),
+		Fee:         trx.Fee().ToNanoPAC(),
+		Value:       trx.Payload().Value().ToNanoPAC(),
 		PayloadType: pactus.PayloadType(trx.Payload().Type()),
 		Memo:        trx.Memo(),
 	}
@@ -304,7 +285,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 			Transfer: &pactus.PayloadTransfer{
 				Sender:   pld.From.String(),
 				Receiver: pld.To.String(),
-				Amount:   pld.Amount.ToPAC(),
+				Amount:   pld.Amount.ToNanoPAC(),
 			},
 		}
 	case payload.TypeBond:
@@ -313,7 +294,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 			Bond: &pactus.PayloadBond{
 				Sender:   pld.From.String(),
 				Receiver: pld.To.String(),
-				Stake:    pld.Stake.ToPAC(),
+				Stake:    pld.Stake.ToNanoPAC(),
 			},
 		}
 	case payload.TypeSortition:
@@ -337,7 +318,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 			Withdraw: &pactus.PayloadWithdraw{
 				From:   pld.From.String(),
 				To:     pld.To.String(),
-				Amount: pld.Amount.ToPAC(),
+				Amount: pld.Amount.ToNanoPAC(),
 			},
 		}
 	default:

@@ -108,14 +108,14 @@ func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
 func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if trx.IsFreeTx() {
 		if trx.Fee() != 0 {
-			return errors.Errorf(errors.ErrInvalidFee, "fee is wrong, expected: 0, got: %s", trx.Fee())
+			return errors.Errorf(errors.ErrInvalidFee, "expected: 0, got: %s", trx.Fee())
 		}
 	} else {
 		fee := CalculateFee(trx.Payload().Value(), sb.Params())
 		// Check if the absolute difference between the calculated fee and the transaction fee
 		// is greater than 1 PAC, indicating an invalid fee.
 		if math.Abs(float64(fee-trx.Fee())) > 1 {
-			return errors.Errorf(errors.ErrInvalidFee, "fee is wrong, expected: %s, got: %s", fee, trx.Fee())
+			return errors.Errorf(errors.ErrInvalidFee, "expected: %s, got: %s", fee, trx.Fee())
 		}
 	}
 

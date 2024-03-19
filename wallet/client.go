@@ -104,7 +104,7 @@ func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, e
 func (c *grpcClient) getFee(amt amount.Amount, payloadType payload.Type) (amount.Amount, error) {
 	res, err := c.transactionClient.CalculateFee(c.ctx,
 		&pactus.CalculateFeeRequest{
-			Amount:      amt.ToPAC(),
+			Amount:      amt.ToNanoPAC(),
 			PayloadType: pactus.PayloadType(payloadType),
 		})
 	if err != nil {

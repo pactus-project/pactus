@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/vote"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
@@ -178,7 +179,7 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 	tm := newTableMaker()
 	tm.addRowAccAddress("Address", acc.Address)
 	tm.addRowInt("Number", int(acc.Number))
-	tm.addRowAmount("Balance", acc.Balance)
+	tm.addRowAmount("Balance", amount.Amount(acc.Balance))
 	tm.addRowBytes("Hash", acc.Hash)
 
 	s.writeHTML(w, tm.html())
@@ -255,7 +256,7 @@ func (s *Server) writeValidatorTable(val *pactus.ValidatorInfo) *tableMaker {
 	tm.addRowString("Public Key", val.PublicKey)
 	tm.addRowValAddress("Address", val.Address)
 	tm.addRowInt("Number", int(val.Number))
-	tm.addRowAmount("Stake", val.Stake)
+	tm.addRowAmount("Stake", amount.Amount(val.Stake))
 	tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight))
 	tm.addRowInt("LastSortitionHeight", int(val.LastSortitionHeight))
 	tm.addRowInt("UnbondingHeight", int(val.UnbondingHeight))

@@ -55,8 +55,8 @@ message GetTransactionResponse {
 
 // Request message for calculating transaction fee.
 message CalculateFeeRequest {
-  // Transaction amount in PAC.
-  double amount = 1;
+  // Transaction amount in NanoPAC.
+  int64 amount = 1;
   // Type of transaction payload.
   PayloadType payload_type = 2;
   // Indicates that amount should be fixed and includes the fee.
@@ -65,10 +65,10 @@ message CalculateFeeRequest {
 
 // Response message containing the calculated transaction fee.
 message CalculateFeeResponse {
-  // Calculated amount in PAC.
-  double amount = 1;
-  // Calculated transaction fee in PAC.
-  double fee = 2;
+  // Calculated transaction fee in NanoPAC.
+  int64 fee = 1;
+  // Calculated amount in NanoPAC.
+  int64 amount = 2;
 }
 
 // Request message for broadcasting a signed transaction.
@@ -92,12 +92,12 @@ message GetRawTransferTransactionRequest {
   string sender = 2;
   // Receiver's account address.
   string receiver = 3;
-  // Transfer amount in PAC.
+  // Transfer amount in NanoPAC.
   // It should be greater than 0.
-  double amount = 4;
-  // Transaction fee in PAC.
+  int64 amount = 4;
+  // Transaction fee in NanoPAC.
   // If not explicitly set, it is calculated based on the amount.
-  double fee = 5;
+  int64 fee = 5;
   // Transaction memo.
   string memo = 6;
 }
@@ -111,14 +111,14 @@ message GetRawBondTransactionRequest {
   string sender = 2;
   // Receiver's validator address.
   string receiver = 3;
-  // Stake amount in PAC.
+  // Stake amount in NanoPAC.
   // It should be greater than 0.
-  double stake = 4;
+  int64 stake = 4;
   // Public key of the validator.
   string public_key = 5;
-  // Transaction fee in PAC.
+  // Transaction fee in NanoPAC.
   // If not explicitly set, it is calculated based on the stake.
-  double fee = 6;
+  int64 fee = 6;
   // Transaction memo.
   string memo = 7;
 }
@@ -143,12 +143,12 @@ message GetRawWithdrawTransactionRequest {
   string validator_address = 2;
   // Address of the account to withdraw to.
   string account_address = 3;
-  // Withdrawal amount in PAC.
+  // Withdrawal amount in NanoPAC.
   // It should be greater than 0.
-  double amount = 4;
-  // Transaction fee.
-  // If not explicitly set, it is calculated based on the stake.
-  double fee = 5;
+  int64 amount = 4;
+  // Transaction fee in NanoPAC.
+  // If not explicitly set, it is calculated based on the amount.
+  int64 fee = 5;
   // Transaction memo.
   string memo = 6;
 }
@@ -165,8 +165,8 @@ message PayloadTransfer {
   string sender = 1;
   // Receiver's address.
   string receiver = 2;
-  // Transaction amount in PAC.
-  double amount = 3;
+  // Transaction amount in NanoPAC.
+  int64 amount = 3;
 }
 
 // Payload for a bond transaction.
@@ -175,8 +175,8 @@ message PayloadBond {
   string sender = 1;
   // Receiver's address.
   string receiver = 2;
-  // Stake amount in PAC.
-  double stake = 3;
+  // Stake amount in NanoPAC.
+  int64 stake = 3;
 }
 
 // Payload for a sortition transaction.
@@ -199,8 +199,8 @@ message PayloadWithdraw {
   string from = 1;
   // Address to withdraw to.
   string to = 2;
-  // Withdrawal amount in PAC.
-  double amount = 3;
+  // Withdrawal amount in NanoPAC.
+  int64 amount = 3;
 }
 
 // Information about a transaction.
@@ -213,10 +213,10 @@ message TransactionInfo {
   int32 version = 3;
   // Lock time for the transaction.
   uint32 lock_time = 4;
-  // Transaction value.
-  double value = 5;
-  // Transaction fee.
-  double fee = 6;
+  // Transaction value in NanoPAC.
+  int64 value = 5;
+  // Transaction fee in NanoPAC.
+  int64 fee = 6;
   // Type of transaction payload.
   PayloadType payload_type = 7;
   oneof payload {

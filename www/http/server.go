@@ -235,8 +235,7 @@ func (t *tableMaker) addRowTime(key string, sec int64) {
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, time.Unix(sec, 0).String())
 }
 
-func (t *tableMaker) addRowAmount(key string, a float64) {
-	amt, _ := amount.NewAmount(a)
+func (t *tableMaker) addRowAmount(key string, amt amount.Amount) {
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>",
 		key, amt.String())
 }

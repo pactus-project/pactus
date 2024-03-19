@@ -251,7 +251,7 @@ func (s *blockchainServer) validatorToProto(val *validator.Validator) *pactus.Va
 		PublicKey:           val.PublicKey().String(),
 		Address:             val.Address().String(),
 		Number:              val.Number(),
-		Stake:               val.Stake().ToPAC(),
+		Stake:               val.Stake().ToNanoPAC(),
 		LastBondingHeight:   val.LastBondingHeight(),
 		LastSortitionHeight: val.LastSortitionHeight(),
 		UnbondingHeight:     val.UnbondingHeight(),
@@ -266,7 +266,7 @@ func (s *blockchainServer) accountToProto(addr crypto.Address, acc *account.Acco
 		Hash:    acc.Hash().Bytes(),
 		Data:    data,
 		Number:  acc.Number(),
-		Balance: acc.Balance().ToPAC(),
+		Balance: acc.Balance().ToNanoPAC(),
 		Address: addr.String(),
 	}
 }

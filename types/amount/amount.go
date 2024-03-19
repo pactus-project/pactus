@@ -77,17 +77,17 @@ func round(f float64) Amount {
 	return Amount(f + 0.5)
 }
 
-// NewAmount creates an Amount from a floating point value representing
-// some value in PAC.  NewAmount errors if f is NaN or +-Infinity, but
-// does not check that the amount is within the total amount of Pactus
-// producible as f may not refer to an amount at a single moment in time.
+// NewAmount creates an Amount from a floating-point value representing
+// an amount in PAC.  NewAmount returns an error if f is NaN or +-Infinity,
+// but it does not check whether the amount is within the total amount of PAC
+// producible, as it may not refer to an amount at a single moment in time.
 //
-// NewAmount is for specifically for converting PAC to NanoPAC.
+// NewAmount is specifically for converting PAC to NanoPAC.
 // For creating a new Amount with an int64 value which denotes a quantity of NanoPAC,
 // do a simple type conversion from type int64 to Amount.
 func NewAmount(f float64) (Amount, error) {
 	// The amount is only considered invalid if it cannot be represented
-	// as an integer type.  This may happen if f is NaN or +-Infinity.
+	// as an integer type. This may happen if f is NaN or +-Infinity.
 	switch {
 	case math.IsNaN(f),
 		math.IsInf(f, 1),
@@ -98,8 +98,9 @@ func NewAmount(f float64) (Amount, error) {
 	return round(f * float64(NanoPACPerPAC)), nil
 }
 
-// FromString parses a string representing a value in PAC as a floating point number.
-// It then uses NewAmount to create an Amount based on the parsed floating point value.
+// FromString parses a string representing a value in PAC.
+// It then uses NewAmount to create an Amount based on the parsed
+// floating-point value.
 // If the parsing of the string fails, it returns an error.
 func FromString(str string) (Amount, error) {
 	f, err := strconv.ParseFloat(str, 64)
@@ -111,20 +112,26 @@ func FromString(str string) (Amount, error) {
 }
 
 // ToUnit converts a monetary amount counted in Pactus base units to a
-// floating point value representing an amount of Pactus (PAC).
+// floating-point value representing an amount of Pactus (PAC).
 func (a Amount) ToUnit(u Unit) float64 {
 	return float64(a) / math.Pow10(int(u+9))
 }
 
-// ToPAC is the equivalent of calling ToUnit with AmountPAC.
+// ToPAC is equivalent to calling ToUnit with AmountPAC.
 func (a Amount) ToPAC() float64 {
 	return a.ToUnit(UnitPAC)
+}
+
+// ToNanoPAC is equivalent to calling ToUnit with AmountNanoPAC.
+// It returns the amount of NanoPAC or atomic unit as a 64-bit integer.
+func (a Amount) ToNanoPAC() int64 {
+	return int64(a)
 }
 
 // Format formats a monetary amount counted in Pactus base units as a
 // string for a given unit.  The conversion will succeed for any unit,
 // however, known units will be formatted with an appended label describing
-// the units with SI notation, or "NanoPAC" for the base unit.
+// the units with SI notation, and "NanoPAC" for the base unit.
 func (a Amount) Format(u Unit) string {
 	units := " " + u.String()
 	formatted := strconv.FormatFloat(a.ToUnit(u), 'f', -int(u+9), 64)
