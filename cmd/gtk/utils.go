@@ -178,10 +178,8 @@ func updateFeeHint(lbl *gtk.Label, amtStr string, w *wallet.Wallet, payloadType 
 	if err != nil {
 		updateHintLabel(lbl, "")
 	} else {
-		fee, err := w.CalculateFee(amt, payloadType)
+		fee, _ := w.CalculateFee(amt, payloadType)
 		if err != nil {
-			errorCheck(err)
-
 			return
 		}
 		hint := fmt.Sprintf("payable: %s, fee: %s",

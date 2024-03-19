@@ -8,10 +8,8 @@ package amount
 
 import (
 	"errors"
-	"fmt"
 	"math"
 	"strconv"
-	"strings"
 )
 
 const (
@@ -135,14 +133,6 @@ func (a Amount) ToNanoPAC() int64 {
 func (a Amount) Format(u Unit) string {
 	units := " " + u.String()
 	formatted := strconv.FormatFloat(a.ToUnit(u), 'f', -int(u+9), 64)
-
-	// When formatting full PAC, add trailing zeroes for numbers
-	// with decimal point to ease reading of amount.
-	if u == UnitPAC {
-		if strings.Contains(formatted, ".") {
-			return fmt.Sprintf("%.9f%s", a.ToUnit(u), units)
-		}
-	}
 
 	return formatted + units
 }
