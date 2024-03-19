@@ -124,8 +124,8 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	}, nil
 }
 
-func (s *transactionServer) GetRawUnBondTransaction(_ context.Context,
-	_ *pactus.GetRawUnBondTransactionRequest,
+func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
+	_ *pactus.GetRawUnbondTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
 	return &pactus.GetRawTransactionResponse{
 		RawTransaction: make([]byte, 0),

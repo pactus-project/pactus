@@ -1,7 +1,8 @@
-// Copyright (c) 2017 The btcsuite developers
-// Copyright (c) 2019 The Decred developers
-// Use of this source code is governed by an ISC
-// license that can be found in the LICENSE file.
+// This file contains code modified from the btcd project,
+// which is licensed under the ISC License.
+//
+// Original license: https://github.com/btcsuite/btcd/blob/master/LICENSE
+//
 
 package bech32m
 

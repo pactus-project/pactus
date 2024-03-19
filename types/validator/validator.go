@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
@@ -19,7 +20,7 @@ type Validator struct {
 type validatorData struct {
 	PublicKey           *bls.PublicKey
 	Number              int32
-	Stake               int64
+	Stake               amount.Amount
 	LastBondingHeight   uint32
 	UnbondingHeight     uint32
 	LastSortitionHeight uint32
@@ -77,7 +78,7 @@ func (val *Validator) Number() int32 {
 }
 
 // Stake returns the stake of the validator.
-func (val *Validator) Stake() int64 {
+func (val *Validator) Stake() amount.Amount {
 	return val.data.Stake
 }
 
@@ -106,16 +107,16 @@ func (val Validator) Power() int64 {
 		return 1
 	}
 
-	return val.data.Stake
+	return int64(val.data.Stake)
 }
 
 // SubtractFromStake subtracts the given amount from the validator's stake.
-func (val *Validator) SubtractFromStake(amt int64) {
+func (val *Validator) SubtractFromStake(amt amount.Amount) {
 	val.data.Stake -= amt
 }
 
 // AddToStake adds the given amount to the validator's stake.
-func (val *Validator) AddToStake(amt int64) {
+func (val *Validator) AddToStake(amt amount.Amount) {
 	val.data.Stake += amt
 }
 

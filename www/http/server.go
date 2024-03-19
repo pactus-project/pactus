@@ -3,6 +3,7 @@ package http
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net"
@@ -12,12 +13,13 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 )
 
 type Server struct {
@@ -26,6 +28,7 @@ type Server struct {
 	config      *Config
 	router      *mux.Router
 	grpcClient  *grpc.ClientConn
+	enableAuth  bool
 	httpServer  *http.Server
 	blockchain  pactus.BlockchainClient
 	transaction pactus.TransactionClient
@@ -34,14 +37,15 @@ type Server struct {
 	logger      *logger.SubLogger
 }
 
-func NewServer(conf *Config) *Server {
+func NewServer(conf *Config, enableAuth bool) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &Server{
-		ctx:    ctx,
-		cancel: cancel,
-		config: conf,
-		logger: logger.NewSubLogger("_http", nil),
+		ctx:        ctx,
+		cancel:     cancel,
+		config:     conf,
+		enableAuth: enableAuth,
+		logger:     logger.NewSubLogger("_http", nil),
 	}
 }
 
@@ -126,11 +130,20 @@ func (s *Server) StopServer() {
 	}
 }
 
-func (s *Server) RootHandler(w http.ResponseWriter, _ *http.Request) {
+func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
+	if s.enableAuth {
+		if _, _, ok := r.BasicAuth(); !ok {
+			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+
+			return
+		}
+	}
+
 	buf := new(bytes.Buffer)
 	buf.WriteString("<html><body><br>")
 
-	err := s.router.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
+	err := s.router.Walk(func(route *mux.Route, _ *mux.Router, _ []*mux.Route) error {
 		pathTemplate, err := route.GetPathTemplate()
 		if err == nil {
 			link := pathTemplate
@@ -169,6 +182,17 @@ func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
 	n, _ := io.WriteString(w, html)
 
 	return n
+}
+
+func (s *Server) basicAuth(ctx context.Context, user, password string) context.Context {
+	auth := user + ":" + password
+	enc := base64.StdEncoding.EncodeToString([]byte(auth))
+
+	md := metadata.New(map[string]string{
+		"authorization": "Basic " + enc,
+	})
+
+	return metadata.NewOutgoingContext(ctx, md)
 }
 
 type tableMaker struct {
@@ -211,9 +235,15 @@ func (t *tableMaker) addRowTime(key string, sec int64) {
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, time.Unix(sec, 0).String())
 }
 
-func (t *tableMaker) addRowAmount(key string, change int64) {
+func (t *tableMaker) addRowAmount(key string, amt amount.Amount) {
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>",
-		key, util.ChangeToString(change))
+		key, amt.String())
+}
+
+func (t *tableMaker) addRowPower(key string, power int64) {
+	amt := amount.Amount(power)
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>",
+		key, amt.String())
 }
 
 func (t *tableMaker) addRowInt(key string, val int) {

@@ -5,13 +5,14 @@ import (
 	"io"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
 type WithdrawPayload struct {
 	From   crypto.Address // withdraw from validator address
 	To     crypto.Address // deposit to account address
-	Amount int64          // amount to deposit
+	Amount amount.Amount  // amount to deposit
 }
 
 func (p *WithdrawPayload) Type() Type {
@@ -22,7 +23,7 @@ func (p *WithdrawPayload) Signer() crypto.Address {
 	return p.From
 }
 
-func (p *WithdrawPayload) Value() int64 {
+func (p *WithdrawPayload) Value() amount.Amount {
 	return p.Amount
 }
 
@@ -71,17 +72,17 @@ func (p *WithdrawPayload) Decode(r io.Reader) error {
 		return err
 	}
 
-	amount, err := encoding.ReadVarInt(r)
+	amt, err := encoding.ReadVarInt(r)
 	if err != nil {
 		return err
 	}
-	p.Amount = int64(amount)
+	p.Amount = amount.Amount(amt)
 
 	return nil
 }
 
 func (p *WithdrawPayload) String() string {
-	return fmt.Sprintf("{WithdrawPayload 🧾 %v->%v %v",
+	return fmt.Sprintf("{WithdrawPayload 🧾 %s->%s %s",
 		p.From.ShortString(),
 		p.To.ShortString(),
 		p.Amount)

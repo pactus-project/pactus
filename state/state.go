@@ -18,6 +18,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/param"
@@ -194,7 +195,7 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 
 func (st *state) loadMerkels() {
 	totalAccount := st.store.TotalAccounts()
-	st.store.IterateAccounts(func(addr crypto.Address, acc *account.Account) bool {
+	st.store.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
 		// Let's keep this check, even we have tested it
 		if acc.Number() >= totalAccount {
 			panic("Account number is out of range")
@@ -337,7 +338,7 @@ func (st *state) UpdateLastCertificate(v *vote.Vote) error {
 	return nil
 }
 
-func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee int64) *tx.Tx {
+func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee amount.Amount) *tx.Tx {
 	lockTime := st.lastInfo.BlockHeight() + 1
 	transaction := tx.NewSubsidyTx(lockTime, rewardAddr, st.params.BlockReward+fee, "")
 
@@ -771,21 +772,21 @@ func (st *state) publishEvents(height uint32, blk *block.Block) {
 	}
 }
 
-func (st *state) CalculateFee(amount int64, payloadType payload.Type) (int64, error) {
+func (st *state) CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount {
 	switch payloadType {
 	case payload.TypeTransfer,
 		payload.TypeBond,
 		payload.TypeWithdraw:
 
-		return execution.CalculateFee(amount, st.params), nil
+		return execution.CalculateFee(amt, st.params)
 
 	case payload.TypeUnbond,
 		payload.TypeSortition:
 
-		return 0, nil
+		return 0
 
 	default:
-		return 0, errors.Errorf(errors.ErrInvalidTx, "unexpected tx type: %v", payloadType)
+		return 0
 	}
 }
 

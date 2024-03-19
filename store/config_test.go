@@ -13,7 +13,7 @@ func TestDefaultConfigCheck(t *testing.T) {
 
 	conf.TxCacheSize = 0
 	err := conf.BasicCheck()
-	assert.ErrorIs(t, InvalidConfigError{"cache size set to zero"}, err)
+	assert.ErrorIs(t, ConfigError{"cache size set to zero"}, err)
 
 	conf.TxCacheSize = 1
 	err = conf.BasicCheck()

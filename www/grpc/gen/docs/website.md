@@ -9,6 +9,10 @@ sidebar: gRPC API Reference
 Each node in the Pactus network can be configured to use the [gRPC](https://grpc.io/) protocol for communication.
 Here you can find the list of all gRPC methods and messages.
 
+All the amounts and values in gRPC endpoints are in NanoPAC units, which are atomic and
+the smallest unit in the Pactus blockchain.
+Each PAC is equivalent to 1,000,000,000 or $10^9$ NanoPACs.
+
 <h2>Table of Contents</h2>
 
 <div id="toc-container">
@@ -36,8 +40,8 @@ Here you can find the list of all gRPC methods and messages.
           <span class="badge text-bg-primary">rpc</span> GetRawBondTransaction</a>
         </li> 
         <li>
-          <a href="#pactus.Transaction.GetRawUnBondTransaction">
-          <span class="badge text-bg-primary">rpc</span> GetRawUnBondTransaction</a>
+          <a href="#pactus.Transaction.GetRawUnbondTransaction">
+          <span class="badge text-bg-primary">rpc</span> GetRawUnbondTransaction</a>
         </li> 
         <li>
           <a href="#pactus.Transaction.GetRawWithdrawTransaction">
@@ -172,8 +176,8 @@ Here you can find the list of all gRPC methods and messages.
           </a>
         </li> 
         <li>
-          <a href="#pactus.GetRawUnBondTransactionRequest">
-            <span class="badge text-bg-secondary">msg</span> GetRawUnBondTransactionRequest
+          <a href="#pactus.GetRawUnbondTransactionRequest">
+            <span class="badge text-bg-secondary">msg</span> GetRawUnbondTransactionRequest
           </a>
         </li> 
         <li>
@@ -513,10 +517,10 @@ Here you can find the list of all gRPC methods and messages.
 <div class="request pt-3">Request message: <a href="#pactus.GetRawBondTransactionRequest">GetRawBondTransactionRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetRawTransactionResponse">GetRawTransactionResponse</a></div>
 <p>GetRawBondTransaction retrieves raw details of a bond transaction.</p> 
-<h3 id="pactus.Transaction.GetRawUnBondTransaction">GetRawUnBondTransaction <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
-<div class="request pt-3">Request message: <a href="#pactus.GetRawUnBondTransactionRequest">GetRawUnBondTransactionRequest</a></div>
+<h3 id="pactus.Transaction.GetRawUnbondTransaction">GetRawUnbondTransaction <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
+<div class="request pt-3">Request message: <a href="#pactus.GetRawUnbondTransactionRequest">GetRawUnbondTransactionRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetRawTransactionResponse">GetRawTransactionResponse</a></div>
-<p>GetRawUnBondTransaction retrieves raw details of an unbond transaction.</p> 
+<p>GetRawUnbondTransaction retrieves raw details of an unbond transaction.</p> 
 <h3 id="pactus.Transaction.GetRawWithdrawTransaction">GetRawWithdrawTransaction <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.GetRawWithdrawTransactionRequest">GetRawWithdrawTransactionRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetRawTransactionResponse">GetRawTransactionResponse</a></div>
@@ -660,7 +664,7 @@ CalculateFeeRequest
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Transaction amount. </td>
+      <td>Transaction amount in NanoPAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">payload_type</td>
@@ -668,6 +672,13 @@ CalculateFeeRequest
         <a href="#pactus.PayloadType">PayloadType</a>
       </td>
       <td>Type of transaction payload. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">fixed_amount</td>
+      <td>
+        <a href="#bool">bool</a>
+      </td>
+      <td>Indicates that amount should be fixed and includes the fee. </td>
     </tr>
   </tbody>
 </table>  
@@ -687,7 +698,14 @@ CalculateFeeResponse
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Calculated transaction fee. </td>
+      <td>Calculated transaction fee in NanoPAC. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">amount</td>
+      <td>
+        <a href="#int64">int64</a>
+      </td>
+      <td>Calculated amount in NanoPAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -707,28 +725,30 @@ GetRawBondTransactionRequest
       <td>
         <a href="#uint32">uint32</a>
       </td>
-      <td>Lock time for the transaction. </td>
+      <td>Lock time for the transaction.
+If not explicitly set, it sets to the last block height. </td>
     </tr>
     <tr>
       <td class="fw-bold">sender</td>
       <td>
         <a href="#string">string</a>
       </td>
-      <td>Sender's address. </td>
+      <td>Sender's account address. </td>
     </tr>
     <tr>
       <td class="fw-bold">receiver</td>
       <td>
         <a href="#string">string</a>
       </td>
-      <td>Receiver's address. </td>
+      <td>Receiver's validator address. </td>
     </tr>
     <tr>
       <td class="fw-bold">stake</td>
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Stake amount. </td>
+      <td>Stake amount in NanoPAC.
+It should be greater than 0. </td>
     </tr>
     <tr>
       <td class="fw-bold">public_key</td>
@@ -742,7 +762,8 @@ GetRawBondTransactionRequest
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Transaction fee. </td>
+      <td>Transaction fee in NanoPAC.
+If not explicitly set, it is calculated based on the stake. </td>
     </tr>
     <tr>
       <td class="fw-bold">memo</td>
@@ -789,35 +810,38 @@ GetRawTransferTransactionRequest
       <td>
         <a href="#uint32">uint32</a>
       </td>
-      <td>Lock time for the transaction. </td>
+      <td>Lock time for the transaction.
+If not explicitly set, it sets to the last block height. </td>
     </tr>
     <tr>
       <td class="fw-bold">sender</td>
       <td>
         <a href="#string">string</a>
       </td>
-      <td>Sender's address. </td>
+      <td>Sender's account address. </td>
     </tr>
     <tr>
       <td class="fw-bold">receiver</td>
       <td>
         <a href="#string">string</a>
       </td>
-      <td>Receiver's address. </td>
+      <td>Receiver's account address. </td>
     </tr>
     <tr>
       <td class="fw-bold">amount</td>
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Transaction amount. </td>
+      <td>Transfer amount in NanoPAC.
+It should be greater than 0. </td>
     </tr>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Transaction fee. </td>
+      <td>Transaction fee in NanoPAC.
+If not explicitly set, it is calculated based on the amount. </td>
     </tr>
     <tr>
       <td class="fw-bold">memo</td>
@@ -828,8 +852,8 @@ GetRawTransferTransactionRequest
     </tr>
   </tbody>
 </table>  
-<h3 id="pactus.GetRawUnBondTransactionRequest">
-GetRawUnBondTransactionRequest
+<h3 id="pactus.GetRawUnbondTransactionRequest">
+GetRawUnbondTransactionRequest
 <span class="badge text-bg-secondary fs-6 align-top">msg</span>
 </h3>
   <p>Request message for retrieving raw details of an unbond transaction.</p>
@@ -844,7 +868,8 @@ GetRawUnBondTransactionRequest
       <td>
         <a href="#uint32">uint32</a>
       </td>
-      <td>Lock time for the transaction. </td>
+      <td>Lock time for the transaction.
+If not explicitly set, it sets to the last block height. </td>
     </tr>
     <tr>
       <td class="fw-bold">validator_address</td>
@@ -878,7 +903,8 @@ GetRawWithdrawTransactionRequest
       <td>
         <a href="#uint32">uint32</a>
       </td>
-      <td>Lock time for the transaction. </td>
+      <td>Lock time for the transaction.
+If not explicitly set, it sets to the last block height. </td>
     </tr>
     <tr>
       <td class="fw-bold">validator_address</td>
@@ -895,18 +921,20 @@ GetRawWithdrawTransactionRequest
       <td>Address of the account to withdraw to. </td>
     </tr>
     <tr>
-      <td class="fw-bold">fee</td>
-      <td>
-        <a href="#int64">int64</a>
-      </td>
-      <td>Transaction fee. </td>
-    </tr>
-    <tr>
       <td class="fw-bold">amount</td>
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Withdrawal amount. </td>
+      <td>Withdrawal amount in NanoPAC.
+It should be greater than 0. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">fee</td>
+      <td>
+        <a href="#int64">int64</a>
+      </td>
+      <td>Transaction fee in NanoPAC.
+If not explicitly set, it is calculated based on the amount. </td>
     </tr>
     <tr>
       <td class="fw-bold">memo</td>
@@ -1008,7 +1036,7 @@ PayloadBond
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Stake amount. </td>
+      <td>Stake amount in NanoPAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -1069,7 +1097,7 @@ PayloadTransfer
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Transaction amount. </td>
+      <td>Transaction amount in NanoPAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -1123,7 +1151,7 @@ PayloadWithdraw
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Withdrawal amount. </td>
+      <td>Withdrawal amount in NanoPAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -1171,14 +1199,14 @@ TransactionInfo
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Transaction value. </td>
+      <td>Transaction value in NanoPAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Transaction fee. </td>
+      <td>Transaction fee in NanoPAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">payload_type</td>
@@ -1282,7 +1310,7 @@ AccountInfo
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Account balance. </td>
+      <td>Account balance in NanoPAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">address</td>
@@ -1910,7 +1938,7 @@ ValidatorInfo
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Validator stake. </td>
+      <td>Validator stake in NanoPAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">last_bonding_height</td>

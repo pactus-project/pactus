@@ -1162,7 +1162,7 @@ type ValidatorInfo struct {
 	PublicKey string `protobuf:"bytes,3,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
 	// Validator number.
 	Number int32 `protobuf:"varint,4,opt,name=number,proto3" json:"number,omitempty"`
-	// Validator stake.
+	// Validator stake in NanoPAC.
 	Stake int64 `protobuf:"varint,5,opt,name=stake,proto3" json:"stake,omitempty"`
 	// Last bonding height.
 	LastBondingHeight uint32 `protobuf:"varint,6,opt,name=last_bonding_height,json=lastBondingHeight,proto3" json:"last_bonding_height,omitempty"`
@@ -1290,7 +1290,7 @@ type AccountInfo struct {
 	Data []byte `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	// Account number.
 	Number int32 `protobuf:"varint,3,opt,name=number,proto3" json:"number,omitempty"`
-	// Account balance.
+	// Account balance in NanoPAC.
 	Balance int64 `protobuf:"varint,4,opt,name=balance,proto3" json:"balance,omitempty"`
 	// Address of the account.
 	Address string `protobuf:"bytes,5,opt,name=address,proto3" json:"address,omitempty"`

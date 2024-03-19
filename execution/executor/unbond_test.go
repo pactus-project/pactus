@@ -63,7 +63,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 	assert.Equal(t, stake, td.sandbox.Validator(valAddr).Stake())
 	assert.Zero(t, td.sandbox.Validator(valAddr).Power())
 	assert.Equal(t, td.sandbox.Validator(valAddr).UnbondingHeight(), td.sandbox.CurrentHeight())
-	assert.Equal(t, td.sandbox.PowerDelta(), -1*val.Stake())
+	assert.Equal(t, int64(-val.Stake()), td.sandbox.PowerDelta())
 
 	td.checkTotalCoin(t, 0)
 }
@@ -112,7 +112,7 @@ func TestPwerDeltaUnbond(t *testing.T) {
 	pub, _ := td.RandBLSKeyPair()
 	valAddr := pub.ValidatorAddress()
 	val := td.sandbox.MakeNewValidator(pub)
-	amt := td.RandInt64(1e9)
+	amt := td.RandAmount()
 	val.AddToStake(amt)
 	td.sandbox.UpdateValidator(val)
 	lockTime := td.sandbox.CurrentHeight()
@@ -121,5 +121,5 @@ func TestPwerDeltaUnbond(t *testing.T) {
 	err := exe.Execute(trx, td.sandbox)
 	assert.NoError(t, err)
 
-	assert.Equal(t, -1*amt, td.sandbox.PowerDelta())
+	assert.Equal(t, int64(-amt), td.sandbox.PowerDelta())
 }

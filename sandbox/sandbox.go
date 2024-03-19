@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
@@ -31,7 +32,7 @@ type sandbox struct {
 	totalValidators int32
 	totalPower      int64
 	powerDelta      int64
-	accumulatedFee  int64
+	accumulatedFee  amount.Amount
 }
 
 type sandboxValidator struct {
@@ -300,7 +301,7 @@ func (sb *sandbox) CommitTransaction(trx *tx.Tx) {
 	sb.accumulatedFee += trx.Fee()
 }
 
-func (sb *sandbox) AccumulatedFee() int64 {
+func (sb *sandbox) AccumulatedFee() amount.Amount {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 

@@ -6,12 +6,12 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 )
 
-// InvalidConfigError is returned when the store configuration is invalid.
-type InvalidConfigError struct {
+// ConfigError is returned when the store configuration is invalid.
+type ConfigError struct {
 	Reason string
 }
 
-func (e InvalidConfigError) Error() string {
+func (e ConfigError) Error() string {
 	return e.Reason
 }
 

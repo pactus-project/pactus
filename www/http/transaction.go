@@ -5,10 +5,24 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/pactus-project/pactus/types/amount"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	if s.enableAuth {
+		user, password, ok := r.BasicAuth()
+		if !ok {
+			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+
+			return
+		}
+
+		ctx = s.basicAuth(ctx, user, password)
+	}
+
 	vars := mux.Vars(r)
 	id, err := hex.DecodeString(vars["id"])
 	if err != nil {
@@ -17,7 +31,7 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.transaction.GetTransaction(r.Context(),
+	res, err := s.transaction.GetTransaction(ctx,
 		&pactus.GetTransactionRequest{
 			Id:        id,
 			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
@@ -51,13 +65,13 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 		pld := trx.Payload.(*pactus.TransactionInfo_Transfer).Transfer
 		tm.addRowAccAddress("Sender", pld.Sender)
 		tm.addRowAccAddress("Receiver", pld.Receiver)
-		tm.addRowAmount("Amount", pld.Amount)
+		tm.addRowAmount("Amount", amount.Amount(pld.Amount))
 
 	case pactus.PayloadType_BOND_PAYLOAD:
 		pld := trx.Payload.(*pactus.TransactionInfo_Bond).Bond
 		tm.addRowAccAddress("Sender", pld.Sender)
 		tm.addRowValAddress("Receiver", pld.Receiver)
-		tm.addRowAmount("Stake", pld.Stake)
+		tm.addRowAmount("Stake", amount.Amount(pld.Stake))
 
 	case pactus.PayloadType_SORTITION_PAYLOAD:
 		pld := trx.Payload.(*pactus.TransactionInfo_Sortition).Sortition
@@ -72,7 +86,7 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 		pld := trx.Payload.(*pactus.TransactionInfo_Withdraw).Withdraw
 		tm.addRowValAddress("Sender", pld.From)
 		tm.addRowAccAddress("Receiver", pld.To)
-		tm.addRowAmount("Amount", pld.Amount)
+		tm.addRowAmount("Amount", amount.Amount(pld.Amount))
 
 	case pactus.PayloadType_UNKNOWN:
 		tm.addRowValAddress("error", "unknown payload type")

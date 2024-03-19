@@ -101,7 +101,7 @@ func PromptConfirm(label string) bool {
 		os.Exit(1)
 	}
 
-	if len(result) > 0 && strings.ToUpper(result[:1]) == "Y" {
+	if result != "" && strings.ToUpper(result[:1]) == "Y" {
 		return true
 	}
 
@@ -314,8 +314,8 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		if err := genDoc.SaveToFile(genPath); err != nil {
 			return nil, nil, err
 		}
-		conf := config.DefaultConfigMainnet()
-		if err := conf.Save(confPath); err != nil {
+		err := config.SaveMainnetConfig(confPath)
+		if err != nil {
 			return nil, nil, err
 		}
 	case genesis.Testnet:
