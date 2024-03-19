@@ -340,7 +340,7 @@ func TestCoinToChangeConversion(t *testing.T) {
 		amt, err := amount.FromString(test.amount)
 		if test.parsErr == nil {
 			assert.NoError(t, err)
-			assert.Equal(t, int64(amt), test.NanoPac)
+			assert.Equal(t, amt.ToNanoPAC(), test.NanoPac)
 			assert.Equal(t, amt.ToPAC(), test.PAC)
 			assert.Equal(t, amt.String(), test.str)
 		} else {
