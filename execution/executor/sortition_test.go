@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/errors"
@@ -127,7 +128,7 @@ func TestChangePower1(t *testing.T) {
 	pub1, _ := td.RandBLSKeyPair()
 	amt1 := td.sandbox.Committee().TotalPower() / 3
 	val1 := td.sandbox.MakeNewValidator(pub1)
-	val1.AddToStake(amt1 - 1)
+	val1.AddToStake(amount.Amount(amt1 - 1))
 	val1.UpdateLastBondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().BondInterval)
 	td.sandbox.UpdateValidator(val1)
 	proof1 := td.RandProof()

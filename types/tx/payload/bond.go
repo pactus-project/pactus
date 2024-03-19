@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
@@ -13,7 +14,7 @@ type BondPayload struct {
 	From      crypto.Address
 	To        crypto.Address
 	PublicKey *bls.PublicKey
-	Stake     int64
+	Stake     amount.Amount
 }
 
 func (p *BondPayload) Type() Type {
@@ -24,7 +25,7 @@ func (p *BondPayload) Signer() crypto.Address {
 	return p.From
 }
 
-func (p *BondPayload) Value() int64 {
+func (p *BondPayload) Value() amount.Amount {
 	return p.Stake
 }
 
@@ -117,13 +118,13 @@ func (p *BondPayload) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	p.Stake = int64(stake)
+	p.Stake = amount.Amount(stake)
 
 	return nil
 }
 
 func (p *BondPayload) String() string {
-	return fmt.Sprintf("{Bond 🔐 %v->%v %v",
+	return fmt.Sprintf("{Bond 🔐 %s->%s %s",
 		p.From.ShortString(),
 		p.To.ShortString(),
 		p.Stake)

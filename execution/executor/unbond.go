@@ -48,13 +48,13 @@ func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		}
 	}
 
-	unboundedPower := val.Power()
+	unbondedPower := val.Power()
 	val.UpdateUnbondingHeight(sb.CurrentHeight())
 
 	// At this point, the validator's power is zero.
 	// However, we know the validator's stake.
 	// So, we can update the power delta with the negative of the validator's stake.
-	sb.UpdatePowerDelta(-1 * unboundedPower)
+	sb.UpdatePowerDelta(-1 * unbondedPower)
 	sb.UpdateValidator(val)
 
 	return nil

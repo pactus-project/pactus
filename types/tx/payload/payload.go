@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/amount"
 )
 
 type Type uint8
@@ -36,7 +37,7 @@ func (t Type) String() string {
 
 type Payload interface {
 	Signer() crypto.Address
-	Value() int64
+	Value() amount.Amount
 	Type() Type
 	SerializeSize() int
 	Encode(io.Writer) error

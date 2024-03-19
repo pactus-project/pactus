@@ -1833,13 +1833,13 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction amount.
+     * Transaction amount in NanoPAC.
      * </pre>
      *
-     * <code>double amount = 1 [json_name = "amount"];</code>
+     * <code>int64 amount = 1 [json_name = "amount"];</code>
      * @return The amount.
      */
-    double getAmount();
+    long getAmount();
 
     /**
      * <pre>
@@ -1916,17 +1916,17 @@ public final class TransactionOuterClass {
     }
 
     public static final int AMOUNT_FIELD_NUMBER = 1;
-    private double amount_;
+    private long amount_;
     /**
      * <pre>
-     * Transaction amount.
+     * Transaction amount in NanoPAC.
      * </pre>
      *
-     * <code>double amount = 1 [json_name = "amount"];</code>
+     * <code>int64 amount = 1 [json_name = "amount"];</code>
      * @return The amount.
      */
     @java.lang.Override
-    public double getAmount() {
+    public long getAmount() {
       return amount_;
     }
 
@@ -1986,8 +1986,8 @@ public final class TransactionOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
-        output.writeDouble(1, amount_);
+      if (amount_ != 0L) {
+        output.writeInt64(1, amount_);
       }
       if (payloadType_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
         output.writeEnum(2, payloadType_);
@@ -2004,9 +2004,9 @@ public final class TransactionOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
+      if (amount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(1, amount_);
+          .computeInt64Size(1, amount_);
       }
       if (payloadType_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
@@ -2031,9 +2031,8 @@ public final class TransactionOuterClass {
       }
       pactus.transaction.TransactionOuterClass.CalculateFeeRequest other = (pactus.transaction.TransactionOuterClass.CalculateFeeRequest) obj;
 
-      if (java.lang.Double.doubleToLongBits(getAmount())
-          != java.lang.Double.doubleToLongBits(
-              other.getAmount())) return false;
+      if (getAmount()
+          != other.getAmount()) return false;
       if (payloadType_ != other.payloadType_) return false;
       if (getFixedAmount()
           != other.getFixedAmount()) return false;
@@ -2050,7 +2049,7 @@ public final class TransactionOuterClass {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getAmount()));
+          getAmount());
       hash = (37 * hash) + PAYLOAD_TYPE_FIELD_NUMBER;
       hash = (53 * hash) + payloadType_;
       hash = (37 * hash) + FIXED_AMOUNT_FIELD_NUMBER;
@@ -2188,7 +2187,7 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        amount_ = 0D;
+        amount_ = 0L;
 
         payloadType_ = 0;
 
@@ -2271,7 +2270,7 @@ public final class TransactionOuterClass {
 
       public Builder mergeFrom(pactus.transaction.TransactionOuterClass.CalculateFeeRequest other) {
         if (other == pactus.transaction.TransactionOuterClass.CalculateFeeRequest.getDefaultInstance()) return this;
-        if (other.getAmount() != 0D) {
+        if (other.getAmount() != 0L) {
           setAmount(other.getAmount());
         }
         if (other.payloadType_ != 0) {
@@ -2306,11 +2305,11 @@ public final class TransactionOuterClass {
               case 0:
                 done = true;
                 break;
-              case 9: {
-                amount_ = input.readDouble();
+              case 8: {
+                amount_ = input.readInt64();
 
                 break;
-              } // case 9
+              } // case 8
               case 16: {
                 payloadType_ = input.readEnum();
 
@@ -2337,29 +2336,29 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private double amount_ ;
+      private long amount_ ;
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in NanoPAC.
        * </pre>
        *
-       * <code>double amount = 1 [json_name = "amount"];</code>
+       * <code>int64 amount = 1 [json_name = "amount"];</code>
        * @return The amount.
        */
       @java.lang.Override
-      public double getAmount() {
+      public long getAmount() {
         return amount_;
       }
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in NanoPAC.
        * </pre>
        *
-       * <code>double amount = 1 [json_name = "amount"];</code>
+       * <code>int64 amount = 1 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
        */
-      public Builder setAmount(double value) {
+      public Builder setAmount(long value) {
         
         amount_ = value;
         onChanged();
@@ -2367,15 +2366,15 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in NanoPAC.
        * </pre>
        *
-       * <code>double amount = 1 [json_name = "amount"];</code>
+       * <code>int64 amount = 1 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAmount() {
         
-        amount_ = 0D;
+        amount_ = 0L;
         onChanged();
         return this;
       }
@@ -2566,23 +2565,23 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Calculated amount.
+     * Calculated transaction fee in NanoPAC.
      * </pre>
      *
-     * <code>double amount = 2 [json_name = "amount"];</code>
-     * @return The amount.
+     * <code>int64 fee = 1 [json_name = "fee"];</code>
+     * @return The fee.
      */
-    double getAmount();
+    long getFee();
 
     /**
      * <pre>
-     * Calculated transaction fee.
+     * Calculated amount in NanoPAC.
      * </pre>
      *
-     * <code>double fee = 1 [json_name = "fee"];</code>
-     * @return The fee.
+     * <code>int64 amount = 2 [json_name = "amount"];</code>
+     * @return The amount.
      */
-    double getFee();
+    long getAmount();
   }
   /**
    * <pre>
@@ -2628,34 +2627,34 @@ public final class TransactionOuterClass {
               pactus.transaction.TransactionOuterClass.CalculateFeeResponse.class, pactus.transaction.TransactionOuterClass.CalculateFeeResponse.Builder.class);
     }
 
-    public static final int AMOUNT_FIELD_NUMBER = 2;
-    private double amount_;
-    /**
-     * <pre>
-     * Calculated amount.
-     * </pre>
-     *
-     * <code>double amount = 2 [json_name = "amount"];</code>
-     * @return The amount.
-     */
-    @java.lang.Override
-    public double getAmount() {
-      return amount_;
-    }
-
     public static final int FEE_FIELD_NUMBER = 1;
-    private double fee_;
+    private long fee_;
     /**
      * <pre>
-     * Calculated transaction fee.
+     * Calculated transaction fee in NanoPAC.
      * </pre>
      *
-     * <code>double fee = 1 [json_name = "fee"];</code>
+     * <code>int64 fee = 1 [json_name = "fee"];</code>
      * @return The fee.
      */
     @java.lang.Override
-    public double getFee() {
+    public long getFee() {
       return fee_;
+    }
+
+    public static final int AMOUNT_FIELD_NUMBER = 2;
+    private long amount_;
+    /**
+     * <pre>
+     * Calculated amount in NanoPAC.
+     * </pre>
+     *
+     * <code>int64 amount = 2 [json_name = "amount"];</code>
+     * @return The amount.
+     */
+    @java.lang.Override
+    public long getAmount() {
+      return amount_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -2672,11 +2671,11 @@ public final class TransactionOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
-        output.writeDouble(1, fee_);
+      if (fee_ != 0L) {
+        output.writeInt64(1, fee_);
       }
-      if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
-        output.writeDouble(2, amount_);
+      if (amount_ != 0L) {
+        output.writeInt64(2, amount_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -2687,13 +2686,13 @@ public final class TransactionOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
+      if (fee_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(1, fee_);
+          .computeInt64Size(1, fee_);
       }
-      if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
+      if (amount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(2, amount_);
+          .computeInt64Size(2, amount_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -2710,12 +2709,10 @@ public final class TransactionOuterClass {
       }
       pactus.transaction.TransactionOuterClass.CalculateFeeResponse other = (pactus.transaction.TransactionOuterClass.CalculateFeeResponse) obj;
 
-      if (java.lang.Double.doubleToLongBits(getAmount())
-          != java.lang.Double.doubleToLongBits(
-              other.getAmount())) return false;
-      if (java.lang.Double.doubleToLongBits(getFee())
-          != java.lang.Double.doubleToLongBits(
-              other.getFee())) return false;
+      if (getFee()
+          != other.getFee()) return false;
+      if (getAmount()
+          != other.getAmount()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -2727,12 +2724,12 @@ public final class TransactionOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getAmount()));
       hash = (37 * hash) + FEE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getFee()));
+          getFee());
+      hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getAmount());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2865,9 +2862,9 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        amount_ = 0D;
+        fee_ = 0L;
 
-        fee_ = 0D;
+        amount_ = 0L;
 
         return this;
       }
@@ -2895,8 +2892,8 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public pactus.transaction.TransactionOuterClass.CalculateFeeResponse buildPartial() {
         pactus.transaction.TransactionOuterClass.CalculateFeeResponse result = new pactus.transaction.TransactionOuterClass.CalculateFeeResponse(this);
-        result.amount_ = amount_;
         result.fee_ = fee_;
+        result.amount_ = amount_;
         onBuilt();
         return result;
       }
@@ -2945,11 +2942,11 @@ public final class TransactionOuterClass {
 
       public Builder mergeFrom(pactus.transaction.TransactionOuterClass.CalculateFeeResponse other) {
         if (other == pactus.transaction.TransactionOuterClass.CalculateFeeResponse.getDefaultInstance()) return this;
-        if (other.getAmount() != 0D) {
-          setAmount(other.getAmount());
-        }
-        if (other.getFee() != 0D) {
+        if (other.getFee() != 0L) {
           setFee(other.getFee());
+        }
+        if (other.getAmount() != 0L) {
+          setAmount(other.getAmount());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -2977,16 +2974,16 @@ public final class TransactionOuterClass {
               case 0:
                 done = true;
                 break;
-              case 9: {
-                fee_ = input.readDouble();
+              case 8: {
+                fee_ = input.readInt64();
 
                 break;
-              } // case 9
-              case 17: {
-                amount_ = input.readDouble();
+              } // case 8
+              case 16: {
+                amount_ = input.readInt64();
 
                 break;
-              } // case 17
+              } // case 16
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -3003,72 +3000,29 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private double amount_ ;
+      private long fee_ ;
       /**
        * <pre>
-       * Calculated amount.
+       * Calculated transaction fee in NanoPAC.
        * </pre>
        *
-       * <code>double amount = 2 [json_name = "amount"];</code>
-       * @return The amount.
-       */
-      @java.lang.Override
-      public double getAmount() {
-        return amount_;
-      }
-      /**
-       * <pre>
-       * Calculated amount.
-       * </pre>
-       *
-       * <code>double amount = 2 [json_name = "amount"];</code>
-       * @param value The amount to set.
-       * @return This builder for chaining.
-       */
-      public Builder setAmount(double value) {
-        
-        amount_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Calculated amount.
-       * </pre>
-       *
-       * <code>double amount = 2 [json_name = "amount"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearAmount() {
-        
-        amount_ = 0D;
-        onChanged();
-        return this;
-      }
-
-      private double fee_ ;
-      /**
-       * <pre>
-       * Calculated transaction fee.
-       * </pre>
-       *
-       * <code>double fee = 1 [json_name = "fee"];</code>
+       * <code>int64 fee = 1 [json_name = "fee"];</code>
        * @return The fee.
        */
       @java.lang.Override
-      public double getFee() {
+      public long getFee() {
         return fee_;
       }
       /**
        * <pre>
-       * Calculated transaction fee.
+       * Calculated transaction fee in NanoPAC.
        * </pre>
        *
-       * <code>double fee = 1 [json_name = "fee"];</code>
+       * <code>int64 fee = 1 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
        */
-      public Builder setFee(double value) {
+      public Builder setFee(long value) {
         
         fee_ = value;
         onChanged();
@@ -3076,15 +3030,58 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Calculated transaction fee.
+       * Calculated transaction fee in NanoPAC.
        * </pre>
        *
-       * <code>double fee = 1 [json_name = "fee"];</code>
+       * <code>int64 fee = 1 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
       public Builder clearFee() {
         
-        fee_ = 0D;
+        fee_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long amount_ ;
+      /**
+       * <pre>
+       * Calculated amount in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 amount = 2 [json_name = "amount"];</code>
+       * @return The amount.
+       */
+      @java.lang.Override
+      public long getAmount() {
+        return amount_;
+      }
+      /**
+       * <pre>
+       * Calculated amount in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 amount = 2 [json_name = "amount"];</code>
+       * @param value The amount to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAmount(long value) {
+        
+        amount_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Calculated amount in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 amount = 2 [json_name = "amount"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAmount() {
+        
+        amount_ = 0L;
         onChanged();
         return this;
       }
@@ -4213,25 +4210,25 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transfer amount.
+     * Transfer amount in NanoPAC.
      * It should be greater than 0.
      * </pre>
      *
-     * <code>double amount = 4 [json_name = "amount"];</code>
+     * <code>int64 amount = 4 [json_name = "amount"];</code>
      * @return The amount.
      */
-    double getAmount();
+    long getAmount();
 
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in NanoPAC.
      * If not explicitly set, it is calculated based on the amount.
      * </pre>
      *
-     * <code>double fee = 5 [json_name = "fee"];</code>
+     * <code>int64 fee = 5 [json_name = "fee"];</code>
      * @return The fee.
      */
-    double getFee();
+    long getFee();
 
     /**
      * <pre>
@@ -4409,34 +4406,34 @@ public final class TransactionOuterClass {
     }
 
     public static final int AMOUNT_FIELD_NUMBER = 4;
-    private double amount_;
+    private long amount_;
     /**
      * <pre>
-     * Transfer amount.
+     * Transfer amount in NanoPAC.
      * It should be greater than 0.
      * </pre>
      *
-     * <code>double amount = 4 [json_name = "amount"];</code>
+     * <code>int64 amount = 4 [json_name = "amount"];</code>
      * @return The amount.
      */
     @java.lang.Override
-    public double getAmount() {
+    public long getAmount() {
       return amount_;
     }
 
     public static final int FEE_FIELD_NUMBER = 5;
-    private double fee_;
+    private long fee_;
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in NanoPAC.
      * If not explicitly set, it is calculated based on the amount.
      * </pre>
      *
-     * <code>double fee = 5 [json_name = "fee"];</code>
+     * <code>int64 fee = 5 [json_name = "fee"];</code>
      * @return The fee.
      */
     @java.lang.Override
-    public double getFee() {
+    public long getFee() {
       return fee_;
     }
 
@@ -4509,11 +4506,11 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, receiver_);
       }
-      if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
-        output.writeDouble(4, amount_);
+      if (amount_ != 0L) {
+        output.writeInt64(4, amount_);
       }
-      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
-        output.writeDouble(5, fee_);
+      if (fee_ != 0L) {
+        output.writeInt64(5, fee_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 6, memo_);
@@ -4537,13 +4534,13 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(receiver_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, receiver_);
       }
-      if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
+      if (amount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(4, amount_);
+          .computeInt64Size(4, amount_);
       }
-      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
+      if (fee_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(5, fee_);
+          .computeInt64Size(5, fee_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, memo_);
@@ -4569,12 +4566,10 @@ public final class TransactionOuterClass {
           .equals(other.getSender())) return false;
       if (!getReceiver()
           .equals(other.getReceiver())) return false;
-      if (java.lang.Double.doubleToLongBits(getAmount())
-          != java.lang.Double.doubleToLongBits(
-              other.getAmount())) return false;
-      if (java.lang.Double.doubleToLongBits(getFee())
-          != java.lang.Double.doubleToLongBits(
-              other.getFee())) return false;
+      if (getAmount()
+          != other.getAmount()) return false;
+      if (getFee()
+          != other.getFee()) return false;
       if (!getMemo()
           .equals(other.getMemo())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -4596,10 +4591,10 @@ public final class TransactionOuterClass {
       hash = (53 * hash) + getReceiver().hashCode();
       hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getAmount()));
+          getAmount());
       hash = (37 * hash) + FEE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getFee()));
+          getFee());
       hash = (37 * hash) + MEMO_FIELD_NUMBER;
       hash = (53 * hash) + getMemo().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
@@ -4740,9 +4735,9 @@ public final class TransactionOuterClass {
 
         receiver_ = "";
 
-        amount_ = 0D;
+        amount_ = 0L;
 
-        fee_ = 0D;
+        fee_ = 0L;
 
         memo_ = "";
 
@@ -4837,10 +4832,10 @@ public final class TransactionOuterClass {
           receiver_ = other.receiver_;
           onChanged();
         }
-        if (other.getAmount() != 0D) {
+        if (other.getAmount() != 0L) {
           setAmount(other.getAmount());
         }
-        if (other.getFee() != 0D) {
+        if (other.getFee() != 0L) {
           setFee(other.getFee());
         }
         if (!other.getMemo().isEmpty()) {
@@ -4888,16 +4883,16 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 26
-              case 33: {
-                amount_ = input.readDouble();
+              case 32: {
+                amount_ = input.readInt64();
 
                 break;
-              } // case 33
-              case 41: {
-                fee_ = input.readDouble();
+              } // case 32
+              case 40: {
+                fee_ = input.readInt64();
 
                 break;
-              } // case 41
+              } // case 40
               case 50: {
                 memo_ = input.readStringRequireUtf8();
 
@@ -5157,31 +5152,31 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private double amount_ ;
+      private long amount_ ;
       /**
        * <pre>
-       * Transfer amount.
+       * Transfer amount in NanoPAC.
        * It should be greater than 0.
        * </pre>
        *
-       * <code>double amount = 4 [json_name = "amount"];</code>
+       * <code>int64 amount = 4 [json_name = "amount"];</code>
        * @return The amount.
        */
       @java.lang.Override
-      public double getAmount() {
+      public long getAmount() {
         return amount_;
       }
       /**
        * <pre>
-       * Transfer amount.
+       * Transfer amount in NanoPAC.
        * It should be greater than 0.
        * </pre>
        *
-       * <code>double amount = 4 [json_name = "amount"];</code>
+       * <code>int64 amount = 4 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
        */
-      public Builder setAmount(double value) {
+      public Builder setAmount(long value) {
         
         amount_ = value;
         onChanged();
@@ -5189,45 +5184,45 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer amount.
+       * Transfer amount in NanoPAC.
        * It should be greater than 0.
        * </pre>
        *
-       * <code>double amount = 4 [json_name = "amount"];</code>
+       * <code>int64 amount = 4 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAmount() {
         
-        amount_ = 0D;
+        amount_ = 0L;
         onChanged();
         return this;
       }
 
-      private double fee_ ;
+      private long fee_ ;
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in NanoPAC.
        * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
-       * <code>double fee = 5 [json_name = "fee"];</code>
+       * <code>int64 fee = 5 [json_name = "fee"];</code>
        * @return The fee.
        */
       @java.lang.Override
-      public double getFee() {
+      public long getFee() {
         return fee_;
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in NanoPAC.
        * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
-       * <code>double fee = 5 [json_name = "fee"];</code>
+       * <code>int64 fee = 5 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
        */
-      public Builder setFee(double value) {
+      public Builder setFee(long value) {
         
         fee_ = value;
         onChanged();
@@ -5235,16 +5230,16 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in NanoPAC.
        * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
-       * <code>double fee = 5 [json_name = "fee"];</code>
+       * <code>int64 fee = 5 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
       public Builder clearFee() {
         
-        fee_ = 0D;
+        fee_ = 0L;
         onChanged();
         return this;
       }
@@ -5465,7 +5460,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Stake amount.
+     * Stake amount in NanoPAC.
      * It should be greater than 0.
      * </pre>
      *
@@ -5496,14 +5491,14 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in NanoPAC.
      * If not explicitly set, it is calculated based on the stake.
      * </pre>
      *
-     * <code>double fee = 6 [json_name = "fee"];</code>
+     * <code>int64 fee = 6 [json_name = "fee"];</code>
      * @return The fee.
      */
-    double getFee();
+    long getFee();
 
     /**
      * <pre>
@@ -5685,7 +5680,7 @@ public final class TransactionOuterClass {
     private long stake_;
     /**
      * <pre>
-     * Stake amount.
+     * Stake amount in NanoPAC.
      * It should be greater than 0.
      * </pre>
      *
@@ -5744,18 +5739,18 @@ public final class TransactionOuterClass {
     }
 
     public static final int FEE_FIELD_NUMBER = 6;
-    private double fee_;
+    private long fee_;
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in NanoPAC.
      * If not explicitly set, it is calculated based on the stake.
      * </pre>
      *
-     * <code>double fee = 6 [json_name = "fee"];</code>
+     * <code>int64 fee = 6 [json_name = "fee"];</code>
      * @return The fee.
      */
     @java.lang.Override
-    public double getFee() {
+    public long getFee() {
       return fee_;
     }
 
@@ -5834,8 +5829,8 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, publicKey_);
       }
-      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
-        output.writeDouble(6, fee_);
+      if (fee_ != 0L) {
+        output.writeInt64(6, fee_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 7, memo_);
@@ -5866,9 +5861,9 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, publicKey_);
       }
-      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
+      if (fee_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(6, fee_);
+          .computeInt64Size(6, fee_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, memo_);
@@ -5898,9 +5893,8 @@ public final class TransactionOuterClass {
           != other.getStake()) return false;
       if (!getPublicKey()
           .equals(other.getPublicKey())) return false;
-      if (java.lang.Double.doubleToLongBits(getFee())
-          != java.lang.Double.doubleToLongBits(
-              other.getFee())) return false;
+      if (getFee()
+          != other.getFee()) return false;
       if (!getMemo()
           .equals(other.getMemo())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -5927,7 +5921,7 @@ public final class TransactionOuterClass {
       hash = (53 * hash) + getPublicKey().hashCode();
       hash = (37 * hash) + FEE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getFee()));
+          getFee());
       hash = (37 * hash) + MEMO_FIELD_NUMBER;
       hash = (53 * hash) + getMemo().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
@@ -6072,7 +6066,7 @@ public final class TransactionOuterClass {
 
         publicKey_ = "";
 
-        fee_ = 0D;
+        fee_ = 0L;
 
         memo_ = "";
 
@@ -6175,7 +6169,7 @@ public final class TransactionOuterClass {
           publicKey_ = other.publicKey_;
           onChanged();
         }
-        if (other.getFee() != 0D) {
+        if (other.getFee() != 0L) {
           setFee(other.getFee());
         }
         if (!other.getMemo().isEmpty()) {
@@ -6233,11 +6227,11 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 42
-              case 49: {
-                fee_ = input.readDouble();
+              case 48: {
+                fee_ = input.readInt64();
 
                 break;
-              } // case 49
+              } // case 48
               case 58: {
                 memo_ = input.readStringRequireUtf8();
 
@@ -6500,7 +6494,7 @@ public final class TransactionOuterClass {
       private long stake_ ;
       /**
        * <pre>
-       * Stake amount.
+       * Stake amount in NanoPAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -6513,7 +6507,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Stake amount.
+       * Stake amount in NanoPAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -6529,7 +6523,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Stake amount.
+       * Stake amount in NanoPAC.
        * It should be greater than 0.
        * </pre>
        *
@@ -6639,31 +6633,31 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private double fee_ ;
+      private long fee_ ;
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in NanoPAC.
        * If not explicitly set, it is calculated based on the stake.
        * </pre>
        *
-       * <code>double fee = 6 [json_name = "fee"];</code>
+       * <code>int64 fee = 6 [json_name = "fee"];</code>
        * @return The fee.
        */
       @java.lang.Override
-      public double getFee() {
+      public long getFee() {
         return fee_;
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in NanoPAC.
        * If not explicitly set, it is calculated based on the stake.
        * </pre>
        *
-       * <code>double fee = 6 [json_name = "fee"];</code>
+       * <code>int64 fee = 6 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
        */
-      public Builder setFee(double value) {
+      public Builder setFee(long value) {
         
         fee_ = value;
         onChanged();
@@ -6671,16 +6665,16 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in NanoPAC.
        * If not explicitly set, it is calculated based on the stake.
        * </pre>
        *
-       * <code>double fee = 6 [json_name = "fee"];</code>
+       * <code>int64 fee = 6 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
       public Builder clearFee() {
         
-        fee_ = 0D;
+        fee_ = 0L;
         onChanged();
         return this;
       }
@@ -7774,25 +7768,25 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Withdrawal amount.
+     * Withdrawal amount in NanoPAC.
      * It should be greater than 0.
      * </pre>
      *
-     * <code>double amount = 4 [json_name = "amount"];</code>
+     * <code>int64 amount = 4 [json_name = "amount"];</code>
      * @return The amount.
      */
-    double getAmount();
+    long getAmount();
 
     /**
      * <pre>
-     * Transaction fee.
-     * If not explicitly set, it is calculated based on the stake.
+     * Transaction fee in NanoPAC.
+     * If not explicitly set, it is calculated based on the amount.
      * </pre>
      *
-     * <code>double fee = 5 [json_name = "fee"];</code>
+     * <code>int64 fee = 5 [json_name = "fee"];</code>
      * @return The fee.
      */
-    double getFee();
+    long getFee();
 
     /**
      * <pre>
@@ -7970,34 +7964,34 @@ public final class TransactionOuterClass {
     }
 
     public static final int AMOUNT_FIELD_NUMBER = 4;
-    private double amount_;
+    private long amount_;
     /**
      * <pre>
-     * Withdrawal amount.
+     * Withdrawal amount in NanoPAC.
      * It should be greater than 0.
      * </pre>
      *
-     * <code>double amount = 4 [json_name = "amount"];</code>
+     * <code>int64 amount = 4 [json_name = "amount"];</code>
      * @return The amount.
      */
     @java.lang.Override
-    public double getAmount() {
+    public long getAmount() {
       return amount_;
     }
 
     public static final int FEE_FIELD_NUMBER = 5;
-    private double fee_;
+    private long fee_;
     /**
      * <pre>
-     * Transaction fee.
-     * If not explicitly set, it is calculated based on the stake.
+     * Transaction fee in NanoPAC.
+     * If not explicitly set, it is calculated based on the amount.
      * </pre>
      *
-     * <code>double fee = 5 [json_name = "fee"];</code>
+     * <code>int64 fee = 5 [json_name = "fee"];</code>
      * @return The fee.
      */
     @java.lang.Override
-    public double getFee() {
+    public long getFee() {
       return fee_;
     }
 
@@ -8070,11 +8064,11 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(accountAddress_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, accountAddress_);
       }
-      if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
-        output.writeDouble(4, amount_);
+      if (amount_ != 0L) {
+        output.writeInt64(4, amount_);
       }
-      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
-        output.writeDouble(5, fee_);
+      if (fee_ != 0L) {
+        output.writeInt64(5, fee_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 6, memo_);
@@ -8098,13 +8092,13 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(accountAddress_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, accountAddress_);
       }
-      if (java.lang.Double.doubleToRawLongBits(amount_) != 0) {
+      if (amount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(4, amount_);
+          .computeInt64Size(4, amount_);
       }
-      if (java.lang.Double.doubleToRawLongBits(fee_) != 0) {
+      if (fee_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(5, fee_);
+          .computeInt64Size(5, fee_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, memo_);
@@ -8130,12 +8124,10 @@ public final class TransactionOuterClass {
           .equals(other.getValidatorAddress())) return false;
       if (!getAccountAddress()
           .equals(other.getAccountAddress())) return false;
-      if (java.lang.Double.doubleToLongBits(getAmount())
-          != java.lang.Double.doubleToLongBits(
-              other.getAmount())) return false;
-      if (java.lang.Double.doubleToLongBits(getFee())
-          != java.lang.Double.doubleToLongBits(
-              other.getFee())) return false;
+      if (getAmount()
+          != other.getAmount()) return false;
+      if (getFee()
+          != other.getFee()) return false;
       if (!getMemo()
           .equals(other.getMemo())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -8157,10 +8149,10 @@ public final class TransactionOuterClass {
       hash = (53 * hash) + getAccountAddress().hashCode();
       hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getAmount()));
+          getAmount());
       hash = (37 * hash) + FEE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getFee()));
+          getFee());
       hash = (37 * hash) + MEMO_FIELD_NUMBER;
       hash = (53 * hash) + getMemo().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
@@ -8301,9 +8293,9 @@ public final class TransactionOuterClass {
 
         accountAddress_ = "";
 
-        amount_ = 0D;
+        amount_ = 0L;
 
-        fee_ = 0D;
+        fee_ = 0L;
 
         memo_ = "";
 
@@ -8398,10 +8390,10 @@ public final class TransactionOuterClass {
           accountAddress_ = other.accountAddress_;
           onChanged();
         }
-        if (other.getAmount() != 0D) {
+        if (other.getAmount() != 0L) {
           setAmount(other.getAmount());
         }
-        if (other.getFee() != 0D) {
+        if (other.getFee() != 0L) {
           setFee(other.getFee());
         }
         if (!other.getMemo().isEmpty()) {
@@ -8449,16 +8441,16 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 26
-              case 33: {
-                amount_ = input.readDouble();
+              case 32: {
+                amount_ = input.readInt64();
 
                 break;
-              } // case 33
-              case 41: {
-                fee_ = input.readDouble();
+              } // case 32
+              case 40: {
+                fee_ = input.readInt64();
 
                 break;
-              } // case 41
+              } // case 40
               case 50: {
                 memo_ = input.readStringRequireUtf8();
 
@@ -8718,31 +8710,31 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private double amount_ ;
+      private long amount_ ;
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in NanoPAC.
        * It should be greater than 0.
        * </pre>
        *
-       * <code>double amount = 4 [json_name = "amount"];</code>
+       * <code>int64 amount = 4 [json_name = "amount"];</code>
        * @return The amount.
        */
       @java.lang.Override
-      public double getAmount() {
+      public long getAmount() {
         return amount_;
       }
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in NanoPAC.
        * It should be greater than 0.
        * </pre>
        *
-       * <code>double amount = 4 [json_name = "amount"];</code>
+       * <code>int64 amount = 4 [json_name = "amount"];</code>
        * @param value The amount to set.
        * @return This builder for chaining.
        */
-      public Builder setAmount(double value) {
+      public Builder setAmount(long value) {
         
         amount_ = value;
         onChanged();
@@ -8750,45 +8742,45 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in NanoPAC.
        * It should be greater than 0.
        * </pre>
        *
-       * <code>double amount = 4 [json_name = "amount"];</code>
+       * <code>int64 amount = 4 [json_name = "amount"];</code>
        * @return This builder for chaining.
        */
       public Builder clearAmount() {
         
-        amount_ = 0D;
+        amount_ = 0L;
         onChanged();
         return this;
       }
 
-      private double fee_ ;
+      private long fee_ ;
       /**
        * <pre>
-       * Transaction fee.
-       * If not explicitly set, it is calculated based on the stake.
+       * Transaction fee in NanoPAC.
+       * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
-       * <code>double fee = 5 [json_name = "fee"];</code>
+       * <code>int64 fee = 5 [json_name = "fee"];</code>
        * @return The fee.
        */
       @java.lang.Override
-      public double getFee() {
+      public long getFee() {
         return fee_;
       }
       /**
        * <pre>
-       * Transaction fee.
-       * If not explicitly set, it is calculated based on the stake.
+       * Transaction fee in NanoPAC.
+       * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
-       * <code>double fee = 5 [json_name = "fee"];</code>
+       * <code>int64 fee = 5 [json_name = "fee"];</code>
        * @param value The fee to set.
        * @return This builder for chaining.
        */
-      public Builder setFee(double value) {
+      public Builder setFee(long value) {
         
         fee_ = value;
         onChanged();
@@ -8796,16 +8788,16 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee.
-       * If not explicitly set, it is calculated based on the stake.
+       * Transaction fee in NanoPAC.
+       * If not explicitly set, it is calculated based on the amount.
        * </pre>
        *
-       * <code>double fee = 5 [json_name = "fee"];</code>
+       * <code>int64 fee = 5 [json_name = "fee"];</code>
        * @return This builder for chaining.
        */
       public Builder clearFee() {
         
-        fee_ = 0D;
+        fee_ = 0L;
         onChanged();
         return this;
       }
@@ -9517,7 +9509,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction amount.
+     * Transaction amount in NanoPAC.
      * </pre>
      *
      * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -9667,7 +9659,7 @@ public final class TransactionOuterClass {
     private long amount_;
     /**
      * <pre>
-     * Transaction amount.
+     * Transaction amount in NanoPAC.
      * </pre>
      *
      * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -10237,7 +10229,7 @@ public final class TransactionOuterClass {
       private long amount_ ;
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -10249,7 +10241,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -10264,7 +10256,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount.
+       * Transaction amount in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -10386,7 +10378,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Stake amount.
+     * Stake amount in NanoPAC.
      * </pre>
      *
      * <code>int64 stake = 3 [json_name = "stake"];</code>
@@ -10536,7 +10528,7 @@ public final class TransactionOuterClass {
     private long stake_;
     /**
      * <pre>
-     * Stake amount.
+     * Stake amount in NanoPAC.
      * </pre>
      *
      * <code>int64 stake = 3 [json_name = "stake"];</code>
@@ -11106,7 +11098,7 @@ public final class TransactionOuterClass {
       private long stake_ ;
       /**
        * <pre>
-       * Stake amount.
+       * Stake amount in NanoPAC.
        * </pre>
        *
        * <code>int64 stake = 3 [json_name = "stake"];</code>
@@ -11118,7 +11110,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Stake amount.
+       * Stake amount in NanoPAC.
        * </pre>
        *
        * <code>int64 stake = 3 [json_name = "stake"];</code>
@@ -11133,7 +11125,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Stake amount.
+       * Stake amount in NanoPAC.
        * </pre>
        *
        * <code>int64 stake = 3 [json_name = "stake"];</code>
@@ -12535,7 +12527,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Withdrawal amount.
+     * Withdrawal amount in NanoPAC.
      * </pre>
      *
      * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -12685,7 +12677,7 @@ public final class TransactionOuterClass {
     private long amount_;
     /**
      * <pre>
-     * Withdrawal amount.
+     * Withdrawal amount in NanoPAC.
      * </pre>
      *
      * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -13255,7 +13247,7 @@ public final class TransactionOuterClass {
       private long amount_ ;
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -13267,7 +13259,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -13282,7 +13274,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdrawal amount.
+       * Withdrawal amount in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -13404,7 +13396,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction value.
+     * Transaction value in NanoPAC.
      * </pre>
      *
      * <code>int64 value = 5 [json_name = "value"];</code>
@@ -13414,7 +13406,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in NanoPAC.
      * </pre>
      *
      * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -13789,7 +13781,7 @@ public final class TransactionOuterClass {
     private long value_;
     /**
      * <pre>
-     * Transaction value.
+     * Transaction value in NanoPAC.
      * </pre>
      *
      * <code>int64 value = 5 [json_name = "value"];</code>
@@ -13804,7 +13796,7 @@ public final class TransactionOuterClass {
     private long fee_;
     /**
      * <pre>
-     * Transaction fee.
+     * Transaction fee in NanoPAC.
      * </pre>
      *
      * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -15075,7 +15067,7 @@ public final class TransactionOuterClass {
       private long value_ ;
       /**
        * <pre>
-       * Transaction value.
+       * Transaction value in NanoPAC.
        * </pre>
        *
        * <code>int64 value = 5 [json_name = "value"];</code>
@@ -15087,7 +15079,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction value.
+       * Transaction value in NanoPAC.
        * </pre>
        *
        * <code>int64 value = 5 [json_name = "value"];</code>
@@ -15102,7 +15094,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction value.
+       * Transaction value in NanoPAC.
        * </pre>
        *
        * <code>int64 value = 5 [json_name = "value"];</code>
@@ -15118,7 +15110,7 @@ public final class TransactionOuterClass {
       private long fee_ ;
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in NanoPAC.
        * </pre>
        *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -15130,7 +15122,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in NanoPAC.
        * </pre>
        *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -15145,7 +15137,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee.
+       * Transaction fee in NanoPAC.
        * </pre>
        *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -16524,24 +16516,24 @@ public final class TransactionOuterClass {
       "lock_height\030\014 \001(\rR\013blockHeight\022\035\n\nblock_" +
       "time\030\r \001(\rR\tblockTime\0229\n\013transaction\030\003 \001" +
       "(\0132\027.pactus.TransactionInfoR\013transaction" +
-      "\"\210\001\n\023CalculateFeeRequest\022\026\n\006amount\030\001 \001(\001" +
+      "\"\210\001\n\023CalculateFeeRequest\022\026\n\006amount\030\001 \001(\003" +
       "R\006amount\0226\n\014payload_type\030\002 \001(\0162\023.pactus." +
       "PayloadTypeR\013payloadType\022!\n\014fixed_amount" +
       "\030\003 \001(\010R\013fixedAmount\"@\n\024CalculateFeeRespo" +
-      "nse\022\026\n\006amount\030\002 \001(\001R\006amount\022\020\n\003fee\030\001 \001(\001" +
-      "R\003fee\"S\n\033BroadcastTransactionRequest\0224\n\026" +
+      "nse\022\020\n\003fee\030\001 \001(\003R\003fee\022\026\n\006amount\030\002 \001(\003R\006a" +
+      "mount\"S\n\033BroadcastTransactionRequest\0224\n\026" +
       "signed_raw_transaction\030\001 \001(\014R\024signedRawT" +
       "ransaction\".\n\034BroadcastTransactionRespon" +
       "se\022\016\n\002id\030\001 \001(\014R\002id\"\261\001\n GetRawTransferTra" +
       "nsactionRequest\022\033\n\tlock_time\030\001 \001(\rR\010lock" +
       "Time\022\026\n\006sender\030\002 \001(\tR\006sender\022\032\n\010receiver" +
-      "\030\003 \001(\tR\010receiver\022\026\n\006amount\030\004 \001(\001R\006amount" +
-      "\022\020\n\003fee\030\005 \001(\001R\003fee\022\022\n\004memo\030\006 \001(\tR\004memo\"\312" +
+      "\030\003 \001(\tR\010receiver\022\026\n\006amount\030\004 \001(\003R\006amount" +
+      "\022\020\n\003fee\030\005 \001(\003R\003fee\022\022\n\004memo\030\006 \001(\tR\004memo\"\312" +
       "\001\n\034GetRawBondTransactionRequest\022\033\n\tlock_" +
       "time\030\001 \001(\rR\010lockTime\022\026\n\006sender\030\002 \001(\tR\006se" +
       "nder\022\032\n\010receiver\030\003 \001(\tR\010receiver\022\024\n\005stak" +
       "e\030\004 \001(\003R\005stake\022\035\n\npublic_key\030\005 \001(\tR\tpubl" +
-      "icKey\022\020\n\003fee\030\006 \001(\001R\003fee\022\022\n\004memo\030\007 \001(\tR\004m" +
+      "icKey\022\020\n\003fee\030\006 \001(\003R\003fee\022\022\n\004memo\030\007 \001(\tR\004m" +
       "emo\"~\n\036GetRawUnbondTransactionRequest\022\033\n" +
       "\tlock_time\030\001 \001(\rR\010lockTime\022+\n\021validator_" +
       "address\030\003 \001(\tR\020validatorAddress\022\022\n\004memo\030" +
@@ -16549,7 +16541,7 @@ public final class TransactionOuterClass {
       "nRequest\022\033\n\tlock_time\030\001 \001(\rR\010lockTime\022+\n" +
       "\021validator_address\030\002 \001(\tR\020validatorAddre" +
       "ss\022\'\n\017account_address\030\003 \001(\tR\016accountAddr" +
-      "ess\022\026\n\006amount\030\004 \001(\001R\006amount\022\020\n\003fee\030\005 \001(\001" +
+      "ess\022\026\n\006amount\030\004 \001(\003R\006amount\022\020\n\003fee\030\005 \001(\003" +
       "R\003fee\022\022\n\004memo\030\006 \001(\tR\004memo\"D\n\031GetRawTrans" +
       "actionResponse\022\'\n\017raw_transaction\030\001 \001(\014R" +
       "\016rawTransaction\"]\n\017PayloadTransfer\022\026\n\006se" +
@@ -16628,7 +16620,7 @@ public final class TransactionOuterClass {
     internal_static_pactus_CalculateFeeResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_CalculateFeeResponse_descriptor,
-        new java.lang.String[] { "Amount", "Fee", });
+        new java.lang.String[] { "Fee", "Amount", });
     internal_static_pactus_BroadcastTransactionRequest_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_pactus_BroadcastTransactionRequest_fieldAccessorTable = new
