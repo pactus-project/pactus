@@ -1,9 +1,5 @@
 package txpool
 
-import (
-	"github.com/pactus-project/pactus/util/errors"
-)
-
 type Config struct {
 	MaxSize int `toml:"max_size"`
 }
@@ -17,7 +13,9 @@ func DefaultConfig() *Config {
 // BasicCheck performs basic checks on the configuration.
 func (conf *Config) BasicCheck() error {
 	if conf.MaxSize == 0 {
-		return errors.Errorf(errors.ErrInvalidConfig, "maxSize can't be negative or zero")
+		return ConfigError{
+			Reason: "maxSize can't be negative or zero",
+		}
 	}
 
 	return nil

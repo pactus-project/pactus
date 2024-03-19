@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/param"
@@ -19,7 +20,6 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -604,35 +604,40 @@ func TestCalcFee(t *testing.T) {
 	td := setup(t)
 
 	tests := []struct {
-		amount          int64
-		pldType         payload.Type
-		fee             int64
-		expectedFee     int64
-		expectedErrCode int
+		amt         amount.Amount
+		pldType     payload.Type
+		expectedFee amount.Amount
 	}{
-		{1, payload.TypeTransfer, 1, td.state.params.MinimumFee, errors.ErrInvalidFee},
-		{1, payload.TypeWithdraw, 1001, td.state.params.MinimumFee, errors.ErrInvalidFee},
-		{1, payload.TypeBond, 1000, td.state.params.MinimumFee, errors.ErrNone},
+		{0, payload.TypeTransfer, td.state.params.MinimumFee},
+		{0, payload.TypeWithdraw, td.state.params.MinimumFee},
+		{0, payload.TypeBond, td.state.params.MinimumFee},
 
-		{1 * 1e9, payload.TypeTransfer, 1, 100000, errors.ErrInvalidFee},
-		{1 * 1e9, payload.TypeWithdraw, 100001, 100000, errors.ErrInvalidFee},
-		{1 * 1e9, payload.TypeBond, 100000, 100000, errors.ErrNone},
+		{1, payload.TypeTransfer, td.state.params.MinimumFee},
+		{1, payload.TypeWithdraw, td.state.params.MinimumFee},
+		{1, payload.TypeBond, td.state.params.MinimumFee},
 
-		{1 * 1e12, payload.TypeTransfer, 1, 1000000, errors.ErrInvalidFee},
-		{1 * 1e12, payload.TypeWithdraw, 1000001, 1000000, errors.ErrInvalidFee},
-		{1 * 1e12, payload.TypeBond, 1000000, 1000000, errors.ErrNone},
+		{1 * 1e9, payload.TypeTransfer, 100000},
+		{1 * 1e9, payload.TypeWithdraw, 100000},
+		{1 * 1e9, payload.TypeBond, 100000},
 
-		{1 * 1e12, payload.TypeSortition, 0, 0, errors.ErrInvalidFee},
-		{1 * 1e12, payload.TypeUnbond, 0, 0, errors.ErrNone},
+		{1 * 1e12, payload.TypeTransfer, 1000000},
+		{1 * 1e12, payload.TypeWithdraw, 1000000},
+		{1 * 1e12, payload.TypeBond, 1000000},
+
+		{1 * 1e12, payload.TypeSortition, 0},
+		{1 * 1e12, payload.TypeUnbond, 0},
 	}
 	for _, test := range tests {
-		fee, err := td.state.CalculateFee(test.amount, test.pldType)
-		assert.NoError(t, err)
+		fee := td.state.CalculateFee(test.amt, test.pldType)
 		assert.Equal(t, test.expectedFee, fee)
-
-		_, err = td.state.CalculateFee(test.amount, 6)
-		assert.Error(t, err)
 	}
+}
+
+func TestInvalidPayloadFee(t *testing.T) {
+	td := setup(t)
+
+	fee := td.state.CalculateFee(td.RandAmount(), 6)
+	assert.Zero(t, fee)
 }
 
 func TestCheckMaximumTransactionPerBlock(t *testing.T) {
@@ -642,8 +647,8 @@ func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 	lockTime := td.state.LastBlockHeight()
 	senderAddr := td.genAccKey.PublicKeyNative().AccountAddress()
 	for i := 0; i < maxTransactionsPerBlock+2; i++ {
-		amt := td.RandInt64(1e6)
-		fee, _ := td.state.CalculateFee(amt, payload.TypeTransfer)
+		amt := td.RandAmount()
+		fee := td.state.CalculateFee(amt, payload.TypeTransfer)
 		trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddress(), amt, fee, "")
 		err := td.state.AddPendingTx(trx)
 		assert.NoError(t, err)

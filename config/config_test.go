@@ -18,7 +18,7 @@ func TestSaveMainnetConfig(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
-	assert.Equal(t, defConf, conf)
+	assert.Equal(t, DefaultConfigMainnet(), conf)
 
 	confData, _ := util.ReadFile(path)
 	exampleData, _ := util.ReadFile("example_config.toml")
@@ -32,7 +32,7 @@ func TestSaveTestnetConfig(t *testing.T) {
 
 	conf, err := LoadFromFile(path, true, defConf)
 	assert.NoError(t, err)
-	assert.Equal(t, defConf, conf)
+	assert.Equal(t, DefaultConfigTestnet(), conf)
 
 	assert.NoError(t, conf.BasicCheck())
 }
@@ -100,7 +100,7 @@ func TestLocalnetConfig(t *testing.T) {
 	assert.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
 	assert.Equal(t, conf.Network.NetworkName, "pactus-localnet")
-	assert.Equal(t, conf.Network.DefaultPort, 21666)
+	assert.Equal(t, conf.Network.DefaultPort, 0)
 
 	assert.True(t, conf.GRPC.Enable)
 	assert.True(t, conf.GRPC.Gateway.Enable)
@@ -108,7 +108,7 @@ func TestLocalnetConfig(t *testing.T) {
 	assert.True(t, conf.Nanomsg.Enable)
 
 	assert.Equal(t, conf.GRPC.Listen, "[::]:50052")
-	assert.Equal(t, conf.GRPC.Gateway.Listen, "[::]:0")
+	assert.Equal(t, conf.GRPC.Gateway.Listen, "[::]:8080")
 	assert.Equal(t, conf.HTTP.Listen, "[::]:0")
 	assert.Equal(t, conf.Nanomsg.Listen, "tcp://[::]:40799")
 }

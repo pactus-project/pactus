@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/testsuite"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -22,7 +23,9 @@ func sendRawTx(t *testing.T, raw []byte) error {
 	return err
 }
 
-func broadcastSendTransaction(t *testing.T, sender *bls.ValidatorKey, receiver crypto.Address, amt, fee int64) error {
+func broadcastSendTransaction(t *testing.T, sender *bls.ValidatorKey, receiver crypto.Address,
+	amt, fee amount.Amount,
+) error {
 	t.Helper()
 
 	lockTime := lastHeight() + 1
@@ -37,7 +40,9 @@ func broadcastSendTransaction(t *testing.T, sender *bls.ValidatorKey, receiver c
 	return sendRawTx(t, d)
 }
 
-func broadcastBondTransaction(t *testing.T, sender *bls.ValidatorKey, pub *bls.PublicKey, stake, fee int64) error {
+func broadcastBondTransaction(t *testing.T, sender *bls.ValidatorKey, pub *bls.PublicKey,
+	stake, fee amount.Amount,
+) error {
 	t.Helper()
 
 	lockTime := lastHeight() + 1
@@ -87,8 +92,8 @@ func TestTransactions(t *testing.T) {
 		// These validators are not in the committee now.
 		// Bond transactions are valid and they can enter the committee soon
 		for i := 0; i < tTotalNodes; i++ {
-			amt := int64(1000000)
-			fee := int64(1000)
+			amt := amount.Amount(1000000)
+			fee := amount.Amount(1000)
 			valKey := tValKeys[tNodeIdx1][0]
 
 			require.NoError(t, broadcastBondTransaction(t, valKey, tValKeys[i][1].PublicKey(), amt, fee))

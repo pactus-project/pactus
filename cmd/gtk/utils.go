@@ -13,9 +13,9 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -152,48 +152,38 @@ func setTextViewContent(tv *gtk.TextView, content string) {
 }
 
 func updateValidatorHint(lbl *gtk.Label, addr string, w *wallet.Wallet) {
-	stake, err := w.Stake(addr)
-	if err != nil {
-		updateHintLabel(lbl, "")
-	} else {
-		hint := fmt.Sprintf("stake: %v", util.ChangeToString(stake))
+	stake, _ := w.Stake(addr)
+	hint := fmt.Sprintf("stake: %s", stake)
 
-		info := w.AddressInfo(addr)
-		if info != nil && info.Label != "" {
-			hint += ", label: " + info.Label
-		}
-		updateHintLabel(lbl, hint)
+	info := w.AddressInfo(addr)
+	if info != nil && info.Label != "" {
+		hint += ", label: " + info.Label
 	}
+	updateHintLabel(lbl, hint)
 }
 
 func updateAccountHint(lbl *gtk.Label, addr string, w *wallet.Wallet) {
-	balance, err := w.Balance(addr)
-	if err != nil {
-		updateHintLabel(lbl, "")
-	} else {
-		hint := fmt.Sprintf("balance: %v", util.ChangeToString(balance))
+	balance, _ := w.Balance(addr)
+	hint := fmt.Sprintf("balance: %s", balance)
 
-		info := w.AddressInfo(addr)
-		if info != nil && info.Label != "" {
-			hint += ", label: " + info.Label
-		}
-		updateHintLabel(lbl, hint)
+	info := w.AddressInfo(addr)
+	if info != nil && info.Label != "" {
+		hint += ", label: " + info.Label
 	}
+	updateHintLabel(lbl, hint)
 }
 
 func updateFeeHint(lbl *gtk.Label, amtStr string, w *wallet.Wallet, payloadType payload.Type) {
-	amount, err := util.StringToChange(amtStr)
+	amt, err := amount.FromString(amtStr)
 	if err != nil {
 		updateHintLabel(lbl, "")
 	} else {
-		fee, err := w.CalculateFee(amount, payloadType)
+		fee, _ := w.CalculateFee(amt, payloadType)
 		if err != nil {
-			errorCheck(err)
-
 			return
 		}
-		hint := fmt.Sprintf("payable: %v, fee: %v",
-			util.ChangeToString(fee+amount), util.ChangeToString(fee))
+		hint := fmt.Sprintf("payable: %s, fee: %s",
+			fee+amt, fee)
 		updateHintLabel(lbl, hint)
 	}
 }

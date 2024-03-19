@@ -1,18 +1,18 @@
 {
-    "genesis_time": "2023-10-15T00:00:00Z",
+    "genesis_time": "2024-03-16T00:00:00Z",
     "params": {
         "block_version": 1,
         "block_interval_in_second": 10,
         "committee_size": 51,
         "block_reward": 1000000000,
-        "transaction_to_live_interval": 2880,
-        "bond_interval": 120,
-        "unbond_interval": 60480,
+        "transaction_to_live_interval": 8640,
+        "bond_interval": 360,
+        "unbond_interval": 181440,
         "sortition_interval": 17,
         "fee_fraction": 0.0001,
         "minimum_fee": 1000,
         "maximum_fee": 1000000,
-        "minimum_stake": 0,
+        "minimum_stake": 1000000000,
         "maximum_stake": 1000000000000
     },
     "accounts": [
@@ -21,22 +21,34 @@
             "balance": 21000000000000000
         },
         {
-            "address": "tpc1zwrzfhge53z0ydey2hz6zca7tjfznmr58xmhh67",
-            "balance": 21000000000000000
+            "address": "tpc1zeszhgvffmf2fx7arpp935n40ek09kx200evaga",
+            "balance": 8400000000000000
+        },
+        {
+            "address": "tpc1z76trjq323tp8cs2staa4vnhaegpxaqc8zm7uzk",
+            "balance": 6300000000000000
+        },
+        {
+            "address": "tpc1zty5pa3x0h879r5zdze6tat4exu97l4y2hyplkm",
+            "balance": 4200000000000000
+        },
+        {
+            "address": "tpc1zq6r4qjkgdn7qg7fdnusa9wsvepc94xeqd6rf6d",
+            "balance": 2100000000000000
         }
     ],
     "validators": [
         {
-            "public_key": "tpublic1pksusffz7832s6hwyanjh5ujldq25gexmycsq59m9afwn78w0unfu2p7qzzljvzy8dkc2tp3039k3yqvvwd72g23ujxe2uuxhjvus08st47mxfp34d4pdlazwk2ntutzu8l9xu466cu0hzvgas3ddy9j00c2ewaky"
+            "public_key": "tpublic1ps5e3k3x9v3q0wdgw48sswx5za45w36fkeay8hkcwhgpl3q3w8zqs4uu7ewzhn537d5pnkmum3lf0yzqk9f2sld0qcl3700y372jxcjmt3kjzmfehru29z6ak7ehfmzh0965kgzdanptm7jnf89zvtkglzymnlq6q"
         },
         {
-            "public_key": "tpublic1p4g3h7pgcs74d8afncr6vus3zddv0ze7gar89l9326gx5y42fd229lercktqeq2lzy3ruspvpls0rkzkclyryljzar2q46r93nuf0pl7sumwu39vv5nxtsfhm8jj4ef0xf7pftv3q4e4y94gcdaqf9cxh8s8zhyxy"
+            "public_key": "tpublic1p49mvzl9ray2rfhwg77ne7m457qlc5knpv897skqnkgfa3luluzq784hf7px30r68knhnhp5td5gayz8ss72dyfxgq8kk2qqm0y86tqsmzss8dvfn433z9j3g0saqhahzcw37f8wy48edrqh6qkf6h9yr4gg8093c"
         },
         {
-            "public_key": "tpublic1pjd8zewq8m7xxqxt22u9k287c6dlx5pf7kdwf2f5c6vnaj8lu9cr7ttt4rzmgnqc0j3xqrvz5mmfew9xjrfqxfa68ha0uq7znmqvs9ykmmzf3nl38yfxua0updrdnudqtv0zx67k8rlndyl39pqespg95zuz9uukc"
+            "public_key": "tpublic1p3yyfsjdudntxlr6k5hdt249wxe6ajfnnkg6knklzt8lmj66s8z4j2duqk7qay8n8d47u0n6w97c8qrwwkljewqqw3t3ufy662llqflcq9nn6wsg35twdc3l5vn72j4ez50s982fxxh6per6hftn3e2v7fgm4gx35"
         },
         {
-            "public_key": "tpublic1p5x2hzaskgy9rulqmgy2wdkfkkaj7p5hsgqjqtwaf67x9xkszdrrf06f3038x0xwyjpecjsffkdkw5xx9k7v89vga23afg45sclsm4l7kufung5wzc6y8lvh0em7t9v3y7mxncg3y8u4fh3zlsm0ql45lgs4navjn"
+            "public_key": "tpublic1pjy7z27zm6795xhj8rln65cve88dtqjkg7gca6scxzwwfxpncnmkhg35n2rw3fa9e04cqcc8c9fyqvpm7y39wj0x2e5qrl0he60ms6v79vga3le2uvgn566p7x9exjnyhh3klycqddstj7339afnm73k09v8k52uy"
         }
     ]
 }

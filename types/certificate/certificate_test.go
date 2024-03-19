@@ -196,10 +196,10 @@ func TestCertificateValidation(t *testing.T) {
 	valKey2 := ts.RandValKey()
 	valKey3 := ts.RandValKey()
 	valKey4 := ts.RandValKey()
-	val1 := validator.NewValidator(valKey1.PublicKey(), ts.RandInt32(10000))
-	val2 := validator.NewValidator(valKey2.PublicKey(), ts.RandInt32(10000))
-	val3 := validator.NewValidator(valKey3.PublicKey(), ts.RandInt32(10000))
-	val4 := validator.NewValidator(valKey4.PublicKey(), ts.RandInt32(10000))
+	val1 := validator.NewValidator(valKey1.PublicKey(), 1001)
+	val2 := validator.NewValidator(valKey2.PublicKey(), 1002)
+	val3 := validator.NewValidator(valKey3.PublicKey(), 1003)
+	val4 := validator.NewValidator(valKey4.PublicKey(), 1004)
 
 	validators := []*validator.Validator{val1, val2, val3, val4}
 	committers := []int32{

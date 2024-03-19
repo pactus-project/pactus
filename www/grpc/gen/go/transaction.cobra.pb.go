@@ -25,7 +25,7 @@ func TransactionClientCommand(options ...client.Option) *cobra.Command {
 		_TransactionBroadcastTransactionCommand(cfg),
 		_TransactionGetRawTransferTransactionCommand(cfg),
 		_TransactionGetRawBondTransactionCommand(cfg),
-		_TransactionGetRawUnBondTransactionCommand(cfg),
+		_TransactionGetRawUnbondTransactionCommand(cfg),
 		_TransactionGetRawWithdrawTransactionCommand(cfg),
 	)
 	return cmd
@@ -111,8 +111,9 @@ func _TransactionCalculateFeeCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "Transaction amount.")
+	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "Transaction amount in NanoPAC.")
 	flag.EnumVar(cmd.PersistentFlags(), &req.PayloadType, cfg.FlagNamer("PayloadType"), "Type of transaction payload.")
+	cmd.PersistentFlags().BoolVar(&req.FixedAmount, cfg.FlagNamer("FixedAmount"), false, "Indicates that amount should be fixed and includes the fee.")
 
 	return cmd
 }
@@ -196,11 +197,11 @@ func _TransactionGetRawTransferTransactionCommand(cfg *client.Config) *cobra.Com
 		},
 	}
 
-	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "Lock time for the transaction.")
-	cmd.PersistentFlags().StringVar(&req.Sender, cfg.FlagNamer("Sender"), "", "Sender's address.")
-	cmd.PersistentFlags().StringVar(&req.Receiver, cfg.FlagNamer("Receiver"), "", "Receiver's address.")
-	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "Transaction amount.")
-	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "Transaction fee.")
+	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "Lock time for the transaction.\n If not explicitly set, it sets to the last block height.")
+	cmd.PersistentFlags().StringVar(&req.Sender, cfg.FlagNamer("Sender"), "", "Sender's account address.")
+	cmd.PersistentFlags().StringVar(&req.Receiver, cfg.FlagNamer("Receiver"), "", "Receiver's account address.")
+	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "Transfer amount in NanoPAC.\n It should be greater than 0.")
+	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "Transaction fee in NanoPAC.\n If not explicitly set, it is calculated based on the amount.")
 	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "Transaction memo.")
 
 	return cmd
@@ -243,43 +244,43 @@ func _TransactionGetRawBondTransactionCommand(cfg *client.Config) *cobra.Command
 		},
 	}
 
-	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "Lock time for the transaction.")
-	cmd.PersistentFlags().StringVar(&req.Sender, cfg.FlagNamer("Sender"), "", "Sender's address.")
-	cmd.PersistentFlags().StringVar(&req.Receiver, cfg.FlagNamer("Receiver"), "", "Receiver's address.")
-	cmd.PersistentFlags().Int64Var(&req.Stake, cfg.FlagNamer("Stake"), 0, "Stake amount.")
+	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "Lock time for the transaction.\n If not explicitly set, it sets to the last block height.")
+	cmd.PersistentFlags().StringVar(&req.Sender, cfg.FlagNamer("Sender"), "", "Sender's account address.")
+	cmd.PersistentFlags().StringVar(&req.Receiver, cfg.FlagNamer("Receiver"), "", "Receiver's validator address.")
+	cmd.PersistentFlags().Int64Var(&req.Stake, cfg.FlagNamer("Stake"), 0, "Stake amount in NanoPAC.\n It should be greater than 0.")
 	cmd.PersistentFlags().StringVar(&req.PublicKey, cfg.FlagNamer("PublicKey"), "", "Public key of the validator.")
-	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "Transaction fee.")
+	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "Transaction fee in NanoPAC.\n If not explicitly set, it is calculated based on the stake.")
 	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "Transaction memo.")
 
 	return cmd
 }
 
-func _TransactionGetRawUnBondTransactionCommand(cfg *client.Config) *cobra.Command {
-	req := &GetRawUnBondTransactionRequest{}
+func _TransactionGetRawUnbondTransactionCommand(cfg *client.Config) *cobra.Command {
+	req := &GetRawUnbondTransactionRequest{}
 
 	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("GetRawUnBondTransaction"),
-		Short: "GetRawUnBondTransaction RPC client",
-		Long:  "GetRawUnBondTransaction retrieves raw details of an unbond transaction.",
+		Use:   cfg.CommandNamer("GetRawUnbondTransaction"),
+		Short: "GetRawUnbondTransaction RPC client",
+		Long:  "GetRawUnbondTransaction retrieves raw details of an unbond transaction.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "GetRawUnBondTransaction"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "GetRawUnbondTransaction"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewTransactionClient(cc)
-				v := &GetRawUnBondTransactionRequest{}
+				v := &GetRawUnbondTransactionRequest{}
 
 				if err := in(v); err != nil {
 					return err
 				}
 				proto.Merge(v, req)
 
-				res, err := cli.GetRawUnBondTransaction(cmd.Context(), v)
+				res, err := cli.GetRawUnbondTransaction(cmd.Context(), v)
 
 				if err != nil {
 					return err
@@ -291,7 +292,7 @@ func _TransactionGetRawUnBondTransactionCommand(cfg *client.Config) *cobra.Comma
 		},
 	}
 
-	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "Lock time for the transaction.")
+	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "Lock time for the transaction.\n If not explicitly set, it sets to the last block height.")
 	cmd.PersistentFlags().StringVar(&req.ValidatorAddress, cfg.FlagNamer("ValidatorAddress"), "", "Address of the validator to unbond from.")
 	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "Transaction memo.")
 
@@ -335,11 +336,11 @@ func _TransactionGetRawWithdrawTransactionCommand(cfg *client.Config) *cobra.Com
 		},
 	}
 
-	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "Lock time for the transaction.")
+	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "Lock time for the transaction.\n If not explicitly set, it sets to the last block height.")
 	cmd.PersistentFlags().StringVar(&req.ValidatorAddress, cfg.FlagNamer("ValidatorAddress"), "", "Address of the validator to withdraw from.")
 	cmd.PersistentFlags().StringVar(&req.AccountAddress, cfg.FlagNamer("AccountAddress"), "", "Address of the account to withdraw to.")
-	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "Transaction fee.")
-	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "Withdrawal amount.")
+	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "Withdrawal amount in NanoPAC.\n It should be greater than 0.")
+	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "Transaction fee in NanoPAC.\n If not explicitly set, it is calculated based on the amount.")
 	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "Transaction memo.")
 
 	return cmd

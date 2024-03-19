@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/errors"
@@ -13,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func setupCommittee(ts *testsuite.TestSuite, stakes ...int64) (
+func setupCommittee(ts *testsuite.TestSuite, stakes ...amount.Amount) (
 	map[crypto.Address]*validator.Validator, []*bls.ValidatorKey, int64,
 ) {
 	valKeys := []*bls.ValidatorKey{}

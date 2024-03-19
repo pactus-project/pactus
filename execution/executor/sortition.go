@@ -75,7 +75,7 @@ func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 	joiningNum := 0
 	joiningPower := int64(0)
 	committee := sb.Committee()
-	sb.IterateValidators(func(val *validator.Validator, updated bool, joined bool) {
+	sb.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
 		if joined {
 			if !committee.Contains(val.Address()) {
 				joiningPower += val.Power()

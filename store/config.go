@@ -37,7 +37,7 @@ func (conf *Config) StorePath() string {
 // BasicCheck performs basic checks on the configuration.
 func (conf *Config) BasicCheck() error {
 	if !util.IsValidDirPath(conf.Path) {
-		return InvalidConfigError{
+		return ConfigError{
 			Reason: "path is not valid",
 		}
 	}
@@ -46,7 +46,7 @@ func (conf *Config) BasicCheck() error {
 		conf.SortitionCacheSize == 0 ||
 		conf.AccountCacheSize == 0 ||
 		conf.PublicKeyCacheSize == 0 {
-		return InvalidConfigError{
+		return ConfigError{
 			Reason: "cache size set to zero",
 		}
 	}

@@ -7,8 +7,8 @@ import (
 	"fmt"
 
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -55,14 +55,14 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 		receiver, _ := receiverEntry.GetText()
 		amountStr, _ := amountEntry.GetText()
 
-		amount, err := util.StringToChange(amountStr)
+		amt, err := amount.FromString(amountStr)
 		if err != nil {
 			errorCheck(err)
 
 			return
 		}
 
-		trx, err := wlt.MakeTransferTx(sender, receiver, amount)
+		trx, err := wlt.MakeTransferTx(sender, receiver, amt)
 		if err != nil {
 			errorCheck(err)
 
@@ -71,13 +71,13 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 		msg := fmt.Sprintf(`
 You are going to sign and broadcast this transaction:
 
-From:   %v
-To:     %v
-Amount: %v
-Fee:    %v
+From:   %s
+To:     %s
+Amount: %s
+Fee:    %s
 
-THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`, sender, receiver,
-			util.ChangeToString(amount), util.ChangeToString(trx.Fee()))
+THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`,
+			sender, receiver, amt, trx.Fee())
 
 		signAndBroadcastTransaction(dlg, msg, wlt, trx)
 

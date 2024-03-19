@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -100,12 +101,15 @@ func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, e
 	return res, nil
 }
 
-func (c *grpcClient) getFee(amount int64, payloadType payload.Type) (int64, error) {
+func (c *grpcClient) getFee(amt amount.Amount, payloadType payload.Type) (amount.Amount, error) {
 	res, err := c.transactionClient.CalculateFee(c.ctx,
-		&pactus.CalculateFeeRequest{Amount: amount, PayloadType: pactus.PayloadType(payloadType)})
+		&pactus.CalculateFeeRequest{
+			Amount:      amt.ToNanoPAC(),
+			PayloadType: pactus.PayloadType(payloadType),
+		})
 	if err != nil {
 		return 0, err
 	}
 
-	return res.Fee, nil
+	return amount.Amount(res.Fee), nil
 }

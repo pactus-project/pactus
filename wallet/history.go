@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
@@ -15,7 +16,7 @@ type HistoryInfo struct {
 	Time        *time.Time
 	PayloadType string
 	Desc        string
-	Amount      int64
+	Amount      amount.Amount
 }
 
 type transaction struct {
@@ -26,15 +27,15 @@ type transaction struct {
 }
 
 type activity struct {
-	TxID   string `json:"id"`
-	Desc   string `json:"desc"`
-	Amount int64  `json:"amount"`
+	TxID   string        `json:"id"`
+	Desc   string        `json:"desc"`
+	Amount amount.Amount `json:"amount"`
 }
 
 type pending struct {
-	TxID   string `json:"id"`
-	Amount int64  `json:"amount"`
-	Data   string `json:"data"`
+	TxID   string        `json:"id"`
+	Amount amount.Amount `json:"amount"`
+	Data   string        `json:"data"`
 }
 
 type history struct {
@@ -49,7 +50,7 @@ func (h *history) hasTransaction(id string) bool {
 	return ok
 }
 
-func (h *history) addActivity(addr string, amount int64, trx *pactus.GetTransactionResponse) {
+func (h *history) addActivity(addr string, amt amount.Amount, trx *pactus.GetTransactionResponse) {
 	if h.Activities == nil {
 		h.Activities = map[string][]activity{}
 		h.Transactions = map[string]transaction{}
@@ -59,7 +60,7 @@ func (h *history) addActivity(addr string, amount int64, trx *pactus.GetTransact
 	}
 	act := activity{
 		TxID:   hex.EncodeToString(trx.Transaction.Id),
-		Amount: amount,
+		Amount: amt,
 	}
 	h.Activities[addr] = append(h.Activities[addr], act)
 	sort.Slice(h.Activities[addr], func(i, j int) bool {
@@ -75,7 +76,7 @@ func (h *history) addActivity(addr string, amount int64, trx *pactus.GetTransact
 	}
 }
 
-func (h *history) addPending(addr string, amount int64, txID hash.Hash, data []byte) {
+func (h *history) addPending(addr string, amt amount.Amount, txID hash.Hash, data []byte) {
 	if h.Pendings == nil {
 		h.Pendings = map[string][]pending{}
 	}
@@ -84,7 +85,7 @@ func (h *history) addPending(addr string, amount int64, txID hash.Hash, data []b
 	}
 	pnd := pending{
 		TxID:   txID.String(),
-		Amount: amount,
+		Amount: amt,
 		Data:   hex.EncodeToString(data),
 	}
 	h.Pendings[addr] = append(h.Pendings[addr], pnd)

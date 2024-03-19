@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
@@ -40,7 +41,7 @@ func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 		TestCommittedTrxs:    make(map[tx.ID]*tx.Tx),
 	}
 
-	treasuryAmt := int64(21000000 * 1e9)
+	treasuryAmt := amount.Amount(21_000_000 * 1e9)
 
 	for i, val := range cmt.Validators() {
 		acc := account.NewAccount(int32(i + 1))
@@ -150,6 +151,6 @@ func (m *MockSandbox) CommitTransaction(trx *tx.Tx) {
 	m.TestCommittedTrxs[trx.ID()] = trx
 }
 
-func (m *MockSandbox) AccumulatedFee() int64 {
-	return 0
+func (m *MockSandbox) AccumulatedFee() amount.Amount {
+	return m.ts.RandAmount()
 }

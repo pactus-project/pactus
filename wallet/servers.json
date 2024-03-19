@@ -24,7 +24,23 @@
     "testnet": [
         {
             "ip": "localhost:50052",
-            "name": "testnet-1"
+            "name": "localhost"
+        },
+        {
+            "ip": "testnet1.pactus.org:50052",
+            "name": "testnet1"
+        },
+        {
+            "ip": "testnet2.pactus.org:50052",
+            "name": "testnet2"
+        },
+        {
+            "ip": "testnet3.pactus.org:50052",
+            "name": "testnet3"
+        },
+        {
+            "ip": "testnet4.pactus.org:50052",
+            "name": "testnet4"
         }
     ]
 }

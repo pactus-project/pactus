@@ -44,7 +44,7 @@ func (s Services) String() string {
 
 	if s != 0 {
 		services += fmt.Sprintf("%d", s)
-	} else if len(services) > 0 {
+	} else if services != "" {
 		services = services[:len(services)-3]
 	}
 

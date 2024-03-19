@@ -22,7 +22,6 @@ const (
 	ErrInvalidProposal
 	ErrInvalidVote
 	ErrInvalidMessage
-	ErrInvalidConfig
 	ErrDuplicateVote
 
 	ErrCount
@@ -46,7 +45,6 @@ var messages = map[int]string{
 	ErrInvalidProposal:   "invalid proposal",
 	ErrInvalidVote:       "invalid vote",
 	ErrInvalidMessage:    "invalid message",
-	ErrInvalidConfig:     "invalid config",
 	ErrDuplicateVote:     "duplicate vote",
 }
 

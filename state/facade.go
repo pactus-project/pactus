@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/param"
@@ -50,7 +51,7 @@ type Facade interface {
 	ValidatorAddresses() []crypto.Address
 	Params() *param.Params
 	Close() error
-	CalculateFee(amount int64, payloadType payload.Type) (int64, error)
+	CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount
 	PublicKey(addr crypto.Address) (crypto.PublicKey, error)
 	AvailabilityScore(valNum int32) float64
 }

@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -114,7 +113,7 @@ func TestAccount(t *testing.T) {
 		td.httpServer.GetAccountHandler(w, r)
 
 		assert.Equal(t, w.Code, 200)
-		assert.Contains(t, w.Body.String(), util.ChangeToString(acc.Balance()))
+		assert.Contains(t, w.Body.String(), acc.Balance().String())
 		fmt.Println(w.Body)
 	})
 
