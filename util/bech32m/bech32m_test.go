@@ -4,7 +4,6 @@
 // Original license: https://github.com/btcsuite/btcd/blob/master/LICENSE
 //
 
-
 package bech32m
 
 import (
