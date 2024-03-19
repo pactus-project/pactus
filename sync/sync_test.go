@@ -185,23 +185,27 @@ func (td *testData) receivingNewMessage(sync *synchronizer, msg message.Message,
 	return sync.processIncomingBundle(bdl, from)
 }
 
-func (td *testData) addPeer(t *testing.T, pub crypto.PublicKey, pid peer.ID, services service.Services) {
+func (td *testData) addPeer(t *testing.T, status peerset.StatusCode, services service.Services) peer.ID {
 	t.Helper()
 
+	pid := td.RandPeerID()
+	pub, _ := td.RandBLSKeyPair()
+
 	td.sync.peerSet.UpdateInfo(pid, t.Name(),
-		version.Agent(), []*bls.PublicKey{pub.(*bls.PublicKey)}, services)
-	td.sync.peerSet.UpdateStatus(pid, peerset.StatusCodeKnown)
+		version.Agent(), []*bls.PublicKey{pub}, services)
+	td.sync.peerSet.UpdateStatus(pid, status)
+
+	return pid
 }
 
-func (td *testData) addPeerToCommittee(t *testing.T, pid peer.ID, pub crypto.PublicKey) {
+func (td *testData) addValidatorToCommittee(t *testing.T, pub crypto.PublicKey) {
 	t.Helper()
 
 	if pub == nil {
 		pub, _ = td.RandBLSKeyPair()
 	}
-	td.addPeer(t, pub, pid, service.New(service.Network))
 	val := validator.NewValidator(pub.(*bls.PublicKey), td.RandInt32(1000))
-	// Note: This may not be completely accurate, but it poses no harm for testing purposes.
+	// Note: This may not be completely accurate, but it has no harm for testing purposes.
 	val.UpdateLastSortitionHeight(td.state.TestCommittee.Proposer(0).LastSortitionHeight() + 1)
 	td.state.TestStore.UpdateValidator(val)
 	td.state.TestCommittee.Update(0, []*validator.Validator{val})
@@ -295,7 +299,7 @@ func TestProtocolsEvent(t *testing.T) {
 func TestTestNetFlags(t *testing.T) {
 	td := setup(t, nil)
 
-	td.addPeerToCommittee(t, td.sync.SelfID(), td.sync.valKeys[0].PublicKey())
+	td.addValidatorToCommittee(t, td.sync.valKeys[0].PublicKey())
 	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(td.RandHeight(), td.RandValAddress()))
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
@@ -321,10 +325,7 @@ func TestDownload(t *testing.T) {
 	t.Run("try to download blocks, but the peer is not a network node", func(t *testing.T) {
 		td := setup(t, conf)
 
-		pub, _ := td.RandBLSKeyPair()
-		pid := td.RandPeerID()
-		td.addPeer(t, pub, pid, service.New(service.None))
-
+		pid := td.addPeer(t, peerset.StatusCodeKnown, service.New(service.None))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
 		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
@@ -335,10 +336,7 @@ func TestDownload(t *testing.T) {
 	t.Run("try to download blocks and the peer is a network node", func(t *testing.T) {
 		td := setup(t, conf)
 
-		pub, _ := td.RandBLSKeyPair()
-		pid := td.RandPeerID()
-		td.addPeer(t, pub, pid, service.New(service.Network))
-
+		pid := td.addPeer(t, peerset.StatusCodeKnown, service.New(service.Network))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
 		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
@@ -349,10 +347,7 @@ func TestDownload(t *testing.T) {
 	t.Run("download request is rejected", func(t *testing.T) {
 		td := setup(t, conf)
 
-		pub, _ := td.RandBLSKeyPair()
-		pid := td.RandPeerID()
-		td.addPeer(t, pub, pid, service.New(service.Network))
-
+		pid := td.addPeer(t, peerset.StatusCodeKnown, service.New(service.None))
 		from := td.sync.stateHeight() + 1
 		count := uint32(123)
 		ssn := td.sync.peerSet.OpenSession(pid, from, count)
