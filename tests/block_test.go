@@ -20,7 +20,7 @@ func lastHeight() uint32 {
 
 func waitForNewBlocks(num uint32) {
 	height := lastHeight() + num
-	for i := uint32(0); i < num; i++ {
+	for i := uint32(0); i < num*2; i++ {
 		if lastHeight() > height {
 			break
 		}
