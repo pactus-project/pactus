@@ -182,20 +182,20 @@ func TestMakeRewardAddresses(t *testing.T) {
 	valAddrsInfo := walletInstance.AllValidatorAddresses()
 	confRewardAddresses := []string{}
 	_, err = MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
-	assert.ErrorContains(t, err, "unable to find reward address")
+	assert.ErrorContains(t, err, "unable to find reward address for")
 
 	// Test 2 - Not enough reward addresses in wallet
 	rewardAddr1, _ := walletInstance.NewBLSAccountAddress("")
 	rewardAddr2, _ := walletInstance.NewBLSAccountAddress("")
 
 	_, err = MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
-	assert.Error(t, err, "unable to find reward address")
+	assert.ErrorContains(t, err, "unable to find reward address for")
 
 	// Test 3 - Get reward addresses from wallet
 	rewardAddr3, _ := walletInstance.NewBLSAccountAddress("")
 
 	rewardAddrs, err := MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
-	assert.NoError(t, err, "unable to find reward address")
+	assert.NoError(t, err)
 	assert.Equal(t, rewardAddrs[0].String(), rewardAddr1)
 	assert.Equal(t, rewardAddrs[1].String(), rewardAddr2)
 	assert.Equal(t, rewardAddrs[2].String(), rewardAddr3)
@@ -206,14 +206,14 @@ func TestMakeRewardAddresses(t *testing.T) {
 	confRewardAddresses = []string{confRewardAddr1, confRewardAddr2}
 
 	_, err = MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
-	assert.Error(t, err, "unable to find reward address")
+	assert.ErrorContains(t, err, "reward addresses should be 3")
 
 	// Test 5 - Get reward addresses from config
 	confRewardAddr3 := ts.RandAccAddress().String()
 	confRewardAddresses = []string{confRewardAddr1, confRewardAddr2, confRewardAddr3}
 
 	rewardAddrs, err = MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
-	assert.NoError(t, err, "unable to find reward address")
+	assert.NoError(t, err)
 	assert.Equal(t, rewardAddrs[0].String(), confRewardAddr1)
 	assert.Equal(t, rewardAddrs[1].String(), confRewardAddr2)
 	assert.Equal(t, rewardAddrs[2].String(), confRewardAddr3)
@@ -223,7 +223,7 @@ func TestMakeRewardAddresses(t *testing.T) {
 	confRewardAddresses = []string{confRewardAddr}
 
 	rewardAddrs, err = MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
-	assert.NoError(t, err, "unable to find reward address")
+	assert.NoError(t, err)
 	assert.Equal(t, rewardAddrs[0].String(), confRewardAddr)
 	assert.Equal(t, rewardAddrs[1].String(), confRewardAddr)
 	assert.Equal(t, rewardAddrs[2].String(), confRewardAddr)
