@@ -237,7 +237,6 @@ func TestMakeRewardAddresses(t *testing.T) {
 }
 
 func TestCreateNode(t *testing.T) {
-	homeDir, _ := os.UserHomeDir()
 	tests := []struct {
 		name           string
 		numValidators  int
@@ -300,11 +299,11 @@ func TestCreateNode(t *testing.T) {
 			withErr:        true,
 		},
 		{
-			name:           "Existing working directory",
-			numValidators:  1,
+			name:           "Invalid mnemonic",
+			numValidators:  4,
 			chain:          genesis.Mainnet,
-			workingDir:     homeDir,
-			mnemonic:       "legal winner thank year wave sausage worth useful legal winner thank yellow",
+			workingDir:     util.TempDirPath(),
+			mnemonic:       "",
 			validatorAddrs: nil,
 			rewardAddrs:    nil,
 			withErr:        true,
