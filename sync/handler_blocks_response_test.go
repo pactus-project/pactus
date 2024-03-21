@@ -67,10 +67,7 @@ func TestOneBlockShorter(t *testing.T) {
 	lastHeight := td.state.LastBlockHeight()
 	blk1, cert1 := td.GenerateTestBlock(lastHeight + 1)
 	d1, _ := blk1.Bytes()
-	pid := td.RandPeerID()
-
-	pub, _ := td.RandBLSKeyPair()
-	td.addPeer(t, pub, pid, service.New(service.None))
+	pid := td.addPeer(t, peerset.StatusCodeKnown, service.New(service.None))
 
 	sid := td.RandInt(1000)
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, t.Name(), sid,
@@ -130,9 +127,7 @@ func TestStrippedPublicKey(t *testing.T) {
 	}
 
 	// Add a peer
-	pid := td.RandPeerID()
-	peerPubKey, _ := td.RandBLSKeyPair()
-	td.addPeer(t, peerPubKey, pid, service.New(service.None))
+	pid := td.addPeer(t, peerset.StatusCodeKnown, service.New(service.None))
 
 	for _, test := range tests {
 		blkData, _ := test.blk.Bytes()
