@@ -235,3 +235,92 @@ func TestMakeRewardAddresses(t *testing.T) {
 	_, err = MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
 	assert.ErrorContains(t, err, "reward address is not an account address")
 }
+
+func TestCreateNode(t *testing.T) {
+	homeDir, _ := os.UserHomeDir()
+	tests := []struct {
+		name           string
+		numValidators  int
+		chain          genesis.ChainType
+		workingDir     string
+		mnemonic       string
+		withErr        bool
+		validatorAddrs []string
+		rewardAddrs    []string
+	}{
+		{
+			name:           "Create node for Mainnet",
+			numValidators:  1,
+			chain:          genesis.Mainnet,
+			workingDir:     util.TempDirPath(),
+			mnemonic:       "legal winner thank year wave sausage worth useful legal winner thank yellow",
+			validatorAddrs: []string{"pc1pqpu5tkuctj6ecxjs85f9apm802hhc65amwhuyw"},
+			rewardAddrs:    []string{"pc1zmpnme0xrgzhml77e3k70ey9hwwwsfed6l04pqc"},
+			withErr:        false,
+		},
+		{
+			name:           "Create node for Testnet",
+			numValidators:  1,
+			chain:          genesis.Testnet,
+			workingDir:     util.TempDirPath(),
+			mnemonic:       "legal winner thank year wave sausage worth useful legal winner thank yellow",
+			validatorAddrs: []string{"tpc1p54ex6jvqkz6qyld5wgm77qm7walgy664hxz2pc"},
+			rewardAddrs:    []string{"tpc1zlkjrgfkrh7f9enpt730tp5vgx7tgtqzplhfksa"},
+			withErr:        false,
+		},
+
+		{
+			name:          "Create node for Localnet",
+			numValidators: 4,
+			chain:         genesis.Localnet,
+			workingDir:    util.TempDirPath(),
+			mnemonic:      "legal winner thank year wave sausage worth useful legal winner thank yellow",
+			validatorAddrs: []string{
+				"tpc1p54ex6jvqkz6qyld5wgm77qm7walgy664hxz2pc",
+				"tpc1pdf5e0q4d6eaww3uq5pmw5aayqpaqplra0pj8z2",
+				"tpc1pe5px2dddn6g4zgnu3wpwgrqpdjrufvda57a4wm",
+				"tpc1p8yyhysp380j9q9gxa6vlhstgkd94238kunttpr",
+			},
+			rewardAddrs: []string{
+				"tpc1zlkjrgfkrh7f9enpt730tp5vgx7tgtqzplhfksa",
+				"tpc1ztzwc9x98j88wctmzm5t09z592lqw0sqc3rn6lu",
+				"tpc1zslef8hjkwqxdcekcqxra6djgjr5gryrj8l3fyf",
+				"tpc1zru3xxmgz5dqqkv0mesqq3t3luepzg3e6jeqkeu",
+			},
+			withErr: false,
+		},
+		{
+			name:           "Localnet with one validator",
+			numValidators:  1,
+			chain:          genesis.Localnet,
+			workingDir:     util.TempDirPath(),
+			mnemonic:       "legal winner thank year wave sausage worth useful legal winner thank yellow",
+			validatorAddrs: nil,
+			rewardAddrs:    nil,
+			withErr:        true,
+		},
+		{
+			name:           "Existing working directory",
+			numValidators:  1,
+			chain:          genesis.Mainnet,
+			workingDir:     homeDir,
+			mnemonic:       "legal winner thank year wave sausage worth useful legal winner thank yellow",
+			validatorAddrs: nil,
+			rewardAddrs:    nil,
+			withErr:        true,
+		},
+	}
+
+	for _, test := range tests {
+		validatorAddrs, rewardAddrs, err := CreateNode(
+			test.numValidators, test.chain, test.workingDir, test.mnemonic, "")
+
+		if test.withErr {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+			assert.Equal(t, test.validatorAddrs, validatorAddrs)
+			assert.Equal(t, test.rewardAddrs, rewardAddrs)
+		}
+	}
+}
