@@ -168,6 +168,7 @@ func TestMain(m *testing.M) {
 	tTransaction = pactus.NewTransactionClient(conn)
 	tNetwork = pactus.NewNetworkClient(conn)
 
+	fmt.Println("waitForNewBlocks(8)")
 	// Wait for some blocks
 	waitForNewBlocks(8)
 

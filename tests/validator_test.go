@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -22,6 +23,7 @@ func getValidator(t *testing.T, addr crypto.Address) *pactus.ValidatorInfo {
 }
 
 func TestGetValidator(t *testing.T) {
+	fmt.Println("TestGetValidator")
 	val := getValidator(t, tValKeys[tNodeIdx2][0].Address())
 	require.NotNil(t, val)
 	assert.Equal(t, val.Number, int32(1))

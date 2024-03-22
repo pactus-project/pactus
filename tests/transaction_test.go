@@ -58,6 +58,7 @@ func broadcastBondTransaction(t *testing.T, sender *bls.ValidatorKey, pub *bls.P
 }
 
 func TestTransactions(t *testing.T) {
+	fmt.Println("TestTransactions")
 	ts := testsuite.NewTestSuite(t)
 
 	pubAlice, prvAlice := ts.RandBLSKeyPair()

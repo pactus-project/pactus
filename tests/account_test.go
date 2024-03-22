@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -22,6 +23,7 @@ func getAccount(t *testing.T, addr crypto.Address) *pactus.AccountInfo {
 }
 
 func TestGetAccount(t *testing.T) {
+	fmt.Println("TestGetAccount")
 	acc := getAccount(t, crypto.TreasuryAddress)
 	require.NotNil(t, acc)
 	assert.Equal(t, acc.Number, int32(0))
