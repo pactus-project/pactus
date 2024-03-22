@@ -19,8 +19,8 @@ const (
 
 func init() {
 	client.RegisterFlagBinder(func(fs *pflag.FlagSet, namer naming.Namer) {
-		fs.StringVar(&Auth.Username, namer("auth-username"), Auth.Username, "username for authentication")
-		fs.StringVar(&Auth.Password, namer("auth-password"), Auth.Password, "password for authentication")
+		fs.StringVar(&Auth.Username, namer("username"), Auth.Username, "username for gRPC basic authentication")
+		fs.StringVar(&Auth.Password, namer("password"), Auth.Password, "password for gRPC basic authentication")
 	})
 
 	client.RegisterPreDialer(func(_ context.Context, opts *[]grpc.DialOption) error {

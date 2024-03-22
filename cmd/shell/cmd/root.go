@@ -9,8 +9,8 @@ import (
 // rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
 	Use:   "shell",
-	Short: "Pactus control cli",
-	Long:  `Managing the Pactus node using CLI.`,
+	Short: "Pactus Shell",
+	Long:  `pactus-shell is a command line tool for interacting with the Pactus blockchain using gRPC`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
