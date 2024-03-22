@@ -2,11 +2,10 @@ package cmd
 
 import (
 	"context"
-	"encoding/base64"
-	"fmt"
 
 	"github.com/NathanBaulch/protoc-gen-cobra/client"
 	"github.com/NathanBaulch/protoc-gen-cobra/naming"
+	"github.com/pactus-project/pactus/util"
 	pb "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -26,9 +25,7 @@ func init() {
 
 	client.RegisterPreDialer(func(_ context.Context, opts *[]grpc.DialOption) error {
 		cred := Auth
-
-		authHeader := fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(cred.Username+":"+cred.Password)))
-		basicAuthCreds := basicAuthCredentials{Token: authHeader}
+		basicAuthCreds := basicAuthCredentials{Token: util.BasicAuth(cred.Username, cred.Password)}
 
 		*opts = append(*opts, grpc.WithPerRPCCredentials(basicAuthCreds))
 
