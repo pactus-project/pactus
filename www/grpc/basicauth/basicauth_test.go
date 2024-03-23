@@ -21,7 +21,7 @@ func TestMakeCredentials(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("Username: %s, Password: %s", tc.username, tc.password), func(t *testing.T) {
 			// Call BasicAuth function
-			result := MakeCredentials(tc.username, tc.password)
+			result := EncodeBasicAuth(tc.username, tc.password)
 
 			// Check if the result matches the expected output
 			if result != tc.expected {

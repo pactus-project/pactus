@@ -185,11 +185,9 @@ func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
 }
 
 func (s *Server) basicAuth(ctx context.Context, username, password string) context.Context {
-	authorization := basicauth.MakeCredentials(username, password)
-
-	md := metadata.New(map[string]string{
-		"authorization": authorization,
-	})
+	ba := basicauth.New(username, password)
+	tokens, _ := ba.GetRequestMetadata(ctx)
+	md := metadata.New(tokens)
 
 	return metadata.NewOutgoingContext(ctx, md)
 }
