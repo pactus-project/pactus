@@ -277,7 +277,6 @@ func TrapSignal(cleanupFunc func()) {
 	}()
 }
 
-// TODO: write test for me.
 func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	mnemonic string, walletPassword string,
 ) ([]string, []string, error) {
@@ -330,6 +329,9 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		}
 
 	case genesis.Localnet:
+		if numValidators < 4 {
+			return nil, nil, fmt.Errorf("LocalNeed needs at least 4 validators")
+		}
 		genDoc := makeLocalGenesis(*walletInstance)
 		if err := genDoc.SaveToFile(genPath); err != nil {
 			return nil, nil, err
