@@ -3,7 +3,6 @@ package http
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"fmt"
 	"io"
 	"net"
@@ -15,6 +14,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/www/grpc/basicauth"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
@@ -184,12 +184,11 @@ func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
 	return n
 }
 
-func (s *Server) basicAuth(ctx context.Context, user, password string) context.Context {
-	auth := user + ":" + password
-	enc := base64.StdEncoding.EncodeToString([]byte(auth))
+func (s *Server) basicAuth(ctx context.Context, username, password string) context.Context {
+	authorization := basicauth.MakeCredentials(username, password)
 
 	md := metadata.New(map[string]string{
-		"authorization": "Basic " + enc,
+		"authorization": authorization,
 	})
 
 	return metadata.NewOutgoingContext(ctx, md)

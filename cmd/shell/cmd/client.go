@@ -5,12 +5,14 @@ import (
 
 	"github.com/NathanBaulch/protoc-gen-cobra/client"
 	"github.com/NathanBaulch/protoc-gen-cobra/naming"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/www/grpc/basicauth"
 	pb "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"google.golang.org/grpc"
 )
+
+var Auth = &basicauth.BasicAuth{}
 
 const (
 	defaultServerAddr     = "localhost:50051"
@@ -25,7 +27,7 @@ func init() {
 
 	client.RegisterPreDialer(func(_ context.Context, opts *[]grpc.DialOption) error {
 		cred := Auth
-		basicAuthCreds := basicAuthCredentials{Token: util.BasicAuth(cred.Username, cred.Password)}
+		basicAuthCreds := basicauth.Credentials{Token: basicauth.MakeCredentials(cred.Username, cred.Password)}
 
 		*opts = append(*opts, grpc.WithPerRPCCredentials(basicAuthCreds))
 
