@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
@@ -26,7 +27,7 @@ type Sandbox interface {
 	IsJoinedCommittee(crypto.Address) bool
 	UpdatePowerDelta(delta int64)
 	PowerDelta() int64
-	AccumulatedFee() int64
+	AccumulatedFee() amount.Amount
 
 	VerifyProof(uint32, sortition.Proof, *validator.Validator) bool
 	Committee() committee.Reader

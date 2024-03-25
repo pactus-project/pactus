@@ -1,8 +1,11 @@
 package execution
 
 import (
+	"math"
+
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -105,20 +108,22 @@ func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
 func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if trx.IsFreeTx() {
 		if trx.Fee() != 0 {
-			return errors.Errorf(errors.ErrInvalidFee, "fee is wrong, expected: 0, got: %v", trx.Fee())
+			return errors.Errorf(errors.ErrInvalidFee, "expected: 0, got: %s", trx.Fee())
 		}
 	} else {
 		fee := CalculateFee(trx.Payload().Value(), sb.Params())
-		if trx.Fee() != fee {
-			return errors.Errorf(errors.ErrInvalidFee, "fee is wrong, expected: %v, got: %v", fee, trx.Fee())
+		// Check if the absolute difference between the calculated fee and the transaction fee
+		// is greater than 1 PAC, indicating an invalid fee.
+		if math.Abs(float64(fee-trx.Fee())) > 1 {
+			return errors.Errorf(errors.ErrInvalidFee, "expected: %s, got: %s", fee, trx.Fee())
 		}
 	}
 
 	return nil
 }
 
-func CalculateFee(amt int64, params *param.Params) int64 {
-	fee := int64(float64(amt) * params.FeeFraction)
+func CalculateFee(amt amount.Amount, params *param.Params) amount.Amount {
+	fee := amt.MulF64(params.FeeFraction)
 	fee = util.Max(fee, params.MinimumFee)
 	fee = util.Min(fee, params.MaximumFee)
 

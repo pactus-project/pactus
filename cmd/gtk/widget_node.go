@@ -11,7 +11,7 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/types/amount"
 )
 
 //go:embed assets/ui/widget_node.ui
@@ -137,8 +137,8 @@ func (wn *widgetNode) timeout10() bool {
 		glib.IdleAdd(func() bool {
 			wn.labelCommitteeSize.SetText(fmt.Sprintf("%v", committeeSize))
 			wn.labelValidatorNum.SetText(fmt.Sprintf("%v", validatorNum))
-			wn.labelCommitteeStake.SetText(util.ChangeToString(committeePower))
-			wn.labelTotalStake.SetText(util.ChangeToString(totalPower))
+			wn.labelCommitteeStake.SetText(amount.Amount(committeePower).String())
+			wn.labelTotalStake.SetText(amount.Amount(totalPower).String())
 			wn.labelInCommittee.SetText(isInCommittee)
 			wn.labelNumConnections.SetText(numConnections)
 			wn.labelReachability.SetText(reachability)

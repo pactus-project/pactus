@@ -7,8 +7,8 @@ import (
 	"fmt"
 
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -63,7 +63,7 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 		amountStr, _ := stakeEntry.GetText()
 		memoStr, _ := memoEntry.GetText()
 
-		amount, err := util.StringToChange(amountStr)
+		amt, err := amount.FromString(amountStr)
 		if err != nil {
 			errorCheck(err)
 

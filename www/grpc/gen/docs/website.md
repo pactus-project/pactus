@@ -9,6 +9,10 @@ sidebar: gRPC API Reference
 Each node in the Pactus network can be configured to use the [gRPC](https://grpc.io/) protocol for communication.
 Here you can find the list of all gRPC methods and messages.
 
+All the amounts and values in gRPC endpoints are in NanoPAC units, which are atomic and
+the smallest unit in the Pactus blockchain.
+Each PAC is equivalent to 1,000,000,000 or $10^9$ NanoPACs.
+
 <h2>Table of Contents</h2>
 
 <div id="toc-container">
@@ -658,9 +662,9 @@ CalculateFeeRequest
     <tr>
       <td class="fw-bold">amount</td>
       <td>
-        <a href="#double">double</a>
+        <a href="#int64">int64</a>
       </td>
-      <td>Transaction amount. </td>
+      <td>Transaction amount in NanoPAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">payload_type</td>
@@ -690,18 +694,18 @@ CalculateFeeResponse
   </thead>
   <tbody class="table-group-divider"> 
     <tr>
-      <td class="fw-bold">amount</td>
-      <td>
-        <a href="#double">double</a>
-      </td>
-      <td>Calculated amount. </td>
-    </tr>
-    <tr>
       <td class="fw-bold">fee</td>
       <td>
-        <a href="#double">double</a>
+        <a href="#int64">int64</a>
       </td>
-      <td>Calculated transaction fee. </td>
+      <td>Calculated transaction fee in NanoPAC. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">amount</td>
+      <td>
+        <a href="#int64">int64</a>
+      </td>
+      <td>Calculated amount in NanoPAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -743,7 +747,7 @@ If not explicitly set, it sets to the last block height. </td>
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Stake amount.
+      <td>Stake amount in NanoPAC.
 It should be greater than 0. </td>
     </tr>
     <tr>
@@ -756,9 +760,9 @@ It should be greater than 0. </td>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
-        <a href="#double">double</a>
+        <a href="#int64">int64</a>
       </td>
-      <td>Transaction fee.
+      <td>Transaction fee in NanoPAC.
 If not explicitly set, it is calculated based on the stake. </td>
     </tr>
     <tr>
@@ -826,17 +830,17 @@ If not explicitly set, it sets to the last block height. </td>
     <tr>
       <td class="fw-bold">amount</td>
       <td>
-        <a href="#double">double</a>
+        <a href="#int64">int64</a>
       </td>
-      <td>Transfer amount.
+      <td>Transfer amount in NanoPAC.
 It should be greater than 0. </td>
     </tr>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
-        <a href="#double">double</a>
+        <a href="#int64">int64</a>
       </td>
-      <td>Transaction fee.
+      <td>Transaction fee in NanoPAC.
 If not explicitly set, it is calculated based on the amount. </td>
     </tr>
     <tr>
@@ -919,18 +923,18 @@ If not explicitly set, it sets to the last block height. </td>
     <tr>
       <td class="fw-bold">amount</td>
       <td>
-        <a href="#double">double</a>
+        <a href="#int64">int64</a>
       </td>
-      <td>Withdrawal amount.
+      <td>Withdrawal amount in NanoPAC.
 It should be greater than 0. </td>
     </tr>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
-        <a href="#double">double</a>
+        <a href="#int64">int64</a>
       </td>
-      <td>Transaction fee.
-If not explicitly set, it is calculated based on the stake. </td>
+      <td>Transaction fee in NanoPAC.
+If not explicitly set, it is calculated based on the amount. </td>
     </tr>
     <tr>
       <td class="fw-bold">memo</td>
@@ -1032,7 +1036,7 @@ PayloadBond
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Stake amount. </td>
+      <td>Stake amount in NanoPAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -1093,7 +1097,7 @@ PayloadTransfer
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Transaction amount. </td>
+      <td>Transaction amount in NanoPAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -1147,7 +1151,7 @@ PayloadWithdraw
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Withdrawal amount. </td>
+      <td>Withdrawal amount in NanoPAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -1195,14 +1199,14 @@ TransactionInfo
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Transaction value. </td>
+      <td>Transaction value in NanoPAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">fee</td>
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Transaction fee. </td>
+      <td>Transaction fee in NanoPAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">payload_type</td>
@@ -1306,7 +1310,7 @@ AccountInfo
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Account balance. </td>
+      <td>Account balance in NanoPAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">address</td>
@@ -1934,7 +1938,7 @@ ValidatorInfo
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Validator stake. </td>
+      <td>Validator stake in NanoPAC. </td>
     </tr>
     <tr>
       <td class="fw-bold">last_bonding_height</td>

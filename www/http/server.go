@@ -3,7 +3,6 @@ package http
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"fmt"
 	"io"
 	"net"
@@ -13,8 +12,9 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/www/grpc/basicauth"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
@@ -184,13 +184,10 @@ func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
 	return n
 }
 
-func (s *Server) basicAuth(ctx context.Context, user, password string) context.Context {
-	auth := user + ":" + password
-	enc := base64.StdEncoding.EncodeToString([]byte(auth))
-
-	md := metadata.New(map[string]string{
-		"authorization": "Basic " + enc,
-	})
+func (s *Server) basicAuth(ctx context.Context, username, password string) context.Context {
+	ba := basicauth.New(username, password)
+	tokens, _ := ba.GetRequestMetadata(ctx)
+	md := metadata.New(tokens)
 
 	return metadata.NewOutgoingContext(ctx, md)
 }
@@ -235,9 +232,15 @@ func (t *tableMaker) addRowTime(key string, sec int64) {
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, time.Unix(sec, 0).String())
 }
 
-func (t *tableMaker) addRowAmount(key string, change int64) {
+func (t *tableMaker) addRowAmount(key string, amt amount.Amount) {
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>",
-		key, util.ChangeToString(change))
+		key, amt.String())
+}
+
+func (t *tableMaker) addRowPower(key string, power int64) {
+	amt := amount.Amount(power)
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>",
+		key, amt.String())
 }
 
 func (t *tableMaker) addRowInt(key string, val int) {

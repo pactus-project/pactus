@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -34,7 +35,7 @@ func TestDecoding(t *testing.T) {
 	acc, err := account.FromBytes(d)
 	require.NoError(t, err)
 	assert.Equal(t, acc.Number(), int32(1))
-	assert.Equal(t, acc.Balance(), int64(2))
+	assert.Equal(t, acc.Balance(), amount.Amount(2))
 	d2, _ := acc.Bytes()
 	assert.Equal(t, d, d2)
 	assert.Equal(t, acc.Hash(), hash.CalcHash(d))

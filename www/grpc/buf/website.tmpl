@@ -9,6 +9,10 @@ sidebar: gRPC API Reference
 Each node in the Pactus network can be configured to use the [gRPC](https://grpc.io/) protocol for communication.
 Here you can find the list of all gRPC methods and messages.
 
+All the amounts and values in gRPC endpoints are in NanoPAC units, which are atomic and
+the smallest unit in the Pactus blockchain.
+Each PAC is equivalent to 1,000,000,000 or $10^9$ NanoPACs.
+
 <h2>Table of Contents</h2>
 
 <div id="toc-container">
