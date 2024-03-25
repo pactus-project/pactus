@@ -68,7 +68,7 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 			wallet.OptionMemo(memoStr),
 		}
 
-		trx, err := wlt.MakeTransferTx(sender, receiver, amount, opts...)
+		trx, err := wlt.MakeTransferTx(sender, receiver, amt, opts...)
 		if err != nil {
 			errorCheck(err)
 
@@ -84,7 +84,7 @@ Memo:   %s
 Fee:    %s
 
 THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`, sender, receiver,
-			util.ChangeToString(amount), trx.Memo(), util.ChangeToString(trx.Fee()))
+			util.ChangeToString(amt), trx.Memo(), util.ChangeToString(trx.Fee()))
 
 		signAndBroadcastTransaction(dlg, msg, wlt, trx)
 
