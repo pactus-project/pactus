@@ -409,3 +409,18 @@ func TestBundleSequenceNo(t *testing.T) {
 	bdl2 := td.shouldPublishMessageWithThisType(t, message.TypeQueryProposal)
 	assert.Equal(t, 1, bdl2.SequenceNo)
 }
+
+func TestAllBlocksInCache(t *testing.T) {
+	td := setup(t, nil)
+
+	blk100, _ := td.GenerateTestBlock(100)
+	blk101, _ := td.GenerateTestBlock(101)
+	blk102, _ := td.GenerateTestBlock(102)
+
+	td.sync.cache.AddBlock(blk100)
+	td.sync.cache.AddBlock(blk101)
+	td.sync.cache.AddBlock(blk102)
+
+	res := td.sync.sendBlockRequestToRandomPeer(100, 3, true)
+	assert.True(t, res)
+}

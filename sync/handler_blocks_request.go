@@ -121,10 +121,6 @@ func (handler *blocksRequestHandler) respond(msg *message.BlocksResponseMessage,
 			"to", to, "reason", msg.Reason)
 
 		handler.sendTo(msg, to)
-
-		// There is no point in keeping this stream connection open.
-		// Close this connection and try to connect to other nodes.
-		handler.network.CloseConnection(to)
 	} else {
 		handler.logger.Info("responding block request message", "msg", msg, "to", to)
 
