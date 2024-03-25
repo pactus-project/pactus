@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/util"
 )
 
 //go:embed assets/ui/dialog_transaction_bond.ui
