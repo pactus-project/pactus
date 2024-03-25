@@ -116,8 +116,6 @@ func (mgr *peerMgr) RemovePeer(pid lp2ppeer.ID) {
 func (mgr *peerMgr) removePeer(pid lp2ppeer.ID) {
 	peerInfo, exists := mgr.peers[pid]
 	if !exists {
-		mgr.logger.Warn("unable to find a peer", "pid", pid)
-
 		return
 	}
 
