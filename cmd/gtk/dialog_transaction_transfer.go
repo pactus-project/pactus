@@ -32,19 +32,23 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 	for _, i := range wlt.AllAccountAddresses() {
 		senderEntry.Append(i.Address, i.Address)
 	}
+	
 	senderEntry.SetActive(0)
 	onSenderChanged := func() {
 		senderStr := senderEntry.GetActiveID()
 		updateAccountHint(senderHint, senderStr, wlt)
 	}
+	
 	onReceiverChanged := func() {
 		receiverStr, _ := receiverEntry.GetText()
 		updateAccountHint(receiverHint, receiverStr, wlt)
 	}
+	
 	onAmountChanged := func() {
 		amtStr, _ := amountEntry.GetText()
 		updateFeeHint(amountHint, amtStr, wlt, payload.TypeTransfer)
 	}
+	
 	onSend := func() {
 		sender := senderEntry.GetActiveID()
 		receiver, _ := receiverEntry.GetText()
@@ -68,13 +72,16 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 
 			return
 		}
+		
 		msg := fmt.Sprintf(`
 You are going to sign and broadcast this transaction:
+
 From:   %v
 To:     %v
 Amount: %v
 Memo:   %s
 Fee:    %v
+
 THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`, sender, receiver,
 			amt, trx.Memo(), trx.Fee())
 
@@ -82,9 +89,11 @@ THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`, sender, receiver,
 
 		dlg.Close()
 	}
+	
 	onClose := func() {
 		dlg.Close()
 	}
+	
 	signals := map[string]interface{}{
 		"on_sender_changed":   onSenderChanged,
 		"on_receiver_changed": onReceiverChanged,
@@ -92,6 +101,7 @@ THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`, sender, receiver,
 		"on_send":             onSend,
 		"on_cancel":           onClose,
 	}
+	
 	builder.ConnectSignals(signals)
 	onSenderChanged()
 	dlg.Run()
