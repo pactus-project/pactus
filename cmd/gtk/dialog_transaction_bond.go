@@ -10,7 +10,6 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/util"
 )
 
 //go:embed assets/ui/dialog_transaction_bond.ui
@@ -89,12 +88,12 @@ You are going to sign and broadcast this transaction:
 
 From:   %v
 To:     %v
-Amount: %s
+Amount: %v
 Memo:   %s
-Fee:    %s
+Fee:    %v
 
 THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`, sender, receiver,
-			util.ChangeToString(amt), trx.Memo(), util.ChangeToString(trx.Fee()))
+			amt, trx.Memo(), trx.Fee())
 
 		signAndBroadcastTransaction(dlg, msg, wlt, trx)
 
