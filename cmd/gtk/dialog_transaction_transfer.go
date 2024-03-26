@@ -33,22 +33,22 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 		senderEntry.Append(i.Address, i.Address)
 	}	
 	senderEntry.SetActive(0)
-	
+
 	onSenderChanged := func() {
 		senderStr := senderEntry.GetActiveID()
 		updateAccountHint(senderHint, senderStr, wlt)
 	}
-	
+
 	onReceiverChanged := func() {
 		receiverStr, _ := receiverEntry.GetText()
 		updateAccountHint(receiverHint, receiverStr, wlt)
 	}
-	
+
 	onAmountChanged := func() {
 		amtStr, _ := amountEntry.GetText()
 		updateFeeHint(amountHint, amtStr, wlt, payload.TypeTransfer)
 	}
-	
+
 	onSend := func() {
 		sender := senderEntry.GetActiveID()
 		receiver, _ := receiverEntry.GetText()
