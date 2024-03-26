@@ -31,9 +31,9 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 
 	for _, i := range wlt.AllAccountAddresses() {
 		senderEntry.Append(i.Address, i.Address)
-	}
-	
+	}	
 	senderEntry.SetActive(0)
+	
 	onSenderChanged := func() {
 		senderStr := senderEntry.GetActiveID()
 		updateAccountHint(senderHint, senderStr, wlt)
