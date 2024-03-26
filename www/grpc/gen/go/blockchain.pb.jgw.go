@@ -28,22 +28,22 @@ func NewBlockchainJsonRpcService(client BlockchainClient) BlockchainJsonRpcServi
 func (s *BlockchainJsonRpcService) Methods() map[string]func(ctx context.Context, params json.RawMessage) (interface{}, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (interface{}, error){
 
-		"pactus.blockchain.get_block": func(ctx context.Context, params json.RawMessage) (interface{}, error) {
-			in := new(GetBlockRequest)
-			err := protojson.Unmarshal(params, in)
+		"pactus.blockchain.get_block": func(ctx context.Context, data json.RawMessage) (interface{}, error) {
+			req := new(GetBlockRequest)
+			err := protojson.Unmarshal(data, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetBlock(ctx, in)
+			return s.client.GetBlock(ctx, req)
 		},
 
-		"pactus.blockchain.get_block_hash": func(ctx context.Context, params json.RawMessage) (interface{}, error) {
-			in := new(GetBlockHashRequest)
-			err := protojson.Unmarshal(params, in)
+		"pactus.blockchain.get_block_hash": func(ctx context.Context, data json.RawMessage) (interface{}, error) {
+			req := new(GetBlockHashRequest)
+			err := protojson.Unmarshal(data, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetBlockHash(ctx, in)
+			return s.client.GetBlockHash(ctx, req)
 		},
 	}
 }

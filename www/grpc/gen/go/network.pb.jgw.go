@@ -28,13 +28,13 @@ func NewNetworkJsonRpcService(client NetworkClient) NetworkJsonRpcService {
 func (s *NetworkJsonRpcService) Methods() map[string]func(ctx context.Context, params json.RawMessage) (interface{}, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (interface{}, error){
 
-		"pactus.network.get_network_info": func(ctx context.Context, params json.RawMessage) (interface{}, error) {
-			in := new(GetNetworkInfoRequest)
-			err := protojson.Unmarshal(params, in)
+		"pactus.network.get_network_info": func(ctx context.Context, data json.RawMessage) (interface{}, error) {
+			req := new(GetNetworkInfoRequest)
+			err := protojson.Unmarshal(data, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetNetworkInfo(ctx, in)
+			return s.client.GetNetworkInfo(ctx, req)
 		},
 	}
 }

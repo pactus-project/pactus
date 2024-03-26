@@ -80,7 +80,7 @@ func (s *Server) StartServer(grpcServer string) error {
 				jsonrpc2.LogMessages(s),
 			}
 			jsonrpc2.NewConn(
-				context.Background(),
+				s.ctx,
 				jsonrpc2.NewBufferedStream(conn, jsonrpc2.VSCodeObjectCodec{}),
 				jsonrpc2.AsyncHandler(s),
 				opts...,
@@ -108,6 +108,8 @@ func (s *Server) StopServer() {
 }
 
 func (s *Server) Handle(ctx context.Context, conn *jsonrpc2.Conn, req *jsonrpc2.Request) {
+	defer conn.Close()
+
 	handler, ok := s.handlers[req.Method]
 	if !ok {
 		respErr := &jsonrpc2.Error{
