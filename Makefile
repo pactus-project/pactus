@@ -30,7 +30,7 @@ devtools:
 build:
 	go build -o ./build/pactus-daemon$(EXE) ./cmd/daemon
 	go build -o ./build/pactus-wallet$(EXE) ./cmd/wallet
-	go build -o ./build/pactus-shell$(EXE) 	./cmd/shell
+	go build -o ./build/pactus-shell$(EXE)  ./cmd/shell
 
 build_race:
 	go build -race -o ./build/pactus-daemon$(EXE) ./cmd/daemon
