@@ -24,17 +24,24 @@ devtools:
 	go install github.com/bufbuild/buf/cmd/buf@v1.25.0
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/rakyll/statik@v0.1
+	go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.1.0
 
 ########################################
 ### Building
-build:
-	go build -o ./build/pactus-daemon$(EXE) ./cmd/daemon
-	go build -o ./build/pactus-wallet$(EXE) ./cmd/wallet
-	go build -o ./build/pactus-shell$(EXE)  ./cmd/shell
+build: build_daemon build_wallet build_shell
 
 build_race:
 	go build -race -o ./build/pactus-daemon$(EXE) ./cmd/daemon
 	go build -race -o ./build/pactus-wallet$(EXE) ./cmd/wallet
+
+build_daemon:
+	go build -o ./build/pactus-daemon$(EXE) ./cmd/daemon
+
+build_wallet:
+	go build -o ./build/pactus-wallet$(EXE) ./cmd/wallet
+
+build_shell:
+	go build -o ./build/pactus-shell$(EXE)  ./cmd/shell
 
 build_gui:
 	go build -tags gtk -o ./build/pactus-gui$(EXE) ./cmd/gtk
@@ -73,8 +80,8 @@ check:
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
-# https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html
-.PHONY: build build_gui
+# https://www.gnu.org/so	ftware/make/manual/html_node/Phony-Targets.html
+.PHONY: build build_gui build_daemon build_wallet build_shell
 .PHONY: test unit_test test_race
 .PHONY: devtools proto
 .PHONY: fmt check docker

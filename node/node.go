@@ -84,7 +84,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	if conf.GRPC.BasicAuthCredential != "" {
 		enableHTTPAuth = true
 	}
-
 	grpcServer := grpc.NewServer(conf.GRPC, st, syn, net, consMgr)
 	httpServer := http.NewServer(conf.HTTP, enableHTTPAuth)
 	jsonrpcServer := jsonrpc.NewServer(conf.JSONRPC, enableHTTPAuth) // TODO: enable auth???
@@ -137,6 +136,7 @@ func (n *Node) Start() error {
 	}
 
 	err = n.http.StartServer(n.grpc.Address())
+
 	if err != nil {
 		return errors.Wrap(err, "could not start HTTP server")
 	}

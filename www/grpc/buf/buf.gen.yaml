@@ -32,8 +32,9 @@ plugins:
     opt:
       - grpc_api_configuration=grpc-gateway.config.yaml,allow_merge=true,merge_file_name=pactus
       - openapi_configuration=openapi.config.yaml
-  - name: jsonrpc-gateway
-    out: ../gen/jsonrpc
+  - name: jrpc-gateway
+    out: ../gen/go
+    opt: paths=source_relative
   - plugin: buf.build/protocolbuffers/js:v3.21.2
     out: ../gen/js
     opt:
