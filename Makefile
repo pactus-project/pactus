@@ -80,7 +80,7 @@ check:
 
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
-# https://www.gnu.org/so	ftware/make/manual/html_node/Phony-Targets.html
+# https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html
 .PHONY: build build_gui build_daemon build_wallet build_shell
 .PHONY: test unit_test test_race
 .PHONY: devtools proto
