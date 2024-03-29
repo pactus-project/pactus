@@ -6,10 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/pacviewer/jrpc-gateway/jrpc"
-
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"github.com/pacviewer/jrpc-gateway/jrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
