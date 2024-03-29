@@ -3,6 +3,7 @@ package jsonrpc
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"time"
 
@@ -18,6 +19,7 @@ type Server struct {
 	cancel     context.CancelFunc
 	config     *Config
 	server     *http.Server
+	listener   net.Listener
 	grpcClient *grpc.ClientConn
 	logger     *logger.SubLogger
 }
@@ -63,10 +65,15 @@ func (s *Server) StartServer(grpcServer string) error {
 	jgw := jrpc.NewServer()
 	jgw.RegisterServices(&blockchainService, &networkService, &transactionService, &walletService)
 
+	listener, err := net.Listen("tcp", s.config.Listen)
+	if err != nil {
+		s.logger.Error("unable to establish tcp connection", "error", err)
+	}
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", jgw.HttpHandler)
 	server := &http.Server{
-		Addr:              s.config.Listen,
+		Addr:              listener.Addr().String(),
 		ReadHeaderTimeout: 3 * time.Second,
 		Handler:           mux,
 	}
@@ -77,13 +84,14 @@ func (s *Server) StartServer(grpcServer string) error {
 			case <-s.ctx.Done():
 				return
 			default:
-				if err := server.ListenAndServe(); err != nil {
+				if err := server.Serve(listener); err != nil {
 					s.logger.Error("error while establishing JSON-RPC connection", "error", err)
 				}
 			}
 		}
 	}()
-	s.logger.Info("json-rpc started listening", "address", s.config.Listen)
+
+	s.logger.Info("json-rpc started listening", "address", listener.Addr().String())
 	s.server = server
 
 	return nil
@@ -94,7 +102,9 @@ func (s *Server) StopServer() {
 	s.logger.Debug("context closed", "reason", s.ctx.Err())
 
 	if s.server != nil {
-		s.server.Close()
+		_ = s.server.Shutdown(s.ctx)
+		_ = s.server.Close()
+		_ = s.listener.Close()
 	}
 
 	if s.grpcClient != nil {
