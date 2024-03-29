@@ -136,7 +136,6 @@ func (n *Node) Start() error {
 	}
 
 	err = n.http.StartServer(n.grpc.Address())
-
 	if err != nil {
 		return errors.Wrap(err, "could not start HTTP server")
 	}

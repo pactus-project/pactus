@@ -3,9 +3,10 @@ package jsonrpc
 import (
 	"context"
 	"fmt"
-	"github.com/pacviewer/jrpc-gateway/jrpc"
 	"net/http"
 	"time"
+
+	"github.com/pacviewer/jrpc-gateway/jrpc"
 
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -22,7 +23,7 @@ type Server struct {
 	logger     *logger.SubLogger
 }
 
-func NewServer(conf *Config, enableAuth bool) *Server {
+func NewServer(conf *Config, _ bool) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &Server{
