@@ -359,8 +359,6 @@ github.com/opentracing/opentracing-go v1.2.0/go.mod h1:GxEUsuufX4nBwe+T+Wl9TAgYr
 github.com/openzipkin/zipkin-go v0.1.1/go.mod h1:NtoC/o8u3JlF1lSlyPNswIbeQH9bJTmOf0Erfk+hxe8=
 github.com/pacviewer/jrpc-gateway v0.1.0 h1:BsL/QxGiNHZ3TXG9xFp5XzjICQ8OxzmgjBj5W98zLi0=
 github.com/pacviewer/jrpc-gateway v0.1.0/go.mod h1:WuqJxr+bvNeg5YR2Tq1TpqZqzLvVDe9HAaOL9BO4sPU=
-github.com/pacviewer/jrpc-gateway v0.1.2 h1:LMkSoLarlrhUo8ZB4RIfEFpskogfHzpmCcK6k5Im+QY=
-github.com/pacviewer/jrpc-gateway v0.1.2/go.mod h1:WuqJxr+bvNeg5YR2Tq1TpqZqzLvVDe9HAaOL9BO4sPU=
 github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58 h1:onHthvaw9LFnH4t2DcNVpwGmV9E1BkGknEliJkfwQj0=
 github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58/go.mod h1:DXv8WO4yhMYhSNPKjeNKa5WY9YCIEBRbNzFFPJbWO6Y=
 github.com/pelletier/go-toml v1.9.5 h1:4yBQzkHv+7BHq2PQUZF3Mx0IYxG7LsP222s7Agd3ve8=
