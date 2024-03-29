@@ -28,20 +28,26 @@ pub struct GetTransactionResponse {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CalculateFeeRequest {
-    /// Transaction amount.
+    /// Transaction amount in NanoPAC.
     #[prost(int64, tag="1")]
     pub amount: i64,
     /// Type of transaction payload.
     #[prost(enumeration="PayloadType", tag="2")]
     pub payload_type: i32,
+    /// Indicates that amount should be fixed and includes the fee.
+    #[prost(bool, tag="3")]
+    pub fixed_amount: bool,
 }
 /// Response message containing the calculated transaction fee.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CalculateFeeResponse {
-    /// Calculated transaction fee.
+    /// Calculated transaction fee in NanoPAC.
     #[prost(int64, tag="1")]
     pub fee: i64,
+    /// Calculated amount in NanoPAC.
+    #[prost(int64, tag="2")]
+    pub amount: i64,
 }
 /// Request message for broadcasting a signed transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -56,7 +62,7 @@ pub struct BroadcastTransactionRequest {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BroadcastTransactionResponse {
     /// Transaction ID.
-    #[prost(bytes="vec", tag="2")]
+    #[prost(bytes="vec", tag="1")]
     pub id: ::prost::alloc::vec::Vec<u8>,
 }
 /// Request message for retrieving raw details of a transfer transaction.
@@ -64,18 +70,21 @@ pub struct BroadcastTransactionResponse {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetRawTransferTransactionRequest {
     /// Lock time for the transaction.
+    /// If not explicitly set, it sets to the last block height.
     #[prost(uint32, tag="1")]
     pub lock_time: u32,
-    /// Sender's address.
+    /// Sender's account address.
     #[prost(string, tag="2")]
     pub sender: ::prost::alloc::string::String,
-    /// Receiver's address.
+    /// Receiver's account address.
     #[prost(string, tag="3")]
     pub receiver: ::prost::alloc::string::String,
-    /// Transaction amount.
+    /// Transfer amount in NanoPAC.
+    /// It should be greater than 0.
     #[prost(int64, tag="4")]
     pub amount: i64,
-    /// Transaction fee.
+    /// Transaction fee in NanoPAC.
+    /// If not explicitly set, it is calculated based on the amount.
     #[prost(int64, tag="5")]
     pub fee: i64,
     /// Transaction memo.
@@ -87,21 +96,24 @@ pub struct GetRawTransferTransactionRequest {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetRawBondTransactionRequest {
     /// Lock time for the transaction.
+    /// If not explicitly set, it sets to the last block height.
     #[prost(uint32, tag="1")]
     pub lock_time: u32,
-    /// Sender's address.
+    /// Sender's account address.
     #[prost(string, tag="2")]
     pub sender: ::prost::alloc::string::String,
-    /// Receiver's address.
+    /// Receiver's validator address.
     #[prost(string, tag="3")]
     pub receiver: ::prost::alloc::string::String,
-    /// Stake amount.
+    /// Stake amount in NanoPAC.
+    /// It should be greater than 0.
     #[prost(int64, tag="4")]
     pub stake: i64,
     /// Public key of the validator.
     #[prost(string, tag="5")]
     pub public_key: ::prost::alloc::string::String,
-    /// Transaction fee.
+    /// Transaction fee in NanoPAC.
+    /// If not explicitly set, it is calculated based on the stake.
     #[prost(int64, tag="6")]
     pub fee: i64,
     /// Transaction memo.
@@ -111,8 +123,9 @@ pub struct GetRawBondTransactionRequest {
 /// Request message for retrieving raw details of an unbond transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct GetRawUnBondTransactionRequest {
+pub struct GetRawUnbondTransactionRequest {
     /// Lock time for the transaction.
+    /// If not explicitly set, it sets to the last block height.
     #[prost(uint32, tag="1")]
     pub lock_time: u32,
     /// Address of the validator to unbond from.
@@ -127,6 +140,7 @@ pub struct GetRawUnBondTransactionRequest {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetRawWithdrawTransactionRequest {
     /// Lock time for the transaction.
+    /// If not explicitly set, it sets to the last block height.
     #[prost(uint32, tag="1")]
     pub lock_time: u32,
     /// Address of the validator to withdraw from.
@@ -135,12 +149,14 @@ pub struct GetRawWithdrawTransactionRequest {
     /// Address of the account to withdraw to.
     #[prost(string, tag="3")]
     pub account_address: ::prost::alloc::string::String,
-    /// Transaction fee.
+    /// Withdrawal amount in NanoPAC.
+    /// It should be greater than 0.
     #[prost(int64, tag="4")]
-    pub fee: i64,
-    /// Withdrawal amount.
-    #[prost(int64, tag="5")]
     pub amount: i64,
+    /// Transaction fee in NanoPAC.
+    /// If not explicitly set, it is calculated based on the amount.
+    #[prost(int64, tag="5")]
+    pub fee: i64,
     /// Transaction memo.
     #[prost(string, tag="6")]
     pub memo: ::prost::alloc::string::String,
@@ -163,7 +179,7 @@ pub struct PayloadTransfer {
     /// Receiver's address.
     #[prost(string, tag="2")]
     pub receiver: ::prost::alloc::string::String,
-    /// Transaction amount.
+    /// Transaction amount in NanoPAC.
     #[prost(int64, tag="3")]
     pub amount: i64,
 }
@@ -177,7 +193,7 @@ pub struct PayloadBond {
     /// Receiver's address.
     #[prost(string, tag="2")]
     pub receiver: ::prost::alloc::string::String,
-    /// Stake amount.
+    /// Stake amount in NanoPAC.
     #[prost(int64, tag="3")]
     pub stake: i64,
 }
@@ -210,7 +226,7 @@ pub struct PayloadWithdraw {
     /// Address to withdraw to.
     #[prost(string, tag="2")]
     pub to: ::prost::alloc::string::String,
-    /// Withdrawal amount.
+    /// Withdrawal amount in NanoPAC.
     #[prost(int64, tag="3")]
     pub amount: i64,
 }
@@ -230,10 +246,10 @@ pub struct TransactionInfo {
     /// Lock time for the transaction.
     #[prost(uint32, tag="4")]
     pub lock_time: u32,
-    /// Transaction value.
+    /// Transaction value in NanoPAC.
     #[prost(int64, tag="5")]
     pub value: i64,
-    /// Transaction fee.
+    /// Transaction fee in NanoPAC.
     #[prost(int64, tag="6")]
     pub fee: i64,
     /// Type of transaction payload.
@@ -545,7 +561,7 @@ pub struct ValidatorInfo {
     /// Validator number.
     #[prost(int32, tag="4")]
     pub number: i32,
-    /// Validator stake.
+    /// Validator stake in NanoPAC.
     #[prost(int64, tag="5")]
     pub stake: i64,
     /// Last bonding height.
@@ -577,7 +593,7 @@ pub struct AccountInfo {
     /// Account number.
     #[prost(int32, tag="3")]
     pub number: i32,
-    /// Account balance.
+    /// Account balance in NanoPAC.
     #[prost(int64, tag="4")]
     pub balance: i64,
     /// Address of the account.

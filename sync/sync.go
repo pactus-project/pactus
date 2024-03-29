@@ -360,19 +360,10 @@ func (sync *synchronizer) String() string {
 // updateBlockchain checks whether the node's height is shorter than the network's height or not.
 // If the node's height is shorter than the network's height by more than two hours (720 blocks),
 // it should start downloading blocks from the network's nodes.
-// Otherwise, the node can request the latest blocks from the network.
+// Otherwise, the node can request the latest blocks from any nodes.
 func (sync *synchronizer) updateBlockchain() {
 	// Maybe we have some blocks inside the cache?
 	_ = sync.tryCommitBlocks()
-
-	// If we have the last block inside the cache but no certificate,
-	// we need to download the next block.
-	downloadHeight := sync.state.LastBlockHeight()
-	downloadHeight++
-
-	if sync.cache.HasBlockInCache(downloadHeight) {
-		downloadHeight++
-	}
 
 	// Check if we have any expired sessions
 	sync.peerSet.SetExpiredSessionsAsUncompleted()
@@ -385,16 +376,16 @@ func (sync *synchronizer) updateBlockchain() {
 				"sid", ssn.SessionID, "pid", ssn.PeerID,
 				"stats", sync.peerSet.SessionStats())
 
-			sent := sync.sendBlockRequestToRandomPeer(ssn.From, ssn.Count, true)
+			sent := sync.sendBlockRequestToRandomPeer(ssn.From, ssn.Count, false)
 			if !sent {
 				break
 			}
 		}
 	}
 
-	// First, let's check if we have any open sessions.
-	// If there are any open sessions, we should wait for them to be closed.
-	// Otherwise, we can request the same blocks from different peers.
+	// Check if there are any open sessions.
+	// If open sessions exist, we should wait for them to close.
+	// Otherwise, we might request to download the same blocks from different peers.
 	// TODO: write test for me
 	if sync.peerSet.HasAnyOpenSession() {
 		sync.logger.Debug("we have open session",
@@ -414,6 +405,15 @@ func (sync *synchronizer) updateBlockchain() {
 	if numOfBlocks <= 1 {
 		// We are sync
 		return
+	}
+
+	downloadHeight := sync.state.LastBlockHeight()
+	downloadHeight++
+
+	if sync.cache.HasBlockInCache(downloadHeight) {
+		// The last block exists inside the cache, without the certificate.
+		// Ignore downloading this block again.
+		downloadHeight++
 	}
 
 	sync.logger.Info("start syncing with the network",
@@ -441,6 +441,20 @@ func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 }
 
 func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyNodeNetwork bool) bool {
+	// Prevent downloading blocks that might be cached before
+	// TODO: write test for me
+	for sync.cache.HasBlockInCache(from) {
+		from++
+		count--
+
+		if count == 0 {
+			// we have blocks inside the cache
+			sync.logger.Debug("sending download request ignored", "from", from+1)
+
+			return true
+		}
+	}
+
 	for i := sync.peerSet.NumberOfSessions(); i < sync.config.MaxSessions; i++ {
 		p := sync.peerSet.GetRandomPeer()
 		if p == nil {
@@ -466,18 +480,6 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 			}
 
 			continue
-		}
-
-		for sync.cache.HasBlockInCache(from) {
-			from++
-			count--
-
-			if count == 0 {
-				// we have blocks inside the cache
-				sync.logger.Debug("sending download request ignored", "from", from+1)
-
-				return true
-			}
 		}
 
 		sync.logger.Debug("sending download request", "from", from+1, "count", count, "pid", p.PeerID)

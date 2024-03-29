@@ -116,7 +116,7 @@ func (n *Node) Start() error {
 	if err := n.network.Start(); err != nil {
 		return err
 	}
-	// Wait for network to started
+	// Wait for network to start
 	time.Sleep(1 * time.Second)
 
 	if err := n.sync.Start(); err != nil {
@@ -148,8 +148,12 @@ func (n *Node) Start() error {
 func (n *Node) Stop() {
 	logger.Info("stopping Node")
 
-	n.consMgr.Stop()
 	n.network.Stop()
+
+	// Wait for network to stop
+	time.Sleep(1 * time.Second)
+
+	n.consMgr.Stop()
 	n.sync.Stop()
 	n.state.Close()
 	n.store.Close()

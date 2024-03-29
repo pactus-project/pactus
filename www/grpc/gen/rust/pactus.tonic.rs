@@ -211,9 +211,9 @@ pub mod transaction_client {
                 .insert(GrpcMethod::new("pactus.Transaction", "GetRawBondTransaction"));
             self.inner.unary(req, path, codec).await
         }
-        pub async fn get_raw_un_bond_transaction(
+        pub async fn get_raw_unbond_transaction(
             &mut self,
-            request: impl tonic::IntoRequest<super::GetRawUnBondTransactionRequest>,
+            request: impl tonic::IntoRequest<super::GetRawUnbondTransactionRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetRawTransactionResponse>,
             tonic::Status,
@@ -229,12 +229,12 @@ pub mod transaction_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Transaction/GetRawUnBondTransaction",
+                "/pactus.Transaction/GetRawUnbondTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
-                    GrpcMethod::new("pactus.Transaction", "GetRawUnBondTransaction"),
+                    GrpcMethod::new("pactus.Transaction", "GetRawUnbondTransaction"),
                 );
             self.inner.unary(req, path, codec).await
         }
@@ -309,9 +309,9 @@ pub mod transaction_server {
             tonic::Response<super::GetRawTransactionResponse>,
             tonic::Status,
         >;
-        async fn get_raw_un_bond_transaction(
+        async fn get_raw_unbond_transaction(
             &self,
-            request: tonic::Request<super::GetRawUnBondTransactionRequest>,
+            request: tonic::Request<super::GetRawUnbondTransactionRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetRawTransactionResponse>,
             tonic::Status,
@@ -636,13 +636,13 @@ pub mod transaction_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Transaction/GetRawUnBondTransaction" => {
+                "/pactus.Transaction/GetRawUnbondTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct GetRawUnBondTransactionSvc<T: Transaction>(pub Arc<T>);
+                    struct GetRawUnbondTransactionSvc<T: Transaction>(pub Arc<T>);
                     impl<
                         T: Transaction,
-                    > tonic::server::UnaryService<super::GetRawUnBondTransactionRequest>
-                    for GetRawUnBondTransactionSvc<T> {
+                    > tonic::server::UnaryService<super::GetRawUnbondTransactionRequest>
+                    for GetRawUnbondTransactionSvc<T> {
                         type Response = super::GetRawTransactionResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
@@ -651,12 +651,12 @@ pub mod transaction_server {
                         fn call(
                             &mut self,
                             request: tonic::Request<
-                                super::GetRawUnBondTransactionRequest,
+                                super::GetRawUnbondTransactionRequest,
                             >,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_raw_un_bond_transaction(request).await
+                                (*inner).get_raw_unbond_transaction(request).await
                             };
                             Box::pin(fut)
                         }
@@ -668,7 +668,7 @@ pub mod transaction_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
-                        let method = GetRawUnBondTransactionSvc(inner);
+                        let method = GetRawUnbondTransactionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
