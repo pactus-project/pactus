@@ -71,6 +71,7 @@ func (s *Server) StartServer(grpcServer string) error {
 		ReadHeaderTimeout: 3 * time.Second,
 		Handler:           mux,
 	}
+
 	go func() {
 		for {
 			select {
@@ -83,7 +84,7 @@ func (s *Server) StartServer(grpcServer string) error {
 			}
 		}
 	}()
-	s.logger.Info("jsonrpc started listening", "address", s.config.Listen)
+	s.logger.Info("json-rpc started listening", "address", s.config.Listen)
 	s.server = server
 
 	return nil
@@ -100,8 +101,4 @@ func (s *Server) StopServer() {
 	if s.grpcClient != nil {
 		s.grpcClient.Close()
 	}
-}
-
-func (s *Server) Printf(format string, v ...interface{}) {
-	s.logger.Debug(format, v...)
 }
