@@ -69,6 +69,7 @@ func (s *Server) StartServer(grpcServer string) error {
 	if err != nil {
 		s.logger.Error("unable to establish tcp connection", "error", err)
 	}
+	s.listener = listener
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", jgw.HttpHandler)
