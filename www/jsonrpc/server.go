@@ -2,7 +2,6 @@ package jsonrpc
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/pacviewer/jrpc-gateway/jrpc"
 	"net/http"
@@ -20,7 +19,6 @@ type Server struct {
 	config     *Config
 	server     *http.Server
 	grpcClient *grpc.ClientConn
-	handlers   map[string]func(ctx context.Context, params json.RawMessage) (interface{}, error)
 	logger     *logger.SubLogger
 }
 
@@ -61,8 +59,6 @@ func (s *Server) StartServer(grpcServer string) error {
 	networkService := pactus.NewNetworkJsonRpcService(network)
 	transactionService := pactus.NewTransactionJsonRpcService(transaction)
 	walletService := pactus.NewWalletJsonRpcService(wallet)
-
-	s.handlers = make(map[string]func(ctx context.Context, params json.RawMessage) (interface{}, error))
 
 	jgw := jrpc.NewServer()
 	jgw.RegisterServices(&blockchainService, &networkService, &transactionService, &walletService)
