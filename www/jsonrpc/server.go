@@ -24,7 +24,7 @@ type Server struct {
 	logger     *logger.SubLogger
 }
 
-func NewServer(conf *Config, _ bool) *Server {
+func NewServer(conf *Config) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &Server{

@@ -86,7 +86,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	}
 	grpcServer := grpc.NewServer(conf.GRPC, st, syn, net, consMgr)
 	httpServer := http.NewServer(conf.HTTP, enableHTTPAuth)
-	jsonrpcServer := jsonrpc.NewServer(conf.JSONRPC, enableHTTPAuth) // TODO: enable auth???
+	jsonrpcServer := jsonrpc.NewServer(conf.JSONRPC)
 	nanomsgServer := nanomsg.NewServer(conf.Nanomsg, eventCh)
 
 	node := &Node{
