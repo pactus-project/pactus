@@ -73,6 +73,12 @@ fmt:
 check:
 	golangci-lint run --build-tags "${BUILD_TAG}" --timeout=20m0s
 
+check_gui:
+	BUILD_TAG=gtk make check
+
+pre_commit: fmt unit_test build check check_gui
+	@echo "pre-commit commands execution done; let's launch the rocket!"
+
 # To avoid unintended conflicts with file names, always add to .PHONY
 # unless there is a reason not to.
 # https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html
