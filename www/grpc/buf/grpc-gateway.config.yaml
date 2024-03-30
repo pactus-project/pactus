@@ -5,22 +5,22 @@ http:
   rules:
     # Blockchain APIs
     - selector: pactus.Blockchain.GetBlock
-      get: "/pactus/blockchain/get_block/height/{height}/verbosity/{verbosity}"
+      get: "/pactus/blockchain/get_block"
 
     - selector: pactus.Blockchain.GetBlockHash
-      get: "/pactus/blockchain/get_block_hash/height/{height}"
+      get: "/pactus/blockchain/get_block_hash"
 
     - selector: pactus.Blockchain.GetBlockHeight
-      get: "/pactus/blockchain/get_block_height/hash/{hash}"
+      get: "/pactus/blockchain/get_block_height"
 
     - selector: pactus.Blockchain.GetAccount
-      get: "/pactus/blockchain/get_account/address/{address}"
+      get: "/pactus/blockchain/get_account"
 
     - selector: pactus.Blockchain.GetValidator
-      get: "/pactus/blockchain/get_validator/address/{address}"
+      get: "/pactus/blockchain/get_validator"
 
     - selector: pactus.Blockchain.GetValidatorByNumber
-      get: "/pactus/blockchain/get_validator_by_number/number/{number}"
+      get: "/pactus/blockchain/get_validator_by_number"
 
     - selector: pactus.Blockchain.GetBlockchainInfo
       get: "/pactus/blockchain/get_blockchain_info"
@@ -29,29 +29,29 @@ http:
       get: "/pactus/blockchain/get_consensus_info"
 
     - selector: pactus.Blockchain.GetPublicKey
-      get: "/pactus/blockchain/get_public_key/address/{address}"
+      get: "/pactus/blockchain/get_public_key"
 
     # Transaction APIs
     - selector: pactus.Transaction.GetTransaction
-      get: "/pactus/transaction/get_transaction/id/{id}/verbosity/{verbosity}"
+      get: "/pactus/transaction/get_transaction"
 
     - selector: pactus.Transaction.BroadcastTransaction
-      put: "/pactus/transaction/broadcast_transaction/signed_raw_transaction/{signed_raw_transaction}"
+      put: "/pactus/transaction/broadcast_transaction"
 
     - selector: pactus.Transaction.CalculateFee
-      get: "/pactus/transaction/calculate_fee/amount/{amount}/payload_type/{payload_type}"
+      get: "/pactus/transaction/calculate_fee"
 
     - selector: pactus.Transaction.GetRawTransferTransaction
-      get: "/pactus/transaction/get_raw_transfer_transaction/sender/{sender}/receiver/{receiver}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"
+      get: "/pactus/transaction/get_raw_transfer_transaction"
 
     - selector: pactus.Transaction.GetRawBondTransaction
-      get: "/pactus/transaction/get_raw_bond_transaction/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lock_time}/public_key/{public_key}/fee/{fee}/memo/{memo}"
+      get: "/pactus/transaction/get_raw_bond_transaction"
 
     - selector: pactus.Transaction.GetRawUnbondTransaction
-      get: "/pactus/transaction/get_raw_unbond_transaction/validator_address/{validator_address}/lock_time/{lock_time}/memo/{memo}"
+      get: "/pactus/transaction/get_raw_unbond_transaction"
 
     - selector: pactus.Transaction.GetRawWithdrawTransaction
-      get: "/pactus/transaction/get_raw_withdraw_transaction/validator_address/{validator_address}/account_address/{account_address}/amount/{amount}/lock_time/{lock_time}/fee/{fee}/memo/{memo}"
+      get: "/pactus/transaction/get_raw_withdraw_transaction"
 
     # Network APIs
     - selector: pactus.Network.GetNetworkInfo
@@ -62,22 +62,22 @@ http:
 
     # Wallet APIs
     - selector: pactus.Wallet.GetValidatorAddress
-      get: "/pactus/wallet/get_validator_address/public_key/{public_key}"
+      get: "/pactus/wallet/get_validator_address"
 
     - selector: pactus.Wallet.CreateWallet
-      get: "/pactus/wallet/create_wallet/wallet_name/{wallet_name}/mnemonic/{mnemonic}/language/{language}"
+      get: "/pactus/wallet/create_wallet"
 
     - selector: pactus.Wallet.LoadWallet
-      get: "/pactus/wallet/load_wallet/wallet_name/{wallet_name}"
+      get: "/pactus/wallet/load_wallet"
 
     - selector: pactus.Wallet.UnloadWallet
-      get: "/pactus/wallet/unload_wallet/wallet_name/{wallet_name}"
+      get: "/pactus/wallet/unload_wallet"
 
     - selector: pactus.Wallet.LockWallet
-      get: "/pactus/wallet/lock_wallet/wallet_name/{wallet_name}"
+      get: "/pactus/wallet/lock_wallet"
 
     - selector: pactus.Wallet.UnlockWallet
-      get: "/pactus/wallet/unlock_wallet/wallet_name/{wallet_name}/password/{password}/timeout/{timeout}"
+      get: "/pactus/wallet/unlock_wallet"
 
     - selector: pactus.Wallet.SignRawTransaction
-      get: "/pactus/wallet/sign_raw_transaction/wallet_name/{wallet_name}/password/{password}/raw_transaction/{raw_transaction}"
+      get: "/pactus/wallet/sign_raw_transaction"
