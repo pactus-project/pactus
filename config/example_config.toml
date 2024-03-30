@@ -173,6 +173,16 @@
     # Default is `false`.
    ## enable_cors = false
 
+# `jsonrpc` configuration.
+[jsonrpc]
+
+  # `enable` indicates whether JSON-RPC service should be enabled or not.
+  # Default is `false`.
+ ## enable = false
+
+  # `listen` is the address to listen for incoming connections for JSON-RPC server.
+ ## listen = "127.0.0.1:8545"
+
 # `http` configuration.
 [http]
 
@@ -180,7 +190,7 @@
   # Default is `false`.
  ## enable = false
 
-  # `listen` is the address address to listen for incoming connections for HTTP server.
+  # `listen` is the address to listen for incoming connections for HTTP server.
  ## listen = "127.0.0.1:80"
 
 # Nanomsg configuration.
