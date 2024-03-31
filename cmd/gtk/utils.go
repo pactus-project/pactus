@@ -202,7 +202,7 @@ func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, w *wallet.Walle
 
 			return
 		}
-		_, err = w.BroadcastTransaction(trx)
+		txID, err := w.BroadcastTransaction(trx)
 		if err != nil {
 			errorCheck(err)
 
@@ -215,6 +215,8 @@ func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, w *wallet.Walle
 
 			return
 		}
+
+		showInfoDialog(parent, fmt.Sprintf("Your transaction Hash: %s", txID))
 	}
 }
 
