@@ -2,6 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Pactus APIs",
+    "description": "Each node in the Pactus network can be configured to use the [gRPC](https://grpc.io/) protocol for communication.\nHere you can find the list of all gRPC methods and messages.\n\nAll the amounts and values in gRPC endpoints are in NanoPAC units, which are atomic and the smallest unit in the Pactus blockchain.\nEach PAC is equivalent to 1,000,000,000 or 10\u003csup\u003e9\u003c/sup\u003e NanoPACs.\n",
     "version": "1.1"
   },
   "tags": [
@@ -25,7 +26,7 @@
     "application/json"
   ],
   "paths": {
-    "/pactus/blockchain/get_account/address/{address}": {
+    "/pactus/blockchain/get_account": {
       "get": {
         "summary": "GetAccount retrieves information about an account based on the provided\naddress.",
         "operationId": "Blockchain_GetAccount",
@@ -47,8 +48,8 @@
           {
             "name": "address",
             "description": "Address of the account.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -57,7 +58,7 @@
         ]
       }
     },
-    "/pactus/blockchain/get_block/height/{height}/verbosity/{verbosity}": {
+    "/pactus/blockchain/get_block": {
       "get": {
         "summary": "GetBlock retrieves information about a block based on the provided request\nparameters.",
         "operationId": "Blockchain_GetBlock",
@@ -79,22 +80,23 @@
           {
             "name": "height",
             "description": "Height of the block.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "integer",
             "format": "int64"
           },
           {
             "name": "verbosity",
-            "description": "Verbosity level for block information.",
-            "in": "path",
-            "required": true,
+            "description": "Verbosity level for block information.\n\n - BLOCK_DATA: Request block data only.\n - BLOCK_INFO: Request block information only.\n - BLOCK_TRANSACTIONS: Request block transactions only.",
+            "in": "query",
+            "required": false,
             "type": "string",
             "enum": [
               "BLOCK_DATA",
               "BLOCK_INFO",
               "BLOCK_TRANSACTIONS"
-            ]
+            ],
+            "default": "BLOCK_DATA"
           }
         ],
         "tags": [
@@ -102,7 +104,7 @@
         ]
       }
     },
-    "/pactus/blockchain/get_block_hash/height/{height}": {
+    "/pactus/blockchain/get_block_hash": {
       "get": {
         "summary": "GetBlockHash retrieves the hash of a block at the specified height.",
         "operationId": "Blockchain_GetBlockHash",
@@ -124,8 +126,8 @@
           {
             "name": "height",
             "description": "Height of the block.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "integer",
             "format": "int64"
           }
@@ -135,7 +137,7 @@
         ]
       }
     },
-    "/pactus/blockchain/get_block_height/hash/{hash}": {
+    "/pactus/blockchain/get_block_height": {
       "get": {
         "summary": "GetBlockHeight retrieves the height of a block with the specified hash.",
         "operationId": "Blockchain_GetBlockHeight",
@@ -157,8 +159,8 @@
           {
             "name": "hash",
             "description": "Hash of the block.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string",
             "format": "byte"
           }
@@ -214,7 +216,7 @@
         ]
       }
     },
-    "/pactus/blockchain/get_public_key/address/{address}": {
+    "/pactus/blockchain/get_public_key": {
       "get": {
         "summary": "GetPublicKey retrieves the public key of an account based on the provided\naddress.",
         "operationId": "Blockchain_GetPublicKey",
@@ -236,8 +238,8 @@
           {
             "name": "address",
             "description": "Address for which public key is requested.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -246,7 +248,7 @@
         ]
       }
     },
-    "/pactus/blockchain/get_validator/address/{address}": {
+    "/pactus/blockchain/get_validator": {
       "get": {
         "summary": "GetValidator retrieves information about a validator based on the provided\naddress.",
         "operationId": "Blockchain_GetValidator",
@@ -268,8 +270,8 @@
           {
             "name": "address",
             "description": "Address of the validator.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -278,7 +280,7 @@
         ]
       }
     },
-    "/pactus/blockchain/get_validator_by_number/number/{number}": {
+    "/pactus/blockchain/get_validator_by_number": {
       "get": {
         "summary": "GetValidatorByNumber retrieves information about a validator based on the\nprovided number.",
         "operationId": "Blockchain_GetValidatorByNumber",
@@ -300,8 +302,8 @@
           {
             "name": "number",
             "description": "Validator number.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "integer",
             "format": "int32"
           }
@@ -357,7 +359,7 @@
         ]
       }
     },
-    "/pactus/transaction/broadcast_transaction/signed_raw_transaction/{signedRawTransaction}": {
+    "/pactus/transaction/broadcast_transaction": {
       "put": {
         "summary": "BroadcastTransaction broadcasts a signed transaction to the network.",
         "operationId": "Transaction_BroadcastTransaction",
@@ -379,8 +381,8 @@
           {
             "name": "signedRawTransaction",
             "description": "Signed raw transaction data.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string",
             "format": "byte"
           }
@@ -390,7 +392,7 @@
         ]
       }
     },
-    "/pactus/transaction/calculate_fee/amount/{amount}/payload_type/{payloadType}": {
+    "/pactus/transaction/calculate_fee": {
       "get": {
         "summary": "CalculateFee calculates the transaction fee based on the specified amount\nand payload type.",
         "operationId": "Transaction_CalculateFee",
@@ -412,16 +414,16 @@
           {
             "name": "amount",
             "description": "Transaction amount in NanoPAC.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string",
             "format": "int64"
           },
           {
             "name": "payloadType",
-            "description": "Type of transaction payload.",
-            "in": "path",
-            "required": true,
+            "description": "Type of transaction payload.\n\n - UNKNOWN: Unknown payload type.\n - TRANSFER_PAYLOAD: Transfer payload type.\n - BOND_PAYLOAD: Bond payload type.\n - SORTITION_PAYLOAD: Sortition payload type.\n - UNBOND_PAYLOAD: Unbond payload type.\n - WITHDRAW_PAYLOAD: Withdraw payload type.",
+            "in": "query",
+            "required": false,
             "type": "string",
             "enum": [
               "UNKNOWN",
@@ -430,7 +432,8 @@
               "SORTITION_PAYLOAD",
               "UNBOND_PAYLOAD",
               "WITHDRAW_PAYLOAD"
-            ]
+            ],
+            "default": "UNKNOWN"
           },
           {
             "name": "fixedAmount",
@@ -445,7 +448,7 @@
         ]
       }
     },
-    "/pactus/transaction/get_raw_bond_transaction/sender/{sender}/receiver/{receiver}/stake/{stake}/lock_time/{lockTime}/public_key/{publicKey}/fee/{fee}/memo/{memo}": {
+    "/pactus/transaction/get_raw_bond_transaction": {
       "get": {
         "summary": "GetRawBondTransaction retrieves raw details of a bond transaction.",
         "operationId": "Transaction_GetRawBondTransaction",
@@ -465,55 +468,55 @@
         },
         "parameters": [
           {
+            "name": "lockTime",
+            "description": "Lock time for the transaction.\nIf not explicitly set, it sets to the last block height.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
             "name": "sender",
             "description": "Sender's account address.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
             "name": "receiver",
             "description": "Receiver's validator address.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
             "name": "stake",
             "description": "Stake amount in NanoPAC.\nIt should be greater than 0.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "lockTime",
-            "description": "Lock time for the transaction.\nIf not explicitly set, it sets to the last block height.",
-            "in": "path",
-            "required": true,
-            "type": "integer",
             "format": "int64"
           },
           {
             "name": "publicKey",
             "description": "Public key of the validator.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
             "name": "fee",
             "description": "Transaction fee in NanoPAC.\nIf not explicitly set, it is calculated based on the stake.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string",
             "format": "int64"
           },
           {
             "name": "memo",
             "description": "Transaction memo.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -522,7 +525,7 @@
         ]
       }
     },
-    "/pactus/transaction/get_raw_transfer_transaction/sender/{sender}/receiver/{receiver}/amount/{amount}/lock_time/{lockTime}/fee/{fee}/memo/{memo}": {
+    "/pactus/transaction/get_raw_transfer_transaction": {
       "get": {
         "summary": "GetRawTransferTransaction retrieves raw details of a transfer transaction.",
         "operationId": "Transaction_GetRawTransferTransaction",
@@ -542,48 +545,48 @@
         },
         "parameters": [
           {
+            "name": "lockTime",
+            "description": "Lock time for the transaction.\nIf not explicitly set, it sets to the last block height.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
             "name": "sender",
             "description": "Sender's account address.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
             "name": "receiver",
             "description": "Receiver's account address.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
             "name": "amount",
             "description": "Transfer amount in NanoPAC.\nIt should be greater than 0.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "lockTime",
-            "description": "Lock time for the transaction.\nIf not explicitly set, it sets to the last block height.",
-            "in": "path",
-            "required": true,
-            "type": "integer",
             "format": "int64"
           },
           {
             "name": "fee",
             "description": "Transaction fee in NanoPAC.\nIf not explicitly set, it is calculated based on the amount.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string",
             "format": "int64"
           },
           {
             "name": "memo",
             "description": "Transaction memo.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -592,7 +595,7 @@
         ]
       }
     },
-    "/pactus/transaction/get_raw_unbond_transaction/validator_address/{validatorAddress}/lock_time/{lockTime}/memo/{memo}": {
+    "/pactus/transaction/get_raw_unbond_transaction": {
       "get": {
         "summary": "GetRawUnbondTransaction retrieves raw details of an unbond transaction.",
         "operationId": "Transaction_GetRawUnbondTransaction",
@@ -612,25 +615,25 @@
         },
         "parameters": [
           {
-            "name": "validatorAddress",
-            "description": "Address of the validator to unbond from.",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
             "name": "lockTime",
             "description": "Lock time for the transaction.\nIf not explicitly set, it sets to the last block height.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "integer",
             "format": "int64"
           },
           {
+            "name": "validatorAddress",
+            "description": "Address of the validator to unbond from.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "memo",
             "description": "Transaction memo.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -639,7 +642,7 @@
         ]
       }
     },
-    "/pactus/transaction/get_raw_withdraw_transaction/validator_address/{validatorAddress}/account_address/{accountAddress}/amount/{amount}/lock_time/{lockTime}/fee/{fee}/memo/{memo}": {
+    "/pactus/transaction/get_raw_withdraw_transaction": {
       "get": {
         "summary": "GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.",
         "operationId": "Transaction_GetRawWithdrawTransaction",
@@ -659,48 +662,48 @@
         },
         "parameters": [
           {
+            "name": "lockTime",
+            "description": "Lock time for the transaction.\nIf not explicitly set, it sets to the last block height.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
             "name": "validatorAddress",
             "description": "Address of the validator to withdraw from.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
             "name": "accountAddress",
             "description": "Address of the account to withdraw to.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
             "name": "amount",
             "description": "Withdrawal amount in NanoPAC.\nIt should be greater than 0.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "lockTime",
-            "description": "Lock time for the transaction.\nIf not explicitly set, it sets to the last block height.",
-            "in": "path",
-            "required": true,
-            "type": "integer",
             "format": "int64"
           },
           {
             "name": "fee",
             "description": "Transaction fee in NanoPAC.\nIf not explicitly set, it is calculated based on the amount.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string",
             "format": "int64"
           },
           {
             "name": "memo",
             "description": "Transaction memo.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -709,7 +712,7 @@
         ]
       }
     },
-    "/pactus/transaction/get_transaction/id/{id}/verbosity/{verbosity}": {
+    "/pactus/transaction/get_transaction": {
       "get": {
         "summary": "GetTransaction retrieves transaction details based on the provided request\nparameters.",
         "operationId": "Transaction_GetTransaction",
@@ -731,21 +734,22 @@
           {
             "name": "id",
             "description": "Transaction ID.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string",
             "format": "byte"
           },
           {
             "name": "verbosity",
-            "description": "Verbosity level for transaction details.",
-            "in": "path",
-            "required": true,
+            "description": "Verbosity level for transaction details.\n\n - TRANSACTION_DATA: Request only transaction data.\n - TRANSACTION_INFO: Request detailed transaction information.",
+            "in": "query",
+            "required": false,
             "type": "string",
             "enum": [
               "TRANSACTION_DATA",
               "TRANSACTION_INFO"
-            ]
+            ],
+            "default": "TRANSACTION_DATA"
           }
         ],
         "tags": [
@@ -753,7 +757,7 @@
         ]
       }
     },
-    "/pactus/wallet/create_wallet/wallet_name/{walletName}/mnemonic/{mnemonic}/language/{language}": {
+    "/pactus/wallet/create_wallet": {
       "get": {
         "summary": "CreateWallet creates a new wallet with the specified parameters.",
         "operationId": "Wallet_CreateWallet",
@@ -775,22 +779,22 @@
           {
             "name": "walletName",
             "description": "Name of the new wallet.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
             "name": "mnemonic",
             "description": "Mnemonic for wallet recovery.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
             "name": "language",
             "description": "Language for the mnemonic.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
@@ -806,7 +810,7 @@
         ]
       }
     },
-    "/pactus/wallet/get_validator_address/public_key/{publicKey}": {
+    "/pactus/wallet/get_validator_address": {
       "get": {
         "summary": "GetValidatorAddress retrieves the validator address associated with a\npublic key.",
         "operationId": "Wallet_GetValidatorAddress",
@@ -828,8 +832,8 @@
           {
             "name": "publicKey",
             "description": "Public key for which the validator address is requested.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -838,7 +842,7 @@
         ]
       }
     },
-    "/pactus/wallet/load_wallet/wallet_name/{walletName}": {
+    "/pactus/wallet/load_wallet": {
       "get": {
         "summary": "LoadWallet loads an existing wallet with the given name.",
         "operationId": "Wallet_LoadWallet",
@@ -860,8 +864,8 @@
           {
             "name": "walletName",
             "description": "Name of the wallet to load.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -870,7 +874,7 @@
         ]
       }
     },
-    "/pactus/wallet/lock_wallet/wallet_name/{walletName}": {
+    "/pactus/wallet/lock_wallet": {
       "get": {
         "summary": "LockWallet locks a currently loaded wallet with the provided password and\ntimeout.",
         "operationId": "Wallet_LockWallet",
@@ -892,8 +896,8 @@
           {
             "name": "walletName",
             "description": "Name of the wallet to lock.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -902,7 +906,7 @@
         ]
       }
     },
-    "/pactus/wallet/sign_raw_transaction/wallet_name/{walletName}/password/{password}/raw_transaction/{rawTransaction}": {
+    "/pactus/wallet/sign_raw_transaction": {
       "get": {
         "summary": "SignRawTransaction signs a raw transaction for a specified wallet.",
         "operationId": "Wallet_SignRawTransaction",
@@ -924,24 +928,24 @@
           {
             "name": "walletName",
             "description": "Name of the wallet used for signing.",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "description": "Password for unlocking the wallet for signing.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
             "name": "rawTransaction",
             "description": "Raw transaction data to be signed.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string",
             "format": "byte"
+          },
+          {
+            "name": "password",
+            "description": "Password for unlocking the wallet for signing.",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -949,7 +953,7 @@
         ]
       }
     },
-    "/pactus/wallet/unload_wallet/wallet_name/{walletName}": {
+    "/pactus/wallet/unload_wallet": {
       "get": {
         "summary": "UnloadWallet unloads a currently loaded wallet with the specified name.",
         "operationId": "Wallet_UnloadWallet",
@@ -971,8 +975,8 @@
           {
             "name": "walletName",
             "description": "Name of the wallet to unload.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -981,7 +985,7 @@
         ]
       }
     },
-    "/pactus/wallet/unlock_wallet/wallet_name/{walletName}/password/{password}/timeout/{timeout}": {
+    "/pactus/wallet/unlock_wallet": {
       "get": {
         "summary": "UnlockWallet unlocks a locked wallet with the provided password and\ntimeout.",
         "operationId": "Wallet_UnlockWallet",
@@ -1003,22 +1007,22 @@
           {
             "name": "walletName",
             "description": "Name of the wallet to unlock.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
             "name": "password",
             "description": "Password for unlocking the wallet.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
             "name": "timeout",
             "description": "Timeout duration for the unlocked state.",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "integer",
             "format": "int32"
           }
