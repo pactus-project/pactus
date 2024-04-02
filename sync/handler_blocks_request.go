@@ -42,8 +42,8 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 		return nil
 	}
 
+	ourHeight := handler.state.LastBlockHeight()
 	if !handler.config.NodeNetwork {
-		ourHeight := handler.state.LastBlockHeight()
 		if ourHeight > handler.config.LatestBlockInterval && msg.From < ourHeight-handler.config.LatestBlockInterval {
 			response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 				fmt.Sprintf("the request height is not acceptable: %v", msg.From), msg.SessionID, 0, nil, nil)
@@ -53,10 +53,17 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 			return nil
 		}
 	}
-	height := msg.From
-	count := msg.Count
 
-	if count > handler.config.LatestBlockInterval {
+	if msg.From > ourHeight {
+		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
+			fmt.Sprintf("don't have requested blocks: %v", msg.From), msg.SessionID, 0, nil, nil)
+
+		handler.respond(response, pid)
+
+		return nil
+	}
+
+	if msg.Count > handler.config.LatestBlockInterval {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("too many blocks requested: %v-%v", msg.From, msg.Count), msg.SessionID, 0, nil, nil)
 
@@ -66,6 +73,8 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 	}
 
 	// Help this peer to sync up
+	height := msg.From
+	count := msg.Count
 	for {
 		blockToRead := util.Min(handler.config.BlockPerMessage, count)
 		blocksData := handler.prepareBlocks(height, blockToRead)
@@ -84,7 +93,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 		}
 	}
 
-	if msg.To() >= handler.state.LastBlockHeight() {
+	if msg.To() >= ourHeight {
 		lastCert := handler.state.LastCertificate()
 		response := message.NewBlocksResponseMessage(message.ResponseCodeSynced,
 			message.ResponseCodeSynced.String(), msg.SessionID, lastCert.Height(), nil, lastCert)
@@ -112,10 +121,6 @@ func (handler *blocksRequestHandler) respond(msg *message.BlocksResponseMessage,
 			"to", to, "reason", msg.Reason)
 
 		handler.sendTo(msg, to)
-
-		// There is no point in keeping this stream connection open.
-		// Close this connection to initiate a new handshake.
-		handler.network.CloseConnection(to)
 	} else {
 		handler.logger.Info("responding block request message", "msg", msg, "to", to)
 

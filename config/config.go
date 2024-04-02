@@ -17,6 +17,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
+	"github.com/pactus-project/pactus/www/jsonrpc"
 	"github.com/pactus-project/pactus/www/nanomsg"
 	"github.com/pelletier/go-toml"
 )
@@ -38,6 +39,7 @@ type Config struct {
 	Consensus *consensus.Config `toml:"-"`
 	Logger    *logger.Config    `toml:"logger"`
 	GRPC      *grpc.Config      `toml:"grpc"`
+	JSONRPC   *jsonrpc.Config   `toml:"jsonrpc"`
 	HTTP      *http.Config      `toml:"http"`
 	Nanomsg   *nanomsg.Config   `toml:"nanomsg"`
 }
@@ -89,6 +91,7 @@ func defaultConfig() *Config {
 		Consensus: consensus.DefaultConfig(),
 		Logger:    logger.DefaultConfig(),
 		GRPC:      grpc.DefaultConfig(),
+		JSONRPC:   jsonrpc.DefaultConfig(),
 		HTTP:      http.DefaultConfig(),
 		Nanomsg:   nanomsg.DefaultConfig(),
 	}
@@ -119,6 +122,8 @@ func DefaultConfigMainnet() *Config {
 	conf.GRPC.BasicAuthCredential = ""
 	conf.GRPC.Gateway.Enable = false
 	conf.GRPC.Gateway.Listen = "127.0.0.1:8080"
+	conf.JSONRPC.Enable = false
+	conf.JSONRPC.Listen = "127.0.0.1:8545"
 	conf.HTTP.Enable = false
 	conf.HTTP.Listen = "127.0.0.1:80"
 	conf.Nanomsg.Enable = false
@@ -145,6 +150,8 @@ func DefaultConfigTestnet() *Config {
 	conf.GRPC.Listen = "[::]:50052"
 	conf.GRPC.Gateway.Enable = true
 	conf.GRPC.Gateway.Listen = "[::]:8080"
+	conf.JSONRPC.Enable = false
+	conf.JSONRPC.Listen = "127.0.0.1:8545"
 	conf.HTTP.Enable = false
 	conf.HTTP.Listen = "[::]:80"
 	conf.Nanomsg.Enable = false
@@ -170,6 +177,8 @@ func DefaultConfigLocalnet() *Config {
 	conf.GRPC.Listen = "[::]:50052"
 	conf.GRPC.Gateway.Enable = true
 	conf.GRPC.Gateway.Listen = "[::]:8080"
+	conf.JSONRPC.Enable = true
+	conf.JSONRPC.Listen = "127.0.0.1:8545"
 	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "[::]:0"
 	conf.Nanomsg.Enable = true
@@ -241,6 +250,9 @@ func (conf *Config) BasicCheck() error {
 		return err
 	}
 	if err := conf.Nanomsg.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.JSONRPC.BasicCheck(); err != nil {
 		return err
 	}
 

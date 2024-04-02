@@ -27,6 +27,7 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 	receiverHint := getLabelObj(builder, "id_hint_receiver")
 	stakeEntry := getEntryObj(builder, "id_entry_stake")
 	stakeHint := getLabelObj(builder, "id_hint_stake")
+	memoEntry := getEntryObj(builder, "id_entry_memo")
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
@@ -35,8 +36,7 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 	}
 	validatorEntry.SetActive(0)
 
-	// TODO: we need something like: wlt.AllAccountAddresses()
-	for _, ai := range wlt.AddressInfos() {
+	for _, ai := range wlt.AllAccountAddresses() {
 		receiverCombo.Append(ai.Address, ai.Address)
 	}
 
@@ -61,6 +61,7 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 		receiverEntry, _ := receiverCombo.GetEntry()
 		receiver, _ := receiverEntry.GetText()
 		amountStr, _ := stakeEntry.GetText()
+		memo, _ := memoEntry.GetText()
 
 		amt, err := amount.FromString(amountStr)
 		if err != nil {
@@ -69,7 +70,11 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 			return
 		}
 
-		trx, err := wlt.MakeWithdrawTx(sender, receiver, amt)
+		opts := []wallet.TxOption{
+			wallet.OptionMemo(memo),
+		}
+
+		trx, err := wlt.MakeWithdrawTx(sender, receiver, amt, opts...)
 		if err != nil {
 			errorCheck(err)
 
@@ -81,10 +86,11 @@ You are going to sign and broadcast this transaction:
 From:   %s
 To:     %s
 Amount: %s
+Memo:   %s
 Fee:    %s
 
 THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`,
-			sender, receiver, amt, trx.Fee())
+			sender, receiver, amt, trx.Memo(), trx.Fee())
 
 		signAndBroadcastTransaction(dlg, msg, wlt, trx)
 

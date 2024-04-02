@@ -24,13 +24,15 @@ devtools:
 	go install github.com/bufbuild/buf/cmd/buf@v1.25.0
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/rakyll/statik@v0.1
+	go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.1.3
 
 ########################################
 ### Building
-build:
+build: 
 	go build -o ./build/pactus-daemon$(EXE) ./cmd/daemon
 	go build -o ./build/pactus-wallet$(EXE) ./cmd/wallet
-	go build -o ./build/pactus-ctl$(EXE) 	./cmd/ctl
+	go build -o ./build/pactus-shell$(EXE)  ./cmd/shell
+
 
 build_race:
 	go build -race -o ./build/pactus-daemon$(EXE) ./cmd/daemon

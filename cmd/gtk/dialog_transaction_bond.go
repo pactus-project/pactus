@@ -28,6 +28,7 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 	publicKeyEntry := getEntryObj(builder, "id_entry_public_key")
 	amountEntry := getEntryObj(builder, "id_entry_amount")
 	amountHint := getLabelObj(builder, "id_hint_amount")
+	memoEntry := getEntryObj(builder, "id_entry_memo")
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
@@ -63,6 +64,7 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 		receiver, _ := receiverEntry.GetText()
 		publicKey, _ := publicKeyEntry.GetText()
 		amountStr, _ := amountEntry.GetText()
+		memo, _ := memoEntry.GetText()
 
 		amt, err := amount.FromString(amountStr)
 		if err != nil {
@@ -71,7 +73,11 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 			return
 		}
 
-		trx, err := wlt.MakeBondTx(sender, receiver, publicKey, amt)
+		opts := []wallet.TxOption{
+			wallet.OptionMemo(memo),
+		}
+
+		trx, err := wlt.MakeBondTx(sender, receiver, publicKey, amt, opts...)
 		if err != nil {
 			errorCheck(err)
 
@@ -83,10 +89,11 @@ You are going to sign and broadcast this transaction:
 From:   %s
 To:     %s
 Amount: %s
+Memo:   %s
 Fee:    %s
 
 THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`,
-			sender, receiver, amt, trx.Fee())
+			sender, receiver, amt, trx.Memo(), trx.Fee())
 
 		signAndBroadcastTransaction(dlg, msg, wlt, trx)
 

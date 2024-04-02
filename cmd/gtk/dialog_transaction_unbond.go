@@ -21,6 +21,7 @@ func broadcastTransactionUnbond(wlt *wallet.Wallet) {
 
 	validatorCombo := getComboBoxTextObj(builder, "id_combo_validator")
 	validatorHint := getLabelObj(builder, "id_hint_validator")
+	memoEntry := getEntryObj(builder, "id_entry_memo")
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
@@ -37,8 +38,13 @@ func broadcastTransactionUnbond(wlt *wallet.Wallet) {
 	onSend := func() {
 		validatorEntry, _ := validatorCombo.GetEntry()
 		validator, _ := validatorEntry.GetText()
+		memo, _ := memoEntry.GetText()
 
-		trx, err := wlt.MakeUnbondTx(validator)
+		opts := []wallet.TxOption{
+			wallet.OptionMemo(memo),
+		}
+
+		trx, err := wlt.MakeUnbondTx(validator, opts...)
 		if err != nil {
 			errorCheck(err)
 
@@ -48,8 +54,9 @@ func broadcastTransactionUnbond(wlt *wallet.Wallet) {
 You are going to sign and broadcast this transaction:
 
 Validator: %s
+Memo:      %s
 
-THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`, validator)
+THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`, validator, trx.Memo())
 
 		signAndBroadcastTransaction(dlg, msg, wlt, trx)
 

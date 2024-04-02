@@ -72,10 +72,11 @@ func TestMain(m *testing.M) {
 
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
+		tConfigs[i].Consensus.ChangeProposerDelta = 0
 		tConfigs[i].Logger.Levels["default"] = "warn"
 		tConfigs[i].Logger.Levels["_state"] = "warn"
 		tConfigs[i].Logger.Levels["_sync"] = "debug"
-		tConfigs[i].Logger.Levels["_consensus"] = "warn"
+		tConfigs[i].Logger.Levels["_consensus"] = "debug"
 		tConfigs[i].Logger.Levels["_network"] = "debug"
 		tConfigs[i].Logger.Levels["_pool"] = "warn"
 		tConfigs[i].Sync.NodeNetwork = false
@@ -84,11 +85,11 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Network.EnableMdns = true
 		tConfigs[i].Network.EnableRelay = false
 		tConfigs[i].Network.DefaultBootstrapAddrStrings = []string{}
+		tConfigs[i].Network.BootstrapAddrStrings = []string{}
 		tConfigs[i].Network.ForcePrivateNetwork = true
 		tConfigs[i].Network.NetworkKey = util.TempFilePath()
 		tConfigs[i].Network.NetworkName = "test"
 		tConfigs[i].Network.ListenAddrStrings = []string{"/ip4/127.0.0.1/tcp/0", "/ip4/127.0.0.1/udp/0/quic-v1"}
-		tConfigs[i].Network.BootstrapAddrStrings = []string{}
 		tConfigs[i].Network.MaxConns = 32
 		tConfigs[i].HTTP.Enable = false
 		tConfigs[i].GRPC.Enable = false
@@ -138,6 +139,17 @@ func TestMain(m *testing.M) {
 			panic(fmt.Sprintf("Error on starting the node: %v", err))
 		}
 
+		if i == 0 {
+			// Set bootstrap address for better connectivity
+			bootstrapAddr := fmt.Sprintf("%v/p2p/%v",
+				tNodes[i].Network().HostAddrs()[0], tNodes[i].Network().SelfID())
+			fmt.Println("Bootstrap address is: " + bootstrapAddr)
+
+			tConfigs[tNodeIdx2].Network.BootstrapAddrStrings = []string{bootstrapAddr}
+			tConfigs[tNodeIdx3].Network.BootstrapAddrStrings = []string{bootstrapAddr}
+			tConfigs[tNodeIdx4].Network.BootstrapAddrStrings = []string{bootstrapAddr}
+		}
+
 		time.Sleep(1 * time.Second)
 	}
 
@@ -158,12 +170,14 @@ func TestMain(m *testing.M) {
 	tNetwork = pactus.NewNetworkClient(conn)
 
 	// Wait for some blocks
+	fmt.Println("Waiting to commit some blocks...")
 	waitForNewBlocks(8)
 
-	fmt.Println("Running tests")
-
+	fmt.Println("Running tests...")
 	exitCode := m.Run()
 	// Commit more blocks, then new nodes can catch up and send sortition transactions
+
+	fmt.Println("Waiting to commit some blocks...")
 	waitForNewBlocks(20)
 
 	// Check if sortition worked or not?

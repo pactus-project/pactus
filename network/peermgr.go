@@ -55,7 +55,7 @@ func (mgr *peerMgr) Start() {
 	mgr.CheckConnectivity()
 
 	go func() {
-		ticker := time.NewTicker(20 * time.Second)
+		ticker := time.NewTicker(60 * time.Second)
 		defer ticker.Stop()
 
 		for {
@@ -116,8 +116,6 @@ func (mgr *peerMgr) RemovePeer(pid lp2ppeer.ID) {
 func (mgr *peerMgr) removePeer(pid lp2ppeer.ID) {
 	peerInfo, exists := mgr.peers[pid]
 	if !exists {
-		mgr.logger.Warn("unable to find a peer", "pid", pid)
-
 		return
 	}
 
@@ -155,7 +153,15 @@ func (mgr *peerMgr) CheckConnectivity() {
 
 	net := mgr.host.Network()
 
-	// Let's check if some peers are disconnected
+	// Close connections with peers that have no supported protocol.
+	for pid := range mgr.peers {
+		prtcls, _ := mgr.host.Peerstore().GetProtocols(pid)
+		if len(prtcls) == 0 {
+			_ = net.ClosePeer(pid)
+		}
+	}
+
+	// Check if some peers are disconnected
 	var connectedPeers []lp2ppeer.ID
 	for pid := range mgr.peers {
 		connectedness := net.Connectedness(pid)

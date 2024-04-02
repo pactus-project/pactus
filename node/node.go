@@ -19,6 +19,7 @@ import (
 	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
+	"github.com/pactus-project/pactus/www/jsonrpc"
 	"github.com/pactus-project/pactus/www/nanomsg"
 	"github.com/pactus-project/pactus/www/nanomsg/event"
 	"github.com/pkg/errors"
@@ -35,6 +36,7 @@ type Node struct {
 	sync       sync.Synchronizer
 	http       *http.Server
 	grpc       *grpc.Server
+	jsonrpc    *jsonrpc.Server
 	nanomsg    *nanomsg.Server
 }
 
@@ -82,9 +84,9 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	if conf.GRPC.BasicAuthCredential != "" {
 		enableHTTPAuth = true
 	}
-
-	httpServer := http.NewServer(conf.HTTP, enableHTTPAuth)
 	grpcServer := grpc.NewServer(conf.GRPC, st, syn, net, consMgr)
+	httpServer := http.NewServer(conf.HTTP, enableHTTPAuth)
+	jsonrpcServer := jsonrpc.NewServer(conf.JSONRPC)
 	nanomsgServer := nanomsg.NewServer(conf.Nanomsg, eventCh)
 
 	node := &Node{
@@ -98,6 +100,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		store:      str,
 		http:       httpServer,
 		grpc:       grpcServer,
+		jsonrpc:    jsonrpcServer,
 		nanomsg:    nanomsgServer,
 	}
 
@@ -116,7 +119,7 @@ func (n *Node) Start() error {
 	if err := n.network.Start(); err != nil {
 		return err
 	}
-	// Wait for network to started
+	// Wait for network to start
 	time.Sleep(1 * time.Second)
 
 	if err := n.sync.Start(); err != nil {
@@ -129,12 +132,17 @@ func (n *Node) Start() error {
 
 	err := n.grpc.StartServer()
 	if err != nil {
-		return errors.Wrap(err, "could not start grpc server")
+		return errors.Wrap(err, "could not start gRPC server")
 	}
 
 	err = n.http.StartServer(n.grpc.Address())
 	if err != nil {
-		return errors.Wrap(err, "could not start http server")
+		return errors.Wrap(err, "could not start HTTP server")
+	}
+
+	err = n.jsonrpc.StartServer(n.grpc.Address())
+	if err != nil {
+		return errors.Wrap(err, "could not start JSON-RPC server")
 	}
 
 	err = n.nanomsg.StartServer()
@@ -148,13 +156,18 @@ func (n *Node) Start() error {
 func (n *Node) Stop() {
 	logger.Info("stopping Node")
 
-	n.consMgr.Stop()
 	n.network.Stop()
+
+	// Wait for network to stop
+	time.Sleep(1 * time.Second)
+
+	n.consMgr.Stop()
 	n.sync.Stop()
 	n.state.Close()
 	n.store.Close()
-	n.http.StopServer()
 	n.grpc.StopServer()
+	n.http.StopServer()
+	n.jsonrpc.StopServer()
 	n.nanomsg.StopServer()
 }
 

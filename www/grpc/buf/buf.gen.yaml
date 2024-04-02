@@ -32,6 +32,8 @@ plugins:
     opt:
       - grpc_api_configuration=grpc-gateway.config.yaml,allow_merge=true,merge_file_name=pactus
       - openapi_configuration=openapi.config.yaml
+  - name: jrpc-gateway
+    out: ../gen/go
   - plugin: buf.build/protocolbuffers/js:v3.21.2
     out: ../gen/js
     opt:
@@ -51,3 +53,11 @@ plugins:
     out: ../gen/python
   - plugin: buf.build/grpc/python:v1.50.0
     out: ../gen/python
+  # Rust code gen:
+  # https://github.com/neoeinstein/protoc-gen-prost?tab=readme-ov-file#example-bufgenyaml
+  - plugin: buf.build/community/neoeinstein-prost:v0.2.3
+    out: ../gen/rust
+  - plugin: buf.build/community/neoeinstein-prost-serde:v0.2.3
+    out: ../gen/rust
+  - plugin: buf.build/community/neoeinstein-tonic:v0.3.0
+    out: ../gen/rust

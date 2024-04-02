@@ -179,9 +179,6 @@ func updateFeeHint(lbl *gtk.Label, amtStr string, w *wallet.Wallet, payloadType 
 		updateHintLabel(lbl, "")
 	} else {
 		fee, _ := w.CalculateFee(amt, payloadType)
-		if err != nil {
-			return
-		}
 		hint := fmt.Sprintf("payable: %s, fee: %s",
 			fee+amt, fee)
 		updateHintLabel(lbl, hint)
@@ -205,7 +202,7 @@ func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, w *wallet.Walle
 
 			return
 		}
-		_, err = w.BroadcastTransaction(trx)
+		txID, err := w.BroadcastTransaction(trx)
 		if err != nil {
 			errorCheck(err)
 
@@ -218,6 +215,8 @@ func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, w *wallet.Walle
 
 			return
 		}
+
+		showInfoDialog(parent, fmt.Sprintf("Your transaction Hash: %s", txID))
 	}
 }
 
