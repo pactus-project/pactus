@@ -99,7 +99,7 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 		trx = tx.NewTransferTx(m.lockTime, *m.from, *m.to, m.amount, m.fee, m.memo)
 	case payload.TypeBond:
 		pub := m.pub
-		val, _ := m.client.getValidator(*m.to)
+		val, _ := m.client.getValidator(m.to.String())
 		if val != nil {
 			// validator exists
 			pub = nil

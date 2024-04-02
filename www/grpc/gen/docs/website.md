@@ -127,6 +127,10 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           <span class="badge text-bg-primary">rpc</span> UnlockWallet</a>
         </li> 
         <li>
+          <a href="#pactus.Wallet.GetTotalBalance">
+          <span class="badge text-bg-primary">rpc</span> GetTotalBalance</a>
+        </li> 
+        <li>
           <a href="#pactus.Wallet.SignRawTransaction">
           <span class="badge text-bg-primary">rpc</span> SignRawTransaction</a>
         </li> 
@@ -405,6 +409,16 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           </a>
         </li> 
         <li>
+          <a href="#pactus.GetTotalBalanceRequest">
+            <span class="badge text-bg-secondary">msg</span> GetTotalBalanceRequest
+          </a>
+        </li> 
+        <li>
+          <a href="#pactus.GetTotalBalanceResponse">
+            <span class="badge text-bg-secondary">msg</span> GetTotalBalanceResponse
+          </a>
+        </li> 
+        <li>
           <a href="#pactus.GetValidatorAddressRequest">
             <span class="badge text-bg-secondary">msg</span> GetValidatorAddressRequest
           </a>
@@ -598,6 +612,10 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
 <div class="request pt-3">Request message: <a href="#pactus.UnlockWalletRequest">UnlockWalletRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.UnlockWalletResponse">UnlockWalletResponse</a></div>
 <p>UnlockWallet unlocks a locked wallet with the provided password and</p><p>timeout.</p> 
+<h3 id="pactus.Wallet.GetTotalBalance">GetTotalBalance <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
+<div class="request pt-3">Request message: <a href="#pactus.GetTotalBalanceRequest">GetTotalBalanceRequest</a></div>
+<div class="response pb-3">Response message: <a href="#pactus.GetTotalBalanceResponse">GetTotalBalanceResponse</a></div>
+<p>GetTotalBalance returns the total available balance of the wallet.</p> 
 <h3 id="pactus.Wallet.SignRawTransaction">SignRawTransaction <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.SignRawTransactionRequest">SignRawTransactionRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.SignRawTransactionResponse">SignRawTransactionResponse</a></div>
@@ -693,18 +711,18 @@ CalculateFeeResponse
   </thead>
   <tbody class="table-group-divider"> 
     <tr>
-      <td class="fw-bold">fee</td>
-      <td>
-        <a href="#int64">int64</a>
-      </td>
-      <td>Calculated transaction fee in NanoPAC. </td>
-    </tr>
-    <tr>
       <td class="fw-bold">amount</td>
       <td>
         <a href="#int64">int64</a>
       </td>
       <td>Calculated amount in NanoPAC. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">fee</td>
+      <td>
+        <a href="#int64">int64</a>
+      </td>
+      <td>Calculated transaction fee in NanoPAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -2500,6 +2518,53 @@ CreateWalletResponse
         <a href="#string">string</a>
       </td>
       <td>Name of the created wallet. </td>
+    </tr>
+  </tbody>
+</table>  
+<h3 id="pactus.GetTotalBalanceRequest">
+GetTotalBalanceRequest
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Request message for obtaining the available balance of a wallet.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> 
+    <tr>
+      <td class="fw-bold">wallet_name</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Name of the wallet. </td>
+    </tr>
+  </tbody>
+</table>  
+<h3 id="pactus.GetTotalBalanceResponse">
+GetTotalBalanceResponse
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Response message containing the available balance of the wallet.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> 
+    <tr>
+      <td class="fw-bold">wallet_name</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Name of the wallet. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">total_balance</td>
+      <td>
+        <a href="#int64">int64</a>
+      </td>
+      <td>The total balance of the wallet in NanoPAC. </td>
     </tr>
   </tbody>
 </table>  

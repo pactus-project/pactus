@@ -739,18 +739,18 @@ impl serde::Serialize for CalculateFeeResponse {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
-        if self.fee != 0 {
+        if self.amount != 0 {
             len += 1;
         }
-        if self.amount != 0 {
+        if self.fee != 0 {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.CalculateFeeResponse", len)?;
-        if self.fee != 0 {
-            struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
-        }
         if self.amount != 0 {
             struct_ser.serialize_field("amount", ToString::to_string(&self.amount).as_str())?;
+        }
+        if self.fee != 0 {
+            struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
         }
         struct_ser.end()
     }
@@ -762,14 +762,14 @@ impl<'de> serde::Deserialize<'de> for CalculateFeeResponse {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "fee",
             "amount",
+            "fee",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            Fee,
             Amount,
+            Fee,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -791,8 +791,8 @@ impl<'de> serde::Deserialize<'de> for CalculateFeeResponse {
                         E: serde::de::Error,
                     {
                         match value {
-                            "fee" => Ok(GeneratedField::Fee),
                             "amount" => Ok(GeneratedField::Amount),
+                            "fee" => Ok(GeneratedField::Fee),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -812,18 +812,10 @@ impl<'de> serde::Deserialize<'de> for CalculateFeeResponse {
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                let mut fee__ = None;
                 let mut amount__ = None;
+                let mut fee__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
-                        GeneratedField::Fee => {
-                            if fee__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("fee"));
-                            }
-                            fee__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
-                        }
                         GeneratedField::Amount => {
                             if amount__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("amount"));
@@ -832,11 +824,19 @@ impl<'de> serde::Deserialize<'de> for CalculateFeeResponse {
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
+                        GeneratedField::Fee => {
+                            if fee__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("fee"));
+                            }
+                            fee__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                     }
                 }
                 Ok(CalculateFeeResponse {
-                    fee: fee__.unwrap_or_default(),
                     amount: amount__.unwrap_or_default(),
+                    fee: fee__.unwrap_or_default(),
                 })
             }
         }
@@ -4294,6 +4294,210 @@ impl<'de> serde::Deserialize<'de> for GetRawWithdrawTransactionRequest {
             }
         }
         deserializer.deserialize_struct("pactus.GetRawWithdrawTransactionRequest", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for GetTotalBalanceRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.wallet_name.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.GetTotalBalanceRequest", len)?;
+        if !self.wallet_name.is_empty() {
+            struct_ser.serialize_field("walletName", &self.wallet_name)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for GetTotalBalanceRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "wallet_name",
+            "walletName",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            WalletName,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = GetTotalBalanceRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.GetTotalBalanceRequest")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetTotalBalanceRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut wallet_name__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::WalletName => {
+                            if wallet_name__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("walletName"));
+                            }
+                            wallet_name__ = Some(map.next_value()?);
+                        }
+                    }
+                }
+                Ok(GetTotalBalanceRequest {
+                    wallet_name: wallet_name__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.GetTotalBalanceRequest", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for GetTotalBalanceResponse {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.wallet_name.is_empty() {
+            len += 1;
+        }
+        if self.total_balance != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.GetTotalBalanceResponse", len)?;
+        if !self.wallet_name.is_empty() {
+            struct_ser.serialize_field("walletName", &self.wallet_name)?;
+        }
+        if self.total_balance != 0 {
+            struct_ser.serialize_field("totalBalance", ToString::to_string(&self.total_balance).as_str())?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for GetTotalBalanceResponse {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "wallet_name",
+            "walletName",
+            "total_balance",
+            "totalBalance",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            WalletName,
+            TotalBalance,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
+                            "totalBalance" | "total_balance" => Ok(GeneratedField::TotalBalance),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = GetTotalBalanceResponse;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.GetTotalBalanceResponse")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetTotalBalanceResponse, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut wallet_name__ = None;
+                let mut total_balance__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::WalletName => {
+                            if wallet_name__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("walletName"));
+                            }
+                            wallet_name__ = Some(map.next_value()?);
+                        }
+                        GeneratedField::TotalBalance => {
+                            if total_balance__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("totalBalance"));
+                            }
+                            total_balance__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(GetTotalBalanceResponse {
+                    wallet_name: wallet_name__.unwrap_or_default(),
+                    total_balance: total_balance__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.GetTotalBalanceResponse", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for GetTransactionRequest {

@@ -1118,15 +1118,15 @@
     "pactusCalculateFeeResponse": {
       "type": "object",
       "properties": {
-        "fee": {
-          "type": "string",
-          "format": "int64",
-          "description": "Calculated transaction fee in NanoPAC."
-        },
         "amount": {
           "type": "string",
           "format": "int64",
           "description": "Calculated amount in NanoPAC."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "Calculated transaction fee in NanoPAC."
         }
       },
       "description": "Response message containing the calculated transaction fee."
@@ -1460,6 +1460,21 @@
         }
       },
       "description": "Response message containing raw transaction data."
+    },
+    "pactusGetTotalBalanceResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "Name of the wallet."
+        },
+        "totalBalance": {
+          "type": "string",
+          "format": "int64",
+          "description": "The total balance of the wallet in NanoPAC."
+        }
+      },
+      "description": "Response message containing the available balance of the wallet."
     },
     "pactusGetTransactionResponse": {
       "type": "object",

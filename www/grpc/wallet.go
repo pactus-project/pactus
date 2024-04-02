@@ -17,7 +17,7 @@ import (
 
 //
 // TODO: default_wallet should be loaded on starting the node.
-// TODO: We need to add a wallet service (or manaeger) to manage wallets.
+// TODO: We need to add a wallet service (or manager) to manage wallets.
 // UnLocking wallet should happens inside the wallet manager (or no?)
 //
 
@@ -127,6 +127,22 @@ func (s *walletServer) UnlockWallet(_ context.Context,
 	_ *pactus.UnlockWalletRequest,
 ) (*pactus.UnlockWalletResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "not implemeneted")
+}
+
+func (s *walletServer) GetTotalBalance(_ context.Context,
+	req *pactus.GetTotalBalanceRequest,
+) (*pactus.GetTotalBalanceResponse, error) {
+	wlt, ok := s.wallets[req.WalletName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	totalBalance := wlt.TotalBalance()
+
+	return &pactus.GetTotalBalanceResponse{
+		WalletName:   req.WalletName,
+		TotalBalance: totalBalance.ToNanoPAC(),
+	}, nil
 }
 
 func (s *walletServer) SignRawTransaction(_ context.Context,

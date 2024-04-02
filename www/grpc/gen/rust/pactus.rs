@@ -15,10 +15,10 @@ pub struct GetTransactionRequest {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetTransactionResponse {
     /// Height of the block containing the transaction.
-    #[prost(uint32, tag="12")]
+    #[prost(uint32, tag="1")]
     pub block_height: u32,
     /// Time of the block containing the transaction.
-    #[prost(uint32, tag="13")]
+    #[prost(uint32, tag="2")]
     pub block_time: u32,
     /// Information about the transaction.
     #[prost(message, optional, tag="3")]
@@ -42,12 +42,12 @@ pub struct CalculateFeeRequest {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CalculateFeeResponse {
-    /// Calculated transaction fee in NanoPAC.
-    #[prost(int64, tag="1")]
-    pub fee: i64,
     /// Calculated amount in NanoPAC.
-    #[prost(int64, tag="2")]
+    #[prost(int64, tag="1")]
     pub amount: i64,
+    /// Calculated transaction fee in NanoPAC.
+    #[prost(int64, tag="2")]
+    pub fee: i64,
 }
 /// Request message for broadcasting a signed transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -1024,6 +1024,25 @@ pub struct SignRawTransactionResponse {
     /// Signed raw transaction data.
     #[prost(bytes="vec", tag="2")]
     pub signed_raw_transaction: ::prost::alloc::vec::Vec<u8>,
+}
+/// Request message for obtaining the available balance of a wallet.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetTotalBalanceRequest {
+    /// Name of the wallet.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+}
+/// Response message containing the available balance of the wallet.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetTotalBalanceResponse {
+    /// Name of the wallet.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// The total balance of the wallet in NanoPAC.
+    #[prost(int64, tag="2")]
+    pub total_balance: i64,
 }
 include!("pactus.serde.rs");
 include!("pactus.tonic.rs");

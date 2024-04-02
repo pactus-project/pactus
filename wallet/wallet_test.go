@@ -81,7 +81,7 @@ func setup(t *testing.T) *testData {
 		transactionClient: pactus.NewTransactionClient(conn),
 	}
 
-	wallet.client = client
+	wallet.lazyClient = client
 
 	assert.False(t, wallet.IsEncrypted())
 	assert.False(t, wallet.IsOffline())

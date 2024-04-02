@@ -40,6 +40,11 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.UnlockWalletRequest.SerializeToString,
                 response_deserializer=wallet__pb2.UnlockWalletResponse.FromString,
                 )
+        self.GetTotalBalance = channel.unary_unary(
+                '/pactus.Wallet/GetTotalBalance',
+                request_serializer=wallet__pb2.GetTotalBalanceRequest.SerializeToString,
+                response_deserializer=wallet__pb2.GetTotalBalanceResponse.FromString,
+                )
         self.SignRawTransaction = channel.unary_unary(
                 '/pactus.Wallet/SignRawTransaction',
                 request_serializer=wallet__pb2.SignRawTransactionRequest.SerializeToString,
@@ -93,6 +98,13 @@ class WalletServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetTotalBalance(self, request, context):
+        """GetTotalBalance returns the total available balance of the wallet.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def SignRawTransaction(self, request, context):
         """SignRawTransaction signs a raw transaction for a specified wallet.
         """
@@ -135,6 +147,11 @@ def add_WalletServicer_to_server(servicer, server):
                     servicer.UnlockWallet,
                     request_deserializer=wallet__pb2.UnlockWalletRequest.FromString,
                     response_serializer=wallet__pb2.UnlockWalletResponse.SerializeToString,
+            ),
+            'GetTotalBalance': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTotalBalance,
+                    request_deserializer=wallet__pb2.GetTotalBalanceRequest.FromString,
+                    response_serializer=wallet__pb2.GetTotalBalanceResponse.SerializeToString,
             ),
             'SignRawTransaction': grpc.unary_unary_rpc_method_handler(
                     servicer.SignRawTransaction,
@@ -239,6 +256,23 @@ class Wallet(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/UnlockWallet',
             wallet__pb2.UnlockWalletRequest.SerializeToString,
             wallet__pb2.UnlockWalletResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetTotalBalance(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/GetTotalBalance',
+            wallet__pb2.GetTotalBalanceRequest.SerializeToString,
+            wallet__pb2.GetTotalBalanceResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

@@ -452,6 +452,14 @@
                 </li>
               
                 <li>
+                  <a href="#pactus.GetTotalBalanceRequest"><span class="badge">M</span>GetTotalBalanceRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#pactus.GetTotalBalanceResponse"><span class="badge">M</span>GetTotalBalanceResponse</a>
+                </li>
+              
+                <li>
                   <a href="#pactus.GetValidatorAddressRequest"><span class="badge">M</span>GetValidatorAddressRequest</a>
                 </li>
               
@@ -618,17 +626,17 @@
             <tbody>
               
                 <tr>
-                  <td>fee</td>
-                  <td><a href="#int64">int64</a></td>
-                  <td></td>
-                  <td><p>Calculated transaction fee in NanoPAC. </p></td>
-                </tr>
-              
-                <tr>
                   <td>amount</td>
                   <td><a href="#int64">int64</a></td>
                   <td></td>
                   <td><p>Calculated amount in NanoPAC. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>fee</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Calculated transaction fee in NanoPAC. </p></td>
                 </tr>
               
             </tbody>
@@ -2966,6 +2974,61 @@ address.</p></td>
 
         
       
+        <h3 id="pactus.GetTotalBalanceRequest">GetTotalBalanceRequest</h3>
+        <p>Request message for obtaining the available balance of a wallet.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>wallet_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Name of the wallet. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pactus.GetTotalBalanceResponse">GetTotalBalanceResponse</h3>
+        <p>Response message containing the available balance of the wallet.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>wallet_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Name of the wallet. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>total_balance</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>The total balance of the wallet in NanoPAC. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="pactus.GetValidatorAddressRequest">GetValidatorAddressRequest</h3>
         <p>Request message for obtaining the validator address associated with a public</p><p>key.</p>
 
@@ -3338,6 +3401,13 @@ timeout.</p></td>
                 <td><a href="#pactus.UnlockWalletResponse">UnlockWalletResponse</a></td>
                 <td><p>UnlockWallet unlocks a locked wallet with the provided password and
 timeout.</p></td>
+              </tr>
+            
+              <tr>
+                <td>GetTotalBalance</td>
+                <td><a href="#pactus.GetTotalBalanceRequest">GetTotalBalanceRequest</a></td>
+                <td><a href="#pactus.GetTotalBalanceResponse">GetTotalBalanceResponse</a></td>
+                <td><p>GetTotalBalance returns the total available balance of the wallet.</p></td>
               </tr>
             
               <tr>

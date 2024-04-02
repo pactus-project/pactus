@@ -614,8 +614,8 @@ proto.pactus.GetTransactionResponse.prototype.toObject = function(opt_includeIns
  */
 proto.pactus.GetTransactionResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    blockHeight: jspb.Message.getFieldWithDefault(msg, 12, 0),
-    blockTime: jspb.Message.getFieldWithDefault(msg, 13, 0),
+    blockHeight: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    blockTime: jspb.Message.getFieldWithDefault(msg, 2, 0),
     transaction: (f = msg.getTransaction()) && proto.pactus.TransactionInfo.toObject(includeInstance, f)
   };
 
@@ -653,11 +653,11 @@ proto.pactus.GetTransactionResponse.deserializeBinaryFromReader = function(msg, 
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 12:
+    case 1:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setBlockHeight(value);
       break;
-    case 13:
+    case 2:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setBlockTime(value);
       break;
@@ -698,14 +698,14 @@ proto.pactus.GetTransactionResponse.serializeBinaryToWriter = function(message, 
   f = message.getBlockHeight();
   if (f !== 0) {
     writer.writeUint32(
-      12,
+      1,
       f
     );
   }
   f = message.getBlockTime();
   if (f !== 0) {
     writer.writeUint32(
-      13,
+      2,
       f
     );
   }
@@ -721,11 +721,11 @@ proto.pactus.GetTransactionResponse.serializeBinaryToWriter = function(message, 
 
 
 /**
- * optional uint32 block_height = 12;
+ * optional uint32 block_height = 1;
  * @return {number}
  */
 proto.pactus.GetTransactionResponse.prototype.getBlockHeight = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
@@ -734,16 +734,16 @@ proto.pactus.GetTransactionResponse.prototype.getBlockHeight = function() {
  * @return {!proto.pactus.GetTransactionResponse} returns this
  */
 proto.pactus.GetTransactionResponse.prototype.setBlockHeight = function(value) {
-  return jspb.Message.setProto3IntField(this, 12, value);
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional uint32 block_time = 13;
+ * optional uint32 block_time = 2;
  * @return {number}
  */
 proto.pactus.GetTransactionResponse.prototype.getBlockTime = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 13, 0));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
@@ -752,7 +752,7 @@ proto.pactus.GetTransactionResponse.prototype.getBlockTime = function() {
  * @return {!proto.pactus.GetTransactionResponse} returns this
  */
 proto.pactus.GetTransactionResponse.prototype.setBlockTime = function(value) {
-  return jspb.Message.setProto3IntField(this, 13, value);
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -1015,8 +1015,8 @@ proto.pactus.CalculateFeeResponse.prototype.toObject = function(opt_includeInsta
  */
 proto.pactus.CalculateFeeResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    fee: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    amount: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    amount: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    fee: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -1055,11 +1055,11 @@ proto.pactus.CalculateFeeResponse.deserializeBinaryFromReader = function(msg, re
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setFee(value);
+      msg.setAmount(value);
       break;
     case 2:
       var value = /** @type {number} */ (reader.readInt64());
-      msg.setAmount(value);
+      msg.setFee(value);
       break;
     default:
       reader.skipField();
@@ -1090,14 +1090,14 @@ proto.pactus.CalculateFeeResponse.prototype.serializeBinary = function() {
  */
 proto.pactus.CalculateFeeResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getFee();
+  f = message.getAmount();
   if (f !== 0) {
     writer.writeInt64(
       1,
       f
     );
   }
-  f = message.getAmount();
+  f = message.getFee();
   if (f !== 0) {
     writer.writeInt64(
       2,
@@ -1108,10 +1108,10 @@ proto.pactus.CalculateFeeResponse.serializeBinaryToWriter = function(message, wr
 
 
 /**
- * optional int64 fee = 1;
+ * optional int64 amount = 1;
  * @return {number}
  */
-proto.pactus.CalculateFeeResponse.prototype.getFee = function() {
+proto.pactus.CalculateFeeResponse.prototype.getAmount = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -1120,16 +1120,16 @@ proto.pactus.CalculateFeeResponse.prototype.getFee = function() {
  * @param {number} value
  * @return {!proto.pactus.CalculateFeeResponse} returns this
  */
-proto.pactus.CalculateFeeResponse.prototype.setFee = function(value) {
+proto.pactus.CalculateFeeResponse.prototype.setAmount = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional int64 amount = 2;
+ * optional int64 fee = 2;
  * @return {number}
  */
-proto.pactus.CalculateFeeResponse.prototype.getAmount = function() {
+proto.pactus.CalculateFeeResponse.prototype.getFee = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
@@ -1138,7 +1138,7 @@ proto.pactus.CalculateFeeResponse.prototype.getAmount = function() {
  * @param {number} value
  * @return {!proto.pactus.CalculateFeeResponse} returns this
  */
-proto.pactus.CalculateFeeResponse.prototype.setAmount = function(value) {
+proto.pactus.CalculateFeeResponse.prototype.setFee = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
 };
 

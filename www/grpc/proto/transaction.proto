@@ -1,4 +1,4 @@
-syntax = 'proto3';
+syntax = "proto3";
 package pactus;
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus.transaction";
@@ -46,9 +46,9 @@ message GetTransactionRequest {
 // Response message containing details of a transaction.
 message GetTransactionResponse {
   // Height of the block containing the transaction.
-  uint32 block_height = 12;
+  uint32 block_height = 1;
   // Time of the block containing the transaction.
-  uint32 block_time = 13;
+  uint32 block_time = 2;
   // Information about the transaction.
   TransactionInfo transaction = 3;
 }
@@ -65,10 +65,10 @@ message CalculateFeeRequest {
 
 // Response message containing the calculated transaction fee.
 message CalculateFeeResponse {
-  // Calculated transaction fee in NanoPAC.
-  int64 fee = 1;
   // Calculated amount in NanoPAC.
-  int64 amount = 2;
+  int64 amount = 1;
+  // Calculated transaction fee in NanoPAC.
+  int64 fee = 2;
 }
 
 // Request message for broadcasting a signed transaction.
