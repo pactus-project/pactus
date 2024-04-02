@@ -341,7 +341,7 @@
         "website": "",
         "address": "/ip4/49.13.27.37/tcp/21888/p2p/12D3KooWPSh9KMa6tRfSewK3sUC4BDSPnXseVDGJxWqNZxKcXnGM"
     },
-     {
+    {
         "name": "Sury",
         "email": "lyminhhai102@gmail.com",
         "website": "",
@@ -364,5 +364,11 @@
         "email": "hain64341@gmail.com",
         "website": "n/a",
         "address": "/ip4/95.111.242.225/tcp/21888/p2p/12D3KooWRNTZpo1XNWKQx2Z5HEu5RnqKeNDV5y4qMKX5f4aLtbv9"
+    },
+    {
+        "name": "Dezh Technologies",
+        "email": "hi@dezh.tech",
+        "website": "https://dezh.tech",
+        "address": "/dns/pactus-bootstrap1.dezh.tech/tcp/21888/p2p/12D3KooWL8yQcyzk1kU31q76KTSVRB8SUtoK8vJrsp8oFbKvWH4N"
     }
 ]
