@@ -143,10 +143,7 @@ func start(workingDir string, app *gtk.Application) {
 	node, wlt, err := cmd.StartNode(workingDir, passwordFetcher)
 	fatalErrorCheck(err)
 
-	grpcAddr := node.GRPC().Address()
-	cmd.PrintInfoMsgf("connect wallet to grpc server: %s\n", grpcAddr)
-
-	err = wlt.Connect(grpcAddr)
+	err = wlt.ConnectToRandomServer()
 	fatalErrorCheck(err)
 
 	nodeModel := newNodeModel(node)

@@ -123,7 +123,7 @@ func newWallet(walletPath string, store *store, offline bool) (*Wallet, error) {
 	}
 
 	if !offline {
-		err := w.connectToRandomServer()
+		err := w.ConnectToRandomServer()
 		if err != nil {
 			return nil, err
 		}
@@ -161,7 +161,7 @@ func (w *Wallet) IsOffline() bool {
 	return w.client == nil
 }
 
-func (w *Wallet) connectToRandomServer() error {
+func (w *Wallet) ConnectToRandomServer() error {
 	serversInfo := servers{}
 	err := json.Unmarshal(serversJSON, &serversInfo)
 	if err != nil {
