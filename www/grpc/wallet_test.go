@@ -2,11 +2,9 @@ package grpc
 
 import (
 	"context"
-	"path/filepath"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -97,15 +95,10 @@ func TestLoadWallet(t *testing.T) {
 	td := setup(t, conf)
 	conn, client := td.walletClient(t)
 
-	wltName := td.RandString(16)
-	wltPath := filepath.Join(conf.WalletsDir, wltName)
-	mnemonic, _ := wallet.GenerateMnemonic(128)
-	wlt, err := wallet.Create(wltPath, mnemonic, "", genesis.Mainnet)
-	require.NoError(t, err)
-
-	wltAddr, err := wlt.NewBLSAccountAddress("test")
+	wltName := "default_wallet"
+	wltAddr, err := td.defaultWallet.NewBLSAccountAddress("test")
 	assert.NoError(t, err)
-	require.NoError(t, wlt.Save())
+	require.NoError(t, td.defaultWallet.Save())
 
 	t.Run("Load non-existing wallet", func(t *testing.T) {
 		res, err := client.LoadWallet(context.Background(),
@@ -224,6 +217,40 @@ func TestGetValidatorAddress(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, pubKey.ValidatorAddress().String(), res.Address)
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}
+
+func TestGetTotalBalance(t *testing.T) {
+	conf := testConfig()
+	conf.EnableWallet = true
+
+	td := setup(t, conf)
+	conn, client := td.walletClient(t)
+
+	t.Run("wallet not loaded", func(t *testing.T) {
+		res, err := client.GetTotalBalance(context.Background(),
+			&pactus.GetTotalBalanceRequest{})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("OK", func(t *testing.T) {
+		walletName := "default_wallet"
+		_, err := client.LoadWallet(context.Background(), &pactus.LoadWalletRequest{
+			WalletName: walletName,
+		})
+		assert.NoError(t, err)
+
+		res, err := client.GetTotalBalance(context.Background(),
+			&pactus.GetTotalBalanceRequest{
+				WalletName: walletName,
+			})
+		assert.NoError(t, err)
+		assert.Equal(t, res.WalletName, walletName)
+		assert.Zero(t, res.TotalBalance)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
