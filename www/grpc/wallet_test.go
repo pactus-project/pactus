@@ -96,7 +96,7 @@ func TestLoadWallet(t *testing.T) {
 	conn, client := td.walletClient(t)
 
 	wltName := "default_wallet"
-	wltAddr, err := td.defaultWallet.NewBLSAccountAddress("test")
+	wltAddrInfo, err := td.defaultWallet.NewBLSAccountAddress("test")
 	assert.NoError(t, err)
 	require.NoError(t, td.defaultWallet.Save())
 
@@ -137,7 +137,7 @@ func TestLoadWallet(t *testing.T) {
 	})
 
 	t.Run("Sign raw transaction, OK", func(t *testing.T) {
-		wltAddr, _ := crypto.AddressFromString(wltAddr)
+		wltAddr, _ := crypto.AddressFromString(wltAddrInfo.Address)
 		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(), td.RandAmount(), "memo")
 		rawTx, _ := bondTx.Bytes()
 		res, err := client.SignRawTransaction(context.Background(),
@@ -156,7 +156,7 @@ func TestLoadWallet(t *testing.T) {
 	})
 
 	t.Run("Sign raw transaction using not loaded wallet", func(t *testing.T) {
-		wltAddr, _ := crypto.AddressFromString(wltAddr)
+		wltAddr, _ := crypto.AddressFromString(wltAddrInfo.Address)
 		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(), td.RandAmount(), "memo")
 		rawTx, _ := bondTx.Bytes()
 		res, err := client.SignRawTransaction(context.Background(),

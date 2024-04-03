@@ -436,58 +436,60 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 	return keys, nil
 }
 
-func (v *Vault) NewBLSAccountAddress(label string) (string, error) {
+func (v *Vault) NewBLSAccountAddress(label string) (*AddressInfo, error) {
 	ext, err := hdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	index := v.Purposes.PurposeBLS.NextAccountIndex
 	ext, err = ext.DerivePath([]uint32{index})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	blsPubKey, err := bls.PublicKeyFromBytes(ext.RawPublicKey())
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	addr := blsPubKey.AccountAddress().String()
-	v.Addresses[addr] = AddressInfo{
+	data := AddressInfo{
 		Address: addr,
 		Label:   label,
 		Path:    addresspath.NewPath(ext.Path()...).String(),
 	}
+	v.Addresses[addr] = data
 	v.Purposes.PurposeBLS.NextAccountIndex++
 
-	return addr, nil
+	return &data, nil
 }
 
-func (v *Vault) NewValidatorAddress(label string) (string, error) {
+func (v *Vault) NewValidatorAddress(label string) (*AddressInfo, error) {
 	ext, err := hdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubValidator)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	index := v.Purposes.PurposeBLS.NextValidatorIndex
 	ext, err = ext.DerivePath([]uint32{index})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	blsPubKey, err := bls.PublicKeyFromBytes(ext.RawPublicKey())
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	addr := blsPubKey.ValidatorAddress().String()
-	v.Addresses[addr] = AddressInfo{
+	data := AddressInfo{
 		Address: addr,
 		Label:   label,
 		Path:    addresspath.NewPath(ext.Path()...).String(),
 	}
+	v.Addresses[addr] = data
 	v.Purposes.PurposeBLS.NextValidatorIndex++
 
-	return addr, nil
+	return &data, nil
 }
 
 // TODO change structure of AddressInfo to more informatively object
