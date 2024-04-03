@@ -75,6 +75,8 @@
 - [wallet.proto](#wallet-proto)
     - [CreateWalletRequest](#pactus-CreateWalletRequest)
     - [CreateWalletResponse](#pactus-CreateWalletResponse)
+    - [GetTotalBalanceRequest](#pactus-GetTotalBalanceRequest)
+    - [GetTotalBalanceResponse](#pactus-GetTotalBalanceResponse)
     - [GetValidatorAddressRequest](#pactus-GetValidatorAddressRequest)
     - [GetValidatorAddressResponse](#pactus-GetValidatorAddressResponse)
     - [LoadWalletRequest](#pactus-LoadWalletRequest)
@@ -156,8 +158,8 @@ Response message containing the calculated transaction fee.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| fee | [int64](#int64) |  | Calculated transaction fee in NanoPAC. |
 | amount | [int64](#int64) |  | Calculated amount in NanoPAC. |
+| fee | [int64](#int64) |  | Calculated transaction fee in NanoPAC. |
 
 
 
@@ -1150,6 +1152,37 @@ Response message containing the name of the created wallet.
 
 
 
+<a name="pactus-GetTotalBalanceRequest"></a>
+
+### GetTotalBalanceRequest
+Request message for obtaining the available balance of a wallet.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| wallet_name | [string](#string) |  | Name of the wallet. |
+
+
+
+
+
+
+<a name="pactus-GetTotalBalanceResponse"></a>
+
+### GetTotalBalanceResponse
+Response message containing the available balance of the wallet.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| wallet_name | [string](#string) |  | Name of the wallet. |
+| total_balance | [int64](#int64) |  | The total balance of the wallet in NanoPAC. |
+
+
+
+
+
+
 <a name="pactus-GetValidatorAddressRequest"></a>
 
 ### GetValidatorAddressRequest
@@ -1355,6 +1388,7 @@ Define the Wallet service with various RPC methods for wallet management.
 | UnloadWallet | [UnloadWalletRequest](#pactus-UnloadWalletRequest) | [UnloadWalletResponse](#pactus-UnloadWalletResponse) | UnloadWallet unloads a currently loaded wallet with the specified name. |
 | LockWallet | [LockWalletRequest](#pactus-LockWalletRequest) | [LockWalletResponse](#pactus-LockWalletResponse) | LockWallet locks a currently loaded wallet with the provided password and timeout. |
 | UnlockWallet | [UnlockWalletRequest](#pactus-UnlockWalletRequest) | [UnlockWalletResponse](#pactus-UnlockWalletResponse) | UnlockWallet unlocks a locked wallet with the provided password and timeout. |
+| GetTotalBalance | [GetTotalBalanceRequest](#pactus-GetTotalBalanceRequest) | [GetTotalBalanceResponse](#pactus-GetTotalBalanceResponse) | GetTotalBalance returns the total available balance of the wallet. |
 | SignRawTransaction | [SignRawTransactionRequest](#pactus-SignRawTransactionRequest) | [SignRawTransactionResponse](#pactus-SignRawTransactionResponse) | SignRawTransaction signs a raw transaction for a specified wallet. |
 | GetValidatorAddress | [GetValidatorAddressRequest](#pactus-GetValidatorAddressRequest) | [GetValidatorAddressResponse](#pactus-GetValidatorAddressResponse) | GetValidatorAddress retrieves the validator address associated with a public key. |
 

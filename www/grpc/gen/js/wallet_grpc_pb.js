@@ -27,6 +27,28 @@ function deserialize_pactus_CreateWalletResponse(buffer_arg) {
   return wallet_pb.CreateWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_GetTotalBalanceRequest(arg) {
+  if (!(arg instanceof wallet_pb.GetTotalBalanceRequest)) {
+    throw new Error('Expected argument of type pactus.GetTotalBalanceRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetTotalBalanceRequest(buffer_arg) {
+  return wallet_pb.GetTotalBalanceRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetTotalBalanceResponse(arg) {
+  if (!(arg instanceof wallet_pb.GetTotalBalanceResponse)) {
+    throw new Error('Expected argument of type pactus.GetTotalBalanceResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetTotalBalanceResponse(buffer_arg) {
+  return wallet_pb.GetTotalBalanceResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetValidatorAddressRequest(arg) {
   if (!(arg instanceof wallet_pb.GetValidatorAddressRequest)) {
     throw new Error('Expected argument of type pactus.GetValidatorAddressRequest');
@@ -223,6 +245,18 @@ unlockWallet: {
     requestDeserialize: deserialize_pactus_UnlockWalletRequest,
     responseSerialize: serialize_pactus_UnlockWalletResponse,
     responseDeserialize: deserialize_pactus_UnlockWalletResponse,
+  },
+  // GetTotalBalance returns the total available balance of the wallet.
+getTotalBalance: {
+    path: '/pactus.Wallet/GetTotalBalance',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.GetTotalBalanceRequest,
+    responseType: wallet_pb.GetTotalBalanceResponse,
+    requestSerialize: serialize_pactus_GetTotalBalanceRequest,
+    requestDeserialize: deserialize_pactus_GetTotalBalanceRequest,
+    responseSerialize: serialize_pactus_GetTotalBalanceResponse,
+    responseDeserialize: deserialize_pactus_GetTotalBalanceResponse,
   },
   // SignRawTransaction signs a raw transaction for a specified wallet.
 signRawTransaction: {

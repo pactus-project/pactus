@@ -119,10 +119,7 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	}
 
 	fee := s.getFee(req.Fee, amt)
-	lockTime := req.LockTime
-	if lockTime == 0 {
-		lockTime = s.state.LastBlockHeight()
-	}
+	lockTime := s.getLockTime(req.LockTime)
 
 	transferTx := tx.NewTransferTx(lockTime, sender, receiver, amt, fee, req.Memo)
 	rawTx, err := transferTx.Bytes()
@@ -164,10 +161,7 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	}
 
 	fee := s.getFee(req.Fee, amt)
-	lockTime := req.LockTime
-	if lockTime == 0 {
-		lockTime = s.state.LastBlockHeight()
-	}
+	lockTime := s.getLockTime(req.LockTime)
 
 	bondTx := tx.NewBondTx(lockTime, sender, receiver, publicKey, amt, fee, req.Memo)
 	rawTx, err := bondTx.Bytes()
@@ -188,10 +182,7 @@ func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
 		return nil, err
 	}
 
-	lockTime := req.LockTime
-	if lockTime == 0 {
-		lockTime = s.state.LastBlockHeight()
-	}
+	lockTime := s.getLockTime(req.LockTime)
 
 	unbondTx := tx.NewUnbondTx(lockTime, validatorAddr, req.Memo)
 	rawTx, err := unbondTx.Bytes()
@@ -223,10 +214,7 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	}
 
 	fee := s.getFee(req.Fee, amt)
-	lockTime := req.LockTime
-	if lockTime == 0 {
-		lockTime = s.state.LastBlockHeight()
-	}
+	lockTime := s.getLockTime(req.LockTime)
 
 	withdrawTx := tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr, amt, fee, req.Memo)
 	rawTx, err := withdrawTx.Bytes()
@@ -255,6 +243,14 @@ func (s *transactionServer) getFee(f int64, amt amount.Amount) amount.Amount {
 	}
 
 	return fee
+}
+
+func (s *transactionServer) getLockTime(lockTime uint32) uint32 {
+	if lockTime == 0 {
+		lockTime = s.state.LastBlockHeight()
+	}
+
+	return lockTime
 }
 
 func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {

@@ -8,6 +8,7 @@
 import 'dart:async' as $async;
 import 'dart:core' as $core;
 
+import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 class CreateWalletRequest extends $pb.GeneratedMessage {
@@ -780,6 +781,114 @@ class SignRawTransactionResponse extends $pb.GeneratedMessage {
   void clearSignedRawTransaction() => clearField(2);
 }
 
+class GetTotalBalanceRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetTotalBalanceRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
+    ..hasRequiredFields = false
+  ;
+
+  GetTotalBalanceRequest._() : super();
+  factory GetTotalBalanceRequest({
+    $core.String? walletName,
+  }) {
+    final _result = create();
+    if (walletName != null) {
+      _result.walletName = walletName;
+    }
+    return _result;
+  }
+  factory GetTotalBalanceRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetTotalBalanceRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetTotalBalanceRequest clone() => GetTotalBalanceRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetTotalBalanceRequest copyWith(void Function(GetTotalBalanceRequest) updates) => super.copyWith((message) => updates(message as GetTotalBalanceRequest)) as GetTotalBalanceRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetTotalBalanceRequest create() => GetTotalBalanceRequest._();
+  GetTotalBalanceRequest createEmptyInstance() => create();
+  static $pb.PbList<GetTotalBalanceRequest> createRepeated() => $pb.PbList<GetTotalBalanceRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetTotalBalanceRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetTotalBalanceRequest>(create);
+  static GetTotalBalanceRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => clearField(1);
+}
+
+class GetTotalBalanceResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetTotalBalanceResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
+    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalBalance')
+    ..hasRequiredFields = false
+  ;
+
+  GetTotalBalanceResponse._() : super();
+  factory GetTotalBalanceResponse({
+    $core.String? walletName,
+    $fixnum.Int64? totalBalance,
+  }) {
+    final _result = create();
+    if (walletName != null) {
+      _result.walletName = walletName;
+    }
+    if (totalBalance != null) {
+      _result.totalBalance = totalBalance;
+    }
+    return _result;
+  }
+  factory GetTotalBalanceResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetTotalBalanceResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetTotalBalanceResponse clone() => GetTotalBalanceResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetTotalBalanceResponse copyWith(void Function(GetTotalBalanceResponse) updates) => super.copyWith((message) => updates(message as GetTotalBalanceResponse)) as GetTotalBalanceResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetTotalBalanceResponse create() => GetTotalBalanceResponse._();
+  GetTotalBalanceResponse createEmptyInstance() => create();
+  static $pb.PbList<GetTotalBalanceResponse> createRepeated() => $pb.PbList<GetTotalBalanceResponse>();
+  @$core.pragma('dart2js:noInline')
+  static GetTotalBalanceResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetTotalBalanceResponse>(create);
+  static GetTotalBalanceResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get totalBalance => $_getI64(1);
+  @$pb.TagNumber(2)
+  set totalBalance($fixnum.Int64 v) { $_setInt64(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasTotalBalance() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTotalBalance() => clearField(2);
+}
+
 class WalletApi {
   $pb.RpcClient _client;
   WalletApi(this._client);
@@ -803,6 +912,10 @@ class WalletApi {
   $async.Future<UnlockWalletResponse> unlockWallet($pb.ClientContext? ctx, UnlockWalletRequest request) {
     var emptyResponse = UnlockWalletResponse();
     return _client.invoke<UnlockWalletResponse>(ctx, 'Wallet', 'UnlockWallet', request, emptyResponse);
+  }
+  $async.Future<GetTotalBalanceResponse> getTotalBalance($pb.ClientContext? ctx, GetTotalBalanceRequest request) {
+    var emptyResponse = GetTotalBalanceResponse();
+    return _client.invoke<GetTotalBalanceResponse>(ctx, 'Wallet', 'GetTotalBalance', request, emptyResponse);
   }
   $async.Future<SignRawTransactionResponse> signRawTransaction($pb.ClientContext? ctx, SignRawTransactionRequest request) {
     var emptyResponse = SignRawTransactionResponse();

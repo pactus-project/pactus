@@ -25,6 +25,7 @@ func WalletClientCommand(options ...client.Option) *cobra.Command {
 		_WalletUnloadWalletCommand(cfg),
 		_WalletLockWalletCommand(cfg),
 		_WalletUnlockWalletCommand(cfg),
+		_WalletGetTotalBalanceCommand(cfg),
 		_WalletSignRawTransactionCommand(cfg),
 		_WalletGetValidatorAddressCommand(cfg),
 	)
@@ -242,6 +243,48 @@ func _WalletUnlockWalletCommand(cfg *client.Config) *cobra.Command {
 	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet to unlock.")
 	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "Password for unlocking the wallet.")
 	cmd.PersistentFlags().Int32Var(&req.Timeout, cfg.FlagNamer("Timeout"), 0, "Timeout duration for the unlocked state.")
+
+	return cmd
+}
+
+func _WalletGetTotalBalanceCommand(cfg *client.Config) *cobra.Command {
+	req := &GetTotalBalanceRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("GetTotalBalance"),
+		Short: "GetTotalBalance RPC client",
+		Long:  "GetTotalBalance returns the total available balance of the wallet.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "GetTotalBalance"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewWalletClient(cc)
+				v := &GetTotalBalanceRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.GetTotalBalance(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet.")
 
 	return cmd
 }

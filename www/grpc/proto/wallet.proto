@@ -1,4 +1,4 @@
-syntax = 'proto3';
+syntax = "proto3";
 
 // Define the package and Go package path for the generated code.
 package pactus;
@@ -28,6 +28,9 @@ service Wallet {
   // UnlockWallet unlocks a locked wallet with the provided password and
   // timeout.
   rpc UnlockWallet(UnlockWalletRequest) returns (UnlockWalletResponse);
+
+  // GetTotalBalance returns the total available balance of the wallet.
+  rpc GetTotalBalance(GetTotalBalanceRequest) returns (GetTotalBalanceResponse);
 
   // SignRawTransaction signs a raw transaction for a specified wallet.
   rpc SignRawTransaction(SignRawTransactionRequest)
@@ -139,4 +142,18 @@ message SignRawTransactionResponse {
   bytes transaction_id = 1;
   // Signed raw transaction data.
   bytes signed_raw_transaction = 2;
+}
+
+// Request message for obtaining the available balance of a wallet.
+message GetTotalBalanceRequest {
+  // Name of the wallet.
+  string wallet_name = 1;
+}
+
+// Response message containing the available balance of the wallet.
+message GetTotalBalanceResponse {
+  // Name of the wallet.
+  string wallet_name = 1;
+  // The total balance of the wallet in NanoPAC.
+  int64 total_balance = 2;
 }

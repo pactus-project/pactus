@@ -34,6 +34,8 @@ type WalletClient interface {
 	// UnlockWallet unlocks a locked wallet with the provided password and
 	// timeout.
 	UnlockWallet(ctx context.Context, in *UnlockWalletRequest, opts ...grpc.CallOption) (*UnlockWalletResponse, error)
+	// GetTotalBalance returns the total available balance of the wallet.
+	GetTotalBalance(ctx context.Context, in *GetTotalBalanceRequest, opts ...grpc.CallOption) (*GetTotalBalanceResponse, error)
 	// SignRawTransaction signs a raw transaction for a specified wallet.
 	SignRawTransaction(ctx context.Context, in *SignRawTransactionRequest, opts ...grpc.CallOption) (*SignRawTransactionResponse, error)
 	// GetValidatorAddress retrieves the validator address associated with a
@@ -94,6 +96,15 @@ func (c *walletClient) UnlockWallet(ctx context.Context, in *UnlockWalletRequest
 	return out, nil
 }
 
+func (c *walletClient) GetTotalBalance(ctx context.Context, in *GetTotalBalanceRequest, opts ...grpc.CallOption) (*GetTotalBalanceResponse, error) {
+	out := new(GetTotalBalanceResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Wallet/GetTotalBalance", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *walletClient) SignRawTransaction(ctx context.Context, in *SignRawTransactionRequest, opts ...grpc.CallOption) (*SignRawTransactionResponse, error) {
 	out := new(SignRawTransactionResponse)
 	err := c.cc.Invoke(ctx, "/pactus.Wallet/SignRawTransaction", in, out, opts...)
@@ -128,6 +139,8 @@ type WalletServer interface {
 	// UnlockWallet unlocks a locked wallet with the provided password and
 	// timeout.
 	UnlockWallet(context.Context, *UnlockWalletRequest) (*UnlockWalletResponse, error)
+	// GetTotalBalance returns the total available balance of the wallet.
+	GetTotalBalance(context.Context, *GetTotalBalanceRequest) (*GetTotalBalanceResponse, error)
 	// SignRawTransaction signs a raw transaction for a specified wallet.
 	SignRawTransaction(context.Context, *SignRawTransactionRequest) (*SignRawTransactionResponse, error)
 	// GetValidatorAddress retrieves the validator address associated with a
@@ -153,6 +166,9 @@ func (UnimplementedWalletServer) LockWallet(context.Context, *LockWalletRequest)
 }
 func (UnimplementedWalletServer) UnlockWallet(context.Context, *UnlockWalletRequest) (*UnlockWalletResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnlockWallet not implemented")
+}
+func (UnimplementedWalletServer) GetTotalBalance(context.Context, *GetTotalBalanceRequest) (*GetTotalBalanceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTotalBalance not implemented")
 }
 func (UnimplementedWalletServer) SignRawTransaction(context.Context, *SignRawTransactionRequest) (*SignRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignRawTransaction not implemented")
@@ -262,6 +278,24 @@ func _Wallet_UnlockWallet_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Wallet_GetTotalBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTotalBalanceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).GetTotalBalance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pactus.Wallet/GetTotalBalance",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).GetTotalBalance(ctx, req.(*GetTotalBalanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Wallet_SignRawTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SignRawTransactionRequest)
 	if err := dec(in); err != nil {
@@ -324,6 +358,10 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UnlockWallet",
 			Handler:    _Wallet_UnlockWallet_Handler,
+		},
+		{
+			MethodName: "GetTotalBalance",
+			Handler:    _Wallet_GetTotalBalance_Handler,
 		},
 		{
 			MethodName: "SignRawTransaction",
