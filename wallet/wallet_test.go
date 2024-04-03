@@ -588,12 +588,12 @@ func TestTotalBalance(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
 
-	addrStr1, _ := td.wallet.NewBLSAccountAddress("account-1")
+	addrInfo1, _ := td.wallet.NewBLSAccountAddress("account-1")
 	_, _ = td.wallet.NewBLSAccountAddress("account-2")
-	addrStr3, _ := td.wallet.NewBLSAccountAddress("account-3")
+	addrInfo3, _ := td.wallet.NewBLSAccountAddress("account-3")
 
-	addr1, _ := crypto.AddressFromString(addrStr1)
-	addr3, _ := crypto.AddressFromString(addrStr3)
+	addr1, _ := crypto.AddressFromString(addrInfo1.Address)
+	addr3, _ := crypto.AddressFromString(addrInfo3.Address)
 
 	acc1 := account.NewAccount(td.RandInt32(1000))
 	acc3 := account.NewAccount(td.RandInt32(1000))
