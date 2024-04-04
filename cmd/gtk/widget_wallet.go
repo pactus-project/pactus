@@ -54,6 +54,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	labelName := getLabelObj(builder, "id_label_wallet_name")
 	labelLocation := getLabelObj(builder, "id_label_wallet_location")
 	labelEncrypted := getLabelObj(builder, "id_label_wallet_encrypted")
+	labelTotalBalance := getLabelObj(builder, "id_lable_wallet_total_balance")
 
 	getToolButtonObj(builder, "id_button_new_address").SetIconWidget(AddIcon())
 	getToolButtonObj(builder, "id_button_change_password").SetIconWidget(PasswordIcon())
@@ -66,6 +67,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	} else {
 		labelEncrypted.SetText("No")
 	}
+	labelTotalBalance.SetText(model.wallet.TotalBalance().String())
 
 	colNo := createColumn("No", IDAddressesColumnNo)
 	colAddress := createColumn("Address", IDAddressesColumnAddress)
