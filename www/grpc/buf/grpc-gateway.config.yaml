@@ -81,3 +81,6 @@ http:
 
     - selector: pactus.Wallet.SignRawTransaction
       get: "/pactus/wallet/sign_raw_transaction"
+
+    - selector: pactus.Wallet.GetNewAddress
+      get: "/pactus/wallet/get_new_address"
