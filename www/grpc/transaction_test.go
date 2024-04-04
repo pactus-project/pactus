@@ -257,6 +257,17 @@ func TestCalculateFee(t *testing.T) {
 		assert.Less(t, res.Amount, amt.ToNanoPAC())
 	})
 
+	t.Run("Unbond fee should be zero", func(t *testing.T) {
+		res, err := client.CalculateFee(context.Background(),
+			&pactus.CalculateFeeRequest{
+				Amount:      0,
+				PayloadType: pactus.PayloadType_UNBOND_PAYLOAD,
+				FixedAmount: true,
+			})
+		assert.NoError(t, err)
+		assert.Zero(t, res.Amount)
+	})
+
 	assert.Nil(t, conn.Close(), "Error closing connection")
 	td.StopServer()
 }
