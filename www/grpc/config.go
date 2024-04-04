@@ -1,11 +1,11 @@
 package grpc
 
 type Config struct {
-	Enable              bool          `toml:"enable"`
-	EnableWallet        bool          `toml:"enable_wallet"`
-	Listen              string        `toml:"listen"`
-	BasicAuthCredential string        `toml:"basic_auth_credential"`
-	Gateway             GatewayConfig `toml:"gateway"`
+	Enable       bool          `toml:"enable"`
+	EnableWallet bool          `toml:"enable_wallet"`
+	Listen       string        `toml:"listen"`
+	BasicAuth    string        `toml:"basic_auth"`
+	Gateway      GatewayConfig `toml:"gateway"`
 
 	// Private config
 	WalletsDir        string `toml:"-"`
