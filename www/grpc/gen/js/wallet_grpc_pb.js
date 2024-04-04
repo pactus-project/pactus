@@ -27,6 +27,28 @@ function deserialize_pactus_CreateWalletResponse(buffer_arg) {
   return wallet_pb.CreateWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_GetNewAddressRequest(arg) {
+  if (!(arg instanceof wallet_pb.GetNewAddressRequest)) {
+    throw new Error('Expected argument of type pactus.GetNewAddressRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetNewAddressRequest(buffer_arg) {
+  return wallet_pb.GetNewAddressRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetNewAddressResponse(arg) {
+  if (!(arg instanceof wallet_pb.GetNewAddressResponse)) {
+    throw new Error('Expected argument of type pactus.GetNewAddressResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetNewAddressResponse(buffer_arg) {
+  return wallet_pb.GetNewAddressResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetTotalBalanceRequest(arg) {
   if (!(arg instanceof wallet_pb.GetTotalBalanceRequest)) {
     throw new Error('Expected argument of type pactus.GetTotalBalanceRequest');
@@ -282,6 +304,18 @@ getValidatorAddress: {
     requestDeserialize: deserialize_pactus_GetValidatorAddressRequest,
     responseSerialize: serialize_pactus_GetValidatorAddressResponse,
     responseDeserialize: deserialize_pactus_GetValidatorAddressResponse,
+  },
+  // GetNewAddress generates a new address for the specified wallet.
+getNewAddress: {
+    path: '/pactus.Wallet/GetNewAddress',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.GetNewAddressRequest,
+    responseType: wallet_pb.GetNewAddressResponse,
+    requestSerialize: serialize_pactus_GetNewAddressRequest,
+    requestDeserialize: deserialize_pactus_GetNewAddressRequest,
+    responseSerialize: serialize_pactus_GetNewAddressResponse,
+    responseDeserialize: deserialize_pactus_GetNewAddressResponse,
   },
 };
 

@@ -41,6 +41,8 @@ type WalletClient interface {
 	// GetValidatorAddress retrieves the validator address associated with a
 	// public key.
 	GetValidatorAddress(ctx context.Context, in *GetValidatorAddressRequest, opts ...grpc.CallOption) (*GetValidatorAddressResponse, error)
+	// GetNewAddress generates a new address for the specified wallet.
+	GetNewAddress(ctx context.Context, in *GetNewAddressRequest, opts ...grpc.CallOption) (*GetNewAddressResponse, error)
 }
 
 type walletClient struct {
@@ -123,6 +125,15 @@ func (c *walletClient) GetValidatorAddress(ctx context.Context, in *GetValidator
 	return out, nil
 }
 
+func (c *walletClient) GetNewAddress(ctx context.Context, in *GetNewAddressRequest, opts ...grpc.CallOption) (*GetNewAddressResponse, error) {
+	out := new(GetNewAddressResponse)
+	err := c.cc.Invoke(ctx, "/pactus.Wallet/GetNewAddress", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WalletServer is the server API for Wallet service.
 // All implementations should embed UnimplementedWalletServer
 // for forward compatibility
@@ -146,6 +157,8 @@ type WalletServer interface {
 	// GetValidatorAddress retrieves the validator address associated with a
 	// public key.
 	GetValidatorAddress(context.Context, *GetValidatorAddressRequest) (*GetValidatorAddressResponse, error)
+	// GetNewAddress generates a new address for the specified wallet.
+	GetNewAddress(context.Context, *GetNewAddressRequest) (*GetNewAddressResponse, error)
 }
 
 // UnimplementedWalletServer should be embedded to have forward compatible implementations.
@@ -175,6 +188,9 @@ func (UnimplementedWalletServer) SignRawTransaction(context.Context, *SignRawTra
 }
 func (UnimplementedWalletServer) GetValidatorAddress(context.Context, *GetValidatorAddressRequest) (*GetValidatorAddressResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetValidatorAddress not implemented")
+}
+func (UnimplementedWalletServer) GetNewAddress(context.Context, *GetNewAddressRequest) (*GetNewAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNewAddress not implemented")
 }
 
 // UnsafeWalletServer may be embedded to opt out of forward compatibility for this service.
@@ -332,6 +348,24 @@ func _Wallet_GetValidatorAddress_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Wallet_GetNewAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNewAddressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).GetNewAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pactus.Wallet/GetNewAddress",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).GetNewAddress(ctx, req.(*GetNewAddressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Wallet_ServiceDesc is the grpc.ServiceDesc for Wallet service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -370,6 +404,10 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetValidatorAddress",
 			Handler:    _Wallet_GetValidatorAddress_Handler,
+		},
+		{
+			MethodName: "GetNewAddress",
+			Handler:    _Wallet_GetNewAddress_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
