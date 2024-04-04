@@ -81,7 +81,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	}
 
 	enableHTTPAuth := false
-	if conf.GRPC.BasicAuthCredential != "" {
+	if conf.GRPC.BasicAuth != "" {
 		enableHTTPAuth = true
 	}
 	grpcServer := grpc.NewServer(conf.GRPC, st, syn, net, consMgr)

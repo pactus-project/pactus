@@ -145,7 +145,6 @@ func TestExampleConfig(t *testing.T) {
 	defaultConf := DefaultConfigMainnet()
 	defaultToml := string(defaultConf.toTOML())
 
-	exampleToml = strings.ReplaceAll(exampleToml, "##", "")
 	exampleToml = strings.ReplaceAll(exampleToml, "\r\n", "\n") // For Windows
 	exampleToml = strings.ReplaceAll(exampleToml, "\n\n", "\n")
 	defaultToml = strings.ReplaceAll(defaultToml, "\n\n", "\n")
