@@ -289,20 +289,20 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 
 	validatorAddrs := []string{}
 	for i := 0; i < numValidators; i++ {
-		addr, err := walletInstance.NewValidatorAddress(fmt.Sprintf("Validator address %v", i+1))
+		addressInfo, err := walletInstance.NewValidatorAddress(fmt.Sprintf("Validator address %v", i+1))
 		if err != nil {
 			return nil, nil, err
 		}
-		validatorAddrs = append(validatorAddrs, addr)
+		validatorAddrs = append(validatorAddrs, addressInfo.Address)
 	}
 
 	rewardAddrs := []string{}
 	for i := 0; i < numValidators; i++ {
-		addr, err := walletInstance.NewBLSAccountAddress(fmt.Sprintf("Reward address %v", i+1))
+		addressInfo, err := walletInstance.NewBLSAccountAddress(fmt.Sprintf("Reward address %v", i+1))
 		if err != nil {
 			return nil, nil, err
 		}
-		rewardAddrs = append(rewardAddrs, addr)
+		rewardAddrs = append(rewardAddrs, addressInfo.Address)
 	}
 
 	confPath := PactusConfigPath(workingDir)

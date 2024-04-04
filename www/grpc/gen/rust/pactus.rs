@@ -887,6 +887,44 @@ pub struct PeerInfo {
     #[prost(int32, tag="20")]
     pub completed_sessions: i32,
 }
+/// Message of address information.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct AddressInfo {
+    #[prost(string, tag="1")]
+    pub address: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub public_key: ::prost::alloc::string::String,
+    #[prost(string, tag="3")]
+    pub label: ::prost::alloc::string::String,
+    #[prost(string, tag="4")]
+    pub path: ::prost::alloc::string::String,
+}
+/// Request message for generating a new address.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetNewAddressRequest {
+    /// Name of the wallet for which the new address is requested.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// Address type for the new address.
+    #[prost(enumeration="AddressType", tag="2")]
+    pub address_type: i32,
+    /// Label for the new address.
+    #[prost(string, tag="3")]
+    pub label: ::prost::alloc::string::String,
+}
+/// Response message containing the new address.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetNewAddressResponse {
+    /// Name of the wallet.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// Address information.
+    #[prost(message, optional, tag="2")]
+    pub address_info: ::core::option::Option<AddressInfo>,
+}
 /// Request message for creating a new wallet.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1043,6 +1081,36 @@ pub struct GetTotalBalanceResponse {
     /// The total balance of the wallet in NanoPAC.
     #[prost(int64, tag="2")]
     pub total_balance: i64,
+}
+/// Enum for the address type.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum AddressType {
+    Treasury = 0,
+    Validator = 1,
+    BlsAccount = 2,
+}
+impl AddressType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            AddressType::Treasury => "ADDRESS_TYPE_TREASURY",
+            AddressType::Validator => "ADDRESS_TYPE_VALIDATOR",
+            AddressType::BlsAccount => "ADDRESS_TYPE_BLS_ACCOUNT",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "ADDRESS_TYPE_TREASURY" => Some(Self::Treasury),
+            "ADDRESS_TYPE_VALIDATOR" => Some(Self::Validator),
+            "ADDRESS_TYPE_BLS_ACCOUNT" => Some(Self::BlsAccount),
+            _ => None,
+        }
+    }
 }
 include!("pactus.serde.rs");
 include!("pactus.tonic.rs");
