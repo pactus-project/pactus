@@ -8,8 +8,10 @@ import (
 	"path"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/genesis"
-	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
@@ -50,8 +52,7 @@ func setup(t *testing.T) *testData {
 
 	server := grpc.NewServer()
 	mockServer := &mockService{
-		lastBlockHash:   ts.RandHash(),
-		lastBlockHeight: ts.RandHeight(),
+		mockState: state.MockingState(ts),
 	}
 
 	pactus.RegisterBlockchainServer(server, mockServer)
@@ -81,7 +82,7 @@ func setup(t *testing.T) *testData {
 		transactionClient: pactus.NewTransactionClient(conn),
 	}
 
-	wallet.client = client
+	wallet.lazyClient = client
 
 	assert.False(t, wallet.IsEncrypted())
 	assert.False(t, wallet.IsOffline())
@@ -154,7 +155,7 @@ func TestRecoverWallet(t *testing.T) {
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
 		_, err := Create(util.TempFilePath(),
-			"invali mnemonic phrase seed", password, 0)
+			"invalid mnemonic phrase seed", password, 0)
 		assert.Error(t, err)
 	})
 
@@ -163,14 +164,14 @@ func TestRecoverWallet(t *testing.T) {
 		recovered, err := Create(walletPath, mnemonic, password, genesis.Mainnet)
 		assert.NoError(t, err)
 
-		addr1, err := recovered.NewBLSAccountAddress("addr-1")
+		addrInfo1, err := recovered.NewBLSAccountAddress("addr-1")
 		assert.NoError(t, err)
 
 		assert.NoFileExists(t, walletPath)
 		assert.NoError(t, recovered.Save())
 
 		assert.FileExists(t, walletPath)
-		assert.True(t, recovered.Contains(addr1))
+		assert.True(t, recovered.Contains(addrInfo1.Address))
 	})
 }
 
@@ -222,14 +223,14 @@ func TestKeyInfo(t *testing.T) {
 	w1, err := Create(util.TempFilePath(), mnemonic, td.password,
 		genesis.Mainnet)
 	assert.NoError(t, err)
-	addrStr1, _ := w1.NewBLSAccountAddress("")
-	prv1, _ := w1.PrivateKey("", addrStr1)
+	addrInfo1, _ := w1.NewBLSAccountAddress("")
+	prv1, _ := w1.PrivateKey("", addrInfo1.Address)
 
 	w2, err := Create(util.TempFilePath(), mnemonic, td.password,
 		genesis.Testnet)
 	assert.NoError(t, err)
-	addrStr2, _ := w2.NewBLSAccountAddress("")
-	prv2, _ := w2.PrivateKey("", addrStr2)
+	addrInfo2, _ := w2.NewBLSAccountAddress("")
+	prv2, _ := w2.PrivateKey("", addrInfo2.Address)
 
 	assert.NotEqual(t, prv1.Bytes(), prv2.Bytes(),
 		"Should generate different private key for the testnet")
@@ -240,10 +241,10 @@ func TestBalance(t *testing.T) {
 	defer td.Close()
 
 	t.Run("existing account", func(t *testing.T) {
-		amt, err := td.wallet.Balance(
-			td.mockService.testAccountAddr.String())
+		acc, addr := td.mockService.mockState.TestStore.AddTestAccount()
+		amt, err := td.wallet.Balance(addr.String())
 		assert.NoError(t, err)
-		assert.Equal(t, amount.Amount(1), amt)
+		assert.Equal(t, amt, acc.Balance())
 	})
 
 	t.Run("non-existing account", func(t *testing.T) {
@@ -259,10 +260,10 @@ func TestStake(t *testing.T) {
 	defer td.Close()
 
 	t.Run("existing validator", func(t *testing.T) {
-		amt, err := td.wallet.Stake(
-			td.mockService.testValidatorAddr.String())
+		val := td.mockService.mockState.TestStore.AddTestValidator()
+		amt, err := td.wallet.Stake(val.Address().String())
 		assert.NoError(t, err)
-		assert.Equal(t, amount.Amount(2), amt)
+		assert.Equal(t, amt, val.Stake())
 	})
 
 	t.Run("non-existing validator", func(t *testing.T) {
@@ -277,7 +278,7 @@ func TestSigningTx(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
 
-	sender, _ := td.wallet.NewBLSAccountAddress("testing addr")
+	senderInfo, _ := td.wallet.NewBLSAccountAddress("testing addr")
 	receiver := td.RandAccAddress()
 	amt := td.RandAmount()
 	fee := td.RandAmount()
@@ -289,7 +290,7 @@ func TestSigningTx(t *testing.T) {
 		OptionMemo("test"),
 	}
 
-	trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amt, opts...)
+	trx, err := td.wallet.MakeTransferTx(senderInfo.Address, receiver.String(), amt, opts...)
 	assert.NoError(t, err)
 	err = td.wallet.SignTransaction(td.password, trx)
 	assert.NoError(t, err)
@@ -306,8 +307,8 @@ func TestMakeTransferTx(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
 
-	sender, _ := td.wallet.NewBLSAccountAddress("testing addr")
-	receiver := td.RandAccAddress()
+	senderInfo, _ := td.wallet.NewBLSAccountAddress("testing addr")
+	receiverInfo := td.RandAccAddress()
 	amt := td.RandAmount()
 	lockTime := td.RandHeight()
 
@@ -319,7 +320,7 @@ func TestMakeTransferTx(t *testing.T) {
 			OptionMemo("test"),
 		}
 
-		trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amt, opts...)
+		trx, err := td.wallet.MakeTransferTx(senderInfo.Address, receiverInfo.String(), amt, opts...)
 		assert.NoError(t, err)
 		assert.Equal(t, fee, trx.Fee())
 		assert.Equal(t, lockTime, trx.LockTime())
@@ -327,9 +328,12 @@ func TestMakeTransferTx(t *testing.T) {
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
-		trx, err := td.wallet.MakeTransferTx(sender, receiver.String(), amt)
+		testHeight := td.RandHeight()
+		_ = td.mockService.mockState.TestStore.AddTestBlock(testHeight)
+
+		trx, err := td.wallet.MakeTransferTx(senderInfo.Address, receiverInfo.String(), amt)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.LockTime(), td.mockService.lastBlockHeight+1)
+		assert.Equal(t, trx.LockTime(), testHeight+1)
 		assert.Equal(t, amt, trx.Payload().Value())
 		fee, err := td.wallet.CalculateFee(amt, payload.TypeTransfer)
 		assert.NoError(t, err)
@@ -337,19 +341,19 @@ func TestMakeTransferTx(t *testing.T) {
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
-		_, err := td.wallet.MakeTransferTx("invalid_addr_string", receiver.String(), amt)
+		_, err := td.wallet.MakeTransferTx("invalid_addr_string", receiverInfo.String(), amt)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("invalid receiver address", func(t *testing.T) {
-		_, err := td.wallet.MakeTransferTx(sender, "invalid_addr_string", amt)
+		_, err := td.wallet.MakeTransferTx(senderInfo.Address, "invalid_addr_string", amt)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
 		td.Close()
 
-		_, err := td.wallet.MakeTransferTx(td.RandAccAddress().String(), receiver.String(), amt)
+		_, err := td.wallet.MakeTransferTx(td.RandAccAddress().String(), receiverInfo.String(), amt)
 		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
 }
@@ -358,7 +362,7 @@ func TestMakeBondTx(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
 
-	sender, _ := td.wallet.NewValidatorAddress("testing addr")
+	senderInfo, _ := td.wallet.NewValidatorAddress("testing addr")
 	receiver := td.RandValKey()
 	amt := td.RandAmount()
 
@@ -371,7 +375,7 @@ func TestMakeBondTx(t *testing.T) {
 			OptionMemo("test"),
 		}
 
-		trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(),
+		trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(),
 			receiver.PublicKey().String(), amt, opts...)
 		assert.NoError(t, err)
 		assert.Equal(t, fee, trx.Fee())
@@ -380,9 +384,12 @@ func TestMakeBondTx(t *testing.T) {
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
-		trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amt)
+		testHeight := td.RandHeight()
+		_ = td.mockService.mockState.TestStore.AddTestBlock(testHeight)
+
+		trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(), receiver.PublicKey().String(), amt)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.LockTime(), td.mockService.lastBlockHeight+1)
+		assert.Equal(t, trx.LockTime(), testHeight+1)
 		assert.Equal(t, amt, trx.Payload().Value())
 		fee, err := td.wallet.CalculateFee(amt, payload.TypeBond)
 		assert.NoError(t, err)
@@ -391,26 +398,28 @@ func TestMakeBondTx(t *testing.T) {
 
 	t.Run("validator address is not stored in wallet", func(t *testing.T) {
 		t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
-			trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), "", amt)
+			trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(), "", amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
 
 		t.Run("validator doesn't exist and public key set", func(t *testing.T) {
-			trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), receiver.PublicKey().String(), amt)
+			trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(), receiver.PublicKey().String(), amt)
 			assert.NoError(t, err)
 			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiver.PublicKey().String())
 		})
 
 		t.Run("validator exists and public key not set", func(t *testing.T) {
-			trx, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), "", amt)
+			trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(), "", amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
 
 		t.Run("validator exists and public key set", func(t *testing.T) {
-			trx, err := td.wallet.MakeBondTx(sender,
-				td.mockService.testValidatorAddr.String(), receiver.PublicKey().String(), amt)
+			val := td.mockService.mockState.TestStore.AddTestValidator()
+
+			trx, err := td.wallet.MakeBondTx(senderInfo.Address,
+				val.Address().String(), receiver.PublicKey().String(), amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
@@ -418,32 +427,36 @@ func TestMakeBondTx(t *testing.T) {
 
 	t.Run("validator address stored in wallet", func(t *testing.T) {
 		receiver, _ := td.wallet.NewValidatorAddress("validator-address")
-		receiverInfo := td.wallet.AddressInfo(receiver)
+		receiverInfo := td.wallet.AddressInfo(receiver.Address)
 
 		t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
-			trx, err := td.wallet.MakeBondTx(sender, receiver, "", amt)
+			trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address, "", amt)
 			assert.NoError(t, err)
 			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiverInfo.PublicKey)
 		})
 
 		t.Run("validator doesn't exist and public key set", func(t *testing.T) {
-			receiverInfo := td.wallet.AddressInfo(receiver)
-			trx, err := td.wallet.MakeBondTx(sender, receiver, receiverInfo.PublicKey, amt)
+			receiverInfo := td.wallet.AddressInfo(receiver.Address)
+			trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address, receiverInfo.PublicKey, amt)
 			assert.NoError(t, err)
 			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiverInfo.PublicKey)
 		})
 
 		t.Run("validator exists and public key not set", func(t *testing.T) {
-			trx, err := td.wallet.MakeBondTx(sender,
-				td.mockService.testValidatorAddr.String(), "", amt)
+			val := td.mockService.mockState.TestStore.AddTestValidator()
+
+			trx, err := td.wallet.MakeBondTx(senderInfo.Address,
+				val.Address().String(), "", amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
 
 		t.Run("validator exists and public key set", func(t *testing.T) {
-			receiverInfo := td.wallet.AddressInfo(receiver)
-			trx, err := td.wallet.MakeBondTx(sender,
-				td.mockService.testValidatorAddr.String(), receiverInfo.PublicKey, amt)
+			val := td.mockService.mockState.TestStore.AddTestValidator()
+
+			receiverInfo := td.wallet.AddressInfo(receiver.Address)
+			trx, err := td.wallet.MakeBondTx(senderInfo.Address,
+				val.Address().String(), receiverInfo.PublicKey, amt)
 			assert.NoError(t, err)
 			assert.Nil(t, trx.Payload().(*payload.BondPayload).PublicKey)
 		})
@@ -455,12 +468,12 @@ func TestMakeBondTx(t *testing.T) {
 	})
 
 	t.Run("invalid receiver address", func(t *testing.T) {
-		_, err := td.wallet.MakeBondTx(sender, "invalid_addr_string", "", amt)
+		_, err := td.wallet.MakeBondTx(senderInfo.Address, "invalid_addr_string", "", amt)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("invalid public key", func(t *testing.T) {
-		_, err := td.wallet.MakeBondTx(sender, receiver.Address().String(), "invalid-pub-key", amt)
+		_, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(), "invalid-pub-key", amt)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
 	})
 
@@ -476,7 +489,7 @@ func TestMakeUnbondTx(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
 
-	sender, _ := td.wallet.NewValidatorAddress("testing addr")
+	senderInfo, _ := td.wallet.NewValidatorAddress("testing addr")
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
@@ -485,7 +498,7 @@ func TestMakeUnbondTx(t *testing.T) {
 			OptionMemo("test"),
 		}
 
-		trx, err := td.wallet.MakeUnbondTx(sender, opts...)
+		trx, err := td.wallet.MakeUnbondTx(senderInfo.Address, opts...)
 		assert.NoError(t, err)
 		assert.Zero(t, trx.Fee()) // Fee for unbond transaction is zero
 		assert.Equal(t, lockTime, trx.LockTime())
@@ -493,9 +506,12 @@ func TestMakeUnbondTx(t *testing.T) {
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
-		trx, err := td.wallet.MakeUnbondTx(sender)
+		testHeight := td.RandHeight()
+		_ = td.mockService.mockState.TestStore.AddTestBlock(testHeight)
+
+		trx, err := td.wallet.MakeUnbondTx(senderInfo.Address)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.LockTime(), td.mockService.lastBlockHeight+1)
+		assert.Equal(t, trx.LockTime(), testHeight+1)
 		assert.Zero(t, trx.Payload().Value())
 		assert.Zero(t, trx.Fee())
 	})
@@ -517,8 +533,8 @@ func TestMakeWithdrawTx(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
 
-	sender, _ := td.wallet.NewBLSAccountAddress("testing addr")
-	receiver, _ := td.wallet.NewBLSAccountAddress("testing addr")
+	senderInfo, _ := td.wallet.NewBLSAccountAddress("testing addr")
+	receiverInfo, _ := td.wallet.NewBLSAccountAddress("testing addr")
 	amt := td.RandAmount()
 
 	t.Run("set parameters manually", func(t *testing.T) {
@@ -530,7 +546,7 @@ func TestMakeWithdrawTx(t *testing.T) {
 			OptionMemo("test"),
 		}
 
-		trx, err := td.wallet.MakeWithdrawTx(sender, receiver, amt, opts...)
+		trx, err := td.wallet.MakeWithdrawTx(senderInfo.Address, receiverInfo.Address, amt, opts...)
 		assert.NoError(t, err)
 		assert.Equal(t, fee, trx.Fee())
 		assert.Equal(t, lockTime, trx.LockTime())
@@ -538,9 +554,12 @@ func TestMakeWithdrawTx(t *testing.T) {
 	})
 
 	t.Run("query parameters from the node", func(t *testing.T) {
-		trx, err := td.wallet.MakeWithdrawTx(sender, receiver, amt)
+		testHeight := td.RandHeight()
+		_ = td.mockService.mockState.TestStore.AddTestBlock(testHeight)
+
+		trx, err := td.wallet.MakeWithdrawTx(senderInfo.Address, receiverInfo.Address, amt)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.LockTime(), td.mockService.lastBlockHeight+1)
+		assert.Equal(t, trx.LockTime(), testHeight+1)
 		assert.Equal(t, amt, trx.Payload().Value())
 		fee, err := td.wallet.CalculateFee(amt, payload.TypeWithdraw)
 		assert.NoError(t, err)
@@ -548,14 +567,14 @@ func TestMakeWithdrawTx(t *testing.T) {
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
-		_, err := td.wallet.MakeWithdrawTx("invalid_addr_string", receiver, amt)
+		_, err := td.wallet.MakeWithdrawTx("invalid_addr_string", receiverInfo.Address, amt)
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
 		td.Close()
 
-		_, err := td.wallet.MakeWithdrawTx(td.RandAccAddress().String(), receiver, amt)
+		_, err := td.wallet.MakeWithdrawTx(td.RandAccAddress().String(), receiverInfo.Address, amt)
 		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
 	})
 }
@@ -563,4 +582,28 @@ func TestMakeWithdrawTx(t *testing.T) {
 func TestCheckMnemonic(t *testing.T) {
 	mnemonic, _ := GenerateMnemonic(128)
 	assert.NoError(t, CheckMnemonic(mnemonic))
+}
+
+func TestTotalBalance(t *testing.T) {
+	td := setup(t)
+	defer td.Close()
+
+	addrInfo1, _ := td.wallet.NewBLSAccountAddress("account-1")
+	_, _ = td.wallet.NewBLSAccountAddress("account-2")
+	addrInfo3, _ := td.wallet.NewBLSAccountAddress("account-3")
+
+	addr1, _ := crypto.AddressFromString(addrInfo1.Address)
+	addr3, _ := crypto.AddressFromString(addrInfo3.Address)
+
+	acc1 := account.NewAccount(td.RandInt32(1000))
+	acc3 := account.NewAccount(td.RandInt32(1000))
+
+	acc1.AddToBalance(td.RandAmount())
+	acc3.AddToBalance(td.RandAmount())
+
+	td.mockService.mockState.TestStore.Accounts[addr1] = acc1
+	td.mockService.mockState.TestStore.Accounts[addr3] = acc3
+
+	totalBalance := td.wallet.TotalBalance()
+	assert.Equal(t, totalBalance, acc1.Balance()+acc3.Balance())
 }

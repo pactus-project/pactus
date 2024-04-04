@@ -5,24 +5,21 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types/tx"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type mockService struct {
-	lastBlockHash     hash.Hash
-	lastBlockHeight   uint32
-	testAccountAddr   crypto.Address
-	testValidatorAddr crypto.Address
+	mockState *state.MockState
 }
 
 func (s *mockService) GetBlockchainInfo(_ context.Context,
 	_ *pactus.GetBlockchainInfoRequest,
 ) (*pactus.GetBlockchainInfoResponse, error) {
 	return &pactus.GetBlockchainInfoResponse{
-		LastBlockHeight: s.lastBlockHeight,
-		LastBlockHash:   s.lastBlockHash.Bytes(),
+		LastBlockHeight: s.mockState.LastBlockHeight(),
+		LastBlockHash:   s.mockState.LastBlockHash().Bytes(),
 	}, nil
 }
 
@@ -53,9 +50,16 @@ func (s *mockService) GetBlock(_ context.Context,
 func (s *mockService) GetAccount(_ context.Context,
 	req *pactus.GetAccountRequest,
 ) (*pactus.GetAccountResponse, error) {
-	if s.testAccountAddr.String() == req.Address {
+	addr, err := crypto.AddressFromString(req.Address)
+	if err != nil {
+		return nil, err
+	}
+	acc := s.mockState.AccountByAddress(addr)
+	if acc != nil {
 		return &pactus.GetAccountResponse{
-			Account: &pactus.AccountInfo{Balance: 1},
+			Account: &pactus.AccountInfo{
+				Balance: acc.Balance().ToNanoPAC(),
+			},
 		}, nil
 	}
 
@@ -77,9 +81,16 @@ func (s *mockService) GetValidatorByNumber(_ context.Context,
 func (s *mockService) GetValidator(_ context.Context,
 	req *pactus.GetValidatorRequest,
 ) (*pactus.GetValidatorResponse, error) {
-	if s.testAccountAddr.String() == req.Address {
+	addr, err := crypto.AddressFromString(req.Address)
+	if err != nil {
+		return nil, err
+	}
+	val := s.mockState.ValidatorByAddress(addr)
+	if val != nil {
 		return &pactus.GetValidatorResponse{
-			Validator: &pactus.ValidatorInfo{Stake: 2},
+			Validator: &pactus.ValidatorInfo{
+				Stake: val.Stake().ToNanoPAC(),
+			},
 		}, nil
 	}
 

@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/vault"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -17,7 +19,7 @@ import (
 
 //
 // TODO: default_wallet should be loaded on starting the node.
-// TODO: We need to add a wallet service (or manaeger) to manage wallets.
+// TODO: We need to add a wallet service (or manager) to manage wallets.
 // UnLocking wallet should happens inside the wallet manager (or no?)
 //
 
@@ -129,6 +131,22 @@ func (s *walletServer) UnlockWallet(_ context.Context,
 	return nil, status.Error(codes.Unimplemented, "not implemeneted")
 }
 
+func (s *walletServer) GetTotalBalance(_ context.Context,
+	req *pactus.GetTotalBalanceRequest,
+) (*pactus.GetTotalBalanceResponse, error) {
+	wlt, ok := s.wallets[req.WalletName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	totalBalance := wlt.TotalBalance()
+
+	return &pactus.GetTotalBalanceResponse{
+		WalletName:   req.WalletName,
+		TotalBalance: totalBalance.ToNanoPAC(),
+	}, nil
+}
+
 func (s *walletServer) SignRawTransaction(_ context.Context,
 	req *pactus.SignRawTransactionRequest,
 ) (*pactus.SignRawTransactionResponse, error) {
@@ -155,5 +173,47 @@ func (s *walletServer) SignRawTransaction(_ context.Context,
 	return &pactus.SignRawTransactionResponse{
 		TransactionId:        trx.ID().Bytes(),
 		SignedRawTransaction: data,
+	}, nil
+}
+
+func (s *walletServer) GetNewAddress(_ context.Context,
+	req *pactus.GetNewAddressRequest,
+) (*pactus.GetNewAddressResponse, error) {
+	wlt, ok := s.wallets[req.WalletName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	var addressInfo *vault.AddressInfo
+	switch req.AddressType {
+	case pactus.AddressType(crypto.AddressTypeBLSAccount):
+		info, err := wlt.NewBLSAccountAddress(req.Label)
+		if err != nil {
+			return nil, err
+		}
+		addressInfo = info
+
+	case pactus.AddressType(crypto.AddressTypeValidator):
+		info, err := wlt.NewValidatorAddress(req.Label)
+		if err != nil {
+			return nil, err
+		}
+		addressInfo = info
+
+	case pactus.AddressType(crypto.AddressTypeTreasury):
+		return nil, status.Errorf(codes.InvalidArgument, "invalid address type")
+
+	default:
+		return nil, status.Errorf(codes.InvalidArgument, "invalid address type")
+	}
+
+	return &pactus.GetNewAddressResponse{
+		WalletName: req.WalletName,
+		AddressInfo: &pactus.AddressInfo{
+			Address:   addressInfo.Address,
+			PublicKey: addressInfo.PublicKey,
+			Label:     addressInfo.Label,
+			Path:      addressInfo.Path,
+		},
 	}, nil
 }

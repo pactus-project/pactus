@@ -185,20 +185,20 @@ func TestMakeRewardAddresses(t *testing.T) {
 	assert.ErrorContains(t, err, "unable to find reward address for")
 
 	// Test 2 - Not enough reward addresses in wallet
-	rewardAddr1, _ := walletInstance.NewBLSAccountAddress("")
-	rewardAddr2, _ := walletInstance.NewBLSAccountAddress("")
+	rewardAddr1Info, _ := walletInstance.NewBLSAccountAddress("")
+	rewardAddr2Info, _ := walletInstance.NewBLSAccountAddress("")
 
 	_, err = MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
 	assert.ErrorContains(t, err, "unable to find reward address for")
 
 	// Test 3 - Get reward addresses from wallet
-	rewardAddr3, _ := walletInstance.NewBLSAccountAddress("")
+	rewardAddr3Info, _ := walletInstance.NewBLSAccountAddress("")
 
 	rewardAddrs, err := MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
 	assert.NoError(t, err)
-	assert.Equal(t, rewardAddrs[0].String(), rewardAddr1)
-	assert.Equal(t, rewardAddrs[1].String(), rewardAddr2)
-	assert.Equal(t, rewardAddrs[2].String(), rewardAddr3)
+	assert.Equal(t, rewardAddrs[0].String(), rewardAddr1Info.Address)
+	assert.Equal(t, rewardAddrs[1].String(), rewardAddr2Info.Address)
+	assert.Equal(t, rewardAddrs[2].String(), rewardAddr3Info.Address)
 
 	// Test 4 - Not enough reward addresses in config
 	confRewardAddr1 := ts.RandAccAddress().String()

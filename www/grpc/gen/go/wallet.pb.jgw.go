@@ -73,6 +73,15 @@ func (s *WalletJsonRpcService) Methods() map[string]func(ctx context.Context, me
 			return s.client.UnlockWallet(ctx, req)
 		},
 
+		"pactus.wallet.get_total_balance": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetTotalBalanceRequest)
+			err := protojson.Unmarshal(data, req)
+			if err != nil {
+				return nil, err
+			}
+			return s.client.GetTotalBalance(ctx, req)
+		},
+
 		"pactus.wallet.sign_raw_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(SignRawTransactionRequest)
 			err := protojson.Unmarshal(data, req)
@@ -89,6 +98,15 @@ func (s *WalletJsonRpcService) Methods() map[string]func(ctx context.Context, me
 				return nil, err
 			}
 			return s.client.GetValidatorAddress(ctx, req)
+		},
+
+		"pactus.wallet.get_new_address": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetNewAddressRequest)
+			err := protojson.Unmarshal(data, req)
+			if err != nil {
+				return nil, err
+			}
+			return s.client.GetNewAddress(ctx, req)
 		},
 	}
 }

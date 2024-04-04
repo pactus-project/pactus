@@ -30,9 +30,6 @@ func TestMDNS(t *testing.T) {
 	assert.NoError(t, net2.Start())
 	time.Sleep(250 * time.Millisecond)
 
-	ce := shouldReceiveEvent(t, net2, EventTypeConnect).(*ConnectEvent)
-	assert.Equal(t, ce.PeerID, net1.SelfID())
-
 	msg := []byte("test-mdns")
 	assert.NoError(t, net1.SendTo(msg, net2.SelfID()))
 

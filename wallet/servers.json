@@ -1,46 +1,16 @@
 {
     "mainnet": [
-        {
-            "ip": "localhost:50051",
-            "name": "localhost"
-        },
-        {
-            "ip": "bootstrap1.pactus.org:50051",
-            "name": "bootstrap1"
-        },
-        {
-            "ip": "bootstrap2.pactus.org:50051",
-            "name": "bootstrap2"
-        },
-        {
-            "ip": "bootstrap3.pactus.org:50051",
-            "name": "bootstrap3"
-        },
-        {
-            "ip": "bootstrap4.pactus.org:50051",
-            "name": "bootstrap4"
-        }
+        "localhost:50051",
+        "bootstrap1.pactus.org:50051",
+        "bootstrap2.pactus.org:50051",
+        "bootstrap3.pactus.org:50051",
+        "bootstrap4.pactus.org:50051"
     ],
     "testnet": [
-        {
-            "ip": "localhost:50052",
-            "name": "localhost"
-        },
-        {
-            "ip": "testnet1.pactus.org:50052",
-            "name": "testnet1"
-        },
-        {
-            "ip": "testnet2.pactus.org:50052",
-            "name": "testnet2"
-        },
-        {
-            "ip": "testnet3.pactus.org:50052",
-            "name": "testnet3"
-        },
-        {
-            "ip": "testnet4.pactus.org:50052",
-            "name": "testnet4"
-        }
+        "localhost:50052",
+        "testnet1.pactus.org:50052",
+        "testnet2.pactus.org:50052",
+        "testnet3.pactus.org:50052",
+        "testnet4.pactus.org:50052"
     ]
 }

@@ -15,10 +15,10 @@ pub struct GetTransactionRequest {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetTransactionResponse {
     /// Height of the block containing the transaction.
-    #[prost(uint32, tag="12")]
+    #[prost(uint32, tag="1")]
     pub block_height: u32,
     /// Time of the block containing the transaction.
-    #[prost(uint32, tag="13")]
+    #[prost(uint32, tag="2")]
     pub block_time: u32,
     /// Information about the transaction.
     #[prost(message, optional, tag="3")]
@@ -42,12 +42,12 @@ pub struct CalculateFeeRequest {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CalculateFeeResponse {
-    /// Calculated transaction fee in NanoPAC.
-    #[prost(int64, tag="1")]
-    pub fee: i64,
     /// Calculated amount in NanoPAC.
-    #[prost(int64, tag="2")]
+    #[prost(int64, tag="1")]
     pub amount: i64,
+    /// Calculated transaction fee in NanoPAC.
+    #[prost(int64, tag="2")]
+    pub fee: i64,
 }
 /// Request message for broadcasting a signed transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -887,6 +887,44 @@ pub struct PeerInfo {
     #[prost(int32, tag="20")]
     pub completed_sessions: i32,
 }
+/// Message of address information.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct AddressInfo {
+    #[prost(string, tag="1")]
+    pub address: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub public_key: ::prost::alloc::string::String,
+    #[prost(string, tag="3")]
+    pub label: ::prost::alloc::string::String,
+    #[prost(string, tag="4")]
+    pub path: ::prost::alloc::string::String,
+}
+/// Request message for generating a new address.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetNewAddressRequest {
+    /// Name of the wallet for which the new address is requested.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// Address type for the new address.
+    #[prost(enumeration="AddressType", tag="2")]
+    pub address_type: i32,
+    /// Label for the new address.
+    #[prost(string, tag="3")]
+    pub label: ::prost::alloc::string::String,
+}
+/// Response message containing the new address.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetNewAddressResponse {
+    /// Name of the wallet.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// Address information.
+    #[prost(message, optional, tag="2")]
+    pub address_info: ::core::option::Option<AddressInfo>,
+}
 /// Request message for creating a new wallet.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1024,6 +1062,55 @@ pub struct SignRawTransactionResponse {
     /// Signed raw transaction data.
     #[prost(bytes="vec", tag="2")]
     pub signed_raw_transaction: ::prost::alloc::vec::Vec<u8>,
+}
+/// Request message for obtaining the available balance of a wallet.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetTotalBalanceRequest {
+    /// Name of the wallet.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+}
+/// Response message containing the available balance of the wallet.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetTotalBalanceResponse {
+    /// Name of the wallet.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// The total balance of the wallet in NanoPAC.
+    #[prost(int64, tag="2")]
+    pub total_balance: i64,
+}
+/// Enum for the address type.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum AddressType {
+    Treasury = 0,
+    Validator = 1,
+    BlsAccount = 2,
+}
+impl AddressType {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            AddressType::Treasury => "ADDRESS_TYPE_TREASURY",
+            AddressType::Validator => "ADDRESS_TYPE_VALIDATOR",
+            AddressType::BlsAccount => "ADDRESS_TYPE_BLS_ACCOUNT",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "ADDRESS_TYPE_TREASURY" => Some(Self::Treasury),
+            "ADDRESS_TYPE_VALIDATOR" => Some(Self::Validator),
+            "ADDRESS_TYPE_BLS_ACCOUNT" => Some(Self::BlsAccount),
+            _ => None,
+        }
+    }
 }
 include!("pactus.serde.rs");
 include!("pactus.tonic.rs");

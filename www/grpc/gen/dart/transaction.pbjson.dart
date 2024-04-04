@@ -49,14 +49,14 @@ final $typed_data.Uint8List getTransactionRequestDescriptor = $convert.base64Dec
 const GetTransactionResponse$json = const {
   '1': 'GetTransactionResponse',
   '2': const [
-    const {'1': 'block_height', '3': 12, '4': 1, '5': 13, '10': 'blockHeight'},
-    const {'1': 'block_time', '3': 13, '4': 1, '5': 13, '10': 'blockTime'},
+    const {'1': 'block_height', '3': 1, '4': 1, '5': 13, '10': 'blockHeight'},
+    const {'1': 'block_time', '3': 2, '4': 1, '5': 13, '10': 'blockTime'},
     const {'1': 'transaction', '3': 3, '4': 1, '5': 11, '6': '.pactus.TransactionInfo', '10': 'transaction'},
   ],
 };
 
 /// Descriptor for `GetTransactionResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getTransactionResponseDescriptor = $convert.base64Decode('ChZHZXRUcmFuc2FjdGlvblJlc3BvbnNlEiEKDGJsb2NrX2hlaWdodBgMIAEoDVILYmxvY2tIZWlnaHQSHQoKYmxvY2tfdGltZRgNIAEoDVIJYmxvY2tUaW1lEjkKC3RyYW5zYWN0aW9uGAMgASgLMhcucGFjdHVzLlRyYW5zYWN0aW9uSW5mb1ILdHJhbnNhY3Rpb24=');
+final $typed_data.Uint8List getTransactionResponseDescriptor = $convert.base64Decode('ChZHZXRUcmFuc2FjdGlvblJlc3BvbnNlEiEKDGJsb2NrX2hlaWdodBgBIAEoDVILYmxvY2tIZWlnaHQSHQoKYmxvY2tfdGltZRgCIAEoDVIJYmxvY2tUaW1lEjkKC3RyYW5zYWN0aW9uGAMgASgLMhcucGFjdHVzLlRyYW5zYWN0aW9uSW5mb1ILdHJhbnNhY3Rpb24=');
 @$core.Deprecated('Use calculateFeeRequestDescriptor instead')
 const CalculateFeeRequest$json = const {
   '1': 'CalculateFeeRequest',
@@ -73,13 +73,13 @@ final $typed_data.Uint8List calculateFeeRequestDescriptor = $convert.base64Decod
 const CalculateFeeResponse$json = const {
   '1': 'CalculateFeeResponse',
   '2': const [
-    const {'1': 'fee', '3': 1, '4': 1, '5': 3, '10': 'fee'},
-    const {'1': 'amount', '3': 2, '4': 1, '5': 3, '10': 'amount'},
+    const {'1': 'amount', '3': 1, '4': 1, '5': 3, '10': 'amount'},
+    const {'1': 'fee', '3': 2, '4': 1, '5': 3, '10': 'fee'},
   ],
 };
 
 /// Descriptor for `CalculateFeeResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List calculateFeeResponseDescriptor = $convert.base64Decode('ChRDYWxjdWxhdGVGZWVSZXNwb25zZRIQCgNmZWUYASABKANSA2ZlZRIWCgZhbW91bnQYAiABKANSBmFtb3VudA==');
+final $typed_data.Uint8List calculateFeeResponseDescriptor = $convert.base64Decode('ChRDYWxjdWxhdGVGZWVSZXNwb25zZRIWCgZhbW91bnQYASABKANSBmFtb3VudBIQCgNmZWUYAiABKANSA2ZlZQ==');
 @$core.Deprecated('Use broadcastTransactionRequestDescriptor instead')
 const BroadcastTransactionRequest$json = const {
   '1': 'BroadcastTransactionRequest',

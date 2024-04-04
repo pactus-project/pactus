@@ -1064,6 +1064,34 @@
       },
       "description": "Message containing information about an account."
     },
+    "pactusAddressInfo": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "description": "Message of address information."
+    },
+    "pactusAddressType": {
+      "type": "string",
+      "enum": [
+        "ADDRESS_TYPE_TREASURY",
+        "ADDRESS_TYPE_VALIDATOR",
+        "ADDRESS_TYPE_BLS_ACCOUNT"
+      ],
+      "default": "ADDRESS_TYPE_TREASURY",
+      "description": "Enum for the address type."
+    },
     "pactusBlockHeaderInfo": {
       "type": "object",
       "properties": {
@@ -1118,15 +1146,15 @@
     "pactusCalculateFeeResponse": {
       "type": "object",
       "properties": {
-        "fee": {
-          "type": "string",
-          "format": "int64",
-          "description": "Calculated transaction fee in NanoPAC."
-        },
         "amount": {
           "type": "string",
           "format": "int64",
           "description": "Calculated amount in NanoPAC."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "Calculated transaction fee in NanoPAC."
         }
       },
       "description": "Response message containing the calculated transaction fee."
@@ -1383,6 +1411,19 @@
       },
       "description": "Response message containing information about the overall network."
     },
+    "pactusGetNewAddressResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "Name of the wallet."
+        },
+        "addressInfo": {
+          "$ref": "#/definitions/pactusAddressInfo"
+        }
+      },
+      "description": "Response message containing the new address."
+    },
     "pactusGetNodeInfoResponse": {
       "type": "object",
       "properties": {
@@ -1460,6 +1501,21 @@
         }
       },
       "description": "Response message containing raw transaction data."
+    },
+    "pactusGetTotalBalanceResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "Name of the wallet."
+        },
+        "totalBalance": {
+          "type": "string",
+          "format": "int64",
+          "description": "The total balance of the wallet in NanoPAC."
+        }
+      },
+      "description": "Response message containing the available balance of the wallet."
     },
     "pactusGetTransactionResponse": {
       "type": "object",

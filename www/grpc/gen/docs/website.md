@@ -127,12 +127,20 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           <span class="badge text-bg-primary">rpc</span> UnlockWallet</a>
         </li> 
         <li>
+          <a href="#pactus.Wallet.GetTotalBalance">
+          <span class="badge text-bg-primary">rpc</span> GetTotalBalance</a>
+        </li> 
+        <li>
           <a href="#pactus.Wallet.SignRawTransaction">
           <span class="badge text-bg-primary">rpc</span> SignRawTransaction</a>
         </li> 
         <li>
           <a href="#pactus.Wallet.GetValidatorAddress">
           <span class="badge text-bg-primary">rpc</span> GetValidatorAddress</a>
+        </li> 
+        <li>
+          <a href="#pactus.Wallet.GetNewAddress">
+          <span class="badge text-bg-primary">rpc</span> GetNewAddress</a>
         </li> 
       </ul>
     </li>   
@@ -395,6 +403,11 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           </a>
         </li>   
         <li>
+          <a href="#pactus.AddressInfo">
+            <span class="badge text-bg-secondary">msg</span> AddressInfo
+          </a>
+        </li> 
+        <li>
           <a href="#pactus.CreateWalletRequest">
             <span class="badge text-bg-secondary">msg</span> CreateWalletRequest
           </a>
@@ -402,6 +415,26 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
         <li>
           <a href="#pactus.CreateWalletResponse">
             <span class="badge text-bg-secondary">msg</span> CreateWalletResponse
+          </a>
+        </li> 
+        <li>
+          <a href="#pactus.GetNewAddressRequest">
+            <span class="badge text-bg-secondary">msg</span> GetNewAddressRequest
+          </a>
+        </li> 
+        <li>
+          <a href="#pactus.GetNewAddressResponse">
+            <span class="badge text-bg-secondary">msg</span> GetNewAddressResponse
+          </a>
+        </li> 
+        <li>
+          <a href="#pactus.GetTotalBalanceRequest">
+            <span class="badge text-bg-secondary">msg</span> GetTotalBalanceRequest
+          </a>
+        </li> 
+        <li>
+          <a href="#pactus.GetTotalBalanceResponse">
+            <span class="badge text-bg-secondary">msg</span> GetTotalBalanceResponse
           </a>
         </li> 
         <li>
@@ -484,7 +517,12 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           <a href="#pactus.VoteType">
             <span class="badge text-bg-info">enum</span> VoteType
           </a>
-        </li>      
+        </li>     
+        <li>
+          <a href="#pactus.AddressType">
+            <span class="badge text-bg-info">enum</span> AddressType
+          </a>
+        </li>  
 
         <li>
           <a href="#scalar-value-types">Scalar Value Types</a>
@@ -598,6 +636,10 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
 <div class="request pt-3">Request message: <a href="#pactus.UnlockWalletRequest">UnlockWalletRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.UnlockWalletResponse">UnlockWalletResponse</a></div>
 <p>UnlockWallet unlocks a locked wallet with the provided password and</p><p>timeout.</p> 
+<h3 id="pactus.Wallet.GetTotalBalance">GetTotalBalance <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
+<div class="request pt-3">Request message: <a href="#pactus.GetTotalBalanceRequest">GetTotalBalanceRequest</a></div>
+<div class="response pb-3">Response message: <a href="#pactus.GetTotalBalanceResponse">GetTotalBalanceResponse</a></div>
+<p>GetTotalBalance returns the total available balance of the wallet.</p> 
 <h3 id="pactus.Wallet.SignRawTransaction">SignRawTransaction <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.SignRawTransactionRequest">SignRawTransactionRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.SignRawTransactionResponse">SignRawTransactionResponse</a></div>
@@ -605,7 +647,11 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
 <h3 id="pactus.Wallet.GetValidatorAddress">GetValidatorAddress <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.GetValidatorAddressRequest">GetValidatorAddressRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetValidatorAddressResponse">GetValidatorAddressResponse</a></div>
-<p>GetValidatorAddress retrieves the validator address associated with a</p><p>public key.</p>   
+<p>GetValidatorAddress retrieves the validator address associated with a</p><p>public key.</p> 
+<h3 id="pactus.Wallet.GetNewAddress">GetNewAddress <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
+<div class="request pt-3">Request message: <a href="#pactus.GetNewAddressRequest">GetNewAddressRequest</a></div>
+<div class="response pb-3">Response message: <a href="#pactus.GetNewAddressResponse">GetNewAddressResponse</a></div>
+<p>GetNewAddress generates a new address for the specified wallet.</p>   
 <h2>Messages and Enums</h2> 
 <h3 id="pactus.BroadcastTransactionRequest">
 BroadcastTransactionRequest
@@ -693,18 +739,18 @@ CalculateFeeResponse
   </thead>
   <tbody class="table-group-divider"> 
     <tr>
-      <td class="fw-bold">fee</td>
-      <td>
-        <a href="#int64">int64</a>
-      </td>
-      <td>Calculated transaction fee in NanoPAC. </td>
-    </tr>
-    <tr>
       <td class="fw-bold">amount</td>
       <td>
         <a href="#int64">int64</a>
       </td>
       <td>Calculated amount in NanoPAC. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">fee</td>
+      <td>
+        <a href="#int64">int64</a>
+      </td>
+      <td>Calculated transaction fee in NanoPAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -2442,6 +2488,47 @@ PeerInfo.SentBytesEntry
     </tr>
   </tbody>
 </table>    
+<h3 id="pactus.AddressInfo">
+AddressInfo
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Message of address information.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> 
+    <tr>
+      <td class="fw-bold">address</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">public_key</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">label</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">path</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>  
 <h3 id="pactus.CreateWalletRequest">
 CreateWalletRequest
 <span class="badge text-bg-secondary fs-6 align-top">msg</span>
@@ -2500,6 +2587,114 @@ CreateWalletResponse
         <a href="#string">string</a>
       </td>
       <td>Name of the created wallet. </td>
+    </tr>
+  </tbody>
+</table>  
+<h3 id="pactus.GetNewAddressRequest">
+GetNewAddressRequest
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Request message for generating a new address.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> 
+    <tr>
+      <td class="fw-bold">wallet_name</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Name of the wallet for which the new address is requested. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">address_type</td>
+      <td>
+        <a href="#pactus.AddressType">AddressType</a>
+      </td>
+      <td>Address type for the new address. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">label</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Label for the new address. </td>
+    </tr>
+  </tbody>
+</table>  
+<h3 id="pactus.GetNewAddressResponse">
+GetNewAddressResponse
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Response message containing the new address.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> 
+    <tr>
+      <td class="fw-bold">wallet_name</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Name of the wallet. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">address_info</td>
+      <td>
+        <a href="#pactus.AddressInfo">AddressInfo</a>
+      </td>
+      <td>Address information. </td>
+    </tr>
+  </tbody>
+</table>  
+<h3 id="pactus.GetTotalBalanceRequest">
+GetTotalBalanceRequest
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Request message for obtaining the available balance of a wallet.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> 
+    <tr>
+      <td class="fw-bold">wallet_name</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Name of the wallet. </td>
+    </tr>
+  </tbody>
+</table>  
+<h3 id="pactus.GetTotalBalanceResponse">
+GetTotalBalanceResponse
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Response message containing the available balance of the wallet.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> 
+    <tr>
+      <td class="fw-bold">wallet_name</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Name of the wallet. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">total_balance</td>
+      <td>
+        <a href="#int64">int64</a>
+      </td>
+      <td>The total balance of the wallet in NanoPAC. </td>
     </tr>
   </tbody>
 </table>  
@@ -2920,7 +3115,38 @@ VoteType
       </tr>
     
   </tbody>
-</table>      
+</table>     
+<h3 id="pactus.AddressType">
+AddressType
+<span class="badge text-bg-info fs-6 align-top">enum</span>
+</h3>
+<p>Enum for the address type.</p>
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+    
+      <tr>
+        <td class="fw-bold">ADDRESS_TYPE_TREASURY</td>
+        <td>0</td>
+        <td></td>
+      </tr>
+    
+      <tr>
+        <td class="fw-bold">ADDRESS_TYPE_VALIDATOR</td>
+        <td>1</td>
+        <td></td>
+      </tr>
+    
+      <tr>
+        <td class="fw-bold">ADDRESS_TYPE_BLS_ACCOUNT</td>
+        <td>2</td>
+        <td></td>
+      </tr>
+    
+  </tbody>
+</table>  
 
 <h3 id="scalar-value-types">Scalar Value Types</h3>
 <table class="table table-bordered table-sm">
