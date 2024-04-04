@@ -40,6 +40,42 @@ service Wallet {
   // public key.
   rpc GetValidatorAddress(GetValidatorAddressRequest)
       returns (GetValidatorAddressResponse);
+
+  // GetNewAddress generates a new address for the specified wallet.
+  rpc GetNewAddress(GetNewAddressRequest) returns (GetNewAddressResponse);
+}
+
+// Enum for the address type.
+enum AddressType {
+  ADDRESS_TYPE_TREASURY = 0;
+  ADDRESS_TYPE_VALIDATOR = 1;
+  ADDRESS_TYPE_BLS_ACCOUNT = 2;
+}
+
+// Message of address information.
+message AddressInfo {
+  string address = 1;
+  string public_key = 2;
+  string label = 3;
+  string path = 4;
+}
+
+// Request message for generating a new address.
+message GetNewAddressRequest {
+  // Name of the wallet for which the new address is requested.
+  string wallet_name = 1;
+  // Address type for the new address.
+  AddressType address_type = 2;
+  // Label for the new address.
+  string label = 3;
+}
+
+// Response message containing the new address.
+message GetNewAddressResponse {
+  // Name of the wallet.
+  string wallet_name = 1;
+  // Address information.
+  AddressInfo address_info = 2;
 }
 
 // Request message for creating a new wallet.

@@ -73,8 +73,11 @@
     - [Network](#pactus-Network)
   
 - [wallet.proto](#wallet-proto)
+    - [AddressInfo](#pactus-AddressInfo)
     - [CreateWalletRequest](#pactus-CreateWalletRequest)
     - [CreateWalletResponse](#pactus-CreateWalletResponse)
+    - [GetNewAddressRequest](#pactus-GetNewAddressRequest)
+    - [GetNewAddressResponse](#pactus-GetNewAddressResponse)
     - [GetTotalBalanceRequest](#pactus-GetTotalBalanceRequest)
     - [GetTotalBalanceResponse](#pactus-GetTotalBalanceResponse)
     - [GetValidatorAddressRequest](#pactus-GetValidatorAddressRequest)
@@ -89,6 +92,8 @@
     - [UnloadWalletResponse](#pactus-UnloadWalletResponse)
     - [UnlockWalletRequest](#pactus-UnlockWalletRequest)
     - [UnlockWalletResponse](#pactus-UnlockWalletResponse)
+  
+    - [AddressType](#pactus-AddressType)
   
     - [Wallet](#pactus-Wallet)
   
@@ -1119,6 +1124,24 @@ Network service provides RPCs for retrieving information about the network.
 
 
 
+<a name="pactus-AddressInfo"></a>
+
+### AddressInfo
+Message of address information.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| address | [string](#string) |  |  |
+| public_key | [string](#string) |  |  |
+| label | [string](#string) |  |  |
+| path | [string](#string) |  |  |
+
+
+
+
+
+
 <a name="pactus-CreateWalletRequest"></a>
 
 ### CreateWalletRequest
@@ -1146,6 +1169,39 @@ Response message containing the name of the created wallet.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | wallet_name | [string](#string) |  | Name of the created wallet. |
+
+
+
+
+
+
+<a name="pactus-GetNewAddressRequest"></a>
+
+### GetNewAddressRequest
+Request message for generating a new address.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| wallet_name | [string](#string) |  | Name of the wallet for which the new address is requested. |
+| address_type | [AddressType](#pactus-AddressType) |  | Address type for the new address. |
+| label | [string](#string) |  | Label for the new address. |
+
+
+
+
+
+
+<a name="pactus-GetNewAddressResponse"></a>
+
+### GetNewAddressResponse
+Response message containing the new address.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| wallet_name | [string](#string) |  | Name of the wallet. |
+| address_info | [AddressInfo](#pactus-AddressInfo) |  | Address information. |
 
 
 
@@ -1371,6 +1427,19 @@ Response message containing the name of the unlocked wallet.
 
  
 
+
+<a name="pactus-AddressType"></a>
+
+### AddressType
+Enum for the address type.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ADDRESS_TYPE_TREASURY | 0 |  |
+| ADDRESS_TYPE_VALIDATOR | 1 |  |
+| ADDRESS_TYPE_BLS_ACCOUNT | 2 |  |
+
+
  
 
  
@@ -1391,6 +1460,7 @@ Define the Wallet service with various RPC methods for wallet management.
 | GetTotalBalance | [GetTotalBalanceRequest](#pactus-GetTotalBalanceRequest) | [GetTotalBalanceResponse](#pactus-GetTotalBalanceResponse) | GetTotalBalance returns the total available balance of the wallet. |
 | SignRawTransaction | [SignRawTransactionRequest](#pactus-SignRawTransactionRequest) | [SignRawTransactionResponse](#pactus-SignRawTransactionResponse) | SignRawTransaction signs a raw transaction for a specified wallet. |
 | GetValidatorAddress | [GetValidatorAddressRequest](#pactus-GetValidatorAddressRequest) | [GetValidatorAddressResponse](#pactus-GetValidatorAddressResponse) | GetValidatorAddress retrieves the validator address associated with a public key. |
+| GetNewAddress | [GetNewAddressRequest](#pactus-GetNewAddressRequest) | [GetNewAddressResponse](#pactus-GetNewAddressResponse) | GetNewAddress generates a new address for the specified wallet. |
 
  
 

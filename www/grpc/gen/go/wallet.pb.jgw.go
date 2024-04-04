@@ -99,5 +99,14 @@ func (s *WalletJsonRpcService) Methods() map[string]func(ctx context.Context, me
 			}
 			return s.client.GetValidatorAddress(ctx, req)
 		},
+
+		"pactus.wallet.get_new_address": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetNewAddressRequest)
+			err := protojson.Unmarshal(data, req)
+			if err != nil {
+				return nil, err
+			}
+			return s.client.GetNewAddress(ctx, req)
+		},
 	}
 }

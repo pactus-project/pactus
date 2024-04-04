@@ -223,10 +223,10 @@ func TestNewBLSAccountAddress(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Ok", func(t *testing.T) {
-		addr, err := td.vault.NewBLSAccountAddress("new-addr")
+		addressInfo, err := td.vault.NewBLSAccountAddress("new-addr")
 		assert.NoError(t, err)
-		assert.True(t, td.vault.Contains(addr))
-		assert.Equal(t, td.vault.Label(addr), "new-addr")
+		assert.True(t, td.vault.Contains(addressInfo.Address))
+		assert.Equal(t, td.vault.Label(addressInfo.Address), "new-addr")
 	})
 }
 
