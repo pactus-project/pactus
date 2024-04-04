@@ -84,3 +84,6 @@ http:
 
     - selector: pactus.Wallet.GetNewAddress
       get: "/pactus/wallet/get_new_address"
+
+    - selector: pactus.Wallet.GetTotalBalance
+      get: "/pactus/wallet/get_total_balance"
