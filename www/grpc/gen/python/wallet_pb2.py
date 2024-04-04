@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 import transaction_pb2 as transaction__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cwallet.proto\x12\x06pactus\x1a\x11transaction.proto\"\x8a\x01\n\x13\x43reateWalletRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\x12\x1a\n\x08mnemonic\x18\x02 \x01(\tR\x08mnemonic\x12\x1a\n\x08language\x18\x03 \x01(\tR\x08language\x12\x1a\n\x08password\x18\x04 \x01(\tR\x08password\"7\n\x14\x43reateWalletResponse\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"4\n\x11LoadWalletRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"5\n\x12LoadWalletResponse\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"6\n\x13UnloadWalletRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"7\n\x14UnloadWalletResponse\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"4\n\x11LockWalletRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"5\n\x12LockWalletResponse\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\";\n\x1aGetValidatorAddressRequest\x12\x1d\n\npublic_key\x18\x01 \x01(\tR\tpublicKey\"7\n\x1bGetValidatorAddressResponse\x12\x18\n\x07\x61\x64\x64ress\x18\x01 \x01(\tR\x07\x61\x64\x64ress\"l\n\x13UnlockWalletRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\x12\x1a\n\x08password\x18\x02 \x01(\tR\x08password\x12\x18\n\x07timeout\x18\x03 \x01(\x05R\x07timeout\"7\n\x14UnlockWalletResponse\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"\x81\x01\n\x19SignRawTransactionRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\x12\'\n\x0fraw_transaction\x18\x02 \x01(\x0cR\x0erawTransaction\x12\x1a\n\x08password\x18\x03 \x01(\tR\x08password\"y\n\x1aSignRawTransactionResponse\x12%\n\x0etransaction_id\x18\x01 \x01(\x0cR\rtransactionId\x12\x34\n\x16signed_raw_transaction\x18\x02 \x01(\x0cR\x14signedRawTransaction\"9\n\x16GetTotalBalanceRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"_\n\x17GetTotalBalanceResponse\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\x12#\n\rtotal_balance\x18\x02 \x01(\x03R\x0ctotalBalance2\x84\x05\n\x06Wallet\x12I\n\x0c\x43reateWallet\x12\x1b.pactus.CreateWalletRequest\x1a\x1c.pactus.CreateWalletResponse\x12\x43\n\nLoadWallet\x12\x19.pactus.LoadWalletRequest\x1a\x1a.pactus.LoadWalletResponse\x12I\n\x0cUnloadWallet\x12\x1b.pactus.UnloadWalletRequest\x1a\x1c.pactus.UnloadWalletResponse\x12\x43\n\nLockWallet\x12\x19.pactus.LockWalletRequest\x1a\x1a.pactus.LockWalletResponse\x12I\n\x0cUnlockWallet\x12\x1b.pactus.UnlockWalletRequest\x1a\x1c.pactus.UnlockWalletResponse\x12R\n\x0fGetTotalBalance\x12\x1e.pactus.GetTotalBalanceRequest\x1a\x1f.pactus.GetTotalBalanceResponse\x12[\n\x12SignRawTransaction\x12!.pactus.SignRawTransactionRequest\x1a\".pactus.SignRawTransactionResponse\x12^\n\x13GetValidatorAddress\x12\".pactus.GetValidatorAddressRequest\x1a#.pactus.GetValidatorAddressResponseBA\n\rpactus.walletZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cwallet.proto\x12\x06pactus\x1a\x11transaction.proto\"p\n\x0b\x41\x64\x64ressInfo\x12\x18\n\x07\x61\x64\x64ress\x18\x01 \x01(\tR\x07\x61\x64\x64ress\x12\x1d\n\npublic_key\x18\x02 \x01(\tR\tpublicKey\x12\x14\n\x05label\x18\x03 \x01(\tR\x05label\x12\x12\n\x04path\x18\x04 \x01(\tR\x04path\"\x85\x01\n\x14GetNewAddressRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\x12\x36\n\x0c\x61\x64\x64ress_type\x18\x02 \x01(\x0e\x32\x13.pactus.AddressTypeR\x0b\x61\x64\x64ressType\x12\x14\n\x05label\x18\x03 \x01(\tR\x05label\"p\n\x15GetNewAddressResponse\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\x12\x36\n\x0c\x61\x64\x64ress_info\x18\x02 \x01(\x0b\x32\x13.pactus.AddressInfoR\x0b\x61\x64\x64ressInfo\"\x8a\x01\n\x13\x43reateWalletRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\x12\x1a\n\x08mnemonic\x18\x02 \x01(\tR\x08mnemonic\x12\x1a\n\x08language\x18\x03 \x01(\tR\x08language\x12\x1a\n\x08password\x18\x04 \x01(\tR\x08password\"7\n\x14\x43reateWalletResponse\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"4\n\x11LoadWalletRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"5\n\x12LoadWalletResponse\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"6\n\x13UnloadWalletRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"7\n\x14UnloadWalletResponse\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"4\n\x11LockWalletRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"5\n\x12LockWalletResponse\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\";\n\x1aGetValidatorAddressRequest\x12\x1d\n\npublic_key\x18\x01 \x01(\tR\tpublicKey\"7\n\x1bGetValidatorAddressResponse\x12\x18\n\x07\x61\x64\x64ress\x18\x01 \x01(\tR\x07\x61\x64\x64ress\"l\n\x13UnlockWalletRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\x12\x1a\n\x08password\x18\x02 \x01(\tR\x08password\x12\x18\n\x07timeout\x18\x03 \x01(\x05R\x07timeout\"7\n\x14UnlockWalletResponse\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"\x81\x01\n\x19SignRawTransactionRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\x12\'\n\x0fraw_transaction\x18\x02 \x01(\x0cR\x0erawTransaction\x12\x1a\n\x08password\x18\x03 \x01(\tR\x08password\"y\n\x1aSignRawTransactionResponse\x12%\n\x0etransaction_id\x18\x01 \x01(\x0cR\rtransactionId\x12\x34\n\x16signed_raw_transaction\x18\x02 \x01(\x0cR\x14signedRawTransaction\"9\n\x16GetTotalBalanceRequest\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\"_\n\x17GetTotalBalanceResponse\x12\x1f\n\x0bwallet_name\x18\x01 \x01(\tR\nwalletName\x12#\n\rtotal_balance\x18\x02 \x01(\x03R\x0ctotalBalance*b\n\x0b\x41\x64\x64ressType\x12\x19\n\x15\x41\x44\x44RESS_TYPE_TREASURY\x10\x00\x12\x1a\n\x16\x41\x44\x44RESS_TYPE_VALIDATOR\x10\x01\x12\x1c\n\x18\x41\x44\x44RESS_TYPE_BLS_ACCOUNT\x10\x02\x32\xd2\x05\n\x06Wallet\x12I\n\x0c\x43reateWallet\x12\x1b.pactus.CreateWalletRequest\x1a\x1c.pactus.CreateWalletResponse\x12\x43\n\nLoadWallet\x12\x19.pactus.LoadWalletRequest\x1a\x1a.pactus.LoadWalletResponse\x12I\n\x0cUnloadWallet\x12\x1b.pactus.UnloadWalletRequest\x1a\x1c.pactus.UnloadWalletResponse\x12\x43\n\nLockWallet\x12\x19.pactus.LockWalletRequest\x1a\x1a.pactus.LockWalletResponse\x12I\n\x0cUnlockWallet\x12\x1b.pactus.UnlockWalletRequest\x1a\x1c.pactus.UnlockWalletResponse\x12R\n\x0fGetTotalBalance\x12\x1e.pactus.GetTotalBalanceRequest\x1a\x1f.pactus.GetTotalBalanceResponse\x12[\n\x12SignRawTransaction\x12!.pactus.SignRawTransactionRequest\x1a\".pactus.SignRawTransactionResponse\x12^\n\x13GetValidatorAddress\x12\".pactus.GetValidatorAddressRequest\x1a#.pactus.GetValidatorAddressResponse\x12L\n\rGetNewAddress\x12\x1c.pactus.GetNewAddressRequest\x1a\x1d.pactus.GetNewAddressResponseBA\n\rpactus.walletZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'wallet_pb2', globals())
@@ -22,38 +22,46 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'\n\rpactus.walletZ0github.com/pactus-project/pactus/www/grpc/pactus'
-  _CREATEWALLETREQUEST._serialized_start=44
-  _CREATEWALLETREQUEST._serialized_end=182
-  _CREATEWALLETRESPONSE._serialized_start=184
-  _CREATEWALLETRESPONSE._serialized_end=239
-  _LOADWALLETREQUEST._serialized_start=241
-  _LOADWALLETREQUEST._serialized_end=293
-  _LOADWALLETRESPONSE._serialized_start=295
-  _LOADWALLETRESPONSE._serialized_end=348
-  _UNLOADWALLETREQUEST._serialized_start=350
-  _UNLOADWALLETREQUEST._serialized_end=404
-  _UNLOADWALLETRESPONSE._serialized_start=406
-  _UNLOADWALLETRESPONSE._serialized_end=461
-  _LOCKWALLETREQUEST._serialized_start=463
-  _LOCKWALLETREQUEST._serialized_end=515
-  _LOCKWALLETRESPONSE._serialized_start=517
-  _LOCKWALLETRESPONSE._serialized_end=570
-  _GETVALIDATORADDRESSREQUEST._serialized_start=572
-  _GETVALIDATORADDRESSREQUEST._serialized_end=631
-  _GETVALIDATORADDRESSRESPONSE._serialized_start=633
-  _GETVALIDATORADDRESSRESPONSE._serialized_end=688
-  _UNLOCKWALLETREQUEST._serialized_start=690
-  _UNLOCKWALLETREQUEST._serialized_end=798
-  _UNLOCKWALLETRESPONSE._serialized_start=800
-  _UNLOCKWALLETRESPONSE._serialized_end=855
-  _SIGNRAWTRANSACTIONREQUEST._serialized_start=858
-  _SIGNRAWTRANSACTIONREQUEST._serialized_end=987
-  _SIGNRAWTRANSACTIONRESPONSE._serialized_start=989
-  _SIGNRAWTRANSACTIONRESPONSE._serialized_end=1110
-  _GETTOTALBALANCEREQUEST._serialized_start=1112
-  _GETTOTALBALANCEREQUEST._serialized_end=1169
-  _GETTOTALBALANCERESPONSE._serialized_start=1171
-  _GETTOTALBALANCERESPONSE._serialized_end=1266
-  _WALLET._serialized_start=1269
-  _WALLET._serialized_end=1913
+  _ADDRESSTYPE._serialized_start=1632
+  _ADDRESSTYPE._serialized_end=1730
+  _ADDRESSINFO._serialized_start=43
+  _ADDRESSINFO._serialized_end=155
+  _GETNEWADDRESSREQUEST._serialized_start=158
+  _GETNEWADDRESSREQUEST._serialized_end=291
+  _GETNEWADDRESSRESPONSE._serialized_start=293
+  _GETNEWADDRESSRESPONSE._serialized_end=405
+  _CREATEWALLETREQUEST._serialized_start=408
+  _CREATEWALLETREQUEST._serialized_end=546
+  _CREATEWALLETRESPONSE._serialized_start=548
+  _CREATEWALLETRESPONSE._serialized_end=603
+  _LOADWALLETREQUEST._serialized_start=605
+  _LOADWALLETREQUEST._serialized_end=657
+  _LOADWALLETRESPONSE._serialized_start=659
+  _LOADWALLETRESPONSE._serialized_end=712
+  _UNLOADWALLETREQUEST._serialized_start=714
+  _UNLOADWALLETREQUEST._serialized_end=768
+  _UNLOADWALLETRESPONSE._serialized_start=770
+  _UNLOADWALLETRESPONSE._serialized_end=825
+  _LOCKWALLETREQUEST._serialized_start=827
+  _LOCKWALLETREQUEST._serialized_end=879
+  _LOCKWALLETRESPONSE._serialized_start=881
+  _LOCKWALLETRESPONSE._serialized_end=934
+  _GETVALIDATORADDRESSREQUEST._serialized_start=936
+  _GETVALIDATORADDRESSREQUEST._serialized_end=995
+  _GETVALIDATORADDRESSRESPONSE._serialized_start=997
+  _GETVALIDATORADDRESSRESPONSE._serialized_end=1052
+  _UNLOCKWALLETREQUEST._serialized_start=1054
+  _UNLOCKWALLETREQUEST._serialized_end=1162
+  _UNLOCKWALLETRESPONSE._serialized_start=1164
+  _UNLOCKWALLETRESPONSE._serialized_end=1219
+  _SIGNRAWTRANSACTIONREQUEST._serialized_start=1222
+  _SIGNRAWTRANSACTIONREQUEST._serialized_end=1351
+  _SIGNRAWTRANSACTIONRESPONSE._serialized_start=1353
+  _SIGNRAWTRANSACTIONRESPONSE._serialized_end=1474
+  _GETTOTALBALANCEREQUEST._serialized_start=1476
+  _GETTOTALBALANCEREQUEST._serialized_end=1533
+  _GETTOTALBALANCERESPONSE._serialized_start=1535
+  _GETTOTALBALANCERESPONSE._serialized_end=1630
+  _WALLET._serialized_start=1733
+  _WALLET._serialized_end=2455
 # @@protoc_insertion_point(module_scope)

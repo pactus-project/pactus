@@ -96,7 +96,7 @@ func TestLoadWallet(t *testing.T) {
 	conn, client := td.walletClient(t)
 
 	wltName := "default_wallet"
-	wltAddr, err := td.defaultWallet.NewBLSAccountAddress("test")
+	wltAddrInfo, err := td.defaultWallet.NewBLSAccountAddress("test")
 	assert.NoError(t, err)
 	require.NoError(t, td.defaultWallet.Save())
 
@@ -137,7 +137,7 @@ func TestLoadWallet(t *testing.T) {
 	})
 
 	t.Run("Sign raw transaction, OK", func(t *testing.T) {
-		wltAddr, _ := crypto.AddressFromString(wltAddr)
+		wltAddr, _ := crypto.AddressFromString(wltAddrInfo.Address)
 		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(), td.RandAmount(), "memo")
 		rawTx, _ := bondTx.Bytes()
 		res, err := client.SignRawTransaction(context.Background(),
@@ -156,7 +156,7 @@ func TestLoadWallet(t *testing.T) {
 	})
 
 	t.Run("Sign raw transaction using not loaded wallet", func(t *testing.T) {
-		wltAddr, _ := crypto.AddressFromString(wltAddr)
+		wltAddr, _ := crypto.AddressFromString(wltAddrInfo.Address)
 		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(), td.RandAmount(), "memo")
 		rawTx, _ := bondTx.Bytes()
 		res, err := client.SignRawTransaction(context.Background(),
@@ -251,6 +251,93 @@ func TestGetTotalBalance(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, res.WalletName, walletName)
 		assert.Zero(t, res.TotalBalance)
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}
+
+func TestGetNewAddress(t *testing.T) {
+	conf := testConfig()
+	conf.EnableWallet = true
+
+	td := setup(t, conf)
+	conn, client := td.walletClient(t)
+
+	wltName := "default_wallet"
+	_, err := td.defaultWallet.NewBLSAccountAddress("test")
+	assert.NoError(t, err)
+	require.NoError(t, td.defaultWallet.Save())
+
+	t.Run("New address with BLS account", func(t *testing.T) {
+		_, err = client.LoadWallet(context.Background(),
+			&pactus.LoadWalletRequest{
+				WalletName: wltName,
+			})
+		require.NoError(t, err)
+
+		res, err := client.GetNewAddress(context.Background(),
+			&pactus.GetNewAddressRequest{
+				WalletName:  wltName,
+				AddressType: 2,
+				Label:       "bls",
+			})
+		assert.Nil(t, err)
+		assert.Equal(t, wltName, res.WalletName)
+		assert.Equal(t, "bls", res.AddressInfo.Label)
+
+		_, err = client.UnloadWallet(context.Background(),
+			&pactus.UnloadWalletRequest{
+				WalletName: wltName,
+			})
+		require.NoError(t, err)
+	})
+
+	t.Run("New address with validator account", func(t *testing.T) {
+		_, err = client.LoadWallet(context.Background(),
+			&pactus.LoadWalletRequest{
+				WalletName: wltName,
+			})
+		require.NoError(t, err)
+
+		res, err := client.GetNewAddress(context.Background(),
+			&pactus.GetNewAddressRequest{
+				WalletName:  wltName,
+				AddressType: 1,
+				Label:       "validator",
+			})
+		assert.Nil(t, err)
+		assert.Equal(t, wltName, res.WalletName)
+		assert.Equal(t, "validator", res.AddressInfo.Label)
+
+		_, err = client.UnloadWallet(context.Background(),
+			&pactus.UnloadWalletRequest{
+				WalletName: wltName,
+			})
+		require.NoError(t, err)
+	})
+
+	t.Run("Error with new address with treasury", func(t *testing.T) {
+		_, err = client.LoadWallet(context.Background(),
+			&pactus.LoadWalletRequest{
+				WalletName: wltName,
+			})
+		require.NoError(t, err)
+
+		res, err := client.GetNewAddress(context.Background(),
+			&pactus.GetNewAddressRequest{
+				WalletName:  wltName,
+				AddressType: 0,
+				Label:       "treasury",
+			})
+		assert.NotNil(t, err)
+		assert.Nil(t, res)
+
+		_, err = client.UnloadWallet(context.Background(),
+			&pactus.UnloadWalletRequest{
+				WalletName: wltName,
+			})
+		require.NoError(t, err)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

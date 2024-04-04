@@ -396,13 +396,13 @@ func (w *Wallet) PrivateKeys(password string, addrs []string) ([]crypto.PrivateK
 
 // NewBLSAccountAddress create a new BLS-based account address and
 // associates it with the given label.
-func (w *Wallet) NewBLSAccountAddress(label string) (string, error) {
+func (w *Wallet) NewBLSAccountAddress(label string) (*vault.AddressInfo, error) {
 	return w.store.Vault.NewBLSAccountAddress(label)
 }
 
 // NewValidatorAddress creates a new BLS validator address and
 // associates it with the given label.
-func (w *Wallet) NewValidatorAddress(label string) (string, error) {
+func (w *Wallet) NewValidatorAddress(label string) (*vault.AddressInfo, error) {
 	return w.store.Vault.NewValidatorAddress(label)
 }
 
