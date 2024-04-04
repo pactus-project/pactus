@@ -19,9 +19,25 @@ import (
 	"github.com/pactus-project/pactus/wallet"
 )
 
+// https://stackoverflow.com/questions/3249053/copying-the-text-from-a-gtk-messagedialog
+func updateMessageDialog(dlg *gtk.MessageDialog) {
+	area, err := dlg.GetMessageArea()
+	if err == nil {
+		children := area.GetChildren()
+		children.Foreach(func(item interface{}) {
+			label, err := gtk.WidgetToLabel(item.(*gtk.Widget))
+			if err == nil {
+				label.SetSelectable(true)
+				label.SetUseMarkup(true)
+			}
+		})
+	}
+}
+
 func showQuestionDialog(parent gtk.IWindow, msg string) bool {
 	dlg := gtk.MessageDialogNew(parent,
 		gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, msg)
+	updateMessageDialog(dlg)
 	res := dlg.Run()
 	dlg.Destroy()
 
@@ -31,6 +47,7 @@ func showQuestionDialog(parent gtk.IWindow, msg string) bool {
 func showInfoDialog(parent gtk.IWindow, msg string) {
 	dlg := gtk.MessageDialogNew(parent,
 		gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, msg)
+	updateMessageDialog(dlg)
 	dlg.Run()
 	dlg.Destroy()
 }
@@ -38,6 +55,7 @@ func showInfoDialog(parent gtk.IWindow, msg string) {
 func showWarningDialog(parent gtk.IWindow, msg string) {
 	dlg := gtk.MessageDialogNew(parent,
 		gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, msg)
+	updateMessageDialog(dlg)
 	dlg.Run()
 	dlg.Destroy()
 }
@@ -45,6 +63,7 @@ func showWarningDialog(parent gtk.IWindow, msg string) {
 func showErrorDialog(parent gtk.IWindow, msg string) {
 	dlg := gtk.MessageDialogNew(parent,
 		gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, msg)
+	updateMessageDialog(dlg)
 	dlg.Run()
 	dlg.Destroy()
 }
@@ -216,7 +235,8 @@ func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, w *wallet.Walle
 			return
 		}
 
-		showInfoDialog(parent, fmt.Sprintf("Your transaction Hash: %s", txID))
+		showInfoDialog(parent,
+			fmt.Sprintf("Transaction Hash: <a href=\"https://pacviewer.com/transactions/%s\">%s</a>", txID, txID))
 	}
 }
 
