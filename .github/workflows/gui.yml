@@ -24,7 +24,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22.1'
+        go-version: '1.22.2'
 
     - name: Build the binary
       run: make build_gui
@@ -47,7 +47,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22.1'
+        go-version: '1.22.2'
 
     - name: Build the binary
       run: make build_gui

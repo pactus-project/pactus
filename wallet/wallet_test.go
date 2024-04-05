@@ -68,7 +68,7 @@ func setup(t *testing.T) *testData {
 		return listener.Dial()
 	}
 
-	conn, err := grpc.NewClient("bufnet",
+	conn, err := grpc.NewClient("passthrough://bufnet",
 		grpc.WithContextDialer(bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
