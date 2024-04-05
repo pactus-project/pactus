@@ -9,6 +9,8 @@ Before proceeding with the release process,
 ensure that your `origin` remote is set to `git@github.com:pactus-project/pactus.git` and not your local fork.
 It is recommended to re-clone the project in a location other than your current working directory.
 Also, make sure that you have set up GPG for your GitHub account.
+Make sure to [set up](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners)
+a self-hosted runner for releasing Pactus for macOS-ARM.
 
 ## 2. Fetch the Latest Code
 
