@@ -64,9 +64,9 @@ List of conventional commit [types](https://github.com/commitizen/conventional-c
 
 ### Example fo commit messages
 
-  - Correct ✅: "feat(grpc): sign transaction using wallet client"
-  - Incorrect ❌: 'feat(grpc): Sign transaction using wallet client."
-  - Incorrect ❌: 'feat(grpc): signed transaction using wallet client"
+  - Correct ✅: "feat(gRPC): sign transaction using wallet client"
+  - Incorrect ❌: 'feat(gRPC): Sign transaction using wallet client."
+  - Incorrect ❌: 'feat(gRPC): signed transaction using wallet client"
   - Incorrect ❌: 'sign transaction using wallet client"
 
 ## Code of Conduct

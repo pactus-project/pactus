@@ -11,7 +11,7 @@ If you want to install a GUI application, make sure you have installed
 
 Follow these steps to compile and build Pactus:
 
-```text
+```bash
 git clone https://github.com/pactus-project/pactus.git
 cd pactus
 make build
@@ -20,20 +20,20 @@ make build
 This will be compile `pactus-daemon` and `pactus-wallet` on your machine.
 Make sure Pactus is properly compiled and installed on your machine:
 
-```
+```bash
 cd build
 ./pactus-daemon version
 ```
 
 If you want to compile the GUI application, run this command in the root folder:
 
-```text
+```bash
 make build_gui
 ```
 
 To run the tests, use this command:
 
-```text
+```bash
 make test
 ```
 
@@ -44,7 +44,7 @@ This may take several minutes to finish.
 `pactus-daemon` is a full node implementation of Pactus blockchain.
 You can use `pactus-daemon` to run a full node:
 
-```text
+```bash
 ./pactus-daemon init  -w=<working_dir>
 ./pactus-daemon start -w=<working_dir>
 ```
@@ -54,7 +54,7 @@ You can use `pactus-daemon` to run a full node:
 To join the TestNet, first you need to initialize your node
 and then start the node:
 
-```text
+```bash
 ./pactus-daemon init  -w=<working_dir> --testnet
 ./pactus-daemon start -w=<working_dir>
 ```
@@ -63,7 +63,7 @@ and then start the node:
 
 You can create a local node to set up a local network for development purposes on your machine:
 
- ```text
+ ```bash
  ./pactus-daemon init  -w=<working_dir> --localnet
  ./pactus-daemon start -w=<working_dir>
  ```
@@ -78,41 +78,40 @@ their accounts on the Pactus blockchain.
 To create a new wallet, run this command. The wallet will be encrypted by the
 provided password.
 
-```text
-./pactus-wallet ~/pactus/wallets/wallet_1 create
+```bash
+./pactus-wallet --path ~/pactus/wallets/wallet_1 create
 ```
 
 You can create a new address like this:
 
-```text
-./pactus-wallet ~/pactus/wallets/wallet_1 address new
+```bash
+./pactus-wallet --path ~/pactus/wallets/wallet_1 address new
 ```
 
 A list of addresses is available with this command:
 
-```text
-./pactus-wallet ~/pactus/wallets/wallet_1 address all
+```bash
+./pactus-wallet --path ~/pactus/wallets/wallet_1 address all
 ```
 
 To obtain the public key of an address, run this command:
 
-```text
-./pactus-wallet ~/pactus/wallets/wallet_1 address pub <ADDRESS>
+```bash
+./pactus-wallet --path ~/pactus/wallets/wallet_1 address pub <ADDRESS>
 ```
 
 To publish a transaction, use the tx subcommand.
 For example, to publish a bond transaction:
 
-```text
-./pactus-wallet ~/pactus/wallets/wallet_1 tx bond <FROM> <TO> <AMOUNT>
+```bash
+./pactus-wallet --path ~/pactus/wallets/wallet_1 tx bond <FROM> <TO> <AMOUNT>
 ```
 
 You can recover a wallet if you have the seed phrase.
 
-```text
-./pactus-wallet ~/pactus/wallets/wallet_2 recover
+```bash
+./pactus-wallet --path ~/pactus/wallets/wallet_2 recover
 ```
-
 
 ## Docker
 
@@ -121,33 +120,33 @@ You can run Pactus using a Docker file. Please make sure you have installed
 
 Pull the Docker from Docker Hub:
 
-```text
-docker pull pactus/pactus
+```bash
+docker pull pactus/pactus:main
 ```
 
 Let's create a working directory at `~/pactus/testnet` for the testnet:
 
-```text
-docker run -it --rm -v ~/pactus/testnet:/pactus pactus/pactus init -w /pactus --testnet
+```bash
+docker run -it --rm -v ~/pactus/testnet:/root/pactus pactus/pactus:main pactus-daemon init --testnet
 ```
 
 Now we can run Pactus and join the testnet:
 
-```text
-docker run -it -v ~/pactus/testnet:/pactus -p 8080:8080 -p 21777:21777 --name pactus-testnet pactus/pactus start -w /pactus
+```bash
+docker run -it -v ~/pactus/testnet:/root/pactus -p 8080:8080 -p 21777:21777 --name pactus-testnet pactus/pactus:main pactus-daemon start
 ```
 
 check "[http://localhost:8080](http://localhost:8080)" for the list of APIs.
 
 Also you can stop/start docker:
 
-```
-docker stop pactus-testnet
+```bash
 docker start pactus-testnet
+docker stop pactus-testnet
 ```
 
 Or check the logs:
 
-```
+```bash
 docker logs pactus-testnet --tail 1000 -f
 ```
