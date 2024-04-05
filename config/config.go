@@ -119,7 +119,7 @@ func DefaultConfigMainnet() *Config {
 	conf.Network.DefaultPort = 21888
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "127.0.0.1:50051"
-	conf.GRPC.BasicAuthCredential = ""
+	conf.GRPC.BasicAuth = ""
 	conf.GRPC.Gateway.Enable = false
 	conf.GRPC.Gateway.Listen = "127.0.0.1:8080"
 	conf.JSONRPC.Enable = false

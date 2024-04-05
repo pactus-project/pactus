@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/vault"
 	"github.com/spf13/cobra"
 )
 
@@ -76,7 +77,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		wallet.AddressTypeBLSAccount, "the type of address: bls_account or validator")
 
 	newAddressCmd.Run = func(_ *cobra.Command, _ []string) {
-		var addr string
+		var addressInfo *vault.AddressInfo
 		var err error
 
 		label := cmd.PromptInput("Label")
@@ -84,9 +85,9 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		if *addressType == wallet.AddressTypeBLSAccount {
-			addr, err = wlt.NewBLSAccountAddress(label)
+			addressInfo, err = wlt.NewBLSAccountAddress(label)
 		} else if *addressType == wallet.AddressTypeValidator {
-			addr, err = wlt.NewValidatorAddress(label)
+			addressInfo, err = wlt.NewValidatorAddress(label)
 		} else {
 			err = fmt.Errorf("invalid address type '%s'", *addressType)
 		}
@@ -96,7 +97,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsgf("%s", addr)
+		cmd.PrintInfoMsgf("%s", addressInfo.Address)
 	}
 }
 

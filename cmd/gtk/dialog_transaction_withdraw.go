@@ -82,15 +82,15 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 		}
 		msg := fmt.Sprintf(`
 You are going to sign and broadcast this transaction:
-
+<tt>
 From:   %s
 To:     %s
 Amount: %s
 Memo:   %s
 Fee:    %s
-
-THIS ACTION IS NOT REVERSIBLE. Do you want to continue?`,
-			sender, receiver, amt, trx.Memo(), trx.Fee())
+</tt>
+<b>THIS ACTION IS NOT REVERSIBLE. Do you want to continue?</b>`,
+			sender, receiver, amt, trx.Fee(), trx.Memo())
 
 		signAndBroadcastTransaction(dlg, msg, wlt, trx)
 

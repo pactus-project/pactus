@@ -64,8 +64,8 @@ func (s *Server) StartServer() error {
 func (s *Server) startListening(listener net.Listener) error {
 	opts := make([]grpc.UnaryServerInterceptor, 0)
 
-	if s.config.BasicAuthCredential != "" {
-		opts = append(opts, BasicAuth(s.config.BasicAuthCredential))
+	if s.config.BasicAuth != "" {
+		opts = append(opts, BasicAuth(s.config.BasicAuth))
 	}
 
 	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(opts...))

@@ -28,6 +28,7 @@ func DefaultConfig() *Config {
 	conf.Levels["_http"] = "info"
 	conf.Levels["_grpc"] = "info"
 	conf.Levels["_nonomsg"] = "info"
+	conf.Levels["_jsonrpc"] = "info"
 
 	return conf
 }
