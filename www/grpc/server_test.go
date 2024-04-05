@@ -105,8 +105,7 @@ func (td *testData) bufDialer(context.Context, string) (net.Conn, error) {
 func (td *testData) blockchainClient(t *testing.T) (*grpc.ClientConn, pactus.BlockchainClient) {
 	t.Helper()
 
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(td.bufDialer),
+	conn, err := grpc.NewClient("bufnet", grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial blockchain server: %v", err)
@@ -118,8 +117,7 @@ func (td *testData) blockchainClient(t *testing.T) (*grpc.ClientConn, pactus.Blo
 func (td *testData) networkClient(t *testing.T) (*grpc.ClientConn, pactus.NetworkClient) {
 	t.Helper()
 
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(td.bufDialer),
+	conn, err := grpc.NewClient("bufnet", grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial network server: %v", err)
@@ -131,8 +129,7 @@ func (td *testData) networkClient(t *testing.T) (*grpc.ClientConn, pactus.Networ
 func (td *testData) transactionClient(t *testing.T) (*grpc.ClientConn, pactus.TransactionClient) {
 	t.Helper()
 
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(td.bufDialer),
+	conn, err := grpc.NewClient("bufnet", grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial transaction server: %v", err)
@@ -144,8 +141,7 @@ func (td *testData) transactionClient(t *testing.T) (*grpc.ClientConn, pactus.Tr
 func (td *testData) walletClient(t *testing.T) (*grpc.ClientConn, pactus.WalletClient) {
 	t.Helper()
 
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(td.bufDialer),
+	conn, err := grpc.NewClient("bufnet", grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial wallet server: %v", err)

@@ -810,6 +810,90 @@
         ]
       }
     },
+    "/pactus/wallet/get_new_address": {
+      "get": {
+        "summary": "GetNewAddress generates a new address for the specified wallet.",
+        "operationId": "Wallet_GetNewAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetNewAddressResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "Name of the wallet for which the new address is requested.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "addressType",
+            "description": "Address type for the new address.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "ADDRESS_TYPE_TREASURY",
+              "ADDRESS_TYPE_VALIDATOR",
+              "ADDRESS_TYPE_BLS_ACCOUNT"
+            ],
+            "default": "ADDRESS_TYPE_TREASURY"
+          },
+          {
+            "name": "label",
+            "description": "Label for the new address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/get_total_balance": {
+      "get": {
+        "summary": "GetTotalBalance returns the total available balance of the wallet.",
+        "operationId": "Wallet_GetTotalBalance",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetTotalBalanceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "Name of the wallet.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
     "/pactus/wallet/get_validator_address": {
       "get": {
         "summary": "GetValidatorAddress retrieves the validator address associated with a\npublic key.",
@@ -1220,6 +1304,7 @@
         "votes": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/pactusVoteInfo"
           },
           "description": "List of votes in the consensus instance."
@@ -1241,7 +1326,8 @@
       "type": "object",
       "properties": {
         "account": {
-          "$ref": "#/definitions/pactusAccountInfo"
+          "$ref": "#/definitions/pactusAccountInfo",
+          "description": "Account information."
         }
       },
       "description": "Message containing the response with account information."
@@ -1292,14 +1378,17 @@
           "description": "Block timestamp."
         },
         "header": {
-          "$ref": "#/definitions/pactusBlockHeaderInfo"
+          "$ref": "#/definitions/pactusBlockHeaderInfo",
+          "description": "Block header information."
         },
         "prevCert": {
-          "$ref": "#/definitions/pactusCertificateInfo"
+          "$ref": "#/definitions/pactusCertificateInfo",
+          "description": "Certificate information of the previous block."
         },
         "txs": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/pactusTransactionInfo"
           },
           "description": "List of transactions in the block."
@@ -1343,6 +1432,7 @@
         "committeeValidators": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/pactusValidatorInfo"
           },
           "description": "List of committee validators."
@@ -1356,6 +1446,7 @@
         "instances": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/pactusConsensusInfo"
           },
           "description": "List of consensus instances."
@@ -1388,6 +1479,7 @@
         "connectedPeers": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/pactusPeerInfo"
           },
           "description": "List of connected peers."
@@ -1419,7 +1511,8 @@
           "description": "Name of the wallet."
         },
         "addressInfo": {
-          "$ref": "#/definitions/pactusAddressInfo"
+          "$ref": "#/definitions/pactusAddressInfo",
+          "description": "Address information."
         }
       },
       "description": "Response message containing the new address."
@@ -1531,7 +1624,8 @@
           "description": "Time of the block containing the transaction."
         },
         "transaction": {
-          "$ref": "#/definitions/pactusTransactionInfo"
+          "$ref": "#/definitions/pactusTransactionInfo",
+          "description": "Information about the transaction."
         }
       },
       "description": "Response message containing details of a transaction."
@@ -1563,7 +1657,8 @@
       "type": "object",
       "properties": {
         "validator": {
-          "$ref": "#/definitions/pactusValidatorInfo"
+          "$ref": "#/definitions/pactusValidatorInfo",
+          "description": "Validator information."
         }
       },
       "description": "Message containing the response with validator information."
@@ -1847,22 +1942,28 @@
           "description": "Transaction fee in NanoPAC."
         },
         "payloadType": {
-          "$ref": "#/definitions/pactusPayloadType"
+          "$ref": "#/definitions/pactusPayloadType",
+          "description": "Type of transaction payload."
         },
         "transfer": {
-          "$ref": "#/definitions/pactusPayloadTransfer"
+          "$ref": "#/definitions/pactusPayloadTransfer",
+          "description": "Transfer payload."
         },
         "bond": {
-          "$ref": "#/definitions/pactusPayloadBond"
+          "$ref": "#/definitions/pactusPayloadBond",
+          "description": "Bond payload."
         },
         "sortition": {
-          "$ref": "#/definitions/pactusPayloadSortition"
+          "$ref": "#/definitions/pactusPayloadSortition",
+          "description": "Sortition payload."
         },
         "unbond": {
-          "$ref": "#/definitions/pactusPayloadUnbond"
+          "$ref": "#/definitions/pactusPayloadUnbond",
+          "description": "Unbond payload."
         },
         "withdraw": {
-          "$ref": "#/definitions/pactusPayloadWithdraw"
+          "$ref": "#/definitions/pactusPayloadWithdraw",
+          "description": "Withdraw payload."
         },
         "memo": {
           "type": "string",
@@ -1967,7 +2068,8 @@
       "type": "object",
       "properties": {
         "type": {
-          "$ref": "#/definitions/pactusVoteType"
+          "$ref": "#/definitions/pactusVoteType",
+          "description": "Type of the vote."
         },
         "voter": {
           "type": "string",
@@ -2029,6 +2131,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }
