@@ -47,7 +47,7 @@ func (c *grpcClient) Connect() error {
 	for i := 0; i < maxTry; i++ {
 		n := util.RandInt32(int32(len(c.servers)))
 		server := c.servers[n]
-		conn, err := grpc.Dial(server,
+		conn, err := grpc.NewClient(server,
 			grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			continue

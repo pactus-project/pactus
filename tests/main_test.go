@@ -153,9 +153,7 @@ func TestMain(m *testing.M) {
 		time.Sleep(1 * time.Second)
 	}
 
-	tCtx = context.Background()
-	conn, err := grpc.DialContext(
-		tCtx,
+	conn, err := grpc.NewClient(
 		tGRPCAddress,
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
