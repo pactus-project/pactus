@@ -3,6 +3,7 @@ package execution
 import (
 	"fmt"
 
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
@@ -39,7 +40,7 @@ type PastLockTimeError struct {
 }
 
 func (e PastLockTimeError) Error() string {
-	return fmt.Sprintf("Transaction's lock time is in the past: %v", e.LockTime)
+	return fmt.Sprintf("lock time is in the past: %v", e.LockTime)
 }
 
 // FutureLockTimeError is returned when the lock time of a transaction
@@ -50,5 +51,15 @@ type FutureLockTimeError struct {
 }
 
 func (e FutureLockTimeError) Error() string {
-	return fmt.Sprintf("Transaction's lock time is in the future: %v", e.LockTime)
+	return fmt.Sprintf("lock time is in the future: %v", e.LockTime)
+}
+
+// InvalidFeeError is returned when the transaction fee is not valid.
+type InvalidFeeError struct {
+	Fee      amount.Amount
+	Expected amount.Amount
+}
+
+func (e InvalidFeeError) Error() string {
+	return fmt.Sprintf("fee is invalid, expected: %s, got: %s", e.Expected, e.Fee)
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
@@ -254,8 +255,8 @@ func (m *MockState) Params() *param.Params {
 	return m.TestParams
 }
 
-func (m *MockState) CalculateFee(amt amount.Amount, _ payload.Type) amount.Amount {
-	return amt.MulF64(m.TestParams.FeeFraction)
+func (m *MockState) CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount {
+	return execution.CalculateFee(amt, payloadType, m.TestParams)
 }
 
 func (m *MockState) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {

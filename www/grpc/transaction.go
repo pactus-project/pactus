@@ -83,11 +83,7 @@ func (s *transactionServer) BroadcastTransaction(_ context.Context,
 func (s *transactionServer) CalculateFee(_ context.Context,
 	req *pactus.CalculateFeeRequest,
 ) (*pactus.CalculateFeeResponse, error) {
-	amt, err := s.getAmount(req.Amount)
-	if err != nil {
-		return nil, err
-	}
-
+	amt := amount.Amount(req.Amount)
 	fee := s.state.CalculateFee(amt, payload.Type(req.PayloadType))
 
 	if req.FixedAmount {
@@ -113,11 +109,7 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 		return nil, err
 	}
 
-	amt, err := s.getAmount(req.Amount)
-	if err != nil {
-		return nil, err
-	}
-
+	amt := amount.Amount(req.Amount)
 	fee := s.getFee(req.Fee, amt)
 	lockTime := s.getLockTime(req.LockTime)
 
@@ -155,11 +147,7 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 		publicKey = nil
 	}
 
-	amt, err := s.getAmount(req.Stake)
-	if err != nil {
-		return nil, err
-	}
-
+	amt := amount.Amount(req.Stake)
 	fee := s.getFee(req.Fee, amt)
 	lockTime := s.getLockTime(req.LockTime)
 
@@ -208,11 +196,7 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 		return nil, err
 	}
 
-	amt, err := s.getAmount(req.Amount)
-	if err != nil {
-		return nil, err
-	}
-
+	amt := amount.Amount(req.Amount)
 	fee := s.getFee(req.Fee, amt)
 	lockTime := s.getLockTime(req.LockTime)
 
@@ -225,15 +209,6 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	return &pactus.GetRawTransactionResponse{
 		RawTransaction: rawTx,
 	}, nil
-}
-
-func (s *transactionServer) getAmount(a int64) (amount.Amount, error) {
-	amt := amount.Amount(a)
-	if amt == 0 {
-		return 0, status.Errorf(codes.InvalidArgument, "amount is zero")
-	}
-
-	return amt, nil
 }
 
 func (s *transactionServer) getFee(f int64, amt amount.Amount) amount.Amount {

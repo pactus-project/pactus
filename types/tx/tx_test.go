@@ -44,12 +44,6 @@ func TestEncodingTx(t *testing.T) {
 	assert.True(t, trx4.IsWithdrawTx())
 	assert.True(t, trx5.IsSortitionTx())
 
-	assert.False(t, trx1.IsFreeTx())
-	assert.False(t, trx2.IsFreeTx())
-	assert.True(t, trx3.IsFreeTx())
-	assert.False(t, trx4.IsFreeTx())
-	assert.True(t, trx5.IsFreeTx())
-
 	tests := []*tx.Tx{trx1, trx2, trx3, trx4, trx5}
 	for _, trx := range tests {
 		assert.NoError(t, trx.BasicCheck())
