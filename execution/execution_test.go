@@ -235,7 +235,7 @@ func TestFee(t *testing.T) {
 		amount      amount.Amount
 		fee         amount.Amount
 		expectedFee amount.Amount
-		expectedErr bool
+		expectErr   bool
 	}{
 		{1, 1, sb.TestParams.MinimumFee, true},
 		{1, 1002, sb.TestParams.MinimumFee, true},
@@ -269,7 +269,7 @@ func TestFee(t *testing.T) {
 			"testing fee")
 		err := exe.checkFee(trx, sb)
 
-		if test.expectedErr {
+		if test.expectErr {
 			assert.Error(t, err, "test %v failed. expected error", i)
 		} else {
 			assert.NoError(t, err, "test %v failed. unexpected error", i)
