@@ -11,7 +11,6 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
-	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/param"
@@ -598,39 +597,6 @@ func TestIsValidator(t *testing.T) {
 	assert.False(t, td.state.IsProposer(addr, 0))
 	assert.False(t, td.state.IsInCommittee(addr))
 	assert.False(t, td.state.IsValidator(addr))
-}
-
-func TestCalcFee(t *testing.T) {
-	td := setup(t)
-
-	tests := []struct {
-		amt         amount.Amount
-		pldType     payload.Type
-		expectedFee amount.Amount
-	}{
-		{0, payload.TypeTransfer, td.state.params.MinimumFee},
-		{0, payload.TypeWithdraw, td.state.params.MinimumFee},
-		{0, payload.TypeBond, td.state.params.MinimumFee},
-
-		{1, payload.TypeTransfer, td.state.params.MinimumFee},
-		{1, payload.TypeWithdraw, td.state.params.MinimumFee},
-		{1, payload.TypeBond, td.state.params.MinimumFee},
-
-		{1 * 1e9, payload.TypeTransfer, 100000},
-		{1 * 1e9, payload.TypeWithdraw, 100000},
-		{1 * 1e9, payload.TypeBond, 100000},
-
-		{1 * 1e12, payload.TypeTransfer, 1000000},
-		{1 * 1e12, payload.TypeWithdraw, 1000000},
-		{1 * 1e12, payload.TypeBond, 1000000},
-
-		{1 * 1e12, payload.TypeSortition, 0},
-		{1 * 1e12, payload.TypeUnbond, 0},
-	}
-	for _, test := range tests {
-		fee := td.state.CalculateFee(test.amt, test.pldType)
-		assert.Equal(t, test.expectedFee, fee)
-	}
 }
 
 func TestInvalidPayloadFee(t *testing.T) {

@@ -23,6 +23,6 @@ type InvalidSignerError struct {
 }
 
 func (e InvalidSignerError) Error() string {
-	return fmt.Sprintf("invalid signer: expected: %s, got: %s",
+	return fmt.Sprintf("invalid signer, expected: %s, got: %s",
 		e.Expected.String(), e.Got.String())
 }

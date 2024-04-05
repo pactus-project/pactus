@@ -9,13 +9,11 @@ const (
 	ErrGeneric
 	ErrInvalidBlock
 	ErrInvalidAmount
-	ErrInvalidFee
 	ErrInvalidAddress
 	ErrInvalidPublicKey
 	ErrInvalidPrivateKey
 	ErrInvalidSignature
 	ErrInvalidTx
-	ErrInvalidMemo
 	ErrInvalidProof
 	ErrInvalidHeight
 	ErrInvalidRound
@@ -32,13 +30,11 @@ var messages = map[int]string{
 	ErrGeneric:           "generic error",
 	ErrInvalidBlock:      "invalid block",
 	ErrInvalidAmount:     "invalid amount",
-	ErrInvalidFee:        "invalid fee",
 	ErrInvalidAddress:    "invalid address",
 	ErrInvalidPublicKey:  "invalid public key",
 	ErrInvalidPrivateKey: "invalid private key",
 	ErrInvalidSignature:  "invalid signature",
 	ErrInvalidTx:         "invalid transaction",
-	ErrInvalidMemo:       "invalid memo",
 	ErrInvalidProof:      "invalid proof",
 	ErrInvalidHeight:     "invalid height",
 	ErrInvalidRound:      "invalid round",
