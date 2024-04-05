@@ -1,4 +1,4 @@
-FROM golang:1.21.5-alpine3.18 as builder
+FROM golang:1.22.1-alpine3.18 as builder
 
 RUN apk add --no-cache git gmp-dev build-base g++ openssl-dev
 ADD . /pactus
@@ -10,7 +10,7 @@ RUN cd /pactus && \
 
 
 ## Copy binary files from builder into second container
-FROM golang:1.21.5-alpine3.18
+FROM golang:1.22.1-alpine3.18
 
 COPY --from=builder /pactus/build/pactus-daemon /usr/bin
 COPY --from=builder /pactus/build/pactus-wallet /usr/bin
