@@ -26,7 +26,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22.1'
+        go-version: '1.22.2'
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_cli.sh
@@ -69,7 +69,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22.1'
+        go-version: '1.22.2'
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_gui_linux.sh
@@ -111,7 +111,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22.1'
+        go-version: '1.22.2'
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_gui_macos.sh
@@ -163,7 +163,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22.1'
+        go-version: '1.22.2'
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_gui_macos.sh
