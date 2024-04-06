@@ -99,7 +99,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 
 	item.SetUseUnderline(true)
 	item.Show()
-	item.Connect("activate", func(item *gtk.MenuItem) bool {
+	item.Connect("activate", func(_ *gtk.MenuItem) bool {
 		w.onUpdateLabel()
 
 		return false
@@ -112,7 +112,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 
 	item.SetUseUnderline(true)
 	item.Show()
-	item.Connect("activate", func(item *gtk.MenuItem) bool {
+	item.Connect("activate", func(_ *gtk.MenuItem) bool {
 		w.onShowDetails()
 
 		return false
@@ -125,7 +125,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 
 	item.SetUseUnderline(true)
 	item.Show()
-	item.Connect("activate", func(item *gtk.MenuItem) bool {
+	item.Connect("activate", func(_ *gtk.MenuItem) bool {
 		w.onShowPrivateKey()
 
 		return false
@@ -133,7 +133,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	menu.Append(item)
 
 	treeView.Connect("button-press-event",
-		func(treeView *gtk.TreeView, event *gdk.Event) bool {
+		func(_ *gtk.TreeView, event *gdk.Event) bool {
 			eventButton := gdk.EventButtonNewFromEvent(event)
 			if eventButton.Type() == gdk.EVENT_BUTTON_PRESS &&
 				eventButton.Button() == gdk.BUTTON_SECONDARY {
