@@ -4,6 +4,7 @@ package main
 
 import (
 	_ "embed"
+	"time"
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -67,7 +68,13 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	} else {
 		labelEncrypted.SetText("No")
 	}
-	labelTotalBalance.SetText(model.wallet.TotalBalance().String())
+
+	go func() {
+		for {
+			labelTotalBalance.SetText(model.wallet.TotalBalance().String())
+			time.Sleep(10 * time.Second)
+		}
+	}()
 
 	colNo := createColumn("No", IDAddressesColumnNo)
 	colAddress := createColumn("Address", IDAddressesColumnAddress)
