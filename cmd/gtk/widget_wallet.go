@@ -68,7 +68,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	} else {
 		labelEncrypted.SetText("No")
 	}
-labelTotalBalance.SetText(model.wallet.TotalBalance().String())
+	labelTotalBalance.SetText(model.wallet.TotalBalance().String())
 
 	colNo := createColumn("No", IDAddressesColumnNo)
 	colAddress := createColumn("Address", IDAddressesColumnAddress)
