@@ -43,8 +43,7 @@ func (s *Server) startGateway(grpcAddr string) error {
 		return nil
 	}
 
-	conn, err := grpc.DialContext(
-		s.ctx,
+	conn, err := grpc.NewClient(
 		grpcAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithBlock(),

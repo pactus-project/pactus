@@ -14,7 +14,7 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install Dependencies
       run: |
@@ -22,15 +22,15 @@ jobs:
         sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev
 
     - name: Install Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v5
       with:
-        go-version: 1.21
+        go-version: '1.22.2'
 
     - name: Build the binary
       run: make build_gui
 
     - name: Installing golangci-lint
-      run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54.1
+      run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.57.2
 
     - name: Lint check
       run: BUILD_TAG=gtk make check
@@ -39,15 +39,15 @@ jobs:
   build-macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install Dependencies
       run: brew install gtk+3
 
     - name: Install Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v5
       with:
-        go-version: 1.21
+        go-version: '1.22.2'
 
     - name: Build the binary
       run: make build_gui
@@ -60,7 +60,7 @@ jobs:
         shell: msys2 {0}
     steps:
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: msys2/setup-msys2@v2
       with:

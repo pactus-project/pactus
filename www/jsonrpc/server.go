@@ -40,8 +40,7 @@ func (s *Server) StartServer(grpcServer string) error {
 		return nil
 	}
 
-	grpcConn, err := grpc.DialContext(
-		s.ctx,
+	grpcConn, err := grpc.NewClient(
 		grpcServer,
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
