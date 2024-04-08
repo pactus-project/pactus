@@ -149,7 +149,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="id_lable_wallet_total_balance">
+                      <object class="GtkLabel" id="id_label_wallet_total_balance">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>

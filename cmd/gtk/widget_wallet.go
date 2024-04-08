@@ -26,8 +26,9 @@ var uiWidgetWallet []byte
 type widgetWallet struct {
 	*gtk.Box
 
-	treeView *gtk.TreeView
-	model    *walletModel
+	treeViewWallet    *gtk.TreeView
+	labelTotalBalance *gtk.Label
+	model             *walletModel
 }
 
 // Add a column to the tree view (during the initialization of the tree view).
@@ -50,11 +51,11 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	}
 
 	box := getBoxObj(builder, "id_box_wallet")
-	treeView := getTreeViewObj(builder, "id_treeview_addresses")
+	treeViewWallet := getTreeViewObj(builder, "id_treeview_addresses")
 	labelName := getLabelObj(builder, "id_label_wallet_name")
 	labelLocation := getLabelObj(builder, "id_label_wallet_location")
 	labelEncrypted := getLabelObj(builder, "id_label_wallet_encrypted")
-	labelTotalBalance := getLabelObj(builder, "id_lable_wallet_total_balance")
+	labelTotalBalance := getLabelObj(builder, "id_label_wallet_total_balance")
 
 	getToolButtonObj(builder, "id_button_new_address").SetIconWidget(AddIcon())
 	getToolButtonObj(builder, "id_button_change_password").SetIconWidget(PasswordIcon())
@@ -76,18 +77,19 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	colStake := createColumn("Stake", IDAddressesColumnStake)
 	colScore := createColumn("Availability Score", IDAddressesColumnAvailabilityScore)
 
-	treeView.AppendColumn(colNo)
-	treeView.AppendColumn(colAddress)
-	treeView.AppendColumn(colLabel)
-	treeView.AppendColumn(colBalance)
-	treeView.AppendColumn(colStake)
-	treeView.AppendColumn(colScore)
-	treeView.SetModel(model.ToTreeModel())
+	treeViewWallet.AppendColumn(colNo)
+	treeViewWallet.AppendColumn(colAddress)
+	treeViewWallet.AppendColumn(colLabel)
+	treeViewWallet.AppendColumn(colBalance)
+	treeViewWallet.AppendColumn(colStake)
+	treeViewWallet.AppendColumn(colScore)
+	treeViewWallet.SetModel(model.ToTreeModel())
 
 	w := &widgetWallet{
-		Box:      box,
-		treeView: treeView,
-		model:    model,
+		Box:               box,
+		treeViewWallet:    treeViewWallet,
+		labelTotalBalance: labelTotalBalance,
+		model:             model,
 	}
 
 	menu, err := gtk.MenuNew()
@@ -132,8 +134,8 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	})
 	menu.Append(item)
 
-	treeView.Connect("button-press-event",
-		func(treeView *gtk.TreeView, event *gdk.Event) bool {
+	treeViewWallet.Connect("button-press-event",
+		func(treeViewWallet *gtk.TreeView, event *gdk.Event) bool {
 			eventButton := gdk.EventButtonNewFromEvent(event)
 			if eventButton.Type() == gdk.EVENT_BUTTON_PRESS &&
 				eventButton.Button() == gdk.BUTTON_SECONDARY {
@@ -177,6 +179,7 @@ func (ww *widgetWallet) onShowSeed() {
 
 func (ww *widgetWallet) timeout() bool {
 	ww.model.rebuildModel()
+	ww.labelTotalBalance.SetText(ww.model.wallet.TotalBalance().String())
 
 	return true
 }
@@ -213,7 +216,7 @@ func (ww *widgetWallet) onShowPrivateKey() {
 }
 
 func (ww *widgetWallet) getSelectedAddress() string {
-	selection, err := ww.treeView.GetSelection()
+	selection, err := ww.treeViewWallet.GetSelection()
 	fatalErrorCheck(err)
 
 	if selection != nil {
