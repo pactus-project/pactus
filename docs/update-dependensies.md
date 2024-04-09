@@ -18,26 +18,7 @@ update the code and use new methods or use another package.
 
 After packages, you need to update dev tools such as `golangci-lint`, `buf`, etc.
 
-You can go to root [make file](../Makefile) and find all dev tools on:
-
-```makefile
-### Tools needed for development
-devtools:
-	@echo "Installing devtools"
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@vx
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@vx
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@vx
-	go install google.golang.org/protobuf/cmd/protoc-gen-go@vx
-	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@vx
-	go install github.com/NathanBaulch/protoc-gen-cobra@vx
-	go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@vx
-	go install github.com/bufbuild/buf/cmd/buf@vx
-	go install mvdan.cc/gofumpt@vx
-	go install github.com/rakyll/statik@vx
-	go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@vx
-	go install ....
-```
-
+You can go to root [make file](../Makefile) and find all dev tools on devtools part.
 You have to find latest version of dev tools and replace them here.
 
 > Note: consider breaking changes and deprecated packages for devtools too.
