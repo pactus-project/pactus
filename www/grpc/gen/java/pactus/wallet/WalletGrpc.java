@@ -297,6 +297,37 @@ public final class WalletGrpc {
     return getGetNewAddressMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetAddressHistoryRequest,
+      pactus.wallet.WalletOuterClass.GetAddressHistoryResponse> getGetAddressHistoryMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetAddressHistory",
+      requestType = pactus.wallet.WalletOuterClass.GetAddressHistoryRequest.class,
+      responseType = pactus.wallet.WalletOuterClass.GetAddressHistoryResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetAddressHistoryRequest,
+      pactus.wallet.WalletOuterClass.GetAddressHistoryResponse> getGetAddressHistoryMethod() {
+    io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetAddressHistoryRequest, pactus.wallet.WalletOuterClass.GetAddressHistoryResponse> getGetAddressHistoryMethod;
+    if ((getGetAddressHistoryMethod = WalletGrpc.getGetAddressHistoryMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getGetAddressHistoryMethod = WalletGrpc.getGetAddressHistoryMethod) == null) {
+          WalletGrpc.getGetAddressHistoryMethod = getGetAddressHistoryMethod =
+              io.grpc.MethodDescriptor.<pactus.wallet.WalletOuterClass.GetAddressHistoryRequest, pactus.wallet.WalletOuterClass.GetAddressHistoryResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetAddressHistory"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.GetAddressHistoryRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.GetAddressHistoryResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("GetAddressHistory"))
+              .build();
+        }
+      }
+    }
+    return getGetAddressHistoryMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -441,6 +472,16 @@ public final class WalletGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetNewAddressMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * GetAddressHistory retrieve transaction history of an address.
+     * </pre>
+     */
+    public void getAddressHistory(pactus.wallet.WalletOuterClass.GetAddressHistoryRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetAddressHistoryResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAddressHistoryMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -506,6 +547,13 @@ public final class WalletGrpc {
                 pactus.wallet.WalletOuterClass.GetNewAddressRequest,
                 pactus.wallet.WalletOuterClass.GetNewAddressResponse>(
                   this, METHODID_GET_NEW_ADDRESS)))
+          .addMethod(
+            getGetAddressHistoryMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.wallet.WalletOuterClass.GetAddressHistoryRequest,
+                pactus.wallet.WalletOuterClass.GetAddressHistoryResponse>(
+                  this, METHODID_GET_ADDRESS_HISTORY)))
           .build();
     }
   }
@@ -628,6 +676,17 @@ public final class WalletGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetNewAddressMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * GetAddressHistory retrieve transaction history of an address.
+     * </pre>
+     */
+    public void getAddressHistory(pactus.wallet.WalletOuterClass.GetAddressHistoryRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetAddressHistoryResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetAddressHistoryMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -738,6 +797,16 @@ public final class WalletGrpc {
     public pactus.wallet.WalletOuterClass.GetNewAddressResponse getNewAddress(pactus.wallet.WalletOuterClass.GetNewAddressRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetNewAddressMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * GetAddressHistory retrieve transaction history of an address.
+     * </pre>
+     */
+    public pactus.wallet.WalletOuterClass.GetAddressHistoryResponse getAddressHistory(pactus.wallet.WalletOuterClass.GetAddressHistoryRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAddressHistoryMethod(), getCallOptions(), request);
     }
   }
 
@@ -859,6 +928,17 @@ public final class WalletGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetNewAddressMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * GetAddressHistory retrieve transaction history of an address.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.GetAddressHistoryResponse> getAddressHistory(
+        pactus.wallet.WalletOuterClass.GetAddressHistoryRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetAddressHistoryMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CREATE_WALLET = 0;
@@ -870,6 +950,7 @@ public final class WalletGrpc {
   private static final int METHODID_SIGN_RAW_TRANSACTION = 6;
   private static final int METHODID_GET_VALIDATOR_ADDRESS = 7;
   private static final int METHODID_GET_NEW_ADDRESS = 8;
+  private static final int METHODID_GET_ADDRESS_HISTORY = 9;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -923,6 +1004,10 @@ public final class WalletGrpc {
         case METHODID_GET_NEW_ADDRESS:
           serviceImpl.getNewAddress((pactus.wallet.WalletOuterClass.GetNewAddressRequest) request,
               (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetNewAddressResponse>) responseObserver);
+          break;
+        case METHODID_GET_ADDRESS_HISTORY:
+          serviceImpl.getAddressHistory((pactus.wallet.WalletOuterClass.GetAddressHistoryRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetAddressHistoryResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -994,6 +1079,7 @@ public final class WalletGrpc {
               .addMethod(getSignRawTransactionMethod())
               .addMethod(getGetValidatorAddressMethod())
               .addMethod(getGetNewAddressMethod())
+              .addMethod(getGetAddressHistoryMethod())
               .build();
         }
       }

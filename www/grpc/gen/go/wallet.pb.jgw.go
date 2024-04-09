@@ -108,5 +108,14 @@ func (s *WalletJsonRpcService) Methods() map[string]func(ctx context.Context, me
 			}
 			return s.client.GetNewAddress(ctx, req)
 		},
+
+		"pactus.wallet.get_address_history": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetAddressHistoryRequest)
+			err := protojson.Unmarshal(data, req)
+			if err != nil {
+				return nil, err
+			}
+			return s.client.GetAddressHistory(ctx, req)
+		},
 	}
 }

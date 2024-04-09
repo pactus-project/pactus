@@ -1332,6 +1332,20 @@
       },
       "description": "Message containing the response with account information."
     },
+    "pactusGetAddressHistoryResponse": {
+      "type": "object",
+      "properties": {
+        "historyInfo": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusHistoryInfo"
+          },
+          "description": "Array of address history and activities."
+        }
+      },
+      "description": "Response message to get an address transaction history."
+    },
     "pactusGetBlockHashResponse": {
       "type": "object",
       "properties": {
@@ -1662,6 +1676,34 @@
         }
       },
       "description": "Message containing the response with validator information."
+    },
+    "pactusHistoryInfo": {
+      "type": "object",
+      "properties": {
+        "transactionId": {
+          "type": "string",
+          "description": "Hash of transaction."
+        },
+        "time": {
+          "type": "integer",
+          "format": "int64",
+          "description": "transaction timestamp."
+        },
+        "payloadType": {
+          "type": "string",
+          "description": "payload type of transaction."
+        },
+        "description": {
+          "type": "string",
+          "description": "description of transaction."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "amount of transaction."
+        }
+      },
+      "description": "Message of address history information."
     },
     "pactusLoadWalletResponse": {
       "type": "object",

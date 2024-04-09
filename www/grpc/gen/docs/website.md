@@ -142,6 +142,10 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           <a href="#pactus.Wallet.GetNewAddress">
           <span class="badge text-bg-primary">rpc</span> GetNewAddress</a>
         </li> 
+        <li>
+          <a href="#pactus.Wallet.GetAddressHistory">
+          <span class="badge text-bg-primary">rpc</span> GetAddressHistory</a>
+        </li> 
       </ul>
     </li>   
 
@@ -418,6 +422,16 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           </a>
         </li> 
         <li>
+          <a href="#pactus.GetAddressHistoryRequest">
+            <span class="badge text-bg-secondary">msg</span> GetAddressHistoryRequest
+          </a>
+        </li> 
+        <li>
+          <a href="#pactus.GetAddressHistoryResponse">
+            <span class="badge text-bg-secondary">msg</span> GetAddressHistoryResponse
+          </a>
+        </li> 
+        <li>
           <a href="#pactus.GetNewAddressRequest">
             <span class="badge text-bg-secondary">msg</span> GetNewAddressRequest
           </a>
@@ -445,6 +459,11 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
         <li>
           <a href="#pactus.GetValidatorAddressResponse">
             <span class="badge text-bg-secondary">msg</span> GetValidatorAddressResponse
+          </a>
+        </li> 
+        <li>
+          <a href="#pactus.HistoryInfo">
+            <span class="badge text-bg-secondary">msg</span> HistoryInfo
           </a>
         </li> 
         <li>
@@ -651,7 +670,11 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
 <h3 id="pactus.Wallet.GetNewAddress">GetNewAddress <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.GetNewAddressRequest">GetNewAddressRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetNewAddressResponse">GetNewAddressResponse</a></div>
-<p>GetNewAddress generates a new address for the specified wallet.</p>   
+<p>GetNewAddress generates a new address for the specified wallet.</p> 
+<h3 id="pactus.Wallet.GetAddressHistory">GetAddressHistory <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
+<div class="request pt-3">Request message: <a href="#pactus.GetAddressHistoryRequest">GetAddressHistoryRequest</a></div>
+<div class="response pb-3">Response message: <a href="#pactus.GetAddressHistoryResponse">GetAddressHistoryResponse</a></div>
+<p>GetAddressHistory retrieve transaction history of an address.</p>   
 <h2>Messages and Enums</h2> 
 <h3 id="pactus.BroadcastTransactionRequest">
 BroadcastTransactionRequest
@@ -2590,6 +2613,53 @@ CreateWalletResponse
     </tr>
   </tbody>
 </table>  
+<h3 id="pactus.GetAddressHistoryRequest">
+GetAddressHistoryRequest
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Request message to get an address transaction history.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> 
+    <tr>
+      <td class="fw-bold">wallet_name</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Name of the wallet. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">address</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Address to get the transaction history of it. </td>
+    </tr>
+  </tbody>
+</table>  
+<h3 id="pactus.GetAddressHistoryResponse">
+GetAddressHistoryResponse
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Response message to get an address transaction history.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> 
+    <tr>
+      <td class="fw-bold">history_info</td>
+      <td>repeated
+        <a href="#pactus.HistoryInfo">HistoryInfo</a>
+      </td>
+      <td>Array of address history and activities. </td>
+    </tr>
+  </tbody>
+</table>  
 <h3 id="pactus.GetNewAddressRequest">
 GetNewAddressRequest
 <span class="badge text-bg-secondary fs-6 align-top">msg</span>
@@ -2735,6 +2805,54 @@ GetValidatorAddressResponse
         <a href="#string">string</a>
       </td>
       <td>Validator address associated with the public key. </td>
+    </tr>
+  </tbody>
+</table>  
+<h3 id="pactus.HistoryInfo">
+HistoryInfo
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Message of address history information.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider"> 
+    <tr>
+      <td class="fw-bold">transaction_id</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Hash of transaction. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">time</td>
+      <td>
+        <a href="#uint32">uint32</a>
+      </td>
+      <td>transaction timestamp. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">payload_type</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>payload type of transaction. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">description</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>description of transaction. </td>
+    </tr>
+    <tr>
+      <td class="fw-bold">amount</td>
+      <td>
+        <a href="#int64">int64</a>
+      </td>
+      <td>amount of transaction. </td>
     </tr>
   </tbody>
 </table>  

@@ -43,6 +43,9 @@ service Wallet {
 
   // GetNewAddress generates a new address for the specified wallet.
   rpc GetNewAddress(GetNewAddressRequest) returns (GetNewAddressResponse);
+
+  // GetAddressHistory retrieve transaction history of an address.
+  rpc GetAddressHistory(GetAddressHistoryRequest) returns (GetAddressHistoryResponse);
 }
 
 // Enum for the address type.
@@ -58,6 +61,34 @@ message AddressInfo {
   string public_key = 2;
   string label = 3;
   string path = 4;
+}
+
+// Message of address history information.
+message HistoryInfo {
+  // Hash of transaction.
+  string transaction_id = 1;
+  // transaction timestamp.
+  uint32 time = 2;
+  // payload type of transaction.
+  string payload_type = 3;
+  // description of transaction.
+  string description = 4;
+  // amount of transaction.
+  int64 amount = 5;
+}
+
+// Request message to get an address transaction history.
+message GetAddressHistoryRequest {
+  // Name of the wallet.
+  string wallet_name = 1;
+  // Address to get the transaction history of it.
+  string address = 2;
+}
+
+// Response message to get an address transaction history.
+message GetAddressHistoryResponse {
+  // Array of address history and activities.
+  repeated HistoryInfo history_info = 1;
 }
 
 // Request message for generating a new address.

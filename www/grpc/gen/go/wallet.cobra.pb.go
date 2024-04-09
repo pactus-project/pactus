@@ -29,6 +29,7 @@ func WalletClientCommand(options ...client.Option) *cobra.Command {
 		_WalletSignRawTransactionCommand(cfg),
 		_WalletGetValidatorAddressCommand(cfg),
 		_WalletGetNewAddressCommand(cfg),
+		_WalletGetAddressHistoryCommand(cfg),
 	)
 	return cmd
 }
@@ -416,6 +417,49 @@ func _WalletGetNewAddressCommand(cfg *client.Config) *cobra.Command {
 	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet for which the new address is requested.")
 	flag.EnumVar(cmd.PersistentFlags(), &req.AddressType, cfg.FlagNamer("AddressType"), "Address type for the new address.")
 	cmd.PersistentFlags().StringVar(&req.Label, cfg.FlagNamer("Label"), "", "Label for the new address.")
+
+	return cmd
+}
+
+func _WalletGetAddressHistoryCommand(cfg *client.Config) *cobra.Command {
+	req := &GetAddressHistoryRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("GetAddressHistory"),
+		Short: "GetAddressHistory RPC client",
+		Long:  "GetAddressHistory retrieve transaction history of an address.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "GetAddressHistory"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewWalletClient(cc)
+				v := &GetAddressHistoryRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.GetAddressHistory(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet.")
+	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "Address to get the transaction history of it.")
 
 	return cmd
 }

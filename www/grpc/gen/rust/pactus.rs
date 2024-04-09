@@ -900,6 +900,45 @@ pub struct AddressInfo {
     #[prost(string, tag="4")]
     pub path: ::prost::alloc::string::String,
 }
+/// Message of address history information.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct HistoryInfo {
+    /// Hash of transaction.
+    #[prost(string, tag="1")]
+    pub transaction_id: ::prost::alloc::string::String,
+    /// transaction timestamp.
+    #[prost(uint32, tag="2")]
+    pub time: u32,
+    /// payload type of transaction.
+    #[prost(string, tag="3")]
+    pub payload_type: ::prost::alloc::string::String,
+    /// description of transaction.
+    #[prost(string, tag="4")]
+    pub description: ::prost::alloc::string::String,
+    /// amount of transaction.
+    #[prost(int64, tag="5")]
+    pub amount: i64,
+}
+/// Request message to get an address transaction history.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetAddressHistoryRequest {
+    /// Name of the wallet.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// Address to get the transaction history of it.
+    #[prost(string, tag="2")]
+    pub address: ::prost::alloc::string::String,
+}
+/// Response message to get an address transaction history.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetAddressHistoryResponse {
+    /// Array of address history and activities.
+    #[prost(message, repeated, tag="1")]
+    pub history_info: ::prost::alloc::vec::Vec<HistoryInfo>,
+}
 /// Request message for generating a new address.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
