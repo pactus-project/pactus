@@ -11,7 +11,7 @@ go get -u ./...
 go mod tidy
 ```
 Once all packages got updated, make sure you run `make build`, `make test` and `make build_gui` commands to make sure
-none of previous behaviors are broken. if any packages had breaking changes or some of them are deprecated, you need to
+none of previous behaviors are broken. If any packages had breaking changes or some of them are deprecated, you need to
 update the code and use new methods or use another package.
 
 
