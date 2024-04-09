@@ -146,8 +146,7 @@ func start(workingDir string, app *gtk.Application) {
 	grpcAddr := node.GRPC().Address()
 	cmd.PrintInfoMsgf("connect wallet to grpc server: %s\n", grpcAddr)
 
-	err = wlt.Connect(grpcAddr)
-	fatalErrorCheck(err)
+	wlt.SetServerAddr(grpcAddr)
 
 	nodeModel := newNodeModel(node)
 	walletModel := newWalletModel(wlt, node)
