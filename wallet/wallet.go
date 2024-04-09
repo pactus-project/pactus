@@ -147,10 +147,8 @@ func newWallet(walletPath string, store *store, offline bool) (*Wallet, error) {
 	return w, nil
 }
 
-func (w *Wallet) Connect(addr string) error {
+func (w *Wallet) SetServerAddr(addr string) {
 	w.lazyClient = newGRPCClient([]string{addr})
-
-	return w.lazyClient.Connect()
 }
 
 func (w *Wallet) Name() string {
@@ -176,7 +174,7 @@ func (w *Wallet) Save() error {
 
 // Balance returns balance of the account associated with the address..
 func (w *Wallet) Balance(addrStr string) (amount.Amount, error) {
-	if w.lazyClient == nil {
+	if w.IsOffline() {
 		return 0, ErrOffline
 	}
 
@@ -190,7 +188,7 @@ func (w *Wallet) Balance(addrStr string) (amount.Amount, error) {
 
 // Stake returns stake of the validator associated with the address..
 func (w *Wallet) Stake(addrStr string) (amount.Amount, error) {
-	if w.lazyClient == nil {
+	if w.IsOffline() {
 		return 0, ErrOffline
 	}
 
@@ -325,7 +323,7 @@ func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
 }
 
 func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
-	if w.lazyClient == nil {
+	if w.IsOffline() {
 		return "", ErrOffline
 	}
 
