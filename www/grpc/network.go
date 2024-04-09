@@ -29,11 +29,6 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 	services := []int32{}
 	servicesNames := []string{}
 
-	if s.sync.Services().IsGossip() {
-		services = append(services, int32(service.Gossip))
-		servicesNames = append(servicesNames, "GOSSIP")
-	}
-
 	if s.sync.Services().IsNetwork() {
 		services = append(services, int32(service.Network))
 		servicesNames = append(servicesNames, "NETWORK")

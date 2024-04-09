@@ -24,6 +24,9 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, pid peer.I
 	if msg.IsRequestRejected() {
 		handler.logger.Warn("blocks request is rejected", "pid", pid, "reason", msg.Reason, "sid", msg.SessionID)
 	} else {
+		handler.logger.Info("blocks received", "from", msg.From, "count", msg.Count(),
+			"pid", pid, "reason", msg.Reason, "sid", msg.SessionID)
+
 		// TODO:
 		// It is good to check the latest height before adding blocks to the cache.
 		// If they have already been committed, this message can be ignored.

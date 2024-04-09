@@ -43,6 +43,10 @@ func NewPeer(peerID peer.ID) *Peer {
 	}
 }
 
+func (p *Peer) IsConnected() bool {
+	return p.Status == StatusCodeConnected || p.Status == StatusCodeKnown || p.Status == StatusCodeTrusty
+}
+
 func (p *Peer) IsKnownOrTrusty() bool {
 	return p.Status == StatusCodeKnown || p.Status == StatusCodeTrusty
 }
@@ -53,4 +57,8 @@ func (p *Peer) IsBanned() bool {
 
 func (p *Peer) HasNetworkService() bool {
 	return p.Services.IsNetwork()
+}
+
+func (p *Peer) DownloadScore() int {
+	return (p.CompletedSessions + 1) * 100 / (p.TotalSessions + 1)
 }

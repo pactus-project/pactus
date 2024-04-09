@@ -104,9 +104,8 @@ func (*DisconnectEvent) Type() EventType {
 
 // ProtocolsEvents represents updating protocols event.
 type ProtocolsEvents struct {
-	PeerID        lp2pcore.PeerID
-	Protocols     []string
-	SupportStream bool
+	PeerID    lp2pcore.PeerID
+	Protocols []string
 }
 
 func (*ProtocolsEvents) Type() EventType {
