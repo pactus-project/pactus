@@ -14,7 +14,6 @@ Once all packages got updated, make sure you run `make build`, `make test` and `
 none of previous behaviors are broken. If any packages had breaking changes or some of them are deprecated, you need to
 update the code and use new methods or use another package.
 
-
 ### Dev tools
 
 After packages, you need to update dev tools such as `golangci-lint`, `buf`, etc.
