@@ -25,6 +25,7 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
   $async.Future<$3.SignRawTransactionResponse> signRawTransaction($pb.ServerContext ctx, $3.SignRawTransactionRequest request);
   $async.Future<$3.GetValidatorAddressResponse> getValidatorAddress($pb.ServerContext ctx, $3.GetValidatorAddressRequest request);
   $async.Future<$3.GetNewAddressResponse> getNewAddress($pb.ServerContext ctx, $3.GetNewAddressRequest request);
+  $async.Future<$3.GetAddressHistoryResponse> getAddressHistory($pb.ServerContext ctx, $3.GetAddressHistoryRequest request);
 
   $pb.GeneratedMessage createRequest($core.String method) {
     switch (method) {
@@ -37,6 +38,7 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       case 'SignRawTransaction': return $3.SignRawTransactionRequest();
       case 'GetValidatorAddress': return $3.GetValidatorAddressRequest();
       case 'GetNewAddress': return $3.GetNewAddressRequest();
+      case 'GetAddressHistory': return $3.GetAddressHistoryRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
@@ -52,6 +54,7 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       case 'SignRawTransaction': return this.signRawTransaction(ctx, request as $3.SignRawTransactionRequest);
       case 'GetValidatorAddress': return this.getValidatorAddress(ctx, request as $3.GetValidatorAddressRequest);
       case 'GetNewAddress': return this.getNewAddress(ctx, request as $3.GetNewAddressRequest);
+      case 'GetAddressHistory': return this.getAddressHistory(ctx, request as $3.GetAddressHistoryRequest);
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }

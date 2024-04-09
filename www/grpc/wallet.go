@@ -217,3 +217,33 @@ func (s *walletServer) GetNewAddress(_ context.Context,
 		},
 	}, nil
 }
+
+func (s *walletServer) GetAddressHistory(_ context.Context,
+	req *pactus.GetAddressHistoryRequest,
+) (*pactus.GetAddressHistoryResponse, error) {
+	wlt, ok := s.wallets[req.WalletName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	historyInfo := wlt.GetHistory(req.Address)
+
+	return &pactus.GetAddressHistoryResponse{
+		HistoryInfo: s.mapHistoryInfo(historyInfo),
+	}, nil
+}
+
+func (s *walletServer) mapHistoryInfo(hi []wallet.HistoryInfo) []*pactus.HistoryInfo {
+	historyInfo := make([]*pactus.HistoryInfo, 0)
+	for _, hi := range hi {
+		historyInfo = append(historyInfo, &pactus.HistoryInfo{
+			TransactionId: hi.TxID,
+			Time:          uint32(hi.Time.Unix()),
+			PayloadType:   hi.PayloadType,
+			Description:   hi.Desc,
+			Amount:        hi.Amount.ToNanoPAC(),
+		})
+	}
+
+	return historyInfo
+}

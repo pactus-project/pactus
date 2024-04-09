@@ -76,12 +76,15 @@
     - [AddressInfo](#pactus-AddressInfo)
     - [CreateWalletRequest](#pactus-CreateWalletRequest)
     - [CreateWalletResponse](#pactus-CreateWalletResponse)
+    - [GetAddressHistoryRequest](#pactus-GetAddressHistoryRequest)
+    - [GetAddressHistoryResponse](#pactus-GetAddressHistoryResponse)
     - [GetNewAddressRequest](#pactus-GetNewAddressRequest)
     - [GetNewAddressResponse](#pactus-GetNewAddressResponse)
     - [GetTotalBalanceRequest](#pactus-GetTotalBalanceRequest)
     - [GetTotalBalanceResponse](#pactus-GetTotalBalanceResponse)
     - [GetValidatorAddressRequest](#pactus-GetValidatorAddressRequest)
     - [GetValidatorAddressResponse](#pactus-GetValidatorAddressResponse)
+    - [HistoryInfo](#pactus-HistoryInfo)
     - [LoadWalletRequest](#pactus-LoadWalletRequest)
     - [LoadWalletResponse](#pactus-LoadWalletResponse)
     - [LockWalletRequest](#pactus-LockWalletRequest)
@@ -1175,6 +1178,37 @@ Response message containing the name of the created wallet.
 
 
 
+<a name="pactus-GetAddressHistoryRequest"></a>
+
+### GetAddressHistoryRequest
+Request message to get an address transaction history.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| wallet_name | [string](#string) |  | Name of the wallet. |
+| address | [string](#string) |  | Address to get the transaction history of it. |
+
+
+
+
+
+
+<a name="pactus-GetAddressHistoryResponse"></a>
+
+### GetAddressHistoryResponse
+Response message to get an address transaction history.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| history_info | [HistoryInfo](#pactus-HistoryInfo) | repeated | Array of address history and activities. |
+
+
+
+
+
+
 <a name="pactus-GetNewAddressRequest"></a>
 
 ### GetNewAddressRequest
@@ -1265,6 +1299,25 @@ key.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | address | [string](#string) |  | Validator address associated with the public key. |
+
+
+
+
+
+
+<a name="pactus-HistoryInfo"></a>
+
+### HistoryInfo
+Message of address history information.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| transaction_id | [string](#string) |  | Hash of transaction. |
+| time | [uint32](#uint32) |  | transaction timestamp. |
+| payload_type | [string](#string) |  | payload type of transaction. |
+| description | [string](#string) |  | description of transaction. |
+| amount | [int64](#int64) |  | amount of transaction. |
 
 
 
@@ -1461,6 +1514,7 @@ Define the Wallet service with various RPC methods for wallet management.
 | SignRawTransaction | [SignRawTransactionRequest](#pactus-SignRawTransactionRequest) | [SignRawTransactionResponse](#pactus-SignRawTransactionResponse) | SignRawTransaction signs a raw transaction for a specified wallet. |
 | GetValidatorAddress | [GetValidatorAddressRequest](#pactus-GetValidatorAddressRequest) | [GetValidatorAddressResponse](#pactus-GetValidatorAddressResponse) | GetValidatorAddress retrieves the validator address associated with a public key. |
 | GetNewAddress | [GetNewAddressRequest](#pactus-GetNewAddressRequest) | [GetNewAddressResponse](#pactus-GetNewAddressResponse) | GetNewAddress generates a new address for the specified wallet. |
+| GetAddressHistory | [GetAddressHistoryRequest](#pactus-GetAddressHistoryRequest) | [GetAddressHistoryResponse](#pactus-GetAddressHistoryResponse) | GetAddressHistory retrieve transaction history of an address. |
 
  
 

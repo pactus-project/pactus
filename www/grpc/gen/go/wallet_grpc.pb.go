@@ -30,6 +30,7 @@ const (
 	Wallet_SignRawTransaction_FullMethodName  = "/pactus.Wallet/SignRawTransaction"
 	Wallet_GetValidatorAddress_FullMethodName = "/pactus.Wallet/GetValidatorAddress"
 	Wallet_GetNewAddress_FullMethodName       = "/pactus.Wallet/GetNewAddress"
+	Wallet_GetAddressHistory_FullMethodName   = "/pactus.Wallet/GetAddressHistory"
 )
 
 // WalletClient is the client API for Wallet service.
@@ -57,6 +58,8 @@ type WalletClient interface {
 	GetValidatorAddress(ctx context.Context, in *GetValidatorAddressRequest, opts ...grpc.CallOption) (*GetValidatorAddressResponse, error)
 	// GetNewAddress generates a new address for the specified wallet.
 	GetNewAddress(ctx context.Context, in *GetNewAddressRequest, opts ...grpc.CallOption) (*GetNewAddressResponse, error)
+	// GetAddressHistory retrieve transaction history of an address.
+	GetAddressHistory(ctx context.Context, in *GetAddressHistoryRequest, opts ...grpc.CallOption) (*GetAddressHistoryResponse, error)
 }
 
 type walletClient struct {
@@ -148,6 +151,15 @@ func (c *walletClient) GetNewAddress(ctx context.Context, in *GetNewAddressReque
 	return out, nil
 }
 
+func (c *walletClient) GetAddressHistory(ctx context.Context, in *GetAddressHistoryRequest, opts ...grpc.CallOption) (*GetAddressHistoryResponse, error) {
+	out := new(GetAddressHistoryResponse)
+	err := c.cc.Invoke(ctx, Wallet_GetAddressHistory_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WalletServer is the server API for Wallet service.
 // All implementations should embed UnimplementedWalletServer
 // for forward compatibility
@@ -173,6 +185,8 @@ type WalletServer interface {
 	GetValidatorAddress(context.Context, *GetValidatorAddressRequest) (*GetValidatorAddressResponse, error)
 	// GetNewAddress generates a new address for the specified wallet.
 	GetNewAddress(context.Context, *GetNewAddressRequest) (*GetNewAddressResponse, error)
+	// GetAddressHistory retrieve transaction history of an address.
+	GetAddressHistory(context.Context, *GetAddressHistoryRequest) (*GetAddressHistoryResponse, error)
 }
 
 // UnimplementedWalletServer should be embedded to have forward compatible implementations.
@@ -205,6 +219,9 @@ func (UnimplementedWalletServer) GetValidatorAddress(context.Context, *GetValida
 }
 func (UnimplementedWalletServer) GetNewAddress(context.Context, *GetNewAddressRequest) (*GetNewAddressResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNewAddress not implemented")
+}
+func (UnimplementedWalletServer) GetAddressHistory(context.Context, *GetAddressHistoryRequest) (*GetAddressHistoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAddressHistory not implemented")
 }
 
 // UnsafeWalletServer may be embedded to opt out of forward compatibility for this service.
@@ -380,6 +397,24 @@ func _Wallet_GetNewAddress_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Wallet_GetAddressHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAddressHistoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).GetAddressHistory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_GetAddressHistory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).GetAddressHistory(ctx, req.(*GetAddressHistoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Wallet_ServiceDesc is the grpc.ServiceDesc for Wallet service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -422,6 +457,10 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetNewAddress",
 			Handler:    _Wallet_GetNewAddress_Handler,
+		},
+		{
+			MethodName: "GetAddressHistory",
+			Handler:    _Wallet_GetAddressHistory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
