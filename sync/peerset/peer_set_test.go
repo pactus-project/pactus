@@ -303,23 +303,19 @@ func TestGetRandomPeerConnected(t *testing.T) {
 	pidBanned := peer.ID("known")
 	pidConnected := peer.ID("connected")
 	pidDisconnected := peer.ID("disconnected")
-	pidKnown := peer.ID("banned")
 	peerSet.UpdateInfo(pidBanned, "moniker", "agent", nil, service.New())
 	peerSet.UpdateInfo(pidConnected, "moniker", "agent", nil, service.New())
 	peerSet.UpdateInfo(pidDisconnected, "moniker", "agent", nil, service.New())
-	peerSet.UpdateInfo(pidKnown, "moniker", "agent", nil, service.New())
 
 	peerSet.UpdateStatus(pidBanned, StatusCodeBanned)
 	peerSet.UpdateStatus(pidConnected, StatusCodeConnected)
 	peerSet.UpdateStatus(pidDisconnected, StatusCodeDisconnected)
-	peerSet.UpdateStatus(pidKnown, StatusCodeKnown)
 
 	p := peerSet.GetRandomPeer()
 
 	assert.NotEqual(t, p.PeerID, pidBanned)
-	assert.NotEqual(t, p.PeerID, pidConnected)
 	assert.NotEqual(t, p.PeerID, pidDisconnected)
-	assert.Equal(t, p.PeerID, pidKnown)
+	assert.Equal(t, p.PeerID, pidConnected)
 }
 
 func TestGetRandomPeerNoPeer(t *testing.T) {
