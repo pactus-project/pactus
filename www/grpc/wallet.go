@@ -229,11 +229,11 @@ func (s *walletServer) GetAddressHistory(_ context.Context,
 	historyInfo := wlt.GetHistory(req.Address)
 
 	return &pactus.GetAddressHistoryResponse{
-		HistoryInfo: s.MapHistoryInfo(historyInfo),
+		HistoryInfo: s.mapHistoryInfo(historyInfo),
 	}, nil
 }
 
-func (s *walletServer) MapHistoryInfo(hi []wallet.HistoryInfo) []*pactus.HistoryInfo {
+func (s *walletServer) mapHistoryInfo(hi []wallet.HistoryInfo) []*pactus.HistoryInfo {
 	historyInfo := make([]*pactus.HistoryInfo, 0)
 	for _, hi := range hi {
 		historyInfo = append(historyInfo, &pactus.HistoryInfo{
