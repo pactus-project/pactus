@@ -14,7 +14,7 @@ type (
 const (
 	None    Service = 0x00
 	Network Service = 0x01
-	Gossip  Service = 0x02
+	Foo     Service = 0x02 // For future use
 )
 
 func New(flags ...Service) Services {
@@ -37,9 +37,9 @@ func (s Services) String() string {
 		s = util.UnsetFlag(s, Services(Network))
 	}
 
-	if util.IsFlagSet(s, Services(Gossip)) {
-		services += "GOSSIP | "
-		s = util.UnsetFlag(s, Services(Gossip))
+	if util.IsFlagSet(s, Services(Foo)) {
+		services += "FOO | "
+		s = util.UnsetFlag(s, Services(Foo))
 	}
 
 	if s != 0 {
@@ -55,6 +55,6 @@ func (s Services) IsNetwork() bool {
 	return util.IsFlagSet(s, Services(Network))
 }
 
-func (s Services) IsGossip() bool {
-	return util.IsFlagSet(s, Services(Gossip))
+func (s Services) IsFoo() bool {
+	return util.IsFlagSet(s, Services(Foo))
 }

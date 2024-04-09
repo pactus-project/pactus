@@ -273,27 +273,12 @@ func TestDisconnectEvent(t *testing.T) {
 func TestProtocolsEvent(t *testing.T) {
 	td := setup(t, nil)
 
-	t.Run("Support stream", func(t *testing.T) {
-		pid := td.RandPeerID()
-		td.network.EventCh <- &network.ProtocolsEvents{
-			PeerID:        pid,
-			Protocols:     []string{"protocol-1"},
-			SupportStream: true,
-		}
-
-		td.shouldPublishMessageWithThisType(t, message.TypeHello)
-	})
-
-	t.Run("Doesn't support stream", func(t *testing.T) {
-		pid := td.RandPeerID()
-		td.network.EventCh <- &network.ProtocolsEvents{
-			PeerID:        pid,
-			Protocols:     []string{"protocol-1"},
-			SupportStream: false,
-		}
-
-		td.shouldNotPublishMessageWithThisType(t, message.TypeHello)
-	})
+	pid := td.RandPeerID()
+	td.network.EventCh <- &network.ProtocolsEvents{
+		PeerID:    pid,
+		Protocols: []string{"protocol-1"},
+	}
+	td.shouldPublishMessageWithThisType(t, message.TypeHello)
 }
 
 func TestTestNetFlags(t *testing.T) {
@@ -313,13 +298,13 @@ func TestDownload(t *testing.T) {
 	t.Run("try to download blocks, but the peer is not known", func(t *testing.T) {
 		td := setup(t, conf)
 
-		pid := td.RandPeerID()
-
+		pid := td.addPeer(t, peerset.StatusCodeConnected, service.New(service.None))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
 		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
+		td.network.IsClosed(pid)
 	})
 
 	t.Run("try to download blocks, but the peer is not a network node", func(t *testing.T) {
@@ -331,6 +316,7 @@ func TestDownload(t *testing.T) {
 		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
+		td.network.IsClosed(pid)
 	})
 
 	t.Run("try to download blocks and the peer is a network node", func(t *testing.T) {

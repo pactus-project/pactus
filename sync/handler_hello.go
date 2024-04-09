@@ -69,10 +69,6 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 	handler.peerSet.UpdateHeight(pid, msg.Height, msg.BlockHash)
 	handler.peerSet.UpdateStatus(pid, peerset.StatusCodeKnown)
 
-	if msg.Services.IsGossip() {
-		handler.network.Protect(msg.PeerID, "GOSSIP")
-	}
-
 	response := message.NewHelloAckMessage(message.ResponseCodeOK, "Ok", handler.state.LastBlockHeight())
 	handler.acknowledge(response, pid)
 

@@ -122,11 +122,9 @@ func (s *NotifeeService) sendProtocolsEvent(pid lp2pcore.PeerID) {
 	}
 
 	slices.Sort(protocolsStr)
-	supportStream := slices.Contains(protocols, s.streamProtocolID)
 	s.eventChannel <- &ProtocolsEvents{
-		PeerID:        pid,
-		Protocols:     protocolsStr,
-		SupportStream: supportStream,
+		PeerID:    pid,
+		Protocols: protocolsStr,
 	}
 }
 
