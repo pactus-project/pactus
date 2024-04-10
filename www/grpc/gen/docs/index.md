@@ -436,8 +436,8 @@ Enumeration for verbosity level when requesting transaction details.
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| TRANSACTION_DATA | 0 | Request only transaction data. |
-| TRANSACTION_INFO | 1 | Request detailed transaction information. |
+| TRANSACTION_DATA | 0 | Request transaction data only. |
+| TRANSACTION_INFO | 1 | Request transaction details. |
 
 
  

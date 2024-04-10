@@ -3156,13 +3156,13 @@ TransactionVerbosity
       <tr>
         <td class="fw-bold">TRANSACTION_DATA</td>
         <td>0</td>
-        <td>Request only transaction data.</td>
+        <td>Request transaction data only.</td>
       </tr>
     
       <tr>
         <td class="fw-bold">TRANSACTION_INFO</td>
         <td>1</td>
-        <td>Request detailed transaction information.</td>
+        <td>Request transaction details.</td>
       </tr>
     
   </tbody>

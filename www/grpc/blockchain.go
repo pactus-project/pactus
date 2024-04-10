@@ -155,7 +155,11 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 		trxs := make([]*pactus.TransactionInfo, 0, block.Transactions().Len())
 		for _, trx := range block.Transactions() {
 			if req.Verbosity == pactus.BlockVerbosity_BLOCK_INFO {
-				trxs = append(trxs, &pactus.TransactionInfo{Id: trx.ID().Bytes()})
+				data, _ := trx.Bytes()
+				trxs = append(trxs, &pactus.TransactionInfo{
+					Id:   trx.ID().Bytes(),
+					Data: data,
+				})
 			} else {
 				trxs = append(trxs, transactionToProto(trx))
 			}

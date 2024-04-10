@@ -338,9 +338,9 @@ impl PayloadType {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum TransactionVerbosity {
-    /// Request only transaction data.
+    /// Request transaction data only.
     TransactionData = 0,
-    /// Request detailed transaction information.
+    /// Request transaction details.
     TransactionInfo = 1,
 }
 impl TransactionVerbosity {

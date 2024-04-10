@@ -257,8 +257,8 @@ enum PayloadType {
 
 // Enumeration for verbosity level when requesting transaction details.
 enum TransactionVerbosity {
-  // Request only transaction data.
+  // Request transaction data only.
   TRANSACTION_DATA = 0;
-  // Request detailed transaction information.
+  // Request transaction details.
   TRANSACTION_INFO = 1;
 }

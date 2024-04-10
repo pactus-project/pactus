@@ -741,7 +741,7 @@
           },
           {
             "name": "verbosity",
-            "description": "Verbosity level for transaction details.\n\n - TRANSACTION_DATA: Request only transaction data.\n - TRANSACTION_INFO: Request detailed transaction information.",
+            "description": "Verbosity level for transaction details.\n\n - TRANSACTION_DATA: Request transaction data only.\n - TRANSACTION_INFO: Request transaction details.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -2030,7 +2030,7 @@
         "TRANSACTION_INFO"
       ],
       "default": "TRANSACTION_DATA",
-      "description": "Enumeration for verbosity level when requesting transaction details.\n\n - TRANSACTION_DATA: Request only transaction data.\n - TRANSACTION_INFO: Request detailed transaction information."
+      "description": "Enumeration for verbosity level when requesting transaction details.\n\n - TRANSACTION_DATA: Request transaction data only.\n - TRANSACTION_INFO: Request transaction details."
     },
     "pactusUnloadWalletResponse": {
       "type": "object",

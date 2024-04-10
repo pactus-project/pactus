@@ -43,12 +43,14 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 		BlockTime:   committedTx.BlockTime,
 	}
 
-	if req.Verbosity == pactus.TransactionVerbosity_TRANSACTION_DATA {
+	switch req.Verbosity {
+	case pactus.TransactionVerbosity_TRANSACTION_DATA:
 		res.Transaction = &pactus.TransactionInfo{
-			Data: committedTx.Data,
 			Id:   committedTx.TxID.Bytes(),
+			Data: committedTx.Data,
 		}
-	} else {
+
+	case pactus.TransactionVerbosity_TRANSACTION_INFO:
 		trx, err := committedTx.ToTx()
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, err.Error())
@@ -229,10 +231,8 @@ func (s *transactionServer) getLockTime(lockTime uint32) uint32 {
 }
 
 func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
-	data, _ := trx.Bytes()
 	transaction := &pactus.TransactionInfo{
 		Id:          trx.ID().Bytes(),
-		Data:        data,
 		Version:     int32(trx.Version()),
 		LockTime:    trx.LockTime(),
 		Fee:         trx.Fee().ToNanoPAC(),
