@@ -453,7 +453,7 @@ pub struct GetBlockResponse {
     /// Hash of the block.
     #[prost(bytes="vec", tag="2")]
     pub hash: ::prost::alloc::vec::Vec<u8>,
-    /// Block data.
+    /// Block data, only available if the verbosity level is set to BLOCK_DATA.
     #[prost(bytes="vec", tag="3")]
     pub data: ::prost::alloc::vec::Vec<u8>,
     /// Block timestamp.
@@ -466,6 +466,7 @@ pub struct GetBlockResponse {
     #[prost(message, optional, tag="6")]
     pub prev_cert: ::core::option::Option<CertificateInfo>,
     /// List of transactions in the block.
+    /// Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
     #[prost(message, repeated, tag="7")]
     pub txs: ::prost::alloc::vec::Vec<TransactionInfo>,
 }
@@ -689,9 +690,9 @@ pub struct ConsensusInfo {
 pub enum BlockVerbosity {
     /// Request block data only.
     BlockData = 0,
-    /// Request block information only.
+    /// Request block information and transaction IDs.
     BlockInfo = 1,
-    /// Request block transactions only.
+    /// Request block information and transaction details.
     BlockTransactions = 2,
 }
 impl BlockVerbosity {

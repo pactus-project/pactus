@@ -47,11 +47,19 @@ func TestGetBlock(t *testing.T) {
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Height, height)
 		assert.Equal(t, res.Hash, b.Hash().Bytes())
-		assert.Equal(t, res.Data, data)
+		assert.Empty(t, res.Data)
 		assert.NotEmpty(t, res.Header)
-		assert.NotEmpty(t, res.Txs)
 		assert.Equal(t, res.PrevCert.Committers, b.PrevCertificate().Committers())
 		assert.Equal(t, res.PrevCert.Absentees, b.PrevCertificate().Absentees())
+		for i, trx := range res.Txs {
+			blockTrx := b.Transactions()[i]
+
+			assert.Equal(t, blockTrx.ID().Bytes(), trx.Id)
+			assert.Empty(t, trx.Data)
+			assert.Zero(t, trx.LockTime)
+			assert.Empty(t, trx.Signature)
+			assert.Empty(t, trx.PublicKey)
+		}
 	})
 
 	t.Run("Should return object with  (verbosity: 2)", func(t *testing.T) {
@@ -62,14 +70,18 @@ func TestGetBlock(t *testing.T) {
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Height, height)
 		assert.Equal(t, res.Hash, b.Hash().Bytes())
-		assert.Equal(t, res.Data, data)
+		assert.Empty(t, res.Data)
 		assert.NotEmpty(t, res.Header)
 		assert.NotEmpty(t, res.Txs)
 		for i, trx := range res.Txs {
-			data, _ := b.Transactions()[i].Bytes()
-			assert.Equal(t, b.Transactions()[i].ID().Bytes(), trx.Id)
-			assert.Equal(t, b.Transactions()[i].Signature().Bytes(), trx.Signature)
+			blockTrx := b.Transactions()[i]
+			data, _ := blockTrx.Bytes()
+
+			assert.Equal(t, blockTrx.ID().Bytes(), trx.Id)
 			assert.Equal(t, data, trx.Data)
+			assert.Equal(t, blockTrx.LockTime(), trx.LockTime)
+			assert.Equal(t, blockTrx.Signature().Bytes(), trx.Signature)
+			assert.Equal(t, blockTrx.PublicKey().String(), trx.PublicKey)
 		}
 	})
 

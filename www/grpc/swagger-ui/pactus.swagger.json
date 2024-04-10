@@ -87,7 +87,7 @@
           },
           {
             "name": "verbosity",
-            "description": "Verbosity level for block information.\n\n - BLOCK_DATA: Request block data only.\n - BLOCK_INFO: Request block information only.\n - BLOCK_TRANSACTIONS: Request block transactions only.",
+            "description": "Verbosity level for block information.\n\n - BLOCK_DATA: Request block data only.\n - BLOCK_INFO: Request block information and transaction IDs.\n - BLOCK_TRANSACTIONS: Request block information and transaction details.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -1214,7 +1214,7 @@
         "BLOCK_TRANSACTIONS"
       ],
       "default": "BLOCK_DATA",
-      "description": "Enumeration for verbosity level when requesting block information.\n\n - BLOCK_DATA: Request block data only.\n - BLOCK_INFO: Request block information only.\n - BLOCK_TRANSACTIONS: Request block transactions only."
+      "description": "Enumeration for verbosity level when requesting block information.\n\n - BLOCK_DATA: Request block data only.\n - BLOCK_INFO: Request block information and transaction IDs.\n - BLOCK_TRANSACTIONS: Request block information and transaction details."
     },
     "pactusBroadcastTransactionResponse": {
       "type": "object",
@@ -1384,7 +1384,7 @@
         "data": {
           "type": "string",
           "format": "byte",
-          "description": "Block data."
+          "description": "Block data, only available if the verbosity level is set to BLOCK_DATA."
         },
         "blockTime": {
           "type": "integer",
@@ -1405,7 +1405,7 @@
             "type": "object",
             "$ref": "#/definitions/pactusTransactionInfo"
           },
-          "description": "List of transactions in the block."
+          "description": "List of transactions in the block.\nTransaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS."
         }
       },
       "description": "Message containing the response with block information."
