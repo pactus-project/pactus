@@ -465,7 +465,6 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		// We haven't completed the handshake with this peer.
 		if !p.IsKnownOrTrusty() {
 			if onlyNodeNetwork {
-				fmt.Println("=================== close" + p.PeerID.String())
 				sync.network.CloseConnection(p.PeerID)
 			}
 
@@ -474,7 +473,6 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 
 		if onlyNodeNetwork && !p.HasNetworkService() {
 			if onlyNodeNetwork {
-				fmt.Println("===================++++++ close" + p.PeerID.String())
 				sync.network.CloseConnection(p.PeerID)
 			}
 
