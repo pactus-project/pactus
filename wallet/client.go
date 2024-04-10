@@ -42,7 +42,11 @@ func newGRPCClient(servers []string) *grpcClient {
 	}
 }
 
-func (c *grpcClient) Connect() error {
+func (c *grpcClient) connect() error {
+	if c.conn != nil {
+		return nil
+	}
+
 	maxTry := util.Min(3, len(c.servers))
 	for i := 0; i < maxTry; i++ {
 		n := util.RandInt32(int32(len(c.servers)))
@@ -74,6 +78,10 @@ func (c *grpcClient) Connect() error {
 }
 
 func (c *grpcClient) getBlockchainInfo() (*pactus.GetBlockchainInfoResponse, error) {
+	if err := c.connect(); err != nil {
+		return nil, err
+	}
+
 	info, err := c.blockchainClient.GetBlockchainInfo(c.ctx,
 		&pactus.GetBlockchainInfoRequest{})
 	if err != nil {
@@ -84,6 +92,10 @@ func (c *grpcClient) getBlockchainInfo() (*pactus.GetBlockchainInfoResponse, err
 }
 
 func (c *grpcClient) getAccount(addrStr string) (*pactus.AccountInfo, error) {
+	if err := c.connect(); err != nil {
+		return nil, err
+	}
+
 	res, err := c.blockchainClient.GetAccount(c.ctx,
 		&pactus.GetAccountRequest{Address: addrStr})
 	if err != nil {
@@ -94,6 +106,10 @@ func (c *grpcClient) getAccount(addrStr string) (*pactus.AccountInfo, error) {
 }
 
 func (c *grpcClient) getValidator(addrStr string) (*pactus.ValidatorInfo, error) {
+	if err := c.connect(); err != nil {
+		return nil, err
+	}
+
 	res, err := c.blockchainClient.GetValidator(c.ctx,
 		&pactus.GetValidatorRequest{Address: addrStr})
 	if err != nil {
@@ -104,6 +120,10 @@ func (c *grpcClient) getValidator(addrStr string) (*pactus.ValidatorInfo, error)
 }
 
 func (c *grpcClient) sendTx(trx *tx.Tx) (tx.ID, error) {
+	if err := c.connect(); err != nil {
+		return hash.UndefHash, err
+	}
+
 	data, err := trx.Bytes()
 	if err != nil {
 		return hash.UndefHash, err
@@ -119,6 +139,10 @@ func (c *grpcClient) sendTx(trx *tx.Tx) (tx.ID, error) {
 
 // TODO: check the return value type.
 func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, error) {
+	if err := c.connect(); err != nil {
+		return nil, err
+	}
+
 	res, err := c.transactionClient.GetTransaction(c.ctx,
 		&pactus.GetTransactionRequest{
 			Id:        id.Bytes(),
@@ -132,6 +156,10 @@ func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, e
 }
 
 func (c *grpcClient) getFee(amt amount.Amount, payloadType payload.Type) (amount.Amount, error) {
+	if err := c.connect(); err != nil {
+		return 0, err
+	}
+
 	res, err := c.transactionClient.CalculateFee(c.ctx,
 		&pactus.CalculateFeeRequest{
 			Amount:      amt.ToNanoPAC(),

@@ -78,6 +78,7 @@ func setup(t *testing.T) *testData {
 	// Creating gRPC client
 	client := &grpcClient{
 		ctx:               context.Background(),
+		conn:              conn,
 		blockchainClient:  pactus.NewBlockchainClient(conn),
 		transactionClient: pactus.NewTransactionClient(conn),
 	}

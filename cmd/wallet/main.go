@@ -18,25 +18,16 @@ func addPasswordOption(c *cobra.Command) *string {
 }
 
 func openWallet() (*wallet.Wallet, error) {
-	if !*offlineOpt && *serverAddrOpt != "" {
-		wlt, err := wallet.Open(*pathOpt, true)
-		if err != nil {
-			return nil, err
-		}
-
-		err = wlt.Connect(*serverAddrOpt)
-		if err != nil {
-			return nil, err
-		}
-
-		return wlt, err
-	}
 	wlt, err := wallet.Open(*pathOpt, *offlineOpt)
 	if err != nil {
 		return nil, err
 	}
 
-	return wlt, nil
+	if *serverAddrOpt != "" {
+		wlt.SetServerAddr(*serverAddrOpt)
+	}
+
+	return wlt, err
 }
 
 func main() {
