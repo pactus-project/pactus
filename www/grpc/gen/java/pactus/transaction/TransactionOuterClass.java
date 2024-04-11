@@ -221,7 +221,7 @@ public final class TransactionOuterClass {
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
      * <pre>
-     * Request only transaction data.
+     * Request transaction data only.
      * </pre>
      *
      * <code>TRANSACTION_DATA = 0;</code>
@@ -229,7 +229,7 @@ public final class TransactionOuterClass {
     TRANSACTION_DATA(0),
     /**
      * <pre>
-     * Request detailed transaction information.
+     * Request transaction details.
      * </pre>
      *
      * <code>TRANSACTION_INFO = 1;</code>
@@ -240,7 +240,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Request only transaction data.
+     * Request transaction data only.
      * </pre>
      *
      * <code>TRANSACTION_DATA = 0;</code>
@@ -248,7 +248,7 @@ public final class TransactionOuterClass {
     public static final int TRANSACTION_DATA_VALUE = 0;
     /**
      * <pre>
-     * Request detailed transaction information.
+     * Request transaction details.
      * </pre>
      *
      * <code>TRANSACTION_INFO = 1;</code>

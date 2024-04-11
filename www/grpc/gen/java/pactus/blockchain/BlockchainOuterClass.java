@@ -33,7 +33,7 @@ public final class BlockchainOuterClass {
     BLOCK_DATA(0),
     /**
      * <pre>
-     * Request block information only.
+     * Request block information and transaction IDs.
      * </pre>
      *
      * <code>BLOCK_INFO = 1;</code>
@@ -41,7 +41,7 @@ public final class BlockchainOuterClass {
     BLOCK_INFO(1),
     /**
      * <pre>
-     * Request block transactions only.
+     * Request block information and transaction details.
      * </pre>
      *
      * <code>BLOCK_TRANSACTIONS = 2;</code>
@@ -60,7 +60,7 @@ public final class BlockchainOuterClass {
     public static final int BLOCK_DATA_VALUE = 0;
     /**
      * <pre>
-     * Request block information only.
+     * Request block information and transaction IDs.
      * </pre>
      *
      * <code>BLOCK_INFO = 1;</code>
@@ -68,7 +68,7 @@ public final class BlockchainOuterClass {
     public static final int BLOCK_INFO_VALUE = 1;
     /**
      * <pre>
-     * Request block transactions only.
+     * Request block information and transaction details.
      * </pre>
      *
      * <code>BLOCK_TRANSACTIONS = 2;</code>
@@ -6284,7 +6284,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Block data.
+     * Block data, only available if the verbosity level is set to BLOCK_DATA.
      * </pre>
      *
      * <code>bytes data = 3 [json_name = "data"];</code>
@@ -6359,6 +6359,7 @@ public final class BlockchainOuterClass {
     /**
      * <pre>
      * List of transactions in the block.
+     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6368,6 +6369,7 @@ public final class BlockchainOuterClass {
     /**
      * <pre>
      * List of transactions in the block.
+     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6376,6 +6378,7 @@ public final class BlockchainOuterClass {
     /**
      * <pre>
      * List of transactions in the block.
+     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6384,6 +6387,7 @@ public final class BlockchainOuterClass {
     /**
      * <pre>
      * List of transactions in the block.
+     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6393,6 +6397,7 @@ public final class BlockchainOuterClass {
     /**
      * <pre>
      * List of transactions in the block.
+     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6481,7 +6486,7 @@ public final class BlockchainOuterClass {
     private com.google.protobuf.ByteString data_;
     /**
      * <pre>
-     * Block data.
+     * Block data, only available if the verbosity level is set to BLOCK_DATA.
      * </pre>
      *
      * <code>bytes data = 3 [json_name = "data"];</code>
@@ -6588,6 +6593,7 @@ public final class BlockchainOuterClass {
     /**
      * <pre>
      * List of transactions in the block.
+     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6599,6 +6605,7 @@ public final class BlockchainOuterClass {
     /**
      * <pre>
      * List of transactions in the block.
+     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6611,6 +6618,7 @@ public final class BlockchainOuterClass {
     /**
      * <pre>
      * List of transactions in the block.
+     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6622,6 +6630,7 @@ public final class BlockchainOuterClass {
     /**
      * <pre>
      * List of transactions in the block.
+     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6633,6 +6642,7 @@ public final class BlockchainOuterClass {
     /**
      * <pre>
      * List of transactions in the block.
+     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7264,7 +7274,7 @@ public final class BlockchainOuterClass {
       private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
       /**
        * <pre>
-       * Block data.
+       * Block data, only available if the verbosity level is set to BLOCK_DATA.
        * </pre>
        *
        * <code>bytes data = 3 [json_name = "data"];</code>
@@ -7276,7 +7286,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block data.
+       * Block data, only available if the verbosity level is set to BLOCK_DATA.
        * </pre>
        *
        * <code>bytes data = 3 [json_name = "data"];</code>
@@ -7294,7 +7304,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block data.
+       * Block data, only available if the verbosity level is set to BLOCK_DATA.
        * </pre>
        *
        * <code>bytes data = 3 [json_name = "data"];</code>
@@ -7675,6 +7685,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7689,6 +7700,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7703,6 +7715,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7717,6 +7730,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7738,6 +7752,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7756,6 +7771,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7776,6 +7792,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7797,6 +7814,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7815,6 +7833,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7833,6 +7852,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7852,6 +7872,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7869,6 +7890,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7886,6 +7908,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7897,6 +7920,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7911,6 +7935,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7926,6 +7951,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7937,6 +7963,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7949,6 +7976,7 @@ public final class BlockchainOuterClass {
       /**
        * <pre>
        * List of transactions in the block.
+       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>

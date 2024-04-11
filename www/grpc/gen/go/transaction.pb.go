@@ -89,9 +89,9 @@ func (PayloadType) EnumDescriptor() ([]byte, []int) {
 type TransactionVerbosity int32
 
 const (
-	// Request only transaction data.
+	// Request transaction data only.
 	TransactionVerbosity_TRANSACTION_DATA TransactionVerbosity = 0
-	// Request detailed transaction information.
+	// Request transaction details.
 	TransactionVerbosity_TRANSACTION_INFO TransactionVerbosity = 1
 )
 

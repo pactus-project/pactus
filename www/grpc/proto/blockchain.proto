@@ -113,7 +113,7 @@ message GetBlockResponse {
   uint32 height = 1;
   // Hash of the block.
   bytes hash = 2;
-  // Block data.
+  // Block data, only available if the verbosity level is set to BLOCK_DATA.
   bytes data = 3;
   // Block timestamp.
   uint32 block_time = 4;
@@ -122,6 +122,7 @@ message GetBlockResponse {
   // Certificate information of the previous block.
   CertificateInfo prev_cert = 6;
   // List of transactions in the block.
+  // Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
   repeated TransactionInfo txs = 7;
 }
 
@@ -279,9 +280,9 @@ message ConsensusInfo {
 enum BlockVerbosity {
   // Request block data only.
   BLOCK_DATA = 0;
-  // Request block information only.
+  // Request block information and transaction IDs.
   BLOCK_INFO = 1;
-  // Request block transactions only.
+  // Request block information and transaction details.
   BLOCK_TRANSACTIONS = 2;
 }
 

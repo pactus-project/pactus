@@ -1710,7 +1710,7 @@ GetBlockResponse
       <td>
         <a href="#bytes">bytes</a>
       </td>
-      <td>Block data. </td>
+      <td>Block data, only available if the verbosity level is set to BLOCK_DATA. </td>
     </tr>
     <tr>
       <td class="fw-bold">block_time</td>
@@ -1738,7 +1738,8 @@ GetBlockResponse
       <td>repeated
         <a href="#pactus.TransactionInfo">TransactionInfo</a>
       </td>
-      <td>List of transactions in the block. </td>
+      <td>List of transactions in the block.
+Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS. </td>
     </tr>
   </tbody>
 </table>  
@@ -3155,13 +3156,13 @@ TransactionVerbosity
       <tr>
         <td class="fw-bold">TRANSACTION_DATA</td>
         <td>0</td>
-        <td>Request only transaction data.</td>
+        <td>Request transaction data only.</td>
       </tr>
     
       <tr>
         <td class="fw-bold">TRANSACTION_INFO</td>
         <td>1</td>
-        <td>Request detailed transaction information.</td>
+        <td>Request transaction details.</td>
       </tr>
     
   </tbody>
@@ -3186,13 +3187,13 @@ BlockVerbosity
       <tr>
         <td class="fw-bold">BLOCK_INFO</td>
         <td>1</td>
-        <td>Request block information only.</td>
+        <td>Request block information and transaction IDs.</td>
       </tr>
     
       <tr>
         <td class="fw-bold">BLOCK_TRANSACTIONS</td>
         <td>2</td>
-        <td>Request block transactions only.</td>
+        <td>Request block information and transaction details.</td>
       </tr>
     
   </tbody>

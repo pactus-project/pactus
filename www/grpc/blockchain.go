@@ -110,10 +110,14 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 	res := &pactus.GetBlockResponse{
 		Height: committedBlock.Height,
 		Hash:   committedBlock.BlockHash.Bytes(),
-		Data:   committedBlock.Data,
 	}
 
-	if req.Verbosity > pactus.BlockVerbosity_BLOCK_DATA {
+	switch req.Verbosity {
+	case pactus.BlockVerbosity_BLOCK_DATA:
+		res.Data = committedBlock.Data
+
+	case pactus.BlockVerbosity_BLOCK_INFO,
+		pactus.BlockVerbosity_BLOCK_TRANSACTIONS:
 		block, err := committedBlock.ToBlock()
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, err.Error())
@@ -151,7 +155,11 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 		trxs := make([]*pactus.TransactionInfo, 0, block.Transactions().Len())
 		for _, trx := range block.Transactions() {
 			if req.Verbosity == pactus.BlockVerbosity_BLOCK_INFO {
-				trxs = append(trxs, &pactus.TransactionInfo{Id: trx.ID().Bytes()})
+				data, _ := trx.Bytes()
+				trxs = append(trxs, &pactus.TransactionInfo{
+					Id:   trx.ID().Bytes(),
+					Data: data,
+				})
 			} else {
 				trxs = append(trxs, transactionToProto(trx))
 			}

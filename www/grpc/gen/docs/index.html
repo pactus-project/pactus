@@ -1350,13 +1350,13 @@ If not explicitly set, it is calculated based on the amount. </p></td>
               <tr>
                 <td>TRANSACTION_DATA</td>
                 <td>0</td>
-                <td><p>Request only transaction data.</p></td>
+                <td><p>Request transaction data only.</p></td>
               </tr>
             
               <tr>
                 <td>TRANSACTION_INFO</td>
                 <td>1</td>
-                <td><p>Request detailed transaction information.</p></td>
+                <td><p>Request transaction details.</p></td>
               </tr>
             
           </tbody>
@@ -1848,7 +1848,7 @@ and payload type.</p></td>
                   <td>data</td>
                   <td><a href="#bytes">bytes</a></td>
                   <td></td>
-                  <td><p>Block data. </p></td>
+                  <td><p>Block data, only available if the verbosity level is set to BLOCK_DATA. </p></td>
                 </tr>
               
                 <tr>
@@ -1876,7 +1876,8 @@ and payload type.</p></td>
                   <td>txs</td>
                   <td><a href="#pactus.TransactionInfo">TransactionInfo</a></td>
                   <td>repeated</td>
-                  <td><p>List of transactions in the block. </p></td>
+                  <td><p>List of transactions in the block.
+Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS. </p></td>
                 </tr>
               
             </tbody>
@@ -2306,13 +2307,13 @@ and payload type.</p></td>
               <tr>
                 <td>BLOCK_INFO</td>
                 <td>1</td>
-                <td><p>Request block information only.</p></td>
+                <td><p>Request block information and transaction IDs.</p></td>
               </tr>
             
               <tr>
                 <td>BLOCK_TRANSACTIONS</td>
                 <td>2</td>
-                <td><p>Request block transactions only.</p></td>
+                <td><p>Request block information and transaction details.</p></td>
               </tr>
             
           </tbody>

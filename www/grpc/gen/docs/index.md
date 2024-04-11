@@ -436,8 +436,8 @@ Enumeration for verbosity level when requesting transaction details.
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| TRANSACTION_DATA | 0 | Request only transaction data. |
-| TRANSACTION_INFO | 1 | Request detailed transaction information. |
+| TRANSACTION_DATA | 0 | Request transaction data only. |
+| TRANSACTION_INFO | 1 | Request transaction details. |
 
 
  
@@ -664,11 +664,11 @@ Message containing the response with block information.
 | ----- | ---- | ----- | ----------- |
 | height | [uint32](#uint32) |  | Height of the block. |
 | hash | [bytes](#bytes) |  | Hash of the block. |
-| data | [bytes](#bytes) |  | Block data. |
+| data | [bytes](#bytes) |  | Block data, only available if the verbosity level is set to BLOCK_DATA. |
 | block_time | [uint32](#uint32) |  | Block timestamp. |
 | header | [BlockHeaderInfo](#pactus-BlockHeaderInfo) |  | Block header information. |
 | prev_cert | [CertificateInfo](#pactus-CertificateInfo) |  | Certificate information of the previous block. |
-| txs | [TransactionInfo](#pactus-TransactionInfo) | repeated | List of transactions in the block. |
+| txs | [TransactionInfo](#pactus-TransactionInfo) | repeated | List of transactions in the block. Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS. |
 
 
 
@@ -885,8 +885,8 @@ Enumeration for verbosity level when requesting block information.
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | BLOCK_DATA | 0 | Request block data only. |
-| BLOCK_INFO | 1 | Request block information only. |
-| BLOCK_TRANSACTIONS | 2 | Request block transactions only. |
+| BLOCK_INFO | 1 | Request block information and transaction IDs. |
+| BLOCK_TRANSACTIONS | 2 | Request block information and transaction details. |
 
 
 
