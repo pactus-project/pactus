@@ -17,13 +17,15 @@ echo "Building the binaries"
 cd ${ROOT_DIR}
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-daemon ./cmd/daemon
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-wallet ./cmd/wallet
+CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-shell ./cmd/shell
 go build -ldflags "-s -w" -trimpath -tags gtk -o ${BUILD_DIR}/pactus-gui ./cmd/gtk
 
 # Moving binaries to package directory
 echo "Moving binaries"
-mv ${BUILD_DIR}/pactus-gui     ${PACKAGE_DIR}/pactus-gui
-mv ${BUILD_DIR}/pactus-wallet  ${PACKAGE_DIR}/pactus-wallet
 mv ${BUILD_DIR}/pactus-daemon  ${PACKAGE_DIR}/pactus-daemon
+mv ${BUILD_DIR}/pactus-wallet  ${PACKAGE_DIR}/pactus-wallet
+mv ${BUILD_DIR}/pactus-shell   ${PACKAGE_DIR}/pactus-shell
+mv ${BUILD_DIR}/pactus-gui     ${PACKAGE_DIR}/pactus-gui
 
 echo "Creating archive"
 tar -czvf ${ROOT_DIR}/${PACKAGE_NAME}_linux_amd64.tar.gz -p ${PACKAGE_NAME}

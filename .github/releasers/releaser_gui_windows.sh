@@ -20,6 +20,7 @@ sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-daemon.exe ./cmd/daemon
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-wallet.exe ./cmd/wallet
 go build -ldflags "-s -w -H windowsgui" -trimpath -tags gtk -o ${BUILD_DIR}/pactus-gui.exe ./cmd/gtk
+CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-shell ./cmd/shell
 
 # Copying the neccesary libraries
 echo "Creating GUI directory"
@@ -120,10 +121,10 @@ cp -rp "${MINGW_PREFIX}/share/glib-2.0/schemas/gschemas.compiled" "${GUI_DIR}/sh
 # Moving binaries to package directory
 cd ${ROOT_DIR}
 echo "Moving binaries"
-mv ${BUILD_DIR}/pactus-gui.exe     ${PACKAGE_DIR}/pactus-gui/pactus-gui.exe
-mv ${BUILD_DIR}/pactus-wallet.exe  ${PACKAGE_DIR}/pactus-wallet.exe
 mv ${BUILD_DIR}/pactus-daemon.exe  ${PACKAGE_DIR}/pactus-daemon.exe
-
+mv ${BUILD_DIR}/pactus-wallet.exe  ${PACKAGE_DIR}/pactus-wallet.exe
+mv ${BUILD_DIR}/pactus-shell.exe   ${PACKAGE_DIR}/pactus-shell.exe
+mv ${BUILD_DIR}/pactus-gui.exe     ${PACKAGE_DIR}/pactus-gui/pactus-gui.exe
 
 echo "Archiving the package"
 7z a ${ROOT_DIR}/${PACKAGE_NAME}_windows_amd64.zip ${PACKAGE_DIR}
