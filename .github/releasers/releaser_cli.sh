@@ -33,6 +33,7 @@ for OS_ARCH in \
 
     CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/${PACKAGE_NAME}/pactus-daemon${EXE} ./cmd/daemon
     CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/${PACKAGE_NAME}/pactus-wallet${EXE} ./cmd/wallet
+    CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/${PACKAGE_NAME}/pactus-shell${EXE} ./cmd/shell
 
     cd ${BUILD_DIR}
     if [ $OS = "windows" ]; then

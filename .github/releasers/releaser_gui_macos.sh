@@ -29,6 +29,7 @@ echo "Building the binaries"
 cd ${ROOT_DIR}
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-daemon ./cmd/daemon
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-wallet ./cmd/wallet
+CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-shell ./cmd/shell
 go build -ldflags "-s -w" -trimpath -tags gtk -o ${BUILD_DIR}/pactus-gui ./cmd/gtk
 
 
@@ -74,6 +75,7 @@ create-dmg \
 echo "Creating archive"
 cp ${BUILD_DIR}/pactus-daemon     ${PACKAGE_DIR}
 cp ${BUILD_DIR}/pactus-wallet     ${PACKAGE_DIR}
+cp ${BUILD_DIR}/pactus-shell      ${PACKAGE_DIR}
 cp -R ${ROOT_DIR}/pactus-gui.app  ${PACKAGE_DIR}
 
 tar -czvf ${ROOT_DIR}/${FILE_NAME}.tar.gz -p ${PACKAGE_NAME}
