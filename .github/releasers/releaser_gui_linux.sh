@@ -43,7 +43,12 @@ wget -c "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous
 
 chmod +x linuxdeploy-x86_64.AppImage linuxdeploy-plugin-gtk.sh
 
-DEPLOY_GTK_VERSION=3 ./linuxdeploy-x86_64.AppImage -e ./pactus-gui --appdir AppDir --plugin gtk --output appimage --icon-file pactus.png --desktop-file ./pactus.desktop
+DEPLOY_GTK_VERSION=3 ./linuxdeploy-x86_64.AppImage \
+    --executable ./pactus-gui \
+    --appdir AppDir \
+    --plugin gtk \
+    --output appimage \
+    --icon-file pactus.png \
+    --desktop-file ./pactus-gui.desktop
 
-cp ./pactus-gui-x86_64.AppImage ${ROOT_DIR}/${PACKAGE_NAME}_linux_amd64.AppImage
-
+mv ./pactus-gui-x86_64.AppImage ${ROOT_DIR}/${PACKAGE_NAME}_linux_amd64.AppImage
