@@ -119,7 +119,7 @@ func (mw *mainWindow) onMenuItemActivateWebsite(_ *gtk.MenuItem) {
 }
 
 func (mw *mainWindow) onMenuItemActivateExplorer(_ *gtk.MenuItem) {
-	if err := openURLInBrowser("https://pacscan.org/"); err != nil {
+	if err := openURLInBrowser("https://pacviewer.com/"); err != nil {
 		fatalErrorCheck(err)
 	}
 }
