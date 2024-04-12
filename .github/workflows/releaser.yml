@@ -81,7 +81,7 @@ jobs:
         EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
         echo "checksums<<$EOF"                    >> "$GITHUB_OUTPUT"
         echo "$(sha256sum pactus-gui*.tar.gz)"    >> "$GITHUB_OUTPUT"
-        echo "$(sha256sum pactus-gui.*AppImage)"  >> "$GITHUB_OUTPUT"
+        echo "$(sha256sum pactus-gui*.AppImage)"  >> "$GITHUB_OUTPUT"
         echo "$EOF"                               >> "$GITHUB_OUTPUT"
 
     - name: Publish
