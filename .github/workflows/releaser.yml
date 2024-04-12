@@ -43,7 +43,7 @@ jobs:
         echo "$EOF"                                     >> "$GITHUB_OUTPUT"
 
     - name: Publish
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           pactus-*.zip
@@ -85,7 +85,7 @@ jobs:
         echo "$EOF"                               >> "$GITHUB_OUTPUT"
 
     - name: Publish
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           pactus-gui*.tar.gz
@@ -126,7 +126,7 @@ jobs:
         echo "$EOF"                                     >> "$GITHUB_OUTPUT"
 
     - name: Publish
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           pactus-*.dmg
@@ -178,7 +178,7 @@ jobs:
         echo "$EOF"                                     >> "$GITHUB_OUTPUT"
 
     - name: Publish
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           pactus-*.dmg
@@ -229,7 +229,7 @@ jobs:
         echo "$EOF"                                            >> "$GITHUB_OUTPUT"
 
     - name: Publish
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           pactus-*.zip
@@ -251,7 +251,7 @@ jobs:
         echo "${{ needs.build-gui-macos-arm.outputs.checksums }}" >> SHA256SUMS
         echo "${{ needs.build-gui-windows.outputs.checksums }}" >> SHA256SUMS
     - name: Publish
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: SHA256SUMS
       env:
@@ -271,7 +271,7 @@ jobs:
         sed -i "s/__VERSION__/${VERSION}/g" .github/releasers/pactus_downloader.sh
 
     - name: Publish
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: .github/releasers/pactus_downloader.sh
       env:
