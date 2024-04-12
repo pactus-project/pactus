@@ -80,16 +80,16 @@ jobs:
         set -e
         EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
         echo "checksums<<$EOF"                    >> "$GITHUB_OUTPUT"
-        echo "$(sha256sum pactus-*tar.gz)"        >> "$GITHUB_OUTPUT"
-        echo "$(sha256sum pactus-gui-*.AppImage)" >> "$GITHUB_OUTPUT"
+        echo "$(sha256sum pactus-gui*.tar.gz)"    >> "$GITHUB_OUTPUT"
+        echo "$(sha256sum pactus-gui.*AppImage)"  >> "$GITHUB_OUTPUT"
         echo "$EOF"                               >> "$GITHUB_OUTPUT"
 
     - name: Publish
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          pactus-*.tar.gz
-          pactus-gui-*.AppImage
+          pactus-gui*.tar.gz
+          pactus-gui*.AppImage
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

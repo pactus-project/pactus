@@ -1,14 +1,16 @@
 build/
-.idea
 .DS_Store
-.vscode
-todo
-*.local.*
-dist/
-.releaser.yml
-pactus-*
 
-# vim artifacts
+# IDEs
+.idea
+.vscode
+
+# TODO tasks
+todo
+
+# Releasers ouput
+/pactus-*
+
+# VIM artifacts
 .swp
 .*.sw*
-
