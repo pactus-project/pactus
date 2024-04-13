@@ -17,3 +17,4 @@ openapiOptions:
           security:
             BasicAuth:
               type: TYPE_BASIC
+              in: IN_HEADER

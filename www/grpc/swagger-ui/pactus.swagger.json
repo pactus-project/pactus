@@ -2182,7 +2182,8 @@
   },
   "securityDefinitions": {
     "BasicAuth": {
-      "type": "basic"
+      "type": "basic",
+      "in": "header"
     }
   }
 }
