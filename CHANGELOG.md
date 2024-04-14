@@ -1,5 +1,67 @@
 # Changelog
 
+## [1.1.0](https://github.com/pactus-project/pactus/compare/v1.0.0...v1.1.0) (2024-04-14)
+
+### Feat
+
+- **gRPC**: add get address history method ([#1206](https://github.com/pactus-project/pactus/pull/1206))
+- **grpc**: Add GetNewAddress/GetTotalBalance endpoint to gateway ([#1197](https://github.com/pactus-project/pactus/pull/1197))
+- **GUI**: adding total balance to wallet widget ([#1194](https://github.com/pactus-project/pactus/pull/1194))
+- Add GetNewAddress gRPC API ([#1193](https://github.com/pactus-project/pactus/pull/1193))
+- **gRPC**: add new API to get the total balance of wallet ([#1190](https://github.com/pactus-project/pactus/pull/1190))
+- **GUI**: showing transaction hash after broadcasting transaction ([#1187](https://github.com/pactus-project/pactus/pull/1187))
+- add jsonrpc gateway support ([#1183](https://github.com/pactus-project/pactus/pull/1183))
+- **config**: one reward address in config for all validators ([#1178](https://github.com/pactus-project/pactus/pull/1178))
+- **GUI**: memo field for transactions on GUI wallet ([#1182](https://github.com/pactus-project/pactus/pull/1182))
+- implement basic auth for pactus shell ([#1177](https://github.com/pactus-project/pactus/pull/1177))
+- **grpc**: add rust code gen for proto ([#1151](https://github.com/pactus-project/pactus/pull/1151))
+- **testnet**: define permanent Testent genesis ([#1173](https://github.com/pactus-project/pactus/pull/1173))
+- add basic auth authentication for securing grpc ([#1162](https://github.com/pactus-project/pactus/pull/1162))
+- **grpc**: calculate fee for create-raw-transaction APIs ([#1159](https://github.com/pactus-project/pactus/pull/1159))
+- **grpc**: add fixed-amount to calc-fee API ([#1146](https://github.com/pactus-project/pactus/pull/1146))
+- **wallet**: adding all account address functions ([#1128](https://github.com/pactus-project/pactus/pull/1128))
+- **grpc**: update swagger API to version 1.1 ([#1106](https://github.com/pactus-project/pactus/pull/1106))
+- **GUI**: adding availability score in wallet ([#1118](https://github.com/pactus-project/pactus/pull/1118))
+- **logger**: adding log target ([#1122](https://github.com/pactus-project/pactus/pull/1122))
+- **logger**: adding file_only option ([#1117](https://github.com/pactus-project/pactus/pull/1117))
+- **gui**: add connections and moniker fields to main windows ([#1090](https://github.com/pactus-project/pactus/pull/1090))
+- implementation for PIP-22 ([#1067](https://github.com/pactus-project/pactus/pull/1067))
+- generate documentation for proto files ([#1064](https://github.com/pactus-project/pactus/pull/1064))
+- pactus-ctl ([#946](https://github.com/pactus-project/pactus/pull/946))
+
+### Fix
+
+- **gRPC**: add basic auth option in header ([#1217](https://github.com/pactus-project/pactus/pull/1217))
+- **gRPC**: not return block data on information verbosity ([#1212](https://github.com/pactus-project/pactus/pull/1212))
+- **wallet**: fix wallet conn issue ([#1211](https://github.com/pactus-project/pactus/pull/1211))
+- **GUI**: update total balance on wallet timeout ([#1204](https://github.com/pactus-project/pactus/pull/1204))
+- accept small bond to existing validator ([#1152](https://github.com/pactus-project/pactus/pull/1152))
+- **GUI**: make transaction hash selactable ([#1196](https://github.com/pactus-project/pactus/pull/1196))
+- close connections with peers that have no supported protocol ([#1181](https://github.com/pactus-project/pactus/pull/1181))
+- **sync**: check the start block request height ([#1176](https://github.com/pactus-project/pactus/pull/1176))
+- **config**: load logger levels in Mainnet config ([#1168](https://github.com/pactus-project/pactus/pull/1168))
+- **gRPC**: pactus swagger not found ([#1163](https://github.com/pactus-project/pactus/pull/1163))
+- add error type for invalid configs ([#1153](https://github.com/pactus-project/pactus/pull/1153))
+- save Mainnet config with inline comments ([#1143](https://github.com/pactus-project/pactus/pull/1143))
+- **network**: set deadline for streams ([#1149](https://github.com/pactus-project/pactus/pull/1149))
+- **grpc**: fix error 404 on grpc gateway ([#1144](https://github.com/pactus-project/pactus/pull/1144))
+- **wallet**: checking args in history add ([#1141](https://github.com/pactus-project/pactus/pull/1141))
+- **gRPC**: adding sign raw transaction API to gateway ([#1116](https://github.com/pactus-project/pactus/pull/1116))
+- **sync**: fix concurrent map read-write crash ([#1112](https://github.com/pactus-project/pactus/pull/1112))
+- **network**: remove disconnected peers from peerMgr ([#1110](https://github.com/pactus-project/pactus/pull/1110))
+- **network**: set dial and accept limit in connection gater ([#1089](https://github.com/pactus-project/pactus/pull/1089))
+- stderr logger in windows os ([#1081](https://github.com/pactus-project/pactus/pull/1081))
+- **sync**: improve syncing process ([#1087](https://github.com/pactus-project/pactus/pull/1087))
+- **network**: redefine resource limits ([#1086](https://github.com/pactus-project/pactus/pull/1086))
+
+### Refactor
+
+- **sync**: improve syncing process ([#1207](https://github.com/pactus-project/pactus/pull/1207))
+- move fee calculation logic to execution package  ([#1195](https://github.com/pactus-project/pactus/pull/1195))
+- introduce Amount data type for converting PAC units ([#1174](https://github.com/pactus-project/pactus/pull/1174))
+- using PAC instead of atomic units for external input/outputs ([#1161](https://github.com/pactus-project/pactus/pull/1161))
+- change func() to cancel func type ([#1142](https://github.com/pactus-project/pactus/pull/1142))
+
 ## [1.0.0](https://github.com/pactus-project/pactus/compare/v0.20.0...v1.0.0) (2024-01-31)
 
 ### Feat
