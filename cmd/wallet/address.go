@@ -117,12 +117,9 @@ func buildBalanceCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		balance, err := wlt.Balance(addr)
-		cmd.FatalErrorCheck(err)
 
-		stake, err := wlt.Stake(addr)
-		cmd.FatalErrorCheck(err)
-
+		balance, _ := wlt.Balance(addr)
+		stake, _ := wlt.Stake(addr)
 		cmd.PrintInfoMsgf("balance: %s\tstake: %s",
 			balance.String(), stake.String())
 	}
