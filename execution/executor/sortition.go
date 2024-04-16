@@ -27,9 +27,11 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			"unable to retrieve validator")
 	}
 
-	if sb.CurrentHeight()-val.LastBondingHeight() < sb.Params().BondInterval {
-		return errors.Errorf(errors.ErrInvalidHeight,
-			"validator has bonded at height %v", val.LastBondingHeight())
+	if val.LastSortitionHeight() == 0 {
+		if sb.CurrentHeight()-val.LastBondingHeight() < sb.Params().BondInterval {
+			return errors.Errorf(errors.ErrInvalidHeight,
+				"validator has bonded at height %v", val.LastBondingHeight())
+		}
 	}
 
 	sortitionHeight := trx.LockTime()
