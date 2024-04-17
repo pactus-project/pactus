@@ -45,7 +45,7 @@ func ParseVersion(versionStr string) (Version, error) {
 	// Parse Major version
 	major, err := strconv.ParseUint(parts[0], 10, 64)
 	if err != nil {
-		return v, fmt.Errorf("failed to parse Major version: %v", err)
+		return v, fmt.Errorf("failed to parse Major version: %w", err)
 	}
 	v.Major = uint(major)
 
