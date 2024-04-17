@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/version"
 )
 
 type helloHandler struct {
@@ -60,6 +61,16 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 	if math.Abs(time.Since(msg.MyTime()).Seconds()) > 10 {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
 			"time discrepancy exceeds 10 seconds", 0)
+
+		handler.acknowledge(response, pid)
+
+		return nil
+	}
+
+	agent, _ := version.ParseAgent(msg.Agent)
+	if agent.Version.Compare(handler.config.LatestSupportingVer) == -1 {
+		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
+			"not supporting version", 0)
 
 		handler.acknowledge(response, pid)
 

@@ -18,7 +18,7 @@ func TestNodeInfo(t *testing.T) {
 	td.httpServer.NodeHandler(w, r)
 
 	assert.Equal(t, w.Code, 200)
-	assert.Contains(t, w.Body.String(), version.Agent())
+	assert.Contains(t, w.Body.String(), version.NodeAgent.String())
 
 	td.StopServers()
 }

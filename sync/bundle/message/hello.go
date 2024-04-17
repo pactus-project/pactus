@@ -30,7 +30,7 @@ func NewHelloMessage(pid peer.ID, moniker string,
 ) *HelloMessage {
 	return &HelloMessage{
 		PeerID:          pid,
-		Agent:           version.Agent(),
+		Agent:           version.NodeAgent.String(),
 		Moniker:         moniker,
 		GenesisHash:     genesisHash,
 		BlockHash:       blockHash,

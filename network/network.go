@@ -144,7 +144,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	opts = append(opts,
 		lp2p.Identity(networkKey),
 		lp2p.ListenAddrs(conf.ListenAddrs()...),
-		lp2p.UserAgent(version.Agent()),
+		lp2p.UserAgent(version.NodeAgent.String()),
 		lp2p.ResourceManager(resMgr),
 		lp2p.ConnectionManager(connMgr),
 		lp2p.Ping(false),

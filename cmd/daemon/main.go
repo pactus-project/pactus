@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	version.AppType = "daemon"
+	version.NodeAgent.AppType = "daemon"
 }
 
 func main() {

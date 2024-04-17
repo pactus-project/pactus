@@ -28,7 +28,7 @@ func aboutDialog() *gtk.AboutDialog {
 	fatalErrorCheck(err)
 
 	dlg.SetLogo(pxLogo)
-	dlg.SetVersion(version.Version())
+	dlg.SetVersion(version.NodeVersion.String())
 
 	return dlg
 }
