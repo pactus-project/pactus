@@ -16,10 +16,10 @@ type Config struct {
 	Firewall       *firewall.Config `toml:"firewall"`
 
 	// Private configs
-	MaxSessions         int    `toml:"-"`
-	LatestBlockInterval uint32 `toml:"-"`
-	BlockPerMessage     uint32 `toml:"-"`
-	LatestSupportingVer version.Version
+	MaxSessions         int             `toml:"-"`
+	LatestBlockInterval uint32          `toml:"-"`
+	BlockPerMessage     uint32          `toml:"-"`
+	LatestSupportingVer version.Version `toml:"-"`
 }
 
 func DefaultConfig() *Config {
