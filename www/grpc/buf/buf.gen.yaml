@@ -10,7 +10,7 @@ plugins:
   - name: doc
     out: ../gen/docs
     opt:
-      - ./website.tmpl,website.md
+      - ./grpc-md.tmpl,grpc.md
   - name: doc
     out: ../gen/docs
     opt:
@@ -34,6 +34,9 @@ plugins:
       - openapi_configuration=openapi.config.yaml
   - name: jrpc-gateway
     out: ../gen/go
+  - name: jrpc-doc
+    out: ../gen/docs
+    opt: ./json-rpc-md.tmpl,json-rpc.md
   - plugin: buf.build/protocolbuffers/js:v3.21.2
     out: ../gen/js
     opt:
