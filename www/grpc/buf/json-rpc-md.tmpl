@@ -1,0 +1,45 @@
+# JSON-RPC API Reference
+
+Each node in the Pactus network can be configured to use the [JSON-RPC 2.0](https://www.jsonrpc.org/specification) protocol for communication.
+Here you can find the list of all JSON-RPC methods and messages.
+
+All the amounts and values in JSON-RPC endpoints are in NanoPAC units, which are atomic and the smallest unit in the Pactus blockchain.
+Each PAC is equivalent to
+ 1,000,000,000 or 10<sup>9</sup> NanoPACs.
+{{$package := (index .Files 0).Package}}
+
+## Methods
+
+{{range $file := .Files}}
+{{range $service := $file.Services}}
+{{range $method := $service.Methods}}
+
+- [{{rpcMethod $package $service.Name $method.Name}}](#{{rpcMethod $package $service.Name $method.Name}})
+{{end}}
+{{end}}
+{{end}}
+
+---
+{{range $file := .Files}}
+{{range $service := $file.Services}}
+{{range $method := $service.Methods}}
+<a id="{{rpcMethod $package $service.Name $method.Name}}"></a>
+
+## Method {{rpcMethod $package $service.Name $method.Name}}
+
+{{$package | lower}}.{{$service.Name | lower}}.{{toJsonRpc $method.Description $method.Name}}
+
+### Parameters
+```json
+{{$method.Params}}
+```
+
+### Result
+```json
+{{$method.Result}}
+```
+---
+
+{{end}}
+{{end}}
+{{end}}
