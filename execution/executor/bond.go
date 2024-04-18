@@ -74,7 +74,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	// TODO: remove me in future
 	// We can have a level for committing blocks even if they are not fully compatible with the current rules.
 	// However, since they were committed in the past, they should be accepted by new nodes.
-	if sb.CurrentHeight() > 752000 {
+	if sb.CurrentHeight() > 740_000 {
 		if pld.Stake < sb.Params().MinimumStake {
 			if pld.Stake == 0 || receiverVal.Stake()+pld.Stake != sb.Params().MaximumStake {
 				return errors.Errorf(errors.ErrInvalidTx,
