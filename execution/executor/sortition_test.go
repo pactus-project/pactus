@@ -36,10 +36,11 @@ func TestExecuteSortitionTx(t *testing.T) {
 	acc.SubtractFromBalance(amt + fee)
 	td.sandbox.UpdateAccount(accAddr, acc)
 	td.sandbox.UpdateValidator(newVal)
-	lockTime := td.sandbox.CurrentHeight()
+	curHeight := td.sandbox.CurrentHeight()
+	lockTime := curHeight
 	proof := td.RandProof()
 
-	newVal.UpdateLastBondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().BondInterval)
+	newVal.UpdateLastBondingHeight(curHeight - td.sandbox.Params().BondInterval)
 	td.sandbox.UpdateValidator(newVal)
 	assert.Zero(t, td.sandbox.Validator(newVal.Address()).LastSortitionHeight())
 	assert.False(t, td.sandbox.IsJoinedCommittee(newVal.Address()))
@@ -51,7 +52,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
-	newVal.UpdateLastBondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().BondInterval + 1)
+	newVal.UpdateLastBondingHeight(curHeight - td.sandbox.Params().BondInterval + 1)
 	td.sandbox.UpdateValidator(newVal)
 
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
@@ -62,7 +63,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 	})
 
 	// Let's add one more block
-	td.sandbox.TestStore.AddTestBlock(td.randHeight + 1)
+	td.sandbox.TestStore.AddTestBlock(curHeight + 1)
 
 	t.Run("Should fail, Invalid proof", func(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
@@ -92,7 +93,6 @@ func TestExecuteSortitionTx(t *testing.T) {
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
 	})
 
-	assert.Equal(t, td.sandbox.CurrentHeight(), td.randHeight+2)
 	assert.Equal(t, td.sandbox.Validator(newVal.Address()).LastSortitionHeight(), lockTime)
 	assert.True(t, td.sandbox.IsJoinedCommittee(newVal.Address()))
 
@@ -238,12 +238,12 @@ func TestOldestDidNotPropose(t *testing.T) {
 	updateCommittee(td)
 
 	// Let's update committee
-	height := td.randHeight
+	height := td.sandbox.CurrentHeight()
 	for i := uint32(0); i < 7; i++ {
 		height++
 		_ = td.sandbox.TestStore.AddTestBlock(height)
 
-		lockTime := td.sandbox.CurrentHeight()
+		lockTime := height
 		trx1 := tx.NewSortitionTx(lockTime,
 			vals[i].Address(), td.RandProof())
 		err := exe.Execute(trx1, td.sandbox)

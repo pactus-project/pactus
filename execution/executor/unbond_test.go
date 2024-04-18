@@ -94,8 +94,9 @@ func TestUnbondJoiningCommittee(t *testing.T) {
 	exe2 := NewUnbondExecutor(false)
 	pub, _ := td.RandBLSKeyPair()
 
+	curHeight := td.sandbox.CurrentHeight()
 	val := td.sandbox.MakeNewValidator(pub)
-	val.UpdateLastSortitionHeight(td.randHeight)
+	val.UpdateLastSortitionHeight(curHeight)
 	td.sandbox.UpdateValidator(val)
 	td.sandbox.JoinedToCommittee(val.Address())
 	lockTime := td.sandbox.CurrentHeight()
@@ -105,7 +106,7 @@ func TestUnbondJoiningCommittee(t *testing.T) {
 	assert.NoError(t, exe2.Execute(trx, td.sandbox))
 }
 
-func TestPwerDeltaUnbond(t *testing.T) {
+func TestPowerDeltaUnbond(t *testing.T) {
 	td := setup(t)
 	exe := NewUnbondExecutor(true)
 

@@ -17,7 +17,7 @@ func TestExecuteBondTx(t *testing.T) {
 	senderBalance := senderAcc.Balance()
 	pub, _ := td.RandBLSKeyPair()
 	receiverAddr := pub.ValidatorAddress()
-	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, senderBalance)
+	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, td.sandbox.TestParams.MaximumStake)
 	lockTime := td.sandbox.CurrentHeight()
 
 	t.Run("Should fail, invalid sender", func(t *testing.T) {
@@ -113,9 +113,8 @@ func TestBondInsideCommittee(t *testing.T) {
 
 	exe1 := NewBondExecutor(true)
 	exe2 := NewBondExecutor(false)
-	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
-	senderBalance := senderAcc.Balance()
-	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, senderBalance)
+	senderAddr, _ := td.sandbox.TestStore.RandomTestAcc()
+	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, td.sandbox.TestParams.MaximumStake)
 	lockTime := td.sandbox.CurrentHeight()
 
 	pub := td.sandbox.Committee().Proposer(0).PublicKey()
@@ -134,10 +133,9 @@ func TestBondJoiningCommittee(t *testing.T) {
 
 	exe1 := NewBondExecutor(true)
 	exe2 := NewBondExecutor(false)
-	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
-	senderBalance := senderAcc.Balance()
+	senderAddr, _ := td.sandbox.TestStore.RandomTestAcc()
 	pub, _ := td.RandBLSKeyPair()
-	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, senderBalance)
+	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, td.sandbox.TestParams.MaximumStake)
 	lockTime := td.sandbox.CurrentHeight()
 
 	val := td.sandbox.MakeNewValidator(pub)
@@ -177,11 +175,10 @@ func TestPowerDeltaBond(t *testing.T) {
 	td := setup(t)
 	exe := NewBondExecutor(true)
 
-	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
-	senderBalance := senderAcc.Balance()
+	senderAddr, _ := td.sandbox.TestStore.RandomTestAcc()
 	pub, _ := td.RandBLSKeyPair()
 	receiverAddr := pub.ValidatorAddress()
-	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, senderBalance)
+	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, td.sandbox.TestParams.MaximumStake)
 	lockTime := td.sandbox.CurrentHeight()
 	trx := tx.NewBondTx(lockTime, senderAddr,
 		receiverAddr, pub, amt, fee, "ok")
@@ -192,18 +189,54 @@ func TestPowerDeltaBond(t *testing.T) {
 	assert.Equal(t, int64(amt), td.sandbox.PowerDelta())
 }
 
+// TestSmallBond tests scenarios involving small and zero stake amounts in bond transactions.
+// This test suite is designed to address the issue reported on GitHub:
+// https://github.com/pactus-project/pactus/issues/1223
 func TestSmallBond(t *testing.T) {
 	td := setup(t)
 	exe := NewBondExecutor(false)
 
+	td.sandbox.TestStore.AddTestBlock(752000 + 1) // TODO: remove me in future
 	senderAddr, _ := td.sandbox.TestStore.RandomTestAcc()
 	receiverVal := td.sandbox.TestStore.RandomTestVal()
 	receiverAddr := receiverVal.Address()
 	fee := td.sandbox.Params().MaximumFee
 	lockTime := td.sandbox.CurrentHeight()
 	trx := tx.NewBondTx(lockTime, senderAddr,
-		receiverAddr, nil, 1, fee, "ok")
+		receiverAddr, nil, 1000e9-receiverVal.Stake()-2, fee, "ok")
 
 	err := exe.Execute(trx, td.sandbox)
 	assert.NoError(t, err, "Ok")
+
+	t.Run("Rejects bond transaction with zero amount", func(t *testing.T) {
+		trx := tx.NewBondTx(lockTime, senderAddr,
+			receiverAddr, nil, 0, fee, "attacking validator")
+
+		err := exe.Execute(trx, td.sandbox)
+		assert.Error(t, err, "Zero bond amount should be rejected")
+	})
+
+	t.Run("Rejects bond transaction below full validator stake", func(t *testing.T) {
+		trx := tx.NewBondTx(lockTime, senderAddr,
+			receiverAddr, nil, 1, fee, "attacking validator")
+
+		err := exe.Execute(trx, td.sandbox)
+		assert.Error(t, err, "Bond amount below full stake should be rejected")
+	})
+
+	t.Run("Accepts bond transaction reaching full validator stake", func(t *testing.T) {
+		trx := tx.NewBondTx(lockTime, senderAddr,
+			receiverAddr, nil, 2, fee, "fulfilling validator stake")
+
+		err := exe.Execute(trx, td.sandbox)
+		assert.NoError(t, err, "Bond reaching full stake should be accepted")
+	})
+
+	t.Run("Accepts bond transaction with zero amount on full validator", func(t *testing.T) {
+		trx := tx.NewBondTx(lockTime, senderAddr,
+			receiverAddr, nil, 0, fee, "attacking validator")
+
+		err := exe.Execute(trx, td.sandbox)
+		assert.Error(t, err, "Zero bond amount on full stake should be rejected")
+	})
 }
