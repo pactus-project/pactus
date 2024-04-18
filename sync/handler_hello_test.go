@@ -80,6 +80,44 @@ func TestParsingHelloMessages(t *testing.T) {
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
 
+	t.Run("Non supporting version.",
+		func(t *testing.T) {
+			valKey := td.RandValKey()
+			height := td.RandUint32NonZero(td.state.LastBlockHeight())
+			pid := td.RandPeerID()
+			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
+			nodeAgent := version.NodeAgent
+			nodeAgent.Version = version.Version{
+				Major: 1,
+				Minor: 0,
+				Patch: 2,
+			}
+			msg.Agent = nodeAgent.String()
+			msg.Sign([]*bls.ValidatorKey{valKey})
+
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
+			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
+		})
+
+	t.Run("Invalid agent.",
+		func(t *testing.T) {
+			valKey := td.RandValKey()
+			height := td.RandUint32NonZero(td.state.LastBlockHeight())
+			pid := td.RandPeerID()
+			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
+				td.state.LastBlockHash(), td.state.Genesis().Hash())
+			msg.Agent = "invalid-agent"
+			msg.Sign([]*bls.ValidatorKey{valKey})
+
+			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
+			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
+			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
+		})
+
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info",
 		func(t *testing.T) {
 			valKey := td.RandValKey()
@@ -99,7 +137,7 @@ func TestParsingHelloMessages(t *testing.T) {
 
 			pub := valKey.PublicKey()
 			assert.Equal(t, p.Status, peerset.StatusCodeKnown)
-			assert.Equal(t, p.Agent, version.Agent())
+			assert.Equal(t, p.Agent, version.NodeAgent.String())
 			assert.Equal(t, p.Moniker, "kitty")
 			assert.Contains(t, p.ConsensusKeys, pub)
 			assert.Equal(t, p.PeerID, pid)

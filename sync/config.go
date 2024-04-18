@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset/service"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/version"
 )
 
 type Config struct {
@@ -15,9 +16,10 @@ type Config struct {
 	Firewall       *firewall.Config `toml:"firewall"`
 
 	// Private configs
-	MaxSessions         int    `toml:"-"`
-	LatestBlockInterval uint32 `toml:"-"`
-	BlockPerMessage     uint32 `toml:"-"`
+	MaxSessions         int             `toml:"-"`
+	LatestBlockInterval uint32          `toml:"-"`
+	BlockPerMessage     uint32          `toml:"-"`
+	LatestSupportingVer version.Version `toml:"-"`
 }
 
 func DefaultConfig() *Config {
@@ -28,6 +30,11 @@ func DefaultConfig() *Config {
 		MaxSessions:         8,
 		LatestBlockInterval: 720,
 		Firewall:            firewall.DefaultConfig(),
+		LatestSupportingVer: version.Version{
+			Major: 1,
+			Minor: 1,
+			Patch: 0,
+		},
 	}
 }
 
