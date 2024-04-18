@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.1](https://github.com/pactus-project/pactus/compare/v1.1.0...v1.1.1) (2024-04-18)
+
+### Feat
+
+- reject direct message from non-supporting agents ([#1225](https://github.com/pactus-project/pactus/pull/1225))
+
+### Fix
+
+- prevent zero stake for bond transactions ([#1227](https://github.com/pactus-project/pactus/pull/1227))
+
 ## [1.1.0](https://github.com/pactus-project/pactus/compare/v1.0.0...v1.1.0) (2024-04-14)
 
 ### Feat
