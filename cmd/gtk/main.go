@@ -31,7 +31,7 @@ func init() {
 	workingDirOpt = flag.String("working-dir", cmd.PactusDefaultHomeDir(), "working directory path")
 	passwordOpt = flag.String("password", "", "wallet password")
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
-	version.AppType = "gui"
+	version.NodeAgent.AppType = "gui"
 	gtk.Init(nil)
 }
 

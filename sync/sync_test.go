@@ -47,6 +47,7 @@ func testConfig() *Config {
 		MaxSessions:         8,
 		LatestBlockInterval: 23,
 		Firewall:            firewall.DefaultConfig(),
+		LatestSupportingVer: DefaultConfig().LatestSupportingVer,
 	}
 }
 
@@ -192,7 +193,7 @@ func (td *testData) addPeer(t *testing.T, status peerset.StatusCode, services se
 	pub, _ := td.RandBLSKeyPair()
 
 	td.sync.peerSet.UpdateInfo(pid, t.Name(),
-		version.Agent(), []*bls.PublicKey{pub}, services)
+		version.NodeAgent.String(), []*bls.PublicKey{pub}, services)
 	td.sync.peerSet.UpdateStatus(pid, status)
 
 	return pid
