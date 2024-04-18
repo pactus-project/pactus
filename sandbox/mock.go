@@ -45,7 +45,7 @@ func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 
 	for i, val := range cmt.Validators() {
 		acc := account.NewAccount(int32(i + 1))
-		acc.AddToBalance(100 * 1e9)
+		acc.AddToBalance(10000 * 1e9)
 		sb.UpdateAccount(val.Address(), acc)
 		sb.UpdateValidator(val)
 
