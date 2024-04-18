@@ -14,9 +14,9 @@ If this is the first patch for a specific major version, you'll need to create a
 Replace `<minor>` with the appropriate minor version number:
 
 ```bash
-git checkout -b 0.<minor>.x v0.<minor>.0
+git checkout -b 1.<minor>.x v1.<minor>.0
 git log
-git push --set-upstream origin 0.<minor>.x
+git push --set-upstream origin 1.<minor>.x
 ```
 
 Don't forget to update the patch version inside the [version.go](../version/version.go) file.
@@ -24,7 +24,7 @@ Don't forget to update the patch version inside the [version.go](../version/vers
 If you're not creating a new patch branch, switch to the existing patch branch:
 
 ```bash
-git checkout 0.<minor>.x
+git checkout 1.<minor>.x
 git pull
 ```
 
@@ -51,7 +51,7 @@ CUR_VER="1.1.1"
 NEXT_VER="1.1.2"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
-BASE_BRANCH="0.21.x"
+BASE_BRANCH="1.1.x"
 ```
 
 ## 5. Follow the Releasing Document
