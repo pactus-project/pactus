@@ -14,8 +14,7 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	sandbox    *sandbox.MockSandbox
-	randHeight uint32
+	sandbox *sandbox.MockSandbox
 }
 
 func setup(t *testing.T) *testData {
@@ -28,9 +27,8 @@ func setup(t *testing.T) *testData {
 	_ = sb.TestStore.AddTestBlock(randHeight)
 
 	return &testData{
-		TestSuite:  ts,
-		sandbox:    sb,
-		randHeight: randHeight,
+		TestSuite: ts,
+		sandbox:   sb,
 	}
 }
 

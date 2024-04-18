@@ -59,7 +59,8 @@ func TestExecuteWithdrawTx(t *testing.T) {
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
 	})
 
-	td.sandbox.TestStore.AddTestBlock(td.randHeight + 1)
+	curHeight := td.sandbox.CurrentHeight()
+	td.sandbox.TestStore.AddTestBlock(curHeight + 1)
 
 	t.Run("Should pass, Everything is Ok!", func(t *testing.T) {
 		trx := tx.NewWithdrawTx(lockTime, val.Address(), addr,

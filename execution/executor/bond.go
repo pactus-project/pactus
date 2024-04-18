@@ -30,6 +30,7 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 			return errors.Errorf(errors.ErrInvalidPublicKey,
 				"public key is not set")
 		}
+		// TODO: remove me in future
 		if pld.Stake < sb.Params().MinimumStake {
 			return errors.Errorf(errors.ErrInvalidTx,
 				"validator's stake can't be less than %v", sb.Params().MinimumStake)
@@ -68,6 +69,18 @@ func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if receiverVal.Stake()+pld.Stake > sb.Params().MaximumStake {
 		return errors.Errorf(errors.ErrInvalidAmount,
 			"validator's stake can't be more than %v", sb.Params().MaximumStake)
+	}
+
+	// TODO: remove me in future
+	// We can have a level for committing blocks even if they are not fully compatible with the current rules.
+	// However, since they were committed in the past, they should be accepted by new nodes.
+	if sb.CurrentHeight() > 740_000 {
+		if pld.Stake < sb.Params().MinimumStake {
+			if pld.Stake == 0 || receiverVal.Stake()+pld.Stake != sb.Params().MaximumStake {
+				return errors.Errorf(errors.ErrInvalidTx,
+					"stake amount should not be less than %v", sb.Params().MinimumStake)
+			}
+		}
 	}
 
 	senderAcc.SubtractFromBalance(pld.Stake + trx.Fee())
