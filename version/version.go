@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 )
+
 // NodeVersion represents the current version of the node software.
 // It should be updated with each new release, adjusting the Major, Minor, or Patch version numbers as necessary.
 // When a major release occurs, the Meta field should be cleared (set to an empty string).
@@ -14,7 +15,7 @@ import (
 var NodeVersion = Version{
 	Major: 1,
 	Minor: 1,
-	Patch: 1,
+	Patch: 2,
 	Meta:  "",
 }
 
