@@ -101,8 +101,13 @@
 [tx_pool]
 
   # `max_size` indicates the maximum number of unconfirmed transactions inside the pool.
-  # Default is `2000`.
-  max_size = 2000
+  # Default is `1000`.
+  max_size = 1000
+
+  # `min_value` indicates the minimum value of a transaction in PAC to enter into the pool.
+  # This prevents spamming transactions.
+  # Default is `0.1`.
+  min_value = 0.1
 
 # `logger` contains configuration options for the logger.
 [logger]
