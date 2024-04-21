@@ -1,10 +1,10 @@
 package config
 
-// Error is returned when the config configuration is invalid.
-type Error struct {
+// NodeConfigError is returned when the config configuration is invalid.
+type NodeConfigError struct {
 	Reason string
 }
 
-func (e Error) Error() string {
+func (e NodeConfigError) Error() string {
 	return e.Reason
 }

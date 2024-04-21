@@ -66,13 +66,13 @@ func (conf *NodeConfig) BasicCheck() error {
 	for _, addrStr := range conf.RewardAddresses {
 		addr, err := crypto.AddressFromString(addrStr)
 		if err != nil {
-			return Error{
+			return NodeConfigError{
 				Reason: fmt.Sprintf("invalid reward address: %v", err.Error()),
 			}
 		}
 
 		if !addr.IsAccountAddress() {
-			return Error{
+			return NodeConfigError{
 				Reason: fmt.Sprintf("reward address is not an account address: %s", addrStr),
 			}
 		}
