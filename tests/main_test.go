@@ -70,6 +70,7 @@ func TestMain(m *testing.M) {
 		tValKeys[i][2] = bls.NewValidatorKey(key2)
 		tConfigs[i] = config.DefaultConfigMainnet()
 
+		tConfigs[i].TxPool.MinValuePAC = 0
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
 		tConfigs[i].Consensus.ChangeProposerDelta = 0
