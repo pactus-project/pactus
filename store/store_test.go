@@ -3,6 +3,7 @@ package store
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/block"
@@ -26,6 +27,7 @@ func testConfig() *Config {
 		SortitionCacheSize: 1024,
 		AccountCacheSize:   1024,
 		PublicKeyCacheSize: 1024,
+		BannedAddrs:        make(map[crypto.Address]bool),
 	}
 }
 
@@ -222,4 +224,15 @@ func TestStrippedPublicKey(t *testing.T) {
 			assert.NoError(t, err)
 		}
 	}
+}
+
+func TestIsBanned(t *testing.T) {
+	conf := testConfig()
+	td := setup(t, conf)
+
+	bannedAddr := td.RandValAddress()
+	conf.BannedAddrs[bannedAddr] = true
+
+	assert.False(t, td.store.IsBanned(td.RandAccAddress()))
+	assert.True(t, td.store.IsBanned(bannedAddr))
 }

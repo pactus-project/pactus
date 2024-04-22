@@ -154,3 +154,7 @@ func (m *MockSandbox) CommitTransaction(trx *tx.Tx) {
 func (m *MockSandbox) AccumulatedFee() amount.Amount {
 	return m.ts.RandAmount()
 }
+
+func (m *MockSandbox) IsBanned(crypto.Address) bool {
+	return false
+}

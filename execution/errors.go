@@ -3,6 +3,7 @@ package execution
 import (
 	"fmt"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -62,4 +63,13 @@ type InvalidFeeError struct {
 
 func (e InvalidFeeError) Error() string {
 	return fmt.Sprintf("fee is invalid, expected: %s, got: %s", e.Expected, e.Fee)
+}
+
+// SignerBannedError is returned when the signer of transaction is banned and its assets is freezed.
+type SignerBannedError struct {
+	addr crypto.Address
+}
+
+func (e SignerBannedError) Error() string {
+	return fmt.Sprintf("the signer is banned: %s", e.addr.String())
 }

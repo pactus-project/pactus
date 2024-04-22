@@ -307,3 +307,14 @@ func (sb *sandbox) AccumulatedFee() amount.Amount {
 
 	return sb.accumulatedFee
 }
+
+func (sb *sandbox) IsBanned(addr crypto.Address) bool {
+	sb.lk.RLock()
+	defer sb.lk.RUnlock()
+
+	if sb.height > 800_000 {
+		return sb.store.IsBanned(addr)
+	}
+
+	return false
+}

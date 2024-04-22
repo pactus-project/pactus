@@ -371,3 +371,7 @@ func (s *store) WriteBatch() error {
 
 	return nil
 }
+
+func (s *store) IsBanned(addr crypto.Address) bool {
+	return s.config.BannedAddrs[addr]
+}

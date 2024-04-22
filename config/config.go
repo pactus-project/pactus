@@ -27,7 +27,10 @@ var (
 	exampleConfigBytes []byte
 
 	//go:embed bootstrap.json
-	bootstrapInfosBytes []byte
+	bootstrapInfoBytes []byte
+
+	//go:embed banned.json
+	bannedBytes []byte
 )
 
 type Config struct {
@@ -103,20 +106,40 @@ func DefaultConfigMainnet() *Config {
 	conf := defaultConfig()
 
 	bootstrapNodes := make([]BootstrapInfo, 0)
-	if err := json.Unmarshal(bootstrapInfosBytes, &bootstrapNodes); err != nil {
+	if err := json.Unmarshal(bootstrapInfoBytes, &bootstrapNodes); err != nil {
 		panic(err)
 	}
 
+	bootstrapAddrs := []string{}
 	for _, node := range bootstrapNodes {
-		conf.Network.DefaultBootstrapAddrStrings = append(conf.Network.DefaultBootstrapAddrStrings, node.Address)
+		bootstrapAddrs = append(bootstrapAddrs, node.Address)
 	}
 
+	// The first item in the banned list is for testing.
+	// The address is: "pc1p8slveave2zm9tgj7q260fgrdfu2ph8n7ezxhtt"
+	// The associated private key: "SECRET1PP8SYQAH8JH8QLGEEX7L7T8WTU69K6T9AVSNMVCZ8DP6PPLWVYE3SVTHFR8"
+	bannedList := make([]string, 0)
+	if err := json.Unmarshal(bannedBytes, &bannedList); err != nil {
+		panic(err)
+	}
+
+	bannedAddrs := make(map[crypto.Address]bool)
+	for _, str := range bannedList {
+		addr, err := crypto.AddressFromString(str)
+		if err != nil {
+			panic(err)
+		}
+		bannedAddrs[addr] = true
+	}
+
+	conf.Store.BannedAddrs = bannedAddrs
 	conf.Network.MaxConns = 64
 	conf.Network.EnableNATService = false
 	conf.Network.EnableUPnP = false
 	conf.Network.EnableRelay = true
 	conf.Network.NetworkName = "pactus"
 	conf.Network.DefaultPort = 21888
+	conf.Network.DefaultBootstrapAddrStrings = bootstrapAddrs
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "127.0.0.1:50051"
 	conf.GRPC.BasicAuth = ""
