@@ -287,3 +287,7 @@ func (m *MockStore) RandomTestVal() *validator.Validator {
 	}
 	panic("no validator in sandbox")
 }
+
+func (m *MockStore) IsBanned(_ crypto.Address) bool {
+	return false
+}

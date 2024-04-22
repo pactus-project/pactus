@@ -19,6 +19,7 @@ type Sandbox interface {
 
 	CommitTransaction(trx *tx.Tx)
 	AnyRecentTransaction(txID tx.ID) bool
+	IsBanned(crypto.Address) bool
 
 	Validator(crypto.Address) *validator.Validator
 	MakeNewValidator(*bls.PublicKey) *validator.Validator

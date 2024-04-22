@@ -3,6 +3,7 @@ package store
 import (
 	"path/filepath"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -10,10 +11,11 @@ type Config struct {
 	Path string `toml:"path"`
 
 	// Private configs
-	TxCacheSize        uint32 `toml:"-"`
-	SortitionCacheSize uint32 `toml:"-"`
-	AccountCacheSize   int    `toml:"-"`
-	PublicKeyCacheSize int    `toml:"-"`
+	TxCacheSize        uint32                  `toml:"-"`
+	SortitionCacheSize uint32                  `toml:"-"`
+	AccountCacheSize   int                     `toml:"-"`
+	PublicKeyCacheSize int                     `toml:"-"`
+	BannedAddrs        map[crypto.Address]bool `toml:"-"`
 }
 
 func DefaultConfig() *Config {
@@ -23,6 +25,7 @@ func DefaultConfig() *Config {
 		SortitionCacheSize: 1024,
 		AccountCacheSize:   1024,
 		PublicKeyCacheSize: 1024,
+		BannedAddrs:        map[crypto.Address]bool{},
 	}
 }
 
