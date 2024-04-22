@@ -43,6 +43,12 @@ func NewChecker() *Execution {
 }
 
 func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
+	if sb.IsBanned(trx.Payload().Signer()) {
+		return SignerBannedError{
+			addr: trx.Payload().Signer(),
+		}
+	}
+
 	if exists := sb.AnyRecentTransaction(trx.ID()); exists {
 		return TransactionCommittedError{
 			ID: trx.ID(),
