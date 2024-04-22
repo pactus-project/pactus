@@ -37,6 +37,9 @@ plugins:
   - name: jrpc-doc
     out: ../gen/docs
     opt: ./json-rpc-md.tmpl,json-rpc.md
+  - name: jrpc-doc
+    out: ../gen/docs
+    opt: ./json-rpc-html.tmpl,json-rpc.html
   - plugin: buf.build/protocolbuffers/js:v3.21.2
     out: ../gen/js
     opt:
