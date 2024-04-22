@@ -64,15 +64,15 @@ func (s *walletServer) CreateWallet(_ context.Context,
 	}
 
 	walletPath := s.walletPath(req.WalletName)
-	w, err := wallet.Create(walletPath, req.Mnemonic, req.Language, s.chainType)
+	wlt, err := wallet.Create(walletPath, req.Mnemonic, req.Language, s.chainType)
 	if err != nil {
 		return nil, err
 	}
-	err = w.UpdatePassword("", req.Password)
+	err = wlt.UpdatePassword("", req.Password)
 	if err != nil {
 		return nil, err
 	}
-	err = w.Save()
+	err = wlt.Save()
 	if err != nil {
 		return nil, err
 	}
@@ -205,6 +205,11 @@ func (s *walletServer) GetNewAddress(_ context.Context,
 
 	default:
 		return nil, status.Errorf(codes.InvalidArgument, "invalid address type")
+	}
+
+	err := wlt.Save()
+	if err != nil {
+		return nil, err
 	}
 
 	return &pactus.GetNewAddressResponse{
