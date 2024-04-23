@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.2](https://github.com/pactus-project/pactus/compare/v1.1.1...v1.1.2) (2024-04-23)
+
+### Feat
+
+- ban attacker validators ([#1235](https://github.com/pactus-project/pactus/pull/1235))
+- **txpool**: prevent spamming transactions by defining a minimum value ([#1233](https://github.com/pactus-project/pactus/pull/1233))
+
+### Fix
+
+- **wallet**: saving wallet file after generating new address in gRPC ([#1236](https://github.com/pactus-project/pactus/pull/1236))
+
 ## [1.1.1](https://github.com/pactus-project/pactus/compare/v1.1.0...v1.1.1) (2024-04-18)
 
 ### Feat
