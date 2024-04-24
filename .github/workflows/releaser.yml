@@ -95,7 +95,7 @@ jobs:
 
   ########################################
   build-gui-macos:
-    runs-on: macos-latest
+    runs-on: macos-12
     env:
       PREFIX: /usr/local
 
@@ -135,16 +135,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ########################################
-  ## Follow these steps to release macOS ARM:
-  ##
-  ## 1- Login to server using VNC (Read the related issue: https://stackoverflow.com/a/9706088)
-  ## 2- Login to the server using SSH
-  ## 3- Install Homebrew: https://brew.sh/ and add `brew` to PATH
-  ## 4- Add self-runner: https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners
-  ## 5- Run the action
-  ##
   build-gui-macos-arm:
-    runs-on: self-hosted
+    runs-on: macos-14
     env:
       # In M1 `/usr/local` moved to `/opt/homebrew`.
       #  More info: https://earthly.dev/blog/homebrew-on-m1/
