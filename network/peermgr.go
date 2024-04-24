@@ -153,6 +153,14 @@ func (mgr *peerMgr) CheckConnectivity() {
 
 	net := mgr.host.Network()
 
+	// Close connections with peers that have no supported protocol.
+	for pid := range mgr.peers {
+		prtcls, _ := mgr.host.Peerstore().GetProtocols(pid)
+		if len(prtcls) == 0 {
+			_ = net.ClosePeer(pid)
+		}
+	}
+
 	// Check if some peers are disconnected
 	var connectedPeers []lp2ppeer.ID
 	for pid := range mgr.peers {
