@@ -9,38 +9,42 @@ import (
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
 )
 
 type Server struct {
-	ctx      context.Context
-	cancel   context.CancelFunc
-	config   *Config
-	listener net.Listener
-	address  string
-	grpc     *grpc.Server
-	state    state.Facade
-	net      network.Network
-	sync     sync.Synchronizer
-	consMgr  consensus.ManagerReader
-	logger   *logger.SubLogger
+	ctx       context.Context
+	cancel    context.CancelFunc
+	config    *Config
+	listener  net.Listener
+	address   string
+	grpc      *grpc.Server
+	state     state.Facade
+	net       network.Network
+	sync      sync.Synchronizer
+	consMgr   consensus.ManagerReader
+	walletMgr *wallet.Manager
+	logger    *logger.SubLogger
 }
 
 func NewServer(conf *Config, st state.Facade, syn sync.Synchronizer,
 	n network.Network, consMgr consensus.ManagerReader,
+	walletMgr *wallet.Manager,
 ) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &Server{
-		ctx:     ctx,
-		cancel:  cancel,
-		config:  conf,
-		state:   st,
-		sync:    syn,
-		net:     n,
-		consMgr: consMgr,
-		logger:  logger.NewSubLogger("_grpc", nil),
+		ctx:       ctx,
+		cancel:    cancel,
+		config:    conf,
+		state:     st,
+		sync:      syn,
+		net:       n,
+		consMgr:   consMgr,
+		walletMgr: walletMgr,
+		logger:    logger.NewSubLogger("_grpc", nil),
 	}
 }
 
@@ -79,8 +83,7 @@ func (s *Server) startListening(listener net.Listener) error {
 	pactus.RegisterNetworkServer(grpcServer, networkServer)
 
 	if s.config.EnableWallet {
-		chainType := s.state.Genesis().ChainType()
-		walletServer := newWalletServer(s, chainType)
+		walletServer := newWalletServer(s, s.walletMgr)
 
 		pactus.RegisterWalletServer(grpcServer, walletServer)
 	}
