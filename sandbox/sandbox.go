@@ -312,7 +312,7 @@ func (sb *sandbox) IsBanned(addr crypto.Address) bool {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	if sb.height > 800_000 {
+	if sb.height > 820_000 {
 		return sb.store.IsBanned(addr)
 	}
 
