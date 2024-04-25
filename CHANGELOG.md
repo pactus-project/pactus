@@ -2,12 +2,6 @@
 
 ## [1.1.3](https://github.com/pactus-project/pactus/compare/v1.1.2...v1.1.3) (2024-04-25)
 
-### Fix
-
-- **network**: disconnect from peers that has no protocol ([#1243](https://github.com/pactus-project/pactus/pull/1243))
-
-## [1.1.2](https://github.com/pactus-project/pactus/compare/v1.1.1...v1.1.2) (2024-04-23)
-
 ### Feat
 
 - ban attacker validators ([#1235](https://github.com/pactus-project/pactus/pull/1235))
@@ -16,6 +10,8 @@
 ### Fix
 
 - **wallet**: saving wallet file after generating new address in gRPC ([#1236](https://github.com/pactus-project/pactus/pull/1236))
+- **network**: disconnect from peers that has no protocol ([#1243](https://github.com/pactus-project/pactus/pull/1243))
+
 
 ## [1.1.1](https://github.com/pactus-project/pactus/compare/v1.1.0...v1.1.1) (2024-04-18)
 
