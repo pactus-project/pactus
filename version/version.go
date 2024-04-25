@@ -15,8 +15,8 @@ import (
 var NodeVersion = Version{
 	Major: 1,
 	Minor: 1,
-	Patch: 3,
-	Meta:  "",
+	Patch: 4,
+	Meta:  "beta",
 }
 
 // These struct follow the semantic versioning 2.0.0 spec (http://semver.org/)
