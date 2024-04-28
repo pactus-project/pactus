@@ -46,9 +46,9 @@ type Just interface {
 func makeJust(t JustType) Just {
 	switch t {
 	case JustTypeInitZero:
-		return &JustInitZero{}
+		return &JustInitNo{}
 	case JustTypeInitOne:
-		return &JustInitOne{}
+		return &JustInitYes{}
 	case JustTypePreVoteSoft:
 		return &JustPreVoteSoft{}
 	case JustTypePreVoteHard:
@@ -64,37 +64,37 @@ func makeJust(t JustType) Just {
 	}
 }
 
-type JustInitZero struct {
-	QCert *certificate.Certificate `cbor:"1,keyasint"`
+type JustInitNo struct {
+	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
 }
-type JustInitOne struct {
+type JustInitYes struct {
 	//
 }
 
 type JustPreVoteSoft struct {
-	QCert *certificate.Certificate `cbor:"1,keyasint"`
+	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
 }
 
 type JustPreVoteHard struct {
-	QCert *certificate.Certificate `cbor:"1,keyasint"`
+	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
 }
 type JustMainVoteConflict struct {
 	Just0 Just
 	Just1 Just
 }
 type JustMainVoteNoConflict struct {
-	QCert *certificate.Certificate `cbor:"1,keyasint"`
+	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
 }
 
 type JustDecided struct {
-	QCert *certificate.Certificate `cbor:"1,keyasint"`
+	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
 }
 
-func (*JustInitZero) Type() JustType {
+func (j *JustInitNo) Type() JustType {
 	return JustTypeInitZero
 }
 
-func (*JustInitOne) Type() JustType {
+func (j *JustInitYes) Type() JustType {
 	return JustTypeInitOne
 }
 
@@ -118,11 +118,11 @@ func (*JustDecided) Type() JustType {
 	return JustTypeDecided
 }
 
-func (j *JustInitZero) BasicCheck() error {
-	return j.QCert.BasicCheck()
+func (j *JustInitNo) BasicCheck() error {
+	return nil
 }
 
-func (*JustInitOne) BasicCheck() error {
+func (j *JustInitYes) BasicCheck() error {
 	return nil
 }
 

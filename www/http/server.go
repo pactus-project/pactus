@@ -107,6 +107,7 @@ func (s *Server) StartServer(grpcServer string) error {
 					s.logger.Error("error on a connection", "error", err)
 				}
 			}
+			s.logger.Info("http server started", "addr", listener.Addr())
 		}
 	}()
 

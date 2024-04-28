@@ -7,7 +7,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 )
@@ -96,7 +95,10 @@ func newVote(voteType Type, blockHash hash.Hash, height uint32, round int16,
 
 // SignBytes generates the bytes to be signed for the vote.
 func (v *Vote) SignBytes() []byte {
-	sb := certificate.BlockCertificateSignBytes(v.data.BlockHash, v.data.Height, v.data.Round)
+	sb := v.data.BlockHash.Bytes()
+	sb = append(sb, util.Uint32ToSlice(v.data.Height)...)
+	sb = append(sb, util.Int16ToSlice(v.data.Round)...)
+
 	switch t := v.Type(); t {
 	case VoteTypePrecommit:
 		// Nothing

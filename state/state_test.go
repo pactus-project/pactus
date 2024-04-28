@@ -39,9 +39,10 @@ func setup(t *testing.T) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 
-	genValKeys := make([]*bls.ValidatorKey, 0, 4)
-	genVals := make([]*validator.Validator, 0, 4)
-	for i := 0; i < 4; i++ {
+	genValNum := 6
+	genValKeys := make([]*bls.ValidatorKey, 0, genValNum)
+	genVals := make([]*validator.Validator, 0, genValNum)
+	for i := 0; i < genValNum; i++ {
 		valKey := ts.RandValKey()
 		val := validator.NewValidator(valKey.PublicKey(), int32(i))
 
@@ -91,7 +92,7 @@ func setup(t *testing.T) *testData {
 }
 
 func (td *testData) makeBlockAndCertificate(t *testing.T, round int16) (
-	*block.Block, *certificate.Certificate,
+	*block.Block, *certificate.BlockCertificate,
 ) {
 	t.Helper()
 
@@ -106,21 +107,26 @@ func (td *testData) makeBlockAndCertificate(t *testing.T, round int16) (
 	return blk, cert
 }
 
-func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash, round int16) *certificate.Certificate {
+func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash,
+	round int16,
+) *certificate.BlockCertificate {
 	t.Helper()
 
 	sigs := make([]*bls.Signature, 0, len(td.genValKeys))
 	height := td.state.LastBlockHeight()
-	signBytes := certificate.BlockCertificateSignBytes(blockHash, height+1, round)
-	committers := []int32{0, 1, 2, 3}
-	absentees := []int32{3}
+	cert := certificate.NewBlockCertificate(height+1, round, true)
+	signBytes := cert.SignBytes(blockHash)
+	committers := []int32{0, 1, 2, 3, 4, 5}
+	absentees := []int32{5}
 
 	for _, key := range td.genValKeys[:len(td.genValKeys)-1] {
 		sig := key.Sign(signBytes)
 		sigs = append(sigs, sig)
 	}
 
-	return certificate.NewCertificate(height+1, round, committers, absentees, bls.SignatureAggregate(sigs...))
+	cert.SetSignature(committers, absentees, bls.SignatureAggregate(sigs...))
+
+	return cert
 }
 
 func (td *testData) commitBlocks(t *testing.T, count int) {
@@ -166,7 +172,7 @@ func TestTryCommitInvalidCertificate(t *testing.T) {
 	td := setup(t)
 
 	blk, _ := td.makeBlockAndCertificate(t, td.RandRound())
-	invCert := td.GenerateTestCertificate(td.state.LastBlockHeight() + 1)
+	invCert := td.GenerateTestBlockCertificate(td.state.LastBlockHeight() + 1)
 
 	assert.Error(t, td.state.CommitBlock(blk, invCert))
 }
@@ -396,7 +402,7 @@ func TestSortition(t *testing.T) {
 	myValKey := td.state.valKeys[0]
 	assert.False(t, td.state.evaluateSortition()) //  not a validator
 	assert.False(t, td.state.IsValidator(myValKey.Address()))
-	assert.Equal(t, td.state.CommitteePower(), int64(4))
+	assert.Equal(t, td.state.CommitteePower(), int64(6))
 
 	trx := tx.NewBondTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),
 		myValKey.Address(), myValKey.PublicKey(), 1000000000, 100000, "")
@@ -407,7 +413,7 @@ func TestSortition(t *testing.T) {
 
 	assert.False(t, td.state.evaluateSortition()) // bonding period
 	assert.True(t, td.state.IsValidator(myValKey.Address()))
-	assert.Equal(t, td.state.CommitteePower(), int64(4))
+	assert.Equal(t, td.state.CommitteePower(), int64(6))
 	assert.False(t, td.state.committee.Contains(myValKey.Address())) // Not in the committee
 
 	// Committing another 10 blocks
@@ -419,7 +425,7 @@ func TestSortition(t *testing.T) {
 	td.commitBlocks(t, 1)
 
 	assert.True(t, td.state.IsValidator(myValKey.Address()))
-	assert.Equal(t, td.state.CommitteePower(), int64(1000000004))
+	assert.Equal(t, td.state.CommitteePower(), int64(1000000006))
 	assert.True(t, td.state.committee.Contains(myValKey.Address())) // In the committee
 }
 
@@ -557,7 +563,7 @@ func TestLoadState(t *testing.T) {
 	assert.ElementsMatch(t, td.state.ValidatorAddresses(), newState.ValidatorAddresses())
 
 	assert.Equal(t, int32(13), td.state.TotalAccounts()) // 11 subsidy addrs + 2 genesis addrs
-	assert.Equal(t, int32(5), td.state.TotalValidators())
+	assert.Equal(t, int32(7), td.state.TotalValidators())
 
 	// Try committing the next block
 	require.NoError(t, newState.CommitBlock(blk6, cert6))
@@ -571,7 +577,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	require.NoError(t, err)
 
 	pub, _ := td.RandBLSKeyPair()
-	val := validator.NewValidator(pub, 4)
+	val := validator.NewValidator(pub, 6)
 	newVals := append(td.state.genDoc.Validators(), val)
 
 	genDoc := genesis.MakeGenesis(
@@ -590,8 +596,8 @@ func TestIsValidator(t *testing.T) {
 	td := setup(t)
 
 	assert.True(t, td.state.IsInCommittee(td.genValKeys[0].Address()))
-	assert.True(t, td.state.IsProposer(td.genValKeys[2].Address(), 0))
-	assert.True(t, td.state.IsProposer(td.genValKeys[3].Address(), 1))
+	assert.True(t, td.state.IsProposer(td.genValKeys[4].Address(), 0))
+	assert.True(t, td.state.IsProposer(td.genValKeys[5].Address(), 1))
 	assert.True(t, td.state.IsInCommittee(td.genValKeys[1].Address()))
 	assert.True(t, td.state.IsValidator(td.genValKeys[1].Address()))
 

@@ -4,10 +4,8 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util"
 )
 
 type changeProposer struct {
@@ -39,7 +37,7 @@ func (*changeProposer) checkCPValue(vte *vote.Vote, allowedValues ...vote.CPValu
 }
 
 func (cp *changeProposer) checkJustInitZero(just vote.Just, blockHash hash.Hash) error {
-	j, ok := just.(*vote.JustInitZero)
+	j, ok := just.(*vote.JustInitNo)
 	if !ok {
 		return invalidJustificationError{
 			JustType: just.Type(),
@@ -47,12 +45,7 @@ func (cp *changeProposer) checkJustInitZero(just vote.Just, blockHash hash.Hash)
 		}
 	}
 
-	sb := certificate.BlockCertificateSignBytes(blockHash,
-		j.QCert.Height(),
-		j.QCert.Round())
-	sb = append(sb, util.StringToBytes(vote.VoteTypePrepare.String())...)
-
-	err := j.QCert.Validate(cp.height, cp.validators, sb)
+	err := j.QCert.ValidatePrepare(cp.validators, blockHash)
 	if err != nil {
 		return invalidJustificationError{
 			JustType: j.Type(),
@@ -63,8 +56,8 @@ func (cp *changeProposer) checkJustInitZero(just vote.Just, blockHash hash.Hash)
 	return nil
 }
 
-func (*changeProposer) checkJustInitOne(just vote.Just) error {
-	_, ok := just.(*vote.JustInitOne)
+func (cp *changeProposer) checkJustInitOne(just vote.Just) error {
+	_, ok := just.(*vote.JustInitYes)
 	if !ok {
 		return invalidJustificationError{
 			JustType: just.Type(),
@@ -86,14 +79,8 @@ func (cp *changeProposer) checkJustPreVoteHard(just vote.Just,
 		}
 	}
 
-	sb := certificate.BlockCertificateSignBytes(blockHash,
-		j.QCert.Height(),
-		j.QCert.Round())
-	sb = append(sb, util.StringToBytes(vote.VoteTypeCPPreVote.String())...)
-	sb = append(sb, util.Int16ToSlice(cpRound-1)...)
-	sb = append(sb, byte(cpValue))
-
-	err := j.QCert.Validate(cp.height, cp.validators, sb)
+	err := j.QCert.ValidateCPPreVote(cp.validators,
+		blockHash, cpRound-1, byte(cpValue))
 	if err != nil {
 		return invalidJustificationError{
 			JustType: just.Type(),
@@ -115,14 +102,8 @@ func (cp *changeProposer) checkJustPreVoteSoft(just vote.Just,
 		}
 	}
 
-	sb := certificate.BlockCertificateSignBytes(blockHash,
-		j.QCert.Height(),
-		j.QCert.Round())
-	sb = append(sb, util.StringToBytes(vote.VoteTypeCPMainVote.String())...)
-	sb = append(sb, util.Int16ToSlice(cpRound-1)...)
-	sb = append(sb, byte(vote.CPValueAbstain))
-
-	err := j.QCert.Validate(cp.height, cp.validators, sb)
+	err := j.QCert.ValidateCPMainVote(cp.validators,
+		blockHash, cpRound-1, byte(vote.CPValueAbstain))
 	if err != nil {
 		return invalidJustificationError{
 			JustType: just.Type(),
@@ -144,14 +125,8 @@ func (cp *changeProposer) checkJustMainVoteNoConflict(just vote.Just,
 		}
 	}
 
-	sb := certificate.BlockCertificateSignBytes(blockHash,
-		j.QCert.Height(),
-		j.QCert.Round())
-	sb = append(sb, util.StringToBytes(vote.VoteTypeCPPreVote.String())...)
-	sb = append(sb, util.Int16ToSlice(cpRound)...)
-	sb = append(sb, byte(cpValue))
-
-	err := j.QCert.Validate(cp.height, cp.validators, sb)
+	err := j.QCert.ValidateCPPreVote(cp.validators,
+		blockHash, cpRound, byte(cpValue))
 	if err != nil {
 		return invalidJustificationError{
 			JustType: j.Type(),
@@ -196,7 +171,7 @@ func (cp *changeProposer) checkJustMainVoteConflict(just vote.Just,
 			return err
 		}
 	case vote.JustTypePreVoteHard:
-		err := cp.checkJustPreVoteHard(j.Just0, blockHash, cpRound, vote.CPValueZero)
+		err := cp.checkJustPreVoteHard(j.Just0, blockHash, cpRound, vote.CPValueNo)
 		if err != nil {
 			return err
 		}
@@ -207,7 +182,7 @@ func (cp *changeProposer) checkJustMainVoteConflict(just vote.Just,
 		}
 	}
 
-	err := cp.checkJustPreVoteHard(j.Just1, hash.UndefHash, cpRound, vote.CPValueOne)
+	err := cp.checkJustPreVoteHard(j.Just1, hash.UndefHash, cpRound, vote.CPValueYes)
 	if err != nil {
 		return err
 	}
@@ -221,7 +196,7 @@ func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 	if v.CPRound() == 0 {
 		switch just.Type() {
 		case vote.JustTypeInitZero:
-			err := cp.checkCPValue(v, vote.CPValueZero)
+			err := cp.checkCPValue(v, vote.CPValueNo)
 			if err != nil {
 				return err
 			}
@@ -229,7 +204,7 @@ func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 			return cp.checkJustInitZero(just, v.BlockHash())
 
 		case vote.JustTypeInitOne:
-			err := cp.checkCPValue(v, vote.CPValueOne)
+			err := cp.checkCPValue(v, vote.CPValueYes)
 			if err != nil {
 				return err
 			}
@@ -244,7 +219,7 @@ func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 	} else {
 		switch just.Type() {
 		case vote.JustTypePreVoteSoft:
-			err := cp.checkCPValue(v, vote.CPValueZero, vote.CPValueOne)
+			err := cp.checkCPValue(v, vote.CPValueNo, vote.CPValueYes)
 			if err != nil {
 				return err
 			}
@@ -252,7 +227,7 @@ func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 			return cp.checkJustPreVoteSoft(just, v.BlockHash(), v.CPRound())
 
 		case vote.JustTypePreVoteHard:
-			err := cp.checkCPValue(v, vote.CPValueZero, vote.CPValueOne)
+			err := cp.checkCPValue(v, vote.CPValueNo, vote.CPValueYes)
 			if err != nil {
 				return err
 			}
@@ -273,7 +248,7 @@ func (cp *changeProposer) checkJustMainVote(v *vote.Vote) error {
 	just := v.CPJust()
 	switch just.Type() {
 	case vote.JustTypeMainVoteNoConflict:
-		err := cp.checkCPValue(v, vote.CPValueZero, vote.CPValueOne)
+		err := cp.checkCPValue(v, vote.CPValueNo, vote.CPValueYes)
 		if err != nil {
 			return err
 		}
@@ -297,7 +272,7 @@ func (cp *changeProposer) checkJustMainVote(v *vote.Vote) error {
 }
 
 func (cp *changeProposer) checkJustDecide(v *vote.Vote) error {
-	err := cp.checkCPValue(v, vote.CPValueZero, vote.CPValueOne)
+	err := cp.checkCPValue(v, vote.CPValueNo, vote.CPValueYes)
 	if err != nil {
 		return err
 	}
@@ -309,14 +284,8 @@ func (cp *changeProposer) checkJustDecide(v *vote.Vote) error {
 		}
 	}
 
-	sb := certificate.BlockCertificateSignBytes(v.BlockHash(),
-		j.QCert.Height(),
-		j.QCert.Round())
-	sb = append(sb, util.StringToBytes(vote.VoteTypeCPMainVote.String())...)
-	sb = append(sb, util.Int16ToSlice(v.CPRound())...)
-	sb = append(sb, byte(v.CPValue()))
-
-	err = j.QCert.Validate(cp.height, cp.validators, sb)
+	err = j.QCert.ValidateCPMainVote(cp.validators,
+		v.BlockHash(), int16(v.CPValue()), byte(v.CPRound()))
 	if err != nil {
 		return invalidJustificationError{
 			JustType: j.Type(),
@@ -343,19 +312,19 @@ func (cp *changeProposer) checkJust(v *vote.Vote) error {
 
 func (cp *changeProposer) strongTermination() {
 	cpDecided := cp.log.CPDecidedVoteVoteSet(cp.round)
-	if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueZero) {
-		cp.cpDecide(vote.CPValueZero)
-	} else if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueOne) {
-		cp.cpDecide(vote.CPValueOne)
+	if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueNo) {
+		cp.cpDecide(vote.CPValueNo)
+	} else if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueYes) {
+		cp.cpDecide(vote.CPValueYes)
 	}
 }
 
 func (cp *changeProposer) cpDecide(cpValue vote.CPValue) {
-	if cpValue == vote.CPValueOne {
+	if cpValue == vote.CPValueYes {
 		cp.round++
 		cp.cpDecided = 1
 		cp.enterNewState(cp.proposeState)
-	} else if cpValue == vote.CPValueZero {
+	} else if cpValue == vote.CPValueNo {
 		roundProposal := cp.log.RoundProposal(cp.round)
 		if roundProposal == nil {
 			cp.queryProposal()

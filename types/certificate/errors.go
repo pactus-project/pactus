@@ -14,18 +14,6 @@ func (e BasicCheckError) Error() string {
 	return e.Reason
 }
 
-// UnexpectedHeightError is returned when the height of the certificate
-// is invalid.
-type UnexpectedHeightError struct {
-	Expected uint32
-	Got      uint32
-}
-
-func (e UnexpectedHeightError) Error() string {
-	return fmt.Sprintf("certificate height is invalid (expected %v got %v)",
-		e.Expected, e.Got)
-}
-
 // UnexpectedCommittersError is returned when the list of committers
 // does not match the expectations.
 type UnexpectedCommittersError struct {

@@ -85,8 +85,8 @@ func TestGoToChangeProposerFromPrecommit(t *testing.T) {
 	td.addPrepareVote(td.consP, blockHash, h, r, tIndexY)
 	td.addPrepareVote(td.consP, blockHash, h, r, tIndexB)
 
-	td.addCPPreVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueOne, &vote.JustInitOne{}, tIndexX)
-	td.addCPPreVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueOne, &vote.JustInitOne{}, tIndexY)
+	td.addCPPreVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueYes, &vote.JustInitYes{}, tIndexX)
+	td.addCPPreVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueYes, &vote.JustInitYes{}, tIndexY)
 
 	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, blockHash)
 }

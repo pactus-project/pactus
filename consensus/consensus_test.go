@@ -337,23 +337,23 @@ func (*testData) enterNextRound(cons *consensus) {
 	cons.lk.Unlock()
 }
 
-func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certificate.Certificate) {
+func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certificate.BlockCertificate) {
 	t.Helper()
 
 	height := td.consX.bcState.LastBlockHeight()
 	var err error
-	p := td.makeProposal(t, height+1, 0)
+	prop := td.makeProposal(t, height+1, 0)
 
-	sb := certificate.BlockCertificateSignBytes(p.Block().Hash(), height+1, 0)
+	cert := certificate.NewBlockCertificate(height+1, 0, false)
+	sb := cert.SignBytes(prop.Block().Hash())
 	sig1 := td.consX.valKey.Sign(sb)
 	sig2 := td.consY.valKey.Sign(sb)
 	sig3 := td.consB.valKey.Sign(sb)
 	sig4 := td.consP.valKey.Sign(sb)
 
 	sig := bls.SignatureAggregate(sig1, sig2, sig3, sig4)
-	cert := certificate.NewCertificate(height+1, 0,
-		[]int32{tIndexX, tIndexY, tIndexB, tIndexP}, []int32{}, sig)
-	blk := p.Block()
+	cert.SetSignature([]int32{tIndexX, tIndexY, tIndexB, tIndexP}, []int32{}, sig)
+	blk := prop.Block()
 
 	err = td.consX.bcState.CommitBlock(blk, cert)
 	assert.NoError(t, err)
@@ -552,40 +552,45 @@ func TestPickRandomVote(t *testing.T) {
 	cpRound := int16(1)
 
 	// === make valid certificate
-	sbPreVote := certificate.BlockCertificateSignBytes(hash.UndefHash, 1, 0)
-	sbPreVote = append(sbPreVote, util.StringToBytes(vote.VoteTypeCPPreVote.String())...)
-	sbPreVote = append(sbPreVote, util.Int16ToSlice(cpRound)...)
-	sbPreVote = append(sbPreVote, byte(vote.CPValueOne))
-
-	sbMainVote := certificate.BlockCertificateSignBytes(hash.UndefHash, 1, 0)
-	sbMainVote = append(sbMainVote, util.StringToBytes(vote.VoteTypeCPMainVote.String())...)
-	sbMainVote = append(sbMainVote, util.Int16ToSlice(cpRound)...)
-	sbMainVote = append(sbMainVote, byte(vote.CPValueOne))
-
-	committers := []int32{}
+	preVoteCommitters := []int32{}
 	preVoteSigs := []*bls.Signature{}
+	for i, val := range td.consP.validators {
+		preVoteJust := &vote.JustInitYes{}
+		preVote := vote.NewCPPreVote(hash.UndefHash, 1, 0, cpRound, vote.CPValueYes, preVoteJust, val.Address())
+		sbPreVote := preVote.SignBytes()
+
+		preVoteCommitters = append(preVoteCommitters, val.Number())
+		preVoteSigs = append(preVoteSigs, td.valKeys[i].Sign(sbPreVote))
+	}
+	preVoteAggSig := bls.SignatureAggregate(preVoteSigs...)
+	certPreVote := certificate.NewVoteCertificate(1, 0)
+	certPreVote.SetSignature(preVoteCommitters, []int32{}, preVoteAggSig)
+
+	mainVoteCommitters := []int32{}
 	mainVoteSigs := []*bls.Signature{}
 	for i, val := range td.consP.validators {
-		committers = append(committers, val.Number())
-		preVoteSigs = append(preVoteSigs, td.valKeys[i].Sign(sbPreVote))
+		mainVoteJust := &vote.JustMainVoteNoConflict{
+			QCert: certPreVote,
+		}
+		mainVote := vote.NewCPMainVote(hash.UndefHash, 1, 0, cpRound, vote.CPValueYes, mainVoteJust, val.Address())
+		sbMainVote := mainVote.SignBytes()
+
+		mainVoteCommitters = append(mainVoteCommitters, val.Number())
 		mainVoteSigs = append(mainVoteSigs, td.valKeys[i].Sign(sbMainVote))
 	}
-
-	preVoteAggSig := bls.SignatureAggregate(preVoteSigs...)
 	mainVoteAggSig := bls.SignatureAggregate(mainVoteSigs...)
-
-	certPreVote := certificate.NewCertificate(1, 0, committers, []int32{}, preVoteAggSig)
-	certMainVote := certificate.NewCertificate(1, 0, committers, []int32{}, mainVoteAggSig)
+	certMainVote := certificate.NewVoteCertificate(1, 0)
+	certMainVote.SetSignature(mainVoteCommitters, []int32{}, mainVoteAggSig)
 	// ====
 
 	// round 0
 	td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexX)
 	td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexY)
-	td.addCPPreVote(td.consP, hash.UndefHash, 1, 0, cpRound+1, vote.CPValueOne,
+	td.addCPPreVote(td.consP, hash.UndefHash, 1, 0, cpRound+1, vote.CPValueYes,
 		&vote.JustPreVoteHard{QCert: certPreVote}, tIndexY)
-	td.addCPMainVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueOne,
+	td.addCPMainVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,
 		&vote.JustMainVoteNoConflict{QCert: certPreVote}, tIndexY)
-	td.addCPDecidedVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueOne,
+	td.addCPDecidedVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,
 		&vote.JustDecided{QCert: certMainVote}, tIndexY)
 
 	assert.NotNil(t, td.consP.PickRandomVote(0))
@@ -729,10 +734,10 @@ func TestCases(t *testing.T) {
 		round       int16
 		description string
 	}{
-		{1697898884837384019, 2, "1/3+ cp:PRE-VOTE in prepare step"},
+		{1697898884837384019, 1, "1/3+ cp:PRE-VOTE in prepare step"},
 		{1694848907840926239, 0, "1/3+ cp:PRE-VOTE in precommit step"},
 		{1694849103290580532, 1, "Conflicting votes, cp-round=0"},
-		{1697900665869342730, 1, "Conflicting votes, cp-round=1"},
+		{1697900665869342730, 2, "Conflicting votes, cp-round=1"},
 		{1697887970998950590, 1, "consP & consB: Change Proposer, consX & consY: Commit (2 block announces)"},
 	}
 
@@ -881,7 +886,7 @@ func TestByzantine(t *testing.T) {
 }
 
 func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
-	*certificate.Certificate, error,
+	*certificate.BlockCertificate, error,
 ) {
 	instances := []*consensus{td.consX, td.consY, td.consB, td.consP}
 

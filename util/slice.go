@@ -205,11 +205,13 @@ func Extend[T any](s *[]T, n int) {
 // IsSubset checks if subSet is a subset of parentSet.
 // It returns true if all elements of subSet are in parentSet.
 func IsSubset[T comparable](parentSet, subSet []T) bool {
+	lastIndex := 0
 	for i := 0; i < len(subSet); i++ {
 		matchFound := false
-		for j := 0; j < len(parentSet); j++ {
+		for j := lastIndex; j < len(parentSet); j++ {
 			if subSet[i] == parentSet[j] {
 				matchFound = true
+				lastIndex = j
 
 				break
 			}

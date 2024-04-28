@@ -94,6 +94,7 @@ func (s *Server) startListening(listener net.Listener) error {
 
 	s.logger.Info("grpc started listening", "address", listener.Addr().String())
 	go func() {
+		s.logger.Info("grpc server started", "addr", listener.Addr())
 		if err := s.grpc.Serve(listener); err != nil {
 			s.logger.Error("error on grpc serve", "error", err)
 		}

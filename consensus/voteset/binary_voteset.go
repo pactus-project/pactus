@@ -16,8 +16,8 @@ type roundVotes struct {
 
 func newRoundVotes() *roundVotes {
 	voteBoxes := [3]*voteBox{}
-	voteBoxes[vote.CPValueZero] = newVoteBox()
-	voteBoxes[vote.CPValueOne] = newVoteBox()
+	voteBoxes[vote.CPValueNo] = newVoteBox()
+	voteBoxes[vote.CPValueYes] = newVoteBox()
 	voteBoxes[vote.CPValueAbstain] = newVoteBox()
 
 	return &roundVotes{

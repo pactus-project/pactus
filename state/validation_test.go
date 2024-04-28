@@ -74,9 +74,12 @@ func TestBlockValidation(t *testing.T) {
 
 	t.Run("Invalid PrevCertificate", func(t *testing.T) {
 		blk0, _ := td.makeBlockAndCertificate(t, round)
-		invPrevCertificate := certificate.NewCertificate(
+		invPrevCert := certificate.NewBlockCertificate(
 			blk0.PrevCertificate().Height(),
 			blk0.PrevCertificate().Round(),
+			blk0.PrevCertificate().FastPath(),
+		)
+		invPrevCert.SetSignature(
 			blk0.PrevCertificate().Committers(),
 			blk0.PrevCertificate().Absentees(),
 			td.RandBLSSignature())
@@ -87,7 +90,7 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Transactions(),
 			blk0.Header().PrevBlockHash(),
 			blk0.Header().StateRoot(),
-			invPrevCertificate,
+			invPrevCert,
 			blk0.Header().SortitionSeed(),
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)

@@ -10,17 +10,17 @@ import (
 type CPValue int8
 
 const (
-	CPValueZero    = CPValue(0)
-	CPValueOne     = CPValue(1)
+	CPValueNo      = CPValue(0)
+	CPValueYes     = CPValue(1)
 	CPValueAbstain = CPValue(2)
 )
 
 func (v CPValue) String() string {
 	switch v {
-	case CPValueZero:
-		return "zero"
-	case CPValueOne:
-		return "one"
+	case CPValueNo:
+		return "no"
+	case CPValueYes:
+		return "yes"
 	case CPValueAbstain:
 		return "abstain"
 	default:
@@ -38,7 +38,7 @@ func (v *cpVote) BasicCheck() error {
 	if v.Round < 0 {
 		return errors.Error(errors.ErrInvalidRound)
 	}
-	if v.Value < CPValueZero ||
+	if v.Value < CPValueNo ||
 		v.Value > CPValueAbstain {
 		// Invalid values
 		return errors.Errorf(errors.ErrInvalidVote, "cp value should be 0, 1 or abstain")
