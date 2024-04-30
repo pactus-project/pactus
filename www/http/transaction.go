@@ -56,7 +56,7 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 	tm.addRowBytes("Data", trx.Data)
 	tm.addRowInt("Version", int(trx.Version))
 	tm.addRowInt("LockTime", int(trx.LockTime))
-	tm.addRowInt("Fee", int(trx.Fee))
+	tm.addRowAmount("Fee", amount.Amount(trx.Fee))
 	tm.addRowString("Memo", trx.Memo)
 	tm.addRowString("Payload type", trx.PayloadType.String())
 
