@@ -6,12 +6,8 @@ import (
 	"path/filepath"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/genesis"
-	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/vault"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -19,23 +15,16 @@ import (
 
 //
 // TODO: default_wallet should be loaded on starting the node.
-// TODO: We need to add a wallet service (or manager) to manage wallets.
-// UnLocking wallet should happens inside the wallet manager (or no?)
-//
 
 type walletServer struct {
 	*Server
-	wallets   map[string]*wallet.Wallet
-	chainType genesis.ChainType
+	walletManager *wallet.Manager
 }
 
-func newWalletServer(server *Server, chainType genesis.ChainType) *walletServer {
-	wallets := make(map[string]*wallet.Wallet)
-
+func newWalletServer(server *Server, manager *wallet.Manager) *walletServer {
 	return &walletServer{
-		Server:    server,
-		wallets:   wallets,
-		chainType: chainType,
+		Server:        server,
+		walletManager: manager,
 	}
 }
 
@@ -43,16 +32,31 @@ func (s *walletServer) walletPath(name string) string {
 	return util.MakeAbs(filepath.Join(s.config.WalletsDir, name))
 }
 
+func (s *walletServer) mapHistoryInfo(hi []wallet.HistoryInfo) []*pactus.HistoryInfo {
+	historyInfo := make([]*pactus.HistoryInfo, 0)
+	for _, hi := range hi {
+		historyInfo = append(historyInfo, &pactus.HistoryInfo{
+			TransactionId: hi.TxID,
+			Time:          uint32(hi.Time.Unix()),
+			PayloadType:   hi.PayloadType,
+			Description:   hi.Desc,
+			Amount:        hi.Amount.ToNanoPAC(),
+		})
+	}
+
+	return historyInfo
+}
+
 func (s *walletServer) GetValidatorAddress(_ context.Context,
 	req *pactus.GetValidatorAddressRequest,
 ) (*pactus.GetValidatorAddressResponse, error) {
-	pubKey, err := bls.PublicKeyFromString(req.PublicKey)
+	adr, err := s.walletManager.GetValidatorAddress(req.PublicKey)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pactus.GetValidatorAddressResponse{
-		Address: pubKey.ValidatorAddress().String(),
+		Address: adr,
 	}, nil
 }
 
@@ -63,17 +67,10 @@ func (s *walletServer) CreateWallet(_ context.Context,
 		return nil, fmt.Errorf("wallet name is required")
 	}
 
-	walletPath := s.walletPath(req.WalletName)
-	wlt, err := wallet.Create(walletPath, req.Mnemonic, req.Language, s.chainType)
-	if err != nil {
-		return nil, err
-	}
-	err = wlt.UpdatePassword("", req.Password)
-	if err != nil {
-		return nil, err
-	}
-	err = wlt.Save()
-	if err != nil {
+	if err := s.walletManager.CreateWallet(
+		req.Mnemonic, req.Language,
+		req.Password, s.walletPath(req.WalletName),
+	); err != nil {
 		return nil, err
 	}
 
@@ -85,19 +82,11 @@ func (s *walletServer) CreateWallet(_ context.Context,
 func (s *walletServer) LoadWallet(_ context.Context,
 	req *pactus.LoadWalletRequest,
 ) (*pactus.LoadWalletResponse, error) {
-	_, ok := s.wallets[req.WalletName]
-	if ok {
-		// TODO: define special codes for errors
-		return nil, status.Errorf(codes.AlreadyExists, "wallet already loaded")
-	}
-
-	walletPath := s.walletPath(req.WalletName)
-	wlt, err := wallet.Open(walletPath, true)
-	if err != nil {
+	if err := s.walletManager.LoadWallet(
+		req.WalletName, s.walletPath(req.WalletName),
+	); err != nil {
 		return nil, err
 	}
-
-	s.wallets[req.WalletName] = wlt
 
 	return &pactus.LoadWalletResponse{
 		WalletName: req.WalletName,
@@ -107,12 +96,9 @@ func (s *walletServer) LoadWallet(_ context.Context,
 func (s *walletServer) UnloadWallet(_ context.Context,
 	req *pactus.UnloadWalletRequest,
 ) (*pactus.UnloadWalletResponse, error) {
-	_, ok := s.wallets[req.WalletName]
-	if !ok {
-		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+	if err := s.walletManager.UnloadWallet(req.WalletName); err != nil {
+		return nil, err
 	}
-
-	delete(s.wallets, req.WalletName)
 
 	return &pactus.UnloadWalletResponse{
 		WalletName: req.WalletName,
@@ -134,44 +120,29 @@ func (s *walletServer) UnlockWallet(_ context.Context,
 func (s *walletServer) GetTotalBalance(_ context.Context,
 	req *pactus.GetTotalBalanceRequest,
 ) (*pactus.GetTotalBalanceResponse, error) {
-	wlt, ok := s.wallets[req.WalletName]
-	if !ok {
-		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+	balance, err := s.walletManager.TotalBalance(req.WalletName)
+	if err != nil {
+		return nil, err
 	}
-
-	totalBalance := wlt.TotalBalance()
 
 	return &pactus.GetTotalBalanceResponse{
 		WalletName:   req.WalletName,
-		TotalBalance: totalBalance.ToNanoPAC(),
+		TotalBalance: balance,
 	}, nil
 }
 
 func (s *walletServer) SignRawTransaction(_ context.Context,
 	req *pactus.SignRawTransactionRequest,
 ) (*pactus.SignRawTransactionResponse, error) {
-	wlt, ok := s.wallets[req.WalletName]
-	if !ok {
-		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
-	}
-
-	trx, err := tx.FromBytes(req.RawTransaction)
-	if err != nil {
-		return nil, err
-	}
-
-	err = wlt.SignTransaction(req.Password, trx)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := trx.Bytes()
+	id, data, err := s.walletManager.SignRawTransaction(
+		req.WalletName, req.Password, req.RawTransaction,
+	)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pactus.SignRawTransactionResponse{
-		TransactionId:        trx.ID().Bytes(),
+		TransactionId:        id,
 		SignedRawTransaction: data,
 	}, nil
 }
@@ -179,35 +150,11 @@ func (s *walletServer) SignRawTransaction(_ context.Context,
 func (s *walletServer) GetNewAddress(_ context.Context,
 	req *pactus.GetNewAddressRequest,
 ) (*pactus.GetNewAddressResponse, error) {
-	wlt, ok := s.wallets[req.WalletName]
-	if !ok {
-		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
-	}
-
-	var addressInfo *vault.AddressInfo
-	switch req.AddressType {
-	case pactus.AddressType(crypto.AddressTypeBLSAccount):
-		info, err := wlt.NewBLSAccountAddress(req.Label)
-		if err != nil {
-			return nil, err
-		}
-		addressInfo = info
-
-	case pactus.AddressType(crypto.AddressTypeValidator):
-		info, err := wlt.NewValidatorAddress(req.Label)
-		if err != nil {
-			return nil, err
-		}
-		addressInfo = info
-
-	case pactus.AddressType(crypto.AddressTypeTreasury):
-		return nil, status.Errorf(codes.InvalidArgument, "invalid address type")
-
-	default:
-		return nil, status.Errorf(codes.InvalidArgument, "invalid address type")
-	}
-
-	err := wlt.Save()
+	data, err := s.walletManager.GetNewAddress(
+		req.WalletName,
+		req.Label,
+		crypto.AddressType(req.AddressType),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -215,10 +162,10 @@ func (s *walletServer) GetNewAddress(_ context.Context,
 	return &pactus.GetNewAddressResponse{
 		WalletName: req.WalletName,
 		AddressInfo: &pactus.AddressInfo{
-			Address:   addressInfo.Address,
-			PublicKey: addressInfo.PublicKey,
-			Label:     addressInfo.Label,
-			Path:      addressInfo.Path,
+			Address:   data.Address,
+			Label:     data.Label,
+			PublicKey: data.PublicKey,
+			Path:      data.Path,
 		},
 	}, nil
 }
@@ -226,29 +173,12 @@ func (s *walletServer) GetNewAddress(_ context.Context,
 func (s *walletServer) GetAddressHistory(_ context.Context,
 	req *pactus.GetAddressHistoryRequest,
 ) (*pactus.GetAddressHistoryResponse, error) {
-	wlt, ok := s.wallets[req.WalletName]
-	if !ok {
-		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+	data, err := s.walletManager.AddressHistory(req.WalletName, req.Address)
+	if err != nil {
+		return nil, err
 	}
-
-	historyInfo := wlt.GetHistory(req.Address)
 
 	return &pactus.GetAddressHistoryResponse{
-		HistoryInfo: s.mapHistoryInfo(historyInfo),
+		HistoryInfo: s.mapHistoryInfo(data),
 	}, nil
-}
-
-func (s *walletServer) mapHistoryInfo(hi []wallet.HistoryInfo) []*pactus.HistoryInfo {
-	historyInfo := make([]*pactus.HistoryInfo, 0)
-	for _, hi := range hi {
-		historyInfo = append(historyInfo, &pactus.HistoryInfo{
-			TransactionId: hi.TxID,
-			Time:          uint32(hi.Time.Unix()),
-			PayloadType:   hi.PayloadType,
-			Description:   hi.Desc,
-			Amount:        hi.Amount.ToNanoPAC(),
-		})
-	}
-
-	return historyInfo
 }

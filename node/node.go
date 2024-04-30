@@ -17,6 +17,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
+	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
@@ -46,9 +47,11 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	// Initialize the logger
 	logger.InitGlobalLogger(conf.Logger)
 
+	chainType := genDoc.ChainType()
+
 	logger.Info("You are running a Pactus blockchain",
 		"version", version.NodeVersion,
-		"network", genDoc.ChainType())
+		"network", chainType)
 
 	messageCh := make(chan message.Message, 500)
 	eventCh := make(chan event.Event, 500)
@@ -74,6 +77,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	}
 
 	consMgr := consensus.NewManager(conf.Consensus, st, valKeys, rewardAddrs, messageCh)
+	walletMgr := wallet.NewWalletManager(chainType)
 
 	syn, err := sync.NewSynchronizer(conf.Sync, valKeys, st, consMgr, net, messageCh)
 	if err != nil {
@@ -84,7 +88,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	if conf.GRPC.BasicAuth != "" {
 		enableHTTPAuth = true
 	}
-	grpcServer := grpc.NewServer(conf.GRPC, st, syn, net, consMgr)
+	grpcServer := grpc.NewServer(conf.GRPC, st, syn, net, consMgr, walletMgr)
 	httpServer := http.NewServer(conf.HTTP, enableHTTPAuth)
 	jsonrpcServer := jsonrpc.NewServer(conf.JSONRPC)
 	nanomsgServer := nanomsg.NewServer(conf.Nanomsg, eventCh)

@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util/testsuite"
+	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/stretchr/testify/assert"
 )
@@ -59,7 +60,11 @@ func setup(t *testing.T) *testData {
 		Listen: "[::]:0",
 	}
 
-	gRPCServer := grpc.NewServer(grpcConf, mockState, mockSync, mockNet, mockConsMgr)
+	gRPCServer := grpc.NewServer(
+		grpcConf, mockState,
+		mockSync, mockNet,
+		mockConsMgr, wallet.NewWalletManager(mockState.Genesis().ChainType()),
+	)
 	assert.NoError(t, gRPCServer.StartServer())
 
 	httpServer := NewServer(httpConf, false)
