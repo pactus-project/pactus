@@ -150,12 +150,12 @@ func (cp *changeProposer) checkJustMainVoteConflict(just vote.Just,
 	}
 
 	if cpRound == 0 {
-		err := cp.checkJustInitZero(j.Just0, blockHash)
+		err := cp.checkJustInitZero(j.JustNo, blockHash)
 		if err != nil {
 			return err
 		}
 
-		err = cp.checkJustInitOne(j.Just1)
+		err = cp.checkJustInitOne(j.JustYes)
 		if err != nil {
 			return err
 		}
@@ -164,25 +164,25 @@ func (cp *changeProposer) checkJustMainVoteConflict(just vote.Just,
 	}
 
 	// Just0 can be for Zero or Abstain values.
-	switch j.Just0.Type() {
+	switch j.JustNo.Type() {
 	case vote.JustTypePreVoteSoft:
-		err := cp.checkJustPreVoteSoft(j.Just0, blockHash, cpRound)
+		err := cp.checkJustPreVoteSoft(j.JustNo, blockHash, cpRound)
 		if err != nil {
 			return err
 		}
 	case vote.JustTypePreVoteHard:
-		err := cp.checkJustPreVoteHard(j.Just0, blockHash, cpRound, vote.CPValueNo)
+		err := cp.checkJustPreVoteHard(j.JustNo, blockHash, cpRound, vote.CPValueNo)
 		if err != nil {
 			return err
 		}
 	default:
 		return invalidJustificationError{
 			JustType: just.Type(),
-			Reason:   fmt.Sprintf("unexpected justification: %s", j.Just0.Type()),
+			Reason:   fmt.Sprintf("unexpected justification: %s", j.JustNo.Type()),
 		}
 	}
 
-	err := cp.checkJustPreVoteHard(j.Just1, hash.UndefHash, cpRound, vote.CPValueYes)
+	err := cp.checkJustPreVoteHard(j.JustYes, hash.UndefHash, cpRound, vote.CPValueYes)
 	if err != nil {
 		return err
 	}
@@ -195,7 +195,7 @@ func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 	just := v.CPJust()
 	if v.CPRound() == 0 {
 		switch just.Type() {
-		case vote.JustTypeInitZero:
+		case vote.JustTypeInitNo:
 			err := cp.checkCPValue(v, vote.CPValueNo)
 			if err != nil {
 				return err
@@ -203,7 +203,7 @@ func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 
 			return cp.checkJustInitZero(just, v.BlockHash())
 
-		case vote.JustTypeInitOne:
+		case vote.JustTypeInitYes:
 			err := cp.checkCPValue(v, vote.CPValueYes)
 			if err != nil {
 				return err

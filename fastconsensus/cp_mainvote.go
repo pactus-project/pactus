@@ -49,8 +49,8 @@ func (s *cpMainVoteState) decide() {
 			vote1 := cpPreVotes.GetRandomVote(s.cpRound, vote.CPValueYes)
 
 			just := &vote.JustMainVoteConflict{
-				Just0: vote0.CPJust(),
-				Just1: vote1.CPJust(),
+				JustNo:  vote0.CPJust(),
+				JustYes: vote1.CPJust(),
 			}
 
 			s.signAddCPMainVote(*s.cpWeakValidity, s.cpRound, vote.CPValueAbstain, just)

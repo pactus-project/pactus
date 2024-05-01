@@ -284,24 +284,26 @@ func (td *testData) addPrecommitVote(cons *consensus, blockHash hash.Hash, heigh
 
 func (td *testData) addCPPreVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
 	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
-) {
+) *vote.Vote {
 	v := vote.NewCPPreVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
 
-	td.addVote(cons, v, valID)
+	return td.addVote(cons, v, valID)
 }
 
 func (td *testData) addCPMainVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
 	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
-) {
+) *vote.Vote {
 	v := vote.NewCPMainVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
-	td.addVote(cons, v, valID)
+
+	return td.addVote(cons, v, valID)
 }
 
 func (td *testData) addCPDecidedVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
 	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
-) {
+) *vote.Vote {
 	v := vote.NewCPDecidedVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
-	td.addVote(cons, v, valID)
+
+	return td.addVote(cons, v, valID)
 }
 
 func (td *testData) addVote(cons *consensus, v *vote.Vote, valID int) *vote.Vote {
@@ -615,26 +617,32 @@ func TestPickRandomVote(t *testing.T) {
 	// ====
 
 	// round 0
-	td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexX)
-	td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexY)
-	td.addCPPreVote(td.consP, hash.UndefHash, 1, 0, cpRound+1, vote.CPValueYes,
+	v1 := td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexX)
+	v2 := td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexY)
+	v3 := td.addCPPreVote(td.consP, hash.UndefHash, 1, 0, cpRound+1, vote.CPValueYes,
 		&vote.JustPreVoteHard{QCert: certPreVote}, tIndexY)
-	td.addCPMainVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,
+	v4 := td.addCPMainVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,
 		&vote.JustMainVoteNoConflict{QCert: certPreVote}, tIndexY)
-	td.addCPDecidedVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,
+	v5 := td.addCPDecidedVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,
 		&vote.JustDecided{QCert: certMainVote}, tIndexY)
-
-	assert.NotNil(t, td.consP.PickRandomVote(0))
 
 	// Round 1
 	td.enterNextRound(td.consP)
-	td.addPrepareVote(td.consP, td.RandHash(), 1, 1, tIndexY)
+	v6 := td.addPrepareVote(td.consP, td.RandHash(), 1, 1, tIndexY)
+
+	assert.True(t, td.consP.HasVote(v1.Hash()))
+	assert.True(t, td.consP.HasVote(v2.Hash()))
+	assert.True(t, td.consP.HasVote(v3.Hash()))
+	assert.True(t, td.consP.HasVote(v4.Hash()))
+	assert.True(t, td.consP.HasVote(v5.Hash()))
+	assert.True(t, td.consP.HasVote(v6.Hash()))
+	assert.NotNil(t, td.consP.PickRandomVote(0))
 
 	rndVote0 := td.consP.PickRandomVote(0)
-	assert.NotEqual(t, rndVote0.Type(), vote.VoteTypePrepare, "Should not pick prepare votes")
+	assert.Equal(t, rndVote0, v5, "for past round should pick Decided votes only")
 
 	rndVote1 := td.consP.PickRandomVote(1)
-	assert.Equal(t, rndVote1.Type(), vote.VoteTypePrepare)
+	assert.Equal(t, rndVote1, v6)
 }
 
 func TestSetProposalFromPreviousRound(t *testing.T) {

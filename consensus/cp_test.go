@@ -333,10 +333,10 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 
 	t.Run("invalid value: no", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
-			Just0: &vote.JustInitNo{
+			JustNo: &vote.JustInitNo{
 				QCert: td.GenerateTestPrepareCertificate(h),
 			},
-			Just1: &vote.JustInitYes{},
+			JustYes: &vote.JustInitYes{},
 		}
 		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueNo, just, td.consB.valKey.Address())
 
@@ -349,10 +349,10 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 
 	t.Run("invalid value: yes", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
-			Just0: &vote.JustInitNo{
+			JustNo: &vote.JustInitNo{
 				QCert: td.GenerateTestPrepareCertificate(h),
 			},
-			Just1: &vote.JustInitYes{},
+			JustYes: &vote.JustInitYes{},
 		}
 		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueYes, just, td.consB.valKey.Address())
 
@@ -365,10 +365,10 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 
 	t.Run("invalid value: unexpected justification (just0)", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
-			Just0: &vote.JustPreVoteSoft{
+			JustNo: &vote.JustPreVoteSoft{
 				QCert: td.GenerateTestPrepareCertificate(h),
 			},
-			Just1: &vote.JustInitYes{},
+			JustYes: &vote.JustInitYes{},
 		}
 		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
@@ -381,10 +381,10 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 
 	t.Run("invalid value: unexpected justification", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
-			Just0: &vote.JustInitNo{
+			JustNo: &vote.JustInitNo{
 				QCert: td.GenerateTestPrepareCertificate(h),
 			},
-			Just1: &vote.JustPreVoteSoft{
+			JustYes: &vote.JustPreVoteSoft{
 				QCert: td.GenerateTestPrepareCertificate(h),
 			},
 		}
@@ -402,8 +402,8 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 			QCert: td.GenerateTestPrepareCertificate(h),
 		}
 		just := &vote.JustMainVoteConflict{
-			Just0: just0,
-			Just1: &vote.JustInitYes{},
+			JustNo:  just0,
+			JustYes: &vote.JustInitYes{},
 		}
 		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
@@ -419,8 +419,8 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 			QCert: td.GenerateTestPrepareCertificate(h),
 		}
 		just := &vote.JustMainVoteConflict{
-			Just0: just0,
-			Just1: &vote.JustPreVoteSoft{
+			JustNo: just0,
+			JustYes: &vote.JustPreVoteSoft{
 				QCert: td.GenerateTestPrepareCertificate(h),
 			},
 		}

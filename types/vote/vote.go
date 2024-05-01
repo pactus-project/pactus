@@ -251,7 +251,7 @@ func (v *Vote) String() string {
 			v.Signer().ShortString(),
 		)
 	case VoteTypeCPPreVote, VoteTypeCPMainVote, VoteTypeCPDecided:
-		return fmt.Sprintf("{%d/%d/%s/%d/%d ⌘ %v 👤 %s}",
+		return fmt.Sprintf("{%d/%d/%s/%d/%s ⌘ %v 👤 %s}",
 			v.Height(),
 			v.Round(),
 			v.Type(),
