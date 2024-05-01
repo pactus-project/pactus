@@ -393,7 +393,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 		err := td.consX.changeProposer.checkJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
 			JustType: just.Type(),
-			Reason:   "unexpected justification: JustInitZero",
+			Reason:   "unexpected justification: JustInitNo",
 		})
 	})
 

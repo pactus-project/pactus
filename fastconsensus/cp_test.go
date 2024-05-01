@@ -348,16 +348,14 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 
 	t.Run("invalid value: unexpected justification (justNo)", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
-			JustNo: &vote.JustPreVoteHard{
-				QCert: td.GenerateTestPrepareCertificate(h),
-			},
+			JustNo:  &vote.JustInitYes{},
 			JustYes: &vote.JustInitYes{},
 		}
 		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
 
 		err := td.consX.changeProposer.cpCheckJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
-			Reason: "invalid round: 0",
+			Reason: "unexpected justification: JustInitYes",
 		})
 	})
 
@@ -376,20 +374,6 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 		assert.ErrorIs(t, err, invalidJustificationError{
 			Reason: "invalid round: 1",
 		})
-	})
-
-	t.Run("invalid certificate", func(t *testing.T) {
-		just0 := &vote.JustInitNo{
-			QCert: td.GenerateTestPrepareCertificate(h),
-		}
-		just := &vote.JustMainVoteConflict{
-			JustNo:  just0,
-			JustYes: &vote.JustInitYes{},
-		}
-		v := vote.NewCPMainVote(td.RandHash(), h, r, 0, vote.CPValueAbstain, just, td.consB.valKey.Address())
-
-		err := td.consX.changeProposer.cpCheckJust(v)
-		assert.Error(t, err)
 	})
 
 	t.Run("invalid certificate", func(t *testing.T) {
