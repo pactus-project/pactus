@@ -378,15 +378,9 @@ Commit(index) ==
 Timeout(index) ==
     /\ ~IsFaulty(index)
     /\ states[index].name = "prepare"
-    /\ IF states[index].round >= MaxRound
-       THEN
-            /\ HasPrepareQuorum(index)
-            /\ states' = [states EXCEPT ![index].name = "cp:pre-vote"]
-            /\ log' = log
-       ELSE
-            /\ states' = [states EXCEPT ![index].name = "cp:pre-vote"]
-            /\ log' = log
-
+    /\ states[index].round < MaxRound
+    /\ states' = [states EXCEPT ![index].name = "cp:pre-vote"]
+    /\ log' = log
 
 
 CPPreVote(index) ==
