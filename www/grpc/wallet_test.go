@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -26,6 +27,46 @@ func TestDisableWallet(t *testing.T) {
 		})
 	assert.ErrorIs(t, err, status.Error(codes.Unimplemented, "unknown service pactus.Wallet"))
 	assert.Nil(t, res)
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}
+
+func TestRestoreWallet(t *testing.T) {
+	config := testConfig()
+	config.EnableWallet = true
+
+	td := setup(t, config)
+	conn, client := td.walletClient(t)
+
+	t.Run("should return error if no wallet name provided", func(t *testing.T) {
+		res, err := client.RestoreWallet(context.Background(),
+			&pactus.RestoreWalletRequest{})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("should return error if no mnemonic provided", func(t *testing.T) {
+		res, err := client.RestoreWallet(context.Background(),
+			&pactus.RestoreWalletRequest{
+				WalletName: "test",
+			})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("should restore wallet", func(t *testing.T) {
+		mnemonic, err := wallet.GenerateMnemonic(128)
+		assert.NoError(t, err)
+
+		res, err := client.RestoreWallet(context.Background(),
+			&pactus.RestoreWalletRequest{
+				WalletName: "test",
+				Mnemonic:   mnemonic,
+			})
+		assert.NoError(t, err)
+		assert.NotNil(t, res)
+	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
 	td.StopServer()

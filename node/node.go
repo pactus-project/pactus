@@ -41,7 +41,7 @@ type Node struct {
 	nanomsg    *nanomsg.Server
 }
 
-func NewNode(genDoc *genesis.Genesis, conf *config.Config,
+func NewNode(walletDir string, genDoc *genesis.Genesis, conf *config.Config,
 	valKeys []*bls.ValidatorKey, rewardAddrs []crypto.Address,
 ) (*Node, error) {
 	// Initialize the logger
@@ -77,7 +77,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	}
 
 	consMgr := consensus.NewManager(conf.Consensus, st, valKeys, rewardAddrs, messageCh)
-	walletMgr := wallet.NewWalletManager(chainType, conf.GRPC.WalletsDir)
+	walletMgr := wallet.NewWalletManager(chainType, walletDir)
 
 	syn, err := sync.NewSynchronizer(conf.Sync, valKeys, st, consMgr, net, messageCh)
 	if err != nil {

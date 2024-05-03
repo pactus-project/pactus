@@ -73,6 +73,27 @@ func (s *walletServer) CreateWallet(_ context.Context,
 	}, nil
 }
 
+func (s *walletServer) RestoreWallet(_ context.Context,
+	req *pactus.RestoreWalletRequest,
+) (*pactus.RestoreWalletResponse, error) {
+	if req.WalletName == "" {
+		return nil, fmt.Errorf("wallet name is required")
+	}
+	if req.Mnemonic == "" {
+		return nil, fmt.Errorf("mnemonic is required")
+	}
+
+	if err := s.walletManager.RestoreWallet(
+		req.WalletName, req.Mnemonic, req.Password,
+	); err != nil {
+		return nil, err
+	}
+
+	return &pactus.RestoreWalletResponse{
+		WalletName: req.WalletName,
+	}, nil
+}
+
 func (s *walletServer) LoadWallet(_ context.Context,
 	req *pactus.LoadWalletRequest,
 ) (*pactus.LoadWalletResponse, error) {

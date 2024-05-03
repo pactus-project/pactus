@@ -410,7 +410,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		return nil, nil, err
 	}
 
-	nodeInstance, err := node.NewNode(gen, conf, valKeys, rewardAddrs)
+	nodeInstance, err := node.NewNode(walletsDir, gen, conf, valKeys, rewardAddrs)
 	if err != nil {
 		return nil, nil, err
 	}

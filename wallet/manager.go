@@ -32,7 +32,7 @@ func (w *Manager) getWalletPath(walletName string) string {
 }
 
 func (w *Manager) createWalletWithMnemonic(
-	mnemonic, password, walletName string,
+	walletName, mnemonic, password string,
 ) error {
 	walletPath := w.getWalletPath(walletName)
 	wlt, err := Create(walletPath, mnemonic, password, w.chainType)
@@ -71,16 +71,23 @@ func (w *Manager) CreateWallet(
 		return "", status.Errorf(codes.AlreadyExists, "wallet already exists")
 	}
 
-	if err := w.createWalletWithMnemonic(mnemonic, password, walletName); err != nil {
+	if err := w.createWalletWithMnemonic(walletName, mnemonic, password); err != nil {
 		return "", err
 	}
 
 	return mnemonic, nil
 }
 
-func (w *Manager) LoadWallet(
-	walletName, walletPath string,
-) error {
+func (w *Manager) RestoreWallet(walletName, mnemonic, password string) error {
+	walletPath := w.getWalletPath(walletName)
+	if isExists := util.PathExists(walletPath); isExists {
+		return status.Errorf(codes.AlreadyExists, "wallet already exists")
+	}
+
+	return w.createWalletWithMnemonic(walletName, mnemonic, password)
+}
+
+func (w *Manager) LoadWallet(walletName string) error {
 	if _, ok := w.wallets[walletName]; ok {
 		// TODO: define special codes for errors
 		return status.Errorf(codes.AlreadyExists, "wallet already loaded")
