@@ -67,6 +67,9 @@ http:
     - selector: pactus.Wallet.CreateWallet
       get: "/pactus/wallet/create_wallet"
 
+    - selector: pactus.Wallet.RestoreWallet
+      get: "/pactus/wallet/restore_wallet"
+
     - selector: pactus.Wallet.LoadWallet
       get: "/pactus/wallet/load_wallet"
 

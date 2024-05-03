@@ -508,6 +508,14 @@
                 </li>
               
                 <li>
+                  <a href="#pactus.RestoreWalletRequest"><span class="badge">M</span>RestoreWalletRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#pactus.RestoreWalletResponse"><span class="badge">M</span>RestoreWalletResponse</a>
+                </li>
+              
+                <li>
                   <a href="#pactus.SignRawTransactionRequest"><span class="badge">M</span>SignRawTransactionRequest</a>
                 </li>
               
@@ -2997,20 +3005,6 @@ address.</p></td>
                 </tr>
               
                 <tr>
-                  <td>mnemonic</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>Mnemonic for wallet recovery. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>language</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>Language for the mnemonic. </p></td>
-                </tr>
-              
-                <tr>
                   <td>password</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
@@ -3035,10 +3029,10 @@ address.</p></td>
             <tbody>
               
                 <tr>
-                  <td>wallet_name</td>
+                  <td>mnemonic</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>Name of the created wallet. </p></td>
+                  <td><p>Menomic for wallet recovery. </p></td>
                 </tr>
               
             </tbody>
@@ -3423,6 +3417,68 @@ address.</p></td>
 
         
       
+        <h3 id="pactus.RestoreWalletRequest">RestoreWalletRequest</h3>
+        <p>Request message for restoring an existing wallet.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>wallet_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Name of the wallet to restore. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>mnemonic</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Menomic for wallet recovery. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>password</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Password for securing the wallet. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pactus.RestoreWalletResponse">RestoreWalletResponse</h3>
+        <p>Response message containing the name of the restored wallet.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>wallet_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Name of the restored wallet. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="pactus.SignRawTransactionRequest">SignRawTransactionRequest</h3>
         <p>Request message for signing a raw transaction.</p>
 
@@ -3650,6 +3706,13 @@ address.</p></td>
                 <td><a href="#pactus.CreateWalletRequest">CreateWalletRequest</a></td>
                 <td><a href="#pactus.CreateWalletResponse">CreateWalletResponse</a></td>
                 <td><p>CreateWallet creates a new wallet with the specified parameters.</p></td>
+              </tr>
+            
+              <tr>
+                <td>RestoreWallet</td>
+                <td><a href="#pactus.RestoreWalletRequest">RestoreWalletRequest</a></td>
+                <td><a href="#pactus.RestoreWalletResponse">RestoreWalletResponse</a></td>
+                <td><p>RestoreWallet restores an existing wallet with the given mnemonic.</p></td>
               </tr>
             
               <tr>

@@ -21,6 +21,7 @@ func WalletClientCommand(options ...client.Option) *cobra.Command {
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
 		_WalletCreateWalletCommand(cfg),
+		_WalletRestoreWalletCommand(cfg),
 		_WalletLoadWalletCommand(cfg),
 		_WalletUnloadWalletCommand(cfg),
 		_WalletLockWalletCommand(cfg),
@@ -72,8 +73,50 @@ func _WalletCreateWalletCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the new wallet.")
-	cmd.PersistentFlags().StringVar(&req.Mnemonic, cfg.FlagNamer("Mnemonic"), "", "Mnemonic for wallet recovery.")
-	cmd.PersistentFlags().StringVar(&req.Language, cfg.FlagNamer("Language"), "", "Language for the mnemonic.")
+	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "Password for securing the wallet.")
+
+	return cmd
+}
+
+func _WalletRestoreWalletCommand(cfg *client.Config) *cobra.Command {
+	req := &RestoreWalletRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("RestoreWallet"),
+		Short: "RestoreWallet RPC client",
+		Long:  "RestoreWallet restores an existing wallet with the given mnemonic.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "RestoreWallet"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewWalletClient(cc)
+				v := &RestoreWalletRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.RestoreWallet(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet to restore.")
+	cmd.PersistentFlags().StringVar(&req.Mnemonic, cfg.FlagNamer("Mnemonic"), "", "Menomic for wallet recovery.")
 	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "Password for securing the wallet.")
 
 	return cmd

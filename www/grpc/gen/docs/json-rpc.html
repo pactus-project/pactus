@@ -86,6 +86,9 @@ Each PAC is equivalent to
 <a href="#pactus.wallet.create_wallet">pactus.wallet.create_wallet</a>
 
 
+<a href="#pactus.wallet.restore_wallet">pactus.wallet.restore_wallet</a>
+
+
 <a href="#pactus.wallet.load_wallet">pactus.wallet.load_wallet</a>
 
 
@@ -833,8 +836,6 @@ pactus.wallet.create_wallet creates a new wallet with the specified parameters.
 <pre>
 <code>
 {
-	"language": "str",	// (string) Language for the mnemonic.
-	"mnemonic": "str",	// (string) Mnemonic for wallet recovery.
 	"password": "str",	// (string) Password for securing the wallet.
 	"wallet_name": "str"	// (string) Name of the new wallet.
 }
@@ -844,7 +845,32 @@ pactus.wallet.create_wallet creates a new wallet with the specified parameters.
 <h3>Result</h3>
 <pre>
 {
-	"wallet_name": "str"	// (string) Name of the created wallet.
+	"mnemonic": "str"	// (string) Menomic for wallet recovery.
+}
+</pre>
+<hr/>
+
+
+<a id="pactus.wallet.restore_wallet"></a>
+<h3>pactus.wallet.restore_wallet <span class="badge text-bg-primary fs-6 align-top">Method</span></h3>
+
+pactus.wallet.restore_wallet restores an existing wallet with the given mnemonic.
+
+<h3>Parameters</h3>
+<pre>
+<code>
+{
+	"mnemonic": "str",	// (string) Menomic for wallet recovery.
+	"password": "str",	// (string) Password for securing the wallet.
+	"wallet_name": "str"	// (string) Name of the wallet to restore.
+}
+</code>
+</pre>
+
+<h3>Result</h3>
+<pre>
+{
+	"wallet_name": "str"	// (string) Name of the restored wallet.
 }
 </pre>
 <hr/>

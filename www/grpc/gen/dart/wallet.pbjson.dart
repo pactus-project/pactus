@@ -91,29 +91,49 @@ const GetNewAddressResponse$json = const {
 
 /// Descriptor for `GetNewAddressResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getNewAddressResponseDescriptor = $convert.base64Decode('ChVHZXROZXdBZGRyZXNzUmVzcG9uc2USHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbWUSNgoMYWRkcmVzc19pbmZvGAIgASgLMhMucGFjdHVzLkFkZHJlc3NJbmZvUgthZGRyZXNzSW5mbw==');
+@$core.Deprecated('Use restoreWalletRequestDescriptor instead')
+const RestoreWalletRequest$json = const {
+  '1': 'RestoreWalletRequest',
+  '2': const [
+    const {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    const {'1': 'mnemonic', '3': 2, '4': 1, '5': 9, '10': 'mnemonic'},
+    const {'1': 'password', '3': 3, '4': 1, '5': 9, '10': 'password'},
+  ],
+};
+
+/// Descriptor for `RestoreWalletRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List restoreWalletRequestDescriptor = $convert.base64Decode('ChRSZXN0b3JlV2FsbGV0UmVxdWVzdBIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0TmFtZRIaCghtbmVtb25pYxgCIAEoCVIIbW5lbW9uaWMSGgoIcGFzc3dvcmQYAyABKAlSCHBhc3N3b3Jk');
+@$core.Deprecated('Use restoreWalletResponseDescriptor instead')
+const RestoreWalletResponse$json = const {
+  '1': 'RestoreWalletResponse',
+  '2': const [
+    const {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+  ],
+};
+
+/// Descriptor for `RestoreWalletResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List restoreWalletResponseDescriptor = $convert.base64Decode('ChVSZXN0b3JlV2FsbGV0UmVzcG9uc2USHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbWU=');
 @$core.Deprecated('Use createWalletRequestDescriptor instead')
 const CreateWalletRequest$json = const {
   '1': 'CreateWalletRequest',
   '2': const [
     const {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
-    const {'1': 'mnemonic', '3': 2, '4': 1, '5': 9, '10': 'mnemonic'},
-    const {'1': 'language', '3': 3, '4': 1, '5': 9, '10': 'language'},
     const {'1': 'password', '3': 4, '4': 1, '5': 9, '10': 'password'},
   ],
 };
 
 /// Descriptor for `CreateWalletRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List createWalletRequestDescriptor = $convert.base64Decode('ChNDcmVhdGVXYWxsZXRSZXF1ZXN0Eh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW1lEhoKCG1uZW1vbmljGAIgASgJUghtbmVtb25pYxIaCghsYW5ndWFnZRgDIAEoCVIIbGFuZ3VhZ2USGgoIcGFzc3dvcmQYBCABKAlSCHBhc3N3b3Jk');
+final $typed_data.Uint8List createWalletRequestDescriptor = $convert.base64Decode('ChNDcmVhdGVXYWxsZXRSZXF1ZXN0Eh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW1lEhoKCHBhc3N3b3JkGAQgASgJUghwYXNzd29yZA==');
 @$core.Deprecated('Use createWalletResponseDescriptor instead')
 const CreateWalletResponse$json = const {
   '1': 'CreateWalletResponse',
   '2': const [
-    const {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    const {'1': 'mnemonic', '3': 2, '4': 1, '5': 9, '10': 'mnemonic'},
   ],
 };
 
 /// Descriptor for `CreateWalletResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List createWalletResponseDescriptor = $convert.base64Decode('ChRDcmVhdGVXYWxsZXRSZXNwb25zZRIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0TmFtZQ==');
+final $typed_data.Uint8List createWalletResponseDescriptor = $convert.base64Decode('ChRDcmVhdGVXYWxsZXRSZXNwb25zZRIaCghtbmVtb25pYxgCIAEoCVIIbW5lbW9uaWM=');
 @$core.Deprecated('Use loadWalletRequestDescriptor instead')
 const LoadWalletRequest$json = const {
   '1': 'LoadWalletRequest',
@@ -264,6 +284,7 @@ const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = const {
   '1': 'Wallet',
   '2': const [
     const {'1': 'CreateWallet', '2': '.pactus.CreateWalletRequest', '3': '.pactus.CreateWalletResponse'},
+    const {'1': 'RestoreWallet', '2': '.pactus.RestoreWalletRequest', '3': '.pactus.RestoreWalletResponse'},
     const {'1': 'LoadWallet', '2': '.pactus.LoadWalletRequest', '3': '.pactus.LoadWalletResponse'},
     const {'1': 'UnloadWallet', '2': '.pactus.UnloadWalletRequest', '3': '.pactus.UnloadWalletResponse'},
     const {'1': 'LockWallet', '2': '.pactus.LockWalletRequest', '3': '.pactus.LockWalletResponse'},
@@ -280,6 +301,8 @@ const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = const {
 const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> WalletServiceBase$messageJson = const {
   '.pactus.CreateWalletRequest': CreateWalletRequest$json,
   '.pactus.CreateWalletResponse': CreateWalletResponse$json,
+  '.pactus.RestoreWalletRequest': RestoreWalletRequest$json,
+  '.pactus.RestoreWalletResponse': RestoreWalletResponse$json,
   '.pactus.LoadWalletRequest': LoadWalletRequest$json,
   '.pactus.LoadWalletResponse': LoadWalletResponse$json,
   '.pactus.UnloadWalletRequest': UnloadWalletRequest$json,
@@ -303,4 +326,4 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> WalletServ
 };
 
 /// Descriptor for `Wallet`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode('CgZXYWxsZXQSSQoMQ3JlYXRlV2FsbGV0EhsucGFjdHVzLkNyZWF0ZVdhbGxldFJlcXVlc3QaHC5wYWN0dXMuQ3JlYXRlV2FsbGV0UmVzcG9uc2USQwoKTG9hZFdhbGxldBIZLnBhY3R1cy5Mb2FkV2FsbGV0UmVxdWVzdBoaLnBhY3R1cy5Mb2FkV2FsbGV0UmVzcG9uc2USSQoMVW5sb2FkV2FsbGV0EhsucGFjdHVzLlVubG9hZFdhbGxldFJlcXVlc3QaHC5wYWN0dXMuVW5sb2FkV2FsbGV0UmVzcG9uc2USQwoKTG9ja1dhbGxldBIZLnBhY3R1cy5Mb2NrV2FsbGV0UmVxdWVzdBoaLnBhY3R1cy5Mb2NrV2FsbGV0UmVzcG9uc2USSQoMVW5sb2NrV2FsbGV0EhsucGFjdHVzLlVubG9ja1dhbGxldFJlcXVlc3QaHC5wYWN0dXMuVW5sb2NrV2FsbGV0UmVzcG9uc2USUgoPR2V0VG90YWxCYWxhbmNlEh4ucGFjdHVzLkdldFRvdGFsQmFsYW5jZVJlcXVlc3QaHy5wYWN0dXMuR2V0VG90YWxCYWxhbmNlUmVzcG9uc2USWwoSU2lnblJhd1RyYW5zYWN0aW9uEiEucGFjdHVzLlNpZ25SYXdUcmFuc2FjdGlvblJlcXVlc3QaIi5wYWN0dXMuU2lnblJhd1RyYW5zYWN0aW9uUmVzcG9uc2USXgoTR2V0VmFsaWRhdG9yQWRkcmVzcxIiLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzUmVxdWVzdBojLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzUmVzcG9uc2USTAoNR2V0TmV3QWRkcmVzcxIcLnBhY3R1cy5HZXROZXdBZGRyZXNzUmVxdWVzdBodLnBhY3R1cy5HZXROZXdBZGRyZXNzUmVzcG9uc2USWAoRR2V0QWRkcmVzc0hpc3RvcnkSIC5wYWN0dXMuR2V0QWRkcmVzc0hpc3RvcnlSZXF1ZXN0GiEucGFjdHVzLkdldEFkZHJlc3NIaXN0b3J5UmVzcG9uc2U=');
+final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode('CgZXYWxsZXQSSQoMQ3JlYXRlV2FsbGV0EhsucGFjdHVzLkNyZWF0ZVdhbGxldFJlcXVlc3QaHC5wYWN0dXMuQ3JlYXRlV2FsbGV0UmVzcG9uc2USTAoNUmVzdG9yZVdhbGxldBIcLnBhY3R1cy5SZXN0b3JlV2FsbGV0UmVxdWVzdBodLnBhY3R1cy5SZXN0b3JlV2FsbGV0UmVzcG9uc2USQwoKTG9hZFdhbGxldBIZLnBhY3R1cy5Mb2FkV2FsbGV0UmVxdWVzdBoaLnBhY3R1cy5Mb2FkV2FsbGV0UmVzcG9uc2USSQoMVW5sb2FkV2FsbGV0EhsucGFjdHVzLlVubG9hZFdhbGxldFJlcXVlc3QaHC5wYWN0dXMuVW5sb2FkV2FsbGV0UmVzcG9uc2USQwoKTG9ja1dhbGxldBIZLnBhY3R1cy5Mb2NrV2FsbGV0UmVxdWVzdBoaLnBhY3R1cy5Mb2NrV2FsbGV0UmVzcG9uc2USSQoMVW5sb2NrV2FsbGV0EhsucGFjdHVzLlVubG9ja1dhbGxldFJlcXVlc3QaHC5wYWN0dXMuVW5sb2NrV2FsbGV0UmVzcG9uc2USUgoPR2V0VG90YWxCYWxhbmNlEh4ucGFjdHVzLkdldFRvdGFsQmFsYW5jZVJlcXVlc3QaHy5wYWN0dXMuR2V0VG90YWxCYWxhbmNlUmVzcG9uc2USWwoSU2lnblJhd1RyYW5zYWN0aW9uEiEucGFjdHVzLlNpZ25SYXdUcmFuc2FjdGlvblJlcXVlc3QaIi5wYWN0dXMuU2lnblJhd1RyYW5zYWN0aW9uUmVzcG9uc2USXgoTR2V0VmFsaWRhdG9yQWRkcmVzcxIiLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzUmVxdWVzdBojLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzUmVzcG9uc2USTAoNR2V0TmV3QWRkcmVzcxIcLnBhY3R1cy5HZXROZXdBZGRyZXNzUmVxdWVzdBodLnBhY3R1cy5HZXROZXdBZGRyZXNzUmVzcG9uc2USWAoRR2V0QWRkcmVzc0hpc3RvcnkSIC5wYWN0dXMuR2V0QWRkcmVzc0hpc3RvcnlSZXF1ZXN0GiEucGFjdHVzLkdldEFkZHJlc3NIaXN0b3J5UmVzcG9uc2U=');

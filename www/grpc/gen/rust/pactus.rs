@@ -965,6 +965,28 @@ pub struct GetNewAddressResponse {
     #[prost(message, optional, tag="2")]
     pub address_info: ::core::option::Option<AddressInfo>,
 }
+/// Request message for restoring an existing wallet.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RestoreWalletRequest {
+    /// Name of the wallet to restore.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// Menomic for wallet recovery.
+    #[prost(string, tag="2")]
+    pub mnemonic: ::prost::alloc::string::String,
+    /// Password for securing the wallet.
+    #[prost(string, tag="3")]
+    pub password: ::prost::alloc::string::String,
+}
+/// Response message containing the name of the restored wallet.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RestoreWalletResponse {
+    /// Name of the restored wallet.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+}
 /// Request message for creating a new wallet.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -972,12 +994,6 @@ pub struct CreateWalletRequest {
     /// Name of the new wallet.
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
-    /// Mnemonic for wallet recovery.
-    #[prost(string, tag="2")]
-    pub mnemonic: ::prost::alloc::string::String,
-    /// Language for the mnemonic.
-    #[prost(string, tag="3")]
-    pub language: ::prost::alloc::string::String,
     /// Password for securing the wallet.
     #[prost(string, tag="4")]
     pub password: ::prost::alloc::string::String,
@@ -986,9 +1002,9 @@ pub struct CreateWalletRequest {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateWalletResponse {
-    /// Name of the created wallet.
-    #[prost(string, tag="1")]
-    pub wallet_name: ::prost::alloc::string::String,
+    /// Menomic for wallet recovery.
+    #[prost(string, tag="2")]
+    pub mnemonic: ::prost::alloc::string::String,
 }
 /// Request message for loading an existing wallet.
 #[allow(clippy::derive_partial_eq_without_eq)]

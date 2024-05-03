@@ -49,6 +49,37 @@ public final class WalletGrpc {
     return getCreateWalletMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.RestoreWalletRequest,
+      pactus.wallet.WalletOuterClass.RestoreWalletResponse> getRestoreWalletMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "RestoreWallet",
+      requestType = pactus.wallet.WalletOuterClass.RestoreWalletRequest.class,
+      responseType = pactus.wallet.WalletOuterClass.RestoreWalletResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.RestoreWalletRequest,
+      pactus.wallet.WalletOuterClass.RestoreWalletResponse> getRestoreWalletMethod() {
+    io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.RestoreWalletRequest, pactus.wallet.WalletOuterClass.RestoreWalletResponse> getRestoreWalletMethod;
+    if ((getRestoreWalletMethod = WalletGrpc.getRestoreWalletMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getRestoreWalletMethod = WalletGrpc.getRestoreWalletMethod) == null) {
+          WalletGrpc.getRestoreWalletMethod = getRestoreWalletMethod =
+              io.grpc.MethodDescriptor.<pactus.wallet.WalletOuterClass.RestoreWalletRequest, pactus.wallet.WalletOuterClass.RestoreWalletResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "RestoreWallet"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.RestoreWalletRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.RestoreWalletResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("RestoreWallet"))
+              .build();
+        }
+      }
+    }
+    return getRestoreWalletMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.LoadWalletRequest,
       pactus.wallet.WalletOuterClass.LoadWalletResponse> getLoadWalletMethod;
 
@@ -391,6 +422,16 @@ public final class WalletGrpc {
 
     /**
      * <pre>
+     * RestoreWallet restores an existing wallet with the given mnemonic.
+     * </pre>
+     */
+    public void restoreWallet(pactus.wallet.WalletOuterClass.RestoreWalletRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.RestoreWalletResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRestoreWalletMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
      * LoadWallet loads an existing wallet with the given name.
      * </pre>
      */
@@ -492,6 +533,13 @@ public final class WalletGrpc {
                 pactus.wallet.WalletOuterClass.CreateWalletResponse>(
                   this, METHODID_CREATE_WALLET)))
           .addMethod(
+            getRestoreWalletMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.wallet.WalletOuterClass.RestoreWalletRequest,
+                pactus.wallet.WalletOuterClass.RestoreWalletResponse>(
+                  this, METHODID_RESTORE_WALLET)))
+          .addMethod(
             getLoadWalletMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
@@ -584,6 +632,17 @@ public final class WalletGrpc {
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.CreateWalletResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getCreateWalletMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * RestoreWallet restores an existing wallet with the given mnemonic.
+     * </pre>
+     */
+    public void restoreWallet(pactus.wallet.WalletOuterClass.RestoreWalletRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.RestoreWalletResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getRestoreWalletMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -718,6 +777,16 @@ public final class WalletGrpc {
 
     /**
      * <pre>
+     * RestoreWallet restores an existing wallet with the given mnemonic.
+     * </pre>
+     */
+    public pactus.wallet.WalletOuterClass.RestoreWalletResponse restoreWallet(pactus.wallet.WalletOuterClass.RestoreWalletRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getRestoreWalletMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
      * LoadWallet loads an existing wallet with the given name.
      * </pre>
      */
@@ -840,6 +909,17 @@ public final class WalletGrpc {
 
     /**
      * <pre>
+     * RestoreWallet restores an existing wallet with the given mnemonic.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.RestoreWalletResponse> restoreWallet(
+        pactus.wallet.WalletOuterClass.RestoreWalletRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getRestoreWalletMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
      * LoadWallet loads an existing wallet with the given name.
      * </pre>
      */
@@ -942,15 +1022,16 @@ public final class WalletGrpc {
   }
 
   private static final int METHODID_CREATE_WALLET = 0;
-  private static final int METHODID_LOAD_WALLET = 1;
-  private static final int METHODID_UNLOAD_WALLET = 2;
-  private static final int METHODID_LOCK_WALLET = 3;
-  private static final int METHODID_UNLOCK_WALLET = 4;
-  private static final int METHODID_GET_TOTAL_BALANCE = 5;
-  private static final int METHODID_SIGN_RAW_TRANSACTION = 6;
-  private static final int METHODID_GET_VALIDATOR_ADDRESS = 7;
-  private static final int METHODID_GET_NEW_ADDRESS = 8;
-  private static final int METHODID_GET_ADDRESS_HISTORY = 9;
+  private static final int METHODID_RESTORE_WALLET = 1;
+  private static final int METHODID_LOAD_WALLET = 2;
+  private static final int METHODID_UNLOAD_WALLET = 3;
+  private static final int METHODID_LOCK_WALLET = 4;
+  private static final int METHODID_UNLOCK_WALLET = 5;
+  private static final int METHODID_GET_TOTAL_BALANCE = 6;
+  private static final int METHODID_SIGN_RAW_TRANSACTION = 7;
+  private static final int METHODID_GET_VALIDATOR_ADDRESS = 8;
+  private static final int METHODID_GET_NEW_ADDRESS = 9;
+  private static final int METHODID_GET_ADDRESS_HISTORY = 10;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -972,6 +1053,10 @@ public final class WalletGrpc {
         case METHODID_CREATE_WALLET:
           serviceImpl.createWallet((pactus.wallet.WalletOuterClass.CreateWalletRequest) request,
               (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.CreateWalletResponse>) responseObserver);
+          break;
+        case METHODID_RESTORE_WALLET:
+          serviceImpl.restoreWallet((pactus.wallet.WalletOuterClass.RestoreWalletRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.RestoreWalletResponse>) responseObserver);
           break;
         case METHODID_LOAD_WALLET:
           serviceImpl.loadWallet((pactus.wallet.WalletOuterClass.LoadWalletRequest) request,
@@ -1071,6 +1156,7 @@ public final class WalletGrpc {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new WalletFileDescriptorSupplier())
               .addMethod(getCreateWalletMethod())
+              .addMethod(getRestoreWalletMethod())
               .addMethod(getLoadWalletMethod())
               .addMethod(getUnloadWalletMethod())
               .addMethod(getLockWalletMethod())
