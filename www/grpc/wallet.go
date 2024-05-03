@@ -3,10 +3,8 @@ package grpc
 import (
 	"context"
 	"fmt"
-	"path/filepath"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc/codes"
@@ -26,10 +24,6 @@ func newWalletServer(server *Server, manager *wallet.Manager) *walletServer {
 		Server:        server,
 		walletManager: manager,
 	}
-}
-
-func (s *walletServer) walletPath(name string) string {
-	return util.MakeAbs(filepath.Join(s.config.WalletsDir, name))
 }
 
 func (s *walletServer) mapHistoryInfo(hi []wallet.HistoryInfo) []*pactus.HistoryInfo {
@@ -67,24 +61,22 @@ func (s *walletServer) CreateWallet(_ context.Context,
 		return nil, fmt.Errorf("wallet name is required")
 	}
 
-	if err := s.walletManager.CreateWallet(
-		req.Mnemonic, req.Language,
-		req.Password, s.walletPath(req.WalletName),
-	); err != nil {
+	mnemonic, err := s.walletManager.CreateWallet(
+		req.WalletName, req.Password,
+	)
+	if err != nil {
 		return nil, err
 	}
 
 	return &pactus.CreateWalletResponse{
-		WalletName: req.WalletName,
+		Mnemonic: mnemonic,
 	}, nil
 }
 
 func (s *walletServer) LoadWallet(_ context.Context,
 	req *pactus.LoadWalletRequest,
 ) (*pactus.LoadWalletResponse, error) {
-	if err := s.walletManager.LoadWallet(
-		req.WalletName, s.walletPath(req.WalletName),
-	); err != nil {
+	if err := s.walletManager.LoadWallet(req.WalletName); err != nil {
 		return nil, err
 	}
 

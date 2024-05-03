@@ -80,7 +80,7 @@ func setup(t *testing.T, conf *Config) *testData {
 	server := NewServer(
 		conf, mockState,
 		mockSync, mockNet,
-		mockConsMgr, wallet.NewWalletManager(mockState.Genesis().ChainType()),
+		mockConsMgr, wallet.NewWalletManager(mockState.Genesis().ChainType(), conf.WalletsDir),
 	)
 	err = server.startListening(listener)
 	assert.NoError(t, err)
