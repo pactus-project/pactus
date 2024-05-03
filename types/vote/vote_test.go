@@ -54,7 +54,7 @@ func TestVoteMarshaling(t *testing.T) {
 				"0100" + // CP_Round: 0
 				"0200" + // CP_Value: 0
 				"0301" + // Just type: 1
-				"045840" + // Just: JustTypeInitZero
+				"045840" + // Just: JustTypeInitNo
 				"A1" + // map(1)
 				"01583C" + // Certificate (60 bytes)
 				"32000000010004010203040094D25422904AC1D130AC981374AA4424F988" + // Certificate Data
@@ -75,7 +75,7 @@ func TestVoteMarshaling(t *testing.T) {
 				"0100" + // CP_Round: 0
 				"0201" + // CP_Value: 1
 				"0302" + // Just type: 2
-				"0441" + // Just: JustTypeInitOne
+				"0441" + // Just: JustTypeInitYes
 				"A0" + // Empty Array
 				"07f6", // Signature -> Null
 			"JustInitYes",
@@ -137,13 +137,13 @@ func TestVoteMarshaling(t *testing.T) {
 				"0305" + // Just type: 5
 				"04584b" + // Just: JustTypeMainVoteConflict
 				"A4" + // map(4)
-				"0101" + // Just0: Type (JustTypeInitZero)
+				"0101" + // Just0: Type (No)
 				"025840" + // Just0Data
 				"A1" + // map(1)
 				"01583C" + // Certificate (60 bytes)
 				"32000000010004010203040094D25422904AC1D130AC981374AA4424F988" + // Certificate Data
 				"61E99131078EFEFD62FC52CF072B0C08BB04E4E6496BA48DE4F3D3309AAB" +
-				"0302" + // Just1: Type (JustTypeInitOne)
+				"0302" + // Just1: Type (JustTypeInitYes)
 				"0441" + // Just1Data
 				"A0" + // Empty Array
 				"07f6", // Signature -> Null
@@ -505,7 +505,7 @@ func TestCPInvalidJustType(t *testing.T) {
 			"0100" + // CP_Round: 0
 			"0201" + // CP_Value: 1
 			"0308" + // Just type: 8 <<<(Unknown Just Type)>>>
-			"0441" + // Just: JustTypeInitOne
+			"0441" + // Just: JustTypeInitYes
 			"A0" + // Empty Array
 			"07f6") // Signature -> Null
 

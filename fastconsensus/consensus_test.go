@@ -415,6 +415,84 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 	return p
 }
 
+// makeChangeProposerJusts generates justifications for changing the proposer at the specified height and round.
+// If `proposal` is nil, it creates justifications for not changing the proposer;
+// otherwise, it generates justifications to change the proposer.
+// It returns three justifications:
+// 1. JustInitNo if the proposal is set, or JustInitYes if not
+// 2. JustMainVoteNoConflict
+// 3. JustDecided
+func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Hash,
+	height uint32, round int16) (vote.Just, vote.Just, vote.Just) {
+	t.Helper()
+
+	cpRound := int16(0)
+
+	// Create PreVote Justification
+	var preVoteJust vote.Just
+	var cpValue vote.CPValue
+
+	if propBlockHash != hash.UndefHash {
+		cpValue = vote.CPValueNo
+		prepareCommitters := []int32{}
+		prepareSigs := []*bls.Signature{}
+		for i, val := range td.consP.validators {
+			prepareVote := vote.NewPrepareVote(propBlockHash, height, round, val.Address())
+			signBytes := prepareVote.SignBytes()
+
+			prepareCommitters = append(prepareCommitters, val.Number())
+			prepareSigs = append(prepareSigs, td.valKeys[i].Sign(signBytes))
+		}
+		prepareAggSig := bls.SignatureAggregate(prepareSigs...)
+		certPrepare := certificate.NewVoteCertificate(height, round)
+		certPrepare.SetSignature(prepareCommitters, []int32{}, prepareAggSig)
+
+		preVoteJust = &vote.JustInitNo{
+			QCert: certPrepare,
+		}
+	} else {
+		cpValue = vote.CPValueYes
+		preVoteJust = &vote.JustInitYes{}
+	}
+
+	// Create MainVote Justification
+	preVoteCommitters := []int32{}
+	preVoteSigs := []*bls.Signature{}
+	for i, val := range td.consP.validators {
+		preVote := vote.NewCPPreVote(propBlockHash, height, round,
+			cpRound, cpValue, preVoteJust, val.Address())
+		signBytes := preVote.SignBytes()
+
+		preVoteCommitters = append(preVoteCommitters, val.Number())
+		preVoteSigs = append(preVoteSigs, td.valKeys[i].Sign(signBytes))
+	}
+	preVoteAggSig := bls.SignatureAggregate(preVoteSigs...)
+	certPreVote := certificate.NewVoteCertificate(height, round)
+	certPreVote.SetSignature(preVoteCommitters, []int32{}, preVoteAggSig)
+	mainVoteJust := &vote.JustMainVoteNoConflict{QCert: certPreVote}
+
+	// Create Decided Justification
+	mainVoteCommitters := []int32{}
+	mainVoteSigs := []*bls.Signature{}
+	for i, val := range td.consP.validators {
+		mainVoteJust := &vote.JustMainVoteNoConflict{
+			QCert: certPreVote,
+		}
+		mainVote := vote.NewCPMainVote(propBlockHash, height, round,
+			cpRound, cpValue, mainVoteJust, val.Address())
+		signBytes := mainVote.SignBytes()
+
+		mainVoteCommitters = append(mainVoteCommitters, val.Number())
+		mainVoteSigs = append(mainVoteSigs, td.valKeys[i].Sign(signBytes))
+	}
+	mainVoteAggSig := bls.SignatureAggregate(mainVoteSigs...)
+	certMainVote := certificate.NewVoteCertificate(height, round)
+	certMainVote.SetSignature(mainVoteCommitters, []int32{}, mainVoteAggSig)
+	decidedJust := &vote.JustDecided{QCert: certMainVote}
+
+	return preVoteJust, mainVoteJust, decidedJust
+}
+
 func TestStart(t *testing.T) {
 	td := setup(t)
 
@@ -582,66 +660,34 @@ func TestPickRandomVote(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 	assert.Nil(t, td.consP.PickRandomVote(0))
-	cpRound := int16(1)
 
-	// === make valid certificate
-	preVoteCommitters := []int32{}
-	preVoteSigs := []*bls.Signature{}
-	for i, val := range td.consP.validators {
-		preVoteJust := &vote.JustInitYes{}
-		preVote := vote.NewCPPreVote(hash.UndefHash, 1, 0, cpRound, vote.CPValueYes, preVoteJust, val.Address())
-		sbPreVote := preVote.SignBytes()
+	h := uint32(1)
+	r := int16(0)
 
-		preVoteCommitters = append(preVoteCommitters, val.Number())
-		preVoteSigs = append(preVoteSigs, td.valKeys[i].Sign(sbPreVote))
-	}
-	preVoteAggSig := bls.SignatureAggregate(preVoteSigs...)
-	certPreVote := certificate.NewVoteCertificate(1, 0)
-	certPreVote.SetSignature(preVoteCommitters, []int32{}, preVoteAggSig)
-
-	mainVoteCommitters := []int32{}
-	mainVoteSigs := []*bls.Signature{}
-	for i, val := range td.consP.validators {
-		mainVoteJust := &vote.JustMainVoteNoConflict{
-			QCert: certPreVote,
-		}
-		mainVote := vote.NewCPMainVote(hash.UndefHash, 1, 0, cpRound, vote.CPValueYes, mainVoteJust, val.Address())
-		sbMainVote := mainVote.SignBytes()
-
-		mainVoteCommitters = append(mainVoteCommitters, val.Number())
-		mainVoteSigs = append(mainVoteSigs, td.valKeys[i].Sign(sbMainVote))
-	}
-	mainVoteAggSig := bls.SignatureAggregate(mainVoteSigs...)
-	certMainVote := certificate.NewVoteCertificate(1, 0)
-	certMainVote.SetSignature(mainVoteCommitters, []int32{}, mainVoteAggSig)
-	// ====
+	preVoteJust, mainVoteJust, decidedJust := td.makeChangeProposerJusts(t, hash.UndefHash, h, r)
 
 	// round 0
-	v1 := td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexX)
-	v2 := td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexY)
-	v3 := td.addCPPreVote(td.consP, hash.UndefHash, 1, 0, cpRound+1, vote.CPValueYes,
-		&vote.JustPreVoteHard{QCert: certPreVote}, tIndexY)
-	v4 := td.addCPMainVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,
-		&vote.JustMainVoteNoConflict{QCert: certPreVote}, tIndexY)
-	v5 := td.addCPDecidedVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,
-		&vote.JustDecided{QCert: certMainVote}, tIndexY)
+	v1 := td.addPrepareVote(td.consP, td.RandHash(), h, r, tIndexX)
+	v2 := td.addPrepareVote(td.consP, td.RandHash(), h, r, tIndexY)
+	v3 := td.addCPPreVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueYes, preVoteJust, tIndexY)
+	v4 := td.addCPMainVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueYes, mainVoteJust, tIndexY)
+	v5 := td.addCPDecidedVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueYes, decidedJust, tIndexY)
 
 	// Round 1
 	td.enterNextRound(td.consP)
-	v6 := td.addPrepareVote(td.consP, td.RandHash(), 1, 1, tIndexY)
+	v6 := td.addPrepareVote(td.consP, td.RandHash(), h, r+1, tIndexY)
 
-	assert.True(t, td.consP.HasVote(v1.Hash()))
-	assert.True(t, td.consP.HasVote(v2.Hash()))
-	assert.True(t, td.consP.HasVote(v3.Hash()))
-	assert.True(t, td.consP.HasVote(v4.Hash()))
-	assert.True(t, td.consP.HasVote(v5.Hash()))
-	assert.True(t, td.consP.HasVote(v6.Hash()))
-	assert.NotNil(t, td.consP.PickRandomVote(0))
+	require.True(t, td.consP.HasVote(v1.Hash()))
+	require.True(t, td.consP.HasVote(v2.Hash()))
+	require.True(t, td.consP.HasVote(v3.Hash()))
+	require.True(t, td.consP.HasVote(v4.Hash()))
+	require.True(t, td.consP.HasVote(v5.Hash()))
+	require.True(t, td.consP.HasVote(v6.Hash()))
 
-	rndVote0 := td.consP.PickRandomVote(0)
+	rndVote0 := td.consP.PickRandomVote(r)
 	assert.Equal(t, rndVote0, v5, "for past round should pick Decided votes only")
 
-	rndVote1 := td.consP.PickRandomVote(1)
+	rndVote1 := td.consP.PickRandomVote(r + 1)
 	assert.Equal(t, rndVote1, v6)
 }
 

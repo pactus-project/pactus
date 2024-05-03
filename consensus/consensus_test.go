@@ -549,7 +549,7 @@ func TestPickRandomVote(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 	assert.Nil(t, td.consP.PickRandomVote(0))
-	cpRound := int16(1)
+	cpRound := int16(0)
 
 	// === make valid certificate
 	preVoteCommitters := []int32{}
@@ -586,8 +586,8 @@ func TestPickRandomVote(t *testing.T) {
 	// round 0
 	td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexX)
 	td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexY)
-	td.addCPPreVote(td.consP, hash.UndefHash, 1, 0, cpRound+1, vote.CPValueYes,
-		&vote.JustPreVoteHard{QCert: certPreVote}, tIndexY)
+	td.addCPPreVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,
+		&vote.JustInitYes{}, tIndexY)
 	td.addCPMainVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,
 		&vote.JustMainVoteNoConflict{QCert: certPreVote}, tIndexY)
 	td.addCPDecidedVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,

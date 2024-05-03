@@ -259,7 +259,7 @@ func (cp *changeProposer) cpCheckJustDecide(just vote.Just,
 	}
 
 	err = j.QCert.ValidateCPMainVote(cp.validators,
-		blockHash, int16(cpValue), byte(cpRound))
+		blockHash, cpRound, byte(cpValue))
 	if err != nil {
 		return invalidJustificationError{
 			Reason: err.Error(),
