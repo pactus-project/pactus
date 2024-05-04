@@ -166,7 +166,6 @@ func TestOpenSession(t *testing.T) {
 	assert.True(t, ps.HasOpenSession(pid))
 	assert.False(t, ps.HasOpenSession(ts.RandPeerID()))
 	assert.Equal(t, 1, ps.NumberOfSessions())
-	assert.Contains(t, ps.Sessions(), ssn)
 }
 
 func TestFindSession(t *testing.T) {

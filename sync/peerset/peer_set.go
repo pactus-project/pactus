@@ -1,7 +1,6 @@
 package peerset
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -18,9 +17,7 @@ type PeerSet struct {
 	lk sync.RWMutex
 
 	peers              map[peer.ID]*Peer
-	sessions           map[int]*session.Session
-	nextSessionID      int
-	sessionTimeout     time.Duration
+	sessionManager     *session.Manager
 	totalSentBundles   int
 	totalSentBytes     int64
 	totalReceivedBytes int64
@@ -32,8 +29,7 @@ type PeerSet struct {
 func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	return &PeerSet{
 		peers:          make(map[peer.ID]*Peer),
-		sessions:       make(map[int]*session.Session),
-		sessionTimeout: sessionTimeout,
+		sessionManager: session.NewManager(sessionTimeout),
 		sentBytes:      make(map[message.Type]int64),
 		receivedBytes:  make(map[message.Type]int64),
 		startedAt:      time.Now(),
@@ -44,9 +40,7 @@ func (ps *PeerSet) OpenSession(pid peer.ID, from, count uint32) *session.Session
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	ssn := session.NewSession(ps.nextSessionID, pid, from, count)
-	ps.sessions[ssn.SessionID] = ssn
-	ps.nextSessionID++
+	ssn := ps.sessionManager.OpenSession(pid, from, count)
 
 	p := ps.mustGetPeer(pid)
 	p.TotalSessions++
@@ -58,127 +52,64 @@ func (ps *PeerSet) FindSession(sid int) *session.Session {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	ssn, ok := ps.sessions[sid]
-	if ok {
-		return ssn
-	}
-
-	return nil
+	return ps.sessionManager.FindSession(sid)
 }
 
 func (ps *PeerSet) NumberOfSessions() int {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	return len(ps.sessions)
+	return ps.sessionManager.NumberOfSessions()
 }
 
 func (ps *PeerSet) HasOpenSession(pid peer.ID) bool {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	for _, ssn := range ps.sessions {
-		if ssn.PeerID == pid && ssn.Status == session.Open {
-			return true
-		}
-	}
-
-	return false
+	return ps.sessionManager.HasOpenSession(pid)
 }
 
-type SessionStats struct {
-	Total       int
-	Open        int
-	Completed   int
-	Uncompleted int
-}
-
-func (ss *SessionStats) String() string {
-	return fmt.Sprintf("total: %v, open: %v, completed: %v, uncompleted: %v",
-		ss.Total, ss.Open, ss.Completed, ss.Uncompleted)
-}
-
-func (ps *PeerSet) SessionStats() SessionStats {
+func (ps *PeerSet) SessionStats() session.Stats {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	total := len(ps.sessions)
-	open := 0
-	completed := 0
-	unCompleted := 0
-	for _, ssn := range ps.sessions {
-		switch ssn.Status {
-		case session.Open:
-			open++
-
-		case session.Completed:
-			completed++
-
-		case session.Uncompleted:
-			unCompleted++
-		}
-	}
-
-	return SessionStats{
-		Total:       total,
-		Open:        open,
-		Completed:   completed,
-		Uncompleted: unCompleted,
-	}
+	return ps.sessionManager.Stats()
 }
 
 func (ps *PeerSet) HasAnyOpenSession() bool {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	for _, ssn := range ps.sessions {
-		if ssn.Status == session.Open {
-			return true
-		}
-	}
-
-	return false
+	return ps.sessionManager.HasAnyOpenSession()
 }
 
 func (ps *PeerSet) UpdateSessionLastActivity(sid int) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	ssn := ps.sessions[sid]
-	if ssn != nil {
-		ssn.LastActivity = time.Now()
-	}
+	ps.sessionManager.UpdateSessionLastActivity(sid)
 }
 
 func (ps *PeerSet) SetExpiredSessionsAsUncompleted() {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	for _, ssn := range ps.sessions {
-		if ps.sessionTimeout < util.Now().Sub(ssn.LastActivity) {
-			ssn.Status = session.Uncompleted
-		}
-	}
+	ps.sessionManager.SetExpiredSessionsAsUncompleted()
 }
 
 func (ps *PeerSet) SetSessionUncompleted(sid int) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	ssn := ps.sessions[sid]
-	if ssn != nil {
-		ssn.Status = session.Uncompleted
-	}
+	ps.sessionManager.SetSessionUncompleted(sid)
 }
 
 func (ps *PeerSet) SetSessionCompleted(sid int) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	ssn := ps.sessions[sid]
+	ssn := ps.sessionManager.SetSessionCompleted(sid)
 	if ssn != nil {
-		ssn.Status = session.Completed
-
 		p := ps.mustGetPeer(ssn.PeerID)
 		p.CompletedSessions++
 	}
@@ -188,7 +119,7 @@ func (ps *PeerSet) RemoveAllSessions() {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	ps.sessions = make(map[int]*session.Session)
+	ps.sessionManager.RemoveAllSessions()
 }
 
 func (ps *PeerSet) Len() int {
@@ -274,7 +205,7 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {
 	p.Status = status
 
 	if status == StatusCodeDisconnected {
-		for _, ssn := range ps.sessions {
+		for _, ssn := range ps.sessionManager.Sessions() {
 			if ssn.PeerID == pid {
 				ssn.Status = session.Uncompleted
 			}
@@ -415,13 +346,7 @@ func (ps *PeerSet) Sessions() []*session.Session {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	sessions := make([]*session.Session, 0, len(ps.sessions))
-
-	for _, ssn := range ps.sessions {
-		sessions = append(sessions, ssn)
-	}
-
-	return sessions
+	return ps.sessionManager.Sessions()
 }
 
 // GetRandomPeer selects a random peer from the peer set based on their download score.
