@@ -136,7 +136,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			p := td.sync.peerSet.GetPeer(pid)
 
 			pub := valKey.PublicKey()
-			assert.Equal(t, p.Status, peerset.StatusCodeKnown)
+			assert.Equal(t, p.Status, peerset.StatusCodeConnected)
 			assert.Equal(t, p.Agent, version.NodeAgent.String())
 			assert.Equal(t, p.Moniker, "kitty")
 			assert.Contains(t, p.ConsensusKeys, pub)
