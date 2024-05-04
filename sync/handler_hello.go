@@ -78,7 +78,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 	}
 
 	handler.peerSet.UpdateHeight(pid, msg.Height, msg.BlockHash)
-	handler.peerSet.UpdateStatus(pid, peerset.StatusCodeKnown)
+	handler.peerSet.UpdateStatus(pid, peerset.StatusCodeConnected)
 
 	response := message.NewHelloAckMessage(message.ResponseCodeOK, "Ok", handler.state.LastBlockHeight())
 	handler.acknowledge(response, pid)
