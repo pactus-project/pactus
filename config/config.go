@@ -19,7 +19,6 @@ import (
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
 	"github.com/pactus-project/pactus/www/nanomsg"
-	"github.com/pelletier/go-toml"
 )
 
 var (
@@ -162,6 +161,16 @@ func DefaultConfigTestnet() *Config {
 		"/dns/testnet2.pactus.org/tcp/21777/p2p/12D3KooWQcDuFDMGsw6gG7oNFw7C4x7ozoMu69J7WEAojKCaNzji",
 		"/dns/testnet3.pactus.org/tcp/21777/p2p/12D3KooWLsAPSJ4xowd9thGbPmbweBT6sg3nEiPjDJccaWZacsUR",
 		"/dns/testnet4.pactus.org/tcp/21777/p2p/12D3KooWJKYdHzWZGibnj74NSSgKRu4Ez6MijDWMfLfXxeL4un6v",
+		"/ip4/34.35.39.182/tcp/21777/p2p/12D3KooWJKYdHzWZGibnj74NSSgKRu4Ez6MijDWMfLfXxeL4un6v",
+		"/ip4/128.140.41.234/tcp/21777/p2p/12D3KooWLV9Y2MzYMVMtqCuivFAzcgVM1H7US4Vud1NU6KFmJBkw",
+		"/ip4/34.18.2.86/tcp/21777/p2p/12D3KooWLsAPSJ4xowd9thGbPmbweBT6sg3nEiPjDJccaWZacsUR",
+		"/ip4/113.176.163.161/tcp/21777/p2p/12D3KooWCNE13y2qh9W4qZFd61Me8nDDANGx36j2zWTz3sscBJou",
+		"/ip4/35.234.166.185/tcp/21777/p2p/12D3KooWQcDuFDMGsw6gG7oNFw7C4x7ozoMu69J7WEAojKCaNzji",
+		"/ip4/49.13.205.202/tcp/21777/p2p/12D3KooWLQdsUExqTux9T6xKbXE3JbgsEFx3Gu9AhCSV3L1ZuMNn",
+		"/ip4/104.234.1.82/tcp/21777/p2p/12D3KooWLnyM3SLvye7f2BW5AH1ZQQvkvZxKr9yaCNEPfFY4cbYx",
+		"/ip4/207.180.250.57/tcp/21777/p2p/12D3KooWFpSTV3r6auPeWfKM1vb4FNug6FeAuJkgmzPTUJocxD39",
+		"/ip4/202.182.126.146/tcp/21777/p2p/12D3KooWB4XaqGMDxAzaXypBBXBvwqZpgAAPcgkwuzy2LbKMRxpH",
+		"/ip4/157.90.111.140/tcp/21777/p2p/12D3KooWKwbdkwfCFdrucHir69U7E9P2BbHctmsBj8Hcms5jP64h",
 	}
 	conf.Network.MaxConns = 64
 	conf.Network.EnableNATService = false
