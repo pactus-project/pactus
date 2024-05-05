@@ -19,7 +19,6 @@ func TestPeerStatus(t *testing.T) {
 		{StatusCodeDisconnected, false, false, false},
 		{StatusCodeConnected, false, true, false},
 		{StatusCodeKnown, false, true, true},
-		{StatusCodeTrusty, false, true, true},
 	}
 
 	for _, testCase := range testCases {
@@ -28,7 +27,7 @@ func TestPeerStatus(t *testing.T) {
 
 		assert.Equal(t, testCase.isBanned, p.IsBanned())
 		assert.Equal(t, testCase.isConnected, p.IsConnected())
-		assert.Equal(t, testCase.isKnown, p.IsKnownOrTrusty())
+		assert.Equal(t, testCase.isKnown, p.IsKnown())
 	}
 }
 

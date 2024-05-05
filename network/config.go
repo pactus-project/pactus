@@ -91,6 +91,11 @@ func (conf *Config) BasicCheck() error {
 			Reason: "both the relay and relay service cannot be active at the same time",
 		}
 	}
+	if conf.MaxConns < 16 {
+		return ConfigError{
+			Reason: "maximum connection should be greater than 16",
+		}
+	}
 
 	return validateAddrInfo(conf.BootstrapAddrStrings...)
 }
@@ -138,10 +143,6 @@ func (conf *Config) CheckIsBootstrapper(pid lp2pcore.PeerID) {
 	}
 }
 
-func (conf *Config) ScaledMaxConns() int {
-	return util.LogScale(conf.MaxConns)
-}
-
-func (conf *Config) ScaledMinConns() int {
-	return conf.ScaledMaxConns() / 4
+func (conf *Config) MinConns() int {
+	return (conf.MaxConns / 4) - 2
 }

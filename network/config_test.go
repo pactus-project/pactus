@@ -78,6 +78,15 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
+			name: "Low MaxConns - Expect Error",
+			expectError: ConfigError{
+				Reason: "maximum connection should be greater than 16",
+			},
+			updateFn: func(c *Config) {
+				c.MaxConns = 8
+			},
+		},
+		{
 			name:        "Valid Public Address - No Error",
 			expectError: nil,
 			updateFn: func(c *Config) {
@@ -134,28 +143,22 @@ func TestIsBootstrapper(t *testing.T) {
 	assert.True(t, conf.IsBootstrapper)
 }
 
-func TestScaledConns(t *testing.T) {
+func TestMinConns(t *testing.T) {
 	tests := []struct {
 		config      Config
-		expectedMax int
 		expectedMin int
 	}{
-		{Config{MaxConns: 1}, 1, 0},
-		{Config{MaxConns: 8}, 8, 2},
-		{Config{MaxConns: 30}, 32, 8},
-		{Config{MaxConns: 1000}, 1024, 256},
+		{Config{MaxConns: 16}, 2},
+		{Config{MaxConns: 30}, 5},
+		{Config{MaxConns: 128}, 30},
 	}
 
 	for _, test := range tests {
-		resultMax := test.config.ScaledMaxConns()
-		resultMin := test.config.ScaledMinConns()
-		if resultMax != test.expectedMax ||
-			resultMin != test.expectedMin {
+		resultMin := test.config.MinConns()
+		if resultMin != test.expectedMin {
 			t.Errorf("For MaxConns %d, "+
-				"NormedMaxConns() returned %d (expected %d), "+
-				"NormedMinConns() returned %d (expected %d)",
+				"MinConns() returned %d (expected %d)",
 				test.config.MaxConns,
-				resultMax, test.expectedMax,
 				resultMin, test.expectedMin)
 		}
 	}

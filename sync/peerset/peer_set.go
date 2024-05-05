@@ -202,7 +202,12 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
-	p.Status = status
+
+	if p.Status != StatusCodeBanned || // Don't update the status if peer is banned
+		// Don't change status to connected if peer is known already
+		!(p.Status == StatusCodeKnown && status == StatusCodeConnected) {
+		p.Status = status
+	}
 
 	if status == StatusCodeDisconnected {
 		for _, ssn := range ps.sessionManager.Sessions() {
