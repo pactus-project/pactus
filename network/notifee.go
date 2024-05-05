@@ -34,10 +34,9 @@ func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel cha
 		new(lp2pevent.EvtPeerIdentificationFailed),
 		new(lp2pevent.EvtPeerProtocolsUpdated),
 	}
-	subOptions :=
-		[]lp2pevent.SubscriptionOpt{
-			lp2peventbus.BufSize(1024),
-		}
+	subOptions := []lp2pevent.SubscriptionOpt{
+		lp2peventbus.BufSize(1024),
+	}
 	eventSub, err := host.EventBus().Subscribe(events, subOptions...)
 	if err != nil {
 		logger.Error("failed to register for libp2p events")
@@ -72,7 +71,6 @@ func (s *NotifeeService) Start() {
 
 				case lp2pevent.EvtPeerIdentificationFailed:
 					s.logger.Warn("identification failed", "pid", e.Peer)
-					s.host.Network().ClosePeer(e.Peer)
 
 				case lp2pevent.EvtPeerProtocolsUpdated:
 					s.logger.Debug("protocols updated", "pid", e.Peer, "protocols", e.Added)

@@ -189,7 +189,7 @@ func DefaultConfigLocalnet() *Config {
 	conf.Network.EnableNATService = false
 	conf.Network.EnableUPnP = false
 	conf.Network.BootstrapAddrStrings = []string{}
-	conf.Network.MaxConns = 0
+	conf.Network.MaxConns = 16
 	conf.Network.NetworkName = "pactus-localnet"
 	conf.Network.DefaultPort = 0
 	conf.Network.ForcePrivateNetwork = true
