@@ -454,7 +454,7 @@ func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls
 		val.UpdateLastBondingHeight(1 + uint32(i))
 		val.UpdateLastSortitionHeight(1 + uint32(i))
 		val.SubtractFromStake(val.Stake())
-		val.AddToStake(10 * 1e9)
+		val.AddToStake(10e9)
 	}
 
 	cmt, _ := committee.NewCommittee(vals, num, vals[0].Address())

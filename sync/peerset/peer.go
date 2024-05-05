@@ -44,11 +44,11 @@ func NewPeer(peerID peer.ID) *Peer {
 }
 
 func (p *Peer) IsConnected() bool {
-	return p.Status == StatusCodeConnected || p.Status == StatusCodeKnown || p.Status == StatusCodeTrusty
+	return p.Status == StatusCodeConnected || p.Status == StatusCodeKnown
 }
 
-func (p *Peer) IsKnownOrTrusty() bool {
-	return p.Status == StatusCodeKnown || p.Status == StatusCodeTrusty
+func (p *Peer) IsKnown() bool {
+	return p.Status == StatusCodeKnown
 }
 
 func (p *Peer) IsBanned() bool {

@@ -7,6 +7,7 @@ import (
 	lp2pevent "github.com/libp2p/go-libp2p/core/event"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
+	lp2peventbus "github.com/libp2p/go-libp2p/p2p/host/eventbus"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/logger"
 	"golang.org/x/exp/slices"
@@ -30,9 +31,13 @@ func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel cha
 	events := []interface{}{
 		new(lp2pevent.EvtLocalReachabilityChanged),
 		new(lp2pevent.EvtPeerIdentificationCompleted),
+		new(lp2pevent.EvtPeerIdentificationFailed),
 		new(lp2pevent.EvtPeerProtocolsUpdated),
 	}
-	eventSub, err := host.EventBus().Subscribe(events)
+	subOptions := []lp2pevent.SubscriptionOpt{
+		lp2peventbus.BufSize(1024),
+	}
+	eventSub, err := host.EventBus().Subscribe(events, subOptions...)
 	if err != nil {
 		logger.Error("failed to register for libp2p events")
 	}
@@ -64,6 +69,9 @@ func (s *NotifeeService) Start() {
 					s.logger.Debug("identification completed", "pid", e.Peer)
 					s.sendProtocolsEvent(e.Peer)
 
+				case lp2pevent.EvtPeerIdentificationFailed:
+					s.logger.Warn("identification failed", "pid", e.Peer)
+
 				case lp2pevent.EvtPeerProtocolsUpdated:
 					s.logger.Debug("protocols updated", "pid", e.Peer, "protocols", e.Added)
 					s.sendProtocolsEvent(e.Peer)
@@ -91,7 +99,7 @@ func (s *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn)
 	pid := conn.RemotePeer()
 	s.logger.Info("connected to peer", "pid", pid, "direction", conn.Stat().Direction, "addr", conn.RemoteMultiaddr())
 
-	s.peerMgr.AddPeer(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
+	s.peerMgr.PeerConnected(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
 	s.sendConnectEvent(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
 }
 
@@ -99,7 +107,7 @@ func (s *NotifeeService) Disconnected(_ lp2pnetwork.Network, conn lp2pnetwork.Co
 	pid := conn.RemotePeer()
 	s.logger.Info("disconnected from peer", "pid", pid)
 
-	s.peerMgr.RemovePeer(pid)
+	s.peerMgr.PeerDisconnected(pid)
 	s.sendDisconnectEvent(pid)
 }
 

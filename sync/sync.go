@@ -222,6 +222,11 @@ func (sync *synchronizer) Services() service.Services {
 }
 
 func (sync *synchronizer) sayHello(to peer.ID) {
+	p := sync.peerSet.GetPeer(to)
+	if p != nil && p.IsKnown() {
+		return
+	}
+
 	msg := message.NewHelloMessage(
 		sync.SelfID(),
 		sync.config.Moniker,
@@ -311,10 +316,6 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
 	sync.logger.Debug("processing connect event", "pid", ce.PeerID)
 
-	p := sync.peerSet.GetPeer(ce.PeerID)
-	if p != nil && p.IsKnownOrTrusty() {
-		return
-	}
 	sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeConnected)
 	sync.peerSet.UpdateAddress(ce.PeerID, ce.RemoteAddress, ce.Direction)
 }
@@ -463,7 +464,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		}
 
 		// We haven't completed the handshake with this peer.
-		if !p.IsKnownOrTrusty() {
+		if !p.IsKnown() {
 			if onlyNodeNetwork {
 				sync.network.CloseConnection(p.PeerID)
 			}

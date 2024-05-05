@@ -33,7 +33,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 		return nil
 	}
 
-	if !p.IsKnownOrTrusty() {
+	if !p.IsKnown() {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("not handshaked (%s)", p.Status.String()), msg.SessionID, 0, nil, nil)
 

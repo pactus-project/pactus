@@ -89,7 +89,7 @@ func ConnectSync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrInf
 		swarm.Backoff().Clear(addrInfo.ID)
 	}
 
-	return h.Connect(lp2pnetwork.WithDialPeerTimeout(ctx, 30*time.Second), addrInfo)
+	return h.Connect(lp2pnetwork.WithDialPeerTimeout(ctx, 10*time.Second), addrInfo)
 }
 
 func PrivateSubnets() []*net.IPNet {
@@ -144,16 +144,16 @@ func BuildConcreteLimitConfig(maxConns int) lp2prcmgr.ConcreteLimitConfig {
 		limit.ConnsInbound = maxConnVal
 		limit.ConnsOutbound = maxConnVal
 		limit.Conns = maxConnVal
-		limit.StreamsInbound = maxConnVal * 8
-		limit.StreamsOutbound = maxConnVal * 8
-		limit.Streams = maxConnVal * 8
+		limit.StreamsInbound = maxConnVal * 16
+		limit.StreamsOutbound = maxConnVal * 16
+		limit.Streams = maxConnVal * 16
 	}
 
 	updateResourceLimits(&changes.System, maxConns, 1)
 	updateResourceLimits(&changes.ServiceDefault, maxConns, 1)
 	updateResourceLimits(&changes.ProtocolDefault, maxConns, 1)
 	updateResourceLimits(&changes.ProtocolPeerDefault, maxConns, 1)
-	updateResourceLimits(&changes.Transient, maxConns, 1)
+	updateResourceLimits(&changes.Transient, maxConns, 0.5)
 
 	defaultLimitConfig := lp2prcmgr.DefaultLimits.AutoScale()
 	changedLimitConfig := changes.Build(defaultLimitConfig)
