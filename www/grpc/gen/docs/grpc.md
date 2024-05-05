@@ -111,6 +111,10 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           <span class="badge text-bg-primary">rpc</span> CreateWallet</a>
         </li> 
         <li>
+          <a href="#pactus.Wallet.RestoreWallet">
+          <span class="badge text-bg-primary">rpc</span> RestoreWallet</a>
+        </li> 
+        <li>
           <a href="#pactus.Wallet.LoadWallet">
           <span class="badge text-bg-primary">rpc</span> LoadWallet</a>
         </li> 
@@ -486,6 +490,16 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           </a>
         </li> 
         <li>
+          <a href="#pactus.RestoreWalletRequest">
+            <span class="badge text-bg-secondary">msg</span> RestoreWalletRequest
+          </a>
+        </li> 
+        <li>
+          <a href="#pactus.RestoreWalletResponse">
+            <span class="badge text-bg-secondary">msg</span> RestoreWalletResponse
+          </a>
+        </li> 
+        <li>
           <a href="#pactus.SignRawTransactionRequest">
             <span class="badge text-bg-secondary">msg</span> SignRawTransactionRequest
           </a>
@@ -637,6 +651,10 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
 <div class="request pt-3">Request message: <a href="#pactus.CreateWalletRequest">CreateWalletRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.CreateWalletResponse">CreateWalletResponse</a></div>
 <p>CreateWallet creates a new wallet with the specified parameters.</p> 
+<h3 id="pactus.Wallet.RestoreWallet">RestoreWallet <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
+<div class="request pt-3">Request message: <a href="#pactus.RestoreWalletRequest">RestoreWalletRequest</a></div>
+<div class="response pb-3">Response message: <a href="#pactus.RestoreWalletResponse">RestoreWalletResponse</a></div>
+<p>RestoreWallet restores an existing wallet with the given mnemonic.</p> 
 <h3 id="pactus.Wallet.LoadWallet">LoadWallet <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.LoadWalletRequest">LoadWalletRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.LoadWalletResponse">LoadWalletResponse</a></div>
@@ -2441,18 +2459,6 @@ CreateWalletRequest
       </td>
       <td>Name of the new wallet. </td>
     </tr><tr>
-      <td class="fw-bold">mnemonic</td>
-      <td>
-        <a href="#string">string</a>
-      </td>
-      <td>Mnemonic for wallet recovery. </td>
-    </tr><tr>
-      <td class="fw-bold">language</td>
-      <td>
-        <a href="#string">string</a>
-      </td>
-      <td>Language for the mnemonic. </td>
-    </tr><tr>
       <td class="fw-bold">password</td>
       <td>
         <a href="#string">string</a>
@@ -2473,11 +2479,11 @@ CreateWalletResponse
   </thead>
   <tbody class="table-group-divider">
   <tr>
-      <td class="fw-bold">wallet_name</td>
+      <td class="fw-bold">mnemonic</td>
       <td>
         <a href="#string">string</a>
       </td>
-      <td>Name of the created wallet. </td>
+      <td>Menomic for wallet recovery. </td>
     </tr>
   </tbody>
 </table>  
@@ -2792,6 +2798,58 @@ LockWalletResponse
         <a href="#string">string</a>
       </td>
       <td>Name of the locked wallet. </td>
+    </tr>
+  </tbody>
+</table>  
+<h3 id="pactus.RestoreWalletRequest">
+RestoreWalletRequest
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Request message for restoring an existing wallet.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+      <td class="fw-bold">wallet_name</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Name of the wallet to restore. </td>
+    </tr><tr>
+      <td class="fw-bold">mnemonic</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Menomic for wallet recovery. </td>
+    </tr><tr>
+      <td class="fw-bold">password</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Password for securing the wallet. </td>
+    </tr>
+  </tbody>
+</table>  
+<h3 id="pactus.RestoreWalletResponse">
+RestoreWalletResponse
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Response message containing the name of the restored wallet.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+      <td class="fw-bold">wallet_name</td>
+      <td>
+        <a href="#string">string</a>
+      </td>
+      <td>Name of the restored wallet. </td>
     </tr>
   </tbody>
 </table>  

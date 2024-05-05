@@ -159,6 +159,28 @@ function deserialize_pactus_LockWalletResponse(buffer_arg) {
   return wallet_pb.LockWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_RestoreWalletRequest(arg) {
+  if (!(arg instanceof wallet_pb.RestoreWalletRequest)) {
+    throw new Error('Expected argument of type pactus.RestoreWalletRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_RestoreWalletRequest(buffer_arg) {
+  return wallet_pb.RestoreWalletRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_RestoreWalletResponse(arg) {
+  if (!(arg instanceof wallet_pb.RestoreWalletResponse)) {
+    throw new Error('Expected argument of type pactus.RestoreWalletResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_RestoreWalletResponse(buffer_arg) {
+  return wallet_pb.RestoreWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_SignRawTransactionRequest(arg) {
   if (!(arg instanceof wallet_pb.SignRawTransactionRequest)) {
     throw new Error('Expected argument of type pactus.SignRawTransactionRequest');
@@ -239,6 +261,18 @@ createWallet: {
     requestDeserialize: deserialize_pactus_CreateWalletRequest,
     responseSerialize: serialize_pactus_CreateWalletResponse,
     responseDeserialize: deserialize_pactus_CreateWalletResponse,
+  },
+  // RestoreWallet restores an existing wallet with the given mnemonic.
+restoreWallet: {
+    path: '/pactus.Wallet/RestoreWallet',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.RestoreWalletRequest,
+    responseType: wallet_pb.RestoreWalletResponse,
+    requestSerialize: serialize_pactus_RestoreWalletRequest,
+    requestDeserialize: deserialize_pactus_RestoreWalletRequest,
+    responseSerialize: serialize_pactus_RestoreWalletResponse,
+    responseDeserialize: deserialize_pactus_RestoreWalletResponse,
   },
   // LoadWallet loads an existing wallet with the given name.
 loadWallet: {

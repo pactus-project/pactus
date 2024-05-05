@@ -77,10 +77,14 @@ func setup(t *testing.T, conf *Config) *testData {
 	require.NoError(t, err)
 	require.NoError(t, defaultWallet.Save())
 
+	mockWalletMgrConf := wallet.DefaultConfig()
+	mockWalletMgrConf.WalletsDir = conf.WalletsDir
+	mockWalletMgrConf.ChainType = mockState.Genesis().ChainType()
+
 	server := NewServer(
 		conf, mockState,
 		mockSync, mockNet,
-		mockConsMgr, wallet.NewWalletManager(mockState.Genesis().ChainType()),
+		mockConsMgr, wallet.NewWalletManager(mockWalletMgrConf),
 	)
 	err = server.startListening(listener)
 	assert.NoError(t, err)

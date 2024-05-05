@@ -89,6 +89,8 @@
     - [LoadWalletResponse](#pactus-LoadWalletResponse)
     - [LockWalletRequest](#pactus-LockWalletRequest)
     - [LockWalletResponse](#pactus-LockWalletResponse)
+    - [RestoreWalletRequest](#pactus-RestoreWalletRequest)
+    - [RestoreWalletResponse](#pactus-RestoreWalletResponse)
     - [SignRawTransactionRequest](#pactus-SignRawTransactionRequest)
     - [SignRawTransactionResponse](#pactus-SignRawTransactionResponse)
     - [UnloadWalletRequest](#pactus-UnloadWalletRequest)
@@ -1154,8 +1156,6 @@ Request message for creating a new wallet.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | wallet_name | [string](#string) |  | Name of the new wallet. |
-| mnemonic | [string](#string) |  | Mnemonic for wallet recovery. |
-| language | [string](#string) |  | Language for the mnemonic. |
 | password | [string](#string) |  | Password for securing the wallet. |
 
 
@@ -1171,7 +1171,7 @@ Response message containing the name of the created wallet.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| wallet_name | [string](#string) |  | Name of the created wallet. |
+| mnemonic | [string](#string) |  | Menomic for wallet recovery. |
 
 
 
@@ -1384,6 +1384,38 @@ Response message containing the name of the locked wallet.
 
 
 
+<a name="pactus-RestoreWalletRequest"></a>
+
+### RestoreWalletRequest
+Request message for restoring an existing wallet.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| wallet_name | [string](#string) |  | Name of the wallet to restore. |
+| mnemonic | [string](#string) |  | Menomic for wallet recovery. |
+| password | [string](#string) |  | Password for securing the wallet. |
+
+
+
+
+
+
+<a name="pactus-RestoreWalletResponse"></a>
+
+### RestoreWalletResponse
+Response message containing the name of the restored wallet.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| wallet_name | [string](#string) |  | Name of the restored wallet. |
+
+
+
+
+
+
 <a name="pactus-SignRawTransactionRequest"></a>
 
 ### SignRawTransactionRequest
@@ -1506,6 +1538,7 @@ Define the Wallet service with various RPC methods for wallet management.
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | CreateWallet | [CreateWalletRequest](#pactus-CreateWalletRequest) | [CreateWalletResponse](#pactus-CreateWalletResponse) | CreateWallet creates a new wallet with the specified parameters. |
+| RestoreWallet | [RestoreWalletRequest](#pactus-RestoreWalletRequest) | [RestoreWalletResponse](#pactus-RestoreWalletResponse) | RestoreWallet restores an existing wallet with the given mnemonic. |
 | LoadWallet | [LoadWalletRequest](#pactus-LoadWalletRequest) | [LoadWalletResponse](#pactus-LoadWalletResponse) | LoadWallet loads an existing wallet with the given name. |
 | UnloadWallet | [UnloadWalletRequest](#pactus-UnloadWalletRequest) | [UnloadWalletResponse](#pactus-UnloadWalletResponse) | UnloadWallet unloads a currently loaded wallet with the specified name. |
 | LockWallet | [LockWalletRequest](#pactus-LockWalletRequest) | [LockWalletResponse](#pactus-LockWalletResponse) | LockWallet locks a currently loaded wallet with the provided password and timeout. |

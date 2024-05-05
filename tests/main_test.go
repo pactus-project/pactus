@@ -128,7 +128,8 @@ func TestMain(m *testing.M) {
 	tGenDoc = genesis.MakeGenesis(util.Now(), accs, vals, params)
 
 	for i := 0; i < tTotalNodes; i++ {
-		tNodes[i], _ = node.NewNode(tGenDoc, tConfigs[i],
+		tNodes[i], _ = node.NewNode(
+			tGenDoc, tConfigs[i],
 			tValKeys[i],
 			[]crypto.Address{
 				tValKeys[i][0].PublicKey().AccountAddress(),

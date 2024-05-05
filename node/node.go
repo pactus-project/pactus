@@ -77,7 +77,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	}
 
 	consMgr := consensus.NewManager(conf.Consensus, st, valKeys, rewardAddrs, messageCh)
-	walletMgr := wallet.NewWalletManager(chainType)
+	walletMgr := wallet.NewWalletManager(conf.WalletManager)
 
 	syn, err := sync.NewSynchronizer(conf.Sync, valKeys, st, consMgr, net, messageCh)
 	if err != nil {

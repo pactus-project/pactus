@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
@@ -34,17 +35,18 @@ var (
 )
 
 type Config struct {
-	Node      *NodeConfig       `toml:"node"`
-	Store     *store.Config     `toml:"store"`
-	Network   *network.Config   `toml:"network"`
-	Sync      *sync.Config      `toml:"sync"`
-	TxPool    *txpool.Config    `toml:"tx_pool"`
-	Consensus *consensus.Config `toml:"-"`
-	Logger    *logger.Config    `toml:"logger"`
-	GRPC      *grpc.Config      `toml:"grpc"`
-	JSONRPC   *jsonrpc.Config   `toml:"jsonrpc"`
-	HTTP      *http.Config      `toml:"http"`
-	Nanomsg   *nanomsg.Config   `toml:"nanomsg"`
+	Node          *NodeConfig       `toml:"node"`
+	Store         *store.Config     `toml:"store"`
+	Network       *network.Config   `toml:"network"`
+	Sync          *sync.Config      `toml:"sync"`
+	TxPool        *txpool.Config    `toml:"tx_pool"`
+	Consensus     *consensus.Config `toml:"-"`
+	Logger        *logger.Config    `toml:"logger"`
+	GRPC          *grpc.Config      `toml:"grpc"`
+	JSONRPC       *jsonrpc.Config   `toml:"jsonrpc"`
+	HTTP          *http.Config      `toml:"http"`
+	WalletManager *wallet.Config    `toml:"-"`
+	Nanomsg       *nanomsg.Config   `toml:"nanomsg"`
 }
 
 type BootstrapInfo struct {
@@ -86,17 +88,18 @@ func (conf *NodeConfig) BasicCheck() error {
 
 func defaultConfig() *Config {
 	conf := &Config{
-		Node:      DefaultNodeConfig(),
-		Store:     store.DefaultConfig(),
-		Network:   network.DefaultConfig(),
-		Sync:      sync.DefaultConfig(),
-		TxPool:    txpool.DefaultConfig(),
-		Consensus: consensus.DefaultConfig(),
-		Logger:    logger.DefaultConfig(),
-		GRPC:      grpc.DefaultConfig(),
-		JSONRPC:   jsonrpc.DefaultConfig(),
-		HTTP:      http.DefaultConfig(),
-		Nanomsg:   nanomsg.DefaultConfig(),
+		Node:          DefaultNodeConfig(),
+		Store:         store.DefaultConfig(),
+		Network:       network.DefaultConfig(),
+		Sync:          sync.DefaultConfig(),
+		TxPool:        txpool.DefaultConfig(),
+		Consensus:     consensus.DefaultConfig(),
+		Logger:        logger.DefaultConfig(),
+		GRPC:          grpc.DefaultConfig(),
+		JSONRPC:       jsonrpc.DefaultConfig(),
+		HTTP:          http.DefaultConfig(),
+		Nanomsg:       nanomsg.DefaultConfig(),
+		WalletManager: wallet.DefaultConfig(),
 	}
 
 	return conf

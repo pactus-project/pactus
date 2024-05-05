@@ -1,25 +1,50 @@
 package wallet
 
 import (
+	"path/filepath"
+
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet/vault"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type Manager struct {
-	wallets   map[string]*Wallet
-	chainType genesis.ChainType
+	wallets         map[string]*Wallet
+	chainType       genesis.ChainType
+	walletDirectory string
 }
 
-func NewWalletManager(chainType genesis.ChainType) *Manager {
+func NewWalletManager(conf *Config) *Manager {
 	return &Manager{
-		wallets:   make(map[string]*Wallet),
-		chainType: chainType,
+		wallets:         make(map[string]*Wallet),
+		chainType:       conf.ChainType,
+		walletDirectory: conf.WalletsDir,
 	}
+}
+
+func (w *Manager) getWalletPath(walletName string) string {
+	return util.MakeAbs(filepath.Join(w.walletDirectory, walletName))
+}
+
+func (w *Manager) createWalletWithMnemonic(
+	walletName, mnemonic, password string,
+) error {
+	walletPath := w.getWalletPath(walletName)
+	wlt, err := Create(walletPath, mnemonic, password, w.chainType)
+	if err != nil {
+		return err
+	}
+
+	if err := wlt.Save(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (w *Manager) GetValidatorAddress(
@@ -34,33 +59,41 @@ func (w *Manager) GetValidatorAddress(
 }
 
 func (w *Manager) CreateWallet(
-	mnemonic, language,
-	password, walletPath string,
-) error {
-	wlt, err := Create(walletPath, mnemonic, language, w.chainType)
+	walletName, password string,
+) (string, error) {
+	mnemonic, err := GenerateMnemonic(128)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	if err := wlt.UpdatePassword("", password); err != nil {
-		return err
+	walletPath := w.getWalletPath(walletName)
+	if isExists := util.PathExists(walletPath); isExists {
+		return "", status.Errorf(codes.AlreadyExists, "wallet already exists")
 	}
 
-	if err := wlt.Save(); err != nil {
-		return err
+	if err := w.createWalletWithMnemonic(walletName, mnemonic, password); err != nil {
+		return "", err
 	}
 
-	return nil
+	return mnemonic, nil
 }
 
-func (w *Manager) LoadWallet(
-	walletName, walletPath string,
-) error {
+func (w *Manager) RestoreWallet(walletName, mnemonic, password string) error {
+	walletPath := w.getWalletPath(walletName)
+	if isExists := util.PathExists(walletPath); isExists {
+		return status.Errorf(codes.AlreadyExists, "wallet already exists")
+	}
+
+	return w.createWalletWithMnemonic(walletName, mnemonic, password)
+}
+
+func (w *Manager) LoadWallet(walletName string) error {
 	if _, ok := w.wallets[walletName]; ok {
 		// TODO: define special codes for errors
 		return status.Errorf(codes.AlreadyExists, "wallet already loaded")
 	}
 
+	walletPath := util.MakeAbs(filepath.Join(w.walletDirectory, walletName))
 	wlt, err := Open(walletPath, true)
 	if err != nil {
 		return err

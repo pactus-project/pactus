@@ -86,6 +86,9 @@ Each PAC is equivalent to
 - [pactus.wallet.create_wallet](#pactus.wallet.create_wallet)
 
 
+- [pactus.wallet.restore_wallet](#pactus.wallet.restore_wallet)
+
+
 - [pactus.wallet.load_wallet](#pactus.wallet.load_wallet)
 
 
@@ -814,8 +817,6 @@ pactus.wallet.create_wallet creates a new wallet with the specified parameters.
 ### Parameters
 ```json
 {
-	"language": "str",	// (string) Language for the mnemonic.
-	"mnemonic": "str",	// (string) Mnemonic for wallet recovery.
 	"password": "str",	// (string) Password for securing the wallet.
 	"wallet_name": "str"	// (string) Name of the new wallet.
 }
@@ -824,7 +825,31 @@ pactus.wallet.create_wallet creates a new wallet with the specified parameters.
 ### Result
 ```json
 {
-	"wallet_name": "str"	// (string) Name of the created wallet.
+	"mnemonic": "str"	// (string) Menomic for wallet recovery.
+}
+```
+---
+
+
+<a id="pactus.wallet.restore_wallet"></a>
+
+## Method pactus.wallet.restore_wallet
+
+pactus.wallet.restore_wallet restores an existing wallet with the given mnemonic.
+
+### Parameters
+```json
+{
+	"mnemonic": "str",	// (string) Menomic for wallet recovery.
+	"password": "str",	// (string) Password for securing the wallet.
+	"wallet_name": "str"	// (string) Name of the wallet to restore.
+}
+```
+
+### Result
+```json
+{
+	"wallet_name": "str"	// (string) Name of the restored wallet.
 }
 ```
 ---

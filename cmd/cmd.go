@@ -483,6 +483,9 @@ func MakeConfig(genDoc *genesis.Genesis, confPath, walletsDir string) (*config.C
 	conf.GRPC.DefaultWalletName = DefaultWalletName
 	conf.GRPC.WalletsDir = walletsDir
 
+	conf.WalletManager.ChainType = chainType
+	conf.WalletManager.WalletsDir = walletsDir
+
 	return conf, nil
 }
 

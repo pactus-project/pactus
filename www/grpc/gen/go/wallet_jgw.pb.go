@@ -37,6 +37,15 @@ func (s *WalletJsonRpcService) Methods() map[string]func(ctx context.Context, me
 			return s.client.CreateWallet(ctx, req)
 		},
 
+		"pactus.wallet.restore_wallet": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(RestoreWalletRequest)
+			err := protojson.Unmarshal(data, req)
+			if err != nil {
+				return nil, err
+			}
+			return s.client.RestoreWallet(ctx, req)
+		},
+
 		"pactus.wallet.load_wallet": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(LoadWalletRequest)
 			err := protojson.Unmarshal(data, req)

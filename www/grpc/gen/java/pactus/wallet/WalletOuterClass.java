@@ -5726,6 +5726,1562 @@ public final class WalletOuterClass {
 
   }
 
+  public interface RestoreWalletRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.RestoreWalletRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * Name of the wallet to restore.
+     * </pre>
+     *
+     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+     * @return The walletName.
+     */
+    java.lang.String getWalletName();
+    /**
+     * <pre>
+     * Name of the wallet to restore.
+     * </pre>
+     *
+     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+     * @return The bytes for walletName.
+     */
+    com.google.protobuf.ByteString
+        getWalletNameBytes();
+
+    /**
+     * <pre>
+     * Menomic for wallet recovery.
+     * </pre>
+     *
+     * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+     * @return The mnemonic.
+     */
+    java.lang.String getMnemonic();
+    /**
+     * <pre>
+     * Menomic for wallet recovery.
+     * </pre>
+     *
+     * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+     * @return The bytes for mnemonic.
+     */
+    com.google.protobuf.ByteString
+        getMnemonicBytes();
+
+    /**
+     * <pre>
+     * Password for securing the wallet.
+     * </pre>
+     *
+     * <code>string password = 3 [json_name = "password"];</code>
+     * @return The password.
+     */
+    java.lang.String getPassword();
+    /**
+     * <pre>
+     * Password for securing the wallet.
+     * </pre>
+     *
+     * <code>string password = 3 [json_name = "password"];</code>
+     * @return The bytes for password.
+     */
+    com.google.protobuf.ByteString
+        getPasswordBytes();
+  }
+  /**
+   * <pre>
+   * Request message for restoring an existing wallet.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.RestoreWalletRequest}
+   */
+  public static final class RestoreWalletRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.RestoreWalletRequest)
+      RestoreWalletRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use RestoreWalletRequest.newBuilder() to construct.
+    private RestoreWalletRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private RestoreWalletRequest() {
+      walletName_ = "";
+      mnemonic_ = "";
+      password_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new RestoreWalletRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.wallet.WalletOuterClass.internal_static_pactus_RestoreWalletRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.wallet.WalletOuterClass.internal_static_pactus_RestoreWalletRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.wallet.WalletOuterClass.RestoreWalletRequest.class, pactus.wallet.WalletOuterClass.RestoreWalletRequest.Builder.class);
+    }
+
+    public static final int WALLET_NAME_FIELD_NUMBER = 1;
+    private volatile java.lang.Object walletName_;
+    /**
+     * <pre>
+     * Name of the wallet to restore.
+     * </pre>
+     *
+     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+     * @return The walletName.
+     */
+    @java.lang.Override
+    public java.lang.String getWalletName() {
+      java.lang.Object ref = walletName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        walletName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Name of the wallet to restore.
+     * </pre>
+     *
+     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+     * @return The bytes for walletName.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getWalletNameBytes() {
+      java.lang.Object ref = walletName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        walletName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MNEMONIC_FIELD_NUMBER = 2;
+    private volatile java.lang.Object mnemonic_;
+    /**
+     * <pre>
+     * Menomic for wallet recovery.
+     * </pre>
+     *
+     * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+     * @return The mnemonic.
+     */
+    @java.lang.Override
+    public java.lang.String getMnemonic() {
+      java.lang.Object ref = mnemonic_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        mnemonic_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Menomic for wallet recovery.
+     * </pre>
+     *
+     * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+     * @return The bytes for mnemonic.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getMnemonicBytes() {
+      java.lang.Object ref = mnemonic_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        mnemonic_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PASSWORD_FIELD_NUMBER = 3;
+    private volatile java.lang.Object password_;
+    /**
+     * <pre>
+     * Password for securing the wallet.
+     * </pre>
+     *
+     * <code>string password = 3 [json_name = "password"];</code>
+     * @return The password.
+     */
+    @java.lang.Override
+    public java.lang.String getPassword() {
+      java.lang.Object ref = password_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        password_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Password for securing the wallet.
+     * </pre>
+     *
+     * <code>string password = 3 [json_name = "password"];</code>
+     * @return The bytes for password.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getPasswordBytes() {
+      java.lang.Object ref = password_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        password_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(walletName_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, walletName_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(mnemonic_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, mnemonic_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(password_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, password_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(walletName_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, walletName_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(mnemonic_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, mnemonic_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(password_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, password_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.wallet.WalletOuterClass.RestoreWalletRequest)) {
+        return super.equals(obj);
+      }
+      pactus.wallet.WalletOuterClass.RestoreWalletRequest other = (pactus.wallet.WalletOuterClass.RestoreWalletRequest) obj;
+
+      if (!getWalletName()
+          .equals(other.getWalletName())) return false;
+      if (!getMnemonic()
+          .equals(other.getMnemonic())) return false;
+      if (!getPassword()
+          .equals(other.getPassword())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + WALLET_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getWalletName().hashCode();
+      hash = (37 * hash) + MNEMONIC_FIELD_NUMBER;
+      hash = (53 * hash) + getMnemonic().hashCode();
+      hash = (37 * hash) + PASSWORD_FIELD_NUMBER;
+      hash = (53 * hash) + getPassword().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.wallet.WalletOuterClass.RestoreWalletRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.wallet.WalletOuterClass.RestoreWalletRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Request message for restoring an existing wallet.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.RestoreWalletRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.RestoreWalletRequest)
+        pactus.wallet.WalletOuterClass.RestoreWalletRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.wallet.WalletOuterClass.internal_static_pactus_RestoreWalletRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.wallet.WalletOuterClass.internal_static_pactus_RestoreWalletRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.wallet.WalletOuterClass.RestoreWalletRequest.class, pactus.wallet.WalletOuterClass.RestoreWalletRequest.Builder.class);
+      }
+
+      // Construct using pactus.wallet.WalletOuterClass.RestoreWalletRequest.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        walletName_ = "";
+
+        mnemonic_ = "";
+
+        password_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.wallet.WalletOuterClass.internal_static_pactus_RestoreWalletRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.wallet.WalletOuterClass.RestoreWalletRequest getDefaultInstanceForType() {
+        return pactus.wallet.WalletOuterClass.RestoreWalletRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.wallet.WalletOuterClass.RestoreWalletRequest build() {
+        pactus.wallet.WalletOuterClass.RestoreWalletRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.wallet.WalletOuterClass.RestoreWalletRequest buildPartial() {
+        pactus.wallet.WalletOuterClass.RestoreWalletRequest result = new pactus.wallet.WalletOuterClass.RestoreWalletRequest(this);
+        result.walletName_ = walletName_;
+        result.mnemonic_ = mnemonic_;
+        result.password_ = password_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.wallet.WalletOuterClass.RestoreWalletRequest) {
+          return mergeFrom((pactus.wallet.WalletOuterClass.RestoreWalletRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.wallet.WalletOuterClass.RestoreWalletRequest other) {
+        if (other == pactus.wallet.WalletOuterClass.RestoreWalletRequest.getDefaultInstance()) return this;
+        if (!other.getWalletName().isEmpty()) {
+          walletName_ = other.walletName_;
+          onChanged();
+        }
+        if (!other.getMnemonic().isEmpty()) {
+          mnemonic_ = other.mnemonic_;
+          onChanged();
+        }
+        if (!other.getPassword().isEmpty()) {
+          password_ = other.password_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                walletName_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 10
+              case 18: {
+                mnemonic_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 18
+              case 26: {
+                password_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 26
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private java.lang.Object walletName_ = "";
+      /**
+       * <pre>
+       * Name of the wallet to restore.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @return The walletName.
+       */
+      public java.lang.String getWalletName() {
+        java.lang.Object ref = walletName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          walletName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Name of the wallet to restore.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @return The bytes for walletName.
+       */
+      public com.google.protobuf.ByteString
+          getWalletNameBytes() {
+        java.lang.Object ref = walletName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          walletName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Name of the wallet to restore.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @param value The walletName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWalletName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        walletName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Name of the wallet to restore.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearWalletName() {
+        
+        walletName_ = getDefaultInstance().getWalletName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Name of the wallet to restore.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @param value The bytes for walletName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWalletNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        walletName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object mnemonic_ = "";
+      /**
+       * <pre>
+       * Menomic for wallet recovery.
+       * </pre>
+       *
+       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+       * @return The mnemonic.
+       */
+      public java.lang.String getMnemonic() {
+        java.lang.Object ref = mnemonic_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          mnemonic_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Menomic for wallet recovery.
+       * </pre>
+       *
+       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+       * @return The bytes for mnemonic.
+       */
+      public com.google.protobuf.ByteString
+          getMnemonicBytes() {
+        java.lang.Object ref = mnemonic_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          mnemonic_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Menomic for wallet recovery.
+       * </pre>
+       *
+       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+       * @param value The mnemonic to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMnemonic(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        mnemonic_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Menomic for wallet recovery.
+       * </pre>
+       *
+       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMnemonic() {
+        
+        mnemonic_ = getDefaultInstance().getMnemonic();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Menomic for wallet recovery.
+       * </pre>
+       *
+       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+       * @param value The bytes for mnemonic to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMnemonicBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        mnemonic_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object password_ = "";
+      /**
+       * <pre>
+       * Password for securing the wallet.
+       * </pre>
+       *
+       * <code>string password = 3 [json_name = "password"];</code>
+       * @return The password.
+       */
+      public java.lang.String getPassword() {
+        java.lang.Object ref = password_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          password_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Password for securing the wallet.
+       * </pre>
+       *
+       * <code>string password = 3 [json_name = "password"];</code>
+       * @return The bytes for password.
+       */
+      public com.google.protobuf.ByteString
+          getPasswordBytes() {
+        java.lang.Object ref = password_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          password_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Password for securing the wallet.
+       * </pre>
+       *
+       * <code>string password = 3 [json_name = "password"];</code>
+       * @param value The password to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPassword(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        password_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Password for securing the wallet.
+       * </pre>
+       *
+       * <code>string password = 3 [json_name = "password"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPassword() {
+        
+        password_ = getDefaultInstance().getPassword();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Password for securing the wallet.
+       * </pre>
+       *
+       * <code>string password = 3 [json_name = "password"];</code>
+       * @param value The bytes for password to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPasswordBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        password_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.RestoreWalletRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.RestoreWalletRequest)
+    private static final pactus.wallet.WalletOuterClass.RestoreWalletRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.wallet.WalletOuterClass.RestoreWalletRequest();
+    }
+
+    public static pactus.wallet.WalletOuterClass.RestoreWalletRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RestoreWalletRequest>
+        PARSER = new com.google.protobuf.AbstractParser<RestoreWalletRequest>() {
+      @java.lang.Override
+      public RestoreWalletRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<RestoreWalletRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RestoreWalletRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.wallet.WalletOuterClass.RestoreWalletRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface RestoreWalletResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.RestoreWalletResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * Name of the restored wallet.
+     * </pre>
+     *
+     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+     * @return The walletName.
+     */
+    java.lang.String getWalletName();
+    /**
+     * <pre>
+     * Name of the restored wallet.
+     * </pre>
+     *
+     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+     * @return The bytes for walletName.
+     */
+    com.google.protobuf.ByteString
+        getWalletNameBytes();
+  }
+  /**
+   * <pre>
+   * Response message containing the name of the restored wallet.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.RestoreWalletResponse}
+   */
+  public static final class RestoreWalletResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.RestoreWalletResponse)
+      RestoreWalletResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use RestoreWalletResponse.newBuilder() to construct.
+    private RestoreWalletResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private RestoreWalletResponse() {
+      walletName_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new RestoreWalletResponse();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.wallet.WalletOuterClass.internal_static_pactus_RestoreWalletResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.wallet.WalletOuterClass.internal_static_pactus_RestoreWalletResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.wallet.WalletOuterClass.RestoreWalletResponse.class, pactus.wallet.WalletOuterClass.RestoreWalletResponse.Builder.class);
+    }
+
+    public static final int WALLET_NAME_FIELD_NUMBER = 1;
+    private volatile java.lang.Object walletName_;
+    /**
+     * <pre>
+     * Name of the restored wallet.
+     * </pre>
+     *
+     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+     * @return The walletName.
+     */
+    @java.lang.Override
+    public java.lang.String getWalletName() {
+      java.lang.Object ref = walletName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        walletName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Name of the restored wallet.
+     * </pre>
+     *
+     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+     * @return The bytes for walletName.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getWalletNameBytes() {
+      java.lang.Object ref = walletName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        walletName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(walletName_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, walletName_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(walletName_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, walletName_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.wallet.WalletOuterClass.RestoreWalletResponse)) {
+        return super.equals(obj);
+      }
+      pactus.wallet.WalletOuterClass.RestoreWalletResponse other = (pactus.wallet.WalletOuterClass.RestoreWalletResponse) obj;
+
+      if (!getWalletName()
+          .equals(other.getWalletName())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + WALLET_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getWalletName().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.wallet.WalletOuterClass.RestoreWalletResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.wallet.WalletOuterClass.RestoreWalletResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.wallet.WalletOuterClass.RestoreWalletResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Response message containing the name of the restored wallet.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.RestoreWalletResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.RestoreWalletResponse)
+        pactus.wallet.WalletOuterClass.RestoreWalletResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.wallet.WalletOuterClass.internal_static_pactus_RestoreWalletResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.wallet.WalletOuterClass.internal_static_pactus_RestoreWalletResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.wallet.WalletOuterClass.RestoreWalletResponse.class, pactus.wallet.WalletOuterClass.RestoreWalletResponse.Builder.class);
+      }
+
+      // Construct using pactus.wallet.WalletOuterClass.RestoreWalletResponse.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        walletName_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.wallet.WalletOuterClass.internal_static_pactus_RestoreWalletResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.wallet.WalletOuterClass.RestoreWalletResponse getDefaultInstanceForType() {
+        return pactus.wallet.WalletOuterClass.RestoreWalletResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.wallet.WalletOuterClass.RestoreWalletResponse build() {
+        pactus.wallet.WalletOuterClass.RestoreWalletResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.wallet.WalletOuterClass.RestoreWalletResponse buildPartial() {
+        pactus.wallet.WalletOuterClass.RestoreWalletResponse result = new pactus.wallet.WalletOuterClass.RestoreWalletResponse(this);
+        result.walletName_ = walletName_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.wallet.WalletOuterClass.RestoreWalletResponse) {
+          return mergeFrom((pactus.wallet.WalletOuterClass.RestoreWalletResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.wallet.WalletOuterClass.RestoreWalletResponse other) {
+        if (other == pactus.wallet.WalletOuterClass.RestoreWalletResponse.getDefaultInstance()) return this;
+        if (!other.getWalletName().isEmpty()) {
+          walletName_ = other.walletName_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                walletName_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private java.lang.Object walletName_ = "";
+      /**
+       * <pre>
+       * Name of the restored wallet.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @return The walletName.
+       */
+      public java.lang.String getWalletName() {
+        java.lang.Object ref = walletName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          walletName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Name of the restored wallet.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @return The bytes for walletName.
+       */
+      public com.google.protobuf.ByteString
+          getWalletNameBytes() {
+        java.lang.Object ref = walletName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          walletName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Name of the restored wallet.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @param value The walletName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWalletName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        walletName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Name of the restored wallet.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearWalletName() {
+        
+        walletName_ = getDefaultInstance().getWalletName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Name of the restored wallet.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @param value The bytes for walletName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWalletNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        walletName_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.RestoreWalletResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.RestoreWalletResponse)
+    private static final pactus.wallet.WalletOuterClass.RestoreWalletResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.wallet.WalletOuterClass.RestoreWalletResponse();
+    }
+
+    public static pactus.wallet.WalletOuterClass.RestoreWalletResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RestoreWalletResponse>
+        PARSER = new com.google.protobuf.AbstractParser<RestoreWalletResponse>() {
+      @java.lang.Override
+      public RestoreWalletResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<RestoreWalletResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RestoreWalletResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.wallet.WalletOuterClass.RestoreWalletResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface CreateWalletRequestOrBuilder extends
       // @@protoc_insertion_point(interface_extends:pactus.CreateWalletRequest)
       com.google.protobuf.MessageOrBuilder {
@@ -5749,46 +7305,6 @@ public final class WalletOuterClass {
      */
     com.google.protobuf.ByteString
         getWalletNameBytes();
-
-    /**
-     * <pre>
-     * Mnemonic for wallet recovery.
-     * </pre>
-     *
-     * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
-     * @return The mnemonic.
-     */
-    java.lang.String getMnemonic();
-    /**
-     * <pre>
-     * Mnemonic for wallet recovery.
-     * </pre>
-     *
-     * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
-     * @return The bytes for mnemonic.
-     */
-    com.google.protobuf.ByteString
-        getMnemonicBytes();
-
-    /**
-     * <pre>
-     * Language for the mnemonic.
-     * </pre>
-     *
-     * <code>string language = 3 [json_name = "language"];</code>
-     * @return The language.
-     */
-    java.lang.String getLanguage();
-    /**
-     * <pre>
-     * Language for the mnemonic.
-     * </pre>
-     *
-     * <code>string language = 3 [json_name = "language"];</code>
-     * @return The bytes for language.
-     */
-    com.google.protobuf.ByteString
-        getLanguageBytes();
 
     /**
      * <pre>
@@ -5828,8 +7344,6 @@ public final class WalletOuterClass {
     }
     private CreateWalletRequest() {
       walletName_ = "";
-      mnemonic_ = "";
-      language_ = "";
       password_ = "";
     }
 
@@ -5904,98 +7418,6 @@ public final class WalletOuterClass {
       }
     }
 
-    public static final int MNEMONIC_FIELD_NUMBER = 2;
-    private volatile java.lang.Object mnemonic_;
-    /**
-     * <pre>
-     * Mnemonic for wallet recovery.
-     * </pre>
-     *
-     * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
-     * @return The mnemonic.
-     */
-    @java.lang.Override
-    public java.lang.String getMnemonic() {
-      java.lang.Object ref = mnemonic_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        mnemonic_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * Mnemonic for wallet recovery.
-     * </pre>
-     *
-     * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
-     * @return The bytes for mnemonic.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getMnemonicBytes() {
-      java.lang.Object ref = mnemonic_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        mnemonic_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int LANGUAGE_FIELD_NUMBER = 3;
-    private volatile java.lang.Object language_;
-    /**
-     * <pre>
-     * Language for the mnemonic.
-     * </pre>
-     *
-     * <code>string language = 3 [json_name = "language"];</code>
-     * @return The language.
-     */
-    @java.lang.Override
-    public java.lang.String getLanguage() {
-      java.lang.Object ref = language_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        language_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * Language for the mnemonic.
-     * </pre>
-     *
-     * <code>string language = 3 [json_name = "language"];</code>
-     * @return The bytes for language.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getLanguageBytes() {
-      java.lang.Object ref = language_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        language_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
     public static final int PASSWORD_FIELD_NUMBER = 4;
     private volatile java.lang.Object password_;
     /**
@@ -6059,12 +7481,6 @@ public final class WalletOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(walletName_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, walletName_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(mnemonic_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, mnemonic_);
-      }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(language_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, language_);
-      }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(password_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, password_);
       }
@@ -6079,12 +7495,6 @@ public final class WalletOuterClass {
       size = 0;
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(walletName_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, walletName_);
-      }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(mnemonic_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, mnemonic_);
-      }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(language_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, language_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(password_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, password_);
@@ -6106,10 +7516,6 @@ public final class WalletOuterClass {
 
       if (!getWalletName()
           .equals(other.getWalletName())) return false;
-      if (!getMnemonic()
-          .equals(other.getMnemonic())) return false;
-      if (!getLanguage()
-          .equals(other.getLanguage())) return false;
       if (!getPassword()
           .equals(other.getPassword())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -6125,10 +7531,6 @@ public final class WalletOuterClass {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + WALLET_NAME_FIELD_NUMBER;
       hash = (53 * hash) + getWalletName().hashCode();
-      hash = (37 * hash) + MNEMONIC_FIELD_NUMBER;
-      hash = (53 * hash) + getMnemonic().hashCode();
-      hash = (37 * hash) + LANGUAGE_FIELD_NUMBER;
-      hash = (53 * hash) + getLanguage().hashCode();
       hash = (37 * hash) + PASSWORD_FIELD_NUMBER;
       hash = (53 * hash) + getPassword().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
@@ -6265,10 +7667,6 @@ public final class WalletOuterClass {
         super.clear();
         walletName_ = "";
 
-        mnemonic_ = "";
-
-        language_ = "";
-
         password_ = "";
 
         return this;
@@ -6298,8 +7696,6 @@ public final class WalletOuterClass {
       public pactus.wallet.WalletOuterClass.CreateWalletRequest buildPartial() {
         pactus.wallet.WalletOuterClass.CreateWalletRequest result = new pactus.wallet.WalletOuterClass.CreateWalletRequest(this);
         result.walletName_ = walletName_;
-        result.mnemonic_ = mnemonic_;
-        result.language_ = language_;
         result.password_ = password_;
         onBuilt();
         return result;
@@ -6353,14 +7749,6 @@ public final class WalletOuterClass {
           walletName_ = other.walletName_;
           onChanged();
         }
-        if (!other.getMnemonic().isEmpty()) {
-          mnemonic_ = other.mnemonic_;
-          onChanged();
-        }
-        if (!other.getLanguage().isEmpty()) {
-          language_ = other.language_;
-          onChanged();
-        }
         if (!other.getPassword().isEmpty()) {
           password_ = other.password_;
           onChanged();
@@ -6396,16 +7784,6 @@ public final class WalletOuterClass {
 
                 break;
               } // case 10
-              case 18: {
-                mnemonic_ = input.readStringRequireUtf8();
-
-                break;
-              } // case 18
-              case 26: {
-                language_ = input.readStringRequireUtf8();
-
-                break;
-              } // case 26
               case 34: {
                 password_ = input.readStringRequireUtf8();
 
@@ -6519,198 +7897,6 @@ public final class WalletOuterClass {
   checkByteStringIsUtf8(value);
         
         walletName_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object mnemonic_ = "";
-      /**
-       * <pre>
-       * Mnemonic for wallet recovery.
-       * </pre>
-       *
-       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
-       * @return The mnemonic.
-       */
-      public java.lang.String getMnemonic() {
-        java.lang.Object ref = mnemonic_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          mnemonic_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       * Mnemonic for wallet recovery.
-       * </pre>
-       *
-       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
-       * @return The bytes for mnemonic.
-       */
-      public com.google.protobuf.ByteString
-          getMnemonicBytes() {
-        java.lang.Object ref = mnemonic_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          mnemonic_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * Mnemonic for wallet recovery.
-       * </pre>
-       *
-       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
-       * @param value The mnemonic to set.
-       * @return This builder for chaining.
-       */
-      public Builder setMnemonic(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        mnemonic_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Mnemonic for wallet recovery.
-       * </pre>
-       *
-       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearMnemonic() {
-        
-        mnemonic_ = getDefaultInstance().getMnemonic();
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Mnemonic for wallet recovery.
-       * </pre>
-       *
-       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
-       * @param value The bytes for mnemonic to set.
-       * @return This builder for chaining.
-       */
-      public Builder setMnemonicBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        mnemonic_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object language_ = "";
-      /**
-       * <pre>
-       * Language for the mnemonic.
-       * </pre>
-       *
-       * <code>string language = 3 [json_name = "language"];</code>
-       * @return The language.
-       */
-      public java.lang.String getLanguage() {
-        java.lang.Object ref = language_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          language_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       * Language for the mnemonic.
-       * </pre>
-       *
-       * <code>string language = 3 [json_name = "language"];</code>
-       * @return The bytes for language.
-       */
-      public com.google.protobuf.ByteString
-          getLanguageBytes() {
-        java.lang.Object ref = language_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          language_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * Language for the mnemonic.
-       * </pre>
-       *
-       * <code>string language = 3 [json_name = "language"];</code>
-       * @param value The language to set.
-       * @return This builder for chaining.
-       */
-      public Builder setLanguage(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        language_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Language for the mnemonic.
-       * </pre>
-       *
-       * <code>string language = 3 [json_name = "language"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearLanguage() {
-        
-        language_ = getDefaultInstance().getLanguage();
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Language for the mnemonic.
-       * </pre>
-       *
-       * <code>string language = 3 [json_name = "language"];</code>
-       * @param value The bytes for language to set.
-       * @return This builder for chaining.
-       */
-      public Builder setLanguageBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        language_ = value;
         onChanged();
         return this;
       }
@@ -6880,23 +8066,23 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Name of the created wallet.
+     * Menomic for wallet recovery.
      * </pre>
      *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The walletName.
+     * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+     * @return The mnemonic.
      */
-    java.lang.String getWalletName();
+    java.lang.String getMnemonic();
     /**
      * <pre>
-     * Name of the created wallet.
+     * Menomic for wallet recovery.
      * </pre>
      *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The bytes for walletName.
+     * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+     * @return The bytes for mnemonic.
      */
     com.google.protobuf.ByteString
-        getWalletNameBytes();
+        getMnemonicBytes();
   }
   /**
    * <pre>
@@ -6915,7 +8101,7 @@ public final class WalletOuterClass {
       super(builder);
     }
     private CreateWalletResponse() {
-      walletName_ = "";
+      mnemonic_ = "";
     }
 
     @java.lang.Override
@@ -6943,46 +8129,46 @@ public final class WalletOuterClass {
               pactus.wallet.WalletOuterClass.CreateWalletResponse.class, pactus.wallet.WalletOuterClass.CreateWalletResponse.Builder.class);
     }
 
-    public static final int WALLET_NAME_FIELD_NUMBER = 1;
-    private volatile java.lang.Object walletName_;
+    public static final int MNEMONIC_FIELD_NUMBER = 2;
+    private volatile java.lang.Object mnemonic_;
     /**
      * <pre>
-     * Name of the created wallet.
+     * Menomic for wallet recovery.
      * </pre>
      *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The walletName.
+     * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+     * @return The mnemonic.
      */
     @java.lang.Override
-    public java.lang.String getWalletName() {
-      java.lang.Object ref = walletName_;
+    public java.lang.String getMnemonic() {
+      java.lang.Object ref = mnemonic_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        walletName_ = s;
+        mnemonic_ = s;
         return s;
       }
     }
     /**
      * <pre>
-     * Name of the created wallet.
+     * Menomic for wallet recovery.
      * </pre>
      *
-     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-     * @return The bytes for walletName.
+     * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+     * @return The bytes for mnemonic.
      */
     @java.lang.Override
     public com.google.protobuf.ByteString
-        getWalletNameBytes() {
-      java.lang.Object ref = walletName_;
+        getMnemonicBytes() {
+      java.lang.Object ref = mnemonic_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        walletName_ = b;
+        mnemonic_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -7003,8 +8189,8 @@ public final class WalletOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(walletName_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, walletName_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(mnemonic_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, mnemonic_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -7015,8 +8201,8 @@ public final class WalletOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(walletName_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, walletName_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(mnemonic_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, mnemonic_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -7033,8 +8219,8 @@ public final class WalletOuterClass {
       }
       pactus.wallet.WalletOuterClass.CreateWalletResponse other = (pactus.wallet.WalletOuterClass.CreateWalletResponse) obj;
 
-      if (!getWalletName()
-          .equals(other.getWalletName())) return false;
+      if (!getMnemonic()
+          .equals(other.getMnemonic())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -7046,8 +8232,8 @@ public final class WalletOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + WALLET_NAME_FIELD_NUMBER;
-      hash = (53 * hash) + getWalletName().hashCode();
+      hash = (37 * hash) + MNEMONIC_FIELD_NUMBER;
+      hash = (53 * hash) + getMnemonic().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -7180,7 +8366,7 @@ public final class WalletOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        walletName_ = "";
+        mnemonic_ = "";
 
         return this;
       }
@@ -7208,7 +8394,7 @@ public final class WalletOuterClass {
       @java.lang.Override
       public pactus.wallet.WalletOuterClass.CreateWalletResponse buildPartial() {
         pactus.wallet.WalletOuterClass.CreateWalletResponse result = new pactus.wallet.WalletOuterClass.CreateWalletResponse(this);
-        result.walletName_ = walletName_;
+        result.mnemonic_ = mnemonic_;
         onBuilt();
         return result;
       }
@@ -7257,8 +8443,8 @@ public final class WalletOuterClass {
 
       public Builder mergeFrom(pactus.wallet.WalletOuterClass.CreateWalletResponse other) {
         if (other == pactus.wallet.WalletOuterClass.CreateWalletResponse.getDefaultInstance()) return this;
-        if (!other.getWalletName().isEmpty()) {
-          walletName_ = other.walletName_;
+        if (!other.getMnemonic().isEmpty()) {
+          mnemonic_ = other.mnemonic_;
           onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -7287,11 +8473,11 @@ public final class WalletOuterClass {
               case 0:
                 done = true;
                 break;
-              case 10: {
-                walletName_ = input.readStringRequireUtf8();
+              case 18: {
+                mnemonic_ = input.readStringRequireUtf8();
 
                 break;
-              } // case 10
+              } // case 18
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -7308,22 +8494,22 @@ public final class WalletOuterClass {
         return this;
       }
 
-      private java.lang.Object walletName_ = "";
+      private java.lang.Object mnemonic_ = "";
       /**
        * <pre>
-       * Name of the created wallet.
+       * Menomic for wallet recovery.
        * </pre>
        *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @return The walletName.
+       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+       * @return The mnemonic.
        */
-      public java.lang.String getWalletName() {
-        java.lang.Object ref = walletName_;
+      public java.lang.String getMnemonic() {
+        java.lang.Object ref = mnemonic_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          walletName_ = s;
+          mnemonic_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
@@ -7331,20 +8517,20 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the created wallet.
+       * Menomic for wallet recovery.
        * </pre>
        *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @return The bytes for walletName.
+       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+       * @return The bytes for mnemonic.
        */
       public com.google.protobuf.ByteString
-          getWalletNameBytes() {
-        java.lang.Object ref = walletName_;
+          getMnemonicBytes() {
+        java.lang.Object ref = mnemonic_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
-          walletName_ = b;
+          mnemonic_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
@@ -7352,54 +8538,54 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the created wallet.
+       * Menomic for wallet recovery.
        * </pre>
        *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @param value The walletName to set.
+       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+       * @param value The mnemonic to set.
        * @return This builder for chaining.
        */
-      public Builder setWalletName(
+      public Builder setMnemonic(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   
-        walletName_ = value;
+        mnemonic_ = value;
         onChanged();
         return this;
       }
       /**
        * <pre>
-       * Name of the created wallet.
+       * Menomic for wallet recovery.
        * </pre>
        *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
        * @return This builder for chaining.
        */
-      public Builder clearWalletName() {
+      public Builder clearMnemonic() {
         
-        walletName_ = getDefaultInstance().getWalletName();
+        mnemonic_ = getDefaultInstance().getMnemonic();
         onChanged();
         return this;
       }
       /**
        * <pre>
-       * Name of the created wallet.
+       * Menomic for wallet recovery.
        * </pre>
        *
-       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
-       * @param value The bytes for walletName to set.
+       * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
+       * @param value The bytes for mnemonic to set.
        * @return This builder for chaining.
        */
-      public Builder setWalletNameBytes(
+      public Builder setMnemonicBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
         
-        walletName_ = value;
+        mnemonic_ = value;
         onChanged();
         return this;
       }
@@ -16452,6 +17638,16 @@ public final class WalletOuterClass {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_GetNewAddressResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_RestoreWalletRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_RestoreWalletRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_RestoreWalletResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_RestoreWalletResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_CreateWalletRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -16558,62 +17754,67 @@ public final class WalletOuterClass {
       "dressType\022\024\n\005label\030\003 \001(\tR\005label\"p\n\025GetNe" +
       "wAddressResponse\022\037\n\013wallet_name\030\001 \001(\tR\nw" +
       "alletName\0226\n\014address_info\030\002 \001(\0132\023.pactus" +
-      ".AddressInfoR\013addressInfo\"\212\001\n\023CreateWall" +
+      ".AddressInfoR\013addressInfo\"o\n\024RestoreWall" +
       "etRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletNa" +
-      "me\022\032\n\010mnemonic\030\002 \001(\tR\010mnemonic\022\032\n\010langua" +
-      "ge\030\003 \001(\tR\010language\022\032\n\010password\030\004 \001(\tR\010pa" +
-      "ssword\"7\n\024CreateWalletResponse\022\037\n\013wallet" +
-      "_name\030\001 \001(\tR\nwalletName\"4\n\021LoadWalletReq" +
-      "uest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"5\n" +
-      "\022LoadWalletResponse\022\037\n\013wallet_name\030\001 \001(\t" +
-      "R\nwalletName\"6\n\023UnloadWalletRequest\022\037\n\013w" +
-      "allet_name\030\001 \001(\tR\nwalletName\"7\n\024UnloadWa" +
-      "lletResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalle" +
-      "tName\"4\n\021LockWalletRequest\022\037\n\013wallet_nam" +
-      "e\030\001 \001(\tR\nwalletName\"5\n\022LockWalletRespons" +
-      "e\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\";\n\032Ge" +
-      "tValidatorAddressRequest\022\035\n\npublic_key\030\001" +
-      " \001(\tR\tpublicKey\"7\n\033GetValidatorAddressRe" +
-      "sponse\022\030\n\007address\030\001 \001(\tR\007address\"l\n\023Unlo" +
+      "me\022\032\n\010mnemonic\030\002 \001(\tR\010mnemonic\022\032\n\010passwo" +
+      "rd\030\003 \001(\tR\010password\"8\n\025RestoreWalletRespo" +
+      "nse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"R\n\023" +
+      "CreateWalletRequest\022\037\n\013wallet_name\030\001 \001(\t" +
+      "R\nwalletName\022\032\n\010password\030\004 \001(\tR\010password" +
+      "\"2\n\024CreateWalletResponse\022\032\n\010mnemonic\030\002 \001" +
+      "(\tR\010mnemonic\"4\n\021LoadWalletRequest\022\037\n\013wal" +
+      "let_name\030\001 \001(\tR\nwalletName\"5\n\022LoadWallet" +
+      "Response\022\037\n\013wallet_name\030\001 \001(\tR\nwalletNam" +
+      "e\"6\n\023UnloadWalletRequest\022\037\n\013wallet_name\030" +
+      "\001 \001(\tR\nwalletName\"7\n\024UnloadWalletRespons" +
+      "e\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"4\n\021Lo" +
       "ckWalletRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwa" +
-      "lletName\022\032\n\010password\030\002 \001(\tR\010password\022\030\n\007" +
-      "timeout\030\003 \001(\005R\007timeout\"7\n\024UnlockWalletRe" +
-      "sponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"" +
-      "\201\001\n\031SignRawTransactionRequest\022\037\n\013wallet_" +
-      "name\030\001 \001(\tR\nwalletName\022\'\n\017raw_transactio" +
-      "n\030\002 \001(\014R\016rawTransaction\022\032\n\010password\030\003 \001(" +
-      "\tR\010password\"y\n\032SignRawTransactionRespons" +
-      "e\022%\n\016transaction_id\030\001 \001(\014R\rtransactionId" +
-      "\0224\n\026signed_raw_transaction\030\002 \001(\014R\024signed" +
-      "RawTransaction\"9\n\026GetTotalBalanceRequest" +
-      "\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"_\n\027Get" +
-      "TotalBalanceResponse\022\037\n\013wallet_name\030\001 \001(" +
-      "\tR\nwalletName\022#\n\rtotal_balance\030\002 \001(\003R\014to" +
-      "talBalance*b\n\013AddressType\022\031\n\025ADDRESS_TYP" +
-      "E_TREASURY\020\000\022\032\n\026ADDRESS_TYPE_VALIDATOR\020\001" +
-      "\022\034\n\030ADDRESS_TYPE_BLS_ACCOUNT\020\0022\254\006\n\006Walle" +
-      "t\022I\n\014CreateWallet\022\033.pactus.CreateWalletR" +
-      "equest\032\034.pactus.CreateWalletResponse\022C\n\n" +
-      "LoadWallet\022\031.pactus.LoadWalletRequest\032\032." +
-      "pactus.LoadWalletResponse\022I\n\014UnloadWalle" +
-      "t\022\033.pactus.UnloadWalletRequest\032\034.pactus." +
-      "UnloadWalletResponse\022C\n\nLockWallet\022\031.pac" +
-      "tus.LockWalletRequest\032\032.pactus.LockWalle" +
-      "tResponse\022I\n\014UnlockWallet\022\033.pactus.Unloc" +
-      "kWalletRequest\032\034.pactus.UnlockWalletResp" +
-      "onse\022R\n\017GetTotalBalance\022\036.pactus.GetTota" +
-      "lBalanceRequest\032\037.pactus.GetTotalBalance" +
-      "Response\022[\n\022SignRawTransaction\022!.pactus." +
-      "SignRawTransactionRequest\032\".pactus.SignR" +
-      "awTransactionResponse\022^\n\023GetValidatorAdd" +
-      "ress\022\".pactus.GetValidatorAddressRequest" +
-      "\032#.pactus.GetValidatorAddressResponse\022L\n" +
-      "\rGetNewAddress\022\034.pactus.GetNewAddressReq" +
-      "uest\032\035.pactus.GetNewAddressResponse\022X\n\021G" +
-      "etAddressHistory\022 .pactus.GetAddressHist" +
-      "oryRequest\032!.pactus.GetAddressHistoryRes" +
-      "ponseBA\n\rpactus.walletZ0github.com/pactu" +
-      "s-project/pactus/www/grpc/pactusb\006proto3"
+      "lletName\"5\n\022LockWalletResponse\022\037\n\013wallet" +
+      "_name\030\001 \001(\tR\nwalletName\";\n\032GetValidatorA" +
+      "ddressRequest\022\035\n\npublic_key\030\001 \001(\tR\tpubli" +
+      "cKey\"7\n\033GetValidatorAddressResponse\022\030\n\007a" +
+      "ddress\030\001 \001(\tR\007address\"l\n\023UnlockWalletReq" +
+      "uest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022\032\n" +
+      "\010password\030\002 \001(\tR\010password\022\030\n\007timeout\030\003 \001" +
+      "(\005R\007timeout\"7\n\024UnlockWalletResponse\022\037\n\013w" +
+      "allet_name\030\001 \001(\tR\nwalletName\"\201\001\n\031SignRaw" +
+      "TransactionRequest\022\037\n\013wallet_name\030\001 \001(\tR" +
+      "\nwalletName\022\'\n\017raw_transaction\030\002 \001(\014R\016ra" +
+      "wTransaction\022\032\n\010password\030\003 \001(\tR\010password" +
+      "\"y\n\032SignRawTransactionResponse\022%\n\016transa" +
+      "ction_id\030\001 \001(\014R\rtransactionId\0224\n\026signed_" +
+      "raw_transaction\030\002 \001(\014R\024signedRawTransact" +
+      "ion\"9\n\026GetTotalBalanceRequest\022\037\n\013wallet_" +
+      "name\030\001 \001(\tR\nwalletName\"_\n\027GetTotalBalanc" +
+      "eResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletNa" +
+      "me\022#\n\rtotal_balance\030\002 \001(\003R\014totalBalance*" +
+      "b\n\013AddressType\022\031\n\025ADDRESS_TYPE_TREASURY\020" +
+      "\000\022\032\n\026ADDRESS_TYPE_VALIDATOR\020\001\022\034\n\030ADDRESS" +
+      "_TYPE_BLS_ACCOUNT\020\0022\372\006\n\006Wallet\022I\n\014Create" +
+      "Wallet\022\033.pactus.CreateWalletRequest\032\034.pa" +
+      "ctus.CreateWalletResponse\022L\n\rRestoreWall" +
+      "et\022\034.pactus.RestoreWalletRequest\032\035.pactu" +
+      "s.RestoreWalletResponse\022C\n\nLoadWallet\022\031." +
+      "pactus.LoadWalletRequest\032\032.pactus.LoadWa" +
+      "lletResponse\022I\n\014UnloadWallet\022\033.pactus.Un" +
+      "loadWalletRequest\032\034.pactus.UnloadWalletR" +
+      "esponse\022C\n\nLockWallet\022\031.pactus.LockWalle" +
+      "tRequest\032\032.pactus.LockWalletResponse\022I\n\014" +
+      "UnlockWallet\022\033.pactus.UnlockWalletReques" +
+      "t\032\034.pactus.UnlockWalletResponse\022R\n\017GetTo" +
+      "talBalance\022\036.pactus.GetTotalBalanceReque" +
+      "st\032\037.pactus.GetTotalBalanceResponse\022[\n\022S" +
+      "ignRawTransaction\022!.pactus.SignRawTransa" +
+      "ctionRequest\032\".pactus.SignRawTransaction" +
+      "Response\022^\n\023GetValidatorAddress\022\".pactus" +
+      ".GetValidatorAddressRequest\032#.pactus.Get" +
+      "ValidatorAddressResponse\022L\n\rGetNewAddres" +
+      "s\022\034.pactus.GetNewAddressRequest\032\035.pactus" +
+      ".GetNewAddressResponse\022X\n\021GetAddressHist" +
+      "ory\022 .pactus.GetAddressHistoryRequest\032!." +
+      "pactus.GetAddressHistoryResponseBA\n\rpact" +
+      "us.walletZ0github.com/pactus-project/pac" +
+      "tus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -16656,98 +17857,110 @@ public final class WalletOuterClass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNewAddressResponse_descriptor,
         new java.lang.String[] { "WalletName", "AddressInfo", });
-    internal_static_pactus_CreateWalletRequest_descriptor =
+    internal_static_pactus_RestoreWalletRequest_descriptor =
       getDescriptor().getMessageTypes().get(6);
+    internal_static_pactus_RestoreWalletRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_RestoreWalletRequest_descriptor,
+        new java.lang.String[] { "WalletName", "Mnemonic", "Password", });
+    internal_static_pactus_RestoreWalletResponse_descriptor =
+      getDescriptor().getMessageTypes().get(7);
+    internal_static_pactus_RestoreWalletResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_RestoreWalletResponse_descriptor,
+        new java.lang.String[] { "WalletName", });
+    internal_static_pactus_CreateWalletRequest_descriptor =
+      getDescriptor().getMessageTypes().get(8);
     internal_static_pactus_CreateWalletRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_CreateWalletRequest_descriptor,
-        new java.lang.String[] { "WalletName", "Mnemonic", "Language", "Password", });
+        new java.lang.String[] { "WalletName", "Password", });
     internal_static_pactus_CreateWalletResponse_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_pactus_CreateWalletResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_CreateWalletResponse_descriptor,
-        new java.lang.String[] { "WalletName", });
+        new java.lang.String[] { "Mnemonic", });
     internal_static_pactus_LoadWalletRequest_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_pactus_LoadWalletRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_LoadWalletRequest_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_LoadWalletResponse_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(11);
     internal_static_pactus_LoadWalletResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_LoadWalletResponse_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_UnloadWalletRequest_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(12);
     internal_static_pactus_UnloadWalletRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_UnloadWalletRequest_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_UnloadWalletResponse_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(13);
     internal_static_pactus_UnloadWalletResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_UnloadWalletResponse_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_LockWalletRequest_descriptor =
-      getDescriptor().getMessageTypes().get(12);
+      getDescriptor().getMessageTypes().get(14);
     internal_static_pactus_LockWalletRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_LockWalletRequest_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_LockWalletResponse_descriptor =
-      getDescriptor().getMessageTypes().get(13);
+      getDescriptor().getMessageTypes().get(15);
     internal_static_pactus_LockWalletResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_LockWalletResponse_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_GetValidatorAddressRequest_descriptor =
-      getDescriptor().getMessageTypes().get(14);
+      getDescriptor().getMessageTypes().get(16);
     internal_static_pactus_GetValidatorAddressRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetValidatorAddressRequest_descriptor,
         new java.lang.String[] { "PublicKey", });
     internal_static_pactus_GetValidatorAddressResponse_descriptor =
-      getDescriptor().getMessageTypes().get(15);
+      getDescriptor().getMessageTypes().get(17);
     internal_static_pactus_GetValidatorAddressResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetValidatorAddressResponse_descriptor,
         new java.lang.String[] { "Address", });
     internal_static_pactus_UnlockWalletRequest_descriptor =
-      getDescriptor().getMessageTypes().get(16);
+      getDescriptor().getMessageTypes().get(18);
     internal_static_pactus_UnlockWalletRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_UnlockWalletRequest_descriptor,
         new java.lang.String[] { "WalletName", "Password", "Timeout", });
     internal_static_pactus_UnlockWalletResponse_descriptor =
-      getDescriptor().getMessageTypes().get(17);
+      getDescriptor().getMessageTypes().get(19);
     internal_static_pactus_UnlockWalletResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_UnlockWalletResponse_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_SignRawTransactionRequest_descriptor =
-      getDescriptor().getMessageTypes().get(18);
+      getDescriptor().getMessageTypes().get(20);
     internal_static_pactus_SignRawTransactionRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_SignRawTransactionRequest_descriptor,
         new java.lang.String[] { "WalletName", "RawTransaction", "Password", });
     internal_static_pactus_SignRawTransactionResponse_descriptor =
-      getDescriptor().getMessageTypes().get(19);
+      getDescriptor().getMessageTypes().get(21);
     internal_static_pactus_SignRawTransactionResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_SignRawTransactionResponse_descriptor,
         new java.lang.String[] { "TransactionId", "SignedRawTransaction", });
     internal_static_pactus_GetTotalBalanceRequest_descriptor =
-      getDescriptor().getMessageTypes().get(20);
+      getDescriptor().getMessageTypes().get(22);
     internal_static_pactus_GetTotalBalanceRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetTotalBalanceRequest_descriptor,
         new java.lang.String[] { "WalletName", });
     internal_static_pactus_GetTotalBalanceResponse_descriptor =
-      getDescriptor().getMessageTypes().get(21);
+      getDescriptor().getMessageTypes().get(23);
     internal_static_pactus_GetTotalBalanceResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetTotalBalanceResponse_descriptor,

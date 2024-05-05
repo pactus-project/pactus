@@ -15,6 +15,9 @@ service Wallet {
   // CreateWallet creates a new wallet with the specified parameters.
   rpc CreateWallet(CreateWalletRequest) returns (CreateWalletResponse);
 
+  // RestoreWallet restores an existing wallet with the given mnemonic.
+  rpc RestoreWallet(RestoreWalletRequest) returns (RestoreWalletResponse);
+
   // LoadWallet loads an existing wallet with the given name.
   rpc LoadWallet(LoadWalletRequest) returns (LoadWalletResponse);
 
@@ -109,22 +112,34 @@ message GetNewAddressResponse {
   AddressInfo address_info = 2;
 }
 
+// Request message for restoring an existing wallet.
+message RestoreWalletRequest {
+  // Name of the wallet to restore.
+  string wallet_name = 1;
+  // Menomic for wallet recovery.
+  string mnemonic = 2;
+  // Password for securing the wallet.
+  string password = 3;
+}
+
+// Response message containing the name of the restored wallet.
+message RestoreWalletResponse {
+  // Name of the restored wallet.
+  string wallet_name = 1;
+}
+
 // Request message for creating a new wallet.
 message CreateWalletRequest {
   // Name of the new wallet.
   string wallet_name = 1;
-  // Mnemonic for wallet recovery.
-  string mnemonic = 2;
-  // Language for the mnemonic.
-  string language = 3;
   // Password for securing the wallet.
   string password = 4;
 }
 
 // Response message containing the name of the created wallet.
 message CreateWalletResponse {
-  // Name of the created wallet.
-  string wallet_name = 1;
+  // Menomic for wallet recovery.
+  string mnemonic = 2;
 }
 
 // Request message for loading an existing wallet.

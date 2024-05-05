@@ -20,6 +20,11 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.CreateWalletRequest.SerializeToString,
                 response_deserializer=wallet__pb2.CreateWalletResponse.FromString,
                 )
+        self.RestoreWallet = channel.unary_unary(
+                '/pactus.Wallet/RestoreWallet',
+                request_serializer=wallet__pb2.RestoreWalletRequest.SerializeToString,
+                response_deserializer=wallet__pb2.RestoreWalletResponse.FromString,
+                )
         self.LoadWallet = channel.unary_unary(
                 '/pactus.Wallet/LoadWallet',
                 request_serializer=wallet__pb2.LoadWalletRequest.SerializeToString,
@@ -73,6 +78,13 @@ class WalletServicer(object):
 
     def CreateWallet(self, request, context):
         """CreateWallet creates a new wallet with the specified parameters.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def RestoreWallet(self, request, context):
+        """RestoreWallet restores an existing wallet with the given mnemonic.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -152,6 +164,11 @@ def add_WalletServicer_to_server(servicer, server):
                     request_deserializer=wallet__pb2.CreateWalletRequest.FromString,
                     response_serializer=wallet__pb2.CreateWalletResponse.SerializeToString,
             ),
+            'RestoreWallet': grpc.unary_unary_rpc_method_handler(
+                    servicer.RestoreWallet,
+                    request_deserializer=wallet__pb2.RestoreWalletRequest.FromString,
+                    response_serializer=wallet__pb2.RestoreWalletResponse.SerializeToString,
+            ),
             'LoadWallet': grpc.unary_unary_rpc_method_handler(
                     servicer.LoadWallet,
                     request_deserializer=wallet__pb2.LoadWalletRequest.FromString,
@@ -222,6 +239,23 @@ class Wallet(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/CreateWallet',
             wallet__pb2.CreateWalletRequest.SerializeToString,
             wallet__pb2.CreateWalletResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def RestoreWallet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/RestoreWallet',
+            wallet__pb2.RestoreWalletRequest.SerializeToString,
+            wallet__pb2.RestoreWalletResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

@@ -784,20 +784,6 @@
             "type": "string"
           },
           {
-            "name": "mnemonic",
-            "description": "Mnemonic for wallet recovery.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "language",
-            "description": "Language for the mnemonic.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
             "name": "password",
             "description": "Password for securing the wallet.",
             "in": "query",
@@ -980,6 +966,52 @@
           {
             "name": "walletName",
             "description": "Name of the wallet to lock.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/restore_wallet": {
+      "get": {
+        "summary": "RestoreWallet restores an existing wallet with the given mnemonic.",
+        "operationId": "Wallet_RestoreWallet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusRestoreWalletResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "Name of the wallet to restore.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "mnemonic",
+            "description": "Menomic for wallet recovery.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "description": "Password for securing the wallet.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -1315,9 +1347,9 @@
     "pactusCreateWalletResponse": {
       "type": "object",
       "properties": {
-        "walletName": {
+        "mnemonic": {
           "type": "string",
-          "description": "Name of the created wallet."
+          "description": "Menomic for wallet recovery."
         }
       },
       "description": "Response message containing the name of the created wallet."
@@ -1933,6 +1965,16 @@
         }
       },
       "description": "Information about a peer in the network."
+    },
+    "pactusRestoreWalletResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "Name of the restored wallet."
+        }
+      },
+      "description": "Response message containing the name of the restored wallet."
     },
     "pactusSignRawTransactionResponse": {
       "type": "object",

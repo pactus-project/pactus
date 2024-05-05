@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	Wallet_CreateWallet_FullMethodName        = "/pactus.Wallet/CreateWallet"
+	Wallet_RestoreWallet_FullMethodName       = "/pactus.Wallet/RestoreWallet"
 	Wallet_LoadWallet_FullMethodName          = "/pactus.Wallet/LoadWallet"
 	Wallet_UnloadWallet_FullMethodName        = "/pactus.Wallet/UnloadWallet"
 	Wallet_LockWallet_FullMethodName          = "/pactus.Wallet/LockWallet"
@@ -39,6 +40,8 @@ const (
 type WalletClient interface {
 	// CreateWallet creates a new wallet with the specified parameters.
 	CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*CreateWalletResponse, error)
+	// RestoreWallet restores an existing wallet with the given mnemonic.
+	RestoreWallet(ctx context.Context, in *RestoreWalletRequest, opts ...grpc.CallOption) (*RestoreWalletResponse, error)
 	// LoadWallet loads an existing wallet with the given name.
 	LoadWallet(ctx context.Context, in *LoadWalletRequest, opts ...grpc.CallOption) (*LoadWalletResponse, error)
 	// UnloadWallet unloads a currently loaded wallet with the specified name.
@@ -73,6 +76,15 @@ func NewWalletClient(cc grpc.ClientConnInterface) WalletClient {
 func (c *walletClient) CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*CreateWalletResponse, error) {
 	out := new(CreateWalletResponse)
 	err := c.cc.Invoke(ctx, Wallet_CreateWallet_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) RestoreWallet(ctx context.Context, in *RestoreWalletRequest, opts ...grpc.CallOption) (*RestoreWalletResponse, error) {
+	out := new(RestoreWalletResponse)
+	err := c.cc.Invoke(ctx, Wallet_RestoreWallet_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -166,6 +178,8 @@ func (c *walletClient) GetAddressHistory(ctx context.Context, in *GetAddressHist
 type WalletServer interface {
 	// CreateWallet creates a new wallet with the specified parameters.
 	CreateWallet(context.Context, *CreateWalletRequest) (*CreateWalletResponse, error)
+	// RestoreWallet restores an existing wallet with the given mnemonic.
+	RestoreWallet(context.Context, *RestoreWalletRequest) (*RestoreWalletResponse, error)
 	// LoadWallet loads an existing wallet with the given name.
 	LoadWallet(context.Context, *LoadWalletRequest) (*LoadWalletResponse, error)
 	// UnloadWallet unloads a currently loaded wallet with the specified name.
@@ -195,6 +209,9 @@ type UnimplementedWalletServer struct {
 
 func (UnimplementedWalletServer) CreateWallet(context.Context, *CreateWalletRequest) (*CreateWalletResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateWallet not implemented")
+}
+func (UnimplementedWalletServer) RestoreWallet(context.Context, *RestoreWalletRequest) (*RestoreWalletResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RestoreWallet not implemented")
 }
 func (UnimplementedWalletServer) LoadWallet(context.Context, *LoadWalletRequest) (*LoadWalletResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadWallet not implemented")
@@ -249,6 +266,24 @@ func _Wallet_CreateWallet_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WalletServer).CreateWallet(ctx, req.(*CreateWalletRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_RestoreWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RestoreWalletRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).RestoreWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_RestoreWallet_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).RestoreWallet(ctx, req.(*RestoreWalletRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -425,6 +460,10 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateWallet",
 			Handler:    _Wallet_CreateWallet_Handler,
+		},
+		{
+			MethodName: "RestoreWallet",
+			Handler:    _Wallet_RestoreWallet_Handler,
 		},
 		{
 			MethodName: "LoadWallet",
