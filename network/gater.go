@@ -30,8 +30,8 @@ func NewConnectionGater(conf *Config, log *logger.SubLogger) (*ConnectionGater, 
 		filters = SubnetsToFilters(privateSubnets, multiaddr.ActionDeny)
 	}
 
-	acceptLimit := conf.ScaledMaxConns()
-	dialLimit := conf.ScaledMaxConns() / 4
+	acceptLimit := conf.MaxConns
+	dialLimit := conf.MaxConns / 4
 	log.Info("connection gater created", "listen", acceptLimit, "dial", dialLimit)
 
 	return &ConnectionGater{
@@ -70,7 +70,7 @@ func (g *ConnectionGater) InterceptPeerDial(pid lp2ppeer.ID) bool {
 	defer g.lk.RUnlock()
 
 	if g.onDialLimit() {
-		g.logger.Info("InterceptPeerDial rejected: many connections",
+		g.logger.Debug("InterceptPeerDial rejected: many connections",
 			"pid", pid, "outbound", g.peerMgr.NumOutbound())
 
 		return false
@@ -84,7 +84,7 @@ func (g *ConnectionGater) InterceptAddrDial(pid lp2ppeer.ID, ma multiaddr.Multia
 	defer g.lk.RUnlock()
 
 	if g.onDialLimit() {
-		g.logger.Info("InterceptAddrDial rejected: many connections",
+		g.logger.Debug("InterceptAddrDial rejected: many connections",
 			"pid", pid, "ma", ma.String(), "outbound", g.peerMgr.NumOutbound())
 
 		return false
@@ -92,7 +92,7 @@ func (g *ConnectionGater) InterceptAddrDial(pid lp2ppeer.ID, ma multiaddr.Multia
 
 	deny := g.filters.AddrBlocked(ma)
 	if deny {
-		g.logger.Info("InterceptAddrDial rejected", "pid", pid, "ma", ma.String())
+		g.logger.Debug("InterceptAddrDial rejected", "pid", pid, "ma", ma.String())
 
 		return false
 	}
@@ -105,7 +105,7 @@ func (g *ConnectionGater) InterceptAccept(cma lp2pnetwork.ConnMultiaddrs) bool {
 	defer g.lk.RUnlock()
 
 	if g.onAcceptLimit() {
-		g.logger.Info("InterceptAccept rejected: many connections",
+		g.logger.Debug("InterceptAccept rejected: many connections",
 			"inbound", g.peerMgr.NumInbound())
 
 		return false
@@ -113,7 +113,7 @@ func (g *ConnectionGater) InterceptAccept(cma lp2pnetwork.ConnMultiaddrs) bool {
 
 	deny := g.filters.AddrBlocked(cma.RemoteMultiaddr())
 	if deny {
-		g.logger.Info("InterceptAccept rejected")
+		g.logger.Debug("InterceptAccept rejected")
 
 		return false
 	}
