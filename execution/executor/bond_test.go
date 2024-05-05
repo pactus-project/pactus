@@ -18,7 +18,7 @@ func TestExecuteBondTx(t *testing.T) {
 	pub, _ := td.RandBLSKeyPair()
 	receiverAddr := pub.ValidatorAddress()
 	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake,
-		td.sandbox.TestParams.MaximumStake-10)
+		td.sandbox.TestParams.MaximumStake-10e9)
 	lockTime := td.sandbox.CurrentHeight()
 
 	t.Run("Should fail, invalid sender", func(t *testing.T) {
@@ -116,7 +116,7 @@ func TestBondInsideCommittee(t *testing.T) {
 	exe2 := NewBondExecutor(false)
 	senderAddr, _ := td.sandbox.TestStore.RandomTestAcc()
 	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake,
-		td.sandbox.TestParams.MaximumStake-10)
+		td.sandbox.TestParams.MaximumStake-10e9)
 	lockTime := td.sandbox.CurrentHeight()
 
 	pub := td.sandbox.Committee().Proposer(0).PublicKey()
@@ -138,7 +138,7 @@ func TestBondJoiningCommittee(t *testing.T) {
 	senderAddr, _ := td.sandbox.TestStore.RandomTestAcc()
 	pub, _ := td.RandBLSKeyPair()
 	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake,
-		td.sandbox.TestParams.MaximumStake-10)
+		td.sandbox.TestParams.MaximumStake-10e9)
 	lockTime := td.sandbox.CurrentHeight()
 
 	val := td.sandbox.MakeNewValidator(pub)
@@ -182,7 +182,7 @@ func TestPowerDeltaBond(t *testing.T) {
 	pub, _ := td.RandBLSKeyPair()
 	receiverAddr := pub.ValidatorAddress()
 	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake,
-		td.sandbox.TestParams.MaximumStake-10)
+		td.sandbox.TestParams.MaximumStake-10e9)
 	lockTime := td.sandbox.CurrentHeight()
 	trx := tx.NewBondTx(lockTime, senderAddr,
 		receiverAddr, pub, amt, fee, "ok")
