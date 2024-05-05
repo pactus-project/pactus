@@ -107,7 +107,7 @@ func (s *NotifeeService) Disconnected(_ lp2pnetwork.Network, conn lp2pnetwork.Co
 	pid := conn.RemotePeer()
 	s.logger.Info("disconnected from peer", "pid", pid)
 
-	s.peerMgr.peerDisconnected(pid)
+	s.peerMgr.PeerDisconnected(pid)
 	s.sendDisconnectEvent(pid)
 }
 
