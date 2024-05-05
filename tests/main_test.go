@@ -129,7 +129,6 @@ func TestMain(m *testing.M) {
 
 	for i := 0; i < tTotalNodes; i++ {
 		tNodes[i], _ = node.NewNode(
-			util.TempDirPath(),
 			tGenDoc, tConfigs[i],
 			tValKeys[i],
 			[]crypto.Address{

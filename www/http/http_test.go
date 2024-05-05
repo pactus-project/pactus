@@ -60,10 +60,13 @@ func setup(t *testing.T) *testData {
 		Listen: "[::]:0",
 	}
 
+	mockWalletMgrConf := wallet.DefaultConfig()
+	mockWalletMgrConf.ChainType = mockState.Genesis().ChainType()
+
 	gRPCServer := grpc.NewServer(
 		grpcConf, mockState,
 		mockSync, mockNet,
-		mockConsMgr, wallet.NewWalletManager(mockState.Genesis().ChainType(), ""),
+		mockConsMgr, wallet.NewWalletManager(mockWalletMgrConf),
 	)
 	assert.NoError(t, gRPCServer.StartServer())
 

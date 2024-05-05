@@ -19,11 +19,11 @@ type Manager struct {
 	walletDirectory string
 }
 
-func NewWalletManager(chainType genesis.ChainType, walletDir string) *Manager {
+func NewWalletManager(conf *Config) *Manager {
 	return &Manager{
 		wallets:         make(map[string]*Wallet),
-		chainType:       chainType,
-		walletDirectory: walletDir,
+		chainType:       conf.ChainType,
+		walletDirectory: conf.WalletsDir,
 	}
 }
 

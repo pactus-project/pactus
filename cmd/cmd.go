@@ -410,7 +410,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		return nil, nil, err
 	}
 
-	nodeInstance, err := node.NewNode(walletsDir, gen, conf, valKeys, rewardAddrs)
+	nodeInstance, err := node.NewNode(gen, conf, valKeys, rewardAddrs)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -482,6 +482,9 @@ func MakeConfig(genDoc *genesis.Genesis, confPath, walletsDir string) (*config.C
 
 	conf.GRPC.DefaultWalletName = DefaultWalletName
 	conf.GRPC.WalletsDir = walletsDir
+
+	conf.WalletManager.ChainType = chainType
+	conf.WalletManager.WalletsDir = walletsDir
 
 	return conf, nil
 }

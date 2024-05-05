@@ -39,7 +39,7 @@ func TestRunningNode(t *testing.T) {
 
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()}
-	n, err := NewNode(util.TempDirPath(), gen, conf, valKeys, rewardAddrs)
+	n, err := NewNode(gen, conf, valKeys, rewardAddrs)
 
 	require.NoError(t, err)
 	assert.Equal(t, n.state.LastBlockHash(), hash.UndefHash)
