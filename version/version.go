@@ -16,7 +16,7 @@ var NodeVersion = Version{
 	Major: 1,
 	Minor: 1,
 	Patch: 4,
-	Meta:  "beta",
+	Meta:  "rc1",
 }
 
 // These struct follow the semantic versioning 2.0.0 spec (http://semver.org/)

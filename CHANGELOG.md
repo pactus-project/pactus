@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.4](https://github.com/pactus-project/pactus/compare/v1.1.3...v1.1.4) (2024-05-05)
+
+### Fix
+
+- **sync**: introduce session manager ([#1257](https://github.com/pactus-project/pactus/pull/1257))
+- **HTTP**: using amount type for fee in transaction details ([#1255](https://github.com/pactus-project/pactus/pull/1255))
+
+### Refactor
+
+- **network**: refactor peer manager and redefine the min cons ([#1259](https://github.com/pactus-project/pactus/pull/1259))
+
 ## [1.1.3](https://github.com/pactus-project/pactus/compare/v1.1.2...v1.1.3) (2024-04-25)
 
 ### Feat
