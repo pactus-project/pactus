@@ -143,7 +143,7 @@ func BuildConcreteLimitConfig(maxConns int) lp2prcmgr.ConcreteLimitConfig {
 
 		limit.ConnsInbound = maxConnVal
 		limit.ConnsOutbound = maxConnVal
-		limit.Conns = maxConnVal
+		limit.Conns = maxConnVal * 2
 		limit.StreamsInbound = maxConnVal * 16
 		limit.StreamsOutbound = maxConnVal * 16
 		limit.Streams = maxConnVal * 16

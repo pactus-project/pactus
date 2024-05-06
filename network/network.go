@@ -124,11 +124,12 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		return nil, LibP2PError{Err: err}
 	}
 
-	// https://github.com/libp2p/go-libp2p/issues/2616
-	// The connection manager doesn't reject any connections.
-	// It just triggers a pruning run once the high watermark is reached (or surpassed).
+	// https://docs.libp2p.io/concepts/security/dos-mitigation/#limit-the-number-of-connections-your-application-needs
+	// The ConnManager is in charge of pruning connections to stay below the defined high watermark,
+	// in contrast, the Resource Manager represents a hard limit where connections will fail to
+	// be created in the first place once we’ve reached our limits.
 	//
-	lowWM := conf.MinConns()                  // Low  Watermark, ex: 14 (if max_conn = 64)
+	lowWM := conf.MaxConns                    // Low  Watermark, ex: 64 (if max_conn = 64)
 	highWM := conf.MaxConns + conf.MinConns() // High Watermark, ex: 78 (if max_conn = 64)
 	connMgr, err := lp2pconnmgr.NewConnManager(
 		lowWM, highWM,
