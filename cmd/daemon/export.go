@@ -31,7 +31,7 @@ func buildExportCmd(root *cobra.Command) {
 		"a path to the working directory node files")
 
 	exportCmd.Run = func(_ *cobra.Command, _ []string) {
-		log.Println("checking working directory...")
+		log.Println("Checking working directory...")
 
 		workingDir, _ := filepath.Abs(*workingDirOpt)
 		if util.IsDirNotExistsOrEmpty(workingDir) {
@@ -58,11 +58,11 @@ func buildExportCmd(root *cobra.Command) {
 			return
 		}
 
-		log.Println("work directory is ready for export.")
+		log.Println("Working directory is ready for export")
 
 		srcDir := filepath.Join(workingDir, "data")
 
-		log.Printf("checking old snapshot exists to remove...")
+		log.Printf("Checking old snapshot exists to remove...")
 
 		snapshotDir, err := filepath.Abs(filepath.Join(workingDir, "snapshot"))
 		if err != nil {
@@ -75,7 +75,7 @@ func buildExportCmd(root *cobra.Command) {
 			}
 		}
 
-		log.Println("creating snapshot from blockchain data...")
+		log.Println("Creating snapshot from blockchain data...")
 
 		md := make([]metadata, 0)
 
@@ -85,8 +85,8 @@ func buildExportCmd(root *cobra.Command) {
 			return
 		}
 
-		log.Println("snapshot created")
-		log.Println("create snapshot metadata...")
+		log.Println("Snapshot created")
+		log.Println("Create snapshot metadata...")
 
 		mdFile, err := os.Create(snapshotDir + "/metadata.json")
 		defer func() {
@@ -154,7 +154,7 @@ func copyFile(base, src, dest string, md *[]metadata) error {
 		Path:     currentFilePath,
 	})
 
-	log.Printf("copying %s...\n", src)
+	log.Printf("Copying %s...\n", src)
 
 	return nil
 }
