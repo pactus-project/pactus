@@ -27,7 +27,9 @@ func TestNetworkInfo(t *testing.T) {
 	td := setup(t)
 
 	w := httptest.NewRecorder()
-	r := new(http.Request)
+	r, err := http.NewRequest("GET", "localhost:80?onlyConnected=false", nil)
+	assert.NoError(t, err)
+	// r.URL.Query().Add("onlyConnected", "false")
 
 	td.httpServer.NetworkHandler(w, r)
 
