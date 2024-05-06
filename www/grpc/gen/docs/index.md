@@ -945,6 +945,11 @@ Blockchain service defines RPC methods for interacting with the blockchain.
 Request message for retrieving overall network information.
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| only_online | [bool](#bool) |  | Only returns the peers with online status |
+
+
 
 
 

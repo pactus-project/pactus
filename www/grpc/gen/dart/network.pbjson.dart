@@ -11,10 +11,13 @@ import 'dart:typed_data' as $typed_data;
 @$core.Deprecated('Use getNetworkInfoRequestDescriptor instead')
 const GetNetworkInfoRequest$json = const {
   '1': 'GetNetworkInfoRequest',
+  '2': const [
+    const {'1': 'only_online', '3': 1, '4': 1, '5': 8, '10': 'onlyOnline'},
+  ],
 };
 
 /// Descriptor for `GetNetworkInfoRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNetworkInfoRequestDescriptor = $convert.base64Decode('ChVHZXROZXR3b3JrSW5mb1JlcXVlc3Q=');
+final $typed_data.Uint8List getNetworkInfoRequestDescriptor = $convert.base64Decode('ChVHZXROZXR3b3JrSW5mb1JlcXVlc3QSHwoLb25seV9vbmxpbmUYASABKAhSCm9ubHlPbmxpbmU=');
 @$core.Deprecated('Use getNetworkInfoResponseDescriptor instead')
 const GetNetworkInfoResponse$json = const {
   '1': 'GetNetworkInfoResponse',

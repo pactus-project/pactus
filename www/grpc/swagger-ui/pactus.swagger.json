@@ -331,6 +331,15 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "onlyOnline",
+            "description": "Only returns the peers with online status",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
         "tags": [
           "Network"
         ]

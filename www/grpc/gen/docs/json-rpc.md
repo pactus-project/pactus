@@ -701,7 +701,9 @@ pactus.network.get_network_info retrieves information about the overall network.
 
 ### Parameters
 ```json
-{}
+{
+	"only_online": true|false	// (boolean) Only returns the peers with online status
+}
 ```
 
 ### Result

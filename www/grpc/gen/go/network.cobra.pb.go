@@ -63,6 +63,8 @@ func _NetworkGetNetworkInfoCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
+	cmd.PersistentFlags().BoolVar(&req.OnlyOnline, cfg.FlagNamer("OnlyOnline"), false, "Only returns the peers with online status")
+
 	return cmd
 }
 

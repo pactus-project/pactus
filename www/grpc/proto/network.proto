@@ -14,7 +14,10 @@ service Network {
 }
 
 // Request message for retrieving overall network information.
-message GetNetworkInfoRequest {}
+message GetNetworkInfoRequest {
+  // Only returns the peers with online status
+  bool only_online = 1;
+}
 
 // Response message containing information about the overall network.
 message GetNetworkInfoResponse {
