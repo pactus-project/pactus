@@ -11,7 +11,6 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
-	lp2prcmgr "github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 	lp2pswarm "github.com/libp2p/go-libp2p/p2p/net/swarm"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -133,32 +132,6 @@ func SubnetsToFilters(subnets []*net.IPNet, action multiaddr.Action) *multiaddr.
 	}
 
 	return filters
-}
-
-func BuildConcreteLimitConfig(maxConns int) lp2prcmgr.ConcreteLimitConfig {
-	changes := lp2prcmgr.PartialLimitConfig{}
-
-	updateResourceLimits := func(limit *lp2prcmgr.ResourceLimits, maxConns int, coefficient float32) {
-		maxConnVal := lp2prcmgr.LimitVal(int(float32(maxConns) * coefficient))
-
-		limit.ConnsInbound = maxConnVal
-		limit.ConnsOutbound = maxConnVal
-		limit.Conns = maxConnVal
-		limit.StreamsInbound = maxConnVal * 16
-		limit.StreamsOutbound = maxConnVal * 16
-		limit.Streams = maxConnVal * 16
-	}
-
-	updateResourceLimits(&changes.System, maxConns, 1)
-	updateResourceLimits(&changes.ServiceDefault, maxConns, 1)
-	updateResourceLimits(&changes.ProtocolDefault, maxConns, 1)
-	updateResourceLimits(&changes.ProtocolPeerDefault, maxConns, 1)
-	updateResourceLimits(&changes.Transient, maxConns, 0.5)
-
-	defaultLimitConfig := lp2prcmgr.DefaultLimits.AutoScale()
-	changedLimitConfig := changes.Build(defaultLimitConfig)
-
-	return changedLimitConfig
 }
 
 func MessageIDFunc(m *lp2pspb.Message) string {
