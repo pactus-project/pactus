@@ -115,9 +115,8 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 		opts = append(opts, lp2p.DisableMetrics())
 	}
 
-	limit := BuildConcreteLimitConfig(conf.MaxConns)
 	resMgr, err := lp2prcmgr.NewResourceManager(
-		lp2prcmgr.NewFixedLimiter(limit),
+		lp2prcmgr.NewFixedLimiter(lp2prcmgr.InfiniteLimits),
 		rcMgrOpt...,
 	)
 	if err != nil {
@@ -129,8 +128,8 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	// in contrast, the Resource Manager represents a hard limit where connections will fail to
 	// be created in the first place once we’ve reached our limits.
 	//
-	lowWM := conf.MaxConns                    // Low  Watermark, ex: 64 (if max_conn = 64)
-	highWM := conf.MaxConns + conf.MinConns() // High Watermark, ex: 78 (if max_conn = 64)
+	lowWM := conf.MaxConns                        // Low  Watermark, ex: 64 (if max_conn = 64)
+	highWM := conf.MaxConns + (conf.MaxConns / 4) // High Watermark, ex: 80 (if max_conn = 64)
 	connMgr, err := lp2pconnmgr.NewConnManager(
 		lowWM, highWM,
 		lp2pconnmgr.WithGracePeriod(time.Minute),
