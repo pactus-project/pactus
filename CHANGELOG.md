@@ -1,9 +1,10 @@
 # Changelog
 
-## [1.1.4](https://github.com/pactus-project/pactus/compare/v1.1.3...v1.1.4) (2024-05-05)
+## [1.1.4](https://github.com/pactus-project/pactus/compare/v1.1.3...v1.1.4) (2024-05-06)
 
 ### Fix
 
+- **network**: set infinite limit for resource manager  ([#1261](https://github.com/pactus-project/pactus/pull/1261))
 - **sync**: introduce session manager ([#1257](https://github.com/pactus-project/pactus/pull/1257))
 - **HTTP**: using amount type for fee in transaction details ([#1255](https://github.com/pactus-project/pactus/pull/1255))
 
