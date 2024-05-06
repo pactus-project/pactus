@@ -2041,11 +2041,11 @@ GetNetworkInfoRequest
   </thead>
   <tbody class="table-group-divider">
   <tr>
-      <td class="fw-bold">only_online</td>
+      <td class="fw-bold">only_connected</td>
       <td>
         <a href="#bool">bool</a>
       </td>
-      <td>Only returns the peers with online status </td>
+      <td>Only returns the peers with connected status </td>
     </tr>
   </tbody>
 </table>  

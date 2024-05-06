@@ -163,7 +163,7 @@ proto.pactus.GetNetworkInfoRequest.prototype.toObject = function(opt_includeInst
  */
 proto.pactus.GetNetworkInfoRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    onlyOnline: jspb.Message.getBooleanFieldWithDefault(msg, 1, false)
+    onlyConnected: jspb.Message.getBooleanFieldWithDefault(msg, 1, false)
   };
 
   if (includeInstance) {
@@ -202,7 +202,7 @@ proto.pactus.GetNetworkInfoRequest.deserializeBinaryFromReader = function(msg, r
     switch (field) {
     case 1:
       var value = /** @type {boolean} */ (reader.readBool());
-      msg.setOnlyOnline(value);
+      msg.setOnlyConnected(value);
       break;
     default:
       reader.skipField();
@@ -233,7 +233,7 @@ proto.pactus.GetNetworkInfoRequest.prototype.serializeBinary = function() {
  */
 proto.pactus.GetNetworkInfoRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getOnlyOnline();
+  f = message.getOnlyConnected();
   if (f) {
     writer.writeBool(
       1,
@@ -244,10 +244,10 @@ proto.pactus.GetNetworkInfoRequest.serializeBinaryToWriter = function(message, w
 
 
 /**
- * optional bool only_online = 1;
+ * optional bool only_connected = 1;
  * @return {boolean}
  */
-proto.pactus.GetNetworkInfoRequest.prototype.getOnlyOnline = function() {
+proto.pactus.GetNetworkInfoRequest.prototype.getOnlyConnected = function() {
   return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 1, false));
 };
 
@@ -256,7 +256,7 @@ proto.pactus.GetNetworkInfoRequest.prototype.getOnlyOnline = function() {
  * @param {boolean} value
  * @return {!proto.pactus.GetNetworkInfoRequest} returns this
  */
-proto.pactus.GetNetworkInfoRequest.prototype.setOnlyOnline = function(value) {
+proto.pactus.GetNetworkInfoRequest.prototype.setOnlyConnected = function(value) {
   return jspb.Message.setProto3BooleanField(this, 1, value);
 };
 

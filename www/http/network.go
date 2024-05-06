@@ -27,8 +27,17 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		ctx = s.basicAuth(ctx, user, password)
 	}
 
+	onlyConnected := false
+
+	onlyConnectedParam := r.URL.Query().Get("onlyConnected")
+	if onlyConnectedParam == "ture" {
+		onlyConnected = true
+	}
+
 	res, err := s.network.GetNetworkInfo(ctx,
-		&pactus.GetNetworkInfoRequest{})
+		&pactus.GetNetworkInfoRequest{
+			OnlyConnected: onlyConnected,
+		})
 	if err != nil {
 		s.writeError(w, err)
 

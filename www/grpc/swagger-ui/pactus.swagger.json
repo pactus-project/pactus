@@ -333,8 +333,8 @@
         },
         "parameters": [
           {
-            "name": "onlyOnline",
-            "description": "Only returns the peers with online status",
+            "name": "onlyConnected",
+            "description": "Only returns the peers with connected status",
             "in": "query",
             "required": false,
             "type": "boolean"

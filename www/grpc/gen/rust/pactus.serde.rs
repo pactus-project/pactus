@@ -3119,12 +3119,12 @@ impl serde::Serialize for GetNetworkInfoRequest {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
-        if self.only_online {
+        if self.only_connected {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetNetworkInfoRequest", len)?;
-        if self.only_online {
-            struct_ser.serialize_field("onlyOnline", &self.only_online)?;
+        if self.only_connected {
+            struct_ser.serialize_field("onlyConnected", &self.only_connected)?;
         }
         struct_ser.end()
     }
@@ -3136,13 +3136,13 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoRequest {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "only_online",
-            "onlyOnline",
+            "only_connected",
+            "onlyConnected",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            OnlyOnline,
+            OnlyConnected,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -3164,7 +3164,7 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoRequest {
                         E: serde::de::Error,
                     {
                         match value {
-                            "onlyOnline" | "only_online" => Ok(GeneratedField::OnlyOnline),
+                            "onlyConnected" | "only_connected" => Ok(GeneratedField::OnlyConnected),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -3184,19 +3184,19 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoRequest {
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                let mut only_online__ = None;
+                let mut only_connected__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
-                        GeneratedField::OnlyOnline => {
-                            if only_online__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("onlyOnline"));
+                        GeneratedField::OnlyConnected => {
+                            if only_connected__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("onlyConnected"));
                             }
-                            only_online__ = Some(map.next_value()?);
+                            only_connected__ = Some(map.next_value()?);
                         }
                     }
                 }
                 Ok(GetNetworkInfoRequest {
-                    only_online: only_online__.unwrap_or_default(),
+                    only_connected: only_connected__.unwrap_or_default(),
                 })
             }
         }

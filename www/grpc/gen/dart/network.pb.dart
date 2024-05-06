@@ -13,17 +13,17 @@ import 'package:protobuf/protobuf.dart' as $pb;
 
 class GetNetworkInfoRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetNetworkInfoRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOB(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'onlyOnline')
+    ..aOB(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'onlyConnected')
     ..hasRequiredFields = false
   ;
 
   GetNetworkInfoRequest._() : super();
   factory GetNetworkInfoRequest({
-    $core.bool? onlyOnline,
+    $core.bool? onlyConnected,
   }) {
     final _result = create();
-    if (onlyOnline != null) {
-      _result.onlyOnline = onlyOnline;
+    if (onlyConnected != null) {
+      _result.onlyConnected = onlyConnected;
     }
     return _result;
   }
@@ -49,13 +49,13 @@ class GetNetworkInfoRequest extends $pb.GeneratedMessage {
   static GetNetworkInfoRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.bool get onlyOnline => $_getBF(0);
+  $core.bool get onlyConnected => $_getBF(0);
   @$pb.TagNumber(1)
-  set onlyOnline($core.bool v) { $_setBool(0, v); }
+  set onlyConnected($core.bool v) { $_setBool(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasOnlyOnline() => $_has(0);
+  $core.bool hasOnlyConnected() => $_has(0);
   @$pb.TagNumber(1)
-  void clearOnlyOnline() => clearField(1);
+  void clearOnlyConnected() => clearField(1);
 }
 
 class GetNetworkInfoResponse extends $pb.GeneratedMessage {

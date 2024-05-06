@@ -947,7 +947,7 @@ Request message for retrieving overall network information.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| only_online | [bool](#bool) |  | Only returns the peers with online status |
+| only_connected | [bool](#bool) |  | Only returns the peers with connected status |
 
 
 

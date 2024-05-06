@@ -20,13 +20,13 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Only returns the peers with online status
+     * Only returns the peers with connected status
      * </pre>
      *
-     * <code>bool only_online = 1 [json_name = "onlyOnline"];</code>
-     * @return The onlyOnline.
+     * <code>bool only_connected = 1 [json_name = "onlyConnected"];</code>
+     * @return The onlyConnected.
      */
-    boolean getOnlyOnline();
+    boolean getOnlyConnected();
   }
   /**
    * <pre>
@@ -72,19 +72,19 @@ public final class NetworkOuterClass {
               pactus.network.NetworkOuterClass.GetNetworkInfoRequest.class, pactus.network.NetworkOuterClass.GetNetworkInfoRequest.Builder.class);
     }
 
-    public static final int ONLY_ONLINE_FIELD_NUMBER = 1;
-    private boolean onlyOnline_;
+    public static final int ONLY_CONNECTED_FIELD_NUMBER = 1;
+    private boolean onlyConnected_;
     /**
      * <pre>
-     * Only returns the peers with online status
+     * Only returns the peers with connected status
      * </pre>
      *
-     * <code>bool only_online = 1 [json_name = "onlyOnline"];</code>
-     * @return The onlyOnline.
+     * <code>bool only_connected = 1 [json_name = "onlyConnected"];</code>
+     * @return The onlyConnected.
      */
     @java.lang.Override
-    public boolean getOnlyOnline() {
-      return onlyOnline_;
+    public boolean getOnlyConnected() {
+      return onlyConnected_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -101,8 +101,8 @@ public final class NetworkOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (onlyOnline_ != false) {
-        output.writeBool(1, onlyOnline_);
+      if (onlyConnected_ != false) {
+        output.writeBool(1, onlyConnected_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -113,9 +113,9 @@ public final class NetworkOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (onlyOnline_ != false) {
+      if (onlyConnected_ != false) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(1, onlyOnline_);
+          .computeBoolSize(1, onlyConnected_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -132,8 +132,8 @@ public final class NetworkOuterClass {
       }
       pactus.network.NetworkOuterClass.GetNetworkInfoRequest other = (pactus.network.NetworkOuterClass.GetNetworkInfoRequest) obj;
 
-      if (getOnlyOnline()
-          != other.getOnlyOnline()) return false;
+      if (getOnlyConnected()
+          != other.getOnlyConnected()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -145,9 +145,9 @@ public final class NetworkOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + ONLY_ONLINE_FIELD_NUMBER;
+      hash = (37 * hash) + ONLY_CONNECTED_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getOnlyOnline());
+          getOnlyConnected());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -280,7 +280,7 @@ public final class NetworkOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        onlyOnline_ = false;
+        onlyConnected_ = false;
 
         return this;
       }
@@ -308,7 +308,7 @@ public final class NetworkOuterClass {
       @java.lang.Override
       public pactus.network.NetworkOuterClass.GetNetworkInfoRequest buildPartial() {
         pactus.network.NetworkOuterClass.GetNetworkInfoRequest result = new pactus.network.NetworkOuterClass.GetNetworkInfoRequest(this);
-        result.onlyOnline_ = onlyOnline_;
+        result.onlyConnected_ = onlyConnected_;
         onBuilt();
         return result;
       }
@@ -357,8 +357,8 @@ public final class NetworkOuterClass {
 
       public Builder mergeFrom(pactus.network.NetworkOuterClass.GetNetworkInfoRequest other) {
         if (other == pactus.network.NetworkOuterClass.GetNetworkInfoRequest.getDefaultInstance()) return this;
-        if (other.getOnlyOnline() != false) {
-          setOnlyOnline(other.getOnlyOnline());
+        if (other.getOnlyConnected() != false) {
+          setOnlyConnected(other.getOnlyConnected());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -387,7 +387,7 @@ public final class NetworkOuterClass {
                 done = true;
                 break;
               case 8: {
-                onlyOnline_ = input.readBool();
+                onlyConnected_ = input.readBool();
 
                 break;
               } // case 8
@@ -407,45 +407,45 @@ public final class NetworkOuterClass {
         return this;
       }
 
-      private boolean onlyOnline_ ;
+      private boolean onlyConnected_ ;
       /**
        * <pre>
-       * Only returns the peers with online status
+       * Only returns the peers with connected status
        * </pre>
        *
-       * <code>bool only_online = 1 [json_name = "onlyOnline"];</code>
-       * @return The onlyOnline.
+       * <code>bool only_connected = 1 [json_name = "onlyConnected"];</code>
+       * @return The onlyConnected.
        */
       @java.lang.Override
-      public boolean getOnlyOnline() {
-        return onlyOnline_;
+      public boolean getOnlyConnected() {
+        return onlyConnected_;
       }
       /**
        * <pre>
-       * Only returns the peers with online status
+       * Only returns the peers with connected status
        * </pre>
        *
-       * <code>bool only_online = 1 [json_name = "onlyOnline"];</code>
-       * @param value The onlyOnline to set.
+       * <code>bool only_connected = 1 [json_name = "onlyConnected"];</code>
+       * @param value The onlyConnected to set.
        * @return This builder for chaining.
        */
-      public Builder setOnlyOnline(boolean value) {
+      public Builder setOnlyConnected(boolean value) {
         
-        onlyOnline_ = value;
+        onlyConnected_ = value;
         onChanged();
         return this;
       }
       /**
        * <pre>
-       * Only returns the peers with online status
+       * Only returns the peers with connected status
        * </pre>
        *
-       * <code>bool only_online = 1 [json_name = "onlyOnline"];</code>
+       * <code>bool only_connected = 1 [json_name = "onlyConnected"];</code>
        * @return This builder for chaining.
        */
-      public Builder clearOnlyOnline() {
+      public Builder clearOnlyConnected() {
         
-        onlyOnline_ = false;
+        onlyConnected_ = false;
         onChanged();
         return this;
       }
@@ -8991,58 +8991,58 @@ public final class NetworkOuterClass {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\rnetwork.proto\022\006pactus\"8\n\025GetNetworkInf" +
-      "oRequest\022\037\n\013only_online\030\001 \001(\010R\nonlyOnlin" +
-      "e\"\256\004\n\026GetNetworkInfoResponse\022!\n\014network_" +
-      "name\030\001 \001(\tR\013networkName\022(\n\020total_sent_by" +
-      "tes\030\002 \001(\rR\016totalSentBytes\0220\n\024total_recei" +
-      "ved_bytes\030\003 \001(\rR\022totalReceivedBytes\0222\n\025c" +
-      "onnected_peers_count\030\004 \001(\rR\023connectedPee" +
-      "rsCount\0229\n\017connected_peers\030\005 \003(\0132\020.pactu" +
-      "s.PeerInfoR\016connectedPeers\022L\n\nsent_bytes" +
-      "\030\006 \003(\0132-.pactus.GetNetworkInfoResponse.S" +
-      "entBytesEntryR\tsentBytes\022X\n\016received_byt" +
-      "es\030\007 \003(\01321.pactus.GetNetworkInfoResponse" +
-      ".ReceivedBytesEntryR\rreceivedBytes\032<\n\016Se" +
-      "ntBytesEntry\022\020\n\003key\030\001 \001(\rR\003key\022\024\n\005value\030" +
-      "\002 \001(\004R\005value:\0028\001\032@\n\022ReceivedBytesEntry\022\020" +
-      "\n\003key\030\001 \001(\rR\003key\022\024\n\005value\030\002 \001(\004R\005value:\002" +
-      "8\001\"\024\n\022GetNodeInfoRequest\"\230\002\n\023GetNodeInfo" +
-      "Response\022\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005ag" +
-      "ent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peerI" +
-      "d\022\035\n\nstarted_at\030\004 \001(\004R\tstartedAt\022\"\n\014reac" +
-      "hability\030\005 \001(\tR\014reachability\022\032\n\010services" +
-      "\030\006 \003(\005R\010services\022%\n\016services_names\030\007 \003(\t" +
-      "R\rservicesNames\022\024\n\005addrs\030\010 \003(\tR\005addrs\022\034\n" +
-      "\tprotocols\030\t \003(\tR\tprotocols\"\355\006\n\010PeerInfo" +
-      "\022\026\n\006status\030\001 \001(\005R\006status\022\030\n\007moniker\030\002 \001(" +
-      "\tR\007moniker\022\024\n\005agent\030\003 \001(\tR\005agent\022\027\n\007peer" +
-      "_id\030\004 \001(\014R\006peerId\022%\n\016consensus_keys\030\005 \003(" +
-      "\tR\rconsensusKeys\022+\n\021consensus_address\030\006 " +
-      "\003(\tR\020consensusAddress\022\032\n\010services\030\007 \001(\rR" +
-      "\010services\022&\n\017last_block_hash\030\010 \001(\014R\rlast" +
-      "BlockHash\022\026\n\006height\030\t \001(\rR\006height\022+\n\021rec" +
-      "eived_messages\030\n \001(\005R\020receivedMessages\022)" +
-      "\n\020invalid_messages\030\013 \001(\005R\017invalidMessage" +
-      "s\022\033\n\tlast_sent\030\014 \001(\003R\010lastSent\022#\n\rlast_r" +
-      "eceived\030\r \001(\003R\014lastReceived\022>\n\nsent_byte" +
-      "s\030\016 \003(\0132\037.pactus.PeerInfo.SentBytesEntry" +
-      "R\tsentBytes\022J\n\016received_bytes\030\017 \003(\0132#.pa" +
-      "ctus.PeerInfo.ReceivedBytesEntryR\rreceiv" +
-      "edBytes\022\030\n\007address\030\020 \001(\tR\007address\022\034\n\tdir" +
-      "ection\030\021 \001(\tR\tdirection\022\034\n\tprotocols\030\022 \003" +
-      "(\tR\tprotocols\022%\n\016total_sessions\030\023 \001(\005R\rt" +
-      "otalSessions\022-\n\022completed_sessions\030\024 \001(\005" +
-      "R\021completedSessions\032<\n\016SentBytesEntry\022\020\n" +
-      "\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028" +
-      "\001\032@\n\022ReceivedBytesEntry\022\020\n\003key\030\001 \001(\005R\003ke" +
-      "y\022\024\n\005value\030\002 \001(\003R\005value:\0028\0012\242\001\n\007Network\022" +
-      "O\n\016GetNetworkInfo\022\035.pactus.GetNetworkInf" +
-      "oRequest\032\036.pactus.GetNetworkInfoResponse" +
-      "\022F\n\013GetNodeInfo\022\032.pactus.GetNodeInfoRequ" +
-      "est\032\033.pactus.GetNodeInfoResponseBB\n\016pact" +
-      "us.networkZ0github.com/pactus-project/pa" +
-      "ctus/www/grpc/pactusb\006proto3"
+      "\n\rnetwork.proto\022\006pactus\">\n\025GetNetworkInf" +
+      "oRequest\022%\n\016only_connected\030\001 \001(\010R\ronlyCo" +
+      "nnected\"\256\004\n\026GetNetworkInfoResponse\022!\n\014ne" +
+      "twork_name\030\001 \001(\tR\013networkName\022(\n\020total_s" +
+      "ent_bytes\030\002 \001(\rR\016totalSentBytes\0220\n\024total" +
+      "_received_bytes\030\003 \001(\rR\022totalReceivedByte" +
+      "s\0222\n\025connected_peers_count\030\004 \001(\rR\023connec" +
+      "tedPeersCount\0229\n\017connected_peers\030\005 \003(\0132\020" +
+      ".pactus.PeerInfoR\016connectedPeers\022L\n\nsent" +
+      "_bytes\030\006 \003(\0132-.pactus.GetNetworkInfoResp" +
+      "onse.SentBytesEntryR\tsentBytes\022X\n\016receiv" +
+      "ed_bytes\030\007 \003(\01321.pactus.GetNetworkInfoRe" +
+      "sponse.ReceivedBytesEntryR\rreceivedBytes" +
+      "\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\rR\003key\022\024\n\005" +
+      "value\030\002 \001(\004R\005value:\0028\001\032@\n\022ReceivedBytesE" +
+      "ntry\022\020\n\003key\030\001 \001(\rR\003key\022\024\n\005value\030\002 \001(\004R\005v" +
+      "alue:\0028\001\"\024\n\022GetNodeInfoRequest\"\230\002\n\023GetNo" +
+      "deInfoResponse\022\030\n\007moniker\030\001 \001(\tR\007moniker" +
+      "\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R" +
+      "\006peerId\022\035\n\nstarted_at\030\004 \001(\004R\tstartedAt\022\"" +
+      "\n\014reachability\030\005 \001(\tR\014reachability\022\032\n\010se" +
+      "rvices\030\006 \003(\005R\010services\022%\n\016services_names" +
+      "\030\007 \003(\tR\rservicesNames\022\024\n\005addrs\030\010 \003(\tR\005ad" +
+      "drs\022\034\n\tprotocols\030\t \003(\tR\tprotocols\"\355\006\n\010Pe" +
+      "erInfo\022\026\n\006status\030\001 \001(\005R\006status\022\030\n\007monike" +
+      "r\030\002 \001(\tR\007moniker\022\024\n\005agent\030\003 \001(\tR\005agent\022\027" +
+      "\n\007peer_id\030\004 \001(\014R\006peerId\022%\n\016consensus_key" +
+      "s\030\005 \003(\tR\rconsensusKeys\022+\n\021consensus_addr" +
+      "ess\030\006 \003(\tR\020consensusAddress\022\032\n\010services\030" +
+      "\007 \001(\rR\010services\022&\n\017last_block_hash\030\010 \001(\014" +
+      "R\rlastBlockHash\022\026\n\006height\030\t \001(\rR\006height\022" +
+      "+\n\021received_messages\030\n \001(\005R\020receivedMess" +
+      "ages\022)\n\020invalid_messages\030\013 \001(\005R\017invalidM" +
+      "essages\022\033\n\tlast_sent\030\014 \001(\003R\010lastSent\022#\n\r" +
+      "last_received\030\r \001(\003R\014lastReceived\022>\n\nsen" +
+      "t_bytes\030\016 \003(\0132\037.pactus.PeerInfo.SentByte" +
+      "sEntryR\tsentBytes\022J\n\016received_bytes\030\017 \003(" +
+      "\0132#.pactus.PeerInfo.ReceivedBytesEntryR\r" +
+      "receivedBytes\022\030\n\007address\030\020 \001(\tR\007address\022" +
+      "\034\n\tdirection\030\021 \001(\tR\tdirection\022\034\n\tprotoco" +
+      "ls\030\022 \003(\tR\tprotocols\022%\n\016total_sessions\030\023 " +
+      "\001(\005R\rtotalSessions\022-\n\022completed_sessions" +
+      "\030\024 \001(\005R\021completedSessions\032<\n\016SentBytesEn" +
+      "try\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005va" +
+      "lue:\0028\001\032@\n\022ReceivedBytesEntry\022\020\n\003key\030\001 \001" +
+      "(\005R\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028\0012\242\001\n\007Ne" +
+      "twork\022O\n\016GetNetworkInfo\022\035.pactus.GetNetw" +
+      "orkInfoRequest\032\036.pactus.GetNetworkInfoRe" +
+      "sponse\022F\n\013GetNodeInfo\022\032.pactus.GetNodeIn" +
+      "foRequest\032\033.pactus.GetNodeInfoResponseBB" +
+      "\n\016pactus.networkZ0github.com/pactus-proj" +
+      "ect/pactus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -9053,7 +9053,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_GetNetworkInfoRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNetworkInfoRequest_descriptor,
-        new java.lang.String[] { "OnlyOnline", });
+        new java.lang.String[] { "OnlyConnected", });
     internal_static_pactus_GetNetworkInfoResponse_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_pactus_GetNetworkInfoResponse_fieldAccessorTable = new
