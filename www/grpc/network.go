@@ -54,9 +54,6 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 	peerInfos := make([]*pactus.PeerInfo, 0, ps.Len())
 
 	ps.IteratePeers(func(peer *peerset.Peer) bool {
-		if !peer.IsConnected() {
-			return false
-		}
 		p := new(pactus.PeerInfo)
 		peerInfos = append(peerInfos, p)
 
