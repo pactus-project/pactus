@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -27,7 +28,8 @@ func TestNetworkInfo(t *testing.T) {
 	td := setup(t)
 
 	w := httptest.NewRecorder()
-	r, err := http.NewRequest("GET", "localhost:80?onlyConnected=false", http.NoBody)
+	r, err := http.NewRequestWithContext(context.Background(), http.MethodGet,
+		"localhost:80?onlyConnected=false", http.NoBody)
 	assert.NoError(t, err)
 
 	td.httpServer.NetworkHandler(w, r)
