@@ -274,23 +274,23 @@ func (td *testData) addPrecommitVote(cons *consensus, blockHash hash.Hash, heigh
 }
 
 func (td *testData) addCPPreVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
-	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
+	cpVal vote.CPValue, just vote.Just, valID int,
 ) {
-	v := vote.NewCPPreVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
+	v := vote.NewCPPreVote(blockHash, height, round, 0, cpVal, just, td.valKeys[valID].Address())
 	td.addVote(cons, v, valID)
 }
 
 func (td *testData) addCPMainVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
-	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
+	cpVal vote.CPValue, just vote.Just, valID int,
 ) {
-	v := vote.NewCPMainVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
+	v := vote.NewCPMainVote(blockHash, height, round, 0, cpVal, just, td.valKeys[valID].Address())
 	td.addVote(cons, v, valID)
 }
 
 func (td *testData) addCPDecidedVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
-	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
+	cpVal vote.CPValue, just vote.Just, valID int,
 ) {
-	v := vote.NewCPDecidedVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
+	v := vote.NewCPDecidedVote(blockHash, height, round, 0, cpVal, just, td.valKeys[valID].Address())
 	td.addVote(cons, v, valID)
 }
 
@@ -586,11 +586,11 @@ func TestPickRandomVote(t *testing.T) {
 	// round 0
 	td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexX)
 	td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexY)
-	td.addCPPreVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,
+	td.addCPPreVote(td.consP, hash.UndefHash, 1, 0, vote.CPValueYes,
 		&vote.JustInitYes{}, tIndexY)
-	td.addCPMainVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,
+	td.addCPMainVote(td.consP, hash.UndefHash, 1, 0, vote.CPValueYes,
 		&vote.JustMainVoteNoConflict{QCert: certPreVote}, tIndexY)
-	td.addCPDecidedVote(td.consP, hash.UndefHash, 1, 0, cpRound, vote.CPValueYes,
+	td.addCPDecidedVote(td.consP, hash.UndefHash, 1, 0, vote.CPValueYes,
 		&vote.JustDecided{QCert: certMainVote}, tIndexY)
 
 	assert.NotNil(t, td.consP.PickRandomVote(0))

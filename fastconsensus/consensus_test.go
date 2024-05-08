@@ -283,25 +283,25 @@ func (td *testData) addPrecommitVote(cons *consensus, blockHash hash.Hash, heigh
 }
 
 func (td *testData) addCPPreVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
-	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
+	cpVal vote.CPValue, just vote.Just, valID int,
 ) *vote.Vote {
-	v := vote.NewCPPreVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
+	v := vote.NewCPPreVote(blockHash, height, round, 0, cpVal, just, td.valKeys[valID].Address())
 
 	return td.addVote(cons, v, valID)
 }
 
 func (td *testData) addCPMainVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
-	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
+	cpVal vote.CPValue, just vote.Just, valID int,
 ) *vote.Vote {
-	v := vote.NewCPMainVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
+	v := vote.NewCPMainVote(blockHash, height, round, 0, cpVal, just, td.valKeys[valID].Address())
 
 	return td.addVote(cons, v, valID)
 }
 
 func (td *testData) addCPDecidedVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
-	cpRound int16, cpVal vote.CPValue, just vote.Just, valID int,
+	cpVal vote.CPValue, just vote.Just, valID int,
 ) *vote.Vote {
-	v := vote.NewCPDecidedVote(blockHash, height, round, cpRound, cpVal, just, td.valKeys[valID].Address())
+	v := vote.NewCPDecidedVote(blockHash, height, round, 0, cpVal, just, td.valKeys[valID].Address())
 
 	return td.addVote(cons, v, valID)
 }
@@ -419,11 +419,12 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 // If `proposal` is nil, it creates justifications for not changing the proposer;
 // otherwise, it generates justifications to change the proposer.
 // It returns three justifications:
-// 1. JustInitNo if the proposal is set, or JustInitYes if not
-// 2. JustMainVoteNoConflict
-// 3. JustDecided
+// 1. JustInitNo if the proposal is set, or JustInitYes if not for the pre-vote step,
+// 2. JustMainVoteNoConflict for the main-vote step,
+// 3. JustDecided for the decided step.
 func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Hash,
-	height uint32, round int16) (vote.Just, vote.Just, vote.Just) {
+	height uint32, round int16,
+) (vote.Just, vote.Just, vote.Just) {
 	t.Helper()
 
 	cpRound := int16(0)
@@ -475,9 +476,6 @@ func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Has
 	mainVoteCommitters := []int32{}
 	mainVoteSigs := []*bls.Signature{}
 	for i, val := range td.consP.validators {
-		mainVoteJust := &vote.JustMainVoteNoConflict{
-			QCert: certPreVote,
-		}
 		mainVote := vote.NewCPMainVote(propBlockHash, height, round,
 			cpRound, cpValue, mainVoteJust, val.Address())
 		signBytes := mainVote.SignBytes()
@@ -669,9 +667,9 @@ func TestPickRandomVote(t *testing.T) {
 	// round 0
 	v1 := td.addPrepareVote(td.consP, td.RandHash(), h, r, tIndexX)
 	v2 := td.addPrepareVote(td.consP, td.RandHash(), h, r, tIndexY)
-	v3 := td.addCPPreVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueYes, preVoteJust, tIndexY)
-	v4 := td.addCPMainVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueYes, mainVoteJust, tIndexY)
-	v5 := td.addCPDecidedVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueYes, decidedJust, tIndexY)
+	v3 := td.addCPPreVote(td.consP, hash.UndefHash, h, r, vote.CPValueYes, preVoteJust, tIndexY)
+	v4 := td.addCPMainVote(td.consP, hash.UndefHash, h, r, vote.CPValueYes, mainVoteJust, tIndexY)
+	v5 := td.addCPDecidedVote(td.consP, hash.UndefHash, h, r, vote.CPValueYes, decidedJust, tIndexY)
 
 	// Round 1
 	td.enterNextRound(td.consP)
@@ -871,108 +869,106 @@ func TestFaulty(t *testing.T) {
 // Once the partition is healed, honest nodes should either reach consensus
 // on one proposal or change the proposer.
 // This is due to the randomness of the binary agreement.
-// func TestByzantine(t *testing.T) {
-// 	td := setup(t)
+func TestByzantine(t *testing.T) {
+	td := setup(t)
 
-// 	for i := 0; i < 8; i++ {
-// 		td.commitBlockForAllStates(t)
-// 	}
+	for i := 0; i < 8; i++ {
+		td.commitBlockForAllStates(t)
+	}
 
-// 	h := uint32(9)
-// 	r := int16(0)
+	h := uint32(9)
+	r := int16(0)
 
-// 	// =================================
-// 	// X, Y votes
-// 	td.enterNewHeight(td.consX)
-// 	td.enterNewHeight(td.consY)
+	// =================================
+	// X, Y votes
+	td.enterNewHeight(td.consX)
+	td.enterNewHeight(td.consY)
 
-// 	prop := td.makeProposal(t, h, r)
-// 	require.Equal(t, prop.Block().Header().ProposerAddress(), td.consB.valKey.Address())
+	prop := td.makeProposal(t, h, r)
+	require.Equal(t, prop.Block().Header().ProposerAddress(), td.consB.valKey.Address())
 
-// 	// X and Y receive the Seconds proposal
-// 	td.consX.SetProposal(prop)
-// 	td.consY.SetProposal(prop)
+	// X and Y receive the Seconds proposal
+	td.consX.SetProposal(prop)
+	td.consY.SetProposal(prop)
 
-// 	td.shouldPublishVote(t, td.consX, vote.VoteTypePrepare, prop.Block().Hash())
-// 	td.shouldPublishVote(t, td.consY, vote.VoteTypePrepare, prop.Block().Hash())
+	td.shouldPublishVote(t, td.consX, vote.VoteTypePrepare, prop.Block().Hash())
+	td.shouldPublishVote(t, td.consY, vote.VoteTypePrepare, prop.Block().Hash())
 
-// 	// X and Y don't have enough votes, so they request to change the proposer
-// 	td.changeProposerTimeout(td.consX)
-// 	td.changeProposerTimeout(td.consY)
+	// X and Y don't have enough votes, so they request to change the proposer
+	td.changeProposerTimeout(td.consX)
+	td.changeProposerTimeout(td.consY)
 
-// 	// X and Y are unable to progress
+	// X and Y are unable to progress
 
-// 	// =================================
-// 	// P, M and N votes
-// 	// Byzantine node create the second proposal and send it to the partitioned nodes
-// 	byzTrx := tx.NewTransferTx(h,
-// 		td.consB.rewardAddr, td.RandAccAddress(), 1000, 1000, "")
-// 	td.HelperSignTransaction(td.consB.valKey.PrivateKey(), byzTrx)
-// 	assert.NoError(t, td.txPool.AppendTx(byzTrx))
-// 	byzProp := td.makeProposal(t, h, r)
+	// =================================
+	// P, M and N votes
+	// Byzantine node create the second proposal and send it to the partitioned nodes
+	byzTrx := tx.NewTransferTx(h,
+		td.consB.rewardAddr, td.RandAccAddress(), 1000, 1000, "")
+	td.HelperSignTransaction(td.consB.valKey.PrivateKey(), byzTrx)
+	assert.NoError(t, td.txPool.AppendTx(byzTrx))
+	byzProp := td.makeProposal(t, h, r)
 
-// 	require.NotEqual(t, prop.Block().Hash(), byzProp.Block().Hash())
-// 	require.Equal(t, byzProp.Block().Header().ProposerAddress(), td.consB.valKey.Address())
+	require.NotEqual(t, prop.Block().Hash(), byzProp.Block().Hash())
+	require.Equal(t, byzProp.Block().Header().ProposerAddress(), td.consB.valKey.Address())
 
-// 	td.enterNewHeight(td.consP)
-// 	td.enterNewHeight(td.consM)
-// 	td.enterNewHeight(td.consN)
+	td.enterNewHeight(td.consP)
+	td.enterNewHeight(td.consM)
+	td.enterNewHeight(td.consN)
 
-// 	// P, M and N receive the Seconds proposal
-// 	td.consP.SetProposal(byzProp)
-// 	td.consM.SetProposal(byzProp)
-// 	td.consN.SetProposal(byzProp)
+	// P, M and N receive the Seconds proposal
+	td.consP.SetProposal(byzProp)
+	td.consM.SetProposal(byzProp)
+	td.consN.SetProposal(byzProp)
 
-// 	voteP := td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, byzProp.Block().Hash())
-// 	voteM := td.shouldPublishVote(t, td.consM, vote.VoteTypePrepare, byzProp.Block().Hash())
-// 	voteN := td.shouldPublishVote(t, td.consN, vote.VoteTypePrepare, byzProp.Block().Hash())
+	voteP := td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, byzProp.Block().Hash())
+	voteM := td.shouldPublishVote(t, td.consM, vote.VoteTypePrepare, byzProp.Block().Hash())
+	voteN := td.shouldPublishVote(t, td.consN, vote.VoteTypePrepare, byzProp.Block().Hash())
 
-// 	// P, M and N don't have enough votes, so they request to change the proposer
-// 	td.changeProposerTimeout(td.consP)
-// 	td.changeProposerTimeout(td.consM)
-// 	td.changeProposerTimeout(td.consN)
+	// P, M and N don't have enough votes, so they request to change the proposer
+	td.changeProposerTimeout(td.consP)
+	td.changeProposerTimeout(td.consM)
+	td.changeProposerTimeout(td.consN)
 
-// 	// P, M and N are unable to progress
+	// P, M and N are unable to progress
 
-// 	// =================================
-// 	// B votes
-// 	// B requests to NOT change the proposer
+	// =================================
+	// B votes
+	// B requests to NOT change the proposer
 
-// 	td.enterNewHeight(td.consB)
+	td.enterNewHeight(td.consB)
 
-// 	voteB := vote.NewPrepareVote(byzProp.Block().Hash(), h, r, td.consB.valKey.Address())
-// 	td.HelperSignVote(td.consB.valKey, voteB)
-// 	byzJust0Block := &vote.JustInitZero{
-// 		QCert: td.consB.makeCPMainVoteCertificate(
-// 			0,
-// 			vote.CPValueNo,
-// 			map[crypto.Address]*vote.Vote{
-// 				voteP.Signer(): voteP,
-// 				voteM.Signer(): voteM,
-// 				voteN.Signer(): voteN,
-// 				voteB.Signer(): voteB,
-// 			}),
-// 	}
-// 	byzVote := vote.NewCPPreVote(byzProp.Block().Hash(), h, r, 0, vote.CPValueNo, byzJust0Block, td.consB.valKey.Address())
-// 	td.HelperSignVote(td.consB.valKey, byzVote)
+	voteB := vote.NewPrepareVote(byzProp.Block().Hash(), h, r, td.consB.valKey.Address())
+	td.HelperSignVote(td.consB.valKey, voteB)
+	byzJust0Block := &vote.JustInitNo{
+		QCert: td.consB.makeVoteCertificate(
+			map[crypto.Address]*vote.Vote{
+				voteP.Signer(): voteP,
+				voteM.Signer(): voteM,
+				voteN.Signer(): voteN,
+				voteB.Signer(): voteB,
+			}),
+	}
+	byzVote := vote.NewCPPreVote(byzProp.Block().Hash(), h, r, 0, vote.CPValueNo, byzJust0Block, td.consB.valKey.Address())
+	td.HelperSignVote(td.consB.valKey, byzVote)
 
-// 	// =================================
+	// =================================
 
-// 	td.checkHeightRound(t, td.consX, h, r)
-// 	td.checkHeightRound(t, td.consY, h, r)
-// 	td.checkHeightRound(t, td.consP, h, r)
-// 	td.checkHeightRound(t, td.consM, h, r)
-// 	td.checkHeightRound(t, td.consN, h, r)
+	td.checkHeightRound(t, td.consX, h, r)
+	td.checkHeightRound(t, td.consY, h, r)
+	td.checkHeightRound(t, td.consP, h, r)
+	td.checkHeightRound(t, td.consM, h, r)
+	td.checkHeightRound(t, td.consN, h, r)
 
-// 	// =================================
-// 	// Now, Partition heals
-// 	fmt.Println("== Partition heals")
-// 	cert, err := checkConsensus(td, h, []*vote.Vote{byzVote})
+	// =================================
+	// Now, Partition heals
+	fmt.Println("== Partition heals")
+	cert, err := checkConsensus(td, h, []*vote.Vote{byzVote})
 
-// 	require.NoError(t, err)
-// 	require.Equal(t, cert.Height(), h)
-// 	require.Contains(t, cert.Absentees(), int32(tIndexB))
-// }
+	require.NoError(t, err)
+	require.Equal(t, cert.Height(), h)
+	require.Contains(t, cert.Absentees(), int32(tIndexB))
+}
 
 func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 	*certificate.BlockCertificate, error,

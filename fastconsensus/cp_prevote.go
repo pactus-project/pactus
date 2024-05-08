@@ -18,6 +18,7 @@ func (s *cpPreVoteState) enter() {
 	s.decide()
 }
 
+//nolint:nestif // complexity can't be reduced more.
 func (s *cpPreVoteState) decide() {
 	s.strongCommit()
 	s.cpStrongTermination()

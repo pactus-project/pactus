@@ -215,7 +215,10 @@ func (cp *changeProposer) cpCheckJustMainVoteConflict(just vote.Just,
 			return err
 		}
 
-	default:
+	case vote.JustTypeInitYes,
+		vote.JustTypeMainVoteConflict,
+		vote.JustTypeMainVoteNoConflict,
+		vote.JustTypeDecided:
 		return invalidJustificationError{
 			Reason: fmt.Sprintf("unexpected justification: %s", j.JustNo.Type()),
 		}
@@ -234,7 +237,11 @@ func (cp *changeProposer) cpCheckJustMainVoteConflict(just vote.Just,
 			return err
 		}
 
-	default:
+	case vote.JustTypeInitNo,
+		vote.JustTypePreVoteSoft,
+		vote.JustTypeMainVoteConflict,
+		vote.JustTypeMainVoteNoConflict,
+		vote.JustTypeDecided:
 		return invalidJustificationError{
 			Reason: fmt.Sprintf("unexpected justification: %s", j.JustNo.Type()),
 		}
