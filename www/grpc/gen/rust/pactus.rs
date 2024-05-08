@@ -758,6 +758,9 @@ impl VoteType {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetNetworkInfoRequest {
+    /// Only returns the peers with connected status
+    #[prost(bool, tag="1")]
+    pub only_connected: bool,
 }
 /// Response message containing information about the overall network.
 #[allow(clippy::derive_partial_eq_without_eq)]

@@ -331,6 +331,15 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "onlyConnected",
+            "description": "Only returns the peers with connected status",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
         "tags": [
           "Network"
         ]
