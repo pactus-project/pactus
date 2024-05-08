@@ -335,6 +335,8 @@ func (st *state) UpdateLastCertificate(v *vote.Vote) error {
 	cloneLastCert.AddSignature(val.Number(), v.Signature())
 	st.lastInfo.UpdateCertificate(cloneLastCert)
 
+	st.logger.Debug("certificate updated", "validator", val.Address(), "power", val.Power())
+
 	return nil
 }
 
