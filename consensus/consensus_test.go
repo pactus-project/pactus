@@ -734,10 +734,10 @@ func TestCases(t *testing.T) {
 		round       int16
 		description string
 	}{
-		{1697898884837384019, 1, "1/3+ cp:PRE-VOTE in prepare step"},
+		{1697898884837384019, 2, "1/3+ cp:PRE-VOTE in prepare step"},
 		{1694848907840926239, 0, "1/3+ cp:PRE-VOTE in precommit step"},
 		{1694849103290580532, 1, "Conflicting votes, cp-round=0"},
-		{1697900665869342730, 2, "Conflicting votes, cp-round=1"},
+		{1697900665869342730, 1, "Conflicting votes, cp-round=1"},
 		{1697887970998950590, 1, "consP & consB: Change Proposer, consX & consY: Commit (2 block announces)"},
 	}
 
