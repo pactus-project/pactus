@@ -13,11 +13,20 @@ import 'package:protobuf/protobuf.dart' as $pb;
 
 class GetNetworkInfoRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetNetworkInfoRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOB(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'onlyConnected')
     ..hasRequiredFields = false
   ;
 
   GetNetworkInfoRequest._() : super();
-  factory GetNetworkInfoRequest() => create();
+  factory GetNetworkInfoRequest({
+    $core.bool? onlyConnected,
+  }) {
+    final _result = create();
+    if (onlyConnected != null) {
+      _result.onlyConnected = onlyConnected;
+    }
+    return _result;
+  }
   factory GetNetworkInfoRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory GetNetworkInfoRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
@@ -38,6 +47,15 @@ class GetNetworkInfoRequest extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static GetNetworkInfoRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetNetworkInfoRequest>(create);
   static GetNetworkInfoRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get onlyConnected => $_getBF(0);
+  @$pb.TagNumber(1)
+  set onlyConnected($core.bool v) { $_setBool(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasOnlyConnected() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearOnlyConnected() => clearField(1);
 }
 
 class GetNetworkInfoResponse extends $pb.GeneratedMessage {

@@ -2034,7 +2034,21 @@ GetNetworkInfoRequest
 <span class="badge text-bg-secondary fs-6 align-top">msg</span>
 </h3>
   <p>Request message for retrieving overall network information.</p>
- Message has no fields.  
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+      <td class="fw-bold">only_connected</td>
+      <td>
+        <a href="#bool">bool</a>
+      </td>
+      <td>Only returns the peers with connected status </td>
+    </tr>
+  </tbody>
+</table>  
 <h3 id="pactus.GetNetworkInfoResponse">
 GetNetworkInfoResponse
 <span class="badge text-bg-secondary fs-6 align-top">msg</span>
