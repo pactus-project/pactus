@@ -13,6 +13,13 @@ openapiOptions:
 
             All the amounts and values in gRPC endpoints are in NanoPAC units, which are atomic and the smallest unit in the Pactus blockchain.
             Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
+          contact:
+            name: Pactus Blockchain
+            url: https://pactus.org
+            email: info@pactus.org
+          license:
+            name: MIT License
+            url: https://github.com/pactus-project/pactus/blob/main/LICENSE
         schemes:
           - HTTP
           - HTTPS
