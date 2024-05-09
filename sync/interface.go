@@ -1,9 +1,9 @@
 package sync
 
 import (
-	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 )
 
 type Synchronizer interface {

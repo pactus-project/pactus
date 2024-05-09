@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,7 +35,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 		})
 
 		t.Run("Reject request from peers without handshaking", func(t *testing.T) {
-			pid := td.addPeer(t, peerset.StatusCodeConnected, service.New(service.None))
+			pid := td.addPeer(t, status.StatusConnected, service.New(service.None))
 			msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
@@ -45,7 +45,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 			assert.Contains(t, res.Reason, "not handshaked")
 		})
 
-		pid := td.addPeer(t, peerset.StatusCodeKnown, service.New(service.None))
+		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 
 		t.Run("Peer requested blocks that we don't have", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight+1, 1)
@@ -120,7 +120,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 
 	t.Run("NodeNetwork flag set", func(t *testing.T) {
 		td.sync.config.NodeNetwork = true
-		pid := td.addPeer(t, peerset.StatusCodeKnown, service.New(service.None))
+		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 
 		t.Run("Requesting one block", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)

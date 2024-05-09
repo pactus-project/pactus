@@ -7,8 +7,8 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
@@ -43,7 +43,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
+			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
@@ -59,7 +59,7 @@ func TestParsingHelloMessages(t *testing.T) {
 
 			msg.MyTimeUnixMilli = msg.MyTime().Add(-10 * time.Second).UnixMilli()
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
+			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
@@ -75,7 +75,7 @@ func TestParsingHelloMessages(t *testing.T) {
 
 			msg.MyTimeUnixMilli = msg.MyTime().Add(20 * time.Second).UnixMilli()
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
+			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
@@ -97,7 +97,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
+			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
@@ -113,7 +113,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-			td.checkPeerStatus(t, pid, peerset.StatusCodeBanned)
+			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
@@ -136,7 +136,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			p := td.sync.peerSet.GetPeer(pid)
 
 			pub := valKey.PublicKey()
-			assert.Equal(t, p.Status, peerset.StatusCodeConnected)
+			assert.Equal(t, p.Status, status.StatusConnected)
 			assert.Equal(t, p.Agent, version.NodeAgent.String())
 			assert.Equal(t, p.Moniker, "kitty")
 			assert.Contains(t, p.ConsensusKeys, pub)

@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -15,8 +14,9 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/firewall"
-	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -186,7 +186,7 @@ func (td *testData) receivingNewMessage(sync *synchronizer, msg message.Message,
 	return sync.processIncomingBundle(bdl, from)
 }
 
-func (td *testData) addPeer(t *testing.T, status peerset.StatusCode, services service.Services) peer.ID {
+func (td *testData) addPeer(t *testing.T, s status.Status, services service.Services) peer.ID {
 	t.Helper()
 
 	pid := td.RandPeerID()
@@ -194,7 +194,7 @@ func (td *testData) addPeer(t *testing.T, status peerset.StatusCode, services se
 
 	td.sync.peerSet.UpdateInfo(pid, t.Name(),
 		version.NodeAgent.String(), []*bls.PublicKey{pub}, services)
-	td.sync.peerSet.UpdateStatus(pid, status)
+	td.sync.peerSet.UpdateStatus(pid, s)
 
 	return pid
 }
@@ -217,10 +217,10 @@ func (td *testData) addValidatorToCommittee(t *testing.T, pub crypto.PublicKey) 
 	}
 }
 
-func (td *testData) checkPeerStatus(t *testing.T, pid peer.ID, code peerset.StatusCode) {
+func (td *testData) checkPeerStatus(t *testing.T, pid peer.ID, code status.Status) {
 	t.Helper()
 
-	require.Equal(t, td.sync.peerSet.GetPeer(pid).Status, code)
+	require.Equal(t, td.sync.peerSet.GetPeerStatus(pid), code)
 }
 
 func TestStop(t *testing.T) {
@@ -247,14 +247,14 @@ func TestConnectEvent(t *testing.T) {
 		}
 		assert.Equal(t, p.Address, "address_1")
 
-		return p.Status == peerset.StatusCodeConnected
+		return p.Status == status.StatusConnected
 	}, time.Second, 100*time.Millisecond)
 
 	// Receiving connect event for the second time
-	td.sync.peerSet.UpdateStatus(pid, peerset.StatusCodeKnown)
+	td.sync.peerSet.UpdateStatus(pid, status.StatusKnown)
 	td.network.EventCh <- ce
-	p := td.sync.peerSet.GetPeer(pid)
-	assert.Equal(t, peerset.StatusCodeKnown, p.Status)
+	s := td.sync.peerSet.GetPeerStatus(pid)
+	assert.True(t, s.IsKnown())
 }
 
 func TestDisconnectEvent(t *testing.T) {
@@ -265,9 +265,9 @@ func TestDisconnectEvent(t *testing.T) {
 	}
 
 	assert.Eventually(t, func() bool {
-		p := td.sync.peerSet.GetPeer(pid)
+		s := td.sync.peerSet.GetPeerStatus(pid)
 
-		return p.Status == peerset.StatusCodeDisconnected
+		return s.IsDisconnected()
 	}, time.Second, 100*time.Millisecond)
 }
 
@@ -299,7 +299,7 @@ func TestDownload(t *testing.T) {
 	t.Run("try to download blocks, but the peer is not known", func(t *testing.T) {
 		td := setup(t, conf)
 
-		pid := td.addPeer(t, peerset.StatusCodeConnected, service.New(service.None))
+		pid := td.addPeer(t, status.StatusConnected, service.New(service.None))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
 		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
@@ -311,7 +311,7 @@ func TestDownload(t *testing.T) {
 	t.Run("try to download blocks, but the peer is not a network node", func(t *testing.T) {
 		td := setup(t, conf)
 
-		pid := td.addPeer(t, peerset.StatusCodeKnown, service.New(service.None))
+		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
 		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
@@ -323,7 +323,7 @@ func TestDownload(t *testing.T) {
 	t.Run("try to download blocks and the peer is a network node", func(t *testing.T) {
 		td := setup(t, conf)
 
-		pid := td.addPeer(t, peerset.StatusCodeKnown, service.New(service.Network))
+		pid := td.addPeer(t, status.StatusKnown, service.New(service.Network))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
 		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
@@ -334,12 +334,12 @@ func TestDownload(t *testing.T) {
 	t.Run("download request is rejected", func(t *testing.T) {
 		td := setup(t, conf)
 
-		pid := td.addPeer(t, peerset.StatusCodeKnown, service.New(service.None))
+		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 		from := td.sync.stateHeight() + 1
 		count := uint32(123)
-		ssn := td.sync.peerSet.OpenSession(pid, from, count)
+		sid := td.sync.peerSet.OpenSession(pid, from, count)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, t.Name(),
-			ssn.SessionID, 1, nil, nil)
+			sid, 1, nil, nil)
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 		assert.False(t, td.sync.peerSet.HasOpenSession(pid))

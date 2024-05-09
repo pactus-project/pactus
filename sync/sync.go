@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
@@ -15,7 +14,9 @@ import (
 	"github.com/pactus-project/pactus/sync/cache"
 	"github.com/pactus-project/pactus/sync/firewall"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -222,8 +223,8 @@ func (sync *synchronizer) Services() service.Services {
 }
 
 func (sync *synchronizer) sayHello(to peer.ID) {
-	p := sync.peerSet.GetPeer(to)
-	if p != nil && p.IsKnown() {
+	s := sync.peerSet.GetPeerStatus(to)
+	if s.IsKnown() {
 		return
 	}
 
@@ -316,7 +317,7 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
 	sync.logger.Debug("processing connect event", "pid", ce.PeerID)
 
-	sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeConnected)
+	sync.peerSet.UpdateStatus(ce.PeerID, status.StatusConnected)
 	sync.peerSet.UpdateAddress(ce.PeerID, ce.RemoteAddress, ce.Direction)
 }
 
@@ -331,7 +332,7 @@ func (sync *synchronizer) processProtocolsEvent(pe *network.ProtocolsEvents) {
 func (sync *synchronizer) processDisconnectEvent(de *network.DisconnectEvent) {
 	sync.logger.Debug("processing disconnect event", "pid", de.PeerID)
 
-	sync.peerSet.UpdateStatus(de.PeerID, peerset.StatusCodeDisconnected)
+	sync.peerSet.UpdateStatus(de.PeerID, status.StatusDisconnected)
 }
 
 func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle, from peer.ID) error {
@@ -464,7 +465,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 		}
 
 		// We haven't completed the handshake with this peer.
-		if !p.IsKnown() {
+		if !p.Status.IsKnown() {
 			if onlyNodeNetwork {
 				sync.network.CloseConnection(p.PeerID)
 			}
@@ -480,12 +481,12 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 			continue
 		}
 
-		ssn := sync.peerSet.OpenSession(p.PeerID, from, count)
-		msg := message.NewBlocksRequestMessage(ssn.SessionID, from, count)
+		sid := sync.peerSet.OpenSession(p.PeerID, from, count)
+		msg := message.NewBlocksRequestMessage(sid, from, count)
 		sync.sendTo(msg, p.PeerID)
 
 		sync.logger.Info("blocks request sent",
-			"from", from+1, "count", count, "pid", p.PeerID, "sid", ssn.SessionID)
+			"from", from+1, "count", count, "pid", p.PeerID, "sid", sid)
 
 		return true
 	}
