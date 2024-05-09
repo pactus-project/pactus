@@ -5,10 +5,10 @@ import (
 	"math"
 	"time"
 
-	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
 )
@@ -78,7 +78,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 	}
 
 	handler.peerSet.UpdateHeight(pid, msg.Height, msg.BlockHash)
-	handler.peerSet.UpdateStatus(pid, peerset.StatusCodeConnected)
+	handler.peerSet.UpdateStatus(pid, status.StatusConnected)
 
 	response := message.NewHelloAckMessage(message.ResponseCodeOK, "Ok", handler.state.LastBlockHeight())
 	handler.acknowledge(response, pid)
@@ -99,7 +99,7 @@ func (handler *helloHandler) acknowledge(msg *message.HelloAckMessage, to peer.I
 			"to", to, "reason", msg.Reason)
 
 		handler.sendTo(msg, to)
-		handler.peerSet.UpdateStatus(to, peerset.StatusCodeBanned)
+		handler.peerSet.UpdateStatus(to, status.StatusBanned)
 		handler.network.CloseConnection(to)
 	} else {
 		handler.logger.Info("acknowledging hello message", "msg", msg,

@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/libp2p/go-libp2p/core/peer"
+	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
@@ -52,9 +52,9 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 	tm.addRowString("Peers", "---")
 
 	for i, p := range res.ConnectedPeers {
-		pid, _ := peer.IDFromBytes(p.PeerId)
+		pid, _ := lp2ppeer.IDFromBytes(p.PeerId)
 		tm.addRowInt("-- Peer #", i+1)
-		tm.addRowString("Status", peerset.StatusCode(p.Status).String())
+		tm.addRowString("Status", status.Status(p.Status).String())
 		tm.addRowString("PeerID", pid.String())
 		tm.addRowString("Services", service.Services(p.Services).String())
 		tm.addRowString("Agent", p.Agent)
@@ -109,7 +109,7 @@ func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sid, _ := peer.IDFromBytes(res.PeerId)
+	sid, _ := lp2ppeer.IDFromBytes(res.PeerId)
 	tm := newTableMaker()
 	tm.addRowString("Peer ID", sid.String())
 	tm.addRowString("Agent", res.Agent)

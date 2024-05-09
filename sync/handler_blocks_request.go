@@ -3,9 +3,9 @@ package sync
 import (
 	"fmt"
 
-	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -23,8 +23,8 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 	msg := m.(*message.BlocksRequestMessage)
 	handler.logger.Trace("parsing BlocksRequest message", "msg", msg)
 
-	p := handler.peerSet.GetPeer(pid)
-	if p == nil {
+	status := handler.peerSet.GetPeerStatus(pid)
+	if status.IsUnknown() {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("unknown peer (%s)", pid.String()), msg.SessionID, 0, nil, nil)
 
@@ -33,9 +33,9 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 		return nil
 	}
 
-	if !p.IsKnown() {
+	if !status.IsKnown() {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
-			fmt.Sprintf("not handshaked (%s)", p.Status.String()), msg.SessionID, 0, nil, nil)
+			fmt.Sprintf("not handshaked (%s)", status.String()), msg.SessionID, 0, nil, nil)
 
 		handler.respond(response, pid)
 

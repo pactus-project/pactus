@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"io"
 
-	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 )
@@ -137,7 +137,7 @@ func (f *Firewall) isPeerBanned(pid peer.ID) bool {
 
 	p := f.peerSet.GetPeer(pid)
 
-	return p.IsBanned()
+	return p.Status.IsBanned()
 }
 
 func (f *Firewall) closeConnection(pid peer.ID) {

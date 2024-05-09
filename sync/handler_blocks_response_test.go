@@ -12,8 +12,8 @@ import (
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/logger"
@@ -67,7 +67,7 @@ func TestOneBlockShorter(t *testing.T) {
 	lastHeight := td.state.LastBlockHeight()
 	blk1, cert1 := td.GenerateTestBlock(lastHeight + 1)
 	d1, _ := blk1.Bytes()
-	pid := td.addPeer(t, peerset.StatusCodeKnown, service.New(service.None))
+	pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 
 	sid := td.RandInt(1000)
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, t.Name(), sid,
@@ -127,7 +127,7 @@ func TestStrippedPublicKey(t *testing.T) {
 	}
 
 	// Add a peer
-	pid := td.addPeer(t, peerset.StatusCodeKnown, service.New(service.None))
+	pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 
 	for _, test := range tests {
 		blkData, _ := test.blk.Bytes()
@@ -244,8 +244,8 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 			syncBob.PeerSet().Len() == 1
 	}, time.Second, 100*time.Millisecond)
 
-	require.Equal(t, peerset.StatusCodeKnown, syncAlice.PeerSet().GetPeer(syncBob.SelfID()).Status)
-	require.Equal(t, peerset.StatusCodeKnown, syncBob.PeerSet().GetPeer(syncAlice.SelfID()).Status)
+	require.Equal(t, status.StatusKnown, syncAlice.PeerSet().GetPeerStatus(syncBob.SelfID()))
+	require.Equal(t, status.StatusKnown, syncBob.PeerSet().GetPeerStatus(syncAlice.SelfID()))
 
 	return &networkAliceBob{
 		TestSuite:    ts,

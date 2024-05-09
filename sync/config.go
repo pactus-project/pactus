@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/sync/firewall"
-	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
 )
