@@ -1,23 +1,26 @@
-package peerset
+package peer
 
 import (
 	"time"
 
-	"github.com/libp2p/go-libp2p/core/peer"
+	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 )
 
+type ID = lp2ppeer.ID
+
 type Peer struct {
-	Status            StatusCode
+	Status            status.Status
 	Moniker           string
 	Agent             string
 	Address           string
 	Direction         string
 	Protocols         []string
-	PeerID            peer.ID
+	PeerID            ID
 	ConsensusKeys     []*bls.PublicKey
 	Services          service.Services
 	LastSent          time.Time
@@ -32,27 +35,15 @@ type Peer struct {
 	SentBytes         map[message.Type]int64
 }
 
-func NewPeer(peerID peer.ID) *Peer {
+func NewPeer(peerID ID) *Peer {
 	return &Peer{
 		ConsensusKeys: make([]*bls.PublicKey, 0),
-		Status:        StatusCodeUnknown,
+		Status:        status.StatusUnknown,
 		PeerID:        peerID,
 		ReceivedBytes: make(map[message.Type]int64),
 		SentBytes:     make(map[message.Type]int64),
 		Protocols:     make([]string, 0),
 	}
-}
-
-func (p *Peer) IsConnected() bool {
-	return p.Status == StatusCodeConnected || p.Status == StatusCodeKnown
-}
-
-func (p *Peer) IsKnown() bool {
-	return p.Status == StatusCodeKnown
-}
-
-func (p *Peer) IsBanned() bool {
-	return p.Status == StatusCodeBanned
 }
 
 func (p *Peer) HasNetworkService() bool {

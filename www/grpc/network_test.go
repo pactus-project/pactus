@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/libp2p/go-libp2p/core/peer"
+	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
@@ -30,7 +30,7 @@ func TestGetNetworkInfo(t *testing.T) {
 		assert.Equal(t, 2, len(res.ConnectedPeers))
 		for _, p := range res.ConnectedPeers {
 			assert.NotEmpty(t, p.PeerId)
-			pid, _ := peer.IDFromBytes(p.PeerId)
+			pid, _ := lp2ppeer.IDFromBytes(p.PeerId)
 			pp := td.mockSync.PeerSet().GetPeer(pid)
 			assert.Equal(t, p.Agent, pp.Agent)
 			assert.Equal(t, p.Moniker, pp.Moniker)

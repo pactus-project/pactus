@@ -3,7 +3,7 @@ package session
 import (
 	"time"
 
-	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/util"
 )
 

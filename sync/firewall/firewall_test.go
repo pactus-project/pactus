@@ -5,12 +5,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -49,8 +50,8 @@ func setup(t *testing.T) *testData {
 	net.AddAnotherNetwork(network.MockingNetwork(ts, unknownPeerID))
 	net.AddAnotherNetwork(network.MockingNetwork(ts, badPeerID))
 
-	firewall.peerSet.UpdateStatus(goodPeerID, peerset.StatusCodeKnown)
-	firewall.peerSet.UpdateStatus(badPeerID, peerset.StatusCodeBanned)
+	firewall.peerSet.UpdateStatus(goodPeerID, status.StatusKnown)
+	firewall.peerSet.UpdateStatus(badPeerID, status.StatusBanned)
 
 	return &testData{
 		TestSuite:     ts,
@@ -79,7 +80,7 @@ func TestInvalidBundlesCounter(t *testing.T) {
 }
 
 func TestGossipMessage(t *testing.T) {
-	t.Run("Message  from: unknown => should NOT close the connection", func(t *testing.T) {
+	t.Run("Message from: unknown => should NOT close the connection", func(t *testing.T) {
 		td := setup(t)
 
 		bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))

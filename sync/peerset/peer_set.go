@@ -4,11 +4,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/util"
 )
@@ -16,7 +17,7 @@ import (
 type PeerSet struct {
 	lk sync.RWMutex
 
-	peers              map[peer.ID]*Peer
+	peers              map[peer.ID]*peer.Peer
 	sessionManager     *session.Manager
 	totalSentBundles   int
 	totalSentBytes     int64
@@ -26,9 +27,10 @@ type PeerSet struct {
 	startedAt          time.Time
 }
 
+// NewPeerSet constructs a new PeerSet for managing peer information.
 func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	return &PeerSet{
-		peers:          make(map[peer.ID]*Peer),
+		peers:          make(map[peer.ID]*peer.Peer),
 		sessionManager: session.NewManager(sessionTimeout),
 		sentBytes:      make(map[message.Type]int64),
 		receivedBytes:  make(map[message.Type]int64),
@@ -36,7 +38,8 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	}
 }
 
-func (ps *PeerSet) OpenSession(pid peer.ID, from, count uint32) *session.Session {
+// OpenSession opens a new session for downloading blocks and returns the session ID.
+func (ps *PeerSet) OpenSession(pid peer.ID, from, count uint32) int {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
@@ -45,16 +48,10 @@ func (ps *PeerSet) OpenSession(pid peer.ID, from, count uint32) *session.Session
 	p := ps.mustGetPeer(pid)
 	p.TotalSessions++
 
-	return ssn
+	return ssn.SessionID
 }
 
-func (ps *PeerSet) FindSession(sid int) *session.Session {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
-
-	return ps.sessionManager.FindSession(sid)
-}
-
+// NumberOfSessions returns the total number of sessions.
 func (ps *PeerSet) NumberOfSessions() int {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
@@ -62,6 +59,8 @@ func (ps *PeerSet) NumberOfSessions() int {
 	return ps.sessionManager.NumberOfSessions()
 }
 
+// HasOpenSession checks if the specified peer has an open session for downloading blocks.
+// Note that a peer may have more than one session.
 func (ps *PeerSet) HasOpenSession(pid peer.ID) bool {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
@@ -137,14 +136,27 @@ func (ps *PeerSet) RemovePeer(pid peer.ID) {
 }
 
 // GetPeer finds a peer by id and returns a copy of the peer object.
-func (ps *PeerSet) GetPeer(pid peer.ID) *Peer {
+func (ps *PeerSet) GetPeer(pid peer.ID) *peer.Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
 	return ps.getPeer(pid)
 }
 
-func (ps *PeerSet) getPeer(pid peer.ID) *Peer {
+// GetPeer finds a peer by id and returns a copy of the peer object.
+func (ps *PeerSet) GetPeerStatus(pid peer.ID) status.Status {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	p := ps.getPeer(pid)
+	if p != nil {
+		return p.Status
+	}
+
+	return status.StatusUnknown
+}
+
+func (ps *PeerSet) getPeer(pid peer.ID) *peer.Peer {
 	if p, ok := ps.peers[pid]; ok {
 		return p
 	}
@@ -152,10 +164,10 @@ func (ps *PeerSet) getPeer(pid peer.ID) *Peer {
 	return nil
 }
 
-func (ps *PeerSet) mustGetPeer(pid peer.ID) *Peer {
+func (ps *PeerSet) mustGetPeer(pid peer.ID) *peer.Peer {
 	p := ps.getPeer(pid)
 	if p == nil {
-		p = NewPeer(pid)
+		p = peer.NewPeer(pid)
 		ps.peers[pid] = p
 	}
 
@@ -197,19 +209,19 @@ func (ps *PeerSet) UpdateAddress(pid peer.ID, addr, direction string) {
 	p.Direction = direction
 }
 
-func (ps *PeerSet) UpdateStatus(pid peer.ID, status StatusCode) {
+func (ps *PeerSet) UpdateStatus(pid peer.ID, s status.Status) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	p := ps.mustGetPeer(pid)
 
-	if p.Status != StatusCodeBanned || // Don't update the status if peer is banned
+	if !p.Status.IsBanned() || // Don't update the status if peer is banned
 		// Don't change status to connected if peer is known already
-		!(p.Status == StatusCodeKnown && status == StatusCodeConnected) {
-		p.Status = status
+		!(p.Status.IsKnown() && s.IsConnected()) {
+		p.Status = s
 	}
 
-	if status == StatusCodeDisconnected {
+	if s.IsDisconnected() {
 		for _, ssn := range ps.sessionManager.Sessions() {
 			if ssn.PeerID == pid {
 				ssn.Status = session.Uncompleted
@@ -335,7 +347,7 @@ func (ps *PeerSet) StartedAt() time.Time {
 	return ps.startedAt
 }
 
-func (ps *PeerSet) IteratePeers(consumer func(peer *Peer) (stop bool)) {
+func (ps *PeerSet) IteratePeers(consumer func(peer *peer.Peer) (stop bool)) {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
@@ -356,12 +368,12 @@ func (ps *PeerSet) Sessions() []*session.Session {
 
 // GetRandomPeer selects a random peer from the peer set based on their download score.
 // Peers with higher score are more likely to be selected.
-func (ps *PeerSet) GetRandomPeer() *Peer {
+func (ps *PeerSet) GetRandomPeer() *peer.Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
 	type scoredPeer struct {
-		peer  *Peer
+		peer  *peer.Peer
 		score int
 	}
 
@@ -369,7 +381,7 @@ func (ps *PeerSet) GetRandomPeer() *Peer {
 	totalScore := 0
 	peers := make([]scoredPeer, 0, len(ps.peers))
 	for _, p := range ps.peers {
-		if !p.IsConnected() {
+		if !p.Status.IsConnectedOrKnown() {
 			continue
 		}
 

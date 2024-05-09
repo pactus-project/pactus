@@ -5,8 +5,8 @@ import (
 	"unsafe"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/sync/peerset/service"
+	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
@@ -53,8 +53,8 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 	ps := s.sync.PeerSet()
 	peerInfos := make([]*pactus.PeerInfo, 0, ps.Len())
 
-	ps.IteratePeers(func(peer *peerset.Peer) bool {
-		if req.OnlyConnected && !peer.IsConnected() {
+	ps.IteratePeers(func(peer *peer.Peer) bool {
+		if req.OnlyConnected && !peer.Status.IsConnectedOrKnown() {
 			return false
 		}
 

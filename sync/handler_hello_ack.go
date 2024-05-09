@@ -1,10 +1,10 @@
 package sync
 
 import (
-	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -31,7 +31,7 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, pid peer.ID) err
 		return nil
 	}
 
-	handler.peerSet.UpdateStatus(pid, peerset.StatusCodeKnown)
+	handler.peerSet.UpdateStatus(pid, status.StatusKnown)
 	handler.logger.Info("hello message acknowledged", "pid", pid)
 
 	if msg.Height > handler.state.LastBlockHeight() {

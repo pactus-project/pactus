@@ -3,7 +3,7 @@ package session
 import (
 	"time"
 
-	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/util"
 )
 
@@ -52,15 +52,6 @@ func (sm *Manager) OpenSession(pid peer.ID, from, count uint32) *Session {
 	sm.nextSessionID++
 
 	return ssn
-}
-
-func (sm *Manager) FindSession(sid int) *Session {
-	ssn, ok := sm.sessions[sid]
-	if ok {
-		return ssn
-	}
-
-	return nil
 }
 
 func (sm *Manager) NumberOfSessions() int {
