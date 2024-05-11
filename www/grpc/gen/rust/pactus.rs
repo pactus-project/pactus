@@ -834,6 +834,9 @@ pub struct GetNodeInfoResponse {
     /// Number of outbound connections
     #[prost(uint64, tag="12")]
     pub outbound_connections: u64,
+    /// Clock offset
+    #[prost(double, tag="13")]
+    pub clock_offset: f64,
 }
 /// Information about a peer in the network.
 #[allow(clippy::derive_partial_eq_without_eq)]

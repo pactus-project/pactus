@@ -1038,6 +1038,7 @@ Response message containing information about a specific node in the network.
 | connections | [uint64](#uint64) |  | Number of connections |
 | inbound_connections | [uint64](#uint64) |  | Number of inbound connections |
 | outbound_connections | [uint64](#uint64) |  | Number of outbound connections |
+| clock_offset | [double](#double) |  | Clock offset |
 
 
 

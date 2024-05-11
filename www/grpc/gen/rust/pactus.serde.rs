@@ -3773,6 +3773,9 @@ impl serde::Serialize for GetNodeInfoResponse {
         if self.outbound_connections != 0 {
             len += 1;
         }
+        if self.clock_offset != 0. {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetNodeInfoResponse", len)?;
         if !self.moniker.is_empty() {
             struct_ser.serialize_field("moniker", &self.moniker)?;
@@ -3810,6 +3813,9 @@ impl serde::Serialize for GetNodeInfoResponse {
         if self.outbound_connections != 0 {
             struct_ser.serialize_field("outboundConnections", ToString::to_string(&self.outbound_connections).as_str())?;
         }
+        if self.clock_offset != 0. {
+            struct_ser.serialize_field("clockOffset", &self.clock_offset)?;
+        }
         struct_ser.end()
     }
 }
@@ -3837,6 +3843,8 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
             "inboundConnections",
             "outbound_connections",
             "outboundConnections",
+            "clock_offset",
+            "clockOffset",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -3853,6 +3861,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
             Connections,
             InboundConnections,
             OutboundConnections,
+            ClockOffset,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -3886,6 +3895,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                             "connections" => Ok(GeneratedField::Connections),
                             "inboundConnections" | "inbound_connections" => Ok(GeneratedField::InboundConnections),
                             "outboundConnections" | "outbound_connections" => Ok(GeneratedField::OutboundConnections),
+                            "clockOffset" | "clock_offset" => Ok(GeneratedField::ClockOffset),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -3917,6 +3927,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                 let mut connections__ = None;
                 let mut inbound_connections__ = None;
                 let mut outbound_connections__ = None;
+                let mut clock_offset__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::Moniker => {
@@ -4004,6 +4015,14 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
+                        GeneratedField::ClockOffset => {
+                            if clock_offset__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("clockOffset"));
+                            }
+                            clock_offset__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                     }
                 }
                 Ok(GetNodeInfoResponse {
@@ -4019,6 +4038,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                     connections: connections__.unwrap_or_default(),
                     inbound_connections: inbound_connections__.unwrap_or_default(),
                     outbound_connections: outbound_connections__.unwrap_or_default(),
+                    clock_offset: clock_offset__.unwrap_or_default(),
                 })
             }
         }

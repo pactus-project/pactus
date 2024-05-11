@@ -760,7 +760,8 @@ proto.pactus.GetNodeInfoResponse.toObject = function(includeInstance, msg) {
     protocolsList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined : f,
     connections: jspb.Message.getFieldWithDefault(msg, 10, 0),
     inboundConnections: jspb.Message.getFieldWithDefault(msg, 11, 0),
-    outboundConnections: jspb.Message.getFieldWithDefault(msg, 12, 0)
+    outboundConnections: jspb.Message.getFieldWithDefault(msg, 12, 0),
+    clockOffset: jspb.Message.getFloatingPointFieldWithDefault(msg, 13, 0.0)
   };
 
   if (includeInstance) {
@@ -846,6 +847,10 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
     case 12:
       var value = /** @type {number} */ (reader.readUint64());
       msg.setOutboundConnections(value);
+      break;
+    case 13:
+      var value = /** @type {number} */ (reader.readDouble());
+      msg.setClockOffset(value);
       break;
     default:
       reader.skipField();
@@ -957,6 +962,13 @@ proto.pactus.GetNodeInfoResponse.serializeBinaryToWriter = function(message, wri
   if (f !== 0) {
     writer.writeUint64(
       12,
+      f
+    );
+  }
+  f = message.getClockOffset();
+  if (f !== 0.0) {
+    writer.writeDouble(
+      13,
       f
     );
   }
@@ -1276,6 +1288,24 @@ proto.pactus.GetNodeInfoResponse.prototype.getOutboundConnections = function() {
  */
 proto.pactus.GetNodeInfoResponse.prototype.setOutboundConnections = function(value) {
   return jspb.Message.setProto3IntField(this, 12, value);
+};
+
+
+/**
+ * optional double clock_offset = 13;
+ * @return {number}
+ */
+proto.pactus.GetNodeInfoResponse.prototype.getClockOffset = function() {
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 13, 0.0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.setClockOffset = function(value) {
+  return jspb.Message.setProto3FloatField(this, 13, value);
 };
 
 

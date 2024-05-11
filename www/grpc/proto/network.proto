@@ -67,6 +67,8 @@ message GetNodeInfoResponse {
   uint64 inbound_connections = 11;
   // Number of outbound connections
   uint64 outbound_connections = 12;
+  // Clock offset
+  double clock_offset = 13;
 }
 
 // Information about a peer in the network.

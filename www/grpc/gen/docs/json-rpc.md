@@ -785,6 +785,7 @@ pactus.network.get_node_info retrieves information about a specific node in the 
 		...
 	],
 	"agent": "str",	// (string) Agent information of the node.
+	"clock_offset": n,	// (numeric) Clock offset
 	"connections": n,	// (numeric) Number of connections
 	"inbound_connections": n,	// (numeric) Number of inbound connections
 	"moniker": "str",	// (string) Moniker of the node.
