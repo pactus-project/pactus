@@ -75,11 +75,14 @@ const GetNodeInfoResponse$json = const {
     const {'1': 'services_names', '3': 7, '4': 3, '5': 9, '10': 'servicesNames'},
     const {'1': 'addrs', '3': 8, '4': 3, '5': 9, '10': 'addrs'},
     const {'1': 'protocols', '3': 9, '4': 3, '5': 9, '10': 'protocols'},
+    const {'1': 'connections', '3': 10, '4': 1, '5': 4, '10': 'connections'},
+    const {'1': 'inbound_connections', '3': 11, '4': 1, '5': 4, '10': 'inboundConnections'},
+    const {'1': 'outbound_connections', '3': 12, '4': 1, '5': 4, '10': 'outboundConnections'},
   ],
 };
 
 /// Descriptor for `GetNodeInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAxSBnBlZXJJZBIdCgpzdGFydGVkX2F0GAQgASgEUglzdGFydGVkQXQSIgoMcmVhY2hhYmlsaXR5GAUgASgJUgxyZWFjaGFiaWxpdHkSGgoIc2VydmljZXMYBiADKAVSCHNlcnZpY2VzEiUKDnNlcnZpY2VzX25hbWVzGAcgAygJUg1zZXJ2aWNlc05hbWVzEhQKBWFkZHJzGAggAygJUgVhZGRycxIcCglwcm90b2NvbHMYCSADKAlSCXByb3RvY29scw==');
+final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAxSBnBlZXJJZBIdCgpzdGFydGVkX2F0GAQgASgEUglzdGFydGVkQXQSIgoMcmVhY2hhYmlsaXR5GAUgASgJUgxyZWFjaGFiaWxpdHkSGgoIc2VydmljZXMYBiADKAVSCHNlcnZpY2VzEiUKDnNlcnZpY2VzX25hbWVzGAcgAygJUg1zZXJ2aWNlc05hbWVzEhQKBWFkZHJzGAggAygJUgVhZGRycxIcCglwcm90b2NvbHMYCSADKAlSCXByb3RvY29scxIgCgtjb25uZWN0aW9ucxgKIAEoBFILY29ubmVjdGlvbnMSLwoTaW5ib3VuZF9jb25uZWN0aW9ucxgLIAEoBFISaW5ib3VuZENvbm5lY3Rpb25zEjEKFG91dGJvdW5kX2Nvbm5lY3Rpb25zGAwgASgEUhNvdXRib3VuZENvbm5lY3Rpb25z');
 @$core.Deprecated('Use peerInfoDescriptor instead')
 const PeerInfo$json = const {
   '1': 'PeerInfo',

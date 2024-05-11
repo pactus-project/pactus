@@ -1035,6 +1035,9 @@ Response message containing information about a specific node in the network.
 | services_names | [string](#string) | repeated | Names of services provided by the node. |
 | addrs | [string](#string) | repeated | List of addresses associated with the node. |
 | protocols | [string](#string) | repeated | List of protocols supported by the node. |
+| connections | [uint64](#uint64) |  | Number of connections |
+| inbound_connections | [uint64](#uint64) |  | Number of inbound connections |
+| outbound_connections | [uint64](#uint64) |  | Number of outbound connections |
 
 
 
