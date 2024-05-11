@@ -757,7 +757,10 @@ proto.pactus.GetNodeInfoResponse.toObject = function(includeInstance, msg) {
     servicesList: (f = jspb.Message.getRepeatedField(msg, 6)) == null ? undefined : f,
     servicesNamesList: (f = jspb.Message.getRepeatedField(msg, 7)) == null ? undefined : f,
     addrsList: (f = jspb.Message.getRepeatedField(msg, 8)) == null ? undefined : f,
-    protocolsList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined : f
+    protocolsList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined : f,
+    connections: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    inboundConnections: jspb.Message.getFieldWithDefault(msg, 11, 0),
+    outboundConnections: jspb.Message.getFieldWithDefault(msg, 12, 0)
   };
 
   if (includeInstance) {
@@ -831,6 +834,18 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
     case 9:
       var value = /** @type {string} */ (reader.readString());
       msg.addProtocols(value);
+      break;
+    case 10:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setConnections(value);
+      break;
+    case 11:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setInboundConnections(value);
+      break;
+    case 12:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setOutboundConnections(value);
       break;
     default:
       reader.skipField();
@@ -921,6 +936,27 @@ proto.pactus.GetNodeInfoResponse.serializeBinaryToWriter = function(message, wri
   if (f.length > 0) {
     writer.writeRepeatedString(
       9,
+      f
+    );
+  }
+  f = message.getConnections();
+  if (f !== 0) {
+    writer.writeUint64(
+      10,
+      f
+    );
+  }
+  f = message.getInboundConnections();
+  if (f !== 0) {
+    writer.writeUint64(
+      11,
+      f
+    );
+  }
+  f = message.getOutboundConnections();
+  if (f !== 0) {
+    writer.writeUint64(
+      12,
       f
     );
   }
@@ -1186,6 +1222,60 @@ proto.pactus.GetNodeInfoResponse.prototype.addProtocols = function(value, opt_in
  */
 proto.pactus.GetNodeInfoResponse.prototype.clearProtocolsList = function() {
   return this.setProtocolsList([]);
+};
+
+
+/**
+ * optional uint64 connections = 10;
+ * @return {number}
+ */
+proto.pactus.GetNodeInfoResponse.prototype.getConnections = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.setConnections = function(value) {
+  return jspb.Message.setProto3IntField(this, 10, value);
+};
+
+
+/**
+ * optional uint64 inbound_connections = 11;
+ * @return {number}
+ */
+proto.pactus.GetNodeInfoResponse.prototype.getInboundConnections = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.setInboundConnections = function(value) {
+  return jspb.Message.setProto3IntField(this, 11, value);
+};
+
+
+/**
+ * optional uint64 outbound_connections = 12;
+ * @return {number}
+ */
+proto.pactus.GetNodeInfoResponse.prototype.getOutboundConnections = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.setOutboundConnections = function(value) {
+  return jspb.Message.setProto3IntField(this, 12, value);
 };
 
 

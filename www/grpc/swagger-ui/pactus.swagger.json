@@ -1638,6 +1638,21 @@
             "type": "string"
           },
           "description": "List of protocols supported by the node."
+        },
+        "connections": {
+          "type": "string",
+          "format": "uint64",
+          "title": "Number of connections"
+        },
+        "inboundConnections": {
+          "type": "string",
+          "format": "uint64",
+          "title": "Number of inbound connections"
+        },
+        "outboundConnections": {
+          "type": "string",
+          "format": "uint64",
+          "title": "Number of outbound connections"
         }
       },
       "description": "Response message containing information about a specific node in the network."

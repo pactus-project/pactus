@@ -3236,6 +3236,36 @@ public final class NetworkOuterClass {
      */
     com.google.protobuf.ByteString
         getProtocolsBytes(int index);
+
+    /**
+     * <pre>
+     * Number of connections
+     * </pre>
+     *
+     * <code>uint64 connections = 10 [json_name = "connections"];</code>
+     * @return The connections.
+     */
+    long getConnections();
+
+    /**
+     * <pre>
+     * Number of inbound connections
+     * </pre>
+     *
+     * <code>uint64 inbound_connections = 11 [json_name = "inboundConnections"];</code>
+     * @return The inboundConnections.
+     */
+    long getInboundConnections();
+
+    /**
+     * <pre>
+     * Number of outbound connections
+     * </pre>
+     *
+     * <code>uint64 outbound_connections = 12 [json_name = "outboundConnections"];</code>
+     * @return The outboundConnections.
+     */
+    long getOutboundConnections();
   }
   /**
    * <pre>
@@ -3650,6 +3680,51 @@ public final class NetworkOuterClass {
       return protocols_.getByteString(index);
     }
 
+    public static final int CONNECTIONS_FIELD_NUMBER = 10;
+    private long connections_;
+    /**
+     * <pre>
+     * Number of connections
+     * </pre>
+     *
+     * <code>uint64 connections = 10 [json_name = "connections"];</code>
+     * @return The connections.
+     */
+    @java.lang.Override
+    public long getConnections() {
+      return connections_;
+    }
+
+    public static final int INBOUND_CONNECTIONS_FIELD_NUMBER = 11;
+    private long inboundConnections_;
+    /**
+     * <pre>
+     * Number of inbound connections
+     * </pre>
+     *
+     * <code>uint64 inbound_connections = 11 [json_name = "inboundConnections"];</code>
+     * @return The inboundConnections.
+     */
+    @java.lang.Override
+    public long getInboundConnections() {
+      return inboundConnections_;
+    }
+
+    public static final int OUTBOUND_CONNECTIONS_FIELD_NUMBER = 12;
+    private long outboundConnections_;
+    /**
+     * <pre>
+     * Number of outbound connections
+     * </pre>
+     *
+     * <code>uint64 outbound_connections = 12 [json_name = "outboundConnections"];</code>
+     * @return The outboundConnections.
+     */
+    @java.lang.Override
+    public long getOutboundConnections() {
+      return outboundConnections_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -3695,6 +3770,15 @@ public final class NetworkOuterClass {
       }
       for (int i = 0; i < protocols_.size(); i++) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 9, protocols_.getRaw(i));
+      }
+      if (connections_ != 0L) {
+        output.writeUInt64(10, connections_);
+      }
+      if (inboundConnections_ != 0L) {
+        output.writeUInt64(11, inboundConnections_);
+      }
+      if (outboundConnections_ != 0L) {
+        output.writeUInt64(12, outboundConnections_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -3760,6 +3844,18 @@ public final class NetworkOuterClass {
         size += dataSize;
         size += 1 * getProtocolsList().size();
       }
+      if (connections_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(10, connections_);
+      }
+      if (inboundConnections_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(11, inboundConnections_);
+      }
+      if (outboundConnections_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(12, outboundConnections_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -3793,6 +3889,12 @@ public final class NetworkOuterClass {
           .equals(other.getAddrsList())) return false;
       if (!getProtocolsList()
           .equals(other.getProtocolsList())) return false;
+      if (getConnections()
+          != other.getConnections()) return false;
+      if (getInboundConnections()
+          != other.getInboundConnections()) return false;
+      if (getOutboundConnections()
+          != other.getOutboundConnections()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -3831,6 +3933,15 @@ public final class NetworkOuterClass {
         hash = (37 * hash) + PROTOCOLS_FIELD_NUMBER;
         hash = (53 * hash) + getProtocolsList().hashCode();
       }
+      hash = (37 * hash) + CONNECTIONS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getConnections());
+      hash = (37 * hash) + INBOUND_CONNECTIONS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getInboundConnections());
+      hash = (37 * hash) + OUTBOUND_CONNECTIONS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getOutboundConnections());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3981,6 +4092,12 @@ public final class NetworkOuterClass {
         bitField0_ = (bitField0_ & ~0x00000004);
         protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000008);
+        connections_ = 0L;
+
+        inboundConnections_ = 0L;
+
+        outboundConnections_ = 0L;
+
         return this;
       }
 
@@ -4033,6 +4150,9 @@ public final class NetworkOuterClass {
           bitField0_ = (bitField0_ & ~0x00000008);
         }
         result.protocols_ = protocols_;
+        result.connections_ = connections_;
+        result.inboundConnections_ = inboundConnections_;
+        result.outboundConnections_ = outboundConnections_;
         onBuilt();
         return result;
       }
@@ -4139,6 +4259,15 @@ public final class NetworkOuterClass {
           }
           onChanged();
         }
+        if (other.getConnections() != 0L) {
+          setConnections(other.getConnections());
+        }
+        if (other.getInboundConnections() != 0L) {
+          setInboundConnections(other.getInboundConnections());
+        }
+        if (other.getOutboundConnections() != 0L) {
+          setOutboundConnections(other.getOutboundConnections());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -4224,6 +4353,21 @@ public final class NetworkOuterClass {
                 protocols_.add(s);
                 break;
               } // case 74
+              case 80: {
+                connections_ = input.readUInt64();
+
+                break;
+              } // case 80
+              case 88: {
+                inboundConnections_ = input.readUInt64();
+
+                break;
+              } // case 88
+              case 96: {
+                outboundConnections_ = input.readUInt64();
+
+                break;
+              } // case 96
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -5159,6 +5303,135 @@ public final class NetworkOuterClass {
   checkByteStringIsUtf8(value);
         ensureProtocolsIsMutable();
         protocols_.add(value);
+        onChanged();
+        return this;
+      }
+
+      private long connections_ ;
+      /**
+       * <pre>
+       * Number of connections
+       * </pre>
+       *
+       * <code>uint64 connections = 10 [json_name = "connections"];</code>
+       * @return The connections.
+       */
+      @java.lang.Override
+      public long getConnections() {
+        return connections_;
+      }
+      /**
+       * <pre>
+       * Number of connections
+       * </pre>
+       *
+       * <code>uint64 connections = 10 [json_name = "connections"];</code>
+       * @param value The connections to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConnections(long value) {
+        
+        connections_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Number of connections
+       * </pre>
+       *
+       * <code>uint64 connections = 10 [json_name = "connections"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearConnections() {
+        
+        connections_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long inboundConnections_ ;
+      /**
+       * <pre>
+       * Number of inbound connections
+       * </pre>
+       *
+       * <code>uint64 inbound_connections = 11 [json_name = "inboundConnections"];</code>
+       * @return The inboundConnections.
+       */
+      @java.lang.Override
+      public long getInboundConnections() {
+        return inboundConnections_;
+      }
+      /**
+       * <pre>
+       * Number of inbound connections
+       * </pre>
+       *
+       * <code>uint64 inbound_connections = 11 [json_name = "inboundConnections"];</code>
+       * @param value The inboundConnections to set.
+       * @return This builder for chaining.
+       */
+      public Builder setInboundConnections(long value) {
+        
+        inboundConnections_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Number of inbound connections
+       * </pre>
+       *
+       * <code>uint64 inbound_connections = 11 [json_name = "inboundConnections"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearInboundConnections() {
+        
+        inboundConnections_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long outboundConnections_ ;
+      /**
+       * <pre>
+       * Number of outbound connections
+       * </pre>
+       *
+       * <code>uint64 outbound_connections = 12 [json_name = "outboundConnections"];</code>
+       * @return The outboundConnections.
+       */
+      @java.lang.Override
+      public long getOutboundConnections() {
+        return outboundConnections_;
+      }
+      /**
+       * <pre>
+       * Number of outbound connections
+       * </pre>
+       *
+       * <code>uint64 outbound_connections = 12 [json_name = "outboundConnections"];</code>
+       * @param value The outboundConnections to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOutboundConnections(long value) {
+        
+        outboundConnections_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Number of outbound connections
+       * </pre>
+       *
+       * <code>uint64 outbound_connections = 12 [json_name = "outboundConnections"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearOutboundConnections() {
+        
+        outboundConnections_ = 0L;
         onChanged();
         return this;
       }
@@ -9007,42 +9280,46 @@ public final class NetworkOuterClass {
       "\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\rR\003key\022\024\n\005" +
       "value\030\002 \001(\004R\005value:\0028\001\032@\n\022ReceivedBytesE" +
       "ntry\022\020\n\003key\030\001 \001(\rR\003key\022\024\n\005value\030\002 \001(\004R\005v" +
-      "alue:\0028\001\"\024\n\022GetNodeInfoRequest\"\230\002\n\023GetNo" +
+      "alue:\0028\001\"\024\n\022GetNodeInfoRequest\"\236\003\n\023GetNo" +
       "deInfoResponse\022\030\n\007moniker\030\001 \001(\tR\007moniker" +
       "\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R" +
       "\006peerId\022\035\n\nstarted_at\030\004 \001(\004R\tstartedAt\022\"" +
       "\n\014reachability\030\005 \001(\tR\014reachability\022\032\n\010se" +
       "rvices\030\006 \003(\005R\010services\022%\n\016services_names" +
       "\030\007 \003(\tR\rservicesNames\022\024\n\005addrs\030\010 \003(\tR\005ad" +
-      "drs\022\034\n\tprotocols\030\t \003(\tR\tprotocols\"\355\006\n\010Pe" +
-      "erInfo\022\026\n\006status\030\001 \001(\005R\006status\022\030\n\007monike" +
-      "r\030\002 \001(\tR\007moniker\022\024\n\005agent\030\003 \001(\tR\005agent\022\027" +
-      "\n\007peer_id\030\004 \001(\014R\006peerId\022%\n\016consensus_key" +
-      "s\030\005 \003(\tR\rconsensusKeys\022+\n\021consensus_addr" +
-      "ess\030\006 \003(\tR\020consensusAddress\022\032\n\010services\030" +
-      "\007 \001(\rR\010services\022&\n\017last_block_hash\030\010 \001(\014" +
-      "R\rlastBlockHash\022\026\n\006height\030\t \001(\rR\006height\022" +
-      "+\n\021received_messages\030\n \001(\005R\020receivedMess" +
-      "ages\022)\n\020invalid_messages\030\013 \001(\005R\017invalidM" +
-      "essages\022\033\n\tlast_sent\030\014 \001(\003R\010lastSent\022#\n\r" +
-      "last_received\030\r \001(\003R\014lastReceived\022>\n\nsen" +
-      "t_bytes\030\016 \003(\0132\037.pactus.PeerInfo.SentByte" +
-      "sEntryR\tsentBytes\022J\n\016received_bytes\030\017 \003(" +
-      "\0132#.pactus.PeerInfo.ReceivedBytesEntryR\r" +
-      "receivedBytes\022\030\n\007address\030\020 \001(\tR\007address\022" +
-      "\034\n\tdirection\030\021 \001(\tR\tdirection\022\034\n\tprotoco" +
-      "ls\030\022 \003(\tR\tprotocols\022%\n\016total_sessions\030\023 " +
-      "\001(\005R\rtotalSessions\022-\n\022completed_sessions" +
-      "\030\024 \001(\005R\021completedSessions\032<\n\016SentBytesEn" +
+      "drs\022\034\n\tprotocols\030\t \003(\tR\tprotocols\022 \n\013con" +
+      "nections\030\n \001(\004R\013connections\022/\n\023inbound_c" +
+      "onnections\030\013 \001(\004R\022inboundConnections\0221\n\024" +
+      "outbound_connections\030\014 \001(\004R\023outboundConn" +
+      "ections\"\355\006\n\010PeerInfo\022\026\n\006status\030\001 \001(\005R\006st" +
+      "atus\022\030\n\007moniker\030\002 \001(\tR\007moniker\022\024\n\005agent\030" +
+      "\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\014R\006peerId\022%\n" +
+      "\016consensus_keys\030\005 \003(\tR\rconsensusKeys\022+\n\021" +
+      "consensus_address\030\006 \003(\tR\020consensusAddres" +
+      "s\022\032\n\010services\030\007 \001(\rR\010services\022&\n\017last_bl" +
+      "ock_hash\030\010 \001(\014R\rlastBlockHash\022\026\n\006height\030" +
+      "\t \001(\rR\006height\022+\n\021received_messages\030\n \001(\005" +
+      "R\020receivedMessages\022)\n\020invalid_messages\030\013" +
+      " \001(\005R\017invalidMessages\022\033\n\tlast_sent\030\014 \001(\003" +
+      "R\010lastSent\022#\n\rlast_received\030\r \001(\003R\014lastR" +
+      "eceived\022>\n\nsent_bytes\030\016 \003(\0132\037.pactus.Pee" +
+      "rInfo.SentBytesEntryR\tsentBytes\022J\n\016recei" +
+      "ved_bytes\030\017 \003(\0132#.pactus.PeerInfo.Receiv" +
+      "edBytesEntryR\rreceivedBytes\022\030\n\007address\030\020" +
+      " \001(\tR\007address\022\034\n\tdirection\030\021 \001(\tR\tdirect" +
+      "ion\022\034\n\tprotocols\030\022 \003(\tR\tprotocols\022%\n\016tot" +
+      "al_sessions\030\023 \001(\005R\rtotalSessions\022-\n\022comp" +
+      "leted_sessions\030\024 \001(\005R\021completedSessions\032" +
+      "<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005v" +
+      "alue\030\002 \001(\003R\005value:\0028\001\032@\n\022ReceivedBytesEn" +
       "try\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005va" +
-      "lue:\0028\001\032@\n\022ReceivedBytesEntry\022\020\n\003key\030\001 \001" +
-      "(\005R\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028\0012\242\001\n\007Ne" +
-      "twork\022O\n\016GetNetworkInfo\022\035.pactus.GetNetw" +
-      "orkInfoRequest\032\036.pactus.GetNetworkInfoRe" +
-      "sponse\022F\n\013GetNodeInfo\022\032.pactus.GetNodeIn" +
-      "foRequest\032\033.pactus.GetNodeInfoResponseBB" +
-      "\n\016pactus.networkZ0github.com/pactus-proj" +
-      "ect/pactus/www/grpc/pactusb\006proto3"
+      "lue:\0028\0012\242\001\n\007Network\022O\n\016GetNetworkInfo\022\035." +
+      "pactus.GetNetworkInfoRequest\032\036.pactus.Ge" +
+      "tNetworkInfoResponse\022F\n\013GetNodeInfo\022\032.pa" +
+      "ctus.GetNodeInfoRequest\032\033.pactus.GetNode" +
+      "InfoResponseBB\n\016pactus.networkZ0github.c" +
+      "om/pactus-project/pactus/www/grpc/pactus" +
+      "b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -9083,7 +9360,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNodeInfoResponse_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "Addrs", "Protocols", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "Addrs", "Protocols", "Connections", "InboundConnections", "OutboundConnections", });
     internal_static_pactus_PeerInfo_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_pactus_PeerInfo_fieldAccessorTable = new

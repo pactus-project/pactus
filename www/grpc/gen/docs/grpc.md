@@ -2228,6 +2228,24 @@ GetNodeInfoResponse
         <a href="#string">string</a>
       </td>
       <td>List of protocols supported by the node. </td>
+    </tr><tr>
+      <td class="fw-bold">connections</td>
+      <td>
+        <a href="#uint64">uint64</a>
+      </td>
+      <td>Number of connections </td>
+    </tr><tr>
+      <td class="fw-bold">inbound_connections</td>
+      <td>
+        <a href="#uint64">uint64</a>
+      </td>
+      <td>Number of inbound connections </td>
+    </tr><tr>
+      <td class="fw-bold">outbound_connections</td>
+      <td>
+        <a href="#uint64">uint64</a>
+      </td>
+      <td>Number of outbound connections </td>
     </tr>
   </tbody>
 </table>  

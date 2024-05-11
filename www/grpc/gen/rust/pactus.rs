@@ -825,6 +825,15 @@ pub struct GetNodeInfoResponse {
     /// List of protocols supported by the node.
     #[prost(string, repeated, tag="9")]
     pub protocols: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// Number of connections
+    #[prost(uint64, tag="10")]
+    pub connections: u64,
+    /// Number of inbound connections
+    #[prost(uint64, tag="11")]
+    pub inbound_connections: u64,
+    /// Number of outbound connections
+    #[prost(uint64, tag="12")]
+    pub outbound_connections: u64,
 }
 /// Information about a peer in the network.
 #[allow(clippy::derive_partial_eq_without_eq)]

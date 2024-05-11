@@ -211,6 +211,9 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     ..pPS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'servicesNames')
     ..pPS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'addrs')
     ..pPS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'protocols')
+    ..a<$fixnum.Int64>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$fixnum.Int64>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'inboundConnections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$fixnum.Int64>(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'outboundConnections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
     ..hasRequiredFields = false
   ;
 
@@ -225,6 +228,9 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     $core.Iterable<$core.String>? servicesNames,
     $core.Iterable<$core.String>? addrs,
     $core.Iterable<$core.String>? protocols,
+    $fixnum.Int64? connections,
+    $fixnum.Int64? inboundConnections,
+    $fixnum.Int64? outboundConnections,
   }) {
     final _result = create();
     if (moniker != null) {
@@ -253,6 +259,15 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     }
     if (protocols != null) {
       _result.protocols.addAll(protocols);
+    }
+    if (connections != null) {
+      _result.connections = connections;
+    }
+    if (inboundConnections != null) {
+      _result.inboundConnections = inboundConnections;
+    }
+    if (outboundConnections != null) {
+      _result.outboundConnections = outboundConnections;
     }
     return _result;
   }
@@ -333,6 +348,33 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(9)
   $core.List<$core.String> get protocols => $_getList(8);
+
+  @$pb.TagNumber(10)
+  $fixnum.Int64 get connections => $_getI64(9);
+  @$pb.TagNumber(10)
+  set connections($fixnum.Int64 v) { $_setInt64(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasConnections() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearConnections() => clearField(10);
+
+  @$pb.TagNumber(11)
+  $fixnum.Int64 get inboundConnections => $_getI64(10);
+  @$pb.TagNumber(11)
+  set inboundConnections($fixnum.Int64 v) { $_setInt64(10, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasInboundConnections() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearInboundConnections() => clearField(11);
+
+  @$pb.TagNumber(12)
+  $fixnum.Int64 get outboundConnections => $_getI64(11);
+  @$pb.TagNumber(12)
+  set outboundConnections($fixnum.Int64 v) { $_setInt64(11, v); }
+  @$pb.TagNumber(12)
+  $core.bool hasOutboundConnections() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearOutboundConnections() => clearField(12);
 }
 
 class PeerInfo extends $pb.GeneratedMessage {
