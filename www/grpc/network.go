@@ -35,15 +35,18 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 	}
 
 	return &pactus.GetNodeInfoResponse{
-		Moniker:       s.sync.Moniker(),
-		Agent:         version.NodeAgent.String(),
-		PeerId:        []byte(s.sync.SelfID()),
-		Reachability:  s.net.ReachabilityStatus(),
-		Addrs:         s.net.HostAddrs(),
-		StartedAt:     uint64(ps.StartedAt().Unix()),
-		Protocols:     s.net.Protocols(),
-		Services:      services,
-		ServicesNames: servicesNames,
+		Moniker:             s.sync.Moniker(),
+		Agent:               version.NodeAgent.String(),
+		PeerId:              []byte(s.sync.SelfID()),
+		Reachability:        s.net.ReachabilityStatus(),
+		Addrs:               s.net.HostAddrs(),
+		StartedAt:           uint64(ps.StartedAt().Unix()),
+		Protocols:           s.net.Protocols(),
+		Services:            services,
+		ServicesNames:       servicesNames,
+		Connections:         uint64(s.net.NumConnectedPeers()),
+		InboundConnections:  uint64(s.net.NumInbound()),
+		OutboundConnections: uint64(s.net.NumOutbound()),
 	}, nil
 }
 
