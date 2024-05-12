@@ -3,6 +3,7 @@ package sync
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -20,6 +21,7 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/ntp"
 )
 
 // IMPORTANT NOTES:
@@ -45,6 +47,7 @@ type synchronizer struct {
 	networkCh   <-chan network.Event
 	network     network.Network
 	logger      *logger.SubLogger
+	ntp         *ntp.Server
 }
 
 func NewSynchronizer(
@@ -66,6 +69,7 @@ func NewSynchronizer(
 		network:     net,
 		broadcastCh: broadcastCh,
 		networkCh:   net.EventChannel(),
+		ntp:         ntp.NewNtpServer(),
 	}
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout)
@@ -107,6 +111,7 @@ func (sync *synchronizer) Start() error {
 		return err
 	}
 
+	go sync.checkClockLoop()
 	go sync.receiveLoop()
 	go sync.broadcastLoop()
 
@@ -250,6 +255,30 @@ func (sync *synchronizer) broadcastLoop() {
 
 		case msg := <-sync.broadcastCh:
 			sync.broadcast(msg)
+		}
+	}
+}
+
+func (sync *synchronizer) checkClockLoop() {
+	checkInterval := 10 * time.Second
+	ntpIntervalTicker := time.NewTicker(checkInterval)
+
+	for {
+		select {
+		case <-sync.ctx.Done():
+			return
+
+		case <-ntpIntervalTicker.C:
+			// if the offset is more than 1 second, we assume the node is out of sync
+			offset := sync.ntp.ClockOffset()
+
+			if sync.ntp.OutOfSync(offset) {
+				sync.logger.Error(
+					"The node is out of sync with the network time",
+					"threshold", sync.ntp.GetThreshold(),
+					"offset", offset,
+				)
+			}
 		}
 	}
 }
