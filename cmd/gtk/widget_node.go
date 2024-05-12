@@ -22,6 +22,7 @@ type widgetNode struct {
 
 	genesisTime          time.Time // TODO: move this logic to the state
 	model                *nodeModel
+	labelClockOffset     *gtk.Label
 	labelLastBlockTime   *gtk.Label
 	labelLastBlockHeight *gtk.Label
 	labelBlocksLeft      *gtk.Label
@@ -60,6 +61,7 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 		Box:                  box,
 		model:                model,
 		genesisTime:          model.node.State().Genesis().GenesisTime(),
+		labelClockOffset:     getLabelObj(builder, "id_label_clock_offset"),
 		labelLastBlockTime:   getLabelObj(builder, "id_label_last_block_time"),
 		labelLastBlockHeight: getLabelObj(builder, "id_label_last_block_height"),
 		labelBlocksLeft:      getLabelObj(builder, "id_label_blocks_left"),
@@ -135,6 +137,18 @@ func (wn *widgetNode) timeout10() bool {
 		}
 
 		glib.IdleAdd(func() bool {
+			offset := wn.model.ntp.ClockOffset()
+
+			wn.labelClockOffset.SetText(offset.String())
+			styleContext, err := wn.labelClockOffset.GetStyleContext()
+			fatalErrorCheck(err)
+
+			if wn.model.ntp.OutOfSync(offset) {
+				styleContext.AddClass("warning")
+			} else {
+				styleContext.RemoveClass("warning")
+			}
+
 			wn.labelCommitteeSize.SetText(fmt.Sprintf("%v", committeeSize))
 			wn.labelValidatorNum.SetText(fmt.Sprintf("%v", validatorNum))
 			wn.labelCommitteeStake.SetText(amount.Amount(committeePower).String())

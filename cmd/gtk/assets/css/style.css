@@ -6,3 +6,7 @@
 .copyable_entry {
     padding-right: 36px;
 }
+
+.warning {
+    color: red;
+}
