@@ -6,17 +6,20 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
+	"github.com/pactus-project/pactus/util/ntp"
 	"github.com/pactus-project/pactus/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type networkServer struct {
 	*Server
+	ntp *ntp.Server
 }
 
 func newNetworkServer(server *Server) *networkServer {
 	return &networkServer{
 		Server: server,
+		ntp:    ntp.NewNtpServer(),
 	}
 }
 
@@ -46,6 +49,7 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 		Connections:         uint64(s.net.NumConnectedPeers()),
 		InboundConnections:  uint64(s.net.NumInbound()),
 		OutboundConnections: uint64(s.net.NumOutbound()),
+		ClockOffset:         s.ntp.ClockOffset().Seconds(),
 	}, nil
 }
 
