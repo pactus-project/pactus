@@ -15,11 +15,14 @@ CONSTANT
     \* The maximum number of cp-round per height.
     \* This limits the range of behaviors evaluated by TLC
     MaxCPRound,
-    \* The total number of nodes in the network, denoted as `n` in the protocol.
-    NumNodes,
-    \* The total number of faulty nodes, denoted as `f` in the protocol.
+    \* The total number of nodes in the network,
+    \* denoted as `n` in the protocol.
+    n,
+    \* The maximum number of faulty node in change-proposer phase,
+    \* denoted as `f` in the protocol.
     f,
-    \* The total number of faulty nodes, denoted as `f` in the protocol.
+    \* The maximum number of faulty node in block-creation phase,
+    \* denoted as `t` in the protocol.
     t,
     \* The indices of faulty nodes.
     FaultyNodes
@@ -30,26 +33,28 @@ VARIABLES
     \* `states` represents the state of each replica in the consensus protocol.
     states
 
-\* ThreeFPlusOne is equal to `3f+1', where `f' is the number of faulty nodes.
-ThreeFPlusOne == (3 * f) + 1
-\* TwoFPlusOne is equal to `2f+1', where `f' is the number of faulty nodes.
+\* TwoFPlusOne is equal to `2f+1'
 TwoFPlusOne == (2 * f) + 1
-\* OneFPlusOne is equal to `f+1', where `f' is the number of faulty nodes.
+\* OneFPlusOne is equal to `f+1'
 OneFPlusOne == (1 * f) + 1
 
-\* FourTPlusOne is equal to `3f+1', where `f' is the number of faulty nodes.
+\* FourTPlusOne is equal to `4t+1'
 FourTPlusOne == (4 * t) + 1
-\* TwoFPlusOne is equal to `2f+1', where `f' is the number of faulty nodes.
+\* ThreeTPlusOne is equal to `3t+1'
 ThreeTPlusOne == (3 * t) + 1
 
 \* A tuple containing all variables in the spec (for ease of use in temporal conditions).
 vars == <<states, log>>
 
 ASSUME
-    \* Ensure that the number of nodes is sufficient to tolerate the specified number of faults.
-    /\ NumNodes >= ThreeFPlusOne
+    \* Ensure that the number of nodes is sufficient to tolerate the specified number of faults
+    \* in change-proposer phase.
+    /\ n >= (3*f)+1
+    \* Ensure that the number of nodes is sufficient to tolerate the specified number of faults
+    \* in block-creation phase.
+    /\ n >= (5*t)+1
     \* Ensure that `FaultyNodes` is a valid subset of node indices.
-    /\ FaultyNodes \subseteq 0..NumNodes-1
+    /\ FaultyNodes \subseteq 0..n-1
 
 -----------------------------------------------------------------------------
 (***************************************************************************)
@@ -64,13 +69,13 @@ SubsetOfMsgs(params) ==
 \* To simplify, we assume the proposer always starts with the first replica,
 \* and moves to the next by the change-proposer phase.
 IsProposer(index) ==
-    states[index].round % NumNodes = index
+    states[index].round % n = index
 
-\* Helper function to check if a node is faulty or not.
+\* IsFaulty checks if a node is faulty or not.
 IsFaulty(index) == index \in FaultyNodes
 
 \* HasPrepareAbsoluteQuorum checks whether the node with the given index
-\* has received all the PREPARE votes in this round.
+\* has received `4t+1` PREPARE votes for a proposal.
 HasPrepareAbsoluteQuorum(index) ==
     Cardinality(SubsetOfMsgs([
         type     |-> "PREPARE",
@@ -78,7 +83,7 @@ HasPrepareAbsoluteQuorum(index) ==
         round    |-> states[index].round])) >= FourTPlusOne
 
 \* HasPrepareQuorum checks whether the node with the given index
-\* has received 2f+1 the PREPARE votes in this round.
+\* has received `3t+1` PREPARE votes for a proposal.
 HasPrepareQuorum(index) ==
     Cardinality(SubsetOfMsgs([
         type     |-> "PREPARE",
@@ -86,7 +91,7 @@ HasPrepareQuorum(index) ==
         round    |-> states[index].round])) >= ThreeTPlusOne
 
 \* HasPrecommitQuorum checks whether the node with the given index
-\* has received 2f+1 the PRECOMMIT votes in this round.
+\* has received `3t+1` the PRECOMMIT votes for a proposal.
 HasPrecommitQuorum(index) ==
     Cardinality(SubsetOfMsgs([
         type     |-> "PRECOMMIT",
@@ -491,14 +496,14 @@ StrongCommit(index) ==
 
 Init ==
     /\ log = {}
-    /\ states = [index \in 0..NumNodes-1 |-> [
+    /\ states = [index \in 0..n-1 |-> [
         name       |-> "new-height",
         height     |-> 0,
         round      |-> 0,
         cp_round   |-> 0]]
 
 Next ==
-    \E index \in 0..NumNodes-1:
+    \E index \in 0..n-1:
         \/ NewHeight(index)
         \/ Propose(index)
         \/ Prepare(index)
@@ -524,7 +529,7 @@ Success == <>(IsCommitted)
 (* TypeOK is the type-correctness invariant.                               *)
 (***************************************************************************)
 TypeOK ==
-    /\ \A index \in 0..NumNodes-1:
+    /\ \A index \in 0..n-1:
         /\ states[index].name \in {"new-height", "propose", "prepare",
             "precommit", "commit", "cp:pre-vote", "cp:main-vote", "cp:decide"}
         /\ states[index].height <= MaxHeight
