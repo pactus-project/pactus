@@ -135,18 +135,23 @@ func (wn *widgetNode) timeout10() bool {
 		if wn.model.node.ConsManager().HasActiveInstance() {
 			isInCommittee = "Yes"
 		}
+		offset, offsetErr := wn.model.node.Sync().GetClockOffset()
 
 		glib.IdleAdd(func() bool {
-			offset := wn.model.ntp.ClockOffset()
-
-			wn.labelClockOffset.SetText(offset.String())
 			styleContext, err := wn.labelClockOffset.GetStyleContext()
 			fatalErrorCheck(err)
 
-			if wn.model.ntp.OutOfSync(offset) {
+			if offsetErr != nil {
 				styleContext.AddClass("warning")
+				wn.labelClockOffset.SetText("Error response from NTP server.")
 			} else {
-				styleContext.RemoveClass("warning")
+				wn.labelClockOffset.SetText(offset.String())
+
+				if wn.model.node.Sync().OutOfSync(offset) {
+					styleContext.AddClass("warning")
+				} else {
+					styleContext.RemoveClass("warning")
+				}
 			}
 
 			wn.labelCommitteeSize.SetText(fmt.Sprintf("%v", committeeSize))

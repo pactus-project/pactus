@@ -47,7 +47,7 @@ type synchronizer struct {
 	networkCh   <-chan network.Event
 	network     network.Network
 	logger      *logger.SubLogger
-	ntp         *ntp.Server
+	ntp         *ntp.Checker
 }
 
 func NewSynchronizer(
@@ -69,7 +69,7 @@ func NewSynchronizer(
 		network:     net,
 		broadcastCh: broadcastCh,
 		networkCh:   net.EventChannel(),
-		ntp:         ntp.NewNtpServer(),
+		ntp:         ntp.NewNtpChecker(1*time.Minute, 1*time.Second),
 	}
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout)
@@ -111,7 +111,7 @@ func (sync *synchronizer) Start() error {
 		return err
 	}
 
-	go sync.checkClockLoop()
+	go sync.ntp.Start()
 	go sync.receiveLoop()
 	go sync.broadcastLoop()
 
@@ -120,7 +120,17 @@ func (sync *synchronizer) Start() error {
 
 func (sync *synchronizer) Stop() {
 	sync.cancel()
+	sync.ntp.Stop()
+
 	sync.logger.Debug("context closed", "reason", sync.ctx.Err())
+}
+
+func (sync *synchronizer) GetClockOffset() (time.Duration, error) {
+	return sync.ntp.GetClockOffset()
+}
+
+func (sync *synchronizer) OutOfSync(offset time.Duration) bool {
+	return sync.ntp.OutOfSync(offset)
 }
 
 func (sync *synchronizer) stateHeight() uint32 {
@@ -255,30 +265,6 @@ func (sync *synchronizer) broadcastLoop() {
 
 		case msg := <-sync.broadcastCh:
 			sync.broadcast(msg)
-		}
-	}
-}
-
-func (sync *synchronizer) checkClockLoop() {
-	checkInterval := 10 * time.Second
-	ntpIntervalTicker := time.NewTicker(checkInterval)
-
-	for {
-		select {
-		case <-sync.ctx.Done():
-			return
-
-		case <-ntpIntervalTicker.C:
-			// if the offset is more than 1 second, we assume the node is out of sync
-			offset := sync.ntp.ClockOffset()
-
-			if sync.ntp.OutOfSync(offset) {
-				sync.logger.Error(
-					"The node is out of sync with the network time",
-					"threshold", sync.ntp.GetThreshold(),
-					"offset", offset,
-				)
-			}
 		}
 	}
 }
