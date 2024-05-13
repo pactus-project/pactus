@@ -206,10 +206,10 @@ func TestSmallBond(t *testing.T) {
 	receiverAddr := receiverVal.Address()
 	fee := td.sandbox.Params().MaximumFee
 	lockTime := td.sandbox.CurrentHeight()
-	trx := tx.NewBondTx(lockTime, senderAddr,
+	trxBond := tx.NewBondTx(lockTime, senderAddr,
 		receiverAddr, nil, 1000e9-receiverVal.Stake()-2, fee, "ok")
 
-	err := exe.Execute(trx, td.sandbox)
+	err := exe.Execute(trxBond, td.sandbox)
 	assert.NoError(t, err, "Ok")
 
 	t.Run("Rejects bond transaction with zero amount", func(t *testing.T) {

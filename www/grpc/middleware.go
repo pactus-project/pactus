@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func BasicAuth(basicAuthCredential string) grpc.UnaryServerInterceptor {
+func BasicAuth(storedCredential string) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (
 		any, error,
 	) {
@@ -18,7 +18,7 @@ func BasicAuth(basicAuthCredential string) grpc.UnaryServerInterceptor {
 			return nil, status.Error(codes.Unauthenticated, "failed to extract basic auth from header")
 		}
 
-		if err := htpasswd.CompareBasicAuth(basicAuthCredential, user, password); err != nil {
+		if err := htpasswd.CompareBasicAuth(storedCredential, user, password); err != nil {
 			return nil, status.Error(codes.Unauthenticated, "username or password is invalid")
 		}
 

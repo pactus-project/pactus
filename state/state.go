@@ -258,11 +258,11 @@ func (st *state) calculateGenesisStateRootFromGenesisDoc() hash.Hash {
 	return *simplemerkle.HashMerkleBranches(&accRootHash, &valRootHash)
 }
 
-func (st *state) Close() error {
+func (st *state) Close() {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
-	return st.store.Close()
+	st.store.Close()
 }
 
 func (st *state) Genesis() *genesis.Genesis {
@@ -403,7 +403,7 @@ func (st *state) ValidateBlock(blk *block.Block, round int16) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if err := st.validateBlock(blk, round); err != nil {
+	if err := st.doValidateBlock(blk, round); err != nil {
 		return err
 	}
 
@@ -448,7 +448,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 		return errors.Error(errors.ErrInvalidBlock)
 	}
 
-	err = st.validateBlock(blk, cert.Round())
+	err = st.doValidateBlock(blk, cert.Round())
 	if err != nil {
 		return err
 	}
@@ -761,16 +761,16 @@ func (st *state) publishEvents(height uint32, blk *block.Block) {
 	for i := 1; i < blk.Transactions().Len(); i++ {
 		transaction := blk.Transactions().Get(i)
 
-		accChangeEvent := event.CreateAccountChangeEvent(transaction.Payload().Signer(), height)
-		st.eventCh <- accChangeEvent
+		senderChangeEvent := event.CreateAccountChangeEvent(transaction.Payload().Signer(), height)
+		st.eventCh <- senderChangeEvent
 
 		if transaction.Payload().Receiver() != nil {
-			accChangeEvent := event.CreateAccountChangeEvent(*transaction.Payload().Receiver(), height)
-			st.eventCh <- accChangeEvent
+			receiverChangeEvent := event.CreateAccountChangeEvent(*transaction.Payload().Receiver(), height)
+			st.eventCh <- receiverChangeEvent
 		}
 
-		TxEvent := event.CreateTransactionEvent(transaction.ID(), height)
-		st.eventCh <- TxEvent
+		txEvent := event.CreateTransactionEvent(transaction.ID(), height)
+		st.eventCh <- txEvent
 	}
 }
 

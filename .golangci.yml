@@ -76,16 +76,83 @@ linters:
     - whitespace
     # - wrapcheck
     - zerologlint
-    - nonamedreturns
 
 linters-settings:
   gosimple:
     checks: ["all"]
 
+  revive:
+    enable-all-rules: true
+    rules:
+      - name: "exported"
+        # TODO: Enable me
+        # all exported function should have comment.
+        disabled: true
+
+      # TODO: Enable me
+      - name: package-comments
+        disabled: true
+
+      - name: "add-constant"
+        disabled: true
+
+      - name: "line-length-limit"
+        disabled: true
+
+      - name: "cognitive-complexity"
+        disabled: true
+
+      - name: "function-length"
+        disabled: true
+
+      - name: "cyclomatic"
+        disabled: true
+
+      - name: "unchecked-type-assertion"
+        disabled: true
+
+      - name: max-public-structs
+        disabled: true
+
+      - name: "flag-parameter"
+        disabled: true
+
+      - name: "deep-exit"
+        disabled: true
+
+      - name: "get-return"
+        disabled: true
+
+      - name: "function-result-limit"
+        disabled: true
+
+      - name: unhandled-error
+        arguments:
+          - "fmt.Printf"
+          - "fmt.Println"
+          - "fmt.Fprintf"
+          - "strings.Builder.WriteString"
+          - "strings.Builder.WriteRune"
+          - "strings.Builder.WriteByte"
+          - "bytes.Buffer.Write"
+          - "bytes.Buffer.WriteString"
+
+  gosec:
+    excludes:
+      - G304
+      - G204
+      - G103 # TODO: enable me
+
+  stylecheck:
+    # TODO: enable ST1000 (at least one file in a package should have a package comment)
+    checks: ["all", "-ST1000"]
+
   govet:
     enable-all: true
-    disable: fieldalignment
-    shadow:
+    disable: ["fieldalignment"]
+
+    settings:
+      shadow:
         strict: true
 
   predeclared:
@@ -104,11 +171,6 @@ linters-settings:
         json: snake
         yaml: snake
 
-  nonamedreturns:
-    # Report named error if it is assigned inside defer.
-    # Default: false
-     report-error-in-defer: false
-
   gocritic:
     disabled-checks:
       - ifElseChain
@@ -124,6 +186,7 @@ linters-settings:
     min-complexity: 6
 
 issues:
+  exclude-use-default: false
   exclude-rules:
     - path: _test.go
       linters:

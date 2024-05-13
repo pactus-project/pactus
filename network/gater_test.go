@@ -13,7 +13,7 @@ type mockConnMultiaddrs struct {
 	remote multiaddr.Multiaddr
 }
 
-func (cma *mockConnMultiaddrs) LocalMultiaddr() multiaddr.Multiaddr {
+func (*mockConnMultiaddrs) LocalMultiaddr() multiaddr.Multiaddr {
 	return nil
 }
 

@@ -12,7 +12,7 @@ type UnbondPayload struct {
 	Validator crypto.Address
 }
 
-func (p *UnbondPayload) Type() Type {
+func (*UnbondPayload) Type() Type {
 	return TypeUnbond
 }
 
@@ -20,12 +20,12 @@ func (p *UnbondPayload) Signer() crypto.Address {
 	return p.Validator
 }
 
-func (p *UnbondPayload) Value() amount.Amount {
+func (*UnbondPayload) Value() amount.Amount {
 	return 0
 }
 
-// TODO: write test for me.
 func (p *UnbondPayload) BasicCheck() error {
+	// TODO: write test for me.
 	if !p.Validator.IsValidatorAddress() {
 		return BasicCheckError{
 			Reason: "address is not a validator address",
@@ -35,7 +35,7 @@ func (p *UnbondPayload) BasicCheck() error {
 	return nil
 }
 
-func (p *UnbondPayload) SerializeSize() int {
+func (*UnbondPayload) SerializeSize() int {
 	return 21
 }
 
@@ -53,6 +53,6 @@ func (p *UnbondPayload) String() string {
 	)
 }
 
-func (p *UnbondPayload) Receiver() *crypto.Address {
+func (*UnbondPayload) Receiver() *crypto.Address {
 	return nil
 }

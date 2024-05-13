@@ -24,7 +24,7 @@ type GatewayConfig struct {
 
 // getOpenAPIHandler serves an OpenAPI UI.
 // https://github.com/philips/grpc-gateway-example/blob/master/cmd/serve.go
-func (s *Server) getOpenAPIHandler() (http.Handler, error) {
+func (*Server) getOpenAPIHandler() (http.Handler, error) {
 	err := mime.AddExtensionType(".svg", "image/svg+xml")
 	if err != nil {
 		return nil, err

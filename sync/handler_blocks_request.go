@@ -111,7 +111,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 	return nil
 }
 
-func (handler *blocksRequestHandler) PrepareBundle(m message.Message) *bundle.Bundle {
+func (*blocksRequestHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	return bundle.NewBundle(m)
 }
 

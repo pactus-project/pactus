@@ -108,6 +108,6 @@ func (s *Server) StopServer() {
 
 	if s.grpc != nil {
 		s.grpc.Stop()
-		s.listener.Close()
+		_ = s.listener.Close()
 	}
 }

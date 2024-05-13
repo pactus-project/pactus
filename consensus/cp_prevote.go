@@ -73,10 +73,10 @@ func (s *cpPreVoteState) decide() {
 	s.enterNewState(s.cpMainVoteState)
 }
 
-func (s *cpPreVoteState) onAddVote(_ *vote.Vote) {
+func (*cpPreVoteState) onAddVote(_ *vote.Vote) {
 	panic("Unreachable")
 }
 
-func (s *cpPreVoteState) name() string {
+func (*cpPreVoteState) name() string {
 	return "cp:pre-vote"
 }

@@ -94,6 +94,6 @@ func (s *cpMainVoteState) onAddVote(v *vote.Vote) {
 	s.strongTermination()
 }
 
-func (s *cpMainVoteState) name() string {
+func (*cpMainVoteState) name() string {
 	return "cp:main-vote"
 }

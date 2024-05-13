@@ -18,11 +18,11 @@ func NewHelloAckMessage(code ResponseCode, reason string, height uint32) *HelloA
 	}
 }
 
-func (m *HelloAckMessage) BasicCheck() error {
+func (*HelloAckMessage) BasicCheck() error {
 	return nil
 }
 
-func (m *HelloAckMessage) Type() Type {
+func (*HelloAckMessage) Type() Type {
 	return TypeHelloAck
 }
 

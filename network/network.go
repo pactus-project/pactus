@@ -84,10 +84,10 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 func NewNetwork(conf *Config) (Network, error) {
 	log := logger.NewSubLogger("_network", nil)
 
-	return newNetwork(conf, log, []lp2p.Option{})
+	return makeNetwork(conf, log, []lp2p.Option{})
 }
 
-func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*network, error) {
+func makeNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*network, error) {
 	self := new(network)
 
 	networkKey, err := loadOrCreateKey(conf.NetworkKey)

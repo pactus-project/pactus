@@ -38,7 +38,7 @@ func (m *BlocksResponseMessage) BasicCheck() error {
 	return nil
 }
 
-func (m *BlocksResponseMessage) Type() Type {
+func (*BlocksResponseMessage) Type() Type {
 	return TypeBlocksResponse
 }
 

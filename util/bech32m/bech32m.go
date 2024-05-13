@@ -54,19 +54,19 @@ func bech32Polymod(hrp string, values, checksum []byte) int {
 		b := chk >> 25
 		hiBits := int(hrp[i]) >> 5
 		chk = (chk&0x1ffffff)<<5 ^ hiBits
-		for i := 0; i < 5; i++ {
-			if (b>>uint(i))&1 == 1 {
-				chk ^= gen[i]
+		for j := 0; j < 5; j++ {
+			if (b>>uint(j))&1 == 1 {
+				chk ^= gen[j]
 			}
 		}
 	}
 
 	// Account for the separator (0) between high and low bits of the HRP.
 	// x^0 == x, so we eliminate the redundant xor used in the other rounds.
-	b := chk >> 25
+	b0 := chk >> 25
 	chk = (chk & 0x1ffffff) << 5
 	for i := 0; i < 5; i++ {
-		if (b>>uint(i))&1 == 1 {
+		if (b0>>uint(i))&1 == 1 {
 			chk ^= gen[i]
 		}
 	}
@@ -76,9 +76,9 @@ func bech32Polymod(hrp string, values, checksum []byte) int {
 		b := chk >> 25
 		loBits := int(hrp[i]) & 31
 		chk = (chk&0x1ffffff)<<5 ^ loBits
-		for i := 0; i < 5; i++ {
-			if (b>>uint(i))&1 == 1 {
-				chk ^= gen[i]
+		for j := 0; j < 5; j++ {
+			if (b>>uint(j))&1 == 1 {
+				chk ^= gen[j]
 			}
 		}
 	}

@@ -32,18 +32,19 @@ func (s *Services) Append(flag Service) {
 
 func (s Services) String() string {
 	services := ""
-	if util.IsFlagSet(s, Services(Network)) {
+	flags := s
+	if util.IsFlagSet(flags, Services(Network)) {
 		services += "NETWORK | "
-		s = util.UnsetFlag(s, Services(Network))
+		flags = util.UnsetFlag(flags, Services(Network))
 	}
 
-	if util.IsFlagSet(s, Services(Foo)) {
+	if util.IsFlagSet(flags, Services(Foo)) {
 		services += "FOO | "
-		s = util.UnsetFlag(s, Services(Foo))
+		flags = util.UnsetFlag(flags, Services(Foo))
 	}
 
-	if s != 0 {
-		services += fmt.Sprintf("%d", s)
+	if flags != 0 {
+		services += fmt.Sprintf("%d", flags)
 	} else if services != "" {
 		services = services[:len(services)-3]
 	}

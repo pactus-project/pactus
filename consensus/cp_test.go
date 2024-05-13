@@ -53,7 +53,7 @@ func TestChangeProposerAgreement1(t *testing.T) {
 	td.addCPMainVote(td.consP, hash.UndefHash, h, r, 0, vote.CPValueOne, mainVote0.CPJust(), tIndexY)
 
 	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPDecided, hash.UndefHash)
-	checkHeightRound(t, td.consP, h, r+1)
+	td.checkHeightRound(t, td.consP, h, r+1)
 }
 
 func TestChangeProposerAgreement0(t *testing.T) {
@@ -87,7 +87,7 @@ func TestChangeProposerAgreement0(t *testing.T) {
 	td.shouldPublishQueryProposal(t, td.consP, h)
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexX)
 	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexY)
-	checkHeightRound(t, td.consP, h, r)
+	td.checkHeightRound(t, td.consP, h, r)
 }
 
 // ConsP receives all PRE-VOTE:0 votes before receiving a proposal or prepare votes.

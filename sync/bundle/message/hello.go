@@ -60,7 +60,7 @@ func (m *HelloMessage) SignBytes() []byte {
 	return []byte(fmt.Sprintf("%s:%s:%s:%s", m.Type(), m.Agent, m.PeerID, m.GenesisHash.String()))
 }
 
-func (m *HelloMessage) Type() Type {
+func (*HelloMessage) Type() Type {
 	return TypeHello
 }
 

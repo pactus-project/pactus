@@ -29,6 +29,6 @@ func (handler *transactionsHandler) ParseMessage(m message.Message, _ peer.ID) e
 	return nil
 }
 
-func (handler *transactionsHandler) PrepareBundle(m message.Message) *bundle.Bundle {
+func (*transactionsHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	return bundle.NewBundle(m)
 }

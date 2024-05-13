@@ -107,5 +107,5 @@ type Store interface {
 	UpdateValidator(val *validator.Validator)
 	SaveBlock(blk *block.Block, cert *certificate.Certificate)
 	WriteBatch() error
-	Close() error
+	Close()
 }

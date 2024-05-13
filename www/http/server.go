@@ -120,12 +120,12 @@ func (s *Server) StopServer() {
 
 	if s.httpServer != nil {
 		_ = s.httpServer.Shutdown(s.ctx)
-		s.httpServer.Close()
-		s.listener.Close()
+		_ = s.httpServer.Close()
+		_ = s.listener.Close()
 	}
 
 	if s.grpcClient != nil {
-		s.grpcClient.Close()
+		_ = s.grpcClient.Close()
 	}
 }
 
@@ -175,7 +175,7 @@ func (s *Server) writeError(w http.ResponseWriter, err error) int {
 	return n
 }
 
-func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
+func (*Server) writeHTML(w http.ResponseWriter, html string) int {
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusOK)
 	n, _ := io.WriteString(w, html)
@@ -183,7 +183,7 @@ func (s *Server) writeHTML(w http.ResponseWriter, html string) int {
 	return n
 }
 
-func (s *Server) basicAuth(ctx context.Context, username, password string) context.Context {
+func (*Server) basicAuth(ctx context.Context, username, password string) context.Context {
 	ba := basicauth.New(username, password)
 	tokens, _ := ba.GetRequestMetadata(ctx)
 	md := metadata.New(tokens)

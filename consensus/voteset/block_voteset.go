@@ -78,12 +78,13 @@ func (vs *BlockVoteSet) AddVote(v *vote.Vote) (bool, error) {
 
 	existingVote, ok := vs.allVotes[v.Signer()]
 	if ok {
-		if existingVote.Hash() != v.Hash() {
-			err = errors.Error(errors.ErrDuplicateVote)
-		} else {
+		if existingVote.Hash() == v.Hash() {
 			// The vote is already added
 			return false, nil
 		}
+
+		// It is a duplicated vote
+		err = errors.Error(errors.ErrDuplicateVote)
 	} else {
 		vs.allVotes[v.Signer()] = v
 	}

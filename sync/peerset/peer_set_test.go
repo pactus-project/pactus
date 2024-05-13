@@ -90,7 +90,7 @@ func TestPeerSet(t *testing.T) {
 		peerSet.IncreaseSentCounters(message.TypeBlocksRequest, 200, nil)
 		peerSet.IncreaseSentCounters(message.TypeBlocksRequest, 250, &pid1)
 
-		peer1 := peerSet.getPeer(pid1)
+		peer1 := peerSet.findPeer(pid1)
 
 		receivedBytes := make(map[message.Type]int64)
 		receivedBytes[message.TypeBlocksResponse] = 100
@@ -120,7 +120,7 @@ func TestPeerSet(t *testing.T) {
 		h := ts.RandHash()
 		peerSet.UpdateHeight(pid1, height, h)
 
-		peer1 := peerSet.getPeer(pid1)
+		peer1 := peerSet.findPeer(pid1)
 		assert.Equal(t, height, peer1.Height)
 		assert.Equal(t, h, peer1.LastBlockHash)
 	})
@@ -128,7 +128,7 @@ func TestPeerSet(t *testing.T) {
 	t.Run("Testing UpdateStatus", func(t *testing.T) {
 		peerSet.UpdateStatus(pid1, status.StatusBanned)
 
-		peer1 := peerSet.getPeer(pid1)
+		peer1 := peerSet.findPeer(pid1)
 		assert.Equal(t, peer1.Status, status.StatusBanned)
 	})
 
@@ -136,7 +136,7 @@ func TestPeerSet(t *testing.T) {
 		now := time.Now()
 		peerSet.UpdateLastSent(pid1)
 
-		peer1 := peerSet.getPeer(pid1)
+		peer1 := peerSet.findPeer(pid1)
 		assert.GreaterOrEqual(t, peer1.LastSent, now)
 	})
 
@@ -144,7 +144,7 @@ func TestPeerSet(t *testing.T) {
 		now := time.Now()
 		peerSet.UpdateLastReceived(pid1)
 
-		peer1 := peerSet.getPeer(pid1)
+		peer1 := peerSet.findPeer(pid1)
 		assert.GreaterOrEqual(t, peer1.LastReceived, now)
 	})
 

@@ -45,7 +45,7 @@ func (ps *PeerSet) OpenSession(pid peer.ID, from, count uint32) int {
 
 	ssn := ps.sessionManager.OpenSession(pid, from, count)
 
-	p := ps.mustGetPeer(pid)
+	p := ps.findOrCreatePeer(pid)
 	p.TotalSessions++
 
 	return ssn.SessionID
@@ -109,7 +109,7 @@ func (ps *PeerSet) SetSessionCompleted(sid int) {
 
 	ssn := ps.sessionManager.SetSessionCompleted(sid)
 	if ssn != nil {
-		p := ps.mustGetPeer(ssn.PeerID)
+		p := ps.findOrCreatePeer(ssn.PeerID)
 		p.CompletedSessions++
 	}
 }
@@ -140,15 +140,15 @@ func (ps *PeerSet) GetPeer(pid peer.ID) *peer.Peer {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	return ps.getPeer(pid)
+	return ps.findPeer(pid)
 }
 
-// GetPeer finds a peer by id and returns a copy of the peer object.
+// GetPeerStatus finds a peer by id and returns the status of the Peer.
 func (ps *PeerSet) GetPeerStatus(pid peer.ID) status.Status {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	p := ps.getPeer(pid)
+	p := ps.findPeer(pid)
 	if p != nil {
 		return p.Status
 	}
@@ -156,7 +156,7 @@ func (ps *PeerSet) GetPeerStatus(pid peer.ID) status.Status {
 	return status.StatusUnknown
 }
 
-func (ps *PeerSet) getPeer(pid peer.ID) *peer.Peer {
+func (ps *PeerSet) findPeer(pid peer.ID) *peer.Peer {
 	if p, ok := ps.peers[pid]; ok {
 		return p
 	}
@@ -164,8 +164,10 @@ func (ps *PeerSet) getPeer(pid peer.ID) *peer.Peer {
 	return nil
 }
 
-func (ps *PeerSet) mustGetPeer(pid peer.ID) *peer.Peer {
-	p := ps.getPeer(pid)
+// FindOrCreatePeer tries to find a peer with the given pid.
+// If not found, it creates a new peer and assigns the pid to it.
+func (ps *PeerSet) findOrCreatePeer(pid peer.ID) *peer.Peer {
+	p := ps.findPeer(pid)
 	if p == nil {
 		p = peer.NewPeer(pid)
 		ps.peers[pid] = p
@@ -184,7 +186,7 @@ func (ps *PeerSet) UpdateInfo(
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	p := ps.mustGetPeer(pid)
+	p := ps.findOrCreatePeer(pid)
 	p.Moniker = moniker
 	p.Agent = agent
 	p.ConsensusKeys = consKeys
@@ -195,7 +197,7 @@ func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32, lastBlockHash hash.H
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	p := ps.mustGetPeer(pid)
+	p := ps.findOrCreatePeer(pid)
 	p.Height = height
 	p.LastBlockHash = lastBlockHash
 }
@@ -204,7 +206,7 @@ func (ps *PeerSet) UpdateAddress(pid peer.ID, addr, direction string) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	p := ps.mustGetPeer(pid)
+	p := ps.findOrCreatePeer(pid)
 	p.Address = addr
 	p.Direction = direction
 }
@@ -213,7 +215,7 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, s status.Status) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	p := ps.mustGetPeer(pid)
+	p := ps.findOrCreatePeer(pid)
 
 	if !p.Status.IsBanned() || // Don't update the status if peer is banned
 		// Don't change status to connected if peer is known already
@@ -234,7 +236,7 @@ func (ps *PeerSet) UpdateProtocols(pid peer.ID, protocols []string) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	p := ps.mustGetPeer(pid)
+	p := ps.findOrCreatePeer(pid)
 	p.Protocols = protocols
 }
 
@@ -242,7 +244,7 @@ func (ps *PeerSet) UpdateLastSent(pid peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	p := ps.mustGetPeer(pid)
+	p := ps.findOrCreatePeer(pid)
 	p.LastSent = time.Now()
 }
 
@@ -250,7 +252,7 @@ func (ps *PeerSet) UpdateLastReceived(pid peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	p := ps.mustGetPeer(pid)
+	p := ps.findOrCreatePeer(pid)
 	p.LastReceived = time.Now()
 }
 
@@ -258,7 +260,7 @@ func (ps *PeerSet) IncreaseReceivedBundlesCounter(pid peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	p := ps.mustGetPeer(pid)
+	p := ps.findOrCreatePeer(pid)
 	p.ReceivedBundles++
 }
 
@@ -266,7 +268,7 @@ func (ps *PeerSet) IncreaseInvalidBundlesCounter(pid peer.ID) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	p := ps.mustGetPeer(pid)
+	p := ps.findOrCreatePeer(pid)
 	p.InvalidBundles++
 }
 
@@ -274,7 +276,7 @@ func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, msgType message.Typ
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	p := ps.mustGetPeer(pid)
+	p := ps.findOrCreatePeer(pid)
 	p.ReceivedBytes[msgType] += c
 
 	ps.totalReceivedBytes += c
@@ -290,7 +292,7 @@ func (ps *PeerSet) IncreaseSentCounters(msgType message.Type, c int64, pid *peer
 	ps.sentBytes[msgType] += c
 
 	if pid != nil {
-		p := ps.mustGetPeer(*pid)
+		p := ps.findOrCreatePeer(*pid)
 		p.SentBytes[msgType] += c
 	}
 }
@@ -347,7 +349,7 @@ func (ps *PeerSet) StartedAt() time.Time {
 	return ps.startedAt
 }
 
-func (ps *PeerSet) IteratePeers(consumer func(peer *peer.Peer) (stop bool)) {
+func (ps *PeerSet) IteratePeers(consumer func(p *peer.Peer) (stop bool)) {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 

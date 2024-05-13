@@ -175,8 +175,8 @@ func (b *Block) Encode(w io.Writer) error {
 	if err := encoding.WriteVarInt(w, uint64(b.data.Txs.Len())); err != nil {
 		return err
 	}
-	for _, tx := range b.Transactions() {
-		if err := tx.Encode(w); err != nil {
+	for _, trx := range b.Transactions() {
+		if err := trx.Encode(w); err != nil {
 			return err
 		}
 	}
@@ -220,8 +220,8 @@ func (b *Block) SerializeSize() int {
 	}
 
 	n += encoding.VarIntSerializeSize(uint64(b.Transactions().Len()))
-	for _, tx := range b.Transactions() {
-		n += tx.SerializeSize()
+	for _, trx := range b.Transactions() {
+		n += trx.SerializeSize()
 	}
 
 	return n

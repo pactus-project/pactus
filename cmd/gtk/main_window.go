@@ -57,7 +57,7 @@ func buildMainWindow(nodeModel *nodeModel, walletModel *walletModel) *mainWindow
 
 	// Map the handlers to callback functions, and connect the signals
 	// to the Builder.
-	signals := map[string]interface{}{
+	signals := map[string]any{
 		"on_about_gtk":            mw.onAboutGtk,
 		"on_about":                mw.onAbout,
 		"on_quit":                 mw.onQuit,
@@ -87,11 +87,11 @@ func (mw *mainWindow) onQuit() {
 	mw.Close()
 }
 
-func (mw *mainWindow) onAboutGtk() {
+func (*mainWindow) onAboutGtk() {
 	showAboutGTKDialog()
 }
 
-func (mw *mainWindow) onAbout() {
+func (*mainWindow) onAbout() {
 	dlg := aboutDialog()
 	dlg.ShowAll()
 }
@@ -112,19 +112,19 @@ func (mw *mainWindow) OnTransactionWithdraw() {
 	broadcastTransactionWithdraw(mw.widgetWallet.model.wallet)
 }
 
-func (mw *mainWindow) onMenuItemActivateWebsite(_ *gtk.MenuItem) {
+func (*mainWindow) onMenuItemActivateWebsite(_ *gtk.MenuItem) {
 	if err := openURLInBrowser("https://pactus.org/"); err != nil {
 		fatalErrorCheck(err)
 	}
 }
 
-func (mw *mainWindow) onMenuItemActivateExplorer(_ *gtk.MenuItem) {
+func (*mainWindow) onMenuItemActivateExplorer(_ *gtk.MenuItem) {
 	if err := openURLInBrowser("https://pacviewer.com/"); err != nil {
 		fatalErrorCheck(err)
 	}
 }
 
-func (mw *mainWindow) onMenuItemActivateLearn(_ *gtk.MenuItem) {
+func (*mainWindow) onMenuItemActivateLearn(_ *gtk.MenuItem) {
 	if err := openURLInBrowser("https://pactus.org/learn/"); err != nil {
 		fatalErrorCheck(err)
 	}

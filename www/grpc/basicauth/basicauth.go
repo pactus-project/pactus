@@ -37,6 +37,6 @@ func (b *BasicAuth) GetRequestMetadata(context.Context, ...string) (map[string]s
 }
 
 // RequireTransportSecurity indicates whether the credentials requires transport security.
-func (b *BasicAuth) RequireTransportSecurity() bool {
+func (*BasicAuth) RequireTransportSecurity() bool {
 	return false
 }

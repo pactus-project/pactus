@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
-	flock "github.com/gofrs/flock"
+	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"

@@ -262,7 +262,7 @@ func (v *Vault) AllImportedPrivateKeysAddresses() []AddressInfo {
 	return addrs
 }
 
-func (v *Vault) SortAddressesByPurpose(addrs ...AddressInfo) {
+func (*Vault) SortAddressesByPurpose(addrs ...AddressInfo) {
 	slices.SortStableFunc(addrs, func(a, b AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
@@ -271,7 +271,7 @@ func (v *Vault) SortAddressesByPurpose(addrs ...AddressInfo) {
 	})
 }
 
-func (v *Vault) SortAddressesByAddressType(addrs ...AddressInfo) {
+func (*Vault) SortAddressesByAddressType(addrs ...AddressInfo) {
 	slices.SortStableFunc(addrs, func(a, b AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
@@ -280,7 +280,7 @@ func (v *Vault) SortAddressesByAddressType(addrs ...AddressInfo) {
 	})
 }
 
-func (v *Vault) SortAddressesByAddressIndex(addrs ...AddressInfo) {
+func (*Vault) SortAddressesByAddressIndex(addrs ...AddressInfo) {
 	slices.SortStableFunc(addrs, func(a, b AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)

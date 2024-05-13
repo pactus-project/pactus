@@ -32,7 +32,7 @@ func (handler *queryProposalHandler) ParseMessage(m message.Message, _ peer.ID) 
 	return nil
 }
 
-func (handler *queryProposalHandler) PrepareBundle(m message.Message) *bundle.Bundle {
+func (*queryProposalHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	bdl := bundle.NewBundle(m)
 
 	return bdl

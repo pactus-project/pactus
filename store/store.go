@@ -128,11 +128,14 @@ func NewStore(conf *Config) (Store, error) {
 	return s, nil
 }
 
-func (s *store) Close() error {
+func (s *store) Close() {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.db.Close()
+	err := s.db.Close()
+	if err != nil {
+		logger.Error("error on closing store", "error", err)
+	}
 }
 
 func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {

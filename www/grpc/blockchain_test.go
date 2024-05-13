@@ -53,10 +53,10 @@ func TestGetBlock(t *testing.T) {
 		assert.Equal(t, res.PrevCert.Absentees, b.PrevCertificate().Absentees())
 		for i, trx := range res.Txs {
 			blockTrx := b.Transactions()[i]
-			data, _ := blockTrx.Bytes()
+			trxData, _ := blockTrx.Bytes()
 
 			assert.Equal(t, blockTrx.ID().Bytes(), trx.Id)
-			assert.Equal(t, data, trx.Data)
+			assert.Equal(t, trxData, trx.Data)
 			assert.Zero(t, trx.LockTime)
 			assert.Empty(t, trx.Signature)
 			assert.Empty(t, trx.PublicKey)

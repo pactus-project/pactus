@@ -26,7 +26,7 @@ func newWalletServer(server *Server, manager *wallet.Manager) *walletServer {
 	}
 }
 
-func (s *walletServer) mapHistoryInfo(hi []wallet.HistoryInfo) []*pactus.HistoryInfo {
+func (*walletServer) mapHistoryInfo(hi []wallet.HistoryInfo) []*pactus.HistoryInfo {
 	historyInfo := make([]*pactus.HistoryInfo, 0)
 	for _, hi := range hi {
 		historyInfo = append(historyInfo, &pactus.HistoryInfo{
@@ -118,13 +118,13 @@ func (s *walletServer) UnloadWallet(_ context.Context,
 	}, nil
 }
 
-func (s *walletServer) LockWallet(_ context.Context,
+func (*walletServer) LockWallet(_ context.Context,
 	_ *pactus.LockWalletRequest,
 ) (*pactus.LockWalletResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "not implemeneted")
 }
 
-func (s *walletServer) UnlockWallet(_ context.Context,
+func (*walletServer) UnlockWallet(_ context.Context,
 	_ *pactus.UnlockWalletRequest,
 ) (*pactus.UnlockWalletResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "not implemeneted")

@@ -120,13 +120,13 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 			message: msg,
 		})
 	}
-	td.consX = newConsensus(testConfig(), stX, valKeys[tIndexX],
+	td.consX = makeConsensus(testConfig(), stX, valKeys[tIndexX],
 		valKeys[tIndexX].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
-	td.consY = newConsensus(testConfig(), stY, valKeys[tIndexY],
+	td.consY = makeConsensus(testConfig(), stY, valKeys[tIndexY],
 		valKeys[tIndexY].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
-	td.consB = newConsensus(testConfig(), stB, valKeys[tIndexB],
+	td.consB = makeConsensus(testConfig(), stB, valKeys[tIndexB],
 		valKeys[tIndexB].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
-	td.consP = newConsensus(testConfig(), stP, valKeys[tIndexP],
+	td.consP = makeConsensus(testConfig(), stP, valKeys[tIndexP],
 		valKeys[tIndexP].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
 
 	// -------------------------------
@@ -249,18 +249,12 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vo
 	return nil
 }
 
-func checkHeightRound(t *testing.T, cons *consensus, height uint32, round int16) {
+func (*testData) checkHeightRound(t *testing.T, cons *consensus, height uint32, round int16) {
 	t.Helper()
 
 	h, r := cons.HeightRound()
 	assert.Equal(t, h, height)
 	assert.Equal(t, r, round)
-}
-
-func (td *testData) checkHeightRound(t *testing.T, cons *consensus, height uint32, round int16) {
-	t.Helper()
-
-	checkHeightRound(t, cons, height, round)
 }
 
 func (td *testData) addPrepareVote(cons *consensus, blockHash hash.Hash, height uint32, round int16,
@@ -307,23 +301,19 @@ func (td *testData) addVote(cons *consensus, v *vote.Vote, valID int) *vote.Vote
 	return v
 }
 
-func newHeightTimeout(cons *consensus) {
+func (*testData) newHeightTimeout(cons *consensus) {
 	cons.lk.Lock()
 	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetNewHeight})
 	cons.lk.Unlock()
 }
 
-func (td *testData) newHeightTimeout(cons *consensus) {
-	newHeightTimeout(cons)
-}
-
-func (td *testData) queryProposalTimeout(cons *consensus) {
+func (*testData) queryProposalTimeout(cons *consensus) {
 	cons.lk.Lock()
 	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetQueryProposal})
 	cons.lk.Unlock()
 }
 
-func (td *testData) changeProposerTimeout(cons *consensus) {
+func (*testData) changeProposerTimeout(cons *consensus) {
 	cons.lk.Lock()
 	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetChangeProposer})
 	cons.lk.Unlock()
@@ -340,7 +330,7 @@ func (td *testData) enterNewHeight(cons *consensus) {
 }
 
 // enterNextRound helps tests to enter next round safely.
-func (td *testData) enterNextRound(cons *consensus) {
+func (*testData) enterNextRound(cons *consensus) {
 	cons.lk.Lock()
 	cons.round++
 	cons.enterNewState(cons.proposeState)
@@ -422,9 +412,9 @@ func TestNotInCommittee(t *testing.T) {
 	str := store.MockingStore(td.TestSuite)
 
 	st, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, str, td.txPool, nil)
-	Cons := NewConsensus(testConfig(), st, valKey, valKey.Address(), make(chan message.Message, 100),
+	consInst := NewConsensus(testConfig(), st, valKey, valKey.Address(), make(chan message.Message, 100),
 		newConcreteMediator())
-	cons := Cons.(*consensus)
+	cons := consInst.(*consensus)
 
 	td.enterNewHeight(cons)
 	td.newHeightTimeout(cons)
@@ -668,9 +658,9 @@ func TestNonActiveValidator(t *testing.T) {
 	td := setup(t)
 
 	valKey := td.RandValKey()
-	Cons := NewConsensus(testConfig(), state.MockingState(td.TestSuite),
+	consInst := NewConsensus(testConfig(), state.MockingState(td.TestSuite),
 		valKey, valKey.Address(), make(chan message.Message, 100), newConcreteMediator())
-	nonActiveCons := Cons.(*consensus)
+	nonActiveCons := consInst.(*consensus)
 
 	t.Run("non-active instances should be in new-height state", func(t *testing.T) {
 		nonActiveCons.MoveToNewHeight()

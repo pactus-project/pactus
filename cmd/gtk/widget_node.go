@@ -73,7 +73,7 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 		labelReachability:    getLabelObj(builder, "id_label_reachability"),
 	}
 
-	signals := map[string]interface{}{}
+	signals := map[string]any{}
 	builder.ConnectSignals(signals)
 
 	glib.TimeoutAdd(1000, w.timeout1)

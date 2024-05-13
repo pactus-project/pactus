@@ -12,7 +12,7 @@ import (
 )
 
 // mockUnaryHandler simulates a gRPC method handler.
-func mockUnaryHandler(_ context.Context, _ interface{}) (interface{}, error) {
+func mockUnaryHandler(_ context.Context, _ any) (any, error) {
 	return "response", nil
 }
 

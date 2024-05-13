@@ -98,7 +98,7 @@ func (m *MockState) LastCertificate() *certificate.Certificate {
 	return m.TestStore.LastCert
 }
 
-func (m *MockState) UpdateLastCertificate(_ *vote.Vote) error {
+func (*MockState) UpdateLastCertificate(_ *vote.Vote) error {
 	return nil
 }
 
@@ -114,9 +114,7 @@ func (m *MockState) CommitBlock(b *block.Block, cert *certificate.Certificate) e
 	return nil
 }
 
-func (m *MockState) Close() error {
-	return nil
-}
+func (*MockState) Close() {}
 
 func (m *MockState) ProposeBlock(valKey *bls.ValidatorKey, _ crypto.Address) (*block.Block, error) {
 	blk, _ := m.ts.GenerateTestBlockWithProposer(m.TestStore.LastHeight, valKey.Address())
@@ -124,7 +122,7 @@ func (m *MockState) ProposeBlock(valKey *bls.ValidatorKey, _ crypto.Address) (*b
 	return blk, nil
 }
 
-func (m *MockState) ValidateBlock(_ *block.Block, _ int16) error {
+func (*MockState) ValidateBlock(_ *block.Block, _ int16) error {
 	return nil
 }
 
@@ -263,6 +261,6 @@ func (m *MockState) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
 	return m.TestStore.PublicKey(addr)
 }
 
-func (m *MockState) AvailabilityScore(_ int32) float64 {
+func (*MockState) AvailabilityScore(_ int32) float64 {
 	return 0.987
 }

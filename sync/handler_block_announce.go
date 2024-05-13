@@ -41,7 +41,7 @@ func (handler *blockAnnounceHandler) ParseMessage(m message.Message, pid peer.ID
 	return nil
 }
 
-func (handler *blockAnnounceHandler) PrepareBundle(m message.Message) *bundle.Bundle {
+func (*blockAnnounceHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	bdl := bundle.NewBundle(m)
 
 	return bdl

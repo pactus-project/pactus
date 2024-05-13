@@ -34,7 +34,7 @@ func New() *Tree {
 	}
 }
 
-func (t *Tree) createNode(width, height int) *node {
+func (*Tree) createNode(width, height int) *node {
 	return &node{
 		width:  width,
 		height: height,

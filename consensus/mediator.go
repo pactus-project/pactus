@@ -8,8 +8,8 @@ import (
 // The `mediator“ interface defines a mechanism for setting proposals and votes
 // between independent consensus instances.
 type mediator interface {
-	OnPublishProposal(from Consensus, proposal *proposal.Proposal)
-	OnPublishVote(from Consensus, vote *vote.Vote)
+	OnPublishProposal(from Consensus, prop *proposal.Proposal)
+	OnPublishVote(from Consensus, vte *vote.Vote)
 	OnBlockAnnounce(from Consensus)
 	Register(cons Consensus)
 }

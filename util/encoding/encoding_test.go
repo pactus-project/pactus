@@ -25,8 +25,8 @@ func TestElementEncoding(t *testing.T) {
 	type writeElementReflect int32
 
 	tests := []struct {
-		in  interface{} // Value to encode
-		buf []byte      // encoding bytes
+		in  any    // Value to encode
+		buf []byte // encoding bytes
 	}{
 		{int8(-128), []byte{0x80}},
 		{int8(127), []byte{0x7f}},
@@ -91,10 +91,10 @@ func TestElementEncoding(t *testing.T) {
 // of various element types to confirm error paths work correctly.
 func TestElementEncodingErrors(t *testing.T) {
 	tests := []struct {
-		in       interface{} // Value to encode
-		max      int         // Max size of fixed buffer to induce errors
-		writeErr error       // Expected write error
-		readErr  error       // Expected read error
+		in       any   // Value to encode
+		max      int   // Max size of fixed buffer to induce errors
+		writeErr error // Expected write error
+		readErr  error // Expected read error
 	}{
 		{int8(127), 0, io.ErrShortWrite, io.EOF},
 		{uint8(1), 0, io.ErrShortWrite, io.EOF},

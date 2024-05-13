@@ -29,7 +29,7 @@ func (m *QueryVotesMessage) BasicCheck() error {
 	return nil
 }
 
-func (m *QueryVotesMessage) Type() Type {
+func (*QueryVotesMessage) Type() Type {
 	return TypeQueryVotes
 }
 

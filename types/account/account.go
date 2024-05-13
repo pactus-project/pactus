@@ -74,7 +74,7 @@ func (acc *Account) Hash() hash.Hash {
 }
 
 // SerializeSize returns the size in bytes required to serialize the account.
-func (acc *Account) SerializeSize() int {
+func (*Account) SerializeSize() int {
 	return 12 // 4+8
 }
 

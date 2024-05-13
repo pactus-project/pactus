@@ -43,7 +43,7 @@ func WriteFile(filename string, data []byte) error {
 
 func Mkdir(dir string) error {
 	// create the directory
-	if err := os.MkdirAll(dir, 0o755); err != nil {
+	if err := os.MkdirAll(dir, 0o750); err != nil {
 		return fmt.Errorf("could not create directory %s", dir)
 	}
 
@@ -77,7 +77,9 @@ func IsDirEmpty(name string) bool {
 	if err != nil {
 		panic(err)
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 
 	// read in ONLY one file
 	_, err = f.Readdir(1)
@@ -101,7 +103,7 @@ func IsValidDirPath(fp string) bool {
 			if err := os.WriteFile(fp+"/test", []byte{}, 0o600); err != nil {
 				return false
 			}
-			os.Remove(fp + "/test")
+			_ = os.Remove(fp + "/test")
 
 			return true
 		}
@@ -112,14 +114,14 @@ func IsValidDirPath(fp string) bool {
 	if err := Mkdir(fp); err != nil {
 		return false
 	}
-	os.Remove(fp)
+	_ = os.Remove(fp)
 
 	return true
 }
 
 // TODO: move these to a test suite
 
-// fixedWriter implements the io.Writer interface and intentionally allows
+// FixedWriter implements the io.Writer interface and intentionally allows
 // testing of error paths by forcing short writes.
 type FixedWriter struct {
 	b   []byte
@@ -148,7 +150,7 @@ func (w *FixedWriter) Bytes() []byte {
 	return w.b
 }
 
-// newFixedWriter returns a new io.Writer that will error once more bytes than
+// NewFixedWriter returns a new io.Writer that will error once more bytes than
 // the specified max have been written.
 func NewFixedWriter(max int) *FixedWriter {
 	b := make([]byte, max)
@@ -157,7 +159,7 @@ func NewFixedWriter(max int) *FixedWriter {
 	return &fw
 }
 
-// fixedReader implements the io.Reader interface and intentionally allows
+// FixedReader implements the io.Reader interface and intentionally allows
 // testing of error paths by forcing short reads.
 type FixedReader struct {
 	buf   []byte
@@ -181,7 +183,7 @@ func (fr *FixedReader) Read(p []byte) (int, error) {
 	return n, nil
 }
 
-// newFixedReader returns a new io.Reader that will error once more bytes than
+// NewFixedReader returns a new io.Reader that will error once more bytes than
 // the specified max have been read.
 func NewFixedReader(max int, buf []byte) *FixedReader {
 	b := make([]byte, max)

@@ -15,7 +15,7 @@ func NewWithdrawExecutor(strict bool) *WithdrawExecutor {
 	return &WithdrawExecutor{strict: strict}
 }
 
-func (e *WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
+func (*WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	pld := trx.Payload().(*payload.WithdrawPayload)
 
 	val := sb.Validator(pld.From)

@@ -251,7 +251,7 @@ func (s *Server) GetValidatorByNumberHandler(w http.ResponseWriter, r *http.Requ
 	s.writeHTML(w, tm.html())
 }
 
-func (s *Server) writeValidatorTable(val *pactus.ValidatorInfo) *tableMaker {
+func (*Server) writeValidatorTable(val *pactus.ValidatorInfo) *tableMaker {
 	tm := newTableMaker()
 	tm.addRowString("Public Key", val.PublicKey)
 	tm.addRowValAddress("Address", val.Address)

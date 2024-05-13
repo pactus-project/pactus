@@ -174,7 +174,7 @@ func FatalErrorCheck(err error) {
 	}
 }
 
-func PrintErrorMsgf(format string, a ...interface{}) {
+func PrintErrorMsgf(format string, a ...any) {
 	format = "[ERROR] " + format
 	if terminalSupported {
 		// Print error msg with red color
@@ -183,7 +183,7 @@ func PrintErrorMsgf(format string, a ...interface{}) {
 	fmt.Printf(format+"\n", a...)
 }
 
-func PrintSuccessMsgf(format string, a ...interface{}) {
+func PrintSuccessMsgf(format string, a ...any) {
 	if terminalSupported {
 		// Print successful msg with green color
 		format = fmt.Sprintf("\033[32m%s\033[0m", format)
@@ -191,7 +191,7 @@ func PrintSuccessMsgf(format string, a ...interface{}) {
 	fmt.Printf(format+"\n", a...)
 }
 
-func PrintWarnMsgf(format string, a ...interface{}) {
+func PrintWarnMsgf(format string, a ...any) {
 	if terminalSupported {
 		// Print warning msg with yellow color
 		format = fmt.Sprintf("\033[33m%s\033[0m", format)
@@ -199,11 +199,11 @@ func PrintWarnMsgf(format string, a ...interface{}) {
 	fmt.Printf(format+"\n", a...)
 }
 
-func PrintInfoMsgf(format string, a ...interface{}) {
+func PrintInfoMsgf(format string, a ...any) {
 	fmt.Printf(format+"\n", a...)
 }
 
-func PrintInfoMsgBoldf(format string, a ...interface{}) {
+func PrintInfoMsgBoldf(format string, a ...any) {
 	if terminalSupported {
 		format = fmt.Sprintf("\033[1m%s\033[0m", format)
 	}
@@ -222,7 +222,7 @@ func PrintJSONData(data []byte) {
 	PrintInfoMsgf(out.String())
 }
 
-func PrintJSONObject(obj interface{}) {
+func PrintJSONObject(obj any) {
 	data, err := json.Marshal(obj)
 	FatalErrorCheck(err)
 
@@ -354,6 +354,9 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	return validatorAddrs, rewardAddrs, nil
 }
 
+// StartNode starts the node from the given working directory.
+// The passwordFetcher will be used to fetch the password for the default_wallet if it is encrypted.
+// It returns an error if the genesis doc or default_wallet can't be found inside the working directory.
 // TODO: write test for me.
 func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool)) (
 	*node.Node, *wallet.Wallet, error,
@@ -447,6 +450,9 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	return gen
 }
 
+// MakeConfig opens the given config file and creates the appropriate configuration per chain type.
+// The chain type is determined from the genesis document.
+// It also updates some private configurations, like "wallets directory".
 // TODO: write test for me.
 func MakeConfig(genDoc *genesis.Genesis, confPath, walletsDir string) (*config.Config, error) {
 	var defConf *config.Config

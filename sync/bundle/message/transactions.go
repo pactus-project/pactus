@@ -22,8 +22,8 @@ func (m *TransactionsMessage) BasicCheck() error {
 	if len(m.Transactions) == 0 {
 		return errors.Errorf(errors.ErrInvalidMessage, "no transaction")
 	}
-	for _, tx := range m.Transactions {
-		if err := tx.BasicCheck(); err != nil {
+	for _, trx := range m.Transactions {
+		if err := trx.BasicCheck(); err != nil {
 			return err
 		}
 	}
@@ -31,15 +31,15 @@ func (m *TransactionsMessage) BasicCheck() error {
 	return nil
 }
 
-func (m *TransactionsMessage) Type() Type {
+func (*TransactionsMessage) Type() Type {
 	return TypeTransactions
 }
 
 func (m *TransactionsMessage) String() string {
 	var builder strings.Builder
 
-	for _, tx := range m.Transactions {
-		builder.WriteString(fmt.Sprintf("%v ", tx.ID().ShortString()))
+	for _, trx := range m.Transactions {
+		builder.WriteString(fmt.Sprintf("%v ", trx.ID().ShortString()))
 	}
 	builder.WriteString(fmt.Sprintf("{%v: ⌘ [%v]}", len(m.Transactions), builder.String()))
 

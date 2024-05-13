@@ -18,7 +18,7 @@ func (m *ProposalMessage) BasicCheck() error {
 	return m.Proposal.BasicCheck()
 }
 
-func (m *ProposalMessage) Type() Type {
+func (*ProposalMessage) Type() Type {
 	return TypeProposal
 }
 

@@ -267,7 +267,7 @@ func (s *blockchainServer) validatorToProto(val *validator.Validator) *pactus.Va
 	}
 }
 
-func (s *blockchainServer) accountToProto(addr crypto.Address, acc *account.Account) *pactus.AccountInfo {
+func (*blockchainServer) accountToProto(addr crypto.Address, acc *account.Account) *pactus.AccountInfo {
 	data, _ := acc.Bytes()
 
 	return &pactus.AccountInfo{
@@ -279,7 +279,7 @@ func (s *blockchainServer) accountToProto(addr crypto.Address, acc *account.Acco
 	}
 }
 
-func (s *blockchainServer) voteToProto(v *vote.Vote) *pactus.VoteInfo {
+func (*blockchainServer) voteToProto(v *vote.Vote) *pactus.VoteInfo {
 	cpRound := int32(0)
 	cpValue := int32(0)
 	if v.IsCPVote() {

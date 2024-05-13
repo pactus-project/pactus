@@ -90,7 +90,7 @@ func TestWriteAndClosePeacefully(t *testing.T) {
 	td := setup(t, nil)
 
 	// After closing db, we should not crash
-	assert.NoError(t, td.store.Close())
+	td.store.Close()
 	assert.Error(t, td.store.WriteBatch())
 }
 

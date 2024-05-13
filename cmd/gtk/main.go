@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	flock "github.com/gofrs/flock"
+	"github.com/gofrs/flock"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"

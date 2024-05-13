@@ -33,7 +33,7 @@ func captureOutput(f func()) string {
 	f()
 
 	// Reset stdout
-	w.Close()
+	_ = w.Close()
 	os.Stdout = oldStdout
 	out := <-outC
 

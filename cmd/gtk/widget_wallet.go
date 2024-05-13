@@ -145,7 +145,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 			return false
 		})
 
-	signals := map[string]interface{}{
+	signals := map[string]any{
 		"on_new_address":     w.onNewAddress,
 		"on_change_password": w.onChangePassword,
 		"on_show_seed":       w.onShowSeed,

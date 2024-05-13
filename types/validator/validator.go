@@ -120,7 +120,7 @@ func (val *Validator) AddToStake(amt amount.Amount) {
 	val.data.Stake += amt
 }
 
-// UpdateLastJoinedHeight updates the last height at which the validator joined the committee.
+// UpdateLastSortitionHeight updates the last height at which the validator performed a valid sortition.
 func (val *Validator) UpdateLastSortitionHeight(height uint32) {
 	val.data.LastSortitionHeight = height
 }
@@ -146,7 +146,7 @@ func (val *Validator) Hash() hash.Hash {
 }
 
 // SerializeSize returns the size in bytes required to serialize the validator.
-func (val *Validator) SerializeSize() int {
+func (*Validator) SerializeSize() int {
 	return 120 // 96+4+4+8+4+4
 }
 

@@ -15,7 +15,7 @@ type WithdrawPayload struct {
 	Amount amount.Amount  // amount to deposit
 }
 
-func (p *WithdrawPayload) Type() Type {
+func (*WithdrawPayload) Type() Type {
 	return TypeWithdraw
 }
 
@@ -27,6 +27,7 @@ func (p *WithdrawPayload) Value() amount.Amount {
 	return p.Amount
 }
 
+// BasicCheck performs basic checks on the Withdraw payload.
 // TODO: write test for me.
 func (p *WithdrawPayload) BasicCheck() error {
 	if !p.From.IsValidatorAddress() {

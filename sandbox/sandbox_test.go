@@ -41,9 +41,9 @@ func setup(t *testing.T) *testData {
 		// For testing purpose, we create some test accounts first.
 		// Account number is the validator number plus one,
 		// since account #0 is the Treasury account.
-		acc := account.NewAccount(val.Number() + 1)
+		newAcc := account.NewAccount(val.Number() + 1)
 		mockStore.UpdateValidator(val)
-		mockStore.UpdateAccount(val.Address(), acc)
+		mockStore.UpdateAccount(val.Address(), newAcc)
 
 		totalPower += val.Power()
 	}

@@ -58,7 +58,7 @@ const (
 // known or supported.
 var ErrNotSupported = errors.New("encrypted method is not supported")
 
-// encrypter keeps the method and parameters for the cipher algorithm.
+// Encrypter keeps the method and parameters for the cipher algorithm.
 type Encrypter struct {
 	Method string `json:"method,omitempty"`
 	Params params `json:"params,omitempty"`

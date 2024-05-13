@@ -14,9 +14,9 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	v1, _ := td.GenerateTestPrecommitVote(consensusHeight, 0)
 	td.consMgr.AddVote(v1)
 	pid := td.RandPeerID()
-	msg := message.NewQueryVotesMessage(consensusHeight, 1, td.RandValAddress())
 
 	t.Run("should respond to the query votes message", func(t *testing.T) {
+		msg := message.NewQueryVotesMessage(consensusHeight, 1, td.RandValAddress())
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
 		bdl := td.shouldPublishMessageWithThisType(t, message.TypeVote)
