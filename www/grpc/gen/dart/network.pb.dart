@@ -61,20 +61,20 @@ class GetNetworkInfoRequest extends $pb.GeneratedMessage {
 class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetNetworkInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'networkName')
-    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalSentBytes', $pb.PbFieldType.OU3)
-    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalReceivedBytes', $pb.PbFieldType.OU3)
+    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalSentBytes')
+    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalReceivedBytes')
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectedPeersCount', $pb.PbFieldType.OU3)
     ..pc<PeerInfo>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectedPeers', $pb.PbFieldType.PM, subBuilder: PeerInfo.create)
-    ..m<$core.int, $fixnum.Int64>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sentBytes', entryClassName: 'GetNetworkInfoResponse.SentBytesEntry', keyFieldType: $pb.PbFieldType.OU3, valueFieldType: $pb.PbFieldType.OU6, packageName: const $pb.PackageName('pactus'))
-    ..m<$core.int, $fixnum.Int64>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', entryClassName: 'GetNetworkInfoResponse.ReceivedBytesEntry', keyFieldType: $pb.PbFieldType.OU3, valueFieldType: $pb.PbFieldType.OU6, packageName: const $pb.PackageName('pactus'))
+    ..m<$core.int, $fixnum.Int64>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sentBytes', entryClassName: 'GetNetworkInfoResponse.SentBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
+    ..m<$core.int, $fixnum.Int64>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', entryClassName: 'GetNetworkInfoResponse.ReceivedBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
     ..hasRequiredFields = false
   ;
 
   GetNetworkInfoResponse._() : super();
   factory GetNetworkInfoResponse({
     $core.String? networkName,
-    $core.int? totalSentBytes,
-    $core.int? totalReceivedBytes,
+    $fixnum.Int64? totalSentBytes,
+    $fixnum.Int64? totalReceivedBytes,
     $core.int? connectedPeersCount,
     $core.Iterable<PeerInfo>? connectedPeers,
     $core.Map<$core.int, $fixnum.Int64>? sentBytes,
@@ -135,18 +135,18 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   void clearNetworkName() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.int get totalSentBytes => $_getIZ(1);
+  $fixnum.Int64 get totalSentBytes => $_getI64(1);
   @$pb.TagNumber(2)
-  set totalSentBytes($core.int v) { $_setUnsignedInt32(1, v); }
+  set totalSentBytes($fixnum.Int64 v) { $_setInt64(1, v); }
   @$pb.TagNumber(2)
   $core.bool hasTotalSentBytes() => $_has(1);
   @$pb.TagNumber(2)
   void clearTotalSentBytes() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.int get totalReceivedBytes => $_getIZ(2);
+  $fixnum.Int64 get totalReceivedBytes => $_getI64(2);
   @$pb.TagNumber(3)
-  set totalReceivedBytes($core.int v) { $_setUnsignedInt32(2, v); }
+  set totalReceivedBytes($fixnum.Int64 v) { $_setInt64(2, v); }
   @$pb.TagNumber(3)
   $core.bool hasTotalReceivedBytes() => $_has(2);
   @$pb.TagNumber(3)
@@ -388,8 +388,8 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'services', $pb.PbFieldType.OU3)
     ..a<$core.List<$core.int>>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBlockHash', $pb.PbFieldType.OY)
     ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
-    ..a<$core.int>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedMessages', $pb.PbFieldType.O3)
-    ..a<$core.int>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invalidMessages', $pb.PbFieldType.O3)
+    ..a<$core.int>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBundles', $pb.PbFieldType.O3)
+    ..a<$core.int>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invalidBundles', $pb.PbFieldType.O3)
     ..aInt64(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSent')
     ..aInt64(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastReceived')
     ..m<$core.int, $fixnum.Int64>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sentBytes', entryClassName: 'PeerInfo.SentBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
@@ -413,8 +413,8 @@ class PeerInfo extends $pb.GeneratedMessage {
     $core.int? services,
     $core.List<$core.int>? lastBlockHash,
     $core.int? height,
-    $core.int? receivedMessages,
-    $core.int? invalidMessages,
+    $core.int? receivedBundles,
+    $core.int? invalidBundles,
     $fixnum.Int64? lastSent,
     $fixnum.Int64? lastReceived,
     $core.Map<$core.int, $fixnum.Int64>? sentBytes,
@@ -453,11 +453,11 @@ class PeerInfo extends $pb.GeneratedMessage {
     if (height != null) {
       _result.height = height;
     }
-    if (receivedMessages != null) {
-      _result.receivedMessages = receivedMessages;
+    if (receivedBundles != null) {
+      _result.receivedBundles = receivedBundles;
     }
-    if (invalidMessages != null) {
-      _result.invalidMessages = invalidMessages;
+    if (invalidBundles != null) {
+      _result.invalidBundles = invalidBundles;
     }
     if (lastSent != null) {
       _result.lastSent = lastSent;
@@ -579,22 +579,22 @@ class PeerInfo extends $pb.GeneratedMessage {
   void clearHeight() => clearField(9);
 
   @$pb.TagNumber(10)
-  $core.int get receivedMessages => $_getIZ(9);
+  $core.int get receivedBundles => $_getIZ(9);
   @$pb.TagNumber(10)
-  set receivedMessages($core.int v) { $_setSignedInt32(9, v); }
+  set receivedBundles($core.int v) { $_setSignedInt32(9, v); }
   @$pb.TagNumber(10)
-  $core.bool hasReceivedMessages() => $_has(9);
+  $core.bool hasReceivedBundles() => $_has(9);
   @$pb.TagNumber(10)
-  void clearReceivedMessages() => clearField(10);
+  void clearReceivedBundles() => clearField(10);
 
   @$pb.TagNumber(11)
-  $core.int get invalidMessages => $_getIZ(10);
+  $core.int get invalidBundles => $_getIZ(10);
   @$pb.TagNumber(11)
-  set invalidMessages($core.int v) { $_setSignedInt32(10, v); }
+  set invalidBundles($core.int v) { $_setSignedInt32(10, v); }
   @$pb.TagNumber(11)
-  $core.bool hasInvalidMessages() => $_has(10);
+  $core.bool hasInvalidBundles() => $_has(10);
   @$pb.TagNumber(11)
-  void clearInvalidMessages() => clearField(11);
+  void clearInvalidBundles() => clearField(11);
 
   @$pb.TagNumber(12)
   $fixnum.Int64 get lastSent => $_getI64(11);

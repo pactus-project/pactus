@@ -24,17 +24,17 @@ message GetNetworkInfoResponse {
   // Name of the network.
   string network_name = 1;
   // Total bytes sent across the network.
-  uint32 total_sent_bytes = 2;
+  int64 total_sent_bytes = 2;
   // Total bytes received across the network.
-  uint32 total_received_bytes = 3;
+  int64 total_received_bytes = 3;
   // Number of connected peers.
   uint32 connected_peers_count = 4;
   // List of connected peers.
   repeated PeerInfo connected_peers = 5;
   // Bytes sent per peer ID.
-  map<uint32, uint64> sent_bytes = 6;
+  map<int32, int64> sent_bytes = 6;
   // Bytes received per peer ID.
-  map<uint32, uint64> received_bytes = 7;
+  map<int32, int64> received_bytes = 7;
 }
 
 // Request message for retrieving information about a specific node in the
@@ -89,13 +89,13 @@ message PeerInfo {
   bytes last_block_hash = 8;
   // Height of the peer in the blockchain.
   uint32 height = 9;
-  // Count of received messages.
-  int32 received_messages = 10;
-  // Count of invalid messages received.
-  int32 invalid_messages = 11;
-  // Timestamp of the last sent message.
+  // Count of received bundles.
+  int32 received_bundles = 10;
+  // Count of invalid bundles received.
+  int32 invalid_bundles = 11;
+  // Timestamp of the last sent bundle.
   int64 last_sent = 12;
-  // Timestamp of the last received message.
+  // Timestamp of the last received bundle.
   int64 last_received = 13;
   // Bytes sent per message type.
   map<int32, int64> sent_bytes = 14;

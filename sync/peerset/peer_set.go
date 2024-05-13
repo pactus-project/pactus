@@ -1,6 +1,7 @@
 package peerset
 
 import (
+	"maps"
 	"sync"
 	"time"
 
@@ -335,11 +336,17 @@ func (ps *PeerSet) ReceivedBytesMessageType(msgType message.Type) int64 {
 }
 
 func (ps *PeerSet) SentBytes() map[message.Type]int64 {
-	return ps.sentBytes
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return maps.Clone(ps.sentBytes)
 }
 
 func (ps *PeerSet) ReceivedBytes() map[message.Type]int64 {
-	return ps.receivedBytes
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return maps.Clone(ps.receivedBytes)
 }
 
 func (ps *PeerSet) StartedAt() time.Time {

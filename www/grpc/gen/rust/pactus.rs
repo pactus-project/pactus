@@ -770,11 +770,11 @@ pub struct GetNetworkInfoResponse {
     #[prost(string, tag="1")]
     pub network_name: ::prost::alloc::string::String,
     /// Total bytes sent across the network.
-    #[prost(uint32, tag="2")]
-    pub total_sent_bytes: u32,
+    #[prost(int64, tag="2")]
+    pub total_sent_bytes: i64,
     /// Total bytes received across the network.
-    #[prost(uint32, tag="3")]
-    pub total_received_bytes: u32,
+    #[prost(int64, tag="3")]
+    pub total_received_bytes: i64,
     /// Number of connected peers.
     #[prost(uint32, tag="4")]
     pub connected_peers_count: u32,
@@ -782,11 +782,11 @@ pub struct GetNetworkInfoResponse {
     #[prost(message, repeated, tag="5")]
     pub connected_peers: ::prost::alloc::vec::Vec<PeerInfo>,
     /// Bytes sent per peer ID.
-    #[prost(map="uint32, uint64", tag="6")]
-    pub sent_bytes: ::std::collections::HashMap<u32, u64>,
+    #[prost(map="int32, int64", tag="6")]
+    pub sent_bytes: ::std::collections::HashMap<i32, i64>,
     /// Bytes received per peer ID.
-    #[prost(map="uint32, uint64", tag="7")]
-    pub received_bytes: ::std::collections::HashMap<u32, u64>,
+    #[prost(map="int32, int64", tag="7")]
+    pub received_bytes: ::std::collections::HashMap<i32, i64>,
 }
 /// Request message for retrieving information about a specific node in the
 /// network.
@@ -866,16 +866,16 @@ pub struct PeerInfo {
     /// Height of the peer in the blockchain.
     #[prost(uint32, tag="9")]
     pub height: u32,
-    /// Count of received messages.
+    /// Count of received bundles.
     #[prost(int32, tag="10")]
-    pub received_messages: i32,
-    /// Count of invalid messages received.
+    pub received_bundles: i32,
+    /// Count of invalid bundles received.
     #[prost(int32, tag="11")]
-    pub invalid_messages: i32,
-    /// Timestamp of the last sent message.
+    pub invalid_bundles: i32,
+    /// Timestamp of the last sent bundle.
     #[prost(int64, tag="12")]
     pub last_sent: i64,
-    /// Timestamp of the last received message.
+    /// Timestamp of the last received bundle.
     #[prost(int64, tag="13")]
     pub last_received: i64,
     /// Bytes sent per message type.

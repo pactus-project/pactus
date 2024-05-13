@@ -3237,10 +3237,10 @@ impl serde::Serialize for GetNetworkInfoResponse {
             struct_ser.serialize_field("networkName", &self.network_name)?;
         }
         if self.total_sent_bytes != 0 {
-            struct_ser.serialize_field("totalSentBytes", &self.total_sent_bytes)?;
+            struct_ser.serialize_field("totalSentBytes", ToString::to_string(&self.total_sent_bytes).as_str())?;
         }
         if self.total_received_bytes != 0 {
-            struct_ser.serialize_field("totalReceivedBytes", &self.total_received_bytes)?;
+            struct_ser.serialize_field("totalReceivedBytes", ToString::to_string(&self.total_received_bytes).as_str())?;
         }
         if self.connected_peers_count != 0 {
             struct_ser.serialize_field("connectedPeersCount", &self.connected_peers_count)?;
@@ -3390,7 +3390,7 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
                                 return Err(serde::de::Error::duplicate_field("sentBytes"));
                             }
                             sent_bytes__ = Some(
-                                map.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<u32>, ::pbjson::private::NumberDeserialize<u64>>>()?
+                                map.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, ::pbjson::private::NumberDeserialize<i64>>>()?
                                     .into_iter().map(|(k,v)| (k.0, v.0)).collect()
                             );
                         }
@@ -3399,7 +3399,7 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
                                 return Err(serde::de::Error::duplicate_field("receivedBytes"));
                             }
                             received_bytes__ = Some(
-                                map.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<u32>, ::pbjson::private::NumberDeserialize<u64>>>()?
+                                map.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, ::pbjson::private::NumberDeserialize<i64>>>()?
                                     .into_iter().map(|(k,v)| (k.0, v.0)).collect()
                             );
                         }
@@ -7302,10 +7302,10 @@ impl serde::Serialize for PeerInfo {
         if self.height != 0 {
             len += 1;
         }
-        if self.received_messages != 0 {
+        if self.received_bundles != 0 {
             len += 1;
         }
-        if self.invalid_messages != 0 {
+        if self.invalid_bundles != 0 {
             len += 1;
         }
         if self.last_sent != 0 {
@@ -7363,11 +7363,11 @@ impl serde::Serialize for PeerInfo {
         if self.height != 0 {
             struct_ser.serialize_field("height", &self.height)?;
         }
-        if self.received_messages != 0 {
-            struct_ser.serialize_field("receivedMessages", &self.received_messages)?;
+        if self.received_bundles != 0 {
+            struct_ser.serialize_field("receivedBundles", &self.received_bundles)?;
         }
-        if self.invalid_messages != 0 {
-            struct_ser.serialize_field("invalidMessages", &self.invalid_messages)?;
+        if self.invalid_bundles != 0 {
+            struct_ser.serialize_field("invalidBundles", &self.invalid_bundles)?;
         }
         if self.last_sent != 0 {
             struct_ser.serialize_field("lastSent", ToString::to_string(&self.last_sent).as_str())?;
@@ -7423,10 +7423,10 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
             "last_block_hash",
             "lastBlockHash",
             "height",
-            "received_messages",
-            "receivedMessages",
-            "invalid_messages",
-            "invalidMessages",
+            "received_bundles",
+            "receivedBundles",
+            "invalid_bundles",
+            "invalidBundles",
             "last_sent",
             "lastSent",
             "last_received",
@@ -7455,8 +7455,8 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
             Services,
             LastBlockHash,
             Height,
-            ReceivedMessages,
-            InvalidMessages,
+            ReceivedBundles,
+            InvalidBundles,
             LastSent,
             LastReceived,
             SentBytes,
@@ -7496,8 +7496,8 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                             "services" => Ok(GeneratedField::Services),
                             "lastBlockHash" | "last_block_hash" => Ok(GeneratedField::LastBlockHash),
                             "height" => Ok(GeneratedField::Height),
-                            "receivedMessages" | "received_messages" => Ok(GeneratedField::ReceivedMessages),
-                            "invalidMessages" | "invalid_messages" => Ok(GeneratedField::InvalidMessages),
+                            "receivedBundles" | "received_bundles" => Ok(GeneratedField::ReceivedBundles),
+                            "invalidBundles" | "invalid_bundles" => Ok(GeneratedField::InvalidBundles),
                             "lastSent" | "last_sent" => Ok(GeneratedField::LastSent),
                             "lastReceived" | "last_received" => Ok(GeneratedField::LastReceived),
                             "sentBytes" | "sent_bytes" => Ok(GeneratedField::SentBytes),
@@ -7535,8 +7535,8 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                 let mut services__ = None;
                 let mut last_block_hash__ = None;
                 let mut height__ = None;
-                let mut received_messages__ = None;
-                let mut invalid_messages__ = None;
+                let mut received_bundles__ = None;
+                let mut invalid_bundles__ = None;
                 let mut last_sent__ = None;
                 let mut last_received__ = None;
                 let mut sent_bytes__ = None;
@@ -7612,19 +7612,19 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
-                        GeneratedField::ReceivedMessages => {
-                            if received_messages__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("receivedMessages"));
+                        GeneratedField::ReceivedBundles => {
+                            if received_bundles__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("receivedBundles"));
                             }
-                            received_messages__ = 
+                            received_bundles__ = 
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
-                        GeneratedField::InvalidMessages => {
-                            if invalid_messages__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("invalidMessages"));
+                        GeneratedField::InvalidBundles => {
+                            if invalid_bundles__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("invalidBundles"));
                             }
-                            invalid_messages__ = 
+                            invalid_bundles__ = 
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
@@ -7708,8 +7708,8 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                     services: services__.unwrap_or_default(),
                     last_block_hash: last_block_hash__.unwrap_or_default(),
                     height: height__.unwrap_or_default(),
-                    received_messages: received_messages__.unwrap_or_default(),
-                    invalid_messages: invalid_messages__.unwrap_or_default(),
+                    received_bundles: received_bundles__.unwrap_or_default(),
+                    invalid_bundles: invalid_bundles__.unwrap_or_default(),
                     last_sent: last_sent__.unwrap_or_default(),
                     last_received: last_received__.unwrap_or_default(),
                     sent_bytes: sent_bytes__.unwrap_or_default(),

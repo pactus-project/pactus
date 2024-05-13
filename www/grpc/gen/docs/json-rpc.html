@@ -742,21 +742,21 @@ pactus.network.get_network_info retrieves information about the overall network.
 			],
 			"direction": "str",	// (string) Direction of connection with the peer.
 			"height": n,	// (numeric) Height of the peer in the blockchain.
-			"invalid_messages": n,	// (numeric) Count of invalid messages received.
+			"invalid_bundles": n,	// (numeric) Count of invalid bundles received.
 			"last_block_hash": "str",	// (string) Hash of the last block the peer knows.
-			"last_received": n,	// (numeric) Timestamp of the last received message.
-			"last_sent": n,	// (numeric) Timestamp of the last sent message.
+			"last_received": n,	// (numeric) Timestamp of the last received bundle.
+			"last_sent": n,	// (numeric) Timestamp of the last sent bundle.
 			"moniker": "str",	// (string) Moniker of the peer.
 			"peer_id": "str",	// (string) Peer ID of the peer.
 			"protocols": [	// (json array) List of protocols supported by the peer.
 				"str",
 				...
 			],
+			"received_bundles": n,	// (numeric) Count of received bundles.
 			"received_bytes": {	// (key:value json object) Bytes received per message type.
 				...: ...,
 				n: n
 			},
-			"received_messages": n,	// (numeric) Count of received messages.
 			"sent_bytes": {	// (key:value json object) Bytes sent per message type.
 				...: ...,
 				n: n

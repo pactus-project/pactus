@@ -2069,13 +2069,13 @@ GetNetworkInfoResponse
     </tr><tr>
       <td class="fw-bold">total_sent_bytes</td>
       <td>
-        <a href="#uint32">uint32</a>
+        <a href="#int64">int64</a>
       </td>
       <td>Total bytes sent across the network. </td>
     </tr><tr>
       <td class="fw-bold">total_received_bytes</td>
       <td>
-        <a href="#uint32">uint32</a>
+        <a href="#int64">int64</a>
       </td>
       <td>Total bytes received across the network. </td>
     </tr><tr>
@@ -2119,13 +2119,13 @@ GetNetworkInfoResponse.ReceivedBytesEntry
   <tr>
       <td class="fw-bold">key</td>
       <td>
-        <a href="#uint32">uint32</a>
+        <a href="#int32">int32</a>
       </td>
       <td> </td>
     </tr><tr>
       <td class="fw-bold">value</td>
       <td>
-        <a href="#uint64">uint64</a>
+        <a href="#int64">int64</a>
       </td>
       <td> </td>
     </tr>
@@ -2145,13 +2145,13 @@ GetNetworkInfoResponse.SentBytesEntry
   <tr>
       <td class="fw-bold">key</td>
       <td>
-        <a href="#uint32">uint32</a>
+        <a href="#int32">int32</a>
       </td>
       <td> </td>
     </tr><tr>
       <td class="fw-bold">value</td>
       <td>
-        <a href="#uint64">uint64</a>
+        <a href="#int64">int64</a>
       </td>
       <td> </td>
     </tr>
@@ -2315,29 +2315,29 @@ PeerInfo
       </td>
       <td>Height of the peer in the blockchain. </td>
     </tr><tr>
-      <td class="fw-bold">received_messages</td>
+      <td class="fw-bold">received_bundles</td>
       <td>
         <a href="#int32">int32</a>
       </td>
-      <td>Count of received messages. </td>
+      <td>Count of received bundles. </td>
     </tr><tr>
-      <td class="fw-bold">invalid_messages</td>
+      <td class="fw-bold">invalid_bundles</td>
       <td>
         <a href="#int32">int32</a>
       </td>
-      <td>Count of invalid messages received. </td>
+      <td>Count of invalid bundles received. </td>
     </tr><tr>
       <td class="fw-bold">last_sent</td>
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Timestamp of the last sent message. </td>
+      <td>Timestamp of the last sent bundle. </td>
     </tr><tr>
       <td class="fw-bold">last_received</td>
       <td>
         <a href="#int64">int64</a>
       </td>
-      <td>Timestamp of the last received message. </td>
+      <td>Timestamp of the last received bundle. </td>
     </tr><tr>
       <td class="fw-bold">sent_bytes</td>
       <td>repeated
