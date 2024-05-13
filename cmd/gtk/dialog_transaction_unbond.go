@@ -67,7 +67,7 @@ Memo:      %s
 		dlg.Close()
 	}
 
-	signals := map[string]interface{}{
+	signals := map[string]any{
 		"on_validator_changed": onValidatorChanged,
 		"on_send":              onSend,
 		"on_cancel":            onClose,

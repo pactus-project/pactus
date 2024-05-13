@@ -24,7 +24,7 @@ func updateMessageDialog(dlg *gtk.MessageDialog) {
 	area, err := dlg.GetMessageArea()
 	if err == nil {
 		children := area.GetChildren()
-		children.Foreach(func(item interface{}) {
+		children.Foreach(func(item any) {
 			label, err := gtk.WidgetToLabel(item.(*gtk.Widget))
 			if err == nil {
 				label.SetSelectable(true)

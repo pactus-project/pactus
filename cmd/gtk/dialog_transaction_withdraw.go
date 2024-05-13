@@ -101,7 +101,7 @@ Fee:    %s
 		dlg.Close()
 	}
 
-	signals := map[string]interface{}{
+	signals := map[string]any{
 		"on_sender_changed":   onSenderChanged,
 		"on_receiver_changed": onReceiverChanged,
 		"on_amount_changed":   onAmountChanged,

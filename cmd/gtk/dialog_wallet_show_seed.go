@@ -34,7 +34,7 @@ func showSeed(seed string) {
 		dlg.Close()
 	}
 
-	signals := map[string]interface{}{
+	signals := map[string]any{
 		"on_close": onClose,
 	}
 	builder.ConnectSignals(signals)

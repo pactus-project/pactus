@@ -38,7 +38,7 @@ func getAddressLabel(oldLabel string) (string, bool) {
 
 	// Map the handlers to callback functions, and connect the signals
 	// to the Builder.
-	signals := map[string]interface{}{
+	signals := map[string]any{
 		"on_ok":     onOk,
 		"on_cancel": onCancel,
 	}

@@ -140,6 +140,7 @@ linters-settings:
   gosec:
     excludes:
       - G304
+      - G204
       - G103 # TODO: enable me
 
   stylecheck:

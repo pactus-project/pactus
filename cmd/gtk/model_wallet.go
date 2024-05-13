@@ -86,7 +86,7 @@ func (model *walletModel) rebuildModel() {
 						IDAddressesColumnStake,
 						IDAddressesColumnAvailabilityScore,
 					},
-					[]interface{}{
+					[]any{
 						d[0],
 						d[1],
 						d[2],

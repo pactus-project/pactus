@@ -38,7 +38,7 @@ func showAddressDetails(wlt *wallet.Wallet, addr string) {
 		dlg.Close()
 	}
 
-	signals := map[string]interface{}{
+	signals := map[string]any{
 		"on_close": onClose,
 	}
 	builder.ConnectSignals(signals)
