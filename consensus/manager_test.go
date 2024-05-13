@@ -25,8 +25,8 @@ func TestManager(t *testing.T) {
 	valKeys := []*bls.ValidatorKey{st.TestValKeys[0], ts.RandValKey()}
 	broadcastCh := make(chan message.Message, 500)
 
-	stateHeight := ts.RandHeight()
-	blk, cert := ts.GenerateTestBlock(stateHeight)
+	randomHeight := ts.RandHeight()
+	blk, cert := ts.GenerateTestBlock(randomHeight)
 	st.TestStore.SaveBlock(blk, cert)
 
 	mgrInst := NewManager(testConfig(), st, valKeys, rewardAddrs, broadcastCh)
@@ -41,17 +41,20 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Check if all instances move to new height", func(t *testing.T) {
+		stateHeight := mgr.state.LastBlockHeight()
 		assert.False(t, mgr.HasActiveInstance())
+
 		mgr.MoveToNewHeight()
-		h, r := mgr.HeightRound()
+		consHeight, consRound := mgr.HeightRound()
 
 		assert.True(t, mgr.HasActiveInstance())
-		assert.Equal(t, stateHeight+1, h)
-		assert.Zero(t, r)
+		assert.Equal(t, consHeight, stateHeight+1)
+		assert.Zero(t, consRound)
 	})
 
 	t.Run("Testing add vote", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), stateHeight+1, 0, valKeys[0].Address())
+		consHeight, _ := mgr.HeightRound()
+		v := vote.NewPrepareVote(ts.RandHash(), consHeight, 0, valKeys[0].Address())
 		ts.HelperSignVote(valKeys[0], v)
 
 		mgr.AddVote(v)
@@ -61,8 +64,9 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Testing set proposal", func(t *testing.T) {
+		consHeight, _ := mgr.HeightRound()
 		b, _ := st.ProposeBlock(valKeys[0], valKeys[0].Address())
-		p := proposal.NewProposal(stateHeight+1, 0, b)
+		p := proposal.NewProposal(consHeight, 0, b)
 		ts.HelperSignProposal(valKeys[0], p)
 
 		mgr.SetProposal(p)
@@ -72,7 +76,8 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Check discarding old votes", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), stateHeight-1, 0, st.TestValKeys[2].Address())
+		consHeight, _ := mgr.HeightRound()
+		v := vote.NewPrepareVote(ts.RandHash(), consHeight-1, 0, st.TestValKeys[2].Address())
 		ts.HelperSignVote(st.TestValKeys[2], v)
 
 		mgr.AddVote(v)
@@ -80,8 +85,9 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Check discarding old proposals", func(t *testing.T) {
+		consHeight, _ := mgr.HeightRound()
 		b, _ := st.ProposeBlock(valKeys[0], valKeys[0].Address())
-		p := proposal.NewProposal(stateHeight-1, 1, b)
+		p := proposal.NewProposal(consHeight-1, 1, b)
 		ts.HelperSignProposal(valKeys[0], p)
 
 		mgr.SetProposal(p)
@@ -89,9 +95,10 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Processing upcoming votes", func(t *testing.T) {
-		v1 := vote.NewPrepareVote(ts.RandHash(), stateHeight+2, 0, valKeys[0].Address())
-		v2 := vote.NewPrepareVote(ts.RandHash(), stateHeight+3, 0, valKeys[0].Address())
-		v3 := vote.NewPrepareVote(ts.RandHash(), stateHeight+4, 0, valKeys[0].Address())
+		consHeight, _ := mgr.HeightRound()
+		v1 := vote.NewPrepareVote(ts.RandHash(), consHeight+1, 0, valKeys[0].Address())
+		v2 := vote.NewPrepareVote(ts.RandHash(), consHeight+2, 0, valKeys[0].Address())
+		v3 := vote.NewPrepareVote(ts.RandHash(), consHeight+3, 0, valKeys[0].Address())
 
 		ts.HelperSignVote(valKeys[0], v1)
 		ts.HelperSignVote(valKeys[0], v2)
@@ -103,15 +110,13 @@ func TestManager(t *testing.T) {
 
 		assert.Len(t, mgr.upcomingVotes, 3)
 
-		blk1, cert1 := ts.GenerateTestBlock(stateHeight + 1)
+		blk1, cert1 := ts.GenerateTestBlock(consHeight)
 		err := st.CommitBlock(blk1, cert1)
 		assert.NoError(t, err)
-		stateHeight++
 
-		blk2, cert2 := ts.GenerateTestBlock(stateHeight + 1)
+		blk2, cert2 := ts.GenerateTestBlock(consHeight + 1)
 		err = st.CommitBlock(blk2, cert2)
 		assert.NoError(t, err)
-		stateHeight++
 
 		mgr.MoveToNewHeight()
 
@@ -119,14 +124,15 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Processing upcoming proposal", func(t *testing.T) {
+		consHeight, _ := mgr.HeightRound()
 		b1, _ := st.ProposeBlock(valKeys[0], valKeys[0].Address())
-		p1 := proposal.NewProposal(stateHeight+2, 0, b1)
+		p1 := proposal.NewProposal(consHeight+1, 0, b1)
 
 		b2, _ := st.ProposeBlock(valKeys[0], valKeys[0].Address())
-		p2 := proposal.NewProposal(stateHeight+3, 0, b2)
+		p2 := proposal.NewProposal(consHeight+2, 0, b2)
 
 		b3, _ := st.ProposeBlock(valKeys[0], valKeys[0].Address())
-		p3 := proposal.NewProposal(stateHeight+4, 0, b3)
+		p3 := proposal.NewProposal(consHeight+3, 0, b3)
 
 		ts.HelperSignProposal(valKeys[0], p1)
 		ts.HelperSignProposal(valKeys[0], p2)
@@ -138,15 +144,13 @@ func TestManager(t *testing.T) {
 
 		assert.Len(t, mgr.upcomingProposals, 3)
 
-		blk1, cert1 := ts.GenerateTestBlock(stateHeight + 1)
+		blk1, cert1 := ts.GenerateTestBlock(consHeight)
 		err := st.CommitBlock(blk1, cert1)
 		assert.NoError(t, err)
-		stateHeight++
 
-		blk2, cert2 := ts.GenerateTestBlock(stateHeight + 1)
+		blk2, cert2 := ts.GenerateTestBlock(consHeight + 1)
 		err = st.CommitBlock(blk2, cert2)
 		assert.NoError(t, err)
-		stateHeight++
 
 		mgr.MoveToNewHeight()
 

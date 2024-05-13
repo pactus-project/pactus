@@ -150,7 +150,7 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 			if i != -1 {
 				link = link[0:i]
 			}
-			_, _ = fmt.Fprintf(buf, "<a href=\"%s\">%s</a></br>", link, pathTemplate)
+			fmt.Fprintf(buf, "<a href=\"%s\">%s</a></br>", link, pathTemplate)
 		}
 
 		return nil

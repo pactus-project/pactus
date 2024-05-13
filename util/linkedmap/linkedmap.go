@@ -122,7 +122,7 @@ func (lm *LinkedMap[K, V]) Remove(key K) bool {
 	return found
 }
 
-// doRemove removes the key-value pair with the specified key from the LinkedMap and linkedlist.LinkedList.
+// doRemove removes the key-value pair with the specified key from the LinkedMap and LinkedList.
 func (lm *LinkedMap[K, V]) doRemove(element *ll.Element[Pair[K, V]], key K) {
 	lm.list.Delete(element)
 	delete(lm.hashmap, key)

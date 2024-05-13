@@ -12,6 +12,7 @@ func TestServicesString(t *testing.T) {
 	assert.Equal(t, New(Foo).String(), "FOO")
 	assert.Equal(t, New(Network, Foo).String(), "NETWORK | FOO")
 	assert.Equal(t, New(5).String(), "NETWORK | 4")
+	assert.Equal(t, New(6).String(), "FOO | 4")
 }
 
 func TestAppend(t *testing.T) {

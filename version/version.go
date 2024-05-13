@@ -19,8 +19,8 @@ var NodeVersion = Version{
 	Meta:  "beta",
 }
 
-// Version defines the version of Pactus software
-// It follows the semantic versioning 2.0.0 spec (http://semver.org/)
+// Version defines the version of Pactus software.
+// It follows the semantic versioning 2.0.0 spec (http://semver.org/).
 type Version struct {
 	Major uint   // Major version number
 	Minor uint   // Minor version number

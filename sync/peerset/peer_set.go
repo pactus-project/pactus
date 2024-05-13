@@ -164,6 +164,8 @@ func (ps *PeerSet) findPeer(pid peer.ID) *peer.Peer {
 	return nil
 }
 
+// FindOrCreatePeer tries to find a peer with the given pid.
+// If not found, it creates a new peer and assigns the pid to it.
 func (ps *PeerSet) findOrCreatePeer(pid peer.ID) *peer.Peer {
 	p := ps.findPeer(pid)
 	if p == nil {
