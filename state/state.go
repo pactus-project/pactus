@@ -491,16 +491,13 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 	st.txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
 
 	// -----------------------------------
-	// Updating score manager
-	if blk.Header().Time().After(time.Now().AddDate(0, -1, -1)) {
+	// Updating the score manager:
+	// This block updates the availability scores.
+	// To enhance syncing efficiency, only blocks with timestamps from the last 10 days are considered.
+	if blk.Header().Time().After(time.Now().AddDate(0, 0, -10)) {
 		prevCert := blk.PrevCertificate()
 		if prevCert != nil {
 			st.scoreMgr.SetCertificate(prevCert)
-
-			// TODO: Remove me after gRPC done
-			for _, num := range st.committee.Committers() {
-				st.logger.Debug("availability score", "val", num, "score", st.scoreMgr.AvailabilityScore(num))
-			}
 		}
 	}
 
