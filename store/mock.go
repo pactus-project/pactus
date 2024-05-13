@@ -81,8 +81,8 @@ func (m *MockStore) SortitionSeed(blockHeight uint32) *sortition.VerifiableSeed 
 }
 
 func (m *MockStore) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
-	for _, block := range m.Blocks {
-		for _, trx := range block.Transactions() {
+	for _, blk := range m.Blocks {
+		for _, trx := range blk.Transactions() {
 			if trx.Payload().Signer() == addr {
 				return trx.PublicKey().(*bls.PublicKey), nil
 			}
@@ -98,15 +98,15 @@ func (m *MockStore) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
 }
 
 func (m *MockStore) Transaction(id tx.ID) (*CommittedTx, error) {
-	for height, block := range m.Blocks {
-		for _, trx := range block.Transactions() {
+	for height, blk := range m.Blocks {
+		for _, trx := range blk.Transactions() {
 			if trx.ID() == id {
 				d, _ := trx.Bytes()
 
 				return &CommittedTx{
 					TxID:      id,
 					Height:    height,
-					BlockTime: block.Header().UnixTime(),
+					BlockTime: blk.Header().UnixTime(),
 					Data:      d,
 				}, nil
 			}
@@ -117,8 +117,8 @@ func (m *MockStore) Transaction(id tx.ID) (*CommittedTx, error) {
 }
 
 func (m *MockStore) AnyRecentTransaction(id tx.ID) bool {
-	for _, block := range m.Blocks {
-		for _, trx := range block.Transactions() {
+	for _, blk := range m.Blocks {
+		for _, trx := range blk.Transactions() {
 			if trx.ID() == id {
 				return true
 			}
@@ -203,9 +203,7 @@ func (m *MockStore) TotalValidators() int32 {
 	return int32(len(m.Validators))
 }
 
-func (m *MockStore) Close() error {
-	return nil
-}
+func (*MockStore) Close() {}
 
 func (m *MockStore) HasAnyBlock() bool {
 	return len(m.Blocks) > 0
@@ -243,7 +241,7 @@ func (m *MockStore) LastCertificate() *certificate.Certificate {
 	return m.LastCert
 }
 
-func (m *MockStore) WriteBatch() error {
+func (*MockStore) WriteBatch() error {
 	return nil
 }
 
@@ -288,6 +286,6 @@ func (m *MockStore) RandomTestVal() *validator.Validator {
 	panic("no validator in sandbox")
 }
 
-func (m *MockStore) IsBanned(_ crypto.Address) bool {
+func (*MockStore) IsBanned(_ crypto.Address) bool {
 	return false
 }

@@ -20,12 +20,12 @@ func DefaultConfig() *Config {
 func (conf *Config) BasicCheck() error {
 	if conf.ChangeProposerTimeout <= 0 {
 		return ConfigError{
-			Reason: "timeout for change proposer can't be negative",
+			Reason: "timeout for change proposer must be greater than zero",
 		}
 	}
 	if conf.ChangeProposerDelta <= 0 {
 		return ConfigError{
-			Reason: "change proposer delta can't be negative",
+			Reason: "change proposer delta must be greater than zero",
 		}
 	}
 	if conf.MinimumAvailabilityScore < 0 || conf.MinimumAvailabilityScore > 1 {

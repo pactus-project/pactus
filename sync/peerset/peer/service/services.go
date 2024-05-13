@@ -34,12 +34,10 @@ func (s Services) String() string {
 	services := ""
 	if util.IsFlagSet(s, Services(Network)) {
 		services += "NETWORK | "
-		s = util.UnsetFlag(s, Services(Network))
 	}
 
 	if util.IsFlagSet(s, Services(Foo)) {
 		services += "FOO | "
-		s = util.UnsetFlag(s, Services(Foo))
 	}
 
 	if s != 0 {

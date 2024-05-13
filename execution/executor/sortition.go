@@ -58,7 +58,7 @@ func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	return nil
 }
 
-func (e *SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
+func (*SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 	val *validator.Validator,
 ) error {
 	if sb.Committee().Size() < sb.Params().CommitteeSize {

@@ -11,6 +11,7 @@ import (
 )
 
 const (
+	// passwordSeparator defines the separator used in basic auth credentials (username:password).
 	passwordSeparator = ":"
 )
 
@@ -24,39 +25,41 @@ var (
 	ErrInvalidPassword         = errors.New("password is invalid")
 )
 
-// CompareBasicAuth compare basic auth with bcrypt algorithm.
-func CompareBasicAuth(basicAuthCredential, user, password string) error {
-	parsedUser, parsedHashedPass, err := ParseHtpasswdAuth(basicAuthCredential)
+// CompareBasicAuth compares a stored credential (username:password_hash) with a provided username and password.
+// It uses bcrypt to securely compare the password hash stored in the credential with the provided password.
+func CompareBasicAuth(storedCredential, user, password string) error {
+	storedUser, storedPasswordHash, err := ExtractBasicAuth(storedCredential)
 	if err != nil {
 		return err
 	}
 
-	if parsedUser != user {
+	if storedUser != user {
 		return ErrInvalidUser
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(parsedHashedPass), []byte(password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(storedPasswordHash), []byte(password)); err != nil {
 		return ErrInvalidPassword
 	}
 
 	return nil
 }
 
-// ParseHtpasswdAuth parse htpasswd auth.
-func ParseHtpasswdAuth(basicAuthCredential string) (string, string, error) {
+// ExtractBasicAuth extracts the user and password or password hash from the given basic auth credential.
+// The credential should be in the form "user:password" or "user:password_hahs".
+func ExtractBasicAuth(basicAuthCredential string) (user, password string, err error) {
 	parts := strings.SplitN(basicAuthCredential, passwordSeparator, 2)
 	if len(parts) != 2 {
 		return "", "", ErrFailedToParseBasicAuth
 	}
 
-	user := parts[0]
-	encodedPassword := parts[1]
+	user = parts[0]
+	password = parts[1]
 
-	return user, encodedPassword, nil
+	return user, password, nil
 }
 
-// ExtractBasicAuthFromContext extract basic auth from incoming context in grpc request.
-func ExtractBasicAuthFromContext(ctx context.Context) (string, string, error) {
+// ExtractBasicAuthFromContext extracts the user and password from the incoming context in gRPC request.
+func ExtractBasicAuthFromContext(ctx context.Context) (user, password string, err error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return "", "", ErrMetadataNotFound

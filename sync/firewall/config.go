@@ -11,6 +11,6 @@ func DefaultConfig() *Config {
 }
 
 // BasicCheck performs basic checks on the configuration.
-func (conf *Config) BasicCheck() error {
+func (*Config) BasicCheck() error {
 	return nil
 }

@@ -16,7 +16,7 @@ func NewTransferExecutor(strict bool) *TransferExecutor {
 	return &TransferExecutor{strict: strict}
 }
 
-func (e *TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
+func (*TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	pld := trx.Payload().(*payload.TransferPayload)
 
 	senderAcc := sb.Account(pld.From)

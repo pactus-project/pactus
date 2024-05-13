@@ -7,7 +7,7 @@ import (
 	"github.com/pactus-project/pactus/util/errors"
 )
 
-func (st *state) validateBlock(blk *block.Block, round int16) error {
+func (st *state) doValidateBlock(blk *block.Block, round int16) error {
 	if blk.Header().Version() != st.params.BlockVersion {
 		return errors.Errorf(errors.ErrInvalidBlock,
 			"invalid version")

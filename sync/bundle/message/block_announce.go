@@ -31,7 +31,7 @@ func (m *BlockAnnounceMessage) Height() uint32 {
 	return m.Certificate.Height()
 }
 
-func (m *BlockAnnounceMessage) Type() Type {
+func (*BlockAnnounceMessage) Type() Type {
 	return TypeBlockAnnounce
 }
 

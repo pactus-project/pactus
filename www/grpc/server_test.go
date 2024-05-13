@@ -103,7 +103,7 @@ func setup(t *testing.T, conf *Config) *testData {
 
 func (td *testData) StopServer() {
 	td.server.StopServer()
-	td.listener.Close()
+	_ = td.listener.Close()
 }
 
 func (td *testData) bufDialer(context.Context, string) (net.Conn, error) {

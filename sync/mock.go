@@ -50,18 +50,18 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 	}
 }
 
-func (m *MockSync) Start() error {
+func (*MockSync) Start() error {
 	return nil
 }
 
-func (m *MockSync) Stop() {
+func (*MockSync) Stop() {
 }
 
 func (m *MockSync) SelfID() peer.ID {
 	return m.TestID
 }
 
-func (m *MockSync) Moniker() string {
+func (*MockSync) Moniker() string {
 	return "test-moniker"
 }
 

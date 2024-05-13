@@ -66,7 +66,7 @@ func NewSandbox(height uint32, str store.Reader, params *param.Params,
 	return sb
 }
 
-func (sb *sandbox) shouldPanicForDuplicatedAddress() {
+func (*sandbox) shouldPanicForDuplicatedAddress() {
 	//
 	// Why is it necessary to panic here?
 	//
@@ -75,7 +75,7 @@ func (sb *sandbox) shouldPanicForDuplicatedAddress() {
 	logger.Panic("duplicated address")
 }
 
-func (sb *sandbox) shouldPanicForUnknownAddress() {
+func (*sandbox) shouldPanicForUnknownAddress() {
 	//
 	// Why is it necessary to panic here?
 	//

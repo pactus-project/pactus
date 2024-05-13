@@ -18,7 +18,7 @@ func (m *VoteMessage) BasicCheck() error {
 	return m.Vote.BasicCheck()
 }
 
-func (m *VoteMessage) Type() Type {
+func (*VoteMessage) Type() Type {
 	return TypeVote
 }
 

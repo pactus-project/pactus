@@ -35,11 +35,9 @@ func newStreamService(ctx context.Context, host lp2phost.Host,
 	return s
 }
 
-func (s *streamService) Start() {
-}
+func (*streamService) Start() {}
 
-func (s *streamService) Stop() {
-}
+func (*streamService) Stop() {}
 
 func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 	from := stream.Conn().RemotePeer()

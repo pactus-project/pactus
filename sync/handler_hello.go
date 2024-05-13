@@ -86,7 +86,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 	return nil
 }
 
-func (handler *helloHandler) PrepareBundle(m message.Message) *bundle.Bundle {
+func (*helloHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	bdl := bundle.NewBundle(m)
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagHandshaking)
 

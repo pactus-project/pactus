@@ -29,8 +29,8 @@ func TestManager(t *testing.T) {
 	blk, cert := ts.GenerateTestBlock(stateHeight)
 	st.TestStore.SaveBlock(blk, cert)
 
-	Mgr := NewManager(testConfig(), st, valKeys, rewardAddrs, broadcastCh)
-	mgr := Mgr.(*manager)
+	mgrInst := NewManager(testConfig(), st, valKeys, rewardAddrs, broadcastCh)
+	mgr := mgrInst.(*manager)
 
 	consA := mgr.instances[0].(*consensus) // active
 	consB := mgr.instances[1].(*consensus) // inactive
@@ -103,13 +103,13 @@ func TestManager(t *testing.T) {
 
 		assert.Len(t, mgr.upcomingVotes, 3)
 
-		blk, cert := ts.GenerateTestBlock(stateHeight + 1)
-		err := st.CommitBlock(blk, cert)
+		blk1, cert1 := ts.GenerateTestBlock(stateHeight + 1)
+		err := st.CommitBlock(blk1, cert1)
 		assert.NoError(t, err)
 		stateHeight++
 
-		blk, cert = ts.GenerateTestBlock(stateHeight + 1)
-		err = st.CommitBlock(blk, cert)
+		blk2, cert2 := ts.GenerateTestBlock(stateHeight + 1)
+		err = st.CommitBlock(blk2, cert2)
 		assert.NoError(t, err)
 		stateHeight++
 
@@ -138,13 +138,13 @@ func TestManager(t *testing.T) {
 
 		assert.Len(t, mgr.upcomingProposals, 3)
 
-		blk, cert := ts.GenerateTestBlock(stateHeight + 1)
-		err := st.CommitBlock(blk, cert)
+		blk1, cert1 := ts.GenerateTestBlock(stateHeight + 1)
+		err := st.CommitBlock(blk1, cert1)
 		assert.NoError(t, err)
 		stateHeight++
 
-		blk, cert = ts.GenerateTestBlock(stateHeight + 1)
-		err = st.CommitBlock(blk, cert)
+		blk2, cert2 := ts.GenerateTestBlock(stateHeight + 1)
+		err = st.CommitBlock(blk2, cert2)
 		assert.NoError(t, err)
 		stateHeight++
 
@@ -172,8 +172,8 @@ func TestMediator(t *testing.T) {
 	blk, cert := ts.GenerateTestBlock(stateHeight)
 	st.TestStore.SaveBlock(blk, cert)
 
-	Mgr := NewManager(testConfig(), st, valKeys, rewardAddrs, broadcastCh)
-	mgr := Mgr.(*manager)
+	mgrInst := NewManager(testConfig(), st, valKeys, rewardAddrs, broadcastCh)
+	mgr := mgrInst.(*manager)
 
 	mgr.MoveToNewHeight()
 

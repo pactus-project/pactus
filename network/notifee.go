@@ -28,7 +28,7 @@ func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel cha
 	peerMgr *peerMgr,
 	protocolID lp2pcore.ProtocolID, log *logger.SubLogger,
 ) *NotifeeService {
-	events := []interface{}{
+	events := []any{
 		new(lp2pevent.EvtLocalReachabilityChanged),
 		new(lp2pevent.EvtPeerIdentificationCompleted),
 		new(lp2pevent.EvtPeerIdentificationFailed),
@@ -88,7 +88,7 @@ func (s *NotifeeService) Start() {
 }
 
 func (s *NotifeeService) Stop() {
-	s.lp2pEventSub.Close()
+	_ = s.lp2pEventSub.Close()
 }
 
 func (s *NotifeeService) Reachability() lp2pnetwork.Reachability {

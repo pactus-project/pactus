@@ -60,7 +60,7 @@ func (mgr *manager) Start() error {
 }
 
 // Stop stops the manager.
-func (mgr *manager) Stop() {
+func (*manager) Stop() {
 }
 
 // Instances return all consensus instances that are read-only and

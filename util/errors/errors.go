@@ -61,7 +61,7 @@ func Error(code int) error {
 	}
 }
 
-func Errorf(code int, format string, a ...interface{}) error {
+func Errorf(code int, format string, a ...any) error {
 	message, ok := messages[code]
 	if !ok {
 		message = "Unknown error code"

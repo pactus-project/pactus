@@ -583,10 +583,10 @@ func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 
 // weAreInTheCommittee checks if one of the validators is a member of the committee
 // at the current height.
-func (sync *synchronizer) shouldPropagateGeneralMessage(_ *network.GossipMessage) bool {
+func (*synchronizer) shouldPropagateGeneralMessage(_ *network.GossipMessage) bool {
 	return true
 }
 
-func (sync *synchronizer) shouldPropagateConsensusMessage(_ *network.GossipMessage) bool {
+func (*synchronizer) shouldPropagateConsensusMessage(_ *network.GossipMessage) bool {
 	return true
 }

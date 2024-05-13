@@ -19,7 +19,8 @@ func MockingTxPool() *MockTxPool {
 		Txs: make([]*tx.Tx, 0),
 	}
 }
-func (m *MockTxPool) SetNewSandboxAndRecheck(_ sandbox.Sandbox) {}
+func (*MockTxPool) SetNewSandboxAndRecheck(_ sandbox.Sandbox) {}
+
 func (m *MockTxPool) PendingTx(id tx.ID) *tx.Tx {
 	for _, t := range m.Txs {
 		if t.ID() == id {
@@ -48,7 +49,7 @@ func (m *MockTxPool) Size() int {
 	return len(m.Txs)
 }
 
-func (m *MockTxPool) String() string {
+func (*MockTxPool) String() string {
 	return ""
 }
 
@@ -64,7 +65,7 @@ func (m *MockTxPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	return nil
 }
 
-func (m *MockTxPool) RemoveTx(_ hash.Hash) {
+func (*MockTxPool) RemoveTx(_ hash.Hash) {
 	// This test pools is shared between different test objects
 	// delete(m.Txs, id)
 }

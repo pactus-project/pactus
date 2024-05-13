@@ -64,18 +64,18 @@ func (s *proposeState) createProposal(height uint32, round int16) {
 	s.logger.Info("proposal signed and broadcasted", "proposal", prop)
 }
 
-func (s *proposeState) onAddVote(_ *vote.Vote) {
+func (*proposeState) onAddVote(_ *vote.Vote) {
 	panic("Unreachable")
 }
 
-func (s *proposeState) onSetProposal(_ *proposal.Proposal) {
+func (*proposeState) onSetProposal(_ *proposal.Proposal) {
 	panic("Unreachable")
 }
 
-func (s *proposeState) onTimeout(_ *ticker) {
+func (*proposeState) onTimeout(_ *ticker) {
 	panic("Unreachable")
 }
 
-func (s *proposeState) name() string {
+func (*proposeState) name() string {
 	return "propose"
 }

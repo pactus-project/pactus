@@ -110,7 +110,7 @@ func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
 	return nil
 }
 
-func (exe *Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
+func (*Execution) checkFee(trx *tx.Tx, sb sandbox.Sandbox) error {
 	var fee amount.Amount
 	if trx.IsSubsidyTx() {
 		fee = 0

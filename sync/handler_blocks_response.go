@@ -50,7 +50,7 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, pid peer.I
 	return nil
 }
 
-func (handler *blocksResponseHandler) PrepareBundle(m message.Message) *bundle.Bundle {
+func (*blocksResponseHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	bdl := bundle.NewBundle(m)
 	bdl.CompressIt()
 

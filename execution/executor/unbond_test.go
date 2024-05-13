@@ -18,9 +18,9 @@ func TestExecuteUnbondTx(t *testing.T) {
 	bonderAcc.SubtractFromBalance(stake)
 	td.sandbox.UpdateAccount(bonderAddr, bonderAcc)
 
-	pub, _ := td.RandBLSKeyPair()
-	valAddr := pub.ValidatorAddress()
-	val := td.sandbox.MakeNewValidator(pub)
+	valPub, _ := td.RandBLSKeyPair()
+	valAddr := valPub.ValidatorAddress()
+	val := td.sandbox.MakeNewValidator(valPub)
 	val.AddToStake(stake)
 	td.sandbox.UpdateValidator(val)
 	lockTime := td.sandbox.CurrentHeight()

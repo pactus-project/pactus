@@ -15,7 +15,7 @@ type TransferPayload struct {
 	Amount amount.Amount
 }
 
-func (p *TransferPayload) Type() Type {
+func (*TransferPayload) Type() Type {
 	return TypeTransfer
 }
 

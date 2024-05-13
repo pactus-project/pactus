@@ -69,7 +69,7 @@ func setup(t *testing.T, config *Config) *testData {
 	broadcastCh := make(chan message.Message, 1000)
 	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())
 
-	Sync, err := NewSynchronizer(config,
+	syncInst, err := NewSynchronizer(config,
 		valKeys,
 		mockState,
 		consMgr,
@@ -77,7 +77,7 @@ func setup(t *testing.T, config *Config) *testData {
 		broadcastCh,
 	)
 	assert.NoError(t, err)
-	sync := Sync.(*synchronizer)
+	sync := syncInst.(*synchronizer)
 
 	td := &testData{
 		TestSuite:   ts,
@@ -179,7 +179,7 @@ func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, msgType me
 	shouldNotPublishMessageWithThisType(t, td.network, msgType)
 }
 
-func (td *testData) receivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
+func (*testData) receivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
 	bdl := bundle.NewBundle(msg)
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P|bundle.BundleFlagNetworkMainnet)
 

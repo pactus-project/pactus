@@ -64,11 +64,11 @@ func NewConsensus(
 		broadcastCh <- msg
 	}
 
-	return newConsensus(conf, bcState,
+	return makeConsensus(conf, bcState,
 		valKey, rewardAddr, broadcaster, mediator)
 }
 
-func newConsensus(
+func makeConsensus(
 	conf *Config,
 	bcState state.Facade,
 	valKey *bls.ValidatorKey,
@@ -118,7 +118,7 @@ func (cs *consensus) Start() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.moveToNewHeight()
+	cs.doMoveToNewHeight()
 	if cs.active {
 		cs.queryProposal()
 		cs.queryVotes()
@@ -184,10 +184,10 @@ func (cs *consensus) MoveToNewHeight() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.moveToNewHeight()
+	cs.doMoveToNewHeight()
 }
 
-func (cs *consensus) moveToNewHeight() {
+func (cs *consensus) doMoveToNewHeight() {
 	stateHeight := cs.bcState.LastBlockHeight()
 	if cs.height != stateHeight+1 {
 		cs.enterNewState(cs.newHeightState)

@@ -89,7 +89,7 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 		return oldestFirst[i].Data.LastSortitionHeight() < oldestFirst[j].Data.LastSortitionHeight()
 	})
 
-	for i := 0; i <= int(lastRound); i++ {
+	for j := 0; j <= int(lastRound); j++ {
 		c.proposerPos = c.proposerPos.Next
 		if c.proposerPos == nil {
 			c.proposerPos = c.validatorList.Head
@@ -97,14 +97,14 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	}
 
 	adjust := c.validatorList.Length() - c.committeeSize
-	for i := 0; i < adjust; i++ {
-		if oldestFirst[i] == c.proposerPos {
+	for n := 0; n < adjust; n++ {
+		if oldestFirst[n] == c.proposerPos {
 			c.proposerPos = c.proposerPos.Next
 			if c.proposerPos == nil {
 				c.proposerPos = c.validatorList.Head
 			}
 		}
-		c.validatorList.Delete(oldestFirst[i])
+		c.validatorList.Delete(oldestFirst[n])
 	}
 }
 
@@ -144,7 +144,7 @@ func (c *committee) find(addr crypto.Address) *validator.Validator {
 
 // IsProposer checks if the given address is the proposer for the specified round.
 func (c *committee) IsProposer(addr crypto.Address, round int16) bool {
-	p := c.proposer(round)
+	p := c.getProposer(round)
 
 	return p.Address() == addr
 }
@@ -152,10 +152,10 @@ func (c *committee) IsProposer(addr crypto.Address, round int16) bool {
 // Proposer returns an instance of the proposer validator for the specified round.
 // A cloned instance of the proposer is returned to avoid modification of the original object.
 func (c *committee) Proposer(round int16) *validator.Validator {
-	return c.proposer(round).Clone()
+	return c.getProposer(round).Clone()
 }
 
-func (c *committee) proposer(round int16) *validator.Validator {
+func (c *committee) getProposer(round int16) *validator.Validator {
 	pos := c.proposerPos
 	for i := 0; i < int(round); i++ {
 		pos = pos.Next

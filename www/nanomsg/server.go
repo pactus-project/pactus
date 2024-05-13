@@ -68,7 +68,7 @@ func (s *Server) StopServer() {
 	s.logger.Debug("context closed", "reason", s.ctx.Err())
 
 	if s.listener != nil {
-		s.listener.Close()
+		_ = s.listener.Close()
 	}
 }
 

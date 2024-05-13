@@ -138,7 +138,7 @@ func (v *Vote) CPValue() CPValue {
 	return v.data.CPVote.Value
 }
 
-// CPValue returns the change proposer justification for the vote.
+// CPJust returns the change proposer justification for the vote.
 func (v *Vote) CPJust() Just {
 	return v.data.CPVote.Just
 }

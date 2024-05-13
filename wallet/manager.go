@@ -40,14 +40,10 @@ func (w *Manager) createWalletWithMnemonic(
 		return err
 	}
 
-	if err := wlt.Save(); err != nil {
-		return err
-	}
-
-	return nil
+	return wlt.Save()
 }
 
-func (w *Manager) GetValidatorAddress(
+func (*Manager) GetValidatorAddress(
 	publicKey string,
 ) (string, error) {
 	pubKey, err := bls.PublicKeyFromString(publicKey)

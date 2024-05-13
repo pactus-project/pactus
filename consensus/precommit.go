@@ -92,6 +92,6 @@ func (s *precommitState) onTimeout(t *ticker) {
 	}
 }
 
-func (s *precommitState) name() string {
+func (*precommitState) name() string {
 	return "precommit"
 }

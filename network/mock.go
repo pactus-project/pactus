@@ -36,23 +36,23 @@ func MockingNetwork(ts *testsuite.TestSuite, id lp2ppeer.ID) *MockNetwork {
 	}
 }
 
-func (mock *MockNetwork) Start() error {
+func (*MockNetwork) Start() error {
 	return nil
 }
 
-func (mock *MockNetwork) Stop() {}
+func (*MockNetwork) Stop() {}
 
-func (mock *MockNetwork) Protect(_ lp2pcore.PeerID, _ string) {}
+func (*MockNetwork) Protect(_ lp2pcore.PeerID, _ string) {}
 
 func (mock *MockNetwork) EventChannel() <-chan Event {
 	return mock.EventCh
 }
 
-func (mock *MockNetwork) JoinGeneralTopic(_ ShouldPropagate) error {
+func (*MockNetwork) JoinGeneralTopic(_ ShouldPropagate) error {
 	return nil
 }
 
-func (mock *MockNetwork) JoinConsensusTopic(_ ShouldPropagate) error {
+func (*MockNetwork) JoinConsensusTopic(_ ShouldPropagate) error {
 	return nil
 }
 
@@ -127,26 +127,26 @@ func (mock *MockNetwork) AddAnotherNetwork(net *MockNetwork) {
 	mock.OtherNets = append(mock.OtherNets, net)
 }
 
-func (mock *MockNetwork) ReachabilityStatus() string {
+func (*MockNetwork) ReachabilityStatus() string {
 	return "Unknown"
 }
 
-func (mock *MockNetwork) HostAddrs() []string {
+func (*MockNetwork) HostAddrs() []string {
 	return []string{"localhost"}
 }
 
-func (mock *MockNetwork) Name() string {
+func (*MockNetwork) Name() string {
 	return "pactus"
 }
 
-func (mock *MockNetwork) Protocols() []string {
+func (*MockNetwork) Protocols() []string {
 	return []string{"gossip"}
 }
 
-func (mock *MockNetwork) NumInbound() int {
+func (*MockNetwork) NumInbound() int {
 	return 0
 }
 
-func (mock *MockNetwork) NumOutbound() int {
+func (*MockNetwork) NumOutbound() int {
 	return 0
 }

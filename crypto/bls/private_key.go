@@ -63,10 +63,10 @@ func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 	secret = append(secret, ikm...)
 	secret = append(secret, util.I2OSP(big.NewInt(0), 1)...)
 
-	L := int64(48)
+	l := int64(48)
 	pseudoRandomKey := make([]byte, 0, len(keyInfo)+2)
 	pseudoRandomKey = append(pseudoRandomKey, keyInfo...)
-	pseudoRandomKey = append(pseudoRandomKey, util.I2OSP(big.NewInt(L), 2)...)
+	pseudoRandomKey = append(pseudoRandomKey, util.I2OSP(big.NewInt(l), 2)...)
 
 	g1 := bls12381.NewG1()
 
@@ -76,7 +76,7 @@ func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 		h := sha256.Sum256(salt)
 		salt = h[:]
 
-		okm := make([]byte, L)
+		okm := make([]byte, l)
 		prk := hkdf.Extract(sha256.New, secret, salt)
 		reader := hkdf.Expand(sha256.New, prk, pseudoRandomKey)
 		_, _ = reader.Read(okm)

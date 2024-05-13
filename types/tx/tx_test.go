@@ -58,16 +58,16 @@ func TestEncodingTx(t *testing.T) {
 		assert.NoError(t, trx.Encode(w))
 
 		for i := 0; i < length; i++ {
-			trx2 := new(tx.Tx)
+			newTrx := new(tx.Tx)
 			r := util.NewFixedReader(i, w.Bytes())
-			assert.Error(t, trx2.Decode(r), "decode test %v failed", i)
+			assert.Error(t, newTrx.Decode(r), "decode test %v failed", i)
 		}
 
 		bz, err := trx.Bytes()
 		assert.NoError(t, err)
-		trx2, err := tx.FromBytes(bz)
+		decodedTrx, err := tx.FromBytes(bz)
 		assert.NoError(t, err)
-		assert.Equal(t, trx.ID(), trx2.ID())
+		assert.Equal(t, trx.ID(), decodedTrx.ID())
 	}
 
 	_, err := tx.FromBytes([]byte{1})

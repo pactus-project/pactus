@@ -17,12 +17,14 @@ func NewPath(indexes ...uint32) Path {
 	return p
 }
 
-// TODO: check the path should exactly 4 levels.
 func FromString(str string) (Path, error) {
 	sub := strings.Split(str, "/")
 	if sub[0] != "m" {
 		return nil, ErrInvalidPath
 	}
+
+	// TODO: check the path should exactly 4 levels.
+
 	var path []uint32
 	for i := 1; i < len(sub); i++ {
 		indexStr := sub[i]

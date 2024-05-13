@@ -96,8 +96,8 @@ func (td *testData) makeBlockAndCertificate(t *testing.T, round int16) (
 	t.Helper()
 
 	blockProposer := td.state.Proposer(round)
-	valKeyIndex := slices.IndexFunc(td.genValKeys, func(E *bls.ValidatorKey) bool {
-		return E.Address() == blockProposer.Address()
+	valKeyIndex := slices.IndexFunc(td.genValKeys, func(e *bls.ValidatorKey) bool {
+		return e.Address() == blockProposer.Address()
 	})
 	valKey := td.genValKeys[valKeyIndex]
 	blk, _ := td.state.ProposeBlock(valKey, td.RandAccAddress())
@@ -135,7 +135,7 @@ func (td *testData) commitBlocks(t *testing.T, count int) {
 func TestClosingState(t *testing.T) {
 	td := setup(t)
 
-	assert.NoError(t, td.state.Close())
+	td.state.Close()
 }
 
 func TestBlockSubsidyTx(t *testing.T) {

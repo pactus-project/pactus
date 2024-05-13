@@ -18,11 +18,11 @@ func NewQueryProposalMessage(height uint32, querier crypto.Address) *QueryPropos
 	}
 }
 
-func (m *QueryProposalMessage) BasicCheck() error {
+func (*QueryProposalMessage) BasicCheck() error {
 	return nil
 }
 
-func (m *QueryProposalMessage) Type() Type {
+func (*QueryProposalMessage) Type() Type {
 	return TypeQueryProposal
 }
 

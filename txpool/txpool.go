@@ -21,7 +21,7 @@ type txPool struct {
 	config      *Config
 	checker     *execution.Execution
 	sandbox     sandbox.Sandbox
-	pools       map[payload.Type]pool
+	pools       map[payload.Type]payloadPool
 	broadcastCh chan message.Message
 	logger      *logger.SubLogger
 }
@@ -29,12 +29,12 @@ type txPool struct {
 func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 	minValue := conf.minValue()
 
-	pools := make(map[payload.Type]pool)
-	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), minValue)
-	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), 0)
-	pools[payload.TypeUnbond] = newPool(conf.unbondPoolSize(), 0)
-	pools[payload.TypeWithdraw] = newPool(conf.withdrawPoolSize(), minValue)
-	pools[payload.TypeSortition] = newPool(conf.sortitionPoolSize(), 0)
+	pools := make(map[payload.Type]payloadPool)
+	pools[payload.TypeTransfer] = newPayloadPool(conf.transferPoolSize(), minValue)
+	pools[payload.TypeBond] = newPayloadPool(conf.bondPoolSize(), 0)
+	pools[payload.TypeUnbond] = newPayloadPool(conf.unbondPoolSize(), 0)
+	pools[payload.TypeWithdraw] = newPayloadPool(conf.withdrawPoolSize(), minValue)
+	pools[payload.TypeSortition] = newPayloadPool(conf.sortitionPoolSize(), 0)
 
 	pool := &txPool{
 		config:      conf,
@@ -75,7 +75,7 @@ func (p *txPool) AppendTx(trx *tx.Tx) error {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	return p.appendTx(trx)
+	return p.doAppendTx(trx)
 }
 
 // AppendTxAndBroadcast validates the transaction, add it into the transaction pool
@@ -84,7 +84,7 @@ func (p *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	if err := p.appendTx(trx); err != nil {
+	if err := p.doAppendTx(trx); err != nil {
 		return err
 	}
 
@@ -95,7 +95,7 @@ func (p *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	return nil
 }
 
-func (p *txPool) appendTx(trx *tx.Tx) error {
+func (p *txPool) doAppendTx(trx *tx.Tx) error {
 	payloadType := trx.Payload().Type()
 	pool := p.pools[payloadType]
 	if pool.list.Has(trx.ID()) {

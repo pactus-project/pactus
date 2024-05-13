@@ -99,12 +99,13 @@ func (vs *BinaryVoteSet) AddVote(v *vote.Vote) (bool, error) {
 	roundVotes := vs.mustGetRoundVotes(v.CPRound())
 	existingVote, ok := roundVotes.allVotes[v.Signer()]
 	if ok {
-		if existingVote.Hash() != v.Hash() {
-			err = errors.Error(errors.ErrDuplicateVote)
-		} else {
+		if existingVote.Hash() == v.Hash() {
 			// The vote is already added
 			return false, nil
 		}
+
+		// It is a duplicated vote
+		err = errors.Error(errors.ErrDuplicateVote)
 	} else {
 		roundVotes.allVotes[v.Signer()] = v
 		roundVotes.votedPower += power

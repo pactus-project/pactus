@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-func TestParseHtpasswdAuth(t *testing.T) {
+func TestExtractBasicAuth(t *testing.T) {
 	tests := []struct {
 		input           string
 		user            string
@@ -39,7 +39,7 @@ func TestParseHtpasswdAuth(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.user, func(t *testing.T) {
-			user, encodedPass, err := ParseHtpasswdAuth(tt.input)
+			user, encodedPass, err := ExtractBasicAuth(tt.input)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -113,7 +113,7 @@ func BenchmarkParseHtpasswd(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		for _, a := range auth {
-			_, _, err := ParseHtpasswdAuth(a)
+			_, _, err := ExtractBasicAuth(a)
 			if err != nil {
 				b.Fatal(err)
 			}

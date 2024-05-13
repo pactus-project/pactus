@@ -18,6 +18,6 @@ type TxPool interface {
 
 	SetNewSandboxAndRecheck(sb sandbox.Sandbox)
 	AppendTxAndBroadcast(trx *tx.Tx) error
-	AppendTx(tx *tx.Tx) error
+	AppendTx(trx *tx.Tx) error
 	RemoveTx(id tx.ID)
 }

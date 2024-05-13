@@ -15,7 +15,7 @@ type SortitionPayload struct {
 	Proof     sortition.Proof
 }
 
-func (p *SortitionPayload) Type() Type {
+func (*SortitionPayload) Type() Type {
 	return TypeSortition
 }
 
@@ -23,7 +23,7 @@ func (p *SortitionPayload) Signer() crypto.Address {
 	return p.Validator
 }
 
-func (p *SortitionPayload) Value() amount.Amount {
+func (*SortitionPayload) Value() amount.Amount {
 	return 0
 }
 
@@ -37,7 +37,7 @@ func (p *SortitionPayload) BasicCheck() error {
 	return nil
 }
 
-func (p *SortitionPayload) SerializeSize() int {
+func (*SortitionPayload) SerializeSize() int {
 	return 69 // 48+21
 }
 
@@ -59,6 +59,6 @@ func (p *SortitionPayload) String() string {
 		p.Validator.ShortString())
 }
 
-func (p *SortitionPayload) Receiver() *crypto.Address {
+func (*SortitionPayload) Receiver() *crypto.Address {
 	return nil
 }

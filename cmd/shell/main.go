@@ -38,14 +38,14 @@ func main() {
 		return nil
 	})
 
-	changeDefaultParameters := func(cmd *cobra.Command) *cobra.Command {
-		_ = cmd.PersistentFlags().Lookup("server-addr").Value.Set(defaultServerAddr)
-		cmd.PersistentFlags().Lookup("server-addr").DefValue = defaultServerAddr
+	changeDefaultParameters := func(c *cobra.Command) *cobra.Command {
+		_ = c.PersistentFlags().Lookup("server-addr").Value.Set(defaultServerAddr)
+		c.PersistentFlags().Lookup("server-addr").DefValue = defaultServerAddr
 
-		_ = cmd.PersistentFlags().Lookup("response-format").Value.Set(defaultResponseFormat)
-		cmd.PersistentFlags().Lookup("response-format").DefValue = defaultResponseFormat
+		_ = c.PersistentFlags().Lookup("response-format").Value.Set(defaultResponseFormat)
+		c.PersistentFlags().Lookup("response-format").DefValue = defaultResponseFormat
 
-		return cmd
+		return c
 	}
 
 	rootCmd.AddCommand(changeDefaultParameters(pb.BlockchainClientCommand()))

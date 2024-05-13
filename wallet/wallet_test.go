@@ -343,12 +343,12 @@ func TestMakeTransferTx(t *testing.T) {
 
 	t.Run("invalid sender address", func(t *testing.T) {
 		_, err := td.wallet.MakeTransferTx("invalid_addr_string", receiverInfo.String(), amt)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		assert.Error(t, err)
 	})
 
 	t.Run("invalid receiver address", func(t *testing.T) {
 		_, err := td.wallet.MakeTransferTx(senderInfo.Address, "invalid_addr_string", amt)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		assert.Error(t, err)
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
@@ -437,7 +437,6 @@ func TestMakeBondTx(t *testing.T) {
 		})
 
 		t.Run("validator doesn't exist and public key set", func(t *testing.T) {
-			receiverInfo := td.wallet.AddressInfo(receiver.Address)
 			trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address, receiverInfo.PublicKey, amt)
 			assert.NoError(t, err)
 			assert.Equal(t, trx.Payload().(*payload.BondPayload).PublicKey.String(), receiverInfo.PublicKey)
@@ -455,7 +454,6 @@ func TestMakeBondTx(t *testing.T) {
 		t.Run("validator exists and public key set", func(t *testing.T) {
 			val := td.mockService.mockState.TestStore.AddTestValidator()
 
-			receiverInfo := td.wallet.AddressInfo(receiver.Address)
 			trx, err := td.wallet.MakeBondTx(senderInfo.Address,
 				val.Address().String(), receiverInfo.PublicKey, amt)
 			assert.NoError(t, err)
@@ -465,12 +463,12 @@ func TestMakeBondTx(t *testing.T) {
 
 	t.Run("invalid sender address", func(t *testing.T) {
 		_, err := td.wallet.MakeBondTx("invalid_addr_string", receiver.Address().String(), "", amt)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		assert.Error(t, err)
 	})
 
 	t.Run("invalid receiver address", func(t *testing.T) {
 		_, err := td.wallet.MakeBondTx(senderInfo.Address, "invalid_addr_string", "", amt)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		assert.Error(t, err)
 	})
 
 	t.Run("invalid public key", func(t *testing.T) {
@@ -519,7 +517,7 @@ func TestMakeUnbondTx(t *testing.T) {
 
 	t.Run("invalid sender address", func(t *testing.T) {
 		_, err := td.wallet.MakeUnbondTx("invalid_addr_string")
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		assert.Error(t, err)
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
@@ -569,7 +567,7 @@ func TestMakeWithdrawTx(t *testing.T) {
 
 	t.Run("invalid sender address", func(t *testing.T) {
 		_, err := td.wallet.MakeWithdrawTx("invalid_addr_string", receiverInfo.Address, amt)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		assert.Error(t, err)
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {

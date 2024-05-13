@@ -155,28 +155,28 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	data := make([]byte, 0, 100)
 	if isChildHardened {
 		// Case #1 and #4.
-		if k.isPrivate {
-			// Case #1
-			//
-			// When the child is a hardened child, the key is known to be a
-			// private key.
-			// Pad it with a leading zero as required by [BIP32] for deriving the child.
-			if len(k.key) != 32 {
-				return nil, ErrInvalidKeyData
-			}
-			if k.pubOnG1 {
-				data = append(data, 0x01)
-			} else {
-				data = append(data, 0x00)
-			}
-			data = append(data, k.key...)
-		} else {
+		if !k.isPrivate {
 			// Case #4
 			//
 			// A hardened child extended key may not be created from a public
 			// extended key.
 			return nil, ErrDeriveHardFromPublic
 		}
+
+		// Case #1
+		//
+		// When the child is a hardened child, the key is known to be a
+		// private key.
+		// Pad it with a leading zero as required by [BIP32] for deriving the child.
+		if len(k.key) != 32 {
+			return nil, ErrInvalidKeyData
+		}
+		if k.pubOnG1 {
+			data = append(data, 0x01)
+		} else {
+			data = append(data, 0x00)
+		}
+		data = append(data, k.key...)
 	} else {
 		// Case #2 or #3.
 		//

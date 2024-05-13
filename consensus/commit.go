@@ -32,18 +32,18 @@ func (s *commitState) decide() {
 	s.enterNewState(s.newHeightState)
 }
 
-func (s *commitState) onAddVote(_ *vote.Vote) {
+func (*commitState) onAddVote(_ *vote.Vote) {
 	panic("Unreachable")
 }
 
-func (s *commitState) onSetProposal(_ *proposal.Proposal) {
+func (*commitState) onSetProposal(_ *proposal.Proposal) {
 	panic("Unreachable")
 }
 
-func (s *commitState) onTimeout(_ *ticker) {
+func (*commitState) onTimeout(_ *ticker) {
 	panic("Unreachable")
 }
 
-func (s *commitState) name() string {
+func (*commitState) name() string {
 	return "commit"
 }

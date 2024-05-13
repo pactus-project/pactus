@@ -20,15 +20,15 @@ func TestNumInboundOutbound(t *testing.T) {
 	pid2 := ts.RandPeerID()
 	pid3 := ts.RandPeerID()
 
-	net.peerMgr.peerConnected(pid1, addr, lp2pnet.DirInbound)
-	net.peerMgr.peerConnected(pid1, addr, lp2pnet.DirInbound) // Duplicated event
-	net.peerMgr.peerConnected(pid2, addr, lp2pnet.DirOutbound)
-	net.peerMgr.peerConnected(pid3, addr, lp2pnet.DirOutbound)
+	net.peerMgr.setPeerConnected(pid1, addr, lp2pnet.DirInbound)
+	net.peerMgr.setPeerConnected(pid1, addr, lp2pnet.DirInbound) // Duplicated event
+	net.peerMgr.setPeerConnected(pid2, addr, lp2pnet.DirOutbound)
+	net.peerMgr.setPeerConnected(pid3, addr, lp2pnet.DirOutbound)
 	net.peerMgr.PeerDisconnected(pid1)
 	net.peerMgr.PeerDisconnected(pid1) // Duplicated event
 	net.peerMgr.PeerDisconnected(pid2)
 	net.peerMgr.PeerDisconnected(ts.RandPeerID())
-	net.peerMgr.peerConnected(pid1, addr, lp2pnet.DirInbound) // Connect again
+	net.peerMgr.setPeerConnected(pid1, addr, lp2pnet.DirInbound) // Connect again
 
 	assert.Equal(t, 1, net.NumInbound())
 	assert.Equal(t, 1, net.NumOutbound())

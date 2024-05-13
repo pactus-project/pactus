@@ -86,7 +86,7 @@ func (h *Header) BasicCheck() error {
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the header.
-func (h *Header) SerializeSize() int {
+func (*Header) SerializeSize() int {
 	return 138 // 5 + (2 * 32) + 48 + 21
 }
 

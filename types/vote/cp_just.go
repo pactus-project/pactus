@@ -90,31 +90,31 @@ type JustDecided struct {
 	QCert *certificate.Certificate `cbor:"1,keyasint"`
 }
 
-func (j *JustInitZero) Type() JustType {
+func (*JustInitZero) Type() JustType {
 	return JustTypeInitZero
 }
 
-func (j *JustInitOne) Type() JustType {
+func (*JustInitOne) Type() JustType {
 	return JustTypeInitOne
 }
 
-func (j *JustPreVoteSoft) Type() JustType {
+func (*JustPreVoteSoft) Type() JustType {
 	return JustTypePreVoteSoft
 }
 
-func (j *JustPreVoteHard) Type() JustType {
+func (*JustPreVoteHard) Type() JustType {
 	return JustTypePreVoteHard
 }
 
-func (j *JustMainVoteConflict) Type() JustType {
+func (*JustMainVoteConflict) Type() JustType {
 	return JustTypeMainVoteConflict
 }
 
-func (j *JustMainVoteNoConflict) Type() JustType {
+func (*JustMainVoteNoConflict) Type() JustType {
 	return JustTypeMainVoteNoConflict
 }
 
-func (j *JustDecided) Type() JustType {
+func (*JustDecided) Type() JustType {
 	return JustTypeDecided
 }
 
@@ -122,7 +122,7 @@ func (j *JustInitZero) BasicCheck() error {
 	return j.QCert.BasicCheck()
 }
 
-func (j *JustInitOne) BasicCheck() error {
+func (*JustInitOne) BasicCheck() error {
 	return nil
 }
 

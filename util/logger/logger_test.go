@@ -11,13 +11,13 @@ import (
 
 type Foo struct{}
 
-func (f Foo) String() string {
+func (Foo) String() string {
 	return "foo"
 }
 
 type Bar struct{}
 
-func (f Bar) ShortString() string {
+func (Bar) ShortString() string {
 	return "bar"
 }
 
@@ -133,6 +133,7 @@ func TestInvalidLevel(t *testing.T) {
 
 	out := buf.String()
 	out2 := buf2.String()
+
 	fmt.Println(out)
 	assert.Contains(t, out, "Unknown Level String")
 	assert.NotContains(t, out2, "error")

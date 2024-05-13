@@ -244,7 +244,7 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	// |8|2|3|4|5|6|7|
 	// +-+-+-+-+-+-+-+
 	//
-	//-------------------------------------
+	// -------------------------------------
 	// In this test, we cover the following movements:
 	//
 	// h=1000, r=0        h=1001, r=0        h=1002, r=3        h=1003, r=0

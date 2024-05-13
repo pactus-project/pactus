@@ -17,7 +17,7 @@ type BondPayload struct {
 	Stake     amount.Amount
 }
 
-func (p *BondPayload) Type() Type {
+func (*BondPayload) Type() Type {
 	return TypeBond
 }
 

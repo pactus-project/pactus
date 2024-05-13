@@ -129,14 +129,14 @@ func (g *gossipService) JoinTopic(name string, sp ShouldPropagate) (*lp2pps.Topi
 }
 
 // Start starts the gossip service.
-func (g *gossipService) Start() {
+func (*gossipService) Start() {
 }
 
 // Stop stops the gossip service.
 // It closes all the joined topics and cancels all the subscriptions.
 func (g *gossipService) Stop() {
 	for _, t := range g.topics {
-		t.Close()
+		_ = t.Close()
 	}
 	for _, s := range g.subs {
 		s.Cancel()

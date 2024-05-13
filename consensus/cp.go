@@ -14,7 +14,7 @@ type changeProposer struct {
 	*consensus
 }
 
-func (cp *changeProposer) onSetProposal(_ *proposal.Proposal) {
+func (*changeProposer) onSetProposal(_ *proposal.Proposal) {
 	// Ignore proposal
 }
 
@@ -25,7 +25,7 @@ func (cp *changeProposer) onTimeout(t *ticker) {
 	}
 }
 
-func (cp *changeProposer) checkCPValue(vte *vote.Vote, allowedValues ...vote.CPValue) error {
+func (*changeProposer) checkCPValue(vte *vote.Vote, allowedValues ...vote.CPValue) error {
 	for _, v := range allowedValues {
 		if vte.CPValue() == v {
 			return nil
@@ -63,7 +63,7 @@ func (cp *changeProposer) checkJustInitZero(just vote.Just, blockHash hash.Hash)
 	return nil
 }
 
-func (cp *changeProposer) checkJustInitOne(just vote.Just) error {
+func (*changeProposer) checkJustInitOne(just vote.Just) error {
 	_, ok := just.(*vote.JustInitOne)
 	if !ok {
 		return invalidJustificationError{

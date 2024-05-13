@@ -78,7 +78,7 @@ func (mgr *peerMgr) Start() {
 	}()
 }
 
-func (mgr *peerMgr) Stop() {
+func (*peerMgr) Stop() {
 }
 
 func (mgr *peerMgr) PeerConnected(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
@@ -87,10 +87,10 @@ func (mgr *peerMgr) PeerConnected(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
 	mgr.lk.Lock()
 	defer mgr.lk.Unlock()
 
-	mgr.peerConnected(pid, ma, direction)
+	mgr.setPeerConnected(pid, ma, direction)
 }
 
-func (mgr *peerMgr) peerConnected(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
+func (mgr *peerMgr) setPeerConnected(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
 	direction lp2pnet.Direction,
 ) {
 	pi, exists := mgr.peers[pid]
@@ -120,10 +120,10 @@ func (mgr *peerMgr) PeerDisconnected(pid lp2ppeer.ID) {
 	mgr.lk.Lock()
 	defer mgr.lk.Unlock()
 
-	mgr.peerDisconnected(pid)
+	mgr.setPeerDisconnected(pid)
 }
 
-func (mgr *peerMgr) peerDisconnected(pid lp2ppeer.ID) {
+func (mgr *peerMgr) setPeerDisconnected(pid lp2ppeer.ID) {
 	pi, exists := mgr.peers[pid]
 	if !exists {
 		return

@@ -178,7 +178,7 @@ func (ts *TestSuite) RandString(length int) string {
 }
 
 // DecodingHex decodes the input string from hexadecimal format and returns the resulting byte slice.
-func (ts *TestSuite) DecodingHex(in string) []byte {
+func (*TestSuite) DecodingHex(in string) []byte {
 	d, err := hex.DecodeString(in)
 	if err != nil {
 		panic(err)
@@ -281,21 +281,21 @@ func (ts *TestSuite) GenerateTestValidator(number int32) (*validator.Validator, 
 // GenerateTestBlockWithProposer generates a block with the give proposer address for testing purposes.
 func (ts *TestSuite) GenerateTestBlockWithProposer(height uint32, proposer crypto.Address,
 ) (*block.Block, *certificate.Certificate) {
-	return ts.generateTestBlock(height, proposer, util.Now())
+	return ts.makeTestBlock(height, proposer, util.Now())
 }
 
 // GenerateTestBlockWithTime generates a block with the given time for testing purposes.
 func (ts *TestSuite) GenerateTestBlockWithTime(height uint32, tme time.Time,
 ) (*block.Block, *certificate.Certificate) {
-	return ts.generateTestBlock(height, ts.RandValAddress(), tme)
+	return ts.makeTestBlock(height, ts.RandValAddress(), tme)
 }
 
 // GenerateTestBlock generates a block for testing purposes.
 func (ts *TestSuite) GenerateTestBlock(height uint32) (*block.Block, *certificate.Certificate) {
-	return ts.generateTestBlock(height, ts.RandValAddress(), util.Now())
+	return ts.makeTestBlock(height, ts.RandValAddress(), util.Now())
 }
 
-func (ts *TestSuite) generateTestBlock(height uint32, proposer crypto.Address, tme time.Time,
+func (ts *TestSuite) makeTestBlock(height uint32, proposer crypto.Address, tme time.Time,
 ) (*block.Block, *certificate.Certificate) {
 	txs := block.NewTxs()
 	tx1, _ := ts.GenerateTestTransferTx()
@@ -462,7 +462,7 @@ func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls
 	return cmt, valKeys
 }
 
-func (ts *TestSuite) HelperSignVote(valKey *bls.ValidatorKey, v *vote.Vote) {
+func (*TestSuite) HelperSignVote(valKey *bls.ValidatorKey, v *vote.Vote) {
 	sig := valKey.Sign(v.SignBytes())
 	v.SetSignature(sig)
 
@@ -471,7 +471,7 @@ func (ts *TestSuite) HelperSignVote(valKey *bls.ValidatorKey, v *vote.Vote) {
 	}
 }
 
-func (ts *TestSuite) HelperSignProposal(valKey *bls.ValidatorKey, p *proposal.Proposal) {
+func (*TestSuite) HelperSignProposal(valKey *bls.ValidatorKey, p *proposal.Proposal) {
 	sig := valKey.Sign(p.SignBytes())
 	p.SetSignature(sig)
 
@@ -480,7 +480,7 @@ func (ts *TestSuite) HelperSignProposal(valKey *bls.ValidatorKey, p *proposal.Pr
 	}
 }
 
-func (ts *TestSuite) HelperSignTransaction(prv crypto.PrivateKey, trx *tx.Tx) {
+func (*TestSuite) HelperSignTransaction(prv crypto.PrivateKey, trx *tx.Tx) {
 	sig := prv.Sign(trx.SignBytes())
 	trx.SetSignature(sig)
 	trx.SetPublicKey(prv.PublicKey())

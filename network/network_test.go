@@ -25,7 +25,7 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 	t.Helper()
 
 	log := logger.NewSubLogger("_network", nil)
-	net, err := newNetwork(conf, log, opts)
+	net, err := makeNetwork(conf, log, opts)
 	require.NoError(t, err)
 
 	log.SetObj(testsuite.NewOverrideStringer(
