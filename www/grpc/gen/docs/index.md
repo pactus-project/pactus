@@ -963,8 +963,8 @@ Response message containing information about the overall network.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | network_name | [string](#string) |  | Name of the network. |
-| total_sent_bytes | [uint32](#uint32) |  | Total bytes sent across the network. |
-| total_received_bytes | [uint32](#uint32) |  | Total bytes received across the network. |
+| total_sent_bytes | [int64](#int64) |  | Total bytes sent across the network. |
+| total_received_bytes | [int64](#int64) |  | Total bytes received across the network. |
 | connected_peers_count | [uint32](#uint32) |  | Number of connected peers. |
 | connected_peers | [PeerInfo](#pactus-PeerInfo) | repeated | List of connected peers. |
 | sent_bytes | [GetNetworkInfoResponse.SentBytesEntry](#pactus-GetNetworkInfoResponse-SentBytesEntry) | repeated | Bytes sent per peer ID. |
@@ -983,8 +983,8 @@ Response message containing information about the overall network.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| key | [uint32](#uint32) |  |  |
-| value | [uint64](#uint64) |  |  |
+| key | [int32](#int32) |  |  |
+| value | [int64](#int64) |  |  |
 
 
 
@@ -999,8 +999,8 @@ Response message containing information about the overall network.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| key | [uint32](#uint32) |  |  |
-| value | [uint64](#uint64) |  |  |
+| key | [int32](#int32) |  |  |
+| value | [int64](#int64) |  |  |
 
 
 
@@ -1061,10 +1061,10 @@ Information about a peer in the network.
 | services | [uint32](#uint32) |  | Services provided by the peer. |
 | last_block_hash | [bytes](#bytes) |  | Hash of the last block the peer knows. |
 | height | [uint32](#uint32) |  | Height of the peer in the blockchain. |
-| received_messages | [int32](#int32) |  | Count of received messages. |
-| invalid_messages | [int32](#int32) |  | Count of invalid messages received. |
-| last_sent | [int64](#int64) |  | Timestamp of the last sent message. |
-| last_received | [int64](#int64) |  | Timestamp of the last received message. |
+| received_bundles | [int32](#int32) |  | Count of received bundles. |
+| invalid_bundles | [int32](#int32) |  | Count of invalid bundles received. |
+| last_sent | [int64](#int64) |  | Timestamp of the last sent bundle. |
+| last_received | [int64](#int64) |  | Timestamp of the last received bundle. |
 | sent_bytes | [PeerInfo.SentBytesEntry](#pactus-PeerInfo-SentBytesEntry) | repeated | Bytes sent per message type. |
 | received_bytes | [PeerInfo.ReceivedBytesEntry](#pactus-PeerInfo-ReceivedBytesEntry) | repeated | Bytes received per message type. |
 | address | [string](#string) |  | Network address of the peer. |

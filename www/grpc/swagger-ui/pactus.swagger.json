@@ -1530,12 +1530,12 @@
           "description": "Name of the network."
         },
         "totalSentBytes": {
-          "type": "integer",
+          "type": "string",
           "format": "int64",
           "description": "Total bytes sent across the network."
         },
         "totalReceivedBytes": {
-          "type": "integer",
+          "type": "string",
           "format": "int64",
           "description": "Total bytes received across the network."
         },
@@ -1556,7 +1556,7 @@
           "type": "object",
           "additionalProperties": {
             "type": "string",
-            "format": "uint64"
+            "format": "int64"
           },
           "description": "Bytes sent per peer ID."
         },
@@ -1564,7 +1564,7 @@
           "type": "object",
           "additionalProperties": {
             "type": "string",
-            "format": "uint64"
+            "format": "int64"
           },
           "description": "Bytes received per peer ID."
         }
@@ -1939,25 +1939,25 @@
           "format": "int64",
           "description": "Height of the peer in the blockchain."
         },
-        "receivedMessages": {
+        "receivedBundles": {
           "type": "integer",
           "format": "int32",
-          "description": "Count of received messages."
+          "description": "Count of received bundles."
         },
-        "invalidMessages": {
+        "invalidBundles": {
           "type": "integer",
           "format": "int32",
-          "description": "Count of invalid messages received."
+          "description": "Count of invalid bundles received."
         },
         "lastSent": {
           "type": "string",
           "format": "int64",
-          "description": "Timestamp of the last sent message."
+          "description": "Timestamp of the last sent bundle."
         },
         "lastReceived": {
           "type": "string",
           "format": "int64",
-          "description": "Timestamp of the last received message."
+          "description": "Timestamp of the last received bundle."
         },
         "sentBytes": {
           "type": "object",

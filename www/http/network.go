@@ -3,6 +3,7 @@ package http
 import (
 	"fmt"
 	"net/http"
+	"sort"
 	"time"
 
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
@@ -30,7 +31,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 	onlyConnected := false
 
 	onlyConnectedParam := r.URL.Query().Get("onlyConnected")
-	if onlyConnectedParam == "ture" {
+	if onlyConnectedParam == "true" {
 		onlyConnected = true
 	}
 
@@ -44,12 +45,38 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	printSortedMap := func(tm *tableMaker, stats map[int32]int64) {
+		keys := make([]int32, 0, len(stats))
+		for k := range stats {
+			keys = append(keys, k)
+		}
+
+		sort.Slice(keys, func(i, j int) bool {
+			return stats[keys[i]] > stats[keys[j]]
+		})
+
+		for _, key := range keys {
+			tm.addRowInt(message.Type(key).String(), int(stats[key]))
+		}
+	}
+
 	tm := newTableMaker()
 	tm.addRowString("Network Name", res.NetworkName)
 	tm.addRowInt("Total Sent Bytes", int(res.TotalSentBytes))
 	tm.addRowInt("Total Received Bytes", int(res.TotalReceivedBytes))
 	tm.addRowInt("Connected Peers Count", int(res.ConnectedPeersCount))
+
+	tm.addRowString("ReceivedBytes", "---")
+	printSortedMap(tm, res.ReceivedBytes)
+
+	tm.addRowString("SentBytes", "---")
+	printSortedMap(tm, res.SentBytes)
+
 	tm.addRowString("Peers", "---")
+
+	sort.Slice(res.ConnectedPeers, func(i, j int) bool {
+		return res.ConnectedPeers[i].ReceivedBundles > res.ConnectedPeers[j].ReceivedBundles
+	})
 
 	for i, p := range res.ConnectedPeers {
 		pid, _ := lp2ppeer.IDFromBytes(p.PeerId)
@@ -68,16 +95,15 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		tm.addRowInt("Height", int(p.Height))
 		tm.addRowInt("TotalSessions", int(p.TotalSessions))
 		tm.addRowInt("CompletedSessions", int(p.CompletedSessions))
-		tm.addRowInt("InvalidBundles", int(p.InvalidMessages))
-		tm.addRowInt("ReceivedBundles", int(p.ReceivedMessages))
+		tm.addRowInt("InvalidBundles", int(p.InvalidBundles))
+		tm.addRowInt("ReceivedBundles", int(p.ReceivedBundles))
+
 		tm.addRowString("ReceivedBytes", "---")
-		for key, value := range p.ReceivedBytes {
-			tm.addRowInt(message.Type(key).String(), int(value))
-		}
+		printSortedMap(tm, p.ReceivedBytes)
+
 		tm.addRowString("SentBytes", "---")
-		for key, value := range p.SentBytes {
-			tm.addRowInt(message.Type(key).String(), int(value))
-		}
+		printSortedMap(tm, p.SentBytes)
+
 		for _, key := range p.ConsensusKeys {
 			pub, _ := bls.PublicKeyFromString(key)
 			tm.addRowString("  PublicKey", pub.String())

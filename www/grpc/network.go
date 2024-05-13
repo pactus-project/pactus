@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"unsafe"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
@@ -80,16 +79,24 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		p.Services = uint32(peer.Services)
 		p.Height = peer.Height
 		p.Protocols = peer.Protocols
-		p.ReceivedMessages = int32(peer.ReceivedBundles)
-		p.InvalidMessages = int32(peer.InvalidBundles)
-		p.ReceivedBytes = *(*map[int32]int64)(unsafe.Pointer(&peer.ReceivedBytes))
-		p.SentBytes = *(*map[int32]int64)(unsafe.Pointer(&peer.SentBytes))
+		p.ReceivedBundles = int32(peer.ReceivedBundles)
+		p.InvalidBundles = int32(peer.InvalidBundles)
 		p.Status = int32(peer.Status)
 		p.LastSent = peer.LastSent.Unix()
 		p.LastReceived = peer.LastReceived.Unix()
 		p.LastBlockHash = peer.LastBlockHash.Bytes()
 		p.TotalSessions = int32(peer.TotalSessions)
 		p.CompletedSessions = int32(peer.CompletedSessions)
+
+		p.ReceivedBytes = make(map[int32]int64)
+		for msgType, bytes := range peer.ReceivedBytes {
+			p.ReceivedBytes[int32(msgType)] = bytes
+		}
+
+		p.SentBytes = make(map[int32]int64)
+		for msgType, bytes := range peer.SentBytes {
+			p.SentBytes[int32(msgType)] = bytes
+		}
 
 		for _, key := range peer.ConsensusKeys {
 			p.ConsensusKeys = append(p.ConsensusKeys, key.String())
@@ -99,16 +106,23 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		return false
 	})
 
-	sentBytes := ps.SentBytes()
-	receivedBytes := ps.ReceivedBytes()
+	sentBytes := make(map[int32]int64)
+	for msgType, bytes := range ps.SentBytes() {
+		sentBytes[int32(msgType)] = bytes
+	}
+
+	receivedBytes := make(map[int32]int64)
+	for msgType, bytes := range ps.ReceivedBytes() {
+		receivedBytes[int32(msgType)] = bytes
+	}
 
 	return &pactus.GetNetworkInfoResponse{
-		TotalSentBytes:      uint32(ps.TotalSentBytes()),
-		TotalReceivedBytes:  uint32(ps.TotalReceivedBytes()),
+		TotalSentBytes:      ps.TotalSentBytes(),
+		TotalReceivedBytes:  ps.TotalReceivedBytes(),
 		NetworkName:         s.net.Name(),
 		ConnectedPeersCount: uint32(len(peerInfos)),
 		ConnectedPeers:      peerInfos,
-		SentBytes:           *(*map[uint32]uint64)(unsafe.Pointer(&sentBytes)),
-		ReceivedBytes:       *(*map[uint32]uint64)(unsafe.Pointer(&receivedBytes)),
+		SentBytes:           sentBytes,
+		ReceivedBytes:       receivedBytes,
 	}, nil
 }

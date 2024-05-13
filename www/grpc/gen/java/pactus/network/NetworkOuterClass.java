@@ -542,20 +542,20 @@ public final class NetworkOuterClass {
      * Total bytes sent across the network.
      * </pre>
      *
-     * <code>uint32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+     * <code>int64 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
      * @return The totalSentBytes.
      */
-    int getTotalSentBytes();
+    long getTotalSentBytes();
 
     /**
      * <pre>
      * Total bytes received across the network.
      * </pre>
      *
-     * <code>uint32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+     * <code>int64 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
      * @return The totalReceivedBytes.
      */
-    int getTotalReceivedBytes();
+    long getTotalReceivedBytes();
 
     /**
      * <pre>
@@ -616,7 +616,7 @@ public final class NetworkOuterClass {
      * Bytes sent per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+     * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
      */
     int getSentBytesCount();
     /**
@@ -624,7 +624,7 @@ public final class NetworkOuterClass {
      * Bytes sent per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+     * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
      */
     boolean containsSentBytes(
         int key);
@@ -639,7 +639,7 @@ public final class NetworkOuterClass {
      * Bytes sent per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+     * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
      */
     java.util.Map<java.lang.Integer, java.lang.Long>
     getSentBytesMap();
@@ -648,7 +648,7 @@ public final class NetworkOuterClass {
      * Bytes sent per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+     * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
      */
 
     long getSentBytesOrDefault(
@@ -659,7 +659,7 @@ public final class NetworkOuterClass {
      * Bytes sent per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+     * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
      */
 
     long getSentBytesOrThrow(
@@ -670,7 +670,7 @@ public final class NetworkOuterClass {
      * Bytes received per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+     * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
      */
     int getReceivedBytesCount();
     /**
@@ -678,7 +678,7 @@ public final class NetworkOuterClass {
      * Bytes received per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+     * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
      */
     boolean containsReceivedBytes(
         int key);
@@ -693,7 +693,7 @@ public final class NetworkOuterClass {
      * Bytes received per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+     * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
      */
     java.util.Map<java.lang.Integer, java.lang.Long>
     getReceivedBytesMap();
@@ -702,7 +702,7 @@ public final class NetworkOuterClass {
      * Bytes received per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+     * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
      */
 
     long getReceivedBytesOrDefault(
@@ -713,7 +713,7 @@ public final class NetworkOuterClass {
      * Bytes received per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+     * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
      */
 
     long getReceivedBytesOrThrow(
@@ -826,32 +826,32 @@ public final class NetworkOuterClass {
     }
 
     public static final int TOTAL_SENT_BYTES_FIELD_NUMBER = 2;
-    private int totalSentBytes_;
+    private long totalSentBytes_;
     /**
      * <pre>
      * Total bytes sent across the network.
      * </pre>
      *
-     * <code>uint32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+     * <code>int64 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
      * @return The totalSentBytes.
      */
     @java.lang.Override
-    public int getTotalSentBytes() {
+    public long getTotalSentBytes() {
       return totalSentBytes_;
     }
 
     public static final int TOTAL_RECEIVED_BYTES_FIELD_NUMBER = 3;
-    private int totalReceivedBytes_;
+    private long totalReceivedBytes_;
     /**
      * <pre>
      * Total bytes received across the network.
      * </pre>
      *
-     * <code>uint32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+     * <code>int64 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
      * @return The totalReceivedBytes.
      */
     @java.lang.Override
-    public int getTotalReceivedBytes() {
+    public long getTotalReceivedBytes() {
       return totalReceivedBytes_;
     }
 
@@ -941,9 +941,9 @@ public final class NetworkOuterClass {
               com.google.protobuf.MapEntry
               .<java.lang.Integer, java.lang.Long>newDefaultInstance(
                   pactus.network.NetworkOuterClass.internal_static_pactus_GetNetworkInfoResponse_SentBytesEntry_descriptor, 
-                  com.google.protobuf.WireFormat.FieldType.UINT32,
+                  com.google.protobuf.WireFormat.FieldType.INT32,
                   0,
-                  com.google.protobuf.WireFormat.FieldType.UINT64,
+                  com.google.protobuf.WireFormat.FieldType.INT64,
                   0L);
     }
     private com.google.protobuf.MapField<
@@ -965,7 +965,7 @@ public final class NetworkOuterClass {
      * Bytes sent per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+     * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
      */
 
     @java.lang.Override
@@ -987,7 +987,7 @@ public final class NetworkOuterClass {
      * Bytes sent per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+     * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
      */
     @java.lang.Override
 
@@ -999,7 +999,7 @@ public final class NetworkOuterClass {
      * Bytes sent per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+     * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
      */
     @java.lang.Override
 
@@ -1016,7 +1016,7 @@ public final class NetworkOuterClass {
      * Bytes sent per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+     * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
      */
     @java.lang.Override
 
@@ -1038,9 +1038,9 @@ public final class NetworkOuterClass {
               com.google.protobuf.MapEntry
               .<java.lang.Integer, java.lang.Long>newDefaultInstance(
                   pactus.network.NetworkOuterClass.internal_static_pactus_GetNetworkInfoResponse_ReceivedBytesEntry_descriptor, 
-                  com.google.protobuf.WireFormat.FieldType.UINT32,
+                  com.google.protobuf.WireFormat.FieldType.INT32,
                   0,
-                  com.google.protobuf.WireFormat.FieldType.UINT64,
+                  com.google.protobuf.WireFormat.FieldType.INT64,
                   0L);
     }
     private com.google.protobuf.MapField<
@@ -1062,7 +1062,7 @@ public final class NetworkOuterClass {
      * Bytes received per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+     * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
      */
 
     @java.lang.Override
@@ -1084,7 +1084,7 @@ public final class NetworkOuterClass {
      * Bytes received per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+     * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
      */
     @java.lang.Override
 
@@ -1096,7 +1096,7 @@ public final class NetworkOuterClass {
      * Bytes received per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+     * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
      */
     @java.lang.Override
 
@@ -1113,7 +1113,7 @@ public final class NetworkOuterClass {
      * Bytes received per peer ID.
      * </pre>
      *
-     * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+     * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
      */
     @java.lang.Override
 
@@ -1145,11 +1145,11 @@ public final class NetworkOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(networkName_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, networkName_);
       }
-      if (totalSentBytes_ != 0) {
-        output.writeUInt32(2, totalSentBytes_);
+      if (totalSentBytes_ != 0L) {
+        output.writeInt64(2, totalSentBytes_);
       }
-      if (totalReceivedBytes_ != 0) {
-        output.writeUInt32(3, totalReceivedBytes_);
+      if (totalReceivedBytes_ != 0L) {
+        output.writeInt64(3, totalReceivedBytes_);
       }
       if (connectedPeersCount4_ != 0) {
         output.writeUInt32(4, connectedPeersCount4_);
@@ -1181,13 +1181,13 @@ public final class NetworkOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(networkName_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, networkName_);
       }
-      if (totalSentBytes_ != 0) {
+      if (totalSentBytes_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(2, totalSentBytes_);
+          .computeInt64Size(2, totalSentBytes_);
       }
-      if (totalReceivedBytes_ != 0) {
+      if (totalReceivedBytes_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(3, totalReceivedBytes_);
+          .computeInt64Size(3, totalReceivedBytes_);
       }
       if (connectedPeersCount4_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -1260,9 +1260,11 @@ public final class NetworkOuterClass {
       hash = (37 * hash) + NETWORK_NAME_FIELD_NUMBER;
       hash = (53 * hash) + getNetworkName().hashCode();
       hash = (37 * hash) + TOTAL_SENT_BYTES_FIELD_NUMBER;
-      hash = (53 * hash) + getTotalSentBytes();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getTotalSentBytes());
       hash = (37 * hash) + TOTAL_RECEIVED_BYTES_FIELD_NUMBER;
-      hash = (53 * hash) + getTotalReceivedBytes();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getTotalReceivedBytes());
       hash = (37 * hash) + CONNECTED_PEERS_COUNT_FIELD_NUMBER;
       hash = (53 * hash) + getConnectedPeersCount4();
       if (getConnectedPeers5Count() > 0) {
@@ -1437,9 +1439,9 @@ public final class NetworkOuterClass {
         super.clear();
         networkName_ = "";
 
-        totalSentBytes_ = 0;
+        totalSentBytes_ = 0L;
 
-        totalReceivedBytes_ = 0;
+        totalReceivedBytes_ = 0L;
 
         connectedPeersCount4_ = 0;
 
@@ -1548,10 +1550,10 @@ public final class NetworkOuterClass {
           networkName_ = other.networkName_;
           onChanged();
         }
-        if (other.getTotalSentBytes() != 0) {
+        if (other.getTotalSentBytes() != 0L) {
           setTotalSentBytes(other.getTotalSentBytes());
         }
-        if (other.getTotalReceivedBytes() != 0) {
+        if (other.getTotalReceivedBytes() != 0L) {
           setTotalReceivedBytes(other.getTotalReceivedBytes());
         }
         if (other.getConnectedPeersCount4() != 0) {
@@ -1619,12 +1621,12 @@ public final class NetworkOuterClass {
                 break;
               } // case 10
               case 16: {
-                totalSentBytes_ = input.readUInt32();
+                totalSentBytes_ = input.readInt64();
 
                 break;
               } // case 16
               case 24: {
-                totalReceivedBytes_ = input.readUInt32();
+                totalReceivedBytes_ = input.readInt64();
 
                 break;
               } // case 24
@@ -1775,17 +1777,17 @@ public final class NetworkOuterClass {
         return this;
       }
 
-      private int totalSentBytes_ ;
+      private long totalSentBytes_ ;
       /**
        * <pre>
        * Total bytes sent across the network.
        * </pre>
        *
-       * <code>uint32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+       * <code>int64 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
        * @return The totalSentBytes.
        */
       @java.lang.Override
-      public int getTotalSentBytes() {
+      public long getTotalSentBytes() {
         return totalSentBytes_;
       }
       /**
@@ -1793,11 +1795,11 @@ public final class NetworkOuterClass {
        * Total bytes sent across the network.
        * </pre>
        *
-       * <code>uint32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+       * <code>int64 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
        * @param value The totalSentBytes to set.
        * @return This builder for chaining.
        */
-      public Builder setTotalSentBytes(int value) {
+      public Builder setTotalSentBytes(long value) {
         
         totalSentBytes_ = value;
         onChanged();
@@ -1808,27 +1810,27 @@ public final class NetworkOuterClass {
        * Total bytes sent across the network.
        * </pre>
        *
-       * <code>uint32 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
+       * <code>int64 total_sent_bytes = 2 [json_name = "totalSentBytes"];</code>
        * @return This builder for chaining.
        */
       public Builder clearTotalSentBytes() {
         
-        totalSentBytes_ = 0;
+        totalSentBytes_ = 0L;
         onChanged();
         return this;
       }
 
-      private int totalReceivedBytes_ ;
+      private long totalReceivedBytes_ ;
       /**
        * <pre>
        * Total bytes received across the network.
        * </pre>
        *
-       * <code>uint32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+       * <code>int64 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
        * @return The totalReceivedBytes.
        */
       @java.lang.Override
-      public int getTotalReceivedBytes() {
+      public long getTotalReceivedBytes() {
         return totalReceivedBytes_;
       }
       /**
@@ -1836,11 +1838,11 @@ public final class NetworkOuterClass {
        * Total bytes received across the network.
        * </pre>
        *
-       * <code>uint32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+       * <code>int64 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
        * @param value The totalReceivedBytes to set.
        * @return This builder for chaining.
        */
-      public Builder setTotalReceivedBytes(int value) {
+      public Builder setTotalReceivedBytes(long value) {
         
         totalReceivedBytes_ = value;
         onChanged();
@@ -1851,12 +1853,12 @@ public final class NetworkOuterClass {
        * Total bytes received across the network.
        * </pre>
        *
-       * <code>uint32 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
+       * <code>int64 total_received_bytes = 3 [json_name = "totalReceivedBytes"];</code>
        * @return This builder for chaining.
        */
       public Builder clearTotalReceivedBytes() {
         
-        totalReceivedBytes_ = 0;
+        totalReceivedBytes_ = 0L;
         onChanged();
         return this;
       }
@@ -2247,7 +2249,7 @@ public final class NetworkOuterClass {
        * Bytes sent per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+       * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
        */
 
       @java.lang.Override
@@ -2269,7 +2271,7 @@ public final class NetworkOuterClass {
        * Bytes sent per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+       * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
        */
       @java.lang.Override
 
@@ -2281,7 +2283,7 @@ public final class NetworkOuterClass {
        * Bytes sent per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+       * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
        */
       @java.lang.Override
 
@@ -2298,7 +2300,7 @@ public final class NetworkOuterClass {
        * Bytes sent per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+       * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
        */
       @java.lang.Override
 
@@ -2323,7 +2325,7 @@ public final class NetworkOuterClass {
        * Bytes sent per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+       * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
        */
 
       public Builder removeSentBytes(
@@ -2346,7 +2348,7 @@ public final class NetworkOuterClass {
        * Bytes sent per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+       * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
        */
       public Builder putSentBytes(
           int key,
@@ -2362,7 +2364,7 @@ public final class NetworkOuterClass {
        * Bytes sent per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
+       * <code>map&lt;int32, int64&gt; sent_bytes = 6 [json_name = "sentBytes"];</code>
        */
 
       public Builder putAllSentBytes(
@@ -2403,7 +2405,7 @@ public final class NetworkOuterClass {
        * Bytes received per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+       * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
        */
 
       @java.lang.Override
@@ -2425,7 +2427,7 @@ public final class NetworkOuterClass {
        * Bytes received per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+       * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
        */
       @java.lang.Override
 
@@ -2437,7 +2439,7 @@ public final class NetworkOuterClass {
        * Bytes received per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+       * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
        */
       @java.lang.Override
 
@@ -2454,7 +2456,7 @@ public final class NetworkOuterClass {
        * Bytes received per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+       * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
        */
       @java.lang.Override
 
@@ -2479,7 +2481,7 @@ public final class NetworkOuterClass {
        * Bytes received per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+       * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
        */
 
       public Builder removeReceivedBytes(
@@ -2502,7 +2504,7 @@ public final class NetworkOuterClass {
        * Bytes received per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+       * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
        */
       public Builder putReceivedBytes(
           int key,
@@ -2518,7 +2520,7 @@ public final class NetworkOuterClass {
        * Bytes received per peer ID.
        * </pre>
        *
-       * <code>map&lt;uint32, uint64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
+       * <code>map&lt;int32, int64&gt; received_bytes = 7 [json_name = "receivedBytes"];</code>
        */
 
       public Builder putAllReceivedBytes(
@@ -5677,27 +5679,27 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Count of received messages.
+     * Count of received bundles.
      * </pre>
      *
-     * <code>int32 received_messages = 10 [json_name = "receivedMessages"];</code>
-     * @return The receivedMessages.
+     * <code>int32 received_bundles = 10 [json_name = "receivedBundles"];</code>
+     * @return The receivedBundles.
      */
-    int getReceivedMessages();
+    int getReceivedBundles();
 
     /**
      * <pre>
-     * Count of invalid messages received.
+     * Count of invalid bundles received.
      * </pre>
      *
-     * <code>int32 invalid_messages = 11 [json_name = "invalidMessages"];</code>
-     * @return The invalidMessages.
+     * <code>int32 invalid_bundles = 11 [json_name = "invalidBundles"];</code>
+     * @return The invalidBundles.
      */
-    int getInvalidMessages();
+    int getInvalidBundles();
 
     /**
      * <pre>
-     * Timestamp of the last sent message.
+     * Timestamp of the last sent bundle.
      * </pre>
      *
      * <code>int64 last_sent = 12 [json_name = "lastSent"];</code>
@@ -5707,7 +5709,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Timestamp of the last received message.
+     * Timestamp of the last received bundle.
      * </pre>
      *
      * <code>int64 last_received = 13 [json_name = "lastReceived"];</code>
@@ -6260,41 +6262,41 @@ public final class NetworkOuterClass {
       return height_;
     }
 
-    public static final int RECEIVED_MESSAGES_FIELD_NUMBER = 10;
-    private int receivedMessages_;
+    public static final int RECEIVED_BUNDLES_FIELD_NUMBER = 10;
+    private int receivedBundles_;
     /**
      * <pre>
-     * Count of received messages.
+     * Count of received bundles.
      * </pre>
      *
-     * <code>int32 received_messages = 10 [json_name = "receivedMessages"];</code>
-     * @return The receivedMessages.
+     * <code>int32 received_bundles = 10 [json_name = "receivedBundles"];</code>
+     * @return The receivedBundles.
      */
     @java.lang.Override
-    public int getReceivedMessages() {
-      return receivedMessages_;
+    public int getReceivedBundles() {
+      return receivedBundles_;
     }
 
-    public static final int INVALID_MESSAGES_FIELD_NUMBER = 11;
-    private int invalidMessages_;
+    public static final int INVALID_BUNDLES_FIELD_NUMBER = 11;
+    private int invalidBundles_;
     /**
      * <pre>
-     * Count of invalid messages received.
+     * Count of invalid bundles received.
      * </pre>
      *
-     * <code>int32 invalid_messages = 11 [json_name = "invalidMessages"];</code>
-     * @return The invalidMessages.
+     * <code>int32 invalid_bundles = 11 [json_name = "invalidBundles"];</code>
+     * @return The invalidBundles.
      */
     @java.lang.Override
-    public int getInvalidMessages() {
-      return invalidMessages_;
+    public int getInvalidBundles() {
+      return invalidBundles_;
     }
 
     public static final int LAST_SENT_FIELD_NUMBER = 12;
     private long lastSent_;
     /**
      * <pre>
-     * Timestamp of the last sent message.
+     * Timestamp of the last sent bundle.
      * </pre>
      *
      * <code>int64 last_sent = 12 [json_name = "lastSent"];</code>
@@ -6309,7 +6311,7 @@ public final class NetworkOuterClass {
     private long lastReceived_;
     /**
      * <pre>
-     * Timestamp of the last received message.
+     * Timestamp of the last received bundle.
      * </pre>
      *
      * <code>int64 last_received = 13 [json_name = "lastReceived"];</code>
@@ -6728,11 +6730,11 @@ public final class NetworkOuterClass {
       if (height_ != 0) {
         output.writeUInt32(9, height_);
       }
-      if (receivedMessages_ != 0) {
-        output.writeInt32(10, receivedMessages_);
+      if (receivedBundles_ != 0) {
+        output.writeInt32(10, receivedBundles_);
       }
-      if (invalidMessages_ != 0) {
-        output.writeInt32(11, invalidMessages_);
+      if (invalidBundles_ != 0) {
+        output.writeInt32(11, invalidBundles_);
       }
       if (lastSent_ != 0L) {
         output.writeInt64(12, lastSent_);
@@ -6818,13 +6820,13 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt32Size(9, height_);
       }
-      if (receivedMessages_ != 0) {
+      if (receivedBundles_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(10, receivedMessages_);
+          .computeInt32Size(10, receivedBundles_);
       }
-      if (invalidMessages_ != 0) {
+      if (invalidBundles_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(11, invalidMessages_);
+          .computeInt32Size(11, invalidBundles_);
       }
       if (lastSent_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
@@ -6909,10 +6911,10 @@ public final class NetworkOuterClass {
           .equals(other.getLastBlockHash())) return false;
       if (getHeight()
           != other.getHeight()) return false;
-      if (getReceivedMessages()
-          != other.getReceivedMessages()) return false;
-      if (getInvalidMessages()
-          != other.getInvalidMessages()) return false;
+      if (getReceivedBundles()
+          != other.getReceivedBundles()) return false;
+      if (getInvalidBundles()
+          != other.getInvalidBundles()) return false;
       if (getLastSent()
           != other.getLastSent()) return false;
       if (getLastReceived()
@@ -6964,10 +6966,10 @@ public final class NetworkOuterClass {
       hash = (53 * hash) + getLastBlockHash().hashCode();
       hash = (37 * hash) + HEIGHT_FIELD_NUMBER;
       hash = (53 * hash) + getHeight();
-      hash = (37 * hash) + RECEIVED_MESSAGES_FIELD_NUMBER;
-      hash = (53 * hash) + getReceivedMessages();
-      hash = (37 * hash) + INVALID_MESSAGES_FIELD_NUMBER;
-      hash = (53 * hash) + getInvalidMessages();
+      hash = (37 * hash) + RECEIVED_BUNDLES_FIELD_NUMBER;
+      hash = (53 * hash) + getReceivedBundles();
+      hash = (37 * hash) + INVALID_BUNDLES_FIELD_NUMBER;
+      hash = (53 * hash) + getInvalidBundles();
       hash = (37 * hash) + LAST_SENT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getLastSent());
@@ -7170,9 +7172,9 @@ public final class NetworkOuterClass {
 
         height_ = 0;
 
-        receivedMessages_ = 0;
+        receivedBundles_ = 0;
 
-        invalidMessages_ = 0;
+        invalidBundles_ = 0;
 
         lastSent_ = 0L;
 
@@ -7234,8 +7236,8 @@ public final class NetworkOuterClass {
         result.services_ = services_;
         result.lastBlockHash_ = lastBlockHash_;
         result.height_ = height_;
-        result.receivedMessages_ = receivedMessages_;
-        result.invalidMessages_ = invalidMessages_;
+        result.receivedBundles_ = receivedBundles_;
+        result.invalidBundles_ = invalidBundles_;
         result.lastSent_ = lastSent_;
         result.lastReceived_ = lastReceived_;
         result.sentBytes_ = internalGetSentBytes();
@@ -7342,11 +7344,11 @@ public final class NetworkOuterClass {
         if (other.getHeight() != 0) {
           setHeight(other.getHeight());
         }
-        if (other.getReceivedMessages() != 0) {
-          setReceivedMessages(other.getReceivedMessages());
+        if (other.getReceivedBundles() != 0) {
+          setReceivedBundles(other.getReceivedBundles());
         }
-        if (other.getInvalidMessages() != 0) {
-          setInvalidMessages(other.getInvalidMessages());
+        if (other.getInvalidBundles() != 0) {
+          setInvalidBundles(other.getInvalidBundles());
         }
         if (other.getLastSent() != 0L) {
           setLastSent(other.getLastSent());
@@ -7456,12 +7458,12 @@ public final class NetworkOuterClass {
                 break;
               } // case 72
               case 80: {
-                receivedMessages_ = input.readInt32();
+                receivedBundles_ = input.readInt32();
 
                 break;
               } // case 80
               case 88: {
-                invalidMessages_ = input.readInt32();
+                invalidBundles_ = input.readInt32();
 
                 break;
               } // case 88
@@ -8239,88 +8241,88 @@ public final class NetworkOuterClass {
         return this;
       }
 
-      private int receivedMessages_ ;
+      private int receivedBundles_ ;
       /**
        * <pre>
-       * Count of received messages.
+       * Count of received bundles.
        * </pre>
        *
-       * <code>int32 received_messages = 10 [json_name = "receivedMessages"];</code>
-       * @return The receivedMessages.
+       * <code>int32 received_bundles = 10 [json_name = "receivedBundles"];</code>
+       * @return The receivedBundles.
        */
       @java.lang.Override
-      public int getReceivedMessages() {
-        return receivedMessages_;
+      public int getReceivedBundles() {
+        return receivedBundles_;
       }
       /**
        * <pre>
-       * Count of received messages.
+       * Count of received bundles.
        * </pre>
        *
-       * <code>int32 received_messages = 10 [json_name = "receivedMessages"];</code>
-       * @param value The receivedMessages to set.
+       * <code>int32 received_bundles = 10 [json_name = "receivedBundles"];</code>
+       * @param value The receivedBundles to set.
        * @return This builder for chaining.
        */
-      public Builder setReceivedMessages(int value) {
+      public Builder setReceivedBundles(int value) {
         
-        receivedMessages_ = value;
+        receivedBundles_ = value;
         onChanged();
         return this;
       }
       /**
        * <pre>
-       * Count of received messages.
+       * Count of received bundles.
        * </pre>
        *
-       * <code>int32 received_messages = 10 [json_name = "receivedMessages"];</code>
+       * <code>int32 received_bundles = 10 [json_name = "receivedBundles"];</code>
        * @return This builder for chaining.
        */
-      public Builder clearReceivedMessages() {
+      public Builder clearReceivedBundles() {
         
-        receivedMessages_ = 0;
+        receivedBundles_ = 0;
         onChanged();
         return this;
       }
 
-      private int invalidMessages_ ;
+      private int invalidBundles_ ;
       /**
        * <pre>
-       * Count of invalid messages received.
+       * Count of invalid bundles received.
        * </pre>
        *
-       * <code>int32 invalid_messages = 11 [json_name = "invalidMessages"];</code>
-       * @return The invalidMessages.
+       * <code>int32 invalid_bundles = 11 [json_name = "invalidBundles"];</code>
+       * @return The invalidBundles.
        */
       @java.lang.Override
-      public int getInvalidMessages() {
-        return invalidMessages_;
+      public int getInvalidBundles() {
+        return invalidBundles_;
       }
       /**
        * <pre>
-       * Count of invalid messages received.
+       * Count of invalid bundles received.
        * </pre>
        *
-       * <code>int32 invalid_messages = 11 [json_name = "invalidMessages"];</code>
-       * @param value The invalidMessages to set.
+       * <code>int32 invalid_bundles = 11 [json_name = "invalidBundles"];</code>
+       * @param value The invalidBundles to set.
        * @return This builder for chaining.
        */
-      public Builder setInvalidMessages(int value) {
+      public Builder setInvalidBundles(int value) {
         
-        invalidMessages_ = value;
+        invalidBundles_ = value;
         onChanged();
         return this;
       }
       /**
        * <pre>
-       * Count of invalid messages received.
+       * Count of invalid bundles received.
        * </pre>
        *
-       * <code>int32 invalid_messages = 11 [json_name = "invalidMessages"];</code>
+       * <code>int32 invalid_bundles = 11 [json_name = "invalidBundles"];</code>
        * @return This builder for chaining.
        */
-      public Builder clearInvalidMessages() {
+      public Builder clearInvalidBundles() {
         
-        invalidMessages_ = 0;
+        invalidBundles_ = 0;
         onChanged();
         return this;
       }
@@ -8328,7 +8330,7 @@ public final class NetworkOuterClass {
       private long lastSent_ ;
       /**
        * <pre>
-       * Timestamp of the last sent message.
+       * Timestamp of the last sent bundle.
        * </pre>
        *
        * <code>int64 last_sent = 12 [json_name = "lastSent"];</code>
@@ -8340,7 +8342,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Timestamp of the last sent message.
+       * Timestamp of the last sent bundle.
        * </pre>
        *
        * <code>int64 last_sent = 12 [json_name = "lastSent"];</code>
@@ -8355,7 +8357,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Timestamp of the last sent message.
+       * Timestamp of the last sent bundle.
        * </pre>
        *
        * <code>int64 last_sent = 12 [json_name = "lastSent"];</code>
@@ -8371,7 +8373,7 @@ public final class NetworkOuterClass {
       private long lastReceived_ ;
       /**
        * <pre>
-       * Timestamp of the last received message.
+       * Timestamp of the last received bundle.
        * </pre>
        *
        * <code>int64 last_received = 13 [json_name = "lastReceived"];</code>
@@ -8383,7 +8385,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Timestamp of the last received message.
+       * Timestamp of the last received bundle.
        * </pre>
        *
        * <code>int64 last_received = 13 [json_name = "lastReceived"];</code>
@@ -8398,7 +8400,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Timestamp of the last received message.
+       * Timestamp of the last received bundle.
        * </pre>
        *
        * <code>int64 last_received = 13 [json_name = "lastReceived"];</code>
@@ -9268,8 +9270,8 @@ public final class NetworkOuterClass {
       "oRequest\022%\n\016only_connected\030\001 \001(\010R\ronlyCo" +
       "nnected\"\256\004\n\026GetNetworkInfoResponse\022!\n\014ne" +
       "twork_name\030\001 \001(\tR\013networkName\022(\n\020total_s" +
-      "ent_bytes\030\002 \001(\rR\016totalSentBytes\0220\n\024total" +
-      "_received_bytes\030\003 \001(\rR\022totalReceivedByte" +
+      "ent_bytes\030\002 \001(\003R\016totalSentBytes\0220\n\024total" +
+      "_received_bytes\030\003 \001(\003R\022totalReceivedByte" +
       "s\0222\n\025connected_peers_count\030\004 \001(\rR\023connec" +
       "tedPeersCount\0229\n\017connected_peers\030\005 \003(\0132\020" +
       ".pactus.PeerInfoR\016connectedPeers\022L\n\nsent" +
@@ -9277,9 +9279,9 @@ public final class NetworkOuterClass {
       "onse.SentBytesEntryR\tsentBytes\022X\n\016receiv" +
       "ed_bytes\030\007 \003(\01321.pactus.GetNetworkInfoRe" +
       "sponse.ReceivedBytesEntryR\rreceivedBytes" +
-      "\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\rR\003key\022\024\n\005" +
-      "value\030\002 \001(\004R\005value:\0028\001\032@\n\022ReceivedBytesE" +
-      "ntry\022\020\n\003key\030\001 \001(\rR\003key\022\024\n\005value\030\002 \001(\004R\005v" +
+      "\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005" +
+      "value\030\002 \001(\003R\005value:\0028\001\032@\n\022ReceivedBytesE" +
+      "ntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005v" +
       "alue:\0028\001\"\024\n\022GetNodeInfoRequest\"\236\003\n\023GetNo" +
       "deInfoResponse\022\030\n\007moniker\030\001 \001(\tR\007moniker" +
       "\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R" +
@@ -9291,35 +9293,35 @@ public final class NetworkOuterClass {
       "nections\030\n \001(\004R\013connections\022/\n\023inbound_c" +
       "onnections\030\013 \001(\004R\022inboundConnections\0221\n\024" +
       "outbound_connections\030\014 \001(\004R\023outboundConn" +
-      "ections\"\355\006\n\010PeerInfo\022\026\n\006status\030\001 \001(\005R\006st" +
+      "ections\"\351\006\n\010PeerInfo\022\026\n\006status\030\001 \001(\005R\006st" +
       "atus\022\030\n\007moniker\030\002 \001(\tR\007moniker\022\024\n\005agent\030" +
       "\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\014R\006peerId\022%\n" +
       "\016consensus_keys\030\005 \003(\tR\rconsensusKeys\022+\n\021" +
       "consensus_address\030\006 \003(\tR\020consensusAddres" +
       "s\022\032\n\010services\030\007 \001(\rR\010services\022&\n\017last_bl" +
       "ock_hash\030\010 \001(\014R\rlastBlockHash\022\026\n\006height\030" +
-      "\t \001(\rR\006height\022+\n\021received_messages\030\n \001(\005" +
-      "R\020receivedMessages\022)\n\020invalid_messages\030\013" +
-      " \001(\005R\017invalidMessages\022\033\n\tlast_sent\030\014 \001(\003" +
-      "R\010lastSent\022#\n\rlast_received\030\r \001(\003R\014lastR" +
-      "eceived\022>\n\nsent_bytes\030\016 \003(\0132\037.pactus.Pee" +
-      "rInfo.SentBytesEntryR\tsentBytes\022J\n\016recei" +
-      "ved_bytes\030\017 \003(\0132#.pactus.PeerInfo.Receiv" +
-      "edBytesEntryR\rreceivedBytes\022\030\n\007address\030\020" +
-      " \001(\tR\007address\022\034\n\tdirection\030\021 \001(\tR\tdirect" +
-      "ion\022\034\n\tprotocols\030\022 \003(\tR\tprotocols\022%\n\016tot" +
-      "al_sessions\030\023 \001(\005R\rtotalSessions\022-\n\022comp" +
-      "leted_sessions\030\024 \001(\005R\021completedSessions\032" +
-      "<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005v" +
-      "alue\030\002 \001(\003R\005value:\0028\001\032@\n\022ReceivedBytesEn" +
-      "try\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005va" +
-      "lue:\0028\0012\242\001\n\007Network\022O\n\016GetNetworkInfo\022\035." +
-      "pactus.GetNetworkInfoRequest\032\036.pactus.Ge" +
-      "tNetworkInfoResponse\022F\n\013GetNodeInfo\022\032.pa" +
-      "ctus.GetNodeInfoRequest\032\033.pactus.GetNode" +
-      "InfoResponseBB\n\016pactus.networkZ0github.c" +
-      "om/pactus-project/pactus/www/grpc/pactus" +
-      "b\006proto3"
+      "\t \001(\rR\006height\022)\n\020received_bundles\030\n \001(\005R" +
+      "\017receivedBundles\022\'\n\017invalid_bundles\030\013 \001(" +
+      "\005R\016invalidBundles\022\033\n\tlast_sent\030\014 \001(\003R\010la" +
+      "stSent\022#\n\rlast_received\030\r \001(\003R\014lastRecei" +
+      "ved\022>\n\nsent_bytes\030\016 \003(\0132\037.pactus.PeerInf" +
+      "o.SentBytesEntryR\tsentBytes\022J\n\016received_" +
+      "bytes\030\017 \003(\0132#.pactus.PeerInfo.ReceivedBy" +
+      "tesEntryR\rreceivedBytes\022\030\n\007address\030\020 \001(\t" +
+      "R\007address\022\034\n\tdirection\030\021 \001(\tR\tdirection\022" +
+      "\034\n\tprotocols\030\022 \003(\tR\tprotocols\022%\n\016total_s" +
+      "essions\030\023 \001(\005R\rtotalSessions\022-\n\022complete" +
+      "d_sessions\030\024 \001(\005R\021completedSessions\032<\n\016S" +
+      "entBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value" +
+      "\030\002 \001(\003R\005value:\0028\001\032@\n\022ReceivedBytesEntry\022" +
+      "\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005value:" +
+      "\0028\0012\242\001\n\007Network\022O\n\016GetNetworkInfo\022\035.pact" +
+      "us.GetNetworkInfoRequest\032\036.pactus.GetNet" +
+      "workInfoResponse\022F\n\013GetNodeInfo\022\032.pactus" +
+      ".GetNodeInfoRequest\032\033.pactus.GetNodeInfo" +
+      "ResponseBB\n\016pactus.networkZ0github.com/p" +
+      "actus-project/pactus/www/grpc/pactusb\006pr" +
+      "oto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -9366,7 +9368,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
-        new java.lang.String[] { "Status", "Moniker", "Agent", "PeerId", "ConsensusKeys", "ConsensusAddress", "Services", "LastBlockHash", "Height", "ReceivedMessages", "InvalidMessages", "LastSent", "LastReceived", "SentBytes", "ReceivedBytes", "Address", "Direction", "Protocols", "TotalSessions", "CompletedSessions", });
+        new java.lang.String[] { "Status", "Moniker", "Agent", "PeerId", "ConsensusKeys", "ConsensusAddress", "Services", "LastBlockHash", "Height", "ReceivedBundles", "InvalidBundles", "LastSent", "LastReceived", "SentBytes", "ReceivedBytes", "Address", "Direction", "Protocols", "TotalSessions", "CompletedSessions", });
     internal_static_pactus_PeerInfo_SentBytesEntry_descriptor =
       internal_static_pactus_PeerInfo_descriptor.getNestedTypes().get(0);
     internal_static_pactus_PeerInfo_SentBytesEntry_fieldAccessorTable = new
