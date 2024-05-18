@@ -23,6 +23,7 @@ const (
 	ErrDuplicateVote
 
 	ErrCount
+	ErrNtpError
 )
 
 var messages = map[int]string{
@@ -42,6 +43,7 @@ var messages = map[int]string{
 	ErrInvalidVote:       "invalid vote",
 	ErrInvalidMessage:    "invalid message",
 	ErrDuplicateVote:     "duplicate vote",
+	ErrNtpError:          "error on getting clock offset",
 }
 
 type withCodeError struct {

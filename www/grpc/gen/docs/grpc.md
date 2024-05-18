@@ -2246,6 +2246,12 @@ GetNodeInfoResponse
         <a href="#uint64">uint64</a>
       </td>
       <td>Number of outbound connections </td>
+    </tr><tr>
+      <td class="fw-bold">clock_offset</td>
+      <td>
+        <a href="#double">double</a>
+      </td>
+      <td>Clock offset </td>
     </tr>
   </tbody>
 </table>  

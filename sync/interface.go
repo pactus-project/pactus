@@ -1,6 +1,8 @@
 package sync
 
 import (
+	"time"
+
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
@@ -13,4 +15,6 @@ type Synchronizer interface {
 	SelfID() peer.ID
 	PeerSet() *peerset.PeerSet
 	Services() service.Services
+	GetClockOffset() (time.Duration, error)
+	OutOfSync(time.Duration) bool
 }

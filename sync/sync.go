@@ -3,6 +3,7 @@ package sync
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -20,6 +21,7 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/ntp"
 )
 
 // IMPORTANT NOTES:
@@ -45,6 +47,7 @@ type synchronizer struct {
 	networkCh   <-chan network.Event
 	network     network.Network
 	logger      *logger.SubLogger
+	ntp         *ntp.Checker
 }
 
 func NewSynchronizer(
@@ -66,6 +69,7 @@ func NewSynchronizer(
 		network:     net,
 		broadcastCh: broadcastCh,
 		networkCh:   net.EventChannel(),
+		ntp:         ntp.NewNtpChecker(1*time.Minute, 1*time.Second),
 	}
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout)
@@ -107,6 +111,7 @@ func (sync *synchronizer) Start() error {
 		return err
 	}
 
+	go sync.ntp.Start()
 	go sync.receiveLoop()
 	go sync.broadcastLoop()
 
@@ -115,7 +120,17 @@ func (sync *synchronizer) Start() error {
 
 func (sync *synchronizer) Stop() {
 	sync.cancel()
+	sync.ntp.Stop()
+
 	sync.logger.Debug("context closed", "reason", sync.ctx.Err())
+}
+
+func (sync *synchronizer) GetClockOffset() (time.Duration, error) {
+	return sync.ntp.GetClockOffset()
+}
+
+func (sync *synchronizer) OutOfSync(offset time.Duration) bool {
+	return sync.ntp.OutOfSync(offset)
 }
 
 func (sync *synchronizer) stateHeight() uint32 {

@@ -33,6 +33,11 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 		servicesNames = append(servicesNames, "NETWORK")
 	}
 
+	clockOffset, err := s.sync.GetClockOffset()
+	if err != nil {
+		s.logger.Warn("failed to get clock offset", "err", err)
+	}
+
 	return &pactus.GetNodeInfoResponse{
 		Moniker:             s.sync.Moniker(),
 		Agent:               version.NodeAgent.String(),
@@ -46,6 +51,7 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 		Connections:         uint64(s.net.NumConnectedPeers()),
 		InboundConnections:  uint64(s.net.NumInbound()),
 		OutboundConnections: uint64(s.net.NumOutbound()),
+		ClockOffset:         clockOffset.Seconds(),
 	}, nil
 }
 

@@ -72,3 +72,11 @@ func (m *MockSync) PeerSet() *peerset.PeerSet {
 func (m *MockSync) Services() service.Services {
 	return m.TestServices
 }
+
+func (*MockSync) GetClockOffset() (time.Duration, error) {
+	return 1 * time.Second, nil
+}
+
+func (*MockSync) OutOfSync(_ time.Duration) bool {
+	return false
+}

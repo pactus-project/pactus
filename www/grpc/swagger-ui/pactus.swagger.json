@@ -1653,6 +1653,11 @@
           "type": "string",
           "format": "uint64",
           "title": "Number of outbound connections"
+        },
+        "clockOffset": {
+          "type": "number",
+          "format": "double",
+          "title": "Clock offset"
         }
       },
       "description": "Response message containing information about a specific node in the network."

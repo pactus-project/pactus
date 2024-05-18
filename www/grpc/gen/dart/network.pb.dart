@@ -214,6 +214,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     ..a<$fixnum.Int64>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
     ..a<$fixnum.Int64>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'inboundConnections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
     ..a<$fixnum.Int64>(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'outboundConnections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$core.double>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'clockOffset', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -231,6 +232,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     $fixnum.Int64? connections,
     $fixnum.Int64? inboundConnections,
     $fixnum.Int64? outboundConnections,
+    $core.double? clockOffset,
   }) {
     final _result = create();
     if (moniker != null) {
@@ -268,6 +270,9 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     }
     if (outboundConnections != null) {
       _result.outboundConnections = outboundConnections;
+    }
+    if (clockOffset != null) {
+      _result.clockOffset = clockOffset;
     }
     return _result;
   }
@@ -375,6 +380,15 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   $core.bool hasOutboundConnections() => $_has(11);
   @$pb.TagNumber(12)
   void clearOutboundConnections() => clearField(12);
+
+  @$pb.TagNumber(13)
+  $core.double get clockOffset => $_getN(12);
+  @$pb.TagNumber(13)
+  set clockOffset($core.double v) { $_setDouble(12, v); }
+  @$pb.TagNumber(13)
+  $core.bool hasClockOffset() => $_has(12);
+  @$pb.TagNumber(13)
+  void clearClockOffset() => clearField(13);
 }
 
 class PeerInfo extends $pb.GeneratedMessage {

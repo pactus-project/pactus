@@ -22,6 +22,7 @@ type widgetNode struct {
 
 	genesisTime          time.Time // TODO: move this logic to the state
 	model                *nodeModel
+	labelClockOffset     *gtk.Label
 	labelLastBlockTime   *gtk.Label
 	labelLastBlockHeight *gtk.Label
 	labelBlocksLeft      *gtk.Label
@@ -60,6 +61,7 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 		Box:                  box,
 		model:                model,
 		genesisTime:          model.node.State().Genesis().GenesisTime(),
+		labelClockOffset:     getLabelObj(builder, "id_label_clock_offset"),
 		labelLastBlockTime:   getLabelObj(builder, "id_label_last_block_time"),
 		labelLastBlockHeight: getLabelObj(builder, "id_label_last_block_height"),
 		labelBlocksLeft:      getLabelObj(builder, "id_label_blocks_left"),
@@ -133,8 +135,25 @@ func (wn *widgetNode) timeout10() bool {
 		if wn.model.node.ConsManager().HasActiveInstance() {
 			isInCommittee = "Yes"
 		}
+		offset, offsetErr := wn.model.node.Sync().GetClockOffset()
 
 		glib.IdleAdd(func() bool {
+			styleContext, err := wn.labelClockOffset.GetStyleContext()
+			fatalErrorCheck(err)
+
+			if offsetErr != nil {
+				styleContext.AddClass("warning")
+				wn.labelClockOffset.SetText("Error response from NTP server.")
+			} else {
+				wn.labelClockOffset.SetText(offset.String())
+
+				if wn.model.node.Sync().OutOfSync(offset) {
+					styleContext.AddClass("warning")
+				} else {
+					styleContext.RemoveClass("warning")
+				}
+			}
+
 			wn.labelCommitteeSize.SetText(fmt.Sprintf("%v", committeeSize))
 			wn.labelValidatorNum.SetText(fmt.Sprintf("%v", validatorNum))
 			wn.labelCommitteeStake.SetText(amount.Amount(committeePower).String())

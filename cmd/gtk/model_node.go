@@ -11,5 +11,7 @@ type nodeModel struct {
 }
 
 func newNodeModel(nde *node.Node) *nodeModel {
-	return &nodeModel{node: nde}
+	return &nodeModel{
+		node: nde,
+	}
 }
