@@ -50,7 +50,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	chainType := genDoc.ChainType()
 
 	logger.Info("You are running a Pactus blockchain",
-		"version", version.NodeVersion,
+		"version", version.NodeVersion.StringWithAlias(),
 		"network", chainType)
 
 	messageCh := make(chan message.Message, 500)

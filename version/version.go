@@ -17,6 +17,7 @@ var NodeVersion = Version{
 	Minor: 2,
 	Patch: 0,
 	Meta:  "beta",
+	Alias: "",
 }
 
 // Version defines the version of Pactus software.
@@ -26,6 +27,7 @@ type Version struct {
 	Minor uint   // Minor version number
 	Patch uint   // Patch version number
 	Meta  string // Metadata for version (e.g., "beta", "rc1")
+	Alias string // Alias for version (e.g., "London")
 }
 
 // ParseVersion parses a version string into a Version struct.
@@ -74,6 +76,15 @@ func ParseVersion(versionStr string) (Version, error) {
 	}
 
 	return v, nil
+}
+
+// StringWithAlias returns a string representation of the Version object with the alias.
+func (v Version) StringWithAlias() string {
+	if v.Alias == "" {
+		return v.String()
+	}
+
+	return fmt.Sprintf("%s (%s)", v.String(), v.Alias)
 }
 
 // String returns a string representation of the Version object.
