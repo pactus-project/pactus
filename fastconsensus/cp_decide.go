@@ -54,6 +54,6 @@ func (s *cpDecideState) onAddVote(_ *vote.Vote) {
 	s.decide()
 }
 
-func (s *cpDecideState) name() string {
+func (*cpDecideState) name() string {
 	return "cp:decide"
 }

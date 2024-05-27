@@ -43,7 +43,7 @@ func (s *newHeightState) onAddVote(_ *vote.Vote) {
 	}
 }
 
-func (s *newHeightState) onSetProposal(_ *proposal.Proposal) {
+func (*newHeightState) onSetProposal(_ *proposal.Proposal) {
 	// Ignore proposal
 }
 
@@ -55,6 +55,6 @@ func (s *newHeightState) onTimeout(t *ticker) {
 	}
 }
 
-func (s *newHeightState) name() string {
+func (*newHeightState) name() string {
 	return "new-height"
 }

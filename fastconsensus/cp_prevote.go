@@ -91,12 +91,12 @@ func (s *cpPreVoteState) onAddVote(_ *vote.Vote) {
 	s.decide()
 }
 
-func (s *cpPreVoteState) onSetProposal(_ *proposal.Proposal) {
+func (*cpPreVoteState) onSetProposal(_ *proposal.Proposal) {
 }
 
-func (s *cpPreVoteState) onTimeout(_ *ticker) {
+func (*cpPreVoteState) onTimeout(_ *ticker) {
 }
 
-func (s *cpPreVoteState) name() string {
+func (*cpPreVoteState) name() string {
 	return "cp:pre-vote"
 }

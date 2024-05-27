@@ -12,7 +12,7 @@ type changeProposer struct {
 	*consensus
 }
 
-func (cp *changeProposer) onSetProposal(_ *proposal.Proposal) {
+func (*changeProposer) onSetProposal(_ *proposal.Proposal) {
 	// Ignore proposal
 }
 
@@ -23,7 +23,7 @@ func (cp *changeProposer) onTimeout(t *ticker) {
 	}
 }
 
-func (cp *changeProposer) cpCheckCPValue(value vote.CPValue, allowedValues ...vote.CPValue) error {
+func (*changeProposer) cpCheckCPValue(value vote.CPValue, allowedValues ...vote.CPValue) error {
 	for _, v := range allowedValues {
 		if value == v {
 			return nil

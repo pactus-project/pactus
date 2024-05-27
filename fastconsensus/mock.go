@@ -59,7 +59,7 @@ func (m *MockConsensus) MoveToNewHeight() {
 	m.Height++
 }
 
-func (m *MockConsensus) Start() {}
+func (*MockConsensus) Start() {}
 
 func (m *MockConsensus) AddVote(v *vote.Vote) {
 	m.lk.Lock()
@@ -109,7 +109,7 @@ func (m *MockConsensus) HeightRound() (uint32, int16) {
 	return m.Height, m.Round
 }
 
-func (m *MockConsensus) String() string {
+func (*MockConsensus) String() string {
 	return ""
 }
 

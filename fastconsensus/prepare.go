@@ -78,6 +78,6 @@ func (s *prepareState) onSetProposal(_ *proposal.Proposal) {
 	s.decide()
 }
 
-func (s *prepareState) name() string {
+func (*prepareState) name() string {
 	return "prepare"
 }

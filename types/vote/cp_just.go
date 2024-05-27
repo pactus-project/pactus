@@ -90,11 +90,11 @@ type JustDecided struct {
 	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
 }
 
-func (j *JustInitNo) Type() JustType {
+func (*JustInitNo) Type() JustType {
 	return JustTypeInitNo
 }
 
-func (j *JustInitYes) Type() JustType {
+func (*JustInitYes) Type() JustType {
 	return JustTypeInitYes
 }
 
@@ -118,11 +118,11 @@ func (*JustDecided) Type() JustType {
 	return JustTypeDecided
 }
 
-func (j *JustInitNo) BasicCheck() error {
+func (*JustInitNo) BasicCheck() error {
 	return nil
 }
 
-func (j *JustInitYes) BasicCheck() error {
+func (*JustInitYes) BasicCheck() error {
 	return nil
 }
 

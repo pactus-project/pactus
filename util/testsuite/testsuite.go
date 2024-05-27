@@ -317,21 +317,21 @@ func (ts *TestSuite) GenerateTestValidator(number int32) (*validator.Validator, 
 // GenerateTestBlockWithProposer generates a block with the give proposer address for testing purposes.
 func (ts *TestSuite) GenerateTestBlockWithProposer(height uint32, proposer crypto.Address,
 ) (*block.Block, *certificate.BlockCertificate) {
-	return ts.generateTestBlock(height, proposer, util.Now())
+	return ts.makeTestBlock(height, proposer, util.Now())
 }
 
 // GenerateTestBlockWithTime generates a block with the given time for testing purposes.
 func (ts *TestSuite) GenerateTestBlockWithTime(height uint32, tme time.Time,
 ) (*block.Block, *certificate.BlockCertificate) {
-	return ts.generateTestBlock(height, ts.RandValAddress(), tme)
+	return ts.makeTestBlock(height, ts.RandValAddress(), tme)
 }
 
 // GenerateTestBlock generates a block for testing purposes.
 func (ts *TestSuite) GenerateTestBlock(height uint32) (*block.Block, *certificate.BlockCertificate) {
-	return ts.generateTestBlock(height, ts.RandValAddress(), util.Now())
+	return ts.makeTestBlock(height, ts.RandValAddress(), util.Now())
 }
 
-func (ts *TestSuite) generateTestBlock(height uint32, proposer crypto.Address, tme time.Time,
+func (ts *TestSuite) makeTestBlock(height uint32, proposer crypto.Address, tme time.Time,
 ) (*block.Block, *certificate.BlockCertificate) {
 	txs := block.NewTxs()
 	tx1, _ := ts.GenerateTestTransferTx()

@@ -90,14 +90,14 @@ func (s *cpMainVoteState) onAddVote(_ *vote.Vote) {
 	s.decide()
 }
 
-func (s *cpMainVoteState) onSetProposal(_ *proposal.Proposal) {
+func (*cpMainVoteState) onSetProposal(_ *proposal.Proposal) {
 	// Ignore proposal
 }
 
-func (s *cpMainVoteState) onTimeout(_ *ticker) {
+func (*cpMainVoteState) onTimeout(_ *ticker) {
 	// Ignore timeouts
 }
 
-func (s *cpMainVoteState) name() string {
+func (*cpMainVoteState) name() string {
 	return "cp:main-vote"
 }

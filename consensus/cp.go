@@ -56,7 +56,7 @@ func (cp *changeProposer) checkJustInitZero(just vote.Just, blockHash hash.Hash)
 	return nil
 }
 
-func (cp *changeProposer) checkJustInitOne(just vote.Just) error {
+func (*changeProposer) checkJustInitOne(just vote.Just) error {
 	_, ok := just.(*vote.JustInitYes)
 	if !ok {
 		return invalidJustificationError{

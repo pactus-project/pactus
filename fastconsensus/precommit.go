@@ -67,10 +67,10 @@ func (s *precommitState) onSetProposal(_ *proposal.Proposal) {
 	s.decide()
 }
 
-func (s *precommitState) onTimeout(_ *ticker) {
+func (*precommitState) onTimeout(_ *ticker) {
 	// Ignore timeouts
 }
 
-func (s *precommitState) name() string {
+func (*precommitState) name() string {
 	return "precommit"
 }
