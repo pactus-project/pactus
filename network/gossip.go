@@ -12,14 +12,15 @@ import (
 )
 
 type gossipService struct {
-	ctx     context.Context
-	wg      sync.WaitGroup
-	host    lp2phost.Host
-	pubsub  *lp2pps.PubSub
-	topics  []*lp2pps.Topic
-	subs    []*lp2pps.Subscription
-	eventCh chan Event
-	logger  *logger.SubLogger
+	ctx       context.Context
+	wg        sync.WaitGroup
+	host      lp2phost.Host
+	pubsub    *lp2pps.PubSub
+	topics    []*lp2pps.Topic
+	subs      []*lp2pps.Subscription
+	eventCh   chan Event
+	logger    *logger.SubLogger
+	ratelimit *rateLimit
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
@@ -55,12 +56,13 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 	}
 
 	return &gossipService{
-		ctx:     ctx,
-		host:    host,
-		pubsub:  pubsub,
-		wg:      sync.WaitGroup{},
-		eventCh: eventCh,
-		logger:  log,
+		ctx:       ctx,
+		host:      host,
+		pubsub:    pubsub,
+		wg:        sync.WaitGroup{},
+		eventCh:   eventCh,
+		logger:    log,
+		ratelimit: newRateLimit(3, 1*time.Second),
 	}
 }
 
@@ -93,6 +95,13 @@ func (g *gossipService) JoinTopic(name string, sp ShouldPropagate) (*lp2pps.Topi
 				From: peerId,
 				Data: m.Data,
 			}
+
+			if m.GetTopic() == "general" {
+				if !g.ratelimit.increment() {
+					return lp2pps.ValidationIgnore
+				}
+			}
+
 			if !sp(msg) {
 				// Consume the message first
 				g.onReceiveMessage(m)
