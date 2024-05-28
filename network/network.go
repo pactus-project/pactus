@@ -260,7 +260,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	self.dht = newDHTService(self.ctx, self.host, kadProtocolID, conf, self.logger)
 	self.peerMgr = newPeerMgr(ctx, host, conf, self.logger)
 	self.stream = newStreamService(ctx, self.host, streamProtocolID, self.eventChannel, self.logger)
-	self.gossip = newGossipService(ctx, self.host, self.eventChannel, conf, self.logger)
+	self.gossip = newGossipService(ctx, self.host, self.eventChannel, self.generalTopicName(), conf, self.logger)
 	self.notifee = newNotifeeService(ctx, self.host, self.eventChannel, self.peerMgr, streamProtocolID, self.logger)
 
 	self.logger.Info("network setup", "id", self.host.ID(),
