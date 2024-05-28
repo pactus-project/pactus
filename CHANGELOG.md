@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/pactus-project/pactus/compare/v1.1.4...v1.1.5) (2024-05-29)
+
+### Feat
+
+- **network**: define config for rate limit threshold ([#1284](https://github.com/pactus-project/pactus/pull/1284))
+- **network**: ratelimit gossip for prevent spamming ([#1283](https://github.com/pactus-project/pactus/pull/1283))
+
 ## [1.1.4](https://github.com/pactus-project/pactus/compare/v1.1.3...v1.1.4) (2024-05-07)
 
 ### Fix
