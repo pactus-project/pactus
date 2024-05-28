@@ -75,6 +75,9 @@
   # Default is `false`.
   force_private_network = false
 
+  # `rate_limit_threshold` defines a threshold (message per second) to ignore messages in P2P network.
+  rate_limit_threshold = 3
+
 # `sync` contains configuration of sync module.
 [sync]
 

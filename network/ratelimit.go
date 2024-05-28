@@ -6,12 +6,12 @@ import (
 
 type rateLimit struct {
 	referenceTime time.Time
-	threshold     uint8
-	counter       uint8
+	threshold     int
+	counter       int
 	window        time.Duration
 }
 
-func newRateLimit(threshold uint8, window time.Duration) *rateLimit {
+func newRateLimit(threshold int, window time.Duration) *rateLimit {
 	return &rateLimit{
 		referenceTime: time.Now(),
 		threshold:     threshold,
