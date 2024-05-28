@@ -12,19 +12,21 @@ import (
 )
 
 type gossipService struct {
-	ctx       context.Context
-	wg        sync.WaitGroup
-	host      lp2phost.Host
-	pubsub    *lp2pps.PubSub
-	topics    []*lp2pps.Topic
-	subs      []*lp2pps.Subscription
-	eventCh   chan Event
-	logger    *logger.SubLogger
-	ratelimit *rateLimit
+	ctx     context.Context
+	wg      sync.WaitGroup
+	host    lp2phost.Host
+	pubsub  *lp2pps.PubSub
+	topics  []*lp2pps.Topic
+	subs    []*lp2pps.Subscription
+	eventCh chan Event
+	logger  *logger.SubLogger
+
+	generalTopicName string
+	rateLimit        *rateLimit
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	conf *Config, log *logger.SubLogger,
+	generalTopicName string, conf *Config, log *logger.SubLogger,
 ) *gossipService {
 	opts := []lp2pps.Option{
 		lp2pps.WithFloodPublish(true),
@@ -56,13 +58,14 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 	}
 
 	return &gossipService{
-		ctx:       ctx,
-		host:      host,
-		pubsub:    pubsub,
-		wg:        sync.WaitGroup{},
-		eventCh:   eventCh,
-		logger:    log,
-		ratelimit: newRateLimit(3, 1*time.Second),
+		ctx:              ctx,
+		host:             host,
+		pubsub:           pubsub,
+		wg:               sync.WaitGroup{},
+		eventCh:          eventCh,
+		logger:           log,
+		rateLimit:        newRateLimit(3, 1*time.Second),
+		generalTopicName: generalTopicName,
 	}
 }
 
@@ -96,8 +99,10 @@ func (g *gossipService) JoinTopic(name string, sp ShouldPropagate) (*lp2pps.Topi
 				Data: m.Data,
 			}
 
-			if m.GetTopic() == "general" {
-				if !g.ratelimit.increment() {
+			if m.GetTopic() == g.generalTopicName {
+				if !g.rateLimit.increment() {
+					g.logger.Warn("rate limit exceeded, ignoring message", "from", peerId)
+
 					return lp2pps.ValidationIgnore
 				}
 			}
