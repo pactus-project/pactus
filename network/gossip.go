@@ -64,7 +64,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 		wg:               sync.WaitGroup{},
 		eventCh:          eventCh,
 		logger:           log,
-		rateLimit:        newRateLimit(3, 1*time.Second),
+		rateLimit:        newRateLimit(conf.RateLimitThreshold, 1*time.Second),
 		generalTopicName: generalTopicName,
 	}
 }
