@@ -52,7 +52,8 @@ func (td *testData) randomAmountAndFee(min, max amount.Amount) (amount.Amount, a
 		amt = amount.Amount(td.RandInt64NonZero(int64(max)))
 	}
 
-	fee := amt.MulF64(td.sandbox.Params().FeeFraction)
+	rem := max - amt
+	fee := amount.Amount(td.RandInt64NonZero(rem.ToNanoPAC()))
 	if amt+fee > max {
 		// To make sure amt+fee is less than max
 		return td.randomAmountAndFee(min, max)

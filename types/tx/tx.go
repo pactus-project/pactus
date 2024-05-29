@@ -422,6 +422,11 @@ func (tx *Tx) IsWithdrawTx() bool {
 	return tx.Payload().Type() == payload.TypeWithdraw
 }
 
+// IsFreeTx checks if the transaction fee should be set to zero.
+func (tx *Tx) IsFreeTx() bool {
+	return tx.IsSubsidyTx() || tx.IsSortitionTx() || tx.IsUnbondTx()
+}
+
 // StripPublicKey removes the public key from the transaction.
 // It is an alias function for `SetPublicKey(nil)`.
 func (tx *Tx) StripPublicKey() {

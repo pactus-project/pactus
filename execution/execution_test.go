@@ -5,9 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/sandbox"
-	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -135,38 +133,12 @@ func TestExecution(t *testing.T) {
 		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
 	})
 
-	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
-		trx := tx.NewTransferTx(lockTime, rndAccAddr, ts.RandAccAddress(), 1000, 1, "invalid fee")
-		ts.HelperSignTransaction(rndPrvKey, trx)
-
-		expectedErr := InvalidFeeError{Fee: 1, Expected: sb.TestParams.MinimumFee}
-		assert.ErrorIs(t, exe.Execute(trx, sb), expectedErr)
-		assert.ErrorIs(t, exe.checkFee(trx, sb), expectedErr)
-	})
-
-	t.Run("Invalid fee, Should returns error", func(t *testing.T) {
-		trx := tx.NewTransferTx(lockTime, rndAccAddr, ts.RandAccAddress(), 1000, 1002, "invalid fee")
-		ts.HelperSignTransaction(rndPrvKey, trx)
-
-		expectedErr := InvalidFeeError{Fee: 1002, Expected: sb.TestParams.MinimumFee}
-		assert.ErrorIs(t, exe.Execute(trx, sb), expectedErr)
-		assert.ErrorIs(t, exe.checkFee(trx, sb), expectedErr)
-	})
-
 	t.Run("Invalid fee (subsidy tx), Should returns error", func(t *testing.T) {
 		trx := tx.NewTransferTx(lockTime, crypto.TreasuryAddress, ts.RandAccAddress(), 1000, 1, "invalid fee")
 
 		expectedErr := InvalidFeeError{Fee: 1, Expected: 0}
 		assert.ErrorIs(t, exe.Execute(trx, sb), expectedErr)
-		assert.ErrorIs(t, exe.checkFee(trx, sb), expectedErr)
-	})
-
-	t.Run("Invalid fee (transfer tx), Should returns error", func(t *testing.T) {
-		trx := tx.NewTransferTx(lockTime, rndAccAddr, ts.RandAccAddress(), 1000, 0, "invalid fee")
-
-		expectedErr := InvalidFeeError{Fee: 0, Expected: sb.TestParams.MinimumFee}
-		assert.ErrorIs(t, exe.Execute(trx, sb), expectedErr)
-		assert.ErrorIs(t, exe.checkFee(trx, sb), expectedErr)
+		assert.ErrorIs(t, exe.checkFee(trx), expectedErr)
 	})
 
 	t.Run("Execution failed", func(t *testing.T) {
@@ -223,59 +195,4 @@ func TestChecker(t *testing.T) {
 	assert.ErrorIs(t, err, FutureLockTimeError{LockTime: lockTime})
 	err = checker.Execute(trx, sb)
 	assert.NoError(t, err)
-}
-
-func TestFee(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	exe := NewChecker()
-	sb := sandbox.MockingSandbox(ts)
-
-	tests := []struct {
-		amount      amount.Amount
-		fee         amount.Amount
-		expectedFee amount.Amount
-		expectErr   bool
-	}{
-		{1, 1, sb.TestParams.MinimumFee, true},
-		{1, 1002, sb.TestParams.MinimumFee, true},
-		{1, 998, sb.TestParams.MinimumFee, true},
-
-		{1, 1001, sb.TestParams.MinimumFee, false},
-		{1, 1000, sb.TestParams.MinimumFee, false},
-		{1, 999, sb.TestParams.MinimumFee, false},
-
-		{2 * 1e9, 100002, 200000, true},
-		{2 * 1e9, 99998, 200000, true},
-
-		{2 * 1e9, 200001, 200000, false},
-		{2 * 1e9, 200000, 200000, false},
-		{2 * 1e9, 199999, 200000, false},
-
-		{1 * 1e12, 1000002, sb.TestParams.MaximumFee, true},
-		{1 * 1e12, 999998, sb.TestParams.MaximumFee, true},
-
-		{1 * 1e12, 1000001, sb.TestParams.MaximumFee, false},
-		{1 * 1e12, 1000000, sb.TestParams.MaximumFee, false},
-		{1 * 1e12, 999999, sb.TestParams.MaximumFee, false},
-
-		{9_999_299_000, 999929, 999930, false}, // Block 66679
-	}
-
-	sender := ts.RandAccAddress()
-	receiver := ts.RandAccAddress()
-	for i, test := range tests {
-		trx := tx.NewTransferTx(sb.CurrentHeight()+1, sender, receiver, test.amount, test.fee,
-			"testing fee")
-		err := exe.checkFee(trx, sb)
-
-		if test.expectErr {
-			assert.Error(t, err, "test %v failed. expected error", i)
-		} else {
-			assert.NoError(t, err, "test %v failed. unexpected error", i)
-		}
-
-		expectedFee := CalculateFee(test.amount, payload.TypeTransfer, sb.Params())
-		assert.Equal(t, expectedFee, test.expectedFee, "test %v failed. invalid fee", i)
-	}
 }

@@ -56,7 +56,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		eventCh = nil
 	}
 
-	txPool := txpool.NewTxPool(conf.TxPool, genDoc.Params().MinimumFee.ToPAC(), messageCh)
+	txPool := txpool.NewTxPool(conf.TxPool, messageCh)
 
 	str, err := store.NewStore(conf.Store)
 	if err != nil {

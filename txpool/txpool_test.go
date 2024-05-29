@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/logger"
@@ -25,19 +26,26 @@ type testData struct {
 	ch      chan message.Message
 }
 
-func setup(t *testing.T) *testData {
+func testConfig() *Config {
+	return &Config{
+		MaxSize:   100,
+		MinFeePAC: 0.000001,
+	}
+}
+
+func setup(t *testing.T, config *Config) *testData {
 	t.Helper()
 
 	ts := testsuite.NewTestSuite(t)
 
+	if config == nil {
+		config = testConfig()
+	}
 	ch := make(chan message.Message, 10)
 	sb := sandbox.MockingSandbox(ts)
-	p := NewTxPool(DefaultConfig(), 0.000001, ch)
+	p := NewTxPool(config, ch)
 	p.SetNewSandboxAndRecheck(sb)
 	pool := p.(*txPool)
-	assert.NotNil(t, pool)
-
-	pool.baseFee = 0.0001
 
 	return &testData{
 		TestSuite: ts,
@@ -73,36 +81,43 @@ func (td *testData) shouldPublishTransaction(t *testing.T, id tx.ID) {
 }
 
 func TestCalculateDynamicFee(t *testing.T) {
-	td := setup(t)
+	minFee := amount.Amount(1000)
+	config := Config{
+		MaxSize:   10,
+		MinFeePAC: minFee.ToPAC(),
+	}
+	td := setup(t, &config)
 
 	randHeight := td.RandHeight()
 	_ = td.sandbox.TestStore.AddTestBlock(randHeight)
 
-	valKey := td.RandValKey()
-	acc := account.NewAccount(0)
-	acc.AddToBalance(10000e9)
-	td.sandbox.UpdateAccount(valKey.Address(), acc)
+	senderAddr := td.RandAccAddress()
+	senderAcc := account.NewAccount(0)
+	senderAcc.AddToBalance(10000e9)
+	td.sandbox.UpdateAccount(senderAddr, senderAcc)
 
 	// Make sure the pool is empty
 	assert.Equal(t, td.pool.Size(), 0)
 
-	for i := 0; i < 993; i++ {
-		trx := tx.NewTransferTx(randHeight+1, valKey.Address(),
-			td.RandAccAddress(), 1e9, 100_000, "ok")
-		valKey.Sign(trx.SignBytes())
-		assert.NoError(t, td.pool.AppendTx(trx))
-	}
+	trx1 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee, "ok")
+	trx2 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee, "ok")
+	trx3 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee, "ok")
+	trx4 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee, "ok")
+	trx5 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee*10, "ok")
+	trx6 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee*1000, "ok")
+	trx7 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee*10000, "ok")
 
-	fee, err := td.pool.calculateDynamicFee()
-	if err != nil {
-		t.Error(err)
-	}
-
-	assert.Greater(t, fee.ToPAC(), td.pool.baseFee)
+	assert.NoError(t, td.pool.AppendTx(trx1))
+	assert.NoError(t, td.pool.AppendTx(trx2))
+	assert.NoError(t, td.pool.AppendTx(trx3))
+	assert.NoError(t, td.pool.AppendTx(trx4))
+	assert.NoError(t, td.pool.AppendTx(trx5))
+	assert.NoError(t, td.pool.AppendTx(trx6))
+	assert.NoError(t, td.pool.AppendTx(trx7))
 }
 
 func TestAppendAndRemove(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	height := td.RandHeight()
 	td.sandbox.TestStore.AddTestBlock(height)
@@ -121,7 +136,7 @@ func TestAppendAndRemove(t *testing.T) {
 }
 
 func TestAppendInvalidTransaction(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	invalidTx, _ := td.GenerateTestTransferTx()
 	assert.Error(t, td.pool.AppendTx(invalidTx))
@@ -129,24 +144,24 @@ func TestAppendInvalidTransaction(t *testing.T) {
 
 // TestFullPool tests if the pool prunes the old transactions when it is full.
 func TestFullPool(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	randHeight := td.RandHeight()
 	_ = td.sandbox.TestStore.AddTestBlock(randHeight)
 	trxs := make([]*tx.Tx, td.pool.config.transferPoolSize()+1)
 
-	valKey := td.RandValKey()
-	acc := account.NewAccount(0)
-	acc.AddToBalance(1000e9)
-	td.sandbox.UpdateAccount(valKey.Address(), acc)
+	senderAddr := td.RandAccAddress()
+	senderAcc := account.NewAccount(0)
+	senderAcc.AddToBalance(1000e9)
+	td.sandbox.UpdateAccount(senderAddr, senderAcc)
 
 	// Make sure the pool is empty
 	assert.Equal(t, td.pool.Size(), 0)
 
 	for i := 0; i < len(trxs); i++ {
-		trx := tx.NewTransferTx(randHeight+1, valKey.Address(),
-			td.RandAccAddress(), 1e9, 100_000, "ok")
-		valKey.Sign(trx.SignBytes())
+		trx := tx.NewTransferTx(randHeight+1, senderAddr,
+			td.RandAccAddress(), 1e9, 100_000_000, "ok")
+
 		assert.NoError(t, td.pool.AppendTx(trx))
 		trxs[i] = trx
 	}
@@ -157,13 +172,13 @@ func TestFullPool(t *testing.T) {
 }
 
 func TestEmptyPool(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	assert.Empty(t, td.pool.PrepareBlockTransactions(), "pool should be empty")
 }
 
 func TestPrepareBlockTransactions(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	randHeight := td.RandHeight() + td.sandbox.TestParams.UnbondInterval
 	_ = td.sandbox.TestStore.AddTestBlock(randHeight)
@@ -221,7 +236,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 }
 
 func TestAppendAndBroadcast(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	height := td.RandHeight()
 	td.sandbox.TestStore.AddTestBlock(height)
@@ -235,7 +250,7 @@ func TestAppendAndBroadcast(t *testing.T) {
 }
 
 func TestAddSubsidyTransactions(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	randHeight := td.RandHeight()
 	td.sandbox.TestStore.AddTestBlock(randHeight)
@@ -262,20 +277,4 @@ func TestAddSubsidyTransactions(t *testing.T) {
 
 	td.pool.SetNewSandboxAndRecheck(td.sandbox)
 	assert.Zero(t, td.pool.Size())
-}
-
-func TestLowValueTransactions(t *testing.T) {
-	td := setup(t)
-
-	randHeight := td.RandHeight() + td.sandbox.TestParams.UnbondInterval
-	_ = td.sandbox.TestStore.AddTestBlock(randHeight)
-
-	transferTx := tx.NewTransferTx(randHeight+1, td.RandAccAddress(), td.RandAccAddress(),
-		1e8-1, 100_000, "low-value-transfer")
-
-	withdrawTx := tx.NewWithdrawTx(randHeight+4, td.RandValAddress(), td.RandAccAddress(),
-		1e8-1, 100_000, "low-value-withdraw")
-
-	assert.ErrorContains(t, td.pool.AppendTx(transferTx), "low value transaction")
-	assert.ErrorContains(t, td.pool.AppendTx(withdrawTx), "low value transaction")
 }

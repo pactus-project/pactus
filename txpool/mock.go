@@ -3,8 +3,10 @@ package txpool
 import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
 var _ TxPool = &MockTxPool{}
@@ -74,4 +76,8 @@ func (m *MockTxPool) PrepareBlockTransactions() block.Txs {
 	copy(txs, m.Txs)
 
 	return txs
+}
+
+func (m *MockTxPool) EstimatedFee(_ amount.Amount, _ payload.Type) amount.Amount {
+	return amount.Amount(1000)
 }
