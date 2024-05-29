@@ -227,6 +227,12 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		return
 	}
 
+	if err := p.BasicCheck(); err != nil {
+		cs.logger.Warn("invalid proposal", "proposal", p, "error", err)
+
+		return
+	}
+
 	roundProposal := cs.log.RoundProposal(p.Round())
 	if roundProposal != nil {
 		cs.logger.Trace("this round has proposal", "proposal", p)

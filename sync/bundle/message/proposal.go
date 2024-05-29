@@ -15,7 +15,9 @@ func NewProposalMessage(p *proposal.Proposal) *ProposalMessage {
 }
 
 func (m *ProposalMessage) BasicCheck() error {
-	return m.Proposal.BasicCheck()
+	// Basic checks for the proposal are deferred to the consensus phase
+	// to avoid unnecessary validation for validators outside the committee.
+	return nil
 }
 
 func (m *ProposalMessage) Type() Type {
