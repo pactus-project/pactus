@@ -2,6 +2,7 @@ package txpool
 
 import (
 	"fmt"
+	"github.com/pactus-project/pactus/types/amount"
 	"sync"
 
 	"github.com/pactus-project/pactus/execution"
@@ -24,9 +25,11 @@ type txPool struct {
 	pools       map[payload.Type]pool
 	broadcastCh chan message.Message
 	logger      *logger.SubLogger
+
+	baseFee float64
 }
 
-func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
+func NewTxPool(conf *Config, baseFee float64, broadcastCh chan message.Message) TxPool {
 	minValue := conf.minValue()
 
 	pools := make(map[payload.Type]pool)
@@ -41,6 +44,7 @@ func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 		checker:     execution.NewChecker(),
 		pools:       pools,
 		broadcastCh: broadcastCh,
+		baseFee:     baseFee,
 	}
 
 	pool.logger = logger.NewSubLogger("_pool", pool)
@@ -66,6 +70,25 @@ func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
 				pool.list.Remove(trx.ID())
 			}
 		}
+	}
+}
+
+func (p *txPool) calculateDynamicFee() (amount.Amount, error) {
+	totalSize := p.config.MaxSize
+	currentSize := p.Size()
+	usageRatio := float64(currentSize) / float64(totalSize)
+
+	switch {
+	case usageRatio >= 0.90:
+		return amount.NewAmount(p.baseFee * 1000)
+	case usageRatio >= 0.80:
+		return amount.NewAmount(p.baseFee * 500)
+	case usageRatio >= 0.75:
+		return amount.NewAmount(p.baseFee * 200)
+	case usageRatio >= 0.50:
+		return amount.NewAmount(p.baseFee * 100)
+	default:
+		return amount.NewAmount(p.baseFee)
 	}
 }
 

@@ -32,10 +32,12 @@ func setup(t *testing.T) *testData {
 
 	ch := make(chan message.Message, 10)
 	sb := sandbox.MockingSandbox(ts)
-	p := NewTxPool(DefaultConfig(), ch)
+	p := NewTxPool(DefaultConfig(), 0.000001, ch)
 	p.SetNewSandboxAndRecheck(sb)
 	pool := p.(*txPool)
 	assert.NotNil(t, pool)
+
+	pool.baseFee = 0.0001
 
 	return &testData{
 		TestSuite: ts,
@@ -68,6 +70,35 @@ func (td *testData) shouldPublishTransaction(t *testing.T, id tx.ID) {
 			}
 		}
 	}
+}
+
+func TestCalculateDynamicFee(t *testing.T) {
+	td := setup(t)
+
+	randHeight := td.RandHeight()
+	_ = td.sandbox.TestStore.AddTestBlock(randHeight)
+
+	valKey := td.RandValKey()
+	acc := account.NewAccount(0)
+	acc.AddToBalance(10000e9)
+	td.sandbox.UpdateAccount(valKey.Address(), acc)
+
+	// Make sure the pool is empty
+	assert.Equal(t, td.pool.Size(), 0)
+
+	for i := 0; i < 993; i++ {
+		trx := tx.NewTransferTx(randHeight+1, valKey.Address(),
+			td.RandAccAddress(), 1e9, 100_000, "ok")
+		valKey.Sign(trx.SignBytes())
+		assert.NoError(t, td.pool.AppendTx(trx))
+	}
+
+	fee, err := td.pool.calculateDynamicFee()
+	if err != nil {
+		t.Error(err)
+	}
+
+	assert.Greater(t, fee.ToPAC(), td.pool.baseFee)
 }
 
 func TestAppendAndRemove(t *testing.T) {
