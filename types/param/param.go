@@ -15,9 +15,9 @@ type Params struct {
 	BondInterval              uint32        `cbor:"6,keyasint"  json:"bond_interval"`
 	UnbondInterval            uint32        `cbor:"7,keyasint"  json:"unbond_interval"`
 	SortitionInterval         uint32        `cbor:"8,keyasint"  json:"sortition_interval"`
-	FeeFraction               float64       `cbor:"9,keyasint"  json:"fee_fraction"`
-	MinimumFee                amount.Amount `cbor:"10,keyasint" json:"minimum_fee"`
-	MaximumFee                amount.Amount `cbor:"11,keyasint" json:"maximum_fee"`
+	FeeFractionDeprecated     float64       `cbor:"9,keyasint"  json:"fee_fraction"`
+	MinimumFeeDeprecated      amount.Amount `cbor:"10,keyasint" json:"minimum_fee"`
+	MaximumFeeDeprecated      amount.Amount `cbor:"11,keyasint" json:"maximum_fee"`
 	MinimumStake              amount.Amount `cobr:"12,keyasint" json:"minimum_stake"`
 	MaximumStake              amount.Amount `cbor:"13,keyasint" json:"maximum_stake"`
 }
@@ -32,9 +32,9 @@ func DefaultParams() *Params {
 		BondInterval:              360,    // one hour
 		UnbondInterval:            181440, // 21 days
 		SortitionInterval:         17,
-		FeeFraction:               0.0001,
-		MinimumFee:                1000,
-		MaximumFee:                1000000,
+		FeeFractionDeprecated:     0.0001,
+		MinimumFeeDeprecated:      1000,
+		MaximumFeeDeprecated:      1000000,
 		MinimumStake:              1000000000,
 		MaximumStake:              1000000000000,
 	}

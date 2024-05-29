@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -27,13 +28,11 @@ type txPool struct {
 }
 
 func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
-	minValue := conf.minValue()
-
 	pools := make(map[payload.Type]pool)
-	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), minValue)
-	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), 0)
+	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), conf.minFee())
+	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), conf.minFee())
 	pools[payload.TypeUnbond] = newPool(conf.unbondPoolSize(), 0)
-	pools[payload.TypeWithdraw] = newPool(conf.withdrawPoolSize(), minValue)
+	pools[payload.TypeWithdraw] = newPool(conf.withdrawPoolSize(), conf.minFee())
 	pools[payload.TypeSortition] = newPool(conf.sortitionPoolSize(), 0)
 
 	pool := &txPool{
@@ -104,11 +103,13 @@ func (p *txPool) appendTx(trx *tx.Tx) error {
 		return nil
 	}
 
-	if trx.Payload().Value() < pool.minValue {
-		p.logger.Warn("low value transaction", "tx", trx, "minValue", pool.minValue)
+	if !trx.IsFreeTx() {
+		if trx.Fee() < pool.calculateDynamicFee() {
+			p.logger.Warn("low fee transaction", "tx", trx, "minFee", pool.calculateDynamicFee())
 
-		return AppendError{
-			Err: fmt.Errorf("low value transaction, expected to be more than %s", pool.minValue),
+			return AppendError{
+				Err: fmt.Errorf("low fee transaction, expected to be more than %s", pool.calculateDynamicFee()),
+			}
 		}
 	}
 
@@ -223,6 +224,18 @@ func (p *txPool) Size() int {
 	}
 
 	return size
+}
+
+func (p *txPool) EstimatedFee(_ amount.Amount, payloadType payload.Type) amount.Amount {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	pool, ok := p.pools[payloadType]
+	if !ok {
+		return 0
+	}
+
+	return pool.calculateDynamicFee()
 }
 
 func (p *txPool) String() string {

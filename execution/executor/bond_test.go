@@ -160,7 +160,7 @@ func TestStakeExceeded(t *testing.T) {
 
 	exe := NewBondExecutor(true)
 	amt := td.sandbox.TestParams.MaximumStake + 1
-	fee := amt.MulF64(td.sandbox.Params().FeeFraction)
+	fee := td.RandAmount()
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderAcc.AddToBalance(td.sandbox.TestParams.MaximumStake + 1)
 	td.sandbox.UpdateAccount(senderAddr, senderAcc)
@@ -204,7 +204,7 @@ func TestSmallBond(t *testing.T) {
 	senderAddr, _ := td.sandbox.TestStore.RandomTestAcc()
 	receiverVal := td.sandbox.TestStore.RandomTestVal()
 	receiverAddr := receiverVal.Address()
-	fee := td.sandbox.Params().MaximumFee
+	fee := td.RandAmount()
 	lockTime := td.sandbox.CurrentHeight()
 	trx := tx.NewBondTx(lockTime, senderAddr,
 		receiverAddr, nil, 1000e9-receiverVal.Stake()-2, fee, "ok")

@@ -773,7 +773,7 @@ func (st *state) publishEvents(height uint32, blk *block.Block) {
 }
 
 func (st *state) CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount {
-	return execution.CalculateFee(amt, payloadType, st.params)
+	return st.txPool.EstimatedFee(amt, payloadType)
 }
 
 func (st *state) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {

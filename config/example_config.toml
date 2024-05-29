@@ -107,10 +107,9 @@
   # Default is `1000`.
   max_size = 1000
 
-  # `min_value` indicates the minimum value of a transaction in PAC to enter into the pool.
-  # This prevents spamming transactions.
-  # Default is `0.1`.
-  min_value = 0.1
+  # `min_fee` indicates the minimum fee in PAC for the transaction to enter into the pool.
+  # Default is `0.000001`.
+  min_fee = 0.000001
 
 # `logger` contains configuration options for the logger.
 [logger]

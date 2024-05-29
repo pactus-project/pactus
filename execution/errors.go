@@ -74,6 +74,7 @@ func (e SignerBannedError) Error() string {
 	return fmt.Sprintf("the signer is banned: %s", e.addr.String())
 }
 
+// TODO: remove me later.
 type SpamTxError struct {
 	addr crypto.Address
 }
