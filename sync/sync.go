@@ -580,8 +580,6 @@ func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 	return blocks
 }
 
-// weAreInTheCommittee checks if one of the validators is a member of the committee
-// at the current height.
 func (sync *synchronizer) shouldPropagateGeneralMessage(_ *network.GossipMessage) bool {
 	return true
 }

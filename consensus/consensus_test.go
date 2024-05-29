@@ -729,7 +729,17 @@ func TestProposalWithBigRound(t *testing.T) {
 
 	p := td.makeProposal(t, 1, util.MaxInt16)
 	td.consP.SetProposal(p)
-	assert.Equal(t, td.consP.log.RoundProposal(util.MaxInt16), p)
+	assert.Nil(t, td.consP.Proposal())
+}
+
+func TestInvalidProposal(t *testing.T) {
+	td := setup(t)
+
+	td.enterNewHeight(td.consP)
+
+	p := td.makeProposal(t, 1, 0)
+	p.SetSignature(nil) // Make proposal invalid
+	td.consP.SetProposal(p)
 	assert.Nil(t, td.consP.Proposal())
 }
 

@@ -30,7 +30,6 @@ func (r *rateLimit) reset() {
 }
 
 func (r *rateLimit) increment() bool {
-
 	// Check if the window has expired and reset if necessary
 	if r.diff() > r.window {
 		r.reset()
