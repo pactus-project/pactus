@@ -5,14 +5,14 @@ import (
 )
 
 type Config struct {
-	MaxSize     int     `toml:"max_size"`
-	MinValuePAC float64 `toml:"min_value"`
+	MaxSize   int     `toml:"max_size"`
+	MinFeePAC float64 `toml:"min_fee"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		MaxSize:     1000,
-		MinValuePAC: 0.1,
+		MaxSize:   1000,
+		MinFeePAC: 0.000001,
 	}
 }
 
@@ -24,17 +24,11 @@ func (conf *Config) BasicCheck() error {
 		}
 	}
 
-	if conf.MinValuePAC > 1 {
-		return ConfigError{
-			Reason: "minVale can't be greater than 1 PAC",
-		}
-	}
-
 	return nil
 }
 
-func (conf *Config) minValue() amount.Amount {
-	amt, _ := amount.NewAmount(conf.MinValuePAC)
+func (conf *Config) minFee() amount.Amount {
+	amt, _ := amount.NewAmount(conf.MinFeePAC)
 
 	return amt
 }

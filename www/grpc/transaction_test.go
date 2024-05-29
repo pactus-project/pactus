@@ -217,7 +217,7 @@ func TestCalculateFee(t *testing.T) {
 
 	t.Run("Not fixed amount", func(t *testing.T) {
 		amt := amount.Amount(100e9)
-		expectedFee := td.mockState.TestParams.MaximumFee
+		expectedFee := amount.Amount(1000)
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
 				Amount:      amt.ToNanoPAC(),
@@ -231,7 +231,7 @@ func TestCalculateFee(t *testing.T) {
 
 	t.Run("Fixed amount", func(t *testing.T) {
 		amt := amount.Amount(100e9)
-		expectedFee := td.mockState.TestParams.MaximumFee
+		expectedFee := amount.Amount(1000)
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
 				Amount:      100e9,
@@ -245,7 +245,7 @@ func TestCalculateFee(t *testing.T) {
 
 	t.Run("Insufficient amount to pay fee", func(t *testing.T) {
 		amt := amount.Amount(1)
-		expectedFee := td.mockState.TestParams.MinimumFee
+		expectedFee := amount.Amount(1000)
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
 				Amount:      amt.ToNanoPAC(),

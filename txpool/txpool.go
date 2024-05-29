@@ -2,12 +2,12 @@ package txpool
 
 import (
 	"fmt"
-	"github.com/pactus-project/pactus/types/amount"
 	"sync"
 
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -25,18 +25,14 @@ type txPool struct {
 	pools       map[payload.Type]pool
 	broadcastCh chan message.Message
 	logger      *logger.SubLogger
-
-	baseFee float64
 }
 
-func NewTxPool(conf *Config, baseFee float64, broadcastCh chan message.Message) TxPool {
-	minValue := conf.minValue()
-
+func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 	pools := make(map[payload.Type]pool)
-	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), minValue)
-	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), 0)
+	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), conf.minFee())
+	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), conf.minFee())
 	pools[payload.TypeUnbond] = newPool(conf.unbondPoolSize(), 0)
-	pools[payload.TypeWithdraw] = newPool(conf.withdrawPoolSize(), minValue)
+	pools[payload.TypeWithdraw] = newPool(conf.withdrawPoolSize(), conf.minFee())
 	pools[payload.TypeSortition] = newPool(conf.sortitionPoolSize(), 0)
 
 	pool := &txPool{
@@ -44,7 +40,6 @@ func NewTxPool(conf *Config, baseFee float64, broadcastCh chan message.Message) 
 		checker:     execution.NewChecker(),
 		pools:       pools,
 		broadcastCh: broadcastCh,
-		baseFee:     baseFee,
 	}
 
 	pool.logger = logger.NewSubLogger("_pool", pool)
@@ -70,25 +65,6 @@ func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
 				pool.list.Remove(trx.ID())
 			}
 		}
-	}
-}
-
-func (p *txPool) calculateDynamicFee() (amount.Amount, error) {
-	totalSize := p.config.MaxSize
-	currentSize := p.Size()
-	usageRatio := float64(currentSize) / float64(totalSize)
-
-	switch {
-	case usageRatio >= 0.90:
-		return amount.NewAmount(p.baseFee * 1000)
-	case usageRatio >= 0.80:
-		return amount.NewAmount(p.baseFee * 500)
-	case usageRatio >= 0.75:
-		return amount.NewAmount(p.baseFee * 200)
-	case usageRatio >= 0.50:
-		return amount.NewAmount(p.baseFee * 100)
-	default:
-		return amount.NewAmount(p.baseFee)
 	}
 }
 
@@ -127,11 +103,13 @@ func (p *txPool) appendTx(trx *tx.Tx) error {
 		return nil
 	}
 
-	if trx.Payload().Value() < pool.minValue {
-		p.logger.Warn("low value transaction", "tx", trx, "minValue", pool.minValue)
+	if !trx.IsFreeTx() {
+		if trx.Fee() < pool.calculateDynamicFee() {
+			p.logger.Warn("low fee transaction", "tx", trx, "minFee", pool.calculateDynamicFee())
 
-		return AppendError{
-			Err: fmt.Errorf("low value transaction, expected to be more than %s", pool.minValue),
+			return AppendError{
+				Err: fmt.Errorf("low fee transaction, expected to be more than %s", pool.calculateDynamicFee()),
+			}
 		}
 	}
 
@@ -246,6 +224,18 @@ func (p *txPool) Size() int {
 	}
 
 	return size
+}
+
+func (p *txPool) EstimatedFee(_ amount.Amount, payloadType payload.Type) amount.Amount {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	pool, ok := p.pools[payloadType]
+	if !ok {
+		return 0
+	}
+
+	return pool.calculateDynamicFee()
 }
 
 func (p *txPool) String() string {

@@ -70,15 +70,15 @@ func TestMain(m *testing.M) {
 		tValKeys[i][2] = bls.NewValidatorKey(key2)
 		tConfigs[i] = config.DefaultConfigMainnet()
 
-		tConfigs[i].TxPool.MinValuePAC = 0
+		tConfigs[i].TxPool.MinFeePAC = 0.000001
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
 		tConfigs[i].Consensus.ChangeProposerDelta = 0
 		tConfigs[i].Logger.Levels["default"] = "warn"
 		tConfigs[i].Logger.Levels["_state"] = "warn"
-		tConfigs[i].Logger.Levels["_sync"] = "debug"
-		tConfigs[i].Logger.Levels["_consensus"] = "debug"
-		tConfigs[i].Logger.Levels["_network"] = "debug"
+		tConfigs[i].Logger.Levels["_sync"] = "info"
+		tConfigs[i].Logger.Levels["_consensus"] = "info"
+		tConfigs[i].Logger.Levels["_network"] = "info"
 		tConfigs[i].Logger.Levels["_pool"] = "warn"
 		tConfigs[i].Sync.NodeNetwork = false
 		tConfigs[i].Sync.Firewall.Enabled = false
@@ -92,6 +92,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Network.NetworkName = "test"
 		tConfigs[i].Network.ListenAddrStrings = []string{"/ip4/127.0.0.1/tcp/0", "/ip4/127.0.0.1/udp/0/quic-v1"}
 		tConfigs[i].Network.MaxConns = 32
+		tConfigs[i].Network.RateLimitThreshold = 1000
 		tConfigs[i].HTTP.Enable = false
 		tConfigs[i].GRPC.Enable = false
 

@@ -599,11 +599,11 @@ func TestIsValidator(t *testing.T) {
 	assert.False(t, td.state.IsValidator(addr))
 }
 
-func TestInvalidPayloadFee(t *testing.T) {
+func TestCalculateFee(t *testing.T) {
 	td := setup(t)
 
-	fee := td.state.CalculateFee(td.RandAmount(), 6)
-	assert.Zero(t, fee)
+	fee := td.state.CalculateFee(td.RandAmount(), payload.TypeTransfer)
+	assert.NotZero(t, fee)
 }
 
 func TestCheckMaximumTransactionPerBlock(t *testing.T) {
@@ -614,7 +614,7 @@ func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 	senderAddr := td.genAccKey.PublicKeyNative().AccountAddress()
 	for i := 0; i < maxTransactionsPerBlock+2; i++ {
 		amt := td.RandAmount()
-		fee := td.state.CalculateFee(amt, payload.TypeTransfer)
+		fee := td.RandAmount()
 		trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddress(), amt, fee, "")
 		err := td.state.AddPendingTx(trx)
 		assert.NoError(t, err)

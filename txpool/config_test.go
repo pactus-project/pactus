@@ -3,6 +3,7 @@ package txpool
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,6 +16,7 @@ func TestDefaultConfigCheck(t *testing.T) {
 	assert.Equal(t, 100, c.unbondPoolSize())
 	assert.Equal(t, 100, c.withdrawPoolSize())
 	assert.Equal(t, 100, c.sortitionPoolSize())
+	assert.Equal(t, amount.Amount(1000), c.minFee())
 
 	assert.Equal(t,
 		c.transferPoolSize()+
@@ -31,32 +33,24 @@ func TestInvalidConfig(t *testing.T) {
 	}{
 		{
 			conf: Config{
-				MaxSize:     0,
-				MinValuePAC: 0.1,
+				MaxSize:   0,
+				MinFeePAC: 0.1,
 			},
 			ErrStr: "maxSize can't be less than 10",
 		},
 
 		{
 			conf: Config{
-				MaxSize:     9,
-				MinValuePAC: 0.1,
+				MaxSize:   9,
+				MinFeePAC: 0.1,
 			},
 			ErrStr: "maxSize can't be less than 10",
 		},
 
 		{
 			conf: Config{
-				MaxSize:     100,
-				MinValuePAC: 1.1,
-			},
-			ErrStr: "minVale can't be greater than 1 PAC",
-		},
-
-		{
-			conf: Config{
-				MaxSize:     100,
-				MinValuePAC: 1.0,
+				MaxSize:   100,
+				MinFeePAC: 1.0,
 			},
 			ErrStr: "",
 		},

@@ -23,7 +23,7 @@ func sendRawTx(t *testing.T, raw []byte) error {
 	return err
 }
 
-func broadcastSendTransaction(t *testing.T, sender *bls.ValidatorKey, receiver crypto.Address,
+func broadcastTransferTransaction(t *testing.T, sender *bls.ValidatorKey, receiver crypto.Address,
 	amt, fee amount.Amount,
 ) error {
 	t.Helper()
@@ -69,23 +69,23 @@ func TestTransactions(t *testing.T) {
 	valKeyBob := bls.NewValidatorKey(prvBob)
 
 	t.Run("Sending normal transaction", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, tValKeys[tNodeIdx2][0], pubAlice.AccountAddress(), 80000000, 8000))
+		require.NoError(t, broadcastTransferTransaction(t, tValKeys[tNodeIdx2][0], pubAlice.AccountAddress(), 80000000, 8000))
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
-		require.Error(t, broadcastSendTransaction(t, valKeyAlice, pubBob.AccountAddress(), 500000, 0))
+		require.Error(t, broadcastTransferTransaction(t, valKeyAlice, pubBob.AccountAddress(), 500000, 0))
 	})
 
 	t.Run("Alice tries double spending", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, valKeyAlice, pubBob.AccountAddress(), 50000000, 5000))
+		require.NoError(t, broadcastTransferTransaction(t, valKeyAlice, pubBob.AccountAddress(), 50000000, 5000))
 
-		require.Error(t, broadcastSendTransaction(t, valKeyAlice, pubCarol.AccountAddress(), 50000000, 5000))
+		require.Error(t, broadcastTransferTransaction(t, valKeyAlice, pubCarol.AccountAddress(), 50000000, 5000))
 	})
 
 	t.Run("Bob sends two transaction at once", func(t *testing.T) {
-		require.NoError(t, broadcastSendTransaction(t, valKeyBob, pubCarol.AccountAddress(), 10, 1000))
+		require.NoError(t, broadcastTransferTransaction(t, valKeyBob, pubCarol.AccountAddress(), 10, 1000))
 
-		require.NoError(t, broadcastSendTransaction(t, valKeyBob, pubDave.AccountAddress(), 1, 1000))
+		require.NoError(t, broadcastTransferTransaction(t, valKeyBob, pubDave.AccountAddress(), 1, 1000))
 	})
 
 	t.Run("Bonding transactions", func(t *testing.T) {
