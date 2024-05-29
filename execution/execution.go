@@ -44,15 +44,6 @@ func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		}
 	}
 
-	// TODO: remove me later.
-	if trx.Payload().Type() == payload.TypeTransfer {
-		if trx.Payload().Receiver() != nil && trx.Payload().Signer() == *trx.Payload().Receiver() {
-			return SpamTxError{
-				addr: trx.Payload().Signer(),
-			}
-		}
-	}
-
 	if exists := sb.AnyRecentTransaction(trx.ID()); exists {
 		return TransactionCommittedError{
 			ID: trx.ID(),

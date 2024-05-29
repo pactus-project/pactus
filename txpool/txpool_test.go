@@ -83,7 +83,7 @@ func (td *testData) shouldPublishTransaction(t *testing.T, id tx.ID) {
 func TestCalculateDynamicFee(t *testing.T) {
 	minFee := amount.Amount(1000)
 	config := Config{
-		MaxSize:   10,
+		MaxSize:   16,
 		MinFeePAC: minFee.ToPAC(),
 	}
 	td := setup(t, &config)
@@ -99,21 +99,29 @@ func TestCalculateDynamicFee(t *testing.T) {
 	// Make sure the pool is empty
 	assert.Equal(t, td.pool.Size(), 0)
 
-	trx1 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee, "ok")
-	trx2 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee, "ok")
-	trx3 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee, "ok")
-	trx4 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee, "ok")
-	trx5 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee*10, "ok")
-	trx6 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee*1000, "ok")
-	trx7 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee*10000, "ok")
+	trx01 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee, "ok")
+	trx02 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee, "ok")
+	trx03 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee, "ok")
+	trx04 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee, "ok")
+	trx05 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee*100, "ok")
+	trx06 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee*100, "ok")
+	trx07 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee*1000, "ok")
+	trx08 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee*10000, "ok")
+	trx09 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee*100000, "ok")
+	trx10 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee*1000000, "ok")
+	trx11 := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), td.RandAmount(), minFee, "ok")
 
-	assert.NoError(t, td.pool.AppendTx(trx1))
-	assert.NoError(t, td.pool.AppendTx(trx2))
-	assert.NoError(t, td.pool.AppendTx(trx3))
-	assert.NoError(t, td.pool.AppendTx(trx4))
-	assert.NoError(t, td.pool.AppendTx(trx5))
-	assert.NoError(t, td.pool.AppendTx(trx6))
-	assert.NoError(t, td.pool.AppendTx(trx7))
+	assert.NoError(t, td.pool.AppendTx(trx01))
+	assert.NoError(t, td.pool.AppendTx(trx02))
+	assert.NoError(t, td.pool.AppendTx(trx03))
+	assert.NoError(t, td.pool.AppendTx(trx04))
+	assert.NoError(t, td.pool.AppendTx(trx05))
+	assert.NoError(t, td.pool.AppendTx(trx06))
+	assert.NoError(t, td.pool.AppendTx(trx07))
+	assert.NoError(t, td.pool.AppendTx(trx08))
+	assert.NoError(t, td.pool.AppendTx(trx09))
+	assert.NoError(t, td.pool.AppendTx(trx10))
+	assert.Error(t, td.pool.AppendTx(trx11))
 }
 
 func TestAppendAndRemove(t *testing.T) {
@@ -160,7 +168,7 @@ func TestFullPool(t *testing.T) {
 
 	for i := 0; i < len(trxs); i++ {
 		trx := tx.NewTransferTx(randHeight+1, senderAddr,
-			td.RandAccAddress(), 1e9, 100_000_000, "ok")
+			td.RandAccAddress(), 1e9, 1000_000_000, "ok")
 
 		assert.NoError(t, td.pool.AppendTx(trx))
 		trxs[i] = trx
