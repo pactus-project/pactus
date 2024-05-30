@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.6](https://github.com/pactus-project/pactus/compare/v1.1.5...v1.1.6) (2024-05-31)
+
+### Fix
+
+- **consensus**: move to new round on decided vote ([#1293](https://github.com/pactus-project/pactus/pull/1293))
+
 ## [1.1.5](https://github.com/pactus-project/pactus/compare/v1.1.4...v1.1.5) (2024-05-30)
 
 ### Feat
