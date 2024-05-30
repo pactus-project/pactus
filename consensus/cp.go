@@ -341,6 +341,30 @@ func (cp *changeProposer) checkJust(v *vote.Vote) error {
 	}
 }
 
+func (cs *consensus) strongTerminationOnDecidedVote(v *vote.Vote) {
+	// TODO: merge me with strongTermination
+	if v.Type() != vote.VoteTypeCPDecided {
+		return
+	}
+
+	if v.Round() > cs.round {
+		cs.logger.Info("move to new round on decided vote", "vote", v)
+		if v.CPValue() == vote.CPValueOne {
+			cs.round = v.Round() + 1
+			cs.cpDecided = 1
+			cs.enterNewState(cs.proposeState)
+		} else if v.CPValue() == vote.CPValueZero {
+			roundProposal := cs.log.RoundProposal(cs.round)
+			if roundProposal == nil {
+				cs.queryProposal()
+			}
+			cs.round = v.Round()
+			cs.cpDecided = 0
+			cs.enterNewState(cs.prepareState)
+		}
+	}
+}
+
 func (cp *changeProposer) strongTermination() {
 	cpDecided := cp.log.CPDecidedVoteVoteSet(cp.round)
 	if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueZero) {

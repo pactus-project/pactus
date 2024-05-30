@@ -314,6 +314,8 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 
 			return
 		}
+
+		cs.strongTerminationOnDecidedVote(v)
 	}
 
 	added, err := cs.log.AddVote(v)
