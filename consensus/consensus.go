@@ -314,6 +314,24 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 
 			return
 		}
+
+		// TODO: merge me with strongTermination
+		if v.Type() == vote.VoteTypeCPDecided {
+			if v.Round() > cs.round {
+				if v.CPValue() == vote.CPValueOne {
+					cs.round = cs.round + 1
+					cs.cpDecided = 1
+					cs.enterNewState(cs.proposeState)
+				} else if v.CPValue() == vote.CPValueZero {
+					roundProposal := cs.log.RoundProposal(cs.round)
+					if roundProposal == nil {
+						cs.queryProposal()
+					}
+					cs.cpDecided = 0
+					cs.enterNewState(cs.prepareState)
+				}
+			}
+		}
 	}
 
 	added, err := cs.log.AddVote(v)
