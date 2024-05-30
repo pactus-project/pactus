@@ -318,8 +318,9 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		// TODO: merge me with strongTermination
 		if v.Type() == vote.VoteTypeCPDecided {
 			if v.Round() > cs.round {
+				cs.logger.Info("move to new round on decided vote", "vote", v)
 				if v.CPValue() == vote.CPValueOne {
-					cs.round = cs.round + 1
+					cs.round = v.Round() + 1
 					cs.cpDecided = 1
 					cs.enterNewState(cs.proposeState)
 				} else if v.CPValue() == vote.CPValueZero {
@@ -327,6 +328,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 					if roundProposal == nil {
 						cs.queryProposal()
 					}
+					cs.round = v.Round()
 					cs.cpDecided = 0
 					cs.enterNewState(cs.prepareState)
 				}
