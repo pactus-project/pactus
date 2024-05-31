@@ -231,12 +231,15 @@ func TestStop(t *testing.T) {
 }
 
 func TestConnectEvent(t *testing.T) {
-	td := setup(t, nil)
+	conf := testConfig()
+	conf.Firewall.BlackListAddresses = []string{"/ip4/1.1.1.1/tcp/21888"}
+
+	td := setup(t, conf)
 
 	pid := td.RandPeerID()
 	ce := &network.ConnectEvent{
 		PeerID:        pid,
-		RemoteAddress: "/ip4/address_1/tcp/21888",
+		RemoteAddress: "/ip4/2.2.2.2/tcp/21888",
 	}
 	td.network.EventCh <- ce
 
@@ -245,22 +248,20 @@ func TestConnectEvent(t *testing.T) {
 		if p == nil {
 			return false
 		}
-		assert.Equal(t, p.Address, "/ip4/address_1/tcp/21888")
+		assert.Equal(t, p.Address, "/ip4/2.2.2.2/tcp/21888")
 
 		return p.Status == peerset.StatusCodeConnected
 	}, time.Second, 100*time.Millisecond)
 
-	// Receiving connect event for the second time
-	td.sync.peerSet.UpdateStatus(pid, peerset.StatusCodeKnown)
-	td.network.EventCh <- ce
-	p := td.sync.peerSet.GetPeer(pid)
-	assert.Equal(t, peerset.StatusCodeKnown, p.Status)
+	p1 := td.sync.peerSet.GetPeer(pid)
+	assert.Equal(t, peerset.StatusCodeConnected, p1.Status)
 
-	// Adding the address to the blacklist
-	td.config.Firewall.BlackListAddresses = []string{"/ip4/address_1/tcp/21888"}
-	assert.NoError(t, td.config.Firewall.BasicCheck())
-
-	// Sending connect event for the blacklisted address
+	// Receiving connect event for the blacklisted address
+	pid = td.RandPeerID()
+	ce = &network.ConnectEvent{
+		PeerID:        pid,
+		RemoteAddress: "/ip4/1.1.1.1/tcp/21888",
+	}
 	td.network.EventCh <- ce
 
 	assert.Eventually(t, func() bool {
@@ -268,13 +269,12 @@ func TestConnectEvent(t *testing.T) {
 		if p == nil {
 			return false
 		}
+
 		return td.sync.firewall.IsBlackListAddress(p.Address)
 	}, time.Second, 100*time.Millisecond)
 
-	p = td.sync.peerSet.GetPeer(pid)
-	assert.Equal(t, peerset.StatusCodeBanned, p.Status)
-
-	td.config.Firewall.BlackListAddresses = make([]string, 0)
+	p2 := td.sync.peerSet.GetPeer(pid)
+	assert.Equal(t, peerset.StatusCodeBanned, p2.Status)
 }
 
 func TestDisconnectEvent(t *testing.T) {

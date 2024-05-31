@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+
 	"github.com/pactus-project/pactus/util/addr"
 )
 
@@ -12,8 +13,8 @@ var _defaultBlackListAddresses []byte
 
 type Config struct {
 	Enabled            bool     `toml:"enable"`
-	BlackListAddresses []string `toml:"blacklist_ips"`
-	blackListAddrSet   map[string]struct{}
+	BlackListAddresses []string `toml:"blacklist_addresses"`
+	blackListAddrSet   map[string]any
 }
 
 type defaultBlackListIPs struct {
@@ -24,31 +25,37 @@ func DefaultConfig() *Config {
 	return &Config{
 		Enabled:            false,
 		BlackListAddresses: make([]string, 0),
-		blackListAddrSet:   make(map[string]struct{}),
+		blackListAddrSet:   make(map[string]any),
 	}
 }
 
 // BasicCheck performs basic checks on the configuration.
 func (conf *Config) BasicCheck() error {
 	for _, address := range conf.BlackListAddresses {
-		parsed, err := addr.Parse(address)
+		// TODO: use libp2p library (multi-address)
+		// TODO: address should only contain protocol + address like: "/ip4/1.1.1.1"
+		_, err := addr.Parse(address)
 		if err != nil {
 			return fmt.Errorf("invalid blacklist address format: %s", address)
 		}
-		conf.blackListAddrSet[parsed.Address()] = struct{}{}
 	}
 
 	return nil
 }
 
-// LoadDefaultBlackListAddresses load default blacklist addresses from black_list.json
-func (conf *Config) LoadDefaultBlackListAddresses() error {
+// LoadDefaultBlackListAddresses loads default blacklist addresses from the `black_list.json` file.
+func (conf *Config) LoadDefaultBlackListAddresses() {
 	var def defaultBlackListIPs
 
-	if err := json.Unmarshal(_defaultBlackListAddresses, &def); err != nil {
-		return err
+	_ = json.Unmarshal(_defaultBlackListAddresses, &def)
+
+	for _, a := range def.Addresses {
+		ma, _ := addr.Parse(a)
+		conf.blackListAddrSet[ma.Address()] = true
 	}
 
-	conf.BlackListAddresses = append(conf.BlackListAddresses, def.Addresses...)
-	return nil
+	for _, a := range conf.BlackListAddresses {
+		ma, _ := addr.Parse(a)
+		conf.blackListAddrSet[ma.Address()] = true
+	}
 }

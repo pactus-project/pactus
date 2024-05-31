@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSaveMainnetConfig(t *testing.T) {
@@ -15,7 +16,7 @@ func TestSaveMainnetConfig(t *testing.T) {
 
 	defConf := DefaultConfigMainnet()
 	conf, err := LoadFromFile(path, true, defConf)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.NoError(t, conf.BasicCheck())
 	assert.Equal(t, DefaultConfigMainnet(), conf)

@@ -2,7 +2,6 @@ package firewall
 
 import (
 	"bytes"
-	"github.com/pactus-project/pactus/util/addr"
 	"io"
 
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -11,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/peerset"
+	"github.com/pactus-project/pactus/util/addr"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 )
@@ -27,6 +27,8 @@ type Firewall struct {
 func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st state.Facade,
 	log *logger.SubLogger,
 ) *Firewall {
+	conf.LoadDefaultBlackListAddresses()
+
 	return &Firewall{
 		config:  conf,
 		network: net,
@@ -55,10 +57,12 @@ func (f *Firewall) IsBlackListAddress(remoteAddr string) bool {
 	p2pRemoteAddr, err := addr.Parse(remoteAddr)
 	if err != nil {
 		f.logger.Debug("firewall: unable to parse remote address", "err", err)
+
 		return false
 	}
 
 	_, exists := f.config.blackListAddrSet[p2pRemoteAddr.Address()]
+
 	return exists
 }
 
