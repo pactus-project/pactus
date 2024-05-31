@@ -52,9 +52,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
 
 func (f *Firewall) IsBlackListIPs(remoteAddr string) bool {
 	for _, ip := range f.config.BlackListIPs {
-		if ip == remoteAddr {
-			return true
-		}
+		return ip == remoteAddr
 	}
 	return false
 }
