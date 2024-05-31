@@ -2,6 +2,7 @@ package firewall
 
 import (
 	"bytes"
+	"github.com/pactus-project/pactus/util/addr"
 	"io"
 
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -48,6 +49,17 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
 	// TODO: check if bundle is a gossip bundle
 
 	return bdl
+}
+
+func (f *Firewall) IsBlackListAddress(remoteAddr string) bool {
+	p2pRemoteAddr, err := addr.Parse(remoteAddr)
+	if err != nil {
+		f.logger.Debug("firewall: unable to parse remote address", "err", err)
+		return false
+	}
+
+	_, exists := f.config.blackListAddrSet[p2pRemoteAddr.Address()]
+	return exists
 }
 
 func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
