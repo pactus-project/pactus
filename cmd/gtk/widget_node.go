@@ -145,7 +145,7 @@ func (wn *widgetNode) timeout10() bool {
 				styleContext.AddClass("warning")
 				wn.labelClockOffset.SetText("Error response from NTP server.")
 			} else {
-				wn.labelClockOffset.SetText(offset.String())
+				wn.labelClockOffset.SetText(fmt.Sprintf("%v secs", offset.Seconds()))
 
 				if wn.model.node.Sync().OutOfSync(offset) {
 					styleContext.AddClass("warning")

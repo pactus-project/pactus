@@ -74,8 +74,8 @@ func (c *Checker) checkClockOffset() {
 			} else if c.OutOfSync(offset) {
 				logger.Error(
 					"The node is out of sync with the network time",
-					"threshold", c.threshold,
-					"offset", offset,
+					"threshold(secs)", c.threshold.Seconds(),
+					"offset(secs)", offset.Seconds(),
 				)
 			}
 		}
