@@ -46,7 +46,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		pid, _ := peer.IDFromBytes(p.PeerId)
 		tm.addRowInt("-- Peer #", i+1)
 		tm.addRowString("Status", peerset.StatusCode(p.Status).String())
-		tm.addRowString("peerID", pid.String())
+		tm.addRowString("PeerID", pid.String())
 		tm.addRowString("Services", service.Services(p.Services).String())
 		tm.addRowString("Agent", p.Agent)
 		tm.addRowString("Moniker", p.Moniker)
