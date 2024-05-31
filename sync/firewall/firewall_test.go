@@ -66,7 +66,7 @@ func setup(t *testing.T) *testData {
 
 func TestLoadDefaultBlackListIPs(t *testing.T) {
 	td := setup(t)
-	assert.Nil(t, td.firewall.config.loadDefaultBlackListIPs())
+	assert.Nil(t, td.firewall.config.LoadDefaultBlackListIPs())
 }
 
 func TestInvalidBundlesCounter(t *testing.T) {
