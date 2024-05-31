@@ -333,6 +333,13 @@ func (cs *consensus) proposer(round int16) *validator.Validator {
 	return cs.bcState.Proposer(round)
 }
 
+func (cs *consensus) IsProposer() bool {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	return cs.isProposer()
+}
+
 func (cs *consensus) isProposer() bool {
 	return cs.proposer(cs.round).Address() == cs.valKey.Address()
 }
