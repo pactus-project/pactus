@@ -70,7 +70,7 @@ func NewSynchronizer(
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout)
 	sync.logger = logger.NewSubLogger("_sync", sync)
 
-	if err := conf.Firewall.LoadDefaultBlackListIPs(); err != nil {
+	if err := conf.Firewall.LoadDefaultBlackListAddresses(); err != nil {
 		return nil, err
 	}
 
@@ -321,7 +321,7 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
 	sync.logger.Debug("processing connect event", "pid", ce.PeerID)
 
-	if sync.firewall.IsBlackListIPs(ce.RemoteAddress) {
+	if sync.firewall.IsBlackListAddress(ce.RemoteAddress) {
 		sync.peerSet.UpdateStatus(ce.PeerID, peerset.StatusCodeBanned)
 		sync.logger.Debug("Peer is blacklisted", "peer_id", ce.PeerID, "remote_address", ce.RemoteAddress)
 		return

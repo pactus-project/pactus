@@ -41,7 +41,7 @@ func TestParseAgent(t *testing.T) {
 			expectedErr: false,
 		},
 		{
-			name:        "Invalid Agent String (Invalid Protocol Version)",
+			name:        "Invalid Agent String (Invalid protocol Version)",
 			agentStr:    "node=gui/node-version=1.2.3-beta/protocol-version=abc/os=linux/arch=amd64",
 			expected:    version.Agent{},
 			expectedErr: true,
