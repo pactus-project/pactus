@@ -1334,6 +1334,27 @@
       },
       "description": "Message containing information about a certificate."
     },
+    "pactusConnectionInfo": {
+      "type": "object",
+      "properties": {
+        "connections": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Total number of the connection."
+        },
+        "inboundConnections": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Number of inbound connections."
+        },
+        "outboundConnections": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Number of outbound connections."
+        }
+      },
+      "description": "Response message containing information about the overall network."
+    },
     "pactusConsensusInfo": {
       "type": "object",
       "properties": {
@@ -1625,7 +1646,7 @@
           },
           "description": "Names of services provided by the node."
         },
-        "addrs": {
+        "localAddrs": {
           "type": "array",
           "items": {
             "type": "string"
@@ -1639,25 +1660,14 @@
           },
           "description": "List of protocols supported by the node."
         },
-        "connections": {
-          "type": "string",
-          "format": "uint64",
-          "title": "Number of connections"
-        },
-        "inboundConnections": {
-          "type": "string",
-          "format": "uint64",
-          "title": "Number of inbound connections"
-        },
-        "outboundConnections": {
-          "type": "string",
-          "format": "uint64",
-          "title": "Number of outbound connections"
-        },
         "clockOffset": {
           "type": "number",
           "format": "double",
           "title": "Clock offset"
+        },
+        "connectionInfo": {
+          "$ref": "#/definitions/pactusConnectionInfo",
+          "title": "Connection information"
         }
       },
       "description": "Response message containing information about a specific node in the network."

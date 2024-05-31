@@ -365,6 +365,11 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           </a>
         </li>   
         <li>
+          <a href="#pactus.ConnectionInfo">
+            <span class="badge text-bg-secondary">msg</span> ConnectionInfo
+          </a>
+        </li> 
+        <li>
           <a href="#pactus.GetNetworkInfoRequest">
             <span class="badge text-bg-secondary">msg</span> GetNetworkInfoRequest
           </a>
@@ -2029,6 +2034,38 @@ VoteInfo
     </tr>
   </tbody>
 </table>    
+<h3 id="pactus.ConnectionInfo">
+ConnectionInfo
+<span class="badge text-bg-secondary fs-6 align-top">msg</span>
+</h3>
+  <p>Response message containing information about the overall network.</p>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+      <td class="fw-bold">connections</td>
+      <td>
+        <a href="#uint64">uint64</a>
+      </td>
+      <td>Total number of the connection. </td>
+    </tr><tr>
+      <td class="fw-bold">inbound_connections</td>
+      <td>
+        <a href="#uint64">uint64</a>
+      </td>
+      <td>Number of inbound connections. </td>
+    </tr><tr>
+      <td class="fw-bold">outbound_connections</td>
+      <td>
+        <a href="#uint64">uint64</a>
+      </td>
+      <td>Number of outbound connections. </td>
+    </tr>
+  </tbody>
+</table>  
 <h3 id="pactus.GetNetworkInfoRequest">
 GetNetworkInfoRequest
 <span class="badge text-bg-secondary fs-6 align-top">msg</span>
@@ -2217,7 +2254,7 @@ GetNodeInfoResponse
       </td>
       <td>Names of services provided by the node. </td>
     </tr><tr>
-      <td class="fw-bold">addrs</td>
+      <td class="fw-bold">local_addrs</td>
       <td>repeated
         <a href="#string">string</a>
       </td>
@@ -2229,29 +2266,17 @@ GetNodeInfoResponse
       </td>
       <td>List of protocols supported by the node. </td>
     </tr><tr>
-      <td class="fw-bold">connections</td>
-      <td>
-        <a href="#uint64">uint64</a>
-      </td>
-      <td>Number of connections </td>
-    </tr><tr>
-      <td class="fw-bold">inbound_connections</td>
-      <td>
-        <a href="#uint64">uint64</a>
-      </td>
-      <td>Number of inbound connections </td>
-    </tr><tr>
-      <td class="fw-bold">outbound_connections</td>
-      <td>
-        <a href="#uint64">uint64</a>
-      </td>
-      <td>Number of outbound connections </td>
-    </tr><tr>
       <td class="fw-bold">clock_offset</td>
       <td>
         <a href="#double">double</a>
       </td>
       <td>Clock offset </td>
+    </tr><tr>
+      <td class="fw-bold">connection_info</td>
+      <td>
+        <a href="#pactus.ConnectionInfo">ConnectionInfo</a>
+      </td>
+      <td>Connection information </td>
     </tr>
   </tbody>
 </table>  

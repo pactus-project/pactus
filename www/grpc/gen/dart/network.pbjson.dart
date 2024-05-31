@@ -62,6 +62,18 @@ const GetNodeInfoRequest$json = const {
 
 /// Descriptor for `GetNodeInfoRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getNodeInfoRequestDescriptor = $convert.base64Decode('ChJHZXROb2RlSW5mb1JlcXVlc3Q=');
+@$core.Deprecated('Use connectionInfoDescriptor instead')
+const ConnectionInfo$json = const {
+  '1': 'ConnectionInfo',
+  '2': const [
+    const {'1': 'connections', '3': 1, '4': 1, '5': 4, '10': 'connections'},
+    const {'1': 'inbound_connections', '3': 2, '4': 1, '5': 4, '10': 'inboundConnections'},
+    const {'1': 'outbound_connections', '3': 3, '4': 1, '5': 4, '10': 'outboundConnections'},
+  ],
+};
+
+/// Descriptor for `ConnectionInfo`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List connectionInfoDescriptor = $convert.base64Decode('Cg5Db25uZWN0aW9uSW5mbxIgCgtjb25uZWN0aW9ucxgBIAEoBFILY29ubmVjdGlvbnMSLwoTaW5ib3VuZF9jb25uZWN0aW9ucxgCIAEoBFISaW5ib3VuZENvbm5lY3Rpb25zEjEKFG91dGJvdW5kX2Nvbm5lY3Rpb25zGAMgASgEUhNvdXRib3VuZENvbm5lY3Rpb25z');
 @$core.Deprecated('Use getNodeInfoResponseDescriptor instead')
 const GetNodeInfoResponse$json = const {
   '1': 'GetNodeInfoResponse',
@@ -73,17 +85,15 @@ const GetNodeInfoResponse$json = const {
     const {'1': 'reachability', '3': 5, '4': 1, '5': 9, '10': 'reachability'},
     const {'1': 'services', '3': 6, '4': 3, '5': 5, '10': 'services'},
     const {'1': 'services_names', '3': 7, '4': 3, '5': 9, '10': 'servicesNames'},
-    const {'1': 'addrs', '3': 8, '4': 3, '5': 9, '10': 'addrs'},
+    const {'1': 'local_addrs', '3': 8, '4': 3, '5': 9, '10': 'localAddrs'},
     const {'1': 'protocols', '3': 9, '4': 3, '5': 9, '10': 'protocols'},
-    const {'1': 'connections', '3': 10, '4': 1, '5': 4, '10': 'connections'},
-    const {'1': 'inbound_connections', '3': 11, '4': 1, '5': 4, '10': 'inboundConnections'},
-    const {'1': 'outbound_connections', '3': 12, '4': 1, '5': 4, '10': 'outboundConnections'},
     const {'1': 'clock_offset', '3': 13, '4': 1, '5': 1, '10': 'clockOffset'},
+    const {'1': 'connection_info', '3': 14, '4': 1, '5': 11, '6': '.pactus.ConnectionInfo', '10': 'connectionInfo'},
   ],
 };
 
 /// Descriptor for `GetNodeInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAxSBnBlZXJJZBIdCgpzdGFydGVkX2F0GAQgASgEUglzdGFydGVkQXQSIgoMcmVhY2hhYmlsaXR5GAUgASgJUgxyZWFjaGFiaWxpdHkSGgoIc2VydmljZXMYBiADKAVSCHNlcnZpY2VzEiUKDnNlcnZpY2VzX25hbWVzGAcgAygJUg1zZXJ2aWNlc05hbWVzEhQKBWFkZHJzGAggAygJUgVhZGRycxIcCglwcm90b2NvbHMYCSADKAlSCXByb3RvY29scxIgCgtjb25uZWN0aW9ucxgKIAEoBFILY29ubmVjdGlvbnMSLwoTaW5ib3VuZF9jb25uZWN0aW9ucxgLIAEoBFISaW5ib3VuZENvbm5lY3Rpb25zEjEKFG91dGJvdW5kX2Nvbm5lY3Rpb25zGAwgASgEUhNvdXRib3VuZENvbm5lY3Rpb25zEiEKDGNsb2NrX29mZnNldBgNIAEoAVILY2xvY2tPZmZzZXQ=');
+final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAxSBnBlZXJJZBIdCgpzdGFydGVkX2F0GAQgASgEUglzdGFydGVkQXQSIgoMcmVhY2hhYmlsaXR5GAUgASgJUgxyZWFjaGFiaWxpdHkSGgoIc2VydmljZXMYBiADKAVSCHNlcnZpY2VzEiUKDnNlcnZpY2VzX25hbWVzGAcgAygJUg1zZXJ2aWNlc05hbWVzEh8KC2xvY2FsX2FkZHJzGAggAygJUgpsb2NhbEFkZHJzEhwKCXByb3RvY29scxgJIAMoCVIJcHJvdG9jb2xzEiEKDGNsb2NrX29mZnNldBgNIAEoAVILY2xvY2tPZmZzZXQSPwoPY29ubmVjdGlvbl9pbmZvGA4gASgLMhYucGFjdHVzLkNvbm5lY3Rpb25JbmZvUg5jb25uZWN0aW9uSW5mbw==');
 @$core.Deprecated('Use peerInfoDescriptor instead')
 const PeerInfo$json = const {
   '1': 'PeerInfo',
@@ -153,6 +163,7 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> NetworkSer
   '.pactus.GetNetworkInfoResponse.ReceivedBytesEntry': GetNetworkInfoResponse_ReceivedBytesEntry$json,
   '.pactus.GetNodeInfoRequest': GetNodeInfoRequest$json,
   '.pactus.GetNodeInfoResponse': GetNodeInfoResponse$json,
+  '.pactus.ConnectionInfo': ConnectionInfo$json,
 };
 
 /// Descriptor for `Network`. Decode as a `google.protobuf.ServiceDescriptorProto`.

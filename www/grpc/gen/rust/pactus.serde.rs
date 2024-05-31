@@ -1233,6 +1233,139 @@ impl<'de> serde::Deserialize<'de> for CertificateInfo {
         deserializer.deserialize_struct("pactus.CertificateInfo", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for ConnectionInfo {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.connections != 0 {
+            len += 1;
+        }
+        if self.inbound_connections != 0 {
+            len += 1;
+        }
+        if self.outbound_connections != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.ConnectionInfo", len)?;
+        if self.connections != 0 {
+            struct_ser.serialize_field("connections", ToString::to_string(&self.connections).as_str())?;
+        }
+        if self.inbound_connections != 0 {
+            struct_ser.serialize_field("inboundConnections", ToString::to_string(&self.inbound_connections).as_str())?;
+        }
+        if self.outbound_connections != 0 {
+            struct_ser.serialize_field("outboundConnections", ToString::to_string(&self.outbound_connections).as_str())?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for ConnectionInfo {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "connections",
+            "inbound_connections",
+            "inboundConnections",
+            "outbound_connections",
+            "outboundConnections",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Connections,
+            InboundConnections,
+            OutboundConnections,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "connections" => Ok(GeneratedField::Connections),
+                            "inboundConnections" | "inbound_connections" => Ok(GeneratedField::InboundConnections),
+                            "outboundConnections" | "outbound_connections" => Ok(GeneratedField::OutboundConnections),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = ConnectionInfo;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.ConnectionInfo")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<ConnectionInfo, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut connections__ = None;
+                let mut inbound_connections__ = None;
+                let mut outbound_connections__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::Connections => {
+                            if connections__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("connections"));
+                            }
+                            connections__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::InboundConnections => {
+                            if inbound_connections__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("inboundConnections"));
+                            }
+                            inbound_connections__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::OutboundConnections => {
+                            if outbound_connections__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("outboundConnections"));
+                            }
+                            outbound_connections__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(ConnectionInfo {
+                    connections: connections__.unwrap_or_default(),
+                    inbound_connections: inbound_connections__.unwrap_or_default(),
+                    outbound_connections: outbound_connections__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.ConnectionInfo", FIELDS, GeneratedVisitor)
+    }
+}
 impl serde::Serialize for ConsensusInfo {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -3758,22 +3891,16 @@ impl serde::Serialize for GetNodeInfoResponse {
         if !self.services_names.is_empty() {
             len += 1;
         }
-        if !self.addrs.is_empty() {
+        if !self.local_addrs.is_empty() {
             len += 1;
         }
         if !self.protocols.is_empty() {
             len += 1;
         }
-        if self.connections != 0 {
-            len += 1;
-        }
-        if self.inbound_connections != 0 {
-            len += 1;
-        }
-        if self.outbound_connections != 0 {
-            len += 1;
-        }
         if self.clock_offset != 0. {
+            len += 1;
+        }
+        if self.connection_info.is_some() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetNodeInfoResponse", len)?;
@@ -3798,23 +3925,17 @@ impl serde::Serialize for GetNodeInfoResponse {
         if !self.services_names.is_empty() {
             struct_ser.serialize_field("servicesNames", &self.services_names)?;
         }
-        if !self.addrs.is_empty() {
-            struct_ser.serialize_field("addrs", &self.addrs)?;
+        if !self.local_addrs.is_empty() {
+            struct_ser.serialize_field("localAddrs", &self.local_addrs)?;
         }
         if !self.protocols.is_empty() {
             struct_ser.serialize_field("protocols", &self.protocols)?;
         }
-        if self.connections != 0 {
-            struct_ser.serialize_field("connections", ToString::to_string(&self.connections).as_str())?;
-        }
-        if self.inbound_connections != 0 {
-            struct_ser.serialize_field("inboundConnections", ToString::to_string(&self.inbound_connections).as_str())?;
-        }
-        if self.outbound_connections != 0 {
-            struct_ser.serialize_field("outboundConnections", ToString::to_string(&self.outbound_connections).as_str())?;
-        }
         if self.clock_offset != 0. {
             struct_ser.serialize_field("clockOffset", &self.clock_offset)?;
+        }
+        if let Some(v) = self.connection_info.as_ref() {
+            struct_ser.serialize_field("connectionInfo", v)?;
         }
         struct_ser.end()
     }
@@ -3836,15 +3957,13 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
             "services",
             "services_names",
             "servicesNames",
-            "addrs",
+            "local_addrs",
+            "localAddrs",
             "protocols",
-            "connections",
-            "inbound_connections",
-            "inboundConnections",
-            "outbound_connections",
-            "outboundConnections",
             "clock_offset",
             "clockOffset",
+            "connection_info",
+            "connectionInfo",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -3856,12 +3975,10 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
             Reachability,
             Services,
             ServicesNames,
-            Addrs,
+            LocalAddrs,
             Protocols,
-            Connections,
-            InboundConnections,
-            OutboundConnections,
             ClockOffset,
+            ConnectionInfo,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -3890,12 +4007,10 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                             "reachability" => Ok(GeneratedField::Reachability),
                             "services" => Ok(GeneratedField::Services),
                             "servicesNames" | "services_names" => Ok(GeneratedField::ServicesNames),
-                            "addrs" => Ok(GeneratedField::Addrs),
+                            "localAddrs" | "local_addrs" => Ok(GeneratedField::LocalAddrs),
                             "protocols" => Ok(GeneratedField::Protocols),
-                            "connections" => Ok(GeneratedField::Connections),
-                            "inboundConnections" | "inbound_connections" => Ok(GeneratedField::InboundConnections),
-                            "outboundConnections" | "outbound_connections" => Ok(GeneratedField::OutboundConnections),
                             "clockOffset" | "clock_offset" => Ok(GeneratedField::ClockOffset),
+                            "connectionInfo" | "connection_info" => Ok(GeneratedField::ConnectionInfo),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -3922,12 +4037,10 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                 let mut reachability__ = None;
                 let mut services__ = None;
                 let mut services_names__ = None;
-                let mut addrs__ = None;
+                let mut local_addrs__ = None;
                 let mut protocols__ = None;
-                let mut connections__ = None;
-                let mut inbound_connections__ = None;
-                let mut outbound_connections__ = None;
                 let mut clock_offset__ = None;
+                let mut connection_info__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::Moniker => {
@@ -3979,41 +4092,17 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                             }
                             services_names__ = Some(map.next_value()?);
                         }
-                        GeneratedField::Addrs => {
-                            if addrs__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("addrs"));
+                        GeneratedField::LocalAddrs => {
+                            if local_addrs__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("localAddrs"));
                             }
-                            addrs__ = Some(map.next_value()?);
+                            local_addrs__ = Some(map.next_value()?);
                         }
                         GeneratedField::Protocols => {
                             if protocols__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("protocols"));
                             }
                             protocols__ = Some(map.next_value()?);
-                        }
-                        GeneratedField::Connections => {
-                            if connections__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("connections"));
-                            }
-                            connections__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
-                        }
-                        GeneratedField::InboundConnections => {
-                            if inbound_connections__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("inboundConnections"));
-                            }
-                            inbound_connections__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
-                        }
-                        GeneratedField::OutboundConnections => {
-                            if outbound_connections__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("outboundConnections"));
-                            }
-                            outbound_connections__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
                         }
                         GeneratedField::ClockOffset => {
                             if clock_offset__.is_some() {
@@ -4022,6 +4111,12 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                             clock_offset__ = 
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
+                        }
+                        GeneratedField::ConnectionInfo => {
+                            if connection_info__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("connectionInfo"));
+                            }
+                            connection_info__ = map.next_value()?;
                         }
                     }
                 }
@@ -4033,12 +4128,10 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                     reachability: reachability__.unwrap_or_default(),
                     services: services__.unwrap_or_default(),
                     services_names: services_names__.unwrap_or_default(),
-                    addrs: addrs__.unwrap_or_default(),
+                    local_addrs: local_addrs__.unwrap_or_default(),
                     protocols: protocols__.unwrap_or_default(),
-                    connections: connections__.unwrap_or_default(),
-                    inbound_connections: inbound_connections__.unwrap_or_default(),
-                    outbound_connections: outbound_connections__.unwrap_or_default(),
                     clock_offset: clock_offset__.unwrap_or_default(),
+                    connection_info: connection_info__,
                 })
             }
         }

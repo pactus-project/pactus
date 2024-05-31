@@ -393,6 +393,10 @@
             <ul>
               
                 <li>
+                  <a href="#pactus.ConnectionInfo"><span class="badge">M</span>ConnectionInfo</a>
+                </li>
+              
+                <li>
                   <a href="#pactus.GetNetworkInfoRequest"><span class="badge">M</span>GetNetworkInfoRequest</a>
                 </li>
               
@@ -2461,6 +2465,44 @@ address.</p></td>
       <p></p>
 
       
+        <h3 id="pactus.ConnectionInfo">ConnectionInfo</h3>
+        <p>Response message containing information about the overall network.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>connections</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>Total number of the connection. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>inbound_connections</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>Number of inbound connections. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>outbound_connections</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>Number of outbound connections. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="pactus.GetNetworkInfoRequest">GetNetworkInfoRequest</h3>
         <p>Request message for retrieving overall network information.</p>
 
@@ -2680,7 +2722,7 @@ address.</p></td>
                 </tr>
               
                 <tr>
-                  <td>addrs</td>
+                  <td>local_addrs</td>
                   <td><a href="#string">string</a></td>
                   <td>repeated</td>
                   <td><p>List of addresses associated with the node. </p></td>
@@ -2694,31 +2736,17 @@ address.</p></td>
                 </tr>
               
                 <tr>
-                  <td>connections</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p>Number of connections </p></td>
-                </tr>
-              
-                <tr>
-                  <td>inbound_connections</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p>Number of inbound connections </p></td>
-                </tr>
-              
-                <tr>
-                  <td>outbound_connections</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p>Number of outbound connections </p></td>
-                </tr>
-              
-                <tr>
                   <td>clock_offset</td>
                   <td><a href="#double">double</a></td>
                   <td></td>
                   <td><p>Clock offset </p></td>
+                </tr>
+              
+                <tr>
+                  <td>connection_info</td>
+                  <td><a href="#pactus.ConnectionInfo">ConnectionInfo</a></td>
+                  <td></td>
+                  <td><p>Connection information </p></td>
                 </tr>
               
             </tbody>

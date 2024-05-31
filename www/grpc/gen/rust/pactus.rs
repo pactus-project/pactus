@@ -794,6 +794,20 @@ pub struct GetNetworkInfoResponse {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetNodeInfoRequest {
 }
+/// Response message containing information about the overall network.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ConnectionInfo {
+    /// Total number of the connection.
+    #[prost(uint64, tag="1")]
+    pub connections: u64,
+    /// Number of inbound connections.
+    #[prost(uint64, tag="2")]
+    pub inbound_connections: u64,
+    /// Number of outbound connections.
+    #[prost(uint64, tag="3")]
+    pub outbound_connections: u64,
+}
 /// Response message containing information about a specific node in the network.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -821,22 +835,16 @@ pub struct GetNodeInfoResponse {
     pub services_names: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// List of addresses associated with the node.
     #[prost(string, repeated, tag="8")]
-    pub addrs: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    pub local_addrs: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// List of protocols supported by the node.
     #[prost(string, repeated, tag="9")]
     pub protocols: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    /// Number of connections
-    #[prost(uint64, tag="10")]
-    pub connections: u64,
-    /// Number of inbound connections
-    #[prost(uint64, tag="11")]
-    pub inbound_connections: u64,
-    /// Number of outbound connections
-    #[prost(uint64, tag="12")]
-    pub outbound_connections: u64,
     /// Clock offset
     #[prost(double, tag="13")]
     pub clock_offset: f64,
+    /// Connection information
+    #[prost(message, optional, tag="14")]
+    pub connection_info: ::core::option::Option<ConnectionInfo>,
 }
 /// Information about a peer in the network.
 #[allow(clippy::derive_partial_eq_without_eq)]
