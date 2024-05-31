@@ -99,6 +99,8 @@
     # `enable` indicates whether the firewall should be enabled or not.
     # Default is `false`.
     enable = false
+    # `blacklist_ips` list blocked faulty ip addresses
+    blacklist_ips = [""]
 
 # `tx_pool` contains configuration options for the transaction pool module.
 [tx_pool]

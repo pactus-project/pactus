@@ -50,6 +50,15 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
 	return bdl
 }
 
+func (f *Firewall) IsBlackListIPs(remoteAddr string) bool {
+	for _, ip := range f.config.BlackListIPs {
+		if ip == remoteAddr {
+			return true
+		}
+	}
+	return false
+}
+
 func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
 	bdl, err := f.openBundle(r, from)
 	if err != nil {

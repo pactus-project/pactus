@@ -255,6 +255,25 @@ func TestConnectEvent(t *testing.T) {
 	td.network.EventCh <- ce
 	p := td.sync.peerSet.GetPeer(pid)
 	assert.Equal(t, peerset.StatusCodeKnown, p.Status)
+
+	// Adding the address to the blacklist
+	td.config.Firewall.BlackListIPs = []string{"address_1"}
+
+	// Sending connect event for the blacklisted address
+	td.network.EventCh <- ce
+
+	assert.Eventually(t, func() bool {
+		p := td.sync.peerSet.GetPeer(pid)
+		if p == nil {
+			return false
+		}
+		return p.Status == peerset.StatusCodeBanned
+	}, time.Second, 100*time.Millisecond)
+
+	p = td.sync.peerSet.GetPeer(pid)
+	assert.Equal(t, peerset.StatusCodeBanned, p.Status)
+
+	td.config.Firewall.BlackListIPs = make([]string, 0)
 }
 
 func TestDisconnectEvent(t *testing.T) {

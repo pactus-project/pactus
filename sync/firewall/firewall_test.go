@@ -39,6 +39,7 @@ func setup(t *testing.T) *testData {
 	net := network.MockingNetwork(ts, ts.RandPeerID())
 	conf := DefaultConfig()
 	conf.Enabled = true
+	conf.BlackListIPs = []string{"10.10.10.10", "11.11.11.11"}
 	firewall := NewFirewall(conf, net, peerSet, st, subLogger)
 	assert.NotNil(t, firewall)
 	badPeerID := ts.RandPeerID()
@@ -63,6 +64,11 @@ func setup(t *testing.T) *testData {
 	}
 }
 
+func TestLoadDefaultBlackListIPs(t *testing.T) {
+	td := setup(t)
+	assert.Nil(t, td.firewall.config.loadDefaultBlackListIPs())
+}
+
 func TestInvalidBundlesCounter(t *testing.T) {
 	td := setup(t)
 
@@ -76,6 +82,16 @@ func TestInvalidBundlesCounter(t *testing.T) {
 
 	p := td.firewall.peerSet.GetPeer(td.unknownPeerID)
 	assert.Equal(t, p.InvalidBundles, 3)
+}
+
+func TestBlackListIPs(t *testing.T) {
+	td := setup(t)
+
+	blackListIP := "10.10.10.10"
+	whiteListIP := "12.12.12.12"
+
+	assert.True(t, td.firewall.IsBlackListIPs(blackListIP))
+	assert.False(t, td.firewall.IsBlackListIPs(whiteListIP))
 }
 
 func TestGossipMessage(t *testing.T) {
