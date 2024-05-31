@@ -14,6 +14,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	prop, _ := td.GenerateTestProposal(consensusHeight, 0)
 	pid := td.RandPeerID()
 	td.consMgr.SetProposal(prop)
+	td.consMocks[0].Proposer = true
 
 	t.Run("not the same height", func(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight+1, td.RandValAddress())
