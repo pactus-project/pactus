@@ -25,17 +25,17 @@ func (p *pool) calculateDynamicFee() amount.Amount {
 
 	switch {
 	case usageRatio > 0.90:
-		return p.minFee * 1000000
+		return p.minFee * 10000000
 	case usageRatio > 0.80:
-		return p.minFee * 100000
+		return p.minFee * 1000000
 	case usageRatio > 0.70:
-		return p.minFee * 10000
+		return p.minFee * 100000
 	case usageRatio > 0.60:
-		return p.minFee * 1000
+		return p.minFee * 10000
 	case usageRatio > 0.50:
-		return p.minFee * 100
+		return p.minFee * 1000
 	case usageRatio > 0.40:
-		return p.minFee * 10
+		return p.minFee * 100
 	default:
 		return p.minFee
 	}
