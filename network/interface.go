@@ -128,7 +128,9 @@ type Network interface {
 	EventChannel() <-chan Event
 	Broadcast([]byte, TopicID) error
 	SendTo([]byte, lp2pcore.PeerID) error
-	JoinGeneralTopic(shouldPropagate ShouldPropagate) error
+	JoinGeneralTopic(shouldPropagate ShouldPropagate) error // Deprecated JoinGeneralTopic
+	JoinBlockTopic(shouldPropagate ShouldPropagate) error
+	JoinTransactionTopic(shouldPropagate ShouldPropagate) error
 	JoinConsensusTopic(shouldPropagate ShouldPropagate) error
 	CloseConnection(pid lp2pcore.PeerID)
 	SelfID() lp2pcore.PeerID

@@ -21,12 +21,14 @@ type gossipService struct {
 	eventCh chan Event
 	logger  *logger.SubLogger
 
+	generalTopicName     string
 	transactionTopicName string
-	rateLimit            *rateLimit
+
+	rateLimit *rateLimit
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	transactionTopicName string, conf *Config, log *logger.SubLogger,
+	transactionTopicName, generalTopicName string, conf *Config, log *logger.SubLogger,
 ) *gossipService {
 	opts := []lp2pps.Option{
 		lp2pps.WithFloodPublish(true),
@@ -66,6 +68,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 		logger:               log,
 		rateLimit:            newRateLimit(conf.RateLimitThreshold, 1*time.Second),
 		transactionTopicName: transactionTopicName,
+		generalTopicName:     generalTopicName,
 	}
 }
 
@@ -99,7 +102,7 @@ func (g *gossipService) JoinTopic(name string, sp ShouldPropagate) (*lp2pps.Topi
 				Data: m.Data,
 			}
 
-			if m.GetTopic() == g.transactionTopicName {
+			if m.GetTopic() == g.generalTopicName || m.GetTopic() == g.transactionTopicName {
 				if !g.rateLimit.increment() {
 					g.logger.Warn("rate limit exceeded, ignoring message", "from", peerId)
 					g.onReceiveMessage(m)

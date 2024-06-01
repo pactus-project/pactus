@@ -99,9 +99,19 @@ func NewSynchronizer(
 }
 
 func (sync *synchronizer) Start() error {
+	// TODO: we can remove general topic in newer version
 	if err := sync.network.JoinGeneralTopic(sync.shouldPropagateGeneralMessage); err != nil {
 		return err
 	}
+
+	if err := sync.network.JoinBlockTopic(sync.shouldPropagateBlockMessage); err != nil {
+		return err
+	}
+
+	if err := sync.network.JoinTransactionTopic(sync.shouldPropagateTransactionMessage); err != nil {
+		return err
+	}
+
 	// TODO: Not joining consensus topic when we are syncing
 	if err := sync.network.JoinConsensusTopic(sync.shouldPropagateConsensusMessage); err != nil {
 		return err
@@ -589,7 +599,16 @@ func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 	return blocks
 }
 
+// Deprecated: shouldPropagateGeneralMessage
 func (sync *synchronizer) shouldPropagateGeneralMessage(_ *network.GossipMessage) bool {
+	return true
+}
+
+func (sync *synchronizer) shouldPropagateBlockMessage(_ *network.GossipMessage) bool {
+	return true
+}
+
+func (sync *synchronizer) shouldPropagateTransactionMessage(_ *network.GossipMessage) bool {
 	return true
 }
 

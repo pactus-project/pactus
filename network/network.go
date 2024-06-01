@@ -30,21 +30,23 @@ import (
 var _ Network = &network{}
 
 type network struct {
-	ctx            context.Context
-	cancel         context.CancelFunc
-	config         *Config
-	host           lp2phost.Host
-	mdns           *mdnsService
-	dht            *dhtService
-	peerMgr        *peerMgr
-	connGater      *ConnectionGater
-	stream         *streamService
-	gossip         *gossipService
-	notifee        *NotifeeService
-	generalTopic   *lp2pps.Topic
-	consensusTopic *lp2pps.Topic
-	eventChannel   chan Event
-	logger         *logger.SubLogger
+	ctx              context.Context
+	cancel           context.CancelFunc
+	config           *Config
+	host             lp2phost.Host
+	mdns             *mdnsService
+	dht              *dhtService
+	peerMgr          *peerMgr
+	connGater        *ConnectionGater
+	stream           *streamService
+	gossip           *gossipService
+	notifee          *NotifeeService
+	generalTopic     *lp2pps.Topic
+	blockTopic       *lp2pps.Topic
+	transactionTopic *lp2pps.Topic
+	consensusTopic   *lp2pps.Topic
+	eventChannel     chan Event
+	logger           *logger.SubLogger
 }
 
 func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
@@ -260,7 +262,8 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	self.dht = newDHTService(self.ctx, self.host, kadProtocolID, conf, self.logger)
 	self.peerMgr = newPeerMgr(ctx, host, conf, self.logger)
 	self.stream = newStreamService(ctx, self.host, streamProtocolID, self.eventChannel, self.logger)
-	self.gossip = newGossipService(ctx, self.host, self.eventChannel, self.transactionTopicName(), conf, self.logger)
+	self.gossip = newGossipService(ctx, self.host, self.eventChannel, self.transactionTopicName(),
+		self.generalTopicName(), conf, self.logger)
 	self.notifee = newNotifeeService(ctx, self.host, self.eventChannel, self.peerMgr, streamProtocolID, self.logger)
 
 	self.logger.Info("network setup", "id", self.host.ID(),
@@ -386,7 +389,18 @@ func (n *network) Broadcast(msg []byte, topicID TopicID) error {
 		}
 
 		return n.gossip.BroadcastMessage(msg, n.generalTopic)
+	case TopicIDBlock:
+		if n.blockTopic == nil {
+			return NotSubscribedError{TopicID: topicID}
+		}
 
+		return n.gossip.BroadcastMessage(msg, n.blockTopic)
+	case TopicIDTransaction:
+		if n.transactionTopic == nil {
+			return NotSubscribedError{TopicID: topicID}
+		}
+
+		return n.gossip.BroadcastMessage(msg, n.transactionTopic)
 	case TopicIDConsensus:
 		if n.consensusTopic == nil {
 			return NotSubscribedError{TopicID: topicID}
@@ -399,6 +413,7 @@ func (n *network) Broadcast(msg []byte, topicID TopicID) error {
 	}
 }
 
+// Deprecated: JoinGeneralTopic
 func (n *network) JoinGeneralTopic(sp ShouldPropagate) error {
 	if n.generalTopic != nil {
 		n.logger.Debug("already subscribed to general topic")
@@ -410,6 +425,36 @@ func (n *network) JoinGeneralTopic(sp ShouldPropagate) error {
 		return err
 	}
 	n.generalTopic = topic
+
+	return nil
+}
+
+func (n *network) JoinBlockTopic(sp ShouldPropagate) error {
+	if n.blockTopic != nil {
+		n.logger.Debug("already subscribed to blockTopic topic")
+
+		return nil
+	}
+	topic, err := n.gossip.JoinTopic(n.blockTopicName(), sp)
+	if err != nil {
+		return err
+	}
+	n.blockTopic = topic
+
+	return nil
+}
+
+func (n *network) JoinTransactionTopic(sp ShouldPropagate) error {
+	if n.transactionTopic != nil {
+		n.logger.Debug("already subscribed to transactionTopic topic")
+
+		return nil
+	}
+	topic, err := n.gossip.JoinTopic(n.transactionTopicName(), sp)
+	if err != nil {
+		return err
+	}
+	n.transactionTopic = topic
 
 	return nil
 }
