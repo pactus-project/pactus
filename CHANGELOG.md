@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.7](https://github.com/pactus-project/pactus/compare/v1.1.6...v1.1.7) (2024-06-01)
+
+### Feat
+
+- **network**: add firewall black list ips to banning when connecting to peer ([#1298](https://github.com/pactus-project/pactus/pull/1298))
+
+### Fix
+
+- **sync**: load black listed addresses from the config ([#1301](https://github.com/pactus-project/pactus/pull/1301))
+- **consensus**: only proposer responds to the query proposal ([#1300](https://github.com/pactus-project/pactus/pull/1300))
+- **network**: set latest support version to 1.1.6 ([#1299](https://github.com/pactus-project/pactus/pull/1299))
+
 ## [1.1.6](https://github.com/pactus-project/pactus/compare/v1.1.5...v1.1.6) (2024-05-31)
 
 ### Fix
