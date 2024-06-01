@@ -99,8 +99,10 @@
     # `enable` indicates whether the firewall should be enabled or not.
     # Default is `false`.
     enable = false
-    # `blacklist_addresses` list blocked faulty p2p addresses
-    blacklist_addresses = [""]
+
+    # `blacklist_addresses` contains the list of addresses that should be blacklisted.
+    # Any connection to blacklisted addresses will be terminated.
+    blacklist_addresses = []
 
 # `tx_pool` contains configuration options for the transaction pool module.
 [tx_pool]

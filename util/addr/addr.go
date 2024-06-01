@@ -44,22 +44,22 @@ func Parse(addr string) (P2PAddr, error) {
 	return address, nil
 }
 
-func (p P2PAddr) Transport() string {
+func (p *P2PAddr) Transport() string {
 	return p.transport
 }
 
-func (p P2PAddr) Protocol() string {
+func (p *P2PAddr) Protocol() string {
 	return p.protocol
 }
 
-func (p P2PAddr) Address() string {
+func (p *P2PAddr) Address() string {
 	return p.addr
 }
 
-func (p P2PAddr) Port() string {
+func (p *P2PAddr) Port() string {
 	return p.port
 }
 
-func (p P2PAddr) PeerID() string {
+func (p *P2PAddr) PeerID() string {
 	return p.peerID
 }
