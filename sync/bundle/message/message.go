@@ -54,10 +54,10 @@ const (
 
 func (t Type) TopicID() network.TopicID {
 	switch t {
-	case TypeTransactions, TypeBlockAnnounce:
-
-		return network.TopicIDGeneral
-
+	case TypeTransactions:
+		return network.TopicIDTransaction
+	case TypeBlockAnnounce:
+		return network.TopicIDBlock
 	case TypeQueryProposal,
 		TypeProposal,
 		TypeQueryVotes,

@@ -9,17 +9,22 @@ import (
 type TopicID int
 
 const (
-	TopicIDGeneral   TopicID = 1
-	TopicIDConsensus TopicID = 2
+	TopicIDGeneral TopicID = iota + 1 // Deprecated: TopicIDGeneral is old topic to consume block and transaction
+	TopicIDConsensus
+	TopicIDBlock
+	TopicIDTransaction
 )
 
 func (t TopicID) String() string {
 	switch t {
 	case TopicIDGeneral:
 		return "general"
-
 	case TopicIDConsensus:
 		return "consensus"
+	case TopicIDBlock:
+		return "block"
+	case TopicIDTransaction:
+		return "transaction"
 	}
 
 	return "invalid"
