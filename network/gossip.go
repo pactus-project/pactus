@@ -102,6 +102,7 @@ func (g *gossipService) JoinTopic(name string, sp ShouldPropagate) (*lp2pps.Topi
 			if m.GetTopic() == g.transactionTopicName {
 				if !g.rateLimit.increment() {
 					g.logger.Warn("rate limit exceeded, ignoring message", "from", peerId)
+					g.onReceiveMessage(m)
 
 					return lp2pps.ValidationIgnore
 				}
