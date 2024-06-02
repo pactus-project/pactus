@@ -23,7 +23,7 @@ func TestQueryProposalMessage(t *testing.T) {
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		m := NewQueryVotesMessage(100, 0, ts.RandValAddress())
+		m := NewQueryProposalMessage(100, 0, ts.RandValAddress())
 
 		assert.NoError(t, m.BasicCheck())
 		assert.Contains(t, m.String(), "100")
