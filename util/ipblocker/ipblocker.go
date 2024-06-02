@@ -2,7 +2,6 @@ package ipblocker
 
 import (
 	"net"
-	"sync"
 )
 
 type IPBlocker struct {
@@ -31,26 +30,12 @@ func (i *IPBlocker) IsBlocked(ip string) bool {
 		return false
 	}
 
-	var wg sync.WaitGroup
-	result := make(chan bool, 1)
-
+	// TODO: if scaled cidrs and ips items we can improve using trys or radix tree
 	for _, cidr := range i.cidrs {
-		wg.Add(1)
-		go func(cidr *net.IPNet) {
-			defer wg.Done()
-			if cidr.Contains(parsedIP) {
-				select {
-				case result <- true:
-				default:
-				}
-			}
-		}(cidr)
+		if cidr.Contains(parsedIP) {
+			return true
+		}
 	}
 
-	go func() {
-		wg.Wait()
-		close(result)
-	}()
-
-	return <-result
+	return false
 }
