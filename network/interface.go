@@ -9,15 +9,15 @@ import (
 type TopicID int
 
 const (
-	TopicIDGeneralDeprecated TopicID = -1
-	TopicIDBlock             TopicID = 1
-	TopicIDTransaction       TopicID = 2
-	TopicIDConsensus         TopicID = 3
+	TopicIDGeneral     TopicID = -1 // Deprecated: generalTopic is replaced with block and transaction
+	TopicIDBlock       TopicID = 1
+	TopicIDTransaction TopicID = 2
+	TopicIDConsensus   TopicID = 3
 )
 
 func (t TopicID) String() string {
 	switch t {
-	case TopicIDGeneralDeprecated:
+	case TopicIDGeneral:
 		return "general"
 
 	case TopicIDBlock:

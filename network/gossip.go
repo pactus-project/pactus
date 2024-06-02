@@ -13,19 +13,19 @@ import (
 )
 
 type gossipService struct {
-	ctx                    context.Context
-	wg                     sync.WaitGroup
-	config                 *Config
-	host                   lp2phost.Host
-	pubsub                 *lp2pps.PubSub
-	topics                 []*lp2pps.Topic
-	subs                   []*lp2pps.Subscription
-	generalTopicDeprecated *lp2pps.Topic
-	blockTopic             *lp2pps.Topic
-	transactionTopic       *lp2pps.Topic
-	consensusTopic         *lp2pps.Topic
-	eventCh                chan Event
-	logger                 *logger.SubLogger
+	ctx              context.Context
+	wg               sync.WaitGroup
+	config           *Config
+	host             lp2phost.Host
+	pubsub           *lp2pps.PubSub
+	topics           []*lp2pps.Topic
+	subs             []*lp2pps.Subscription
+	generalTopic     *lp2pps.Topic // Deprecated: generalTopic is replaced with block and transaction
+	blockTopic       *lp2pps.Topic
+	transactionTopic *lp2pps.Topic
+	consensusTopic   *lp2pps.Topic
+	eventCh          chan Event
+	logger           *logger.SubLogger
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
@@ -74,12 +74,12 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 func (g *gossipService) Broadcast(msg []byte, topicID TopicID) error {
 	g.logger.Trace("publishing new message", "topic", topicID)
 	switch topicID {
-	case TopicIDGeneralDeprecated:
-		if g.generalTopicDeprecated == nil {
+	case TopicIDGeneral:
+		if g.generalTopic == nil {
 			return NotSubscribedError{TopicID: topicID}
 		}
 
-		return g.BroadcastMessage(msg, g.generalTopicDeprecated)
+		return g.BroadcastMessage(msg, g.generalTopic)
 
 	case TopicIDBlock:
 		if g.blockTopic == nil {
@@ -108,16 +108,16 @@ func (g *gossipService) Broadcast(msg []byte, topicID TopicID) error {
 }
 
 func (g *gossipService) JoinGeneralTopic(sp ShouldPropagate) error {
-	if g.generalTopicDeprecated != nil {
+	if g.generalTopic != nil {
 		g.logger.Debug("already subscribed to general topic")
 
 		return nil
 	}
-	topic, err := g.JoinTopic(g.generalTopicNameDeprecated(), sp)
+	topic, err := g.JoinTopic(g.generalTopicName(), sp)
 	if err != nil {
 		return err
 	}
-	g.generalTopicDeprecated = topic
+	g.generalTopic = topic
 
 	return nil
 }
@@ -167,7 +167,8 @@ func (g *gossipService) JoinConsensusTopic(sp ShouldPropagate) error {
 	return nil
 }
 
-func (g *gossipService) generalTopicNameDeprecated() string {
+// Deprecated: generalTopic is replaced with block and transaction.
+func (g *gossipService) generalTopicName() string {
 	return g.TopicName("general")
 }
 
