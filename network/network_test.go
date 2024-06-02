@@ -50,7 +50,6 @@ func testConfig() *Config {
 		ForcePrivateNetwork:  true,
 		NetworkName:          "test",
 		DefaultPort:          12345,
-		RateLimitThreshold:   124,
 	}
 }
 
@@ -196,11 +195,11 @@ func TestNetwork(t *testing.T) {
 		lp2p.ForceReachabilityPrivate(),
 	})
 
-	assert.NoError(t, networkB.JoinGeneralTopic(alwaysPropagate))
-	assert.NoError(t, networkP.JoinGeneralTopic(alwaysPropagate))
-	assert.NoError(t, networkM.JoinGeneralTopic(alwaysPropagate))
-	assert.NoError(t, networkN.JoinGeneralTopic(alwaysPropagate))
-	assert.NoError(t, networkX.JoinGeneralTopic(alwaysPropagate))
+	assert.NoError(t, networkB.JoinBlockTopic(alwaysPropagate))
+	assert.NoError(t, networkP.JoinBlockTopic(alwaysPropagate))
+	assert.NoError(t, networkM.JoinBlockTopic(alwaysPropagate))
+	assert.NoError(t, networkN.JoinBlockTopic(alwaysPropagate))
+	assert.NoError(t, networkX.JoinBlockTopic(alwaysPropagate))
 
 	assert.NoError(t, networkB.JoinConsensusTopic(alwaysPropagate))
 	assert.NoError(t, networkP.JoinConsensusTopic(alwaysPropagate))
@@ -255,7 +254,7 @@ func TestNetwork(t *testing.T) {
 	t.Run("Gossip: all nodes receive general gossip messages", func(t *testing.T) {
 		msg := ts.RandBytes(64)
 
-		require.NoError(t, networkP.Broadcast(msg, TopicIDGeneral))
+		require.NoError(t, networkP.Broadcast(msg, TopicIDBlock))
 
 		eB := shouldReceiveEvent(t, networkB, EventTypeGossip).(*GossipMessage)
 		eM := shouldReceiveEvent(t, networkM, EventTypeGossip).(*GossipMessage)
@@ -315,8 +314,8 @@ func TestNetwork(t *testing.T) {
 	t.Run("Ignore broadcasting identical messages", func(t *testing.T) {
 		msg := ts.RandBytes(64)
 
-		require.NoError(t, networkM.Broadcast(msg, TopicIDGeneral))
-		require.NoError(t, networkN.Broadcast(msg, TopicIDGeneral))
+		require.NoError(t, networkM.Broadcast(msg, TopicIDBlock))
+		require.NoError(t, networkN.Broadcast(msg, TopicIDBlock))
 
 		eX := shouldReceiveEvent(t, networkX, EventTypeGossip).(*GossipMessage)
 

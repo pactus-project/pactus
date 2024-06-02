@@ -9,14 +9,22 @@ import (
 type TopicID int
 
 const (
-	TopicIDGeneral   TopicID = 1
-	TopicIDConsensus TopicID = 2
+	TopicIDGeneralDeprecated TopicID = -1
+	TopicIDBlock             TopicID = 1
+	TopicIDTransaction       TopicID = 2
+	TopicIDConsensus         TopicID = 3
 )
 
 func (t TopicID) String() string {
 	switch t {
-	case TopicIDGeneral:
+	case TopicIDGeneralDeprecated:
 		return "general"
+
+	case TopicIDBlock:
+		return "block"
+
+	case TopicIDTransaction:
+		return "transaction"
 
 	case TopicIDConsensus:
 		return "consensus"
@@ -124,6 +132,8 @@ type Network interface {
 	Broadcast([]byte, TopicID) error
 	SendTo([]byte, lp2pcore.PeerID) error
 	JoinGeneralTopic(shouldPropagate ShouldPropagate) error
+	JoinBlockTopic(shouldPropagate ShouldPropagate) error
+	JoinTransactionTopic(shouldPropagate ShouldPropagate) error
 	JoinConsensusTopic(shouldPropagate ShouldPropagate) error
 	CloseConnection(pid lp2pcore.PeerID)
 	SelfID() lp2pcore.PeerID

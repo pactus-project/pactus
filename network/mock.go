@@ -52,6 +52,14 @@ func (mock *MockNetwork) JoinGeneralTopic(_ ShouldPropagate) error {
 	return nil
 }
 
+func (mock *MockNetwork) JoinBlockTopic(_ ShouldPropagate) error {
+	return nil
+}
+
+func (mock *MockNetwork) JoinTransactionTopic(_ ShouldPropagate) error {
+	return nil
+}
+
 func (mock *MockNetwork) JoinConsensusTopic(_ ShouldPropagate) error {
 	return nil
 }

@@ -75,9 +75,6 @@
   # Default is `false`.
   force_private_network = false
 
-  # `rate_limit_threshold` defines a threshold (message per second) to ignore messages in P2P network.
-  rate_limit_threshold = 3
-
 # `sync` contains configuration of sync module.
 [sync]
 
@@ -96,13 +93,23 @@
 
   # `sync.firewall` contains configuration options for the sync firewall.
   [sync.firewall]
-    # `enable` indicates whether the firewall should be enabled or not.
-    # Default is `false`.
-    enable = false
-
     # `blacklist_addresses` contains the list of addresses that should be blacklisted.
     # Any connection to blacklisted addresses will be terminated.
     blacklist_addresses = []
+
+    # `rate_limit` contains the rate limit configurations for network topics.
+    # The rate limit specifies the number of messages per second that are allowed.
+    # If set to zero, it allows all requests without any limit.`
+    [sync.firewall.rate_limit]
+
+      # `block_topic` specifies the rate limit for the block topic.
+      block_topic = 0
+
+      # `transaction_topic` specifies the rate limit for the transaction topic.
+      transaction_topic = 3
+
+      # `consensus_topic` specifies the rate limit for the consensus topic.
+      consensus_topic = 0
 
 # `tx_pool` contains configuration options for the transaction pool module.
 [tx_pool]

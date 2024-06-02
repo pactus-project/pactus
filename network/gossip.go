@@ -2,6 +2,7 @@ package network
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -12,21 +13,23 @@ import (
 )
 
 type gossipService struct {
-	ctx     context.Context
-	wg      sync.WaitGroup
-	host    lp2phost.Host
-	pubsub  *lp2pps.PubSub
-	topics  []*lp2pps.Topic
-	subs    []*lp2pps.Subscription
-	eventCh chan Event
-	logger  *logger.SubLogger
-
-	generalTopicName string
-	rateLimit        *rateLimit
+	ctx                    context.Context
+	wg                     sync.WaitGroup
+	config                 *Config
+	host                   lp2phost.Host
+	pubsub                 *lp2pps.PubSub
+	topics                 []*lp2pps.Topic
+	subs                   []*lp2pps.Subscription
+	generalTopicDeprecated *lp2pps.Topic
+	blockTopic             *lp2pps.Topic
+	transactionTopic       *lp2pps.Topic
+	consensusTopic         *lp2pps.Topic
+	eventCh                chan Event
+	logger                 *logger.SubLogger
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	generalTopicName string, conf *Config, log *logger.SubLogger,
+	conf *Config, log *logger.SubLogger,
 ) *gossipService {
 	opts := []lp2pps.Option{
 		lp2pps.WithFloodPublish(true),
@@ -58,15 +61,130 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 	}
 
 	return &gossipService{
-		ctx:              ctx,
-		host:             host,
-		pubsub:           pubsub,
-		wg:               sync.WaitGroup{},
-		eventCh:          eventCh,
-		logger:           log,
-		rateLimit:        newRateLimit(conf.RateLimitThreshold, 1*time.Second),
-		generalTopicName: generalTopicName,
+		ctx:     ctx,
+		host:    host,
+		config:  conf,
+		pubsub:  pubsub,
+		wg:      sync.WaitGroup{},
+		eventCh: eventCh,
+		logger:  log,
 	}
+}
+
+func (g *gossipService) Broadcast(msg []byte, topicID TopicID) error {
+	g.logger.Trace("publishing new message", "topic", topicID)
+	switch topicID {
+	case TopicIDGeneralDeprecated:
+		if g.generalTopicDeprecated == nil {
+			return NotSubscribedError{TopicID: topicID}
+		}
+
+		return g.BroadcastMessage(msg, g.generalTopicDeprecated)
+
+	case TopicIDBlock:
+		if g.blockTopic == nil {
+			return NotSubscribedError{TopicID: topicID}
+		}
+
+		return g.BroadcastMessage(msg, g.blockTopic)
+
+	case TopicIDTransaction:
+		if g.transactionTopic == nil {
+			return NotSubscribedError{TopicID: topicID}
+		}
+
+		return g.BroadcastMessage(msg, g.transactionTopic)
+
+	case TopicIDConsensus:
+		if g.consensusTopic == nil {
+			return NotSubscribedError{TopicID: topicID}
+		}
+
+		return g.BroadcastMessage(msg, g.consensusTopic)
+
+	default:
+		return InvalidTopicError{TopicID: topicID}
+	}
+}
+
+func (g *gossipService) JoinGeneralTopic(sp ShouldPropagate) error {
+	if g.generalTopicDeprecated != nil {
+		g.logger.Debug("already subscribed to general topic")
+
+		return nil
+	}
+	topic, err := g.JoinTopic(g.generalTopicNameDeprecated(), sp)
+	if err != nil {
+		return err
+	}
+	g.generalTopicDeprecated = topic
+
+	return nil
+}
+
+func (g *gossipService) JoinBlockTopic(sp ShouldPropagate) error {
+	if g.blockTopic != nil {
+		g.logger.Debug("already subscribed to general topic")
+
+		return nil
+	}
+	topic, err := g.JoinTopic(g.blockTopicName(), sp)
+	if err != nil {
+		return err
+	}
+	g.blockTopic = topic
+
+	return nil
+}
+
+func (g *gossipService) JoinTransactionTopic(sp ShouldPropagate) error {
+	if g.transactionTopic != nil {
+		g.logger.Debug("already subscribed to general topic")
+
+		return nil
+	}
+	topic, err := g.JoinTopic(g.transactionTopicName(), sp)
+	if err != nil {
+		return err
+	}
+	g.transactionTopic = topic
+
+	return nil
+}
+
+func (g *gossipService) JoinConsensusTopic(sp ShouldPropagate) error {
+	if g.consensusTopic != nil {
+		g.logger.Debug("already subscribed to consensus topic")
+
+		return nil
+	}
+	topic, err := g.JoinTopic(g.consensusTopicName(), sp)
+	if err != nil {
+		return err
+	}
+	g.consensusTopic = topic
+
+	return nil
+}
+
+func (g *gossipService) generalTopicNameDeprecated() string {
+	return g.TopicName("general")
+}
+
+func (g *gossipService) blockTopicName() string {
+	return g.TopicName("block")
+}
+
+func (g *gossipService) transactionTopicName() string {
+	return g.TopicName("transaction")
+}
+
+func (g *gossipService) consensusTopicName() string {
+	return g.TopicName("consensus")
+}
+
+func (g *gossipService) TopicName(topic string) string {
+	return fmt.Sprintf("/%s/topic/%s/v1", g.config.NetworkName, topic)
 }
 
 // BroadcastMessage broadcasts a message to the specified topic.
@@ -99,16 +217,9 @@ func (g *gossipService) JoinTopic(name string, sp ShouldPropagate) (*lp2pps.Topi
 				Data: m.Data,
 			}
 
-			if m.GetTopic() == g.generalTopicName {
-				if !g.rateLimit.increment() {
-					g.logger.Warn("rate limit exceeded, ignoring message", "from", peerId)
-					g.onReceiveMessage(m)
-
-					return lp2pps.ValidationIgnore
-				}
-			}
-
 			if !sp(msg) {
+				g.logger.Warn("message ignored", "from", peerId, "topic", name)
+
 				// Consume the message first
 				g.onReceiveMessage(m)
 

@@ -3,6 +3,7 @@ package firewall
 import (
 	"bytes"
 	"io"
+	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/genesis"
@@ -13,15 +14,19 @@ import (
 	"github.com/pactus-project/pactus/util/addr"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/ratelimit"
 )
 
 // Firewall check packets before passing them to sync module.
 type Firewall struct {
-	config  *Config
-	network network.Network
-	peerSet *peerset.PeerSet
-	state   state.Facade
-	logger  *logger.SubLogger
+	config               *Config
+	network              network.Network
+	peerSet              *peerset.PeerSet
+	blockRateLimit       *ratelimit.RateLimit
+	transactionRateLimit *ratelimit.RateLimit
+	consensusRateLimit   *ratelimit.RateLimit
+	state                state.Facade
+	logger               *logger.SubLogger
 }
 
 func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st state.Facade,
@@ -29,12 +34,19 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 ) *Firewall {
 	conf.LoadDefaultBlackListAddresses()
 
+	blockRateLimit := ratelimit.NewRateLimit(conf.RateLimit.BlockTopic, time.Second)
+	transactionRateLimit := ratelimit.NewRateLimit(conf.RateLimit.TransactionTopic, time.Second)
+	consensusRateLimit := ratelimit.NewRateLimit(conf.RateLimit.ConsensusTopic, time.Second)
+
 	return &Firewall{
-		config:  conf,
-		network: net,
-		peerSet: peerSet,
-		state:   st,
-		logger:  log,
+		config:               conf,
+		network:              net,
+		peerSet:              peerSet,
+		blockRateLimit:       blockRateLimit,
+		transactionRateLimit: transactionRateLimit,
+		consensusRateLimit:   consensusRateLimit,
+		state:                st,
+		logger:               log,
 	}
 }
 
@@ -147,19 +159,23 @@ func (f *Firewall) checkBundle(bdl *bundle.Bundle) error {
 }
 
 func (f *Firewall) isPeerBanned(pid peer.ID) bool {
-	if !f.config.Enabled {
-		return false
-	}
-
 	p := f.peerSet.GetPeer(pid)
 
 	return p.IsBanned()
 }
 
 func (f *Firewall) closeConnection(pid peer.ID) {
-	if !f.config.Enabled {
-		return
-	}
-
 	f.network.CloseConnection(pid)
+}
+
+func (f *Firewall) AllowBlockRequest() bool {
+	return f.blockRateLimit.AllowRequest()
+}
+
+func (f *Firewall) AllowTransactionRequest() bool {
+	return f.transactionRateLimit.AllowRequest()
+}
+
+func (f *Firewall) AllowConsensusRequest() bool {
+	return f.consensusRateLimit.AllowRequest()
 }

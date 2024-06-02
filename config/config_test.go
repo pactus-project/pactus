@@ -137,7 +137,8 @@ func TestExampleConfig(t *testing.T) {
 		if !(strings.HasPrefix(line, "# ") ||
 			strings.HasPrefix(line, "###") ||
 			strings.HasPrefix(line, "  # ") ||
-			strings.HasPrefix(line, "    # ")) {
+			strings.HasPrefix(line, "    # ") ||
+			strings.HasPrefix(line, "      # ")) {
 			exampleToml += line
 			exampleToml += "\n"
 		}

@@ -23,7 +23,6 @@ type Config struct {
 	EnableMdns           bool     `toml:"enable_mdns"`
 	EnableMetrics        bool     `toml:"enable_metrics"`
 	ForcePrivateNetwork  bool     `toml:"force_private_network"`
-	RateLimitThreshold   int      `toml:"rate_limit_threshold"`
 
 	// Private configs
 	NetworkName                 string   `toml:"-"`
@@ -49,7 +48,6 @@ func DefaultConfig() *Config {
 		ForcePrivateNetwork:  false,
 		DefaultPort:          0,
 		IsBootstrapper:       false,
-		RateLimitThreshold:   3,
 	}
 }
 

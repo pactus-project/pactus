@@ -29,17 +29,20 @@ type testData struct {
 	state         *state.MockState
 }
 
-func setup(t *testing.T) *testData {
+func setup(t *testing.T, conf *Config) *testData {
 	t.Helper()
 
 	ts := testsuite.NewTestSuite(t)
+
+	if conf == nil {
+		conf = DefaultConfig()
+	}
 
 	subLogger := logger.NewSubLogger("firewall", nil)
 	peerSet := peerset.NewPeerSet(1 * time.Minute)
 	st := state.MockingState(ts)
 	net := network.MockingNetwork(ts, ts.RandPeerID())
-	conf := DefaultConfig()
-	conf.Enabled = true
+
 	// TODO: It should be like: "/ip6/2a01:4f9:4a:1d85::2"
 	conf.BlackListAddresses = []string{"/ip6/2a01:4f9:4a:1d85::2/tcp/21888"}
 	require.NoError(t, conf.BasicCheck())
@@ -68,7 +71,7 @@ func setup(t *testing.T) *testData {
 }
 
 func TestInvalidBundlesCounter(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	assert.Nil(t, td.firewall.OpenGossipBundle([]byte("bad"), td.unknownPeerID))
 	assert.Nil(t, td.firewall.OpenGossipBundle(nil, td.unknownPeerID))
@@ -84,7 +87,7 @@ func TestInvalidBundlesCounter(t *testing.T) {
 
 func TestGossipMessage(t *testing.T) {
 	t.Run("Message  from: unknown => should NOT close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
@@ -96,7 +99,7 @@ func TestGossipMessage(t *testing.T) {
 	})
 
 	t.Run("Message  from: bad => should close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
@@ -108,13 +111,13 @@ func TestGossipMessage(t *testing.T) {
 	})
 
 	t.Run("Message is nil => should close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		assert.Nil(t, td.firewall.OpenGossipBundle(nil, td.unknownPeerID))
 	})
 
 	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
@@ -128,7 +131,7 @@ func TestGossipMessage(t *testing.T) {
 
 func TestStreamMessage(t *testing.T) {
 	t.Run("Message is nil => should close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		assert.False(t, td.network.IsClosed(td.badPeerID))
 		assert.Nil(t, td.firewall.OpenStreamBundle(bytes.NewReader(nil), td.badPeerID))
@@ -136,7 +139,7 @@ func TestStreamMessage(t *testing.T) {
 	})
 
 	t.Run("Message from: bad => should close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		bdl := bundle.NewBundle(message.NewBlocksRequestMessage(td.RandInt(100), 1, 100))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
@@ -148,7 +151,7 @@ func TestStreamMessage(t *testing.T) {
 	})
 
 	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		bdl := bundle.NewBundle(message.NewBlocksRequestMessage(td.RandInt(100), 1, 100))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
@@ -160,20 +163,8 @@ func TestStreamMessage(t *testing.T) {
 	})
 }
 
-func TestDisabledFirewall(t *testing.T) {
-	td := setup(t)
-
-	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), -1, td.RandValAddress()))
-	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-	d, _ := bdl.Encode()
-
-	td.firewall.config.Enabled = false
-	assert.Nil(t, td.firewall.OpenGossipBundle(d, td.badPeerID))
-	assert.False(t, td.network.IsClosed(td.badPeerID))
-}
-
 func TestUpdateLastReceived(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
@@ -186,7 +177,7 @@ func TestUpdateLastReceived(t *testing.T) {
 }
 
 func TestNetworkFlags(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	// TODO: add tests for Mainnet and Testnet flags
 	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
@@ -205,7 +196,7 @@ func TestNetworkFlags(t *testing.T) {
 }
 
 func TestBlackListAddress(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	testCases := []struct {
 		addr        string
@@ -245,4 +236,34 @@ func TestBlackListAddress(t *testing.T) {
 				"test %v failed, addr %v should not blacklisted", i, tc.addr)
 		}
 	}
+}
+
+func TestAllowBlockRequest(t *testing.T) {
+	conf := DefaultConfig()
+	conf.RateLimit.BlockTopic = 1
+
+	td := setup(t, conf)
+
+	assert.True(t, td.firewall.AllowBlockRequest())
+	assert.False(t, td.firewall.AllowBlockRequest())
+}
+
+func TestAllowTransactionRequest(t *testing.T) {
+	conf := DefaultConfig()
+	conf.RateLimit.TransactionTopic = 1
+
+	td := setup(t, conf)
+
+	assert.True(t, td.firewall.AllowTransactionRequest())
+	assert.False(t, td.firewall.AllowTransactionRequest())
+}
+
+func TestAllowConsensusRequest(t *testing.T) {
+	conf := DefaultConfig()
+	conf.RateLimit.ConsensusTopic = 1
+
+	td := setup(t, conf)
+
+	assert.True(t, td.firewall.AllowConsensusRequest())
+	assert.False(t, td.firewall.AllowConsensusRequest())
 }
