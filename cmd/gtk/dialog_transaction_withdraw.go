@@ -86,8 +86,8 @@ You are going to sign and broadcast this transaction:
 From:   %s
 To:     %s
 Amount: %s
-Memo:   %s
 Fee:    %s
+Memo:   %s
 </tt>
 <b>THIS ACTION IS NOT REVERSIBLE. Do you want to continue?</b>`,
 			sender, receiver, amt, trx.Fee(), trx.Memo())
