@@ -609,6 +609,9 @@ func TestPickRandomVote(t *testing.T) {
 
 	rndVote1 := td.consP.PickRandomVote(1)
 	assert.Equal(t, rndVote1.Type(), vote.VoteTypePrepare)
+
+	rndVote2 := td.consP.PickRandomVote(2)
+	assert.Nil(t, rndVote2)
 }
 
 func TestSetProposalFromPreviousRound(t *testing.T) {
