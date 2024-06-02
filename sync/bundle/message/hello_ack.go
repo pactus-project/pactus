@@ -27,5 +27,5 @@ func (m *HelloAckMessage) Type() Type {
 }
 
 func (m *HelloAckMessage) String() string {
-	return fmt.Sprintf("{%s: %s}", m.ResponseCode, m.Reason)
+	return fmt.Sprintf("{%s: %s %v}", m.ResponseCode, m.Reason, m.Height)
 }

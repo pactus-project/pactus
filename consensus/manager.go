@@ -81,16 +81,11 @@ func (mgr *manager) PickRandomVote(round int16) *vote.Vote {
 	return cons.PickRandomVote(round)
 }
 
-// Proposal returns the proposal for a specific round if one of the consensus instances is the proposer.
-// Otherwise, it returns nil.
+// Proposal returns the proposal for a specific round from a random consensus instance.
 func (mgr *manager) Proposal() *proposal.Proposal {
-	for _, cons := range mgr.instances {
-		if cons.IsProposer() {
-			return cons.Proposal()
-		}
-	}
+	cons := mgr.getBestInstance()
 
-	return nil
+	return cons.Proposal()
 }
 
 // HeightRound retrieves the current height and round from a random consensus instance.
@@ -104,6 +99,18 @@ func (mgr *manager) HeightRound() (uint32, int16) {
 func (mgr *manager) HasActiveInstance() bool {
 	for _, cons := range mgr.instances {
 		if cons.IsActive() {
+			return true
+		}
+	}
+
+	return false
+}
+
+// HasActiveInstance checks if any of the consensus instances is the proposer
+// for the current round.
+func (mgr *manager) HasProposer() bool {
+	for _, cons := range mgr.instances {
+		if cons.IsProposer() {
 			return true
 		}
 	}

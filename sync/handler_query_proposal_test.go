@@ -14,6 +14,23 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	prop, _ := td.GenerateTestProposal(consensusHeight, 0)
 	pid := td.RandPeerID()
 	td.consMgr.SetProposal(prop)
+
+	t.Run("doesn't have active validator", func(t *testing.T) {
+		msg := message.NewQueryProposalMessage(consensusHeight+1, td.RandValAddress())
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+
+		td.shouldNotPublishMessageWithThisType(t, message.TypeVote)
+	})
+
+	td.consMocks[0].Active = true
+
+	t.Run("not the proposer", func(t *testing.T) {
+		msg := message.NewQueryProposalMessage(consensusHeight+1, td.RandValAddress())
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+
+		td.shouldNotPublishMessageWithThisType(t, message.TypeVote)
+	})
+
 	td.consMocks[0].Proposer = true
 
 	t.Run("not the same height", func(t *testing.T) {
@@ -22,6 +39,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeProposal)
 	})
+
 	t.Run("should respond to the query proposal message", func(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consensusHeight, td.RandValAddress())
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
