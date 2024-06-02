@@ -773,29 +773,7 @@ func (st *state) publishEvents(height uint32, blk *block.Block) {
 }
 
 func (st *state) CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount {
-	switch payloadType {
-	case payload.TypeUnbond,
-		payload.TypeSortition:
-
-		return 0
-
-	case payload.TypeTransfer,
-		payload.TypeBond,
-		payload.TypeWithdraw:
-		fee := amt.MulF64(st.params.FeeFractionDeprecated)
-		fee = util.Max(fee, st.params.MinimumFeeDeprecated)
-		fee = util.Min(fee, st.params.MaximumFeeDeprecated)
-
-		return fee
-
-	default:
-		return 0
-	}
-
-	// TODO:
-	// The above code should be replaced by the below code once the majority of the nodes are upgraded.
-	// This helps to smoothly migrate the nodes.
-	// return st.txPool.EstimatedFee(amt, payloadType)
+	return st.txPool.EstimatedFee(amt, payloadType)
 }
 
 func (st *state) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {

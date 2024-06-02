@@ -6,13 +6,13 @@ import (
 
 type Config struct {
 	MaxSize   int     `toml:"max_size"`
-	MinFeePAC float64 `toml:"min_fee"`
+	MinFeePAC float64 `toml:"-"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
 		MaxSize:   1000,
-		MinFeePAC: 0.000001,
+		MinFeePAC: 0.1,
 	}
 }
 

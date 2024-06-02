@@ -16,7 +16,7 @@ func TestDefaultConfigCheck(t *testing.T) {
 	assert.Equal(t, 100, c.unbondPoolSize())
 	assert.Equal(t, 100, c.withdrawPoolSize())
 	assert.Equal(t, 100, c.sortitionPoolSize())
-	assert.Equal(t, amount.Amount(1000), c.minFee())
+	assert.Equal(t, amount.Amount(100000000), c.minFee())
 
 	assert.Equal(t,
 		c.transferPoolSize()+

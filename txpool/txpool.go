@@ -104,11 +104,11 @@ func (p *txPool) appendTx(trx *tx.Tx) error {
 	}
 
 	if !trx.IsFreeTx() {
-		if trx.Fee() < pool.calculateDynamicFee() {
-			p.logger.Warn("low fee transaction", "tx", trx, "minFee", pool.calculateDynamicFee())
+		if trx.Fee() < pool.estimatedFee() {
+			p.logger.Warn("low fee transaction", "tx", trx, "minFee", pool.estimatedFee())
 
 			return AppendError{
-				Err: fmt.Errorf("low fee transaction, expected to be more than %s", pool.calculateDynamicFee()),
+				Err: fmt.Errorf("low fee transaction, expected to be more than %s", pool.estimatedFee()),
 			}
 		}
 	}
@@ -235,7 +235,7 @@ func (p *txPool) EstimatedFee(_ amount.Amount, payloadType payload.Type) amount.
 		return 0
 	}
 
-	return pool.calculateDynamicFee()
+	return pool.estimatedFee()
 }
 
 func (p *txPool) String() string {
