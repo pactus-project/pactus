@@ -5,13 +5,15 @@ import "time"
 type Config struct {
 	ChangeProposerTimeout    time.Duration `toml:"-"`
 	ChangeProposerDelta      time.Duration `toml:"-"`
+	QueryVoteTimeout         time.Duration `toml:"-"`
 	MinimumAvailabilityScore float64       `toml:"-"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		ChangeProposerTimeout:    8 * time.Second,
+		ChangeProposerTimeout:    6 * time.Second,
 		ChangeProposerDelta:      4 * time.Second,
+		QueryVoteTimeout:         4 * time.Second,
 		MinimumAvailabilityScore: 0.6666666,
 	}
 }
@@ -38,7 +40,6 @@ func (conf *Config) BasicCheck() error {
 }
 
 func (conf *Config) CalculateChangeProposerTimeout(round int16) time.Duration {
-	return time.Duration(
-		conf.ChangeProposerTimeout.Milliseconds()+conf.ChangeProposerDelta.Milliseconds()*int64(round),
-	) * time.Millisecond
+	return conf.ChangeProposerTimeout +
+		conf.ChangeProposerDelta*time.Duration(round)
 }

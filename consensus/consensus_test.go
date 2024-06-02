@@ -57,12 +57,12 @@ func testConfig() *Config {
 	return &Config{
 		ChangeProposerTimeout: 1 * time.Hour, // Disabling timers
 		ChangeProposerDelta:   1 * time.Hour, // Disabling timers
+		QueryVoteTimeout:      1 * time.Hour, // Disabling timers
 	}
 }
 
 func setup(t *testing.T) *testData {
 	t.Helper()
-	queryVoteInitialTimeout = 2 * time.Hour
 
 	return setupWithSeed(t, testsuite.GenerateSeed())
 }

@@ -453,6 +453,23 @@ func TestValidateBlockTime(t *testing.T) {
 		assert.Equal(t, expectedProposeTime, td.state.proposeNextBlockTime())
 	})
 
+	t.Run("Last block is committed 20 seconds ago", func(t *testing.T) {
+		td.state.lastInfo.UpdateBlockTime(roundedNow.Add(-20 * time.Second))
+
+		// Before or same as the last block time
+		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(-20*time.Second)))
+
+		// Ok
+		assert.NoError(t, td.state.validateBlockTime(roundedNow))
+		assert.NoError(t, td.state.validateBlockTime(roundedNow.Add(10*time.Second)))
+
+		// More than the threshold
+		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(20*time.Second)))
+
+		expectedProposeTime := roundedNow
+		assert.Equal(t, expectedProposeTime, td.state.proposeNextBlockTime())
+	})
+
 	t.Run("Last block is committed one minute ago", func(t *testing.T) {
 		td.state.lastInfo.UpdateBlockTime(roundedNow.Add(-1 * time.Minute)) // One minute ago
 		lastBlockTime := td.state.LastBlockTime()
