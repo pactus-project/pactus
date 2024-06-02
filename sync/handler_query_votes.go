@@ -33,18 +33,23 @@ func (handler *queryVotesHandler) ParseMessage(m message.Message, _ peer.ID) err
 	}
 
 	if !handler.rateLimit.AllowRequest() {
-		handler.logger.Warn("ignoring QueryVotes, rate limit exceeded", "msg", msg)
+		handler.logger.Debug("ignoring QueryVotes, rate limit exceeded", "msg", msg)
 
 		return nil
 	}
 
 	height, _ := handler.consMgr.HeightRound()
-	if msg.Height == height {
-		v := handler.consMgr.PickRandomVote(msg.Round)
-		if v != nil {
-			response := message.NewVoteMessage(v)
-			handler.broadcast(response)
-		}
+	if msg.Height != height {
+		handler.logger.Debug("ignoring QueryVotes, not same height", "msg", msg,
+			"height", height)
+
+		return nil
+	}
+
+	v := handler.consMgr.PickRandomVote(msg.Round)
+	if v != nil {
+		response := message.NewVoteMessage(v)
+		handler.broadcast(response)
 	}
 
 	return nil

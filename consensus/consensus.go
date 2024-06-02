@@ -392,7 +392,7 @@ func (cs *consensus) signAddVote(v *vote.Vote) {
 
 func (cs *consensus) queryProposal() {
 	cs.broadcaster(cs.valKey.Address(),
-		message.NewQueryProposalMessage(cs.height, cs.valKey.Address()))
+		message.NewQueryProposalMessage(cs.height, cs.round, cs.valKey.Address()))
 }
 
 // queryVotes is an anti-entropy mechanism to retrieve missed votes
@@ -457,14 +457,21 @@ func (cs *consensus) PickRandomVote(round int16) *vote.Vote {
 	defer cs.lk.RUnlock()
 
 	votes := []*vote.Vote{}
-	if round == cs.round {
-		m := cs.log.RoundMessages(round)
-		votes = append(votes, m.AllVotes()...)
-	} else {
-		// Only broadcast cp:decided votes
+	switch {
+	case round < cs.round:
+		// Past round: Only broadcast cp:decided votes
 		vs := cs.log.CPDecidedVoteVoteSet(round)
 		votes = append(votes, vs.AllVotes()...)
+
+	case round == cs.round:
+		// Current round
+		m := cs.log.RoundMessages(round)
+		votes = append(votes, m.AllVotes()...)
+
+	case round > cs.round:
+		// Future round
 	}
+
 	if len(votes) == 0 {
 		return nil
 	}
