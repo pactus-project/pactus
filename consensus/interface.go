@@ -33,6 +33,7 @@ type ManagerReader interface {
 	Proposal() *proposal.Proposal
 	HeightRound() (uint32, int16)
 	HasActiveInstance() bool
+	HasProposer() bool
 }
 
 type Manager interface {

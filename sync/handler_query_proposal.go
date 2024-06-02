@@ -4,21 +4,45 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/util/ratelimit"
 )
 
 type queryProposalHandler struct {
 	*synchronizer
+
+	rateLimit *ratelimit.RateLimit
 }
 
 func newQueryProposalHandler(sync *synchronizer) messageHandler {
+	rateLimit := ratelimit.NewRateLimit(1, sync.config.QueryProposalWindow)
+
 	return &queryProposalHandler{
-		sync,
+		synchronizer: sync,
+		rateLimit:    rateLimit,
 	}
 }
 
 func (handler *queryProposalHandler) ParseMessage(m message.Message, _ peer.ID) error {
 	msg := m.(*message.QueryProposalMessage)
 	handler.logger.Trace("parsing QueryProposal message", "msg", msg)
+
+	if !handler.consMgr.HasActiveInstance() {
+		handler.logger.Debug("ignoring QueryProposal, not active", "msg", msg)
+
+		return nil
+	}
+
+	if !handler.consMgr.HasProposer() {
+		handler.logger.Debug("ignoring QueryProposal, not proposer", "msg", msg)
+
+		return nil
+	}
+
+	if !handler.rateLimit.AllowRequest() {
+		handler.logger.Warn("ignoring QueryProposal, rate limit exceeded", "msg", msg)
+
+		return nil
+	}
 
 	height, _ := handler.consMgr.HeightRound()
 	if msg.Height == height {

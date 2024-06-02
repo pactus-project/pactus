@@ -20,6 +20,8 @@ type Config struct {
 	LatestBlockInterval uint32          `toml:"-"`
 	BlockPerMessage     uint32          `toml:"-"`
 	LatestSupportingVer version.Version `toml:"-"`
+	QueryProposalWindow time.Duration   `toml:"-"`
+	QueryVoteWindow     time.Duration   `toml:"-"`
 }
 
 func DefaultConfig() *Config {
@@ -29,6 +31,8 @@ func DefaultConfig() *Config {
 		BlockPerMessage:     60,
 		MaxSessions:         8,
 		LatestBlockInterval: 720,
+		QueryProposalWindow: 6 * time.Second,
+		QueryVoteWindow:     8 * time.Second,
 		Firewall:            firewall.DefaultConfig(),
 		LatestSupportingVer: version.Version{
 			Major: 1,
