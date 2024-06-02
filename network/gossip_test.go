@@ -26,8 +26,8 @@ func TestInvalidTopic(t *testing.T) {
 
 	msg := []byte("test-invalid-topic")
 
-	require.ErrorIs(t, net.Broadcast(msg, -1),
+	require.ErrorIs(t, net.Broadcast(msg, 0xbad),
 		InvalidTopicError{
-			TopicID: TopicID(-1),
+			TopicID: TopicID(0xbad),
 		})
 }
