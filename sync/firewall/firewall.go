@@ -6,13 +6,14 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/peerset"
-	"github.com/pactus-project/pactus/util/addr"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/ipblocker"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/ratelimit"
 )
@@ -26,13 +27,21 @@ type Firewall struct {
 	transactionRateLimit *ratelimit.RateLimit
 	consensusRateLimit   *ratelimit.RateLimit
 	state                state.Facade
+	ipBlocker *ipblocker.IPBlocker
 	logger               *logger.SubLogger
 }
 
 func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st state.Facade,
 	log *logger.SubLogger,
-) *Firewall {
-	conf.LoadDefaultBlackListAddresses()
+) (*Firewall, error) {
+	if err := conf.LoadDefaultBlackListAddresses(); err != nil {
+		return nil, err
+	}
+
+	blocker, err := ipblocker.New(conf.BlackListAddresses)
+	if err != nil {
+		return nil, err
+	}
 
 	blockRateLimit := ratelimit.NewRateLimit(conf.RateLimit.BlockTopic, time.Second)
 	transactionRateLimit := ratelimit.NewRateLimit(conf.RateLimit.TransactionTopic, time.Second)
@@ -45,6 +54,7 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 		blockRateLimit:       blockRateLimit,
 		transactionRateLimit: transactionRateLimit,
 		consensusRateLimit:   consensusRateLimit,
+		ipBlocker: blocker,
 		state:                st,
 		logger:               log,
 	}
@@ -66,16 +76,13 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
 }
 
 func (f *Firewall) IsBlackListAddress(remoteAddr string) bool {
-	p2pRemoteAddr, err := addr.Parse(remoteAddr)
+	ip, err := f.parseP2PAddr(remoteAddr)
 	if err != nil {
 		f.logger.Debug("firewall: unable to parse remote address", "err", err)
-
 		return false
 	}
 
-	_, exists := f.config.blackListAddrSet[p2pRemoteAddr.Address()]
-
-	return exists
+	return f.ipBlocker.IsBlocked(ip)
 }
 
 func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
@@ -178,4 +185,28 @@ func (f *Firewall) AllowTransactionRequest() bool {
 
 func (f *Firewall) AllowConsensusRequest() bool {
 	return f.consensusRateLimit.AllowRequest()
+}
+
+func (f *Firewall) parseP2PAddr(address string) (string, error) {
+	addr, err := multiaddr.NewMultiaddr(address)
+	if err != nil {
+		return "", err
+	}
+
+	components := addr.Protocols()
+
+	var ip string
+	for _, comp := range components {
+		switch comp.Name {
+		// TODO: can parse dns address and find ip??
+		case "ip4", "ip6":
+			ipComponent, err := addr.ValueForProtocol(comp.Code)
+			if err != nil {
+				return "", err
+			}
+			ip = ipComponent
+		}
+	}
+
+	return ip, nil
 }

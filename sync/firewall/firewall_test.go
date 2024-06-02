@@ -44,9 +44,16 @@ func setup(t *testing.T, conf *Config) *testData {
 	net := network.MockingNetwork(ts, ts.RandPeerID())
 
 	// TODO: It should be like: "/ip6/2a01:4f9:4a:1d85::2"
-	conf.BlackListAddresses = []string{"/ip6/2a01:4f9:4a:1d85::2/tcp/21888"}
+	conf.BlackListAddresses = []string{
+		"84.247.0.0/24",
+		"115.193.0.0/16",
+		"2001:db8:85a3:0000:0000:8a2e:0370:7334/64",
+	}
 	require.NoError(t, conf.BasicCheck())
-	firewall := NewFirewall(conf, net, peerSet, st, subLogger)
+	firewall, err := NewFirewall(conf, net, peerSet, st, subLogger)
+	if err != nil {
+		return nil
+	}
 	assert.NotNil(t, firewall)
 	badPeerID := ts.RandPeerID()
 	goodPeerID := ts.RandPeerID()
@@ -266,4 +273,49 @@ func TestAllowConsensusRequest(t *testing.T) {
 
 	assert.True(t, td.firewall.AllowConsensusRequest())
 	assert.False(t, td.firewall.AllowConsensusRequest())
+}
+
+func TestParseP2PAddr(t *testing.T) {
+	td := setup(t)
+
+	tests := []struct {
+		name        string
+		address     string
+		expectedIP  string
+		expectError bool
+	}{
+		{
+			name:       "Valid IPv4 with p2p",
+			address:    "/ip4/84.247.165.249/tcp/21888/p2p/12D3KooWQmv2FcNQfh1EhA98twt8ePdkQaxEPeYfinEYyVS16juY",
+			expectedIP: "84.247.165.249",
+		},
+		{
+			name:       "Valid IPv4 without p2p",
+			address:    "/ip4/115.193.157.138/tcp/21888",
+			expectedIP: "115.193.157.138",
+		},
+		{
+			name: "Valid IPv6 with p2p",
+			address: "/ip6/240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/tcp/21888/p2p/" +
+				"12D3KooWQmv2FcNQfh1EhA98twt8ePdkQaxEPeYfinEYyVS16juY",
+			expectedIP: "240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf",
+		},
+		{
+			name:        "Invalid address",
+			address:     "/invalid/address",
+			expectError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ip, err := td.firewall.parseP2PAddr(tt.address)
+			if tt.expectError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.expectedIP, ip)
+			}
+		})
+	}
 }
