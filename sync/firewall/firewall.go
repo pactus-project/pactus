@@ -76,7 +76,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
 }
 
 func (f *Firewall) IsBlackListAddress(remoteAddr string) bool {
-	ip, err := f.parseP2PAddr(remoteAddr)
+	ip, err := f.getIPFromMultiAddress(remoteAddr)
 	if err != nil {
 		f.logger.Warn("firewall: unable to parse remote address", "err", err)
 		return false
@@ -187,7 +187,7 @@ func (f *Firewall) AllowConsensusRequest() bool {
 	return f.consensusRateLimit.AllowRequest()
 }
 
-func (f *Firewall) parseP2PAddr(address string) (string, error) {
+func (f *Firewall) getIPFromMultiAddress(address string) (string, error) {
 	addr, err := multiaddr.NewMultiaddr(address)
 	if err != nil {
 		return "", err

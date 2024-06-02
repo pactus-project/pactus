@@ -304,7 +304,7 @@ func TestParseP2PAddr(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ip, err := td.firewall.parseP2PAddr(tt.address)
+			ip, err := td.firewall.getIPFromMultiAddress(tt.address)
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {
