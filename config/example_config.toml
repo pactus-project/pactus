@@ -93,7 +93,7 @@
 
   # `sync.firewall` contains configuration options for the sync firewall.
   [sync.firewall]
-    # `blacklist_addresses` contains the list of addresses that should be blacklisted.
+    # `blacklist_addresses` contains the list of IPs and CIDRs that should be blacklisted.
     # Any connection to blacklisted addresses will be terminated.
     blacklist_addresses = []
 

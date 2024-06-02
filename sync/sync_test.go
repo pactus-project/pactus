@@ -232,7 +232,11 @@ func TestStop(t *testing.T) {
 
 func TestConnectEvent(t *testing.T) {
 	conf := testConfig()
-	conf.Firewall.BlackListAddresses = []string{"/ip4/1.1.1.1/tcp/21888"}
+	conf.Firewall.BlackListAddresses = []string{
+		"84.247.0.0/24",
+		"115.193.0.0/16",
+		"240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/64",
+	}
 
 	td := setup(t, conf)
 
@@ -260,7 +264,7 @@ func TestConnectEvent(t *testing.T) {
 	pid = td.RandPeerID()
 	ce = &network.ConnectEvent{
 		PeerID:        pid,
-		RemoteAddress: "/ip4/1.1.1.1/tcp/21888",
+		RemoteAddress: "/ip4/115.193.2.1/tcp/21888",
 	}
 	td.network.EventCh <- ce
 
