@@ -27,7 +27,6 @@ type defaultBlackListCIDRs struct {
 func DefaultConfig() *Config {
 	return &Config{
 		BlackListAddresses: make([]string, 0),
-		blackListAddrSet:   make(map[string]any),
 		RateLimit: RateLimit{
 			BlockTopic:       0,
 			TransactionTopic: 3,

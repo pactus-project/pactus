@@ -27,7 +27,7 @@ type Firewall struct {
 	transactionRateLimit *ratelimit.RateLimit
 	consensusRateLimit   *ratelimit.RateLimit
 	state                state.Facade
-	ipBlocker *ipblocker.IPBlocker
+	ipBlocker            *ipblocker.IPBlocker
 	logger               *logger.SubLogger
 }
 
@@ -54,10 +54,10 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 		blockRateLimit:       blockRateLimit,
 		transactionRateLimit: transactionRateLimit,
 		consensusRateLimit:   consensusRateLimit,
-		ipBlocker: blocker,
+		ipBlocker:            blocker,
 		state:                st,
 		logger:               log,
-	}
+	}, nil
 }
 
 func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {

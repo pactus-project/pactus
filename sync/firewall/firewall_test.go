@@ -47,7 +47,7 @@ func setup(t *testing.T, conf *Config) *testData {
 	conf.BlackListAddresses = []string{
 		"84.247.0.0/24",
 		"115.193.0.0/16",
-		"2001:db8:85a3:0000:0000:8a2e:0370:7334/64",
+		"240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/64",
 	}
 	require.NoError(t, conf.BasicCheck())
 	firewall, err := NewFirewall(conf, net, peerSet, st, subLogger)
@@ -213,18 +213,13 @@ func TestBlackListAddress(t *testing.T) {
 			addr:        "/ip4/115.193.157.138/tcp/21888",
 			blacklisted: true,
 		},
-		// TOD: uncomment me
-		// {
-		// 	addr:        "/ip4/115.193.157.138",
-		// 	blacklisted: true,
-		// },
 		{
 			addr:        "/ip4/10.10.10.10",
 			blacklisted: false,
 		},
 		{
-			addr:        "/ip4/10.10.10.10/udp/21888",
-			blacklisted: false,
+			addr:        "/ip6/240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/udp/21888",
+			blacklisted: true,
 		},
 		{
 			addr:        "/ip6/2a01:4f9:4a:1d85::2",
@@ -276,7 +271,7 @@ func TestAllowConsensusRequest(t *testing.T) {
 }
 
 func TestParseP2PAddr(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	tests := []struct {
 		name        string
