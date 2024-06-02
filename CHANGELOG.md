@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.1.8](https://github.com/pactus-project/pactus/compare/v1.1.7...v1.1.8) (2024-06-02)
+
+### Feat
+
+- **firewall**: define rate limit for network topics ([#1308](https://github.com/pactus-project/pactus/pull/1308))
+
+### Fix
+
+- set fix fee 0.1 PAC for transactions ([#1315](https://github.com/pactus-project/pactus/pull/1315))
+- **consensus**: add round to query proposal message ([#1314](https://github.com/pactus-project/pactus/pull/1314))
+- **firewall**: block peer base on blacklisted CIDR ([#1309](https://github.com/pactus-project/pactus/pull/1309))
+- **consensus**: reduce ChangeProposerTimeout to 6 seconds ([#1311](https://github.com/pactus-project/pactus/pull/1311))
+- **sync**: define rate limit for query vote and proposal ([#1310](https://github.com/pactus-project/pactus/pull/1310))
+- decerease to 100 maximum transaction per block ([#1306](https://github.com/pactus-project/pactus/pull/1306))
+- consume message first then ignore on ratelimit ([#1304](https://github.com/pactus-project/pactus/pull/1304))
+
 ## [1.1.7](https://github.com/pactus-project/pactus/compare/v1.1.6...v1.1.7) (2024-06-01)
 
 ### Feat
