@@ -20,10 +20,6 @@ type Config struct {
 	RateLimit          RateLimit `toml:"rate_limit"`
 }
 
-type defaultBlackListCIDRs struct {
-	Addresses []string `json:"addresses"`
-}
-
 func DefaultConfig() *Config {
 	return &Config{
 		BlackListAddresses: make([]string, 0),
@@ -47,22 +43,17 @@ func (conf *Config) BasicCheck() error {
 	return nil
 }
 
-// LoadDefaultBlackListAddresses loads default blacklist addresses from the `black_list.json` file.
-func (conf *Config) LoadDefaultBlackListAddresses() error {
-	var def defaultBlackListCIDRs
+// BlackListAddresses returns the list of blacklisted addresses.
+// It is a combination of user-defined addresses and pre-defined addresses in the `black_list.json` file.
+func (conf *Config) GetBlackListAddresses() []string {
+	var blacklisted []string
 
-	err := json.Unmarshal(_defaultBlackListCidrs, &def)
+	err := json.Unmarshal(_defaultBlackListCidrs, &blacklisted)
 	if err != nil {
-		return err
+		panic(err)
 	}
 
-	for _, cidr := range def.Addresses {
-		conf.BlackListAddresses = append(conf.BlackListAddresses, cidr)
-	}
+	blacklisted = append(blacklisted, conf.BlackListAddresses...)
 
-	for _, addr := range conf.BlackListAddresses {
-		conf.BlackListAddresses = append(conf.BlackListAddresses, addr)
-	}
-
-	return nil
+	return blacklisted
 }
