@@ -40,7 +40,7 @@ func DefaultConfig() *Config {
 
 // BasicCheck performs basic checks on the configuration.
 func (conf *Config) BasicCheck() error {
-	return nil
+	return conf.Firewall.BasicCheck()
 }
 
 func (conf *Config) CacheSize() int {

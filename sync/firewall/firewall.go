@@ -38,10 +38,6 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 		return nil, err
 	}
 
-	if err := conf.BasicCheck(); err != nil {
-		return nil, err
-	}
-
 	blocker, err := ipblocker.New(conf.BlackListAddresses)
 	if err != nil {
 		return nil, err
