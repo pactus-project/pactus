@@ -47,7 +47,7 @@ func setup(t *testing.T, conf *Config) *testData {
 	conf.BlackListAddresses = []string{
 		"84.247.0.0/24",
 		"115.193.0.0/16",
-		"240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/64",
+		"240e:390:8a1:ae80:0000:0000:0000:0000/64",
 	}
 	require.NoError(t, conf.BasicCheck())
 	firewall, err := NewFirewall(conf, net, peerSet, st, subLogger)
