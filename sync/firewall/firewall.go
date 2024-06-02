@@ -34,11 +34,8 @@ type Firewall struct {
 func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st state.Facade,
 	log *logger.SubLogger,
 ) (*Firewall, error) {
-	if err := conf.LoadDefaultBlackListAddresses(); err != nil {
-		return nil, err
-	}
-
-	blocker, err := ipblocker.New(conf.BlackListAddresses)
+	blacklisted := conf.GetBlackListAddresses()
+	blocker, err := ipblocker.New(blacklisted)
 	if err != nil {
 		return nil, err
 	}
@@ -79,6 +76,7 @@ func (f *Firewall) IsBlackListAddress(remoteAddr string) bool {
 	ip, err := f.getIPFromMultiAddress(remoteAddr)
 	if err != nil {
 		f.logger.Warn("firewall: unable to parse remote address", "err", err, "addr", remoteAddr)
+
 		return false
 	}
 

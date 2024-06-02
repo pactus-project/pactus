@@ -30,7 +30,7 @@ func (i *IPBlocker) IsBlocked(ip string) bool {
 		return false
 	}
 
-	// TODO: if scaled cidrs and ips items we can improve using trys or radix tree
+	// TODO: if scaled cidrs and ips items we can improve using trie or radix tree
 	for _, cidr := range i.cidrs {
 		if cidr.Contains(parsedIP) {
 			return true
