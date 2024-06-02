@@ -11,10 +11,17 @@ import (
 //go:embed black_list.json
 var _defaultBlackListAddresses []byte
 
+type RateLimit struct {
+	BlockTopic       int `toml:"block_topic"`
+	TransactionTopic int `toml:"transaction_topic"`
+	ConsensusTopic   int `toml:"consensus_topic"`
+}
+
 type Config struct {
-	Enabled            bool     `toml:"enable"`
-	BlackListAddresses []string `toml:"blacklist_addresses"`
-	blackListAddrSet   map[string]any
+	BlackListAddresses []string  `toml:"blacklist_addresses"`
+	RateLimit          RateLimit `toml:"rate_limit"`
+
+	blackListAddrSet map[string]any
 }
 
 type defaultBlackListIPs struct {
@@ -23,9 +30,13 @@ type defaultBlackListIPs struct {
 
 func DefaultConfig() *Config {
 	return &Config{
-		Enabled:            false,
 		BlackListAddresses: make([]string, 0),
 		blackListAddrSet:   make(map[string]any),
+		RateLimit: RateLimit{
+			BlockTopic:       0,
+			TransactionTopic: 3,
+			ConsensusTopic:   0,
+		},
 	}
 }
 

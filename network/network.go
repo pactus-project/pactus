@@ -7,7 +7,6 @@ import (
 	"time"
 
 	lp2p "github.com/libp2p/go-libp2p"
-	lp2pps "github.com/libp2p/go-libp2p-pubsub"
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2pcrypto "github.com/libp2p/go-libp2p/core/crypto"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
@@ -30,21 +29,19 @@ import (
 var _ Network = &network{}
 
 type network struct {
-	ctx            context.Context
-	cancel         context.CancelFunc
-	config         *Config
-	host           lp2phost.Host
-	mdns           *mdnsService
-	dht            *dhtService
-	peerMgr        *peerMgr
-	connGater      *ConnectionGater
-	stream         *streamService
-	gossip         *gossipService
-	notifee        *NotifeeService
-	generalTopic   *lp2pps.Topic
-	consensusTopic *lp2pps.Topic
-	eventChannel   chan Event
-	logger         *logger.SubLogger
+	ctx          context.Context
+	cancel       context.CancelFunc
+	config       *Config
+	host         lp2phost.Host
+	mdns         *mdnsService
+	dht          *dhtService
+	peerMgr      *peerMgr
+	connGater    *ConnectionGater
+	stream       *streamService
+	gossip       *gossipService
+	notifee      *NotifeeService
+	eventChannel chan Event
+	logger       *logger.SubLogger
 }
 
 func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
@@ -260,7 +257,7 @@ func newNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netwo
 	self.dht = newDHTService(self.ctx, self.host, kadProtocolID, conf, self.logger)
 	self.peerMgr = newPeerMgr(ctx, host, conf, self.logger)
 	self.stream = newStreamService(ctx, self.host, streamProtocolID, self.eventChannel, self.logger)
-	self.gossip = newGossipService(ctx, self.host, self.eventChannel, self.generalTopicName(), conf, self.logger)
+	self.gossip = newGossipService(ctx, self.host, self.eventChannel, conf, self.logger)
 	self.notifee = newNotifeeService(ctx, self.host, self.eventChannel, self.peerMgr, streamProtocolID, self.logger)
 
 	self.logger.Info("network setup", "id", self.host.ID(),
@@ -378,67 +375,23 @@ func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) error {
 }
 
 func (n *network) Broadcast(msg []byte, topicID TopicID) error {
-	n.logger.Trace("publishing new message", "topic", topicID)
-	switch topicID {
-	case TopicIDGeneral:
-		if n.generalTopic == nil {
-			return NotSubscribedError{TopicID: topicID}
-		}
-
-		return n.gossip.BroadcastMessage(msg, n.generalTopic)
-
-	case TopicIDConsensus:
-		if n.consensusTopic == nil {
-			return NotSubscribedError{TopicID: topicID}
-		}
-
-		return n.gossip.BroadcastMessage(msg, n.consensusTopic)
-
-	default:
-		return InvalidTopicError{TopicID: topicID}
-	}
+	return n.gossip.Broadcast(msg, topicID)
 }
 
 func (n *network) JoinGeneralTopic(sp ShouldPropagate) error {
-	if n.generalTopic != nil {
-		n.logger.Debug("already subscribed to general topic")
+	return n.gossip.JoinGeneralTopic(sp)
+}
 
-		return nil
-	}
-	topic, err := n.gossip.JoinTopic(n.generalTopicName(), sp)
-	if err != nil {
-		return err
-	}
-	n.generalTopic = topic
+func (n *network) JoinBlockTopic(sp ShouldPropagate) error {
+	return n.gossip.JoinBlockTopic(sp)
+}
 
-	return nil
+func (n *network) JoinTransactionTopic(sp ShouldPropagate) error {
+	return n.gossip.JoinTransactionTopic(sp)
 }
 
 func (n *network) JoinConsensusTopic(sp ShouldPropagate) error {
-	if n.consensusTopic != nil {
-		n.logger.Debug("already subscribed to consensus topic")
-
-		return nil
-	}
-	topic, err := n.gossip.JoinTopic(n.consensusTopicName(), sp)
-	if err != nil {
-		return err
-	}
-	n.consensusTopic = topic
-
-	return nil
-}
-
-func (n *network) generalTopicName() string {
-	return n.TopicName("general")
-}
-
-func (n *network) consensusTopicName() string {
-	return n.TopicName("consensus")
-}
-
-func (n *network) TopicName(topic string) string {
-	return fmt.Sprintf("/%s/topic/%s/v1", n.config.NetworkName, topic)
+	return n.gossip.JoinConsensusTopic(sp)
 }
 
 func (n *network) CloseConnection(pid lp2ppeer.ID) {

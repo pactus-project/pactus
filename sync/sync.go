@@ -99,7 +99,10 @@ func NewSynchronizer(
 }
 
 func (sync *synchronizer) Start() error {
-	if err := sync.network.JoinGeneralTopic(sync.shouldPropagateGeneralMessage); err != nil {
+	if err := sync.network.JoinBlockTopic(sync.shouldPropagateBlockMessage); err != nil {
+		return err
+	}
+	if err := sync.network.JoinTransactionTopic(sync.shouldPropagateTransactionMessage); err != nil {
 		return err
 	}
 	// TODO: Not joining consensus topic when we are syncing
@@ -589,10 +592,14 @@ func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 	return blocks
 }
 
-func (sync *synchronizer) shouldPropagateGeneralMessage(_ *network.GossipMessage) bool {
-	return true
+func (sync *synchronizer) shouldPropagateBlockMessage(_ *network.GossipMessage) bool {
+	return sync.firewall.AllowBlockRequest()
+}
+
+func (sync *synchronizer) shouldPropagateTransactionMessage(_ *network.GossipMessage) bool {
+	return sync.firewall.AllowTransactionRequest()
 }
 
 func (sync *synchronizer) shouldPropagateConsensusMessage(_ *network.GossipMessage) bool {
-	return true
+	return sync.firewall.AllowConsensusRequest()
 }
