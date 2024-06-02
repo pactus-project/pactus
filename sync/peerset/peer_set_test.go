@@ -247,11 +247,11 @@ func TestUncompletedSession(t *testing.T) {
 }
 
 func TestExpireSessions(t *testing.T) {
-	timeout := 100 * time.Millisecond
+	timeout := 1 * time.Second
 	ps := NewPeerSet(timeout)
 
 	ssn := ps.OpenSession("peer1", 100, 101)
-	time.Sleep(timeout)
+	time.Sleep(2 * time.Second)
 
 	ps.SetExpiredSessionsAsUncompleted()
 	assert.Equal(t, 1, ps.NumberOfSessions())
