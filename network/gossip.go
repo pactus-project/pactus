@@ -168,8 +168,8 @@ func (g *gossipService) TopicName(topicID TopicID) string {
 	return fmt.Sprintf("/%s/topic/%s/v1", g.networkName, topicID.String())
 }
 
-func (g *gossipService) doJoinTopic(topicId TopicID, sp ShouldPropagate) (*lp2pps.Topic, error) {
-	topicName := g.TopicName(topicId)
+func (g *gossipService) doJoinTopic(topicID TopicID, sp ShouldPropagate) (*lp2pps.Topic, error) {
+	topicName := g.TopicName(topicID)
 	topic, err := g.pubsub.Join(topicName)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
@@ -185,7 +185,7 @@ func (g *gossipService) doJoinTopic(topicId TopicID, sp ShouldPropagate) (*lp2pp
 			msg := &GossipMessage{
 				From:    peerId,
 				Data:    m.Data,
-				TopicID: topicId,
+				TopicID: topicID,
 			}
 			if !sp(msg) {
 				// Consume the message first
