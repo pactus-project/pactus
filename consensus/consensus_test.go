@@ -216,7 +216,7 @@ func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height
 
 	for _, consMsg := range td.consMessages {
 		if consMsg.sender != cons.valKey.Address() ||
-			consMsg.message.Type() != message.TypeQueryVotes {
+			consMsg.message.Type() != message.TypeQueryVote {
 			continue
 		}
 
@@ -938,8 +938,8 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 		case
 			message.TypeHello,
 			message.TypeHelloAck,
-			message.TypeTransactions,
-			message.TypeQueryVotes,
+			message.TypeTransaction,
+			message.TypeQueryVote,
 			message.TypeBlocksRequest,
 			message.TypeBlocksResponse:
 			//

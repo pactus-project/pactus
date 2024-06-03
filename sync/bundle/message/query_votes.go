@@ -30,7 +30,7 @@ func (m *QueryVotesMessage) BasicCheck() error {
 }
 
 func (*QueryVotesMessage) Type() Type {
-	return TypeQueryVotes
+	return TypeQueryVote
 }
 
 func (m *QueryVotesMessage) String() string {

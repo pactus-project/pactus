@@ -28,7 +28,7 @@ func TestQueryProposal(t *testing.T) {
 	td.queryProposalTimeout(td.consP)
 
 	td.shouldPublishQueryProposal(t, td.consP, h)
-	td.shouldNotPublish(t, td.consP, message.TypeQueryVotes)
+	td.shouldNotPublish(t, td.consP, message.TypeQueryVote)
 }
 
 func TestQueryVotes(t *testing.T) {

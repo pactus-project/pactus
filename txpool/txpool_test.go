@@ -60,7 +60,7 @@ func (td *testData) shouldPublishTransaction(t *testing.T, id tx.ID) {
 		case msg := <-td.ch:
 			logger.Info("shouldPublishTransaction", "msg", msg)
 
-			if msg.Type() == message.TypeTransactions {
+			if msg.Type() == message.TypeTransaction {
 				m := msg.(*message.TransactionsMessage)
 				assert.Equal(t, m.Transactions[0].ID(), id)
 

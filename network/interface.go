@@ -9,14 +9,18 @@ import (
 type TopicID int
 
 const (
-	TopicIDGeneral   TopicID = 1
-	TopicIDConsensus TopicID = 2
+	TopicIDBlock       TopicID = 1
+	TopicIDTransaction TopicID = 2
+	TopicIDConsensus   TopicID = 3
 )
 
 func (t TopicID) String() string {
 	switch t {
-	case TopicIDGeneral:
-		return "general"
+	case TopicIDBlock:
+		return "block"
+
+	case TopicIDTransaction:
+		return "transaction"
 
 	case TopicIDConsensus:
 		return "consensus"
@@ -63,8 +67,9 @@ type Event interface {
 // GossipMessage represents message from PubSub module.
 // `From` is the ID of the peer that we received a message from.
 type GossipMessage struct {
-	From lp2pcore.PeerID
-	Data []byte
+	From    lp2pcore.PeerID
+	Data    []byte
+	TopicID TopicID
 }
 
 func (*GossipMessage) Type() EventType {
@@ -123,9 +128,8 @@ type Network interface {
 	EventChannel() <-chan Event
 	Broadcast([]byte, TopicID) error
 	SendTo([]byte, lp2pcore.PeerID) error
-	JoinGeneralTopic(shouldPropagate ShouldPropagate) error
-	JoinConsensusTopic(shouldPropagate ShouldPropagate) error
-	CloseConnection(pid lp2pcore.PeerID)
+	JoinTopic(TopicID, ShouldPropagate) error
+	CloseConnection(lp2pcore.PeerID)
 	SelfID() lp2pcore.PeerID
 	NumConnectedPeers() int
 	NumInbound() int
