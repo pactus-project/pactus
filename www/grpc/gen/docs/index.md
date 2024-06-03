@@ -60,6 +60,7 @@
     - [Blockchain](#pactus-Blockchain)
   
 - [network.proto](#network-proto)
+    - [ConnectionInfo](#pactus-ConnectionInfo)
     - [GetNetworkInfoRequest](#pactus-GetNetworkInfoRequest)
     - [GetNetworkInfoResponse](#pactus-GetNetworkInfoResponse)
     - [GetNetworkInfoResponse.ReceivedBytesEntry](#pactus-GetNetworkInfoResponse-ReceivedBytesEntry)
@@ -939,6 +940,23 @@ Blockchain service defines RPC methods for interacting with the blockchain.
 
 
 
+<a name="pactus-ConnectionInfo"></a>
+
+### ConnectionInfo
+Response message containing information about the overall network.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| connections | [uint64](#uint64) |  | Total number of the connection. |
+| inbound_connections | [uint64](#uint64) |  | Number of inbound connections. |
+| outbound_connections | [uint64](#uint64) |  | Number of outbound connections. |
+
+
+
+
+
+
 <a name="pactus-GetNetworkInfoRequest"></a>
 
 ### GetNetworkInfoRequest
@@ -1033,12 +1051,10 @@ Response message containing information about a specific node in the network.
 | reachability | [string](#string) |  | Reachability status of the node. |
 | services | [int32](#int32) | repeated | List of services provided by the node. |
 | services_names | [string](#string) | repeated | Names of services provided by the node. |
-| addrs | [string](#string) | repeated | List of addresses associated with the node. |
+| local_addrs | [string](#string) | repeated | List of addresses associated with the node. |
 | protocols | [string](#string) | repeated | List of protocols supported by the node. |
-| connections | [uint64](#uint64) |  | Number of connections |
-| inbound_connections | [uint64](#uint64) |  | Number of inbound connections |
-| outbound_connections | [uint64](#uint64) |  | Number of outbound connections |
 | clock_offset | [double](#double) |  | Clock offset |
+| connection_info | [ConnectionInfo](#pactus-ConnectionInfo) |  | Connection information |
 
 
 

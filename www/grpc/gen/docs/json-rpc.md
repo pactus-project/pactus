@@ -780,16 +780,18 @@ pactus.network.get_node_info retrieves information about a specific node in the 
 ### Result
 ```json
 {
-	"addrs": [	// (json array) List of addresses associated with the node.
+	"agent": "str",	// (string) Agent information of the node.
+	"clock_offset": n,	// (numeric) Clock offset
+	"connection_info": {	// (json object) Connection information
+		"connections": n,	// (numeric) Total number of the connection.
+		"inbound_connections": n,	// (numeric) Number of inbound connections.
+		"outbound_connections": n	// (numeric) Number of outbound connections.
+	},
+	"local_addrs": [	// (json array) List of addresses associated with the node.
 		"str",
 		...
 	],
-	"agent": "str",	// (string) Agent information of the node.
-	"clock_offset": n,	// (numeric) Clock offset
-	"connections": n,	// (numeric) Number of connections
-	"inbound_connections": n,	// (numeric) Number of inbound connections
 	"moniker": "str",	// (string) Moniker of the node.
-	"outbound_connections": n,	// (numeric) Number of outbound connections
 	"peer_id": "str",	// (string) Peer ID of the node.
 	"protocols": [	// (json array) List of protocols supported by the node.
 		"str",

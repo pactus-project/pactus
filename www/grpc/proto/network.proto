@@ -41,6 +41,16 @@ message GetNetworkInfoResponse {
 // network.
 message GetNodeInfoRequest {}
 
+// Response message containing information about the overall network.
+message ConnectionInfo {
+  // Total number of the connection.
+  uint64 connections = 1;
+  // Number of inbound connections.
+  uint64 inbound_connections = 2;
+  // Number of outbound connections.
+  uint64 outbound_connections = 3;
+}
+
 // Response message containing information about a specific node in the network.
 message GetNodeInfoResponse {
   // Moniker of the node.
@@ -58,17 +68,13 @@ message GetNodeInfoResponse {
   // Names of services provided by the node.
   repeated string services_names = 7;
   // List of addresses associated with the node.
-  repeated string addrs = 8;
+  repeated string local_addrs = 8;
   // List of protocols supported by the node.
   repeated string protocols = 9;
-  // Number of connections
-  uint64 connections = 10;
-  // Number of inbound connections
-  uint64 inbound_connections = 11;
-  // Number of outbound connections
-  uint64 outbound_connections = 12;
   // Clock offset
   double clock_offset = 13;
+  // Connection information
+  ConnectionInfo connection_info = 14;
 }
 
 // Information about a peer in the network.
