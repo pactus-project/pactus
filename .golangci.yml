@@ -18,7 +18,6 @@ linters:
     - errchkjson
     - errname
     - errorlint
-    - execinquery
     - exhaustive
     - exportloopref
     - forbidigo
@@ -174,6 +173,7 @@ linters-settings:
     disabled-checks:
       - ifElseChain
       - unnamedResult
+      - builtinShadow
     enabled-tags:
       - diagnostic
       - style

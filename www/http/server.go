@@ -56,7 +56,6 @@ func (s *Server) StartServer(grpcServer string) error {
 
 	conn, err := grpc.NewClient(
 		grpcServer,
-		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
