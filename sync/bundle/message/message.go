@@ -42,10 +42,10 @@ type Type int32
 const (
 	TypeHello          = Type(1)
 	TypeHelloAck       = Type(2)
-	TypeTransactions   = Type(3)
+	TypeTransaction    = Type(3)
 	TypeQueryProposal  = Type(4)
 	TypeProposal       = Type(5)
-	TypeQueryVotes     = Type(6)
+	TypeQueryVote      = Type(6)
 	TypeVote           = Type(7)
 	TypeBlockAnnounce  = Type(8)
 	TypeBlocksRequest  = Type(9)
@@ -54,13 +54,17 @@ const (
 
 func (t Type) TopicID() network.TopicID {
 	switch t {
-	case TypeTransactions, TypeBlockAnnounce:
+	case TypeBlockAnnounce:
 
-		return network.TopicIDGeneral
+		return network.TopicIDBlock
+
+	case TypeTransaction:
+
+		return network.TopicIDTransaction
 
 	case TypeQueryProposal,
 		TypeProposal,
-		TypeQueryVotes,
+		TypeQueryVote,
 		TypeVote:
 
 		return network.TopicIDConsensus
@@ -86,7 +90,7 @@ func (t Type) String() string {
 	case TypeHelloAck:
 		return "hello-ack"
 
-	case TypeTransactions:
+	case TypeTransaction:
 		return "txs"
 
 	case TypeQueryProposal:
@@ -95,7 +99,7 @@ func (t Type) String() string {
 	case TypeProposal:
 		return "proposal"
 
-	case TypeQueryVotes:
+	case TypeQueryVote:
 		return "query-votes"
 
 	case TypeVote:
@@ -123,7 +127,7 @@ func MakeMessage(t Type) Message {
 	case TypeHelloAck:
 		return &HelloAckMessage{}
 
-	case TypeTransactions:
+	case TypeTransaction:
 		return &TransactionsMessage{}
 
 	case TypeQueryProposal:
@@ -132,7 +136,7 @@ func MakeMessage(t Type) Message {
 	case TypeProposal:
 		return &ProposalMessage{}
 
-	case TypeQueryVotes:
+	case TypeQueryVote:
 		return &QueryVotesMessage{}
 
 	case TypeVote:

@@ -10,7 +10,7 @@ import (
 
 func TestQueryVotesType(t *testing.T) {
 	m := &QueryVotesMessage{}
-	assert.Equal(t, m.Type(), TypeQueryVotes)
+	assert.Equal(t, m.Type(), TypeQueryVote)
 }
 
 func TestQueryVotesMessage(t *testing.T) {

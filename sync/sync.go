@@ -88,10 +88,10 @@ func NewSynchronizer(
 
 	handlers[message.TypeHello] = newHelloHandler(sync)
 	handlers[message.TypeHelloAck] = newHelloAckHandler(sync)
-	handlers[message.TypeTransactions] = newTransactionsHandler(sync)
+	handlers[message.TypeTransaction] = newTransactionsHandler(sync)
 	handlers[message.TypeQueryProposal] = newQueryProposalHandler(sync)
 	handlers[message.TypeProposal] = newProposalHandler(sync)
-	handlers[message.TypeQueryVotes] = newQueryVotesHandler(sync)
+	handlers[message.TypeQueryVote] = newQueryVotesHandler(sync)
 	handlers[message.TypeVote] = newVoteHandler(sync)
 	handlers[message.TypeBlockAnnounce] = newBlockAnnounceHandler(sync)
 	handlers[message.TypeBlocksRequest] = newBlocksRequestHandler(sync)
@@ -103,11 +103,14 @@ func NewSynchronizer(
 }
 
 func (sync *synchronizer) Start() error {
-	if err := sync.network.JoinGeneralTopic(sync.shouldPropagateGeneralMessage); err != nil {
+	if err := sync.network.JoinTopic(network.TopicIDBlock, sync.shouldPropagateGeneralMessage); err != nil {
+		return err
+	}
+	if err := sync.network.JoinTopic(network.TopicIDTransaction, sync.shouldPropagateGeneralMessage); err != nil {
 		return err
 	}
 	// TODO: Not joining consensus topic when we are syncing
-	if err := sync.network.JoinConsensusTopic(sync.shouldPropagateConsensusMessage); err != nil {
+	if err := sync.network.JoinTopic(network.TopicIDConsensus, sync.shouldPropagateConsensusMessage); err != nil {
 		return err
 	}
 

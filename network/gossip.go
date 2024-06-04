@@ -2,6 +2,7 @@ package network
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -12,14 +13,18 @@ import (
 )
 
 type gossipService struct {
-	ctx     context.Context
-	wg      sync.WaitGroup
-	host    lp2phost.Host
-	pubsub  *lp2pps.PubSub
-	topics  []*lp2pps.Topic
-	subs    []*lp2pps.Subscription
-	eventCh chan Event
-	logger  *logger.SubLogger
+	ctx              context.Context
+	wg               sync.WaitGroup
+	host             lp2phost.Host
+	pubsub           *lp2pps.PubSub
+	topics           []*lp2pps.Topic
+	subs             []*lp2pps.Subscription
+	topicBlock       *lp2pps.Topic
+	topicTransaction *lp2pps.Topic
+	topicConsensus   *lp2pps.Topic
+	networkName      string
+	eventCh          chan Event
+	logger           *logger.SubLogger
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
@@ -55,17 +60,49 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 	}
 
 	return &gossipService{
-		ctx:     ctx,
-		host:    host,
-		pubsub:  pubsub,
-		wg:      sync.WaitGroup{},
-		eventCh: eventCh,
-		logger:  log,
+		ctx:         ctx,
+		networkName: conf.NetworkName,
+		host:        host,
+		pubsub:      pubsub,
+		wg:          sync.WaitGroup{},
+		eventCh:     eventCh,
+		logger:      log,
 	}
 }
 
-// BroadcastMessage broadcasts a message to the specified topic.
-func (g *gossipService) BroadcastMessage(msg []byte, topic *lp2pps.Topic) error {
+// Broadcast broadcasts a message with the specified topic ID to the network.
+func (g *gossipService) Broadcast(msg []byte, topicID TopicID) error {
+	g.logger.Trace("publishing new message", "topic", topicID)
+
+	switch topicID {
+	case TopicIDBlock:
+		if g.topicBlock == nil {
+			return NotSubscribedError{TopicID: topicID}
+		}
+
+		return g.publish(msg, g.topicBlock)
+
+	case TopicIDTransaction:
+		if g.topicTransaction == nil {
+			return NotSubscribedError{TopicID: topicID}
+		}
+
+		return g.publish(msg, g.topicTransaction)
+
+	case TopicIDConsensus:
+		if g.topicConsensus == nil {
+			return NotSubscribedError{TopicID: topicID}
+		}
+
+		return g.publish(msg, g.topicConsensus)
+
+	default:
+		return InvalidTopicError{TopicID: topicID}
+	}
+}
+
+// publish publishes a message with the specified topic to the network.
+func (g *gossipService) publish(msg []byte, topic *lp2pps.Topic) error {
 	err := topic.Publish(g.ctx, msg)
 	if err != nil {
 		return LibP2PError{Err: err}
@@ -74,10 +111,66 @@ func (g *gossipService) BroadcastMessage(msg []byte, topic *lp2pps.Topic) error 
 	return nil
 }
 
-// JoinTopic joins a topic with the given name.
-// It creates a subscription to the topic and returns the joined topic.
-func (g *gossipService) JoinTopic(name string, sp ShouldPropagate) (*lp2pps.Topic, error) {
-	topic, err := g.pubsub.Join(name)
+// JoinTopic joins to the topic with the given name and subscribes to receive topic messages.
+func (g *gossipService) JoinTopic(topicID TopicID, sp ShouldPropagate) error {
+	switch topicID {
+	case TopicIDBlock:
+		if g.topicBlock != nil {
+			g.logger.Warn("already subscribed to block topic")
+
+			return nil
+		}
+
+		topic, err := g.doJoinTopic(topicID, sp)
+		if err != nil {
+			return err
+		}
+		g.topicBlock = topic
+
+		return nil
+
+	case TopicIDTransaction:
+		if g.topicTransaction != nil {
+			g.logger.Warn("already subscribed to transaction topic")
+
+			return nil
+		}
+
+		topic, err := g.doJoinTopic(topicID, sp)
+		if err != nil {
+			return err
+		}
+		g.topicTransaction = topic
+
+		return nil
+
+	case TopicIDConsensus:
+		if g.topicConsensus != nil {
+			g.logger.Warn("already subscribed to consensus topic")
+
+			return nil
+		}
+
+		topic, err := g.doJoinTopic(topicID, sp)
+		if err != nil {
+			return err
+		}
+		g.topicConsensus = topic
+
+		return nil
+
+	default:
+		return InvalidTopicError{TopicID: topicID}
+	}
+}
+
+func (g *gossipService) TopicName(topicID TopicID) string {
+	return fmt.Sprintf("/%s/topic/%s/v1", g.networkName, topicID.String())
+}
+
+func (g *gossipService) doJoinTopic(topicID TopicID, sp ShouldPropagate) (*lp2pps.Topic, error) {
+	topicName := g.TopicName(topicID)
+	topic, err := g.pubsub.Join(topicName)
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
@@ -87,11 +180,12 @@ func (g *gossipService) JoinTopic(name string, sp ShouldPropagate) (*lp2pps.Topi
 		return nil, LibP2PError{Err: err}
 	}
 
-	err = g.pubsub.RegisterTopicValidator(name,
+	err = g.pubsub.RegisterTopicValidator(topicName,
 		func(_ context.Context, peerId lp2pcore.PeerID, m *lp2pps.Message) lp2pps.ValidationResult {
 			msg := &GossipMessage{
-				From: peerId,
-				Data: m.Data,
+				From:    peerId,
+				Data:    m.Data,
+				TopicID: topicID,
 			}
 			if !sp(msg) {
 				// Consume the message first

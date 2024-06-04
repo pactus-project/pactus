@@ -32,7 +32,7 @@ func (m *TransactionsMessage) BasicCheck() error {
 }
 
 func (*TransactionsMessage) Type() Type {
-	return TypeTransactions
+	return TypeTransaction
 }
 
 func (m *TransactionsMessage) String() string {
