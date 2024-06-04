@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/sync/peerset/peer"
-	"github.com/pactus-project/pactus/util"
 )
 
 type Manager struct {
@@ -87,7 +86,7 @@ func (sm *Manager) UpdateSessionLastActivity(sid int) {
 
 func (sm *Manager) SetExpiredSessionsAsUncompleted() {
 	for _, ssn := range sm.sessions {
-		if sm.sessionTimeout < util.Now().Sub(ssn.LastActivity) {
+		if sm.sessionTimeout < time.Since(ssn.LastActivity) {
 			ssn.Status = Uncompleted
 		}
 	}

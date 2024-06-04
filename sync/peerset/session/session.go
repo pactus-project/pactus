@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/sync/peerset/peer"
-	"github.com/pactus-project/pactus/util"
 )
 
 type Status int
@@ -31,6 +30,6 @@ func NewSession(id int, peerID peer.ID, from, count uint32) *Session {
 		PeerID:       peerID,
 		From:         from,
 		Count:        count,
-		LastActivity: util.Now(),
+		LastActivity: time.Now(),
 	}
 }

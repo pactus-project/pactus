@@ -14,6 +14,8 @@ func TestNow(t *testing.T) {
 
 	assert.NotEqual(t, c1, c2)
 	assert.Equal(t, c1.Second(), c2.Second())
+	assert.Equal(t, c2.UnixMicro()%1000000, int64(0))
+	assert.Equal(t, c2.UnixMilli()%1000, int64(0))
 	assert.Equal(t, c3.Nanosecond(), 0)
 	assert.Equal(t, c3.Second()%5, 0)
 }

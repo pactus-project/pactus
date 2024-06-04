@@ -17,8 +17,10 @@ func TestExecuteBondTx(t *testing.T) {
 	senderBalance := senderAcc.Balance()
 	pub, _ := td.RandBLSKeyPair()
 	receiverAddr := pub.ValidatorAddress()
-	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake,
-		td.sandbox.TestParams.MaximumStake-10e9)
+	amt := td.RandAmountRange(
+		td.sandbox.TestParams.MinimumStake,
+		td.sandbox.TestParams.MaximumStake)
+	fee := td.RandFee()
 	lockTime := td.sandbox.CurrentHeight()
 
 	t.Run("Should fail, invalid sender", func(t *testing.T) {
@@ -115,8 +117,10 @@ func TestBondInsideCommittee(t *testing.T) {
 	exe1 := NewBondExecutor(true)
 	exe2 := NewBondExecutor(false)
 	senderAddr, _ := td.sandbox.TestStore.RandomTestAcc()
-	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake,
-		td.sandbox.TestParams.MaximumStake-10e9)
+	amt := td.RandAmountRange(
+		td.sandbox.TestParams.MinimumStake,
+		td.sandbox.TestParams.MaximumStake-10e9) // it has 10e9 stake
+	fee := td.RandFee()
 	lockTime := td.sandbox.CurrentHeight()
 
 	pub := td.sandbox.Committee().Proposer(0).PublicKey()
@@ -137,8 +141,10 @@ func TestBondJoiningCommittee(t *testing.T) {
 	exe2 := NewBondExecutor(false)
 	senderAddr, _ := td.sandbox.TestStore.RandomTestAcc()
 	pub, _ := td.RandBLSKeyPair()
-	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake,
-		td.sandbox.TestParams.MaximumStake-10e9)
+	amt := td.RandAmountRange(
+		td.sandbox.TestParams.MinimumStake,
+		td.sandbox.TestParams.MaximumStake-10e9) // it has 10e9 stake
+	fee := td.RandFee()
 	lockTime := td.sandbox.CurrentHeight()
 
 	val := td.sandbox.MakeNewValidator(pub)
@@ -160,7 +166,7 @@ func TestStakeExceeded(t *testing.T) {
 
 	exe := NewBondExecutor(true)
 	amt := td.sandbox.TestParams.MaximumStake + 1
-	fee := amt.MulF64(td.sandbox.Params().FeeFraction)
+	fee := td.RandFee()
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderAcc.AddToBalance(td.sandbox.TestParams.MaximumStake + 1)
 	td.sandbox.UpdateAccount(senderAddr, senderAcc)
@@ -181,8 +187,10 @@ func TestPowerDeltaBond(t *testing.T) {
 	senderAddr, _ := td.sandbox.TestStore.RandomTestAcc()
 	pub, _ := td.RandBLSKeyPair()
 	receiverAddr := pub.ValidatorAddress()
-	amt, fee := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake,
-		td.sandbox.TestParams.MaximumStake-10e9)
+	amt := td.RandAmountRange(
+		td.sandbox.TestParams.MinimumStake,
+		td.sandbox.TestParams.MaximumStake)
+	fee := td.RandFee()
 	lockTime := td.sandbox.CurrentHeight()
 	trx := tx.NewBondTx(lockTime, senderAddr,
 		receiverAddr, pub, amt, fee, "ok")
@@ -204,7 +212,7 @@ func TestSmallBond(t *testing.T) {
 	senderAddr, _ := td.sandbox.TestStore.RandomTestAcc()
 	receiverVal := td.sandbox.TestStore.RandomTestVal()
 	receiverAddr := receiverVal.Address()
-	fee := td.sandbox.Params().MaximumFee
+	fee := td.RandFee()
 	lockTime := td.sandbox.CurrentHeight()
 	trxBond := tx.NewBondTx(lockTime, senderAddr,
 		receiverAddr, nil, 1000e9-receiverVal.Stake()-2, fee, "ok")
@@ -243,4 +251,7 @@ func TestSmallBond(t *testing.T) {
 		err := exe.Execute(trx, td.sandbox)
 		assert.Error(t, err, "Zero bond amount on full stake should be rejected")
 	})
+
+	val, _ := td.sandbox.TestStore.Validator(receiverVal.Address())
+	assert.Equal(t, td.sandbox.Params().MaximumStake, val.Stake())
 }

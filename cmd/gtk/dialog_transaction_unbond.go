@@ -54,9 +54,10 @@ func broadcastTransactionUnbond(wlt *wallet.Wallet) {
 You are going to sign and broadcast this transaction:
 <tt>
 Validator: %s
+Fee:       %s
 Memo:      %s
 </tt>
-<b>THIS ACTION IS NOT REVERSIBLE. Do you want to continue?</b>`, validator, trx.Memo())
+<b>THIS ACTION IS NOT REVERSIBLE. Do you want to continue?</b>`, validator, trx.Fee(), trx.Memo())
 
 		signAndBroadcastTransaction(dlg, msg, wlt, trx)
 

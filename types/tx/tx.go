@@ -98,6 +98,11 @@ func (tx *Tx) Signature() crypto.Signature {
 	return tx.data.Signature
 }
 
+// IsFreeTx checks if the transaction fee should be set to zero.
+func (tx *Tx) IsFreeTx() bool {
+	return tx.IsSubsidyTx() || tx.IsSortitionTx() || tx.IsUnbondTx()
+}
+
 func (tx *Tx) SetSignature(sig crypto.Signature) {
 	tx.basicChecked = false
 	tx.data.Signature = sig
