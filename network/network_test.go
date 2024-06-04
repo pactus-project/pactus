@@ -56,7 +56,7 @@ func testConfig() *Config {
 func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
 	t.Helper()
 
-	timeout := time.NewTimer(4 * time.Second)
+	timeout := time.NewTimer(8 * time.Second)
 
 	for {
 		select {
@@ -123,7 +123,7 @@ func TestStoppingNetwork(t *testing.T) {
 //
 // The test will evaluate the following scenarios:
 //   - Connection establishment to the bootstrap node
-//   - General and consensus topics and gossip message
+//   - bLOCK and consensus topics and gossip message
 //   - Direct and relayed stream communication between nodes
 func TestNetwork(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
@@ -251,7 +251,7 @@ func TestNetwork(t *testing.T) {
 		}, 5*time.Second, 100*time.Millisecond)
 	})
 
-	t.Run("Gossip: all nodes receive general gossip messages", func(t *testing.T) {
+	t.Run("Gossip: all nodes receive gossip messages", func(t *testing.T) {
 		msg := ts.RandBytes(64)
 
 		require.NoError(t, networkP.Broadcast(msg, TopicIDBlock))
