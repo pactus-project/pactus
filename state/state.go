@@ -34,7 +34,7 @@ import (
 	"github.com/pactus-project/pactus/www/nanomsg/event"
 )
 
-var maxTransactionsPerBlock = 1000
+var maxTransactionsPerBlock = 100
 
 type state struct {
 	lk sync.RWMutex
@@ -492,8 +492,8 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 
 	// -----------------------------------
 	// Updating the score manager:
-	// This block updates the availability scores.
-	// To enhance syncing efficiency, only blocks with timestamps from the last 10 days are considered.
+	// This code updates the availability scores.
+	// To enhance syncing process, only blocks with timestamps from the last 10 days are considered.
 	if blk.Header().Time().After(time.Now().AddDate(0, 0, -10)) {
 		prevCert := blk.PrevCertificate()
 		if prevCert != nil {
@@ -623,7 +623,7 @@ func (st *state) proposeNextBlockTime() time.Time {
 	timestamp := st.lastInfo.BlockTime().Add(st.params.BlockInterval())
 
 	now := util.Now()
-	if now.After(timestamp.Add(1 * time.Second)) {
+	if now.After(timestamp.Add(10 * time.Second)) {
 		st.logger.Debug("it looks the last block had delay", "delay", now.Sub(timestamp))
 		timestamp = util.RoundNow(st.params.BlockIntervalInSecond)
 	}
@@ -772,7 +772,7 @@ func (st *state) publishEvents(height uint32, blk *block.Block) {
 }
 
 func (st *state) CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount {
-	return execution.CalculateFee(amt, payloadType, st.params)
+	return st.txPool.EstimatedFee(amt, payloadType)
 }
 
 func (st *state) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {

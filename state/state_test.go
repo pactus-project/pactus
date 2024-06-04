@@ -143,7 +143,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 
 	// Without reward address in config
 	rewardAddr := td.RandAccAddress()
-	randAccumulatedFee := td.RandAmount()
+	randAccumulatedFee := td.RandFee()
 	trx := td.state.createSubsidyTx(rewardAddr, randAccumulatedFee)
 	assert.True(t, trx.IsSubsidyTx())
 	assert.Equal(t, trx.Payload().Value(), td.state.params.BlockReward+randAccumulatedFee)
@@ -453,6 +453,24 @@ func TestValidateBlockTime(t *testing.T) {
 		assert.Equal(t, expectedProposeTime, td.state.proposeNextBlockTime())
 	})
 
+	t.Run("Last block is committed 20 seconds ago", func(t *testing.T) {
+		td.state.lastInfo.UpdateBlockTime(roundedNow.Add(-20 * time.Second))
+
+		// Before or same as the last block time
+		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(-20*time.Second)))
+
+		// Ok
+		assert.NoError(t, td.state.validateBlockTime(roundedNow.Add(-10*time.Second)))
+		assert.NoError(t, td.state.validateBlockTime(roundedNow))
+		assert.NoError(t, td.state.validateBlockTime(roundedNow.Add(10*time.Second)))
+
+		// More than the threshold
+		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(20*time.Second)))
+
+		expectedProposeTime := roundedNow
+		assert.Equal(t, expectedProposeTime, td.state.proposeNextBlockTime())
+	})
+
 	t.Run("Last block is committed one minute ago", func(t *testing.T) {
 		td.state.lastInfo.UpdateBlockTime(roundedNow.Add(-1 * time.Minute)) // One minute ago
 		lastBlockTime := td.state.LastBlockTime()
@@ -599,11 +617,13 @@ func TestIsValidator(t *testing.T) {
 	assert.False(t, td.state.IsValidator(addr))
 }
 
-func TestInvalidPayloadFee(t *testing.T) {
+func TestCalculateFee(t *testing.T) {
 	td := setup(t)
 
-	fee := td.state.CalculateFee(td.RandAmount(), 6)
-	assert.Zero(t, fee)
+	fee := td.state.CalculateFee(td.RandAmount(), payload.TypeTransfer)
+	expectedFee := td.commonTxPool.EstimatedFee(0, payload.TypeTransfer)
+
+	assert.Equal(t, expectedFee, fee)
 }
 
 func TestCheckMaximumTransactionPerBlock(t *testing.T) {

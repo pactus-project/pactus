@@ -14,7 +14,9 @@ func TestExecuteUnbondTx(t *testing.T) {
 
 	bonderAddr, bonderAcc := td.sandbox.TestStore.RandomTestAcc()
 	bonderBalance := bonderAcc.Balance()
-	stake, _ := td.randomAmountAndFee(td.sandbox.TestParams.MinimumStake, bonderBalance)
+	stake := td.RandAmountRange(
+		td.sandbox.TestParams.MinimumStake,
+		bonderBalance)
 	bonderAcc.SubtractFromBalance(stake)
 	td.sandbox.UpdateAccount(bonderAddr, bonderAcc)
 

@@ -3,8 +3,10 @@ package txpool
 import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
 var _ TxPool = &MockTxPool{}
@@ -20,7 +22,6 @@ func MockingTxPool() *MockTxPool {
 	}
 }
 func (*MockTxPool) SetNewSandboxAndRecheck(_ sandbox.Sandbox) {}
-
 func (m *MockTxPool) PendingTx(id tx.ID) *tx.Tx {
 	for _, t := range m.Txs {
 		if t.ID() == id {
@@ -75,4 +76,8 @@ func (m *MockTxPool) PrepareBlockTransactions() block.Txs {
 	copy(txs, m.Txs)
 
 	return txs
+}
+
+func (*MockTxPool) EstimatedFee(_ amount.Amount, _ payload.Type) amount.Amount {
+	return amount.Amount(0.1e9)
 }
