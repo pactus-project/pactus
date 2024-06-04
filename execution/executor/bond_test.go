@@ -119,7 +119,7 @@ func TestBondInsideCommittee(t *testing.T) {
 	senderAddr, _ := td.sandbox.TestStore.RandomTestAcc()
 	amt := td.RandAmountRange(
 		td.sandbox.TestParams.MinimumStake,
-		td.sandbox.TestParams.MaximumStake)
+		td.sandbox.TestParams.MaximumStake-10e9) // it has 10e9 stake
 	fee := td.RandFee()
 	lockTime := td.sandbox.CurrentHeight()
 
@@ -143,7 +143,7 @@ func TestBondJoiningCommittee(t *testing.T) {
 	pub, _ := td.RandBLSKeyPair()
 	amt := td.RandAmountRange(
 		td.sandbox.TestParams.MinimumStake,
-		td.sandbox.TestParams.MaximumStake)
+		td.sandbox.TestParams.MaximumStake-10e9) // it has 10e9 stake
 	fee := td.RandFee()
 	lockTime := td.sandbox.CurrentHeight()
 

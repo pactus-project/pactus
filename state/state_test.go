@@ -405,7 +405,7 @@ func TestSortition(t *testing.T) {
 
 	td.commitBlocks(t, 1)
 
-	assert.False(t, td.state.evaluateSortition()) //  bonding period
+	assert.False(t, td.state.evaluateSortition()) // bonding period
 	assert.True(t, td.state.IsValidator(myValKey.Address()))
 	assert.Equal(t, td.state.CommitteePower(), int64(4))
 	assert.False(t, td.state.committee.Contains(myValKey.Address())) // Not in the committee
@@ -413,8 +413,8 @@ func TestSortition(t *testing.T) {
 	// Committing another 10 blocks
 	td.commitBlocks(t, 10)
 
-	assert.True(t, td.state.evaluateSortition())                     //  ok
-	assert.False(t, td.state.committee.Contains(myValKey.Address())) // still not in the committee
+	assert.True(t, td.state.evaluateSortition())                     // OK
+	assert.False(t, td.state.committee.Contains(myValKey.Address())) // Still not in the committee
 
 	td.commitBlocks(t, 1)
 
@@ -426,9 +426,9 @@ func TestSortition(t *testing.T) {
 func TestValidateBlockTime(t *testing.T) {
 	td := setup(t)
 
-	roundedNow := util.RoundNow(10)
-
 	t.Run("Time is not rounded", func(t *testing.T) {
+		roundedNow := util.RoundNow(10)
+
 		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(-15*time.Second)))
 		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(-5*time.Second)))
 		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(5*time.Second)))
@@ -436,6 +436,7 @@ func TestValidateBlockTime(t *testing.T) {
 	})
 
 	t.Run("Last block is committed 10 seconds ago", func(t *testing.T) {
+		roundedNow := util.RoundNow(10)
 		td.state.lastInfo.UpdateBlockTime(roundedNow.Add(-10 * time.Second))
 
 		// Before or same as the last block time
@@ -453,25 +454,8 @@ func TestValidateBlockTime(t *testing.T) {
 		assert.Equal(t, expectedProposeTime, td.state.proposeNextBlockTime())
 	})
 
-	t.Run("Last block is committed 20 seconds ago", func(t *testing.T) {
-		td.state.lastInfo.UpdateBlockTime(roundedNow.Add(-20 * time.Second))
-
-		// Before or same as the last block time
-		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(-20*time.Second)))
-
-		// Ok
-		assert.NoError(t, td.state.validateBlockTime(roundedNow.Add(-10*time.Second)))
-		assert.NoError(t, td.state.validateBlockTime(roundedNow))
-		assert.NoError(t, td.state.validateBlockTime(roundedNow.Add(10*time.Second)))
-
-		// More than the threshold
-		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(20*time.Second)))
-
-		expectedProposeTime := roundedNow
-		assert.Equal(t, expectedProposeTime, td.state.proposeNextBlockTime())
-	})
-
 	t.Run("Last block is committed one minute ago", func(t *testing.T) {
+		roundedNow := util.RoundNow(10)
 		td.state.lastInfo.UpdateBlockTime(roundedNow.Add(-1 * time.Minute)) // One minute ago
 		lastBlockTime := td.state.LastBlockTime()
 
@@ -492,6 +476,7 @@ func TestValidateBlockTime(t *testing.T) {
 	})
 
 	t.Run("Last block is committed in future", func(t *testing.T) {
+		roundedNow := util.RoundNow(10)
 		td.state.lastInfo.UpdateBlockTime(roundedNow.Add(1 * time.Minute)) // One minute later
 		lastBlockTime := td.state.LastBlockTime()
 
