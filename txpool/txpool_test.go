@@ -25,6 +25,13 @@ type testData struct {
 	ch      chan message.Message
 }
 
+func testConfig() *Config {
+	return &Config{
+		MaxSize:   100,
+		MinFeePAC: 0.000001,
+	}
+}
+
 func setup(t *testing.T) *testData {
 	t.Helper()
 
@@ -32,7 +39,8 @@ func setup(t *testing.T) *testData {
 
 	ch := make(chan message.Message, 10)
 	sb := sandbox.MockingSandbox(ts)
-	p := NewTxPool(DefaultConfig(), ch)
+	config := testConfig()
+	p := NewTxPool(config, ch)
 	p.SetNewSandboxAndRecheck(sb)
 	pool := p.(*txPool)
 	assert.NotNil(t, pool)
@@ -60,7 +68,7 @@ func (td *testData) shouldPublishTransaction(t *testing.T, id tx.ID) {
 		case msg := <-td.ch:
 			logger.Info("shouldPublishTransaction", "msg", msg)
 
-			if msg.Type() == message.TypeTransactions {
+			if msg.Type() == message.TypeTransaction {
 				m := msg.(*message.TransactionsMessage)
 				assert.Equal(t, m.Transactions[0].ID(), id)
 
@@ -104,18 +112,18 @@ func TestFullPool(t *testing.T) {
 	_ = td.sandbox.TestStore.AddTestBlock(randHeight)
 	trxs := make([]*tx.Tx, td.pool.config.transferPoolSize()+1)
 
-	valKey := td.RandValKey()
-	acc := account.NewAccount(0)
-	acc.AddToBalance(1000e9)
-	td.sandbox.UpdateAccount(valKey.Address(), acc)
+	senderAddr := td.RandAccAddress()
+	senderAcc := account.NewAccount(0)
+	senderAcc.AddToBalance(1000e9)
+	td.sandbox.UpdateAccount(senderAddr, senderAcc)
 
 	// Make sure the pool is empty
 	assert.Equal(t, td.pool.Size(), 0)
 
 	for i := 0; i < len(trxs); i++ {
-		trx := tx.NewTransferTx(randHeight+1, valKey.Address(),
-			td.RandAccAddress(), 1e9, 100_000, "ok")
-		valKey.Sign(trx.SignBytes())
+		trx := tx.NewTransferTx(randHeight+1, senderAddr,
+			td.RandAccAddress(), 1e9, 1000_000_000, "ok")
+
 		assert.NoError(t, td.pool.AppendTx(trx))
 		trxs[i] = trx
 	}
@@ -159,16 +167,16 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	td.sandbox.UpdateValidator(val3)
 
 	transferTx := tx.NewTransferTx(randHeight+1, acc1Addr,
-		td.RandAccAddress(), 1e9, 100_000, "transfer-tx")
+		td.RandAccAddress(), 1e9, 100_000_000, "transfer-tx")
 
 	pub, _ := td.RandBLSKeyPair()
 	bondTx := tx.NewBondTx(randHeight+2, acc1Addr,
-		pub.ValidatorAddress(), pub, 1e9, 100_000, "bond-tx")
+		pub.ValidatorAddress(), pub, 1e9, 100_000_000, "bond-tx")
 
 	unbondTx := tx.NewUnbondTx(randHeight+3, val1.Address(), "unbond-tx")
 
 	withdrawTx := tx.NewWithdrawTx(randHeight+4, val2.Address(),
-		td.RandAccAddress(), 1e9, 100_000, "withdraw-tx")
+		td.RandAccAddress(), 1e9, 100_000_000, "withdraw-tx")
 
 	td.sandbox.TestAcceptSortition = true
 	sortitionTx := tx.NewSortitionTx(randHeight, val3.Address(),
@@ -231,20 +239,4 @@ func TestAddSubsidyTransactions(t *testing.T) {
 
 	td.pool.SetNewSandboxAndRecheck(td.sandbox)
 	assert.Zero(t, td.pool.Size())
-}
-
-func TestLowValueTransactions(t *testing.T) {
-	td := setup(t)
-
-	randHeight := td.RandHeight() + td.sandbox.TestParams.UnbondInterval
-	_ = td.sandbox.TestStore.AddTestBlock(randHeight)
-
-	transferTx := tx.NewTransferTx(randHeight+1, td.RandAccAddress(), td.RandAccAddress(),
-		1e8-1, 100_000, "low-value-transfer")
-
-	withdrawTx := tx.NewWithdrawTx(randHeight+4, td.RandValAddress(), td.RandAccAddress(),
-		1e8-1, 100_000, "low-value-withdraw")
-
-	assert.ErrorContains(t, td.pool.AppendTx(transferTx), "low value transaction")
-	assert.ErrorContains(t, td.pool.AppendTx(withdrawTx), "low value transaction")
 }

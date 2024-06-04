@@ -46,7 +46,6 @@ func (s *Server) startGateway(grpcAddr string) error {
 	conn, err := grpc.NewClient(
 		grpcAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithBlock(),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to dial server: %w", err)

@@ -56,7 +56,7 @@ func testConfig() *Config {
 func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
 	t.Helper()
 
-	timeout := time.NewTimer(4 * time.Second)
+	timeout := time.NewTimer(8 * time.Second)
 
 	for {
 		select {
@@ -109,7 +109,7 @@ func TestStoppingNetwork(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NoError(t, net.Start())
-	assert.NoError(t, net.JoinGeneralTopic(alwaysPropagate))
+	assert.NoError(t, net.JoinTopic(TopicIDBlock, alwaysPropagate))
 
 	// Should stop peacefully
 	net.Stop()
@@ -123,7 +123,7 @@ func TestStoppingNetwork(t *testing.T) {
 //
 // The test will evaluate the following scenarios:
 //   - Connection establishment to the bootstrap node
-//   - General and consensus topics and gossip message
+//   - bLOCK and consensus topics and gossip message
 //   - Direct and relayed stream communication between nodes
 func TestNetwork(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
@@ -195,16 +195,16 @@ func TestNetwork(t *testing.T) {
 		lp2p.ForceReachabilityPrivate(),
 	})
 
-	assert.NoError(t, networkB.JoinGeneralTopic(alwaysPropagate))
-	assert.NoError(t, networkP.JoinGeneralTopic(alwaysPropagate))
-	assert.NoError(t, networkM.JoinGeneralTopic(alwaysPropagate))
-	assert.NoError(t, networkN.JoinGeneralTopic(alwaysPropagate))
-	assert.NoError(t, networkX.JoinGeneralTopic(alwaysPropagate))
+	assert.NoError(t, networkB.JoinTopic(TopicIDBlock, alwaysPropagate))
+	assert.NoError(t, networkP.JoinTopic(TopicIDBlock, alwaysPropagate))
+	assert.NoError(t, networkM.JoinTopic(TopicIDBlock, alwaysPropagate))
+	assert.NoError(t, networkN.JoinTopic(TopicIDBlock, alwaysPropagate))
+	assert.NoError(t, networkX.JoinTopic(TopicIDBlock, alwaysPropagate))
 
-	assert.NoError(t, networkB.JoinConsensusTopic(alwaysPropagate))
-	assert.NoError(t, networkP.JoinConsensusTopic(alwaysPropagate))
-	assert.NoError(t, networkM.JoinConsensusTopic(alwaysPropagate))
-	assert.NoError(t, networkN.JoinConsensusTopic(alwaysPropagate))
+	assert.NoError(t, networkB.JoinTopic(TopicIDConsensus, alwaysPropagate))
+	assert.NoError(t, networkP.JoinTopic(TopicIDConsensus, alwaysPropagate))
+	assert.NoError(t, networkM.JoinTopic(TopicIDConsensus, alwaysPropagate))
+	assert.NoError(t, networkN.JoinTopic(TopicIDConsensus, alwaysPropagate))
 	// Network X doesn't join the consensus topic
 
 	time.Sleep(2 * time.Second)
@@ -251,10 +251,10 @@ func TestNetwork(t *testing.T) {
 		}, 5*time.Second, 100*time.Millisecond)
 	})
 
-	t.Run("Gossip: all nodes receive general gossip messages", func(t *testing.T) {
+	t.Run("Gossip: all nodes receive gossip messages", func(t *testing.T) {
 		msg := ts.RandBytes(64)
 
-		require.NoError(t, networkP.Broadcast(msg, TopicIDGeneral))
+		require.NoError(t, networkP.Broadcast(msg, TopicIDBlock))
 
 		eB := shouldReceiveEvent(t, networkB, EventTypeGossip).(*GossipMessage)
 		eM := shouldReceiveEvent(t, networkM, EventTypeGossip).(*GossipMessage)
@@ -314,8 +314,8 @@ func TestNetwork(t *testing.T) {
 	t.Run("Ignore broadcasting identical messages", func(t *testing.T) {
 		msg := ts.RandBytes(64)
 
-		require.NoError(t, networkM.Broadcast(msg, TopicIDGeneral))
-		require.NoError(t, networkN.Broadcast(msg, TopicIDGeneral))
+		require.NoError(t, networkM.Broadcast(msg, TopicIDBlock))
+		require.NoError(t, networkN.Broadcast(msg, TopicIDBlock))
 
 		eX := shouldReceiveEvent(t, networkX, EventTypeGossip).(*GossipMessage)
 

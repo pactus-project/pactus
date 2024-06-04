@@ -14,14 +14,14 @@ all: build test
 ### Tools needed for development
 devtools:
 	@echo "Installing devtools"
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.57.2
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.19.1
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.19.1
-	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.33
-	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.3
-	go install github.com/NathanBaulch/protoc-gen-cobra@v1.2.1
-	go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@v1.5.1
-	go install github.com/bufbuild/buf/cmd/buf@v1.30.1
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.59
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.20
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.20
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.34
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.4
+	go install github.com/NathanBaulch/protoc-gen-cobra@v1.2
+	go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@v1.5
+	go install github.com/bufbuild/buf/cmd/buf@v1.32
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/rakyll/statik@v0.1.7
 	go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.1.7

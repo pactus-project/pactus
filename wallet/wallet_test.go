@@ -282,7 +282,7 @@ func TestSigningTx(t *testing.T) {
 	senderInfo, _ := td.wallet.NewBLSAccountAddress("testing addr")
 	receiver := td.RandAccAddress()
 	amt := td.RandAmount()
-	fee := td.RandAmount()
+	fee := td.RandFee()
 	lockTime := td.RandHeight()
 
 	opts := []TxOption{
@@ -314,7 +314,7 @@ func TestMakeTransferTx(t *testing.T) {
 	lockTime := td.RandHeight()
 
 	t.Run("set parameters manually", func(t *testing.T) {
-		fee := td.RandAmount()
+		fee := td.RandFee()
 		opts := []TxOption{
 			OptionFee(fee),
 			OptionLockTime(lockTime),
@@ -369,7 +369,7 @@ func TestMakeBondTx(t *testing.T) {
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
-		fee := td.RandAmount()
+		fee := td.RandFee()
 		opts := []TxOption{
 			OptionFee(fee),
 			OptionLockTime(lockTime),
@@ -538,7 +538,7 @@ func TestMakeWithdrawTx(t *testing.T) {
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
-		fee := td.RandAmount()
+		fee := td.RandFee()
 		opts := []TxOption{
 			OptionFee(fee),
 			OptionLockTime(lockTime),

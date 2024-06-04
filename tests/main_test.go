@@ -70,7 +70,7 @@ func TestMain(m *testing.M) {
 		tValKeys[i][2] = bls.NewValidatorKey(key2)
 		tConfigs[i] = config.DefaultConfigMainnet()
 
-		tConfigs[i].TxPool.MinValuePAC = 0
+		tConfigs[i].TxPool.MinFeePAC = 0.000001
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
 		tConfigs[i].Consensus.ChangeProposerDelta = 0
@@ -158,7 +158,6 @@ func TestMain(m *testing.M) {
 	tCtx = context.Background()
 	conn, err := grpc.NewClient(
 		tGRPCAddress,
-		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {

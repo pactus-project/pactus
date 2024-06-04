@@ -48,11 +48,7 @@ func (mock *MockNetwork) EventChannel() <-chan Event {
 	return mock.EventCh
 }
 
-func (*MockNetwork) JoinGeneralTopic(_ ShouldPropagate) error {
-	return nil
-}
-
-func (*MockNetwork) JoinConsensusTopic(_ ShouldPropagate) error {
+func (*MockNetwork) JoinTopic(_ TopicID, _ ShouldPropagate) error {
 	return nil
 }
 

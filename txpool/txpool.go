@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -21,20 +22,18 @@ type txPool struct {
 	config      *Config
 	checker     *execution.Execution
 	sandbox     sandbox.Sandbox
-	pools       map[payload.Type]payloadPool
+	pools       map[payload.Type]pool
 	broadcastCh chan message.Message
 	logger      *logger.SubLogger
 }
 
 func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
-	minValue := conf.minValue()
-
-	pools := make(map[payload.Type]payloadPool)
-	pools[payload.TypeTransfer] = newPayloadPool(conf.transferPoolSize(), minValue)
-	pools[payload.TypeBond] = newPayloadPool(conf.bondPoolSize(), 0)
-	pools[payload.TypeUnbond] = newPayloadPool(conf.unbondPoolSize(), 0)
-	pools[payload.TypeWithdraw] = newPayloadPool(conf.withdrawPoolSize(), minValue)
-	pools[payload.TypeSortition] = newPayloadPool(conf.sortitionPoolSize(), 0)
+	pools := make(map[payload.Type]pool)
+	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), conf.minFee())
+	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), conf.minFee())
+	pools[payload.TypeUnbond] = newPool(conf.unbondPoolSize(), 0)
+	pools[payload.TypeWithdraw] = newPool(conf.withdrawPoolSize(), conf.minFee())
+	pools[payload.TypeSortition] = newPool(conf.sortitionPoolSize(), 0)
 
 	pool := &txPool{
 		config:      conf,
@@ -97,18 +96,20 @@ func (p *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 
 func (p *txPool) doAppendTx(trx *tx.Tx) error {
 	payloadType := trx.Payload().Type()
-	pool := p.pools[payloadType]
-	if pool.list.Has(trx.ID()) {
+	payloadPool := p.pools[payloadType]
+	if payloadPool.list.Has(trx.ID()) {
 		p.logger.Trace("transaction is already in pool", "id", trx.ID())
 
 		return nil
 	}
 
-	if trx.Payload().Value() < pool.minValue {
-		p.logger.Warn("low value transaction", "tx", trx, "minValue", pool.minValue)
+	if !trx.IsFreeTx() {
+		if trx.Fee() < payloadPool.estimatedFee() {
+			p.logger.Warn("low fee transaction", "tx", trx, "minFee", payloadPool.estimatedFee())
 
-		return AppendError{
-			Err: fmt.Errorf("low value transaction, expected to be more than %s", pool.minValue),
+			return AppendError{
+				Err: fmt.Errorf("low fee transaction, expected to be more than %s", payloadPool.estimatedFee()),
+			}
 		}
 	}
 
@@ -118,7 +119,7 @@ func (p *txPool) doAppendTx(trx *tx.Tx) error {
 		}
 	}
 
-	pool.list.PushBack(trx.ID(), trx)
+	payloadPool.list.PushBack(trx.ID(), trx)
 	p.logger.Debug("transaction appended into pool", "tx", trx)
 
 	return nil
@@ -223,6 +224,18 @@ func (p *txPool) Size() int {
 	}
 
 	return size
+}
+
+func (p *txPool) EstimatedFee(_ amount.Amount, payloadType payload.Type) amount.Amount {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	payloadPool, ok := p.pools[payloadType]
+	if !ok {
+		return 0
+	}
+
+	return payloadPool.estimatedFee()
 }
 
 func (p *txPool) String() string {

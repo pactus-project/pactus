@@ -143,7 +143,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 
 	// Without reward address in config
 	rewardAddr := td.RandAccAddress()
-	randAccumulatedFee := td.RandAmount()
+	randAccumulatedFee := td.RandFee()
 	trx := td.state.createSubsidyTx(rewardAddr, randAccumulatedFee)
 	assert.True(t, trx.IsSubsidyTx())
 	assert.Equal(t, trx.Payload().Value(), td.state.params.BlockReward+randAccumulatedFee)
@@ -405,7 +405,7 @@ func TestSortition(t *testing.T) {
 
 	td.commitBlocks(t, 1)
 
-	assert.False(t, td.state.evaluateSortition()) //  bonding period
+	assert.False(t, td.state.evaluateSortition()) // bonding period
 	assert.True(t, td.state.IsValidator(myValKey.Address()))
 	assert.Equal(t, td.state.CommitteePower(), int64(4))
 	assert.False(t, td.state.committee.Contains(myValKey.Address())) // Not in the committee
@@ -413,8 +413,8 @@ func TestSortition(t *testing.T) {
 	// Committing another 10 blocks
 	td.commitBlocks(t, 10)
 
-	assert.True(t, td.state.evaluateSortition())                     //  ok
-	assert.False(t, td.state.committee.Contains(myValKey.Address())) // still not in the committee
+	assert.True(t, td.state.evaluateSortition())                     // OK
+	assert.False(t, td.state.committee.Contains(myValKey.Address())) // Still not in the committee
 
 	td.commitBlocks(t, 1)
 
@@ -426,9 +426,9 @@ func TestSortition(t *testing.T) {
 func TestValidateBlockTime(t *testing.T) {
 	td := setup(t)
 
-	roundedNow := util.RoundNow(10)
-
 	t.Run("Time is not rounded", func(t *testing.T) {
+		roundedNow := util.RoundNow(10)
+
 		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(-15*time.Second)))
 		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(-5*time.Second)))
 		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(5*time.Second)))
@@ -436,6 +436,7 @@ func TestValidateBlockTime(t *testing.T) {
 	})
 
 	t.Run("Last block is committed 10 seconds ago", func(t *testing.T) {
+		roundedNow := util.RoundNow(10)
 		td.state.lastInfo.UpdateBlockTime(roundedNow.Add(-10 * time.Second))
 
 		// Before or same as the last block time
@@ -454,6 +455,7 @@ func TestValidateBlockTime(t *testing.T) {
 	})
 
 	t.Run("Last block is committed one minute ago", func(t *testing.T) {
+		roundedNow := util.RoundNow(10)
 		td.state.lastInfo.UpdateBlockTime(roundedNow.Add(-1 * time.Minute)) // One minute ago
 		lastBlockTime := td.state.LastBlockTime()
 
@@ -474,6 +476,7 @@ func TestValidateBlockTime(t *testing.T) {
 	})
 
 	t.Run("Last block is committed in future", func(t *testing.T) {
+		roundedNow := util.RoundNow(10)
 		td.state.lastInfo.UpdateBlockTime(roundedNow.Add(1 * time.Minute)) // One minute later
 		lastBlockTime := td.state.LastBlockTime()
 
@@ -599,11 +602,13 @@ func TestIsValidator(t *testing.T) {
 	assert.False(t, td.state.IsValidator(addr))
 }
 
-func TestInvalidPayloadFee(t *testing.T) {
+func TestCalculateFee(t *testing.T) {
 	td := setup(t)
 
-	fee := td.state.CalculateFee(td.RandAmount(), 6)
-	assert.Zero(t, fee)
+	fee := td.state.CalculateFee(td.RandAmount(), payload.TypeTransfer)
+	expectedFee := td.commonTxPool.EstimatedFee(0, payload.TypeTransfer)
+
+	assert.Equal(t, expectedFee, fee)
 }
 
 func TestCheckMaximumTransactionPerBlock(t *testing.T) {

@@ -38,5 +38,5 @@ func TestBroadcastingQueryVotesMessages(t *testing.T) {
 	msg := message.NewQueryVotesMessage(consensusHeight, 1, td.RandValAddress())
 	td.sync.broadcast(msg)
 
-	td.shouldPublishMessageWithThisType(t, message.TypeQueryVotes)
+	td.shouldPublishMessageWithThisType(t, message.TypeQueryVote)
 }

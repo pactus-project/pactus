@@ -16,7 +16,7 @@ func TestJoinConsensusTopic(t *testing.T) {
 		NotSubscribedError{
 			TopicID: TopicIDConsensus,
 		})
-	require.NoError(t, net.JoinConsensusTopic(alwaysPropagate))
+	require.NoError(t, net.JoinTopic(TopicIDConsensus, alwaysPropagate))
 	require.NoError(t, net.Broadcast(msg, TopicIDConsensus))
 }
 
