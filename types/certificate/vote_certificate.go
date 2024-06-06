@@ -23,7 +23,9 @@ func NewVoteCertificate(height uint32, round int16) *VoteCertificate {
 	}
 }
 
-func (cert *VoteCertificate) signBytes(blockHash hash.Hash, extraData ...[]byte) []byte {
+// SignBytes returns the sign bytes for the vote certificate.
+// This method provides the same data as the `SignBytes` function in vote struct.
+func (cert *VoteCertificate) SignBytes(blockHash hash.Hash, extraData ...[]byte) []byte {
 	sb := blockHash.Bytes()
 	sb = append(sb, util.Uint32ToSlice(cert.height)...)
 	sb = append(sb, util.Int16ToSlice(cert.round)...)
@@ -37,7 +39,7 @@ func (cert *VoteCertificate) signBytes(blockHash hash.Hash, extraData ...[]byte)
 func (cert *VoteCertificate) ValidatePrepare(validators []*validator.Validator,
 	blockHash hash.Hash,
 ) error {
-	signBytes := cert.signBytes(blockHash,
+	signBytes := cert.SignBytes(blockHash,
 		util.StringToBytes("PREPARE"))
 
 	return cert.validate(validators, signBytes)
@@ -46,7 +48,7 @@ func (cert *VoteCertificate) ValidatePrepare(validators []*validator.Validator,
 func (cert *VoteCertificate) ValidateCPPreVote(validators []*validator.Validator,
 	blockHash hash.Hash, cpRound int16, cpValue byte,
 ) error {
-	signBytes := cert.signBytes(blockHash,
+	signBytes := cert.SignBytes(blockHash,
 		util.StringToBytes("PRE-VOTE"),
 		util.Int16ToSlice(cpRound),
 		[]byte{cpValue})
@@ -57,7 +59,7 @@ func (cert *VoteCertificate) ValidateCPPreVote(validators []*validator.Validator
 func (cert *VoteCertificate) ValidateCPMainVote(validators []*validator.Validator,
 	blockHash hash.Hash, cpRound int16, cpValue byte,
 ) error {
-	signBytes := cert.signBytes(blockHash,
+	signBytes := cert.SignBytes(blockHash,
 		util.StringToBytes("MAIN-VOTE"),
 		util.Int16ToSlice(cpRound),
 		[]byte{cpValue})

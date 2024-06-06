@@ -219,7 +219,7 @@ func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height
 
 	for _, consMsg := range td.consMessages {
 		if consMsg.sender != cons.valKey.Address() ||
-			consMsg.message.Type() != message.TypeQueryVotes {
+			consMsg.message.Type() != message.TypeQueryVote {
 			continue
 		}
 
@@ -409,9 +409,10 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 // If `proposal` is nil, it creates justifications for not changing the proposer;
 // otherwise, it generates justifications to change the proposer.
 // It returns three justifications:
-// 1. JustInitNo if the proposal is set, or JustInitYes if not for the pre-vote step,
-// 2. JustMainVoteNoConflict for the main-vote step,
-// 3. JustDecided for the decided step.
+//
+//  1. `JustInitNo` if the proposal is set, or `JustInitYes` if not for the pre-vote step,
+//  2. `JustMainVoteNoConflict` for the main-vote step,
+//  3. `JustDecided` for the decided step.
 func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Hash,
 	height uint32, round int16,
 ) (vote.Just, vote.Just, vote.Just) {
@@ -599,49 +600,44 @@ func TestConsensusLateProposal(t *testing.T) {
 	td.shouldPublishBlockAnnounce(t, td.consP, blockHash)
 }
 
-// // TestConsensusVeryLateProposal tests the scenario where a slow node doesn't have the proposal
-// // in precommit phase.
-// func TestConsensusVeryLateProposal(t *testing.T) {
-// 	td := setup(t)
+// TestConsensusVeryLateProposal tests the scenario where a slow node doesn't have the proposal
+// in precommit phase.
+func TestConsensusVeryLateProposal(t *testing.T) {
+	td := setup(t)
 
-// 	td.commitBlockForAllStates(t) // height 1
+	td.commitBlockForAllStates(t) // height 1
 
-// 	td.enterNewHeight(td.consP)
-// 	td.commitBlockForAllStates(t) // height 2
+	td.enterNewHeight(td.consP)
 
-// 	h := uint32(2)
-// 	r := int16(0)
-// 	prop := td.makeProposal(t, h, r)
-// 	blockHash := p.Block().Hash()
+	h := uint32(2)
+	r := int16(0)
+	prop := td.makeProposal(t, h, r)
+	blockHash := prop.Block().Hash()
 
-// 	td.addPrepareVote(td.consP, blockHash, h, r, tIndexX)
-// 	td.addPrepareVote(td.consP, blockHash, h, r, tIndexY)
-// 	td.addPrepareVote(td.consP, blockHash, h, r, tIndexM)
-// 	td.addPrepareVote(td.consP, blockHash, h, r, tIndexN)
+	td.addPrepareVote(td.consP, blockHash, h, r, tIndexX)
+	td.addPrepareVote(td.consP, blockHash, h, r, tIndexY)
+	td.addPrepareVote(td.consP, blockHash, h, r, tIndexM)
+	td.addPrepareVote(td.consP, blockHash, h, r, tIndexN)
 
-// 	// consP timed out
-// 	td.changeProposerTimeout(td.consP)
+	// consP timed out
+	td.changeProposerTimeout(td.consP)
 
-// 	preVote0 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, blockHash)
-// 	td.addCPPreVote(td.consP, p.Block().Hash(), h, r, 0, vote.CPValueNo, preVote0.CPJust(), tIndexX)
-// 	td.addCPPreVote(td.consP, p.Block().Hash(), h, r, 0, vote.CPValueNo, preVote0.CPJust(), tIndexY)
+	_, _, decidedJust := td.makeChangeProposerJusts(t, prop.Block().Hash(), h, r)
+	td.addCPDecidedVote(td.consP, prop.Block().Hash(), h, r, vote.CPValueNo, decidedJust, tIndexX)
 
-// 	mainVote0 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPMainVote, blockHash)
-// 	td.addCPMainVote(td.consP, blockHash, h, r, 0, vote.CPValueNo, mainVote0.CPJust(), tIndexX)
-// 	td.addCPMainVote(td.consP, blockHash, h, r, 0, vote.CPValueNo, mainVote0.CPJust(), tIndexY)
+	td.addPrecommitVote(td.consP, blockHash, h, r, tIndexX)
+	td.addPrecommitVote(td.consP, blockHash, h, r, tIndexY)
+	td.addPrecommitVote(td.consP, blockHash, h, r, tIndexM)
+	td.addPrecommitVote(td.consP, blockHash, h, r, tIndexN)
 
-// 	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPDecided, blockHash)
+	td.shouldPublishQueryProposal(t, td.consP, h)
 
-// 	td.addPrecommitVote(td.consP, blockHash, h, r, tIndexX)
-// 	td.addPrecommitVote(td.consP, blockHash, h, r, tIndexY)
-// 	td.addPrecommitVote(td.consP, blockHash, h, r, tIndexB)
+	// consP receives proposal now
+	td.consP.SetProposal(prop)
 
-// 	// consP receives proposal now
-// 	td.consP.SetProposal(p)
-
-// 	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, p.Block().Hash())
-// 	td.shouldPublishBlockAnnounce(t, td.consP, p.Block().Hash())
-// }
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, prop.Block().Hash())
+	td.shouldPublishBlockAnnounce(t, td.consP, prop.Block().Hash())
+}
 
 func TestPickRandomVote(t *testing.T) {
 	td := setup(t)
@@ -1010,7 +1006,7 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 					})
 				}
 			}
-		case message.TypeQueryVotes:
+		case message.TypeQueryVote:
 			// To make the test reproducible, we ignore the QueryVote message.
 			// This is because QueryVote returns a random vote that can make the test non-reproducible.
 
@@ -1021,7 +1017,7 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 		case
 			message.TypeHello,
 			message.TypeHelloAck,
-			message.TypeTransactions,
+			message.TypeTransaction,
 			message.TypeBlocksRequest,
 			message.TypeBlocksResponse:
 			//

@@ -412,7 +412,7 @@ func (cs *consensus) announceNewBlock(blk *block.Block, cert *certificate.BlockC
 func (cs *consensus) makeBlockCertificate(votes map[crypto.Address]*vote.Vote, fastPath bool,
 ) *certificate.BlockCertificate {
 	cert := certificate.NewBlockCertificate(cs.height, cs.round, fastPath)
-	cert.SetSignature(cs.signerInfo(votes))
+	cert.SetSignature(cs.signersInfo(votes))
 
 	return cert
 }
@@ -420,16 +420,16 @@ func (cs *consensus) makeBlockCertificate(votes map[crypto.Address]*vote.Vote, f
 func (cs *consensus) makeVoteCertificate(votes map[crypto.Address]*vote.Vote,
 ) *certificate.VoteCertificate {
 	cert := certificate.NewVoteCertificate(cs.height, cs.round)
-	cert.SetSignature(cs.signerInfo(votes))
+	cert.SetSignature(cs.signersInfo(votes))
 
 	return cert
 }
 
-// signerInfo processes a map of votes from validators and provides these information:
+// signersInfo processes a map of votes from validators and provides these information:
 // - A list of all validators' numbers eligible to vote in this step.
 // - A list of absentee validators' numbers who did not vote in this step.
 // - An aggregated signature generated from the signatures of participating validators.
-func (cs *consensus) signerInfo(votes map[crypto.Address]*vote.Vote) ([]int32, []int32, *bls.Signature) {
+func (cs *consensus) signersInfo(votes map[crypto.Address]*vote.Vote) ([]int32, []int32, *bls.Signature) {
 	vals := cs.validators
 	committers := make([]int32, len(vals))
 	absentees := make([]int32, 0)
