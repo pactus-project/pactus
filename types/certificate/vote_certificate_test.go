@@ -45,7 +45,8 @@ func TestVoteCertificateValidatePrepare(t *testing.T) {
 	height := ts.RandHeight()
 	round := ts.RandRound()
 	cert := certificate.NewVoteCertificate(height, round)
-	signBytes := cert.SignBytes(blockHash, util.StringToBytes("PREPARE"))
+	signBytes := cert.SignBytes(blockHash,
+		util.StringToBytes("PREPARE"))
 	committers := ts.RandSlice(6)
 	sigs := []*bls.Signature{}
 	validators := []*validator.Validator{}
@@ -77,6 +78,120 @@ func TestVoteCertificateValidatePrepare(t *testing.T) {
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrepare(validators, blockHash)
+		assert.NoError(t, err)
+	})
+}
+
+func TestVoteCertificateValidateCPPreVote(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	blockHash := ts.RandHash()
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	cpRound := ts.RandRound()
+	cpValue := 2
+	cert := certificate.NewVoteCertificate(height, round)
+	signBytes := cert.SignBytes(blockHash,
+		util.StringToBytes("PRE-VOTE"),
+		util.Int16ToSlice(cpRound),
+		[]byte{byte(cpValue)})
+	committers := ts.RandSlice(6)
+	sigs := []*bls.Signature{}
+	validators := []*validator.Validator{}
+
+	for _, committer := range committers {
+		valKey := ts.RandValKey()
+		val := validator.NewValidator(valKey.PublicKey(), committer)
+		sig := valKey.Sign(signBytes)
+
+		validators = append(validators, val)
+		sigs = append(sigs, sig)
+	}
+
+	t.Run("Invalid cpValue", func(t *testing.T) {
+		absentees := committers[3:]
+		aggSig := bls.SignatureAggregate(sigs[:3]...)
+		cert.SetSignature(committers, absentees, aggSig)
+
+		err := cert.ValidateCPPreVote(validators, blockHash, cpRound, byte(0))
+		assert.Error(t, err)
+	})
+
+	t.Run("Doesn't have 2f+1 majority", func(t *testing.T) {
+		absentees := committers[2:]
+		aggSig := bls.SignatureAggregate(sigs[:2]...)
+		cert.SetSignature(committers, absentees, aggSig)
+
+		err := cert.ValidateCPPreVote(validators, blockHash, cpRound, byte(cpValue))
+		assert.ErrorIs(t, err, certificate.InsufficientPowerError{
+			SignedPower:   2,
+			RequiredPower: 3,
+		})
+	})
+
+	t.Run("Ok, should return no error", func(t *testing.T) {
+		absentees := committers[3:]
+		aggSig := bls.SignatureAggregate(sigs[:3]...)
+		cert.SetSignature(committers, absentees, aggSig)
+
+		err := cert.ValidateCPPreVote(validators, blockHash, cpRound, byte(cpValue))
+		assert.NoError(t, err)
+	})
+}
+
+func TestVoteCertificateValidateCPMainVote(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	blockHash := ts.RandHash()
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	cpRound := ts.RandRound()
+	cpValue := 2
+	cert := certificate.NewVoteCertificate(height, round)
+	signBytes := cert.SignBytes(blockHash,
+		util.StringToBytes("MAIN-VOTE"),
+		util.Int16ToSlice(cpRound),
+		[]byte{byte(cpValue)})
+	committers := ts.RandSlice(6)
+	sigs := []*bls.Signature{}
+	validators := []*validator.Validator{}
+
+	for _, committer := range committers {
+		valKey := ts.RandValKey()
+		val := validator.NewValidator(valKey.PublicKey(), committer)
+		sig := valKey.Sign(signBytes)
+
+		validators = append(validators, val)
+		sigs = append(sigs, sig)
+	}
+
+	t.Run("Invalid cpValue", func(t *testing.T) {
+		absentees := committers[3:]
+		aggSig := bls.SignatureAggregate(sigs[:3]...)
+		cert.SetSignature(committers, absentees, aggSig)
+
+		err := cert.ValidateCPMainVote(validators, blockHash, cpRound, byte(0))
+		assert.Error(t, err)
+	})
+
+	t.Run("Doesn't have 2f+1 majority", func(t *testing.T) {
+		absentees := committers[2:]
+		aggSig := bls.SignatureAggregate(sigs[:2]...)
+		cert.SetSignature(committers, absentees, aggSig)
+
+		err := cert.ValidateCPMainVote(validators, blockHash, cpRound, byte(cpValue))
+		assert.ErrorIs(t, err, certificate.InsufficientPowerError{
+			SignedPower:   2,
+			RequiredPower: 3,
+		})
+	})
+
+	t.Run("Ok, should return no error", func(t *testing.T) {
+		absentees := committers[3:]
+		aggSig := bls.SignatureAggregate(sigs[:3]...)
+		cert.SetSignature(committers, absentees, aggSig)
+
+		err := cert.ValidateCPMainVote(validators, blockHash, cpRound, byte(cpValue))
 		assert.NoError(t, err)
 	})
 }
