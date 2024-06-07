@@ -19,10 +19,10 @@ func TestDefaultConfigCheck(t *testing.T) {
 	assert.ErrorIs(t, c2.BasicCheck(), ConfigError{Reason: "change proposer delta must be greater than zero"})
 
 	c3.ChangeProposerTimeout = 0 * time.Second
-	assert.ErrorIs(t, c3.BasicCheck(), ConfigError{Reason: "timeout for change proposer must be greater than zero"})
+	assert.ErrorIs(t, c3.BasicCheck(), ConfigError{Reason: "change proposer timeout must be greater than zero"})
 
 	c4.ChangeProposerTimeout = -1 * time.Second
-	assert.ErrorIs(t, c4.BasicCheck(), ConfigError{Reason: "timeout for change proposer must be greater than zero"})
+	assert.ErrorIs(t, c4.BasicCheck(), ConfigError{Reason: "change proposer timeout must be greater than zero"})
 
 	c5.MinimumAvailabilityScore = 1.5
 	assert.ErrorIs(t, c5.BasicCheck(), ConfigError{Reason: "minimum availability score can't be negative or more than 1"})

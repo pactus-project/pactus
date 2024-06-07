@@ -21,6 +21,7 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
+	"golang.org/x/exp/slices"
 )
 
 // TestSuite provides a set of helper functions for testing purposes.
@@ -63,6 +64,16 @@ func NewTestSuite(t *testing.T) *TestSuite {
 // RandBool returns a random boolean value.
 func (ts *TestSuite) RandBool() bool {
 	return ts.RandInt64(2) == 0
+}
+
+// RandInt8 returns a random int8 between 0 and max: [0, max).
+func (ts *TestSuite) RandInt8(max int8) int8 {
+	return int8(ts.RandUint64(uint64(max)))
+}
+
+// RandUint8 returns a random uint8 between 0 and max: [0, max).
+func (ts *TestSuite) RandUint8(max uint8) uint8 {
+	return uint8(ts.RandUint64(uint64(max)))
 }
 
 // RandInt16 returns a random int16 between 0 and max: [0, max).
@@ -173,6 +184,21 @@ func (ts *TestSuite) RandBytes(length int) []byte {
 	}
 
 	return buf
+}
+
+// RandSlice generates a random non-repeating slice of int32 elements with the specified length.
+func (ts *TestSuite) RandSlice(length int) []int32 {
+	slice := []int32{}
+	for {
+		randInt := ts.RandInt32(1000)
+		if !slices.Contains(slice, randInt) {
+			slice = append(slice, randInt)
+		}
+
+		if len(slice) == length {
+			return slice
+		}
+	}
 }
 
 // RandString generates a random string of the given length.
@@ -290,23 +316,23 @@ func (ts *TestSuite) GenerateTestValidator(number int32) (*validator.Validator, 
 
 // GenerateTestBlockWithProposer generates a block with the give proposer address for testing purposes.
 func (ts *TestSuite) GenerateTestBlockWithProposer(height uint32, proposer crypto.Address,
-) (*block.Block, *certificate.Certificate) {
+) (*block.Block, *certificate.BlockCertificate) {
 	return ts.makeTestBlock(height, proposer, util.Now())
 }
 
 // GenerateTestBlockWithTime generates a block with the given time for testing purposes.
 func (ts *TestSuite) GenerateTestBlockWithTime(height uint32, tme time.Time,
-) (*block.Block, *certificate.Certificate) {
+) (*block.Block, *certificate.BlockCertificate) {
 	return ts.makeTestBlock(height, ts.RandValAddress(), tme)
 }
 
 // GenerateTestBlock generates a block for testing purposes.
-func (ts *TestSuite) GenerateTestBlock(height uint32) (*block.Block, *certificate.Certificate) {
+func (ts *TestSuite) GenerateTestBlock(height uint32) (*block.Block, *certificate.BlockCertificate) {
 	return ts.makeTestBlock(height, ts.RandValAddress(), util.Now())
 }
 
 func (ts *TestSuite) makeTestBlock(height uint32, proposer crypto.Address, tme time.Time,
-) (*block.Block, *certificate.Certificate) {
+) (*block.Block, *certificate.BlockCertificate) {
 	txs := block.NewTxs()
 	tx1, _ := ts.GenerateTestTransferTx()
 	tx2, _ := ts.GenerateTestSortitionTx()
@@ -320,15 +346,15 @@ func (ts *TestSuite) makeTestBlock(height uint32, proposer crypto.Address, tme t
 	txs.Append(tx4)
 	txs.Append(tx5)
 
-	var prevCert *certificate.Certificate
+	var prevCert *certificate.BlockCertificate
 	prevBlockHash := ts.RandHash()
 	if height == 1 {
 		prevCert = nil
 		prevBlockHash = hash.UndefHash
 	} else {
-		prevCert = ts.GenerateTestCertificate(height - 1)
+		prevCert = ts.GenerateTestBlockCertificate(height - 1)
 	}
-	blockCert := ts.GenerateTestCertificate(height)
+	blockCert := ts.GenerateTestBlockCertificate(height)
 	header := block.NewHeader(1, tme,
 		ts.RandHash(),
 		prevBlockHash,
@@ -345,20 +371,33 @@ func (ts *TestSuite) makeTestBlock(height uint32, proposer crypto.Address, tme t
 	return blk, blockCert
 }
 
-// GenerateTestCertificate generates a certificate for testing purposes.
-func (ts *TestSuite) GenerateTestCertificate(height uint32) *certificate.Certificate {
+// GenerateTestBlockCertificate generates a block certificate for testing purposes.
+func (ts *TestSuite) GenerateTestBlockCertificate(height uint32) *certificate.BlockCertificate {
 	sig := ts.RandBLSSignature()
 
-	c1 := ts.RandInt32NonZero(10)
-	c2 := ts.RandInt32NonZero(10) + 10
-	c3 := ts.RandInt32NonZero(10) + 20
-	c4 := ts.RandInt32NonZero(10) + 30
-	cert := certificate.NewCertificate(
-		height,
-		ts.RandRound(),
-		[]int32{c1, c2, c3, c4},
-		[]int32{c2},
-		sig)
+	cert := certificate.NewBlockCertificate(height, ts.RandRound(), false)
+
+	committers := ts.RandSlice(6)
+	absentees := []int32{committers[5]}
+	cert.SetSignature(committers, absentees, sig)
+
+	err := cert.BasicCheck()
+	if err != nil {
+		panic(err)
+	}
+
+	return cert
+}
+
+// GenerateTestPrepareCertificate generates a prepare certificate for testing purposes.
+func (ts *TestSuite) GenerateTestPrepareCertificate(height uint32) *certificate.VoteCertificate {
+	sig := ts.RandBLSSignature()
+
+	cert := certificate.NewVoteCertificate(height, ts.RandRound())
+
+	committers := ts.RandSlice(6)
+	absentees := []int32{committers[5]}
+	cert.SetSignature(committers, absentees, sig)
 
 	err := cert.BasicCheck()
 	if err != nil {
@@ -454,6 +493,9 @@ func (ts *TestSuite) GenerateTestPrepareVote(height uint32, round int16) (*vote.
 // GenerateTestCommittee generates a committee for testing purposes.
 // All committee members have the same power.
 func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls.ValidatorKey) {
+	if num < 4 {
+		panic("the number of committee members must be at least 4")
+	}
 	valKeys := make([]*bls.ValidatorKey, num)
 	vals := make([]*validator.Validator, num)
 	for i := int32(0); i < int32(num); i++ {

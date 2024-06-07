@@ -18,12 +18,12 @@ func (e InvalidVoteForCertificateError) Error() string {
 		e.Vote.String())
 }
 
-// InvalidCertificateError is returned when the given certificate is invalid.
-type InvalidCertificateError struct {
-	Cert *certificate.Certificate
+// InvalidBlockCertificateError is returned when the given certificate is invalid.
+type InvalidBlockCertificateError struct {
+	Cert *certificate.BlockCertificate
 }
 
-func (e InvalidCertificateError) Error() string {
+func (e InvalidBlockCertificateError) Error() string {
 	return fmt.Sprintf("invalid certificate for block %d",
 		e.Cert.Height())
 }

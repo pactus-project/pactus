@@ -198,7 +198,8 @@ func (st *state) loadMerkels() {
 	st.store.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
 		// Let's keep this check, even we have tested it
 		if acc.Number() >= totalAccount {
-			panic("Account number is out of range")
+			panic(fmt.Sprintf(
+				"Account number is out of range: %v >= %v", acc.Number(), totalAccount))
 		}
 		st.accountMerkle.SetHash(int(acc.Number()), acc.Hash())
 
@@ -209,7 +210,8 @@ func (st *state) loadMerkels() {
 	st.store.IterateValidators(func(val *validator.Validator) bool {
 		// Let's keep this check, even we have tested it
 		if val.Number() >= totalValidator {
-			panic("Validator number is out of range")
+			panic(fmt.Sprintf(
+				"Validator number is out of range: %v >= %v", val.Number(), totalValidator))
 		}
 		st.validatorMerkle.SetHash(int(val.Number()), val.Hash())
 
@@ -293,7 +295,7 @@ func (st *state) LastBlockTime() time.Time {
 	return st.lastInfo.BlockTime()
 }
 
-func (st *state) LastCertificate() *certificate.Certificate {
+func (st *state) LastCertificate() *certificate.BlockCertificate {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
@@ -417,7 +419,7 @@ func (st *state) ValidateBlock(blk *block.Block, round int16) error {
 	return st.executeBlock(blk, sb)
 }
 
-func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) error {
+func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -428,7 +430,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) er
 		return nil
 	}
 
-	err := st.validateCertificate(cert, blk.Hash())
+	err := st.validateCurCertificate(cert, blk.Hash())
 	if err != nil {
 		return err
 	}

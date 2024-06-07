@@ -138,7 +138,7 @@ func (s *store) Close() {
 	}
 }
 
-func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
+func (s *store) SaveBlock(blk *block.Block, cert *certificate.BlockCertificate) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -337,7 +337,7 @@ func (s *store) UpdateValidator(acc *validator.Validator) {
 	s.validatorStore.updateValidator(s.batch, acc)
 }
 
-func (s *store) LastCertificate() *certificate.Certificate {
+func (s *store) LastCertificate() *certificate.BlockCertificate {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -348,7 +348,7 @@ func (s *store) LastCertificate() *certificate.Certificate {
 	}
 	r := bytes.NewReader(data)
 	version := int32(0)
-	cert := new(certificate.Certificate)
+	cert := new(certificate.BlockCertificate)
 	err := encoding.ReadElements(r, &version)
 	if err != nil {
 		return nil

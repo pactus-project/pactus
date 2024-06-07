@@ -24,11 +24,11 @@ type Block struct {
 
 type blockData struct {
 	Header   *Header
-	PrevCert *certificate.Certificate
+	PrevCert *certificate.BlockCertificate
 	Txs      Txs
 }
 
-func NewBlock(header *Header, prevCert *certificate.Certificate, txs Txs) *Block {
+func NewBlock(header *Header, prevCert *certificate.BlockCertificate, txs Txs) *Block {
 	return &Block{
 		data: blockData{
 			Header:   header,
@@ -51,7 +51,7 @@ func FromBytes(data []byte) (*Block, error) {
 
 func MakeBlock(version uint8, timestamp time.Time, txs Txs,
 	prevBlockHash, stateRoot hash.Hash,
-	prevCert *certificate.Certificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address,
+	prevCert *certificate.BlockCertificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address,
 ) *Block {
 	header := NewHeader(version, timestamp,
 		stateRoot, prevBlockHash, sortitionSeed, proposer)
@@ -63,7 +63,7 @@ func (b *Block) Header() *Header {
 	return b.data.Header
 }
 
-func (b *Block) PrevCertificate() *certificate.Certificate {
+func (b *Block) PrevCertificate() *certificate.BlockCertificate {
 	return b.data.PrevCert
 }
 
@@ -190,7 +190,7 @@ func (b *Block) Decode(r io.Reader) error {
 		return err
 	}
 	if !b.data.Header.PrevBlockHash().IsUndef() {
-		b.data.PrevCert = new(certificate.Certificate)
+		b.data.PrevCert = new(certificate.BlockCertificate)
 		if err := b.data.PrevCert.Decode(r); err != nil {
 			return err
 		}

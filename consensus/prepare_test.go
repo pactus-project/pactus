@@ -56,8 +56,8 @@ func TestGoToChangeProposerFromPrepare(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 
-	td.addCPPreVote(td.consP, hash.UndefHash, 2, 0, 0, vote.CPValueOne, &vote.JustInitOne{}, tIndexX)
-	td.addCPPreVote(td.consP, hash.UndefHash, 2, 0, 0, vote.CPValueOne, &vote.JustInitOne{}, tIndexY)
+	td.addCPPreVote(td.consP, hash.UndefHash, 2, 0, vote.CPValueYes, &vote.JustInitYes{}, tIndexX)
+	td.addCPPreVote(td.consP, hash.UndefHash, 2, 0, vote.CPValueYes, &vote.JustInitYes{}, tIndexY)
 
 	// should move to the change proposer phase, even if it has the proposal and
 	// its timer has not expired, if it has received 1/3 of the change-proposer votes.

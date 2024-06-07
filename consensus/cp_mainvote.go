@@ -19,35 +19,35 @@ func (s *cpMainVoteState) decide() {
 
 	cpPreVotes := s.log.CPPreVoteVoteSet(s.round)
 	if cpPreVotes.HasTwoThirdOfTotalPower(s.cpRound) {
-		if cpPreVotes.HasQuorumVotesFor(s.cpRound, vote.CPValueOne) {
+		if cpPreVotes.HasQuorumVotesFor(s.cpRound, vote.CPValueYes) {
 			s.logger.Debug("cp: quorum for pre-votes", "v", "1")
 
-			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueOne)
-			cert := s.makeCertificate(votes)
+			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueYes)
+			cert := s.makeVoteCertificate(votes)
 			just := &vote.JustMainVoteNoConflict{
 				QCert: cert,
 			}
-			s.signAddCPMainVote(hash.UndefHash, s.cpRound, vote.CPValueOne, just)
+			s.signAddCPMainVote(hash.UndefHash, s.cpRound, vote.CPValueYes, just)
 			s.enterNewState(s.cpDecideState)
-		} else if cpPreVotes.HasQuorumVotesFor(s.cpRound, vote.CPValueZero) {
+		} else if cpPreVotes.HasQuorumVotesFor(s.cpRound, vote.CPValueNo) {
 			s.logger.Debug("cp: quorum for pre-votes", "v", "0")
 
-			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueZero)
-			cert := s.makeCertificate(votes)
+			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueNo)
+			cert := s.makeVoteCertificate(votes)
 			just := &vote.JustMainVoteNoConflict{
 				QCert: cert,
 			}
-			s.signAddCPMainVote(*s.cpWeakValidity, s.cpRound, vote.CPValueZero, just)
+			s.signAddCPMainVote(*s.cpWeakValidity, s.cpRound, vote.CPValueNo, just)
 			s.enterNewState(s.cpDecideState)
 		} else {
 			s.logger.Debug("cp: no-quorum for pre-votes", "v", "abstain")
 
-			vote0 := cpPreVotes.GetRandomVote(s.cpRound, vote.CPValueZero)
-			vote1 := cpPreVotes.GetRandomVote(s.cpRound, vote.CPValueOne)
+			vote0 := cpPreVotes.GetRandomVote(s.cpRound, vote.CPValueNo)
+			vote1 := cpPreVotes.GetRandomVote(s.cpRound, vote.CPValueYes)
 
 			just := &vote.JustMainVoteConflict{
-				Just0: vote0.CPJust(),
-				Just1: vote1.CPJust(),
+				JustNo:  vote0.CPJust(),
+				JustYes: vote1.CPJust(),
 			}
 
 			s.signAddCPMainVote(*s.cpWeakValidity, s.cpRound, vote.CPValueAbstain, just)
@@ -59,7 +59,7 @@ func (s *cpMainVoteState) decide() {
 func (s *cpMainVoteState) checkForWeakValidity() {
 	if s.cpWeakValidity == nil {
 		preVotes := s.log.CPPreVoteVoteSet(s.round)
-		preVotesZero := preVotes.BinaryVotes(s.cpRound, vote.CPValueZero)
+		preVotesZero := preVotes.BinaryVotes(s.cpRound, vote.CPValueNo)
 
 		for _, v := range preVotesZero {
 			bh := v.BlockHash()

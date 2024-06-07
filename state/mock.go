@@ -90,7 +90,7 @@ func (m *MockState) LastBlockTime() time.Time {
 	return m.Genesis().GenesisTime()
 }
 
-func (m *MockState) LastCertificate() *certificate.Certificate {
+func (m *MockState) LastCertificate() *certificate.BlockCertificate {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
@@ -101,7 +101,7 @@ func (*MockState) UpdateLastCertificate(_ *vote.Vote) error {
 	return nil
 }
 
-func (m *MockState) CommitBlock(b *block.Block, cert *certificate.Certificate) error {
+func (m *MockState) CommitBlock(b *block.Block, cert *certificate.BlockCertificate) error {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 

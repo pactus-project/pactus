@@ -13,88 +13,79 @@ import (
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
-type Certificate struct {
-	data certificateData
-}
-type certificateData struct {
-	Height     uint32
-	Round      int16
-	Committers []int32
-	Absentees  []int32
-	Signature  *bls.Signature
-}
-
-func NewCertificate(height uint32, round int16, committers, absentees []int32, signature *bls.Signature) *Certificate {
-	cert := &Certificate{
-		data: certificateData{
-			Height:     height,
-			Round:      round,
-			Committers: committers,
-			Absentees:  absentees,
-			Signature:  signature,
-		},
-	}
-
-	return cert
+// baseCertificate represents a base structure for both BlockCertificate and VoteCertificate.
+// As a BlockCertificate, it verifies if a block is signed by a majority of validators.
+// As a VoteCertificate, it checks whether a majority of validators have voted in the consensus step.
+type baseCertificate struct {
+	height     uint32
+	round      int16
+	fastPath   bool
+	committers []int32
+	absentees  []int32
+	signature  *bls.Signature
 }
 
-func (cert *Certificate) Height() uint32 {
-	return cert.data.Height
+func (cert *baseCertificate) Height() uint32 {
+	return cert.height
 }
 
-func (cert *Certificate) Round() int16 {
-	return cert.data.Round
+func (cert *baseCertificate) Round() int16 {
+	return cert.round
 }
 
-func (cert *Certificate) Committers() []int32 {
-	return cert.data.Committers
+func (cert *baseCertificate) FastPath() bool {
+	return cert.fastPath
 }
 
-func (cert *Certificate) Absentees() []int32 {
-	return cert.data.Absentees
+func (cert *baseCertificate) Committers() []int32 {
+	return cert.committers
 }
 
-func (cert *Certificate) Signature() *bls.Signature {
-	return cert.data.Signature
+func (cert *baseCertificate) Absentees() []int32 {
+	return cert.absentees
 }
 
-func (cert *Certificate) BasicCheck() error {
-	if cert.Height() <= 0 {
+func (cert *baseCertificate) Signature() *bls.Signature {
+	return cert.signature
+}
+
+func (cert *baseCertificate) BasicCheck() error {
+	if cert.height <= 0 {
 		return BasicCheckError{
-			Reason: fmt.Sprintf("height is not positive: %d", cert.Height()),
+			Reason: fmt.Sprintf("height is not positive: %d", cert.height),
 		}
 	}
-	if cert.Round() < 0 {
+	if cert.round < 0 {
 		return BasicCheckError{
-			Reason: fmt.Sprintf("round is negative: %d", cert.Round()),
+			Reason: fmt.Sprintf("round is negative: %d", cert.round),
 		}
 	}
-	if cert.Signature() == nil {
+	if cert.signature == nil {
 		return BasicCheckError{
 			Reason: "signature is missing",
 		}
 	}
-	if cert.Committers() == nil {
+	if cert.committers == nil {
 		return BasicCheckError{
 			Reason: "committers is missing",
 		}
 	}
-	if cert.Absentees() == nil {
+	if cert.absentees == nil {
 		return BasicCheckError{
 			Reason: "absentees is missing",
 		}
 	}
-	if !util.IsSubset(cert.Committers(), cert.Absentees()) {
+	if !util.IsSubset(cert.committers, cert.absentees) {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("absentees are not a subset of committers: %v, %v",
-				cert.Committers(), cert.Absentees()),
+				cert.committers, cert.absentees),
 		}
 	}
 
 	return nil
 }
 
-func (cert *Certificate) Hash() hash.Hash {
+func (cert *baseCertificate) Hash() hash.Hash {
 	w := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
 	if err := cert.Encode(w); err != nil {
 		return hash.UndefHash
@@ -103,43 +94,31 @@ func (cert *Certificate) Hash() hash.Hash {
 	return hash.CalcHash(w.Bytes())
 }
 
-func (cert *Certificate) Clone() *Certificate {
-	cloned := &Certificate{
-		data: certificateData{
-			Height:     cert.Height(),
-			Round:      cert.Round(),
-			Committers: make([]int32, len(cert.data.Committers)),
-			Absentees:  make([]int32, len(cert.data.Absentees)),
-			Signature:  new(bls.Signature),
-		},
-	}
-
-	copy(cloned.data.Committers, cert.data.Committers)
-	copy(cloned.data.Absentees, cert.data.Absentees)
-	*cloned.data.Signature = *cert.data.Signature
-
-	return cloned
+func (cert *baseCertificate) SetSignature(committers, absentees []int32, signature *bls.Signature) {
+	cert.committers = committers
+	cert.absentees = absentees
+	cert.signature = signature
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the block.
-func (cert *Certificate) SerializeSize() int {
+func (cert *baseCertificate) SerializeSize() int {
 	sz := 6 + // height (4) + round(2)
-		encoding.VarIntSerializeSize(uint64(len(cert.Committers()))) +
-		encoding.VarIntSerializeSize(uint64(len(cert.Absentees()))) +
+		encoding.VarIntSerializeSize(uint64(len(cert.committers))) +
+		encoding.VarIntSerializeSize(uint64(len(cert.absentees))) +
 		bls.SignatureSize
 
-	for _, n := range cert.Committers() {
+	for _, n := range cert.committers {
 		sz += encoding.VarIntSerializeSize(uint64(n))
 	}
 
-	for _, n := range cert.Absentees() {
+	for _, n := range cert.absentees {
 		sz += encoding.VarIntSerializeSize(uint64(n))
 	}
 
 	return sz
 }
 
-func (cert *Certificate) MarshalCBOR() ([]byte, error) {
+func (cert *baseCertificate) MarshalCBOR() ([]byte, error) {
 	buf := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
 	if err := cert.Encode(buf); err != nil {
 		return nil, err
@@ -148,7 +127,7 @@ func (cert *Certificate) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(buf.Bytes())
 }
 
-func (cert *Certificate) UnmarshalCBOR(bs []byte) error {
+func (cert *baseCertificate) UnmarshalCBOR(bs []byte) error {
 	data := make([]byte, 0, cert.SerializeSize())
 	err := cbor.Unmarshal(bs, &data)
 	if err != nil {
@@ -159,34 +138,45 @@ func (cert *Certificate) UnmarshalCBOR(bs []byte) error {
 	return cert.Decode(buf)
 }
 
-func (cert *Certificate) Encode(w io.Writer) error {
-	if err := encoding.WriteElements(w, cert.data.Height, cert.data.Round); err != nil {
+func (cert *baseCertificate) Encode(w io.Writer) error {
+	roundAndPath := uint16(cert.round)
+	if cert.FastPath() {
+		roundAndPath |= 0x8000
+	}
+
+	if err := encoding.WriteElements(w, cert.height, roundAndPath); err != nil {
 		return err
 	}
-	if err := encoding.WriteVarInt(w, uint64(len(cert.data.Committers))); err != nil {
+	if err := encoding.WriteVarInt(w, uint64(len(cert.committers))); err != nil {
 		return err
 	}
-	for _, n := range cert.data.Committers {
+	for _, n := range cert.committers {
 		if err := encoding.WriteVarInt(w, uint64(n)); err != nil {
 			return err
 		}
 	}
-	if err := encoding.WriteVarInt(w, uint64(len(cert.data.Absentees))); err != nil {
+	if err := encoding.WriteVarInt(w, uint64(len(cert.absentees))); err != nil {
 		return err
 	}
-	for _, n := range cert.data.Absentees {
+	for _, n := range cert.absentees {
 		if err := encoding.WriteVarInt(w, uint64(n)); err != nil {
 			return err
 		}
 	}
 
-	return cert.data.Signature.Encode(w)
+	return cert.signature.Encode(w)
 }
 
-func (cert *Certificate) Decode(r io.Reader) error {
-	err := encoding.ReadElements(r, &cert.data.Height, &cert.data.Round)
+func (cert *baseCertificate) Decode(r io.Reader) error {
+	roundAndPath := uint16(0)
+	err := encoding.ReadElements(r, &cert.height, &roundAndPath)
 	if err != nil {
 		return err
+	}
+
+	cert.round = int16(roundAndPath & 0x7FFF)
+	if roundAndPath&0x8000 == 0x8000 {
+		cert.fastPath = true
 	}
 
 	lenCommitters, err := encoding.ReadVarInt(r)
@@ -220,80 +210,63 @@ func (cert *Certificate) Decode(r io.Reader) error {
 		return err
 	}
 
-	cert.data.Committers = committers
-	cert.data.Absentees = absentees
-	cert.data.Signature = sig
+	cert.committers = committers
+	cert.absentees = absentees
+	cert.signature = sig
 
 	return nil
 }
 
-func (cert *Certificate) Validate(height uint32,
-	validators []*validator.Validator, signBytes []byte,
+func (cert *baseCertificate) validate(validators []*validator.Validator,
+	signBytes []byte, calcRequiredPowerFn func(int64) int64,
 ) error {
-	if cert.Height() != height {
-		return UnexpectedHeightError{
-			Expected: height,
-			Got:      cert.Height(),
-		}
-	}
-
-	if len(validators) != len(cert.Committers()) {
+	if len(validators) != len(cert.committers) {
 		return UnexpectedCommittersError{
-			Committers: cert.Committers(),
+			Committers: cert.committers,
 		}
 	}
 
-	pubs := make([]*bls.PublicKey, 0, len(cert.Committers()))
+	pubs := make([]*bls.PublicKey, 0, len(cert.committers))
 	committeePower := int64(0)
 	signedPower := int64(0)
 
-	for index, num := range cert.Committers() {
+	for index, num := range cert.committers {
 		val := validators[index]
 		if val.Number() != num {
 			return UnexpectedCommittersError{
-				Committers: cert.Committers(),
+				Committers: cert.committers,
 			}
 		}
 
-		if !util.Contains(cert.Absentees(), num) {
+		if !util.Contains(cert.absentees, num) {
 			pubs = append(pubs, val.PublicKey())
 			signedPower += val.Power()
 		}
 		committeePower += val.Power()
 	}
 
-	// Check if signers have 2/3+ of total power
-	if signedPower <= committeePower*2/3 {
+	requiredPower := calcRequiredPowerFn(committeePower)
+
+	// Check if signers have enough power
+	if signedPower < requiredPower {
 		return InsufficientPowerError{
 			SignedPower:   signedPower,
-			RequiredPower: committeePower*2/3 + 1,
+			RequiredPower: requiredPower,
 		}
 	}
 
-	// Check signature
-	err := bls.VerifyAggregated(cert.Signature(), pubs, signBytes)
-	if err != nil {
-		return err
-	}
+	aggPub := bls.PublicKeyAggregate(pubs...)
 
-	return nil
+	return aggPub.Verify(signBytes, cert.signature)
 }
 
 // AddSignature adds a new signature to the certificate.
 // It does not check the validity of the signature.
 // The caller should ensure that the signature is valid.
-func (cert *Certificate) AddSignature(valNum int32, sig *bls.Signature) {
-	absentees, removed := util.RemoveFirstOccurrenceOf(cert.data.Absentees, valNum)
+func (cert *baseCertificate) AddSignature(valNum int32, sig *bls.Signature) {
+	absentees, removed := util.RemoveFirstOccurrenceOf(cert.absentees, valNum)
 	if removed {
-		cert.data.Signature = bls.SignatureAggregate(cert.data.Signature, sig)
-		cert.data.Absentees = absentees
+		cert.signature = bls.SignatureAggregate(cert.signature, sig)
+		cert.absentees = absentees
 	}
-}
-
-func BlockCertificateSignBytes(blockHash hash.Hash, height uint32, round int16) []byte {
-	sb := blockHash.Bytes()
-	sb = append(sb, util.Uint32ToSlice(height)...)
-	sb = append(sb, util.Int16ToSlice(round)...)
-
-	return sb
 }

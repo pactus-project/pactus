@@ -44,7 +44,7 @@ func (p *Proposal) Block() *block.Block {
 	return p.data.Block
 }
 
-func (p *Proposal) Signature() crypto.Signature {
+func (p *Proposal) Signature() *bls.Signature {
 	return p.data.Signature
 }
 
@@ -73,11 +73,7 @@ func (p *Proposal) SetSignature(sig *bls.Signature) {
 }
 
 func (p *Proposal) SignBytes() []byte {
-	sb := p.Block().Hash().Bytes()
-	sb = append(sb, util.Uint32ToSlice(p.Height())...)
-	sb = append(sb, util.Int16ToSlice(p.Round())...)
-
-	return sb
+	return SignBytes(p.Block().Hash(), p.Height(), p.Round())
 }
 
 func (p *Proposal) MarshalCBOR() ([]byte, error) {
@@ -111,4 +107,20 @@ func (p Proposal) String() string {
 	b := p.Block()
 
 	return fmt.Sprintf("{%v/%v 🗃 %v}", p.data.Height, p.data.Round, b.String())
+}
+
+func SignBytes(blockHash hash.Hash, height uint32, round int16) []byte {
+	sb := blockHash.Bytes()
+	sb = append(sb, util.Uint32ToSlice(height)...)
+	sb = append(sb, util.Int16ToSlice(round)...)
+
+	return sb
+}
+
+func ChecKSignature(blockHash hash.Hash, height uint32, round int16,
+	sig *bls.Signature, pubKey *bls.PublicKey,
+) error {
+	sb := SignBytes(blockHash, height, round)
+
+	return pubKey.Verify(sb, sig)
 }

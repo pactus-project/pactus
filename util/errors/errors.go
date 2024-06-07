@@ -83,12 +83,12 @@ func Code(err error) int {
 	if err == nil {
 		return ErrNone
 	}
-	_e, ok := err.(i) //nolint
+	e, ok := err.(i)
 	if !ok {
 		return ErrGeneric
 	}
 
-	return _e.Code()
+	return e.Code()
 }
 
 func (e *withCodeError) Error() string {

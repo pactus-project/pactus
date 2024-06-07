@@ -8,11 +8,11 @@ import (
 )
 
 type BlockAnnounceMessage struct {
-	Block       *block.Block             `cbor:"1,keyasint"`
-	Certificate *certificate.Certificate `cbor:"2,keyasint"`
+	Block       *block.Block                  `cbor:"1,keyasint"`
+	Certificate *certificate.BlockCertificate `cbor:"2,keyasint"`
 }
 
-func NewBlockAnnounceMessage(blk *block.Block, cert *certificate.Certificate) *BlockAnnounceMessage {
+func NewBlockAnnounceMessage(blk *block.Block, cert *certificate.BlockCertificate) *BlockAnnounceMessage {
 	return &BlockAnnounceMessage{
 		Block:       blk,
 		Certificate: cert,
