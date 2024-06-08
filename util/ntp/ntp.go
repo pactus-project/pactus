@@ -48,30 +48,7 @@ func NewNtpChecker(interval, threshold time.Duration) *Checker {
 	return server
 }
 
-func (*Checker) clockOffset() time.Duration {
-	for _, server := range _pools {
-		response, err := ntp.Query(server)
-		if err != nil {
-			logger.Warn("ntp error", "server", server, "error", err)
-
-			continue
-		}
-
-		if err := response.Validate(); err != nil {
-			logger.Warn("ntp validate error", "server", server, "error", err)
-
-			continue
-		}
-
-		return response.ClockOffset
-	}
-
-	logger.Error("failed to get ntp query from all pool, set default max clock offset")
-
-	return maxClockOffset
-}
-
-func (c *Checker) checkClockOffset() {
+func (c *Checker) Start() {
 	for {
 		select {
 		case <-c.ctx.Done():
@@ -96,17 +73,13 @@ func (c *Checker) checkClockOffset() {
 	}
 }
 
-func (c *Checker) OutOfSync(offset time.Duration) bool {
-	return math.Abs(float64(offset)) > float64(c.threshold)
-}
-
-func (c *Checker) Start() {
-	c.checkClockOffset()
-}
-
 func (c *Checker) Stop() {
 	c.cancel()
 	c.ticker.Stop()
+}
+
+func (c *Checker) OutOfSync(offset time.Duration) bool {
+	return math.Abs(float64(offset)) > float64(c.threshold)
 }
 
 func (c *Checker) GetClockOffset() (time.Duration, error) {
@@ -120,4 +93,27 @@ func (c *Checker) GetClockOffset() (time.Duration, error) {
 	}
 
 	return offset, nil
+}
+
+func (*Checker) clockOffset() time.Duration {
+	for _, server := range _pools {
+		response, err := ntp.Query(server)
+		if err != nil {
+			logger.Warn("ntp error", "server", server, "error", err)
+
+			continue
+		}
+
+		if err := response.Validate(); err != nil {
+			logger.Warn("ntp validate error", "server", server, "error", err)
+
+			continue
+		}
+
+		return response.ClockOffset
+	}
+
+	logger.Error("failed to get ntp query from all pool, set default max clock offset")
+
+	return maxClockOffset
 }
