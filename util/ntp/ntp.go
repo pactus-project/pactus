@@ -15,16 +15,14 @@ const (
 	maxClockOffset = time.Duration(math.MinInt64)
 )
 
-var (
-	_pools = []string{
-		"pool.ntp.org",
-		"time.google.com",
-		"time.cloudflare.com",
-		"time.apple.com",
-		"time.windows.com",
-		"ntp.ubuntu.com",
-	}
-)
+var _pools = []string{
+	"pool.ntp.org",
+	"time.google.com",
+	"time.cloudflare.com",
+	"time.apple.com",
+	"time.windows.com",
+	"ntp.ubuntu.com",
+}
 
 type Checker struct {
 	lock   sync.RWMutex
@@ -55,11 +53,13 @@ func (*Checker) clockOffset() time.Duration {
 		response, err := ntp.Query(server)
 		if err != nil {
 			logger.Warn("ntp error", "server", server, "error", err)
+
 			continue
 		}
 
 		if err := response.Validate(); err != nil {
 			logger.Warn("ntp validate error", "server", server, "error", err)
+
 			continue
 		}
 
@@ -67,6 +67,7 @@ func (*Checker) clockOffset() time.Duration {
 	}
 
 	logger.Error("failed to get ntp query from all pool, set default max clock offset")
+
 	return maxClockOffset
 }
 
