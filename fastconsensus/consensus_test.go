@@ -198,7 +198,7 @@ func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
 	return nil
 }
 
-func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, height uint32) {
+func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, height uint32, round int16) {
 	t.Helper()
 
 	for _, consMsg := range td.consMessages {
@@ -209,6 +209,7 @@ func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, he
 
 		m := consMsg.message.(*message.QueryProposalMessage)
 		assert.Equal(t, m.Height, height)
+		assert.Equal(t, m.Round, round)
 		assert.Equal(t, m.Querier, cons.valKey.Address())
 
 		return
@@ -593,7 +594,7 @@ func TestConsensusLateProposal(t *testing.T) {
 	td.addPrepareVote(td.consP, blockHash, h, r, tIndexM)
 	td.addPrepareVote(td.consP, blockHash, h, r, tIndexN)
 
-	td.shouldPublishQueryProposal(t, td.consP, h)
+	td.shouldPublishQueryProposal(t, td.consP, h, r)
 
 	// consP receives proposal now
 	td.consP.SetProposal(prop)
@@ -632,7 +633,7 @@ func TestConsensusVeryLateProposal(t *testing.T) {
 	td.addPrecommitVote(td.consP, blockHash, h, r, tIndexM)
 	td.addPrecommitVote(td.consP, blockHash, h, r, tIndexN)
 
-	td.shouldPublishQueryProposal(t, td.consP, h)
+	td.shouldPublishQueryProposal(t, td.consP, h, r)
 
 	// consP receives proposal now
 	td.consP.SetProposal(prop)

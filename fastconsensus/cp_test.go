@@ -415,11 +415,38 @@ func TestInvalidJustDecided(t *testing.T) {
 	})
 
 	t.Run("invalid certificate", func(t *testing.T) {
-		v := vote.NewCPDecidedVote(td.RandHash(), h, r, 0, vote.CPValueYes, just, td.consB.valKey.Address())
+		v := vote.NewCPDecidedVote(hash.UndefHash, h, r, 0, vote.CPValueYes, just, td.consB.valKey.Address())
 
 		err := td.consX.changeProposer.cpCheckJust(v)
 		assert.ErrorIs(t, err, invalidJustificationError{
 			Reason: fmt.Sprintf("certificate has an unexpected committers: %v", just.QCert.Committers()),
 		})
 	})
+}
+
+func TestMoveToNextRoundOnDecidedVoteYes(t *testing.T) {
+	td := setup(t)
+
+	td.enterNewHeight(td.consP)
+	h := uint32(1)
+	r := int16(3)
+
+	_, _, decideJust := td.makeChangeProposerJusts(t, hash.UndefHash, h, r)
+	td.addCPDecidedVote(td.consP, hash.UndefHash, h, r, vote.CPValueYes, decideJust, tIndexX)
+
+	td.checkHeightRound(t, td.consP, h, r+1)
+}
+
+func TestMoveToNextRoundOnDecidedVoteNo(t *testing.T) {
+	td := setup(t)
+
+	td.enterNewHeight(td.consP)
+	h := uint32(1)
+	r := int16(3)
+	propHash := td.RandHash()
+
+	_, _, decideJust := td.makeChangeProposerJusts(t, propHash, h, r)
+	td.addCPDecidedVote(td.consP, propHash, h, r, vote.CPValueNo, decideJust, tIndexX)
+
+	td.checkHeightRound(t, td.consP, h, r)
 }

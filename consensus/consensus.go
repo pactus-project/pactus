@@ -316,12 +316,6 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 
 			return
 		}
-
-		if v.Type() != vote.VoteTypeCPDecided {
-			if v.Round() > cs.round {
-				cs.changeProposer.cpStrongTermination(v.Round())
-			}
-		}
 	}
 
 	added, err := cs.log.AddVote(v)
@@ -332,6 +326,12 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		cs.logger.Info("new vote added", "vote", v)
 
 		cs.currentState.onAddVote(v)
+
+		if v.Type() == vote.VoteTypeCPDecided {
+			if v.Round() > cs.round {
+				cs.changeProposer.cpStrongTermination(v.Round())
+			}
+		}
 	}
 }
 

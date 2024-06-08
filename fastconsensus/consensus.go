@@ -317,14 +317,6 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 
 			return
 		}
-
-		// If there is a proper and justified "Decide" vote for a subsequent round, move consensus to that round.
-		// This especially helps validators to catch up with the network when they restart their node.
-		if v.Type() != vote.VoteTypeCPDecided {
-			if v.Round() > cs.round {
-				cs.changeProposer.cpStrongTermination(v.Round())
-			}
-		}
 	}
 
 	added, err := cs.log.AddVote(v)
@@ -335,6 +327,14 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		cs.logger.Info("new vote added", "vote", v)
 
 		cs.currentState.onAddVote(v)
+
+		// If there is a proper and justified "Decide" vote for a subsequent round, move consensus to that round.
+		// This especially helps validators to catch up with the network when they restart their node.
+		if v.Type() == vote.VoteTypeCPDecided {
+			if v.Round() > cs.round {
+				cs.changeProposer.cpStrongTermination(v.Round())
+			}
+		}
 	}
 }
 

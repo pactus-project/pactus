@@ -29,7 +29,7 @@ func TestQueryProposal(t *testing.T) {
 	td.enterNextRound(td.consP)
 	td.queryProposalTimeout(td.consP)
 
-	td.shouldPublishQueryProposal(t, td.consP, h)
+	td.shouldPublishQueryProposal(t, td.consP, h, 1)
 	td.shouldNotPublish(t, td.consP, message.TypeQueryVote)
 }
 
@@ -87,7 +87,7 @@ func TestByzantineProposal(t *testing.T) {
 	td.addPrepareVote(td.consP, propBlockHash, h, r, tIndexN)
 
 	assert.Nil(t, td.consP.Proposal())
-	td.shouldPublishQueryProposal(t, td.consP, h)
+	td.shouldPublishQueryProposal(t, td.consP, h, r)
 
 	// Byzantine node sends second proposal to Partitioned node.
 	trx := tx.NewTransferTx(h, td.consX.rewardAddr,
@@ -99,6 +99,6 @@ func TestByzantineProposal(t *testing.T) {
 
 	td.consP.SetProposal(byzProp)
 	assert.Nil(t, td.consP.Proposal())
-	td.shouldPublishQueryProposal(t, td.consP, h)
+	td.shouldPublishQueryProposal(t, td.consP, h, r)
 	td.checkHeightRound(t, td.consP, h, r)
 }
