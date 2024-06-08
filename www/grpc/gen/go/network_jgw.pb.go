@@ -19,8 +19,8 @@ type NetworkJsonRpcService struct {
 	client NetworkClient
 }
 
-func NewNetworkJsonRpcService(client NetworkClient) NetworkJsonRpcService {
-	return NetworkJsonRpcService{
+func NewNetworkJsonRpcService(client NetworkClient) *NetworkJsonRpcService {
+	return &NetworkJsonRpcService{
 		client: client,
 	}
 }

@@ -19,8 +19,8 @@ type TransactionJsonRpcService struct {
 	client TransactionClient
 }
 
-func NewTransactionJsonRpcService(client TransactionClient) TransactionJsonRpcService {
-	return TransactionJsonRpcService{
+func NewTransactionJsonRpcService(client TransactionClient) *TransactionJsonRpcService {
+	return &TransactionJsonRpcService{
 		client: client,
 	}
 }

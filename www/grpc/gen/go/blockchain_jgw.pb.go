@@ -19,8 +19,8 @@ type BlockchainJsonRpcService struct {
 	client BlockchainClient
 }
 
-func NewBlockchainJsonRpcService(client BlockchainClient) BlockchainJsonRpcService {
-	return BlockchainJsonRpcService{
+func NewBlockchainJsonRpcService(client BlockchainClient) *BlockchainJsonRpcService {
+	return &BlockchainJsonRpcService{
 		client: client,
 	}
 }

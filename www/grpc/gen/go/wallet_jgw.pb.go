@@ -19,8 +19,8 @@ type WalletJsonRpcService struct {
 	client WalletClient
 }
 
-func NewWalletJsonRpcService(client WalletClient) WalletJsonRpcService {
-	return WalletJsonRpcService{
+func NewWalletJsonRpcService(client WalletClient) *WalletJsonRpcService {
+	return &WalletJsonRpcService{
 		client: client,
 	}
 }
