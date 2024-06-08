@@ -83,7 +83,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_network"] = "debug"
 		tConfigs[i].Logger.Levels["_pool"] = "warn"
 		tConfigs[i].Sync.NodeNetwork = false
-		tConfigs[i].Sync.Firewall.Enabled = false
+		tConfigs[i].Sync.Firewall.BlackListAddresses = make([]string, 0)
 		tConfigs[i].Sync.LatestBlockInterval = 10
 		tConfigs[i].Network.EnableMdns = true
 		tConfigs[i].Network.EnableRelay = false

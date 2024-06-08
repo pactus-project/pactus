@@ -2,7 +2,6 @@ package firewall
 
 import (
 	"bytes"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
 
@@ -17,6 +16,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type testData struct {

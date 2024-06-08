@@ -93,9 +93,9 @@
 
   # `sync.firewall` contains configuration options for the sync firewall.
   [sync.firewall]
-    # `enable` indicates whether the firewall should be enabled or not.
-    # Default is `false`.
-    enable = false
+    # `blacklist_addresses` contains the list of IPs and CIDRs that should be blacklisted.
+    # Any connection to blacklisted addresses will be terminated.
+    blacklist_addresses = []
 
 # `tx_pool` contains configuration options for the transaction pool module.
 [tx_pool]

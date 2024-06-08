@@ -2,10 +2,10 @@ package firewall
 
 import (
 	"bytes"
-	"github.com/multiformats/go-multiaddr"
-	"github.com/pactus-project/pactus/util/ipblocker"
+	_ "embed"
 	"io"
 
+	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/ipblocker"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
