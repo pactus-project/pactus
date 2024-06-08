@@ -26,7 +26,7 @@ func (s *cpDecideState) decide() {
 				QCert: cert,
 			}
 			s.signAddCPDecidedVote(hash.UndefHash, s.cpRound, vote.CPValueYes, just)
-			s.cpDecide(vote.CPValueYes)
+			s.cpDecide(s.round, vote.CPValueYes)
 		} else if cpMainVotes.HasQuorumVotesFor(s.cpRound, vote.CPValueNo) {
 			// decided for no and proceeds to the next round
 			s.logger.Info("binary agreement decided", "value", 0, "round", s.cpRound)
@@ -37,7 +37,7 @@ func (s *cpDecideState) decide() {
 				QCert: cert,
 			}
 			s.signAddCPDecidedVote(*s.cpWeakValidity, s.cpRound, vote.CPValueNo, just)
-			s.cpDecide(vote.CPValueNo)
+			s.cpDecide(s.round, vote.CPValueNo)
 		} else {
 			// conflicting votes
 			s.logger.Debug("conflicting main votes", "round", s.cpRound)
@@ -52,7 +52,7 @@ func (s *cpDecideState) onAddVote(v *vote.Vote) {
 		s.decide()
 	}
 
-	s.strongTermination()
+	s.cpStrongTermination(s.round)
 }
 
 func (*cpDecideState) name() string {

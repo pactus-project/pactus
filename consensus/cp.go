@@ -310,18 +310,18 @@ func (cp *changeProposer) checkJust(v *vote.Vote) error {
 	}
 }
 
-func (cp *changeProposer) strongTermination() {
-	cpDecided := cp.log.CPDecidedVoteVoteSet(cp.round)
+func (cp *changeProposer) cpStrongTermination(round int16) {
+	cpDecided := cp.log.CPDecidedVoteSet(round)
 	if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueNo) {
-		cp.cpDecide(vote.CPValueNo)
+		cp.cpDecide(round, vote.CPValueNo)
 	} else if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueYes) {
-		cp.cpDecide(vote.CPValueYes)
+		cp.cpDecide(round, vote.CPValueYes)
 	}
 }
 
-func (cp *changeProposer) cpDecide(cpValue vote.CPValue) {
+func (cp *changeProposer) cpDecide(round int16, cpValue vote.CPValue) {
 	if cpValue == vote.CPValueYes {
-		cp.round++
+		cp.round = round + 1
 		cp.cpDecided = 1
 		cp.enterNewState(cp.proposeState)
 	} else if cpValue == vote.CPValueNo {
@@ -329,6 +329,7 @@ func (cp *changeProposer) cpDecide(cpValue vote.CPValue) {
 		if roundProposal == nil {
 			cp.queryProposal()
 		}
+		cp.round = round
 		cp.cpDecided = 0
 		cp.enterNewState(cp.prepareState)
 	}

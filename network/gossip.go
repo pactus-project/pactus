@@ -121,7 +121,7 @@ func (g *gossipService) JoinTopic(topicID TopicID, sp ShouldPropagate) error {
 			return nil
 		}
 
-		topic, err := g.doJoinTopic(topicID, sp)
+		topic, err := g.joinTopic(topicID, sp)
 		if err != nil {
 			return err
 		}
@@ -136,7 +136,7 @@ func (g *gossipService) JoinTopic(topicID TopicID, sp ShouldPropagate) error {
 			return nil
 		}
 
-		topic, err := g.doJoinTopic(topicID, sp)
+		topic, err := g.joinTopic(topicID, sp)
 		if err != nil {
 			return err
 		}
@@ -151,7 +151,7 @@ func (g *gossipService) JoinTopic(topicID TopicID, sp ShouldPropagate) error {
 			return nil
 		}
 
-		topic, err := g.doJoinTopic(topicID, sp)
+		topic, err := g.joinTopic(topicID, sp)
 		if err != nil {
 			return err
 		}
@@ -168,7 +168,7 @@ func (g *gossipService) TopicName(topicID TopicID) string {
 	return fmt.Sprintf("/%s/topic/%s/v1", g.networkName, topicID.String())
 }
 
-func (g *gossipService) doJoinTopic(topicID TopicID, sp ShouldPropagate) (*lp2pps.Topic, error) {
+func (g *gossipService) joinTopic(topicID TopicID, sp ShouldPropagate) (*lp2pps.Topic, error) {
 	topicName := g.TopicName(topicID)
 	topic, err := g.pubsub.Join(topicName)
 	if err != nil {

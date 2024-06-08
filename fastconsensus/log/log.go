@@ -43,7 +43,7 @@ func (log *Log) mustGetRoundMessages(round int16) *Messages {
 			precommitVotes: voteset.NewPrecommitVoteSet(round, log.totalPower, log.validators),
 			cpPreVotes:     voteset.NewCPPreVoteVoteSet(round, log.totalPower, log.validators),
 			cpMainVotes:    voteset.NewCPMainVoteVoteSet(round, log.totalPower, log.validators),
-			cpDecidedVotes: voteset.NewCPDecidedVoteVoteSet(round, log.totalPower, log.validators),
+			cpDecidedVotes: voteset.NewCPDecidedVoteSet(round, log.totalPower, log.validators),
 		}
 		log.roundMessages[round] = rm
 	}
@@ -81,7 +81,7 @@ func (log *Log) CPMainVoteVoteSet(round int16) *voteset.BinaryVoteSet {
 	return m.cpMainVotes
 }
 
-func (log *Log) CPDecidedVoteVoteSet(round int16) *voteset.BinaryVoteSet {
+func (log *Log) CPDecidedVoteSet(round int16) *voteset.BinaryVoteSet {
 	m := log.mustGetRoundMessages(round)
 
 	return m.cpDecidedVotes

@@ -409,7 +409,7 @@ func TestDecidedVoteset(t *testing.T) {
 	height := ts.RandHeight()
 	round := ts.RandRound()
 	just := &vote.JustInitYes{}
-	vs := NewCPDecidedVoteVoteSet(round, totalPower, valsMap)
+	vs := NewCPDecidedVoteSet(round, totalPower, valsMap)
 
 	v1 := vote.NewCPDecidedVote(h, height, round, 0, vote.CPValueYes, just, valKeys[0].Address())
 

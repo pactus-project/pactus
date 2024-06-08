@@ -21,6 +21,7 @@ type MockConsensus struct {
 	Votes       []*vote.Vote
 	CurProposal *proposal.Proposal
 	Active      bool
+	Proposer    bool
 	Height      uint32
 	Round       int16
 }
@@ -130,6 +131,13 @@ func (m *MockConsensus) IsActive() bool {
 	defer m.lk.Unlock()
 
 	return m.Active
+}
+
+func (m *MockConsensus) IsProposer() bool {
+	m.lk.Lock()
+	defer m.lk.Unlock()
+
+	return m.Proposer
 }
 
 func (m *MockConsensus) SetActive(active bool) {

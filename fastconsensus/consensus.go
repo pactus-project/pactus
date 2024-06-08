@@ -119,13 +119,7 @@ func (cs *consensus) Start() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.doMoveToNewHeight()
-	// We have just started the consensus (possibly restarting the node).
-	// Therefore, let's query the votes and proposals in case we missed any.
-	if cs.active {
-		cs.queryProposal()
-		cs.queryVotes()
-	}
+	cs.moveToNewHeight()
 }
 
 func (cs *consensus) String() string {
@@ -187,10 +181,10 @@ func (cs *consensus) MoveToNewHeight() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.doMoveToNewHeight()
+	cs.moveToNewHeight()
 }
 
-func (cs *consensus) doMoveToNewHeight() {
+func (cs *consensus) moveToNewHeight() {
 	stateHeight := cs.bcState.LastBlockHeight()
 	if cs.height != stateHeight+1 {
 		cs.enterNewState(cs.newHeightState)
@@ -206,6 +200,23 @@ func (cs *consensus) scheduleTimeout(duration time.Duration, height uint32, roun
 		<-timer.C
 		cs.handleTimeout(ti)
 	}()
+}
+
+func (cs *consensus) handleTimeout(t *ticker) {
+	cs.lk.Lock()
+	defer cs.lk.Unlock()
+
+	cs.logger.Trace("handle ticker", "ticker", t)
+
+	// Old tickers might be triggered now. Ignore them.
+	if cs.height != t.Height || cs.round != t.Round {
+		cs.logger.Trace("stale ticker", "ticker", t)
+
+		return
+	}
+
+	cs.logger.Debug("timer expired", "ticker", t)
+	cs.currentState.onTimeout(t)
 }
 
 func (cs *consensus) SetProposal(p *proposal.Proposal) {
@@ -226,6 +237,12 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 
 	if p.Round() < cs.round {
 		cs.logger.Trace("expired round", "proposal", p)
+
+		return
+	}
+
+	if err := p.BasicCheck(); err != nil {
+		cs.logger.Warn("invalid proposal", "proposal", p, "error", err)
 
 		return
 	}
@@ -269,23 +286,6 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 	cs.currentState.onSetProposal(p)
 }
 
-func (cs *consensus) handleTimeout(t *ticker) {
-	cs.lk.Lock()
-	defer cs.lk.Unlock()
-
-	cs.logger.Trace("handle ticker", "ticker", t)
-
-	// Old tickers might be triggered now. Ignore them.
-	if cs.height != t.Height || cs.round != t.Round {
-		cs.logger.Trace("stale ticker", "ticker", t)
-
-		return
-	}
-
-	cs.logger.Debug("timer expired", "ticker", t)
-	cs.currentState.onTimeout(t)
-}
-
 func (cs *consensus) AddVote(v *vote.Vote) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
@@ -302,6 +302,12 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		return
 	}
 
+	if v.Round() < cs.round {
+		cs.logger.Trace("vote for expired round", "vote", v)
+
+		return
+	}
+
 	if v.Type() == vote.VoteTypeCPPreVote ||
 		v.Type() == vote.VoteTypeCPMainVote ||
 		v.Type() == vote.VoteTypeCPDecided {
@@ -310,6 +316,12 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 			cs.logger.Error("error on adding a cp vote", "vote", v, "error", err)
 
 			return
+		}
+
+		if v.Type() != vote.VoteTypeCPDecided {
+			if v.Round() > cs.round {
+				cs.changeProposer.cpStrongTermination(v.Round())
+			}
 		}
 	}
 
@@ -326,6 +338,13 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 
 func (cs *consensus) proposer(round int16) *validator.Validator {
 	return cs.bcState.Proposer(round)
+}
+
+func (cs *consensus) IsProposer() bool {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	return cs.isProposer()
 }
 
 func (cs *consensus) isProposer() bool {
@@ -380,7 +399,7 @@ func (cs *consensus) signAddVote(v *vote.Vote) {
 
 func (cs *consensus) queryProposal() {
 	cs.broadcaster(cs.valKey.Address(),
-		message.NewQueryProposalMessage(cs.height, cs.valKey.Address()))
+		message.NewQueryProposalMessage(cs.height, cs.round, cs.valKey.Address()))
 }
 
 // queryVotes is an anti-entropy mechanism to retrieve missed votes
@@ -465,14 +484,21 @@ func (cs *consensus) PickRandomVote(round int16) *vote.Vote {
 	defer cs.lk.RUnlock()
 
 	votes := []*vote.Vote{}
-	if round == cs.round {
+	switch {
+	case round < cs.round:
+		// Past round: Only broadcast cp:decided votes
+		vs := cs.log.CPDecidedVoteSet(round)
+		votes = append(votes, vs.AllVotes()...)
+
+	case round == cs.round:
+		// Current round
 		m := cs.log.RoundMessages(round)
 		votes = append(votes, m.AllVotes()...)
-	} else {
-		// Only broadcast cp:decided votes
-		vs := cs.log.CPDecidedVoteVoteSet(round)
-		votes = append(votes, vs.AllVotes()...)
+
+	case round > cs.round:
+		// Future round
 	}
+
 	if len(votes) == 0 {
 		return nil
 	}

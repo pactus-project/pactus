@@ -61,12 +61,12 @@ func testConfig() *Config {
 	return &Config{
 		ChangeProposerTimeout: 1 * time.Hour, // Disabling timers
 		ChangeProposerDelta:   1 * time.Hour, // Disabling timers
+		QueryVoteTimeout:      1 * time.Hour, // Disabling timers
 	}
 }
 
 func setup(t *testing.T) *testData {
 	t.Helper()
-	queryVoteInitialTimeout = 2 * time.Hour
 
 	return setupWithSeed(t, testsuite.GenerateSeed())
 }
@@ -93,8 +93,10 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	params := param.DefaultParams()
 	params.CommitteeSize = 6
 
-	// to prevent triggering timers before starting the tests to avoid double entries for new heights in some tests.
-	getTime := util.RoundNow(params.BlockIntervalInSecond).Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
+	// To prevent triggering timers before starting the tests and
+	// avoid double entries for new heights in some tests.
+	getTime := util.RoundNow(params.BlockIntervalInSecond).
+		Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
 
 	consMessages := make([]consMessage, 0)
@@ -378,6 +380,7 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	return blk, cert
 }
 
+// makeProposal generates a signed and valid proposal for the given height and round.
 func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *proposal.Proposal {
 	t.Helper()
 
@@ -486,8 +489,7 @@ func TestStart(t *testing.T) {
 	td := setup(t)
 
 	td.consX.Start()
-	td.shouldPublishQueryProposal(t, td.consX, 1)
-	td.shouldPublishQueryVote(t, td.consX, 1, 0)
+	td.checkHeightRound(t, td.consX, 1, 0)
 }
 
 func TestNotInCommittee(t *testing.T) {
@@ -557,14 +559,14 @@ func TestConsensusAddVote(t *testing.T) {
 	v6, _ := td.GenerateTestPrepareVote(1, 0)
 	td.consP.AddVote(v6)
 
-	assert.True(t, td.consP.HasVote(v1.Hash())) // previous round
-	assert.True(t, td.consP.HasVote(v2.Hash())) // next round
+	assert.False(t, td.consP.HasVote(v1.Hash())) // previous round
+	assert.True(t, td.consP.HasVote(v2.Hash()))  // next round
 	assert.True(t, td.consP.HasVote(v3.Hash()))
 	assert.True(t, td.consP.HasVote(v4.Hash()))
 	assert.False(t, td.consP.HasVote(v5.Hash())) // valid votes for the next height
 	assert.False(t, td.consP.HasVote(v6.Hash())) // invalid votes
 
-	assert.Equal(t, td.consP.AllVotes(), []*vote.Vote{v1, v3, v4})
+	assert.Equal(t, td.consP.AllVotes(), []*vote.Vote{v3, v4})
 	assert.NotContains(t, td.consP.AllVotes(), v2)
 }
 
@@ -673,6 +675,9 @@ func TestPickRandomVote(t *testing.T) {
 
 	rndVote1 := td.consP.PickRandomVote(r + 1)
 	assert.Equal(t, rndVote1, v6)
+
+	rndVote2 := td.consP.PickRandomVote(r + 2)
+	assert.Nil(t, rndVote2)
 }
 
 func TestSetProposalFromPreviousRound(t *testing.T) {
@@ -793,7 +798,17 @@ func TestProposalWithBigRound(t *testing.T) {
 
 	prop := td.makeProposal(t, 1, util.MaxInt16)
 	td.consP.SetProposal(prop)
-	assert.Equal(t, td.consP.log.RoundProposal(util.MaxInt16), prop)
+	assert.Nil(t, td.consP.Proposal())
+}
+
+func TestInvalidProposal(t *testing.T) {
+	td := setup(t)
+
+	td.enterNewHeight(td.consP)
+
+	p := td.makeProposal(t, 1, 0)
+	p.SetSignature(nil) // Make proposal invalid
+	td.consP.SetProposal(p)
 	assert.Nil(t, td.consP.Proposal())
 }
 

@@ -20,13 +20,18 @@ func (handler *queryProposalHandler) ParseMessage(m message.Message, _ peer.ID) 
 	msg := m.(*message.QueryProposalMessage)
 	handler.logger.Trace("parsing QueryProposal message", "msg", msg)
 
-	height, _ := handler.consMgr.HeightRound()
-	if msg.Height == height {
-		prop := handler.consMgr.Proposal()
-		if prop != nil {
-			response := message.NewProposalMessage(prop)
-			handler.broadcast(response)
-		}
+	height, round := handler.consMgr.HeightRound()
+	if msg.Height != height || msg.Round != round {
+		handler.logger.Debug("ignoring QueryProposal, not same height/round", "msg", msg,
+			"height", height, "round", round)
+
+		return nil
+	}
+
+	prop := handler.consMgr.Proposal()
+	if prop != nil {
+		response := message.NewProposalMessage(prop)
+		handler.broadcast(response)
 	}
 
 	return nil

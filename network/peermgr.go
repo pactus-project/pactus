@@ -81,7 +81,7 @@ func (mgr *peerMgr) Start() {
 func (*peerMgr) Stop() {
 }
 
-func (mgr *peerMgr) PeerConnected(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
+func (mgr *peerMgr) SetPeerConnected(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
 	direction lp2pnet.Direction,
 ) {
 	mgr.lk.Lock()
@@ -116,7 +116,7 @@ func (mgr *peerMgr) setPeerConnected(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
 	}
 }
 
-func (mgr *peerMgr) PeerDisconnected(pid lp2ppeer.ID) {
+func (mgr *peerMgr) SetPeerDisconnected(pid lp2ppeer.ID) {
 	mgr.lk.Lock()
 	defer mgr.lk.Unlock()
 
