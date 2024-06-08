@@ -2,6 +2,7 @@ package firewall
 
 import (
 	"bytes"
+	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
 
@@ -29,7 +30,7 @@ type testData struct {
 	state         *state.MockState
 }
 
-func setup(t *testing.T) *testData {
+func setup(t *testing.T, conf *Config) *testData {
 	t.Helper()
 
 	ts := testsuite.NewTestSuite(t)
@@ -38,9 +39,19 @@ func setup(t *testing.T) *testData {
 	peerSet := peerset.NewPeerSet(1 * time.Minute)
 	st := state.MockingState(ts)
 	net := network.MockingNetwork(ts, ts.RandPeerID())
-	conf := DefaultConfig()
-	conf.Enabled = true
-	firewall := NewFirewall(conf, net, peerSet, st, subLogger)
+
+	// TODO: It should be like: "/ip6/2a01:4f9:4a:1d85::2"
+	conf.BlackListAddresses = []string{
+		"84.247.0.0/24",
+		"115.193.0.0/16",
+		"240e:390:8a1:ae80:0000:0000:0000:0000/64",
+	}
+	require.NoError(t, conf.BasicCheck())
+	firewall, err := NewFirewall(conf, net, peerSet, st, subLogger)
+	if err != nil {
+		return nil
+	}
+
 	assert.NotNil(t, firewall)
 	badPeerID := ts.RandPeerID()
 	goodPeerID := ts.RandPeerID()
@@ -65,7 +76,7 @@ func setup(t *testing.T) *testData {
 }
 
 func TestInvalidBundlesCounter(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	assert.Nil(t, td.firewall.OpenGossipBundle([]byte("bad"), td.unknownPeerID))
 	assert.Nil(t, td.firewall.OpenGossipBundle(nil, td.unknownPeerID))
@@ -81,7 +92,7 @@ func TestInvalidBundlesCounter(t *testing.T) {
 
 func TestGossipMessage(t *testing.T) {
 	t.Run("Message from: unknown => should NOT close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
@@ -93,7 +104,7 @@ func TestGossipMessage(t *testing.T) {
 	})
 
 	t.Run("Message  from: bad => should close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
@@ -105,13 +116,13 @@ func TestGossipMessage(t *testing.T) {
 	})
 
 	t.Run("Message is nil => should close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		assert.Nil(t, td.firewall.OpenGossipBundle(nil, td.unknownPeerID))
 	})
 
 	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
@@ -125,7 +136,7 @@ func TestGossipMessage(t *testing.T) {
 
 func TestStreamMessage(t *testing.T) {
 	t.Run("Message is nil => should close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		assert.False(t, td.network.IsClosed(td.badPeerID))
 		assert.Nil(t, td.firewall.OpenStreamBundle(bytes.NewReader(nil), td.badPeerID))
@@ -133,7 +144,7 @@ func TestStreamMessage(t *testing.T) {
 	})
 
 	t.Run("Message from: bad => should close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		bdl := bundle.NewBundle(message.NewBlocksRequestMessage(td.RandInt(100), 1, 100))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
@@ -145,7 +156,7 @@ func TestStreamMessage(t *testing.T) {
 	})
 
 	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
-		td := setup(t)
+		td := setup(t, nil)
 
 		bdl := bundle.NewBundle(message.NewBlocksRequestMessage(td.RandInt(100), 1, 100))
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
@@ -158,19 +169,18 @@ func TestStreamMessage(t *testing.T) {
 }
 
 func TestDisabledFirewall(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), -1, td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	d, _ := bdl.Encode()
 
-	td.firewall.config.Enabled = false
 	assert.Nil(t, td.firewall.OpenGossipBundle(d, td.badPeerID))
 	assert.False(t, td.network.IsClosed(td.badPeerID))
 }
 
 func TestUpdateLastReceived(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
@@ -182,8 +192,46 @@ func TestUpdateLastReceived(t *testing.T) {
 	assert.GreaterOrEqual(t, peerGood.LastReceived.UnixNano(), now)
 }
 
+func TestBlackListAddress(t *testing.T) {
+	td := setup(t, nil)
+
+	testCases := []struct {
+		addr        string
+		blacklisted bool
+	}{
+		{
+			addr:        "/ip4/115.193.157.138/tcp/21888",
+			blacklisted: true,
+		},
+		{
+			addr:        "/ip4/10.10.10.10",
+			blacklisted: false,
+		},
+		{
+			addr:        "/ip6/240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/udp/21888",
+			blacklisted: true,
+		},
+		{
+			addr:        "/ip6/2a01:4f9:4a:1d85::2",
+			blacklisted: false,
+		},
+	}
+
+	for i, tc := range testCases {
+		blacklisted := td.firewall.IsBlackListAddress(tc.addr)
+
+		if tc.blacklisted {
+			assert.True(t, blacklisted,
+				"test %v failed, addr %v should blacklisted", i, tc.addr)
+		} else {
+			assert.False(t, blacklisted,
+				"test %v failed, addr %v should not blacklisted", i, tc.addr)
+		}
+	}
+}
+
 func TestNetworkFlags(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	// TODO: add tests for Mainnet and Testnet flags
 	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
@@ -199,4 +247,49 @@ func TestNetworkFlags(t *testing.T) {
 	td.state.TestParams.BlockVersion = 0x3f // changing genesis hash
 	bdl.Flags = 1
 	assert.Error(t, td.firewall.checkBundle(bdl))
+}
+
+func TestParseP2PAddr(t *testing.T) {
+	td := setup(t, nil)
+
+	tests := []struct {
+		name        string
+		address     string
+		expectedIP  string
+		expectError bool
+	}{
+		{
+			name:       "Valid IPv4 with p2p",
+			address:    "/ip4/84.247.165.249/tcp/21888/p2p/12D3KooWQmv2FcNQfh1EhA98twt8ePdkQaxEPeYfinEYyVS16juY",
+			expectedIP: "84.247.165.249",
+		},
+		{
+			name:       "Valid IPv4 without p2p",
+			address:    "/ip4/115.193.157.138/tcp/21888",
+			expectedIP: "115.193.157.138",
+		},
+		{
+			name: "Valid IPv6 with p2p",
+			address: "/ip6/240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/tcp/21888/p2p/" +
+				"12D3KooWQmv2FcNQfh1EhA98twt8ePdkQaxEPeYfinEYyVS16juY",
+			expectedIP: "240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf",
+		},
+		{
+			name:        "Invalid address",
+			address:     "/invalid/address",
+			expectError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ip, err := td.firewall.getIPFromMultiAddress(tt.address)
+			if tt.expectError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.expectedIP, ip)
+			}
+		})
+	}
 }
