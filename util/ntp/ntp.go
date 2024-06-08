@@ -101,7 +101,7 @@ func (c *Checker) OutOfSync(offset time.Duration) bool {
 }
 
 func (c *Checker) Start() {
-	go c.checkClockOffset()
+	c.checkClockOffset()
 }
 
 func (c *Checker) Stop() {
