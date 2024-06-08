@@ -329,7 +329,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 
 		if v.Type() == vote.VoteTypeCPDecided {
 			if v.Round() > cs.round {
-				cs.changeProposer.cpStrongTermination(v.Round())
+				cs.changeProposer.cpDecide(v.Round(), v.CPValue())
 			}
 		}
 	}

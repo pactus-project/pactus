@@ -15,7 +15,7 @@ func (s *cpDecideState) enter() {
 
 func (s *cpDecideState) decide() {
 	s.strongCommit()
-	s.cpStrongTermination(s.round)
+	s.cpStrongTermination()
 
 	cpMainVotes := s.log.CPMainVoteVoteSet(s.round)
 	if cpMainVotes.HasTwoFPlusOneVotes(s.cpRound) {

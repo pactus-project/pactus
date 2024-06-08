@@ -318,12 +318,12 @@ func (cp *changeProposer) cpCheckJust(v *vote.Vote) error {
 // wait for committing the current proposal by gathering enough precommit votes.
 // If the `Decided` vote is for "Yes", then the validator moves to the propose step
 // and starts a new round.
-func (cp *changeProposer) cpStrongTermination(round int16) {
-	cpDecided := cp.log.CPDecidedVoteSet(round)
+func (cp *changeProposer) cpStrongTermination() {
+	cpDecided := cp.log.CPDecidedVoteSet(cp.round)
 	if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueNo) {
-		cp.cpDecide(round, vote.CPValueNo)
+		cp.cpDecide(cp.round, vote.CPValueNo)
 	} else if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueYes) {
-		cp.cpDecide(round, vote.CPValueYes)
+		cp.cpDecide(cp.round, vote.CPValueYes)
 	}
 }
 

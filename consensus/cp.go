@@ -310,12 +310,12 @@ func (cp *changeProposer) checkJust(v *vote.Vote) error {
 	}
 }
 
-func (cp *changeProposer) cpStrongTermination(round int16) {
-	cpDecided := cp.log.CPDecidedVoteSet(round)
+func (cp *changeProposer) cpStrongTermination() {
+	cpDecided := cp.log.CPDecidedVoteSet(cp.round)
 	if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueNo) {
-		cp.cpDecide(round, vote.CPValueNo)
+		cp.cpDecide(cp.round, vote.CPValueNo)
 	} else if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueYes) {
-		cp.cpDecide(round, vote.CPValueYes)
+		cp.cpDecide(cp.round, vote.CPValueYes)
 	}
 }
 

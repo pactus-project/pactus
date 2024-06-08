@@ -332,7 +332,7 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		// This especially helps validators to catch up with the network when they restart their node.
 		if v.Type() == vote.VoteTypeCPDecided {
 			if v.Round() > cs.round {
-				cs.changeProposer.cpStrongTermination(v.Round())
+				cs.changeProposer.cpDecide(v.Round(), v.CPValue())
 			}
 		}
 	}
