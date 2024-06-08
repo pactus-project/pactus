@@ -19,7 +19,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consHeight, consRound, td.RandValAddress())
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, message.TypeVote)
+		td.shouldNotPublishMessageWithThisType(t, message.TypeProposal)
 	})
 
 	td.consMocks[0].Active = true
@@ -28,7 +28,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consHeight, consRound, td.RandValAddress())
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
 
-		td.shouldNotPublishMessageWithThisType(t, message.TypeVote)
+		td.shouldNotPublishMessageWithThisType(t, message.TypeProposal)
 	})
 
 	td.consMocks[0].Proposer = true

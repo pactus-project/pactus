@@ -20,6 +20,12 @@ func (handler *queryVotesHandler) ParseMessage(m message.Message, _ peer.ID) err
 	msg := m.(*message.QueryVotesMessage)
 	handler.logger.Trace("parsing QueryVotes message", "msg", msg)
 
+	if !handler.consMgr.HasActiveInstance() {
+		handler.logger.Debug("ignoring QueryVotes, not active", "msg", msg)
+
+		return nil
+	}
+
 	height, _ := handler.consMgr.HeightRound()
 	if msg.Height != height {
 		handler.logger.Debug("ignoring QueryVotes, not same height", "msg", msg,
