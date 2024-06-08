@@ -7,8 +7,8 @@ import (
 type JustType uint8
 
 const (
-	JustTypeInitZero           = JustType(1)
-	JustTypeInitOne            = JustType(2)
+	JustTypeInitNo             = JustType(1)
+	JustTypeInitYes            = JustType(2)
 	JustTypePreVoteSoft        = JustType(3)
 	JustTypePreVoteHard        = JustType(4)
 	JustTypeMainVoteConflict   = JustType(5)
@@ -18,10 +18,10 @@ const (
 
 func (t JustType) String() string {
 	switch t {
-	case JustTypeInitZero:
-		return "JustInitZero"
-	case JustTypeInitOne:
-		return "JustInitOne"
+	case JustTypeInitNo:
+		return "JustInitNo"
+	case JustTypeInitYes:
+		return "JustInitYes"
 	case JustTypePreVoteSoft:
 		return "JustPreVoteSoft"
 	case JustTypePreVoteHard:
@@ -45,10 +45,10 @@ type Just interface {
 
 func makeJust(t JustType) Just {
 	switch t {
-	case JustTypeInitZero:
-		return &JustInitZero{}
-	case JustTypeInitOne:
-		return &JustInitOne{}
+	case JustTypeInitNo:
+		return &JustInitNo{}
+	case JustTypeInitYes:
+		return &JustInitYes{}
 	case JustTypePreVoteSoft:
 		return &JustPreVoteSoft{}
 	case JustTypePreVoteHard:
@@ -64,38 +64,38 @@ func makeJust(t JustType) Just {
 	}
 }
 
-type JustInitZero struct {
-	QCert *certificate.Certificate `cbor:"1,keyasint"`
+type JustInitNo struct {
+	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
 }
-type JustInitOne struct {
+type JustInitYes struct {
 	//
 }
 
 type JustPreVoteSoft struct {
-	QCert *certificate.Certificate `cbor:"1,keyasint"`
+	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
 }
 
 type JustPreVoteHard struct {
-	QCert *certificate.Certificate `cbor:"1,keyasint"`
+	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
 }
 type JustMainVoteConflict struct {
-	Just0 Just
-	Just1 Just
+	JustNo  Just
+	JustYes Just
 }
 type JustMainVoteNoConflict struct {
-	QCert *certificate.Certificate `cbor:"1,keyasint"`
+	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
 }
 
 type JustDecided struct {
-	QCert *certificate.Certificate `cbor:"1,keyasint"`
+	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
 }
 
-func (*JustInitZero) Type() JustType {
-	return JustTypeInitZero
+func (*JustInitNo) Type() JustType {
+	return JustTypeInitNo
 }
 
-func (*JustInitOne) Type() JustType {
-	return JustTypeInitOne
+func (*JustInitYes) Type() JustType {
+	return JustTypeInitYes
 }
 
 func (*JustPreVoteSoft) Type() JustType {
@@ -118,11 +118,11 @@ func (*JustDecided) Type() JustType {
 	return JustTypeDecided
 }
 
-func (j *JustInitZero) BasicCheck() error {
-	return j.QCert.BasicCheck()
+func (*JustInitNo) BasicCheck() error {
+	return nil
 }
 
-func (*JustInitOne) BasicCheck() error {
+func (*JustInitYes) BasicCheck() error {
 	return nil
 }
 
@@ -135,11 +135,11 @@ func (j *JustPreVoteHard) BasicCheck() error {
 }
 
 func (j *JustMainVoteConflict) BasicCheck() error {
-	if err := j.Just0.BasicCheck(); err != nil {
+	if err := j.JustNo.BasicCheck(); err != nil {
 		return err
 	}
 
-	return j.Just1.BasicCheck()
+	return j.JustYes.BasicCheck()
 }
 
 func (j *JustMainVoteNoConflict) BasicCheck() error {

@@ -18,7 +18,7 @@ func (s *commitState) decide() {
 	certBlock := roundProposal.Block()
 	precommits := s.log.PrecommitVoteSet(s.round)
 	votes := precommits.BlockVotes(certBlock.Hash())
-	cert := s.makeCertificate(votes)
+	cert := s.makeBlockCertificate(votes)
 	err := s.bcState.CommitBlock(certBlock, cert)
 	if err != nil {
 		s.logger.Error("committing block failed", "block", certBlock, "error", err)

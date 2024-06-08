@@ -246,7 +246,8 @@ func TestIsSubset(t *testing.T) {
 		arr1, arr2 []int
 		want       bool
 	}{
-		{[]int{11, 1, 13, 21, 3, 7}, []int{11, 3, 7, 1}, true},
+		{[]int{11, 1, 13, 21, 3, 7}, []int{11, 3, 7}, true},
+		{[]int{11, 1, 13, 21, 3, 7}, []int{3, 11, 7}, false},
 		{[]int{1, 2, 3, 4, 5}, []int{1, 2, 3}, true},
 		{[]int{1, 2, 3}, []int{1, 2, 3, 4}, false},
 		{[]int{1, 2, 3, 4, 5}, []int{6, 7, 8}, false},

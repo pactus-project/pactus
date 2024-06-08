@@ -38,7 +38,7 @@ func TestInvalidBlockAnnounce(t *testing.T) {
 	pid := td.RandPeerID()
 	height := td.state.LastBlockHeight() + 1
 	blk, _ := td.GenerateTestBlock(height)
-	invCert := certificate.NewCertificate(height, 0, nil, nil, nil)
+	invCert := certificate.NewBlockCertificate(height, 0, false)
 	msg := message.NewBlockAnnounceMessage(blk, invCert)
 
 	err := td.receivingNewMessage(td.sync, msg, pid)

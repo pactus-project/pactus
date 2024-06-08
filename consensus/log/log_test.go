@@ -34,8 +34,8 @@ func TestAddValidVote(t *testing.T) {
 
 	v1 := vote.NewPrepareVote(ts.RandHash(), h, r, valKeys[0].Address())
 	v2 := vote.NewPrecommitVote(ts.RandHash(), h, r, valKeys[0].Address())
-	v3 := vote.NewCPPreVote(ts.RandHash(), h, r, 0, vote.CPValueOne, &vote.JustInitOne{}, valKeys[0].Address())
-	v4 := vote.NewCPMainVote(ts.RandHash(), h, r, 0, vote.CPValueZero, &vote.JustInitOne{}, valKeys[0].Address())
+	v3 := vote.NewCPPreVote(ts.RandHash(), h, r, 0, vote.CPValueYes, &vote.JustInitYes{}, valKeys[0].Address())
+	v4 := vote.NewCPMainVote(ts.RandHash(), h, r, 0, vote.CPValueNo, &vote.JustInitYes{}, valKeys[0].Address())
 
 	for _, v := range []*vote.Vote{v1, v2, v3, v4} {
 		ts.HelperSignVote(valKeys[0], v)

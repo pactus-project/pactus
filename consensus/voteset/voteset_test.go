@@ -85,7 +85,7 @@ func TestAddBinaryVote(t *testing.T) {
 	round := ts.RandRound()
 	cpRound := ts.RandRound()
 	cpVal := ts.RandInt(2)
-	just := &vote.JustInitOne{}
+	just := &vote.JustInitYes{}
 	invKey := ts.RandValKey()
 	valKey := valKeys[0]
 	vs := NewCPPreVoteVoteSet(round, totalPower, valsMap)
@@ -171,9 +171,9 @@ func TestDuplicateBinaryVote(t *testing.T) {
 	addr := valKeys[0].Address()
 	vs := NewCPPreVoteVoteSet(0, totalPower, valsMap)
 
-	correctVote := vote.NewCPPreVote(h1, 1, 0, 0, vote.CPValueOne, &vote.JustInitOne{}, addr)
-	duplicatedVote1 := vote.NewCPPreVote(h2, 1, 0, 0, vote.CPValueOne, &vote.JustInitOne{}, addr)
-	duplicatedVote2 := vote.NewCPPreVote(h3, 1, 0, 0, vote.CPValueOne, &vote.JustInitOne{}, addr)
+	correctVote := vote.NewCPPreVote(h1, 1, 0, 0, vote.CPValueYes, &vote.JustInitYes{}, addr)
+	duplicatedVote1 := vote.NewCPPreVote(h2, 1, 0, 0, vote.CPValueYes, &vote.JustInitYes{}, addr)
+	duplicatedVote2 := vote.NewCPPreVote(h3, 1, 0, 0, vote.CPValueYes, &vote.JustInitYes{}, addr)
 
 	// sign the votes
 	ts.HelperSignVote(valKeys[0], correctVote)
@@ -290,9 +290,9 @@ func TestAllBinaryVotes(t *testing.T) {
 
 	vs := NewCPMainVoteVoteSet(1, totalPower, valsMap)
 
-	v1 := vote.NewCPMainVote(hash.UndefHash, 1, 1, 0, vote.CPValueZero, &vote.JustInitOne{}, valKeys[0].Address())
-	v2 := vote.NewCPMainVote(hash.UndefHash, 1, 1, 1, vote.CPValueOne, &vote.JustInitOne{}, valKeys[1].Address())
-	v3 := vote.NewCPMainVote(hash.UndefHash, 1, 1, 2, vote.CPValueAbstain, &vote.JustInitOne{}, valKeys[2].Address())
+	v1 := vote.NewCPMainVote(hash.UndefHash, 1, 1, 0, vote.CPValueNo, &vote.JustInitYes{}, valKeys[0].Address())
+	v2 := vote.NewCPMainVote(hash.UndefHash, 1, 1, 1, vote.CPValueYes, &vote.JustInitYes{}, valKeys[1].Address())
+	v3 := vote.NewCPMainVote(hash.UndefHash, 1, 1, 2, vote.CPValueAbstain, &vote.JustInitYes{}, valKeys[2].Address())
 
 	ts.HelperSignVote(valKeys[0], v1)
 	ts.HelperSignVote(valKeys[1], v2)
@@ -313,10 +313,10 @@ func TestAllBinaryVotes(t *testing.T) {
 	assert.Contains(t, vs.AllVotes(), v2)
 	assert.Contains(t, vs.AllVotes(), v3)
 
-	ranVote1 := vs.GetRandomVote(1, vote.CPValueZero)
+	ranVote1 := vs.GetRandomVote(1, vote.CPValueNo)
 	assert.Nil(t, ranVote1)
 
-	ranVote2 := vs.GetRandomVote(1, vote.CPValueOne)
+	ranVote2 := vs.GetRandomVote(1, vote.CPValueYes)
 	assert.Equal(t, ranVote2, v2)
 }
 
@@ -331,13 +331,13 @@ func TestOneThirdPower(t *testing.T) {
 	h := ts.RandHash()
 	height := ts.RandHeight()
 	round := ts.RandRound()
-	just := &vote.JustInitOne{}
+	just := &vote.JustInitYes{}
 	vs := NewCPPreVoteVoteSet(round, totalPower, valsMap)
 
-	v1 := vote.NewCPPreVote(h, height, round, 0, vote.CPValueOne, just, valKeys[0].Address())
-	v2 := vote.NewCPPreVote(h, height, round, 0, vote.CPValueOne, just, valKeys[1].Address())
-	v3 := vote.NewCPPreVote(h, height, round, 0, vote.CPValueOne, just, valKeys[2].Address())
-	v4 := vote.NewCPPreVote(h, height, round, 0, vote.CPValueZero, just, valKeys[3].Address())
+	v1 := vote.NewCPPreVote(h, height, round, 0, vote.CPValueYes, just, valKeys[0].Address())
+	v2 := vote.NewCPPreVote(h, height, round, 0, vote.CPValueYes, just, valKeys[1].Address())
+	v3 := vote.NewCPPreVote(h, height, round, 0, vote.CPValueYes, just, valKeys[2].Address())
+	v4 := vote.NewCPPreVote(h, height, round, 0, vote.CPValueNo, just, valKeys[3].Address())
 
 	ts.HelperSignVote(valKeys[0], v1)
 	ts.HelperSignVote(valKeys[1], v2)
@@ -347,8 +347,8 @@ func TestOneThirdPower(t *testing.T) {
 	_, err := vs.AddVote(v1)
 	assert.NoError(t, err)
 	assert.False(t, vs.HasOneThirdOfTotalPower(0))
-	assert.True(t, vs.HasAnyVoteFor(0, vote.CPValueOne))
-	assert.False(t, vs.HasAnyVoteFor(0, vote.CPValueZero))
+	assert.True(t, vs.HasAnyVoteFor(0, vote.CPValueYes))
+	assert.False(t, vs.HasAnyVoteFor(0, vote.CPValueNo))
 	assert.False(t, vs.HasAnyVoteFor(0, vote.CPValueAbstain))
 
 	_, err = vs.AddVote(v2)
@@ -359,21 +359,21 @@ func TestOneThirdPower(t *testing.T) {
 	_, err = vs.AddVote(v3)
 	assert.NoError(t, err)
 	assert.True(t, vs.HasTwoThirdOfTotalPower(0))
-	assert.False(t, vs.HasAnyVoteFor(0, vote.CPValueZero))
-	assert.True(t, vs.HasAnyVoteFor(0, vote.CPValueOne))
-	assert.False(t, vs.HasQuorumVotesFor(0, vote.CPValueZero))
-	assert.True(t, vs.HasQuorumVotesFor(0, vote.CPValueOne))
-	assert.True(t, vs.HasAllVotesFor(0, vote.CPValueOne))
+	assert.False(t, vs.HasAnyVoteFor(0, vote.CPValueNo))
+	assert.True(t, vs.HasAnyVoteFor(0, vote.CPValueYes))
+	assert.False(t, vs.HasQuorumVotesFor(0, vote.CPValueNo))
+	assert.True(t, vs.HasQuorumVotesFor(0, vote.CPValueYes))
+	assert.True(t, vs.HasAllVotesFor(0, vote.CPValueYes))
 
 	_, err = vs.AddVote(v4)
 	assert.NoError(t, err)
-	assert.True(t, vs.HasAnyVoteFor(0, vote.CPValueZero))
-	assert.False(t, vs.HasQuorumVotesFor(0, vote.CPValueZero))
-	assert.True(t, vs.HasQuorumVotesFor(0, vote.CPValueOne))
-	assert.False(t, vs.HasAllVotesFor(0, vote.CPValueOne))
+	assert.True(t, vs.HasAnyVoteFor(0, vote.CPValueNo))
+	assert.False(t, vs.HasQuorumVotesFor(0, vote.CPValueNo))
+	assert.True(t, vs.HasQuorumVotesFor(0, vote.CPValueYes))
+	assert.False(t, vs.HasAllVotesFor(0, vote.CPValueYes))
 
-	bv1 := vs.BinaryVotes(0, vote.CPValueOne)
-	bv2 := vs.BinaryVotes(0, vote.CPValueZero)
+	bv1 := vs.BinaryVotes(0, vote.CPValueYes)
+	bv2 := vs.BinaryVotes(0, vote.CPValueNo)
 
 	assert.Contains(t, bv1, v1.Signer())
 	assert.Contains(t, bv1, v2.Signer())
@@ -388,15 +388,15 @@ func TestDecidedVoteset(t *testing.T) {
 	h := ts.RandHash()
 	height := ts.RandHeight()
 	round := ts.RandRound()
-	just := &vote.JustInitOne{}
+	just := &vote.JustInitYes{}
 	vs := NewCPDecidedVoteVoteSet(round, totalPower, valsMap)
 
-	v1 := vote.NewCPDecidedVote(h, height, round, 0, vote.CPValueOne, just, valKeys[0].Address())
+	v1 := vote.NewCPDecidedVote(h, height, round, 0, vote.CPValueYes, just, valKeys[0].Address())
 
 	ts.HelperSignVote(valKeys[0], v1)
 
 	_, err := vs.AddVote(v1)
 	assert.NoError(t, err)
-	assert.True(t, vs.HasAnyVoteFor(0, vote.CPValueOne))
-	assert.False(t, vs.HasAnyVoteFor(0, vote.CPValueZero))
+	assert.True(t, vs.HasAnyVoteFor(0, vote.CPValueYes))
+	assert.False(t, vs.HasAnyVoteFor(0, vote.CPValueNo))
 }

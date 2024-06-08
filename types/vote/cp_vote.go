@@ -10,17 +10,17 @@ import (
 type CPValue int8
 
 const (
-	CPValueZero    = CPValue(0)
-	CPValueOne     = CPValue(1)
+	CPValueNo      = CPValue(0)
+	CPValueYes     = CPValue(1)
 	CPValueAbstain = CPValue(2)
 )
 
 func (v CPValue) String() string {
 	switch v {
-	case CPValueZero:
-		return "zero"
-	case CPValueOne:
-		return "one"
+	case CPValueNo:
+		return "no"
+	case CPValueYes:
+		return "yes"
 	case CPValueAbstain:
 		return "abstain"
 	default:
@@ -38,7 +38,7 @@ func (v *cpVote) BasicCheck() error {
 	if v.Round < 0 {
 		return errors.Error(errors.ErrInvalidRound)
 	}
-	if v.Value < CPValueZero ||
+	if v.Value < CPValueNo ||
 		v.Value > CPValueAbstain {
 		// Invalid values
 		return errors.Errorf(errors.ErrInvalidVote, "cp value should be 0, 1 or abstain")
@@ -66,19 +66,19 @@ func (v *cpVote) MarshalCBOR() ([]byte, error) {
 	justData := []byte{}
 	if v.Just.Type() == JustTypeMainVoteConflict {
 		conflictJust := v.Just.(*JustMainVoteConflict)
-		data0, err := cbor.Marshal(conflictJust.Just0)
+		data0, err := cbor.Marshal(conflictJust.JustNo)
 		if err != nil {
 			return nil, err
 		}
-		data1, err := cbor.Marshal(conflictJust.Just1)
+		data1, err := cbor.Marshal(conflictJust.JustYes)
 		if err != nil {
 			return nil, err
 		}
 
 		_conflictingJust := _JustMainVoteConflict{
-			Just0Type: conflictJust.Just0.Type(),
+			Just0Type: conflictJust.JustNo.Type(),
 			Just0Data: data0,
-			Just1Type: conflictJust.Just1.Type(),
+			Just1Type: conflictJust.JustYes.Type(),
 			Just1Data: data1,
 		}
 		data, err := cbor.Marshal(_conflictingJust)
@@ -133,8 +133,8 @@ func (v *cpVote) UnmarshalCBOR(bs []byte) error {
 		}
 
 		just = &JustMainVoteConflict{
-			Just0: just0,
-			Just1: just1,
+			JustNo:  just0,
+			JustYes: just1,
 		}
 	} else {
 		just = makeJust(_cp.JustType)

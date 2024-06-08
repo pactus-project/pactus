@@ -28,8 +28,8 @@ func TestInvalidBlockData(t *testing.T) {
 	td.state.CommitTestBlocks(10)
 
 	lastHeight := td.state.LastBlockHeight()
-	prevCert := td.GenerateTestCertificate(lastHeight)
-	cert := td.GenerateTestCertificate(lastHeight + 1)
+	prevCert := td.GenerateTestBlockCertificate(lastHeight)
+	cert := td.GenerateTestBlockCertificate(lastHeight + 1)
 	blk := block.MakeBlock(1, time.Now(), nil, td.RandHash(), td.RandHash(),
 		prevCert, td.RandSeed(), td.RandValAddress())
 	data, _ := blk.Bytes()
@@ -91,7 +91,7 @@ func TestStrippedPublicKey(t *testing.T) {
 	trxs0 := []*tx.Tx{trx0}
 	blk0 := block.MakeBlock(1, time.Now(), trxs0, td.RandHash(), td.RandHash(),
 		td.state.LastCertificate(), td.RandSeed(), td.RandValAddress())
-	cert0 := td.GenerateTestCertificate(lastHeight + 1)
+	cert0 := td.GenerateTestBlockCertificate(lastHeight + 1)
 	err := td.state.CommitBlock(blk0, cert0)
 	require.NoError(t, err)
 	lastHeight++
@@ -132,7 +132,7 @@ func TestStrippedPublicKey(t *testing.T) {
 	for _, test := range tests {
 		blkData, _ := test.blk.Bytes()
 		sid := td.RandInt(1000)
-		cert := td.GenerateTestCertificate(lastHeight + 1)
+		cert := td.GenerateTestBlockCertificate(lastHeight + 1)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
 			lastHeight+1, [][]byte{blkData}, cert)
 		err := td.receivingNewMessage(td.sync, msg, pid)

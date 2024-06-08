@@ -20,7 +20,7 @@ func DefaultConfig() *Config {
 func (conf *Config) BasicCheck() error {
 	if conf.ChangeProposerTimeout <= 0 {
 		return ConfigError{
-			Reason: "timeout for change proposer must be greater than zero",
+			Reason: "change proposer timeout must be greater than zero",
 		}
 	}
 	if conf.ChangeProposerDelta <= 0 {

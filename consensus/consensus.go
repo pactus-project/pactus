@@ -400,13 +400,25 @@ func (cs *consensus) broadcastVote(v *vote.Vote) {
 		message.NewVoteMessage(v))
 }
 
-func (cs *consensus) announceNewBlock(blk *block.Block, cert *certificate.Certificate) {
+func (cs *consensus) announceNewBlock(blk *block.Block, cert *certificate.BlockCertificate) {
 	go cs.mediator.OnBlockAnnounce(cs)
 	cs.broadcaster(cs.valKey.Address(),
 		message.NewBlockAnnounceMessage(blk, cert))
 }
 
-func (cs *consensus) makeCertificate(votes map[crypto.Address]*vote.Vote) *certificate.Certificate {
+func (cs *consensus) makeBlockCertificate(votes map[crypto.Address]*vote.Vote,
+) *certificate.BlockCertificate {
+	cert := certificate.NewBlockCertificate(cs.height, cs.round, false)
+	cert.SetSignature(cs.signersInfo(votes))
+
+	return cert
+}
+
+// signersInfo processes a map of votes from validators and provides these information:
+// - A list of all validators' numbers eligible to vote in this step.
+// - A list of absentee validators' numbers who did not vote in this step.
+// - An aggregated signature generated from the signatures of participating validators.
+func (cs *consensus) signersInfo(votes map[crypto.Address]*vote.Vote) ([]int32, []int32, *bls.Signature) {
 	vals := cs.validators
 	committers := make([]int32, len(vals))
 	absentees := make([]int32, 0)
@@ -425,7 +437,15 @@ func (cs *consensus) makeCertificate(votes map[crypto.Address]*vote.Vote) *certi
 
 	aggSig := bls.SignatureAggregate(sigs...)
 
-	return certificate.NewCertificate(cs.height, cs.round, committers, absentees, aggSig)
+	return committers, absentees, aggSig
+}
+
+func (cs *consensus) makeVoteCertificate(votes map[crypto.Address]*vote.Vote,
+) *certificate.VoteCertificate {
+	cert := certificate.NewVoteCertificate(cs.height, cs.round)
+	cert.SetSignature(cs.signersInfo(votes))
+
+	return cert
 }
 
 // IsActive checks if the consensus is in an active state and participating in the consensus algorithm.
