@@ -312,21 +312,29 @@ func (cp *changeProposer) cpCheckJust(v *vote.Vote) error {
 }
 
 // cpStrongTermination decides if the Change Proposer phase should be terminated.
-// If there is only one proper and justified `decided` vote, the validators can
+// If there is only one proper and justified `Decided` vote, the validators can
 // move on to the next phase.
-// If the decided vote is for "No", then validators move to the precommit step and
+// If the `Decided` vote is for "No", then validators move to the precommit step and
 // wait for committing the current proposal by gathering enough precommit votes.
-// If the decided vote is for "Yes", then the validator moves to the propose step
+// If the `Decided` vote is for "Yes", then the validator moves to the propose step
 // and starts a new round.
 func (cp *changeProposer) cpStrongTermination(round int16) {
 	cpDecided := cp.log.CPDecidedVoteSet(round)
 	if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueNo) {
-		cp.round = round
-		cp.cpDecided = 0
-		cp.enterNewState(cp.precommitState)
+		cp.cpDecide(round, vote.CPValueNo)
 	} else if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueYes) {
+		cp.cpDecide(round, vote.CPValueYes)
+	}
+}
+
+func (cp *changeProposer) cpDecide(round int16, cpValue vote.CPValue) {
+	if cpValue == vote.CPValueYes {
 		cp.round = round + 1
 		cp.cpDecided = 1
 		cp.enterNewState(cp.proposeState)
+	} else if cpValue == vote.CPValueNo {
+		cp.round = round
+		cp.cpDecided = 0
+		cp.enterNewState(cp.precommitState)
 	}
 }

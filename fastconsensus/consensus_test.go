@@ -823,7 +823,7 @@ func TestCases(t *testing.T) {
 		// {1694849103290580532, 1, "Conflicting votes, cp-round=0"},
 		// {1697900665869342730, 1, "Conflicting votes, cp-round=1"},
 		// {1697887970998950590, 1, "consP & consB: Change Proposer, consX & consY: Commit (2 block announces)"},
-		{1702913410152124511, 0, ""},
+		{1717870730391411396, 2, "move to the next round on decided vote"},
 	}
 
 	for i, test := range tests {

@@ -325,10 +325,6 @@ func (cp *changeProposer) cpDecide(round int16, cpValue vote.CPValue) {
 		cp.cpDecided = 1
 		cp.enterNewState(cp.proposeState)
 	} else if cpValue == vote.CPValueNo {
-		roundProposal := cp.log.RoundProposal(cp.round)
-		if roundProposal == nil {
-			cp.queryProposal()
-		}
 		cp.round = round
 		cp.cpDecided = 0
 		cp.enterNewState(cp.prepareState)
