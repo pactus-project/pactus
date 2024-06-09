@@ -8,23 +8,23 @@ type IPBlocker struct {
 	cidrs []*net.IPNet
 }
 
-func New(blackListCidr []string) (*IPBlocker, error) {
-	ipblocker := &IPBlocker{
+func New(bannedNets []string) (*IPBlocker, error) {
+	ipBlocker := &IPBlocker{
 		cidrs: make([]*net.IPNet, 0),
 	}
 
-	for _, cidr := range blackListCidr {
-		_, ipnet, err := net.ParseCIDR(cidr)
+	for _, cidr := range bannedNets {
+		_, ipNet, err := net.ParseCIDR(cidr)
 		if err != nil {
 			return nil, err
 		}
-		ipblocker.cidrs = append(ipblocker.cidrs, ipnet)
+		ipBlocker.cidrs = append(ipBlocker.cidrs, ipNet)
 	}
 
-	return ipblocker, nil
+	return ipBlocker, nil
 }
 
-func (i *IPBlocker) IsBlocked(ip string) bool {
+func (i *IPBlocker) IsBanned(ip string) bool {
 	parsedIP := net.ParseIP(ip)
 	if parsedIP == nil {
 		return false

@@ -9,7 +9,7 @@ import (
 func TestNew(t *testing.T) {
 	tests := []struct {
 		name           string
-		blackListCidr  []string
+		bannedNets     []string
 		expectedError  bool
 		expectedLength int
 	}{
@@ -24,7 +24,7 @@ func TestNew(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ipBlocker, err := New(tt.blackListCidr)
+			ipBlocker, err := New(tt.bannedNets)
 			if tt.expectedError {
 				assert.Error(t, err)
 			} else {
@@ -37,10 +37,10 @@ func TestNew(t *testing.T) {
 
 func TestIsBlocked(t *testing.T) {
 	tests := []struct {
-		name          string
-		blackListCidr []string
-		ip            string
-		expected      bool
+		name       string
+		bannedNets []string
+		ip         string
+		expected   bool
 	}{
 		{
 			"Blocked IPv6",
@@ -70,9 +70,9 @@ func TestIsBlocked(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ipBlocker, err := New(tt.blackListCidr)
+			ipBlocker, err := New(tt.bannedNets)
 			assert.NoError(t, err)
-			result := ipBlocker.IsBlocked(tt.ip)
+			result := ipBlocker.IsBanned(tt.ip)
 			assert.Equal(t, tt.expected, result)
 		})
 	}

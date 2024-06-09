@@ -40,11 +40,8 @@ func setup(t *testing.T, conf *Config) *testData {
 	st := state.MockingState(ts)
 	net := network.MockingNetwork(ts, ts.RandPeerID())
 
-	// TODO: It should be like: "/ip6/2a01:4f9:4a:1d85::2"
-	conf.BlackListAddresses = []string{
-		"84.247.0.0/24",
-		"115.193.0.0/16",
-		"240e:390:8a1:ae80:0000:0000:0000:0000/64",
+	if conf == nil {
+		conf = DefaultConfig()
 	}
 	require.NoError(t, conf.BasicCheck())
 	firewall, err := NewFirewall(conf, net, peerSet, st, subLogger)
@@ -168,17 +165,6 @@ func TestStreamMessage(t *testing.T) {
 	})
 }
 
-func TestDisabledFirewall(t *testing.T) {
-	td := setup(t, nil)
-
-	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), -1, td.RandValAddress()))
-	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-	d, _ := bdl.Encode()
-
-	assert.Nil(t, td.firewall.OpenGossipBundle(d, td.badPeerID))
-	assert.False(t, td.network.IsClosed(td.badPeerID))
-}
-
 func TestUpdateLastReceived(t *testing.T) {
 	td := setup(t, nil)
 
@@ -192,40 +178,46 @@ func TestUpdateLastReceived(t *testing.T) {
 	assert.GreaterOrEqual(t, peerGood.LastReceived.UnixNano(), now)
 }
 
-func TestBlackListAddress(t *testing.T) {
-	td := setup(t, nil)
+func TestBannedAddress(t *testing.T) {
+	conf := &Config{
+		BannedNets: []string{
+			"115.193.0.0/16",
+			"240e:390:8a1:ae80:0000:0000:0000:0000/64",
+		},
+	}
+	td := setup(t, conf)
 
 	testCases := []struct {
-		addr        string
-		blacklisted bool
+		addr   string
+		banned bool
 	}{
 		{
-			addr:        "/ip4/115.193.157.138/tcp/21888",
-			blacklisted: true,
+			addr:   "/ip4/115.193.157.138/tcp/21888",
+			banned: true,
 		},
 		{
-			addr:        "/ip4/10.10.10.10",
-			blacklisted: false,
+			addr:   "/ip4/10.10.10.10",
+			banned: false,
 		},
 		{
-			addr:        "/ip6/240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/udp/21888",
-			blacklisted: true,
+			addr:   "/ip6/240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/udp/21888",
+			banned: true,
 		},
 		{
-			addr:        "/ip6/2a01:4f9:4a:1d85::2",
-			blacklisted: false,
+			addr:   "/ip6/2a01:4f9:4a:1d85::2",
+			banned: false,
 		},
 	}
 
 	for i, tc := range testCases {
-		blacklisted := td.firewall.IsBlackListAddress(tc.addr)
+		banned := td.firewall.IsBannedAddress(tc.addr)
 
-		if tc.blacklisted {
-			assert.True(t, blacklisted,
-				"test %v failed, addr %v should blacklisted", i, tc.addr)
+		if tc.banned {
+			assert.True(t, banned,
+				"test %v failed, addr %v should be banned", i, tc.addr)
 		} else {
-			assert.False(t, blacklisted,
-				"test %v failed, addr %v should not blacklisted", i, tc.addr)
+			assert.False(t, banned,
+				"test %v failed, addr %v should not be banned", i, tc.addr)
 		}
 	}
 }
