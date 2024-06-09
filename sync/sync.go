@@ -74,7 +74,12 @@ func NewSynchronizer(
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout)
 	sync.logger = logger.NewSubLogger("_sync", sync)
-	sync.firewall = firewall.NewFirewall(conf.Firewall, net, sync.peerSet, st, sync.logger)
+	fw, err := firewall.NewFirewall(conf.Firewall, net, sync.peerSet, st, sync.logger)
+	if err != nil {
+		return nil, err
+	}
+
+	sync.firewall = fw
 
 	cacheSize := conf.CacheSize()
 	ca, err := cache.NewCache(conf.CacheSize())
