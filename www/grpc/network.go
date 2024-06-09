@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"math"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
@@ -48,7 +49,7 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 		Protocols:     s.net.Protocols(),
 		Services:      services,
 		ServicesNames: servicesNames,
-		ClockOffset:   clockOffset.Seconds(),
+		ClockOffset:   math.Round(clockOffset.Seconds()),
 		ConnectionInfo: &pactus.ConnectionInfo{
 			Connections:         uint64(s.net.NumConnectedPeers()),
 			InboundConnections:  uint64(s.net.NumInbound()),

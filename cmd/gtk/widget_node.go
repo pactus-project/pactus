@@ -5,6 +5,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"time"
@@ -148,7 +149,7 @@ func (wn *widgetNode) timeout10() bool {
 				styleContext.AddClass("warning")
 				wn.labelClockOffset.SetText("Error response from NTP server.")
 			} else {
-				wn.labelClockOffset.SetText(fmt.Sprintf("%v second(s)", offset.Seconds()))
+				wn.labelClockOffset.SetText(fmt.Sprintf("%v second(s)", math.Round(offset.Seconds())))
 
 				if wn.model.node.Sync().OutOfSync(offset) {
 					styleContext.AddClass("warning")
