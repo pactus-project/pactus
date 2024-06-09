@@ -141,11 +141,14 @@ func (wn *widgetNode) timeout10() bool {
 			styleContext, err := wn.labelClockOffset.GetStyleContext()
 			fatalErrorCheck(err)
 
+			wn.labelClockOffset.SetTooltipText("Difference between time of your machine and " +
+				"network time( (NTP)  for synchronization.")
+
 			if offsetErr != nil {
 				styleContext.AddClass("warning")
 				wn.labelClockOffset.SetText("Error response from NTP server.")
 			} else {
-				wn.labelClockOffset.SetText(fmt.Sprintf("%v secs", offset.Seconds()))
+				wn.labelClockOffset.SetText(fmt.Sprintf("%v second(s)", offset.Seconds()))
 
 				if wn.model.node.Sync().OutOfSync(offset) {
 					styleContext.AddClass("warning")
@@ -159,6 +162,11 @@ func (wn *widgetNode) timeout10() bool {
 			wn.labelCommitteeStake.SetText(amount.Amount(committeePower).String())
 			wn.labelTotalStake.SetText(amount.Amount(totalPower).String())
 			wn.labelInCommittee.SetText(isInCommittee)
+			if isInCommittee == "Yes" {
+				wn.labelInCommittee.SetMarkup(fmt.Sprintf("<span foreground=\"#10c92f\">%s</span>", isInCommittee))
+			} else {
+				wn.labelInCommittee.SetText(isInCommittee)
+			}
 			wn.labelNumConnections.SetText(numConnections)
 			wn.labelReachability.SetText(reachability)
 
