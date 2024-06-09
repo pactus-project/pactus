@@ -74,7 +74,12 @@ func NewSynchronizer(
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout)
 	sync.logger = logger.NewSubLogger("_sync", sync)
-	sync.firewall = firewall.NewFirewall(conf.Firewall, net, sync.peerSet, st, sync.logger)
+	fw, err := firewall.NewFirewall(conf.Firewall, net, sync.peerSet, st, sync.logger)
+	if err != nil {
+		return nil, err
+	}
+
+	sync.firewall = fw
 
 	cacheSize := conf.CacheSize()
 	ca, err := cache.NewCache(conf.CacheSize())
@@ -599,8 +604,6 @@ func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 	return blocks
 }
 
-// weAreInTheCommittee checks if one of the validators is a member of the committee
-// at the current height.
 func (*synchronizer) shouldPropagateGeneralMessage(_ *network.GossipMessage) bool {
 	return true
 }

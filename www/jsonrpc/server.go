@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"net/http"
-	"time"
 
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -18,7 +16,7 @@ type Server struct {
 	ctx        context.Context
 	cancel     context.CancelFunc
 	config     *Config
-	server     *http.Server
+	server     *jrpc.Server
 	listener   net.Listener
 	grpcClient *grpc.ClientConn
 	logger     *logger.SubLogger
@@ -50,31 +48,17 @@ func (s *Server) StartServer(grpcServer string) error {
 
 	s.grpcClient = grpcConn
 
-	blockchain := pactus.NewBlockchainClient(grpcConn)
-	network := pactus.NewNetworkClient(grpcConn)
-	transaction := pactus.NewTransactionClient(grpcConn)
-	wallet := pactus.NewWalletClient(grpcConn)
+	blockchainService := pactus.RegisterBlockchainJsonRPC(grpcConn)
+	networkService := pactus.RegisterNetworkJsonRPC(grpcConn)
+	transactionService := pactus.RegisterTransactionJsonRPC(grpcConn)
+	walletService := pactus.RegisterWalletJsonRPC(grpcConn)
 
-	blockchainService := pactus.NewBlockchainJsonRpcService(blockchain)
-	networkService := pactus.NewNetworkJsonRpcService(network)
-	transactionService := pactus.NewTransactionJsonRpcService(transaction)
-	walletService := pactus.NewWalletJsonRpcService(wallet)
-
-	jgw := jrpc.NewServer()
-	jgw.RegisterServices(&blockchainService, &networkService, &transactionService, &walletService)
+	server := jrpc.NewServer()
+	server.RegisterServices(blockchainService, networkService, transactionService, walletService)
 
 	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
 		s.logger.Error("unable to establish tcp connection", "error", err)
-	}
-	s.listener = listener
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", jgw.HttpHandler)
-	server := &http.Server{
-		Addr:              listener.Addr().String(),
-		ReadHeaderTimeout: 3 * time.Second,
-		Handler:           mux,
 	}
 
 	go func() {
@@ -92,6 +76,7 @@ func (s *Server) StartServer(grpcServer string) error {
 
 	s.logger.Info("json-rpc started listening", "address", listener.Addr().String())
 	s.server = server
+	s.listener = listener
 
 	return nil
 }
@@ -101,8 +86,7 @@ func (s *Server) StopServer() {
 	s.logger.Debug("context closed", "reason", s.ctx.Err())
 
 	if s.server != nil {
-		_ = s.server.Shutdown(s.ctx)
-		_ = s.server.Close()
+		_ = s.server.GracefulStop(s.ctx)
 		_ = s.listener.Close()
 	}
 

@@ -12,110 +12,199 @@ import (
 	"context"
 	"encoding/json"
 
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type BlockchainJsonRpcService struct {
+type BlockchainJsonRPC struct {
 	client BlockchainClient
 }
 
-func NewBlockchainJsonRpcService(client BlockchainClient) BlockchainJsonRpcService {
-	return BlockchainJsonRpcService{
-		client: client,
+type paramsAndHeadersBlockchain struct {
+	Headers metadata.MD     `json:"headers,omitempty"`
+	Params  json.RawMessage `json:"params"`
+}
+
+// RegisterBlockchainJsonRPC register the grpc client Blockchain for json-rpc.
+// The handlers forward requests to the grpc endpoint over "conn".
+func RegisterBlockchainJsonRPC(conn *grpc.ClientConn) *BlockchainJsonRPC {
+	return &BlockchainJsonRPC{
+		client: NewBlockchainClient(conn),
 	}
 }
 
-func (s *BlockchainJsonRpcService) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
+func (s *BlockchainJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (any, error){
 
 		"pactus.blockchain.get_block": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetBlockRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetBlock(ctx, req)
+
+			return s.client.GetBlock(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.blockchain.get_block_hash": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetBlockHashRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetBlockHash(ctx, req)
+
+			return s.client.GetBlockHash(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.blockchain.get_block_height": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetBlockHeightRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetBlockHeight(ctx, req)
+
+			return s.client.GetBlockHeight(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.blockchain.get_blockchain_info": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetBlockchainInfoRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetBlockchainInfo(ctx, req)
+
+			return s.client.GetBlockchainInfo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.blockchain.get_consensus_info": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetConsensusInfoRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetConsensusInfo(ctx, req)
+
+			return s.client.GetConsensusInfo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.blockchain.get_account": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetAccountRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetAccount(ctx, req)
+
+			return s.client.GetAccount(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.blockchain.get_validator": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetValidatorRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetValidator(ctx, req)
+
+			return s.client.GetValidator(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.blockchain.get_validator_by_number": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetValidatorByNumberRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetValidatorByNumber(ctx, req)
+
+			return s.client.GetValidatorByNumber(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.blockchain.get_validator_addresses": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetValidatorAddressesRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetValidatorAddresses(ctx, req)
+
+			return s.client.GetValidatorAddresses(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.blockchain.get_public_key": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetPublicKeyRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetPublicKey(ctx, req)
+
+			return s.client.GetPublicKey(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 	}
 }

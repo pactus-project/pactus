@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 
+	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -11,28 +12,36 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/util/ipblocker"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
 // Firewall check packets before passing them to sync module.
 type Firewall struct {
-	config  *Config
-	network network.Network
-	peerSet *peerset.PeerSet
-	state   state.Facade
-	logger  *logger.SubLogger
+	config    *Config
+	network   network.Network
+	peerSet   *peerset.PeerSet
+	state     state.Facade
+	ipBlocker *ipblocker.IPBlocker
+	logger    *logger.SubLogger
 }
 
 func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st state.Facade,
 	log *logger.SubLogger,
-) *Firewall {
-	return &Firewall{
-		config:  conf,
-		network: net,
-		peerSet: peerSet,
-		state:   st,
-		logger:  log,
+) (*Firewall, error) {
+	blocker, err := ipblocker.New(conf.BannedNets)
+	if err != nil {
+		return nil, err
 	}
+
+	return &Firewall{
+		config:    conf,
+		network:   net,
+		peerSet:   peerSet,
+		state:     st,
+		ipBlocker: blocker,
+		logger:    log,
+	}, nil
 }
 
 func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
@@ -48,6 +57,18 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
 	// TODO: check if bundle is a gossip bundle
 
 	return bdl
+}
+
+// IsBannedAddress checks if the remote IP address is banned.
+func (f *Firewall) IsBannedAddress(remoteAddr string) bool {
+	ip, err := f.getIPFromMultiAddress(remoteAddr)
+	if err != nil {
+		f.logger.Warn("firewall: unable to parse remote address", "err", err, "addr", remoteAddr)
+
+		return false
+	}
+
+	return f.ipBlocker.IsBanned(ip)
 }
 
 func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
@@ -131,19 +152,35 @@ func (f *Firewall) checkBundle(bdl *bundle.Bundle) error {
 }
 
 func (f *Firewall) isPeerBanned(pid peer.ID) bool {
-	if !f.config.Enabled {
-		return false
-	}
-
 	p := f.peerSet.GetPeer(pid)
 
 	return p.Status.IsBanned()
 }
 
 func (f *Firewall) closeConnection(pid peer.ID) {
-	if !f.config.Enabled {
-		return
+	f.network.CloseConnection(pid)
+}
+
+func (*Firewall) getIPFromMultiAddress(address string) (string, error) {
+	addr, err := multiaddr.NewMultiaddr(address)
+	if err != nil {
+		return "", err
 	}
 
-	f.network.CloseConnection(pid)
+	components := addr.Protocols()
+
+	var ip string
+	for _, comp := range components {
+		switch comp.Name {
+		// TODO: can parse dns address and find ip??
+		case "ip4", "ip6":
+			ipComponent, err := addr.ValueForProtocol(comp.Code)
+			if err != nil {
+				return "", err
+			}
+			ip = ipComponent
+		}
+	}
+
+	return ip, nil
 }

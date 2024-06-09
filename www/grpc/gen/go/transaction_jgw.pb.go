@@ -12,83 +12,148 @@ import (
 	"context"
 	"encoding/json"
 
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type TransactionJsonRpcService struct {
+type TransactionJsonRPC struct {
 	client TransactionClient
 }
 
-func NewTransactionJsonRpcService(client TransactionClient) TransactionJsonRpcService {
-	return TransactionJsonRpcService{
-		client: client,
+type paramsAndHeadersTransaction struct {
+	Headers metadata.MD     `json:"headers,omitempty"`
+	Params  json.RawMessage `json:"params"`
+}
+
+// RegisterTransactionJsonRPC register the grpc client Transaction for json-rpc.
+// The handlers forward requests to the grpc endpoint over "conn".
+func RegisterTransactionJsonRPC(conn *grpc.ClientConn) *TransactionJsonRPC {
+	return &TransactionJsonRPC{
+		client: NewTransactionClient(conn),
 	}
 }
 
-func (s *TransactionJsonRpcService) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
+func (s *TransactionJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (any, error){
 
 		"pactus.transaction.get_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetTransactionRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersTransaction
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetTransaction(ctx, req)
+
+			return s.client.GetTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.transaction.calculate_fee": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(CalculateFeeRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersTransaction
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.CalculateFee(ctx, req)
+
+			return s.client.CalculateFee(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.transaction.broadcast_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(BroadcastTransactionRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersTransaction
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.BroadcastTransaction(ctx, req)
+
+			return s.client.BroadcastTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.transaction.get_raw_transfer_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetRawTransferTransactionRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersTransaction
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetRawTransferTransaction(ctx, req)
+
+			return s.client.GetRawTransferTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.transaction.get_raw_bond_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetRawBondTransactionRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersTransaction
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetRawBondTransaction(ctx, req)
+
+			return s.client.GetRawBondTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.transaction.get_raw_unbond_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetRawUnbondTransactionRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersTransaction
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetRawUnbondTransaction(ctx, req)
+
+			return s.client.GetRawUnbondTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.transaction.get_raw_withdraw_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetRawWithdrawTransactionRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersTransaction
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetRawWithdrawTransaction(ctx, req)
+
+			return s.client.GetRawWithdrawTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 	}
 }

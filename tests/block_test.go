@@ -24,7 +24,7 @@ func waitForNewBlocks(num uint32) {
 		if lastHeight() > height {
 			break
 		}
-		time.Sleep(2 * time.Second)
+		time.Sleep(4 * time.Second)
 	}
 }
 

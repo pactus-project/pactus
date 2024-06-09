@@ -1,14 +1,10 @@
 package fastconsensus
 
 import (
-	"time"
-
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
-
-var queryVoteInitialTimeout = 2 * time.Second
 
 type cpPreVoteState struct {
 	*changeProposer
@@ -47,7 +43,7 @@ func (s *cpPreVoteState) decide() {
 			just := &vote.JustInitYes{}
 			s.signAddCPPreVote(hash.UndefHash, s.cpRound, 1, just)
 		}
-		s.scheduleTimeout(queryVoteInitialTimeout, s.height, s.round, tickerTargetQueryVotes)
+		s.scheduleTimeout(s.config.QueryVoteTimeout, s.height, s.round, tickerTargetQueryVotes)
 	} else {
 		cpMainVotes := s.log.CPMainVoteVoteSet(s.round)
 		switch {

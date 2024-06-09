@@ -122,6 +122,9 @@ linters-settings:
       - name: "get-return"
         disabled: true
 
+      - name: "confusing-naming"
+        disabled: true
+
       - name: "function-result-limit"
         disabled: true
 

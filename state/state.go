@@ -405,7 +405,7 @@ func (st *state) ValidateBlock(blk *block.Block, round int16) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	if err := st.doValidateBlock(blk, round); err != nil {
+	if err := st.validateBlock(blk, round); err != nil {
 		return err
 	}
 
@@ -450,7 +450,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 		return errors.Error(errors.ErrInvalidBlock)
 	}
 
-	err = st.doValidateBlock(blk, cert.Round())
+	err = st.validateBlock(blk, cert.Round())
 	if err != nil {
 		return err
 	}

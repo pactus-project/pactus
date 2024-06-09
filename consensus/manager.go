@@ -106,6 +106,18 @@ func (mgr *manager) HasActiveInstance() bool {
 	return false
 }
 
+// HasProposer checks if any of the consensus instances is the proposer
+// for the current round.
+func (mgr *manager) HasProposer() bool {
+	for _, cons := range mgr.instances {
+		if cons.IsProposer() {
+			return true
+		}
+	}
+
+	return false
+}
+
 // MoveToNewHeight moves all consensus instances to a new height.
 func (mgr *manager) MoveToNewHeight() {
 	for _, cons := range mgr.instances {

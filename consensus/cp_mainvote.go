@@ -91,7 +91,7 @@ func (s *cpMainVoteState) onAddVote(v *vote.Vote) {
 		s.decide()
 	}
 
-	s.strongTermination()
+	s.cpStrongTermination()
 }
 
 func (*cpMainVoteState) name() string {

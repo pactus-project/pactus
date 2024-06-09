@@ -15,6 +15,7 @@ type Reader interface {
 	HasVote(h hash.Hash) bool
 	HeightRound() (uint32, int16)
 	IsActive() bool
+	IsProposer() bool
 }
 
 type Consensus interface {
@@ -32,6 +33,7 @@ type ManagerReader interface {
 	Proposal() *proposal.Proposal
 	HeightRound() (uint32, int16)
 	HasActiveInstance() bool
+	HasProposer() bool
 }
 
 type Manager interface {

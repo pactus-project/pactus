@@ -71,11 +71,11 @@ func TestMaxConnection(t *testing.T) {
 	cmaPublic := &mockConnMultiaddrs{remote: maPublic}
 	pid := ts.RandPeerID()
 
-	net.peerMgr.PeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirOutbound)
-	net.peerMgr.PeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
-	net.peerMgr.PeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
-	net.peerMgr.PeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
-	net.peerMgr.PeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
+	net.peerMgr.SetPeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirOutbound)
+	net.peerMgr.SetPeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
+	net.peerMgr.SetPeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
+	net.peerMgr.SetPeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
+	net.peerMgr.SetPeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
 
 	assert.True(t, net.connGater.InterceptPeerDial(pid))
 	assert.True(t, net.connGater.InterceptAddrDial(pid, maPrivate))
@@ -83,7 +83,7 @@ func TestMaxConnection(t *testing.T) {
 	assert.True(t, net.connGater.InterceptAccept(cmaPrivate))
 	assert.True(t, net.connGater.InterceptAccept(cmaPublic))
 
-	net.peerMgr.PeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirOutbound)
+	net.peerMgr.SetPeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirOutbound)
 
 	assert.False(t, net.connGater.InterceptPeerDial(pid))
 	assert.False(t, net.connGater.InterceptAddrDial(pid, maPrivate))
@@ -91,7 +91,7 @@ func TestMaxConnection(t *testing.T) {
 	assert.True(t, net.connGater.InterceptAccept(cmaPrivate))
 	assert.True(t, net.connGater.InterceptAccept(cmaPublic))
 
-	net.peerMgr.PeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
+	net.peerMgr.SetPeerConnected(ts.RandPeerID(), aMultiAddr, lp2pnetwork.DirInbound)
 
 	assert.False(t, net.connGater.InterceptPeerDial(pid))
 	assert.False(t, net.connGater.InterceptAddrDial(pid, maPrivate))
