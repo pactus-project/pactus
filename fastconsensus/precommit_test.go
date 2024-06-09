@@ -33,5 +33,5 @@ func TestPrecommitQueryProposal(t *testing.T) {
 	td.addPrecommitVote(td.consP, propBlockHash, h, r, tIndexM)
 	td.addPrecommitVote(td.consP, propBlockHash, h, r, tIndexN)
 
-	td.shouldPublishQueryProposal(t, td.consP, h)
+	td.shouldPublishQueryProposal(t, td.consP, h, r)
 }

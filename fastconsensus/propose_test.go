@@ -77,7 +77,7 @@ func TestNetworkLagging(t *testing.T) {
 	td.addPrepareVote(td.consP, prop.Block().Hash(), h, r, tIndexY)
 
 	td.queryProposalTimeout(td.consP)
-	td.shouldPublishQueryProposal(t, td.consP, h)
+	td.shouldPublishQueryProposal(t, td.consP, h, r)
 
 	// Proposal is received now
 	td.consP.SetProposal(prop)

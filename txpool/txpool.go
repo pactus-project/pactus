@@ -74,7 +74,7 @@ func (p *txPool) AppendTx(trx *tx.Tx) error {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	return p.doAppendTx(trx)
+	return p.appendTx(trx)
 }
 
 // AppendTxAndBroadcast validates the transaction, add it into the transaction pool
@@ -83,7 +83,7 @@ func (p *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	if err := p.doAppendTx(trx); err != nil {
+	if err := p.appendTx(trx); err != nil {
 		return err
 	}
 
@@ -94,7 +94,7 @@ func (p *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	return nil
 }
 
-func (p *txPool) doAppendTx(trx *tx.Tx) error {
+func (p *txPool) appendTx(trx *tx.Tx) error {
 	payloadType := trx.Payload().Type()
 	payloadPool := p.pools[payloadType]
 	if payloadPool.list.Has(trx.ID()) {

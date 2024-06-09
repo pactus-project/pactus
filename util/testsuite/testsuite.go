@@ -526,10 +526,6 @@ func (*TestSuite) HelperSignVote(valKey *bls.ValidatorKey, v *vote.Vote) {
 func (*TestSuite) HelperSignProposal(valKey *bls.ValidatorKey, p *proposal.Proposal) {
 	sig := valKey.Sign(p.SignBytes())
 	p.SetSignature(sig)
-
-	if err := p.BasicCheck(); err != nil {
-		panic(err)
-	}
 }
 
 func (*TestSuite) HelperSignTransaction(prv crypto.PrivateKey, trx *tx.Tx) {

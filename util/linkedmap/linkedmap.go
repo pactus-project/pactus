@@ -93,7 +93,7 @@ func (lm *LinkedMap[K, V]) TailNode() *ll.Element[Pair[K, V]] {
 }
 
 func (lm *LinkedMap[K, V]) RemoveTail() {
-	lm.doRemove(lm.list.Tail, lm.list.Tail.Data.Key)
+	lm.remove(lm.list.Tail)
 }
 
 // HeadNode returns the LinkNode at the beginning (head) of the LinkedMap.
@@ -107,25 +107,24 @@ func (lm *LinkedMap[K, V]) HeadNode() *ll.Element[Pair[K, V]] {
 }
 
 func (lm *LinkedMap[K, V]) RemoveHead() {
-	lm.doRemove(lm.list.Head, lm.list.Head.Data.Key)
+	lm.remove(lm.list.Head)
 }
 
 // Remove removes the key-value pair with the specified key from the LinkedMap.
 // It returns true if the key was found and removed, otherwise false.
 func (lm *LinkedMap[K, V]) Remove(key K) bool {
-	ln, found := lm.hashmap[key]
+	element, found := lm.hashmap[key]
 	if found {
-		lm.list.Delete(ln)
-		delete(lm.hashmap, ln.Data.Key)
+		lm.remove(element)
 	}
 
 	return found
 }
 
-// doRemove removes the key-value pair with the specified key from the LinkedMap and LinkedList.
-func (lm *LinkedMap[K, V]) doRemove(element *ll.Element[Pair[K, V]], key K) {
+// remove removes the specified element pair from the LinkedMap.
+func (lm *LinkedMap[K, V]) remove(element *ll.Element[Pair[K, V]]) {
 	lm.list.Delete(element)
-	delete(lm.hashmap, key)
+	delete(lm.hashmap, element.Data.Key)
 }
 
 // Empty checks if the LinkedMap is empty (contains no key-value pairs).

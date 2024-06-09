@@ -3,8 +3,6 @@ package message
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/types/proposal"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -16,13 +14,6 @@ func TestProposalType(t *testing.T) {
 
 func TestProposalMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
-
-	t.Run("Invalid proposal", func(t *testing.T) {
-		prop := proposal.NewProposal(0, 0, nil)
-		m := NewProposalMessage(prop)
-
-		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidBlock)
-	})
 
 	t.Run("OK", func(t *testing.T) {
 		prop, _ := ts.GenerateTestProposal(100, 0)

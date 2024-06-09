@@ -15,6 +15,15 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 	td.consMgr.AddVote(v1)
 	pid := td.RandPeerID()
 
+	t.Run("doesn't have active validator", func(t *testing.T) {
+		msg := message.NewQueryVotesMessage(consensusHeight, 1, td.RandValAddress())
+		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+
+		td.shouldNotPublishMessageWithThisType(t, message.TypeVote)
+	})
+
+	td.consMocks[0].Active = true
+
 	t.Run("should respond to the query votes message", func(t *testing.T) {
 		msg := message.NewQueryVotesMessage(consensusHeight, 1, td.RandValAddress())
 		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))

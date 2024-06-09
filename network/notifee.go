@@ -99,7 +99,7 @@ func (s *NotifeeService) Connected(_ lp2pnetwork.Network, conn lp2pnetwork.Conn)
 	pid := conn.RemotePeer()
 	s.logger.Info("connected to peer", "pid", pid, "direction", conn.Stat().Direction, "addr", conn.RemoteMultiaddr())
 
-	s.peerMgr.PeerConnected(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
+	s.peerMgr.SetPeerConnected(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
 	s.sendConnectEvent(pid, conn.RemoteMultiaddr(), conn.Stat().Direction)
 }
 
@@ -107,7 +107,7 @@ func (s *NotifeeService) Disconnected(_ lp2pnetwork.Network, conn lp2pnetwork.Co
 	pid := conn.RemotePeer()
 	s.logger.Info("disconnected from peer", "pid", pid)
 
-	s.peerMgr.PeerDisconnected(pid)
+	s.peerMgr.SetPeerDisconnected(pid)
 	s.sendDisconnectEvent(pid)
 }
 
