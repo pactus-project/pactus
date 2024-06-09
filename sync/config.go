@@ -39,8 +39,8 @@ func DefaultConfig() *Config {
 }
 
 // BasicCheck performs basic checks on the configuration.
-func (*Config) BasicCheck() error {
-	return nil
+func (conf *Config) BasicCheck() error {
+	return conf.Firewall.BasicCheck()
 }
 
 func (conf *Config) CacheSize() int {

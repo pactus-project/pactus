@@ -93,9 +93,9 @@
 
   # `sync.firewall` contains configuration options for the sync firewall.
   [sync.firewall]
-    # `enable` indicates whether the firewall should be enabled or not.
-    # Default is `false`.
-    enable = false
+    # `banned_nets` contains the list of IPs and subnets that should be banned.
+    # Any incoming and outgoing connections to banned addresses will be terminated.
+    banned_nets = []
 
 # `tx_pool` contains configuration options for the transaction pool module.
 [tx_pool]
