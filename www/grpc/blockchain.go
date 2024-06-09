@@ -23,7 +23,7 @@ func newBlockchainServer(server *Server) *blockchainServer {
 	}
 }
 
-func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
+func (s *blockchainServer) GetBlockchainInfo(ctx context.Context,
 	_ *pactus.GetBlockchainInfoRequest,
 ) (*pactus.GetBlockchainInfoResponse, error) {
 	vals := s.state.CommitteeValidators()

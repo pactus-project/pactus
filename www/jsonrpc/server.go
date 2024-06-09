@@ -48,15 +48,10 @@ func (s *Server) StartServer(grpcServer string) error {
 
 	s.grpcClient = grpcConn
 
-	blockchain := pactus.NewBlockchainClient(grpcConn)
-	network := pactus.NewNetworkClient(grpcConn)
-	transaction := pactus.NewTransactionClient(grpcConn)
-	wallet := pactus.NewWalletClient(grpcConn)
-
-	blockchainService := pactus.NewBlockchainJsonRpcService(blockchain)
-	networkService := pactus.NewNetworkJsonRpcService(network)
-	transactionService := pactus.NewTransactionJsonRpcService(transaction)
-	walletService := pactus.NewWalletJsonRpcService(wallet)
+	blockchainService := pactus.RegisterBlockchainJsonRpcService(grpcConn)
+	networkService := pactus.RegisterNetworkJsonRpcService(grpcConn)
+	transactionService := pactus.RegisterTransactionJsonRpcService(grpcConn)
+	walletService := pactus.RegisterWalletJsonRpcService(grpcConn)
 
 	server := jrpc.NewServer()
 	server.RegisterServices(blockchainService, networkService, transactionService, walletService)

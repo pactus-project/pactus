@@ -12,6 +12,8 @@ import (
 	"context"
 	"encoding/json"
 
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -19,9 +21,16 @@ type NetworkJsonRpcService struct {
 	client NetworkClient
 }
 
-func NewNetworkJsonRpcService(client NetworkClient) *NetworkJsonRpcService {
+type paramsAndHeadersNetwork struct {
+	Headers metadata.MD     `json:"headers,omitempty"`
+	Params  json.RawMessage `json:"params"`
+}
+
+// RegisterNetworkJsonRpcService register the grpc client Network for json-rpc.
+// The handlers forward requests to the grpc endpoint over "conn".
+func RegisterNetworkJsonRpcService(conn *grpc.ClientConn) *NetworkJsonRpcService {
 	return &NetworkJsonRpcService{
-		client: client,
+		client: NewNetworkClient(conn),
 	}
 }
 
@@ -30,20 +39,36 @@ func (s *NetworkJsonRpcService) Methods() map[string]func(ctx context.Context, m
 
 		"pactus.network.get_network_info": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetNetworkInfoRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersNetwork
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetNetworkInfo(ctx, req)
+
+			return s.client.GetNetworkInfo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.network.get_node_info": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetNodeInfoRequest)
-			err := protojson.Unmarshal(data, req)
+
+			var jrpcData paramsAndHeadersNetwork
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
 			if err != nil {
 				return nil, err
 			}
-			return s.client.GetNodeInfo(ctx, req)
+
+			return s.client.GetNodeInfo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 	}
 }
