@@ -67,6 +67,8 @@ func (c *Checker) Start() {
 					"The node is out of sync with the network time",
 					"threshold", c.threshold,
 					"offset", offset,
+					"threshold(secs)", c.threshold.Seconds(),
+					"offset(secs)", offset.Seconds(),
 				)
 			}
 		}
