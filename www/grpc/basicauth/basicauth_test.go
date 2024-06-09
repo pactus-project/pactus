@@ -20,12 +20,12 @@ func TestMakeCredentials(t *testing.T) {
 	// Iterate over test cases
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("Username: %s, Password: %s", tc.username, tc.password), func(t *testing.T) {
-			// Call BasicAuth function
+			// Call basicAuth function
 			result := EncodeBasicAuth(tc.username, tc.password)
 
 			// Check if the result matches the expected output
 			if result != tc.expected {
-				t.Errorf("BasicAuth(%s, %s) = %s; want %s", tc.username, tc.password, result, tc.expected)
+				t.Errorf("basicAuth(%s, %s) = %s; want %s", tc.username, tc.password, result, tc.expected)
 			}
 		})
 	}
