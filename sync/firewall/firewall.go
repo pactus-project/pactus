@@ -2,7 +2,6 @@ package firewall
 
 import (
 	"bytes"
-	_ "embed"
 	"io"
 
 	"github.com/multiformats/go-multiaddr"
@@ -30,8 +29,7 @@ type Firewall struct {
 func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st state.Facade,
 	log *logger.SubLogger,
 ) (*Firewall, error) {
-	blacklisted := conf.GetBlackListAddresses()
-	blocker, err := ipblocker.New(blacklisted)
+	blocker, err := ipblocker.New(conf.BannedNets)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +59,8 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
 	return bdl
 }
 
-func (f *Firewall) IsBlackListAddress(remoteAddr string) bool {
+// IsBannedAddress checks if the remote IP address is banned.
+func (f *Firewall) IsBannedAddress(remoteAddr string) bool {
 	ip, err := f.getIPFromMultiAddress(remoteAddr)
 	if err != nil {
 		f.logger.Warn("firewall: unable to parse remote address", "err", err, "addr", remoteAddr)
@@ -69,7 +68,7 @@ func (f *Firewall) IsBlackListAddress(remoteAddr string) bool {
 		return false
 	}
 
-	return f.ipBlocker.IsBlocked(ip)
+	return f.ipBlocker.IsBanned(ip)
 }
 
 func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
@@ -162,7 +161,7 @@ func (f *Firewall) closeConnection(pid peer.ID) {
 	f.network.CloseConnection(pid)
 }
 
-func (f *Firewall) getIPFromMultiAddress(address string) (string, error) {
+func (*Firewall) getIPFromMultiAddress(address string) (string, error) {
 	addr, err := multiaddr.NewMultiaddr(address)
 	if err != nil {
 		return "", err

@@ -232,7 +232,7 @@ func TestStop(t *testing.T) {
 
 func TestConnectEvent(t *testing.T) {
 	conf := testConfig()
-	conf.Firewall.BlackListAddresses = []string{
+	conf.Firewall.BannedNets = []string{
 		"84.247.0.0/24",
 		"115.193.0.0/16",
 		"240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/64",
@@ -260,7 +260,7 @@ func TestConnectEvent(t *testing.T) {
 	p1 := td.sync.peerSet.GetPeer(pid)
 	assert.Equal(t, status.StatusConnected, p1.Status)
 
-	// Receiving connect event for the blacklisted address
+	// Receiving connect event for the banned address
 	pid = td.RandPeerID()
 	ce = &network.ConnectEvent{
 		PeerID:        pid,
@@ -274,7 +274,7 @@ func TestConnectEvent(t *testing.T) {
 			return false
 		}
 
-		isBlocked := td.sync.firewall.IsBlackListAddress(p.Address)
+		isBlocked := td.sync.firewall.IsBannedAddress(p.Address)
 
 		if isBlocked {
 			p.Status = status.StatusBanned
