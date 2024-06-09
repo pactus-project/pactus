@@ -75,7 +75,7 @@ func ConnectAsync(ctx context.Context, h lp2phost.Host, addrInfo lp2ppeer.AddrIn
 		err := ConnectSync(ctx, h, addrInfo)
 		if log != nil {
 			if err != nil {
-				log.Warn("connection failed", "addr", addrInfo.Addrs, "err", err)
+				log.Info("connection failed", "addr", addrInfo.Addrs, "err", err)
 			} else {
 				log.Debug("connection successful", "addr", addrInfo.Addrs)
 			}
