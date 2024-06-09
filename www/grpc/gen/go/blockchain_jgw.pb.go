@@ -17,7 +17,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type BlockchainJsonRpcService struct {
+type BlockchainJsonRPC struct {
 	client BlockchainClient
 }
 
@@ -26,15 +26,15 @@ type paramsAndHeadersBlockchain struct {
 	Params  json.RawMessage `json:"params"`
 }
 
-// RegisterBlockchainJsonRpcService register the grpc client Blockchain for json-rpc.
+// RegisterBlockchainJsonRPC register the grpc client Blockchain for json-rpc.
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterBlockchainJsonRpcService(conn *grpc.ClientConn) *BlockchainJsonRpcService {
-	return &BlockchainJsonRpcService{
+func RegisterBlockchainJsonRPC(conn *grpc.ClientConn) *BlockchainJsonRPC {
+	return &BlockchainJsonRPC{
 		client: NewBlockchainClient(conn),
 	}
 }
 
-func (s *BlockchainJsonRpcService) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
+func (s *BlockchainJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (any, error){
 
 		"pactus.blockchain.get_block": func(ctx context.Context, data json.RawMessage) (any, error) {

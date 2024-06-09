@@ -17,7 +17,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type TransactionJsonRpcService struct {
+type TransactionJsonRPC struct {
 	client TransactionClient
 }
 
@@ -26,15 +26,15 @@ type paramsAndHeadersTransaction struct {
 	Params  json.RawMessage `json:"params"`
 }
 
-// RegisterTransactionJsonRpcService register the grpc client Transaction for json-rpc.
+// RegisterTransactionJsonRPC register the grpc client Transaction for json-rpc.
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterTransactionJsonRpcService(conn *grpc.ClientConn) *TransactionJsonRpcService {
-	return &TransactionJsonRpcService{
+func RegisterTransactionJsonRPC(conn *grpc.ClientConn) *TransactionJsonRPC {
+	return &TransactionJsonRPC{
 		client: NewTransactionClient(conn),
 	}
 }
 
-func (s *TransactionJsonRpcService) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
+func (s *TransactionJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (any, error){
 
 		"pactus.transaction.get_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {

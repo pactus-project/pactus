@@ -17,7 +17,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type NetworkJsonRpcService struct {
+type NetworkJsonRPC struct {
 	client NetworkClient
 }
 
@@ -26,15 +26,15 @@ type paramsAndHeadersNetwork struct {
 	Params  json.RawMessage `json:"params"`
 }
 
-// RegisterNetworkJsonRpcService register the grpc client Network for json-rpc.
+// RegisterNetworkJsonRPC register the grpc client Network for json-rpc.
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterNetworkJsonRpcService(conn *grpc.ClientConn) *NetworkJsonRpcService {
-	return &NetworkJsonRpcService{
+func RegisterNetworkJsonRPC(conn *grpc.ClientConn) *NetworkJsonRPC {
+	return &NetworkJsonRPC{
 		client: NewNetworkClient(conn),
 	}
 }
 
-func (s *NetworkJsonRpcService) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
+func (s *NetworkJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (any, error){
 
 		"pactus.network.get_network_info": func(ctx context.Context, data json.RawMessage) (any, error) {

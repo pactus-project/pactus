@@ -17,7 +17,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type WalletJsonRpcService struct {
+type WalletJsonRPC struct {
 	client WalletClient
 }
 
@@ -26,15 +26,15 @@ type paramsAndHeadersWallet struct {
 	Params  json.RawMessage `json:"params"`
 }
 
-// RegisterWalletJsonRpcService register the grpc client Wallet for json-rpc.
+// RegisterWalletJsonRPC register the grpc client Wallet for json-rpc.
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterWalletJsonRpcService(conn *grpc.ClientConn) *WalletJsonRpcService {
-	return &WalletJsonRpcService{
+func RegisterWalletJsonRPC(conn *grpc.ClientConn) *WalletJsonRPC {
+	return &WalletJsonRPC{
 		client: NewWalletClient(conn),
 	}
 }
 
-func (s *WalletJsonRpcService) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
+func (s *WalletJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (any, error){
 
 		"pactus.wallet.create_wallet": func(ctx context.Context, data json.RawMessage) (any, error) {
