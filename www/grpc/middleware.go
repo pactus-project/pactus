@@ -6,7 +6,6 @@ import (
 
 	rec "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/pactus-project/pactus/util/htpasswd"
-	"github.com/pactus-project/pactus/util/logger"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -29,11 +28,11 @@ func BasicAuth(storedCredential string) grpc.UnaryServerInterceptor {
 	}
 }
 
-func Recovery(log *logger.SubLogger) grpc.UnaryServerInterceptor {
+func (s *Server) Recovery() grpc.UnaryServerInterceptor {
 	recovery := func(p any) (err error) {
 		err = status.Errorf(codes.Unknown, "%v", p)
 		stackTrace := debug.Stack()
-		log.Error(
+		s.logger.Error(
 			"recovery panic triggered in grpc server",
 			"error", err,
 			"stacktrace", string(stackTrace),
