@@ -142,15 +142,21 @@ func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 	tm.addRowString("Moniker", res.Moniker)
 	tm.addRowTime("Started at", int64(res.StartedAt))
 	tm.addRowString("Reachability", res.Reachability)
+	tm.addRowFloat64("Clock Offset", res.ClockOffset)
 	tm.addRowInts("Services", res.Services)
 	tm.addRowStrings("Services Names", res.ServicesNames)
+
+	tm.addRowString("Connection Info", "---")
+	tm.addRowInt("  Total connections", int(res.ConnectionInfo.Connections))
+	tm.addRowInt("  Inbound connections", int(res.ConnectionInfo.InboundConnections))
+	tm.addRowInt("  Outbound connections", int(res.ConnectionInfo.OutboundConnections))
 
 	tm.addRowString("Protocols", "---")
 	for i, p := range res.Protocols {
 		tm.addRowString(fmt.Sprint(i), p)
 	}
 
-	tm.addRowString("LocalAddress", "---")
+	tm.addRowString("Local Addresses", "---")
 	for i, la := range res.LocalAddrs {
 		tm.addRowString(fmt.Sprint(i), la)
 	}
