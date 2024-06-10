@@ -14,7 +14,7 @@ func DefaultConfig() *Config {
 		ChangeProposerTimeout:    5 * time.Second,
 		ChangeProposerDelta:      5 * time.Second,
 		QueryVoteTimeout:         5 * time.Second,
-		MinimumAvailabilityScore: 0.9,
+		MinimumAvailabilityScore: 0.666667,
 	}
 }
 
