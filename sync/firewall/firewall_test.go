@@ -285,3 +285,33 @@ func TestParseP2PAddr(t *testing.T) {
 		})
 	}
 }
+
+func TestAllowBlockRequest(t *testing.T) {
+	conf := DefaultConfig()
+	conf.RateLimit.BlockTopic = 1
+
+	td := setup(t, conf)
+
+	assert.True(t, td.firewall.AllowBlockRequest())
+	assert.False(t, td.firewall.AllowBlockRequest())
+}
+
+func TestAllowTransactionRequest(t *testing.T) {
+	conf := DefaultConfig()
+	conf.RateLimit.TransactionTopic = 1
+
+	td := setup(t, conf)
+
+	assert.True(t, td.firewall.AllowTransactionRequest())
+	assert.False(t, td.firewall.AllowTransactionRequest())
+}
+
+func TestAllowConsensusRequest(t *testing.T) {
+	conf := DefaultConfig()
+	conf.RateLimit.ConsensusTopic = 1
+
+	td := setup(t, conf)
+
+	assert.True(t, td.firewall.AllowConsensusRequest())
+	assert.False(t, td.firewall.AllowConsensusRequest())
+}
