@@ -95,7 +95,7 @@ func (*helloHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 
 func (handler *helloHandler) acknowledge(msg *message.HelloAckMessage, to peer.ID) {
 	if msg.ResponseCode == message.ResponseCodeRejected {
-		handler.logger.Debug("rejecting hello message", "msg", msg,
+		handler.logger.Info("rejecting hello message", "msg", msg,
 			"to", to, "reason", msg.Reason)
 
 		handler.sendTo(msg, to)

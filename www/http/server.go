@@ -248,6 +248,10 @@ func (t *tableMaker) addRowPower(key string, power int64) {
 		key, amt.String())
 }
 
+func (t *tableMaker) addRowFloat64(key string, val float64) {
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%v</td></tr>", key, val)
+}
+
 func (t *tableMaker) addRowInt(key string, val int) {
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%d</td></tr>", key, val)
 }
