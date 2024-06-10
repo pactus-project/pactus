@@ -72,7 +72,7 @@ func (s *Server) startListening(listener net.Listener) error {
 		opts = append(opts, BasicAuth(s.config.BasicAuth))
 	}
 
-	opts = append(opts, Recovery())
+	opts = append(opts, s.Recovery())
 
 	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(opts...))
 

@@ -72,7 +72,9 @@ func TestBasicAuth(t *testing.T) {
 }
 
 func TestGrpcRecovery(t *testing.T) {
-	interceptor := Recovery()
+	s := setup(t, nil)
+
+	interceptor := s.server.Recovery()
 
 	_, err := interceptor(context.Background(), nil, &grpc.UnaryServerInfo{}, mockUnaryPanicHandler)
 	if status.Code(err) != codes.Unknown {
