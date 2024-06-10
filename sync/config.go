@@ -32,8 +32,8 @@ func DefaultConfig() *Config {
 		Firewall:            firewall.DefaultConfig(),
 		LatestSupportingVer: version.Version{
 			Major: 1,
-			Minor: 8,
-			Patch: 0,
+			Minor: 1,
+			Patch: 8,
 		},
 	}
 }
