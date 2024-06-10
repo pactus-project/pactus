@@ -3,6 +3,7 @@ package firewall
 import (
 	"bytes"
 	"io"
+	"time"
 
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/genesis"
@@ -14,16 +15,20 @@ import (
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/ipblocker"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/ratelimit"
 )
 
 // Firewall check packets before passing them to sync module.
 type Firewall struct {
-	config    *Config
-	network   network.Network
-	peerSet   *peerset.PeerSet
-	state     state.Facade
-	ipBlocker *ipblocker.IPBlocker
-	logger    *logger.SubLogger
+	config               *Config
+	network              network.Network
+	peerSet              *peerset.PeerSet
+	state                state.Facade
+	ipBlocker            *ipblocker.IPBlocker
+	blockRateLimit       *ratelimit.RateLimit
+	transactionRateLimit *ratelimit.RateLimit
+	consensusRateLimit   *ratelimit.RateLimit
+	logger               *logger.SubLogger
 }
 
 func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st state.Facade,
@@ -34,13 +39,20 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 		return nil, err
 	}
 
+	blockRateLimit := ratelimit.NewRateLimit(conf.RateLimit.BlockTopic, time.Second)
+	transactionRateLimit := ratelimit.NewRateLimit(conf.RateLimit.TransactionTopic, time.Second)
+	consensusRateLimit := ratelimit.NewRateLimit(conf.RateLimit.ConsensusTopic, time.Second)
+
 	return &Firewall{
-		config:    conf,
-		network:   net,
-		peerSet:   peerSet,
-		state:     st,
-		ipBlocker: blocker,
-		logger:    log,
+		config:               conf,
+		network:              net,
+		peerSet:              peerSet,
+		state:                st,
+		ipBlocker:            blocker,
+		blockRateLimit:       blockRateLimit,
+		transactionRateLimit: transactionRateLimit,
+		consensusRateLimit:   consensusRateLimit,
+		logger:               log,
 	}, nil
 }
 
@@ -183,4 +195,16 @@ func (*Firewall) getIPFromMultiAddress(address string) (string, error) {
 	}
 
 	return ip, nil
+}
+
+func (f *Firewall) AllowBlockRequest() bool {
+	return f.blockRateLimit.AllowRequest()
+}
+
+func (f *Firewall) AllowTransactionRequest() bool {
+	return f.transactionRateLimit.AllowRequest()
+}
+
+func (f *Firewall) AllowConsensusRequest() bool {
+	return f.consensusRateLimit.AllowRequest()
 }

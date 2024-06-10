@@ -4,13 +4,25 @@ import (
 	"net"
 )
 
+type RateLimit struct {
+	BlockTopic       int `toml:"block_topic"`
+	TransactionTopic int `toml:"transaction_topic"`
+	ConsensusTopic   int `toml:"consensus_topic"`
+}
+
 type Config struct {
-	BannedNets []string `toml:"banned_nets"`
+	BannedNets []string  `toml:"banned_nets"`
+	RateLimit  RateLimit `toml:"rate_limit"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
 		BannedNets: make([]string, 0),
+		RateLimit: RateLimit{
+			BlockTopic:       0,
+			TransactionTopic: 5,
+			ConsensusTopic:   0,
+		},
 	}
 }
 

@@ -188,6 +188,8 @@ func (g *gossipService) joinTopic(topicID TopicID, sp ShouldPropagate) (*lp2pps.
 				TopicID: topicID,
 			}
 			if !sp(msg) {
+				g.logger.Debug("message ignored", "from", peerId, "topic", topicID)
+
 				// Consume the message first
 				g.onReceiveMessage(m)
 
