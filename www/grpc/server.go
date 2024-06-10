@@ -72,6 +72,8 @@ func (s *Server) startListening(listener net.Listener) error {
 		opts = append(opts, BasicAuth(s.config.BasicAuth))
 	}
 
+	opts = append(opts, Recovery())
+
 	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(opts...))
 
 	blockchainServer := newBlockchainServer(s)

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 
+	ret "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pacviewer/jrpc-gateway/jrpc"
@@ -38,9 +39,14 @@ func (s *Server) StartServer(grpcServer string) error {
 		return nil
 	}
 
+	dialOpts := make([]grpc.DialOption, 0)
+	dialOpts = append(dialOpts,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(ret.UnaryClientInterceptor()),
+	)
 	grpcConn, err := grpc.NewClient(
 		grpcServer,
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		dialOpts...,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to dial server: %w", err)

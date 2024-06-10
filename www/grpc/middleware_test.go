@@ -16,6 +16,10 @@ func mockUnaryHandler(_ context.Context, _ any) (any, error) {
 	return "response", nil
 }
 
+func mockUnaryPanicHandler(_ context.Context, _ any) (any, error) {
+	panic("panic happen!!!")
+}
+
 func TestBasicAuth(t *testing.T) {
 	auth := "Basic " + base64.StdEncoding.EncodeToString([]byte("user:password"))
 	invalidAuth := "Basic " + base64.StdEncoding.EncodeToString([]byte("invalid:invalid"))
@@ -64,5 +68,14 @@ func TestBasicAuth(t *testing.T) {
 				t.Errorf("expected error code %v, got %v", want, got)
 			}
 		})
+	}
+}
+
+func TestGrpcRecovery(t *testing.T) {
+	interceptor := Recovery()
+
+	_, err := interceptor(context.Background(), nil, &grpc.UnaryServerInfo{}, mockUnaryPanicHandler)
+	if status.Code(err) != codes.Unknown {
+		t.Errorf("expected error code %v, got %v", codes.Unknown, err)
 	}
 }
