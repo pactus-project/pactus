@@ -97,6 +97,20 @@
     # Any incoming and outgoing connections to banned addresses will be terminated.
     banned_nets = []
 
+    # `rate_limit` contains the rate limit configurations for network topics.
+    # The rate limit specifies the number of messages per second that are allowed.
+    # If set to zero, it allows all requests without any limit.`
+    [sync.firewall.rate_limit]
+
+      # `block_topic` specifies the rate limit for the block topic.
+      block_topic = 0
+
+      # `transaction_topic` specifies the rate limit for the transaction topic.
+      transaction_topic = 5
+
+      # `consensus_topic` specifies the rate limit for the consensus topic.
+      consensus_topic = 0
+
 # `tx_pool` contains configuration options for the transaction pool module.
 [tx_pool]
 
