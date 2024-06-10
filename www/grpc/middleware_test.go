@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"testing"
 
+	"github.com/pactus-project/pactus/util/logger"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -72,7 +73,8 @@ func TestBasicAuth(t *testing.T) {
 }
 
 func TestGrpcRecovery(t *testing.T) {
-	interceptor := Recovery()
+	l := logger.NewSubLogger("grpc", nil)
+	interceptor := Recovery(l)
 
 	_, err := interceptor(context.Background(), nil, &grpc.UnaryServerInfo{}, mockUnaryPanicHandler)
 	if status.Code(err) != codes.Unknown {
