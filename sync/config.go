@@ -33,7 +33,7 @@ func DefaultConfig() *Config {
 		LatestSupportingVer: version.Version{
 			Major: 1,
 			Minor: 1,
-			Patch: 0,
+			Patch: 8,
 		},
 	}
 }
