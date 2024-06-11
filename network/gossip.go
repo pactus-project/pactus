@@ -72,7 +72,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Even
 
 // Broadcast broadcasts a message with the specified topic ID to the network.
 func (g *gossipService) Broadcast(msg []byte, topicID TopicID) error {
-	g.logger.Trace("publishing new message", "topic", topicID)
+	g.logger.Debug("publishing new message", "topic", topicID)
 
 	switch topicID {
 	case TopicIDBlock:
