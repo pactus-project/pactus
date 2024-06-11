@@ -29,7 +29,7 @@ func (s *proposeState) decide() {
 	// TODO: write test for me
 	score := s.bcState.AvailabilityScore(proposer.Number())
 
-	// Based on PIP-19, if the Availability Score is less than 0.9,
+	// Based on PIP-19, if the Availability Score is less than the Minimum threshold,
 	// we initiate the Change-Proposer phase.
 	if score < s.config.MinimumAvailabilityScore {
 		s.logger.Info("availability score of proposer is low",
