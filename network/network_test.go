@@ -210,7 +210,7 @@ func TestNetwork(t *testing.T) {
 	time.Sleep(2 * time.Second)
 
 	t.Run("Supported Protocols", func(t *testing.T) {
-		fmt.Println(t.Name())
+		t.Log(t.Name())
 
 		require.EventuallyWithT(t, func(_ *assert.CollectT) {
 			protos := networkM.Protocols()
@@ -232,7 +232,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("all nodes have at least one connection to the bootstrap node B", func(t *testing.T) {
-		fmt.Println(t.Name())
+		t.Log(t.Name())
 
 		assert.EventuallyWithT(t, func(c *assert.CollectT) {
 			assert.GreaterOrEqual(c, networkP.NumConnectedPeers(), 1) // Connected to B, M, N, X
@@ -256,7 +256,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("Gossip: all nodes receive gossip messages", func(t *testing.T) {
-		fmt.Println(t.Name())
+		t.Log(t.Name())
 
 		msg := ts.RandBytes(64)
 
@@ -274,7 +274,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("only nodes subscribed to the consensus topic receive consensus gossip messages", func(t *testing.T) {
-		fmt.Println(t.Name())
+		t.Log(t.Name())
 
 		msg := ts.RandBytes(64)
 
@@ -291,7 +291,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node P (public) is directly accessible by nodes M and N (private behind NAT)", func(t *testing.T) {
-		fmt.Println(t.Name())
+		t.Log(t.Name())
 
 		require.NoError(t, networkM.host.Connect(networkM.ctx, *publicAddrInfo))
 
@@ -303,7 +303,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node P (public) is directly accessible by node X (private behind NAT, without relay)", func(t *testing.T) {
-		fmt.Println(t.Name())
+		t.Log(t.Name())
 
 		require.NoError(t, networkX.host.Connect(networkX.ctx, *publicAddrInfo))
 
@@ -315,7 +315,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node P (public) is directly accessible by node B (bootstrap)", func(t *testing.T) {
-		fmt.Println(t.Name())
+		t.Log(t.Name())
 
 		msgB := ts.RandBytes(64)
 
@@ -326,7 +326,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("Ignore broadcasting identical messages", func(t *testing.T) {
-		fmt.Println(t.Name())
+		t.Log(t.Name())
 
 		msg := ts.RandBytes(64)
 
@@ -343,7 +343,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node X (private, not connected via relay) is not accessible by node M", func(t *testing.T) {
-		fmt.Println(t.Name())
+		t.Log(t.Name())
 
 		msgM := ts.RandBytes(64)
 		require.Error(t, networkM.SendTo(msgM, networkX.SelfID()))
@@ -358,7 +358,7 @@ func TestNetwork(t *testing.T) {
 	// })
 
 	t.Run("closing connection", func(t *testing.T) {
-		fmt.Println(t.Name())
+		t.Log(t.Name())
 
 		msgB := ts.RandBytes(64)
 
@@ -370,7 +370,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("Reachability Status", func(t *testing.T) {
-		fmt.Println(t.Name())
+		t.Log(t.Name())
 
 		assert.Equal(t, networkP.ReachabilityStatus(), "Public")
 		assert.Equal(t, networkB.ReachabilityStatus(), "Public")
