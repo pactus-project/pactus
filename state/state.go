@@ -1,6 +1,7 @@
 package state
 
 import (
+	"bytes"
 	"fmt"
 	"sync"
 	"time"
@@ -110,11 +111,15 @@ func LoadOrNewState(
 		if err != nil {
 			return nil, err
 		}
-		blk, err := cb.ToBlock()
+		// This code decodes the block certificate from the block data
+		// without decoding the header and transactions.
+		r := bytes.NewReader(cb.Data[138:]) // Block header is 138 bytes
+		cert := new(certificate.BlockCertificate)
+		err = cert.Decode(r)
 		if err != nil {
 			return nil, err
 		}
-		scoreMgr.SetCertificate(blk.PrevCertificate())
+		scoreMgr.SetCertificate(cert)
 	}
 	st.scoreMgr = scoreMgr
 
