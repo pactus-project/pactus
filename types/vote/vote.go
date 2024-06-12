@@ -165,12 +165,12 @@ func (v *Vote) SetSignature(sig *bls.Signature) {
 	v.data.Signature = sig
 }
 
-// MarshalCBOR marshals the vote into CBOR format.
+// MarshalCBOR encodes the vote into CBOR format.
 func (v *Vote) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(v.data)
 }
 
-// UnmarshalCBOR unmarshals the vote from CBOR format.
+// UnmarshalCBOR decodes the vote from CBOR format.
 func (v *Vote) UnmarshalCBOR(bs []byte) error {
 	return cbor.Unmarshal(bs, &v.data)
 }

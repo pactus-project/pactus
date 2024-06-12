@@ -9,9 +9,9 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPublicKeyCBORMarshaling(t *testing.T) {
@@ -29,7 +29,10 @@ func TestPublicKeyCBORMarshaling(t *testing.T) {
 
 	inv, _ := hex.DecodeString(strings.Repeat("ff", bls.PublicKeySize))
 	data, _ := cbor.Marshal(inv)
-	assert.Error(t, pub2.UnmarshalCBOR(data))
+	assert.NoError(t, pub2.UnmarshalCBOR(data))
+
+	_, err = pub2.PointG2()
+	assert.Error(t, err)
 }
 
 func TestPublicKeyEqualsTo(t *testing.T) {
@@ -88,9 +91,12 @@ func TestNilPublicKey(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	pub := &bls.PublicKey{}
+	randSig := ts.RandBLSSignature()
 	assert.Error(t, pub.VerifyAddress(ts.RandAccAddress()))
+	assert.Error(t, pub.VerifyAddress(ts.RandValAddress()))
 	assert.Error(t, pub.Verify(nil, nil))
 	assert.Error(t, pub.Verify(nil, &bls.Signature{}))
+	assert.Error(t, pub.Verify(nil, randSig))
 }
 
 func TestNilSignature(t *testing.T) {
@@ -129,25 +135,7 @@ func TestPublicKeyBytes(t *testing.T) {
 			false, nil,
 		},
 		{
-			"compression flag must be set",
-			"public1pqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
-				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqjzu9w8",
-			false, nil,
-		},
-		{
-			"input string must be zero when infinity flag is set",
-			"public1pllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll" +
-				"llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllluhpuzyf",
-			false, nil,
-		},
-		{
-			"public key is zero",
-			"public1pcqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
-				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9",
-			false, nil,
-		},
-		{
-			"invalid hrp: xxx",
+			"invalid HRP: xxx",
 			"xxx1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjrvqc" +
 				"vf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5evslaq",
 			false, nil,
@@ -162,8 +150,13 @@ func TestPublicKeyBytes(t *testing.T) {
 			"public key should be 96 bytes, but it is 95 bytes",
 			"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
 				"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg73y98kl",
-			false,
-			nil,
+			false, nil,
+		},
+		{
+			"invalid public key type: 2",
+			"public1z372l5frmm5e7cn7ewfjdkx5t7y62kztqr82rtatat70cl8p8ng3rdzr02mzpwcfl6s2v26kry6mwg" +
+				"xpqy92ywx9wtff80mc9p3kr4cmhgekj048gavx2zdh78tsnh7eg5jzdw6s3et6c0dqyp22vslcgkukxh4l4",
+			false, nil,
 		},
 		{
 			"",
@@ -188,7 +181,51 @@ func TestPublicKeyBytes(t *testing.T) {
 			assert.Equal(t, pub.Bytes(), test.result, "test %v: invalid bytes", no)
 			assert.Equal(t, pub.String(), test.encoded, "test %v: invalid encoded", no)
 		} else {
-			assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
+			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
+		}
+	}
+}
+
+func TestPointG2(t *testing.T) {
+	tests := []struct {
+		errMsg  string
+		encoded string
+		valid   bool
+	}{
+		{
+			"compression flag must be set",
+			"public1pqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
+				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqjzu9w8",
+			false,
+		},
+		{
+			"input string must be zero when infinity flag is set",
+			"public1pllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll" +
+				"llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllluhpuzyf",
+			false,
+		},
+		{
+			"public key is zero",
+			"public1pcqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
+				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9",
+			false,
+		},
+		{
+			"",
+			"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
+				"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx47a",
+			true,
+		},
+	}
+
+	for no, test := range tests {
+		pub, err := bls.PublicKeyFromString(test.encoded)
+		require.NoError(t, err)
+
+		_, err = pub.PointG2()
+		if test.valid {
+			assert.NoError(t, err, "test %v: unexpected error", no)
+		} else {
 			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
 		}
 	}

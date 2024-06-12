@@ -9,9 +9,9 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSignatureCBORMarshaling(t *testing.T) {
@@ -30,7 +30,10 @@ func TestSignatureCBORMarshaling(t *testing.T) {
 
 	inv, _ := hex.DecodeString(strings.Repeat("ff", bls.SignatureSize))
 	data, _ := cbor.Marshal(inv)
-	assert.Error(t, sig2.UnmarshalCBOR(data))
+	assert.NoError(t, sig2.UnmarshalCBOR(data))
+
+	_, err = sig2.PointG1()
+	assert.Error(t, err)
 }
 
 func TestSignatureEqualsTo(t *testing.T) {
@@ -110,21 +113,6 @@ func TestSignatureBytes(t *testing.T) {
 			false, nil,
 		},
 		{
-			"compression flag must be set",
-			"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-			false, nil,
-		},
-		{
-			"input string must be zero when infinity flag is set",
-			"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-			false, nil,
-		},
-		{
-			"signature is zero",
-			"c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-			false, nil,
-		},
-		{
 			"",
 			"ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792",
 			true,
@@ -143,7 +131,47 @@ func TestSignatureBytes(t *testing.T) {
 			assert.Equal(t, sig.Bytes(), test.bytes, "test %v: invalid bytes", no)
 			assert.Equal(t, sig.String(), test.encoded, "test %v: invalid encode", no)
 		} else {
-			assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature, "test %v: invalid error code", no)
+			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
+		}
+	}
+}
+
+func TestPointG1(t *testing.T) {
+	tests := []struct {
+		errMsg  string
+		encoded string
+		valid   bool
+	}{
+		{
+			"compression flag must be set",
+			"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+			false,
+		},
+		{
+			"input string must be zero when infinity flag is set",
+			"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+			false,
+		},
+		{
+			"signature is zero",
+			"c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+			false,
+		},
+		{
+			"",
+			"ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792",
+			true,
+		},
+	}
+
+	for no, test := range tests {
+		sig, err := bls.SignatureFromString(test.encoded)
+		require.NoError(t, err)
+
+		_, err = sig.PointG1()
+		if test.valid {
+			assert.NoError(t, err, "test %v: unexpected error", no)
+		} else {
 			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
 		}
 	}
