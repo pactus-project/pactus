@@ -25,6 +25,7 @@ func TestSigning(t *testing.T) {
 	sig1 := prv.Sign(msg)
 	assert.Equal(t, sig1.Bytes(), sig.Bytes())
 	assert.NoError(t, pub.Verify(msg, sig))
+	assert.Equal(t, prv.PublicKey(), pub)
 	assert.Equal(t, pub.ValidatorAddress(), addr)
 }
 
@@ -84,18 +85,18 @@ func TestAggregateFailed(t *testing.T) {
 	assert.Error(t, pub2.Verify(msg1, agg1))
 	assert.Error(t, pub3.Verify(msg1, agg1))
 
-	assert.Nil(t, pubAgg1.Verify(msg1, agg1))
-	assert.NotNil(t, pubAgg1.Verify(msg2, agg1))
-	assert.NotNil(t, pubAgg1.Verify(msg1, agg2))
-	assert.NotNil(t, pubAgg2.Verify(msg1, agg1))
-	assert.Nil(t, pubAgg2.Verify(msg1, agg2))
-	assert.NotNil(t, pubAgg2.Verify(msg2, agg2))
-	assert.NotNil(t, pubAgg1.Verify(msg1, agg3))
-	assert.NotNil(t, pubAgg1.Verify(msg2, agg3))
-	assert.NotNil(t, pubAgg1.Verify(msg1, agg4))
-	assert.NotNil(t, pubAgg3.Verify(msg1, agg1))
-	assert.Nil(t, pubAgg1.Verify(msg1, agg5))
-	assert.Nil(t, pubAgg4.Verify(msg1, agg1))
+	assert.NoError(t, pubAgg1.Verify(msg1, agg1))
+	assert.Error(t, pubAgg1.Verify(msg2, agg1))
+	assert.Error(t, pubAgg1.Verify(msg1, agg2))
+	assert.Error(t, pubAgg2.Verify(msg1, agg1))
+	assert.NoError(t, pubAgg2.Verify(msg1, agg2))
+	assert.Error(t, pubAgg2.Verify(msg2, agg2))
+	assert.Error(t, pubAgg1.Verify(msg1, agg3))
+	assert.Error(t, pubAgg1.Verify(msg2, agg3))
+	assert.Error(t, pubAgg1.Verify(msg1, agg4))
+	assert.Error(t, pubAgg3.Verify(msg1, agg1))
+	assert.NoError(t, pubAgg1.Verify(msg1, agg5))
+	assert.NoError(t, pubAgg4.Verify(msg1, agg1))
 }
 
 func TestAggregateOnlyOneSignature(t *testing.T) {
