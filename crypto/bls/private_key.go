@@ -28,13 +28,12 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 	// Decode the bech32m encoded private key.
 	hrp, typ, data, err := bech32m.DecodeToBase256WithTypeNoLimit(text)
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey, err.Error())
+		return nil, err
 	}
 
 	// Check if hrp is valid
 	if hrp != crypto.PrivateKeyHRP {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
-			"invalid hrp: %v", hrp)
+		return nil, crypto.InvalidHRPError(hrp)
 	}
 
 	if typ != crypto.SignatureTypeBLS {
@@ -136,18 +135,24 @@ func (prv *PrivateKey) SignNative(msg []byte) *Signature {
 	if err != nil {
 		panic(err)
 	}
-	s := g1.MulScalar(g1.New(), q, &prv.fr)
+	pointG1 := g1.MulScalar(g1.New(), q, &prv.fr)
+	data := g1.ToCompressed(pointG1)
 
-	return &Signature{pointG1: *s}
+	return &Signature{
+		data:    data,
+		pointG1: pointG1,
+	}
 }
 
 func (prv *PrivateKey) PublicKeyNative() *PublicKey {
 	g2 := bls12381.NewG2()
 
 	pointG2 := g2.MulScalar(g2.New(), g2.One(), &prv.fr)
+	data := g2.ToCompressed(pointG2)
 
 	return &PublicKey{
-		pointG2: *pointG2,
+		data:    data,
+		pointG2: pointG2,
 	}
 }
 

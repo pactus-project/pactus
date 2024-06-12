@@ -61,7 +61,7 @@ type _JustMainVoteConflict struct {
 	Just1Data []byte   `cbor:"4,keyasint"`
 }
 
-// MarshalCBOR marshals the cpVote into CBOR format.
+// MarshalCBOR encodes the cpVote into CBOR format.
 func (v *cpVote) MarshalCBOR() ([]byte, error) {
 	justData := []byte{}
 	if v.Just.Type() == JustTypeMainVoteConflict {
@@ -104,7 +104,7 @@ func (v *cpVote) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(msg)
 }
 
-// UnmarshalCBOR unmarshals the cpVote from CBOR format.
+// UnmarshalCBOR decodes the cpVote from CBOR format.
 func (v *cpVote) UnmarshalCBOR(bs []byte) error {
 	var _cp _cpVote
 	err := cbor.Unmarshal(bs, &_cp)

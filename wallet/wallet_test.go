@@ -473,7 +473,7 @@ func TestMakeBondTx(t *testing.T) {
 
 	t.Run("invalid public key", func(t *testing.T) {
 		_, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(), "invalid-pub-key", amt)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
+		assert.Error(t, err)
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {

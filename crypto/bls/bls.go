@@ -13,16 +13,26 @@ func SignatureAggregate(sigs ...*Signature) *Signature {
 		return nil
 	}
 	g1 := bls12381.NewG1()
-	aggPointG1 := sigs[0].pointG1
+	aggPointG1, err := sigs[0].PointG1()
+	if err != nil {
+		return nil
+	}
 	for i := 1; i < len(sigs); i++ {
+		s, err := sigs[i].PointG1()
+		if err != nil {
+			return nil
+		}
 		g1.Add(
 			&aggPointG1,
 			&aggPointG1,
-			&sigs[i].pointG1)
+			&s)
 	}
 
+	data := g1.ToCompressed(&aggPointG1)
+
 	return &Signature{
-		pointG1: aggPointG1,
+		data:    data,
+		pointG1: &aggPointG1,
 	}
 }
 
@@ -31,18 +41,22 @@ func PublicKeyAggregate(pubs ...*PublicKey) *PublicKey {
 		return nil
 	}
 	g2 := bls12381.NewG2()
-	aggPointG2 := pubs[0].pointG2
+	aggPointG2, err := pubs[0].PointG2()
+	if err != nil {
+		return nil
+	}
 	for i := 1; i < len(pubs); i++ {
-		if g2.IsZero(&pubs[i].pointG2) {
-			return nil
-		}
+		pointG2, _ := pubs[i].PointG2()
 		g2.Add(
 			&aggPointG2,
 			&aggPointG2,
-			&pubs[i].pointG2)
+			&pointG2)
 	}
 
+	data := g2.ToCompressed(&aggPointG2)
+
 	return &PublicKey{
-		pointG2: aggPointG2,
+		data:    data,
+		pointG2: &aggPointG2,
 	}
 }

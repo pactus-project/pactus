@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -56,7 +55,7 @@ func TestPrivateKeyToString(t *testing.T) {
 			false, nil,
 		},
 		{
-			"invalid hrp: xxx",
+			"invalid HRP: xxx",
 			"XXX1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQMUUMJT",
 			false, nil,
 		},
@@ -101,7 +100,6 @@ func TestPrivateKeyToString(t *testing.T) {
 			assert.Equal(t, prv.Bytes(), test.result, "test %v: invalid bytes", no)
 			assert.Equal(t, prv.String(), strings.ToUpper(test.encoded), "test %v: invalid encoded", no)
 		} else {
-			assert.Equal(t, errors.Code(err), errors.ErrInvalidPrivateKey, "test %v: invalid error code", no)
 			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
 		}
 	}
