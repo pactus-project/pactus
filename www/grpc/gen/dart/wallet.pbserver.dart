@@ -20,8 +20,6 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
   $async.Future<$3.RestoreWalletResponse> restoreWallet($pb.ServerContext ctx, $3.RestoreWalletRequest request);
   $async.Future<$3.LoadWalletResponse> loadWallet($pb.ServerContext ctx, $3.LoadWalletRequest request);
   $async.Future<$3.UnloadWalletResponse> unloadWallet($pb.ServerContext ctx, $3.UnloadWalletRequest request);
-  $async.Future<$3.LockWalletResponse> lockWallet($pb.ServerContext ctx, $3.LockWalletRequest request);
-  $async.Future<$3.UnlockWalletResponse> unlockWallet($pb.ServerContext ctx, $3.UnlockWalletRequest request);
   $async.Future<$3.GetTotalBalanceResponse> getTotalBalance($pb.ServerContext ctx, $3.GetTotalBalanceRequest request);
   $async.Future<$3.SignRawTransactionResponse> signRawTransaction($pb.ServerContext ctx, $3.SignRawTransactionRequest request);
   $async.Future<$3.GetValidatorAddressResponse> getValidatorAddress($pb.ServerContext ctx, $3.GetValidatorAddressRequest request);
@@ -34,8 +32,6 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       case 'RestoreWallet': return $3.RestoreWalletRequest();
       case 'LoadWallet': return $3.LoadWalletRequest();
       case 'UnloadWallet': return $3.UnloadWalletRequest();
-      case 'LockWallet': return $3.LockWalletRequest();
-      case 'UnlockWallet': return $3.UnlockWalletRequest();
       case 'GetTotalBalance': return $3.GetTotalBalanceRequest();
       case 'SignRawTransaction': return $3.SignRawTransactionRequest();
       case 'GetValidatorAddress': return $3.GetValidatorAddressRequest();
@@ -51,8 +47,6 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       case 'RestoreWallet': return this.restoreWallet(ctx, request as $3.RestoreWalletRequest);
       case 'LoadWallet': return this.loadWallet(ctx, request as $3.LoadWalletRequest);
       case 'UnloadWallet': return this.unloadWallet(ctx, request as $3.UnloadWalletRequest);
-      case 'LockWallet': return this.lockWallet(ctx, request as $3.LockWalletRequest);
-      case 'UnlockWallet': return this.unlockWallet(ctx, request as $3.UnlockWalletRequest);
       case 'GetTotalBalance': return this.getTotalBalance(ctx, request as $3.GetTotalBalanceRequest);
       case 'SignRawTransaction': return this.signRawTransaction(ctx, request as $3.SignRawTransactionRequest);
       case 'GetValidatorAddress': return this.getValidatorAddress(ctx, request as $3.GetValidatorAddressRequest);

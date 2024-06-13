@@ -504,14 +504,6 @@
                 </li>
               
                 <li>
-                  <a href="#pactus.LockWalletRequest"><span class="badge">M</span>LockWalletRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#pactus.LockWalletResponse"><span class="badge">M</span>LockWalletResponse</a>
-                </li>
-              
-                <li>
                   <a href="#pactus.RestoreWalletRequest"><span class="badge">M</span>RestoreWalletRequest</a>
                 </li>
               
@@ -533,14 +525,6 @@
               
                 <li>
                   <a href="#pactus.UnloadWalletResponse"><span class="badge">M</span>UnloadWalletResponse</a>
-                </li>
-              
-                <li>
-                  <a href="#pactus.UnlockWalletRequest"><span class="badge">M</span>UnlockWalletRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#pactus.UnlockWalletResponse"><span class="badge">M</span>UnlockWalletResponse</a>
                 </li>
               
               
@@ -3442,54 +3426,6 @@ address.</p></td>
 
         
       
-        <h3 id="pactus.LockWalletRequest">LockWalletRequest</h3>
-        <p>Request message for locking a currently loaded wallet.</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>wallet_name</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>Name of the wallet to lock. </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="pactus.LockWalletResponse">LockWalletResponse</h3>
-        <p>Response message containing the name of the locked wallet.</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>wallet_name</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>Name of the locked wallet. </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
         <h3 id="pactus.RestoreWalletRequest">RestoreWalletRequest</h3>
         <p>Request message for restoring an existing wallet.</p>
 
@@ -3669,68 +3605,6 @@ address.</p></td>
 
         
       
-        <h3 id="pactus.UnlockWalletRequest">UnlockWalletRequest</h3>
-        <p>Request message for unlocking a wallet.</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>wallet_name</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>Name of the wallet to unlock. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>password</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>Password for unlocking the wallet. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>timeout</td>
-                  <td><a href="#int32">int32</a></td>
-                  <td></td>
-                  <td><p>Timeout duration for the unlocked state. </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="pactus.UnlockWalletResponse">UnlockWalletResponse</h3>
-        <p>Response message containing the name of the unlocked wallet.</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>wallet_name</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>Name of the unlocked wallet. </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
 
       
         <h3 id="pactus.AddressType">AddressType</h3>
@@ -3800,22 +3674,6 @@ address.</p></td>
                 <td><a href="#pactus.UnloadWalletRequest">UnloadWalletRequest</a></td>
                 <td><a href="#pactus.UnloadWalletResponse">UnloadWalletResponse</a></td>
                 <td><p>UnloadWallet unloads a currently loaded wallet with the specified name.</p></td>
-              </tr>
-            
-              <tr>
-                <td>LockWallet</td>
-                <td><a href="#pactus.LockWalletRequest">LockWalletRequest</a></td>
-                <td><a href="#pactus.LockWalletResponse">LockWalletResponse</a></td>
-                <td><p>LockWallet locks a currently loaded wallet with the provided password and
-timeout.</p></td>
-              </tr>
-            
-              <tr>
-                <td>UnlockWallet</td>
-                <td><a href="#pactus.UnlockWalletRequest">UnlockWalletRequest</a></td>
-                <td><a href="#pactus.UnlockWalletResponse">UnlockWalletResponse</a></td>
-                <td><p>UnlockWallet unlocks a locked wallet with the provided password and
-timeout.</p></td>
               </tr>
             
               <tr>

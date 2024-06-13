@@ -88,16 +88,12 @@
     - [HistoryInfo](#pactus-HistoryInfo)
     - [LoadWalletRequest](#pactus-LoadWalletRequest)
     - [LoadWalletResponse](#pactus-LoadWalletResponse)
-    - [LockWalletRequest](#pactus-LockWalletRequest)
-    - [LockWalletResponse](#pactus-LockWalletResponse)
     - [RestoreWalletRequest](#pactus-RestoreWalletRequest)
     - [RestoreWalletResponse](#pactus-RestoreWalletResponse)
     - [SignRawTransactionRequest](#pactus-SignRawTransactionRequest)
     - [SignRawTransactionResponse](#pactus-SignRawTransactionResponse)
     - [UnloadWalletRequest](#pactus-UnloadWalletRequest)
     - [UnloadWalletResponse](#pactus-UnloadWalletResponse)
-    - [UnlockWalletRequest](#pactus-UnlockWalletRequest)
-    - [UnlockWalletResponse](#pactus-UnlockWalletResponse)
   
     - [AddressType](#pactus-AddressType)
   
@@ -1379,36 +1375,6 @@ Response message containing the name of the loaded wallet.
 
 
 
-<a name="pactus-LockWalletRequest"></a>
-
-### LockWalletRequest
-Request message for locking a currently loaded wallet.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| wallet_name | [string](#string) |  | Name of the wallet to lock. |
-
-
-
-
-
-
-<a name="pactus-LockWalletResponse"></a>
-
-### LockWalletResponse
-Response message containing the name of the locked wallet.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| wallet_name | [string](#string) |  | Name of the locked wallet. |
-
-
-
-
-
-
 <a name="pactus-RestoreWalletRequest"></a>
 
 ### RestoreWalletRequest
@@ -1503,38 +1469,6 @@ Response message containing the name of the unloaded wallet.
 
 
 
-
-<a name="pactus-UnlockWalletRequest"></a>
-
-### UnlockWalletRequest
-Request message for unlocking a wallet.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| wallet_name | [string](#string) |  | Name of the wallet to unlock. |
-| password | [string](#string) |  | Password for unlocking the wallet. |
-| timeout | [int32](#int32) |  | Timeout duration for the unlocked state. |
-
-
-
-
-
-
-<a name="pactus-UnlockWalletResponse"></a>
-
-### UnlockWalletResponse
-Response message containing the name of the unlocked wallet.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| wallet_name | [string](#string) |  | Name of the unlocked wallet. |
-
-
-
-
-
  
 
 
@@ -1566,8 +1500,6 @@ Define the Wallet service with various RPC methods for wallet management.
 | RestoreWallet | [RestoreWalletRequest](#pactus-RestoreWalletRequest) | [RestoreWalletResponse](#pactus-RestoreWalletResponse) | RestoreWallet restores an existing wallet with the given mnemonic. |
 | LoadWallet | [LoadWalletRequest](#pactus-LoadWalletRequest) | [LoadWalletResponse](#pactus-LoadWalletResponse) | LoadWallet loads an existing wallet with the given name. |
 | UnloadWallet | [UnloadWalletRequest](#pactus-UnloadWalletRequest) | [UnloadWalletResponse](#pactus-UnloadWalletResponse) | UnloadWallet unloads a currently loaded wallet with the specified name. |
-| LockWallet | [LockWalletRequest](#pactus-LockWalletRequest) | [LockWalletResponse](#pactus-LockWalletResponse) | LockWallet locks a currently loaded wallet with the provided password and timeout. |
-| UnlockWallet | [UnlockWalletRequest](#pactus-UnlockWalletRequest) | [UnlockWalletResponse](#pactus-UnlockWalletResponse) | UnlockWallet unlocks a locked wallet with the provided password and timeout. |
 | GetTotalBalance | [GetTotalBalanceRequest](#pactus-GetTotalBalanceRequest) | [GetTotalBalanceResponse](#pactus-GetTotalBalanceResponse) | GetTotalBalance returns the total available balance of the wallet. |
 | SignRawTransaction | [SignRawTransactionRequest](#pactus-SignRawTransactionRequest) | [SignRawTransactionResponse](#pactus-SignRawTransactionResponse) | SignRawTransaction signs a raw transaction for a specified wallet. |
 | GetValidatorAddress | [GetValidatorAddressRequest](#pactus-GetValidatorAddressRequest) | [GetValidatorAddressResponse](#pactus-GetValidatorAddressResponse) | GetValidatorAddress retrieves the validator address associated with a public key. |

@@ -95,12 +95,6 @@ Each PAC is equivalent to
 - [pactus.wallet.unload_wallet](#pactus.wallet.unload_wallet)
 
 
-- [pactus.wallet.lock_wallet](#pactus.wallet.lock_wallet)
-
-
-- [pactus.wallet.unlock_wallet](#pactus.wallet.unlock_wallet)
-
-
 - [pactus.wallet.get_total_balance](#pactus.wallet.get_total_balance)
 
 
@@ -902,54 +896,6 @@ pactus.wallet.unload_wallet unloads a currently loaded wallet with the specified
 ```json
 {
 	"wallet_name": "str"	// (string) Name of the unloaded wallet.
-}
-```
----
-
-
-<a id="pactus.wallet.lock_wallet"></a>
-
-## Method pactus.wallet.lock_wallet
-
-pactus.wallet.lock_wallet locks a currently loaded wallet with the provided password and
-timeout.
-
-### Parameters
-```json
-{
-	"wallet_name": "str"	// (string) Name of the wallet to lock.
-}
-```
-
-### Result
-```json
-{
-	"wallet_name": "str"	// (string) Name of the locked wallet.
-}
-```
----
-
-
-<a id="pactus.wallet.unlock_wallet"></a>
-
-## Method pactus.wallet.unlock_wallet
-
-pactus.wallet.unlock_wallet unlocks a locked wallet with the provided password and
-timeout.
-
-### Parameters
-```json
-{
-	"password": "str",	// (string) Password for unlocking the wallet.
-	"timeout": n,	// (numeric) Timeout duration for the unlocked state.
-	"wallet_name": "str"	// (string) Name of the wallet to unlock.
-}
-```
-
-### Result
-```json
-{
-	"wallet_name": "str"	// (string) Name of the unlocked wallet.
 }
 ```
 ---

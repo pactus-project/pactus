@@ -24,14 +24,6 @@ service Wallet {
   // UnloadWallet unloads a currently loaded wallet with the specified name.
   rpc UnloadWallet(UnloadWalletRequest) returns (UnloadWalletResponse);
 
-  // LockWallet locks a currently loaded wallet with the provided password and
-  // timeout.
-  rpc LockWallet(LockWalletRequest) returns (LockWalletResponse);
-
-  // UnlockWallet unlocks a locked wallet with the provided password and
-  // timeout.
-  rpc UnlockWallet(UnlockWalletRequest) returns (UnlockWalletResponse);
-
   // GetTotalBalance returns the total available balance of the wallet.
   rpc GetTotalBalance(GetTotalBalanceRequest) returns (GetTotalBalanceResponse);
 
@@ -166,18 +158,6 @@ message UnloadWalletResponse {
   string wallet_name = 1;
 }
 
-// Request message for locking a currently loaded wallet.
-message LockWalletRequest {
-  // Name of the wallet to lock.
-  string wallet_name = 1;
-}
-
-// Response message containing the name of the locked wallet.
-message LockWalletResponse {
-  // Name of the locked wallet.
-  string wallet_name = 1;
-}
-
 // Request message for obtaining the validator address associated with a public
 // key.
 message GetValidatorAddressRequest {
@@ -190,22 +170,6 @@ message GetValidatorAddressRequest {
 message GetValidatorAddressResponse {
   // Validator address associated with the public key.
   string address = 1;
-}
-
-// Request message for unlocking a wallet.
-message UnlockWalletRequest {
-  // Name of the wallet to unlock.
-  string wallet_name = 1;
-  // Password for unlocking the wallet.
-  string password = 2;
-  // Timeout duration for the unlocked state.
-  int32 timeout = 3;
-}
-
-// Response message containing the name of the unlocked wallet.
-message UnlockWalletResponse {
-  // Name of the unlocked wallet.
-  string wallet_name = 1;
 }
 
 // Request message for signing a raw transaction.

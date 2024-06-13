@@ -142,68 +142,6 @@ public final class WalletGrpc {
     return getUnloadWalletMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.LockWalletRequest,
-      pactus.wallet.WalletOuterClass.LockWalletResponse> getLockWalletMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "LockWallet",
-      requestType = pactus.wallet.WalletOuterClass.LockWalletRequest.class,
-      responseType = pactus.wallet.WalletOuterClass.LockWalletResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.LockWalletRequest,
-      pactus.wallet.WalletOuterClass.LockWalletResponse> getLockWalletMethod() {
-    io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.LockWalletRequest, pactus.wallet.WalletOuterClass.LockWalletResponse> getLockWalletMethod;
-    if ((getLockWalletMethod = WalletGrpc.getLockWalletMethod) == null) {
-      synchronized (WalletGrpc.class) {
-        if ((getLockWalletMethod = WalletGrpc.getLockWalletMethod) == null) {
-          WalletGrpc.getLockWalletMethod = getLockWalletMethod =
-              io.grpc.MethodDescriptor.<pactus.wallet.WalletOuterClass.LockWalletRequest, pactus.wallet.WalletOuterClass.LockWalletResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "LockWallet"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.wallet.WalletOuterClass.LockWalletRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.wallet.WalletOuterClass.LockWalletResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("LockWallet"))
-              .build();
-        }
-      }
-    }
-    return getLockWalletMethod;
-  }
-
-  private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.UnlockWalletRequest,
-      pactus.wallet.WalletOuterClass.UnlockWalletResponse> getUnlockWalletMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "UnlockWallet",
-      requestType = pactus.wallet.WalletOuterClass.UnlockWalletRequest.class,
-      responseType = pactus.wallet.WalletOuterClass.UnlockWalletResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.UnlockWalletRequest,
-      pactus.wallet.WalletOuterClass.UnlockWalletResponse> getUnlockWalletMethod() {
-    io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.UnlockWalletRequest, pactus.wallet.WalletOuterClass.UnlockWalletResponse> getUnlockWalletMethod;
-    if ((getUnlockWalletMethod = WalletGrpc.getUnlockWalletMethod) == null) {
-      synchronized (WalletGrpc.class) {
-        if ((getUnlockWalletMethod = WalletGrpc.getUnlockWalletMethod) == null) {
-          WalletGrpc.getUnlockWalletMethod = getUnlockWalletMethod =
-              io.grpc.MethodDescriptor.<pactus.wallet.WalletOuterClass.UnlockWalletRequest, pactus.wallet.WalletOuterClass.UnlockWalletResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "UnlockWallet"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.wallet.WalletOuterClass.UnlockWalletRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.wallet.WalletOuterClass.UnlockWalletResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("UnlockWallet"))
-              .build();
-        }
-      }
-    }
-    return getUnlockWalletMethod;
-  }
-
   private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetTotalBalanceRequest,
       pactus.wallet.WalletOuterClass.GetTotalBalanceResponse> getGetTotalBalanceMethod;
 
@@ -452,28 +390,6 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * LockWallet locks a currently loaded wallet with the provided password and
-     * timeout.
-     * </pre>
-     */
-    public void lockWallet(pactus.wallet.WalletOuterClass.LockWalletRequest request,
-        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.LockWalletResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getLockWalletMethod(), responseObserver);
-    }
-
-    /**
-     * <pre>
-     * UnlockWallet unlocks a locked wallet with the provided password and
-     * timeout.
-     * </pre>
-     */
-    public void unlockWallet(pactus.wallet.WalletOuterClass.UnlockWalletRequest request,
-        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.UnlockWalletResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getUnlockWalletMethod(), responseObserver);
-    }
-
-    /**
-     * <pre>
      * GetTotalBalance returns the total available balance of the wallet.
      * </pre>
      */
@@ -553,20 +469,6 @@ public final class WalletGrpc {
                 pactus.wallet.WalletOuterClass.UnloadWalletRequest,
                 pactus.wallet.WalletOuterClass.UnloadWalletResponse>(
                   this, METHODID_UNLOAD_WALLET)))
-          .addMethod(
-            getLockWalletMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                pactus.wallet.WalletOuterClass.LockWalletRequest,
-                pactus.wallet.WalletOuterClass.LockWalletResponse>(
-                  this, METHODID_LOCK_WALLET)))
-          .addMethod(
-            getUnlockWalletMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                pactus.wallet.WalletOuterClass.UnlockWalletRequest,
-                pactus.wallet.WalletOuterClass.UnlockWalletResponse>(
-                  this, METHODID_UNLOCK_WALLET)))
           .addMethod(
             getGetTotalBalanceMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -665,30 +567,6 @@ public final class WalletGrpc {
         io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.UnloadWalletResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getUnloadWalletMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     * <pre>
-     * LockWallet locks a currently loaded wallet with the provided password and
-     * timeout.
-     * </pre>
-     */
-    public void lockWallet(pactus.wallet.WalletOuterClass.LockWalletRequest request,
-        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.LockWalletResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getLockWalletMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     * <pre>
-     * UnlockWallet unlocks a locked wallet with the provided password and
-     * timeout.
-     * </pre>
-     */
-    public void unlockWallet(pactus.wallet.WalletOuterClass.UnlockWalletRequest request,
-        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.UnlockWalletResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getUnlockWalletMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -807,28 +685,6 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * LockWallet locks a currently loaded wallet with the provided password and
-     * timeout.
-     * </pre>
-     */
-    public pactus.wallet.WalletOuterClass.LockWalletResponse lockWallet(pactus.wallet.WalletOuterClass.LockWalletRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getLockWalletMethod(), getCallOptions(), request);
-    }
-
-    /**
-     * <pre>
-     * UnlockWallet unlocks a locked wallet with the provided password and
-     * timeout.
-     * </pre>
-     */
-    public pactus.wallet.WalletOuterClass.UnlockWalletResponse unlockWallet(pactus.wallet.WalletOuterClass.UnlockWalletRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getUnlockWalletMethod(), getCallOptions(), request);
-    }
-
-    /**
-     * <pre>
      * GetTotalBalance returns the total available balance of the wallet.
      * </pre>
      */
@@ -942,30 +798,6 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * LockWallet locks a currently loaded wallet with the provided password and
-     * timeout.
-     * </pre>
-     */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.LockWalletResponse> lockWallet(
-        pactus.wallet.WalletOuterClass.LockWalletRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getLockWalletMethod(), getCallOptions()), request);
-    }
-
-    /**
-     * <pre>
-     * UnlockWallet unlocks a locked wallet with the provided password and
-     * timeout.
-     * </pre>
-     */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.UnlockWalletResponse> unlockWallet(
-        pactus.wallet.WalletOuterClass.UnlockWalletRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getUnlockWalletMethod(), getCallOptions()), request);
-    }
-
-    /**
-     * <pre>
      * GetTotalBalance returns the total available balance of the wallet.
      * </pre>
      */
@@ -1025,13 +857,11 @@ public final class WalletGrpc {
   private static final int METHODID_RESTORE_WALLET = 1;
   private static final int METHODID_LOAD_WALLET = 2;
   private static final int METHODID_UNLOAD_WALLET = 3;
-  private static final int METHODID_LOCK_WALLET = 4;
-  private static final int METHODID_UNLOCK_WALLET = 5;
-  private static final int METHODID_GET_TOTAL_BALANCE = 6;
-  private static final int METHODID_SIGN_RAW_TRANSACTION = 7;
-  private static final int METHODID_GET_VALIDATOR_ADDRESS = 8;
-  private static final int METHODID_GET_NEW_ADDRESS = 9;
-  private static final int METHODID_GET_ADDRESS_HISTORY = 10;
+  private static final int METHODID_GET_TOTAL_BALANCE = 4;
+  private static final int METHODID_SIGN_RAW_TRANSACTION = 5;
+  private static final int METHODID_GET_VALIDATOR_ADDRESS = 6;
+  private static final int METHODID_GET_NEW_ADDRESS = 7;
+  private static final int METHODID_GET_ADDRESS_HISTORY = 8;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1065,14 +895,6 @@ public final class WalletGrpc {
         case METHODID_UNLOAD_WALLET:
           serviceImpl.unloadWallet((pactus.wallet.WalletOuterClass.UnloadWalletRequest) request,
               (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.UnloadWalletResponse>) responseObserver);
-          break;
-        case METHODID_LOCK_WALLET:
-          serviceImpl.lockWallet((pactus.wallet.WalletOuterClass.LockWalletRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.LockWalletResponse>) responseObserver);
-          break;
-        case METHODID_UNLOCK_WALLET:
-          serviceImpl.unlockWallet((pactus.wallet.WalletOuterClass.UnlockWalletRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.UnlockWalletResponse>) responseObserver);
           break;
         case METHODID_GET_TOTAL_BALANCE:
           serviceImpl.getTotalBalance((pactus.wallet.WalletOuterClass.GetTotalBalanceRequest) request,
@@ -1159,8 +981,6 @@ public final class WalletGrpc {
               .addMethod(getRestoreWalletMethod())
               .addMethod(getLoadWalletMethod())
               .addMethod(getUnloadWalletMethod())
-              .addMethod(getLockWalletMethod())
-              .addMethod(getUnlockWalletMethod())
               .addMethod(getGetTotalBalanceMethod())
               .addMethod(getSignRawTransactionMethod())
               .addMethod(getGetValidatorAddressMethod())

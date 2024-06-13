@@ -35,16 +35,6 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.UnloadWalletRequest.SerializeToString,
                 response_deserializer=wallet__pb2.UnloadWalletResponse.FromString,
                 )
-        self.LockWallet = channel.unary_unary(
-                '/pactus.Wallet/LockWallet',
-                request_serializer=wallet__pb2.LockWalletRequest.SerializeToString,
-                response_deserializer=wallet__pb2.LockWalletResponse.FromString,
-                )
-        self.UnlockWallet = channel.unary_unary(
-                '/pactus.Wallet/UnlockWallet',
-                request_serializer=wallet__pb2.UnlockWalletRequest.SerializeToString,
-                response_deserializer=wallet__pb2.UnlockWalletResponse.FromString,
-                )
         self.GetTotalBalance = channel.unary_unary(
                 '/pactus.Wallet/GetTotalBalance',
                 request_serializer=wallet__pb2.GetTotalBalanceRequest.SerializeToString,
@@ -99,22 +89,6 @@ class WalletServicer(object):
 
     def UnloadWallet(self, request, context):
         """UnloadWallet unloads a currently loaded wallet with the specified name.
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def LockWallet(self, request, context):
-        """LockWallet locks a currently loaded wallet with the provided password and
-        timeout.
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def UnlockWallet(self, request, context):
-        """UnlockWallet unlocks a locked wallet with the provided password and
-        timeout.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -178,16 +152,6 @@ def add_WalletServicer_to_server(servicer, server):
                     servicer.UnloadWallet,
                     request_deserializer=wallet__pb2.UnloadWalletRequest.FromString,
                     response_serializer=wallet__pb2.UnloadWalletResponse.SerializeToString,
-            ),
-            'LockWallet': grpc.unary_unary_rpc_method_handler(
-                    servicer.LockWallet,
-                    request_deserializer=wallet__pb2.LockWalletRequest.FromString,
-                    response_serializer=wallet__pb2.LockWalletResponse.SerializeToString,
-            ),
-            'UnlockWallet': grpc.unary_unary_rpc_method_handler(
-                    servicer.UnlockWallet,
-                    request_deserializer=wallet__pb2.UnlockWalletRequest.FromString,
-                    response_serializer=wallet__pb2.UnlockWalletResponse.SerializeToString,
             ),
             'GetTotalBalance': grpc.unary_unary_rpc_method_handler(
                     servicer.GetTotalBalance,
@@ -290,40 +254,6 @@ class Wallet(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/UnloadWallet',
             wallet__pb2.UnloadWalletRequest.SerializeToString,
             wallet__pb2.UnloadWalletResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def LockWallet(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/LockWallet',
-            wallet__pb2.LockWalletRequest.SerializeToString,
-            wallet__pb2.LockWalletResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def UnlockWallet(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/UnlockWallet',
-            wallet__pb2.UnlockWalletRequest.SerializeToString,
-            wallet__pb2.UnlockWalletResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

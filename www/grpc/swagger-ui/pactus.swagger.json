@@ -966,38 +966,6 @@
         ]
       }
     },
-    "/pactus/wallet/lock_wallet": {
-      "get": {
-        "summary": "LockWallet locks a currently loaded wallet with the provided password and\ntimeout.",
-        "operationId": "Wallet_LockWallet",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusLockWalletResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "walletName",
-            "description": "Name of the wallet to lock.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Wallet"
-        ]
-      }
-    },
     "/pactus/wallet/restore_wallet": {
       "get": {
         "summary": "RestoreWallet restores an existing wallet with the given mnemonic.",
@@ -1116,53 +1084,6 @@
             "in": "query",
             "required": false,
             "type": "string"
-          }
-        ],
-        "tags": [
-          "Wallet"
-        ]
-      }
-    },
-    "/pactus/wallet/unlock_wallet": {
-      "get": {
-        "summary": "UnlockWallet unlocks a locked wallet with the provided password and\ntimeout.",
-        "operationId": "Wallet_UnlockWallet",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusUnlockWalletResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "walletName",
-            "description": "Name of the wallet to unlock.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "description": "Password for unlocking the wallet.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "timeout",
-            "description": "Timeout duration for the unlocked state.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
           }
         ],
         "tags": [
@@ -1799,16 +1720,6 @@
       },
       "description": "Response message containing the name of the loaded wallet."
     },
-    "pactusLockWalletResponse": {
-      "type": "object",
-      "properties": {
-        "walletName": {
-          "type": "string",
-          "description": "Name of the locked wallet."
-        }
-      },
-      "description": "Response message containing the name of the locked wallet."
-    },
     "pactusPayloadBond": {
       "type": "object",
       "properties": {
@@ -2135,16 +2046,6 @@
         }
       },
       "description": "Response message containing the name of the unloaded wallet."
-    },
-    "pactusUnlockWalletResponse": {
-      "type": "object",
-      "properties": {
-        "walletName": {
-          "type": "string",
-          "description": "Name of the unlocked wallet."
-        }
-      },
-      "description": "Response message containing the name of the unlocked wallet."
     },
     "pactusValidatorInfo": {
       "type": "object",

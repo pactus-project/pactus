@@ -76,12 +76,6 @@ http:
     - selector: pactus.Wallet.UnloadWallet
       get: "/pactus/wallet/unload_wallet"
 
-    - selector: pactus.Wallet.LockWallet
-      get: "/pactus/wallet/lock_wallet"
-
-    - selector: pactus.Wallet.UnlockWallet
-      get: "/pactus/wallet/unlock_wallet"
-
     - selector: pactus.Wallet.SignRawTransaction
       get: "/pactus/wallet/sign_raw_transaction"
 

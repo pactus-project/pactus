@@ -137,28 +137,6 @@ function deserialize_pactus_LoadWalletResponse(buffer_arg) {
   return wallet_pb.LoadWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_LockWalletRequest(arg) {
-  if (!(arg instanceof wallet_pb.LockWalletRequest)) {
-    throw new Error('Expected argument of type pactus.LockWalletRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_LockWalletRequest(buffer_arg) {
-  return wallet_pb.LockWalletRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_pactus_LockWalletResponse(arg) {
-  if (!(arg instanceof wallet_pb.LockWalletResponse)) {
-    throw new Error('Expected argument of type pactus.LockWalletResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_LockWalletResponse(buffer_arg) {
-  return wallet_pb.LockWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_pactus_RestoreWalletRequest(arg) {
   if (!(arg instanceof wallet_pb.RestoreWalletRequest)) {
     throw new Error('Expected argument of type pactus.RestoreWalletRequest');
@@ -225,28 +203,6 @@ function deserialize_pactus_UnloadWalletResponse(buffer_arg) {
   return wallet_pb.UnloadWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_UnlockWalletRequest(arg) {
-  if (!(arg instanceof wallet_pb.UnlockWalletRequest)) {
-    throw new Error('Expected argument of type pactus.UnlockWalletRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_UnlockWalletRequest(buffer_arg) {
-  return wallet_pb.UnlockWalletRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_pactus_UnlockWalletResponse(arg) {
-  if (!(arg instanceof wallet_pb.UnlockWalletResponse)) {
-    throw new Error('Expected argument of type pactus.UnlockWalletResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_UnlockWalletResponse(buffer_arg) {
-  return wallet_pb.UnlockWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 
 // Define the Wallet service with various RPC methods for wallet management.
 var WalletService = exports.WalletService = {
@@ -297,32 +253,6 @@ unloadWallet: {
     requestDeserialize: deserialize_pactus_UnloadWalletRequest,
     responseSerialize: serialize_pactus_UnloadWalletResponse,
     responseDeserialize: deserialize_pactus_UnloadWalletResponse,
-  },
-  // LockWallet locks a currently loaded wallet with the provided password and
-// timeout.
-lockWallet: {
-    path: '/pactus.Wallet/LockWallet',
-    requestStream: false,
-    responseStream: false,
-    requestType: wallet_pb.LockWalletRequest,
-    responseType: wallet_pb.LockWalletResponse,
-    requestSerialize: serialize_pactus_LockWalletRequest,
-    requestDeserialize: deserialize_pactus_LockWalletRequest,
-    responseSerialize: serialize_pactus_LockWalletResponse,
-    responseDeserialize: deserialize_pactus_LockWalletResponse,
-  },
-  // UnlockWallet unlocks a locked wallet with the provided password and
-// timeout.
-unlockWallet: {
-    path: '/pactus.Wallet/UnlockWallet',
-    requestStream: false,
-    responseStream: false,
-    requestType: wallet_pb.UnlockWalletRequest,
-    responseType: wallet_pb.UnlockWalletResponse,
-    requestSerialize: serialize_pactus_UnlockWalletRequest,
-    requestDeserialize: deserialize_pactus_UnlockWalletRequest,
-    responseSerialize: serialize_pactus_UnlockWalletResponse,
-    responseDeserialize: deserialize_pactus_UnlockWalletResponse,
   },
   // GetTotalBalance returns the total available balance of the wallet.
 getTotalBalance: {
