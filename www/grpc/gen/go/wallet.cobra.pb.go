@@ -24,8 +24,6 @@ func WalletClientCommand(options ...client.Option) *cobra.Command {
 		_WalletRestoreWalletCommand(cfg),
 		_WalletLoadWalletCommand(cfg),
 		_WalletUnloadWalletCommand(cfg),
-		_WalletLockWalletCommand(cfg),
-		_WalletUnlockWalletCommand(cfg),
 		_WalletGetTotalBalanceCommand(cfg),
 		_WalletSignRawTransactionCommand(cfg),
 		_WalletGetValidatorAddressCommand(cfg),
@@ -202,92 +200,6 @@ func _WalletUnloadWalletCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet to unload.")
-
-	return cmd
-}
-
-func _WalletLockWalletCommand(cfg *client.Config) *cobra.Command {
-	req := &LockWalletRequest{}
-
-	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("LockWallet"),
-		Short: "LockWallet RPC client",
-		Long:  "LockWallet locks a currently loaded wallet with the provided password and\n timeout.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
-					return err
-				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "LockWallet"); err != nil {
-					return err
-				}
-			}
-			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletClient(cc)
-				v := &LockWalletRequest{}
-
-				if err := in(v); err != nil {
-					return err
-				}
-				proto.Merge(v, req)
-
-				res, err := cli.LockWallet(cmd.Context(), v)
-
-				if err != nil {
-					return err
-				}
-
-				return out(res)
-
-			})
-		},
-	}
-
-	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet to lock.")
-
-	return cmd
-}
-
-func _WalletUnlockWalletCommand(cfg *client.Config) *cobra.Command {
-	req := &UnlockWalletRequest{}
-
-	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("UnlockWallet"),
-		Short: "UnlockWallet RPC client",
-		Long:  "UnlockWallet unlocks a locked wallet with the provided password and\n timeout.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
-					return err
-				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "UnlockWallet"); err != nil {
-					return err
-				}
-			}
-			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletClient(cc)
-				v := &UnlockWalletRequest{}
-
-				if err := in(v); err != nil {
-					return err
-				}
-				proto.Merge(v, req)
-
-				res, err := cli.UnlockWallet(cmd.Context(), v)
-
-				if err != nil {
-					return err
-				}
-
-				return out(res)
-
-			})
-		},
-	}
-
-	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet to unlock.")
-	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "Password for unlocking the wallet.")
-	cmd.PersistentFlags().Int32Var(&req.Timeout, cfg.FlagNamer("Timeout"), 0, "Timeout duration for the unlocked state.")
 
 	return cmd
 }

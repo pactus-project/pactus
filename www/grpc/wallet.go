@@ -7,8 +7,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 //
@@ -116,18 +114,6 @@ func (s *walletServer) UnloadWallet(_ context.Context,
 	return &pactus.UnloadWalletResponse{
 		WalletName: req.WalletName,
 	}, nil
-}
-
-func (*walletServer) LockWallet(_ context.Context,
-	_ *pactus.LockWalletRequest,
-) (*pactus.LockWalletResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "not implemeneted")
-}
-
-func (*walletServer) UnlockWallet(_ context.Context,
-	_ *pactus.UnlockWalletRequest,
-) (*pactus.UnlockWalletResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "not implemeneted")
 }
 
 func (s *walletServer) GetTotalBalance(_ context.Context,

@@ -105,40 +105,6 @@ func (s *WalletJsonRPC) Methods() map[string]func(ctx context.Context, message j
 			return s.client.UnloadWallet(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.wallet.lock_wallet": func(ctx context.Context, data json.RawMessage) (any, error) {
-			req := new(LockWalletRequest)
-
-			var jrpcData paramsAndHeadersWallet
-
-			if err := json.Unmarshal(data, &jrpcData); err != nil {
-				return nil, err
-			}
-
-			err := protojson.Unmarshal(jrpcData.Params, req)
-			if err != nil {
-				return nil, err
-			}
-
-			return s.client.LockWallet(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
-		},
-
-		"pactus.wallet.unlock_wallet": func(ctx context.Context, data json.RawMessage) (any, error) {
-			req := new(UnlockWalletRequest)
-
-			var jrpcData paramsAndHeadersWallet
-
-			if err := json.Unmarshal(data, &jrpcData); err != nil {
-				return nil, err
-			}
-
-			err := protojson.Unmarshal(jrpcData.Params, req)
-			if err != nil {
-				return nil, err
-			}
-
-			return s.client.UnlockWallet(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
-		},
-
 		"pactus.wallet.get_total_balance": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetTotalBalanceRequest)
 

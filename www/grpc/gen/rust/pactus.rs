@@ -1061,22 +1061,6 @@ pub struct UnloadWalletResponse {
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
 }
-/// Request message for locking a currently loaded wallet.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct LockWalletRequest {
-    /// Name of the wallet to lock.
-    #[prost(string, tag="1")]
-    pub wallet_name: ::prost::alloc::string::String,
-}
-/// Response message containing the name of the locked wallet.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct LockWalletResponse {
-    /// Name of the locked wallet.
-    #[prost(string, tag="1")]
-    pub wallet_name: ::prost::alloc::string::String,
-}
 /// Request message for obtaining the validator address associated with a public
 /// key.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -1094,28 +1078,6 @@ pub struct GetValidatorAddressResponse {
     /// Validator address associated with the public key.
     #[prost(string, tag="1")]
     pub address: ::prost::alloc::string::String,
-}
-/// Request message for unlocking a wallet.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct UnlockWalletRequest {
-    /// Name of the wallet to unlock.
-    #[prost(string, tag="1")]
-    pub wallet_name: ::prost::alloc::string::String,
-    /// Password for unlocking the wallet.
-    #[prost(string, tag="2")]
-    pub password: ::prost::alloc::string::String,
-    /// Timeout duration for the unlocked state.
-    #[prost(int32, tag="3")]
-    pub timeout: i32,
-}
-/// Response message containing the name of the unlocked wallet.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct UnlockWalletResponse {
-    /// Name of the unlocked wallet.
-    #[prost(string, tag="1")]
-    pub wallet_name: ::prost::alloc::string::String,
 }
 /// Request message for signing a raw transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]

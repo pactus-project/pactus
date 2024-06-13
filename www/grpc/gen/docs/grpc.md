@@ -123,14 +123,6 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           <span class="badge text-bg-primary">rpc</span> UnloadWallet</a>
         </li> 
         <li>
-          <a href="#pactus.Wallet.LockWallet">
-          <span class="badge text-bg-primary">rpc</span> LockWallet</a>
-        </li> 
-        <li>
-          <a href="#pactus.Wallet.UnlockWallet">
-          <span class="badge text-bg-primary">rpc</span> UnlockWallet</a>
-        </li> 
-        <li>
           <a href="#pactus.Wallet.GetTotalBalance">
           <span class="badge text-bg-primary">rpc</span> GetTotalBalance</a>
         </li> 
@@ -485,16 +477,6 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           </a>
         </li> 
         <li>
-          <a href="#pactus.LockWalletRequest">
-            <span class="badge text-bg-secondary">msg</span> LockWalletRequest
-          </a>
-        </li> 
-        <li>
-          <a href="#pactus.LockWalletResponse">
-            <span class="badge text-bg-secondary">msg</span> LockWalletResponse
-          </a>
-        </li> 
-        <li>
           <a href="#pactus.RestoreWalletRequest">
             <span class="badge text-bg-secondary">msg</span> RestoreWalletRequest
           </a>
@@ -522,16 +504,6 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
         <li>
           <a href="#pactus.UnloadWalletResponse">
             <span class="badge text-bg-secondary">msg</span> UnloadWalletResponse
-          </a>
-        </li> 
-        <li>
-          <a href="#pactus.UnlockWalletRequest">
-            <span class="badge text-bg-secondary">msg</span> UnlockWalletRequest
-          </a>
-        </li> 
-        <li>
-          <a href="#pactus.UnlockWalletResponse">
-            <span class="badge text-bg-secondary">msg</span> UnlockWalletResponse
           </a>
         </li>  
          
@@ -668,14 +640,6 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
 <div class="request pt-3">Request message: <a href="#pactus.UnloadWalletRequest">UnloadWalletRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.UnloadWalletResponse">UnloadWalletResponse</a></div>
 <p>UnloadWallet unloads a currently loaded wallet with the specified name.</p> 
-<h3 id="pactus.Wallet.LockWallet">LockWallet <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
-<div class="request pt-3">Request message: <a href="#pactus.LockWalletRequest">LockWalletRequest</a></div>
-<div class="response pb-3">Response message: <a href="#pactus.LockWalletResponse">LockWalletResponse</a></div>
-<p>LockWallet locks a currently loaded wallet with the provided password and</p><p>timeout.</p> 
-<h3 id="pactus.Wallet.UnlockWallet">UnlockWallet <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
-<div class="request pt-3">Request message: <a href="#pactus.UnlockWalletRequest">UnlockWalletRequest</a></div>
-<div class="response pb-3">Response message: <a href="#pactus.UnlockWalletResponse">UnlockWalletResponse</a></div>
-<p>UnlockWallet unlocks a locked wallet with the provided password and</p><p>timeout.</p> 
 <h3 id="pactus.Wallet.GetTotalBalance">GetTotalBalance <span class="badge text-bg-primary fs-6 align-top">rpc</span></h3>
 <div class="request pt-3">Request message: <a href="#pactus.GetTotalBalanceRequest">GetTotalBalanceRequest</a></div>
 <div class="response pb-3">Response message: <a href="#pactus.GetTotalBalanceResponse">GetTotalBalanceResponse</a></div>
@@ -2824,46 +2788,6 @@ LoadWalletResponse
     </tr>
   </tbody>
 </table>  
-<h3 id="pactus.LockWalletRequest">
-LockWalletRequest
-<span class="badge text-bg-secondary fs-6 align-top">msg</span>
-</h3>
-  <p>Request message for locking a currently loaded wallet.</p>
-
-<table class="table table-bordered table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-      <td class="fw-bold">wallet_name</td>
-      <td>
-        <a href="#string">string</a>
-      </td>
-      <td>Name of the wallet to lock. </td>
-    </tr>
-  </tbody>
-</table>  
-<h3 id="pactus.LockWalletResponse">
-LockWalletResponse
-<span class="badge text-bg-secondary fs-6 align-top">msg</span>
-</h3>
-  <p>Response message containing the name of the locked wallet.</p>
-
-<table class="table table-bordered table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-      <td class="fw-bold">wallet_name</td>
-      <td>
-        <a href="#string">string</a>
-      </td>
-      <td>Name of the locked wallet. </td>
-    </tr>
-  </tbody>
-</table>  
 <h3 id="pactus.RestoreWalletRequest">
 RestoreWalletRequest
 <span class="badge text-bg-secondary fs-6 align-top">msg</span>
@@ -3011,58 +2935,6 @@ UnloadWalletResponse
         <a href="#string">string</a>
       </td>
       <td>Name of the unloaded wallet. </td>
-    </tr>
-  </tbody>
-</table>  
-<h3 id="pactus.UnlockWalletRequest">
-UnlockWalletRequest
-<span class="badge text-bg-secondary fs-6 align-top">msg</span>
-</h3>
-  <p>Request message for unlocking a wallet.</p>
-
-<table class="table table-bordered table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-      <td class="fw-bold">wallet_name</td>
-      <td>
-        <a href="#string">string</a>
-      </td>
-      <td>Name of the wallet to unlock. </td>
-    </tr><tr>
-      <td class="fw-bold">password</td>
-      <td>
-        <a href="#string">string</a>
-      </td>
-      <td>Password for unlocking the wallet. </td>
-    </tr><tr>
-      <td class="fw-bold">timeout</td>
-      <td>
-        <a href="#int32">int32</a>
-      </td>
-      <td>Timeout duration for the unlocked state. </td>
-    </tr>
-  </tbody>
-</table>  
-<h3 id="pactus.UnlockWalletResponse">
-UnlockWalletResponse
-<span class="badge text-bg-secondary fs-6 align-top">msg</span>
-</h3>
-  <p>Response message containing the name of the unlocked wallet.</p>
-
-<table class="table table-bordered table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-      <td class="fw-bold">wallet_name</td>
-      <td>
-        <a href="#string">string</a>
-      </td>
-      <td>Name of the unlocked wallet. </td>
     </tr>
   </tbody>
 </table>   
