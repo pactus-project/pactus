@@ -29,10 +29,10 @@ func (*walletServer) mapHistoryInfo(hi []wallet.HistoryInfo) []*pactus.HistoryIn
 	for _, hi := range hi {
 		historyInfo = append(historyInfo, &pactus.HistoryInfo{
 			TransactionId: hi.TxID,
-			Time:          uint32(hi.Time.Unix()),
-			PayloadType:   hi.PayloadType,
-			Description:   hi.Desc,
-			Amount:        hi.Amount.ToNanoPAC(),
+			// Time:          uint32(hi.Time.Unix()),  // TODO: Fix me
+			PayloadType: hi.PayloadType,
+			Description: hi.Desc,
+			Amount:      hi.Amount.ToNanoPAC(),
 		})
 	}
 
@@ -95,7 +95,7 @@ func (s *walletServer) RestoreWallet(_ context.Context,
 func (s *walletServer) LoadWallet(_ context.Context,
 	req *pactus.LoadWalletRequest,
 ) (*pactus.LoadWalletResponse, error) {
-	if err := s.walletManager.LoadWallet(req.WalletName); err != nil {
+	if err := s.walletManager.LoadWallet(req.WalletName, s.Address()); err != nil {
 		return nil, err
 	}
 
@@ -126,7 +126,7 @@ func (s *walletServer) GetTotalBalance(_ context.Context,
 
 	return &pactus.GetTotalBalanceResponse{
 		WalletName:   req.WalletName,
-		TotalBalance: balance,
+		TotalBalance: balance.ToNanoPAC(),
 	}, nil
 }
 

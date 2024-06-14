@@ -68,7 +68,9 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	} else {
 		labelEncrypted.SetText("No")
 	}
-	labelTotalBalance.SetText(model.wallet.TotalBalance().String())
+
+	totalBalance, _ := model.wallet.TotalBalance()
+	labelTotalBalance.SetText(totalBalance.String())
 
 	colNo := createColumn("No", IDAddressesColumnNo)
 	colAddress := createColumn("Address", IDAddressesColumnAddress)
@@ -178,8 +180,9 @@ func (ww *widgetWallet) onShowSeed() {
 }
 
 func (ww *widgetWallet) timeout() bool {
+	totalBalance, _ := ww.model.wallet.TotalBalance()
 	ww.model.rebuildModel()
-	ww.labelTotalBalance.SetText(ww.model.wallet.TotalBalance().String())
+	ww.labelTotalBalance.SetText(totalBalance.String())
 
 	return true
 }

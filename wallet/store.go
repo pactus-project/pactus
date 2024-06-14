@@ -20,7 +20,7 @@ type store struct {
 	History   history           `json:"history"`
 }
 
-func (s *store) Load() ([]byte, error) {
+func (s *store) ToBytes() ([]byte, error) {
 	s.VaultCRC = s.calcVaultCRC()
 
 	return json.MarshalIndent(s, "  ", "  ")

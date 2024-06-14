@@ -43,7 +43,7 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 		fee, err := amount.NewAmount(*feeOpt)
 		cmd.FatalErrorCheck(err)
 
-		w, err := openWallet()
+		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
@@ -52,7 +52,7 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 			wallet.OptionMemo(*memoOpt),
 		}
 
-		trx, err := w.MakeTransferTx(from, to, amt, opts...)
+		trx, err := wlt.MakeTransferTx(from, to, amt, opts...)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
@@ -62,7 +62,7 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 		cmd.PrintInfoMsgf("Amount: %s", amt)
 		cmd.PrintInfoMsgf("Fee   : %s", trx.Fee())
 
-		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
+		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
 }
 
@@ -88,7 +88,7 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 		fee, err := amount.NewAmount(*feeOpt)
 		cmd.FatalErrorCheck(err)
 
-		w, err := openWallet()
+		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
@@ -97,7 +97,7 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 			wallet.OptionMemo(*memoOpt),
 		}
 
-		trx, err := w.MakeBondTx(from, to, *pubKeyOpt, amt, opts...)
+		trx, err := wlt.MakeBondTx(from, to, *pubKeyOpt, amt, opts...)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
@@ -107,7 +107,7 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 		cmd.PrintInfoMsgf("Stake    : %s", amt)
 		cmd.PrintInfoMsgf("Fee      : %s", trx.Fee())
 
-		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
+		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
 }
 
@@ -129,7 +129,7 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 		fee, err := amount.NewAmount(*feeOpt)
 		cmd.FatalErrorCheck(err)
 
-		w, err := openWallet()
+		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
@@ -138,7 +138,7 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 			wallet.OptionMemo(*memoOpt),
 		}
 
-		trx, err := w.MakeUnbondTx(from, opts...)
+		trx, err := wlt.MakeUnbondTx(from, opts...)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
@@ -146,7 +146,7 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 		cmd.PrintInfoMsgf("Validator: %s", from)
 		cmd.PrintInfoMsgf("Fee      : %s", trx.Fee())
 
-		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
+		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
 }
 
@@ -171,7 +171,7 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 		fee, err := amount.NewAmount(*feeOpt)
 		cmd.FatalErrorCheck(err)
 
-		w, err := openWallet()
+		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
@@ -180,7 +180,7 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 			wallet.OptionMemo(*memoOpt),
 		}
 
-		trx, err := w.MakeWithdrawTx(from, to, amt, opts...)
+		trx, err := wlt.MakeWithdrawTx(from, to, amt, opts...)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
@@ -190,7 +190,7 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 		cmd.PrintInfoMsgf("Amount   : %s", amt)
 		cmd.PrintInfoMsgf("Fee      : %s", trx.Fee())
 
-		signAndPublishTx(w, trx, *noConfirmOpt, *passOpt)
+		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
 }
 
@@ -210,17 +210,17 @@ func addCommonTxOptions(c *cobra.Command) (*int, *float64, *string, *bool) {
 	return lockTimeOpt, feeOpt, memoOpt, noConfirmOpt
 }
 
-func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string) {
+func signAndPublishTx(wlt *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string) {
 	cmd.PrintLine()
-	password := getPassword(w, pass)
-	err := w.SignTransaction(password, trx)
+	password := getPassword(wlt, pass)
+	err := wlt.SignTransaction(password, trx)
 	cmd.FatalErrorCheck(err)
 
 	bs, _ := trx.Bytes()
 	cmd.PrintInfoMsgf("Signed transaction data: %x", bs)
 	cmd.PrintLine()
 
-	if !w.IsOffline() {
+	if !wlt.IsOffline() {
 		if !noConfirm {
 			cmd.PrintInfoMsgf("You are going to broadcast the signed transition:")
 			cmd.PrintWarnMsgf("THIS ACTION IS NOT REVERSIBLE")
@@ -229,10 +229,10 @@ func signAndPublishTx(w *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string)
 				return
 			}
 		}
-		res, err := w.BroadcastTransaction(trx)
+		res, err := wlt.BroadcastTransaction(trx)
 		cmd.FatalErrorCheck(err)
 
-		err = w.Save()
+		err = wlt.Save()
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintInfoMsgf("Transaction hash: %s", res)

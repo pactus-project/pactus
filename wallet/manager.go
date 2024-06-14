@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet/vault"
@@ -27,15 +28,15 @@ func NewWalletManager(conf *Config) *Manager {
 	}
 }
 
-func (w *Manager) getWalletPath(walletName string) string {
-	return util.MakeAbs(filepath.Join(w.walletDirectory, walletName))
+func (wm *Manager) getWalletPath(walletName string) string {
+	return util.MakeAbs(filepath.Join(wm.walletDirectory, walletName))
 }
 
-func (w *Manager) createWalletWithMnemonic(
+func (wm *Manager) createWalletWithMnemonic(
 	walletName, mnemonic, password string,
 ) error {
-	walletPath := w.getWalletPath(walletName)
-	wlt, err := Create(walletPath, mnemonic, password, w.chainType)
+	walletPath := wm.getWalletPath(walletName)
+	wlt, err := Create(walletPath, mnemonic, password, wm.chainType)
 	if err != nil {
 		return err
 	}
@@ -54,7 +55,7 @@ func (*Manager) GetValidatorAddress(
 	return pubKey.ValidatorAddress().String(), nil
 }
 
-func (w *Manager) CreateWallet(
+func (wm *Manager) CreateWallet(
 	walletName, password string,
 ) (string, error) {
 	mnemonic, err := GenerateMnemonic(128)
@@ -62,71 +63,72 @@ func (w *Manager) CreateWallet(
 		return "", err
 	}
 
-	walletPath := w.getWalletPath(walletName)
+	walletPath := wm.getWalletPath(walletName)
 	if isExists := util.PathExists(walletPath); isExists {
 		return "", status.Errorf(codes.AlreadyExists, "wallet already exists")
 	}
 
-	if err := w.createWalletWithMnemonic(walletName, mnemonic, password); err != nil {
+	if err := wm.createWalletWithMnemonic(walletName, mnemonic, password); err != nil {
 		return "", err
 	}
 
 	return mnemonic, nil
 }
 
-func (w *Manager) RestoreWallet(walletName, mnemonic, password string) error {
-	walletPath := w.getWalletPath(walletName)
+func (wm *Manager) RestoreWallet(walletName, mnemonic, password string) error {
+	walletPath := wm.getWalletPath(walletName)
 	if isExists := util.PathExists(walletPath); isExists {
 		return status.Errorf(codes.AlreadyExists, "wallet already exists")
 	}
 
-	return w.createWalletWithMnemonic(walletName, mnemonic, password)
+	return wm.createWalletWithMnemonic(walletName, mnemonic, password)
 }
 
-func (w *Manager) LoadWallet(walletName string) error {
-	if _, ok := w.wallets[walletName]; ok {
+func (wm *Manager) LoadWallet(walletName, serverAddr string) error {
+	if _, ok := wm.wallets[walletName]; ok {
 		// TODO: define special codes for errors
 		return status.Errorf(codes.AlreadyExists, "wallet already loaded")
 	}
 
-	walletPath := util.MakeAbs(filepath.Join(w.walletDirectory, walletName))
+	walletPath := util.MakeAbs(filepath.Join(wm.walletDirectory, walletName))
 	wlt, err := Open(walletPath, true)
 	if err != nil {
 		return err
 	}
+	wlt.SetServerAddr(serverAddr)
 
-	w.wallets[walletName] = wlt
+	wm.wallets[walletName] = wlt
 
 	return nil
 }
 
-func (w *Manager) UnloadWallet(
+func (wm *Manager) UnloadWallet(
 	walletName string,
 ) error {
-	if _, ok := w.wallets[walletName]; !ok {
+	if _, ok := wm.wallets[walletName]; !ok {
 		return status.Errorf(codes.NotFound, "wallet is not loaded")
 	}
 
-	delete(w.wallets, walletName)
+	delete(wm.wallets, walletName)
 
 	return nil
 }
 
-func (w *Manager) TotalBalance(
+func (wm *Manager) TotalBalance(
 	walletName string,
-) (int64, error) {
-	wlt, ok := w.wallets[walletName]
+) (amount.Amount, error) {
+	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return 0, status.Errorf(codes.NotFound, "wallet is not loaded")
 	}
 
-	return wlt.TotalBalance().ToNanoPAC(), nil
+	return wlt.TotalBalance()
 }
 
-func (w *Manager) SignRawTransaction(
+func (wm *Manager) SignRawTransaction(
 	walletName, password string, rawTx []byte,
 ) ([]byte, []byte, error) {
-	wlt, ok := w.wallets[walletName]
+	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return nil, nil, status.Errorf(codes.NotFound, "wallet is not loaded")
 	}
@@ -148,11 +150,11 @@ func (w *Manager) SignRawTransaction(
 	return trx.ID().Bytes(), data, nil
 }
 
-func (w *Manager) GetNewAddress(
+func (wm *Manager) GetNewAddress(
 	walletName, label string,
 	addressType crypto.AddressType,
 ) (*vault.AddressInfo, error) {
-	wlt, ok := w.wallets[walletName]
+	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
 	}
@@ -187,10 +189,10 @@ func (w *Manager) GetNewAddress(
 	return addressInfo, nil
 }
 
-func (w *Manager) AddressHistory(
+func (wm *Manager) AddressHistory(
 	walletName, address string,
 ) ([]HistoryInfo, error) {
-	wlt, ok := w.wallets[walletName]
+	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
 	}

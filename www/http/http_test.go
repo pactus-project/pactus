@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/www/grpc"
@@ -60,13 +61,15 @@ func setup(t *testing.T) *testData {
 		Listen: "[::]:0",
 	}
 
-	mockWalletMgrConf := wallet.DefaultConfig()
-	mockWalletMgrConf.ChainType = mockState.Genesis().ChainType()
+	walletMgrConf := &wallet.Config{
+		WalletsDir: util.TempDirPath(),
+		ChainType:  mockState.Genesis().ChainType(),
+	}
 
 	gRPCServer := grpc.NewServer(
 		grpcConf, mockState,
 		mockSync, mockNet,
-		mockConsMgr, wallet.NewWalletManager(mockWalletMgrConf),
+		mockConsMgr, wallet.NewWalletManager(walletMgrConf),
 	)
 	assert.NoError(t, gRPCServer.StartServer())
 
