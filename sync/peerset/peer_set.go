@@ -208,7 +208,7 @@ func (ps *PeerSet) UpdateAddress(pid peer.ID, addr, direction string) {
 	defer ps.lk.Unlock()
 
 	p := ps.findOrCreatePeer(pid)
-	p.Address = addr
+	p.RemoteAddress = addr
 	p.Direction = direction
 }
 

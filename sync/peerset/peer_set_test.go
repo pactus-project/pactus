@@ -353,7 +353,7 @@ func TestUpdateAddress(t *testing.T) {
 	ps.UpdateAddress(pid, addr, dir)
 
 	p := ps.GetPeer(pid)
-	assert.Equal(t, addr, p.Address)
+	assert.Equal(t, addr, p.RemoteAddress)
 	assert.Equal(t, dir, p.Direction)
 }
 

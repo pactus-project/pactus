@@ -252,7 +252,7 @@ func TestConnectEvent(t *testing.T) {
 		if p == nil {
 			return false
 		}
-		assert.Equal(t, p.Address, "/ip4/2.2.2.2/tcp/21888")
+		assert.Equal(t, p.RemoteAddress, "/ip4/2.2.2.2/tcp/21888")
 
 		return p.Status == status.StatusConnected
 	}, time.Second, 100*time.Millisecond)
@@ -274,7 +274,7 @@ func TestConnectEvent(t *testing.T) {
 			return false
 		}
 
-		isBlocked := td.sync.firewall.IsBannedAddress(p.Address)
+		isBlocked := td.sync.firewall.IsBannedAddress(p.RemoteAddress)
 
 		if isBlocked {
 			p.Status = status.StatusBanned
