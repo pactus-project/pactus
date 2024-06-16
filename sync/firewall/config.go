@@ -11,8 +11,9 @@ type RateLimit struct {
 }
 
 type Config struct {
-	BannedNets []string  `toml:"banned_nets"`
-	RateLimit  RateLimit `toml:"rate_limit"`
+	BannedNets               []string  `toml:"banned_nets"`
+	RateLimit                RateLimit `toml:"rate_limit"`
+	DisallowDuplicateAddress bool      `toml:"disallow_duplicate_address"`
 }
 
 func DefaultConfig() *Config {
@@ -23,6 +24,7 @@ func DefaultConfig() *Config {
 			TransactionTopic: 5,
 			ConsensusTopic:   0,
 		},
+		DisallowDuplicateAddress: true,
 	}
 }
 

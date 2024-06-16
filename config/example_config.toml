@@ -97,6 +97,9 @@
     # Any incoming and outgoing connections to banned addresses will be terminated.
     banned_nets = []
 
+    # `disallow_duplicate_address` disallow duplicate peer connected or known with same network id or ip address.
+    disallow_duplicate_address = true
+
     # `rate_limit` contains the rate limit configurations for network topics.
     # The rate limit specifies the number of messages per second that are allowed.
     # If set to zero, it allows all requests without any limit.`

@@ -83,6 +83,12 @@ func (f *Firewall) IsBannedAddress(remoteAddr string) bool {
 	return f.ipBlocker.IsBanned(ip)
 }
 
+func (f *Firewall) IsDuplicatePeer(peerID peer.ID, remoteAddr string) bool {
+	return f.config.DisallowDuplicateAddress &&
+		f.isDuplicatePeer(peerID) ||
+		f.isDuplicateRemoteAddress(remoteAddr)
+}
+
 func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
 	bdl, err := f.openBundle(r, from)
 	if err != nil {
@@ -195,6 +201,47 @@ func (*Firewall) getIPFromMultiAddress(address string) (string, error) {
 	}
 
 	return ip, nil
+}
+
+func (f *Firewall) isDuplicatePeer(pid peer.ID) bool {
+	p := f.peerSet.GetPeer(pid)
+
+	return p.Status.IsConnectedOrKnown()
+}
+
+func (f *Firewall) isDuplicateRemoteAddress(remoteAddr string) bool {
+	p := f.findPeerByIP(remoteAddr)
+
+	return p.Status.IsConnectedOrKnown()
+}
+
+func (f *Firewall) findPeerByIP(remoteAddr string) *peer.Peer {
+	target := new(peer.Peer)
+	remoteIP, err := f.getIPFromMultiAddress(remoteAddr)
+	if err != nil {
+		f.logger.Warn("firewall: unable to parse remote address", "err", err, "addr", remoteAddr)
+
+		return nil
+	}
+
+	f.peerSet.IteratePeers(func(p *peer.Peer) (stop bool) {
+		ip, err := f.getIPFromMultiAddress(p.RemoteAddress)
+		if err != nil {
+			f.logger.Warn("firewall: unable to parse remote address", "err", err, "addr", remoteAddr)
+
+			return false
+		}
+
+		if remoteIP == ip {
+			target = p
+
+			return true
+		}
+
+		return false
+	})
+
+	return target
 }
 
 func (f *Firewall) AllowBlockRequest() bool {
