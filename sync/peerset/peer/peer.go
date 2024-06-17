@@ -17,7 +17,7 @@ type Peer struct {
 	Status            status.Status
 	Moniker           string
 	Agent             string
-	Address           string
+	RemoteAddress     string
 	Direction         string
 	Protocols         []string
 	PeerID            ID

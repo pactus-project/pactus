@@ -353,7 +353,7 @@ func TestUpdateAddress(t *testing.T) {
 	ps.UpdateAddress(pid, addr, dir)
 
 	p := ps.GetPeer(pid)
-	assert.Equal(t, addr, p.Address)
+	assert.Equal(t, addr, p.RemoteAddress)
 	assert.Equal(t, dir, p.Direction)
 }
 
@@ -377,4 +377,34 @@ func TestUpdateProtocols(t *testing.T) {
 
 	p := ps.GetPeer(pid)
 	assert.Equal(t, p.Protocols, protocols)
+}
+
+func TestGetPeerByRemoteAddr(t *testing.T) {
+	ps := NewPeerSet(time.Minute)
+
+	tests := []struct {
+		RemoteAddr string
+		PeerID     peer.ID
+	}{
+		{
+			RemoteAddr: "/ip4/84.247.165.249/tcp/21888/p2p/12D3KooWQmv2FcNQfh1EhA98twt8ePdkQaxEPeYfinEYyVS16juY",
+			PeerID:     peer.ID("peer-1"),
+		},
+		{
+			RemoteAddr: "/ip4/115.193.157.138/tcp/21888",
+			PeerID:     peer.ID("peer-2"),
+		},
+		{
+			RemoteAddr: "/ip6/240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/tcp/21888/p2p/" +
+				"12D3KooWQmv2FcNQfh1EhA98twt8ePdkQaxEPeYfinEYyVS16juY",
+			PeerID: peer.ID("peer-3"),
+		},
+	}
+
+	for _, tt := range tests {
+		ps.UpdateAddress(tt.PeerID, tt.RemoteAddr, "")
+	}
+
+	assert.NotNil(t, ps.GetPeerByRemoteAddr("/ip6/240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/tcp/21888/p2p/"+
+		"12D3KooWQmv2FcNQfh1EhA98twt8ePdkQaxEPeYfinEYyVS16juY"))
 }

@@ -208,7 +208,7 @@ func (ps *PeerSet) UpdateAddress(pid peer.ID, addr, direction string) {
 	defer ps.lk.Unlock()
 
 	p := ps.findOrCreatePeer(pid)
-	p.Address = addr
+	p.RemoteAddress = addr
 	p.Direction = direction
 }
 
@@ -417,4 +417,24 @@ func (ps *PeerSet) GetRandomPeer() *peer.Peer {
 		}
 	}
 	panic("unreachable code")
+}
+
+func (ps *PeerSet) GetPeerByRemoteAddr(remoteAddr string) *peer.Peer {
+	remoteIP, err := util.GetIPFromMultiAddress(remoteAddr)
+	if err != nil {
+		return nil
+	}
+
+	for _, p := range ps.peers {
+		ip, err := util.GetIPFromMultiAddress(p.RemoteAddress)
+		if err != nil {
+			continue
+		}
+
+		if remoteIP == ip {
+			return p
+		}
+	}
+
+	return nil
 }

@@ -5,13 +5,13 @@ import (
 	"io"
 	"time"
 
-	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/ipblocker"
 	"github.com/pactus-project/pactus/util/logger"
@@ -71,16 +71,18 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
 	return bdl
 }
 
-// IsBannedAddress checks if the remote IP address is banned.
-func (f *Firewall) IsBannedAddress(remoteAddr string) bool {
-	ip, err := f.getIPFromMultiAddress(remoteAddr)
+// IsAddressBanned checks if the remote IP address is banned.
+func (f *Firewall) IsAddressBanned(remoteAddr string, peerID peer.ID) bool {
+	ip, err := util.GetIPFromMultiAddress(remoteAddr)
 	if err != nil {
 		f.logger.Warn("firewall: unable to parse remote address", "err", err, "addr", remoteAddr)
 
 		return false
 	}
 
-	return f.ipBlocker.IsBanned(ip)
+	return f.ipBlocker.IsBanned(ip) || f.config.DisallowDuplicateAddress &&
+		f.isDuplicatePeer(peerID) || f.config.DisallowDuplicateAddress &&
+		f.isDuplicateRemoteAddress(remoteAddr)
 }
 
 func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
@@ -173,28 +175,16 @@ func (f *Firewall) closeConnection(pid peer.ID) {
 	f.network.CloseConnection(pid)
 }
 
-func (*Firewall) getIPFromMultiAddress(address string) (string, error) {
-	addr, err := multiaddr.NewMultiaddr(address)
-	if err != nil {
-		return "", err
-	}
+func (f *Firewall) isDuplicatePeer(pid peer.ID) bool {
+	p := f.peerSet.GetPeer(pid)
 
-	components := addr.Protocols()
+	return p != nil && p.Status.IsConnectedOrKnown()
+}
 
-	var ip string
-	for _, comp := range components {
-		switch comp.Name {
-		// TODO: can parse dns address and find ip??
-		case "ip4", "ip6":
-			ipComponent, err := addr.ValueForProtocol(comp.Code)
-			if err != nil {
-				return "", err
-			}
-			ip = ipComponent
-		}
-	}
+func (f *Firewall) isDuplicateRemoteAddress(remoteAddr string) bool {
+	p := f.peerSet.GetPeerByRemoteAddr(remoteAddr)
 
-	return ip, nil
+	return p != nil && p.Status.IsConnectedOrKnown()
 }
 
 func (f *Firewall) AllowBlockRequest() bool {
