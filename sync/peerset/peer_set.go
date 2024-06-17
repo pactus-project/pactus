@@ -428,7 +428,7 @@ func (ps *PeerSet) GetPeerByRemoteAddr(remoteAddr string) *peer.Peer {
 	for _, p := range ps.peers {
 		ip, err := util.GetIPFromMultiAddress(p.RemoteAddress)
 		if err != nil {
-			return nil
+			continue
 		}
 
 		if remoteIP == ip {

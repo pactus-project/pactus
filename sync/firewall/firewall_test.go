@@ -53,13 +53,22 @@ func setup(t *testing.T, conf *Config) *testData {
 	badPeerID := ts.RandPeerID()
 	goodPeerID := ts.RandPeerID()
 	unknownPeerID := ts.RandPeerID()
+	duplicatePeerID := peer.ID("peerX")
+	duplicatePeerID2 := ts.RandPeerID()
 
 	net.AddAnotherNetwork(network.MockingNetwork(ts, goodPeerID))
 	net.AddAnotherNetwork(network.MockingNetwork(ts, unknownPeerID))
 	net.AddAnotherNetwork(network.MockingNetwork(ts, badPeerID))
+	net.AddAnotherNetwork(network.MockingNetwork(ts, duplicatePeerID))
+	net.AddAnotherNetwork(network.MockingNetwork(ts, duplicatePeerID2))
 
 	firewall.peerSet.UpdateStatus(goodPeerID, status.StatusKnown)
+	firewall.peerSet.UpdateStatus(duplicatePeerID, status.StatusKnown)
+	firewall.peerSet.UpdateStatus(duplicatePeerID2, status.StatusConnected)
 	firewall.peerSet.UpdateStatus(badPeerID, status.StatusBanned)
+
+	firewall.peerSet.UpdateAddress(duplicatePeerID2, "/ip4/1.1.1.1", "")
+	firewall.peerSet.UpdateAddress(duplicatePeerID, "/ip4/2.1.1.1", "")
 
 	return &testData{
 		TestSuite:     ts,
@@ -210,7 +219,7 @@ func TestBannedAddress(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		banned := td.firewall.IsAddressBanned(tc.addr)
+		banned := td.firewall.IsAddressBanned(tc.addr, "")
 
 		if tc.banned {
 			assert.True(t, banned,
@@ -218,6 +227,39 @@ func TestBannedAddress(t *testing.T) {
 		} else {
 			assert.False(t, banned,
 				"test %v failed, addr %v should not be banned", i, tc.addr)
+		}
+	}
+
+	td.firewall.config.DisallowDuplicateAddress = true
+
+	tests := []struct {
+		peerID     peer.ID
+		remoteAddr string
+		banned     bool
+	}{
+		{
+			peerID:     "peerX",
+			remoteAddr: "/ip4/1.2.3.4",
+			banned:     true,
+		},
+		{
+			peerID:     "peerZ",
+			remoteAddr: "/ip4/1.1.1.1",
+			banned:     true,
+		},
+		{
+			peerID:     "peerZZ",
+			remoteAddr: "/ip4/1.2.3.7",
+			banned:     false,
+		},
+	}
+
+	for _, tt := range tests {
+		banned := td.firewall.IsAddressBanned(tt.remoteAddr, tt.peerID)
+		if tt.banned {
+			assert.True(t, banned)
+		} else {
+			assert.False(t, banned)
 		}
 	}
 }

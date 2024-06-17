@@ -72,7 +72,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
 }
 
 // IsAddressBanned checks if the remote IP address is banned.
-func (f *Firewall) IsAddressBanned(remoteAddr string) bool {
+func (f *Firewall) IsAddressBanned(remoteAddr string, peerID peer.ID) bool {
 	ip, err := util.GetIPFromMultiAddress(remoteAddr)
 	if err != nil {
 		f.logger.Warn("firewall: unable to parse remote address", "err", err, "addr", remoteAddr)
@@ -80,12 +80,8 @@ func (f *Firewall) IsAddressBanned(remoteAddr string) bool {
 		return false
 	}
 
-	return f.ipBlocker.IsBanned(ip)
-}
-
-func (f *Firewall) IsDuplicatePeer(peerID peer.ID, remoteAddr string) bool {
-	return f.config.DisallowDuplicateAddress &&
-		f.isDuplicatePeer(peerID) ||
+	return f.ipBlocker.IsBanned(ip) || f.config.DisallowDuplicateAddress &&
+		f.isDuplicatePeer(peerID) || f.config.DisallowDuplicateAddress &&
 		f.isDuplicateRemoteAddress(remoteAddr)
 }
 
@@ -182,13 +178,13 @@ func (f *Firewall) closeConnection(pid peer.ID) {
 func (f *Firewall) isDuplicatePeer(pid peer.ID) bool {
 	p := f.peerSet.GetPeer(pid)
 
-	return p.Status.IsConnectedOrKnown()
+	return p != nil && p.Status.IsConnectedOrKnown()
 }
 
 func (f *Firewall) isDuplicateRemoteAddress(remoteAddr string) bool {
 	p := f.peerSet.GetPeerByRemoteAddr(remoteAddr)
 
-	return p.Status.IsConnectedOrKnown()
+	return p != nil && p.Status.IsConnectedOrKnown()
 }
 
 func (f *Firewall) AllowBlockRequest() bool {
