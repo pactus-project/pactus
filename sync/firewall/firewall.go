@@ -5,13 +5,13 @@ import (
 	"io"
 	"time"
 
-	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/ipblocker"
 	"github.com/pactus-project/pactus/util/logger"
@@ -71,9 +71,9 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
 	return bdl
 }
 
-// IsBannedAddress checks if the remote IP address is banned.
-func (f *Firewall) IsBannedAddress(remoteAddr string) bool {
-	ip, err := f.getIPFromMultiAddress(remoteAddr)
+// IsAddressBanned checks if the remote IP address is banned.
+func (f *Firewall) IsAddressBanned(remoteAddr string) bool {
+	ip, err := util.GetIPFromMultiAddress(remoteAddr)
 	if err != nil {
 		f.logger.Warn("firewall: unable to parse remote address", "err", err, "addr", remoteAddr)
 
@@ -179,30 +179,6 @@ func (f *Firewall) closeConnection(pid peer.ID) {
 	f.network.CloseConnection(pid)
 }
 
-func (*Firewall) getIPFromMultiAddress(address string) (string, error) {
-	addr, err := multiaddr.NewMultiaddr(address)
-	if err != nil {
-		return "", err
-	}
-
-	components := addr.Protocols()
-
-	var ip string
-	for _, comp := range components {
-		switch comp.Name {
-		// TODO: can parse dns address and find ip??
-		case "ip4", "ip6":
-			ipComponent, err := addr.ValueForProtocol(comp.Code)
-			if err != nil {
-				return "", err
-			}
-			ip = ipComponent
-		}
-	}
-
-	return ip, nil
-}
-
 func (f *Firewall) isDuplicatePeer(pid peer.ID) bool {
 	p := f.peerSet.GetPeer(pid)
 
@@ -210,38 +186,9 @@ func (f *Firewall) isDuplicatePeer(pid peer.ID) bool {
 }
 
 func (f *Firewall) isDuplicateRemoteAddress(remoteAddr string) bool {
-	p := f.findPeerByIP(remoteAddr)
+	p := f.peerSet.GetPeerByRemoteAddr(remoteAddr)
 
 	return p.Status.IsConnectedOrKnown()
-}
-
-func (f *Firewall) findPeerByIP(remoteAddr string) *peer.Peer {
-	target := new(peer.Peer)
-	remoteIP, err := f.getIPFromMultiAddress(remoteAddr)
-	if err != nil {
-		f.logger.Warn("firewall: unable to parse remote address", "err", err, "addr", remoteAddr)
-
-		return nil
-	}
-
-	f.peerSet.IteratePeers(func(p *peer.Peer) (stop bool) {
-		ip, err := f.getIPFromMultiAddress(p.RemoteAddress)
-		if err != nil {
-			f.logger.Warn("firewall: unable to parse remote address", "err", err, "addr", remoteAddr)
-
-			return false
-		}
-
-		if remoteIP == ip {
-			target = p
-
-			return true
-		}
-
-		return false
-	})
-
-	return target
 }
 
 func (f *Firewall) AllowBlockRequest() bool {

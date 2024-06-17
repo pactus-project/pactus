@@ -274,7 +274,7 @@ func TestConnectEvent(t *testing.T) {
 			return false
 		}
 
-		isBlocked := td.sync.firewall.IsBannedAddress(p.RemoteAddress)
+		isBlocked := td.sync.firewall.IsAddressBanned(p.RemoteAddress)
 
 		if isBlocked {
 			p.Status = status.StatusBanned

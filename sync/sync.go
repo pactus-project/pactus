@@ -349,7 +349,7 @@ func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
 		return
 	}
 
-	if sync.firewall.IsBannedAddress(ce.RemoteAddress) {
+	if sync.firewall.IsAddressBanned(ce.RemoteAddress) {
 		sync.logger.Debug("Peer is blacklisted", "peer_id", ce.PeerID, "remote_address", ce.RemoteAddress)
 		sync.peerSet.UpdateStatus(ce.PeerID, status.StatusBanned)
 
