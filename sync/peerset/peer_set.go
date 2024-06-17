@@ -418,3 +418,23 @@ func (ps *PeerSet) GetRandomPeer() *peer.Peer {
 	}
 	panic("unreachable code")
 }
+
+func (ps *PeerSet) GetPeerByRemoteAddr(remoteAddr string) *peer.Peer {
+	remoteIP, err := util.GetIPFromMultiAddress(remoteAddr)
+	if err != nil {
+		return nil
+	}
+
+	for _, p := range ps.peers {
+		ip, err := util.GetIPFromMultiAddress(p.RemoteAddress)
+		if err != nil {
+			return nil
+		}
+
+		if remoteIP == ip {
+			return p
+		}
+	}
+
+	return nil
+}
