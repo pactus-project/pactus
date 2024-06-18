@@ -118,6 +118,10 @@
   # Default is `1000`.
   max_size = 1000
 
+  # `min_fee` indicates the minimum fee in PAC for the transaction to enter into the pool.
+  # Default is `0.01`.
+  min_fee = 0.01
+
 # `logger` contains configuration options for the logger.
 [logger]
   # `colorful` indicates whether log can be colorful or not.
