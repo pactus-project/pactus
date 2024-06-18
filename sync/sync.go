@@ -340,8 +340,16 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
 	sync.logger.Debug("processing connect event", "pid", ce.PeerID)
 
-	sync.peerSet.UpdateStatus(ce.PeerID, status.StatusConnected)
 	sync.peerSet.UpdateAddress(ce.PeerID, ce.RemoteAddress, ce.Direction)
+
+	if sync.firewall.IsBannedAddress(ce.RemoteAddress) {
+		sync.logger.Debug("Peer is blacklisted", "peer_id", ce.PeerID, "remote_address", ce.RemoteAddress)
+		sync.peerSet.UpdateStatus(ce.PeerID, status.StatusBanned)
+
+		return
+	}
+
+	sync.peerSet.UpdateStatus(ce.PeerID, status.StatusConnected)
 }
 
 func (sync *synchronizer) processProtocolsEvent(pe *network.ProtocolsEvents) {
