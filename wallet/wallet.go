@@ -18,11 +18,15 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-type Wallet struct {
-	store *store
-	path  string
+const (
+	AddressTypeBLSAccount string = "bls_account"
+	AddressTypeValidator  string = "validator"
+)
 
-	lazyClient *grpcClient
+type Wallet struct {
+	store      *store
+	path       string
+	grpcClient *grpcClient
 }
 
 //go:embed servers.json
@@ -111,9 +115,12 @@ func newWallet(walletPath string, store *store, offline bool) (*Wallet, error) {
 		crypto.XPrivateKeyHRP = "txsecret"
 	}
 
+	client := newGrpcClient()
+
 	w := &Wallet{
-		store: store,
-		path:  walletPath,
+		store:      store,
+		path:       walletPath,
+		grpcClient: client,
 	}
 
 	if !offline {
@@ -126,29 +133,27 @@ func newWallet(walletPath string, store *store, offline bool) (*Wallet, error) {
 		var netServers []string
 		switch w.store.Network {
 		case genesis.Mainnet:
-			// mainnet
 			netServers = serversInfo["mainnet"]
 
 		case genesis.Testnet:
-			// testnet
 			netServers = serversInfo["testnet"]
 
 		case genesis.Localnet:
-			// localnet
 			netServers = []string{"localhost:50052"}
 
 		default:
 			return nil, ErrInvalidNetwork
 		}
 
-		w.lazyClient = newGRPCClient(netServers)
+		util.Shuffle(netServers)
+		w.grpcClient.SetServerAddrs(netServers)
 	}
 
 	return w, nil
 }
 
 func (w *Wallet) SetServerAddr(addr string) {
-	w.lazyClient = newGRPCClient([]string{addr})
+	w.grpcClient.SetServerAddrs([]string{addr})
 }
 
 func (w *Wallet) Name() string {
@@ -156,7 +161,7 @@ func (w *Wallet) Name() string {
 }
 
 func (w *Wallet) IsOffline() bool {
-	return w.lazyClient == nil
+	return len(w.grpcClient.servers) == 0
 }
 
 func (w *Wallet) Path() string {
@@ -164,7 +169,7 @@ func (w *Wallet) Path() string {
 }
 
 func (w *Wallet) Save() error {
-	bs, err := w.store.Load()
+	bs, err := w.store.ToBytes()
 	if err != nil {
 		return err
 	}
@@ -174,11 +179,7 @@ func (w *Wallet) Save() error {
 
 // Balance returns balance of the account associated with the address..
 func (w *Wallet) Balance(addrStr string) (amount.Amount, error) {
-	if w.IsOffline() {
-		return 0, ErrOffline
-	}
-
-	acc, err := w.lazyClient.getAccount(addrStr)
+	acc, err := w.grpcClient.getAccount(addrStr)
 	if err != nil {
 		return 0, err
 	}
@@ -188,11 +189,7 @@ func (w *Wallet) Balance(addrStr string) (amount.Amount, error) {
 
 // Stake returns stake of the validator associated with the address..
 func (w *Wallet) Stake(addrStr string) (amount.Amount, error) {
-	if w.IsOffline() {
-		return 0, ErrOffline
-	}
-
-	val, err := w.lazyClient.getValidator(addrStr)
+	val, err := w.grpcClient.getValidator(addrStr)
 	if err != nil {
 		return 0, err
 	}
@@ -201,24 +198,24 @@ func (w *Wallet) Stake(addrStr string) (amount.Amount, error) {
 }
 
 // TotalBalance return the total available balance of the wallet.
-func (w *Wallet) TotalBalance() amount.Amount {
+func (w *Wallet) TotalBalance() (amount.Amount, error) {
 	totalBalance := int64(0)
 	infos := w.store.Vault.AllAccountAddresses()
 	for _, info := range infos {
-		acc, _ := w.lazyClient.getAccount(info.Address)
+		acc, _ := w.grpcClient.getAccount(info.Address)
 		if acc != nil {
 			totalBalance += acc.Balance
 		}
 	}
 
-	return amount.Amount(totalBalance)
+	return amount.Amount(totalBalance), nil
 }
 
 // MakeTransferTx creates a new transfer transaction based on the given parameters.
 func (w *Wallet) MakeTransferTx(sender, receiver string, amt amount.Amount,
 	options ...TxOption,
 ) (*tx.Tx, error) {
-	maker, err := newTxBuilder(w.lazyClient, options...)
+	maker, err := newTxBuilder(w.grpcClient, options...)
 	if err != nil {
 		return nil, err
 	}
@@ -240,7 +237,7 @@ func (w *Wallet) MakeTransferTx(sender, receiver string, amt amount.Amount,
 func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amt amount.Amount,
 	options ...TxOption,
 ) (*tx.Tx, error) {
-	maker, err := newTxBuilder(w.lazyClient, options...)
+	maker, err := newTxBuilder(w.grpcClient, options...)
 	if err != nil {
 		return nil, err
 	}
@@ -273,7 +270,7 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amt amount.Amount,
 
 // MakeUnbondTx creates a new unbond transaction based on the given parameters.
 func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
-	maker, err := newTxBuilder(w.lazyClient, opts...)
+	maker, err := newTxBuilder(w.grpcClient, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -291,7 +288,7 @@ func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
 func (w *Wallet) MakeWithdrawTx(sender, receiver string, amt amount.Amount,
 	options ...TxOption,
 ) (*tx.Tx, error) {
-	maker, err := newTxBuilder(w.lazyClient, options...)
+	maker, err := newTxBuilder(w.grpcClient, options...)
 	if err != nil {
 		return nil, err
 	}
@@ -323,11 +320,7 @@ func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
 }
 
 func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
-	if w.IsOffline() {
-		return "", ErrOffline
-	}
-
-	id, err := w.lazyClient.sendTx(trx)
+	id, err := w.grpcClient.sendTx(trx)
 	if err != nil {
 		return "", err
 	}
@@ -339,7 +332,7 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 }
 
 func (w *Wallet) CalculateFee(amt amount.Amount, payloadType payload.Type) (amount.Amount, error) {
-	return w.lazyClient.getFee(amt, payloadType)
+	return w.grpcClient.getFee(amt, payloadType)
 }
 
 func (w *Wallet) UpdatePassword(oldPassword, newPassword string) error {
@@ -428,7 +421,7 @@ func (w *Wallet) AddTransaction(id tx.ID) error {
 		return ErrHistoryExists
 	}
 
-	trxRes, err := w.lazyClient.getTransaction(id)
+	trxRes, err := w.grpcClient.getTransaction(id)
 	if err != nil {
 		return err
 	}

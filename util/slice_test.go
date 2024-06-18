@@ -347,3 +347,18 @@ func TestTrimSlice(t *testing.T) {
 		assert.Equal(t, got, tt.want, "Trim() = %v, want %v", got, tt.want)
 	}
 }
+
+func TestShuffle(t *testing.T) {
+	// Create a slice with 100 integers
+	ints := make([]int, 100)
+	for i := range ints {
+		ints[i] = i + 1
+	}
+	originalInts := make([]int, len(ints))
+	copy(originalInts, ints)
+
+	Shuffle(ints)
+
+	assert.NotEqual(t, originalInts, ints, "ints slice was not shuffled")
+	assert.ElementsMatch(t, originalInts, ints, "ints slice does not contain the same elements")
+}

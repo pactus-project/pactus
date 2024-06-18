@@ -29,14 +29,14 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		if *testnetOpt {
 			chainType = genesis.Testnet
 		}
-		wallet, err := wallet.Create(*pathOpt, mnemonic, *passOpt, chainType)
+		wlt, err := wallet.Create(*pathOpt, mnemonic, *passOpt, chainType)
 		cmd.FatalErrorCheck(err)
 
-		err = wallet.Save()
+		err = wlt.Save()
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsgf("Wallet successfully recovered and saved at: %s", wallet.Path())
+		cmd.PrintInfoMsgf("Wallet successfully recovered and saved at: %s", wlt.Path())
 	}
 }
 

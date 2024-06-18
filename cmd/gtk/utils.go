@@ -170,34 +170,34 @@ func setTextViewContent(tv *gtk.TextView, content string) {
 	buf.SetText(content)
 }
 
-func updateValidatorHint(lbl *gtk.Label, addr string, w *wallet.Wallet) {
-	stake, _ := w.Stake(addr)
+func updateValidatorHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
+	stake, _ := wlt.Stake(addr)
 	hint := fmt.Sprintf("stake: %s", stake)
 
-	info := w.AddressInfo(addr)
+	info := wlt.AddressInfo(addr)
 	if info != nil && info.Label != "" {
 		hint += ", label: " + info.Label
 	}
 	updateHintLabel(lbl, hint)
 }
 
-func updateAccountHint(lbl *gtk.Label, addr string, w *wallet.Wallet) {
-	balance, _ := w.Balance(addr)
+func updateAccountHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
+	balance, _ := wlt.Balance(addr)
 	hint := fmt.Sprintf("balance: %s", balance)
 
-	info := w.AddressInfo(addr)
+	info := wlt.AddressInfo(addr)
 	if info != nil && info.Label != "" {
 		hint += ", label: " + info.Label
 	}
 	updateHintLabel(lbl, hint)
 }
 
-func updateFeeHint(lbl *gtk.Label, amtStr string, w *wallet.Wallet, payloadType payload.Type) {
+func updateFeeHint(lbl *gtk.Label, amtStr string, wlt *wallet.Wallet, payloadType payload.Type) {
 	amt, err := amount.FromString(amtStr)
 	if err != nil {
 		updateHintLabel(lbl, "")
 	} else {
-		fee, _ := w.CalculateFee(amt, payloadType)
+		fee, _ := wlt.CalculateFee(amt, payloadType)
 		hint := fmt.Sprintf("payable: %s, fee: %s",
 			fee+amt, fee)
 		updateHintLabel(lbl, hint)
@@ -209,26 +209,26 @@ func updateHintLabel(lbl *gtk.Label, hint string) {
 		fmt.Sprintf("<span foreground='gray' size='small'>%s</span>", hint))
 }
 
-func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, w *wallet.Wallet, trx *tx.Tx) {
+func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, wlt *wallet.Wallet, trx *tx.Tx) {
 	if showQuestionDialog(parent, msg) {
-		password, ok := getWalletPassword(w)
+		password, ok := getWalletPassword(wlt)
 		if !ok {
 			return
 		}
-		err := w.SignTransaction(password, trx)
+		err := wlt.SignTransaction(password, trx)
 		if err != nil {
 			errorCheck(err)
 
 			return
 		}
-		txID, err := w.BroadcastTransaction(trx)
+		txID, err := wlt.BroadcastTransaction(trx)
 		if err != nil {
 			errorCheck(err)
 
 			return
 		}
 
-		err = w.Save()
+		err = wlt.Save()
 		if err != nil {
 			errorCheck(err)
 

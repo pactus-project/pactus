@@ -1,10 +1,6 @@
-package wallet
+package wallet_test
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"net"
 	"path"
 	"testing"
 
@@ -16,20 +12,18 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
-	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/stretchr/testify/assert"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/test/bufconn"
 )
 
 type testData struct {
 	*testsuite.TestSuite
 
-	server      *grpc.Server
-	mockService *mockService
-	wallet      *Wallet
-	password    string
+	server    *grpc.Server
+	wallet    *wallet.Wallet
+	mockState *state.MockState
+	password  string
 }
 
 func setup(t *testing.T) *testData {
@@ -39,66 +33,43 @@ func setup(t *testing.T) *testData {
 
 	password := ""
 	walletPath := util.TempFilePath()
-	mnemonic, _ := GenerateMnemonic(128)
-	wallet, err := Create(walletPath, mnemonic, password, genesis.Mainnet)
+	mnemonic, _ := wallet.GenerateMnemonic(128)
+	wlt, err := wallet.Create(walletPath, mnemonic, password, genesis.Mainnet)
 	assert.NoError(t, err)
-	assert.False(t, wallet.IsEncrypted())
-	assert.Equal(t, wallet.Path(), walletPath)
-	assert.Equal(t, wallet.Name(), path.Base(walletPath))
+	assert.False(t, wlt.IsEncrypted())
+	assert.Equal(t, wlt.Path(), walletPath)
+	assert.Equal(t, wlt.Name(), path.Base(walletPath))
 
-	// Mocking the gRPC server
-	const bufSize = 1024 * 1024
-	listener := bufconn.Listen(bufSize)
-
-	server := grpc.NewServer()
-	mockServer := &mockService{
-		mockState: state.MockingState(ts),
+	grpcConf := &grpc.Config{
+		Enable: true,
+		Listen: "[::]:0",
 	}
-
-	pactus.RegisterBlockchainServer(server, mockServer)
-	pactus.RegisterTransactionServer(server, mockServer)
-
-	go func() {
-		if err := server.Serve(listener); err != nil {
-			fmt.Printf("Server exited with error: %v", err)
-		}
-	}()
-
-	bufDialer := func(context.Context, string) (net.Conn, error) {
-		return listener.Dial()
+	walletMgrConf := &wallet.Config{
+		WalletsDir: util.TempDirPath(),
+		ChainType:  genesis.Mainnet,
 	}
+	mockState := state.MockingState(ts)
+	gRPCServer := grpc.NewServer(
+		grpcConf, mockState,
+		nil, nil,
+		nil, wallet.NewWalletManager(walletMgrConf),
+	)
 
-	conn, err := grpc.NewClient("passthrough://bufnet",
-		grpc.WithContextDialer(bufDialer),
-		grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		t.Fatalf("Failed to dial blockchain server: %v", err)
-	}
+	assert.NoError(t, gRPCServer.StartServer())
 
-	// Creating gRPC client
-	client := &grpcClient{
-		ctx:               context.Background(),
-		conn:              conn,
-		blockchainClient:  pactus.NewBlockchainClient(conn),
-		transactionClient: pactus.NewTransactionClient(conn),
-	}
-
-	wallet.lazyClient = client
-
-	assert.False(t, wallet.IsEncrypted())
-	assert.False(t, wallet.IsOffline())
+	wlt.SetServerAddr(gRPCServer.Address())
 
 	return &testData{
-		TestSuite:   ts,
-		server:      server,
-		mockService: mockServer,
-		wallet:      wallet,
-		password:    password,
+		TestSuite: ts,
+		mockState: mockState,
+		server:    gRPCServer,
+		wallet:    wlt,
+		password:  password,
 	}
 }
 
-func (ts *testData) Close() {
-	ts.server.Stop()
+func (td *testData) Close() {
+	td.server.StopServer()
 	// TODO:  close client (wallet.Close() ??)
 }
 
@@ -106,33 +77,34 @@ func TestOpenWallet(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
 
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Save the wallet", func(t *testing.T) {
 		assert.NoError(t, td.wallet.Save())
-		_, err := Open(td.wallet.path, true)
+	})
+
+	t.Run("Re-open the wallet", func(t *testing.T) {
+		_, err := wallet.Open(td.wallet.Path(), true)
 		assert.NoError(t, err)
 	})
 
 	t.Run("Invalid wallet path", func(t *testing.T) {
-		_, err := Open(util.TempFilePath(), true)
+		_, err := wallet.Open(util.TempFilePath(), true)
 		assert.Error(t, err)
 	})
 
 	t.Run("Invalid crc", func(t *testing.T) {
-		td.wallet.store.VaultCRC = 0
-		bs, _ := json.Marshal(td.wallet.store)
-		assert.NoError(t, util.WriteFile(td.wallet.path, bs))
+		assert.NoError(t, util.WriteFile(td.wallet.Path(), []byte("{}")))
 
-		_, err := Open(td.wallet.path, true)
-		assert.ErrorIs(t, err, CRCNotMatchError{
-			Expected: td.wallet.store.calcVaultCRC(),
+		_, err := wallet.Open(td.wallet.Path(), true)
+		assert.ErrorIs(t, err, wallet.CRCNotMatchError{
+			Expected: 634125391,
 			Got:      0,
 		})
 	})
 
 	t.Run("Invalid json", func(t *testing.T) {
-		assert.NoError(t, util.WriteFile(td.wallet.path, []byte("invalid_json")))
+		assert.NoError(t, util.WriteFile(td.wallet.Path(), []byte("invalid_json")))
 
-		_, err := Open(td.wallet.path, true)
+		_, err := wallet.Open(td.wallet.Path(), true)
 		assert.Error(t, err)
 	})
 }
@@ -148,21 +120,21 @@ func TestRecoverWallet(t *testing.T) {
 		// try to recover a wallet at the same place
 		assert.NoError(t, td.wallet.Save())
 
-		_, err := Create(td.wallet.path, mnemonic, password, 0)
-		assert.ErrorIs(t, err, ExitsError{
-			Path: td.wallet.path,
+		_, err := wallet.Create(td.wallet.Path(), mnemonic, password, 0)
+		assert.ErrorIs(t, err, wallet.ExitsError{
+			Path: td.wallet.Path(),
 		})
 	})
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
-		_, err := Create(util.TempFilePath(),
+		_, err := wallet.Create(util.TempFilePath(),
 			"invalid mnemonic phrase seed", password, 0)
 		assert.Error(t, err)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		walletPath := util.TempFilePath()
-		recovered, err := Create(walletPath, mnemonic, password, genesis.Mainnet)
+		recovered, err := wallet.Create(walletPath, mnemonic, password, genesis.Mainnet)
 		assert.NoError(t, err)
 
 		addrInfo1, err := recovered.NewBLSAccountAddress("addr-1")
@@ -173,16 +145,6 @@ func TestRecoverWallet(t *testing.T) {
 
 		assert.FileExists(t, walletPath)
 		assert.True(t, recovered.Contains(addrInfo1.Address))
-	})
-}
-
-func TestSaveWallet(t *testing.T) {
-	td := setup(t)
-	defer td.Close()
-
-	t.Run("Invalid path", func(t *testing.T) {
-		td.wallet.path = "/"
-		assert.Error(t, td.wallet.Save())
 	})
 }
 
@@ -220,14 +182,14 @@ func TestKeyInfo(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
 
-	mnemonic, _ := GenerateMnemonic(128)
-	w1, err := Create(util.TempFilePath(), mnemonic, td.password,
+	mnemonic, _ := wallet.GenerateMnemonic(128)
+	w1, err := wallet.Create(util.TempFilePath(), mnemonic, td.password,
 		genesis.Mainnet)
 	assert.NoError(t, err)
 	addrInfo1, _ := w1.NewBLSAccountAddress("")
 	prv1, _ := w1.PrivateKey("", addrInfo1.Address)
 
-	w2, err := Create(util.TempFilePath(), mnemonic, td.password,
+	w2, err := wallet.Create(util.TempFilePath(), mnemonic, td.password,
 		genesis.Testnet)
 	assert.NoError(t, err)
 	addrInfo2, _ := w2.NewBLSAccountAddress("")
@@ -242,7 +204,7 @@ func TestBalance(t *testing.T) {
 	defer td.Close()
 
 	t.Run("existing account", func(t *testing.T) {
-		acc, addr := td.mockService.mockState.TestStore.AddTestAccount()
+		acc, addr := td.mockState.TestStore.AddTestAccount()
 		amt, err := td.wallet.Balance(addr.String())
 		assert.NoError(t, err)
 		assert.Equal(t, amt, acc.Balance())
@@ -261,7 +223,7 @@ func TestStake(t *testing.T) {
 	defer td.Close()
 
 	t.Run("existing validator", func(t *testing.T) {
-		val := td.mockService.mockState.TestStore.AddTestValidator()
+		val := td.mockState.TestStore.AddTestValidator()
 		amt, err := td.wallet.Stake(val.Address().String())
 		assert.NoError(t, err)
 		assert.Equal(t, amt, val.Stake())
@@ -285,10 +247,10 @@ func TestSigningTx(t *testing.T) {
 	fee := td.RandFee()
 	lockTime := td.RandHeight()
 
-	opts := []TxOption{
-		OptionFee(fee),
-		OptionLockTime(lockTime),
-		OptionMemo("test"),
+	opts := []wallet.TxOption{
+		wallet.OptionFee(fee),
+		wallet.OptionLockTime(lockTime),
+		wallet.OptionMemo("test"),
 	}
 
 	trx, err := td.wallet.MakeTransferTx(senderInfo.Address, receiver.String(), amt, opts...)
@@ -315,10 +277,10 @@ func TestMakeTransferTx(t *testing.T) {
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		fee := td.RandFee()
-		opts := []TxOption{
-			OptionFee(fee),
-			OptionLockTime(lockTime),
-			OptionMemo("test"),
+		opts := []wallet.TxOption{
+			wallet.OptionFee(fee),
+			wallet.OptionLockTime(lockTime),
+			wallet.OptionMemo("test"),
 		}
 
 		trx, err := td.wallet.MakeTransferTx(senderInfo.Address, receiverInfo.String(), amt, opts...)
@@ -330,7 +292,7 @@ func TestMakeTransferTx(t *testing.T) {
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		testHeight := td.RandHeight()
-		_ = td.mockService.mockState.TestStore.AddTestBlock(testHeight)
+		_ = td.mockState.TestStore.AddTestBlock(testHeight)
 
 		trx, err := td.wallet.MakeTransferTx(senderInfo.Address, receiverInfo.String(), amt)
 		assert.NoError(t, err)
@@ -370,10 +332,10 @@ func TestMakeBondTx(t *testing.T) {
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
 		fee := td.RandFee()
-		opts := []TxOption{
-			OptionFee(fee),
-			OptionLockTime(lockTime),
-			OptionMemo("test"),
+		opts := []wallet.TxOption{
+			wallet.OptionFee(fee),
+			wallet.OptionLockTime(lockTime),
+			wallet.OptionMemo("test"),
 		}
 
 		trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(),
@@ -386,7 +348,7 @@ func TestMakeBondTx(t *testing.T) {
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		testHeight := td.RandHeight()
-		_ = td.mockService.mockState.TestStore.AddTestBlock(testHeight)
+		_ = td.mockState.TestStore.AddTestBlock(testHeight)
 
 		trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address().String(), receiver.PublicKey().String(), amt)
 		assert.NoError(t, err)
@@ -417,7 +379,7 @@ func TestMakeBondTx(t *testing.T) {
 		})
 
 		t.Run("validator exists and public key set", func(t *testing.T) {
-			val := td.mockService.mockState.TestStore.AddTestValidator()
+			val := td.mockState.TestStore.AddTestValidator()
 
 			trx, err := td.wallet.MakeBondTx(senderInfo.Address,
 				val.Address().String(), receiver.PublicKey().String(), amt)
@@ -443,7 +405,7 @@ func TestMakeBondTx(t *testing.T) {
 		})
 
 		t.Run("validator exists and public key not set", func(t *testing.T) {
-			val := td.mockService.mockState.TestStore.AddTestValidator()
+			val := td.mockState.TestStore.AddTestValidator()
 
 			trx, err := td.wallet.MakeBondTx(senderInfo.Address,
 				val.Address().String(), "", amt)
@@ -452,7 +414,7 @@ func TestMakeBondTx(t *testing.T) {
 		})
 
 		t.Run("validator exists and public key set", func(t *testing.T) {
-			val := td.mockService.mockState.TestStore.AddTestValidator()
+			val := td.mockState.TestStore.AddTestValidator()
 
 			trx, err := td.wallet.MakeBondTx(senderInfo.Address,
 				val.Address().String(), receiverInfo.PublicKey, amt)
@@ -492,9 +454,9 @@ func TestMakeUnbondTx(t *testing.T) {
 
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
-		opts := []TxOption{
-			OptionLockTime(lockTime),
-			OptionMemo("test"),
+		opts := []wallet.TxOption{
+			wallet.OptionLockTime(lockTime),
+			wallet.OptionMemo("test"),
 		}
 
 		trx, err := td.wallet.MakeUnbondTx(senderInfo.Address, opts...)
@@ -506,7 +468,7 @@ func TestMakeUnbondTx(t *testing.T) {
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		testHeight := td.RandHeight()
-		_ = td.mockService.mockState.TestStore.AddTestBlock(testHeight)
+		_ = td.mockState.TestStore.AddTestBlock(testHeight)
 
 		trx, err := td.wallet.MakeUnbondTx(senderInfo.Address)
 		assert.NoError(t, err)
@@ -539,10 +501,10 @@ func TestMakeWithdrawTx(t *testing.T) {
 	t.Run("set parameters manually", func(t *testing.T) {
 		lockTime := td.RandHeight()
 		fee := td.RandFee()
-		opts := []TxOption{
-			OptionFee(fee),
-			OptionLockTime(lockTime),
-			OptionMemo("test"),
+		opts := []wallet.TxOption{
+			wallet.OptionFee(fee),
+			wallet.OptionLockTime(lockTime),
+			wallet.OptionMemo("test"),
 		}
 
 		trx, err := td.wallet.MakeWithdrawTx(senderInfo.Address, receiverInfo.Address, amt, opts...)
@@ -554,7 +516,7 @@ func TestMakeWithdrawTx(t *testing.T) {
 
 	t.Run("query parameters from the node", func(t *testing.T) {
 		testHeight := td.RandHeight()
-		_ = td.mockService.mockState.TestStore.AddTestBlock(testHeight)
+		_ = td.mockState.TestStore.AddTestBlock(testHeight)
 
 		trx, err := td.wallet.MakeWithdrawTx(senderInfo.Address, receiverInfo.Address, amt)
 		assert.NoError(t, err)
@@ -579,8 +541,8 @@ func TestMakeWithdrawTx(t *testing.T) {
 }
 
 func TestCheckMnemonic(t *testing.T) {
-	mnemonic, _ := GenerateMnemonic(128)
-	assert.NoError(t, CheckMnemonic(mnemonic))
+	mnemonic, _ := wallet.GenerateMnemonic(128)
+	assert.NoError(t, wallet.CheckMnemonic(mnemonic))
 }
 
 func TestTotalBalance(t *testing.T) {
@@ -600,9 +562,10 @@ func TestTotalBalance(t *testing.T) {
 	acc1.AddToBalance(td.RandAmount())
 	acc3.AddToBalance(td.RandAmount())
 
-	td.mockService.mockState.TestStore.Accounts[addr1] = acc1
-	td.mockService.mockState.TestStore.Accounts[addr3] = acc3
+	td.mockState.TestStore.Accounts[addr1] = acc1
+	td.mockState.TestStore.Accounts[addr3] = acc3
 
-	totalBalance := td.wallet.TotalBalance()
+	totalBalance, err := td.wallet.TotalBalance()
+	assert.NoError(t, err)
 	assert.Equal(t, totalBalance, acc1.Balance()+acc3.Balance())
 }

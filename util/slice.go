@@ -6,6 +6,7 @@ import (
 	"crypto/subtle"
 	"encoding/binary"
 	"io"
+	"math/rand"
 )
 
 func Uint16ToSlice(n uint16) []byte {
@@ -242,4 +243,11 @@ func Trim[T any](s []T, newLength int) []T {
 	}
 
 	return s
+}
+
+// Shuffle shuffles a slice of any type.
+func Shuffle[T any](slice []T) {
+	rand.Shuffle(len(slice), func(i, j int) {
+		slice[i], slice[j] = slice[j], slice[i]
+	})
 }

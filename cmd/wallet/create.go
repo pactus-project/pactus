@@ -29,14 +29,14 @@ func buildCreateCmd(parentCmd *cobra.Command) {
 		if *testnetOpt {
 			network = genesis.Testnet
 		}
-		wallet, err := wallet.Create(*pathOpt, mnemonic, password, network)
+		wlt, err := wallet.Create(*pathOpt, mnemonic, password, network)
 		cmd.FatalErrorCheck(err)
 
-		err = wallet.Save()
+		err = wlt.Save()
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintSuccessMsgf("Your wallet was successfully created at: %s", wallet.Path())
+		cmd.PrintSuccessMsgf("Your wallet was successfully created at: %s", wlt.Path())
 		cmd.PrintInfoMsgf("Seed phrase: \"%v\"", mnemonic)
 		cmd.PrintWarnMsgf("Please keep your seed in a safe place; " +
 			"if you lose it, you will not be able to restore your wallet.")
