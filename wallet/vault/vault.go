@@ -483,9 +483,10 @@ func (v *Vault) NewValidatorAddress(label string) (*AddressInfo, error) {
 
 	addr := blsPubKey.ValidatorAddress().String()
 	data := AddressInfo{
-		Address: addr,
-		Label:   label,
-		Path:    addresspath.NewPath(ext.Path()...).String(),
+		Address:   addr,
+		Label:     label,
+		PublicKey: blsPubKey.String(),
+		Path:      addresspath.NewPath(ext.Path()...).String(),
 	}
 	v.Addresses[addr] = data
 	v.Purposes.PurposeBLS.NextValidatorIndex++
