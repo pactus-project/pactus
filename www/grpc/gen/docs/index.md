@@ -182,8 +182,8 @@ Request message for retrieving raw details of a bond transaction.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | lock_time | [uint32](#uint32) |  | Lock time for the transaction. If not explicitly set, it sets to the last block height. |
-| sender | [string](#string) |  | Sender&#39;s account address. |
-| receiver | [string](#string) |  | Receiver&#39;s validator address. |
+| sender | [string](#string) |  | Sender's account address. |
+| receiver | [string](#string) |  | Receiver's validator address. |
 | stake | [int64](#int64) |  | Stake amount in NanoPAC. It should be greater than 0. |
 | public_key | [string](#string) |  | Public key of the validator. |
 | fee | [int64](#int64) |  | Transaction fee in NanoPAC. If not explicitly set, it is calculated based on the stake. |
@@ -218,8 +218,8 @@ Request message for retrieving raw details of a transfer transaction.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | lock_time | [uint32](#uint32) |  | Lock time for the transaction. If not explicitly set, it sets to the last block height. |
-| sender | [string](#string) |  | Sender&#39;s account address. |
-| receiver | [string](#string) |  | Receiver&#39;s account address. |
+| sender | [string](#string) |  | Sender's account address. |
+| receiver | [string](#string) |  | Receiver's account address. |
 | amount | [int64](#int64) |  | Transfer amount in NanoPAC. It should be greater than 0. |
 | fee | [int64](#int64) |  | Transaction fee in NanoPAC. If not explicitly set, it is calculated based on the amount. |
 | memo | [string](#string) |  | Transaction memo. |
@@ -307,8 +307,8 @@ Payload for a bond transaction.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| sender | [string](#string) |  | Sender&#39;s address. |
-| receiver | [string](#string) |  | Receiver&#39;s address. |
+| sender | [string](#string) |  | Sender's address. |
+| receiver | [string](#string) |  | Receiver's address. |
 | stake | [int64](#int64) |  | Stake amount in NanoPAC. |
 
 
@@ -340,8 +340,8 @@ Payload for a transfer transaction.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| sender | [string](#string) |  | Sender&#39;s address. |
-| receiver | [string](#string) |  | Receiver&#39;s address. |
+| sender | [string](#string) |  | Sender's address. |
+| receiver | [string](#string) |  | Receiver's address. |
 | amount | [int64](#int64) |  | Transaction amount in NanoPAC. |
 
 
@@ -863,7 +863,7 @@ Message containing information about a vote.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | type | [VoteType](#pactus-VoteType) |  | Type of the vote. |
-| voter | [string](#string) |  | Voter&#39;s address. |
+| voter | [string](#string) |  | Voter's address. |
 | block_hash | [bytes](#bytes) |  | Hash of the block being voted on. |
 | round | [int32](#int32) |  | Round of the vote. |
 | cp_round | [int32](#int32) |  | Consensus round of the vote. |
