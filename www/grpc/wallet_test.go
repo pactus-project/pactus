@@ -301,12 +301,14 @@ func TestGetNewAddress(t *testing.T) {
 		res, err := client.GetNewAddress(context.Background(),
 			&pactus.GetNewAddressRequest{
 				WalletName:  wltName,
-				AddressType: 2,
-				Label:       "bls",
+				AddressType: pactus.AddressType_ADDRESS_TYPE_BLS_ACCOUNT,
+				Label:       "bls-account",
 			})
 		assert.Nil(t, err)
 		assert.Equal(t, wltName, res.WalletName)
-		assert.Equal(t, "bls", res.AddressInfo.Label)
+		assert.NotEmpty(t, res.AddressInfo.PublicKey)
+		assert.NotEmpty(t, res.AddressInfo.Path)
+		assert.Equal(t, "bls-account", res.AddressInfo.Label)
 
 		_, err = client.UnloadWallet(context.Background(),
 			&pactus.UnloadWalletRequest{
@@ -325,11 +327,13 @@ func TestGetNewAddress(t *testing.T) {
 		res, err := client.GetNewAddress(context.Background(),
 			&pactus.GetNewAddressRequest{
 				WalletName:  wltName,
-				AddressType: 1,
+				AddressType: pactus.AddressType_ADDRESS_TYPE_VALIDATOR,
 				Label:       "validator",
 			})
 		assert.Nil(t, err)
 		assert.Equal(t, wltName, res.WalletName)
+		assert.NotEmpty(t, res.AddressInfo.PublicKey)
+		assert.NotEmpty(t, res.AddressInfo.Path)
 		assert.Equal(t, "validator", res.AddressInfo.Label)
 
 		_, err = client.UnloadWallet(context.Background(),
@@ -349,7 +353,7 @@ func TestGetNewAddress(t *testing.T) {
 		res, err := client.GetNewAddress(context.Background(),
 			&pactus.GetNewAddressRequest{
 				WalletName:  wltName,
-				AddressType: 0,
+				AddressType: pactus.AddressType_ADDRESS_TYPE_TREASURY,
 				Label:       "treasury",
 			})
 		assert.NotNil(t, err)
