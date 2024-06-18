@@ -222,12 +222,25 @@ func TestAllImportedPrivateKeysAddresses(t *testing.T) {
 func TestNewBLSAccountAddress(t *testing.T) {
 	td := setup(t)
 
-	t.Run("Ok", func(t *testing.T) {
-		addressInfo, err := td.vault.NewBLSAccountAddress("new-addr")
-		assert.NoError(t, err)
-		assert.True(t, td.vault.Contains(addressInfo.Address))
-		assert.Equal(t, td.vault.Label(addressInfo.Address), "new-addr")
-	})
+	label := td.RandString(16)
+	addressInfo, err := td.vault.NewBLSAccountAddress(label)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, addressInfo.Address)
+	assert.NotEmpty(t, addressInfo.PublicKey)
+	assert.Contains(t, addressInfo.Path, "m/12381'/21888'/2'")
+	assert.Equal(t, addressInfo.Label, label)
+}
+
+func TestNewValidatorAddress(t *testing.T) {
+	td := setup(t)
+
+	label := td.RandString(16)
+	addressInfo, err := td.vault.NewValidatorAddress(label)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, addressInfo.Address)
+	assert.NotEmpty(t, addressInfo.PublicKey)
+	assert.Contains(t, addressInfo.Path, "m/12381'/21888'/1'")
+	assert.Equal(t, addressInfo.Label, label)
 }
 
 func TestRecover(t *testing.T) {
