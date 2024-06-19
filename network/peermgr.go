@@ -2,6 +2,8 @@ package network
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"sync"
 	"time"
 
@@ -9,8 +11,11 @@ import (
 	lp2pnet "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 )
+
+const PeerStorePath = "peers.json"
 
 type peerInfo struct {
 	MultiAddress multiaddr.Multiaddr
@@ -36,9 +41,20 @@ type peerMgr struct {
 func newPeerMgr(ctx context.Context, h lp2phost.Host,
 	conf *Config, log *logger.SubLogger,
 ) *peerMgr {
-	peers := make(map[lp2ppeer.ID]*peerInfo)
+	var err error
+	peerStore := make([]lp2ppeer.AddrInfo, 0)
+	if util.PathExists(PeerStorePath) {
+		peerStore, err = loadPeerStore()
+		if err != nil {
+			log.Error("failed to load peer store", "err", err)
+		}
+		log.Info("peer store loaded successfully")
+	}
 
-	for _, ai := range conf.BootstrapAddrInfos() {
+	peerStore = append(peerStore, conf.BootstrapAddrInfos()...)
+
+	peers := make(map[lp2ppeer.ID]*peerInfo)
+	for _, ai := range peerStore {
 		peers[ai.ID] = &peerInfo{
 			MultiAddress: ai.Addrs[0],
 			Connected:    false,
@@ -46,7 +62,7 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host,
 		}
 	}
 
-	b := &peerMgr{
+	pm := &peerMgr{
 		ctx:      ctx,
 		minConns: conf.MinConns(),
 		peers:    peers,
@@ -54,9 +70,9 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host,
 		logger:   log,
 	}
 
-	log.Info("peer manager created", "minConns", b.minConns)
+	log.Info("peer manager created", "minConns", pm.minConns)
 
-	return b
+	return pm
 }
 
 // Start starts the Peer  Manager.
@@ -78,7 +94,10 @@ func (mgr *peerMgr) Start() {
 	}()
 }
 
-func (*peerMgr) Stop() {
+func (mgr *peerMgr) Stop() {
+	if err := mgr.savePeerStore(); err != nil {
+		mgr.logger.Error("can't save peer store", "err", err)
+	}
 }
 
 func (mgr *peerMgr) SetPeerConnected(pid lp2ppeer.ID, ma multiaddr.Multiaddr,
@@ -148,7 +167,7 @@ func (mgr *peerMgr) setPeerDisconnected(pid lp2ppeer.ID) {
 	pi.Direction = lp2pnet.DirUnknown
 }
 
-// checkConnectivity performs the actual work of maintaining connections.
+// CheckConnectivity performs the actual work of maintaining connections.
 // It ensures that the number of connections stays within the minimum and maximum thresholds.
 func (mgr *peerMgr) CheckConnectivity() {
 	mgr.lk.Lock()
@@ -209,4 +228,36 @@ func (mgr *peerMgr) NumOutbound() int {
 	defer mgr.lk.RUnlock()
 
 	return mgr.numOutbound
+}
+
+func (mgr *peerMgr) savePeerStore() error {
+	mgr.lk.RLock()
+	defer mgr.lk.RUnlock()
+
+	ps := make([]string, 0)
+	for id, info := range mgr.peers {
+		ps = append(ps, fmt.Sprintf("%s/p2p/%s", info.MultiAddress.String(), id.String()))
+	}
+
+	data, err := json.Marshal(ps)
+	if err != nil {
+		return err
+	}
+
+	return util.WriteFile(PeerStorePath, data)
+}
+
+func loadPeerStore() ([]lp2ppeer.AddrInfo, error) {
+	data, err := util.ReadFile(PeerStorePath)
+	if err != nil {
+		return nil, err
+	}
+
+	ps := make([]string, 0)
+	err = json.Unmarshal(data, &ps)
+	if err != nil {
+		return nil, err
+	}
+
+	return MakeAddrInfos(ps)
 }
