@@ -1,45 +1,160 @@
-# JSON-RPC API Reference
-
-Each node in the Pactus network can be configured to use the [JSON-RPC 2.0](https://www.jsonrpc.org/specification) protocol for communication.
-Here you can find the list of all JSON-RPC methods and messages.
-
-All the amounts and values in JSON-RPC endpoints are in NanoPAC units, which are atomic and the smallest unit in the Pactus blockchain.
-Each PAC is equivalent to
- 1,000,000,000 or 10<sup>9</sup> NanoPACs.
-{{$package := (index .Files 0).Package}}
-
-## Methods
-
-{{range $file := .Files}}
-{{range $service := $file.Services}}
-{{range $method := $service.Methods}}
-
-- [{{rpcMethod $package $service.Name $method.Name}}](#{{rpcMethod $package $service.Name $method.Name}})
-{{end}}
-{{end}}
-{{end}}
-
----
-{{range $file := .Files}}
-{{range $service := $file.Services}}
-{{range $method := $service.Methods}}
-<a id="{{rpcMethod $package $service.Name $method.Name}}"></a>
-
-## Method {{rpcMethod $package $service.Name $method.Name}}
-
-{{$package | lower}}.{{$service.Name | lower}}.{{toJsonRpc $method.Description $method.Name}}
-
-### Parameters
-```json
-{{$method.Params}}
-```
-
-### Result
-```json
-{{$method.Result}}
-```
+{{/* This template generates gRPC document for https://pactus.org/ */}}---
+title: JSON-RPC API Reference
+weight: 2
 ---
 
-{{end}}
-{{end}}
-{{end}}
+Each node in the Pactus network can be configured to use the [gRPC](https://grpc.io/) protocol for communication.
+Here, you can find the list of all gRPC methods and messages.
+
+All the amounts and values in gRPC endpoints are in NanoPAC units,
+which are atomic and the smallest unit in the Pactus blockchain.
+Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
+
+All binary data, including hash and transaction data,
+are encoded using the [base64](https://en.wikipedia.org/wiki/Base64) decoder.
+
+<h2>JSON-RPC Services</h2>
+
+<div id="toc-container">
+  <ul class="">
+  {{range .Files}}{{- print "" -}}
+    {{range .Services}}{{- print "" -}}
+    <li> {{.Name}} Service
+      <ul> {{$service_name := .JSONName}}
+        {{range .Methods}}{{- print "" -}}
+        <li>
+          <a href="#{{.JSONName}}">
+          <span class="rpc-badge"></span> {{.JSONName}}</a>
+        </li>
+        {{end}}{{- print "" -}}
+      </ul>
+    </li>
+    {{end}}{{- print "" -}}
+  {{end}}{{- print "" -}}
+  </ul>
+</div>
+
+<div class="api-doc">
+{{range .Files}}{{range .Services}}{{- print "\n" -}}
+
+## {{.Name}} Service
+
+{{p .Description}}
+{{$service_name := .FullName}}{{range .Methods}}{{- print "\n" -}}
+
+### {{.JSONName}} <span id="{{.JSONName}}" class="rpc-badge"></span>
+
+{{p .Description}}
+
+<h4>Parameters</h4>
+
+{{with getMessage .RequestLongType  }}{{- print "" -}}
+  {{if .HasFields}}{{- print "" -}}
+ <table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  {{range .Fields}}{{- print "" -}}
+  <tr>
+    <td class="fw-bold">{{.JSONName}}</td>
+    <td>{{.Label}} {{.JSONType}}</td>
+    <td>
+    {{if .IsEnum}}(Enum) {{end}}{{- print "" -}}
+    {{if .IsOneOf}}(OneOf) {{end}}{{- print "" -}}
+    {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{end}}{{- print "" -}}
+    {{.Description}}
+    {{if .DefaultValue}}Default: {{.DefaultValue}}{{end}}{{- print "" -}}
+    {{with getEnum .LongType  }}{{- print "" -}}
+       <br>Available values:<ul>
+      {{range .Values}}{{- print "" -}}
+        <li>{{ .Name}} = {{ .Description }}</li>
+      {{end}}{{- print "" -}}
+      </ul>
+    {{end}}{{- print "" -}}
+    </td>
+  </tr>
+  {{end}}{{- print "" -}}
+  </tbody>
+</table>
+  {{else}}{{- print "" -}}
+Parameters has no fields.
+  {{end}}{{- print "" -}}
+{{end}}{{- print "" -}}
+
+<h4>Result</h4>
+
+{{with getMessage .ResponseLongType  }}{{- print "" -}}
+ <table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  {{range .Fields}}{{- print "" -}}
+  <tr>
+    <td class="fw-bold">{{.Name}}</td>
+    <td>{{.Label}} {{.JSONType}}</td>
+    <td>
+    {{if .IsEnum}}(Enum) {{end}}{{- print "" -}}
+    {{if .IsOneOf}}(OneOf) {{end}}{{- print "" -}}
+    {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{end}}{{- print "" -}}
+    {{.Description}}
+    {{if .DefaultValue}}Default: {{.DefaultValue}}{{end}}{{- print "" -}}
+    {{with getEnum .LongType  }}{{- print "" -}}
+       <br>Available values:<ul>
+      {{range .Values}}{{- print "" -}}
+        <li>{{ .Name}} = {{ .Description }}</li>
+      {{end}}{{- print "" -}}
+      </ul>
+    {{end}}{{- print "" -}}
+    </td>
+  </tr>
+    {{$msg0 := .}} {{with getMessage .LongType  }}{{- print "" -}}
+      {{range .Fields}}{{- print "" -}}
+      <tr>
+        <td class="fw-bold">{{$msg0.Name}}{{if $msg0.IsRepeated}}[]{{end}}.{{.Name}}</td>
+        <td>{{.Label}} {{.JSONType}}</td>
+        <td>
+        {{if .IsEnum}}(Enum) {{end}}{{- print "" -}}
+        {{if .IsOneOf}}(OneOf) {{end}}{{- print "" -}}
+        {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{end}}{{- print "" -}}
+        {{.Description}}
+        {{if .DefaultValue}}Default: {{.DefaultValue}}{{end}}{{- print "" -}}
+        {{with getEnum .LongType  }}{{- print "" -}}
+          <br>Available values:<ul>
+          {{range .Values}}{{- print "" -}}
+            <li>{{ .Name}} = {{ .Description }}</li>
+          {{end}}{{- print "" -}}
+          </ul>
+        {{end}}{{- print "" -}}
+        </td>
+      </tr>
+        {{$msg1 := .}} {{with getMessage .LongType  }}{{- print "" -}}
+          {{range .Fields}}{{- print "" -}}
+          <tr>
+            <td class="fw-bold">{{$msg0.Name}}{{if $msg0.IsRepeated}}[]{{end}}.{{$msg1.Name}}{{if $msg1.IsRepeated}}[]{{end}}.{{.Name}}</td>
+            <td>{{.Label}} {{.JSONType}}</td>
+            <td>
+            {{if .IsEnum}}(Enum) {{end}}{{- print "" -}}
+            {{if .IsOneOf}}(OneOf) {{end}}{{- print "" -}}
+            {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{end}}{{- print "" -}}
+            {{.Description}}
+            {{if .DefaultValue}}Default: {{.DefaultValue}}{{end}}{{- print "" -}}
+            {{with getEnum .LongType  }}{{- print "" -}}
+              <br>Available values:<ul>
+              {{range .Values}}{{- print "" -}}
+                <li>{{ .Name}} = {{ .Description }}</li>
+              {{end}}{{- print "" -}}
+              </ul>
+            {{end}}{{- print "" -}}
+            </td>
+          </tr>
+          {{end}}{{- print "" -}}
+        {{end}}{{- print "" -}}
+      {{end}}{{- print "" -}}
+    {{end}}{{- print "" -}}
+  {{end}}{{- print "" -}}
+  </tbody>
+{{end}}{{- print "" -}}
+</table>
+{{end}}{{end}}{{end}}{{- print "" -}}

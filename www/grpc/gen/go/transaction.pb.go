@@ -20,7 +20,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Enumeration for different types of transaction payloads.
+// Enumeration for different types of transaction payload.
 type PayloadType int32
 
 const (

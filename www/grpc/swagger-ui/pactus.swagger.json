@@ -839,14 +839,14 @@
         "parameters": [
           {
             "name": "walletName",
-            "description": "Name of the wallet for which the new address is requested.",
+            "description": "The name of the wallet for which the new address is requested.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "addressType",
-            "description": "Address type for the new address.",
+            "description": "The type of the new address.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -859,7 +859,7 @@
           },
           {
             "name": "label",
-            "description": "Label for the new address.",
+            "description": "The label for the new address.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -1127,16 +1127,20 @@
       "type": "object",
       "properties": {
         "address": {
-          "type": "string"
+          "type": "string",
+          "description": "The string representing the address."
         },
         "publicKey": {
-          "type": "string"
+          "type": "string",
+          "description": "The public key that the address is derived from."
         },
         "label": {
-          "type": "string"
+          "type": "string",
+          "description": "The label that is associated with the address."
         },
         "path": {
-          "type": "string"
+          "type": "string",
+          "description": "The Hierarchical Deterministic path of the address within the wallet."
         }
       },
       "description": "Message of address information."
@@ -1518,11 +1522,11 @@
       "properties": {
         "walletName": {
           "type": "string",
-          "description": "Name of the wallet."
+          "description": "The name of the wallet from which the address is created."
         },
         "addressInfo": {
           "$ref": "#/definitions/pactusAddressInfo",
-          "description": "Address information."
+          "description": "Information about the new address."
         }
       },
       "description": "Response message containing the new address."
@@ -1692,20 +1696,20 @@
         "time": {
           "type": "integer",
           "format": "int64",
-          "description": "transaction timestamp."
+          "description": "Transaction timestamp."
         },
         "payloadType": {
           "type": "string",
-          "description": "payload type of transaction."
+          "description": "Type of transaction payload."
         },
         "description": {
           "type": "string",
-          "description": "description of transaction."
+          "description": "Description of transaction."
         },
         "amount": {
           "type": "string",
           "format": "int64",
-          "description": "amount of transaction."
+          "description": "Amount of transaction."
         }
       },
       "description": "Message of address history information."
@@ -1784,7 +1788,7 @@
         "WITHDRAW_PAYLOAD"
       ],
       "default": "UNKNOWN",
-      "description": "Enumeration for different types of transaction payloads.\n\n - UNKNOWN: Unknown payload type.\n - TRANSFER_PAYLOAD: Transfer payload type.\n - BOND_PAYLOAD: Bond payload type.\n - SORTITION_PAYLOAD: Sortition payload type.\n - UNBOND_PAYLOAD: Unbond payload type.\n - WITHDRAW_PAYLOAD: Withdraw payload type."
+      "description": "Enumeration for different types of transaction payload.\n\n - UNKNOWN: Unknown payload type.\n - TRANSFER_PAYLOAD: Transfer payload type.\n - BOND_PAYLOAD: Bond payload type.\n - SORTITION_PAYLOAD: Sortition payload type.\n - UNBOND_PAYLOAD: Unbond payload type.\n - WITHDRAW_PAYLOAD: Withdraw payload type."
     },
     "pactusPayloadUnbond": {
       "type": "object",

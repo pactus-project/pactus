@@ -239,7 +239,7 @@ message TransactionInfo {
   bytes signature = 10;
 }
 
-// Enumeration for different types of transaction payloads.
+// Enumeration for different types of transaction payload.
 enum PayloadType {
   // Unknown payload type.
   UNKNOWN = 0;

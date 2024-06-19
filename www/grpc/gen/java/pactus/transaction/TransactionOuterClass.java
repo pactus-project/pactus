@@ -16,7 +16,7 @@ public final class TransactionOuterClass {
   }
   /**
    * <pre>
-   * Enumeration for different types of transaction payloads.
+   * Enumeration for different types of transaction payload.
    * </pre>
    *
    * Protobuf enum {@code pactus.PayloadType}

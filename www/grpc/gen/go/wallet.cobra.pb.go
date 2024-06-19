@@ -369,9 +369,9 @@ func _WalletGetNewAddressCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet for which the new address is requested.")
-	flag.EnumVar(cmd.PersistentFlags(), &req.AddressType, cfg.FlagNamer("AddressType"), "Address type for the new address.")
-	cmd.PersistentFlags().StringVar(&req.Label, cfg.FlagNamer("Label"), "", "Label for the new address.")
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "The name of the wallet for which the new address is requested.")
+	flag.EnumVar(cmd.PersistentFlags(), &req.AddressType, cfg.FlagNamer("AddressType"), "The type of the new address.")
+	cmd.PersistentFlags().StringVar(&req.Label, cfg.FlagNamer("Label"), "", "The label for the new address.")
 
 	return cmd
 }
