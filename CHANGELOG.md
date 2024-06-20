@@ -1,5 +1,57 @@
 # Changelog
 
+## [1.2.0](https://github.com/pactus-project/pactus/compare/v1.1.0...v1.2.0) (2024-06-20)
+
+### Feat
+
+- **config**: make minimum fee configurable ([#1349](https://github.com/pactus-project/pactus/pull/1349))
+- apply rate limit for the network topics ([#1332](https://github.com/pactus-project/pactus/pull/1332))
+- add ipblocker package ([#1323](https://github.com/pactus-project/pactus/pull/1323))
+- **consensus**: fast consensus path implementation ([#1253](https://github.com/pactus-project/pactus/pull/1253))
+- **version**: add alias to node version ([#1281](https://github.com/pactus-project/pactus/pull/1281))
+- **ntp**: add ntp util ([#1274](https://github.com/pactus-project/pactus/pull/1274))
+- **gRPC**: add connection info to node info ([#1273](https://github.com/pactus-project/pactus/pull/1273))
+- **gRPC**: add only_connected parameter to getNetworkInfo API ([#1264](https://github.com/pactus-project/pactus/pull/1264))
+- **grpc**: refactor CreateWallet and add RestoreWallet API endpoint ([#1256](https://github.com/pactus-project/pactus/pull/1256))
+- add wallet service ([#1241](https://github.com/pactus-project/pactus/pull/1241))
+- ban attacker validators ([#1235](https://github.com/pactus-project/pactus/pull/1235))
+- **txpool**: prevent spamming transactions by defining a minimum value ([#1233](https://github.com/pactus-project/pactus/pull/1233))
+- reject direct message from non-supporting agents ([#1225](https://github.com/pactus-project/pactus/pull/1225))
+
+### Fix
+
+- **wallet**: add public key on get new address ([#1350](https://github.com/pactus-project/pactus/pull/1350))
+- **sync**: add IsBannedAddress check in processing connect event ([#1347](https://github.com/pactus-project/pactus/pull/1347))
+- **sync**: update latest supporting version ([#1336](https://github.com/pactus-project/pactus/pull/1336))
+- **state**: improve node startup by optimizing availability score calculation ([#1338](https://github.com/pactus-project/pactus/pull/1338))
+- **HTTP**: add clock offset and connection info to node-info API ([#1334](https://github.com/pactus-project/pactus/pull/1334))
+- **grpc**: add stacktrace to locate panic ([#1333](https://github.com/pactus-project/pactus/pull/1333))
+- **consensus**: implement PIP-26 ([#1331](https://github.com/pactus-project/pactus/pull/1331))
+- **grpc**: improve grpc server and client ([#1330](https://github.com/pactus-project/pactus/pull/1330))
+- **util**: add more ntp pool ([#1328](https://github.com/pactus-project/pactus/pull/1328))
+- **jsonrpc**: update JSON-RPC Gateway to support headers and improve client registry ([#1327](https://github.com/pactus-project/pactus/pull/1327))
+- **consensus**: improve consensus alghorithm ([#1329](https://github.com/pactus-project/pactus/pull/1329))
+- **txpool**: set fix fee of 0.1 PAC for transactions ([#1320](https://github.com/pactus-project/pactus/pull/1320))
+- **network**: add block and transaction topics ([#1319](https://github.com/pactus-project/pactus/pull/1319))
+- **gRPC**: prevent concurrent map iteration and map write ([#1279](https://github.com/pactus-project/pactus/pull/1279))
+- **api**: add swagger schemes ([#1270](https://github.com/pactus-project/pactus/pull/1270))
+- **network**: set infinite limit for resource manager  ([#1261](https://github.com/pactus-project/pactus/pull/1261))
+- **sync**: introduce session manager ([#1257](https://github.com/pactus-project/pactus/pull/1257))
+- **HTTP**: using amount type for fee in transaction details ([#1255](https://github.com/pactus-project/pactus/pull/1255))
+- **network**: disconnect from peers that has no protocol ([#1243](https://github.com/pactus-project/pactus/pull/1243))
+- **wallet**: saving wallet file after generating new address in gRPC ([#1236](https://github.com/pactus-project/pactus/pull/1236))
+- prevent zero stake for bond transactions ([#1227](https://github.com/pactus-project/pactus/pull/1227))
+- set bounding interval for first boudning tx only ([#1224](https://github.com/pactus-project/pactus/pull/1224))
+
+### Refactor
+
+- **wallet**: set server address on loading wallet ([#1348](https://github.com/pactus-project/pactus/pull/1348))
+- removed deprecated LockWallet and UnLockWallet from WalletService ([#1343](https://github.com/pactus-project/pactus/pull/1343))
+- **crypto**: decode data to point on verification ([#1339](https://github.com/pactus-project/pactus/pull/1339))
+- **network**: define connection info in network proto ([#1297](https://github.com/pactus-project/pactus/pull/1297))
+- **sync**: define peer package ([#1271](https://github.com/pactus-project/pactus/pull/1271))
+- **network**: refactor peer manager and redefine the min cons ([#1259](https://github.com/pactus-project/pactus/pull/1259))
+
 ## [1.1.0](https://github.com/pactus-project/pactus/compare/v1.0.0...v1.1.0) (2024-04-14)
 
 ### Feat
