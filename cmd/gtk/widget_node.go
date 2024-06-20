@@ -149,7 +149,11 @@ func (wn *widgetNode) timeout10() bool {
 				styleContext.AddClass("warning")
 				wn.labelClockOffset.SetText("N/A")
 			} else {
-				wn.labelClockOffset.SetText(fmt.Sprintf("%v second(s)", math.Round(offset.Seconds())))
+				offset := math.Round(offset.Seconds())
+				if offset == 0 {
+					offset = math.Abs(offset) // To fix "-0 second(s)" issue
+				}
+				wn.labelClockOffset.SetText(fmt.Sprintf("%v second(s)", offset))
 
 				if wn.model.node.Sync().IsClockOutOfSync() {
 					styleContext.AddClass("warning")
