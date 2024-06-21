@@ -45,9 +45,9 @@ Keep your terminal open for further steps.
 PRV_VER="1.1.0"
 CUR_VER="1.2.0"
 NEXT_VER="1.3.0"
+BASE_BRANCH="main"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
-BASE_BRANCH="main"
 ```
 
 ## 5. Update the Version
