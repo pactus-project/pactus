@@ -123,6 +123,9 @@ func (c *Checker) Stop() {
 }
 
 func (c *Checker) IsOutOfSync() bool {
+	c.lk.RLock()
+	defer c.lk.RUnlock()
+
 	return c.offset.Abs() > c.threshold
 }
 

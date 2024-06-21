@@ -36,8 +36,6 @@ func setup(t *testing.T) *testData {
 
 	checker := NewNtpChecker(opts...)
 
-	go checker.Start()
-
 	td := &testData{
 		checker: checker,
 		querier: querier,
@@ -51,15 +49,17 @@ func (td *testData) Stop() {
 }
 
 func TestNTPChecker(t *testing.T) {
-	td := setup(t)
-	defer td.Stop()
-
 	t.Run("Offset less than one second", func(t *testing.T) {
+		td := setup(t)
+		defer td.Stop()
+
 		ntpOffset := 100 * time.Millisecond
 		td.querier.res = &ntp.Response{
 			Stratum:     1,
 			ClockOffset: ntpOffset,
 		}
+
+		go td.checker.Start()
 
 		require.Eventually(t, func() bool {
 			offset, _ := td.checker.ClockOffset()
@@ -74,11 +74,16 @@ func TestNTPChecker(t *testing.T) {
 	})
 
 	t.Run("Offset more than one second", func(t *testing.T) {
+		td := setup(t)
+		defer td.Stop()
+
 		ntpOffset := 2 * time.Second
 		td.querier.res = &ntp.Response{
 			Stratum:     1,
 			ClockOffset: ntpOffset,
 		}
+
+		go td.checker.Start()
 
 		require.Eventually(t, func() bool {
 			offset, _ := td.checker.ClockOffset()
@@ -93,7 +98,12 @@ func TestNTPChecker(t *testing.T) {
 	})
 
 	t.Run("Query error", func(t *testing.T) {
+		td := setup(t)
+		defer td.Stop()
+
 		td.querier.err = fmt.Errorf("unable to query")
+
+		go td.checker.Start()
 
 		require.Eventually(t, func() bool {
 			_, err := td.checker.ClockOffset()
@@ -108,10 +118,15 @@ func TestNTPChecker(t *testing.T) {
 	})
 
 	t.Run("Validation error", func(t *testing.T) {
+		td := setup(t)
+		defer td.Stop()
+
 		td.querier.err = nil
 		td.querier.res = &ntp.Response{
 			Stratum: 0,
 		}
+
+		go td.checker.Start()
 
 		require.Eventually(t, func() bool {
 			_, err := td.checker.ClockOffset()
