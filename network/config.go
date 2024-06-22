@@ -29,6 +29,7 @@ type Config struct {
 	DefaultPort                 int      `toml:"-"`
 	DefaultBootstrapAddrStrings []string `toml:"-"`
 	IsBootstrapper              bool     `toml:"-"`
+	PeerStorePath               string   `toml:"-"`
 }
 
 func DefaultConfig() *Config {
@@ -48,6 +49,7 @@ func DefaultConfig() *Config {
 		ForcePrivateNetwork:  false,
 		DefaultPort:          0,
 		IsBootstrapper:       false,
+		PeerStorePath:        "peers.json",
 	}
 }
 

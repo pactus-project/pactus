@@ -3,6 +3,7 @@ package network
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -15,8 +16,6 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 )
 
-const PeerStorePath = "peers.json"
-
 type peerInfo struct {
 	MultiAddress multiaddr.Multiaddr
 	Connected    bool
@@ -28,28 +27,25 @@ type peerInfo struct {
 type peerMgr struct {
 	lk sync.RWMutex
 
-	ctx         context.Context
-	minConns    int
-	numInbound  int
-	numOutbound int
-	host        lp2phost.Host
-	peers       map[lp2ppeer.ID]*peerInfo
-	logger      *logger.SubLogger
+	ctx           context.Context
+	minConns      int
+	numInbound    int
+	numOutbound   int
+	host          lp2phost.Host
+	peers         map[lp2ppeer.ID]*peerInfo
+	peerStorePath string
+	logger        *logger.SubLogger
 }
 
 // newPeerMgr creates a new Peer Manager instance.
 func newPeerMgr(ctx context.Context, h lp2phost.Host,
 	conf *Config, log *logger.SubLogger,
 ) *peerMgr {
-	var err error
-	peerStore := make([]lp2ppeer.AddrInfo, 0)
-	if util.PathExists(PeerStorePath) {
-		peerStore, err = loadPeerStore()
-		if err != nil {
-			log.Error("failed to load peer store", "err", err)
-		}
-		log.Info("peer store loaded successfully")
+	peerStore, err := loadPeerStore(conf.PeerStorePath)
+	if err != nil {
+		log.Error("failed to load peer store", "err", err)
 	}
+	log.Info("peer store loaded successfully")
 
 	peerStore = append(peerStore, conf.BootstrapAddrInfos()...)
 
@@ -63,11 +59,12 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host,
 	}
 
 	pm := &peerMgr{
-		ctx:      ctx,
-		minConns: conf.MinConns(),
-		peers:    peers,
-		host:     h,
-		logger:   log,
+		ctx:           ctx,
+		minConns:      conf.MinConns(),
+		peers:         peers,
+		peerStorePath: conf.PeerStorePath,
+		host:          h,
+		logger:        log,
 	}
 
 	log.Info("peer manager created", "minConns", pm.minConns)
@@ -244,20 +241,33 @@ func (mgr *peerMgr) savePeerStore() error {
 		return err
 	}
 
-	return util.WriteFile(PeerStorePath, data)
+	return util.WriteFile(mgr.peerStorePath, data)
 }
 
-func loadPeerStore() ([]lp2ppeer.AddrInfo, error) {
-	data, err := util.ReadFile(PeerStorePath)
+func loadPeerStore(path string) ([]lp2ppeer.AddrInfo, error) {
+	peerStore := make([]lp2ppeer.AddrInfo, 0)
+
+	if !util.PathExists(path) {
+		return peerStore, PeerStoreError{
+			Err: errors.New("peers.json not found"),
+		}
+	}
+
+	data, err := util.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return peerStore, err
 	}
 
 	ps := make([]string, 0)
 	err = json.Unmarshal(data, &ps)
 	if err != nil {
-		return nil, err
+		return peerStore, err
 	}
 
-	return MakeAddrInfos(ps)
+	peerStore, err = MakeAddrInfos(ps)
+	if err != nil {
+		return []lp2ppeer.AddrInfo{}, err
+	}
+
+	return peerStore, nil
 }

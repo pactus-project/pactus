@@ -38,3 +38,12 @@ type LibP2PError struct {
 func (e LibP2PError) Error() string {
 	return fmt.Sprintf("libp2p error: %s", e.Err.Error())
 }
+
+// PeerStoreError is returned when an loading or saving permanent peer-store encounters an error.
+type PeerStoreError struct {
+	Err error
+}
+
+func (e PeerStoreError) Error() string {
+	return fmt.Sprintf("libp2p error: %s", e.Err.Error())
+}

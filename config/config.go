@@ -179,6 +179,7 @@ func DefaultConfigTestnet() *Config {
 	conf.Network.EnableRelay = true
 	conf.Network.NetworkName = "pactus-testnet"
 	conf.Network.DefaultPort = 21777
+	conf.Network.PeerStorePath = "testnet-peers.json"
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "[::]:50052"
 	conf.GRPC.Gateway.Enable = true
@@ -204,6 +205,7 @@ func DefaultConfigLocalnet() *Config {
 	conf.Network.DefaultPort = 0
 	conf.Network.ForcePrivateNetwork = true
 	conf.Network.EnableMdns = true
+	conf.Network.PeerStorePath = "localnet-peers.json"
 	conf.Sync.Moniker = "localnet-1"
 	conf.GRPC.Enable = true
 	conf.GRPC.EnableWallet = true
