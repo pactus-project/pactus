@@ -73,10 +73,10 @@ func (m *MockSync) Services() service.Services {
 	return m.TestServices
 }
 
-func (*MockSync) GetClockOffset() (time.Duration, error) {
+func (*MockSync) ClockOffset() (time.Duration, error) {
 	return 1 * time.Second, nil
 }
 
-func (*MockSync) OutOfSync(_ time.Duration) bool {
+func (*MockSync) IsClockOutOfSync() bool {
 	return false
 }

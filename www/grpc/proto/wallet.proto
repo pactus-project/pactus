@@ -52,9 +52,13 @@ enum AddressType {
 
 // Message of address information.
 message AddressInfo {
+  // The string representing the address.
   string address = 1;
+  // The public key that the address is derived from.
   string public_key = 2;
+  // The label that is associated with the address.
   string label = 3;
+  // The Hierarchical Deterministic path of the address within the wallet.
   string path = 4;
 }
 
@@ -62,13 +66,13 @@ message AddressInfo {
 message HistoryInfo {
   // Hash of transaction.
   string transaction_id = 1;
-  // transaction timestamp.
+  // Transaction timestamp.
   uint32 time = 2;
-  // payload type of transaction.
+  // Type of transaction payload.
   string payload_type = 3;
-  // description of transaction.
+  // Description of transaction.
   string description = 4;
-  // amount of transaction.
+  // Amount of transaction.
   int64 amount = 5;
 }
 
@@ -88,19 +92,19 @@ message GetAddressHistoryResponse {
 
 // Request message for generating a new address.
 message GetNewAddressRequest {
-  // Name of the wallet for which the new address is requested.
+  // The name of the wallet for which the new address is requested.
   string wallet_name = 1;
-  // Address type for the new address.
+  // The type of the new address.
   AddressType address_type = 2;
-  // Label for the new address.
+  // The label for the new address.
   string label = 3;
 }
 
 // Response message containing the new address.
 message GetNewAddressResponse {
-  // Name of the wallet.
+  // The name of the wallet from which the address is created.
   string wallet_name = 1;
-  // Address information.
+  // Information about the new address.
   AddressInfo address_info = 2;
 }
 

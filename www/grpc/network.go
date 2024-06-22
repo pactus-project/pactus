@@ -33,7 +33,7 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 		servicesNames = append(servicesNames, "NETWORK")
 	}
 
-	clockOffset, err := s.sync.GetClockOffset()
+	clockOffset, err := s.sync.ClockOffset()
 	if err != nil {
 		s.logger.Warn("failed to get clock offset", "err", err)
 	}

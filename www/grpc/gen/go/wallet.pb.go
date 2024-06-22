@@ -78,10 +78,14 @@ type AddressInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Address   string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	// The string representing the address.
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	// The public key that the address is derived from.
 	PublicKey string `protobuf:"bytes,2,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
-	Label     string `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
-	Path      string `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
+	// The label that is associated with the address.
+	Label string `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
+	// The Hierarchical Deterministic path of the address within the wallet.
+	Path string `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
 }
 
 func (x *AddressInfo) Reset() {
@@ -152,13 +156,13 @@ type HistoryInfo struct {
 
 	// Hash of transaction.
 	TransactionId string `protobuf:"bytes,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
-	// transaction timestamp.
+	// Transaction timestamp.
 	Time uint32 `protobuf:"varint,2,opt,name=time,proto3" json:"time,omitempty"`
-	// payload type of transaction.
+	// Type of transaction payload.
 	PayloadType string `protobuf:"bytes,3,opt,name=payload_type,json=payloadType,proto3" json:"payload_type,omitempty"`
-	// description of transaction.
+	// Description of transaction.
 	Description string `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
-	// amount of transaction.
+	// Amount of transaction.
 	Amount int64 `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`
 }
 
@@ -342,11 +346,11 @@ type GetNewAddressRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Name of the wallet for which the new address is requested.
+	// The name of the wallet for which the new address is requested.
 	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
-	// Address type for the new address.
+	// The type of the new address.
 	AddressType AddressType `protobuf:"varint,2,opt,name=address_type,json=addressType,proto3,enum=pactus.AddressType" json:"address_type,omitempty"`
-	// Label for the new address.
+	// The label for the new address.
 	Label string `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
 }
 
@@ -409,9 +413,9 @@ type GetNewAddressResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Name of the wallet.
+	// The name of the wallet from which the address is created.
 	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
-	// Address information.
+	// Information about the new address.
 	AddressInfo *AddressInfo `protobuf:"bytes,2,opt,name=address_info,json=addressInfo,proto3" json:"address_info,omitempty"`
 }
 

@@ -14,7 +14,7 @@ import (
 // During development, set the Meta field to "beta".
 var NodeVersion = Version{
 	Major: 1,
-	Minor: 2,
+	Minor: 3,
 	Patch: 0,
 	Meta:  "beta",
 	Alias: "",

@@ -15,6 +15,6 @@ type Synchronizer interface {
 	SelfID() peer.ID
 	PeerSet() *peerset.PeerSet
 	Services() service.Services
-	GetClockOffset() (time.Duration, error)
-	OutOfSync(time.Duration) bool
+	ClockOffset() (time.Duration, error)
+	IsClockOutOfSync() bool
 }

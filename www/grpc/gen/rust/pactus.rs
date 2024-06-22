@@ -289,7 +289,7 @@ pub mod transaction_info {
         Withdraw(super::PayloadWithdraw),
     }
 }
-/// Enumeration for different types of transaction payloads.
+/// Enumeration for different types of transaction payload.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum PayloadType {
@@ -915,12 +915,16 @@ pub struct PeerInfo {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AddressInfo {
+    /// The string representing the address.
     #[prost(string, tag="1")]
     pub address: ::prost::alloc::string::String,
+    /// The public key that the address is derived from.
     #[prost(string, tag="2")]
     pub public_key: ::prost::alloc::string::String,
+    /// The label that is associated with the address.
     #[prost(string, tag="3")]
     pub label: ::prost::alloc::string::String,
+    /// The Hierarchical Deterministic path of the address within the wallet.
     #[prost(string, tag="4")]
     pub path: ::prost::alloc::string::String,
 }
@@ -931,16 +935,16 @@ pub struct HistoryInfo {
     /// Hash of transaction.
     #[prost(string, tag="1")]
     pub transaction_id: ::prost::alloc::string::String,
-    /// transaction timestamp.
+    /// Transaction timestamp.
     #[prost(uint32, tag="2")]
     pub time: u32,
-    /// payload type of transaction.
+    /// Type of transaction payload.
     #[prost(string, tag="3")]
     pub payload_type: ::prost::alloc::string::String,
-    /// description of transaction.
+    /// Description of transaction.
     #[prost(string, tag="4")]
     pub description: ::prost::alloc::string::String,
-    /// amount of transaction.
+    /// Amount of transaction.
     #[prost(int64, tag="5")]
     pub amount: i64,
 }
@@ -967,13 +971,13 @@ pub struct GetAddressHistoryResponse {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetNewAddressRequest {
-    /// Name of the wallet for which the new address is requested.
+    /// The name of the wallet for which the new address is requested.
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
-    /// Address type for the new address.
+    /// The type of the new address.
     #[prost(enumeration="AddressType", tag="2")]
     pub address_type: i32,
-    /// Label for the new address.
+    /// The label for the new address.
     #[prost(string, tag="3")]
     pub label: ::prost::alloc::string::String,
 }
@@ -981,10 +985,10 @@ pub struct GetNewAddressRequest {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetNewAddressResponse {
-    /// Name of the wallet.
+    /// The name of the wallet from which the address is created.
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
-    /// Address information.
+    /// Information about the new address.
     #[prost(message, optional, tag="2")]
     pub address_info: ::core::option::Option<AddressInfo>,
 }
