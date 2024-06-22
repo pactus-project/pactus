@@ -3,7 +3,6 @@ package network
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -246,12 +245,6 @@ func (mgr *peerMgr) savePeerStore() error {
 
 func loadPeerStore(path string) ([]lp2ppeer.AddrInfo, error) {
 	peerStore := make([]lp2ppeer.AddrInfo, 0)
-
-	if !util.PathExists(path) {
-		return peerStore, PeerStoreError{
-			Err: errors.New("peers.json not found"),
-		}
-	}
 
 	data, err := util.ReadFile(path)
 	if err != nil {
