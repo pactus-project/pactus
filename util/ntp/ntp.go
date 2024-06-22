@@ -144,13 +144,13 @@ func (c *Checker) queryClockOffset() (time.Duration, error) {
 	for _, server := range _pools {
 		response, err := c.querier.Query(server)
 		if err != nil {
-			logger.Warn("ntp query error", "server", server, "error", err)
+			logger.Debug("ntp query error", "server", server, "error", err)
 
 			continue
 		}
 
 		if err := response.Validate(); err != nil {
-			logger.Warn("ntp validate error", "server", server, "error", err)
+			logger.Debug("ntp validate error", "server", server, "error", err)
 
 			continue
 		}
