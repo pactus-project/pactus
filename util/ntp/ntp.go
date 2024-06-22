@@ -6,14 +6,20 @@ import (
 	"sync"
 	"time"
 
-	"github.com/beevik/ntp"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
 const (
 	maxClockOffset = time.Duration(math.MinInt64)
 )
+
+// QueryError is returned when a query from all NTP pools encounters an error
+// and we have no valid response from them.
+type QueryError struct{}
+
+func (QueryError) Error() string {
+	return "failed to get NTP query from all pools"
+}
 
 var _pools = []string{
 	"pool.ntp.org",
@@ -24,28 +30,69 @@ var _pools = []string{
 	"ntp.ubuntu.com",
 }
 
+// Checker represents a NTP checker that periodically checks the system time against the network time.
 type Checker struct {
-	lock   sync.RWMutex
-	ctx    context.Context
-	cancel func()
+	lk sync.RWMutex
 
-	ticker    *time.Ticker
-	threshold time.Duration
+	ctx       context.Context
+	cancel    func()
+	querier   Querier
 	offset    time.Duration
 	interval  time.Duration
+	threshold time.Duration
+	ticker    *time.Ticker
 }
 
-func NewNtpChecker(interval, threshold time.Duration) *Checker {
+// CheckerOption defines the type for functions that configure a Checker.
+type CheckerOption func(*Checker)
+
+// WithQuerier sets the Querier for the Checker.
+func WithQuerier(querier Querier) CheckerOption {
+	return func(c *Checker) {
+		c.querier = querier
+	}
+}
+
+// WithInterval sets the interval at which the checker will run.
+// Default interval is 1 minute.
+func WithInterval(interval time.Duration) CheckerOption {
+	return func(c *Checker) {
+		c.interval = interval
+		c.ticker = time.NewTicker(interval)
+	}
+}
+
+// WithThreshold sets the threshold for determining if the system time is out of sync.
+// Default threshold is 1 second.
+func WithThreshold(threshold time.Duration) CheckerOption {
+	return func(c *Checker) {
+		c.threshold = threshold
+	}
+}
+
+// NewNtpChecker creates a new Checker with the provided options.
+// If no options are provided, it uses default values for interval and threshold.
+func NewNtpChecker(opts ...CheckerOption) *Checker {
 	ctxWithCancel, cancel := context.WithCancel(context.Background())
-	server := &Checker{
+	defaultInterval := time.Minute
+	defaultThreshold := time.Second
+
+	// Initialize the checker with default values.
+	checker := &Checker{
 		ctx:       ctxWithCancel,
 		cancel:    cancel,
-		interval:  interval,
-		threshold: threshold,
-		ticker:    time.NewTicker(interval),
+		interval:  defaultInterval,
+		threshold: defaultThreshold,
+		querier:   RemoteQuerier{},
+		ticker:    time.NewTicker(defaultInterval),
 	}
 
-	return server
+	// Apply provided options to override default values.
+	for _, opt := range opts {
+		opt(checker)
+	}
+
+	return checker
 }
 
 func (c *Checker) Start() {
@@ -55,21 +102,16 @@ func (c *Checker) Start() {
 			return
 
 		case <-c.ticker.C:
-			offset := c.clockOffset()
-			c.lock.Lock()
-			c.offset = offset
-			c.lock.Unlock()
+			offset, _ := c.queryClockOffset()
 
-			if c.offset == maxClockOffset {
-				logger.Error("error on getting clock offset")
-			} else if c.OutOfSync(offset) {
+			c.lk.Lock()
+			c.offset = offset
+			c.lk.Unlock()
+
+			if c.offset != maxClockOffset && c.IsOutOfSync() {
 				logger.Error(
-					"The node is out of sync with the network time",
-					"threshold", c.threshold,
-					"offset", offset,
-					"threshold(secs)", c.threshold.Seconds(),
-					"offset(secs)", offset.Seconds(),
-				)
+					"the system time is out of sync with the network time by more than one second",
+					"threshold", c.threshold, "offset", offset)
 			}
 		}
 	}
@@ -80,28 +122,29 @@ func (c *Checker) Stop() {
 	c.ticker.Stop()
 }
 
-func (c *Checker) OutOfSync(offset time.Duration) bool {
-	return math.Abs(float64(offset)) > float64(c.threshold)
+func (c *Checker) IsOutOfSync() bool {
+	c.lk.RLock()
+	defer c.lk.RUnlock()
+
+	return c.offset.Abs() > c.threshold
 }
 
-func (c *Checker) GetClockOffset() (time.Duration, error) {
-	c.lock.RLock()
-	defer c.lock.RUnlock()
+func (c *Checker) ClockOffset() (time.Duration, error) {
+	c.lk.RLock()
+	defer c.lk.RUnlock()
 
-	offset := c.offset
-
-	if offset == maxClockOffset {
-		return 0, errors.Errorf(errors.ErrNtpError, "unable to get clock offset")
+	if c.offset == maxClockOffset {
+		return 0, QueryError{}
 	}
 
-	return offset, nil
+	return c.offset, nil
 }
 
-func (*Checker) clockOffset() time.Duration {
+func (c *Checker) queryClockOffset() (time.Duration, error) {
 	for _, server := range _pools {
-		response, err := ntp.Query(server)
+		response, err := c.querier.Query(server)
 		if err != nil {
-			logger.Warn("ntp error", "server", server, "error", err)
+			logger.Warn("ntp query error", "server", server, "error", err)
 
 			continue
 		}
@@ -112,10 +155,12 @@ func (*Checker) clockOffset() time.Duration {
 			continue
 		}
 
-		return response.ClockOffset
+		logger.Debug("successful ntp query", "offset", response.ClockOffset, "RTT", response.RTT)
+
+		return response.ClockOffset, nil
 	}
 
-	logger.Error("failed to get ntp query from all pool, set default max clock offset")
+	logger.Error("failed to get ntp query from all pool")
 
-	return maxClockOffset
+	return maxClockOffset, QueryError{}
 }

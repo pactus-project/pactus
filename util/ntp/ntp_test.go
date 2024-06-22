@@ -1,63 +1,142 @@
 package ntp
 
 import (
-	"sync"
+	"fmt"
 	"testing"
 	"time"
 
+	"github.com/beevik/ntp"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestNewNtpChecker(t *testing.T) {
-	checker := NewNtpChecker(1*time.Second, 500*time.Millisecond)
-	assert.NotNil(t, checker)
-	assert.Equal(t, 1*time.Second, checker.interval)
-	assert.Equal(t, 500*time.Millisecond, checker.threshold)
+type testQuerier struct {
+	err error
+	res *ntp.Response
 }
 
-func TestOutOfSync(t *testing.T) {
-	checker := NewNtpChecker(1*time.Second, 500*time.Millisecond)
-	assert.False(t, checker.OutOfSync(300*time.Millisecond))
-	assert.True(t, checker.OutOfSync(600*time.Millisecond))
+func (q *testQuerier) Query(_ string) (*ntp.Response, error) {
+	return q.res, q.err
 }
 
-func TestGetClockOffset(t *testing.T) {
-	checker := NewNtpChecker(1*time.Second, 500*time.Millisecond)
-	checker.lock.Lock()
-	checker.offset = 300 * time.Millisecond
-	checker.lock.Unlock()
-
-	offset, err := checker.GetClockOffset()
-	assert.NoError(t, err)
-	assert.Equal(t, 300*time.Millisecond, offset)
-
-	checker.lock.Lock()
-	checker.offset = maxClockOffset
-	checker.lock.Unlock()
-
-	offset, err = checker.GetClockOffset()
-	assert.Error(t, err)
-	assert.Equal(t, 0*time.Millisecond, offset)
+type testData struct {
+	checker *Checker
+	querier *testQuerier
 }
 
-func TestStartAndStop(t *testing.T) {
-	checker := NewNtpChecker(1*time.Second, 500*time.Millisecond)
-	assert.NotNil(t, checker)
+func setup(t *testing.T) *testData {
+	t.Helper()
 
-	// Using a WaitGroup to wait for the goroutine to start
-	var wg sync.WaitGroup
-	wg.Add(1)
+	querier := &testQuerier{}
+	opts := []CheckerOption{
+		WithInterval(100 * time.Millisecond),
+		WithThreshold(1 * time.Second),
+		WithQuerier(querier),
+	}
 
-	go func() {
-		wg.Done()
-		checker.Start()
-	}()
+	checker := NewNtpChecker(opts...)
 
-	// Wait for the goroutine to start
-	wg.Wait()
+	td := &testData{
+		checker: checker,
+		querier: querier,
+	}
 
-	// Let the checker run for a short period
-	time.Sleep(2 * time.Second)
+	return td
+}
 
-	checker.Stop()
+func (td *testData) Stop() {
+	td.checker.Stop()
+}
+
+func TestNTPChecker(t *testing.T) {
+	t.Run("Offset less than one second", func(t *testing.T) {
+		td := setup(t)
+		defer td.Stop()
+
+		ntpOffset := 100 * time.Millisecond
+		td.querier.res = &ntp.Response{
+			Stratum:     1,
+			ClockOffset: ntpOffset,
+		}
+
+		go td.checker.Start()
+
+		require.Eventually(t, func() bool {
+			offset, _ := td.checker.ClockOffset()
+
+			return offset == ntpOffset
+		}, 5*time.Second, 100*time.Millisecond)
+
+		offset, err := td.checker.ClockOffset()
+		assert.NoError(t, err)
+		assert.Equal(t, ntpOffset, offset)
+		assert.False(t, td.checker.IsOutOfSync())
+	})
+
+	t.Run("Offset more than one second", func(t *testing.T) {
+		td := setup(t)
+		defer td.Stop()
+
+		ntpOffset := 2 * time.Second
+		td.querier.res = &ntp.Response{
+			Stratum:     1,
+			ClockOffset: ntpOffset,
+		}
+
+		go td.checker.Start()
+
+		require.Eventually(t, func() bool {
+			offset, _ := td.checker.ClockOffset()
+
+			return offset == ntpOffset
+		}, 5*time.Second, 100*time.Millisecond)
+
+		offset, err := td.checker.ClockOffset()
+		assert.NoError(t, err)
+		assert.Equal(t, ntpOffset, offset)
+		assert.True(t, td.checker.IsOutOfSync())
+	})
+
+	t.Run("Query error", func(t *testing.T) {
+		td := setup(t)
+		defer td.Stop()
+
+		td.querier.err = fmt.Errorf("unable to query")
+
+		go td.checker.Start()
+
+		require.Eventually(t, func() bool {
+			_, err := td.checker.ClockOffset()
+
+			return err != nil
+		}, 5*time.Second, 100*time.Millisecond)
+
+		offset, err := td.checker.ClockOffset()
+		assert.Error(t, err)
+		assert.Zero(t, offset)
+		assert.True(t, td.checker.IsOutOfSync())
+	})
+
+	t.Run("Validation error", func(t *testing.T) {
+		td := setup(t)
+		defer td.Stop()
+
+		td.querier.err = nil
+		td.querier.res = &ntp.Response{
+			Stratum: 0,
+		}
+
+		go td.checker.Start()
+
+		require.Eventually(t, func() bool {
+			_, err := td.checker.ClockOffset()
+
+			return err != nil
+		}, 5*time.Second, 100*time.Millisecond)
+
+		offset, err := td.checker.ClockOffset()
+		assert.Error(t, err)
+		assert.Zero(t, offset)
+		assert.True(t, td.checker.IsOutOfSync())
+	})
 }

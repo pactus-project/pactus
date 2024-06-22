@@ -69,7 +69,7 @@ func NewSynchronizer(
 		network:     net,
 		broadcastCh: broadcastCh,
 		networkCh:   net.EventChannel(),
-		ntp:         ntp.NewNtpChecker(1*time.Minute, 1*time.Second),
+		ntp:         ntp.NewNtpChecker(),
 	}
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout)
@@ -133,12 +133,12 @@ func (sync *synchronizer) Stop() {
 	sync.logger.Debug("context closed", "reason", sync.ctx.Err())
 }
 
-func (sync *synchronizer) GetClockOffset() (time.Duration, error) {
-	return sync.ntp.GetClockOffset()
+func (sync *synchronizer) ClockOffset() (time.Duration, error) {
+	return sync.ntp.ClockOffset()
 }
 
-func (sync *synchronizer) OutOfSync(offset time.Duration) bool {
-	return sync.ntp.OutOfSync(offset)
+func (sync *synchronizer) IsClockOutOfSync() bool {
+	return sync.ntp.IsOutOfSync()
 }
 
 func (sync *synchronizer) stateHeight() uint32 {
