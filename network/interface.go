@@ -126,8 +126,8 @@ type Network interface {
 	Stop()
 	Protect(lp2pcore.PeerID, string)
 	EventChannel() <-chan Event
-	Broadcast([]byte, TopicID) error
-	SendTo([]byte, lp2pcore.PeerID) error
+	Broadcast([]byte, TopicID)
+	SendTo([]byte, lp2pcore.PeerID)
 	JoinTopic(TopicID, ShouldPropagate) error
 	CloseConnection(lp2pcore.PeerID)
 	SelfID() lp2pcore.PeerID
