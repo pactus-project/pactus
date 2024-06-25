@@ -51,6 +51,11 @@ class TransactionStub(object):
                 request_serializer=transaction__pb2.GetRawWithdrawTransactionRequest.SerializeToString,
                 response_deserializer=transaction__pb2.GetRawTransactionResponse.FromString,
                 )
+        self.GetTransactionPool = channel.unary_unary(
+                '/pactus.Transaction/GetTransactionPool',
+                request_serializer=transaction__pb2.GetTransactionPoolRequest.SerializeToString,
+                response_deserializer=transaction__pb2.GetTransactionPoolResponse.FromString,
+                )
 
 
 class TransactionServicer(object):
@@ -109,6 +114,13 @@ class TransactionServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetTransactionPool(self, request, context):
+        """GetTransactionPool retrieves current transactions on the TXPool.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_TransactionServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -146,6 +158,11 @@ def add_TransactionServicer_to_server(servicer, server):
                     servicer.GetRawWithdrawTransaction,
                     request_deserializer=transaction__pb2.GetRawWithdrawTransactionRequest.FromString,
                     response_serializer=transaction__pb2.GetRawTransactionResponse.SerializeToString,
+            ),
+            'GetTransactionPool': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTransactionPool,
+                    request_deserializer=transaction__pb2.GetTransactionPoolRequest.FromString,
+                    response_serializer=transaction__pb2.GetTransactionPoolResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -275,5 +292,22 @@ class Transaction(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/GetRawWithdrawTransaction',
             transaction__pb2.GetRawWithdrawTransactionRequest.SerializeToString,
             transaction__pb2.GetRawTransactionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetTransactionPool(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/GetTransactionPool',
+            transaction__pb2.GetTransactionPoolRequest.SerializeToString,
+            transaction__pb2.GetTransactionPoolResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

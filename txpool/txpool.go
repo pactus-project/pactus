@@ -238,6 +238,25 @@ func (p *txPool) EstimatedFee(_ amount.Amount, payloadType payload.Type) amount.
 	return payloadPool.estimatedFee()
 }
 
+func (p *txPool) AllPendingTxs() []*tx.Tx {
+	p.lk.RLock()
+	defer p.lk.RUnlock()
+
+	txs := make([]*tx.Tx, 0, p.Size())
+
+	var next *linkedlist.Element[linkedmap.Pair[tx.ID, *tx.Tx]]
+	for _, pool := range p.pools {
+		for e := pool.list.HeadNode(); e != nil; e = next {
+			next = e.Next
+			trx := e.Data.Value
+
+			txs = append(txs, trx)
+		}
+	}
+
+	return txs
+}
+
 func (p *txPool) String() string {
 	return fmt.Sprintf("{💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
 		p.pools[payload.TypeTransfer].list.Size(),

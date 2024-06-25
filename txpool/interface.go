@@ -14,6 +14,7 @@ type Reader interface {
 	HasTx(id tx.ID) bool
 	Size() int
 	EstimatedFee(amt amount.Amount, payloadType payload.Type) amount.Amount
+	AllPendingTxs() []*tx.Tx
 }
 
 type TxPool interface {

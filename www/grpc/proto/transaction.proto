@@ -33,6 +33,10 @@ service Transaction {
   // GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
   rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest)
       returns (GetRawTransactionResponse);
+
+  // GetTransactionPool retrieves current transactions on the TXPool.
+  rpc GetTransactionPool(GetTransactionPoolRequest)
+      returns (GetTransactionPoolResponse);
 }
 
 // Request message for retrieving transaction details.
@@ -157,6 +161,18 @@ message GetRawWithdrawTransactionRequest {
 message GetRawTransactionResponse {
   // Raw transaction data.
   bytes raw_transaction = 1;
+}
+
+// Request message to retirve transaction pool transactions.
+message GetTransactionPoolRequest {
+  // Payload type of tranactions in the tx pool, 0 is all types.
+  PayloadType payload_type = 1;
+}
+
+// Response message containing transaction pool transactions.
+message GetTransactionPoolResponse {
+  // List of the transaction in the pool.
+  repeated TransactionInfo txs = 1;
 }
 
 // Payload for a transfer transaction.

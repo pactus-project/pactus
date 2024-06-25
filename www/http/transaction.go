@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/hex"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -45,6 +46,35 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 
 	tm := newTableMaker()
 	txToTable(res.Transaction, tm)
+	s.writeHTML(w, tm.html())
+}
+
+func (s *Server) GetTransactionPoolHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	if s.enableAuth {
+		user, password, ok := r.BasicAuth()
+		if !ok {
+			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+
+			return
+		}
+
+		ctx = s.basicAuth(ctx, user, password)
+	}
+
+	res, err := s.transaction.GetTransactionPool(ctx, &pactus.GetTransactionPoolRequest{})
+	if err != nil {
+		s.writeError(w, err)
+
+		return
+	}
+
+	tm := newTableMaker()
+	for i, tx := range res.Txs {
+		tm.addRowString("\n-------------- ", fmt.Sprintf("%d --------------\n", i))
+		txToTable(tx, tm)
+	}
 	s.writeHTML(w, tm.html())
 }
 

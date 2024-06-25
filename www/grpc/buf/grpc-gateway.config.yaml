@@ -52,6 +52,9 @@ http:
 
     - selector: pactus.Transaction.GetRawWithdrawTransaction
       get: "/pactus/transaction/get_raw_withdraw_transaction"
+    
+    - selector: pactus.Transaction.GetTransactionPool
+      get: "/pactus/transaction/get_transaction_pool"
 
     # Network APIs
     - selector: pactus.Network.GetNetworkInfo

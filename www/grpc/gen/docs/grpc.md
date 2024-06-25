@@ -43,6 +43,10 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           <a href="#pactus.Transaction.GetRawWithdrawTransaction">
           <span class="rpc-badge"></span> GetRawWithdrawTransaction</a>
         </li>
+        <li>
+          <a href="#pactus.Transaction.GetTransactionPool">
+          <span class="rpc-badge"></span> GetTransactionPool</a>
+        </li>
         </ul>
     </li>
     <li> Blockchain Service
@@ -797,6 +801,248 @@ If not explicitly set, it is calculated based on the amount.
     </td>
   </tr>
      </tbody>
+</table>
+
+### GetTransactionPool <span id="pactus.Transaction.GetTransactionPool" class="rpc-badge"></span>
+
+<p>GetTransactionPool retrieves current transactions on the TXPool.</p>
+
+<h4>GetTransactionPoolRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">payload_type</td>
+    <td> PayloadType</td>
+    <td>
+    (Enum) Payload type of tranactions in the tx pool, 0 is all types.
+    <br>Available values:<ul>
+      <li>UNKNOWN = Unknown payload type.</li>
+      <li>TRANSFER_PAYLOAD = Transfer payload type.</li>
+      <li>BOND_PAYLOAD = Bond payload type.</li>
+      <li>SORTITION_PAYLOAD = Sortition payload type.</li>
+      <li>UNBOND_PAYLOAD = Unbond payload type.</li>
+      <li>WITHDRAW_PAYLOAD = Withdraw payload type.</li>
+      </ul>
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>GetTransactionPoolResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">txs</td>
+    <td>repeated TransactionInfo</td>
+    <td>
+    List of the transaction in the pool.
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">txs[].id</td>
+        <td> bytes</td>
+        <td>
+        Transaction ID.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].data</td>
+        <td> bytes</td>
+        <td>
+        Transaction data.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].version</td>
+        <td> int32</td>
+        <td>
+        Transaction version.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].lock_time</td>
+        <td> uint32</td>
+        <td>
+        Lock time for the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].value</td>
+        <td> int64</td>
+        <td>
+        Transaction value in NanoPAC.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].fee</td>
+        <td> int64</td>
+        <td>
+        Transaction fee in NanoPAC.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].payload_type</td>
+        <td> PayloadType</td>
+        <td>
+        (Enum) Type of transaction payload.
+        <br>Available values:<ul>
+          <li>UNKNOWN = Unknown payload type.</li>
+          <li>TRANSFER_PAYLOAD = Transfer payload type.</li>
+          <li>BOND_PAYLOAD = Bond payload type.</li>
+          <li>SORTITION_PAYLOAD = Sortition payload type.</li>
+          <li>UNBOND_PAYLOAD = Unbond payload type.</li>
+          <li>WITHDRAW_PAYLOAD = Withdraw payload type.</li>
+          </ul>
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].transfer</td>
+        <td> PayloadTransfer</td>
+        <td>
+        (OneOf) Transfer payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">txs[].transfer.sender</td>
+            <td> string</td>
+            <td>
+            Sender's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].transfer.receiver</td>
+            <td> string</td>
+            <td>
+            Receiver's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].transfer.amount</td>
+            <td> int64</td>
+            <td>
+            Transaction amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">txs[].bond</td>
+        <td> PayloadBond</td>
+        <td>
+        (OneOf) Bond payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">txs[].bond.sender</td>
+            <td> string</td>
+            <td>
+            Sender's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].bond.receiver</td>
+            <td> string</td>
+            <td>
+            Receiver's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].bond.stake</td>
+            <td> int64</td>
+            <td>
+            Stake amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">txs[].sortition</td>
+        <td> PayloadSortition</td>
+        <td>
+        (OneOf) Sortition payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">txs[].sortition.address</td>
+            <td> string</td>
+            <td>
+            Address associated with the sortition.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].sortition.proof</td>
+            <td> bytes</td>
+            <td>
+            Proof for the sortition.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">txs[].unbond</td>
+        <td> PayloadUnbond</td>
+        <td>
+        (OneOf) Unbond payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">txs[].unbond.validator</td>
+            <td> string</td>
+            <td>
+            Address of the validator to unbond from.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">txs[].withdraw</td>
+        <td> PayloadWithdraw</td>
+        <td>
+        (OneOf) Withdraw payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">txs[].withdraw.from</td>
+            <td> string</td>
+            <td>
+            Address to withdraw from.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].withdraw.to</td>
+            <td> string</td>
+            <td>
+            Address to withdraw to.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].withdraw.amount</td>
+            <td> int64</td>
+            <td>
+            Withdrawal amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">txs[].memo</td>
+        <td> string</td>
+        <td>
+        Transaction memo.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].public_key</td>
+        <td> string</td>
+        <td>
+        Public key associated with the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].signature</td>
+        <td> bytes</td>
+        <td>
+        Transaction signature.
+        </td>
+      </tr>
+         </tbody>
 </table>
 
 ## Blockchain Service

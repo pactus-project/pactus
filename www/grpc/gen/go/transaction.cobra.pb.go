@@ -27,6 +27,7 @@ func TransactionClientCommand(options ...client.Option) *cobra.Command {
 		_TransactionGetRawBondTransactionCommand(cfg),
 		_TransactionGetRawUnbondTransactionCommand(cfg),
 		_TransactionGetRawWithdrawTransactionCommand(cfg),
+		_TransactionGetTransactionPoolCommand(cfg),
 	)
 	return cmd
 }
@@ -342,6 +343,48 @@ func _TransactionGetRawWithdrawTransactionCommand(cfg *client.Config) *cobra.Com
 	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "Withdrawal amount in NanoPAC.\n It should be greater than 0.")
 	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "Transaction fee in NanoPAC.\n If not explicitly set, it is calculated based on the amount.")
 	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "Transaction memo.")
+
+	return cmd
+}
+
+func _TransactionGetTransactionPoolCommand(cfg *client.Config) *cobra.Command {
+	req := &GetTransactionPoolRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("GetTransactionPool"),
+		Short: "GetTransactionPool RPC client",
+		Long:  "GetTransactionPool retrieves current transactions on the TXPool.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "GetTransactionPool"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewTransactionClient(cc)
+				v := &GetTransactionPoolRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.GetTransactionPool(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	flag.EnumVar(cmd.PersistentFlags(), &req.PayloadType, cfg.FlagNamer("PayloadType"), "Payload type of tranactions in the tx pool, 0 is all types.")
 
 	return cmd
 }

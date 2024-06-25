@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -22,6 +23,7 @@ type Server struct {
 	address   string
 	grpc      *grpc.Server
 	state     state.Facade
+	txpool    txpool.TxPool
 	net       network.Network
 	sync      sync.Synchronizer
 	consMgr   consensus.ManagerReader
@@ -31,7 +33,7 @@ type Server struct {
 
 func NewServer(conf *Config, st state.Facade, syn sync.Synchronizer,
 	n network.Network, consMgr consensus.ManagerReader,
-	walletMgr *wallet.Manager,
+	walletMgr *wallet.Manager, tp txpool.TxPool,
 ) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -42,6 +44,7 @@ func NewServer(conf *Config, st state.Facade, syn sync.Synchronizer,
 		state:     st,
 		sync:      syn,
 		net:       n,
+		txpool:    tp,
 		consMgr:   consMgr,
 		walletMgr: walletMgr,
 		logger:    logger.NewSubLogger("_grpc", nil),
