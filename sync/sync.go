@@ -190,15 +190,10 @@ func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
 	if bdl != nil {
 		data, _ := bdl.Encode()
 
-		err := sync.network.SendTo(data, to)
-		if err != nil {
-			sync.logger.Warn("error on sending the bundle", "bundle", bdl, "to", to, "error", err)
-
-			return
-		}
-
+		sync.network.SendTo(data, to)
 		sync.peerSet.UpdateLastSent(to)
 		sync.peerSet.IncreaseSentCounters(msg.Type(), int64(len(data)), &to)
+
 		sync.logger.Debug("bundle sent", "bundle", bdl, "to", to)
 	}
 }
@@ -219,13 +214,10 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
 
 		data, _ := bdl.Encode()
-		err := sync.network.Broadcast(data, msg.Type().TopicID())
-		if err != nil {
-			sync.logger.Error("error on broadcasting bundle", "bundle", bdl, "error", err)
-		} else {
-			sync.logger.Info("broadcasting new bundle", "bundle", bdl)
-		}
+		sync.network.Broadcast(data, msg.Type().TopicID())
 		sync.peerSet.IncreaseSentCounters(msg.Type(), int64(len(data)), nil)
+
+		sync.logger.Debug("bundle broadcasted", "bundle", bdl)
 	}
 }
 

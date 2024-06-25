@@ -374,19 +374,6 @@ func TestDownload(t *testing.T) {
 
 		assert.False(t, td.sync.peerSet.HasOpenSession(pid))
 	})
-
-	t.Run("testing send failure", func(t *testing.T) {
-		td := setup(t, conf)
-
-		pid := td.RandPeerID()
-		td.network.SendError = fmt.Errorf("send error")
-
-		blk, cert := td.GenerateTestBlock(td.RandHeight())
-		baMsg := message.NewBlockAnnounceMessage(blk, cert)
-		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
-
-		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
-	})
 }
 
 func TestBroadcastBlockAnnounce(t *testing.T) {

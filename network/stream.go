@@ -62,7 +62,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) error {
 	}
 
 	// To prevent a broken stream from being open forever.
-	ctxWithTimeout, cancel := context.WithTimeout(s.ctx, 1*time.Minute)
+	ctxWithTimeout, cancel := context.WithTimeout(s.ctx, 20*time.Second)
 	defer cancel()
 
 	// Attempt to open a new stream to the target peer assuming there's already direct a connection

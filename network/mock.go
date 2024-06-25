@@ -23,7 +23,6 @@ type MockNetwork struct {
 	EventCh   chan Event
 	ID        lp2ppeer.ID
 	OtherNets []*MockNetwork
-	SendError error
 }
 
 func MockingNetwork(ts *testsuite.TestSuite, id lp2ppeer.ID) *MockNetwork {
@@ -56,25 +55,18 @@ func (mock *MockNetwork) SelfID() lp2ppeer.ID {
 	return mock.ID
 }
 
-func (mock *MockNetwork) SendTo(data []byte, pid lp2pcore.PeerID) error {
-	if mock.SendError != nil {
-		return mock.SendError
-	}
+func (mock *MockNetwork) SendTo(data []byte, pid lp2pcore.PeerID) {
 	mock.PublishCh <- PublishData{
 		Data:   data,
 		Target: &pid,
 	}
-
-	return nil
 }
 
-func (mock *MockNetwork) Broadcast(data []byte, _ TopicID) error {
+func (mock *MockNetwork) Broadcast(data []byte, _ TopicID) {
 	mock.PublishCh <- PublishData{
 		Data:   data,
 		Target: nil, // Send to all
 	}
-
-	return nil
 }
 
 func (mock *MockNetwork) SendToOthers(data []byte, target *lp2ppeer.ID) {

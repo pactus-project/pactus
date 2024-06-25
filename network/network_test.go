@@ -260,7 +260,7 @@ func TestNetwork(t *testing.T) {
 
 		msg := ts.RandBytes(64)
 
-		require.NoError(t, networkP.Broadcast(msg, TopicIDBlock))
+		networkP.Broadcast(msg, TopicIDBlock)
 
 		eB := shouldReceiveEvent(t, networkB, EventTypeGossip).(*GossipMessage)
 		eM := shouldReceiveEvent(t, networkM, EventTypeGossip).(*GossipMessage)
@@ -278,7 +278,7 @@ func TestNetwork(t *testing.T) {
 
 		msg := ts.RandBytes(64)
 
-		require.NoError(t, networkP.Broadcast(msg, TopicIDConsensus))
+		networkP.Broadcast(msg, TopicIDConsensus)
 
 		eB := shouldReceiveEvent(t, networkB, EventTypeGossip).(*GossipMessage)
 		eM := shouldReceiveEvent(t, networkM, EventTypeGossip).(*GossipMessage)
@@ -296,7 +296,7 @@ func TestNetwork(t *testing.T) {
 		require.NoError(t, networkM.host.Connect(networkM.ctx, *publicAddrInfo))
 
 		msgM := ts.RandBytes(64)
-		require.NoError(t, networkM.SendTo(msgM, networkP.SelfID()))
+		networkM.SendTo(msgM, networkP.SelfID())
 		eP := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
 		assert.Equal(t, eP.From, networkM.SelfID())
 		assert.Equal(t, readData(t, eP.Reader, len(msgM)), msgM)
@@ -308,7 +308,7 @@ func TestNetwork(t *testing.T) {
 		require.NoError(t, networkX.host.Connect(networkX.ctx, *publicAddrInfo))
 
 		msgX := ts.RandBytes(64)
-		require.NoError(t, networkX.SendTo(msgX, networkP.SelfID()))
+		networkX.SendTo(msgX, networkP.SelfID())
 		eP := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
 		assert.Equal(t, eP.From, networkX.SelfID())
 		assert.Equal(t, readData(t, eP.Reader, len(msgX)), msgX)
@@ -319,7 +319,7 @@ func TestNetwork(t *testing.T) {
 
 		msgB := ts.RandBytes(64)
 
-		require.NoError(t, networkB.SendTo(msgB, networkP.SelfID()))
+		networkB.SendTo(msgB, networkP.SelfID())
 		eB := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
 		assert.Equal(t, eB.From, networkB.SelfID())
 		assert.Equal(t, readData(t, eB.Reader, len(msgB)), msgB)
@@ -330,8 +330,8 @@ func TestNetwork(t *testing.T) {
 
 		msg := ts.RandBytes(64)
 
-		require.NoError(t, networkM.Broadcast(msg, TopicIDBlock))
-		require.NoError(t, networkN.Broadcast(msg, TopicIDBlock))
+		networkM.Broadcast(msg, TopicIDBlock)
+		networkN.Broadcast(msg, TopicIDBlock)
 
 		eX := shouldReceiveEvent(t, networkX, EventTypeGossip).(*GossipMessage)
 
@@ -346,7 +346,7 @@ func TestNetwork(t *testing.T) {
 		t.Log(t.Name())
 
 		msgM := ts.RandBytes(64)
-		require.Error(t, networkM.SendTo(msgM, networkX.SelfID()))
+		networkM.SendTo(msgM, networkX.SelfID())
 	})
 
 	// TODO: How to test this?
@@ -366,7 +366,7 @@ func TestNetwork(t *testing.T) {
 		networkB.CloseConnection(networkP.SelfID())
 		e := shouldReceiveEvent(t, networkB, EventTypeDisconnect).(*DisconnectEvent)
 		assert.Equal(t, e.PeerID, networkP.SelfID())
-		require.Error(t, networkB.SendTo(msgB, networkP.SelfID()))
+		networkB.SendTo(msgB, networkP.SelfID())
 	})
 
 	t.Run("Reachability Status", func(t *testing.T) {
@@ -443,7 +443,7 @@ func testConnection(t *testing.T, networkP, networkB *network) {
 
 	msg := []byte("test-msg")
 
-	require.NoError(t, networkP.SendTo(msg, networkB.SelfID()))
+	networkP.SendTo(msg, networkB.SelfID())
 	e := shouldReceiveEvent(t, networkB, EventTypeStream).(*StreamMessage)
 	assert.Equal(t, e.From, networkP.SelfID())
 	assert.Equal(t, readData(t, e.Reader, len(msg)), msg)
