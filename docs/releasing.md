@@ -88,7 +88,7 @@ Create a Git tag and sign it using your [GPG key](https://docs.github.com/en/aut
 ```bash
 git checkout ${BASE_BRANCH}
 git pull
-git tag -s -a $TAG_NAME -m $TAG_MSG
+git tag -s -a ${TAG_NAME} -m ${TAG_MSG}
 ```
 
 Inspect the tag information:
