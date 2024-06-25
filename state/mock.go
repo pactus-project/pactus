@@ -263,3 +263,7 @@ func (m *MockState) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
 func (*MockState) AvailabilityScore(_ int32) float64 {
 	return 0.987
 }
+
+func (*MockState) AllPendingTxs() []*tx.Tx {
+	return make([]*tx.Tx, 0)
+}

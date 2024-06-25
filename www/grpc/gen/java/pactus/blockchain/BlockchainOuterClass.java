@@ -13215,6 +13215,1451 @@ public final class BlockchainOuterClass {
 
   }
 
+  public interface GetTxPoolContentRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.GetTxPoolContentRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * Payload type of tranactions in the tx pool, 0 is all types.
+     * </pre>
+     *
+     * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
+     * @return The enum numeric value on the wire for payloadType.
+     */
+    int getPayloadTypeValue();
+    /**
+     * <pre>
+     * Payload type of tranactions in the tx pool, 0 is all types.
+     * </pre>
+     *
+     * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
+     * @return The payloadType.
+     */
+    pactus.transaction.TransactionOuterClass.PayloadType getPayloadType();
+  }
+  /**
+   * <pre>
+   * Request message to retirve transaction pool transactions.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.GetTxPoolContentRequest}
+   */
+  public static final class GetTxPoolContentRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.GetTxPoolContentRequest)
+      GetTxPoolContentRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GetTxPoolContentRequest.newBuilder() to construct.
+    private GetTxPoolContentRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GetTxPoolContentRequest() {
+      payloadType_ = 0;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new GetTxPoolContentRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest.class, pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest.Builder.class);
+    }
+
+    public static final int PAYLOAD_TYPE_FIELD_NUMBER = 1;
+    private int payloadType_;
+    /**
+     * <pre>
+     * Payload type of tranactions in the tx pool, 0 is all types.
+     * </pre>
+     *
+     * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
+     * @return The enum numeric value on the wire for payloadType.
+     */
+    @java.lang.Override public int getPayloadTypeValue() {
+      return payloadType_;
+    }
+    /**
+     * <pre>
+     * Payload type of tranactions in the tx pool, 0 is all types.
+     * </pre>
+     *
+     * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
+     * @return The payloadType.
+     */
+    @java.lang.Override public pactus.transaction.TransactionOuterClass.PayloadType getPayloadType() {
+      @SuppressWarnings("deprecation")
+      pactus.transaction.TransactionOuterClass.PayloadType result = pactus.transaction.TransactionOuterClass.PayloadType.valueOf(payloadType_);
+      return result == null ? pactus.transaction.TransactionOuterClass.PayloadType.UNRECOGNIZED : result;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (payloadType_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
+        output.writeEnum(1, payloadType_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (payloadType_ != pactus.transaction.TransactionOuterClass.PayloadType.UNKNOWN.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(1, payloadType_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest)) {
+        return super.equals(obj);
+      }
+      pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest other = (pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest) obj;
+
+      if (payloadType_ != other.payloadType_) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + PAYLOAD_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + payloadType_;
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Request message to retirve transaction pool transactions.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.GetTxPoolContentRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.GetTxPoolContentRequest)
+        pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest.class, pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest.Builder.class);
+      }
+
+      // Construct using pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        payloadType_ = 0;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest getDefaultInstanceForType() {
+        return pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest build() {
+        pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest buildPartial() {
+        pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest result = new pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest(this);
+        result.payloadType_ = payloadType_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest) {
+          return mergeFrom((pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest other) {
+        if (other == pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest.getDefaultInstance()) return this;
+        if (other.payloadType_ != 0) {
+          setPayloadTypeValue(other.getPayloadTypeValue());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                payloadType_ = input.readEnum();
+
+                break;
+              } // case 8
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private int payloadType_ = 0;
+      /**
+       * <pre>
+       * Payload type of tranactions in the tx pool, 0 is all types.
+       * </pre>
+       *
+       * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
+       * @return The enum numeric value on the wire for payloadType.
+       */
+      @java.lang.Override public int getPayloadTypeValue() {
+        return payloadType_;
+      }
+      /**
+       * <pre>
+       * Payload type of tranactions in the tx pool, 0 is all types.
+       * </pre>
+       *
+       * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
+       * @param value The enum numeric value on the wire for payloadType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPayloadTypeValue(int value) {
+        
+        payloadType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Payload type of tranactions in the tx pool, 0 is all types.
+       * </pre>
+       *
+       * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
+       * @return The payloadType.
+       */
+      @java.lang.Override
+      public pactus.transaction.TransactionOuterClass.PayloadType getPayloadType() {
+        @SuppressWarnings("deprecation")
+        pactus.transaction.TransactionOuterClass.PayloadType result = pactus.transaction.TransactionOuterClass.PayloadType.valueOf(payloadType_);
+        return result == null ? pactus.transaction.TransactionOuterClass.PayloadType.UNRECOGNIZED : result;
+      }
+      /**
+       * <pre>
+       * Payload type of tranactions in the tx pool, 0 is all types.
+       * </pre>
+       *
+       * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
+       * @param value The payloadType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPayloadType(pactus.transaction.TransactionOuterClass.PayloadType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        
+        payloadType_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Payload type of tranactions in the tx pool, 0 is all types.
+       * </pre>
+       *
+       * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPayloadType() {
+        
+        payloadType_ = 0;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.GetTxPoolContentRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.GetTxPoolContentRequest)
+    private static final pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest();
+    }
+
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetTxPoolContentRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetTxPoolContentRequest>() {
+      @java.lang.Override
+      public GetTxPoolContentRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetTxPoolContentRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetTxPoolContentRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface GetTxPoolContentResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.GetTxPoolContentResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * List of the transaction in the pool.
+     * </pre>
+     *
+     * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+     */
+    java.util.List<pactus.transaction.TransactionOuterClass.TransactionInfo> 
+        getTxsList();
+    /**
+     * <pre>
+     * List of the transaction in the pool.
+     * </pre>
+     *
+     * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+     */
+    pactus.transaction.TransactionOuterClass.TransactionInfo getTxs(int index);
+    /**
+     * <pre>
+     * List of the transaction in the pool.
+     * </pre>
+     *
+     * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+     */
+    int getTxsCount();
+    /**
+     * <pre>
+     * List of the transaction in the pool.
+     * </pre>
+     *
+     * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+     */
+    java.util.List<? extends pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder> 
+        getTxsOrBuilderList();
+    /**
+     * <pre>
+     * List of the transaction in the pool.
+     * </pre>
+     *
+     * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+     */
+    pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder getTxsOrBuilder(
+        int index);
+  }
+  /**
+   * <pre>
+   * Response message containing transaction pool transactions.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.GetTxPoolContentResponse}
+   */
+  public static final class GetTxPoolContentResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.GetTxPoolContentResponse)
+      GetTxPoolContentResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use GetTxPoolContentResponse.newBuilder() to construct.
+    private GetTxPoolContentResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private GetTxPoolContentResponse() {
+      txs_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new GetTxPoolContentResponse();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse.class, pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse.Builder.class);
+    }
+
+    public static final int TXS_FIELD_NUMBER = 1;
+    private java.util.List<pactus.transaction.TransactionOuterClass.TransactionInfo> txs_;
+    /**
+     * <pre>
+     * List of the transaction in the pool.
+     * </pre>
+     *
+     * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+     */
+    @java.lang.Override
+    public java.util.List<pactus.transaction.TransactionOuterClass.TransactionInfo> getTxsList() {
+      return txs_;
+    }
+    /**
+     * <pre>
+     * List of the transaction in the pool.
+     * </pre>
+     *
+     * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder> 
+        getTxsOrBuilderList() {
+      return txs_;
+    }
+    /**
+     * <pre>
+     * List of the transaction in the pool.
+     * </pre>
+     *
+     * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+     */
+    @java.lang.Override
+    public int getTxsCount() {
+      return txs_.size();
+    }
+    /**
+     * <pre>
+     * List of the transaction in the pool.
+     * </pre>
+     *
+     * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+     */
+    @java.lang.Override
+    public pactus.transaction.TransactionOuterClass.TransactionInfo getTxs(int index) {
+      return txs_.get(index);
+    }
+    /**
+     * <pre>
+     * List of the transaction in the pool.
+     * </pre>
+     *
+     * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+     */
+    @java.lang.Override
+    public pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder getTxsOrBuilder(
+        int index) {
+      return txs_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < txs_.size(); i++) {
+        output.writeMessage(1, txs_.get(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < txs_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, txs_.get(i));
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse)) {
+        return super.equals(obj);
+      }
+      pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse other = (pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse) obj;
+
+      if (!getTxsList()
+          .equals(other.getTxsList())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getTxsCount() > 0) {
+        hash = (37 * hash) + TXS_FIELD_NUMBER;
+        hash = (53 * hash) + getTxsList().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Response message containing transaction pool transactions.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.GetTxPoolContentResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.GetTxPoolContentResponse)
+        pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse.class, pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse.Builder.class);
+      }
+
+      // Construct using pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (txsBuilder_ == null) {
+          txs_ = java.util.Collections.emptyList();
+        } else {
+          txs_ = null;
+          txsBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.blockchain.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse getDefaultInstanceForType() {
+        return pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse build() {
+        pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse buildPartial() {
+        pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse result = new pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse(this);
+        int from_bitField0_ = bitField0_;
+        if (txsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            txs_ = java.util.Collections.unmodifiableList(txs_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.txs_ = txs_;
+        } else {
+          result.txs_ = txsBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse) {
+          return mergeFrom((pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse other) {
+        if (other == pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse.getDefaultInstance()) return this;
+        if (txsBuilder_ == null) {
+          if (!other.txs_.isEmpty()) {
+            if (txs_.isEmpty()) {
+              txs_ = other.txs_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureTxsIsMutable();
+              txs_.addAll(other.txs_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.txs_.isEmpty()) {
+            if (txsBuilder_.isEmpty()) {
+              txsBuilder_.dispose();
+              txsBuilder_ = null;
+              txs_ = other.txs_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              txsBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getTxsFieldBuilder() : null;
+            } else {
+              txsBuilder_.addAllMessages(other.txs_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                pactus.transaction.TransactionOuterClass.TransactionInfo m =
+                    input.readMessage(
+                        pactus.transaction.TransactionOuterClass.TransactionInfo.parser(),
+                        extensionRegistry);
+                if (txsBuilder_ == null) {
+                  ensureTxsIsMutable();
+                  txs_.add(m);
+                } else {
+                  txsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<pactus.transaction.TransactionOuterClass.TransactionInfo> txs_ =
+        java.util.Collections.emptyList();
+      private void ensureTxsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          txs_ = new java.util.ArrayList<pactus.transaction.TransactionOuterClass.TransactionInfo>(txs_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          pactus.transaction.TransactionOuterClass.TransactionInfo, pactus.transaction.TransactionOuterClass.TransactionInfo.Builder, pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder> txsBuilder_;
+
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public java.util.List<pactus.transaction.TransactionOuterClass.TransactionInfo> getTxsList() {
+        if (txsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(txs_);
+        } else {
+          return txsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public int getTxsCount() {
+        if (txsBuilder_ == null) {
+          return txs_.size();
+        } else {
+          return txsBuilder_.getCount();
+        }
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public pactus.transaction.TransactionOuterClass.TransactionInfo getTxs(int index) {
+        if (txsBuilder_ == null) {
+          return txs_.get(index);
+        } else {
+          return txsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public Builder setTxs(
+          int index, pactus.transaction.TransactionOuterClass.TransactionInfo value) {
+        if (txsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTxsIsMutable();
+          txs_.set(index, value);
+          onChanged();
+        } else {
+          txsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public Builder setTxs(
+          int index, pactus.transaction.TransactionOuterClass.TransactionInfo.Builder builderForValue) {
+        if (txsBuilder_ == null) {
+          ensureTxsIsMutable();
+          txs_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          txsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public Builder addTxs(pactus.transaction.TransactionOuterClass.TransactionInfo value) {
+        if (txsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTxsIsMutable();
+          txs_.add(value);
+          onChanged();
+        } else {
+          txsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public Builder addTxs(
+          int index, pactus.transaction.TransactionOuterClass.TransactionInfo value) {
+        if (txsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTxsIsMutable();
+          txs_.add(index, value);
+          onChanged();
+        } else {
+          txsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public Builder addTxs(
+          pactus.transaction.TransactionOuterClass.TransactionInfo.Builder builderForValue) {
+        if (txsBuilder_ == null) {
+          ensureTxsIsMutable();
+          txs_.add(builderForValue.build());
+          onChanged();
+        } else {
+          txsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public Builder addTxs(
+          int index, pactus.transaction.TransactionOuterClass.TransactionInfo.Builder builderForValue) {
+        if (txsBuilder_ == null) {
+          ensureTxsIsMutable();
+          txs_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          txsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public Builder addAllTxs(
+          java.lang.Iterable<? extends pactus.transaction.TransactionOuterClass.TransactionInfo> values) {
+        if (txsBuilder_ == null) {
+          ensureTxsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, txs_);
+          onChanged();
+        } else {
+          txsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public Builder clearTxs() {
+        if (txsBuilder_ == null) {
+          txs_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          txsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public Builder removeTxs(int index) {
+        if (txsBuilder_ == null) {
+          ensureTxsIsMutable();
+          txs_.remove(index);
+          onChanged();
+        } else {
+          txsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public pactus.transaction.TransactionOuterClass.TransactionInfo.Builder getTxsBuilder(
+          int index) {
+        return getTxsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder getTxsOrBuilder(
+          int index) {
+        if (txsBuilder_ == null) {
+          return txs_.get(index);  } else {
+          return txsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public java.util.List<? extends pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder> 
+           getTxsOrBuilderList() {
+        if (txsBuilder_ != null) {
+          return txsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(txs_);
+        }
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public pactus.transaction.TransactionOuterClass.TransactionInfo.Builder addTxsBuilder() {
+        return getTxsFieldBuilder().addBuilder(
+            pactus.transaction.TransactionOuterClass.TransactionInfo.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public pactus.transaction.TransactionOuterClass.TransactionInfo.Builder addTxsBuilder(
+          int index) {
+        return getTxsFieldBuilder().addBuilder(
+            index, pactus.transaction.TransactionOuterClass.TransactionInfo.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * List of the transaction in the pool.
+       * </pre>
+       *
+       * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
+       */
+      public java.util.List<pactus.transaction.TransactionOuterClass.TransactionInfo.Builder> 
+           getTxsBuilderList() {
+        return getTxsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          pactus.transaction.TransactionOuterClass.TransactionInfo, pactus.transaction.TransactionOuterClass.TransactionInfo.Builder, pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder> 
+          getTxsFieldBuilder() {
+        if (txsBuilder_ == null) {
+          txsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              pactus.transaction.TransactionOuterClass.TransactionInfo, pactus.transaction.TransactionOuterClass.TransactionInfo.Builder, pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder>(
+                  txs_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          txs_ = null;
+        }
+        return txsBuilder_;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.GetTxPoolContentResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.GetTxPoolContentResponse)
+    private static final pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse();
+    }
+
+    public static pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetTxPoolContentResponse>
+        PARSER = new com.google.protobuf.AbstractParser<GetTxPoolContentResponse>() {
+      @java.lang.Override
+      public GetTxPoolContentResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetTxPoolContentResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetTxPoolContentResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface ValidatorInfoOrBuilder extends
       // @@protoc_insertion_point(interface_extends:pactus.ValidatorInfo)
       com.google.protobuf.MessageOrBuilder {
@@ -20360,6 +21805,16 @@ public final class BlockchainOuterClass {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_GetConsensusInfoResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_GetTxPoolContentRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_GetTxPoolContentRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_GetTxPoolContentResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_GetTxPoolContentResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_ValidatorInfo_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -20437,63 +21892,69 @@ public final class BlockchainOuterClass {
       "ommitteeValidators\"\031\n\027GetConsensusInfoRe" +
       "quest\"O\n\030GetConsensusInfoResponse\0223\n\tins" +
       "tances\030\001 \003(\0132\025.pactus.ConsensusInfoR\tins" +
-      "tances\"\334\002\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\014R\004" +
-      "hash\022\022\n\004data\030\002 \001(\014R\004data\022\035\n\npublic_key\030\003" +
-      " \001(\tR\tpublicKey\022\026\n\006number\030\004 \001(\005R\006number\022" +
-      "\024\n\005stake\030\005 \001(\003R\005stake\022.\n\023last_bonding_he" +
-      "ight\030\006 \001(\rR\021lastBondingHeight\0222\n\025last_so" +
-      "rtition_height\030\007 \001(\rR\023lastSortitionHeigh" +
-      "t\022)\n\020unbonding_height\030\010 \001(\rR\017unbondingHe" +
-      "ight\022\030\n\007address\030\t \001(\tR\007address\022-\n\022availa" +
-      "bility_score\030\n \001(\001R\021availabilityScore\"\201\001" +
-      "\n\013AccountInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n\004dat" +
-      "a\030\002 \001(\014R\004data\022\026\n\006number\030\003 \001(\005R\006number\022\030\n" +
-      "\007balance\030\004 \001(\003R\007balance\022\030\n\007address\030\005 \001(\t" +
-      "R\007address\"\304\001\n\017BlockHeaderInfo\022\030\n\007version" +
-      "\030\001 \001(\005R\007version\022&\n\017prev_block_hash\030\002 \001(\014" +
-      "R\rprevBlockHash\022\035\n\nstate_root\030\003 \001(\014R\tsta" +
-      "teRoot\022%\n\016sortition_seed\030\004 \001(\014R\rsortitio" +
-      "nSeed\022)\n\020proposer_address\030\005 \001(\tR\017propose" +
-      "rAddress\"\227\001\n\017CertificateInfo\022\022\n\004hash\030\001 \001" +
-      "(\014R\004hash\022\024\n\005round\030\002 \001(\005R\005round\022\036\n\ncommit" +
-      "ters\030\003 \003(\005R\ncommitters\022\034\n\tabsentees\030\004 \003(" +
-      "\005R\tabsentees\022\034\n\tsignature\030\005 \001(\014R\tsignatu" +
-      "re\"\261\001\n\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.pactus.V" +
-      "oteTypeR\004type\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nb" +
-      "lock_hash\030\003 \001(\014R\tblockHash\022\024\n\005round\030\004 \001(" +
-      "\005R\005round\022\031\n\010cp_round\030\005 \001(\005R\007cpRound\022\031\n\010c" +
-      "p_value\030\006 \001(\005R\007cpValue\"\227\001\n\rConsensusInfo" +
-      "\022\030\n\007address\030\001 \001(\tR\007address\022\026\n\006Active\030\002 \001" +
-      "(\010R\006Active\022\026\n\006height\030\003 \001(\rR\006height\022\024\n\005ro" +
-      "und\030\004 \001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.pactus" +
-      ".VoteInfoR\005votes*H\n\016BlockVerbosity\022\016\n\nBL" +
-      "OCK_DATA\020\000\022\016\n\nBLOCK_INFO\020\001\022\026\n\022BLOCK_TRAN" +
-      "SACTIONS\020\002*\\\n\010VoteType\022\020\n\014VOTE_UNKNOWN\020\000" +
-      "\022\020\n\014VOTE_PREPARE\020\001\022\022\n\016VOTE_PRECOMMIT\020\002\022\030" +
-      "\n\024VOTE_CHANGE_PROPOSER\020\0032\264\006\n\nBlockchain\022" +
-      "=\n\010GetBlock\022\027.pactus.GetBlockRequest\032\030.p" +
-      "actus.GetBlockResponse\022I\n\014GetBlockHash\022\033" +
-      ".pactus.GetBlockHashRequest\032\034.pactus.Get" +
-      "BlockHashResponse\022O\n\016GetBlockHeight\022\035.pa" +
-      "ctus.GetBlockHeightRequest\032\036.pactus.GetB" +
-      "lockHeightResponse\022X\n\021GetBlockchainInfo\022" +
-      " .pactus.GetBlockchainInfoRequest\032!.pact" +
-      "us.GetBlockchainInfoResponse\022U\n\020GetConse" +
-      "nsusInfo\022\037.pactus.GetConsensusInfoReques" +
-      "t\032 .pactus.GetConsensusInfoResponse\022C\n\nG" +
-      "etAccount\022\031.pactus.GetAccountRequest\032\032.p" +
-      "actus.GetAccountResponse\022I\n\014GetValidator" +
-      "\022\033.pactus.GetValidatorRequest\032\034.pactus.G" +
-      "etValidatorResponse\022Y\n\024GetValidatorByNum" +
-      "ber\022#.pactus.GetValidatorByNumberRequest" +
-      "\032\034.pactus.GetValidatorResponse\022d\n\025GetVal" +
-      "idatorAddresses\022$.pactus.GetValidatorAdd" +
-      "ressesRequest\032%.pactus.GetValidatorAddre" +
-      "ssesResponse\022I\n\014GetPublicKey\022\033.pactus.Ge" +
-      "tPublicKeyRequest\032\034.pactus.GetPublicKeyR" +
-      "esponseBE\n\021pactus.blockchainZ0github.com" +
-      "/pactus-project/pactus/www/grpc/pactusb\006" +
-      "proto3"
+      "tances\"Q\n\027GetTxPoolContentRequest\0226\n\014pay" +
+      "load_type\030\001 \001(\0162\023.pactus.PayloadTypeR\013pa" +
+      "yloadType\"E\n\030GetTxPoolContentResponse\022)\n" +
+      "\003txs\030\001 \003(\0132\027.pactus.TransactionInfoR\003txs" +
+      "\"\334\002\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\022" +
+      "\n\004data\030\002 \001(\014R\004data\022\035\n\npublic_key\030\003 \001(\tR\t" +
+      "publicKey\022\026\n\006number\030\004 \001(\005R\006number\022\024\n\005sta" +
+      "ke\030\005 \001(\003R\005stake\022.\n\023last_bonding_height\030\006" +
+      " \001(\rR\021lastBondingHeight\0222\n\025last_sortitio" +
+      "n_height\030\007 \001(\rR\023lastSortitionHeight\022)\n\020u" +
+      "nbonding_height\030\010 \001(\rR\017unbondingHeight\022\030" +
+      "\n\007address\030\t \001(\tR\007address\022-\n\022availability" +
+      "_score\030\n \001(\001R\021availabilityScore\"\201\001\n\013Acco" +
+      "untInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n\004data\030\002 \001(" +
+      "\014R\004data\022\026\n\006number\030\003 \001(\005R\006number\022\030\n\007balan" +
+      "ce\030\004 \001(\003R\007balance\022\030\n\007address\030\005 \001(\tR\007addr" +
+      "ess\"\304\001\n\017BlockHeaderInfo\022\030\n\007version\030\001 \001(\005" +
+      "R\007version\022&\n\017prev_block_hash\030\002 \001(\014R\rprev" +
+      "BlockHash\022\035\n\nstate_root\030\003 \001(\014R\tstateRoot" +
+      "\022%\n\016sortition_seed\030\004 \001(\014R\rsortitionSeed\022" +
+      ")\n\020proposer_address\030\005 \001(\tR\017proposerAddre" +
+      "ss\"\227\001\n\017CertificateInfo\022\022\n\004hash\030\001 \001(\014R\004ha" +
+      "sh\022\024\n\005round\030\002 \001(\005R\005round\022\036\n\ncommitters\030\003" +
+      " \003(\005R\ncommitters\022\034\n\tabsentees\030\004 \003(\005R\tabs" +
+      "entees\022\034\n\tsignature\030\005 \001(\014R\tsignature\"\261\001\n" +
+      "\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.pactus.VoteTyp" +
+      "eR\004type\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nblock_h" +
+      "ash\030\003 \001(\014R\tblockHash\022\024\n\005round\030\004 \001(\005R\005rou" +
+      "nd\022\031\n\010cp_round\030\005 \001(\005R\007cpRound\022\031\n\010cp_valu" +
+      "e\030\006 \001(\005R\007cpValue\"\227\001\n\rConsensusInfo\022\030\n\007ad" +
+      "dress\030\001 \001(\tR\007address\022\026\n\006Active\030\002 \001(\010R\006Ac" +
+      "tive\022\026\n\006height\030\003 \001(\rR\006height\022\024\n\005round\030\004 " +
+      "\001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.pactus.VoteI" +
+      "nfoR\005votes*H\n\016BlockVerbosity\022\016\n\nBLOCK_DA" +
+      "TA\020\000\022\016\n\nBLOCK_INFO\020\001\022\026\n\022BLOCK_TRANSACTIO" +
+      "NS\020\002*\\\n\010VoteType\022\020\n\014VOTE_UNKNOWN\020\000\022\020\n\014VO" +
+      "TE_PREPARE\020\001\022\022\n\016VOTE_PRECOMMIT\020\002\022\030\n\024VOTE" +
+      "_CHANGE_PROPOSER\020\0032\213\007\n\nBlockchain\022=\n\010Get" +
+      "Block\022\027.pactus.GetBlockRequest\032\030.pactus." +
+      "GetBlockResponse\022I\n\014GetBlockHash\022\033.pactu" +
+      "s.GetBlockHashRequest\032\034.pactus.GetBlockH" +
+      "ashResponse\022O\n\016GetBlockHeight\022\035.pactus.G" +
+      "etBlockHeightRequest\032\036.pactus.GetBlockHe" +
+      "ightResponse\022X\n\021GetBlockchainInfo\022 .pact" +
+      "us.GetBlockchainInfoRequest\032!.pactus.Get" +
+      "BlockchainInfoResponse\022U\n\020GetConsensusIn" +
+      "fo\022\037.pactus.GetConsensusInfoRequest\032 .pa" +
+      "ctus.GetConsensusInfoResponse\022C\n\nGetAcco" +
+      "unt\022\031.pactus.GetAccountRequest\032\032.pactus." +
+      "GetAccountResponse\022I\n\014GetValidator\022\033.pac" +
+      "tus.GetValidatorRequest\032\034.pactus.GetVali" +
+      "datorResponse\022Y\n\024GetValidatorByNumber\022#." +
+      "pactus.GetValidatorByNumberRequest\032\034.pac" +
+      "tus.GetValidatorResponse\022d\n\025GetValidator" +
+      "Addresses\022$.pactus.GetValidatorAddresses" +
+      "Request\032%.pactus.GetValidatorAddressesRe" +
+      "sponse\022I\n\014GetPublicKey\022\033.pactus.GetPubli" +
+      "cKeyRequest\032\034.pactus.GetPublicKeyRespons" +
+      "e\022U\n\020GetTxPoolContent\022\037.pactus.GetTxPool" +
+      "ContentRequest\032 .pactus.GetTxPoolContent" +
+      "ResponseBE\n\021pactus.blockchainZ0github.co" +
+      "m/pactus-project/pactus/www/grpc/pactusb" +
+      "\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -20614,38 +22075,50 @@ public final class BlockchainOuterClass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetConsensusInfoResponse_descriptor,
         new java.lang.String[] { "Instances", });
-    internal_static_pactus_ValidatorInfo_descriptor =
+    internal_static_pactus_GetTxPoolContentRequest_descriptor =
       getDescriptor().getMessageTypes().get(19);
+    internal_static_pactus_GetTxPoolContentRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_GetTxPoolContentRequest_descriptor,
+        new java.lang.String[] { "PayloadType", });
+    internal_static_pactus_GetTxPoolContentResponse_descriptor =
+      getDescriptor().getMessageTypes().get(20);
+    internal_static_pactus_GetTxPoolContentResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_GetTxPoolContentResponse_descriptor,
+        new java.lang.String[] { "Txs", });
+    internal_static_pactus_ValidatorInfo_descriptor =
+      getDescriptor().getMessageTypes().get(21);
     internal_static_pactus_ValidatorInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_ValidatorInfo_descriptor,
         new java.lang.String[] { "Hash", "Data", "PublicKey", "Number", "Stake", "LastBondingHeight", "LastSortitionHeight", "UnbondingHeight", "Address", "AvailabilityScore", });
     internal_static_pactus_AccountInfo_descriptor =
-      getDescriptor().getMessageTypes().get(20);
+      getDescriptor().getMessageTypes().get(22);
     internal_static_pactus_AccountInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_AccountInfo_descriptor,
         new java.lang.String[] { "Hash", "Data", "Number", "Balance", "Address", });
     internal_static_pactus_BlockHeaderInfo_descriptor =
-      getDescriptor().getMessageTypes().get(21);
+      getDescriptor().getMessageTypes().get(23);
     internal_static_pactus_BlockHeaderInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_BlockHeaderInfo_descriptor,
         new java.lang.String[] { "Version", "PrevBlockHash", "StateRoot", "SortitionSeed", "ProposerAddress", });
     internal_static_pactus_CertificateInfo_descriptor =
-      getDescriptor().getMessageTypes().get(22);
+      getDescriptor().getMessageTypes().get(24);
     internal_static_pactus_CertificateInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_CertificateInfo_descriptor,
         new java.lang.String[] { "Hash", "Round", "Committers", "Absentees", "Signature", });
     internal_static_pactus_VoteInfo_descriptor =
-      getDescriptor().getMessageTypes().get(23);
+      getDescriptor().getMessageTypes().get(25);
     internal_static_pactus_VoteInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_VoteInfo_descriptor,
         new java.lang.String[] { "Type", "Voter", "BlockHash", "Round", "CpRound", "CpValue", });
     internal_static_pactus_ConsensusInfo_descriptor =
-      getDescriptor().getMessageTypes().get(24);
+      getDescriptor().getMessageTypes().get(26);
     internal_static_pactus_ConsensusInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_ConsensusInfo_descriptor,

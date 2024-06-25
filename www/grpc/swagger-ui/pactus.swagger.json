@@ -1653,6 +1653,20 @@
       },
       "description": "Response message containing details of a transaction."
     },
+    "pactusGetTxPoolContentResponse": {
+      "type": "object",
+      "properties": {
+        "txs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusTransactionInfo"
+          },
+          "description": "List of the transaction in the pool."
+        }
+      },
+      "description": "Response message containing transaction pool transactions."
+    },
     "pactusGetValidatorAddressResponse": {
       "type": "object",
       "properties": {

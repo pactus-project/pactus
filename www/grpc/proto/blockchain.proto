@@ -46,6 +46,10 @@ service Blockchain {
   // GetPublicKey retrieves the public key of an account based on the provided
   // address.
   rpc GetPublicKey(GetPublicKeyRequest) returns (GetPublicKeyResponse);
+
+  // GetTxPoolContent retrieves current transactions on the TXPool.
+  rpc GetTxPoolContent(GetTxPoolContentRequest)
+      returns (GetTxPoolContentResponse);
 }
 
 // Message to request account information based on an address.
@@ -178,6 +182,18 @@ message GetConsensusInfoRequest {}
 message GetConsensusInfoResponse {
   // List of consensus instances.
   repeated ConsensusInfo instances = 1;
+}
+
+// Request message to retirve transaction pool transactions.
+message GetTxPoolContentRequest {
+  // Payload type of tranactions in the tx pool, 0 is all types.
+  PayloadType payload_type = 1;
+}
+
+// Response message containing transaction pool transactions.
+message GetTxPoolContentResponse {
+  // List of the transaction in the pool.
+  repeated TransactionInfo txs = 1;
 }
 
 // Message containing information about a validator.

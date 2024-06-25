@@ -81,3 +81,7 @@ func (m *MockTxPool) PrepareBlockTransactions() block.Txs {
 func (*MockTxPool) EstimatedFee(_ amount.Amount, _ payload.Type) amount.Amount {
 	return amount.Amount(0.1e9)
 }
+
+func (m *MockTxPool) AllPendingTxs() []*tx.Tx {
+	return make([]*tx.Tx, m.Size())
+}

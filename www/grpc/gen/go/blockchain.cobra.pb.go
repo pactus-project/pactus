@@ -30,6 +30,7 @@ func BlockchainClientCommand(options ...client.Option) *cobra.Command {
 		_BlockchainGetValidatorByNumberCommand(cfg),
 		_BlockchainGetValidatorAddressesCommand(cfg),
 		_BlockchainGetPublicKeyCommand(cfg),
+		_BlockchainGetTxPoolContentCommand(cfg),
 	)
 	return cmd
 }
@@ -445,6 +446,48 @@ func _BlockchainGetPublicKeyCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "Address for which public key is requested.")
+
+	return cmd
+}
+
+func _BlockchainGetTxPoolContentCommand(cfg *client.Config) *cobra.Command {
+	req := &GetTxPoolContentRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("GetTxPoolContent"),
+		Short: "GetTxPoolContent RPC client",
+		Long:  "GetTxPoolContent retrieves current transactions on the TXPool.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetTxPoolContent"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewBlockchainClient(cc)
+				v := &GetTxPoolContentRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.GetTxPoolContent(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	flag.EnumVar(cmd.PersistentFlags(), &req.PayloadType, cfg.FlagNamer("PayloadType"), "Payload type of tranactions in the tx pool, 0 is all types.")
 
 	return cmd
 }

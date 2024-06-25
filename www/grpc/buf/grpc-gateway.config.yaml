@@ -31,6 +31,9 @@ http:
     - selector: pactus.Blockchain.GetPublicKey
       get: "/pactus/blockchain/get_public_key"
 
+    - selector: pactus.Transaction.GetTxPoolContent
+      get: "/pactus/blockchain/get_txpool_content"
+
     # Transaction APIs
     - selector: pactus.Transaction.GetTransaction
       get: "/pactus/transaction/get_transaction"

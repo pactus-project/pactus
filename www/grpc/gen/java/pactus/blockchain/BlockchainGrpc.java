@@ -328,6 +328,37 @@ public final class BlockchainGrpc {
     return getGetPublicKeyMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest,
+      pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse> getGetTxPoolContentMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetTxPoolContent",
+      requestType = pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest.class,
+      responseType = pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest,
+      pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse> getGetTxPoolContentMethod() {
+    io.grpc.MethodDescriptor<pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest, pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse> getGetTxPoolContentMethod;
+    if ((getGetTxPoolContentMethod = BlockchainGrpc.getGetTxPoolContentMethod) == null) {
+      synchronized (BlockchainGrpc.class) {
+        if ((getGetTxPoolContentMethod = BlockchainGrpc.getGetTxPoolContentMethod) == null) {
+          BlockchainGrpc.getGetTxPoolContentMethod = getGetTxPoolContentMethod =
+              io.grpc.MethodDescriptor.<pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest, pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetTxPoolContent"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new BlockchainMethodDescriptorSupplier("GetTxPoolContent"))
+              .build();
+        }
+      }
+    }
+    return getGetTxPoolContentMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -484,6 +515,16 @@ public final class BlockchainGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetPublicKeyMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * GetTxPoolContent retrieves current transactions on the TXPool.
+     * </pre>
+     */
+    public void getTxPoolContent(pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetTxPoolContentMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -556,6 +597,13 @@ public final class BlockchainGrpc {
                 pactus.blockchain.BlockchainOuterClass.GetPublicKeyRequest,
                 pactus.blockchain.BlockchainOuterClass.GetPublicKeyResponse>(
                   this, METHODID_GET_PUBLIC_KEY)))
+          .addMethod(
+            getGetTxPoolContentMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest,
+                pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse>(
+                  this, METHODID_GET_TX_POOL_CONTENT)))
           .build();
     }
   }
@@ -691,6 +739,17 @@ public final class BlockchainGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetPublicKeyMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * GetTxPoolContent retrieves current transactions on the TXPool.
+     * </pre>
+     */
+    public void getTxPoolContent(pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest request,
+        io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetTxPoolContentMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -813,6 +872,16 @@ public final class BlockchainGrpc {
     public pactus.blockchain.BlockchainOuterClass.GetPublicKeyResponse getPublicKey(pactus.blockchain.BlockchainOuterClass.GetPublicKeyRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetPublicKeyMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * GetTxPoolContent retrieves current transactions on the TXPool.
+     * </pre>
+     */
+    public pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse getTxPoolContent(pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetTxPoolContentMethod(), getCallOptions(), request);
     }
   }
 
@@ -947,6 +1016,17 @@ public final class BlockchainGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetPublicKeyMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * GetTxPoolContent retrieves current transactions on the TXPool.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse> getTxPoolContent(
+        pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetTxPoolContentMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_BLOCK = 0;
@@ -959,6 +1039,7 @@ public final class BlockchainGrpc {
   private static final int METHODID_GET_VALIDATOR_BY_NUMBER = 7;
   private static final int METHODID_GET_VALIDATOR_ADDRESSES = 8;
   private static final int METHODID_GET_PUBLIC_KEY = 9;
+  private static final int METHODID_GET_TX_POOL_CONTENT = 10;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1016,6 +1097,10 @@ public final class BlockchainGrpc {
         case METHODID_GET_PUBLIC_KEY:
           serviceImpl.getPublicKey((pactus.blockchain.BlockchainOuterClass.GetPublicKeyRequest) request,
               (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetPublicKeyResponse>) responseObserver);
+          break;
+        case METHODID_GET_TX_POOL_CONTENT:
+          serviceImpl.getTxPoolContent((pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1088,6 +1173,7 @@ public final class BlockchainGrpc {
               .addMethod(getGetValidatorByNumberMethod())
               .addMethod(getGetValidatorAddressesMethod())
               .addMethod(getGetPublicKeyMethod())
+              .addMethod(getGetTxPoolContentMethod())
               .build();
         }
       }

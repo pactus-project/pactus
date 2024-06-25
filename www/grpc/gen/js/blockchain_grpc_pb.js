@@ -159,6 +159,28 @@ function deserialize_pactus_GetPublicKeyResponse(buffer_arg) {
   return blockchain_pb.GetPublicKeyResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_GetTxPoolContentRequest(arg) {
+  if (!(arg instanceof blockchain_pb.GetTxPoolContentRequest)) {
+    throw new Error('Expected argument of type pactus.GetTxPoolContentRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetTxPoolContentRequest(buffer_arg) {
+  return blockchain_pb.GetTxPoolContentRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_GetTxPoolContentResponse(arg) {
+  if (!(arg instanceof blockchain_pb.GetTxPoolContentResponse)) {
+    throw new Error('Expected argument of type pactus.GetTxPoolContentResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetTxPoolContentResponse(buffer_arg) {
+  return blockchain_pb.GetTxPoolContentResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetValidatorAddressesRequest(arg) {
   if (!(arg instanceof blockchain_pb.GetValidatorAddressesRequest)) {
     throw new Error('Expected argument of type pactus.GetValidatorAddressesRequest');
@@ -341,6 +363,18 @@ getPublicKey: {
     requestDeserialize: deserialize_pactus_GetPublicKeyRequest,
     responseSerialize: serialize_pactus_GetPublicKeyResponse,
     responseDeserialize: deserialize_pactus_GetPublicKeyResponse,
+  },
+  // GetTxPoolContent retrieves current transactions on the TXPool.
+getTxPoolContent: {
+    path: '/pactus.Blockchain/GetTxPoolContent',
+    requestStream: false,
+    responseStream: false,
+    requestType: blockchain_pb.GetTxPoolContentRequest,
+    responseType: blockchain_pb.GetTxPoolContentResponse,
+    requestSerialize: serialize_pactus_GetTxPoolContentRequest,
+    requestDeserialize: deserialize_pactus_GetTxPoolContentRequest,
+    responseSerialize: serialize_pactus_GetTxPoolContentResponse,
+    responseDeserialize: deserialize_pactus_GetTxPoolContentResponse,
   },
 };
 

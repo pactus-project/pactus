@@ -26,6 +26,7 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
   $async.Future<$1.GetValidatorResponse> getValidatorByNumber($pb.ServerContext ctx, $1.GetValidatorByNumberRequest request);
   $async.Future<$1.GetValidatorAddressesResponse> getValidatorAddresses($pb.ServerContext ctx, $1.GetValidatorAddressesRequest request);
   $async.Future<$1.GetPublicKeyResponse> getPublicKey($pb.ServerContext ctx, $1.GetPublicKeyRequest request);
+  $async.Future<$1.GetTxPoolContentResponse> getTxPoolContent($pb.ServerContext ctx, $1.GetTxPoolContentRequest request);
 
   $pb.GeneratedMessage createRequest($core.String method) {
     switch (method) {
@@ -39,6 +40,7 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
       case 'GetValidatorByNumber': return $1.GetValidatorByNumberRequest();
       case 'GetValidatorAddresses': return $1.GetValidatorAddressesRequest();
       case 'GetPublicKey': return $1.GetPublicKeyRequest();
+      case 'GetTxPoolContent': return $1.GetTxPoolContentRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
@@ -55,6 +57,7 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
       case 'GetValidatorByNumber': return this.getValidatorByNumber(ctx, request as $1.GetValidatorByNumberRequest);
       case 'GetValidatorAddresses': return this.getValidatorAddresses(ctx, request as $1.GetValidatorAddressesRequest);
       case 'GetPublicKey': return this.getPublicKey(ctx, request as $1.GetPublicKeyRequest);
+      case 'GetTxPoolContent': return this.getTxPoolContent(ctx, request as $1.GetTxPoolContentRequest);
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
