@@ -385,7 +385,7 @@ func (n *network) Broadcast(msg []byte, topicID TopicID) {
 	go func() {
 		err := n.gossip.Broadcast(msg, topicID)
 		if err != nil {
-			n.logger.Error("error on broadcasting msg", "error", err)
+			n.logger.Warn("error on broadcasting msg", "error", err)
 		}
 	}()
 }
