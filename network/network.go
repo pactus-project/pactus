@@ -368,14 +368,26 @@ func (n *network) Protect(pid lp2pcore.PeerID, tag string) {
 	n.host.ConnManager().Protect(pid, tag)
 }
 
-func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) error {
-	n.logger.Trace("Sending new message", "to", pid)
-
-	return n.stream.SendRequest(msg, pid)
+// SendTo sends a message to a specific peer identified by pid asynchronously.
+// It uses a goroutine to ensure that if sending is blocked, receiving messages won't be blocked.
+func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) {
+	go func() {
+		err := n.stream.SendRequest(msg, pid)
+		if err != nil {
+			n.logger.Warn("error on sending msg", "pid", pid, "error", err)
+		}
+	}()
 }
 
-func (n *network) Broadcast(msg []byte, topicID TopicID) error {
-	return n.gossip.Broadcast(msg, topicID)
+// Broadcast sends a message to all peers subscribed to a specific topic asynchronously.
+// It uses a goroutine to ensure that if broadcasting is blocked, receiving messages won't be blocked.
+func (n *network) Broadcast(msg []byte, topicID TopicID) {
+	go func() {
+		err := n.gossip.Broadcast(msg, topicID)
+		if err != nil {
+			n.logger.Warn("error on broadcasting msg", "error", err)
+		}
+	}()
 }
 
 func (n *network) JoinTopic(topicID TopicID, sp ShouldPropagate) error {

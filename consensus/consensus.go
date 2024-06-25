@@ -509,7 +509,8 @@ func (cs *consensus) startChangingProposer() {
 	// If it is not decided yet.
 	// TODO: can we remove this condition in new consensus model?
 	if cs.cpDecided == -1 {
-		cs.logger.Info("changing proposer started", "cpRound", cs.cpRound)
+		cs.logger.Info("changing proposer started",
+			"cpRound", cs.cpRound, "proposer", cs.proposer(cs.round).Address())
 		cs.enterNewState(cs.cpPreVoteState)
 	}
 }
