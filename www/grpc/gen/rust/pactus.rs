@@ -169,22 +169,6 @@ pub struct GetRawTransactionResponse {
     #[prost(bytes="vec", tag="1")]
     pub raw_transaction: ::prost::alloc::vec::Vec<u8>,
 }
-/// Request message to retirve transaction pool transactions.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct GetTransactionPoolRequest {
-    /// Payload type of tranactions in the tx pool, 0 is all types.
-    #[prost(enumeration="PayloadType", tag="1")]
-    pub payload_type: i32,
-}
-/// Response message containing transaction pool transactions.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct GetTransactionPoolResponse {
-    /// List of the transaction in the pool.
-    #[prost(message, repeated, tag="1")]
-    pub txs: ::prost::alloc::vec::Vec<TransactionInfo>,
-}
 /// Payload for a transfer transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -561,6 +545,22 @@ pub struct GetConsensusInfoResponse {
     /// List of consensus instances.
     #[prost(message, repeated, tag="1")]
     pub instances: ::prost::alloc::vec::Vec<ConsensusInfo>,
+}
+/// Request message to retirve transaction pool transactions.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetTxPoolContentRequest {
+    /// Payload type of tranactions in the tx pool, 0 is all types.
+    #[prost(enumeration="PayloadType", tag="1")]
+    pub payload_type: i32,
+}
+/// Response message containing transaction pool transactions.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetTxPoolContentResponse {
+    /// List of the transaction in the pool.
+    #[prost(message, repeated, tag="1")]
+    pub txs: ::prost::alloc::vec::Vec<TransactionInfo>,
 }
 /// Message containing information about a validator.
 #[allow(clippy::derive_partial_eq_without_eq)]

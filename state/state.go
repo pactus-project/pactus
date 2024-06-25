@@ -795,3 +795,10 @@ func (st *state) AvailabilityScore(valNum int32) float64 {
 
 	return st.scoreMgr.AvailabilityScore(valNum)
 }
+
+func (st *state) AllPendingTxs() []*tx.Tx {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return st.txPool.AllPendingTxs()
+}

@@ -14,6 +14,7 @@ import 'package:protobuf/protobuf.dart' as $pb;
 import 'transaction.pb.dart' as $0;
 
 import 'blockchain.pbenum.dart';
+import 'transaction.pbenum.dart' as $0;
 
 export 'blockchain.pbenum.dart';
 
@@ -1022,6 +1023,94 @@ class GetConsensusInfoResponse extends $pb.GeneratedMessage {
   $core.List<ConsensusInfo> get instances => $_getList(0);
 }
 
+class GetTxPoolContentRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetTxPoolContentRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..e<$0.PayloadType>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'payloadType', $pb.PbFieldType.OE, defaultOrMaker: $0.PayloadType.UNKNOWN, valueOf: $0.PayloadType.valueOf, enumValues: $0.PayloadType.values)
+    ..hasRequiredFields = false
+  ;
+
+  GetTxPoolContentRequest._() : super();
+  factory GetTxPoolContentRequest({
+    $0.PayloadType? payloadType,
+  }) {
+    final _result = create();
+    if (payloadType != null) {
+      _result.payloadType = payloadType;
+    }
+    return _result;
+  }
+  factory GetTxPoolContentRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetTxPoolContentRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetTxPoolContentRequest clone() => GetTxPoolContentRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetTxPoolContentRequest copyWith(void Function(GetTxPoolContentRequest) updates) => super.copyWith((message) => updates(message as GetTxPoolContentRequest)) as GetTxPoolContentRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetTxPoolContentRequest create() => GetTxPoolContentRequest._();
+  GetTxPoolContentRequest createEmptyInstance() => create();
+  static $pb.PbList<GetTxPoolContentRequest> createRepeated() => $pb.PbList<GetTxPoolContentRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetTxPoolContentRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetTxPoolContentRequest>(create);
+  static GetTxPoolContentRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $0.PayloadType get payloadType => $_getN(0);
+  @$pb.TagNumber(1)
+  set payloadType($0.PayloadType v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasPayloadType() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPayloadType() => clearField(1);
+}
+
+class GetTxPoolContentResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetTxPoolContentResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..pc<$0.TransactionInfo>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'txs', $pb.PbFieldType.PM, subBuilder: $0.TransactionInfo.create)
+    ..hasRequiredFields = false
+  ;
+
+  GetTxPoolContentResponse._() : super();
+  factory GetTxPoolContentResponse({
+    $core.Iterable<$0.TransactionInfo>? txs,
+  }) {
+    final _result = create();
+    if (txs != null) {
+      _result.txs.addAll(txs);
+    }
+    return _result;
+  }
+  factory GetTxPoolContentResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetTxPoolContentResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetTxPoolContentResponse clone() => GetTxPoolContentResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetTxPoolContentResponse copyWith(void Function(GetTxPoolContentResponse) updates) => super.copyWith((message) => updates(message as GetTxPoolContentResponse)) as GetTxPoolContentResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetTxPoolContentResponse create() => GetTxPoolContentResponse._();
+  GetTxPoolContentResponse createEmptyInstance() => create();
+  static $pb.PbList<GetTxPoolContentResponse> createRepeated() => $pb.PbList<GetTxPoolContentResponse>();
+  @$core.pragma('dart2js:noInline')
+  static GetTxPoolContentResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetTxPoolContentResponse>(create);
+  static GetTxPoolContentResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$0.TransactionInfo> get txs => $_getList(0);
+}
+
 class ValidatorInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ValidatorInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash', $pb.PbFieldType.OY)
@@ -1749,6 +1838,10 @@ class BlockchainApi {
   $async.Future<GetPublicKeyResponse> getPublicKey($pb.ClientContext? ctx, GetPublicKeyRequest request) {
     var emptyResponse = GetPublicKeyResponse();
     return _client.invoke<GetPublicKeyResponse>(ctx, 'Blockchain', 'GetPublicKey', request, emptyResponse);
+  }
+  $async.Future<GetTxPoolContentResponse> getTxPoolContent($pb.ClientContext? ctx, GetTxPoolContentRequest request) {
+    var emptyResponse = GetTxPoolContentResponse();
+    return _client.invoke<GetTxPoolContentResponse>(ctx, 'Blockchain', 'GetTxPoolContent', request, emptyResponse);
   }
 }
 

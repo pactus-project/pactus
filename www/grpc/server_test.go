@@ -13,7 +13,6 @@ import (
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
-	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
@@ -69,7 +68,6 @@ func setup(t *testing.T, conf *Config) *testData {
 	mockState := state.MockingState(ts)
 	mockNet := network.MockingNetwork(ts, ts.RandPeerID())
 	mockSync := sync.MockingSync(ts)
-	mockTxPool := txpool.MockingTxPool()
 
 	mockState.CommitTestBlocks(10)
 
@@ -87,7 +85,6 @@ func setup(t *testing.T, conf *Config) *testData {
 		conf, mockState,
 		mockSync, mockNet,
 		mockConsMgr, wallet.NewWalletManager(mockWalletMgrConf),
-		mockTxPool,
 	)
 	err = server.startListening(listener)
 	assert.NoError(t, err)

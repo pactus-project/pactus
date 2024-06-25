@@ -103,28 +103,6 @@ function deserialize_pactus_GetRawWithdrawTransactionRequest(buffer_arg) {
   return transaction_pb.GetRawWithdrawTransactionRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_GetTransactionPoolRequest(arg) {
-  if (!(arg instanceof transaction_pb.GetTransactionPoolRequest)) {
-    throw new Error('Expected argument of type pactus.GetTransactionPoolRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_GetTransactionPoolRequest(buffer_arg) {
-  return transaction_pb.GetTransactionPoolRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_pactus_GetTransactionPoolResponse(arg) {
-  if (!(arg instanceof transaction_pb.GetTransactionPoolResponse)) {
-    throw new Error('Expected argument of type pactus.GetTransactionPoolResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_GetTransactionPoolResponse(buffer_arg) {
-  return transaction_pb.GetTransactionPoolResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_pactus_GetTransactionRequest(arg) {
   if (!(arg instanceof transaction_pb.GetTransactionRequest)) {
     throw new Error('Expected argument of type pactus.GetTransactionRequest');
@@ -236,18 +214,6 @@ getRawWithdrawTransaction: {
     requestDeserialize: deserialize_pactus_GetRawWithdrawTransactionRequest,
     responseSerialize: serialize_pactus_GetRawTransactionResponse,
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
-  },
-  // GetTransactionPool retrieves current transactions on the TXPool.
-getTransactionPool: {
-    path: '/pactus.Transaction/GetTransactionPool',
-    requestStream: false,
-    responseStream: false,
-    requestType: transaction_pb.GetTransactionPoolRequest,
-    responseType: transaction_pb.GetTransactionPoolResponse,
-    requestSerialize: serialize_pactus_GetTransactionPoolRequest,
-    requestDeserialize: deserialize_pactus_GetTransactionPoolRequest,
-    responseSerialize: serialize_pactus_GetTransactionPoolResponse,
-    responseDeserialize: deserialize_pactus_GetTransactionPoolResponse,
   },
 };
 

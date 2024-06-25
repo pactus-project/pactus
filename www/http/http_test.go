@@ -11,7 +11,6 @@ import (
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
-	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
@@ -50,7 +49,6 @@ func setup(t *testing.T) *testData {
 	mockConsMgr, _ := consensus.MockingManager(ts, []*bls.ValidatorKey{
 		ts.RandValKey(), ts.RandValKey(),
 	})
-	mockTxPool := txpool.MockingTxPool()
 
 	mockConsMgr.MoveToNewHeight()
 
@@ -72,7 +70,6 @@ func setup(t *testing.T) *testData {
 		grpcConf, mockState,
 		mockSync, mockNet,
 		mockConsMgr, wallet.NewWalletManager(walletMgrConf),
-		mockTxPool,
 	)
 	assert.NoError(t, gRPCServer.StartServer())
 

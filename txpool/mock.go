@@ -83,7 +83,5 @@ func (*MockTxPool) EstimatedFee(_ amount.Amount, _ payload.Type) amount.Amount {
 }
 
 func (m *MockTxPool) AllPendingTxs() []*tx.Tx {
-	txs := make([]*tx.Tx, m.Size())
-
-	return txs
+	return make([]*tx.Tx, m.Size())
 }

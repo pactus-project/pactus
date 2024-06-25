@@ -265,31 +265,6 @@ pub mod transaction_client {
                 );
             self.inner.unary(req, path, codec).await
         }
-        pub async fn get_transaction_pool(
-            &mut self,
-            request: impl tonic::IntoRequest<super::GetTransactionPoolRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetTransactionPoolResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
-            let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Transaction/GetTransactionPool",
-            );
-            let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Transaction", "GetTransactionPool"));
-            self.inner.unary(req, path, codec).await
-        }
     }
 }
 /// Generated server implementations.
@@ -346,13 +321,6 @@ pub mod transaction_server {
             request: tonic::Request<super::GetRawWithdrawTransactionRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetRawTransactionResponse>,
-            tonic::Status,
-        >;
-        async fn get_transaction_pool(
-            &self,
-            request: tonic::Request<super::GetTransactionPoolRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetTransactionPoolResponse>,
             tonic::Status,
         >;
     }
@@ -765,52 +733,6 @@ pub mod transaction_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Transaction/GetTransactionPool" => {
-                    #[allow(non_camel_case_types)]
-                    struct GetTransactionPoolSvc<T: Transaction>(pub Arc<T>);
-                    impl<
-                        T: Transaction,
-                    > tonic::server::UnaryService<super::GetTransactionPoolRequest>
-                    for GetTransactionPoolSvc<T> {
-                        type Response = super::GetTransactionPoolResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<super::GetTransactionPoolRequest>,
-                        ) -> Self::Future {
-                            let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                (*inner).get_transaction_pool(request).await
-                            };
-                            Box::pin(fut)
-                        }
-                    }
-                    let accept_compression_encodings = self.accept_compression_encodings;
-                    let send_compression_encodings = self.send_compression_encodings;
-                    let max_decoding_message_size = self.max_decoding_message_size;
-                    let max_encoding_message_size = self.max_encoding_message_size;
-                    let inner = self.inner.clone();
-                    let fut = async move {
-                        let inner = inner.0;
-                        let method = GetTransactionPoolSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            )
-                            .apply_max_message_size_config(
-                                max_decoding_message_size,
-                                max_encoding_message_size,
-                            );
-                        let res = grpc.unary(method, req).await;
-                        Ok(res)
-                    };
-                    Box::pin(fut)
-                }
                 _ => {
                     Box::pin(async move {
                         Ok(
@@ -1187,6 +1109,31 @@ pub mod blockchain_client {
                 .insert(GrpcMethod::new("pactus.Blockchain", "GetPublicKey"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn get_tx_pool_content(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetTxPoolContentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetTxPoolContentResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Blockchain/GetTxPoolContent",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetTxPoolContent"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -1264,6 +1211,13 @@ pub mod blockchain_server {
             request: tonic::Request<super::GetPublicKeyRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetPublicKeyResponse>,
+            tonic::Status,
+        >;
+        async fn get_tx_pool_content(
+            &self,
+            request: tonic::Request<super::GetTxPoolContentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetTxPoolContentResponse>,
             tonic::Status,
         >;
     }
@@ -1787,6 +1741,52 @@ pub mod blockchain_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetPublicKeySvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Blockchain/GetTxPoolContent" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetTxPoolContentSvc<T: Blockchain>(pub Arc<T>);
+                    impl<
+                        T: Blockchain,
+                    > tonic::server::UnaryService<super::GetTxPoolContentRequest>
+                    for GetTxPoolContentSvc<T> {
+                        type Response = super::GetTxPoolContentResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetTxPoolContentRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).get_tx_pool_content(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetTxPoolContentSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

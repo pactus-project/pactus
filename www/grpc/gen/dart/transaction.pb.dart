@@ -870,94 +870,6 @@ class GetRawTransactionResponse extends $pb.GeneratedMessage {
   void clearRawTransaction() => clearField(1);
 }
 
-class GetTransactionPoolRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetTransactionPoolRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..e<PayloadType>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'payloadType', $pb.PbFieldType.OE, defaultOrMaker: PayloadType.UNKNOWN, valueOf: PayloadType.valueOf, enumValues: PayloadType.values)
-    ..hasRequiredFields = false
-  ;
-
-  GetTransactionPoolRequest._() : super();
-  factory GetTransactionPoolRequest({
-    PayloadType? payloadType,
-  }) {
-    final _result = create();
-    if (payloadType != null) {
-      _result.payloadType = payloadType;
-    }
-    return _result;
-  }
-  factory GetTransactionPoolRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory GetTransactionPoolRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  GetTransactionPoolRequest clone() => GetTransactionPoolRequest()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  GetTransactionPoolRequest copyWith(void Function(GetTransactionPoolRequest) updates) => super.copyWith((message) => updates(message as GetTransactionPoolRequest)) as GetTransactionPoolRequest; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static GetTransactionPoolRequest create() => GetTransactionPoolRequest._();
-  GetTransactionPoolRequest createEmptyInstance() => create();
-  static $pb.PbList<GetTransactionPoolRequest> createRepeated() => $pb.PbList<GetTransactionPoolRequest>();
-  @$core.pragma('dart2js:noInline')
-  static GetTransactionPoolRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetTransactionPoolRequest>(create);
-  static GetTransactionPoolRequest? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  PayloadType get payloadType => $_getN(0);
-  @$pb.TagNumber(1)
-  set payloadType(PayloadType v) { setField(1, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasPayloadType() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearPayloadType() => clearField(1);
-}
-
-class GetTransactionPoolResponse extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetTransactionPoolResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..pc<TransactionInfo>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'txs', $pb.PbFieldType.PM, subBuilder: TransactionInfo.create)
-    ..hasRequiredFields = false
-  ;
-
-  GetTransactionPoolResponse._() : super();
-  factory GetTransactionPoolResponse({
-    $core.Iterable<TransactionInfo>? txs,
-  }) {
-    final _result = create();
-    if (txs != null) {
-      _result.txs.addAll(txs);
-    }
-    return _result;
-  }
-  factory GetTransactionPoolResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory GetTransactionPoolResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  GetTransactionPoolResponse clone() => GetTransactionPoolResponse()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  GetTransactionPoolResponse copyWith(void Function(GetTransactionPoolResponse) updates) => super.copyWith((message) => updates(message as GetTransactionPoolResponse)) as GetTransactionPoolResponse; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static GetTransactionPoolResponse create() => GetTransactionPoolResponse._();
-  GetTransactionPoolResponse createEmptyInstance() => create();
-  static $pb.PbList<GetTransactionPoolResponse> createRepeated() => $pb.PbList<GetTransactionPoolResponse>();
-  @$core.pragma('dart2js:noInline')
-  static GetTransactionPoolResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetTransactionPoolResponse>(create);
-  static GetTransactionPoolResponse? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.List<TransactionInfo> get txs => $_getList(0);
-}
-
 class PayloadTransfer extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'PayloadTransfer', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sender')
@@ -1596,10 +1508,6 @@ class TransactionApi {
   $async.Future<GetRawTransactionResponse> getRawWithdrawTransaction($pb.ClientContext? ctx, GetRawWithdrawTransactionRequest request) {
     var emptyResponse = GetRawTransactionResponse();
     return _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction', 'GetRawWithdrawTransaction', request, emptyResponse);
-  }
-  $async.Future<GetTransactionPoolResponse> getTransactionPool($pb.ClientContext? ctx, GetTransactionPoolRequest request) {
-    var emptyResponse = GetTransactionPoolResponse();
-    return _client.invoke<GetTransactionPoolResponse>(ctx, 'Transaction', 'GetTransactionPool', request, emptyResponse);
   }
 }
 

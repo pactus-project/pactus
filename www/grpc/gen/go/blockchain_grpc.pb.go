@@ -29,6 +29,7 @@ const (
 	Blockchain_GetValidatorByNumber_FullMethodName  = "/pactus.Blockchain/GetValidatorByNumber"
 	Blockchain_GetValidatorAddresses_FullMethodName = "/pactus.Blockchain/GetValidatorAddresses"
 	Blockchain_GetPublicKey_FullMethodName          = "/pactus.Blockchain/GetPublicKey"
+	Blockchain_GetTxPoolContent_FullMethodName      = "/pactus.Blockchain/GetTxPoolContent"
 )
 
 // BlockchainClient is the client API for Blockchain service.
@@ -60,6 +61,8 @@ type BlockchainClient interface {
 	// GetPublicKey retrieves the public key of an account based on the provided
 	// address.
 	GetPublicKey(ctx context.Context, in *GetPublicKeyRequest, opts ...grpc.CallOption) (*GetPublicKeyResponse, error)
+	// GetTxPoolContent retrieves current transactions on the TXPool.
+	GetTxPoolContent(ctx context.Context, in *GetTxPoolContentRequest, opts ...grpc.CallOption) (*GetTxPoolContentResponse, error)
 }
 
 type blockchainClient struct {
@@ -160,6 +163,15 @@ func (c *blockchainClient) GetPublicKey(ctx context.Context, in *GetPublicKeyReq
 	return out, nil
 }
 
+func (c *blockchainClient) GetTxPoolContent(ctx context.Context, in *GetTxPoolContentRequest, opts ...grpc.CallOption) (*GetTxPoolContentResponse, error) {
+	out := new(GetTxPoolContentResponse)
+	err := c.cc.Invoke(ctx, Blockchain_GetTxPoolContent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BlockchainServer is the server API for Blockchain service.
 // All implementations should embed UnimplementedBlockchainServer
 // for forward compatibility
@@ -189,6 +201,8 @@ type BlockchainServer interface {
 	// GetPublicKey retrieves the public key of an account based on the provided
 	// address.
 	GetPublicKey(context.Context, *GetPublicKeyRequest) (*GetPublicKeyResponse, error)
+	// GetTxPoolContent retrieves current transactions on the TXPool.
+	GetTxPoolContent(context.Context, *GetTxPoolContentRequest) (*GetTxPoolContentResponse, error)
 }
 
 // UnimplementedBlockchainServer should be embedded to have forward compatible implementations.
@@ -224,6 +238,9 @@ func (UnimplementedBlockchainServer) GetValidatorAddresses(context.Context, *Get
 }
 func (UnimplementedBlockchainServer) GetPublicKey(context.Context, *GetPublicKeyRequest) (*GetPublicKeyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPublicKey not implemented")
+}
+func (UnimplementedBlockchainServer) GetTxPoolContent(context.Context, *GetTxPoolContentRequest) (*GetTxPoolContentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTxPoolContent not implemented")
 }
 
 // UnsafeBlockchainServer may be embedded to opt out of forward compatibility for this service.
@@ -417,6 +434,24 @@ func _Blockchain_GetPublicKey_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Blockchain_GetTxPoolContent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTxPoolContentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BlockchainServer).GetTxPoolContent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Blockchain_GetTxPoolContent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BlockchainServer).GetTxPoolContent(ctx, req.(*GetTxPoolContentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Blockchain_ServiceDesc is the grpc.ServiceDesc for Blockchain service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -463,6 +498,10 @@ var Blockchain_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPublicKey",
 			Handler:    _Blockchain_GetPublicKey_Handler,
+		},
+		{
+			MethodName: "GetTxPoolContent",
+			Handler:    _Blockchain_GetTxPoolContent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

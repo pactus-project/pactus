@@ -250,6 +250,19 @@ func (s *blockchainServer) GetPublicKey(_ context.Context,
 	return &pactus.GetPublicKeyResponse{PublicKey: publicKey.String()}, nil
 }
 
+func (s *blockchainServer) GetTxPoolContent(_ context.Context,
+	_ *pactus.GetTxPoolContentRequest,
+) (*pactus.GetTxPoolContentResponse, error) {
+	result := make([]*pactus.TransactionInfo, 0)
+	for _, t := range s.state.AllPendingTxs() {
+		result = append(result, transactionToProto(t))
+	}
+
+	return &pactus.GetTxPoolContentResponse{
+		Txs: result,
+	}, nil
+}
+
 func (s *blockchainServer) validatorToProto(val *validator.Validator) *pactus.ValidatorInfo {
 	data, _ := val.Bytes()
 

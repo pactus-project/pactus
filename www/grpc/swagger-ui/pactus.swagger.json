@@ -779,47 +779,6 @@
         ]
       }
     },
-    "/pactus/transaction/get_transaction_pool": {
-      "get": {
-        "summary": "GetTransactionPool retrieves current transactions on the TXPool.",
-        "operationId": "Transaction_GetTransactionPool",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusGetTransactionPoolResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "payloadType",
-            "description": "Payload type of tranactions in the tx pool, 0 is all types.\n\n - UNKNOWN: Unknown payload type.\n - TRANSFER_PAYLOAD: Transfer payload type.\n - BOND_PAYLOAD: Bond payload type.\n - SORTITION_PAYLOAD: Sortition payload type.\n - UNBOND_PAYLOAD: Unbond payload type.\n - WITHDRAW_PAYLOAD: Withdraw payload type.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": [
-              "UNKNOWN",
-              "TRANSFER_PAYLOAD",
-              "BOND_PAYLOAD",
-              "SORTITION_PAYLOAD",
-              "UNBOND_PAYLOAD",
-              "WITHDRAW_PAYLOAD"
-            ],
-            "default": "UNKNOWN"
-          }
-        ],
-        "tags": [
-          "Transaction"
-        ]
-      }
-    },
     "/pactus/wallet/create_wallet": {
       "get": {
         "summary": "CreateWallet creates a new wallet with the specified parameters.",
@@ -1674,20 +1633,6 @@
       },
       "description": "Response message containing the available balance of the wallet."
     },
-    "pactusGetTransactionPoolResponse": {
-      "type": "object",
-      "properties": {
-        "txs": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/pactusTransactionInfo"
-          },
-          "description": "List of the transaction in the pool."
-        }
-      },
-      "description": "Response message containing transaction pool transactions."
-    },
     "pactusGetTransactionResponse": {
       "type": "object",
       "properties": {
@@ -1707,6 +1652,20 @@
         }
       },
       "description": "Response message containing details of a transaction."
+    },
+    "pactusGetTxPoolContentResponse": {
+      "type": "object",
+      "properties": {
+        "txs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusTransactionInfo"
+          },
+          "description": "List of the transaction in the pool."
+        }
+      },
+      "description": "Response message containing transaction pool transactions."
     },
     "pactusGetValidatorAddressResponse": {
       "type": "object",

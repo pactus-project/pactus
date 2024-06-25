@@ -54,4 +54,5 @@ type Facade interface {
 	CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount
 	PublicKey(addr crypto.Address) (crypto.PublicKey, error)
 	AvailabilityScore(valNum int32) float64
+	AllPendingTxs() []*tx.Tx
 }

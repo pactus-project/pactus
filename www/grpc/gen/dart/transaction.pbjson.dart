@@ -168,26 +168,6 @@ const GetRawTransactionResponse$json = const {
 
 /// Descriptor for `GetRawTransactionResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getRawTransactionResponseDescriptor = $convert.base64Decode('ChlHZXRSYXdUcmFuc2FjdGlvblJlc3BvbnNlEicKD3Jhd190cmFuc2FjdGlvbhgBIAEoDFIOcmF3VHJhbnNhY3Rpb24=');
-@$core.Deprecated('Use getTransactionPoolRequestDescriptor instead')
-const GetTransactionPoolRequest$json = const {
-  '1': 'GetTransactionPoolRequest',
-  '2': const [
-    const {'1': 'payload_type', '3': 1, '4': 1, '5': 14, '6': '.pactus.PayloadType', '10': 'payloadType'},
-  ],
-};
-
-/// Descriptor for `GetTransactionPoolRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getTransactionPoolRequestDescriptor = $convert.base64Decode('ChlHZXRUcmFuc2FjdGlvblBvb2xSZXF1ZXN0EjYKDHBheWxvYWRfdHlwZRgBIAEoDjITLnBhY3R1cy5QYXlsb2FkVHlwZVILcGF5bG9hZFR5cGU=');
-@$core.Deprecated('Use getTransactionPoolResponseDescriptor instead')
-const GetTransactionPoolResponse$json = const {
-  '1': 'GetTransactionPoolResponse',
-  '2': const [
-    const {'1': 'txs', '3': 1, '4': 3, '5': 11, '6': '.pactus.TransactionInfo', '10': 'txs'},
-  ],
-};
-
-/// Descriptor for `GetTransactionPoolResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getTransactionPoolResponseDescriptor = $convert.base64Decode('ChpHZXRUcmFuc2FjdGlvblBvb2xSZXNwb25zZRIpCgN0eHMYASADKAsyFy5wYWN0dXMuVHJhbnNhY3Rpb25JbmZvUgN0eHM=');
 @$core.Deprecated('Use payloadTransferDescriptor instead')
 const PayloadTransfer$json = const {
   '1': 'PayloadTransfer',
@@ -282,7 +262,6 @@ const $core.Map<$core.String, $core.dynamic> TransactionServiceBase$json = const
     const {'1': 'GetRawBondTransaction', '2': '.pactus.GetRawBondTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
     const {'1': 'GetRawUnbondTransaction', '2': '.pactus.GetRawUnbondTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
     const {'1': 'GetRawWithdrawTransaction', '2': '.pactus.GetRawWithdrawTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
-    const {'1': 'GetTransactionPool', '2': '.pactus.GetTransactionPoolRequest', '3': '.pactus.GetTransactionPoolResponse'},
   ],
 };
 
@@ -305,9 +284,7 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Transactio
   '.pactus.GetRawBondTransactionRequest': GetRawBondTransactionRequest$json,
   '.pactus.GetRawUnbondTransactionRequest': GetRawUnbondTransactionRequest$json,
   '.pactus.GetRawWithdrawTransactionRequest': GetRawWithdrawTransactionRequest$json,
-  '.pactus.GetTransactionPoolRequest': GetTransactionPoolRequest$json,
-  '.pactus.GetTransactionPoolResponse': GetTransactionPoolResponse$json,
 };
 
 /// Descriptor for `Transaction`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode('CgtUcmFuc2FjdGlvbhJPCg5HZXRUcmFuc2FjdGlvbhIdLnBhY3R1cy5HZXRUcmFuc2FjdGlvblJlcXVlc3QaHi5wYWN0dXMuR2V0VHJhbnNhY3Rpb25SZXNwb25zZRJJCgxDYWxjdWxhdGVGZWUSGy5wYWN0dXMuQ2FsY3VsYXRlRmVlUmVxdWVzdBocLnBhY3R1cy5DYWxjdWxhdGVGZWVSZXNwb25zZRJhChRCcm9hZGNhc3RUcmFuc2FjdGlvbhIjLnBhY3R1cy5Ccm9hZGNhc3RUcmFuc2FjdGlvblJlcXVlc3QaJC5wYWN0dXMuQnJvYWRjYXN0VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdUcmFuc2ZlclRyYW5zYWN0aW9uEigucGFjdHVzLkdldFJhd1RyYW5zZmVyVHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2USYAoVR2V0UmF3Qm9uZFRyYW5zYWN0aW9uEiQucGFjdHVzLkdldFJhd0JvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3VHJhbnNhY3Rpb25SZXNwb25zZRJkChdHZXRSYXdVbmJvbmRUcmFuc2FjdGlvbhImLnBhY3R1cy5HZXRSYXdVbmJvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uEigucGFjdHVzLkdldFJhd1dpdGhkcmF3VHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2USWwoSR2V0VHJhbnNhY3Rpb25Qb29sEiEucGFjdHVzLkdldFRyYW5zYWN0aW9uUG9vbFJlcXVlc3QaIi5wYWN0dXMuR2V0VHJhbnNhY3Rpb25Qb29sUmVzcG9uc2U=');
+final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode('CgtUcmFuc2FjdGlvbhJPCg5HZXRUcmFuc2FjdGlvbhIdLnBhY3R1cy5HZXRUcmFuc2FjdGlvblJlcXVlc3QaHi5wYWN0dXMuR2V0VHJhbnNhY3Rpb25SZXNwb25zZRJJCgxDYWxjdWxhdGVGZWUSGy5wYWN0dXMuQ2FsY3VsYXRlRmVlUmVxdWVzdBocLnBhY3R1cy5DYWxjdWxhdGVGZWVSZXNwb25zZRJhChRCcm9hZGNhc3RUcmFuc2FjdGlvbhIjLnBhY3R1cy5Ccm9hZGNhc3RUcmFuc2FjdGlvblJlcXVlc3QaJC5wYWN0dXMuQnJvYWRjYXN0VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdUcmFuc2ZlclRyYW5zYWN0aW9uEigucGFjdHVzLkdldFJhd1RyYW5zZmVyVHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2USYAoVR2V0UmF3Qm9uZFRyYW5zYWN0aW9uEiQucGFjdHVzLkdldFJhd0JvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3VHJhbnNhY3Rpb25SZXNwb25zZRJkChdHZXRSYXdVbmJvbmRUcmFuc2FjdGlvbhImLnBhY3R1cy5HZXRSYXdVbmJvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uEigucGFjdHVzLkdldFJhd1dpdGhkcmF3VHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2U=');

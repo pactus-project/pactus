@@ -213,19 +213,6 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	}, nil
 }
 
-func (s *transactionServer) GetTransactionPool(_ context.Context,
-	_ *pactus.GetTransactionPoolRequest,
-) (*pactus.GetTransactionPoolResponse, error) {
-	result := make([]*pactus.TransactionInfo, 0)
-	for _, t := range s.txpool.AllPendingTxs() {
-		result = append(result, transactionToProto(t))
-	}
-
-	return &pactus.GetTransactionPoolResponse{
-		Txs: result,
-	}, nil
-}
-
 func (s *transactionServer) getFee(f int64, amt amount.Amount) amount.Amount {
 	fee := amount.Amount(f)
 	if fee == 0 {

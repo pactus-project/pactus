@@ -26,7 +26,6 @@ const (
 	Transaction_GetRawBondTransaction_FullMethodName     = "/pactus.Transaction/GetRawBondTransaction"
 	Transaction_GetRawUnbondTransaction_FullMethodName   = "/pactus.Transaction/GetRawUnbondTransaction"
 	Transaction_GetRawWithdrawTransaction_FullMethodName = "/pactus.Transaction/GetRawWithdrawTransaction"
-	Transaction_GetTransactionPool_FullMethodName        = "/pactus.Transaction/GetTransactionPool"
 )
 
 // TransactionClient is the client API for Transaction service.
@@ -49,8 +48,6 @@ type TransactionClient interface {
 	GetRawUnbondTransaction(ctx context.Context, in *GetRawUnbondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
 	GetRawWithdrawTransaction(ctx context.Context, in *GetRawWithdrawTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
-	// GetTransactionPool retrieves current transactions on the TXPool.
-	GetTransactionPool(ctx context.Context, in *GetTransactionPoolRequest, opts ...grpc.CallOption) (*GetTransactionPoolResponse, error)
 }
 
 type transactionClient struct {
@@ -124,15 +121,6 @@ func (c *transactionClient) GetRawWithdrawTransaction(ctx context.Context, in *G
 	return out, nil
 }
 
-func (c *transactionClient) GetTransactionPool(ctx context.Context, in *GetTransactionPoolRequest, opts ...grpc.CallOption) (*GetTransactionPoolResponse, error) {
-	out := new(GetTransactionPoolResponse)
-	err := c.cc.Invoke(ctx, Transaction_GetTransactionPool_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // TransactionServer is the server API for Transaction service.
 // All implementations should embed UnimplementedTransactionServer
 // for forward compatibility
@@ -153,8 +141,6 @@ type TransactionServer interface {
 	GetRawUnbondTransaction(context.Context, *GetRawUnbondTransactionRequest) (*GetRawTransactionResponse, error)
 	// GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
 	GetRawWithdrawTransaction(context.Context, *GetRawWithdrawTransactionRequest) (*GetRawTransactionResponse, error)
-	// GetTransactionPool retrieves current transactions on the TXPool.
-	GetTransactionPool(context.Context, *GetTransactionPoolRequest) (*GetTransactionPoolResponse, error)
 }
 
 // UnimplementedTransactionServer should be embedded to have forward compatible implementations.
@@ -181,9 +167,6 @@ func (UnimplementedTransactionServer) GetRawUnbondTransaction(context.Context, *
 }
 func (UnimplementedTransactionServer) GetRawWithdrawTransaction(context.Context, *GetRawWithdrawTransactionRequest) (*GetRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRawWithdrawTransaction not implemented")
-}
-func (UnimplementedTransactionServer) GetTransactionPool(context.Context, *GetTransactionPoolRequest) (*GetTransactionPoolResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTransactionPool not implemented")
 }
 
 // UnsafeTransactionServer may be embedded to opt out of forward compatibility for this service.
@@ -323,24 +306,6 @@ func _Transaction_GetRawWithdrawTransaction_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Transaction_GetTransactionPool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTransactionPoolRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TransactionServer).GetTransactionPool(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Transaction_GetTransactionPool_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServer).GetTransactionPool(ctx, req.(*GetTransactionPoolRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Transaction_ServiceDesc is the grpc.ServiceDesc for Transaction service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -375,10 +340,6 @@ var Transaction_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRawWithdrawTransaction",
 			Handler:    _Transaction_GetRawWithdrawTransaction_Handler,
-		},
-		{
-			MethodName: "GetTransactionPool",
-			Handler:    _Transaction_GetTransactionPool_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

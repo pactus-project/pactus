@@ -206,5 +206,22 @@ func (s *BlockchainJsonRPC) Methods() map[string]func(ctx context.Context, messa
 
 			return s.client.GetPublicKey(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
+
+		"pactus.blockchain.get_tx_pool_content": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetTxPoolContentRequest)
+
+			var jrpcData paramsAndHeadersBlockchain
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.GetTxPoolContent(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
 	}
 }
