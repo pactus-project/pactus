@@ -128,7 +128,7 @@ func (c *grpcClient) sendTx(trx *tx.Tx) (tx.ID, error) {
 		return hash.UndefHash, err
 	}
 
-	return hash.FromHex(res.Id)
+	return hash.FromString(res.Id)
 }
 
 // TODO: check the return value type.
@@ -139,7 +139,7 @@ func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, e
 
 	res, err := c.transactionClient.GetTransaction(c.ctx,
 		&pactus.GetTransactionRequest{
-			Id:        id.Hex(),
+			Id:        id.String(),
 			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
 		})
 	if err != nil {

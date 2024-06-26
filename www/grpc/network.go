@@ -93,7 +93,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		p.Status = int32(peer.Status)
 		p.LastSent = peer.LastSent.Unix()
 		p.LastReceived = peer.LastReceived.Unix()
-		p.LastBlockHash = peer.LastBlockHash.Hex()
+		p.LastBlockHash = peer.LastBlockHash.String()
 		p.TotalSessions = int32(peer.TotalSessions)
 		p.CompletedSessions = int32(peer.CompletedSessions)
 

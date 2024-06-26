@@ -161,16 +161,15 @@ func TestLoadWallet(t *testing.T) {
 	t.Run("Sign raw transaction, OK", func(t *testing.T) {
 		wltAddr, _ := crypto.AddressFromString(wltAddrInfo.Address)
 		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(), td.RandAmount(), "memo")
-		rawTx, err := bondTx.Hex()
-		assert.NoError(t, err)
+
 		res, err := client.SignRawTransaction(context.Background(),
 			&pactus.SignRawTransactionRequest{
 				WalletName:     wltName,
-				RawTransaction: rawTx,
+				RawTransaction: bondTx.Hex(),
 				Password:       "",
 			})
 		assert.NoError(t, err)
-		assert.Equal(t, bondTx.ID().Hex(), res.TransactionId)
+		assert.Equal(t, bondTx.ID().String(), res.TransactionId)
 
 		signedTx, err := tx.FromHex(res.SignedRawTransaction)
 		assert.NoError(t, err)
@@ -181,11 +180,10 @@ func TestLoadWallet(t *testing.T) {
 	t.Run("Sign raw transaction using not loaded wallet", func(t *testing.T) {
 		wltAddr, _ := crypto.AddressFromString(wltAddrInfo.Address)
 		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(), td.RandAmount(), "memo")
-		rawTx, _ := bondTx.Hex()
 		res, err := client.SignRawTransaction(context.Background(),
 			&pactus.SignRawTransactionRequest{
 				WalletName:     "not-loaded-wallet",
-				RawTransaction: rawTx,
+				RawTransaction: bondTx.Hex(),
 				Password:       "",
 			})
 		assert.Error(t, err)

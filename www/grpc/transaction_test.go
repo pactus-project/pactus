@@ -22,24 +22,23 @@ func TestGetTransaction(t *testing.T) {
 	t.Run("Should return transaction (verbosity: 0)", func(t *testing.T) {
 		res, err := client.GetTransaction(context.Background(),
 			&pactus.GetTransactionRequest{
-				Id:        trx1.ID().Hex(),
+				Id:        trx1.ID().String(),
 				Verbosity: pactus.TransactionVerbosity_TRANSACTION_DATA,
 			})
-		data, _ := trx1.Hex()
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.NotEmpty(t, res.Transaction)
 		assert.Equal(t, uint32(0x1), res.BlockHeight)
-		assert.Equal(t, trx1.ID().Hex(), res.Transaction.Id)
-		assert.Equal(t, data, res.Transaction.Data)
+		assert.Equal(t, trx1.ID().String(), res.Transaction.Id)
+		assert.Equal(t, trx1.Hex(), res.Transaction.Data)
 		assert.Nil(t, res.Transaction.Payload)
 	})
 
 	t.Run("Should return transaction (verbosity: 1)", func(t *testing.T) {
 		res, err := client.GetTransaction(context.Background(),
 			&pactus.GetTransactionRequest{
-				Id:        trx1.ID().Hex(),
+				Id:        trx1.ID().String(),
 				Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
 			})
 		pld := res.Transaction.Payload.(*pactus.TransactionInfo_Transfer)
@@ -50,12 +49,12 @@ func TestGetTransaction(t *testing.T) {
 		assert.Empty(t, res.Transaction.Data)
 		assert.Equal(t, uint32(0x1), res.BlockHeight)
 		assert.Equal(t, testBlock.Header().UnixTime(), res.BlockTime)
-		assert.Equal(t, trx1.ID().Hex(), res.Transaction.Id)
+		assert.Equal(t, trx1.ID().String(), res.Transaction.Id)
 		assert.Equal(t, trx1.Fee().ToNanoPAC(), res.Transaction.Fee)
 		assert.Equal(t, trx1.Memo(), res.Transaction.Memo)
 		assert.Equal(t, trx1.Payload().Type(), payload.Type(res.Transaction.PayloadType))
 		assert.Equal(t, trx1.LockTime(), res.Transaction.LockTime)
-		assert.Equal(t, trx1.Signature().Hex(), res.Transaction.Signature)
+		assert.Equal(t, trx1.Signature().String(), res.Transaction.Signature)
 		assert.Equal(t, trx1.PublicKey().String(), res.Transaction.PublicKey)
 		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).Amount.ToNanoPAC(), pld.Transfer.Amount)
 		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).From.String(), pld.Transfer.Sender)
@@ -72,7 +71,7 @@ func TestGetTransaction(t *testing.T) {
 	t.Run("Should return nil value because transaction doesn't exist", func(t *testing.T) {
 		id := td.RandHash()
 		res, err := client.GetTransaction(context.Background(),
-			&pactus.GetTransactionRequest{Id: id.Hex()})
+			&pactus.GetTransactionRequest{Id: id.String()})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})

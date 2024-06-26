@@ -37,14 +37,6 @@ func TestHashFromBytes(t *testing.T) {
 	assert.Equal(t, hash1, hash2)
 }
 
-func TestFromHex(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-	hash1 := ts.RandHash()
-	hash2, err := hash.FromHex(hash1.Hex())
-	assert.NoError(t, err)
-	assert.Equal(t, hash1, hash2)
-}
-
 func TestHashEmpty(t *testing.T) {
 	_, err := hash.FromBytes(nil)
 	assert.Error(t, err)
@@ -65,15 +57,6 @@ func TestHash160(t *testing.T) {
 	h := hash.Hash160(data)
 	expected, _ := hex.DecodeString("e93efc0c83176034cb828e39435eeecc07a29298")
 	assert.Equal(t, h, expected)
-}
-
-func TestHex(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	h := ts.RandHash()
-	res := h.Hex()
-
-	assert.Equal(t, res, hex.EncodeToString(h.Bytes()))
 }
 
 func TestHashBasicCheck(t *testing.T) {

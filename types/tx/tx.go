@@ -232,14 +232,14 @@ func (tx *Tx) Bytes() ([]byte, error) {
 	return w.Bytes(), nil
 }
 
-// Hex return hex of Tx.
-func (tx *Tx) Hex() (string, error) {
+// Hex constructs a new transaction from a hex-encoded string.
+func (tx *Tx) Hex() string {
 	b, err := tx.Bytes()
 	if err != nil {
-		return "", err
+		return ""
 	}
 
-	return hex.EncodeToString(b), nil
+	return hex.EncodeToString(b)
 }
 
 func (tx *Tx) MarshalCBOR() ([]byte, error) {

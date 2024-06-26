@@ -98,7 +98,7 @@ func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, err := s.blockchain.GetBlockHeight(ctx,
-		&pactus.GetBlockHeightRequest{Hash: blockHash.Hex()})
+		&pactus.GetBlockHeightRequest{Hash: blockHash.String()})
 	if err != nil {
 		s.writeError(w, err)
 

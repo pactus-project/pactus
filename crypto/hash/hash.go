@@ -56,15 +56,6 @@ func FromBytes(data []byte) (Hash, error) {
 	return h, nil
 }
 
-func FromHex(str string) (Hash, error) {
-	b, err := hex.DecodeString(str)
-	if err != nil {
-		return Hash{}, err
-	}
-
-	return FromBytes(b)
-}
-
 func CalcHash(data []byte) Hash {
 	h, _ := FromBytes(Hash256(data))
 
@@ -77,10 +68,6 @@ func (h Hash) String() string {
 
 func (h Hash) Bytes() []byte {
 	return h[:]
-}
-
-func (h Hash) Hex() string {
-	return hex.EncodeToString(h[:])
 }
 
 func (h Hash) ShortString() string {
