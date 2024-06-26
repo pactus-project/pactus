@@ -52,8 +52,8 @@ TAG_MSG="Version ${CUR_VER}"
 
 ## 5. Update the Version
 
-Remove the `beta` tag from the `meta` field in [version.go](../version/version.go).
-Also, double-check the [config.go](../config/config.go) files to ensure they are up-to-date.
+clear Meta and set Alias in [version.go](../version/version.go).
+If this is a **major release**, update the versions inside the [patching](./patching.md) in step 2.
 
 ## 6. Update Changelog
 
@@ -88,7 +88,7 @@ Create a Git tag and sign it using your [GPG key](https://docs.github.com/en/aut
 ```bash
 git checkout ${BASE_BRANCH}
 git pull
-git tag -s -a $TAG_NAME -m $TAG_MSG
+git tag -s -a ${TAG_NAME} -m ${TAG_MSG}
 ```
 
 Inspect the tag information:
@@ -110,8 +110,7 @@ Pushing the tag will automatically create a release tag and build the binaries.
 ## 10. Bump the Version
 
 Update the version inside [version.go](../version/version.go) and add `beta` to the `meta` field.
-Additionally, update version in the [patching](./patching.md) document.
-If this is a major release, update the version inside this document in step 3.
+If this is a **major release**, update the versions inside this document in step 3.
 
 Create a new PR against the base branch:
 
