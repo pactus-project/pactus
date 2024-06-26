@@ -71,8 +71,8 @@ func FromBytes(bs []byte) (*Tx, error) {
 	return tx, nil
 }
 
-// FromHex return Tx from hex.
-func FromHex(str string) (*Tx, error) {
+// FromString  constructs a new transaction from a hex-encoded string.
+func FromString(str string) (*Tx, error) {
 	b, err := hex.DecodeString(str)
 	if err != nil {
 		return nil, err

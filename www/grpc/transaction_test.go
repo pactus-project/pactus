@@ -135,7 +135,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, _ := tx.FromHex(res.RawTransaction)
+		decodedTrx, _ := tx.FromString(res.RawTransaction)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeTransfer)
 
@@ -159,7 +159,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, _ := tx.FromHex(res.RawTransaction)
+		decodedTrx, _ := tx.FromString(res.RawTransaction)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeBond)
 
@@ -177,7 +177,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, _ := tx.FromHex(res.RawTransaction)
+		decodedTrx, _ := tx.FromString(res.RawTransaction)
 		expectedLockTime := td.mockState.LastBlockHeight()
 
 		assert.Zero(t, decodedTrx.Payload().Value())
@@ -198,7 +198,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, _ := tx.FromHex(res.RawTransaction)
+		decodedTrx, _ := tx.FromString(res.RawTransaction)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeWithdraw)
 

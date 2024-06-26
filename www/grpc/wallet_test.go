@@ -171,7 +171,7 @@ func TestLoadWallet(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, bondTx.ID().String(), res.TransactionId)
 
-		signedTx, err := tx.FromHex(res.SignedRawTransaction)
+		signedTx, err := tx.FromString(res.SignedRawTransaction)
 		assert.NoError(t, err)
 		assert.NotNil(t, signedTx.Signature())
 		assert.Nil(t, signedTx.BasicCheck())

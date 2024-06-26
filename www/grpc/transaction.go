@@ -65,7 +65,7 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 func (s *transactionServer) BroadcastTransaction(_ context.Context,
 	req *pactus.BroadcastTransactionRequest,
 ) (*pactus.BroadcastTransactionResponse, error) {
-	trx, err := tx.FromHex(req.SignedRawTransaction)
+	trx, err := tx.FromString(req.SignedRawTransaction)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}
