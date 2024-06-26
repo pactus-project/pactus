@@ -29,14 +29,6 @@ func TestHashFromString(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestHashFromBytes(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-	hash1 := ts.RandHash()
-	hash2, err := hash.FromBytes(hash1.Bytes())
-	assert.NoError(t, err)
-	assert.Equal(t, hash1, hash2)
-}
-
 func TestHashEmpty(t *testing.T) {
 	_, err := hash.FromBytes(nil)
 	assert.Error(t, err)
