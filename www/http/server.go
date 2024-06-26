@@ -210,8 +210,8 @@ func newTableMaker() *tableMaker {
 	return t
 }
 
-func (t *tableMaker) addRowBlockHash(key string, val []byte) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/block/hash/%x\">%x</a></td></tr>", key, val, val)
+func (t *tableMaker) addRowBlockHash(key, val string) {
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/block/hash/%s\">%s</a></td></tr>", key, val, val)
 }
 
 func (t *tableMaker) addRowAccAddress(key, val string) {
@@ -222,8 +222,8 @@ func (t *tableMaker) addRowValAddress(key, val string) {
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/validator/address/%s\">%s</a></td></tr>", key, val, val)
 }
 
-func (t *tableMaker) addRowTxID(key string, val []byte) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/transaction/id/%x\">%x</a></td></tr>", key, val, val)
+func (t *tableMaker) addRowTxID(key, val string) {
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/transaction/id/%s\">%s</a></td></tr>", key, val, val)
 }
 
 func (t *tableMaker) addRowString(key, val string) {
@@ -269,8 +269,8 @@ func (t *tableMaker) addRowInts(key string, vals []int32) {
 	t.w.WriteString("</td></tr>")
 }
 
-func (t *tableMaker) addRowBytes(key string, val []byte) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%x</td></tr>", key, val)
+func (t *tableMaker) addRowHex(key, val string) {
+	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, val)
 }
 
 func (t *tableMaker) addRowDouble(key string, val float64) {

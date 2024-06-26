@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"encoding/hex"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
@@ -41,7 +42,7 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 	return &pactus.GetNodeInfoResponse{
 		Moniker:       s.sync.Moniker(),
 		Agent:         version.NodeAgent.String(),
-		PeerId:        []byte(s.sync.SelfID()),
+		PeerId:        hex.EncodeToString([]byte(s.sync.SelfID())),
 		Reachability:  s.net.ReachabilityStatus(),
 		LocalAddrs:    s.net.HostAddrs(),
 		StartedAt:     uint64(ps.StartedAt().Unix()),
@@ -79,7 +80,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		}
 		p.Agent = string(bs)
 
-		p.PeerId = []byte(peer.PeerID)
+		p.PeerId = hex.EncodeToString([]byte(peer.PeerID))
 		p.Moniker = peer.Moniker
 		p.Agent = peer.Agent
 		p.Address = peer.Address
@@ -92,7 +93,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		p.Status = int32(peer.Status)
 		p.LastSent = peer.LastSent.Unix()
 		p.LastReceived = peer.LastReceived.Unix()
-		p.LastBlockHash = peer.LastBlockHash.Bytes()
+		p.LastBlockHash = peer.LastBlockHash.Hex()
 		p.TotalSessions = int32(peer.TotalSessions)
 		p.CompletedSessions = int32(peer.CompletedSessions)
 

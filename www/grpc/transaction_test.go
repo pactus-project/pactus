@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"encoding/hex"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/amount"
@@ -21,16 +22,16 @@ func TestGetTransaction(t *testing.T) {
 	t.Run("Should return transaction (verbosity: 0)", func(t *testing.T) {
 		res, err := client.GetTransaction(context.Background(),
 			&pactus.GetTransactionRequest{
-				Id:        trx1.ID().Bytes(),
+				Id:        trx1.ID().Hex(),
 				Verbosity: pactus.TransactionVerbosity_TRANSACTION_DATA,
 			})
-		data, _ := trx1.Bytes()
+		data, _ := trx1.Hex()
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.NotEmpty(t, res.Transaction)
 		assert.Equal(t, uint32(0x1), res.BlockHeight)
-		assert.Equal(t, trx1.ID().Bytes(), res.Transaction.Id)
+		assert.Equal(t, trx1.ID().Hex(), res.Transaction.Id)
 		assert.Equal(t, data, res.Transaction.Data)
 		assert.Nil(t, res.Transaction.Payload)
 	})
@@ -38,7 +39,7 @@ func TestGetTransaction(t *testing.T) {
 	t.Run("Should return transaction (verbosity: 1)", func(t *testing.T) {
 		res, err := client.GetTransaction(context.Background(),
 			&pactus.GetTransactionRequest{
-				Id:        trx1.ID().Bytes(),
+				Id:        trx1.ID().Hex(),
 				Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
 			})
 		pld := res.Transaction.Payload.(*pactus.TransactionInfo_Transfer)
@@ -49,12 +50,12 @@ func TestGetTransaction(t *testing.T) {
 		assert.Empty(t, res.Transaction.Data)
 		assert.Equal(t, uint32(0x1), res.BlockHeight)
 		assert.Equal(t, testBlock.Header().UnixTime(), res.BlockTime)
-		assert.Equal(t, trx1.ID().Bytes(), res.Transaction.Id)
+		assert.Equal(t, trx1.ID().Hex(), res.Transaction.Id)
 		assert.Equal(t, trx1.Fee().ToNanoPAC(), res.Transaction.Fee)
 		assert.Equal(t, trx1.Memo(), res.Transaction.Memo)
 		assert.Equal(t, trx1.Payload().Type(), payload.Type(res.Transaction.PayloadType))
 		assert.Equal(t, trx1.LockTime(), res.Transaction.LockTime)
-		assert.Equal(t, trx1.Signature().Bytes(), res.Transaction.Signature)
+		assert.Equal(t, trx1.Signature().Hex(), res.Transaction.Signature)
 		assert.Equal(t, trx1.PublicKey().String(), res.Transaction.PublicKey)
 		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).Amount.ToNanoPAC(), pld.Transfer.Amount)
 		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).From.String(), pld.Transfer.Sender)
@@ -63,7 +64,7 @@ func TestGetTransaction(t *testing.T) {
 
 	t.Run("Should return nil value because transaction id is invalid", func(t *testing.T) {
 		res, err := client.GetTransaction(context.Background(),
-			&pactus.GetTransactionRequest{Id: []byte("invalid_id")})
+			&pactus.GetTransactionRequest{Id: "invalid_id"})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -71,7 +72,7 @@ func TestGetTransaction(t *testing.T) {
 	t.Run("Should return nil value because transaction doesn't exist", func(t *testing.T) {
 		id := td.RandHash()
 		res, err := client.GetTransaction(context.Background(),
-			&pactus.GetTransactionRequest{Id: id.Bytes()})
+			&pactus.GetTransactionRequest{Id: id.Hex()})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -86,7 +87,7 @@ func TestSendRawTransaction(t *testing.T) {
 
 	t.Run("Should fail, invalid cbor", func(t *testing.T) {
 		res, err := client.BroadcastTransaction(context.Background(),
-			&pactus.BroadcastTransactionRequest{SignedRawTransaction: []byte("00000000")})
+			&pactus.BroadcastTransactionRequest{SignedRawTransaction: "00000000"})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -96,7 +97,7 @@ func TestSendRawTransaction(t *testing.T) {
 		trx.SetSignature(pValKey.Sign(trx.SignBytes()))
 		data, _ := trx.Bytes()
 		res, err := client.BroadcastTransaction(context.Background(),
-			&pactus.BroadcastTransactionRequest{SignedRawTransaction: data})
+			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -104,13 +105,13 @@ func TestSendRawTransaction(t *testing.T) {
 	data, _ := trx.Bytes()
 	t.Run("Should pass", func(t *testing.T) {
 		res, err := client.BroadcastTransaction(context.Background(),
-			&pactus.BroadcastTransactionRequest{SignedRawTransaction: data})
+			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 	})
 	t.Run("Should fail, Not Broadcasted", func(t *testing.T) {
 		res, err := client.BroadcastTransaction(context.Background(),
-			&pactus.BroadcastTransactionRequest{SignedRawTransaction: data})
+			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -135,7 +136,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, _ := tx.FromBytes(res.RawTransaction)
+		decodedTrx, _ := tx.FromHex(res.RawTransaction)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeTransfer)
 
@@ -159,7 +160,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, _ := tx.FromBytes(res.RawTransaction)
+		decodedTrx, _ := tx.FromHex(res.RawTransaction)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeBond)
 
@@ -177,7 +178,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, _ := tx.FromBytes(res.RawTransaction)
+		decodedTrx, _ := tx.FromHex(res.RawTransaction)
 		expectedLockTime := td.mockState.LastBlockHeight()
 
 		assert.Zero(t, decodedTrx.Payload().Value())
@@ -198,7 +199,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, _ := tx.FromBytes(res.RawTransaction)
+		decodedTrx, _ := tx.FromHex(res.RawTransaction)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeWithdraw)
 

@@ -58,7 +58,7 @@ message GetNodeInfoResponse {
   // Agent information of the node.
   string agent = 2;
   // Peer ID of the node.
-  bytes peer_id = 3;
+  string peer_id = 3;
   // Timestamp when the node started.
   uint64 started_at = 4;
   // Reachability status of the node.
@@ -86,7 +86,7 @@ message PeerInfo {
   // Agent information of the peer.
   string agent = 3;
   // Peer ID of the peer.
-  bytes peer_id = 4;
+  string peer_id = 4;
   // Consensus keys used by the peer.
   repeated string consensus_keys = 5;
   // Consensus address of the peer.
@@ -94,7 +94,7 @@ message PeerInfo {
   // Services provided by the peer.
   uint32 services = 7;
   // Hash of the last block the peer knows.
-  bytes last_block_hash = 8;
+  string last_block_hash = 8;
   // Height of the peer in the blockchain.
   uint32 height = 9;
   // Count of received bundles.

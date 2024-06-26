@@ -1,7 +1,6 @@
 package http
 
 import (
-	"encoding/hex"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -24,16 +23,10 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
-	id, err := hex.DecodeString(vars["id"])
-	if err != nil {
-		s.writeError(w, err)
-
-		return
-	}
 
 	res, err := s.transaction.GetTransaction(ctx,
 		&pactus.GetTransactionRequest{
-			Id:        id,
+			Id:        vars["id"],
 			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
 		},
 	)
@@ -53,7 +46,7 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 		return
 	}
 	tm.addRowTxID("ID", trx.Id)
-	tm.addRowBytes("Data", trx.Data)
+	tm.addRowHex("Data", trx.Data)
 	tm.addRowInt("Version", int(trx.Version))
 	tm.addRowInt("LockTime", int(trx.LockTime))
 	tm.addRowAmount("Fee", amount.Amount(trx.Fee))
@@ -76,7 +69,7 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 	case pactus.PayloadType_SORTITION_PAYLOAD:
 		pld := trx.Payload.(*pactus.TransactionInfo_Sortition).Sortition
 		tm.addRowValAddress("Address", pld.Address)
-		tm.addRowBytes("Proof", pld.Proof)
+		tm.addRowHex("Proof", pld.Proof)
 
 	case pactus.PayloadType_UNBOND_PAYLOAD:
 		pld := trx.Payload.(*pactus.TransactionInfo_Unbond).Unbond
@@ -94,7 +87,7 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 	if trx.PublicKey != "" {
 		tm.addRowString("PublicKey", trx.PublicKey)
 	}
-	if trx.Signature != nil {
-		tm.addRowBytes("Signature", trx.Signature)
+	if trx.Signature != "" {
+		tm.addRowHex("Signature", trx.Signature)
 	}
 }

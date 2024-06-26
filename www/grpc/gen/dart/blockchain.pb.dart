@@ -485,8 +485,8 @@ class GetBlockRequest extends $pb.GeneratedMessage {
 class GetBlockResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetBlockResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
-    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash', $pb.PbFieldType.OY)
-    ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data')
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'blockTime', $pb.PbFieldType.OU3)
     ..aOM<BlockHeaderInfo>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'header', subBuilder: BlockHeaderInfo.create)
     ..aOM<CertificateInfo>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'prevCert', subBuilder: CertificateInfo.create)
@@ -497,8 +497,8 @@ class GetBlockResponse extends $pb.GeneratedMessage {
   GetBlockResponse._() : super();
   factory GetBlockResponse({
     $core.int? height,
-    $core.List<$core.int>? hash,
-    $core.List<$core.int>? data,
+    $core.String? hash,
+    $core.String? data,
     $core.int? blockTime,
     BlockHeaderInfo? header,
     CertificateInfo? prevCert,
@@ -559,18 +559,18 @@ class GetBlockResponse extends $pb.GeneratedMessage {
   void clearHeight() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<$core.int> get hash => $_getN(1);
+  $core.String get hash => $_getSZ(1);
   @$pb.TagNumber(2)
-  set hash($core.List<$core.int> v) { $_setBytes(1, v); }
+  set hash($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
   $core.bool hasHash() => $_has(1);
   @$pb.TagNumber(2)
   void clearHash() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.List<$core.int> get data => $_getN(2);
+  $core.String get data => $_getSZ(2);
   @$pb.TagNumber(3)
-  set data($core.List<$core.int> v) { $_setBytes(2, v); }
+  set data($core.String v) { $_setString(2, v); }
   @$pb.TagNumber(3)
   $core.bool hasData() => $_has(2);
   @$pb.TagNumber(3)
@@ -660,13 +660,13 @@ class GetBlockHashRequest extends $pb.GeneratedMessage {
 
 class GetBlockHashResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetBlockHashResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash', $pb.PbFieldType.OY)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash')
     ..hasRequiredFields = false
   ;
 
   GetBlockHashResponse._() : super();
   factory GetBlockHashResponse({
-    $core.List<$core.int>? hash,
+    $core.String? hash,
   }) {
     final _result = create();
     if (hash != null) {
@@ -696,9 +696,9 @@ class GetBlockHashResponse extends $pb.GeneratedMessage {
   static GetBlockHashResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get hash => $_getN(0);
+  $core.String get hash => $_getSZ(0);
   @$pb.TagNumber(1)
-  set hash($core.List<$core.int> v) { $_setBytes(0, v); }
+  set hash($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasHash() => $_has(0);
   @$pb.TagNumber(1)
@@ -707,13 +707,13 @@ class GetBlockHashResponse extends $pb.GeneratedMessage {
 
 class GetBlockHeightRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetBlockHeightRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash', $pb.PbFieldType.OY)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash')
     ..hasRequiredFields = false
   ;
 
   GetBlockHeightRequest._() : super();
   factory GetBlockHeightRequest({
-    $core.List<$core.int>? hash,
+    $core.String? hash,
   }) {
     final _result = create();
     if (hash != null) {
@@ -743,9 +743,9 @@ class GetBlockHeightRequest extends $pb.GeneratedMessage {
   static GetBlockHeightRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get hash => $_getN(0);
+  $core.String get hash => $_getSZ(0);
   @$pb.TagNumber(1)
-  set hash($core.List<$core.int> v) { $_setBytes(0, v); }
+  set hash($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasHash() => $_has(0);
   @$pb.TagNumber(1)
@@ -831,7 +831,7 @@ class GetBlockchainInfoRequest extends $pb.GeneratedMessage {
 class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetBlockchainInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBlockHeight', $pb.PbFieldType.OU3)
-    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBlockHash', $pb.PbFieldType.OY)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBlockHash')
     ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalAccounts', $pb.PbFieldType.O3)
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalValidators', $pb.PbFieldType.O3)
     ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalPower')
@@ -843,7 +843,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   GetBlockchainInfoResponse._() : super();
   factory GetBlockchainInfoResponse({
     $core.int? lastBlockHeight,
-    $core.List<$core.int>? lastBlockHash,
+    $core.String? lastBlockHash,
     $core.int? totalAccounts,
     $core.int? totalValidators,
     $fixnum.Int64? totalPower,
@@ -905,9 +905,9 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   void clearLastBlockHeight() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<$core.int> get lastBlockHash => $_getN(1);
+  $core.String get lastBlockHash => $_getSZ(1);
   @$pb.TagNumber(2)
-  set lastBlockHash($core.List<$core.int> v) { $_setBytes(1, v); }
+  set lastBlockHash($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
   $core.bool hasLastBlockHash() => $_has(1);
   @$pb.TagNumber(2)
@@ -1113,8 +1113,8 @@ class GetTxPoolContentResponse extends $pb.GeneratedMessage {
 
 class ValidatorInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ValidatorInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash', $pb.PbFieldType.OY)
-    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
     ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stake')
@@ -1128,8 +1128,8 @@ class ValidatorInfo extends $pb.GeneratedMessage {
 
   ValidatorInfo._() : super();
   factory ValidatorInfo({
-    $core.List<$core.int>? hash,
-    $core.List<$core.int>? data,
+    $core.String? hash,
+    $core.String? data,
     $core.String? publicKey,
     $core.int? number,
     $fixnum.Int64? stake,
@@ -1194,18 +1194,18 @@ class ValidatorInfo extends $pb.GeneratedMessage {
   static ValidatorInfo? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get hash => $_getN(0);
+  $core.String get hash => $_getSZ(0);
   @$pb.TagNumber(1)
-  set hash($core.List<$core.int> v) { $_setBytes(0, v); }
+  set hash($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasHash() => $_has(0);
   @$pb.TagNumber(1)
   void clearHash() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<$core.int> get data => $_getN(1);
+  $core.String get data => $_getSZ(1);
   @$pb.TagNumber(2)
-  set data($core.List<$core.int> v) { $_setBytes(1, v); }
+  set data($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
   $core.bool hasData() => $_has(1);
   @$pb.TagNumber(2)
@@ -1286,8 +1286,8 @@ class ValidatorInfo extends $pb.GeneratedMessage {
 
 class AccountInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AccountInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash', $pb.PbFieldType.OY)
-    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data')
     ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'number', $pb.PbFieldType.O3)
     ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'balance')
     ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
@@ -1296,8 +1296,8 @@ class AccountInfo extends $pb.GeneratedMessage {
 
   AccountInfo._() : super();
   factory AccountInfo({
-    $core.List<$core.int>? hash,
-    $core.List<$core.int>? data,
+    $core.String? hash,
+    $core.String? data,
     $core.int? number,
     $fixnum.Int64? balance,
     $core.String? address,
@@ -1342,18 +1342,18 @@ class AccountInfo extends $pb.GeneratedMessage {
   static AccountInfo? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get hash => $_getN(0);
+  $core.String get hash => $_getSZ(0);
   @$pb.TagNumber(1)
-  set hash($core.List<$core.int> v) { $_setBytes(0, v); }
+  set hash($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasHash() => $_has(0);
   @$pb.TagNumber(1)
   void clearHash() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<$core.int> get data => $_getN(1);
+  $core.String get data => $_getSZ(1);
   @$pb.TagNumber(2)
-  set data($core.List<$core.int> v) { $_setBytes(1, v); }
+  set data($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
   $core.bool hasData() => $_has(1);
   @$pb.TagNumber(2)
@@ -1390,9 +1390,9 @@ class AccountInfo extends $pb.GeneratedMessage {
 class BlockHeaderInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'BlockHeaderInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'version', $pb.PbFieldType.O3)
-    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'prevBlockHash', $pb.PbFieldType.OY)
-    ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stateRoot', $pb.PbFieldType.OY)
-    ..a<$core.List<$core.int>>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sortitionSeed', $pb.PbFieldType.OY)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'prevBlockHash')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stateRoot')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sortitionSeed')
     ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'proposerAddress')
     ..hasRequiredFields = false
   ;
@@ -1400,9 +1400,9 @@ class BlockHeaderInfo extends $pb.GeneratedMessage {
   BlockHeaderInfo._() : super();
   factory BlockHeaderInfo({
     $core.int? version,
-    $core.List<$core.int>? prevBlockHash,
-    $core.List<$core.int>? stateRoot,
-    $core.List<$core.int>? sortitionSeed,
+    $core.String? prevBlockHash,
+    $core.String? stateRoot,
+    $core.String? sortitionSeed,
     $core.String? proposerAddress,
   }) {
     final _result = create();
@@ -1454,27 +1454,27 @@ class BlockHeaderInfo extends $pb.GeneratedMessage {
   void clearVersion() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<$core.int> get prevBlockHash => $_getN(1);
+  $core.String get prevBlockHash => $_getSZ(1);
   @$pb.TagNumber(2)
-  set prevBlockHash($core.List<$core.int> v) { $_setBytes(1, v); }
+  set prevBlockHash($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
   $core.bool hasPrevBlockHash() => $_has(1);
   @$pb.TagNumber(2)
   void clearPrevBlockHash() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.List<$core.int> get stateRoot => $_getN(2);
+  $core.String get stateRoot => $_getSZ(2);
   @$pb.TagNumber(3)
-  set stateRoot($core.List<$core.int> v) { $_setBytes(2, v); }
+  set stateRoot($core.String v) { $_setString(2, v); }
   @$pb.TagNumber(3)
   $core.bool hasStateRoot() => $_has(2);
   @$pb.TagNumber(3)
   void clearStateRoot() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.List<$core.int> get sortitionSeed => $_getN(3);
+  $core.String get sortitionSeed => $_getSZ(3);
   @$pb.TagNumber(4)
-  set sortitionSeed($core.List<$core.int> v) { $_setBytes(3, v); }
+  set sortitionSeed($core.String v) { $_setString(3, v); }
   @$pb.TagNumber(4)
   $core.bool hasSortitionSeed() => $_has(3);
   @$pb.TagNumber(4)
@@ -1492,21 +1492,21 @@ class BlockHeaderInfo extends $pb.GeneratedMessage {
 
 class CertificateInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CertificateInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash', $pb.PbFieldType.OY)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hash')
     ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'round', $pb.PbFieldType.O3)
     ..p<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'committers', $pb.PbFieldType.K3)
     ..p<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'absentees', $pb.PbFieldType.K3)
-    ..a<$core.List<$core.int>>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', $pb.PbFieldType.OY)
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature')
     ..hasRequiredFields = false
   ;
 
   CertificateInfo._() : super();
   factory CertificateInfo({
-    $core.List<$core.int>? hash,
+    $core.String? hash,
     $core.int? round,
     $core.Iterable<$core.int>? committers,
     $core.Iterable<$core.int>? absentees,
-    $core.List<$core.int>? signature,
+    $core.String? signature,
   }) {
     final _result = create();
     if (hash != null) {
@@ -1548,9 +1548,9 @@ class CertificateInfo extends $pb.GeneratedMessage {
   static CertificateInfo? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get hash => $_getN(0);
+  $core.String get hash => $_getSZ(0);
   @$pb.TagNumber(1)
-  set hash($core.List<$core.int> v) { $_setBytes(0, v); }
+  set hash($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasHash() => $_has(0);
   @$pb.TagNumber(1)
@@ -1572,9 +1572,9 @@ class CertificateInfo extends $pb.GeneratedMessage {
   $core.List<$core.int> get absentees => $_getList(3);
 
   @$pb.TagNumber(5)
-  $core.List<$core.int> get signature => $_getN(4);
+  $core.String get signature => $_getSZ(4);
   @$pb.TagNumber(5)
-  set signature($core.List<$core.int> v) { $_setBytes(4, v); }
+  set signature($core.String v) { $_setString(4, v); }
   @$pb.TagNumber(5)
   $core.bool hasSignature() => $_has(4);
   @$pb.TagNumber(5)
@@ -1585,7 +1585,7 @@ class VoteInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'VoteInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..e<VoteType>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'type', $pb.PbFieldType.OE, defaultOrMaker: VoteType.VOTE_UNKNOWN, valueOf: VoteType.valueOf, enumValues: VoteType.values)
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'voter')
-    ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'blockHash', $pb.PbFieldType.OY)
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'blockHash')
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'round', $pb.PbFieldType.O3)
     ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'cpRound', $pb.PbFieldType.O3)
     ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'cpValue', $pb.PbFieldType.O3)
@@ -1596,7 +1596,7 @@ class VoteInfo extends $pb.GeneratedMessage {
   factory VoteInfo({
     VoteType? type,
     $core.String? voter,
-    $core.List<$core.int>? blockHash,
+    $core.String? blockHash,
     $core.int? round,
     $core.int? cpRound,
     $core.int? cpValue,
@@ -1662,9 +1662,9 @@ class VoteInfo extends $pb.GeneratedMessage {
   void clearVoter() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.List<$core.int> get blockHash => $_getN(2);
+  $core.String get blockHash => $_getSZ(2);
   @$pb.TagNumber(3)
-  set blockHash($core.List<$core.int> v) { $_setBytes(2, v); }
+  set blockHash($core.String v) { $_setString(2, v); }
   @$pb.TagNumber(3)
   $core.bool hasBlockHash() => $_has(2);
   @$pb.TagNumber(3)

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/hex"
 	"fmt"
 	"net/http"
 	"sort"
@@ -79,7 +80,8 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	for i, p := range res.ConnectedPeers {
-		pid, _ := lp2ppeer.IDFromBytes(p.PeerId)
+		id, _ := hex.DecodeString(p.PeerId)
+		pid, _ := lp2ppeer.IDFromBytes(id)
 		tm.addRowInt("-- Peer #", i+1)
 		tm.addRowString("Status", status.Status(p.Status).String())
 		tm.addRowString("PeerID", pid.String())
@@ -134,8 +136,8 @@ func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-
-	sid, _ := lp2ppeer.IDFromBytes(res.PeerId)
+	id, _ := hex.DecodeString(res.PeerId)
+	sid, _ := lp2ppeer.IDFromBytes(id)
 	tm := newTableMaker()
 	tm.addRowString("Peer ID", sid.String())
 	tm.addRowString("Agent", res.Agent)

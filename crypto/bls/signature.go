@@ -42,9 +42,24 @@ func SignatureFromBytes(data []byte) (*Signature, error) {
 	return &Signature{data: data}, nil
 }
 
+// SignatureFromHex return Signature from hex.
+func SignatureFromHex(sigHex string) (*Signature, error) {
+	b, err := hex.DecodeString(sigHex)
+	if err != nil {
+		return nil, err
+	}
+
+	return SignatureFromBytes(b)
+}
+
 // Bytes returns the raw byte representation of the signature.
 func (sig *Signature) Bytes() []byte {
 	return sig.data
+}
+
+// Hex return hex of signature.
+func (sig *Signature) Hex() string {
+	return hex.EncodeToString(sig.data)
 }
 
 // String returns the hex-encoded string representation of the signature.

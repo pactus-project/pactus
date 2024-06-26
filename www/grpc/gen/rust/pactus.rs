@@ -4,8 +4,8 @@
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetTransactionRequest {
     /// Transaction ID.
-    #[prost(bytes="vec", tag="1")]
-    pub id: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
     /// Verbosity level for transaction details.
     #[prost(enumeration="TransactionVerbosity", tag="2")]
     pub verbosity: i32,
@@ -54,16 +54,16 @@ pub struct CalculateFeeResponse {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BroadcastTransactionRequest {
     /// Signed raw transaction data.
-    #[prost(bytes="vec", tag="1")]
-    pub signed_raw_transaction: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="1")]
+    pub signed_raw_transaction: ::prost::alloc::string::String,
 }
 /// Response message containing the ID of the broadcasted transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BroadcastTransactionResponse {
     /// Transaction ID.
-    #[prost(bytes="vec", tag="1")]
-    pub id: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
 }
 /// Request message for retrieving raw details of a transfer transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -166,8 +166,8 @@ pub struct GetRawWithdrawTransactionRequest {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetRawTransactionResponse {
     /// Raw transaction data.
-    #[prost(bytes="vec", tag="1")]
-    pub raw_transaction: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="1")]
+    pub raw_transaction: ::prost::alloc::string::String,
 }
 /// Payload for a transfer transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -205,8 +205,8 @@ pub struct PayloadSortition {
     #[prost(string, tag="1")]
     pub address: ::prost::alloc::string::String,
     /// Proof for the sortition.
-    #[prost(bytes="vec", tag="2")]
-    pub proof: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="2")]
+    pub proof: ::prost::alloc::string::String,
 }
 /// Payload for an unbond transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -235,11 +235,11 @@ pub struct PayloadWithdraw {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TransactionInfo {
     /// Transaction ID.
-    #[prost(bytes="vec", tag="1")]
-    pub id: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="1")]
+    pub id: ::prost::alloc::string::String,
     /// Transaction data.
-    #[prost(bytes="vec", tag="2")]
-    pub data: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="2")]
+    pub data: ::prost::alloc::string::String,
     /// Transaction version.
     #[prost(int32, tag="3")]
     pub version: i32,
@@ -262,8 +262,8 @@ pub struct TransactionInfo {
     #[prost(string, tag="9")]
     pub public_key: ::prost::alloc::string::String,
     /// Transaction signature.
-    #[prost(bytes="vec", tag="10")]
-    pub signature: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="10")]
+    pub signature: ::prost::alloc::string::String,
     #[prost(oneof="transaction_info::Payload", tags="30, 31, 32, 33, 34")]
     pub payload: ::core::option::Option<transaction_info::Payload>,
 }
@@ -451,11 +451,11 @@ pub struct GetBlockResponse {
     #[prost(uint32, tag="1")]
     pub height: u32,
     /// Hash of the block.
-    #[prost(bytes="vec", tag="2")]
-    pub hash: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="2")]
+    pub hash: ::prost::alloc::string::String,
     /// Block data, only available if the verbosity level is set to BLOCK_DATA.
-    #[prost(bytes="vec", tag="3")]
-    pub data: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="3")]
+    pub data: ::prost::alloc::string::String,
     /// Block timestamp.
     #[prost(uint32, tag="4")]
     pub block_time: u32,
@@ -483,16 +483,16 @@ pub struct GetBlockHashRequest {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetBlockHashResponse {
     /// Hash of the block.
-    #[prost(bytes="vec", tag="1")]
-    pub hash: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="1")]
+    pub hash: ::prost::alloc::string::String,
 }
 /// Message to request block height based on hash.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetBlockHeightRequest {
     /// Hash of the block.
-    #[prost(bytes="vec", tag="1")]
-    pub hash: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="1")]
+    pub hash: ::prost::alloc::string::String,
 }
 /// Message containing the response with the block height.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -515,8 +515,8 @@ pub struct GetBlockchainInfoResponse {
     #[prost(uint32, tag="1")]
     pub last_block_height: u32,
     /// Hash of the last block.
-    #[prost(bytes="vec", tag="2")]
-    pub last_block_hash: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="2")]
+    pub last_block_hash: ::prost::alloc::string::String,
     /// Total number of accounts.
     #[prost(int32, tag="3")]
     pub total_accounts: i32,
@@ -567,11 +567,11 @@ pub struct GetTxPoolContentResponse {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ValidatorInfo {
     /// Hash of the validator.
-    #[prost(bytes="vec", tag="1")]
-    pub hash: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="1")]
+    pub hash: ::prost::alloc::string::String,
     /// Validator data.
-    #[prost(bytes="vec", tag="2")]
-    pub data: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="2")]
+    pub data: ::prost::alloc::string::String,
     /// Public key of the validator.
     #[prost(string, tag="3")]
     pub public_key: ::prost::alloc::string::String,
@@ -602,11 +602,11 @@ pub struct ValidatorInfo {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AccountInfo {
     /// Hash of the account.
-    #[prost(bytes="vec", tag="1")]
-    pub hash: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="1")]
+    pub hash: ::prost::alloc::string::String,
     /// Account data.
-    #[prost(bytes="vec", tag="2")]
-    pub data: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="2")]
+    pub data: ::prost::alloc::string::String,
     /// Account number.
     #[prost(int32, tag="3")]
     pub number: i32,
@@ -625,14 +625,14 @@ pub struct BlockHeaderInfo {
     #[prost(int32, tag="1")]
     pub version: i32,
     /// Hash of the previous block.
-    #[prost(bytes="vec", tag="2")]
-    pub prev_block_hash: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="2")]
+    pub prev_block_hash: ::prost::alloc::string::String,
     /// State root of the block.
-    #[prost(bytes="vec", tag="3")]
-    pub state_root: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="3")]
+    pub state_root: ::prost::alloc::string::String,
     /// Sortition seed of the block.
-    #[prost(bytes="vec", tag="4")]
-    pub sortition_seed: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="4")]
+    pub sortition_seed: ::prost::alloc::string::String,
     /// Address of the proposer of the block.
     #[prost(string, tag="5")]
     pub proposer_address: ::prost::alloc::string::String,
@@ -642,8 +642,8 @@ pub struct BlockHeaderInfo {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CertificateInfo {
     /// Hash of the certificate.
-    #[prost(bytes="vec", tag="1")]
-    pub hash: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="1")]
+    pub hash: ::prost::alloc::string::String,
     /// Round of the certificate.
     #[prost(int32, tag="2")]
     pub round: i32,
@@ -654,8 +654,8 @@ pub struct CertificateInfo {
     #[prost(int32, repeated, tag="4")]
     pub absentees: ::prost::alloc::vec::Vec<i32>,
     /// Certificate signature.
-    #[prost(bytes="vec", tag="5")]
-    pub signature: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="5")]
+    pub signature: ::prost::alloc::string::String,
 }
 /// Message containing information about a vote.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -668,8 +668,8 @@ pub struct VoteInfo {
     #[prost(string, tag="2")]
     pub voter: ::prost::alloc::string::String,
     /// Hash of the block being voted on.
-    #[prost(bytes="vec", tag="3")]
-    pub block_hash: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="3")]
+    pub block_hash: ::prost::alloc::string::String,
     /// Round of the vote.
     #[prost(int32, tag="4")]
     pub round: i32,
@@ -835,8 +835,8 @@ pub struct GetNodeInfoResponse {
     #[prost(string, tag="2")]
     pub agent: ::prost::alloc::string::String,
     /// Peer ID of the node.
-    #[prost(bytes="vec", tag="3")]
-    pub peer_id: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="3")]
+    pub peer_id: ::prost::alloc::string::String,
     /// Timestamp when the node started.
     #[prost(uint64, tag="4")]
     pub started_at: u64,
@@ -876,8 +876,8 @@ pub struct PeerInfo {
     #[prost(string, tag="3")]
     pub agent: ::prost::alloc::string::String,
     /// Peer ID of the peer.
-    #[prost(bytes="vec", tag="4")]
-    pub peer_id: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="4")]
+    pub peer_id: ::prost::alloc::string::String,
     /// Consensus keys used by the peer.
     #[prost(string, repeated, tag="5")]
     pub consensus_keys: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
@@ -888,8 +888,8 @@ pub struct PeerInfo {
     #[prost(uint32, tag="7")]
     pub services: u32,
     /// Hash of the last block the peer knows.
-    #[prost(bytes="vec", tag="8")]
-    pub last_block_hash: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="8")]
+    pub last_block_hash: ::prost::alloc::string::String,
     /// Height of the peer in the blockchain.
     #[prost(uint32, tag="9")]
     pub height: u32,
@@ -1107,8 +1107,8 @@ pub struct SignRawTransactionRequest {
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
     /// Raw transaction data to be signed.
-    #[prost(bytes="vec", tag="2")]
-    pub raw_transaction: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="2")]
+    pub raw_transaction: ::prost::alloc::string::String,
     /// Password for unlocking the wallet for signing.
     #[prost(string, tag="3")]
     pub password: ::prost::alloc::string::String,
@@ -1118,11 +1118,11 @@ pub struct SignRawTransactionRequest {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignRawTransactionResponse {
     /// ID of the signed transaction.
-    #[prost(bytes="vec", tag="1")]
-    pub transaction_id: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="1")]
+    pub transaction_id: ::prost::alloc::string::String,
     /// Signed raw transaction data.
-    #[prost(bytes="vec", tag="2")]
-    pub signed_raw_transaction: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag="2")]
+    pub signed_raw_transaction: ::prost::alloc::string::String,
 }
 /// Request message for obtaining the available balance of a wallet.
 #[allow(clippy::derive_partial_eq_without_eq)]

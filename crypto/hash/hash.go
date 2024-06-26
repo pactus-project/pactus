@@ -61,6 +61,7 @@ func FromHex(str string) (Hash, error) {
 	if err != nil {
 		return Hash{}, err
 	}
+
 	return FromBytes(b)
 }
 

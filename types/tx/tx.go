@@ -2,6 +2,7 @@ package tx
 
 import (
 	"bytes"
+	"encoding/hex"
 	"fmt"
 	"io"
 
@@ -68,6 +69,16 @@ func FromBytes(bs []byte) (*Tx, error) {
 	}
 
 	return tx, nil
+}
+
+// FromHex return Tx from hex.
+func FromHex(str string) (*Tx, error) {
+	b, err := hex.DecodeString(str)
+	if err != nil {
+		return nil, err
+	}
+
+	return FromBytes(b)
 }
 
 func (tx *Tx) Version() uint8 {
@@ -219,6 +230,16 @@ func (tx *Tx) Bytes() ([]byte, error) {
 	}
 
 	return w.Bytes(), nil
+}
+
+// Hex return hex of Tx.
+func (tx *Tx) Hex() (string, error) {
+	b, err := tx.Bytes()
+	if err != nil {
+		return "", err
+	}
+
+	return hex.EncodeToString(b), nil
 }
 
 func (tx *Tx) MarshalCBOR() ([]byte, error) {

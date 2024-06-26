@@ -6277,20 +6277,40 @@ public final class BlockchainOuterClass {
      * Hash of the block.
      * </pre>
      *
-     * <code>bytes hash = 2 [json_name = "hash"];</code>
+     * <code>string hash = 2 [json_name = "hash"];</code>
      * @return The hash.
      */
-    com.google.protobuf.ByteString getHash();
+    java.lang.String getHash();
+    /**
+     * <pre>
+     * Hash of the block.
+     * </pre>
+     *
+     * <code>string hash = 2 [json_name = "hash"];</code>
+     * @return The bytes for hash.
+     */
+    com.google.protobuf.ByteString
+        getHashBytes();
 
     /**
      * <pre>
      * Block data, only available if the verbosity level is set to BLOCK_DATA.
      * </pre>
      *
-     * <code>bytes data = 3 [json_name = "data"];</code>
+     * <code>string data = 3 [json_name = "data"];</code>
      * @return The data.
      */
-    com.google.protobuf.ByteString getData();
+    java.lang.String getData();
+    /**
+     * <pre>
+     * Block data, only available if the verbosity level is set to BLOCK_DATA.
+     * </pre>
+     *
+     * <code>string data = 3 [json_name = "data"];</code>
+     * @return The bytes for data.
+     */
+    com.google.protobuf.ByteString
+        getDataBytes();
 
     /**
      * <pre>
@@ -6422,8 +6442,8 @@ public final class BlockchainOuterClass {
       super(builder);
     }
     private GetBlockResponse() {
-      hash_ = com.google.protobuf.ByteString.EMPTY;
-      data_ = com.google.protobuf.ByteString.EMPTY;
+      hash_ = "";
+      data_ = "";
       txs_ = java.util.Collections.emptyList();
     }
 
@@ -6468,33 +6488,95 @@ public final class BlockchainOuterClass {
     }
 
     public static final int HASH_FIELD_NUMBER = 2;
-    private com.google.protobuf.ByteString hash_;
+    private volatile java.lang.Object hash_;
     /**
      * <pre>
      * Hash of the block.
      * </pre>
      *
-     * <code>bytes hash = 2 [json_name = "hash"];</code>
+     * <code>string hash = 2 [json_name = "hash"];</code>
      * @return The hash.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getHash() {
-      return hash_;
+    public java.lang.String getHash() {
+      java.lang.Object ref = hash_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hash_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Hash of the block.
+     * </pre>
+     *
+     * <code>string hash = 2 [json_name = "hash"];</code>
+     * @return The bytes for hash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getHashBytes() {
+      java.lang.Object ref = hash_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        hash_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int DATA_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString data_;
+    private volatile java.lang.Object data_;
     /**
      * <pre>
      * Block data, only available if the verbosity level is set to BLOCK_DATA.
      * </pre>
      *
-     * <code>bytes data = 3 [json_name = "data"];</code>
+     * <code>string data = 3 [json_name = "data"];</code>
      * @return The data.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getData() {
-      return data_;
+    public java.lang.String getData() {
+      java.lang.Object ref = data_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        data_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Block data, only available if the verbosity level is set to BLOCK_DATA.
+     * </pre>
+     *
+     * <code>string data = 3 [json_name = "data"];</code>
+     * @return The bytes for data.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getDataBytes() {
+      java.lang.Object ref = data_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        data_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int BLOCK_TIME_FIELD_NUMBER = 4;
@@ -6670,11 +6752,11 @@ public final class BlockchainOuterClass {
       if (height_ != 0) {
         output.writeUInt32(1, height_);
       }
-      if (!hash_.isEmpty()) {
-        output.writeBytes(2, hash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(hash_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, hash_);
       }
-      if (!data_.isEmpty()) {
-        output.writeBytes(3, data_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(data_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, data_);
       }
       if (blockTime_ != 0) {
         output.writeUInt32(4, blockTime_);
@@ -6701,13 +6783,11 @@ public final class BlockchainOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt32Size(1, height_);
       }
-      if (!hash_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, hash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(hash_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, hash_);
       }
-      if (!data_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, data_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(data_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, data_);
       }
       if (blockTime_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -6925,9 +7005,9 @@ public final class BlockchainOuterClass {
         super.clear();
         height_ = 0;
 
-        hash_ = com.google.protobuf.ByteString.EMPTY;
+        hash_ = "";
 
-        data_ = com.google.protobuf.ByteString.EMPTY;
+        data_ = "";
 
         blockTime_ = 0;
 
@@ -7051,11 +7131,13 @@ public final class BlockchainOuterClass {
         if (other.getHeight() != 0) {
           setHeight(other.getHeight());
         }
-        if (other.getHash() != com.google.protobuf.ByteString.EMPTY) {
-          setHash(other.getHash());
+        if (!other.getHash().isEmpty()) {
+          hash_ = other.hash_;
+          onChanged();
         }
-        if (other.getData() != com.google.protobuf.ByteString.EMPTY) {
-          setData(other.getData());
+        if (!other.getData().isEmpty()) {
+          data_ = other.data_;
+          onChanged();
         }
         if (other.getBlockTime() != 0) {
           setBlockTime(other.getBlockTime());
@@ -7124,12 +7206,12 @@ public final class BlockchainOuterClass {
                 break;
               } // case 8
               case 18: {
-                hash_ = input.readBytes();
+                hash_ = input.readStringRequireUtf8();
 
                 break;
               } // case 18
               case 26: {
-                data_ = input.readBytes();
+                data_ = input.readStringRequireUtf8();
 
                 break;
               } // case 26
@@ -7225,29 +7307,59 @@ public final class BlockchainOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object hash_ = "";
       /**
        * <pre>
        * Hash of the block.
        * </pre>
        *
-       * <code>bytes hash = 2 [json_name = "hash"];</code>
+       * <code>string hash = 2 [json_name = "hash"];</code>
        * @return The hash.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getHash() {
-        return hash_;
+      public java.lang.String getHash() {
+        java.lang.Object ref = hash_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hash_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Hash of the block.
        * </pre>
        *
-       * <code>bytes hash = 2 [json_name = "hash"];</code>
+       * <code>string hash = 2 [json_name = "hash"];</code>
+       * @return The bytes for hash.
+       */
+      public com.google.protobuf.ByteString
+          getHashBytes() {
+        java.lang.Object ref = hash_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          hash_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
+       * <code>string hash = 2 [json_name = "hash"];</code>
        * @param value The hash to set.
        * @return This builder for chaining.
        */
-      public Builder setHash(com.google.protobuf.ByteString value) {
+      public Builder setHash(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -7261,7 +7373,7 @@ public final class BlockchainOuterClass {
        * Hash of the block.
        * </pre>
        *
-       * <code>bytes hash = 2 [json_name = "hash"];</code>
+       * <code>string hash = 2 [json_name = "hash"];</code>
        * @return This builder for chaining.
        */
       public Builder clearHash() {
@@ -7270,30 +7382,80 @@ public final class BlockchainOuterClass {
         onChanged();
         return this;
       }
+      /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
+       * <code>string hash = 2 [json_name = "hash"];</code>
+       * @param value The bytes for hash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHashBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        hash_ = value;
+        onChanged();
+        return this;
+      }
 
-      private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object data_ = "";
       /**
        * <pre>
        * Block data, only available if the verbosity level is set to BLOCK_DATA.
        * </pre>
        *
-       * <code>bytes data = 3 [json_name = "data"];</code>
+       * <code>string data = 3 [json_name = "data"];</code>
        * @return The data.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getData() {
-        return data_;
+      public java.lang.String getData() {
+        java.lang.Object ref = data_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          data_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Block data, only available if the verbosity level is set to BLOCK_DATA.
        * </pre>
        *
-       * <code>bytes data = 3 [json_name = "data"];</code>
+       * <code>string data = 3 [json_name = "data"];</code>
+       * @return The bytes for data.
+       */
+      public com.google.protobuf.ByteString
+          getDataBytes() {
+        java.lang.Object ref = data_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          data_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Block data, only available if the verbosity level is set to BLOCK_DATA.
+       * </pre>
+       *
+       * <code>string data = 3 [json_name = "data"];</code>
        * @param value The data to set.
        * @return This builder for chaining.
        */
-      public Builder setData(com.google.protobuf.ByteString value) {
+      public Builder setData(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -7307,12 +7469,32 @@ public final class BlockchainOuterClass {
        * Block data, only available if the verbosity level is set to BLOCK_DATA.
        * </pre>
        *
-       * <code>bytes data = 3 [json_name = "data"];</code>
+       * <code>string data = 3 [json_name = "data"];</code>
        * @return This builder for chaining.
        */
       public Builder clearData() {
         
         data_ = getDefaultInstance().getData();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Block data, only available if the verbosity level is set to BLOCK_DATA.
+       * </pre>
+       *
+       * <code>string data = 3 [json_name = "data"];</code>
+       * @param value The bytes for data to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDataBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        data_ = value;
         onChanged();
         return this;
       }
@@ -8570,10 +8752,20 @@ public final class BlockchainOuterClass {
      * Hash of the block.
      * </pre>
      *
-     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * <code>string hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
-    com.google.protobuf.ByteString getHash();
+    java.lang.String getHash();
+    /**
+     * <pre>
+     * Hash of the block.
+     * </pre>
+     *
+     * <code>string hash = 1 [json_name = "hash"];</code>
+     * @return The bytes for hash.
+     */
+    com.google.protobuf.ByteString
+        getHashBytes();
   }
   /**
    * <pre>
@@ -8592,7 +8784,7 @@ public final class BlockchainOuterClass {
       super(builder);
     }
     private GetBlockHashResponse() {
-      hash_ = com.google.protobuf.ByteString.EMPTY;
+      hash_ = "";
     }
 
     @java.lang.Override
@@ -8621,18 +8813,49 @@ public final class BlockchainOuterClass {
     }
 
     public static final int HASH_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString hash_;
+    private volatile java.lang.Object hash_;
     /**
      * <pre>
      * Hash of the block.
      * </pre>
      *
-     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * <code>string hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getHash() {
-      return hash_;
+    public java.lang.String getHash() {
+      java.lang.Object ref = hash_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hash_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Hash of the block.
+     * </pre>
+     *
+     * <code>string hash = 1 [json_name = "hash"];</code>
+     * @return The bytes for hash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getHashBytes() {
+      java.lang.Object ref = hash_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        hash_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -8649,8 +8872,8 @@ public final class BlockchainOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!hash_.isEmpty()) {
-        output.writeBytes(1, hash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(hash_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, hash_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -8661,9 +8884,8 @@ public final class BlockchainOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!hash_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, hash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(hash_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, hash_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -8827,7 +9049,7 @@ public final class BlockchainOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        hash_ = com.google.protobuf.ByteString.EMPTY;
+        hash_ = "";
 
         return this;
       }
@@ -8904,8 +9126,9 @@ public final class BlockchainOuterClass {
 
       public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse other) {
         if (other == pactus.blockchain.BlockchainOuterClass.GetBlockHashResponse.getDefaultInstance()) return this;
-        if (other.getHash() != com.google.protobuf.ByteString.EMPTY) {
-          setHash(other.getHash());
+        if (!other.getHash().isEmpty()) {
+          hash_ = other.hash_;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -8934,7 +9157,7 @@ public final class BlockchainOuterClass {
                 done = true;
                 break;
               case 10: {
-                hash_ = input.readBytes();
+                hash_ = input.readStringRequireUtf8();
 
                 break;
               } // case 10
@@ -8954,29 +9177,59 @@ public final class BlockchainOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object hash_ = "";
       /**
        * <pre>
        * Hash of the block.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @return The hash.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getHash() {
-        return hash_;
+      public java.lang.String getHash() {
+        java.lang.Object ref = hash_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hash_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Hash of the block.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
+       * @return The bytes for hash.
+       */
+      public com.google.protobuf.ByteString
+          getHashBytes() {
+        java.lang.Object ref = hash_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          hash_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @param value The hash to set.
        * @return This builder for chaining.
        */
-      public Builder setHash(com.google.protobuf.ByteString value) {
+      public Builder setHash(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -8990,12 +9243,32 @@ public final class BlockchainOuterClass {
        * Hash of the block.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @return This builder for chaining.
        */
       public Builder clearHash() {
         
         hash_ = getDefaultInstance().getHash();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
+       * <code>string hash = 1 [json_name = "hash"];</code>
+       * @param value The bytes for hash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHashBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        hash_ = value;
         onChanged();
         return this;
       }
@@ -9072,10 +9345,20 @@ public final class BlockchainOuterClass {
      * Hash of the block.
      * </pre>
      *
-     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * <code>string hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
-    com.google.protobuf.ByteString getHash();
+    java.lang.String getHash();
+    /**
+     * <pre>
+     * Hash of the block.
+     * </pre>
+     *
+     * <code>string hash = 1 [json_name = "hash"];</code>
+     * @return The bytes for hash.
+     */
+    com.google.protobuf.ByteString
+        getHashBytes();
   }
   /**
    * <pre>
@@ -9094,7 +9377,7 @@ public final class BlockchainOuterClass {
       super(builder);
     }
     private GetBlockHeightRequest() {
-      hash_ = com.google.protobuf.ByteString.EMPTY;
+      hash_ = "";
     }
 
     @java.lang.Override
@@ -9123,18 +9406,49 @@ public final class BlockchainOuterClass {
     }
 
     public static final int HASH_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString hash_;
+    private volatile java.lang.Object hash_;
     /**
      * <pre>
      * Hash of the block.
      * </pre>
      *
-     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * <code>string hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getHash() {
-      return hash_;
+    public java.lang.String getHash() {
+      java.lang.Object ref = hash_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hash_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Hash of the block.
+     * </pre>
+     *
+     * <code>string hash = 1 [json_name = "hash"];</code>
+     * @return The bytes for hash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getHashBytes() {
+      java.lang.Object ref = hash_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        hash_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -9151,8 +9465,8 @@ public final class BlockchainOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!hash_.isEmpty()) {
-        output.writeBytes(1, hash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(hash_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, hash_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -9163,9 +9477,8 @@ public final class BlockchainOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!hash_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, hash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(hash_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, hash_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -9329,7 +9642,7 @@ public final class BlockchainOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        hash_ = com.google.protobuf.ByteString.EMPTY;
+        hash_ = "";
 
         return this;
       }
@@ -9406,8 +9719,9 @@ public final class BlockchainOuterClass {
 
       public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest other) {
         if (other == pactus.blockchain.BlockchainOuterClass.GetBlockHeightRequest.getDefaultInstance()) return this;
-        if (other.getHash() != com.google.protobuf.ByteString.EMPTY) {
-          setHash(other.getHash());
+        if (!other.getHash().isEmpty()) {
+          hash_ = other.hash_;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -9436,7 +9750,7 @@ public final class BlockchainOuterClass {
                 done = true;
                 break;
               case 10: {
-                hash_ = input.readBytes();
+                hash_ = input.readStringRequireUtf8();
 
                 break;
               } // case 10
@@ -9456,29 +9770,59 @@ public final class BlockchainOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object hash_ = "";
       /**
        * <pre>
        * Hash of the block.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @return The hash.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getHash() {
-        return hash_;
+      public java.lang.String getHash() {
+        java.lang.Object ref = hash_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hash_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Hash of the block.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
+       * @return The bytes for hash.
+       */
+      public com.google.protobuf.ByteString
+          getHashBytes() {
+        java.lang.Object ref = hash_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          hash_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @param value The hash to set.
        * @return This builder for chaining.
        */
-      public Builder setHash(com.google.protobuf.ByteString value) {
+      public Builder setHash(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -9492,12 +9836,32 @@ public final class BlockchainOuterClass {
        * Hash of the block.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @return This builder for chaining.
        */
       public Builder clearHash() {
         
         hash_ = getDefaultInstance().getHash();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Hash of the block.
+       * </pre>
+       *
+       * <code>string hash = 1 [json_name = "hash"];</code>
+       * @param value The bytes for hash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHashBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        hash_ = value;
         onChanged();
         return this;
       }
@@ -10490,10 +10854,20 @@ public final class BlockchainOuterClass {
      * Hash of the last block.
      * </pre>
      *
-     * <code>bytes last_block_hash = 2 [json_name = "lastBlockHash"];</code>
+     * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
      * @return The lastBlockHash.
      */
-    com.google.protobuf.ByteString getLastBlockHash();
+    java.lang.String getLastBlockHash();
+    /**
+     * <pre>
+     * Hash of the last block.
+     * </pre>
+     *
+     * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
+     * @return The bytes for lastBlockHash.
+     */
+    com.google.protobuf.ByteString
+        getLastBlockHashBytes();
 
     /**
      * <pre>
@@ -10596,7 +10970,7 @@ public final class BlockchainOuterClass {
       super(builder);
     }
     private GetBlockchainInfoResponse() {
-      lastBlockHash_ = com.google.protobuf.ByteString.EMPTY;
+      lastBlockHash_ = "";
       committeeValidators_ = java.util.Collections.emptyList();
     }
 
@@ -10641,18 +11015,49 @@ public final class BlockchainOuterClass {
     }
 
     public static final int LAST_BLOCK_HASH_FIELD_NUMBER = 2;
-    private com.google.protobuf.ByteString lastBlockHash_;
+    private volatile java.lang.Object lastBlockHash_;
     /**
      * <pre>
      * Hash of the last block.
      * </pre>
      *
-     * <code>bytes last_block_hash = 2 [json_name = "lastBlockHash"];</code>
+     * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
      * @return The lastBlockHash.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getLastBlockHash() {
-      return lastBlockHash_;
+    public java.lang.String getLastBlockHash() {
+      java.lang.Object ref = lastBlockHash_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lastBlockHash_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Hash of the last block.
+     * </pre>
+     *
+     * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
+     * @return The bytes for lastBlockHash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getLastBlockHashBytes() {
+      java.lang.Object ref = lastBlockHash_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        lastBlockHash_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int TOTAL_ACCOUNTS_FIELD_NUMBER = 3;
@@ -10792,8 +11197,8 @@ public final class BlockchainOuterClass {
       if (lastBlockHeight_ != 0) {
         output.writeUInt32(1, lastBlockHeight_);
       }
-      if (!lastBlockHash_.isEmpty()) {
-        output.writeBytes(2, lastBlockHash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(lastBlockHash_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, lastBlockHash_);
       }
       if (totalAccounts_ != 0) {
         output.writeInt32(3, totalAccounts_);
@@ -10823,9 +11228,8 @@ public final class BlockchainOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt32Size(1, lastBlockHeight_);
       }
-      if (!lastBlockHash_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, lastBlockHash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(lastBlockHash_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, lastBlockHash_);
       }
       if (totalAccounts_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -11039,7 +11443,7 @@ public final class BlockchainOuterClass {
         super.clear();
         lastBlockHeight_ = 0;
 
-        lastBlockHash_ = com.google.protobuf.ByteString.EMPTY;
+        lastBlockHash_ = "";
 
         totalAccounts_ = 0;
 
@@ -11149,8 +11553,9 @@ public final class BlockchainOuterClass {
         if (other.getLastBlockHeight() != 0) {
           setLastBlockHeight(other.getLastBlockHeight());
         }
-        if (other.getLastBlockHash() != com.google.protobuf.ByteString.EMPTY) {
-          setLastBlockHash(other.getLastBlockHash());
+        if (!other.getLastBlockHash().isEmpty()) {
+          lastBlockHash_ = other.lastBlockHash_;
+          onChanged();
         }
         if (other.getTotalAccounts() != 0) {
           setTotalAccounts(other.getTotalAccounts());
@@ -11222,7 +11627,7 @@ public final class BlockchainOuterClass {
                 break;
               } // case 8
               case 18: {
-                lastBlockHash_ = input.readBytes();
+                lastBlockHash_ = input.readStringRequireUtf8();
 
                 break;
               } // case 18
@@ -11319,29 +11724,59 @@ public final class BlockchainOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString lastBlockHash_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object lastBlockHash_ = "";
       /**
        * <pre>
        * Hash of the last block.
        * </pre>
        *
-       * <code>bytes last_block_hash = 2 [json_name = "lastBlockHash"];</code>
+       * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
        * @return The lastBlockHash.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getLastBlockHash() {
-        return lastBlockHash_;
+      public java.lang.String getLastBlockHash() {
+        java.lang.Object ref = lastBlockHash_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lastBlockHash_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Hash of the last block.
        * </pre>
        *
-       * <code>bytes last_block_hash = 2 [json_name = "lastBlockHash"];</code>
+       * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
+       * @return The bytes for lastBlockHash.
+       */
+      public com.google.protobuf.ByteString
+          getLastBlockHashBytes() {
+        java.lang.Object ref = lastBlockHash_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          lastBlockHash_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Hash of the last block.
+       * </pre>
+       *
+       * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
        * @param value The lastBlockHash to set.
        * @return This builder for chaining.
        */
-      public Builder setLastBlockHash(com.google.protobuf.ByteString value) {
+      public Builder setLastBlockHash(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -11355,12 +11790,32 @@ public final class BlockchainOuterClass {
        * Hash of the last block.
        * </pre>
        *
-       * <code>bytes last_block_hash = 2 [json_name = "lastBlockHash"];</code>
+       * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
        * @return This builder for chaining.
        */
       public Builder clearLastBlockHash() {
         
         lastBlockHash_ = getDefaultInstance().getLastBlockHash();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Hash of the last block.
+       * </pre>
+       *
+       * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
+       * @param value The bytes for lastBlockHash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLastBlockHashBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        lastBlockHash_ = value;
         onChanged();
         return this;
       }
@@ -14669,20 +15124,40 @@ public final class BlockchainOuterClass {
      * Hash of the validator.
      * </pre>
      *
-     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * <code>string hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
-    com.google.protobuf.ByteString getHash();
+    java.lang.String getHash();
+    /**
+     * <pre>
+     * Hash of the validator.
+     * </pre>
+     *
+     * <code>string hash = 1 [json_name = "hash"];</code>
+     * @return The bytes for hash.
+     */
+    com.google.protobuf.ByteString
+        getHashBytes();
 
     /**
      * <pre>
      * Validator data.
      * </pre>
      *
-     * <code>bytes data = 2 [json_name = "data"];</code>
+     * <code>string data = 2 [json_name = "data"];</code>
      * @return The data.
      */
-    com.google.protobuf.ByteString getData();
+    java.lang.String getData();
+    /**
+     * <pre>
+     * Validator data.
+     * </pre>
+     *
+     * <code>string data = 2 [json_name = "data"];</code>
+     * @return The bytes for data.
+     */
+    com.google.protobuf.ByteString
+        getDataBytes();
 
     /**
      * <pre>
@@ -14801,8 +15276,8 @@ public final class BlockchainOuterClass {
       super(builder);
     }
     private ValidatorInfo() {
-      hash_ = com.google.protobuf.ByteString.EMPTY;
-      data_ = com.google.protobuf.ByteString.EMPTY;
+      hash_ = "";
+      data_ = "";
       publicKey_ = "";
       address_ = "";
     }
@@ -14833,33 +15308,95 @@ public final class BlockchainOuterClass {
     }
 
     public static final int HASH_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString hash_;
+    private volatile java.lang.Object hash_;
     /**
      * <pre>
      * Hash of the validator.
      * </pre>
      *
-     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * <code>string hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getHash() {
-      return hash_;
+    public java.lang.String getHash() {
+      java.lang.Object ref = hash_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hash_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Hash of the validator.
+     * </pre>
+     *
+     * <code>string hash = 1 [json_name = "hash"];</code>
+     * @return The bytes for hash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getHashBytes() {
+      java.lang.Object ref = hash_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        hash_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int DATA_FIELD_NUMBER = 2;
-    private com.google.protobuf.ByteString data_;
+    private volatile java.lang.Object data_;
     /**
      * <pre>
      * Validator data.
      * </pre>
      *
-     * <code>bytes data = 2 [json_name = "data"];</code>
+     * <code>string data = 2 [json_name = "data"];</code>
      * @return The data.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getData() {
-      return data_;
+    public java.lang.String getData() {
+      java.lang.Object ref = data_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        data_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Validator data.
+     * </pre>
+     *
+     * <code>string data = 2 [json_name = "data"];</code>
+     * @return The bytes for data.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getDataBytes() {
+      java.lang.Object ref = data_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        data_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int PUBLIC_KEY_FIELD_NUMBER = 3;
@@ -15058,11 +15595,11 @@ public final class BlockchainOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!hash_.isEmpty()) {
-        output.writeBytes(1, hash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(hash_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, hash_);
       }
-      if (!data_.isEmpty()) {
-        output.writeBytes(2, data_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(data_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, data_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, publicKey_);
@@ -15097,13 +15634,11 @@ public final class BlockchainOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!hash_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, hash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(hash_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, hash_);
       }
-      if (!data_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, data_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(data_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, data_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, publicKey_);
@@ -15336,9 +15871,9 @@ public final class BlockchainOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        hash_ = com.google.protobuf.ByteString.EMPTY;
+        hash_ = "";
 
-        data_ = com.google.protobuf.ByteString.EMPTY;
+        data_ = "";
 
         publicKey_ = "";
 
@@ -15440,11 +15975,13 @@ public final class BlockchainOuterClass {
 
       public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.ValidatorInfo other) {
         if (other == pactus.blockchain.BlockchainOuterClass.ValidatorInfo.getDefaultInstance()) return this;
-        if (other.getHash() != com.google.protobuf.ByteString.EMPTY) {
-          setHash(other.getHash());
+        if (!other.getHash().isEmpty()) {
+          hash_ = other.hash_;
+          onChanged();
         }
-        if (other.getData() != com.google.protobuf.ByteString.EMPTY) {
-          setData(other.getData());
+        if (!other.getData().isEmpty()) {
+          data_ = other.data_;
+          onChanged();
         }
         if (!other.getPublicKey().isEmpty()) {
           publicKey_ = other.publicKey_;
@@ -15499,12 +16036,12 @@ public final class BlockchainOuterClass {
                 done = true;
                 break;
               case 10: {
-                hash_ = input.readBytes();
+                hash_ = input.readStringRequireUtf8();
 
                 break;
               } // case 10
               case 18: {
-                data_ = input.readBytes();
+                data_ = input.readStringRequireUtf8();
 
                 break;
               } // case 18
@@ -15564,29 +16101,59 @@ public final class BlockchainOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object hash_ = "";
       /**
        * <pre>
        * Hash of the validator.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @return The hash.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getHash() {
-        return hash_;
+      public java.lang.String getHash() {
+        java.lang.Object ref = hash_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hash_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Hash of the validator.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
+       * @return The bytes for hash.
+       */
+      public com.google.protobuf.ByteString
+          getHashBytes() {
+        java.lang.Object ref = hash_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          hash_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Hash of the validator.
+       * </pre>
+       *
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @param value The hash to set.
        * @return This builder for chaining.
        */
-      public Builder setHash(com.google.protobuf.ByteString value) {
+      public Builder setHash(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -15600,7 +16167,7 @@ public final class BlockchainOuterClass {
        * Hash of the validator.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @return This builder for chaining.
        */
       public Builder clearHash() {
@@ -15609,30 +16176,80 @@ public final class BlockchainOuterClass {
         onChanged();
         return this;
       }
+      /**
+       * <pre>
+       * Hash of the validator.
+       * </pre>
+       *
+       * <code>string hash = 1 [json_name = "hash"];</code>
+       * @param value The bytes for hash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHashBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        hash_ = value;
+        onChanged();
+        return this;
+      }
 
-      private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object data_ = "";
       /**
        * <pre>
        * Validator data.
        * </pre>
        *
-       * <code>bytes data = 2 [json_name = "data"];</code>
+       * <code>string data = 2 [json_name = "data"];</code>
        * @return The data.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getData() {
-        return data_;
+      public java.lang.String getData() {
+        java.lang.Object ref = data_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          data_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Validator data.
        * </pre>
        *
-       * <code>bytes data = 2 [json_name = "data"];</code>
+       * <code>string data = 2 [json_name = "data"];</code>
+       * @return The bytes for data.
+       */
+      public com.google.protobuf.ByteString
+          getDataBytes() {
+        java.lang.Object ref = data_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          data_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Validator data.
+       * </pre>
+       *
+       * <code>string data = 2 [json_name = "data"];</code>
        * @param value The data to set.
        * @return This builder for chaining.
        */
-      public Builder setData(com.google.protobuf.ByteString value) {
+      public Builder setData(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -15646,12 +16263,32 @@ public final class BlockchainOuterClass {
        * Validator data.
        * </pre>
        *
-       * <code>bytes data = 2 [json_name = "data"];</code>
+       * <code>string data = 2 [json_name = "data"];</code>
        * @return This builder for chaining.
        */
       public Builder clearData() {
         
         data_ = getDefaultInstance().getData();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Validator data.
+       * </pre>
+       *
+       * <code>string data = 2 [json_name = "data"];</code>
+       * @param value The bytes for data to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDataBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        data_ = value;
         onChanged();
         return this;
       }
@@ -16178,20 +16815,40 @@ public final class BlockchainOuterClass {
      * Hash of the account.
      * </pre>
      *
-     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * <code>string hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
-    com.google.protobuf.ByteString getHash();
+    java.lang.String getHash();
+    /**
+     * <pre>
+     * Hash of the account.
+     * </pre>
+     *
+     * <code>string hash = 1 [json_name = "hash"];</code>
+     * @return The bytes for hash.
+     */
+    com.google.protobuf.ByteString
+        getHashBytes();
 
     /**
      * <pre>
      * Account data.
      * </pre>
      *
-     * <code>bytes data = 2 [json_name = "data"];</code>
+     * <code>string data = 2 [json_name = "data"];</code>
      * @return The data.
      */
-    com.google.protobuf.ByteString getData();
+    java.lang.String getData();
+    /**
+     * <pre>
+     * Account data.
+     * </pre>
+     *
+     * <code>string data = 2 [json_name = "data"];</code>
+     * @return The bytes for data.
+     */
+    com.google.protobuf.ByteString
+        getDataBytes();
 
     /**
      * <pre>
@@ -16250,8 +16907,8 @@ public final class BlockchainOuterClass {
       super(builder);
     }
     private AccountInfo() {
-      hash_ = com.google.protobuf.ByteString.EMPTY;
-      data_ = com.google.protobuf.ByteString.EMPTY;
+      hash_ = "";
+      data_ = "";
       address_ = "";
     }
 
@@ -16281,33 +16938,95 @@ public final class BlockchainOuterClass {
     }
 
     public static final int HASH_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString hash_;
+    private volatile java.lang.Object hash_;
     /**
      * <pre>
      * Hash of the account.
      * </pre>
      *
-     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * <code>string hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getHash() {
-      return hash_;
+    public java.lang.String getHash() {
+      java.lang.Object ref = hash_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hash_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Hash of the account.
+     * </pre>
+     *
+     * <code>string hash = 1 [json_name = "hash"];</code>
+     * @return The bytes for hash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getHashBytes() {
+      java.lang.Object ref = hash_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        hash_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int DATA_FIELD_NUMBER = 2;
-    private com.google.protobuf.ByteString data_;
+    private volatile java.lang.Object data_;
     /**
      * <pre>
      * Account data.
      * </pre>
      *
-     * <code>bytes data = 2 [json_name = "data"];</code>
+     * <code>string data = 2 [json_name = "data"];</code>
      * @return The data.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getData() {
-      return data_;
+    public java.lang.String getData() {
+      java.lang.Object ref = data_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        data_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Account data.
+     * </pre>
+     *
+     * <code>string data = 2 [json_name = "data"];</code>
+     * @return The bytes for data.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getDataBytes() {
+      java.lang.Object ref = data_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        data_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int NUMBER_FIELD_NUMBER = 3;
@@ -16400,11 +17119,11 @@ public final class BlockchainOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!hash_.isEmpty()) {
-        output.writeBytes(1, hash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(hash_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, hash_);
       }
-      if (!data_.isEmpty()) {
-        output.writeBytes(2, data_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(data_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, data_);
       }
       if (number_ != 0) {
         output.writeInt32(3, number_);
@@ -16424,13 +17143,11 @@ public final class BlockchainOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!hash_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, hash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(hash_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, hash_);
       }
-      if (!data_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, data_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(data_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, data_);
       }
       if (number_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -16622,9 +17339,9 @@ public final class BlockchainOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        hash_ = com.google.protobuf.ByteString.EMPTY;
+        hash_ = "";
 
-        data_ = com.google.protobuf.ByteString.EMPTY;
+        data_ = "";
 
         number_ = 0;
 
@@ -16711,11 +17428,13 @@ public final class BlockchainOuterClass {
 
       public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.AccountInfo other) {
         if (other == pactus.blockchain.BlockchainOuterClass.AccountInfo.getDefaultInstance()) return this;
-        if (other.getHash() != com.google.protobuf.ByteString.EMPTY) {
-          setHash(other.getHash());
+        if (!other.getHash().isEmpty()) {
+          hash_ = other.hash_;
+          onChanged();
         }
-        if (other.getData() != com.google.protobuf.ByteString.EMPTY) {
-          setData(other.getData());
+        if (!other.getData().isEmpty()) {
+          data_ = other.data_;
+          onChanged();
         }
         if (other.getNumber() != 0) {
           setNumber(other.getNumber());
@@ -16754,12 +17473,12 @@ public final class BlockchainOuterClass {
                 done = true;
                 break;
               case 10: {
-                hash_ = input.readBytes();
+                hash_ = input.readStringRequireUtf8();
 
                 break;
               } // case 10
               case 18: {
-                data_ = input.readBytes();
+                data_ = input.readStringRequireUtf8();
 
                 break;
               } // case 18
@@ -16794,29 +17513,59 @@ public final class BlockchainOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object hash_ = "";
       /**
        * <pre>
        * Hash of the account.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @return The hash.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getHash() {
-        return hash_;
+      public java.lang.String getHash() {
+        java.lang.Object ref = hash_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hash_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Hash of the account.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
+       * @return The bytes for hash.
+       */
+      public com.google.protobuf.ByteString
+          getHashBytes() {
+        java.lang.Object ref = hash_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          hash_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Hash of the account.
+       * </pre>
+       *
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @param value The hash to set.
        * @return This builder for chaining.
        */
-      public Builder setHash(com.google.protobuf.ByteString value) {
+      public Builder setHash(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -16830,7 +17579,7 @@ public final class BlockchainOuterClass {
        * Hash of the account.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @return This builder for chaining.
        */
       public Builder clearHash() {
@@ -16839,30 +17588,80 @@ public final class BlockchainOuterClass {
         onChanged();
         return this;
       }
+      /**
+       * <pre>
+       * Hash of the account.
+       * </pre>
+       *
+       * <code>string hash = 1 [json_name = "hash"];</code>
+       * @param value The bytes for hash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHashBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        hash_ = value;
+        onChanged();
+        return this;
+      }
 
-      private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object data_ = "";
       /**
        * <pre>
        * Account data.
        * </pre>
        *
-       * <code>bytes data = 2 [json_name = "data"];</code>
+       * <code>string data = 2 [json_name = "data"];</code>
        * @return The data.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getData() {
-        return data_;
+      public java.lang.String getData() {
+        java.lang.Object ref = data_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          data_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Account data.
        * </pre>
        *
-       * <code>bytes data = 2 [json_name = "data"];</code>
+       * <code>string data = 2 [json_name = "data"];</code>
+       * @return The bytes for data.
+       */
+      public com.google.protobuf.ByteString
+          getDataBytes() {
+        java.lang.Object ref = data_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          data_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Account data.
+       * </pre>
+       *
+       * <code>string data = 2 [json_name = "data"];</code>
        * @param value The data to set.
        * @return This builder for chaining.
        */
-      public Builder setData(com.google.protobuf.ByteString value) {
+      public Builder setData(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -16876,12 +17675,32 @@ public final class BlockchainOuterClass {
        * Account data.
        * </pre>
        *
-       * <code>bytes data = 2 [json_name = "data"];</code>
+       * <code>string data = 2 [json_name = "data"];</code>
        * @return This builder for chaining.
        */
       public Builder clearData() {
         
         data_ = getDefaultInstance().getData();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Account data.
+       * </pre>
+       *
+       * <code>string data = 2 [json_name = "data"];</code>
+       * @param value The bytes for data to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDataBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        data_ = value;
         onChanged();
         return this;
       }
@@ -17150,30 +17969,60 @@ public final class BlockchainOuterClass {
      * Hash of the previous block.
      * </pre>
      *
-     * <code>bytes prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
+     * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
      * @return The prevBlockHash.
      */
-    com.google.protobuf.ByteString getPrevBlockHash();
+    java.lang.String getPrevBlockHash();
+    /**
+     * <pre>
+     * Hash of the previous block.
+     * </pre>
+     *
+     * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
+     * @return The bytes for prevBlockHash.
+     */
+    com.google.protobuf.ByteString
+        getPrevBlockHashBytes();
 
     /**
      * <pre>
      * State root of the block.
      * </pre>
      *
-     * <code>bytes state_root = 3 [json_name = "stateRoot"];</code>
+     * <code>string state_root = 3 [json_name = "stateRoot"];</code>
      * @return The stateRoot.
      */
-    com.google.protobuf.ByteString getStateRoot();
+    java.lang.String getStateRoot();
+    /**
+     * <pre>
+     * State root of the block.
+     * </pre>
+     *
+     * <code>string state_root = 3 [json_name = "stateRoot"];</code>
+     * @return The bytes for stateRoot.
+     */
+    com.google.protobuf.ByteString
+        getStateRootBytes();
 
     /**
      * <pre>
      * Sortition seed of the block.
      * </pre>
      *
-     * <code>bytes sortition_seed = 4 [json_name = "sortitionSeed"];</code>
+     * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
      * @return The sortitionSeed.
      */
-    com.google.protobuf.ByteString getSortitionSeed();
+    java.lang.String getSortitionSeed();
+    /**
+     * <pre>
+     * Sortition seed of the block.
+     * </pre>
+     *
+     * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
+     * @return The bytes for sortitionSeed.
+     */
+    com.google.protobuf.ByteString
+        getSortitionSeedBytes();
 
     /**
      * <pre>
@@ -17212,9 +18061,9 @@ public final class BlockchainOuterClass {
       super(builder);
     }
     private BlockHeaderInfo() {
-      prevBlockHash_ = com.google.protobuf.ByteString.EMPTY;
-      stateRoot_ = com.google.protobuf.ByteString.EMPTY;
-      sortitionSeed_ = com.google.protobuf.ByteString.EMPTY;
+      prevBlockHash_ = "";
+      stateRoot_ = "";
+      sortitionSeed_ = "";
       proposerAddress_ = "";
     }
 
@@ -17259,48 +18108,141 @@ public final class BlockchainOuterClass {
     }
 
     public static final int PREV_BLOCK_HASH_FIELD_NUMBER = 2;
-    private com.google.protobuf.ByteString prevBlockHash_;
+    private volatile java.lang.Object prevBlockHash_;
     /**
      * <pre>
      * Hash of the previous block.
      * </pre>
      *
-     * <code>bytes prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
+     * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
      * @return The prevBlockHash.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getPrevBlockHash() {
-      return prevBlockHash_;
+    public java.lang.String getPrevBlockHash() {
+      java.lang.Object ref = prevBlockHash_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        prevBlockHash_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Hash of the previous block.
+     * </pre>
+     *
+     * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
+     * @return The bytes for prevBlockHash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getPrevBlockHashBytes() {
+      java.lang.Object ref = prevBlockHash_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        prevBlockHash_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int STATE_ROOT_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString stateRoot_;
+    private volatile java.lang.Object stateRoot_;
     /**
      * <pre>
      * State root of the block.
      * </pre>
      *
-     * <code>bytes state_root = 3 [json_name = "stateRoot"];</code>
+     * <code>string state_root = 3 [json_name = "stateRoot"];</code>
      * @return The stateRoot.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getStateRoot() {
-      return stateRoot_;
+    public java.lang.String getStateRoot() {
+      java.lang.Object ref = stateRoot_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        stateRoot_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * State root of the block.
+     * </pre>
+     *
+     * <code>string state_root = 3 [json_name = "stateRoot"];</code>
+     * @return The bytes for stateRoot.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getStateRootBytes() {
+      java.lang.Object ref = stateRoot_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        stateRoot_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int SORTITION_SEED_FIELD_NUMBER = 4;
-    private com.google.protobuf.ByteString sortitionSeed_;
+    private volatile java.lang.Object sortitionSeed_;
     /**
      * <pre>
      * Sortition seed of the block.
      * </pre>
      *
-     * <code>bytes sortition_seed = 4 [json_name = "sortitionSeed"];</code>
+     * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
      * @return The sortitionSeed.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getSortitionSeed() {
-      return sortitionSeed_;
+    public java.lang.String getSortitionSeed() {
+      java.lang.Object ref = sortitionSeed_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        sortitionSeed_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Sortition seed of the block.
+     * </pre>
+     *
+     * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
+     * @return The bytes for sortitionSeed.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSortitionSeedBytes() {
+      java.lang.Object ref = sortitionSeed_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        sortitionSeed_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int PROPOSER_ADDRESS_FIELD_NUMBER = 5;
@@ -17366,14 +18308,14 @@ public final class BlockchainOuterClass {
       if (version_ != 0) {
         output.writeInt32(1, version_);
       }
-      if (!prevBlockHash_.isEmpty()) {
-        output.writeBytes(2, prevBlockHash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(prevBlockHash_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, prevBlockHash_);
       }
-      if (!stateRoot_.isEmpty()) {
-        output.writeBytes(3, stateRoot_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(stateRoot_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, stateRoot_);
       }
-      if (!sortitionSeed_.isEmpty()) {
-        output.writeBytes(4, sortitionSeed_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sortitionSeed_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, sortitionSeed_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(proposerAddress_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, proposerAddress_);
@@ -17391,17 +18333,14 @@ public final class BlockchainOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(1, version_);
       }
-      if (!prevBlockHash_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, prevBlockHash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(prevBlockHash_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, prevBlockHash_);
       }
-      if (!stateRoot_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, stateRoot_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(stateRoot_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, stateRoot_);
       }
-      if (!sortitionSeed_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(4, sortitionSeed_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sortitionSeed_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, sortitionSeed_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(proposerAddress_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, proposerAddress_);
@@ -17586,11 +18525,11 @@ public final class BlockchainOuterClass {
         super.clear();
         version_ = 0;
 
-        prevBlockHash_ = com.google.protobuf.ByteString.EMPTY;
+        prevBlockHash_ = "";
 
-        stateRoot_ = com.google.protobuf.ByteString.EMPTY;
+        stateRoot_ = "";
 
-        sortitionSeed_ = com.google.protobuf.ByteString.EMPTY;
+        sortitionSeed_ = "";
 
         proposerAddress_ = "";
 
@@ -17676,14 +18615,17 @@ public final class BlockchainOuterClass {
         if (other.getVersion() != 0) {
           setVersion(other.getVersion());
         }
-        if (other.getPrevBlockHash() != com.google.protobuf.ByteString.EMPTY) {
-          setPrevBlockHash(other.getPrevBlockHash());
+        if (!other.getPrevBlockHash().isEmpty()) {
+          prevBlockHash_ = other.prevBlockHash_;
+          onChanged();
         }
-        if (other.getStateRoot() != com.google.protobuf.ByteString.EMPTY) {
-          setStateRoot(other.getStateRoot());
+        if (!other.getStateRoot().isEmpty()) {
+          stateRoot_ = other.stateRoot_;
+          onChanged();
         }
-        if (other.getSortitionSeed() != com.google.protobuf.ByteString.EMPTY) {
-          setSortitionSeed(other.getSortitionSeed());
+        if (!other.getSortitionSeed().isEmpty()) {
+          sortitionSeed_ = other.sortitionSeed_;
+          onChanged();
         }
         if (!other.getProposerAddress().isEmpty()) {
           proposerAddress_ = other.proposerAddress_;
@@ -17721,17 +18663,17 @@ public final class BlockchainOuterClass {
                 break;
               } // case 8
               case 18: {
-                prevBlockHash_ = input.readBytes();
+                prevBlockHash_ = input.readStringRequireUtf8();
 
                 break;
               } // case 18
               case 26: {
-                stateRoot_ = input.readBytes();
+                stateRoot_ = input.readStringRequireUtf8();
 
                 break;
               } // case 26
               case 34: {
-                sortitionSeed_ = input.readBytes();
+                sortitionSeed_ = input.readStringRequireUtf8();
 
                 break;
               } // case 34
@@ -17799,29 +18741,59 @@ public final class BlockchainOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString prevBlockHash_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object prevBlockHash_ = "";
       /**
        * <pre>
        * Hash of the previous block.
        * </pre>
        *
-       * <code>bytes prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
+       * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
        * @return The prevBlockHash.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getPrevBlockHash() {
-        return prevBlockHash_;
+      public java.lang.String getPrevBlockHash() {
+        java.lang.Object ref = prevBlockHash_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          prevBlockHash_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Hash of the previous block.
        * </pre>
        *
-       * <code>bytes prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
+       * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
+       * @return The bytes for prevBlockHash.
+       */
+      public com.google.protobuf.ByteString
+          getPrevBlockHashBytes() {
+        java.lang.Object ref = prevBlockHash_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          prevBlockHash_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Hash of the previous block.
+       * </pre>
+       *
+       * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
        * @param value The prevBlockHash to set.
        * @return This builder for chaining.
        */
-      public Builder setPrevBlockHash(com.google.protobuf.ByteString value) {
+      public Builder setPrevBlockHash(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -17835,7 +18807,7 @@ public final class BlockchainOuterClass {
        * Hash of the previous block.
        * </pre>
        *
-       * <code>bytes prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
+       * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
        * @return This builder for chaining.
        */
       public Builder clearPrevBlockHash() {
@@ -17844,30 +18816,80 @@ public final class BlockchainOuterClass {
         onChanged();
         return this;
       }
+      /**
+       * <pre>
+       * Hash of the previous block.
+       * </pre>
+       *
+       * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
+       * @param value The bytes for prevBlockHash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPrevBlockHashBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        prevBlockHash_ = value;
+        onChanged();
+        return this;
+      }
 
-      private com.google.protobuf.ByteString stateRoot_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object stateRoot_ = "";
       /**
        * <pre>
        * State root of the block.
        * </pre>
        *
-       * <code>bytes state_root = 3 [json_name = "stateRoot"];</code>
+       * <code>string state_root = 3 [json_name = "stateRoot"];</code>
        * @return The stateRoot.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getStateRoot() {
-        return stateRoot_;
+      public java.lang.String getStateRoot() {
+        java.lang.Object ref = stateRoot_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          stateRoot_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * State root of the block.
        * </pre>
        *
-       * <code>bytes state_root = 3 [json_name = "stateRoot"];</code>
+       * <code>string state_root = 3 [json_name = "stateRoot"];</code>
+       * @return The bytes for stateRoot.
+       */
+      public com.google.protobuf.ByteString
+          getStateRootBytes() {
+        java.lang.Object ref = stateRoot_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          stateRoot_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * State root of the block.
+       * </pre>
+       *
+       * <code>string state_root = 3 [json_name = "stateRoot"];</code>
        * @param value The stateRoot to set.
        * @return This builder for chaining.
        */
-      public Builder setStateRoot(com.google.protobuf.ByteString value) {
+      public Builder setStateRoot(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -17881,7 +18903,7 @@ public final class BlockchainOuterClass {
        * State root of the block.
        * </pre>
        *
-       * <code>bytes state_root = 3 [json_name = "stateRoot"];</code>
+       * <code>string state_root = 3 [json_name = "stateRoot"];</code>
        * @return This builder for chaining.
        */
       public Builder clearStateRoot() {
@@ -17890,30 +18912,80 @@ public final class BlockchainOuterClass {
         onChanged();
         return this;
       }
+      /**
+       * <pre>
+       * State root of the block.
+       * </pre>
+       *
+       * <code>string state_root = 3 [json_name = "stateRoot"];</code>
+       * @param value The bytes for stateRoot to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStateRootBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        stateRoot_ = value;
+        onChanged();
+        return this;
+      }
 
-      private com.google.protobuf.ByteString sortitionSeed_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object sortitionSeed_ = "";
       /**
        * <pre>
        * Sortition seed of the block.
        * </pre>
        *
-       * <code>bytes sortition_seed = 4 [json_name = "sortitionSeed"];</code>
+       * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
        * @return The sortitionSeed.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getSortitionSeed() {
-        return sortitionSeed_;
+      public java.lang.String getSortitionSeed() {
+        java.lang.Object ref = sortitionSeed_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          sortitionSeed_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Sortition seed of the block.
        * </pre>
        *
-       * <code>bytes sortition_seed = 4 [json_name = "sortitionSeed"];</code>
+       * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
+       * @return The bytes for sortitionSeed.
+       */
+      public com.google.protobuf.ByteString
+          getSortitionSeedBytes() {
+        java.lang.Object ref = sortitionSeed_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          sortitionSeed_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Sortition seed of the block.
+       * </pre>
+       *
+       * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
        * @param value The sortitionSeed to set.
        * @return This builder for chaining.
        */
-      public Builder setSortitionSeed(com.google.protobuf.ByteString value) {
+      public Builder setSortitionSeed(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -17927,12 +18999,32 @@ public final class BlockchainOuterClass {
        * Sortition seed of the block.
        * </pre>
        *
-       * <code>bytes sortition_seed = 4 [json_name = "sortitionSeed"];</code>
+       * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
        * @return This builder for chaining.
        */
       public Builder clearSortitionSeed() {
         
         sortitionSeed_ = getDefaultInstance().getSortitionSeed();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Sortition seed of the block.
+       * </pre>
+       *
+       * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
+       * @param value The bytes for sortitionSeed to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSortitionSeedBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        sortitionSeed_ = value;
         onChanged();
         return this;
       }
@@ -18105,10 +19197,20 @@ public final class BlockchainOuterClass {
      * Hash of the certificate.
      * </pre>
      *
-     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * <code>string hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
-    com.google.protobuf.ByteString getHash();
+    java.lang.String getHash();
+    /**
+     * <pre>
+     * Hash of the certificate.
+     * </pre>
+     *
+     * <code>string hash = 1 [json_name = "hash"];</code>
+     * @return The bytes for hash.
+     */
+    com.google.protobuf.ByteString
+        getHashBytes();
 
     /**
      * <pre>
@@ -18183,10 +19285,20 @@ public final class BlockchainOuterClass {
      * Certificate signature.
      * </pre>
      *
-     * <code>bytes signature = 5 [json_name = "signature"];</code>
+     * <code>string signature = 5 [json_name = "signature"];</code>
      * @return The signature.
      */
-    com.google.protobuf.ByteString getSignature();
+    java.lang.String getSignature();
+    /**
+     * <pre>
+     * Certificate signature.
+     * </pre>
+     *
+     * <code>string signature = 5 [json_name = "signature"];</code>
+     * @return The bytes for signature.
+     */
+    com.google.protobuf.ByteString
+        getSignatureBytes();
   }
   /**
    * <pre>
@@ -18205,10 +19317,10 @@ public final class BlockchainOuterClass {
       super(builder);
     }
     private CertificateInfo() {
-      hash_ = com.google.protobuf.ByteString.EMPTY;
+      hash_ = "";
       committers_ = emptyIntList();
       absentees_ = emptyIntList();
-      signature_ = com.google.protobuf.ByteString.EMPTY;
+      signature_ = "";
     }
 
     @java.lang.Override
@@ -18237,18 +19349,49 @@ public final class BlockchainOuterClass {
     }
 
     public static final int HASH_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString hash_;
+    private volatile java.lang.Object hash_;
     /**
      * <pre>
      * Hash of the certificate.
      * </pre>
      *
-     * <code>bytes hash = 1 [json_name = "hash"];</code>
+     * <code>string hash = 1 [json_name = "hash"];</code>
      * @return The hash.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getHash() {
-      return hash_;
+    public java.lang.String getHash() {
+      java.lang.Object ref = hash_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        hash_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Hash of the certificate.
+     * </pre>
+     *
+     * <code>string hash = 1 [json_name = "hash"];</code>
+     * @return The bytes for hash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getHashBytes() {
+      java.lang.Object ref = hash_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        hash_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int ROUND_FIELD_NUMBER = 2;
@@ -18347,18 +19490,49 @@ public final class BlockchainOuterClass {
     private int absenteesMemoizedSerializedSize = -1;
 
     public static final int SIGNATURE_FIELD_NUMBER = 5;
-    private com.google.protobuf.ByteString signature_;
+    private volatile java.lang.Object signature_;
     /**
      * <pre>
      * Certificate signature.
      * </pre>
      *
-     * <code>bytes signature = 5 [json_name = "signature"];</code>
+     * <code>string signature = 5 [json_name = "signature"];</code>
      * @return The signature.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getSignature() {
-      return signature_;
+    public java.lang.String getSignature() {
+      java.lang.Object ref = signature_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        signature_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Certificate signature.
+     * </pre>
+     *
+     * <code>string signature = 5 [json_name = "signature"];</code>
+     * @return The bytes for signature.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSignatureBytes() {
+      java.lang.Object ref = signature_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        signature_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -18376,8 +19550,8 @@ public final class BlockchainOuterClass {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      if (!hash_.isEmpty()) {
-        output.writeBytes(1, hash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(hash_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, hash_);
       }
       if (round_ != 0) {
         output.writeInt32(2, round_);
@@ -18396,8 +19570,8 @@ public final class BlockchainOuterClass {
       for (int i = 0; i < absentees_.size(); i++) {
         output.writeInt32NoTag(absentees_.getInt(i));
       }
-      if (!signature_.isEmpty()) {
-        output.writeBytes(5, signature_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(signature_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, signature_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -18408,9 +19582,8 @@ public final class BlockchainOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!hash_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, hash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(hash_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, hash_);
       }
       if (round_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -18444,9 +19617,8 @@ public final class BlockchainOuterClass {
         }
         absenteesMemoizedSerializedSize = dataSize;
       }
-      if (!signature_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(5, signature_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(signature_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, signature_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -18630,7 +19802,7 @@ public final class BlockchainOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        hash_ = com.google.protobuf.ByteString.EMPTY;
+        hash_ = "";
 
         round_ = 0;
 
@@ -18638,7 +19810,7 @@ public final class BlockchainOuterClass {
         bitField0_ = (bitField0_ & ~0x00000001);
         absentees_ = emptyIntList();
         bitField0_ = (bitField0_ & ~0x00000002);
-        signature_ = com.google.protobuf.ByteString.EMPTY;
+        signature_ = "";
 
         return this;
       }
@@ -18728,8 +19900,9 @@ public final class BlockchainOuterClass {
 
       public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.CertificateInfo other) {
         if (other == pactus.blockchain.BlockchainOuterClass.CertificateInfo.getDefaultInstance()) return this;
-        if (other.getHash() != com.google.protobuf.ByteString.EMPTY) {
-          setHash(other.getHash());
+        if (!other.getHash().isEmpty()) {
+          hash_ = other.hash_;
+          onChanged();
         }
         if (other.getRound() != 0) {
           setRound(other.getRound());
@@ -18754,8 +19927,9 @@ public final class BlockchainOuterClass {
           }
           onChanged();
         }
-        if (other.getSignature() != com.google.protobuf.ByteString.EMPTY) {
-          setSignature(other.getSignature());
+        if (!other.getSignature().isEmpty()) {
+          signature_ = other.signature_;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -18784,7 +19958,7 @@ public final class BlockchainOuterClass {
                 done = true;
                 break;
               case 10: {
-                hash_ = input.readBytes();
+                hash_ = input.readStringRequireUtf8();
 
                 break;
               } // case 10
@@ -18826,7 +20000,7 @@ public final class BlockchainOuterClass {
                 break;
               } // case 34
               case 42: {
-                signature_ = input.readBytes();
+                signature_ = input.readStringRequireUtf8();
 
                 break;
               } // case 42
@@ -18847,29 +20021,59 @@ public final class BlockchainOuterClass {
       }
       private int bitField0_;
 
-      private com.google.protobuf.ByteString hash_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object hash_ = "";
       /**
        * <pre>
        * Hash of the certificate.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @return The hash.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getHash() {
-        return hash_;
+      public java.lang.String getHash() {
+        java.lang.Object ref = hash_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hash_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Hash of the certificate.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
+       * @return The bytes for hash.
+       */
+      public com.google.protobuf.ByteString
+          getHashBytes() {
+        java.lang.Object ref = hash_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          hash_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Hash of the certificate.
+       * </pre>
+       *
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @param value The hash to set.
        * @return This builder for chaining.
        */
-      public Builder setHash(com.google.protobuf.ByteString value) {
+      public Builder setHash(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -18883,12 +20087,32 @@ public final class BlockchainOuterClass {
        * Hash of the certificate.
        * </pre>
        *
-       * <code>bytes hash = 1 [json_name = "hash"];</code>
+       * <code>string hash = 1 [json_name = "hash"];</code>
        * @return This builder for chaining.
        */
       public Builder clearHash() {
         
         hash_ = getDefaultInstance().getHash();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Hash of the certificate.
+       * </pre>
+       *
+       * <code>string hash = 1 [json_name = "hash"];</code>
+       * @param value The bytes for hash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHashBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        hash_ = value;
         onChanged();
         return this;
       }
@@ -19150,29 +20374,59 @@ public final class BlockchainOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString signature_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object signature_ = "";
       /**
        * <pre>
        * Certificate signature.
        * </pre>
        *
-       * <code>bytes signature = 5 [json_name = "signature"];</code>
+       * <code>string signature = 5 [json_name = "signature"];</code>
        * @return The signature.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getSignature() {
-        return signature_;
+      public java.lang.String getSignature() {
+        java.lang.Object ref = signature_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          signature_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Certificate signature.
        * </pre>
        *
-       * <code>bytes signature = 5 [json_name = "signature"];</code>
+       * <code>string signature = 5 [json_name = "signature"];</code>
+       * @return The bytes for signature.
+       */
+      public com.google.protobuf.ByteString
+          getSignatureBytes() {
+        java.lang.Object ref = signature_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          signature_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Certificate signature.
+       * </pre>
+       *
+       * <code>string signature = 5 [json_name = "signature"];</code>
        * @param value The signature to set.
        * @return This builder for chaining.
        */
-      public Builder setSignature(com.google.protobuf.ByteString value) {
+      public Builder setSignature(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -19186,12 +20440,32 @@ public final class BlockchainOuterClass {
        * Certificate signature.
        * </pre>
        *
-       * <code>bytes signature = 5 [json_name = "signature"];</code>
+       * <code>string signature = 5 [json_name = "signature"];</code>
        * @return This builder for chaining.
        */
       public Builder clearSignature() {
         
         signature_ = getDefaultInstance().getSignature();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Certificate signature.
+       * </pre>
+       *
+       * <code>string signature = 5 [json_name = "signature"];</code>
+       * @param value The bytes for signature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSignatureBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        signature_ = value;
         onChanged();
         return this;
       }
@@ -19307,10 +20581,20 @@ public final class BlockchainOuterClass {
      * Hash of the block being voted on.
      * </pre>
      *
-     * <code>bytes block_hash = 3 [json_name = "blockHash"];</code>
+     * <code>string block_hash = 3 [json_name = "blockHash"];</code>
      * @return The blockHash.
      */
-    com.google.protobuf.ByteString getBlockHash();
+    java.lang.String getBlockHash();
+    /**
+     * <pre>
+     * Hash of the block being voted on.
+     * </pre>
+     *
+     * <code>string block_hash = 3 [json_name = "blockHash"];</code>
+     * @return The bytes for blockHash.
+     */
+    com.google.protobuf.ByteString
+        getBlockHashBytes();
 
     /**
      * <pre>
@@ -19361,7 +20645,7 @@ public final class BlockchainOuterClass {
     private VoteInfo() {
       type_ = 0;
       voter_ = "";
-      blockHash_ = com.google.protobuf.ByteString.EMPTY;
+      blockHash_ = "";
     }
 
     @java.lang.Override
@@ -19463,18 +20747,49 @@ public final class BlockchainOuterClass {
     }
 
     public static final int BLOCK_HASH_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString blockHash_;
+    private volatile java.lang.Object blockHash_;
     /**
      * <pre>
      * Hash of the block being voted on.
      * </pre>
      *
-     * <code>bytes block_hash = 3 [json_name = "blockHash"];</code>
+     * <code>string block_hash = 3 [json_name = "blockHash"];</code>
      * @return The blockHash.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getBlockHash() {
-      return blockHash_;
+    public java.lang.String getBlockHash() {
+      java.lang.Object ref = blockHash_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        blockHash_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Hash of the block being voted on.
+     * </pre>
+     *
+     * <code>string block_hash = 3 [json_name = "blockHash"];</code>
+     * @return The bytes for blockHash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getBlockHashBytes() {
+      java.lang.Object ref = blockHash_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        blockHash_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int ROUND_FIELD_NUMBER = 4;
@@ -19542,8 +20857,8 @@ public final class BlockchainOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(voter_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, voter_);
       }
-      if (!blockHash_.isEmpty()) {
-        output.writeBytes(3, blockHash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(blockHash_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, blockHash_);
       }
       if (round_ != 0) {
         output.writeInt32(4, round_);
@@ -19570,9 +20885,8 @@ public final class BlockchainOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(voter_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, voter_);
       }
-      if (!blockHash_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, blockHash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(blockHash_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, blockHash_);
       }
       if (round_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -19771,7 +21085,7 @@ public final class BlockchainOuterClass {
 
         voter_ = "";
 
-        blockHash_ = com.google.protobuf.ByteString.EMPTY;
+        blockHash_ = "";
 
         round_ = 0;
 
@@ -19866,8 +21180,9 @@ public final class BlockchainOuterClass {
           voter_ = other.voter_;
           onChanged();
         }
-        if (other.getBlockHash() != com.google.protobuf.ByteString.EMPTY) {
-          setBlockHash(other.getBlockHash());
+        if (!other.getBlockHash().isEmpty()) {
+          blockHash_ = other.blockHash_;
+          onChanged();
         }
         if (other.getRound() != 0) {
           setRound(other.getRound());
@@ -19915,7 +21230,7 @@ public final class BlockchainOuterClass {
                 break;
               } // case 18
               case 26: {
-                blockHash_ = input.readBytes();
+                blockHash_ = input.readStringRequireUtf8();
 
                 break;
               } // case 26
@@ -20120,29 +21435,59 @@ public final class BlockchainOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString blockHash_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object blockHash_ = "";
       /**
        * <pre>
        * Hash of the block being voted on.
        * </pre>
        *
-       * <code>bytes block_hash = 3 [json_name = "blockHash"];</code>
+       * <code>string block_hash = 3 [json_name = "blockHash"];</code>
        * @return The blockHash.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getBlockHash() {
-        return blockHash_;
+      public java.lang.String getBlockHash() {
+        java.lang.Object ref = blockHash_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          blockHash_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Hash of the block being voted on.
        * </pre>
        *
-       * <code>bytes block_hash = 3 [json_name = "blockHash"];</code>
+       * <code>string block_hash = 3 [json_name = "blockHash"];</code>
+       * @return The bytes for blockHash.
+       */
+      public com.google.protobuf.ByteString
+          getBlockHashBytes() {
+        java.lang.Object ref = blockHash_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          blockHash_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Hash of the block being voted on.
+       * </pre>
+       *
+       * <code>string block_hash = 3 [json_name = "blockHash"];</code>
        * @param value The blockHash to set.
        * @return This builder for chaining.
        */
-      public Builder setBlockHash(com.google.protobuf.ByteString value) {
+      public Builder setBlockHash(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -20156,12 +21501,32 @@ public final class BlockchainOuterClass {
        * Hash of the block being voted on.
        * </pre>
        *
-       * <code>bytes block_hash = 3 [json_name = "blockHash"];</code>
+       * <code>string block_hash = 3 [json_name = "blockHash"];</code>
        * @return This builder for chaining.
        */
       public Builder clearBlockHash() {
         
         blockHash_ = getDefaultInstance().getBlockHash();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Hash of the block being voted on.
+       * </pre>
+       *
+       * <code>string block_hash = 3 [json_name = "blockHash"];</code>
+       * @param value The bytes for blockHash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBlockHashBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        blockHash_ = value;
         onChanged();
         return this;
       }
@@ -21870,20 +23235,20 @@ public final class BlockchainOuterClass {
       "\022\026\n\006height\030\001 \001(\rR\006height\0224\n\tverbosity\030\002 " +
       "\001(\0162\026.pactus.BlockVerbosityR\tverbosity\"\203" +
       "\002\n\020GetBlockResponse\022\026\n\006height\030\001 \001(\rR\006hei" +
-      "ght\022\022\n\004hash\030\002 \001(\014R\004hash\022\022\n\004data\030\003 \001(\014R\004d" +
+      "ght\022\022\n\004hash\030\002 \001(\tR\004hash\022\022\n\004data\030\003 \001(\tR\004d" +
       "ata\022\035\n\nblock_time\030\004 \001(\rR\tblockTime\022/\n\006he" +
       "ader\030\005 \001(\0132\027.pactus.BlockHeaderInfoR\006hea" +
       "der\0224\n\tprev_cert\030\006 \001(\0132\027.pactus.Certific" +
       "ateInfoR\010prevCert\022)\n\003txs\030\007 \003(\0132\027.pactus." +
       "TransactionInfoR\003txs\"-\n\023GetBlockHashRequ" +
       "est\022\026\n\006height\030\001 \001(\rR\006height\"*\n\024GetBlockH" +
-      "ashResponse\022\022\n\004hash\030\001 \001(\014R\004hash\"+\n\025GetBl" +
-      "ockHeightRequest\022\022\n\004hash\030\001 \001(\014R\004hash\"0\n\026" +
+      "ashResponse\022\022\n\004hash\030\001 \001(\tR\004hash\"+\n\025GetBl" +
+      "ockHeightRequest\022\022\n\004hash\030\001 \001(\tR\004hash\"0\n\026" +
       "GetBlockHeightResponse\022\026\n\006height\030\001 \001(\rR\006" +
       "height\"\032\n\030GetBlockchainInfoRequest\"\325\002\n\031G" +
       "etBlockchainInfoResponse\022*\n\021last_block_h" +
       "eight\030\001 \001(\rR\017lastBlockHeight\022&\n\017last_blo" +
-      "ck_hash\030\002 \001(\014R\rlastBlockHash\022%\n\016total_ac" +
+      "ck_hash\030\002 \001(\tR\rlastBlockHash\022%\n\016total_ac" +
       "counts\030\003 \001(\005R\rtotalAccounts\022)\n\020total_val" +
       "idators\030\004 \001(\005R\017totalValidators\022\037\n\013total_" +
       "power\030\005 \001(\003R\ntotalPower\022\'\n\017committee_pow" +
@@ -21896,8 +23261,8 @@ public final class BlockchainOuterClass {
       "load_type\030\001 \001(\0162\023.pactus.PayloadTypeR\013pa" +
       "yloadType\"E\n\030GetTxPoolContentResponse\022)\n" +
       "\003txs\030\001 \003(\0132\027.pactus.TransactionInfoR\003txs" +
-      "\"\334\002\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\022" +
-      "\n\004data\030\002 \001(\014R\004data\022\035\n\npublic_key\030\003 \001(\tR\t" +
+      "\"\334\002\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022" +
+      "\n\004data\030\002 \001(\tR\004data\022\035\n\npublic_key\030\003 \001(\tR\t" +
       "publicKey\022\026\n\006number\030\004 \001(\005R\006number\022\024\n\005sta" +
       "ke\030\005 \001(\003R\005stake\022.\n\023last_bonding_height\030\006" +
       " \001(\rR\021lastBondingHeight\0222\n\025last_sortitio" +
@@ -21905,21 +23270,21 @@ public final class BlockchainOuterClass {
       "nbonding_height\030\010 \001(\rR\017unbondingHeight\022\030" +
       "\n\007address\030\t \001(\tR\007address\022-\n\022availability" +
       "_score\030\n \001(\001R\021availabilityScore\"\201\001\n\013Acco" +
-      "untInfo\022\022\n\004hash\030\001 \001(\014R\004hash\022\022\n\004data\030\002 \001(" +
-      "\014R\004data\022\026\n\006number\030\003 \001(\005R\006number\022\030\n\007balan" +
+      "untInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004data\030\002 \001(" +
+      "\tR\004data\022\026\n\006number\030\003 \001(\005R\006number\022\030\n\007balan" +
       "ce\030\004 \001(\003R\007balance\022\030\n\007address\030\005 \001(\tR\007addr" +
       "ess\"\304\001\n\017BlockHeaderInfo\022\030\n\007version\030\001 \001(\005" +
-      "R\007version\022&\n\017prev_block_hash\030\002 \001(\014R\rprev" +
-      "BlockHash\022\035\n\nstate_root\030\003 \001(\014R\tstateRoot" +
-      "\022%\n\016sortition_seed\030\004 \001(\014R\rsortitionSeed\022" +
+      "R\007version\022&\n\017prev_block_hash\030\002 \001(\tR\rprev" +
+      "BlockHash\022\035\n\nstate_root\030\003 \001(\tR\tstateRoot" +
+      "\022%\n\016sortition_seed\030\004 \001(\tR\rsortitionSeed\022" +
       ")\n\020proposer_address\030\005 \001(\tR\017proposerAddre" +
-      "ss\"\227\001\n\017CertificateInfo\022\022\n\004hash\030\001 \001(\014R\004ha" +
+      "ss\"\227\001\n\017CertificateInfo\022\022\n\004hash\030\001 \001(\tR\004ha" +
       "sh\022\024\n\005round\030\002 \001(\005R\005round\022\036\n\ncommitters\030\003" +
       " \003(\005R\ncommitters\022\034\n\tabsentees\030\004 \003(\005R\tabs" +
-      "entees\022\034\n\tsignature\030\005 \001(\014R\tsignature\"\261\001\n" +
+      "entees\022\034\n\tsignature\030\005 \001(\tR\tsignature\"\261\001\n" +
       "\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.pactus.VoteTyp" +
       "eR\004type\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nblock_h" +
-      "ash\030\003 \001(\014R\tblockHash\022\024\n\005round\030\004 \001(\005R\005rou" +
+      "ash\030\003 \001(\tR\tblockHash\022\024\n\005round\030\004 \001(\005R\005rou" +
       "nd\022\031\n\010cp_round\030\005 \001(\005R\007cpRound\022\031\n\010cp_valu" +
       "e\030\006 \001(\005R\007cpValue\"\227\001\n\rConsensusInfo\022\030\n\007ad" +
       "dress\030\001 \001(\tR\007address\022\026\n\006Active\030\002 \001(\010R\006Ac" +

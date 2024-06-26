@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -133,16 +134,21 @@ func (s *walletServer) GetTotalBalance(_ context.Context,
 func (s *walletServer) SignRawTransaction(_ context.Context,
 	req *pactus.SignRawTransactionRequest,
 ) (*pactus.SignRawTransactionResponse, error) {
+	rawBytes, err := hex.DecodeString(req.RawTransaction)
+	if err != nil {
+		return nil, err
+	}
+
 	id, data, err := s.walletManager.SignRawTransaction(
-		req.WalletName, req.Password, req.RawTransaction,
+		req.WalletName, req.Password, rawBytes,
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pactus.SignRawTransactionResponse{
-		TransactionId:        id,
-		SignedRawTransaction: data,
+		TransactionId:        hex.EncodeToString(id),
+		SignedRawTransaction: hex.EncodeToString(data),
 	}, nil
 }
 

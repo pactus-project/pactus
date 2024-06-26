@@ -24,10 +24,10 @@ impl serde::Serialize for AccountInfo {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.AccountInfo", len)?;
         if !self.hash.is_empty() {
-            struct_ser.serialize_field("hash", pbjson::private::base64::encode(&self.hash).as_str())?;
+            struct_ser.serialize_field("hash", &self.hash)?;
         }
         if !self.data.is_empty() {
-            struct_ser.serialize_field("data", pbjson::private::base64::encode(&self.data).as_str())?;
+            struct_ser.serialize_field("data", &self.data)?;
         }
         if self.number != 0 {
             struct_ser.serialize_field("number", &self.number)?;
@@ -118,17 +118,13 @@ impl<'de> serde::Deserialize<'de> for AccountInfo {
                             if hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("hash"));
                             }
-                            hash__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            hash__ = Some(map.next_value()?);
                         }
                         GeneratedField::Data => {
                             if data__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("data"));
                             }
-                            data__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            data__ = Some(map.next_value()?);
                         }
                         GeneratedField::Number => {
                             if number__.is_some() {
@@ -413,13 +409,13 @@ impl serde::Serialize for BlockHeaderInfo {
             struct_ser.serialize_field("version", &self.version)?;
         }
         if !self.prev_block_hash.is_empty() {
-            struct_ser.serialize_field("prevBlockHash", pbjson::private::base64::encode(&self.prev_block_hash).as_str())?;
+            struct_ser.serialize_field("prevBlockHash", &self.prev_block_hash)?;
         }
         if !self.state_root.is_empty() {
-            struct_ser.serialize_field("stateRoot", pbjson::private::base64::encode(&self.state_root).as_str())?;
+            struct_ser.serialize_field("stateRoot", &self.state_root)?;
         }
         if !self.sortition_seed.is_empty() {
-            struct_ser.serialize_field("sortitionSeed", pbjson::private::base64::encode(&self.sortition_seed).as_str())?;
+            struct_ser.serialize_field("sortitionSeed", &self.sortition_seed)?;
         }
         if !self.proposer_address.is_empty() {
             struct_ser.serialize_field("proposerAddress", &self.proposer_address)?;
@@ -516,25 +512,19 @@ impl<'de> serde::Deserialize<'de> for BlockHeaderInfo {
                             if prev_block_hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("prevBlockHash"));
                             }
-                            prev_block_hash__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            prev_block_hash__ = Some(map.next_value()?);
                         }
                         GeneratedField::StateRoot => {
                             if state_root__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("stateRoot"));
                             }
-                            state_root__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            state_root__ = Some(map.next_value()?);
                         }
                         GeneratedField::SortitionSeed => {
                             if sortition_seed__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("sortitionSeed"));
                             }
-                            sortition_seed__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            sortition_seed__ = Some(map.next_value()?);
                         }
                         GeneratedField::ProposerAddress => {
                             if proposer_address__.is_some() {
@@ -645,7 +635,7 @@ impl serde::Serialize for BroadcastTransactionRequest {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.BroadcastTransactionRequest", len)?;
         if !self.signed_raw_transaction.is_empty() {
-            struct_ser.serialize_field("signedRawTransaction", pbjson::private::base64::encode(&self.signed_raw_transaction).as_str())?;
+            struct_ser.serialize_field("signedRawTransaction", &self.signed_raw_transaction)?;
         }
         struct_ser.end()
     }
@@ -712,9 +702,7 @@ impl<'de> serde::Deserialize<'de> for BroadcastTransactionRequest {
                             if signed_raw_transaction__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("signedRawTransaction"));
                             }
-                            signed_raw_transaction__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            signed_raw_transaction__ = Some(map.next_value()?);
                         }
                     }
                 }
@@ -739,7 +727,7 @@ impl serde::Serialize for BroadcastTransactionResponse {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.BroadcastTransactionResponse", len)?;
         if !self.id.is_empty() {
-            struct_ser.serialize_field("id", pbjson::private::base64::encode(&self.id).as_str())?;
+            struct_ser.serialize_field("id", &self.id)?;
         }
         struct_ser.end()
     }
@@ -805,9 +793,7 @@ impl<'de> serde::Deserialize<'de> for BroadcastTransactionResponse {
                             if id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("id"));
                             }
-                            id__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            id__ = Some(map.next_value()?);
                         }
                     }
                 }
@@ -1087,7 +1073,7 @@ impl serde::Serialize for CertificateInfo {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.CertificateInfo", len)?;
         if !self.hash.is_empty() {
-            struct_ser.serialize_field("hash", pbjson::private::base64::encode(&self.hash).as_str())?;
+            struct_ser.serialize_field("hash", &self.hash)?;
         }
         if self.round != 0 {
             struct_ser.serialize_field("round", &self.round)?;
@@ -1099,7 +1085,7 @@ impl serde::Serialize for CertificateInfo {
             struct_ser.serialize_field("absentees", &self.absentees)?;
         }
         if !self.signature.is_empty() {
-            struct_ser.serialize_field("signature", pbjson::private::base64::encode(&self.signature).as_str())?;
+            struct_ser.serialize_field("signature", &self.signature)?;
         }
         struct_ser.end()
     }
@@ -1181,9 +1167,7 @@ impl<'de> serde::Deserialize<'de> for CertificateInfo {
                             if hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("hash"));
                             }
-                            hash__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            hash__ = Some(map.next_value()?);
                         }
                         GeneratedField::Round => {
                             if round__.is_some() {
@@ -1215,9 +1199,7 @@ impl<'de> serde::Deserialize<'de> for CertificateInfo {
                             if signature__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("signature"));
                             }
-                            signature__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            signature__ = Some(map.next_value()?);
                         }
                     }
                 }
@@ -2218,7 +2200,7 @@ impl serde::Serialize for GetBlockHashResponse {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetBlockHashResponse", len)?;
         if !self.hash.is_empty() {
-            struct_ser.serialize_field("hash", pbjson::private::base64::encode(&self.hash).as_str())?;
+            struct_ser.serialize_field("hash", &self.hash)?;
         }
         struct_ser.end()
     }
@@ -2284,9 +2266,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockHashResponse {
                             if hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("hash"));
                             }
-                            hash__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            hash__ = Some(map.next_value()?);
                         }
                     }
                 }
@@ -2311,7 +2291,7 @@ impl serde::Serialize for GetBlockHeightRequest {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetBlockHeightRequest", len)?;
         if !self.hash.is_empty() {
-            struct_ser.serialize_field("hash", pbjson::private::base64::encode(&self.hash).as_str())?;
+            struct_ser.serialize_field("hash", &self.hash)?;
         }
         struct_ser.end()
     }
@@ -2377,9 +2357,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockHeightRequest {
                             if hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("hash"));
                             }
-                            hash__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            hash__ = Some(map.next_value()?);
                         }
                     }
                 }
@@ -2630,10 +2608,10 @@ impl serde::Serialize for GetBlockResponse {
             struct_ser.serialize_field("height", &self.height)?;
         }
         if !self.hash.is_empty() {
-            struct_ser.serialize_field("hash", pbjson::private::base64::encode(&self.hash).as_str())?;
+            struct_ser.serialize_field("hash", &self.hash)?;
         }
         if !self.data.is_empty() {
-            struct_ser.serialize_field("data", pbjson::private::base64::encode(&self.data).as_str())?;
+            struct_ser.serialize_field("data", &self.data)?;
         }
         if self.block_time != 0 {
             struct_ser.serialize_field("blockTime", &self.block_time)?;
@@ -2745,17 +2723,13 @@ impl<'de> serde::Deserialize<'de> for GetBlockResponse {
                             if hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("hash"));
                             }
-                            hash__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            hash__ = Some(map.next_value()?);
                         }
                         GeneratedField::Data => {
                             if data__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("data"));
                             }
-                            data__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            data__ = Some(map.next_value()?);
                         }
                         GeneratedField::BlockTime => {
                             if block_time__.is_some() {
@@ -2904,7 +2878,7 @@ impl serde::Serialize for GetBlockchainInfoResponse {
             struct_ser.serialize_field("lastBlockHeight", &self.last_block_height)?;
         }
         if !self.last_block_hash.is_empty() {
-            struct_ser.serialize_field("lastBlockHash", pbjson::private::base64::encode(&self.last_block_hash).as_str())?;
+            struct_ser.serialize_field("lastBlockHash", &self.last_block_hash)?;
         }
         if self.total_accounts != 0 {
             struct_ser.serialize_field("totalAccounts", &self.total_accounts)?;
@@ -3024,9 +2998,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                             if last_block_hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("lastBlockHash"));
                             }
-                            last_block_hash__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            last_block_hash__ = Some(map.next_value()?);
                         }
                         GeneratedField::TotalAccounts => {
                             if total_accounts__.is_some() {
@@ -3911,7 +3883,7 @@ impl serde::Serialize for GetNodeInfoResponse {
             struct_ser.serialize_field("agent", &self.agent)?;
         }
         if !self.peer_id.is_empty() {
-            struct_ser.serialize_field("peerId", pbjson::private::base64::encode(&self.peer_id).as_str())?;
+            struct_ser.serialize_field("peerId", &self.peer_id)?;
         }
         if self.started_at != 0 {
             struct_ser.serialize_field("startedAt", ToString::to_string(&self.started_at).as_str())?;
@@ -4059,9 +4031,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                             if peer_id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("peerId"));
                             }
-                            peer_id__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            peer_id__ = Some(map.next_value()?);
                         }
                         GeneratedField::StartedAt => {
                             if started_at__.is_some() {
@@ -4535,7 +4505,7 @@ impl serde::Serialize for GetRawTransactionResponse {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetRawTransactionResponse", len)?;
         if !self.raw_transaction.is_empty() {
-            struct_ser.serialize_field("rawTransaction", pbjson::private::base64::encode(&self.raw_transaction).as_str())?;
+            struct_ser.serialize_field("rawTransaction", &self.raw_transaction)?;
         }
         struct_ser.end()
     }
@@ -4602,9 +4572,7 @@ impl<'de> serde::Deserialize<'de> for GetRawTransactionResponse {
                             if raw_transaction__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("rawTransaction"));
                             }
-                            raw_transaction__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            raw_transaction__ = Some(map.next_value()?);
                         }
                     }
                 }
@@ -5333,7 +5301,7 @@ impl serde::Serialize for GetTransactionRequest {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetTransactionRequest", len)?;
         if !self.id.is_empty() {
-            struct_ser.serialize_field("id", pbjson::private::base64::encode(&self.id).as_str())?;
+            struct_ser.serialize_field("id", &self.id)?;
         }
         if self.verbosity != 0 {
             let v = TransactionVerbosity::from_i32(self.verbosity)
@@ -5408,9 +5376,7 @@ impl<'de> serde::Deserialize<'de> for GetTransactionRequest {
                             if id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("id"));
                             }
-                            id__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            id__ = Some(map.next_value()?);
                         }
                         GeneratedField::Verbosity => {
                             if verbosity__.is_some() {
@@ -6860,7 +6826,7 @@ impl serde::Serialize for PayloadSortition {
             struct_ser.serialize_field("address", &self.address)?;
         }
         if !self.proof.is_empty() {
-            struct_ser.serialize_field("proof", pbjson::private::base64::encode(&self.proof).as_str())?;
+            struct_ser.serialize_field("proof", &self.proof)?;
         }
         struct_ser.end()
     }
@@ -6936,9 +6902,7 @@ impl<'de> serde::Deserialize<'de> for PayloadSortition {
                             if proof__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("proof"));
                             }
-                            proof__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            proof__ = Some(map.next_value()?);
                         }
                     }
                 }
@@ -7460,7 +7424,7 @@ impl serde::Serialize for PeerInfo {
             struct_ser.serialize_field("agent", &self.agent)?;
         }
         if !self.peer_id.is_empty() {
-            struct_ser.serialize_field("peerId", pbjson::private::base64::encode(&self.peer_id).as_str())?;
+            struct_ser.serialize_field("peerId", &self.peer_id)?;
         }
         if !self.consensus_keys.is_empty() {
             struct_ser.serialize_field("consensusKeys", &self.consensus_keys)?;
@@ -7472,7 +7436,7 @@ impl serde::Serialize for PeerInfo {
             struct_ser.serialize_field("services", &self.services)?;
         }
         if !self.last_block_hash.is_empty() {
-            struct_ser.serialize_field("lastBlockHash", pbjson::private::base64::encode(&self.last_block_hash).as_str())?;
+            struct_ser.serialize_field("lastBlockHash", &self.last_block_hash)?;
         }
         if self.height != 0 {
             struct_ser.serialize_field("height", &self.height)?;
@@ -7686,9 +7650,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                             if peer_id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("peerId"));
                             }
-                            peer_id__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            peer_id__ = Some(map.next_value()?);
                         }
                         GeneratedField::ConsensusKeys => {
                             if consensus_keys__.is_some() {
@@ -7714,9 +7676,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                             if last_block_hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("lastBlockHash"));
                             }
-                            last_block_hash__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            last_block_hash__ = Some(map.next_value()?);
                         }
                         GeneratedField::Height => {
                             if height__.is_some() {
@@ -8079,7 +8039,7 @@ impl serde::Serialize for SignRawTransactionRequest {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
         if !self.raw_transaction.is_empty() {
-            struct_ser.serialize_field("rawTransaction", pbjson::private::base64::encode(&self.raw_transaction).as_str())?;
+            struct_ser.serialize_field("rawTransaction", &self.raw_transaction)?;
         }
         if !self.password.is_empty() {
             struct_ser.serialize_field("password", &self.password)?;
@@ -8164,9 +8124,7 @@ impl<'de> serde::Deserialize<'de> for SignRawTransactionRequest {
                             if raw_transaction__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("rawTransaction"));
                             }
-                            raw_transaction__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            raw_transaction__ = Some(map.next_value()?);
                         }
                         GeneratedField::Password => {
                             if password__.is_some() {
@@ -8202,10 +8160,10 @@ impl serde::Serialize for SignRawTransactionResponse {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.SignRawTransactionResponse", len)?;
         if !self.transaction_id.is_empty() {
-            struct_ser.serialize_field("transactionId", pbjson::private::base64::encode(&self.transaction_id).as_str())?;
+            struct_ser.serialize_field("transactionId", &self.transaction_id)?;
         }
         if !self.signed_raw_transaction.is_empty() {
-            struct_ser.serialize_field("signedRawTransaction", pbjson::private::base64::encode(&self.signed_raw_transaction).as_str())?;
+            struct_ser.serialize_field("signedRawTransaction", &self.signed_raw_transaction)?;
         }
         struct_ser.end()
     }
@@ -8277,17 +8235,13 @@ impl<'de> serde::Deserialize<'de> for SignRawTransactionResponse {
                             if transaction_id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("transactionId"));
                             }
-                            transaction_id__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            transaction_id__ = Some(map.next_value()?);
                         }
                         GeneratedField::SignedRawTransaction => {
                             if signed_raw_transaction__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("signedRawTransaction"));
                             }
-                            signed_raw_transaction__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            signed_raw_transaction__ = Some(map.next_value()?);
                         }
                     }
                 }
@@ -8343,10 +8297,10 @@ impl serde::Serialize for TransactionInfo {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.TransactionInfo", len)?;
         if !self.id.is_empty() {
-            struct_ser.serialize_field("id", pbjson::private::base64::encode(&self.id).as_str())?;
+            struct_ser.serialize_field("id", &self.id)?;
         }
         if !self.data.is_empty() {
-            struct_ser.serialize_field("data", pbjson::private::base64::encode(&self.data).as_str())?;
+            struct_ser.serialize_field("data", &self.data)?;
         }
         if self.version != 0 {
             struct_ser.serialize_field("version", &self.version)?;
@@ -8372,7 +8326,7 @@ impl serde::Serialize for TransactionInfo {
             struct_ser.serialize_field("publicKey", &self.public_key)?;
         }
         if !self.signature.is_empty() {
-            struct_ser.serialize_field("signature", pbjson::private::base64::encode(&self.signature).as_str())?;
+            struct_ser.serialize_field("signature", &self.signature)?;
         }
         if let Some(v) = self.payload.as_ref() {
             match v {
@@ -8512,17 +8466,13 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                             if id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("id"));
                             }
-                            id__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            id__ = Some(map.next_value()?);
                         }
                         GeneratedField::Data => {
                             if data__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("data"));
                             }
-                            data__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            data__ = Some(map.next_value()?);
                         }
                         GeneratedField::Version => {
                             if version__.is_some() {
@@ -8578,9 +8528,7 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                             if signature__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("signature"));
                             }
-                            signature__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            signature__ = Some(map.next_value()?);
                         }
                         GeneratedField::Transfer => {
                             if payload__.is_some() {
@@ -8934,10 +8882,10 @@ impl serde::Serialize for ValidatorInfo {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.ValidatorInfo", len)?;
         if !self.hash.is_empty() {
-            struct_ser.serialize_field("hash", pbjson::private::base64::encode(&self.hash).as_str())?;
+            struct_ser.serialize_field("hash", &self.hash)?;
         }
         if !self.data.is_empty() {
-            struct_ser.serialize_field("data", pbjson::private::base64::encode(&self.data).as_str())?;
+            struct_ser.serialize_field("data", &self.data)?;
         }
         if !self.public_key.is_empty() {
             struct_ser.serialize_field("publicKey", &self.public_key)?;
@@ -9068,17 +9016,13 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                             if hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("hash"));
                             }
-                            hash__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            hash__ = Some(map.next_value()?);
                         }
                         GeneratedField::Data => {
                             if data__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("data"));
                             }
-                            data__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            data__ = Some(map.next_value()?);
                         }
                         GeneratedField::PublicKey => {
                             if public_key__.is_some() {
@@ -9195,7 +9139,7 @@ impl serde::Serialize for VoteInfo {
             struct_ser.serialize_field("voter", &self.voter)?;
         }
         if !self.block_hash.is_empty() {
-            struct_ser.serialize_field("blockHash", pbjson::private::base64::encode(&self.block_hash).as_str())?;
+            struct_ser.serialize_field("blockHash", &self.block_hash)?;
         }
         if self.round != 0 {
             struct_ser.serialize_field("round", &self.round)?;
@@ -9305,9 +9249,7 @@ impl<'de> serde::Deserialize<'de> for VoteInfo {
                             if block_hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("blockHash"));
                             }
-                            block_hash__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
+                            block_hash__ = Some(map.next_value()?);
                         }
                         GeneratedField::Round => {
                             if round__.is_some() {

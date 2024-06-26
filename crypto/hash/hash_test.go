@@ -70,10 +70,10 @@ func TestHash160(t *testing.T) {
 func TestHex(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	hash := ts.RandHash()
-	res := hash.Hex()
+	h := ts.RandHash()
+	res := h.Hex()
 
-	assert.Equal(t, res, hex.EncodeToString(hash.Bytes()))
+	assert.Equal(t, res, hex.EncodeToString(h.Bytes()))
 }
 
 func TestHashBasicCheck(t *testing.T) {
