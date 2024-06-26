@@ -16,17 +16,6 @@ import (
 
 func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if s.enableAuth {
-		user, password, ok := r.BasicAuth()
-		if !ok {
-			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
-
-			return
-		}
-
-		ctx = s.basicAuth(ctx, user, password)
-	}
 
 	onlyConnected := false
 
@@ -115,17 +104,6 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if s.enableAuth {
-		user, password, ok := r.BasicAuth()
-		if !ok {
-			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
-
-			return
-		}
-
-		ctx = s.basicAuth(ctx, user, password)
-	}
 
 	res, err := s.network.GetNodeInfo(ctx,
 		&pactus.GetNodeInfoRequest{})
