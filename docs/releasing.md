@@ -9,8 +9,6 @@ Before proceeding with the release process,
 ensure that your `origin` remote is set to `git@github.com:pactus-project/pactus.git` and not your local fork.
 It is recommended to re-clone the project in a location other than your current working directory.
 Also, make sure that you have set up GPG for your GitHub account.
-Make sure to [set up](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners)
-a self-hosted runner for releasing Pactus for macOS-ARM.
 
 ## 2. Fetch the Latest Code
 
@@ -34,7 +32,7 @@ pacman -Suyyy
 ```
 
 Wait for the build to finish. If everything is successful, proceed to the next step.
-If not, update the dependency DLLs inside `.github/releasers/releaser_gui_windows.sh` and rerun the command.
+If not, update the dependency DLLs inside `.github/releasers/releaser_gui_windows.sh` and re-run the command.
 
 ## 4. Set Environment Variables
 
@@ -42,9 +40,9 @@ Create environment variables for the release version, which will be used in subs
 Keep your terminal open for further steps.
 
 ```bash
-PRV_VER="1.1.0"
-CUR_VER="1.2.0"
-NEXT_VER="1.3.0"
+PRV_VER="1.2.0"
+CUR_VER="1.3.0"
+NEXT_VER="1.4.0"
 BASE_BRANCH="main"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"

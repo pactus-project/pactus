@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/pactus-project/pactus/compare/v1.2.0...v1.3.0) (2024-06-27)
+
+### Feat
+
+- get txpool API ([#1364](https://github.com/pactus-project/pactus/pull/1364))
+- **network**: permanent peer store ([#1354](https://github.com/pactus-project/pactus/pull/1354))
+
+### Fix
+
+- **grpc**: change bytes type to hex string ([#1371](https://github.com/pactus-project/pactus/pull/1371))
+- **http**: add basic auth middleware for http server ([#1372](https://github.com/pactus-project/pactus/pull/1372))
+- **network**: use goroutines for sending streams ([#1365](https://github.com/pactus-project/pactus/pull/1365))
+
 ## [1.2.0](https://github.com/pactus-project/pactus/compare/v1.1.0...v1.2.0) (2024-06-20)
 
 ### Feat
