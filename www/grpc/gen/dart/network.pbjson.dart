@@ -103,7 +103,7 @@ const PeerInfo$json = const {
     const {'1': 'agent', '3': 3, '4': 1, '5': 9, '10': 'agent'},
     const {'1': 'peer_id', '3': 4, '4': 1, '5': 9, '10': 'peerId'},
     const {'1': 'consensus_keys', '3': 5, '4': 3, '5': 9, '10': 'consensusKeys'},
-    const {'1': 'consensus_address', '3': 6, '4': 3, '5': 9, '10': 'consensusAddress'},
+    const {'1': 'consensus_addresses', '3': 6, '4': 3, '5': 9, '10': 'consensusAddresses'},
     const {'1': 'services', '3': 7, '4': 1, '5': 13, '10': 'services'},
     const {'1': 'last_block_hash', '3': 8, '4': 1, '5': 9, '10': 'lastBlockHash'},
     const {'1': 'height', '3': 9, '4': 1, '5': 13, '10': 'height'},
@@ -143,7 +143,7 @@ const PeerInfo_ReceivedBytesEntry$json = const {
 };
 
 /// Descriptor for `PeerInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode('CghQZWVySW5mbxIWCgZzdGF0dXMYASABKAVSBnN0YXR1cxIYCgdtb25pa2VyGAIgASgJUgdtb25pa2VyEhQKBWFnZW50GAMgASgJUgVhZ2VudBIXCgdwZWVyX2lkGAQgASgJUgZwZWVySWQSJQoOY29uc2Vuc3VzX2tleXMYBSADKAlSDWNvbnNlbnN1c0tleXMSKwoRY29uc2Vuc3VzX2FkZHJlc3MYBiADKAlSEGNvbnNlbnN1c0FkZHJlc3MSGgoIc2VydmljZXMYByABKA1SCHNlcnZpY2VzEiYKD2xhc3RfYmxvY2tfaGFzaBgIIAEoCVINbGFzdEJsb2NrSGFzaBIWCgZoZWlnaHQYCSABKA1SBmhlaWdodBIpChByZWNlaXZlZF9idW5kbGVzGAogASgFUg9yZWNlaXZlZEJ1bmRsZXMSJwoPaW52YWxpZF9idW5kbGVzGAsgASgFUg5pbnZhbGlkQnVuZGxlcxIbCglsYXN0X3NlbnQYDCABKANSCGxhc3RTZW50EiMKDWxhc3RfcmVjZWl2ZWQYDSABKANSDGxhc3RSZWNlaXZlZBI+CgpzZW50X2J5dGVzGA4gAygLMh8ucGFjdHVzLlBlZXJJbmZvLlNlbnRCeXRlc0VudHJ5UglzZW50Qnl0ZXMSSgoOcmVjZWl2ZWRfYnl0ZXMYDyADKAsyIy5wYWN0dXMuUGVlckluZm8uUmVjZWl2ZWRCeXRlc0VudHJ5Ug1yZWNlaXZlZEJ5dGVzEhgKB2FkZHJlc3MYECABKAlSB2FkZHJlc3MSHAoJZGlyZWN0aW9uGBEgASgJUglkaXJlY3Rpb24SHAoJcHJvdG9jb2xzGBIgAygJUglwcm90b2NvbHMSJQoOdG90YWxfc2Vzc2lvbnMYEyABKAVSDXRvdGFsU2Vzc2lvbnMSLQoSY29tcGxldGVkX3Nlc3Npb25zGBQgASgFUhFjb21wbGV0ZWRTZXNzaW9ucxo8Cg5TZW50Qnl0ZXNFbnRyeRIQCgNrZXkYASABKAVSA2tleRIUCgV2YWx1ZRgCIAEoA1IFdmFsdWU6AjgBGkAKElJlY2VpdmVkQnl0ZXNFbnRyeRIQCgNrZXkYASABKAVSA2tleRIUCgV2YWx1ZRgCIAEoA1IFdmFsdWU6AjgB');
+final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode('CghQZWVySW5mbxIWCgZzdGF0dXMYASABKAVSBnN0YXR1cxIYCgdtb25pa2VyGAIgASgJUgdtb25pa2VyEhQKBWFnZW50GAMgASgJUgVhZ2VudBIXCgdwZWVyX2lkGAQgASgJUgZwZWVySWQSJQoOY29uc2Vuc3VzX2tleXMYBSADKAlSDWNvbnNlbnN1c0tleXMSLwoTY29uc2Vuc3VzX2FkZHJlc3NlcxgGIAMoCVISY29uc2Vuc3VzQWRkcmVzc2VzEhoKCHNlcnZpY2VzGAcgASgNUghzZXJ2aWNlcxImCg9sYXN0X2Jsb2NrX2hhc2gYCCABKAlSDWxhc3RCbG9ja0hhc2gSFgoGaGVpZ2h0GAkgASgNUgZoZWlnaHQSKQoQcmVjZWl2ZWRfYnVuZGxlcxgKIAEoBVIPcmVjZWl2ZWRCdW5kbGVzEicKD2ludmFsaWRfYnVuZGxlcxgLIAEoBVIOaW52YWxpZEJ1bmRsZXMSGwoJbGFzdF9zZW50GAwgASgDUghsYXN0U2VudBIjCg1sYXN0X3JlY2VpdmVkGA0gASgDUgxsYXN0UmVjZWl2ZWQSPgoKc2VudF9ieXRlcxgOIAMoCzIfLnBhY3R1cy5QZWVySW5mby5TZW50Qnl0ZXNFbnRyeVIJc2VudEJ5dGVzEkoKDnJlY2VpdmVkX2J5dGVzGA8gAygLMiMucGFjdHVzLlBlZXJJbmZvLlJlY2VpdmVkQnl0ZXNFbnRyeVINcmVjZWl2ZWRCeXRlcxIYCgdhZGRyZXNzGBAgASgJUgdhZGRyZXNzEhwKCWRpcmVjdGlvbhgRIAEoCVIJZGlyZWN0aW9uEhwKCXByb3RvY29scxgSIAMoCVIJcHJvdG9jb2xzEiUKDnRvdGFsX3Nlc3Npb25zGBMgASgFUg10b3RhbFNlc3Npb25zEi0KEmNvbXBsZXRlZF9zZXNzaW9ucxgUIAEoBVIRY29tcGxldGVkU2Vzc2lvbnMaPAoOU2VudEJ5dGVzRW50cnkSEAoDa2V5GAEgASgFUgNrZXkSFAoFdmFsdWUYAiABKANSBXZhbHVlOgI4ARpAChJSZWNlaXZlZEJ5dGVzRW50cnkSEAoDa2V5GAEgASgFUgNrZXkSFAoFdmFsdWUYAiABKANSBXZhbHVlOgI4AQ==');
 const $core.Map<$core.String, $core.dynamic> NetworkServiceBase$json = const {
   '1': 'Network',
   '2': const [

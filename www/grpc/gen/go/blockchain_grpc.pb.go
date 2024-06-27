@@ -63,7 +63,7 @@ type BlockchainClient interface {
 	// GetPublicKey retrieves the public key of an account based on the provided
 	// address.
 	GetPublicKey(ctx context.Context, in *GetPublicKeyRequest, opts ...grpc.CallOption) (*GetPublicKeyResponse, error)
-	// GetTxPoolContent retrieves current transactions on the TXPool.
+	// GetTxPoolContent retrieves current transactions in the transaction pool.
 	GetTxPoolContent(ctx context.Context, in *GetTxPoolContentRequest, opts ...grpc.CallOption) (*GetTxPoolContentResponse, error)
 }
 
@@ -216,7 +216,7 @@ type BlockchainServer interface {
 	// GetPublicKey retrieves the public key of an account based on the provided
 	// address.
 	GetPublicKey(context.Context, *GetPublicKeyRequest) (*GetPublicKeyResponse, error)
-	// GetTxPoolContent retrieves current transactions on the TXPool.
+	// GetTxPoolContent retrieves current transactions in the transaction pool.
 	GetTxPoolContent(context.Context, *GetTxPoolContentRequest) (*GetTxPoolContentResponse, error)
 }
 

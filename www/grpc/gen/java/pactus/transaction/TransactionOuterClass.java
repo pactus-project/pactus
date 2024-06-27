@@ -16,7 +16,7 @@ public final class TransactionOuterClass {
   }
   /**
    * <pre>
-   * Enumeration for different types of transaction payload.
+   * Enumeration for different types of transaction payloads.
    * </pre>
    *
    * Protobuf enum {@code pactus.PayloadType}
@@ -212,7 +212,7 @@ public final class TransactionOuterClass {
 
   /**
    * <pre>
-   * Enumeration for verbosity level when requesting transaction details.
+   * Enumeration for verbosity levels when requesting transaction details.
    * </pre>
    *
    * Protobuf enum {@code pactus.TransactionVerbosity}
@@ -229,7 +229,7 @@ public final class TransactionOuterClass {
     TRANSACTION_DATA(0),
     /**
      * <pre>
-     * Request transaction details.
+     * Request detailed transaction information.
      * </pre>
      *
      * <code>TRANSACTION_INFO = 1;</code>
@@ -248,7 +248,7 @@ public final class TransactionOuterClass {
     public static final int TRANSACTION_DATA_VALUE = 0;
     /**
      * <pre>
-     * Request transaction details.
+     * Request detailed transaction information.
      * </pre>
      *
      * <code>TRANSACTION_INFO = 1;</code>
@@ -344,7 +344,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction ID.
+     * The unique ID of the transaction to retrieve.
      * </pre>
      *
      * <code>string id = 1 [json_name = "id"];</code>
@@ -353,7 +353,7 @@ public final class TransactionOuterClass {
     java.lang.String getId();
     /**
      * <pre>
-     * Transaction ID.
+     * The unique ID of the transaction to retrieve.
      * </pre>
      *
      * <code>string id = 1 [json_name = "id"];</code>
@@ -364,7 +364,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Verbosity level for transaction details.
+     * The verbosity level for transaction details.
      * </pre>
      *
      * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -373,7 +373,7 @@ public final class TransactionOuterClass {
     int getVerbosityValue();
     /**
      * <pre>
-     * Verbosity level for transaction details.
+     * The verbosity level for transaction details.
      * </pre>
      *
      * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -431,7 +431,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object id_;
     /**
      * <pre>
-     * Transaction ID.
+     * The unique ID of the transaction to retrieve.
      * </pre>
      *
      * <code>string id = 1 [json_name = "id"];</code>
@@ -452,7 +452,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Transaction ID.
+     * The unique ID of the transaction to retrieve.
      * </pre>
      *
      * <code>string id = 1 [json_name = "id"];</code>
@@ -477,7 +477,7 @@ public final class TransactionOuterClass {
     private int verbosity_;
     /**
      * <pre>
-     * Verbosity level for transaction details.
+     * The verbosity level for transaction details.
      * </pre>
      *
      * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -488,7 +488,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Verbosity level for transaction details.
+     * The verbosity level for transaction details.
      * </pre>
      *
      * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -843,7 +843,7 @@ public final class TransactionOuterClass {
       private java.lang.Object id_ = "";
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the transaction to retrieve.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -863,7 +863,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the transaction to retrieve.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -884,7 +884,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the transaction to retrieve.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -903,7 +903,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the transaction to retrieve.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -917,7 +917,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the transaction to retrieve.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -939,7 +939,7 @@ public final class TransactionOuterClass {
       private int verbosity_ = 0;
       /**
        * <pre>
-       * Verbosity level for transaction details.
+       * The verbosity level for transaction details.
        * </pre>
        *
        * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -950,7 +950,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Verbosity level for transaction details.
+       * The verbosity level for transaction details.
        * </pre>
        *
        * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -965,7 +965,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Verbosity level for transaction details.
+       * The verbosity level for transaction details.
        * </pre>
        *
        * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -979,7 +979,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Verbosity level for transaction details.
+       * The verbosity level for transaction details.
        * </pre>
        *
        * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -997,7 +997,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Verbosity level for transaction details.
+       * The verbosity level for transaction details.
        * </pre>
        *
        * <code>.pactus.TransactionVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -1079,7 +1079,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Height of the block containing the transaction.
+     * The height of the block containing the transaction.
      * </pre>
      *
      * <code>uint32 block_height = 1 [json_name = "blockHeight"];</code>
@@ -1089,7 +1089,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Time of the block containing the transaction.
+     * The UNIX timestamp of the block containing the transaction.
      * </pre>
      *
      * <code>uint32 block_time = 2 [json_name = "blockTime"];</code>
@@ -1099,7 +1099,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Information about the transaction.
+     * Detailed information about the transaction.
      * </pre>
      *
      * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1108,7 +1108,7 @@ public final class TransactionOuterClass {
     boolean hasTransaction();
     /**
      * <pre>
-     * Information about the transaction.
+     * Detailed information about the transaction.
      * </pre>
      *
      * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1117,7 +1117,7 @@ public final class TransactionOuterClass {
     pactus.transaction.TransactionOuterClass.TransactionInfo getTransaction();
     /**
      * <pre>
-     * Information about the transaction.
+     * Detailed information about the transaction.
      * </pre>
      *
      * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1172,7 +1172,7 @@ public final class TransactionOuterClass {
     private int blockHeight_;
     /**
      * <pre>
-     * Height of the block containing the transaction.
+     * The height of the block containing the transaction.
      * </pre>
      *
      * <code>uint32 block_height = 1 [json_name = "blockHeight"];</code>
@@ -1187,7 +1187,7 @@ public final class TransactionOuterClass {
     private int blockTime_;
     /**
      * <pre>
-     * Time of the block containing the transaction.
+     * The UNIX timestamp of the block containing the transaction.
      * </pre>
      *
      * <code>uint32 block_time = 2 [json_name = "blockTime"];</code>
@@ -1202,7 +1202,7 @@ public final class TransactionOuterClass {
     private pactus.transaction.TransactionOuterClass.TransactionInfo transaction_;
     /**
      * <pre>
-     * Information about the transaction.
+     * Detailed information about the transaction.
      * </pre>
      *
      * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1214,7 +1214,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Information about the transaction.
+     * Detailed information about the transaction.
      * </pre>
      *
      * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1226,7 +1226,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Information about the transaction.
+     * Detailed information about the transaction.
      * </pre>
      *
      * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1617,7 +1617,7 @@ public final class TransactionOuterClass {
       private int blockHeight_ ;
       /**
        * <pre>
-       * Height of the block containing the transaction.
+       * The height of the block containing the transaction.
        * </pre>
        *
        * <code>uint32 block_height = 1 [json_name = "blockHeight"];</code>
@@ -1629,7 +1629,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Height of the block containing the transaction.
+       * The height of the block containing the transaction.
        * </pre>
        *
        * <code>uint32 block_height = 1 [json_name = "blockHeight"];</code>
@@ -1644,7 +1644,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Height of the block containing the transaction.
+       * The height of the block containing the transaction.
        * </pre>
        *
        * <code>uint32 block_height = 1 [json_name = "blockHeight"];</code>
@@ -1660,7 +1660,7 @@ public final class TransactionOuterClass {
       private int blockTime_ ;
       /**
        * <pre>
-       * Time of the block containing the transaction.
+       * The UNIX timestamp of the block containing the transaction.
        * </pre>
        *
        * <code>uint32 block_time = 2 [json_name = "blockTime"];</code>
@@ -1672,7 +1672,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Time of the block containing the transaction.
+       * The UNIX timestamp of the block containing the transaction.
        * </pre>
        *
        * <code>uint32 block_time = 2 [json_name = "blockTime"];</code>
@@ -1687,7 +1687,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Time of the block containing the transaction.
+       * The UNIX timestamp of the block containing the transaction.
        * </pre>
        *
        * <code>uint32 block_time = 2 [json_name = "blockTime"];</code>
@@ -1705,7 +1705,7 @@ public final class TransactionOuterClass {
           pactus.transaction.TransactionOuterClass.TransactionInfo, pactus.transaction.TransactionOuterClass.TransactionInfo.Builder, pactus.transaction.TransactionOuterClass.TransactionInfoOrBuilder> transactionBuilder_;
       /**
        * <pre>
-       * Information about the transaction.
+       * Detailed information about the transaction.
        * </pre>
        *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1716,7 +1716,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Information about the transaction.
+       * Detailed information about the transaction.
        * </pre>
        *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1731,7 +1731,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Information about the transaction.
+       * Detailed information about the transaction.
        * </pre>
        *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1751,7 +1751,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Information about the transaction.
+       * Detailed information about the transaction.
        * </pre>
        *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1769,7 +1769,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Information about the transaction.
+       * Detailed information about the transaction.
        * </pre>
        *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1791,7 +1791,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Information about the transaction.
+       * Detailed information about the transaction.
        * </pre>
        *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1809,7 +1809,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Information about the transaction.
+       * Detailed information about the transaction.
        * </pre>
        *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1821,7 +1821,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Information about the transaction.
+       * Detailed information about the transaction.
        * </pre>
        *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1836,7 +1836,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Information about the transaction.
+       * Detailed information about the transaction.
        * </pre>
        *
        * <code>.pactus.TransactionInfo transaction = 3 [json_name = "transaction"];</code>
@@ -1924,7 +1924,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction amount in NanoPAC.
+     * The amount involved in the transaction, specified in NanoPAC.
      * </pre>
      *
      * <code>int64 amount = 1 [json_name = "amount"];</code>
@@ -1934,7 +1934,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Type of transaction payload.
+     * The type of transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
@@ -1943,7 +1943,7 @@ public final class TransactionOuterClass {
     int getPayloadTypeValue();
     /**
      * <pre>
-     * Type of transaction payload.
+     * The type of transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
@@ -1953,7 +1953,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Indicates that amount should be fixed and includes the fee.
+     * Indicates if the amount should be fixed and include the fee.
      * </pre>
      *
      * <code>bool fixed_amount = 3 [json_name = "fixedAmount"];</code>
@@ -2010,7 +2010,7 @@ public final class TransactionOuterClass {
     private long amount_;
     /**
      * <pre>
-     * Transaction amount in NanoPAC.
+     * The amount involved in the transaction, specified in NanoPAC.
      * </pre>
      *
      * <code>int64 amount = 1 [json_name = "amount"];</code>
@@ -2025,7 +2025,7 @@ public final class TransactionOuterClass {
     private int payloadType_;
     /**
      * <pre>
-     * Type of transaction payload.
+     * The type of transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
@@ -2036,7 +2036,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Type of transaction payload.
+     * The type of transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
@@ -2052,7 +2052,7 @@ public final class TransactionOuterClass {
     private boolean fixedAmount_;
     /**
      * <pre>
-     * Indicates that amount should be fixed and includes the fee.
+     * Indicates if the amount should be fixed and include the fee.
      * </pre>
      *
      * <code>bool fixed_amount = 3 [json_name = "fixedAmount"];</code>
@@ -2430,7 +2430,7 @@ public final class TransactionOuterClass {
       private long amount_ ;
       /**
        * <pre>
-       * Transaction amount in NanoPAC.
+       * The amount involved in the transaction, specified in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 1 [json_name = "amount"];</code>
@@ -2442,7 +2442,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount in NanoPAC.
+       * The amount involved in the transaction, specified in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 1 [json_name = "amount"];</code>
@@ -2457,7 +2457,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount in NanoPAC.
+       * The amount involved in the transaction, specified in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 1 [json_name = "amount"];</code>
@@ -2473,7 +2473,7 @@ public final class TransactionOuterClass {
       private int payloadType_ = 0;
       /**
        * <pre>
-       * Type of transaction payload.
+       * The type of transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
@@ -2484,7 +2484,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Type of transaction payload.
+       * The type of transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
@@ -2499,7 +2499,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Type of transaction payload.
+       * The type of transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
@@ -2513,7 +2513,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Type of transaction payload.
+       * The type of transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
@@ -2531,7 +2531,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Type of transaction payload.
+       * The type of transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 2 [json_name = "payloadType"];</code>
@@ -2547,7 +2547,7 @@ public final class TransactionOuterClass {
       private boolean fixedAmount_ ;
       /**
        * <pre>
-       * Indicates that amount should be fixed and includes the fee.
+       * Indicates if the amount should be fixed and include the fee.
        * </pre>
        *
        * <code>bool fixed_amount = 3 [json_name = "fixedAmount"];</code>
@@ -2559,7 +2559,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Indicates that amount should be fixed and includes the fee.
+       * Indicates if the amount should be fixed and include the fee.
        * </pre>
        *
        * <code>bool fixed_amount = 3 [json_name = "fixedAmount"];</code>
@@ -2574,7 +2574,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Indicates that amount should be fixed and includes the fee.
+       * Indicates if the amount should be fixed and include the fee.
        * </pre>
        *
        * <code>bool fixed_amount = 3 [json_name = "fixedAmount"];</code>
@@ -2656,7 +2656,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Calculated amount in NanoPAC.
+     * The calculated amount in NanoPAC.
      * </pre>
      *
      * <code>int64 amount = 1 [json_name = "amount"];</code>
@@ -2666,7 +2666,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Calculated transaction fee in NanoPAC.
+     * The calculated transaction fee in NanoPAC.
      * </pre>
      *
      * <code>int64 fee = 2 [json_name = "fee"];</code>
@@ -2722,7 +2722,7 @@ public final class TransactionOuterClass {
     private long amount_;
     /**
      * <pre>
-     * Calculated amount in NanoPAC.
+     * The calculated amount in NanoPAC.
      * </pre>
      *
      * <code>int64 amount = 1 [json_name = "amount"];</code>
@@ -2737,7 +2737,7 @@ public final class TransactionOuterClass {
     private long fee_;
     /**
      * <pre>
-     * Calculated transaction fee in NanoPAC.
+     * The calculated transaction fee in NanoPAC.
      * </pre>
      *
      * <code>int64 fee = 2 [json_name = "fee"];</code>
@@ -3094,7 +3094,7 @@ public final class TransactionOuterClass {
       private long amount_ ;
       /**
        * <pre>
-       * Calculated amount in NanoPAC.
+       * The calculated amount in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 1 [json_name = "amount"];</code>
@@ -3106,7 +3106,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Calculated amount in NanoPAC.
+       * The calculated amount in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 1 [json_name = "amount"];</code>
@@ -3121,7 +3121,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Calculated amount in NanoPAC.
+       * The calculated amount in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 1 [json_name = "amount"];</code>
@@ -3137,7 +3137,7 @@ public final class TransactionOuterClass {
       private long fee_ ;
       /**
        * <pre>
-       * Calculated transaction fee in NanoPAC.
+       * The calculated transaction fee in NanoPAC.
        * </pre>
        *
        * <code>int64 fee = 2 [json_name = "fee"];</code>
@@ -3149,7 +3149,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Calculated transaction fee in NanoPAC.
+       * The calculated transaction fee in NanoPAC.
        * </pre>
        *
        * <code>int64 fee = 2 [json_name = "fee"];</code>
@@ -3164,7 +3164,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Calculated transaction fee in NanoPAC.
+       * The calculated transaction fee in NanoPAC.
        * </pre>
        *
        * <code>int64 fee = 2 [json_name = "fee"];</code>
@@ -3246,7 +3246,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Signed raw transaction data.
+     * The signed raw transaction data to be broadcasted.
      * </pre>
      *
      * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
@@ -3255,7 +3255,7 @@ public final class TransactionOuterClass {
     java.lang.String getSignedRawTransaction();
     /**
      * <pre>
-     * Signed raw transaction data.
+     * The signed raw transaction data to be broadcasted.
      * </pre>
      *
      * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
@@ -3313,7 +3313,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object signedRawTransaction_;
     /**
      * <pre>
-     * Signed raw transaction data.
+     * The signed raw transaction data to be broadcasted.
      * </pre>
      *
      * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
@@ -3334,7 +3334,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Signed raw transaction data.
+     * The signed raw transaction data to be broadcasted.
      * </pre>
      *
      * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
@@ -3677,7 +3677,7 @@ public final class TransactionOuterClass {
       private java.lang.Object signedRawTransaction_ = "";
       /**
        * <pre>
-       * Signed raw transaction data.
+       * The signed raw transaction data to be broadcasted.
        * </pre>
        *
        * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
@@ -3697,7 +3697,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Signed raw transaction data.
+       * The signed raw transaction data to be broadcasted.
        * </pre>
        *
        * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
@@ -3718,7 +3718,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Signed raw transaction data.
+       * The signed raw transaction data to be broadcasted.
        * </pre>
        *
        * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
@@ -3737,7 +3737,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Signed raw transaction data.
+       * The signed raw transaction data to be broadcasted.
        * </pre>
        *
        * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
@@ -3751,7 +3751,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Signed raw transaction data.
+       * The signed raw transaction data to be broadcasted.
        * </pre>
        *
        * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
@@ -3839,7 +3839,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction ID.
+     * The unique ID of the broadcasted transaction.
      * </pre>
      *
      * <code>string id = 1 [json_name = "id"];</code>
@@ -3848,7 +3848,7 @@ public final class TransactionOuterClass {
     java.lang.String getId();
     /**
      * <pre>
-     * Transaction ID.
+     * The unique ID of the broadcasted transaction.
      * </pre>
      *
      * <code>string id = 1 [json_name = "id"];</code>
@@ -3906,7 +3906,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object id_;
     /**
      * <pre>
-     * Transaction ID.
+     * The unique ID of the broadcasted transaction.
      * </pre>
      *
      * <code>string id = 1 [json_name = "id"];</code>
@@ -3927,7 +3927,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Transaction ID.
+     * The unique ID of the broadcasted transaction.
      * </pre>
      *
      * <code>string id = 1 [json_name = "id"];</code>
@@ -4270,7 +4270,7 @@ public final class TransactionOuterClass {
       private java.lang.Object id_ = "";
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the broadcasted transaction.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -4290,7 +4290,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the broadcasted transaction.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -4311,7 +4311,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the broadcasted transaction.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -4330,7 +4330,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the broadcasted transaction.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -4344,7 +4344,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the broadcasted transaction.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -4432,8 +4432,8 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Lock time for the transaction.
-     * If not explicitly set, it sets to the last block height.
+     * The lock time for the transaction. If not set, defaults to the last block
+     * height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -4443,7 +4443,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Sender's account address.
+     * The sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -4452,7 +4452,7 @@ public final class TransactionOuterClass {
     java.lang.String getSender();
     /**
      * <pre>
-     * Sender's account address.
+     * The sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -4463,7 +4463,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Receiver's account address.
+     * The receiver's account address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -4472,7 +4472,7 @@ public final class TransactionOuterClass {
     java.lang.String getReceiver();
     /**
      * <pre>
-     * Receiver's account address.
+     * The receiver's account address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -4483,8 +4483,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transfer amount in NanoPAC.
-     * It should be greater than 0.
+     * The amount to be transferred, specified in NanoPAC. Must be greater than 0.
      * </pre>
      *
      * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -4494,8 +4493,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction fee in NanoPAC.
-     * If not explicitly set, it is calculated based on the amount.
+     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
      * </pre>
      *
      * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -4505,7 +4503,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 6 [json_name = "memo"];</code>
@@ -4514,7 +4512,7 @@ public final class TransactionOuterClass {
     java.lang.String getMemo();
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 6 [json_name = "memo"];</code>
@@ -4574,8 +4572,8 @@ public final class TransactionOuterClass {
     private int lockTime_;
     /**
      * <pre>
-     * Lock time for the transaction.
-     * If not explicitly set, it sets to the last block height.
+     * The lock time for the transaction. If not set, defaults to the last block
+     * height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -4590,7 +4588,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object sender_;
     /**
      * <pre>
-     * Sender's account address.
+     * The sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -4611,7 +4609,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Sender's account address.
+     * The sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -4636,7 +4634,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object receiver_;
     /**
      * <pre>
-     * Receiver's account address.
+     * The receiver's account address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -4657,7 +4655,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Receiver's account address.
+     * The receiver's account address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -4682,8 +4680,7 @@ public final class TransactionOuterClass {
     private long amount_;
     /**
      * <pre>
-     * Transfer amount in NanoPAC.
-     * It should be greater than 0.
+     * The amount to be transferred, specified in NanoPAC. Must be greater than 0.
      * </pre>
      *
      * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -4698,8 +4695,7 @@ public final class TransactionOuterClass {
     private long fee_;
     /**
      * <pre>
-     * Transaction fee in NanoPAC.
-     * If not explicitly set, it is calculated based on the amount.
+     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
      * </pre>
      *
      * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -4714,7 +4710,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object memo_;
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 6 [json_name = "memo"];</code>
@@ -4735,7 +4731,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 6 [json_name = "memo"];</code>
@@ -5190,8 +5186,8 @@ public final class TransactionOuterClass {
       private int lockTime_ ;
       /**
        * <pre>
-       * Lock time for the transaction.
-       * If not explicitly set, it sets to the last block height.
+       * The lock time for the transaction. If not set, defaults to the last block
+       * height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -5203,8 +5199,8 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Lock time for the transaction.
-       * If not explicitly set, it sets to the last block height.
+       * The lock time for the transaction. If not set, defaults to the last block
+       * height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -5219,8 +5215,8 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Lock time for the transaction.
-       * If not explicitly set, it sets to the last block height.
+       * The lock time for the transaction. If not set, defaults to the last block
+       * height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -5236,7 +5232,7 @@ public final class TransactionOuterClass {
       private java.lang.Object sender_ = "";
       /**
        * <pre>
-       * Sender's account address.
+       * The sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5256,7 +5252,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's account address.
+       * The sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5277,7 +5273,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's account address.
+       * The sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5296,7 +5292,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's account address.
+       * The sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5310,7 +5306,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's account address.
+       * The sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5332,7 +5328,7 @@ public final class TransactionOuterClass {
       private java.lang.Object receiver_ = "";
       /**
        * <pre>
-       * Receiver's account address.
+       * The receiver's account address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5352,7 +5348,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's account address.
+       * The receiver's account address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5373,7 +5369,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's account address.
+       * The receiver's account address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5392,7 +5388,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's account address.
+       * The receiver's account address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5406,7 +5402,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's account address.
+       * The receiver's account address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5428,8 +5424,7 @@ public final class TransactionOuterClass {
       private long amount_ ;
       /**
        * <pre>
-       * Transfer amount in NanoPAC.
-       * It should be greater than 0.
+       * The amount to be transferred, specified in NanoPAC. Must be greater than 0.
        * </pre>
        *
        * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -5441,8 +5436,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer amount in NanoPAC.
-       * It should be greater than 0.
+       * The amount to be transferred, specified in NanoPAC. Must be greater than 0.
        * </pre>
        *
        * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -5457,8 +5451,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer amount in NanoPAC.
-       * It should be greater than 0.
+       * The amount to be transferred, specified in NanoPAC. Must be greater than 0.
        * </pre>
        *
        * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -5474,8 +5467,7 @@ public final class TransactionOuterClass {
       private long fee_ ;
       /**
        * <pre>
-       * Transaction fee in NanoPAC.
-       * If not explicitly set, it is calculated based on the amount.
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
        * </pre>
        *
        * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -5487,8 +5479,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee in NanoPAC.
-       * If not explicitly set, it is calculated based on the amount.
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
        * </pre>
        *
        * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -5503,8 +5494,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee in NanoPAC.
-       * If not explicitly set, it is calculated based on the amount.
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
        * </pre>
        *
        * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -5520,7 +5510,7 @@ public final class TransactionOuterClass {
       private java.lang.Object memo_ = "";
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 6 [json_name = "memo"];</code>
@@ -5540,7 +5530,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 6 [json_name = "memo"];</code>
@@ -5561,7 +5551,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 6 [json_name = "memo"];</code>
@@ -5580,7 +5570,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 6 [json_name = "memo"];</code>
@@ -5594,7 +5584,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 6 [json_name = "memo"];</code>
@@ -5682,8 +5672,8 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Lock time for the transaction.
-     * If not explicitly set, it sets to the last block height.
+     * The lock time for the transaction. If not set, defaults to the last block
+     * height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -5693,7 +5683,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Sender's account address.
+     * The sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5702,7 +5692,7 @@ public final class TransactionOuterClass {
     java.lang.String getSender();
     /**
      * <pre>
-     * Sender's account address.
+     * The sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5713,7 +5703,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Receiver's validator address.
+     * The receiver's validator address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5722,7 +5712,7 @@ public final class TransactionOuterClass {
     java.lang.String getReceiver();
     /**
      * <pre>
-     * Receiver's validator address.
+     * The receiver's validator address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5733,8 +5723,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Stake amount in NanoPAC.
-     * It should be greater than 0.
+     * The stake amount in NanoPAC. Must be greater than 0.
      * </pre>
      *
      * <code>int64 stake = 4 [json_name = "stake"];</code>
@@ -5744,7 +5733,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Public key of the validator.
+     * The public key of the validator.
      * </pre>
      *
      * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -5753,7 +5742,7 @@ public final class TransactionOuterClass {
     java.lang.String getPublicKey();
     /**
      * <pre>
-     * Public key of the validator.
+     * The public key of the validator.
      * </pre>
      *
      * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -5764,8 +5753,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction fee in NanoPAC.
-     * If not explicitly set, it is calculated based on the stake.
+     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
      * </pre>
      *
      * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -5775,7 +5763,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 7 [json_name = "memo"];</code>
@@ -5784,7 +5772,7 @@ public final class TransactionOuterClass {
     java.lang.String getMemo();
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 7 [json_name = "memo"];</code>
@@ -5845,8 +5833,8 @@ public final class TransactionOuterClass {
     private int lockTime_;
     /**
      * <pre>
-     * Lock time for the transaction.
-     * If not explicitly set, it sets to the last block height.
+     * The lock time for the transaction. If not set, defaults to the last block
+     * height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -5861,7 +5849,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object sender_;
     /**
      * <pre>
-     * Sender's account address.
+     * The sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5882,7 +5870,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Sender's account address.
+     * The sender's account address.
      * </pre>
      *
      * <code>string sender = 2 [json_name = "sender"];</code>
@@ -5907,7 +5895,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object receiver_;
     /**
      * <pre>
-     * Receiver's validator address.
+     * The receiver's validator address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5928,7 +5916,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Receiver's validator address.
+     * The receiver's validator address.
      * </pre>
      *
      * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -5953,8 +5941,7 @@ public final class TransactionOuterClass {
     private long stake_;
     /**
      * <pre>
-     * Stake amount in NanoPAC.
-     * It should be greater than 0.
+     * The stake amount in NanoPAC. Must be greater than 0.
      * </pre>
      *
      * <code>int64 stake = 4 [json_name = "stake"];</code>
@@ -5969,7 +5956,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object publicKey_;
     /**
      * <pre>
-     * Public key of the validator.
+     * The public key of the validator.
      * </pre>
      *
      * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -5990,7 +5977,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Public key of the validator.
+     * The public key of the validator.
      * </pre>
      *
      * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -6015,8 +6002,7 @@ public final class TransactionOuterClass {
     private long fee_;
     /**
      * <pre>
-     * Transaction fee in NanoPAC.
-     * If not explicitly set, it is calculated based on the stake.
+     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
      * </pre>
      *
      * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -6031,7 +6017,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object memo_;
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 7 [json_name = "memo"];</code>
@@ -6052,7 +6038,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 7 [json_name = "memo"];</code>
@@ -6529,8 +6515,8 @@ public final class TransactionOuterClass {
       private int lockTime_ ;
       /**
        * <pre>
-       * Lock time for the transaction.
-       * If not explicitly set, it sets to the last block height.
+       * The lock time for the transaction. If not set, defaults to the last block
+       * height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -6542,8 +6528,8 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Lock time for the transaction.
-       * If not explicitly set, it sets to the last block height.
+       * The lock time for the transaction. If not set, defaults to the last block
+       * height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -6558,8 +6544,8 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Lock time for the transaction.
-       * If not explicitly set, it sets to the last block height.
+       * The lock time for the transaction. If not set, defaults to the last block
+       * height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -6575,7 +6561,7 @@ public final class TransactionOuterClass {
       private java.lang.Object sender_ = "";
       /**
        * <pre>
-       * Sender's account address.
+       * The sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -6595,7 +6581,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's account address.
+       * The sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -6616,7 +6602,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's account address.
+       * The sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -6635,7 +6621,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's account address.
+       * The sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -6649,7 +6635,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's account address.
+       * The sender's account address.
        * </pre>
        *
        * <code>string sender = 2 [json_name = "sender"];</code>
@@ -6671,7 +6657,7 @@ public final class TransactionOuterClass {
       private java.lang.Object receiver_ = "";
       /**
        * <pre>
-       * Receiver's validator address.
+       * The receiver's validator address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -6691,7 +6677,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's validator address.
+       * The receiver's validator address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -6712,7 +6698,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's validator address.
+       * The receiver's validator address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -6731,7 +6717,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's validator address.
+       * The receiver's validator address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -6745,7 +6731,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's validator address.
+       * The receiver's validator address.
        * </pre>
        *
        * <code>string receiver = 3 [json_name = "receiver"];</code>
@@ -6767,8 +6753,7 @@ public final class TransactionOuterClass {
       private long stake_ ;
       /**
        * <pre>
-       * Stake amount in NanoPAC.
-       * It should be greater than 0.
+       * The stake amount in NanoPAC. Must be greater than 0.
        * </pre>
        *
        * <code>int64 stake = 4 [json_name = "stake"];</code>
@@ -6780,8 +6765,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Stake amount in NanoPAC.
-       * It should be greater than 0.
+       * The stake amount in NanoPAC. Must be greater than 0.
        * </pre>
        *
        * <code>int64 stake = 4 [json_name = "stake"];</code>
@@ -6796,8 +6780,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Stake amount in NanoPAC.
-       * It should be greater than 0.
+       * The stake amount in NanoPAC. Must be greater than 0.
        * </pre>
        *
        * <code>int64 stake = 4 [json_name = "stake"];</code>
@@ -6813,7 +6796,7 @@ public final class TransactionOuterClass {
       private java.lang.Object publicKey_ = "";
       /**
        * <pre>
-       * Public key of the validator.
+       * The public key of the validator.
        * </pre>
        *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -6833,7 +6816,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Public key of the validator.
+       * The public key of the validator.
        * </pre>
        *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -6854,7 +6837,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Public key of the validator.
+       * The public key of the validator.
        * </pre>
        *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -6873,7 +6856,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Public key of the validator.
+       * The public key of the validator.
        * </pre>
        *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -6887,7 +6870,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Public key of the validator.
+       * The public key of the validator.
        * </pre>
        *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -6909,8 +6892,7 @@ public final class TransactionOuterClass {
       private long fee_ ;
       /**
        * <pre>
-       * Transaction fee in NanoPAC.
-       * If not explicitly set, it is calculated based on the stake.
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
        * </pre>
        *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -6922,8 +6904,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee in NanoPAC.
-       * If not explicitly set, it is calculated based on the stake.
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
        * </pre>
        *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -6938,8 +6919,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee in NanoPAC.
-       * If not explicitly set, it is calculated based on the stake.
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
        * </pre>
        *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -6955,7 +6935,7 @@ public final class TransactionOuterClass {
       private java.lang.Object memo_ = "";
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 7 [json_name = "memo"];</code>
@@ -6975,7 +6955,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 7 [json_name = "memo"];</code>
@@ -6996,7 +6976,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 7 [json_name = "memo"];</code>
@@ -7015,7 +6995,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 7 [json_name = "memo"];</code>
@@ -7029,7 +7009,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 7 [json_name = "memo"];</code>
@@ -7117,8 +7097,8 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Lock time for the transaction.
-     * If not explicitly set, it sets to the last block height.
+     * The lock time for the transaction. If not set, defaults to the last block
+     * height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -7128,7 +7108,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Address of the validator to unbond from.
+     * The address of the validator to unbond from.
      * </pre>
      *
      * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
@@ -7137,7 +7117,7 @@ public final class TransactionOuterClass {
     java.lang.String getValidatorAddress();
     /**
      * <pre>
-     * Address of the validator to unbond from.
+     * The address of the validator to unbond from.
      * </pre>
      *
      * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
@@ -7148,7 +7128,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 4 [json_name = "memo"];</code>
@@ -7157,7 +7137,7 @@ public final class TransactionOuterClass {
     java.lang.String getMemo();
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 4 [json_name = "memo"];</code>
@@ -7216,8 +7196,8 @@ public final class TransactionOuterClass {
     private int lockTime_;
     /**
      * <pre>
-     * Lock time for the transaction.
-     * If not explicitly set, it sets to the last block height.
+     * The lock time for the transaction. If not set, defaults to the last block
+     * height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -7232,7 +7212,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object validatorAddress_;
     /**
      * <pre>
-     * Address of the validator to unbond from.
+     * The address of the validator to unbond from.
      * </pre>
      *
      * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
@@ -7253,7 +7233,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Address of the validator to unbond from.
+     * The address of the validator to unbond from.
      * </pre>
      *
      * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
@@ -7278,7 +7258,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object memo_;
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 4 [json_name = "memo"];</code>
@@ -7299,7 +7279,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 4 [json_name = "memo"];</code>
@@ -7686,8 +7666,8 @@ public final class TransactionOuterClass {
       private int lockTime_ ;
       /**
        * <pre>
-       * Lock time for the transaction.
-       * If not explicitly set, it sets to the last block height.
+       * The lock time for the transaction. If not set, defaults to the last block
+       * height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -7699,8 +7679,8 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Lock time for the transaction.
-       * If not explicitly set, it sets to the last block height.
+       * The lock time for the transaction. If not set, defaults to the last block
+       * height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -7715,8 +7695,8 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Lock time for the transaction.
-       * If not explicitly set, it sets to the last block height.
+       * The lock time for the transaction. If not set, defaults to the last block
+       * height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -7732,7 +7712,7 @@ public final class TransactionOuterClass {
       private java.lang.Object validatorAddress_ = "";
       /**
        * <pre>
-       * Address of the validator to unbond from.
+       * The address of the validator to unbond from.
        * </pre>
        *
        * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
@@ -7752,7 +7732,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator to unbond from.
+       * The address of the validator to unbond from.
        * </pre>
        *
        * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
@@ -7773,7 +7753,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator to unbond from.
+       * The address of the validator to unbond from.
        * </pre>
        *
        * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
@@ -7792,7 +7772,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator to unbond from.
+       * The address of the validator to unbond from.
        * </pre>
        *
        * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
@@ -7806,7 +7786,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator to unbond from.
+       * The address of the validator to unbond from.
        * </pre>
        *
        * <code>string validator_address = 3 [json_name = "validatorAddress"];</code>
@@ -7828,7 +7808,7 @@ public final class TransactionOuterClass {
       private java.lang.Object memo_ = "";
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 4 [json_name = "memo"];</code>
@@ -7848,7 +7828,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 4 [json_name = "memo"];</code>
@@ -7869,7 +7849,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 4 [json_name = "memo"];</code>
@@ -7888,7 +7868,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 4 [json_name = "memo"];</code>
@@ -7902,7 +7882,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 4 [json_name = "memo"];</code>
@@ -7990,8 +7970,8 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Lock time for the transaction.
-     * If not explicitly set, it sets to the last block height.
+     * The lock time for the transaction. If not set, defaults to the last block
+     * height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -8001,7 +7981,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Address of the validator to withdraw from.
+     * The address of the validator to withdraw from.
      * </pre>
      *
      * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
@@ -8010,7 +7990,7 @@ public final class TransactionOuterClass {
     java.lang.String getValidatorAddress();
     /**
      * <pre>
-     * Address of the validator to withdraw from.
+     * The address of the validator to withdraw from.
      * </pre>
      *
      * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
@@ -8021,7 +8001,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Address of the account to withdraw to.
+     * The address of the account to withdraw to.
      * </pre>
      *
      * <code>string account_address = 3 [json_name = "accountAddress"];</code>
@@ -8030,7 +8010,7 @@ public final class TransactionOuterClass {
     java.lang.String getAccountAddress();
     /**
      * <pre>
-     * Address of the account to withdraw to.
+     * The address of the account to withdraw to.
      * </pre>
      *
      * <code>string account_address = 3 [json_name = "accountAddress"];</code>
@@ -8041,8 +8021,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Withdrawal amount in NanoPAC.
-     * It should be greater than 0.
+     * The withdrawal amount in NanoPAC. Must be greater than 0.
      * </pre>
      *
      * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -8052,8 +8031,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction fee in NanoPAC.
-     * If not explicitly set, it is calculated based on the amount.
+     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
      * </pre>
      *
      * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -8063,7 +8041,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 6 [json_name = "memo"];</code>
@@ -8072,7 +8050,7 @@ public final class TransactionOuterClass {
     java.lang.String getMemo();
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 6 [json_name = "memo"];</code>
@@ -8132,8 +8110,8 @@ public final class TransactionOuterClass {
     private int lockTime_;
     /**
      * <pre>
-     * Lock time for the transaction.
-     * If not explicitly set, it sets to the last block height.
+     * The lock time for the transaction. If not set, defaults to the last block
+     * height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -8148,7 +8126,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object validatorAddress_;
     /**
      * <pre>
-     * Address of the validator to withdraw from.
+     * The address of the validator to withdraw from.
      * </pre>
      *
      * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
@@ -8169,7 +8147,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Address of the validator to withdraw from.
+     * The address of the validator to withdraw from.
      * </pre>
      *
      * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
@@ -8194,7 +8172,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object accountAddress_;
     /**
      * <pre>
-     * Address of the account to withdraw to.
+     * The address of the account to withdraw to.
      * </pre>
      *
      * <code>string account_address = 3 [json_name = "accountAddress"];</code>
@@ -8215,7 +8193,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Address of the account to withdraw to.
+     * The address of the account to withdraw to.
      * </pre>
      *
      * <code>string account_address = 3 [json_name = "accountAddress"];</code>
@@ -8240,8 +8218,7 @@ public final class TransactionOuterClass {
     private long amount_;
     /**
      * <pre>
-     * Withdrawal amount in NanoPAC.
-     * It should be greater than 0.
+     * The withdrawal amount in NanoPAC. Must be greater than 0.
      * </pre>
      *
      * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -8256,8 +8233,7 @@ public final class TransactionOuterClass {
     private long fee_;
     /**
      * <pre>
-     * Transaction fee in NanoPAC.
-     * If not explicitly set, it is calculated based on the amount.
+     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
      * </pre>
      *
      * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -8272,7 +8248,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object memo_;
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 6 [json_name = "memo"];</code>
@@ -8293,7 +8269,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 6 [json_name = "memo"];</code>
@@ -8748,8 +8724,8 @@ public final class TransactionOuterClass {
       private int lockTime_ ;
       /**
        * <pre>
-       * Lock time for the transaction.
-       * If not explicitly set, it sets to the last block height.
+       * The lock time for the transaction. If not set, defaults to the last block
+       * height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -8761,8 +8737,8 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Lock time for the transaction.
-       * If not explicitly set, it sets to the last block height.
+       * The lock time for the transaction. If not set, defaults to the last block
+       * height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -8777,8 +8753,8 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Lock time for the transaction.
-       * If not explicitly set, it sets to the last block height.
+       * The lock time for the transaction. If not set, defaults to the last block
+       * height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -8794,7 +8770,7 @@ public final class TransactionOuterClass {
       private java.lang.Object validatorAddress_ = "";
       /**
        * <pre>
-       * Address of the validator to withdraw from.
+       * The address of the validator to withdraw from.
        * </pre>
        *
        * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
@@ -8814,7 +8790,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator to withdraw from.
+       * The address of the validator to withdraw from.
        * </pre>
        *
        * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
@@ -8835,7 +8811,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator to withdraw from.
+       * The address of the validator to withdraw from.
        * </pre>
        *
        * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
@@ -8854,7 +8830,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator to withdraw from.
+       * The address of the validator to withdraw from.
        * </pre>
        *
        * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
@@ -8868,7 +8844,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator to withdraw from.
+       * The address of the validator to withdraw from.
        * </pre>
        *
        * <code>string validator_address = 2 [json_name = "validatorAddress"];</code>
@@ -8890,7 +8866,7 @@ public final class TransactionOuterClass {
       private java.lang.Object accountAddress_ = "";
       /**
        * <pre>
-       * Address of the account to withdraw to.
+       * The address of the account to withdraw to.
        * </pre>
        *
        * <code>string account_address = 3 [json_name = "accountAddress"];</code>
@@ -8910,7 +8886,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the account to withdraw to.
+       * The address of the account to withdraw to.
        * </pre>
        *
        * <code>string account_address = 3 [json_name = "accountAddress"];</code>
@@ -8931,7 +8907,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the account to withdraw to.
+       * The address of the account to withdraw to.
        * </pre>
        *
        * <code>string account_address = 3 [json_name = "accountAddress"];</code>
@@ -8950,7 +8926,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the account to withdraw to.
+       * The address of the account to withdraw to.
        * </pre>
        *
        * <code>string account_address = 3 [json_name = "accountAddress"];</code>
@@ -8964,7 +8940,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the account to withdraw to.
+       * The address of the account to withdraw to.
        * </pre>
        *
        * <code>string account_address = 3 [json_name = "accountAddress"];</code>
@@ -8986,8 +8962,7 @@ public final class TransactionOuterClass {
       private long amount_ ;
       /**
        * <pre>
-       * Withdrawal amount in NanoPAC.
-       * It should be greater than 0.
+       * The withdrawal amount in NanoPAC. Must be greater than 0.
        * </pre>
        *
        * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -8999,8 +8974,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdrawal amount in NanoPAC.
-       * It should be greater than 0.
+       * The withdrawal amount in NanoPAC. Must be greater than 0.
        * </pre>
        *
        * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -9015,8 +8989,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdrawal amount in NanoPAC.
-       * It should be greater than 0.
+       * The withdrawal amount in NanoPAC. Must be greater than 0.
        * </pre>
        *
        * <code>int64 amount = 4 [json_name = "amount"];</code>
@@ -9032,8 +9005,7 @@ public final class TransactionOuterClass {
       private long fee_ ;
       /**
        * <pre>
-       * Transaction fee in NanoPAC.
-       * If not explicitly set, it is calculated based on the amount.
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
        * </pre>
        *
        * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -9045,8 +9017,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee in NanoPAC.
-       * If not explicitly set, it is calculated based on the amount.
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
        * </pre>
        *
        * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -9061,8 +9032,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee in NanoPAC.
-       * If not explicitly set, it is calculated based on the amount.
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
        * </pre>
        *
        * <code>int64 fee = 5 [json_name = "fee"];</code>
@@ -9078,7 +9048,7 @@ public final class TransactionOuterClass {
       private java.lang.Object memo_ = "";
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 6 [json_name = "memo"];</code>
@@ -9098,7 +9068,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 6 [json_name = "memo"];</code>
@@ -9119,7 +9089,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 6 [json_name = "memo"];</code>
@@ -9138,7 +9108,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 6 [json_name = "memo"];</code>
@@ -9152,7 +9122,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 6 [json_name = "memo"];</code>
@@ -9240,7 +9210,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Raw transaction data.
+     * The raw transaction data.
      * </pre>
      *
      * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
@@ -9249,7 +9219,7 @@ public final class TransactionOuterClass {
     java.lang.String getRawTransaction();
     /**
      * <pre>
-     * Raw transaction data.
+     * The raw transaction data.
      * </pre>
      *
      * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
@@ -9307,7 +9277,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object rawTransaction_;
     /**
      * <pre>
-     * Raw transaction data.
+     * The raw transaction data.
      * </pre>
      *
      * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
@@ -9328,7 +9298,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Raw transaction data.
+     * The raw transaction data.
      * </pre>
      *
      * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
@@ -9671,7 +9641,7 @@ public final class TransactionOuterClass {
       private java.lang.Object rawTransaction_ = "";
       /**
        * <pre>
-       * Raw transaction data.
+       * The raw transaction data.
        * </pre>
        *
        * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
@@ -9691,7 +9661,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Raw transaction data.
+       * The raw transaction data.
        * </pre>
        *
        * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
@@ -9712,7 +9682,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Raw transaction data.
+       * The raw transaction data.
        * </pre>
        *
        * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
@@ -9731,7 +9701,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Raw transaction data.
+       * The raw transaction data.
        * </pre>
        *
        * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
@@ -9745,7 +9715,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Raw transaction data.
+       * The raw transaction data.
        * </pre>
        *
        * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
@@ -9833,7 +9803,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Sender's address.
+     * The sender's address.
      * </pre>
      *
      * <code>string sender = 1 [json_name = "sender"];</code>
@@ -9842,7 +9812,7 @@ public final class TransactionOuterClass {
     java.lang.String getSender();
     /**
      * <pre>
-     * Sender's address.
+     * The sender's address.
      * </pre>
      *
      * <code>string sender = 1 [json_name = "sender"];</code>
@@ -9853,7 +9823,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Receiver's address.
+     * The receiver's address.
      * </pre>
      *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -9862,7 +9832,7 @@ public final class TransactionOuterClass {
     java.lang.String getReceiver();
     /**
      * <pre>
-     * Receiver's address.
+     * The receiver's address.
      * </pre>
      *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -9873,7 +9843,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction amount in NanoPAC.
+     * The amount to be transferred in NanoPAC.
      * </pre>
      *
      * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -9931,7 +9901,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object sender_;
     /**
      * <pre>
-     * Sender's address.
+     * The sender's address.
      * </pre>
      *
      * <code>string sender = 1 [json_name = "sender"];</code>
@@ -9952,7 +9922,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Sender's address.
+     * The sender's address.
      * </pre>
      *
      * <code>string sender = 1 [json_name = "sender"];</code>
@@ -9977,7 +9947,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object receiver_;
     /**
      * <pre>
-     * Receiver's address.
+     * The receiver's address.
      * </pre>
      *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -9998,7 +9968,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Receiver's address.
+     * The receiver's address.
      * </pre>
      *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -10023,7 +9993,7 @@ public final class TransactionOuterClass {
     private long amount_;
     /**
      * <pre>
-     * Transaction amount in NanoPAC.
+     * The amount to be transferred in NanoPAC.
      * </pre>
      *
      * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -10401,7 +10371,7 @@ public final class TransactionOuterClass {
       private java.lang.Object sender_ = "";
       /**
        * <pre>
-       * Sender's address.
+       * The sender's address.
        * </pre>
        *
        * <code>string sender = 1 [json_name = "sender"];</code>
@@ -10421,7 +10391,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * The sender's address.
        * </pre>
        *
        * <code>string sender = 1 [json_name = "sender"];</code>
@@ -10442,7 +10412,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * The sender's address.
        * </pre>
        *
        * <code>string sender = 1 [json_name = "sender"];</code>
@@ -10461,7 +10431,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * The sender's address.
        * </pre>
        *
        * <code>string sender = 1 [json_name = "sender"];</code>
@@ -10475,7 +10445,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * The sender's address.
        * </pre>
        *
        * <code>string sender = 1 [json_name = "sender"];</code>
@@ -10497,7 +10467,7 @@ public final class TransactionOuterClass {
       private java.lang.Object receiver_ = "";
       /**
        * <pre>
-       * Receiver's address.
+       * The receiver's address.
        * </pre>
        *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -10517,7 +10487,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * The receiver's address.
        * </pre>
        *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -10538,7 +10508,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * The receiver's address.
        * </pre>
        *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -10557,7 +10527,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * The receiver's address.
        * </pre>
        *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -10571,7 +10541,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * The receiver's address.
        * </pre>
        *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -10593,7 +10563,7 @@ public final class TransactionOuterClass {
       private long amount_ ;
       /**
        * <pre>
-       * Transaction amount in NanoPAC.
+       * The amount to be transferred in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -10605,7 +10575,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount in NanoPAC.
+       * The amount to be transferred in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -10620,7 +10590,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction amount in NanoPAC.
+       * The amount to be transferred in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -10702,7 +10672,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Sender's address.
+     * The sender's address.
      * </pre>
      *
      * <code>string sender = 1 [json_name = "sender"];</code>
@@ -10711,7 +10681,7 @@ public final class TransactionOuterClass {
     java.lang.String getSender();
     /**
      * <pre>
-     * Sender's address.
+     * The sender's address.
      * </pre>
      *
      * <code>string sender = 1 [json_name = "sender"];</code>
@@ -10722,7 +10692,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Receiver's address.
+     * The receiver's address.
      * </pre>
      *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -10731,7 +10701,7 @@ public final class TransactionOuterClass {
     java.lang.String getReceiver();
     /**
      * <pre>
-     * Receiver's address.
+     * The receiver's address.
      * </pre>
      *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -10742,7 +10712,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Stake amount in NanoPAC.
+     * The stake amount in NanoPAC.
      * </pre>
      *
      * <code>int64 stake = 3 [json_name = "stake"];</code>
@@ -10800,7 +10770,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object sender_;
     /**
      * <pre>
-     * Sender's address.
+     * The sender's address.
      * </pre>
      *
      * <code>string sender = 1 [json_name = "sender"];</code>
@@ -10821,7 +10791,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Sender's address.
+     * The sender's address.
      * </pre>
      *
      * <code>string sender = 1 [json_name = "sender"];</code>
@@ -10846,7 +10816,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object receiver_;
     /**
      * <pre>
-     * Receiver's address.
+     * The receiver's address.
      * </pre>
      *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -10867,7 +10837,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Receiver's address.
+     * The receiver's address.
      * </pre>
      *
      * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -10892,7 +10862,7 @@ public final class TransactionOuterClass {
     private long stake_;
     /**
      * <pre>
-     * Stake amount in NanoPAC.
+     * The stake amount in NanoPAC.
      * </pre>
      *
      * <code>int64 stake = 3 [json_name = "stake"];</code>
@@ -11270,7 +11240,7 @@ public final class TransactionOuterClass {
       private java.lang.Object sender_ = "";
       /**
        * <pre>
-       * Sender's address.
+       * The sender's address.
        * </pre>
        *
        * <code>string sender = 1 [json_name = "sender"];</code>
@@ -11290,7 +11260,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * The sender's address.
        * </pre>
        *
        * <code>string sender = 1 [json_name = "sender"];</code>
@@ -11311,7 +11281,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * The sender's address.
        * </pre>
        *
        * <code>string sender = 1 [json_name = "sender"];</code>
@@ -11330,7 +11300,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * The sender's address.
        * </pre>
        *
        * <code>string sender = 1 [json_name = "sender"];</code>
@@ -11344,7 +11314,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sender's address.
+       * The sender's address.
        * </pre>
        *
        * <code>string sender = 1 [json_name = "sender"];</code>
@@ -11366,7 +11336,7 @@ public final class TransactionOuterClass {
       private java.lang.Object receiver_ = "";
       /**
        * <pre>
-       * Receiver's address.
+       * The receiver's address.
        * </pre>
        *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -11386,7 +11356,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * The receiver's address.
        * </pre>
        *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -11407,7 +11377,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * The receiver's address.
        * </pre>
        *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -11426,7 +11396,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * The receiver's address.
        * </pre>
        *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -11440,7 +11410,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Receiver's address.
+       * The receiver's address.
        * </pre>
        *
        * <code>string receiver = 2 [json_name = "receiver"];</code>
@@ -11462,7 +11432,7 @@ public final class TransactionOuterClass {
       private long stake_ ;
       /**
        * <pre>
-       * Stake amount in NanoPAC.
+       * The stake amount in NanoPAC.
        * </pre>
        *
        * <code>int64 stake = 3 [json_name = "stake"];</code>
@@ -11474,7 +11444,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Stake amount in NanoPAC.
+       * The stake amount in NanoPAC.
        * </pre>
        *
        * <code>int64 stake = 3 [json_name = "stake"];</code>
@@ -11489,7 +11459,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Stake amount in NanoPAC.
+       * The stake amount in NanoPAC.
        * </pre>
        *
        * <code>int64 stake = 3 [json_name = "stake"];</code>
@@ -11571,7 +11541,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Address associated with the sortition.
+     * The validator address associated with the sortition proof.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -11580,7 +11550,7 @@ public final class TransactionOuterClass {
     java.lang.String getAddress();
     /**
      * <pre>
-     * Address associated with the sortition.
+     * The validator address associated with the sortition proof.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -11591,7 +11561,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Proof for the sortition.
+     * The proof for the sortition.
      * </pre>
      *
      * <code>string proof = 2 [json_name = "proof"];</code>
@@ -11600,7 +11570,7 @@ public final class TransactionOuterClass {
     java.lang.String getProof();
     /**
      * <pre>
-     * Proof for the sortition.
+     * The proof for the sortition.
      * </pre>
      *
      * <code>string proof = 2 [json_name = "proof"];</code>
@@ -11659,7 +11629,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object address_;
     /**
      * <pre>
-     * Address associated with the sortition.
+     * The validator address associated with the sortition proof.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -11680,7 +11650,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Address associated with the sortition.
+     * The validator address associated with the sortition proof.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -11705,7 +11675,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object proof_;
     /**
      * <pre>
-     * Proof for the sortition.
+     * The proof for the sortition.
      * </pre>
      *
      * <code>string proof = 2 [json_name = "proof"];</code>
@@ -11726,7 +11696,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Proof for the sortition.
+     * The proof for the sortition.
      * </pre>
      *
      * <code>string proof = 2 [json_name = "proof"];</code>
@@ -12091,7 +12061,7 @@ public final class TransactionOuterClass {
       private java.lang.Object address_ = "";
       /**
        * <pre>
-       * Address associated with the sortition.
+       * The validator address associated with the sortition proof.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -12111,7 +12081,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address associated with the sortition.
+       * The validator address associated with the sortition proof.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -12132,7 +12102,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address associated with the sortition.
+       * The validator address associated with the sortition proof.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -12151,7 +12121,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address associated with the sortition.
+       * The validator address associated with the sortition proof.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -12165,7 +12135,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address associated with the sortition.
+       * The validator address associated with the sortition proof.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -12187,7 +12157,7 @@ public final class TransactionOuterClass {
       private java.lang.Object proof_ = "";
       /**
        * <pre>
-       * Proof for the sortition.
+       * The proof for the sortition.
        * </pre>
        *
        * <code>string proof = 2 [json_name = "proof"];</code>
@@ -12207,7 +12177,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Proof for the sortition.
+       * The proof for the sortition.
        * </pre>
        *
        * <code>string proof = 2 [json_name = "proof"];</code>
@@ -12228,7 +12198,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Proof for the sortition.
+       * The proof for the sortition.
        * </pre>
        *
        * <code>string proof = 2 [json_name = "proof"];</code>
@@ -12247,7 +12217,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Proof for the sortition.
+       * The proof for the sortition.
        * </pre>
        *
        * <code>string proof = 2 [json_name = "proof"];</code>
@@ -12261,7 +12231,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Proof for the sortition.
+       * The proof for the sortition.
        * </pre>
        *
        * <code>string proof = 2 [json_name = "proof"];</code>
@@ -12349,7 +12319,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Address of the validator to unbond from.
+     * The address of the validator to unbond from.
      * </pre>
      *
      * <code>string validator = 1 [json_name = "validator"];</code>
@@ -12358,7 +12328,7 @@ public final class TransactionOuterClass {
     java.lang.String getValidator();
     /**
      * <pre>
-     * Address of the validator to unbond from.
+     * The address of the validator to unbond from.
      * </pre>
      *
      * <code>string validator = 1 [json_name = "validator"];</code>
@@ -12416,7 +12386,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object validator_;
     /**
      * <pre>
-     * Address of the validator to unbond from.
+     * The address of the validator to unbond from.
      * </pre>
      *
      * <code>string validator = 1 [json_name = "validator"];</code>
@@ -12437,7 +12407,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Address of the validator to unbond from.
+     * The address of the validator to unbond from.
      * </pre>
      *
      * <code>string validator = 1 [json_name = "validator"];</code>
@@ -12780,7 +12750,7 @@ public final class TransactionOuterClass {
       private java.lang.Object validator_ = "";
       /**
        * <pre>
-       * Address of the validator to unbond from.
+       * The address of the validator to unbond from.
        * </pre>
        *
        * <code>string validator = 1 [json_name = "validator"];</code>
@@ -12800,7 +12770,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator to unbond from.
+       * The address of the validator to unbond from.
        * </pre>
        *
        * <code>string validator = 1 [json_name = "validator"];</code>
@@ -12821,7 +12791,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator to unbond from.
+       * The address of the validator to unbond from.
        * </pre>
        *
        * <code>string validator = 1 [json_name = "validator"];</code>
@@ -12840,7 +12810,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator to unbond from.
+       * The address of the validator to unbond from.
        * </pre>
        *
        * <code>string validator = 1 [json_name = "validator"];</code>
@@ -12854,7 +12824,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator to unbond from.
+       * The address of the validator to unbond from.
        * </pre>
        *
        * <code>string validator = 1 [json_name = "validator"];</code>
@@ -12942,7 +12912,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Address to withdraw from.
+     * The address to withdraw from.
      * </pre>
      *
      * <code>string from = 1 [json_name = "from"];</code>
@@ -12951,7 +12921,7 @@ public final class TransactionOuterClass {
     java.lang.String getFrom();
     /**
      * <pre>
-     * Address to withdraw from.
+     * The address to withdraw from.
      * </pre>
      *
      * <code>string from = 1 [json_name = "from"];</code>
@@ -12962,7 +12932,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Address to withdraw to.
+     * The address to withdraw to.
      * </pre>
      *
      * <code>string to = 2 [json_name = "to"];</code>
@@ -12971,7 +12941,7 @@ public final class TransactionOuterClass {
     java.lang.String getTo();
     /**
      * <pre>
-     * Address to withdraw to.
+     * The address to withdraw to.
      * </pre>
      *
      * <code>string to = 2 [json_name = "to"];</code>
@@ -12982,7 +12952,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Withdrawal amount in NanoPAC.
+     * The withdrawal amount in NanoPAC.
      * </pre>
      *
      * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -13040,7 +13010,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object from_;
     /**
      * <pre>
-     * Address to withdraw from.
+     * The address to withdraw from.
      * </pre>
      *
      * <code>string from = 1 [json_name = "from"];</code>
@@ -13061,7 +13031,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Address to withdraw from.
+     * The address to withdraw from.
      * </pre>
      *
      * <code>string from = 1 [json_name = "from"];</code>
@@ -13086,7 +13056,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object to_;
     /**
      * <pre>
-     * Address to withdraw to.
+     * The address to withdraw to.
      * </pre>
      *
      * <code>string to = 2 [json_name = "to"];</code>
@@ -13107,7 +13077,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Address to withdraw to.
+     * The address to withdraw to.
      * </pre>
      *
      * <code>string to = 2 [json_name = "to"];</code>
@@ -13132,7 +13102,7 @@ public final class TransactionOuterClass {
     private long amount_;
     /**
      * <pre>
-     * Withdrawal amount in NanoPAC.
+     * The withdrawal amount in NanoPAC.
      * </pre>
      *
      * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -13510,7 +13480,7 @@ public final class TransactionOuterClass {
       private java.lang.Object from_ = "";
       /**
        * <pre>
-       * Address to withdraw from.
+       * The address to withdraw from.
        * </pre>
        *
        * <code>string from = 1 [json_name = "from"];</code>
@@ -13530,7 +13500,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address to withdraw from.
+       * The address to withdraw from.
        * </pre>
        *
        * <code>string from = 1 [json_name = "from"];</code>
@@ -13551,7 +13521,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address to withdraw from.
+       * The address to withdraw from.
        * </pre>
        *
        * <code>string from = 1 [json_name = "from"];</code>
@@ -13570,7 +13540,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address to withdraw from.
+       * The address to withdraw from.
        * </pre>
        *
        * <code>string from = 1 [json_name = "from"];</code>
@@ -13584,7 +13554,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address to withdraw from.
+       * The address to withdraw from.
        * </pre>
        *
        * <code>string from = 1 [json_name = "from"];</code>
@@ -13606,7 +13576,7 @@ public final class TransactionOuterClass {
       private java.lang.Object to_ = "";
       /**
        * <pre>
-       * Address to withdraw to.
+       * The address to withdraw to.
        * </pre>
        *
        * <code>string to = 2 [json_name = "to"];</code>
@@ -13626,7 +13596,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address to withdraw to.
+       * The address to withdraw to.
        * </pre>
        *
        * <code>string to = 2 [json_name = "to"];</code>
@@ -13647,7 +13617,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address to withdraw to.
+       * The address to withdraw to.
        * </pre>
        *
        * <code>string to = 2 [json_name = "to"];</code>
@@ -13666,7 +13636,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address to withdraw to.
+       * The address to withdraw to.
        * </pre>
        *
        * <code>string to = 2 [json_name = "to"];</code>
@@ -13680,7 +13650,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Address to withdraw to.
+       * The address to withdraw to.
        * </pre>
        *
        * <code>string to = 2 [json_name = "to"];</code>
@@ -13702,7 +13672,7 @@ public final class TransactionOuterClass {
       private long amount_ ;
       /**
        * <pre>
-       * Withdrawal amount in NanoPAC.
+       * The withdrawal amount in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -13714,7 +13684,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdrawal amount in NanoPAC.
+       * The withdrawal amount in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -13729,7 +13699,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdrawal amount in NanoPAC.
+       * The withdrawal amount in NanoPAC.
        * </pre>
        *
        * <code>int64 amount = 3 [json_name = "amount"];</code>
@@ -13811,7 +13781,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction ID.
+     * The unique ID of the transaction.
      * </pre>
      *
      * <code>string id = 1 [json_name = "id"];</code>
@@ -13820,7 +13790,7 @@ public final class TransactionOuterClass {
     java.lang.String getId();
     /**
      * <pre>
-     * Transaction ID.
+     * The unique ID of the transaction.
      * </pre>
      *
      * <code>string id = 1 [json_name = "id"];</code>
@@ -13831,7 +13801,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction data.
+     * The raw transaction data.
      * </pre>
      *
      * <code>string data = 2 [json_name = "data"];</code>
@@ -13840,7 +13810,7 @@ public final class TransactionOuterClass {
     java.lang.String getData();
     /**
      * <pre>
-     * Transaction data.
+     * The raw transaction data.
      * </pre>
      *
      * <code>string data = 2 [json_name = "data"];</code>
@@ -13851,7 +13821,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction version.
+     * The version of the transaction.
      * </pre>
      *
      * <code>int32 version = 3 [json_name = "version"];</code>
@@ -13861,7 +13831,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Lock time for the transaction.
+     * The lock time for the transaction.
      * </pre>
      *
      * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
@@ -13871,7 +13841,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction value in NanoPAC.
+     * The value of the transaction in NanoPAC.
      * </pre>
      *
      * <code>int64 value = 5 [json_name = "value"];</code>
@@ -13881,7 +13851,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction fee in NanoPAC.
+     * The fee for the transaction in NanoPAC.
      * </pre>
      *
      * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -13891,7 +13861,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Type of transaction payload.
+     * The type of transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
@@ -13900,7 +13870,7 @@ public final class TransactionOuterClass {
     int getPayloadTypeValue();
     /**
      * <pre>
-     * Type of transaction payload.
+     * The type of transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
@@ -13910,7 +13880,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transfer payload.
+     * Transfer transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -13919,7 +13889,7 @@ public final class TransactionOuterClass {
     boolean hasTransfer();
     /**
      * <pre>
-     * Transfer payload.
+     * Transfer transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -13928,7 +13898,7 @@ public final class TransactionOuterClass {
     pactus.transaction.TransactionOuterClass.PayloadTransfer getTransfer();
     /**
      * <pre>
-     * Transfer payload.
+     * Transfer transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -13937,7 +13907,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Bond payload.
+     * Bond transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -13946,7 +13916,7 @@ public final class TransactionOuterClass {
     boolean hasBond();
     /**
      * <pre>
-     * Bond payload.
+     * Bond transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -13955,7 +13925,7 @@ public final class TransactionOuterClass {
     pactus.transaction.TransactionOuterClass.PayloadBond getBond();
     /**
      * <pre>
-     * Bond payload.
+     * Bond transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -13964,7 +13934,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Sortition payload.
+     * Sortition transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -13973,7 +13943,7 @@ public final class TransactionOuterClass {
     boolean hasSortition();
     /**
      * <pre>
-     * Sortition payload.
+     * Sortition transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -13982,7 +13952,7 @@ public final class TransactionOuterClass {
     pactus.transaction.TransactionOuterClass.PayloadSortition getSortition();
     /**
      * <pre>
-     * Sortition payload.
+     * Sortition transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -13991,7 +13961,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Unbond payload.
+     * Unbond transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -14000,7 +13970,7 @@ public final class TransactionOuterClass {
     boolean hasUnbond();
     /**
      * <pre>
-     * Unbond payload.
+     * Unbond transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -14009,7 +13979,7 @@ public final class TransactionOuterClass {
     pactus.transaction.TransactionOuterClass.PayloadUnbond getUnbond();
     /**
      * <pre>
-     * Unbond payload.
+     * Unbond transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -14018,7 +13988,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Withdraw payload.
+     * Withdraw transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -14027,7 +13997,7 @@ public final class TransactionOuterClass {
     boolean hasWithdraw();
     /**
      * <pre>
-     * Withdraw payload.
+     * Withdraw transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -14036,7 +14006,7 @@ public final class TransactionOuterClass {
     pactus.transaction.TransactionOuterClass.PayloadWithdraw getWithdraw();
     /**
      * <pre>
-     * Withdraw payload.
+     * Withdraw transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -14045,7 +14015,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 8 [json_name = "memo"];</code>
@@ -14054,7 +14024,7 @@ public final class TransactionOuterClass {
     java.lang.String getMemo();
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 8 [json_name = "memo"];</code>
@@ -14065,7 +14035,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Public key associated with the transaction.
+     * The public key associated with the transaction.
      * </pre>
      *
      * <code>string public_key = 9 [json_name = "publicKey"];</code>
@@ -14074,7 +14044,7 @@ public final class TransactionOuterClass {
     java.lang.String getPublicKey();
     /**
      * <pre>
-     * Public key associated with the transaction.
+     * The public key associated with the transaction.
      * </pre>
      *
      * <code>string public_key = 9 [json_name = "publicKey"];</code>
@@ -14085,7 +14055,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * Transaction signature.
+     * The signature for the transaction.
      * </pre>
      *
      * <code>string signature = 10 [json_name = "signature"];</code>
@@ -14094,7 +14064,7 @@ public final class TransactionOuterClass {
     java.lang.String getSignature();
     /**
      * <pre>
-     * Transaction signature.
+     * The signature for the transaction.
      * </pre>
      *
      * <code>string signature = 10 [json_name = "signature"];</code>
@@ -14206,7 +14176,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object id_;
     /**
      * <pre>
-     * Transaction ID.
+     * The unique ID of the transaction.
      * </pre>
      *
      * <code>string id = 1 [json_name = "id"];</code>
@@ -14227,7 +14197,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Transaction ID.
+     * The unique ID of the transaction.
      * </pre>
      *
      * <code>string id = 1 [json_name = "id"];</code>
@@ -14252,7 +14222,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object data_;
     /**
      * <pre>
-     * Transaction data.
+     * The raw transaction data.
      * </pre>
      *
      * <code>string data = 2 [json_name = "data"];</code>
@@ -14273,7 +14243,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Transaction data.
+     * The raw transaction data.
      * </pre>
      *
      * <code>string data = 2 [json_name = "data"];</code>
@@ -14298,7 +14268,7 @@ public final class TransactionOuterClass {
     private int version_;
     /**
      * <pre>
-     * Transaction version.
+     * The version of the transaction.
      * </pre>
      *
      * <code>int32 version = 3 [json_name = "version"];</code>
@@ -14313,7 +14283,7 @@ public final class TransactionOuterClass {
     private int lockTime_;
     /**
      * <pre>
-     * Lock time for the transaction.
+     * The lock time for the transaction.
      * </pre>
      *
      * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
@@ -14328,7 +14298,7 @@ public final class TransactionOuterClass {
     private long value_;
     /**
      * <pre>
-     * Transaction value in NanoPAC.
+     * The value of the transaction in NanoPAC.
      * </pre>
      *
      * <code>int64 value = 5 [json_name = "value"];</code>
@@ -14343,7 +14313,7 @@ public final class TransactionOuterClass {
     private long fee_;
     /**
      * <pre>
-     * Transaction fee in NanoPAC.
+     * The fee for the transaction in NanoPAC.
      * </pre>
      *
      * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -14358,7 +14328,7 @@ public final class TransactionOuterClass {
     private int payloadType_;
     /**
      * <pre>
-     * Type of transaction payload.
+     * The type of transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
@@ -14369,7 +14339,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Type of transaction payload.
+     * The type of transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
@@ -14384,7 +14354,7 @@ public final class TransactionOuterClass {
     public static final int TRANSFER_FIELD_NUMBER = 30;
     /**
      * <pre>
-     * Transfer payload.
+     * Transfer transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -14396,7 +14366,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Transfer payload.
+     * Transfer transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -14411,7 +14381,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Transfer payload.
+     * Transfer transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -14427,7 +14397,7 @@ public final class TransactionOuterClass {
     public static final int BOND_FIELD_NUMBER = 31;
     /**
      * <pre>
-     * Bond payload.
+     * Bond transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -14439,7 +14409,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Bond payload.
+     * Bond transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -14454,7 +14424,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Bond payload.
+     * Bond transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -14470,7 +14440,7 @@ public final class TransactionOuterClass {
     public static final int SORTITION_FIELD_NUMBER = 32;
     /**
      * <pre>
-     * Sortition payload.
+     * Sortition transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -14482,7 +14452,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Sortition payload.
+     * Sortition transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -14497,7 +14467,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Sortition payload.
+     * Sortition transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -14513,7 +14483,7 @@ public final class TransactionOuterClass {
     public static final int UNBOND_FIELD_NUMBER = 33;
     /**
      * <pre>
-     * Unbond payload.
+     * Unbond transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -14525,7 +14495,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Unbond payload.
+     * Unbond transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -14540,7 +14510,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Unbond payload.
+     * Unbond transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -14556,7 +14526,7 @@ public final class TransactionOuterClass {
     public static final int WITHDRAW_FIELD_NUMBER = 34;
     /**
      * <pre>
-     * Withdraw payload.
+     * Withdraw transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -14568,7 +14538,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Withdraw payload.
+     * Withdraw transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -14583,7 +14553,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Withdraw payload.
+     * Withdraw transaction payload.
      * </pre>
      *
      * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -14600,7 +14570,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object memo_;
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 8 [json_name = "memo"];</code>
@@ -14621,7 +14591,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Transaction memo.
+     * A memo string for the transaction.
      * </pre>
      *
      * <code>string memo = 8 [json_name = "memo"];</code>
@@ -14646,7 +14616,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object publicKey_;
     /**
      * <pre>
-     * Public key associated with the transaction.
+     * The public key associated with the transaction.
      * </pre>
      *
      * <code>string public_key = 9 [json_name = "publicKey"];</code>
@@ -14667,7 +14637,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Public key associated with the transaction.
+     * The public key associated with the transaction.
      * </pre>
      *
      * <code>string public_key = 9 [json_name = "publicKey"];</code>
@@ -14692,7 +14662,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object signature_;
     /**
      * <pre>
-     * Transaction signature.
+     * The signature for the transaction.
      * </pre>
      *
      * <code>string signature = 10 [json_name = "signature"];</code>
@@ -14713,7 +14683,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * Transaction signature.
+     * The signature for the transaction.
      * </pre>
      *
      * <code>string signature = 10 [json_name = "signature"];</code>
@@ -15467,7 +15437,7 @@ public final class TransactionOuterClass {
       private java.lang.Object id_ = "";
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the transaction.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -15487,7 +15457,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the transaction.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -15508,7 +15478,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the transaction.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -15527,7 +15497,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the transaction.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -15541,7 +15511,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction ID.
+       * The unique ID of the transaction.
        * </pre>
        *
        * <code>string id = 1 [json_name = "id"];</code>
@@ -15563,7 +15533,7 @@ public final class TransactionOuterClass {
       private java.lang.Object data_ = "";
       /**
        * <pre>
-       * Transaction data.
+       * The raw transaction data.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -15583,7 +15553,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction data.
+       * The raw transaction data.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -15604,7 +15574,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction data.
+       * The raw transaction data.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -15623,7 +15593,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction data.
+       * The raw transaction data.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -15637,7 +15607,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction data.
+       * The raw transaction data.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -15659,7 +15629,7 @@ public final class TransactionOuterClass {
       private int version_ ;
       /**
        * <pre>
-       * Transaction version.
+       * The version of the transaction.
        * </pre>
        *
        * <code>int32 version = 3 [json_name = "version"];</code>
@@ -15671,7 +15641,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction version.
+       * The version of the transaction.
        * </pre>
        *
        * <code>int32 version = 3 [json_name = "version"];</code>
@@ -15686,7 +15656,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction version.
+       * The version of the transaction.
        * </pre>
        *
        * <code>int32 version = 3 [json_name = "version"];</code>
@@ -15702,7 +15672,7 @@ public final class TransactionOuterClass {
       private int lockTime_ ;
       /**
        * <pre>
-       * Lock time for the transaction.
+       * The lock time for the transaction.
        * </pre>
        *
        * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
@@ -15714,7 +15684,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Lock time for the transaction.
+       * The lock time for the transaction.
        * </pre>
        *
        * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
@@ -15729,7 +15699,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Lock time for the transaction.
+       * The lock time for the transaction.
        * </pre>
        *
        * <code>uint32 lock_time = 4 [json_name = "lockTime"];</code>
@@ -15745,7 +15715,7 @@ public final class TransactionOuterClass {
       private long value_ ;
       /**
        * <pre>
-       * Transaction value in NanoPAC.
+       * The value of the transaction in NanoPAC.
        * </pre>
        *
        * <code>int64 value = 5 [json_name = "value"];</code>
@@ -15757,7 +15727,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction value in NanoPAC.
+       * The value of the transaction in NanoPAC.
        * </pre>
        *
        * <code>int64 value = 5 [json_name = "value"];</code>
@@ -15772,7 +15742,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction value in NanoPAC.
+       * The value of the transaction in NanoPAC.
        * </pre>
        *
        * <code>int64 value = 5 [json_name = "value"];</code>
@@ -15788,7 +15758,7 @@ public final class TransactionOuterClass {
       private long fee_ ;
       /**
        * <pre>
-       * Transaction fee in NanoPAC.
+       * The fee for the transaction in NanoPAC.
        * </pre>
        *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -15800,7 +15770,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee in NanoPAC.
+       * The fee for the transaction in NanoPAC.
        * </pre>
        *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -15815,7 +15785,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction fee in NanoPAC.
+       * The fee for the transaction in NanoPAC.
        * </pre>
        *
        * <code>int64 fee = 6 [json_name = "fee"];</code>
@@ -15831,7 +15801,7 @@ public final class TransactionOuterClass {
       private int payloadType_ = 0;
       /**
        * <pre>
-       * Type of transaction payload.
+       * The type of transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
@@ -15842,7 +15812,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Type of transaction payload.
+       * The type of transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
@@ -15857,7 +15827,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Type of transaction payload.
+       * The type of transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
@@ -15871,7 +15841,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Type of transaction payload.
+       * The type of transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
@@ -15889,7 +15859,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Type of transaction payload.
+       * The type of transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 7 [json_name = "payloadType"];</code>
@@ -15906,7 +15876,7 @@ public final class TransactionOuterClass {
           pactus.transaction.TransactionOuterClass.PayloadTransfer, pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder, pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder> transferBuilder_;
       /**
        * <pre>
-       * Transfer payload.
+       * Transfer transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -15918,7 +15888,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer payload.
+       * Transfer transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -15940,7 +15910,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer payload.
+       * Transfer transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -15960,7 +15930,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer payload.
+       * Transfer transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -15978,7 +15948,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer payload.
+       * Transfer transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -16005,7 +15975,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer payload.
+       * Transfer transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -16028,7 +15998,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer payload.
+       * Transfer transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -16038,7 +16008,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer payload.
+       * Transfer transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -16056,7 +16026,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transfer payload.
+       * Transfer transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadTransfer transfer = 30 [json_name = "transfer"];</code>
@@ -16084,7 +16054,7 @@ public final class TransactionOuterClass {
           pactus.transaction.TransactionOuterClass.PayloadBond, pactus.transaction.TransactionOuterClass.PayloadBond.Builder, pactus.transaction.TransactionOuterClass.PayloadBondOrBuilder> bondBuilder_;
       /**
        * <pre>
-       * Bond payload.
+       * Bond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -16096,7 +16066,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Bond payload.
+       * Bond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -16118,7 +16088,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Bond payload.
+       * Bond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -16138,7 +16108,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Bond payload.
+       * Bond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -16156,7 +16126,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Bond payload.
+       * Bond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -16183,7 +16153,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Bond payload.
+       * Bond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -16206,7 +16176,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Bond payload.
+       * Bond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -16216,7 +16186,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Bond payload.
+       * Bond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -16234,7 +16204,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Bond payload.
+       * Bond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadBond bond = 31 [json_name = "bond"];</code>
@@ -16262,7 +16232,7 @@ public final class TransactionOuterClass {
           pactus.transaction.TransactionOuterClass.PayloadSortition, pactus.transaction.TransactionOuterClass.PayloadSortition.Builder, pactus.transaction.TransactionOuterClass.PayloadSortitionOrBuilder> sortitionBuilder_;
       /**
        * <pre>
-       * Sortition payload.
+       * Sortition transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -16274,7 +16244,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sortition payload.
+       * Sortition transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -16296,7 +16266,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sortition payload.
+       * Sortition transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -16316,7 +16286,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sortition payload.
+       * Sortition transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -16334,7 +16304,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sortition payload.
+       * Sortition transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -16361,7 +16331,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sortition payload.
+       * Sortition transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -16384,7 +16354,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sortition payload.
+       * Sortition transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -16394,7 +16364,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sortition payload.
+       * Sortition transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -16412,7 +16382,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Sortition payload.
+       * Sortition transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadSortition sortition = 32 [json_name = "sortition"];</code>
@@ -16440,7 +16410,7 @@ public final class TransactionOuterClass {
           pactus.transaction.TransactionOuterClass.PayloadUnbond, pactus.transaction.TransactionOuterClass.PayloadUnbond.Builder, pactus.transaction.TransactionOuterClass.PayloadUnbondOrBuilder> unbondBuilder_;
       /**
        * <pre>
-       * Unbond payload.
+       * Unbond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -16452,7 +16422,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Unbond payload.
+       * Unbond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -16474,7 +16444,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Unbond payload.
+       * Unbond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -16494,7 +16464,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Unbond payload.
+       * Unbond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -16512,7 +16482,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Unbond payload.
+       * Unbond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -16539,7 +16509,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Unbond payload.
+       * Unbond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -16562,7 +16532,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Unbond payload.
+       * Unbond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -16572,7 +16542,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Unbond payload.
+       * Unbond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -16590,7 +16560,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Unbond payload.
+       * Unbond transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadUnbond unbond = 33 [json_name = "unbond"];</code>
@@ -16618,7 +16588,7 @@ public final class TransactionOuterClass {
           pactus.transaction.TransactionOuterClass.PayloadWithdraw, pactus.transaction.TransactionOuterClass.PayloadWithdraw.Builder, pactus.transaction.TransactionOuterClass.PayloadWithdrawOrBuilder> withdrawBuilder_;
       /**
        * <pre>
-       * Withdraw payload.
+       * Withdraw transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -16630,7 +16600,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdraw payload.
+       * Withdraw transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -16652,7 +16622,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdraw payload.
+       * Withdraw transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -16672,7 +16642,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdraw payload.
+       * Withdraw transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -16690,7 +16660,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdraw payload.
+       * Withdraw transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -16717,7 +16687,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdraw payload.
+       * Withdraw transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -16740,7 +16710,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdraw payload.
+       * Withdraw transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -16750,7 +16720,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdraw payload.
+       * Withdraw transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -16768,7 +16738,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Withdraw payload.
+       * Withdraw transaction payload.
        * </pre>
        *
        * <code>.pactus.PayloadWithdraw withdraw = 34 [json_name = "withdraw"];</code>
@@ -16795,7 +16765,7 @@ public final class TransactionOuterClass {
       private java.lang.Object memo_ = "";
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 8 [json_name = "memo"];</code>
@@ -16815,7 +16785,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 8 [json_name = "memo"];</code>
@@ -16836,7 +16806,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 8 [json_name = "memo"];</code>
@@ -16855,7 +16825,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 8 [json_name = "memo"];</code>
@@ -16869,7 +16839,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction memo.
+       * A memo string for the transaction.
        * </pre>
        *
        * <code>string memo = 8 [json_name = "memo"];</code>
@@ -16891,7 +16861,7 @@ public final class TransactionOuterClass {
       private java.lang.Object publicKey_ = "";
       /**
        * <pre>
-       * Public key associated with the transaction.
+       * The public key associated with the transaction.
        * </pre>
        *
        * <code>string public_key = 9 [json_name = "publicKey"];</code>
@@ -16911,7 +16881,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Public key associated with the transaction.
+       * The public key associated with the transaction.
        * </pre>
        *
        * <code>string public_key = 9 [json_name = "publicKey"];</code>
@@ -16932,7 +16902,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Public key associated with the transaction.
+       * The public key associated with the transaction.
        * </pre>
        *
        * <code>string public_key = 9 [json_name = "publicKey"];</code>
@@ -16951,7 +16921,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Public key associated with the transaction.
+       * The public key associated with the transaction.
        * </pre>
        *
        * <code>string public_key = 9 [json_name = "publicKey"];</code>
@@ -16965,7 +16935,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Public key associated with the transaction.
+       * The public key associated with the transaction.
        * </pre>
        *
        * <code>string public_key = 9 [json_name = "publicKey"];</code>
@@ -16987,7 +16957,7 @@ public final class TransactionOuterClass {
       private java.lang.Object signature_ = "";
       /**
        * <pre>
-       * Transaction signature.
+       * The signature for the transaction.
        * </pre>
        *
        * <code>string signature = 10 [json_name = "signature"];</code>
@@ -17007,7 +16977,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction signature.
+       * The signature for the transaction.
        * </pre>
        *
        * <code>string signature = 10 [json_name = "signature"];</code>
@@ -17028,7 +16998,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction signature.
+       * The signature for the transaction.
        * </pre>
        *
        * <code>string signature = 10 [json_name = "signature"];</code>
@@ -17047,7 +17017,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction signature.
+       * The signature for the transaction.
        * </pre>
        *
        * <code>string signature = 10 [json_name = "signature"];</code>
@@ -17061,7 +17031,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * Transaction signature.
+       * The signature for the transaction.
        * </pre>
        *
        * <code>string signature = 10 [json_name = "signature"];</code>

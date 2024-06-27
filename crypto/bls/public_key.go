@@ -23,8 +23,8 @@ type PublicKey struct {
 	data    []byte            // Raw public key data.
 }
 
-// PublicKeyFromString decodes the string encoding of a BLS public key
-// and returns the public key if text is a valid encoding for BLS public key.
+// PublicKeyFromString decodes the input string and returns the PublicKey
+// if the string is a valid bech32m encoding of a BLS public key.
 func PublicKeyFromString(text string) (*PublicKey, error) {
 	// Decode the bech32m encoded public key.
 	hrp, typ, data, err := bech32m.DecodeToBase256WithTypeNoLimit(text)

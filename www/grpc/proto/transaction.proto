@@ -1,5 +1,6 @@
 syntax = "proto3";
 package pactus;
+
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus.transaction";
 
@@ -37,209 +38,203 @@ service Transaction {
 
 // Request message for retrieving transaction details.
 message GetTransactionRequest {
-  // Transaction ID.
+  // The unique ID of the transaction to retrieve.
   string id = 1;
-  // Verbosity level for transaction details.
+  // The verbosity level for transaction details.
   TransactionVerbosity verbosity = 2;
 }
 
 // Response message containing details of a transaction.
 message GetTransactionResponse {
-  // Height of the block containing the transaction.
+  // The height of the block containing the transaction.
   uint32 block_height = 1;
-  // Time of the block containing the transaction.
+  // The UNIX timestamp of the block containing the transaction.
   uint32 block_time = 2;
-  // Information about the transaction.
+  // Detailed information about the transaction.
   TransactionInfo transaction = 3;
 }
 
 // Request message for calculating transaction fee.
 message CalculateFeeRequest {
-  // Transaction amount in NanoPAC.
+  // The amount involved in the transaction, specified in NanoPAC.
   int64 amount = 1;
-  // Type of transaction payload.
+  // The type of transaction payload.
   PayloadType payload_type = 2;
-  // Indicates that amount should be fixed and includes the fee.
+  // Indicates if the amount should be fixed and include the fee.
   bool fixed_amount = 3;
 }
 
 // Response message containing the calculated transaction fee.
 message CalculateFeeResponse {
-  // Calculated amount in NanoPAC.
+  // The calculated amount in NanoPAC.
   int64 amount = 1;
-  // Calculated transaction fee in NanoPAC.
+  // The calculated transaction fee in NanoPAC.
   int64 fee = 2;
 }
 
 // Request message for broadcasting a signed transaction.
 message BroadcastTransactionRequest {
-  // Signed raw transaction data.
+  // The signed raw transaction data to be broadcasted.
   string signed_raw_transaction = 1;
 }
 
 // Response message containing the ID of the broadcasted transaction.
 message BroadcastTransactionResponse {
-  // Transaction ID.
+  // The unique ID of the broadcasted transaction.
   string id = 1;
 }
 
 // Request message for retrieving raw details of a transfer transaction.
 message GetRawTransferTransactionRequest {
-  // Lock time for the transaction.
-  // If not explicitly set, it sets to the last block height.
+  // The lock time for the transaction. If not set, defaults to the last block
+  // height.
   uint32 lock_time = 1;
-  // Sender's account address.
+  // The sender's account address.
   string sender = 2;
-  // Receiver's account address.
+  // The receiver's account address.
   string receiver = 3;
-  // Transfer amount in NanoPAC.
-  // It should be greater than 0.
+  // The amount to be transferred, specified in NanoPAC. Must be greater than 0.
   int64 amount = 4;
-  // Transaction fee in NanoPAC.
-  // If not explicitly set, it is calculated based on the amount.
+  // The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
   int64 fee = 5;
-  // Transaction memo.
+  // A memo string for the transaction.
   string memo = 6;
 }
 
 // Request message for retrieving raw details of a bond transaction.
 message GetRawBondTransactionRequest {
-  // Lock time for the transaction.
-  // If not explicitly set, it sets to the last block height.
+  // The lock time for the transaction. If not set, defaults to the last block
+  // height.
   uint32 lock_time = 1;
-  // Sender's account address.
+  // The sender's account address.
   string sender = 2;
-  // Receiver's validator address.
+  // The receiver's validator address.
   string receiver = 3;
-  // Stake amount in NanoPAC.
-  // It should be greater than 0.
+  // The stake amount in NanoPAC. Must be greater than 0.
   int64 stake = 4;
-  // Public key of the validator.
+  // The public key of the validator.
   string public_key = 5;
-  // Transaction fee in NanoPAC.
-  // If not explicitly set, it is calculated based on the stake.
+  // The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
   int64 fee = 6;
-  // Transaction memo.
+  // A memo string for the transaction.
   string memo = 7;
 }
 
 // Request message for retrieving raw details of an unbond transaction.
 message GetRawUnbondTransactionRequest {
-  // Lock time for the transaction.
-  // If not explicitly set, it sets to the last block height.
+  // The lock time for the transaction. If not set, defaults to the last block
+  // height.
   uint32 lock_time = 1;
-  // Address of the validator to unbond from.
+  // The address of the validator to unbond from.
   string validator_address = 3;
-  // Transaction memo.
+  // A memo string for the transaction.
   string memo = 4;
 }
 
 // Request message for retrieving raw details of a withdraw transaction.
 message GetRawWithdrawTransactionRequest {
-  // Lock time for the transaction.
-  // If not explicitly set, it sets to the last block height.
+  // The lock time for the transaction. If not set, defaults to the last block
+  // height.
   uint32 lock_time = 1;
-  // Address of the validator to withdraw from.
+  // The address of the validator to withdraw from.
   string validator_address = 2;
-  // Address of the account to withdraw to.
+  // The address of the account to withdraw to.
   string account_address = 3;
-  // Withdrawal amount in NanoPAC.
-  // It should be greater than 0.
+  // The withdrawal amount in NanoPAC. Must be greater than 0.
   int64 amount = 4;
-  // Transaction fee in NanoPAC.
-  // If not explicitly set, it is calculated based on the amount.
+  // The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
   int64 fee = 5;
-  // Transaction memo.
+  // A memo string for the transaction.
   string memo = 6;
 }
 
 // Response message containing raw transaction data.
 message GetRawTransactionResponse {
-  // Raw transaction data.
+  // The raw transaction data.
   string raw_transaction = 1;
 }
 
 // Payload for a transfer transaction.
 message PayloadTransfer {
-  // Sender's address.
+  // The sender's address.
   string sender = 1;
-  // Receiver's address.
+  // The receiver's address.
   string receiver = 2;
-  // Transaction amount in NanoPAC.
+  // The amount to be transferred in NanoPAC.
   int64 amount = 3;
 }
 
 // Payload for a bond transaction.
 message PayloadBond {
-  // Sender's address.
+  // The sender's address.
   string sender = 1;
-  // Receiver's address.
+  // The receiver's address.
   string receiver = 2;
-  // Stake amount in NanoPAC.
+  // The stake amount in NanoPAC.
   int64 stake = 3;
 }
 
 // Payload for a sortition transaction.
 message PayloadSortition {
-  // Address associated with the sortition.
+  // The validator address associated with the sortition proof.
   string address = 1;
-  // Proof for the sortition.
+  // The proof for the sortition.
   string proof = 2;
 }
 
 // Payload for an unbond transaction.
 message PayloadUnbond {
-  // Address of the validator to unbond from.
+  // The address of the validator to unbond from.
   string validator = 1;
 }
 
 // Payload for a withdraw transaction.
 message PayloadWithdraw {
-  // Address to withdraw from.
+  // The address to withdraw from.
   string from = 1;
-  // Address to withdraw to.
+  // The address to withdraw to.
   string to = 2;
-  // Withdrawal amount in NanoPAC.
+  // The withdrawal amount in NanoPAC.
   int64 amount = 3;
 }
 
 // Information about a transaction.
 message TransactionInfo {
-  // Transaction ID.
+  // The unique ID of the transaction.
   string id = 1;
-  // Transaction data.
+  // The raw transaction data.
   string data = 2;
-  // Transaction version.
+  // The version of the transaction.
   int32 version = 3;
-  // Lock time for the transaction.
+  // The lock time for the transaction.
   uint32 lock_time = 4;
-  // Transaction value in NanoPAC.
+  // The value of the transaction in NanoPAC.
   int64 value = 5;
-  // Transaction fee in NanoPAC.
+  // The fee for the transaction in NanoPAC.
   int64 fee = 6;
-  // Type of transaction payload.
+  // The type of transaction payload.
   PayloadType payload_type = 7;
   oneof payload {
-    // Transfer payload.
+    // Transfer transaction payload.
     PayloadTransfer transfer = 30;
-    // Bond payload.
+    // Bond transaction payload.
     PayloadBond bond = 31;
-    // Sortition payload.
+    // Sortition transaction payload.
     PayloadSortition sortition = 32;
-    // Unbond payload.
+    // Unbond transaction payload.
     PayloadUnbond unbond = 33;
-    // Withdraw payload.
+    // Withdraw transaction payload.
     PayloadWithdraw withdraw = 34;
   };
-  // Transaction memo.
+  // A memo string for the transaction.
   string memo = 8;
-  // Public key associated with the transaction.
+  // The public key associated with the transaction.
   string public_key = 9;
-  // Transaction signature.
+  // The signature for the transaction.
   string signature = 10;
 }
 
-// Enumeration for different types of transaction payload.
+// Enumeration for different types of transaction payloads.
 enum PayloadType {
   // Unknown payload type.
   UNKNOWN = 0;
@@ -255,10 +250,10 @@ enum PayloadType {
   WITHDRAW_PAYLOAD = 5;
 }
 
-// Enumeration for verbosity level when requesting transaction details.
+// Enumeration for verbosity levels when requesting transaction details.
 enum TransactionVerbosity {
   // Request transaction data only.
   TRANSACTION_DATA = 0;
-  // Request transaction details.
+  // Request detailed transaction information.
   TRANSACTION_INFO = 1;
 }

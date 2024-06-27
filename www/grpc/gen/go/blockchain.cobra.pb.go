@@ -72,8 +72,8 @@ func _BlockchainGetBlockCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().Uint32Var(&req.Height, cfg.FlagNamer("Height"), 0, "Height of the block.")
-	flag.EnumVar(cmd.PersistentFlags(), &req.Verbosity, cfg.FlagNamer("Verbosity"), "Verbosity level for block information.")
+	cmd.PersistentFlags().Uint32Var(&req.Height, cfg.FlagNamer("Height"), 0, "The height of the block to retrieve.")
+	flag.EnumVar(cmd.PersistentFlags(), &req.Verbosity, cfg.FlagNamer("Verbosity"), "The verbosity level for block information.")
 
 	return cmd
 }
@@ -115,7 +115,7 @@ func _BlockchainGetBlockHashCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().Uint32Var(&req.Height, cfg.FlagNamer("Height"), 0, "Height of the block.")
+	cmd.PersistentFlags().Uint32Var(&req.Height, cfg.FlagNamer("Height"), 0, "The height of the block to retrieve the hash for.")
 
 	return cmd
 }
@@ -157,7 +157,7 @@ func _BlockchainGetBlockHeightCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Hash, cfg.FlagNamer("Hash"), "", "Hash of the block.")
+	cmd.PersistentFlags().StringVar(&req.Hash, cfg.FlagNamer("Hash"), "", "The hash of the block to retrieve the height for.")
 
 	return cmd
 }
@@ -279,7 +279,7 @@ func _BlockchainGetAccountCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "Address of the account.")
+	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "The address of the account to retrieve information for.")
 
 	return cmd
 }
@@ -321,7 +321,7 @@ func _BlockchainGetValidatorCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "Address of the validator.")
+	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "The address of the validator to retrieve information for.")
 
 	return cmd
 }
@@ -363,7 +363,7 @@ func _BlockchainGetValidatorByNumberCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().Int32Var(&req.Number, cfg.FlagNamer("Number"), 0, "Validator number.")
+	cmd.PersistentFlags().Int32Var(&req.Number, cfg.FlagNamer("Number"), 0, "The unique number of the validator to retrieve information for.")
 
 	return cmd
 }
@@ -445,7 +445,7 @@ func _BlockchainGetPublicKeyCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "Address for which public key is requested.")
+	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "The address for which to retrieve the public key.")
 
 	return cmd
 }
@@ -456,7 +456,7 @@ func _BlockchainGetTxPoolContentCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetTxPoolContent"),
 		Short: "GetTxPoolContent RPC client",
-		Long:  "GetTxPoolContent retrieves current transactions on the TXPool.",
+		Long:  "GetTxPoolContent retrieves current transactions in the transaction pool.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
@@ -487,7 +487,7 @@ func _BlockchainGetTxPoolContentCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	flag.EnumVar(cmd.PersistentFlags(), &req.PayloadType, cfg.FlagNamer("PayloadType"), "Payload type of tranactions in the tx pool, 0 is all types.")
+	flag.EnumVar(cmd.PersistentFlags(), &req.PayloadType, cfg.FlagNamer("PayloadType"), "The type of transactions to retrieve from the transaction pool. 0 means all\n types.")
 
 	return cmd
 }

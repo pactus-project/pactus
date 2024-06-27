@@ -1502,7 +1502,7 @@ proto.pactus.PeerInfo.toObject = function(includeInstance, msg) {
     agent: jspb.Message.getFieldWithDefault(msg, 3, ""),
     peerId: jspb.Message.getFieldWithDefault(msg, 4, ""),
     consensusKeysList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f,
-    consensusAddressList: (f = jspb.Message.getRepeatedField(msg, 6)) == null ? undefined : f,
+    consensusAddressesList: (f = jspb.Message.getRepeatedField(msg, 6)) == null ? undefined : f,
     services: jspb.Message.getFieldWithDefault(msg, 7, 0),
     lastBlockHash: jspb.Message.getFieldWithDefault(msg, 8, ""),
     height: jspb.Message.getFieldWithDefault(msg, 9, 0),
@@ -1575,7 +1575,7 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 6:
       var value = /** @type {string} */ (reader.readString());
-      msg.addConsensusAddress(value);
+      msg.addConsensusAddresses(value);
       break;
     case 7:
       var value = /** @type {number} */ (reader.readUint32());
@@ -1701,7 +1701,7 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getConsensusAddressList();
+  f = message.getConsensusAddressesList();
   if (f.length > 0) {
     writer.writeRepeatedString(
       6,
@@ -1913,10 +1913,10 @@ proto.pactus.PeerInfo.prototype.clearConsensusKeysList = function() {
 
 
 /**
- * repeated string consensus_address = 6;
+ * repeated string consensus_addresses = 6;
  * @return {!Array<string>}
  */
-proto.pactus.PeerInfo.prototype.getConsensusAddressList = function() {
+proto.pactus.PeerInfo.prototype.getConsensusAddressesList = function() {
   return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 6));
 };
 
@@ -1925,7 +1925,7 @@ proto.pactus.PeerInfo.prototype.getConsensusAddressList = function() {
  * @param {!Array<string>} value
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.setConsensusAddressList = function(value) {
+proto.pactus.PeerInfo.prototype.setConsensusAddressesList = function(value) {
   return jspb.Message.setField(this, 6, value || []);
 };
 
@@ -1935,7 +1935,7 @@ proto.pactus.PeerInfo.prototype.setConsensusAddressList = function(value) {
  * @param {number=} opt_index
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.addConsensusAddress = function(value, opt_index) {
+proto.pactus.PeerInfo.prototype.addConsensusAddresses = function(value, opt_index) {
   return jspb.Message.addToRepeatedField(this, 6, value, opt_index);
 };
 
@@ -1944,8 +1944,8 @@ proto.pactus.PeerInfo.prototype.addConsensusAddress = function(value, opt_index)
  * Clears the list making it empty but non-null.
  * @return {!proto.pactus.PeerInfo} returns this
  */
-proto.pactus.PeerInfo.prototype.clearConsensusAddressList = function() {
-  return this.setConsensusAddressList([]);
+proto.pactus.PeerInfo.prototype.clearConsensusAddressesList = function() {
+  return this.setConsensusAddressesList([]);
 };
 
 
