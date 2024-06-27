@@ -109,7 +109,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 
 		for _, key := range peer.ConsensusKeys {
 			p.ConsensusKeys = append(p.ConsensusKeys, key.String())
-			p.ConsensusAddress = append(p.ConsensusAddress, key.ValidatorAddress().String())
+			p.ConsensusAddresses = append(p.ConsensusAddresses, key.ValidatorAddress().String())
 		}
 
 		return false

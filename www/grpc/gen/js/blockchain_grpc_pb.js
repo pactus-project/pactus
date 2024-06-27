@@ -364,7 +364,7 @@ getPublicKey: {
     responseSerialize: serialize_pactus_GetPublicKeyResponse,
     responseDeserialize: deserialize_pactus_GetPublicKeyResponse,
   },
-  // GetTxPoolContent retrieves current transactions on the TXPool.
+  // GetTxPoolContent retrieves current transactions in the transaction pool.
 getTxPoolContent: {
     path: '/pactus.Blockchain/GetTxPoolContent',
     requestStream: false,

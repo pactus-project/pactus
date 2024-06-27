@@ -35,7 +35,6 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 		return
 	}
 	tm.addRowTxID("ID", trx.Id)
-	tm.addRowHex("Data", trx.Data)
 	tm.addRowInt("Version", int(trx.Version))
 	tm.addRowInt("LockTime", int(trx.LockTime))
 	tm.addRowAmount("Fee", amount.Amount(trx.Fee))
@@ -58,7 +57,7 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 	case pactus.PayloadType_SORTITION_PAYLOAD:
 		pld := trx.Payload.(*pactus.TransactionInfo_Sortition).Sortition
 		tm.addRowValAddress("Address", pld.Address)
-		tm.addRowHex("Proof", pld.Proof)
+		tm.addRowString("Proof", pld.Proof)
 
 	case pactus.PayloadType_UNBOND_PAYLOAD:
 		pld := trx.Payload.(*pactus.TransactionInfo_Unbond).Unbond
@@ -77,6 +76,6 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 		tm.addRowString("PublicKey", trx.PublicKey)
 	}
 	if trx.Signature != "" {
-		tm.addRowHex("Signature", trx.Signature)
+		tm.addRowString("Signature", trx.Signature)
 	}
 }

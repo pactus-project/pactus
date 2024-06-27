@@ -171,17 +171,17 @@ parameters.</p>
     <td class="fw-bold">id</td>
     <td> string</td>
     <td>
-    Transaction ID.
+    The unique ID of the transaction to retrieve.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">verbosity</td>
     <td> TransactionVerbosity</td>
     <td>
-    (Enum) Verbosity level for transaction details.
+    (Enum) The verbosity level for transaction details.
     <br>Available values:<ul>
       <li>TRANSACTION_DATA = Request transaction data only.</li>
-      <li>TRANSACTION_INFO = Request transaction details.</li>
+      <li>TRANSACTION_INFO = Request detailed transaction information.</li>
       </ul>
     </td>
   </tr>
@@ -198,70 +198,70 @@ parameters.</p>
     <td class="fw-bold">block_height</td>
     <td> uint32</td>
     <td>
-    Height of the block containing the transaction.
+    The height of the block containing the transaction.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">block_time</td>
     <td> uint32</td>
     <td>
-    Time of the block containing the transaction.
+    The UNIX timestamp of the block containing the transaction.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">transaction</td>
     <td> TransactionInfo</td>
     <td>
-    Information about the transaction.
+    Detailed information about the transaction.
     </td>
   </tr>
      <tr>
         <td class="fw-bold">transaction.id</td>
         <td> string</td>
         <td>
-        Transaction ID.
+        The unique ID of the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">transaction.data</td>
         <td> string</td>
         <td>
-        Transaction data.
+        The raw transaction data.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">transaction.version</td>
         <td> int32</td>
         <td>
-        Transaction version.
+        The version of the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">transaction.lock_time</td>
         <td> uint32</td>
         <td>
-        Lock time for the transaction.
+        The lock time for the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">transaction.value</td>
         <td> int64</td>
         <td>
-        Transaction value in NanoPAC.
+        The value of the transaction in NanoPAC.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">transaction.fee</td>
         <td> int64</td>
         <td>
-        Transaction fee in NanoPAC.
+        The fee for the transaction in NanoPAC.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">transaction.payload_type</td>
         <td> PayloadType</td>
         <td>
-        (Enum) Type of transaction payload.
+        (Enum) The type of transaction payload.
         <br>Available values:<ul>
           <li>UNKNOWN = Unknown payload type.</li>
           <li>TRANSFER_PAYLOAD = Transfer payload type.</li>
@@ -276,140 +276,140 @@ parameters.</p>
         <td class="fw-bold">transaction.transfer</td>
         <td> PayloadTransfer</td>
         <td>
-        (OneOf) Transfer payload.
+        (OneOf) Transfer transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">transaction.transfer.sender</td>
             <td> string</td>
             <td>
-            Sender's address.
+            The sender's address.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">transaction.transfer.receiver</td>
             <td> string</td>
             <td>
-            Receiver's address.
+            The receiver's address.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">transaction.transfer.amount</td>
             <td> int64</td>
             <td>
-            Transaction amount in NanoPAC.
+            The amount to be transferred in NanoPAC.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">transaction.bond</td>
         <td> PayloadBond</td>
         <td>
-        (OneOf) Bond payload.
+        (OneOf) Bond transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">transaction.bond.sender</td>
             <td> string</td>
             <td>
-            Sender's address.
+            The sender's address.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">transaction.bond.receiver</td>
             <td> string</td>
             <td>
-            Receiver's address.
+            The receiver's address.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">transaction.bond.stake</td>
             <td> int64</td>
             <td>
-            Stake amount in NanoPAC.
+            The stake amount in NanoPAC.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">transaction.sortition</td>
         <td> PayloadSortition</td>
         <td>
-        (OneOf) Sortition payload.
+        (OneOf) Sortition transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">transaction.sortition.address</td>
             <td> string</td>
             <td>
-            Address associated with the sortition.
+            The validator address associated with the sortition proof.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">transaction.sortition.proof</td>
             <td> string</td>
             <td>
-            Proof for the sortition.
+            The proof for the sortition.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">transaction.unbond</td>
         <td> PayloadUnbond</td>
         <td>
-        (OneOf) Unbond payload.
+        (OneOf) Unbond transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">transaction.unbond.validator</td>
             <td> string</td>
             <td>
-            Address of the validator to unbond from.
+            The address of the validator to unbond from.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">transaction.withdraw</td>
         <td> PayloadWithdraw</td>
         <td>
-        (OneOf) Withdraw payload.
+        (OneOf) Withdraw transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">transaction.withdraw.from</td>
             <td> string</td>
             <td>
-            Address to withdraw from.
+            The address to withdraw from.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">transaction.withdraw.to</td>
             <td> string</td>
             <td>
-            Address to withdraw to.
+            The address to withdraw to.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">transaction.withdraw.amount</td>
             <td> int64</td>
             <td>
-            Withdrawal amount in NanoPAC.
+            The withdrawal amount in NanoPAC.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">transaction.memo</td>
         <td> string</td>
         <td>
-        Transaction memo.
+        A memo string for the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">transaction.public_key</td>
         <td> string</td>
         <td>
-        Public key associated with the transaction.
+        The public key associated with the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">transaction.signature</td>
         <td> string</td>
         <td>
-        Transaction signature.
+        The signature for the transaction.
         </td>
       </tr>
          </tbody>
@@ -431,14 +431,14 @@ and payload type.</p>
     <td class="fw-bold">amount</td>
     <td> int64</td>
     <td>
-    Transaction amount in NanoPAC.
+    The amount involved in the transaction, specified in NanoPAC.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">payload_type</td>
     <td> PayloadType</td>
     <td>
-    (Enum) Type of transaction payload.
+    (Enum) The type of transaction payload.
     <br>Available values:<ul>
       <li>UNKNOWN = Unknown payload type.</li>
       <li>TRANSFER_PAYLOAD = Transfer payload type.</li>
@@ -453,7 +453,7 @@ and payload type.</p>
     <td class="fw-bold">fixed_amount</td>
     <td> bool</td>
     <td>
-    Indicates that amount should be fixed and includes the fee.
+    Indicates if the amount should be fixed and include the fee.
     </td>
   </tr>
   </tbody>
@@ -469,14 +469,14 @@ and payload type.</p>
     <td class="fw-bold">amount</td>
     <td> int64</td>
     <td>
-    Calculated amount in NanoPAC.
+    The calculated amount in NanoPAC.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">fee</td>
     <td> int64</td>
     <td>
-    Calculated transaction fee in NanoPAC.
+    The calculated transaction fee in NanoPAC.
     </td>
   </tr>
      </tbody>
@@ -497,7 +497,7 @@ and payload type.</p>
     <td class="fw-bold">signed_raw_transaction</td>
     <td> string</td>
     <td>
-    Signed raw transaction data.
+    The signed raw transaction data to be broadcasted.
     </td>
   </tr>
   </tbody>
@@ -513,7 +513,7 @@ and payload type.</p>
     <td class="fw-bold">id</td>
     <td> string</td>
     <td>
-    Transaction ID.
+    The unique ID of the broadcasted transaction.
     </td>
   </tr>
      </tbody>
@@ -534,45 +534,43 @@ and payload type.</p>
     <td class="fw-bold">lock_time</td>
     <td> uint32</td>
     <td>
-    Lock time for the transaction.
-If not explicitly set, it sets to the last block height.
+    The lock time for the transaction. If not set, defaults to the last block
+height.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">sender</td>
     <td> string</td>
     <td>
-    Sender's account address.
+    The sender's account address.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">receiver</td>
     <td> string</td>
     <td>
-    Receiver's account address.
+    The receiver's account address.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">amount</td>
     <td> int64</td>
     <td>
-    Transfer amount in NanoPAC.
-It should be greater than 0.
+    The amount to be transferred, specified in NanoPAC. Must be greater than 0.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">fee</td>
     <td> int64</td>
     <td>
-    Transaction fee in NanoPAC.
-If not explicitly set, it is calculated based on the amount.
+    The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">memo</td>
     <td> string</td>
     <td>
-    Transaction memo.
+    A memo string for the transaction.
     </td>
   </tr>
   </tbody>
@@ -588,7 +586,7 @@ If not explicitly set, it is calculated based on the amount.
     <td class="fw-bold">raw_transaction</td>
     <td> string</td>
     <td>
-    Raw transaction data.
+    The raw transaction data.
     </td>
   </tr>
      </tbody>
@@ -609,52 +607,50 @@ If not explicitly set, it is calculated based on the amount.
     <td class="fw-bold">lock_time</td>
     <td> uint32</td>
     <td>
-    Lock time for the transaction.
-If not explicitly set, it sets to the last block height.
+    The lock time for the transaction. If not set, defaults to the last block
+height.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">sender</td>
     <td> string</td>
     <td>
-    Sender's account address.
+    The sender's account address.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">receiver</td>
     <td> string</td>
     <td>
-    Receiver's validator address.
+    The receiver's validator address.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">stake</td>
     <td> int64</td>
     <td>
-    Stake amount in NanoPAC.
-It should be greater than 0.
+    The stake amount in NanoPAC. Must be greater than 0.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">public_key</td>
     <td> string</td>
     <td>
-    Public key of the validator.
+    The public key of the validator.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">fee</td>
     <td> int64</td>
     <td>
-    Transaction fee in NanoPAC.
-If not explicitly set, it is calculated based on the stake.
+    The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">memo</td>
     <td> string</td>
     <td>
-    Transaction memo.
+    A memo string for the transaction.
     </td>
   </tr>
   </tbody>
@@ -670,7 +666,7 @@ If not explicitly set, it is calculated based on the stake.
     <td class="fw-bold">raw_transaction</td>
     <td> string</td>
     <td>
-    Raw transaction data.
+    The raw transaction data.
     </td>
   </tr>
      </tbody>
@@ -691,22 +687,22 @@ If not explicitly set, it is calculated based on the stake.
     <td class="fw-bold">lock_time</td>
     <td> uint32</td>
     <td>
-    Lock time for the transaction.
-If not explicitly set, it sets to the last block height.
+    The lock time for the transaction. If not set, defaults to the last block
+height.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">validator_address</td>
     <td> string</td>
     <td>
-    Address of the validator to unbond from.
+    The address of the validator to unbond from.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">memo</td>
     <td> string</td>
     <td>
-    Transaction memo.
+    A memo string for the transaction.
     </td>
   </tr>
   </tbody>
@@ -722,7 +718,7 @@ If not explicitly set, it sets to the last block height.
     <td class="fw-bold">raw_transaction</td>
     <td> string</td>
     <td>
-    Raw transaction data.
+    The raw transaction data.
     </td>
   </tr>
      </tbody>
@@ -743,45 +739,43 @@ If not explicitly set, it sets to the last block height.
     <td class="fw-bold">lock_time</td>
     <td> uint32</td>
     <td>
-    Lock time for the transaction.
-If not explicitly set, it sets to the last block height.
+    The lock time for the transaction. If not set, defaults to the last block
+height.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">validator_address</td>
     <td> string</td>
     <td>
-    Address of the validator to withdraw from.
+    The address of the validator to withdraw from.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">account_address</td>
     <td> string</td>
     <td>
-    Address of the account to withdraw to.
+    The address of the account to withdraw to.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">amount</td>
     <td> int64</td>
     <td>
-    Withdrawal amount in NanoPAC.
-It should be greater than 0.
+    The withdrawal amount in NanoPAC. Must be greater than 0.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">fee</td>
     <td> int64</td>
     <td>
-    Transaction fee in NanoPAC.
-If not explicitly set, it is calculated based on the amount.
+    The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">memo</td>
     <td> string</td>
     <td>
-    Transaction memo.
+    A memo string for the transaction.
     </td>
   </tr>
   </tbody>
@@ -797,7 +791,7 @@ If not explicitly set, it is calculated based on the amount.
     <td class="fw-bold">raw_transaction</td>
     <td> string</td>
     <td>
-    Raw transaction data.
+    The raw transaction data.
     </td>
   </tr>
      </tbody>
@@ -823,18 +817,18 @@ parameters.</p>
     <td class="fw-bold">height</td>
     <td> uint32</td>
     <td>
-    Height of the block.
+    The height of the block to retrieve.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">verbosity</td>
     <td> BlockVerbosity</td>
     <td>
-    (Enum) Verbosity level for block information.
+    (Enum) The verbosity level for block information.
     <br>Available values:<ul>
-      <li>BLOCK_DATA = Request block data only.</li>
+      <li>BLOCK_DATA = Request only block data.</li>
       <li>BLOCK_INFO = Request block information and transaction IDs.</li>
-      <li>BLOCK_TRANSACTIONS = Request block information and transaction details.</li>
+      <li>BLOCK_TRANSACTIONS = Request block information and detailed transaction data.</li>
       </ul>
     </td>
   </tr>
@@ -851,70 +845,70 @@ parameters.</p>
     <td class="fw-bold">height</td>
     <td> uint32</td>
     <td>
-    Height of the block.
+    The height of the block.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">hash</td>
     <td> string</td>
     <td>
-    Hash of the block.
+    The hash of the block.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">data</td>
     <td> string</td>
     <td>
-    Block data, only available if the verbosity level is set to BLOCK_DATA.
+    Block data, available only if verbosity level is set to BLOCK_DATA.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">block_time</td>
     <td> uint32</td>
     <td>
-    Block timestamp.
+    The timestamp of the block.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">header</td>
     <td> BlockHeaderInfo</td>
     <td>
-    Block header information.
+    Header information of the block.
     </td>
   </tr>
      <tr>
         <td class="fw-bold">header.version</td>
         <td> int32</td>
         <td>
-        Block version.
+        The version of the block.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">header.prev_block_hash</td>
         <td> string</td>
         <td>
-        Hash of the previous block.
+        The hash of the previous block.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">header.state_root</td>
         <td> string</td>
         <td>
-        State root of the block.
+        The state root hash of the blockchain.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">header.sortition_seed</td>
         <td> string</td>
         <td>
-        Sortition seed of the block.
+        The sortition seed of the block.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">header.proposer_address</td>
         <td> string</td>
         <td>
-        Address of the proposer of the block.
+        The address of the proposer of the block.
         </td>
       </tr>
          <tr>
@@ -928,14 +922,14 @@ parameters.</p>
         <td class="fw-bold">prev_cert.hash</td>
         <td> string</td>
         <td>
-        Hash of the certificate.
+        The hash of the certificate.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">prev_cert.round</td>
         <td> int32</td>
         <td>
-        Round of the certificate.
+        The round of the certificate.
         </td>
       </tr>
          <tr>
@@ -956,64 +950,64 @@ parameters.</p>
         <td class="fw-bold">prev_cert.signature</td>
         <td> string</td>
         <td>
-        Certificate signature.
+        The signature of the certificate.
         </td>
       </tr>
          <tr>
     <td class="fw-bold">txs</td>
     <td>repeated TransactionInfo</td>
     <td>
-    List of transactions in the block.
-Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+    List of transactions in the block, available when verbosity level is set to
+BLOCK_TRANSACTIONS.
     </td>
   </tr>
      <tr>
         <td class="fw-bold">txs[].id</td>
         <td> string</td>
         <td>
-        Transaction ID.
+        The unique ID of the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].data</td>
         <td> string</td>
         <td>
-        Transaction data.
+        The raw transaction data.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].version</td>
         <td> int32</td>
         <td>
-        Transaction version.
+        The version of the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].lock_time</td>
         <td> uint32</td>
         <td>
-        Lock time for the transaction.
+        The lock time for the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].value</td>
         <td> int64</td>
         <td>
-        Transaction value in NanoPAC.
+        The value of the transaction in NanoPAC.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].fee</td>
         <td> int64</td>
         <td>
-        Transaction fee in NanoPAC.
+        The fee for the transaction in NanoPAC.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].payload_type</td>
         <td> PayloadType</td>
         <td>
-        (Enum) Type of transaction payload.
+        (Enum) The type of transaction payload.
         <br>Available values:<ul>
           <li>UNKNOWN = Unknown payload type.</li>
           <li>TRANSFER_PAYLOAD = Transfer payload type.</li>
@@ -1028,140 +1022,140 @@ Transaction information is available when the verbosity level is set to BLOCK_TR
         <td class="fw-bold">txs[].transfer</td>
         <td> PayloadTransfer</td>
         <td>
-        (OneOf) Transfer payload.
+        (OneOf) Transfer transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">txs[].transfer.sender</td>
             <td> string</td>
             <td>
-            Sender's address.
+            The sender's address.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].transfer.receiver</td>
             <td> string</td>
             <td>
-            Receiver's address.
+            The receiver's address.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].transfer.amount</td>
             <td> int64</td>
             <td>
-            Transaction amount in NanoPAC.
+            The amount to be transferred in NanoPAC.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">txs[].bond</td>
         <td> PayloadBond</td>
         <td>
-        (OneOf) Bond payload.
+        (OneOf) Bond transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">txs[].bond.sender</td>
             <td> string</td>
             <td>
-            Sender's address.
+            The sender's address.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].bond.receiver</td>
             <td> string</td>
             <td>
-            Receiver's address.
+            The receiver's address.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].bond.stake</td>
             <td> int64</td>
             <td>
-            Stake amount in NanoPAC.
+            The stake amount in NanoPAC.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">txs[].sortition</td>
         <td> PayloadSortition</td>
         <td>
-        (OneOf) Sortition payload.
+        (OneOf) Sortition transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">txs[].sortition.address</td>
             <td> string</td>
             <td>
-            Address associated with the sortition.
+            The validator address associated with the sortition proof.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].sortition.proof</td>
             <td> string</td>
             <td>
-            Proof for the sortition.
+            The proof for the sortition.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">txs[].unbond</td>
         <td> PayloadUnbond</td>
         <td>
-        (OneOf) Unbond payload.
+        (OneOf) Unbond transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">txs[].unbond.validator</td>
             <td> string</td>
             <td>
-            Address of the validator to unbond from.
+            The address of the validator to unbond from.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">txs[].withdraw</td>
         <td> PayloadWithdraw</td>
         <td>
-        (OneOf) Withdraw payload.
+        (OneOf) Withdraw transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">txs[].withdraw.from</td>
             <td> string</td>
             <td>
-            Address to withdraw from.
+            The address to withdraw from.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].withdraw.to</td>
             <td> string</td>
             <td>
-            Address to withdraw to.
+            The address to withdraw to.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].withdraw.amount</td>
             <td> int64</td>
             <td>
-            Withdrawal amount in NanoPAC.
+            The withdrawal amount in NanoPAC.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">txs[].memo</td>
         <td> string</td>
         <td>
-        Transaction memo.
+        A memo string for the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].public_key</td>
         <td> string</td>
         <td>
-        Public key associated with the transaction.
+        The public key associated with the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].signature</td>
         <td> string</td>
         <td>
-        Transaction signature.
+        The signature for the transaction.
         </td>
       </tr>
          </tbody>
@@ -1182,7 +1176,7 @@ Transaction information is available when the verbosity level is set to BLOCK_TR
     <td class="fw-bold">height</td>
     <td> uint32</td>
     <td>
-    Height of the block.
+    The height of the block to retrieve the hash for.
     </td>
   </tr>
   </tbody>
@@ -1198,7 +1192,7 @@ Transaction information is available when the verbosity level is set to BLOCK_TR
     <td class="fw-bold">hash</td>
     <td> string</td>
     <td>
-    Hash of the block.
+    The hash of the block.
     </td>
   </tr>
      </tbody>
@@ -1219,7 +1213,7 @@ Transaction information is available when the verbosity level is set to BLOCK_TR
     <td class="fw-bold">hash</td>
     <td> string</td>
     <td>
-    Hash of the block.
+    The hash of the block to retrieve the height for.
     </td>
   </tr>
   </tbody>
@@ -1235,7 +1229,7 @@ Transaction information is available when the verbosity level is set to BLOCK_TR
     <td class="fw-bold">height</td>
     <td> uint32</td>
     <td>
-    Height of the block.
+    The height of the block.
     </td>
   </tr>
      </tbody>
@@ -1259,42 +1253,42 @@ Message has no fields.
     <td class="fw-bold">last_block_height</td>
     <td> uint32</td>
     <td>
-    Height of the last block.
+    The height of the last block in the blockchain.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">last_block_hash</td>
     <td> string</td>
     <td>
-    Hash of the last block.
+    The hash of the last block in the blockchain.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">total_accounts</td>
     <td> int32</td>
     <td>
-    Total number of accounts.
+    The total number of accounts in the blockchain.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">total_validators</td>
     <td> int32</td>
     <td>
-    Total number of validators.
+    The total number of validators in the blockchain.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">total_power</td>
     <td> int64</td>
     <td>
-    Total power in the blockchain.
+    The total power of the blockchain.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">committee_power</td>
     <td> int64</td>
     <td>
-    Power of the committee.
+    The power of the committee.
     </td>
   </tr>
      <tr>
@@ -1308,70 +1302,70 @@ Message has no fields.
         <td class="fw-bold">committee_validators[].hash</td>
         <td> string</td>
         <td>
-        Hash of the validator.
+        The hash of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">committee_validators[].data</td>
         <td> string</td>
         <td>
-        Validator data.
+        The serialized data of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">committee_validators[].public_key</td>
         <td> string</td>
         <td>
-        Public key of the validator.
+        The public key of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">committee_validators[].number</td>
         <td> int32</td>
         <td>
-        Validator number.
+        The unique number assigned to the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">committee_validators[].stake</td>
         <td> int64</td>
         <td>
-        Validator stake in NanoPAC.
+        The stake of the validator in NanoPAC.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">committee_validators[].last_bonding_height</td>
         <td> uint32</td>
         <td>
-        Last bonding height.
+        The height at which the validator last bonded.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">committee_validators[].last_sortition_height</td>
         <td> uint32</td>
         <td>
-        Last sortition height.
+        The height at which the validator last participated in sortition.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">committee_validators[].unbonding_height</td>
         <td> uint32</td>
         <td>
-        Unbonding height.
+        The height at which the validator will unbond.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">committee_validators[].address</td>
         <td> string</td>
         <td>
-        Address of the validator.
+        The address of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">committee_validators[].availability_score</td>
         <td> double</td>
         <td>
-        Availability score of the validator.
+        The availability score of the validator.
         </td>
       </tr>
          </tbody>
@@ -1402,28 +1396,29 @@ Message has no fields.
         <td class="fw-bold">instances[].address</td>
         <td> string</td>
         <td>
-        Address of the consensus instance.
+        The address of the consensus instance.
         </td>
       </tr>
          <tr>
-        <td class="fw-bold">instances[].Active</td>
+        <td class="fw-bold">instances[].active</td>
         <td> bool</td>
         <td>
-        Whether the consensus instance is active.
+        Indicates whether the consensus instance is active and part of the
+committee.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">instances[].height</td>
         <td> uint32</td>
         <td>
-        Height of the consensus instance.
+        The height of the consensus instance.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">instances[].round</td>
         <td> int32</td>
         <td>
-        Round of the consensus instance.
+        The round of the consensus instance.
         </td>
       </tr>
          <tr>
@@ -1437,7 +1432,7 @@ Message has no fields.
             <td class="fw-bold">instances[].votes[].type</td>
             <td> VoteType</td>
             <td>
-            (Enum) Type of the vote.
+            (Enum) The type of the vote.
             <br>Available values:<ul>
               <li>VOTE_UNKNOWN = Unknown vote type.</li>
               <li>VOTE_PREPARE = Prepare vote type.</li>
@@ -1450,35 +1445,35 @@ Message has no fields.
             <td class="fw-bold">instances[].votes[].voter</td>
             <td> string</td>
             <td>
-            Voter's address.
+            The address of the voter.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">instances[].votes[].block_hash</td>
             <td> string</td>
             <td>
-            Hash of the block being voted on.
+            The hash of the block being voted on.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">instances[].votes[].round</td>
             <td> int32</td>
             <td>
-            Round of the vote.
+            The consensus round of the vote.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">instances[].votes[].cp_round</td>
             <td> int32</td>
             <td>
-            Consensus round of the vote.
+            The change-proposer round of the vote.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">instances[].votes[].cp_value</td>
             <td> int32</td>
             <td>
-            Consensus value of the vote.
+            The change-proposer value of the vote.
             </td>
           </tr>
           </tbody>
@@ -1500,7 +1495,7 @@ address.</p>
     <td class="fw-bold">address</td>
     <td> string</td>
     <td>
-    Address of the account.
+    The address of the account to retrieve information for.
     </td>
   </tr>
   </tbody>
@@ -1516,42 +1511,42 @@ address.</p>
     <td class="fw-bold">account</td>
     <td> AccountInfo</td>
     <td>
-    Account information.
+    Detailed information about the account.
     </td>
   </tr>
      <tr>
         <td class="fw-bold">account.hash</td>
         <td> string</td>
         <td>
-        Hash of the account.
+        The hash of the account.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">account.data</td>
         <td> string</td>
         <td>
-        Account data.
+        The serialized data of the account.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">account.number</td>
         <td> int32</td>
         <td>
-        Account number.
+        The unique number assigned to the account.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">account.balance</td>
         <td> int64</td>
         <td>
-        Account balance in NanoPAC.
+        The balance of the account in NanoPAC.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">account.address</td>
         <td> string</td>
         <td>
-        Address of the account.
+        The address of the account.
         </td>
       </tr>
          </tbody>
@@ -1573,7 +1568,7 @@ address.</p>
     <td class="fw-bold">address</td>
     <td> string</td>
     <td>
-    Address of the validator.
+    The address of the validator to retrieve information for.
     </td>
   </tr>
   </tbody>
@@ -1589,77 +1584,77 @@ address.</p>
     <td class="fw-bold">validator</td>
     <td> ValidatorInfo</td>
     <td>
-    Validator information.
+    Detailed information about the validator.
     </td>
   </tr>
      <tr>
         <td class="fw-bold">validator.hash</td>
         <td> string</td>
         <td>
-        Hash of the validator.
+        The hash of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.data</td>
         <td> string</td>
         <td>
-        Validator data.
+        The serialized data of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.public_key</td>
         <td> string</td>
         <td>
-        Public key of the validator.
+        The public key of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.number</td>
         <td> int32</td>
         <td>
-        Validator number.
+        The unique number assigned to the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.stake</td>
         <td> int64</td>
         <td>
-        Validator stake in NanoPAC.
+        The stake of the validator in NanoPAC.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.last_bonding_height</td>
         <td> uint32</td>
         <td>
-        Last bonding height.
+        The height at which the validator last bonded.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.last_sortition_height</td>
         <td> uint32</td>
         <td>
-        Last sortition height.
+        The height at which the validator last participated in sortition.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.unbonding_height</td>
         <td> uint32</td>
         <td>
-        Unbonding height.
+        The height at which the validator will unbond.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.address</td>
         <td> string</td>
         <td>
-        Address of the validator.
+        The address of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.availability_score</td>
         <td> double</td>
         <td>
-        Availability score of the validator.
+        The availability score of the validator.
         </td>
       </tr>
          </tbody>
@@ -1681,7 +1676,7 @@ provided number.</p>
     <td class="fw-bold">number</td>
     <td> int32</td>
     <td>
-    Validator number.
+    The unique number of the validator to retrieve information for.
     </td>
   </tr>
   </tbody>
@@ -1697,77 +1692,77 @@ provided number.</p>
     <td class="fw-bold">validator</td>
     <td> ValidatorInfo</td>
     <td>
-    Validator information.
+    Detailed information about the validator.
     </td>
   </tr>
      <tr>
         <td class="fw-bold">validator.hash</td>
         <td> string</td>
         <td>
-        Hash of the validator.
+        The hash of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.data</td>
         <td> string</td>
         <td>
-        Validator data.
+        The serialized data of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.public_key</td>
         <td> string</td>
         <td>
-        Public key of the validator.
+        The public key of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.number</td>
         <td> int32</td>
         <td>
-        Validator number.
+        The unique number assigned to the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.stake</td>
         <td> int64</td>
         <td>
-        Validator stake in NanoPAC.
+        The stake of the validator in NanoPAC.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.last_bonding_height</td>
         <td> uint32</td>
         <td>
-        Last bonding height.
+        The height at which the validator last bonded.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.last_sortition_height</td>
         <td> uint32</td>
         <td>
-        Last sortition height.
+        The height at which the validator last participated in sortition.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.unbonding_height</td>
         <td> uint32</td>
         <td>
-        Unbonding height.
+        The height at which the validator will unbond.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.address</td>
         <td> string</td>
         <td>
-        Address of the validator.
+        The address of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.availability_score</td>
         <td> double</td>
         <td>
-        Availability score of the validator.
+        The availability score of the validator.
         </td>
       </tr>
          </tbody>
@@ -1813,7 +1808,7 @@ address.</p>
     <td class="fw-bold">address</td>
     <td> string</td>
     <td>
-    Address for which public key is requested.
+    The address for which to retrieve the public key.
     </td>
   </tr>
   </tbody>
@@ -1829,7 +1824,7 @@ address.</p>
     <td class="fw-bold">public_key</td>
     <td> string</td>
     <td>
-    Public key of the account.
+    The public key associated with the provided address.
     </td>
   </tr>
      </tbody>
@@ -1837,7 +1832,7 @@ address.</p>
 
 ### GetTxPoolContent <span id="pactus.Blockchain.GetTxPoolContent" class="rpc-badge"></span>
 
-<p>GetTxPoolContent retrieves current transactions on the TXPool.</p>
+<p>GetTxPoolContent retrieves current transactions in the transaction pool.</p>
 
 <h4>GetTxPoolContentRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -1850,7 +1845,8 @@ address.</p>
     <td class="fw-bold">payload_type</td>
     <td> PayloadType</td>
     <td>
-    (Enum) Payload type of tranactions in the tx pool, 0 is all types.
+    (Enum) The type of transactions to retrieve from the transaction pool. 0 means all
+types.
     <br>Available values:<ul>
       <li>UNKNOWN = Unknown payload type.</li>
       <li>TRANSFER_PAYLOAD = Transfer payload type.</li>
@@ -1874,56 +1870,56 @@ address.</p>
     <td class="fw-bold">txs</td>
     <td>repeated TransactionInfo</td>
     <td>
-    List of the transaction in the pool.
+    List of transactions currently in the pool.
     </td>
   </tr>
      <tr>
         <td class="fw-bold">txs[].id</td>
         <td> string</td>
         <td>
-        Transaction ID.
+        The unique ID of the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].data</td>
         <td> string</td>
         <td>
-        Transaction data.
+        The raw transaction data.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].version</td>
         <td> int32</td>
         <td>
-        Transaction version.
+        The version of the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].lock_time</td>
         <td> uint32</td>
         <td>
-        Lock time for the transaction.
+        The lock time for the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].value</td>
         <td> int64</td>
         <td>
-        Transaction value in NanoPAC.
+        The value of the transaction in NanoPAC.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].fee</td>
         <td> int64</td>
         <td>
-        Transaction fee in NanoPAC.
+        The fee for the transaction in NanoPAC.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].payload_type</td>
         <td> PayloadType</td>
         <td>
-        (Enum) Type of transaction payload.
+        (Enum) The type of transaction payload.
         <br>Available values:<ul>
           <li>UNKNOWN = Unknown payload type.</li>
           <li>TRANSFER_PAYLOAD = Transfer payload type.</li>
@@ -1938,140 +1934,140 @@ address.</p>
         <td class="fw-bold">txs[].transfer</td>
         <td> PayloadTransfer</td>
         <td>
-        (OneOf) Transfer payload.
+        (OneOf) Transfer transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">txs[].transfer.sender</td>
             <td> string</td>
             <td>
-            Sender's address.
+            The sender's address.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].transfer.receiver</td>
             <td> string</td>
             <td>
-            Receiver's address.
+            The receiver's address.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].transfer.amount</td>
             <td> int64</td>
             <td>
-            Transaction amount in NanoPAC.
+            The amount to be transferred in NanoPAC.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">txs[].bond</td>
         <td> PayloadBond</td>
         <td>
-        (OneOf) Bond payload.
+        (OneOf) Bond transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">txs[].bond.sender</td>
             <td> string</td>
             <td>
-            Sender's address.
+            The sender's address.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].bond.receiver</td>
             <td> string</td>
             <td>
-            Receiver's address.
+            The receiver's address.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].bond.stake</td>
             <td> int64</td>
             <td>
-            Stake amount in NanoPAC.
+            The stake amount in NanoPAC.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">txs[].sortition</td>
         <td> PayloadSortition</td>
         <td>
-        (OneOf) Sortition payload.
+        (OneOf) Sortition transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">txs[].sortition.address</td>
             <td> string</td>
             <td>
-            Address associated with the sortition.
+            The validator address associated with the sortition proof.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].sortition.proof</td>
             <td> string</td>
             <td>
-            Proof for the sortition.
+            The proof for the sortition.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">txs[].unbond</td>
         <td> PayloadUnbond</td>
         <td>
-        (OneOf) Unbond payload.
+        (OneOf) Unbond transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">txs[].unbond.validator</td>
             <td> string</td>
             <td>
-            Address of the validator to unbond from.
+            The address of the validator to unbond from.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">txs[].withdraw</td>
         <td> PayloadWithdraw</td>
         <td>
-        (OneOf) Withdraw payload.
+        (OneOf) Withdraw transaction payload.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">txs[].withdraw.from</td>
             <td> string</td>
             <td>
-            Address to withdraw from.
+            The address to withdraw from.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].withdraw.to</td>
             <td> string</td>
             <td>
-            Address to withdraw to.
+            The address to withdraw to.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">txs[].withdraw.amount</td>
             <td> int64</td>
             <td>
-            Withdrawal amount in NanoPAC.
+            The withdrawal amount in NanoPAC.
             </td>
           </tr>
           <tr>
         <td class="fw-bold">txs[].memo</td>
         <td> string</td>
         <td>
-        Transaction memo.
+        A memo string for the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].public_key</td>
         <td> string</td>
         <td>
-        Public key associated with the transaction.
+        The public key associated with the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].signature</td>
         <td> string</td>
         <td>
-        Transaction signature.
+        The signature for the transaction.
         </td>
       </tr>
          </tbody>
@@ -2096,7 +2092,7 @@ address.</p>
     <td class="fw-bold">only_connected</td>
     <td> bool</td>
     <td>
-    Only returns the peers with connected status
+    If true, only returns peers with connected status.
     </td>
   </tr>
   </tbody>
@@ -2179,10 +2175,10 @@ address.</p>
         </td>
       </tr>
          <tr>
-        <td class="fw-bold">connected_peers[].consensus_address</td>
+        <td class="fw-bold">connected_peers[].consensus_addresses</td>
         <td>repeated string</td>
         <td>
-        Consensus address of the peer.
+        Consensus addresses of the peer.
         </td>
       </tr>
          <tr>
@@ -2203,21 +2199,21 @@ address.</p>
         <td class="fw-bold">connected_peers[].height</td>
         <td> uint32</td>
         <td>
-        Height of the peer in the blockchain.
+        Blockchain height of the peer.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].received_bundles</td>
         <td> int32</td>
         <td>
-        Count of received bundles.
+        Number of received bundles.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].invalid_bundles</td>
         <td> int32</td>
         <td>
-        Count of invalid bundles received.
+        Number of invalid bundles received.
         </td>
       </tr>
          <tr>
@@ -2273,14 +2269,14 @@ address.</p>
         <td class="fw-bold">connected_peers[].total_sessions</td>
         <td> int32</td>
         <td>
-        Total sessions with the peer.
+        Total download sessions with the peer.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].completed_sessions</td>
         <td> int32</td>
         <td>
-        Completed sessions with the peer.
+        Completed download sessions with the peer.
         </td>
       </tr>
          <tr>
@@ -2381,21 +2377,21 @@ Message has no fields.
     <td class="fw-bold">clock_offset</td>
     <td> double</td>
     <td>
-    Clock offset
+    Clock offset of the node.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">connection_info</td>
     <td> ConnectionInfo</td>
     <td>
-    Connection information
+    Information about the node's connections.
     </td>
   </tr>
      <tr>
         <td class="fw-bold">connection_info.connections</td>
         <td> uint64</td>
         <td>
-        Total number of the connection.
+        Total number of connections.
         </td>
       </tr>
          <tr>
@@ -2434,14 +2430,14 @@ Message has no fields.
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    Name of the new wallet.
+    The name of the new wallet.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">password</td>
     <td> string</td>
     <td>
-    Password for securing the wallet.
+    The password for securing the wallet.
     </td>
   </tr>
   </tbody>
@@ -2457,7 +2453,7 @@ Message has no fields.
     <td class="fw-bold">mnemonic</td>
     <td> string</td>
     <td>
-    Menomic for wallet recovery.
+    The mnemonic for wallet recovery.
     </td>
   </tr>
      </tbody>
@@ -2478,21 +2474,21 @@ Message has no fields.
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    Name of the wallet to restore.
+    The name of the wallet to restore.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">mnemonic</td>
     <td> string</td>
     <td>
-    Menomic for wallet recovery.
+    The mnemonic for wallet recovery.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">password</td>
     <td> string</td>
     <td>
-    Password for securing the wallet.
+    The password for securing the wallet.
     </td>
   </tr>
   </tbody>
@@ -2508,7 +2504,7 @@ Message has no fields.
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    Name of the restored wallet.
+    The name of the restored wallet.
     </td>
   </tr>
      </tbody>
@@ -2529,7 +2525,7 @@ Message has no fields.
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    Name of the wallet to load.
+    The name of the wallet to load.
     </td>
   </tr>
   </tbody>
@@ -2545,7 +2541,7 @@ Message has no fields.
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    Name of the loaded wallet.
+    The name of the loaded wallet.
     </td>
   </tr>
      </tbody>
@@ -2566,7 +2562,7 @@ Message has no fields.
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    Name of the wallet to unload.
+    The name of the wallet to unload.
     </td>
   </tr>
   </tbody>
@@ -2582,7 +2578,7 @@ Message has no fields.
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    Name of the unloaded wallet.
+    The name of the unloaded wallet.
     </td>
   </tr>
      </tbody>
@@ -2603,7 +2599,7 @@ Message has no fields.
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    Name of the wallet.
+    The name of the wallet to get the total balance.
     </td>
   </tr>
   </tbody>
@@ -2619,7 +2615,7 @@ Message has no fields.
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    Name of the wallet.
+    The name of the wallet.
     </td>
   </tr>
      <tr>
@@ -2647,21 +2643,21 @@ Message has no fields.
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    Name of the wallet used for signing.
+    The name of the wallet used for signing.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">raw_transaction</td>
     <td> string</td>
     <td>
-    Raw transaction data to be signed.
+    The raw transaction data to be signed.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">password</td>
     <td> string</td>
     <td>
-    Password for unlocking the wallet for signing.
+    The password for unlocking the wallet for signing.
     </td>
   </tr>
   </tbody>
@@ -2677,14 +2673,14 @@ Message has no fields.
     <td class="fw-bold">transaction_id</td>
     <td> string</td>
     <td>
-    ID of the signed transaction.
+    The ID of the signed transaction.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">signed_raw_transaction</td>
     <td> string</td>
     <td>
-    Signed raw transaction data.
+    The signed raw transaction data.
     </td>
   </tr>
      </tbody>
@@ -2706,7 +2702,7 @@ public key.</p>
     <td class="fw-bold">public_key</td>
     <td> string</td>
     <td>
-    Public key for which the validator address is requested.
+    The public key for which the validator address is requested.
     </td>
   </tr>
   </tbody>
@@ -2722,7 +2718,7 @@ public key.</p>
     <td class="fw-bold">address</td>
     <td> string</td>
     <td>
-    Validator address associated with the public key.
+    The validator address associated with the public key.
     </td>
   </tr>
      </tbody>
@@ -2743,14 +2739,14 @@ public key.</p>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the wallet for which the new address is requested.
+    The name of the wallet to generate a new address.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">address_type</td>
     <td> AddressType</td>
     <td>
-    (Enum) The type of the new address.
+    (Enum) The type of address to generate.
     <br>Available values:<ul>
       <li>ADDRESS_TYPE_TREASURY = </li>
       <li>ADDRESS_TYPE_VALIDATOR = </li>
@@ -2762,7 +2758,7 @@ public key.</p>
     <td class="fw-bold">label</td>
     <td> string</td>
     <td>
-    The label for the new address.
+    A label for the new address.
     </td>
   </tr>
   </tbody>
@@ -2778,35 +2774,35 @@ public key.</p>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the wallet from which the address is created.
+    The name of the wallet from which the address is generated.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">address_info</td>
     <td> AddressInfo</td>
     <td>
-    Information about the new address.
+    Information about the newly generated address.
     </td>
   </tr>
      <tr>
         <td class="fw-bold">address_info.address</td>
         <td> string</td>
         <td>
-        The string representing the address.
+        The address string.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">address_info.public_key</td>
         <td> string</td>
         <td>
-        The public key that the address is derived from.
+        The public key associated with the address.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">address_info.label</td>
         <td> string</td>
         <td>
-        The label that is associated with the address.
+        A label associated with the address.
         </td>
       </tr>
          <tr>
@@ -2821,7 +2817,7 @@ public key.</p>
 
 ### GetAddressHistory <span id="pactus.Wallet.GetAddressHistory" class="rpc-badge"></span>
 
-<p>GetAddressHistory retrieve transaction history of an address.</p>
+<p>GetAddressHistory retrieves the transaction history of an address.</p>
 
 <h4>GetAddressHistoryRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -2834,14 +2830,14 @@ public key.</p>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    Name of the wallet.
+    The name of the wallet.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">address</td>
     <td> string</td>
     <td>
-    Address to get the transaction history of it.
+    The address to retrieve the transaction history for.
     </td>
   </tr>
   </tbody>
@@ -2857,42 +2853,42 @@ public key.</p>
     <td class="fw-bold">history_info</td>
     <td>repeated HistoryInfo</td>
     <td>
-    Array of address history and activities.
+    Array of history information for the address.
     </td>
   </tr>
      <tr>
         <td class="fw-bold">history_info[].transaction_id</td>
         <td> string</td>
         <td>
-        Hash of transaction.
+        The transaction ID hash.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">history_info[].time</td>
         <td> uint32</td>
         <td>
-        Transaction timestamp.
+        The timestamp of the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">history_info[].payload_type</td>
         <td> string</td>
         <td>
-        Type of transaction payload.
+        The payload type of the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">history_info[].description</td>
         <td> string</td>
         <td>
-        Description of transaction.
+        A description of the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">history_info[].amount</td>
         <td> int64</td>
         <td>
-        Amount of transaction.
+        The amount involved in the transaction.
         </td>
       </tr>
          </tbody>

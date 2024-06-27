@@ -517,7 +517,7 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetTxPoolContent retrieves current transactions on the TXPool.
+     * GetTxPoolContent retrieves current transactions in the transaction pool.
      * </pre>
      */
     public void getTxPoolContent(pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest request,
@@ -742,7 +742,7 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetTxPoolContent retrieves current transactions on the TXPool.
+     * GetTxPoolContent retrieves current transactions in the transaction pool.
      * </pre>
      */
     public void getTxPoolContent(pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest request,
@@ -876,7 +876,7 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetTxPoolContent retrieves current transactions on the TXPool.
+     * GetTxPoolContent retrieves current transactions in the transaction pool.
      * </pre>
      */
     public pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse getTxPoolContent(pactus.blockchain.BlockchainOuterClass.GetTxPoolContentRequest request) {
@@ -1019,7 +1019,7 @@ public final class BlockchainGrpc {
 
     /**
      * <pre>
-     * GetTxPoolContent retrieves current transactions on the TXPool.
+     * GetTxPoolContent retrieves current transactions in the transaction pool.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.blockchain.BlockchainOuterClass.GetTxPoolContentResponse> getTxPoolContent(

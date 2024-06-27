@@ -20,7 +20,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Enumeration for different types of transaction payload.
+// Enumeration for different types of transaction payloads.
 type PayloadType int32
 
 const (
@@ -85,13 +85,13 @@ func (PayloadType) EnumDescriptor() ([]byte, []int) {
 	return file_transaction_proto_rawDescGZIP(), []int{0}
 }
 
-// Enumeration for verbosity level when requesting transaction details.
+// Enumeration for verbosity levels when requesting transaction details.
 type TransactionVerbosity int32
 
 const (
 	// Request transaction data only.
 	TransactionVerbosity_TRANSACTION_DATA TransactionVerbosity = 0
-	// Request transaction details.
+	// Request detailed transaction information.
 	TransactionVerbosity_TRANSACTION_INFO TransactionVerbosity = 1
 )
 
@@ -140,9 +140,9 @@ type GetTransactionRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Transaction ID.
+	// The unique ID of the transaction to retrieve.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// Verbosity level for transaction details.
+	// The verbosity level for transaction details.
 	Verbosity TransactionVerbosity `protobuf:"varint,2,opt,name=verbosity,proto3,enum=pactus.TransactionVerbosity" json:"verbosity,omitempty"`
 }
 
@@ -198,11 +198,11 @@ type GetTransactionResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Height of the block containing the transaction.
+	// The height of the block containing the transaction.
 	BlockHeight uint32 `protobuf:"varint,1,opt,name=block_height,json=blockHeight,proto3" json:"block_height,omitempty"`
-	// Time of the block containing the transaction.
+	// The UNIX timestamp of the block containing the transaction.
 	BlockTime uint32 `protobuf:"varint,2,opt,name=block_time,json=blockTime,proto3" json:"block_time,omitempty"`
-	// Information about the transaction.
+	// Detailed information about the transaction.
 	Transaction *TransactionInfo `protobuf:"bytes,3,opt,name=transaction,proto3" json:"transaction,omitempty"`
 }
 
@@ -265,11 +265,11 @@ type CalculateFeeRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Transaction amount in NanoPAC.
+	// The amount involved in the transaction, specified in NanoPAC.
 	Amount int64 `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`
-	// Type of transaction payload.
+	// The type of transaction payload.
 	PayloadType PayloadType `protobuf:"varint,2,opt,name=payload_type,json=payloadType,proto3,enum=pactus.PayloadType" json:"payload_type,omitempty"`
-	// Indicates that amount should be fixed and includes the fee.
+	// Indicates if the amount should be fixed and include the fee.
 	FixedAmount bool `protobuf:"varint,3,opt,name=fixed_amount,json=fixedAmount,proto3" json:"fixed_amount,omitempty"`
 }
 
@@ -332,9 +332,9 @@ type CalculateFeeResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Calculated amount in NanoPAC.
+	// The calculated amount in NanoPAC.
 	Amount int64 `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`
-	// Calculated transaction fee in NanoPAC.
+	// The calculated transaction fee in NanoPAC.
 	Fee int64 `protobuf:"varint,2,opt,name=fee,proto3" json:"fee,omitempty"`
 }
 
@@ -390,7 +390,7 @@ type BroadcastTransactionRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Signed raw transaction data.
+	// The signed raw transaction data to be broadcasted.
 	SignedRawTransaction string `protobuf:"bytes,1,opt,name=signed_raw_transaction,json=signedRawTransaction,proto3" json:"signed_raw_transaction,omitempty"`
 }
 
@@ -439,7 +439,7 @@ type BroadcastTransactionResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Transaction ID.
+	// The unique ID of the broadcasted transaction.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
@@ -488,20 +488,18 @@ type GetRawTransferTransactionRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Lock time for the transaction.
-	// If not explicitly set, it sets to the last block height.
+	// The lock time for the transaction. If not set, defaults to the last block
+	// height.
 	LockTime uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	// Sender's account address.
+	// The sender's account address.
 	Sender string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty"`
-	// Receiver's account address.
+	// The receiver's account address.
 	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	// Transfer amount in NanoPAC.
-	// It should be greater than 0.
+	// The amount to be transferred, specified in NanoPAC. Must be greater than 0.
 	Amount int64 `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`
-	// Transaction fee in NanoPAC.
-	// If not explicitly set, it is calculated based on the amount.
+	// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
 	Fee int64 `protobuf:"varint,5,opt,name=fee,proto3" json:"fee,omitempty"`
-	// Transaction memo.
+	// A memo string for the transaction.
 	Memo string `protobuf:"bytes,6,opt,name=memo,proto3" json:"memo,omitempty"`
 }
 
@@ -585,22 +583,20 @@ type GetRawBondTransactionRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Lock time for the transaction.
-	// If not explicitly set, it sets to the last block height.
+	// The lock time for the transaction. If not set, defaults to the last block
+	// height.
 	LockTime uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	// Sender's account address.
+	// The sender's account address.
 	Sender string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty"`
-	// Receiver's validator address.
+	// The receiver's validator address.
 	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	// Stake amount in NanoPAC.
-	// It should be greater than 0.
+	// The stake amount in NanoPAC. Must be greater than 0.
 	Stake int64 `protobuf:"varint,4,opt,name=stake,proto3" json:"stake,omitempty"`
-	// Public key of the validator.
+	// The public key of the validator.
 	PublicKey string `protobuf:"bytes,5,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
-	// Transaction fee in NanoPAC.
-	// If not explicitly set, it is calculated based on the stake.
+	// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
 	Fee int64 `protobuf:"varint,6,opt,name=fee,proto3" json:"fee,omitempty"`
-	// Transaction memo.
+	// A memo string for the transaction.
 	Memo string `protobuf:"bytes,7,opt,name=memo,proto3" json:"memo,omitempty"`
 }
 
@@ -691,12 +687,12 @@ type GetRawUnbondTransactionRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Lock time for the transaction.
-	// If not explicitly set, it sets to the last block height.
+	// The lock time for the transaction. If not set, defaults to the last block
+	// height.
 	LockTime uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	// Address of the validator to unbond from.
+	// The address of the validator to unbond from.
 	ValidatorAddress string `protobuf:"bytes,3,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
-	// Transaction memo.
+	// A memo string for the transaction.
 	Memo string `protobuf:"bytes,4,opt,name=memo,proto3" json:"memo,omitempty"`
 }
 
@@ -759,20 +755,18 @@ type GetRawWithdrawTransactionRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Lock time for the transaction.
-	// If not explicitly set, it sets to the last block height.
+	// The lock time for the transaction. If not set, defaults to the last block
+	// height.
 	LockTime uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	// Address of the validator to withdraw from.
+	// The address of the validator to withdraw from.
 	ValidatorAddress string `protobuf:"bytes,2,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
-	// Address of the account to withdraw to.
+	// The address of the account to withdraw to.
 	AccountAddress string `protobuf:"bytes,3,opt,name=account_address,json=accountAddress,proto3" json:"account_address,omitempty"`
-	// Withdrawal amount in NanoPAC.
-	// It should be greater than 0.
+	// The withdrawal amount in NanoPAC. Must be greater than 0.
 	Amount int64 `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`
-	// Transaction fee in NanoPAC.
-	// If not explicitly set, it is calculated based on the amount.
+	// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
 	Fee int64 `protobuf:"varint,5,opt,name=fee,proto3" json:"fee,omitempty"`
-	// Transaction memo.
+	// A memo string for the transaction.
 	Memo string `protobuf:"bytes,6,opt,name=memo,proto3" json:"memo,omitempty"`
 }
 
@@ -856,7 +850,7 @@ type GetRawTransactionResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Raw transaction data.
+	// The raw transaction data.
 	RawTransaction string `protobuf:"bytes,1,opt,name=raw_transaction,json=rawTransaction,proto3" json:"raw_transaction,omitempty"`
 }
 
@@ -905,11 +899,11 @@ type PayloadTransfer struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Sender's address.
+	// The sender's address.
 	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
-	// Receiver's address.
+	// The receiver's address.
 	Receiver string `protobuf:"bytes,2,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	// Transaction amount in NanoPAC.
+	// The amount to be transferred in NanoPAC.
 	Amount int64 `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
 }
 
@@ -972,11 +966,11 @@ type PayloadBond struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Sender's address.
+	// The sender's address.
 	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
-	// Receiver's address.
+	// The receiver's address.
 	Receiver string `protobuf:"bytes,2,opt,name=receiver,proto3" json:"receiver,omitempty"`
-	// Stake amount in NanoPAC.
+	// The stake amount in NanoPAC.
 	Stake int64 `protobuf:"varint,3,opt,name=stake,proto3" json:"stake,omitempty"`
 }
 
@@ -1039,9 +1033,9 @@ type PayloadSortition struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Address associated with the sortition.
+	// The validator address associated with the sortition proof.
 	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
-	// Proof for the sortition.
+	// The proof for the sortition.
 	Proof string `protobuf:"bytes,2,opt,name=proof,proto3" json:"proof,omitempty"`
 }
 
@@ -1097,7 +1091,7 @@ type PayloadUnbond struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Address of the validator to unbond from.
+	// The address of the validator to unbond from.
 	Validator string `protobuf:"bytes,1,opt,name=validator,proto3" json:"validator,omitempty"`
 }
 
@@ -1146,11 +1140,11 @@ type PayloadWithdraw struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Address to withdraw from.
+	// The address to withdraw from.
 	From string `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
-	// Address to withdraw to.
+	// The address to withdraw to.
 	To string `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
-	// Withdrawal amount in NanoPAC.
+	// The withdrawal amount in NanoPAC.
 	Amount int64 `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
 }
 
@@ -1213,19 +1207,19 @@ type TransactionInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Transaction ID.
+	// The unique ID of the transaction.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// Transaction data.
+	// The raw transaction data.
 	Data string `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	// Transaction version.
+	// The version of the transaction.
 	Version int32 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
-	// Lock time for the transaction.
+	// The lock time for the transaction.
 	LockTime uint32 `protobuf:"varint,4,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	// Transaction value in NanoPAC.
+	// The value of the transaction in NanoPAC.
 	Value int64 `protobuf:"varint,5,opt,name=value,proto3" json:"value,omitempty"`
-	// Transaction fee in NanoPAC.
+	// The fee for the transaction in NanoPAC.
 	Fee int64 `protobuf:"varint,6,opt,name=fee,proto3" json:"fee,omitempty"`
-	// Type of transaction payload.
+	// The type of transaction payload.
 	PayloadType PayloadType `protobuf:"varint,7,opt,name=payload_type,json=payloadType,proto3,enum=pactus.PayloadType" json:"payload_type,omitempty"`
 	// Types that are assignable to Payload:
 	//
@@ -1235,11 +1229,11 @@ type TransactionInfo struct {
 	//	*TransactionInfo_Unbond
 	//	*TransactionInfo_Withdraw
 	Payload isTransactionInfo_Payload `protobuf_oneof:"payload"`
-	// Transaction memo.
+	// A memo string for the transaction.
 	Memo string `protobuf:"bytes,8,opt,name=memo,proto3" json:"memo,omitempty"`
-	// Public key associated with the transaction.
+	// The public key associated with the transaction.
 	PublicKey string `protobuf:"bytes,9,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
-	// Transaction signature.
+	// The signature for the transaction.
 	Signature string `protobuf:"bytes,10,opt,name=signature,proto3" json:"signature,omitempty"`
 }
 
@@ -1392,27 +1386,27 @@ type isTransactionInfo_Payload interface {
 }
 
 type TransactionInfo_Transfer struct {
-	// Transfer payload.
+	// Transfer transaction payload.
 	Transfer *PayloadTransfer `protobuf:"bytes,30,opt,name=transfer,proto3,oneof"`
 }
 
 type TransactionInfo_Bond struct {
-	// Bond payload.
+	// Bond transaction payload.
 	Bond *PayloadBond `protobuf:"bytes,31,opt,name=bond,proto3,oneof"`
 }
 
 type TransactionInfo_Sortition struct {
-	// Sortition payload.
+	// Sortition transaction payload.
 	Sortition *PayloadSortition `protobuf:"bytes,32,opt,name=sortition,proto3,oneof"`
 }
 
 type TransactionInfo_Unbond struct {
-	// Unbond payload.
+	// Unbond transaction payload.
 	Unbond *PayloadUnbond `protobuf:"bytes,33,opt,name=unbond,proto3,oneof"`
 }
 
 type TransactionInfo_Withdraw struct {
-	// Withdraw payload.
+	// Withdraw transaction payload.
 	Withdraw *PayloadWithdraw `protobuf:"bytes,34,opt,name=withdraw,proto3,oneof"`
 }
 

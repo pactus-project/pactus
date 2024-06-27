@@ -264,10 +264,6 @@ func (t *tableMaker) addRowInts(key string, vals []int32) {
 	t.w.WriteString("</td></tr>")
 }
 
-func (t *tableMaker) addRowHex(key, val string) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, val)
-}
-
 func (t *tableMaker) addRowDouble(key string, val float64) {
 	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%f</td></tr>", key, val)
 }

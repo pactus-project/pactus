@@ -5550,7 +5550,7 @@ proto.pactus.ConsensusInfo.prototype.setAddress = function(value) {
 
 
 /**
- * optional bool Active = 2;
+ * optional bool active = 2;
  * @return {boolean}
  */
 proto.pactus.ConsensusInfo.prototype.getActive = function() {

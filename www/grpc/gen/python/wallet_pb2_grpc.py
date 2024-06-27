@@ -124,7 +124,7 @@ class WalletServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetAddressHistory(self, request, context):
-        """GetAddressHistory retrieve transaction history of an address.
+        """GetAddressHistory retrieves the transaction history of an address.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')

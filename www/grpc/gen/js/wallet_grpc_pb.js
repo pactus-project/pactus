@@ -303,7 +303,7 @@ getNewAddress: {
     responseSerialize: serialize_pactus_GetNewAddressResponse,
     responseDeserialize: deserialize_pactus_GetNewAddressResponse,
   },
-  // GetAddressHistory retrieve transaction history of an address.
+  // GetAddressHistory retrieves the transaction history of an address.
 getAddressHistory: {
     path: '/pactus.Wallet/GetAddressHistory',
     requestStream: false,

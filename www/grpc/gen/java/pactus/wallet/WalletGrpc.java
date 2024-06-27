@@ -431,7 +431,7 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * GetAddressHistory retrieve transaction history of an address.
+     * GetAddressHistory retrieves the transaction history of an address.
      * </pre>
      */
     public void getAddressHistory(pactus.wallet.WalletOuterClass.GetAddressHistoryRequest request,
@@ -616,7 +616,7 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * GetAddressHistory retrieve transaction history of an address.
+     * GetAddressHistory retrieves the transaction history of an address.
      * </pre>
      */
     public void getAddressHistory(pactus.wallet.WalletOuterClass.GetAddressHistoryRequest request,
@@ -726,7 +726,7 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * GetAddressHistory retrieve transaction history of an address.
+     * GetAddressHistory retrieves the transaction history of an address.
      * </pre>
      */
     public pactus.wallet.WalletOuterClass.GetAddressHistoryResponse getAddressHistory(pactus.wallet.WalletOuterClass.GetAddressHistoryRequest request) {
@@ -843,7 +843,7 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * GetAddressHistory retrieve transaction history of an address.
+     * GetAddressHistory retrieves the transaction history of an address.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.GetAddressHistoryResponse> getAddressHistory(
