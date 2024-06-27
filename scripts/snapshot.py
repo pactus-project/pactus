@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# Pactus Blockchain Backup tool
+# Pactus Blockchain Snapshot tool
 #
 # This script first stops the Pactus node if it is running, then creates a backup of the blockchain data by copying
 # or compressing it based on the specified options. The backup is stored in a timestamped snapshot directory along
@@ -44,7 +44,7 @@
 #
 # For create snapshots just run this command:
 #
-# sudo python3 backup.py --service_path /etc/systemd/system/pactus.service --data_path /home/{user}/pactus/data
+# sudo python3 snapshot.py --service_path /etc/systemd/system/pactus.service --data_path /home/{user}/pactus/data
 # --compress zip --retention 3
 
 
@@ -317,7 +317,7 @@ def parse_args():
     user_home = os.path.expanduser("~")
     default_data_path = os.path.join(user_home, 'pactus')
 
-    parser = argparse.ArgumentParser(description='Pactus Blockchain Backup Tool')
+    parser = argparse.ArgumentParser(description='Pactus Blockchain Snapshot Tool')
     parser.add_argument('--service_path', required=True, help='Path to pactus systemctl service')
     parser.add_argument('--data_path', default=default_data_path, help='Path to data directory')
     parser.add_argument('--compress', choices=['none', 'zip', 'tar'], default='none', help='Compression type')
