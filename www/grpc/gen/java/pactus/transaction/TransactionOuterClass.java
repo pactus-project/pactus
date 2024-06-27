@@ -347,10 +347,20 @@ public final class TransactionOuterClass {
      * Transaction ID.
      * </pre>
      *
-     * <code>bytes id = 1 [json_name = "id"];</code>
+     * <code>string id = 1 [json_name = "id"];</code>
      * @return The id.
      */
-    com.google.protobuf.ByteString getId();
+    java.lang.String getId();
+    /**
+     * <pre>
+     * Transaction ID.
+     * </pre>
+     *
+     * <code>string id = 1 [json_name = "id"];</code>
+     * @return The bytes for id.
+     */
+    com.google.protobuf.ByteString
+        getIdBytes();
 
     /**
      * <pre>
@@ -388,7 +398,7 @@ public final class TransactionOuterClass {
       super(builder);
     }
     private GetTransactionRequest() {
-      id_ = com.google.protobuf.ByteString.EMPTY;
+      id_ = "";
       verbosity_ = 0;
     }
 
@@ -418,18 +428,49 @@ public final class TransactionOuterClass {
     }
 
     public static final int ID_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString id_;
+    private volatile java.lang.Object id_;
     /**
      * <pre>
      * Transaction ID.
      * </pre>
      *
-     * <code>bytes id = 1 [json_name = "id"];</code>
+     * <code>string id = 1 [json_name = "id"];</code>
      * @return The id.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getId() {
-      return id_;
+    public java.lang.String getId() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        id_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Transaction ID.
+     * </pre>
+     *
+     * <code>string id = 1 [json_name = "id"];</code>
+     * @return The bytes for id.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getIdBytes() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        id_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int VERBOSITY_FIELD_NUMBER = 2;
@@ -473,8 +514,8 @@ public final class TransactionOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!id_.isEmpty()) {
-        output.writeBytes(1, id_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, id_);
       }
       if (verbosity_ != pactus.transaction.TransactionOuterClass.TransactionVerbosity.TRANSACTION_DATA.getNumber()) {
         output.writeEnum(2, verbosity_);
@@ -488,9 +529,8 @@ public final class TransactionOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!id_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, id_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, id_);
       }
       if (verbosity_ != pactus.transaction.TransactionOuterClass.TransactionVerbosity.TRANSACTION_DATA.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
@@ -661,7 +701,7 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        id_ = com.google.protobuf.ByteString.EMPTY;
+        id_ = "";
 
         verbosity_ = 0;
 
@@ -741,8 +781,9 @@ public final class TransactionOuterClass {
 
       public Builder mergeFrom(pactus.transaction.TransactionOuterClass.GetTransactionRequest other) {
         if (other == pactus.transaction.TransactionOuterClass.GetTransactionRequest.getDefaultInstance()) return this;
-        if (other.getId() != com.google.protobuf.ByteString.EMPTY) {
-          setId(other.getId());
+        if (!other.getId().isEmpty()) {
+          id_ = other.id_;
+          onChanged();
         }
         if (other.verbosity_ != 0) {
           setVerbosityValue(other.getVerbosityValue());
@@ -774,7 +815,7 @@ public final class TransactionOuterClass {
                 done = true;
                 break;
               case 10: {
-                id_ = input.readBytes();
+                id_ = input.readStringRequireUtf8();
 
                 break;
               } // case 10
@@ -799,29 +840,59 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString id_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object id_ = "";
       /**
        * <pre>
        * Transaction ID.
        * </pre>
        *
-       * <code>bytes id = 1 [json_name = "id"];</code>
+       * <code>string id = 1 [json_name = "id"];</code>
        * @return The id.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getId() {
-        return id_;
+      public java.lang.String getId() {
+        java.lang.Object ref = id_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          id_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Transaction ID.
        * </pre>
        *
-       * <code>bytes id = 1 [json_name = "id"];</code>
+       * <code>string id = 1 [json_name = "id"];</code>
+       * @return The bytes for id.
+       */
+      public com.google.protobuf.ByteString
+          getIdBytes() {
+        java.lang.Object ref = id_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          id_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
+       * <code>string id = 1 [json_name = "id"];</code>
        * @param value The id to set.
        * @return This builder for chaining.
        */
-      public Builder setId(com.google.protobuf.ByteString value) {
+      public Builder setId(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -835,12 +906,32 @@ public final class TransactionOuterClass {
        * Transaction ID.
        * </pre>
        *
-       * <code>bytes id = 1 [json_name = "id"];</code>
+       * <code>string id = 1 [json_name = "id"];</code>
        * @return This builder for chaining.
        */
       public Builder clearId() {
         
         id_ = getDefaultInstance().getId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
+       * <code>string id = 1 [json_name = "id"];</code>
+       * @param value The bytes for id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        id_ = value;
         onChanged();
         return this;
       }
@@ -3158,10 +3249,20 @@ public final class TransactionOuterClass {
      * Signed raw transaction data.
      * </pre>
      *
-     * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
+     * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
      * @return The signedRawTransaction.
      */
-    com.google.protobuf.ByteString getSignedRawTransaction();
+    java.lang.String getSignedRawTransaction();
+    /**
+     * <pre>
+     * Signed raw transaction data.
+     * </pre>
+     *
+     * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
+     * @return The bytes for signedRawTransaction.
+     */
+    com.google.protobuf.ByteString
+        getSignedRawTransactionBytes();
   }
   /**
    * <pre>
@@ -3180,7 +3281,7 @@ public final class TransactionOuterClass {
       super(builder);
     }
     private BroadcastTransactionRequest() {
-      signedRawTransaction_ = com.google.protobuf.ByteString.EMPTY;
+      signedRawTransaction_ = "";
     }
 
     @java.lang.Override
@@ -3209,18 +3310,49 @@ public final class TransactionOuterClass {
     }
 
     public static final int SIGNED_RAW_TRANSACTION_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString signedRawTransaction_;
+    private volatile java.lang.Object signedRawTransaction_;
     /**
      * <pre>
      * Signed raw transaction data.
      * </pre>
      *
-     * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
+     * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
      * @return The signedRawTransaction.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getSignedRawTransaction() {
-      return signedRawTransaction_;
+    public java.lang.String getSignedRawTransaction() {
+      java.lang.Object ref = signedRawTransaction_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        signedRawTransaction_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Signed raw transaction data.
+     * </pre>
+     *
+     * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
+     * @return The bytes for signedRawTransaction.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSignedRawTransactionBytes() {
+      java.lang.Object ref = signedRawTransaction_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        signedRawTransaction_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -3237,8 +3369,8 @@ public final class TransactionOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!signedRawTransaction_.isEmpty()) {
-        output.writeBytes(1, signedRawTransaction_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(signedRawTransaction_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, signedRawTransaction_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -3249,9 +3381,8 @@ public final class TransactionOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!signedRawTransaction_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, signedRawTransaction_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(signedRawTransaction_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, signedRawTransaction_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -3415,7 +3546,7 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        signedRawTransaction_ = com.google.protobuf.ByteString.EMPTY;
+        signedRawTransaction_ = "";
 
         return this;
       }
@@ -3492,8 +3623,9 @@ public final class TransactionOuterClass {
 
       public Builder mergeFrom(pactus.transaction.TransactionOuterClass.BroadcastTransactionRequest other) {
         if (other == pactus.transaction.TransactionOuterClass.BroadcastTransactionRequest.getDefaultInstance()) return this;
-        if (other.getSignedRawTransaction() != com.google.protobuf.ByteString.EMPTY) {
-          setSignedRawTransaction(other.getSignedRawTransaction());
+        if (!other.getSignedRawTransaction().isEmpty()) {
+          signedRawTransaction_ = other.signedRawTransaction_;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -3522,7 +3654,7 @@ public final class TransactionOuterClass {
                 done = true;
                 break;
               case 10: {
-                signedRawTransaction_ = input.readBytes();
+                signedRawTransaction_ = input.readStringRequireUtf8();
 
                 break;
               } // case 10
@@ -3542,29 +3674,59 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString signedRawTransaction_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object signedRawTransaction_ = "";
       /**
        * <pre>
        * Signed raw transaction data.
        * </pre>
        *
-       * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
+       * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
        * @return The signedRawTransaction.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getSignedRawTransaction() {
-        return signedRawTransaction_;
+      public java.lang.String getSignedRawTransaction() {
+        java.lang.Object ref = signedRawTransaction_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          signedRawTransaction_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Signed raw transaction data.
        * </pre>
        *
-       * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
+       * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
+       * @return The bytes for signedRawTransaction.
+       */
+      public com.google.protobuf.ByteString
+          getSignedRawTransactionBytes() {
+        java.lang.Object ref = signedRawTransaction_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          signedRawTransaction_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Signed raw transaction data.
+       * </pre>
+       *
+       * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
        * @param value The signedRawTransaction to set.
        * @return This builder for chaining.
        */
-      public Builder setSignedRawTransaction(com.google.protobuf.ByteString value) {
+      public Builder setSignedRawTransaction(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -3578,12 +3740,32 @@ public final class TransactionOuterClass {
        * Signed raw transaction data.
        * </pre>
        *
-       * <code>bytes signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
+       * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
        * @return This builder for chaining.
        */
       public Builder clearSignedRawTransaction() {
         
         signedRawTransaction_ = getDefaultInstance().getSignedRawTransaction();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Signed raw transaction data.
+       * </pre>
+       *
+       * <code>string signed_raw_transaction = 1 [json_name = "signedRawTransaction"];</code>
+       * @param value The bytes for signedRawTransaction to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSignedRawTransactionBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        signedRawTransaction_ = value;
         onChanged();
         return this;
       }
@@ -3660,10 +3842,20 @@ public final class TransactionOuterClass {
      * Transaction ID.
      * </pre>
      *
-     * <code>bytes id = 1 [json_name = "id"];</code>
+     * <code>string id = 1 [json_name = "id"];</code>
      * @return The id.
      */
-    com.google.protobuf.ByteString getId();
+    java.lang.String getId();
+    /**
+     * <pre>
+     * Transaction ID.
+     * </pre>
+     *
+     * <code>string id = 1 [json_name = "id"];</code>
+     * @return The bytes for id.
+     */
+    com.google.protobuf.ByteString
+        getIdBytes();
   }
   /**
    * <pre>
@@ -3682,7 +3874,7 @@ public final class TransactionOuterClass {
       super(builder);
     }
     private BroadcastTransactionResponse() {
-      id_ = com.google.protobuf.ByteString.EMPTY;
+      id_ = "";
     }
 
     @java.lang.Override
@@ -3711,18 +3903,49 @@ public final class TransactionOuterClass {
     }
 
     public static final int ID_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString id_;
+    private volatile java.lang.Object id_;
     /**
      * <pre>
      * Transaction ID.
      * </pre>
      *
-     * <code>bytes id = 1 [json_name = "id"];</code>
+     * <code>string id = 1 [json_name = "id"];</code>
      * @return The id.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getId() {
-      return id_;
+    public java.lang.String getId() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        id_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Transaction ID.
+     * </pre>
+     *
+     * <code>string id = 1 [json_name = "id"];</code>
+     * @return The bytes for id.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getIdBytes() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        id_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -3739,8 +3962,8 @@ public final class TransactionOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!id_.isEmpty()) {
-        output.writeBytes(1, id_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, id_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -3751,9 +3974,8 @@ public final class TransactionOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!id_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, id_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, id_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -3917,7 +4139,7 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        id_ = com.google.protobuf.ByteString.EMPTY;
+        id_ = "";
 
         return this;
       }
@@ -3994,8 +4216,9 @@ public final class TransactionOuterClass {
 
       public Builder mergeFrom(pactus.transaction.TransactionOuterClass.BroadcastTransactionResponse other) {
         if (other == pactus.transaction.TransactionOuterClass.BroadcastTransactionResponse.getDefaultInstance()) return this;
-        if (other.getId() != com.google.protobuf.ByteString.EMPTY) {
-          setId(other.getId());
+        if (!other.getId().isEmpty()) {
+          id_ = other.id_;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -4024,7 +4247,7 @@ public final class TransactionOuterClass {
                 done = true;
                 break;
               case 10: {
-                id_ = input.readBytes();
+                id_ = input.readStringRequireUtf8();
 
                 break;
               } // case 10
@@ -4044,29 +4267,59 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString id_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object id_ = "";
       /**
        * <pre>
        * Transaction ID.
        * </pre>
        *
-       * <code>bytes id = 1 [json_name = "id"];</code>
+       * <code>string id = 1 [json_name = "id"];</code>
        * @return The id.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getId() {
-        return id_;
+      public java.lang.String getId() {
+        java.lang.Object ref = id_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          id_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Transaction ID.
        * </pre>
        *
-       * <code>bytes id = 1 [json_name = "id"];</code>
+       * <code>string id = 1 [json_name = "id"];</code>
+       * @return The bytes for id.
+       */
+      public com.google.protobuf.ByteString
+          getIdBytes() {
+        java.lang.Object ref = id_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          id_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
+       * <code>string id = 1 [json_name = "id"];</code>
        * @param value The id to set.
        * @return This builder for chaining.
        */
-      public Builder setId(com.google.protobuf.ByteString value) {
+      public Builder setId(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -4080,12 +4333,32 @@ public final class TransactionOuterClass {
        * Transaction ID.
        * </pre>
        *
-       * <code>bytes id = 1 [json_name = "id"];</code>
+       * <code>string id = 1 [json_name = "id"];</code>
        * @return This builder for chaining.
        */
       public Builder clearId() {
         
         id_ = getDefaultInstance().getId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
+       * <code>string id = 1 [json_name = "id"];</code>
+       * @param value The bytes for id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        id_ = value;
         onChanged();
         return this;
       }
@@ -8970,10 +9243,20 @@ public final class TransactionOuterClass {
      * Raw transaction data.
      * </pre>
      *
-     * <code>bytes raw_transaction = 1 [json_name = "rawTransaction"];</code>
+     * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
      * @return The rawTransaction.
      */
-    com.google.protobuf.ByteString getRawTransaction();
+    java.lang.String getRawTransaction();
+    /**
+     * <pre>
+     * Raw transaction data.
+     * </pre>
+     *
+     * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
+     * @return The bytes for rawTransaction.
+     */
+    com.google.protobuf.ByteString
+        getRawTransactionBytes();
   }
   /**
    * <pre>
@@ -8992,7 +9275,7 @@ public final class TransactionOuterClass {
       super(builder);
     }
     private GetRawTransactionResponse() {
-      rawTransaction_ = com.google.protobuf.ByteString.EMPTY;
+      rawTransaction_ = "";
     }
 
     @java.lang.Override
@@ -9021,18 +9304,49 @@ public final class TransactionOuterClass {
     }
 
     public static final int RAW_TRANSACTION_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString rawTransaction_;
+    private volatile java.lang.Object rawTransaction_;
     /**
      * <pre>
      * Raw transaction data.
      * </pre>
      *
-     * <code>bytes raw_transaction = 1 [json_name = "rawTransaction"];</code>
+     * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
      * @return The rawTransaction.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getRawTransaction() {
-      return rawTransaction_;
+    public java.lang.String getRawTransaction() {
+      java.lang.Object ref = rawTransaction_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        rawTransaction_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Raw transaction data.
+     * </pre>
+     *
+     * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
+     * @return The bytes for rawTransaction.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getRawTransactionBytes() {
+      java.lang.Object ref = rawTransaction_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        rawTransaction_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -9049,8 +9363,8 @@ public final class TransactionOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!rawTransaction_.isEmpty()) {
-        output.writeBytes(1, rawTransaction_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(rawTransaction_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, rawTransaction_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -9061,9 +9375,8 @@ public final class TransactionOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!rawTransaction_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, rawTransaction_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(rawTransaction_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, rawTransaction_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -9227,7 +9540,7 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        rawTransaction_ = com.google.protobuf.ByteString.EMPTY;
+        rawTransaction_ = "";
 
         return this;
       }
@@ -9304,8 +9617,9 @@ public final class TransactionOuterClass {
 
       public Builder mergeFrom(pactus.transaction.TransactionOuterClass.GetRawTransactionResponse other) {
         if (other == pactus.transaction.TransactionOuterClass.GetRawTransactionResponse.getDefaultInstance()) return this;
-        if (other.getRawTransaction() != com.google.protobuf.ByteString.EMPTY) {
-          setRawTransaction(other.getRawTransaction());
+        if (!other.getRawTransaction().isEmpty()) {
+          rawTransaction_ = other.rawTransaction_;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -9334,7 +9648,7 @@ public final class TransactionOuterClass {
                 done = true;
                 break;
               case 10: {
-                rawTransaction_ = input.readBytes();
+                rawTransaction_ = input.readStringRequireUtf8();
 
                 break;
               } // case 10
@@ -9354,29 +9668,59 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString rawTransaction_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object rawTransaction_ = "";
       /**
        * <pre>
        * Raw transaction data.
        * </pre>
        *
-       * <code>bytes raw_transaction = 1 [json_name = "rawTransaction"];</code>
+       * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
        * @return The rawTransaction.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getRawTransaction() {
-        return rawTransaction_;
+      public java.lang.String getRawTransaction() {
+        java.lang.Object ref = rawTransaction_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          rawTransaction_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Raw transaction data.
        * </pre>
        *
-       * <code>bytes raw_transaction = 1 [json_name = "rawTransaction"];</code>
+       * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
+       * @return The bytes for rawTransaction.
+       */
+      public com.google.protobuf.ByteString
+          getRawTransactionBytes() {
+        java.lang.Object ref = rawTransaction_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          rawTransaction_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Raw transaction data.
+       * </pre>
+       *
+       * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
        * @param value The rawTransaction to set.
        * @return This builder for chaining.
        */
-      public Builder setRawTransaction(com.google.protobuf.ByteString value) {
+      public Builder setRawTransaction(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -9390,12 +9734,32 @@ public final class TransactionOuterClass {
        * Raw transaction data.
        * </pre>
        *
-       * <code>bytes raw_transaction = 1 [json_name = "rawTransaction"];</code>
+       * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
        * @return This builder for chaining.
        */
       public Builder clearRawTransaction() {
         
         rawTransaction_ = getDefaultInstance().getRawTransaction();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Raw transaction data.
+       * </pre>
+       *
+       * <code>string raw_transaction = 1 [json_name = "rawTransaction"];</code>
+       * @param value The bytes for rawTransaction to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRawTransactionBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        rawTransaction_ = value;
         onChanged();
         return this;
       }
@@ -11230,10 +11594,20 @@ public final class TransactionOuterClass {
      * Proof for the sortition.
      * </pre>
      *
-     * <code>bytes proof = 2 [json_name = "proof"];</code>
+     * <code>string proof = 2 [json_name = "proof"];</code>
      * @return The proof.
      */
-    com.google.protobuf.ByteString getProof();
+    java.lang.String getProof();
+    /**
+     * <pre>
+     * Proof for the sortition.
+     * </pre>
+     *
+     * <code>string proof = 2 [json_name = "proof"];</code>
+     * @return The bytes for proof.
+     */
+    com.google.protobuf.ByteString
+        getProofBytes();
   }
   /**
    * <pre>
@@ -11253,7 +11627,7 @@ public final class TransactionOuterClass {
     }
     private PayloadSortition() {
       address_ = "";
-      proof_ = com.google.protobuf.ByteString.EMPTY;
+      proof_ = "";
     }
 
     @java.lang.Override
@@ -11328,18 +11702,49 @@ public final class TransactionOuterClass {
     }
 
     public static final int PROOF_FIELD_NUMBER = 2;
-    private com.google.protobuf.ByteString proof_;
+    private volatile java.lang.Object proof_;
     /**
      * <pre>
      * Proof for the sortition.
      * </pre>
      *
-     * <code>bytes proof = 2 [json_name = "proof"];</code>
+     * <code>string proof = 2 [json_name = "proof"];</code>
      * @return The proof.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getProof() {
-      return proof_;
+    public java.lang.String getProof() {
+      java.lang.Object ref = proof_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        proof_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Proof for the sortition.
+     * </pre>
+     *
+     * <code>string proof = 2 [json_name = "proof"];</code>
+     * @return The bytes for proof.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getProofBytes() {
+      java.lang.Object ref = proof_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        proof_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -11359,8 +11764,8 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, address_);
       }
-      if (!proof_.isEmpty()) {
-        output.writeBytes(2, proof_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(proof_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, proof_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -11374,9 +11779,8 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, address_);
       }
-      if (!proof_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, proof_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(proof_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, proof_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -11546,7 +11950,7 @@ public final class TransactionOuterClass {
         super.clear();
         address_ = "";
 
-        proof_ = com.google.protobuf.ByteString.EMPTY;
+        proof_ = "";
 
         return this;
       }
@@ -11628,8 +12032,9 @@ public final class TransactionOuterClass {
           address_ = other.address_;
           onChanged();
         }
-        if (other.getProof() != com.google.protobuf.ByteString.EMPTY) {
-          setProof(other.getProof());
+        if (!other.getProof().isEmpty()) {
+          proof_ = other.proof_;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -11663,7 +12068,7 @@ public final class TransactionOuterClass {
                 break;
               } // case 10
               case 18: {
-                proof_ = input.readBytes();
+                proof_ = input.readStringRequireUtf8();
 
                 break;
               } // case 18
@@ -11779,29 +12184,59 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString proof_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object proof_ = "";
       /**
        * <pre>
        * Proof for the sortition.
        * </pre>
        *
-       * <code>bytes proof = 2 [json_name = "proof"];</code>
+       * <code>string proof = 2 [json_name = "proof"];</code>
        * @return The proof.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getProof() {
-        return proof_;
+      public java.lang.String getProof() {
+        java.lang.Object ref = proof_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          proof_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Proof for the sortition.
        * </pre>
        *
-       * <code>bytes proof = 2 [json_name = "proof"];</code>
+       * <code>string proof = 2 [json_name = "proof"];</code>
+       * @return The bytes for proof.
+       */
+      public com.google.protobuf.ByteString
+          getProofBytes() {
+        java.lang.Object ref = proof_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          proof_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Proof for the sortition.
+       * </pre>
+       *
+       * <code>string proof = 2 [json_name = "proof"];</code>
        * @param value The proof to set.
        * @return This builder for chaining.
        */
-      public Builder setProof(com.google.protobuf.ByteString value) {
+      public Builder setProof(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -11815,12 +12250,32 @@ public final class TransactionOuterClass {
        * Proof for the sortition.
        * </pre>
        *
-       * <code>bytes proof = 2 [json_name = "proof"];</code>
+       * <code>string proof = 2 [json_name = "proof"];</code>
        * @return This builder for chaining.
        */
       public Builder clearProof() {
         
         proof_ = getDefaultInstance().getProof();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Proof for the sortition.
+       * </pre>
+       *
+       * <code>string proof = 2 [json_name = "proof"];</code>
+       * @param value The bytes for proof to set.
+       * @return This builder for chaining.
+       */
+      public Builder setProofBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        proof_ = value;
         onChanged();
         return this;
       }
@@ -13359,20 +13814,40 @@ public final class TransactionOuterClass {
      * Transaction ID.
      * </pre>
      *
-     * <code>bytes id = 1 [json_name = "id"];</code>
+     * <code>string id = 1 [json_name = "id"];</code>
      * @return The id.
      */
-    com.google.protobuf.ByteString getId();
+    java.lang.String getId();
+    /**
+     * <pre>
+     * Transaction ID.
+     * </pre>
+     *
+     * <code>string id = 1 [json_name = "id"];</code>
+     * @return The bytes for id.
+     */
+    com.google.protobuf.ByteString
+        getIdBytes();
 
     /**
      * <pre>
      * Transaction data.
      * </pre>
      *
-     * <code>bytes data = 2 [json_name = "data"];</code>
+     * <code>string data = 2 [json_name = "data"];</code>
      * @return The data.
      */
-    com.google.protobuf.ByteString getData();
+    java.lang.String getData();
+    /**
+     * <pre>
+     * Transaction data.
+     * </pre>
+     *
+     * <code>string data = 2 [json_name = "data"];</code>
+     * @return The bytes for data.
+     */
+    com.google.protobuf.ByteString
+        getDataBytes();
 
     /**
      * <pre>
@@ -13613,10 +14088,20 @@ public final class TransactionOuterClass {
      * Transaction signature.
      * </pre>
      *
-     * <code>bytes signature = 10 [json_name = "signature"];</code>
+     * <code>string signature = 10 [json_name = "signature"];</code>
      * @return The signature.
      */
-    com.google.protobuf.ByteString getSignature();
+    java.lang.String getSignature();
+    /**
+     * <pre>
+     * Transaction signature.
+     * </pre>
+     *
+     * <code>string signature = 10 [json_name = "signature"];</code>
+     * @return The bytes for signature.
+     */
+    com.google.protobuf.ByteString
+        getSignatureBytes();
 
     public pactus.transaction.TransactionOuterClass.TransactionInfo.PayloadCase getPayloadCase();
   }
@@ -13637,12 +14122,12 @@ public final class TransactionOuterClass {
       super(builder);
     }
     private TransactionInfo() {
-      id_ = com.google.protobuf.ByteString.EMPTY;
-      data_ = com.google.protobuf.ByteString.EMPTY;
+      id_ = "";
+      data_ = "";
       payloadType_ = 0;
       memo_ = "";
       publicKey_ = "";
-      signature_ = com.google.protobuf.ByteString.EMPTY;
+      signature_ = "";
     }
 
     @java.lang.Override
@@ -13718,33 +14203,95 @@ public final class TransactionOuterClass {
     }
 
     public static final int ID_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString id_;
+    private volatile java.lang.Object id_;
     /**
      * <pre>
      * Transaction ID.
      * </pre>
      *
-     * <code>bytes id = 1 [json_name = "id"];</code>
+     * <code>string id = 1 [json_name = "id"];</code>
      * @return The id.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getId() {
-      return id_;
+    public java.lang.String getId() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        id_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Transaction ID.
+     * </pre>
+     *
+     * <code>string id = 1 [json_name = "id"];</code>
+     * @return The bytes for id.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getIdBytes() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        id_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int DATA_FIELD_NUMBER = 2;
-    private com.google.protobuf.ByteString data_;
+    private volatile java.lang.Object data_;
     /**
      * <pre>
      * Transaction data.
      * </pre>
      *
-     * <code>bytes data = 2 [json_name = "data"];</code>
+     * <code>string data = 2 [json_name = "data"];</code>
      * @return The data.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getData() {
-      return data_;
+    public java.lang.String getData() {
+      java.lang.Object ref = data_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        data_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Transaction data.
+     * </pre>
+     *
+     * <code>string data = 2 [json_name = "data"];</code>
+     * @return The bytes for data.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getDataBytes() {
+      java.lang.Object ref = data_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        data_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int VERSION_FIELD_NUMBER = 3;
@@ -14142,18 +14689,49 @@ public final class TransactionOuterClass {
     }
 
     public static final int SIGNATURE_FIELD_NUMBER = 10;
-    private com.google.protobuf.ByteString signature_;
+    private volatile java.lang.Object signature_;
     /**
      * <pre>
      * Transaction signature.
      * </pre>
      *
-     * <code>bytes signature = 10 [json_name = "signature"];</code>
+     * <code>string signature = 10 [json_name = "signature"];</code>
      * @return The signature.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getSignature() {
-      return signature_;
+    public java.lang.String getSignature() {
+      java.lang.Object ref = signature_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        signature_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Transaction signature.
+     * </pre>
+     *
+     * <code>string signature = 10 [json_name = "signature"];</code>
+     * @return The bytes for signature.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSignatureBytes() {
+      java.lang.Object ref = signature_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        signature_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -14170,11 +14748,11 @@ public final class TransactionOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!id_.isEmpty()) {
-        output.writeBytes(1, id_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, id_);
       }
-      if (!data_.isEmpty()) {
-        output.writeBytes(2, data_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(data_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, data_);
       }
       if (version_ != 0) {
         output.writeInt32(3, version_);
@@ -14197,8 +14775,8 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 9, publicKey_);
       }
-      if (!signature_.isEmpty()) {
-        output.writeBytes(10, signature_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(signature_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, signature_);
       }
       if (payloadCase_ == 30) {
         output.writeMessage(30, (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_);
@@ -14224,13 +14802,11 @@ public final class TransactionOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!id_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, id_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, id_);
       }
-      if (!data_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, data_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(data_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, data_);
       }
       if (version_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -14258,9 +14834,8 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, publicKey_);
       }
-      if (!signature_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(10, signature_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(signature_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, signature_);
       }
       if (payloadCase_ == 30) {
         size += com.google.protobuf.CodedOutputStream
@@ -14530,9 +15105,9 @@ public final class TransactionOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        id_ = com.google.protobuf.ByteString.EMPTY;
+        id_ = "";
 
-        data_ = com.google.protobuf.ByteString.EMPTY;
+        data_ = "";
 
         version_ = 0;
 
@@ -14563,7 +15138,7 @@ public final class TransactionOuterClass {
 
         publicKey_ = "";
 
-        signature_ = com.google.protobuf.ByteString.EMPTY;
+        signature_ = "";
 
         payloadCase_ = 0;
         payload_ = null;
@@ -14687,11 +15262,13 @@ public final class TransactionOuterClass {
 
       public Builder mergeFrom(pactus.transaction.TransactionOuterClass.TransactionInfo other) {
         if (other == pactus.transaction.TransactionOuterClass.TransactionInfo.getDefaultInstance()) return this;
-        if (other.getId() != com.google.protobuf.ByteString.EMPTY) {
-          setId(other.getId());
+        if (!other.getId().isEmpty()) {
+          id_ = other.id_;
+          onChanged();
         }
-        if (other.getData() != com.google.protobuf.ByteString.EMPTY) {
-          setData(other.getData());
+        if (!other.getData().isEmpty()) {
+          data_ = other.data_;
+          onChanged();
         }
         if (other.getVersion() != 0) {
           setVersion(other.getVersion());
@@ -14716,8 +15293,9 @@ public final class TransactionOuterClass {
           publicKey_ = other.publicKey_;
           onChanged();
         }
-        if (other.getSignature() != com.google.protobuf.ByteString.EMPTY) {
-          setSignature(other.getSignature());
+        if (!other.getSignature().isEmpty()) {
+          signature_ = other.signature_;
+          onChanged();
         }
         switch (other.getPayloadCase()) {
           case TRANSFER: {
@@ -14771,12 +15349,12 @@ public final class TransactionOuterClass {
                 done = true;
                 break;
               case 10: {
-                id_ = input.readBytes();
+                id_ = input.readStringRequireUtf8();
 
                 break;
               } // case 10
               case 18: {
-                data_ = input.readBytes();
+                data_ = input.readStringRequireUtf8();
 
                 break;
               } // case 18
@@ -14816,7 +15394,7 @@ public final class TransactionOuterClass {
                 break;
               } // case 74
               case 82: {
-                signature_ = input.readBytes();
+                signature_ = input.readStringRequireUtf8();
 
                 break;
               } // case 82
@@ -14886,29 +15464,59 @@ public final class TransactionOuterClass {
       }
 
 
-      private com.google.protobuf.ByteString id_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object id_ = "";
       /**
        * <pre>
        * Transaction ID.
        * </pre>
        *
-       * <code>bytes id = 1 [json_name = "id"];</code>
+       * <code>string id = 1 [json_name = "id"];</code>
        * @return The id.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getId() {
-        return id_;
+      public java.lang.String getId() {
+        java.lang.Object ref = id_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          id_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Transaction ID.
        * </pre>
        *
-       * <code>bytes id = 1 [json_name = "id"];</code>
+       * <code>string id = 1 [json_name = "id"];</code>
+       * @return The bytes for id.
+       */
+      public com.google.protobuf.ByteString
+          getIdBytes() {
+        java.lang.Object ref = id_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          id_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
+       * <code>string id = 1 [json_name = "id"];</code>
        * @param value The id to set.
        * @return This builder for chaining.
        */
-      public Builder setId(com.google.protobuf.ByteString value) {
+      public Builder setId(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -14922,7 +15530,7 @@ public final class TransactionOuterClass {
        * Transaction ID.
        * </pre>
        *
-       * <code>bytes id = 1 [json_name = "id"];</code>
+       * <code>string id = 1 [json_name = "id"];</code>
        * @return This builder for chaining.
        */
       public Builder clearId() {
@@ -14931,30 +15539,80 @@ public final class TransactionOuterClass {
         onChanged();
         return this;
       }
+      /**
+       * <pre>
+       * Transaction ID.
+       * </pre>
+       *
+       * <code>string id = 1 [json_name = "id"];</code>
+       * @param value The bytes for id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        id_ = value;
+        onChanged();
+        return this;
+      }
 
-      private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object data_ = "";
       /**
        * <pre>
        * Transaction data.
        * </pre>
        *
-       * <code>bytes data = 2 [json_name = "data"];</code>
+       * <code>string data = 2 [json_name = "data"];</code>
        * @return The data.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getData() {
-        return data_;
+      public java.lang.String getData() {
+        java.lang.Object ref = data_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          data_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Transaction data.
        * </pre>
        *
-       * <code>bytes data = 2 [json_name = "data"];</code>
+       * <code>string data = 2 [json_name = "data"];</code>
+       * @return The bytes for data.
+       */
+      public com.google.protobuf.ByteString
+          getDataBytes() {
+        java.lang.Object ref = data_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          data_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Transaction data.
+       * </pre>
+       *
+       * <code>string data = 2 [json_name = "data"];</code>
        * @param value The data to set.
        * @return This builder for chaining.
        */
-      public Builder setData(com.google.protobuf.ByteString value) {
+      public Builder setData(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -14968,12 +15626,32 @@ public final class TransactionOuterClass {
        * Transaction data.
        * </pre>
        *
-       * <code>bytes data = 2 [json_name = "data"];</code>
+       * <code>string data = 2 [json_name = "data"];</code>
        * @return This builder for chaining.
        */
       public Builder clearData() {
         
         data_ = getDefaultInstance().getData();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Transaction data.
+       * </pre>
+       *
+       * <code>string data = 2 [json_name = "data"];</code>
+       * @param value The bytes for data to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDataBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        data_ = value;
         onChanged();
         return this;
       }
@@ -16306,29 +16984,59 @@ public final class TransactionOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString signature_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object signature_ = "";
       /**
        * <pre>
        * Transaction signature.
        * </pre>
        *
-       * <code>bytes signature = 10 [json_name = "signature"];</code>
+       * <code>string signature = 10 [json_name = "signature"];</code>
        * @return The signature.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getSignature() {
-        return signature_;
+      public java.lang.String getSignature() {
+        java.lang.Object ref = signature_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          signature_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Transaction signature.
        * </pre>
        *
-       * <code>bytes signature = 10 [json_name = "signature"];</code>
+       * <code>string signature = 10 [json_name = "signature"];</code>
+       * @return The bytes for signature.
+       */
+      public com.google.protobuf.ByteString
+          getSignatureBytes() {
+        java.lang.Object ref = signature_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          signature_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Transaction signature.
+       * </pre>
+       *
+       * <code>string signature = 10 [json_name = "signature"];</code>
        * @param value The signature to set.
        * @return This builder for chaining.
        */
-      public Builder setSignature(com.google.protobuf.ByteString value) {
+      public Builder setSignature(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -16342,12 +17050,32 @@ public final class TransactionOuterClass {
        * Transaction signature.
        * </pre>
        *
-       * <code>bytes signature = 10 [json_name = "signature"];</code>
+       * <code>string signature = 10 [json_name = "signature"];</code>
        * @return This builder for chaining.
        */
       public Builder clearSignature() {
         
         signature_ = getDefaultInstance().getSignature();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Transaction signature.
+       * </pre>
+       *
+       * <code>string signature = 10 [json_name = "signature"];</code>
+       * @param value The bytes for signature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSignatureBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        signature_ = value;
         onChanged();
         return this;
       }
@@ -16510,7 +17238,7 @@ public final class TransactionOuterClass {
   static {
     java.lang.String[] descriptorData = {
       "\n\021transaction.proto\022\006pactus\"c\n\025GetTransa" +
-      "ctionRequest\022\016\n\002id\030\001 \001(\014R\002id\022:\n\tverbosit" +
+      "ctionRequest\022\016\n\002id\030\001 \001(\tR\002id\022:\n\tverbosit" +
       "y\030\002 \001(\0162\034.pactus.TransactionVerbosityR\tv" +
       "erbosity\"\225\001\n\026GetTransactionResponse\022!\n\014b" +
       "lock_height\030\001 \001(\rR\013blockHeight\022\035\n\nblock_" +
@@ -16522,9 +17250,9 @@ public final class TransactionOuterClass {
       "\030\003 \001(\010R\013fixedAmount\"@\n\024CalculateFeeRespo" +
       "nse\022\026\n\006amount\030\001 \001(\003R\006amount\022\020\n\003fee\030\002 \001(\003" +
       "R\003fee\"S\n\033BroadcastTransactionRequest\0224\n\026" +
-      "signed_raw_transaction\030\001 \001(\014R\024signedRawT" +
+      "signed_raw_transaction\030\001 \001(\tR\024signedRawT" +
       "ransaction\".\n\034BroadcastTransactionRespon" +
-      "se\022\016\n\002id\030\001 \001(\014R\002id\"\261\001\n GetRawTransferTra" +
+      "se\022\016\n\002id\030\001 \001(\tR\002id\"\261\001\n GetRawTransferTra" +
       "nsactionRequest\022\033\n\tlock_time\030\001 \001(\rR\010lock" +
       "Time\022\026\n\006sender\030\002 \001(\tR\006sender\022\032\n\010receiver" +
       "\030\003 \001(\tR\010receiver\022\026\n\006amount\030\004 \001(\003R\006amount" +
@@ -16543,19 +17271,19 @@ public final class TransactionOuterClass {
       "ss\022\'\n\017account_address\030\003 \001(\tR\016accountAddr" +
       "ess\022\026\n\006amount\030\004 \001(\003R\006amount\022\020\n\003fee\030\005 \001(\003" +
       "R\003fee\022\022\n\004memo\030\006 \001(\tR\004memo\"D\n\031GetRawTrans" +
-      "actionResponse\022\'\n\017raw_transaction\030\001 \001(\014R" +
+      "actionResponse\022\'\n\017raw_transaction\030\001 \001(\tR" +
       "\016rawTransaction\"]\n\017PayloadTransfer\022\026\n\006se" +
       "nder\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010re" +
       "ceiver\022\026\n\006amount\030\003 \001(\003R\006amount\"W\n\013Payloa" +
       "dBond\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010receive" +
       "r\030\002 \001(\tR\010receiver\022\024\n\005stake\030\003 \001(\003R\005stake\"" +
       "B\n\020PayloadSortition\022\030\n\007address\030\001 \001(\tR\007ad" +
-      "dress\022\024\n\005proof\030\002 \001(\014R\005proof\"-\n\rPayloadUn" +
+      "dress\022\024\n\005proof\030\002 \001(\tR\005proof\"-\n\rPayloadUn" +
       "bond\022\034\n\tvalidator\030\001 \001(\tR\tvalidator\"M\n\017Pa" +
       "yloadWithdraw\022\022\n\004from\030\001 \001(\tR\004from\022\016\n\002to\030" +
       "\002 \001(\tR\002to\022\026\n\006amount\030\003 \001(\003R\006amount\"\254\004\n\017Tr" +
-      "ansactionInfo\022\016\n\002id\030\001 \001(\014R\002id\022\022\n\004data\030\002 " +
-      "\001(\014R\004data\022\030\n\007version\030\003 \001(\005R\007version\022\033\n\tl" +
+      "ansactionInfo\022\016\n\002id\030\001 \001(\tR\002id\022\022\n\004data\030\002 " +
+      "\001(\tR\004data\022\030\n\007version\030\003 \001(\005R\007version\022\033\n\tl" +
       "ock_time\030\004 \001(\rR\010lockTime\022\024\n\005value\030\005 \001(\003R" +
       "\005value\022\020\n\003fee\030\006 \001(\003R\003fee\0226\n\014payload_type" +
       "\030\007 \001(\0162\023.pactus.PayloadTypeR\013payloadType" +
@@ -16567,7 +17295,7 @@ public final class TransactionOuterClass {
       "nbond\0225\n\010withdraw\030\" \001(\0132\027.pactus.Payload" +
       "WithdrawH\000R\010withdraw\022\022\n\004memo\030\010 \001(\tR\004memo" +
       "\022\035\n\npublic_key\030\t \001(\tR\tpublicKey\022\034\n\tsigna" +
-      "ture\030\n \001(\014R\tsignatureB\t\n\007payload*\203\001\n\013Pay" +
+      "ture\030\n \001(\tR\tsignatureB\t\n\007payload*\203\001\n\013Pay" +
       "loadType\022\013\n\007UNKNOWN\020\000\022\024\n\020TRANSFER_PAYLOA" +
       "D\020\001\022\020\n\014BOND_PAYLOAD\020\002\022\025\n\021SORTITION_PAYLO" +
       "AD\020\003\022\022\n\016UNBOND_PAYLOAD\020\004\022\024\n\020WITHDRAW_PAY" +

@@ -22,7 +22,8 @@ type Signature struct {
 	data    []byte            // Raw signature data.
 }
 
-// SignatureFromString constructs a BLS signature from a hex-encoded string.
+// SignatureFromString decodes the input string and returns the Signature
+// if the string is a valid hex encoding of a BLS signature.
 func SignatureFromString(text string) (*Signature, error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {

@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"encoding/hex"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -34,7 +35,7 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 
 	return &pactus.GetBlockchainInfoResponse{
 		LastBlockHeight:     s.state.LastBlockHeight(),
-		LastBlockHash:       s.state.LastBlockHash().Bytes(),
+		LastBlockHash:       s.state.LastBlockHash().String(),
 		TotalAccounts:       s.state.TotalAccounts(),
 		TotalValidators:     s.state.TotalValidators(),
 		TotalPower:          s.state.TotalPower(),
@@ -78,14 +79,14 @@ func (s *blockchainServer) GetBlockHash(_ context.Context,
 	}
 
 	return &pactus.GetBlockHashResponse{
-		Hash: h.Bytes(),
+		Hash: h.String(),
 	}, nil
 }
 
 func (s *blockchainServer) GetBlockHeight(_ context.Context,
 	req *pactus.GetBlockHeightRequest,
 ) (*pactus.GetBlockHeightResponse, error) {
-	h, err := hash.FromBytes(req.GetHash())
+	h, err := hash.FromString(req.GetHash())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid hash: %v", err)
 	}
@@ -109,12 +110,12 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 	}
 	res := &pactus.GetBlockResponse{
 		Height: committedBlock.Height,
-		Hash:   committedBlock.BlockHash.Bytes(),
+		Hash:   committedBlock.BlockHash.String(),
 	}
 
 	switch req.Verbosity {
 	case pactus.BlockVerbosity_BLOCK_DATA:
-		res.Data = committedBlock.Data
+		res.Data = hex.EncodeToString(committedBlock.Data)
 
 	case pactus.BlockVerbosity_BLOCK_INFO,
 		pactus.BlockVerbosity_BLOCK_TRANSACTIONS:
@@ -137,18 +138,18 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 				absentees[i] = n
 			}
 			prevCert = &pactus.CertificateInfo{
-				Hash:       cert.Hash().Bytes(),
+				Hash:       cert.Hash().String(),
 				Round:      int32(cert.Round()),
 				Committers: committers,
 				Absentees:  absentees,
-				Signature:  cert.Signature().Bytes(),
+				Signature:  cert.Signature().String(),
 			}
 		}
 		header := &pactus.BlockHeaderInfo{
 			Version:         int32(block.Header().Version()),
-			PrevBlockHash:   block.Header().PrevBlockHash().Bytes(),
-			StateRoot:       block.Header().StateRoot().Bytes(),
-			SortitionSeed:   seed[:],
+			PrevBlockHash:   block.Header().PrevBlockHash().String(),
+			StateRoot:       block.Header().StateRoot().String(),
+			SortitionSeed:   hex.EncodeToString(seed[:]),
 			ProposerAddress: block.Header().ProposerAddress().String(),
 		}
 
@@ -157,8 +158,8 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 			if req.Verbosity == pactus.BlockVerbosity_BLOCK_INFO {
 				data, _ := trx.Bytes()
 				trxs = append(trxs, &pactus.TransactionInfo{
-					Id:   trx.ID().Bytes(),
-					Data: data,
+					Id:   trx.ID().String(),
+					Data: hex.EncodeToString(data),
 				})
 			} else {
 				trxs = append(trxs, transactionToProto(trx))
@@ -267,8 +268,8 @@ func (s *blockchainServer) validatorToProto(val *validator.Validator) *pactus.Va
 	data, _ := val.Bytes()
 
 	return &pactus.ValidatorInfo{
-		Hash:                val.Hash().Bytes(),
-		Data:                data,
+		Hash:                val.Hash().String(),
+		Data:                hex.EncodeToString(data),
 		PublicKey:           val.PublicKey().String(),
 		Address:             val.Address().String(),
 		Number:              val.Number(),
@@ -284,8 +285,8 @@ func (*blockchainServer) accountToProto(addr crypto.Address, acc *account.Accoun
 	data, _ := acc.Bytes()
 
 	return &pactus.AccountInfo{
-		Hash:    acc.Hash().Bytes(),
-		Data:    data,
+		Hash:    acc.Hash().String(),
+		Data:    hex.EncodeToString(data),
 		Number:  acc.Number(),
 		Balance: acc.Balance().ToNanoPAC(),
 		Address: addr.String(),
@@ -303,7 +304,7 @@ func (*blockchainServer) voteToProto(v *vote.Vote) *pactus.VoteInfo {
 	return &pactus.VoteInfo{
 		Type:      pactus.VoteType(v.Type()),
 		Voter:     v.Signer().String(),
-		BlockHash: v.BlockHash().Bytes(),
+		BlockHash: v.BlockHash().String(),
 		Round:     int32(v.Round()),
 		CpRound:   cpRound,
 		CpValue:   cpValue,

@@ -116,9 +116,9 @@ message GetBlockResponse {
   // Height of the block.
   uint32 height = 1;
   // Hash of the block.
-  bytes hash = 2;
+  string hash = 2;
   // Block data, only available if the verbosity level is set to BLOCK_DATA.
-  bytes data = 3;
+  string data = 3;
   // Block timestamp.
   uint32 block_time = 4;
   // Block header information.
@@ -139,13 +139,13 @@ message GetBlockHashRequest {
 // Message containing the response with the block hash.
 message GetBlockHashResponse {
   // Hash of the block.
-  bytes hash = 1;
+  string hash = 1;
 }
 
 // Message to request block height based on hash.
 message GetBlockHeightRequest {
   // Hash of the block.
-  bytes hash = 1;
+  string hash = 1;
 }
 
 // Message containing the response with the block height.
@@ -162,7 +162,7 @@ message GetBlockchainInfoResponse {
   // Height of the last block.
   uint32 last_block_height = 1;
   // Hash of the last block.
-  bytes last_block_hash = 2;
+  string last_block_hash = 2;
   // Total number of accounts.
   int32 total_accounts = 3;
   // Total number of validators.
@@ -199,9 +199,9 @@ message GetTxPoolContentResponse {
 // Message containing information about a validator.
 message ValidatorInfo {
   // Hash of the validator.
-  bytes hash = 1;
+  string hash = 1;
   // Validator data.
-  bytes data = 2;
+  string data = 2;
   // Public key of the validator.
   string public_key = 3;
   // Validator number.
@@ -223,9 +223,9 @@ message ValidatorInfo {
 // Message containing information about an account.
 message AccountInfo {
   // Hash of the account.
-  bytes hash = 1;
+  string hash = 1;
   // Account data.
-  bytes data = 2;
+  string data = 2;
   // Account number.
   int32 number = 3;
   // Account balance in NanoPAC.
@@ -239,11 +239,11 @@ message BlockHeaderInfo {
   // Block version.
   int32 version = 1;
   // Hash of the previous block.
-  bytes prev_block_hash = 2;
+  string prev_block_hash = 2;
   // State root of the block.
-  bytes state_root = 3;
+  string state_root = 3;
   // Sortition seed of the block.
-  bytes sortition_seed = 4;
+  string sortition_seed = 4;
   // Address of the proposer of the block.
   string proposer_address = 5;
 }
@@ -251,7 +251,7 @@ message BlockHeaderInfo {
 // Message containing information about a certificate.
 message CertificateInfo {
   // Hash of the certificate.
-  bytes hash = 1;
+  string hash = 1;
   // Round of the certificate.
   int32 round = 2;
   // List of committers in the certificate.
@@ -259,7 +259,7 @@ message CertificateInfo {
   // List of absentees in the certificate.
   repeated int32 absentees = 4;
   // Certificate signature.
-  bytes signature = 5;
+  string signature = 5;
 }
 
 // Message containing information about a vote.
@@ -269,7 +269,7 @@ message VoteInfo {
   // Voter's address.
   string voter = 2;
   // Hash of the block being voted on.
-  bytes block_hash = 3;
+  string block_hash = 3;
   // Round of the vote.
   int32 round = 4;
   // Consensus round of the vote.

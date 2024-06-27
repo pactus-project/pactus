@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"encoding/hex"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -28,7 +29,7 @@ func newTransactionServer(server *Server) *transactionServer {
 func (s *transactionServer) GetTransaction(_ context.Context,
 	req *pactus.GetTransactionRequest,
 ) (*pactus.GetTransactionResponse, error) {
-	id, err := hash.FromBytes(req.Id)
+	id, err := hash.FromString(req.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid transaction ID: %v", err.Error())
 	}
@@ -46,8 +47,8 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 	switch req.Verbosity {
 	case pactus.TransactionVerbosity_TRANSACTION_DATA:
 		res.Transaction = &pactus.TransactionInfo{
-			Id:   committedTx.TxID.Bytes(),
-			Data: committedTx.Data,
+			Id:   committedTx.TxID.String(),
+			Data: hex.EncodeToString(committedTx.Data),
 		}
 
 	case pactus.TransactionVerbosity_TRANSACTION_INFO:
@@ -64,7 +65,12 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 func (s *transactionServer) BroadcastTransaction(_ context.Context,
 	req *pactus.BroadcastTransactionRequest,
 ) (*pactus.BroadcastTransactionResponse, error) {
-	trx, err := tx.FromBytes(req.SignedRawTransaction)
+	b, err := hex.DecodeString(req.SignedRawTransaction)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid signed transaction")
+	}
+
+	trx, err := tx.FromBytes(b)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}
@@ -78,7 +84,7 @@ func (s *transactionServer) BroadcastTransaction(_ context.Context,
 	}
 
 	return &pactus.BroadcastTransactionResponse{
-		Id: trx.ID().Bytes(),
+		Id: trx.ID().String(),
 	}, nil
 }
 
@@ -122,7 +128,7 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	}
 
 	return &pactus.GetRawTransactionResponse{
-		RawTransaction: rawTx,
+		RawTransaction: hex.EncodeToString(rawTx),
 	}, nil
 }
 
@@ -160,7 +166,7 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	}
 
 	return &pactus.GetRawTransactionResponse{
-		RawTransaction: rawTx,
+		RawTransaction: hex.EncodeToString(rawTx),
 	}, nil
 }
 
@@ -181,7 +187,7 @@ func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
 	}
 
 	return &pactus.GetRawTransactionResponse{
-		RawTransaction: rawTx,
+		RawTransaction: hex.EncodeToString(rawTx),
 	}, nil
 }
 
@@ -209,7 +215,7 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	}
 
 	return &pactus.GetRawTransactionResponse{
-		RawTransaction: rawTx,
+		RawTransaction: hex.EncodeToString(rawTx),
 	}, nil
 }
 
@@ -232,7 +238,7 @@ func (s *transactionServer) getLockTime(lockTime uint32) uint32 {
 
 func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 	transaction := &pactus.TransactionInfo{
-		Id:          trx.ID().Bytes(),
+		Id:          trx.ID().String(),
 		Version:     int32(trx.Version()),
 		LockTime:    trx.LockTime(),
 		Fee:         trx.Fee().ToNanoPAC(),
@@ -246,7 +252,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 	}
 
 	if trx.Signature() != nil {
-		transaction.Signature = trx.Signature().Bytes()
+		transaction.Signature = trx.Signature().String()
 	}
 
 	switch trx.Payload().Type() {
@@ -273,7 +279,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 		transaction.Payload = &pactus.TransactionInfo_Sortition{
 			Sortition: &pactus.PayloadSortition{
 				Address: pld.Validator.String(),
-				Proof:   pld.Proof[:],
+				Proof:   hex.EncodeToString(pld.Proof[:]),
 			},
 		}
 	case payload.TypeUnbond:

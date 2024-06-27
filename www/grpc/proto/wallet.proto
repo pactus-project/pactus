@@ -181,7 +181,7 @@ message SignRawTransactionRequest {
   // Name of the wallet used for signing.
   string wallet_name = 1;
   // Raw transaction data to be signed.
-  bytes raw_transaction = 2;
+  string raw_transaction = 2;
   // Password for unlocking the wallet for signing.
   string password = 3;
 }
@@ -189,9 +189,9 @@ message SignRawTransactionRequest {
 // Response message containing the transaction ID and signed raw transaction.
 message SignRawTransactionResponse {
   // ID of the signed transaction.
-  bytes transaction_id = 1;
+  string transaction_id = 1;
   // Signed raw transaction data.
-  bytes signed_raw_transaction = 2;
+  string signed_raw_transaction = 2;
 }
 
 // Request message for obtaining the available balance of a wallet.

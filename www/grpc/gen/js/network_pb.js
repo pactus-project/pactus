@@ -963,7 +963,7 @@ proto.pactus.GetNodeInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     moniker: jspb.Message.getFieldWithDefault(msg, 1, ""),
     agent: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    peerId: msg.getPeerId_asB64(),
+    peerId: jspb.Message.getFieldWithDefault(msg, 3, ""),
     startedAt: jspb.Message.getFieldWithDefault(msg, 4, 0),
     reachability: jspb.Message.getFieldWithDefault(msg, 5, ""),
     servicesList: (f = jspb.Message.getRepeatedField(msg, 6)) == null ? undefined : f,
@@ -1017,7 +1017,7 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
       msg.setAgent(value);
       break;
     case 3:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setPeerId(value);
       break;
     case 4:
@@ -1098,9 +1098,9 @@ proto.pactus.GetNodeInfoResponse.serializeBinaryToWriter = function(message, wri
       f
     );
   }
-  f = message.getPeerId_asU8();
+  f = message.getPeerId();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       3,
       f
     );
@@ -1202,44 +1202,20 @@ proto.pactus.GetNodeInfoResponse.prototype.setAgent = function(value) {
 
 
 /**
- * optional bytes peer_id = 3;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.GetNodeInfoResponse.prototype.getPeerId = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/**
- * optional bytes peer_id = 3;
- * This is a type-conversion wrapper around `getPeerId()`
+ * optional string peer_id = 3;
  * @return {string}
  */
-proto.pactus.GetNodeInfoResponse.prototype.getPeerId_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getPeerId()));
+proto.pactus.GetNodeInfoResponse.prototype.getPeerId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
 /**
- * optional bytes peer_id = 3;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getPeerId()`
- * @return {!Uint8Array}
- */
-proto.pactus.GetNodeInfoResponse.prototype.getPeerId_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getPeerId()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.GetNodeInfoResponse} returns this
  */
 proto.pactus.GetNodeInfoResponse.prototype.setPeerId = function(value) {
-  return jspb.Message.setProto3BytesField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
@@ -1524,11 +1500,11 @@ proto.pactus.PeerInfo.toObject = function(includeInstance, msg) {
     status: jspb.Message.getFieldWithDefault(msg, 1, 0),
     moniker: jspb.Message.getFieldWithDefault(msg, 2, ""),
     agent: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    peerId: msg.getPeerId_asB64(),
+    peerId: jspb.Message.getFieldWithDefault(msg, 4, ""),
     consensusKeysList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f,
     consensusAddressList: (f = jspb.Message.getRepeatedField(msg, 6)) == null ? undefined : f,
     services: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    lastBlockHash: msg.getLastBlockHash_asB64(),
+    lastBlockHash: jspb.Message.getFieldWithDefault(msg, 8, ""),
     height: jspb.Message.getFieldWithDefault(msg, 9, 0),
     receivedBundles: jspb.Message.getFieldWithDefault(msg, 10, 0),
     invalidBundles: jspb.Message.getFieldWithDefault(msg, 11, 0),
@@ -1590,7 +1566,7 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setAgent(value);
       break;
     case 4:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setPeerId(value);
       break;
     case 5:
@@ -1606,7 +1582,7 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setServices(value);
       break;
     case 8:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setLastBlockHash(value);
       break;
     case 9:
@@ -1711,9 +1687,9 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getPeerId_asU8();
+  f = message.getPeerId();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       4,
       f
     );
@@ -1739,9 +1715,9 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getLastBlockHash_asU8();
+  f = message.getLastBlockHash();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       8,
       f
     );
@@ -1882,44 +1858,20 @@ proto.pactus.PeerInfo.prototype.setAgent = function(value) {
 
 
 /**
- * optional bytes peer_id = 4;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.PeerInfo.prototype.getPeerId = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
-};
-
-
-/**
- * optional bytes peer_id = 4;
- * This is a type-conversion wrapper around `getPeerId()`
+ * optional string peer_id = 4;
  * @return {string}
  */
-proto.pactus.PeerInfo.prototype.getPeerId_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getPeerId()));
+proto.pactus.PeerInfo.prototype.getPeerId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
 };
 
 
 /**
- * optional bytes peer_id = 4;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getPeerId()`
- * @return {!Uint8Array}
- */
-proto.pactus.PeerInfo.prototype.getPeerId_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getPeerId()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.PeerInfo} returns this
  */
 proto.pactus.PeerInfo.prototype.setPeerId = function(value) {
-  return jspb.Message.setProto3BytesField(this, 4, value);
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
@@ -2016,44 +1968,20 @@ proto.pactus.PeerInfo.prototype.setServices = function(value) {
 
 
 /**
- * optional bytes last_block_hash = 8;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.PeerInfo.prototype.getLastBlockHash = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
-};
-
-
-/**
- * optional bytes last_block_hash = 8;
- * This is a type-conversion wrapper around `getLastBlockHash()`
+ * optional string last_block_hash = 8;
  * @return {string}
  */
-proto.pactus.PeerInfo.prototype.getLastBlockHash_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getLastBlockHash()));
+proto.pactus.PeerInfo.prototype.getLastBlockHash = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
 };
 
 
 /**
- * optional bytes last_block_hash = 8;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getLastBlockHash()`
- * @return {!Uint8Array}
- */
-proto.pactus.PeerInfo.prototype.getLastBlockHash_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getLastBlockHash()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.PeerInfo} returns this
  */
 proto.pactus.PeerInfo.prototype.setLastBlockHash = function(value) {
-  return jspb.Message.setProto3BytesField(this, 8, value);
+  return jspb.Message.setProto3StringField(this, 8, value);
 };
 
 

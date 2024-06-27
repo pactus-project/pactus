@@ -68,7 +68,7 @@ func _TransactionGetTransactionCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	flag.BytesBase64Var(cmd.PersistentFlags(), &req.Id, cfg.FlagNamer("Id"), "Transaction ID.")
+	cmd.PersistentFlags().StringVar(&req.Id, cfg.FlagNamer("Id"), "", "Transaction ID.")
 	flag.EnumVar(cmd.PersistentFlags(), &req.Verbosity, cfg.FlagNamer("Verbosity"), "Verbosity level for transaction details.")
 
 	return cmd
@@ -155,7 +155,7 @@ func _TransactionBroadcastTransactionCommand(cfg *client.Config) *cobra.Command 
 		},
 	}
 
-	flag.BytesBase64Var(cmd.PersistentFlags(), &req.SignedRawTransaction, cfg.FlagNamer("SignedRawTransaction"), "Signed raw transaction data.")
+	cmd.PersistentFlags().StringVar(&req.SignedRawTransaction, cfg.FlagNamer("SignedRawTransaction"), "", "Signed raw transaction data.")
 
 	return cmd
 }

@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"encoding/hex"
 	"testing"
 
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -33,8 +34,8 @@ func TestGetBlock(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Height, height)
-		assert.Equal(t, res.Hash, b.Hash().Bytes())
-		assert.Equal(t, res.Data, data)
+		assert.Equal(t, res.Hash, b.Hash().String())
+		assert.Equal(t, res.Data, hex.EncodeToString(data))
 		assert.Empty(t, res.Header)
 		assert.Empty(t, res.Txs)
 	})
@@ -46,17 +47,17 @@ func TestGetBlock(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Height, height)
-		assert.Equal(t, res.Hash, b.Hash().Bytes())
+		assert.Equal(t, res.Hash, b.Hash().String())
 		assert.Empty(t, res.Data)
 		assert.NotEmpty(t, res.Header)
 		assert.Equal(t, res.PrevCert.Committers, b.PrevCertificate().Committers())
 		assert.Equal(t, res.PrevCert.Absentees, b.PrevCertificate().Absentees())
 		for i, trx := range res.Txs {
 			blockTrx := b.Transactions()[i]
-			trxData, _ := blockTrx.Bytes()
-
-			assert.Equal(t, blockTrx.ID().Bytes(), trx.Id)
-			assert.Equal(t, trxData, trx.Data)
+			b, err := blockTrx.Bytes()
+			assert.NoError(t, err)
+			assert.Equal(t, blockTrx.ID().String(), trx.Id)
+			assert.Equal(t, hex.EncodeToString(b), trx.Data)
 			assert.Zero(t, trx.LockTime)
 			assert.Empty(t, trx.Signature)
 			assert.Empty(t, trx.PublicKey)
@@ -70,17 +71,17 @@ func TestGetBlock(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, res.Height, height)
-		assert.Equal(t, res.Hash, b.Hash().Bytes())
+		assert.Equal(t, res.Hash, b.Hash().String())
 		assert.Empty(t, res.Data)
 		assert.NotEmpty(t, res.Header)
 		assert.NotEmpty(t, res.Txs)
 		for i, trx := range res.Txs {
 			blockTrx := b.Transactions()[i]
 
-			assert.Equal(t, blockTrx.ID().Bytes(), trx.Id)
+			assert.Equal(t, blockTrx.ID().String(), trx.Id)
 			assert.Empty(t, trx.Data)
 			assert.Equal(t, blockTrx.LockTime(), trx.LockTime)
-			assert.Equal(t, blockTrx.Signature().Bytes(), trx.Signature)
+			assert.Equal(t, blockTrx.Signature().String(), trx.Signature)
 			assert.Equal(t, blockTrx.PublicKey().String(), trx.PublicKey)
 		}
 	})
@@ -108,7 +109,7 @@ func TestGetBlockHash(t *testing.T) {
 			&pactus.GetBlockHashRequest{Height: 100})
 
 		assert.NoError(t, err)
-		assert.Equal(t, b.Hash().Bytes(), res.Hash)
+		assert.Equal(t, b.Hash().String(), res.Hash)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
@@ -123,7 +124,7 @@ func TestGetBlockHeight(t *testing.T) {
 
 	t.Run("Should return error for invalid hash", func(t *testing.T) {
 		res, err := client.GetBlockHeight(context.Background(),
-			&pactus.GetBlockHeightRequest{Hash: nil})
+			&pactus.GetBlockHeightRequest{Hash: ""})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -131,7 +132,7 @@ func TestGetBlockHeight(t *testing.T) {
 
 	t.Run("Should return error for non existing block", func(t *testing.T) {
 		res, err := client.GetBlockHeight(context.Background(),
-			&pactus.GetBlockHeightRequest{Hash: td.RandHash().Bytes()})
+			&pactus.GetBlockHeightRequest{Hash: td.RandHash().String()})
 
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -139,7 +140,7 @@ func TestGetBlockHeight(t *testing.T) {
 
 	t.Run("Should return height of existing block", func(t *testing.T) {
 		res, err := client.GetBlockHeight(context.Background(),
-			&pactus.GetBlockHeightRequest{Hash: b.Hash().Bytes()})
+			&pactus.GetBlockHeightRequest{Hash: b.Hash().String()})
 
 		assert.NoError(t, err)
 		assert.Equal(t, uint32(100), res.Height)

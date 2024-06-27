@@ -199,24 +199,24 @@ const SignRawTransactionRequest$json = const {
   '1': 'SignRawTransactionRequest',
   '2': const [
     const {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
-    const {'1': 'raw_transaction', '3': 2, '4': 1, '5': 12, '10': 'rawTransaction'},
+    const {'1': 'raw_transaction', '3': 2, '4': 1, '5': 9, '10': 'rawTransaction'},
     const {'1': 'password', '3': 3, '4': 1, '5': 9, '10': 'password'},
   ],
 };
 
 /// Descriptor for `SignRawTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signRawTransactionRequestDescriptor = $convert.base64Decode('ChlTaWduUmF3VHJhbnNhY3Rpb25SZXF1ZXN0Eh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW1lEicKD3Jhd190cmFuc2FjdGlvbhgCIAEoDFIOcmF3VHJhbnNhY3Rpb24SGgoIcGFzc3dvcmQYAyABKAlSCHBhc3N3b3Jk');
+final $typed_data.Uint8List signRawTransactionRequestDescriptor = $convert.base64Decode('ChlTaWduUmF3VHJhbnNhY3Rpb25SZXF1ZXN0Eh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW1lEicKD3Jhd190cmFuc2FjdGlvbhgCIAEoCVIOcmF3VHJhbnNhY3Rpb24SGgoIcGFzc3dvcmQYAyABKAlSCHBhc3N3b3Jk');
 @$core.Deprecated('Use signRawTransactionResponseDescriptor instead')
 const SignRawTransactionResponse$json = const {
   '1': 'SignRawTransactionResponse',
   '2': const [
-    const {'1': 'transaction_id', '3': 1, '4': 1, '5': 12, '10': 'transactionId'},
-    const {'1': 'signed_raw_transaction', '3': 2, '4': 1, '5': 12, '10': 'signedRawTransaction'},
+    const {'1': 'transaction_id', '3': 1, '4': 1, '5': 9, '10': 'transactionId'},
+    const {'1': 'signed_raw_transaction', '3': 2, '4': 1, '5': 9, '10': 'signedRawTransaction'},
   ],
 };
 
 /// Descriptor for `SignRawTransactionResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signRawTransactionResponseDescriptor = $convert.base64Decode('ChpTaWduUmF3VHJhbnNhY3Rpb25SZXNwb25zZRIlCg50cmFuc2FjdGlvbl9pZBgBIAEoDFINdHJhbnNhY3Rpb25JZBI0ChZzaWduZWRfcmF3X3RyYW5zYWN0aW9uGAIgASgMUhRzaWduZWRSYXdUcmFuc2FjdGlvbg==');
+final $typed_data.Uint8List signRawTransactionResponseDescriptor = $convert.base64Decode('ChpTaWduUmF3VHJhbnNhY3Rpb25SZXNwb25zZRIlCg50cmFuc2FjdGlvbl9pZBgBIAEoCVINdHJhbnNhY3Rpb25JZBI0ChZzaWduZWRfcmF3X3RyYW5zYWN0aW9uGAIgASgJUhRzaWduZWRSYXdUcmFuc2FjdGlvbg==');
 @$core.Deprecated('Use getTotalBalanceRequestDescriptor instead')
 const GetTotalBalanceRequest$json = const {
   '1': 'GetTotalBalanceRequest',

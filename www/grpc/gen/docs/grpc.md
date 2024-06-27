@@ -169,7 +169,7 @@ parameters.</p>
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">id</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Transaction ID.
     </td>
@@ -217,14 +217,14 @@ parameters.</p>
   </tr>
      <tr>
         <td class="fw-bold">transaction.id</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Transaction ID.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">transaction.data</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Transaction data.
         </td>
@@ -344,7 +344,7 @@ parameters.</p>
           </tr>
           <tr>
             <td class="fw-bold">transaction.sortition.proof</td>
-            <td> bytes</td>
+            <td> string</td>
             <td>
             Proof for the sortition.
             </td>
@@ -407,7 +407,7 @@ parameters.</p>
       </tr>
          <tr>
         <td class="fw-bold">transaction.signature</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Transaction signature.
         </td>
@@ -495,7 +495,7 @@ and payload type.</p>
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">signed_raw_transaction</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Signed raw transaction data.
     </td>
@@ -511,7 +511,7 @@ and payload type.</p>
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">id</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Transaction ID.
     </td>
@@ -586,7 +586,7 @@ If not explicitly set, it is calculated based on the amount.
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">raw_transaction</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Raw transaction data.
     </td>
@@ -668,7 +668,7 @@ If not explicitly set, it is calculated based on the stake.
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">raw_transaction</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Raw transaction data.
     </td>
@@ -720,7 +720,7 @@ If not explicitly set, it sets to the last block height.
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">raw_transaction</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Raw transaction data.
     </td>
@@ -795,7 +795,7 @@ If not explicitly set, it is calculated based on the amount.
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">raw_transaction</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Raw transaction data.
     </td>
@@ -856,14 +856,14 @@ parameters.</p>
   </tr>
      <tr>
     <td class="fw-bold">hash</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Hash of the block.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">data</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Block data, only available if the verbosity level is set to BLOCK_DATA.
     </td>
@@ -891,21 +891,21 @@ parameters.</p>
       </tr>
          <tr>
         <td class="fw-bold">header.prev_block_hash</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Hash of the previous block.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">header.state_root</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         State root of the block.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">header.sortition_seed</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Sortition seed of the block.
         </td>
@@ -926,7 +926,7 @@ parameters.</p>
   </tr>
      <tr>
         <td class="fw-bold">prev_cert.hash</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Hash of the certificate.
         </td>
@@ -954,7 +954,7 @@ parameters.</p>
       </tr>
          <tr>
         <td class="fw-bold">prev_cert.signature</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Certificate signature.
         </td>
@@ -969,14 +969,14 @@ Transaction information is available when the verbosity level is set to BLOCK_TR
   </tr>
      <tr>
         <td class="fw-bold">txs[].id</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Transaction ID.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].data</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Transaction data.
         </td>
@@ -1096,7 +1096,7 @@ Transaction information is available when the verbosity level is set to BLOCK_TR
           </tr>
           <tr>
             <td class="fw-bold">txs[].sortition.proof</td>
-            <td> bytes</td>
+            <td> string</td>
             <td>
             Proof for the sortition.
             </td>
@@ -1159,7 +1159,7 @@ Transaction information is available when the verbosity level is set to BLOCK_TR
       </tr>
          <tr>
         <td class="fw-bold">txs[].signature</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Transaction signature.
         </td>
@@ -1196,7 +1196,7 @@ Transaction information is available when the verbosity level is set to BLOCK_TR
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">hash</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Hash of the block.
     </td>
@@ -1217,7 +1217,7 @@ Transaction information is available when the verbosity level is set to BLOCK_TR
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">hash</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Hash of the block.
     </td>
@@ -1264,7 +1264,7 @@ Message has no fields.
   </tr>
      <tr>
     <td class="fw-bold">last_block_hash</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Hash of the last block.
     </td>
@@ -1306,14 +1306,14 @@ Message has no fields.
   </tr>
      <tr>
         <td class="fw-bold">committee_validators[].hash</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Hash of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">committee_validators[].data</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Validator data.
         </td>
@@ -1455,7 +1455,7 @@ Message has no fields.
           </tr>
           <tr>
             <td class="fw-bold">instances[].votes[].block_hash</td>
-            <td> bytes</td>
+            <td> string</td>
             <td>
             Hash of the block being voted on.
             </td>
@@ -1521,14 +1521,14 @@ address.</p>
   </tr>
      <tr>
         <td class="fw-bold">account.hash</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Hash of the account.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">account.data</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Account data.
         </td>
@@ -1594,14 +1594,14 @@ address.</p>
   </tr>
      <tr>
         <td class="fw-bold">validator.hash</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Hash of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.data</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Validator data.
         </td>
@@ -1702,14 +1702,14 @@ provided number.</p>
   </tr>
      <tr>
         <td class="fw-bold">validator.hash</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Hash of the validator.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">validator.data</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Validator data.
         </td>
@@ -1879,14 +1879,14 @@ address.</p>
   </tr>
      <tr>
         <td class="fw-bold">txs[].id</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Transaction ID.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">txs[].data</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Transaction data.
         </td>
@@ -2006,7 +2006,7 @@ address.</p>
           </tr>
           <tr>
             <td class="fw-bold">txs[].sortition.proof</td>
-            <td> bytes</td>
+            <td> string</td>
             <td>
             Proof for the sortition.
             </td>
@@ -2069,7 +2069,7 @@ address.</p>
       </tr>
          <tr>
         <td class="fw-bold">txs[].signature</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Transaction signature.
         </td>
@@ -2166,7 +2166,7 @@ address.</p>
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].peer_id</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Peer ID of the peer.
         </td>
@@ -2194,7 +2194,7 @@ address.</p>
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].last_block_hash</td>
-        <td> bytes</td>
+        <td> string</td>
         <td>
         Hash of the last block the peer knows.
         </td>
@@ -2330,7 +2330,7 @@ Message has no fields.
   </tr>
      <tr>
     <td class="fw-bold">peer_id</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Peer ID of the node.
     </td>
@@ -2652,7 +2652,7 @@ Message has no fields.
   </tr>
   <tr>
     <td class="fw-bold">raw_transaction</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Raw transaction data to be signed.
     </td>
@@ -2675,14 +2675,14 @@ Message has no fields.
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">transaction_id</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     ID of the signed transaction.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">signed_raw_transaction</td>
-    <td> bytes</td>
+    <td> string</td>
     <td>
     Signed raw transaction data.
     </td>

@@ -3733,10 +3733,20 @@ public final class NetworkOuterClass {
      * Peer ID of the node.
      * </pre>
      *
-     * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
+     * <code>string peer_id = 3 [json_name = "peerId"];</code>
      * @return The peerId.
      */
-    com.google.protobuf.ByteString getPeerId();
+    java.lang.String getPeerId();
+    /**
+     * <pre>
+     * Peer ID of the node.
+     * </pre>
+     *
+     * <code>string peer_id = 3 [json_name = "peerId"];</code>
+     * @return The bytes for peerId.
+     */
+    com.google.protobuf.ByteString
+        getPeerIdBytes();
 
     /**
      * <pre>
@@ -3976,7 +3986,7 @@ public final class NetworkOuterClass {
     private GetNodeInfoResponse() {
       moniker_ = "";
       agent_ = "";
-      peerId_ = com.google.protobuf.ByteString.EMPTY;
+      peerId_ = "";
       reachability_ = "";
       services_ = emptyIntList();
       servicesNames_ = com.google.protobuf.LazyStringArrayList.EMPTY;
@@ -4102,18 +4112,49 @@ public final class NetworkOuterClass {
     }
 
     public static final int PEER_ID_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString peerId_;
+    private volatile java.lang.Object peerId_;
     /**
      * <pre>
      * Peer ID of the node.
      * </pre>
      *
-     * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
+     * <code>string peer_id = 3 [json_name = "peerId"];</code>
      * @return The peerId.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getPeerId() {
-      return peerId_;
+    public java.lang.String getPeerId() {
+      java.lang.Object ref = peerId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        peerId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Peer ID of the node.
+     * </pre>
+     *
+     * <code>string peer_id = 3 [json_name = "peerId"];</code>
+     * @return The bytes for peerId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getPeerIdBytes() {
+      java.lang.Object ref = peerId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        peerId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int STARTED_AT_FIELD_NUMBER = 4;
@@ -4444,8 +4485,8 @@ public final class NetworkOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(agent_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, agent_);
       }
-      if (!peerId_.isEmpty()) {
-        output.writeBytes(3, peerId_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(peerId_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, peerId_);
       }
       if (startedAt_ != 0L) {
         output.writeUInt64(4, startedAt_);
@@ -4490,9 +4531,8 @@ public final class NetworkOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(agent_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, agent_);
       }
-      if (!peerId_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, peerId_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(peerId_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, peerId_);
       }
       if (startedAt_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
@@ -4769,7 +4809,7 @@ public final class NetworkOuterClass {
 
         agent_ = "";
 
-        peerId_ = com.google.protobuf.ByteString.EMPTY;
+        peerId_ = "";
 
         startedAt_ = 0L;
 
@@ -4905,8 +4945,9 @@ public final class NetworkOuterClass {
           agent_ = other.agent_;
           onChanged();
         }
-        if (other.getPeerId() != com.google.protobuf.ByteString.EMPTY) {
-          setPeerId(other.getPeerId());
+        if (!other.getPeerId().isEmpty()) {
+          peerId_ = other.peerId_;
+          onChanged();
         }
         if (other.getStartedAt() != 0L) {
           setStartedAt(other.getStartedAt());
@@ -4998,7 +5039,7 @@ public final class NetworkOuterClass {
                 break;
               } // case 18
               case 26: {
-                peerId_ = input.readBytes();
+                peerId_ = input.readStringRequireUtf8();
 
                 break;
               } // case 26
@@ -5267,29 +5308,59 @@ public final class NetworkOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString peerId_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object peerId_ = "";
       /**
        * <pre>
        * Peer ID of the node.
        * </pre>
        *
-       * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
+       * <code>string peer_id = 3 [json_name = "peerId"];</code>
        * @return The peerId.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getPeerId() {
-        return peerId_;
+      public java.lang.String getPeerId() {
+        java.lang.Object ref = peerId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          peerId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Peer ID of the node.
        * </pre>
        *
-       * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
+       * <code>string peer_id = 3 [json_name = "peerId"];</code>
+       * @return The bytes for peerId.
+       */
+      public com.google.protobuf.ByteString
+          getPeerIdBytes() {
+        java.lang.Object ref = peerId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          peerId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Peer ID of the node.
+       * </pre>
+       *
+       * <code>string peer_id = 3 [json_name = "peerId"];</code>
        * @param value The peerId to set.
        * @return This builder for chaining.
        */
-      public Builder setPeerId(com.google.protobuf.ByteString value) {
+      public Builder setPeerId(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -5303,12 +5374,32 @@ public final class NetworkOuterClass {
        * Peer ID of the node.
        * </pre>
        *
-       * <code>bytes peer_id = 3 [json_name = "peerId"];</code>
+       * <code>string peer_id = 3 [json_name = "peerId"];</code>
        * @return This builder for chaining.
        */
       public Builder clearPeerId() {
         
         peerId_ = getDefaultInstance().getPeerId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Peer ID of the node.
+       * </pre>
+       *
+       * <code>string peer_id = 3 [json_name = "peerId"];</code>
+       * @param value The bytes for peerId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPeerIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        peerId_ = value;
         onChanged();
         return this;
       }
@@ -6317,10 +6408,20 @@ public final class NetworkOuterClass {
      * Peer ID of the peer.
      * </pre>
      *
-     * <code>bytes peer_id = 4 [json_name = "peerId"];</code>
+     * <code>string peer_id = 4 [json_name = "peerId"];</code>
      * @return The peerId.
      */
-    com.google.protobuf.ByteString getPeerId();
+    java.lang.String getPeerId();
+    /**
+     * <pre>
+     * Peer ID of the peer.
+     * </pre>
+     *
+     * <code>string peer_id = 4 [json_name = "peerId"];</code>
+     * @return The bytes for peerId.
+     */
+    com.google.protobuf.ByteString
+        getPeerIdBytes();
 
     /**
      * <pre>
@@ -6419,10 +6520,20 @@ public final class NetworkOuterClass {
      * Hash of the last block the peer knows.
      * </pre>
      *
-     * <code>bytes last_block_hash = 8 [json_name = "lastBlockHash"];</code>
+     * <code>string last_block_hash = 8 [json_name = "lastBlockHash"];</code>
      * @return The lastBlockHash.
      */
-    com.google.protobuf.ByteString getLastBlockHash();
+    java.lang.String getLastBlockHash();
+    /**
+     * <pre>
+     * Hash of the last block the peer knows.
+     * </pre>
+     *
+     * <code>string last_block_hash = 8 [json_name = "lastBlockHash"];</code>
+     * @return The bytes for lastBlockHash.
+     */
+    com.google.protobuf.ByteString
+        getLastBlockHashBytes();
 
     /**
      * <pre>
@@ -6702,10 +6813,10 @@ public final class NetworkOuterClass {
     private PeerInfo() {
       moniker_ = "";
       agent_ = "";
-      peerId_ = com.google.protobuf.ByteString.EMPTY;
+      peerId_ = "";
       consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       consensusAddress_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      lastBlockHash_ = com.google.protobuf.ByteString.EMPTY;
+      lastBlockHash_ = "";
       address_ = "";
       direction_ = "";
       protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
@@ -6858,18 +6969,49 @@ public final class NetworkOuterClass {
     }
 
     public static final int PEER_ID_FIELD_NUMBER = 4;
-    private com.google.protobuf.ByteString peerId_;
+    private volatile java.lang.Object peerId_;
     /**
      * <pre>
      * Peer ID of the peer.
      * </pre>
      *
-     * <code>bytes peer_id = 4 [json_name = "peerId"];</code>
+     * <code>string peer_id = 4 [json_name = "peerId"];</code>
      * @return The peerId.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getPeerId() {
-      return peerId_;
+    public java.lang.String getPeerId() {
+      java.lang.Object ref = peerId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        peerId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Peer ID of the peer.
+     * </pre>
+     *
+     * <code>string peer_id = 4 [json_name = "peerId"];</code>
+     * @return The bytes for peerId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getPeerIdBytes() {
+      java.lang.Object ref = peerId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        peerId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int CONSENSUS_KEYS_FIELD_NUMBER = 5;
@@ -6990,18 +7132,49 @@ public final class NetworkOuterClass {
     }
 
     public static final int LAST_BLOCK_HASH_FIELD_NUMBER = 8;
-    private com.google.protobuf.ByteString lastBlockHash_;
+    private volatile java.lang.Object lastBlockHash_;
     /**
      * <pre>
      * Hash of the last block the peer knows.
      * </pre>
      *
-     * <code>bytes last_block_hash = 8 [json_name = "lastBlockHash"];</code>
+     * <code>string last_block_hash = 8 [json_name = "lastBlockHash"];</code>
      * @return The lastBlockHash.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString getLastBlockHash() {
-      return lastBlockHash_;
+    public java.lang.String getLastBlockHash() {
+      java.lang.Object ref = lastBlockHash_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lastBlockHash_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Hash of the last block the peer knows.
+     * </pre>
+     *
+     * <code>string last_block_hash = 8 [json_name = "lastBlockHash"];</code>
+     * @return The bytes for lastBlockHash.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getLastBlockHashBytes() {
+      java.lang.Object ref = lastBlockHash_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        lastBlockHash_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int HEIGHT_FIELD_NUMBER = 9;
@@ -7469,8 +7642,8 @@ public final class NetworkOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(agent_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, agent_);
       }
-      if (!peerId_.isEmpty()) {
-        output.writeBytes(4, peerId_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(peerId_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, peerId_);
       }
       for (int i = 0; i < consensusKeys_.size(); i++) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, consensusKeys_.getRaw(i));
@@ -7481,8 +7654,8 @@ public final class NetworkOuterClass {
       if (services_ != 0) {
         output.writeUInt32(7, services_);
       }
-      if (!lastBlockHash_.isEmpty()) {
-        output.writeBytes(8, lastBlockHash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(lastBlockHash_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, lastBlockHash_);
       }
       if (height_ != 0) {
         output.writeUInt32(9, height_);
@@ -7545,9 +7718,8 @@ public final class NetworkOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(agent_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, agent_);
       }
-      if (!peerId_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(4, peerId_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(peerId_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, peerId_);
       }
       {
         int dataSize = 0;
@@ -7569,9 +7741,8 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt32Size(7, services_);
       }
-      if (!lastBlockHash_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(8, lastBlockHash_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(lastBlockHash_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, lastBlockHash_);
       }
       if (height_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -7917,7 +8088,7 @@ public final class NetworkOuterClass {
 
         agent_ = "";
 
-        peerId_ = com.google.protobuf.ByteString.EMPTY;
+        peerId_ = "";
 
         consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
@@ -7925,7 +8096,7 @@ public final class NetworkOuterClass {
         bitField0_ = (bitField0_ & ~0x00000002);
         services_ = 0;
 
-        lastBlockHash_ = com.google.protobuf.ByteString.EMPTY;
+        lastBlockHash_ = "";
 
         height_ = 0;
 
@@ -8069,8 +8240,9 @@ public final class NetworkOuterClass {
           agent_ = other.agent_;
           onChanged();
         }
-        if (other.getPeerId() != com.google.protobuf.ByteString.EMPTY) {
-          setPeerId(other.getPeerId());
+        if (!other.getPeerId().isEmpty()) {
+          peerId_ = other.peerId_;
+          onChanged();
         }
         if (!other.consensusKeys_.isEmpty()) {
           if (consensusKeys_.isEmpty()) {
@@ -8095,8 +8267,9 @@ public final class NetworkOuterClass {
         if (other.getServices() != 0) {
           setServices(other.getServices());
         }
-        if (other.getLastBlockHash() != com.google.protobuf.ByteString.EMPTY) {
-          setLastBlockHash(other.getLastBlockHash());
+        if (!other.getLastBlockHash().isEmpty()) {
+          lastBlockHash_ = other.lastBlockHash_;
+          onChanged();
         }
         if (other.getHeight() != 0) {
           setHeight(other.getHeight());
@@ -8183,7 +8356,7 @@ public final class NetworkOuterClass {
                 break;
               } // case 26
               case 34: {
-                peerId_ = input.readBytes();
+                peerId_ = input.readStringRequireUtf8();
 
                 break;
               } // case 34
@@ -8205,7 +8378,7 @@ public final class NetworkOuterClass {
                 break;
               } // case 56
               case 66: {
-                lastBlockHash_ = input.readBytes();
+                lastBlockHash_ = input.readStringRequireUtf8();
 
                 break;
               } // case 66
@@ -8528,29 +8701,59 @@ public final class NetworkOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString peerId_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object peerId_ = "";
       /**
        * <pre>
        * Peer ID of the peer.
        * </pre>
        *
-       * <code>bytes peer_id = 4 [json_name = "peerId"];</code>
+       * <code>string peer_id = 4 [json_name = "peerId"];</code>
        * @return The peerId.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getPeerId() {
-        return peerId_;
+      public java.lang.String getPeerId() {
+        java.lang.Object ref = peerId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          peerId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Peer ID of the peer.
        * </pre>
        *
-       * <code>bytes peer_id = 4 [json_name = "peerId"];</code>
+       * <code>string peer_id = 4 [json_name = "peerId"];</code>
+       * @return The bytes for peerId.
+       */
+      public com.google.protobuf.ByteString
+          getPeerIdBytes() {
+        java.lang.Object ref = peerId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          peerId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Peer ID of the peer.
+       * </pre>
+       *
+       * <code>string peer_id = 4 [json_name = "peerId"];</code>
        * @param value The peerId to set.
        * @return This builder for chaining.
        */
-      public Builder setPeerId(com.google.protobuf.ByteString value) {
+      public Builder setPeerId(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -8564,12 +8767,32 @@ public final class NetworkOuterClass {
        * Peer ID of the peer.
        * </pre>
        *
-       * <code>bytes peer_id = 4 [json_name = "peerId"];</code>
+       * <code>string peer_id = 4 [json_name = "peerId"];</code>
        * @return This builder for chaining.
        */
       public Builder clearPeerId() {
         
         peerId_ = getDefaultInstance().getPeerId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Peer ID of the peer.
+       * </pre>
+       *
+       * <code>string peer_id = 4 [json_name = "peerId"];</code>
+       * @param value The bytes for peerId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPeerIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        peerId_ = value;
         onChanged();
         return this;
       }
@@ -8909,29 +9132,59 @@ public final class NetworkOuterClass {
         return this;
       }
 
-      private com.google.protobuf.ByteString lastBlockHash_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object lastBlockHash_ = "";
       /**
        * <pre>
        * Hash of the last block the peer knows.
        * </pre>
        *
-       * <code>bytes last_block_hash = 8 [json_name = "lastBlockHash"];</code>
+       * <code>string last_block_hash = 8 [json_name = "lastBlockHash"];</code>
        * @return The lastBlockHash.
        */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getLastBlockHash() {
-        return lastBlockHash_;
+      public java.lang.String getLastBlockHash() {
+        java.lang.Object ref = lastBlockHash_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lastBlockHash_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Hash of the last block the peer knows.
        * </pre>
        *
-       * <code>bytes last_block_hash = 8 [json_name = "lastBlockHash"];</code>
+       * <code>string last_block_hash = 8 [json_name = "lastBlockHash"];</code>
+       * @return The bytes for lastBlockHash.
+       */
+      public com.google.protobuf.ByteString
+          getLastBlockHashBytes() {
+        java.lang.Object ref = lastBlockHash_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          lastBlockHash_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Hash of the last block the peer knows.
+       * </pre>
+       *
+       * <code>string last_block_hash = 8 [json_name = "lastBlockHash"];</code>
        * @param value The lastBlockHash to set.
        * @return This builder for chaining.
        */
-      public Builder setLastBlockHash(com.google.protobuf.ByteString value) {
+      public Builder setLastBlockHash(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -8945,12 +9198,32 @@ public final class NetworkOuterClass {
        * Hash of the last block the peer knows.
        * </pre>
        *
-       * <code>bytes last_block_hash = 8 [json_name = "lastBlockHash"];</code>
+       * <code>string last_block_hash = 8 [json_name = "lastBlockHash"];</code>
        * @return This builder for chaining.
        */
       public Builder clearLastBlockHash() {
         
         lastBlockHash_ = getDefaultInstance().getLastBlockHash();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Hash of the last block the peer knows.
+       * </pre>
+       *
+       * <code>string last_block_hash = 8 [json_name = "lastBlockHash"];</code>
+       * @param value The bytes for lastBlockHash to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLastBlockHashBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        lastBlockHash_ = value;
         onChanged();
         return this;
       }
@@ -10050,7 +10323,7 @@ public final class NetworkOuterClass {
       "dConnections\0221\n\024outbound_connections\030\003 \001" +
       "(\004R\023outboundConnections\"\207\003\n\023GetNodeInfoR" +
       "esponse\022\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005age" +
-      "nt\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\014R\006peerId" +
+      "nt\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\tR\006peerId" +
       "\022\035\n\nstarted_at\030\004 \001(\004R\tstartedAt\022\"\n\014reach" +
       "ability\030\005 \001(\tR\014reachability\022\032\n\010services\030" +
       "\006 \003(\005R\010services\022%\n\016services_names\030\007 \003(\tR" +
@@ -10060,11 +10333,11 @@ public final class NetworkOuterClass {
       "ection_info\030\016 \001(\0132\026.pactus.ConnectionInf" +
       "oR\016connectionInfo\"\351\006\n\010PeerInfo\022\026\n\006status" +
       "\030\001 \001(\005R\006status\022\030\n\007moniker\030\002 \001(\tR\007moniker" +
-      "\022\024\n\005agent\030\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\014R" +
+      "\022\024\n\005agent\030\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\tR" +
       "\006peerId\022%\n\016consensus_keys\030\005 \003(\tR\rconsens" +
       "usKeys\022+\n\021consensus_address\030\006 \003(\tR\020conse" +
       "nsusAddress\022\032\n\010services\030\007 \001(\rR\010services\022" +
-      "&\n\017last_block_hash\030\010 \001(\014R\rlastBlockHash\022" +
+      "&\n\017last_block_hash\030\010 \001(\tR\rlastBlockHash\022" +
       "\026\n\006height\030\t \001(\rR\006height\022)\n\020received_bund" +
       "les\030\n \001(\005R\017receivedBundles\022\'\n\017invalid_bu" +
       "ndles\030\013 \001(\005R\016invalidBundles\022\033\n\tlast_sent" +

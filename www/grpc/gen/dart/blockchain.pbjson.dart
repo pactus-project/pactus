@@ -138,8 +138,8 @@ const GetBlockResponse$json = const {
   '1': 'GetBlockResponse',
   '2': const [
     const {'1': 'height', '3': 1, '4': 1, '5': 13, '10': 'height'},
-    const {'1': 'hash', '3': 2, '4': 1, '5': 12, '10': 'hash'},
-    const {'1': 'data', '3': 3, '4': 1, '5': 12, '10': 'data'},
+    const {'1': 'hash', '3': 2, '4': 1, '5': 9, '10': 'hash'},
+    const {'1': 'data', '3': 3, '4': 1, '5': 9, '10': 'data'},
     const {'1': 'block_time', '3': 4, '4': 1, '5': 13, '10': 'blockTime'},
     const {'1': 'header', '3': 5, '4': 1, '5': 11, '6': '.pactus.BlockHeaderInfo', '10': 'header'},
     const {'1': 'prev_cert', '3': 6, '4': 1, '5': 11, '6': '.pactus.CertificateInfo', '10': 'prevCert'},
@@ -148,7 +148,7 @@ const GetBlockResponse$json = const {
 };
 
 /// Descriptor for `GetBlockResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getBlockResponseDescriptor = $convert.base64Decode('ChBHZXRCbG9ja1Jlc3BvbnNlEhYKBmhlaWdodBgBIAEoDVIGaGVpZ2h0EhIKBGhhc2gYAiABKAxSBGhhc2gSEgoEZGF0YRgDIAEoDFIEZGF0YRIdCgpibG9ja190aW1lGAQgASgNUglibG9ja1RpbWUSLwoGaGVhZGVyGAUgASgLMhcucGFjdHVzLkJsb2NrSGVhZGVySW5mb1IGaGVhZGVyEjQKCXByZXZfY2VydBgGIAEoCzIXLnBhY3R1cy5DZXJ0aWZpY2F0ZUluZm9SCHByZXZDZXJ0EikKA3R4cxgHIAMoCzIXLnBhY3R1cy5UcmFuc2FjdGlvbkluZm9SA3R4cw==');
+final $typed_data.Uint8List getBlockResponseDescriptor = $convert.base64Decode('ChBHZXRCbG9ja1Jlc3BvbnNlEhYKBmhlaWdodBgBIAEoDVIGaGVpZ2h0EhIKBGhhc2gYAiABKAlSBGhhc2gSEgoEZGF0YRgDIAEoCVIEZGF0YRIdCgpibG9ja190aW1lGAQgASgNUglibG9ja1RpbWUSLwoGaGVhZGVyGAUgASgLMhcucGFjdHVzLkJsb2NrSGVhZGVySW5mb1IGaGVhZGVyEjQKCXByZXZfY2VydBgGIAEoCzIXLnBhY3R1cy5DZXJ0aWZpY2F0ZUluZm9SCHByZXZDZXJ0EikKA3R4cxgHIAMoCzIXLnBhY3R1cy5UcmFuc2FjdGlvbkluZm9SA3R4cw==');
 @$core.Deprecated('Use getBlockHashRequestDescriptor instead')
 const GetBlockHashRequest$json = const {
   '1': 'GetBlockHashRequest',
@@ -163,22 +163,22 @@ final $typed_data.Uint8List getBlockHashRequestDescriptor = $convert.base64Decod
 const GetBlockHashResponse$json = const {
   '1': 'GetBlockHashResponse',
   '2': const [
-    const {'1': 'hash', '3': 1, '4': 1, '5': 12, '10': 'hash'},
+    const {'1': 'hash', '3': 1, '4': 1, '5': 9, '10': 'hash'},
   ],
 };
 
 /// Descriptor for `GetBlockHashResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getBlockHashResponseDescriptor = $convert.base64Decode('ChRHZXRCbG9ja0hhc2hSZXNwb25zZRISCgRoYXNoGAEgASgMUgRoYXNo');
+final $typed_data.Uint8List getBlockHashResponseDescriptor = $convert.base64Decode('ChRHZXRCbG9ja0hhc2hSZXNwb25zZRISCgRoYXNoGAEgASgJUgRoYXNo');
 @$core.Deprecated('Use getBlockHeightRequestDescriptor instead')
 const GetBlockHeightRequest$json = const {
   '1': 'GetBlockHeightRequest',
   '2': const [
-    const {'1': 'hash', '3': 1, '4': 1, '5': 12, '10': 'hash'},
+    const {'1': 'hash', '3': 1, '4': 1, '5': 9, '10': 'hash'},
   ],
 };
 
 /// Descriptor for `GetBlockHeightRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getBlockHeightRequestDescriptor = $convert.base64Decode('ChVHZXRCbG9ja0hlaWdodFJlcXVlc3QSEgoEaGFzaBgBIAEoDFIEaGFzaA==');
+final $typed_data.Uint8List getBlockHeightRequestDescriptor = $convert.base64Decode('ChVHZXRCbG9ja0hlaWdodFJlcXVlc3QSEgoEaGFzaBgBIAEoCVIEaGFzaA==');
 @$core.Deprecated('Use getBlockHeightResponseDescriptor instead')
 const GetBlockHeightResponse$json = const {
   '1': 'GetBlockHeightResponse',
@@ -201,7 +201,7 @@ const GetBlockchainInfoResponse$json = const {
   '1': 'GetBlockchainInfoResponse',
   '2': const [
     const {'1': 'last_block_height', '3': 1, '4': 1, '5': 13, '10': 'lastBlockHeight'},
-    const {'1': 'last_block_hash', '3': 2, '4': 1, '5': 12, '10': 'lastBlockHash'},
+    const {'1': 'last_block_hash', '3': 2, '4': 1, '5': 9, '10': 'lastBlockHash'},
     const {'1': 'total_accounts', '3': 3, '4': 1, '5': 5, '10': 'totalAccounts'},
     const {'1': 'total_validators', '3': 4, '4': 1, '5': 5, '10': 'totalValidators'},
     const {'1': 'total_power', '3': 5, '4': 1, '5': 3, '10': 'totalPower'},
@@ -211,7 +211,7 @@ const GetBlockchainInfoResponse$json = const {
 };
 
 /// Descriptor for `GetBlockchainInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getBlockchainInfoResponseDescriptor = $convert.base64Decode('ChlHZXRCbG9ja2NoYWluSW5mb1Jlc3BvbnNlEioKEWxhc3RfYmxvY2tfaGVpZ2h0GAEgASgNUg9sYXN0QmxvY2tIZWlnaHQSJgoPbGFzdF9ibG9ja19oYXNoGAIgASgMUg1sYXN0QmxvY2tIYXNoEiUKDnRvdGFsX2FjY291bnRzGAMgASgFUg10b3RhbEFjY291bnRzEikKEHRvdGFsX3ZhbGlkYXRvcnMYBCABKAVSD3RvdGFsVmFsaWRhdG9ycxIfCgt0b3RhbF9wb3dlchgFIAEoA1IKdG90YWxQb3dlchInCg9jb21taXR0ZWVfcG93ZXIYBiABKANSDmNvbW1pdHRlZVBvd2VyEkgKFGNvbW1pdHRlZV92YWxpZGF0b3JzGAcgAygLMhUucGFjdHVzLlZhbGlkYXRvckluZm9SE2NvbW1pdHRlZVZhbGlkYXRvcnM=');
+final $typed_data.Uint8List getBlockchainInfoResponseDescriptor = $convert.base64Decode('ChlHZXRCbG9ja2NoYWluSW5mb1Jlc3BvbnNlEioKEWxhc3RfYmxvY2tfaGVpZ2h0GAEgASgNUg9sYXN0QmxvY2tIZWlnaHQSJgoPbGFzdF9ibG9ja19oYXNoGAIgASgJUg1sYXN0QmxvY2tIYXNoEiUKDnRvdGFsX2FjY291bnRzGAMgASgFUg10b3RhbEFjY291bnRzEikKEHRvdGFsX3ZhbGlkYXRvcnMYBCABKAVSD3RvdGFsVmFsaWRhdG9ycxIfCgt0b3RhbF9wb3dlchgFIAEoA1IKdG90YWxQb3dlchInCg9jb21taXR0ZWVfcG93ZXIYBiABKANSDmNvbW1pdHRlZVBvd2VyEkgKFGNvbW1pdHRlZV92YWxpZGF0b3JzGAcgAygLMhUucGFjdHVzLlZhbGlkYXRvckluZm9SE2NvbW1pdHRlZVZhbGlkYXRvcnM=');
 @$core.Deprecated('Use getConsensusInfoRequestDescriptor instead')
 const GetConsensusInfoRequest$json = const {
   '1': 'GetConsensusInfoRequest',
@@ -253,8 +253,8 @@ final $typed_data.Uint8List getTxPoolContentResponseDescriptor = $convert.base64
 const ValidatorInfo$json = const {
   '1': 'ValidatorInfo',
   '2': const [
-    const {'1': 'hash', '3': 1, '4': 1, '5': 12, '10': 'hash'},
-    const {'1': 'data', '3': 2, '4': 1, '5': 12, '10': 'data'},
+    const {'1': 'hash', '3': 1, '4': 1, '5': 9, '10': 'hash'},
+    const {'1': 'data', '3': 2, '4': 1, '5': 9, '10': 'data'},
     const {'1': 'public_key', '3': 3, '4': 1, '5': 9, '10': 'publicKey'},
     const {'1': 'number', '3': 4, '4': 1, '5': 5, '10': 'number'},
     const {'1': 'stake', '3': 5, '4': 1, '5': 3, '10': 'stake'},
@@ -267,13 +267,13 @@ const ValidatorInfo$json = const {
 };
 
 /// Descriptor for `ValidatorInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List validatorInfoDescriptor = $convert.base64Decode('Cg1WYWxpZGF0b3JJbmZvEhIKBGhhc2gYASABKAxSBGhhc2gSEgoEZGF0YRgCIAEoDFIEZGF0YRIdCgpwdWJsaWNfa2V5GAMgASgJUglwdWJsaWNLZXkSFgoGbnVtYmVyGAQgASgFUgZudW1iZXISFAoFc3Rha2UYBSABKANSBXN0YWtlEi4KE2xhc3RfYm9uZGluZ19oZWlnaHQYBiABKA1SEWxhc3RCb25kaW5nSGVpZ2h0EjIKFWxhc3Rfc29ydGl0aW9uX2hlaWdodBgHIAEoDVITbGFzdFNvcnRpdGlvbkhlaWdodBIpChB1bmJvbmRpbmdfaGVpZ2h0GAggASgNUg91bmJvbmRpbmdIZWlnaHQSGAoHYWRkcmVzcxgJIAEoCVIHYWRkcmVzcxItChJhdmFpbGFiaWxpdHlfc2NvcmUYCiABKAFSEWF2YWlsYWJpbGl0eVNjb3Jl');
+final $typed_data.Uint8List validatorInfoDescriptor = $convert.base64Decode('Cg1WYWxpZGF0b3JJbmZvEhIKBGhhc2gYASABKAlSBGhhc2gSEgoEZGF0YRgCIAEoCVIEZGF0YRIdCgpwdWJsaWNfa2V5GAMgASgJUglwdWJsaWNLZXkSFgoGbnVtYmVyGAQgASgFUgZudW1iZXISFAoFc3Rha2UYBSABKANSBXN0YWtlEi4KE2xhc3RfYm9uZGluZ19oZWlnaHQYBiABKA1SEWxhc3RCb25kaW5nSGVpZ2h0EjIKFWxhc3Rfc29ydGl0aW9uX2hlaWdodBgHIAEoDVITbGFzdFNvcnRpdGlvbkhlaWdodBIpChB1bmJvbmRpbmdfaGVpZ2h0GAggASgNUg91bmJvbmRpbmdIZWlnaHQSGAoHYWRkcmVzcxgJIAEoCVIHYWRkcmVzcxItChJhdmFpbGFiaWxpdHlfc2NvcmUYCiABKAFSEWF2YWlsYWJpbGl0eVNjb3Jl');
 @$core.Deprecated('Use accountInfoDescriptor instead')
 const AccountInfo$json = const {
   '1': 'AccountInfo',
   '2': const [
-    const {'1': 'hash', '3': 1, '4': 1, '5': 12, '10': 'hash'},
-    const {'1': 'data', '3': 2, '4': 1, '5': 12, '10': 'data'},
+    const {'1': 'hash', '3': 1, '4': 1, '5': 9, '10': 'hash'},
+    const {'1': 'data', '3': 2, '4': 1, '5': 9, '10': 'data'},
     const {'1': 'number', '3': 3, '4': 1, '5': 5, '10': 'number'},
     const {'1': 'balance', '3': 4, '4': 1, '5': 3, '10': 'balance'},
     const {'1': 'address', '3': 5, '4': 1, '5': 9, '10': 'address'},
@@ -281,42 +281,42 @@ const AccountInfo$json = const {
 };
 
 /// Descriptor for `AccountInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List accountInfoDescriptor = $convert.base64Decode('CgtBY2NvdW50SW5mbxISCgRoYXNoGAEgASgMUgRoYXNoEhIKBGRhdGEYAiABKAxSBGRhdGESFgoGbnVtYmVyGAMgASgFUgZudW1iZXISGAoHYmFsYW5jZRgEIAEoA1IHYmFsYW5jZRIYCgdhZGRyZXNzGAUgASgJUgdhZGRyZXNz');
+final $typed_data.Uint8List accountInfoDescriptor = $convert.base64Decode('CgtBY2NvdW50SW5mbxISCgRoYXNoGAEgASgJUgRoYXNoEhIKBGRhdGEYAiABKAlSBGRhdGESFgoGbnVtYmVyGAMgASgFUgZudW1iZXISGAoHYmFsYW5jZRgEIAEoA1IHYmFsYW5jZRIYCgdhZGRyZXNzGAUgASgJUgdhZGRyZXNz');
 @$core.Deprecated('Use blockHeaderInfoDescriptor instead')
 const BlockHeaderInfo$json = const {
   '1': 'BlockHeaderInfo',
   '2': const [
     const {'1': 'version', '3': 1, '4': 1, '5': 5, '10': 'version'},
-    const {'1': 'prev_block_hash', '3': 2, '4': 1, '5': 12, '10': 'prevBlockHash'},
-    const {'1': 'state_root', '3': 3, '4': 1, '5': 12, '10': 'stateRoot'},
-    const {'1': 'sortition_seed', '3': 4, '4': 1, '5': 12, '10': 'sortitionSeed'},
+    const {'1': 'prev_block_hash', '3': 2, '4': 1, '5': 9, '10': 'prevBlockHash'},
+    const {'1': 'state_root', '3': 3, '4': 1, '5': 9, '10': 'stateRoot'},
+    const {'1': 'sortition_seed', '3': 4, '4': 1, '5': 9, '10': 'sortitionSeed'},
     const {'1': 'proposer_address', '3': 5, '4': 1, '5': 9, '10': 'proposerAddress'},
   ],
 };
 
 /// Descriptor for `BlockHeaderInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List blockHeaderInfoDescriptor = $convert.base64Decode('Cg9CbG9ja0hlYWRlckluZm8SGAoHdmVyc2lvbhgBIAEoBVIHdmVyc2lvbhImCg9wcmV2X2Jsb2NrX2hhc2gYAiABKAxSDXByZXZCbG9ja0hhc2gSHQoKc3RhdGVfcm9vdBgDIAEoDFIJc3RhdGVSb290EiUKDnNvcnRpdGlvbl9zZWVkGAQgASgMUg1zb3J0aXRpb25TZWVkEikKEHByb3Bvc2VyX2FkZHJlc3MYBSABKAlSD3Byb3Bvc2VyQWRkcmVzcw==');
+final $typed_data.Uint8List blockHeaderInfoDescriptor = $convert.base64Decode('Cg9CbG9ja0hlYWRlckluZm8SGAoHdmVyc2lvbhgBIAEoBVIHdmVyc2lvbhImCg9wcmV2X2Jsb2NrX2hhc2gYAiABKAlSDXByZXZCbG9ja0hhc2gSHQoKc3RhdGVfcm9vdBgDIAEoCVIJc3RhdGVSb290EiUKDnNvcnRpdGlvbl9zZWVkGAQgASgJUg1zb3J0aXRpb25TZWVkEikKEHByb3Bvc2VyX2FkZHJlc3MYBSABKAlSD3Byb3Bvc2VyQWRkcmVzcw==');
 @$core.Deprecated('Use certificateInfoDescriptor instead')
 const CertificateInfo$json = const {
   '1': 'CertificateInfo',
   '2': const [
-    const {'1': 'hash', '3': 1, '4': 1, '5': 12, '10': 'hash'},
+    const {'1': 'hash', '3': 1, '4': 1, '5': 9, '10': 'hash'},
     const {'1': 'round', '3': 2, '4': 1, '5': 5, '10': 'round'},
     const {'1': 'committers', '3': 3, '4': 3, '5': 5, '10': 'committers'},
     const {'1': 'absentees', '3': 4, '4': 3, '5': 5, '10': 'absentees'},
-    const {'1': 'signature', '3': 5, '4': 1, '5': 12, '10': 'signature'},
+    const {'1': 'signature', '3': 5, '4': 1, '5': 9, '10': 'signature'},
   ],
 };
 
 /// Descriptor for `CertificateInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List certificateInfoDescriptor = $convert.base64Decode('Cg9DZXJ0aWZpY2F0ZUluZm8SEgoEaGFzaBgBIAEoDFIEaGFzaBIUCgVyb3VuZBgCIAEoBVIFcm91bmQSHgoKY29tbWl0dGVycxgDIAMoBVIKY29tbWl0dGVycxIcCglhYnNlbnRlZXMYBCADKAVSCWFic2VudGVlcxIcCglzaWduYXR1cmUYBSABKAxSCXNpZ25hdHVyZQ==');
+final $typed_data.Uint8List certificateInfoDescriptor = $convert.base64Decode('Cg9DZXJ0aWZpY2F0ZUluZm8SEgoEaGFzaBgBIAEoCVIEaGFzaBIUCgVyb3VuZBgCIAEoBVIFcm91bmQSHgoKY29tbWl0dGVycxgDIAMoBVIKY29tbWl0dGVycxIcCglhYnNlbnRlZXMYBCADKAVSCWFic2VudGVlcxIcCglzaWduYXR1cmUYBSABKAlSCXNpZ25hdHVyZQ==');
 @$core.Deprecated('Use voteInfoDescriptor instead')
 const VoteInfo$json = const {
   '1': 'VoteInfo',
   '2': const [
     const {'1': 'type', '3': 1, '4': 1, '5': 14, '6': '.pactus.VoteType', '10': 'type'},
     const {'1': 'voter', '3': 2, '4': 1, '5': 9, '10': 'voter'},
-    const {'1': 'block_hash', '3': 3, '4': 1, '5': 12, '10': 'blockHash'},
+    const {'1': 'block_hash', '3': 3, '4': 1, '5': 9, '10': 'blockHash'},
     const {'1': 'round', '3': 4, '4': 1, '5': 5, '10': 'round'},
     const {'1': 'cp_round', '3': 5, '4': 1, '5': 5, '10': 'cpRound'},
     const {'1': 'cp_value', '3': 6, '4': 1, '5': 5, '10': 'cpValue'},
@@ -324,7 +324,7 @@ const VoteInfo$json = const {
 };
 
 /// Descriptor for `VoteInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List voteInfoDescriptor = $convert.base64Decode('CghWb3RlSW5mbxIkCgR0eXBlGAEgASgOMhAucGFjdHVzLlZvdGVUeXBlUgR0eXBlEhQKBXZvdGVyGAIgASgJUgV2b3RlchIdCgpibG9ja19oYXNoGAMgASgMUglibG9ja0hhc2gSFAoFcm91bmQYBCABKAVSBXJvdW5kEhkKCGNwX3JvdW5kGAUgASgFUgdjcFJvdW5kEhkKCGNwX3ZhbHVlGAYgASgFUgdjcFZhbHVl');
+final $typed_data.Uint8List voteInfoDescriptor = $convert.base64Decode('CghWb3RlSW5mbxIkCgR0eXBlGAEgASgOMhAucGFjdHVzLlZvdGVUeXBlUgR0eXBlEhQKBXZvdGVyGAIgASgJUgV2b3RlchIdCgpibG9ja19oYXNoGAMgASgJUglibG9ja0hhc2gSFAoFcm91bmQYBCABKAVSBXJvdW5kEhkKCGNwX3JvdW5kGAUgASgFUgdjcFJvdW5kEhkKCGNwX3ZhbHVlGAYgASgFUgdjcFZhbHVl');
 @$core.Deprecated('Use consensusInfoDescriptor instead')
 const ConsensusInfo$json = const {
   '1': 'ConsensusInfo',

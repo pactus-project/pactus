@@ -16,7 +16,6 @@ openapiOptions:
           contact:
             name: Pactus Blockchain
             url: https://pactus.org
-            email: info@pactus.org
           license:
             name: MIT License
             url: https://github.com/pactus-project/pactus/blob/main/LICENSE

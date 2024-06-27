@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"encoding/hex"
 	"testing"
 
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
@@ -30,7 +31,9 @@ func TestGetNetworkInfo(t *testing.T) {
 		assert.Equal(t, 2, len(res.ConnectedPeers))
 		for _, p := range res.ConnectedPeers {
 			assert.NotEmpty(t, p.PeerId)
-			pid, _ := lp2ppeer.IDFromBytes(p.PeerId)
+			b, err := hex.DecodeString(p.PeerId)
+			assert.NoError(t, err)
+			pid, _ := lp2ppeer.IDFromBytes(b)
 			pp := td.mockSync.PeerSet().GetPeer(pid)
 			assert.Equal(t, p.Agent, pp.Agent)
 			assert.Equal(t, p.Moniker, pp.Moniker)
@@ -55,7 +58,7 @@ func TestGetNodeInfo(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Nil(t, err)
 	assert.Equal(t, version.NodeAgent.String(), res.Agent)
-	assert.Equal(t, []byte(td.mockSync.SelfID()), res.PeerId)
+	assert.Equal(t, hex.EncodeToString([]byte(td.mockSync.SelfID())), res.PeerId)
 	assert.Equal(t, "test-moniker", res.Moniker)
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

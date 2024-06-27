@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/hex"
 	"fmt"
 	"net/http"
 	"sort"
@@ -16,17 +17,6 @@ import (
 
 func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if s.enableAuth {
-		user, password, ok := r.BasicAuth()
-		if !ok {
-			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
-
-			return
-		}
-
-		ctx = s.basicAuth(ctx, user, password)
-	}
 
 	onlyConnected := false
 
@@ -79,7 +69,8 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	for i, p := range res.ConnectedPeers {
-		pid, _ := lp2ppeer.IDFromBytes(p.PeerId)
+		id, _ := hex.DecodeString(p.PeerId)
+		pid, _ := lp2ppeer.IDFromBytes(id)
 		tm.addRowInt("-- Peer #", i+1)
 		tm.addRowString("Status", status.Status(p.Status).String())
 		tm.addRowString("PeerID", pid.String())
@@ -115,17 +106,6 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if s.enableAuth {
-		user, password, ok := r.BasicAuth()
-		if !ok {
-			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
-
-			return
-		}
-
-		ctx = s.basicAuth(ctx, user, password)
-	}
 
 	res, err := s.network.GetNodeInfo(ctx,
 		&pactus.GetNodeInfoRequest{})
@@ -134,8 +114,8 @@ func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-
-	sid, _ := lp2ppeer.IDFromBytes(res.PeerId)
+	id, _ := hex.DecodeString(res.PeerId)
+	sid, _ := lp2ppeer.IDFromBytes(id)
 	tm := newTableMaker()
 	tm.addRowString("Peer ID", sid.String())
 	tm.addRowString("Agent", res.Agent)

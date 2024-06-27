@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"encoding/hex"
 	"fmt"
 	"testing"
 
@@ -18,7 +19,7 @@ func sendRawTx(t *testing.T, raw []byte) error {
 	t.Helper()
 
 	_, err := tTransaction.BroadcastTransaction(tCtx,
-		&pactus.BroadcastTransactionRequest{SignedRawTransaction: raw})
+		&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(raw)})
 
 	return err
 }
