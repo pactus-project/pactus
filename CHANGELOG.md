@@ -4,7 +4,7 @@
 
 ### Feat
 
-- get txpool API ([#1364](https://github.com/pactus-project/pactus/pull/1364))
+- **grpc**: get txpool content API ([#1364](https://github.com/pactus-project/pactus/pull/1364))
 - **network**: permanent peer store ([#1354](https://github.com/pactus-project/pactus/pull/1354))
 
 ### Fix
