@@ -157,7 +157,7 @@ func _BlockchainGetBlockHeightCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	flag.BytesBase64Var(cmd.PersistentFlags(), &req.Hash, cfg.FlagNamer("Hash"), "Hash of the block.")
+	cmd.PersistentFlags().StringVar(&req.Hash, cfg.FlagNamer("Hash"), "", "Hash of the block.")
 
 	return cmd
 }

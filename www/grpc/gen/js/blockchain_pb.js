@@ -2028,8 +2028,8 @@ proto.pactus.GetBlockResponse.prototype.toObject = function(opt_includeInstance)
 proto.pactus.GetBlockResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     height: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    hash: msg.getHash_asB64(),
-    data: msg.getData_asB64(),
+    hash: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    data: jspb.Message.getFieldWithDefault(msg, 3, ""),
     blockTime: jspb.Message.getFieldWithDefault(msg, 4, 0),
     header: (f = msg.getHeader()) && proto.pactus.BlockHeaderInfo.toObject(includeInstance, f),
     prevCert: (f = msg.getPrevCert()) && proto.pactus.CertificateInfo.toObject(includeInstance, f),
@@ -2076,11 +2076,11 @@ proto.pactus.GetBlockResponse.deserializeBinaryFromReader = function(msg, reader
       msg.setHeight(value);
       break;
     case 2:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setHash(value);
       break;
     case 3:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setData(value);
       break;
     case 4:
@@ -2138,16 +2138,16 @@ proto.pactus.GetBlockResponse.serializeBinaryToWriter = function(message, writer
       f
     );
   }
-  f = message.getHash_asU8();
+  f = message.getHash();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       2,
       f
     );
   }
-  f = message.getData_asU8();
+  f = message.getData();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       3,
       f
     );
@@ -2205,86 +2205,38 @@ proto.pactus.GetBlockResponse.prototype.setHeight = function(value) {
 
 
 /**
- * optional bytes hash = 2;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.GetBlockResponse.prototype.getHash = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * optional bytes hash = 2;
- * This is a type-conversion wrapper around `getHash()`
+ * optional string hash = 2;
  * @return {string}
  */
-proto.pactus.GetBlockResponse.prototype.getHash_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getHash()));
+proto.pactus.GetBlockResponse.prototype.getHash = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /**
- * optional bytes hash = 2;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getHash()`
- * @return {!Uint8Array}
- */
-proto.pactus.GetBlockResponse.prototype.getHash_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getHash()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.GetBlockResponse} returns this
  */
 proto.pactus.GetBlockResponse.prototype.setHash = function(value) {
-  return jspb.Message.setProto3BytesField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional bytes data = 3;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.GetBlockResponse.prototype.getData = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/**
- * optional bytes data = 3;
- * This is a type-conversion wrapper around `getData()`
+ * optional string data = 3;
  * @return {string}
  */
-proto.pactus.GetBlockResponse.prototype.getData_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getData()));
+proto.pactus.GetBlockResponse.prototype.getData = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
 /**
- * optional bytes data = 3;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getData()`
- * @return {!Uint8Array}
- */
-proto.pactus.GetBlockResponse.prototype.getData_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getData()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.GetBlockResponse} returns this
  */
 proto.pactus.GetBlockResponse.prototype.setData = function(value) {
-  return jspb.Message.setProto3BytesField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
@@ -2580,7 +2532,7 @@ proto.pactus.GetBlockHashResponse.prototype.toObject = function(opt_includeInsta
  */
 proto.pactus.GetBlockHashResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    hash: msg.getHash_asB64()
+    hash: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -2618,7 +2570,7 @@ proto.pactus.GetBlockHashResponse.deserializeBinaryFromReader = function(msg, re
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setHash(value);
       break;
     default:
@@ -2650,9 +2602,9 @@ proto.pactus.GetBlockHashResponse.prototype.serializeBinary = function() {
  */
 proto.pactus.GetBlockHashResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getHash_asU8();
+  f = message.getHash();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       1,
       f
     );
@@ -2661,44 +2613,20 @@ proto.pactus.GetBlockHashResponse.serializeBinaryToWriter = function(message, wr
 
 
 /**
- * optional bytes hash = 1;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.GetBlockHashResponse.prototype.getHash = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * optional bytes hash = 1;
- * This is a type-conversion wrapper around `getHash()`
+ * optional string hash = 1;
  * @return {string}
  */
-proto.pactus.GetBlockHashResponse.prototype.getHash_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getHash()));
+proto.pactus.GetBlockHashResponse.prototype.getHash = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
- * optional bytes hash = 1;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getHash()`
- * @return {!Uint8Array}
- */
-proto.pactus.GetBlockHashResponse.prototype.getHash_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getHash()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.GetBlockHashResponse} returns this
  */
 proto.pactus.GetBlockHashResponse.prototype.setHash = function(value) {
-  return jspb.Message.setProto3BytesField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -2734,7 +2662,7 @@ proto.pactus.GetBlockHeightRequest.prototype.toObject = function(opt_includeInst
  */
 proto.pactus.GetBlockHeightRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    hash: msg.getHash_asB64()
+    hash: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -2772,7 +2700,7 @@ proto.pactus.GetBlockHeightRequest.deserializeBinaryFromReader = function(msg, r
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setHash(value);
       break;
     default:
@@ -2804,9 +2732,9 @@ proto.pactus.GetBlockHeightRequest.prototype.serializeBinary = function() {
  */
 proto.pactus.GetBlockHeightRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getHash_asU8();
+  f = message.getHash();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       1,
       f
     );
@@ -2815,44 +2743,20 @@ proto.pactus.GetBlockHeightRequest.serializeBinaryToWriter = function(message, w
 
 
 /**
- * optional bytes hash = 1;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.GetBlockHeightRequest.prototype.getHash = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * optional bytes hash = 1;
- * This is a type-conversion wrapper around `getHash()`
+ * optional string hash = 1;
  * @return {string}
  */
-proto.pactus.GetBlockHeightRequest.prototype.getHash_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getHash()));
+proto.pactus.GetBlockHeightRequest.prototype.getHash = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
- * optional bytes hash = 1;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getHash()`
- * @return {!Uint8Array}
- */
-proto.pactus.GetBlockHeightRequest.prototype.getHash_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getHash()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.GetBlockHeightRequest} returns this
  */
 proto.pactus.GetBlockHeightRequest.prototype.setHash = function(value) {
-  return jspb.Message.setProto3BytesField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -3127,7 +3031,7 @@ proto.pactus.GetBlockchainInfoResponse.prototype.toObject = function(opt_include
 proto.pactus.GetBlockchainInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     lastBlockHeight: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    lastBlockHash: msg.getLastBlockHash_asB64(),
+    lastBlockHash: jspb.Message.getFieldWithDefault(msg, 2, ""),
     totalAccounts: jspb.Message.getFieldWithDefault(msg, 3, 0),
     totalValidators: jspb.Message.getFieldWithDefault(msg, 4, 0),
     totalPower: jspb.Message.getFieldWithDefault(msg, 5, 0),
@@ -3175,7 +3079,7 @@ proto.pactus.GetBlockchainInfoResponse.deserializeBinaryFromReader = function(ms
       msg.setLastBlockHeight(value);
       break;
     case 2:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setLastBlockHash(value);
       break;
     case 3:
@@ -3235,9 +3139,9 @@ proto.pactus.GetBlockchainInfoResponse.serializeBinaryToWriter = function(messag
       f
     );
   }
-  f = message.getLastBlockHash_asU8();
+  f = message.getLastBlockHash();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       2,
       f
     );
@@ -3300,44 +3204,20 @@ proto.pactus.GetBlockchainInfoResponse.prototype.setLastBlockHeight = function(v
 
 
 /**
- * optional bytes last_block_hash = 2;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.getLastBlockHash = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * optional bytes last_block_hash = 2;
- * This is a type-conversion wrapper around `getLastBlockHash()`
+ * optional string last_block_hash = 2;
  * @return {string}
  */
-proto.pactus.GetBlockchainInfoResponse.prototype.getLastBlockHash_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getLastBlockHash()));
+proto.pactus.GetBlockchainInfoResponse.prototype.getLastBlockHash = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /**
- * optional bytes last_block_hash = 2;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getLastBlockHash()`
- * @return {!Uint8Array}
- */
-proto.pactus.GetBlockchainInfoResponse.prototype.getLastBlockHash_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getLastBlockHash()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
  */
 proto.pactus.GetBlockchainInfoResponse.prototype.setLastBlockHash = function(value) {
-  return jspb.Message.setProto3BytesField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -4034,8 +3914,8 @@ proto.pactus.ValidatorInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.ValidatorInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    hash: msg.getHash_asB64(),
-    data: msg.getData_asB64(),
+    hash: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    data: jspb.Message.getFieldWithDefault(msg, 2, ""),
     publicKey: jspb.Message.getFieldWithDefault(msg, 3, ""),
     number: jspb.Message.getFieldWithDefault(msg, 4, 0),
     stake: jspb.Message.getFieldWithDefault(msg, 5, 0),
@@ -4081,11 +3961,11 @@ proto.pactus.ValidatorInfo.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setHash(value);
       break;
     case 2:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setData(value);
       break;
     case 3:
@@ -4149,16 +4029,16 @@ proto.pactus.ValidatorInfo.prototype.serializeBinary = function() {
  */
 proto.pactus.ValidatorInfo.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getHash_asU8();
+  f = message.getHash();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       1,
       f
     );
   }
-  f = message.getData_asU8();
+  f = message.getData();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       2,
       f
     );
@@ -4223,86 +4103,38 @@ proto.pactus.ValidatorInfo.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional bytes hash = 1;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.ValidatorInfo.prototype.getHash = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * optional bytes hash = 1;
- * This is a type-conversion wrapper around `getHash()`
+ * optional string hash = 1;
  * @return {string}
  */
-proto.pactus.ValidatorInfo.prototype.getHash_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getHash()));
+proto.pactus.ValidatorInfo.prototype.getHash = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
- * optional bytes hash = 1;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getHash()`
- * @return {!Uint8Array}
- */
-proto.pactus.ValidatorInfo.prototype.getHash_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getHash()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
 proto.pactus.ValidatorInfo.prototype.setHash = function(value) {
-  return jspb.Message.setProto3BytesField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 /**
- * optional bytes data = 2;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.ValidatorInfo.prototype.getData = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * optional bytes data = 2;
- * This is a type-conversion wrapper around `getData()`
+ * optional string data = 2;
  * @return {string}
  */
-proto.pactus.ValidatorInfo.prototype.getData_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getData()));
+proto.pactus.ValidatorInfo.prototype.getData = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /**
- * optional bytes data = 2;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getData()`
- * @return {!Uint8Array}
- */
-proto.pactus.ValidatorInfo.prototype.getData_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getData()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.ValidatorInfo} returns this
  */
 proto.pactus.ValidatorInfo.prototype.setData = function(value) {
-  return jspb.Message.setProto3BytesField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -4482,8 +4314,8 @@ proto.pactus.AccountInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.AccountInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    hash: msg.getHash_asB64(),
-    data: msg.getData_asB64(),
+    hash: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    data: jspb.Message.getFieldWithDefault(msg, 2, ""),
     number: jspb.Message.getFieldWithDefault(msg, 3, 0),
     balance: jspb.Message.getFieldWithDefault(msg, 4, 0),
     address: jspb.Message.getFieldWithDefault(msg, 5, "")
@@ -4524,11 +4356,11 @@ proto.pactus.AccountInfo.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setHash(value);
       break;
     case 2:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setData(value);
       break;
     case 3:
@@ -4572,16 +4404,16 @@ proto.pactus.AccountInfo.prototype.serializeBinary = function() {
  */
 proto.pactus.AccountInfo.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getHash_asU8();
+  f = message.getHash();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       1,
       f
     );
   }
-  f = message.getData_asU8();
+  f = message.getData();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       2,
       f
     );
@@ -4611,86 +4443,38 @@ proto.pactus.AccountInfo.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional bytes hash = 1;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.AccountInfo.prototype.getHash = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * optional bytes hash = 1;
- * This is a type-conversion wrapper around `getHash()`
+ * optional string hash = 1;
  * @return {string}
  */
-proto.pactus.AccountInfo.prototype.getHash_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getHash()));
+proto.pactus.AccountInfo.prototype.getHash = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
- * optional bytes hash = 1;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getHash()`
- * @return {!Uint8Array}
- */
-proto.pactus.AccountInfo.prototype.getHash_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getHash()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.AccountInfo} returns this
  */
 proto.pactus.AccountInfo.prototype.setHash = function(value) {
-  return jspb.Message.setProto3BytesField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 /**
- * optional bytes data = 2;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.AccountInfo.prototype.getData = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * optional bytes data = 2;
- * This is a type-conversion wrapper around `getData()`
+ * optional string data = 2;
  * @return {string}
  */
-proto.pactus.AccountInfo.prototype.getData_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getData()));
+proto.pactus.AccountInfo.prototype.getData = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /**
- * optional bytes data = 2;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getData()`
- * @return {!Uint8Array}
- */
-proto.pactus.AccountInfo.prototype.getData_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getData()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.AccountInfo} returns this
  */
 proto.pactus.AccountInfo.prototype.setData = function(value) {
-  return jspb.Message.setProto3BytesField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -4781,9 +4565,9 @@ proto.pactus.BlockHeaderInfo.prototype.toObject = function(opt_includeInstance) 
 proto.pactus.BlockHeaderInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
     version: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    prevBlockHash: msg.getPrevBlockHash_asB64(),
-    stateRoot: msg.getStateRoot_asB64(),
-    sortitionSeed: msg.getSortitionSeed_asB64(),
+    prevBlockHash: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    stateRoot: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    sortitionSeed: jspb.Message.getFieldWithDefault(msg, 4, ""),
     proposerAddress: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
 
@@ -4826,15 +4610,15 @@ proto.pactus.BlockHeaderInfo.deserializeBinaryFromReader = function(msg, reader)
       msg.setVersion(value);
       break;
     case 2:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setPrevBlockHash(value);
       break;
     case 3:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setStateRoot(value);
       break;
     case 4:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setSortitionSeed(value);
       break;
     case 5:
@@ -4877,23 +4661,23 @@ proto.pactus.BlockHeaderInfo.serializeBinaryToWriter = function(message, writer)
       f
     );
   }
-  f = message.getPrevBlockHash_asU8();
+  f = message.getPrevBlockHash();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       2,
       f
     );
   }
-  f = message.getStateRoot_asU8();
+  f = message.getStateRoot();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       3,
       f
     );
   }
-  f = message.getSortitionSeed_asU8();
+  f = message.getSortitionSeed();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       4,
       f
     );
@@ -4927,128 +4711,56 @@ proto.pactus.BlockHeaderInfo.prototype.setVersion = function(value) {
 
 
 /**
- * optional bytes prev_block_hash = 2;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.BlockHeaderInfo.prototype.getPrevBlockHash = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * optional bytes prev_block_hash = 2;
- * This is a type-conversion wrapper around `getPrevBlockHash()`
+ * optional string prev_block_hash = 2;
  * @return {string}
  */
-proto.pactus.BlockHeaderInfo.prototype.getPrevBlockHash_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getPrevBlockHash()));
+proto.pactus.BlockHeaderInfo.prototype.getPrevBlockHash = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /**
- * optional bytes prev_block_hash = 2;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getPrevBlockHash()`
- * @return {!Uint8Array}
- */
-proto.pactus.BlockHeaderInfo.prototype.getPrevBlockHash_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getPrevBlockHash()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.BlockHeaderInfo} returns this
  */
 proto.pactus.BlockHeaderInfo.prototype.setPrevBlockHash = function(value) {
-  return jspb.Message.setProto3BytesField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional bytes state_root = 3;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.BlockHeaderInfo.prototype.getStateRoot = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/**
- * optional bytes state_root = 3;
- * This is a type-conversion wrapper around `getStateRoot()`
+ * optional string state_root = 3;
  * @return {string}
  */
-proto.pactus.BlockHeaderInfo.prototype.getStateRoot_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getStateRoot()));
+proto.pactus.BlockHeaderInfo.prototype.getStateRoot = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
 /**
- * optional bytes state_root = 3;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getStateRoot()`
- * @return {!Uint8Array}
- */
-proto.pactus.BlockHeaderInfo.prototype.getStateRoot_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getStateRoot()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.BlockHeaderInfo} returns this
  */
 proto.pactus.BlockHeaderInfo.prototype.setStateRoot = function(value) {
-  return jspb.Message.setProto3BytesField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
 /**
- * optional bytes sortition_seed = 4;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.BlockHeaderInfo.prototype.getSortitionSeed = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
-};
-
-
-/**
- * optional bytes sortition_seed = 4;
- * This is a type-conversion wrapper around `getSortitionSeed()`
+ * optional string sortition_seed = 4;
  * @return {string}
  */
-proto.pactus.BlockHeaderInfo.prototype.getSortitionSeed_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getSortitionSeed()));
+proto.pactus.BlockHeaderInfo.prototype.getSortitionSeed = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
 };
 
 
 /**
- * optional bytes sortition_seed = 4;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getSortitionSeed()`
- * @return {!Uint8Array}
- */
-proto.pactus.BlockHeaderInfo.prototype.getSortitionSeed_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getSortitionSeed()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.BlockHeaderInfo} returns this
  */
 proto.pactus.BlockHeaderInfo.prototype.setSortitionSeed = function(value) {
-  return jspb.Message.setProto3BytesField(this, 4, value);
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
@@ -5109,11 +4821,11 @@ proto.pactus.CertificateInfo.prototype.toObject = function(opt_includeInstance) 
  */
 proto.pactus.CertificateInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    hash: msg.getHash_asB64(),
+    hash: jspb.Message.getFieldWithDefault(msg, 1, ""),
     round: jspb.Message.getFieldWithDefault(msg, 2, 0),
     committersList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f,
     absenteesList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f,
-    signature: msg.getSignature_asB64()
+    signature: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
 
   if (includeInstance) {
@@ -5151,7 +4863,7 @@ proto.pactus.CertificateInfo.deserializeBinaryFromReader = function(msg, reader)
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setHash(value);
       break;
     case 2:
@@ -5171,7 +4883,7 @@ proto.pactus.CertificateInfo.deserializeBinaryFromReader = function(msg, reader)
       }
       break;
     case 5:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setSignature(value);
       break;
     default:
@@ -5203,9 +4915,9 @@ proto.pactus.CertificateInfo.prototype.serializeBinary = function() {
  */
 proto.pactus.CertificateInfo.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getHash_asU8();
+  f = message.getHash();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       1,
       f
     );
@@ -5231,9 +4943,9 @@ proto.pactus.CertificateInfo.serializeBinaryToWriter = function(message, writer)
       f
     );
   }
-  f = message.getSignature_asU8();
+  f = message.getSignature();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       5,
       f
     );
@@ -5242,44 +4954,20 @@ proto.pactus.CertificateInfo.serializeBinaryToWriter = function(message, writer)
 
 
 /**
- * optional bytes hash = 1;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.CertificateInfo.prototype.getHash = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * optional bytes hash = 1;
- * This is a type-conversion wrapper around `getHash()`
+ * optional string hash = 1;
  * @return {string}
  */
-proto.pactus.CertificateInfo.prototype.getHash_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getHash()));
+proto.pactus.CertificateInfo.prototype.getHash = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
- * optional bytes hash = 1;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getHash()`
- * @return {!Uint8Array}
- */
-proto.pactus.CertificateInfo.prototype.getHash_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getHash()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.CertificateInfo} returns this
  */
 proto.pactus.CertificateInfo.prototype.setHash = function(value) {
-  return jspb.Message.setProto3BytesField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -5376,44 +5064,20 @@ proto.pactus.CertificateInfo.prototype.clearAbsenteesList = function() {
 
 
 /**
- * optional bytes signature = 5;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.CertificateInfo.prototype.getSignature = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
-};
-
-
-/**
- * optional bytes signature = 5;
- * This is a type-conversion wrapper around `getSignature()`
+ * optional string signature = 5;
  * @return {string}
  */
-proto.pactus.CertificateInfo.prototype.getSignature_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getSignature()));
+proto.pactus.CertificateInfo.prototype.getSignature = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
 
 /**
- * optional bytes signature = 5;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getSignature()`
- * @return {!Uint8Array}
- */
-proto.pactus.CertificateInfo.prototype.getSignature_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getSignature()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.CertificateInfo} returns this
  */
 proto.pactus.CertificateInfo.prototype.setSignature = function(value) {
-  return jspb.Message.setProto3BytesField(this, 5, value);
+  return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
@@ -5451,7 +5115,7 @@ proto.pactus.VoteInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
     type: jspb.Message.getFieldWithDefault(msg, 1, 0),
     voter: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    blockHash: msg.getBlockHash_asB64(),
+    blockHash: jspb.Message.getFieldWithDefault(msg, 3, ""),
     round: jspb.Message.getFieldWithDefault(msg, 4, 0),
     cpRound: jspb.Message.getFieldWithDefault(msg, 5, 0),
     cpValue: jspb.Message.getFieldWithDefault(msg, 6, 0)
@@ -5500,7 +5164,7 @@ proto.pactus.VoteInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setVoter(value);
       break;
     case 3:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setBlockHash(value);
       break;
     case 4:
@@ -5558,9 +5222,9 @@ proto.pactus.VoteInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getBlockHash_asU8();
+  f = message.getBlockHash();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       3,
       f
     );
@@ -5626,44 +5290,20 @@ proto.pactus.VoteInfo.prototype.setVoter = function(value) {
 
 
 /**
- * optional bytes block_hash = 3;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.VoteInfo.prototype.getBlockHash = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/**
- * optional bytes block_hash = 3;
- * This is a type-conversion wrapper around `getBlockHash()`
+ * optional string block_hash = 3;
  * @return {string}
  */
-proto.pactus.VoteInfo.prototype.getBlockHash_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getBlockHash()));
+proto.pactus.VoteInfo.prototype.getBlockHash = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
 /**
- * optional bytes block_hash = 3;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getBlockHash()`
- * @return {!Uint8Array}
- */
-proto.pactus.VoteInfo.prototype.getBlockHash_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getBlockHash()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.VoteInfo} returns this
  */
 proto.pactus.VoteInfo.prototype.setBlockHash = function(value) {
-  return jspb.Message.setProto3BytesField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 

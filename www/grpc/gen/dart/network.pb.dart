@@ -279,7 +279,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetNodeInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'moniker')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'agent')
-    ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peerId', $pb.PbFieldType.OY)
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peerId')
     ..a<$fixnum.Int64>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'startedAt', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
     ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'reachability')
     ..p<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'services', $pb.PbFieldType.K3)
@@ -295,7 +295,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   factory GetNodeInfoResponse({
     $core.String? moniker,
     $core.String? agent,
-    $core.List<$core.int>? peerId,
+    $core.String? peerId,
     $fixnum.Int64? startedAt,
     $core.String? reachability,
     $core.Iterable<$core.int>? services,
@@ -381,9 +381,9 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   void clearAgent() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.List<$core.int> get peerId => $_getN(2);
+  $core.String get peerId => $_getSZ(2);
   @$pb.TagNumber(3)
-  set peerId($core.List<$core.int> v) { $_setBytes(2, v); }
+  set peerId($core.String v) { $_setString(2, v); }
   @$pb.TagNumber(3)
   $core.bool hasPeerId() => $_has(2);
   @$pb.TagNumber(3)
@@ -445,11 +445,11 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', $pb.PbFieldType.O3)
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'moniker')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'agent')
-    ..a<$core.List<$core.int>>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peerId', $pb.PbFieldType.OY)
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peerId')
     ..pPS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'consensusKeys')
     ..pPS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'consensusAddress')
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'services', $pb.PbFieldType.OU3)
-    ..a<$core.List<$core.int>>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBlockHash', $pb.PbFieldType.OY)
+    ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBlockHash')
     ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
     ..a<$core.int>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBundles', $pb.PbFieldType.O3)
     ..a<$core.int>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invalidBundles', $pb.PbFieldType.O3)
@@ -470,11 +470,11 @@ class PeerInfo extends $pb.GeneratedMessage {
     $core.int? status,
     $core.String? moniker,
     $core.String? agent,
-    $core.List<$core.int>? peerId,
+    $core.String? peerId,
     $core.Iterable<$core.String>? consensusKeys,
     $core.Iterable<$core.String>? consensusAddress,
     $core.int? services,
-    $core.List<$core.int>? lastBlockHash,
+    $core.String? lastBlockHash,
     $core.int? height,
     $core.int? receivedBundles,
     $core.int? invalidBundles,
@@ -600,9 +600,9 @@ class PeerInfo extends $pb.GeneratedMessage {
   void clearAgent() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.List<$core.int> get peerId => $_getN(3);
+  $core.String get peerId => $_getSZ(3);
   @$pb.TagNumber(4)
-  set peerId($core.List<$core.int> v) { $_setBytes(3, v); }
+  set peerId($core.String v) { $_setString(3, v); }
   @$pb.TagNumber(4)
   $core.bool hasPeerId() => $_has(3);
   @$pb.TagNumber(4)
@@ -624,9 +624,9 @@ class PeerInfo extends $pb.GeneratedMessage {
   void clearServices() => clearField(7);
 
   @$pb.TagNumber(8)
-  $core.List<$core.int> get lastBlockHash => $_getN(7);
+  $core.String get lastBlockHash => $_getSZ(7);
   @$pb.TagNumber(8)
-  set lastBlockHash($core.List<$core.int> v) { $_setBytes(7, v); }
+  set lastBlockHash($core.String v) { $_setString(7, v); }
   @$pb.TagNumber(8)
   $core.bool hasLastBlockHash() => $_has(7);
   @$pb.TagNumber(8)

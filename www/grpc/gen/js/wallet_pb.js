@@ -3048,7 +3048,7 @@ proto.pactus.SignRawTransactionRequest.prototype.toObject = function(opt_include
 proto.pactus.SignRawTransactionRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    rawTransaction: msg.getRawTransaction_asB64(),
+    rawTransaction: jspb.Message.getFieldWithDefault(msg, 2, ""),
     password: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
@@ -3091,7 +3091,7 @@ proto.pactus.SignRawTransactionRequest.deserializeBinaryFromReader = function(ms
       msg.setWalletName(value);
       break;
     case 2:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setRawTransaction(value);
       break;
     case 3:
@@ -3134,9 +3134,9 @@ proto.pactus.SignRawTransactionRequest.serializeBinaryToWriter = function(messag
       f
     );
   }
-  f = message.getRawTransaction_asU8();
+  f = message.getRawTransaction();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       2,
       f
     );
@@ -3170,44 +3170,20 @@ proto.pactus.SignRawTransactionRequest.prototype.setWalletName = function(value)
 
 
 /**
- * optional bytes raw_transaction = 2;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.SignRawTransactionRequest.prototype.getRawTransaction = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * optional bytes raw_transaction = 2;
- * This is a type-conversion wrapper around `getRawTransaction()`
+ * optional string raw_transaction = 2;
  * @return {string}
  */
-proto.pactus.SignRawTransactionRequest.prototype.getRawTransaction_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getRawTransaction()));
+proto.pactus.SignRawTransactionRequest.prototype.getRawTransaction = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /**
- * optional bytes raw_transaction = 2;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getRawTransaction()`
- * @return {!Uint8Array}
- */
-proto.pactus.SignRawTransactionRequest.prototype.getRawTransaction_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getRawTransaction()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.SignRawTransactionRequest} returns this
  */
 proto.pactus.SignRawTransactionRequest.prototype.setRawTransaction = function(value) {
-  return jspb.Message.setProto3BytesField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -3261,8 +3237,8 @@ proto.pactus.SignRawTransactionResponse.prototype.toObject = function(opt_includ
  */
 proto.pactus.SignRawTransactionResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    transactionId: msg.getTransactionId_asB64(),
-    signedRawTransaction: msg.getSignedRawTransaction_asB64()
+    transactionId: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    signedRawTransaction: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -3300,11 +3276,11 @@ proto.pactus.SignRawTransactionResponse.deserializeBinaryFromReader = function(m
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setTransactionId(value);
       break;
     case 2:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
       msg.setSignedRawTransaction(value);
       break;
     default:
@@ -3336,16 +3312,16 @@ proto.pactus.SignRawTransactionResponse.prototype.serializeBinary = function() {
  */
 proto.pactus.SignRawTransactionResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getTransactionId_asU8();
+  f = message.getTransactionId();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       1,
       f
     );
   }
-  f = message.getSignedRawTransaction_asU8();
+  f = message.getSignedRawTransaction();
   if (f.length > 0) {
-    writer.writeBytes(
+    writer.writeString(
       2,
       f
     );
@@ -3354,86 +3330,38 @@ proto.pactus.SignRawTransactionResponse.serializeBinaryToWriter = function(messa
 
 
 /**
- * optional bytes transaction_id = 1;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.SignRawTransactionResponse.prototype.getTransactionId = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * optional bytes transaction_id = 1;
- * This is a type-conversion wrapper around `getTransactionId()`
+ * optional string transaction_id = 1;
  * @return {string}
  */
-proto.pactus.SignRawTransactionResponse.prototype.getTransactionId_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getTransactionId()));
+proto.pactus.SignRawTransactionResponse.prototype.getTransactionId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
- * optional bytes transaction_id = 1;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getTransactionId()`
- * @return {!Uint8Array}
- */
-proto.pactus.SignRawTransactionResponse.prototype.getTransactionId_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getTransactionId()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.SignRawTransactionResponse} returns this
  */
 proto.pactus.SignRawTransactionResponse.prototype.setTransactionId = function(value) {
-  return jspb.Message.setProto3BytesField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 /**
- * optional bytes signed_raw_transaction = 2;
- * @return {!(string|Uint8Array)}
- */
-proto.pactus.SignRawTransactionResponse.prototype.getSignedRawTransaction = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * optional bytes signed_raw_transaction = 2;
- * This is a type-conversion wrapper around `getSignedRawTransaction()`
+ * optional string signed_raw_transaction = 2;
  * @return {string}
  */
-proto.pactus.SignRawTransactionResponse.prototype.getSignedRawTransaction_asB64 = function() {
-  return /** @type {string} */ (jspb.Message.bytesAsB64(
-      this.getSignedRawTransaction()));
+proto.pactus.SignRawTransactionResponse.prototype.getSignedRawTransaction = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /**
- * optional bytes signed_raw_transaction = 2;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getSignedRawTransaction()`
- * @return {!Uint8Array}
- */
-proto.pactus.SignRawTransactionResponse.prototype.getSignedRawTransaction_asU8 = function() {
-  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
-      this.getSignedRawTransaction()));
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @return {!proto.pactus.SignRawTransactionResponse} returns this
  */
 proto.pactus.SignRawTransactionResponse.prototype.setSignedRawTransaction = function(value) {
-  return jspb.Message.setProto3BytesField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 

@@ -38,7 +38,7 @@ service Transaction {
 // Request message for retrieving transaction details.
 message GetTransactionRequest {
   // Transaction ID.
-  bytes id = 1;
+  string id = 1;
   // Verbosity level for transaction details.
   TransactionVerbosity verbosity = 2;
 }
@@ -74,13 +74,13 @@ message CalculateFeeResponse {
 // Request message for broadcasting a signed transaction.
 message BroadcastTransactionRequest {
   // Signed raw transaction data.
-  bytes signed_raw_transaction = 1;
+  string signed_raw_transaction = 1;
 }
 
 // Response message containing the ID of the broadcasted transaction.
 message BroadcastTransactionResponse {
   // Transaction ID.
-  bytes id = 1;
+  string id = 1;
 }
 
 // Request message for retrieving raw details of a transfer transaction.
@@ -156,7 +156,7 @@ message GetRawWithdrawTransactionRequest {
 // Response message containing raw transaction data.
 message GetRawTransactionResponse {
   // Raw transaction data.
-  bytes raw_transaction = 1;
+  string raw_transaction = 1;
 }
 
 // Payload for a transfer transaction.
@@ -184,7 +184,7 @@ message PayloadSortition {
   // Address associated with the sortition.
   string address = 1;
   // Proof for the sortition.
-  bytes proof = 2;
+  string proof = 2;
 }
 
 // Payload for an unbond transaction.
@@ -206,9 +206,9 @@ message PayloadWithdraw {
 // Information about a transaction.
 message TransactionInfo {
   // Transaction ID.
-  bytes id = 1;
+  string id = 1;
   // Transaction data.
-  bytes data = 2;
+  string data = 2;
   // Transaction version.
   int32 version = 3;
   // Lock time for the transaction.
@@ -236,7 +236,7 @@ message TransactionInfo {
   // Public key associated with the transaction.
   string public_key = 9;
   // Transaction signature.
-  bytes signature = 10;
+  string signature = 10;
 }
 
 // Enumeration for different types of transaction payload.

@@ -59,7 +59,7 @@ func (h *history) addActivity(addr string, amt amount.Amount, trx *pactus.GetTra
 		h.Activities[addr] = make([]activity, 0, 1)
 	}
 	act := activity{
-		TxID:   hex.EncodeToString(trx.Transaction.Id),
+		TxID:   trx.Transaction.Id,
 		Amount: amt,
 	}
 	h.Activities[addr] = append(h.Activities[addr], act)
@@ -72,7 +72,7 @@ func (h *history) addActivity(addr string, amt amount.Amount, trx *pactus.GetTra
 		BlockHeight: trx.BlockHeight,
 		BlockTime:   trx.BlockTime,
 		PayloadType: payload.Type(trx.Transaction.PayloadType).String(),
-		Data:        hex.EncodeToString(trx.Transaction.Data),
+		Data:        trx.Transaction.Data,
 	}
 }
 

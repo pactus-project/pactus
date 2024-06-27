@@ -173,8 +173,7 @@
             "description": "Hash of the block.",
             "in": "query",
             "required": false,
-            "type": "string",
-            "format": "byte"
+            "type": "string"
           }
         ],
         "tags": [
@@ -253,6 +252,47 @@
             "in": "query",
             "required": false,
             "type": "string"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/pactus/blockchain/get_txpool_content": {
+      "get": {
+        "summary": "GetTxPoolContent retrieves current transactions on the TXPool.",
+        "operationId": "Blockchain_GetTxPoolContent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetTxPoolContentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "payloadType",
+            "description": "Payload type of tranactions in the tx pool, 0 is all types.\n\n - UNKNOWN: Unknown payload type.\n - TRANSFER_PAYLOAD: Transfer payload type.\n - BOND_PAYLOAD: Bond payload type.\n - SORTITION_PAYLOAD: Sortition payload type.\n - UNBOND_PAYLOAD: Unbond payload type.\n - WITHDRAW_PAYLOAD: Withdraw payload type.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "TRANSFER_PAYLOAD",
+              "BOND_PAYLOAD",
+              "SORTITION_PAYLOAD",
+              "UNBOND_PAYLOAD",
+              "WITHDRAW_PAYLOAD"
+            ],
+            "default": "UNKNOWN"
           }
         ],
         "tags": [
@@ -404,8 +444,7 @@
             "description": "Signed raw transaction data.",
             "in": "query",
             "required": false,
-            "type": "string",
-            "format": "byte"
+            "type": "string"
           }
         ],
         "tags": [
@@ -757,8 +796,7 @@
             "description": "Transaction ID.",
             "in": "query",
             "required": false,
-            "type": "string",
-            "format": "byte"
+            "type": "string"
           },
           {
             "name": "verbosity",
@@ -1042,8 +1080,7 @@
             "description": "Raw transaction data to be signed.",
             "in": "query",
             "required": false,
-            "type": "string",
-            "format": "byte"
+            "type": "string"
           },
           {
             "name": "password",
@@ -1097,12 +1134,10 @@
       "properties": {
         "hash": {
           "type": "string",
-          "format": "byte",
           "description": "Hash of the account."
         },
         "data": {
           "type": "string",
-          "format": "byte",
           "description": "Account data."
         },
         "number": {
@@ -1164,17 +1199,14 @@
         },
         "prevBlockHash": {
           "type": "string",
-          "format": "byte",
           "description": "Hash of the previous block."
         },
         "stateRoot": {
           "type": "string",
-          "format": "byte",
           "description": "State root of the block."
         },
         "sortitionSeed": {
           "type": "string",
-          "format": "byte",
           "description": "Sortition seed of the block."
         },
         "proposerAddress": {
@@ -1199,7 +1231,6 @@
       "properties": {
         "id": {
           "type": "string",
-          "format": "byte",
           "description": "Transaction ID."
         }
       },
@@ -1226,7 +1257,6 @@
       "properties": {
         "hash": {
           "type": "string",
-          "format": "byte",
           "description": "Hash of the certificate."
         },
         "round": {
@@ -1252,7 +1282,6 @@
         },
         "signature": {
           "type": "string",
-          "format": "byte",
           "description": "Certificate signature."
         }
       },
@@ -1350,7 +1379,6 @@
       "properties": {
         "hash": {
           "type": "string",
-          "format": "byte",
           "description": "Hash of the block."
         }
       },
@@ -1377,12 +1405,10 @@
         },
         "hash": {
           "type": "string",
-          "format": "byte",
           "description": "Hash of the block."
         },
         "data": {
           "type": "string",
-          "format": "byte",
           "description": "Block data, only available if the verbosity level is set to BLOCK_DATA."
         },
         "blockTime": {
@@ -1419,7 +1445,6 @@
         },
         "lastBlockHash": {
           "type": "string",
-          "format": "byte",
           "description": "Hash of the last block."
         },
         "totalAccounts": {
@@ -1543,7 +1568,6 @@
         },
         "peerId": {
           "type": "string",
-          "format": "byte",
           "description": "Peer ID of the node."
         },
         "startedAt": {
@@ -1611,7 +1635,6 @@
       "properties": {
         "rawTransaction": {
           "type": "string",
-          "format": "byte",
           "description": "Raw transaction data."
         }
       },
@@ -1765,7 +1788,6 @@
         },
         "proof": {
           "type": "string",
-          "format": "byte",
           "description": "Proof for the sortition."
         }
       },
@@ -1850,7 +1872,6 @@
         },
         "peerId": {
           "type": "string",
-          "format": "byte",
           "description": "Peer ID of the peer."
         },
         "consensusKeys": {
@@ -1874,7 +1895,6 @@
         },
         "lastBlockHash": {
           "type": "string",
-          "format": "byte",
           "description": "Hash of the last block the peer knows."
         },
         "height": {
@@ -1961,12 +1981,10 @@
       "properties": {
         "transactionId": {
           "type": "string",
-          "format": "byte",
           "description": "ID of the signed transaction."
         },
         "signedRawTransaction": {
           "type": "string",
-          "format": "byte",
           "description": "Signed raw transaction data."
         }
       },
@@ -1977,12 +1995,10 @@
       "properties": {
         "id": {
           "type": "string",
-          "format": "byte",
           "description": "Transaction ID."
         },
         "data": {
           "type": "string",
-          "format": "byte",
           "description": "Transaction data."
         },
         "version": {
@@ -2039,7 +2055,6 @@
         },
         "signature": {
           "type": "string",
-          "format": "byte",
           "description": "Transaction signature."
         }
       },
@@ -2069,12 +2084,10 @@
       "properties": {
         "hash": {
           "type": "string",
-          "format": "byte",
           "description": "Hash of the validator."
         },
         "data": {
           "type": "string",
-          "format": "byte",
           "description": "Validator data."
         },
         "publicKey": {
@@ -2131,7 +2144,6 @@
         },
         "blockHash": {
           "type": "string",
-          "format": "byte",
           "description": "Hash of the block being voted on."
         },
         "round": {

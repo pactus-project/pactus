@@ -17,14 +17,14 @@ export 'transaction.pbenum.dart';
 
 class GetTransactionRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id', $pb.PbFieldType.OY)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
     ..e<TransactionVerbosity>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'verbosity', $pb.PbFieldType.OE, defaultOrMaker: TransactionVerbosity.TRANSACTION_DATA, valueOf: TransactionVerbosity.valueOf, enumValues: TransactionVerbosity.values)
     ..hasRequiredFields = false
   ;
 
   GetTransactionRequest._() : super();
   factory GetTransactionRequest({
-    $core.List<$core.int>? id,
+    $core.String? id,
     TransactionVerbosity? verbosity,
   }) {
     final _result = create();
@@ -58,9 +58,9 @@ class GetTransactionRequest extends $pb.GeneratedMessage {
   static GetTransactionRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get id => $_getN(0);
+  $core.String get id => $_getSZ(0);
   @$pb.TagNumber(1)
-  set id($core.List<$core.int> v) { $_setBytes(0, v); }
+  set id($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasId() => $_has(0);
   @$pb.TagNumber(1)
@@ -291,13 +291,13 @@ class CalculateFeeResponse extends $pb.GeneratedMessage {
 
 class BroadcastTransactionRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'BroadcastTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signedRawTransaction', $pb.PbFieldType.OY)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signedRawTransaction')
     ..hasRequiredFields = false
   ;
 
   BroadcastTransactionRequest._() : super();
   factory BroadcastTransactionRequest({
-    $core.List<$core.int>? signedRawTransaction,
+    $core.String? signedRawTransaction,
   }) {
     final _result = create();
     if (signedRawTransaction != null) {
@@ -327,9 +327,9 @@ class BroadcastTransactionRequest extends $pb.GeneratedMessage {
   static BroadcastTransactionRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get signedRawTransaction => $_getN(0);
+  $core.String get signedRawTransaction => $_getSZ(0);
   @$pb.TagNumber(1)
-  set signedRawTransaction($core.List<$core.int> v) { $_setBytes(0, v); }
+  set signedRawTransaction($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasSignedRawTransaction() => $_has(0);
   @$pb.TagNumber(1)
@@ -338,13 +338,13 @@ class BroadcastTransactionRequest extends $pb.GeneratedMessage {
 
 class BroadcastTransactionResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'BroadcastTransactionResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id', $pb.PbFieldType.OY)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
     ..hasRequiredFields = false
   ;
 
   BroadcastTransactionResponse._() : super();
   factory BroadcastTransactionResponse({
-    $core.List<$core.int>? id,
+    $core.String? id,
   }) {
     final _result = create();
     if (id != null) {
@@ -374,9 +374,9 @@ class BroadcastTransactionResponse extends $pb.GeneratedMessage {
   static BroadcastTransactionResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get id => $_getN(0);
+  $core.String get id => $_getSZ(0);
   @$pb.TagNumber(1)
-  set id($core.List<$core.int> v) { $_setBytes(0, v); }
+  set id($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasId() => $_has(0);
   @$pb.TagNumber(1)
@@ -825,13 +825,13 @@ class GetRawWithdrawTransactionRequest extends $pb.GeneratedMessage {
 
 class GetRawTransactionResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetRawTransactionResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'rawTransaction', $pb.PbFieldType.OY)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'rawTransaction')
     ..hasRequiredFields = false
   ;
 
   GetRawTransactionResponse._() : super();
   factory GetRawTransactionResponse({
-    $core.List<$core.int>? rawTransaction,
+    $core.String? rawTransaction,
   }) {
     final _result = create();
     if (rawTransaction != null) {
@@ -861,9 +861,9 @@ class GetRawTransactionResponse extends $pb.GeneratedMessage {
   static GetRawTransactionResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get rawTransaction => $_getN(0);
+  $core.String get rawTransaction => $_getSZ(0);
   @$pb.TagNumber(1)
-  set rawTransaction($core.List<$core.int> v) { $_setBytes(0, v); }
+  set rawTransaction($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasRawTransaction() => $_has(0);
   @$pb.TagNumber(1)
@@ -1023,14 +1023,14 @@ class PayloadBond extends $pb.GeneratedMessage {
 class PayloadSortition extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'PayloadSortition', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
-    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'proof', $pb.PbFieldType.OY)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'proof')
     ..hasRequiredFields = false
   ;
 
   PayloadSortition._() : super();
   factory PayloadSortition({
     $core.String? address,
-    $core.List<$core.int>? proof,
+    $core.String? proof,
   }) {
     final _result = create();
     if (address != null) {
@@ -1072,9 +1072,9 @@ class PayloadSortition extends $pb.GeneratedMessage {
   void clearAddress() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<$core.int> get proof => $_getN(1);
+  $core.String get proof => $_getSZ(1);
   @$pb.TagNumber(2)
-  set proof($core.List<$core.int> v) { $_setBytes(1, v); }
+  set proof($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
   $core.bool hasProof() => $_has(1);
   @$pb.TagNumber(2)
@@ -1223,8 +1223,8 @@ class TransactionInfo extends $pb.GeneratedMessage {
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'TransactionInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..oo(0, [30, 31, 32, 33, 34])
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id', $pb.PbFieldType.OY)
-    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data')
     ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'version', $pb.PbFieldType.O3)
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lockTime', $pb.PbFieldType.OU3)
     ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'value')
@@ -1232,7 +1232,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
     ..e<PayloadType>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'payloadType', $pb.PbFieldType.OE, defaultOrMaker: PayloadType.UNKNOWN, valueOf: PayloadType.valueOf, enumValues: PayloadType.values)
     ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'memo')
     ..aOS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
-    ..a<$core.List<$core.int>>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', $pb.PbFieldType.OY)
+    ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature')
     ..aOM<PayloadTransfer>(30, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transfer', subBuilder: PayloadTransfer.create)
     ..aOM<PayloadBond>(31, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'bond', subBuilder: PayloadBond.create)
     ..aOM<PayloadSortition>(32, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sortition', subBuilder: PayloadSortition.create)
@@ -1243,8 +1243,8 @@ class TransactionInfo extends $pb.GeneratedMessage {
 
   TransactionInfo._() : super();
   factory TransactionInfo({
-    $core.List<$core.int>? id,
-    $core.List<$core.int>? data,
+    $core.String? id,
+    $core.String? data,
     $core.int? version,
     $core.int? lockTime,
     $fixnum.Int64? value,
@@ -1252,7 +1252,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
     PayloadType? payloadType,
     $core.String? memo,
     $core.String? publicKey,
-    $core.List<$core.int>? signature,
+    $core.String? signature,
     PayloadTransfer? transfer,
     PayloadBond? bond,
     PayloadSortition? sortition,
@@ -1332,18 +1332,18 @@ class TransactionInfo extends $pb.GeneratedMessage {
   void clearPayload() => clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get id => $_getN(0);
+  $core.String get id => $_getSZ(0);
   @$pb.TagNumber(1)
-  set id($core.List<$core.int> v) { $_setBytes(0, v); }
+  set id($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasId() => $_has(0);
   @$pb.TagNumber(1)
   void clearId() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<$core.int> get data => $_getN(1);
+  $core.String get data => $_getSZ(1);
   @$pb.TagNumber(2)
-  set data($core.List<$core.int> v) { $_setBytes(1, v); }
+  set data($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
   $core.bool hasData() => $_has(1);
   @$pb.TagNumber(2)
@@ -1413,9 +1413,9 @@ class TransactionInfo extends $pb.GeneratedMessage {
   void clearPublicKey() => clearField(9);
 
   @$pb.TagNumber(10)
-  $core.List<$core.int> get signature => $_getN(9);
+  $core.String get signature => $_getSZ(9);
   @$pb.TagNumber(10)
-  set signature($core.List<$core.int> v) { $_setBytes(9, v); }
+  set signature($core.String v) { $_setString(9, v); }
   @$pb.TagNumber(10)
   $core.bool hasSignature() => $_has(9);
   @$pb.TagNumber(10)

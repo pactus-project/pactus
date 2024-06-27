@@ -284,7 +284,7 @@ func _WalletSignRawTransactionCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "Name of the wallet used for signing.")
-	flag.BytesBase64Var(cmd.PersistentFlags(), &req.RawTransaction, cfg.FlagNamer("RawTransaction"), "Raw transaction data to be signed.")
+	cmd.PersistentFlags().StringVar(&req.RawTransaction, cfg.FlagNamer("RawTransaction"), "", "Raw transaction data to be signed.")
 	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "Password for unlocking the wallet for signing.")
 
 	return cmd

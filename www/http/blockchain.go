@@ -65,7 +65,7 @@ func (s *Server) GetBlockByHashHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, err := s.blockchain.GetBlockHeight(ctx,
-		&pactus.GetBlockHeightRequest{Hash: blockHash.Bytes()})
+		&pactus.GetBlockHeightRequest{Hash: blockHash.String()})
 	if err != nil {
 		s.writeError(w, err)
 
@@ -91,24 +91,24 @@ func (s *Server) blockByHeight(ctx context.Context, w http.ResponseWriter, block
 	tm := newTableMaker()
 	tm.addRowString("Time", time.Unix(int64(res.BlockTime), 0).String())
 	tm.addRowInt("Height", int(res.Height))
-	tm.addRowBytes("Hash", res.Hash)
-	tm.addRowBytes("Data", res.Data)
+	tm.addRowHex("Hash", res.Hash)
+	tm.addRowHex("Data", res.Data)
 	if res.Header != nil {
 		tm.addRowString("--- Header", "---")
 		tm.addRowInt("Version", int(res.Header.Version))
 		tm.addRowInt("UnixTime", int(res.BlockTime))
 		tm.addRowBlockHash("PrevBlockHash", res.Header.PrevBlockHash)
-		tm.addRowBytes("StateRoot", res.Header.StateRoot)
-		tm.addRowBytes("SortitionSeed", res.Header.SortitionSeed)
+		tm.addRowHex("StateRoot", res.Header.StateRoot)
+		tm.addRowHex("SortitionSeed", res.Header.SortitionSeed)
 		tm.addRowValAddress("ProposerAddress", res.Header.ProposerAddress)
 	}
 	if res.PrevCert != nil {
 		tm.addRowString("--- PrevCertificate", "---")
-		tm.addRowBytes("Hash", res.PrevCert.Hash)
+		tm.addRowHex("Hash", res.PrevCert.Hash)
 		tm.addRowInt("Round", int(res.PrevCert.Round))
 		tm.addRowInts("Committers", res.PrevCert.Committers)
 		tm.addRowInts("Absentees", res.PrevCert.Absentees)
-		tm.addRowBytes("Signature", res.PrevCert.Signature)
+		tm.addRowHex("Signature", res.PrevCert.Signature)
 	}
 	tm.addRowString("--- Transactions", "---")
 	for i, trx := range res.Txs {
@@ -137,7 +137,7 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 	tm.addRowAccAddress("Address", acc.Address)
 	tm.addRowInt("Number", int(acc.Number))
 	tm.addRowAmount("Balance", amount.Amount(acc.Balance))
-	tm.addRowBytes("Hash", acc.Hash)
+	tm.addRowHex("Hash", acc.Hash)
 
 	s.writeHTML(w, tm.html())
 }
@@ -214,7 +214,7 @@ func (*Server) writeValidatorTable(val *pactus.ValidatorInfo) *tableMaker {
 	tm.addRowInt("LastSortitionHeight", int(val.LastSortitionHeight))
 	tm.addRowInt("UnbondingHeight", int(val.UnbondingHeight))
 	tm.addRowDouble("AvailabilityScore", val.AvailabilityScore)
-	tm.addRowBytes("Hash", val.Hash)
+	tm.addRowHex("Hash", val.Hash)
 
 	return tm
 }
