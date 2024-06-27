@@ -1,3 +1,53 @@
+# MIT License
+#
+# Copyright (c) 2024 Javad Rajabzadeh
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+# Pactus Blockchain Backup tool
+#
+# This script first stops the Pactus node if it is running, then creates a backup of the blockchain data by copying
+# or compressing it based on the specified options. The backup is stored in a timestamped snapshot directory along
+# with a `metadata.json` file that contains detailed information about the snapshot, including file paths and
+# checksums. Finally, the script manages the retention of snapshots, ensuring only a specified number of recent
+# backups are kept.
+#
+# Arguments
+#
+# - `--service_path`: This argument specifies the path to the `pactus` service file to manage systemctl service.
+# - `--data_path`: This argument specifies the path to the Pactus data folder to create snapshots.
+#    - Windows: `C:\Users\{user}\pactus\data`
+#    - Linux or Mac: `/home/{user}/pactus/data`
+# - `--compress`: This argument specifies the compression method based on your choice ['none', 'zip', 'tar'],
+# with 'none' being without compression.
+# - `--retention`: This argument sets the number of snapshots to keep.
+# - `--snapshot_path`: This argument sets a custom path for snapshots, with the default being the current
+# working directory of the script.
+#
+# How to run?
+#
+# For create snapshots just run this command:
+#
+# sudo python3 backup.py --service_path /etc/systemd/system/pactus.service --data_path /home/{user}/pactus/data
+# --compress zip --retention 3
+
+
 import argparse
 import os
 import shutil
@@ -100,53 +150,37 @@ class Metadata:
         return {"data": file_info}
 
 
+def run_command(command):
+    logging.info(f"Running command: {' '.join(command)}")
+    try:
+        result = subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        logging.info(f"Command output: {result.stdout.strip()}")
+        if result.stderr.strip():
+            logging.error(f"Command error: {result.stderr.strip()}")
+        return result.stdout.strip()
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Command failed with error: {e.stderr.strip()}")
+        return f"Error: {e.stderr.strip()}"
+
+
+def get_service_name(service_path):
+    base_name = os.path.basename(service_path)
+    service_name = os.path.splitext(base_name)[0]
+    return service_name
+
+
 class DaemonManager:
     @staticmethod
-    def is_daemon_running(daemon_path):
-        process_name = os.path.basename(daemon_path)
-        if os.name == 'nt':
-            tasklist = subprocess.run(['tasklist'], capture_output=True, text=True).stdout
-            return process_name in tasklist
-        else:
-            pgrep_command = ['pgrep', '-f', daemon_path]
-            pgrep_result = subprocess.run(pgrep_command, capture_output=True, text=True)
-            pgrep_output = pgrep_result.stdout.strip()
-            logging.debug(f"Running command: {' '.join(pgrep_command)}")
-            logging.debug(f"Pgrep output: '{pgrep_output}'")
-            return bool(pgrep_output)
+    def start_service(service_path):
+        sv = get_service_name(service_path)
+        logging.info(f"Starting '{sv}' service")
+        return run_command(['sudo', 'systemctl', 'start', sv])
 
     @staticmethod
-    def stop_daemon(daemon_path):
-        if DaemonManager.is_daemon_running(daemon_path):
-            logging.info(f"Daemon process found for '{daemon_path}', attempting to stop it")
-            process_name = os.path.basename(daemon_path)
-            try:
-                if os.name == 'nt':
-                    subprocess.run(['taskkill', '/F', '/IM', process_name], timeout=10)
-                else:
-                    pids = subprocess.run(['pgrep', '-f', daemon_path], capture_output=True,
-                                          text=True).stdout.strip().split()
-                    current_pid = os.getpid()
-                    pids_to_kill = [pid for pid in pids if pid != str(current_pid)]
-                    logging.debug(f"PIDs to kill: {pids_to_kill}")
-                    for pid in pids_to_kill:
-                        subprocess.run(['kill', pid], timeout=10)
-                logging.info(f"Daemon process '{process_name}' stopped successfully")
-            except subprocess.TimeoutExpired:
-                logging.error(f"Failed to stop daemon process '{process_name}' within the timeout period")
-        else:
-            logging.info(f"No running daemon process found for '{daemon_path}'")
-
-    @staticmethod
-    def start_node(daemon_path):
-        logging.info(f"Starting daemon with command '{daemon_path} start'")
-        try:
-            subprocess.run([daemon_path, 'start'], capture_output=True, text=True, check=True)
-            logging.info(f"Daemon '{daemon_path}' started successfully")
-        except subprocess.CalledProcessError as e:
-            logging.error(f"Failed to start daemon '{daemon_path}': {e}")
-            logging.error(f"stdout: {e.stdout}")
-            logging.error(f"stderr: {e.stderr}")
+    def stop_service(service_path):
+        sv = get_service_name(service_path)
+        logging.info(f"Stopping '{sv}' service")
+        return run_command(['sudo', 'systemctl', 'stop', sv])
 
 
 class SnapshotManager:
@@ -220,9 +254,9 @@ class Validation:
     def validate_args(args):
         logging.info('Validating arguments')
 
-        if not os.path.isfile(args.daemon_path):
-            raise ValueError(f"Daemon path '{args.daemon_path}' does not exist.")
-        logging.info(f"Daemon path '{args.daemon_path}' exists")
+        if not os.path.isfile(args.service_path):
+            raise ValueError(f"Service file '{args.service_path}' does not exist.")
+        logging.info(f"Service file '{args.service_path}' exists")
 
         if not os.path.isdir(args.data_path):
             raise ValueError(f"Data path '{args.data_path}' does not exist.")
@@ -257,18 +291,26 @@ class Validation:
         else:
             logging.info("Snapshots directory exists")
 
+    @staticmethod
+    def validate():
+        if os.name == "nt":
+            raise EnvironmentError("Windows not supported.")
+        if os.geteuid() != 0:
+            raise PermissionError("This script requires sudo/root access. Please run with sudo.")
+
 
 class ProcessBackup:
     def __init__(self, args):
         self.args = args
 
     def run(self):
+        Validation.validate()
         Validation.validate_args(self.args)
-        DaemonManager.stop_daemon(self.args.daemon_path)
+        DaemonManager.stop_service(self.args.service_path)
         snapshot_manager = SnapshotManager(self.args)
         snapshot_manager.manage_snapshots()
         snapshot_manager.create_snapshot()
-        DaemonManager.start_node(self.args.daemon_path)
+        DaemonManager.start_service(self.args.service_path)
 
 
 def parse_args():
@@ -276,7 +318,7 @@ def parse_args():
     default_data_path = os.path.join(user_home, 'pactus')
 
     parser = argparse.ArgumentParser(description='Pactus Blockchain Backup Tool')
-    parser.add_argument('--daemon_path', required=True, help='Path to daemon executable')
+    parser.add_argument('--service_path', required=True, help='Path to pactus systemctl service')
     parser.add_argument('--data_path', default=default_data_path, help='Path to data directory')
     parser.add_argument('--compress', choices=['none', 'zip', 'tar'], default='none', help='Compression type')
     parser.add_argument('--retention', type=int, default=3, help='Number of snapshots to retain')
