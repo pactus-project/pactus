@@ -128,7 +128,7 @@ Create a new announcement post on the
 [blog](https://pactus.org/blog/) and update the
 [Road Map](https://pactus.org/about/roadmap/) and
 [Download](https://pactus.org/download/) pages.
-Additionally, draft a new release on the
+Additionally, update the new release on the
 [GitHub Releases](https://github.com/pactus-project/pactus/releases) page.
 
 ## 12. Celebrate 🎉
