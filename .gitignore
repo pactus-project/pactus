@@ -14,4 +14,3 @@ todo
 # VIM artifacts
 .swp
 .*.sw*
-node/peers.json
