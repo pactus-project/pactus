@@ -130,7 +130,10 @@ Create a new announcement post on the
 [Download](https://pactus.org/download/) pages.
 Additionally, update the new release on the
 [GitHub Releases](https://github.com/pactus-project/pactus/releases) page.
+If gRPC APIs has changed in this version,
+be sure to update the [API documentation](https://docs.pactus.org/api/) accordingly.
 
 ## 12. Celebrate 🎉
 
-Before celebrating, ensure that the release has been tested and that all documentation is up to date
+Before celebrating, ensure that the release has been tested and that all documentation is up to date.
+Don't forget to update dependencies after major releases (see [Update Dependencies](./update-dependensies.md)).

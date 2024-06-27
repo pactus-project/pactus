@@ -1,4 +1,4 @@
-#  Updating Project Dependencies
+#  Update Dependencies
 
 This document is about how to update the Pactus project repository to latest version.
 
