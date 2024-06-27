@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"encoding/hex"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -162,16 +163,19 @@ func TestLoadWallet(t *testing.T) {
 		wltAddr, _ := crypto.AddressFromString(wltAddrInfo.Address)
 		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(), td.RandAmount(), "memo")
 
+		b, err := bondTx.Bytes()
+		assert.NoError(t, err)
+
 		res, err := client.SignRawTransaction(context.Background(),
 			&pactus.SignRawTransactionRequest{
 				WalletName:     wltName,
-				RawTransaction: bondTx.Hex(),
+				RawTransaction: hex.EncodeToString(b),
 				Password:       "",
 			})
 		assert.NoError(t, err)
 		assert.Equal(t, bondTx.ID().String(), res.TransactionId)
 
-		signedTx, err := tx.FromString(res.SignedRawTransaction)
+		signedTx, err := tx.FromBytes(td.DecodingHex(res.SignedRawTransaction))
 		assert.NoError(t, err)
 		assert.NotNil(t, signedTx.Signature())
 		assert.Nil(t, signedTx.BasicCheck())
@@ -180,10 +184,14 @@ func TestLoadWallet(t *testing.T) {
 	t.Run("Sign raw transaction using not loaded wallet", func(t *testing.T) {
 		wltAddr, _ := crypto.AddressFromString(wltAddrInfo.Address)
 		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(), td.RandAmount(), "memo")
+
+		b, err := bondTx.Bytes()
+		assert.NoError(t, err)
+
 		res, err := client.SignRawTransaction(context.Background(),
 			&pactus.SignRawTransactionRequest{
 				WalletName:     "not-loaded-wallet",
-				RawTransaction: bondTx.Hex(),
+				RawTransaction: hex.EncodeToString(b),
 				Password:       "",
 			})
 		assert.Error(t, err)

@@ -65,7 +65,12 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 func (s *transactionServer) BroadcastTransaction(_ context.Context,
 	req *pactus.BroadcastTransactionRequest,
 ) (*pactus.BroadcastTransactionResponse, error) {
-	trx, err := tx.FromString(req.SignedRawTransaction)
+	b, err := hex.DecodeString(req.SignedRawTransaction)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid signed transaction")
+	}
+
+	trx, err := tx.FromBytes(b)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}

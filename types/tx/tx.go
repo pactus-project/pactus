@@ -2,7 +2,6 @@ package tx
 
 import (
 	"bytes"
-	"encoding/hex"
 	"fmt"
 	"io"
 
@@ -69,16 +68,6 @@ func FromBytes(bs []byte) (*Tx, error) {
 	}
 
 	return tx, nil
-}
-
-// FromString  constructs a new transaction from a hex-encoded string.
-func FromString(str string) (*Tx, error) {
-	b, err := hex.DecodeString(str)
-	if err != nil {
-		return nil, err
-	}
-
-	return FromBytes(b)
 }
 
 func (tx *Tx) Version() uint8 {
@@ -230,16 +219,6 @@ func (tx *Tx) Bytes() ([]byte, error) {
 	}
 
 	return w.Bytes(), nil
-}
-
-// Hex constructs a new transaction from a hex-encoded string.
-func (tx *Tx) Hex() string {
-	b, err := tx.Bytes()
-	if err != nil {
-		return ""
-	}
-
-	return hex.EncodeToString(b)
 }
 
 func (tx *Tx) MarshalCBOR() ([]byte, error) {
