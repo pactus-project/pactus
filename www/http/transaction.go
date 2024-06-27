@@ -10,17 +10,6 @@ import (
 
 func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if s.enableAuth {
-		user, password, ok := r.BasicAuth()
-		if !ok {
-			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
-
-			return
-		}
-
-		ctx = s.basicAuth(ctx, user, password)
-	}
 
 	vars := mux.Vars(r)
 

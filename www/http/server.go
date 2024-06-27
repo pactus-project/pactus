@@ -15,12 +15,10 @@ import (
 	ret "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/www/grpc/basicauth"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/metadata"
 )
 
 type Server struct {
@@ -87,7 +85,12 @@ func (s *Server) StartServer(grpcServer string) error {
 	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)
 	s.router.HandleFunc("/validator/number/{number}", s.GetValidatorByNumberHandler)
 	s.router.HandleFunc("/metrics/prometheus", promhttp.Handler().ServeHTTP)
-	http.Handle("/", handlers.RecoveryHandler()(s.router))
+
+	if s.enableAuth {
+		http.Handle("/", handlers.RecoveryHandler()(basicAuth(s.router)))
+	} else {
+		http.Handle("/", handlers.RecoveryHandler()(s.router))
+	}
 
 	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
@@ -188,14 +191,6 @@ func (*Server) writeHTML(w http.ResponseWriter, html string) int {
 	n, _ := io.WriteString(w, html)
 
 	return n
-}
-
-func (*Server) basicAuth(ctx context.Context, username, password string) context.Context {
-	ba := basicauth.New(username, password)
-	tokens, _ := ba.GetRequestMetadata(ctx)
-	md := metadata.New(tokens)
-
-	return metadata.NewOutgoingContext(ctx, md)
 }
 
 type tableMaker struct {
