@@ -467,9 +467,9 @@ func TestValidateBlockTime(t *testing.T) {
 		assert.NoError(t, td.state.validateBlockTime(roundedNow.Add(10*time.Second)))
 
 		// More than the threshold
-		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(20*time.Second)))
+		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(30*time.Second)))
 
-		expectedProposeTime := roundedNow
+		expectedProposeTime := util.RoundNow(10)
 		assert.Equal(t, expectedProposeTime, td.state.proposeNextBlockTime())
 	})
 
