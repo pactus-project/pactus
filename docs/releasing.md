@@ -40,9 +40,9 @@ Create environment variables for the release version, which will be used in subs
 Keep your terminal open for further steps.
 
 ```bash
-PRV_VER="1.2.0"
-CUR_VER="1.3.0"
-NEXT_VER="1.4.0"
+PRV_VER="1.3.0"
+CUR_VER="1.4.0"
+NEXT_VER="1.5.0"
 BASE_BRANCH="main"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
@@ -51,7 +51,6 @@ TAG_MSG="Version ${CUR_VER}"
 ## 5. Update the Version
 
 clear Meta and set Alias in [version.go](../version/version.go).
-If this is a **major release**, update the versions inside the [patching](./patching.md) in step 2.
 
 ## 6. Update Changelog
 
@@ -107,8 +106,10 @@ Pushing the tag will automatically create a release tag and build the binaries.
 
 ## 10. Bump the Version
 
-Update the version inside [version.go](../version/version.go) and add `beta` to the `meta` field.
-If this is a **major release**, update the versions inside this document in step 3.
+- Update the version inside [version.go](../version/version.go) and add `beta` to the `meta` field.
+- If this is a **major release**, update the versions inside this document in step 3 and
+update the versions inside the [patching](./patching.md) in step 2.
+- If this is a **patch release**, update the versions inside the [patching](./patching.md) in step 2.
 
 Create a new PR against the base branch:
 
@@ -127,9 +128,12 @@ Create a new announcement post on the
 [blog](https://pactus.org/blog/) and update the
 [Road Map](https://pactus.org/about/roadmap/) and
 [Download](https://pactus.org/download/) pages.
-Additionally, draft a new release on the
+Additionally, update the new release on the
 [GitHub Releases](https://github.com/pactus-project/pactus/releases) page.
+If gRPC APIs has changed in this version,
+be sure to update the [API documentation](https://docs.pactus.org/api/) accordingly.
 
 ## 12. Celebrate 🎉
 
-Before celebrating, ensure that the release has been tested and that all documentation is up to date
+Before celebrating, ensure that the release has been tested and that all documentation is up to date.
+Don't forget to update dependencies after major releases (see [Update Dependencies](./update-dependensies.md)).
