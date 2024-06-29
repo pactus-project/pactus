@@ -1,8 +1,9 @@
 package grpc
 
 import (
+	"embed"
 	"fmt"
-	"mime"
+	"io/fs"
 	"net"
 	"net/http"
 	"strings"
@@ -10,11 +11,12 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
-	_ "github.com/pactus-project/pactus/www/grpc/statik" // Static files.
-	"github.com/rakyll/statik/fs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
+
+//go:embed swagger-ui
+var swaggerFS embed.FS
 
 type GatewayConfig struct {
 	Enable     bool   `toml:"enable"`
@@ -23,19 +25,17 @@ type GatewayConfig struct {
 }
 
 // getOpenAPIHandler serves an OpenAPI UI.
-// https://github.com/philips/grpc-gateway-example/blob/master/cmd/serve.go
 func (*Server) getOpenAPIHandler() (http.Handler, error) {
-	err := mime.AddExtensionType(".svg", "image/svg+xml")
-	if err != nil {
-		return nil, err
+	if _, err := swaggerFS.ReadFile("swagger-ui/index.html"); err == nil {
+		swagger, err := fs.Sub(swaggerFS, "swagger-ui")
+		if err != nil {
+			return nil, err
+		}
+
+		return http.FileServer(http.FS(swagger)), nil
 	}
 
-	statikFS, err := fs.New()
-	if err != nil {
-		return nil, err
-	}
-
-	return http.FileServer(statikFS), nil
+	return http.FileServer(http.Dir("swagger-ui")), nil
 }
 
 func (s *Server) startGateway(grpcAddr string) error {
